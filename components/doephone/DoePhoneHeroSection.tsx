@@ -133,7 +133,7 @@ function HeroCopyCarousel({
   fontClass,
   className,
   fitToContainer,
-  variant = "mobile",
+  variant: _variant = "mobile",
 }: {
   entries: readonly DoeHomeHeroHeadlineEntry[];
   fontClass?: string;
@@ -141,7 +141,6 @@ function HeroCopyCarousel({
   fitToContainer?: boolean;
   variant?: "mobile" | "desktop";
 }) {
-  const useAnimatedLayout = variant !== "desktop";
   const [activeIndex, setActiveIndex] = useState(0);
   const [transition, setTransition] = useState<HeroCopyTransition | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -260,25 +259,7 @@ function HeroCopyCarousel({
   const readMoreIndex = transition?.to ?? activeIndex;
   const layoutEntry = entries[transition?.to ?? activeIndex];
 
-  const applyCarouselSize = useCallback(
-    (size: CarouselSize, animate: boolean) => {
-      const carousel = carouselRef.current;
-      if (!carousel) return;
-
-      const ms = DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS;
-      if (animate && !reducedMotion) {
-        carousel.style.transition = `width ${ms}ms ${HERO_CAROUSEL_SIZE_EASING}, height ${ms}ms ${HERO_CAROUSEL_SIZE_EASING}`;
-      } else {
-        carousel.style.transition = "";
-      }
-
-      carousel.style.width = `${size.width}px`;
-      carousel.style.height = `${size.height}px`;
-    },
-    [reducedMotion],
-  );
-
-  const applyDesktopCarouselHeight = useCallback(
+  const applyCarouselHeight = useCallback(
     (height: number, animate: boolean) => {
       const carousel = carouselRef.current;
       if (!carousel) return;
@@ -295,7 +276,7 @@ function HeroCopyCarousel({
     [reducedMotion],
   );
 
-  const clearDesktopCarouselInlineSize = useCallback(() => {
+  const clearCarouselInlineSize = useCallback(() => {
     const carousel = carouselRef.current;
     if (!carousel) return;
     carousel.style.transition = "";
@@ -319,34 +300,20 @@ function HeroCopyCarousel({
 
     const from = sizeBeforeTransitionRef.current;
 
-    if (!useAnimatedLayout) {
-      if (transition && from && !reducedMotion) {
-        applyDesktopCarouselHeight(from.height, false);
-        void carouselRef.current?.offsetHeight;
-        applyDesktopCarouselHeight(target.height, true);
-        return;
-      }
-
-      clearDesktopCarouselInlineSize();
-      sizeBeforeTransitionRef.current = null;
-      return;
-    }
-
     if (transition && from && !reducedMotion) {
-      applyCarouselSize(from, false);
+      applyCarouselHeight(from.height, false);
       void carouselRef.current?.offsetHeight;
-      applyCarouselSize(target, true);
+      applyCarouselHeight(target.height, true);
       return;
     }
 
-    applyCarouselSize(target, false);
+    clearCarouselInlineSize();
     sizeBeforeTransitionRef.current = null;
   }, [
     activeIndex,
-    applyCarouselSize,
-    applyDesktopCarouselHeight,
+    applyCarouselHeight,
     className,
-    clearDesktopCarouselInlineSize,
+    clearCarouselInlineSize,
     fitToContainer,
     fontClass,
     layoutEntry.line1,
@@ -357,31 +324,7 @@ function HeroCopyCarousel({
     transition,
     transition?.from,
     transition?.to,
-    useAnimatedLayout,
   ]);
-
-  useEffect(() => {
-    if (!useAnimatedLayout) return undefined;
-
-    const measure = measureRef.current;
-    if (!measure) return undefined;
-
-    const syncIdleSize = () => {
-      if (transitionRef.current) return;
-      const target = measureTargetSize();
-      if (target) applyCarouselSize(target, false);
-    };
-
-    const ro = new ResizeObserver(syncIdleSize);
-    ro.observe(measure);
-    window.addEventListener("resize", syncIdleSize);
-    void document.fonts.ready.then(syncIdleSize);
-
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", syncIdleSize);
-    };
-  }, [applyCarouselSize, measureTargetSize, useAnimatedLayout]);
 
   const renderHeadlineSizer = (entry: DoeHomeHeroHeadlineEntry, key: string) => (
     <HeroCopyBlock
@@ -408,7 +351,7 @@ function HeroCopyCarousel({
 
         <div
           ref={carouselRef}
-          className={`doehealth-hero-copy-carousel doehealth-hero-copy-carousel--overlay${useAnimatedLayout ? " doehealth-hero-copy-carousel--animated-layout" : " doehealth-hero-copy-carousel--natural-layout"}${transition ? " doehealth-hero-copy-carousel--transitioning" : ""}`}
+          className={`doehealth-hero-copy-carousel doehealth-hero-copy-carousel--overlay doehealth-hero-copy-carousel--natural-layout${transition ? " doehealth-hero-copy-carousel--transitioning" : ""}`}
           style={
             {
               ["--doehealth-hero-copy-crossfade-ms" as string]: `${DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS}ms`,
@@ -417,28 +360,22 @@ function HeroCopyCarousel({
         >
           <div
             ref={measureRef}
-            className={`doehealth-hero-copy-carousel__sizer ${useAnimatedLayout ? "doehealth-hero-copy-carousel__sizer--measure" : "doehealth-hero-copy-carousel__sizer--in-flow"}`}
+            className="doehealth-hero-copy-carousel__sizer doehealth-hero-copy-carousel__sizer--in-flow"
             aria-hidden="true"
           >
-            {useAnimatedLayout ? (
-              renderHeadlineSizer(layoutEntry, "sizer-layout")
-            ) : (
-              <>
-                <div className="doehealth-hero-copy-carousel__sizer-width">
-                  {transition ? (
-                    <>
-                      {renderHeadlineSizer(entries[transition.from], "sizer-width-from")}
-                      {renderHeadlineSizer(entries[transition.to], "sizer-width-to")}
-                    </>
-                  ) : (
-                    renderHeadlineSizer(entries[activeIndex], "sizer-width-active")
-                  )}
-                </div>
-                <div className="doehealth-hero-copy-carousel__sizer-height">
-                  {renderHeadlineSizer(layoutEntry, "sizer-height-layout")}
-                </div>
-              </>
-            )}
+            <div className="doehealth-hero-copy-carousel__sizer-width">
+              {transition ? (
+                <>
+                  {renderHeadlineSizer(entries[transition.from], "sizer-width-from")}
+                  {renderHeadlineSizer(entries[transition.to], "sizer-width-to")}
+                </>
+              ) : (
+                renderHeadlineSizer(entries[activeIndex], "sizer-width-active")
+              )}
+            </div>
+            <div className="doehealth-hero-copy-carousel__sizer-height">
+              {renderHeadlineSizer(layoutEntry, "sizer-height-layout")}
+            </div>
           </div>
           {transition ? (
             <>

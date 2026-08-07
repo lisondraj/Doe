@@ -263,14 +263,6 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   min-width: 0;
 }
 
-.doehealth-hero-copy-carousel__headline-row:has(.doehealth-hero-copy-carousel--animated-layout) {
-  align-items: flex-start;
-}
-
-.doehealth-hero-copy-carousel__headline-row:has(.doehealth-hero-copy-carousel--animated-layout) .doehealth-hero-copy-carousel__nav {
-  align-self: center;
-}
-
 .doehealth-hero-copy-carousel-wrap > .doehealth-hero-copy-carousel__read-more-slot {
   margin-left: calc(var(--doehealth-hero-copy-nav-size) + var(--doehealth-hero-copy-nav-gap));
   width: max-content;
@@ -352,7 +344,6 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   overflow: visible;
 }
 
-.doehealth-hero-copy-carousel--overlay > .doehealth-hero-copy-carousel__sizer--measure,
 .doehealth-hero-copy-carousel--overlay > .doehealth-hero-copy-carousel__sizer--in-flow,
 .doehealth-hero-copy-carousel--overlay > .doehealth-hero-copy-carousel__slide {
   grid-area: 1 / 1;
@@ -368,26 +359,13 @@ html[data-home-page]:has(.doephone-mobile-root--doehealth) .doehealth-top-banner
   overflow: visible;
 }
 
-.doehealth-hero-copy-carousel--overlay.doehealth-hero-copy-carousel--animated-layout > .doehealth-hero-copy-carousel__slide {
-  align-items: flex-start;
-}
-
-.doehealth-hero-copy-carousel--overlay.doehealth-hero-copy-carousel--animated-layout.doehealth-hero-copy-carousel--transitioning
-  > .doehealth-hero-copy-carousel__slide {
-  align-items: flex-start;
-}
-
-.doehealth-hero-copy-carousel__sizer--measure {
-  visibility: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
+.doehealth-hero-copy-carousel--natural-layout {
   width: max-content;
   max-width: 100%;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
+}
+
+.doehealth-hero-copy-carousel--natural-layout.doehealth-hero-copy-carousel--transitioning > .doehealth-hero-copy-carousel__slide {
+  align-items: flex-start;
 }
 
 .doehealth-hero-copy-carousel__sizer--in-flow {
