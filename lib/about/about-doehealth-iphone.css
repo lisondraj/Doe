@@ -1233,15 +1233,14 @@ html[data-about-page][data-layout="desktop"]
   height: auto !important;
 }
 
-/* Intelligence for every clinic desktop — square interleaved tiles at the same height as
-   other articles' 2:1 full-width tiles (half-column width keeps the height matched). */
+/* Intelligence for every clinic desktop — full-width interleaved shader tiles (2:1). */
 html[data-about-page][data-layout="desktop"]
   .about-style-labs-proposal-page
   .about-style-shader-figure__shader {
-  aspect-ratio: 1 / 1 !important;
-  width: 50% !important;
+  aspect-ratio: 2 / 1 !important;
+  width: 100% !important;
   height: auto !important;
-  margin-inline: auto !important;
+  margin-inline: 0 !important;
 }
 
 /* Introducing Genome desktop — match proposal-article shader width for interleaved tiles. */
