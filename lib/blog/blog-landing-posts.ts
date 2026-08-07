@@ -15,6 +15,10 @@ import {
   INTRODUCING_FLOAT_PATH,
 } from "@/lib/blog/introducing-float-article";
 import {
+  INTRODUCING_GENOME_ARTICLE,
+  INTRODUCING_GENOME_PATH,
+} from "@/lib/blog/introducing-genome-article";
+import {
   INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE,
   INTELLIGENCE_FOR_EVERY_CLINIC_PATH,
 } from "@/lib/blog/intelligence-for-every-clinic-article";
@@ -53,6 +57,18 @@ export type BlogLandingPost = {
 
 /** Featured posts on /blog — Pulse sub-features, flagship launches, and Broader Doe Vision. */
 export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
+  {
+    slug: INTRODUCING_GENOME_ARTICLE.slug,
+    path: INTRODUCING_GENOME_PATH,
+    title: INTRODUCING_GENOME_ARTICLE.title,
+    category: blogPostCategory(INTRODUCING_GENOME_ARTICLE.slug)!,
+    subheading: INTRODUCING_GENOME_ARTICLE.subheading,
+    excerpt: INTRODUCING_GENOME_ARTICLE.excerpt,
+    byline: INTRODUCING_GENOME_ARTICLE.byline,
+    date: INTRODUCING_GENOME_ARTICLE.date,
+    previewShaderVariant: blogLandingPreviewShader(INTRODUCING_GENOME_ARTICLE.slug),
+    carouselShaderVariant: blogCarouselPreviewShader(INTRODUCING_GENOME_ARTICLE.slug),
+  },
   {
     slug: INTELLIGENCE_FOR_EVERY_CLINIC_ARTICLE.slug,
     path: INTELLIGENCE_FOR_EVERY_CLINIC_PATH,
