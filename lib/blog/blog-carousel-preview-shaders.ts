@@ -9,7 +9,7 @@ export const BLOG_CAROUSEL_PREVIEW_SHADERS: Record<string, ProtoGrainGradientVar
   "introducing-float": "prototype",
   "intelligence-for-every-clinic": "meet-proto-stack-1",
   "introducing-genome": "build-hero",
-  "genome-is-built-for-you": "meet-proto-stack-0",
+  "genome-is-built-for-you": "meet-proto",
   "the-broader-doe-vision": "build-hero",
 };
 

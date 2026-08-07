@@ -20,7 +20,7 @@ export const DOEHEALTH_TOP_BANNER_SLIDES = [
     linkHref: "/about",
   },
   {
-    message: "Designing personal intelligence for every clinic",
+    message: "Personal intelligence for every clinic",
     linkLabel: "Genome",
     linkHref: INTRODUCING_GENOME_PATH,
   },

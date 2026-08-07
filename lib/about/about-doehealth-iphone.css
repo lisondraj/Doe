@@ -1430,6 +1430,19 @@ html[data-home-page][data-layout="desktop"]
   letter-spacing: -0.042em !important;
 }
 
+/* Genome is built for you — iPhone carousels: match peer title scale for long headline. */
+:is(html[data-about-page], html[data-home-page]):not([data-layout="desktop"])
+  .blog-article-related-carousel
+  .blog-landing-card--genome-is-built-for-you
+  .blog-landing-card-title,
+html[data-home-page]:not([data-layout="desktop"])
+  .home-blog-featured-carousel
+  .blog-landing-card--genome-is-built-for-you
+  .blog-landing-card-title {
+  font-size: clamp(1.83rem, 1.54rem + 1.08vmin, 2.3rem) !important;
+  letter-spacing: -0.038em !important;
+}
+
 html[data-about-page][data-layout="desktop"] .blog-landing-card-excerpt,
 html[data-home-page][data-layout="desktop"] .blog-landing-card-excerpt {
   font-size: clamp(1.22rem, 0.95vw, 1.48rem) !important;

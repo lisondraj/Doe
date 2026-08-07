@@ -12,7 +12,7 @@ export const GENOME_IS_BUILT_FOR_YOU_ARTICLE = {
   title: "Genome is built for you",
   excerpt:
     "Ten ways Genome gives provider organizations a clinic-specific model that learns from approved workflows and operates in private cloud compute.",
-  subheading: "A clinic-specific model, designed around your standards.",
+  subheading: "Your clinic's own model.",
   openingLede:
     "Your clinic should not have to adapt its care delivery to the assumptions of a generic model.",
   openingLedeContinuation:
