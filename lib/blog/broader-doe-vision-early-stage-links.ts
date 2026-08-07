@@ -23,7 +23,7 @@ export const BROADER_DOE_VISION_EARLY_STAGE_INTRO =
   "The pieces below describe what Doe is building in these early stages, from product launches to clinic-specific intelligence.";
 
 export const BROADER_DOE_VISION_EARLY_STAGE_VERTICALS_NOTE =
-  "These are our first vertical products built on the Doe platform.";
+  "The products below are our first verticals on the Doe platform.";
 
 /** Featured posts for the Founder's Memo, excluding this page. Intelligence leads; Pulse sub-features nest beneath Introducing Pulse. */
 export const BROADER_DOE_VISION_EARLY_STAGE_ENTRIES: readonly BroaderDoeVisionEarlyStageEntry[] = [
