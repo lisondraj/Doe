@@ -67,11 +67,19 @@ export const INTRODUCING_GENOME_ARTICLE = {
       text: "The model is deployed in private cloud compute dedicated to your clinic. Patient information is processed inside that approved environment, rather than being sent out to a general-purpose model for routine clinical or operational work. This architecture is designed to support HIPAA-compliant deployments with the access controls, auditability, and safeguards healthcare organizations require.",
     },
     {
+      type: "subheading",
+      text: "How Genome benefits your clinic",
+    },
+    {
+      type: "paragraph",
+      text: "A clinic-specific model can improve the quality and economics of routine operations without changing who is accountable for care. Genome is designed to provide practical benefits over time:",
+    },
+    {
       type: "bullets",
       id: "genome-model-benefits",
       items: [
         "**Clinic-specific context:** The model can reflect local workflows, specialty language, templates, and escalation policies.",
-        "**More consistent execution:** Repeated tasks can follow the same approved logic, reducing variation across routine administrative work.",
+        "**Fewer preventable errors:** Repeated tasks can follow the same approved logic, reducing variation and missed steps across routine administrative work.",
         "**Improvement through feedback:** Documented outcomes help the model refine how it drafts, routes, prioritizes, and escalates work over time.",
         "**Lower operating costs over time:** A dedicated open-weight deployment can reduce dependence on repeated third-party model calls as more work is handled within the clinic environment.",
         "**Governed data handling:** Patient information remains within the clinic’s dedicated infrastructure for the workflows Genome supports.",
