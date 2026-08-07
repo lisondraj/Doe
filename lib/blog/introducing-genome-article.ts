@@ -11,7 +11,7 @@ export const INTRODUCING_GENOME_ARTICLE = {
   title: "Introducing Genome",
   excerpt:
     "Genome gives each clinic a model shaped by its own workflows, deployed in a private cloud environment designed for clinical governance.",
-  subheading: "A model for the way your clinic works.",
+  subheading: "One clinic. One model.",
   openingLede:
     "Every clinic has a way of caring for patients that cannot be reduced to a generic workflow.",
   openingLedeContinuation:
