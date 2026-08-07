@@ -19,6 +19,10 @@ import {
   INTRODUCING_GENOME_PATH,
 } from "@/lib/blog/introducing-genome-article";
 import {
+  BLENDED_INTELLIGENCE_ARTICLE,
+  BLENDED_INTELLIGENCE_PATH,
+} from "@/lib/blog/blended-intelligence-article";
+import {
   GENOME_IS_BUILT_FOR_YOU_ARTICLE,
   GENOME_IS_BUILT_FOR_YOU_PATH,
 } from "@/lib/blog/genome-is-built-for-you-article";
@@ -61,6 +65,18 @@ export type BlogLandingPost = {
 
 /** Featured posts on /blog — Pulse sub-features, flagship launches, and Broader Doe Vision. */
 export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
+  {
+    slug: BLENDED_INTELLIGENCE_ARTICLE.slug,
+    path: BLENDED_INTELLIGENCE_PATH,
+    title: BLENDED_INTELLIGENCE_ARTICLE.title,
+    category: blogPostCategory(BLENDED_INTELLIGENCE_ARTICLE.slug)!,
+    subheading: BLENDED_INTELLIGENCE_ARTICLE.subheading,
+    excerpt: BLENDED_INTELLIGENCE_ARTICLE.excerpt,
+    byline: BLENDED_INTELLIGENCE_ARTICLE.byline,
+    date: BLENDED_INTELLIGENCE_ARTICLE.date,
+    previewShaderVariant: blogLandingPreviewShader(BLENDED_INTELLIGENCE_ARTICLE.slug),
+    carouselShaderVariant: blogCarouselPreviewShader(BLENDED_INTELLIGENCE_ARTICLE.slug),
+  },
   {
     slug: GENOME_IS_BUILT_FOR_YOU_ARTICLE.slug,
     path: GENOME_IS_BUILT_FOR_YOU_PATH,
