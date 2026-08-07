@@ -10,6 +10,7 @@ export const BLOG_HOME_CAROUSEL_PREVIEW_SHADERS: Record<string, ProtoGrainGradie
   "introducing-float": "agents",
   "intelligence-for-every-clinic": "meet-proto-stack-2",
   "introducing-genome": "billing",
+  "genome-is-built-for-you": "inbox",
 };
 
 export function blogHomeCarouselPreviewShader(slug: string): ProtoGrainGradientVariant {
