@@ -32,6 +32,11 @@ export const DOEHEALTH_HERO_HEADLINE_ENTRIES: readonly DoeHomeHeroHeadlineEntry[
     ],
   },
   {
+    line1: "Building intelligence",
+    line2: "for every clinic",
+    readMoreLinks: [{ label: "Meet Genome", href: INTRODUCING_GENOME_PATH }],
+  },
+  {
     line1: "Read the",
     line2: "Founder's Memo",
     readMoreLinks: [{ label: "The Broader Doe Vision", href: BROADER_DOE_VISION_PATH }],

@@ -1,4 +1,5 @@
 import { INTRODUCING_FABRIC_PATH } from "@/lib/blog/introducing-fabric-article";
+import { INTRODUCING_GENOME_PATH } from "@/lib/blog/introducing-genome-article";
 import { INTRODUCING_PULSE_PATH } from "@/lib/blog/introducing-pulse-article";
 
 export type DoeHealthTopBannerSlide = {
@@ -17,6 +18,11 @@ export const DOEHEALTH_TOP_BANNER_SLIDES = [
     message: "Learn more about Doe's vision",
     linkLabel: "Read more",
     linkHref: "/about",
+  },
+  {
+    message: "Designing personal intelligence for every clinic",
+    linkLabel: "Genome",
+    linkHref: INTRODUCING_GENOME_PATH,
   },
   {
     message: "Introducing Front-Desk Voice Agents",
