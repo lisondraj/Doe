@@ -27,10 +27,9 @@ export const INTRODUCING_GENOME_ARTICLE = {
       text: "Genome is built around a straightforward principle: a clinic’s intelligence should reflect its own standards of care, operational decisions, and clinical context—not an average drawn from everyone else’s.",
     },
     {
-      type: "image",
+      type: "shader",
       id: "genome-clinic-workflow",
-      src: "/images/genome-clinic-workflow.png",
-      alt: "A physician and clinical operations leader review a workflow dashboard together.",
+      shaderVariant: "validate",
       caption:
         "Genome is intended to reflect the decisions and workflows already established by the people who deliver and coordinate care.",
     },
@@ -86,10 +85,9 @@ export const INTRODUCING_GENOME_ARTICLE = {
       ],
     },
     {
-      type: "image",
+      type: "shader",
       id: "genome-private-compute",
-      src: "/images/genome-private-compute.png",
-      alt: "Secure private cloud infrastructure in a data center.",
+      shaderVariant: "prototype",
       caption:
         "Genome is deployed on private cloud compute dedicated to the clinic, with the model, data handling, and audit controls operating in one governed environment.",
     },

@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
 import type { AboutStyleArticleContentBlock } from "@/lib/blog/about-style-article-content-blocks";
@@ -117,23 +115,6 @@ export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleCont
                   {renderBoldSegments(block.continuation)}&rdquo;
                 </span>
               </blockquote>
-            </figure>
-          );
-        }
-
-        if (block.type === "image") {
-          return (
-            <figure key={block.id} className="about-style-image-figure m-0">
-              <Image
-                src={block.src}
-                alt={block.alt}
-                width={1600}
-                height={1200}
-                className={`aspect-[4/3] w-full object-cover ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
-              />
-              <figcaption className={`${ABOUT_STYLE_SHADER_CAPTION_TW} mt-3 iphone-page:mt-4`}>
-                {block.caption}
-              </figcaption>
             </figure>
           );
         }
