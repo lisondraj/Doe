@@ -16,7 +16,7 @@ export function BroaderDoeVisionEarlyStageLinks() {
         {BROADER_DOE_VISION_EARLY_STAGE_LINKS.map((entry) => (
           <li
             key={entry.href}
-            className={`broader-doe-early-stage-links__item${entry.indent ? " broader-doe-early-stage-links__item--indent" : ""}`}
+            className={`broader-doe-early-stage-links__item${"indent" in entry && entry.indent ? " broader-doe-early-stage-links__item--indent" : ""}`}
           >
             <p className={`${BROADER_DOE_VISION_BODY_TW} !mt-0`}>
               <Link href={entry.href} className="broader-doe-early-stage-links__label">
