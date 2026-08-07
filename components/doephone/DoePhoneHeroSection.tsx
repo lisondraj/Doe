@@ -54,17 +54,58 @@ function HeroReadMoreArrow() {
   );
 }
 
-/** Headline + "introducing" style link row for one hero carousel entry. */
+function HeroCarouselNavChevron({ direction }: { direction: "prev" | "next" }) {
+  return (
+    <svg
+      className="doehealth-hero-copy-carousel__chevron"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
+      <path
+        d={direction === "prev" ? "M15.25 5.75 8.5 12l6.75 6.25" : "M8.75 5.75 15.5 12l-6.75 6.25"}
+        stroke="currentColor"
+        strokeWidth="1.85"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function HeroReadMoreRow({ entry }: { entry: DoeHomeHeroHeadlineEntry }) {
+  if (entry.readMoreLinks.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={`doehealth-hero-read-more-row pointer-events-auto ${inter.className}`}>
+      {entry.readMorePrefix ? (
+        <span className="doehealth-hero-read-more__prefix">{entry.readMorePrefix}</span>
+      ) : null}
+      {entry.readMoreLinks.map((link) => (
+        <Link key={link.href} href={link.href} className="doehealth-hero-read-more">
+          {link.label}
+          <HeroReadMoreArrow />
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+/** Headline + optional read-more row for one hero carousel entry. */
 function HeroCopyBlock({
   entry,
   fontClass,
   className,
   fitToContainer,
+  showReadMore = true,
 }: {
   entry: DoeHomeHeroHeadlineEntry;
   fontClass?: string;
   className?: string;
   fitToContainer?: boolean;
+  showReadMore?: boolean;
 }) {
   return (
     <>
@@ -75,19 +116,7 @@ function HeroCopyBlock({
         className={[className, entry.headlineClassName].filter(Boolean).join(" ")}
         fitToContainer={fitToContainer || entry.headlineClassName === "doehealth-hero-headline--single-line"}
       />
-      {entry.readMoreLinks.length > 0 ? (
-        <div className={`doehealth-hero-read-more-row pointer-events-auto ${inter.className}`}>
-          {entry.readMorePrefix ? (
-            <span className="doehealth-hero-read-more__prefix">{entry.readMorePrefix}</span>
-          ) : null}
-          {entry.readMoreLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="doehealth-hero-read-more">
-              {link.label}
-              <HeroReadMoreArrow />
-            </Link>
-          ))}
-        </div>
-      ) : null}
+      {showReadMore ? <HeroReadMoreRow entry={entry} /> : null}
     </>
   );
 }
@@ -116,6 +145,8 @@ function HeroCopyCarousel({
   const activeIndexRef = useRef(0);
   const isTransitioningRef = useRef(false);
   const transitionRef = useRef<HeroCopyTransition | null>(null);
+  const rotateIntervalRef = useRef<number | null>(null);
+  const tabVisibleRef = useRef(true);
 
   useLayoutEffect(() => {
     activeIndexRef.current = activeIndex;
@@ -140,17 +171,9 @@ function HeroCopyCarousel({
     isTransitioningRef.current = false;
   }, []);
 
-  useEffect(() => {
-    let tabVisible = document.visibilityState === "visible";
-    const onVisibility = () => {
-      tabVisible = document.visibilityState === "visible";
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-
-    const interval = window.setInterval(() => {
-      if (!tabVisible || isTransitioningRef.current) return;
-
-      const nextIndex = (activeIndexRef.current + 1) % entries.length;
+  const beginTransition = useCallback(
+    (nextIndex: number) => {
+      if (isTransitioningRef.current || nextIndex === activeIndexRef.current) return;
 
       if (reducedMotion) {
         activeIndexRef.current = nextIndex;
@@ -162,13 +185,56 @@ function HeroCopyCarousel({
       const nextTransition = { from: activeIndexRef.current, to: nextIndex };
       transitionRef.current = nextTransition;
       setTransition(nextTransition);
+    },
+    [reducedMotion],
+  );
+
+  const goToNext = useCallback(() => {
+    beginTransition((activeIndexRef.current + 1) % entries.length);
+  }, [beginTransition, entries.length]);
+
+  const goToPrev = useCallback(() => {
+    beginTransition((activeIndexRef.current - 1 + entries.length) % entries.length);
+  }, [beginTransition, entries.length]);
+
+  const restartRotateInterval = useCallback(() => {
+    if (rotateIntervalRef.current !== null) {
+      window.clearInterval(rotateIntervalRef.current);
+    }
+
+    rotateIntervalRef.current = window.setInterval(() => {
+      if (!tabVisibleRef.current || isTransitioningRef.current) return;
+      beginTransition((activeIndexRef.current + 1) % entries.length);
     }, DOEHEALTH_HERO_HEADLINE_ROTATE_MS);
+  }, [beginTransition, entries.length]);
+
+  useEffect(() => {
+    tabVisibleRef.current = document.visibilityState === "visible";
+    const onVisibility = () => {
+      tabVisibleRef.current = document.visibilityState === "visible";
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+
+  useEffect(() => {
+    restartRotateInterval();
 
     return () => {
-      window.clearInterval(interval);
-      document.removeEventListener("visibilitychange", onVisibility);
+      if (rotateIntervalRef.current !== null) {
+        window.clearInterval(rotateIntervalRef.current);
+      }
     };
-  }, [entries.length, reducedMotion]);
+  }, [restartRotateInterval]);
+
+  const handleManualNav = useCallback(
+    (direction: "prev" | "next") => {
+      if (direction === "prev") goToPrev();
+      else goToNext();
+      restartRotateInterval();
+    },
+    [goToNext, goToPrev, restartRotateInterval],
+  );
 
   useEffect(() => {
     if (!transition || reducedMotion) return undefined;
@@ -181,60 +247,94 @@ function HeroCopyCarousel({
   const singleLineTransition =
     transition != null &&
     (isSingleLineHeroEntry(entries[transition.from]) || isSingleLineHeroEntry(entries[transition.to]));
+  const readMoreIndex = transition?.to ?? activeIndex;
 
   return (
-    <div
-      className={`doehealth-hero-copy-carousel${singleLineTransition ? " doehealth-hero-copy-carousel--single-line-transition" : ""}`}
-    >
-      <div className="doehealth-hero-copy-carousel__sizer" aria-hidden="true">
-        <HeroCopyBlock
-          entry={sizerEntry}
-          fontClass={fontClass}
-          className={className}
-          fitToContainer={fitToContainer}
-        />
-      </div>
-      {transition ? (
-        <>
-          <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--out doehealth-hero-copy-carousel__slide--animate">
+    <div className="doehealth-hero-copy-carousel-wrap">
+      <div className="doehealth-hero-copy-carousel__headline-row">
+        <button
+          type="button"
+          className="doehealth-hero-copy-carousel__nav doehealth-hero-copy-carousel__nav--prev pointer-events-auto"
+          aria-label="Previous hero headline"
+          onClick={() => handleManualNav("prev")}
+        >
+          <HeroCarouselNavChevron direction="prev" />
+        </button>
+
+        <div
+          className={`doehealth-hero-copy-carousel${singleLineTransition ? " doehealth-hero-copy-carousel--single-line-transition" : ""}`}
+          style={
+            {
+              ["--doehealth-hero-copy-crossfade-ms" as string]: `${DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS}ms`,
+            } as CSSProperties
+          }
+        >
+          <div className="doehealth-hero-copy-carousel__sizer" aria-hidden="true">
             <HeroCopyBlock
-              entry={entries[transition.from]}
+              entry={sizerEntry}
               fontClass={fontClass}
               className={className}
               fitToContainer={fitToContainer}
+              showReadMore={false}
             />
           </div>
-          <div
-            className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--in doehealth-hero-copy-carousel__slide--animate"
-            onAnimationEnd={(event) => {
-              if (event.currentTarget !== event.target) return;
-              if (
-                event.animationName !== "doehealth-hero-copy-in" &&
-                event.animationName !== "doehealth-hero-copy-in-fade"
-              ) {
-                return;
-              }
-              completeTransition();
-            }}
-          >
-            <HeroCopyBlock
-              entry={entries[transition.to]}
-              fontClass={fontClass}
-              className={className}
-              fitToContainer={fitToContainer}
-            />
-          </div>
-        </>
-      ) : (
-        <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--current">
-          <HeroCopyBlock
-            entry={entries[activeIndex]}
-            fontClass={fontClass}
-            className={className}
-            fitToContainer={fitToContainer}
-          />
+          {transition ? (
+            <>
+              <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--out doehealth-hero-copy-carousel__slide--animate">
+                <HeroCopyBlock
+                  entry={entries[transition.from]}
+                  fontClass={fontClass}
+                  className={className}
+                  fitToContainer={fitToContainer}
+                  showReadMore={false}
+                />
+              </div>
+              <div
+                className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--in doehealth-hero-copy-carousel__slide--animate"
+                onAnimationEnd={(event) => {
+                  if (event.currentTarget !== event.target) return;
+                  if (
+                    event.animationName !== "doehealth-hero-copy-in" &&
+                    event.animationName !== "doehealth-hero-copy-in-fade"
+                  ) {
+                    return;
+                  }
+                  completeTransition();
+                }}
+              >
+                <HeroCopyBlock
+                  entry={entries[transition.to]}
+                  fontClass={fontClass}
+                  className={className}
+                  fitToContainer={fitToContainer}
+                  showReadMore={false}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="doehealth-hero-copy-carousel__slide doehealth-hero-copy-carousel__slide--current">
+              <HeroCopyBlock
+                entry={entries[activeIndex]}
+                fontClass={fontClass}
+                className={className}
+                fitToContainer={fitToContainer}
+                showReadMore={false}
+              />
+            </div>
+          )}
         </div>
-      )}
+
+        <button
+          type="button"
+          className="doehealth-hero-copy-carousel__nav doehealth-hero-copy-carousel__nav--next pointer-events-auto"
+          aria-label="Next hero headline"
+          onClick={() => handleManualNav("next")}
+        >
+          <HeroCarouselNavChevron direction="next" />
+        </button>
+      </div>
+
+      <HeroReadMoreRow entry={entries[readMoreIndex]} />
     </div>
   );
 }

@@ -37,13 +37,13 @@ export const DOEHEALTH_HERO_HEADLINE_ENTRIES: readonly DoeHomeHeroHeadlineEntry[
     readMoreLinks: [{ label: "The Broader Doe Vision", href: BROADER_DOE_VISION_PATH }],
   },
   {
-    line1: "Introducing Float",
-    headlineClassName: "doehealth-hero-headline--single-line",
+    line1: "Meet",
+    line2: "Float",
     readMoreLinks: [{ label: "Read more", href: INTRODUCING_FLOAT_PATH }],
   },
   {
-    line1: "Blended Intelligence",
-    headlineClassName: "doehealth-hero-headline--single-line",
+    line1: "Blended",
+    line2: "Intelligence",
     readMoreLinks: [{ label: "Read our proposal", href: INTELLIGENCE_FOR_EVERY_CLINIC_PATH }],
   },
   {
