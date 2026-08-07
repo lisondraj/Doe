@@ -29,7 +29,7 @@ export const INTRODUCING_GENOME_ARTICLE = {
     {
       type: "image",
       id: "genome-clinic-workflow",
-      src: "/images/genome-clinic-workflow.jpg",
+      src: "/images/genome-clinic-workflow.png",
       alt: "A physician and clinical operations leader review a workflow dashboard together.",
       caption:
         "Genome is intended to reflect the decisions and workflows already established by the people who deliver and coordinate care.",
@@ -80,7 +80,7 @@ export const INTRODUCING_GENOME_ARTICLE = {
     {
       type: "image",
       id: "genome-private-compute",
-      src: "/images/genome-private-compute.jpg",
+      src: "/images/genome-private-compute.png",
       alt: "Secure private cloud infrastructure in a data center.",
       caption:
         "Genome is deployed on private cloud compute dedicated to the clinic, with the model, data handling, and audit controls operating in one governed environment.",
