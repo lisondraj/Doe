@@ -11,6 +11,11 @@ import { ProductAppointmentsPanel } from "@/components/product/ProductAppointmen
 import { ProductCallHistoryPanel } from "@/components/product/ProductCallHistoryPanel";
 import { ProductCallHistoryRightRail } from "@/components/product/ProductCallHistoryRightRail";
 import { ProductLandingPanel } from "@/components/product/ProductLandingPanel";
+import { StorySidebarFooter } from "@/components/story/StorySidebarFooter";
+import { StoryBlankPanel } from "@/components/story/StoryBlankPanel";
+import { StorySidebarNav } from "@/components/story/StorySidebarNav";
+import { STORY_DEFAULT_TAB, storyTabHeaderLabel } from "@/lib/story/story-copy";
+import type { StoryTabId } from "@/lib/story/story-nav";
 import { dmSans } from "@/lib/home/fonts";
 import "@/lib/product2/product2-inbox.css";
 import "@/lib/product2/product2-schedule.css";
@@ -1182,7 +1187,7 @@ function Icon({
   );
 }
 
-export type DoeSchedulesAppMockVariant = "framed" | "fullscreen" | "hero" | "product-brown";
+export type DoeSchedulesAppMockVariant = "framed" | "fullscreen" | "hero" | "product-brown" | "story";
 
 const PERIOD_SELECTOR_COPY: Record<
   "Today" | "This week" | "Month" | "Year",
@@ -1266,6 +1271,7 @@ export function DoeSchedulesAppMock({
   ] as const;
   const [selectedUser, setSelectedUser] = useState<(typeof userOptions)[number]>(userOptions[0]);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [storyTab, setStoryTab] = useState<StoryTabId>(STORY_DEFAULT_TAB);
   const [workspaceView, setWorkspaceView] = useState<
     | "inbox"
     | "schedule"
@@ -1275,9 +1281,9 @@ export function DoeSchedulesAppMock({
     | "call-history"
     | "agent-builder"
     | "appointments"
-  >(variant === "product-brown" ? "landing" : "schedule");
+  >(variant === "product-brown" || variant === "story" ? "landing" : "schedule");
   useEffect(() => {
-    if (variant !== "product-brown") return;
+    if (variant !== "product-brown" && variant !== "story") return;
     const allowed = new Set([
       "landing",
       "call-history",
@@ -1373,8 +1379,9 @@ export function DoeSchedulesAppMock({
     return hit ?? filteredInbox[0];
   }, [filteredInbox, selectedInboxId]);
 
-  const full = variant === "fullscreen" || variant === "product-brown";
-  const productBrown = variant === "product-brown";
+  const full = variant === "fullscreen" || variant === "product-brown" || variant === "story";
+  const productBrown = variant === "product-brown" || variant === "story";
+  const storyMode = variant === "story";
   const hero = variant === "hero";
   const productBrownWorkspace =
     productBrown &&
@@ -1483,8 +1490,13 @@ export function DoeSchedulesAppMock({
           : "w-[220px] border-r border-[#EFEFEF] bg-white"
       }`}
     >
-      <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-2">
+      <div
+        className={`flex items-center justify-between gap-2 px-3 pt-3 pb-2${
+          storyMode ? " story-sidebar-header" : ""
+        }`}
+      >
         <div className="flex min-w-0 items-center gap-2.5">
+          {!storyMode ? (
           <div
             className={`shrink-0 rounded-lg shadow-sm ${
               productBrown ? "h-9 w-9" : "h-8 w-8"
@@ -1494,13 +1506,18 @@ export function DoeSchedulesAppMock({
                 : "bg-gradient-to-br from-[#E7A944] via-[#D2774C] to-[#1E343A]"
             }`}
           />
+          ) : null}
           <div className="min-w-0">
           <div
-            className={`truncate font-normal leading-[2.25rem] tracking-tight ${
-              productBrown ? "h-9 text-[1.65rem]" : "text-[1.15rem]"
-            } ${
-              productBrown ? "text-[#f5e6d0]" : "text-neutral-900"
-            } ${lora.className}`}
+            className={`tracking-tight ${
+              storyMode
+                ? `story-wordmark ${lora.className}`
+                : `truncate font-normal ${
+                    productBrown
+                      ? "h-9 text-[1.65rem] leading-[2.25rem] text-[#f5e6d0]"
+                      : "text-[1.15rem] leading-[2.25rem] text-neutral-900"
+                  } ${lora.className}`
+            }`}
           >
             Doe
           </div>
@@ -1508,8 +1525,12 @@ export function DoeSchedulesAppMock({
         </div>
         <button
           type="button"
-          className={`rounded-md hover:bg-neutral-100 hover:text-neutral-600 ${
-            productBrown ? "p-1.5 text-[rgba(245,230,208,0.52)] hover:bg-[rgba(245,230,208,0.08)] hover:text-[#f5e6d0]" : "p-1 text-neutral-400"
+          className={`rounded-md ${
+            storyMode
+              ? "story-sidebar-header__collapse p-1.5"
+              : productBrown
+                ? "p-1.5 text-[rgba(245,230,208,0.52)] hover:bg-[rgba(245,230,208,0.08)] hover:text-[#f5e6d0]"
+                : "p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
           }`}
           aria-label="Collapse sidebar"
         >
@@ -1520,6 +1541,7 @@ export function DoeSchedulesAppMock({
         </button>
       </div>
 
+      {!storyMode ? (
       <div className="px-3 pb-2">
         <div className="flex h-9 items-center gap-2 rounded-lg border border-[#ECECEC] bg-[#FAFAFA] px-2.5">
           <Icon className="h-4 w-4 text-neutral-400">
@@ -1532,7 +1554,9 @@ export function DoeSchedulesAppMock({
           </span>
         </div>
       </div>
+      ) : null}
 
+      {!storyMode ? (
       <div className={`px-3 pb-2${productBrown && clinicMenuOpen ? " product-brown-nav-selector-section--open" : ""}`}>
         <div className="product-brown-nav-selector-wrap relative">
           <button
@@ -1631,9 +1655,15 @@ export function DoeSchedulesAppMock({
           ) : null}
         </div>
       </div>
+      ) : null}
 
       {productBrown ? (
         <>
+          {storyMode ? (
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+              <StorySidebarNav activeTab={storyTab} onSelect={setStoryTab} />
+            </div>
+          ) : (
           <nav className="flex flex-col gap-0.5 px-2 pb-2">
             {(
               [
@@ -1693,7 +1723,9 @@ export function DoeSchedulesAppMock({
               </button>
             ))}
           </nav>
+          )}
 
+          {!storyMode ? (
           <div className="px-2 pb-1 pt-1">
             <div className="flex items-center justify-between px-1 text-[10px] font-semibold uppercase tracking-wider text-[rgba(242,232,218,0.48)]">
               <span>Tools</span>
@@ -1746,6 +1778,7 @@ export function DoeSchedulesAppMock({
               ))}
             </div>
           </div>
+          ) : null}
         </>
       ) : (
         <>
@@ -1992,6 +2025,7 @@ export function DoeSchedulesAppMock({
         </>
       )}
 
+      {!storyMode ? (
       <div className="mt-auto border-t border-[#EFEFEF] px-2 py-2">
         <div className="px-1">
           <div className="relative">
@@ -2113,6 +2147,9 @@ export function DoeSchedulesAppMock({
           </button>
         </div>
       </div>
+      ) : null}
+
+      {storyMode ? <StorySidebarFooter /> : null}
     </aside>
   );
 
@@ -2129,7 +2166,7 @@ export function DoeSchedulesAppMock({
         (productBrown ? " product-brown-mock" : "") +
         (productBrownDarkWorkspace ? " product-brown-workspace-mode" : "") +
         (productBrownInbox ? " product-brown-inbox-mode" : "") +
-        (productBrownLandingStyle ? " product-brown-landing-mode" : "") +
+        (storyMode ? " product-brown-story-mode" : productBrownLandingStyle ? " product-brown-landing-mode" : "") +
         (productBrownAgentBuilder ? " product-brown-agent-builder-mode" : "") +
         (productBrownAppointments ? " product-brown-appointments-mode" : "") +
         (productBrownSchedule ? " product-brown-schedule-mode" : "") +
@@ -2152,7 +2189,7 @@ export function DoeSchedulesAppMock({
         <div
           className={`min-h-0 flex-1 overflow-hidden ${
             productBrown
-              ? productBrownInbox || productBrownSchedule || productBrownLandingStyle || productBrownAgents
+              ? productBrownInbox || productBrownSchedule || productBrownLandingStyle || storyMode || productBrownAgents
                 || productBrownCallHistory || productBrownAgentBuilder || productBrownAppointments
                 ? "product-brown-frame product-brown-layered-layout bg-[var(--pi-cream)]"
                 : "product-brown-frame product-brown-layered-layout bg-[#151008]"
@@ -2209,7 +2246,7 @@ export function DoeSchedulesAppMock({
                       ? scheduleUi!.cream
                       : productBrownAgents
                         ? "bg-[var(--pi-cream)]"
-                        : productBrownLandingStyle || productBrownCallHistory || productBrownAgentBuilder
+                        : productBrownLandingStyle || storyMode || productBrownCallHistory || productBrownAgentBuilder
                           || productBrownAppointments
                           ? "bg-transparent"
                         : productBrownDarkWorkspace
@@ -2219,7 +2256,9 @@ export function DoeSchedulesAppMock({
                             : "bg-white"
                 }`}
               >
-                {workspaceView === "landing" && productBrown ? (
+                {storyMode ? (
+                  <StoryBlankPanel tab={storyTab} title={storyTabHeaderLabel(storyTab)} />
+                ) : workspaceView === "landing" && productBrown ? (
                   <ProductLandingPanel />
                 ) : workspaceView === "agent-builder" && productBrown ? (
                   <ProductAgentBuilderPanel />
