@@ -90,6 +90,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
   const containerRef = useRef<HTMLDivElement>(null);
   const hero = isHeroVariant(variant);
+  const [layoutContextEpoch, setLayoutContextEpoch] = useState(0);
   const phone = isPhoneLayout();
   const reactSlotId = useId();
   const homeHeroBackground = hero && phone && variant === "home-hero";
@@ -156,6 +157,12 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     if (hero) requestMount();
   }, [hero]);
 
+  useLayoutEffect(() => {
+    setLayoutContextEpoch((current) => current + 1);
+    const raf = requestAnimationFrame(() => setLayoutContextEpoch((current) => current + 1));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
   useEffect(() => {
     if (hero) return;
     if (effectiveInViewport) {
@@ -168,10 +175,9 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   useEffect(() => {
     if (!isShaderWebGLBudgetActive()) return;
     if (typeof document === "undefined") return;
-    // Dedicated hero shaders register the gate — subscribing here loops (React #185).
+    // Dedicated heroes register the gate — subscribing here loops (React #185).
     if (dedicatedHeroBackground) return;
-    const onAboutPage = document.documentElement.getAttribute("data-about-page") === "true";
-    if (document.documentElement.getAttribute("data-home-page") !== "true" && !onAboutPage) return;
+    if (document.documentElement.getAttribute("data-home-page") !== "true") return;
 
     return subscribeHomeHeroBackgroundReady(() => {
       setHomeHeroGateEpoch((current) => current + 1);
@@ -223,6 +229,47 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     evictShader,
     hasMounted,
     homeHeroGateEpoch,
+    layoutContextEpoch,
+    shaderPriority,
+    slotId,
+  ]);
+
+  useEffect(() => {
+    if (!isShaderWebGLBudgetActive() || !dedicatedHeroBackground) return;
+    if (!hasMounted || !containerReady || budgetGranted) return;
+
+    let cancelled = false;
+    let retryTimer = 0;
+    let retryDelayMs = 32;
+
+    const tryAcquire = () => {
+      if (cancelled) return;
+      const granted = aboutHeroBackground
+        ? acquireAboutHeroBackgroundSlot(evictShader)
+        : acquireShaderWebGLSlot(slotId, shaderPriority, evictShader);
+      if (granted) {
+        setBudgetGranted(true);
+        setHomeHeroBackgroundReady(true);
+        return;
+      }
+      retryDelayMs = Math.min(retryDelayMs * 2, 2000);
+      retryTimer = window.setTimeout(tryAcquire, retryDelayMs);
+    };
+
+    tryAcquire();
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(retryTimer);
+    };
+  }, [
+    aboutHeroBackground,
+    budgetGranted,
+    containerReady,
+    dedicatedHeroBackground,
+    evictShader,
+    hasMounted,
+    layoutContextEpoch,
     shaderPriority,
     slotId,
   ]);

@@ -42,7 +42,9 @@ function applyAboutDesktopDocumentAttrs() {
 
 /** /about-style pages — read bootstrap before paint, then keep document attrs in sync. */
 export function useAboutPageVariant(): AboutPageVariant | null {
-  const [variant, setVariant] = useState<AboutPageVariant | null>(null);
+  const [variant, setVariant] = useState<AboutPageVariant | null>(() =>
+    typeof window !== "undefined" ? readBootstrappedDoePhoneVariant() : null,
+  );
 
   useLayoutEffect(() => {
     setVariant(readBootstrappedDoePhoneVariant());
