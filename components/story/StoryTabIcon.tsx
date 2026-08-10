@@ -73,15 +73,6 @@ export function StoryTabIcon({ tab, className }: { tab: StoryTabId; className?: 
     );
   }
 
-  if (tab === "vision") {
-    return (
-      <StoryTabIconFrame className={className}>
-        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
-        <circle cx="12" cy="12" r="2.5" />
-      </StoryTabIconFrame>
-    );
-  }
-
   if (tab === "genome") {
     return (
       <StoryTabIconFrame className={className}>
@@ -126,26 +117,6 @@ export function StoryTabIcon({ tab, className }: { tab: StoryTabId; className?: 
         <path d="M12 19V5" />
         <path d="m8 9 4-4 4 4" />
         <path d="M6.5 19h11" />
-      </StoryTabIconFrame>
-    );
-  }
-
-  if (tab === "platform") {
-    return (
-      <StoryTabIconFrame className={className}>
-        <rect width="7" height="7" x="3" y="3" rx="1.5" />
-        <rect width="7" height="7" x="14" y="3" rx="1.5" />
-        <rect width="7" height="7" x="3" y="14" rx="1.5" />
-        <rect width="7" height="7" x="14" y="14" rx="1.5" />
-      </StoryTabIconFrame>
-    );
-  }
-
-  if (tab === "live-demo") {
-    return (
-      <StoryTabIconFrame className={className}>
-        <polygon points="9.5 8 16 12 9.5 16 9.5 8" />
-        <rect width="18" height="14" x="3" y="5" rx="2" />
       </StoryTabIconFrame>
     );
   }
