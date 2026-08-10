@@ -4,9 +4,7 @@
 
 .premed-founders-block {
   margin: 0;
-  padding: clamp(0.35rem, 0.6vw, 0.55rem) 0 clamp(0.35rem, 0.6vw, 0.55rem)
-    clamp(1.15rem, 1.45vw, 1.55rem);
-  border-left: 2px solid rgba(232, 192, 142, 0.42);
+  padding: clamp(0.35rem, 0.6vw, 0.55rem) 0;
 }
 
 .premed-founders-block__list {
@@ -56,6 +54,13 @@
   height: 0.95rem;
 }
 
+html[data-about-page][data-layout="desktop"] .premed-founders-band__divider {
+  display: none;
+}
+
 html[data-about-page][data-layout="desktop"] .premed-founders-block {
-  padding-left: clamp(1.25rem, 1.55vw, 1.65rem);
+  margin-top: clamp(2.85rem, 3.4vw, 3.75rem);
+  padding: clamp(0.35rem, 0.6vw, 0.55rem) 0 clamp(0.35rem, 0.6vw, 0.55rem)
+    clamp(1.25rem, 1.55vw, 1.65rem);
+  border-left: 2px solid rgba(232, 192, 142, 0.42);
 }

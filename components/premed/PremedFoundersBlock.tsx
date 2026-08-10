@@ -7,7 +7,9 @@ import { PREMED_FOUNDERS } from "@/lib/premed/premed-copy";
 export function PremedFoundersBlock() {
   return (
     <div className="premed-founders-band">
-      <BlogArticleCarouselDivider />
+      <div className="premed-founders-band__divider">
+        <BlogArticleCarouselDivider />
+      </div>
       <section className="premed-founders-block" aria-label="Founders">
         <div className="premed-founders-block__list">
           {PREMED_FOUNDERS.map((founder) => (
@@ -30,7 +32,9 @@ export function PremedFoundersBlock() {
           ))}
         </div>
       </section>
-      <BlogArticleCarouselDivider />
+      <div className="premed-founders-band__divider">
+        <BlogArticleCarouselDivider />
+      </div>
     </div>
   );
 }
