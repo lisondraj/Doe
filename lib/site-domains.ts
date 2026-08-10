@@ -2,7 +2,7 @@
 export const PRIMARY_SITE_HOST =
   process.env.PRIMARY_SITE_HOST ?? "doe.care";
 
-/** Designers landing domain — rewrites site root to /doehealth (default: doehealth.care). */
+/** Designers landing domain — `/` only; rewrites to /premed (default: doehealth.care). */
 export const DESIGNERS_SITE_HOST =
   process.env.DESIGNERS_SITE_HOST ?? process.env.JOIN_SITE_HOST ?? "doehealth.care";
 

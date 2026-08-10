@@ -41,18 +41,14 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  if (!isDesignersHost(host)) {
-    return NextResponse.next();
+  if (isDesignersHost(host)) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/";
+    redirectUrl.search = "";
+    return applyLandingSiteHeaders(NextResponse.redirect(redirectUrl));
   }
 
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-doe-designers-site", "1");
-
-  return applyLandingSiteHeaders(
-    NextResponse.next({
-      request: { headers: requestHeaders },
-    }),
-  );
+  return NextResponse.next();
 }
 
 export const config = {
