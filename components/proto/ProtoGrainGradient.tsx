@@ -38,11 +38,6 @@ function isHeroVariant(variant: ProtoGrainGradientVariant) {
   );
 }
 
-function isAboutStylePage() {
-  if (typeof document === "undefined") return false;
-  return document.documentElement.getAttribute("data-about-page") === "true";
-}
-
 function isPhoneLayout() {
   if (typeof document === "undefined") return false;
   return (
@@ -101,7 +96,8 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const phone = isPhoneLayout();
   const reactSlotId = useId();
   const homeHeroBackground = hero && phone && variant === "home-hero";
-  const aboutHeroBackground = hero && phone && variant === "about-hero" && isAboutStylePage();
+  /** about-hero is only used on about-style article heroes — don't gate on data-about-page timing. */
+  const aboutHeroBackground = hero && phone && variant === "about-hero";
   const dedicatedHeroBackground = homeHeroBackground || aboutHeroBackground;
   const slotId = homeHeroBackground
     ? DOEPHONE_HOME_HERO_SHADER_SLOT
@@ -183,7 +179,8 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   useEffect(() => {
     if (!isShaderWebGLBudgetActive()) return;
     if (typeof document === "undefined") return;
-    if (document.documentElement.getAttribute("data-home-page") !== "true") return;
+    const onAboutPage = document.documentElement.getAttribute("data-about-page") === "true";
+    if (document.documentElement.getAttribute("data-home-page") !== "true" && !onAboutPage) return;
 
     return subscribeHomeHeroBackgroundReady(() => {
       setHomeHeroGateEpoch((current) => current + 1);
@@ -497,7 +494,8 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const targetSpeed = preset.speed ?? PROTO_GRAIN_GRADIENT_SPEED;
   const shouldAnimate =
     !staticShader && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible && hasMounted;
-  const showGradient = hasMounted && containerReady && effectiveInViewport && budgetGranted;
+  const showGradient =
+    hasMounted && containerReady && (dedicatedHeroBackground || effectiveInViewport) && budgetGranted;
 
   return (
     <div
