@@ -63,7 +63,8 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
     link: {
       label: "Introducing Float",
       href: INTRODUCING_FLOAT_PATH,
-      description: "An introduction to Float and Doe's work in financial operations.",
+      description:
+        "A finance layer for claims, collections, payer calls, and management fees, built with intelligent agents and the Fabric agent builder.",
     },
   },
   {
@@ -72,7 +73,8 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
     link: {
       label: "Introducing Pulse",
       href: INTRODUCING_PULSE_PATH,
-      description: "An introduction to Pulse and voice-led workflows for care teams.",
+      description:
+        "Intelligent agents built for the workflows your clinic runs every day, from scheduling and payer hold times to front-desk triage on your existing phone line and software.",
     },
   },
   {
@@ -81,7 +83,8 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
     link: {
       label: "Pulse: Call History",
       href: PULSE_CALL_HISTORY_PATH,
-      description: "How teams can review and learn from voice interactions.",
+      description:
+        "One workspace to replay agent calls, inspect actions, run prompt-based analysis, and keep a complete record of what Pulse handled.",
       nested: true,
     },
   },
@@ -91,7 +94,8 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
     link: {
       label: "Pulse: Ambient",
       href: PULSE_AMBIENT_PATH,
-      description: "How conversation context can support visits and preparation.",
+      description:
+        "Prepares visits after agent calls, briefs physicians on the week ahead, and surfaces chart and call context during the appointment.",
       nested: true,
     },
   },
@@ -101,7 +105,8 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
     link: {
       label: "Introducing Fabric",
       href: INTRODUCING_FABRIC_PATH,
-      description: "An introduction to Fabric and building workflows in plain language.",
+      description:
+        "A visual agent builder that lets clinical teams design the workflows they actually run, in plain language and without waiting on a vendor roadmap.",
     },
   },
 ];
