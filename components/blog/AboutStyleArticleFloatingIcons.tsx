@@ -1,5 +1,24 @@
 /** Shared SVG icons for bottom floating chrome (blog nav + TOC + audio). */
 
+export function ListenIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="26"
+      height="26"
+      viewBox="0 0 20 20"
+      fill="none"
+      aria-hidden
+      className={className}
+    >
+      <circle cx="10" cy="10" r="6.65" stroke="currentColor" strokeWidth="1.35" />
+      <path
+        d="M8.3 7.05c0-.54.62-.26.98-.05l3.97 2.27c.36.21.36.73 0 .94l-3.97 2.27c-.36.21-.98-.08-.98-.62V7.05Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 export function BlogNavIcon({ className }: { className?: string }) {
   return (
     <svg

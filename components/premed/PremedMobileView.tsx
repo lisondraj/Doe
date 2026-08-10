@@ -5,6 +5,7 @@ import { useLayoutEffect } from "react";
 import { AboutStyleArticleFloatingChrome } from "@/components/blog/AboutStyleArticleFloatingChrome";
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
+import { PremedFloatingBlogPanel } from "@/components/premed/PremedFloatingBlogPanel";
 import { PremedPageContent } from "@/components/premed/PremedPageContent";
 import { ABOUT_STYLE_PHONE_SHELL_PROPS } from "@/lib/about/about-style-phone-shell-props";
 import { AboutStyleArticleAudioPlayerProvider } from "@/lib/blog/about-style-article-audio-player-context";
@@ -46,14 +47,14 @@ export function PremedMobileView({ tocItems }: PremedMobileViewProps) {
         topBanner={<DoeHealthTopBanner {...PREMED_TOP_BANNER} />}
       >
         <main className={`w-full ${BROADER_DOE_VISION_CONTENT_PT}`}>
-          <PremedPageContent tocItems={tocItems} hideArticleAudio />
+          <PremedPageContent tocItems={tocItems} />
         </main>
       </BlogMobileShell>
       <AboutStyleArticleFloatingChrome
         tocItems={tocItems}
         currentSlug="the-broader-doe-vision"
-        hideBlogNav
-        hideArticleAudio
+        BlogPanel={PremedFloatingBlogPanel}
+        leftCapListenMode
       />
     </AboutStyleArticleAudioPlayerProvider>
   );

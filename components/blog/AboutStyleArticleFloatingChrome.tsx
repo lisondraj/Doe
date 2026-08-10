@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import { AboutStyleArticleFloatingBlogPanel } from "@/components/blog/AboutStyleArticleFloatingBlogPanel";
 import {
   BlogNavIcon,
+  ListenIcon,
   PauseIcon,
   PlayIcon,
   SkipBack10Icon,
@@ -36,9 +37,11 @@ type AboutStyleArticleFloatingChromeProps = {
   tocItems: readonly AboutStyleArticleTocItem[];
   currentSlug?: string;
   BlogPanel?: typeof AboutStyleArticleFloatingBlogPanel;
-  /** Hide the left blog-posts cap and panel (e.g. /premed iPhone). */
+  /** Hide the left blog-posts cap and panel. */
   hideBlogNav?: boolean;
-  /** Keep listen row visible but disable playback (e.g. /premed iPhone). */
+  /** /premed iPhone — listen circle opens the pill; gallery circle appears left of the pill when joined. */
+  leftCapListenMode?: boolean;
+  /** Keep listen row visible but disable playback. */
   hideArticleAudio?: boolean;
 };
 
@@ -92,6 +95,7 @@ export function AboutStyleArticleFloatingChrome({
   currentSlug,
   BlogPanel = AboutStyleArticleFloatingBlogPanel,
   hideBlogNav = false,
+  leftCapListenMode = false,
   hideArticleAudio = false,
 }: AboutStyleArticleFloatingChromeProps) {
   const {
@@ -374,7 +378,7 @@ export function AboutStyleArticleFloatingChrome({
   }, [audioClosing, markWidgetOpened, openPlayer]);
 
   const openBlog = useCallback(() => {
-    if (hideBlogNav) return;
+    if (hideBlogNav && !leftCapListenMode) return;
     markWidgetOpened();
     const handoffFromAudio = isPlayerOpen && !audioClosing;
     if (handoffFromAudio) beginAudioClose();
@@ -407,7 +411,7 @@ export function AboutStyleArticleFloatingChrome({
     } else {
       beginBlogPanelExpand();
     }
-  }, [audioClosing, beginAudioClose, clearBlogCollapseStyles, closeToc, hideBlogNav, isPlayerOpen, markWidgetOpened]);
+  }, [audioClosing, beginAudioClose, clearBlogCollapseStyles, closeToc, hideBlogNav, isPlayerOpen, leftCapListenMode, markWidgetOpened]);
 
   const openToc = useCallback(() => {
     markWidgetOpened();
@@ -699,7 +703,8 @@ export function AboutStyleArticleFloatingChrome({
 
   const audioJoining = isPlayerOpen && !audioJoined && !audioClosing;
   const leftCapCrossfade = isPlaying && audioClosing && isPlayerOpen && audioJoined;
-  const blogCapExpanded = !hideBlogNav && blogOpen && (!audioCapActive || audioClosing);
+  const leftBlogNavEnabled = leftCapListenMode || !hideBlogNav;
+  const blogCapExpanded = leftBlogNavEnabled && blogOpen && (!audioCapActive || audioClosing);
   const tocCapExpanded = tocOpen && (!audioCapActive || audioClosing);
   const showLeftCapTriggers = blogCollapsing || !blogPanelRevealed || blogCapExpanded;
   const audioPillAnchored = isPlayerOpen && audioJoined && !audioClosing;
@@ -707,8 +712,20 @@ export function AboutStyleArticleFloatingChrome({
     isPlaying &&
     showLeftCapTriggers &&
     (leftCapCrossfade || (!audioPillAnchored && (!isPlayerOpen || audioClosing || audioJoining)));
-  const showLeftBlogCap = !hideBlogNav && showLeftCapTriggers && !showLeftPlayingCap && !leftCapCrossfade;
-  const showLeftCap = !hideBlogNav || showLeftPlayingCap || leftCapCrossfade;
+  const showLeftListenCap =
+    leftCapListenMode &&
+    showLeftCapTriggers &&
+    !showLeftPlayingCap &&
+    !leftCapCrossfade &&
+    !blogCapExpanded &&
+    !audioPillAnchored;
+  const showLeftBlogCap =
+    showLeftCapTriggers &&
+    !showLeftPlayingCap &&
+    !leftCapCrossfade &&
+    !blogCapExpanded &&
+    ((leftCapListenMode && audioPillAnchored) || (!leftCapListenMode && !hideBlogNav));
+  const showLeftCap = leftCapListenMode || !hideBlogNav || showLeftPlayingCap || leftCapCrossfade;
   const showTocCapTrigger = tocCollapsing || !tocPanelRevealed || tocCapExpanded;
   const panelHandoffBlog = blogOpen && audioClosing;
   const panelHandoffToc = tocOpen && audioClosing;
@@ -724,7 +741,7 @@ export function AboutStyleArticleFloatingChrome({
     "about-style-article-floating-chrome__shell",
     "proto-nav-frost-shell",
     audioCapActive ? "is-audio-shell" : "",
-    hideBlogNav ? "" : blogOpen && !audioCapActive ? "is-blog-open" : "",
+    leftBlogNavEnabled ? (blogOpen && !audioCapActive ? "is-blog-open" : "") : "",
     tocOpen && !audioCapActive ? "is-toc-open" : "",
     blogCollapsing ? "is-blog-closing" : "",
     tocCollapsing ? "is-toc-closing" : "",
@@ -744,7 +761,7 @@ export function AboutStyleArticleFloatingChrome({
     panelHandoffBlog ? "is-handoff-blog" : "",
     panelHandoffToc ? "is-handoff-toc" : "",
     panelCrossfade ? "is-panel-crossfade" : "",
-    hideBlogNav ? "" : blogOpen && !audioCapActive ? "is-blog" : "",
+    leftBlogNavEnabled ? (blogOpen && !audioCapActive ? "is-blog" : "") : "",
     tocOpen && !audioCapActive ? "is-toc" : "",
     blogCollapsing ? "is-blog-closing" : "",
     tocCollapsing ? "is-toc-closing" : "",
@@ -811,6 +828,22 @@ export function AboutStyleArticleFloatingChrome({
                 >
                   <PlayingCapRing progress={progress} />
                   <PauseIcon size={22} />
+                </button>
+              ) : null}
+
+              {showLeftListenCap ? (
+                <button
+                  type="button"
+                  className={`about-style-article-floating-chrome__cap-trigger${leftCapCrossfade ? " is-stack-fading" : ""}`}
+                  aria-label="Listen to article"
+                  aria-hidden={leftCapCrossfade ? true : undefined}
+                  tabIndex={leftCapCrossfade ? -1 : chromeVisible ? 0 : -1}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    openAudioFromFloatingToc();
+                  }}
+                >
+                  <ListenIcon className="about-style-article-floating-chrome__icon" />
                 </button>
               ) : null}
 
