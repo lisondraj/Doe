@@ -42,9 +42,12 @@ function applyAboutDesktopDocumentAttrs() {
 
 /** /about-style pages — read bootstrap before paint, then keep document attrs in sync. */
 export function useAboutPageVariant(): AboutPageVariant | null {
-  const [variant, setVariant] = useState<AboutPageVariant | null>(() =>
-    typeof window !== "undefined" ? readBootstrappedDoePhoneVariant() : null,
-  );
+  /**
+   * Always start at null (matches SSR) — reading window here would make the client's
+   * first hydration render diverge from the server-rendered null, which trips a full
+   * hydration-failure remount (see React hydration mismatch docs) on every load.
+   */
+  const [variant, setVariant] = useState<AboutPageVariant | null>(null);
 
   useLayoutEffect(() => {
     setVariant(readBootstrappedDoePhoneVariant());
