@@ -35,6 +35,7 @@ const WIDGET_DISMISS_ARM_MS = 480;
 type AboutStyleArticleFloatingChromeProps = {
   tocItems: readonly AboutStyleArticleTocItem[];
   currentSlug?: string;
+  BlogPanel?: typeof AboutStyleArticleFloatingBlogPanel;
 };
 
 function formatTime(seconds: number) {
@@ -82,7 +83,11 @@ function PlayingCapRing({ progress }: { progress: number }) {
 }
 
 /** Unified bottom chrome — blog + TOC circles merge into an audio pill on voice play. */
-export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: AboutStyleArticleFloatingChromeProps) {
+export function AboutStyleArticleFloatingChrome({
+  tocItems,
+  currentSlug,
+  BlogPanel = AboutStyleArticleFloatingBlogPanel,
+}: AboutStyleArticleFloatingChromeProps) {
   const {
     audioSrc,
     audioRef,
@@ -775,7 +780,7 @@ export function AboutStyleArticleFloatingChrome({ tocItems, currentSlug }: About
         >
           {blogCapExpanded ? (
             <div className="about-style-article-floating-chrome__panel" aria-hidden={!blogPanelRevealed}>
-              <AboutStyleArticleFloatingBlogPanel currentSlug={currentSlug} onItemClick={closeBlog} />
+              <BlogPanel currentSlug={currentSlug} onItemClick={closeBlog} />
             </div>
           ) : null}
 

@@ -17,26 +17,37 @@ function findInterceptedAnchor(target: EventTarget | null): HTMLAnchorElement | 
   return anchor;
 }
 
+function findInterceptedWaitlistButton(target: EventTarget | null): HTMLButtonElement | null {
+  if (!(target instanceof Element)) return null;
+  const button = target.closest(
+    ".doehealth-nav-waitlist-shell button, .doehealth-nav-waitlist-label, button[class*='waitlist']",
+  );
+  if (!(button instanceof HTMLButtonElement)) return null;
+  if (isPremedModalLink(button)) return null;
+  return button;
+}
+
 /** Keeps link styling site-wide on /premed while routing clicks to the learn-more modal. */
 export function PremedLinkGuard({ children }: { children: ReactNode }) {
   const { openLearnMoreModal } = usePremedLearnMoreModal();
 
   useEffect(() => {
-    const onDocumentClick = (event: MouseEvent) => {
+    const intercept = (event: Event) => {
       const anchor = findInterceptedAnchor(event.target);
-      if (!anchor) return;
+      const waitlistButton = anchor ? null : findInterceptedWaitlistButton(event.target);
+      if (!anchor && !waitlistButton) return;
       event.preventDefault();
       event.stopPropagation();
       openLearnMoreModal();
     };
 
+    const onDocumentClick = (event: MouseEvent) => {
+      intercept(event);
+    };
+
     const onDocumentKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Enter") return;
-      const anchor = findInterceptedAnchor(event.target);
-      if (!anchor) return;
-      event.preventDefault();
-      event.stopPropagation();
-      openLearnMoreModal();
+      intercept(event);
     };
 
     document.addEventListener("click", onDocumentClick, true);

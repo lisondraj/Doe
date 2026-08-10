@@ -1,17 +1,17 @@
 import {
-  BROADER_DOE_VISION_EARLY_STAGE_ENTRIES,
-  BROADER_DOE_VISION_EARLY_STAGE_INTRO,
-  type BroaderDoeVisionEarlyStageEntry,
-} from "@/lib/blog/broader-doe-vision-early-stage-links";
+  PREMED_EARLY_STAGE_ENTRIES,
+  PREMED_EARLY_STAGE_INTRO,
+  type PremedEarlyStageEntry,
+} from "@/lib/premed/premed-early-stage-links";
 
-type EarlyStageLinkEntry = Extract<BroaderDoeVisionEarlyStageEntry, { kind: "link" }>;
-type EarlyStageNoteEntry = Extract<BroaderDoeVisionEarlyStageEntry, { kind: "note" }>;
+type EarlyStageLinkEntry = Extract<PremedEarlyStageEntry, { kind: "link" }>;
+type EarlyStageNoteEntry = Extract<PremedEarlyStageEntry, { kind: "note" }>;
 
 type EarlyStageSegment =
   | { kind: "links"; entries: EarlyStageLinkEntry[] }
   | { kind: "note"; entry: EarlyStageNoteEntry };
 
-function groupEarlyStageEntries(entries: readonly BroaderDoeVisionEarlyStageEntry[]): EarlyStageSegment[] {
+function groupEarlyStageEntries(entries: readonly PremedEarlyStageEntry[]): EarlyStageSegment[] {
   const segments: EarlyStageSegment[] = [];
   let linkBatch: EarlyStageLinkEntry[] = [];
 
@@ -58,11 +58,11 @@ function PremedEarlyStageLinkItem({ entry }: { entry: EarlyStageLinkEntry }) {
 
 /** /premed — linked index with navigation handled by PremedLinkGuard. */
 export function PremedEarlyStageLinks() {
-  const segments = groupEarlyStageEntries(BROADER_DOE_VISION_EARLY_STAGE_ENTRIES);
+  const segments = groupEarlyStageEntries(PREMED_EARLY_STAGE_ENTRIES);
 
   return (
     <div className="broader-doe-early-stage-links mt-8 iphone-page:mt-9">
-      <p className="broader-doe-early-stage-links__intro">{BROADER_DOE_VISION_EARLY_STAGE_INTRO}</p>
+      <p className="broader-doe-early-stage-links__intro">{PREMED_EARLY_STAGE_INTRO}</p>
 
       {segments.map((segment) => {
         if (segment.kind === "note") {

@@ -1,7 +1,7 @@
 import { AboutStyleArticleTableOfContents } from "@/components/blog/AboutStyleArticleTableOfContents";
 import { BlogArticleFooterCarouselBand } from "@/components/blog/BlogArticleFooterCarouselBand";
 import { BlogArticleCategory } from "@/components/blog/BlogArticleCategory";
-import { BlogArticleRelatedCarousel } from "@/components/blog/BlogArticleRelatedCarousel";
+import { PremedBlogRelatedCarousel } from "@/components/premed/PremedBlogRelatedCarousel";
 import { BroaderDoeVisionProposalQuote } from "@/components/blog/BroaderDoeVisionProposalQuote";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { PremedContactLink } from "@/components/premed/PremedContactLink";
@@ -161,7 +161,7 @@ export function PremedPageContent({
           </div>
 
           <BlogArticleFooterCarouselBand>
-            <BlogArticleRelatedCarousel currentSlug="the-broader-doe-vision" />
+            <PremedBlogRelatedCarousel currentSlug="the-broader-doe-vision" />
           </BlogArticleFooterCarouselBand>
         </div>
       </div>

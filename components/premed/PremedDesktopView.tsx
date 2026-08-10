@@ -42,7 +42,7 @@ export function PremedDesktopView({ tocItems }: PremedDesktopViewProps) {
 
       <AboutStyleArticleFloatingToc items={tocItems} />
 
-      <HomeFooter linksDisabled shaderTheme="dusk" />
+      <HomeFooter linksDisabled shaderTheme="dusk" showIncorporationLines />
     </div>
   );
 }

@@ -20,9 +20,11 @@ const FOOTER_LINKS = [
 export function HomeFooter({
   linksDisabled = false,
   shaderTheme = "default",
+  showIncorporationLines = false,
 }: {
   linksDisabled?: boolean;
   shaderTheme?: "default" | "dusk";
+  showIncorporationLines?: boolean;
 }) {
   const footerShader =
     shaderTheme === "dusk" ? doeHomeDuskFooterShaderSurface() : DEFAULT_FOOTER_SHADER;
@@ -61,6 +63,13 @@ export function HomeFooter({
               <p className="text-[clamp(1.22rem,1.02rem+0.72vmin,1.48rem)] font-semibold leading-[1.16] iphone-page:text-[clamp(1.14rem,0.98rem+0.65vmin,1.36rem)]">
                 Doe Intelligence Inc
               </p>
+              {showIncorporationLines ? (
+                <p className="mt-1 text-[clamp(1rem,0.88rem+0.48vmin,1.16rem)] font-normal leading-[1.34] text-white/78">
+                  Delaware
+                  <br />
+                  C-Corporation
+                </p>
+              ) : null}
               <a
                 href="mailto:james@doe.care"
                 className="mt-2.5 inline-block text-white/88 no-underline transition-colors hover:text-white"

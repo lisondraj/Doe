@@ -23,6 +23,7 @@ type BlogMobileShellProps = {
   frostedScrollPastHero?: boolean;
   frostedNavAlwaysPunched?: boolean;
   footerShaderTheme?: "default" | "dusk";
+  footerShowIncorporationLines?: boolean;
   /** Optional fixed strip above the nav (e.g. doehealth top banner). */
   topBanner?: ReactNode;
   /** Extra root classes — e.g. `doephone-mobile-root--doehealth` for gold chrome. */
@@ -47,6 +48,7 @@ export function BlogMobileShell({
   frostedScrollPastHero = false,
   frostedNavAlwaysPunched = false,
   footerShaderTheme = "default",
+  footerShowIncorporationLines = false,
   topBanner = null,
   rootClassName = "",
   navShowMailIcon = true,
@@ -78,7 +80,13 @@ export function BlogMobileShell({
         <div className={`blog-page-root relative z-0 ${BLOG_PAGE_INSET_X} ${showFooter ? BLOG_FOOTER_GAP : ""}`}>
           {children}
         </div>
-        {showFooter ? <HomeFooter linksDisabled={footerLinksDisabled} shaderTheme={footerShaderTheme} /> : null}
+        {showFooter ? (
+          <HomeFooter
+            linksDisabled={footerLinksDisabled}
+            shaderTheme={footerShaderTheme}
+            showIncorporationLines={footerShowIncorporationLines}
+          />
+        ) : null}
       </div>
     </>
   );
