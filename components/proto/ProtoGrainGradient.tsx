@@ -39,11 +39,6 @@ function isHeroVariant(variant: ProtoGrainGradientVariant) {
   );
 }
 
-function isAboutStylePage() {
-  if (typeof document === "undefined") return false;
-  return document.documentElement.getAttribute("data-about-page") === "true";
-}
-
 function isPhoneLayout() {
   if (typeof document === "undefined") return false;
   return (
@@ -85,7 +80,6 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   static: staticShader = false,
   colors,
   colorBack,
-  aboutStyleArticleHero = false,
 }: {
   variant: ProtoGrainGradientVariant;
   className?: string;
@@ -93,8 +87,6 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   static?: boolean;
   colors?: readonly string[];
   colorBack?: string;
-  /** iPhone about-style blog article hero — pre-premed WebGL mount path. */
-  aboutStyleArticleHero?: boolean;
 }) {
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
   const containerRef = useRef<HTMLDivElement>(null);
@@ -102,12 +94,8 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const phone = isPhoneLayout();
   const budgetActive = isShaderWebGLBudgetActive();
   const reactSlotId = useId();
-  const homeHeroBackground = aboutStyleArticleHero
-    ? hero && phone && variant === "home-hero"
-    : hero && variant === "home-hero" && budgetActive;
-  const aboutHeroBackground = aboutStyleArticleHero
-    ? hero && phone && variant === "about-hero" && isAboutStylePage()
-    : hero && variant === "about-hero" && budgetActive;
+  const homeHeroBackground = hero && variant === "home-hero" && budgetActive;
+  const aboutHeroBackground = hero && variant === "about-hero" && budgetActive;
   const dedicatedHeroBackground = homeHeroBackground || aboutHeroBackground;
   const slotId = homeHeroBackground
     ? DOEPHONE_HOME_HERO_SHADER_SLOT
@@ -131,11 +119,8 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     : inBlogCarouselCard
       ? SHADER_WEBGL_SLOT_PRIORITY.CAROUSEL_ADJACENT
       : SHADER_WEBGL_SLOT_PRIORITY.SECTION_BAND;
-  const effectiveInViewport = aboutStyleArticleHero
-    ? inCarouselRange && inViewport
-    : hero
-      ? true
-      : inCarouselRange && inViewport;
+  /** Hero bands sit at the fold — never gate mount/show on intersection churn (iOS first paint). */
+  const effectiveInViewport = hero ? true : inCarouselRange && inViewport;
 
   const resetShader = useCallback(() => {
     hasMountedRef.current = false;
@@ -185,12 +170,6 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   useEffect(() => {
     if (!isShaderWebGLBudgetActive()) return;
     if (typeof document === "undefined") return;
-    if (aboutStyleArticleHero) {
-      if (document.documentElement.getAttribute("data-home-page") !== "true") return;
-      return subscribeHomeHeroBackgroundReady(() => {
-        setHomeHeroGateEpoch((current) => current + 1);
-      });
-    }
     if (dedicatedHeroBackground) return;
 
     const onHomePage = document.documentElement.getAttribute("data-home-page") === "true";
@@ -200,62 +179,10 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     return subscribeHomeHeroBackgroundReady(() => {
       setHomeHeroGateEpoch((current) => current + 1);
     });
-  }, [aboutStyleArticleHero, dedicatedHeroBackground]);
+  }, [dedicatedHeroBackground]);
 
   useLayoutEffect(() => {
-    if (!aboutStyleArticleHero) return;
-
-    if (!hasMounted || !containerReady) {
-      if (budgetGranted) {
-        releaseShaderWebGLSlot(slotId);
-        setBudgetGranted(false);
-      }
-      if (dedicatedHeroBackground) {
-        setHomeHeroBackgroundReady(false);
-      }
-      return;
-    }
-
-    if (!dedicatedHeroBackground && !effectiveInViewport) {
-      if (budgetGranted) {
-        releaseShaderWebGLSlot(slotId);
-        setBudgetGranted(false);
-      }
-      return;
-    }
-
-    const granted = aboutHeroBackground
-      ? acquireAboutHeroBackgroundSlot(evictShader)
-      : acquireShaderWebGLSlot(slotId, shaderPriority, evictShader);
-    if (granted) {
-      setBudgetGranted(true);
-    }
-    if (dedicatedHeroBackground) {
-      setHomeHeroBackgroundReady(granted);
-    }
-
-    return () => {
-      releaseShaderWebGLSlot(slotId);
-      setBudgetGranted(false);
-      if (dedicatedHeroBackground) {
-        setHomeHeroBackgroundReady(false);
-      }
-    };
-  }, [
-    aboutHeroBackground,
-    aboutStyleArticleHero,
-    containerReady,
-    dedicatedHeroBackground,
-    effectiveInViewport,
-    evictShader,
-    hasMounted,
-    homeHeroGateEpoch,
-    shaderPriority,
-    slotId,
-  ]);
-
-  useLayoutEffect(() => {
-    if (aboutStyleArticleHero || !dedicatedHeroBackground) return;
+    if (!dedicatedHeroBackground) return;
 
     if (!hasMounted || !containerReady) {
       if (budgetGranted) {
@@ -290,7 +217,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   ]);
 
   useLayoutEffect(() => {
-    if (aboutStyleArticleHero || dedicatedHeroBackground) return;
+    if (dedicatedHeroBackground) return;
 
     if (!hasMounted || !containerReady) {
       if (budgetGranted) {
@@ -337,7 +264,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   ]);
 
   useEffect(() => {
-    if (aboutStyleArticleHero || !isShaderWebGLBudgetActive() || !dedicatedHeroBackground) return;
+    if (!isShaderWebGLBudgetActive() || !dedicatedHeroBackground) return;
     if (!hasMounted || !containerReady || budgetGranted) return;
 
     let cancelled = false;
@@ -592,9 +519,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const targetSpeed = preset.speed ?? PROTO_GRAIN_GRADIENT_SPEED;
   const shouldAnimate =
     !staticShader && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible && hasMounted;
-  const showGradient = aboutStyleArticleHero
-    ? hasMounted && containerReady && (dedicatedHeroBackground || effectiveInViewport) && budgetGranted
-    : hasMounted && containerReady && (hero || effectiveInViewport) && budgetGranted;
+  const showGradient = hasMounted && containerReady && (hero || effectiveInViewport) && budgetGranted;
 
   return (
     <div

@@ -34,8 +34,6 @@ export function BlogHeroVisual({
   previewShaderVariant,
   carouselShaderVariant,
   staticShader = false,
-  /** iPhone /blog article hero — use the blog article WebGL mount path. */
-  aboutStyleArticleHero = false,
   children,
 }: {
   backdrop?: WorkflowCarouselDesignBackdropType;
@@ -49,7 +47,6 @@ export function BlogHeroVisual({
   useHomeHeroDuskShader?: boolean;
   /** /about + about-style blog — dedicated about-hero dusk shader preset. */
   useAboutHeroDuskShader?: boolean;
-  aboutStyleArticleHero?: boolean;
   /** /blog list previews — per-post static shader tile. */
   previewShaderVariant?: AboutStyleFeatureShaderVariant;
   /** Related carousel — frozen flow preset (same appearance, no animation). */
@@ -87,7 +84,6 @@ export function BlogHeroVisual({
     >
       {usesHeroShader ? (
         <ProtoGrainGradient
-          aboutStyleArticleHero={aboutStyleArticleHero}
           static={carouselShader ? false : staticShader || previewShader !== null}
           variant={activePreviewShader ? activePreviewShader.variant : heroShader.variant}
           colors={activePreviewShader ? activePreviewShader.colors : heroShader.colors}
