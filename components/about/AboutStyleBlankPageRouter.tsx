@@ -14,10 +14,6 @@ export function AboutStyleBlankPageRouter({ ariaLabel }: AboutStyleBlankPageRout
   const variant = useAboutPageVariant();
   const content = <AboutStyleBlankPageContent ariaLabel={ariaLabel} />;
 
-  if (variant === null) {
-    return null;
-  }
-
   return variant === "desktop" ? (
     <AboutStyleArticleDesktopView>{content}</AboutStyleArticleDesktopView>
   ) : (

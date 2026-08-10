@@ -11,10 +11,6 @@ export function PremedRouter() {
   const variant = useAboutPageVariant();
   const tocItems = BROADER_DOE_VISION_TOC_ITEMS;
 
-  if (variant === null) {
-    return null;
-  }
-
   return (
     <PremedLearnMoreProvider>
       <PremedLinkGuard>

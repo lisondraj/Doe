@@ -539,7 +539,11 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const targetSpeed = preset.speed ?? PROTO_GRAIN_GRADIENT_SPEED;
   const shouldAnimate =
     !staticShader && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible && hasMounted;
-  const showGradient = hasMounted && containerReady && (hero || effectiveInViewport) && budgetGranted;
+  const showGradient =
+    hasMounted &&
+    containerReady &&
+    (hero || effectiveInViewport) &&
+    (dedicatedHeroBackground ? true : budgetGranted);
 
   /**
    * Cold-start WebGL context verification — hero only. `useShaderContextRecovery` above
@@ -554,19 +558,25 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
    * comes up healthy.
    */
   useEffect(() => {
-    if (!hero || !showGradient) return;
+    if (!hero || !hasMounted || !containerReady) return;
 
     let cancelled = false;
     let attempts = 0;
-    const maxAttempts = 4;
+    const maxAttempts = 6;
 
     const check = () => {
       if (cancelled) return;
       const canvas = containerRef.current?.querySelector("canvas");
-      const gl = canvas
-        ? (canvas.getContext("webgl2") as WebGLRenderingContext | null) ??
-          (canvas.getContext("webgl") as WebGLRenderingContext | null)
-        : null;
+      if (!canvas) {
+        attempts += 1;
+        if (attempts >= maxAttempts) return;
+        window.setTimeout(check, 350);
+        return;
+      }
+
+      const gl =
+        (canvas.getContext("webgl2") as WebGLRenderingContext | null) ??
+        (canvas.getContext("webgl") as WebGLRenderingContext | null);
       const healthy = !!gl && !gl.isContextLost();
 
       attempts += 1;
@@ -583,7 +593,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
       window.clearTimeout(initialCheck);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- retries locally; shaderGeneration bump shouldn't reset the attempt loop
-  }, [hero, showGradient]);
+  }, [hero, hasMounted, containerReady]);
 
   return (
     <div

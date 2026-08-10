@@ -41,21 +41,23 @@ function applyAboutDesktopDocumentAttrs() {
 }
 
 /** /about-style pages — read bootstrap before paint, then keep document attrs in sync. */
-export function useAboutPageVariant(): AboutPageVariant | null {
+export function useAboutPageVariant(): AboutPageVariant {
   /**
-   * Always start at null (matches SSR) — reading window here would make the client's
-   * first hydration render diverge from the server-rendered null, which trips a full
-   * hydration-failure remount (see React hydration mismatch docs) on every load.
+   * SSR assumes phone (iPhone is the fragile case). Client first paint reads the
+   * bootstrap attrs set in <head> so the hero mounts immediately — returning null
+   * first delayed the entire about-style tree by one frame and made doe.care `/`
+   * (pathname `/`) lose the hero shader race on cold iOS WebGL.
    */
-  const [variant, setVariant] = useState<AboutPageVariant | null>(null);
+  const [variant, setVariant] = useState<AboutPageVariant>(() => {
+    if (typeof window === "undefined") return "phone";
+    return readBootstrappedDoePhoneVariant();
+  });
 
   useLayoutEffect(() => {
     setVariant(readBootstrappedDoePhoneVariant());
   }, []);
 
   useEffect(() => {
-    if (variant === null) return;
-
     const sync = () => setVariant(resolveAboutPageVariant());
     sync();
 
@@ -64,11 +66,9 @@ export function useAboutPageVariant(): AboutPageVariant | null {
     const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
-  }, [variant]);
+  }, []);
 
   useLayoutEffect(() => {
-    if (variant === null) return;
-
     if (variant === "desktop") {
       applyAboutDesktopDocumentAttrs();
       return;

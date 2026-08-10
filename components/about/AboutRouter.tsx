@@ -7,9 +7,5 @@ import { useAboutPageVariant } from "@/lib/about/use-about-page-variant";
 export function AboutRouter() {
   const variant = useAboutPageVariant();
 
-  if (variant === null) {
-    return null;
-  }
-
   return variant === "desktop" ? <AboutDesktopView /> : <AboutMobileView />;
 }

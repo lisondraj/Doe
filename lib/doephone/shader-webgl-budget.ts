@@ -1,5 +1,6 @@
 /** iPhone WebGL context budget — avoids black shader loss when the page exceeds GPU limits. */
 
+import { isAboutStylePagePath } from "@/lib/about/about-style-page-paths";
 import { isAboutStyleBlankPagePath } from "@/lib/about/about-style-blank-pages";
 import { BLOG_LANDING_PATH } from "@/lib/blog/blog-landing-posts";
 import { resolvePremedAwarePath } from "@/lib/premed/premed-path";
@@ -61,7 +62,9 @@ function isHomePhoneRoute() {
 
 function isAboutStyleRoute() {
   if (typeof document === "undefined") return false;
-  return document.documentElement.getAttribute("data-about-page") === "true";
+  if (document.documentElement.getAttribute("data-about-page") === "true") return true;
+  if (typeof window === "undefined") return false;
+  return isAboutStylePagePath(window.location.pathname, window.location.hostname);
 }
 
 /** /waitlist, /hiring, /pitchdeck — no hero shader; don't block the footer band. */

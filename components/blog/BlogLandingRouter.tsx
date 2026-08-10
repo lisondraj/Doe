@@ -10,10 +10,6 @@ export function BlogLandingRouter() {
   const variant = useAboutPageVariant();
   const content = <BlogLandingPageContent />;
 
-  if (variant === null) {
-    return null;
-  }
-
   return variant === "desktop" ? (
     <AboutStyleArticleDesktopView>{content}</AboutStyleArticleDesktopView>
   ) : (

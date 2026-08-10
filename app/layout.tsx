@@ -6,6 +6,7 @@ import { RootChrome } from "@/components/RootChrome";
 import { aboutRouteBootstrapScript } from "@/lib/about/about-route-bootstrap-script";
 import { doeHealthLandingTouchBootstrapScript } from "@/lib/doehealth/doehealth-landing-bootstrap-script";
 import { homeRouteBootstrapScript } from "@/lib/home/home-route-bootstrap-script";
+import { premedRouteBootstrapScript } from "@/lib/premed/premed-route-bootstrap-script";
 import { productRouteBootstrapScript } from "@/lib/product/product-route-bootstrap-script";
 import { DESIGNERS_SITE_HOST } from "@/lib/site-domains";
 
@@ -34,9 +35,10 @@ export const viewport: Viewport = {
   themeColor: DOE_PAGE_SURFACE,
 };
 
+const premedBootstrap = premedRouteBootstrapScript();
+const aboutBootstrap = aboutRouteBootstrapScript();
 const designersTouchBootstrap = doeHealthLandingTouchBootstrapScript(DESIGNERS_SITE_HOST);
 const homeBootstrap = homeRouteBootstrapScript();
-const aboutBootstrap = aboutRouteBootstrapScript();
 const productBootstrap = productRouteBootstrapScript();
 
 export default function RootLayout({
@@ -45,11 +47,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-doeforvc-always-phone="true">
+    <html lang="en" data-doeforvc-always-phone="true" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: premedBootstrap }} />
+        <script dangerouslySetInnerHTML={{ __html: aboutBootstrap }} />
         <script dangerouslySetInnerHTML={{ __html: designersTouchBootstrap }} />
         <script dangerouslySetInnerHTML={{ __html: homeBootstrap }} />
-        <script dangerouslySetInnerHTML={{ __html: aboutBootstrap }} />
         <script dangerouslySetInnerHTML={{ __html: productBootstrap }} />
       </head>
       <body className={`${inter.variable} font-sans antialiased wide-desktop:overflow-hidden`}>
