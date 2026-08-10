@@ -14,6 +14,7 @@ function findInterceptedAnchor(target: EventTarget | null): HTMLAnchorElement | 
   const anchor = target.closest("a[href]");
   if (!(anchor instanceof HTMLAnchorElement)) return null;
   if (isPremedModalLink(anchor)) return null;
+  if (anchor.hasAttribute("data-premed-allow-link")) return null;
   return anchor;
 }
 

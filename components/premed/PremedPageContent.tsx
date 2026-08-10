@@ -7,6 +7,7 @@ import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { PremedContactLink } from "@/components/premed/PremedContactLink";
 import { PremedEarlyStageLinks } from "@/components/premed/PremedEarlyStageLinks";
 import { PremedEmailInvite } from "@/components/premed/PremedEmailInvite";
+import { PremedFoundersBlock } from "@/components/premed/PremedFoundersBlock";
 import {
   ABOUT_MOBILE_CONTENT_GAP,
   ABOUT_MOBILE_LIST_GAP,
@@ -45,10 +46,6 @@ import {
   BROADER_DOE_VISION_TITLE,
 } from "@/lib/blog/broader-doe-vision-article";
 import { blogPostCategory } from "@/lib/blog/blog-post-categories";
-import {
-  PREMED_JAMES_LISONDRA_BIO,
-  PREMED_MATTHEW_LISONDRA_BIO,
-} from "@/lib/premed/premed-copy";
 import {
   ABOUT_STYLE_ARTICLE_SECTION_ANCHOR,
   ABOUT_STYLE_ARTICLE_TOC_IDS,
@@ -158,8 +155,7 @@ export function PremedPageContent({
 
           <p className={`${BROADER_DOE_VISION_BODY_TW} font-semibold`}>{BROADER_DOE_VISION_FINAL_PARAGRAPH}</p>
 
-          <p className={BROADER_DOE_VISION_BODY_TW}>{PREMED_JAMES_LISONDRA_BIO}</p>
-          <p className={BROADER_DOE_VISION_BODY_TW}>{PREMED_MATTHEW_LISONDRA_BIO}</p>
+          <PremedFoundersBlock />
 
           <PremedEarlyStageLinks />
 

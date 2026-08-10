@@ -14,6 +14,7 @@ import type { AboutStyleArticleTocItem } from "@/lib/blog/about-style-article-to
 import { PREMED_TOP_BANNER } from "@/lib/premed/premed-copy";
 import "@/lib/about/about-doehealth-iphone.css";
 import "@/lib/doehealth/doehealth-landing.css";
+import "@/lib/premed/premed-page.css";
 import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { ABOUT_BROWN_OVERFLOW_SURFACE } from "@/lib/home/doe-page-colors";
