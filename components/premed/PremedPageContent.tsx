@@ -44,6 +44,7 @@ import {
   BROADER_DOE_VISION_THESIS_POINTS,
   BROADER_DOE_VISION_TITLE,
 } from "@/lib/blog/broader-doe-vision-article";
+import { blogPostCategory } from "@/lib/blog/blog-post-categories";
 import {
   PREMED_JAMES_LISONDRA_BIO,
   PREMED_MATTHEW_LISONDRA_BIO,
