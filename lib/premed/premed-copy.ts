@@ -25,4 +25,10 @@ export const PREMED_TOP_BANNER = {
   linkHref: ABOUT_CONTACT_MAILTO,
 } as const;
 
+export const PREMED_JAMES_LISONDRA_BIO =
+  "James Lisondra is CEO of Doe. He holds an MD from the University of Ottawa and brings experience in clinical medicine and healthcare delivery to Doe's product direction, partnerships, and go-to-market.";
+
+export const PREMED_MATTHEW_LISONDRA_BIO =
+  "Matthew Lisondra is CTO of Doe. He holds a PhD from the University of Toronto with backgrounds in physics, robotics, AI, and computer science, and leads the engineering behind Doe's intelligence platform.";
+
 export { ABOUT_CONTACT_EMAIL, ABOUT_CONTACT_MAILTO };
