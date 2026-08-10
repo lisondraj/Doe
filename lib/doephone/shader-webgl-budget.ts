@@ -226,3 +226,12 @@ export function releaseShaderWebGLSlot(id: string) {
   }
   slots.delete(id);
 }
+
+/** About-style article routes — hero slot reserved but not yet claimed by the hero shader. */
+export function isAboutHeroSlotPending() {
+  return isShaderWebGLBudgetActive() && aboutRouteReservesHeroShaderSlot() && !hasAboutHeroBackgroundSlot();
+}
+
+export function isAboutHeroBackgroundSlotHeld() {
+  return hasAboutHeroBackgroundSlot();
+}

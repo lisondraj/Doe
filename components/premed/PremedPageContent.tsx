@@ -4,7 +4,6 @@ import { BlogArticleCategory } from "@/components/blog/BlogArticleCategory";
 import { PremedBlogRelatedCarousel } from "@/components/premed/PremedBlogRelatedCarousel";
 import { BroaderDoeVisionProposalQuote } from "@/components/blog/BroaderDoeVisionProposalQuote";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
-import { PremedPhoneHeroVisual } from "@/components/premed/PremedPhoneHeroVisual";
 import { PremedContactLink } from "@/components/premed/PremedContactLink";
 import { PremedEarlyStageLinks } from "@/components/premed/PremedEarlyStageLinks";
 import { PremedEmailInvite } from "@/components/premed/PremedEmailInvite";
@@ -86,21 +85,13 @@ export function PremedPageContent({
       </header>
 
       <div className={BROADER_DOE_VISION_HERO_WRAP}>
-        {hideArticleAudio ? (
-          <PremedPhoneHeroVisual
-            backdrop={BROADER_DOE_VISION_HERO_BACKDROP}
-            boxClassName={ABOUT_PAGE_HERO_BOX_TW}
-            gapClassName=""
-          />
-        ) : (
-          <BlogHeroVisual
-            backdrop={BROADER_DOE_VISION_HERO_BACKDROP}
-            variant="hero"
-            boxClassName={ABOUT_PAGE_HERO_BOX_TW}
-            gapClassName=""
-            useAboutHeroDuskShader
-          />
-        )}
+        <BlogHeroVisual
+          backdrop={BROADER_DOE_VISION_HERO_BACKDROP}
+          variant="hero"
+          boxClassName={ABOUT_PAGE_HERO_BOX_TW}
+          gapClassName=""
+          useAboutHeroDuskShader
+        />
       </div>
 
       <AboutStyleArticleTableOfContents items={tocItems} hideArticleAudio={hideArticleAudio} />
