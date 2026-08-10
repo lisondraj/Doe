@@ -35,12 +35,12 @@ export const PREMED_FOUNDERS: readonly PremedFounderBio[] = [
   {
     name: "James Lisondra",
     linkedinUrl: "https://www.linkedin.com/in/jameslisondra",
-    bio: "is CEO. He holds an MD from the University of Ottawa and brings experience in clinical medicine and healthcare delivery to product direction, partnerships, and go-to-market.",
+    bio: "is CEO. A medical student at the University of Ottawa soon building Doe full-time, he brings clinical training and healthcare experience to product direction, partnerships, and go-to-market.",
   },
   {
     name: "Matthew Lisondra",
     linkedinUrl: "https://www.linkedin.com/in/mattlisondra",
-    bio: "is CTO. He holds a PhD from the University of Toronto with backgrounds in physics, robotics, AI, and computer science, and leads the engineering behind the intelligence platform.",
+    bio: "is CTO. A doctoral candidate at the University of Toronto soon building Doe full-time, with backgrounds in physics, robotics, AI, and computer science, he leads Doe's intelligence engineering.",
   },
 ] as const;
 
