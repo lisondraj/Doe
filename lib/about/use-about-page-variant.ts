@@ -46,7 +46,6 @@ export function useAboutPageVariant(): AboutPageVariant | null {
 
   useLayoutEffect(() => {
     setVariant(readBootstrappedDoePhoneVariant());
-    return () => document.documentElement.removeAttribute("data-about-page");
   }, []);
 
   useEffect(() => {
