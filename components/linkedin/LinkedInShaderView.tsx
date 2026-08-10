@@ -1,11 +1,16 @@
 "use client";
 
-import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
-import { pulseCallHistoryCarouselShaderSurface } from "@/lib/linkedin/pulse-call-history-carousel-shader";
+import { GrainGradient } from "@paper-design/shaders-react";
 
-/** Full-viewport Pulse Call History carousel shader — for LinkedIn banner capture. */
+import { linkedInShaderSurface } from "@/lib/linkedin/linkedin-shader-surface";
+import {
+  PROTO_GRAIN_GRADIENT_WORLD_HEIGHT,
+  PROTO_GRAIN_GRADIENT_WORLD_WIDTH,
+} from "@/lib/proto/proto-grain-gradient";
+
+/** Full-viewport LinkedIn shader — browner integrate flow, raised for banner capture. */
 export function LinkedInShaderView() {
-  const shader = pulseCallHistoryCarouselShaderSurface();
+  const shader = linkedInShaderSurface();
 
   return (
     <main
@@ -13,12 +18,23 @@ export function LinkedInShaderView() {
       style={{ backgroundColor: shader.colorBack }}
       aria-hidden
     >
-      <ProtoGrainGradient
-        static
-        variant={shader.variant}
-        colors={shader.colors}
+      <GrainGradient
+        width="100%"
+        height="100%"
+        fit="cover"
+        worldWidth={PROTO_GRAIN_GRADIENT_WORLD_WIDTH}
+        worldHeight={PROTO_GRAIN_GRADIENT_WORLD_HEIGHT}
+        colors={[...shader.colors]}
         colorBack={shader.colorBack}
-        className="absolute inset-0 h-full w-full"
+        softness={shader.softness}
+        intensity={shader.intensity}
+        noise={0}
+        shape="wave"
+        speed={0}
+        rotation={shader.rotation}
+        offsetX={shader.offsetX}
+        offsetY={shader.offsetY}
+        scale={shader.scale}
       />
     </main>
   );
