@@ -541,6 +541,50 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     !staticShader && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible && hasMounted;
   const showGradient = hasMounted && containerReady && (hero || effectiveInViewport) && budgetGranted;
 
+  /**
+   * Cold-start WebGL context verification — hero only. `useShaderContextRecovery` above
+   * only fires on `webglcontextlost`, an event for a context that WAS working and then
+   * got reclaimed. It never fires if the very first `getContext()` call silently failed
+   * or came back already dead, which real iOS Safari does on a cold GPU process — e.g.
+   * the hero is often the first WebGL consumer in a fresh tab on a direct landing hit,
+   * while a page reached by navigating past another shader first gets a warm GPU
+   * process. That's exactly the "iPhone, initial load only" failure pattern. With no
+   * event to react to, the canvas then sits blank forever. Poll the live context a
+   * couple of times shortly after mount and force a fresh canvas (new key) if it never
+   * comes up healthy.
+   */
+  useEffect(() => {
+    if (!hero || !showGradient) return;
+
+    let cancelled = false;
+    let attempts = 0;
+    const maxAttempts = 4;
+
+    const check = () => {
+      if (cancelled) return;
+      const canvas = containerRef.current?.querySelector("canvas");
+      const gl = canvas
+        ? (canvas.getContext("webgl2") as WebGLRenderingContext | null) ??
+          (canvas.getContext("webgl") as WebGLRenderingContext | null)
+        : null;
+      const healthy = !!gl && !gl.isContextLost();
+
+      attempts += 1;
+      if (healthy || attempts >= maxAttempts) return;
+
+      setShaderGeneration((current) => current + 1);
+      window.setTimeout(check, 350);
+    };
+
+    const initialCheck = window.setTimeout(check, 400);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(initialCheck);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- retries locally; shaderGeneration bump shouldn't reset the attempt loop
+  }, [hero, showGradient]);
+
   return (
     <div
       ref={containerRef}
