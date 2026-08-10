@@ -10,11 +10,13 @@ import { INTRODUCING_PULSE_PATH } from "@/lib/blog/introducing-pulse-article";
 import { PULSE_AMBIENT_PATH } from "@/lib/blog/pulse-ambient-article";
 import { PULSE_CALL_HISTORY_PATH } from "@/lib/blog/pulse-call-history-article";
 import { DOE_MISSION_PATH } from "@/lib/blog/doe-mission-article";
-import { ABOUT_PATH } from "@/lib/site-domains";
+import { ABOUT_PATH, PREMED_PATH } from "@/lib/site-domains";
+import { resolvePremedAwarePath } from "@/lib/premed/premed-path";
 
 /** Routes that share /about iPhone chrome, typography, and bootstrap behavior. */
 export const ABOUT_STYLE_PAGE_PATHS = [
   ABOUT_PATH,
+  PREMED_PATH,
   BLOG_LANDING_PATH,
   DOE_MISSION_PATH,
   INTRODUCING_PULSE_PATH,
@@ -29,6 +31,7 @@ export const ABOUT_STYLE_PAGE_PATHS = [
   ...ABOUT_STYLE_BLANK_PAGE_PATHS,
 ] as const;
 
-export function isAboutStylePagePath(pathname: string): boolean {
-  return (ABOUT_STYLE_PAGE_PATHS as readonly string[]).includes(pathname);
+export function isAboutStylePagePath(pathname: string, host?: string): boolean {
+  const resolved = resolvePremedAwarePath(pathname, host);
+  return (ABOUT_STYLE_PAGE_PATHS as readonly string[]).includes(resolved);
 }

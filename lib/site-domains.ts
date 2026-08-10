@@ -14,9 +14,10 @@ export const WAITLIST_PATH = "/waitlist";
 export const HIRING_PATH = "/hiring";
 export const PITCHDECK_PATH = "/pitchdeck";
 export const ABOUT_PATH = "/about";
+export const PREMED_PATH = "/premed";
 export const PROTO_INVEST_PATH = "/proto-invest";
 export const DESIGNERS_PATH = "/designers";
-/** Editable landing served at doe.care and doehealth.care root via middleware rewrite. */
+/** Editable landing served at doe.care root via middleware rewrite. */
 export const DOEHEALTH_PATH = "/doehealth";
 
 /** Former primary home — Voice Agents hero (preview at /legacymain). */
@@ -71,12 +72,17 @@ export function isPrimaryHost(host: string | null | undefined): boolean {
   return normalizeHost(host) === normalizeHost(PRIMARY_SITE_HOST);
 }
 
-/** doe.care or doehealth.care site root — URL stays `/`, content from /doehealth. */
+/** doe.care or doehealth.care site root — URL stays `/`, content from landing rewrite. */
 export function isMarketingLandingRoot(
   host: string | null | undefined,
   pathname: string,
 ): boolean {
   return pathname === "/" && (isPrimaryHost(host) || isDesignersHost(host));
+}
+
+/** Middleware rewrite target for `/` on production marketing hosts. */
+export function marketingLandingRewritePath(host: string | null | undefined): string {
+  return isDesignersHost(host) ? PREMED_PATH : DOEHEALTH_PATH;
 }
 
 /** Skip cross-domain redirects on localhost and Vercel preview URLs. */
@@ -105,6 +111,10 @@ export function designersPageUrl(protocol: "http" | "https" = "https"): string {
 
 export function doeHealthPageUrl(protocol: "http" | "https" = "https"): string {
   return `${designersSiteOrigin(protocol)}${DOEHEALTH_PATH}`;
+}
+
+export function premedPageUrl(protocol: "http" | "https" = "https"): string {
+  return `${designersSiteOrigin(protocol)}${PREMED_PATH}`;
 }
 
 export function joinPageUrl(protocol: "http" | "https" = "https"): string {

@@ -1,3 +1,5 @@
+import { isPremedPagePath } from "@/lib/premed/premed-path";
+
 /** Doe /about — touch devices always use iPhone layout scaling. */
 export function isTouchPrimaryDevice(): boolean {
   if (typeof window === "undefined") return false;
@@ -10,5 +12,7 @@ export function isAboutRoute(): boolean {
 }
 
 export function shouldLockAboutTouchPhoneLayout(): boolean {
-  return isAboutRoute() && isTouchPrimaryDevice();
+  if (!isTouchPrimaryDevice() || typeof window === "undefined") return false;
+  const { pathname, hostname } = window.location;
+  return pathname === "/about" || isPremedPagePath(pathname, hostname);
 }

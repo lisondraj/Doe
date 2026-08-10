@@ -1,9 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import {
-  DOEHEALTH_PATH,
   isDesignersHost,
   isMarketingLandingRoot,
+  marketingLandingRewritePath,
   requestHostFromHeaders,
   shouldEnforceDomainRouting,
 } from "@/lib/site-domains";
@@ -33,7 +33,7 @@ export function middleware(request: NextRequest) {
     requestHeaders.set("x-doe-designers-site", "1");
 
     const rewriteUrl = request.nextUrl.clone();
-    rewriteUrl.pathname = DOEHEALTH_PATH;
+    rewriteUrl.pathname = marketingLandingRewritePath(host);
     return applyLandingSiteHeaders(
       NextResponse.rewrite(rewriteUrl, {
         request: { headers: requestHeaders },

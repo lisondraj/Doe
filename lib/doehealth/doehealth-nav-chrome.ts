@@ -10,9 +10,10 @@ import { isDesignersHost, isMarketingLandingRoot } from "@/lib/site-domains";
 export function isDoeHealthLandingNavContext(): boolean {
   if (typeof window === "undefined") return false;
   const path = window.location.pathname;
-  if (isAboutStylePagePath(path)) return true;
+  const host = window.location.hostname;
+  if (isAboutStylePagePath(path, host)) return true;
   if (isDoeHealthLandingPath(path)) return true;
-  return isMarketingLandingRoot(window.location.hostname, path);
+  return isMarketingLandingRoot(host, path);
 }
 
 export function useDoeHealthLandingNavContext(): boolean {
