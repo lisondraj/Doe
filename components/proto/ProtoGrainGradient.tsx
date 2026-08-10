@@ -92,10 +92,21 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const containerRef = useRef<HTMLDivElement>(null);
   const hero = isHeroVariant(variant);
   const phone = isPhoneLayout();
-  const budgetActive = isShaderWebGLBudgetActive();
   const reactSlotId = useId();
-  const homeHeroBackground = hero && variant === "home-hero" && budgetActive;
-  const aboutHeroBackground = hero && variant === "about-hero" && budgetActive;
+  /**
+   * Deliberately NOT gated on `isShaderWebGLBudgetActive()` here. That reads a
+   * `data-doeforvc-always-phone` attribute that an ancestor (`useAboutPageVariant`)
+   * sets via its own `useLayoutEffect` in the very same commit that first mounts this
+   * hero — and layout effects fire bottom-up, so this component's effects run before
+   * that attribute exists. Gating the dedicated-path choice on that live DOM read made
+   * the hero flip from the dedicated slot path to the generic path on its first render,
+   * then flip back once the attribute landed — and the generic path's now-stale effect
+   * cleanup fired afterward and clobbered `budgetGranted` back to false, permanently
+   * blanking the hero. The acquire*Slot functions already no-op safely when the budget
+   * isn't active, so the dedicated-path choice only needs to depend on `variant`.
+   */
+  const homeHeroBackground = hero && variant === "home-hero";
+  const aboutHeroBackground = hero && variant === "about-hero";
   const dedicatedHeroBackground = homeHeroBackground || aboutHeroBackground;
   const slotId = homeHeroBackground
     ? DOEPHONE_HOME_HERO_SHADER_SLOT
