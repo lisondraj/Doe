@@ -36,6 +36,8 @@ type AboutStyleArticleFloatingChromeProps = {
   tocItems: readonly AboutStyleArticleTocItem[];
   currentSlug?: string;
   BlogPanel?: typeof AboutStyleArticleFloatingBlogPanel;
+  /** Hide the left blog-posts cap and panel (e.g. /premed iPhone). */
+  hideBlogNav?: boolean;
 };
 
 function formatTime(seconds: number) {
@@ -87,6 +89,7 @@ export function AboutStyleArticleFloatingChrome({
   tocItems,
   currentSlug,
   BlogPanel = AboutStyleArticleFloatingBlogPanel,
+  hideBlogNav = false,
 }: AboutStyleArticleFloatingChromeProps) {
   const {
     audioSrc,
@@ -368,6 +371,7 @@ export function AboutStyleArticleFloatingChrome({
   }, [audioClosing, markWidgetOpened, openPlayer]);
 
   const openBlog = useCallback(() => {
+    if (hideBlogNav) return;
     markWidgetOpened();
     const handoffFromAudio = isPlayerOpen && !audioClosing;
     if (handoffFromAudio) beginAudioClose();
@@ -400,7 +404,7 @@ export function AboutStyleArticleFloatingChrome({
     } else {
       beginBlogPanelExpand();
     }
-  }, [audioClosing, beginAudioClose, clearBlogCollapseStyles, closeToc, isPlayerOpen, markWidgetOpened]);
+  }, [audioClosing, beginAudioClose, clearBlogCollapseStyles, closeToc, hideBlogNav, isPlayerOpen, markWidgetOpened]);
 
   const openToc = useCallback(() => {
     markWidgetOpened();
@@ -692,7 +696,7 @@ export function AboutStyleArticleFloatingChrome({
 
   const audioJoining = isPlayerOpen && !audioJoined && !audioClosing;
   const leftCapCrossfade = isPlaying && audioClosing && isPlayerOpen && audioJoined;
-  const blogCapExpanded = blogOpen && (!audioCapActive || audioClosing);
+  const blogCapExpanded = !hideBlogNav && blogOpen && (!audioCapActive || audioClosing);
   const tocCapExpanded = tocOpen && (!audioCapActive || audioClosing);
   const showLeftCapTriggers = blogCollapsing || !blogPanelRevealed || blogCapExpanded;
   const audioPillAnchored = isPlayerOpen && audioJoined && !audioClosing;
@@ -700,7 +704,8 @@ export function AboutStyleArticleFloatingChrome({
     isPlaying &&
     showLeftCapTriggers &&
     (leftCapCrossfade || (!audioPillAnchored && (!isPlayerOpen || audioClosing || audioJoining)));
-  const showLeftBlogCap = showLeftCapTriggers && !showLeftPlayingCap && !leftCapCrossfade;
+  const showLeftBlogCap = !hideBlogNav && showLeftCapTriggers && !showLeftPlayingCap && !leftCapCrossfade;
+  const showLeftCap = !hideBlogNav || showLeftPlayingCap || leftCapCrossfade;
   const showTocCapTrigger = tocCollapsing || !tocPanelRevealed || tocCapExpanded;
   const panelHandoffBlog = blogOpen && audioClosing;
   const panelHandoffToc = tocOpen && audioClosing;
@@ -716,7 +721,7 @@ export function AboutStyleArticleFloatingChrome({
     "about-style-article-floating-chrome__shell",
     "proto-nav-frost-shell",
     audioCapActive ? "is-audio-shell" : "",
-    blogOpen && !audioCapActive ? "is-blog-open" : "",
+    hideBlogNav ? "" : blogOpen && !audioCapActive ? "is-blog-open" : "",
     tocOpen && !audioCapActive ? "is-toc-open" : "",
     blogCollapsing ? "is-blog-closing" : "",
     tocCollapsing ? "is-toc-closing" : "",
@@ -736,7 +741,7 @@ export function AboutStyleArticleFloatingChrome({
     panelHandoffBlog ? "is-handoff-blog" : "",
     panelHandoffToc ? "is-handoff-toc" : "",
     panelCrossfade ? "is-panel-crossfade" : "",
-    blogOpen && !audioCapActive ? "is-blog" : "",
+    hideBlogNav ? "" : blogOpen && !audioCapActive ? "is-blog" : "",
     tocOpen && !audioCapActive ? "is-toc" : "",
     blogCollapsing ? "is-blog-closing" : "",
     tocCollapsing ? "is-toc-closing" : "",
@@ -774,6 +779,7 @@ export function AboutStyleArticleFloatingChrome({
           ["--about-floating-chrome-handoff-duration" as string]: `${AUDIO_LEAVE_SPLIT_MS + PANEL_CIRCLE_HOLD_MS}ms`,
         }}
       >
+        {showLeftCap ? (
         <div
           ref={blogCapRef}
           className={`about-style-article-floating-chrome__cap about-style-article-floating-chrome__cap--left${blogCapExpanded ? " is-open" : ""}${blogPanelRevealed ? " is-revealed" : ""}${blogCollapsing ? " is-closing" : ""}${panelHandoffBlog ? " is-handoff" : ""}${panelCrossfade && blogCollapsing ? " is-sliding-out" : ""}${panelCrossfade && blogOpen && !blogCollapsing ? " is-sliding-in" : ""}`}
@@ -824,6 +830,7 @@ export function AboutStyleArticleFloatingChrome({
             </div>
           ) : null}
         </div>
+        ) : null}
 
         <div className="about-style-article-floating-chrome__bridge" aria-hidden={!audioCapActive}>
             <div className="about-style-article-floating-chrome__audio-stack">
