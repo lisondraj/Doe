@@ -56,8 +56,10 @@ import {
 /** /premed — Broader Doe Vision scroll structure with disabled outbound navigation. */
 export function PremedPageContent({
   tocItems,
+  hideArticleAudio = false,
 }: {
   tocItems: readonly AboutStyleArticleTocItem[];
+  hideArticleAudio?: boolean;
 }) {
   const category = blogPostCategory("the-broader-doe-vision");
 
@@ -92,7 +94,7 @@ export function PremedPageContent({
         />
       </div>
 
-      <AboutStyleArticleTableOfContents items={tocItems} />
+      <AboutStyleArticleTableOfContents items={tocItems} hideArticleAudio={hideArticleAudio} />
 
       <div className={ABOUT_MOBILE_SECTION_GAP}>
         <div className={ABOUT_MOBILE_CONTENT_GAP}>

@@ -102,13 +102,16 @@ function ArticleAudioRow({
   variant,
   onAfterOpen,
   onListenClick,
+  hideArticleAudio = false,
 }: {
   audioSrc?: string;
   variant: "inline" | "nav" | "desktop";
   onAfterOpen?: () => void;
   onListenClick?: () => void;
+  hideArticleAudio?: boolean;
 }) {
-  const audioPlayer = useAboutStyleArticleAudioPlayerOptional();
+  const audioPlayerContext = useAboutStyleArticleAudioPlayerOptional();
+  const audioPlayer = hideArticleAudio ? null : audioPlayerContext;
   const fallbackAudioRef = useRef<HTMLAudioElement>(null);
   const playIcon = (
     <span
@@ -148,6 +151,15 @@ function ArticleAudioRow({
       audio.pause();
     }
   };
+
+  if (hideArticleAudio || (!audioPlayer && !audioSrc)) {
+    return (
+      <p className={rowClass}>
+        {playIcon}
+        <ArticleAudioCopy variant={variant} />
+      </p>
+    );
+  }
 
   if (audioPlayer) {
     return (
@@ -288,6 +300,8 @@ type AboutStyleArticleTocPanelProps = {
   onItemClick?: () => void;
   onListenClick?: () => void;
   audioSrc?: string;
+  /** Keep listen row visible but non-interactive (e.g. /premed iPhone). */
+  hideArticleAudio?: boolean;
 };
 
 /** Shared TOC list for inline, floating, and desktop sidebar panels. */
@@ -298,6 +312,7 @@ export function AboutStyleArticleTocPanel({
   onItemClick,
   onListenClick,
   audioSrc = ABOUT_STYLE_ARTICLE_AUDIO.src,
+  hideArticleAudio = false,
 }: AboutStyleArticleTocPanelProps) {
   const isNav = variant === "nav";
   const isDesktop = variant === "desktop";
@@ -362,7 +377,13 @@ export function AboutStyleArticleTocPanel({
       </ol>
 
       <div className={audioDividerClass}>
-        <ArticleAudioRow audioSrc={audioSrc} variant={variant} onAfterOpen={onItemClick} onListenClick={onListenClick} />
+        <ArticleAudioRow
+          audioSrc={audioSrc}
+          variant={variant}
+          onAfterOpen={onItemClick}
+          onListenClick={onListenClick}
+          hideArticleAudio={hideArticleAudio}
+        />
       </div>
     </>
   );
@@ -392,7 +413,13 @@ export function AboutStyleArticleTocPanel({
         </div>
 
         <div className={`${audioDividerClass} about-style-article-floating-toc__audio-bar`}>
-          <ArticleAudioRow audioSrc={audioSrc} variant={variant} onAfterOpen={onItemClick} onListenClick={onListenClick} />
+          <ArticleAudioRow
+            audioSrc={audioSrc}
+            variant={variant}
+            onAfterOpen={onItemClick}
+            onListenClick={onListenClick}
+            hideArticleAudio={hideArticleAudio}
+          />
         </div>
       </div>
     );

@@ -181,3 +181,36 @@ export function useAboutStyleArticleAudioPlayer() {
 export function useAboutStyleArticleAudioPlayerOptional() {
   return useContext(AboutStyleArticleAudioPlayerContext);
 }
+
+const disabledAudioRef = { current: null } as RefObject<HTMLAudioElement | null>;
+
+/** Inert player — keeps floating chrome hooks stable when article audio is hidden. */
+export const ABOUT_STYLE_ARTICLE_AUDIO_PLAYER_DISABLED: AboutStyleArticleAudioPlayerContextValue = {
+  audioSrc: undefined,
+  audioRef: disabledAudioRef,
+  isPlayerOpen: false,
+  isPlaying: false,
+  currentTime: 0,
+  duration: 0,
+  progress: 0,
+  openPlayer: () => {},
+  hidePlayer: () => {},
+  closePlayer: () => {},
+  togglePlay: () => {},
+  seekBy: () => {},
+  seekToProgress: () => {},
+  setCurrentTime: () => {},
+  setDuration: () => {},
+  setIsPlaying: () => {},
+};
+
+export function useAboutStyleArticleAudioPlayerOrDisabled(disabled: boolean) {
+  const context = useAboutStyleArticleAudioPlayerOptional();
+  if (disabled) {
+    return ABOUT_STYLE_ARTICLE_AUDIO_PLAYER_DISABLED;
+  }
+  if (!context) {
+    throw new Error("useAboutStyleArticleAudioPlayer must be used within AboutStyleArticleAudioPlayerProvider");
+  }
+  return context;
+}

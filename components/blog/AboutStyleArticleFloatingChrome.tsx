@@ -15,7 +15,7 @@ import {
 import { AboutStyleArticleTocPanel } from "@/components/blog/AboutStyleArticleTocPanel";
 import {
   ABOUT_STYLE_ARTICLE_AUDIO_FAKE_DURATION_S,
-  useAboutStyleArticleAudioPlayer,
+  useAboutStyleArticleAudioPlayerOrDisabled,
 } from "@/lib/blog/about-style-article-audio-player-context";
 import type { AboutStyleArticleTocItem } from "@/lib/blog/about-style-article-toc";
 
@@ -38,6 +38,8 @@ type AboutStyleArticleFloatingChromeProps = {
   BlogPanel?: typeof AboutStyleArticleFloatingBlogPanel;
   /** Hide the left blog-posts cap and panel (e.g. /premed iPhone). */
   hideBlogNav?: boolean;
+  /** Keep listen row visible but disable playback (e.g. /premed iPhone). */
+  hideArticleAudio?: boolean;
 };
 
 function formatTime(seconds: number) {
@@ -90,6 +92,7 @@ export function AboutStyleArticleFloatingChrome({
   currentSlug,
   BlogPanel = AboutStyleArticleFloatingBlogPanel,
   hideBlogNav = false,
+  hideArticleAudio = false,
 }: AboutStyleArticleFloatingChromeProps) {
   const {
     audioSrc,
@@ -108,7 +111,7 @@ export function AboutStyleArticleFloatingChrome({
     setCurrentTime,
     setDuration,
     setIsPlaying,
-  } = useAboutStyleArticleAudioPlayer();
+  } = useAboutStyleArticleAudioPlayerOrDisabled(hideArticleAudio);
 
   const [mounted, setMounted] = useState(false);
   const [scrollRevealed, setScrollRevealed] = useState(false);
@@ -905,7 +908,8 @@ export function AboutStyleArticleFloatingChrome({
                   items={tocItems}
                   variant="nav"
                   onItemClick={closeToc}
-                  onListenClick={openAudioFromFloatingToc}
+                  onListenClick={hideArticleAudio ? undefined : openAudioFromFloatingToc}
+                  hideArticleAudio={hideArticleAudio}
                 />
               </div>
             ) : null}
