@@ -29,10 +29,6 @@ export function PremedMobileView({ tocItems }: PremedMobileViewProps) {
   useDoePhoneStableViewport(true);
 
   useLayoutEffect(() => {
-    const html = document.documentElement;
-    html.setAttribute("data-about-page", "true");
-    html.removeAttribute("data-home-page");
-    html.setAttribute("data-doeforvc-always-phone", "true");
     applyPhoneOverflowChrome(ABOUT_BROWN_OVERFLOW_SURFACE);
 
     try {
