@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import {
-  isDesignersHost,
   isMarketingLandingRoot,
+  isPrimaryHost,
   marketingLandingRewritePath,
   requestHostFromHeaders,
   shouldEnforceDomainRouting,
@@ -41,7 +41,8 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  if (isDesignersHost(host)) {
+  /** doe.care serves /premed at `/` only — bounce any other path back to root. */
+  if (isPrimaryHost(host)) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/";
     redirectUrl.search = "";

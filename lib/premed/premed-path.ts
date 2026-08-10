@@ -1,10 +1,10 @@
-import { DESIGNERS_SITE_HOST, PREMED_PATH, normalizeHost } from "@/lib/site-domains";
+import { PREMED_PATH, PRIMARY_SITE_HOST, normalizeHost } from "@/lib/site-domains";
 
-/** Map doehealth.care `/` rewrite to the premed page for client-side path checks. */
+/** Map doe.care `/` rewrite to the premed page for client-side path checks. */
 export function resolvePremedAwarePath(pathname: string, host?: string): string {
   const resolvedHost =
     host ?? (typeof window !== "undefined" ? window.location.hostname : "");
-  if (pathname === "/" && normalizeHost(resolvedHost) === normalizeHost(DESIGNERS_SITE_HOST)) {
+  if (pathname === "/" && normalizeHost(resolvedHost) === normalizeHost(PRIMARY_SITE_HOST)) {
     return PREMED_PATH;
   }
   return pathname;

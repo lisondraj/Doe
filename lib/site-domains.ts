@@ -1,8 +1,8 @@
-/** Primary marketing site (includes /join). */
+/** Primary marketing site — `/` only; rewrites to /premed (default: doe.care). */
 export const PRIMARY_SITE_HOST =
   process.env.PRIMARY_SITE_HOST ?? "doe.care";
 
-/** Designers landing domain — `/` only; rewrites to /premed (default: doehealth.care). */
+/** Full doehealth site — `/` rewrites to /doehealth; all other routes allowed (default: doehealth.care). */
 export const DESIGNERS_SITE_HOST =
   process.env.DESIGNERS_SITE_HOST ?? process.env.JOIN_SITE_HOST ?? "doehealth.care";
 
@@ -17,7 +17,7 @@ export const ABOUT_PATH = "/about";
 export const PREMED_PATH = "/premed";
 export const PROTO_INVEST_PATH = "/proto-invest";
 export const DESIGNERS_PATH = "/designers";
-/** Editable landing served at doe.care root via middleware rewrite. */
+/** Editable landing served at doehealth.care root via middleware rewrite. */
 export const DOEHEALTH_PATH = "/doehealth";
 
 /** Former primary home — Voice Agents hero (preview at /legacymain). */
@@ -80,9 +80,25 @@ export function isMarketingLandingRoot(
   return pathname === "/" && (isPrimaryHost(host) || isDesignersHost(host));
 }
 
+/** doe.care `/` — URL stays `/`, content from /premed rewrite. */
+export function isPremedMarketingRoot(
+  host: string | null | undefined,
+  pathname: string,
+): boolean {
+  return pathname === "/" && isPrimaryHost(host);
+}
+
+/** doehealth.care `/` — URL stays `/`, content from /doehealth rewrite. */
+export function isDoeHealthMarketingRoot(
+  host: string | null | undefined,
+  pathname: string,
+): boolean {
+  return pathname === "/" && isDesignersHost(host);
+}
+
 /** Middleware rewrite target for `/` on production marketing hosts. */
 export function marketingLandingRewritePath(host: string | null | undefined): string {
-  return isDesignersHost(host) ? PREMED_PATH : DOEHEALTH_PATH;
+  return isPrimaryHost(host) ? PREMED_PATH : DOEHEALTH_PATH;
 }
 
 /** Skip cross-domain redirects on localhost and Vercel preview URLs. */
@@ -114,29 +130,29 @@ export function doeHealthPageUrl(protocol: "http" | "https" = "https"): string {
 }
 
 export function premedPageUrl(protocol: "http" | "https" = "https"): string {
-  return `${designersSiteOrigin(protocol)}${PREMED_PATH}`;
+  return primarySiteOrigin(protocol);
 }
 
 export function joinPageUrl(protocol: "http" | "https" = "https"): string {
-  return `${primarySiteOrigin(protocol)}${JOIN_PATH}`;
+  return `${designersSiteOrigin(protocol)}${JOIN_PATH}`;
 }
 
 export function waitlistPageUrl(protocol: "http" | "https" = "https"): string {
-  return `${primarySiteOrigin(protocol)}${WAITLIST_PATH}`;
+  return `${designersSiteOrigin(protocol)}${WAITLIST_PATH}`;
 }
 
 export function aboutPageUrl(protocol: "http" | "https" = "https"): string {
-  return `${primarySiteOrigin(protocol)}${ABOUT_PATH}`;
+  return `${designersSiteOrigin(protocol)}${ABOUT_PATH}`;
 }
 
 /**
- * Absolute join URL for links from the primary site.
+ * Absolute join URL for links from the doehealth site.
  * Override with NEXT_PUBLIC_JOIN_URL in env (useful for staging).
  */
 export const JOIN_PAGE_HREF =
   process.env.NEXT_PUBLIC_JOIN_URL ?? joinPageUrl();
 
-/** Home link when rendering chrome on the join domain. */
+/** Home link when rendering chrome on the doehealth site. */
 export function primaryHomeHref(protocol: "http" | "https" = "https"): string {
-  return primarySiteOrigin(protocol);
+  return designersSiteOrigin(protocol);
 }
