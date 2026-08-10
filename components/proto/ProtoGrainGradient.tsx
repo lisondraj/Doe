@@ -95,6 +95,9 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
   const containerRef = useRef<HTMLDivElement>(null);
   const hero = isHeroVariant(variant);
+  /** Re-read phone/about attrs after parent layout effects (e.g. /premed router) set document flags. */
+  const [layoutContextEpoch, setLayoutContextEpoch] = useState(0);
+  void layoutContextEpoch;
   const phone = isPhoneLayout();
   const reactSlotId = useId();
   const homeHeroBackground = hero && phone && variant === "home-hero";
@@ -160,6 +163,14 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     if (hero) requestMount();
   }, [hero]);
 
+  useLayoutEffect(() => {
+    let raf = 0;
+    const syncLayoutContext = () => setLayoutContextEpoch((current) => current + 1);
+    syncLayoutContext();
+    raf = requestAnimationFrame(syncLayoutContext);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
   useEffect(() => {
     if (hero) return;
     if (effectiveInViewport) {
@@ -224,6 +235,47 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     evictShader,
     hasMounted,
     homeHeroGateEpoch,
+    layoutContextEpoch,
+    shaderPriority,
+    slotId,
+  ]);
+
+  useEffect(() => {
+    if (!isShaderWebGLBudgetActive() || !dedicatedHeroBackground) return;
+    if (!hasMounted || !containerReady || budgetGranted) return;
+
+    let cancelled = false;
+    let retryTimer = 0;
+    let retryDelayMs = 32;
+
+    const tryAcquire = () => {
+      if (cancelled) return;
+      const granted = aboutHeroBackground
+        ? acquireAboutHeroBackgroundSlot(evictShader)
+        : acquireShaderWebGLSlot(slotId, shaderPriority, evictShader);
+      if (granted) {
+        setBudgetGranted(true);
+        setHomeHeroBackgroundReady(true);
+        return;
+      }
+      retryDelayMs = Math.min(retryDelayMs * 2, 2000);
+      retryTimer = window.setTimeout(tryAcquire, retryDelayMs);
+    };
+
+    tryAcquire();
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(retryTimer);
+    };
+  }, [
+    aboutHeroBackground,
+    budgetGranted,
+    containerReady,
+    dedicatedHeroBackground,
+    evictShader,
+    hasMounted,
+    layoutContextEpoch,
     shaderPriority,
     slotId,
   ]);
