@@ -38,6 +38,11 @@ function isHeroVariant(variant: ProtoGrainGradientVariant) {
   );
 }
 
+function isAboutStylePage() {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.getAttribute("data-about-page") === "true";
+}
+
 function isPhoneLayout() {
   if (typeof document === "undefined") return false;
   return (
@@ -90,14 +95,10 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const preset = PROTO_GRAIN_GRADIENT_PRESETS[variant];
   const containerRef = useRef<HTMLDivElement>(null);
   const hero = isHeroVariant(variant);
-  /** Re-read phone/about attrs after parent layout effects (e.g. /premed router) set document flags. */
-  const [layoutContextEpoch, setLayoutContextEpoch] = useState(0);
-  void layoutContextEpoch;
   const phone = isPhoneLayout();
   const reactSlotId = useId();
   const homeHeroBackground = hero && phone && variant === "home-hero";
-  /** about-hero is only used on about-style article heroes — don't gate on data-about-page timing. */
-  const aboutHeroBackground = hero && phone && variant === "about-hero";
+  const aboutHeroBackground = hero && phone && variant === "about-hero" && isAboutStylePage();
   const dedicatedHeroBackground = homeHeroBackground || aboutHeroBackground;
   const slotId = homeHeroBackground
     ? DOEPHONE_HOME_HERO_SHADER_SLOT
@@ -159,14 +160,6 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     if (hero) requestMount();
   }, [hero]);
 
-  useLayoutEffect(() => {
-    let raf = 0;
-    const syncLayoutContext = () => setLayoutContextEpoch((current) => current + 1);
-    syncLayoutContext();
-    raf = requestAnimationFrame(syncLayoutContext);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
   useEffect(() => {
     if (hero) return;
     if (effectiveInViewport) {
@@ -179,15 +172,12 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   useEffect(() => {
     if (!isShaderWebGLBudgetActive()) return;
     if (typeof document === "undefined") return;
-    // Dedicated hero shaders register the gate — subscribing here loops (React #185).
-    if (dedicatedHeroBackground) return;
-    const onAboutPage = document.documentElement.getAttribute("data-about-page") === "true";
-    if (document.documentElement.getAttribute("data-home-page") !== "true" && !onAboutPage) return;
+    if (document.documentElement.getAttribute("data-home-page") !== "true") return;
 
     return subscribeHomeHeroBackgroundReady(() => {
       setHomeHeroGateEpoch((current) => current + 1);
     });
-  }, [dedicatedHeroBackground]);
+  }, []);
 
   useLayoutEffect(() => {
     if (!hasMounted || !containerReady) {
@@ -234,47 +224,6 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
     evictShader,
     hasMounted,
     homeHeroGateEpoch,
-    layoutContextEpoch,
-    shaderPriority,
-    slotId,
-  ]);
-
-  useEffect(() => {
-    if (!isShaderWebGLBudgetActive() || !dedicatedHeroBackground) return;
-    if (!hasMounted || !containerReady || budgetGranted) return;
-
-    let cancelled = false;
-    let retryTimer = 0;
-    let retryDelayMs = 32;
-
-    const tryAcquire = () => {
-      if (cancelled) return;
-      const granted = aboutHeroBackground
-        ? acquireAboutHeroBackgroundSlot(evictShader)
-        : acquireShaderWebGLSlot(slotId, shaderPriority, evictShader);
-      if (granted) {
-        setBudgetGranted(true);
-        setHomeHeroBackgroundReady(true);
-        return;
-      }
-      retryDelayMs = Math.min(retryDelayMs * 2, 2000);
-      retryTimer = window.setTimeout(tryAcquire, retryDelayMs);
-    };
-
-    tryAcquire();
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(retryTimer);
-    };
-  }, [
-    aboutHeroBackground,
-    budgetGranted,
-    containerReady,
-    dedicatedHeroBackground,
-    evictShader,
-    hasMounted,
-    layoutContextEpoch,
     shaderPriority,
     slotId,
   ]);
@@ -496,8 +445,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   const targetSpeed = preset.speed ?? PROTO_GRAIN_GRADIENT_SPEED;
   const shouldAnimate =
     !staticShader && !reducedMotion && targetSpeed > 0 && isVisible && tabVisible && hasMounted;
-  const showGradient =
-    hasMounted && containerReady && (dedicatedHeroBackground || effectiveInViewport) && budgetGranted;
+  const showGradient = hasMounted && containerReady && effectiveInViewport && budgetGranted;
 
   return (
     <div
