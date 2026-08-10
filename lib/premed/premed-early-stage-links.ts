@@ -31,7 +31,8 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
     link: {
       label: "Intelligence for every clinic",
       href: INTELLIGENCE_FOR_EVERY_CLINIC_PATH,
-      description: "An early outline of Doe's view on intelligence in healthcare.",
+      description:
+        "An early outline of how Doe thinks about intelligence in healthcare and where the platform is heading.",
     },
   },
   {
@@ -40,7 +41,8 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
     link: {
       label: "Introducing Genome",
       href: INTRODUCING_GENOME_PATH,
-      description: "A first look at Genome and how Doe approaches specialized intelligence.",
+      description:
+        "A first look at Genome and how Doe approaches specialized intelligence for clinical environments.",
     },
   },
   {
@@ -49,7 +51,8 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
     link: {
       label: "Genome is built for you",
       href: GENOME_IS_BUILT_FOR_YOU_PATH,
-      description: "How Genome is designed to reflect the teams and workflows that use it.",
+      description:
+        "How Genome is designed to reflect the teams, workflows, and priorities of the organizations that use it.",
     },
   },
   {
@@ -64,7 +67,7 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
       label: "Introducing Float",
       href: INTRODUCING_FLOAT_PATH,
       description:
-        "A finance layer for claims, collections, payer calls, and management fees, built with intelligent agents and the Fabric agent builder.",
+        "An early look at Float as another layer of the Doe platform, focused on the operational work clinics rely on every day across the organization.",
     },
   },
   {
@@ -74,7 +77,7 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
       label: "Introducing Pulse",
       href: INTRODUCING_PULSE_PATH,
       description:
-        "Intelligent agents built for the workflows your clinic runs every day, from scheduling and payer hold times to front-desk triage on your existing phone line and software.",
+        "An early introduction to Pulse and how Doe is building intelligent support for the daily workflows care teams already depend on.",
     },
   },
   {
@@ -84,7 +87,7 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
       label: "Pulse: Call History",
       href: PULSE_CALL_HISTORY_PATH,
       description:
-        "One workspace to replay agent calls, inspect actions, run prompt-based analysis, and keep a complete record of what Pulse handled.",
+        "A closer look at how Pulse helps teams review past activity, understand outcomes, and maintain a dependable record over time.",
       nested: true,
     },
   },
@@ -95,7 +98,7 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
       label: "Pulse: Ambient",
       href: PULSE_AMBIENT_PATH,
       description:
-        "Prepares visits after agent calls, briefs physicians on the week ahead, and surfaces chart and call context during the appointment.",
+        "How Pulse supports preparation before visits and keeps relevant context close during the moments that matter most in day-to-day care.",
       nested: true,
     },
   },
@@ -106,7 +109,7 @@ export const PREMED_EARLY_STAGE_ENTRIES: readonly PremedEarlyStageEntry[] = [
       label: "Introducing Fabric",
       href: INTRODUCING_FABRIC_PATH,
       description:
-        "A visual agent builder that lets clinical teams design the workflows they actually run, in plain language and without waiting on a vendor roadmap.",
+        "An introduction to Fabric and how clinical teams can shape the tools they use without waiting on someone else's product plan.",
     },
   },
 ];
