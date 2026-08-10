@@ -122,16 +122,25 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   /** Hero bands sit at the fold — never gate mount/show on intersection churn (iOS first paint). */
   const effectiveInViewport = hero ? true : inCarouselRange && inViewport;
 
+  /**
+   * WebGL context loss recovery (iOS drops contexts under memory pressure far more
+   * aggressively than desktop). Every effect below that calls `requestMount()` only
+   * fires once — each is keyed on `hero`/`phone`/`effectiveInViewport` values that
+   * never change again after the initial mount — so if we drop `hasMounted` to false
+   * here, nothing ever brings it back and the shader stays a blank colorBack fill
+   * forever. Re-assert current mount intent instead of clearing it.
+   */
   const resetShader = useCallback(() => {
-    hasMountedRef.current = false;
-    setHasMounted(false);
+    const shouldStayMounted = hero || effectiveInViewport;
+    hasMountedRef.current = shouldStayMounted;
+    setHasMounted(shouldStayMounted);
     setBudgetGranted(false);
     releaseShaderWebGLSlot(slotId);
     if (dedicatedHeroBackground) {
       setHomeHeroBackgroundReady(false);
     }
     setShaderGeneration((current) => current + 1);
-  }, [dedicatedHeroBackground, slotId]);
+  }, [dedicatedHeroBackground, effectiveInViewport, hero, slotId]);
 
   /** Budget eviction — drop the slot but keep mount intent so we can re-acquire in viewport. */
   const evictShader = useCallback(() => {
