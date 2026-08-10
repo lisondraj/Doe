@@ -1,9 +1,9 @@
 /** iPhone WebGL context budget — avoids black shader loss when the page exceeds GPU limits. */
 
 import { isAboutStyleBlankPagePath } from "@/lib/about/about-style-blank-pages";
-import { isAboutStylePagePath } from "@/lib/about/about-style-page-paths";
 import { BLOG_LANDING_PATH } from "@/lib/blog/blog-landing-posts";
 import { resolvePremedAwarePath } from "@/lib/premed/premed-path";
+import { ABOUT_PATH, PREMED_PATH } from "@/lib/site-domains";
 import {
   DOEPHONE_ABOUT_HERO_SHADER_SLOT,
   DOEPHONE_HOME_HERO_SHADER_SLOT,
@@ -70,7 +70,8 @@ function aboutRouteReservesHeroShaderSlot() {
   const path = resolvePremedAwarePath(window.location.pathname, window.location.hostname);
   if (path === BLOG_LANDING_PATH) return false;
   if (isAboutStyleBlankPagePath(path)) return false;
-  return isAboutStyleRoute() || isAboutStylePagePath(path);
+  if (isAboutStyleRoute()) return true;
+  return path === PREMED_PATH || path === ABOUT_PATH || path.startsWith("/blog/");
 }
 
 function hasAboutHeroBackgroundSlot() {

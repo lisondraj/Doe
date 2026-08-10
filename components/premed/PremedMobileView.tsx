@@ -7,6 +7,7 @@ import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { PremedPageContent } from "@/components/premed/PremedPageContent";
 import { ABOUT_STYLE_PHONE_SHELL_PROPS } from "@/lib/about/about-style-phone-shell-props";
+import { AboutStyleArticleAudioPlayerProvider } from "@/lib/blog/about-style-article-audio-player-context";
 import { BROADER_DOE_VISION_CONTENT_PT } from "@/lib/blog/broader-doe-vision-layout-styles";
 import type { AboutStyleArticleTocItem } from "@/lib/blog/about-style-article-toc";
 import { PREMED_TOP_BANNER } from "@/lib/premed/premed-copy";
@@ -38,7 +39,7 @@ export function PremedMobileView({ tocItems }: PremedMobileViewProps) {
   }, []);
 
   return (
-    <>
+    <AboutStyleArticleAudioPlayerProvider>
       <BlogMobileShell
         {...ABOUT_STYLE_PHONE_SHELL_PROPS}
         footerShowIncorporationLines
@@ -54,6 +55,6 @@ export function PremedMobileView({ tocItems }: PremedMobileViewProps) {
         hideBlogNav
         hideArticleAudio
       />
-    </>
+    </AboutStyleArticleAudioPlayerProvider>
   );
 }

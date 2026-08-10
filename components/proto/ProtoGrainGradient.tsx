@@ -179,13 +179,15 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
   useEffect(() => {
     if (!isShaderWebGLBudgetActive()) return;
     if (typeof document === "undefined") return;
+    // Dedicated hero shaders register the gate — subscribing here loops (React #185).
+    if (dedicatedHeroBackground) return;
     const onAboutPage = document.documentElement.getAttribute("data-about-page") === "true";
     if (document.documentElement.getAttribute("data-home-page") !== "true" && !onAboutPage) return;
 
     return subscribeHomeHeroBackgroundReady(() => {
       setHomeHeroGateEpoch((current) => current + 1);
     });
-  }, []);
+  }, [dedicatedHeroBackground]);
 
   useLayoutEffect(() => {
     if (!hasMounted || !containerReady) {

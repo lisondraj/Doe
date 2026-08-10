@@ -206,11 +206,8 @@ export const ABOUT_STYLE_ARTICLE_AUDIO_PLAYER_DISABLED: AboutStyleArticleAudioPl
 
 export function useAboutStyleArticleAudioPlayerOrDisabled(disabled: boolean) {
   const context = useAboutStyleArticleAudioPlayerOptional();
-  if (disabled) {
-    return ABOUT_STYLE_ARTICLE_AUDIO_PLAYER_DISABLED;
-  }
-  if (!context) {
-    throw new Error("useAboutStyleArticleAudioPlayer must be used within AboutStyleArticleAudioPlayerProvider");
+  if (disabled || !context) {
+    return context ?? ABOUT_STYLE_ARTICLE_AUDIO_PLAYER_DISABLED;
   }
   return context;
 }
