@@ -1,6 +1,10 @@
+.premed-founders-band {
+  width: 100%;
+}
+
 .premed-founders-block {
-  margin-top: clamp(2.5rem, 3.2vw, 3.35rem);
-  padding: clamp(1.35rem, 1.8vw, 1.85rem) 0 clamp(1.35rem, 1.8vw, 1.85rem)
+  margin: 0;
+  padding: clamp(0.35rem, 0.6vw, 0.55rem) 0 clamp(0.35rem, 0.6vw, 0.55rem)
     clamp(1.15rem, 1.45vw, 1.55rem);
   border-left: 2px solid rgba(232, 192, 142, 0.42);
 }
@@ -53,6 +57,5 @@
 }
 
 html[data-about-page][data-layout="desktop"] .premed-founders-block {
-  margin-top: clamp(2.85rem, 3.4vw, 3.75rem);
   padding-left: clamp(1.25rem, 1.55vw, 1.65rem);
 }
