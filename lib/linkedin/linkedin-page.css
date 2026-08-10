@@ -1,0 +1,82 @@
+.linkedin-page {
+  --linkedin-gold-text-gradient: linear-gradient(
+    180deg,
+    #f2ddb0 0%,
+    #e8c08e 18%,
+    #d4a574 58%,
+    rgba(196, 138, 88, 0.88) 100%
+  );
+  --linkedin-caption-cream: rgba(242, 232, 218, 0.92);
+  --linkedin-caption-muted: rgba(232, 192, 142, 0.82);
+}
+
+.linkedin-page__shader {
+  position: absolute;
+  inset: 0;
+}
+
+.linkedin-caption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  max-width: min(92vw, 58rem);
+  flex-direction: column;
+  align-items: flex-end;
+  padding: clamp(2rem, 4.5vw, 4.5rem);
+  text-align: right;
+  pointer-events: auto;
+}
+
+.linkedin-caption__headline {
+  margin: 0;
+  font-size: clamp(3.4rem, 7.8vw, 7.25rem);
+  font-weight: 375;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  background: var(--linkedin-gold-text-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-wrap: balance;
+}
+
+.linkedin-caption__byline {
+  margin: clamp(1.15rem, 2vw, 1.85rem) 0 0;
+  font-size: clamp(1.35rem, 2.35vw, 2.35rem);
+  font-weight: 500;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+  color: var(--linkedin-caption-cream);
+}
+
+.linkedin-caption__date {
+  color: var(--linkedin-caption-muted);
+  font-weight: 400;
+}
+
+.linkedin-caption__read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(0.65rem, 1vw, 1rem);
+  margin-top: clamp(1rem, 1.8vw, 1.65rem);
+  font-size: clamp(1.65rem, 2.85vw, 3rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: #e8c08e;
+  text-decoration: none;
+  transition: opacity 150ms ease;
+}
+
+.linkedin-caption__read-more:hover {
+  opacity: 0.82;
+}
+
+.linkedin-caption__read-more-icon {
+  width: clamp(1.35rem, 2.2vw, 2.35rem);
+  height: clamp(1.35rem, 2.2vw, 2.35rem);
+  flex-shrink: 0;
+}
