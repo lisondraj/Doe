@@ -29,6 +29,15 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (isMarketingLandingRoot(host, pathname)) {
+    /**
+     * doe.care `/` is served natively by app/page.tsx (PremedRouter). Rewriting to
+     * /premed made the server render app/premed while the client router still hydrated
+     * app/page at `/` — a route-tree mismatch that broke hero WebGL on iPhone load.
+     */
+    if (isPrimaryHost(host)) {
+      return applyLandingSiteHeaders(NextResponse.next());
+    }
+
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-doe-designers-site", "1");
 

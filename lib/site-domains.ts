@@ -1,4 +1,4 @@
-/** Primary marketing site — `/` only; rewrites to /premed (default: doe.care). */
+/** Primary marketing site — `/` serves PremedRouter natively via app/page.tsx (default: doe.care). */
 export const PRIMARY_SITE_HOST =
   process.env.PRIMARY_SITE_HOST ?? "doe.care";
 
@@ -80,7 +80,7 @@ export function isMarketingLandingRoot(
   return pathname === "/" && (isPrimaryHost(host) || isDesignersHost(host));
 }
 
-/** doe.care `/` — URL stays `/`, content from /premed rewrite. */
+/** doe.care `/` — URL stays `/`, PremedRouter from app/page.tsx. */
 export function isPremedMarketingRoot(
   host: string | null | undefined,
   pathname: string,
@@ -96,7 +96,7 @@ export function isDoeHealthMarketingRoot(
   return pathname === "/" && isDesignersHost(host);
 }
 
-/** Middleware rewrite target for `/` on production marketing hosts. */
+/** Middleware rewrite target for doehealth.care `/` (doe.care `/` uses app/page.tsx). */
 export function marketingLandingRewritePath(host: string | null | undefined): string {
   return isPrimaryHost(host) ? PREMED_PATH : DOEHEALTH_PATH;
 }
