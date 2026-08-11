@@ -69,7 +69,7 @@ export function HomeFooter({
                   <br />
                   C-Corporation
                   <span className="mt-0.5 block text-[clamp(0.78rem,0.7rem+0.32vmin,0.88rem)] font-normal leading-[1.2] tracking-[0.01em] text-white/58">
-                    (in process)
+                    (Pending)
                   </span>
                 </p>
               ) : null}
