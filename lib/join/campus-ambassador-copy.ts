@@ -5,8 +5,12 @@ import {
   ABOUT_TOP_BANNER_MESSAGE,
 } from "@/lib/about/about-contact";
 import { JOIN_PATH } from "@/lib/site-domains";
+import type { AboutStyleFeatureShaderVariant } from "@/lib/blog/about-style-feature-card";
 
 export const CAMPUS_AMBASSADOR_PAGE_TITLE = "Campus Ambassador Program";
+
+/** Hero shader — Ambient ripple flow (animated; not truchet / worm). */
+export const CAMPUS_AMBASSADOR_HERO_SHADER_VARIANT: AboutStyleFeatureShaderVariant = "ambient";
 
 export const CAMPUS_AMBASSADOR_SUBHEADING = "Open to all pre-health students.";
 
