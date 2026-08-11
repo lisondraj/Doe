@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseRouteHandlerClient } from "@/lib/supabase/route-handler";
 
 export async function POST() {
-  const supabase = createSupabaseServerClient();
+  const response = NextResponse.json({ ok: true });
+  const supabase = createSupabaseRouteHandlerClient(response);
   await supabase.auth.signOut();
-  return NextResponse.json({ ok: true });
+  return response;
 }

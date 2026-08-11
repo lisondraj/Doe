@@ -5,7 +5,32 @@ import {
   isAdminAllowedEmail,
   normalizeAdminEmail,
 } from "@/lib/admin/admin-auth";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getSupabaseAnonKey, getSupabaseUrl } from "@/lib/supabase/config";
+import { createSupabaseRouteHandlerClient } from "@/lib/supabase/route-handler";
+
+type TokenResponse = {
+  access_token?: string;
+  refresh_token?: string;
+  error?: string;
+  error_description?: string;
+  msg?: string;
+};
+
+async function signInWithPasswordDirect(email: string, password: string): Promise<TokenResponse | null> {
+  const response = await fetch(`${getSupabaseUrl()}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: {
+      apikey: getSupabaseAnonKey(),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+    cache: "no-store",
+  });
+
+  const payload = (await response.json()) as TokenResponse;
+  if (!response.ok) return payload;
+  return payload;
+}
 
 export async function POST(request: Request) {
   let email = "";
@@ -28,14 +53,29 @@ export async function POST(request: Request) {
   }
 
   try {
-    const supabase = createSupabaseServerClient();
+    const response = NextResponse.json({ ok: true });
+    const supabase = createSupabaseRouteHandlerClient(response);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
+    if (!error) {
+      return response;
+    }
+
+    const tokens = await signInWithPasswordDirect(email, password);
+    if (!tokens?.access_token || !tokens.refresh_token) {
       return NextResponse.json({ ok: false, error: ADMIN_LOGIN_INVALID_CREDENTIALS_MESSAGE }, { status: 401 });
     }
 
-    return NextResponse.json({ ok: true });
+    const { error: sessionError } = await supabase.auth.setSession({
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+    });
+
+    if (sessionError) {
+      return NextResponse.json({ ok: false, error: ADMIN_LOGIN_INVALID_CREDENTIALS_MESSAGE }, { status: 401 });
+    }
+
+    return response;
   } catch {
     return NextResponse.json({ ok: false, error: ADMIN_LOGIN_INVALID_CREDENTIALS_MESSAGE }, { status: 401 });
   }

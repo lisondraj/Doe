@@ -1,19 +1,14 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { getSupabaseAnonKey, getSupabaseUrl } from "@/lib/supabase/config";
+
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
 export async function createSupabaseMiddlewareClient(request: NextRequest) {
   let response = NextResponse.next({ request });
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !anonKey || anonKey.startsWith("your-")) {
-    return { supabase: null, response, user: null };
-  }
-
-  const supabase = createServerClient(url, anonKey, {
+  const supabase = createServerClient(getSupabaseUrl(), getSupabaseAnonKey(), {
     cookies: {
       getAll() {
         return request.cookies.getAll();
