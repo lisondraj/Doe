@@ -107,7 +107,7 @@ export function CampusAmbassadorSelectField({
   }, [open]);
 
   return (
-    <div ref={rootRef} className="campus-ambassador-select block">
+    <div ref={rootRef} className="campus-ambassador-select block min-w-0 max-w-full">
       <span className={FIELD_LABEL_CLASS} id={`${listboxId}-label`}>
         {label}
         {required ? <span aria-hidden> *</span> : null}
@@ -209,7 +209,7 @@ export function CampusAmbassadorCheckboxGroup<T extends string>({
 
           return (
             <li key={option.id}>
-              <label className="campus-ambassador-checkbox-row flex cursor-pointer items-start gap-3">
+              <label className="campus-ambassador-checkbox-row flex min-w-0 cursor-pointer items-start gap-3">
                 <input
                   type="checkbox"
                   name={`${name}-${index}`}
@@ -230,7 +230,7 @@ export function CampusAmbassadorCheckboxGroup<T extends string>({
                     className={`campus-ambassador-checkbox-other-input min-w-0 flex-1 ${FIELD_INPUT_CLASS}`}
                   />
                 ) : (
-                  <span className={`campus-ambassador-checkbox-label text-[clamp(1.02rem,0.9rem+0.48vmin,1.16rem)] font-normal leading-snug tracking-[-0.01em] iphone-page:text-[clamp(1.08rem,0.94rem+0.52vmin,1.22rem)] ${dmSans.className}`}>
+                  <span className={`campus-ambassador-checkbox-label min-w-0 flex-1 break-words text-[clamp(1.02rem,0.9rem+0.48vmin,1.16rem)] font-normal leading-snug tracking-[-0.01em] iphone-page:text-[clamp(1.08rem,0.94rem+0.52vmin,1.22rem)] ${dmSans.className}`}>
                     {option.label}
                   </span>
                 )}

@@ -26,7 +26,7 @@ import {
 /** doe.care /join — campus ambassador iPhone article band. */
 export function CampusAmbassadorPageContent() {
   return (
-    <div className="about-page-content">
+    <div className="about-page-content campus-ambassador-page-content min-w-0 max-w-full">
       <header className={BROADER_DOE_VISION_HERO_INTRO_WRAP}>
         <div className={BROADER_DOE_VISION_HERO_HEADLINES_WRAP}>
           <h1 className={`${BROADER_DOE_VISION_TITLE_TW} ${ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW}`}>

@@ -37,7 +37,7 @@ export function CampusAmbassadorMobileView() {
       footerShowIncorporationLines
       topBanner={<DoeHealthTopBanner {...CAMPUS_AMBASSADOR_TOP_BANNER} />}
     >
-      <main className={`w-full ${BROADER_DOE_VISION_CONTENT_PT}`}>
+      <main className={`campus-ambassador-page-main min-w-0 max-w-full overflow-x-clip w-full ${BROADER_DOE_VISION_CONTENT_PT}`}>
         <CampusAmbassadorPageContent />
       </main>
     </BlogMobileShell>

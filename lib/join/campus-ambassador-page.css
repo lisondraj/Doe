@@ -190,3 +190,51 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* /join iPhone — contain horizontal bleed from carousel breakout + long form rows. */
+html[data-about-page]:not([data-layout="desktop"]):has(.campus-ambassador-apply) {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+html[data-about-page]:not([data-layout="desktop"]):has(.campus-ambassador-apply) body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+html[data-about-page]:not([data-layout="desktop"])
+  .blog-mobile-root:has(.campus-ambassador-apply),
+html[data-about-page]:not([data-layout="desktop"])
+  .blog-page-root:has(.campus-ambassador-apply),
+html[data-about-page]:not([data-layout="desktop"])
+  .about-page-content:has(.campus-ambassador-apply),
+html[data-about-page]:not([data-layout="desktop"])
+  .campus-ambassador-page-main {
+  overflow-x: clip !important;
+  max-width: 100%;
+}
+
+html[data-about-page]:not([data-layout="desktop"])
+  .about-page-content:has(.campus-ambassador-apply)
+  .blog-article-related-carousel {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  --blog-related-carousel-slide-width: calc(100% - 2 * var(--blog-related-carousel-inset-x));
+}
+
+.campus-ambassador-apply,
+.campus-ambassador-apply form,
+.campus-ambassador-checkbox-group,
+.campus-ambassador-field-input,
+.campus-ambassador-select-trigger {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.campus-ambassador-checkbox-row {
+  min-width: 0;
+  max-width: 100%;
+}
