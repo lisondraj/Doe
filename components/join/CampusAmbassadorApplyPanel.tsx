@@ -125,6 +125,8 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
               patchForm({
                 schoolLevel: schoolLevel as CampusAmbassadorFormState["schoolLevel"],
                 schoolLevelOther: schoolLevel === "other" ? form.schoolLevelOther : "",
+                yearOfStudy: schoolLevel === "graduated" ? "" : form.yearOfStudy,
+                yearOfStudyOther: schoolLevel === "graduated" ? "" : form.yearOfStudyOther,
               })
             }
             options={CAMPUS_AMBASSADOR_SCHOOL_LEVEL_OPTIONS}
@@ -140,27 +142,31 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
             />
           ) : null}
 
-          <CampusAmbassadorSelectField
-            label={CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY}
-            name="campus-ambassador-year-of-study"
-            value={form.yearOfStudy}
-            onChange={(yearOfStudy) =>
-              patchForm({
-                yearOfStudy: yearOfStudy as CampusAmbassadorFormState["yearOfStudy"],
-                yearOfStudyOther: yearOfStudy === "other" ? form.yearOfStudyOther : "",
-              })
-            }
-            options={CAMPUS_AMBASSADOR_YEAR_OF_STUDY_OPTIONS}
-            placeholder="Select your year"
-          />
+          {form.schoolLevel !== "graduated" ? (
+            <>
+              <CampusAmbassadorSelectField
+                label={CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY}
+                name="campus-ambassador-year-of-study"
+                value={form.yearOfStudy}
+                onChange={(yearOfStudy) =>
+                  patchForm({
+                    yearOfStudy: yearOfStudy as CampusAmbassadorFormState["yearOfStudy"],
+                    yearOfStudyOther: yearOfStudy === "other" ? form.yearOfStudyOther : "",
+                  })
+                }
+                options={CAMPUS_AMBASSADOR_YEAR_OF_STUDY_OPTIONS}
+                placeholder="Select your year"
+              />
 
-          {form.yearOfStudy === "other" ? (
-            <CampusAmbassadorTextField
-              label={CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY_OTHER}
-              name="campus-ambassador-year-of-study-other"
-              value={form.yearOfStudyOther}
-              onChange={(yearOfStudyOther) => patchForm({ yearOfStudyOther })}
-            />
+              {form.yearOfStudy === "other" ? (
+                <CampusAmbassadorTextField
+                  label={CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY_OTHER}
+                  name="campus-ambassador-year-of-study-other"
+                  value={form.yearOfStudyOther}
+                  onChange={(yearOfStudyOther) => patchForm({ yearOfStudyOther })}
+                />
+              ) : null}
+            </>
           ) : null}
 
           <CampusAmbassadorTextField

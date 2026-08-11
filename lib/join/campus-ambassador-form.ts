@@ -9,6 +9,7 @@ export const CAMPUS_AMBASSADOR_SCHOOL_LEVEL_OPTIONS = [
   { value: "high-school", label: "High school" },
   { value: "college", label: "College" },
   { value: "university", label: "University" },
+  { value: "graduated", label: "Graduated" },
   { value: "other", label: "Other" },
 ] as const;
 
@@ -133,8 +134,10 @@ export function isCampusAmbassadorFormValid(data: CampusAmbassadorFormState): bo
   if (!data.stateOrProvince.trim()) return false;
   if (!data.schoolLevel) return false;
   if (data.schoolLevel === "other" && !data.schoolLevelOther.trim()) return false;
-  if (!data.yearOfStudy) return false;
-  if (data.yearOfStudy === "other" && !data.yearOfStudyOther.trim()) return false;
+  if (data.schoolLevel !== "graduated") {
+    if (!data.yearOfStudy) return false;
+    if (data.yearOfStudy === "other" && !data.yearOfStudyOther.trim()) return false;
+  }
   if (!data.fieldOfStudy.trim()) return false;
   if (data.healthPrograms.length === 0) return false;
   if (data.healthPrograms.includes("other") && !data.healthProgramOther.trim()) return false;
