@@ -26,7 +26,9 @@ import {
   CAMPUS_AMBASSADOR_REQUIRED_NOTE,
   CAMPUS_AMBASSADOR_SELECT_ALL_HINT,
   CAMPUS_AMBASSADOR_STATEMENTS_HEADING,
+  CAMPUS_AMBASSADOR_SUBMIT_INCOMPLETE_MESSAGE,
   CAMPUS_AMBASSADOR_SUBMIT_LABEL,
+  CAMPUS_AMBASSADOR_SUBMIT_SUCCESS_MESSAGE,
 } from "@/lib/join/campus-ambassador-copy";
 import {
   CAMPUS_AMBASSADOR_COUNTRY_OPTIONS,
@@ -48,19 +50,29 @@ type CampusAmbassadorApplyPanelProps = {
   id?: string;
 };
 
+type SubmitFeedback = "incomplete" | "success" | null;
+
 /** Campus ambassador application — full survey with custom Doe-styled controls. */
 export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelProps) {
   const [form, setForm] = useState<CampusAmbassadorFormState>(CAMPUS_AMBASSADOR_INITIAL_FORM_STATE);
   const [submitted, setSubmitted] = useState(false);
+  const [submitFeedback, setSubmitFeedback] = useState<SubmitFeedback>(null);
 
   const patchForm = (patch: Partial<CampusAmbassadorFormState>) => {
     setForm((current) => ({ ...current, ...patch }));
+    if (submitFeedback === "incomplete") {
+      setSubmitFeedback(null);
+    }
   };
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!isCampusAmbassadorFormValid(form)) return;
+    if (!isCampusAmbassadorFormValid(form)) {
+      setSubmitFeedback("incomplete");
+      return;
+    }
     setSubmitted(true);
+    setSubmitFeedback("success");
   };
 
   return (
@@ -224,8 +236,20 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
           disabled={submitted}
           className={`campus-ambassador-submit mx-auto inline-flex items-center justify-center rounded-xl px-6 py-3.5 font-semibold leading-tight tracking-[-0.01em] disabled:opacity-60 text-[clamp(1.05rem,0.92rem+0.55vmin,1.22rem)] iphone-page:px-7 iphone-page:py-4 iphone-page:text-[clamp(1.12rem,0.98rem+0.62vmin,1.28rem)] ${dmSans.className}`}
         >
-          {submitted ? "Application received" : CAMPUS_AMBASSADOR_SUBMIT_LABEL}
+          {CAMPUS_AMBASSADOR_SUBMIT_LABEL}
         </button>
+
+        {submitFeedback ? (
+          <p
+            role="alert"
+            aria-live="polite"
+            className={`campus-ambassador-submit-feedback campus-ambassador-submit-feedback--${submitFeedback} text-center ${inter.className}`}
+          >
+            {submitFeedback === "success"
+              ? CAMPUS_AMBASSADOR_SUBMIT_SUCCESS_MESSAGE
+              : CAMPUS_AMBASSADOR_SUBMIT_INCOMPLETE_MESSAGE}
+          </p>
+        ) : null}
       </form>
     </aside>
   );

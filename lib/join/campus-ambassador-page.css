@@ -221,6 +221,34 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassa
   line-height: 1.4;
 }
 
+.campus-ambassador-submit-feedback {
+  margin: 0;
+  max-width: 34rem;
+  align-self: center;
+  font-size: clamp(0.92rem, 0.82rem + 0.38vmin, 1.05rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.45;
+}
+
+.campus-ambassador-submit-feedback--incomplete {
+  color: #e8a060;
+}
+
+.campus-ambassador-submit-feedback--success {
+  color: rgba(242, 232, 218, 0.88);
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main .campus-ambassador-submit-feedback--incomplete,
+html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassador-submit-feedback--incomplete {
+  color: #e8a060 !important;
+}
+
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main .campus-ambassador-submit-feedback--success,
+html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassador-submit-feedback--success {
+  color: rgba(242, 232, 218, 0.88) !important;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
