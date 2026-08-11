@@ -2,7 +2,6 @@
 
 import { useState, type FormEvent } from "react";
 
-import { AboutContactRingsGraphic } from "@/components/about/AboutContactRingsGraphic";
 import {
   CampusAmbassadorCheckboxGroup,
   CampusAmbassadorFormSection,
@@ -70,13 +69,6 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
       className={`campus-ambassador-apply relative flex w-full items-stretch overflow-hidden border border-[rgba(212,165,116,0.28)] bg-[#271F17] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
       aria-label="Campus ambassador application"
     >
-      <div
-        className="broader-doe-email-invite__rings pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[min(92%,15rem)]"
-        aria-hidden
-      >
-        <AboutContactRingsGraphic />
-      </div>
-
       <form
         className="relative z-10 flex w-full flex-col gap-6 px-6 py-8 iphone-page:gap-7 iphone-page:px-8 iphone-page:py-10"
         onSubmit={onSubmit}
@@ -224,7 +216,7 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
         <button
           type="submit"
           disabled={submitted}
-          className={`campus-ambassador-submit mx-auto inline-flex items-center justify-center rounded-xl px-6 py-3.5 font-medium leading-tight tracking-[-0.01em] transition-colors disabled:opacity-60 text-[clamp(1.05rem,0.92rem+0.55vmin,1.22rem)] iphone-page:px-7 iphone-page:py-4 iphone-page:text-[clamp(1.12rem,0.98rem+0.62vmin,1.28rem)] ${dmSans.className}`}
+          className={`campus-ambassador-submit mx-auto inline-flex items-center justify-center rounded-xl px-6 py-3.5 font-semibold leading-tight tracking-[-0.01em] disabled:opacity-60 text-[clamp(1.05rem,0.92rem+0.55vmin,1.22rem)] iphone-page:px-7 iphone-page:py-4 iphone-page:text-[clamp(1.12rem,0.98rem+0.62vmin,1.28rem)] ${dmSans.className}`}
         >
           {submitted ? "Application received" : CAMPUS_AMBASSADOR_SUBMIT_LABEL}
         </button>
