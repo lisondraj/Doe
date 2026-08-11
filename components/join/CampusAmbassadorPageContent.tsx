@@ -50,8 +50,12 @@ export function CampusAmbassadorPageContent() {
 
       <div className={ABOUT_MOBILE_SECTION_GAP}>
         <div className={ABOUT_MOBILE_CONTENT_GAP}>
-          <p className={BROADER_DOE_VISION_BODY_TW}>{CAMPUS_AMBASSADOR_OPENING_PARAGRAPH}</p>
-          <p className={BROADER_DOE_VISION_BODY_TW}>{CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY}</p>
+          <p className={BROADER_DOE_VISION_BODY_TW}>
+            <span className="broader-doe-thesis-text">{CAMPUS_AMBASSADOR_OPENING_PARAGRAPH}</span>
+          </p>
+          <p className={BROADER_DOE_VISION_BODY_TW}>
+            <span className="broader-doe-thesis-text">{CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY}</span>
+          </p>
           <p className={BROADER_DOE_VISION_BODY_TW}>{CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH}</p>
 
           <CampusAmbassadorApplyPanel />
