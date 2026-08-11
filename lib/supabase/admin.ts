@@ -33,6 +33,24 @@ export type InternshipApplicationEmailRow = {
   error_message: string | null;
 };
 
+export type CampusAmbassadorApplicationRow = {
+  id: string;
+  created_at: string;
+  full_name: string;
+  email: string;
+  country: "us" | "canada";
+  state_or_province: string;
+  school_level: "high-school" | "college" | "university" | "graduated" | "other";
+  school_level_other: string | null;
+  year_of_study: "year-1" | "year-2" | "year-3" | "year-4" | "year-5-plus" | "other" | null;
+  year_of_study_other: string | null;
+  field_of_study: string;
+  health_programs: string[];
+  health_program_other: string | null;
+  statements: string[];
+  linkedin_url: string;
+};
+
 export function createSupabaseAdmin(): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

@@ -28,6 +28,7 @@ import {
   CAMPUS_AMBASSADOR_STATEMENTS_HEADING,
   CAMPUS_AMBASSADOR_SUBMIT_INCOMPLETE_MESSAGE,
   CAMPUS_AMBASSADOR_SUBMIT_LABEL,
+  CAMPUS_AMBASSADOR_SUBMIT_ERROR_MESSAGE,
   CAMPUS_AMBASSADOR_SUBMIT_SUCCESS_MESSAGE,
 } from "@/lib/join/campus-ambassador-copy";
 import {
@@ -50,12 +51,13 @@ type CampusAmbassadorApplyPanelProps = {
   id?: string;
 };
 
-type SubmitFeedback = "incomplete" | "success" | null;
+type SubmitFeedback = "incomplete" | "success" | "error" | null;
 
 /** Campus ambassador application — full survey with custom Doe-styled controls. */
 export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelProps) {
   const [form, setForm] = useState<CampusAmbassadorFormState>(CAMPUS_AMBASSADOR_INITIAL_FORM_STATE);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [submitFeedback, setSubmitFeedback] = useState<SubmitFeedback>(null);
 
   const patchForm = (patch: Partial<CampusAmbassadorFormState>) => {
@@ -65,14 +67,36 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
     }
   };
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isCampusAmbassadorFormValid(form)) {
       setSubmitFeedback("incomplete");
       return;
     }
-    setSubmitted(true);
-    setSubmitFeedback("success");
+
+    setSubmitting(true);
+    setSubmitFeedback(null);
+
+    try {
+      const response = await fetch("/api/join/campus-ambassador/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      if (!response.ok) {
+        throw new Error(payload?.error || CAMPUS_AMBASSADOR_SUBMIT_ERROR_MESSAGE);
+      }
+
+      setSubmitted(true);
+      setSubmitFeedback("success");
+    } catch (error) {
+      setSubmitFeedback("error");
+      console.error("[join/campus-ambassador] submit failed:", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -232,10 +256,10 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
 
         <button
           type="submit"
-          disabled={submitted}
+          disabled={submitted || submitting}
           className={`campus-ambassador-submit mx-auto inline-flex items-center justify-center rounded-xl px-6 py-3.5 font-semibold leading-tight tracking-[-0.01em] disabled:opacity-60 text-[clamp(1.05rem,0.92rem+0.55vmin,1.22rem)] iphone-page:px-7 iphone-page:py-4 iphone-page:text-[clamp(1.12rem,0.98rem+0.62vmin,1.28rem)] ${dmSans.className}`}
         >
-          {CAMPUS_AMBASSADOR_SUBMIT_LABEL}
+          {submitting ? "Submitting…" : CAMPUS_AMBASSADOR_SUBMIT_LABEL}
         </button>
 
         {submitFeedback ? (
@@ -246,7 +270,9 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
           >
             {submitFeedback === "success"
               ? CAMPUS_AMBASSADOR_SUBMIT_SUCCESS_MESSAGE
-              : CAMPUS_AMBASSADOR_SUBMIT_INCOMPLETE_MESSAGE}
+              : submitFeedback === "error"
+                ? CAMPUS_AMBASSADOR_SUBMIT_ERROR_MESSAGE
+                : CAMPUS_AMBASSADOR_SUBMIT_INCOMPLETE_MESSAGE}
           </p>
         ) : null}
       </form>

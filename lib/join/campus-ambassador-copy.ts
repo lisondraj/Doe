@@ -40,6 +40,9 @@ export const CAMPUS_AMBASSADOR_SUBMIT_INCOMPLETE_MESSAGE =
 export const CAMPUS_AMBASSADOR_SUBMIT_SUCCESS_MESSAGE =
   "Submitted. Thank you for your interest in joining our venture! We will be in touch with you shortly.";
 
+export const CAMPUS_AMBASSADOR_SUBMIT_ERROR_MESSAGE =
+  "Could not submit your application. Please try again.";
+
 export const CAMPUS_AMBASSADOR_FORM_HEADLINE = "Apply to represent Doe on your campus";
 
 export const CAMPUS_AMBASSADOR_FIELD_FULL_NAME = "What is your full name?";
