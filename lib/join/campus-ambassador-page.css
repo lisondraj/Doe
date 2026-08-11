@@ -107,6 +107,15 @@
   background: rgba(18, 14, 10, 0.42);
 }
 
+.campus-ambassador-checkbox-group__heading {
+  margin: 0 0 0.35rem;
+}
+
+.campus-ambassador-checkbox-other-input {
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+}
+
 .campus-ambassador-checkbox-row:focus-within .campus-ambassador-checkbox-box {
   border-color: rgba(232, 192, 142, 0.55);
 }

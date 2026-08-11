@@ -43,6 +43,7 @@ export const CAMPUS_AMBASSADOR_HEALTH_PROGRAM_OPTIONS = [
   { id: "audiology", label: "Audiology" },
   { id: "mental-health", label: "Mental Health Counseling / Clinical Psychology" },
   { id: "biomedical-research", label: "Biomedical / Health Sciences Research" },
+  { id: "other", label: "Other" },
 ] as const;
 
 export type CampusAmbassadorHealthProgramId = (typeof CAMPUS_AMBASSADOR_HEALTH_PROGRAM_OPTIONS)[number]["id"];
@@ -76,6 +77,7 @@ export type CampusAmbassadorFormState = {
   yearOfStudyOther: string;
   fieldOfStudy: string;
   healthPrograms: CampusAmbassadorHealthProgramId[];
+  healthProgramOther: string;
   statements: CampusAmbassadorStatementId[];
   linkedin: string;
 };
@@ -90,6 +92,7 @@ export const CAMPUS_AMBASSADOR_INITIAL_FORM_STATE: CampusAmbassadorFormState = {
   yearOfStudyOther: "",
   fieldOfStudy: "",
   healthPrograms: [],
+  healthProgramOther: "",
   statements: [],
   linkedin: "",
 };
@@ -110,6 +113,7 @@ export function isCampusAmbassadorFormValid(data: CampusAmbassadorFormState): bo
   if (data.yearOfStudy === "other" && !data.yearOfStudyOther.trim()) return false;
   if (!data.fieldOfStudy.trim()) return false;
   if (data.healthPrograms.length === 0) return false;
+  if (data.healthPrograms.includes("other") && !data.healthProgramOther.trim()) return false;
   if (!data.linkedin.trim()) return false;
   return true;
 }

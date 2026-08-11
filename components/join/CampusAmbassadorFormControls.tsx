@@ -162,6 +162,10 @@ type CampusAmbassadorCheckboxGroupProps<T extends string> = {
   values: readonly T[];
   onToggle: (id: T) => void;
   required?: boolean;
+  otherOptionId?: T;
+  otherValue?: string;
+  onOtherChange?: (value: string) => void;
+  otherPlaceholder?: string;
 };
 
 export function CampusAmbassadorCheckboxGroup<T extends string>({
@@ -172,17 +176,32 @@ export function CampusAmbassadorCheckboxGroup<T extends string>({
   values,
   onToggle,
   required = false,
+  otherOptionId,
+  otherValue = "",
+  onOtherChange,
+  otherPlaceholder = "Please specify",
 }: CampusAmbassadorCheckboxGroupProps<T>) {
+  const groupId = useId();
+
   return (
-    <fieldset className="campus-ambassador-checkbox-group m-0 border-0 p-0">
-      <legend className={GROUP_HEADING_CLASS}>
+    <fieldset
+      className="campus-ambassador-checkbox-group m-0 border-0 p-0"
+      aria-labelledby={groupId}
+    >
+      <legend className="sr-only">
+        {legend}
+        {required ? " (required)" : ""}
+      </legend>
+      <p id={groupId} className={`${GROUP_HEADING_CLASS} campus-ambassador-checkbox-group__heading`}>
         {legend}
         {required ? <span aria-hidden> *</span> : null}
-      </legend>
+      </p>
       {hint ? <p className={GROUP_HINT_CLASS}>{hint}</p> : null}
       <ul className="m-0 flex list-none flex-col gap-3 p-0 iphone-page:gap-3.5">
         {options.map((option, index) => {
           const checked = values.includes(option.id);
+          const isOther = otherOptionId != null && option.id === otherOptionId;
+
           return (
             <li key={option.id}>
               <label className="campus-ambassador-checkbox-row flex cursor-pointer items-start gap-3">
@@ -194,9 +213,22 @@ export function CampusAmbassadorCheckboxGroup<T extends string>({
                   className="campus-ambassador-checkbox-input sr-only"
                 />
                 <span className="campus-ambassador-checkbox-box mt-0.5 shrink-0" aria-hidden />
-                <span className={`campus-ambassador-checkbox-label text-[clamp(1.02rem,0.9rem+0.48vmin,1.16rem)] font-normal leading-snug tracking-[-0.01em] iphone-page:text-[clamp(1.08rem,0.94rem+0.52vmin,1.22rem)] ${dmSans.className}`}>
-                  {option.label}
-                </span>
+                {isOther && checked ? (
+                  <input
+                    type="text"
+                    name={`${name}-other`}
+                    value={otherValue}
+                    required={required}
+                    placeholder={otherPlaceholder}
+                    onChange={(event) => onOtherChange?.(event.target.value)}
+                    onClick={(event) => event.stopPropagation()}
+                    className={`campus-ambassador-checkbox-other-input min-w-0 flex-1 ${FIELD_INPUT_CLASS}`}
+                  />
+                ) : (
+                  <span className={`campus-ambassador-checkbox-label text-[clamp(1.02rem,0.9rem+0.48vmin,1.16rem)] font-normal leading-snug tracking-[-0.01em] iphone-page:text-[clamp(1.08rem,0.94rem+0.52vmin,1.22rem)] ${dmSans.className}`}>
+                    {option.label}
+                  </span>
+                )}
               </label>
             </li>
           );

@@ -35,7 +35,9 @@ export const CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY_OTHER = "Please specify your 
 export const CAMPUS_AMBASSADOR_FIELD_OF_STUDY = "What is your field of study?";
 
 export const CAMPUS_AMBASSADOR_HEALTH_PROGRAMS_HEADING =
-  "Which of the following health professional programs will you be applying to?";
+  "Which of the following professional schools are you applying to?";
+
+export const CAMPUS_AMBASSADOR_HEALTH_PROGRAM_OTHER_PLACEHOLDER = "Please specify your program";
 
 export const CAMPUS_AMBASSADOR_SELECT_ALL_HINT = "Select all that apply.";
 

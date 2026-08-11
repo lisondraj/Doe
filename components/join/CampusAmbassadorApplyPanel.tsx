@@ -20,6 +20,7 @@ import {
   CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY,
   CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY_OTHER,
   CAMPUS_AMBASSADOR_HEALTH_PROGRAMS_HEADING,
+  CAMPUS_AMBASSADOR_HEALTH_PROGRAM_OTHER_PLACEHOLDER,
   CAMPUS_AMBASSADOR_LINKEDIN_PLACEHOLDER,
   CAMPUS_AMBASSADOR_REQUIRED_NOTE,
   CAMPUS_AMBASSADOR_SELECT_ALL_HINT,
@@ -79,12 +80,6 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
         onSubmit={onSubmit}
         noValidate
       >
-        <p
-          className={`text-center font-medium leading-[1.12] tracking-[-0.02em] text-[#F2E8DA] text-[clamp(1.55rem,1.28rem+1.05vmin,1.95rem)] iphone-page:text-[clamp(1.72rem,1.42rem+1.2vmin,2.15rem)] ${dmSans.className}`}
-        >
-          {CAMPUS_AMBASSADOR_FORM_HEADLINE}
-        </p>
-
         <p className={`campus-ambassador-required-note text-center ${inter.className}`}>
           {CAMPUS_AMBASSADOR_REQUIRED_NOTE}
         </p>
@@ -180,8 +175,16 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
             onToggle={(id: CampusAmbassadorHealthProgramId) =>
               patchForm({
                 healthPrograms: toggleCampusAmbassadorSelection(form.healthPrograms, id),
+                healthProgramOther:
+                  id === "other" && form.healthPrograms.includes("other")
+                    ? ""
+                    : form.healthProgramOther,
               })
             }
+            otherOptionId="other"
+            otherValue={form.healthProgramOther}
+            onOtherChange={(healthProgramOther) => patchForm({ healthProgramOther })}
+            otherPlaceholder={CAMPUS_AMBASSADOR_HEALTH_PROGRAM_OTHER_PLACEHOLDER}
             required
           />
 
