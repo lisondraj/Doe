@@ -20,9 +20,9 @@ import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 const ADMIN_ROOT_PATH = "/admin";
 const ADMIN_AUTH_CALLBACK_PATH = "/auth/callback";
 const ADMIN_SIGNOUT_API_PATH = "/api/admin/auth/signout";
-const ADMIN_SEND_OTP_API_PATH = "/api/admin/auth/send-otp";
+const ADMIN_SIGN_IN_API_PATH = "/api/admin/auth/sign-in";
 
-const ADMIN_PUBLIC_API_PATHS = new Set([ADMIN_SIGNOUT_API_PATH, ADMIN_SEND_OTP_API_PATH]);
+const ADMIN_PUBLIC_API_PATHS = new Set([ADMIN_SIGNOUT_API_PATH, ADMIN_SIGN_IN_API_PATH]);
 
 function applyLandingSiteHeaders(response: NextResponse) {
   /** Bust edge/browser caches of the old permanent redirect to /join. */

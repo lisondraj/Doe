@@ -26,9 +26,15 @@ loadEnvFile();
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const initialPassword = process.env.ADMIN_INITIAL_PASSWORD;
 
 if (!url || !serviceRoleKey || serviceRoleKey.startsWith("your-")) {
   console.error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.");
+  process.exit(1);
+}
+
+if (!initialPassword) {
+  console.error("Missing ADMIN_INITIAL_PASSWORD — pass the password only via env for this one-time setup.");
   process.exit(1);
 }
 
@@ -51,12 +57,24 @@ const existing = listed.users.find(
 );
 
 if (existing) {
-  console.log(`Admin auth user already exists: ${ADMIN_EMAIL} (${existing.id})`);
+  const { error: updateError } = await supabase.auth.admin.updateUserById(existing.id, {
+    email: ADMIN_EMAIL,
+    password: initialPassword,
+    email_confirm: true,
+  });
+
+  if (updateError) {
+    console.error("Could not update admin auth user:", updateError.message);
+    process.exit(1);
+  }
+
+  console.log(`Updated admin auth user password: ${ADMIN_EMAIL} (${existing.id})`);
   process.exit(0);
 }
 
 const { data, error } = await supabase.auth.admin.createUser({
   email: ADMIN_EMAIL,
+  password: initialPassword,
   email_confirm: true,
 });
 
