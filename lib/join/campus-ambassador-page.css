@@ -1,3 +1,7 @@
+.campus-ambassador-subheading {
+  white-space: nowrap;
+}
+
 .campus-ambassador-field-label {
   color: #e8c08e;
 }
@@ -29,5 +33,10 @@
 }
 
 .campus-ambassador-required-note {
-  color: rgba(232, 192, 142, 0.82);
+  margin: -0.35rem 0 0;
+  color: rgba(232, 192, 142, 0.7);
+  font-size: clamp(0.9rem, 0.8rem + 0.35vmin, 1.02rem);
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  line-height: 1.4;
 }

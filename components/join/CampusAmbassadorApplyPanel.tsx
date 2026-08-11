@@ -7,10 +7,11 @@ import {
   CAMPUS_AMBASSADOR_FIELD_COUNT,
   CAMPUS_AMBASSADOR_FIELD_PROMPT,
   CAMPUS_AMBASSADOR_FORM_HEADLINE,
+  CAMPUS_AMBASSADOR_REQUIRED_NOTE,
   CAMPUS_AMBASSADOR_SUBMIT_LABEL,
 } from "@/lib/join/campus-ambassador-copy";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
-import { dmSans } from "@/lib/home/fonts";
+import { dmSans, inter } from "@/lib/home/fonts";
 
 function emptyFields(count: number) {
   return Array.from({ length: count }, () => "");
@@ -63,6 +64,10 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
           className={`text-center font-medium leading-[1.12] tracking-[-0.02em] text-[#F2E8DA] text-[clamp(1.55rem,1.28rem+1.05vmin,1.95rem)] iphone-page:text-[clamp(1.72rem,1.42rem+1.2vmin,2.15rem)] ${dmSans.className}`}
         >
           {CAMPUS_AMBASSADOR_FORM_HEADLINE}
+        </p>
+
+        <p className={`campus-ambassador-required-note text-center ${inter.className}`}>
+          {CAMPUS_AMBASSADOR_REQUIRED_NOTE}
         </p>
 
         <div className="flex flex-1 flex-col gap-5 iphone-page:gap-6">

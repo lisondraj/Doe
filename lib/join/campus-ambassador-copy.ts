@@ -8,13 +8,12 @@ import { JOIN_PATH } from "@/lib/site-domains";
 
 export const CAMPUS_AMBASSADOR_PAGE_TITLE = "Campus Ambassador Program";
 
-export const CAMPUS_AMBASSADOR_SUBHEADING =
-  "Open to all pre-health students who want to represent Doe on campus and connect peers with clinical intelligence.";
+export const CAMPUS_AMBASSADOR_SUBHEADING = "Open to all pre-health students.";
 
 export const CAMPUS_AMBASSADOR_REQUIRED_NOTE = "All fields marked with * are required.";
 
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH =
-  "Campus ambassadors help pre-med and pre-health communities discover how Doe supports clinical learning, documentation, and the path toward intelligent care. Tell us a bit about yourself below—we review every submission.";
+  "Campus ambassadors help pre-med and pre-health communities discover how Doe supports clinical learning, documentation, and intelligent care. Tell us a bit about yourself below. We review every submission.";
 
 export const CAMPUS_AMBASSADOR_FIELD_PROMPT = "What is your name?";
 
