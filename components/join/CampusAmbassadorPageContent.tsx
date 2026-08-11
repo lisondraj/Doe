@@ -13,7 +13,6 @@ import {
   BROADER_DOE_VISION_HERO_HEADLINES_WRAP,
   BROADER_DOE_VISION_HERO_INTRO_WRAP,
   BROADER_DOE_VISION_HERO_WRAP,
-  BROADER_DOE_VISION_SUBHEADING_TW,
   BROADER_DOE_VISION_TITLE_TW,
   ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
@@ -21,7 +20,6 @@ import { BROADER_DOE_VISION_HERO_BACKDROP } from "@/lib/blog/broader-doe-vision-
 import {
   CAMPUS_AMBASSADOR_OPENING_PARAGRAPH,
   CAMPUS_AMBASSADOR_PAGE_TITLE,
-  CAMPUS_AMBASSADOR_SUBHEADING,
 } from "@/lib/join/campus-ambassador-copy";
 
 /** doe.care /join — campus ambassador iPhone article band. */

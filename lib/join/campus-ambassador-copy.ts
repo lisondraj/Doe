@@ -8,8 +8,6 @@ import { JOIN_PATH } from "@/lib/site-domains";
 
 export const CAMPUS_AMBASSADOR_PAGE_TITLE = "Campus Ambassador Program";
 
-export const CAMPUS_AMBASSADOR_SUBHEADING = "Open to all pre-health students.";
-
 export const CAMPUS_AMBASSADOR_REQUIRED_NOTE = "All fields marked with * are required.";
 
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH =
