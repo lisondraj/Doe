@@ -4,6 +4,7 @@ import { BlogArticleCategory } from "@/components/blog/BlogArticleCategory";
 import { PremedBlogRelatedCarousel } from "@/components/premed/PremedBlogRelatedCarousel";
 import { BroaderDoeVisionProposalQuote } from "@/components/blog/BroaderDoeVisionProposalQuote";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
+import { PremedCampusAmbassadorInvite } from "@/components/premed/PremedCampusAmbassadorInvite";
 import { PremedContactLink } from "@/components/premed/PremedContactLink";
 import { PremedEarlyStageLinks } from "@/components/premed/PremedEarlyStageLinks";
 import { PremedEmailInvite } from "@/components/premed/PremedEmailInvite";
@@ -163,6 +164,7 @@ export function PremedPageContent({
 
           <div id={ABOUT_STYLE_ARTICLE_TOC_IDS.contact} className={ABOUT_STYLE_ARTICLE_SECTION_ANCHOR}>
             <PremedEmailInvite />
+            <PremedCampusAmbassadorInvite />
           </div>
 
           <BlogArticleFooterCarouselBand>

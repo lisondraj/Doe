@@ -19,6 +19,13 @@ export const PREMED_LEARN_MORE_MODAL_EMAIL_LABEL = "Email James";
 
 export const PREMED_LEARN_MORE_MODAL_DISMISS_LABEL = "Close";
 
+export const PREMED_CAMPUS_AMBASSADOR_HEADLINE = "Register for our Campus Ambassador Program";
+
+export const PREMED_CAMPUS_AMBASSADOR_DESCRIPTION =
+  "Represent Doe on your campus and connect pre-health students to our vision for healthcare intelligence.";
+
+export const PREMED_CAMPUS_AMBASSADOR_CTA_LABEL = "Apply now";
+
 export const PREMED_TOP_BANNER = {
   message: ABOUT_TOP_BANNER_MESSAGE,
   linkLabel: ABOUT_TOP_BANNER_LINK_LABEL,
