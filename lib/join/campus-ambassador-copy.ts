@@ -8,7 +8,7 @@ import { JOIN_PATH } from "@/lib/site-domains";
 
 export const CAMPUS_AMBASSADOR_PAGE_TITLE = "Campus Ambassador Program";
 
-export const CAMPUS_AMBASSADOR_FOUNDERS_MEMO_LINK_LABEL = "Read the founders memo";
+export const CAMPUS_AMBASSADOR_FOUNDERS_MEMO_LINK_LABEL = "Read the Founder's Memo";
 
 export const CAMPUS_AMBASSADOR_REQUIRED_NOTE = "All fields marked with * are required.";
 

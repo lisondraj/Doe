@@ -4,7 +4,7 @@
   justify-content: center;
   gap: 0.28rem;
   margin: 0;
-  font-size: clamp(0.88rem, 0.8rem + 0.32vmin, 0.98rem);
+  font-size: clamp(0.98rem, 0.9rem + 0.38vmin, 1.1rem);
   font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 1.2;
@@ -38,7 +38,7 @@
 
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main .campus-ambassador-founders-memo-link,
 html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassador-founders-memo-link {
-  font-size: clamp(0.92rem, 0.84rem + 0.34vmin, 1.02rem);
+  font-size: clamp(1.04rem, 0.96rem + 0.42vmin, 1.16rem);
 }
 
 .campus-ambassador-field-label,
