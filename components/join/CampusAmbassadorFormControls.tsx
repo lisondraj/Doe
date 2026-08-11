@@ -21,6 +21,7 @@ type CampusAmbassadorTextFieldProps = {
   type?: "text" | "email";
   autoComplete?: string;
   placeholder?: string;
+  description?: string;
 };
 
 export function CampusAmbassadorTextField({
@@ -32,6 +33,7 @@ export function CampusAmbassadorTextField({
   type = "text",
   autoComplete,
   placeholder,
+  description,
 }: CampusAmbassadorTextFieldProps) {
   const [focused, setFocused] = useState(false);
   const resolvedPlaceholder = placeholder ?? label;
@@ -42,6 +44,9 @@ export function CampusAmbassadorTextField({
         {label}
         {required ? <span aria-hidden> *</span> : null}
       </span>
+      {description ? (
+        <p className={`campus-ambassador-field-description mb-2.5 ${dmSans.className}`}>{description}</p>
+      ) : null}
       <input
         type={type}
         name={name}

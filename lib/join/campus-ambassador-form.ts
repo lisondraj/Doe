@@ -71,6 +71,7 @@ export type CampusAmbassadorFormState = {
   fullName: string;
   email: string;
   country: CampusAmbassadorCountry | "";
+  stateOrProvince: string;
   schoolLevel: CampusAmbassadorSchoolLevel | "";
   schoolLevelOther: string;
   yearOfStudy: CampusAmbassadorYearOfStudy | "";
@@ -86,6 +87,7 @@ export const CAMPUS_AMBASSADOR_INITIAL_FORM_STATE: CampusAmbassadorFormState = {
   fullName: "",
   email: "",
   country: "",
+  stateOrProvince: "",
   schoolLevel: "",
   schoolLevelOther: "",
   yearOfStudy: "",
@@ -107,6 +109,7 @@ export function isCampusAmbassadorFormValid(data: CampusAmbassadorFormState): bo
   if (!data.fullName.trim()) return false;
   if (!isCampusAmbassadorEmailValid(data.email)) return false;
   if (!data.country) return false;
+  if (!data.stateOrProvince.trim()) return false;
   if (!data.schoolLevel) return false;
   if (data.schoolLevel === "other" && !data.schoolLevelOther.trim()) return false;
   if (!data.yearOfStudy) return false;

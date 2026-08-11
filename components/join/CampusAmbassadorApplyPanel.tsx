@@ -17,6 +17,8 @@ import {
   CAMPUS_AMBASSADOR_FIELD_OF_STUDY,
   CAMPUS_AMBASSADOR_FIELD_SCHOOL_LEVEL,
   CAMPUS_AMBASSADOR_FIELD_SCHOOL_LEVEL_OTHER,
+  CAMPUS_AMBASSADOR_FIELD_STATE_OR_PROVINCE,
+  CAMPUS_AMBASSADOR_FIELD_STATE_OR_PROVINCE_HINT,
   CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY,
   CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY_OTHER,
   CAMPUS_AMBASSADOR_HEALTH_PROGRAMS_HEADING,
@@ -111,6 +113,16 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
             }
             options={CAMPUS_AMBASSADOR_COUNTRY_OPTIONS}
             placeholder="Select a country"
+          />
+
+          <CampusAmbassadorTextField
+            label={CAMPUS_AMBASSADOR_FIELD_STATE_OR_PROVINCE}
+            description={CAMPUS_AMBASSADOR_FIELD_STATE_OR_PROVINCE_HINT}
+            name="campus-ambassador-state-or-province"
+            value={form.stateOrProvince}
+            onChange={(stateOrProvince) => patchForm({ stateOrProvince })}
+            autoComplete="address-level1"
+            placeholder="State or province"
           />
 
           <CampusAmbassadorSelectField

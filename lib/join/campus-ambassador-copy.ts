@@ -23,6 +23,12 @@ export const CAMPUS_AMBASSADOR_FIELD_EMAIL = "What is your email?";
 
 export const CAMPUS_AMBASSADOR_FIELD_COUNTRY = "Which country do you currently reside in?";
 
+export const CAMPUS_AMBASSADOR_FIELD_STATE_OR_PROVINCE =
+  "What state or province do you currently live in?";
+
+export const CAMPUS_AMBASSADOR_FIELD_STATE_OR_PROVINCE_HINT =
+  "If you're comfortable, please include the city.";
+
 export const CAMPUS_AMBASSADOR_FIELD_SCHOOL_LEVEL =
   "Are you currently in high school, college, or university?";
 

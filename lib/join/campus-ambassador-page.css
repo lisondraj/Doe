@@ -7,6 +7,15 @@
   color: rgba(232, 192, 142, 0.62);
 }
 
+.campus-ambassador-field-description {
+  margin: -0.15rem 0 0.65rem;
+  color: rgba(232, 192, 142, 0.52);
+  font-size: clamp(0.82rem, 0.74rem + 0.32vmin, 0.92rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+}
+
 .campus-ambassador-field-input {
   background: rgba(18, 14, 10, 0.72);
   border: 1px solid rgba(212, 165, 116, 0.28);

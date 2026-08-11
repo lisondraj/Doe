@@ -53,7 +53,7 @@ export function CampusAmbassadorPageContent() {
           <PremedEmailInvite />
 
           <BlogArticleFooterCarouselBand>
-            <BlogArticleRelatedCarousel currentSlug="the-broader-doe-vision" />
+            <PremedBlogRelatedCarousel currentSlug="the-broader-doe-vision" />
           </BlogArticleFooterCarouselBand>
         </div>
       </div>
