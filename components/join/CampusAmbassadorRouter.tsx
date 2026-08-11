@@ -1,5 +1,6 @@
 "use client";
 
+import { CampusAmbassadorDesktopView } from "@/components/join/CampusAmbassadorDesktopView";
 import { CampusAmbassadorMobileView } from "@/components/join/CampusAmbassadorMobileView";
 import { PremedLearnMoreProvider } from "@/components/premed/PremedLearnMoreProvider";
 import { PremedLinkGuard } from "@/components/premed/PremedLinkGuard";
@@ -10,9 +11,9 @@ import {
 } from "@/lib/join/join-campus-page-path";
 import { joinPageUrl } from "@/lib/site-domains";
 
-/** doe.care /join — iPhone-only campus ambassador page. */
+/** doe.care /join — campus ambassador page (premed-style phone + desktop layouts). */
 export function CampusAmbassadorRouter() {
-  useAboutPageVariant();
+  const variant = useAboutPageVariant();
 
   if (typeof window !== "undefined" && !joinCampusPageHostAllowed(window.location.hostname)) {
     return (
@@ -31,7 +32,7 @@ export function CampusAmbassadorRouter() {
   return (
     <PremedLearnMoreProvider>
       <PremedLinkGuard>
-        <CampusAmbassadorMobileView />
+        {variant === "desktop" ? <CampusAmbassadorDesktopView /> : <CampusAmbassadorMobileView />}
       </PremedLinkGuard>
     </PremedLearnMoreProvider>
   );

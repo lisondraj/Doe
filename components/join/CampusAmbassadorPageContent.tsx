@@ -28,7 +28,7 @@ import {
   CAMPUS_AMBASSADOR_PAGE_TITLE,
 } from "@/lib/join/campus-ambassador-copy";
 
-/** doe.care /join — campus ambassador iPhone article band. */
+/** doe.care /join — campus ambassador article band (phone + desktop). */
 export function CampusAmbassadorPageContent() {
   return (
     <div className="about-page-content campus-ambassador-page-content min-w-0 max-w-full">

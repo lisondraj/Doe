@@ -249,6 +249,16 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassa
   color: rgba(242, 232, 218, 0.88) !important;
 }
 
+html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassador-apply {
+  max-width: 42rem;
+  margin-inline: auto;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-main .broader-doe-email-invite {
+  max-width: 42rem;
+  margin-inline: auto;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

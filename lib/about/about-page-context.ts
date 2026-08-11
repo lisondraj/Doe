@@ -12,11 +12,12 @@ export function isAboutRoute(): boolean {
   return window.location.pathname === "/about";
 }
 
-/** doe.care /join — always iPhone layout, including desktop browsers. */
+/** doe.care /join — iPhone layout on touch devices; desktop browsers use desktop layout. */
 export function shouldLockJoinCampusPhoneLayout(): boolean {
   if (typeof window === "undefined") return false;
   const { pathname, hostname } = window.location;
-  return isJoinCampusPagePath(pathname, hostname);
+  if (!isJoinCampusPagePath(pathname, hostname)) return false;
+  return isTouchPrimaryDevice();
 }
 
 export function shouldLockAboutTouchPhoneLayout(): boolean {
