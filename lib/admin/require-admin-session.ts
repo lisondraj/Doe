@@ -1,4 +1,4 @@
-import { isAdminAllowedEmail } from "@/lib/admin/admin-auth";
+import { ADMIN_AUTH_ENABLED, isAdminAllowedEmail } from "@/lib/admin/admin-auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export class AdminAuthError extends Error {
@@ -12,6 +12,10 @@ export class AdminAuthError extends Error {
 }
 
 export async function requireAdminSession() {
+  if (!ADMIN_AUTH_ENABLED) {
+    return { supabase: null, user: null };
+  }
+
   const supabase = createSupabaseServerClient();
   const {
     data: { user },

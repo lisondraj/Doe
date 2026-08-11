@@ -1,6 +1,9 @@
 export const ADMIN_LOGIN_PATH = "/admin/login";
 export const ADMIN_AUTH_CALLBACK_PATH = "/auth/callback";
 
+/** Set to true to require email OTP / magic-link sign-in for /admin. */
+export const ADMIN_AUTH_ENABLED = false;
+
 /** Only these emails may access /admin. Checked server-side on every protected request. */
 export const ADMIN_ALLOWED_EMAILS = ["jameslisondra@hotmail.com"] as const;
 

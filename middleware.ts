@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import {
+  ADMIN_AUTH_ENABLED,
   ADMIN_LOGIN_PATH,
   isAdminAllowedEmail,
 } from "@/lib/admin/admin-auth";
@@ -43,6 +44,10 @@ function isAdminProtectedApiPath(pathname: string): boolean {
 }
 
 async function handleAdminAccess(request: NextRequest): Promise<NextResponse | null> {
+  if (!ADMIN_AUTH_ENABLED) {
+    return null;
+  }
+
   const { pathname } = request.nextUrl;
 
   if (
