@@ -50,7 +50,7 @@ export function BlogHeroVisual({
   useHomeHeroDuskShader?: boolean;
   /** /about + about-style blog — dedicated about-hero dusk shader preset. */
   useAboutHeroDuskShader?: boolean;
-  /** /join campus ambassador — dusk palette with ripple flow (introducing-pulse preset). */
+  /** /join campus ambassador — dusk palette with shortlist wave flow (introducing-genome preset). */
   useJoinCampusHeroDuskShader?: boolean;
   /** /blog list previews — per-post static shader tile. */
   previewShaderVariant?: AboutStyleFeatureShaderVariant;

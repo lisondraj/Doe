@@ -73,7 +73,7 @@ export function doeAboutHeroDuskShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
-/** /join campus ambassador — dusk palette with introducing-pulse ripple flow. */
+/** /join campus ambassador — dusk palette with introducing-genome shortlist wave flow. */
 export function doeJoinCampusHeroDuskShaderSurface(): ProtoGrainGradientSurface {
   return {
     variant: "join-campus-hero",

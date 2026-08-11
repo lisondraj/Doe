@@ -214,17 +214,17 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     scale: 1.12,
     speed: 0.65,
   },
-  /** /join campus ambassador — dusk palette, introducing-pulse ripple flow (not truchet). */
+  /** /join campus ambassador — dusk palette, introducing-genome shortlist wave (not truchet). */
   "join-campus-hero": {
-    shape: "ripple",
-    softness: 0.72,
-    intensity: 0.14,
+    shape: "wave",
+    softness: 0.69,
+    intensity: 0.16,
     fit: "cover",
-    rotation: 288,
-    offsetX: -0.1,
-    offsetY: -0.12,
+    rotation: 112,
+    offsetX: 0.1,
+    offsetY: -0.18,
     scale: 1.16,
-    speed: 0.35,
+    speed: 0.68,
   },
   agents: {
     shape: "blob",
