@@ -253,10 +253,10 @@ export function CampusAmbassadorCheckboxGroup<T extends string>({
         {legend}
         {required ? " (required)" : ""}
       </legend>
-      <p id={groupId} className={`${GROUP_HEADING_CLASS} campus-ambassador-checkbox-group__heading`}>
+      <span id={groupId} className={`${FIELD_LABEL_CLASS} campus-ambassador-checkbox-group__heading leading-snug`}>
         {legend}
         {required ? <span aria-hidden> *</span> : null}
-      </p>
+      </span>
       {hint ? <p className={GROUP_HINT_CLASS}>{hint}</p> : null}
       <ul className="m-0 flex list-none flex-col gap-3 p-0 iphone-page:gap-3.5">
         {options.map((option, index) => {

@@ -3,6 +3,13 @@
   color: #e8c08e;
 }
 
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main .campus-ambassador-field-label,
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main .campus-ambassador-group-heading,
+html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassador-field-label,
+html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassador-group-heading {
+  color: #e8c08e !important;
+}
+
 .campus-ambassador-group-hint {
   color: rgba(232, 192, 142, 0.62);
 }
