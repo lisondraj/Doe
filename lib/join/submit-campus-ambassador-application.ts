@@ -20,9 +20,19 @@ const STATEMENT_IDS = new Set<string>(CAMPUS_AMBASSADOR_STATEMENT_OPTIONS.map((o
 const SCHOOL_LEVELS = new Set<string>(CAMPUS_AMBASSADOR_SCHOOL_LEVEL_OPTIONS.map((option) => option.value));
 const YEAR_OF_STUDY = new Set<string>(CAMPUS_AMBASSADOR_YEAR_OF_STUDY_OPTIONS.map((option) => option.value));
 
-function parseStringArray(raw: unknown, allowed: Set<string>, fieldLabel: string): string[] {
+const MAX_FIELD_LENGTH = 500;
+const MAX_EMAIL_LENGTH = 320;
+const MAX_ARRAY_LENGTH = 32;
+
+function trimToMax(value: string, max: number): string {
+  return value.trim().slice(0, max);
+}
+
+function parseStringArray(raw: unknown, allowed: Set<string>, fieldLabel: string, maxItems: number): string[] {
   if (!Array.isArray(raw)) throw new Error(`Invalid ${fieldLabel}.`);
-  const values = raw.filter((item): item is string => typeof item === "string" && allowed.has(item));
+  const values = raw
+    .slice(0, maxItems)
+    .filter((item): item is string => typeof item === "string" && allowed.has(item));
   if (values.length === 0) throw new Error(`Select at least one ${fieldLabel}.`);
   return values;
 }
@@ -49,28 +59,31 @@ export function campusAmbassadorFormStateFromPayload(payload: unknown): CampusAm
   }
 
   return {
-    fullName: String(body.fullName ?? "").trim(),
-    email: String(body.email ?? "").trim(),
+    fullName: trimToMax(String(body.fullName ?? ""), MAX_FIELD_LENGTH),
+    email: trimToMax(String(body.email ?? ""), MAX_EMAIL_LENGTH),
     country,
-    stateOrProvince: String(body.stateOrProvince ?? "").trim(),
+    stateOrProvince: trimToMax(String(body.stateOrProvince ?? ""), MAX_FIELD_LENGTH),
     schoolLevel: schoolLevel as CampusAmbassadorFormState["schoolLevel"],
-    schoolLevelOther: String(body.schoolLevelOther ?? "").trim(),
+    schoolLevelOther: trimToMax(String(body.schoolLevelOther ?? ""), MAX_FIELD_LENGTH),
     yearOfStudy: parsedYearOfStudy,
-    yearOfStudyOther: String(body.yearOfStudyOther ?? "").trim(),
-    fieldOfStudy: String(body.fieldOfStudy ?? "").trim(),
+    yearOfStudyOther: trimToMax(String(body.yearOfStudyOther ?? ""), MAX_FIELD_LENGTH),
+    fieldOfStudy: trimToMax(String(body.fieldOfStudy ?? ""), MAX_FIELD_LENGTH),
     healthPrograms: parseStringArray(
       body.healthPrograms,
       HEALTH_PROGRAM_IDS,
       "health program",
+      MAX_ARRAY_LENGTH,
     ) as CampusAmbassadorHealthProgramId[],
-    healthProgramOther: String(body.healthProgramOther ?? "").trim(),
+    healthProgramOther: trimToMax(String(body.healthProgramOther ?? ""), MAX_FIELD_LENGTH),
     statements: Array.isArray(body.statements)
-      ? body.statements.filter(
-          (item): item is CampusAmbassadorStatementId =>
-            typeof item === "string" && STATEMENT_IDS.has(item),
-        )
+      ? body.statements
+          .slice(0, MAX_ARRAY_LENGTH)
+          .filter(
+            (item): item is CampusAmbassadorStatementId =>
+              typeof item === "string" && STATEMENT_IDS.has(item),
+          )
       : [],
-    linkedin: String(body.linkedin ?? "").trim(),
+    linkedin: trimToMax(String(body.linkedin ?? ""), MAX_FIELD_LENGTH),
   };
 }
 
