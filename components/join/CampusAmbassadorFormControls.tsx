@@ -3,6 +3,11 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
 import { dmSans } from "@/lib/home/fonts";
+import {
+  CAMPUS_AMBASSADOR_LINKEDIN_PREFIX,
+  formatCampusAmbassadorLinkedInUrl,
+  normalizeCampusAmbassadorLinkedInUsername,
+} from "@/lib/join/campus-ambassador-form";
 
 const FIELD_INPUT_CLASS = `campus-ambassador-field-input w-full rounded-xl px-4 py-3.5 text-[clamp(1.05rem,0.92rem+0.55vmin,1.22rem)] font-normal leading-snug tracking-[-0.01em] iphone-page:px-5 iphone-page:py-4 iphone-page:text-[clamp(1.12rem,0.98rem+0.62vmin,1.28rem)] ${dmSans.className}`;
 
@@ -60,6 +65,57 @@ export function CampusAmbassadorTextField({
         className={FIELD_INPUT_CLASS}
       />
     </label>
+  );
+}
+
+type CampusAmbassadorLinkedInFieldProps = {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+};
+
+/** LinkedIn profile — static linkedin.com/in/ prefix; stores full URL on submit. */
+export function CampusAmbassadorLinkedInField({
+  label,
+  name,
+  value,
+  onChange,
+  required = true,
+}: CampusAmbassadorLinkedInFieldProps) {
+  const linkedinUrl = formatCampusAmbassadorLinkedInUrl(value);
+
+  return (
+    <div className="block min-w-0 max-w-full">
+      <span className={FIELD_LABEL_CLASS}>
+        {label}
+        {required ? <span aria-hidden> *</span> : null}
+      </span>
+      <div className={`campus-ambassador-linkedin-field ${FIELD_INPUT_CLASS}`}>
+        <span className={`campus-ambassador-linkedin-field__prefix ${dmSans.className}`} aria-hidden>
+          {CAMPUS_AMBASSADOR_LINKEDIN_PREFIX}
+        </span>
+        <input
+          type="text"
+          value={value}
+          required={required}
+          autoComplete="off"
+          spellCheck={false}
+          aria-label="LinkedIn username"
+          onChange={(event) => onChange(normalizeCampusAmbassadorLinkedInUsername(event.target.value))}
+          onKeyDown={(event) => {
+            const input = event.currentTarget;
+            const atStart = input.selectionStart === 0 && input.selectionEnd === 0;
+            if (atStart && (event.key === "Backspace" || event.key === "Delete")) {
+              event.preventDefault();
+            }
+          }}
+          className={`campus-ambassador-linkedin-field__input min-w-0 flex-1 bg-transparent p-0 outline-none ${dmSans.className}`}
+        />
+      </div>
+      <input type="hidden" name={name} value={linkedinUrl} />
+    </div>
   );
 }
 

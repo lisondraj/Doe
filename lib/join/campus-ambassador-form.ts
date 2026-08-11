@@ -101,6 +101,27 @@ export const CAMPUS_AMBASSADOR_INITIAL_FORM_STATE: CampusAmbassadorFormState = {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+export const CAMPUS_AMBASSADOR_LINKEDIN_PREFIX = "linkedin.com/in/";
+
+/** Strip pasted URLs down to the profile slug after `/in/`. */
+export function normalizeCampusAmbassadorLinkedInUsername(value: string): string {
+  return value
+    .trim()
+    .replace(/\s/g, "")
+    .replace(/^@/, "")
+    .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "")
+    .replace(/^linkedin\.com\/in\//i, "")
+    .replace(/\/+$/, "");
+}
+
+/** Canonical profile URL for persistence and form submission. */
+export function formatCampusAmbassadorLinkedInUrl(username: string): string {
+  const slug = normalizeCampusAmbassadorLinkedInUsername(username);
+  if (!slug) return "";
+  return `https://www.linkedin.com/in/${slug}`;
+}
+
 export function isCampusAmbassadorEmailValid(email: string): boolean {
   return EMAIL_RE.test(email.trim());
 }
@@ -117,7 +138,7 @@ export function isCampusAmbassadorFormValid(data: CampusAmbassadorFormState): bo
   if (!data.fieldOfStudy.trim()) return false;
   if (data.healthPrograms.length === 0) return false;
   if (data.healthPrograms.includes("other") && !data.healthProgramOther.trim()) return false;
-  if (!data.linkedin.trim()) return false;
+  if (!normalizeCampusAmbassadorLinkedInUsername(data.linkedin)) return false;
   return true;
 }
 

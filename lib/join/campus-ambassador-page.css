@@ -31,6 +31,30 @@
   outline: none;
 }
 
+.campus-ambassador-linkedin-field {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.campus-ambassador-linkedin-field__prefix {
+  flex-shrink: 0;
+  color: rgba(242, 232, 218, 0.62);
+  user-select: none;
+  pointer-events: none;
+}
+
+.campus-ambassador-linkedin-field__input {
+  color: #f2e8da;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+}
+
 .campus-ambassador-select {
   position: relative;
 }

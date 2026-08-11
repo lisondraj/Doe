@@ -6,6 +6,7 @@ import { AboutContactRingsGraphic } from "@/components/about/AboutContactRingsGr
 import {
   CampusAmbassadorCheckboxGroup,
   CampusAmbassadorFormSection,
+  CampusAmbassadorLinkedInField,
   CampusAmbassadorSelectField,
   CampusAmbassadorTextField,
 } from "@/components/join/CampusAmbassadorFormControls";
@@ -23,7 +24,6 @@ import {
   CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY_OTHER,
   CAMPUS_AMBASSADOR_HEALTH_PROGRAMS_HEADING,
   CAMPUS_AMBASSADOR_HEALTH_PROGRAM_OTHER_PLACEHOLDER,
-  CAMPUS_AMBASSADOR_LINKEDIN_PLACEHOLDER,
   CAMPUS_AMBASSADOR_REQUIRED_NOTE,
   CAMPUS_AMBASSADOR_SELECT_ALL_HINT,
   CAMPUS_AMBASSADOR_STATEMENTS_HEADING,
@@ -213,13 +213,11 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
             }
           />
 
-          <CampusAmbassadorTextField
+          <CampusAmbassadorLinkedInField
             label={CAMPUS_AMBASSADOR_FIELD_LINKEDIN}
             name="campus-ambassador-linkedin"
             value={form.linkedin}
             onChange={(linkedin) => patchForm({ linkedin })}
-            placeholder={CAMPUS_AMBASSADOR_LINKEDIN_PLACEHOLDER}
-            autoComplete="url"
           />
         </CampusAmbassadorFormSection>
 
