@@ -1,7 +1,7 @@
 import { BlogArticleFooterCarouselBand } from "@/components/blog/BlogArticleFooterCarouselBand";
-import { BlogArticleRelatedCarousel } from "@/components/blog/BlogArticleRelatedCarousel";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { CampusAmbassadorApplyPanel } from "@/components/join/CampusAmbassadorApplyPanel";
+import { PremedBlogRelatedCarousel } from "@/components/premed/PremedBlogRelatedCarousel";
 import { PremedEmailInvite } from "@/components/premed/PremedEmailInvite";
 import {
   ABOUT_MOBILE_CONTENT_GAP,
@@ -31,10 +31,6 @@ export function CampusAmbassadorPageContent() {
           <h1 className={`${BROADER_DOE_VISION_TITLE_TW} ${ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW}`}>
             {CAMPUS_AMBASSADOR_PAGE_TITLE}
           </h1>
-
-          <p className={`campus-ambassador-subheading ${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-none`}>
-            {CAMPUS_AMBASSADOR_SUBHEADING}
-          </p>
         </div>
       </header>
 
