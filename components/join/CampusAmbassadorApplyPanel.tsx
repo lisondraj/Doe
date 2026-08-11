@@ -102,7 +102,6 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
           <CampusAmbassadorTextField
             label={CAMPUS_AMBASSADOR_FIELD_EMAIL}
             name="campus-ambassador-email"
-            type="email"
             value={form.email}
             onChange={(email) => patchForm({ email })}
             autoComplete="email"

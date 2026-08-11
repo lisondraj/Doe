@@ -100,8 +100,6 @@ export const CAMPUS_AMBASSADOR_INITIAL_FORM_STATE: CampusAmbassadorFormState = {
   linkedin: "",
 };
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export const CAMPUS_AMBASSADOR_LINKEDIN_PREFIX = "linkedin.com/in/";
 
 /** Strip pasted URLs down to the profile slug after `/in/`. */
@@ -124,7 +122,7 @@ export function formatCampusAmbassadorLinkedInUrl(username: string): string {
 }
 
 export function isCampusAmbassadorEmailValid(email: string): boolean {
-  return EMAIL_RE.test(email.trim());
+  return email.trim().length > 0;
 }
 
 export function isCampusAmbassadorFormValid(data: CampusAmbassadorFormState): boolean {
