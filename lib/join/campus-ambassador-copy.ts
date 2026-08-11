@@ -16,7 +16,12 @@ export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH =
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY =
   "This is an opportunity to join a high-velocity startup, connect within your community, and learn more about innovations in AI and clinical practice.";
 
-export const CAMPUS_AMBASSADOR_OPENING_DESCRIPTION = `${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH} ${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY}`;
+export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH =
+  "We'll be sharing more about our venture's vision and plans as we approach launch in fall 2026.";
+
+export const CAMPUS_AMBASSADOR_FOUNDERS_HEADING = "About the founders";
+
+export const CAMPUS_AMBASSADOR_OPENING_DESCRIPTION = `${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH} ${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY} ${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH}`;
 
 export const CAMPUS_AMBASSADOR_SUBMIT_LABEL = "Submit application";
 

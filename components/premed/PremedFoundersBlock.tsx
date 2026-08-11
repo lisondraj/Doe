@@ -1,16 +1,34 @@
 import { BlogArticleCarouselDivider } from "@/components/blog/BlogArticleCarouselDivider";
 import { HeroLinkedInIcon } from "@/components/home/icons/HeroSocialIcons";
-import { BROADER_DOE_VISION_BODY_TW } from "@/lib/blog/broader-doe-vision-layout-styles";
+import {
+  BROADER_DOE_VISION_BODY_TW,
+  BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW,
+  BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW,
+} from "@/lib/blog/broader-doe-vision-layout-styles";
 import { PREMED_FOUNDERS } from "@/lib/premed/premed-copy";
 
-/** /premed only — offset founder bios with highlighted names and LinkedIn links. */
-export function PremedFoundersBlock() {
+type PremedFoundersBlockProps = {
+  heading?: string;
+  showDividers?: boolean;
+};
+
+/** /premed + /join — founder bios with highlighted names and LinkedIn links. */
+export function PremedFoundersBlock({ heading, showDividers = true }: PremedFoundersBlockProps = {}) {
   return (
     <div className="premed-founders-band">
-      <div className="premed-founders-band__divider">
-        <BlogArticleCarouselDivider />
-      </div>
-      <section className="premed-founders-block" aria-label="Founders">
+      {showDividers ? (
+        <div className="premed-founders-band__divider">
+          <BlogArticleCarouselDivider />
+        </div>
+      ) : null}
+      <section className="premed-founders-block" aria-label={heading ?? "Founders"}>
+        {heading ? (
+          <p
+            className={`premed-founders-block__heading mb-5 iphone-page:mb-6 ${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW} ${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW}`}
+          >
+            {heading}
+          </p>
+        ) : null}
         <div className="premed-founders-block__list">
           {PREMED_FOUNDERS.map((founder) => (
             <p key={founder.name} className={`premed-founders-block__bio ${BROADER_DOE_VISION_BODY_TW}`}>
@@ -32,9 +50,11 @@ export function PremedFoundersBlock() {
           ))}
         </div>
       </section>
-      <div className="premed-founders-band__divider">
-        <BlogArticleCarouselDivider />
-      </div>
+      {showDividers ? (
+        <div className="premed-founders-band__divider">
+          <BlogArticleCarouselDivider />
+        </div>
+      ) : null}
     </div>
   );
 }

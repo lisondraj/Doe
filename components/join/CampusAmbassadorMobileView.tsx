@@ -10,6 +10,7 @@ import "@/lib/about/about-doehealth-iphone.css";
 import { BROADER_DOE_VISION_CONTENT_PT } from "@/lib/blog/broader-doe-vision-layout-styles";
 import { CAMPUS_AMBASSADOR_TOP_BANNER } from "@/lib/join/campus-ambassador-copy";
 import "@/lib/join/campus-ambassador-page.css";
+import "@/lib/premed/premed-page.css";
 import "@/lib/doehealth/doehealth-landing.css";
 import { applyPhoneOverflowChrome } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";

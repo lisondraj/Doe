@@ -225,6 +225,12 @@ html[data-about-page]:not([data-layout="desktop"])
   --blog-related-carousel-slide-width: calc(100% - 2 * var(--blog-related-carousel-inset-x));
 }
 
+html[data-about-page]:not([data-layout="desktop"])
+  .about-page-content:has(.campus-ambassador-apply)
+  .premed-founders-band {
+  margin-top: clamp(2rem, 2.6vw, 2.65rem);
+}
+
 .campus-ambassador-apply,
 .campus-ambassador-apply form,
 .campus-ambassador-checkbox-group,

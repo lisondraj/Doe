@@ -3,6 +3,7 @@ import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { CampusAmbassadorApplyPanel } from "@/components/join/CampusAmbassadorApplyPanel";
 import { PremedBlogRelatedCarousel } from "@/components/premed/PremedBlogRelatedCarousel";
 import { PremedEmailInvite } from "@/components/premed/PremedEmailInvite";
+import { PremedFoundersBlock } from "@/components/premed/PremedFoundersBlock";
 import {
   ABOUT_MOBILE_CONTENT_GAP,
   ABOUT_MOBILE_SECTION_GAP,
@@ -18,7 +19,9 @@ import {
 } from "@/lib/blog/broader-doe-vision-layout-styles";
 import { BROADER_DOE_VISION_HERO_BACKDROP } from "@/lib/blog/broader-doe-vision-article";
 import {
+  CAMPUS_AMBASSADOR_FOUNDERS_HEADING,
   CAMPUS_AMBASSADOR_OPENING_PARAGRAPH,
+  CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH,
   CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY,
   CAMPUS_AMBASSADOR_PAGE_TITLE,
 } from "@/lib/join/campus-ambassador-copy";
@@ -49,10 +52,13 @@ export function CampusAmbassadorPageContent() {
         <div className={ABOUT_MOBILE_CONTENT_GAP}>
           <p className={BROADER_DOE_VISION_BODY_TW}>{CAMPUS_AMBASSADOR_OPENING_PARAGRAPH}</p>
           <p className={BROADER_DOE_VISION_BODY_TW}>{CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY}</p>
+          <p className={BROADER_DOE_VISION_BODY_TW}>{CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH}</p>
 
           <CampusAmbassadorApplyPanel />
 
           <PremedEmailInvite />
+
+          <PremedFoundersBlock heading={CAMPUS_AMBASSADOR_FOUNDERS_HEADING} showDividers={false} />
 
           <BlogArticleFooterCarouselBand>
             <PremedBlogRelatedCarousel currentSlug="the-broader-doe-vision" />

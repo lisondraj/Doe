@@ -13,6 +13,10 @@
   gap: clamp(1.35rem, 1.9vw, 1.75rem);
 }
 
+.premed-founders-block__heading {
+  margin-top: 0;
+}
+
 .premed-founders-block__bio {
   margin: 0;
 }
