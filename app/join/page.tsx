@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 import { CampusAmbassadorRouter } from "@/components/join/CampusAmbassadorRouter";
 import {
-  CAMPUS_AMBASSADOR_OPENING_PARAGRAPH,
+  CAMPUS_AMBASSADOR_OPENING_DESCRIPTION,
   CAMPUS_AMBASSADOR_PAGE_TITLE,
 } from "@/lib/join/campus-ambassador-copy";
 import { joinCampusPageHostAllowed } from "@/lib/join/join-campus-page-path";
@@ -16,7 +16,7 @@ const pageTitle = `${CAMPUS_AMBASSADOR_PAGE_TITLE} · Doe`;
 
 export const metadata: Metadata = {
   title: pageTitle,
-  description: CAMPUS_AMBASSADOR_OPENING_PARAGRAPH,
+  description: CAMPUS_AMBASSADOR_OPENING_DESCRIPTION,
   alternates: {
     canonical: joinPageUrl(),
   },

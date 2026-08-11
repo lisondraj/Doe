@@ -19,6 +19,7 @@ import {
 import { BROADER_DOE_VISION_HERO_BACKDROP } from "@/lib/blog/broader-doe-vision-article";
 import {
   CAMPUS_AMBASSADOR_OPENING_PARAGRAPH,
+  CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY,
   CAMPUS_AMBASSADOR_PAGE_TITLE,
 } from "@/lib/join/campus-ambassador-copy";
 
@@ -47,6 +48,7 @@ export function CampusAmbassadorPageContent() {
       <div className={ABOUT_MOBILE_SECTION_GAP}>
         <div className={ABOUT_MOBILE_CONTENT_GAP}>
           <p className={BROADER_DOE_VISION_BODY_TW}>{CAMPUS_AMBASSADOR_OPENING_PARAGRAPH}</p>
+          <p className={BROADER_DOE_VISION_BODY_TW}>{CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY}</p>
 
           <CampusAmbassadorApplyPanel />
 
