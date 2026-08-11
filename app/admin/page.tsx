@@ -3,11 +3,11 @@ import { headers } from "next/headers";
 
 import { AdminRouter } from "@/components/admin/AdminRouter";
 import {
-  fetchInternshipApplications,
-  summarizeInternshipApplications,
-  type AdminInternshipApplication,
-  type InternshipSignupStats,
-} from "@/lib/admin/internship-applications";
+  fetchCampusAmbassadorApplications,
+  summarizeCampusAmbassadorApplications,
+  type AdminCampusAmbassadorApplication,
+  type CampusAmbassadorSignupStats,
+} from "@/lib/admin/campus-ambassador-applications";
 
 export const dynamic = "force-dynamic";
 
@@ -23,18 +23,19 @@ export default async function AdminPage() {
   const ua = headers().get("user-agent") ?? "";
   const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
 
-  let initialApplications: AdminInternshipApplication[] = [];
-  let initialStats: InternshipSignupStats = {
+  let initialApplications: AdminCampusAmbassadorApplication[] = [];
+  let initialStats: CampusAmbassadorSignupStats = {
     total: 0,
-    withResume: 0,
-    withLinkedIn: 0,
-    withNotes: 0,
+    unitedStates: 0,
+    canada: 0,
+    withStatements: 0,
+    multiProgram: 0,
   };
   let initialError: string | null = null;
 
   try {
-    initialApplications = await fetchInternshipApplications();
-    initialStats = summarizeInternshipApplications(initialApplications);
+    initialApplications = await fetchCampusAmbassadorApplications();
+    initialStats = summarizeCampusAmbassadorApplications(initialApplications);
   } catch (error) {
     initialError = error instanceof Error ? error.message : "Could not load admin data.";
   }

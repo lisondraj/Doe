@@ -2,29 +2,19 @@
 
 import { useState } from "react";
 
-import { InternshipAnalyticsPanel } from "@/components/admin/InternshipAnalyticsPanel";
-import { InternshipSignupsPanel } from "@/components/admin/InternshipSignupsPanel";
+import { CampusAmbassadorAnalyticsPanel } from "@/components/admin/CampusAmbassadorAnalyticsPanel";
+import { CampusAmbassadorSignupsPanel } from "@/components/admin/CampusAmbassadorSignupsPanel";
 import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
-import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
-import type { AdminInternshipApplication, InternshipSignupStats } from "@/lib/admin/internship-applications";
-import {
-  ADMIN_MOBILE_BUTTON_TW,
-  ADMIN_MOBILE_CONTENT_BOTTOM_PAD,
-  ADMIN_MOBILE_CONTENT_STACK,
-  ADMIN_MOBILE_CONTENT_TOP_PAD,
-  ADMIN_MOBILE_INPUT_H,
-  ADMIN_MOBILE_NAV_CLEARANCE,
-  ADMIN_MOBILE_REFRESH_ROW_GAP,
-  ADMIN_MOBILE_TAB_BADGE_TW,
-  ADMIN_MOBILE_TAB_BAR_INSET,
-  ADMIN_MOBILE_TAB_BAR_RESERVE,
-  ADMIN_MOBILE_TAB_BAR_SAFE_BOTTOM,
-  ADMIN_MOBILE_TAB_BUTTON_TW,
-  ADMIN_MOBILE_TAB_ICON_TW,
-} from "@/lib/admin/admin-layout";
+import type {
+  AdminCampusAmbassadorApplication,
+  CampusAmbassadorSignupStats,
+} from "@/lib/admin/campus-ambassador-applications";
 import { useAdminData } from "@/lib/admin/use-admin-data";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
-import { inter } from "@/lib/home/fonts";
+import "@/lib/admin/admin-page.css";
+import "@/lib/product/product-brown-mock.css";
+import "@/lib/product/product-mobile.css";
+import { inter, lora } from "@/lib/home/fonts";
 
 type AdminTab = "signups" | "analytics";
 
@@ -32,103 +22,81 @@ export function AdminMobileView({
   initialApplications,
   initialStats,
 }: {
-  initialApplications: AdminInternshipApplication[];
-  initialStats: InternshipSignupStats;
+  initialApplications: AdminCampusAmbassadorApplication[];
+  initialStats: CampusAmbassadorSignupStats;
 }) {
   useDoePhoneStableViewport();
   const [activeTab, setActiveTab] = useState<AdminTab>("signups");
-  const { applications, stats, loading, error, refresh, handleApplicationUpdated } = useAdminData(
-    initialApplications,
-    initialStats,
-  );
+  const { applications, stats, loading, error, refresh } = useAdminData(initialApplications, initialStats);
 
   return (
-    <BlogMobileShell
-      showJoinCta={false}
-      logoLink={false}
-      footerLinksDisabled
-      showMenu={false}
-      showFooter={false}
-      shellMinHeightClass="min-h-[var(--app-vh,100lvh)]"
-    >
-      <div
-        className={`flex min-h-[var(--app-vh,100lvh)] flex-col ${ADMIN_MOBILE_NAV_CLEARANCE} ${ADMIN_MOBILE_CONTENT_TOP_PAD} ${ADMIN_MOBILE_CONTENT_BOTTOM_PAD} ${ADMIN_MOBILE_TAB_BAR_RESERVE} ${inter.className}`}
-      >
-        <header className={`flex shrink-0 justify-end ${ADMIN_MOBILE_REFRESH_ROW_GAP}`}>
-          <button
-            type="button"
-            onClick={() => void refresh()}
-            disabled={loading}
-            aria-label="Refresh admin data"
-            className={`${ADMIN_MOBILE_BUTTON_TW} ${ADMIN_MOBILE_INPUT_H} min-w-[8.5rem] iphone-page:min-w-[9.25rem]`}
-          >
-            {loading ? "Refreshing…" : "Refresh"}
-          </button>
-        </header>
-
-        <div className={`min-h-0 flex-1 ${ADMIN_MOBILE_CONTENT_STACK}`}>
-          {activeTab === "signups" ? (
-            <InternshipSignupsPanel
-              variant="mobile"
-              applications={applications}
-              stats={stats}
-              loading={loading}
-              error={error}
-              onRefresh={() => void refresh()}
-              onApplicationUpdated={handleApplicationUpdated}
-            />
-          ) : (
-            <InternshipAnalyticsPanel
-              variant="mobile"
-              applications={applications}
-              loading={loading}
-              onRefresh={() => void refresh()}
-            />
-          )}
+    <div className={`admin-mobile-root product-brown-mock ${inter.className}`}>
+      <header className="admin-mobile-topbar">
+        <div>
+          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[rgba(245,230,208,0.48)]">
+            Doe Admin
+          </p>
+          <h1 className={`admin-mobile-topbar__title ${lora.className}`}>
+            {activeTab === "signups" ? "Campus ambassador program" : "Analytics"}
+          </h1>
         </div>
-      </div>
+        <button type="button" onClick={() => void refresh()} disabled={loading} className="admin-panel-button">
+          {loading ? "Refreshing…" : "Refresh"}
+        </button>
+      </header>
 
-      <nav
-        className={`fixed inset-x-0 bottom-0 z-[80] border-t border-[#E8E8E8] bg-[#F7F6F3]/95 backdrop-blur-md ${ADMIN_MOBILE_TAB_BAR_INSET} ${ADMIN_MOBILE_TAB_BAR_SAFE_BOTTOM}`}
-        aria-label="Admin sections"
-      >
-        <div className="flex gap-3 iphone-page:gap-3.5">
-          <button
-            type="button"
-            onClick={() => setActiveTab("signups")}
-            className={`${ADMIN_MOBILE_TAB_BUTTON_TW} ${
-              activeTab === "signups" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500"
-            }`}
-          >
-            <DoeBuildIcon className={ADMIN_MOBILE_TAB_ICON_TW}>
-              <>
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </>
-            </DoeBuildIcon>
-            <span className="truncate">Signups</span>
-            <span className={ADMIN_MOBILE_TAB_BADGE_TW}>{stats.total}</span>
-          </button>
+      <main className="admin-mobile-main">
+        {activeTab === "signups" ? (
+          <CampusAmbassadorSignupsPanel
+            variant="mobile"
+            applications={applications}
+            stats={stats}
+            loading={loading}
+            error={error}
+            onRefresh={() => void refresh()}
+          />
+        ) : (
+          <CampusAmbassadorAnalyticsPanel
+            variant="mobile"
+            applications={applications}
+            loading={loading}
+            onRefresh={() => void refresh()}
+          />
+        )}
+      </main>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("analytics")}
-            className={`${ADMIN_MOBILE_TAB_BUTTON_TW} ${
-              activeTab === "analytics" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500"
-            }`}
-          >
-            <DoeBuildIcon className={ADMIN_MOBILE_TAB_ICON_TW}>
-              <>
-                <path d="M3 3v18h18" />
-                <path d="M7 16l4-4 4 4 5-6" />
-              </>
-            </DoeBuildIcon>
-            <span className="truncate">Analytics</span>
-          </button>
-        </div>
+      <nav className="admin-mobile-tabbar" aria-label="Admin sections">
+        <button
+          type="button"
+          onClick={() => setActiveTab("signups")}
+          className={`admin-mobile-tabbar__btn ${activeTab === "signups" ? "admin-mobile-tabbar__btn--active" : ""}`}
+        >
+          <DoeBuildIcon className="h-5 w-5">
+            <>
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </>
+          </DoeBuildIcon>
+          <span className="truncate">Applications</span>
+          <span className="admin-mobile-tabbar__badge">{stats.total}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("analytics")}
+          className={`admin-mobile-tabbar__btn ${activeTab === "analytics" ? "admin-mobile-tabbar__btn--active" : ""}`}
+        >
+          <DoeBuildIcon className="h-5 w-5">
+            <>
+              <path d="M3 3v18h18" />
+              <path d="M7 16l4-4 4 4 5-6" />
+            </>
+          </DoeBuildIcon>
+          <span className="truncate">Analytics</span>
+        </button>
       </nav>
-    </BlogMobileShell>
+    </div>
   );
 }

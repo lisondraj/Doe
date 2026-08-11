@@ -2,30 +2,29 @@
 
 import { useCallback, useState } from "react";
 
-import type { AdminInternshipApplication, InternshipSignupStats } from "@/lib/admin/internship-applications";
+import type {
+  AdminCampusAmbassadorApplication,
+  CampusAmbassadorSignupStats,
+} from "@/lib/admin/campus-ambassador-applications";
 
 export function useAdminData(
-  initialApplications: AdminInternshipApplication[],
-  initialStats: InternshipSignupStats,
+  initialApplications: AdminCampusAmbassadorApplication[],
+  initialStats: CampusAmbassadorSignupStats,
 ) {
   const [applications, setApplications] = useState(initialApplications);
   const [stats, setStats] = useState(initialStats);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleApplicationUpdated = useCallback((updated: AdminInternshipApplication) => {
-    setApplications((current) => current.map((row) => (row.id === updated.id ? updated : row)));
-  }, []);
-
   const refresh = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/admin/internship-applications");
+      const response = await fetch("/api/admin/campus-ambassador-applications");
       const payload = (await response.json()) as {
         ok?: boolean;
-        applications?: AdminInternshipApplication[];
-        stats?: InternshipSignupStats;
+        applications?: AdminCampusAmbassadorApplication[];
+        stats?: CampusAmbassadorSignupStats;
         error?: string;
       };
       if (!response.ok || !payload.ok || !payload.applications || !payload.stats) {
@@ -40,5 +39,5 @@ export function useAdminData(
     }
   }, []);
 
-  return { applications, stats, loading, error, refresh, handleApplicationUpdated };
+  return { applications, stats, loading, error, refresh };
 }

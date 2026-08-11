@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 
 import { AdminMobileView } from "@/components/admin/AdminMobileView";
 import { DoeAdminApp } from "@/components/admin/DoeAdminApp";
-import type { AdminInternshipApplication, InternshipSignupStats } from "@/lib/admin/internship-applications";
+import type {
+  AdminCampusAmbassadorApplication,
+  CampusAmbassadorSignupStats,
+} from "@/lib/admin/campus-ambassador-applications";
 import { inter, lora } from "@/lib/home/fonts";
 
 type Variant = "phone" | "desktop";
@@ -12,10 +15,10 @@ const DESKTOP_QUERY = "(min-width: 1024px)";
 
 function AdminErrorState({ message }: { message: string }) {
   return (
-    <main className={`flex min-h-dvh items-center justify-center bg-[#F4F4F5] px-6 ${inter.className}`}>
-      <div className="max-w-lg rounded-2xl border border-[#E8E8E8] bg-white p-8 shadow-sm">
-        <p className={`text-3xl text-neutral-900 ${lora.className}`}>Doe Admin</p>
-        <p className="mt-3 text-[15px] leading-relaxed text-[#BF593D]">{message}</p>
+    <main className={`admin-page-root flex min-h-dvh items-center justify-center px-6 ${inter.className}`}>
+      <div className="admin-error-card">
+        <p className={`text-3xl ${lora.className}`}>Doe Admin</p>
+        <p className="admin-error-card__message">{message}</p>
       </div>
     </main>
   );
@@ -28,8 +31,8 @@ export function AdminRouter({
   initialError,
 }: {
   initialVariant: Variant;
-  initialApplications: AdminInternshipApplication[];
-  initialStats: InternshipSignupStats;
+  initialApplications: AdminCampusAmbassadorApplication[];
+  initialStats: CampusAmbassadorSignupStats;
   initialError: string | null;
 }) {
   const [variant, setVariant] = useState<Variant>(initialVariant);
@@ -40,6 +43,19 @@ export function AdminRouter({
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    html.setAttribute("data-admin-page", "true");
+    html.setAttribute("data-product-page", "true");
+    html.removeAttribute("data-home-page");
+    html.removeAttribute("data-about-page");
+
+    return () => {
+      html.removeAttribute("data-admin-page");
+      html.removeAttribute("data-product-page");
+    };
   }, []);
 
   useEffect(() => {
