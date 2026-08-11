@@ -1,6 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import {
+  ADMIN_LOGIN_PATH,
+  isAdminAllowedEmail,
+} from "@/lib/admin/admin-auth";
+import {
   JOIN_PATH,
   isDesignersHost,
   isMarketingLandingRoot,
@@ -10,6 +14,14 @@ import {
   requestHostFromHeaders,
   shouldEnforceDomainRouting,
 } from "@/lib/site-domains";
+import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
+
+const ADMIN_ROOT_PATH = "/admin";
+const ADMIN_AUTH_CALLBACK_PATH = "/auth/callback";
+const ADMIN_SIGNOUT_API_PATH = "/api/admin/auth/signout";
+const ADMIN_SEND_OTP_API_PATH = "/api/admin/auth/send-otp";
+
+const ADMIN_PUBLIC_API_PATHS = new Set([ADMIN_SIGNOUT_API_PATH, ADMIN_SEND_OTP_API_PATH]);
 
 function applyLandingSiteHeaders(response: NextResponse) {
   /** Bust edge/browser caches of the old permanent redirect to /join. */
@@ -22,8 +34,56 @@ function applyLandingSiteHeaders(response: NextResponse) {
   return response;
 }
 
-export function middleware(request: NextRequest) {
+function isAdminAppPath(pathname: string): boolean {
+  return pathname === ADMIN_ROOT_PATH || pathname.startsWith(`${ADMIN_ROOT_PATH}/`);
+}
+
+function isAdminProtectedApiPath(pathname: string): boolean {
+  return pathname.startsWith("/api/admin/") && !ADMIN_PUBLIC_API_PATHS.has(pathname);
+}
+
+async function handleAdminAccess(request: NextRequest): Promise<NextResponse | null> {
+  const { pathname } = request.nextUrl;
+
+  if (
+    !isAdminAppPath(pathname) &&
+    !isAdminProtectedApiPath(pathname) &&
+    pathname !== ADMIN_AUTH_CALLBACK_PATH &&
+    !ADMIN_PUBLIC_API_PATHS.has(pathname)
+  ) {
+    return null;
+  }
+
+  const { response, user } = await createSupabaseMiddlewareClient(request);
+  const isAuthed = Boolean(user?.email && isAdminAllowedEmail(user.email));
+
+  if (isAdminProtectedApiPath(pathname) && !isAuthed) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (isAdminAppPath(pathname) && pathname !== ADMIN_LOGIN_PATH && !isAuthed) {
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = ADMIN_LOGIN_PATH;
+    loginUrl.search = "";
+    return applyLandingSiteHeaders(NextResponse.redirect(loginUrl));
+  }
+
+  if (pathname === ADMIN_LOGIN_PATH && isAuthed) {
+    const adminUrl = request.nextUrl.clone();
+    adminUrl.pathname = ADMIN_ROOT_PATH;
+    adminUrl.search = "";
+    return applyLandingSiteHeaders(NextResponse.redirect(adminUrl));
+  }
+
+  return applyLandingSiteHeaders(response);
+}
+
+export async function middleware(request: NextRequest) {
   const host = requestHostFromHeaders(request.headers);
+  const adminResponse = await handleAdminAccess(request);
+  if (adminResponse) {
+    return adminResponse;
+  }
 
   if (!shouldEnforceDomainRouting(host)) {
     return NextResponse.next();
@@ -66,6 +126,10 @@ export function middleware(request: NextRequest) {
   }
 
   if (pathname === JOIN_PATH && isPrimaryHost(host)) {
+    return applyLandingSiteHeaders(NextResponse.next());
+  }
+
+  if (isAdminAppPath(pathname) || pathname === ADMIN_AUTH_CALLBACK_PATH) {
     return applyLandingSiteHeaders(NextResponse.next());
   }
 

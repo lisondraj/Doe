@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { enrichInternshipApplicationRow } from "@/lib/admin/internship-applications";
+import { AdminAuthError, requireAdminSession } from "@/lib/admin/require-admin-session";
 import { updateInternshipApplicationEmail } from "@/lib/admin/update-internship-application-email";
 
 type RouteContext = {
@@ -9,6 +10,7 @@ type RouteContext = {
 
 export async function PATCH(request: Request, { params }: RouteContext) {
   try {
+    await requireAdminSession();
     const body = (await request.json()) as { email?: string };
     if (typeof body.email !== "string") {
       return NextResponse.json({ ok: false, error: "Email is required." }, { status: 400 });
@@ -18,6 +20,9 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     const application = await enrichInternshipApplicationRow(row);
     return NextResponse.json({ ok: true, application });
   } catch (error) {
+    if (error instanceof AdminAuthError) {
+      return NextResponse.json({ ok: false, error: error.message }, { status: error.status });
+    }
     const message = error instanceof Error ? error.message : "Could not update applicant email.";
     const status = message.includes("not configured")
       ? 503

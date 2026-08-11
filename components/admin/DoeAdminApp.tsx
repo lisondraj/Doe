@@ -10,6 +10,7 @@ import type {
   CampusAmbassadorSignupStats,
 } from "@/lib/admin/campus-ambassador-applications";
 import { useAdminData } from "@/lib/admin/use-admin-data";
+import { signOutAdmin } from "@/lib/admin/sign-out-admin";
 import "@/lib/admin/admin-page.css";
 import "@/lib/product/product-brown-mock.css";
 import { inter, lora } from "@/lib/home/fonts";
@@ -76,6 +77,13 @@ export function DoeAdminApp({
                   Workspace
                 </p>
                 <p className="mt-1 text-[0.78rem] font-medium text-[var(--pl-nav-soft)]">Doe Admin</p>
+                <button
+                  type="button"
+                  onClick={() => void signOutAdmin()}
+                  className="admin-login-secondary mt-3 w-full text-left"
+                >
+                  Sign out
+                </button>
               </div>
             </div>
           </aside>

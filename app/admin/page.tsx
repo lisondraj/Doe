@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 import { AdminRouter } from "@/components/admin/AdminRouter";
 import {
@@ -8,6 +9,7 @@ import {
   type AdminCampusAmbassadorApplication,
   type CampusAmbassadorSignupStats,
 } from "@/lib/admin/campus-ambassador-applications";
+import { requireAdminSession } from "@/lib/admin/require-admin-session";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +22,12 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
+  try {
+    await requireAdminSession();
+  } catch {
+    redirect("/admin/login");
+  }
+
   const ua = headers().get("user-agent") ?? "";
   const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
 

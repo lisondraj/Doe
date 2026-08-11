@@ -10,13 +10,15 @@
     "remotion:studio": "remotion studio remotion/index.ts",
     "remotion:render": "remotion render remotion/index.ts DoeLaunch public/motion/doe-launch-remotion.mp4",
     "remotion:intro": "remotion render remotion/index.ts DoeIntro public/motion/doe-intro.mp4 --width=1920 --height=1080 --crf=10 --scale=2 --gl=angle --concurrency=2",
-    "remotion:motion4": "bash scripts/render-motion4.sh"
+    "remotion:motion4": "bash scripts/render-motion4.sh",
+    "export:linkedin": "node scripts/export-linkedin-banner.mjs"
   },
   "dependencies": {
     "@paper-design/shaders-react": "^0.0.76",
     "@remotion/cli": "^4.0.499",
     "@remotion/google-fonts": "^4.0.499",
     "@remotion/player": "^4.0.499",
+    "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.108.2",
     "html-to-image": "^1.11.13",
     "jspdf": "^4.2.1",

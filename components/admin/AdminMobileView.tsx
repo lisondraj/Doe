@@ -10,6 +10,7 @@ import type {
   CampusAmbassadorSignupStats,
 } from "@/lib/admin/campus-ambassador-applications";
 import { useAdminData } from "@/lib/admin/use-admin-data";
+import { signOutAdmin } from "@/lib/admin/sign-out-admin";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import "@/lib/admin/admin-page.css";
 import "@/lib/product/product-brown-mock.css";
@@ -40,9 +41,14 @@ export function AdminMobileView({
             {activeTab === "signups" ? "Campus ambassador program" : "Analytics"}
           </h1>
         </div>
-        <button type="button" onClick={() => void refresh()} disabled={loading} className="admin-panel-button">
-          {loading ? "Refreshing…" : "Refresh"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={() => void refresh()} disabled={loading} className="admin-panel-button">
+            {loading ? "Refreshing…" : "Refresh"}
+          </button>
+          <button type="button" onClick={() => void signOutAdmin()} className="admin-panel-button">
+            Sign out
+          </button>
+        </div>
       </header>
 
       <main className="admin-mobile-main">
