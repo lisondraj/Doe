@@ -1,0 +1,33 @@
+.campus-ambassador-field-label {
+  color: #e8c08e;
+}
+
+.campus-ambassador-field-input {
+  background: rgba(18, 14, 10, 0.72);
+  border: 1px solid rgba(212, 165, 116, 0.28);
+  color: #f2e8da;
+}
+
+.campus-ambassador-field-input::placeholder {
+  color: rgba(242, 232, 218, 0.38);
+}
+
+.campus-ambassador-field-input:focus {
+  border-color: rgba(232, 192, 142, 0.55);
+  outline: none;
+}
+
+.campus-ambassador-submit {
+  border: 1px solid rgba(212, 165, 116, 0.28);
+  background: rgba(39, 31, 23, 0.72);
+  color: #f2e8da;
+}
+
+.campus-ambassador-submit:hover {
+  border-color: rgba(232, 192, 142, 0.45);
+  color: #fff;
+}
+
+.campus-ambassador-required-note {
+  color: rgba(232, 192, 142, 0.82);
+}

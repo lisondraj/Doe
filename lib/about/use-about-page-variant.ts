@@ -2,7 +2,11 @@
 
 import { useEffect, useLayoutEffect, useState } from "react";
 
-import { isTouchPrimaryDevice, shouldLockAboutTouchPhoneLayout } from "@/lib/about/about-page-context";
+import {
+  isTouchPrimaryDevice,
+  shouldLockAboutTouchPhoneLayout,
+  shouldLockJoinCampusPhoneLayout,
+} from "@/lib/about/about-page-context";
 import { applyPhoneLayoutViewportMeta, phoneLayoutViewportContent } from "@/lib/doephone/phone-layout-viewport";
 import {
   DOEPHONE_DESKTOP_MEDIA_QUERY,
@@ -13,6 +17,7 @@ export type AboutPageVariant = "phone" | "desktop";
 
 export function resolveAboutPageVariant(): AboutPageVariant {
   if (typeof window === "undefined") return "phone";
+  if (shouldLockJoinCampusPhoneLayout()) return "phone";
   if (shouldLockAboutTouchPhoneLayout()) return "phone";
   if (isTouchPrimaryDevice()) return "phone";
   if (window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY).matches) return "desktop";

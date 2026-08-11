@@ -1,8 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import {
+  JOIN_PATH,
+  isDesignersHost,
   isMarketingLandingRoot,
   isPrimaryHost,
+  joinPageUrl,
   marketingLandingRewritePath,
   requestHostFromHeaders,
   shouldEnforceDomainRouting,
@@ -48,6 +51,18 @@ export function middleware(request: NextRequest) {
         request: { headers: requestHeaders },
       }),
     );
+  }
+
+  if (pathname === JOIN_PATH && isDesignersHost(host)) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.hostname = new URL(joinPageUrl()).hostname;
+    redirectUrl.pathname = JOIN_PATH;
+    redirectUrl.search = "";
+    return applyLandingSiteHeaders(NextResponse.redirect(redirectUrl));
+  }
+
+  if (pathname === JOIN_PATH && isPrimaryHost(host)) {
+    return applyLandingSiteHeaders(NextResponse.next());
   }
 
   /** doe.care serves /premed at `/` only — bounce any other path back to root. */
