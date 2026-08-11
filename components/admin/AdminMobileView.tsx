@@ -17,6 +17,8 @@ import "@/lib/admin/admin-page.css";
 import "@/lib/product/product-brown-mock.css";
 import "@/lib/product/product-mobile.css";
 import "@/lib/product/product-landing.css";
+import "@/lib/product/product-page.css";
+import "@/lib/product2/product2-inbox.css";
 import { lora, suisseIntl } from "@/lib/home/fonts";
 
 const TAB_LABELS: Record<AdminTab, string> = {
@@ -91,7 +93,7 @@ export function AdminMobileView({
   const { applications, stats, loading, error, refresh } = useAdminData(initialApplications, initialStats);
 
   return (
-    <div className={`product-mobile-root product-brown-mock product-brown-landing-mode ${lora.className}`}>
+    <div className={`product-mobile-root product-brown-mock product-brown-inbox-mode ${lora.className}`}>
       <header className="product-mobile-topbar">
         <p className={`product-mobile-topbar__wordmark ${lora.className}`}>Doe</p>
         <div className="product-mobile-topbar__end">

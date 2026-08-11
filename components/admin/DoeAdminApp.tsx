@@ -13,6 +13,8 @@ import { useAdminData } from "@/lib/admin/use-admin-data";
 import "@/lib/admin/admin-page.css";
 import "@/lib/product/product-brown-mock.css";
 import "@/lib/product/product-landing.css";
+import "@/lib/product/product-page.css";
+import "@/lib/product2/product2-inbox.css";
 import { suisseIntl } from "@/lib/home/fonts";
 
 export function DoeAdminApp({
@@ -27,7 +29,7 @@ export function DoeAdminApp({
 
   return (
     <main className={`admin-page-root product-page-root h-dvh min-h-0 w-full overflow-hidden ${suisseIntl.className}`}>
-      <div className="product-brown-mock product-brown-admin-mode product-brown-landing-mode flex h-full min-h-0 flex-col">
+      <div className="product-brown-mock product-brown-admin-mode product-brown-inbox-mode flex h-full min-h-0 flex-col">
         <div className="product-brown-shell flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0">
           <div className="product-brown-frame product-brown-layered-layout min-h-0 flex-1 overflow-hidden">
             <div className="product-brown-workspace-row h-full max-w-none">

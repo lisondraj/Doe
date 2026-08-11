@@ -44,12 +44,38 @@ html[data-admin-page="true"] {
   background: transparent;
 }
 
+.product-brown-mock.product-brown-admin-mode .product-brown-shell,
+.product-brown-mock.product-brown-admin-mode .product-brown-frame,
+.product-brown-mock.product-brown-admin-mode .product-brown-layered-layout,
+.product-brown-mock.product-brown-admin-mode .product-brown-workspace-row,
+.product-brown-mock.product-brown-admin-mode .product-brown-inner-row,
+.product-brown-mock.product-brown-admin-mode .product-brown-inner-row__content,
+.product-brown-mock.product-brown-admin-mode .product-brown-main,
+.product-brown-mock.product-brown-admin-mode .product-landing-panel,
+.product-brown-mock.product-brown-admin-mode .product-inbox-panel,
+.product-brown-mock.product-brown-admin-mode .product-inbox-stage,
+.product-brown-mock.product-brown-admin-mode .product-inbox-index,
+.product-brown-mock.product-brown-admin-mode .product-inbox-reading {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
 .product-brown-mock.product-brown-admin-mode .product-brown-main {
   border-top-left-radius: 0;
   min-height: 0;
   overflow: hidden;
-  background: transparent !important;
   color: var(--pl-console-text, #f2e8da) !important;
+}
+
+/* Kill cream/sand remaps that leak white panels into admin */
+.product-brown-mock.product-brown-admin-mode .product-brown-main [class*="bg-white"],
+.product-brown-mock.product-brown-admin-mode .product-brown-main [class*="bg-[#FAFAFA]"],
+.product-brown-mock.product-brown-admin-mode .product-brown-main [class*="bg-[#F7F7F7]"],
+.product-brown-mock.product-brown-admin-mode .product-brown-main [class*="bg-[#FBFBFB]"],
+.product-brown-mock.product-brown-admin-mode .product-brown-main [class*="bg-[#faf0d8]"],
+.product-brown-mock.product-brown-admin-mode .product-brown-main [class*="bg-[#f5e6d0]"],
+.product-brown-mock.product-brown-admin-mode .product-brown-main [class*="bg-[#ede0c8]"] {
+  background-color: rgba(39, 31, 23, 0.55) !important;
 }
 
 .product-brown-mock.product-brown-admin-mode .product-landing-console-shell .product-landing-header {
@@ -68,15 +94,83 @@ html[data-admin-page="true"] {
   background: rgba(242, 232, 218, 0.12);
 }
 
-.admin-panel-title {
-  font-size: clamp(1.55rem, 1.15rem + 1.3vw, 2.2rem);
-  line-height: 1.08;
-  letter-spacing: -0.03em;
+.product-brown-mock.product-brown-admin-mode .product-landing-header {
+  background-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-masthead__desk {
+  -webkit-text-fill-color: transparent;
+}
+
+.product-brown-mock.product-brown-admin-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  header:not(.product-landing-header),
+.product-brown-mock.product-brown-admin-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  .sticky.top-0 {
+  background-color: transparent !important;
+  border-color: rgba(242, 232, 218, 0.1) !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-chart-card,
+.product-brown-mock.product-brown-admin-mode .admin-mobile-chart-card {
+  background: rgba(39, 31, 23, 0.72) !important;
+  border-color: rgba(245, 230, 208, 0.12) !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-mobile-inbox__heading {
   background: var(--admin-gold-text);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
+}
+
+.admin-reading-title {
+  color: #f2e8da !important;
+  background: none !important;
+  -webkit-text-fill-color: #f2e8da;
+}
+
+.admin-stat-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-stat-strip__value {
+  color: #f0dcc4 !important;
+  background: var(--admin-gold-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.admin-stat-strip__label,
+.admin-stat-strip__detail {
+  color: rgba(242, 232, 218, 0.52) !important;
+}
+
+.admin-inbox-search {
+  min-height: 2.25rem;
+  border: 1px solid rgba(245, 230, 208, 0.12);
+  border-radius: 0.65rem;
+  background: rgba(20, 14, 8, 0.55);
+  padding: 0 0.75rem;
+  color: #f5e6d0;
+}
+
+.admin-inbox-search input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  background: transparent;
+  outline: none;
+  color: #f5e6d0;
+  font-size: 0.82rem;
+}
+
+.admin-inbox-search input::placeholder {
+  color: rgba(245, 230, 208, 0.42);
 }
 
 .product-brown-sidebar > nav.px-2 > button {
@@ -345,6 +439,7 @@ html[data-admin-page="true"] {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.product-brown-inbox-mode .product-mobile-embed .product-landing-header,
 .product-brown-landing-mode .product-mobile-embed .product-landing-header {
   background: transparent !important;
   border-bottom: 0 !important;
@@ -352,11 +447,14 @@ html[data-admin-page="true"] {
   margin-bottom: 0.35rem;
 }
 
+.product-brown-inbox-mode .product-mobile-embed .product-landing-header__title,
+.product-brown-inbox-mode .product-mobile-embed .product-landing-header__crumb,
 .product-brown-landing-mode .product-mobile-embed .product-landing-header__title,
 .product-brown-landing-mode .product-mobile-embed .product-landing-header__crumb {
   color: rgba(245, 230, 208, 0.88) !important;
 }
 
+.product-brown-inbox-mode .product-mobile-embed .product-landing-header__crumb--current,
 .product-brown-landing-mode .product-mobile-embed .product-landing-header__crumb--current {
   color: #f5e6d0 !important;
 }
@@ -391,7 +489,11 @@ html[data-admin-page="true"] {
   line-height: 1;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
-  color: #f5e6d0;
+  background: var(--admin-gold-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .admin-mobile-section-title {
@@ -598,7 +700,11 @@ html[data-admin-page="true"] {
   font-size: clamp(1.7rem, 1.35rem + 1.1vmin, 2.15rem);
   line-height: 1.08;
   letter-spacing: -0.03em;
-  color: #f5e6d0;
+  background: var(--admin-gold-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .admin-mobile-detail__body {

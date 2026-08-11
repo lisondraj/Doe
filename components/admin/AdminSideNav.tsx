@@ -38,6 +38,14 @@ const NAV_ITEMS: {
   },
 ];
 
+function SidebarIcon({ children }: { children: ReactNode }) {
+  return (
+    <DoeBuildIcon className="h-[18px] w-[18px] shrink-0 text-[rgba(245,230,208,0.42)]">
+      {children}
+    </DoeBuildIcon>
+  );
+}
+
 export function AdminSideNav({
   activeTab,
   onSelect,
@@ -63,6 +71,31 @@ export function AdminSideNav({
             </p>
           </div>
         </div>
+        <button
+          type="button"
+          className="rounded-md p-1.5 text-[rgba(245,230,208,0.52)] hover:bg-[rgba(245,230,208,0.08)] hover:text-[#f5e6d0]"
+          aria-label="Collapse sidebar"
+        >
+          <SidebarIcon>
+            <rect width="18" height="18" x="3" y="3" rx="2" />
+            <path d="M9 3v18" />
+          </SidebarIcon>
+        </button>
+      </div>
+
+      <div className="px-3 pb-2">
+        <div className="flex h-9 items-center gap-2 rounded-lg border border-[#ECECEC] bg-[#FAFAFA] px-2.5">
+          <SidebarIcon>
+            <>
+              <circle cx="11" cy="11" r="7" />
+              <path d="m21 21-4.35-4.35" />
+            </>
+          </SidebarIcon>
+          <span className="flex-1 text-[13px] text-neutral-400">Search</span>
+          <span className="rounded border border-[#E5E5E5] bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
+            ⌘
+          </span>
+        </div>
       </div>
 
       <div className="px-2 pb-1 pt-1">
@@ -82,24 +115,16 @@ export function AdminSideNav({
               type="button"
               onClick={() => onSelect(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] outline-none transition-colors duration-150 ${
+              className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] outline-none ${
                 isActive
-                  ? "font-medium text-[#f5e6d0]"
+                  ? "bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
                   : "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
               }`}
             >
-              <DoeBuildIcon className="h-[18px] w-[18px] shrink-0 text-[rgba(245,230,208,0.42)]">
-                {item.icon}
-              </DoeBuildIcon>
+              <SidebarIcon>{item.icon}</SidebarIcon>
               <span className="min-w-0 flex-1 truncate">{item.label}</span>
               {badge !== undefined ? (
-                <span
-                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums ${
-                    isActive
-                      ? "bg-[rgba(245,230,208,0.16)] text-[#f5e6d0]"
-                      : "bg-[rgba(245,230,208,0.08)] text-[rgba(245,230,208,0.72)]"
-                  }`}
-                >
+                <span className="rounded-full bg-[rgba(245,230,208,0.08)] px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-[rgba(245,230,208,0.72)]">
                   {badge}
                 </span>
               ) : null}
@@ -116,11 +141,7 @@ export function AdminSideNav({
           Doe Admin
         </p>
         {ADMIN_AUTH_ENABLED ? (
-          <button
-            type="button"
-            onClick={() => void signOutAdmin()}
-            className="admin-nav-signout mt-3"
-          >
+          <button type="button" onClick={() => void signOutAdmin()} className="admin-nav-signout mt-3">
             Sign out
           </button>
         ) : null}

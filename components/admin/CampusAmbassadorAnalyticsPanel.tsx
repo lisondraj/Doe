@@ -3,10 +3,11 @@
 import { useMemo } from "react";
 
 import { AdminBarChart, AdminDonutChart } from "@/components/admin/AdminCharts";
+import { AdminProductStatStrip } from "@/components/admin/admin-product-stats";
 import type { AdminCampusAmbassadorApplication } from "@/lib/admin/campus-ambassador-applications";
 import { buildCampusAmbassadorAnalytics } from "@/lib/admin/campus-ambassador-analytics";
 import type { AnalyticsBarItem } from "@/lib/admin/internship-analytics";
-import { inter, lora, suisseIntl } from "@/lib/home/fonts";
+import { dmSans, suisseIntl } from "@/lib/home/fonts";
 
 type PanelVariant = "mobile" | "desktop";
 
@@ -19,32 +20,6 @@ function toBarItems(
     value: slice.value,
     percentage: total > 0 ? Math.round((slice.value / total) * 100) : 0,
   }));
-}
-
-function SummaryTile({
-  label,
-  value,
-  variant,
-}: {
-  label: string;
-  value: number;
-  variant: PanelVariant;
-}) {
-  if (variant === "mobile") {
-    return (
-      <div className="admin-mobile-stat-card admin-mobile-surface">
-        <p className="admin-mobile-stat-card__label">{label}</p>
-        <p className="admin-mobile-stat-card__value">{value}</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="admin-stat-card">
-      <p className="admin-stat-card__label">{label}</p>
-      <p className="admin-stat-card__value">{value}</p>
-    </div>
-  );
 }
 
 export function CampusAmbassadorAnalyticsPanel({
@@ -60,78 +35,101 @@ export function CampusAmbassadorAnalyticsPanel({
 }) {
   const analytics = useMemo(() => buildCampusAmbassadorAnalytics(applications), [applications]);
   const chartVariant = variant;
+
+  const statItems = [
+    { label: "Total applications", value: analytics.total },
+    {
+      label: "United States",
+      value: analytics.byCountry.find((item) => item.label === "United States")?.value ?? 0,
+    },
+    {
+      label: "Canada",
+      value: analytics.byCountry.find((item) => item.label === "Canada")?.value ?? 0,
+    },
+    {
+      label: "Program tags",
+      value: analytics.byHealthProgram.reduce((sum, item) => sum + item.value, 0),
+    },
+  ];
+
   const countryItems = toBarItems(analytics.byCountry, analytics.total);
   const schoolLevelItems = toBarItems(analytics.bySchoolLevel, analytics.total);
   const healthProgramItems = toBarItems(analytics.byHealthProgram, analytics.total);
   const statementItems = toBarItems(analytics.byStatementCount, analytics.total);
 
-  const summaryTiles = (
+  const charts = (
     <>
-      <SummaryTile variant={variant} label="Total applications" value={analytics.total} />
-      <SummaryTile
-        variant={variant}
-        label="United States"
-        value={analytics.byCountry.find((item) => item.label === "United States")?.value ?? 0}
-      />
-      <SummaryTile
-        variant={variant}
-        label="Canada"
-        value={analytics.byCountry.find((item) => item.label === "Canada")?.value ?? 0}
-      />
-      <SummaryTile
-        variant={variant}
-        label="Health program tags"
-        value={analytics.byHealthProgram.reduce((sum, item) => sum + item.value, 0)}
-      />
+      <AdminDonutChart title="By country" items={countryItems} variant={chartVariant} />
+      <AdminBarChart title="By school level" items={schoolLevelItems} variant={chartVariant} />
+      <AdminBarChart title="Health programs" items={healthProgramItems.slice(0, 8)} variant={chartVariant} />
+      <AdminDonutChart title="Statement selections" items={statementItems} variant={chartVariant} />
     </>
   );
 
-  return (
-    <div className="product-landing-panel flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-      {variant === "desktop" ? (
-        <div className="product-landing-console-shell shrink-0">
-          <header className="product-landing-header flex shrink-0 items-center gap-2 py-3">
-            <h1 className={`admin-panel-title m-0 ${lora.className}`}>Analytics</h1>
-            <div className="ml-auto">
-              <button type="button" onClick={onRefresh} disabled={loading} className="admin-panel-button">
-                {loading ? "Refreshing…" : "Refresh"}
-              </button>
-            </div>
-          </header>
+  if (variant === "mobile") {
+    return (
+      <div className={`product-mobile-inbox product-mobile-panel flex h-full min-h-0 flex-col ${suisseIntl.className}`}>
+        <div className="product-mobile-inbox__masthead">
+          <p className="product-mobile-inbox__eyebrow">Campus Ambassador Program</p>
+          <h2 className={`product-mobile-inbox__heading ${dmSans.className}`}>Analytics</h2>
         </div>
-      ) : (
-        <header className={`product-landing-header product-mobile-page-header__bar flex items-center px-0 py-0 ${suisseIntl.className}`}>
-          <h1 className="product-landing-header__title product-landing-header__trail product-mobile-page-header__trail m-0 min-w-0 font-normal tracking-tight">
-            <span className="product-landing-header__crumb product-landing-header__crumb--current admin-mobile-section-title">Analytics</span>
-          </h1>
-        </header>
-      )}
+        <AdminProductStatStrip variant="mobile" items={statItems} />
+        <div className="mt-4 flex flex-col gap-4 overflow-y-auto px-4 pb-4">{charts}</div>
+      </div>
+    );
+  }
 
-      <div
-        className={
-          variant === "mobile"
-            ? "admin-mobile-stat-grid"
-            : "grid grid-cols-4 gap-3 border-b border-[rgba(245,230,208,0.08)] px-[clamp(1.35rem,2vw,2rem)] py-4"
-        }
-      >
-        {summaryTiles}
+  return (
+    <div className="product-inbox-panel product-inbox-panel--editorial product-landing-panel flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="product-landing-console-shell shrink-0">
+        <header className={`product-landing-header flex items-center gap-2 ${suisseIntl.className}`}>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+            className="product-landing-header__icon shrink-0"
+          >
+            <path d="M3 3v18h18" />
+            <path d="M7 16l4-4 4 4 5-6" />
+          </svg>
+          <h1 className="product-landing-header__title m-0 font-normal tracking-tight">Analytics</h1>
+          <div className="ml-auto">
+            <button
+              type="button"
+              onClick={onRefresh}
+              disabled={loading}
+              className="product-call-history-rail__action-btn"
+            >
+              {loading ? "Refreshing…" : "Refresh"}
+            </button>
+          </div>
+        </header>
       </div>
 
-      <div
-        className={
-          variant === "mobile"
-            ? "mt-4 flex flex-col gap-4 overflow-y-auto pb-4"
-            : "grid min-h-0 flex-1 grid-cols-2 gap-4 overflow-y-auto px-[clamp(1.35rem,2vw,2rem)] py-4"
-        }
-      >
-        <AdminDonutChart title="By country" items={countryItems} variant={chartVariant} />
-        <AdminBarChart title="By school level" items={schoolLevelItems} variant={chartVariant} />
-        <AdminBarChart
-          title="Health programs"
-          items={healthProgramItems.slice(0, 8)}
-          variant={chartVariant}
-        />
-        <AdminDonutChart title="Statement selections" items={statementItems} variant={chartVariant} />
+      <div className={`product-inbox-masthead ${suisseIntl.className}`}>
+        <div className="product-inbox-masthead__grid">
+          <div className="product-inbox-masthead__hero">
+            <h2 className={`product-inbox-masthead__desk ${dmSans.className}`}>Program analytics</h2>
+            <p className={`product-inbox-masthead__agent ${dmSans.className}`}>
+              Breakdown across {analytics.total} application{analytics.total === 1 ? "" : "s"}
+            </p>
+          </div>
+        </div>
+        <div className="px-[var(--pi-stage-pad-x,clamp(1.35rem,2vw,2rem))] pb-4">
+          <AdminProductStatStrip variant="desktop" items={statItems} />
+        </div>
+      </div>
+
+      <div className="product-landing-panel__divider" role="separator" aria-hidden />
+
+      <div className="product-inbox-reading min-h-0 flex-1">
+        <div className="product-inbox-reading__scroll">
+          <div className="grid min-h-0 grid-cols-2 gap-4">{charts}</div>
+        </div>
       </div>
     </div>
   );
