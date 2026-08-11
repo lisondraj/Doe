@@ -1,6 +1,8 @@
 "use client";
 
 import { CampusAmbassadorMobileView } from "@/components/join/CampusAmbassadorMobileView";
+import { PremedLearnMoreProvider } from "@/components/premed/PremedLearnMoreProvider";
+import { PremedLinkGuard } from "@/components/premed/PremedLinkGuard";
 import { useAboutPageVariant } from "@/lib/about/use-about-page-variant";
 import {
   joinCampusPageHostAllowed,
@@ -26,5 +28,11 @@ export function CampusAmbassadorRouter() {
     );
   }
 
-  return <CampusAmbassadorMobileView />;
+  return (
+    <PremedLearnMoreProvider>
+      <PremedLinkGuard>
+        <CampusAmbassadorMobileView />
+      </PremedLinkGuard>
+    </PremedLearnMoreProvider>
+  );
 }
