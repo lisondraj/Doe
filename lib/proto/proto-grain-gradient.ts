@@ -96,6 +96,7 @@ export type ProtoGrainGradientVariant =
   | "home-footer"
   | "home-integrations"
   | "about-hero"
+  | "join-campus-hero"
   | "agents"
   | "front-desk"
   | "front-desk-band"
@@ -212,6 +213,18 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     offsetY: -0.08,
     scale: 1.12,
     speed: 0.65,
+  },
+  /** /join campus ambassador — dusk palette, introducing-pulse ripple flow (not truchet). */
+  "join-campus-hero": {
+    shape: "ripple",
+    softness: 0.72,
+    intensity: 0.14,
+    fit: "cover",
+    rotation: 288,
+    offsetX: -0.1,
+    offsetY: -0.12,
+    scale: 1.16,
+    speed: 0.35,
   },
   agents: {
     shape: "blob",
@@ -576,7 +589,8 @@ export function isProtoShaderHeroVariant(variant: ProtoGrainGradientVariant) {
     variant === "home-hero" ||
     variant === "home-hero-phone" ||
     variant === "build-hero" ||
-    variant === "about-hero"
+    variant === "about-hero" ||
+    variant === "join-campus-hero"
   );
 }
 

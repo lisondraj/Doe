@@ -44,7 +44,7 @@ export function CampusAmbassadorPageContent() {
           variant="hero"
           boxClassName={ABOUT_PAGE_HERO_BOX_TW}
           gapClassName=""
-          useAboutHeroDuskShader
+          useJoinCampusHeroDuskShader
         />
       </div>
 

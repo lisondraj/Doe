@@ -35,8 +35,13 @@ function isHeroVariant(variant: ProtoGrainGradientVariant) {
     variant === "home-hero" ||
     variant === "home-hero-phone" ||
     variant === "build-hero" ||
-    variant === "about-hero"
+    variant === "about-hero" ||
+    variant === "join-campus-hero"
   );
+}
+
+function isAboutHeroShaderVariant(variant: ProtoGrainGradientVariant) {
+  return variant === "about-hero" || variant === "join-campus-hero";
 }
 
 function isPhoneLayout() {
@@ -106,7 +111,7 @@ export const ProtoGrainGradient = memo(function ProtoGrainGradient({
    * isn't active, so the dedicated-path choice only needs to depend on `variant`.
    */
   const homeHeroBackground = hero && variant === "home-hero";
-  const aboutHeroBackground = hero && variant === "about-hero";
+  const aboutHeroBackground = hero && isAboutHeroShaderVariant(variant);
   const dedicatedHeroBackground = homeHeroBackground || aboutHeroBackground;
   const slotId = homeHeroBackground
     ? DOEPHONE_HOME_HERO_SHADER_SLOT

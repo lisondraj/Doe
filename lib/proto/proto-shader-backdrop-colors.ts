@@ -73,6 +73,19 @@ export function doeAboutHeroDuskShaderSurface(): ProtoGrainGradientSurface {
   };
 }
 
+/** /join campus ambassador — dusk palette with introducing-pulse ripple flow. */
+export function doeJoinCampusHeroDuskShaderSurface(): ProtoGrainGradientSurface {
+  return {
+    variant: "join-campus-hero",
+    colors: [
+      DOE_HOME_HERO_DUSK_PALETTE.horizon,
+      DOE_HOME_HERO_DUSK_PALETTE.clay,
+      DOE_HOME_HERO_DUSK_PALETTE.sand,
+    ],
+    colorBack: DOE_HOME_HERO_DUSK_PALETTE.back,
+  };
+}
+
 /** iPhone home dusk — footer shader (warm pool on umber). */
 export function doeHomeDuskFooterShaderSurface(): ProtoGrainGradientSurface {
   return {
