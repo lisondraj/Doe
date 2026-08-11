@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 
 import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
+import { ADMIN_AUTH_ENABLED } from "@/lib/admin/admin-auth";
 import { signOutAdmin } from "@/lib/admin/sign-out-admin";
 import { lora, suisseIntl } from "@/lib/home/fonts";
 
@@ -12,7 +13,6 @@ const NAV_ITEMS: {
   id: AdminTab;
   label: string;
   icon: ReactNode;
-  badge?: number;
 }[] = [
   {
     id: "signups",
@@ -49,13 +49,19 @@ export function AdminSideNav({
 }) {
   return (
     <aside className={`product-brown-sidebar flex h-full shrink-0 flex-col ${suisseIntl.className}`}>
-      <div className="flex items-center gap-2.5 px-3 pt-3 pb-2">
-        <div
-          className="h-9 w-9 shrink-0 rounded-lg bg-gradient-to-br from-[#D4A574] via-[#A67B5B] to-[#3d2e1f] shadow-sm"
-          aria-hidden
-        />
-        <div className="min-w-0">
-          <p className={`admin-gold-wordmark m-0 truncate font-normal ${lora.className}`}>Doe</p>
+      <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-2">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <div
+            className="h-9 w-9 shrink-0 rounded-lg bg-gradient-to-br from-[#D4A574] via-[#A67B5B] to-[#3d2e1f] shadow-sm"
+            aria-hidden
+          />
+          <div className="min-w-0">
+            <p
+              className={`m-0 truncate font-normal text-[1.65rem] leading-[2.25rem] tracking-tight text-[#f5e6d0] ${lora.className}`}
+            >
+              Doe
+            </p>
+          </div>
         </div>
       </div>
 
@@ -82,11 +88,13 @@ export function AdminSideNav({
                   : "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
               }`}
             >
-              <DoeBuildIcon className="h-5 w-5 shrink-0 text-[rgba(245,230,208,0.42)]">{item.icon}</DoeBuildIcon>
+              <DoeBuildIcon className="h-[18px] w-[18px] shrink-0 text-[rgba(245,230,208,0.42)]">
+                {item.icon}
+              </DoeBuildIcon>
               <span className="min-w-0 flex-1 truncate">{item.label}</span>
               {badge !== undefined ? (
                 <span
-                  className={`rounded-full px-1.5 py-0.5 text-[11px] font-medium tabular-nums ${
+                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums ${
                     isActive
                       ? "bg-[rgba(245,230,208,0.16)] text-[#f5e6d0]"
                       : "bg-[rgba(245,230,208,0.08)] text-[rgba(245,230,208,0.72)]"
@@ -107,13 +115,15 @@ export function AdminSideNav({
         <p className="m-0 mt-[0.4rem] truncate text-[0.88rem] font-normal leading-[1.2] tracking-[-0.01em] text-[rgba(245,230,208,0.78)]">
           Doe Admin
         </p>
-        <button
-          type="button"
-          onClick={() => void signOutAdmin()}
-          className="admin-nav-signout mt-3"
-        >
-          Sign out
-        </button>
+        {ADMIN_AUTH_ENABLED ? (
+          <button
+            type="button"
+            onClick={() => void signOutAdmin()}
+            className="admin-nav-signout mt-3"
+          >
+            Sign out
+          </button>
+        ) : null}
       </div>
     </aside>
   );

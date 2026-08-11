@@ -3,11 +3,10 @@
 import { useMemo } from "react";
 
 import { AdminBarChart, AdminDonutChart } from "@/components/admin/AdminCharts";
-import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
 import type { AdminCampusAmbassadorApplication } from "@/lib/admin/campus-ambassador-applications";
 import { buildCampusAmbassadorAnalytics } from "@/lib/admin/campus-ambassador-analytics";
 import type { AnalyticsBarItem } from "@/lib/admin/internship-analytics";
-import { inter, lora } from "@/lib/home/fonts";
+import { inter, suisseIntl } from "@/lib/home/fonts";
 
 type PanelVariant = "mobile" | "desktop";
 
@@ -90,14 +89,10 @@ export function CampusAmbassadorAnalyticsPanel({
   return (
     <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
       {variant === "desktop" ? (
-        <header className="admin-panel-header">
-          <DoeBuildIcon className="h-5 w-5 text-[var(--admin-panel-muted)]">
-            <>
-              <path d="M3 3v18h18" />
-              <path d="M7 16l4-4 4 4 5-6" />
-            </>
-          </DoeBuildIcon>
-          <h1 className="admin-panel-header__title">Campus ambassador analytics</h1>
+        <header className="product-landing-header flex shrink-0 items-center gap-2 px-4 py-3">
+          <h1 className={`product-landing-header__title m-0 text-[15px] font-normal tracking-tight ${suisseIntl.className}`}>
+            Analytics
+          </h1>
           <div className="ml-auto">
             <button type="button" onClick={onRefresh} disabled={loading} className="admin-panel-button">
               {loading ? "Refreshing…" : "Refresh"}
@@ -105,14 +100,18 @@ export function CampusAmbassadorAnalyticsPanel({
           </div>
         </header>
       ) : (
-        <h2 className={`admin-mobile-section-title ${lora.className}`}>Analytics</h2>
+        <header className={`product-landing-header product-mobile-page-header__bar flex items-center px-0 py-0 ${suisseIntl.className}`}>
+          <h1 className="product-landing-header__title product-landing-header__trail product-mobile-page-header__trail m-0 min-w-0 font-normal tracking-tight">
+            <span className="product-landing-header__crumb product-landing-header__crumb--current">Analytics</span>
+          </h1>
+        </header>
       )}
 
       <div
         className={
           variant === "mobile"
             ? "admin-mobile-stat-grid"
-            : "grid grid-cols-4 gap-3 border-b border-[var(--admin-panel-line)] p-4"
+            : "grid grid-cols-4 gap-3 border-b border-[var(--pi-line,rgba(38,32,28,0.09))] p-4"
         }
       >
         {summaryTiles}

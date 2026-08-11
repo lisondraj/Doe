@@ -10,11 +10,13 @@ import type {
   CampusAmbassadorSignupStats,
 } from "@/lib/admin/campus-ambassador-applications";
 import { useAdminData } from "@/lib/admin/use-admin-data";
+import { ADMIN_AUTH_ENABLED } from "@/lib/admin/admin-auth";
 import { signOutAdmin } from "@/lib/admin/sign-out-admin";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import "@/lib/admin/admin-page.css";
 import "@/lib/product/product-brown-mock.css";
 import "@/lib/product/product-mobile.css";
+import "@/lib/product/product-landing.css";
 import { lora, suisseIntl } from "@/lib/home/fonts";
 
 const TAB_LABELS: Record<AdminTab, string> = {
@@ -89,7 +91,7 @@ export function AdminMobileView({
   const { applications, stats, loading, error, refresh } = useAdminData(initialApplications, initialStats);
 
   return (
-    <div className={`product-mobile-root product-brown-mock product-brown-admin-mode ${lora.className}`}>
+    <div className={`product-mobile-root product-brown-mock product-brown-agents-mode ${lora.className}`}>
       <header className="product-mobile-topbar">
         <p className={`product-mobile-topbar__wordmark ${lora.className}`}>Doe</p>
         <div className="product-mobile-topbar__end">
@@ -102,43 +104,39 @@ export function AdminMobileView({
           >
             <RefreshIcon />
           </button>
-          <button
-            type="button"
-            onClick={() => void signOutAdmin()}
-            className="product-mobile-topbar__settings"
-            aria-label="Sign out"
-          >
-            <SignOutIcon />
-          </button>
+          {ADMIN_AUTH_ENABLED ? (
+            <button
+              type="button"
+              onClick={() => void signOutAdmin()}
+              className="product-mobile-topbar__settings"
+              aria-label="Sign out"
+            >
+              <SignOutIcon />
+            </button>
+          ) : null}
         </div>
       </header>
 
-      <div className={`admin-mobile-crumb ${suisseIntl.className}`}>
-        <span className="admin-mobile-crumb__section">Admin</span>
-        <span className="admin-mobile-crumb__sep" aria-hidden>
-          /
-        </span>
-        <span className="admin-mobile-crumb__current">{TAB_LABELS[activeTab]}</span>
-      </div>
-
       <main className="product-mobile-main">
-        {activeTab === "signups" ? (
-          <CampusAmbassadorSignupsPanel
-            variant="mobile"
-            applications={applications}
-            stats={stats}
-            loading={loading}
-            error={error}
-            onRefresh={() => void refresh()}
-          />
-        ) : (
-          <CampusAmbassadorAnalyticsPanel
-            variant="mobile"
-            applications={applications}
-            loading={loading}
-            onRefresh={() => void refresh()}
-          />
-        )}
+        <div className="product-mobile-embed admin-mobile-embed">
+          {activeTab === "signups" ? (
+            <CampusAmbassadorSignupsPanel
+              variant="mobile"
+              applications={applications}
+              stats={stats}
+              loading={loading}
+              error={error}
+              onRefresh={() => void refresh()}
+            />
+          ) : (
+            <CampusAmbassadorAnalyticsPanel
+              variant="mobile"
+              applications={applications}
+              loading={loading}
+              onRefresh={() => void refresh()}
+            />
+          )}
+        </div>
       </main>
 
       <nav className="product-mobile-tabbar admin-mobile-tabbar--two" aria-label="Admin sections">
@@ -150,13 +148,10 @@ export function AdminMobileView({
               type="button"
               onClick={() => setActiveTab(tab)}
               aria-current={isActive ? "page" : undefined}
-              className={`product-mobile-tabbar__btn ${isActive ? "product-mobile-tabbar__btn--active" : ""} ${suisseIntl.className}`}
+              className={`product-mobile-tabbar__btn${isActive ? " product-mobile-tabbar__btn--active" : ""} ${suisseIntl.className}`}
             >
               <AdminTabIcon tab={tab} active={isActive} />
               <span>{TAB_LABELS[tab]}</span>
-              {tab === "signups" ? (
-                <span className="admin-mobile-tab-badge">{stats.total}</span>
-              ) : null}
             </button>
           );
         })}

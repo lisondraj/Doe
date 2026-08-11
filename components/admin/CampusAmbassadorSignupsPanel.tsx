@@ -18,7 +18,7 @@ import {
   groupCampusAmbassadorApplications,
   type CampusAmbassadorGroupMode,
 } from "@/lib/admin/campus-ambassador-grouping";
-import { inter, lora } from "@/lib/home/fonts";
+import { inter, lora, suisseIntl } from "@/lib/home/fonts";
 
 type PanelVariant = "mobile" | "desktop";
 
@@ -377,16 +377,10 @@ export function CampusAmbassadorSignupsPanel({
   return (
     <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
       {variant === "desktop" ? (
-        <header className="admin-panel-header">
-          <DoeBuildIcon className="h-5 w-5 text-[var(--admin-panel-muted)]">
-            <>
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </>
-          </DoeBuildIcon>
-          <h1 className="admin-panel-header__title">Campus ambassador program</h1>
+        <header className="product-landing-header flex shrink-0 items-center gap-2 px-4 py-3">
+          <h1 className={`product-landing-header__title m-0 text-[15px] font-normal tracking-tight ${suisseIntl.className}`}>
+            Campus ambassador program
+          </h1>
           <div className="ml-auto">
             <button type="button" onClick={onRefresh} disabled={loading} className="admin-panel-button">
               {loading ? "Refreshing…" : "Refresh"}
@@ -394,14 +388,20 @@ export function CampusAmbassadorSignupsPanel({
           </div>
         </header>
       ) : (
-        <h2 className={`admin-mobile-section-title ${lora.className}`}>Campus ambassador program</h2>
+        <header className={`product-landing-header product-mobile-page-header__bar flex items-center px-0 py-0 ${suisseIntl.className}`}>
+          <h1 className="product-landing-header__title product-landing-header__trail product-mobile-page-header__trail m-0 min-w-0 font-normal tracking-tight">
+            <span className="product-landing-header__crumb product-landing-header__crumb--current">
+              Campus ambassador program
+            </span>
+          </h1>
+        </header>
       )}
 
-      <div className={variant === "mobile" ? "admin-mobile-stat-grid" : "grid grid-cols-4 gap-3 border-b border-[var(--admin-panel-line)] p-4"}>
+      <div className={variant === "mobile" ? "admin-mobile-stat-grid" : "grid grid-cols-4 gap-3 border-b border-[var(--pi-line,rgba(38,32,28,0.09))] p-4"}>
         {statCards}
       </div>
 
-      <div className={variant === "mobile" ? "mt-4 flex flex-col gap-4" : "flex flex-col gap-3 border-b border-[var(--admin-panel-line)] p-4"}>
+      <div className={variant === "mobile" ? "mt-4 flex flex-col gap-4" : "flex flex-col gap-3 border-b border-[var(--pi-line,rgba(38,32,28,0.09))] p-4"}>
         {variant === "mobile" ? (
           <>
             <label className="admin-mobile-search">
@@ -417,7 +417,7 @@ export function CampusAmbassadorSignupsPanel({
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search name, email, school, programs…"
               />
-              <span className="admin-mobile-tabbar__badge">{filtered.length}</span>
+              <span className="admin-search-bar__count">{filtered.length}</span>
             </label>
             <div className="admin-mobile-group-select">
               <label htmlFor="admin-mobile-group-by">Group by</label>
@@ -475,7 +475,7 @@ export function CampusAmbassadorSignupsPanel({
         <div className="admin-mobile-surface mt-4 min-h-0 flex-1 overflow-y-auto">{listContent}</div>
       ) : (
         <div className="grid min-h-0 flex-1 grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
-          <div className="min-h-0 overflow-y-auto border-r border-[var(--admin-panel-line)]">{listContent}</div>
+          <div className="min-h-0 overflow-y-auto border-r border-[var(--pi-line,rgba(38,32,28,0.09))]">{listContent}</div>
           <div className="min-h-0 bg-[rgba(255,255,255,0.42)]">
             {selected ? (
               <ApplicationDetail application={selected} variant="desktop" />
