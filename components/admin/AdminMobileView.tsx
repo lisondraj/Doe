@@ -91,7 +91,7 @@ export function AdminMobileView({
   const { applications, stats, loading, error, refresh } = useAdminData(initialApplications, initialStats);
 
   return (
-    <div className={`product-mobile-root product-brown-mock product-brown-agents-mode ${lora.className}`}>
+    <div className={`product-mobile-root product-brown-mock product-brown-landing-mode ${lora.className}`}>
       <header className="product-mobile-topbar">
         <p className={`product-mobile-topbar__wordmark ${lora.className}`}>Doe</p>
         <div className="product-mobile-topbar__end">

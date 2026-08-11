@@ -6,7 +6,7 @@ import { AdminBarChart, AdminDonutChart } from "@/components/admin/AdminCharts";
 import type { AdminCampusAmbassadorApplication } from "@/lib/admin/campus-ambassador-applications";
 import { buildCampusAmbassadorAnalytics } from "@/lib/admin/campus-ambassador-analytics";
 import type { AnalyticsBarItem } from "@/lib/admin/internship-analytics";
-import { inter, suisseIntl } from "@/lib/home/fonts";
+import { inter, lora, suisseIntl } from "@/lib/home/fonts";
 
 type PanelVariant = "mobile" | "desktop";
 
@@ -87,22 +87,22 @@ export function CampusAmbassadorAnalyticsPanel({
   );
 
   return (
-    <div className={`flex h-full min-h-0 flex-col ${inter.className}`}>
+    <div className="product-landing-panel flex h-full min-h-0 flex-1 flex-col overflow-hidden">
       {variant === "desktop" ? (
-        <header className="product-landing-header flex shrink-0 items-center gap-2 px-4 py-3">
-          <h1 className={`product-landing-header__title m-0 text-[15px] font-normal tracking-tight ${suisseIntl.className}`}>
-            Analytics
-          </h1>
-          <div className="ml-auto">
-            <button type="button" onClick={onRefresh} disabled={loading} className="admin-panel-button">
-              {loading ? "Refreshing…" : "Refresh"}
-            </button>
-          </div>
-        </header>
+        <div className="product-landing-console-shell shrink-0">
+          <header className="product-landing-header flex shrink-0 items-center gap-2 py-3">
+            <h1 className={`admin-panel-title m-0 ${lora.className}`}>Analytics</h1>
+            <div className="ml-auto">
+              <button type="button" onClick={onRefresh} disabled={loading} className="admin-panel-button">
+                {loading ? "Refreshing…" : "Refresh"}
+              </button>
+            </div>
+          </header>
+        </div>
       ) : (
         <header className={`product-landing-header product-mobile-page-header__bar flex items-center px-0 py-0 ${suisseIntl.className}`}>
           <h1 className="product-landing-header__title product-landing-header__trail product-mobile-page-header__trail m-0 min-w-0 font-normal tracking-tight">
-            <span className="product-landing-header__crumb product-landing-header__crumb--current">Analytics</span>
+            <span className="product-landing-header__crumb product-landing-header__crumb--current admin-mobile-section-title">Analytics</span>
           </h1>
         </header>
       )}
@@ -111,7 +111,7 @@ export function CampusAmbassadorAnalyticsPanel({
         className={
           variant === "mobile"
             ? "admin-mobile-stat-grid"
-            : "grid grid-cols-4 gap-3 border-b border-[var(--pi-line,rgba(38,32,28,0.09))] p-4"
+            : "grid grid-cols-4 gap-3 border-b border-[rgba(245,230,208,0.08)] px-[clamp(1.35rem,2vw,2rem)] py-4"
         }
       >
         {summaryTiles}
@@ -121,7 +121,7 @@ export function CampusAmbassadorAnalyticsPanel({
         className={
           variant === "mobile"
             ? "mt-4 flex flex-col gap-4 overflow-y-auto pb-4"
-            : "grid min-h-0 flex-1 grid-cols-2 gap-4 overflow-y-auto p-4"
+            : "grid min-h-0 flex-1 grid-cols-2 gap-4 overflow-y-auto px-[clamp(1.35rem,2vw,2rem)] py-4"
         }
       >
         <AdminDonutChart title="By country" items={countryItems} variant={chartVariant} />

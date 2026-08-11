@@ -82,9 +82,9 @@ export function AdminSideNav({
               type="button"
               onClick={() => onSelect(item.id)}
               aria-current={isActive ? "page" : undefined}
-              className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] transition-colors duration-150 ${
+              className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] outline-none transition-colors duration-150 ${
                 isActive
-                  ? "bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
+                  ? "font-medium text-[#f5e6d0]"
                   : "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]"
               }`}
             >
