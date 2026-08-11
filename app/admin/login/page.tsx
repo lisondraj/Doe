@@ -16,7 +16,7 @@ export default function AdminLoginPage({
   const initialError = searchParams?.error ? ERROR_MESSAGES[searchParams.error] ?? "Could not sign in." : null;
 
   return (
-    <main className="admin-page-root admin-login-page">
+    <main className="admin-page-root admin-login-page product-brown-admin-mode">
       <AdminLoginForm initialError={initialError} />
     </main>
   );

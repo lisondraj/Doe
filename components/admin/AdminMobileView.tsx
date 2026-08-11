@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { CampusAmbassadorAnalyticsPanel } from "@/components/admin/CampusAmbassadorAnalyticsPanel";
 import { CampusAmbassadorSignupsPanel } from "@/components/admin/CampusAmbassadorSignupsPanel";
-import { DoeBuildIcon } from "@/components/admin/doe-build-icon";
+import type { AdminTab } from "@/components/admin/AdminSideNav";
 import type {
   AdminCampusAmbassadorApplication,
   CampusAmbassadorSignupStats,
@@ -15,9 +15,67 @@ import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-v
 import "@/lib/admin/admin-page.css";
 import "@/lib/product/product-brown-mock.css";
 import "@/lib/product/product-mobile.css";
-import { inter, lora } from "@/lib/home/fonts";
+import { lora, suisseIntl } from "@/lib/home/fonts";
 
-type AdminTab = "signups" | "analytics";
+const TAB_LABELS: Record<AdminTab, string> = {
+  signups: "Applications",
+  analytics: "Analytics",
+};
+
+function RefreshIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className="h-[1.32rem] w-[1.32rem]">
+      <path
+        d="M21 12a9 9 0 1 1-2.64-6.36"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+      <path d="M21 3v6h-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SignOutIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden className="h-[1.32rem] w-[1.32rem]">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function AdminTabIcon({ tab, active }: { tab: AdminTab; active: boolean }) {
+  const stroke = active ? "#f5e6d0" : "rgba(245,230,208,0.48)";
+  const common = {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke,
+    strokeWidth: 1.6,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    className: "h-[1.45rem] w-[1.45rem]",
+    "aria-hidden": true as const,
+  };
+
+  if (tab === "signups") {
+    return (
+      <svg {...common}>
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...common}>
+      <path d="M3 3v18h18" />
+      <path d="M7 16l4-4 4 4 5-6" />
+    </svg>
+  );
+}
 
 export function AdminMobileView({
   initialApplications,
@@ -31,27 +89,39 @@ export function AdminMobileView({
   const { applications, stats, loading, error, refresh } = useAdminData(initialApplications, initialStats);
 
   return (
-    <div className={`admin-mobile-root product-brown-mock ${inter.className}`}>
-      <header className="admin-mobile-topbar">
-        <div>
-          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[rgba(245,230,208,0.48)]">
-            Doe Admin
-          </p>
-          <h1 className={`admin-mobile-topbar__title ${lora.className}`}>
-            {activeTab === "signups" ? "Campus ambassador program" : "Analytics"}
-          </h1>
-        </div>
-        <div className="flex items-center gap-2">
-          <button type="button" onClick={() => void refresh()} disabled={loading} className="admin-panel-button">
-            {loading ? "Refreshing…" : "Refresh"}
+    <div className={`product-mobile-root product-brown-mock product-brown-admin-mode ${lora.className}`}>
+      <header className="product-mobile-topbar">
+        <p className={`product-mobile-topbar__wordmark ${lora.className}`}>Doe</p>
+        <div className="product-mobile-topbar__end">
+          <button
+            type="button"
+            onClick={() => void refresh()}
+            disabled={loading}
+            className="product-mobile-topbar__settings"
+            aria-label={loading ? "Refreshing" : "Refresh"}
+          >
+            <RefreshIcon />
           </button>
-          <button type="button" onClick={() => void signOutAdmin()} className="admin-panel-button">
-            Sign out
+          <button
+            type="button"
+            onClick={() => void signOutAdmin()}
+            className="product-mobile-topbar__settings"
+            aria-label="Sign out"
+          >
+            <SignOutIcon />
           </button>
         </div>
       </header>
 
-      <main className="admin-mobile-main">
+      <div className={`admin-mobile-crumb ${suisseIntl.className}`}>
+        <span className="admin-mobile-crumb__section">Admin</span>
+        <span className="admin-mobile-crumb__sep" aria-hidden>
+          /
+        </span>
+        <span className="admin-mobile-crumb__current">{TAB_LABELS[activeTab]}</span>
+      </div>
+
+      <main className="product-mobile-main">
         {activeTab === "signups" ? (
           <CampusAmbassadorSignupsPanel
             variant="mobile"
@@ -71,37 +141,25 @@ export function AdminMobileView({
         )}
       </main>
 
-      <nav className="admin-mobile-tabbar" aria-label="Admin sections">
-        <button
-          type="button"
-          onClick={() => setActiveTab("signups")}
-          className={`admin-mobile-tabbar__btn ${activeTab === "signups" ? "admin-mobile-tabbar__btn--active" : ""}`}
-        >
-          <DoeBuildIcon className="h-5 w-5">
-            <>
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </>
-          </DoeBuildIcon>
-          <span className="truncate">Applications</span>
-          <span className="admin-mobile-tabbar__badge">{stats.total}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("analytics")}
-          className={`admin-mobile-tabbar__btn ${activeTab === "analytics" ? "admin-mobile-tabbar__btn--active" : ""}`}
-        >
-          <DoeBuildIcon className="h-5 w-5">
-            <>
-              <path d="M3 3v18h18" />
-              <path d="M7 16l4-4 4 4 5-6" />
-            </>
-          </DoeBuildIcon>
-          <span className="truncate">Analytics</span>
-        </button>
+      <nav className="product-mobile-tabbar admin-mobile-tabbar--two" aria-label="Admin sections">
+        {(["signups", "analytics"] as const).map((tab) => {
+          const isActive = activeTab === tab;
+          return (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              aria-current={isActive ? "page" : undefined}
+              className={`product-mobile-tabbar__btn ${isActive ? "product-mobile-tabbar__btn--active" : ""} ${suisseIntl.className}`}
+            >
+              <AdminTabIcon tab={tab} active={isActive} />
+              <span>{TAB_LABELS[tab]}</span>
+              {tab === "signups" ? (
+                <span className="admin-mobile-tab-badge">{stats.total}</span>
+              ) : null}
+            </button>
+          );
+        })}
       </nav>
     </div>
   );
