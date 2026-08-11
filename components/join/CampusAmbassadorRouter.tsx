@@ -10,7 +10,7 @@ import { joinPageUrl } from "@/lib/site-domains";
 
 /** doe.care /join — iPhone-only campus ambassador page. */
 export function CampusAmbassadorRouter() {
-  const variant = useAboutPageVariant();
+  useAboutPageVariant();
 
   if (typeof window !== "undefined" && !joinCampusPageHostAllowed(window.location.hostname)) {
     return (
@@ -24,10 +24,6 @@ export function CampusAmbassadorRouter() {
         </p>
       </div>
     );
-  }
-
-  if (variant === null) {
-    return null;
   }
 
   return <CampusAmbassadorMobileView />;

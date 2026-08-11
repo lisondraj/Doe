@@ -17,8 +17,8 @@ import {
   BROADER_DOE_VISION_TITLE_TW,
   ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
+import { BROADER_DOE_VISION_HERO_BACKDROP } from "@/lib/blog/broader-doe-vision-article";
 import {
-  CAMPUS_AMBASSADOR_HERO_SHADER_VARIANT,
   CAMPUS_AMBASSADOR_OPENING_PARAGRAPH,
   CAMPUS_AMBASSADOR_PAGE_TITLE,
   CAMPUS_AMBASSADOR_SUBHEADING,
@@ -42,10 +42,11 @@ export function CampusAmbassadorPageContent() {
 
       <div className={BROADER_DOE_VISION_HERO_WRAP}>
         <BlogHeroVisual
+          backdrop={BROADER_DOE_VISION_HERO_BACKDROP}
           variant="hero"
           boxClassName={ABOUT_PAGE_HERO_BOX_TW}
           gapClassName=""
-          carouselShaderVariant={CAMPUS_AMBASSADOR_HERO_SHADER_VARIANT}
+          useAboutHeroDuskShader
         />
       </div>
 
