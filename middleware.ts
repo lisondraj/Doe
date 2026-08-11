@@ -31,6 +31,10 @@ export function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+
   if (isMarketingLandingRoot(host, pathname)) {
     /**
      * doe.care `/` is served natively by app/page.tsx (PremedRouter). Rewriting to

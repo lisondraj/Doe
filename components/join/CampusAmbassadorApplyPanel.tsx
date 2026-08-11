@@ -84,8 +84,11 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
         body: JSON.stringify(form),
       });
 
-      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-      if (!response.ok) {
+      const payload = (await response.json().catch(() => null)) as {
+        ok?: boolean;
+        error?: string;
+      } | null;
+      if (!response.ok || !payload?.ok) {
         throw new Error(payload?.error || CAMPUS_AMBASSADOR_SUBMIT_ERROR_MESSAGE);
       }
 

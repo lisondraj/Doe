@@ -1,3 +1,5 @@
+import { randomUUID } from "crypto";
+
 import {
   CAMPUS_AMBASSADOR_HEALTH_PROGRAM_OPTIONS,
   CAMPUS_AMBASSADOR_SCHOOL_LEVEL_OPTIONS,
@@ -82,35 +84,33 @@ export async function submitCampusAmbassadorApplication(
 
   const supabase = createSupabaseAdmin();
   const linkedinUrl = formatCampusAmbassadorLinkedInUrl(data.linkedin);
+  const applicationId = randomUUID();
 
-  const { data: inserted, error: insertError } = await supabase
-    .from("campus_ambassador_applications")
-    .insert({
-      full_name: data.fullName,
-      email: data.email,
-      country: data.country,
-      state_or_province: data.stateOrProvince,
-      school_level: data.schoolLevel,
-      school_level_other: data.schoolLevel === "other" ? data.schoolLevelOther || null : null,
-      year_of_study: data.schoolLevel === "graduated" ? null : data.yearOfStudy || null,
-      year_of_study_other:
-        data.schoolLevel !== "graduated" && data.yearOfStudy === "other"
-          ? data.yearOfStudyOther || null
-          : null,
-      field_of_study: data.fieldOfStudy,
-      health_programs: data.healthPrograms,
-      health_program_other: data.healthPrograms.includes("other")
-        ? data.healthProgramOther || null
+  const { error: insertError } = await supabase.from("campus_ambassador_applications").insert({
+    id: applicationId,
+    full_name: data.fullName,
+    email: data.email,
+    country: data.country,
+    state_or_province: data.stateOrProvince,
+    school_level: data.schoolLevel,
+    school_level_other: data.schoolLevel === "other" ? data.schoolLevelOther || null : null,
+    year_of_study: data.schoolLevel === "graduated" ? null : data.yearOfStudy || null,
+    year_of_study_other:
+      data.schoolLevel !== "graduated" && data.yearOfStudy === "other"
+        ? data.yearOfStudyOther || null
         : null,
-      statements: data.statements,
-      linkedin_url: linkedinUrl,
-    })
-    .select("id")
-    .single();
+    field_of_study: data.fieldOfStudy,
+    health_programs: data.healthPrograms,
+    health_program_other: data.healthPrograms.includes("other")
+      ? data.healthProgramOther || null
+      : null,
+    statements: data.statements,
+    linkedin_url: linkedinUrl,
+  });
 
-  if (insertError || !inserted) {
-    throw new Error(insertError?.message || "Could not save application.");
+  if (insertError) {
+    throw new Error(insertError.message || "Could not save application.");
   }
 
-  return { id: inserted.id as string };
+  return { id: applicationId };
 }
