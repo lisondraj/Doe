@@ -58,7 +58,12 @@ export function CampusAmbassadorPageContent() {
 
           <PremedEmailInvite />
 
-          <PremedFoundersBlock heading={CAMPUS_AMBASSADOR_FOUNDERS_HEADING} showDividers={false} />
+          <PremedFoundersBlock
+            heading={CAMPUS_AMBASSADOR_FOUNDERS_HEADING}
+            headingClassName="campus-ambassador-founders-heading"
+            showDividers={false}
+            showTopDivider
+          />
 
           <BlogArticleFooterCarouselBand>
             <PremedBlogRelatedCarousel currentSlug="the-broader-doe-vision" />

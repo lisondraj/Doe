@@ -1,33 +1,39 @@
 import { BlogArticleCarouselDivider } from "@/components/blog/BlogArticleCarouselDivider";
 import { HeroLinkedInIcon } from "@/components/home/icons/HeroSocialIcons";
+import { dmSans } from "@/lib/home/fonts";
 import {
   BROADER_DOE_VISION_BODY_TW,
-  BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW,
-  BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
 import { PREMED_FOUNDERS } from "@/lib/premed/premed-copy";
 
 type PremedFoundersBlockProps = {
   heading?: string;
+  headingClassName?: string;
   showDividers?: boolean;
+  showTopDivider?: boolean;
 };
 
 /** /premed + /join — founder bios with highlighted names and LinkedIn links. */
-export function PremedFoundersBlock({ heading, showDividers = true }: PremedFoundersBlockProps = {}) {
+export function PremedFoundersBlock({
+  heading,
+  headingClassName = "",
+  showDividers = true,
+  showTopDivider = false,
+}: PremedFoundersBlockProps = {}) {
   return (
     <div className="premed-founders-band">
-      {showDividers ? (
+      {showDividers || showTopDivider ? (
         <div className="premed-founders-band__divider">
           <BlogArticleCarouselDivider />
         </div>
       ) : null}
       <section className="premed-founders-block" aria-label={heading ?? "Founders"}>
         {heading ? (
-          <p
-            className={`premed-founders-block__heading mb-5 iphone-page:mb-6 ${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_TW} ${BROADER_DOE_VISION_THESIS_SECTION_HEADLINE_GOLD_TW}`}
+          <h2
+            className={`premed-founders-block__heading broader-doe-thesis-headline broader-doe-thesis-headline-gold mb-5 font-medium leading-[1.12] tracking-[-0.02em] iphone-page:mb-6 ${dmSans.className} ${headingClassName}`}
           >
             {heading}
-          </p>
+          </h2>
         ) : null}
         <div className="premed-founders-block__list">
           {PREMED_FOUNDERS.map((founder) => (

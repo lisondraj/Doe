@@ -229,10 +229,6 @@ html[data-about-page]:not([data-layout="desktop"]):has(.campus-ambassador-apply)
 html[data-about-page]:not([data-layout="desktop"])
   .blog-mobile-root:has(.campus-ambassador-apply),
 html[data-about-page]:not([data-layout="desktop"])
-  .blog-page-root:has(.campus-ambassador-apply),
-html[data-about-page]:not([data-layout="desktop"])
-  .about-page-content:has(.campus-ambassador-apply),
-html[data-about-page]:not([data-layout="desktop"])
   .campus-ambassador-page-main {
   overflow-x: clip !important;
   max-width: 100%;
@@ -240,19 +236,16 @@ html[data-about-page]:not([data-layout="desktop"])
 
 html[data-about-page]:not([data-layout="desktop"])
   .about-page-content:has(.campus-ambassador-apply)
-  .blog-article-related-carousel {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-  margin-left: 0;
-  margin-right: 0;
-  --blog-related-carousel-slide-width: calc(100% - 2 * var(--blog-related-carousel-inset-x));
+  .premed-founders-band {
+  margin-top: clamp(2rem, 2.6vw, 2.65rem);
 }
 
 html[data-about-page]:not([data-layout="desktop"])
   .about-page-content:has(.campus-ambassador-apply)
-  .premed-founders-band {
-  margin-top: clamp(2rem, 2.6vw, 2.65rem);
+  .campus-ambassador-founders-heading {
+  font-size: clamp(1.55rem, 1.28rem + 1.2vmin, 2.15rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
 }
 
 .campus-ambassador-apply,
