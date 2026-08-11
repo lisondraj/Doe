@@ -25,14 +25,9 @@ type PanelVariant = "mobile" | "desktop";
 
 function DetailRow({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="product-inbox-message product-inbox-message--latest">
-      <div className="product-inbox-message__rail" aria-hidden>
-        <span className="product-inbox-message__node" />
-      </div>
-      <div className="product-inbox-message__content">
-        <p className="product-inbox-message__affiliation">{label}</p>
-        <div className={`product-inbox-message__body ${dmSans.className}`}>{value}</div>
-      </div>
+    <div className="admin-field-row">
+      <p className="admin-field-row__label">{label}</p>
+      <div className={`admin-field-row__value ${dmSans.className}`}>{value}</div>
     </div>
   );
 }
@@ -45,9 +40,9 @@ function ApplicationDetail({
   variant: PanelVariant;
 }) {
   const programChips = application.health_programs.length ? (
-    <div className="flex flex-wrap gap-2">
+    <div className="admin-chip-row">
       {application.health_programs.map((program) => (
-        <span key={program} className="product-inbox-masthead__category product-inbox-masthead__category--active">
+        <span key={program} className="admin-chip">
           {formatCampusAmbassadorHealthProgram(program)}
         </span>
       ))}
@@ -57,9 +52,9 @@ function ApplicationDetail({
   );
 
   const statementChips = application.statements.length ? (
-    <div className="flex flex-col gap-2">
+    <div className="admin-chip-row admin-chip-row--stack">
       {application.statements.map((statement) => (
-        <span key={statement} className="product-inbox-masthead__category">
+        <span key={statement} className="admin-chip">
           {formatCampusAmbassadorStatement(statement)}
         </span>
       ))}
@@ -85,7 +80,7 @@ function ApplicationDetail({
           <h2 className={`admin-mobile-detail__title ${dmSans.className}`}>{application.full_name}</h2>
           <p className="admin-mobile-list-item__meta">Submitted {formatAdminDate(application.created_at)}</p>
         </header>
-        <div className="admin-mobile-detail__body">
+        <div className="admin-mobile-detail__body admin-field-stack">
           <DetailRow label="Email" value={application.email} />
           <DetailRow label="Country" value={formatCampusAmbassadorCountry(application.country)} />
           <DetailRow label="State or province" value={application.state_or_province} />
@@ -141,7 +136,7 @@ function ApplicationDetail({
         </div>
       </header>
       <div className="product-inbox-reading__scroll">
-        <div className="product-inbox-correspondence">
+        <div className="admin-field-stack">
           <DetailRow label="Email" value={application.email} />
           <DetailRow label="State or province" value={application.state_or_province} />
           <DetailRow
@@ -437,7 +432,7 @@ export function CampusAmbassadorSignupsPanel({
               <span className="product-inbox-index__count">{filtered.length}</span>
             </p>
           </div>
-          <label className="admin-inbox-search mx-[var(--pi-stage-pad-x,clamp(1.35rem,2vw,2rem))] mb-3 flex items-center gap-2">
+          <label className="admin-inbox-search mb-3 flex w-full items-center gap-2">
             <DoeBuildIcon className="h-4 w-4 shrink-0 opacity-50">
               <>
                 <circle cx="11" cy="11" r="7" />
@@ -451,7 +446,7 @@ export function CampusAmbassadorSignupsPanel({
               placeholder="Search name, email, school, programs…"
             />
           </label>
-          {error ? <p className="admin-error-text px-[var(--pi-stage-pad-x,clamp(1.35rem,2vw,2rem))] pb-2">{error}</p> : null}
+          {error ? <p className="admin-error-text pb-2">{error}</p> : null}
           <div className="product-inbox-index__list">{listContent}</div>
         </aside>
 

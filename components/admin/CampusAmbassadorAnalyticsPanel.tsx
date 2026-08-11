@@ -126,9 +126,9 @@ export function CampusAmbassadorAnalyticsPanel({
 
       <div className="product-landing-panel__divider" role="separator" aria-hidden />
 
-      <div className="product-inbox-reading min-h-0 flex-1">
+      <div className="product-inbox-reading min-h-0 flex-1 admin-analytics-pane">
         <div className="product-inbox-reading__scroll">
-          <div className="grid min-h-0 grid-cols-2 gap-4">{charts}</div>
+          <div className="admin-analytics-grid">{charts}</div>
         </div>
       </div>
     </div>

@@ -52,10 +52,7 @@ html[data-admin-page="true"] {
 .product-brown-mock.product-brown-admin-mode .product-brown-inner-row__content,
 .product-brown-mock.product-brown-admin-mode .product-brown-main,
 .product-brown-mock.product-brown-admin-mode .product-landing-panel,
-.product-brown-mock.product-brown-admin-mode .product-inbox-panel,
-.product-brown-mock.product-brown-admin-mode .product-inbox-stage,
-.product-brown-mock.product-brown-admin-mode .product-inbox-index,
-.product-brown-mock.product-brown-admin-mode .product-inbox-reading {
+.product-brown-mock.product-brown-admin-mode .product-inbox-panel {
   background: transparent !important;
   background-color: transparent !important;
 }
@@ -65,6 +62,29 @@ html[data-admin-page="true"] {
   min-height: 0;
   overflow: hidden;
   color: var(--pl-console-text, #f2e8da) !important;
+}
+
+/* Stage panes need real brown fills — full transparency reads as broken holes */
+.product-brown-mock.product-brown-admin-mode .product-inbox-stage {
+  background: rgba(18, 12, 6, 0.28) !important;
+  border-top: 1px solid rgba(242, 232, 218, 0.08);
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-index {
+  background: rgba(22, 16, 10, 0.55) !important;
+  border-right-color: rgba(242, 232, 218, 0.1) !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-reading {
+  background: rgba(14, 10, 7, 0.42) !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-masthead {
+  background: transparent !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-landing-panel__divider {
+  background: rgba(242, 232, 218, 0.12) !important;
 }
 
 /* Kill cream/sand remaps that leak white panels into admin */
@@ -171,6 +191,128 @@ html[data-admin-page="true"] {
 
 .admin-inbox-search input::placeholder {
   color: rgba(245, 230, 208, 0.42);
+}
+
+/* Remove gold vertical bar on selected submission */
+.product-brown-mock.product-brown-admin-mode .product-inbox-thread--active {
+  box-shadow: none !important;
+  background: rgba(212, 165, 116, 0.14) !important;
+  border-radius: 0.55rem;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-thread {
+  border-radius: 0.55rem;
+  padding-inline: 0.55rem;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-thread:hover {
+  background: rgba(212, 165, 116, 0.1) !important;
+}
+
+/* Category tabs as proper buttons */
+.product-brown-mock.product-brown-admin-mode .product-inbox-masthead__categories button.product-inbox-masthead__category {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-masthead__category {
+  color: rgba(242, 232, 218, 0.48);
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-masthead__category--active {
+  color: #f2e8da;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-stat-strip .product-landing-stat-strip__item + .product-landing-stat-strip__item {
+  border-left-color: rgba(242, 232, 218, 0.12);
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-reading__stat + .product-inbox-reading__stat {
+  border-left-color: rgba(242, 232, 218, 0.1);
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-reading__stat strong {
+  color: #f2e8da;
+  font-weight: 500;
+}
+
+/* Clean field stack (no timeline rail) */
+.admin-field-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.admin-field-row {
+  border-bottom: 1px solid rgba(242, 232, 218, 0.08);
+  padding: 0.95rem 0;
+}
+
+.admin-field-row:last-child {
+  border-bottom: 0;
+}
+
+.admin-field-row__label {
+  margin: 0;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(228, 210, 184, 0.58);
+}
+
+.admin-field-row__value {
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  color: rgba(245, 230, 208, 0.92);
+  word-break: break-word;
+}
+
+.admin-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.admin-chip-row--stack {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-chip {
+  display: inline-flex;
+  border-radius: 999px;
+  background: rgba(245, 230, 208, 0.08);
+  border: 1px solid rgba(245, 230, 208, 0.12);
+  padding: 0.28rem 0.65rem;
+  color: #f5e6d0;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.admin-analytics-pane {
+  background: rgba(14, 10, 7, 0.42) !important;
+}
+
+.admin-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-index__empty {
+  background: transparent;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-reading__header {
+  background: rgba(20, 14, 8, 0.35);
+  border-bottom-color: rgba(242, 232, 218, 0.08) !important;
 }
 
 .product-brown-sidebar > nav.px-2 > button {
@@ -412,9 +554,10 @@ html[data-admin-page="true"] {
   display: inline-flex;
   border-radius: 999px;
   background: rgba(245, 230, 208, 0.08);
-  padding: 0.28rem 0.55rem;
+  border: 1px solid rgba(245, 230, 208, 0.12);
+  padding: 0.28rem 0.65rem;
   color: #f5e6d0;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 600;
 }
 
