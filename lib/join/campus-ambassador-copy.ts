@@ -17,7 +17,7 @@ export const CAMPUS_AMBASSADOR_SUBHEADING = "Open to all pre-health students.";
 export const CAMPUS_AMBASSADOR_REQUIRED_NOTE = "All fields marked with * are required.";
 
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH =
-  "Campus ambassadors help pre-med and pre-health communities discover how Doe supports clinical learning, documentation, and intelligent care. Tell us a bit about yourself below. We review every submission.";
+  "Today we are excited to open applications for Doe's campus ambassador program for all pre-health students in the United States and Canada who are interested in exploring the intersections of healthcare, AI, and entrepreneurship. This is an opportunity to join a high-velocity startup, connect within your community, and learn more about innovations in AI and clinical practice.";
 
 export const CAMPUS_AMBASSADOR_SUBMIT_LABEL = "Submit application";
 
