@@ -19,13 +19,37 @@ export const CAMPUS_AMBASSADOR_REQUIRED_NOTE = "All fields marked with * are req
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH =
   "Campus ambassadors help pre-med and pre-health communities discover how Doe supports clinical learning, documentation, and intelligent care. Tell us a bit about yourself below. We review every submission.";
 
-export const CAMPUS_AMBASSADOR_FIELD_PROMPT = "What is your name?";
-
-export const CAMPUS_AMBASSADOR_FIELD_COUNT = 10;
-
 export const CAMPUS_AMBASSADOR_SUBMIT_LABEL = "Submit application";
 
 export const CAMPUS_AMBASSADOR_FORM_HEADLINE = "Apply to represent Doe on your campus";
+
+export const CAMPUS_AMBASSADOR_FIELD_FULL_NAME = "What is your full name?";
+
+export const CAMPUS_AMBASSADOR_FIELD_EMAIL = "What is your email?";
+
+export const CAMPUS_AMBASSADOR_FIELD_COUNTRY = "Which country do you currently reside in?";
+
+export const CAMPUS_AMBASSADOR_FIELD_SCHOOL_LEVEL =
+  "Are you currently in high school, college, or university?";
+
+export const CAMPUS_AMBASSADOR_FIELD_SCHOOL_LEVEL_OTHER = "Please specify";
+
+export const CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY = "What current year of study are you in?";
+
+export const CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY_OTHER = "Please specify your year of study";
+
+export const CAMPUS_AMBASSADOR_FIELD_OF_STUDY = "What is your field of study?";
+
+export const CAMPUS_AMBASSADOR_HEALTH_PROGRAMS_HEADING =
+  "Which of the following health professional programs will you be applying to?";
+
+export const CAMPUS_AMBASSADOR_SELECT_ALL_HINT = "Select all that apply.";
+
+export const CAMPUS_AMBASSADOR_STATEMENTS_HEADING = "Select all the fields that apply to you.";
+
+export const CAMPUS_AMBASSADOR_FIELD_LINKEDIN = "What is your LinkedIn profile?";
+
+export const CAMPUS_AMBASSADOR_LINKEDIN_PLACEHOLDER = "linkedin.com/in/username or full URL";
 
 export const CAMPUS_AMBASSADOR_TOP_BANNER = {
   message: ABOUT_TOP_BANNER_MESSAGE,

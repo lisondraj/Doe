@@ -4,48 +4,68 @@ import { useState, type FormEvent } from "react";
 
 import { AboutContactRingsGraphic } from "@/components/about/AboutContactRingsGraphic";
 import {
-  CAMPUS_AMBASSADOR_FIELD_COUNT,
-  CAMPUS_AMBASSADOR_FIELD_PROMPT,
+  CampusAmbassadorCheckboxGroup,
+  CampusAmbassadorFormSection,
+  CampusAmbassadorSelectField,
+  CampusAmbassadorTextField,
+} from "@/components/join/CampusAmbassadorFormControls";
+import {
+  CAMPUS_AMBASSADOR_FIELD_COUNTRY,
+  CAMPUS_AMBASSADOR_FIELD_EMAIL,
+  CAMPUS_AMBASSADOR_FIELD_FULL_NAME,
+  CAMPUS_AMBASSADOR_FIELD_LINKEDIN,
+  CAMPUS_AMBASSADOR_FIELD_OF_STUDY,
+  CAMPUS_AMBASSADOR_FIELD_SCHOOL_LEVEL,
+  CAMPUS_AMBASSADOR_FIELD_SCHOOL_LEVEL_OTHER,
+  CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY,
+  CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY_OTHER,
   CAMPUS_AMBASSADOR_FORM_HEADLINE,
+  CAMPUS_AMBASSADOR_HEALTH_PROGRAMS_HEADING,
+  CAMPUS_AMBASSADOR_LINKEDIN_PLACEHOLDER,
   CAMPUS_AMBASSADOR_REQUIRED_NOTE,
+  CAMPUS_AMBASSADOR_SELECT_ALL_HINT,
+  CAMPUS_AMBASSADOR_STATEMENTS_HEADING,
   CAMPUS_AMBASSADOR_SUBMIT_LABEL,
 } from "@/lib/join/campus-ambassador-copy";
+import {
+  CAMPUS_AMBASSADOR_COUNTRY_OPTIONS,
+  CAMPUS_AMBASSADOR_HEALTH_PROGRAM_OPTIONS,
+  CAMPUS_AMBASSADOR_INITIAL_FORM_STATE,
+  CAMPUS_AMBASSADOR_SCHOOL_LEVEL_OPTIONS,
+  CAMPUS_AMBASSADOR_STATEMENT_OPTIONS,
+  CAMPUS_AMBASSADOR_YEAR_OF_STUDY_OPTIONS,
+  isCampusAmbassadorFormValid,
+  toggleCampusAmbassadorSelection,
+  type CampusAmbassadorFormState,
+  type CampusAmbassadorHealthProgramId,
+  type CampusAmbassadorStatementId,
+} from "@/lib/join/campus-ambassador-form";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
 import { dmSans, inter } from "@/lib/home/fonts";
-
-function emptyFields(count: number) {
-  return Array.from({ length: count }, () => "");
-}
 
 type CampusAmbassadorApplyPanelProps = {
   id?: string;
 };
 
-/** Tall gold-framed application panel — ten name fields and submit. */
+/** Campus ambassador application — full survey with custom Doe-styled controls. */
 export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelProps) {
-  const [values, setValues] = useState<string[]>(() => emptyFields(CAMPUS_AMBASSADOR_FIELD_COUNT));
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const [form, setForm] = useState<CampusAmbassadorFormState>(CAMPUS_AMBASSADOR_INITIAL_FORM_STATE);
   const [submitted, setSubmitted] = useState(false);
 
-  const updateField = (index: number, next: string) => {
-    setValues((current) => {
-      const copy = [...current];
-      copy[index] = next;
-      return copy;
-    });
+  const patchForm = (patch: Partial<CampusAmbassadorFormState>) => {
+    setForm((current) => ({ ...current, ...patch }));
   };
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const complete = values.every((value) => value.trim().length > 0);
-    if (!complete) return;
+    if (!isCampusAmbassadorFormValid(form)) return;
     setSubmitted(true);
   };
 
   return (
     <aside
       id={id}
-      className={`campus-ambassador-apply relative flex min-h-[clamp(44rem,118vw,58rem)] w-full items-stretch overflow-hidden border border-[rgba(212,165,116,0.28)] bg-[#271F17] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+      className={`campus-ambassador-apply relative flex w-full items-stretch overflow-hidden border border-[rgba(212,165,116,0.28)] bg-[#271F17] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
       aria-label="Campus ambassador application"
     >
       <div
@@ -70,30 +90,124 @@ export function CampusAmbassadorApplyPanel({ id }: CampusAmbassadorApplyPanelPro
           {CAMPUS_AMBASSADOR_REQUIRED_NOTE}
         </p>
 
-        <div className="flex flex-1 flex-col gap-5 iphone-page:gap-6">
-          {values.map((value, index) => (
-            <label key={index} className="block">
-              <span
-                className={`campus-ambassador-field-label mb-2.5 block text-[clamp(1.02rem,0.9rem+0.48vmin,1.16rem)] font-medium tracking-[-0.01em] iphone-page:text-[clamp(1.08rem,0.94rem+0.52vmin,1.22rem)] ${dmSans.className}`}
-              >
-                {CAMPUS_AMBASSADOR_FIELD_PROMPT}
-                <span aria-hidden> *</span>
-              </span>
-              <input
-                type="text"
-                name={`campus-ambassador-name-${index + 1}`}
-                autoComplete={index === 0 ? "name" : "off"}
-                required
-                value={value}
-                placeholder={focusedIndex === index || value ? "" : CAMPUS_AMBASSADOR_FIELD_PROMPT}
-                onFocus={() => setFocusedIndex(index)}
-                onBlur={() => setFocusedIndex((current) => (current === index ? null : current))}
-                onChange={(event) => updateField(index, event.target.value)}
-                className={`campus-ambassador-field-input w-full rounded-xl px-4 py-3.5 text-[clamp(1.05rem,0.92rem+0.55vmin,1.22rem)] font-normal leading-snug tracking-[-0.01em] iphone-page:px-5 iphone-page:py-4 iphone-page:text-[clamp(1.12rem,0.98rem+0.62vmin,1.28rem)] ${dmSans.className}`}
-              />
-            </label>
-          ))}
-        </div>
+        <CampusAmbassadorFormSection>
+          <CampusAmbassadorTextField
+            label={CAMPUS_AMBASSADOR_FIELD_FULL_NAME}
+            name="campus-ambassador-full-name"
+            value={form.fullName}
+            onChange={(fullName) => patchForm({ fullName })}
+            autoComplete="name"
+          />
+
+          <CampusAmbassadorTextField
+            label={CAMPUS_AMBASSADOR_FIELD_EMAIL}
+            name="campus-ambassador-email"
+            type="email"
+            value={form.email}
+            onChange={(email) => patchForm({ email })}
+            autoComplete="email"
+          />
+
+          <CampusAmbassadorSelectField
+            label={CAMPUS_AMBASSADOR_FIELD_COUNTRY}
+            name="campus-ambassador-country"
+            value={form.country}
+            onChange={(country) =>
+              patchForm({ country: country as CampusAmbassadorFormState["country"] })
+            }
+            options={CAMPUS_AMBASSADOR_COUNTRY_OPTIONS}
+            placeholder="Select a country"
+          />
+
+          <CampusAmbassadorSelectField
+            label={CAMPUS_AMBASSADOR_FIELD_SCHOOL_LEVEL}
+            name="campus-ambassador-school-level"
+            value={form.schoolLevel}
+            onChange={(schoolLevel) =>
+              patchForm({
+                schoolLevel: schoolLevel as CampusAmbassadorFormState["schoolLevel"],
+                schoolLevelOther: schoolLevel === "other" ? form.schoolLevelOther : "",
+              })
+            }
+            options={CAMPUS_AMBASSADOR_SCHOOL_LEVEL_OPTIONS}
+            placeholder="Select your current level"
+          />
+
+          {form.schoolLevel === "other" ? (
+            <CampusAmbassadorTextField
+              label={CAMPUS_AMBASSADOR_FIELD_SCHOOL_LEVEL_OTHER}
+              name="campus-ambassador-school-level-other"
+              value={form.schoolLevelOther}
+              onChange={(schoolLevelOther) => patchForm({ schoolLevelOther })}
+            />
+          ) : null}
+
+          <CampusAmbassadorSelectField
+            label={CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY}
+            name="campus-ambassador-year-of-study"
+            value={form.yearOfStudy}
+            onChange={(yearOfStudy) =>
+              patchForm({
+                yearOfStudy: yearOfStudy as CampusAmbassadorFormState["yearOfStudy"],
+                yearOfStudyOther: yearOfStudy === "other" ? form.yearOfStudyOther : "",
+              })
+            }
+            options={CAMPUS_AMBASSADOR_YEAR_OF_STUDY_OPTIONS}
+            placeholder="Select your year"
+          />
+
+          {form.yearOfStudy === "other" ? (
+            <CampusAmbassadorTextField
+              label={CAMPUS_AMBASSADOR_FIELD_YEAR_OF_STUDY_OTHER}
+              name="campus-ambassador-year-of-study-other"
+              value={form.yearOfStudyOther}
+              onChange={(yearOfStudyOther) => patchForm({ yearOfStudyOther })}
+            />
+          ) : null}
+
+          <CampusAmbassadorTextField
+            label={CAMPUS_AMBASSADOR_FIELD_OF_STUDY}
+            name="campus-ambassador-field-of-study"
+            value={form.fieldOfStudy}
+            onChange={(fieldOfStudy) => patchForm({ fieldOfStudy })}
+          />
+
+          <CampusAmbassadorCheckboxGroup
+            legend={CAMPUS_AMBASSADOR_HEALTH_PROGRAMS_HEADING}
+            hint={CAMPUS_AMBASSADOR_SELECT_ALL_HINT}
+            name="campus-ambassador-health-programs"
+            options={CAMPUS_AMBASSADOR_HEALTH_PROGRAM_OPTIONS}
+            values={form.healthPrograms}
+            onToggle={(id: CampusAmbassadorHealthProgramId) =>
+              patchForm({
+                healthPrograms: toggleCampusAmbassadorSelection(form.healthPrograms, id),
+              })
+            }
+            required
+          />
+
+          <CampusAmbassadorCheckboxGroup
+            legend={CAMPUS_AMBASSADOR_STATEMENTS_HEADING}
+            hint={CAMPUS_AMBASSADOR_SELECT_ALL_HINT}
+            name="campus-ambassador-statements"
+            options={CAMPUS_AMBASSADOR_STATEMENT_OPTIONS}
+            values={form.statements}
+            onToggle={(id: CampusAmbassadorStatementId) =>
+              patchForm({
+                statements: toggleCampusAmbassadorSelection(form.statements, id),
+              })
+            }
+          />
+
+          <CampusAmbassadorTextField
+            label={CAMPUS_AMBASSADOR_FIELD_LINKEDIN}
+            name="campus-ambassador-linkedin"
+            value={form.linkedin}
+            onChange={(linkedin) => patchForm({ linkedin })}
+            placeholder={CAMPUS_AMBASSADOR_LINKEDIN_PLACEHOLDER}
+            autoComplete="url"
+          />
+        </CampusAmbassadorFormSection>
 
         <button
           type="submit"
