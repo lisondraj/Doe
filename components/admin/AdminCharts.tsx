@@ -4,12 +4,12 @@ import type { AnalyticsBarItem } from "@/lib/admin/internship-analytics";
 import { inter } from "@/lib/home/fonts";
 
 const BAR_COLORS = [
-  "from-[#E7A944] to-[#D2774C]",
+  "from-[#E8C08E] to-[#D4A574]",
   "from-[#D2774C] to-[#BF593D]",
-  "from-[#1E343A] to-[#3A5960]",
-  "from-[#9A8F82] to-[#C8C0B4]",
-  "from-[#6B8E9B] to-[#1E343A]",
-  "from-[#E7A944] to-[#1E343A]",
+  "from-[#A87654] to-[#8B5E3C]",
+  "from-[#C8A882] to-[#9A8F82]",
+  "from-[#E8C08E] to-[#A87654]",
+  "from-[#D4A574] to-[#8B6914]",
 ];
 
 type ChartVariant = "mobile" | "desktop";
@@ -93,7 +93,7 @@ export function AdminDonutChart({
   const total = items.reduce((sum, item) => sum + item.value, 0);
   const segments = items.map((item, index) => ({
     ...item,
-    color: ["#E7A944", "#D2774C", "#1E343A", "#9A8F82", "#6B8E9B", "#BF593D"][index % 6],
+    color: ["#E8C08E", "#D2774C", "#A87654", "#C8A882", "#D4A574", "#BF593D"][index % 6],
   }));
 
   let cursor = 0;

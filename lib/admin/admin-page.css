@@ -119,8 +119,47 @@ html[data-admin-page="true"] {
   border-bottom-color: transparent !important;
 }
 
-.product-brown-mock.product-brown-admin-mode .product-inbox-masthead__desk {
+.product-brown-mock.product-brown-admin-mode .product-inbox-masthead__desk,
+.product-brown-mock.product-brown-admin-mode .product-mobile-inbox__heading,
+.product-brown-mock.product-brown-admin-mode .admin-mobile-detail__title,
+.product-brown-mock.product-brown-admin-mode .admin-mobile-section-title,
+.product-brown-mock.product-brown-admin-mode .admin-detail-header__title,
+.product-brown-mock.product-brown-admin-mode .admin-login-card__title {
+  line-height: 1.14;
+  padding-bottom: 0.1em;
+  overflow: visible;
   -webkit-text-fill-color: transparent;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-reading__subject {
+  overflow: visible;
+  display: block;
+  -webkit-box-orient: unset;
+  -webkit-line-clamp: unset;
+  line-height: 1.14;
+  padding-bottom: 0.1em;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-reading-title {
+  color: #f2e8da !important;
+  background: none !important;
+  -webkit-text-fill-color: #f2e8da;
+  text-shadow: none;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-stat-strip__value,
+.product-brown-mock.product-brown-admin-mode .admin-mobile-stat-card__value,
+.product-brown-mock.product-brown-admin-mode .admin-stat-card__value {
+  line-height: 1.08;
+  padding-bottom: 0.06em;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-landing-stat-strip.admin-stat-strip .product-landing-stat-strip__item {
+  padding-bottom: 0.25rem;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-landing-stat-strip.admin-stat-strip .product-landing-stat-strip__label {
+  line-height: 1.25;
 }
 
 .product-brown-mock.product-brown-admin-mode
@@ -133,10 +172,13 @@ html[data-admin-page="true"] {
   border-color: rgba(242, 232, 218, 0.1) !important;
 }
 
-.product-brown-mock.product-brown-admin-mode .admin-chart-card,
-.product-brown-mock.product-brown-admin-mode .admin-mobile-chart-card {
-  background: rgba(39, 31, 23, 0.72) !important;
-  border-color: rgba(245, 230, 208, 0.12) !important;
+.product-brown-mock.product-brown-admin-mode .product-inbox-masthead,
+.product-brown-mock.product-brown-admin-mode .product-inbox-masthead__hero {
+  overflow: visible;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-analytics-grid > * {
+  min-width: 0;
 }
 
 .product-brown-mock.product-brown-admin-mode .product-mobile-inbox__heading {
@@ -151,6 +193,23 @@ html[data-admin-page="true"] {
   color: #f2e8da !important;
   background: none !important;
   -webkit-text-fill-color: #f2e8da;
+}
+
+.product-brown-mock.product-brown-admin-mode.product-brown-inbox-mode
+  :is(.product-brown-main, .product-brown-main-panel)
+  header:not(.product-landing-header) {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-chart-card header {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-landing-stat-strip.admin-stat-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .admin-stat-strip {
@@ -222,8 +281,15 @@ html[data-admin-page="true"] {
   color: rgba(242, 232, 218, 0.48);
 }
 
+.product-brown-mock.product-brown-admin-mode .product-inbox-masthead__category {
+  border-radius: 999px;
+  padding: 0.28rem 0.65rem;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
 .product-brown-mock.product-brown-admin-mode .product-inbox-masthead__category--active {
-  color: #f2e8da;
+  color: #1a1208;
+  background: linear-gradient(180deg, #f0d2a4 0%, #e8c08e 52%, #d4a574 100%);
 }
 
 .product-brown-mock.product-brown-admin-mode .admin-stat-strip .product-landing-stat-strip__item + .product-landing-stat-strip__item {
@@ -297,22 +363,65 @@ html[data-admin-page="true"] {
 }
 
 .admin-analytics-pane {
-  background: rgba(14, 10, 7, 0.42) !important;
+  background: #181008 !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-analytics-pane .product-inbox-reading__scroll {
+  background: #181008 !important;
+  padding-top: 1rem;
 }
 
 .admin-analytics-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  align-items: stretch;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-chart-card,
+.product-brown-mock.product-brown-admin-mode .admin-mobile-chart-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: #211912 !important;
+  border-color: rgba(212, 165, 116, 0.16) !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-chart-card__title,
+.product-brown-mock.product-brown-admin-mode .admin-mobile-chart-card__title {
+  color: #f0dcc4 !important;
+  background: var(--admin-gold-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+  padding-bottom: 0.08em;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-chart-card__label,
+.product-brown-mock.product-brown-admin-mode .admin-chart-card__value {
+  color: rgba(242, 232, 218, 0.78) !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .admin-chart-card .rounded-full.bg-\[rgba\(245\,230\,208\,0\.08\)\] {
+  background: rgba(212, 165, 116, 0.1) !important;
 }
 
 .product-brown-mock.product-brown-admin-mode .product-inbox-index__empty {
   background: transparent;
 }
 
+.product-brown-mock.product-brown-admin-mode .product-inbox-reading {
+  background: #1a1208 !important;
+}
+
 .product-brown-mock.product-brown-admin-mode .product-inbox-reading__header {
-  background: rgba(20, 14, 8, 0.35);
+  background: #211912 !important;
   border-bottom-color: rgba(242, 232, 218, 0.08) !important;
+}
+
+.product-brown-mock.product-brown-admin-mode .product-inbox-reading__scroll {
+  background: #1a1208 !important;
 }
 
 .product-brown-sidebar > nav.px-2 > button {
@@ -610,8 +719,8 @@ html[data-admin-page="true"] {
 
 .admin-mobile-stat-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
 }
 
 .admin-mobile-stat-card {
