@@ -6,9 +6,9 @@ import {
 } from "@/lib/about/about-contact";
 import { JOIN_PATH } from "@/lib/site-domains";
 
-export const CAMPUS_AMBASSADOR_PAGE_TITLE = "Clinical Partners Program Eligible: Pre-Health Students";
+export const CAMPUS_AMBASSADOR_PAGE_TITLE = "Clinical Partners Program";
 
-export const CAMPUS_AMBASSADOR_PAGE_SUBTITLE = "in US and Canada";
+export const CAMPUS_AMBASSADOR_PAGE_SUBTITLE = "Eligible: Pre-Health Students in US and Canada";
 
 export const CAMPUS_AMBASSADOR_FOUNDERS_MEMO_LINK_LABEL = "Read the Founder's Memo";
 
