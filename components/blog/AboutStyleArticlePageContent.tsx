@@ -41,6 +41,20 @@ type AboutStyleArticlePageContentProps = {
   tocItems: readonly AboutStyleArticleTocItem[];
 };
 
+function AboutStyleArticleSubheading({ article }: { article: AboutStyleLongformArticle }) {
+  return (
+    <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>
+      {article.subheading}
+      {article.subheadingLine2 ? (
+        <>
+          <br />
+          {article.subheadingLine2}
+        </>
+      ) : null}
+    </p>
+  );
+}
+
 /** /about-style longform article — hero, shader band, body, quote, thesis list, email invite. */
 export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleArticlePageContentProps) {
   const productIntro = isAboutStyleProductIntro(article.slug);
@@ -64,7 +78,7 @@ export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleAr
             {category ? <BlogArticleCategory category={category} /> : null}
             <h1 className={`${BROADER_DOE_VISION_TITLE_TW} ${ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW}`}>{titleContent}</h1>
 
-            <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>{article.subheading}</p>
+            <AboutStyleArticleSubheading article={article} />
 
             <p className={BROADER_DOE_VISION_BYLINE_TW}>
               {article.byline}
@@ -131,7 +145,7 @@ export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleAr
               {titleContent}
             </h1>
 
-            <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>{article.subheading}</p>
+            <AboutStyleArticleSubheading article={article} />
 
             <p className={BROADER_DOE_VISION_BYLINE_TW}>
               {article.byline}
@@ -203,7 +217,7 @@ export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleAr
           {category ? <BlogArticleCategory category={category} /> : null}
           <h1 className={BROADER_DOE_VISION_TITLE_TW}>{titleContent}</h1>
 
-          <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>{article.subheading}</p>
+          <AboutStyleArticleSubheading article={article} />
 
           <p className={BROADER_DOE_VISION_BYLINE_TW}>
             {article.byline}

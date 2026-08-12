@@ -19,6 +19,7 @@ export const BLOG_CAROUSEL_PREVIEW_SHADERS: Record<string, ProtoGrainGradientVar
   "blended-intelligence": "meet-proto-stack-1",
   "genome-is-built-for-you": "meet-proto",
   "the-broader-doe-vision": "home-integrations",
+  "our-founder-story": "meet-proto-stack-1",
 };
 
 export function blogCarouselPreviewShader(slug: string): ProtoGrainGradientVariant {

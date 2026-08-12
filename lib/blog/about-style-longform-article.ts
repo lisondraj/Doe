@@ -11,6 +11,8 @@ export type AboutStyleLongformArticle = {
   titleLine2?: string;
   excerpt: string;
   subheading: string;
+  /** Optional second subheading line rendered beneath `subheading` in the hero. */
+  subheadingLine2?: string;
   openingLede: string;
   /** Product intro pages — body copy after the bold opening sentence. */
   openingLedeContinuation?: string;

@@ -12,6 +12,7 @@ export const BLOG_LANDING_PREVIEW_SHADERS: Record<string, AboutStyleFeatureShade
   "blended-intelligence": "integrate",
   "genome-is-built-for-you": "front-desk",
   "the-broader-doe-vision": "looking-ahead",
+  "our-founder-story": "meet-proto-stack-1",
 };
 
 export function blogLandingPreviewShader(slug: string): AboutStyleFeatureShaderVariant {

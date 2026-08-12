@@ -7,6 +7,10 @@ import {
   BROADER_DOE_VISION_TITLE,
 } from "@/lib/blog/broader-doe-vision-article";
 import {
+  OUR_FOUNDER_STORY_ARTICLE,
+  OUR_FOUNDER_STORY_PATH,
+} from "@/lib/blog/our-founder-story-article";
+import {
   INTRODUCING_FABRIC_ARTICLE,
   INTRODUCING_FABRIC_PATH,
 } from "@/lib/blog/introducing-fabric-article";
@@ -65,6 +69,18 @@ export type BlogLandingPost = {
 
 /** Featured posts on /blog — Pulse sub-features, flagship launches, and Broader Doe Vision. */
 export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
+  {
+    slug: OUR_FOUNDER_STORY_ARTICLE.slug,
+    path: OUR_FOUNDER_STORY_PATH,
+    title: OUR_FOUNDER_STORY_ARTICLE.title,
+    category: blogPostCategory(OUR_FOUNDER_STORY_ARTICLE.slug)!,
+    subheading: `${OUR_FOUNDER_STORY_ARTICLE.subheading} ${OUR_FOUNDER_STORY_ARTICLE.subheadingLine2}`,
+    excerpt: OUR_FOUNDER_STORY_ARTICLE.excerpt,
+    byline: OUR_FOUNDER_STORY_ARTICLE.byline,
+    date: OUR_FOUNDER_STORY_ARTICLE.date,
+    previewShaderVariant: blogLandingPreviewShader(OUR_FOUNDER_STORY_ARTICLE.slug),
+    carouselShaderVariant: blogCarouselPreviewShader(OUR_FOUNDER_STORY_ARTICLE.slug),
+  },
   {
     slug: BLENDED_INTELLIGENCE_ARTICLE.slug,
     path: BLENDED_INTELLIGENCE_PATH,

@@ -17,6 +17,7 @@ import {
   requestHostFromHeaders,
   shouldEnforceDomainRouting,
 } from "@/lib/site-domains";
+import { OUR_FOUNDER_STORY_PATH } from "@/lib/blog/our-founder-story-article";
 import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 
 const ADMIN_ROOT_PATH = "/admin";
@@ -145,6 +146,10 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname === PARTNERS_PATH && isPrimaryHost(host)) {
+    return applyLandingSiteHeaders(NextResponse.next());
+  }
+
+  if (pathname === OUR_FOUNDER_STORY_PATH && isPrimaryHost(host)) {
     return applyLandingSiteHeaders(NextResponse.next());
   }
 

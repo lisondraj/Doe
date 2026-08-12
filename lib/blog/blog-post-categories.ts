@@ -17,6 +17,7 @@ export type BlogPostCategory =
 
 const BLOG_POST_CATEGORIES: Record<string, BlogPostCategory> = {
   "the-broader-doe-vision": BLOG_POST_CATEGORY_FOUNDERS_MEMO,
+  "our-founder-story": BLOG_POST_CATEGORY_FOUNDERS_MEMO,
   "introducing-pulse": BLOG_POST_CATEGORY_NEW_RELEASES,
   "introducing-fabric": BLOG_POST_CATEGORY_NEW_RELEASES,
   "introducing-float": BLOG_POST_CATEGORY_FEATURES,
