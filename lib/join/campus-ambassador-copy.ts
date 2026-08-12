@@ -16,12 +16,15 @@ export const CAMPUS_AMBASSADOR_REQUIRED_NOTE = "All fields marked with * are req
 
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_BEFORE = "Today, we are excited to launch our ";
 
-export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_GOLD = "Clinical Ambassador Program";
+export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_GOLD = "Clinical Partners Program";
 
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_AFTER =
   ". This will allow us to connect current and future providers with intelligent tools to streamline their education and practices. The program first opens to pre-health students in the United States and Canada who are interested in exploring the intersections of healthcare, AI, and entrepreneurship.";
 
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH = `${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_BEFORE}${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_GOLD}${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_AFTER}`;
+
+export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_EXPANSION =
+  "We will be slowly expanding the program to professional student schools, then to providers as we near the launch of Doe's intelligent tools this Fall.";
 
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY =
   "This is an opportunity to join a high-velocity startup, connect within your community, and learn more about innovations in AI and clinical practice.";
@@ -44,7 +47,7 @@ export const CAMPUS_AMBASSADOR_EDUCATION_DESCRIPTION =
 
 export const CAMPUS_AMBASSADOR_FOUNDERS_HEADING = "About the Founders";
 
-export const CAMPUS_AMBASSADOR_OPENING_DESCRIPTION = `${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH} ${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY} ${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH}`;
+export const CAMPUS_AMBASSADOR_OPENING_DESCRIPTION = `${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH} ${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_EXPANSION} ${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY} ${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH}`;
 
 export const CAMPUS_AMBASSADOR_SUBMIT_LABEL = "Submit";
 
