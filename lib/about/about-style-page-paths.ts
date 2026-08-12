@@ -10,13 +10,14 @@ import { INTRODUCING_PULSE_PATH } from "@/lib/blog/introducing-pulse-article";
 import { PULSE_AMBIENT_PATH } from "@/lib/blog/pulse-ambient-article";
 import { PULSE_CALL_HISTORY_PATH } from "@/lib/blog/pulse-call-history-article";
 import { DOE_MISSION_PATH } from "@/lib/blog/doe-mission-article";
-import { ABOUT_PATH, JOIN_PATH, PREMED_PATH } from "@/lib/site-domains";
+import { ABOUT_PATH, JOIN_PATH, PARTNERS_PATH, PREMED_PATH } from "@/lib/site-domains";
 import { resolvePremedAwarePath } from "@/lib/premed/premed-path";
 
 /** Routes that share /about iPhone chrome, typography, and bootstrap behavior. */
 export const ABOUT_STYLE_PAGE_PATHS = [
   ABOUT_PATH,
   JOIN_PATH,
+  PARTNERS_PATH,
   PREMED_PATH,
   BLOG_LANDING_PATH,
   DOE_MISSION_PATH,

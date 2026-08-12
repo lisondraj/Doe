@@ -81,7 +81,7 @@ export function ClinicalPartnersApplyPanel({ id }: ClinicalPartnersApplyPanelPro
   return (
     <aside
       id={id}
-      className={`campus-ambassador-apply relative flex w-full items-stretch overflow-hidden border border-[rgba(212,165,116,0.28)] bg-[#271F17] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+      className={`campus-ambassador-apply clinical-partners-apply relative flex w-full items-stretch overflow-hidden border border-[rgba(212,165,116,0.28)] bg-[#271F17] ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
       aria-label="Clinical partners application"
     >
       <form

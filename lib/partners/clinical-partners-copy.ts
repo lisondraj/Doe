@@ -30,6 +30,19 @@ export const CLINICAL_PARTNERS_OPENING_PARAGRAPH_BENEFITS =
 export const CLINICAL_PARTNERS_OPENING_PARAGRAPH_LAUNCH =
   "We'll be sharing more about our venture's vision and plans as we approach launch in fall 2026.";
 
+export const CLINICAL_PARTNERS_BENEFITS_HEADING = "Benefits";
+
+export const CLINICAL_PARTNERS_BENEFITS_ITEMS = [
+  "Grow your network with future colleagues across medicine, pharmacy, dentistry, nursing, and allied health before you enter practice.",
+  "Build connections with physicians, pharmacists, dentists, and other clinicians who are shaping how care is delivered.",
+  "Be first considered when we open funded internship and early-career opportunities at Doe.",
+] as const;
+
+export const CLINICAL_PARTNERS_EDUCATION_HEADING = "Doe Education";
+
+export const CLINICAL_PARTNERS_EDUCATION_DESCRIPTION =
+  "Lock in reduced pricing on pre-health tools designed to support your applications, interviews, and transition into professional school.";
+
 export const CLINICAL_PARTNERS_FOUNDERS_HEADING = "About the Founders";
 
 export const CLINICAL_PARTNERS_OPENING_DESCRIPTION = `${CLINICAL_PARTNERS_OPENING_PARAGRAPH} ${CLINICAL_PARTNERS_OPENING_PARAGRAPH_BENEFITS} ${CLINICAL_PARTNERS_OPENING_PARAGRAPH_LAUNCH}`;
