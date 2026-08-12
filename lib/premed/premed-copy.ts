@@ -19,10 +19,10 @@ export const PREMED_LEARN_MORE_MODAL_EMAIL_LABEL = "Email James";
 
 export const PREMED_LEARN_MORE_MODAL_DISMISS_LABEL = "Close";
 
-export const PREMED_CAMPUS_AMBASSADOR_HEADLINE = "Register for our Campus Ambassador Program";
+export const PREMED_CAMPUS_AMBASSADOR_HEADLINE = "Clinical Partners Program";
 
 export const PREMED_CAMPUS_AMBASSADOR_DESCRIPTION =
-  "Represent Doe on your campus and connect pre-health students to our vision for healthcare intelligence.";
+  "Applications are open first to pre-health students in the US and Canada. We will expand to professional school students and providers as we launch Doe's intelligent tools this Fall.";
 
 export const PREMED_CAMPUS_AMBASSADOR_CTA_LABEL = "Apply now";
 

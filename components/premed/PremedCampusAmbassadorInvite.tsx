@@ -14,7 +14,7 @@ export function PremedCampusAmbassadorInvite() {
   return (
     <aside
       className={`premed-campus-ambassador-invite relative flex w-full flex-col items-center overflow-hidden border border-[rgba(212,165,116,0.28)] bg-[rgba(39,31,23,0.72)] text-center ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
-      aria-label="Campus Ambassador Program"
+      aria-label="Clinical Partners Program"
     >
       <div className="relative z-10 flex w-full max-w-[34rem] flex-col items-center gap-4 px-6 py-7 iphone-page:gap-5 iphone-page:px-8 iphone-page:py-8">
         <p
