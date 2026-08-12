@@ -3,13 +3,15 @@ import {
   ABOUT_STYLE_BULLET_LIST_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
-import { dmSans } from "@/lib/home/fonts";
+import { dmSans, inter, lora } from "@/lib/home/fonts";
 import {
   CAMPUS_AMBASSADOR_BENEFITS_HEADING,
   CAMPUS_AMBASSADOR_BENEFITS_ITEMS,
+  CAMPUS_AMBASSADOR_EDUCATION_DESCRIPTION,
+  CAMPUS_AMBASSADOR_EDUCATION_HEADING,
 } from "@/lib/join/campus-ambassador-copy";
 
-/** /join — raised benefits panel above the application survey. */
+/** /join — benefits + Doe Education panel above the application survey. */
 export function CampusAmbassadorBenefitsPanel() {
   return (
     <aside
@@ -34,6 +36,19 @@ export function CampusAmbassadorBenefitsPanel() {
             </li>
           ))}
         </ul>
+
+        <div className="campus-ambassador-benefits-panel__education">
+          <h3
+            className={`campus-ambassador-benefits-panel__education-heading broader-doe-thesis-headline broader-doe-thesis-headline-gold m-0 font-normal leading-[1.14] tracking-[-0.035em] ${lora.className}`}
+          >
+            {CAMPUS_AMBASSADOR_EDUCATION_HEADING}
+          </h3>
+          <p
+            className={`campus-ambassador-benefits-panel__education-description m-0 font-normal leading-[1.42] tracking-[-0.01em] text-[clamp(0.98rem,0.88rem+0.42vmin,1.1rem)] iphone-page:text-[clamp(1.02rem,0.92rem+0.48vmin,1.14rem)] ${inter.className}`}
+          >
+            {CAMPUS_AMBASSADOR_EDUCATION_DESCRIPTION}
+          </p>
+        </div>
       </div>
     </aside>
   );

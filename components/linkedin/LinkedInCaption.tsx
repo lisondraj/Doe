@@ -1,15 +1,15 @@
-import { ABOUT_PATH } from "@/lib/site-domains";
 import {
   LINKEDIN_BYLINE,
   LINKEDIN_DATE,
   LINKEDIN_HEADLINE_LINES,
+  LINKEDIN_MEMO_LABEL,
   LINKEDIN_READ_MORE_LABEL,
 } from "@/lib/linkedin/linkedin-copy";
 import { dmSans, suisseIntl } from "@/lib/home/fonts";
 
-function LinkedInReadMoreArrow() {
+function LinkedInCommentsArrow() {
   return (
-    <svg className="linkedin-caption__read-more-icon" viewBox="0 0 16 16" fill="none" aria-hidden>
+    <svg className="linkedin-caption__comments-cta-icon" viewBox="0 0 16 16" fill="none" aria-hidden>
       <path
         d="M3 8h9M9 4l4 4-4 4"
         stroke="currentColor"
@@ -21,14 +21,15 @@ function LinkedInReadMoreArrow() {
   );
 }
 
-/** Bottom-right LinkedIn capture copy — gold headline, byline, read more. */
+/** Bottom-right LinkedIn capture copy — gold headline, byline, comments CTA. */
 export function LinkedInCaption() {
   return (
     <div className="linkedin-caption">
+      <p className={`linkedin-caption__memo ${dmSans.className}`}>{LINKEDIN_MEMO_LABEL}</p>
+
       <h1 className={`linkedin-caption__headline ${suisseIntl.className}`}>
-        {LINKEDIN_HEADLINE_LINES[0]}
-        <br />
-        {LINKEDIN_HEADLINE_LINES[1]}
+        <span className="linkedin-caption__headline-line">{LINKEDIN_HEADLINE_LINES[0]}</span>
+        <span className="linkedin-caption__headline-line">{LINKEDIN_HEADLINE_LINES[1]}</span>
       </h1>
 
       <p className={`linkedin-caption__byline ${dmSans.className}`}>
@@ -39,10 +40,10 @@ export function LinkedInCaption() {
         <span className="linkedin-caption__date">{LINKEDIN_DATE}</span>
       </p>
 
-      <a href={ABOUT_PATH} className={`linkedin-caption__read-more ${dmSans.className}`}>
+      <p className={`linkedin-caption__comments-cta ${dmSans.className}`}>
         {LINKEDIN_READ_MORE_LABEL}
-        <LinkedInReadMoreArrow />
-      </a>
+        <LinkedInCommentsArrow />
+      </p>
     </div>
   );
 }

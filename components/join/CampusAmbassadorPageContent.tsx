@@ -4,7 +4,6 @@ import { BlogArticleFooterCarouselBand } from "@/components/blog/BlogArticleFoot
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { CampusAmbassadorApplyPanel } from "@/components/join/CampusAmbassadorApplyPanel";
 import { CampusAmbassadorBenefitsPanel } from "@/components/join/CampusAmbassadorBenefitsPanel";
-import { CampusAmbassadorEducationPanel } from "@/components/join/CampusAmbassadorEducationPanel";
 import { PremedBlogRelatedCarousel } from "@/components/premed/PremedBlogRelatedCarousel";
 import { PremedEmailInvite } from "@/components/premed/PremedEmailInvite";
 import { PremedFoundersBlock } from "@/components/premed/PremedFoundersBlock";
@@ -103,8 +102,6 @@ export function CampusAmbassadorPageContent() {
           <CampusAmbassadorBenefitsPanel />
 
           <CampusAmbassadorApplyPanel />
-
-          <CampusAmbassadorEducationPanel />
 
           <PremedEmailInvite />
 
