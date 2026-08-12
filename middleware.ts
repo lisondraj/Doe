@@ -7,11 +7,13 @@ import {
 } from "@/lib/admin/admin-auth";
 import {
   JOIN_PATH,
+  PARTNERS_PATH,
   isDesignersHost,
   isMarketingLandingRoot,
   isPrimaryHost,
   joinPageUrl,
   marketingLandingRewritePath,
+  partnersPageUrl,
   requestHostFromHeaders,
   shouldEnforceDomainRouting,
 } from "@/lib/site-domains";
@@ -131,6 +133,18 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname === JOIN_PATH && isPrimaryHost(host)) {
+    return applyLandingSiteHeaders(NextResponse.next());
+  }
+
+  if (pathname === PARTNERS_PATH && isDesignersHost(host)) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.hostname = new URL(partnersPageUrl()).hostname;
+    redirectUrl.pathname = PARTNERS_PATH;
+    redirectUrl.search = "";
+    return applyLandingSiteHeaders(NextResponse.redirect(redirectUrl));
+  }
+
+  if (pathname === PARTNERS_PATH && isPrimaryHost(host)) {
     return applyLandingSiteHeaders(NextResponse.next());
   }
 

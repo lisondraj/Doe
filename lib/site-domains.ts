@@ -10,6 +10,7 @@ export const DESIGNERS_SITE_HOST =
 export const JOIN_SITE_HOST = DESIGNERS_SITE_HOST;
 
 export const JOIN_PATH = "/join";
+export const PARTNERS_PATH = "/partners";
 export const WAITLIST_PATH = "/waitlist";
 export const HIRING_PATH = "/hiring";
 export const PITCHDECK_PATH = "/pitchdeck";
@@ -135,6 +136,10 @@ export function premedPageUrl(protocol: "http" | "https" = "https"): string {
 
 export function joinPageUrl(protocol: "http" | "https" = "https"): string {
   return `${designersSiteOrigin(protocol)}${JOIN_PATH}`;
+}
+
+export function partnersPageUrl(protocol: "http" | "https" = "https"): string {
+  return `${primarySiteOrigin(protocol)}${PARTNERS_PATH}`;
 }
 
 export function waitlistPageUrl(protocol: "http" | "https" = "https"): string {
