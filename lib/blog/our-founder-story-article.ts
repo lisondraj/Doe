@@ -77,7 +77,7 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
     },
     {
       type: "subheading",
-      text: "The decision to build together",
+      text: "How we build together",
     },
     {
       type: "paragraph",
@@ -92,6 +92,10 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
       text: "Doe is built on a shared vision, but it is made stronger by two distinct ways of seeing the same problem.",
     },
     {
+      type: "paragraph",
+      text: "I lead the company’s product direction, design, healthcare relationships, partnerships, capital conversations, recruiting, and operations. My work begins with the people Doe hopes to serve and carries through to the decisions that shape how the company presents itself and grows.",
+    },
+    {
       type: "bullets",
       id: "founder-story-james-scope",
       items: [
@@ -100,6 +104,10 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
         "**Capital and partnerships:** I lead many of the conversations that help secure the resources, relationships, and alignment needed to build responsibly.",
         "**Recruiting and operations:** I help keep the company organized, focused, and prepared for the next stage of its development.",
       ],
+    },
+    {
+      type: "paragraph",
+      text: "Matthew leads Doe’s technical direction and engineering. He owns the systems, infrastructure, and execution that turn a product direction into software that can be trusted, improved, and sustained.",
     },
     {
       type: "bullets",
@@ -119,23 +127,23 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
     },
     {
       type: "subheading",
-      text: "Why we are staying lean",
+      text: "What our partnership makes possible",
     },
     {
       type: "paragraph",
-      text: "It is tempting for a growing company to treat headcount as progress. We see it differently. A larger organization can be valuable when the work calls for it, but hiring ahead of clarity creates distance between a company and the reason it exists. In healthcare, where trust and context matter deeply, that distance can become expensive.",
+      text: "Between the two of us, Doe can cover the core functions required to build and operate the company: product, graphic design, healthcare distribution, partnerships, capital, recruiting, operations, technical direction, engineering, and internal infrastructure. That range gives the company a practical foundation for moving from a first idea to a working system without losing ownership of the details along the way.",
     },
     {
       type: "paragraph",
-      text: "For now, being lean means remaining close to product decisions, customer conversations, engineering tradeoffs, and the ordinary operational work of running Doe. It means we can change course when we learn something important. It means the person making a decision can still see the consequence of it.",
+      text: "Our responsibilities meet at the points that matter most. Product decisions are informed by technical reality. Engineering decisions stay connected to the experience we want providers and communities to have. Customer conversations shape the work that follows. Operations support the pace of building instead of becoming separate from it.",
     },
     {
       type: "paragraph",
-      text: "This is not an argument against growth. It is an argument for earned growth. We expect Doe to bring in more people when the mission requires expertise we do not have, capacity we cannot create alone, or a perspective that makes the company better. Until then, we would rather build a strong foundation than a large org chart.",
+      text: "This pairing gives Doe unusual continuity. The people responsible for product direction, company building, and technical execution are in close conversation every day. It allows the company to hold context, make decisions, and carry work forward with a level of consistency that is difficult to recreate through handoffs alone.",
     },
     {
       type: "goldParagraph",
-      text: "We will grow when the work demands it, not when growth becomes a substitute for focus.",
+      text: "Together, we can take responsibility for most of the work required to build Doe from the inside out.",
     },
     {
       type: "subheading",
@@ -195,15 +203,15 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
     },
     {
       type: "subheading",
-      text: "What we want to protect",
+      text: "The work ahead",
     },
     {
       type: "paragraph",
-      text: "As Doe grows, there are a few things we want to protect: the directness of our partnership, the humility to learn from people who understand healthcare better than we do, and the patience to build systems that deserve to last. Those principles will matter more than any one release or announcement.",
+      text: "The next chapter of Doe will bring more conversations with providers, health trainees, partners, and institutions across Canada and the United States. Each conversation gives us a clearer view of where intelligent tools can be most useful and where they need to be designed with greater care.",
     },
     {
       type: "paragraph",
-      text: "We will keep sharing our direction as it becomes clearer. That includes our work with pre-health students, future professional school programs, provider communities, and the intelligent tools we are preparing for the next stage of Doe. Some details will stay intentionally private while they are still taking shape. The intention behind them will not.",
+      text: "We will continue sharing Doe’s direction through our work with pre-health students, future professional school programs, provider communities, and the intelligent tools we are bringing to market. The company will evolve, but the central aim remains clear: build technology that creates a more capable and connected healthcare experience.",
     },
     {
       type: "quote",
