@@ -417,8 +417,22 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassa
   padding-left: 0;
 }
 
-.campus-ambassador-benefits-panel__list .campus-ambassador-benefits-panel__list-item {
-  color: #e8c08e !important;
+html[data-about-page] .campus-ambassador-benefits-panel__list .campus-ambassador-benefits-panel__list-item.about-style-bullet-item,
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main .campus-ambassador-benefits-panel__list .campus-ambassador-benefits-panel__list-item.about-style-bullet-item,
+html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassador-benefits-panel__list .campus-ambassador-benefits-panel__list-item.about-style-bullet-item {
+  background: var(
+    --doehealth-gold-text-gradient,
+    linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassador-benefits-panel .about-style-bullet-item {
+  font-size: clamp(1.08rem, 0.94rem + 0.55vmin, 1.28rem) !important;
+  line-height: 1.46 !important;
 }
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main:has(.campus-ambassador-apply) .campus-ambassador-benefits-panel {
@@ -429,9 +443,4 @@ html[data-about-page][data-layout="desktop"] .about-desktop-main:has(.campus-amb
 
 html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassador-benefits-panel__list {
   padding-left: 0.35rem;
-}
-
-html[data-about-page][data-layout="desktop"] .about-desktop-main .campus-ambassador-benefits-panel .about-style-bullet-item {
-  font-size: clamp(1.08rem, 0.94rem + 0.55vmin, 1.28rem) !important;
-  line-height: 1.46 !important;
 }

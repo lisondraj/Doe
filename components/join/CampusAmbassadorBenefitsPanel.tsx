@@ -1,5 +1,4 @@
 import {
-  ABOUT_STYLE_BULLET_ITEM_TW,
   ABOUT_STYLE_BULLET_LIST_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
@@ -10,6 +9,9 @@ import {
   CAMPUS_AMBASSADOR_EDUCATION_DESCRIPTION,
   CAMPUS_AMBASSADOR_EDUCATION_HEADING,
 } from "@/lib/join/campus-ambassador-copy";
+
+const CAMPUS_AMBASSADOR_BENEFITS_BULLET_ITEM_TW =
+  `campus-ambassador-benefits-panel__list-item about-style-bullet-item broader-doe-thesis-headline-gold relative pl-6 iphone-page:pl-7 text-[clamp(1.32rem,1.12rem+0.9vmin,1.58rem)] iphone-page:text-[clamp(1.55rem,1.28rem+1.22vmin,1.95rem)] font-normal leading-[1.48] tracking-[-0.01em] ${dmSans.className}`;
 
 /** /join — benefits + Doe Education panel above the application survey. */
 export function CampusAmbassadorBenefitsPanel() {
@@ -27,7 +29,7 @@ export function CampusAmbassadorBenefitsPanel() {
 
         <ul className={`campus-ambassador-benefits-panel__list ${ABOUT_STYLE_BULLET_LIST_TW}`}>
           {CAMPUS_AMBASSADOR_BENEFITS_ITEMS.map((item) => (
-            <li key={item} className={`campus-ambassador-benefits-panel__list-item ${ABOUT_STYLE_BULLET_ITEM_TW}`}>
+            <li key={item} className={CAMPUS_AMBASSADOR_BENEFITS_BULLET_ITEM_TW}>
               <span
                 className="absolute left-0 top-[0.62em] h-[6px] w-[6px] rounded-full bg-[#E8C08E]"
                 aria-hidden
