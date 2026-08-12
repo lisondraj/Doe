@@ -42,10 +42,10 @@ export const BROADER_DOE_VISION_AI_PLAYBOOK_PARAGRAPH = {
 } as const;
 
 export const BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_LEAD =
-  "We propose that in the years to come, every provider, every clinic, every hospital and even deeper, every specialty, every small action in healthcare, will be powered by their own intelligence stack.";
+  "We propose that in the years to come, every provider, every clinic, every hospital, and even deeper, every specialty and every small action in healthcare, will be powered by their own intelligence stack.";
 
 export const BROADER_DOE_VISION_PROPOSAL_HIGHLIGHT_CONTINUATION =
-  "This stack will be built on top of open-weight models, fortified by frontier tools, and hosted on private cloud compute.";
+  "This stack will be built from adaptable foundations, reinforced by specialized capabilities, and operated within each organization's own secure environment.";
 
 export const BROADER_DOE_VISION_PROPOSAL_CLOSING =
   "This blend of intelligence is the only path to guaranteeing AI can effectively meet the challenges of a healthcare industry being rapidly redefined by technology every second.";
