@@ -16,18 +16,18 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
   openingLede:
     "Doe began with a question my brother Matthew and I could not stop returning to: what would it look like if the people closest to healthcare had intelligent tools that actually reflected the work in front of them?",
   openingLedeContinuation:
-    "The answer is still being built. Doe is early by design, and we want to be candid about that. We are a small company with a long view, built by two brothers whose paths through medicine, design, engineering, and research eventually led back to the same table.",
+    "Doe is built with a long view. We are a focused company led by two brothers whose paths through medicine, design, engineering, and research eventually led back to the same table.",
   byline: "By James Lisondra",
   date: "August 12, 2026",
   heroBackdrop: ABOUT_PAGE_HERO_BACKDROP,
   contentBlocks: [
     {
       type: "goldParagraph",
-      text: "This is not the complete story of Doe. It is the beginning of one: why we started, how we work, and the principles we want to preserve as the company grows.",
+      text: "This is the story of why we started, how we work, and the principles we intend to preserve as Doe grows.",
     },
     {
       type: "subheading",
-      text: "A company at the beginning",
+      text: "The company we are building",
     },
     {
       type: "paragraph",
@@ -35,11 +35,11 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "That conviction does not give us a finished product or a shortcut. It gives us a standard. We want Doe to be useful, legible, and grounded in the realities of healthcare. The work starts by listening closely, building deliberately, and being honest about what is ready now versus what is still ahead.",
+      text: "That conviction gives us a standard. We want Doe to be useful, legible, and grounded in the realities of healthcare. Our work is guided by close listening, deliberate building, and a clear understanding of what people need from the tools they trust.",
     },
     {
       type: "paragraph",
-      text: "In the early stages, a company is often defined as much by its habits as its roadmap. The choices are small but consequential: what gets built first, who gets heard first, where the team spends time, and what it refuses to rush. Those are the choices we are making now.",
+      text: "A company is defined as much by its habits as its roadmap. The choices are small but consequential: what gets built first, who gets heard first, where the team spends time, and what it refuses to rush. Those are the choices we are making now.",
     },
     {
       type: "quote",
@@ -115,7 +115,7 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
       id: "founder-story-complement-quote",
       lead: "Our responsibilities are different, but our standard is shared",
       continuation:
-        "A good early-stage company needs both proximity to the user and depth in the system. **Doe begins with both in the same room.**",
+        "A good company needs both proximity to the user and depth in the system. **Doe brings both into the same room.**",
     },
     {
       type: "subheading",
@@ -123,7 +123,7 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "It is tempting for an early-stage company to treat headcount as progress. We see it differently. A larger organization can be valuable when the work calls for it, but hiring ahead of clarity creates distance between a company and the reason it exists. In healthcare, where trust and context matter deeply, that distance can become expensive.",
+      text: "It is tempting for a growing company to treat headcount as progress. We see it differently. A larger organization can be valuable when the work calls for it, but hiring ahead of clarity creates distance between a company and the reason it exists. In healthcare, where trust and context matter deeply, that distance can become expensive.",
     },
     {
       type: "paragraph",
@@ -147,7 +147,7 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "Proto is an early expression of this approach. It is our automated recruiting and internal operations system, created to help us organize potential collaborators, run thoughtful outreach, retain context, and follow through without reducing people to rows in a spreadsheet. It is not meant to replace human judgment. It is meant to give that judgment more room.",
+      text: "Proto is an expression of this approach. It is our automated recruiting and internal operations system, created to help us organize potential collaborators, run thoughtful outreach, retain context, and follow through without reducing people to rows in a spreadsheet. It is not meant to replace human judgment. It is meant to give that judgment more room.",
     },
     {
       type: "paragraph",
@@ -185,7 +185,7 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
     {
       type: "quote",
       id: "founder-story-closing-quote",
-      lead: "Doe is early, and we mean that honestly",
+      lead: "Doe is being built with intention",
       continuation:
         "It is being built by two brothers who brought their paths back together around a shared vision for healthcare. **We are grateful to everyone who chooses to follow the story as it unfolds.**",
     },
