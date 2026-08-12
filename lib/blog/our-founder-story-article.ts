@@ -172,6 +172,29 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
     },
     {
       type: "subheading",
+      text: "Built for broader impact",
+    },
+    {
+      type: "paragraph",
+      text: "Building for ourselves first is one way we protect the quality of Doe's work. The larger purpose is to maximize the positive impact we can have for patients, providers, and the communities around them. That requires more than a strong product. It requires an organization designed to reach the people, resources, and partners needed to make that product matter.",
+    },
+    {
+      type: "paragraph",
+      text: "Doe Intelligence Inc. is structured with that objective in mind. We are building a company that can engage talent, work with customers, and access the capital required to grow across both Canada and the United States. Our cross-border perspective reflects the communities we know and the opportunity to learn from healthcare systems, institutions, and builders in both countries.",
+    },
+    {
+      type: "paragraph",
+      text: "This structure is not an end in itself. It is a practical foundation for a larger mission: bringing capable, thoughtful technology closer to the people who depend on healthcare every day. The more effectively Doe can connect with the right talent, customers, and supporters, the more responsibly we can invest in tools that improve the experience of care.",
+    },
+    {
+      type: "quote",
+      id: "founder-story-impact-quote",
+      lead: "Doe is organized to create as much impact as possible where care is felt most directly",
+      continuation:
+        "A company structure should create access to the people and resources that make better work possible. **For us, that means building across Canada and the United States with patients and communities at the center.**",
+    },
+    {
+      type: "subheading",
       text: "What we want to protect",
     },
     {
