@@ -3,8 +3,6 @@ import Link from "next/link";
 import { BlogArticleFooterCarouselBand } from "@/components/blog/BlogArticleFooterCarouselBand";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { ClinicalPartnersApplyPanel } from "@/components/partners/ClinicalPartnersApplyPanel";
-import { ClinicalPartnersBenefitsPanel } from "@/components/partners/ClinicalPartnersBenefitsPanel";
-import { ClinicalPartnersEducationPanel } from "@/components/partners/ClinicalPartnersEducationPanel";
 import { PremedBlogRelatedCarousel } from "@/components/premed/PremedBlogRelatedCarousel";
 import { PremedEmailInvite } from "@/components/premed/PremedEmailInvite";
 import { PremedFoundersBlock } from "@/components/premed/PremedFoundersBlock";
@@ -105,11 +103,7 @@ export function ClinicalPartnersPageContent() {
           </p>
           <p className={BROADER_DOE_VISION_BODY_TW}>{CLINICAL_PARTNERS_OPENING_PARAGRAPH_LAUNCH}</p>
 
-          <ClinicalPartnersBenefitsPanel />
-
           <ClinicalPartnersApplyPanel />
-
-          <ClinicalPartnersEducationPanel />
 
           <PremedEmailInvite />
 

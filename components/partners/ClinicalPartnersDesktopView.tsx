@@ -9,7 +9,6 @@ import { CLINICAL_PARTNERS_TOP_BANNER } from "@/lib/partners/clinical-partners-c
 import "@/lib/about/about-doehealth-iphone.css";
 import "@/lib/doehealth/doehealth-landing.css";
 import "@/lib/join/campus-ambassador-page.css";
-import "@/lib/partners/clinical-partners-page.css";
 import "@/lib/premed/premed-page.css";
 
 /** Desktop /partners on doe.care — clinical partners program (premed-style brown band). */

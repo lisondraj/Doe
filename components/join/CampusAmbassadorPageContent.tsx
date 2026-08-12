@@ -3,6 +3,8 @@ import Link from "next/link";
 import { BlogArticleFooterCarouselBand } from "@/components/blog/BlogArticleFooterCarouselBand";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
 import { CampusAmbassadorApplyPanel } from "@/components/join/CampusAmbassadorApplyPanel";
+import { CampusAmbassadorBenefitsPanel } from "@/components/join/CampusAmbassadorBenefitsPanel";
+import { CampusAmbassadorEducationPanel } from "@/components/join/CampusAmbassadorEducationPanel";
 import { PremedBlogRelatedCarousel } from "@/components/premed/PremedBlogRelatedCarousel";
 import { PremedEmailInvite } from "@/components/premed/PremedEmailInvite";
 import { PremedFoundersBlock } from "@/components/premed/PremedFoundersBlock";
@@ -98,7 +100,11 @@ export function CampusAmbassadorPageContent() {
           </p>
           <p className={BROADER_DOE_VISION_BODY_TW}>{CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH}</p>
 
+          <CampusAmbassadorBenefitsPanel />
+
           <CampusAmbassadorApplyPanel />
+
+          <CampusAmbassadorEducationPanel />
 
           <PremedEmailInvite />
 

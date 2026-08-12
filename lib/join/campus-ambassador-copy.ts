@@ -28,6 +28,19 @@ export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY =
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH =
   "We'll be sharing more about our venture's vision and plans as we approach launch in fall 2026.";
 
+export const CAMPUS_AMBASSADOR_BENEFITS_HEADING = "Benefits";
+
+export const CAMPUS_AMBASSADOR_BENEFITS_ITEMS = [
+  "Grow your network with future colleagues across medicine, pharmacy, dentistry, nursing, and allied health while you prepare for professional school.",
+  "Build connections with physicians, pharmacists, dentists, and other clinicians who are shaping how care is delivered.",
+  "Be first considered when we open funded internship opportunities at Doe.",
+] as const;
+
+export const CAMPUS_AMBASSADOR_EDUCATION_HEADING = "Doe Education";
+
+export const CAMPUS_AMBASSADOR_EDUCATION_DESCRIPTION =
+  "Lock in reduced pricing on pre-health tools designed to support your applications, interviews, and transition into professional school.";
+
 export const CAMPUS_AMBASSADOR_FOUNDERS_HEADING = "About the Founders";
 
 export const CAMPUS_AMBASSADOR_OPENING_DESCRIPTION = `${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH} ${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY} ${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH}`;
