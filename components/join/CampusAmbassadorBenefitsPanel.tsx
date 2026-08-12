@@ -27,7 +27,7 @@ export function CampusAmbassadorBenefitsPanel() {
 
         <ul className={`campus-ambassador-benefits-panel__list ${ABOUT_STYLE_BULLET_LIST_TW}`}>
           {CAMPUS_AMBASSADOR_BENEFITS_ITEMS.map((item) => (
-            <li key={item} className={ABOUT_STYLE_BULLET_ITEM_TW}>
+            <li key={item} className={`campus-ambassador-benefits-panel__list-item ${ABOUT_STYLE_BULLET_ITEM_TW}`}>
               <span
                 className="absolute left-0 top-[0.62em] h-[6px] w-[6px] rounded-full bg-[#E8C08E]"
                 aria-hidden
