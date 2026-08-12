@@ -89,9 +89,16 @@ export function BlogHeroVisual({
     useAboutHeroDuskShader ||
     useJoinCampusHeroDuskShader;
 
-  const heroShaderColors = activePreviewShader ? activePreviewShader.colors : heroShader.colors;
-  const heroShaderColorBack = activePreviewShader ? activePreviewShader.colorBack : heroShader.colorBack;
-  const heroShaderVariant = activePreviewShader ? activePreviewShader.variant : heroShader.variant;
+  const heroShaderColors =
+    activePreviewShader?.colors ??
+    heroShader.colors ?? [
+      DOE_HOME_HERO_DUSK_PALETTE.horizon,
+      DOE_HOME_HERO_DUSK_PALETTE.clay,
+      DOE_HOME_HERO_DUSK_PALETTE.sand,
+    ];
+  const heroShaderColorBack =
+    activePreviewShader?.colorBack ?? heroShader.colorBack ?? DOE_HOME_HERO_DUSK_PALETTE.back;
+  const heroShaderVariant = activePreviewShader?.variant ?? heroShader.variant;
 
   return (
     <div
