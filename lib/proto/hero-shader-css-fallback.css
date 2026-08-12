@@ -1,0 +1,66 @@
+.hero-shader-css-fallback {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  background-color: var(--hero-shader-fallback-back, #1a1208);
+}
+
+.hero-shader-css-fallback__gradient {
+  position: absolute;
+  inset: -14%;
+  transform: rotate(168deg);
+  transform-origin: center;
+  background:
+    radial-gradient(
+      ellipse 88% 72% at 20% 24%,
+      color-mix(in srgb, var(--hero-shader-fallback-0) 86%, transparent),
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 94% 80% at 74% 76%,
+      color-mix(in srgb, var(--hero-shader-fallback-1) 74%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 102% 88% at 54% 44%,
+      color-mix(in srgb, var(--hero-shader-fallback-2) 52%, transparent),
+      transparent 74%
+    ),
+    linear-gradient(
+      168deg,
+      var(--hero-shader-fallback-back) 0%,
+      color-mix(in srgb, var(--hero-shader-fallback-1) 36%, var(--hero-shader-fallback-back)) 44%,
+      var(--hero-shader-fallback-back) 100%
+    );
+}
+
+.hero-shader-css-fallback--join-campus-hero .hero-shader-css-fallback__gradient {
+  transform: rotate(112deg);
+}
+
+.hero-shader-css-fallback--home-hero-phone .hero-shader-css-fallback__gradient {
+  transform: rotate(202deg) scale(1.08);
+}
+
+.hero-shader-css-fallback__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.14;
+  mix-blend-mode: soft-light;
+  background-image: url("/proto-grain-tile.png");
+  background-size: 180px 180px;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .hero-shader-css-fallback__grain {
+    background-image: url("/proto-grain-tile-3x.png");
+    background-size: 120px 120px;
+  }
+}
+
+.about-hero-visual.about-hero-visual--shader-fallback > .proto-shader-surface {
+  z-index: 1;
+  background-color: transparent !important;
+}

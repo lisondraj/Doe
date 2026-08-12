@@ -1,6 +1,7 @@
 "use client";
 
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
+import { HeroShaderCssFallback } from "@/components/proto/HeroShaderCssFallback";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropType } from "@/lib/workflow-carousel-design-backdrops";
 import {
@@ -18,6 +19,7 @@ import {
   doeJoinCampusHeroDuskShaderSurface,
 } from "@/lib/proto/proto-shader-backdrop-colors";
 import { BLOG_FEATURE_BOX_TW, BLOG_TITLE_VISUAL_GAP } from "@/lib/blog/blog-layout-styles";
+import "@/lib/proto/hero-shader-css-fallback.css";
 
 const HOME_HERO_SHADER = doeHomeHeroShaderSurface();
 const HOME_HERO_DUSK_SHADER = doeHomeHeroDuskShaderSurface();
@@ -87,20 +89,32 @@ export function BlogHeroVisual({
     useAboutHeroDuskShader ||
     useJoinCampusHeroDuskShader;
 
+  const heroShaderColors = activePreviewShader ? activePreviewShader.colors : heroShader.colors;
+  const heroShaderColorBack = activePreviewShader ? activePreviewShader.colorBack : heroShader.colorBack;
+  const heroShaderVariant = activePreviewShader ? activePreviewShader.variant : heroShader.variant;
+
   return (
     <div
-      className={`about-hero-visual relative w-full overflow-hidden ${boxClassName ?? BLOG_FEATURE_BOX_TW} ${gap}`.trim()}
+      className={`about-hero-visual relative w-full overflow-hidden ${usesHeroShader ? "about-hero-visual--shader-fallback" : ""} ${boxClassName ?? BLOG_FEATURE_BOX_TW} ${gap}`.trim()}
       style={usesHeroShader ? { backgroundColor: heroBack } : undefined}
       aria-hidden={children ? undefined : true}
     >
       {usesHeroShader ? (
-        <ProtoGrainGradient
-          static={carouselShader ? false : staticShader || previewShader !== null}
-          variant={activePreviewShader ? activePreviewShader.variant : heroShader.variant}
-          colors={activePreviewShader ? activePreviewShader.colors : heroShader.colors}
-          colorBack={activePreviewShader ? activePreviewShader.colorBack : heroShader.colorBack}
-          className="absolute inset-0 h-full w-full"
-        />
+        <>
+          <HeroShaderCssFallback
+            colors={heroShaderColors}
+            colorBack={heroShaderColorBack}
+            variant={heroShaderVariant}
+            className="absolute inset-0 h-full w-full"
+          />
+          <ProtoGrainGradient
+            static={carouselShader ? false : staticShader || previewShader !== null}
+            variant={heroShaderVariant}
+            colors={heroShaderColors}
+            colorBack={heroShaderColorBack}
+            className="absolute inset-0 h-full w-full"
+          />
+        </>
       ) : backdrop ? (
         <WorkflowCarouselDesignBackdrop
           backdrop={backdrop}
