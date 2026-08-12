@@ -6,19 +6,20 @@ import {
 } from "@/lib/about/about-contact";
 import { JOIN_PATH } from "@/lib/site-domains";
 
-export const CAMPUS_AMBASSADOR_PAGE_TITLE = "Campus Ambassador Program";
+export const CAMPUS_AMBASSADOR_PAGE_TITLE = "Clinical Partners Program Eligible: Pre-Health Students";
+
+export const CAMPUS_AMBASSADOR_PAGE_SUBTITLE = "in US and Canada";
 
 export const CAMPUS_AMBASSADOR_FOUNDERS_MEMO_LINK_LABEL = "Read the Founder's Memo";
 
 export const CAMPUS_AMBASSADOR_REQUIRED_NOTE = "All fields marked with * are required.";
 
-export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_BEFORE =
-  "Today, we are excited to open applications for Doe's ";
+export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_BEFORE = "Doe's ";
 
-export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_GOLD = "campus ambassador program";
+export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_GOLD = "Clinical Ambassador Program";
 
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_AFTER =
-  " for all pre-health students in the United States and Canada who are interested in exploring the intersections of healthcare, AI, and entrepreneurship.";
+  " allows us to connect current and future providers with intelligent tools to streamline their education and practices. The program first opens to pre-health students in the United States and Canada who are interested in exploring the intersections of healthcare, AI, and entrepreneurship.";
 
 export const CAMPUS_AMBASSADOR_OPENING_PARAGRAPH = `${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_BEFORE}${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_GOLD}${CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_AFTER}`;
 

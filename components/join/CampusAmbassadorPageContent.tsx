@@ -17,6 +17,7 @@ import {
   BROADER_DOE_VISION_HERO_HEADLINES_WRAP,
   BROADER_DOE_VISION_HERO_INTRO_WRAP,
   BROADER_DOE_VISION_HERO_WRAP,
+  BROADER_DOE_VISION_SUBHEADING_TW,
   BROADER_DOE_VISION_TITLE_TW,
   ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW,
 } from "@/lib/blog/broader-doe-vision-layout-styles";
@@ -30,6 +31,7 @@ import {
   CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_GOLD,
   CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH,
   CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY,
+  CAMPUS_AMBASSADOR_PAGE_SUBTITLE,
   CAMPUS_AMBASSADOR_PAGE_TITLE,
 } from "@/lib/join/campus-ambassador-copy";
 import { PREMED_PATH } from "@/lib/site-domains";
@@ -74,6 +76,9 @@ export function CampusAmbassadorPageContent() {
           <h1 className={`${BROADER_DOE_VISION_TITLE_TW} ${ABOUT_STYLE_PRODUCT_INTRO_TITLE_TW}`}>
             {CAMPUS_AMBASSADOR_PAGE_TITLE}
           </h1>
+          <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>
+            {CAMPUS_AMBASSADOR_PAGE_SUBTITLE}
+          </p>
         </div>
       </header>
 
