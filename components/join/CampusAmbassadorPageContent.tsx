@@ -33,6 +33,7 @@ import {
   CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_LAUNCH,
   CAMPUS_AMBASSADOR_OPENING_PARAGRAPH_OPPORTUNITY,
   CAMPUS_AMBASSADOR_PAGE_SUBTITLE,
+  CAMPUS_AMBASSADOR_PAGE_SUBTITLE_LINE_2,
   CAMPUS_AMBASSADOR_PAGE_TITLE,
 } from "@/lib/join/campus-ambassador-copy";
 import { PREMED_PATH } from "@/lib/site-domains";
@@ -79,6 +80,8 @@ export function CampusAmbassadorPageContent() {
           </h1>
           <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>
             {CAMPUS_AMBASSADOR_PAGE_SUBTITLE}
+            <br />
+            {CAMPUS_AMBASSADOR_PAGE_SUBTITLE_LINE_2}
           </p>
         </div>
       </header>
