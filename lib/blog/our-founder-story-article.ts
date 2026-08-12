@@ -17,7 +17,7 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
     "Doe began with a question my brother Matthew and I could not stop returning to: what would it look like if the people closest to healthcare had intelligent tools that actually reflected the work in front of them?",
   openingLedeContinuation:
     "Doe is built with a long view. We are a focused company led by two brothers whose paths through medicine, design, engineering, and research eventually led back to the same table.",
-  byline: "By James Lisondra",
+  byline: "By: James & Matthew Lisondra",
   date: "August 12, 2026",
   heroBackdrop: ABOUT_PAGE_HERO_BACKDROP,
   contentBlocks: [
