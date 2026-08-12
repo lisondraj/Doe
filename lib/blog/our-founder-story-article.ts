@@ -189,9 +189,9 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
     {
       type: "quote",
       id: "founder-story-impact-quote",
-      lead: "Doe is organized to create as much impact as possible where care is felt most directly",
+      lead: "Doe Intelligence Inc. is legally grounded in Delaware and designed for a cross-border future",
       continuation:
-        "A company structure should create access to the people and resources that make better work possible. **For us, that means building across Canada and the United States with patients and communities at the center.**",
+        "Our structure gives Doe a foundation to build for communities in both Canada and the United States, while staying focused on the people who experience healthcare most directly. **Patients and their communities remain the reason that foundation matters.**",
     },
     {
       type: "subheading",
