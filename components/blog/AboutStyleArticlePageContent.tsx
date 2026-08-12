@@ -42,8 +42,13 @@ type AboutStyleArticlePageContentProps = {
 };
 
 function AboutStyleArticleSubheading({ article }: { article: AboutStyleLongformArticle }) {
+  const founderStorySubheading =
+    article.slug === "our-founder-story" ? " about-style-hero-subheading--founder-story" : "";
+
   return (
-    <p className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]`}>
+    <p
+      className={`${BROADER_DOE_VISION_SUBHEADING_TW} mx-auto max-w-[36ch]${founderStorySubheading}`}
+    >
       {article.subheading}
       {article.subheadingLine2 ? (
         <>

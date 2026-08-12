@@ -455,6 +455,13 @@ html[data-home-page]:not([data-layout="desktop"]) p.broader-doe-hero-description
   font-size: clamp(1.48rem, 1.22rem + 0.72vmin, 1.58rem) !important;
 }
 
+html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.about-style-hero-subheading--founder-story,
+html[data-about-page]:not([data-layout="desktop"]) .about-style-hero-subheading--founder-story {
+  max-width: 48ch !important;
+  font-size: clamp(1.34rem, 1.1rem + 0.62vmin, 1.48rem) !important;
+  line-height: 1.26 !important;
+}
+
 html[data-about-page]:has(.doephone-mobile-root--doehealth) main p.broader-doe-hero-byline,
 html[data-home-page]:not([data-layout="desktop"]) p.broader-doe-hero-byline {
   font-size: clamp(1.22rem, 1.05rem + 0.7vmin, 1.44rem) !important;
