@@ -3,7 +3,7 @@ import {
   LINKEDIN2_MODEL_MENU_OPTIONS,
   LINKEDIN2_MODEL_TRIGGER_LABEL,
 } from "@/lib/linkedin/linkedin2-copy";
-import { dmSans } from "@/lib/home/fonts";
+import { PROTO_FONT_CLASS } from "@/lib/proto/proto-font";
 
 function DropdownChevron() {
   return (
@@ -22,7 +22,7 @@ function DropdownChevron() {
 /** Proto-style static model picker — trigger above, open menu below, Dr. Simon's at bottom. */
 export function LinkedIn2ModelDropdown() {
   return (
-    <div className={`linkedin2-model-dropdown ${dmSans.className}`} aria-hidden>
+    <div className={`linkedin2-model-dropdown ${PROTO_FONT_CLASS}`} aria-hidden>
       <div className="linkedin2-model-dropdown__trigger">
         <span className="linkedin2-model-dropdown__trigger-label">{LINKEDIN2_MODEL_TRIGGER_LABEL}</span>
         <DropdownChevron />

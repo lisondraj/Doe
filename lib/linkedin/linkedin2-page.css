@@ -1,173 +1,238 @@
 .linkedin2-page {
   --linkedin2-frame-width: 1200;
   --linkedin2-frame-height: 627;
-  --linkedin2-brown: #4a3420; /* keep in sync with linkedin2-colors.ts */
-  --linkedin2-picker-brown: #271f17;
-  --linkedin2-picker-brown-elevated: rgba(26, 18, 8, 0.52);
-  --linkedin2-picker-gold: #e8c08e;
-  --linkedin2-picker-cream: rgba(242, 232, 218, 0.88);
-  --linkedin2-picker-border: rgba(212, 165, 116, 0.28);
+  --linkedin2-scene-bg: #121819;
+  --linkedin2-chrome: #271f17;
+  --linkedin2-chrome-elevated: rgba(39, 31, 23, 0.88);
+  --linkedin2-gold: #e8c08e;
+  --linkedin2-gold-muted: rgba(232, 192, 142, 0.72);
+  --linkedin2-cream: rgba(242, 232, 218, 0.92);
+  --linkedin2-border: rgba(212, 165, 116, 0.28);
   position: fixed;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: #0e1011;
   overflow: hidden;
 }
 
 .linkedin2-page__frame {
-  container-type: inline-size;
+  container-type: size;
   container-name: linkedin2;
   position: relative;
   width: min(1200px, 100vw, calc(100dvh * var(--linkedin2-frame-width) / var(--linkedin2-frame-height)));
   aspect-ratio: 1200 / 627;
   overflow: hidden;
   flex-shrink: 0;
+  background: var(--linkedin2-scene-bg);
 }
 
-.linkedin2-page__block-grid {
+.linkedin2-scene {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding:
+    clamp(0.85rem, 3.2cqh, 1.35rem)
+    clamp(1.35rem, 4.8cqw, 2.35rem)
+    clamp(0.75rem, 2.8cqh, 1.15rem);
+  color: #ffffff;
+  pointer-events: none;
+}
+
+/* ── Nav ── */
+
+.linkedin2-scene__nav {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(0.65rem, 1.8cqw, 1rem);
+  min-height: clamp(2rem, 5.8cqh, 2.65rem);
+  padding: clamp(0.28rem, 0.85cqh, 0.42rem) clamp(0.55rem, 1.6cqw, 0.82rem);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(18, 24, 25, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 24px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.linkedin2-scene__nav-brand {
+  min-width: 0;
+  font-size: clamp(1rem, 2.45cqw, 1.35rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.linkedin2-scene__nav-actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.35rem, 1cqw, 0.55rem);
+  flex-shrink: 0;
+}
+
+.linkedin2-scene__nav-grid-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(1.65rem, 4.2cqw, 2rem);
+  height: clamp(1.65rem, 4.2cqw, 2rem);
+  border-radius: 0.45rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.linkedin2-scene__nav-grid {
+  width: clamp(0.82rem, 1.75cqw, 0.95rem);
+  height: clamp(0.82rem, 1.75cqw, 0.95rem);
+}
+
+.linkedin2-scene__nav-invest {
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: rgba(247, 246, 243, 0.96);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+}
+
+.linkedin2-scene__nav-invest-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 clamp(0.62rem, 1.45cqw, 0.82rem);
+  font-size: clamp(0.62rem, 1.28cqw, 0.78rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1;
+  color: #1e343a;
+  white-space: nowrap;
+}
+
+.linkedin2-scene__nav-invest-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(1.35rem, 3.2cqw, 1.65rem);
+  border-left: 1px solid rgba(30, 52, 58, 0.12);
+  color: rgba(30, 52, 58, 0.42);
+}
+
+.linkedin2-scene__nav-chevron {
+  width: 0.48rem;
+  height: 0.48rem;
+}
+
+/* ── Gradient card ── */
+
+.linkedin2-scene__card {
+  position: relative;
+  flex: 1 1 auto;
+  width: min(100%, 36rem);
+  max-height: clamp(12rem, 58cqh, 22rem);
+  min-height: clamp(10.5rem, 52cqh, 18rem);
+  margin-top: clamp(0.65rem, 2.4cqh, 1rem);
+  border-radius: clamp(1rem, 2.8cqw, 1.65rem);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.85rem, 2.8cqw, 1.45rem);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+}
+
+.linkedin2-scene__card-shader {
   position: absolute;
   inset: 0;
   z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-  opacity: 0.64;
 }
 
-.linkedin2-page__block-grid-stage {
-  position: absolute;
-  left: 50%;
-  top: 58%;
+.linkedin2-scene__pill-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
-  width: 118%;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 7px;
-  transform: translate(-50%, -50%) perspective(540px) rotateX(46deg);
-  transform-origin: 50% 50%;
-  transform-style: preserve-3d;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 0.35) 12%,
-    black 28%,
-    black 88%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 0.35) 12%,
-    black 28%,
-    black 88%,
-    transparent 100%
-  );
+  width: 100%;
+  max-width: min(100%, 26rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(0.38rem, 1.05cqw, 0.58rem);
 }
 
-.linkedin2-banner {
-  --linkedin2-banner-gap: clamp(0.55rem, 1.35cqw, 0.95rem);
-  --linkedin2-picker-width: clamp(9.25rem, 13.5cqw, 11.75rem);
-  --linkedin2-banner-inset-x: clamp(0.95rem, 2.65cqw, 2rem);
-  --linkedin2-caption-pad-y: clamp(0.25rem, 0.55cqw, 0.45rem);
-  position: absolute;
-  left: var(--linkedin2-banner-inset-x);
-  top: 50%;
-  z-index: 10;
-  box-sizing: border-box;
+.linkedin2-scene__pill-col {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: clamp(0.38rem, 1.05cqw, 0.58rem);
+}
+
+/* ── Sandbox pills ── */
+
+.linkedin2-sandbox-pill {
   display: flex;
   align-items: center;
-  gap: var(--linkedin2-banner-gap);
-  width: calc(100cqw - (var(--linkedin2-banner-inset-x) * 2));
-  max-width: calc(100cqw - (var(--linkedin2-banner-inset-x) * 2));
-  transform: translateY(-50%);
-  transform-origin: left center;
-  pointer-events: none;
+  justify-content: space-between;
+  gap: 0.35rem;
+  min-height: clamp(1.65rem, 4.8cqh, 2.05rem);
+  padding: clamp(0.32rem, 0.95cqh, 0.42rem) clamp(0.48rem, 1.15cqw, 0.62rem);
+  border: 1px solid var(--linkedin2-border);
+  border-radius: clamp(0.42rem, 1.05cqw, 0.55rem);
+  background: rgba(39, 31, 23, 0.82);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 230, 0.05),
+    0 6px 16px rgba(18, 12, 6, 0.24);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-.linkedin2-caption {
-  position: static;
-  flex: 1 1 auto;
+.linkedin2-sandbox-pill__label {
   min-width: 0;
-  width: auto;
-  max-width: calc(100% - var(--linkedin2-picker-width) - var(--linkedin2-banner-gap));
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: var(--linkedin2-caption-pad-y) 0;
-  text-align: left;
-  color: var(--linkedin2-brown);
-  pointer-events: auto;
-}
-
-.linkedin2-caption__title {
-  margin: 0;
-  font-size: clamp(2.85rem, 6.35cqw, 5.35rem);
-  font-weight: 500;
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-  white-space: nowrap;
-}
-
-.linkedin2-caption__subtitle {
-  margin: clamp(0.28rem, 0.6cqw, 0.45rem) 0 0;
-  display: flex;
-  max-width: 100%;
-  flex-direction: column;
-  align-items: flex-start;
-  font-size: clamp(1.28rem, 2.65cqw, 2.2rem);
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
-}
-
-.linkedin2-caption__subtitle-line {
-  display: block;
-  max-width: 100%;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.linkedin2-caption__byline {
-  margin: clamp(0.4rem, 0.85cqw, 0.65rem) 0 0;
-  max-width: 100%;
-  font-size: clamp(0.78rem, 1.42cqw, 1.32rem);
-  font-weight: 500;
-  line-height: 1.28;
-  letter-spacing: -0.015em;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: clamp(0.58rem, 1.12cqw, 0.72rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  color: var(--linkedin2-gold);
 }
 
-.linkedin2-caption__date {
-  font-weight: 400;
+.linkedin2-sandbox-pill__chevron {
+  width: clamp(0.42rem, 0.95cqw, 0.52rem);
+  height: clamp(0.42rem, 0.95cqw, 0.52rem);
+  flex-shrink: 0;
+  color: var(--linkedin2-gold-muted);
 }
+
+/* ── Model dropdown (attached to Opus 5 pill) ── */
 
 .linkedin2-model-dropdown {
-  flex: 0 0 var(--linkedin2-picker-width);
-  width: var(--linkedin2-picker-width);
+  width: 100%;
   min-width: 0;
-  max-width: var(--linkedin2-picker-width);
-  align-self: center;
   overflow: hidden;
-  border: 1px solid var(--linkedin2-picker-border);
-  border-radius: 0.625rem;
-  background: var(--linkedin2-picker-brown);
+  border: 1px solid var(--linkedin2-border);
+  border-radius: clamp(0.42rem, 1.05cqw, 0.55rem);
+  background: var(--linkedin2-chrome);
   box-shadow:
-    inset 0 1px 0 rgba(255, 245, 230, 0.06),
-    0 10px 24px rgba(18, 12, 6, 0.28);
+    inset 0 1px 0 rgba(255, 245, 230, 0.05),
+    0 8px 20px rgba(18, 12, 6, 0.28);
 }
 
 .linkedin2-model-dropdown__trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.45rem;
-  min-height: clamp(2rem, 3.35cqw, 2.35rem);
-  padding: 0.48rem 0.58rem 0.48rem 0.68rem;
-  border-bottom: 1px solid rgba(212, 165, 116, 0.18);
-  background: var(--linkedin2-picker-brown-elevated);
+  gap: 0.35rem;
+  min-height: clamp(1.65rem, 4.8cqh, 2.05rem);
+  padding: clamp(0.32rem, 0.95cqh, 0.42rem) clamp(0.48rem, 1.15cqw, 0.62rem);
+  border-bottom: 1px solid rgba(212, 165, 116, 0.16);
+  background: var(--linkedin2-chrome-elevated);
 }
 
 .linkedin2-model-dropdown__trigger-label {
@@ -175,32 +240,32 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: clamp(0.72rem, 1.18cqw, 0.86rem);
+  font-size: clamp(0.58rem, 1.12cqw, 0.72rem);
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   line-height: 1.15;
-  color: var(--linkedin2-picker-cream);
+  color: var(--linkedin2-cream);
 }
 
 .linkedin2-model-dropdown__chevron {
-  width: 0.72rem;
-  height: 0.72rem;
+  width: clamp(0.42rem, 0.95cqw, 0.52rem);
+  height: clamp(0.42rem, 0.95cqw, 0.52rem);
   flex-shrink: 0;
-  color: rgba(232, 192, 142, 0.62);
+  color: var(--linkedin2-gold-muted);
   transform: rotate(180deg);
 }
 
 .linkedin2-model-dropdown__menu {
   margin: 0;
-  padding: 0.22rem;
+  padding: clamp(0.14rem, 0.42cqh, 0.2rem);
   list-style: none;
-  background: var(--linkedin2-picker-brown);
+  background: var(--linkedin2-chrome);
 }
 
 .linkedin2-model-dropdown__option {
-  padding: 0.38rem 0.48rem;
-  border-radius: 0.4rem;
-  font-size: clamp(0.68rem, 1.08cqw, 0.8rem);
+  padding: clamp(0.28rem, 0.82cqh, 0.38rem) clamp(0.42rem, 1cqw, 0.52rem);
+  border-radius: clamp(0.32rem, 0.82cqw, 0.4rem);
+  font-size: clamp(0.54rem, 1.02cqw, 0.66rem);
   font-weight: 500;
   letter-spacing: -0.015em;
   line-height: 1.2;
@@ -212,7 +277,41 @@
 
 .linkedin2-model-dropdown__option--hover {
   background: rgba(212, 165, 116, 0.14);
-  color: var(--linkedin2-picker-gold);
+  color: var(--linkedin2-gold);
   box-shadow: inset 0 0 0 1px rgba(212, 165, 116, 0.34);
 }
 
+/* ── Headline + footer ── */
+
+.linkedin2-scene__headline {
+  margin: clamp(0.55rem, 2.2cqh, 0.85rem) 0 0;
+  max-width: 100%;
+  font-size: clamp(1.15rem, 3.35cqw, 2rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-align: center;
+  color: #ffffff;
+}
+
+.linkedin2-scene__footer {
+  margin-top: auto;
+  padding-top: clamp(0.35rem, 1.4cqh, 0.55rem);
+}
+
+.linkedin2-scene__footer-url {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(1.45rem, 4.2cqh, 1.85rem);
+  padding: 0 clamp(0.72rem, 1.75cqw, 0.95rem);
+  border-radius: 999px;
+  background: rgba(18, 24, 25, 0.88);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  font-size: clamp(0.52rem, 1.05cqw, 0.64rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.88);
+  white-space: nowrap;
+}

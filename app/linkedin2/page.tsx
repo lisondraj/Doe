@@ -9,7 +9,7 @@ const LINKEDIN2_PATH = "/linkedin2";
 
 export const metadata: Metadata = {
   title: "LinkedIn 2 · Doe",
-  description: "Doe LinkedIn banner — off-white with Meet Doe headline.",
+  description: "Proto sandbox feature mock for LinkedIn capture — dark brown and gold.",
   alternates: {
     canonical: `${primarySiteOrigin()}${LINKEDIN2_PATH}`,
   },
