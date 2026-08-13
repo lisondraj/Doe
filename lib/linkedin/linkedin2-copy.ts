@@ -18,8 +18,6 @@ export const LINKEDIN2_MODEL_MENU_OPTIONS = [
   "GPT 5.6",
   "Sol",
   "Gemini 3",
-  "Sonnet 5",
-  "Composer 2.5",
   "Dr. Simon's Model",
 ] as const;
 
