@@ -2,6 +2,10 @@
   --linkedin2-frame-width: 1200;
   --linkedin2-frame-height: 627;
   --linkedin2-brown: #4a3420; /* keep in sync with linkedin2-colors.ts */
+  --linkedin2-chrome-deep: #271f17;
+  --linkedin2-chrome-mid: #3a2a1c;
+  --linkedin2-gold: #e8c08e;
+  --linkedin2-gold-muted: #e8c08e;
   position: fixed;
   inset: 0;
   display: flex;
@@ -60,6 +64,7 @@
 }
 
 .linkedin2-caption {
+  --linkedin2-caption-scale: 1.05;
   --linkedin2-caption-inset: clamp(1.25rem, 3.5cqw, 3.25rem);
   --linkedin2-caption-offset-x: clamp(1.25rem, 4cqw, 3.5rem);
   position: absolute;
@@ -73,7 +78,7 @@
   flex-direction: column;
   align-items: flex-start;
   padding: var(--linkedin2-caption-inset);
-  transform: translateY(-50%) scale(1.15);
+  transform: translateY(-50%) scale(var(--linkedin2-caption-scale));
   transform-origin: left center;
   text-align: left;
   color: var(--linkedin2-brown);
@@ -119,4 +124,124 @@
 
 .linkedin2-caption__date {
   font-weight: 400;
+}
+
+/* ── Model picker (right rail) ── */
+
+.linkedin2-model-picker-rail {
+  --linkedin2-picker-rail-start: 56%;
+  position: absolute;
+  inset: 0 0 0 var(--linkedin2-picker-rail-start);
+  z-index: 10;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 2.5cqw, 2rem) clamp(0.55rem, 1.4cqw, 1rem) clamp(1rem, 2.5cqw, 2rem)
+    clamp(1.35rem, 3.2cqw, 2.35rem);
+  pointer-events: none;
+}
+
+.linkedin2-model-picker {
+  --linkedin2-picker-scale: 1.48;
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, clamp(7.75rem, 14.5cqw, 9.75rem));
+  flex-shrink: 0;
+  transform: translate(
+      clamp(0.55rem, 1.35cqw, 0.95rem),
+      clamp(0.65rem, 1.85cqh, 1.05rem)
+    )
+    scale(var(--linkedin2-picker-scale));
+  transform-origin: center center;
+  pointer-events: none;
+}
+
+.linkedin2-model-dropdown {
+  --linkedin2-picker-font-size: clamp(0.68rem, 1.3cqw, 0.84rem);
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  gap: clamp(0.2rem, 0.48cqh, 0.3rem);
+  overflow: visible;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  -webkit-font-smoothing: antialiased;
+}
+
+.linkedin2-model-dropdown__trigger,
+.linkedin2-model-dropdown__menu {
+  border: none;
+  box-shadow: none;
+}
+
+.linkedin2-model-dropdown__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.28rem;
+  min-height: clamp(1.85rem, 5.1cqh, 2.35rem);
+  padding: clamp(0.36rem, 1cqh, 0.48rem) clamp(0.38rem, 0.85cqw, 0.48rem);
+  border-radius: clamp(0.46rem, 1.05cqw, 0.58rem);
+  background: linear-gradient(
+    165deg,
+    var(--linkedin2-chrome-mid) 0%,
+    var(--linkedin2-chrome-deep) 100%
+  );
+}
+
+.linkedin2-model-dropdown__trigger-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--linkedin2-picker-font-size);
+  font-weight: inherit;
+  letter-spacing: inherit;
+  line-height: 1.12;
+  color: #f0cfa0;
+  text-shadow: 0 1px 0 rgba(18, 12, 6, 0.32);
+}
+
+.linkedin2-model-dropdown__chevron {
+  width: clamp(0.52rem, 1.12cqw, 0.64rem);
+  height: clamp(0.52rem, 1.12cqw, 0.64rem);
+  flex-shrink: 0;
+  color: #f0cfa0;
+  transform: rotate(180deg);
+  filter: drop-shadow(0 1px 0 rgba(18, 12, 6, 0.28));
+}
+
+.linkedin2-model-dropdown__menu {
+  margin: 0;
+  padding: clamp(0.18rem, 0.5cqh, 0.24rem);
+  list-style: none;
+  border-radius: clamp(0.46rem, 1.05cqw, 0.58rem);
+  background: linear-gradient(
+    180deg,
+    var(--linkedin2-chrome-mid) 0%,
+    var(--linkedin2-chrome-deep) 55%,
+    #1f1710 100%
+  );
+}
+
+.linkedin2-model-dropdown__option {
+  padding: clamp(0.32rem, 0.95cqh, 0.42rem) clamp(0.38rem, 0.85cqw, 0.48rem);
+  border-radius: clamp(0.34rem, 0.85cqw, 0.44rem);
+  font-size: var(--linkedin2-picker-font-size);
+  font-weight: inherit;
+  letter-spacing: inherit;
+  line-height: 1.18;
+  color: #f0cfa0;
+  text-shadow: 0 1px 0 rgba(18, 12, 6, 0.28);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linkedin2-model-dropdown__option--hover {
+  background: #4a3828;
+  color: #f5d8b0;
+  text-shadow: 0 1px 0 rgba(18, 12, 6, 0.38);
 }
