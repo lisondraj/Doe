@@ -13,10 +13,9 @@ export const LINKEDIN2_FOOTER_URL = "hireproto.com";
 export const LINKEDIN2_MODEL_TRIGGER_LABEL = "Opus 5";
 
 export const LINKEDIN2_MODEL_MENU_OPTIONS = [
-  "Fable 5",
   "GPT 5.6",
   "Sol",
-  "Gemini 3",
+  "Gemini 3.0",
   "Dr. Simon's Model",
 ] as const;
 
