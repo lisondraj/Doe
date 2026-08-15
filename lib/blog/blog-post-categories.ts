@@ -22,6 +22,7 @@ const BLOG_POST_CATEGORIES: Record<string, BlogPostCategory> = {
   "introducing-fabric": BLOG_POST_CATEGORY_NEW_RELEASES,
   "introducing-float": BLOG_POST_CATEGORY_FEATURES,
   "intelligence-for-every-clinic": BLOG_POST_CATEGORY_DOE_LABS,
+  "federated-clinic-intelligence": BLOG_POST_CATEGORY_DOE_LABS,
   "introducing-genome": BLOG_POST_CATEGORY_FEATURES,
   "blended-intelligence": BLOG_POST_CATEGORY_DOE_LABS,
   "genome-is-built-for-you": BLOG_POST_CATEGORY_PULSE_PRODUCT_DESIGN,

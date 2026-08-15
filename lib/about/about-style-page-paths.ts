@@ -6,6 +6,7 @@ import { INTRODUCING_FLOAT_PATH } from "@/lib/blog/introducing-float-article";
 import { INTRODUCING_GENOME_PATH } from "@/lib/blog/introducing-genome-article";
 import { GENOME_IS_BUILT_FOR_YOU_PATH } from "@/lib/blog/genome-is-built-for-you-article";
 import { INTELLIGENCE_FOR_EVERY_CLINIC_PATH } from "@/lib/blog/intelligence-for-every-clinic-article";
+import { FEDERATED_CLINIC_INTELLIGENCE_PATH } from "@/lib/blog/federated-clinic-intelligence-article";
 import { INTRODUCING_PULSE_PATH } from "@/lib/blog/introducing-pulse-article";
 import { PULSE_AMBIENT_PATH } from "@/lib/blog/pulse-ambient-article";
 import { PULSE_CALL_HISTORY_PATH } from "@/lib/blog/pulse-call-history-article";
@@ -30,6 +31,7 @@ export const ABOUT_STYLE_PAGE_PATHS = [
   BLENDED_INTELLIGENCE_PATH,
   GENOME_IS_BUILT_FOR_YOU_PATH,
   INTELLIGENCE_FOR_EVERY_CLINIC_PATH,
+  FEDERATED_CLINIC_INTELLIGENCE_PATH,
   PULSE_CALL_HISTORY_PATH,
   PULSE_AMBIENT_PATH,
   ...ABOUT_STYLE_BLANK_PAGE_PATHS,
