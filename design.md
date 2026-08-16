@@ -232,6 +232,14 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 | Name | Gold gradient | Per card layout | `clamp(2.65–4.25rem)` |
 | Credentials | Cream body text | Wrap allowed | `clamp(1.05–1.55rem)` |
 
+#### Roadmap — iPhone
+
+| Element | Layout | Alignment | Sizes (approx) |
+|---------|--------|-----------|---------------|
+| Hero + sections | **Vertical stack** | **Center** hero, left-aligned GTM list | Scroll-friendly body |
+| Agent grid | **2 columns** | **Center** in cells | Smaller focus + headline clamps |
+| GTM | Below product section | **Left** bullets | `overflow-wrap: anywhere` on all copy |
+
 ---
 
 ## 7. Desktop vs iPhone — quick comparison
