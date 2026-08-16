@@ -1,11 +1,51 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+
 import { StoryGoalsAtSeedPanel } from "@/components/story/StoryGoalsAtSeedPanel";
 import { StoryOurAskPanel } from "@/components/story/StoryOurAskPanel";
 import { StoryRoadmapPanel } from "@/components/story/StoryRoadmapPanel";
 import { StoryTeamPanel } from "@/components/story/StoryTeamPanel";
 import { suisseIntl } from "@/lib/home/fonts";
 import type { StoryTabId } from "@/lib/story/story-nav";
+
+const STORY_TAB_FADE_MS = 280;
+
+function storyTabFadeDurationMs() {
+  if (typeof window === "undefined") return STORY_TAB_FADE_MS;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : STORY_TAB_FADE_MS;
+}
+
+function useStoryTabFade(tab: StoryTabId, title: string) {
+  const [renderedTab, setRenderedTab] = useState(tab);
+  const [renderedTitle, setRenderedTitle] = useState(title);
+  const [hidden, setHidden] = useState(false);
+  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    if (tab === renderedTab && title === renderedTitle) return;
+
+    setHidden(true);
+    clearTimeout(fadeTimeoutRef.current);
+    fadeTimeoutRef.current = setTimeout(() => {
+      setRenderedTab(tab);
+      setRenderedTitle(title);
+      setHidden(false);
+    }, storyTabFadeDurationMs());
+
+    return () => clearTimeout(fadeTimeoutRef.current);
+  }, [tab, title, renderedTab, renderedTitle]);
+
+  return { renderedTab, renderedTitle, hidden };
+}
+
+function StoryTabPanelContent({ tab }: { tab: StoryTabId }) {
+  if (tab === "our-ask") return <StoryOurAskPanel />;
+  if (tab === "goals-at-seed") return <StoryGoalsAtSeedPanel />;
+  if (tab === "team") return <StoryTeamPanel />;
+  if (tab === "roadmap-gtm") return <StoryRoadmapPanel />;
+  return null;
+}
 
 function storyTabPanelBodyClass(tab: StoryTabId) {
   if (tab === "our-ask") return " story-tab-panel__body--our-ask";
@@ -64,23 +104,26 @@ export function StoryBlankPanel({
   mobileMenu?: boolean;
   onOpenNav?: () => void;
 }) {
+  const { renderedTab, renderedTitle, hidden } = useStoryTabFade(tab, title);
+  const fadeClass = hidden ? " story-tab-panel__fade--hidden" : "";
+
   return (
     <div className={`story-tab-panel flex min-h-0 flex-1 flex-col overflow-hidden${mobileMenu ? " story-tab-panel--mobile-fullscreen" : ""}`}>
       <div className="product-landing-console-shell shrink-0">
         <header className={`product-landing-header flex items-center ${suisseIntl.className}`}>
           {mobileMenu && onOpenNav ? <StoryMobileMenuButton onClick={onOpenNav} /> : null}
           {navCollapsed && onExpandNav ? <StoryNavExpandButton onClick={onExpandNav} /> : null}
-          <h1 className="product-landing-header__title m-0 font-normal tracking-tight">{title}</h1>
+          <h1
+            className={`product-landing-header__title story-tab-panel__fade m-0 font-normal tracking-tight${fadeClass}`}
+          >
+            {renderedTitle}
+          </h1>
         </header>
       </div>
-      <div className={`story-tab-panel__body relative min-h-0 flex-1${storyTabPanelBodyClass(tab)}`}>
-        {tab === "our-ask" ? <StoryOurAskPanel /> : null}
-
-        {tab === "goals-at-seed" ? <StoryGoalsAtSeedPanel /> : null}
-
-        {tab === "team" ? <StoryTeamPanel /> : null}
-
-        {tab === "roadmap-gtm" ? <StoryRoadmapPanel /> : null}
+      <div className={`story-tab-panel__body relative min-h-0 flex-1${storyTabPanelBodyClass(renderedTab)}`}>
+        <div className={`story-tab-panel__fade min-h-0 flex-1${fadeClass}`}>
+          <StoryTabPanelContent tab={renderedTab} />
+        </div>
       </div>
     </div>
   );
