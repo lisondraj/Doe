@@ -787,8 +787,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__panel {
 
 html[data-doeforvc-always-phone] .story-meet-doe-modal__backdrop {
   aspect-ratio: auto;
-  height: clamp(26rem, 78vh, 34rem);
-  min-height: clamp(26rem, 78vh, 34rem);
+  height: calc(clamp(26rem, 78vh, 34rem) * var(--story-meet-doe-height-mult));
+  min-height: calc(clamp(26rem, 78vh, 34rem) * var(--story-meet-doe-height-mult));
 }
 
 html[data-doeforvc-always-phone] .story-meet-doe-modal__title--brand {
@@ -2539,6 +2539,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 }
 
 .story-meet-doe-modal {
+  --story-meet-doe-height-mult: calc(4 / 3);
   --story-gold-text: var(
     --doehealth-gold-text-gradient,
     linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
@@ -2598,8 +2599,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 .story-meet-doe-modal__backdrop {
   position: relative;
   isolation: isolate;
-  aspect-ratio: 2.35 / 1;
-  min-height: clamp(18rem, 42vh, 30rem);
+  aspect-ratio: 2.35 / 1.333333;
+  min-height: calc(clamp(18rem, 42vh, 30rem) * var(--story-meet-doe-height-mult));
   overflow: hidden;
   margin: 0;
   border-radius: var(--story-meet-doe-radius);
