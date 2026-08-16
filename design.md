@@ -108,12 +108,13 @@ text-wrap: balance;
 white-space: normal;
 ```
 
-Apply to: goal stats, product-line names, budget labels, team credentials, hero labels.
+Apply to: goal stats, product-line names, budget labels, team credentials, hero labels, roadmap agent cards, GTM phase copy.
 
 ### May stay single-line
 
 - Short numeric tokens: `$200K`, `1.5M`, `18 months`
 - Budget `%` / `$$$` columns: `white-space: nowrap`
+- Roadmap focus hub label: **Voice** (`white-space: nowrap`)
 - Nav / tab bar chrome (Product)
 
 ### Anti-clipping
@@ -143,7 +144,16 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 | **Shell** | Sidebar nav + tab panel (`--pb-nav-inset`); collapsible nav | Suisse wordmark + nav | — |
 | **Tab header** | `product-landing-header__title` **gold gradient**, Suisse | `clamp(1.35rem … 1.75rem)` | Left-aligned |
 | **Tab pager** | Fixed bottom-right inside workspace | — | — |
-| **Panel body** | `overflow: hidden`; content centered or grid-fit | — | Container queries OK on Goals (`container-type: size`) |
+| **Panel body** | `overflow: hidden`; content fills tab height where possible | — | Container queries OK on Goals; Roadmap uses **full-height grid** |
+
+### Story content tabs — quick reference
+
+| Tab | Key classes | Font split | Desktop layout | iPhone layout |
+|-----|-------------|------------|----------------|---------------|
+| **Our Ask** | `story-fundraise-*`, `story-fundraise-budget*` | DM Sans ask, Suisse budget | 2-col scaled grid | Stacked, centered ask |
+| **Goals at Seed** | `story-goals-*` | DM Sans | 3×3 grid + fade lines | 2-col grid, scroll body |
+| **Team** | `story-team-grid__*` | Suisse | Overlapping cards | Stacked cards |
+| **Roadmap** | `story-roadmap-*` | DM Sans headlines/focus, Suisse labels/body | **Full-height** product diagram + GTM timeline | Stacked full-width panels, scroll |
 
 #### Our Ask — desktop
 
@@ -173,13 +183,32 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 
 #### Roadmap — desktop
 
-| Element | Layout | Alignment | Sizes (approx) |
-|---------|--------|-----------|----------------|
-| Hero | Top center lockup | **Center** | Headline `clamp(2.35–3.85rem)` gold |
-| Columns | **2-col** — Product left, GTM right | Top-aligned sections | Max width **56rem** |
-| Focus card | “Live today” + **Voice** | **Left** in product column | Focus value up to **2.65rem** |
-| Agent grid | **3×2** rollout labels | **Center** in cells | Suisse labels, wrap/balance |
-| GTM list | Bulleted points | **Left** | DM Sans headline, Suisse body |
+**Goal:** Use the **full tab panel** — hero strip + two bordered panels that stretch to the bottom. Prefer **visual diagrams and cards** over plain bullet lists.
+
+| Element | Layout | Alignment | Sizes / notes |
+|---------|--------|-----------|---------------|
+| **Callout shell** | `story-roadmap-callout` — CSS grid `auto / 1fr`; `height: 100%` | Full width, no max-width cap | Padding via `--story-gutter` |
+| **Hero** | `story-roadmap-hero` — **2-col** headline + body | **Left** aligned | Headline `clamp(2.65–4.35rem)` gold; body `--story-cream-body` |
+| **Stage** | `story-roadmap-stage` — **~58/42** grid (`1.18fr / 0.82fr`) | Both panels **`height: 100%`** | Gap `clamp(0.85–1.15rem)` |
+| **Product panel** | `story-roadmap-product-panel` — bordered card, radial highlight | Diagram + voice strip stack vertically | `flex: 1` diagram rows |
+| **Voice hub** | `story-roadmap-diagram__focus` — gradient pill + stem | **Center** | “Live today” tag + **Voice** gold; stem connects to rows |
+| **Agent diagram** | `story-roadmap-diagram__rows` — 2 rows × 3 nodes | Horizontal **bar + drop lines** per node | Same topology as `doehealth-voice-roadmap`, Story gold tokens |
+| **Agent cards** | `story-roadmap-agent-card` — index `01–06`, title, description | **Left** in card | Title DM Sans gold; desc Suisse `--story-cream-muted` |
+| **Voice strip** | `story-roadmap-voice-strip` — **3×2** feature pills | Label + note stacked | From `DESIGNERS_PRODUCT_VOICE_FEATURES` |
+| **GTM panel** | `story-roadmap-gtm-panel` — bordered card | Phase timeline fills height | Headline DM Sans gold |
+| **GTM phases** | `story-roadmap-gtm-phase` — rail (`01–03`) + card | **Left**; cards `flex: 1` | Title uppercase muted; headline gold; **marker pills** |
+
+**Roadmap CSS tokens (define on `.story-roadmap-callout`):**
+
+| Token | Use |
+|-------|-----|
+| `--story-roadmap-line` | Connector stems, bars, drops (`rgba(232, 192, 142, 0.24)`) |
+| `--story-roadmap-line-soft` | Card borders |
+| `--story-roadmap-panel-fill` | Panel background tint |
+| `--story-roadmap-panel-border` | Panel outer border |
+| `--story-roadmap-drop` | Vertical drop height above agent cards |
+
+**Copy source:** `lib/story/story-roadmap-gtm.ts` — agents (`STORY_ROADMAP_AGENTS`), GTM phases (`STORY_GTM_PHASES`), voice features, designers/doehealth headlines.
 
 ---
 
@@ -234,11 +263,20 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 
 #### Roadmap — iPhone
 
-| Element | Layout | Alignment | Sizes (approx) |
+**Goal:** Same content as desktop, **full width**, visually dense — stack panels and scroll the tab body.
+
+| Element | Layout | Alignment | Sizes / notes |
 |---------|--------|-----------|---------------|
-| Hero + sections | **Vertical stack** | **Center** hero, left-aligned GTM list | Scroll-friendly body |
-| Agent grid | **2 columns** | **Center** in cells | Smaller focus + headline clamps |
-| GTM | Below product section | **Left** bullets | `overflow-wrap: anywhere` on all copy |
+| **Callout** | Single column; `height: auto`, scroll-friendly | Full width | Bottom pad clears tab pager |
+| **Hero** | **1-col** stack (headline then body) | **Left** | Headline `clamp(2.15–3.15rem)` |
+| **Stage** | Product panel **above** GTM panel | Full width | Gap `clamp(1–1.35rem)` |
+| **Panels** | `min-height: clamp(18rem, 62vw, 24rem)` each | Border + fill match desktop | Do not shrink to a narrow centered column |
+| **Agent diagram** | Rows stay **3-wide → 2-col** per row (`diagram__next`) | Drops + cards preserved | Card `min-height: clamp(5.5–7rem)` |
+| **Voice hub** | Wider focus pill (`max 16rem`) | **Center** | Voice up to `clamp(2.35–3.25rem)` |
+| **Voice strip** | **2 columns** | Compact pills | Same 6 features |
+| **GTM phases** | Stacked; rail + card per phase | **Left** | Card `min-height: clamp(7.5–9.5rem)`; markers wrap |
+
+**iPhone scope:** `.product-brown-story-mode--mobile .story-roadmap-*` only — never change desktop panel proportions when tuning phone.
 
 ---
 
@@ -251,9 +289,9 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 | **Our Ask** | 2-col scaled grid; ask left | Stacked; ask centered; budget below |
 | **Goals** | 3×3 grid + fade lines; container queries | 2-col; no grid lines; block scroll body |
 | **Team** | Overlapping absolute cards | Stacked full-width cards |
-| **Roadmap** | 2-col product + GTM | Stacked; 2-col agent grid |
-| **Body overflow** | `hidden` (fit viewport) | `overflow-y: auto` |
-| **Content padding** | Stage-centered, scale transform | `--story-gutter` + safe areas |
+| **Roadmap** | Full-height diagram + GTM timeline (~58/42) | Stacked panels; 2-col agent cards; scroll |
+| **Body overflow** | `hidden` — content fills viewport height | `overflow-y: auto` |
+| **Content padding** | `--story-gutter`; Roadmap uses **full width** (no max-width cap) | `--story-gutter` + safe areas |
 
 ### Product vs Story (iPhone)
 
@@ -270,6 +308,7 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 | Content type | Desktop | iPhone |
 |--------------|---------|--------|
 | Story goal / product labels | `text-wrap: balance`, wrap OK | Same + `overflow-wrap: anywhere` |
+| Story roadmap agent + GTM copy | Wrap/balance on titles and descriptions | Same; marker pills may wrap |
 | Story budget categories | Wrap OK | Wrap OK |
 | Product call-history hero | Often `nowrap` | **Must wrap** |
 | Short amounts (`1.5M`, `$200K`) | `nowrap` | `nowrap` |
@@ -287,6 +326,9 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 | Our Ask grid scale | `0.88` transform | none (100% width stack) |
 | Fundraise stack gap | — | `clamp(1.35rem, 4.5vw, 2rem)` |
 | Goals row gap | `clamp(2rem, 5cqb, 4rem)` | `clamp(1.15rem, 4vw, 1.75rem)` |
+| Roadmap stage split | Product **1.18fr** / GTM **0.82fr** | Single column stack |
+| Roadmap panel min-height | Stretch to tab bottom (`height: 100%`) | `clamp(18rem, 62vw, 24rem)` per panel |
+| Roadmap agent diagram | 3 cols × 2 rows; `space-evenly` rows | 2 cols per row |
 | Meet Doe card height | aspect ~2.35:1 (desktop modal) | `clamp(26rem, 78vh, 34rem)` |
 
 ---
@@ -306,15 +348,17 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 6. Story Goals may use `container-type: size` and `@container` queries.
 7. Story Our Ask may use scale transform for grid fit.
 8. Team cards may use absolute overlap layout.
-9. Product call-history display type may use `nowrap` where specified.
+9. Story Roadmap uses **full tab height** — hero + `story-roadmap-stage` grid; bordered `*-panel` cards; visual diagram (not text-only lists).
+10. Product call-history display type may use `nowrap` where specified.
 
 ### iPhone only
 
-10. Scope CSS with `--mobile`, `:not([data-layout="desktop"])`, or `data-doeforvc-always-phone`.
-11. Tab bodies scroll vertically; no zero-height size containers.
-12. Safe-area on header, pager, tab bar, modals.
-13. Product hero names and Story content labels: **`overflow-wrap: anywhere`**.
-14. Do not change desktop rules when fixing iPhone.
+11. Scope CSS with `--mobile`, `:not([data-layout="desktop"])`, or `data-doeforvc-always-phone`.
+12. Tab bodies scroll vertically; no zero-height size containers.
+13. Safe-area on header, pager, tab bar, modals.
+14. Product hero names and Story content labels: **`overflow-wrap: anywhere`**.
+15. Roadmap iPhone: stack panels full width; preserve diagram topology (hub → bars → cards).
+16. Do not change desktop rules when fixing iPhone.
 
 ---
 
@@ -331,7 +375,8 @@ Requirements:
 - Scope CSS to desktop selectors only (data-layout="desktop" or :not(.product-brown-story-mode--mobile))
 - Typography: Suisse Intl (chrome), DM Sans (stats), Lora (wordmark only)
 - Colors: --story-gold-text or product brown/cream tokens; muted --story-cream-muted
-- Layout: per design.md desktop tables for Our Ask / Goals / Team
+- Layout: per design.md desktop tables for Our Ask / Goals / Team / Roadmap
+- Roadmap: full-height stage, product diagram (Voice hub + agent cards + voice strip) + GTM phase timeline with marker pills
 - Text: balance wrap on content; nowrap OK for short numeric tokens and product call-history display hero
 - Do not add iPhone/mobile rules in this change
 ```
@@ -348,6 +393,7 @@ Requirements:
 - Typography: same font roles as desktop; use --product-mobile-gold-text on Product iPhone
 - Text: full words visible — overflow-wrap anywhere on all content labels; nowrap only for amounts and numeric columns
 - Layout: stacked/scrolling per design.md iPhone tables; safe-area insets; tab bar/pager clearance
+- Roadmap: full-width stacked panels; 2-col agent cards; scroll body; keep visual diagram structure
 - Do not change desktop layout, scale transforms, or container-type: size rules
 ```
 
@@ -359,7 +405,9 @@ Requirements:
 |---------|--------|
 | Story tokens & tabs | `lib/story/story-page.css` |
 | Story components | `components/story/Story*Panel.tsx`, `StoryBlankPanel.tsx`, `StoryRoadmapPanel.tsx` |
-| Story roadmap copy | `lib/story/story-roadmap-gtm.ts` |
+| Story roadmap copy & types | `lib/story/story-roadmap-gtm.ts` |
+| Voice roadmap topology (reference) | `lib/doehealth/doehealth-voice-roadmap.ts`, `components/doehealth/DoeHealthVoiceRoadmapDiagram.tsx` |
+| Designers voice features | `lib/designers/designers-product-copy.ts` (`DESIGNERS_PRODUCT_VOICE_FEATURES`) |
 | Product brown shell | `lib/product/product-brown-mock.css` |
 | Product Today / landing | `lib/product/product-landing.css` |
 | Product iPhone | `lib/product/product-mobile.css` |
@@ -377,6 +425,52 @@ Requirements:
 | Header title | Taupe/cream (Product) | Gold gradient (Story) |
 | Primary use | Operational UI | Fundraise / pitch |
 | Desktop Goals | N/A | 3×3 grid with fade lines |
+| Desktop Roadmap | N/A | Full-height voice-first diagram + GTM phase timeline |
 | iPhone nav | Bottom tab bar | Drawer + pager |
 
 Unify **typography, gold hierarchy, wrapping, and alignment** — not information architecture or nav patterns.
+
+---
+
+## 13. Story Roadmap — pattern to reuse
+
+When building or extending Story tabs that need **rich, investor-grade visuals**, use the Roadmap tab as the reference implementation (`StoryRoadmapPanel`, `story-page.css` roadmap block).
+
+### Structure (component)
+
+```
+story-roadmap-callout
+├── story-roadmap-hero (headline + body)
+└── story-roadmap-stage
+    ├── story-roadmap-product-panel
+    │   ├── story-roadmap-panel-head (eyebrow + caption)
+    │   ├── story-roadmap-diagram (focus hub → rows → agent cards)
+    │   └── story-roadmap-voice-strip (supporting detail pills)
+    └── story-roadmap-gtm-panel
+        ├── story-roadmap-panel-head
+        └── story-roadmap-gtm-phases (step rail + phase cards + markers)
+```
+
+### Visual rules
+
+1. **Fill the tab** — desktop panels stretch to `height: 100%`; avoid narrow centered max-width shells for primary content.
+2. **Diagram over lists** — use connectors (`__focus-stem`, `__row-bar`, `__drop`) and numbered cards for sequences; reserve plain bullets for secondary detail only.
+3. **Layered panels** — outer `*-panel` with `--story-roadmap-panel-border`, inner `--story-roadmap-panel-fill`, optional radial highlight.
+4. **Detail density** — each node gets title + description (or label + note); GTM phases get headline + detail + marker pills.
+5. **Hub-and-spoke** — one gold focus node (“Voice”) at top; downstream items connect visually, not only by proximity.
+
+### Class prefix map
+
+| Prefix | Purpose |
+|--------|---------|
+| `story-roadmap-callout` | Root; owns roadmap CSS variables |
+| `story-roadmap-diagram__*` | Voice-first rollout topology |
+| `story-roadmap-agent-card__*` | Numbered rollout nodes |
+| `story-roadmap-voice-strip__*` | Live-today capability grid |
+| `story-roadmap-gtm-phase__*` | Go-to-market timeline cards |
+
+### Do not
+
+- Collapse Roadmap back to a simple 2-col text grid without diagrams when “polishing” — keep the visual system.
+- Cap desktop Roadmap with a small `max-width` — it should breathe across the tab panel.
+- Drop agent descriptions or GTM markers to save space; scale type with `clamp()` instead.
