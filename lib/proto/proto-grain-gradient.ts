@@ -109,6 +109,7 @@ export type ProtoGrainGradientVariant =
   | "doehealth-routed-calls-right"
   | "ambient"
   | "ambient-band"
+  | "ambient-band-flip"
   | "billing"
   | "sandbox-build"
   | "prototype"
@@ -368,6 +369,18 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     rotation: 348,
     offsetX: -0.06,
     offsetY: 0.36,
+    scale: 1.12,
+    speed: 0,
+  },
+  /** ambient-band flipped vertically — story team James card. */
+  "ambient-band-flip": {
+    shape: "wave",
+    softness: 0.72,
+    intensity: 0.17,
+    fit: "cover",
+    rotation: 168,
+    offsetX: 0.06,
+    offsetY: -0.36,
     scale: 1.12,
     speed: 0,
   },

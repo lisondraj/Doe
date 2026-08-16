@@ -1,47 +1,82 @@
 "use client";
 
-import { StoryFundraiseBudgetTable } from "@/components/story/StoryFundraiseBudgetTable";
-import { dmSans, suisseIntl } from "@/lib/home/fonts";
-import {
-  STORY_FUNDRAISE_AMOUNT,
-  STORY_FUNDRAISE_ROUND,
-  STORY_FUNDRAISE_RUNWAY_DURATION,
-  STORY_FUNDRAISE_RUNWAY_LABEL,
-} from "@/lib/story/story-copy";
+import { StoryGoalsAtSeedPanel } from "@/components/story/StoryGoalsAtSeedPanel";
+import { StoryOurAskPanel } from "@/components/story/StoryOurAskPanel";
+import { StoryTeamPanel } from "@/components/story/StoryTeamPanel";
+import { suisseIntl } from "@/lib/home/fonts";
 import type { StoryTabId } from "@/lib/story/story-nav";
 
 function storyTabPanelBodyClass(tab: StoryTabId) {
-  if (tab === "our-ask") return " story-tab-panel__body--fundraise";
-  if (tab === "budget") return " story-tab-panel__body--budget";
+  if (tab === "our-ask") return " story-tab-panel__body--our-ask";
+  if (tab === "goals-at-seed") return " story-tab-panel__body--fundraise story-tab-panel__body--goals";
+  if (tab === "team") return " story-tab-panel__body--team";
   return "";
 }
 
-/** Blank brown workspace — tab header and optional tab-specific content. */
-export function StoryBlankPanel({ tab, title }: { tab: StoryTabId; title: string }) {
+function StoryNavExpandButton({ onClick }: { onClick: () => void }) {
   return (
-    <div className="story-tab-panel flex min-h-0 flex-1 flex-col overflow-hidden">
+    <button
+      type="button"
+      className="story-tab-panel__expand-nav"
+      aria-label="Expand sidebar"
+      aria-expanded={false}
+      onClick={onClick}
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden className="h-5 w-5">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <path d="M9 3v18" />
+      </svg>
+    </button>
+  );
+}
+
+function StoryMobileMenuButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      className="story-mobile-tab-bar__menu"
+      aria-label="Open navigation"
+      aria-expanded={false}
+      onClick={onClick}
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden>
+        <path d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+    </button>
+  );
+}
+
+/** Blank brown workspace — tab header and optional tab-specific content. */
+export function StoryBlankPanel({
+  tab,
+  title,
+  navCollapsed = false,
+  onExpandNav,
+  mobileMenu = false,
+  onOpenNav,
+}: {
+  tab: StoryTabId;
+  title: string;
+  navCollapsed?: boolean;
+  onExpandNav?: () => void;
+  mobileMenu?: boolean;
+  onOpenNav?: () => void;
+}) {
+  return (
+    <div className={`story-tab-panel flex min-h-0 flex-1 flex-col overflow-hidden${mobileMenu ? " story-tab-panel--mobile-fullscreen" : ""}`}>
       <div className="product-landing-console-shell shrink-0">
         <header className={`product-landing-header flex items-center ${suisseIntl.className}`}>
+          {mobileMenu && onOpenNav ? <StoryMobileMenuButton onClick={onOpenNav} /> : null}
+          {navCollapsed && onExpandNav ? <StoryNavExpandButton onClick={onExpandNav} /> : null}
           <h1 className="product-landing-header__title m-0 font-normal tracking-tight">{title}</h1>
         </header>
       </div>
       <div className={`story-tab-panel__body relative min-h-0 flex-1${storyTabPanelBodyClass(tab)}`}>
-        {tab === "budget" ? <StoryFundraiseBudgetTable /> : null}
+        {tab === "our-ask" ? <StoryOurAskPanel /> : null}
 
-        {tab === "our-ask" ? (
-          <div className={`story-fundraise-callout ${dmSans.className}`}>
-            <p className="story-fundraise-round m-0">{STORY_FUNDRAISE_ROUND}</p>
-            <div className="story-fundraise-amount-block">
-              <p className="story-fundraise-amount m-0" aria-label="Seven hundred fifty thousand dollars">
-                {STORY_FUNDRAISE_AMOUNT}
-              </p>
-              <div className="story-fundraise-runway">
-                <p className="story-fundraise-runway-duration m-0">{STORY_FUNDRAISE_RUNWAY_DURATION}</p>
-                <p className="story-fundraise-runway-label m-0">{STORY_FUNDRAISE_RUNWAY_LABEL}</p>
-              </div>
-            </div>
-          </div>
-        ) : null}
+        {tab === "goals-at-seed" ? <StoryGoalsAtSeedPanel /> : null}
+
+        {tab === "team" ? <StoryTeamPanel /> : null}
       </div>
     </div>
   );

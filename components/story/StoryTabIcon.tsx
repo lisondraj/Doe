@@ -131,6 +131,17 @@ export function StoryTabIcon({ tab, className }: { tab: StoryTabId; className?: 
     );
   }
 
+  if (tab === "platform") {
+    return (
+      <StoryTabIconFrame className={className}>
+        <rect x="3" y="3" width="7" height="7" rx="1.25" />
+        <rect x="14" y="3" width="7" height="7" rx="1.25" />
+        <rect x="3" y="14" width="7" height="7" rx="1.25" />
+        <rect x="14" y="14" width="7" height="7" rx="1.25" />
+      </StoryTabIconFrame>
+    );
+  }
+
   if (tab === "team") {
     return (
       <StoryTabIconFrame className={className}>
@@ -138,15 +149,6 @@ export function StoryTabIcon({ tab, className }: { tab: StoryTabId; className?: 
         <circle cx="16.5" cy="9.75" r="2.25" />
         <path d="M4.5 18.5v-1.1a3.75 3.75 0 0 1 3.75-3.75h1.5A3.75 3.75 0 0 1 13.5 17.4V18.5" />
         <path d="M13.5 18.5v-0.85a3.1 3.1 0 0 1 2.55-3.05" />
-      </StoryTabIconFrame>
-    );
-  }
-
-  if (tab === "budget") {
-    return (
-      <StoryTabIconFrame className={className}>
-        <path d="M4 4h16v16H4z" />
-        <path d="M4 9h16M4 14h16M9 4v16M14 4v16" />
       </StoryTabIconFrame>
     );
   }
@@ -165,6 +167,27 @@ export function StoryTabIcon({ tab, className }: { tab: StoryTabId; className?: 
       <StoryTabIconFrame className={className}>
         <path d="M3 3v18h18" />
         <path d="M7 16l4-8 4 5 5-9" />
+      </StoryTabIconFrame>
+    );
+  }
+
+  if (tab === "cap-table") {
+    return (
+      <StoryTabIconFrame className={className}>
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 4v16" />
+        <path d="M4 12h16" />
+      </StoryTabIconFrame>
+    );
+  }
+
+  if (tab === "incorporation") {
+    return (
+      <StoryTabIconFrame className={className}>
+        <path d="M6 22V8l6-4 6 4v14" />
+        <path d="M10 12h4" />
+        <path d="M10 16h4" />
+        <path d="M10 20h4" />
       </StoryTabIconFrame>
     );
   }

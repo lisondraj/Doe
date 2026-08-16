@@ -3,18 +3,20 @@
 import { useEffect, useState, type ReactNode } from "react";
 
 import {
-  DocumentsNavIcon,
   FundraiseNavIcon,
   ProductNavIcon,
   StoryTabIcon,
 } from "@/components/story/StoryTabIcon";
 import type { StoryTabId } from "@/lib/story/story-nav";
 import {
-  isStoryDocumentTab,
+  STORY_CONTACT_EMAIL,
+  STORY_CONTACT_LINKEDIN_HANDLE,
+  STORY_CONTACT_LINKEDIN_URL,
+} from "@/lib/story/story-copy";
+import {
   isStoryFundraiseTab,
+  isStoryGoldNavTab,
   isStoryProductTab,
-  STORY_DOCUMENTS_SECTION_LABEL,
-  STORY_DOCUMENT_TABS,
   STORY_FUNDRAISE_SECTION_LABEL,
   STORY_FUNDRAISE_TABS,
   STORY_PRIMARY_TABS_AFTER_FUNDRAISE,
@@ -24,6 +26,78 @@ import {
   STORY_PRODUCT_TABS,
   type StoryNavTab,
 } from "@/lib/story/story-nav";
+
+function StorySidebarSearch() {
+  return (
+    <div className="story-sidebar-search">
+      <div className="story-sidebar-search__field" role="search" aria-label="Search story">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden
+          className="story-sidebar-search__icon"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+        <span className="story-sidebar-search__placeholder">Search</span>
+        <kbd className="story-sidebar-search__kbd">⌘</kbd>
+      </div>
+    </div>
+  );
+}
+
+function StorySidebarContact() {
+  return (
+    <div className="story-sidebar-contact">
+      <div className="story-sidebar-contact__box">
+        <a href={`mailto:${STORY_CONTACT_EMAIL}`} className="story-sidebar-contact__row">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+            className="story-sidebar-search__icon"
+          >
+            <rect width="18" height="14" x="3" y="5" rx="2" />
+            <path d="m3 7 9 6 9-6" />
+          </svg>
+          <span className="story-sidebar-contact__label truncate">{STORY_CONTACT_EMAIL}</span>
+        </a>
+        <a
+          href={STORY_CONTACT_LINKEDIN_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="story-sidebar-contact__row"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+            className="story-sidebar-search__icon"
+          >
+            <rect width="18" height="18" x="3" y="3" rx="3" />
+            <path d="M8 10v7" />
+            <path d="M8 7h.01" />
+            <path d="M12 17v-4a2 2 0 0 1 4 0v4" />
+          </svg>
+          <span className="story-sidebar-contact__label truncate">{STORY_CONTACT_LINKEDIN_HANDLE}</span>
+        </a>
+      </div>
+    </div>
+  );
+}
 
 function NavChevron({ open }: { open: boolean }) {
   return (
@@ -42,7 +116,7 @@ function NavChevron({ open }: { open: boolean }) {
   );
 }
 
-function navButtonClass(isActive: boolean, subItem = false) {
+function navButtonClass(isActive: boolean, subItem = false, gold = false) {
   if (subItem) {
     return [
       "story-nav-item story-nav-item--subpage story-nav-subitem inline-flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-[13px] whitespace-nowrap transition-colors",
@@ -54,6 +128,7 @@ function navButtonClass(isActive: boolean, subItem = false) {
 
   return [
     "story-nav-item inline-flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-[13px] whitespace-nowrap transition-colors",
+    gold ? "story-nav-item--gold" : "",
     isActive
       ? "story-nav-item--active bg-[rgba(245,230,208,0.12)] font-medium text-[#f5e6d0]"
       : "text-[rgba(245,230,208,0.78)] hover:bg-[rgba(245,230,208,0.08)]",
@@ -88,7 +163,7 @@ function StoryNavTabButton({
       type="button"
       onClick={() => onSelect(item.id)}
       aria-current={isActive ? "page" : undefined}
-      className={navButtonClass(isActive, subItem)}
+      className={navButtonClass(isActive, subItem, isStoryGoldNavTab(item.id))}
     >
       <StoryTabIcon tab={item.id} />
       <span className="truncate">{item.label}</span>
@@ -159,10 +234,8 @@ export function StorySidebarNav({
 }) {
   const hasActiveProduct = isStoryProductTab(activeTab);
   const hasActiveFundraise = isStoryFundraiseTab(activeTab);
-  const hasActiveDocument = isStoryDocumentTab(activeTab);
   const [productOpen, setProductOpen] = useState(true);
   const [fundraiseOpen, setFundraiseOpen] = useState(true);
-  const [documentsOpen, setDocumentsOpen] = useState(true);
 
   useEffect(() => {
     if (hasActiveProduct) {
@@ -176,14 +249,10 @@ export function StorySidebarNav({
     }
   }, [hasActiveFundraise]);
 
-  useEffect(() => {
-    if (hasActiveDocument) {
-      setDocumentsOpen(true);
-    }
-  }, [hasActiveDocument]);
-
   return (
-    <nav className="story-sidebar-nav flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto">
+    <div className="story-sidebar-shell flex min-h-0 flex-1 flex-col overflow-hidden">
+      <StorySidebarSearch />
+      <nav className="story-sidebar-nav flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto">
       {STORY_PRIMARY_TABS_BEFORE_PRODUCT.map((item) => (
         <StoryNavTabButton key={item.id} item={item} isActive={activeTab === item.id} onSelect={onSelect} />
       ))}
@@ -221,19 +290,8 @@ export function StorySidebarNav({
       {STORY_PRIMARY_TABS_AFTER_FUNDRAISE.map((item) => (
         <StoryNavTabButton key={item.id} item={item} isActive={activeTab === item.id} onSelect={onSelect} />
       ))}
-
-      <StoryNavGroup
-        sectionClassName="story-sidebar-documents"
-        subnavId="story-documents-subnav"
-        label={STORY_DOCUMENTS_SECTION_LABEL}
-        icon={<DocumentsNavIcon />}
-        items={STORY_DOCUMENT_TABS}
-        open={documentsOpen}
-        onToggle={() => setDocumentsOpen((open) => !open)}
-        hasActiveChild={hasActiveDocument}
-        activeTab={activeTab}
-        onSelect={onSelect}
-      />
-    </nav>
+      </nav>
+      <StorySidebarContact />
+    </div>
   );
 }

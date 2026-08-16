@@ -35,7 +35,7 @@ export const PITCH_TEAM = {
     {
       lines: ["James", "Lisondra"] as const,
       placement: "top-left" as const,
-      roleLabel: "Founder",
+      roleLabel: "Founder, CEO",
       roleLabelPlacement: "below-name" as const,
       credentials: ["Medical Student,", "University of Ottawa"] as const,
       credentialsPlacement: "bottom-right" as const,
@@ -45,7 +45,7 @@ export const PITCH_TEAM = {
     {
       lines: ["Matthew", "Lisondra"] as const,
       placement: "bottom-right" as const,
-      roleLabel: "Founding Engineer",
+      roleLabel: "Founder, CTO",
       roleLabelPlacement: "above-name" as const,
       credentials: [
         "Robotics & Computer Engineering",

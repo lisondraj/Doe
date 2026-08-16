@@ -11,8 +11,8 @@ import { ProductAppointmentsPanel } from "@/components/product/ProductAppointmen
 import { ProductCallHistoryPanel } from "@/components/product/ProductCallHistoryPanel";
 import { ProductCallHistoryRightRail } from "@/components/product/ProductCallHistoryRightRail";
 import { ProductLandingPanel } from "@/components/product/ProductLandingPanel";
-import { StorySidebarFooter } from "@/components/story/StorySidebarFooter";
 import { StoryBlankPanel } from "@/components/story/StoryBlankPanel";
+import { StoryTabPager } from "@/components/story/StoryTabPager";
 import { StorySidebarNav } from "@/components/story/StorySidebarNav";
 import { STORY_DEFAULT_TAB, storyTabHeaderLabel } from "@/lib/story/story-copy";
 import type { StoryTabId } from "@/lib/story/story-nav";
@@ -1272,6 +1272,7 @@ export function DoeSchedulesAppMock({
   const [selectedUser, setSelectedUser] = useState<(typeof userOptions)[number]>(userOptions[0]);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [storyTab, setStoryTab] = useState<StoryTabId>(STORY_DEFAULT_TAB);
+  const [storyNavCollapsed, setStoryNavCollapsed] = useState(false);
   const [workspaceView, setWorkspaceView] = useState<
     | "inbox"
     | "schedule"
@@ -1484,11 +1485,14 @@ export function DoeSchedulesAppMock({
 
   const renderAppSidebar = (railClassName = "") => (
     <aside
-      className={`flex h-full shrink-0 flex-col ${
+      className={`flex h-full shrink-0 flex-col${
+        storyMode && storyNavCollapsed ? " story-sidebar--collapsed" : ""
+      } ${
         productBrown
           ? `product-brown-sidebar ${railClassName} ${suisseIntlUi.className}`
           : "w-[220px] border-r border-[#EFEFEF] bg-white"
       }`}
+      aria-hidden={storyMode && storyNavCollapsed ? true : undefined}
     >
       <div
         className={`flex items-center justify-between gap-2 px-3 pt-3 pb-2${
@@ -1533,6 +1537,10 @@ export function DoeSchedulesAppMock({
                 : "p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
           }`}
           aria-label="Collapse sidebar"
+          aria-expanded={storyMode ? !storyNavCollapsed : undefined}
+          onClick={() => {
+            if (storyMode) setStoryNavCollapsed(true);
+          }}
         >
           <Icon className={productBrown ? "h-5 w-5" : "h-4 w-4"}>
             <rect width="18" height="18" x="3" y="3" rx="2" />
@@ -2149,7 +2157,6 @@ export function DoeSchedulesAppMock({
       </div>
       ) : null}
 
-      {storyMode ? <StorySidebarFooter /> : null}
     </aside>
   );
 
@@ -2167,6 +2174,7 @@ export function DoeSchedulesAppMock({
         (productBrownDarkWorkspace ? " product-brown-workspace-mode" : "") +
         (productBrownInbox ? " product-brown-inbox-mode" : "") +
         (storyMode ? " product-brown-story-mode" : productBrownLandingStyle ? " product-brown-landing-mode" : "") +
+        (storyMode && storyNavCollapsed ? " product-brown-story-mode--nav-collapsed" : "") +
         (productBrownAgentBuilder ? " product-brown-agent-builder-mode" : "") +
         (productBrownAppointments ? " product-brown-appointments-mode" : "") +
         (productBrownSchedule ? " product-brown-schedule-mode" : "") +
@@ -2257,7 +2265,15 @@ export function DoeSchedulesAppMock({
                 }`}
               >
                 {storyMode ? (
-                  <StoryBlankPanel tab={storyTab} title={storyTabHeaderLabel(storyTab)} />
+                  <>
+                    <StoryBlankPanel
+                      tab={storyTab}
+                      title={storyTabHeaderLabel(storyTab)}
+                      navCollapsed={storyNavCollapsed}
+                      onExpandNav={() => setStoryNavCollapsed(false)}
+                    />
+                    <StoryTabPager activeTab={storyTab} onSelect={setStoryTab} />
+                  </>
                 ) : workspaceView === "landing" && productBrown ? (
                   <ProductLandingPanel />
                 ) : workspaceView === "agent-builder" && productBrown ? (

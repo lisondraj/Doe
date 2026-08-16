@@ -7,9 +7,9 @@ export type StoryTabId =
   | "fabric"
   | "float"
   | "use-cases"
+  | "platform"
   | "team"
   | "our-ask"
-  | "budget"
   | "goals-at-seed"
   | "roadmap-gtm"
   | "cap-table"
@@ -24,7 +24,6 @@ export const STORY_PRIMARY_TABS_BEFORE_PRODUCT: readonly StoryNavTab[] = [
   { id: "introduction", label: "Introduction" },
   { id: "meet-doe", label: "Meet Doe" },
   { id: "genome", label: "Genome" },
-  { id: "compliance", label: "Compliance" },
 ] as const;
 
 export const STORY_PRODUCT_SECTION_LABEL = "Product";
@@ -37,6 +36,8 @@ export const STORY_PRODUCT_TABS: readonly StoryNavTab[] = [
 
 export const STORY_PRIMARY_TABS_BEFORE_FUNDRAISE: readonly StoryNavTab[] = [
   { id: "use-cases", label: "Use Cases" },
+  { id: "platform", label: "Platform" },
+  { id: "compliance", label: "Compliance" },
   { id: "team", label: "Team" },
 ] as const;
 
@@ -44,12 +45,13 @@ export const STORY_FUNDRAISE_SECTION_LABEL = "Fundraise";
 
 export const STORY_FUNDRAISE_TABS: readonly StoryNavTab[] = [
   { id: "our-ask", label: "Our Ask" },
-  { id: "budget", label: "Budget" },
+  { id: "goals-at-seed", label: "Goals at Seed" },
 ] as const;
 
 export const STORY_PRIMARY_TABS_AFTER_FUNDRAISE: readonly StoryNavTab[] = [
-  { id: "goals-at-seed", label: "Goals at Seed" },
   { id: "roadmap-gtm", label: "Roadmap" },
+  { id: "cap-table", label: "Cap Table" },
+  { id: "incorporation", label: "Incorporation" },
 ] as const;
 
 export const STORY_PRIMARY_TABS: readonly StoryNavTab[] = [
@@ -58,12 +60,24 @@ export const STORY_PRIMARY_TABS: readonly StoryNavTab[] = [
   ...STORY_PRIMARY_TABS_AFTER_FUNDRAISE,
 ] as const;
 
-export const STORY_DOCUMENTS_SECTION_LABEL = "Documents";
-
-export const STORY_DOCUMENT_TABS: readonly StoryNavTab[] = [
-  { id: "cap-table", label: "Cap Table" },
-  { id: "incorporation", label: "Incorporation" },
+/** Flat sidebar order — primary, product, and fundraise tabs. */
+export const STORY_NAV_TAB_ORDER: readonly StoryTabId[] = [
+  ...STORY_PRIMARY_TABS_BEFORE_PRODUCT.map((tab) => tab.id),
+  ...STORY_PRODUCT_TABS.map((tab) => tab.id),
+  ...STORY_PRIMARY_TABS_BEFORE_FUNDRAISE.map((tab) => tab.id),
+  ...STORY_FUNDRAISE_TABS.map((tab) => tab.id),
+  ...STORY_PRIMARY_TABS_AFTER_FUNDRAISE.map((tab) => tab.id),
 ] as const;
+
+export function storyAdjacentTab(tab: StoryTabId, direction: -1 | 1): StoryTabId | null {
+  const index = STORY_NAV_TAB_ORDER.indexOf(tab);
+  if (index < 0) return null;
+
+  const nextIndex = index + direction;
+  if (nextIndex < 0 || nextIndex >= STORY_NAV_TAB_ORDER.length) return null;
+
+  return STORY_NAV_TAB_ORDER[nextIndex] ?? null;
+}
 
 export const STORY_DEFAULT_TAB: StoryTabId = "introduction";
 
@@ -75,15 +89,7 @@ export function storyTabHeaderLabel(tab: StoryTabId): string {
 
   const fundraiseTab = STORY_FUNDRAISE_TABS.find((item) => item.id === tab);
   if (fundraiseTab) {
-    if (tab === "budget") {
-      return STORY_FUNDRAISE_SECTION_LABEL;
-    }
     return `${STORY_FUNDRAISE_SECTION_LABEL} / ${fundraiseTab.label}`;
-  }
-
-  const documentTab = STORY_DOCUMENT_TABS.find((item) => item.id === tab);
-  if (documentTab) {
-    return `${STORY_DOCUMENTS_SECTION_LABEL} / ${documentTab.label}`;
   }
 
   return STORY_PRIMARY_TABS.find((item) => item.id === tab)?.label ?? tab;
@@ -97,6 +103,8 @@ export function isStoryFundraiseTab(tab: StoryTabId): boolean {
   return STORY_FUNDRAISE_TABS.some((item) => item.id === tab);
 }
 
-export function isStoryDocumentTab(tab: StoryTabId): boolean {
-  return STORY_DOCUMENT_TABS.some((item) => item.id === tab);
+export const STORY_GOLD_NAV_TAB_IDS: readonly StoryTabId[] = ["cap-table", "incorporation"] as const;
+
+export function isStoryGoldNavTab(tab: StoryTabId): boolean {
+  return STORY_GOLD_NAV_TAB_IDS.includes(tab);
 }
