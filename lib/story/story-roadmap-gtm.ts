@@ -1,62 +1,59 @@
-import { DESIGNERS_PRODUCT_NEXT_BODY, DESIGNERS_PRODUCT_NEXT_HEADLINE, DESIGNERS_PRODUCT_VOICE_FEATURES } from "@/lib/designers/designers-product-copy";
 import { DOEHEALTH_VOICE_ROADMAP } from "@/lib/doehealth/doehealth-voice-roadmap";
 
-export const STORY_ROADMAP_HEADLINE = DESIGNERS_PRODUCT_NEXT_HEADLINE;
+export const STORY_ROADMAP_HEADLINE = "Toronto to seed.";
 
-export const STORY_ROADMAP_BODY = DESIGNERS_PRODUCT_NEXT_BODY;
+export const STORY_ROADMAP_BODY =
+  "Over the next 18 months, we will prove Doe with Toronto clinics, launch Genome and Pulse, then give teams Fabric and Float — while preparing a focused US pilot before seed.";
 
-export const STORY_ROADMAP_FOCUS_LABEL = "Live today";
+export const STORY_ROADMAP_FOCUS_LABEL = "Now";
 
 export const STORY_ROADMAP_FOCUS = DOEHEALTH_VOICE_ROADMAP.focus;
 
 export const STORY_ROADMAP_PRODUCT_EYEBROW = "Product rollout";
 
-export const STORY_ROADMAP_DIAGRAM_LABEL = "Agent rollout from voice";
+export const STORY_ROADMAP_DIAGRAM_LABEL = "Four launches across the next 18 months";
 
-export const STORY_ROADMAP_VOICE_FEATURES = DESIGNERS_PRODUCT_VOICE_FEATURES;
+export const STORY_ROADMAP_VOICE_FEATURES = [
+  { label: "Toronto", note: "Clinic design partners" },
+  { label: "Team", note: "Hiring in Toronto" },
+  { label: "US pilot", note: "Lead hired before seed" },
+] as const;
 
 export type StoryRoadmapAgent = {
   id: string;
   label: string;
+  timing: string;
   description: string;
   phase: 1 | 2;
 };
 
 export const STORY_ROADMAP_AGENTS: readonly StoryRoadmapAgent[] = [
   {
-    id: "front-desk",
-    label: "Front-desk",
-    description: "Triage, intake, and clinic routing on every call.",
+    id: "genome",
+    label: "Genome",
+    timing: "Months 1–4",
+    description: "Patient context and clinic memory for every interaction.",
     phase: 1,
   },
   {
-    id: "scheduling",
-    label: "Scheduling",
-    description: "Book, reschedule, waitlists, and reminder workflows.",
+    id: "pulse",
+    label: "Pulse",
+    timing: "Months 4–8",
+    description: "Live care signals, patient follow-up, and team visibility.",
     phase: 1,
   },
   {
-    id: "prior-auth",
-    label: "Prior Auth",
-    description: "Payer authorization requests and follow-up status.",
-    phase: 1,
-  },
-  {
-    id: "referrals",
-    label: "Referrals",
-    description: "Specialist routing, referral packets, and tracking.",
+    id: "fabric",
+    label: "Fabric",
+    timing: "Months 8–13",
+    description: "A visual builder for the clinical workflows teams run.",
     phase: 2,
   },
   {
-    id: "results",
-    label: "Results",
-    description: "Lab and imaging result communication to patients.",
-    phase: 2,
-  },
-  {
-    id: "documentation",
-    label: "Documentation",
-    description: "Encounter notes, chart completion, and handoff summaries.",
+    id: "float",
+    label: "Float",
+    timing: "Months 13–18",
+    description: "Autonomous work across the clinic's daily operations.",
     phase: 2,
   },
 ] as const;
@@ -68,7 +65,7 @@ export const STORY_ROADMAP_AGENT_ROWS: readonly (readonly StoryRoadmapAgent[])[]
 
 export const STORY_GTM_EYEBROW = "Go-to-market";
 
-export const STORY_GTM_HEADLINE = "Canada first, then the US.";
+export const STORY_GTM_HEADLINE = "Toronto first. Seed-ready in 18 months.";
 
 export type StoryGtmPhase = {
   id: string;
@@ -81,31 +78,40 @@ export type StoryGtmPhase = {
 
 export const STORY_GTM_PHASES: readonly StoryGtmPhase[] = [
   {
-    id: "validate",
+    id: "toronto-foundation",
     step: "01",
-    title: "Validate",
-    headline: "Canada",
+    title: "Now → month 3",
+    headline: "Build in Toronto",
     detail:
-      "Pilot with Canadian healthcare clinics, prove clinical ROI, and harden compliance before scaling across provinces.",
-    markers: ["Ontario pilots", "PIPEDA-ready stack", "25 clinics at seed"],
+      "Establish Doe's operating base in Toronto, recruit early technical and clinical hires locally, and select design-partner clinics.",
+    markers: ["Toronto hiring", "Clinic design partners", "Voice live today"],
   },
   {
-    id: "expand",
+    id: "toronto-launch",
     step: "02",
-    title: "Expand",
-    headline: "United States",
+    title: "Months 4–8",
+    headline: "Launch with Toronto clinics",
     detail:
-      "Enter California and New York City first, then broaden to additional US markets with the same provider-led rollout.",
-    markers: ["California + NYC", "SOC 2 in flight", "Physician-first wedge"],
+      "Ship Genome and Pulse alongside Toronto clinic partners, measure time returned to staff, and turn repeatable workflows into a local playbook.",
+    markers: ["Genome launch", "Pulse launch", "Toronto clinic cohort"],
   },
   {
-    id: "scale",
+    id: "us-pilot",
     step: "03",
-    title: "Scale",
-    headline: "Full clinical teams",
+    title: "Months 9–14",
+    headline: "Prepare the US pilot",
     detail:
-      "Move from physicians to nurse practitioners, PAs, nurses, and allied health — while clinics customize agents in Fabric.",
-    markers: ["Delaware C-Corp", "US + CA backers", "Agent Builder in clinic"],
+      "Hire a US-based clinical market lead, secure a small physician-led pilot cohort, and launch Fabric so clinics can shape their own workflows.",
+    markers: ["US lead hired", "Fabric launch", "Pilot sites selected"],
+  },
+  {
+    id: "seed",
+    step: "04",
+    title: "Months 15–18",
+    headline: "Run the pilot. Raise seed.",
+    detail:
+      "Operate the first US pilot before seed, launch Float for autonomous clinic operations, and enter the round with Toronto and US proof points.",
+    markers: ["US pilot live", "Float launch", "Seed-ready metrics"],
   },
 ] as const;
 

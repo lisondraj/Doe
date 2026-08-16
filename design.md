@@ -193,7 +193,7 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 | **Product panel** | `story-roadmap-product-panel` — bordered card, radial highlight | Diagram + voice strip stack vertically | `flex: 1` diagram rows |
 | **Voice hub** | `story-roadmap-diagram__focus` — gradient pill + stem | **Center** | “Live today” tag + **Voice** gold; stem connects to rows |
 | **Agent diagram** | `story-roadmap-diagram__rows` — 2 rows × 3 nodes | Horizontal **bar + drop lines** per node | Same topology as `doehealth-voice-roadmap`, Story gold tokens |
-| **Agent cards** | `story-roadmap-agent-card` — index `01–06`, title, description | **Left** in card | Title DM Sans gold; desc Suisse `--story-cream-muted` |
+| **Agent cards** | `story-roadmap-agent-card` — index, launch timing, title, description | **Left** in card | Title DM Sans gold; timing uses `--story-gold-soft`; desc Suisse `--story-cream-muted` |
 | **Voice strip** | `story-roadmap-voice-strip` — **3×2** feature pills | Label + note stacked | From `DESIGNERS_PRODUCT_VOICE_FEATURES` |
 | **GTM panel** | `story-roadmap-gtm-panel` — bordered card | Phase timeline fills height | Headline DM Sans gold |
 | **GTM phases** | `story-roadmap-gtm-phase` — rail (`01–03`) + card | **Left**; cards `flex: 1` | Title uppercase muted; headline gold; **marker pills** |
@@ -456,7 +456,7 @@ story-roadmap-callout
 1. **Fill the tab** — desktop panels stretch to `height: 100%`; avoid narrow centered max-width shells for primary content.
 2. **Diagram over lists** — use connectors (`__focus-stem`, `__row-bar`, `__drop`) and numbered cards for sequences; reserve plain bullets for secondary detail only.
 3. **Layered panels** — outer `*-panel` with `--story-roadmap-panel-border`, inner `--story-roadmap-panel-fill`, optional radial highlight.
-4. **Detail density** — each node gets title + description (or label + note); GTM phases get headline + detail + marker pills.
+4. **Detail density** — each roadmap node gets launch timing + title + description; GTM phases get timeline window + headline + detail + marker pills.
 5. **Hub-and-spoke** — one gold focus node (“Voice”) at top; downstream items connect visually, not only by proximity.
 
 ### Class prefix map
@@ -473,4 +473,4 @@ story-roadmap-callout
 
 - Collapse Roadmap back to a simple 2-col text grid without diagrams when “polishing” — keep the visual system.
 - Cap desktop Roadmap with a small `max-width` — it should breathe across the tab panel.
-- Drop agent descriptions or GTM markers to save space; scale type with `clamp()` instead.
+- Drop launch timings, agent descriptions, or GTM markers to save space; scale type with `clamp()` instead.

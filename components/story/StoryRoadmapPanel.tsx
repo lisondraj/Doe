@@ -29,6 +29,7 @@ function StoryRoadmapAgentCard({
           {String(index + 1).padStart(2, "0")}
         </span>
         <h4 className={`story-roadmap-agent-card__title m-0 ${dmSans.className}`}>{agent.label}</h4>
+        <p className="story-roadmap-agent-card__timing m-0">{agent.timing}</p>
         <p className={`story-roadmap-agent-card__desc m-0 ${suisseIntl.className}`}>{agent.description}</p>
       </article>
     </li>
@@ -67,7 +68,7 @@ export function StoryRoadmapPanel() {
                 <div key={row.map((agent) => agent.id).join("-")} className="story-roadmap-diagram__row">
                   {rowIndex > 0 ? <div className="story-roadmap-diagram__row-link" aria-hidden /> : null}
                   <div className="story-roadmap-diagram__row-bar" aria-hidden />
-                  <ul className="story-roadmap-diagram__next m-0 p-0">
+                  <ul className={`story-roadmap-diagram__next story-roadmap-diagram__next--count-${row.length} m-0 p-0`}>
                     {row.map((agent) => {
                       const card = <StoryRoadmapAgentCard key={agent.id} agent={agent} index={agentIndex} />;
                       agentIndex += 1;

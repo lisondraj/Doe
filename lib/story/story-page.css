@@ -1195,7 +1195,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   justify-content: center;
   gap: clamp(0.18rem, 0.28vw, 0.28rem);
   width: min(100%, 14rem);
-  min-height: clamp(4.25rem, 8cqb, 5.75rem);
+  min-height: clamp(4.25rem, 12vh, 5.75rem);
   padding: clamp(0.85rem, 1.15vw, 1.05rem) clamp(1.15rem, 1.65vw, 1.45rem);
   border: 1px solid rgba(212, 165, 116, 0.28);
   border-radius: clamp(0.65rem, 0.95vw, 0.85rem);
@@ -1279,6 +1279,12 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   list-style: none;
 }
 
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__next--count-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(100%, 76%);
+  margin-inline: auto;
+}
+
 .product-brown-mock.product-brown-story-mode .story-roadmap-diagram__node {
   position: relative;
   min-width: 0;
@@ -1330,6 +1336,14 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   letter-spacing: -0.022em;
   overflow-wrap: anywhere;
   text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-card__timing {
+  font-size: clamp(0.62rem, 0.56rem + 0.14vw, 0.7rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  color: var(--story-gold-soft);
 }
 
 .product-brown-mock.product-brown-story-mode .story-roadmap-agent-card__desc {
@@ -3061,6 +3075,10 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-diagram__next {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(0.55rem, 2vw, 0.72rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-diagram__next--count-2 {
+  width: 100%;
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-agent-card {
