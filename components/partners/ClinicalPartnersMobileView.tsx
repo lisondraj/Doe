@@ -8,6 +8,7 @@ import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { ABOUT_STYLE_PHONE_SHELL_PROPS } from "@/lib/about/about-style-phone-shell-props";
 import "@/lib/about/about-doehealth-iphone.css";
 import { BROADER_DOE_VISION_CONTENT_PT } from "@/lib/blog/broader-doe-vision-layout-styles";
+import { BLOG_DUSK_FOOTER_BACKDROP } from "@/lib/blog/blog-about-shader-backdrops";
 import { CLINICAL_PARTNERS_TOP_BANNER } from "@/lib/partners/clinical-partners-copy";
 import "@/lib/join/campus-ambassador-page.css";
 import "@/lib/premed/premed-page.css";
@@ -35,6 +36,7 @@ export function ClinicalPartnersMobileView() {
   return (
     <BlogMobileShell
       {...ABOUT_STYLE_PHONE_SHELL_PROPS}
+      footerBackdropImageSrc={BLOG_DUSK_FOOTER_BACKDROP}
       footerShowIncorporationLines
       topBanner={<DoeHealthTopBanner {...CLINICAL_PARTNERS_TOP_BANNER} />}
     >

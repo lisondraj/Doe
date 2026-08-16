@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { ClinicalPartnersRouter } from "@/components/partners/ClinicalPartnersRouter";
+import { ShaderBackdropPreloadLinks } from "@/components/shared/ShaderBackdropPreloadLinks";
+import { BLOG_PARTNERS_PAGE_SHADER_BACKDROP_PATHS } from "@/lib/blog/blog-about-shader-backdrops";
 import {
   CLINICAL_PARTNERS_OPENING_DESCRIPTION,
   CLINICAL_PARTNERS_PAGE_TITLE,
@@ -29,5 +31,10 @@ export default function PartnersPage() {
     redirect(partnersPageUrl());
   }
 
-  return <ClinicalPartnersRouter />;
+  return (
+    <>
+      <ShaderBackdropPreloadLinks srcs={BLOG_PARTNERS_PAGE_SHADER_BACKDROP_PATHS} />
+      <ClinicalPartnersRouter />
+    </>
+  );
 }

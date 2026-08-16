@@ -2,6 +2,7 @@
 
 import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
+import { BLOG_DUSK_FOOTER_BACKDROP } from "@/lib/blog/blog-about-shader-backdrops";
 import { ClinicalPartnersDesktopNav } from "@/components/partners/ClinicalPartnersDesktopNav";
 import { ClinicalPartnersPageContent } from "@/components/partners/ClinicalPartnersPageContent";
 import { ABOUT_DESKTOP_SCROLL_MAIN_TW } from "@/lib/about/about-layout-styles";
@@ -30,7 +31,12 @@ export function ClinicalPartnersDesktopView() {
         </div>
       </main>
 
-      <HomeFooter linksDisabled shaderTheme="dusk" showIncorporationLines />
+      <HomeFooter
+        linksDisabled
+        shaderTheme="dusk"
+        showIncorporationLines
+        backdropImageSrc={BLOG_DUSK_FOOTER_BACKDROP}
+      />
     </div>
   );
 }

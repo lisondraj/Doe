@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { DoePhoneScrollRevealLift } from "@/components/doephone/DoePhoneScrollRevealLift";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
+import { BlogShaderBackdropImage } from "@/components/blog/BlogShaderBackdropImage";
 import { DOEPHONE_FOOTER_CONTENT_INSET } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
 import { doeHomeDuskFooterShaderSurface, doeHomeFooterShaderSurface } from "@/lib/proto/proto-shader-backdrop-colors";
@@ -21,10 +22,13 @@ export function HomeFooter({
   linksDisabled = false,
   shaderTheme = "default",
   showIncorporationLines = false,
+  backdropImageSrc,
 }: {
   linksDisabled?: boolean;
   shaderTheme?: "default" | "dusk";
   showIncorporationLines?: boolean;
+  /** High-res baked footer backdrop — skips live WebGL when set. */
+  backdropImageSrc?: string;
 }) {
   const footerShader =
     shaderTheme === "dusk" ? doeHomeDuskFooterShaderSurface() : DEFAULT_FOOTER_SHADER;
@@ -45,12 +49,16 @@ export function HomeFooter({
         }}
       >
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-          <ProtoGrainGradient
-            variant={footerShader.variant}
-            colors={footerShader.colors}
-            colorBack={footerShader.colorBack}
-            static
-          />
+          {backdropImageSrc ? (
+            <BlogShaderBackdropImage src={backdropImageSrc} />
+          ) : (
+            <ProtoGrainGradient
+              variant={footerShader.variant}
+              colors={footerShader.colors}
+              colorBack={footerShader.colorBack}
+              static
+            />
+          )}
         </div>
 
         <DoePhoneScrollRevealLift className="relative z-10 flex w-full flex-1 flex-col justify-end pt-10 md:pt-16">

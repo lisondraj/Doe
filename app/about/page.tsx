@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
 import { BroaderDoeVisionRouter } from "@/components/blog/BroaderDoeVisionRouter";
+import { ShaderBackdropPreloadLinks } from "@/components/shared/ShaderBackdropPreloadLinks";
 import {
   BROADER_DOE_VISION_OPENING_LEDE,
   BROADER_DOE_VISION_PATH,
   BROADER_DOE_VISION_TITLE,
 } from "@/lib/blog/broader-doe-vision-article";
+import { BLOG_ABOUT_PAGE_SHADER_BACKDROP_PATHS } from "@/lib/blog/blog-about-shader-backdrops";
 import { primarySiteOrigin } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
@@ -21,5 +23,10 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  return <BroaderDoeVisionRouter />;
+  return (
+    <>
+      <ShaderBackdropPreloadLinks srcs={BLOG_ABOUT_PAGE_SHADER_BACKDROP_PATHS} />
+      <BroaderDoeVisionRouter />
+    </>
+  );
 }

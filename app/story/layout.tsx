@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { ShaderBackdropPreloadLinks } from "@/components/shared/ShaderBackdropPreloadLinks";
+import { STORY_BAKED_SHADER_BACKDROP_PATHS } from "@/lib/story/story-baked-shader-backdrops";
 import { STORY_ALL_POSTER_URLS } from "@/lib/story/story-shader-posters";
 
 export const metadata: Metadata = {
@@ -13,9 +15,7 @@ export default function StoryLayout({
 }>) {
   return (
     <>
-      {STORY_ALL_POSTER_URLS.map((href) => (
-        <link key={href} rel="preload" as="image" href={href} />
-      ))}
+      <ShaderBackdropPreloadLinks srcs={[...STORY_BAKED_SHADER_BACKDROP_PATHS, ...STORY_ALL_POSTER_URLS]} />
       {children}
     </>
   );

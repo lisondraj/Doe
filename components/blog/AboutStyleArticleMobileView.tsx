@@ -21,6 +21,7 @@ type AboutStyleArticleMobileViewProps = {
   children: ReactNode;
   tocItems?: readonly AboutStyleArticleTocItem[];
   currentSlug?: string;
+  footerBackdropImageSrc?: string;
 };
 
 /** iPhone /about-style longform article shell. */
@@ -28,6 +29,7 @@ export function AboutStyleArticleMobileView({
   children,
   tocItems = [],
   currentSlug,
+  footerBackdropImageSrc,
 }: AboutStyleArticleMobileViewProps) {
   useDoePhoneLayoutViewport();
   useDoePhoneStableViewport(true);
@@ -46,6 +48,7 @@ export function AboutStyleArticleMobileView({
     <AboutStyleArticleAudioPlayerProvider>
       <BlogMobileShell
         {...ABOUT_STYLE_PHONE_SHELL_PROPS}
+        footerBackdropImageSrc={footerBackdropImageSrc}
         topBanner={<DoeHealthTopBanner {...ABOUT_STYLE_TOP_BANNER} />}
       >
         <main className={`w-full ${BROADER_DOE_VISION_CONTENT_PT}`}>{children}</main>

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { AboutStyleArticleRouter } from "@/components/blog/AboutStyleArticleRouter";
+import { ShaderBackdropPreloadLinks } from "@/components/shared/ShaderBackdropPreloadLinks";
+import { BLOG_FOUNDER_STORY_SHADER_BACKDROP_PATHS } from "@/lib/blog/blog-about-shader-backdrops";
 import {
   OUR_FOUNDER_STORY_ARTICLE,
   OUR_FOUNDER_STORY_EXCERPT,
@@ -22,5 +24,10 @@ export const metadata: Metadata = {
 };
 
 export default function OurFounderStoryPage() {
-  return <AboutStyleArticleRouter article={OUR_FOUNDER_STORY_ARTICLE} />;
+  return (
+    <>
+      <ShaderBackdropPreloadLinks srcs={BLOG_FOUNDER_STORY_SHADER_BACKDROP_PATHS} />
+      <AboutStyleArticleRouter article={OUR_FOUNDER_STORY_ARTICLE} />
+    </>
+  );
 }

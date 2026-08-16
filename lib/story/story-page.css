@@ -37,6 +37,10 @@ html[data-story-meet-doe-pending] .story-tab-pager {
   --story-rail-field-border: rgba(212, 165, 116, 0.16);
   --story-rail-field-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
   --story-rail-field-chip: rgba(21, 16, 10, 0.62);
+  --story-cream-text: var(--pl-console-text, #f2e8da);
+  --story-cream-muted: rgba(245, 230, 208, 0.62);
+  --story-cream-body: rgba(245, 230, 208, 0.72);
+  --story-gutter: var(--pl-gutter, clamp(1rem, 2vw, 1.35rem));
 }
 
 .product-brown-mock.product-brown-story-mode .product-brown-layered-layout .product-brown-sidebar::before {
@@ -597,8 +601,22 @@ html[data-product-page="true"]:has(.product-brown-story-mode--mobile) .story-mob
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen .product-landing-console-shell {
+  position: relative;
   border-radius: 0;
   background: var(--pb-nav-surface, #1b1713);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen .product-landing-console-shell::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 100vw;
+  max-width: 100vw;
+  height: 1px;
+  transform: translateX(-50%);
+  background: rgba(212, 165, 116, 0.22);
+  pointer-events: none;
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen .product-landing-header {
@@ -607,7 +625,7 @@ html[data-product-page="true"]:has(.product-brown-story-mode--mobile) .story-mob
   padding-right: max(1rem, env(safe-area-inset-right, 0px));
   padding-bottom: 0.75rem;
   padding-left: max(1rem, env(safe-area-inset-left, 0px));
-  border-bottom: 1px solid rgba(212, 165, 116, 0.14);
+  border-bottom: 0;
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen .product-landing-header::after {
@@ -759,7 +777,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal {
 }
 
 html[data-doeforvc-always-phone] .story-meet-doe-modal__stack {
-  width: min(100%, calc(100vw - 1.25rem));
+  width: min(100%, calc(100vw - 3.5rem));
   gap: 0.95rem;
 }
 
@@ -769,7 +787,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__panel {
 
 html[data-doeforvc-always-phone] .story-meet-doe-modal__backdrop {
   aspect-ratio: auto;
-  min-height: min(68vw, 22rem);
+  height: calc(clamp(26rem, 78vh, 34rem) * var(--story-meet-doe-height-mult));
+  min-height: calc(clamp(26rem, 78vh, 34rem) * var(--story-meet-doe-height-mult));
 }
 
 html[data-doeforvc-always-phone] .story-meet-doe-modal__title--brand {
@@ -1125,6 +1144,32 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 
   .product-brown-mock.product-brown-story-mode .story-introduction-carousel {
     margin-top: clamp(0.55rem, 2cqb, 0.85rem);
+  }
+}
+
+.product-brown-mock.product-brown-story-mode .story-tab-panel__fade {
+  opacity: 1;
+  transition: opacity 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity;
+}
+
+.product-brown-mock.product-brown-story-mode .story-tab-panel__body > .story-tab-panel__fade {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.product-brown-mock.product-brown-story-mode .story-tab-panel__fade--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-brown-mock.product-brown-story-mode .story-tab-panel__fade {
+    transition: none;
   }
 }
 
@@ -1987,6 +2032,24 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   border-radius: inherit !important;
 }
 
+.product-brown-mock.product-brown-story-mode .story-team-grid__fill .story-team-backdrop-image {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center center;
+  image-rendering: auto;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
 .product-brown-mock.product-brown-story-mode .story-team-grid__fill .proto-shader-surface {
   position: absolute !important;
   inset: 0 !important;
@@ -2078,6 +2141,477 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid--bento {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: var(--story-team-filler-row) var(--story-team-founder-row) var(--story-team-filler-row);
+}
+
+.product-brown-mock.product-brown-story-mode .story-tab-panel__body--roadmap {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-callout {
+  --story-roadmap-line: rgba(232, 192, 142, 0.24);
+  --story-roadmap-line-soft: rgba(232, 192, 142, 0.14);
+  --story-roadmap-panel-fill: rgba(212, 165, 116, 0.05);
+  --story-roadmap-panel-border: rgba(212, 165, 116, 0.16);
+  --story-roadmap-drop: clamp(0.72rem, 1.35vw, 1rem);
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(0.85rem, 1.5vw, 1.25rem);
+  width: 100%;
+  height: 100%;
+  padding: clamp(0.55rem, 1vw, 0.85rem) var(--story-gutter, clamp(1rem, 2vw, 1.35rem));
+  box-sizing: border-box;
+  pointer-events: none;
+  user-select: none;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-hero {
+  flex: none;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: clamp(0.85rem, 1.65vw, 1.35rem);
+  align-items: end;
+  text-align: left;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-hero-headline {
+  background: var(--story-gold-text);
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  font-size: clamp(2.65rem, 1.55rem + 3.35vw, 4.35rem);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: -0.036em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-hero-body {
+  margin-top: 0;
+  font-size: clamp(0.95rem, 0.84rem + 0.38vw, 1.08rem);
+  font-weight: 400;
+  line-height: 1.44;
+  letter-spacing: -0.012em;
+  color: var(--story-cream-body);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-stage {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr);
+  gap: clamp(0.85rem, 1.35vw, 1.15rem);
+  width: 100%;
+  height: 100%;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-product-panel,
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-panel {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.65rem, 1vw, 0.85rem);
+  padding: clamp(0.85rem, 1.25vw, 1.05rem);
+  border: 1px solid var(--story-roadmap-panel-border);
+  border-radius: clamp(0.85rem, 1.25vw, 1.05rem);
+  background:
+    radial-gradient(ellipse 85% 55% at 50% 0%, rgba(212, 165, 116, 0.08), transparent 68%),
+    var(--story-roadmap-panel-fill);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-panel-head {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.22rem, 0.35vw, 0.32rem);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-panel-caption {
+  font-size: clamp(0.82rem, 0.74rem + 0.25vw, 0.92rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+  color: var(--story-cream-muted);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-eyebrow {
+  font-size: clamp(0.68rem, 0.62rem + 0.18vw, 0.76rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--story-gold-muted);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__focus-wrap {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__focus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.18rem, 0.28vw, 0.28rem);
+  width: min(100%, 14rem);
+  min-height: clamp(4.25rem, 12vh, 5.75rem);
+  padding: clamp(0.85rem, 1.15vw, 1.05rem) clamp(1.15rem, 1.65vw, 1.45rem);
+  border: 1px solid rgba(212, 165, 116, 0.28);
+  border-radius: clamp(0.65rem, 0.95vw, 0.85rem);
+  background: linear-gradient(168deg, rgba(58, 44, 30, 0.92) 0%, rgba(26, 18, 8, 0.96) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 14px 36px rgba(10, 8, 6, 0.34);
+  text-align: center;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__focus-tag {
+  font-size: clamp(0.66rem, 0.6rem + 0.16vw, 0.74rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--story-cream-muted);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__focus-value {
+  background: var(--story-gold-text);
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  font-size: clamp(2.15rem, 1.35rem + 2.15vw, 3.15rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.032em;
+  white-space: nowrap;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__focus-stem {
+  width: 1px;
+  height: clamp(1rem, 1.65vw, 1.35rem);
+  background: var(--story-roadmap-line);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__rows {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: clamp(0.35rem, 0.65vw, 0.55rem);
+  width: 100%;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__row {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__row-link {
+  width: 1px;
+  height: clamp(0.65rem, 1.05vw, 0.85rem);
+  margin-inline: auto;
+  background: var(--story-roadmap-line);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__row-bar {
+  width: min(100%, calc(100% - 1.5rem));
+  height: 1px;
+  margin-inline: auto;
+  background: var(--story-roadmap-line);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__next {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.45rem, 0.75vw, 0.65rem);
+  align-items: stretch;
+  width: 100%;
+  min-height: 0;
+  padding-top: clamp(0.45rem, 0.75vw, 0.62rem);
+  list-style: none;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__next--count-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(100%, 76%);
+  margin-inline: auto;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__node {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-diagram__drop {
+  width: 1px;
+  height: var(--story-roadmap-drop);
+  background: var(--story-roadmap-line);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-card {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: clamp(0.18rem, 0.28vw, 0.28rem);
+  width: 100%;
+  min-height: 100%;
+  padding: clamp(0.62rem, 0.95vw, 0.82rem);
+  border: 1px solid var(--story-roadmap-line-soft);
+  border-radius: clamp(0.55rem, 0.85vw, 0.72rem);
+  background: rgba(21, 16, 10, 0.42);
+  box-sizing: border-box;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-card__index {
+  font-size: clamp(0.62rem, 0.56rem + 0.16vw, 0.72rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: var(--story-gold-muted);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-card__title {
+  background: var(--story-gold-text);
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  font-size: clamp(0.95rem, 0.82rem + 0.42vw, 1.15rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.022em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-card__timing {
+  font-size: clamp(0.62rem, 0.56rem + 0.14vw, 0.7rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  color: var(--story-gold-soft);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-card__desc {
+  font-size: clamp(0.72rem, 0.66rem + 0.18vw, 0.82rem);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--story-cream-muted);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-voice-strip {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.38rem, 0.62vw, 0.52rem);
+  width: 100%;
+  list-style: none;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-voice-strip__item {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  padding: clamp(0.48rem, 0.72vw, 0.62rem);
+  border: 1px solid rgba(212, 165, 116, 0.1);
+  border-radius: 0.5rem;
+  background: rgba(212, 165, 116, 0.03);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-voice-strip__label {
+  font-size: clamp(0.68rem, 0.62rem + 0.16vw, 0.76rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--story-gold-soft);
+  overflow-wrap: anywhere;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-voice-strip__note {
+  font-size: clamp(0.62rem, 0.56rem + 0.14vw, 0.7rem);
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--story-cream-muted);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-headline {
+  background: var(--story-gold-text);
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  font-size: clamp(1.55rem, 0.98rem + 1.55vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phases {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.55rem, 0.85vw, 0.72rem);
+  list-style: none;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(0.62rem, 0.95vw, 0.82rem);
+  align-items: stretch;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.35rem, 0.55vw, 0.48rem);
+  padding-top: 0.15rem;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase__step {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: clamp(2rem, 2.65vw, 2.35rem);
+  min-height: clamp(2rem, 2.65vw, 2.35rem);
+  border: 1px solid rgba(212, 165, 116, 0.24);
+  border-radius: 9999px;
+  background: rgba(212, 165, 116, 0.08);
+  font-size: clamp(0.72rem, 0.64rem + 0.2vw, 0.82rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--story-gold-soft);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase__line {
+  flex: 1 1 auto;
+  width: 1px;
+  min-height: 0.35rem;
+  background: linear-gradient(to bottom, var(--story-roadmap-line), rgba(232, 192, 142, 0.04));
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase:last-child .story-roadmap-gtm-phase__line {
+  opacity: 0;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase__card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.22rem, 0.35vw, 0.32rem);
+  min-height: 100%;
+  height: 100%;
+  padding: clamp(0.72rem, 1.05vw, 0.92rem);
+  border: 1px solid var(--story-roadmap-line-soft);
+  border-radius: clamp(0.62rem, 0.92vw, 0.78rem);
+  background: rgba(21, 16, 10, 0.38);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase__title {
+  font-size: clamp(0.66rem, 0.6rem + 0.16vw, 0.74rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--story-gold-muted);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase__headline {
+  background: var(--story-gold-text);
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  font-size: clamp(1.25rem, 0.88rem + 1.05vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.026em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase__detail {
+  font-size: clamp(0.78rem, 0.7rem + 0.22vw, 0.88rem);
+  font-weight: 400;
+  line-height: 1.38;
+  letter-spacing: -0.01em;
+  color: var(--story-cream-body);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase__markers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.28rem, 0.42vw, 0.38rem);
+  margin-top: clamp(0.18rem, 0.28vw, 0.28rem);
+  list-style: none;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase__marker {
+  padding: clamp(0.28rem, 0.42vw, 0.36rem) clamp(0.48rem, 0.68vw, 0.58rem);
+  border: 1px solid rgba(212, 165, 116, 0.16);
+  border-radius: 9999px;
+  background: rgba(212, 165, 116, 0.06);
+  font-size: clamp(0.62rem, 0.56rem + 0.14vw, 0.7rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  color: var(--story-gold-soft);
+  overflow-wrap: anywhere;
 }
 
 .product-brown-mock.product-brown-story-mode .story-tab-panel__body--goals {
@@ -2253,7 +2787,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 }
 
 .product-brown-mock.product-brown-story-mode .story-goals-list__item:nth-child(n + 4):nth-child(-n + 6) {
-  overflow: hidden;
+  overflow: visible;
   gap: clamp(0.05rem, 0.18cqb, 0.12rem);
   padding-block: calc(var(--story-goals-grid-cell-y) * 0.82);
 }
@@ -2400,7 +2934,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   line-height: 0.98;
   letter-spacing: -0.032em;
   overflow: visible;
-  white-space: nowrap;
+  white-space: normal;
+  text-wrap: balance;
   width: 100%;
   text-align: center;
 }
@@ -2501,10 +3036,11 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   font-weight: 500;
   line-height: 1.08;
   letter-spacing: -0.018em;
-  color: rgba(245, 230, 208, 0.62) !important;
+  color: var(--story-cream-muted) !important;
   background: none !important;
-  -webkit-text-fill-color: rgba(245, 230, 208, 0.62) !important;
+  -webkit-text-fill-color: var(--story-cream-muted) !important;
   overflow: visible;
+  overflow-wrap: anywhere;
   text-wrap: balance;
 }
 
@@ -2894,7 +3430,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody td {
-  color: rgba(245, 230, 208, 0.72);
+  color: var(--story-cream-body);
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget thead th:nth-child(2),
@@ -2969,6 +3505,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   flex: 1;
   min-width: 0;
   padding-right: 0.15rem;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget__chevron {
@@ -3169,12 +3707,15 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   font-weight: 500;
   line-height: 1.05;
   letter-spacing: -0.02em;
-  color: rgba(245, 230, 208, 0.62) !important;
+  color: var(--story-cream-muted) !important;
   background: none !important;
-  -webkit-text-fill-color: rgba(245, 230, 208, 0.62) !important;
+  -webkit-text-fill-color: var(--story-cream-muted) !important;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .story-meet-doe-modal {
+  --story-meet-doe-height-mult: calc(4 / 3);
   --story-gold-text: var(
     --doehealth-gold-text-gradient,
     linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.72) 100%)
@@ -3250,8 +3791,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 .story-meet-doe-modal__backdrop {
   position: relative;
   isolation: isolate;
-  aspect-ratio: 2.35 / 1;
-  min-height: clamp(18rem, 42vh, 30rem);
+  aspect-ratio: 2.35 / 1.333333;
+  min-height: calc(clamp(18rem, 42vh, 30rem) * var(--story-meet-doe-height-mult));
   overflow: hidden;
   margin: 0;
   border-radius: var(--story-meet-doe-radius);
@@ -3265,6 +3806,21 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   height: 42%;
   background: linear-gradient(to bottom, rgba(27, 23, 19, 0) 0%, rgba(27, 23, 19, 0.55) 62%, rgba(27, 23, 19, 0.82) 100%);
   pointer-events: none;
+}
+
+.story-meet-doe-modal__backdrop-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .story-meet-doe-modal__shader {
@@ -3485,6 +4041,766 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   right: max(0.85rem, env(safe-area-inset-right, 0px));
   bottom: max(0.85rem, env(safe-area-inset-bottom, 0px));
   z-index: 12;
+}
+
+/* iPhone /story — scrollable tab bodies with real content */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--our-ask,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--team,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--goals,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--roadmap {
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* iPhone /story — Our Ask: stack ask + budget vertically, drop desktop scale grid */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-stage {
+  flex: none;
+  align-items: stretch;
+  justify-content: flex-start;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  padding: clamp(0.65rem, 2.75vw, 1rem) clamp(0.85rem, 3.25vw, 1.15rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid {
+  --story-our-ask-scale: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.35rem, 4.5vw, 2rem);
+  width: 100%;
+  max-width: 100%;
+  max-height: none;
+  transform: none;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell {
+  overflow: visible;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-callout {
+  align-items: center;
+  justify-content: flex-start;
+  height: auto;
+  padding: clamp(0.35rem, 1.5vw, 0.65rem) 0;
+  text-align: center;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-amount-block {
+  align-items: center;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-round {
+  font-size: clamp(1.65rem, 5.5vw, 2.35rem);
+  text-align: center;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-amount {
+  font-size: clamp(4.35rem, 21vw, 7.25rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-runway {
+  align-items: center;
+  margin-top: clamp(0.85rem, 3vw, 1.25rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-runway-duration {
+  font-size: clamp(2.85rem, 13.5vw, 4.75rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-runway-label {
+  font-size: clamp(1.15rem, 4.2vw, 1.65rem);
+  text-align: center;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--budget {
+  padding: 0;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget-wrap--embedded {
+  width: 100%;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget thead th {
+  font-size: clamp(0.88rem, 3.2vw, 1rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget thead th:nth-child(2),
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget thead th:nth-child(3) {
+  width: 4.35rem;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody th,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody td {
+  font-size: clamp(0.82rem, 2.95vw, 0.94rem);
+  padding: 0.68rem 0;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--group th,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--group td {
+  font-size: clamp(0.92rem, 3.2vw, 1.05rem);
+  padding-top: 0.88rem;
+  padding-bottom: 0.88rem;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--total th,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--total td {
+  font-size: clamp(1.05rem, 3.85vw, 1.35rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget__sub-row {
+  grid-template-columns: minmax(0, 1fr) 4.35rem 4.35rem;
+  padding: 0.82rem 0;
+  font-size: clamp(0.88rem, 3.1vw, 1rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget__sub-label {
+  padding-left: 0.85rem;
+}
+
+/* iPhone /story — Team: stacked founder cards instead of absolute desktop overlap */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-callout {
+  flex: none;
+  height: auto;
+  min-height: 0;
+  padding: clamp(0.65rem, 2.75vw, 1rem) clamp(0.85rem, 3.25vw, 1.15rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-stage {
+  position: relative;
+  flex: none;
+  min-height: 0;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid {
+  position: relative;
+  inset: auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.85rem, 3.25vw, 1.25rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__box {
+  position: relative;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  width: 100%;
+  height: auto;
+  min-height: clamp(15.5rem, 68vw, 21rem);
+  max-width: none;
+  aspect-ratio: 1.28 / 1;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__fill > p:first-of-type {
+  font-size: clamp(2.65rem, 11.5vw, 4.25rem) !important;
+  padding: clamp(0.85rem, 3.5vw, 1.25rem) !important;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__fill > p:first-of-type span.uppercase {
+  font-size: clamp(0.72rem, 2.85vw, 0.95rem) !important;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__fill > p:nth-of-type(2) {
+  font-size: clamp(1.05rem, 4.1vw, 1.55rem) !important;
+  padding: clamp(0.85rem, 3.5vw, 1.25rem) !important;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__fill > div {
+  padding: clamp(0.85rem, 3.5vw, 1.25rem) !important;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__fill .rounded-full {
+  font-size: clamp(0.78rem, 2.85vw, 0.92rem) !important;
+  padding: clamp(0.42rem, 1.75vw, 0.55rem) clamp(0.78rem, 3vw, 1rem) !important;
+}
+
+/* iPhone /story — Goals at Seed: scroll-friendly spacing on top of 2-col mobile grid */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--fundraise.story-tab-panel__body--goals {
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-callout {
+  flex: none;
+  height: auto;
+  min-height: min-content;
+  container-type: normal;
+  overflow: visible;
+  justify-content: flex-start;
+  --story-goals-row-gap: clamp(1.15rem, 4vw, 1.75rem);
+  --story-goals-grid-cell-y: clamp(0.85rem, 2.75vw, 1.25rem);
+  --story-goals-grid-cell-x: clamp(0.55rem, 2vw, 0.85rem);
+  gap: var(--story-goals-row-gap);
+  padding: clamp(0.75rem, 3vw, 1.1rem) clamp(0.85rem, 3.25vw, 1.15rem) clamp(1.25rem, 4vw, 1.75rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-hero {
+  margin-top: 0;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-list {
+  flex: none;
+  align-content: start;
+  width: 100%;
+  min-height: min-content;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-list__item {
+  padding: var(--story-goals-grid-cell-y) var(--story-goals-grid-cell-x);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-list__item:nth-child(n + 4):nth-child(-n + 6) .story-goals-product-lines__name {
+  white-space: normal;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+/* iPhone /story — Roadmap: full-width stacked panels, scroll when needed */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-callout {
+  flex: none;
+  height: auto;
+  min-height: min-content;
+  grid-template-rows: auto auto;
+  gap: clamp(1rem, 3.5vw, 1.45rem);
+  padding: clamp(0.65rem, 2.75vw, 0.95rem) clamp(0.85rem, 3.25vw, 1.15rem) clamp(1.35rem, 4.5vw, 1.85rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-hero {
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(0.55rem, 2vw, 0.78rem);
+  text-align: left;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-hero-headline {
+  font-size: clamp(2.15rem, 8.5vw, 3.15rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-hero-body {
+  font-size: clamp(0.9rem, 3.15vw, 1.02rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-stage {
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 3.5vw, 1.35rem);
+  height: auto;
+  min-height: min-content;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-product-panel,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-gtm-panel {
+  height: auto;
+  min-height: clamp(18rem, 62vw, 24rem);
+  padding: clamp(0.85rem, 3vw, 1.05rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-diagram__focus {
+  width: min(100%, 16rem);
+  min-height: clamp(4.5rem, 18vw, 5.85rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-diagram__focus-value {
+  font-size: clamp(2.35rem, 10vw, 3.25rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-diagram__rows {
+  justify-content: flex-start;
+  gap: clamp(0.65rem, 2.5vw, 0.95rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-diagram__row {
+  flex: none;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-diagram__next {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.55rem, 2vw, 0.72rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-diagram__next--count-2 {
+  width: 100%;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-agent-card {
+  min-height: clamp(5.5rem, 22vw, 7rem);
+  padding: clamp(0.72rem, 2.75vw, 0.92rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-agent-card__title {
+  font-size: clamp(1rem, 3.65vw, 1.18rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-agent-card__desc {
+  font-size: clamp(0.76rem, 2.85vw, 0.88rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-voice-strip {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-gtm-headline {
+  font-size: clamp(1.45rem, 5.25vw, 2rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-gtm-phases {
+  gap: clamp(0.72rem, 2.75vw, 0.95rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-gtm-phase {
+  flex: none;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-gtm-phase__card {
+  min-height: clamp(7.5rem, 28vw, 9.5rem);
+  padding: clamp(0.82rem, 3vw, 1rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-gtm-phase__headline {
+  font-size: clamp(1.35rem, 4.85vw, 1.75rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-gtm-phase__detail {
+  font-size: clamp(0.82rem, 3vw, 0.92rem);
+}
+
+/* Story ↔ Product consistency — content panels share wrap, color, and gutter rules (see design.md) */
+.product-brown-mock.product-brown-story-mode .story-goals-stat-focus,
+.product-brown-mock.product-brown-story-mode .story-goals-hero-label,
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody th,
+.product-brown-mock.product-brown-story-mode .story-roadmap-hero-headline,
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-headline,
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-card__title,
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-card__desc,
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase__headline,
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-phase__detail {
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-tab-panel {
+  --pl-gutter: var(--story-gutter);
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-stage,
+.product-brown-mock.product-brown-story-mode .story-team-callout,
+.product-brown-mock.product-brown-story-mode .story-goals-callout,
+.product-brown-mock.product-brown-story-mode .story-roadmap-callout {
+  padding-inline: var(--story-gutter);
+}
+
+/* Story Roadmap — shared timeline replaces the older split diagram and phase list. */
+.product-brown-mock.product-brown-story-mode .story-roadmap-callout {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  gap: clamp(0.75rem, 1.35vw, 1.1rem);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-hero {
+  grid-template-columns: minmax(0, 0.88fr) minmax(18rem, 1.12fr);
+  gap: clamp(1rem, 2vw, 1.75rem);
+  align-items: end;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-hero__eyebrow {
+  margin-bottom: clamp(0.38rem, 0.65vw, 0.55rem);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-timeline {
+  --roadmap-rule: rgba(232, 192, 142, 0.28);
+  --roadmap-card: rgba(21, 16, 10, 0.58);
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.6rem, 1vw, 0.85rem);
+  padding: clamp(0.85rem, 1.25vw, 1.05rem);
+  border: 1px solid rgba(212, 165, 116, 0.18);
+  border-radius: clamp(0.85rem, 1.25vw, 1.05rem);
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(232, 192, 142, 0.12), transparent 72%),
+    linear-gradient(145deg, rgba(54, 40, 26, 0.38), rgba(21, 16, 10, 0.26));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-timeline__axis {
+  position: relative;
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: start;
+  min-height: 2.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-timeline__axis::after {
+  content: "";
+  position: absolute;
+  right: 0.25rem;
+  bottom: 0;
+  left: 0.25rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--roadmap-rule) 5%, var(--roadmap-rule) 95%, transparent);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-timeline__tick {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.28rem;
+  font-size: clamp(0.62rem, 0.55rem + 0.17vw, 0.72rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: var(--story-cream-muted);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-timeline__tick::after {
+  content: "";
+  position: relative;
+  z-index: 1;
+  width: 0.38rem;
+  height: 0.38rem;
+  border: 1px solid var(--roadmap-rule);
+  border-radius: 9999px;
+  background: #1b1713;
+  box-sizing: border-box;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-timeline__tick--start,
+.product-brown-mock.product-brown-story-mode .story-roadmap-timeline__tick--end {
+  color: var(--story-gold-soft);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-timeline__tick--start::after,
+.product-brown-mock.product-brown-story-mode .story-roadmap-timeline__tick--end::after {
+  border-color: var(--story-gold);
+  background: var(--story-gold);
+  box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.12);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-timeline__tracks {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.65rem, 1vw, 0.85rem);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-track {
+  position: relative;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: clamp(8.75rem, 13vw, 11.5rem) minmax(0, 1fr);
+  gap: clamp(0.65rem, 1vw, 0.9rem);
+  padding: clamp(0.65rem, 0.95vw, 0.8rem);
+  border: 1px solid rgba(212, 165, 116, 0.12);
+  border-radius: clamp(0.65rem, 0.95vw, 0.8rem);
+  background: rgba(212, 165, 116, 0.035);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-track--market {
+  background: rgba(232, 192, 142, 0.055);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-track__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.48rem;
+  padding-top: 0.14rem;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-track__dot {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.2rem;
+  border-radius: 9999px;
+  background: var(--story-gold);
+  box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.1);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-track--market .story-roadmap-track__dot {
+  background: #f2ddb8;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-track__caption {
+  margin-top: 0.28rem;
+  font-size: clamp(0.7rem, 0.62rem + 0.18vw, 0.8rem);
+  line-height: 1.3;
+  color: var(--story-cream-muted);
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-track__headline {
+  margin-top: 0.25rem;
+  color: var(--story-gold-soft);
+  font-size: clamp(0.95rem, 0.76rem + 0.52vw, 1.2rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-track__milestones {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.38rem, 0.65vw, 0.55rem);
+  list-style: none;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-milestone {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  padding-top: 0.42rem;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-milestone::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0.55rem;
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 1px solid var(--roadmap-rule);
+  border-radius: 9999px;
+  background: #221a12;
+  box-shadow: 0 0 0 0.17rem rgba(27, 23, 19, 0.9);
+  box-sizing: border-box;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-milestone--market::before {
+  border-color: rgba(242, 221, 184, 0.58);
+  background: #f2ddb8;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-milestone__card {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.18rem, 0.3vw, 0.27rem);
+  padding: clamp(0.55rem, 0.78vw, 0.68rem);
+  border: 1px solid rgba(232, 192, 142, 0.14);
+  border-radius: clamp(0.5rem, 0.75vw, 0.65rem);
+  background: var(--roadmap-card);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  box-sizing: border-box;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-milestone__number {
+  position: absolute;
+  top: clamp(0.48rem, 0.7vw, 0.62rem);
+  right: clamp(0.48rem, 0.7vw, 0.62rem);
+  font-size: clamp(0.58rem, 0.52rem + 0.14vw, 0.66rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  color: rgba(232, 192, 142, 0.42);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-milestone__time {
+  padding-right: 1.3rem;
+  font-size: clamp(0.59rem, 0.53rem + 0.14vw, 0.68rem);
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: 0.04em;
+  color: var(--story-gold-soft);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-milestone__title {
+  background: var(--story-gold-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-size: clamp(0.9rem, 0.74rem + 0.38vw, 1.08rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-milestone__detail {
+  font-size: clamp(0.67rem, 0.6rem + 0.15vw, 0.75rem);
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  color: var(--story-cream-muted);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-milestone__markers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.22rem;
+  margin-top: auto;
+  padding-top: 0.14rem;
+  list-style: none;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-milestone__markers li {
+  padding: 0.18rem 0.3rem;
+  border: 1px solid rgba(212, 165, 116, 0.14);
+  border-radius: 9999px;
+  background: rgba(212, 165, 116, 0.05);
+  font-size: clamp(0.54rem, 0.49rem + 0.12vw, 0.62rem);
+  line-height: 1.15;
+  color: var(--story-gold-soft);
+  overflow-wrap: anywhere;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-proof-strip {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.38rem, 0.62vw, 0.52rem);
+  list-style: none;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-proof-strip li {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.38rem;
+  padding: clamp(0.42rem, 0.6vw, 0.52rem) clamp(0.5rem, 0.72vw, 0.62rem);
+  border-left: 1px solid rgba(232, 192, 142, 0.24);
+  background: rgba(212, 165, 116, 0.025);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-proof-strip span {
+  flex: none;
+  font-size: clamp(0.66rem, 0.59rem + 0.16vw, 0.74rem);
+  font-weight: 500;
+  color: var(--story-gold-soft);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-proof-strip small {
+  min-width: 0;
+  font-size: clamp(0.62rem, 0.56rem + 0.14vw, 0.7rem);
+  line-height: 1.25;
+  color: var(--story-cream-muted);
+  overflow-wrap: anywhere;
+}
+
+/* iPhone /story — turn the shared timeline into a vertical journey without losing sequence. */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-callout {
+  gap: clamp(0.85rem, 3vw, 1.15rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-hero {
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(0.5rem, 2vw, 0.72rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-timeline {
+  flex: none;
+  min-height: 0;
+  padding: clamp(0.78rem, 3vw, 1rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-timeline__axis {
+  min-height: 2.05rem;
+  padding-bottom: 0.42rem;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-timeline__tick {
+  font-size: clamp(0.56rem, 2.45vw, 0.68rem);
+  letter-spacing: 0.04em;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-timeline__tracks {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.78rem, 3vw, 1rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-track {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.65rem, 2.6vw, 0.85rem);
+  padding: clamp(0.72rem, 2.8vw, 0.92rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-track__head {
+  padding-top: 0;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-track__caption {
+  font-size: clamp(0.76rem, 3vw, 0.88rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-track__headline {
+  font-size: clamp(1.1rem, 4.4vw, 1.38rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-track__milestones {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.52rem, 2vw, 0.7rem);
+  padding-left: 1rem;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-track__milestones::before {
+  content: "";
+  position: absolute;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  left: 0.24rem;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--roadmap-rule), rgba(232, 192, 142, 0.08));
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-milestone {
+  flex: none;
+  padding-top: 0;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-milestone::before {
+  top: 0.82rem;
+  left: -1rem;
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-milestone__card {
+  min-height: clamp(6.35rem, 25vw, 7.75rem);
+  padding: clamp(0.72rem, 2.8vw, 0.92rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-milestone__title {
+  font-size: clamp(1.06rem, 4vw, 1.25rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-milestone__detail {
+  font-size: clamp(0.76rem, 2.95vw, 0.88rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-milestone__markers li {
+  font-size: clamp(0.61rem, 2.4vw, 0.7rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-proof-strip {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.32rem;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-proof-strip li {
+  padding: 0.48rem 0.58rem;
 }
 
 @keyframes story-meet-doe-modal-enter {

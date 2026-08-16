@@ -6,6 +6,7 @@ import { AboutStyleArticleFloatingToc } from "@/components/blog/AboutStyleArticl
 import { BroaderDoeVisionPageContent } from "@/components/blog/BroaderDoeVisionPageContent";
 import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { HomeFooter } from "@/components/home/sections/HomeFooter";
+import { BLOG_DUSK_FOOTER_BACKDROP } from "@/lib/blog/blog-about-shader-backdrops";
 import { ABOUT_STYLE_TOP_BANNER } from "@/lib/about/about-style-phone-shell-props";
 import "@/lib/about/about-doehealth-iphone.css";
 import { ABOUT_DESKTOP_SCROLL_MAIN_TW } from "@/lib/about/about-layout-styles";
@@ -42,7 +43,7 @@ export function BroaderDoeVisionDesktopView({ tocItems }: BroaderDoeVisionDeskto
 
       <AboutStyleArticleFloatingToc items={tocItems} />
 
-      <HomeFooter linksDisabled shaderTheme="dusk" />
+      <HomeFooter linksDisabled shaderTheme="dusk" backdropImageSrc={BLOG_DUSK_FOOTER_BACKDROP} />
     </div>
   );
 }

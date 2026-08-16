@@ -3,7 +3,9 @@
 import Link from "next/link";
 
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
+import { BlogShaderBackdropImage } from "@/components/blog/BlogShaderBackdropImage";
 import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
+import { blogAboutFeatureShaderBackdrop } from "@/lib/blog/blog-about-shader-backdrops";
 import type { AboutStyleArticleContentBlock } from "@/lib/blog/about-style-article-content-blocks";
 import {
   ABOUT_STYLE_ARTICLE_SECTION_ANCHOR,
@@ -26,6 +28,7 @@ import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles"
 
 type AboutStyleArticleContentBlocksProps = {
   blocks: readonly AboutStyleArticleContentBlock[];
+  useBakedShaderBackdrops?: boolean;
 };
 
 /** Splits `**bold**` markers out of quote copy into bold spans. */
@@ -42,7 +45,10 @@ function renderBoldSegments(text: string) {
 }
 
 /** Longform blocks — paragraphs, gold paragraphs, glossary, bullets, pull quotes, subheadings, shader figures. */
-export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleContentBlocksProps) {
+export function AboutStyleArticleContentBlocks({
+  blocks,
+  useBakedShaderBackdrops = false,
+}: AboutStyleArticleContentBlocksProps) {
   return (
     <div className="about-style-article-blocks space-y-8 iphone-page:space-y-9">
       {blocks.map((block) => {
@@ -137,6 +143,9 @@ export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleCont
         }
 
         const shader = aboutStyleFeatureShaderSurface(block.shaderVariant);
+        const backdropSrc = useBakedShaderBackdrops
+          ? blogAboutFeatureShaderBackdrop(block.shaderVariant)
+          : undefined;
 
         return (
           <figure key={block.id} className="about-style-shader-figure m-0">
@@ -145,13 +154,17 @@ export function AboutStyleArticleContentBlocks({ blocks }: AboutStyleArticleCont
               style={{ backgroundColor: shader.colorBack }}
               aria-hidden
             >
-              <ProtoGrainGradient
-                static
-                variant={shader.variant}
-                colors={shader.colors}
-                colorBack={shader.colorBack}
-                className="absolute inset-0 h-full w-full"
-              />
+              {backdropSrc ? (
+                <BlogShaderBackdropImage src={backdropSrc} />
+              ) : (
+                <ProtoGrainGradient
+                  static
+                  variant={shader.variant}
+                  colors={shader.colors}
+                  colorBack={shader.colorBack}
+                  className="absolute inset-0 h-full w-full"
+                />
+              )}
             </div>
             <figcaption className={`${ABOUT_STYLE_SHADER_CAPTION_TW} mt-3 iphone-page:mt-4`}>
               {block.caption}
