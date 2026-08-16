@@ -873,7 +873,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 .product-brown-mock.product-brown-story-mode .story-introduction-panel__body {
   margin-top: clamp(0.85rem, 1.35vw, 1.25rem);
   max-width: 38rem;
-  font-size: clamp(0.98rem, 0.9rem + 0.28vw, 1.12rem);
+  font-size: clamp(1.15rem, 0.95rem + 0.55vw, 1.42rem);
   font-weight: 400;
   line-height: 1.62;
   letter-spacing: -0.012em;
@@ -910,7 +910,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-introduction-panel__body {
-  font-size: clamp(1rem, 3.8vw, 1.12rem);
+  font-size: clamp(1.08rem, 4.5vw, 1.38rem);
   line-height: 1.58;
 }
 
@@ -1138,8 +1138,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 
   .product-brown-mock.product-brown-story-mode .story-introduction-panel__body {
     margin-top: clamp(0.55rem, 2cqb, 0.85rem);
-    font-size: clamp(0.92rem, 3.4cqb, 1.02rem);
-    line-height: 1.52;
+    font-size: clamp(1.08rem, 4.8cqb, 1.35rem);
+    line-height: 1.56;
   }
 
   .product-brown-mock.product-brown-story-mode .story-introduction-carousel {
