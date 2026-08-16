@@ -5,10 +5,14 @@ import { AboutStyleArticleMobileView } from "@/components/blog/AboutStyleArticle
 import { AboutStyleArticlePageContent } from "@/components/blog/AboutStyleArticlePageContent";
 import { PremedLearnMoreProvider } from "@/components/premed/PremedLearnMoreProvider";
 import { PremedLinkGuard } from "@/components/premed/PremedLinkGuard";
+import { ShaderBackdropPreloader } from "@/components/shared/ShaderBackdropPreloader";
 import type { AboutStyleLongformArticle } from "@/lib/blog/about-style-longform-article";
 import { buildAboutStyleArticleTocItems } from "@/lib/blog/about-style-article-toc";
+import {
+  BLOG_DUSK_FOOTER_BACKDROP,
+  BLOG_FOUNDER_STORY_SHADER_BACKDROP_PATHS,
+} from "@/lib/blog/blog-about-shader-backdrops";
 import { OUR_FOUNDER_STORY_SLUG } from "@/lib/blog/our-founder-story-article";
-import { BLOG_DUSK_FOOTER_BACKDROP } from "@/lib/blog/blog-about-shader-backdrops";
 import { useAboutPageVariant } from "@/lib/about/use-about-page-variant";
 
 type AboutStyleArticleRouterProps = {
@@ -41,7 +45,10 @@ export function AboutStyleArticleRouter({ article }: AboutStyleArticleRouterProp
   if (article.slug === OUR_FOUNDER_STORY_SLUG) {
     return (
       <PremedLearnMoreProvider>
-        <PremedLinkGuard>{page}</PremedLinkGuard>
+        <PremedLinkGuard>
+          <ShaderBackdropPreloader srcs={BLOG_FOUNDER_STORY_SHADER_BACKDROP_PATHS} />
+          {page}
+        </PremedLinkGuard>
       </PremedLearnMoreProvider>
     );
   }

@@ -5,6 +5,8 @@ import { createPortal } from "react-dom";
 
 import { lora, suisseIntl } from "@/lib/home/fonts";
 import { DOEPHONE_DISPLAY_WEIGHT_TW } from "@/lib/doephone/section-styles";
+import { ShaderBackdropImage } from "@/components/shared/ShaderBackdropImage";
+import { preloadShaderBackdrop } from "@/lib/shader/shader-backdrop-preload";
 import { STORY_MEET_DOE_MODAL_BACKDROPS } from "@/lib/story/story-meet-doe-backdrops";
 import { STORY_MEET_DOE_MODAL_SHADERS } from "@/lib/story/story-contact-shader";
 import { STORY_MEET_DOE_MODAL_ALWAYS_SHOW, STORY_MEET_DOE_MODAL_SLIDE_COUNT, STORY_MEET_DOE_MODAL_SLIDE_LINES, STORY_MEET_DOE_MODAL_STORAGE_KEY, storyMeetDoeModalShouldShow } from "@/lib/story/story-copy";
@@ -57,13 +59,8 @@ function MeetDoeModalSlide({
         className="story-meet-doe-modal__backdrop"
         style={{ backgroundColor: shader.colorBack }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <ShaderBackdropImage
           src={backdropSrc}
-          alt=""
-          aria-hidden
-          draggable={false}
-          decoding="async"
           className="story-meet-doe-modal__backdrop-image"
         />
         <h1
@@ -96,10 +93,14 @@ export function StoryMeetDoeModal() {
   useLayoutEffect(() => {
     setMounted(true);
     const shouldShow = storyMeetDoeModalShouldShow();
-    setOpen(shouldShow);
     if (!shouldShow) {
       clearStoryMeetDoePending();
+      return;
     }
+
+    void preloadShaderBackdrop(STORY_MEET_DOE_MODAL_BACKDROPS[0]).finally(() => {
+      setOpen(true);
+    });
   }, []);
 
   useLayoutEffect(() => {

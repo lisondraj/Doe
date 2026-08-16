@@ -4,6 +4,8 @@ import { ClinicalPartnersDesktopView } from "@/components/partners/ClinicalPartn
 import { ClinicalPartnersMobileView } from "@/components/partners/ClinicalPartnersMobileView";
 import { PremedLearnMoreProvider } from "@/components/premed/PremedLearnMoreProvider";
 import { PremedLinkGuard } from "@/components/premed/PremedLinkGuard";
+import { ShaderBackdropPreloader } from "@/components/shared/ShaderBackdropPreloader";
+import { BLOG_PARTNERS_PAGE_SHADER_BACKDROP_PATHS } from "@/lib/blog/blog-about-shader-backdrops";
 import { useAboutPageVariant } from "@/lib/about/use-about-page-variant";
 import {
   partnersPageHostAllowed,
@@ -32,6 +34,7 @@ export function ClinicalPartnersRouter() {
   return (
     <PremedLearnMoreProvider>
       <PremedLinkGuard>
+        <ShaderBackdropPreloader srcs={BLOG_PARTNERS_PAGE_SHADER_BACKDROP_PATHS} />
         {variant === "desktop" ? <ClinicalPartnersDesktopView /> : <ClinicalPartnersMobileView />}
       </PremedLinkGuard>
     </PremedLearnMoreProvider>

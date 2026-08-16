@@ -1,4 +1,5 @@
 import { PitchBoxCenterLines } from "@/components/pitch/PitchBoxCenterLines";
+import { ShaderBackdropImage } from "@/components/shared/ShaderBackdropImage";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { suisseIntl } from "@/lib/home/fonts";
 import type { ProtoGrainGradientSurface } from "@/lib/proto/proto-grain-gradient";
@@ -48,13 +49,8 @@ export function PitchShaderFillBox({
       aria-label={label}
     >
       {backdropImageSrc ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <ShaderBackdropImage
           src={backdropImageSrc}
-          alt=""
-          aria-hidden
-          draggable={false}
-          decoding="async"
           className="story-team-backdrop-image pointer-events-none absolute inset-0 h-full w-full"
         />
       ) : surface ? (

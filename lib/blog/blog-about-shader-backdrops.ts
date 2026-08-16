@@ -32,3 +32,38 @@ export function blogAboutFeatureShaderBackdrop(variant: AboutStyleFeatureShaderV
 export function blogAboutCarouselShaderBackdrop(variant: ProtoGrainGradientVariant) {
   return BLOG_ABOUT_CAROUSEL_BACKDROPS[variant];
 }
+
+const BLOG_ABOUT_CAROUSEL_BACKDROP_PATHS = [
+  "/story/blog-carousel-integrate-backdrop.png",
+  "/story/blog-carousel-meet-proto-stack-2-backdrop.png",
+  "/story/blog-carousel-meet-proto-backdrop.png",
+  "/story/blog-carousel-prototype-backdrop.png",
+  "/story/blog-carousel-meet-proto-stack-1-backdrop.png",
+  "/story/blog-carousel-shortlist-backdrop.png",
+  "/story/blog-carousel-home-integrations-backdrop.png",
+] as const;
+
+/** /about + founder story + /partners — footer carousel tile PNGs. */
+export const BLOG_ABOUT_CAROUSEL_SHADER_BACKDROP_PATHS = BLOG_ABOUT_CAROUSEL_BACKDROP_PATHS;
+
+/** /about — hero, footer, and carousel backdrops. */
+export const BLOG_ABOUT_PAGE_SHADER_BACKDROP_PATHS = [
+  BLOG_ABOUT_HERO_BACKDROP,
+  BLOG_DUSK_FOOTER_BACKDROP,
+  ...BLOG_ABOUT_CAROUSEL_BACKDROP_PATHS,
+] as const;
+
+/** /partners — join-campus hero, footer, and carousel backdrops. */
+export const BLOG_PARTNERS_PAGE_SHADER_BACKDROP_PATHS = [
+  BLOG_JOIN_CAMPUS_HERO_BACKDROP,
+  BLOG_DUSK_FOOTER_BACKDROP,
+  ...BLOG_ABOUT_CAROUSEL_BACKDROP_PATHS,
+] as const;
+
+/** Founder story — hero, inline figure, footer, and carousel backdrops. */
+export const BLOG_FOUNDER_STORY_SHADER_BACKDROP_PATHS = [
+  BLOG_ABOUT_HERO_BACKDROP,
+  BLOG_DUSK_FOOTER_BACKDROP,
+  "/story/blog-looking-ahead-backdrop.png",
+  ...BLOG_ABOUT_CAROUSEL_BACKDROP_PATHS,
+] as const;
