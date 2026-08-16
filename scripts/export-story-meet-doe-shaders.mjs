@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
@@ -7,12 +7,14 @@ import { chromium } from "playwright";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const outDir = path.join(root, "public", "story");
-const baseUrl = process.env.STORY_SHADER_BASE_URL ?? "http://127.0.0.1:3001";
-const captureRoute = "/story/team-shader-capture";
+const baseUrl = process.env.STORY_SHADER_BASE_URL ?? "http://127.0.0.1:3000";
+const captureRoute = "/story/meet-doe-shader-capture";
 
 const targets = [
-  { id: "story-team-james-capture", filename: "team-james-backdrop.png" },
-  { id: "story-team-matthew-capture", filename: "team-matthew-backdrop.png" },
+  { id: "story-meet-doe-slide-01-capture", filename: "meet-doe-slide-01-backdrop.png" },
+  { id: "story-meet-doe-slide-02-capture", filename: "meet-doe-slide-02-backdrop.png" },
+  { id: "story-meet-doe-slide-03-capture", filename: "meet-doe-slide-03-backdrop.png" },
+  { id: "story-meet-doe-slide-04-capture", filename: "meet-doe-slide-04-backdrop.png" },
 ];
 
 async function waitForShaderCanvas(page, selector) {
@@ -26,7 +28,7 @@ async function waitForShaderCanvas(page, selector) {
     selector,
     { timeout: 60_000 },
   );
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(2500);
 }
 
 async function captureTarget(page, selector, outputPath) {
@@ -51,7 +53,7 @@ async function main() {
 
   try {
     const context = await browser.newContext({
-      viewport: { width: 4040, height: 6400 },
+      viewport: { width: 4040, height: 10000 },
       deviceScaleFactor: 1,
     });
     const page = await context.newPage();

@@ -2616,6 +2616,21 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   pointer-events: none;
 }
 
+.story-meet-doe-modal__backdrop-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 .story-meet-doe-modal__shader {
   border-radius: inherit;
 }
