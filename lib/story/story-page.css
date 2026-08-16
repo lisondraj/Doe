@@ -2316,6 +2316,203 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   z-index: 12;
 }
 
+/* iPhone /story — scrollable tab bodies with real content */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--our-ask,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--team,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--goals {
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* iPhone /story — Our Ask: stack ask + budget vertically, drop desktop scale grid */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-stage {
+  flex: none;
+  align-items: stretch;
+  justify-content: flex-start;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  padding: clamp(0.65rem, 2.75vw, 1rem) clamp(0.85rem, 3.25vw, 1.15rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid {
+  --story-our-ask-scale: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.35rem, 4.5vw, 2rem);
+  width: 100%;
+  max-width: 100%;
+  max-height: none;
+  transform: none;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell {
+  overflow: visible;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-callout {
+  align-items: center;
+  justify-content: flex-start;
+  height: auto;
+  padding: clamp(0.35rem, 1.5vw, 0.65rem) 0;
+  text-align: center;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-amount-block {
+  align-items: center;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-round {
+  font-size: clamp(1.65rem, 5.5vw, 2.35rem);
+  text-align: center;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-amount {
+  font-size: clamp(4.35rem, 21vw, 7.25rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-runway {
+  align-items: center;
+  margin-top: clamp(0.85rem, 3vw, 1.25rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-runway-duration {
+  font-size: clamp(2.85rem, 13.5vw, 4.75rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-runway-label {
+  font-size: clamp(1.15rem, 4.2vw, 1.65rem);
+  text-align: center;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--budget {
+  padding: 0;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget-wrap--embedded {
+  width: 100%;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget thead th {
+  font-size: clamp(0.88rem, 3.2vw, 1rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget thead th:nth-child(2),
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget thead th:nth-child(3) {
+  width: 4.35rem;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody th,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody td {
+  font-size: clamp(0.82rem, 2.95vw, 0.94rem);
+  padding: 0.68rem 0;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--group th,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--group td {
+  font-size: clamp(0.92rem, 3.2vw, 1.05rem);
+  padding-top: 0.88rem;
+  padding-bottom: 0.88rem;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--total th,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--total td {
+  font-size: clamp(1.05rem, 3.85vw, 1.35rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget__sub-row {
+  grid-template-columns: minmax(0, 1fr) 4.35rem 4.35rem;
+  padding: 0.82rem 0;
+  font-size: clamp(0.88rem, 3.1vw, 1rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget__sub-label {
+  padding-left: 0.85rem;
+}
+
+/* iPhone /story — Team: stacked founder cards instead of absolute desktop overlap */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-callout {
+  flex: none;
+  height: auto;
+  min-height: 0;
+  padding: clamp(0.65rem, 2.75vw, 1rem) clamp(0.85rem, 3.25vw, 1.15rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-stage {
+  position: relative;
+  flex: none;
+  min-height: 0;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid {
+  position: relative;
+  inset: auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.85rem, 3.25vw, 1.25rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__box {
+  position: relative;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  width: 100%;
+  height: auto;
+  min-height: clamp(15.5rem, 68vw, 21rem);
+  max-width: none;
+  aspect-ratio: 1.28 / 1;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__fill > p:first-of-type {
+  font-size: clamp(2.65rem, 11.5vw, 4.25rem) !important;
+  padding: clamp(0.85rem, 3.5vw, 1.25rem) !important;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__fill > p:first-of-type span.uppercase {
+  font-size: clamp(0.72rem, 2.85vw, 0.95rem) !important;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__fill > p:nth-of-type(2) {
+  font-size: clamp(1.05rem, 4.1vw, 1.55rem) !important;
+  padding: clamp(0.85rem, 3.5vw, 1.25rem) !important;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__fill > div {
+  padding: clamp(0.85rem, 3.5vw, 1.25rem) !important;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-team-grid__fill .rounded-full {
+  font-size: clamp(0.78rem, 2.85vw, 0.92rem) !important;
+  padding: clamp(0.42rem, 1.75vw, 0.55rem) clamp(0.78rem, 3vw, 1rem) !important;
+}
+
+/* iPhone /story — Goals at Seed: scroll-friendly spacing on top of 2-col mobile grid */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-callout {
+  flex: none;
+  height: auto;
+  min-height: 0;
+  justify-content: flex-start;
+  gap: clamp(1.15rem, 4vw, 1.75rem);
+  padding: clamp(0.75rem, 3vw, 1.1rem) clamp(0.85rem, 3.25vw, 1.15rem) clamp(1.25rem, 4vw, 1.75rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-hero {
+  margin-top: 0;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-list {
+  flex: none;
+  align-content: start;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-list__item:nth-child(n + 4):nth-child(-n + 6) .story-goals-product-lines__name {
+  white-space: normal;
+}
+
 @keyframes story-meet-doe-modal-enter {
   from {
     opacity: 0;
