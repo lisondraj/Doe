@@ -19,8 +19,8 @@ export function StoryMobileView() {
   const [navOpen, setNavOpen] = useState(false);
 
   return (
-    <main className="product-page-root h-dvh min-h-0 w-full overflow-hidden bg-transparent">
-      <div className="product-brown-mock product-brown-story-mode product-brown-story-mode--mobile flex h-full min-h-0 flex-col">
+    <main className="product-page-root story-mobile-page-root h-dvh min-h-0 w-full overflow-hidden">
+      <div className="product-brown-mock product-brown-story-mode product-brown-story-mode--mobile story-mobile-shell flex h-full min-h-0 flex-col">
         <StoryBlankPanel
           tab={storyTab}
           title={storyTabHeaderLabel(storyTab)}

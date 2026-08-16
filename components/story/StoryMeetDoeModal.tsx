@@ -71,7 +71,7 @@ function MeetDoeModalSlide({
           {lines.map((line, lineIndex) => (
             <span
               key={`${slideIndex}-${lineIndex}`}
-              className={`story-meet-doe-modal__title-line${isCta && lineIndex === 1 ? " story-meet-doe-modal__title-line--cta" : ""}`}
+              className={`story-meet-doe-modal__title-line${isBrandWordmark ? ` story-meet-doe-modal__title-line--brand ${lora.className}` : ""}${isCta && lineIndex === 1 ? " story-meet-doe-modal__title-line--cta" : ""}`}
             >
               {line}
               {isCta && lineIndex === 1 ? <MeetDoeTitleChevron /> : null}

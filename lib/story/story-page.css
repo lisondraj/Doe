@@ -552,35 +552,77 @@ html[data-story-meet-doe-pending] .story-tab-pager {
   border-bottom-color: rgba(212, 165, 116, 0.16) !important;
 }
 
-/* Phone /story — edge-to-edge tab + full-screen nav drawer */
-.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile {
+/* Phone /story — solid surface fills viewport including overscroll */
+html[data-product-page="true"]:has(.product-brown-story-mode--mobile),
+html[data-product-page="true"]:has(.product-brown-story-mode--mobile) body {
+  background: #1b1713;
+}
+
+html[data-product-page="true"]:has(.product-brown-story-mode--mobile) .product-page-root::before {
+  background: #1b1713;
+}
+
+html[data-product-page="true"]:has(.product-brown-story-mode--mobile) .story-mobile-page-root {
+  background: #1b1713;
+  min-height: 100dvh;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile.story-mobile-shell {
   padding: 0;
   box-sizing: border-box;
+  background: var(--pb-nav-surface, #1b1713);
+  min-height: 100dvh;
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen {
   flex: 1 1 auto;
-  min-height: 0;
+  min-height: 100dvh;
   border-radius: 0;
+  background: var(--pb-nav-surface, #1b1713);
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen::before {
+  position: fixed;
+  inset: 0;
   border-radius: 0;
   box-shadow: none;
+  background: var(--pb-nav-surface, #1b1713);
+  z-index: 0;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen > * {
+  position: relative;
+  z-index: 1;
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen .product-landing-console-shell {
   border-radius: 0;
+  background: var(--pb-nav-surface, #1b1713);
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen .product-landing-header {
-  padding-top: max(0.95rem, env(safe-area-inset-top, 0px));
+  min-height: 3.15rem;
+  padding-top: max(0.85rem, env(safe-area-inset-top, 0px));
   padding-right: max(1rem, env(safe-area-inset-right, 0px));
+  padding-bottom: 0.75rem;
   padding-left: max(1rem, env(safe-area-inset-left, 0px));
+  border-bottom: 1px solid rgba(212, 165, 116, 0.14);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen .product-landing-header::after {
+  display: none;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen .product-landing-header__title {
+  font-size: clamp(1.2rem, 1.05rem + 0.8vw, 1.45rem);
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel--mobile-fullscreen .story-tab-panel__body {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  flex: 1 1 auto;
+  min-height: 0;
+  background: var(--pb-nav-surface, #1b1713);
+  padding-bottom: max(5.5rem, calc(env(safe-area-inset-bottom, 0px) + 4.75rem));
 }
 
 .story-mobile-tab-bar__menu {
@@ -619,11 +661,37 @@ html[data-story-meet-doe-pending] .story-tab-pager {
   overflow: hidden;
   background: var(--pb-nav-surface, #1b1713);
   color: var(--pl-console-text, #f2e8da);
+}
+
+.story-mobile-nav-drawer.product-brown-story-mode {
   padding:
     env(safe-area-inset-top, 0px)
     env(safe-area-inset-right, 0px)
     env(safe-area-inset-bottom, 0px)
     env(safe-area-inset-left, 0px);
+}
+
+.story-mobile-nav-drawer.product-brown-story-mode .story-sidebar-shell {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.story-mobile-nav-drawer.product-brown-story-mode .story-sidebar-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.story-mobile-nav-drawer.product-brown-story-mode .story-sidebar-search {
+  padding-top: 0.15rem;
+}
+
+.story-mobile-nav-drawer.product-brown-story-mode .story-sidebar-contact {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
 }
 
 .story-mobile-nav-drawer__header {
@@ -679,6 +747,62 @@ html[data-story-meet-doe-pending] .story-tab-pager {
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel {
   flex: 1 1 auto;
+}
+
+/* iPhone /story — Meet Doe modal brand + layout */
+html[data-doeforvc-always-phone] .story-meet-doe-modal {
+  padding:
+    max(0.65rem, env(safe-area-inset-top, 0px))
+    max(0.65rem, env(safe-area-inset-right, 0px))
+    max(0.65rem, env(safe-area-inset-bottom, 0px))
+    max(0.65rem, env(safe-area-inset-left, 0px));
+}
+
+html[data-doeforvc-always-phone] .story-meet-doe-modal__stack {
+  width: min(100%, calc(100vw - 1.25rem));
+  gap: 0.95rem;
+}
+
+html[data-doeforvc-always-phone] .story-meet-doe-modal__panel {
+  border-radius: clamp(0.95rem, 3vw, 1.2rem);
+}
+
+html[data-doeforvc-always-phone] .story-meet-doe-modal__backdrop {
+  aspect-ratio: auto;
+  min-height: min(68vw, 22rem);
+}
+
+html[data-doeforvc-always-phone] .story-meet-doe-modal__title--brand {
+  right: clamp(0.85rem, 3.5vw, 1.15rem);
+  bottom: clamp(0.85rem, 3.5vw, 1.15rem);
+  max-width: calc(100% - 1.5rem);
+  font-size: clamp(3.35rem, 16vw, 5.75rem);
+  font-weight: 400;
+  line-height: 0.92;
+}
+
+html[data-doeforvc-always-phone] .story-meet-doe-modal__title--brand .story-meet-doe-modal__title-line--brand {
+  display: block;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  background: var(--doehealth-gold-text-gradient, var(--story-gold-text));
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+html[data-doeforvc-always-phone] .story-meet-doe-modal__title--statement {
+  font-size: clamp(1.65rem, 5.2vw, 2.35rem);
+  bottom: clamp(1rem, 3.5vw, 1.35rem);
+}
+
+html[data-doeforvc-always-phone] .story-meet-doe-modal__title--product-stack {
+  font-size: clamp(1.75rem, 5.5vw, 2.5rem);
+}
+
+html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
+  gap: 0.42rem;
 }
 
 .product-brown-mock.product-brown-story-mode .story-tab-panel__body {
@@ -2026,6 +2150,12 @@ html[data-story-meet-doe-pending] .story-tab-pager {
   transition: none;
 }
 
+.story-meet-doe-modal__title--brand .story-meet-doe-modal__title-line--brand {
+  display: block;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
 .story-meet-doe-modal__title--revealed .story-meet-doe-modal__title-line:nth-child(1) {
   transition-delay: 0ms;
 }
@@ -2181,8 +2311,9 @@ html[data-story-meet-doe-pending] .story-tab-pager {
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-pager {
-  right: clamp(0.85rem, 3.5vw, 1.25rem);
-  bottom: clamp(0.85rem, 3.5vw, 1.25rem);
+  right: max(0.85rem, env(safe-area-inset-right, 0px));
+  bottom: max(0.85rem, env(safe-area-inset-bottom, 0px));
+  z-index: 12;
 }
 
 @keyframes story-meet-doe-modal-enter {

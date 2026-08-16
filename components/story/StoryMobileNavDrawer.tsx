@@ -60,7 +60,12 @@ export function StoryMobileNavDrawer({
   }
 
   return createPortal(
-    <div className="story-mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="Story navigation">
+    <div
+      className="story-mobile-nav-drawer product-brown-mock product-brown-story-mode product-brown-story-mode--mobile"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Story navigation"
+    >
       <header className="story-mobile-nav-drawer__header">
         <p className={`story-mobile-nav-drawer__wordmark ${lora.className}`}>Doe</p>
         <button
