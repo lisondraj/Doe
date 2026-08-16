@@ -11,7 +11,8 @@
     "remotion:render": "remotion render remotion/index.ts DoeLaunch public/motion/doe-launch-remotion.mp4",
     "remotion:intro": "remotion render remotion/index.ts DoeIntro public/motion/doe-intro.mp4 --width=1920 --height=1080 --crf=10 --scale=2 --gl=angle --concurrency=2",
     "remotion:motion4": "bash scripts/render-motion4.sh",
-    "export:linkedin": "node scripts/export-linkedin-banner.mjs"
+    "export:linkedin": "node scripts/export-linkedin-banner.mjs",
+    "export:story-team-shaders": "node scripts/export-story-team-shaders.mjs"
   },
   "dependencies": {
     "@paper-design/shaders-react": "^0.0.76",
