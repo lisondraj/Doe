@@ -16,10 +16,15 @@ import "@/lib/doehealth/doehealth-landing.css";
 type AboutStyleArticleDesktopViewProps = {
   children: ReactNode;
   tocItems?: readonly AboutStyleArticleTocItem[];
+  footerBackdropImageSrc?: string;
 };
 
 /** Desktop /about-style longform article shell. */
-export function AboutStyleArticleDesktopView({ children, tocItems = [] }: AboutStyleArticleDesktopViewProps) {
+export function AboutStyleArticleDesktopView({
+  children,
+  tocItems = [],
+  footerBackdropImageSrc,
+}: AboutStyleArticleDesktopViewProps) {
   const hasDesktopToc = tocItems.length > 0;
 
   return (
@@ -42,7 +47,7 @@ export function AboutStyleArticleDesktopView({ children, tocItems = [] }: AboutS
 
       <AboutStyleArticleFloatingToc items={tocItems} />
 
-      <HomeFooter linksDisabled shaderTheme="dusk" />
+      <HomeFooter linksDisabled shaderTheme="dusk" backdropImageSrc={footerBackdropImageSrc} />
     </div>
   );
 }

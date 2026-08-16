@@ -1563,6 +1563,33 @@ html[data-about-page][data-layout="desktop"] .about-page-content .about-hero-vis
   max-height: none !important;
 }
 
+html[data-about-page] .blog-shader-backdrop-image,
+html[data-home-page] .blog-shader-backdrop-image {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center center;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+html[data-about-page] .home-footer--dusk .blog-shader-backdrop-image {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  object-position: center bottom;
+}
+
 html[data-about-page] .blog-landing-card-stack,
 html[data-home-page] .blog-landing-card-stack {
   height: 100%;

@@ -2,6 +2,7 @@
 
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { HeroShaderCssFallback } from "@/components/proto/HeroShaderCssFallback";
+import { BlogShaderBackdropImage } from "@/components/blog/BlogShaderBackdropImage";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
 import type { WorkflowCarouselDesignBackdrop as WorkflowCarouselDesignBackdropType } from "@/lib/workflow-carousel-design-backdrops";
 import {
@@ -28,6 +29,7 @@ const JOIN_CAMPUS_HERO_DUSK_SHADER = doeJoinCampusHeroDuskShaderSurface();
 
 export function BlogHeroVisual({
   backdrop,
+  backdropImageSrc,
   variant = "hero",
   boxClassName,
   gapClassName,
@@ -41,6 +43,8 @@ export function BlogHeroVisual({
   staticShader = false,
   children,
 }: {
+  /** High-res baked backdrop — skips live WebGL when set. */
+  backdropImageSrc?: string;
   backdrop?: WorkflowCarouselDesignBackdropType;
   variant?: "hero" | "list";
   boxClassName?: string;
@@ -106,7 +110,9 @@ export function BlogHeroVisual({
       style={usesHeroShader ? { backgroundColor: heroBack } : undefined}
       aria-hidden={children ? undefined : true}
     >
-      {usesHeroShader ? (
+      {backdropImageSrc ? (
+        <BlogShaderBackdropImage src={backdropImageSrc} />
+      ) : usesHeroShader ? (
         <>
           <HeroShaderCssFallback
             colors={heroShaderColors}

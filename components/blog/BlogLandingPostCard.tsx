@@ -3,8 +3,10 @@
 import Link from "next/link";
 
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
+import { BlogShaderBackdropImage } from "@/components/blog/BlogShaderBackdropImage";
 import { BlogArticleCategory } from "@/components/blog/BlogArticleCategory";
 import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
+import { blogAboutCarouselShaderBackdrop } from "@/lib/blog/blog-about-shader-backdrops";
 import { blogHomeCarouselPreviewShader } from "@/lib/blog/blog-home-carousel-preview-shaders";
 import { blogPreviewShaderSurface } from "@/lib/blog/blog-preview-shader-surface";
 import {
@@ -46,6 +48,8 @@ type BlogLandingPostCardProps = {
   linked?: boolean;
   /** List previews on /blog use list shader variants; carousel uses distinct frozen flow presets. */
   previewContext?: "list" | "carousel" | "home-carousel";
+  /** When true, use baked PNG backdrops instead of live WebGL. */
+  useBakedShaderBackdrops?: boolean;
 };
 
 /** /blog landing card — shader thumbnail, title, subheading, meta, excerpt, read more. */
@@ -53,6 +57,7 @@ export function BlogLandingPostCard({
   post,
   linked = true,
   previewContext = "list",
+  useBakedShaderBackdrops = false,
 }: BlogLandingPostCardProps) {
   const subheading = post.previewSubheading ?? post.subheading;
   const shader =
@@ -61,6 +66,7 @@ export function BlogLandingPostCard({
       : previewContext === "carousel"
         ? blogPreviewShaderSurface(post.carouselShaderVariant)
         : aboutStyleFeatureShaderSurface(post.previewShaderVariant);
+  const backdropSrc = useBakedShaderBackdrops ? blogAboutCarouselShaderBackdrop(shader.variant) : undefined;
 
   const card = (
     <article
@@ -71,13 +77,17 @@ export function BlogLandingPostCard({
         style={{ backgroundColor: shader.colorBack }}
         aria-hidden
       >
-        <ProtoGrainGradient
-          static
-          variant={shader.variant}
-          colors={shader.colors}
-          colorBack={shader.colorBack}
-          className="absolute inset-0 h-full w-full"
-        />
+        {backdropSrc ? (
+          <BlogShaderBackdropImage src={backdropSrc} />
+        ) : (
+          <ProtoGrainGradient
+            static
+            variant={shader.variant}
+            colors={shader.colors}
+            colorBack={shader.colorBack}
+            className="absolute inset-0 h-full w-full"
+          />
+        )}
       </div>
 
       <div className="blog-landing-card-copy mt-5 iphone-page:mt-6">

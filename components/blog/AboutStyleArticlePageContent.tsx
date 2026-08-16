@@ -35,6 +35,8 @@ import {
   ABOUT_STYLE_ARTICLE_TOC_IDS,
   type AboutStyleArticleTocItem,
 } from "@/lib/blog/about-style-article-toc";
+import { BLOG_ABOUT_HERO_BACKDROP } from "@/lib/blog/blog-about-shader-backdrops";
+import { OUR_FOUNDER_STORY_SLUG } from "@/lib/blog/our-founder-story-article";
 
 type AboutStyleArticlePageContentProps = {
   article: AboutStyleLongformArticle;
@@ -65,6 +67,8 @@ export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleAr
   const productIntro = isAboutStyleProductIntro(article.slug);
   const labsProposal = article.contentBlocks != null && article.contentBlocks.length > 0;
   const category = blogPostCategory(article.slug);
+  const useBakedShaderBackdrops = article.slug === OUR_FOUNDER_STORY_SLUG;
+  const heroBackdropImageSrc = useBakedShaderBackdrops ? BLOG_ABOUT_HERO_BACKDROP : undefined;
 
   const titleContent = article.titleLine2 ? (
     <>
@@ -98,6 +102,7 @@ export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleAr
         <div className={BROADER_DOE_VISION_HERO_WRAP}>
           <BlogHeroVisual
             backdrop={article.heroBackdrop}
+            backdropImageSrc={heroBackdropImageSrc}
             variant="hero"
             boxClassName={ABOUT_PAGE_HERO_BOX_TW}
             gapClassName=""
@@ -119,7 +124,10 @@ export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleAr
 
         {article.contentBlocks ? (
           <div className={`${ABOUT_MOBILE_SECTION_GAP} mt-10 iphone-page:mt-12`}>
-            <AboutStyleArticleContentBlocks blocks={article.contentBlocks} />
+            <AboutStyleArticleContentBlocks
+              blocks={article.contentBlocks}
+              useBakedShaderBackdrops={useBakedShaderBackdrops}
+            />
           </div>
         ) : null}
 
@@ -132,7 +140,10 @@ export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleAr
             </div>
 
             <BlogArticleFooterCarouselBand>
-              <BlogArticleRelatedCarousel currentSlug={article.slug} />
+              <BlogArticleRelatedCarousel
+                currentSlug={article.slug}
+                useBakedShaderBackdrops={useBakedShaderBackdrops}
+              />
             </BlogArticleFooterCarouselBand>
           </div>
         </div>
@@ -165,6 +176,7 @@ export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleAr
         <div className={BROADER_DOE_VISION_HERO_WRAP}>
           <BlogHeroVisual
             backdrop={article.heroBackdrop}
+            backdropImageSrc={heroBackdropImageSrc}
             variant="hero"
             boxClassName={ABOUT_PAGE_HERO_BOX_TW}
             gapClassName=""
@@ -207,7 +219,10 @@ export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleAr
             </div>
 
             <BlogArticleFooterCarouselBand>
-              <BlogArticleRelatedCarousel currentSlug={article.slug} />
+              <BlogArticleRelatedCarousel
+                currentSlug={article.slug}
+                useBakedShaderBackdrops={useBakedShaderBackdrops}
+              />
             </BlogArticleFooterCarouselBand>
           </div>
         </div>
@@ -237,6 +252,7 @@ export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleAr
       <div className={BROADER_DOE_VISION_HERO_WRAP}>
         <BlogHeroVisual
           backdrop={article.heroBackdrop}
+          backdropImageSrc={heroBackdropImageSrc}
           variant="hero"
           boxClassName={ABOUT_PAGE_HERO_BOX_TW}
           gapClassName=""
@@ -314,7 +330,10 @@ export function AboutStyleArticlePageContent({ article, tocItems }: AboutStyleAr
           </div>
 
           <BlogArticleFooterCarouselBand>
-            <BlogArticleRelatedCarousel currentSlug={article.slug} />
+            <BlogArticleRelatedCarousel
+              currentSlug={article.slug}
+              useBakedShaderBackdrops={useBakedShaderBackdrops}
+            />
           </BlogArticleFooterCarouselBand>
         </div>
       </div>

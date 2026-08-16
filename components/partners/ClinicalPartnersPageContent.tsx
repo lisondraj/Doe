@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { BlogArticleFooterCarouselBand } from "@/components/blog/BlogArticleFooterCarouselBand";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
+import { BLOG_JOIN_CAMPUS_HERO_BACKDROP } from "@/lib/blog/blog-about-shader-backdrops";
 import { ClinicalPartnersApplyPanel } from "@/components/partners/ClinicalPartnersApplyPanel";
 import { PremedBlogRelatedCarousel } from "@/components/premed/PremedBlogRelatedCarousel";
 import { PremedEmailInvite } from "@/components/premed/PremedEmailInvite";
@@ -84,6 +85,7 @@ export function ClinicalPartnersPageContent() {
       <div className={BROADER_DOE_VISION_HERO_WRAP}>
         <BlogHeroVisual
           backdrop={BROADER_DOE_VISION_HERO_BACKDROP}
+          backdropImageSrc={BLOG_JOIN_CAMPUS_HERO_BACKDROP}
           variant="hero"
           boxClassName={ABOUT_PAGE_HERO_BOX_TW}
           gapClassName=""
@@ -115,7 +117,7 @@ export function ClinicalPartnersPageContent() {
           />
 
           <BlogArticleFooterCarouselBand>
-            <PremedBlogRelatedCarousel currentSlug="the-broader-doe-vision" />
+            <PremedBlogRelatedCarousel currentSlug="the-broader-doe-vision" useBakedShaderBackdrops />
           </BlogArticleFooterCarouselBand>
         </div>
       </div>

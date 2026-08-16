@@ -6,10 +6,14 @@ import { withPremedBlogPreviewCopy } from "@/lib/premed/premed-blog-preview-copy
 
 type PremedBlogRelatedCarouselProps = {
   currentSlug: string;
+  useBakedShaderBackdrops?: boolean;
 };
 
 /** /premed — related blog carousel with vague preview copy. */
-export function PremedBlogRelatedCarousel({ currentSlug }: PremedBlogRelatedCarouselProps) {
+export function PremedBlogRelatedCarousel({
+  currentSlug,
+  useBakedShaderBackdrops = false,
+}: PremedBlogRelatedCarouselProps) {
   const posts = getOtherBlogLandingPosts(currentSlug).map(withPremedBlogPreviewCopy);
 
   if (posts.length === 0) {
@@ -23,7 +27,12 @@ export function PremedBlogRelatedCarousel({ currentSlug }: PremedBlogRelatedCaro
           {posts.map((post) => (
             <li key={post.slug} className="blog-article-related-carousel__slide">
               <Link href={post.path} className="group block h-full no-underline">
-                <BlogLandingPostCard post={post} linked={false} previewContext="carousel" />
+                <BlogLandingPostCard
+                  post={post}
+                  linked={false}
+                  previewContext="carousel"
+                  useBakedShaderBackdrops={useBakedShaderBackdrops}
+                />
               </Link>
             </li>
           ))}

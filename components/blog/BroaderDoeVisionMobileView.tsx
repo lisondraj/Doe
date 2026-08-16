@@ -7,6 +7,7 @@ import { BroaderDoeVisionPageContent } from "@/components/blog/BroaderDoeVisionP
 import { BlogMobileShell } from "@/components/blog/BlogMobileShell";
 import { DoeHealthTopBanner } from "@/components/doehealth/DoeHealthTopBanner";
 import { ABOUT_STYLE_PHONE_SHELL_PROPS, ABOUT_STYLE_TOP_BANNER } from "@/lib/about/about-style-phone-shell-props";
+import { BLOG_DUSK_FOOTER_BACKDROP } from "@/lib/blog/blog-about-shader-backdrops";
 import "@/lib/about/about-doehealth-iphone.css";
 import { AboutStyleArticleAudioPlayerProvider } from "@/lib/blog/about-style-article-audio-player-context";
 import { BROADER_DOE_VISION_CONTENT_PT } from "@/lib/blog/broader-doe-vision-layout-styles";
@@ -40,6 +41,7 @@ export function BroaderDoeVisionMobileView({ tocItems }: BroaderDoeVisionMobileV
     <AboutStyleArticleAudioPlayerProvider>
       <BlogMobileShell
         {...ABOUT_STYLE_PHONE_SHELL_PROPS}
+        footerBackdropImageSrc={BLOG_DUSK_FOOTER_BACKDROP}
         topBanner={<DoeHealthTopBanner {...ABOUT_STYLE_TOP_BANNER} />}
       >
         <main className={`w-full ${BROADER_DOE_VISION_CONTENT_PT}`}>

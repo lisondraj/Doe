@@ -7,6 +7,7 @@ import { BroaderDoeVisionEarlyStageLinks } from "@/components/blog/BroaderDoeVis
 import { BroaderDoeVisionEmailInvite } from "@/components/blog/BroaderDoeVisionEmailInvite";
 import { BroaderDoeVisionProposalQuote } from "@/components/blog/BroaderDoeVisionProposalQuote";
 import { BlogHeroVisual } from "@/components/blog/BlogHeroVisual";
+import { BLOG_ABOUT_HERO_BACKDROP } from "@/lib/blog/blog-about-shader-backdrops";
 import {
   ABOUT_MOBILE_CONTENT_GAP,
   ABOUT_MOBILE_LIST_GAP,
@@ -83,6 +84,7 @@ export function BroaderDoeVisionPageContent({
       <div className={BROADER_DOE_VISION_HERO_WRAP}>
         <BlogHeroVisual
           backdrop={BROADER_DOE_VISION_HERO_BACKDROP}
+          backdropImageSrc={BLOG_ABOUT_HERO_BACKDROP}
           variant="hero"
           boxClassName={ABOUT_PAGE_HERO_BOX_TW}
           gapClassName=""
@@ -160,7 +162,7 @@ export function BroaderDoeVisionPageContent({
           </div>
 
           <BlogArticleFooterCarouselBand>
-            <BlogArticleRelatedCarousel currentSlug="the-broader-doe-vision" />
+            <BlogArticleRelatedCarousel currentSlug="the-broader-doe-vision" useBakedShaderBackdrops />
           </BlogArticleFooterCarouselBand>
         </div>
       </div>

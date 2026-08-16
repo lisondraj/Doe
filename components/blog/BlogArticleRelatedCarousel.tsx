@@ -5,10 +5,14 @@ import { getOtherBlogLandingPosts } from "@/lib/blog/blog-landing-posts";
 
 type BlogArticleRelatedCarouselProps = {
   currentSlug: string;
+  useBakedShaderBackdrops?: boolean;
 };
 
 /** Horizontal swipe carousel of other featured blog posts — /blog card design. */
-export function BlogArticleRelatedCarousel({ currentSlug }: BlogArticleRelatedCarouselProps) {
+export function BlogArticleRelatedCarousel({
+  currentSlug,
+  useBakedShaderBackdrops = false,
+}: BlogArticleRelatedCarouselProps) {
   const posts = getOtherBlogLandingPosts(currentSlug);
 
   if (posts.length === 0) {
@@ -22,7 +26,12 @@ export function BlogArticleRelatedCarousel({ currentSlug }: BlogArticleRelatedCa
           {posts.map((post) => (
             <li key={post.slug} className="blog-article-related-carousel__slide">
               <Link href={post.path} className="group block h-full no-underline">
-                <BlogLandingPostCard post={post} linked={false} previewContext="carousel" />
+                <BlogLandingPostCard
+                  post={post}
+                  linked={false}
+                  previewContext="carousel"
+                  useBakedShaderBackdrops={useBakedShaderBackdrops}
+                />
               </Link>
             </li>
           ))}
