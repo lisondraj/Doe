@@ -1,10 +1,10 @@
 "use client";
 
-import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
+import { StoryShaderCaptureGradient } from "@/components/story/StoryShaderCaptureGradient";
 import { doeHomeDuskShaderBandSurface } from "@/lib/proto/proto-shader-backdrop-colors";
 
-const CAPTURE_WIDTH = 3840;
-const CAPTURE_HEIGHT = 3000;
+const CAPTURE_WIDTH = 7680;
+const CAPTURE_HEIGHT = 6000;
 
 function TeamShaderCaptureTile({
   id,
@@ -19,22 +19,8 @@ function TeamShaderCaptureTile({
   const surface = { ...ambient, variant };
 
   return (
-    <div
-      id={id}
-      style={{
-        position: "relative",
-        width: CAPTURE_WIDTH,
-        height: CAPTURE_HEIGHT,
-        overflow: "hidden",
-        backgroundColor: surface.colorBack,
-      }}
-    >
-      <ProtoGrainGradient
-        variant={surface.variant}
-        colors={surface.colors}
-        colorBack={surface.colorBack}
-        static
-      />
+    <div id={id}>
+      <StoryShaderCaptureGradient surface={surface} width={CAPTURE_WIDTH} height={CAPTURE_HEIGHT} />
     </div>
   );
 }

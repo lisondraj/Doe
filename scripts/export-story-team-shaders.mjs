@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
@@ -10,23 +10,27 @@ const outDir = path.join(root, "public", "story");
 const baseUrl = process.env.STORY_SHADER_BASE_URL ?? "http://127.0.0.1:3001";
 const captureRoute = "/story/team-shader-capture";
 
+const CAPTURE_WIDTH = 7680;
+const CAPTURE_HEIGHT = 6000;
+const MIN_CANVAS_WIDTH = Math.floor(CAPTURE_WIDTH * 0.95);
+
 const targets = [
   { id: "story-team-james-capture", filename: "team-james-backdrop.png" },
   { id: "story-team-matthew-capture", filename: "team-matthew-backdrop.png" },
 ];
 
 async function waitForShaderCanvas(page, selector) {
-  await page.waitForSelector(`${selector} canvas`, { timeout: 60_000 });
+  await page.waitForSelector(`${selector} canvas`, { timeout: 120_000 });
   await page.waitForFunction(
-    (sel) => {
+    ({ sel, minWidth }) => {
       const canvas = document.querySelector(`${sel} canvas`);
       if (!(canvas instanceof HTMLCanvasElement)) return false;
-      return canvas.width > 16 && canvas.height > 16;
+      return canvas.width >= minWidth && canvas.height >= 16;
     },
-    selector,
-    { timeout: 60_000 },
+    { sel: selector, minWidth: MIN_CANVAS_WIDTH },
+    { timeout: 120_000 },
   );
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(2000);
 }
 
 async function captureTarget(page, selector, outputPath) {
@@ -51,11 +55,11 @@ async function main() {
 
   try {
     const context = await browser.newContext({
-      viewport: { width: 4040, height: 6400 },
+      viewport: { width: CAPTURE_WIDTH + 160, height: CAPTURE_HEIGHT * 2 + 320 },
       deviceScaleFactor: 1,
     });
     const page = await context.newPage();
-    await page.goto(`${baseUrl}${captureRoute}`, { waitUntil: "networkidle", timeout: 120_000 });
+    await page.goto(`${baseUrl}${captureRoute}`, { waitUntil: "networkidle", timeout: 180_000 });
 
     for (const target of targets) {
       const outputPath = path.join(outDir, target.filename);

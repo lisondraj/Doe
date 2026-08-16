@@ -3,7 +3,7 @@
 import { StoryShaderCaptureGradient } from "@/components/story/StoryShaderCaptureGradient";
 import { STORY_MEET_DOE_MODAL_SHADERS } from "@/lib/story/story-contact-shader";
 
-const CAPTURE_WIDTH = 3840;
+const CAPTURE_WIDTH = 7680;
 const CAPTURE_HEIGHT = Math.round((CAPTURE_WIDTH * 1.333333) / 2.35);
 
 function MeetDoeShaderCaptureTile({ id, slideIndex }: { id: string; slideIndex: number }) {

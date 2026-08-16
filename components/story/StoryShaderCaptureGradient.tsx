@@ -48,7 +48,7 @@ export function StoryShaderCaptureGradient({
         offsetX={preset.offsetX}
         offsetY={preset.offsetY}
         scale={preset.scale}
-        maxPixelCount={2560 * 1440 * 4}
+        maxPixelCount={width * height}
       />
     </div>
   );
