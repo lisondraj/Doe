@@ -13,6 +13,11 @@ import "@/lib/story/story-page.css";
 
 const STORY_MEET_DOE_REVEAL_START_DELAY_MS = 350;
 
+function isStoryMeetDoePhoneLayout() {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.getAttribute("data-doeforvc-always-phone") === "true";
+}
+
 function clearStoryMeetDoePending() {
   document.documentElement.removeAttribute("data-story-meet-doe-pending");
 }
@@ -38,10 +43,14 @@ function MeetDoeModalSlide({
   slideIndex,
   titleId,
   isRevealed,
+  mountShader = true,
+  shaderMountKey = 0,
 }: {
   slideIndex: number;
   titleId?: string;
   isRevealed: boolean;
+  mountShader?: boolean;
+  shaderMountKey?: number;
 }) {
   const shader = STORY_MEET_DOE_MODAL_SHADERS[slideIndex] ?? STORY_MEET_DOE_MODAL_SHADERS[0];
   const lines = STORY_MEET_DOE_MODAL_SLIDE_LINES[slideIndex] ?? STORY_MEET_DOE_MODAL_SLIDE_LINES[0];
@@ -56,14 +65,17 @@ function MeetDoeModalSlide({
         className="story-meet-doe-modal__backdrop"
         style={{ backgroundColor: shader.colorBack }}
       >
-        <ProtoGrainGradient
-          static
-          variant={shader.variant}
-          colors={shader.colors}
-          colorBack={shader.colorBack}
-          className="story-meet-doe-modal__shader absolute inset-0 h-full w-full"
-          aria-hidden
-        />
+        {mountShader ? (
+          <ProtoGrainGradient
+            key={`${slideIndex}-${shaderMountKey}`}
+            static
+            variant={shader.variant}
+            colors={shader.colors}
+            colorBack={shader.colorBack}
+            className="story-meet-doe-modal__shader absolute inset-0 h-full w-full"
+            aria-hidden
+          />
+        ) : null}
         <h1
           id={titleId}
           className={`story-meet-doe-modal__title${isBrandWordmark ? ` story-meet-doe-modal__title--brand ${lora.className}` : ` doehealth-hero-headline ${DOEPHONE_DISPLAY_WEIGHT_TW} ${suisseIntl.className}`}${isStatement ? " story-meet-doe-modal__title--statement" : ""}${isProductStack ? " story-meet-doe-modal__title--product-stack" : ""}${!isBrandWordmark && isRevealed ? " story-meet-doe-modal__title--revealed" : ""}`}
@@ -89,9 +101,12 @@ export function StoryMeetDoeModal() {
   const [mounted, setMounted] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [revealedSlide, setRevealedSlide] = useState<number | null>(null);
+  const [phoneLayout, setPhoneLayout] = useState(false);
+  const [phoneShaderEpoch, setPhoneShaderEpoch] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
+    setPhoneLayout(isStoryMeetDoePhoneLayout());
     setMounted(true);
     const shouldShow = storyMeetDoeModalShouldShow();
     setOpen(shouldShow);
@@ -99,6 +114,26 @@ export function StoryMeetDoeModal() {
       clearStoryMeetDoePending();
     }
   }, []);
+
+  useLayoutEffect(() => {
+    if (!open || !phoneLayout) return;
+
+    let cancelled = false;
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        if (!cancelled) {
+          setPhoneShaderEpoch((current) => current + 1);
+        }
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [open, phoneLayout]);
 
   useLayoutEffect(() => {
     if (!mounted) return;
@@ -242,6 +277,8 @@ export function StoryMeetDoeModal() {
                 slideIndex={index}
                 titleId={index === 0 ? "story-meet-doe-title" : undefined}
                 isRevealed={revealedSlide === index}
+                mountShader={!phoneLayout || index === activeSlide}
+                shaderMountKey={phoneLayout && index === activeSlide ? phoneShaderEpoch : 0}
               />
             ))}
           </div>

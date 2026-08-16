@@ -769,7 +769,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__panel {
 
 html[data-doeforvc-always-phone] .story-meet-doe-modal__backdrop {
   aspect-ratio: auto;
-  min-height: clamp(22rem, 66vh, 28rem);
+  height: clamp(26rem, 78vh, 34rem);
+  min-height: clamp(26rem, 78vh, 34rem);
 }
 
 html[data-doeforvc-always-phone] .story-meet-doe-modal__title--brand {
@@ -2491,12 +2492,24 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 }
 
 /* iPhone /story — Goals at Seed: scroll-friendly spacing on top of 2-col mobile grid */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--fundraise.story-tab-panel__body--goals {
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-callout {
   flex: none;
   height: auto;
-  min-height: 0;
+  min-height: min-content;
+  container-type: normal;
+  overflow: visible;
   justify-content: flex-start;
-  gap: clamp(1.15rem, 4vw, 1.75rem);
+  --story-goals-row-gap: clamp(1.15rem, 4vw, 1.75rem);
+  --story-goals-grid-cell-y: clamp(0.85rem, 2.75vw, 1.25rem);
+  --story-goals-grid-cell-x: clamp(0.55rem, 2vw, 0.85rem);
+  gap: var(--story-goals-row-gap);
   padding: clamp(0.75rem, 3vw, 1.1rem) clamp(0.85rem, 3.25vw, 1.15rem) clamp(1.25rem, 4vw, 1.75rem);
 }
 
@@ -2507,6 +2520,12 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-list {
   flex: none;
   align-content: start;
+  width: 100%;
+  min-height: min-content;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-list__item {
+  padding: var(--story-goals-grid-cell-y) var(--story-goals-grid-cell-x);
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-list__item:nth-child(n + 4):nth-child(-n + 6) .story-goals-product-lines__name {
