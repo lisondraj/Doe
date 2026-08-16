@@ -84,23 +84,98 @@ function readActiveSlideIndex(carousel: HTMLDivElement) {
   return closestIndex;
 }
 
+function isSlideCentered(carousel: HTMLDivElement, index: number, tolerance = 24) {
+  const slides = carousel.querySelectorAll<HTMLElement>(".story-introduction-carousel__slide");
+  const target = slides[index];
+  if (!target || target.offsetWidth <= 0 || carousel.clientWidth <= 0) return false;
+
+  const carouselCenter = carousel.scrollLeft + carousel.clientWidth / 2;
+  const slideCenter = target.offsetLeft + target.offsetWidth / 2;
+  return Math.abs(carouselCenter - slideCenter) <= tolerance;
+}
+
 function scrollToSlide(carousel: HTMLDivElement, index: number, behavior: ScrollBehavior = "smooth") {
-  const target = carousel.querySelector<HTMLElement>(
-    `.story-introduction-carousel__slide:nth-child(${index + 1})`,
-  );
-  target?.scrollIntoView({ behavior, inline: "center", block: "nearest" });
+  const slides = carousel.querySelectorAll<HTMLElement>(".story-introduction-carousel__slide");
+  const target = slides[index];
+  if (!target || target.offsetWidth <= 0 || carousel.clientWidth <= 0) return false;
+
+  const left = target.offsetLeft - (carousel.clientWidth - target.offsetWidth) / 2;
+  const nextLeft = Math.max(0, left);
+
+  if (behavior === "auto") {
+    carousel.scrollLeft = nextLeft;
+  } else {
+    carousel.scrollTo({ left: nextLeft, behavior });
+  }
+
+  return true;
 }
 
 /** Introduction tab — modal-shaped deck preview carousel with progress dots. */
 export function StoryIntroductionCarousel() {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const bootstrappingRef = useRef(true);
   const [activeSlide, setActiveSlide] = useState(STORY_INTRODUCTION_CAROUSEL_INITIAL_SLIDE_INDEX);
+  const [isReady, setIsReady] = useState(false);
 
   useLayoutEffect(() => {
     const carousel = carouselRef.current;
     if (!carousel) return;
-    scrollToSlide(carousel, STORY_INTRODUCTION_CAROUSEL_INITIAL_SLIDE_INDEX, "auto");
-    setActiveSlide(STORY_INTRODUCTION_CAROUSEL_INITIAL_SLIDE_INDEX);
+
+    const initialIndex = STORY_INTRODUCTION_CAROUSEL_INITIAL_SLIDE_INDEX;
+    let disposed = false;
+
+    const finishBootstrap = () => {
+      if (disposed || !bootstrappingRef.current) return;
+
+      bootstrappingRef.current = false;
+      carousel.classList.remove("story-introduction-carousel__track--bootstrapping");
+      carousel.classList.add("story-introduction-carousel__track--ready");
+      setActiveSlide(initialIndex);
+      setIsReady(true);
+      observer.disconnect();
+    };
+
+    const alignInitial = () => {
+      if (disposed || !bootstrappingRef.current) return;
+
+      carousel.classList.add("story-introduction-carousel__track--bootstrapping");
+
+      const didScroll = scrollToSlide(carousel, initialIndex, "auto");
+      if (!didScroll) return;
+
+      if (isSlideCentered(carousel, initialIndex)) {
+        finishBootstrap();
+      }
+    };
+
+    const observer = new ResizeObserver(alignInitial);
+    observer.observe(carousel);
+
+    const panel = carousel.closest(".story-introduction-carousel__panel");
+    const introPanel = carousel.closest(".story-introduction-panel");
+    if (panel instanceof Element) observer.observe(panel);
+    if (introPanel instanceof Element) observer.observe(introPanel);
+
+    carousel.querySelectorAll(".story-introduction-carousel__slide").forEach((slide) => {
+      observer.observe(slide);
+    });
+
+    alignInitial();
+
+    const fallback = window.setTimeout(() => {
+      if (disposed || !bootstrappingRef.current) return;
+
+      scrollToSlide(carousel, initialIndex, "auto");
+      finishBootstrap();
+    }, 600);
+
+    return () => {
+      disposed = true;
+      bootstrappingRef.current = false;
+      window.clearTimeout(fallback);
+      observer.disconnect();
+    };
   }, []);
 
   const goToSlide = useCallback((index: number) => {
@@ -113,14 +188,18 @@ export function StoryIntroductionCarousel() {
   }, []);
 
   return (
-    <div className="story-introduction-carousel" aria-label="Story deck preview">
+    <div
+      className={`story-introduction-carousel${isReady ? " story-introduction-carousel--ready" : ""}`}
+      aria-label="Story deck preview"
+    >
       <div className="story-introduction-carousel__stack">
         <div className="story-introduction-carousel__panel">
           <div
             ref={carouselRef}
-            className="story-introduction-carousel__track"
+            className="story-introduction-carousel__track story-introduction-carousel__track--bootstrapping"
             aria-label="Introduction preview slides"
             onScroll={(event) => {
+              if (bootstrappingRef.current) return;
               setActiveSlide(readActiveSlideIndex(event.currentTarget));
             }}
           >

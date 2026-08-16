@@ -966,6 +966,19 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   -ms-overflow-style: none;
 }
 
+.story-introduction-carousel__track--bootstrapping {
+  scroll-behavior: auto !important;
+  visibility: hidden;
+}
+
+.story-introduction-carousel__track--bootstrapping .story-introduction-carousel__backdrop {
+  transition: none;
+}
+
+.story-introduction-carousel__track--ready {
+  visibility: visible;
+}
+
 .story-introduction-carousel__track::-webkit-scrollbar {
   display: none;
 }
@@ -1200,7 +1213,6 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 }
 
 .product-brown-mock.product-brown-story-mode .story-our-ask-grid {
-  --story-our-ask-budget-scale: 0.88;
   --story-our-ask-col-gap: clamp(0.75rem, 1.25vw, 1.15rem);
   display: grid;
   grid-template-columns: minmax(0, 0.47fr) minmax(0, 0.53fr);
@@ -1232,18 +1244,126 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 .product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: flex-start;
   height: 100%;
   min-height: 0;
-  padding: clamp(0.45rem, 0.85vw, 0.75rem) clamp(0.25rem, 0.5vw, 0.45rem);
+  padding: clamp(0.55rem, 1vw, 0.85rem) clamp(0.25rem, 0.5vw, 0.45rem) clamp(0.45rem, 0.85vw, 0.75rem);
   overflow: hidden;
   box-sizing: border-box;
 }
 
 .product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget-wrap--embedded {
-  transform: scale(var(--story-our-ask-budget-scale));
-  transform-origin: center center;
+  flex: 1 1 auto;
+  max-height: 100%;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  margin-block: 0;
+  --story-our-ask-budget-inline: clamp(0.65rem, 1.15vw, 1rem);
+  padding-inline: var(--story-our-ask-budget-inline);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget-intro {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, max-content);
+  grid-template-rows: auto auto;
+  align-items: end;
+  column-gap: clamp(0.35rem, 0.75vw, 0.75rem);
+  row-gap: clamp(0.2rem, 0.4vw, 0.4rem);
+  width: 100%;
+  margin-bottom: clamp(0.55rem, 0.85vw, 0.85rem);
+  padding-top: 0.04em;
+  overflow: visible;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-runway--above-heading {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  gap: clamp(0.06rem, 0.12vw, 0.14rem);
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget-heading {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  align-self: flex-start;
+  text-align: left;
+  margin-bottom: 0;
+  font-size: clamp(2.1rem, 1.55rem + 1.6vw, 3.15rem);
+  line-height: 1.12;
+  padding-bottom: 0.12em;
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-runway-duration {
+  font-size: clamp(3rem, 2.05rem + 2.85vw, 5.5rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  background: none !important;
+  color: var(--story-gold-bright) !important;
+  -webkit-text-fill-color: var(--story-gold-bright) !important;
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-runway-label {
+  font-size: clamp(1.45rem, 1rem + 1.15vw, 2.35rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  color: var(--story-cream-muted) !important;
+  background: none !important;
+  -webkit-text-fill-color: var(--story-cream-muted) !important;
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget-table-shell {
+  flex: 1 1 auto;
+  min-height: 0;
+  justify-content: center;
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget thead th {
+  font-size: clamp(1.45rem, 1.2rem + 0.65vw, 1.75rem);
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget tbody th,
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget tbody td {
+  font-size: clamp(1.08rem, 0.96rem + 0.38vw, 1.2rem);
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget tbody tr.story-fundraise-budget__row--group th,
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget tbody tr.story-fundraise-budget__row--group td {
+  font-size: clamp(1.22rem, 1.08rem + 0.48vw, 1.42rem);
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget__sub-row {
+  font-size: clamp(1.12rem, 1rem + 0.42vw, 1.32rem);
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget__chevron {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget tbody tr.story-fundraise-budget__row--total th,
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--budget .story-fundraise-budget tbody tr.story-fundraise-budget__row--total td {
+  font-size: clamp(1.45rem, 1.2rem + 0.65vw, 1.75rem);
 }
 
 .product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--ask .story-fundraise-callout {
@@ -1314,26 +1434,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   text-align: right;
 }
 
-.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--ask .story-fundraise-runway {
-  align-self: flex-end;
-  align-items: flex-end;
-  width: auto;
-  max-width: 100%;
-  text-align: right;
-  margin-top: clamp(0.55rem, 0.35rem + 0.75vw, 0.95rem);
-}
-
-.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--ask .story-fundraise-runway-duration {
-  font-size: clamp(4.5rem, 2.7rem + 7.75vw, 8rem);
-}
-
-.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--ask .story-fundraise-runway-label {
-  font-size: clamp(1.85rem, 1.25rem + 1.6vw, 2.55rem);
-}
-
 .product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--ask .story-fundraise-round,
-.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--ask .story-fundraise-amount,
-.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--ask .story-fundraise-runway-duration {
+.product-brown-mock.product-brown-story-mode .story-our-ask-grid__cell--ask .story-fundraise-amount {
   background: none !important;
   color: var(--story-gold-bright) !important;
   -webkit-text-fill-color: var(--story-gold-bright) !important;
@@ -1350,6 +1452,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 
 .product-brown-mock.product-brown-story-mode .story-tab-panel__body--roadmap,
 .product-brown-mock.product-brown-story-mode .story-tab-panel__body--genome,
+.product-brown-mock.product-brown-story-mode .story-tab-panel__body--meet-doe,
 .product-brown-mock.product-brown-story-mode .story-tab-panel__body--pulse,
 .product-brown-mock.product-brown-story-mode .story-tab-panel__body--fabric,
 .product-brown-mock.product-brown-story-mode .story-tab-panel__body--float {
@@ -1395,6 +1498,13 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 
 .product-brown-mock.product-brown-story-mode .story-puzzle-tile--poster {
   border-color: rgba(212, 165, 116, 0.22);
+}
+
+.product-brown-mock.product-brown-story-mode .story-puzzle-tile--spacer {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
 }
 
 .product-brown-mock.product-brown-story-mode .story-puzzle-tile__poster {
@@ -1568,6 +1678,37 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 
 .product-brown-mock.product-brown-story-mode .story-puzzle-tile--float-3 {
   grid-column: 1;
+  grid-row: 2;
+}
+
+/* Meet Doe — 5 slots, 2 + 3 (6-column grid) */
+.product-brown-mock.product-brown-story-mode .story-puzzle-grid--meet-doe {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+.product-brown-mock.product-brown-story-mode .story-puzzle-tile--meet-doe-1 {
+  grid-column: 1 / 4;
+  grid-row: 1;
+}
+
+.product-brown-mock.product-brown-story-mode .story-puzzle-tile--meet-doe-2 {
+  grid-column: 4 / 7;
+  grid-row: 1;
+}
+
+.product-brown-mock.product-brown-story-mode .story-puzzle-tile--meet-doe-3 {
+  grid-column: 1 / 3;
+  grid-row: 2;
+}
+
+.product-brown-mock.product-brown-story-mode .story-puzzle-tile--meet-doe-4 {
+  grid-column: 3 / 5;
+  grid-row: 2;
+}
+
+.product-brown-mock.product-brown-story-mode .story-puzzle-tile--meet-doe-5 {
+  grid-column: 5 / 7;
   grid-row: 2;
 }
 
@@ -3275,7 +3416,6 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   overflow-y: visible;
 }
 
-.product-brown-mock.product-brown-story-mode .story-fundraise-budget-wrap--embedded.story-fundraise-budget-wrap--locked:not(.story-fundraise-budget-wrap--focus) .story-fundraise-budget-table-shell,
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget-wrap--embedded.story-fundraise-budget-wrap--locked.story-fundraise-budget-wrap--focus .story-fundraise-budget-table-shell {
   flex: 1;
   min-height: 0;
@@ -3302,6 +3442,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget-scroll {
@@ -3335,6 +3477,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   visibility: collapse;
   opacity: 0;
   pointer-events: none;
+  transition: opacity 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget__group-body--active {
@@ -3350,6 +3493,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   flex-shrink: 0;
   position: relative;
   z-index: 1;
+  padding-bottom: 0.12em;
   background: var(--pb-nav-surface, #181410);
 }
 
@@ -3387,16 +3531,23 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget thead th {
-  padding: 0.72rem 0 0.62rem;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 1.15rem 0 1.05rem;
   border-bottom: 1px solid rgba(212, 165, 116, 0.22);
-  font-size: clamp(1.05rem, 0.94rem + 0.35vw, 1.22rem);
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -0.018em;
+  font-size: clamp(1.35rem, 1.15rem + 0.55vw, 1.65rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   text-align: left;
-  background: var(--story-gold-text);
-  background-clip: text !important;
-  -webkit-background-clip: text !important;
+  vertical-align: bottom;
+  overflow: visible;
+  border-left: 0;
+  border-right: 0;
+  background: var(--story-gold-text), var(--pb-nav-surface, #181410);
+  background-clip: text, border-box;
+  -webkit-background-clip: text, border-box;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
 }
@@ -3433,19 +3584,31 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   color: var(--story-cream-body);
 }
 
-.product-brown-mock.product-brown-story-mode .story-fundraise-budget thead th:nth-child(2),
-.product-brown-mock.product-brown-story-mode .story-fundraise-budget thead th:nth-child(3) {
-  width: 7.5rem;
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget__value {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.016em;
 }
 
-.product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody tr.story-fundraise-budget__row--group th,
-.product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody tr.story-fundraise-budget__row--group td {
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget thead th:nth-child(2),
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget thead th:nth-child(3) {
+  width: 8.25rem;
+}
+
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody tr.story-fundraise-budget__row--group th {
   padding-top: 1.05rem;
   padding-bottom: 1.05rem;
-  font-size: clamp(1.05rem, 0.94rem + 0.35vw, 1.22rem);
+  font-size: clamp(1.22rem, 1.05rem + 0.45vw, 1.4rem);
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.018em;
+}
+
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody tr.story-fundraise-budget__row--group td {
+  padding-top: 1.05rem;
+  padding-bottom: 1.05rem;
+  font-size: clamp(1.22rem, 1.05rem + 0.45vw, 1.4rem);
+  line-height: 1.2;
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody tr.story-fundraise-budget__row--group td {
@@ -3455,12 +3618,21 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody tr.story-fundraise-budget__row--total th,
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody tr.story-fundraise-budget__row--total td {
   padding-top: 1.15rem;
+  padding-bottom: 0.2rem;
   border-bottom: 0;
   font-size: clamp(1.35rem, 1.15rem + 0.55vw, 1.65rem);
-  font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.02em;
   vertical-align: bottom;
+  overflow: visible;
+}
+
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody tr.story-fundraise-budget__row--total th {
+  font-weight: 600;
+}
+
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody tr.story-fundraise-budget__row--total td.story-fundraise-budget__value {
+  font-weight: 500;
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody tr.story-fundraise-budget__row--total th {
@@ -3510,8 +3682,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget__chevron {
-  width: 0.95rem;
-  height: 0.95rem;
+  width: 1.15rem;
+  height: 1.15rem;
   margin-top: 0;
   margin-left: auto;
   flex: none;
@@ -3583,11 +3755,11 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget__sub-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 7.5rem 7.5rem;
+  grid-template-columns: minmax(0, 1fr) 8.25rem 8.25rem;
   align-items: center;
   padding: 1.05rem 0;
   border-bottom: 1px solid rgba(212, 165, 116, 0.1);
-  font-size: clamp(1.05rem, 0.94rem + 0.35vw, 1.22rem);
+  font-size: clamp(1.12rem, 1rem + 0.42vw, 1.32rem);
   font-weight: 400;
   line-height: 1.2;
   letter-spacing: -0.018em;
@@ -3608,10 +3780,13 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget__sub-percent,
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget__sub-amount {
-  font: inherit;
   text-align: right;
   white-space: nowrap;
-  color: rgba(196, 154, 108, 0.58);
+}
+
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget__sub-percent.story-fundraise-budget__value,
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget__sub-amount.story-fundraise-budget__value {
+  color: rgba(210, 178, 132, 0.72);
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-round,
@@ -4101,18 +4276,18 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   font-size: clamp(4.35rem, 21vw, 7.25rem);
 }
 
-.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-runway {
-  align-items: center;
-  margin-top: clamp(0.85rem, 3vw, 1.25rem);
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--budget .story-fundraise-runway--above-heading {
+  align-items: flex-end;
+  text-align: right;
 }
 
-.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-runway-duration {
-  font-size: clamp(2.85rem, 13.5vw, 4.75rem);
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--budget .story-fundraise-runway-duration {
+  font-size: clamp(2.35rem, 12.5vw, 4.25rem);
 }
 
-.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--ask .story-fundraise-runway-label {
-  font-size: clamp(1.15rem, 4.2vw, 1.65rem);
-  text-align: center;
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--budget .story-fundraise-runway-label {
+  font-size: clamp(1.15rem, 4.6vw, 1.75rem);
+  text-align: right;
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-our-ask-grid__cell--budget {
@@ -4124,7 +4299,11 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget thead th {
-  font-size: clamp(0.88rem, 3.2vw, 1rem);
+  font-size: clamp(1.05rem, 3.85vw, 1.35rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  padding: 1rem 0 0.9rem;
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget thead th:nth-child(2),
@@ -4140,7 +4319,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--group th,
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--group td {
-  font-size: clamp(0.92rem, 3.2vw, 1.05rem);
+  font-size: clamp(1.02rem, 3.55vw, 1.18rem);
   padding-top: 0.88rem;
   padding-bottom: 0.88rem;
 }
@@ -4148,12 +4327,13 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--total th,
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget tbody tr.story-fundraise-budget__row--total td {
   font-size: clamp(1.05rem, 3.85vw, 1.35rem);
+  padding-bottom: 0.18rem;
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget__sub-row {
-  grid-template-columns: minmax(0, 1fr) 4.35rem 4.35rem;
+  grid-template-columns: minmax(0, 1fr) 4.75rem 4.75rem;
   padding: 0.82rem 0;
-  font-size: clamp(0.88rem, 3.1vw, 1rem);
+  font-size: clamp(0.98rem, 3.45vw, 1.12rem);
 }
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-fundraise-budget__sub-label {

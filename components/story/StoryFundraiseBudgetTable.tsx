@@ -1,15 +1,21 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
-import { suisseIntl } from "@/lib/home/fonts";
+import { dmSans, suisseIntl } from "@/lib/home/fonts";
 import {
   STORY_FUNDRAISE_BUDGET_GROUPS,
   STORY_FUNDRAISE_BUDGET_TOTAL,
 } from "@/lib/story/story-fundraise-budget";
+import {
+  STORY_FUNDRAISE_RUNWAY_DURATION,
+  STORY_FUNDRAISE_RUNWAY_LABEL,
+} from "@/lib/story/story-copy";
 
 const STORY_BUDGET_HEADING = "Budget";
+const STORY_BUDGET_VALUE_CLASS = "story-fundraise-budget__value";
 const STORY_BUDGET_MIN_LOCK_HEIGHT = 48;
+const STORY_BUDGET_CLOSE_MS = 480;
 
 function BudgetChevron({ open }: { open: boolean }) {
   return (
@@ -30,32 +36,84 @@ function BudgetChevron({ open }: { open: boolean }) {
 
 /** Pre-seed use-of-funds table — standalone or embedded in Our Ask grid. */
 export function StoryFundraiseBudgetTable({ embedded = false }: { embedded?: boolean }) {
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [focusId, setFocusId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
   const [lockedHeight, setLockedHeight] = useState<number | null>(null);
   const [focusSubHeight, setFocusSubHeight] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const isFocusMode = expandedId != null;
-  const isHeightLocked = lockedHeight != null && (!embedded || isFocusMode);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const collapsedHeightRef = useRef<number | null>(null);
+  const isFocusMode = focusId != null;
+  const isHeightLocked = lockedHeight != null;
+
+  function measureWrapContentHeight() {
+    const wrap = wrapRef.current;
+    if (!wrap) return null;
+
+    const intro = wrap.querySelector<HTMLElement>(".story-fundraise-budget-intro");
+    const heading = wrap.querySelector<HTMLElement>(".story-fundraise-budget-heading");
+    const shell = wrap.querySelector<HTMLElement>(".story-fundraise-budget-table-shell");
+    if (!shell) return null;
+
+    const introBlock = intro ?? heading;
+    const introHeight = introBlock?.offsetHeight ?? 0;
+    const introMargin =
+      introBlock != null
+        ? Number.parseFloat(getComputedStyle(introBlock).marginBottom) || 0
+        : 0;
+
+    return introHeight + introMargin + shell.scrollHeight;
+  }
+
+  function rememberCollapsedHeight() {
+    const height = measureWrapContentHeight();
+    if (height != null && height >= STORY_BUDGET_MIN_LOCK_HEIGHT) {
+      collapsedHeightRef.current = height;
+    }
+  }
 
   const orderedGroups = useMemo(() => {
-    if (!expandedId) return STORY_FUNDRAISE_BUDGET_GROUPS;
+    if (!focusId) return STORY_FUNDRAISE_BUDGET_GROUPS;
 
-    const activeIndex = STORY_FUNDRAISE_BUDGET_GROUPS.findIndex((group) => group.id === expandedId);
+    const activeIndex = STORY_FUNDRAISE_BUDGET_GROUPS.findIndex((group) => group.id === focusId);
     if (activeIndex < 0) return STORY_FUNDRAISE_BUDGET_GROUPS;
 
     const groups = [...STORY_FUNDRAISE_BUDGET_GROUPS];
     const [active] = groups.splice(activeIndex, 1);
     return [active, ...groups];
-  }, [expandedId]);
+  }, [focusId]);
+
+  useEffect(
+    () => () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    },
+    [],
+  );
 
   useLayoutEffect(() => {
+    if (embedded) {
+      if (isFocusMode || isHeightLocked) return;
+
+      rememberCollapsedHeight();
+
+      const wrap = wrapRef.current;
+      if (!wrap) return;
+
+      const observer = new ResizeObserver(() => {
+        rememberCollapsedHeight();
+      });
+      observer.observe(wrap);
+
+      return () => observer.disconnect();
+    }
+
     const wrap = wrapRef.current;
-    if (!wrap || isFocusMode || embedded) return;
+    if (!wrap || isFocusMode) return;
 
     const measure = () => {
-      const height = wrap.getBoundingClientRect().height;
-      if (height >= STORY_BUDGET_MIN_LOCK_HEIGHT) {
+      const height = measureWrapContentHeight();
+      if (height != null && height >= STORY_BUDGET_MIN_LOCK_HEIGHT) {
         setLockedHeight(height);
       }
     };
@@ -66,7 +124,7 @@ export function StoryFundraiseBudgetTable({ embedded = false }: { embedded?: boo
     observer.observe(wrap);
 
     return () => observer.disconnect();
-  }, [embedded, isFocusMode]);
+  }, [embedded, isFocusMode, isHeightLocked]);
 
   useLayoutEffect(() => {
     const scroll = scrollRef.current;
@@ -89,7 +147,7 @@ export function StoryFundraiseBudgetTable({ embedded = false }: { embedded?: boo
     };
 
     setFocusSubHeight(0);
-    scroll.scrollTo({ top: 0, behavior: "smooth" });
+    scroll.scrollTo({ top: 0, behavior: "auto" });
 
     const raf = window.requestAnimationFrame(() => {
       window.requestAnimationFrame(measure);
@@ -103,35 +161,53 @@ export function StoryFundraiseBudgetTable({ embedded = false }: { embedded?: boo
       window.cancelAnimationFrame(raf);
       observer.disconnect();
     };
-  }, [embedded, expandedId, isFocusMode]);
+  }, [focusId, isFocusMode]);
 
-  function toggleGroup(id: string) {
-    setExpandedId((current) => {
-      const next = current === id ? null : id;
+  function lockWrapHeight() {
+    rememberCollapsedHeight();
 
-      if (next != null && wrapRef.current) {
-        const height = wrapRef.current.getBoundingClientRect().height;
-        if (height >= STORY_BUDGET_MIN_LOCK_HEIGHT) {
-          setLockedHeight(height);
-        }
-      } else if (!embedded) {
-        setLockedHeight(null);
-      }
-
-      return next;
-    });
+    const height = collapsedHeightRef.current ?? measureWrapContentHeight();
+    if (height != null && height >= STORY_BUDGET_MIN_LOCK_HEIGHT) {
+      setLockedHeight(height);
+    }
   }
 
-  const pinTotalRow = !embedded || isFocusMode;
+  function toggleGroup(id: string) {
+    if (focusId === id) {
+      setOpenId(null);
+      closeTimerRef.current = setTimeout(() => {
+        setFocusId(null);
+      }, STORY_BUDGET_CLOSE_MS);
+      return;
+    }
+
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+
+    lockWrapHeight();
+    setFocusId(id);
+    setOpenId(id);
+  }
+
+  const pinTotalRow = embedded || isFocusMode;
 
   return (
     <div
       ref={wrapRef}
-      className={`story-fundraise-budget-wrap ${suisseIntl.className}${embedded ? " story-fundraise-budget-wrap--embedded" : ""}${isHeightLocked ? " story-fundraise-budget-wrap--locked" : ""}${isFocusMode ? " story-fundraise-budget-wrap--focus" : ""}`}
+      className={`story-fundraise-budget-wrap${embedded ? " story-fundraise-budget-wrap--embedded" : ""}${isHeightLocked ? " story-fundraise-budget-wrap--locked" : ""}${isFocusMode ? " story-fundraise-budget-wrap--focus" : ""}`}
       style={isHeightLocked && lockedHeight != null ? { height: lockedHeight, maxHeight: lockedHeight } : undefined}
     >
-      {!embedded ? <h2 className="story-fundraise-budget-heading m-0">{STORY_BUDGET_HEADING}</h2> : null}
-      <div className="story-fundraise-budget-table-shell">
+      {embedded ? (
+        <div className="story-fundraise-budget-intro">
+          <div className={`story-fundraise-runway story-fundraise-runway--above-heading ${dmSans.className}`}>
+            <p className="story-fundraise-runway-duration m-0">{STORY_FUNDRAISE_RUNWAY_DURATION}</p>
+            <p className="story-fundraise-runway-label m-0">{STORY_FUNDRAISE_RUNWAY_LABEL}</p>
+          </div>
+          <h2 className={`story-fundraise-budget-heading m-0 ${suisseIntl.className}`}>{STORY_BUDGET_HEADING}</h2>
+        </div>
+      ) : (
+        <h2 className={`story-fundraise-budget-heading m-0 ${suisseIntl.className}`}>{STORY_BUDGET_HEADING}</h2>
+      )}
+      <div className={`story-fundraise-budget-table-shell ${dmSans.className}`}>
         <div
           ref={scrollRef}
           className={`story-fundraise-budget-scroll${isFocusMode ? " story-fundraise-budget-scroll--focus" : ""}`}
@@ -146,14 +222,14 @@ export function StoryFundraiseBudgetTable({ embedded = false }: { embedded?: boo
             </thead>
 
             {orderedGroups.map((group) => {
-              const open = group.id === expandedId;
+              const open = group.id === openId;
               const collapsible = group.id !== "reserve";
-              const hidden = isFocusMode && !open;
+              const hidden = isFocusMode && group.id !== focusId;
 
               return (
                 <tbody
                   key={group.id}
-                  className={`story-fundraise-budget__group-body${open && isFocusMode ? " story-fundraise-budget__group-body--active" : ""}${hidden ? " story-fundraise-budget__group-body--hidden" : ""}`}
+                  className={`story-fundraise-budget__group-body${group.id === focusId && isFocusMode ? " story-fundraise-budget__group-body--active" : ""}${hidden ? " story-fundraise-budget__group-body--hidden" : ""}`}
                 >
                   <GroupRows
                     group={group}
@@ -192,8 +268,8 @@ function TotalRow() {
   return (
     <tr className="story-fundraise-budget__row--total">
       <th scope="row">{STORY_FUNDRAISE_BUDGET_TOTAL.category}</th>
-      <td>{STORY_FUNDRAISE_BUDGET_TOTAL.percent}</td>
-      <td>{STORY_FUNDRAISE_BUDGET_TOTAL.amount}</td>
+      <td className={STORY_BUDGET_VALUE_CLASS}>{STORY_FUNDRAISE_BUDGET_TOTAL.percent}</td>
+      <td className={STORY_BUDGET_VALUE_CLASS}>{STORY_FUNDRAISE_BUDGET_TOTAL.amount}</td>
     </tr>
   );
 }
@@ -230,8 +306,8 @@ function GroupRows({
             <span className="story-fundraise-budget__group-label">{group.category}</span>
           )}
         </th>
-        <td>{group.percent}</td>
-        <td>{group.amount}</td>
+        <td className={STORY_BUDGET_VALUE_CLASS}>{group.percent}</td>
+        <td className={STORY_BUDGET_VALUE_CLASS}>{group.amount}</td>
       </tr>
 
       {collapsible ? (
@@ -256,8 +332,12 @@ function GroupRows({
                     className="story-fundraise-budget__sub-row"
                   >
                     <span className="story-fundraise-budget__sub-label">{subcategory.label}</span>
-                    <span className="story-fundraise-budget__sub-percent">{subcategory.percent}</span>
-                    <span className="story-fundraise-budget__sub-amount">{subcategory.amount}</span>
+                    <span className={`story-fundraise-budget__sub-percent ${STORY_BUDGET_VALUE_CLASS}`}>
+                      {subcategory.percent}
+                    </span>
+                    <span className={`story-fundraise-budget__sub-amount ${STORY_BUDGET_VALUE_CLASS}`}>
+                      {subcategory.amount}
+                    </span>
                   </div>
                 ))}
               </div>

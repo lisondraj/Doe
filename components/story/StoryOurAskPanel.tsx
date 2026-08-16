@@ -1,7 +1,7 @@
 import { StoryFundraiseAskPanel } from "@/components/story/StoryFundraiseAskPanel";
 import { StoryFundraiseBudgetTable } from "@/components/story/StoryFundraiseBudgetTable";
 
-/** Our Ask — ask left, full-height budget right. */
+/** Our Ask — pre-seed callout left, budget right. */
 export function StoryOurAskPanel() {
   return (
     <div className="story-our-ask-stage">

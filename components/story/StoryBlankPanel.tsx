@@ -7,6 +7,7 @@ import { StoryFloatPanel } from "@/components/story/StoryFloatPanel";
 import { StoryGenomePanel } from "@/components/story/StoryGenomePanel";
 import { StoryGoalsAtSeedPanel } from "@/components/story/StoryGoalsAtSeedPanel";
 import { StoryIntroductionPanel } from "@/components/story/StoryIntroductionPanel";
+import { StoryMeetDoePanel } from "@/components/story/StoryMeetDoePanel";
 import { StoryOurAskPanel } from "@/components/story/StoryOurAskPanel";
 import { StoryPulsePanel } from "@/components/story/StoryPulsePanel";
 import { StoryRoadmapPanel } from "@/components/story/StoryRoadmapPanel";
@@ -46,6 +47,7 @@ function useStoryTabFade(tab: StoryTabId, title: string) {
 
 function StoryTabPanelContent({ tab }: { tab: StoryTabId }) {
   if (tab === "introduction") return <StoryIntroductionPanel />;
+  if (tab === "meet-doe") return <StoryMeetDoePanel />;
   if (tab === "our-ask") return <StoryOurAskPanel />;
   if (tab === "goals-at-seed") return <StoryGoalsAtSeedPanel />;
   if (tab === "team") return <StoryTeamPanel />;
@@ -59,6 +61,7 @@ function StoryTabPanelContent({ tab }: { tab: StoryTabId }) {
 
 function storyTabPanelBodyClass(tab: StoryTabId) {
   if (tab === "introduction") return " story-tab-panel__body--introduction";
+  if (tab === "meet-doe") return " story-tab-panel__body--meet-doe";
   if (tab === "our-ask") return " story-tab-panel__body--our-ask";
   if (tab === "goals-at-seed") return " story-tab-panel__body--fundraise story-tab-panel__body--goals";
   if (tab === "team") return " story-tab-panel__body--team";

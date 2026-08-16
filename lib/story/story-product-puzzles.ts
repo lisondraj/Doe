@@ -1,13 +1,15 @@
 import {
   STORY_FABRIC_TALL_LEFT_POSTER,
+  STORY_FLOAT_TOP_RIGHT_POSTER,
   STORY_GENOME_BOTTOM_RIGHT_POSTER,
   STORY_GENOME_TOP_LEFT_POSTER,
   STORY_PULSE_TALL_LEFT_POSTER,
   STORY_PULSE_WIDE_BOTTOM_POSTER,
+  STORY_ROADMAP_PRIOR_AUTH_POSTER,
 } from "@/lib/story/story-shader-posters";
 import { storyProductPuzzlePlaceholder } from "@/lib/story/story-product-puzzle-copy";
 
-export type StoryProductPuzzleLayout = "genome" | "pulse" | "fabric" | "float";
+export type StoryProductPuzzleLayout = "genome" | "pulse" | "fabric" | "float" | "meet-doe";
 
 export type StoryProductPuzzleTile = {
   id: string;
@@ -16,6 +18,8 @@ export type StoryProductPuzzleTile = {
   description: string;
   /** Pre-rendered shader poster masked into this tile. */
   posterSrc?: string;
+  /** Empty grid slot — reserves layout space without a visible tile. */
+  spacer?: boolean;
 };
 
 export type StoryProductPuzzleConfig = {
@@ -123,6 +127,7 @@ export const STORY_FABRIC_PUZZLE: StoryProductPuzzleConfig = {
       placement: "fabric-3",
       label: "Fabric delivery",
       description: storyProductPuzzlePlaceholder("Fabric", "Delivery path"),
+      posterSrc: STORY_PULSE_WIDE_BOTTOM_POSTER,
     },
   ],
 };
@@ -159,6 +164,53 @@ export const STORY_FLOAT_PUZZLE: StoryProductPuzzleConfig = {
   ],
 };
 
+/**
+ * Meet Doe — 5 tiles, 2 on top + 3 below (6-column grid).
+ * [====][====]
+ * [==][==][==]
+ */
+export const STORY_MEET_DOE_PUZZLE: StoryProductPuzzleConfig = {
+  layout: "meet-doe",
+  ariaLabel: "Meet Doe",
+  tiles: [
+    {
+      id: "meet-doe-1",
+      placement: "meet-doe-1",
+      label: "Meet Doe overview",
+      description: storyProductPuzzlePlaceholder("Meet Doe", "Overview"),
+      spacer: true,
+    },
+    {
+      id: "meet-doe-2",
+      placement: "meet-doe-2",
+      label: "Meet Doe platform",
+      description: storyProductPuzzlePlaceholder("Meet Doe", "Platform surface"),
+      posterSrc: STORY_FLOAT_TOP_RIGHT_POSTER,
+    },
+    {
+      id: "meet-doe-3",
+      placement: "meet-doe-3",
+      label: "Meet Doe intelligence",
+      description: storyProductPuzzlePlaceholder("Meet Doe", "Intelligence layer"),
+      posterSrc: STORY_GENOME_BOTTOM_RIGHT_POSTER,
+    },
+    {
+      id: "meet-doe-4",
+      placement: "meet-doe-4",
+      label: "Meet Doe fabric",
+      description: storyProductPuzzlePlaceholder("Meet Doe", "Fabric layer"),
+      posterSrc: STORY_ROADMAP_PRIOR_AUTH_POSTER,
+    },
+    {
+      id: "meet-doe-5",
+      placement: "meet-doe-5",
+      label: "Meet Doe pulse",
+      description: storyProductPuzzlePlaceholder("Meet Doe", "Pulse layer"),
+      posterSrc: STORY_FABRIC_TALL_LEFT_POSTER,
+    },
+  ],
+};
+
 export const STORY_PRODUCT_PUZZLES: Record<
   Exclude<StoryProductPuzzleLayout, never>,
   StoryProductPuzzleConfig
@@ -167,4 +219,5 @@ export const STORY_PRODUCT_PUZZLES: Record<
   pulse: STORY_PULSE_PUZZLE,
   fabric: STORY_FABRIC_PUZZLE,
   float: STORY_FLOAT_PUZZLE,
+  "meet-doe": STORY_MEET_DOE_PUZZLE,
 };

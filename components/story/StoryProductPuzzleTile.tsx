@@ -45,6 +45,15 @@ export function StoryProductPuzzleTile({ tile }: { tile: StoryProductPuzzleTile 
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [close, open]);
 
+  if (tile.spacer) {
+    return (
+      <li
+        className={`story-puzzle-tile story-puzzle-tile--spacer story-puzzle-tile--${tile.placement}`}
+        aria-hidden="true"
+      />
+    );
+  }
+
   return (
     <li
       className={`story-puzzle-tile story-puzzle-tile--${tile.placement}${tile.posterSrc ? " story-puzzle-tile--poster" : ""}${open ? " story-puzzle-tile--modal-open" : ""}`}
