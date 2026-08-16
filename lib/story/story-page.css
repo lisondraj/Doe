@@ -759,7 +759,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal {
 }
 
 html[data-doeforvc-always-phone] .story-meet-doe-modal__stack {
-  width: min(100%, calc(100vw - 1.25rem));
+  width: min(100%, calc(100vw - 3.5rem));
   gap: 0.95rem;
 }
 
@@ -769,7 +769,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__panel {
 
 html[data-doeforvc-always-phone] .story-meet-doe-modal__backdrop {
   aspect-ratio: auto;
-  min-height: min(68vw, 22rem);
+  min-height: clamp(22rem, 66vh, 28rem);
 }
 
 html[data-doeforvc-always-phone] .story-meet-doe-modal__title--brand {
