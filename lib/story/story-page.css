@@ -37,6 +37,10 @@ html[data-story-meet-doe-pending] .story-tab-pager {
   --story-rail-field-border: rgba(212, 165, 116, 0.16);
   --story-rail-field-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
   --story-rail-field-chip: rgba(21, 16, 10, 0.62);
+  --story-cream-text: var(--pl-console-text, #f2e8da);
+  --story-cream-muted: rgba(245, 230, 208, 0.62);
+  --story-cream-body: rgba(245, 230, 208, 0.72);
+  --story-gutter: var(--pl-gutter, clamp(1rem, 2vw, 1.35rem));
 }
 
 .product-brown-mock.product-brown-story-mode .product-brown-layered-layout .product-brown-sidebar::before {
@@ -1195,7 +1199,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 }
 
 .product-brown-mock.product-brown-story-mode .story-goals-list__item:nth-child(n + 4):nth-child(-n + 6) {
-  overflow: hidden;
+  overflow: visible;
   gap: clamp(0.05rem, 0.18cqb, 0.12rem);
   padding-block: calc(var(--story-goals-grid-cell-y) * 0.82);
 }
@@ -1295,7 +1299,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   line-height: 0.98;
   letter-spacing: -0.032em;
   overflow: visible;
-  white-space: nowrap;
+  white-space: normal;
+  text-wrap: balance;
   width: 100%;
   text-align: center;
 }
@@ -1396,10 +1401,11 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   font-weight: 500;
   line-height: 1.08;
   letter-spacing: -0.018em;
-  color: rgba(245, 230, 208, 0.62) !important;
+  color: var(--story-cream-muted) !important;
   background: none !important;
-  -webkit-text-fill-color: rgba(245, 230, 208, 0.62) !important;
+  -webkit-text-fill-color: var(--story-cream-muted) !important;
   overflow: visible;
+  overflow-wrap: anywhere;
   text-wrap: balance;
 }
 
@@ -1745,7 +1751,7 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody td {
-  color: rgba(245, 230, 208, 0.72);
+  color: var(--story-cream-body);
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget thead th:nth-child(2),
@@ -1820,6 +1826,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   flex: 1;
   min-width: 0;
   padding-right: 0.15rem;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .product-brown-mock.product-brown-story-mode .story-fundraise-budget__chevron {
@@ -2020,9 +2028,11 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   font-weight: 500;
   line-height: 1.05;
   letter-spacing: -0.02em;
-  color: rgba(245, 230, 208, 0.62) !important;
+  color: var(--story-cream-muted) !important;
   background: none !important;
-  -webkit-text-fill-color: rgba(245, 230, 208, 0.62) !important;
+  -webkit-text-fill-color: var(--story-cream-muted) !important;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .story-meet-doe-modal {
@@ -2530,6 +2540,26 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-goals-list__item:nth-child(n + 4):nth-child(-n + 6) .story-goals-product-lines__name {
   white-space: normal;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+/* Story ↔ Product consistency — content panels share wrap, color, and gutter rules (see design.md) */
+.product-brown-mock.product-brown-story-mode .story-goals-stat-focus,
+.product-brown-mock.product-brown-story-mode .story-goals-hero-label,
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody th {
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-tab-panel {
+  --pl-gutter: var(--story-gutter);
+}
+
+.product-brown-mock.product-brown-story-mode .story-our-ask-stage,
+.product-brown-mock.product-brown-story-mode .story-team-callout,
+.product-brown-mock.product-brown-story-mode .story-goals-callout {
+  padding-inline: var(--story-gutter);
 }
 
 @keyframes story-meet-doe-modal-enter {
