@@ -1058,6 +1058,201 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   bottom: var(--story-team-edge-inset-y);
 }
 
+.product-brown-mock.product-brown-story-mode .story-tab-panel__body--roadmap {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-callout {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(1.35rem, 2.5vw, 2rem);
+  width: 100%;
+  height: 100%;
+  padding: clamp(0.75rem, 1.35vw, 1.15rem) var(--story-gutter, clamp(1rem, 2vw, 1.35rem));
+  box-sizing: border-box;
+  pointer-events: none;
+  user-select: none;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-hero {
+  flex: none;
+  width: 100%;
+  max-width: min(100%, 46rem);
+  margin-inline: auto;
+  text-align: center;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-hero-headline {
+  background: var(--story-gold-text);
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  font-size: clamp(2.35rem, 1.45rem + 2.75vw, 3.85rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.032em;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-hero-body {
+  margin-top: clamp(0.65rem, 1.1vw, 0.95rem);
+  font-size: clamp(0.98rem, 0.88rem + 0.35vw, 1.12rem);
+  font-weight: 400;
+  line-height: 1.48;
+  letter-spacing: -0.012em;
+  color: var(--story-cream-body);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-columns {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1.15rem, 2vw, 1.75rem);
+  align-items: stretch;
+  width: 100%;
+  max-width: min(100%, 56rem);
+  margin-inline: auto;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-product,
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.25vw, 1rem);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-eyebrow {
+  font-size: clamp(0.68rem, 0.62rem + 0.18vw, 0.76rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--story-gold-muted);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-focus-card {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.28rem, 0.45vw, 0.38rem);
+  padding: clamp(0.85rem, 1.25vw, 1.05rem) clamp(0.95rem, 1.35vw, 1.15rem);
+  border: 1px solid rgba(212, 165, 116, 0.18);
+  border-radius: 0.75rem;
+  background: rgba(212, 165, 116, 0.06);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-focus-label {
+  font-size: clamp(0.68rem, 0.62rem + 0.18vw, 0.76rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--story-cream-muted);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-focus-value {
+  background: var(--story-gold-text);
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  font-size: clamp(1.85rem, 1.25rem + 1.75vw, 2.65rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.028em;
+  white-space: nowrap;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.42rem, 0.65vw, 0.55rem);
+  list-style: none;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-grid__item {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.62rem, 0.95vw, 0.78rem) clamp(0.55rem, 0.85vw, 0.72rem);
+  border: 1px solid rgba(212, 165, 116, 0.14);
+  border-radius: 0.55rem;
+  background: rgba(212, 165, 116, 0.04);
+  text-align: center;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-grid__label {
+  font-size: clamp(0.82rem, 0.74rem + 0.28vw, 0.94rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.012em;
+  color: var(--story-cream-body);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-headline {
+  background: var(--story-gold-text);
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  font-size: clamp(1.65rem, 1.05rem + 1.65vw, 2.35rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.72rem, 1.1vw, 0.95rem);
+  list-style: none;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.62rem, 0.95vw, 0.78rem);
+  min-width: 0;
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-list__bullet {
+  flex: none;
+  width: 0.42rem;
+  height: 0.42rem;
+  margin-top: 0.42em;
+  border-radius: 9999px;
+  background: var(--story-gold-mid);
+  box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.12);
+}
+
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-list__text {
+  flex: 1;
+  min-width: 0;
+  font-size: clamp(0.92rem, 0.84rem + 0.28vw, 1.02rem);
+  font-weight: 400;
+  line-height: 1.42;
+  letter-spacing: -0.012em;
+  color: var(--story-cream-body);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
 .product-brown-mock.product-brown-story-mode .story-tab-panel__body--goals {
   display: flex;
   flex-direction: column;
@@ -2330,7 +2525,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 /* iPhone /story — scrollable tab bodies with real content */
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--our-ask,
 .product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--team,
-.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--goals {
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--goals,
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-tab-panel__body--roadmap {
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -2544,10 +2740,58 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   overflow-wrap: anywhere;
 }
 
+/* iPhone /story — Roadmap: stack product + GTM, scroll-friendly type */
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-callout {
+  flex: none;
+  height: auto;
+  min-height: min-content;
+  justify-content: flex-start;
+  gap: clamp(1.15rem, 4vw, 1.65rem);
+  padding: clamp(0.75rem, 3vw, 1.1rem) clamp(0.85rem, 3.25vw, 1.15rem) clamp(1.25rem, 4vw, 1.75rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-hero {
+  max-width: 100%;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-hero-headline {
+  font-size: clamp(1.85rem, 6.5vw, 2.75rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-hero-body {
+  font-size: clamp(0.92rem, 3.1vw, 1.05rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-columns {
+  flex: none;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.35rem, 4.5vw, 2rem);
+  max-width: 100%;
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-agent-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-focus-value {
+  font-size: clamp(1.55rem, 5.5vw, 2.15rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-gtm-headline {
+  font-size: clamp(1.45rem, 5vw, 2rem);
+}
+
+.product-brown-mock.product-brown-story-mode.product-brown-story-mode--mobile .story-roadmap-gtm-list__text {
+  font-size: clamp(0.88rem, 3vw, 0.98rem);
+}
+
 /* Story ↔ Product consistency — content panels share wrap, color, and gutter rules (see design.md) */
 .product-brown-mock.product-brown-story-mode .story-goals-stat-focus,
 .product-brown-mock.product-brown-story-mode .story-goals-hero-label,
-.product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody th {
+.product-brown-mock.product-brown-story-mode .story-fundraise-budget tbody th,
+.product-brown-mock.product-brown-story-mode .story-roadmap-hero-headline,
+.product-brown-mock.product-brown-story-mode .story-roadmap-gtm-headline,
+.product-brown-mock.product-brown-story-mode .story-roadmap-agent-grid__label {
   overflow-wrap: anywhere;
   text-wrap: balance;
 }
@@ -2558,7 +2802,8 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
 
 .product-brown-mock.product-brown-story-mode .story-our-ask-stage,
 .product-brown-mock.product-brown-story-mode .story-team-callout,
-.product-brown-mock.product-brown-story-mode .story-goals-callout {
+.product-brown-mock.product-brown-story-mode .story-goals-callout,
+.product-brown-mock.product-brown-story-mode .story-roadmap-callout {
   padding-inline: var(--story-gutter);
 }
 

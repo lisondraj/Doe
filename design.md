@@ -171,6 +171,16 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 | Role label | Uppercase, `--story-gold-muted` | Corner placement | `letter-spacing: 0.16em` |
 | Credentials | `#fff8f0` | Opposite corner | `max-width: min(22ch, 88%)`, wrap OK |
 
+#### Roadmap — desktop
+
+| Element | Layout | Alignment | Sizes (approx) |
+|---------|--------|-----------|----------------|
+| Hero | Top center lockup | **Center** | Headline `clamp(2.35–3.85rem)` gold |
+| Columns | **2-col** — Product left, GTM right | Top-aligned sections | Max width **56rem** |
+| Focus card | “Live today” + **Voice** | **Left** in product column | Focus value up to **2.65rem** |
+| Agent grid | **3×2** rollout labels | **Center** in cells | Suisse labels, wrap/balance |
+| GTM list | Bulleted points | **Left** | DM Sans headline, Suisse body |
+
 ---
 
 ## 6. iPhone view rules
@@ -193,7 +203,7 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 |------|--------|------------|---------------|
 | **Shell** | Full-screen tab; slide-over nav drawer | Same font split as desktop Story | Solid `#1b1713` fill including overscroll |
 | **Tab header** | Safe-area top padding; hamburger opens drawer | Title `clamp(1.2–1.45rem)` gold | Left-aligned + menu button |
-| **Tab body** | `overflow-y: auto`; bottom pad **`max(5.5rem, safe-area + 4.75rem)`** | — | Scrollable for Our Ask / Goals / Team |
+| **Tab body** | `overflow-y: auto`; bottom pad **`max(5.5rem, safe-area + 4.75rem)`** | — | Scrollable for Our Ask / Goals / Team / Roadmap |
 | **Tab pager** | Fixed bottom-right, safe-area inset | — | z-index above content |
 | **Meet Doe modal** | Scoped `html[data-doeforvc-always-phone]` | — | Narrower card, taller backdrop; one shader at a time |
 
@@ -233,6 +243,7 @@ Apply to: goal stats, product-line names, budget labels, team credentials, hero 
 | **Our Ask** | 2-col scaled grid; ask left | Stacked; ask centered; budget below |
 | **Goals** | 3×3 grid + fade lines; container queries | 2-col; no grid lines; block scroll body |
 | **Team** | Overlapping absolute cards | Stacked full-width cards |
+| **Roadmap** | 2-col product + GTM | Stacked; 2-col agent grid |
 | **Body overflow** | `hidden` (fit viewport) | `overflow-y: auto` |
 | **Content padding** | Stage-centered, scale transform | `--story-gutter` + safe areas |
 
@@ -339,7 +350,8 @@ Requirements:
 | Concern | Files |
 |---------|--------|
 | Story tokens & tabs | `lib/story/story-page.css` |
-| Story components | `components/story/Story*Panel.tsx`, `StoryBlankPanel.tsx` |
+| Story components | `components/story/Story*Panel.tsx`, `StoryBlankPanel.tsx`, `StoryRoadmapPanel.tsx` |
+| Story roadmap copy | `lib/story/story-roadmap-gtm.ts` |
 | Product brown shell | `lib/product/product-brown-mock.css` |
 | Product Today / landing | `lib/product/product-landing.css` |
 | Product iPhone | `lib/product/product-mobile.css` |

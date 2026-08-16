@@ -2,6 +2,7 @@
 
 import { StoryGoalsAtSeedPanel } from "@/components/story/StoryGoalsAtSeedPanel";
 import { StoryOurAskPanel } from "@/components/story/StoryOurAskPanel";
+import { StoryRoadmapPanel } from "@/components/story/StoryRoadmapPanel";
 import { StoryTeamPanel } from "@/components/story/StoryTeamPanel";
 import { suisseIntl } from "@/lib/home/fonts";
 import type { StoryTabId } from "@/lib/story/story-nav";
@@ -10,6 +11,7 @@ function storyTabPanelBodyClass(tab: StoryTabId) {
   if (tab === "our-ask") return " story-tab-panel__body--our-ask";
   if (tab === "goals-at-seed") return " story-tab-panel__body--fundraise story-tab-panel__body--goals";
   if (tab === "team") return " story-tab-panel__body--team";
+  if (tab === "roadmap-gtm") return " story-tab-panel__body--roadmap";
   return "";
 }
 
@@ -77,6 +79,8 @@ export function StoryBlankPanel({
         {tab === "goals-at-seed" ? <StoryGoalsAtSeedPanel /> : null}
 
         {tab === "team" ? <StoryTeamPanel /> : null}
+
+        {tab === "roadmap-gtm" ? <StoryRoadmapPanel /> : null}
       </div>
     </div>
   );
