@@ -6,7 +6,9 @@ import type { ProtoGrainGradientSurface } from "@/lib/proto/proto-grain-gradient
 export const pitchBoxTagPillClassName = `rounded-full border border-[rgba(245,230,208,0.28)] bg-[rgba(245,230,208,0.12)] px-[clamp(0.88rem,0.72rem+0.4vw,1.05rem)] py-[clamp(0.46rem,0.38rem+0.22vw,0.54rem)] text-[clamp(0.82rem,0.68rem+0.38vw,0.94rem)] leading-none tracking-[0.04em] text-[rgba(245,230,208,0.88)] ${suisseIntl.className}`;
 
 export type PitchShaderFillBoxProps = {
-  surface: ProtoGrainGradientSurface;
+  surface?: ProtoGrainGradientSurface;
+  /** High-res baked backdrop — skips live WebGL when set. */
+  backdropImageSrc?: string;
   label: string;
   className?: string;
   nameLines?: readonly [string, string];
@@ -22,6 +24,7 @@ export type PitchShaderFillBoxProps = {
 /** Shader-backed pitch card with founder metadata overlays. */
 export function PitchShaderFillBox({
   surface,
+  backdropImageSrc,
   label,
   className = "",
   nameLines,
@@ -44,12 +47,24 @@ export function PitchShaderFillBox({
       className={`relative overflow-hidden rounded-[clamp(1.1rem,1.6vw,1.85rem)] ${className}`.trim()}
       aria-label={label}
     >
-      <ProtoGrainGradient
-        variant={surface.variant}
-        colors={surface.colors}
-        colorBack={surface.colorBack}
-        static
-      />
+      {backdropImageSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={backdropImageSrc}
+          alt=""
+          aria-hidden
+          draggable={false}
+          decoding="async"
+          className="story-team-backdrop-image pointer-events-none absolute inset-0 h-full w-full"
+        />
+      ) : surface ? (
+        <ProtoGrainGradient
+          variant={surface.variant}
+          colors={surface.colors}
+          colorBack={surface.colorBack}
+          static
+        />
+      ) : null}
       <PitchBoxCenterLines />
       {nameLines ? (
         <p

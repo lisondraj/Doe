@@ -975,6 +975,24 @@ html[data-doeforvc-always-phone] .story-meet-doe-modal__dots {
   border-radius: inherit !important;
 }
 
+.product-brown-mock.product-brown-story-mode .story-team-grid__fill .story-team-backdrop-image {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center center;
+  image-rendering: auto;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
 .product-brown-mock.product-brown-story-mode .story-team-grid__fill .proto-shader-surface {
   position: absolute !important;
   inset: 0 !important;
