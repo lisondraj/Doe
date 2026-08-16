@@ -1,15 +1,27 @@
 "use client";
 
 import { StoryGoalsAtSeedPanel } from "@/components/story/StoryGoalsAtSeedPanel";
+import { StoryIntroductionPanel } from "@/components/story/StoryIntroductionPanel";
 import { StoryOurAskPanel } from "@/components/story/StoryOurAskPanel";
+import { StoryFabricPanel } from "@/components/story/StoryFabricPanel";
+import { StoryFloatPanel } from "@/components/story/StoryFloatPanel";
+import { StoryGenomePanel } from "@/components/story/StoryGenomePanel";
+import { StoryPulsePanel } from "@/components/story/StoryPulsePanel";
+import { StoryRoadmapPanel } from "@/components/story/StoryRoadmapPanel";
 import { StoryTeamPanel } from "@/components/story/StoryTeamPanel";
 import { suisseIntl } from "@/lib/home/fonts";
 import type { StoryTabId } from "@/lib/story/story-nav";
 
 function storyTabPanelBodyClass(tab: StoryTabId) {
+  if (tab === "introduction") return " story-tab-panel__body--introduction";
   if (tab === "our-ask") return " story-tab-panel__body--our-ask";
   if (tab === "goals-at-seed") return " story-tab-panel__body--fundraise story-tab-panel__body--goals";
   if (tab === "team") return " story-tab-panel__body--team";
+  if (tab === "roadmap-gtm") return " story-tab-panel__body--roadmap";
+  if (tab === "genome") return " story-tab-panel__body--genome";
+  if (tab === "pulse") return " story-tab-panel__body--pulse";
+  if (tab === "fabric") return " story-tab-panel__body--fabric";
+  if (tab === "float") return " story-tab-panel__body--float";
   return "";
 }
 
@@ -72,11 +84,23 @@ export function StoryBlankPanel({
         </header>
       </div>
       <div className={`story-tab-panel__body relative min-h-0 flex-1${storyTabPanelBodyClass(tab)}`}>
+        {tab === "introduction" ? <StoryIntroductionPanel /> : null}
+
         {tab === "our-ask" ? <StoryOurAskPanel /> : null}
 
         {tab === "goals-at-seed" ? <StoryGoalsAtSeedPanel /> : null}
 
         {tab === "team" ? <StoryTeamPanel /> : null}
+
+        {tab === "genome" ? <StoryGenomePanel /> : null}
+
+        {tab === "pulse" ? <StoryPulsePanel /> : null}
+
+        {tab === "fabric" ? <StoryFabricPanel /> : null}
+
+        {tab === "float" ? <StoryFloatPanel /> : null}
+
+        {tab === "roadmap-gtm" ? <StoryRoadmapPanel /> : null}
       </div>
     </div>
   );

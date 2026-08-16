@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
+import { StoryShaderPosterFill } from "@/components/story/StoryShaderPosterFill";
 import { lora, suisseIntl } from "@/lib/home/fonts";
 import { DOEPHONE_DISPLAY_WEIGHT_TW } from "@/lib/doephone/section-styles";
-import { STORY_MEET_DOE_MODAL_SHADERS } from "@/lib/story/story-contact-shader";
+import { STORY_MEET_DOE_POSTERS } from "@/lib/story/story-shader-posters";
 import { STORY_MEET_DOE_MODAL_ALWAYS_SHOW, STORY_MEET_DOE_MODAL_SLIDE_COUNT, STORY_MEET_DOE_MODAL_SLIDE_LINES, STORY_MEET_DOE_MODAL_STORAGE_KEY, storyMeetDoeModalShouldShow } from "@/lib/story/story-copy";
 import "@/lib/doehealth/doehealth-landing.css";
 import "@/lib/story/story-page.css";
@@ -43,7 +43,6 @@ function MeetDoeModalSlide({
   titleId?: string;
   isRevealed: boolean;
 }) {
-  const shader = STORY_MEET_DOE_MODAL_SHADERS[slideIndex] ?? STORY_MEET_DOE_MODAL_SHADERS[0];
   const lines = STORY_MEET_DOE_MODAL_SLIDE_LINES[slideIndex] ?? STORY_MEET_DOE_MODAL_SLIDE_LINES[0];
   const isBrandWordmark = slideIndex === 0;
   const isStatement = !isBrandWordmark && lines.length === 2;
@@ -52,17 +51,10 @@ function MeetDoeModalSlide({
 
   return (
     <div className="story-meet-doe-modal__slide">
-      <div
-        className="story-meet-doe-modal__backdrop"
-        style={{ backgroundColor: shader.colorBack }}
-      >
-        <ProtoGrainGradient
-          static
-          variant={shader.variant}
-          colors={shader.colors}
-          colorBack={shader.colorBack}
+      <div className="story-meet-doe-modal__backdrop">
+        <StoryShaderPosterFill
+          src={STORY_MEET_DOE_POSTERS[slideIndex] ?? STORY_MEET_DOE_POSTERS[0]}
           className="story-meet-doe-modal__shader absolute inset-0 h-full w-full"
-          aria-hidden
         />
         <h1
           id={titleId}

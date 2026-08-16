@@ -1,12 +1,15 @@
+import { StoryShaderPosterFill } from "@/components/story/StoryShaderPosterFill";
 import { dmSans } from "@/lib/home/fonts";
 import {
   STORY_GOALS_AT_SEED_ARR_AMOUNT,
   STORY_GOALS_AT_SEED_ARR_LABEL,
+  STORY_GOALS_AT_SEED_ARR_META,
 } from "@/lib/story/story-copy";
 import {
   STORY_GOALS_AT_SEED_ITEMS,
   type StoryGoldOffset,
 } from "@/lib/story/story-goals-at-seed";
+import { STORY_GOALS_ARR_HERO_POSTER } from "@/lib/story/story-shader-posters";
 
 function storyGoalsGoldOffsetClass(offset?: StoryGoldOffset) {
   return offset ? `story-goals-gold-offset story-goals-gold-offset--${offset}` : "";
@@ -33,14 +36,21 @@ export function StoryGoalsAtSeedPanel() {
   return (
     <div className={`story-goals-callout ${dmSans.className}`} aria-label="Goals at seed">
       <div className="story-goals-hero">
-        <div className="story-goals-hero-lockup">
-          <p
-            className="story-goals-hero-amount m-0"
-            aria-label="Two hundred thousand dollars annualized run rate"
-          >
-            {STORY_GOALS_AT_SEED_ARR_AMOUNT}
-          </p>
-          <p className="story-goals-hero-label m-0">{STORY_GOALS_AT_SEED_ARR_LABEL}</p>
+        <div className="story-goals-hero-box">
+          <StoryShaderPosterFill
+            src={STORY_GOALS_ARR_HERO_POSTER}
+            className="story-goals-hero-box__poster"
+          />
+          <div className="story-goals-hero-lockup">
+            <p className="story-goals-hero-meta m-0">{STORY_GOALS_AT_SEED_ARR_META}</p>
+            <p
+              className="story-goals-hero-amount m-0"
+              aria-label="Two hundred thousand dollars annualized run rate by spring twenty twenty eight"
+            >
+              {STORY_GOALS_AT_SEED_ARR_AMOUNT}
+            </p>
+            <p className="story-goals-hero-label m-0">{STORY_GOALS_AT_SEED_ARR_LABEL}</p>
+          </div>
         </div>
       </div>
 

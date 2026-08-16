@@ -1,12 +1,16 @@
 import { PitchBoxCenterLines } from "@/components/pitch/PitchBoxCenterLines";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
+import { StoryShaderPosterFill } from "@/components/story/StoryShaderPosterFill";
 import { suisseIntl } from "@/lib/home/fonts";
 import type { ProtoGrainGradientSurface } from "@/lib/proto/proto-grain-gradient";
 
 export const pitchBoxTagPillClassName = `rounded-full border border-[rgba(245,230,208,0.28)] bg-[rgba(245,230,208,0.12)] px-[clamp(0.88rem,0.72rem+0.4vw,1.05rem)] py-[clamp(0.46rem,0.38rem+0.22vw,0.54rem)] text-[clamp(0.82rem,0.68rem+0.38vw,0.94rem)] leading-none tracking-[0.04em] text-[rgba(245,230,208,0.88)] ${suisseIntl.className}`;
 
 export type PitchShaderFillBoxProps = {
-  surface: ProtoGrainGradientSurface;
+  /** Live WebGL surface — omit when `posterSrc` is set (story posters). */
+  surface?: ProtoGrainGradientSurface;
+  /** Pre-rendered PNG — instant paint, full WebGL quality (story team cards). */
+  posterSrc?: string;
   label: string;
   className?: string;
   nameLines?: readonly [string, string];
@@ -22,6 +26,7 @@ export type PitchShaderFillBoxProps = {
 /** Shader-backed pitch card with founder metadata overlays. */
 export function PitchShaderFillBox({
   surface,
+  posterSrc,
   label,
   className = "",
   nameLines,
@@ -44,12 +49,16 @@ export function PitchShaderFillBox({
       className={`relative overflow-hidden rounded-[clamp(1.1rem,1.6vw,1.85rem)] ${className}`.trim()}
       aria-label={label}
     >
-      <ProtoGrainGradient
-        variant={surface.variant}
-        colors={surface.colors}
-        colorBack={surface.colorBack}
-        static
-      />
+      {posterSrc ? (
+        <StoryShaderPosterFill src={posterSrc} />
+      ) : surface ? (
+        <ProtoGrainGradient
+          variant={surface.variant}
+          colors={surface.colors}
+          colorBack={surface.colorBack}
+          static
+        />
+      ) : null}
       <PitchBoxCenterLines />
       {nameLines ? (
         <p

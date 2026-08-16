@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Export /linkedin2 at 2400×1254 — captures at the same ~1024px preview width as the
+ * Export /linkedin3 at 2400×1254 — captures at the same ~1024px preview width as the
  * in-browser frame (matching manual screenshots), then scales to LinkedIn dimensions.
- * Usage: node scripts/export-linkedin2-banner.mjs [--suffix=N] [--preview-width=1024]
+ * Usage: node scripts/export-linkedin3-banner.mjs [--suffix=N] [--preview-width=1024]
  */
 import { execFile } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -26,11 +26,11 @@ const EXPORT_SCALE = EXPORT_WIDTH / PREVIEW_WIDTH;
 
 const OUT_DIR = join(process.cwd(), "exports", "linkedin");
 const OUT_BASENAME = suffixArg
-  ? `doe-linkedin2-banner-${EXPORT_WIDTH}x${EXPORT_HEIGHT}-${suffixArg}`
-  : `doe-linkedin2-banner-${EXPORT_WIDTH}x${EXPORT_HEIGHT}`;
+  ? `doe-linkedin3-banner-${EXPORT_WIDTH}x${EXPORT_HEIGHT}-${suffixArg}`
+  : `doe-linkedin3-banner-${EXPORT_WIDTH}x${EXPORT_HEIGHT}`;
 const OUT_FILE = join(OUT_DIR, `${OUT_BASENAME}.png`);
 
-const url = "http://localhost:3000/linkedin2";
+const url = "http://localhost:3000/linkedin3";
 
 async function waitForFrame(page) {
   await page.waitForSelector(".linkedin2-page__frame", { state: "visible", timeout: 60_000 });

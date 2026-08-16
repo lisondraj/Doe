@@ -1,0 +1,17 @@
+@import "./linkedin2-page.css";
+
+/* /linkedin3 — longer company title; same frame + picker as linkedin2. */
+.linkedin3-page .linkedin2-caption {
+  --linkedin2-caption-scale: 0.96;
+  max-width: calc(100cqw - var(--linkedin2-caption-inset) * 2 - var(--linkedin2-caption-offset-x) - 22cqw);
+}
+
+.linkedin3-page .linkedin2-caption__title {
+  font-size: clamp(2.65rem, 6.2cqw, 5.1rem);
+  line-height: 1.05;
+}
+
+.linkedin3-page .linkedin2-caption__subtitle {
+  margin-top: clamp(0.4rem, 0.85cqw, 0.65rem);
+  font-size: clamp(1.95rem, 3.85cqw, 3.35rem);
+}

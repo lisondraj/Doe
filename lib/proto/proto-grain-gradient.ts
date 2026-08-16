@@ -120,7 +120,18 @@ export type ProtoGrainGradientVariant =
   | "meet-proto"
   | "meet-proto-stack-0"
   | "meet-proto-stack-1"
-  | "meet-proto-stack-2";
+  | "meet-proto-stack-2"
+  | "story-genome-tl"
+  | "story-genome-br"
+  | "story-pulse-tall"
+  | "story-pulse-wide"
+  | "story-fabric-tall"
+  | "story-float-tr"
+  | "story-float-mid-left"
+  | "story-roadmap-front-desk"
+  | "story-roadmap-prior-auth"
+  | "story-roadmap-results"
+  | "story-goals-arr-hero";
 
 export type ProtoGrainGradientPreset = {
   shape: GrainGradientShape;
@@ -503,6 +514,160 @@ export const PROTO_GRAIN_GRADIENT_PRESETS: Record<ProtoGrainGradientVariant, Pro
     offsetX: -0.08,
     offsetY: 0.22,
     scale: 1.32,
+    speed: 0,
+  },
+  /** Story Genome — wide top-left tile (2:1), shortlist wave from upper-left. */
+  "story-genome-tl": {
+    shape: "wave",
+    softness: 0.7,
+    intensity: 0.17,
+    fit: "cover",
+    rotation: 118,
+    offsetX: -0.02,
+    offsetY: -0.24,
+    scale: 1.26,
+    worldWidth: 1920,
+    worldHeight: 960,
+    speed: 0,
+  },
+  /** Story Genome — wide bottom-right tile (2:1), footer ripple pooled lower-right. */
+  "story-genome-br": {
+    shape: "ripple",
+    softness: 0.76,
+    intensity: 0.16,
+    fit: "cover",
+    rotation: 302,
+    offsetX: -0.2,
+    offsetY: 0.36,
+    scale: 1.3,
+    worldWidth: 1920,
+    worldHeight: 960,
+    speed: 0,
+  },
+  /** Story Pulse — tall vertical tile (1:2), ripple drift along right edge. */
+  "story-pulse-tall": {
+    shape: "ripple",
+    softness: 0.74,
+    intensity: 0.17,
+    fit: "cover",
+    rotation: 14,
+    offsetX: 0.2,
+    offsetY: 0.12,
+    scale: 1.3,
+    worldWidth: 960,
+    worldHeight: 1920,
+    speed: 0,
+  },
+  /** Story Pulse — wide bottom-right tile (2:1), corner wash across lower-right. */
+  "story-pulse-wide": {
+    shape: "corners",
+    softness: 0.74,
+    intensity: 0.17,
+    fit: "cover",
+    rotation: 54,
+    offsetX: 0.18,
+    offsetY: -0.16,
+    scale: 1.26,
+    worldWidth: 1920,
+    worldHeight: 960,
+    speed: 0,
+  },
+  /** Story Fabric — tall left tile (1:2), ripple pool along left span. */
+  "story-fabric-tall": {
+    shape: "ripple",
+    softness: 0.72,
+    intensity: 0.16,
+    fit: "cover",
+    rotation: 188,
+    offsetX: -0.16,
+    offsetY: 0.3,
+    scale: 1.3,
+    worldWidth: 960,
+    worldHeight: 1920,
+    speed: 0,
+  },
+  /** Story Float — top-right cell (1:1), wave drift upper-right. */
+  "story-float-tr": {
+    shape: "wave",
+    softness: 0.71,
+    intensity: 0.16,
+    fit: "cover",
+    rotation: 92,
+    offsetX: 0.12,
+    offsetY: -0.18,
+    scale: 1.2,
+    worldWidth: 1280,
+    worldHeight: 1280,
+    speed: 0,
+  },
+  /** Story Float — mid-left cell (1:1), validate blob pool. */
+  "story-float-mid-left": {
+    shape: "blob",
+    softness: 0.68,
+    intensity: 0.17,
+    fit: "cover",
+    rotation: 264,
+    offsetX: -0.2,
+    offsetY: 0.08,
+    scale: 1.18,
+    worldWidth: 1280,
+    worldHeight: 1280,
+    speed: 0,
+  },
+  /** Story Roadmap — Front-desk tile, reception ripple band. */
+  "story-roadmap-front-desk": {
+    shape: "ripple",
+    softness: 0.74,
+    intensity: 0.16,
+    fit: "cover",
+    rotation: 148,
+    offsetX: -0.1,
+    offsetY: 0.28,
+    scale: 1.28,
+    worldWidth: 1920,
+    worldHeight: 1920,
+    speed: 0,
+  },
+  /** Story Roadmap — Prior Auth tile, structured corner wash. */
+  "story-roadmap-prior-auth": {
+    shape: "corners",
+    softness: 0.76,
+    intensity: 0.17,
+    fit: "cover",
+    rotation: 64,
+    offsetX: 0.14,
+    offsetY: -0.12,
+    scale: 1.24,
+    worldWidth: 1920,
+    worldHeight: 1920,
+    speed: 0,
+  },
+  /** Story Roadmap — Results tile, wave wash lower-right. */
+  "story-roadmap-results": {
+    shape: "wave",
+    softness: 0.72,
+    intensity: 0.16,
+    fit: "cover",
+    rotation: 118,
+    offsetX: 0.14,
+    offsetY: 0.18,
+    scale: 1.24,
+    worldWidth: 1920,
+    worldHeight: 1920,
+    speed: 0,
+  },
+  /** Story Goals at Seed — wide ARR hero band, shortlist wave (no truchet / worm). */
+  "story-goals-arr-hero": {
+    shape: "wave",
+    softness: 0.73,
+    intensity: 0.15,
+    fit: "cover",
+    rotation: 96,
+    offsetX: -0.1,
+    offsetY: -0.08,
+    scale: 1.22,
+    worldWidth: 3200,
+    worldHeight: 1280,
     speed: 0,
   },
 };

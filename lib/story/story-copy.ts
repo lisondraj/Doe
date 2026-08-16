@@ -44,6 +44,8 @@ export const STORY_FUNDRAISE_RUNWAY_DURATION = "18 months";
 
 export const STORY_GOALS_AT_SEED_ARR_AMOUNT = "$200K";
 
+export const STORY_GOALS_AT_SEED_ARR_META = "By Spring 2028";
+
 export const STORY_GOALS_AT_SEED_ARR_LABEL = "Annualized Run Rate";
 
 export const STORY_CONTACT_EMAIL = "james@doe.care";
@@ -51,3 +53,11 @@ export const STORY_CONTACT_EMAIL = "james@doe.care";
 export const STORY_CONTACT_LINKEDIN_HANDLE = "in/jameslisondra";
 
 export const STORY_CONTACT_LINKEDIN_URL = "https://www.linkedin.com/in/jameslisondra";
+
+export const STORY_INTRODUCTION_HEADLINE = "Meet Doe";
+
+export const STORY_INTRODUCTION_BODY_LEAD =
+  "This is our investor story deck. It introduces who we are, what we are building, and how we see the path ahead. We update it as the company evolves, so you always have our latest thinking in one place. You can contact ";
+
+export const STORY_INTRODUCTION_BODY_TAIL =
+  " at any time with questions or to go deeper on anything here.";
