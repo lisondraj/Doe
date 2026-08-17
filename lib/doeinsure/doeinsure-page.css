@@ -1628,14 +1628,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   align-items: start;
 }
 
-.doeinsure-root--desktop #request,
-.doeinsure-root--iphone #request {
-  padding-bottom: 0;
+.doeinsure-root--desktop #request {
+  padding-bottom: 5rem;
 }
 
-.doeinsure-root--desktop .doeinsure-footer,
-.doeinsure-root--iphone .doeinsure-footer {
-  margin-top: 0;
+.doeinsure-root--iphone #request {
+  padding-bottom: 3.25rem;
 }
 
 .doeinsure-root--iphone .doeinsure-cta-grid {
