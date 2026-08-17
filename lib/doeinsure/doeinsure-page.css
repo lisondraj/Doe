@@ -5577,7 +5577,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-issue__scan.is-on {
   opacity: 1;
-  animation: doeinsure-issue-scan 2.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  animation: doeinsure-issue-scan 2.8s ease-in-out infinite;
 }
 
 .doeinsure-issue__top {
@@ -5777,11 +5777,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 @keyframes doeinsure-issue-scan {
-  0% {
+  0%,
+  100% {
     top: -12%;
   }
 
-  100% {
+  50% {
     top: 92%;
   }
 }
