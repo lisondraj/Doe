@@ -212,7 +212,7 @@ function MatchSection() {
                     className={scenario === index ? "is-on" : undefined}
                     onClick={() => setScenario(index)}
                   >
-                    <span>{item.name}</span>
+                    <span className="doeinsure-match__system-name">{item.name}</span>
                     <b>{item.ask}</b>
                     <span className="doeinsure-stage-block__tags">
                       {item.tags.map((tag) => (
@@ -400,6 +400,7 @@ function StackBody({ revealed }: { revealed: boolean }) {
       <DoeInsureAppFrame file="Risk file · Harbor Notes" className="doeinsure-app--stack">
         <div className={`doeinsure-link${complete ? " is-on" : ""}`}>
           <div className="doeinsure-link__map">
+            <p className="doeinsure-link__map-label">Sources</p>
             <svg className="doeinsure-link__wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
               {DOEINSURE_STACK.sources.map((item) => {
                 const live = on[item.id] || linking === item.id;
@@ -434,8 +435,13 @@ function StackBody({ revealed }: { revealed: boolean }) {
                   aria-pressed={live}
                   onClick={() => toggle(item.id)}
                 >
-                  <span>{item.name}</span>
-                  <b>{item.signal}</b>
+                  <span className="doeinsure-link__node-copy">
+                    <span>{item.name}</span>
+                    <b>{item.signal}</b>
+                  </span>
+                  <em className="doeinsure-link__node-state">
+                    {linking === item.id ? "Reading" : live ? item.value : "Connect"}
+                  </em>
                 </button>
               );
             })}
