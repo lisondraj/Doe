@@ -5100,44 +5100,233 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   display: none;
 }
 
-.doeinsure-root--iphone .doeinsure-link {
-  border: 1px solid var(--di-line);
-}
-
-.doeinsure-root--iphone .doeinsure-link__map {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  min-height: 0;
-  overflow: hidden;
-  background: var(--di-line);
-}
-
-.doeinsure-root--iphone .doeinsure-link__map-label,
-.doeinsure-root--iphone .doeinsure-link__wires {
+.doeinsure-stack-phone {
   display: none;
 }
 
-.doeinsure-root--iphone .doeinsure-link__node {
-  position: relative;
-  z-index: 1;
-  left: auto !important;
-  top: auto !important;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.55rem;
-  width: 100%;
-  min-height: 6.4rem;
-  padding: 0.85rem 0.8rem 0.9rem;
-  transform: none;
+.doeinsure-root--iphone .doeinsure-app--stack {
   border: 0;
-  background: var(--di-white);
-  overflow: hidden;
+  background: transparent;
 }
 
-.doeinsure-root--iphone .doeinsure-link__node-copy {
+.doeinsure-root--iphone .doeinsure-link {
+  gap: 0.75rem;
+  border: 0;
+  background: transparent;
+}
+
+.doeinsure-root--iphone .doeinsure-link__map,
+.doeinsure-root--iphone .doeinsure-link__bar {
+  display: none;
+}
+
+.doeinsure-root--iphone .doeinsure-stack-phone {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.doeinsure-stack-phone__quote {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 1.05rem 1rem 1.1rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+}
+
+.doeinsure-stack-phone__quote.is-on {
+  background: var(--di-blue);
+  border-color: var(--di-blue);
+  color: #ffffff;
+}
+
+.doeinsure-stack-phone__quote-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.doeinsure-stack-phone__quote-head span,
+.doeinsure-stack-phone__quote-head em,
+.doeinsure-stack-phone__board-label {
+  color: var(--di-blue);
+  font-size: 0.64rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.doeinsure-stack-phone__quote-head em {
+  color: var(--di-muted);
+}
+
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__quote-head span,
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__quote-head em {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.doeinsure-stack-phone__company {
+  color: var(--di-ink);
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__company {
+  color: #ffffff;
+}
+
+.doeinsure-stack-phone__premium {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  margin: 0.15rem 0 0.2rem;
+}
+
+.doeinsure-stack-phone__premium b {
+  font-size: clamp(2.55rem, 13vw, 3.2rem);
+  font-weight: 500;
+  letter-spacing: -0.07em;
+  line-height: 0.92;
+}
+
+.doeinsure-stack-phone__premium em {
+  color: var(--di-muted);
+  font-size: 0.82rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__premium em {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.doeinsure-stack-phone__meter {
+  width: 100%;
+  height: 3px;
+  margin: 0.2rem 0 0.15rem;
+  background: var(--di-line);
+}
+
+.doeinsure-stack-phone__meter i {
+  display: block;
+  width: var(--stack-fill, 0%);
+  height: 100%;
+  background: var(--di-blue);
+  transition: width 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__meter {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__meter i {
+  background: #ffffff;
+}
+
+.doeinsure-stack-phone__signals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem 1rem;
+  width: 100%;
+  margin: 0.45rem 0 0;
+  padding: 0.75rem 0 0;
+  border-top: 1px solid var(--di-line);
+  list-style: none;
+}
+
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__signals {
+  border-top-color: rgba(255, 255, 255, 0.22);
+}
+
+.doeinsure-stack-phone__signals li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.doeinsure-stack-phone__signals span {
+  color: var(--di-muted);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-stack-phone__signals b {
+  color: var(--di-ink);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-stack-phone__signals li.is-reading b {
+  color: var(--di-blue);
+}
+
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__signals span,
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__signals b {
+  color: #ffffff;
+}
+
+.doeinsure-stack-phone__board {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.doeinsure-stack-phone__board-label {
+  margin: 0;
+  padding: 0 0.05rem;
+}
+
+.doeinsure-stack-phone__sources {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+}
+
+.doeinsure-stack-phone__source {
+  appearance: none;
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.7rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.95rem 0.95rem;
+  border: 0;
+  border-bottom: 1px solid var(--di-line);
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.doeinsure-stack-phone__sources li:last-child .doeinsure-stack-phone__source {
+  border-bottom: 0;
+}
+
+.doeinsure-stack-phone__source i {
+  display: block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+}
+
+.doeinsure-stack-phone__source span {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -5145,38 +5334,45 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   min-width: 0;
 }
 
-.doeinsure-root--iphone .doeinsure-link__node span {
-  font-size: 0.64rem;
-}
-
-.doeinsure-root--iphone .doeinsure-link__node b {
-  font-size: 0.98rem;
-}
-
-.doeinsure-root--iphone .doeinsure-link__node-state {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  padding: 0.22rem 0.42rem;
-  border: 1px solid var(--di-line);
-  background: var(--di-gray);
+.doeinsure-stack-phone__source b {
   color: var(--di-ink);
-  font-size: 0.58rem;
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.doeinsure-stack-phone__source em {
+  color: var(--di-muted);
+  font-size: 0.72rem;
   font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-stack-phone__source strong {
+  color: var(--di-muted);
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.doeinsure-root--iphone .doeinsure-link__node.is-on .doeinsure-link__node-state,
-.doeinsure-root--iphone .doeinsure-link__node.is-linking .doeinsure-link__node-state {
-  border-color: rgba(255, 255, 255, 0.36);
-  background: rgba(255, 255, 255, 0.16);
-  color: #ffffff;
+.doeinsure-stack-phone__source.is-on i,
+.doeinsure-stack-phone__source.is-linking i {
+  background: var(--di-blue);
+  border-color: var(--di-blue);
 }
 
-.doeinsure-root--iphone .doeinsure-link__node.is-linking::after {
+.doeinsure-stack-phone__source.is-linking i {
+  animation: doeinsure-stack-phone-pin 720ms ease-in-out infinite;
+}
+
+.doeinsure-stack-phone__source.is-on strong,
+.doeinsure-stack-phone__source.is-linking strong {
+  color: var(--di-blue);
+}
+
+.doeinsure-stack-phone__source.is-linking::after {
   content: "";
   position: absolute;
   left: 0;
@@ -5185,56 +5381,37 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   height: 2px;
   background: var(--di-blue);
   transform-origin: left center;
-  animation: doeinsure-link-read 720ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: doeinsure-stack-phone-read 720ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.doeinsure-root--iphone .doeinsure-link__node.is-on.is-linking::after,
-.doeinsure-root--iphone .doeinsure-link__node.is-linking.is-on::after {
-  background: #ffffff;
-}
-
-.doeinsure-root--iphone .doeinsure-link__hub {
-  position: relative;
-  z-index: 1;
-  top: auto;
-  left: auto;
-  grid-column: 1 / -1;
-  order: -1;
+.doeinsure-stack-phone__cta .doeinsure-btn {
   width: 100%;
-  transform: none;
-  padding: 1.05rem 1rem 1.1rem;
-  border: 0;
-  background: var(--di-white);
+  margin-top: 0;
 }
 
-.doeinsure-root--iphone .doeinsure-link__hub ul {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.28rem 0.9rem;
+.doeinsure-stack-phone__cta .doeinsure-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
 }
 
-.doeinsure-root--iphone .doeinsure-link__hub:not(.is-on) ul,
-.doeinsure-root--iphone .doeinsure-link__hub li.is-wait {
-  display: none;
-}
-
-.doeinsure-root--iphone .doeinsure-link__bar {
-  flex-direction: column;
-  align-items: stretch;
-  padding: 0.9rem 0.95rem 1.05rem;
-}
-
-.doeinsure-root--iphone .doeinsure-link__bar .doeinsure-btn {
-  width: 100%;
-}
-
-@keyframes doeinsure-link-read {
+@keyframes doeinsure-stack-phone-read {
   from {
     transform: scaleX(0);
   }
 
   to {
     transform: scaleX(1);
+  }
+}
+
+@keyframes doeinsure-stack-phone-pin {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
   }
 }
 
@@ -5775,11 +5952,16 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   .doeinsure-match__scan-bar::after,
   .doeinsure-link__wire-live.is-linking,
   .doeinsure-issue__scan.is-on,
-  .doeinsure-root--iphone .doeinsure-link__node.is-linking::after {
+  .doeinsure-stack-phone__source.is-linking::after {
     animation: none !important;
     transform: none;
     width: 100%;
     stroke-dashoffset: 0;
+  }
+
+  .doeinsure-stack-phone__source.is-linking i {
+    animation: none !important;
+    opacity: 1;
   }
 
   .doeinsure-link__packet {

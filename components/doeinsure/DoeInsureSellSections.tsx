@@ -395,6 +395,14 @@ function StackBody({ revealed }: { revealed: boolean }) {
     : busy || connected.length
       ? DOEINSURE_STACK.reading
       : DOEINSURE_STACK.waiting;
+  const stackPremium = Number.parseInt(DOEINSURE_STACK.premium.replace(/[^\d]/g, ""), 10);
+  const livePremium =
+    connected.length === 0
+      ? "—"
+      : complete
+        ? DOEINSURE_STACK.premium
+        : `$${Math.round((stackPremium * connected.length) / DOEINSURE_STACK.sources.length)}`;
+  const stackFill = ((connected.length + (linking ? 0.45 : 0)) / DOEINSURE_STACK.sources.length) * 100;
 
   return (
     <>
@@ -520,6 +528,85 @@ function StackBody({ revealed }: { revealed: boolean }) {
                 {busy ? DOEINSURE_STACK.reading : DOEINSURE_STACK.connectAll}
               </button>
             )}
+          </div>
+
+          <div className="doeinsure-stack-phone">
+            <article
+              className={`doeinsure-stack-phone__quote${complete ? " is-on" : ""}${busy ? " is-reading" : ""}`}
+            >
+              <header className="doeinsure-stack-phone__quote-head">
+                <span>{status}</span>
+                <em>
+                  {connected.length} of {DOEINSURE_STACK.sources.length}
+                </em>
+              </header>
+              <strong className="doeinsure-stack-phone__company">{DOEINSURE_STACK.company}</strong>
+              <p className="doeinsure-stack-phone__premium">
+                <b>{livePremium}</b>
+                {complete ? <em>{DOEINSURE_STACK.premiumNote}</em> : null}
+              </p>
+              <div
+                className="doeinsure-stack-phone__meter"
+                aria-hidden="true"
+                style={{ "--stack-fill": `${stackFill}%` } as CSSProperties}
+              >
+                <i />
+              </div>
+              <ul className="doeinsure-stack-phone__signals">
+                {DOEINSURE_STACK.sources.map((item) => {
+                  const live = Boolean(on[item.id]);
+                  const reading = linking === item.id;
+                  return (
+                    <li
+                      key={item.id}
+                      className={live ? "is-on" : reading ? "is-reading" : undefined}
+                    >
+                      <span>{item.signal}</span>
+                      <b>{reading ? "Reading" : live ? item.value : "—"}</b>
+                    </li>
+                  );
+                })}
+              </ul>
+            </article>
+
+            <div className="doeinsure-stack-phone__board">
+              <p className="doeinsure-stack-phone__board-label">Sources</p>
+              <ul className="doeinsure-stack-phone__sources">
+                {DOEINSURE_STACK.sources.map((item) => {
+                  const live = Boolean(on[item.id]);
+                  const reading = linking === item.id;
+                  return (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        className={`doeinsure-stack-phone__source${live ? " is-on" : ""}${reading ? " is-linking" : ""}`}
+                        aria-pressed={live}
+                        onClick={() => toggle(item.id)}
+                      >
+                        <i aria-hidden="true" />
+                        <span>
+                          <b>{item.name}</b>
+                          <em>{item.signal}</em>
+                        </span>
+                        <strong>{reading ? "Reading" : live ? item.value : "Connect"}</strong>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            <div className="doeinsure-stack-phone__cta">
+              {complete ? (
+                <a className="doeinsure-btn" href="#request">
+                  {DOEINSURE_STACK.request}
+                </a>
+              ) : (
+                <button type="button" className="doeinsure-btn" disabled={busy} onClick={connectAll}>
+                  {busy ? DOEINSURE_STACK.reading : DOEINSURE_STACK.connectAll}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </DoeInsureAppFrame>
