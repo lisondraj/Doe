@@ -414,9 +414,6 @@ function StackBody({ revealed }: { revealed: boolean }) {
   const remaining = DOEINSURE_STACK.sources.length - connected.length;
   const dropStep = Math.round(stackPremium / DOEINSURE_STACK.sources.length);
   const dropTotal = dropStep * connected.length;
-  const livePremium = complete
-    ? DOEINSURE_STACK.premium
-    : `$${stackPremium + Math.round((stackPremium * remaining) / DOEINSURE_STACK.sources.length)}`;
   const stackFill = ((connected.length + (linking ? 0.45 : 0)) / DOEINSURE_STACK.sources.length) * 100;
 
   return (
@@ -560,9 +557,8 @@ function StackBody({ revealed }: { revealed: boolean }) {
               </header>
               <strong className="doeinsure-stack-phone__company">{DOEINSURE_STACK.company}</strong>
               <p className="doeinsure-stack-phone__premium">
-                <b>{livePremium}</b>
+                <b>{DOEINSURE_STACK.premium}</b>
                 {dropTotal ? <em className="doeinsure-stack-phone__drop">−${dropTotal}</em> : null}
-                {complete ? <em>{DOEINSURE_STACK.premiumNote}</em> : null}
               </p>
               <div
                 className="doeinsure-stack-phone__meter"
