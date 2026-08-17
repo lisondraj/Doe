@@ -1586,48 +1586,175 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-footer {
   display: flex;
+  flex-direction: column;
+  min-height: 28rem;
+  margin-top: 1.5rem;
+  padding: 0;
+  border-top: 0;
+  background: var(--di-blue);
+  color: #ffffff;
+}
+
+.doeinsure-footer__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(8rem, 0.7fr) minmax(10rem, 0.9fr);
+  gap: 3.5rem 4.5rem;
+  align-items: start;
+  width: min(100%, 72rem);
+  padding-top: 5.25rem;
+  padding-bottom: 3.4rem;
+}
+
+.doeinsure-footer__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.35rem;
+  max-width: 28rem;
+}
+
+.doeinsure-footer__mark {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  color: #ffffff;
+  font-size: clamp(3.4rem, 6.2vw, 5.4rem);
+  font-weight: 500;
+  letter-spacing: -0.08em;
+  line-height: 0.86;
+}
+
+.doeinsure-footer__mark-line {
+  display: block;
+  color: #ffffff;
+}
+
+.doeinsure-footer__blurb {
+  margin: 0;
+  max-width: 22rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1.02rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+}
+
+.doeinsure-footer__nav,
+.doeinsure-footer__cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.72rem;
+  padding-top: 0.55rem;
+}
+
+.doeinsure-footer__label {
+  margin-bottom: 0.35rem;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.doeinsure-footer__nav a,
+.doeinsure-footer__mail {
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.doeinsure-footer__nav a:hover,
+.doeinsure-footer__mail:hover {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.doeinsure-footer__quote {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.7rem;
+  padding: 0 1.05rem;
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  color: var(--di-blue);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-footer__mail {
+  margin-top: 0.35rem;
+}
+
+.doeinsure-footer__bar {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.doeinsure-footer__legal {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  gap: 2rem;
-  align-items: end;
-  padding: 2.4rem var(--di-inset) 2.1rem;
-  border-top: 1px solid var(--di-line);
-  background: var(--di-gray);
+  gap: 1.5rem;
+  padding-top: 1.35rem;
+  padding-bottom: 1.55rem;
+}
+
+.doeinsure-footer__legal p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 .doeinsure-root--iphone .doeinsure-footer {
+  min-height: 0;
+  margin-top: 0.4rem;
+}
+
+.doeinsure-root--iphone .doeinsure-footer__inner {
+  grid-template-columns: 1fr;
+  gap: 2.4rem;
+  padding-top: 2.8rem;
+  padding-bottom: 2.1rem;
+}
+
+.doeinsure-root--iphone .doeinsure-footer__brand {
+  gap: 1.05rem;
+  max-width: none;
+}
+
+.doeinsure-root--iphone .doeinsure-footer__mark {
+  font-size: clamp(3.6rem, 18vw, 4.6rem);
+  letter-spacing: -0.08em;
+}
+
+.doeinsure-root--iphone .doeinsure-footer__blurb {
+  max-width: none;
+  font-size: 0.98rem;
+}
+
+.doeinsure-root--iphone .doeinsure-footer__nav,
+.doeinsure-root--iphone .doeinsure-footer__cta {
+  padding-top: 0;
+  gap: 0.62rem;
+}
+
+.doeinsure-root--iphone .doeinsure-footer__quote {
+  width: 100%;
+  justify-content: center;
+}
+
+.doeinsure-root--iphone .doeinsure-footer__legal {
   flex-direction: column;
   align-items: flex-start;
-  gap: 1.2rem;
-  padding: 1.6rem max(var(--di-inset), env(safe-area-inset-right, 0px)) calc(1.8rem + env(safe-area-inset-bottom, 0px))
-    max(var(--di-inset), env(safe-area-inset-left, 0px));
-}
-
-.doeinsure-footer strong {
-  display: block;
-  font-size: 1.15rem;
-  font-weight: 600;
-  letter-spacing: -0.04em;
-}
-
-.doeinsure-footer strong span {
-  color: var(--di-blue);
-}
-
-.doeinsure-footer p,
-.doeinsure-footer a {
-  margin: 0.35rem 0 0;
-  color: var(--di-muted);
-  font-size: 0.88rem;
-}
-
-.doeinsure-footer__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.1rem;
-}
-
-.doeinsure-footer__links a:hover {
-  color: var(--di-ink);
+  gap: 0.28rem;
+  padding-top: 1.15rem;
+  padding-bottom: calc(1.4rem + env(safe-area-inset-bottom, 0px));
 }
 
 .doeinsure-card--click {
