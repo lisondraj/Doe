@@ -68,10 +68,6 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-nav.is-scrolled {
-  border-bottom-color: var(--di-ink);
-}
-
-.doeinsure-root--iphone .doeinsure-nav.is-scrolled {
   border-bottom-color: var(--di-line);
 }
 
@@ -331,20 +327,23 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(15rem, 0.65fr);
-  gap: 2.5rem;
-  align-items: start;
-  padding-top: 4.5rem;
-  padding-bottom: 4.75rem;
+  padding-top: 5.75rem;
 }
 
-.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-hero {
+.doeinsure-hero__stage {
   position: relative;
   isolation: isolate;
 }
 
-.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-hero::before {
+.doeinsure-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(17rem, 0.8fr);
+  gap: 3.75rem;
+  align-items: center;
+  padding-bottom: 4.5rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-hero__stage::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -353,10 +352,21 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   left: calc(50% - 50vw);
   right: calc(50% - 50vw);
   background-color: var(--di-white);
-  background-image: radial-gradient(circle at 1px 1px, rgba(90, 94, 104, 0.11) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, rgba(90, 94, 104, 0.16) 1px, transparent 0);
   background-size: 20px 20px;
-  mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
   pointer-events: none;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 5rem, #000 calc(100% - 5rem), transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 2.75rem, #000 calc(100% - 2.75rem), transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 5rem, #000 calc(100% - 5rem), transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 2.75rem, #000 calc(100% - 2.75rem), transparent 100%);
+  mask-composite: intersect;
+}
+
+.doeinsure-hero__copy {
+  min-width: 0;
 }
 
 .doeinsure-hero__title {
@@ -369,29 +379,38 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   white-space: nowrap;
 }
 
+.doeinsure-hero__line--accent {
+  color: var(--di-blue);
+}
+
 .doeinsure-hero h1,
 .doeinsure-hero__title {
-  font-size: clamp(2.55rem, 4vw, 3.85rem);
+  font-size: clamp(2.9rem, 5.1vw, 4.7rem);
   font-weight: 500;
-  letter-spacing: -0.065em;
-  line-height: 0.95;
+  letter-spacing: -0.075em;
+  line-height: 0.9;
 }
 
 .doeinsure-root--iphone .doeinsure-hero h1,
 .doeinsure-root--iphone .doeinsure-hero__title {
-  font-size: clamp(1.38rem, 6.4vw, 1.88rem);
   max-width: 100%;
+  font-size: clamp(1.72rem, 8.6vw, 2.12rem);
+  letter-spacing: -0.07em;
+  line-height: 0.96;
 }
 
 .doeinsure-root--iphone .doeinsure-hero {
+  padding-top: 1.55rem;
+}
+
+.doeinsure-root--iphone .doeinsure-hero__grid {
   grid-template-columns: 1fr;
-  gap: 2rem;
-  padding-top: 2.1rem;
-  padding-bottom: 2.4rem;
+  gap: 1.45rem;
+  padding-bottom: 1.55rem;
 }
 
 .doeinsure-root--iphone .doeinsure-hero__line {
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .doeinsure-eyebrow {
@@ -404,6 +423,10 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   text-transform: uppercase;
 }
 
+.doeinsure-hero .doeinsure-eyebrow {
+  margin-bottom: 1.05rem;
+}
+
 .doeinsure-hero__lede {
   max-width: 36rem;
   margin: 1.4rem 0 0;
@@ -414,8 +437,17 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   line-height: 1.45;
 }
 
+.doeinsure-hero .doeinsure-hero__lede {
+  max-width: 34rem;
+  margin-top: 1.55rem;
+  font-size: clamp(1.08rem, 1.4vw, 1.32rem);
+}
+
 .doeinsure-root--iphone .doeinsure-hero__lede {
-  font-size: 1.02rem;
+  max-width: none;
+  margin-top: 0.95rem;
+  font-size: 0.95rem;
+  line-height: 1.42;
 }
 
 .doeinsure-hero-form {
@@ -424,11 +456,24 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   align-items: end;
   gap: 0.55rem;
   max-width: 32rem;
-  margin-top: 2rem;
+  margin-top: 2.35rem;
 }
 
 .doeinsure-root--iphone .doeinsure-hero-form {
   grid-template-columns: 1fr;
+  gap: 0.7rem;
+  max-width: none;
+  margin-top: 1.35rem;
+}
+
+.doeinsure-root--iphone .doeinsure-hero-form .doeinsure-btn {
+  width: 100%;
+  min-width: 0;
+}
+
+.doeinsure-root--iphone .doeinsure-hero__secondary {
+  margin-top: 0.8rem;
+  font-size: 0.88rem;
 }
 
 .doeinsure-hero-form__field {
@@ -469,15 +514,66 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-hero__secondary {
   display: inline-block;
-  margin-top: 0.95rem;
-  color: var(--di-muted);
-  font-size: 0.92rem;
+  margin-top: 1.05rem;
+  color: var(--di-ink);
+  font-size: 0.95rem;
   font-weight: 500;
   letter-spacing: -0.02em;
+  border-bottom: 1px solid var(--di-line);
 }
 
 .doeinsure-hero__secondary:hover {
-  color: var(--di-ink);
+  border-bottom-color: var(--di-blue);
+  color: var(--di-blue);
+}
+
+.doeinsure-hero__file {
+  align-self: stretch;
+  justify-content: center;
+  min-height: 22rem;
+  padding: 1.55rem 1.6rem 1.65rem;
+  background: var(--di-white);
+}
+
+.doeinsure-hero__file .doeinsure-card__name {
+  font-size: clamp(1.45rem, 2vw, 1.75rem);
+}
+
+.doeinsure-hero__file .doeinsure-card__limit {
+  font-size: clamp(2.7rem, 4.2vw, 3.55rem);
+}
+
+.doeinsure-root--iphone .doeinsure-hero__file {
+  align-self: stretch;
+  justify-content: flex-start;
+  min-height: 0;
+  padding: 1.1rem 1.05rem 1.15rem;
+  background: var(--di-gray);
+}
+
+.doeinsure-root--iphone .doeinsure-hero__file .doeinsure-card__name {
+  margin-top: 0.7rem;
+  font-size: 1.02rem;
+  color: var(--di-muted);
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-root--iphone .doeinsure-hero__file .doeinsure-card__limit {
+  margin-top: 0.15rem;
+  font-size: clamp(2.35rem, 11vw, 2.85rem);
+}
+
+.doeinsure-root--iphone .doeinsure-hero__file .doeinsure-card__meta {
+  margin: 0.12rem 0 0.85rem;
+  font-size: 0.75rem;
+}
+
+.doeinsure-root--iphone .doeinsure-hero__file .doeinsure-pills {
+  margin-bottom: 0.85rem;
+}
+
+.doeinsure-root--iphone .doeinsure-hero__file .doeinsure-card__hint {
+  margin-top: 0.75rem;
 }
 
 .doeinsure-card {
@@ -566,8 +662,13 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stats {
+  position: relative;
   border-top: 1px solid var(--di-line);
   border-bottom: 1px solid var(--di-line);
+  background: transparent;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-hero .doeinsure-stats {
   background: var(--di-white);
 }
 
@@ -576,6 +677,10 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   padding-left: 0;
   padding-right: 0;
+}
+
+.doeinsure-root--iphone .doeinsure-hero .doeinsure-stats {
+  background: var(--di-white);
 }
 
 .doeinsure-root--iphone .doeinsure-stats__row {
@@ -614,14 +719,36 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-root--iphone .doeinsure-stat {
-  padding: 1.15rem max(var(--di-inset), env(safe-area-inset-right, 0px)) 1.15rem
+  display: grid;
+  grid-template-columns: 5.8rem minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: 0.75rem;
+  padding: 0.82rem max(var(--di-inset), env(safe-area-inset-right, 0px)) 0.82rem
     max(var(--di-inset), env(safe-area-inset-left, 0px));
   border-right: 0;
   border-bottom: 1px solid var(--di-line);
 }
 
+.doeinsure-root--iphone .doeinsure-stat:first-child,
+.doeinsure-root--iphone .doeinsure-stat:not(:first-child),
+.doeinsure-root--iphone .doeinsure-stat:last-child {
+  padding-left: max(var(--di-inset), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--di-inset), env(safe-area-inset-right, 0px));
+}
+
 .doeinsure-root--iphone .doeinsure-stat:last-child {
   border-bottom: 0;
+}
+
+.doeinsure-root--iphone .doeinsure-stat b {
+  font-size: 1.12rem;
+  letter-spacing: -0.04em;
+}
+
+.doeinsure-root--iphone .doeinsure-stat span {
+  margin-top: 0;
+  font-size: 0.78rem;
+  line-height: 1.3;
 }
 
 .doeinsure-stat b {
@@ -686,6 +813,31 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-root:not(.doeinsure-root--iphone) #scale .doeinsure-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) #stack {
+  position: relative;
+  isolation: isolate;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) #stack::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  background-color: var(--di-gray);
+  background-image: radial-gradient(circle at 1px 1px, rgba(90, 94, 104, 0.11) 1px, transparent 0);
+  background-size: 20px 20px;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  pointer-events: none;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) #stack .doeinsure-wrap {
   position: relative;
   z-index: 1;
 }
@@ -2254,6 +2406,299 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   white-space: normal;
 }
 
+.doeinsure-ladder {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 2.6rem;
+}
+
+.doeinsure-rung {
+  --rung: 0;
+  appearance: none;
+  display: grid;
+  grid-template-columns: 6.8rem minmax(9.5rem, 0.7fr) minmax(10.5rem, 0.8fr) minmax(0, 1.5fr);
+  align-items: center;
+  gap: 0.35rem 1.5rem;
+  width: calc(100% - (var(--rung) * 1.15rem));
+  margin-left: calc(var(--rung) * 1.15rem);
+  padding: 1.05rem 1.3rem 1.1rem;
+  border: 1px solid var(--di-line);
+  border-left-width: 2px;
+  background: var(--di-white);
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.doeinsure-rung.is-on {
+  border-left-color: var(--di-blue);
+  background: var(--di-gray);
+}
+
+.doeinsure-rung.is-end {
+  background: var(--di-blue);
+  border-color: var(--di-blue);
+  color: #ffffff;
+}
+
+.doeinsure-rung.is-end.is-on {
+  background: var(--di-blue);
+}
+
+.doeinsure-rung__limit {
+  color: var(--di-blue);
+  font-size: calc(1.65rem + (var(--rung) * 0.26rem));
+  font-weight: 500;
+  letter-spacing: -0.08em;
+  line-height: 0.9;
+}
+
+.doeinsure-rung.is-end .doeinsure-rung__limit {
+  color: #ffffff;
+}
+
+.doeinsure-rung__who {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.doeinsure-rung__index {
+  color: var(--di-muted);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.doeinsure-rung.is-end .doeinsure-rung__index {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.doeinsure-rung__who h3 {
+  margin: 0;
+  font-size: 1.12rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.doeinsure-rung__who em {
+  color: var(--di-muted);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.doeinsure-rung.is-end .doeinsure-rung__who em {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.doeinsure-rung .doeinsure-stage-block__tags {
+  margin-top: 0;
+  align-content: center;
+  gap: 0.28rem;
+}
+
+.doeinsure-rung .doeinsure-stage-block__tag {
+  min-height: 1.55rem;
+  padding: 0.22rem 0.5rem;
+  background: transparent;
+  color: var(--di-muted);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.doeinsure-rung.is-on .doeinsure-stage-block__tag {
+  background: var(--di-white);
+  color: var(--di-ink);
+}
+
+.doeinsure-rung.is-end .doeinsure-stage-block__tag {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.doeinsure-rung ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.22rem 1.1rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doeinsure-rung li {
+  color: var(--di-muted);
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.doeinsure-rung li::before {
+  content: "";
+  display: inline-block;
+  width: 0.32rem;
+  height: 0.32rem;
+  margin-right: 0.38rem;
+  background: var(--di-blue);
+  vertical-align: 0.12rem;
+}
+
+.doeinsure-rung.is-end li {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.doeinsure-rung.is-end li::before {
+  background: #ffffff;
+}
+
+.doeinsure-root--iphone .doeinsure-ladder {
+  gap: 0.45rem;
+  margin-top: 1.75rem;
+}
+
+.doeinsure-root--iphone .doeinsure-rung {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  width: 100%;
+  margin-left: 0;
+  padding: 0.95rem 1rem 1.05rem;
+  gap: 0.25rem 0.9rem;
+}
+
+.doeinsure-root--iphone .doeinsure-rung__limit {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: clamp(1.55rem, 7.4vw, 2rem);
+}
+
+.doeinsure-root--iphone .doeinsure-rung__who {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.doeinsure-root--iphone .doeinsure-rung__who h3 {
+  font-size: 1.02rem;
+}
+
+.doeinsure-root--iphone .doeinsure-rung .doeinsure-stage-block__tags,
+.doeinsure-root--iphone .doeinsure-rung ul {
+  grid-column: 1 / -1;
+}
+
+.doeinsure-root--iphone .doeinsure-rung ul {
+  grid-template-columns: 1fr;
+  margin-top: 0.35rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--di-line);
+}
+
+.doeinsure-root--iphone .doeinsure-rung.is-end ul {
+  border-top-color: rgba(255, 255, 255, 0.22);
+}
+
+.doeinsure-reveal > .doeinsure-ladder {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+.doeinsure-reveal.is-in > .doeinsure-ladder {
+  animation: none;
+}
+
+.doeinsure-rung {
+  opacity: 0;
+}
+
+.doeinsure-rung > * {
+  opacity: 0;
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung {
+  animation: doeinsure-rung-in 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--rung) * 120ms);
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung > * {
+  animation: doeinsure-rung-seg 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung > *:nth-child(1) {
+  animation-delay: calc(var(--rung) * 120ms + 70ms);
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung > *:nth-child(2) {
+  animation-delay: calc(var(--rung) * 120ms + 140ms);
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung > *:nth-child(3) {
+  animation-delay: calc(var(--rung) * 120ms + 210ms);
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung > *:nth-child(4) {
+  animation-delay: calc(var(--rung) * 120ms + 280ms);
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung li {
+  animation: doeinsure-rung-seg 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung li:nth-child(1) {
+  animation-delay: calc(var(--rung) * 120ms + 300ms);
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung li:nth-child(2) {
+  animation-delay: calc(var(--rung) * 120ms + 340ms);
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung li:nth-child(3) {
+  animation-delay: calc(var(--rung) * 120ms + 380ms);
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung li:nth-child(4) {
+  animation-delay: calc(var(--rung) * 120ms + 420ms);
+}
+
+.doeinsure-reveal.is-in .doeinsure-rung li:nth-child(n + 5) {
+  animation-delay: calc(var(--rung) * 120ms + 460ms);
+}
+
+@keyframes doeinsure-rung-in {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes doeinsure-rung-seg {
+  from {
+    opacity: 0;
+    transform: translateX(-0.55rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .doeinsure-stage-blocks {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -3048,19 +3493,25 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-stages-title + .doeinsure-app--scale,
 .doeinsure-stages-title + .doeinsure-app--match,
-.doeinsure-stages-title + .doeinsure-app--stack {
+.doeinsure-stages-title + .doeinsure-app--stack,
+.doeinsure-stages-title + .doeinsure-app--issue,
+.doeinsure-stages-title + .doeinsure-app--follow {
   margin-top: 2.6rem;
 }
 
 .doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--scale,
 .doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--match,
-.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--stack {
+.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--stack,
+.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--issue,
+.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--follow {
   margin-top: 1.6rem;
 }
 
 .doeinsure-app--scale .doeinsure-app__bar,
 .doeinsure-app--match .doeinsure-app__bar,
-.doeinsure-app--stack .doeinsure-app__bar {
+.doeinsure-app--stack .doeinsure-app__bar,
+.doeinsure-app--issue .doeinsure-app__bar,
+.doeinsure-app--follow .doeinsure-app__bar {
   display: none;
 }
 
@@ -3333,10 +3784,10 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   appearance: none;
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.28rem;
   align-items: flex-start;
   width: 100%;
-  padding: 1.15rem 1.15rem 1.25rem;
+  padding: 1.05rem 1.15rem 1.15rem;
   border: 0;
   border-bottom: 1px solid var(--di-line);
   background: transparent;
@@ -3348,24 +3799,26 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-match__systems .doeinsure-stage-block__tags {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 0.28rem;
-  margin-top: 0.1rem;
+  margin-top: 0.45rem;
 }
 
 .doeinsure-match__systems .doeinsure-stage-block__tag {
-  flex: 1 1 0;
+  flex: 0 1 auto;
   min-width: 0;
-  min-height: 2rem;
-  padding: 0.4rem 0.5rem;
-  font-size: clamp(0.62rem, 0.74vw, 0.72rem);
-  letter-spacing: -0.02em;
+  min-height: 1.55rem;
+  padding: 0.22rem 0.5rem;
+  background: transparent;
+  color: var(--di-muted);
+  font-size: 0.6rem;
+  letter-spacing: 0.02em;
 }
 
 .doeinsure-match__systems button.is-on .doeinsure-stage-block__tag {
   border-color: rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .doeinsure-match__systems button.is-on b {
@@ -3382,15 +3835,17 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-match__systems span {
-  font-size: 1rem;
-  font-weight: 500;
-  letter-spacing: -0.03em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .doeinsure-match__systems b {
-  font-size: 1.35rem;
+  font-size: clamp(1.55rem, 2.4vw, 2.05rem);
   font-weight: 500;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
 }
 
 .doeinsure-doc {
@@ -3457,6 +3912,10 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-match__doc > p {
   margin: 0;
   padding: 0;
+  color: var(--di-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.45;
   text-wrap: balance;
 }
 
@@ -3496,18 +3955,18 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   flex: 1;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 0.35rem;
+  gap: 0.28rem;
   width: 100%;
   min-height: 0;
-  padding: 1rem 0.9rem;
+  padding: 0.85rem 0.9rem;
   border: 0;
   border-left: 2px solid transparent;
-  background: var(--di-gray);
+  background: var(--di-white);
   color: var(--di-muted);
   font-family: inherit;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   letter-spacing: -0.02em;
-  line-height: 1.4;
+  line-height: 1.38;
   text-align: left;
   cursor: pointer;
   transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
@@ -3530,30 +3989,25 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-match__clause-top em {
+  padding: 0.18rem 0.4rem;
+  border: 1px solid var(--di-blue);
   color: var(--di-blue);
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-style: normal;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .doeinsure-match__clauses strong {
   color: var(--di-ink);
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   font-weight: 500;
   letter-spacing: -0.02em;
 }
 
-.doeinsure-match__clause-match {
-  color: var(--di-blue);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
 .doeinsure-match__clauses button.is-on {
-  background: var(--di-white);
+  background: var(--di-gray);
   border-left-color: var(--di-blue);
   color: var(--di-ink);
 }
@@ -3611,25 +4065,61 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-match__file {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  padding: 1.4rem 1.35rem 1.5rem;
-  background: var(--di-gray);
-}
-
-.doeinsure-match__file.is-on {
+  gap: 0.7rem;
+  padding: 1.25rem 1.25rem 1.35rem;
   background: var(--di-white);
 }
 
+.doeinsure-match__file.is-on {
+  background: var(--di-blue);
+  color: #ffffff;
+}
+
 .doeinsure-match__status {
-  color: var(--di-muted);
-  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  color: var(--di-ink);
+  font-size: clamp(1.45rem, 2.4vw, 1.9rem);
   font-weight: 500;
   letter-spacing: -0.05em;
-  line-height: 1.1;
+  line-height: 1.08;
 }
 
 .doeinsure-match__file.is-on .doeinsure-match__status {
+  color: #ffffff;
+}
+
+.doeinsure-match__file.is-on .doeinsure-card__kicker,
+.doeinsure-match__file.is-on .doeinsure-match__updates > span,
+.doeinsure-match__file.is-on .doeinsure-scan__limits span,
+.doeinsure-match__file.is-on .doeinsure-scan__limits b,
+.doeinsure-match__file.is-on .doeinsure-match__updates li {
+  color: #ffffff;
+}
+
+.doeinsure-match__file.is-on .doeinsure-match__progress {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.doeinsure-match__file.is-on .doeinsure-match__progress i {
+  background: #ffffff;
+}
+
+.doeinsure-match__file.is-on .doeinsure-scan__limits {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.doeinsure-match__file.is-on .doeinsure-scan__limits span {
+  background: transparent;
+}
+
+.doeinsure-match__file.is-on .doeinsure-match__updates li {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: transparent;
+}
+
+.doeinsure-match__file.is-on .doeinsure-btn {
+  background: #ffffff;
   color: var(--di-blue);
+  -webkit-text-fill-color: var(--di-blue);
 }
 
 .doeinsure-match__progress {
@@ -4309,6 +4799,508 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   }
 }
 
+.doeinsure-issue {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: transparent;
+}
+
+.doeinsure-app--issue {
+  border: 0;
+  background: transparent;
+}
+
+.doeinsure-issue__rail {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--di-line);
+  border: 1px solid var(--di-line);
+}
+
+.doeinsure-issue__sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.5rem 1.6rem;
+  overflow: hidden;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+  transition: background-color 420ms ease, border-color 420ms ease, color 420ms ease;
+}
+
+.doeinsure-issue.is-on .doeinsure-issue__sheet {
+  background: var(--di-blue);
+  border-color: var(--di-blue);
+  color: #ffffff;
+}
+
+.doeinsure-issue.is-on .doeinsure-issue__scan {
+  display: none;
+}
+
+.doeinsure-issue.is-on .doeinsure-issue__kicker,
+.doeinsure-issue.is-on .doeinsure-issue__limit,
+.doeinsure-issue.is-on .doeinsure-issue__note,
+.doeinsure-issue.is-on .doeinsure-issue__sheet li,
+.doeinsure-issue.is-on .doeinsure-issue__sheet li span,
+.doeinsure-issue.is-on .doeinsure-issue__sheet li b {
+  color: #ffffff;
+}
+
+.doeinsure-issue.is-on .doeinsure-issue__sheet ul,
+.doeinsure-issue.is-on .doeinsure-issue__sheet li {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.doeinsure-issue.is-on .doeinsure-issue__sheet li i {
+  border-bottom-color: rgba(255, 255, 255, 0.28);
+}
+
+.doeinsure-issue__rail button {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 1rem 1.2rem 1.1rem;
+  border: 0;
+  background: var(--di-gray);
+  color: var(--di-muted);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.doeinsure-issue__rail button.is-on {
+  background: var(--di-blue);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.doeinsure-issue__rail span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-issue__rail b {
+  color: var(--di-ink);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.doeinsure-issue__rail button.is-on b {
+  color: #ffffff;
+}
+
+.doeinsure-issue__scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12%;
+  height: 18%;
+  background: linear-gradient(180deg, transparent, rgba(48, 80, 224, 0.08), transparent);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.doeinsure-issue__scan.is-on {
+  opacity: 1;
+  animation: doeinsure-issue-scan 2.1s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.doeinsure-issue__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.doeinsure-issue__kicker {
+  margin: 0;
+  flex: 0 0 auto;
+  padding: 0.45rem 0.85rem 0.5rem;
+  border: 1px solid var(--di-blue);
+  background: transparent;
+  color: var(--di-blue);
+  font-size: clamp(1.35rem, 2.6vw, 2.15rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.doeinsure-issue.is-on .doeinsure-issue__kicker {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.doeinsure-issue__limit {
+  display: block;
+  margin-top: 0;
+  color: var(--di-ink);
+  font-size: clamp(3.2rem, 7vw, 5.4rem);
+  font-weight: 500;
+  letter-spacing: -0.08em;
+  line-height: 0.9;
+  opacity: 0.28;
+  transition: opacity 420ms ease, color 420ms ease;
+}
+
+.doeinsure-issue__limit.is-on {
+  opacity: 1;
+}
+
+.doeinsure-issue.is-on .doeinsure-issue__limit {
+  color: #ffffff;
+}
+
+.doeinsure-issue__note {
+  display: block;
+  margin-top: 0.7rem;
+  color: var(--di-muted);
+  font-size: 0.98rem;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+}
+
+.doeinsure-issue__sheet ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--di-line);
+}
+
+.doeinsure-issue__sheet li {
+  display: grid;
+  grid-template-columns: auto minmax(1.5rem, 1fr) auto;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--di-line);
+  color: var(--di-muted);
+}
+
+.doeinsure-issue__sheet li span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-issue__sheet li i {
+  display: block;
+  height: 0;
+  border-bottom: 1px dotted var(--di-line);
+}
+
+.doeinsure-issue__sheet li b {
+  min-height: 1.2em;
+  color: var(--di-ink);
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-issue__sheet li.is-on span {
+  color: var(--di-blue);
+}
+
+.doeinsure-issue__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.35rem 1.15rem;
+  border-top: 1px solid var(--di-line);
+  background: var(--di-white);
+}
+
+.doeinsure-issue__bar p {
+  margin: 0;
+}
+
+.doeinsure-issue__bar span {
+  display: block;
+  color: var(--di-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-issue__bar b {
+  color: var(--di-ink);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.doeinsure-issue__bar.is-on b {
+  color: var(--di-blue);
+}
+
+.doeinsure-issue__bar .doeinsure-btn {
+  margin-top: 0;
+  min-width: 10rem;
+}
+
+.doeinsure-issue__bar .doeinsure-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__rail {
+  grid-template-columns: 1fr;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__sheet {
+  padding: 1.15rem 1rem 1.25rem;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__kicker {
+  font-size: 1.05rem;
+  padding: 0.35rem 0.55rem 0.38rem;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__limit {
+  font-size: clamp(2.45rem, 12vw, 3.2rem);
+}
+
+.doeinsure-root--iphone .doeinsure-issue__sheet li {
+  grid-template-columns: 1fr;
+  gap: 0.2rem;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__sheet li i {
+  display: none;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__bar {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 1rem 1rem 1.15rem;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__bar .doeinsure-btn {
+  width: 100%;
+}
+
+@keyframes doeinsure-issue-scan {
+  0% {
+    top: -12%;
+  }
+
+  100% {
+    top: 92%;
+  }
+}
+
+.doeinsure-app--follow {
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+}
+
+.doeinsure-follow {
+  display: flex;
+  flex-direction: column;
+  background: var(--di-white);
+}
+
+.doeinsure-follow__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.4rem 1.5rem 1.15rem;
+}
+
+.doeinsure-follow__head strong {
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 1.05;
+}
+
+.doeinsure-follow.is-on .doeinsure-follow__head strong {
+  color: var(--di-blue);
+}
+
+.doeinsure-follow__head span {
+  color: var(--di-muted);
+  font-size: 0.98rem;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-follow__log {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0 1.5rem 1.5rem;
+  list-style: none;
+}
+
+.doeinsure-follow__log::before,
+.doeinsure-follow__log::after {
+  content: "";
+  position: absolute;
+  left: calc(1.5rem + 0.42rem);
+  top: 1.35rem;
+  bottom: 1.7rem;
+  width: 1px;
+  pointer-events: none;
+}
+
+.doeinsure-follow__log::before {
+  background: var(--di-line);
+}
+
+.doeinsure-follow__log::after {
+  background: var(--di-blue);
+  transform: scaleY(var(--follow-progress, 0));
+  transform-origin: top center;
+  transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doeinsure-follow__log li + li {
+  margin-top: 0.15rem;
+}
+
+.doeinsure-follow__log button {
+  appearance: none;
+  display: grid;
+  grid-template-columns: 0.85rem 2.4rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.95rem;
+  width: 100%;
+  padding: 0.95rem 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.doeinsure-follow__log button i {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+}
+
+.doeinsure-follow__log button.is-on i,
+.doeinsure-follow__log button.is-live i {
+  border-color: var(--di-blue);
+  background: var(--di-blue);
+}
+
+.doeinsure-follow__log button.is-live i {
+  animation: doeinsure-follow-pulse 720ms ease infinite;
+}
+
+.doeinsure-follow__log button b {
+  color: var(--di-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-follow__log button.is-on b,
+.doeinsure-follow__log button.is-live b {
+  color: var(--di-blue);
+}
+
+.doeinsure-follow__log button span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  color: var(--di-ink);
+  font-size: 1.12rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.doeinsure-follow__log button em {
+  color: var(--di-muted);
+  font-size: 0.82rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-follow__log button p {
+  margin: 0;
+  padding: 0.38rem 0.65rem 0.4rem;
+  border: 1px solid var(--di-line);
+  background: transparent;
+  color: var(--di-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.doeinsure-follow__log button.is-live p {
+  border-color: var(--di-blue);
+  color: var(--di-blue);
+}
+
+.doeinsure-follow__log button.is-on p {
+  border-color: var(--di-blue);
+  color: var(--di-blue);
+}
+
+.doeinsure-root--iphone .doeinsure-follow__head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 1.15rem 1rem 0.9rem;
+}
+
+.doeinsure-root--iphone .doeinsure-follow__log {
+  padding: 0 1rem 1.15rem;
+}
+
+.doeinsure-root--iphone .doeinsure-follow__log::before,
+.doeinsure-root--iphone .doeinsure-follow__log::after {
+  left: calc(1rem + 0.42rem);
+}
+
+.doeinsure-root--iphone .doeinsure-follow__log button {
+  grid-template-columns: 0.85rem 2.1rem minmax(0, 1fr);
+  gap: 0.7rem;
+}
+
+.doeinsure-root--iphone .doeinsure-follow__log button p {
+  grid-column: 3;
+  justify-self: start;
+  margin-top: 0.15rem;
+}
+
+@keyframes doeinsure-follow-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.35);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .doeinsure-root * {
     animation: none !important;
@@ -4316,7 +5308,8 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   }
 
   .doeinsure-match__scan-bar::after,
-  .doeinsure-link__wire-live.is-linking {
+  .doeinsure-link__wire-live.is-linking,
+  .doeinsure-issue__scan.is-on {
     animation: none !important;
     transform: none;
     width: 100%;
@@ -4330,6 +5323,14 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   .doeinsure-reveal > * {
     opacity: 1 !important;
     filter: none !important;
+    transform: none !important;
+  }
+
+  .doeinsure-rung,
+  .doeinsure-rung > *,
+  .doeinsure-rung li {
+    opacity: 1 !important;
+    clip-path: none !important;
     transform: none !important;
   }
 }

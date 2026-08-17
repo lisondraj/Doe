@@ -334,7 +334,7 @@ export const DOEINSURE_MATCH = {
   currentLabel: "Working limit",
   requiredLabel: "MSA requires",
   policyUpdates: "Policy updates",
-  waitingUpdates: "Match clauses to update the policy file.",
+  waitingUpdates: "Waiting on clauses.",
   scenarios: [
     {
       id: "enterprise-msa",
@@ -434,7 +434,7 @@ export const DOEINSURE_STACK = {
   reading: "Reading live signals",
   ready: "Quote ready",
   premium: "$1240",
-  premiumNote: "Monthly · from live stack",
+  premiumNote: "Monthly",
   connectAll: "Connect all",
   request: "Request this quote",
   sources: [
@@ -469,6 +469,80 @@ export const DOEINSURE_STACK = {
       value: "Live",
       x: 84,
       y: 82,
+    },
+  ],
+} as const;
+
+export const DOEINSURE_ISSUE = {
+  id: "issue",
+  title: ["Certificates on demand.", "Issued from the file."],
+  insured: "Harbor Notes, Inc.",
+  issuing: "Issuing",
+  issued: "Issued",
+  waiting: "Ready to issue",
+  issueAll: "Issue certificate",
+  request: "Request coverage",
+  fields: [
+    { id: "holder", label: "Holder" },
+    { id: "insured", label: "Named insured" },
+    { id: "limit", label: "Limit" },
+    { id: "endorsement", label: "Endorsement" },
+  ],
+  requests: [
+    {
+      id: "msa",
+      name: "Enterprise MSA",
+      time: "Now",
+      holder: "Health system legal",
+      limit: "$10M",
+      endorsement: "Additional insured",
+    },
+    {
+      id: "clinic",
+      name: "Clinic credentialing",
+      time: "12 min",
+      holder: "Credentialing desk",
+      limit: "$5M",
+      endorsement: "Waiver of subrogation",
+    },
+    {
+      id: "golive",
+      name: "Go-live vendor pack",
+      time: "48 min",
+      holder: "Vendor management",
+      limit: "$10M",
+      endorsement: "Primary / noncontributory",
+    },
+  ],
+} as const;
+
+export const DOEINSURE_FOLLOW = {
+  id: "follow",
+  title: ["Coverage follows the product.", "Not next year’s renewal."],
+  company: "Harbor Notes",
+  waiting: "Waiting on a ship",
+  shipping: "Endorsing",
+  current: "Policy current",
+  endorsed: "Endorsed",
+  queued: "Queued",
+  ships: [
+    {
+      id: "v1",
+      version: "v1",
+      name: "Ambient capture",
+      cover: "PHI at capture",
+    },
+    {
+      id: "v2",
+      version: "v2",
+      name: "Clinic agent",
+      cover: "Autonomous step rider",
+    },
+    {
+      id: "v3",
+      version: "v3",
+      name: "New modality",
+      cover: "Imaging path",
     },
   ],
 } as const;

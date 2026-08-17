@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import { DoeInsureAppFrame } from "@/components/doeinsure/DoeInsureAppUi";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import {
+  DOEINSURE_FOLLOW,
+  DOEINSURE_ISSUE,
   DOEINSURE_MATCH,
   DOEINSURE_SCALE,
   DOEINSURE_STACK,
@@ -249,7 +251,6 @@ function MatchSection() {
                                 {on ? <em>Matched</em> : null}
                               </span>
                               <strong>{clause.text}</strong>
-                              {on ? <span className="doeinsure-match__clause-match">{clause.policyMatch}</span> : null}
                             </button>
                           </li>
                         );
@@ -270,9 +271,6 @@ function MatchSection() {
                 <div className="doeinsure-match__progress" aria-hidden="true">
                   <i style={{ width: `${progress}%` }} />
                 </div>
-                <p className="doeinsure-match__progress-label">
-                  {matchedCount} of {clauseTotal} {DOEINSURE_MATCH.progressLabel.toLowerCase()}
-                </p>
                 <div className="doeinsure-scan__limits">
                   <span>
                     {DOEINSURE_MATCH.currentLabel}
@@ -484,12 +482,208 @@ function StackBody({ revealed }: { revealed: boolean }) {
   );
 }
 
+const ISSUE_STEP_MS = 520;
+
+function IssueSection() {
+  return (
+    <section className="doeinsure-section" id="issue">
+      <div className="doeinsure-wrap">
+        <DoeInsureReveal variant="rise">
+          {(revealed) => <IssueBody revealed={revealed} />}
+        </DoeInsureReveal>
+      </div>
+    </section>
+  );
+}
+
+function IssueBody({ revealed }: { revealed: boolean }) {
+  const [request, setRequest] = useState(0);
+  const [step, setStep] = useState(0);
+  const [auto, setAuto] = useState(false);
+  const active = DOEINSURE_ISSUE.requests[request];
+  const total = DOEINSURE_ISSUE.fields.length;
+  const complete = step >= total;
+  const busy = auto && !complete;
+
+  const values: Record<string, string> = {
+    holder: active.holder,
+    insured: DOEINSURE_ISSUE.insured,
+    limit: active.limit,
+    endorsement: active.endorsement,
+  };
+
+  useEffect(() => {
+    setStep(0);
+    if (!revealed) return;
+    setAuto(true);
+  }, [revealed, request]);
+
+  useEffect(() => {
+    if (!auto || complete) return undefined;
+    const id = window.setTimeout(() => setStep((current) => current + 1), ISSUE_STEP_MS);
+    return () => window.clearTimeout(id);
+  }, [auto, complete, step]);
+
+  const pick = (index: number) => {
+    setAuto(false);
+    setRequest(index);
+  };
+
+  return (
+    <>
+      <h2 className="doeinsure-stages-title">
+        {DOEINSURE_ISSUE.title.map((line) => (
+          <span key={line} className="doeinsure-stages-title__line">
+            {line}
+          </span>
+        ))}
+      </h2>
+      <DoeInsureAppFrame file="Certificate desk" className="doeinsure-app--issue">
+        <div className={`doeinsure-issue${complete ? " is-on" : ""}`}>
+          <div className="doeinsure-issue__rail" role="tablist" aria-label="Certificate requests">
+            {DOEINSURE_ISSUE.requests.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={request === index}
+                className={request === index ? "is-on" : undefined}
+                onClick={() => pick(index)}
+              >
+                <span>{item.time}</span>
+                <b>{item.name}</b>
+              </button>
+            ))}
+          </div>
+
+          <article className="doeinsure-issue__sheet" key={active.id}>
+            <div className={`doeinsure-issue__scan${busy ? " is-on" : ""}`} aria-hidden="true" />
+            <div className="doeinsure-issue__top">
+              <strong className={`doeinsure-issue__limit${step > 0 ? " is-on" : ""}`}>{active.limit}</strong>
+              <p className="doeinsure-issue__kicker">
+                {complete ? DOEINSURE_ISSUE.issued : busy ? DOEINSURE_ISSUE.issuing : DOEINSURE_ISSUE.waiting}
+              </p>
+            </div>
+            <span className="doeinsure-issue__note">{DOEINSURE_ISSUE.insured}</span>
+            <ul>
+              {DOEINSURE_ISSUE.fields.map((field, index) => {
+                const filled = step > index;
+                return (
+                  <li key={field.id} className={filled ? "is-on" : undefined}>
+                    <span>{field.label}</span>
+                    <i />
+                    <b>{filled ? values[field.id] : ""}</b>
+                  </li>
+                );
+              })}
+            </ul>
+          </article>
+        </div>
+      </DoeInsureAppFrame>
+    </>
+  );
+}
+
+const FOLLOW_STEP_MS = 780;
+
+function FollowSection() {
+  return (
+    <section className="doeinsure-section doeinsure-section--gray" id="follow">
+      <div className="doeinsure-wrap">
+        <DoeInsureReveal variant="rise">
+          {(revealed) => <FollowBody revealed={revealed} />}
+        </DoeInsureReveal>
+      </div>
+    </section>
+  );
+}
+
+function FollowBody({ revealed }: { revealed: boolean }) {
+  const [step, setStep] = useState(0);
+  const [auto, setAuto] = useState(false);
+  const total = DOEINSURE_FOLLOW.ships.length;
+  const complete = step >= total;
+  const busy = auto && !complete;
+  const active = DOEINSURE_FOLLOW.ships[Math.min(step, total - 1)];
+  const status = complete
+    ? DOEINSURE_FOLLOW.current
+    : busy
+      ? `${DOEINSURE_FOLLOW.shipping} ${active.version}`
+      : DOEINSURE_FOLLOW.waiting;
+
+  useEffect(() => {
+    if (!revealed) return;
+    setStep(0);
+    setAuto(true);
+  }, [revealed]);
+
+  useEffect(() => {
+    if (!auto || complete) return undefined;
+    const id = window.setTimeout(() => setStep((current) => current + 1), FOLLOW_STEP_MS);
+    return () => window.clearTimeout(id);
+  }, [auto, complete, step]);
+
+  const pick = (index: number) => {
+    setAuto(false);
+    setStep(index + 1);
+  };
+
+  return (
+    <>
+      <h2 className="doeinsure-stages-title">
+        {DOEINSURE_FOLLOW.title.map((line) => (
+          <span key={line} className="doeinsure-stages-title__line">
+            {line}
+          </span>
+        ))}
+      </h2>
+      <DoeInsureAppFrame file="Product file · Harbor Notes" className="doeinsure-app--follow">
+        <div className={`doeinsure-follow${complete ? " is-on" : ""}`}>
+          <div className="doeinsure-follow__head">
+            <strong>{status}</strong>
+            <span>{DOEINSURE_FOLLOW.company}</span>
+          </div>
+          <ol
+            className="doeinsure-follow__log"
+            style={{ "--follow-progress": total ? String(step / total) : "0" } as CSSProperties}
+          >
+            {DOEINSURE_FOLLOW.ships.map((item, index) => {
+              const on = step > index;
+              const live = busy && step === index;
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    className={`${on ? "is-on" : ""}${live ? " is-live" : ""}`}
+                    aria-pressed={on}
+                    onClick={() => pick(index)}
+                  >
+                    <i aria-hidden="true" />
+                    <b>{item.version}</b>
+                    <span>
+                      {item.name}
+                      <em>{item.cover}</em>
+                    </span>
+                    <p>{on ? DOEINSURE_FOLLOW.endorsed : live ? DOEINSURE_FOLLOW.shipping : DOEINSURE_FOLLOW.queued}</p>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </DoeInsureAppFrame>
+    </>
+  );
+}
+
 export function DoeInsureSellSections() {
   return (
     <>
       <ScaleSection />
       <MatchSection />
       <StackSection />
+      <IssueSection />
+      <FollowSection />
     </>
   );
 }
