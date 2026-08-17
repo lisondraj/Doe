@@ -756,68 +756,6 @@ export const DOEINSURE_HOW = {
   ],
 } as const;
 
-export const DOEINSURE_HOUR = {
-  id: "hour",
-  title: ["The hour they ask.", "The limit is already moving."],
-  desk: "Overnight desk",
-  live: "On the wire",
-  raising: "Raising",
-  raised: "Raised",
-  fromLabel: "Was",
-  toLabel: "Now",
-  asks: [
-    {
-      time: "21:14",
-      who: "Northwell legal",
-      ask: "Tech E&O",
-      from: "$2M",
-      to: "$10M",
-      note: "MSA addendum. Friday close.",
-    },
-    {
-      time: "22:03",
-      who: "Kaiser credentialing",
-      ask: "Additional insured",
-      from: "Named",
-      to: "Primary",
-      note: "Clinic go-live Monday.",
-    },
-    {
-      time: "23:41",
-      who: "Mayo contracting",
-      ask: "Cyber",
-      from: "$1M",
-      to: "$5M",
-      note: "Imaging pathway paper.",
-    },
-    {
-      time: "01:08",
-      who: "Cleveland Clinic",
-      ask: "Subrogation",
-      from: "Open",
-      to: "Waived",
-      note: "Ambient rollout, four sites.",
-    },
-  ],
-} as const;
-
-export const DOEINSURE_BOOK = {
-  id: "book",
-  title: ["Move the book.", "Prior acts stay on."],
-  leftLabel: "Incumbent file",
-  rightLabel: "On Doe tonight",
-  transferring: "Transferring",
-  bound: "Bound",
-  folio: "Folio",
-  clinics: [
-    { name: "Harbor Evening Clinic", lives: "14k lives", status: "Prior acts 2024–26" },
-    { name: "Northwell Ambient Pod", lives: "6 sites", status: "Retro date kept" },
-    { name: "Cedar Prior Auth Desk", lives: "2.1M claims", status: "No gap in cover" },
-    { name: "Mayo Imaging Labs", lives: "11 readers", status: "SaMD class mapped" },
-    { name: "Summit RCM Agents", lives: "38 payers", status: "Book dated back" },
-  ],
-} as const;
-
 export const DOEINSURE_UNDERWRITE = {
   eyebrow: "What we look at",
   title: "Read from the stack, not a stale PDF.",
