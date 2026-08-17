@@ -5246,14 +5246,18 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stack-phone__premium {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.28rem;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-items: end;
+  column-gap: 0.55rem;
+  row-gap: 0.12rem;
   margin: 0.15rem 0 0.2rem;
 }
 
 .doeinsure-stack-phone__premium b {
+  grid-column: 1;
+  grid-row: 1;
   font-size: clamp(2.55rem, 13vw, 3.2rem);
   font-weight: 500;
   letter-spacing: -0.07em;
@@ -5264,7 +5268,9 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   color: #ffffff;
 }
 
-.doeinsure-stack-phone__premium em {
+.doeinsure-stack-phone__period {
+  grid-column: 1;
+  grid-row: 2;
   color: var(--di-muted);
   font-size: 0.82rem;
   font-style: normal;
@@ -5272,30 +5278,32 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   letter-spacing: -0.02em;
 }
 
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__period {
+  color: #ffffff;
+}
+
 .doeinsure-stack-phone__drop {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
   display: inline-flex;
   align-items: center;
   min-height: 0;
   padding: 0.18rem 0.48rem;
   border: 1px solid var(--di-blue);
-  background: var(--di-blue);
-  color: #ffffff;
+  background: #ffffff;
+  color: var(--di-blue);
   font-size: 1rem;
+  font-style: normal;
   font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 1;
 }
 
 .doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__drop {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #ffffff;
-  font-size: 1.02rem;
-}
-
-.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__premium em {
-  color: rgba(255, 255, 255, 0.82);
+  border-color: #ffffff;
+  background: #ffffff;
+  color: var(--di-blue);
 }
 
 .doeinsure-stack-phone__meter {
@@ -5460,8 +5468,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   min-height: 1.7rem;
   padding: 0.2rem 0.48rem;
   border: 1px solid var(--di-blue);
-  background: var(--di-blue);
-  color: #ffffff;
+  background: #ffffff;
+  color: var(--di-blue);
   font-size: 0.92rem;
   font-weight: 600;
   letter-spacing: -0.03em;

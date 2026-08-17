@@ -569,6 +569,7 @@ function StackBody({ revealed }: { revealed: boolean }) {
               <p className="doeinsure-stack-phone__premium">
                 <b>{DOEINSURE_STACK.premium}</b>
                 {dropTotal ? <em className="doeinsure-stack-phone__drop">−${dropTotal}</em> : null}
+                <em className="doeinsure-stack-phone__period">{DOEINSURE_STACK.premiumNote}</em>
               </p>
               <div
                 className="doeinsure-stack-phone__meter"
