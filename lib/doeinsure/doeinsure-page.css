@@ -339,6 +339,26 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   padding-bottom: 4.75rem;
 }
 
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  background-color: var(--di-white);
+  background-image: radial-gradient(circle at 1px 1px, rgba(90, 94, 104, 0.11) 1px, transparent 0);
+  background-size: 20px 20px;
+  mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+  pointer-events: none;
+}
+
 .doeinsure-hero__title {
   margin: 0;
   max-width: max-content;
@@ -638,6 +658,36 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-section--gray {
   background: var(--di-gray);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) #scale {
+  position: relative;
+  isolation: isolate;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) #scale::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  background-color: var(--di-gray);
+  background-image: repeating-radial-gradient(
+    circle at 50% 118%,
+    transparent 0,
+    transparent 31px,
+    rgba(48, 80, 224, 0.055) 31px,
+    rgba(48, 80, 224, 0.055) 32px
+  );
+  mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  pointer-events: none;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) #scale .doeinsure-wrap {
+  position: relative;
+  z-index: 1;
 }
 
 .doeinsure-section h2 {
@@ -2997,17 +3047,20 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stages-title + .doeinsure-app--scale,
-.doeinsure-stages-title + .doeinsure-app--match {
+.doeinsure-stages-title + .doeinsure-app--match,
+.doeinsure-stages-title + .doeinsure-app--stack {
   margin-top: 2.6rem;
 }
 
 .doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--scale,
-.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--match {
+.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--match,
+.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--stack {
   margin-top: 1.6rem;
 }
 
 .doeinsure-app--scale .doeinsure-app__bar,
-.doeinsure-app--match .doeinsure-app__bar {
+.doeinsure-app--match .doeinsure-app__bar,
+.doeinsure-app--stack .doeinsure-app__bar {
   display: none;
 }
 
@@ -3978,16 +4031,300 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   background: var(--di-line);
 }
 
+.doeinsure-link {
+  display: flex;
+  flex-direction: column;
+  background: var(--di-white);
+}
+
+.doeinsure-link__map {
+  position: relative;
+  min-height: 28rem;
+  overflow: hidden;
+  background: var(--di-gray);
+}
+
+.doeinsure-link__wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.doeinsure-link__wire {
+  fill: none;
+  stroke: var(--di-line);
+  stroke-width: 0.7;
+}
+
+.doeinsure-link__wire-live {
+  fill: none;
+  stroke: var(--di-blue);
+  stroke-width: 0.9;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.doeinsure-link__wire-live.is-on {
+  stroke-dashoffset: 0;
+}
+
+.doeinsure-link__wire-live.is-linking {
+  animation: doeinsure-link-draw 720ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.doeinsure-link__packet {
+  fill: var(--di-blue);
+}
+
+.doeinsure-link__node {
+  appearance: none;
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.18rem;
+  width: 8.6rem;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+  color: var(--di-muted);
+  font-family: inherit;
+  text-align: left;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.doeinsure-link__node span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-link__node b {
+  color: var(--di-ink);
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-link__node.is-on,
+.doeinsure-link__node.is-linking {
+  background: var(--di-blue);
+  border-color: var(--di-blue);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.doeinsure-link__node.is-on b,
+.doeinsure-link__node.is-linking b {
+  color: #ffffff;
+}
+
+.doeinsure-link__hub {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: min(18.5rem, 46%);
+  padding: 1.15rem 1.2rem 1.2rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+  transform: translate(-50%, -50%);
+}
+
+.doeinsure-link__hub.is-on {
+  background: var(--di-blue);
+  border-color: var(--di-blue);
+  color: #ffffff;
+}
+
+.doeinsure-link__hub > span {
+  color: var(--di-blue);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-link__hub.is-on > span {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.doeinsure-link__hub strong {
+  font-size: clamp(1.55rem, 2.4vw, 2.05rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.doeinsure-link__hub em {
+  color: var(--di-muted);
+  font-size: 0.82rem;
+  font-style: normal;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-link__hub.is-on em {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.doeinsure-link__hub ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  width: 100%;
+  margin: 0.55rem 0 0;
+  padding: 0.7rem 0 0;
+  border-top: 1px solid var(--di-line);
+  list-style: none;
+}
+
+.doeinsure-link__hub.is-on ul {
+  border-top-color: rgba(255, 255, 255, 0.22);
+}
+
+.doeinsure-link__hub li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  color: var(--di-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-link__hub li b {
+  color: var(--di-ink);
+  font-weight: 600;
+}
+
+.doeinsure-link__hub.is-on li,
+.doeinsure-link__hub.is-on li b {
+  color: #ffffff;
+}
+
+.doeinsure-link__hub li.is-wait {
+  font-weight: 400;
+}
+
+.doeinsure-link__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.35rem 1.15rem;
+  border-top: 1px solid var(--di-line);
+  background: var(--di-white);
+}
+
+.doeinsure-link__bar p {
+  margin: 0;
+}
+
+.doeinsure-link__bar span {
+  display: block;
+  color: var(--di-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-link__bar b {
+  color: var(--di-ink);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.doeinsure-link__bar.is-on b {
+  color: var(--di-blue);
+}
+
+.doeinsure-link__bar .doeinsure-btn {
+  margin-top: 0;
+  min-width: 10rem;
+}
+
+.doeinsure-link__bar .doeinsure-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.doeinsure-root--iphone .doeinsure-link__map {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  min-height: 0;
+  background: var(--di-line);
+}
+
+.doeinsure-root--iphone .doeinsure-link__wires {
+  display: none;
+}
+
+.doeinsure-root--iphone .doeinsure-link__node {
+  position: relative;
+  left: auto !important;
+  top: auto !important;
+  width: 100%;
+  transform: none;
+  border: 0;
+}
+
+.doeinsure-root--iphone .doeinsure-link__hub {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 100%;
+  grid-column: 1 / -1;
+  transform: none;
+  padding: 1.15rem 1rem 1.2rem;
+}
+
+.doeinsure-root--iphone .doeinsure-link__bar {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 1rem 1rem 1.15rem;
+}
+
+.doeinsure-root--iphone .doeinsure-link__bar .doeinsure-btn {
+  width: 100%;
+}
+
+@keyframes doeinsure-link-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .doeinsure-root * {
     animation: none !important;
     transition: none !important;
   }
 
-  .doeinsure-match__scan-bar::after {
+  .doeinsure-match__scan-bar::after,
+  .doeinsure-link__wire-live.is-linking {
     animation: none !important;
     transform: none;
     width: 100%;
+    stroke-dashoffset: 0;
+  }
+
+  .doeinsure-link__packet {
+    display: none;
   }
 
   .doeinsure-reveal > * {

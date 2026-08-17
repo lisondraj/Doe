@@ -7,6 +7,7 @@ import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import {
   DOEINSURE_MATCH,
   DOEINSURE_SCALE,
+  DOEINSURE_STACK,
 } from "@/lib/doeinsure/doeinsure-copy";
 
 function ScaleSection() {
@@ -317,11 +318,178 @@ function MatchSection() {
   );
 }
 
+const STACK_HUB = { x: 50, y: 50 };
+const STACK_CONNECT_MS = 720;
+
+function stackPath(x: number, y: number) {
+  const midY = y < STACK_HUB.y ? 34 : 66;
+  return `M ${x} ${y} Q ${STACK_HUB.x} ${midY} ${STACK_HUB.x} ${STACK_HUB.y}`;
+}
+
+function StackSection() {
+  return (
+    <section className="doeinsure-section doeinsure-section--gray" id="stack">
+      <div className="doeinsure-wrap">
+        <DoeInsureReveal variant="rise">
+          {(revealed) => <StackBody revealed={revealed} />}
+        </DoeInsureReveal>
+      </div>
+    </section>
+  );
+}
+
+function StackBody({ revealed }: { revealed: boolean }) {
+  const [on, setOn] = useState<Record<string, boolean>>({});
+  const [linking, setLinking] = useState<string | null>(null);
+  const [auto, setAuto] = useState(false);
+  const connected = DOEINSURE_STACK.sources.filter((item) => on[item.id]);
+  const complete = connected.length === DOEINSURE_STACK.sources.length;
+  const busy = Boolean(linking);
+
+  useEffect(() => {
+    if (!revealed || complete) return undefined;
+    setAuto(true);
+    return undefined;
+  }, [complete, revealed]);
+
+  useEffect(() => {
+    if (!auto || linking || complete) return undefined;
+    const next = DOEINSURE_STACK.sources.find((item) => !on[item.id]);
+    if (!next) {
+      setAuto(false);
+      return undefined;
+    }
+    const id = window.setTimeout(() => setLinking(next.id), 160);
+    return () => window.clearTimeout(id);
+  }, [auto, complete, linking, on]);
+
+  useEffect(() => {
+    if (!linking) return undefined;
+    const id = window.setTimeout(() => {
+      setOn((current) => ({ ...current, [linking]: true }));
+      setLinking(null);
+    }, STACK_CONNECT_MS);
+    return () => window.clearTimeout(id);
+  }, [linking]);
+
+  const toggle = (id: string) => {
+    if (busy && linking !== id) return;
+    setAuto(false);
+    setLinking(null);
+    setOn((current) => ({ ...current, [id]: !current[id] }));
+  };
+
+  const connectAll = () => {
+    if (busy || complete) return;
+    setAuto(true);
+  };
+
+  const status = complete
+    ? DOEINSURE_STACK.ready
+    : busy || connected.length
+      ? DOEINSURE_STACK.reading
+      : DOEINSURE_STACK.waiting;
+
+  return (
+    <>
+      <h2 className="doeinsure-stages-title">
+        {DOEINSURE_STACK.title.map((line) => (
+          <span key={line} className="doeinsure-stages-title__line">
+            {line}
+          </span>
+        ))}
+      </h2>
+      <DoeInsureAppFrame file="Risk file · Harbor Notes" className="doeinsure-app--stack">
+        <div className={`doeinsure-link${complete ? " is-on" : ""}`}>
+          <div className="doeinsure-link__map">
+            <svg className="doeinsure-link__wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              {DOEINSURE_STACK.sources.map((item) => {
+                const live = on[item.id] || linking === item.id;
+                const d = stackPath(item.x, item.y);
+                return (
+                  <g key={item.id}>
+                    <path className="doeinsure-link__wire" d={d} />
+                    <path
+                      className={`doeinsure-link__wire-live${live ? " is-on" : ""}${linking === item.id ? " is-linking" : ""}`}
+                      d={d}
+                      pathLength={1}
+                    />
+                    {linking === item.id ? (
+                      <circle className="doeinsure-link__packet" r="1.25">
+                        <animateMotion dur="0.72s" fill="freeze" path={d} />
+                      </circle>
+                    ) : null}
+                  </g>
+                );
+              })}
+            </svg>
+
+            {DOEINSURE_STACK.sources.map((item) => {
+              const live = Boolean(on[item.id]);
+              const active = live || linking === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`doeinsure-link__node${active ? " is-on" : ""}${linking === item.id ? " is-linking" : ""}`}
+                  style={{ left: `${item.x}%`, top: `${item.y}%` }}
+                  aria-pressed={live}
+                  onClick={() => toggle(item.id)}
+                >
+                  <span>{item.name}</span>
+                  <b>{item.signal}</b>
+                </button>
+              );
+            })}
+
+            <div className={`doeinsure-link__hub${complete ? " is-on" : ""}`}>
+              <span>{status}</span>
+              <strong>{complete ? DOEINSURE_STACK.premium : DOEINSURE_STACK.company}</strong>
+              {complete ? <em>{DOEINSURE_STACK.premiumNote}</em> : null}
+              <ul>
+                {connected.length ? (
+                  connected.map((item) => (
+                    <li key={item.id}>
+                      {item.signal}
+                      <b>{item.value}</b>
+                    </li>
+                  ))
+                ) : (
+                  <li className="is-wait">Connect a source</li>
+                )}
+              </ul>
+            </div>
+          </div>
+
+          <div className={`doeinsure-link__bar${complete ? " is-on" : ""}`}>
+            <p>
+              <span>
+                {connected.length} of {DOEINSURE_STACK.sources.length}
+              </span>
+              <b>{status}</b>
+            </p>
+            {complete ? (
+              <a className="doeinsure-btn" href="#request">
+                {DOEINSURE_STACK.request}
+              </a>
+            ) : (
+              <button type="button" className="doeinsure-btn" disabled={busy} onClick={connectAll}>
+                {busy ? DOEINSURE_STACK.reading : DOEINSURE_STACK.connectAll}
+              </button>
+            )}
+          </div>
+        </div>
+      </DoeInsureAppFrame>
+    </>
+  );
+}
+
 export function DoeInsureSellSections() {
   return (
     <>
       <ScaleSection />
       <MatchSection />
+      <StackSection />
     </>
   );
 }

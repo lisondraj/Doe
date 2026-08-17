@@ -16,7 +16,6 @@ import {
   DOEINSURE_HOW,
   DOEINSURE_LIMITS,
   DOEINSURE_NEXT,
-  DOEINSURE_PLATFORM,
   DOEINSURE_POLICY_SAMPLES,
   DOEINSURE_STATS,
   DOEINSURE_STAGES,
@@ -183,50 +182,9 @@ function PolicyPreview() {
   );
 }
 
-function CoiCard() {
-  const [issued, setIssued] = useState(false);
-
-  return (
-    <aside className="doeinsure-card doeinsure-coi">
-      <div className="doeinsure-card__kicker">
-        <span>Certificate</span>
-        <span>{issued ? "Issued" : "Draft"}</span>
-      </div>
-      <p className="doeinsure-card__name">Certificate of insurance</p>
-      <p className="doeinsure-card__meta">Additional insured · waiver of subrogation</p>
-      <div className="doeinsure-coi__grid">
-        <span>
-          Holder
-          <b>Kaiser Permanente</b>
-        </span>
-        <span>
-          Named insured
-          <b>Harbor Notes, Inc.</b>
-        </span>
-        <span>
-          Limit
-          <b key={issued ? "on" : "off"}>{issued ? "$10M" : "$1M"}</b>
-        </span>
-        <span>
-          Status
-          <b>{issued ? "Delivered" : "Ready"}</b>
-        </span>
-      </div>
-      <button
-        type="button"
-        className={`doeinsure-inline${issued ? " is-on" : ""}`}
-        onClick={() => setIssued((value) => !value)}
-      >
-        {issued ? "Certificate issued" : "Issue COI"}
-      </button>
-    </aside>
-  );
-}
-
 export function DoeInsurePageContent() {
   const [email, setEmail] = useState("");
   const [stat, setStat] = useState(0);
-  const [more, setMore] = useState(0);
   const [cover, setCover] = useState(0);
   const [stage, setStage] = useState(DOEINSURE_STAGES.items.length - 1);
   const [who, setWho] = useState(0);
@@ -361,41 +319,6 @@ export function DoeInsurePageContent() {
       </section>
 
       <DoeInsureSellSections />
-
-      <section className="doeinsure-section doeinsure-section--gray">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal className="doeinsure-more">
-            <div>
-              <h2>{DOEINSURE_PLATFORM.more.title}</h2>
-              <div className="doeinsure-acc">
-                {DOEINSURE_PLATFORM.more.items.map((item, index) => {
-                  const open = more === index;
-                  return (
-                    <div key={item.id} className={`doeinsure-acc__item${open ? " is-on" : ""}`}>
-                      <button
-                        type="button"
-                        className="doeinsure-acc__btn"
-                        aria-expanded={open}
-                        onClick={() => setMore(index)}
-                      >
-                        <span>{String(index + 1).padStart(2, "0")}</span>
-                        <h3>{item.name}</h3>
-                        <i aria-hidden="true">{open ? "–" : "+"}</i>
-                      </button>
-                      <div className={`doeinsure-fold${open ? " is-on" : ""}`}>
-                        <div>
-                          <p>{item.body}</p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <CoiCard />
-          </DoeInsureReveal>
-        </div>
-      </section>
 
       <section className="doeinsure-section" id="coverage">
         <div className="doeinsure-wrap">

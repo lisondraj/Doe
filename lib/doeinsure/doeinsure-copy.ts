@@ -306,12 +306,12 @@ export const DOEINSURE_SCALE = {
   traditionalNote: "Prepaid on January revenue — uncovered by June, or overpaid in the winter.",
   oursNote: "Billed on this month’s usage.",
   months: [
-    { label: "Jan", mrr: "$10k", users: "412", premium: "$410", traditional: "$4,920" },
-    { label: "Feb", mrr: "$18k", users: "890", premium: "$520", traditional: "$4,920" },
-    { label: "Mar", mrr: "$31k", users: "1,402", premium: "$680", traditional: "$4,920" },
-    { label: "Apr", mrr: "$48k", users: "2,110", premium: "$890", traditional: "$4,920" },
-    { label: "May", mrr: "$67k", users: "2,680", premium: "$1,080", traditional: "$4,920" },
-    { label: "Jun", mrr: "$86k", users: "3,104", premium: "$1,240", traditional: "$4,920" },
+    { label: "Jan", mrr: "$10k", users: "412", premium: "$410", traditional: "$4920" },
+    { label: "Feb", mrr: "$18k", users: "890", premium: "$520", traditional: "$4920" },
+    { label: "Mar", mrr: "$31k", users: "1402", premium: "$680", traditional: "$4920" },
+    { label: "Apr", mrr: "$48k", users: "2110", premium: "$890", traditional: "$4920" },
+    { label: "May", mrr: "$67k", users: "2680", premium: "$1080", traditional: "$4920" },
+    { label: "Jun", mrr: "$86k", users: "3104", premium: "$1240", traditional: "$4920" },
   ],
 } as const;
 
@@ -426,44 +426,51 @@ export const DOEINSURE_MATCH = {
   ],
 } as const;
 
-export const DOEINSURE_PLATFORM = {
-  eyebrow: "Platform",
-  more: {
-    eyebrow: "Also in the dashboard",
-    title: "The rest of the close, without a new packet.",
-    items: [
-      {
-        id: "coi",
-        name: "Certificates on demand",
-        body: "Hospital credentialing wants a COI, additional insured, and waiver of subrogation this afternoon. Issue it from the dashboard.",
-      },
-      {
-        id: "posture",
-        name: "Continuous posture",
-        body: "Cloud, repo, and compliance signals keep the risk file current. A drift in encryption or access is visible before renewal.",
-      },
-      {
-        id: "model",
-        name: "Model-change endorsements",
-        body: "Ship a new agent, modality, or autonomous step. Coverage follows the product, not next year’s renewal date.",
-      },
-      {
-        id: "baa",
-        name: "BAA and PHI pack",
-        body: "Named insureds, BAAs, and PHI incident language packaged for the health-system legal review.",
-      },
-      {
-        id: "incident",
-        name: "Incident desk",
-        body: "A 24-hour path for a suspected PHI event — counsel, forensics, and notice — without hunting a panel number.",
-      },
-      {
-        id: "prior",
-        name: "Prior acts on switch",
-        body: "Move an existing book off a generic tech form. Prior acts so last year’s clinics stay inside the coverage.",
-      },
-    ],
-  },
+export const DOEINSURE_STACK = {
+  id: "stack",
+  title: ["Connect your stack.", "Quote in minutes."],
+  company: "Harbor Notes",
+  waiting: "Waiting on stack",
+  reading: "Reading live signals",
+  ready: "Quote ready",
+  premium: "$1240",
+  premiumNote: "Monthly · from live stack",
+  connectAll: "Connect all",
+  request: "Request this quote",
+  sources: [
+    {
+      id: "aws",
+      name: "AWS",
+      signal: "Encryption",
+      value: "On",
+      x: 16,
+      y: 18,
+    },
+    {
+      id: "github",
+      name: "GitHub",
+      signal: "Branches",
+      value: "100%",
+      x: 84,
+      y: 18,
+    },
+    {
+      id: "vanta",
+      name: "Vanta",
+      signal: "SOC 2",
+      value: "Ready",
+      x: 16,
+      y: 82,
+    },
+    {
+      id: "stripe",
+      name: "Stripe",
+      signal: "Volume",
+      value: "Live",
+      x: 84,
+      y: 82,
+    },
+  ],
 } as const;
 
 export const DOEINSURE_CONNECT = {
