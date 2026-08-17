@@ -229,39 +229,37 @@ function MatchSection() {
                 ))}
               </div>
 
-              <article className="doeinsure-doc doeinsure-match__doc" key={active.id}>
-                {scanning ? (
-                  <div className="doeinsure-match__scan">
+              <article className={`doeinsure-doc doeinsure-match__doc${scanning ? " is-scanning" : ""}`} key={active.id}>
+                <div className="doeinsure-match__reader">
+                  <span className="doeinsure-match__draft">{DOEINSURE_MATCH.draftLabel}</span>
+                  <div className={`doeinsure-match__scan${scanning ? " is-on" : ""}`} aria-hidden={!scanning}>
                     <span>{DOEINSURE_MATCH.scanning}</span>
                     <span className="doeinsure-match__scan-bar" aria-hidden="true" />
                   </div>
-                ) : (
-                  <>
-                    <p>{active.excerpt}</p>
-                    <ul className="doeinsure-match__clauses">
-                      {active.clauses.map((clause) => {
-                        const key = `${scenario}-${clause.id}`;
-                        const on = Boolean(done[key]);
-                        return (
-                          <li key={clause.id}>
-                            <button
-                              type="button"
-                              className={on ? "is-on" : undefined}
-                              disabled={matchingAll}
-                              onClick={() => toggleClause(clause.id)}
-                            >
-                              <span className="doeinsure-match__clause-top">
-                                <span>{clause.label}</span>
-                                {on ? <em>Matched</em> : null}
-                              </span>
-                              <strong>{clause.text}</strong>
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </>
-                )}
+                  <p>{active.excerpt}</p>
+                </div>
+                <ul className="doeinsure-match__clauses">
+                  {active.clauses.map((clause) => {
+                    const key = `${scenario}-${clause.id}`;
+                    const on = Boolean(done[key]);
+                    return (
+                      <li key={clause.id}>
+                        <button
+                          type="button"
+                          className={on ? "is-on" : undefined}
+                          disabled={matchingAll}
+                          onClick={() => toggleClause(clause.id)}
+                        >
+                          <span className="doeinsure-match__clause-top">
+                            <span>{clause.label}</span>
+                            {on ? <em>Matched</em> : null}
+                          </span>
+                          <strong>{clause.text}</strong>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
               </article>
 
               <aside className={`doeinsure-match__file${complete ? " is-on" : ""}`}>
