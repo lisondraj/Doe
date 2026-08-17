@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 
 import {
   DOEINSURE_CONTACT_EMAIL,
+  DOEINSURE_CERTIFICATE,
   DOEINSURE_COMPARE,
   DOEINSURE_CONNECT,
   DOEINSURE_COVERAGE,
@@ -15,6 +16,7 @@ import {
   DOEINSURE_NEXT,
   DOEINSURE_PLATFORM,
   DOEINSURE_POLICY_SAMPLES,
+  DOEINSURE_QUOTE,
   DOEINSURE_STATS,
   DOEINSURE_STAGES,
   DOEINSURE_UNDERWRITE,
@@ -231,6 +233,9 @@ function ScaleCard({
           </li>
         ))}
       </ul>
+      <div className="doeinsure-meter" aria-hidden="true">
+        <i style={{ width: grown ? "86%" : "18%" }} />
+      </div>
       <button type="button" className="doeinsure-inline" onClick={() => setGrown((value) => !value)}>
         {grown ? "Show January" : "Run to June"}
       </button>
@@ -274,7 +279,127 @@ function ContractCard({
   );
 }
 
-export function DoeInsurePageContent() {
+function QuoteBoard() {
+  const [klass, setKlass] = useState(0);
+  const [volume, setVolume] = useState(1);
+  const product = DOEINSURE_QUOTE.classes[klass];
+  const book = DOEINSURE_QUOTE.volumes[volume];
+  const premium = product.base + Math.round((book.users / 1000) * product.perThousand);
+  const fill = Math.min(92, 14 + volume * 24);
+
+  return (
+    <div className="doeinsure-quote">
+      <div className="doeinsure-quote__classes" role="tablist" aria-label="Product class">
+        {DOEINSURE_QUOTE.classes.map((item, index) => (
+          <button
+            key={item.id}
+            type="button"
+            role="tab"
+            aria-selected={klass === index}
+            className={klass === index ? "is-on" : undefined}
+            onClick={() => setKlass(index)}
+          >
+            <b>{item.name}</b>
+            <span>{item.note}</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="doeinsure-quote__board">
+        <div className="doeinsure-quote__users">
+          <span>{DOEINSURE_QUOTE.usersLabel}</span>
+          <div>
+            {DOEINSURE_QUOTE.volumes.map((item, index) => (
+              <button
+                key={item.label}
+                type="button"
+                className={volume === index ? "is-on" : undefined}
+                aria-pressed={volume === index}
+                onClick={() => setVolume(index)}
+              >
+                {item.label}
+                <b>{item.users.toLocaleString("en-US")}</b>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <p className="doeinsure-quote__premium" key={`${product.id}-${book.label}`}>
+          ${premium.toLocaleString("en-US")}
+          <span>{DOEINSURE_QUOTE.unit}</span>
+        </p>
+        <div className="doeinsure-meter" aria-hidden="true">
+          <i style={{ width: `${fill}%` }} />
+        </div>
+        <p className="doeinsure-quote__limit">
+          {DOEINSURE_QUOTE.limitLabel}
+          <b>{product.limit}</b>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function CertificateBoard() {
+  const [holder, setHolder] = useState(0);
+  const [issued, setIssued] = useState(false);
+  const hospital = DOEINSURE_CERTIFICATE.holders[holder];
+
+  return (
+    <div className="doeinsure-coi">
+      <div className="doeinsure-coi__holders" role="tablist" aria-label="Certificate holder">
+        {DOEINSURE_CERTIFICATE.holders.map((item, index) => (
+          <button
+            key={item.name}
+            type="button"
+            role="tab"
+            aria-selected={holder === index}
+            className={holder === index ? "is-on" : undefined}
+            onClick={() => {
+              setHolder(index);
+              setIssued(false);
+            }}
+          >
+            {item.name}
+          </button>
+        ))}
+      </div>
+
+      <div className="doeinsure-coi__paper" key={`${hospital.name}-${issued ? "on" : "off"}`}>
+        <div className="doeinsure-card__kicker">
+          <span>{DOEINSURE_CERTIFICATE.kicker}</span>
+          <span>{issued ? DOEINSURE_CERTIFICATE.issued : DOEINSURE_CERTIFICATE.pending}</span>
+        </div>
+        <dl>
+          <div>
+            <dt>{DOEINSURE_CERTIFICATE.namedLabel}</dt>
+            <dd>{DOEINSURE_CERTIFICATE.named}</dd>
+          </div>
+          <div>
+            <dt>{DOEINSURE_CERTIFICATE.holderLabel}</dt>
+            <dd>{hospital.name}</dd>
+          </div>
+          <div>
+            <dt>{DOEINSURE_CERTIFICATE.extraLabel}</dt>
+            <dd>{issued ? hospital.extra : "—"}</dd>
+          </div>
+          <div>
+            <dt>{DOEINSURE_CERTIFICATE.waiverLabel}</dt>
+            <dd>{issued ? hospital.waiver : "—"}</dd>
+          </div>
+        </dl>
+        <p className="doeinsure-coi__need">{hospital.need}</p>
+        <button
+          type="button"
+          className={`doeinsure-inline${issued ? " is-on" : ""}`}
+          onClick={() => setIssued((value) => !value)}
+        >
+          {issued ? DOEINSURE_CERTIFICATE.issued : DOEINSURE_CERTIFICATE.issue}
+        </button>
+      </div>
+    </div>
+  );
+}
   const [email, setEmail] = useState("");
   const [stat, setStat] = useState(0);
   const [more, setMore] = useState(0);
@@ -507,7 +632,15 @@ export function DoeInsurePageContent() {
         </div>
       </section>
 
-      <section className="doeinsure-section" id="connect">
+      <section className="doeinsure-section" id="quote">
+        <div className="doeinsure-wrap">
+          <h2>{DOEINSURE_QUOTE.title}</h2>
+          <p className="doeinsure-hero__lede">{DOEINSURE_QUOTE.lede}</p>
+          <QuoteBoard />
+        </div>
+      </section>
+
+      <section className="doeinsure-section doeinsure-section--gray" id="connect">
         <div className="doeinsure-wrap">
           <h2>{DOEINSURE_CONNECT.title}</h2>
           <p className="doeinsure-hero__lede">{DOEINSURE_CONNECT.lede}</p>
@@ -537,6 +670,14 @@ export function DoeInsurePageContent() {
               );
             })}
           </ul>
+        </div>
+      </section>
+
+      <section className="doeinsure-section">
+        <div className="doeinsure-wrap">
+          <h2>{DOEINSURE_CERTIFICATE.title}</h2>
+          <p className="doeinsure-hero__lede">{DOEINSURE_CERTIFICATE.lede}</p>
+          <CertificateBoard />
         </div>
       </section>
 

@@ -8,7 +8,7 @@ export const DOEINSURE_NAV_LINKS = [
   { href: "#platform", label: "Platform" },
   { href: "#coverage", label: "Coverage" },
   { href: "#stages", label: "Stages" },
-  { href: "#connect", label: "Connect" },
+  { href: "#quote", label: "Quote" },
   { href: "#faq", label: "FAQ" },
 ] as const;
 
@@ -433,6 +433,80 @@ export const DOEINSURE_HOW = {
       n: "03",
       name: "Scale and match contracts",
       body: "Premiums follow usage. When a hospital asks for $10M by Friday, raise the limit from the same dashboard.",
+    },
+  ],
+} as const;
+
+export const DOEINSURE_QUOTE = {
+  title: "Premium follows the book you have this month.",
+  lede: "Pick a product class and a live user count. The number is usage-priced — not a January guess locked for twelve months.",
+  unit: "/ month",
+  limitLabel: "Working limit",
+  usersLabel: "Active users",
+  classes: [
+    {
+      id: "ambient",
+      name: "Ambient / notes",
+      note: "Capture in the exam room. PHI from day one.",
+      base: 410,
+      perThousand: 180,
+      limit: "$2,000,000",
+    },
+    {
+      id: "imaging",
+      name: "Imaging / SaMD",
+      note: "A device in a care pathway. Product injury sits on the form.",
+      base: 860,
+      perThousand: 240,
+      limit: "$5,000,000",
+    },
+    {
+      id: "rcm",
+      name: "RCM / operations",
+      note: "Claims, scheduling, and the model that touches both.",
+      base: 540,
+      perThousand: 120,
+      limit: "$2,000,000",
+    },
+  ],
+  volumes: [
+    { users: 400, label: "Pilot" },
+    { users: 2500, label: "Clinic" },
+    { users: 8000, label: "System" },
+    { users: 20000, label: "National" },
+  ],
+} as const;
+
+export const DOEINSURE_CERTIFICATE = {
+  title: "Issue a COI the hour credentialing asks.",
+  lede: "Named insured, additional insured, and waiver of subrogation — from the same file that quoted you.",
+  kicker: "Certificate of insurance",
+  holderLabel: "Certificate holder",
+  namedLabel: "Named insured",
+  named: "Northwell Ambient, Inc.",
+  extraLabel: "Additional insured",
+  waiverLabel: "Waiver of subrogation",
+  issue: "Issue certificate",
+  issued: "Issued",
+  pending: "Draft",
+  holders: [
+    {
+      name: "Northwell Health",
+      extra: "Northwell Health, its affiliates and employees",
+      waiver: "Yes",
+      need: "Cyber $5M · additional insured",
+    },
+    {
+      name: "Mayo Clinic",
+      extra: "Mayo Clinic and Mayo Clinic Health System",
+      waiver: "Yes",
+      need: "Tech E&O $10M · named insured",
+    },
+    {
+      name: "Kaiser Permanente",
+      extra: "Kaiser Foundation Hospitals",
+      waiver: "Yes",
+      need: "Cyber and Tech E&O $10M each claim",
     },
   ],
 } as const;
