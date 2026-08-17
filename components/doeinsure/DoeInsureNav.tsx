@@ -109,7 +109,11 @@ export function DoeInsureNav() {
         </div>
       </div>
 
-      <div className="doeinsure-nav__panel" id={panelId} hidden={!open}>
+      <div
+        className={`doeinsure-nav__panel${open ? " is-open" : ""}`}
+        id={panelId}
+        aria-hidden={!open}
+      >
         <nav aria-label="Doe Insure menu">
           {DOEINSURE_NAV_LINKS.map((link) => (
             <a

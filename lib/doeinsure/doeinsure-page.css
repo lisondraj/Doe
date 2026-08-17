@@ -65,6 +65,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   z-index: 50;
   border-bottom: 1px solid var(--di-line);
   background: var(--di-white);
+  overflow: visible;
 }
 
 .doeinsure-nav.is-scrolled {
@@ -214,12 +215,24 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   transform: translateY(-3px) rotate(-45deg);
 }
 
+.doeinsure-root--iphone .doeinsure-nav__end {
+  flex-shrink: 0;
+  max-width: 100%;
+}
+
+.doeinsure-root--iphone .doeinsure-nav__menu {
+  display: flex;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
 .doeinsure-nav__panel {
   position: absolute;
   left: 0;
   right: 0;
   top: 100%;
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 1.4rem;
   min-height: calc(100dvh - 3.5rem - env(safe-area-inset-top, 0px));
@@ -229,12 +242,25 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   border-bottom: 1px solid var(--di-line);
 }
 
-.doeinsure-nav__panel[hidden] {
-  display: none;
+.doeinsure-nav__panel.is-open {
+  display: flex;
+  animation: doeinsure-in 200ms ease;
 }
 
-.doeinsure-nav__panel:not([hidden]) {
-  animation: doeinsure-in 200ms ease;
+.doeinsure-root--iphone .doeinsure-nav.is-open {
+  z-index: 100;
+}
+
+.doeinsure-root--iphone .doeinsure-nav__panel.is-open {
+  position: fixed;
+  top: calc(3.5rem + env(safe-area-inset-top, 0px));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .doeinsure-nav__panel nav {
