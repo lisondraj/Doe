@@ -5470,12 +5470,16 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stack-phone__quote-head em {
-  color: var(--di-muted);
+  display: none;
 }
 
 .doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__quote-head span,
 .doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__quote-head em {
+  background-image: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
   color: rgba(255, 255, 255, 0.82);
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.82);
 }
 
 .doeinsure-stack-phone__company {
@@ -5490,18 +5494,22 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stack-phone__premium {
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-template-rows: auto auto;
-  align-items: end;
-  column-gap: 0.55rem;
-  row-gap: 0.12rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
   margin: 0.15rem 0 0.2rem;
 }
 
+.doeinsure-stack-phone__premium-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
 .doeinsure-stack-phone__premium b {
-  grid-column: 1;
-  grid-row: 1;
   font-size: clamp(2.55rem, 13vw, 3.2rem);
   font-weight: 500;
   letter-spacing: -0.07em;
@@ -5513,8 +5521,6 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stack-phone__period {
-  grid-column: 1;
-  grid-row: 2;
   color: var(--di-muted);
   font-size: 0.82rem;
   font-style: normal;
@@ -5526,36 +5532,52 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   color: #ffffff;
 }
 
+.doeinsure-stack-phone__drop-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 0.18rem;
+  margin-left: auto;
+  text-align: right;
+}
+
 .doeinsure-stack-phone__drop {
-  grid-column: 2;
-  grid-row: 1;
-  align-self: end;
-  display: inline-flex;
-  align-items: center;
-  min-height: 0;
-  padding: 0.18rem 0.48rem;
-  border: 1px solid var(--di-blue-deep);
-  background-color: #ffffff;
-  background-image: var(--di-blue-gradient-h), linear-gradient(#ffffff, #ffffff);
-  background-clip: text, padding-box;
-  -webkit-background-clip: text, padding-box;
+  padding: 0;
+  border: 0;
+  background: none;
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  font-size: 1rem;
+  font-size: clamp(1.45rem, 7.2vw, 1.85rem);
   font-style: normal;
   font-weight: 600;
-  letter-spacing: -0.04em;
-  line-height: 1;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+}
+
+.doeinsure-stack-phone__drop-note {
+  color: var(--di-muted);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__drop {
-  border-color: #ffffff;
-  background-color: #ffffff;
-  background-image: var(--di-blue-gradient-h), linear-gradient(#ffffff, #ffffff);
-  background-clip: text, padding-box;
-  -webkit-background-clip: text, padding-box;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  background-image: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__drop-note {
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .doeinsure-stack-phone__meter {

@@ -585,15 +585,21 @@ function StackBody({ revealed }: { revealed: boolean }) {
             >
               <header className="doeinsure-stack-phone__quote-head">
                 <span>{status}</span>
-                <em>
-                  {connected.length} of {DOEINSURE_STACK.sources.length}
-                </em>
               </header>
               <strong className="doeinsure-stack-phone__company">{DOEINSURE_STACK.company}</strong>
               <p className="doeinsure-stack-phone__premium">
-                <b>{DOEINSURE_STACK.premium}</b>
-                {dropTotal ? <em className="doeinsure-stack-phone__drop">−${dropTotal}</em> : null}
-                <em className="doeinsure-stack-phone__period">{DOEINSURE_STACK.premiumNote}</em>
+                <span className="doeinsure-stack-phone__premium-main">
+                  <b>{DOEINSURE_STACK.premium}</b>
+                  <em className="doeinsure-stack-phone__period">{DOEINSURE_STACK.premiumNote}</em>
+                </span>
+                {connected.length ? (
+                  <span className="doeinsure-stack-phone__drop-col">
+                    <em className="doeinsure-stack-phone__drop">−${dropTotal}</em>
+                    <em className="doeinsure-stack-phone__drop-note">
+                      after {connected.length} connection{connected.length === 1 ? "" : "s"}
+                    </em>
+                  </span>
+                ) : null}
               </p>
               <div
                 className="doeinsure-stack-phone__meter"
