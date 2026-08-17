@@ -5405,11 +5405,6 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   animation: doeinsure-stack-phone-pin var(--stack-connect-ms, 1280ms) ease-in-out infinite;
 }
 
-.doeinsure-stack-phone__source.is-on strong,
-.doeinsure-stack-phone__source.is-linking strong {
-  color: var(--di-blue);
-}
-
 .doeinsure-stack-phone__source.is-linking::after {
   content: "";
   position: absolute;
