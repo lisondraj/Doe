@@ -20,6 +20,8 @@ export const PROTO_INVEST_PATH = "/proto-invest";
 export const DESIGNERS_PATH = "/designers";
 /** Editable landing served at doehealth.care root via middleware rewrite. */
 export const DOEHEALTH_PATH = "/doehealth";
+/** Specialty insurance for healthcare AI companies. */
+export const DOEINSURE_PATH = "/doeinsure";
 
 /** Former primary home — Voice Agents hero (preview at /legacymain). */
 export const LEGACY_MAIN_PATH = "/legacymain";

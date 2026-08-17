@@ -1,0 +1,629 @@
+html[data-doeinsure-page] {
+  --doe-page-surface: #ffffff;
+  --proto-page-bg: #ffffff;
+  scroll-padding-top: 4.5rem;
+  background-color: #ffffff;
+}
+
+html[data-doeinsure-page] body,
+html[data-doeinsure-page]:has(.doephone-mobile-root),
+html[data-doeinsure-page]:has(.doephone-mobile-root) body,
+html[data-doeinsure-page][data-layout="desktop"] body {
+  background-color: #ffffff !important;
+}
+
+.doeinsure-root {
+  --di-white: #ffffff;
+  --di-gray: #f3f4f6;
+  --di-blue: #3050e0;
+  --di-ink: #0e1016;
+  --di-muted: #5a5e68;
+  --di-line: #e4e6eb;
+  --font-di: var(--font-dm-sans), "DM Sans", ui-sans-serif, sans-serif;
+  box-sizing: border-box;
+  min-height: 100%;
+  color: var(--di-ink);
+  font-family: var(--font-di);
+  background: var(--di-white);
+  -webkit-font-smoothing: antialiased;
+}
+
+.doeinsure-root *,
+.doeinsure-root *::before,
+.doeinsure-root *::after {
+  box-sizing: border-box;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.doeinsure-root a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.doeinsure-wrap {
+  width: min(100%, 72rem);
+  margin: 0 auto;
+  padding-left: var(--desktop-page-inset-x, 2.5rem);
+  padding-right: var(--desktop-page-inset-x, 2.5rem);
+}
+
+.doeinsure-root--iphone .doeinsure-wrap {
+  width: 100%;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.doeinsure-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  min-height: 4.25rem;
+  padding: 0.85rem var(--desktop-page-inset-x, 2.5rem);
+  border-bottom: 1px solid var(--di-line);
+  background: var(--di-white);
+}
+
+.doeinsure-root--iphone .doeinsure-nav {
+  min-height: 3.6rem;
+  padding: 0.7rem 1.25rem;
+}
+
+.doeinsure-nav__mark {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.doeinsure-nav__mark span {
+  color: var(--di-blue);
+}
+
+.doeinsure-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+.doeinsure-nav__links a {
+  color: var(--di-muted);
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-nav__links a:hover {
+  color: var(--di-ink);
+}
+
+.doeinsure-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.7rem;
+  padding: 0.65rem 1.1rem;
+  border: 1px solid var(--di-blue);
+  background: var(--di-blue);
+  color: var(--di-white);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+}
+
+.doeinsure-btn:hover {
+  background: var(--di-ink);
+  border-color: var(--di-ink);
+  color: var(--di-white);
+}
+
+.doeinsure-btn--ghost {
+  background: transparent;
+  color: var(--di-ink);
+  border-color: var(--di-ink);
+}
+
+.doeinsure-btn--ghost:hover {
+  background: var(--di-ink);
+  color: var(--di-white);
+}
+
+.doeinsure-btn--block {
+  width: 100%;
+}
+
+.doeinsure-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+  gap: 3.5rem;
+  align-items: end;
+  padding-top: 4.5rem;
+  padding-bottom: 4.75rem;
+}
+
+.doeinsure-root--iphone .doeinsure-hero {
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding-top: 2.1rem;
+  padding-bottom: 2.4rem;
+}
+
+.doeinsure-eyebrow {
+  display: block;
+  margin-bottom: 0.85rem;
+  color: var(--di-blue);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.doeinsure-hero h1 {
+  margin: 0;
+  font-size: clamp(3.4rem, 6.4vw, 6.1rem);
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  line-height: 0.92;
+}
+
+.doeinsure-root--iphone .doeinsure-hero h1 {
+  font-size: clamp(2.55rem, 11.5vw, 3.35rem);
+}
+
+.doeinsure-hero__lede {
+  max-width: 36rem;
+  margin: 1.4rem 0 0;
+  color: var(--di-muted);
+  font-size: clamp(1.05rem, 1.35vw, 1.28rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+}
+
+.doeinsure-root--iphone .doeinsure-hero__lede {
+  font-size: 1.02rem;
+}
+
+.doeinsure-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 2rem;
+}
+
+.doeinsure-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1.35rem 1.4rem 1.45rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-gray);
+}
+
+.doeinsure-card__kicker {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--di-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.doeinsure-card__name {
+  margin: 1.15rem 0 0;
+  font-size: 1.55rem;
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+}
+
+.doeinsure-card__limit {
+  margin: 0.35rem 0 0;
+  color: var(--di-blue);
+  font-size: clamp(2.2rem, 3.2vw, 2.85rem);
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  line-height: 1;
+}
+
+.doeinsure-card__meta {
+  margin: 0.2rem 0 1.15rem;
+  color: var(--di-muted);
+  font-size: 0.82rem;
+}
+
+.doeinsure-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1.2rem;
+}
+
+.doeinsure-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.85rem;
+  padding: 0.28rem 0.62rem;
+  border: 1px solid var(--di-blue);
+  background: var(--di-blue);
+  color: var(--di-white);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.doeinsure-pill--outline {
+  background: transparent;
+  color: var(--di-ink);
+  border-color: var(--di-ink);
+}
+
+.doeinsure-card__insured-label {
+  color: var(--di-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-card__insured {
+  margin-top: 0.2rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-stats {
+  border-top: 1px solid var(--di-line);
+  border-bottom: 1px solid var(--di-line);
+  background: var(--di-gray);
+}
+
+.doeinsure-stats__row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.doeinsure-root--iphone .doeinsure-stats__row {
+  grid-template-columns: 1fr;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.doeinsure-stat {
+  padding: 1.6rem 0;
+  border-right: 1px solid var(--di-line);
+}
+
+.doeinsure-stat:first-child {
+  padding-right: 1.5rem;
+}
+
+.doeinsure-stat:not(:first-child) {
+  padding-left: 1.5rem;
+}
+
+.doeinsure-stat:last-child {
+  border-right: 0;
+}
+
+.doeinsure-root--iphone .doeinsure-stat {
+  padding: 1.15rem 1.25rem;
+  border-right: 0;
+  border-bottom: 1px solid var(--di-line);
+}
+
+.doeinsure-root--iphone .doeinsure-stat:last-child {
+  border-bottom: 0;
+}
+
+.doeinsure-stat b {
+  display: block;
+  color: var(--di-blue);
+  font-size: clamp(1.7rem, 2.4vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.doeinsure-stat span {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--di-muted);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.doeinsure-section {
+  padding-top: 5.25rem;
+  padding-bottom: 5.25rem;
+}
+
+.doeinsure-root--iphone .doeinsure-section {
+  padding-top: 2.6rem;
+  padding-bottom: 2.6rem;
+}
+
+.doeinsure-section--gray {
+  background: var(--di-gray);
+}
+
+.doeinsure-section h2 {
+  max-width: 18ch;
+  margin: 0;
+  font-size: clamp(2.15rem, 3.8vw, 3.55rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+}
+
+.doeinsure-root--iphone .doeinsure-section h2 {
+  font-size: clamp(1.85rem, 8.4vw, 2.35rem);
+  max-width: none;
+}
+
+.doeinsure-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 2.6rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-line);
+}
+
+.doeinsure-root--iphone .doeinsure-grid {
+  grid-template-columns: 1fr;
+}
+
+.doeinsure-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  min-height: 14rem;
+  padding: 1.45rem 1.4rem 1.55rem;
+  background: var(--di-white);
+}
+
+.doeinsure-section--gray .doeinsure-tile {
+  background: var(--di-gray);
+}
+
+.doeinsure-tile h3,
+.doeinsure-who-card h3,
+.doeinsure-step h3,
+.doeinsure-faq dt {
+  margin: 0;
+  font-size: 1.28rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+}
+
+.doeinsure-tile p,
+.doeinsure-who-card p,
+.doeinsure-step p,
+.doeinsure-faq dd {
+  margin: 0;
+  color: var(--di-muted);
+  font-size: 0.98rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+}
+
+.doeinsure-who {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+  margin-top: 2.6rem;
+}
+
+.doeinsure-root--iphone .doeinsure-who {
+  grid-template-columns: 1fr;
+  gap: 1.6rem;
+}
+
+.doeinsure-who-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding-top: 1.15rem;
+  border-top: 2px solid var(--di-blue);
+}
+
+.doeinsure-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.2rem;
+  margin-top: 2.6rem;
+}
+
+.doeinsure-root--iphone .doeinsure-steps {
+  grid-template-columns: 1fr;
+  gap: 1.7rem;
+}
+
+.doeinsure-step__n {
+  display: block;
+  margin-bottom: 0.85rem;
+  color: var(--di-blue);
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  font-weight: 500;
+  letter-spacing: -0.07em;
+  line-height: 0.9;
+}
+
+.doeinsure-checks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin-top: 2.4rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-line);
+}
+
+.doeinsure-root--iphone .doeinsure-checks {
+  grid-template-columns: 1fr;
+}
+
+.doeinsure-check {
+  display: grid;
+  grid-template-columns: 0.85rem 1fr;
+  gap: 0.85rem;
+  align-items: start;
+  padding: 1.15rem 1.2rem;
+  background: var(--di-white);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-check i {
+  display: block;
+  width: 0.85rem;
+  height: 0.85rem;
+  margin-top: 0.28rem;
+  background: var(--di-blue);
+  font-style: normal;
+}
+
+.doeinsure-faq {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2.4rem;
+  border-top: 1px solid var(--di-line);
+}
+
+.doeinsure-faq div {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 2rem;
+  padding: 1.55rem 0;
+  border-bottom: 1px solid var(--di-line);
+}
+
+.doeinsure-root--iphone .doeinsure-faq div {
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+  padding: 1.2rem 0;
+}
+
+.doeinsure-cta-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 3.5rem;
+  align-items: start;
+}
+
+.doeinsure-root--iphone .doeinsure-cta-grid {
+  grid-template-columns: 1fr;
+  gap: 1.8rem;
+}
+
+.doeinsure-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.doeinsure-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.doeinsure-field span {
+  color: var(--di-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-field input,
+.doeinsure-field select,
+.doeinsure-field textarea {
+  width: 100%;
+  min-height: 2.85rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+  color: var(--di-ink);
+  font-family: inherit;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  outline: none;
+  appearance: none;
+}
+
+.doeinsure-field textarea {
+  min-height: 7.5rem;
+  resize: vertical;
+}
+
+.doeinsure-field input:focus,
+.doeinsure-field select:focus,
+.doeinsure-field textarea:focus {
+  border-color: var(--di-blue);
+}
+
+.doeinsure-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  align-items: end;
+  padding: 2.4rem var(--desktop-page-inset-x, 2.5rem) 2.1rem;
+  border-top: 1px solid var(--di-line);
+  background: var(--di-gray);
+}
+
+.doeinsure-root--iphone .doeinsure-footer {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.2rem;
+  padding: 1.6rem 1.25rem 1.8rem;
+}
+
+.doeinsure-footer strong {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.doeinsure-footer strong span {
+  color: var(--di-blue);
+}
+
+.doeinsure-footer p,
+.doeinsure-footer a {
+  margin: 0.35rem 0 0;
+  color: var(--di-muted);
+  font-size: 0.88rem;
+}
+
+.doeinsure-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+}
+
+.doeinsure-footer__links a:hover {
+  color: var(--di-ink);
+}
+
+@media (max-width: 1023px) {
+  .doeinsure-root--desktop .doeinsure-nav__links {
+    display: none;
+  }
+}
