@@ -6144,18 +6144,45 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   padding: 1.15rem 1rem 1.25rem;
 }
 
+.doeinsure-root--iphone .doeinsure-issue__top {
+  align-items: flex-start;
+  min-height: clamp(2.45rem, 12vw, 3.2rem);
+}
+
 .doeinsure-root--iphone .doeinsure-issue__kicker {
   font-size: 1.05rem;
+  min-height: 2.05rem;
   padding: 0.35rem 0.55rem 0.38rem;
+  line-height: 1;
 }
 
 .doeinsure-root--iphone .doeinsure-issue__limit {
   font-size: clamp(2.45rem, 12vw, 3.2rem);
 }
 
+.doeinsure-root--iphone .doeinsure-issue__note {
+  min-height: 1.35em;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__sheet ul {
+  margin-top: 1.15rem;
+}
+
 .doeinsure-root--iphone .doeinsure-issue__sheet li {
   grid-template-columns: 1fr;
   gap: 0.2rem;
+  min-height: 3.35rem;
+  padding: 0.72rem 0;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__sheet li b {
+  display: block;
+  min-height: 2.5em;
+  line-height: 1.25;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__sheet li b.is-pending {
+  visibility: hidden;
 }
 
 .doeinsure-root--iphone .doeinsure-issue__sheet li i {

@@ -771,7 +771,9 @@ function IssueBody({ revealed }: { revealed: boolean }) {
                   <li key={field.id} className={filled ? "is-on" : undefined}>
                     <span>{field.label}</span>
                     <i />
-                    <b>{filled ? values[field.id] : ""}</b>
+                    <b className={filled ? undefined : "is-pending"} aria-hidden={!filled}>
+                      {values[field.id]}
+                    </b>
                   </li>
                 );
               })}
