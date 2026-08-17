@@ -267,7 +267,6 @@ export function DoeInsurePageContent() {
             ))}
           </div>
         </div>
-      </section>
 
       <section className="doeinsure-section doeinsure-section--gray" id="stages">
         <div className="doeinsure-wrap">
