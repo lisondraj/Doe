@@ -349,7 +349,9 @@ export function DoeInsurePageContent() {
                         <li key={line}>{line}</li>
                       ))}
                     </ul>
-                    <span className="doeinsure-stage-block__cover">{item.cover}</span>
+                    {"cover" in item ? (
+                      <span className="doeinsure-stage-block__cover">{item.cover}</span>
+                    ) : null}
                   </button>
                 );
               })}
