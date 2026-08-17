@@ -1,10 +1,10 @@
 "use client";
 
-import { FormEvent, useState, type CSSProperties } from "react";
+import { FormEvent, useState } from "react";
 
 import { DoeInsureHowApp } from "@/components/doeinsure/DoeInsureAppUi";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
-import { DoeInsureSellSections } from "@/components/doeinsure/DoeInsureSellSections";
+import { DoeInsureFollowSection } from "@/components/doeinsure/DoeInsureSellSections";
 import {
   DOEINSURE_CONTACT_EMAIL,
   DOEINSURE_COMPARE,
@@ -12,67 +12,16 @@ import {
   DOEINSURE_COVERAGE,
   DOEINSURE_CTA,
   DOEINSURE_FAQ,
-  DOEINSURE_HERO,
   DOEINSURE_HOW,
   DOEINSURE_LIMITS,
   DOEINSURE_NEXT,
-  DOEINSURE_POLICY_SAMPLES,
-  DOEINSURE_STATS,
-  DOEINSURE_STAGES,
-  DOEINSURE_UNDERWRITE,
   DOEINSURE_WHO,
 } from "@/lib/doeinsure/doeinsure-copy";
-import { useDoeInsureLadderScroll } from "@/lib/doeinsure/use-doeinsure-ladder-scroll";
 
 function mailtoDoeInsure(lines: string[], subjectName: string) {
   const subject = encodeURIComponent(`Doe Insure — ${subjectName}`);
   const body = encodeURIComponent(lines.filter(Boolean).join("\n"));
   window.location.href = `mailto:${DOEINSURE_CONTACT_EMAIL}?subject=${subject}&body=${body}`;
-}
-
-function StageTags({ tags }: { tags: readonly string[] }) {
-  return (
-    <div className="doeinsure-stage-block__tags">
-      {tags.map((tag) => (
-        <span key={tag} className="doeinsure-stage-block__tag">
-          {tag}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function DoeInsureHeroEmailForm({
-  email,
-  onEmailChange,
-}: {
-  email: string;
-  onEmailChange: (value: string) => void;
-}) {
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    mailtoDoeInsure([`Work email: ${email}`], email);
-  };
-
-  return (
-    <form className="doeinsure-hero-form" onSubmit={onSubmit}>
-      <label className="doeinsure-hero-form__field">
-        <span className="doeinsure-hero-form__label">{DOEINSURE_HERO.emailLabel}</span>
-        <input
-          value={email}
-          onChange={(event) => onEmailChange(event.target.value)}
-          name="email"
-          type="email"
-          autoComplete="email"
-          placeholder={DOEINSURE_HERO.emailPlaceholder}
-          required
-        />
-      </label>
-      <button className="doeinsure-btn" type="submit">
-        {DOEINSURE_HERO.primaryCta}
-      </button>
-    </form>
-  );
 }
 
 function DoeInsureIntakeForm({
@@ -148,53 +97,15 @@ function DoeInsureIntakeForm({
   );
 }
 
-function PolicyPreview() {
-  const [index, setIndex] = useState(0);
-  const policy = DOEINSURE_POLICY_SAMPLES[index];
-
-  return (
-    <button
-      type="button"
-      className="doeinsure-card doeinsure-card--click doeinsure-hero__file"
-      aria-label="Sample policy. Click to see another."
-      onClick={() => setIndex((current) => (current + 1) % DOEINSURE_POLICY_SAMPLES.length)}
-    >
-      <div className="doeinsure-card__kicker">
-        <span>{policy.kicker}</span>
-        <span>{policy.id}</span>
-      </div>
-      <p className="doeinsure-card__name" key={`${policy.id}-name`}>
-        {policy.name}
-      </p>
-      <p className="doeinsure-card__limit" key={`${policy.id}-limit`}>
-        {policy.limit}
-      </p>
-      <p className="doeinsure-card__meta">{policy.limitLabel}</p>
-      <div className="doeinsure-pills">
-        <span className="doeinsure-pill">{policy.status}</span>
-        <span className="doeinsure-pill doeinsure-pill--outline">{policy.rider}</span>
-      </div>
-      <span className="doeinsure-card__insured-label">{policy.insuredLabel}</span>
-      <span className="doeinsure-card__insured">{policy.insured}</span>
-      <span className="doeinsure-card__hint">
-        {index + 1} / {DOEINSURE_POLICY_SAMPLES.length} · click for another sample
-      </span>
-    </button>
-  );
-}
-
 export function DoeInsurePageContent() {
   const [email, setEmail] = useState("");
-  const [stat, setStat] = useState(0);
   const [cover, setCover] = useState(0);
-  const { ladderRef, activeIndex: stage } = useDoeInsureLadderScroll(DOEINSURE_STAGES.items.length);
   const [who, setWho] = useState(0);
   const [how, setHow] = useState(0);
   const [linked, setLinked] = useState<Record<string, boolean>>({ AWS: true, GitHub: true });
   const [compare, setCompare] = useState<"old" | "next">("next");
   const [next, setNext] = useState(0);
   const [limit, setLimit] = useState(1);
-  const [checks, setChecks] = useState<Record<string, boolean>>({});
   const [faq, setFaq] = useState<number | null>(0);
 
   const activeCover = DOEINSURE_COVERAGE.items[cover];
@@ -203,87 +114,7 @@ export function DoeInsurePageContent() {
 
   return (
     <>
-      <section className="doeinsure-hero" id="top">
-        <div className="doeinsure-hero__stage">
-          <div className="doeinsure-wrap doeinsure-hero__grid">
-            <div className="doeinsure-hero__copy">
-              <h1 className="doeinsure-hero__title">
-                {DOEINSURE_HERO.headline.map((line, index) => (
-                  <span
-                    key={line}
-                    className={`doeinsure-hero__line${index === DOEINSURE_HERO.headline.length - 1 ? " doeinsure-hero__line--accent" : ""}`}
-                  >
-                    {line}
-                  </span>
-                ))}
-              </h1>
-              <p className="doeinsure-hero__lede">{DOEINSURE_HERO.lede}</p>
-              <DoeInsureHeroEmailForm email={email} onEmailChange={setEmail} />
-              <a className="doeinsure-hero__secondary" href="#scale">
-                {DOEINSURE_HERO.secondaryCta}
-              </a>
-            </div>
-            <PolicyPreview />
-          </div>
-        </div>
-        <div className="doeinsure-stats" aria-label="Doe Insure at a glance">
-          <div className="doeinsure-wrap doeinsure-stats__row">
-            {DOEINSURE_STATS.map((item, index) => (
-              <button
-                key={item.label}
-                type="button"
-                className={`doeinsure-stat${stat === index ? " is-on" : ""}`}
-                aria-pressed={stat === index}
-                onClick={() => setStat(index)}
-              >
-                <b>{item.value}</b>
-                <span>{item.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="doeinsure-section" id="stages">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal>
-            <h2>
-              {DOEINSURE_STAGES.title.map((line) => (
-                <span key={line} className="doeinsure-stages-title__line">
-                  {line}
-                </span>
-              ))}
-            </h2>
-            <div className="doeinsure-ladder" ref={ladderRef}>
-              {DOEINSURE_STAGES.items.map((item, index) => {
-                const filled = stage === index;
-                return (
-                  <div
-                    key={item.id}
-                    className={`doeinsure-rung${filled ? " is-filled" : ""}`}
-                    style={{ "--rung": index } as CSSProperties}
-                    aria-current={filled ? "step" : undefined}
-                  >
-                    <b className="doeinsure-rung__limit">{item.limit}</b>
-                    <span className="doeinsure-rung__who">
-                      <h3>{item.name}</h3>
-                      <em>{item.badge}</em>
-                    </span>
-                    <StageTags tags={item.tags} />
-                    <ul>
-                      {item.includes.map((line) => (
-                        <li key={line}>{line}</li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })}
-            </div>
-          </DoeInsureReveal>
-        </div>
-      </section>
-
-      <DoeInsureSellSections />
+      <DoeInsureFollowSection />
 
       <section className="doeinsure-section" id="coverage">
         <div className="doeinsure-wrap">
@@ -500,31 +331,6 @@ export function DoeInsurePageContent() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-            </div>
-          </DoeInsureReveal>
-        </div>
-      </section>
-
-      <section className="doeinsure-section doeinsure-section--gray">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal>
-            <h2>{DOEINSURE_UNDERWRITE.title}</h2>
-            <div className="doeinsure-checks">
-              {DOEINSURE_UNDERWRITE.items.map((item) => {
-                const on = Boolean(checks[item]);
-                return (
-                  <button
-                    key={item}
-                    type="button"
-                    className={`doeinsure-check${on ? " is-on" : ""}`}
-                    aria-pressed={on}
-                    onClick={() => setChecks((current) => ({ ...current, [item]: !current[item] }))}
-                  >
-                    <i aria-hidden="true" />
-                    {item}
-                  </button>
-                );
-              })}
             </div>
           </DoeInsureReveal>
         </div>

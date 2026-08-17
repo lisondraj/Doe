@@ -5,9 +5,8 @@ export const DOEINSURE_PAGE_DESCRIPTION =
   "Insurance for new and existing healthcare AI companies. Cover the model, the data, and the company.";
 
 export const DOEINSURE_NAV_LINKS = [
-  { href: "#stages", label: "Growth" },
-  { href: "#scale", label: "Scale" },
-  { href: "#match", label: "Match" },
+  { href: "#follow", label: "Follow" },
+  { href: "#coverage", label: "Coverage" },
   { href: "#faq", label: "FAQ" },
 ] as const;
 
