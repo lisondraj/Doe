@@ -65,10 +65,7 @@ function ScaleBody({
   setPlaying: (value: boolean | ((current: boolean) => boolean)) => void;
 }) {
   useEffect(() => {
-    if (!revealed) {
-      setPlaying(false);
-      return;
-    }
+    if (!revealed) return;
     setPlaying(true);
   }, [revealed, setPlaying]);
 
@@ -190,12 +187,7 @@ function MatchBody({ revealed }: { revealed: boolean }) {
     .map((clause) => clause.policyMatch);
 
   useEffect(() => {
-    if (!revealed) {
-      setScanning(false);
-      setDone({});
-      setMatchingAll(false);
-      return undefined;
-    }
+    if (!revealed) return undefined;
 
     setScanning(true);
     setDone({});
@@ -402,19 +394,13 @@ function StackBody({ revealed }: { revealed: boolean }) {
   const busy = Boolean(linking);
 
   useEffect(() => {
-    if (!revealed) {
-      setAuto(false);
-      setLinking(null);
-      setOn({});
-      return undefined;
-    }
-    if (complete) return undefined;
+    if (!revealed || complete) return undefined;
     setAuto(true);
     return undefined;
   }, [complete, revealed]);
 
   useEffect(() => {
-    if (!auto || linking || complete || !revealed) return undefined;
+    if (!auto || linking || complete) return undefined;
     const next = DOEINSURE_STACK.sources.find((item) => !on[item.id]);
     if (!next) {
       setAuto(false);
@@ -425,7 +411,7 @@ function StackBody({ revealed }: { revealed: boolean }) {
   }, [auto, autoDelayMs, complete, linking, on]);
 
   useEffect(() => {
-    if (!linking || !revealed) return undefined;
+    if (!linking) return undefined;
     const id = window.setTimeout(() => {
       setOn((current) => ({ ...current, [linking]: true }));
       setLinking(null);
@@ -705,22 +691,19 @@ function IssueBody({ revealed }: { revealed: boolean }) {
   };
 
   useEffect(() => {
+    if (!revealed) return;
     setStep(0);
-    if (!revealed) {
-      setAuto(false);
-      return;
-    }
     setAuto(true);
   }, [revealed, request]);
 
   useEffect(() => {
-    if (!auto || complete || !revealed) return undefined;
+    if (!auto || complete) return undefined;
     const id = window.setTimeout(() => setStep((current) => current + 1), ISSUE_STEP_MS);
     return () => window.clearTimeout(id);
-  }, [auto, complete, revealed, step]);
+  }, [auto, complete, step]);
 
   useEffect(() => {
-    if (!auto || !complete || !revealed) return undefined;
+    if (!auto || !complete) return undefined;
     if (request >= requestCount - 1) {
       setAuto(false);
       return undefined;
@@ -730,7 +713,7 @@ function IssueBody({ revealed }: { revealed: boolean }) {
       setStep(0);
     }, ISSUE_ISSUED_HOLD_MS);
     return () => window.clearTimeout(id);
-  }, [auto, complete, revealed, request, requestCount]);
+  }, [auto, complete, request, requestCount]);
 
   const pick = (index: number) => {
     setAuto(false);
@@ -820,20 +803,16 @@ function FollowBody({ revealed }: { revealed: boolean }) {
       : DOEINSURE_FOLLOW.waiting;
 
   useEffect(() => {
-    if (!revealed) {
-      setStep(0);
-      setAuto(false);
-      return;
-    }
+    if (!revealed) return;
     setStep(0);
     setAuto(true);
   }, [revealed]);
 
   useEffect(() => {
-    if (!auto || complete || !revealed) return undefined;
+    if (!auto || complete) return undefined;
     const id = window.setTimeout(() => setStep((current) => current + 1), FOLLOW_STEP_MS);
     return () => window.clearTimeout(id);
-  }, [auto, complete, revealed, step]);
+  }, [auto, complete, step]);
 
   const pick = (index: number) => {
     setAuto(false);

@@ -19,8 +19,8 @@ export type DoeInsureSectionRevealOptions = {
 
 /**
  * Scroll-triggered reveal for /doeinsure sections.
- * Motions only arm once the section is actually in view, after a short delay.
- * Leaving the section resets so demos do not run off-screen.
+ * Motions arm once the section is actually in view, after a short delay.
+ * After the first run, state stays at its endpoint when scrolling away.
  */
 export function useDoeInsureSectionReveal(options: DoeInsureSectionRevealOptions = {}) {
   const {
@@ -60,12 +60,11 @@ export function useDoeInsureSectionReveal(options: DoeInsureSectionRevealOptions
   }, [rootMargin, threshold]);
 
   useEffect(() => {
-    if (!inView) {
-      setRevealed(false);
-      return undefined;
-    }
+    if (!inView) return undefined;
 
-    const id = window.setTimeout(() => setRevealed(true), motionDelayMs);
+    const id = window.setTimeout(() => {
+      setRevealed(true);
+    }, motionDelayMs);
     return () => window.clearTimeout(id);
   }, [inView, motionDelayMs]);
 

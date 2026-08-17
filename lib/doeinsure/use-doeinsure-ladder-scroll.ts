@@ -9,7 +9,7 @@ import {
 
 /**
  * Scroll-driven active rung for the stages ladder.
- * Only updates while the stages block is in the viewport.
+ * Fill advances with scroll and stays at the highest rung reached.
  */
 export function useDoeInsureLadderScroll(itemCount: number) {
   const ladderRef = useRef<HTMLDivElement>(null);
@@ -48,7 +48,7 @@ export function useDoeInsureLadderScroll(itemCount: number) {
         const { top } = rungs[i].getBoundingClientRect();
         if (top <= trigger) next = i;
       }
-      setActiveIndex(Math.min(itemCount - 1, next));
+      setActiveIndex((current) => Math.max(current, Math.min(itemCount - 1, next)));
     };
 
     update();
