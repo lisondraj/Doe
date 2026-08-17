@@ -259,23 +259,23 @@ function MatchBody({ revealed }: { revealed: boolean }) {
             <div className="doeinsure-match__reader">
               <span className="doeinsure-match__draft">{DOEINSURE_MATCH.draftLabel}</span>
               {variant === "phone" ? (
-                scanning ? (
+                <div className={`doeinsure-match__load-pane${scanning ? " is-on" : ""}`} aria-hidden={!scanning}>
                   <div className="doeinsure-match__scan doeinsure-match__scan--phone is-on">
                     <span className="doeinsure-match__scan-label">Reading MSA</span>
                     <span className="doeinsure-match__scan-track" aria-hidden="true">
                       <i />
                     </span>
                   </div>
-                ) : null
+                </div>
               ) : (
                 <div className={`doeinsure-match__scan${scanning ? " is-on" : ""}`} aria-hidden={!scanning}>
                   <span>{DOEINSURE_MATCH.scanning}</span>
                   <span className="doeinsure-match__scan-bar" aria-hidden="true" />
                 </div>
               )}
-              <p>{active.excerpt}</p>
+              <p className="doeinsure-match__excerpt">{active.excerpt}</p>
             </div>
-            <ul className="doeinsure-match__clauses">
+            <ul className={`doeinsure-match__clauses${scanning ? " is-wait" : " is-in"}`}>
               {active.clauses.map((clause) => {
                 const key = `${scenario}-${clause.id}`;
                 const on = Boolean(done[key]);
