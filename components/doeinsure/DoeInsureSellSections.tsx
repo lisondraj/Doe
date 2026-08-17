@@ -786,6 +786,7 @@ function IssueBody({ revealed }: { revealed: boolean }) {
 
 const CLAIM_STEP_MS = 640;
 const CLAIM_STEP_MS_IPHONE = 780;
+const CLAIM_HOLD_MS = 880;
 const CLAIM_LAST_STEP = 5;
 
 function ClaimSection() {
@@ -803,6 +804,7 @@ function ClaimSection() {
 function ClaimBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeInsurePageVariant();
   const stepMs = variant === "phone" ? CLAIM_STEP_MS_IPHONE : CLAIM_STEP_MS;
+  const incidentCount = DOEINSURE_CLAIM.incidents.length;
   const [incident, setIncident] = useState(0);
   const [step, setStep] = useState(0);
   const [auto, setAuto] = useState(false);
@@ -812,6 +814,7 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
   const evidenceOn = step >= 3;
   const filed = step >= CLAIM_LAST_STEP;
   const ready = step >= 4 && !filed;
+  const complete = filed && incident >= incidentCount - 1;
   const status = filed
     ? DOEINSURE_CLAIM.opened
     : ready
@@ -822,9 +825,10 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
 
   useEffect(() => {
     if (!revealed) return;
+    setIncident(0);
     setStep(0);
     setAuto(true);
-  }, [incident, revealed]);
+  }, [revealed]);
 
   useEffect(() => {
     if (!auto || filed) return undefined;
@@ -832,9 +836,18 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
     return () => window.clearTimeout(id);
   }, [auto, filed, step, stepMs]);
 
-  const pick = (index: number) => {
-    setIncident(index);
-  };
+  useEffect(() => {
+    if (!auto || !filed) return undefined;
+    if (incident >= incidentCount - 1) {
+      setAuto(false);
+      return undefined;
+    }
+    const id = window.setTimeout(() => {
+      setIncident((current) => current + 1);
+      setStep(0);
+    }, CLAIM_HOLD_MS);
+    return () => window.clearTimeout(id);
+  }, [auto, filed, incident, incidentCount]);
 
   const fileClaim = () => {
     if (!ready || filed) return;
@@ -852,30 +865,17 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
         ))}
       </h2>
       <DoeInsureAppFrame file="Claim desk · Harbor Notes" className="doeinsure-app--claim">
-        <div className={`doeinsure-claim${filed ? " is-on" : ""}`}>
-          <div className="doeinsure-claim__incidents" role="tablist" aria-label="Incident type">
-            {DOEINSURE_CLAIM.incidents.map((item, index) => (
-              <button
-                key={item.id}
-                type="button"
-                role="tab"
-                aria-selected={incident === index}
-                className={incident === index ? "is-on" : undefined}
-                onClick={() => pick(index)}
-              >
-                <span>{item.line}</span>
-                <b>{item.name}</b>
-              </button>
-            ))}
-          </div>
-
+        <div className={`doeinsure-claim${complete ? " is-on" : ""}`}>
           <article className="doeinsure-claim__ticket" key={active.id}>
             <header className="doeinsure-claim__head">
               <div>
                 <strong className={filed ? "is-on" : undefined}>
                   {filed ? active.number : DOEINSURE_CLAIM.draftTitle}
                 </strong>
-                <span>{DOEINSURE_CLAIM.company}</span>
+                <span>
+                  {DOEINSURE_CLAIM.company}
+                  <em>{active.line}</em>
+                </span>
               </div>
               <em className={filed ? "is-on" : undefined}>{status}</em>
             </header>
@@ -915,7 +915,7 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
               </div>
             </div>
 
-            {filed ? (
+            {complete ? (
               <a className="doeinsure-btn" href="#request">
                 {DOEINSURE_CLAIM.filed}
               </a>

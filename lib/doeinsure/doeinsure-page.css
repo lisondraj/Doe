@@ -6285,76 +6285,18 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-claim {
-  display: grid;
-  grid-template-columns: minmax(13.25rem, 0.72fr) minmax(0, 1.28fr);
-  gap: 0.75rem;
-  align-items: stretch;
+  display: block;
   background: transparent;
-}
-
-.doeinsure-claim__incidents {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--di-line);
-  background: var(--di-white);
-}
-
-.doeinsure-claim__incidents button {
-  appearance: none;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 0.22rem;
-  width: 100%;
-  padding: 1.05rem 1.15rem 1.1rem;
-  border: 0;
-  border-bottom: 1px solid var(--di-line);
-  background: var(--di-white);
-  color: inherit;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.doeinsure-claim__incidents button:last-child {
-  border-bottom: 0;
-}
-
-.doeinsure-claim__incidents button span {
-  color: var(--di-muted);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.doeinsure-claim__incidents button b {
-  color: var(--di-ink);
-  font-size: 1.12rem;
-  font-weight: 500;
-  letter-spacing: -0.045em;
-}
-
-.doeinsure-claim__incidents button.is-on {
-  background: var(--di-blue-gradient);
-  border-bottom-color: var(--di-blue);
-}
-
-.doeinsure-claim__incidents button.is-on span,
-.doeinsure-claim__incidents button.is-on b {
-  background-image: none;
-  color: #ffffff;
-  -webkit-text-fill-color: #ffffff;
 }
 
 .doeinsure-claim__ticket {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-  min-height: 100%;
-  padding: 1.25rem 1.3rem 1.3rem;
+  width: 100%;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 1.25rem 1.35rem 1.35rem;
   border: 1px solid var(--di-line);
   background: var(--di-white);
   transition: background-color 420ms ease, border-color 420ms ease, color 420ms ease;
@@ -6391,9 +6333,22 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-claim__head span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
   color: var(--di-muted);
   font-size: 0.92rem;
   letter-spacing: -0.02em;
+}
+
+.doeinsure-claim__head span em {
+  color: var(--di-ink);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .doeinsure-claim__head em {
@@ -6418,7 +6373,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-claim.is-on .doeinsure-claim__head strong,
-.doeinsure-claim.is-on .doeinsure-claim__head span {
+.doeinsure-claim.is-on .doeinsure-claim__head span,
+.doeinsure-claim.is-on .doeinsure-claim__head span em {
   background-image: none;
   color: #ffffff;
   -webkit-text-fill-color: #ffffff;
@@ -6599,46 +6555,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   -webkit-text-fill-color: transparent;
 }
 
-.doeinsure-root--iphone .doeinsure-claim {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.doeinsure-root--iphone .doeinsure-claim__incidents {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-  border: 0;
-  background: transparent;
-}
-
-.doeinsure-root--iphone .doeinsure-claim__incidents button,
-.doeinsure-root--iphone .doeinsure-claim__incidents button:last-child {
-  flex: none;
-  box-sizing: border-box;
-  min-height: 4.1rem;
-  padding: 0.52rem 0.42rem 0.62rem;
-  border: 1px solid var(--di-line);
-}
-
-.doeinsure-root--iphone .doeinsure-claim__incidents button.is-on,
-.doeinsure-root--iphone .doeinsure-claim__incidents button.is-on:last-child {
-  border-color: var(--di-blue);
-}
-
-.doeinsure-root--iphone .doeinsure-claim__incidents button span {
-  font-size: 0.56rem;
-  letter-spacing: 0.06em;
-}
-
-.doeinsure-root--iphone .doeinsure-claim__incidents button b {
-  font-size: 0.86rem;
-  letter-spacing: -0.04em;
-  line-height: 1.15;
-}
-
 .doeinsure-root--iphone .doeinsure-claim__ticket {
+  max-width: none;
   gap: 0.7rem;
   padding: 0.95rem 1rem 1rem;
 }
