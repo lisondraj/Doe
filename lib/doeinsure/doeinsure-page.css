@@ -2592,6 +2592,13 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   font-size: 0.68rem;
 }
 
+.doeinsure-root--iphone #stages .doeinsure-rung.is-filled .doeinsure-stage-block__tag {
+  border-color: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
 .doeinsure-root--iphone .doeinsure-rung ul {
   grid-template-columns: 1fr;
   margin-top: 0.35rem;
