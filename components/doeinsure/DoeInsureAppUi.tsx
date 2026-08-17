@@ -274,10 +274,10 @@ export function DoeInsureQuoteApp() {
 export function DoeInsureHowApp({ step }: { step: number }) {
   const [on, setOn] = useState<Record<string, boolean>>({ AWS: true });
   const connected = DOEINSURE_QUOTE.sources.filter((source) => on[source.name]).length;
-  const hospital = DOEINSURE_MATCH.systems[0];
+  const scenario = DOEINSURE_MATCH.scenarios[0];
 
   return (
-    <DoeInsureAppFrame file={step === 2 ? hospital.name : "Harbor Notes, Inc."}>
+    <DoeInsureAppFrame file={step === 2 ? "Contract desk" : "Harbor Notes, Inc."}>
       <div className="doeinsure-app__shell">
         <AppRail active={step === 0 ? "stack" : "risk"} />
         {step === 0 ? (
@@ -299,16 +299,16 @@ export function DoeInsureHowApp({ step }: { step: number }) {
             <span className="doeinsure-app__kicker">Contract desk</span>
             <div className="doeinsure-mod">
               <span>Clause</span>
-              <b>{hospital.clauses[0].text}</b>
+              <b>{scenario.clauses[0].text}</b>
             </div>
             <div className="doeinsure-app__grid doeinsure-app__grid--2">
               <div className="doeinsure-mod">
                 <span>Now</span>
-                <b>{hospital.from}</b>
+                <b>{scenario.from}</b>
               </div>
               <div className="doeinsure-mod is-on">
                 <span>Match to</span>
-                <b>{hospital.ask}</b>
+                <b>{scenario.ask}</b>
               </div>
             </div>
             <p className="doeinsure-app__hint">Raise the limit from the same file. No broker calendar.</p>

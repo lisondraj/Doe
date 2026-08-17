@@ -30,6 +30,18 @@ function mailtoDoeInsure(lines: string[], subjectName: string) {
   window.location.href = `mailto:${DOEINSURE_CONTACT_EMAIL}?subject=${subject}&body=${body}`;
 }
 
+function StageTags({ tags }: { tags: readonly string[] }) {
+  return (
+    <div className="doeinsure-stage-block__tags">
+      {tags.map((tag) => (
+        <span key={tag} className="doeinsure-stage-block__tag">
+          {tag}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function DoeInsureHeroEmailForm({
   email,
   onEmailChange,
@@ -295,7 +307,7 @@ export function DoeInsurePageContent() {
                           </span>
                           <h3>{item.name}</h3>
                           <b>{item.limit}</b>
-                          <p className="doeinsure-stage-block__moment">{item.moment}</p>
+                          <StageTags tags={item.tags} />
                         </div>
                         <div
                           className={`doeinsure-stage-block__band-body${isLead ? " doeinsure-stage-block__band-body--lead" : " doeinsure-stage-block__band-body--growth"}`}
@@ -309,9 +321,7 @@ export function DoeInsurePageContent() {
                           </ul>
                           {isLead ? (
                             <p className="doeinsure-stage-block__lead-cover">{item.cover}</p>
-                          ) : (
-                            <p className="doeinsure-stage-block__band-foot">{item.cover}</p>
-                          )}
+                          ) : null}
                         </div>
                       </div>
                     </div>
@@ -333,7 +343,7 @@ export function DoeInsurePageContent() {
                     </span>
                     <h3>{item.name}</h3>
                     <b>{item.limit}</b>
-                    <p className="doeinsure-stage-block__moment">{item.moment}</p>
+                    <StageTags tags={item.tags} />
                     <ul>
                       {item.includes.map((line) => (
                         <li key={line}>{line}</li>

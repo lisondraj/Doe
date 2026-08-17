@@ -89,161 +89,227 @@ function ScaleBody({
         ))}
       </h2>
       <DoeInsureAppFrame file="Usage · Harbor Notes" className="doeinsure-app--scale">
-      <div className="doeinsure-scale-board">
-        <p className="doeinsure-scale-board__month">{point.label}</p>
-        <b
-          className={`doeinsure-scale-board__premium${mode === "traditional" ? " is-old" : ""}`}
-          key={`${mode}-${point.label}`}
-        >
-          {mode === "ours" ? point.premium : point.traditional}
-        </b>
-        <span className="doeinsure-scale-board__note">
-          {mode === "ours" ? DOEINSURE_SCALE.oursNote : DOEINSURE_SCALE.traditionalNote}
-        </span>
-        <dl className="doeinsure-scale-board__meta">
-          <div>
-            <dt>MRR</dt>
-            <dd key={`mrr-${point.label}`}>{point.mrr}</dd>
-          </div>
-          <div>
-            <dt>Active users</dt>
-            <dd key={`users-${point.label}`}>{point.users}</dd>
-          </div>
-          <div>
-            <dt>{mode === "ours" ? "This month" : "Prepaid"}</dt>
-            <dd key={`pay-${mode}-${point.label}`}>{mode === "ours" ? point.premium : point.traditional}</dd>
-          </div>
-        </dl>
-        <div className="doeinsure-bars" role="tablist" aria-label="Months">
-          {DOEINSURE_SCALE.months.map((item, index) => {
-            const height = Math.max(0.18, Number.parseInt(item.mrr.replace(/\D/g, ""), 10) / maxMrr);
-            return (
-              <button
-                key={item.label}
-                type="button"
-                role="tab"
-                aria-selected={month === index}
-                className={month === index ? "is-on" : undefined}
-                onClick={() => {
-                  setPlaying(false);
-                  setMonth(index);
-                }}
-              >
-                <i
-                  style={{
-                    transform: revealed ? `scaleY(${height})` : "scaleY(0)",
+        <div className="doeinsure-scale-board">
+          <p className="doeinsure-scale-board__month">{point.label}</p>
+          <b
+            className={`doeinsure-scale-board__premium${mode === "traditional" ? " is-old" : ""}`}
+            key={`${mode}-${point.label}`}
+          >
+            {mode === "ours" ? point.premium : point.traditional}
+          </b>
+          <span className="doeinsure-scale-board__note">
+            {mode === "ours" ? DOEINSURE_SCALE.oursNote : DOEINSURE_SCALE.traditionalNote}
+          </span>
+          <dl className="doeinsure-scale-board__meta">
+            <div>
+              <dt>MRR</dt>
+              <dd key={`mrr-${point.label}`}>{point.mrr}</dd>
+            </div>
+            <div>
+              <dt>Active users</dt>
+              <dd key={`users-${point.label}`}>{point.users}</dd>
+            </div>
+            <div>
+              <dt>{mode === "ours" ? "This month" : "Prepaid"}</dt>
+              <dd key={`pay-${mode}-${point.label}`}>{mode === "ours" ? point.premium : point.traditional}</dd>
+            </div>
+          </dl>
+          <div className="doeinsure-bars" role="tablist" aria-label="Months">
+            {DOEINSURE_SCALE.months.map((item, index) => {
+              const height = Math.max(0.18, Number.parseInt(item.mrr.replace(/\D/g, ""), 10) / maxMrr);
+              return (
+                <button
+                  key={item.label}
+                  type="button"
+                  role="tab"
+                  aria-selected={month === index}
+                  className={month === index ? "is-on" : undefined}
+                  onClick={() => {
+                    setPlaying(false);
+                    setMonth(index);
                   }}
-                />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
+                >
+                  <i
+                    style={{
+                      transform: revealed ? `scaleY(${height})` : "scaleY(0)",
+                    }}
+                  />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
       </DoeInsureAppFrame>
     </>
   );
 }
 
 function MatchSection() {
-  const [system, setSystem] = useState(0);
+  const [scenario, setScenario] = useState(0);
   const [done, setDone] = useState<Record<string, boolean>>({});
-  const hospital = DOEINSURE_MATCH.systems[system];
-  const matchedCount = hospital.clauses.filter((clause) => done[`${system}-${clause.id}`]).length;
-  const complete = matchedCount === hospital.clauses.length;
+  const [scanning, setScanning] = useState(false);
+  const [matchingAll, setMatchingAll] = useState(false);
+  const active = DOEINSURE_MATCH.scenarios[scenario];
+  const clauseTotal = active.clauses.length;
+  const matchedCount = active.clauses.filter((clause) => done[`${scenario}-${clause.id}`]).length;
+  const complete = matchedCount === clauseTotal;
+  const limitMatched = Boolean(done[`${scenario}-limit`]);
+  const workingLimit = limitMatched || complete ? active.ask : active.from;
+  const progress = clauseTotal ? (matchedCount / clauseTotal) * 100 : 0;
+  const policyUpdates = active.clauses
+    .filter((clause) => done[`${scenario}-${clause.id}`])
+    .map((clause) => clause.policyMatch);
+
+  useEffect(() => {
+    setScanning(true);
+    setDone({});
+    setMatchingAll(false);
+    const id = window.setTimeout(() => setScanning(false), 900);
+    return () => window.clearTimeout(id);
+  }, [scenario]);
+
+  const toggleClause = (clauseId: string) => {
+    if (scanning || matchingAll) return;
+    const key = `${scenario}-${clauseId}`;
+    setDone((current) => ({ ...current, [key]: !current[key] }));
+  };
+
+  const matchAll = () => {
+    if (scanning || matchingAll || complete) return;
+    setMatchingAll(true);
+    active.clauses.forEach((clause, index) => {
+      window.setTimeout(() => {
+        setDone((current) => ({ ...current, [`${scenario}-${clause.id}`]: true }));
+        if (index === active.clauses.length - 1) setMatchingAll(false);
+      }, (index + 1) * 480);
+    });
+  };
 
   return (
     <section className="doeinsure-section" id="match">
       <div className="doeinsure-wrap">
-        <DoeInsureReveal variant="right">
-          <span className="doeinsure-eyebrow">{DOEINSURE_MATCH.eyebrow}</span>
-          <h2>{DOEINSURE_MATCH.title}</h2>
-          <p className="doeinsure-hero__lede">{DOEINSURE_MATCH.lede}</p>
-          <DoeInsureAppFrame file="Contract desk">
-          <div className="doeinsure-match">
-            <div className="doeinsure-match__systems" role="tablist" aria-label="Health systems">
-              {DOEINSURE_MATCH.systems.map((item, index) => (
-                <button
-                  key={item.name}
-                  type="button"
-                  role="tab"
-                  aria-selected={system === index}
-                  className={system === index ? "is-on" : undefined}
-                  onClick={() => {
-                    setSystem(index);
-                    setDone({});
-                  }}
-                >
-                  <span>{item.name}</span>
-                  <b>{item.ask}</b>
-                </button>
-              ))}
-            </div>
-            <article className="doeinsure-doc" key={hospital.name}>
-              <div className="doeinsure-card__kicker">
-                <span>Hospital draft</span>
-                <span>{hospital.name}</span>
-              </div>
-              <p>{hospital.excerpt}</p>
-              <ul>
-                {hospital.clauses.map((clause) => {
-                  const key = `${system}-${clause.id}`;
-                  const on = Boolean(done[key]);
-                  return (
-                    <li key={clause.id}>
-                      <button
-                        type="button"
-                        className={on ? "is-on" : undefined}
-                        onClick={() => setDone((current) => ({ ...current, [key]: !current[key] }))}
-                      >
-                        <span>{clause.label}</span>
-                        {clause.text}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </article>
-            <aside className={`doeinsure-match__file${complete ? " is-on" : ""}`}>
-              <div className="doeinsure-card__kicker">
-                <span>Policy file</span>
-                <span>{complete ? DOEINSURE_MATCH.hoursDone : DOEINSURE_MATCH.hours}</span>
-              </div>
-              <span className="doeinsure-match__status">
-                {complete ? DOEINSURE_MATCH.unblocked : DOEINSURE_MATCH.blocked}
+        <DoeInsureReveal variant="rise">
+          <h2 className="doeinsure-stages-title">
+            {DOEINSURE_MATCH.title.map((line) => (
+              <span key={line} className="doeinsure-stages-title__line">
+                {line}
               </span>
-              <div className="doeinsure-scan__limits">
-                <span>
-                  {DOEINSURE_MATCH.currentLabel}
-                  <b key={complete ? "to" : "from"}>{complete ? hospital.ask : hospital.from}</b>
-                </span>
-                <span>
-                  {DOEINSURE_MATCH.requiredLabel}
-                  <b>{hospital.ask}</b>
-                </span>
+            ))}
+          </h2>
+          <DoeInsureAppFrame file="Contract desk" className="doeinsure-app--match">
+            <div className="doeinsure-match">
+              <div className="doeinsure-match__systems" role="tablist" aria-label={DOEINSURE_MATCH.scenarioLabel}>
+                {DOEINSURE_MATCH.scenarios.map((item, index) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={scenario === index}
+                    className={scenario === index ? "is-on" : undefined}
+                    onClick={() => setScenario(index)}
+                  >
+                    <span>{item.name}</span>
+                    <b>{item.ask}</b>
+                    <span className="doeinsure-stage-block__tags">
+                      {item.tags.map((tag) => (
+                        <span key={tag} className="doeinsure-stage-block__tag">
+                          {tag}
+                        </span>
+                      ))}
+                    </span>
+                  </button>
+                ))}
               </div>
-              <p>
-                {matchedCount} of {hospital.clauses.length} clauses matched
-              </p>
-              {complete ? (
-                <a className="doeinsure-btn" href="#request">
-                  {DOEINSURE_MATCH.request}
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  className="doeinsure-btn"
-                  onClick={() =>
-                    setDone(
-                      Object.fromEntries(hospital.clauses.map((clause) => [`${system}-${clause.id}`, true])),
-                    )
-                  }
-                >
-                  {DOEINSURE_MATCH.matchAll}
-                </button>
-              )}
-            </aside>
-          </div>
+
+              <article className="doeinsure-doc doeinsure-match__doc" key={active.id}>
+                {scanning ? (
+                  <div className="doeinsure-match__scan">
+                    <span>{DOEINSURE_MATCH.scanning}</span>
+                    <span className="doeinsure-match__scan-bar" aria-hidden="true" />
+                  </div>
+                ) : (
+                  <>
+                    <p>{active.excerpt}</p>
+                    <ul className="doeinsure-match__clauses">
+                      {active.clauses.map((clause) => {
+                        const key = `${scenario}-${clause.id}`;
+                        const on = Boolean(done[key]);
+                        return (
+                          <li key={clause.id}>
+                            <button
+                              type="button"
+                              className={on ? "is-on" : undefined}
+                              disabled={matchingAll}
+                              onClick={() => toggleClause(clause.id)}
+                            >
+                              <span className="doeinsure-match__clause-top">
+                                <span>{clause.label}</span>
+                                {on ? <em>Matched</em> : null}
+                              </span>
+                              <strong>{clause.text}</strong>
+                              {on ? <span className="doeinsure-match__clause-match">{clause.policyMatch}</span> : null}
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </>
+                )}
+              </article>
+
+              <aside className={`doeinsure-match__file${complete ? " is-on" : ""}`}>
+                <div className="doeinsure-card__kicker">
+                  <span>{DOEINSURE_MATCH.fileLabel}</span>
+                  <span>{complete ? DOEINSURE_MATCH.hoursDone : DOEINSURE_MATCH.hours}</span>
+                </div>
+                <span className="doeinsure-match__status">
+                  {complete ? DOEINSURE_MATCH.unblocked : DOEINSURE_MATCH.blocked}
+                </span>
+                <div className="doeinsure-match__progress" aria-hidden="true">
+                  <i style={{ width: `${progress}%` }} />
+                </div>
+                <p className="doeinsure-match__progress-label">
+                  {matchedCount} of {clauseTotal} {DOEINSURE_MATCH.progressLabel.toLowerCase()}
+                </p>
+                <div className="doeinsure-scan__limits">
+                  <span>
+                    {DOEINSURE_MATCH.currentLabel}
+                    <b key={workingLimit}>{workingLimit}</b>
+                  </span>
+                  <span>
+                    {DOEINSURE_MATCH.requiredLabel}
+                    <b>{active.ask}</b>
+                  </span>
+                </div>
+                <div className="doeinsure-match__updates">
+                  <span>{DOEINSURE_MATCH.policyUpdates}</span>
+                  <ul>
+                    {policyUpdates.length ? (
+                      policyUpdates.map((update) => (
+                        <li key={update}>{update}</li>
+                      ))
+                    ) : (
+                      <li className="is-wait">{DOEINSURE_MATCH.waitingUpdates}</li>
+                    )}
+                  </ul>
+                </div>
+                {complete ? (
+                  <a className="doeinsure-btn" href="#request">
+                    {DOEINSURE_MATCH.request}
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    className="doeinsure-btn"
+                    disabled={scanning || matchingAll}
+                    onClick={matchAll}
+                  >
+                    {matchingAll ? DOEINSURE_MATCH.scanning : DOEINSURE_MATCH.matchAll}
+                  </button>
+                )}
+              </aside>
+            </div>
           </DoeInsureAppFrame>
         </DoeInsureReveal>
       </div>
