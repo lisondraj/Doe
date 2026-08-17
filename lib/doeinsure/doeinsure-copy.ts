@@ -749,7 +749,9 @@ export const DOEINSURE_CTA = {
 
 export const DOEINSURE_FOOTER = {
   wordmark: "Doe Insure",
-  blurb: "A Doe product. Insurance for healthcare AI companies.",
+  blurb: "Doe Intelligence, Inc.",
+  coverageCta: "Get coverage",
   legal: "Doe Intelligence Inc · Delaware",
   email: DOEINSURE_CONTACT_EMAIL,
+  fill: "#3050e0",
 } as const;

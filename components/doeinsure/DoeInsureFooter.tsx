@@ -27,6 +27,9 @@ export function DoeInsureFooter() {
           <a className="doeinsure-footer__quote" href="#request">
             {DOEINSURE_NAV.cta}
           </a>
+          <a className="doeinsure-footer__coverage" href="#request">
+            {DOEINSURE_FOOTER.coverageCta}
+          </a>
           <a className="doeinsure-footer__mail" href={`mailto:${DOEINSURE_FOOTER.email}`}>
             {DOEINSURE_FOOTER.email}
           </a>

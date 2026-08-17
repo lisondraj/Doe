@@ -6,10 +6,18 @@ html[data-doeinsure-page] {
 }
 
 html[data-doeinsure-page] body,
-html[data-doeinsure-page]:has(.doephone-mobile-root),
-html[data-doeinsure-page]:has(.doephone-mobile-root) body,
 html[data-doeinsure-page][data-layout="desktop"] body {
   background-color: #ffffff !important;
+}
+
+html[data-doeinsure-page]:has(.doephone-mobile-root) {
+  --doe-page-surface: #3050e0;
+  --proto-page-bg: #3050e0;
+  background-color: #3050e0;
+}
+
+html[data-doeinsure-page]:has(.doephone-mobile-root) body {
+  background-color: #3050e0 !important;
 }
 
 .doeinsure-root {
@@ -53,6 +61,11 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-root--iphone {
   --di-inset: max(1rem, env(safe-area-inset-left, 0px));
   overflow-x: clip;
+  background: var(--di-blue);
+}
+
+.doeinsure-root--iphone main {
+  background: var(--di-white);
 }
 
 .doeinsure-root--iphone .doeinsure-wrap {
@@ -1685,6 +1698,10 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   letter-spacing: -0.02em;
 }
 
+.doeinsure-footer__coverage {
+  display: none;
+}
+
 .doeinsure-footer__mail {
   margin-top: 0.35rem;
 }
@@ -1714,6 +1731,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-root--iphone .doeinsure-footer {
   min-height: 0;
   margin-top: 0.4rem;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .doeinsure-root--iphone .doeinsure-footer__inner {
@@ -1744,9 +1762,24 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   gap: 0.62rem;
 }
 
+.doeinsure-root--iphone .doeinsure-footer__cta > .doeinsure-footer__label,
 .doeinsure-root--iphone .doeinsure-footer__quote {
-  width: 100%;
+  display: none;
+}
+
+.doeinsure-root--iphone .doeinsure-footer__coverage {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
+  min-width: 2.7rem;
+  min-height: 2.7rem;
+  padding: 0.65rem 1.1rem;
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  color: var(--di-blue);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .doeinsure-root--iphone .doeinsure-footer__legal {
@@ -1754,7 +1787,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   align-items: flex-start;
   gap: 0.28rem;
   padding-top: 1.15rem;
-  padding-bottom: calc(1.4rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: 1.4rem;
 }
 
 .doeinsure-card--click {
