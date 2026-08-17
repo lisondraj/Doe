@@ -748,10 +748,9 @@ export const DOEINSURE_CTA = {
 } as const;
 
 export const DOEINSURE_FOOTER = {
-  wordmark: "Doe Insure",
   blurb: "Doe Intelligence, Inc.",
   coverageCta: "Get coverage",
-  legal: "Doe Intelligence Inc · Delaware",
+  legal: "Doe Insure is a registered MGA.",
   email: DOEINSURE_CONTACT_EMAIL,
   fill: "#3050e0",
 } as const;

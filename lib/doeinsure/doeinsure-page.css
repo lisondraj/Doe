@@ -1783,9 +1783,6 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-footer__legal {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.28rem;
   padding-top: 1.15rem;
   padding-bottom: 1.4rem;
 }

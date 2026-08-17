@@ -39,7 +39,6 @@ export function DoeInsureFooter() {
       <div className="doeinsure-footer__bar">
         <div className="doeinsure-wrap doeinsure-footer__legal">
           <p>{DOEINSURE_FOOTER.legal}</p>
-          <p>{DOEINSURE_FOOTER.wordmark}</p>
         </div>
       </div>
     </footer>
