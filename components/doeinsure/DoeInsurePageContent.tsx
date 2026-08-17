@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 
-import { DoeInsureHeroApp, DoeInsureHowApp } from "@/components/doeinsure/DoeInsureAppUi";
+import { DoeInsureHowApp } from "@/components/doeinsure/DoeInsureAppUi";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import { DoeInsureSellSections } from "@/components/doeinsure/DoeInsureSellSections";
 import {
@@ -17,6 +17,7 @@ import {
   DOEINSURE_LIMITS,
   DOEINSURE_NEXT,
   DOEINSURE_PLATFORM,
+  DOEINSURE_POLICY_SAMPLES,
   DOEINSURE_STATS,
   DOEINSURE_STAGES,
   DOEINSURE_UNDERWRITE,
@@ -135,6 +136,40 @@ function DoeInsureIntakeForm({
   );
 }
 
+function PolicyPreview() {
+  const [index, setIndex] = useState(0);
+  const policy = DOEINSURE_POLICY_SAMPLES[index];
+
+  return (
+    <button
+      type="button"
+      className="doeinsure-card doeinsure-card--click"
+      aria-label="Sample policy. Click to see another."
+      onClick={() => setIndex((current) => (current + 1) % DOEINSURE_POLICY_SAMPLES.length)}
+    >
+      <div className="doeinsure-card__kicker">
+        <span>{policy.kicker}</span>
+        <span>{policy.id}</span>
+      </div>
+      <p className="doeinsure-card__name" key={`${policy.id}-name`}>
+        {policy.name}
+      </p>
+      <p className="doeinsure-card__limit" key={`${policy.id}-limit`}>
+        {policy.limit}
+      </p>
+      <p className="doeinsure-card__meta">{policy.limitLabel}</p>
+      <div className="doeinsure-pills">
+        <span className="doeinsure-pill">{policy.status}</span>
+        <span className="doeinsure-pill doeinsure-pill--outline">{policy.rider}</span>
+      </div>
+      <span className="doeinsure-card__insured-label">{policy.insuredLabel}</span>
+      <span className="doeinsure-card__insured">{policy.insured}</span>
+      <span className="doeinsure-card__hint">
+        {index + 1} / {DOEINSURE_POLICY_SAMPLES.length} · click for another sample
+      </span>
+    </button>
+  );
+}
 
 function CoiCard() {
   const [issued, setIssued] = useState(false);
@@ -198,27 +233,24 @@ export function DoeInsurePageContent() {
 
   return (
     <>
-      <section className="doeinsure-hero" id="top">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal className="doeinsure-hero__grid">
-            <div>
-              <span className="doeinsure-eyebrow">{DOEINSURE_HERO.eyebrow}</span>
-              <h1 className="doeinsure-hero__title">
-                {DOEINSURE_HERO.headline.map((line) => (
-                  <span key={line} className="doeinsure-hero__line">
-                    {line}
-                  </span>
-                ))}
-              </h1>
-              <p className="doeinsure-hero__lede">{DOEINSURE_HERO.lede}</p>
-              <DoeInsureHeroEmailForm email={email} onEmailChange={setEmail} />
-              <a className="doeinsure-hero__secondary" href="#stages">
-                {DOEINSURE_HERO.secondaryCta}
-              </a>
-            </div>
-            <DoeInsureHeroApp />
-          </DoeInsureReveal>
+      <section className="doeinsure-wrap doeinsure-hero" id="top">
+        <div>
+          <span className="doeinsure-eyebrow">{DOEINSURE_HERO.eyebrow}</span>
+          <h1 className="doeinsure-hero__title">
+            {DOEINSURE_HERO.headline.map((line) => (
+              <span key={line} className="doeinsure-hero__line">
+                {line}
+              </span>
+            ))}
+          </h1>
+          <p className="doeinsure-hero__lede">{DOEINSURE_HERO.lede}</p>
+          <DoeInsureHeroEmailForm email={email} onEmailChange={setEmail} />
+          <a className="doeinsure-hero__secondary" href="#quote">
+            {DOEINSURE_HERO.secondaryCta}
+          </a>
         </div>
+        <PolicyPreview />
+      </section>
         <div className="doeinsure-stats" aria-label="Doe Insure at a glance">
           <div className="doeinsure-wrap doeinsure-stats__row">
             {DOEINSURE_STATS.map((item, index) => (

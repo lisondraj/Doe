@@ -327,15 +327,12 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-hero {
-  padding-top: 4.5rem;
-}
-
-.doeinsure-hero__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(15rem, 0.65fr);
   gap: 2.5rem;
   align-items: start;
-  padding-bottom: 3.25rem;
+  padding-top: 4.5rem;
+  padding-bottom: 4.75rem;
 }
 
 .doeinsure-hero__title {
@@ -345,34 +342,32 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-hero__line {
   display: block;
+  white-space: nowrap;
 }
 
 .doeinsure-hero h1,
 .doeinsure-hero__title {
-  font-size: clamp(2.6rem, 4.4vw, 4.05rem);
+  font-size: clamp(2.55rem, 4vw, 3.85rem);
   font-weight: 500;
-  letter-spacing: -0.07em;
-  line-height: 0.92;
+  letter-spacing: -0.065em;
+  line-height: 0.95;
 }
 
 .doeinsure-root--iphone .doeinsure-hero h1,
 .doeinsure-root--iphone .doeinsure-hero__title {
-  font-size: clamp(1.55rem, 7.6vw, 2.05rem);
+  font-size: clamp(1.38rem, 6.4vw, 1.88rem);
   max-width: 100%;
 }
 
 .doeinsure-root--iphone .doeinsure-hero {
-  padding-top: 2.1rem;
-}
-
-.doeinsure-root--iphone .doeinsure-hero__grid {
   grid-template-columns: 1fr;
   gap: 2rem;
-  padding-bottom: 1.6rem;
+  padding-top: 2.1rem;
+  padding-bottom: 2.4rem;
 }
 
 .doeinsure-root--iphone .doeinsure-hero__line {
-  white-space: normal;
+  white-space: nowrap;
 }
 
 .doeinsure-eyebrow {

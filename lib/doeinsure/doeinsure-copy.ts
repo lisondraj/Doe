@@ -23,14 +23,12 @@ export const DOEINSURE_NAV = {
 
 export const DOEINSURE_HERO = {
   eyebrow: "Doe Insure",
-  headline: ["Bind the model,", "the data, the company."],
-  lede: "Insurance for new and existing healthcare AI companies. Quote from the live stack. Raise limits the hour a hospital asks.",
+  headline: ["Insurance for builders", "in healthcare AI."],
+  lede: "Coverage for new and existing healthcare AI companies. Connect the stack, quote from live data, and raise limits the hour a hospital asks.",
   emailLabel: "Work email",
   emailPlaceholder: "you@company.com",
   primaryCta: "Get started",
-  secondaryCta: "See Growth+",
-  live: "Live file",
-  classesLabel: "Product class",
+  secondaryCta: "See the platform",
 } as const;
 
 export const DOEINSURE_HERO_CLASSES = [
