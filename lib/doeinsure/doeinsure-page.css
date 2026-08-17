@@ -2178,7 +2178,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stages-title {
-  max-width: 22ch;
+  max-width: max-content;
   margin: 0;
   font-size: clamp(2.15rem, 3.8vw, 3.55rem);
   font-weight: 500;
@@ -2188,11 +2188,16 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-stages-title__line {
   display: block;
+  white-space: nowrap;
 }
 
 .doeinsure-root--iphone .doeinsure-stages-title {
   max-width: none;
   font-size: clamp(1.85rem, 8.4vw, 2.35rem);
+}
+
+.doeinsure-root--iphone .doeinsure-stages-title__line {
+  white-space: normal;
 }
 
 .doeinsure-stage-blocks {
@@ -2230,27 +2235,52 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stage-block.doeinsure-stage-block--band {
-  padding: 1.35rem 1.5rem 1.45rem;
+  padding: 1.35rem 0 1.45rem;
   cursor: default;
 }
 
-.doeinsure-stage-block.doeinsure-stage-block--band-blue {
-  background: var(--di-blue);
-  color: #ffffff;
+.doeinsure-stage-block--lead {
+  display: block;
 }
 
 .doeinsure-stage-block__band {
   display: grid;
-  grid-template-columns: minmax(11rem, 0.82fr) minmax(0, 1.45fr) minmax(10rem, 0.73fr);
-  gap: 1.35rem 2rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
   width: 100%;
-  align-items: start;
+  align-items: stretch;
 }
 
 .doeinsure-stage-block__band-head {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+  padding: 0 1.5rem;
+  border-right: 1px solid var(--di-line);
+}
+
+.doeinsure-stage-block--band-blue .doeinsure-stage-block__band-head {
+  border-right-color: rgba(255, 255, 255, 0.18);
+}
+
+.doeinsure-stage-block__band-body {
+  grid-column: 2 / -1;
+  min-width: 0;
+  padding: 0 1.5rem;
+}
+
+.doeinsure-stage-block__band-body--lead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 1.5rem 2rem;
+  align-items: center;
+}
+
+.doeinsure-stage-block__band-body--growth {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.15rem;
 }
 
 .doeinsure-stage-block__band-lines {
@@ -2259,29 +2289,98 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   gap: 0.45rem 1.15rem;
   width: 100%;
   margin: 0;
-  padding: 0.15rem 0 0;
+  padding: 0;
   border-top: 0;
   list-style: none;
+}
+
+.doeinsure-stage-block__band-lines--lead {
+  align-self: center;
 }
 
 .doeinsure-stage-block__band-lines--wide {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.doeinsure-stage-block__band-lines li {
+  color: var(--di-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.doeinsure-stage-block__band-lines li::before {
+  content: "";
+  display: inline-block;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-right: 0.45rem;
+  background: var(--di-blue);
+  vertical-align: 0.1rem;
+}
+
+.doeinsure-stage-block__lead-cover {
+  margin: 0;
+  color: #2a2d33;
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+  text-align: left;
+}
+
 .doeinsure-stage-block__band-foot {
   margin: 0;
-  padding-top: 0.15rem;
+  max-width: 42rem;
   color: var(--di-muted);
-  font-size: 0.88rem;
+  font-size: clamp(0.98rem, 1.35vw, 1.12rem);
   letter-spacing: -0.02em;
   line-height: 1.45;
+}
+
+.doeinsure-stage-block.doeinsure-stage-block--band-blue {
+  background: var(--di-blue);
+  color: #ffffff;
 }
 
 .doeinsure-stage-block--band-blue .doeinsure-stage-block__band-foot {
   color: rgba(255, 255, 255, 0.88);
 }
 
+.doeinsure-stage-block__band-body--lead .doeinsure-stage-block__lead-cover {
+  padding-left: 2rem;
+  border-left: 1px solid var(--di-line);
+}
+
+.doeinsure-root--iphone .doeinsure-stage-block__band-body--lead .doeinsure-stage-block__lead-cover {
+  padding-left: 0;
+  border-left: 0;
+  padding-top: 0.25rem;
+}
+
 .doeinsure-root--iphone .doeinsure-stage-block__band {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.doeinsure-root--iphone .doeinsure-stage-block__band-head {
+  padding: 0 1.25rem;
+  border-right: 0;
+  border-bottom: 1px solid var(--di-line);
+  padding-bottom: 1rem;
+}
+
+.doeinsure-root--iphone .doeinsure-stage-block--band-blue .doeinsure-stage-block__band-head {
+  border-bottom-color: rgba(255, 255, 255, 0.18);
+}
+
+.doeinsure-root--iphone .doeinsure-stage-block__band-body {
+  grid-column: auto;
+  padding: 0 1.25rem;
+}
+
+.doeinsure-root--iphone .doeinsure-stage-block__band-body--lead {
   grid-template-columns: 1fr;
   gap: 1rem;
 }
@@ -2315,7 +2414,6 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stage-block--band-blue .doeinsure-stage-block__top,
-.doeinsure-stage-block--band-blue b,
 .doeinsure-stage-block--band-blue .doeinsure-stage-block__moment,
 .doeinsure-stage-block--band-blue .doeinsure-stage-block__band-lines,
 .doeinsure-stage-block--band-blue .doeinsure-stage-block__band-lines li,
@@ -2327,7 +2425,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   color: rgba(255, 255, 255, 0.92);
 }
 
-.doeinsure-stage-block--band-blue li::before {
+.doeinsure-stage-block--band-blue .doeinsure-stage-block__band-lines li::before {
   background: #ffffff;
 }
 
@@ -2405,6 +2503,14 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-stage-block.is-on li::before {
   background: var(--di-blue);
+}
+
+.doeinsure-stage-block.doeinsure-stage-block--band-blue b {
+  color: #ffffff;
+}
+
+.doeinsure-stage-block.doeinsure-stage-block--band-blue li::before {
+  background: #ffffff;
 }
 
 .doeinsure-stage-block__cover {
@@ -2694,6 +2800,10 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   font-style: normal;
   font-weight: 600;
   letter-spacing: 0.04em;
+}
+
+.doeinsure-stages-title + .doeinsure-app--scale {
+  margin-top: 2.6rem;
 }
 
 .doeinsure-scale-board {
@@ -3317,6 +3427,15 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   margin: 0;
   border: 0;
   background: transparent;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.doeinsure-app--scale .doeinsure-scale-board__month {
+  margin-top: 1.25rem;
+}
+
+.doeinsure-app--scale .doeinsure-scale-board__note {
+  text-align: left;
 }
 
 .doeinsure-app .doeinsure-match {

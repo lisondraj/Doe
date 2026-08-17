@@ -75,7 +75,7 @@ function ScaleBody({
         }
         return current + 1;
       });
-    }, 640);
+    }, 1400);
     return () => window.clearInterval(id);
   }, [playing, setMonth, setPlaying]);
 
@@ -88,44 +88,8 @@ function ScaleBody({
           </span>
         ))}
       </h2>
-      <DoeInsureAppFrame file="Usage · Harbor Notes">
+      <DoeInsureAppFrame file="Usage · Harbor Notes" className="doeinsure-app--scale">
       <div className="doeinsure-scale-board">
-        <div className="doeinsure-scale-board__top">
-          <div className="doeinsure-compare-toggle" role="tablist" aria-label="Premium type">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === "ours"}
-              className={mode === "ours" ? "is-on" : undefined}
-              onClick={() => setMode("ours")}
-            >
-              {DOEINSURE_SCALE.ours}
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === "traditional"}
-              className={mode === "traditional" ? "is-on" : undefined}
-              onClick={() => setMode("traditional")}
-            >
-              {DOEINSURE_SCALE.traditional}
-            </button>
-          </div>
-          <button
-            type="button"
-            className="doeinsure-inline is-on"
-            onClick={() => {
-              if (playing) {
-                setPlaying(false);
-                return;
-              }
-              if (month >= DOEINSURE_SCALE.months.length - 1) setMonth(0);
-              setPlaying(true);
-            }}
-          >
-            {playing ? DOEINSURE_SCALE.pause : DOEINSURE_SCALE.play}
-          </button>
-        </div>
         <p className="doeinsure-scale-board__month">{point.label}</p>
         <b
           className={`doeinsure-scale-board__premium${mode === "traditional" ? " is-old" : ""}`}

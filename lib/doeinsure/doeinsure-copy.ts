@@ -162,7 +162,7 @@ export const DOEINSURE_COVERAGE = {
 } as const;
 
 export const DOEINSURE_STAGES = {
-  title: ["Coverage that changes as fast as your", "company."],
+  title: ["Coverage that changes as fast", "as your company."],
   items: [
     {
       id: "idea",
@@ -171,7 +171,7 @@ export const DOEINSURE_STAGES = {
       limit: "$1M",
       badge: "First bind",
       moment: "Founders, a repo, no revenue.",
-      cover: "Bind on product class. Pay as you scale from day one.",
+      cover: "Pay as you scale from day one.",
       includes: ["Cyber and privacy", "Media and IP", "Usage-priced premium", "Product-class bind"],
       policies: ["Cyber and privacy", "Media and IP"],
     },
@@ -305,7 +305,7 @@ export const DOEINSURE_SCALE = {
   ours: "Doe Insure",
   traditional: "Traditional",
   traditionalNote: "Prepaid on January revenue — uncovered by June, or overpaid in the winter.",
-  oursNote: "Billed on this month’s usage. No annual true-up.",
+  oursNote: "Billed on this month’s usage.",
   months: [
     { label: "Jan", mrr: "$10k", users: "412", premium: "$410", traditional: "$4,920" },
     { label: "Feb", mrr: "$18k", users: "890", premium: "$520", traditional: "$4,920" },

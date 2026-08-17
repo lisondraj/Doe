@@ -285,7 +285,7 @@ export function DoeInsurePageContent() {
                   return (
                     <div
                       key={item.id}
-                      className={`doeinsure-stage-block doeinsure-stage-block--band${isBand ? " doeinsure-stage-block--band-blue" : ""}`}
+                      className={`doeinsure-stage-block doeinsure-stage-block--band${isBand ? " doeinsure-stage-block--band-blue" : ""}${isLead ? " doeinsure-stage-block--lead" : ""}`}
                     >
                       <div className="doeinsure-stage-block__band">
                         <div className="doeinsure-stage-block__band-head">
@@ -297,14 +297,22 @@ export function DoeInsurePageContent() {
                           <b>{item.limit}</b>
                           <p className="doeinsure-stage-block__moment">{item.moment}</p>
                         </div>
-                        <ul
-                          className={`doeinsure-stage-block__band-lines${item.id === "growth" ? " doeinsure-stage-block__band-lines--wide" : ""}`}
+                        <div
+                          className={`doeinsure-stage-block__band-body${isLead ? " doeinsure-stage-block__band-body--lead" : " doeinsure-stage-block__band-body--growth"}`}
                         >
-                          {item.includes.map((line) => (
-                            <li key={line}>{line}</li>
-                          ))}
-                        </ul>
-                        <p className="doeinsure-stage-block__band-foot">{item.cover}</p>
+                          <ul
+                            className={`doeinsure-stage-block__band-lines${isLead ? " doeinsure-stage-block__band-lines--lead" : " doeinsure-stage-block__band-lines--wide"}`}
+                          >
+                            {item.includes.map((line) => (
+                              <li key={line}>{line}</li>
+                            ))}
+                          </ul>
+                          {isLead ? (
+                            <p className="doeinsure-stage-block__lead-cover">{item.cover}</p>
+                          ) : (
+                            <p className="doeinsure-stage-block__band-foot">{item.cover}</p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
