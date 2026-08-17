@@ -6987,6 +6987,415 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   }
 }
 
+.doeinsure-section--ink {
+  position: relative;
+  isolation: isolate;
+  background: var(--di-ink);
+  color: #ffffff;
+}
+
+.doeinsure-section--ink::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 47px,
+      rgba(255, 255, 255, 0.035) 47px,
+      rgba(255, 255, 255, 0.035) 48px
+    ),
+    var(--di-ink);
+  pointer-events: none;
+}
+
+.doeinsure-section--ink .doeinsure-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.doeinsure-hour__head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1.6rem 2.4rem;
+  align-items: end;
+  margin-bottom: 2.6rem;
+}
+
+.doeinsure-hour__desk {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.doeinsure-section h2.doeinsure-hour__title {
+  max-width: 16ch;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 500;
+  letter-spacing: -0.07em;
+  line-height: 0.92;
+}
+
+.doeinsure-hour__title span {
+  display: block;
+}
+
+.doeinsure-hour__title-accent {
+  color: #8ea2ff;
+}
+
+.doeinsure-hour__board {
+  display: grid;
+  grid-template-columns: minmax(11rem, 0.42fr) minmax(0, 1fr);
+  gap: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.doeinsure-hour__clock {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  min-height: 22rem;
+  padding: 1.6rem 1.5rem 1.4rem 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.doeinsure-hour__clock em {
+  color: #8ea2ff;
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.doeinsure-hour__clock b {
+  color: #ffffff;
+  font-size: clamp(4.4rem, 8vw, 7.2rem);
+  font-weight: 500;
+  letter-spacing: -0.09em;
+  line-height: 0.82;
+  font-variant-numeric: tabular-nums;
+}
+
+.doeinsure-hour__clock span {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-hour__wire {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doeinsure-hour__wire li {
+  display: grid;
+  grid-template-columns: 4.2rem minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: start;
+  padding: 1.05rem 0 1.05rem 1.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.42);
+  transition: background-color 420ms ease, color 420ms ease;
+}
+
+.doeinsure-hour__wire time {
+  padding-top: 0.18rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+.doeinsure-hour__wire strong {
+  display: block;
+  color: inherit;
+  font-size: 1.12rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.doeinsure-hour__wire span {
+  display: block;
+  margin-top: 0.18rem;
+  font-size: 0.82rem;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-hour__wire em {
+  display: block;
+  margin-top: 0.28rem;
+  font-size: 0.78rem;
+  font-style: normal;
+  letter-spacing: -0.01em;
+}
+
+.doeinsure-hour__wire p {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  margin: 0;
+  min-width: 5.5rem;
+  text-align: right;
+}
+
+.doeinsure-hour__wire p span {
+  margin: 0;
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-hour__wire p b {
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.doeinsure-hour__wire li.is-on {
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+}
+
+.doeinsure-hour__wire li.is-on p b {
+  color: #8ea2ff;
+}
+
+.doeinsure-hour__wire li.is-done {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.doeinsure-hour__wire li.is-done p b {
+  color: #ffffff;
+}
+
+.doeinsure-folio__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2.4rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 2px solid var(--di-ink);
+}
+
+.doeinsure-section h2.doeinsure-folio__title {
+  max-width: 12ch;
+  margin: 0;
+  font-size: clamp(2.3rem, 4.4vw, 3.8rem);
+  font-weight: 500;
+  letter-spacing: -0.07em;
+  line-height: 0.94;
+}
+
+.doeinsure-folio__title span {
+  display: block;
+}
+
+.doeinsure-folio__count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  margin: 0;
+}
+
+.doeinsure-folio__count span {
+  color: var(--di-muted);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.doeinsure-folio__count b {
+  font-size: 1.55rem;
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.doeinsure-folio__spread {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+  gap: 0 1.6rem;
+  min-height: 22rem;
+}
+
+.doeinsure-folio__gutter {
+  display: block;
+  width: 1px;
+  background: var(--di-ink);
+}
+
+.doeinsure-folio__page span {
+  display: block;
+  margin-bottom: 1.15rem;
+  color: var(--di-muted);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.doeinsure-folio__page ol {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doeinsure-folio__page li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  min-height: 3.6rem;
+  padding: 0.7rem 0 0.85rem;
+  border-top: 1px solid var(--di-line);
+}
+
+.doeinsure-folio__page b {
+  font-size: 1.18rem;
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+
+.doeinsure-folio__page em {
+  color: var(--di-muted);
+  font-size: 0.78rem;
+  font-style: normal;
+  letter-spacing: -0.01em;
+}
+
+.doeinsure-folio__page li.is-gone b,
+.doeinsure-folio__page li.is-leaving b {
+  text-decoration: line-through;
+  color: var(--di-muted);
+}
+
+.doeinsure-folio__page li.is-gone {
+  opacity: 0.38;
+}
+
+.doeinsure-folio__page--live li:not(.is-on) b,
+.doeinsure-folio__page--live li:not(.is-on) em {
+  visibility: hidden;
+}
+
+.doeinsure-folio__page--live li.is-on b {
+  color: var(--di-ink);
+}
+
+.doeinsure-folio__page--live li.is-in b {
+  animation: doeinsure-folio-in 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-folio__spread.is-done .doeinsure-folio__page--live li.is-on b {
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.doeinsure-root--iphone .doeinsure-hour__head {
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.9rem 1rem;
+  margin-bottom: 1.7rem;
+}
+
+.doeinsure-root--iphone .doeinsure-section h2.doeinsure-hour__title {
+  font-size: clamp(2rem, 9vw, 2.7rem);
+}
+
+.doeinsure-root--iphone .doeinsure-hour__board {
+  grid-template-columns: 1fr;
+}
+
+.doeinsure-root--iphone .doeinsure-hour__clock {
+  min-height: 0;
+  padding: 1.15rem 0 1.05rem;
+  border-right: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.doeinsure-root--iphone .doeinsure-hour__clock b {
+  font-size: clamp(3.6rem, 18vw, 5.2rem);
+}
+
+.doeinsure-root--iphone .doeinsure-hour__wire li {
+  grid-template-columns: 3.4rem minmax(0, 1fr);
+  padding: 0.95rem 0;
+}
+
+.doeinsure-root--iphone .doeinsure-hour__wire p {
+  grid-column: 2;
+  align-items: flex-start;
+  text-align: left;
+  margin-top: -0.15rem;
+}
+
+.doeinsure-root--iphone .doeinsure-folio__head {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+}
+
+.doeinsure-root--iphone .doeinsure-section h2.doeinsure-folio__title {
+  font-size: clamp(2rem, 9vw, 2.6rem);
+}
+
+.doeinsure-root--iphone .doeinsure-folio__count {
+  align-items: flex-start;
+}
+
+.doeinsure-root--iphone .doeinsure-folio__spread {
+  grid-template-columns: 1fr;
+  gap: 1.4rem;
+  min-height: 0;
+}
+
+.doeinsure-root--iphone .doeinsure-folio__gutter {
+  width: 100%;
+  height: 1px;
+}
+
+.doeinsure-root--iphone .doeinsure-folio__page b {
+  font-size: 1.05rem;
+}
+
+@keyframes doeinsure-folio-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.25rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .doeinsure-root * {
     animation: none !important;
@@ -7022,6 +7431,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
     opacity: 1 !important;
     filter: none !important;
     transform: none !important;
+  }
+
+  .doeinsure-folio__page--live li.is-in b {
+    animation: none !important;
+    transform: none;
   }
 
   .doeinsure-rung,
