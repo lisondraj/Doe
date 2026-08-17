@@ -527,8 +527,8 @@ function StackBody({ revealed }: { revealed: boolean }) {
   );
 }
 
-const ISSUE_STEP_MS = 520;
-const ISSUE_ISSUED_HOLD_MS = 1800;
+const ISSUE_STEP_MS = 780;
+const ISSUE_ISSUED_HOLD_MS = 3000;
 
 function IssueSection() {
   return (
@@ -573,12 +573,16 @@ function IssueBody({ revealed }: { revealed: boolean }) {
 
   useEffect(() => {
     if (!auto || !complete || !revealed) return undefined;
+    if (request >= requestCount - 1) {
+      setAuto(false);
+      return undefined;
+    }
     const id = window.setTimeout(() => {
-      setRequest((current) => (current + 1) % requestCount);
+      setRequest((current) => current + 1);
       setStep(0);
     }, ISSUE_ISSUED_HOLD_MS);
     return () => window.clearTimeout(id);
-  }, [auto, complete, revealed, requestCount]);
+  }, [auto, complete, revealed, request, requestCount]);
 
   const pick = (index: number) => {
     setAuto(false);

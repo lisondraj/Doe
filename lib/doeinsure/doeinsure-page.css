@@ -5347,7 +5347,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-issue__scan.is-on {
   opacity: 1;
-  animation: doeinsure-issue-scan 2.1s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  animation: doeinsure-issue-scan 2.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
 .doeinsure-issue__top {
