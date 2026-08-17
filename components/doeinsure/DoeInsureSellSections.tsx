@@ -938,7 +938,7 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
 
 const READ_STEP_MS = 620;
 const READ_STEP_MS_IPHONE = 760;
-const READ_LAST_STEP = 4;
+const READ_LAST_STEP = DOEINSURE_READ.packet.fields.length + 1;
 
 function ReadSection() {
   return (
@@ -955,13 +955,12 @@ function ReadSection() {
 function ReadBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeInsurePageVariant();
   const stepMs = variant === "phone" ? READ_STEP_MS_IPHONE : READ_STEP_MS;
-  const [packet, setPacket] = useState(0);
   const [step, setStep] = useState(0);
   const [auto, setAuto] = useState(false);
-  const active = DOEINSURE_READ.packets[packet];
+  const { packet } = DOEINSURE_READ;
   const reading = step >= 1 && step < READ_LAST_STEP;
   const complete = step >= READ_LAST_STEP;
-  const extracted = complete ? active.fields.length : Math.max(0, step - 1);
+  const extracted = complete ? packet.fields.length : Math.max(0, step - 1);
   const status = complete
     ? DOEINSURE_READ.filed
     : reading
@@ -972,7 +971,7 @@ function ReadBody({ revealed }: { revealed: boolean }) {
     if (!revealed) return;
     setStep(0);
     setAuto(true);
-  }, [packet, revealed]);
+  }, [revealed]);
 
   useEffect(() => {
     if (!auto || complete) return undefined;
@@ -991,41 +990,28 @@ function ReadBody({ revealed }: { revealed: boolean }) {
       </h2>
       <DoeInsureAppFrame file="Packet desk · Harbor Notes" className="doeinsure-app--read">
         <div className={`doeinsure-read${complete ? " is-on" : ""}`}>
-          <div className="doeinsure-read__packets" role="tablist" aria-label="Packet">
-            {DOEINSURE_READ.packets.map((item, index) => (
-              <button
-                key={item.id}
-                type="button"
-                role="tab"
-                aria-selected={packet === index}
-                className={packet === index ? "is-on" : undefined}
-                onClick={() => setPacket(index)}
-              >
-                <span>{item.kind}</span>
-                <b>{item.name}</b>
-              </button>
-            ))}
-          </div>
-
-          <div className="doeinsure-read__desk" key={active.id}>
+          <div className="doeinsure-read__desk">
             <article
               className={`doeinsure-read__page${reading ? " is-reading" : ""}`}
-              style={{ "--read-scan-ms": `${stepMs * 3}ms` } as CSSProperties}
+              style={{ "--read-scan-ms": `${stepMs * packet.fields.length}ms` } as CSSProperties}
             >
-              <header className="doeinsure-read__page-head">
-                <strong>{active.file}</strong>
-                <span>
-                  {active.pages} {DOEINSURE_READ.pagesLabel}
-                </span>
-              </header>
               <div className="doeinsure-read__sheet">
+                <header className="doeinsure-read__sheet-head">
+                  <strong>{packet.file}</strong>
+                  <span>
+                    {packet.pages} {DOEINSURE_READ.pagesLabel}
+                  </span>
+                </header>
                 <i className="doeinsure-read__cursor" aria-hidden="true" />
                 <p>
-                  {active.excerpt.map((part, index) => {
-                    const marked = Boolean(part.mark && active.fields.some((field, fieldIndex) => field.id === part.mark && fieldIndex < extracted));
+                  {packet.excerpt.map((part, index) => {
+                    const marked = Boolean(
+                      part.mark &&
+                        packet.fields.some((field, fieldIndex) => field.id === part.mark && fieldIndex < extracted),
+                    );
                     return (
                       <span
-                        key={`${active.id}-${index}`}
+                        key={`${packet.id}-${index}`}
                         className={part.mark ? `doeinsure-read__mark${marked ? " is-on" : ""}` : undefined}
                       >
                         {part.text}
@@ -1035,7 +1021,7 @@ function ReadBody({ revealed }: { revealed: boolean }) {
                 </p>
               </div>
               <div className="doeinsure-read__meter" aria-hidden="true">
-                <i style={{ width: `${(extracted / active.fields.length) * 100}%` }} />
+                <i style={{ width: `${(extracted / packet.fields.length) * 100}%` }} />
               </div>
             </article>
 
@@ -1045,7 +1031,7 @@ function ReadBody({ revealed }: { revealed: boolean }) {
                 <em>{status}</em>
               </header>
               <ul>
-                {active.fields.map((field, index) => {
+                {packet.fields.map((field, index) => {
                   const on = index < extracted;
                   return (
                     <li key={field.id} className={on ? "is-on" : undefined}>
