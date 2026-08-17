@@ -1,10 +1,10 @@
 html[data-doeinsure-page] {
   --di-blue: #3050e0;
-  --di-blue-deep: #2848d4;
-  --di-blue-light: #3d65eb;
-  --di-blue-gradient: linear-gradient(152deg, var(--di-blue-light) 0%, var(--di-blue) 54%, var(--di-blue-deep) 100%);
-  --di-blue-gradient-soft: linear-gradient(180deg, #3a62ec 0%, var(--di-blue) 48%, var(--di-blue-deep) 100%);
-  --di-blue-gradient-h: linear-gradient(90deg, var(--di-blue-deep) 0%, var(--di-blue) 50%, var(--di-blue-light) 100%);
+  --di-blue-deep: #182da8;
+  --di-blue-light: #5288ff;
+  --di-blue-gradient: linear-gradient(180deg, var(--di-blue-light) 0%, var(--di-blue) 46%, var(--di-blue-deep) 100%);
+  --di-blue-gradient-soft: linear-gradient(180deg, #5c92ff 0%, var(--di-blue) 42%, #142896 100%);
+  --di-blue-gradient-h: linear-gradient(180deg, var(--di-blue-light) 0%, var(--di-blue-deep) 100%);
   --doe-page-surface: #ffffff;
   --proto-page-bg: #ffffff;
   scroll-padding-top: 4.5rem;
@@ -32,11 +32,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   --di-white: #ffffff;
   --di-gray: #f3f4f6;
   --di-blue: #3050e0;
-  --di-blue-deep: #2848d4;
-  --di-blue-light: #3d65eb;
-  --di-blue-gradient: linear-gradient(152deg, var(--di-blue-light) 0%, var(--di-blue) 54%, var(--di-blue-deep) 100%);
-  --di-blue-gradient-soft: linear-gradient(180deg, #3a62ec 0%, var(--di-blue) 48%, var(--di-blue-deep) 100%);
-  --di-blue-gradient-h: linear-gradient(90deg, var(--di-blue-deep) 0%, var(--di-blue) 50%, var(--di-blue-light) 100%);
+  --di-blue-deep: #182da8;
+  --di-blue-light: #5288ff;
+  --di-blue-gradient: linear-gradient(180deg, var(--di-blue-light) 0%, var(--di-blue) 46%, var(--di-blue-deep) 100%);
+  --di-blue-gradient-soft: linear-gradient(180deg, #5c92ff 0%, var(--di-blue) 42%, #142896 100%);
+  --di-blue-gradient-h: linear-gradient(180deg, var(--di-blue-light) 0%, var(--di-blue-deep) 100%);
   --di-ink: #0e1016;
   --di-muted: #5a5e68;
   --di-line: #e4e6eb;
@@ -5509,15 +5509,37 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   min-width: 0;
 }
 
+.doeinsure-stack-phone__was {
+  color: var(--di-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__was {
+  background-image: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: rgba(255, 255, 255, 0.62);
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.62);
+}
+
 .doeinsure-stack-phone__premium b {
   font-size: clamp(2.55rem, 13vw, 3.2rem);
   font-weight: 500;
   letter-spacing: -0.07em;
   line-height: 0.92;
+  transition: color 220ms ease;
 }
 
 .doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__premium b {
+  background-image: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
   color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
 }
 
 .doeinsure-stack-phone__period {

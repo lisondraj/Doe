@@ -432,9 +432,12 @@ function StackBody({ revealed }: { revealed: boolean }) {
       ? DOEINSURE_STACK.reading
       : DOEINSURE_STACK.waiting;
   const stackPremium = Number.parseInt(DOEINSURE_STACK.premium.replace(/[^\d]/g, ""), 10);
+  const stackOriginal = stackPremium * 2;
   const dropStep = Math.round(stackPremium / DOEINSURE_STACK.sources.length);
-  const dropTotal = dropStep * connected.length;
-  const stackFill = ((connected.length + (linking ? 0.45 : 0)) / DOEINSURE_STACK.sources.length) * 100;
+  const savingsProgress = connected.length + (linking ? 0.45 : 0);
+  const dropTotal = Math.round(dropStep * savingsProgress);
+  const stackQuote = stackOriginal - dropTotal;
+  const stackFill = (savingsProgress / DOEINSURE_STACK.sources.length) * 100;
 
   return (
     <>
@@ -575,10 +578,15 @@ function StackBody({ revealed }: { revealed: boolean }) {
               <strong className="doeinsure-stack-phone__company">{DOEINSURE_STACK.company}</strong>
               <p className="doeinsure-stack-phone__premium">
                 <span className="doeinsure-stack-phone__premium-main">
-                  <b>{DOEINSURE_STACK.premium}</b>
+                  {dropTotal ? (
+                    <s className="doeinsure-stack-phone__was" aria-hidden="true">
+                      ${stackOriginal}
+                    </s>
+                  ) : null}
+                  <b key={stackQuote}>${stackQuote}</b>
                   <em className="doeinsure-stack-phone__period">{DOEINSURE_STACK.premiumNote}</em>
                 </span>
-                {connected.length ? (
+                {dropTotal ? (
                   <span className="doeinsure-stack-phone__drop-col">
                     <em className="doeinsure-stack-phone__drop">−${dropTotal}</em>
                     <em className="doeinsure-stack-phone__drop-note">
