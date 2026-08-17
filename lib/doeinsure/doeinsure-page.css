@@ -1624,6 +1624,14 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   align-items: start;
 }
 
+.doeinsure-root--desktop #request {
+  padding-bottom: 0;
+}
+
+.doeinsure-root--desktop .doeinsure-footer {
+  margin-top: 0;
+}
+
 .doeinsure-root--iphone .doeinsure-cta-grid {
   grid-template-columns: 1fr;
   gap: 1.8rem;
