@@ -1,4 +1,10 @@
 html[data-doeinsure-page] {
+  --di-blue: #3050e0;
+  --di-blue-deep: #2848d4;
+  --di-blue-light: #3d65eb;
+  --di-blue-gradient: linear-gradient(152deg, var(--di-blue-light) 0%, var(--di-blue) 54%, var(--di-blue-deep) 100%);
+  --di-blue-gradient-soft: linear-gradient(180deg, #3a62ec 0%, var(--di-blue) 48%, var(--di-blue-deep) 100%);
+  --di-blue-gradient-h: linear-gradient(90deg, var(--di-blue-deep) 0%, var(--di-blue) 50%, var(--di-blue-light) 100%);
   --doe-page-surface: #ffffff;
   --proto-page-bg: #ffffff;
   scroll-padding-top: 4.5rem;
@@ -13,17 +19,24 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 html[data-doeinsure-page]:has(.doephone-mobile-root) {
   --doe-page-surface: #3050e0;
   --proto-page-bg: #3050e0;
-  background-color: #3050e0;
+  background-color: var(--di-blue-deep);
+  background-image: var(--di-blue-gradient-soft);
 }
 
 html[data-doeinsure-page]:has(.doephone-mobile-root) body {
-  background-color: #3050e0 !important;
+  background-color: transparent !important;
+  background-image: var(--di-blue-gradient-soft);
 }
 
 .doeinsure-root {
   --di-white: #ffffff;
   --di-gray: #f3f4f6;
   --di-blue: #3050e0;
+  --di-blue-deep: #2848d4;
+  --di-blue-light: #3d65eb;
+  --di-blue-gradient: linear-gradient(152deg, var(--di-blue-light) 0%, var(--di-blue) 54%, var(--di-blue-deep) 100%);
+  --di-blue-gradient-soft: linear-gradient(180deg, #3a62ec 0%, var(--di-blue) 48%, var(--di-blue-deep) 100%);
+  --di-blue-gradient-h: linear-gradient(90deg, var(--di-blue-deep) 0%, var(--di-blue) 50%, var(--di-blue-light) 100%);
   --di-ink: #0e1016;
   --di-muted: #5a5e68;
   --di-line: #e4e6eb;
@@ -51,6 +64,22 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   text-decoration: none;
 }
 
+.doeinsure-blue-gradient-text,
+.doeinsure-white-fill-blue-text {
+  background-image: var(--di-blue-gradient-h), linear-gradient(#ffffff, #ffffff);
+  background-clip: text, padding-box;
+  -webkit-background-clip: text, padding-box;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.doeinsure-blue-gradient-text {
+  background-image: var(--di-blue-gradient-h);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+
 .doeinsure-wrap {
   width: min(100%, 72rem);
   margin: 0 auto;
@@ -61,7 +90,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-root--iphone {
   --di-inset: max(1rem, env(safe-area-inset-left, 0px));
   overflow-x: clip;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient-soft);
 }
 
 .doeinsure-root--iphone main {
@@ -124,7 +153,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-nav__mark-accent {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-nav__links {
@@ -163,7 +196,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   right: 0.7rem;
   bottom: 0.2rem;
   height: 1px;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
 }
 
 .doeinsure-nav__end {
@@ -301,11 +334,19 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-nav__panel a.is-on {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-nav__panel a.is-on span {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-root a.doeinsure-btn,
@@ -316,9 +357,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   justify-content: center;
   min-height: 2.7rem;
   padding: 0.65rem 1.1rem;
-  border: 1px solid var(--di-blue);
-  background: var(--di-blue);
-  background-image: none;
+  border: 1px solid var(--di-blue-deep);
+  background: var(--di-blue-gradient);
   color: #ffffff;
   -webkit-text-fill-color: #ffffff;
   font-family: inherit;
@@ -433,7 +473,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-hero__line--accent {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-hero h1,
@@ -469,7 +513,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-eyebrow {
   display: block;
   margin-bottom: 0.85rem;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -558,7 +606,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-hero-form input:focus {
-  border-color: var(--di-blue);
+  border-color: var(--di-blue-deep);
 }
 
 .doeinsure-hero-form .doeinsure-btn {
@@ -576,8 +624,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-hero__secondary:hover {
-  border-bottom-color: var(--di-blue);
-  color: var(--di-blue);
+  border-bottom-color: var(--di-blue-deep);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-hero__file {
@@ -659,7 +711,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-card__limit {
   margin: 0.35rem 0 0;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: clamp(2.2rem, 3.2vw, 2.85rem);
   font-weight: 500;
   letter-spacing: -0.06em;
@@ -684,8 +740,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   align-items: center;
   min-height: 1.85rem;
   padding: 0.28rem 0.62rem;
-  border: 1px solid var(--di-blue);
-  background: var(--di-blue);
+  border: 1px solid var(--di-blue-deep);
+  background: var(--di-blue-gradient);
   color: var(--di-white);
   font-size: 0.72rem;
   font-weight: 600;
@@ -815,7 +871,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stat.is-on b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-stat span {
@@ -986,7 +1046,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-offer__n {
   display: block;
   margin-bottom: 0.55rem;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -1024,7 +1088,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-offer__foot {
   margin-top: 0.9rem;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -1092,14 +1160,22 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-source.is-on b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-scale li b {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-scale li i {
@@ -1149,7 +1225,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-scan__limits span:last-child b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-stage-rail {
@@ -1193,7 +1273,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-stage-rail button.is-on,
 .doeinsure-stage-rail button.is-on:hover {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
@@ -1222,7 +1302,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stages__n {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -1261,8 +1345,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-stages__policies li {
   padding: 0.28rem 0.5rem;
-  border: 1px solid var(--di-blue);
-  color: var(--di-blue);
+  border: 1px solid var(--di-blue-deep);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -1286,7 +1374,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   flex-direction: column;
   gap: 0.7rem;
   padding-top: 1.15rem;
-  border-top: 2px solid var(--di-blue);
+  border-top: 2px solid var(--di-blue-deep);
 }
 
 .doeinsure-steps {
@@ -1351,7 +1439,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-compare__row span:nth-child(3) {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-weight: 500;
 }
 
@@ -1384,7 +1476,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-limit b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: clamp(2rem, 3.4vw, 2.7rem);
   font-weight: 500;
   letter-spacing: -0.06em;
@@ -1409,7 +1505,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-step__n {
   display: block;
   margin-bottom: 0.85rem;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: clamp(2.4rem, 4vw, 3.4rem);
   font-weight: 500;
   letter-spacing: -0.07em;
@@ -1458,14 +1558,14 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   width: 0.85rem;
   height: 0.85rem;
   margin-top: 0.28rem;
-  border: 1px solid var(--di-blue);
+  border: 1px solid var(--di-blue-deep);
   background: transparent;
   font-style: normal;
   transition: background-color 180ms ease;
 }
 
 .doeinsure-check.is-on i {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
 }
 
 .doeinsure-faq {
@@ -1499,7 +1599,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-faq button i {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-style: normal;
   font-weight: 500;
 }
@@ -1594,7 +1698,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-field input:focus,
 .doeinsure-field select:focus,
 .doeinsure-field textarea:focus {
-  border-color: var(--di-blue);
+  border-color: var(--di-blue-deep);
 }
 
 .doeinsure-footer {
@@ -1604,7 +1708,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   margin-top: 1.5rem;
   padding: 0;
   border-top: 0;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
@@ -1691,8 +1795,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   min-height: 2.7rem;
   padding: 0 1.05rem;
   border: 1px solid #ffffff;
-  background: #ffffff;
-  color: var(--di-blue);
+  background-color: #ffffff;
+  background-image: var(--di-blue-gradient-h), linear-gradient(#ffffff, #ffffff);
+  background-clip: text, padding-box;
+  -webkit-background-clip: text, padding-box;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.92rem;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -1775,8 +1883,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   min-height: 2.7rem;
   padding: 0.65rem 1.1rem;
   border: 1px solid #ffffff;
-  background: #ffffff;
-  color: var(--di-blue);
+  background-color: #ffffff;
+  background-image: var(--di-blue-gradient-h), linear-gradient(#ffffff, #ffffff);
+  background-clip: text, padding-box;
+  -webkit-background-clip: text, padding-box;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.92rem;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -1800,7 +1912,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-card--click:hover,
 .doeinsure-card--click:focus-visible {
   background: var(--di-white);
-  border-color: var(--di-blue);
+  border-color: var(--di-blue-deep);
   outline: none;
 }
 
@@ -1835,8 +1947,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-inline.is-on,
 .doeinsure-inline:hover {
-  background: var(--di-blue);
-  border-color: var(--di-blue);
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue-deep);
   color: #ffffff;
 }
 
@@ -1922,7 +2034,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-acc__btn span,
 .doeinsure-acc__btn i {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.82rem;
   font-style: normal;
   font-weight: 600;
@@ -1998,7 +2114,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-catalog__nav button.is-on,
 .doeinsure-catalog__nav button.is-on:hover {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
@@ -2012,7 +2128,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-catalog__pane span {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -2090,7 +2210,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-who-row.is-on > span:first-child {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-who-row__copy {
@@ -2157,7 +2281,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stepper__nav button.is-on {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
@@ -2187,7 +2311,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-connect__count {
   margin: 1.6rem 0 0;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -2233,7 +2361,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-connect li.is-on h3 {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-compare-toggle {
@@ -2261,7 +2393,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-compare-toggle button.is-on {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
@@ -2296,7 +2428,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-compare__row .is-next {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-weight: 500;
 }
 
@@ -2340,7 +2476,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-line li.is-on button span {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-line strong {
@@ -2398,7 +2538,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-limit-nav button.is-on {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
@@ -2430,8 +2570,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-limit-pane li {
   padding: 0.28rem 0.5rem;
-  border: 1px solid var(--di-blue);
-  color: var(--di-blue);
+  border: 1px solid var(--di-blue-deep);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -2459,7 +2603,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   display: block;
   width: 0.55rem;
   height: 0.55rem;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   animation: doeinsure-pulse 1.6s ease-in-out infinite;
 }
 
@@ -2490,7 +2634,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-hero-board__classes button.is-on,
 .doeinsure-hero-board__classes button.is-on:hover {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
@@ -2549,7 +2693,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-ticker strong {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: -0.03em;
@@ -2629,13 +2777,17 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-rung.is-filled {
-  background: var(--di-blue);
-  border-color: var(--di-blue);
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue-deep);
   color: #ffffff;
 }
 
 .doeinsure-rung__limit {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: calc(1.65rem + (var(--rung) * 0.26rem));
   font-weight: 500;
   letter-spacing: -0.08em;
@@ -2725,7 +2877,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   width: 0.32rem;
   height: 0.32rem;
   margin-right: 0.38rem;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   vertical-align: 0.12rem;
 }
 
@@ -3054,7 +3206,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   width: 0.45rem;
   height: 0.45rem;
   margin-right: 0.45rem;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   vertical-align: 0.1rem;
 }
 
@@ -3079,7 +3231,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stage-block.doeinsure-stage-block--band-blue {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
@@ -3171,7 +3323,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone #stages .doeinsure-stage-block__top span:last-child {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-root--iphone #stages .doeinsure-stage-block h3 {
@@ -3266,7 +3422,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   justify-content: space-between;
   gap: 0.8rem;
   width: 100%;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -3274,7 +3434,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stage-block.is-on .doeinsure-stage-block__top {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-stage-block--band-blue .doeinsure-stage-block__top,
@@ -3301,7 +3465,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stage-block b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: clamp(1.7rem, 2.6vw, 2.15rem);
   font-weight: 500;
   letter-spacing: -0.06em;
@@ -3309,7 +3477,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stage-block.is-on b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-stage-block__tags {
@@ -3397,12 +3569,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   width: 0.45rem;
   height: 0.45rem;
   margin-right: 0.45rem;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   vertical-align: 0.1rem;
 }
 
 .doeinsure-stage-block.is-on li::before {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
 }
 
 .doeinsure-stage-block.doeinsure-stage-block--band-blue b {
@@ -3611,12 +3783,16 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-quote-tile.is-on {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
 .doeinsure-quote-tile span {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -3667,12 +3843,16 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-quote-result.is-on {
   background: var(--di-white);
-  border-color: var(--di-blue);
+  border-color: var(--di-blue-deep);
 }
 
 .doeinsure-quote-result__kicker {
   width: 100%;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -3680,7 +3860,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-quote-result b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: clamp(2.8rem, 5.2vw, 4.4rem);
   font-weight: 500;
   letter-spacing: -0.07em;
@@ -3752,7 +3936,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-scale-board__month {
   margin: 1.6rem 0 0;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -3881,7 +4069,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   width: 100%;
   height: calc(var(--bar-fill, 0) * 100%);
   flex: 0 0 auto;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   opacity: 0.35;
   transition:
     height 700ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -3986,7 +4174,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-match__systems button.is-on {
-  border-color: var(--di-blue);
+  border-color: var(--di-blue-deep);
 }
 
 .doeinsure-root--iphone .doeinsure-match__systems .doeinsure-stage-block__tags {
@@ -4039,7 +4227,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-root--iphone .doeinsure-match__draft {
   display: block;
   margin-bottom: 0.4rem;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -4081,7 +4273,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-match__scan-label {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -4101,7 +4297,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   display: block;
   width: 100%;
   height: 100%;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   transform: scaleX(0);
   transform-origin: left center;
   animation: doeinsure-match-scan-fill-iphone var(--match-scan-ms, 2.6s) linear forwards;
@@ -4207,7 +4403,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-match__systems button.is-on {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
@@ -4267,7 +4463,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-match__scan > span:first-child {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -4287,7 +4487,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   display: block;
   width: 38%;
   height: 100%;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   animation: doeinsure-match-scan 1.1s ease-in-out infinite;
 }
 
@@ -4383,7 +4583,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-match__clause-top span {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -4392,8 +4596,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-match__clause-top em {
   padding: 0.18rem 0.4rem;
-  border: 1px solid var(--di-blue);
-  color: var(--di-blue);
+  border: 1px solid var(--di-blue-deep);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.62rem;
   font-style: normal;
   font-weight: 600;
@@ -4410,7 +4618,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-match__clauses button.is-on {
   background: var(--di-gray);
-  border-left-color: var(--di-blue);
+  border-left-color: var(--di-blue-deep);
   color: var(--di-ink);
 }
 
@@ -4451,7 +4659,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-doc button span {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -4460,7 +4672,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-doc button.is-on {
   background: var(--di-white);
-  border-left-color: var(--di-blue);
+  border-left-color: var(--di-blue-deep);
   color: var(--di-ink);
 }
 
@@ -4473,7 +4685,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-match__file.is-on {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
@@ -4519,9 +4731,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-match__file.is-on .doeinsure-btn {
-  background: #ffffff;
-  color: var(--di-blue);
-  -webkit-text-fill-color: var(--di-blue);
+  border-color: #ffffff;
+  background-color: #ffffff;
+  background-image: var(--di-blue-gradient-h), linear-gradient(#ffffff, #ffffff);
+  background-clip: text, padding-box;
+  -webkit-background-clip: text, padding-box;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-match__progress {
@@ -4534,7 +4750,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-match__progress i {
   display: block;
   height: 100%;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   transition: width 420ms ease;
 }
 
@@ -4644,7 +4860,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-app__bar strong span {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-app__bar em {
@@ -4714,7 +4934,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-app__rail button.is-on {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: #ffffff;
 }
 
@@ -4727,7 +4947,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-app__kicker {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -4785,8 +5009,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-mod.is-on,
 .doeinsure-mod--btn.is-on {
-  background: var(--di-blue);
-  border-color: var(--di-blue);
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue-deep);
 }
 
 .doeinsure-mod.is-on span,
@@ -4815,7 +5039,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-mod--score b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: clamp(2.4rem, 4vw, 3.2rem);
   font-weight: 500;
   letter-spacing: -0.07em;
@@ -4853,8 +5081,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-app__chips button.is-on {
-  background: var(--di-blue);
-  border-color: var(--di-blue);
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue-deep);
   color: #ffffff;
 }
 
@@ -4885,7 +5113,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-app__foot.is-on b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-app__foot .doeinsure-inline,
@@ -4956,7 +5188,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-link__wire-live {
   fill: none;
-  stroke: var(--di-blue);
+  stroke: url(#doeinsure-blue-gradient);
   stroke-width: 0.9;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
@@ -4971,7 +5203,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-link__packet {
-  fill: var(--di-blue);
+  fill: url(#doeinsure-blue-gradient);
 }
 
 .doeinsure-link__node {
@@ -5010,8 +5242,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-link__node.is-on,
 .doeinsure-link__node.is-linking {
-  background: var(--di-blue);
-  border-color: var(--di-blue);
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue-deep);
   color: rgba(255, 255, 255, 0.78);
 }
 
@@ -5036,13 +5268,17 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-link__hub.is-on {
-  background: var(--di-blue);
-  border-color: var(--di-blue);
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue-deep);
   color: #ffffff;
 }
 
 .doeinsure-link__hub > span {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -5141,7 +5377,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-link__bar.is-on b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-link__bar .doeinsure-btn {
@@ -5202,8 +5442,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stack-phone__quote.is-on {
-  background: var(--di-blue);
-  border-color: var(--di-blue);
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue-deep);
   color: #ffffff;
 }
 
@@ -5217,7 +5457,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-stack-phone__quote-head span,
 .doeinsure-stack-phone__quote-head em,
 .doeinsure-stack-phone__board-label {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.64rem;
   font-style: normal;
   font-weight: 600;
@@ -5290,9 +5534,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   align-items: center;
   min-height: 0;
   padding: 0.18rem 0.48rem;
-  border: 1px solid var(--di-blue);
-  background: #ffffff;
-  color: var(--di-blue);
+  border: 1px solid var(--di-blue-deep);
+  background-color: #ffffff;
+  background-image: var(--di-blue-gradient-h), linear-gradient(#ffffff, #ffffff);
+  background-clip: text, padding-box;
+  -webkit-background-clip: text, padding-box;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 1rem;
   font-style: normal;
   font-weight: 600;
@@ -5302,8 +5550,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__drop {
   border-color: #ffffff;
-  background: #ffffff;
-  color: var(--di-blue);
+  background-color: #ffffff;
+  background-image: var(--di-blue-gradient-h), linear-gradient(#ffffff, #ffffff);
+  background-clip: text, padding-box;
+  -webkit-background-clip: text, padding-box;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-stack-phone__meter {
@@ -5317,7 +5569,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   display: block;
   width: var(--stack-fill, 0%);
   height: 100%;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   transition: width 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -5371,7 +5623,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stack-phone__signals li.is-reading b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__signals span,
@@ -5467,9 +5723,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   align-items: center;
   min-height: 1.7rem;
   padding: 0.2rem 0.48rem;
-  border: 1px solid var(--di-blue);
-  background: #ffffff;
-  color: var(--di-blue);
+  border: 1px solid var(--di-blue-deep);
+  background-color: #ffffff;
+  background-image: var(--di-blue-gradient-h), linear-gradient(#ffffff, #ffffff);
+  background-clip: text, padding-box;
+  -webkit-background-clip: text, padding-box;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: 0.92rem;
   font-weight: 600;
   letter-spacing: -0.03em;
@@ -5478,8 +5738,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-stack-phone__source.is-on i,
 .doeinsure-stack-phone__source.is-linking i {
-  background: var(--di-blue);
-  border-color: var(--di-blue);
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue-deep);
 }
 
 .doeinsure-stack-phone__source.is-linking i {
@@ -5497,7 +5757,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   right: 0;
   bottom: 0;
   height: 2px;
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   transform-origin: left center;
   animation: doeinsure-stack-phone-read 720ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -5579,8 +5839,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-issue.is-on .doeinsure-issue__sheet {
-  background: var(--di-blue);
-  border-color: var(--di-blue);
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue-deep);
   color: #ffffff;
 }
 
@@ -5622,7 +5882,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-issue__rail button.is-on {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   color: rgba(255, 255, 255, 0.78);
 }
 
@@ -5671,9 +5931,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   margin: 0;
   flex: 0 0 auto;
   padding: 0.45rem 0.85rem 0.5rem;
-  border: 1px solid var(--di-blue);
+  border: 1px solid var(--di-blue-deep);
   background: transparent;
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: clamp(1.35rem, 2.6vw, 2.15rem);
   font-weight: 500;
   letter-spacing: -0.04em;
@@ -5757,7 +6021,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-issue__sheet li.is-on span {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-issue__bar {
@@ -5791,7 +6059,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-issue__bar.is-on b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-issue__bar .doeinsure-btn {
@@ -5894,7 +6166,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-follow.is-on .doeinsure-follow__head strong {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-follow__head span {
@@ -5928,7 +6204,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-follow__log::after {
-  background: var(--di-blue);
+  background: var(--di-blue-gradient);
   transform: scaleY(var(--follow-progress, 0));
   transform-origin: top center;
   transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -5966,8 +6242,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-follow__log button.is-on i,
 .doeinsure-follow__log button.is-live i {
-  border-color: var(--di-blue);
-  background: var(--di-blue);
+  border-color: var(--di-blue-deep);
+  background: var(--di-blue-gradient);
 }
 
 .doeinsure-follow__log button.is-live i {
@@ -5984,7 +6260,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-follow__log button.is-on b,
 .doeinsure-follow__log button.is-live b {
-  color: var(--di-blue);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-follow__log button span {
@@ -6019,13 +6299,21 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-follow__log button.is-live p {
-  border-color: var(--di-blue);
-  color: var(--di-blue);
+  border-color: var(--di-blue-deep);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-follow__log button.is-on p {
-  border-color: var(--di-blue);
-  color: var(--di-blue);
+  border-color: var(--di-blue-deep);
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doeinsure-root--iphone .doeinsure-follow__head {

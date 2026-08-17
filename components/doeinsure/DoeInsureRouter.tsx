@@ -1,5 +1,6 @@
 "use client";
 
+import { DoeInsureBlueDefs } from "@/components/doeinsure/DoeInsureBlueDefs";
 import { DoeInsureDesktopView } from "@/components/doeinsure/DoeInsureDesktopView";
 import { DoeInsureMobileView } from "@/components/doeinsure/DoeInsureMobileView";
 import { useDoeInsurePageVariant } from "@/lib/doeinsure/use-doeinsure-page-variant";
@@ -12,5 +13,15 @@ export function DoeInsureRouter() {
     return <div className="doeinsure-root doeinsure-root--desktop" suppressHydrationWarning />;
   }
 
-  return variant === "desktop" ? <DoeInsureDesktopView /> : <DoeInsureMobileView />;
+  return variant === "desktop" ? (
+    <>
+      <DoeInsureBlueDefs />
+      <DoeInsureDesktopView />
+    </>
+  ) : (
+    <>
+      <DoeInsureBlueDefs />
+      <DoeInsureMobileView />
+    </>
+  );
 }
