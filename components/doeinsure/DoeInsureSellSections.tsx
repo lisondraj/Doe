@@ -784,9 +784,9 @@ function IssueBody({ revealed }: { revealed: boolean }) {
   );
 }
 
-const CLAIM_STEP_MS = 640;
-const CLAIM_STEP_MS_IPHONE = 780;
-const CLAIM_HOLD_MS = 880;
+const CLAIM_STEP_MS = 920;
+const CLAIM_STEP_MS_IPHONE = 1080;
+const CLAIM_HOLD_MS = 1600;
 const CLAIM_LAST_STEP = 5;
 
 function ClaimSection() {
@@ -865,7 +865,7 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
         ))}
       </h2>
       <DoeInsureAppFrame file="Claim desk · Harbor Notes" className="doeinsure-app--claim">
-        <div className={`doeinsure-claim${complete ? " is-on" : ""}`}>
+        <div className={`doeinsure-claim${filed ? " is-on" : ""}`}>
           <article className="doeinsure-claim__ticket" key={active.id}>
             <header className="doeinsure-claim__head">
               <div>
@@ -923,10 +923,10 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
               <button
                 type="button"
                 className="doeinsure-btn"
-                disabled={!ready}
+                disabled={!ready || filed}
                 onClick={fileClaim}
               >
-                {DOEINSURE_CLAIM.file}
+                {filed ? DOEINSURE_CLAIM.filed : DOEINSURE_CLAIM.file}
               </button>
             )}
           </article>
