@@ -2777,6 +2777,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
 }
 
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-rung {
+  box-sizing: border-box;
+  min-height: 8.35rem;
+}
+
 .doeinsure-rung.is-filled {
   background: var(--di-blue-gradient);
   border-color: var(--di-blue);
@@ -2793,6 +2798,10 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   font-weight: 500;
   letter-spacing: -0.08em;
   line-height: 0.9;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-rung__limit {
+  font-size: 2.69rem;
 }
 
 .doeinsure-rung.is-filled .doeinsure-rung__limit {
