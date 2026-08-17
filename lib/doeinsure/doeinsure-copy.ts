@@ -721,7 +721,7 @@ export const DOEINSURE_UNDERWRITE = {
 
 export const DOEINSURE_FAQ = {
   eyebrow: "FAQ",
-  title: "Straight answers.",
+  title: "Insurance built for you.",
   items: [
     {
       q: "Do we still fill out a 20-page PDF?",
