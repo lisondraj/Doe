@@ -19,13 +19,13 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 html[data-doeinsure-page]:has(.doephone-mobile-root) {
   --doe-page-surface: #3050e0;
   --proto-page-bg: #3050e0;
-  background-color: var(--di-blue-deep);
-  background-image: var(--di-blue-gradient-soft);
+  background-color: var(--di-blue);
+  background-image: none;
 }
 
 html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   background-color: transparent !important;
-  background-image: var(--di-blue-gradient-soft);
+  background-image: none;
 }
 
 .doeinsure-root {
@@ -90,7 +90,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-root--iphone {
   --di-inset: max(1rem, env(safe-area-inset-left, 0px));
   overflow-x: clip;
-  background: var(--di-blue-gradient-soft);
+  background: var(--di-blue);
 }
 
 .doeinsure-root--iphone main {
@@ -1624,11 +1624,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   align-items: start;
 }
 
-.doeinsure-root--desktop #request {
+.doeinsure-root--desktop #request,
+.doeinsure-root--iphone #request {
   padding-bottom: 0;
 }
 
-.doeinsure-root--desktop .doeinsure-footer {
+.doeinsure-root--desktop .doeinsure-footer,
+.doeinsure-root--iphone .doeinsure-footer {
   margin-top: 0;
 }
 
@@ -1842,7 +1844,6 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-root--iphone .doeinsure-footer {
   min-height: 0;
-  margin-top: 0.4rem;
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
