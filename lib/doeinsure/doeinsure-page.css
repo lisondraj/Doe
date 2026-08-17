@@ -91,19 +91,25 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-nav__mark {
   justify-self: start;
   display: inline-flex;
-  align-items: baseline;
-  gap: 0.35rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
   font-size: 1.12rem;
   font-weight: 600;
   letter-spacing: -0.05em;
-  line-height: 1;
+  line-height: 0.92;
 }
 
 .doeinsure-root--iphone .doeinsure-nav__mark {
-  font-size: 1.02rem;
+  font-size: 1.38rem;
+  letter-spacing: -0.06em;
 }
 
-.doeinsure-nav__mark span {
+.doeinsure-nav__mark-line {
+  display: block;
+}
+
+.doeinsure-nav__mark-accent {
   color: var(--di-blue);
 }
 
@@ -165,17 +171,21 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-root--iphone .doeinsure-nav__cta-full {
-  display: none;
-}
-
-.doeinsure-root--iphone .doeinsure-nav__cta-short {
   display: inline;
 }
 
+.doeinsure-root--iphone .doeinsure-nav__cta-short {
+  display: none;
+}
+
 .doeinsure-root--iphone .doeinsure-nav__cta {
-  min-height: 2.15rem;
-  min-width: 5.6rem;
-  padding: 0.4rem 0.75rem;
+  min-height: 2.35rem;
+  height: 2.35rem;
+  min-width: 0;
+  padding: 0 0.85rem;
+  font-size: 0.78rem;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
 }
 
 .doeinsure-nav__menu {
@@ -248,10 +258,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-nav__panel a:not(.doeinsure-btn) {
-  display: grid;
-  grid-template-columns: 2.4rem minmax(0, 1fr);
-  gap: 0.6rem;
-  align-items: baseline;
+  display: block;
   padding: 1.05rem 0;
   border-bottom: 1px solid var(--di-line);
   color: var(--di-ink);
@@ -394,7 +401,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-root--iphone .doeinsure-hero h1,
 .doeinsure-root--iphone .doeinsure-hero__title {
   max-width: 100%;
-  font-size: clamp(1.72rem, 8.6vw, 2.12rem);
+  font-size: clamp(2.05rem, 10.2vw, 2.65rem);
   letter-spacing: -0.07em;
   line-height: 0.96;
 }
@@ -2415,7 +2422,6 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-rung {
   --rung: 0;
-  appearance: none;
   display: grid;
   grid-template-columns: 6.8rem minmax(9.5rem, 0.7fr) minmax(10.5rem, 0.8fr) minmax(0, 1.5fr);
   align-items: center;
@@ -2429,23 +2435,13 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   color: inherit;
   font-family: inherit;
   text-align: left;
-  cursor: pointer;
-  transition: background-color 180ms ease, border-color 180ms ease;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
 }
 
-.doeinsure-rung.is-on {
-  border-left-color: var(--di-blue);
-  background: var(--di-gray);
-}
-
-.doeinsure-rung.is-end {
+.doeinsure-rung.is-filled {
   background: var(--di-blue);
   border-color: var(--di-blue);
   color: #ffffff;
-}
-
-.doeinsure-rung.is-end.is-on {
-  background: var(--di-blue);
 }
 
 .doeinsure-rung__limit {
@@ -2456,7 +2452,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   line-height: 0.9;
 }
 
-.doeinsure-rung.is-end .doeinsure-rung__limit {
+.doeinsure-rung.is-filled .doeinsure-rung__limit {
   color: #ffffff;
 }
 
@@ -2465,18 +2461,6 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   flex-direction: column;
   gap: 0.12rem;
   min-width: 0;
-}
-
-.doeinsure-rung__index {
-  color: var(--di-muted);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.doeinsure-rung.is-end .doeinsure-rung__index {
-  color: rgba(255, 255, 255, 0.62);
 }
 
 .doeinsure-rung__who h3 {
@@ -2496,7 +2480,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   text-transform: uppercase;
 }
 
-.doeinsure-rung.is-end .doeinsure-rung__who em {
+.doeinsure-rung.is-filled .doeinsure-rung__who em {
   color: rgba(255, 255, 255, 0.78);
 }
 
@@ -2509,22 +2493,18 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-rung .doeinsure-stage-block__tag {
   min-height: 1.55rem;
   padding: 0.22rem 0.5rem;
-  background: transparent;
-  color: var(--di-muted);
+  border: 1px solid var(--di-line);
+  background: var(--di-gray);
+  color: var(--di-ink);
   font-size: 0.6rem;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 
-.doeinsure-rung.is-on .doeinsure-stage-block__tag {
-  background: var(--di-white);
-  color: var(--di-ink);
-}
-
-.doeinsure-rung.is-end .doeinsure-stage-block__tag {
-  border-color: rgba(255, 255, 255, 0.28);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.88);
+.doeinsure-rung.is-filled .doeinsure-stage-block__tag {
+  border-color: rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
 }
 
 .doeinsure-rung ul {
@@ -2555,11 +2535,11 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   vertical-align: 0.12rem;
 }
 
-.doeinsure-rung.is-end li {
+.doeinsure-rung.is-filled li {
   color: rgba(255, 255, 255, 0.88);
 }
 
-.doeinsure-rung.is-end li::before {
+.doeinsure-rung.is-filled li::before {
   background: #ffffff;
 }
 
@@ -2589,12 +2569,25 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-root--iphone .doeinsure-rung__who h3 {
-  font-size: 1.02rem;
+  font-size: clamp(1.75rem, 8.2vw, 2.15rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1.02;
 }
 
 .doeinsure-root--iphone .doeinsure-rung .doeinsure-stage-block__tags,
 .doeinsure-root--iphone .doeinsure-rung ul {
   grid-column: 1 / -1;
+}
+
+.doeinsure-root--iphone .doeinsure-rung .doeinsure-stage-block__tags {
+  gap: 0.35rem;
+}
+
+.doeinsure-root--iphone .doeinsure-rung .doeinsure-stage-block__tag {
+  min-height: 1.75rem;
+  padding: 0.28rem 0.62rem;
+  font-size: 0.68rem;
 }
 
 .doeinsure-root--iphone .doeinsure-rung ul {
@@ -2604,8 +2597,12 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   border-top: 1px solid var(--di-line);
 }
 
-.doeinsure-root--iphone .doeinsure-rung.is-end ul {
+.doeinsure-root--iphone .doeinsure-rung.is-filled ul {
   border-top-color: rgba(255, 255, 255, 0.22);
+}
+
+.doeinsure-section#stages h2 .doeinsure-stages-title__line {
+  display: block;
 }
 
 .doeinsure-reveal > .doeinsure-ladder {

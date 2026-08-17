@@ -14,8 +14,8 @@ export const DOEINSURE_NAV_LINKS = [
 export const DOEINSURE_NAV = {
   mark: "Doe",
   markAccent: "Insure",
-  cta: "Request coverage",
-  ctaShort: "Request",
+  cta: "Get Your Quote",
+  ctaShort: "Get Your Quote",
   menuOpen: "Open menu",
   menuClose: "Close menu",
 } as const;

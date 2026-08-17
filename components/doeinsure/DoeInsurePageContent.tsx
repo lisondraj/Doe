@@ -22,6 +22,7 @@ import {
   DOEINSURE_UNDERWRITE,
   DOEINSURE_WHO,
 } from "@/lib/doeinsure/doeinsure-copy";
+import { useDoeInsureLadderScroll } from "@/lib/doeinsure/use-doeinsure-ladder-scroll";
 
 function mailtoDoeInsure(lines: string[], subjectName: string) {
   const subject = encodeURIComponent(`Doe Insure — ${subjectName}`);
@@ -186,7 +187,7 @@ export function DoeInsurePageContent() {
   const [email, setEmail] = useState("");
   const [stat, setStat] = useState(0);
   const [cover, setCover] = useState(0);
-  const [stage, setStage] = useState(DOEINSURE_STAGES.items.length - 1);
+  const { ladderRef, activeIndex: stage } = useDoeInsureLadderScroll(DOEINSURE_STAGES.items.length);
   const [who, setWho] = useState(0);
   const [how, setHow] = useState(0);
   const [linked, setLinked] = useState<Record<string, boolean>>({ AWS: true, GitHub: true });
@@ -246,29 +247,25 @@ export function DoeInsurePageContent() {
       <section className="doeinsure-section" id="stages">
         <div className="doeinsure-wrap">
           <DoeInsureReveal>
-            <h2 className="doeinsure-stages-title">
+            <h2>
               {DOEINSURE_STAGES.title.map((line) => (
                 <span key={line} className="doeinsure-stages-title__line">
                   {line}
                 </span>
               ))}
             </h2>
-            <div className="doeinsure-ladder">
+            <div className="doeinsure-ladder" ref={ladderRef}>
               {DOEINSURE_STAGES.items.map((item, index) => {
-                const on = stage === index;
-                const isEnd = index === DOEINSURE_STAGES.items.length - 1;
+                const filled = stage === index;
                 return (
-                  <button
+                  <div
                     key={item.id}
-                    type="button"
-                    className={`doeinsure-rung${on ? " is-on" : ""}${isEnd ? " is-end" : ""}`}
+                    className={`doeinsure-rung${filled ? " is-filled" : ""}`}
                     style={{ "--rung": index } as CSSProperties}
-                    aria-pressed={on}
-                    onClick={() => setStage(index)}
+                    aria-current={filled ? "step" : undefined}
                   >
                     <b className="doeinsure-rung__limit">{item.limit}</b>
                     <span className="doeinsure-rung__who">
-                      <span className="doeinsure-rung__index">{String(index + 1).padStart(2, "0")}</span>
                       <h3>{item.name}</h3>
                       <em>{item.badge}</em>
                     </span>
@@ -278,7 +275,7 @@ export function DoeInsurePageContent() {
                         <li key={line}>{line}</li>
                       ))}
                     </ul>
-                  </button>
+                  </div>
                 );
               })}
             </div>

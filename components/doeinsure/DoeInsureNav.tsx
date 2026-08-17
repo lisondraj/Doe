@@ -72,7 +72,8 @@ export function DoeInsureNav() {
     <header className={`doeinsure-nav${scrolled ? " is-scrolled" : ""}${open ? " is-open" : ""}`}>
       <div className="doeinsure-nav__bar">
         <a className="doeinsure-nav__mark" href="#top" onClick={() => go("#top")}>
-          {DOEINSURE_NAV.mark} <span>{DOEINSURE_NAV.markAccent}</span>
+          <span className="doeinsure-nav__mark-line">{DOEINSURE_NAV.mark}</span>
+          <span className="doeinsure-nav__mark-line doeinsure-nav__mark-accent">{DOEINSURE_NAV.markAccent}</span>
         </a>
 
         <nav className="doeinsure-nav__links" aria-label="Doe Insure">
@@ -110,7 +111,7 @@ export function DoeInsureNav() {
 
       <div className="doeinsure-nav__panel" id={panelId} hidden={!open}>
         <nav aria-label="Doe Insure menu">
-          {DOEINSURE_NAV_LINKS.map((link, index) => (
+          {DOEINSURE_NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -118,7 +119,6 @@ export function DoeInsureNav() {
               aria-current={active === link.href ? "true" : undefined}
               onClick={() => go(link.href)}
             >
-              <span>{String(index + 1).padStart(2, "0")}</span>
               {link.label}
             </a>
           ))}
