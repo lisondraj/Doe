@@ -356,9 +356,9 @@ function MatchBody({ revealed }: { revealed: boolean }) {
 const STACK_HUB = { x: 50, y: 50 };
 const STACK_HUB_MOBILE = { x: 14, y: 94 };
 const STACK_CONNECT_MS = 720;
-const STACK_CONNECT_MS_IPHONE = 1680;
+const STACK_CONNECT_MS_IPHONE = 2100;
 const STACK_AUTO_DELAY_MS = 160;
-const STACK_AUTO_DELAY_MS_IPHONE = 480;
+const STACK_AUTO_DELAY_MS_IPHONE = 600;
 
 function stackPath(x: number, y: number) {
   const midY = y < STACK_HUB.y ? 34 : 66;
@@ -578,11 +578,6 @@ function StackBody({ revealed }: { revealed: boolean }) {
               <strong className="doeinsure-stack-phone__company">{DOEINSURE_STACK.company}</strong>
               <p className="doeinsure-stack-phone__premium">
                 <span className="doeinsure-stack-phone__premium-main">
-                  {dropTotal ? (
-                    <s className="doeinsure-stack-phone__was" aria-hidden="true">
-                      ${stackOriginal}
-                    </s>
-                  ) : null}
                   <b key={stackQuote}>${stackQuote}</b>
                   <em className="doeinsure-stack-phone__period">{DOEINSURE_STACK.premiumNote}</em>
                 </span>
