@@ -2,7 +2,10 @@
 
 import type { ReactNode } from "react";
 
-import { useDoeInsureSectionReveal } from "@/lib/doeinsure/use-doeinsure-section-reveal";
+import {
+  useDoeInsureSectionReveal,
+  type DoeInsureSectionRevealOptions,
+} from "@/lib/doeinsure/use-doeinsure-section-reveal";
 
 type RevealVariant = "rise" | "left" | "right";
 
@@ -10,12 +13,14 @@ export function DoeInsureReveal({
   children,
   className = "",
   variant = "rise",
+  reveal,
 }: {
   children: ReactNode | ((revealed: boolean) => ReactNode);
   className?: string;
   variant?: RevealVariant;
+  reveal?: DoeInsureSectionRevealOptions;
 }) {
-  const { ref, revealed } = useDoeInsureSectionReveal();
+  const { ref, revealed } = useDoeInsureSectionReveal(reveal);
   const content = typeof children === "function" ? children(revealed) : children;
 
   return (
