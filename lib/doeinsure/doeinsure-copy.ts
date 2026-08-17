@@ -5,30 +5,73 @@ export const DOEINSURE_PAGE_DESCRIPTION =
   "Insurance for new and existing healthcare AI companies. Cover the model, the data, and the company.";
 
 export const DOEINSURE_NAV_LINKS = [
-  { href: "#platform", label: "Platform" },
-  { href: "#coverage", label: "Coverage" },
-  { href: "#stages", label: "Stages" },
+  { href: "#stages", label: "Growth+" },
   { href: "#quote", label: "Quote" },
+  { href: "#scale", label: "Scale" },
+  { href: "#match", label: "Match" },
   { href: "#faq", label: "FAQ" },
 ] as const;
 
-export const DOEINSURE_NAV = {
-  mark: "Doe",
-  markAccent: "Insure",
-  cta: "Request coverage",
-  ctaShort: "Request",
-  menuOpen: "Open menu",
-  menuClose: "Close menu",
-} as const;
-
 export const DOEINSURE_HERO = {
   eyebrow: "Doe Insure",
-  headline: ["Insurance for builders", "in healthcare AI."],
-  lede: "Coverage for new and existing healthcare AI companies. Connect the stack, quote from live data, and raise limits the hour a hospital asks.",
+  headline: ["Bind the model,", "the data, the company."],
+  lede: "Insurance for new and existing healthcare AI companies. Quote from the live stack. Raise limits the hour a hospital asks.",
   emailLabel: "Work email",
   emailPlaceholder: "you@company.com",
   primaryCta: "Get started",
-  secondaryCta: "See the platform",
+  secondaryCta: "See Growth+",
+  live: "Live file",
+  classesLabel: "Product class",
+} as const;
+
+export const DOEINSURE_HERO_CLASSES = [
+  { id: "ambient", name: "Ambient", detail: "Scribe in the room. PHI at capture." },
+  { id: "rcm", name: "RCM", detail: "Agents on claims, eligibility, and denial." },
+  { id: "imaging", name: "Imaging", detail: "Reads in the care pathway. SaMD path." },
+] as const;
+
+export const DOEINSURE_HERO_TICKER = [
+  { time: "Just now", company: "Harbor Notes", event: "Quote ready", value: "$2M" },
+  { time: "4 min", company: "Northwell Ambient", event: "Bound", value: "$5M" },
+  { time: "12 min", company: "Mayo Imaging Labs", event: "Limit matched", value: "$10M" },
+  { time: "31 min", company: "Cedar Prior Auth", event: "COI issued", value: "Kaiser" },
+] as const;
+
+export const DOEINSURE_APP = {
+  mark: "Doe",
+  accent: "Insure",
+  nav: [
+    { id: "intake", label: "Intake" },
+    { id: "stack", label: "APIs" },
+    { id: "risk", label: "Risk" },
+  ],
+  intake: {
+    kicker: "New file",
+    company: "Company",
+    website: "Website",
+    classLabel: "Product class",
+    open: "Open risk file",
+    hint: "Intake maps product class before a questionnaire exists.",
+  },
+  stack: {
+    kicker: "Read-only",
+    hint: "Connect the stack you already run. Encryption, uptime, and SOC 2 land in the file.",
+    connect: "Connect",
+    reading: "Reading",
+  },
+  risk: {
+    kicker: "Assessment",
+    score: "72",
+    max: "100",
+    label: "Clear to quote",
+    hint: "Risk from live signals — not a 20-page PDF.",
+    signals: [
+      { name: "Encryption", value: "On" },
+      { name: "PHI path", value: "Logged" },
+      { name: "Human in loop", value: "Yes" },
+      { name: "SOC 2", value: "Ready" },
+    ],
+  },
 } as const;
 
 export const DOEINSURE_POLICY_SAMPLES = [
@@ -114,42 +157,70 @@ export const DOEINSURE_COVERAGE = {
 
 export const DOEINSURE_STAGES = {
   eyebrow: "Stages",
-  title: "From early idea to Growth+.",
-  lede: "Each round changes the risk. Coverage, limits, and premium follow the company you are this month — not the form you filled last year.",
+  title: "Growth+.",
+  lede: "What is in force at each round. Click a stage — limits, lines, and the work the dashboard does.",
   items: [
     {
       id: "idea",
       name: "Idea",
+      limit: "$1M",
+      badge: "First bind",
       moment: "Founders, a repo, no revenue.",
-      cover: "Bind on product class. $1M limits. Pay as you scale from day one.",
+      cover: "Bind on product class. Pay as you scale from day one.",
+      includes: ["Cyber and privacy", "Media and IP", "Usage-priced premium", "Product-class bind"],
       policies: ["Cyber and privacy", "Media and IP"],
     },
     {
       id: "pre-seed",
       name: "Pre-seed",
+      limit: "$1M",
+      badge: "Adds E&O",
       moment: "Angels, an accelerator, a first COI request.",
       cover: "Connect the stack. Quote in minutes. Certificates without a broker queue.",
+      includes: ["Cyber and privacy", "Technology E&O", "Media and IP", "Certificates on demand"],
       policies: ["Cyber and privacy", "Technology E&O", "Media and IP"],
     },
     {
       id: "seed",
       name: "Seed",
+      limit: "$2M",
+      badge: "PHI in clinic",
       moment: "First clinic pilots. PHI is in the building.",
       cover: "E&O and cyber on one form. BAA pack. Still usage-priced.",
+      includes: ["Technology E&O", "Cyber and privacy", "Media and IP", "BAA and PHI pack"],
       policies: ["Technology E&O", "Cyber and privacy", "Media and IP"],
     },
     {
       id: "series-a",
       name: "Series A",
+      limit: "$5M",
+      badge: "Adds D&O",
       moment: "First health-system conversation.",
-      cover: "Contract scanner. Raise limits the hour legal asks — often $5M.",
+      cover: "Contract scanner. Raise limits the hour legal asks.",
+      includes: [
+        "Technology E&O",
+        "Cyber and privacy",
+        "Directors and officers",
+        "Media and IP",
+        "Contract matching",
+      ],
       policies: ["Technology E&O", "Cyber and privacy", "Directors and officers", "Media and IP"],
     },
     {
       id: "series-b",
       name: "Series B",
+      limit: "$5–10M",
+      badge: "Adds product",
       moment: "Multi-site GTM. Maybe SaMD.",
       cover: "Named insureds for the hospital. Product injury, not just downtime.",
+      includes: [
+        "Technology E&O",
+        "Cyber and privacy",
+        "Product liability",
+        "Directors and officers",
+        "Media and IP",
+        "Named insureds",
+      ],
       policies: [
         "Technology E&O",
         "Cyber and privacy",
@@ -161,8 +232,19 @@ export const DOEINSURE_STAGES = {
     {
       id: "series-c",
       name: "Series C",
+      limit: "$5–10M",
+      badge: "Adds regulatory",
       moment: "National book. Agents shipping every quarter.",
-      cover: "$5–10M as the working limit. Model-change endorsements as the fleet grows.",
+      cover: "Working limit at $5–10M. Model-change endorsements as the fleet grows.",
+      includes: [
+        "Technology E&O",
+        "Cyber and privacy",
+        "Product liability",
+        "Directors and officers",
+        "Media and IP",
+        "Regulatory defense",
+        "Model-change endorsements",
+      ],
       policies: [
         "Technology E&O",
         "Cyber and privacy",
@@ -175,8 +257,20 @@ export const DOEINSURE_STAGES = {
     {
       id: "growth",
       name: "Growth+",
+      limit: "$10M+",
+      badge: "Full stack",
       moment: "Late stage, public path, or an existing vendor book.",
-      cover: "Prior acts, incident desk, continuous posture. $10M+ to match enterprise paper.",
+      cover: "Prior acts, incident desk, continuous posture. Enterprise paper.",
+      includes: [
+        "Technology E&O",
+        "Cyber and privacy",
+        "Product liability",
+        "Directors and officers",
+        "Media and IP",
+        "Regulatory defense",
+        "Prior acts on switch",
+        "Incident desk",
+      ],
       policies: [
         "Technology E&O",
         "Cyber and privacy",
@@ -208,63 +302,121 @@ export const DOEINSURE_WHO = {
   ],
 } as const;
 
-export const DOEINSURE_PLATFORM = {
-  eyebrow: "Platform",
-  title: "Built for companies that change every month.",
-  featured: [
+export const DOEINSURE_QUOTE = {
+  id: "quote",
+  eyebrow: "01 · Quote",
+  title: "A quote from the live stack.",
+  lede: "A 20-page PDF is stale the day the repo moves. Connect cloud, GitHub, and SOC 2. Underwriting reads encryption, uptime, and controls as they stand today.",
+  waiting: "Connect every source to open a quote.",
+  ready: "Quote ready",
+  premium: "$1,240",
+  premiumLabel: "Estimated monthly",
+  time: "Four minutes from first connect",
+  bind: "Bind this quote",
+  connect: "Connect",
+  connected: "Reading",
+  connectAll: "Connect all",
+  reset: "Reset stack",
+  sources: [
     {
-      id: "api",
-      kicker: "01",
-      name: "API-driven underwriting",
-      problem:
-        "A static 20-page PDF every year fails the moment data volume, client count, or the codebase moves.",
-      way: "Connect AWS or Azure, GitHub, and SOC 2 platforms such as Vanta or Drata. The engine reads security metrics, encryption logs, and uptime as they stand today.",
-      benefit: "A quote in minutes, not a questionnaire that is already stale.",
-      ui: {
-        kicker: "Live stack",
-        rows: [
-          { source: "AWS", metric: "Encryption", value: "On" },
-          { source: "GitHub", metric: "Protected branches", value: "100%" },
-          { source: "Vanta", metric: "SOC 2", value: "Ready" },
-        ],
-        foot: "Quote ready · 4 min",
-      },
+      name: "AWS",
+      reads: "Encryption, IAM, uptime",
+      metric: "Encryption at rest",
+      value: "On · 3 regions",
     },
     {
-      id: "scale",
-      kicker: "02",
-      name: "Pay as you scale",
-      problem:
-        "A team at $10k MRR in January can be at $500k by June. An annual premium guessed in December is either a cash-flow hit or a gap.",
-      way: "Premiums follow actual processed data volume or active users, adjusted each month.",
-      benefit: "You are not under-insured after a growth month, and you do not overpay in the pre-seed months.",
-      ui: {
-        kicker: "This month",
-        rows: [
-          { label: "MRR", from: "$10k", to: "$86k" },
-          { label: "Active users", from: "412", to: "3,104" },
-          { label: "Premium", from: "$410", to: "$1,240" },
-        ],
-        foot: "Billed on usage · no annual true-up",
-      },
+      name: "GitHub",
+      reads: "Branches, reviews, releases",
+      metric: "Protected branches",
+      value: "100%",
     },
     {
-      id: "contract",
-      kicker: "03",
-      name: "Contract matching",
-      problem:
-        "A Kaiser or Mayo contract can demand Tech E&O or Cyber limits of $5M or $10M within 48 hours, or the deal waits.",
-      way: "Upload the hospital draft. The scanner pulls the insurance clauses. One action raises limits to what legal asked for.",
-      benefit: "The enterprise close is not held by a broker calendar.",
-      ui: {
-        kicker: "Kaiser draft · extracted",
-        clause: "Cyber and Tech E&O of not less than $10,000,000 each claim.",
-        from: "$1,000,000",
-        to: "$10,000,000",
-        action: "Match limit",
-      },
+      name: "Vanta",
+      reads: "SOC 2 this week",
+      metric: "SOC 2",
+      value: "Ready",
     },
   ],
+} as const;
+
+export const DOEINSURE_SCALE = {
+  id: "scale",
+  eyebrow: "02 · Scale",
+  title: "Pay this month’s company.",
+  lede: "January is $10k MRR. June is $86k. An annual premium guessed in December is either a cash-flow hit or a gap. Usage-priced cover follows the book you actually have.",
+  play: "Play January to June",
+  pause: "Pause",
+  ours: "Doe Insure",
+  traditional: "Traditional",
+  traditionalNote: "Prepaid on January revenue — uncovered by June, or overpaid in the winter.",
+  oursNote: "Billed on this month’s usage. No annual true-up.",
+  months: [
+    { label: "Jan", mrr: "$10k", users: "412", premium: "$410", traditional: "$4,920" },
+    { label: "Feb", mrr: "$18k", users: "890", premium: "$520", traditional: "$4,920" },
+    { label: "Mar", mrr: "$31k", users: "1,402", premium: "$680", traditional: "$4,920" },
+    { label: "Apr", mrr: "$48k", users: "2,110", premium: "$890", traditional: "$4,920" },
+    { label: "May", mrr: "$67k", users: "2,680", premium: "$1,080", traditional: "$4,920" },
+    { label: "Jun", mrr: "$86k", users: "3,104", premium: "$1,240", traditional: "$4,920" },
+  ],
+} as const;
+
+export const DOEINSURE_MATCH = {
+  id: "match",
+  eyebrow: "03 · Match",
+  title: "Unblock the hospital close.",
+  lede: "A Kaiser or Mayo MSA can demand $5M or $10M in 48 hours. The scanner pulls the insurance clauses. One action raises the limit. The deal does not sit on a broker calendar.",
+  blocked: "Deal blocked",
+  unblocked: "Deal unblocked",
+  hours: "48 hrs",
+  hoursDone: "Matched",
+  matchAll: "Match all clauses",
+  matched: "All clauses matched",
+  request: "Request this limit",
+  action: "Match limit",
+  currentLabel: "On the policy now",
+  requiredLabel: "Hospital requires",
+  systems: [
+    {
+      name: "Kaiser Permanente",
+      ask: "$10,000,000",
+      from: "$1,000,000",
+      excerpt:
+        "Vendor shall maintain Cyber Liability and Technology E&O insurance of not less than $10,000,000 each claim and in the aggregate, and shall name Kaiser Permanente as additional insured.",
+      clauses: [
+        { id: "limit", label: "Limit", text: "Cyber and Tech E&O of not less than $10,000,000 each claim." },
+        { id: "ai", label: "Additional insured", text: "Named insured to include the health system and its affiliates." },
+        { id: "waiver", label: "Waiver", text: "Waiver of subrogation in favor of the hospital." },
+      ],
+    },
+    {
+      name: "Mayo Clinic",
+      ask: "$5,000,000",
+      from: "$1,000,000",
+      excerpt:
+        "Coverage shall include Technology Errors & Omissions with limits of $5,000,000, and shall provide a waiver of subrogation and additional insured status for Mayo Clinic.",
+      clauses: [
+        { id: "limit", label: "Limit", text: "Technology E&O of not less than $5,000,000 each claim." },
+        { id: "ai", label: "Additional insured", text: "Mayo Clinic and wholly owned affiliates as additional insured." },
+        { id: "waiver", label: "Waiver", text: "Waiver of subrogation required on all liability lines." },
+      ],
+    },
+    {
+      name: "Cleveland Clinic",
+      ask: "$10,000,000",
+      from: "$2,000,000",
+      excerpt:
+        "Professional and cyber liability of $10,000,000. Certificate evidencing additional insured and primary/noncontributory wording due prior to go-live.",
+      clauses: [
+        { id: "limit", label: "Limit", text: "Professional and cyber liability of $10,000,000." },
+        { id: "ai", label: "Additional insured", text: "Cleveland Clinic as additional insured, primary and noncontributory." },
+        { id: "coi", label: "Certificate", text: "COI delivered prior to go-live." },
+      ],
+    },
+  ],
+} as const;
+
+export const DOEINSURE_PLATFORM = {
+  eyebrow: "Platform",
   more: {
     eyebrow: "Also in the dashboard",
     title: "The rest of the close, without a new packet.",
@@ -437,80 +589,6 @@ export const DOEINSURE_HOW = {
   ],
 } as const;
 
-export const DOEINSURE_QUOTE = {
-  title: "Premium follows the book you have this month.",
-  lede: "Pick a product class and a live user count. The number is usage-priced — not a January guess locked for twelve months.",
-  unit: "/ month",
-  limitLabel: "Working limit",
-  usersLabel: "Active users",
-  classes: [
-    {
-      id: "ambient",
-      name: "Ambient / notes",
-      note: "Capture in the exam room. PHI from day one.",
-      base: 410,
-      perThousand: 180,
-      limit: "$2,000,000",
-    },
-    {
-      id: "imaging",
-      name: "Imaging / SaMD",
-      note: "A device in a care pathway. Product injury sits on the form.",
-      base: 860,
-      perThousand: 240,
-      limit: "$5,000,000",
-    },
-    {
-      id: "rcm",
-      name: "RCM / operations",
-      note: "Claims, scheduling, and the model that touches both.",
-      base: 540,
-      perThousand: 120,
-      limit: "$2,000,000",
-    },
-  ],
-  volumes: [
-    { users: 400, label: "Pilot" },
-    { users: 2500, label: "Clinic" },
-    { users: 8000, label: "System" },
-    { users: 20000, label: "National" },
-  ],
-} as const;
-
-export const DOEINSURE_CERTIFICATE = {
-  title: "Issue a COI the hour credentialing asks.",
-  lede: "Named insured, additional insured, and waiver of subrogation — from the same file that quoted you.",
-  kicker: "Certificate of insurance",
-  holderLabel: "Certificate holder",
-  namedLabel: "Named insured",
-  named: "Northwell Ambient, Inc.",
-  extraLabel: "Additional insured",
-  waiverLabel: "Waiver of subrogation",
-  issue: "Issue certificate",
-  issued: "Issued",
-  pending: "Draft",
-  holders: [
-    {
-      name: "Northwell Health",
-      extra: "Northwell Health, its affiliates and employees",
-      waiver: "Yes",
-      need: "Cyber $5M · additional insured",
-    },
-    {
-      name: "Mayo Clinic",
-      extra: "Mayo Clinic and Mayo Clinic Health System",
-      waiver: "Yes",
-      need: "Tech E&O $10M · named insured",
-    },
-    {
-      name: "Kaiser Permanente",
-      extra: "Kaiser Foundation Hospitals",
-      waiver: "Yes",
-      need: "Cyber and Tech E&O $10M each claim",
-    },
-  ],
-} as const;
-
 export const DOEINSURE_UNDERWRITE = {
   eyebrow: "What we look at",
   title: "Read from the stack, not a stale PDF.",
@@ -578,15 +656,8 @@ export const DOEINSURE_CTA = {
 } as const;
 
 export const DOEINSURE_FOOTER = {
-  mark: "Doe",
-  markAccent: "Insure",
-  blurb: "Insurance for healthcare AI companies. Cover the model, the data, and the company.",
-  legal: "Doe Intelligence Inc",
-  place: "Delaware",
+  wordmark: "Doe Insure",
+  blurb: "A Doe product. Insurance for healthcare AI companies.",
+  legal: "Doe Intelligence Inc · Delaware",
   email: DOEINSURE_CONTACT_EMAIL,
-  productLabel: "Product",
-  companyLabel: "Company",
-  home: "Doe",
-  homeHref: "/",
-  request: "Request coverage",
 } as const;

@@ -30,7 +30,7 @@ export function DoeInsureMobileView() {
       className={`doeinsure-root doeinsure-root--iphone doephone-mobile-root ${dmSans.variable} ${dmSans.className}`}
       data-doeforvc-view="iphone"
     >
-      <DoeInsureNav />
+      <DoeInsureNav compact />
       <main>
         <DoeInsurePageContent />
       </main>
