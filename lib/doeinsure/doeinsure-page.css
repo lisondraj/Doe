@@ -3895,7 +3895,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-stages-title + .doeinsure-app--match,
 .doeinsure-stages-title + .doeinsure-app--stack,
 .doeinsure-stages-title + .doeinsure-app--issue,
-.doeinsure-stages-title + .doeinsure-app--claim {
+.doeinsure-stages-title + .doeinsure-app--claim,
+.doeinsure-stages-title + .doeinsure-app--read {
   margin-top: 2.6rem;
 }
 
@@ -3903,7 +3904,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--match,
 .doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--stack,
 .doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--issue,
-.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--claim {
+.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--claim,
+.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--read {
   margin-top: 1.6rem;
 }
 
@@ -3911,7 +3913,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-app--match .doeinsure-app__bar,
 .doeinsure-app--stack .doeinsure-app__bar,
 .doeinsure-app--issue .doeinsure-app__bar,
-.doeinsure-app--claim .doeinsure-app__bar {
+.doeinsure-app--claim .doeinsure-app__bar,
+.doeinsure-app--read .doeinsure-app__bar {
   display: none;
 }
 
@@ -6700,6 +6703,365 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   }
 }
 
+.doeinsure-app--read {
+  border: 0;
+  background: transparent;
+}
+
+.doeinsure-read {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.doeinsure-read__packets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--di-line);
+  background: var(--di-line);
+}
+
+.doeinsure-read__packets button {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.22rem;
+  width: 100%;
+  padding: 1rem 1.15rem 1.05rem;
+  border: 0;
+  background: var(--di-white);
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.doeinsure-read__packets button span {
+  color: var(--di-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-read__packets button b {
+  color: var(--di-ink);
+  font-size: 1.08rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.doeinsure-read__packets button.is-on {
+  background: var(--di-blue-gradient);
+}
+
+.doeinsure-read__packets button.is-on span,
+.doeinsure-read__packets button.is-on b {
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.doeinsure-read__desk {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(14rem, 0.8fr);
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.doeinsure-read__page,
+.doeinsure-read__extract {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+}
+
+.doeinsure-read__page {
+  gap: 0.75rem;
+  padding: 1.2rem 1.25rem 1.25rem;
+}
+
+.doeinsure-read__page-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.doeinsure-read__page-head strong {
+  color: var(--di-ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-read__page-head span {
+  color: var(--di-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.doeinsure-read__sheet {
+  position: relative;
+  overflow: hidden;
+  min-height: 10.5rem;
+  padding: 0.95rem 1rem 1.05rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-gray);
+}
+
+.doeinsure-read__sheet p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: var(--di-ink);
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.55;
+}
+
+.doeinsure-read__mark {
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0.04em 0;
+  border-bottom: 1px solid transparent;
+  transition: background-color 280ms ease, border-color 280ms ease, color 280ms ease;
+}
+
+.doeinsure-read__mark.is-on {
+  border-bottom-color: var(--di-blue);
+  background: rgba(48, 80, 224, 0.1);
+}
+
+.doeinsure-read__cursor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: var(--di-blue-gradient);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.doeinsure-read__page.is-reading .doeinsure-read__cursor {
+  opacity: 1;
+  animation: doeinsure-read-cursor var(--read-scan-ms, 1.86s) linear forwards;
+}
+
+.doeinsure-read__meter {
+  width: 100%;
+  height: 0.35rem;
+  overflow: hidden;
+  background: var(--di-line);
+}
+
+.doeinsure-read__meter i {
+  display: block;
+  height: 100%;
+  background: var(--di-blue-gradient);
+  transition: width 420ms ease;
+}
+
+.doeinsure-read__extract {
+  gap: 0;
+  padding: 1.2rem 1.25rem 1.3rem;
+  transition: background-color 420ms ease, border-color 420ms ease, color 420ms ease;
+}
+
+.doeinsure-read__extract.is-on {
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue);
+  color: #ffffff;
+}
+
+.doeinsure-read__extract-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.85rem;
+}
+
+.doeinsure-read__extract-head span {
+  color: var(--di-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-read__extract-head em {
+  color: var(--di-ink);
+  font-size: clamp(1.45rem, 2.4vw, 1.9rem);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.doeinsure-read__extract.is-on .doeinsure-read__extract-head span,
+.doeinsure-read__extract.is-on .doeinsure-read__extract-head em {
+  background-image: none;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.doeinsure-read__extract ul {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--di-line);
+  background: var(--di-line);
+  overflow: hidden;
+}
+
+.doeinsure-read__extract li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+  min-height: 3.15rem;
+  padding: 0.72rem 0.8rem;
+  background: var(--di-gray);
+}
+
+.doeinsure-read__extract li span {
+  color: var(--di-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-read__extract li b {
+  min-height: 1.2em;
+  color: var(--di-ink);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  text-align: right;
+}
+
+.doeinsure-read__extract li:not(.is-on) b {
+  visibility: hidden;
+}
+
+.doeinsure-read__extract li.is-on b {
+  animation: doeinsure-read-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-read__extract.is-on ul,
+.doeinsure-read__extract.is-on li {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.doeinsure-read__extract.is-on li {
+  background: transparent;
+}
+
+.doeinsure-read__extract.is-on li span,
+.doeinsure-read__extract.is-on li b {
+  background-image: none;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.doeinsure-root--iphone .doeinsure-read__packets {
+  gap: 0.75rem;
+  border: 0;
+  background: transparent;
+}
+
+.doeinsure-root--iphone .doeinsure-read__packets button {
+  box-sizing: border-box;
+  min-height: 4.1rem;
+  padding: 0.52rem 0.42rem 0.62rem;
+  border: 1px solid var(--di-line);
+}
+
+.doeinsure-root--iphone .doeinsure-read__packets button.is-on {
+  border-color: var(--di-blue);
+}
+
+.doeinsure-root--iphone .doeinsure-read__packets button span {
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+}
+
+.doeinsure-root--iphone .doeinsure-read__packets button b {
+  font-size: 0.86rem;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+}
+
+.doeinsure-root--iphone .doeinsure-read__desk {
+  grid-template-columns: 1fr;
+}
+
+.doeinsure-root--iphone .doeinsure-read__page,
+.doeinsure-root--iphone .doeinsure-read__extract {
+  padding: 0.95rem 1rem 1rem;
+}
+
+.doeinsure-root--iphone .doeinsure-read__sheet {
+  min-height: 9.4rem;
+  padding: 0.78rem 0.8rem 0.85rem;
+}
+
+.doeinsure-root--iphone .doeinsure-read__sheet p {
+  font-size: 0.9rem;
+  line-height: 1.48;
+}
+
+.doeinsure-root--iphone .doeinsure-read__extract-head em {
+  font-size: clamp(1.45rem, 7vw, 1.85rem);
+}
+
+.doeinsure-root--iphone .doeinsure-read__extract li {
+  min-height: 2.85rem;
+  padding: 0.62rem 0.68rem;
+}
+
+.doeinsure-root--iphone .doeinsure-read__extract li b {
+  font-size: 0.98rem;
+}
+
+@keyframes doeinsure-read-cursor {
+  from {
+    top: 0;
+    opacity: 1;
+  }
+
+  to {
+    top: calc(100% - 2px);
+    opacity: 1;
+  }
+}
+
+@keyframes doeinsure-read-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.2rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .doeinsure-root * {
     animation: none !important;
@@ -6710,6 +7072,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   .doeinsure-match__scan-track i,
   .doeinsure-link__wire-live.is-linking,
   .doeinsure-issue__scan.is-on,
+  .doeinsure-read__cursor,
   .doeinsure-stack-phone__source.is-linking::after {
     animation: none !important;
     transform: none;

@@ -572,6 +572,81 @@ export const DOEINSURE_CLAIM = {
   ],
 } as const;
 
+export const DOEINSURE_READ = {
+  id: "read",
+  title: ["Upload the packet.", "The file reads it."],
+  waiting: "Waiting",
+  reading: "Reading",
+  filed: "In the file",
+  pagesLabel: "pages",
+  extractLabel: "Extracted",
+  packets: [
+    {
+      id: "msa",
+      name: "Enterprise MSA",
+      file: "NORTHWELL_MSA.PDF",
+      pages: "14",
+      kind: "Contract",
+      excerpt: [
+        { text: "Vendor shall maintain Cyber Liability and Technology E&O of not less than ", mark: null },
+        { text: "$10M", mark: "limit" },
+        { text: " each claim, naming the ", mark: null },
+        { text: "health system an additional insured", mark: "insured" },
+        { text: ", with ", mark: null },
+        { text: "waiver of subrogation", mark: "waiver" },
+        { text: " in favor of the hospital.", mark: null },
+      ],
+      fields: [
+        { id: "limit", label: "Limit", value: "$10M" },
+        { id: "insured", label: "Named", value: "Health system" },
+        { id: "waiver", label: "Waiver", value: "Required" },
+      ],
+    },
+    {
+      id: "soc2",
+      name: "SOC 2 letter",
+      file: "VANTA_SOC2.PDF",
+      pages: "6",
+      kind: "Evidence",
+      excerpt: [
+        { text: "Harbor Notes holds a ", mark: null },
+        { text: "SOC 2 Type II", mark: "type" },
+        { text: " report for the period ending ", mark: null },
+        { text: "May 2026", mark: "period" },
+        { text: ", issued through ", mark: null },
+        { text: "Vanta", mark: "issuer" },
+        { text: ". Controls cover encryption, access, and change management.", mark: null },
+      ],
+      fields: [
+        { id: "type", label: "Report", value: "Type II" },
+        { id: "period", label: "Through", value: "May 2026" },
+        { id: "issuer", label: "Issuer", value: "Vanta" },
+      ],
+    },
+    {
+      id: "notice",
+      name: "Incident notice",
+      file: "PHI_NOTICE.PDF",
+      pages: "2",
+      kind: "Notice",
+      excerpt: [
+        { text: "Written notice of a possible ", mark: null },
+        { text: "PHI path", mark: "line" },
+        { text: " in an ambient session on ", mark: null },
+        { text: "Apr 12, 9:14p", mark: "when" },
+        { text: " at ", mark: null },
+        { text: "Northwell evening clinic", mark: "site" },
+        { text: ". Session 4812 is attached.", mark: null },
+      ],
+      fields: [
+        { id: "line", label: "Line", value: "Cyber" },
+        { id: "when", label: "When", value: "Apr 12, 9:14p" },
+        { id: "site", label: "Site", value: "Northwell" },
+      ],
+    },
+  ],
+} as const;
+
 export const DOEINSURE_CONNECT = {
   eyebrow: "Connect",
   title: "Underwrite from the stack you already run.",
