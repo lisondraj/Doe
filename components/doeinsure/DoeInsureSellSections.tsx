@@ -530,6 +530,7 @@ function StackBody({ revealed }: { revealed: boolean }) {
 }
 
 const ISSUE_STEP_MS = 520;
+const ISSUE_ISSUED_HOLD_MS = 1800;
 
 function IssueSection() {
   return (
@@ -547,6 +548,7 @@ function IssueBody({ revealed }: { revealed: boolean }) {
   const [request, setRequest] = useState(0);
   const [step, setStep] = useState(0);
   const [auto, setAuto] = useState(false);
+  const requestCount = DOEINSURE_ISSUE.requests.length;
   const active = DOEINSURE_ISSUE.requests[request];
   const total = DOEINSURE_ISSUE.fields.length;
   const complete = step >= total;
@@ -570,6 +572,15 @@ function IssueBody({ revealed }: { revealed: boolean }) {
     const id = window.setTimeout(() => setStep((current) => current + 1), ISSUE_STEP_MS);
     return () => window.clearTimeout(id);
   }, [auto, complete, step]);
+
+  useEffect(() => {
+    if (!auto || !complete || !revealed) return undefined;
+    const id = window.setTimeout(() => {
+      setRequest((current) => (current + 1) % requestCount);
+      setStep(0);
+    }, ISSUE_ISSUED_HOLD_MS);
+    return () => window.clearTimeout(id);
+  }, [auto, complete, revealed, requestCount]);
 
   const pick = (index: number) => {
     setAuto(false);
