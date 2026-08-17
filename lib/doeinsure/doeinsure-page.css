@@ -50,6 +50,10 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   -webkit-font-smoothing: antialiased;
 }
 
+.doeinsure-root--desktop {
+  --di-inset: calc(var(--desktop-page-inset-x, 2.5rem) / 9 * 2 / 3);
+}
+
 .doeinsure-root *,
 .doeinsure-root *::before,
 .doeinsure-root *::after {
