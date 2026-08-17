@@ -23,7 +23,6 @@ export function DoeInsureFooter() {
         </nav>
 
         <div className="doeinsure-footer__cta">
-          <span className="doeinsure-footer__label">Get coverage</span>
           <a className="doeinsure-footer__quote" href="#request">
             {DOEINSURE_NAV.cta}
           </a>
