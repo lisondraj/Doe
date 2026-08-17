@@ -200,6 +200,7 @@ function LiveStackCard({
                 <span>{row.source}</span>
                 <span>{row.metric}</span>
                 <b>{active ? row.value : "Off"}</b>
+                <i aria-hidden="true" />
               </button>
             </li>
           );
@@ -226,16 +227,16 @@ function ScaleCard({
         <span>{grown ? "June" : "January"}</span>
       </div>
       <ul className="doeinsure-scale">
-        {ui.rows.map((row) => (
+        {ui.rows.map((row, index) => (
           <li key={row.label}>
             <span>{row.label}</span>
             <b key={`${row.label}-${grown ? "to" : "from"}`}>{grown ? row.to : row.from}</b>
+            <div className="doeinsure-meter doeinsure-meter--row" aria-hidden="true">
+              <i style={{ width: grown ? "100%" : `${[16, 14, 34][index]}%` }} />
+            </div>
           </li>
         ))}
       </ul>
-      <div className="doeinsure-meter" aria-hidden="true">
-        <i style={{ width: grown ? "86%" : "18%" }} />
-      </div>
       <button type="button" className="doeinsure-inline" onClick={() => setGrown((value) => !value)}>
         {grown ? "Show January" : "Run to June"}
       </button>
@@ -267,6 +268,9 @@ function ContractCard({
           Required
           <b>{ui.to}</b>
         </span>
+      </div>
+      <div className="doeinsure-meter" aria-hidden="true">
+        <i style={{ width: matched ? "100%" : "10%" }} />
       </div>
       <button
         type="button"
@@ -400,6 +404,8 @@ function CertificateBoard() {
     </div>
   );
 }
+
+export function DoeInsurePageContent() {
   const [email, setEmail] = useState("");
   const [stat, setStat] = useState(0);
   const [more, setMore] = useState(0);
@@ -556,6 +562,9 @@ function CertificateBoard() {
                 {item.name}
               </button>
             ))}
+          </div>
+          <div className="doeinsure-meter" aria-hidden="true">
+            <i style={{ width: `${((stage + 1) / DOEINSURE_STAGES.items.length) * 100}%` }} />
           </div>
           <div className="doeinsure-stage-pane" key={activeStage.id}>
             <span className="doeinsure-stages__n">{String(stage + 1).padStart(2, "0")}</span>
@@ -770,6 +779,9 @@ function CertificateBoard() {
       <section className="doeinsure-section">
         <div className="doeinsure-wrap">
           <h2>{DOEINSURE_UNDERWRITE.title}</h2>
+          <p className="doeinsure-connect__count">
+            {Object.values(checks).filter(Boolean).length} of {DOEINSURE_UNDERWRITE.items.length} reviewed
+          </p>
           <div className="doeinsure-checks">
             {DOEINSURE_UNDERWRITE.items.map((item) => {
               const on = Boolean(checks[item]);
