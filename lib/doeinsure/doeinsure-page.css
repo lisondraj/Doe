@@ -4179,8 +4179,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-root--iphone .doeinsure-match__file {
   order: 1;
-  gap: 0.55rem;
-  padding: 1.05rem 1rem 1.1rem;
+  gap: 0.5rem;
+  padding: 0.95rem 1rem 0.95rem;
   border: 1px solid var(--di-line);
 }
 
@@ -4193,7 +4193,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-root--iphone .doeinsure-match__file .doeinsure-scan__limits {
   grid-template-columns: 1fr 1fr;
   gap: 1px;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0;
   border: 1px solid var(--di-line);
   background: var(--di-line);
   overflow: hidden;
@@ -4209,15 +4209,16 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-root--iphone .doeinsure-match__file .doeinsure-btn {
   width: 100%;
+  margin-top: 0;
 }
 
 .doeinsure-root--iphone .doeinsure-doc.doeinsure-match__doc {
   order: 2;
   height: auto;
   overflow: hidden;
-  padding: 0.95rem 0.95rem 1rem;
+  padding: 0.9rem 0.95rem 0.9rem;
   border: 1px solid var(--di-line);
-  gap: 0.8rem;
+  gap: 0.65rem;
 }
 
 .doeinsure-root--iphone .doeinsure-match__draft {
@@ -4261,9 +4262,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-match__doc.is-scanning .doeinsure-match__clauses.is-wait {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  display: none;
 }
 
 .doeinsure-root--iphone .doeinsure-match__reader > p:not(.doeinsure-match__excerpt) {
@@ -4318,7 +4317,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-root--iphone .doeinsure-match__clauses {
   flex: none;
   gap: 1px;
-  min-height: 11.75rem;
+  min-height: 0;
 }
 
 .doeinsure-root--iphone .doeinsure-match__clauses.is-in li {
@@ -4760,6 +4759,14 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-match__file.is-on .doeinsure-scan__limits span {
   background: transparent;
+}
+
+.doeinsure-match__file.is-on .doeinsure-scan__limits b {
+  background-image: none;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
 }
 
 .doeinsure-match__file.is-on .doeinsure-match__updates li {
