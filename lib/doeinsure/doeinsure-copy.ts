@@ -162,7 +162,7 @@ export const DOEINSURE_COVERAGE = {
 } as const;
 
 export const DOEINSURE_STAGES = {
-  title: ["Coverage that changes as fast", "as your company."],
+  title: ["Coverage as fast", "as your company."],
   items: [
     {
       id: "idea",

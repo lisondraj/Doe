@@ -174,20 +174,6 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   display: inline;
 }
 
-.doeinsure-root--iphone .doeinsure-nav__cta-short {
-  display: none;
-}
-
-.doeinsure-root--iphone .doeinsure-nav__cta {
-  min-height: 2.35rem;
-  height: 2.35rem;
-  min-width: 0;
-  padding: 0 0.85rem;
-  font-size: 0.78rem;
-  letter-spacing: -0.03em;
-  white-space: nowrap;
-}
-
 .doeinsure-nav__menu {
   display: none;
   width: 2.35rem;
@@ -331,6 +317,18 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-btn--block {
   width: 100%;
+}
+
+.doeinsure-root--iphone .doeinsure-nav__end a.doeinsure-btn.doeinsure-nav__cta {
+  min-height: 2.35rem;
+  height: 2.35rem;
+  max-height: 2.35rem;
+  padding: 0 0.72rem;
+  line-height: 1;
+  font-size: 0.72rem;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .doeinsure-hero {
@@ -2481,7 +2479,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-rung.is-filled .doeinsure-rung__who em {
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .doeinsure-rung .doeinsure-stage-block__tags {
@@ -2501,9 +2499,13 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   letter-spacing: 0.02em;
 }
 
+.doeinsure-rung.is-filled .doeinsure-rung__who h3 {
+  color: #ffffff;
+}
+
 .doeinsure-rung.is-filled .doeinsure-stage-block__tag {
-  border-color: rgba(255, 255, 255, 0.32);
-  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
 }
 
@@ -2603,6 +2605,18 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-section#stages h2 .doeinsure-stages-title__line {
   display: block;
+  white-space: nowrap;
+}
+
+.doeinsure-root--iphone #stages h2 {
+  font-size: clamp(1.85rem, 8.4vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+}
+
+.doeinsure-root--iphone #stages h2 .doeinsure-stages-title__line {
+  white-space: nowrap;
 }
 
 .doeinsure-reveal > .doeinsure-ladder {
@@ -5054,7 +5068,23 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-root--iphone .doeinsure-issue__rail {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.doeinsure-root--iphone .doeinsure-issue__rail button {
+  padding: 0.62rem 0.4rem 0.68rem;
+  gap: 0.12rem;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__rail span {
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+}
+
+.doeinsure-root--iphone .doeinsure-issue__rail b {
+  font-size: 0.76rem;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
 }
 
 .doeinsure-root--iphone .doeinsure-issue__sheet {
