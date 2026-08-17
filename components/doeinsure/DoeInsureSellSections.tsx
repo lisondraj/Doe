@@ -403,12 +403,10 @@ function StackBody({ revealed }: { revealed: boolean }) {
       ? DOEINSURE_STACK.reading
       : DOEINSURE_STACK.waiting;
   const stackPremium = Number.parseInt(DOEINSURE_STACK.premium.replace(/[^\d]/g, ""), 10);
-  const livePremium =
-    connected.length === 0
-      ? "—"
-      : complete
-        ? DOEINSURE_STACK.premium
-        : `$${Math.round((stackPremium * connected.length) / DOEINSURE_STACK.sources.length)}`;
+  const remaining = DOEINSURE_STACK.sources.length - connected.length;
+  const livePremium = complete
+    ? DOEINSURE_STACK.premium
+    : `$${stackPremium + Math.round((stackPremium * remaining) / DOEINSURE_STACK.sources.length)}`;
   const stackFill = ((connected.length + (linking ? 0.45 : 0)) / DOEINSURE_STACK.sources.length) * 100;
 
   return (
