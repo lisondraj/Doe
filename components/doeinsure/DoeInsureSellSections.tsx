@@ -153,7 +153,12 @@ function ScaleBody({
   );
 }
 
+const MATCH_SCAN_MS = 900;
+const MATCH_SCAN_MS_IPHONE = 2600;
+
 function MatchSection() {
+  const { variant } = useDoeInsurePageVariant();
+  const scanMs = variant === "phone" ? MATCH_SCAN_MS_IPHONE : MATCH_SCAN_MS;
   const [scenario, setScenario] = useState(0);
   const [done, setDone] = useState<Record<string, boolean>>({});
   const [scanning, setScanning] = useState(false);
@@ -173,9 +178,9 @@ function MatchSection() {
     setScanning(true);
     setDone({});
     setMatchingAll(false);
-    const id = window.setTimeout(() => setScanning(false), 900);
+    const id = window.setTimeout(() => setScanning(false), scanMs);
     return () => window.clearTimeout(id);
-  }, [scenario]);
+  }, [scenario, scanMs]);
 
   const toggleClause = (clauseId: string) => {
     if (scanning || matchingAll) return;
@@ -230,7 +235,15 @@ function MatchSection() {
                 ))}
               </div>
 
-              <article className={`doeinsure-doc doeinsure-match__doc${scanning ? " is-scanning" : ""}`} key={active.id}>
+              <article
+                className={`doeinsure-doc doeinsure-match__doc${scanning ? " is-scanning" : ""}`}
+                key={active.id}
+                style={
+                  variant === "phone"
+                    ? ({ "--match-scan-ms": `${scanMs}ms` } as CSSProperties)
+                    : undefined
+                }
+              >
                 <div className="doeinsure-match__reader">
                   <span className="doeinsure-match__draft">{DOEINSURE_MATCH.draftLabel}</span>
                   <div className={`doeinsure-match__scan${scanning ? " is-on" : ""}`} aria-hidden={!scanning}>
@@ -390,11 +403,6 @@ function StackBody({ revealed }: { revealed: boolean }) {
     setAuto(false);
     setLinking(null);
     setOn((current) => ({ ...current, [id]: !current[id] }));
-  };
-
-  const connectAll = () => {
-    if (busy || complete) return;
-    setAuto(true);
   };
 
   const status = complete

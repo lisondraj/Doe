@@ -3960,20 +3960,21 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   align-items: flex-start;
   justify-content: center;
   gap: 0.12rem;
-  min-height: 3.35rem;
-  padding: 0.5rem 0.42rem 0.55rem;
+  min-height: 3.9rem;
+  padding: 0.52rem 0.42rem 0.62rem;
   border: 1px solid var(--di-line);
   background: var(--di-white);
+  overflow: visible;
 }
 
 .doeinsure-root--iphone .doeinsure-match__system-name {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   font-size: 0.58rem;
   letter-spacing: 0.05em;
-  line-height: 1.15;
+  line-height: 1.18;
 }
 
 .doeinsure-root--iphone .doeinsure-match__systems b {
@@ -4004,6 +4005,15 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-root--iphone .doeinsure-match__file .doeinsure-scan__limits {
   grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin-bottom: 0.85rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-line);
+  overflow: hidden;
+}
+
+.doeinsure-root--iphone .doeinsure-match__file .doeinsure-scan__limits span {
+  background: var(--di-gray);
 }
 
 .doeinsure-root--iphone .doeinsure-match__updates {
@@ -4037,6 +4047,19 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   position: relative;
   overflow: hidden;
   padding-bottom: 0.15rem;
+}
+
+.doeinsure-root--iphone .doeinsure-match__doc.is-scanning .doeinsure-match__reader {
+  min-height: 8.75rem;
+}
+
+.doeinsure-root--iphone .doeinsure-match__doc.is-scanning .doeinsure-match__reader > p {
+  opacity: 0.38;
+}
+
+.doeinsure-root--iphone .doeinsure-match__doc.is-scanning .doeinsure-match__clauses {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .doeinsure-root--iphone .doeinsure-match__reader > p {
@@ -4080,10 +4103,14 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-match__scan-bar::after {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
   width: 100%;
   height: 2px;
   background: var(--di-blue);
-  animation: doeinsure-match-read 1.2s linear infinite;
+  animation: doeinsure-match-read-iphone var(--match-scan-ms, 2.6s) linear infinite;
 }
 
 .doeinsure-root--iphone .doeinsure-match__doc:not(.is-scanning) .doeinsure-match__scan {
@@ -4121,6 +4148,22 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   100% {
     transform: translateY(7.5rem);
     opacity: 0.25;
+  }
+}
+
+@keyframes doeinsure-match-read-iphone {
+  0% {
+    top: 0;
+    opacity: 0.45;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    top: calc(100% - 2px);
+    opacity: 1;
   }
 }
 
