@@ -19,6 +19,7 @@ import {
   DOEINSURE_POLICY_SAMPLES,
   DOEINSURE_STATS,
   DOEINSURE_STAGES,
+  DOEINSURE_UNDERWRITE,
   DOEINSURE_WHO,
 } from "@/lib/doeinsure/doeinsure-copy";
 import { useDoeInsureLadderScroll } from "@/lib/doeinsure/use-doeinsure-ladder-scroll";
@@ -193,6 +194,7 @@ export function DoeInsurePageContent() {
   const [compare, setCompare] = useState<"old" | "next">("next");
   const [next, setNext] = useState(0);
   const [limit, setLimit] = useState(1);
+  const [checks, setChecks] = useState<Record<string, boolean>>({});
   const [faq, setFaq] = useState<number | null>(0);
 
   const activeCover = DOEINSURE_COVERAGE.items[cover];
@@ -498,6 +500,31 @@ export function DoeInsurePageContent() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </DoeInsureReveal>
+        </div>
+      </section>
+
+      <section className="doeinsure-section doeinsure-section--gray" id="underwrite">
+        <div className="doeinsure-wrap">
+          <DoeInsureReveal>
+            <h2>{DOEINSURE_UNDERWRITE.title}</h2>
+            <div className="doeinsure-checks">
+              {DOEINSURE_UNDERWRITE.items.map((item) => {
+                const on = Boolean(checks[item]);
+                return (
+                  <button
+                    key={item}
+                    type="button"
+                    className={`doeinsure-check${on ? " is-on" : ""}`}
+                    aria-pressed={on}
+                    onClick={() => setChecks((current) => ({ ...current, [item]: !current[item] }))}
+                  >
+                    <i aria-hidden="true" />
+                    {item}
+                  </button>
+                );
+              })}
             </div>
           </DoeInsureReveal>
         </div>
