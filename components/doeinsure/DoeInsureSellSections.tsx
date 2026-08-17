@@ -246,10 +246,21 @@ function MatchSection() {
               >
                 <div className="doeinsure-match__reader">
                   <span className="doeinsure-match__draft">{DOEINSURE_MATCH.draftLabel}</span>
-                  <div className={`doeinsure-match__scan${scanning ? " is-on" : ""}`} aria-hidden={!scanning}>
-                    <span>{DOEINSURE_MATCH.scanning}</span>
-                    <span className="doeinsure-match__scan-bar" aria-hidden="true" />
-                  </div>
+                  {variant === "phone" ? (
+                    scanning ? (
+                      <div className="doeinsure-match__scan doeinsure-match__scan--phone is-on">
+                        <span className="doeinsure-match__scan-label">Reading MSA</span>
+                        <span className="doeinsure-match__scan-track" aria-hidden="true">
+                          <i />
+                        </span>
+                      </div>
+                    ) : null
+                  ) : (
+                    <div className={`doeinsure-match__scan${scanning ? " is-on" : ""}`} aria-hidden={!scanning}>
+                      <span>{DOEINSURE_MATCH.scanning}</span>
+                      <span className="doeinsure-match__scan-bar" aria-hidden="true" />
+                    </div>
+                  )}
                   <p>{active.excerpt}</p>
                 </div>
                 <ul className="doeinsure-match__clauses">
@@ -411,7 +422,6 @@ function StackBody({ revealed }: { revealed: boolean }) {
       ? DOEINSURE_STACK.reading
       : DOEINSURE_STACK.waiting;
   const stackPremium = Number.parseInt(DOEINSURE_STACK.premium.replace(/[^\d]/g, ""), 10);
-  const remaining = DOEINSURE_STACK.sources.length - connected.length;
   const dropStep = Math.round(stackPremium / DOEINSURE_STACK.sources.length);
   const dropTotal = dropStep * connected.length;
   const stackFill = ((connected.length + (linking ? 0.45 : 0)) / DOEINSURE_STACK.sources.length) * 100;

@@ -3948,6 +3948,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-root--iphone .doeinsure-match__systems {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
   gap: 0.75rem;
   order: 0;
   background: transparent;
@@ -3960,9 +3961,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   align-items: flex-start;
   justify-content: center;
   gap: 0.12rem;
-  min-height: 3.9rem;
+  box-sizing: border-box;
+  min-height: 4.1rem;
   padding: 0.52rem 0.42rem 0.62rem;
   border: 1px solid var(--di-line);
+  border-bottom: 1px solid var(--di-line);
   background: var(--di-white);
   overflow: visible;
 }
@@ -4044,17 +4047,14 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-match__reader {
-  position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
   padding-bottom: 0.15rem;
 }
 
-.doeinsure-root--iphone .doeinsure-match__doc.is-scanning .doeinsure-match__reader {
-  min-height: 8.75rem;
-}
-
 .doeinsure-root--iphone .doeinsure-match__doc.is-scanning .doeinsure-match__reader > p {
-  opacity: 0.38;
+  opacity: 0.72;
 }
 
 .doeinsure-root--iphone .doeinsure-match__doc.is-scanning .doeinsure-match__clauses {
@@ -4072,49 +4072,39 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   line-height: 1.48;
 }
 
-.doeinsure-root--iphone .doeinsure-match__scan {
-  position: absolute;
-  inset: 1.35rem 0 0;
-  z-index: 1;
+.doeinsure-root--iphone .doeinsure-match__scan--phone {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 0;
-  min-height: 0;
-  padding: 0;
+  gap: 0.42rem;
+  margin: 0;
   pointer-events: none;
 }
 
-.doeinsure-root--iphone .doeinsure-match__scan > span:first-child {
-  position: relative;
-  z-index: 2;
-  width: max-content;
-  padding: 0.12rem 0.35rem 0.14rem;
-  background: var(--di-white);
+.doeinsure-root--iphone .doeinsure-match__scan-label {
+  color: var(--di-blue);
   font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-.doeinsure-root--iphone .doeinsure-match__scan-bar {
-  position: absolute;
-  inset: 0;
-  height: auto;
-  background: transparent;
+.doeinsure-root--iphone .doeinsure-match__scan-track {
+  display: block;
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--di-gray);
   overflow: hidden;
 }
 
-.doeinsure-root--iphone .doeinsure-match__scan-bar::after {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
+.doeinsure-root--iphone .doeinsure-match__scan-track i {
+  display: block;
   width: 100%;
-  height: 2px;
+  height: 100%;
   background: var(--di-blue);
-  animation: doeinsure-match-read-iphone var(--match-scan-ms, 2.6s) linear infinite;
-}
-
-.doeinsure-root--iphone .doeinsure-match__doc:not(.is-scanning) .doeinsure-match__scan {
-  display: none;
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: doeinsure-match-scan-fill-iphone var(--match-scan-ms, 2.6s) linear forwards;
 }
 
 .doeinsure-root--iphone .doeinsure-match__clauses {
@@ -4151,19 +4141,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   }
 }
 
-@keyframes doeinsure-match-read-iphone {
-  0% {
-    top: 0;
-    opacity: 0.45;
+@keyframes doeinsure-match-scan-fill-iphone {
+  from {
+    transform: scaleX(0);
   }
 
-  10% {
-    opacity: 1;
-  }
-
-  100% {
-    top: calc(100% - 2px);
-    opacity: 1;
+  to {
+    transform: scaleX(1);
   }
 }
 
@@ -4218,7 +4202,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   color: #ffffff;
 }
 
-.doeinsure-match__systems button:last-child {
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__systems button:last-child {
   border-bottom: 0;
 }
 
@@ -6081,6 +6065,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   }
 
   .doeinsure-match__scan-bar::after,
+  .doeinsure-match__scan-track i,
   .doeinsure-link__wire-live.is-linking,
   .doeinsure-issue__scan.is-on,
   .doeinsure-stack-phone__source.is-linking::after {
