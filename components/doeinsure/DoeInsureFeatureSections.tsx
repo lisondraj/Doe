@@ -3,13 +3,13 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
-import { DOEINSURE_FLAP, DOEINSURE_RADAR } from "@/lib/doeinsure/doeinsure-copy";
+import { DOEINSURE_PATH, DOEINSURE_RADAR } from "@/lib/doeinsure/doeinsure-copy";
 import { useDoeInsurePageVariant } from "@/lib/doeinsure/use-doeinsure-page-variant";
 
 const RADAR_STEP_MS = 920;
 const RADAR_STEP_MS_IPHONE = 1120;
-const FLAP_STEP_MS = 1080;
-const FLAP_STEP_MS_IPHONE = 1280;
+const PATH_STEP_MS = 1100;
+const PATH_STEP_MS_IPHONE = 1320;
 const RADAR_CX = 100;
 const RADAR_CY = 100;
 const RADAR_R = 78;
@@ -102,63 +102,57 @@ function RadarBody({ revealed }: { revealed: boolean }) {
   );
 }
 
-function FlapBody({ revealed }: { revealed: boolean }) {
+function PathBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeInsurePageVariant();
-  const stepMs = variant === "phone" ? FLAP_STEP_MS_IPHONE : FLAP_STEP_MS;
-  const [flipped, setFlipped] = useState(0);
+  const stepMs = variant === "phone" ? PATH_STEP_MS_IPHONE : PATH_STEP_MS;
+  const [step, setStep] = useState(0);
   const [auto, setAuto] = useState(false);
-  const rows = DOEINSURE_FLAP.rows;
-  const complete = flipped >= rows.length;
+  const steps = DOEINSURE_PATH.steps;
+  const complete = step >= steps.length;
+  const fill = (Math.min(step, steps.length - 1) / (steps.length - 1)) * 100;
 
   useEffect(() => {
     if (!revealed) return;
-    setFlipped(0);
+    setStep(0);
     setAuto(true);
   }, [revealed]);
 
   useEffect(() => {
     if (!auto || complete) return undefined;
-    const id = window.setTimeout(() => setFlipped((current) => current + 1), stepMs);
+    const id = window.setTimeout(() => setStep((current) => current + 1), stepMs);
     return () => window.clearTimeout(id);
-  }, [auto, complete, flipped, stepMs]);
+  }, [auto, complete, step, stepMs]);
 
   return (
     <>
-      <header className="doeinsure-flap__head">
-        <span>{DOEINSURE_FLAP.board}</span>
-        <h2 className="doeinsure-flap__title">
-          {DOEINSURE_FLAP.title.map((line) => (
+      <header className="doeinsure-path__head">
+        <h2 className="doeinsure-path__title">
+          {DOEINSURE_PATH.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
         </h2>
+        <p className="doeinsure-path__lede">{DOEINSURE_PATH.lede}</p>
       </header>
 
       <div
-        className={`doeinsure-flap__board${complete ? " is-done" : ""}`}
-        style={{ "--flap-step-ms": `${stepMs}ms` } as CSSProperties}
+        className={`doeinsure-path${complete ? " is-done" : ""}`}
+        style={{ "--path-fill": `${complete ? 100 : fill}%` } as CSSProperties}
       >
-        <div className="doeinsure-flap__legend">
-          <span>Code</span>
-          <span>Clause</span>
-          <span>{DOEINSURE_FLAP.fromLabel}</span>
-          <span>{DOEINSURE_FLAP.toLabel}</span>
-        </div>
+        <i className="doeinsure-path__rail" aria-hidden="true" />
         <ol>
-          {rows.map((row, index) => {
-            const on = index < flipped;
-            const turning = index === flipped && !complete;
+          {steps.map((item, index) => {
+            const on = index < step;
+            const here = index === step && !complete;
             return (
-              <li key={row.code} className={`${on ? "is-on" : ""}${turning ? " is-turning" : ""}`}>
-                <b className="doeinsure-flap__code">{row.code}</b>
-                <span className="doeinsure-flap__clause">{row.clause}</span>
-                <em className="doeinsure-flap__tile">{row.from}</em>
-                <strong className="doeinsure-flap__tile doeinsure-flap__tile--to">
-                  <i>{on ? row.to : row.from}</i>
-                </strong>
+              <li key={item.n} className={`${on ? "is-on" : ""}${here ? " is-here" : ""}`}>
+                <em>{item.n}</em>
+                <strong>{item.name}</strong>
+                <span>{item.cover}</span>
               </li>
             );
           })}
         </ol>
+        <p className="doeinsure-path__state">{complete ? DOEINSURE_PATH.covered : DOEINSURE_PATH.walking}</p>
       </div>
     </>
   );
@@ -172,9 +166,9 @@ export function DoeInsureFeatureSections() {
           <DoeInsureReveal variant="rise">{(revealed) => <RadarBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
-      <section className="doeinsure-section doeinsure-section--board" id="flap">
+      <section className="doeinsure-section" id="path">
         <div className="doeinsure-wrap">
-          <DoeInsureReveal variant="rise">{(revealed) => <FlapBody revealed={revealed} />}</DoeInsureReveal>
+          <DoeInsureReveal variant="rise">{(revealed) => <PathBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
     </>

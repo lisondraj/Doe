@@ -7151,135 +7151,136 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   color: #ffffff;
 }
 
-.doeinsure-section--board {
-  background: #111318;
-  color: #f3ead2;
+.doeinsure-path__head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 0.7fr);
+  gap: 2.5rem;
+  align-items: end;
+  margin-bottom: 3.4rem;
 }
 
-.doeinsure-flap__head {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  margin-bottom: 2rem;
-}
-
-.doeinsure-flap__head > span {
-  color: #c4b48a;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.doeinsure-section h2.doeinsure-flap__title {
-  max-width: 14ch;
+.doeinsure-section h2.doeinsure-path__title {
+  max-width: 12ch;
   margin: 0;
-  color: #f3ead2;
-  font-size: clamp(2.2rem, 4.6vw, 3.9rem);
+  color: var(--di-ink);
+  font-size: clamp(2.2rem, 4.4vw, 3.7rem);
   font-weight: 500;
   letter-spacing: -0.07em;
   line-height: 0.94;
 }
 
-.doeinsure-flap__title span {
+.doeinsure-path__title span {
   display: block;
 }
 
-.doeinsure-flap__board {
-  border: 1px solid #3a3428;
-  background: #0b0c10;
+.doeinsure-path__lede {
+  margin: 0;
+  max-width: 28ch;
+  color: var(--di-muted);
+  font-size: 1.08rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.4;
 }
 
-.doeinsure-flap__legend,
-.doeinsure-flap__board li {
+.doeinsure-path {
+  position: relative;
+}
+
+.doeinsure-path__rail {
+  position: absolute;
+  left: 0.42rem;
+  right: 0.42rem;
+  top: 0.42rem;
+  height: 1px;
+  background: var(--di-line);
+}
+
+.doeinsure-path__rail::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--path-fill, 0%);
+  height: 100%;
+  background: var(--di-blue);
+  transition: width 720ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doeinsure-path ol {
   display: grid;
-  grid-template-columns: 3.4rem minmax(0, 1.4fr) minmax(6.5rem, 0.7fr) minmax(6.5rem, 0.7fr);
-  gap: 0.65rem;
-  align-items: center;
-}
-
-.doeinsure-flap__legend {
-  padding: 0.7rem 0.9rem;
-  border-bottom: 1px solid #3a3428;
-  color: #8a7f63;
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.doeinsure-flap__board ol {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.6rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.doeinsure-flap__board li {
-  padding: 0.55rem 0.7rem;
-  border-bottom: 1px solid #2a261c;
-}
-
-.doeinsure-flap__board li:last-child {
-  border-bottom: 0;
-}
-
-.doeinsure-flap__code {
-  color: #c4b48a;
-  font-size: 0.92rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-}
-
-.doeinsure-flap__clause {
-  color: #f3ead2;
-  font-size: 1.02rem;
-  font-weight: 500;
-  letter-spacing: -0.03em;
-}
-
-.doeinsure-flap__tile {
+.doeinsure-path li {
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.55rem;
-  padding: 0 0.55rem;
-  overflow: hidden;
-  border: 1px solid #2f2a20;
-  background:
-    linear-gradient(#1a1813, #1a1813) 0 50% / 100% 1px no-repeat,
-    #16140f;
-  color: #8a7f63;
-  font-size: 0.82rem;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-top: 1.55rem;
+  color: var(--di-muted);
+}
+
+.doeinsure-path li::before {
+  content: "";
+  position: absolute;
+  top: 0.18rem;
+  left: 0.18rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--di-white);
+  border: 1px solid var(--di-line);
+}
+
+.doeinsure-path li.is-here::before,
+.doeinsure-path li.is-on::before {
+  background: var(--di-blue);
+  border-color: var(--di-blue);
+}
+
+.doeinsure-path li em {
+  color: inherit;
+  font-size: 0.68rem;
   font-style: normal;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
+}
+
+.doeinsure-path li strong {
+  color: inherit;
+  font-size: 1.45rem;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+}
+
+.doeinsure-path li span {
+  max-width: 16ch;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.doeinsure-path li.is-here,
+.doeinsure-path li.is-on {
+  color: var(--di-ink);
+}
+
+.doeinsure-path__state {
+  margin: 2.1rem 0 0;
+  color: var(--di-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-.doeinsure-flap__tile--to {
-  perspective: 420px;
-  color: #f3ead2;
-}
-
-.doeinsure-flap__tile--to i {
-  display: block;
-  font-style: normal;
-  transform-origin: center;
-  backface-visibility: hidden;
-}
-
-.doeinsure-flap__board li.is-turning .doeinsure-flap__tile--to i,
-.doeinsure-flap__board li.is-on .doeinsure-flap__tile--to i {
-  animation: doeinsure-flap-turn var(--flap-step-ms, 1080ms) cubic-bezier(0.65, 0, 0.35, 1) both;
-}
-
-.doeinsure-flap__board li.is-on .doeinsure-flap__tile--to {
-  border-color: #c4b48a;
-  color: #111318;
-  background:
-    linear-gradient(#111318, #111318) 0 50% / 100% 1px no-repeat,
-    #f3ead2;
+.doeinsure-path.is-done .doeinsure-path__state {
+  color: var(--di-blue);
 }
 
 .doeinsure-root--iphone .doeinsure-section--print::after {
@@ -7297,7 +7298,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-section h2.doeinsure-radar__title,
-.doeinsure-root--iphone .doeinsure-section h2.doeinsure-flap__title {
+.doeinsure-root--iphone .doeinsure-section h2.doeinsure-path__title {
   font-size: clamp(1.95rem, 8.8vw, 2.55rem);
 }
 
@@ -7315,53 +7316,62 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   grid-template-columns: 1fr;
 }
 
-.doeinsure-root--iphone .doeinsure-flap__legend {
-  display: none;
+.doeinsure-root--iphone .doeinsure-path__head {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 2.1rem;
 }
 
-.doeinsure-root--iphone .doeinsure-flap__board li {
-  grid-template-columns: 2.6rem minmax(0, 1fr);
-  gap: 0.45rem 0.7rem;
+.doeinsure-root--iphone .doeinsure-path__lede {
+  max-width: none;
+  font-size: 1rem;
 }
 
-.doeinsure-root--iphone .doeinsure-flap__clause {
-  font-size: 0.95rem;
+.doeinsure-root--iphone .doeinsure-path__rail {
+  left: 0.42rem;
+  right: auto;
+  top: 0.42rem;
+  bottom: 0.42rem;
+  width: 1px;
+  height: auto;
 }
 
-.doeinsure-root--iphone .doeinsure-flap__tile {
-  min-height: 2.25rem;
-  font-size: 0.72rem;
+.doeinsure-root--iphone .doeinsure-path__rail::after {
+  width: 100%;
+  height: var(--path-fill, 0%);
+  transition: height 720ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.doeinsure-root--iphone .doeinsure-flap__board li .doeinsure-flap__tile:not(.doeinsure-flap__tile--to) {
-  grid-column: 1;
+.doeinsure-root--iphone .doeinsure-path ol {
+  grid-template-columns: 1fr;
+  gap: 0;
 }
 
-.doeinsure-root--iphone .doeinsure-flap__board li .doeinsure-flap__tile--to {
-  grid-column: 2;
+.doeinsure-root--iphone .doeinsure-path li {
+  padding: 0 0 1.55rem 1.55rem;
+}
+
+.doeinsure-root--iphone .doeinsure-path li::before {
+  top: 0.18rem;
+  left: 0.18rem;
+}
+
+.doeinsure-root--iphone .doeinsure-path li strong {
+  font-size: 1.28rem;
+}
+
+.doeinsure-root--iphone .doeinsure-path li span {
+  max-width: none;
+}
+
+.doeinsure-root--iphone .doeinsure-path__state {
+  margin-top: 0.4rem;
+  padding-left: 1.55rem;
 }
 
 @keyframes doeinsure-radar-blink {
   50% {
     opacity: 0.15;
-  }
-}
-
-@keyframes doeinsure-flap-turn {
-  0% {
-    transform: rotateX(0deg);
-  }
-
-  45% {
-    transform: rotateX(-90deg);
-  }
-
-  55% {
-    transform: rotateX(-90deg);
-  }
-
-  100% {
-    transform: rotateX(0deg);
   }
 }
 
@@ -7403,9 +7413,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   }
 
   .doeinsure-radar__status i,
-  .doeinsure-radar__sweep,
-  .doeinsure-flap__board li.is-turning .doeinsure-flap__tile--to i,
-  .doeinsure-flap__board li.is-on .doeinsure-flap__tile--to i {
+  .doeinsure-radar__sweep {
     animation: none !important;
     transform: none;
   }

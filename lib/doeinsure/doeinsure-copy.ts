@@ -771,18 +771,17 @@ export const DOEINSURE_RADAR = {
   ],
 } as const;
 
-export const DOEINSURE_FLAP = {
-  id: "flap",
-  title: ["Endorsements flip live.", "No wholesaler queue."],
-  board: "Endorsement board",
-  fromLabel: "Asked",
-  toLabel: "Bound",
-  rows: [
-    { code: "AI", clause: "Additional insured", from: "PENDING", to: "PRIMARY" },
-    { code: "WS", clause: "Waiver of subrogation", from: "OPEN", to: "WAIVED" },
-    { code: "NC", clause: "Notice of cancel", from: "60 DAY", to: "30 DAY" },
-    { code: "LM", clause: "Limit match", from: "$2M", to: "$10M" },
-    { code: "PA", clause: "Prior acts", from: "GAP", to: "RESTORED" },
+export const DOEINSURE_PATH = {
+  id: "path",
+  title: ["Coverage that sits", "in the care path."],
+  lede: "Generic tech policies stop at downtime. Doe follows the model from the room to the hospital paper.",
+  covered: "On cover",
+  walking: "Walking the path",
+  steps: [
+    { n: "01", name: "Capture", cover: "Ambient audio and PHI at the bedside." },
+    { n: "02", name: "Inference", cover: "The model call, the log, the human in loop." },
+    { n: "03", name: "Clinic", cover: "The note, the order, the patient in front of it." },
+    { n: "04", name: "Contract", cover: "Named insured, the limit, the Friday ask." },
   ],
 } as const;
 
