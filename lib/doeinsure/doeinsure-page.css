@@ -46,12 +46,13 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-wrap {
   width: min(100%, 72rem);
   margin: 0 auto;
-  padding-left: var(--di-inset);
-  padding-right: var(--di-inset);
+  padding-left: max(var(--di-inset), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--di-inset), env(safe-area-inset-right, 0px));
 }
 
 .doeinsure-root--iphone {
-  --di-inset: calc(0.5rem * 2 / 9);
+  --di-inset: max(1rem, env(safe-area-inset-left, 0px));
+  overflow-x: clip;
 }
 
 .doeinsure-root--iphone .doeinsure-wrap {
@@ -61,27 +62,45 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-nav {
   position: sticky;
   top: 0;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.25rem;
-  min-height: 4.25rem;
-  padding: 0.85rem var(--di-inset);
+  z-index: 50;
   border-bottom: 1px solid var(--di-line);
   background: var(--di-white);
 }
 
-.doeinsure-root--iphone .doeinsure-nav {
-  min-height: 3.6rem;
-  padding: 0.7rem var(--di-inset);
+.doeinsure-nav.is-scrolled {
+  border-bottom-color: var(--di-ink);
+}
+
+.doeinsure-nav__bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  width: min(100%, 72rem);
+  min-height: 4.5rem;
+  margin: 0 auto;
+  padding: 0 max(var(--di-inset), env(safe-area-inset-right, 0px)) 0 max(var(--di-inset), env(safe-area-inset-left, 0px));
+}
+
+.doeinsure-root--iphone .doeinsure-nav__bar {
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: calc(3.5rem + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .doeinsure-nav__mark {
-  font-size: 1.05rem;
+  justify-self: start;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 1.12rem;
   font-weight: 600;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.05em;
   line-height: 1;
+}
+
+.doeinsure-root--iphone .doeinsure-nav__mark {
+  font-size: 1.02rem;
 }
 
 .doeinsure-nav__mark span {
@@ -91,18 +110,170 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-nav__links {
   display: flex;
   align-items: center;
-  gap: 1.35rem;
+  justify-content: center;
+  gap: 0.15rem;
+}
+
+.doeinsure-root--iphone .doeinsure-nav__links {
+  display: none;
 }
 
 .doeinsure-nav__links a {
+  position: relative;
+  padding: 0.45rem 0.7rem;
   color: var(--di-muted);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: -0.02em;
+  transition: color 160ms ease;
 }
 
 .doeinsure-nav__links a:hover {
   color: var(--di-ink);
+}
+
+.doeinsure-nav__links a.is-on {
+  color: var(--di-ink);
+}
+
+.doeinsure-nav__links a.is-on::after {
+  content: "";
+  position: absolute;
+  left: 0.7rem;
+  right: 0.7rem;
+  bottom: 0.2rem;
+  height: 1px;
+  background: var(--di-blue);
+}
+
+.doeinsure-nav__end {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 0.45rem;
+}
+
+.doeinsure-root a.doeinsure-nav__cta,
+.doeinsure-root .doeinsure-nav__cta {
+  min-height: 2.35rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.84rem;
+}
+
+.doeinsure-nav__cta-short {
+  display: none;
+}
+
+.doeinsure-root--iphone .doeinsure-nav__cta-full {
+  display: none;
+}
+
+.doeinsure-root--iphone .doeinsure-nav__cta-short {
+  display: inline;
+}
+
+.doeinsure-root--iphone .doeinsure-nav__cta {
+  min-height: 2.15rem;
+  min-width: 5.6rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.doeinsure-nav__menu {
+  display: none;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+  color: var(--di-ink);
+  cursor: pointer;
+}
+
+.doeinsure-root--iphone .doeinsure-nav__menu {
+  display: flex;
+}
+
+.doeinsure-nav.is-open .doeinsure-nav__menu {
+  border-color: var(--di-ink);
+  background: var(--di-ink);
+  color: #ffffff;
+}
+
+.doeinsure-nav__menu i {
+  display: block;
+  width: 0.95rem;
+  height: 1px;
+  background: currentColor;
+  transition: transform 180ms ease;
+}
+
+.doeinsure-nav.is-open .doeinsure-nav__menu i:first-child {
+  transform: translateY(3px) rotate(45deg);
+}
+
+.doeinsure-nav.is-open .doeinsure-nav__menu i:last-child {
+  transform: translateY(-3px) rotate(-45deg);
+}
+
+.doeinsure-nav__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  min-height: calc(100dvh - 3.5rem - env(safe-area-inset-top, 0px));
+  padding: 0.4rem max(var(--di-inset), env(safe-area-inset-right, 0px)) calc(1.6rem + env(safe-area-inset-bottom, 0px))
+    max(var(--di-inset), env(safe-area-inset-left, 0px));
+  background: var(--di-white);
+  border-bottom: 1px solid var(--di-line);
+}
+
+.doeinsure-nav__panel[hidden] {
+  display: none;
+}
+
+.doeinsure-nav__panel:not([hidden]) {
+  animation: doeinsure-in 200ms ease;
+}
+
+.doeinsure-nav__panel nav {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--di-line);
+}
+
+.doeinsure-nav__panel a:not(.doeinsure-btn) {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 1.05rem 0;
+  border-bottom: 1px solid var(--di-line);
+  color: var(--di-ink);
+  font-size: 1.55rem;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+}
+
+.doeinsure-nav__panel a:not(.doeinsure-btn) span {
+  color: var(--di-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.doeinsure-nav__panel a.is-on {
+  color: var(--di-blue);
+}
+
+.doeinsure-nav__panel a.is-on span {
+  color: var(--di-blue);
 }
 
 .doeinsure-root a.doeinsure-btn,
@@ -422,7 +593,8 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-root--iphone .doeinsure-stat {
-  padding: 1.15rem var(--di-inset);
+  padding: 1.15rem max(var(--di-inset), env(safe-area-inset-right, 0px)) 1.15rem
+    max(var(--di-inset), env(safe-area-inset-left, 0px));
   border-right: 0;
   border-bottom: 1px solid var(--di-line);
 }
@@ -1183,7 +1355,8 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   flex-direction: column;
   align-items: flex-start;
   gap: 1.2rem;
-  padding: 1.6rem var(--di-inset) 1.8rem;
+  padding: 1.6rem max(var(--di-inset), env(safe-area-inset-right, 0px)) calc(1.8rem + env(safe-area-inset-bottom, 0px))
+    max(var(--di-inset), env(safe-area-inset-left, 0px));
 }
 
 .doeinsure-footer strong {
@@ -3079,11 +3252,5 @@ html[data-doeinsure-page][data-layout="desktop"] body {
     opacity: 1 !important;
     filter: none !important;
     transform: none !important;
-  }
-}
-
-@media (max-width: 1023px) {
-  .doeinsure-root--desktop .doeinsure-nav__links {
-    display: none;
   }
 }

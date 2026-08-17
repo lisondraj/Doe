@@ -12,6 +12,15 @@ export const DOEINSURE_NAV_LINKS = [
   { href: "#faq", label: "FAQ" },
 ] as const;
 
+export const DOEINSURE_NAV = {
+  mark: "Doe",
+  markAccent: "Insure",
+  cta: "Request coverage",
+  ctaShort: "Request",
+  menuOpen: "Open menu",
+  menuClose: "Close menu",
+} as const;
+
 export const DOEINSURE_HERO = {
   eyebrow: "Doe Insure",
   headline: ["Bind the model,", "the data, the company."],
