@@ -5220,8 +5220,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-stack-phone__premium {
   display: flex;
-  align-items: baseline;
-  gap: 0.55rem;
+  align-items: center;
+  gap: 0.7rem;
   margin: 0.15rem 0 0.2rem;
 }
 
@@ -5241,18 +5241,27 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stack-phone__drop {
-  color: var(--di-ink);
-  font-size: 1.02rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.9rem;
+  padding: 0.22rem 0.55rem;
+  border: 1px solid var(--di-blue);
+  background: var(--di-blue);
+  color: #ffffff;
+  font-size: 1.12rem;
   font-weight: 600;
   letter-spacing: -0.04em;
+  line-height: 1;
 }
 
 .doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__premium em {
   color: rgba(255, 255, 255, 0.82);
 }
 
-.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__drop {
-  color: #ffffff;
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__premium .doeinsure-stack-phone__drop {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: var(--di-blue);
 }
 
 .doeinsure-stack-phone__meter {
@@ -5412,8 +5421,15 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-stack-phone__source strong.is-drop {
-  color: var(--di-ink);
-  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.7rem;
+  padding: 0.2rem 0.48rem;
+  border: 1px solid var(--di-blue);
+  background: var(--di-blue);
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 600;
   letter-spacing: -0.03em;
   text-transform: none;
 }
