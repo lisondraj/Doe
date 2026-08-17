@@ -5240,8 +5240,19 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   letter-spacing: -0.02em;
 }
 
+.doeinsure-stack-phone__drop {
+  color: var(--di-ink);
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
 .doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__premium em {
   color: rgba(255, 255, 255, 0.82);
+}
+
+.doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__drop {
+  color: #ffffff;
 }
 
 .doeinsure-stack-phone__meter {
@@ -5398,6 +5409,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.doeinsure-stack-phone__source strong.is-drop {
+  color: var(--di-ink);
+  font-size: 0.82rem;
+  letter-spacing: -0.03em;
+  text-transform: none;
 }
 
 .doeinsure-stack-phone__source.is-on i,

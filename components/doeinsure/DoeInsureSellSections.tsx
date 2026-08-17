@@ -404,6 +404,8 @@ function StackBody({ revealed }: { revealed: boolean }) {
       : DOEINSURE_STACK.waiting;
   const stackPremium = Number.parseInt(DOEINSURE_STACK.premium.replace(/[^\d]/g, ""), 10);
   const remaining = DOEINSURE_STACK.sources.length - connected.length;
+  const dropStep = Math.round(stackPremium / DOEINSURE_STACK.sources.length);
+  const dropTotal = dropStep * connected.length;
   const livePremium = complete
     ? DOEINSURE_STACK.premium
     : `$${stackPremium + Math.round((stackPremium * remaining) / DOEINSURE_STACK.sources.length)}`;
@@ -551,6 +553,7 @@ function StackBody({ revealed }: { revealed: boolean }) {
               <strong className="doeinsure-stack-phone__company">{DOEINSURE_STACK.company}</strong>
               <p className="doeinsure-stack-phone__premium">
                 <b>{livePremium}</b>
+                {dropTotal ? <em className="doeinsure-stack-phone__drop">−${dropTotal}</em> : null}
                 {complete ? <em>{DOEINSURE_STACK.premiumNote}</em> : null}
               </p>
               <div
@@ -596,7 +599,9 @@ function StackBody({ revealed }: { revealed: boolean }) {
                           <b>{item.name}</b>
                           <em>{item.signal}</em>
                         </span>
-                        <strong>{reading ? "Reading" : live ? item.value : "Connect"}</strong>
+                        <strong className={live && !reading ? "is-drop" : undefined}>
+                          {reading ? "Reading" : live ? `−$${dropStep}` : "Connect"}
+                        </strong>
                       </button>
                     </li>
                   );
