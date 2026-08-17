@@ -5,8 +5,7 @@ export const DOEINSURE_PAGE_DESCRIPTION =
   "Insurance for new and existing healthcare AI companies. Cover the model, the data, and the company.";
 
 export const DOEINSURE_NAV_LINKS = [
-  { href: "#stages", label: "Growth+" },
-  { href: "#quote", label: "Quote" },
+  { href: "#stages", label: "Growth" },
   { href: "#scale", label: "Scale" },
   { href: "#match", label: "Match" },
   { href: "#faq", label: "FAQ" },
@@ -86,7 +85,7 @@ export const DOEINSURE_POLICY_SAMPLES = [
     kicker: "Policy",
     id: "DI-4418",
     name: "Healthcare AI E&O",
-    limit: "$5,000,000",
+    limit: "$5M",
     limitLabel: "Each claim / aggregate",
     status: "Bound",
     rider: "Cyber included",
@@ -97,7 +96,7 @@ export const DOEINSURE_POLICY_SAMPLES = [
     kicker: "Quote",
     id: "DI-2201",
     name: "Cyber and privacy",
-    limit: "$2,000,000",
+    limit: "$2M",
     limitLabel: "Each claim / aggregate",
     status: "Quoted",
     rider: "PHI rider",
@@ -108,7 +107,7 @@ export const DOEINSURE_POLICY_SAMPLES = [
     kicker: "Match",
     id: "DI-8810",
     name: "Tech E&O + D&O",
-    limit: "$10,000,000",
+    limit: "$10M",
     limitLabel: "Each claim / aggregate",
     status: "Matching",
     rider: "Named insured",
@@ -163,13 +162,12 @@ export const DOEINSURE_COVERAGE = {
 } as const;
 
 export const DOEINSURE_STAGES = {
-  eyebrow: "Stages",
-  title: "Growth+.",
-  lede: "What is in force at each round. Click a stage — limits, lines, and the work the dashboard does.",
+  title: ["Coverage that changes as fast as your", "company."],
   items: [
     {
       id: "idea",
       name: "Idea",
+      lead: true,
       limit: "$1M",
       badge: "First bind",
       moment: "Founders, a repo, no revenue.",
@@ -214,56 +212,9 @@ export const DOEINSURE_STAGES = {
       policies: ["Technology E&O", "Cyber and privacy", "Directors and officers", "Media and IP"],
     },
     {
-      id: "series-b",
-      name: "Series B",
-      limit: "$5–10M",
-      badge: "Adds product",
-      moment: "Multi-site GTM. Maybe SaMD.",
-      cover: "Named insureds for the hospital. Product injury, not just downtime.",
-      includes: [
-        "Technology E&O",
-        "Cyber and privacy",
-        "Product liability",
-        "Directors and officers",
-        "Media and IP",
-        "Named insureds",
-      ],
-      policies: [
-        "Technology E&O",
-        "Cyber and privacy",
-        "Product liability",
-        "Directors and officers",
-        "Media and IP",
-      ],
-    },
-    {
-      id: "series-c",
-      name: "Series C",
-      limit: "$5–10M",
-      badge: "Adds regulatory",
-      moment: "National book. Agents shipping every quarter.",
-      cover: "Working limit at $5–10M. Model-change endorsements as the fleet grows.",
-      includes: [
-        "Technology E&O",
-        "Cyber and privacy",
-        "Product liability",
-        "Directors and officers",
-        "Media and IP",
-        "Regulatory defense",
-        "Model-change endorsements",
-      ],
-      policies: [
-        "Technology E&O",
-        "Cyber and privacy",
-        "Product liability",
-        "Directors and officers",
-        "Media and IP",
-        "Regulatory defense",
-      ],
-    },
-    {
       id: "growth",
-      name: "Growth+",
+      name: "Growth",
+      band: true,
       limit: "$10M+",
       badge: "Full stack",
       moment: "Late stage, public path, or an existing vendor book.",
@@ -348,9 +299,7 @@ export const DOEINSURE_QUOTE = {
 
 export const DOEINSURE_SCALE = {
   id: "scale",
-  eyebrow: "02 · Scale",
-  title: "Pay this month’s company.",
-  lede: "January is $10k MRR. June is $86k. An annual premium guessed in December is either a cash-flow hit or a gap. Usage-priced cover follows the book you actually have.",
+  title: ["Dynamic policy pricing", "to scale with you."],
   play: "Play January to June",
   pause: "Pause",
   ours: "Doe Insure",
@@ -385,36 +334,36 @@ export const DOEINSURE_MATCH = {
   systems: [
     {
       name: "Kaiser Permanente",
-      ask: "$10,000,000",
-      from: "$1,000,000",
+      ask: "$10M",
+      from: "$1M",
       excerpt:
-        "Vendor shall maintain Cyber Liability and Technology E&O insurance of not less than $10,000,000 each claim and in the aggregate, and shall name Kaiser Permanente as additional insured.",
+        "Vendor shall maintain Cyber Liability and Technology E&O insurance of not less than $10M each claim and in the aggregate, and shall name Kaiser Permanente as additional insured.",
       clauses: [
-        { id: "limit", label: "Limit", text: "Cyber and Tech E&O of not less than $10,000,000 each claim." },
+        { id: "limit", label: "Limit", text: "Cyber and Tech E&O of not less than $10M each claim." },
         { id: "ai", label: "Additional insured", text: "Named insured to include the health system and its affiliates." },
         { id: "waiver", label: "Waiver", text: "Waiver of subrogation in favor of the hospital." },
       ],
     },
     {
       name: "Mayo Clinic",
-      ask: "$5,000,000",
-      from: "$1,000,000",
+      ask: "$5M",
+      from: "$1M",
       excerpt:
-        "Coverage shall include Technology Errors & Omissions with limits of $5,000,000, and shall provide a waiver of subrogation and additional insured status for Mayo Clinic.",
+        "Coverage shall include Technology Errors & Omissions with limits of $5M, and shall provide a waiver of subrogation and additional insured status for Mayo Clinic.",
       clauses: [
-        { id: "limit", label: "Limit", text: "Technology E&O of not less than $5,000,000 each claim." },
+        { id: "limit", label: "Limit", text: "Technology E&O of not less than $5M each claim." },
         { id: "ai", label: "Additional insured", text: "Mayo Clinic and wholly owned affiliates as additional insured." },
         { id: "waiver", label: "Waiver", text: "Waiver of subrogation required on all liability lines." },
       ],
     },
     {
       name: "Cleveland Clinic",
-      ask: "$10,000,000",
-      from: "$2,000,000",
+      ask: "$10M",
+      from: "$2M",
       excerpt:
-        "Professional and cyber liability of $10,000,000. Certificate evidencing additional insured and primary/noncontributory wording due prior to go-live.",
+        "Professional and cyber liability of $10M. Certificate evidencing additional insured and primary/noncontributory wording due prior to go-live.",
       clauses: [
-        { id: "limit", label: "Limit", text: "Professional and cyber liability of $10,000,000." },
+        { id: "limit", label: "Limit", text: "Professional and cyber liability of $10M." },
         { id: "ai", label: "Additional insured", text: "Cleveland Clinic as additional insured, primary and noncontributory." },
         { id: "coi", label: "Certificate", text: "COI delivered prior to go-live." },
       ],

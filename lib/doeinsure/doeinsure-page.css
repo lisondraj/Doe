@@ -550,12 +550,12 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-stats__row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .doeinsure-root--iphone .doeinsure-stats__row {
   grid-template-columns: 1fr;
-  padding-left: 0;
-  padding-right: 0;
 }
 
 .doeinsure-stat {
@@ -576,6 +576,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stat:first-child {
+  padding-left: max(var(--di-inset), env(safe-area-inset-left, 0px));
   padding-right: 1.5rem;
 }
 
@@ -584,6 +585,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stat:last-child {
+  padding-right: max(var(--di-inset), env(safe-area-inset-right, 0px));
   border-right: 0;
 }
 
@@ -2175,25 +2177,39 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   align-self: center;
 }
 
+.doeinsure-stages-title {
+  max-width: 22ch;
+  margin: 0;
+  font-size: clamp(2.15rem, 3.8vw, 3.55rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+}
+
+.doeinsure-stages-title__line {
+  display: block;
+}
+
+.doeinsure-root--iphone .doeinsure-stages-title {
+  max-width: none;
+  font-size: clamp(1.85rem, 8.4vw, 2.35rem);
+}
+
 .doeinsure-stage-blocks {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1px;
   margin-top: 2.6rem;
   border: 1px solid var(--di-line);
   background: var(--di-line);
 }
 
-.doeinsure-stage-block:last-child {
-  grid-column: span 2;
+.doeinsure-stage-block--band {
+  grid-column: 1 / -1;
 }
 
 .doeinsure-root--iphone .doeinsure-stage-blocks {
   grid-template-columns: 1fr;
-}
-
-.doeinsure-root--iphone .doeinsure-stage-block:last-child {
-  grid-column: auto;
 }
 
 .doeinsure-stage-block {
@@ -2213,9 +2229,73 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   transition: background-color 180ms ease, color 180ms ease;
 }
 
-.doeinsure-stage-block.is-on {
+.doeinsure-stage-block.doeinsure-stage-block--band {
+  padding: 1.35rem 1.5rem 1.45rem;
+  cursor: default;
+}
+
+.doeinsure-stage-block.doeinsure-stage-block--band-blue {
   background: var(--di-blue);
   color: #ffffff;
+}
+
+.doeinsure-stage-block__band {
+  display: grid;
+  grid-template-columns: minmax(11rem, 0.82fr) minmax(0, 1.45fr) minmax(10rem, 0.73fr);
+  gap: 1.35rem 2rem;
+  width: 100%;
+  align-items: start;
+}
+
+.doeinsure-stage-block__band-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.doeinsure-stage-block__band-lines {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem 1.15rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.15rem 0 0;
+  border-top: 0;
+  list-style: none;
+}
+
+.doeinsure-stage-block__band-lines--wide {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.doeinsure-stage-block__band-foot {
+  margin: 0;
+  padding-top: 0.15rem;
+  color: var(--di-muted);
+  font-size: 0.88rem;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+}
+
+.doeinsure-stage-block--band-blue .doeinsure-stage-block__band-foot {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.doeinsure-root--iphone .doeinsure-stage-block__band {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.doeinsure-root--iphone .doeinsure-stage-block__band-lines {
+  grid-template-columns: 1fr;
+}
+
+.doeinsure-root--iphone .doeinsure-stage-block__band-lines--wide {
+  grid-template-columns: 1fr;
+}
+
+.doeinsure-stage-block.is-on {
+  background: var(--di-gray);
 }
 
 .doeinsure-stage-block__top {
@@ -2231,7 +2311,24 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stage-block.is-on .doeinsure-stage-block__top {
+  color: var(--di-blue);
+}
+
+.doeinsure-stage-block--band-blue .doeinsure-stage-block__top,
+.doeinsure-stage-block--band-blue b,
+.doeinsure-stage-block--band-blue .doeinsure-stage-block__moment,
+.doeinsure-stage-block--band-blue .doeinsure-stage-block__band-lines,
+.doeinsure-stage-block--band-blue .doeinsure-stage-block__band-lines li,
+.doeinsure-stage-block--band-blue .doeinsure-stage-block__band-foot {
   color: #ffffff;
+}
+
+.doeinsure-stage-block--band-blue .doeinsure-stage-block__band-lines li {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.doeinsure-stage-block--band-blue li::before {
+  background: #ffffff;
 }
 
 .doeinsure-stage-block h3 {
@@ -2251,7 +2348,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stage-block.is-on b {
-  color: #ffffff;
+  color: var(--di-blue);
 }
 
 .doeinsure-stage-block__moment {
@@ -2266,7 +2363,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-stage-block.is-on .doeinsure-stage-block__moment,
 .doeinsure-stage-block.is-on .doeinsure-stage-block__cover,
 .doeinsure-stage-block.is-on ul {
-  color: #ffffff;
+  color: inherit;
 }
 
 .doeinsure-stage-block ul {
@@ -2281,7 +2378,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stage-block.is-on ul {
-  border-top-color: rgba(255, 255, 255, 0.35);
+  border-top-color: var(--di-line);
 }
 
 .doeinsure-stage-block li {
@@ -2293,7 +2390,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stage-block.is-on li {
-  color: #ffffff;
+  color: var(--di-muted);
 }
 
 .doeinsure-stage-block li::before {
@@ -2307,7 +2404,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-stage-block.is-on li::before {
-  background: #ffffff;
+  background: var(--di-blue);
 }
 
 .doeinsure-stage-block__cover {
@@ -2317,15 +2414,6 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   font-size: 0.88rem;
   letter-spacing: -0.02em;
   line-height: 1.4;
-}
-
-.doeinsure-stage-blocks__foot {
-  margin: 1.15rem 0 0;
-  color: var(--di-blue);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .doeinsure-more {

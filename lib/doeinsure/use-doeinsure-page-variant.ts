@@ -2,11 +2,11 @@
 
 import { useEffect, useLayoutEffect, useState } from "react";
 
-import { isTouchPrimaryDevice } from "@/lib/about/about-page-context";
 import { applyPhoneLayoutViewportMeta, phoneLayoutViewportContent } from "@/lib/doephone/phone-layout-viewport";
 import {
   DOEPHONE_DESKTOP_MEDIA_QUERY,
   readBootstrappedDoePhoneVariant,
+  resolveDoePhoneVariant,
   type DoePhoneVariant,
 } from "@/lib/doephone/resolve-doe-phone-variant";
 
@@ -36,10 +36,7 @@ function applyDesktopDocumentAttrs() {
 }
 
 function resolveVariant(): DoeInsurePageVariant {
-  if (typeof window === "undefined") return "phone";
-  if (isTouchPrimaryDevice()) return "phone";
-  if (window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY).matches) return "desktop";
-  return "phone";
+  return resolveDoePhoneVariant();
 }
 
 export function useDoeInsurePageVariant(): DoeInsurePageVariant {
@@ -55,7 +52,6 @@ export function useDoeInsurePageVariant(): DoeInsurePageVariant {
   useEffect(() => {
     const sync = () => setVariant(resolveVariant());
     sync();
-    if (isTouchPrimaryDevice()) return;
     const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);

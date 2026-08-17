@@ -193,7 +193,7 @@ function CoiCard() {
         </span>
         <span>
           Limit
-          <b key={issued ? "on" : "off"}>{issued ? "$10,000,000" : "$1,000,000"}</b>
+          <b key={issued ? "on" : "off"}>{issued ? "$10M" : "$1M"}</b>
         </span>
         <span>
           Status
@@ -228,7 +228,6 @@ export function DoeInsurePageContent() {
 
   const activeCover = DOEINSURE_COVERAGE.items[cover];
   const activeLimit = DOEINSURE_LIMITS.items[limit];
-  const activeStage = DOEINSURE_STAGES.items[stage];
   const linkedCount = DOEINSURE_CONNECT.items.filter((item) => linked[item.name]).length;
 
   return (
@@ -245,37 +244,72 @@ export function DoeInsurePageContent() {
           </h1>
           <p className="doeinsure-hero__lede">{DOEINSURE_HERO.lede}</p>
           <DoeInsureHeroEmailForm email={email} onEmailChange={setEmail} />
-          <a className="doeinsure-hero__secondary" href="#quote">
+          <a className="doeinsure-hero__secondary" href="#scale">
             {DOEINSURE_HERO.secondaryCta}
           </a>
         </div>
         <PolicyPreview />
       </section>
-        <div className="doeinsure-stats" aria-label="Doe Insure at a glance">
-          <div className="doeinsure-wrap doeinsure-stats__row">
-            {DOEINSURE_STATS.map((item, index) => (
-              <button
-                key={item.label}
-                type="button"
-                className={`doeinsure-stat${stat === index ? " is-on" : ""}`}
-                aria-pressed={stat === index}
-                onClick={() => setStat(index)}
-              >
-                <b>{item.value}</b>
-                <span>{item.label}</span>
-              </button>
-            ))}
-          </div>
+      <section className="doeinsure-stats" aria-label="Doe Insure at a glance">
+        <div className="doeinsure-wrap doeinsure-stats__row">
+          {DOEINSURE_STATS.map((item, index) => (
+            <button
+              key={item.label}
+              type="button"
+              className={`doeinsure-stat${stat === index ? " is-on" : ""}`}
+              aria-pressed={stat === index}
+              onClick={() => setStat(index)}
+            >
+              <b>{item.value}</b>
+              <span>{item.label}</span>
+            </button>
+          ))}
         </div>
+      </section>
 
-      <section className="doeinsure-section doeinsure-section--gray" id="stages">
+      <section className="doeinsure-section" id="stages">
         <div className="doeinsure-wrap">
           <DoeInsureReveal>
-            <span className="doeinsure-eyebrow">{DOEINSURE_STAGES.eyebrow}</span>
-            <h2>{DOEINSURE_STAGES.title}</h2>
-            <p className="doeinsure-hero__lede">{DOEINSURE_STAGES.lede}</p>
+            <h2 className="doeinsure-stages-title">
+              {DOEINSURE_STAGES.title.map((line) => (
+                <span key={line} className="doeinsure-stages-title__line">
+                  {line}
+                </span>
+              ))}
+            </h2>
             <div className="doeinsure-stage-blocks">
               {DOEINSURE_STAGES.items.map((item, index) => {
+                const isBand = "band" in item && item.band;
+                const isLead = "lead" in item && item.lead;
+                if (isBand || isLead) {
+                  return (
+                    <div
+                      key={item.id}
+                      className={`doeinsure-stage-block doeinsure-stage-block--band${isBand ? " doeinsure-stage-block--band-blue" : ""}`}
+                    >
+                      <div className="doeinsure-stage-block__band">
+                        <div className="doeinsure-stage-block__band-head">
+                          <span className="doeinsure-stage-block__top">
+                            <span>{String(index + 1).padStart(2, "0")}</span>
+                            <span>{item.badge}</span>
+                          </span>
+                          <h3>{item.name}</h3>
+                          <b>{item.limit}</b>
+                          <p className="doeinsure-stage-block__moment">{item.moment}</p>
+                        </div>
+                        <ul
+                          className={`doeinsure-stage-block__band-lines${item.id === "growth" ? " doeinsure-stage-block__band-lines--wide" : ""}`}
+                        >
+                          {item.includes.map((line) => (
+                            <li key={line}>{line}</li>
+                          ))}
+                        </ul>
+                        <p className="doeinsure-stage-block__band-foot">{item.cover}</p>
+                      </div>
+                    </div>
+                  );
+                }
+
                 const on = stage === index;
                 return (
                   <button
@@ -302,9 +336,6 @@ export function DoeInsurePageContent() {
                 );
               })}
             </div>
-            <p className="doeinsure-stage-blocks__foot">
-              {activeStage.name} · {activeStage.policies.length} lines in force · {activeStage.limit} working limit
-            </p>
           </DoeInsureReveal>
         </div>
       </section>

@@ -2,30 +2,12 @@
 
 import { useEffect, useState } from "react";
 
-import { DoeInsureAppFrame, DoeInsureQuoteApp } from "@/components/doeinsure/DoeInsureAppUi";
+import { DoeInsureAppFrame } from "@/components/doeinsure/DoeInsureAppUi";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import {
   DOEINSURE_MATCH,
-  DOEINSURE_QUOTE,
   DOEINSURE_SCALE,
 } from "@/lib/doeinsure/doeinsure-copy";
-
-function QuoteSection() {
-  return (
-    <section className="doeinsure-section" id="quote">
-      <div className="doeinsure-wrap">
-        <DoeInsureReveal variant="left" className="doeinsure-split">
-          <div>
-            <span className="doeinsure-eyebrow">{DOEINSURE_QUOTE.eyebrow}</span>
-            <h2>{DOEINSURE_QUOTE.title}</h2>
-            <p className="doeinsure-hero__lede">{DOEINSURE_QUOTE.lede}</p>
-          </div>
-          <DoeInsureQuoteApp />
-        </DoeInsureReveal>
-      </div>
-    </section>
-  );
-}
 
 function ScaleSection() {
   const [month, setMonth] = useState(0);
@@ -99,9 +81,13 @@ function ScaleBody({
 
   return (
     <>
-      <span className="doeinsure-eyebrow">{DOEINSURE_SCALE.eyebrow}</span>
-      <h2>{DOEINSURE_SCALE.title}</h2>
-      <p className="doeinsure-hero__lede">{DOEINSURE_SCALE.lede}</p>
+      <h2 className="doeinsure-stages-title">
+        {DOEINSURE_SCALE.title.map((line) => (
+          <span key={line} className="doeinsure-stages-title__line">
+            {line}
+          </span>
+        ))}
+      </h2>
       <DoeInsureAppFrame file="Usage · Harbor Notes">
       <div className="doeinsure-scale-board">
         <div className="doeinsure-scale-board__top">
@@ -304,7 +290,6 @@ function MatchSection() {
 export function DoeInsureSellSections() {
   return (
     <>
-      <QuoteSection />
       <ScaleSection />
       <MatchSection />
     </>

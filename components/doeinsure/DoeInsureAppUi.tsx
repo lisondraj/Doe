@@ -240,7 +240,7 @@ export function DoeInsureQuoteApp() {
           <RiskMods
             connected={connected}
             total={DOEINSURE_QUOTE.sources.length}
-            limit={ready ? "$2,000,000" : "—"}
+            limit={ready ? "$2M" : "—"}
             status={ready ? DOEINSURE_QUOTE.ready : "Intake"}
           />
         ) : null}
@@ -290,7 +290,7 @@ export function DoeInsureHowApp({ step }: { step: number }) {
           <RiskMods
             connected={Math.max(connected, 2)}
             total={DOEINSURE_QUOTE.sources.length}
-            limit="$2,000,000"
+            limit="$2M"
             status="Quoted"
           />
         ) : null}
