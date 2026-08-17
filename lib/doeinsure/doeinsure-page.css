@@ -2486,6 +2486,8 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 .doeinsure-scale-board__premium.is-old {
   color: var(--di-muted);
 }
+
+.doeinsure-scale-board__note {
   display: block;
   max-width: 36rem;
   margin-top: 0.7rem;
