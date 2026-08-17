@@ -5280,7 +5280,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-stack-phone__meter i {
-  transition: width var(--stack-connect-ms, 1280ms) cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width var(--stack-connect-ms, 1680ms) cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__meter {
@@ -5445,7 +5445,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-stack-phone__source.is-linking i {
-  animation: doeinsure-stack-phone-pin var(--stack-connect-ms, 1280ms) ease-in-out infinite;
+  animation: doeinsure-stack-phone-pin var(--stack-connect-ms, 1680ms) ease-in-out infinite;
 }
 
 .doeinsure-stack-phone__source.is-linking::after {
@@ -5461,7 +5461,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-stack-phone__source.is-linking::after {
-  animation: doeinsure-stack-phone-read var(--stack-connect-ms, 1280ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: doeinsure-stack-phone-read var(--stack-connect-ms, 1680ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .doeinsure-stack-phone__cta .doeinsure-btn {

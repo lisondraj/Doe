@@ -322,9 +322,9 @@ function MatchSection() {
 const STACK_HUB = { x: 50, y: 50 };
 const STACK_HUB_MOBILE = { x: 14, y: 94 };
 const STACK_CONNECT_MS = 720;
-const STACK_CONNECT_MS_IPHONE = 1280;
+const STACK_CONNECT_MS_IPHONE = 1680;
 const STACK_AUTO_DELAY_MS = 160;
-const STACK_AUTO_DELAY_MS_IPHONE = 360;
+const STACK_AUTO_DELAY_MS_IPHONE = 480;
 
 function stackPath(x: number, y: number) {
   const midY = y < STACK_HUB.y ? 34 : 66;
