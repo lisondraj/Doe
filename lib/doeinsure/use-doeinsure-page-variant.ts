@@ -2,15 +2,15 @@
 
 import { useEffect, useLayoutEffect, useState } from "react";
 
-import { applyPhoneLayoutViewportMeta, phoneLayoutViewportContent } from "@/lib/doephone/phone-layout-viewport";
 import {
-  DOEPHONE_DESKTOP_MEDIA_QUERY,
-  readBootstrappedDoePhoneVariant,
-  resolveDoePhoneVariant,
-  type DoePhoneVariant,
-} from "@/lib/doephone/resolve-doe-phone-variant";
+  DOEINSURE_DESKTOP_MEDIA_QUERY,
+  DOEINSURE_DEVICE_VIEWPORT,
+  resolveDoeInsurePageVariant,
+  type DoeInsurePageVariant,
+} from "@/lib/doeinsure/doeinsure-page-variant";
+import { applyPhoneLayoutViewportMeta, phoneLayoutViewportContent } from "@/lib/doephone/phone-layout-viewport";
 
-export type DoeInsurePageVariant = DoePhoneVariant;
+export type { DoeInsurePageVariant } from "@/lib/doeinsure/doeinsure-page-variant";
 
 function applyPhoneDocumentAttrs() {
   const html = document.documentElement;
@@ -26,6 +26,8 @@ function applyPhoneDocumentAttrs() {
 function applyDesktopDocumentAttrs() {
   const html = document.documentElement;
   const body = document.body;
+  const meta = document.querySelector('meta[name="viewport"]');
+
   html.setAttribute("data-doeinsure-page", "true");
   html.removeAttribute("data-home-page");
   html.removeAttribute("data-about-page");
@@ -33,41 +35,45 @@ function applyDesktopDocumentAttrs() {
   html.removeAttribute("data-doephone-pinching");
   html.setAttribute("data-layout", "desktop");
   body.classList.add("desktop-route");
+  html.style.removeProperty("--app-vw");
+  html.style.removeProperty("--app-vh");
+  html.style.removeProperty("--app-vv-offset-top");
+  meta?.setAttribute("content", DOEINSURE_DEVICE_VIEWPORT);
 }
 
-function resolveVariant(): DoeInsurePageVariant {
-  return resolveDoePhoneVariant();
-}
-
-export function useDoeInsurePageVariant(): DoeInsurePageVariant {
-  const [variant, setVariant] = useState<DoeInsurePageVariant>(() => {
-    if (typeof window === "undefined") return "phone";
-    return readBootstrappedDoePhoneVariant();
-  });
+export function useDoeInsurePageVariant() {
+  const [variant, setVariant] = useState<DoeInsurePageVariant>("phone");
+  const [ready, setReady] = useState(false);
 
   useLayoutEffect(() => {
-    setVariant(readBootstrappedDoePhoneVariant());
+    setVariant(resolveDoeInsurePageVariant());
+    setReady(true);
   }, []);
 
   useEffect(() => {
-    const sync = () => setVariant(resolveVariant());
+    if (!ready) return undefined;
+
+    const sync = () => setVariant(resolveDoeInsurePageVariant());
     sync();
-    const mq = window.matchMedia(DOEPHONE_DESKTOP_MEDIA_QUERY);
+    const mq = window.matchMedia(DOEINSURE_DESKTOP_MEDIA_QUERY);
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
-  }, []);
+  }, [ready]);
 
   useLayoutEffect(() => {
+    if (!ready) return;
+
     if (variant === "desktop") {
       applyDesktopDocumentAttrs();
       return;
     }
+
     applyPhoneDocumentAttrs();
     applyPhoneLayoutViewportMeta();
-  }, [variant]);
+  }, [ready, variant]);
 
   useEffect(() => {
-    if (variant !== "phone") return undefined;
+    if (!ready || variant !== "phone") return undefined;
 
     const html = document.documentElement;
     const meta = document.querySelector('meta[name="viewport"]');
@@ -83,7 +89,7 @@ export function useDoeInsurePageVariant(): DoeInsurePageVariant {
         else meta.removeAttribute("content");
       }
     };
-  }, [variant]);
+  }, [ready, variant]);
 
-  return variant;
+  return { variant, ready };
 }

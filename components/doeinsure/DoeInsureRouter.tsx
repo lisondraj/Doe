@@ -6,6 +6,11 @@ import { useDoeInsurePageVariant } from "@/lib/doeinsure/use-doeinsure-page-vari
 import "@/lib/doeinsure/doeinsure-page.css";
 
 export function DoeInsureRouter() {
-  const variant = useDoeInsurePageVariant();
+  const { variant, ready } = useDoeInsurePageVariant();
+
+  if (!ready) {
+    return <div className="doeinsure-root doeinsure-root--desktop" suppressHydrationWarning />;
+  }
+
   return variant === "desktop" ? <DoeInsureDesktopView /> : <DoeInsureMobileView />;
 }
