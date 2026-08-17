@@ -1,11 +1,24 @@
+import { STORY_FABRIC_GOLD_TITLES, STORY_FABRIC_TILE_COPY } from "@/lib/story/story-fabric-visuals";
+import { STORY_FLOAT_GOLD_TITLES, STORY_FLOAT_TILE_COPY } from "@/lib/story/story-float-visuals";
+import { STORY_MEET_DOE_GOLD_TITLES } from "@/lib/story/story-meet-doe-visuals";
+import {
+  STORY_GENOME_GOLD_TITLES,
+  STORY_GENOME_TILE_COPY,
+} from "@/lib/story/story-genome-visuals";
+import {
+  STORY_PULSE_GOLD_TITLES,
+  STORY_PULSE_TILE_COPY,
+} from "@/lib/story/story-pulse-visuals";
 import {
   STORY_FABRIC_TALL_LEFT_POSTER,
+  STORY_FLOAT_MID_LEFT_POSTER,
   STORY_FLOAT_TOP_RIGHT_POSTER,
   STORY_GENOME_BOTTOM_RIGHT_POSTER,
   STORY_GENOME_TOP_LEFT_POSTER,
   STORY_PULSE_TALL_LEFT_POSTER,
   STORY_PULSE_WIDE_BOTTOM_POSTER,
   STORY_ROADMAP_PRIOR_AUTH_POSTER,
+  STORY_ROADMAP_RESULTS_POSTER,
 } from "@/lib/story/story-shader-posters";
 import { storyProductPuzzlePlaceholder } from "@/lib/story/story-product-puzzle-copy";
 
@@ -20,6 +33,38 @@ export type StoryProductPuzzleTile = {
   posterSrc?: string;
   /** Empty grid slot — reserves layout space without a visible tile. */
   spacer?: boolean;
+  /** Nested empty UI boxes — narrow slot left, wide slot right. */
+  innerSplit?: "narrow-wide";
+  /** Overlapping phone-number pills overlay. */
+  phonePills?: boolean;
+  /** Legacy home call-logic canvas with connector nodes. */
+  callLogicDiagram?: boolean;
+  /** Clinic fintech dashboard — scaled from bottom, edge cropped. */
+  floatDashboard?: boolean;
+  /** Big corner title (Pulse-style); optional brown gradient tone. */
+  meetDoeCornerLabel?: {
+    text: string;
+    corner: "top-left" | "bottom-left" | "bottom-right";
+    tone?: "gold" | "brown";
+  };
+  /** Gold display title at the top of a Meet Doe tile. */
+  meetDoeGoldTitle?: string | readonly string[];
+  /** Genome tile visual overlay. */
+  genomeVisual?: "fleet" | "router" | "train" | "agents";
+  /** Gold display title at the top of a Genome tile. */
+  genomeGoldTitle?: string | readonly string[];
+  /** Pulse tile visual overlay. */
+  pulseVisual?: "voices" | "desk" | "live" | "nights";
+  /** Gold display title at the top of a Pulse tile. */
+  pulseGoldTitle?: string | readonly string[];
+  /** Fabric tile visual overlay. */
+  fabricVisual?: "canvas" | "tone" | "library" | "sim";
+  /** Gold display title at the top of a Fabric tile. */
+  fabricGoldTitle?: string | readonly string[];
+  /** Float tile visual overlay. */
+  floatVisual?: "hold" | "rates" | "codes" | "denials";
+  /** Gold display title at the top of a Float tile. */
+  floatGoldTitle?: string | readonly string[];
 };
 
 export type StoryProductPuzzleConfig = {
@@ -36,28 +81,38 @@ export const STORY_GENOME_PUZZLE: StoryProductPuzzleConfig = {
     {
       id: "genome-1",
       placement: "genome-1",
-      label: "Genome primary",
-      description: storyProductPuzzlePlaceholder("Genome", "Primary surface"),
+      label: "Clinic fleet",
+      description: STORY_GENOME_TILE_COPY.fleet,
       posterSrc: STORY_GENOME_TOP_LEFT_POSTER,
+      genomeVisual: "fleet",
+      genomeGoldTitle: STORY_GENOME_GOLD_TITLES.fleet,
     },
     {
       id: "genome-2",
       placement: "genome-2",
-      label: "Genome routing",
-      description: storyProductPuzzlePlaceholder("Genome", "Routing layer"),
+      label: "Model router",
+      description: STORY_GENOME_TILE_COPY.router,
+      posterSrc: STORY_FLOAT_TOP_RIGHT_POSTER,
+      genomeVisual: "router",
+      genomeGoldTitle: STORY_GENOME_GOLD_TITLES.router,
     },
     {
       id: "genome-3",
       placement: "genome-3",
-      label: "Genome memory",
-      description: storyProductPuzzlePlaceholder("Genome", "Workflow memory"),
+      label: "Weekly train",
+      description: STORY_GENOME_TILE_COPY.train,
+      posterSrc: STORY_FLOAT_MID_LEFT_POSTER,
+      genomeVisual: "train",
+      genomeGoldTitle: STORY_GENOME_GOLD_TITLES.train,
     },
     {
       id: "genome-4",
       placement: "genome-4",
-      label: "Genome governance",
-      description: storyProductPuzzlePlaceholder("Genome", "Governance surface"),
+      label: "Agent canvas",
+      description: STORY_GENOME_TILE_COPY.agents,
       posterSrc: STORY_GENOME_BOTTOM_RIGHT_POSTER,
+      genomeVisual: "agents",
+      genomeGoldTitle: STORY_GENOME_GOLD_TITLES.agents,
     },
   ],
 };
@@ -74,36 +129,46 @@ export const STORY_PULSE_PUZZLE: StoryProductPuzzleConfig = {
     {
       id: "pulse-1",
       placement: "pulse-1",
-      label: "Pulse signals",
-      description: storyProductPuzzlePlaceholder("Pulse", "Signal surface"),
+      label: "Voice agents",
+      description: STORY_PULSE_TILE_COPY.voices,
       posterSrc: STORY_PULSE_WIDE_BOTTOM_POSTER,
+      pulseVisual: "voices",
+      pulseGoldTitle: STORY_PULSE_GOLD_TITLES.voices,
     },
     {
       id: "pulse-2",
       placement: "pulse-2",
-      label: "Pulse routing",
-      description: storyProductPuzzlePlaceholder("Pulse", "Routing lane"),
+      label: "Front desk",
+      description: STORY_PULSE_TILE_COPY.desk,
       posterSrc: STORY_PULSE_TALL_LEFT_POSTER,
+      pulseVisual: "desk",
+      pulseGoldTitle: STORY_PULSE_GOLD_TITLES.desk,
     },
     {
       id: "pulse-3",
       placement: "pulse-3",
-      label: "Pulse intake",
-      description: storyProductPuzzlePlaceholder("Pulse", "Intake channel"),
+      label: "Live floor",
+      description: STORY_PULSE_TILE_COPY.live,
+      posterSrc: STORY_FLOAT_TOP_RIGHT_POSTER,
+      pulseVisual: "live",
+      pulseGoldTitle: STORY_PULSE_GOLD_TITLES.live,
     },
     {
       id: "pulse-4",
       placement: "pulse-4",
-      label: "Pulse dispatch",
-      description: storyProductPuzzlePlaceholder("Pulse", "Dispatch lane"),
+      label: "After hours",
+      description: STORY_PULSE_TILE_COPY.nights,
+      posterSrc: STORY_FLOAT_MID_LEFT_POSTER,
+      pulseVisual: "nights",
+      pulseGoldTitle: STORY_PULSE_GOLD_TITLES.nights,
     },
   ],
 };
 
 /**
- * Fabric — 3 tiles, tall left + stacked right (2×2 grid).
- * [||][=]
- * [||][=]
+ * Fabric — 4 tiles, tall left + two squares TR + wide BR (3×2).
+ * [||][=][=]
+ * [||][====]
  */
 export const STORY_FABRIC_PUZZLE: StoryProductPuzzleConfig = {
   layout: "fabric",
@@ -112,30 +177,46 @@ export const STORY_FABRIC_PUZZLE: StoryProductPuzzleConfig = {
     {
       id: "fabric-1",
       placement: "fabric-1",
-      label: "Fabric foundation",
-      description: storyProductPuzzlePlaceholder("Fabric", "Foundation layer"),
+      label: "Design canvas",
+      description: STORY_FABRIC_TILE_COPY.canvas,
       posterSrc: STORY_FABRIC_TALL_LEFT_POSTER,
+      fabricVisual: "canvas",
+      fabricGoldTitle: STORY_FABRIC_GOLD_TITLES.canvas,
     },
     {
       id: "fabric-2",
       placement: "fabric-2",
-      label: "Fabric interfaces",
-      description: storyProductPuzzlePlaceholder("Fabric", "Interface mesh"),
+      label: "Agent voice",
+      description: STORY_FABRIC_TILE_COPY.tone,
+      posterSrc: STORY_FLOAT_TOP_RIGHT_POSTER,
+      fabricVisual: "tone",
+      fabricGoldTitle: STORY_FABRIC_GOLD_TITLES.tone,
     },
     {
       id: "fabric-3",
       placement: "fabric-3",
-      label: "Fabric delivery",
-      description: storyProductPuzzlePlaceholder("Fabric", "Delivery path"),
+      label: "Community library",
+      description: STORY_FABRIC_TILE_COPY.library,
+      posterSrc: STORY_ROADMAP_RESULTS_POSTER,
+      fabricVisual: "library",
+      fabricGoldTitle: STORY_FABRIC_GOLD_TITLES.library,
+    },
+    {
+      id: "fabric-4",
+      placement: "fabric-4",
+      label: "Conversation simulator",
+      description: STORY_FABRIC_TILE_COPY.sim,
       posterSrc: STORY_PULSE_WIDE_BOTTOM_POSTER,
+      fabricVisual: "sim",
+      fabricGoldTitle: STORY_FABRIC_GOLD_TITLES.sim,
     },
   ],
 };
 
 /**
- * Float — 3 tiles, stacked left + tall right (2×2 grid).
- * [==][||]
- * [==][||]
+ * Float — 4 tiles, square TL + wide TR, wide BL + square BR (3×2).
+ * [=][====]
+ * [====][=]
  */
 export const STORY_FLOAT_PUZZLE: StoryProductPuzzleConfig = {
   layout: "float",
@@ -144,22 +225,38 @@ export const STORY_FLOAT_PUZZLE: StoryProductPuzzleConfig = {
     {
       id: "float-1",
       placement: "float-1",
-      label: "Float entry",
-      description: storyProductPuzzlePlaceholder("Float", "Entry point"),
+      label: "Payer hold",
+      description: STORY_FLOAT_TILE_COPY.hold,
+      posterSrc: STORY_FLOAT_MID_LEFT_POSTER,
+      floatVisual: "hold",
+      floatGoldTitle: STORY_FLOAT_GOLD_TITLES.hold,
     },
     {
       id: "float-2",
       placement: "float-2",
-      label: "Float context",
-      description: storyProductPuzzlePlaceholder("Float", "Context window"),
-      posterSrc: STORY_GENOME_TOP_LEFT_POSTER,
+      label: "Contract rates",
+      description: STORY_FLOAT_TILE_COPY.rates,
+      posterSrc: STORY_GENOME_BOTTOM_RIGHT_POSTER,
+      floatVisual: "rates",
+      floatGoldTitle: STORY_FLOAT_GOLD_TITLES.rates,
     },
     {
       id: "float-3",
       placement: "float-3",
-      label: "Float agents",
-      description: storyProductPuzzlePlaceholder("Float", "Agent surface"),
-      posterSrc: STORY_PULSE_WIDE_BOTTOM_POSTER,
+      label: "Charge capture",
+      description: STORY_FLOAT_TILE_COPY.codes,
+      posterSrc: STORY_GENOME_TOP_LEFT_POSTER,
+      floatVisual: "codes",
+      floatGoldTitle: STORY_FLOAT_GOLD_TITLES.codes,
+    },
+    {
+      id: "float-4",
+      placement: "float-4",
+      label: "Denial queue",
+      description: STORY_FLOAT_TILE_COPY.denials,
+      posterSrc: STORY_ROADMAP_PRIOR_AUTH_POSTER,
+      floatVisual: "denials",
+      floatGoldTitle: STORY_FLOAT_GOLD_TITLES.denials,
     },
   ],
 };
@@ -185,7 +282,9 @@ export const STORY_MEET_DOE_PUZZLE: StoryProductPuzzleConfig = {
       placement: "meet-doe-2",
       label: "Meet Doe platform",
       description: storyProductPuzzlePlaceholder("Meet Doe", "Platform surface"),
-      posterSrc: STORY_FLOAT_TOP_RIGHT_POSTER,
+      posterSrc: STORY_GENOME_TOP_LEFT_POSTER,
+      innerSplit: "narrow-wide",
+      meetDoeGoldTitle: STORY_MEET_DOE_GOLD_TITLES.genome,
     },
     {
       id: "meet-doe-3",
@@ -193,6 +292,8 @@ export const STORY_MEET_DOE_PUZZLE: StoryProductPuzzleConfig = {
       label: "Meet Doe intelligence",
       description: storyProductPuzzlePlaceholder("Meet Doe", "Intelligence layer"),
       posterSrc: STORY_GENOME_BOTTOM_RIGHT_POSTER,
+      phonePills: true,
+      meetDoeGoldTitle: STORY_MEET_DOE_GOLD_TITLES.pulse,
     },
     {
       id: "meet-doe-4",
@@ -200,13 +301,17 @@ export const STORY_MEET_DOE_PUZZLE: StoryProductPuzzleConfig = {
       label: "Meet Doe fabric",
       description: storyProductPuzzlePlaceholder("Meet Doe", "Fabric layer"),
       posterSrc: STORY_ROADMAP_PRIOR_AUTH_POSTER,
+      callLogicDiagram: true,
+      meetDoeGoldTitle: STORY_MEET_DOE_GOLD_TITLES.fabric,
     },
     {
       id: "meet-doe-5",
       placement: "meet-doe-5",
       label: "Meet Doe pulse",
       description: storyProductPuzzlePlaceholder("Meet Doe", "Pulse layer"),
-      posterSrc: STORY_FABRIC_TALL_LEFT_POSTER,
+      posterSrc: STORY_GENOME_BOTTOM_RIGHT_POSTER,
+      floatDashboard: true,
+      meetDoeGoldTitle: STORY_MEET_DOE_GOLD_TITLES.float,
     },
   ],
 };

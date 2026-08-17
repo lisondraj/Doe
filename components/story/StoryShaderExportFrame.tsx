@@ -42,7 +42,7 @@ export function StoryShaderExportFrame({
         webGlContextAttributes={{ preserveDrawingBuffer: true }}
         worldWidth={preset.worldWidth ?? PROTO_GRAIN_GRADIENT_WORLD_WIDTH}
         worldHeight={preset.worldHeight ?? PROTO_GRAIN_GRADIENT_WORLD_HEIGHT}
-        colors={[...surface.colors]}
+        colors={[...(surface.colors ?? [])]}
         colorBack={surface.colorBack}
         softness={preset.softness}
         intensity={preset.intensity}

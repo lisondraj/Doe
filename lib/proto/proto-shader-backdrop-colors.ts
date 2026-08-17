@@ -27,6 +27,12 @@ export const DOE_HOME_HERO_DUSK_PALETTE = {
   sand: "#F2D8A8",
 } as const;
 
+export const DOE_HOME_HERO_DUSK_SHADER_COLORS = [
+  DOE_HOME_HERO_DUSK_PALETTE.horizon,
+  DOE_HOME_HERO_DUSK_PALETTE.clay,
+  DOE_HOME_HERO_DUSK_PALETTE.sand,
+] as const;
+
 const PROTO_AGENTS_MID_BLUE = "#4A6878";
 
 type ShaderColors = {
@@ -51,11 +57,7 @@ export function doeHomeHeroShaderSurface(): ProtoGrainGradientSurface {
 export function doeHomeHeroDuskShaderSurface(): ProtoGrainGradientSurface {
   return {
     variant: "home-hero",
-    colors: [
-      DOE_HOME_HERO_DUSK_PALETTE.horizon,
-      DOE_HOME_HERO_DUSK_PALETTE.clay,
-      DOE_HOME_HERO_DUSK_PALETTE.sand,
-    ],
+    colors: DOE_HOME_HERO_DUSK_SHADER_COLORS,
     colorBack: DOE_HOME_HERO_DUSK_PALETTE.back,
   };
 }
