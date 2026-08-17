@@ -3,24 +3,51 @@
 import { useEffect, useId, useState } from "react";
 
 import { DOEINSURE_NAV, DOEINSURE_NAV_LINKS } from "@/lib/doeinsure/doeinsure-copy";
+import { useDoeInsurePageVariant } from "@/lib/doeinsure/use-doeinsure-page-variant";
 
 const SECTION_IDS = DOEINSURE_NAV_LINKS.map((link) => link.href.slice(1));
+const NAV_TOP_THRESHOLD = 12;
+const PAGE_TAP_IGNORE =
+  "a, button, input, select, textarea, label, [contenteditable='true'], [role='button'], [role='link']";
 
 export function DoeInsureNav() {
   const panelId = useId();
+  const { variant, ready } = useDoeInsurePageVariant();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("#stages");
+  const isPhone = variant === "phone";
+  const overlayNav = isPhone && scrolled && open;
 
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY || document.documentElement.scrollTop || 0;
-      setScrolled(y > 12);
+      setScrolled(y > NAV_TOP_THRESHOLD);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (!ready || !isPhone) return undefined;
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (open) return;
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      if (y <= NAV_TOP_THRESHOLD) return;
+
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest(".doeinsure-nav")) return;
+      if (target.closest(PAGE_TAP_IGNORE)) return;
+
+      setOpen(true);
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [isPhone, open, ready]);
 
   useEffect(() => {
     const nodes = SECTION_IDS.map((id) => document.getElementById(id)).filter(
@@ -69,7 +96,9 @@ export function DoeInsureNav() {
   };
 
   return (
-    <header className={`doeinsure-nav${scrolled ? " is-scrolled" : ""}${open ? " is-open" : ""}`}>
+    <header
+      className={`doeinsure-nav${scrolled ? " is-scrolled" : ""}${open ? " is-open" : ""}${overlayNav ? " is-overlay" : ""}`}
+    >
       <div className="doeinsure-nav__bar">
         <a className="doeinsure-nav__mark" href="#top" onClick={() => go("#top")}>
           <span className="doeinsure-nav__mark-line">{DOEINSURE_NAV.mark}</span>
@@ -114,6 +143,17 @@ export function DoeInsureNav() {
         id={panelId}
         aria-hidden={!open}
       >
+        {overlayNav ? (
+          <button
+            type="button"
+            className="doeinsure-nav__overlay-close"
+            aria-label={DOEINSURE_NAV.menuClose}
+            onClick={() => setOpen(false)}
+          >
+            <i />
+            <i />
+          </button>
+        ) : null}
         <nav aria-label="Doe Insure menu">
           {DOEINSURE_NAV_LINKS.map((link) => (
             <a

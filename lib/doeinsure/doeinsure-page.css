@@ -313,6 +313,58 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   -webkit-overflow-scrolling: touch;
 }
 
+.doeinsure-root--iphone .doeinsure-nav.is-open.is-overlay {
+  border-bottom-color: transparent;
+}
+
+.doeinsure-root--iphone .doeinsure-nav.is-open.is-overlay .doeinsure-nav__bar {
+  display: none;
+}
+
+.doeinsure-root--iphone .doeinsure-nav.is-open.is-overlay .doeinsure-nav__panel.is-open {
+  top: 0;
+  padding-top: calc(0.55rem + env(safe-area-inset-top, 0px));
+}
+
+.doeinsure-nav__overlay-close {
+  display: none;
+}
+
+.doeinsure-root--iphone .doeinsure-nav.is-open.is-overlay .doeinsure-nav__overlay-close {
+  display: flex;
+  align-self: flex-end;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 0.35rem;
+  border: 1px solid var(--di-ink);
+  background: var(--di-ink);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.doeinsure-nav__overlay-close i {
+  display: block;
+  width: 0.95rem;
+  height: 1px;
+  background: currentColor;
+}
+
+.doeinsure-nav__overlay-close i:first-child {
+  transform: translateY(3px) rotate(45deg);
+}
+
+.doeinsure-nav__overlay-close i:last-child {
+  transform: translateY(-3px) rotate(-45deg);
+}
+
+.doeinsure-root--iphone .doeinsure-nav.is-open.is-overlay .doeinsure-nav__panel nav {
+  border-top: 0;
+}
+
 .doeinsure-nav__panel nav {
   display: flex;
   flex-direction: column;
