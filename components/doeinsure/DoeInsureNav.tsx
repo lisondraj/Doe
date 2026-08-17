@@ -10,7 +10,7 @@ export function DoeInsureNav() {
   const panelId = useId();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState("#follow");
+  const [active, setActive] = useState("#stages");
 
   useEffect(() => {
     const onScroll = () => {
