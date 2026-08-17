@@ -5,7 +5,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { DoeInsureAppFrame } from "@/components/doeinsure/DoeInsureAppUi";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import {
-  DOEINSURE_FOLLOW,
+  DOEINSURE_CLAIM,
   DOEINSURE_ISSUE,
   DOEINSURE_MATCH,
   DOEINSURE_SCALE,
@@ -783,92 +783,152 @@ function IssueBody({ revealed }: { revealed: boolean }) {
   );
 }
 
-const FOLLOW_STEP_MS = 780;
+const CLAIM_STEP_MS = 640;
+const CLAIM_STEP_MS_IPHONE = 780;
+const CLAIM_LAST_STEP = 5;
 
-function FollowSection() {
+function ClaimSection() {
   return (
-    <section className="doeinsure-section doeinsure-section--gray" id="follow">
+    <section className="doeinsure-section doeinsure-section--gray" id="claim">
       <div className="doeinsure-wrap">
         <DoeInsureReveal variant="rise">
-          {(revealed) => <FollowBody revealed={revealed} />}
+          {(revealed) => <ClaimBody revealed={revealed} />}
         </DoeInsureReveal>
       </div>
     </section>
   );
 }
 
-function FollowBody({ revealed }: { revealed: boolean }) {
+function ClaimBody({ revealed }: { revealed: boolean }) {
+  const { variant } = useDoeInsurePageVariant();
+  const stepMs = variant === "phone" ? CLAIM_STEP_MS_IPHONE : CLAIM_STEP_MS;
+  const [incident, setIncident] = useState(0);
   const [step, setStep] = useState(0);
   const [auto, setAuto] = useState(false);
-  const total = DOEINSURE_FOLLOW.ships.length;
-  const complete = step >= total;
-  const busy = auto && !complete;
-  const active = DOEINSURE_FOLLOW.ships[Math.min(step, total - 1)];
-  const status = complete
-    ? DOEINSURE_FOLLOW.current
-    : busy
-      ? `${DOEINSURE_FOLLOW.shipping} ${active.version}`
-      : DOEINSURE_FOLLOW.waiting;
+  const active = DOEINSURE_CLAIM.incidents[incident];
+  const noteOn = step >= 1;
+  const factsOn = step >= 2;
+  const evidenceOn = step >= 3;
+  const filed = step >= CLAIM_LAST_STEP;
+  const ready = step >= 4 && !filed;
+  const status = filed
+    ? DOEINSURE_CLAIM.opened
+    : ready
+      ? DOEINSURE_CLAIM.ready
+      : evidenceOn || factsOn
+        ? DOEINSURE_CLAIM.collecting
+        : DOEINSURE_CLAIM.waiting;
 
   useEffect(() => {
     if (!revealed) return;
     setStep(0);
     setAuto(true);
-  }, [revealed]);
+  }, [incident, revealed]);
 
   useEffect(() => {
-    if (!auto || complete) return undefined;
-    const id = window.setTimeout(() => setStep((current) => current + 1), FOLLOW_STEP_MS);
+    if (!auto || filed) return undefined;
+    const id = window.setTimeout(() => setStep((current) => current + 1), stepMs);
     return () => window.clearTimeout(id);
-  }, [auto, complete, step]);
+  }, [auto, filed, step, stepMs]);
 
   const pick = (index: number) => {
+    setIncident(index);
+  };
+
+  const fileClaim = () => {
+    if (!ready || filed) return;
     setAuto(false);
-    setStep(index + 1);
+    setStep(CLAIM_LAST_STEP);
   };
 
   return (
     <>
       <h2 className="doeinsure-stages-title">
-        {DOEINSURE_FOLLOW.title.map((line) => (
+        {DOEINSURE_CLAIM.title.map((line) => (
           <span key={line} className="doeinsure-stages-title__line">
             {line}
           </span>
         ))}
       </h2>
-      <DoeInsureAppFrame file="Product file · Harbor Notes" className="doeinsure-app--follow">
-        <div className={`doeinsure-follow${complete ? " is-on" : ""}`}>
-          <div className="doeinsure-follow__head">
-            <strong>{status}</strong>
-            <span>{DOEINSURE_FOLLOW.company}</span>
+      <DoeInsureAppFrame file="Claim desk · Harbor Notes" className="doeinsure-app--claim">
+        <div className={`doeinsure-claim${filed ? " is-on" : ""}`}>
+          <div className="doeinsure-claim__incidents" role="tablist" aria-label="Incident type">
+            {DOEINSURE_CLAIM.incidents.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={incident === index}
+                className={incident === index ? "is-on" : undefined}
+                onClick={() => pick(index)}
+              >
+                <span>{item.line}</span>
+                <b>{item.name}</b>
+              </button>
+            ))}
           </div>
-          <ol
-            className="doeinsure-follow__log"
-            style={{ "--follow-progress": total ? String(step / total) : "0" } as CSSProperties}
-          >
-            {DOEINSURE_FOLLOW.ships.map((item, index) => {
-              const on = step > index;
-              const live = busy && step === index;
-              return (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    className={`${on ? "is-on" : ""}${live ? " is-live" : ""}`}
-                    aria-pressed={on}
-                    onClick={() => pick(index)}
-                  >
-                    <i aria-hidden="true" />
-                    <b>{item.version}</b>
-                    <span>
-                      {item.name}
-                      <em>{item.cover}</em>
-                    </span>
-                    <p>{on ? DOEINSURE_FOLLOW.endorsed : live ? DOEINSURE_FOLLOW.shipping : DOEINSURE_FOLLOW.queued}</p>
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
+
+          <article className="doeinsure-claim__ticket" key={active.id}>
+            <header className="doeinsure-claim__head">
+              <div>
+                <strong className={filed ? "is-on" : undefined}>
+                  {filed ? active.number : DOEINSURE_CLAIM.draftTitle}
+                </strong>
+                <span>{DOEINSURE_CLAIM.company}</span>
+              </div>
+              <em className={filed ? "is-on" : undefined}>{status}</em>
+            </header>
+
+            <p className={`doeinsure-claim__note${noteOn ? " is-in" : ""}`}>
+              <span aria-hidden={!noteOn}>{active.note}</span>
+            </p>
+
+            <div className={`doeinsure-claim__facts${factsOn ? " is-in" : ""}`}>
+              <div>
+                <span>{DOEINSURE_CLAIM.whenLabel}</span>
+                <b aria-hidden={!factsOn}>{active.when}</b>
+              </div>
+              <div>
+                <span>{DOEINSURE_CLAIM.reserveLabel}</span>
+                <b aria-hidden={!factsOn}>{active.reserve}</b>
+              </div>
+            </div>
+
+            <div className="doeinsure-claim__evidence">
+              <span>{DOEINSURE_CLAIM.evidenceLabel}</span>
+              <p className={`doeinsure-claim__chips${evidenceOn ? " is-in" : ""}`}>
+                {active.evidence.map((item) => (
+                  <em key={item}>{item}</em>
+                ))}
+              </p>
+            </div>
+
+            <div className={`doeinsure-claim__desk${filed ? " is-in" : ""}`}>
+              <div>
+                <span>{DOEINSURE_CLAIM.adjusterLabel}</span>
+                <b aria-hidden={!filed}>{active.adjuster}</b>
+              </div>
+              <div>
+                <span>{DOEINSURE_CLAIM.nextLabel}</span>
+                <b aria-hidden={!filed}>{active.next}</b>
+              </div>
+            </div>
+
+            {filed ? (
+              <a className="doeinsure-btn" href="#request">
+                {DOEINSURE_CLAIM.filed}
+              </a>
+            ) : (
+              <button
+                type="button"
+                className="doeinsure-btn"
+                disabled={!ready}
+                onClick={fileClaim}
+              >
+                {DOEINSURE_CLAIM.file}
+              </button>
+            )}
+          </article>
         </div>
       </DoeInsureAppFrame>
     </>
@@ -882,7 +942,7 @@ export function DoeInsureSellSections() {
       <MatchSection />
       <StackSection />
       <IssueSection />
-      <FollowSection />
+      <ClaimSection />
     </>
   );
 }

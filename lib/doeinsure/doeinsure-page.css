@@ -3886,7 +3886,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-stages-title + .doeinsure-app--match,
 .doeinsure-stages-title + .doeinsure-app--stack,
 .doeinsure-stages-title + .doeinsure-app--issue,
-.doeinsure-stages-title + .doeinsure-app--follow {
+.doeinsure-stages-title + .doeinsure-app--claim {
   margin-top: 2.6rem;
 }
 
@@ -3894,7 +3894,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--match,
 .doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--stack,
 .doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--issue,
-.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--follow {
+.doeinsure-root--iphone .doeinsure-stages-title + .doeinsure-app--claim {
   margin-top: 1.6rem;
 }
 
@@ -3902,7 +3902,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-app--match .doeinsure-app__bar,
 .doeinsure-app--stack .doeinsure-app__bar,
 .doeinsure-app--issue .doeinsure-app__bar,
-.doeinsure-app--follow .doeinsure-app__bar {
+.doeinsure-app--claim .doeinsure-app__bar {
   display: none;
 }
 
@@ -6254,218 +6254,440 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   }
 }
 
-.doeinsure-app--follow {
+.doeinsure-app--claim {
+  border: 0;
+  background: transparent;
+}
+
+.doeinsure-claim {
+  display: grid;
+  grid-template-columns: minmax(13.25rem, 0.72fr) minmax(0, 1.28fr);
+  gap: 0.75rem;
+  align-items: stretch;
+  background: transparent;
+}
+
+.doeinsure-claim__incidents {
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--di-line);
   background: var(--di-white);
 }
 
-.doeinsure-follow {
-  display: flex;
-  flex-direction: column;
-  background: var(--di-white);
-}
-
-.doeinsure-follow__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.4rem 1.5rem 1.15rem;
-}
-
-.doeinsure-follow__head strong {
-  font-size: clamp(1.7rem, 3vw, 2.4rem);
-  font-weight: 500;
-  letter-spacing: -0.055em;
-  line-height: 1.05;
-}
-
-.doeinsure-follow.is-on .doeinsure-follow__head strong {
-  background-image: var(--di-blue-gradient-h);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
-
-.doeinsure-follow__head span {
-  color: var(--di-muted);
-  font-size: 0.98rem;
-  letter-spacing: -0.02em;
-}
-
-.doeinsure-follow__log {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0 1.5rem 1.5rem;
-  list-style: none;
-}
-
-.doeinsure-follow__log::before,
-.doeinsure-follow__log::after {
-  content: "";
-  position: absolute;
-  left: calc(1.5rem + 0.42rem);
-  top: 1.35rem;
-  bottom: 1.7rem;
-  width: 1px;
-  pointer-events: none;
-}
-
-.doeinsure-follow__log::before {
-  background: var(--di-line);
-}
-
-.doeinsure-follow__log::after {
-  background: var(--di-blue-gradient);
-  transform: scaleY(var(--follow-progress, 0));
-  transform-origin: top center;
-  transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.doeinsure-follow__log li + li {
-  margin-top: 0.15rem;
-}
-
-.doeinsure-follow__log button {
+.doeinsure-claim__incidents button {
   appearance: none;
-  display: grid;
-  grid-template-columns: 0.85rem 2.4rem minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.95rem;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.22rem;
   width: 100%;
-  padding: 0.95rem 0;
+  padding: 1.05rem 1.15rem 1.1rem;
   border: 0;
-  background: transparent;
+  border-bottom: 1px solid var(--di-line);
+  background: var(--di-white);
   color: inherit;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
 }
 
-.doeinsure-follow__log button i {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 0.85rem;
-  height: 0.85rem;
-  border: 1px solid var(--di-line);
-  background: var(--di-white);
+.doeinsure-claim__incidents button:last-child {
+  border-bottom: 0;
 }
 
-.doeinsure-follow__log button.is-on i,
-.doeinsure-follow__log button.is-live i {
-  border-color: var(--di-blue);
-  background: var(--di-blue-gradient);
-}
-
-.doeinsure-follow__log button.is-live i {
-  animation: doeinsure-follow-pulse 720ms ease infinite;
-}
-
-.doeinsure-follow__log button b {
+.doeinsure-claim__incidents button span {
   color: var(--di-muted);
-  font-size: 0.78rem;
+  font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.doeinsure-follow__log button.is-on b,
-.doeinsure-follow__log button.is-live b {
-  background-image: var(--di-blue-gradient-h);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
-
-.doeinsure-follow__log button span {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  min-width: 0;
+.doeinsure-claim__incidents button b {
   color: var(--di-ink);
   font-size: 1.12rem;
   font-weight: 500;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.045em;
 }
 
-.doeinsure-follow__log button em {
-  color: var(--di-muted);
-  font-size: 0.82rem;
-  font-style: normal;
-  font-weight: 500;
-  letter-spacing: -0.02em;
+.doeinsure-claim__incidents button.is-on {
+  background: var(--di-blue-gradient);
+  border-bottom-color: var(--di-blue);
 }
 
-.doeinsure-follow__log button p {
-  margin: 0;
-  padding: 0.38rem 0.65rem 0.4rem;
+.doeinsure-claim__incidents button.is-on span,
+.doeinsure-claim__incidents button.is-on b {
+  background-image: none;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.doeinsure-claim__ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-height: 100%;
+  padding: 1.25rem 1.3rem 1.3rem;
   border: 1px solid var(--di-line);
-  background: transparent;
-  color: var(--di-muted);
-  font-size: 0.82rem;
+  background: var(--di-white);
+  transition: background-color 420ms ease, border-color 420ms ease, color 420ms ease;
+}
+
+.doeinsure-claim.is-on .doeinsure-claim__ticket {
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue);
+  color: #ffffff;
+}
+
+.doeinsure-claim__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.doeinsure-claim__head > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.doeinsure-claim__head strong {
+  display: block;
+  min-height: 1.15em;
+  color: var(--di-ink);
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
   font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+}
+
+.doeinsure-claim__head span {
+  color: var(--di-muted);
+  font-size: 0.92rem;
   letter-spacing: -0.02em;
+}
+
+.doeinsure-claim__head em {
+  flex: 0 0 auto;
+  margin: 0.2rem 0 0;
+  padding: 0.32rem 0.58rem 0.34rem;
+  border: 1px solid var(--di-line);
+  color: var(--di-muted);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
   text-transform: uppercase;
 }
 
-.doeinsure-follow__log button.is-live p {
-  border-color: var(--di-blue);
-  background-image: var(--di-blue-gradient-h);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+.doeinsure-claim__head em.is-on,
+.doeinsure-claim.is-on .doeinsure-claim__head em {
+  border-color: #ffffff;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
 }
 
-.doeinsure-follow__log button.is-on p {
-  border-color: var(--di-blue);
-  background-image: var(--di-blue-gradient-h);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+.doeinsure-claim.is-on .doeinsure-claim__head strong,
+.doeinsure-claim.is-on .doeinsure-claim__head span {
+  background-image: none;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
 }
 
-.doeinsure-root--iphone .doeinsure-follow__head {
-  flex-direction: column;
+.doeinsure-claim__head strong.is-on {
+  animation: doeinsure-claim-stamp 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-claim__note {
+  display: flex;
   align-items: flex-start;
-  gap: 0.35rem;
-  padding: 1.15rem 1rem 0.9rem;
+  margin: 0;
+  min-height: 4.35rem;
+  padding: 0.78rem 0.82rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-gray);
+  color: var(--di-ink);
+  font-size: 0.98rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
 }
 
-.doeinsure-root--iphone .doeinsure-follow__log {
-  padding: 0 1rem 1.15rem;
+.doeinsure-claim__note span {
+  display: block;
+  opacity: 0;
+  transform: translateY(0.28rem);
 }
 
-.doeinsure-root--iphone .doeinsure-follow__log::before,
-.doeinsure-root--iphone .doeinsure-follow__log::after {
-  left: calc(1rem + 0.42rem);
+.doeinsure-claim__note.is-in span {
+  opacity: 1;
+  transform: none;
+  transition: opacity 420ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.doeinsure-root--iphone .doeinsure-follow__log button {
-  grid-template-columns: 0.85rem 2.1rem minmax(0, 1fr);
-  gap: 0.7rem;
+.doeinsure-claim.is-on .doeinsure-claim__note {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
-.doeinsure-root--iphone .doeinsure-follow__log button p {
-  grid-column: 3;
-  justify-self: start;
+.doeinsure-claim__facts,
+.doeinsure-claim__desk {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  border: 1px solid var(--di-line);
+  background: var(--di-line);
+  overflow: hidden;
+}
+
+.doeinsure-claim__facts > div,
+.doeinsure-claim__desk > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  padding: 0.72rem 0.8rem 0.78rem;
+  background: var(--di-gray);
+}
+
+.doeinsure-claim__facts span,
+.doeinsure-claim__desk span,
+.doeinsure-claim__evidence > span {
+  color: var(--di-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-claim__facts b,
+.doeinsure-claim__desk b {
+  min-height: 1.2em;
+  color: var(--di-ink);
+  font-size: 1.08rem;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.doeinsure-claim__facts:not(.is-in) b,
+.doeinsure-claim__desk:not(.is-in) b {
+  visibility: hidden;
+}
+
+.doeinsure-claim__facts.is-in b,
+.doeinsure-claim__desk.is-in b {
+  animation: doeinsure-claim-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-claim.is-on .doeinsure-claim__facts,
+.doeinsure-claim.is-on .doeinsure-claim__desk {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.doeinsure-claim.is-on .doeinsure-claim__facts > div,
+.doeinsure-claim.is-on .doeinsure-claim__desk > div {
+  background: transparent;
+}
+
+.doeinsure-claim.is-on .doeinsure-claim__facts span,
+.doeinsure-claim.is-on .doeinsure-claim__desk span,
+.doeinsure-claim.is-on .doeinsure-claim__evidence > span,
+.doeinsure-claim.is-on .doeinsure-claim__facts b,
+.doeinsure-claim.is-on .doeinsure-claim__desk b {
+  background-image: none;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.doeinsure-claim__evidence {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.doeinsure-claim__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-height: 1.85rem;
+  margin: 0;
+}
+
+.doeinsure-claim__chips em {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.85rem;
+  padding: 0.28rem 0.58rem 0.3rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-gray);
+  color: var(--di-ink);
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  transform: translateY(0.22rem);
+}
+
+.doeinsure-claim__chips.is-in em {
+  animation: doeinsure-claim-chip 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-claim__chips.is-in em:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.doeinsure-claim__chips.is-in em:nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.doeinsure-claim.is-on .doeinsure-claim__chips em {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.doeinsure-claim__ticket .doeinsure-btn {
+  width: 100%;
   margin-top: 0.15rem;
 }
 
-@keyframes doeinsure-follow-pulse {
-  0%,
-  100% {
-    transform: scale(1);
+.doeinsure-claim__ticket .doeinsure-btn:disabled {
+  opacity: 0.45;
+  cursor: wait;
+}
+
+.doeinsure-claim.is-on .doeinsure-claim__ticket .doeinsure-btn {
+  border-color: #ffffff;
+  background-color: #ffffff;
+  background-image: var(--di-blue-gradient-h), linear-gradient(#ffffff, #ffffff);
+  background-clip: text, padding-box;
+  -webkit-background-clip: text, padding-box;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.doeinsure-root--iphone .doeinsure-claim {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.doeinsure-root--iphone .doeinsure-claim__incidents {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  border: 0;
+  background: transparent;
+}
+
+.doeinsure-root--iphone .doeinsure-claim__incidents button,
+.doeinsure-root--iphone .doeinsure-claim__incidents button:last-child {
+  flex: none;
+  box-sizing: border-box;
+  min-height: 4.1rem;
+  padding: 0.52rem 0.42rem 0.62rem;
+  border: 1px solid var(--di-line);
+}
+
+.doeinsure-root--iphone .doeinsure-claim__incidents button.is-on,
+.doeinsure-root--iphone .doeinsure-claim__incidents button.is-on:last-child {
+  border-color: var(--di-blue);
+}
+
+.doeinsure-root--iphone .doeinsure-claim__incidents button span {
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+}
+
+.doeinsure-root--iphone .doeinsure-claim__incidents button b {
+  font-size: 0.86rem;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+}
+
+.doeinsure-root--iphone .doeinsure-claim__ticket {
+  gap: 0.7rem;
+  padding: 0.95rem 1rem 1rem;
+}
+
+.doeinsure-root--iphone .doeinsure-claim__head strong {
+  font-size: clamp(1.7rem, 8vw, 2.15rem);
+  letter-spacing: -0.06em;
+}
+
+.doeinsure-root--iphone .doeinsure-claim__head span {
+  font-size: 0.82rem;
+}
+
+.doeinsure-root--iphone .doeinsure-claim__head em {
+  margin-top: 0.12rem;
+  padding: 0.28rem 0.48rem 0.3rem;
+  font-size: 0.58rem;
+}
+
+.doeinsure-root--iphone .doeinsure-claim__note {
+  min-height: 4.6rem;
+  padding: 0.7rem 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.42;
+}
+
+.doeinsure-root--iphone .doeinsure-claim__facts > div,
+.doeinsure-root--iphone .doeinsure-claim__desk > div {
+  padding: 0.62rem 0.68rem 0.68rem;
+}
+
+.doeinsure-root--iphone .doeinsure-claim__facts b,
+.doeinsure-root--iphone .doeinsure-claim__desk b {
+  font-size: 0.98rem;
+}
+
+.doeinsure-root--iphone .doeinsure-claim__chips em {
+  min-height: 1.7rem;
+  font-size: 0.72rem;
+}
+
+@keyframes doeinsure-claim-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.22rem);
   }
 
-  50% {
-    transform: scale(1.35);
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes doeinsure-claim-chip {
+  from {
+    opacity: 0;
+    transform: translateY(0.22rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes doeinsure-claim-stamp {
+  from {
+    opacity: 0;
+    transform: translateY(0.3rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
