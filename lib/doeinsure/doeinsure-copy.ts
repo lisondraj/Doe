@@ -756,6 +756,36 @@ export const DOEINSURE_HOW = {
   ],
 } as const;
 
+export const DOEINSURE_RADAR = {
+  id: "radar",
+  title: ["See the risk surface.", "Not a questionnaire."],
+  scan: "Scanning",
+  locked: "Surface locked",
+  axes: [
+    { id: "cyber", label: "Cyber", value: 92, note: "AES-256 · 3 regions" },
+    { id: "eo", label: "Tech E&O", value: 86, note: "Human in the loop" },
+    { id: "phi", label: "PHI path", value: 78, note: "Logged at inference" },
+    { id: "soc", label: "SOC 2", value: 94, note: "Type II this week" },
+    { id: "samd", label: "SaMD", value: 71, note: "CDS, not device yet" },
+    { id: "reg", label: "Regulatory", value: 80, note: "FDA counsel on file" },
+  ],
+} as const;
+
+export const DOEINSURE_FLAP = {
+  id: "flap",
+  title: ["Endorsements flip live.", "No wholesaler queue."],
+  board: "Endorsement board",
+  fromLabel: "Asked",
+  toLabel: "Bound",
+  rows: [
+    { code: "AI", clause: "Additional insured", from: "PENDING", to: "PRIMARY" },
+    { code: "WS", clause: "Waiver of subrogation", from: "OPEN", to: "WAIVED" },
+    { code: "NC", clause: "Notice of cancel", from: "60 DAY", to: "30 DAY" },
+    { code: "LM", clause: "Limit match", from: "$2M", to: "$10M" },
+    { code: "PA", clause: "Prior acts", from: "GAP", to: "RESTORED" },
+  ],
+} as const;
+
 export const DOEINSURE_UNDERWRITE = {
   eyebrow: "What we look at",
   title: "Read from the stack, not a stale PDF.",

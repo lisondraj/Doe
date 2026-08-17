@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState, type CSSProperties } from "react";
 
+import { DoeInsureFeatureSections } from "@/components/doeinsure/DoeInsureFeatureSections";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import { DoeInsureSellSections } from "@/components/doeinsure/DoeInsureSellSections";
 import {
@@ -314,6 +315,8 @@ export function DoeInsurePageContent() {
       </section>
 
       <DoeInsureSellSections />
+
+      <DoeInsureFeatureSections />
 
       <section className="doeinsure-section doeinsure-section--gray" id="underwrite">
         <div className="doeinsure-wrap">

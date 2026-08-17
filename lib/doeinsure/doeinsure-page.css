@@ -6987,6 +6987,384 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   }
 }
 
+.doeinsure-section--print {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #1636c4;
+  color: #d7e2ff;
+}
+
+.doeinsure-section--print::before,
+.doeinsure-section--print::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.doeinsure-section--print::before {
+  inset: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at 50% 55%, #000 0%, #000 42%, transparent 78%);
+}
+
+.doeinsure-section--print::after {
+  top: 1.1rem;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  left: 1.1rem;
+  border: 1px dashed rgba(255, 255, 255, 0.28);
+}
+
+.doeinsure-section--print .doeinsure-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.doeinsure-radar__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.4rem;
+  margin-bottom: 2.2rem;
+}
+
+.doeinsure-section h2.doeinsure-radar__title {
+  max-width: 14ch;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(2.2rem, 4.6vw, 3.9rem);
+  font-weight: 500;
+  letter-spacing: -0.07em;
+  line-height: 0.94;
+}
+
+.doeinsure-radar__title span {
+  display: block;
+}
+
+.doeinsure-radar__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  color: #b8c8ff;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.doeinsure-radar__status i {
+  width: 0.55rem;
+  height: 0.55rem;
+  background: #7d9bff;
+  animation: doeinsure-radar-blink 1.1s steps(2, end) infinite;
+}
+
+.doeinsure-radar__plot.is-locked .doeinsure-radar__status i {
+  animation: none;
+  background: #ffffff;
+}
+
+.doeinsure-radar__plot {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.9fr) minmax(0, 1.1fr);
+  gap: 2.4rem;
+  align-items: center;
+}
+
+.doeinsure-radar__svg {
+  width: min(100%, 28rem);
+  aspect-ratio: 1;
+  overflow: visible;
+}
+
+.doeinsure-radar__svg circle,
+.doeinsure-radar__svg line {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.28);
+  stroke-width: 0.7;
+}
+
+.doeinsure-radar__svg polygon {
+  fill: rgba(255, 255, 255, 0.16);
+  stroke: #ffffff;
+  stroke-width: 1.4;
+  transition: all 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doeinsure-radar__sweep {
+  stroke: #ffffff !important;
+  stroke-width: 1.6 !important;
+  transform-origin: 100px 100px;
+  transform: rotate(var(--radar-sweep, 0deg));
+  transition: transform var(--radar-step-ms, 920ms) linear;
+}
+
+.doeinsure-radar__readout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doeinsure-radar__readout li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.6rem;
+  gap: 0.15rem 0.8rem;
+  padding: 0.85rem 0.2rem 0.95rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(215, 226, 255, 0.42);
+}
+
+.doeinsure-radar__readout span {
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-radar__readout b {
+  justify-self: end;
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.doeinsure-radar__readout em {
+  grid-column: 1 / -1;
+  font-size: 0.72rem;
+  font-style: normal;
+  letter-spacing: 0.02em;
+}
+
+.doeinsure-radar__readout li.is-on {
+  color: #ffffff;
+}
+
+.doeinsure-section--board {
+  background: #111318;
+  color: #f3ead2;
+}
+
+.doeinsure-flap__head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 2rem;
+}
+
+.doeinsure-flap__head > span {
+  color: #c4b48a;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.doeinsure-section h2.doeinsure-flap__title {
+  max-width: 14ch;
+  margin: 0;
+  color: #f3ead2;
+  font-size: clamp(2.2rem, 4.6vw, 3.9rem);
+  font-weight: 500;
+  letter-spacing: -0.07em;
+  line-height: 0.94;
+}
+
+.doeinsure-flap__title span {
+  display: block;
+}
+
+.doeinsure-flap__board {
+  border: 1px solid #3a3428;
+  background: #0b0c10;
+}
+
+.doeinsure-flap__legend,
+.doeinsure-flap__board li {
+  display: grid;
+  grid-template-columns: 3.4rem minmax(0, 1.4fr) minmax(6.5rem, 0.7fr) minmax(6.5rem, 0.7fr);
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.doeinsure-flap__legend {
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid #3a3428;
+  color: #8a7f63;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.doeinsure-flap__board ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doeinsure-flap__board li {
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid #2a261c;
+}
+
+.doeinsure-flap__board li:last-child {
+  border-bottom: 0;
+}
+
+.doeinsure-flap__code {
+  color: #c4b48a;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.doeinsure-flap__clause {
+  color: #f3ead2;
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-flap__tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.55rem;
+  padding: 0 0.55rem;
+  overflow: hidden;
+  border: 1px solid #2f2a20;
+  background:
+    linear-gradient(#1a1813, #1a1813) 0 50% / 100% 1px no-repeat,
+    #16140f;
+  color: #8a7f63;
+  font-size: 0.82rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.doeinsure-flap__tile--to {
+  perspective: 420px;
+  color: #f3ead2;
+}
+
+.doeinsure-flap__tile--to i {
+  display: block;
+  font-style: normal;
+  transform-origin: center;
+  backface-visibility: hidden;
+}
+
+.doeinsure-flap__board li.is-turning .doeinsure-flap__tile--to i,
+.doeinsure-flap__board li.is-on .doeinsure-flap__tile--to i {
+  animation: doeinsure-flap-turn var(--flap-step-ms, 1080ms) cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+.doeinsure-flap__board li.is-on .doeinsure-flap__tile--to {
+  border-color: #c4b48a;
+  color: #111318;
+  background:
+    linear-gradient(#111318, #111318) 0 50% / 100% 1px no-repeat,
+    #f3ead2;
+}
+
+.doeinsure-root--iphone .doeinsure-section--print::after {
+  top: 0.7rem;
+  right: 0.7rem;
+  bottom: 0.7rem;
+  left: 0.7rem;
+}
+
+.doeinsure-root--iphone .doeinsure-radar__head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.doeinsure-root--iphone .doeinsure-section h2.doeinsure-radar__title,
+.doeinsure-root--iphone .doeinsure-section h2.doeinsure-flap__title {
+  font-size: clamp(1.95rem, 8.8vw, 2.55rem);
+}
+
+.doeinsure-root--iphone .doeinsure-radar__plot {
+  grid-template-columns: 1fr;
+  gap: 1.4rem;
+}
+
+.doeinsure-root--iphone .doeinsure-radar__svg {
+  width: min(100%, 18.5rem);
+  margin: 0 auto;
+}
+
+.doeinsure-root--iphone .doeinsure-radar__readout {
+  grid-template-columns: 1fr;
+}
+
+.doeinsure-root--iphone .doeinsure-flap__legend {
+  display: none;
+}
+
+.doeinsure-root--iphone .doeinsure-flap__board li {
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: 0.45rem 0.7rem;
+}
+
+.doeinsure-root--iphone .doeinsure-flap__clause {
+  font-size: 0.95rem;
+}
+
+.doeinsure-root--iphone .doeinsure-flap__tile {
+  min-height: 2.25rem;
+  font-size: 0.72rem;
+}
+
+.doeinsure-root--iphone .doeinsure-flap__board li .doeinsure-flap__tile:not(.doeinsure-flap__tile--to) {
+  grid-column: 1;
+}
+
+.doeinsure-root--iphone .doeinsure-flap__board li .doeinsure-flap__tile--to {
+  grid-column: 2;
+}
+
+@keyframes doeinsure-radar-blink {
+  50% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes doeinsure-flap-turn {
+  0% {
+    transform: rotateX(0deg);
+  }
+
+  45% {
+    transform: rotateX(-90deg);
+  }
+
+  55% {
+    transform: rotateX(-90deg);
+  }
+
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .doeinsure-root * {
     animation: none !important;
@@ -7022,6 +7400,14 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
     opacity: 1 !important;
     filter: none !important;
     transform: none !important;
+  }
+
+  .doeinsure-radar__status i,
+  .doeinsure-radar__sweep,
+  .doeinsure-flap__board li.is-turning .doeinsure-flap__tile--to i,
+  .doeinsure-flap__board li.is-on .doeinsure-flap__tile--to i {
+    animation: none !important;
+    transform: none;
   }
 
   .doeinsure-rung,
