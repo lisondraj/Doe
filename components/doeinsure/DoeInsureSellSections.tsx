@@ -438,7 +438,7 @@ function StackBody({ revealed }: { revealed: boolean }) {
   const stackOriginal = stackPremium * 2;
   const dropStep = Math.round(stackPremium / DOEINSURE_STACK.sources.length);
   const savingsProgress = connected.length + (linking ? 0.45 : 0);
-  const dropTotal = Math.round(dropStep * savingsProgress);
+  const dropTotal = Math.round(dropStep * connected.length);
   const stackQuote = stackOriginal - dropTotal;
   const stackFill = (savingsProgress / DOEINSURE_STACK.sources.length) * 100;
 
