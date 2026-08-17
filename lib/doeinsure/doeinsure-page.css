@@ -1586,6 +1586,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-check {
+  position: relative;
   display: grid;
   grid-template-columns: 0.85rem 1fr;
   gap: 0.85rem;
@@ -1600,12 +1601,17 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   font-weight: 500;
   letter-spacing: -0.03em;
   text-align: left;
-  cursor: pointer;
-  transition: background-color 180ms ease, color 180ms ease;
+  overflow: hidden;
+  transition: background-color 420ms ease, color 420ms ease;
 }
 
 .doeinsure-check.is-on {
   background: var(--di-gray);
+  color: var(--di-ink);
+}
+
+.doeinsure-check.is-reading {
+  background: var(--di-white);
   color: var(--di-ink);
 }
 
@@ -1617,11 +1623,53 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   border: 1px solid var(--di-blue);
   background: transparent;
   font-style: normal;
-  transition: background-color 180ms ease;
+  transition: background-color 420ms ease, border-color 420ms ease;
 }
 
 .doeinsure-check.is-on i {
   background: var(--di-blue-gradient);
+}
+
+.doeinsure-check.is-reading i {
+  background: var(--di-blue-gradient);
+  animation: doeinsure-check-pin var(--underwrite-step-ms, 980ms) ease-in-out infinite;
+}
+
+.doeinsure-check.is-reading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--di-blue-gradient);
+  transform-origin: left center;
+  animation: doeinsure-check-sweep var(--underwrite-step-ms, 980ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.doeinsure-checks.is-complete .doeinsure-check.is-on {
+  background: var(--di-gray);
+}
+
+@keyframes doeinsure-check-sweep {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes doeinsure-check-pin {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0.88);
+  }
 }
 
 .doeinsure-faq {

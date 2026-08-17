@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState, type CSSProperties } from "react";
+import { FormEvent, useEffect, useState, type CSSProperties } from "react";
 
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import { DoeInsureSellSections } from "@/components/doeinsure/DoeInsureSellSections";
@@ -15,6 +15,10 @@ import {
   DOEINSURE_UNDERWRITE,
 } from "@/lib/doeinsure/doeinsure-copy";
 import { useDoeInsureLadderScroll } from "@/lib/doeinsure/use-doeinsure-ladder-scroll";
+import { useDoeInsurePageVariant } from "@/lib/doeinsure/use-doeinsure-page-variant";
+
+const UNDERWRITE_STEP_MS = 980;
+const UNDERWRITE_STEP_MS_IPHONE = 1180;
 
 function mailtoDoeInsure(lines: string[], subjectName: string) {
   const subject = encodeURIComponent(`Doe Insure — ${subjectName}`);
@@ -175,11 +179,56 @@ function PolicyPreview() {
   );
 }
 
+function UnderwriteBody({ revealed }: { revealed: boolean }) {
+  const { variant } = useDoeInsurePageVariant();
+  const stepMs = variant === "phone" ? UNDERWRITE_STEP_MS_IPHONE : UNDERWRITE_STEP_MS;
+  const [index, setIndex] = useState(-1);
+  const [auto, setAuto] = useState(false);
+  const items = DOEINSURE_UNDERWRITE.items;
+  const complete = index >= items.length;
+
+  useEffect(() => {
+    if (!revealed) return;
+    setIndex(0);
+    setAuto(true);
+  }, [revealed]);
+
+  useEffect(() => {
+    if (!auto || complete) return undefined;
+    const id = window.setTimeout(() => setIndex((current) => current + 1), stepMs);
+    return () => window.clearTimeout(id);
+  }, [auto, complete, index, stepMs]);
+
+  return (
+    <>
+      <h2>{DOEINSURE_UNDERWRITE.title}</h2>
+      <div
+        className={`doeinsure-checks${complete ? " is-complete" : ""}${index >= 0 && !complete ? " is-reading" : ""}`}
+        style={{ "--underwrite-step-ms": `${stepMs}ms` } as CSSProperties}
+      >
+        {items.map((item, itemIndex) => {
+          const on = itemIndex < index;
+          const reading = itemIndex === index && !complete;
+          return (
+            <div
+              key={item}
+              className={`doeinsure-check${on ? " is-on" : ""}${reading ? " is-reading" : ""}`}
+              aria-current={reading ? "step" : undefined}
+            >
+              <i aria-hidden="true" />
+              {item}
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
 export function DoeInsurePageContent() {
   const [email, setEmail] = useState("");
   const [stat, setStat] = useState(0);
   const { ladderRef, activeIndex: stage } = useDoeInsureLadderScroll(DOEINSURE_STAGES.items.length);
-  const [checks, setChecks] = useState<Record<string, boolean>>({});
   const [faq, setFaq] = useState<number | null>(0);
 
   return (
@@ -268,26 +317,7 @@ export function DoeInsurePageContent() {
 
       <section className="doeinsure-section doeinsure-section--gray" id="underwrite">
         <div className="doeinsure-wrap">
-          <DoeInsureReveal>
-            <h2>{DOEINSURE_UNDERWRITE.title}</h2>
-            <div className="doeinsure-checks">
-              {DOEINSURE_UNDERWRITE.items.map((item) => {
-                const on = Boolean(checks[item]);
-                return (
-                  <button
-                    key={item}
-                    type="button"
-                    className={`doeinsure-check${on ? " is-on" : ""}`}
-                    aria-pressed={on}
-                    onClick={() => setChecks((current) => ({ ...current, [item]: !current[item] }))}
-                  >
-                    <i aria-hidden="true" />
-                    {item}
-                  </button>
-                );
-              })}
-            </div>
-          </DoeInsureReveal>
+          <DoeInsureReveal>{(revealed) => <UnderwriteBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
 
