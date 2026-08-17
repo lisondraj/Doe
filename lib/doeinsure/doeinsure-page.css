@@ -5250,6 +5250,10 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   transition: width 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.doeinsure-root--iphone .doeinsure-stack-phone__meter i {
+  transition: width var(--stack-connect-ms, 1280ms) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .doeinsure-stack-phone__quote.is-on .doeinsure-stack-phone__meter {
   background: rgba(255, 255, 255, 0.22);
 }
@@ -5397,6 +5401,10 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   animation: doeinsure-stack-phone-pin 720ms ease-in-out infinite;
 }
 
+.doeinsure-root--iphone .doeinsure-stack-phone__source.is-linking i {
+  animation: doeinsure-stack-phone-pin var(--stack-connect-ms, 1280ms) ease-in-out infinite;
+}
+
 .doeinsure-stack-phone__source.is-on strong,
 .doeinsure-stack-phone__source.is-linking strong {
   color: var(--di-blue);
@@ -5412,6 +5420,10 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   background: var(--di-blue);
   transform-origin: left center;
   animation: doeinsure-stack-phone-read 720ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.doeinsure-root--iphone .doeinsure-stack-phone__source.is-linking::after {
+  animation: doeinsure-stack-phone-read var(--stack-connect-ms, 1280ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .doeinsure-stack-phone__cta .doeinsure-btn {

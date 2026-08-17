@@ -11,6 +11,7 @@ import {
   DOEINSURE_SCALE,
   DOEINSURE_STACK,
 } from "@/lib/doeinsure/doeinsure-copy";
+import { useDoeInsurePageVariant } from "@/lib/doeinsure/use-doeinsure-page-variant";
 
 function ScaleSection() {
   const [month, setMonth] = useState(0);
@@ -321,6 +322,9 @@ function MatchSection() {
 const STACK_HUB = { x: 50, y: 50 };
 const STACK_HUB_MOBILE = { x: 14, y: 94 };
 const STACK_CONNECT_MS = 720;
+const STACK_CONNECT_MS_IPHONE = 1280;
+const STACK_AUTO_DELAY_MS = 160;
+const STACK_AUTO_DELAY_MS_IPHONE = 360;
 
 function stackPath(x: number, y: number) {
   const midY = y < STACK_HUB.y ? 34 : 66;
@@ -345,6 +349,9 @@ function StackSection() {
 }
 
 function StackBody({ revealed }: { revealed: boolean }) {
+  const { variant } = useDoeInsurePageVariant();
+  const connectMs = variant === "phone" ? STACK_CONNECT_MS_IPHONE : STACK_CONNECT_MS;
+  const autoDelayMs = variant === "phone" ? STACK_AUTO_DELAY_MS_IPHONE : STACK_AUTO_DELAY_MS;
   const [on, setOn] = useState<Record<string, boolean>>({});
   const [linking, setLinking] = useState<string | null>(null);
   const [auto, setAuto] = useState(false);
@@ -365,18 +372,18 @@ function StackBody({ revealed }: { revealed: boolean }) {
       setAuto(false);
       return undefined;
     }
-    const id = window.setTimeout(() => setLinking(next.id), 160);
+    const id = window.setTimeout(() => setLinking(next.id), autoDelayMs);
     return () => window.clearTimeout(id);
-  }, [auto, complete, linking, on]);
+  }, [auto, autoDelayMs, complete, linking, on]);
 
   useEffect(() => {
     if (!linking) return undefined;
     const id = window.setTimeout(() => {
       setOn((current) => ({ ...current, [linking]: true }));
       setLinking(null);
-    }, STACK_CONNECT_MS);
+    }, connectMs);
     return () => window.clearTimeout(id);
-  }, [linking]);
+  }, [connectMs, linking]);
 
   const toggle = (id: string) => {
     if (busy && linking !== id) return;
@@ -530,7 +537,10 @@ function StackBody({ revealed }: { revealed: boolean }) {
             )}
           </div>
 
-          <div className="doeinsure-stack-phone">
+          <div
+            className="doeinsure-stack-phone"
+            style={{ "--stack-connect-ms": `${connectMs}ms` } as CSSProperties}
+          >
             <article
               className={`doeinsure-stack-phone__quote${complete ? " is-on" : ""}${busy ? " is-reading" : ""}`}
             >
