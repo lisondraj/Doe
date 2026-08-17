@@ -936,10 +936,9 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
   );
 }
 
-const READ_CONNECT_MS = 1480;
-const READ_CONNECT_MS_IPHONE = 1920;
-const READ_AUTO_DELAY_MS = 520;
-const READ_AUTO_DELAY_MS_IPHONE = 680;
+const READ_STEP_MS = 620;
+const READ_STEP_MS_IPHONE = 760;
+const READ_LAST_STEP = DOEINSURE_READ.packet.fields.length + 1;
 
 function ReadSection() {
   return (
@@ -955,45 +954,30 @@ function ReadSection() {
 
 function ReadBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeInsurePageVariant();
-  const readMs = variant === "phone" ? READ_CONNECT_MS_IPHONE : READ_CONNECT_MS;
-  const autoDelayMs = variant === "phone" ? READ_AUTO_DELAY_MS_IPHONE : READ_AUTO_DELAY_MS;
-  const [read, setRead] = useState<Record<string, boolean>>({});
-  const [reading, setReading] = useState<string | null>(null);
+  const stepMs = variant === "phone" ? READ_STEP_MS_IPHONE : READ_STEP_MS;
+  const [step, setStep] = useState(0);
   const [auto, setAuto] = useState(false);
-  const { sources } = DOEINSURE_READ;
-  const readCount = sources.filter((item) => read[item.id]).length;
-  const complete = readCount === sources.length;
-  const busy = Boolean(reading);
+  const { packet } = DOEINSURE_READ;
+  const reading = step >= 1 && step < READ_LAST_STEP;
+  const complete = step >= READ_LAST_STEP;
+  const extracted = complete ? packet.fields.length : Math.max(0, step - 1);
   const status = complete
     ? DOEINSURE_READ.filed
-    : busy || readCount
+    : reading
       ? DOEINSURE_READ.reading
       : DOEINSURE_READ.waiting;
-  const fill = ((readCount + (reading ? 0.42 : 0)) / sources.length) * 100;
 
   useEffect(() => {
     if (!revealed) return;
-    setRead({});
-    setReading(null);
+    setStep(0);
     setAuto(true);
   }, [revealed]);
 
   useEffect(() => {
-    if (!auto || reading || complete) return undefined;
-    const next = sources.find((item) => !read[item.id]);
-    if (!next) return undefined;
-    const id = window.setTimeout(() => setReading(next.id), autoDelayMs);
+    if (!auto || complete) return undefined;
+    const id = window.setTimeout(() => setStep((current) => current + 1), stepMs);
     return () => window.clearTimeout(id);
-  }, [auto, autoDelayMs, complete, read, reading, sources]);
-
-  useEffect(() => {
-    if (!reading) return undefined;
-    const id = window.setTimeout(() => {
-      setRead((current) => ({ ...current, [reading]: true }));
-      setReading(null);
-    }, readMs);
-    return () => window.clearTimeout(id);
-  }, [readMs, reading]);
+  }, [auto, complete, step, stepMs]);
 
   return (
     <>
@@ -1004,41 +988,40 @@ function ReadBody({ revealed }: { revealed: boolean }) {
           </span>
         ))}
       </h2>
-      <DoeInsureAppFrame file="Risk file · Harbor Notes" className="doeinsure-app--read">
-        <div
-          className={`doeinsure-read${complete ? " is-on" : ""}`}
-          style={{ "--read-connect-ms": `${readMs}ms` } as CSSProperties}
-        >
+      <DoeInsureAppFrame file="Packet desk · Harbor Notes" className="doeinsure-app--read">
+        <div className={`doeinsure-read${complete ? " is-on" : ""}`}>
           <div className="doeinsure-read__desk">
-            <article className={`doeinsure-read__stack${busy ? " is-busy" : ""}`}>
-              <header className="doeinsure-read__stack-head">
-                <span>{DOEINSURE_READ.stackLabel}</span>
-                <em>
-                  {readCount} of {sources.length}
-                </em>
-              </header>
-              <ul className="doeinsure-read__sources">
-                {sources.map((item) => {
-                  const done = Boolean(read[item.id]);
-                  const active = reading === item.id;
-                  return (
-                    <li key={item.id}>
-                      <div
-                        className={`doeinsure-read__source${done ? " is-on" : ""}${active ? " is-reading" : ""}`}
+            <article
+              className={`doeinsure-read__page${reading ? " is-reading" : ""}`}
+              style={{ "--read-scan-ms": `${stepMs * packet.fields.length}ms` } as CSSProperties}
+            >
+              <div className="doeinsure-read__sheet">
+                <header className="doeinsure-read__sheet-head">
+                  <strong>{packet.file}</strong>
+                  <span>
+                    {packet.pages} {DOEINSURE_READ.pagesLabel}
+                  </span>
+                </header>
+                <i className="doeinsure-read__cursor" aria-hidden="true" />
+                <p>
+                  {packet.excerpt.map((part, index) => {
+                    const marked = Boolean(
+                      part.mark &&
+                        packet.fields.some((field, fieldIndex) => field.id === part.mark && fieldIndex < extracted),
+                    );
+                    return (
+                      <span
+                        key={`${packet.id}-${index}`}
+                        className={part.mark ? `doeinsure-read__mark${marked ? " is-on" : ""}` : undefined}
                       >
-                        <i aria-hidden="true" />
-                        <span>
-                          <b>{item.name}</b>
-                          <em>{item.signal}</em>
-                        </span>
-                        <strong>{active ? DOEINSURE_READ.reading : done ? item.value : "—"}</strong>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
+                        {part.text}
+                      </span>
+                    );
+                  })}
+                </p>
+              </div>
               <div className="doeinsure-read__meter" aria-hidden="true">
-                <i style={{ width: `${fill}%` }} />
+                <i style={{ width: `${(extracted / packet.fields.length) * 100}%` }} />
               </div>
             </article>
 
@@ -1048,12 +1031,12 @@ function ReadBody({ revealed }: { revealed: boolean }) {
                 <em>{status}</em>
               </header>
               <ul>
-                {sources.map((item, index) => {
-                  const on = index < readCount;
+                {packet.fields.map((field, index) => {
+                  const on = index < extracted;
                   return (
-                    <li key={item.id} className={on ? "is-on" : undefined}>
-                      <span>{item.signal}</span>
-                      <b aria-hidden={!on}>{item.value}</b>
+                    <li key={field.id} className={on ? "is-on" : undefined}>
+                      <span>{field.label}</span>
+                      <b aria-hidden={!on}>{field.value}</b>
                     </li>
                   );
                 })}
