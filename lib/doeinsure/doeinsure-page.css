@@ -891,13 +891,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-section {
-  padding-top: 5.25rem;
-  padding-bottom: 5.25rem;
+  padding-top: 7rem;
+  padding-bottom: 7rem;
 }
 
 .doeinsure-root--iphone .doeinsure-section {
-  padding-top: 2.6rem;
-  padding-bottom: 2.6rem;
+  padding-top: 3.75rem;
+  padding-bottom: 3.75rem;
 }
 
 .doeinsure-section--gray {
@@ -1626,14 +1626,6 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 3.5rem;
   align-items: start;
-}
-
-.doeinsure-root--desktop #request {
-  padding-bottom: 5rem;
-}
-
-.doeinsure-root--iphone #request {
-  padding-bottom: 3.25rem;
 }
 
 .doeinsure-root--iphone .doeinsure-cta-grid {
