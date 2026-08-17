@@ -132,12 +132,16 @@ function ScaleBody({
                     setMonth(index);
                   }}
                 >
-                  <i
-                    style={{
-                      transform: revealed ? `scaleY(${height})` : "scaleY(0)",
-                    }}
-                  />
-                  <span>{item.label}</span>
+                  <span className="doeinsure-bars__plot">
+                    <i
+                      style={
+                        {
+                          "--bar-fill": revealed ? height : 0,
+                        } as CSSProperties
+                      }
+                    />
+                  </span>
+                  <span className="doeinsure-bars__label">{item.label}</span>
                 </button>
               );
             })}
