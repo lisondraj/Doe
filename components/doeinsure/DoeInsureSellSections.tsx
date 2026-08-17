@@ -531,8 +531,8 @@ function StackBody({ revealed }: { revealed: boolean }) {
                 {DOEINSURE_STACK.request}
               </a>
             ) : (
-              <button type="button" className="doeinsure-btn" disabled={busy} onClick={connectAll}>
-                {busy ? DOEINSURE_STACK.reading : DOEINSURE_STACK.connectAll}
+              <button type="button" className="doeinsure-btn" disabled>
+                {DOEINSURE_STACK.reading}
               </button>
             )}
           </div>
@@ -615,8 +615,8 @@ function StackBody({ revealed }: { revealed: boolean }) {
                   {DOEINSURE_STACK.request}
                 </a>
               ) : (
-                <button type="button" className="doeinsure-btn" disabled={busy} onClick={connectAll}>
-                  {busy ? DOEINSURE_STACK.reading : DOEINSURE_STACK.connectAll}
+                <button type="button" className="doeinsure-btn" disabled>
+                  {DOEINSURE_STACK.reading}
                 </button>
               )}
             </div>
