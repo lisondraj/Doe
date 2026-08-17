@@ -374,7 +374,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   padding-bottom: 4.5rem;
 }
 
-.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-hero__stage::before {
+.doeinsure-hero__stage::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -394,6 +394,15 @@ html[data-doeinsure-page][data-layout="desktop"] body {
     linear-gradient(to right, transparent 0%, #000 5rem, #000 calc(100% - 5rem), transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 2.75rem, #000 calc(100% - 2.75rem), transparent 100%);
   mask-composite: intersect;
+}
+
+.doeinsure-root--iphone .doeinsure-hero__stage::before {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 0.75rem, #000 calc(100% - 0.75rem), transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 1.25rem, #000 calc(100% - 1.25rem), transparent 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 0.75rem, #000 calc(100% - 0.75rem), transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 1.25rem, #000 calc(100% - 1.25rem), transparent 100%);
 }
 
 .doeinsure-hero__copy {
@@ -818,12 +827,12 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   background: var(--di-gray);
 }
 
-.doeinsure-root:not(.doeinsure-root--iphone) #scale {
+#scale {
   position: relative;
   isolation: isolate;
 }
 
-.doeinsure-root:not(.doeinsure-root--iphone) #scale::before {
+#scale::before {
   content: "";
   position: absolute;
   z-index: 0;
@@ -843,17 +852,17 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   pointer-events: none;
 }
 
-.doeinsure-root:not(.doeinsure-root--iphone) #scale .doeinsure-wrap {
+#scale .doeinsure-wrap {
   position: relative;
   z-index: 1;
 }
 
-.doeinsure-root:not(.doeinsure-root--iphone) #stack {
+#stack {
   position: relative;
   isolation: isolate;
 }
 
-.doeinsure-root:not(.doeinsure-root--iphone) #stack::before {
+#stack::before {
   content: "";
   position: absolute;
   z-index: 0;
@@ -868,7 +877,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   pointer-events: none;
 }
 
-.doeinsure-root:not(.doeinsure-root--iphone) #stack .doeinsure-wrap {
+#stack .doeinsure-wrap {
   position: relative;
   z-index: 1;
 }
@@ -2927,7 +2936,8 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-root--iphone .doeinsure-stage-block--lead::before,
 .doeinsure-root--iphone .doeinsure-stage-block--band-blue::before {
-  display: none;
+  left: 0;
+  width: 2px;
 }
 
 .doeinsure-root--iphone .doeinsure-stage-block__band {
@@ -4621,6 +4631,10 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   pointer-events: none;
 }
 
+.doeinsure-link__wires--iphone {
+  display: none;
+}
+
 .doeinsure-link__wire {
   fill: none;
   stroke: var(--di-line);
@@ -4844,6 +4858,7 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 .doeinsure-root--iphone .doeinsure-link__map {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -4862,19 +4877,28 @@ html[data-doeinsure-page][data-layout="desktop"] body {
   text-transform: uppercase;
 }
 
-.doeinsure-root--iphone .doeinsure-link__wires {
+.doeinsure-root--iphone .doeinsure-link__wires--desktop {
   display: none;
+}
+
+.doeinsure-root--iphone .doeinsure-link__wires--iphone {
+  display: block;
+  left: 0;
+  right: auto;
+  width: 3.4rem;
+  background: transparent;
 }
 
 .doeinsure-root--iphone .doeinsure-link__node {
   position: relative;
+  z-index: 1;
   left: auto !important;
   top: auto !important;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   width: 100%;
-  padding: 0.82rem 0.95rem;
+  padding: 0.82rem 0.95rem 0.82rem 2.35rem;
   transform: none;
   border: 0;
   border-top: 1px solid var(--di-line);
@@ -4921,11 +4945,12 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 
 .doeinsure-root--iphone .doeinsure-link__hub {
   position: relative;
+  z-index: 1;
   top: auto;
   left: auto;
   width: 100%;
   transform: none;
-  padding: 1rem 0.95rem 1.1rem;
+  padding: 1rem 0.95rem 1.1rem 2.35rem;
   border: 0;
   border-top: 1px solid var(--di-line);
 }

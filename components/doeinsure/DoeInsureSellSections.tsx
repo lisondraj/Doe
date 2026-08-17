@@ -321,11 +321,17 @@ function MatchSection() {
 }
 
 const STACK_HUB = { x: 50, y: 50 };
+const STACK_HUB_MOBILE = { x: 14, y: 94 };
 const STACK_CONNECT_MS = 720;
 
 function stackPath(x: number, y: number) {
   const midY = y < STACK_HUB.y ? 34 : 66;
   return `M ${x} ${y} Q ${STACK_HUB.x} ${midY} ${STACK_HUB.x} ${STACK_HUB.y}`;
+}
+
+function stackPathMobile(index: number, count: number) {
+  const y = count <= 1 ? 18 : 14 + index * (68 / (count - 1));
+  return `M ${STACK_HUB_MOBILE.x} ${STACK_HUB_MOBILE.y} L ${STACK_HUB_MOBILE.x} ${y} L 88 ${y}`;
 }
 
 function StackSection() {
@@ -405,10 +411,41 @@ function StackBody({ revealed }: { revealed: boolean }) {
         <div className={`doeinsure-link${complete ? " is-on" : ""}`}>
           <div className="doeinsure-link__map">
             <p className="doeinsure-link__map-label">Sources</p>
-            <svg className="doeinsure-link__wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <svg
+              className="doeinsure-link__wires doeinsure-link__wires--desktop"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
               {DOEINSURE_STACK.sources.map((item) => {
                 const live = on[item.id] || linking === item.id;
                 const d = stackPath(item.x, item.y);
+                return (
+                  <g key={item.id}>
+                    <path className="doeinsure-link__wire" d={d} />
+                    <path
+                      className={`doeinsure-link__wire-live${live ? " is-on" : ""}${linking === item.id ? " is-linking" : ""}`}
+                      d={d}
+                      pathLength={1}
+                    />
+                    {linking === item.id ? (
+                      <circle className="doeinsure-link__packet" r="1.25">
+                        <animateMotion dur="0.72s" fill="freeze" path={d} />
+                      </circle>
+                    ) : null}
+                  </g>
+                );
+              })}
+            </svg>
+            <svg
+              className="doeinsure-link__wires doeinsure-link__wires--iphone"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              {DOEINSURE_STACK.sources.map((item, index) => {
+                const live = on[item.id] || linking === item.id;
+                const d = stackPathMobile(index, DOEINSURE_STACK.sources.length);
                 return (
                   <g key={item.id}>
                     <path className="doeinsure-link__wire" d={d} />
