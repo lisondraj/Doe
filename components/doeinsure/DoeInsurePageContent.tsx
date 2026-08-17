@@ -2,25 +2,17 @@
 
 import { FormEvent, useState, type CSSProperties } from "react";
 
-import { DoeInsureHowApp } from "@/components/doeinsure/DoeInsureAppUi";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import { DoeInsureSellSections } from "@/components/doeinsure/DoeInsureSellSections";
 import {
   DOEINSURE_CONTACT_EMAIL,
-  DOEINSURE_COMPARE,
-  DOEINSURE_CONNECT,
-  DOEINSURE_COVERAGE,
   DOEINSURE_CTA,
   DOEINSURE_FAQ,
   DOEINSURE_HERO,
-  DOEINSURE_HOW,
-  DOEINSURE_LIMITS,
-  DOEINSURE_NEXT,
   DOEINSURE_POLICY_SAMPLES,
   DOEINSURE_STATS,
   DOEINSURE_STAGES,
   DOEINSURE_UNDERWRITE,
-  DOEINSURE_WHO,
 } from "@/lib/doeinsure/doeinsure-copy";
 import { useDoeInsureLadderScroll } from "@/lib/doeinsure/use-doeinsure-ladder-scroll";
 
@@ -186,20 +178,9 @@ function PolicyPreview() {
 export function DoeInsurePageContent() {
   const [email, setEmail] = useState("");
   const [stat, setStat] = useState(0);
-  const [cover, setCover] = useState(0);
   const { ladderRef, activeIndex: stage } = useDoeInsureLadderScroll(DOEINSURE_STAGES.items.length);
-  const [who, setWho] = useState(0);
-  const [how, setHow] = useState(0);
-  const [linked, setLinked] = useState<Record<string, boolean>>({ AWS: true, GitHub: true });
-  const [compare, setCompare] = useState<"old" | "next">("next");
-  const [next, setNext] = useState(0);
-  const [limit, setLimit] = useState(1);
   const [checks, setChecks] = useState<Record<string, boolean>>({});
   const [faq, setFaq] = useState<number | null>(0);
-
-  const activeCover = DOEINSURE_COVERAGE.items[cover];
-  const activeLimit = DOEINSURE_LIMITS.items[limit];
-  const linkedCount = DOEINSURE_CONNECT.items.filter((item) => linked[item.name]).length;
 
   return (
     <>
@@ -284,226 +265,6 @@ export function DoeInsurePageContent() {
       </section>
 
       <DoeInsureSellSections />
-
-      <section className="doeinsure-section" id="coverage">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal>
-            <h2>{DOEINSURE_COVERAGE.title}</h2>
-            <div className="doeinsure-catalog">
-              <div className="doeinsure-catalog__nav" role="tablist" aria-label="Coverage lines">
-                {DOEINSURE_COVERAGE.items.map((item, index) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={cover === index}
-                    className={cover === index ? "is-on" : undefined}
-                    onClick={() => setCover(index)}
-                  >
-                    {item.name}
-                  </button>
-                ))}
-              </div>
-              <div className="doeinsure-catalog__pane" role="tabpanel" key={activeCover.id}>
-                <span>{String(cover + 1).padStart(2, "0")}</span>
-                <h3>{activeCover.name}</h3>
-                <p>{activeCover.body}</p>
-              </div>
-            </div>
-          </DoeInsureReveal>
-        </div>
-      </section>
-
-      <section className="doeinsure-section doeinsure-section--gray" id="who">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal>
-            <h2>{DOEINSURE_WHO.title}</h2>
-            <div className="doeinsure-who-list">
-              {DOEINSURE_WHO.items.map((item, index) => {
-                const open = who === index;
-                return (
-                  <button
-                    key={item.name}
-                    type="button"
-                    className={`doeinsure-who-row${open ? " is-on" : ""}`}
-                    aria-expanded={open}
-                    onClick={() => setWho(index)}
-                  >
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    <span className="doeinsure-who-row__copy">
-                      <h3>{item.name}</h3>
-                      <span className={`doeinsure-fold${open ? " is-on" : ""}`}>
-                        <span>
-                          <p>{item.body}</p>
-                        </span>
-                      </span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </DoeInsureReveal>
-        </div>
-      </section>
-
-      <section className="doeinsure-section" id="how">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal className="doeinsure-split">
-            <div>
-              <h2>{DOEINSURE_HOW.title}</h2>
-              <div className="doeinsure-stepper">
-                <div className="doeinsure-stepper__nav" role="tablist" aria-label="How it works">
-                  {DOEINSURE_HOW.steps.map((step, index) => (
-                    <button
-                      key={step.n}
-                      type="button"
-                      role="tab"
-                      aria-selected={how === index}
-                      className={how === index ? "is-on" : undefined}
-                      onClick={() => setHow(index)}
-                    >
-                      <span>{step.n}</span>
-                      {step.name}
-                    </button>
-                  ))}
-                </div>
-                <div className="doeinsure-stepper__pane" key={DOEINSURE_HOW.steps[how].n}>
-                  <h3>{DOEINSURE_HOW.steps[how].name}</h3>
-                  <p>{DOEINSURE_HOW.steps[how].body}</p>
-                </div>
-              </div>
-            </div>
-            <DoeInsureHowApp step={how} />
-          </DoeInsureReveal>
-        </div>
-      </section>
-
-      <section className="doeinsure-section doeinsure-section--gray" id="connect">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal>
-            <h2>{DOEINSURE_CONNECT.title}</h2>
-            <p className="doeinsure-hero__lede">{DOEINSURE_CONNECT.lede}</p>
-            <p className="doeinsure-connect__count">
-              {linkedCount} of {DOEINSURE_CONNECT.items.length} connected
-            </p>
-            <ul className="doeinsure-connect">
-              {DOEINSURE_CONNECT.items.map((item) => {
-                const on = Boolean(linked[item.name]);
-                return (
-                  <li key={item.name} className={on ? "is-on" : undefined}>
-                    <div>
-                      <h3>{item.name}</h3>
-                      <p>{on ? item.body : item.reads}</p>
-                    </div>
-                    <button
-                      type="button"
-                      className={`doeinsure-inline${on ? " is-on" : ""}`}
-                      aria-pressed={on}
-                      onClick={() =>
-                        setLinked((current) => ({ ...current, [item.name]: !current[item.name] }))
-                      }
-                    >
-                      {on ? DOEINSURE_CONNECT.done : DOEINSURE_CONNECT.action}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </DoeInsureReveal>
-        </div>
-      </section>
-
-      <section className="doeinsure-section">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal>
-            <h2>{DOEINSURE_COMPARE.title}</h2>
-            <div className="doeinsure-compare-toggle" role="tablist" aria-label="Compare">
-              {DOEINSURE_COMPARE.columns.map((column, index) => {
-                const key = index === 0 ? "old" : "next";
-                return (
-                  <button
-                    key={column}
-                    type="button"
-                    role="tab"
-                    aria-selected={compare === key}
-                    className={compare === key ? "is-on" : undefined}
-                    onClick={() => setCompare(key)}
-                  >
-                    {column}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="doeinsure-compare" role="table">
-              {DOEINSURE_COMPARE.rows.map((row) => (
-                <div key={row.label} className="doeinsure-compare__row" role="row">
-                  <span role="rowheader">{row.label}</span>
-                  <span role="cell" className={compare === "next" ? "is-next" : "is-old"}>
-                    {compare === "next" ? row.next : row.old}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </DoeInsureReveal>
-        </div>
-      </section>
-
-      <section className="doeinsure-section doeinsure-section--gray">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal>
-            <h2>{DOEINSURE_NEXT.title}</h2>
-            <ol className="doeinsure-line">
-              {DOEINSURE_NEXT.steps.map((step, index) => {
-                const open = next === index;
-                return (
-                  <li key={step.n} className={open ? "is-on" : undefined}>
-                    <button type="button" aria-expanded={open} onClick={() => setNext(index)}>
-                      <span>{step.n}</span>
-                      <strong>{step.name}</strong>
-                    </button>
-                    <div className={`doeinsure-fold${open ? " is-on" : ""}`}>
-                      <div>
-                        <p>{step.body}</p>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
-          </DoeInsureReveal>
-        </div>
-      </section>
-
-      <section className="doeinsure-section">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal>
-            <h2>{DOEINSURE_LIMITS.title}</h2>
-            <div className="doeinsure-limit-nav" role="tablist" aria-label="Working limits">
-              {DOEINSURE_LIMITS.items.map((item, index) => (
-                <button
-                  key={item.value}
-                  type="button"
-                  role="tab"
-                  aria-selected={limit === index}
-                  className={limit === index ? "is-on" : undefined}
-                  onClick={() => setLimit(index)}
-                >
-                  <b>{item.value}</b>
-                  {item.label}
-                </button>
-              ))}
-            </div>
-            <div className="doeinsure-limit-pane" key={activeLimit.value}>
-              <p>{activeLimit.note}</p>
-              <ul>
-                {activeLimit.includes.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </DoeInsureReveal>
-        </div>
-      </section>
 
       <section className="doeinsure-section doeinsure-section--gray" id="underwrite">
         <div className="doeinsure-wrap">
