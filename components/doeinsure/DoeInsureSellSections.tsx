@@ -259,13 +259,16 @@ function MatchBody({ revealed }: { revealed: boolean }) {
             <div className="doeinsure-match__reader">
               <span className="doeinsure-match__draft">{DOEINSURE_MATCH.draftLabel}</span>
               {variant === "phone" ? (
-                <div className={`doeinsure-match__load-pane${scanning ? " is-on" : ""}`} aria-hidden={!scanning}>
-                  <div className="doeinsure-match__scan doeinsure-match__scan--phone is-on">
-                    <span className="doeinsure-match__scan-label">Reading MSA</span>
-                    <span className="doeinsure-match__scan-track" aria-hidden="true">
-                      <i />
-                    </span>
-                  </div>
+                <div className="doeinsure-match__load-pane">
+                  <p className="doeinsure-match__excerpt">{active.excerpt}</p>
+                  {scanning ? (
+                    <div className="doeinsure-match__scan doeinsure-match__scan--phone is-on">
+                      <span className="doeinsure-match__scan-label">Reading MSA</span>
+                      <span className="doeinsure-match__scan-track" aria-hidden="true">
+                        <i />
+                      </span>
+                    </div>
+                  ) : null}
                 </div>
               ) : (
                 <div className={`doeinsure-match__scan${scanning ? " is-on" : ""}`} aria-hidden={!scanning}>
@@ -273,7 +276,7 @@ function MatchBody({ revealed }: { revealed: boolean }) {
                   <span className="doeinsure-match__scan-bar" aria-hidden="true" />
                 </div>
               )}
-              <p className="doeinsure-match__excerpt">{active.excerpt}</p>
+              {variant === "phone" ? null : <p className="doeinsure-match__excerpt">{active.excerpt}</p>}
             </div>
             <ul className={`doeinsure-match__clauses${scanning ? " is-wait" : " is-in"}`}>
               {active.clauses.map((clause) => {
