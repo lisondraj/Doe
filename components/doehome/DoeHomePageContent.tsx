@@ -9,7 +9,7 @@ import {
   DOEHOME_CTA,
   DOEHOME_FAQ,
   DOEHOME_HERO,
-  DOEHOME_HERO_STACK,
+  DOEHOME_HERO_TAPE,
   DOEHOME_STACK,
   DOEHOME_STATS,
 } from "@/lib/doehome/doehome-copy";
@@ -140,35 +140,25 @@ function IntakeForm({
   );
 }
 
-function HeroStack() {
+function HeroTape() {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(true, 5, variant === "phone" ? 460 : 360);
-  const coreOn = lit >= 1;
-  const stemsOn = lit >= 2;
-  const appsLit = Math.max(0, lit - 2);
+  const { lit } = useDoeHomeStep(true, DOEHOME_HERO_TAPE.lines.length + 1, variant === "phone" ? 420 : 340);
 
   return (
-    <div className="doehome-hero-stack" aria-hidden="true">
-      <div className={`doehome-hero-stack__apps${stemsOn ? " is-on" : ""}`}>
-        {DOEHOME_HERO_STACK.apps.map((app, index) => (
-          <article key={app.id} className={index < appsLit ? "is-on" : undefined}>
-            <span>{app.name}</span>
-            <b>{app.line}</b>
-          </article>
+    <div className="doehome-tape" aria-hidden="true">
+      <header className={lit >= 1 ? "is-on" : undefined}>
+        <span>{DOEHOME_HERO_TAPE.heading}</span>
+        <b>{DOEHOME_HERO_TAPE.clinic}</b>
+      </header>
+      <ol>
+        {DOEHOME_HERO_TAPE.lines.map((line, index) => (
+          <li key={line.text} className={index < lit - 1 ? "is-on" : undefined}>
+            <span>{line.t}</span>
+            <b>{line.text}</b>
+          </li>
         ))}
-      </div>
-      <div className={`doehome-hero-stack__stems${stemsOn ? " is-on" : ""}`} aria-hidden="true">
-        {DOEHOME_HERO_STACK.apps.map((app) => (
-          <i key={app.id} />
-        ))}
-      </div>
-      <div className={`doehome-hero-stack__core${coreOn ? " is-on" : ""}`}>
-        <span>
-          {DOEHOME_HERO_STACK.coreName} · {DOEHOME_HERO_STACK.version}
-        </span>
-        <b>{DOEHOME_HERO_STACK.coreClinic}</b>
-        <em>{DOEHOME_HERO_STACK.coreLine}</em>
-      </div>
+      </ol>
+      <p className={lit > DOEHOME_HERO_TAPE.lines.length ? "is-on" : undefined}>{DOEHOME_HERO_TAPE.foot}</p>
     </div>
   );
 }
@@ -198,7 +188,7 @@ export function DoeHomePageContent() {
                 {DOEHOME_HERO.secondaryCta}
               </a>
             </div>
-            <HeroStack />
+            <HeroTape />
           </div>
         </div>
         <div className="doeinsure-stats" aria-label="Doe at a glance">

@@ -36,15 +36,16 @@ export const DOEHOME_HERO = {
   secondaryCta: "See Genome",
 } as const;
 
-export const DOEHOME_HERO_STACK = {
-  coreName: "Genome",
-  coreClinic: "Harbor Ortho",
-  coreLine: "Your clinic’s own model. Everything else runs on it.",
-  version: "v2.1",
-  apps: [
-    { id: "pulse", name: "Pulse", line: "Answers the phones" },
-    { id: "fabric", name: "Fabric", line: "Builds your agents" },
-    { id: "float", name: "Float", line: "Runs the money" },
+export const DOEHOME_HERO_TAPE = {
+  clinic: "Harbor Ortho",
+  heading: "This morning",
+  foot: "Genome v2.1 · underneath it all",
+  lines: [
+    { t: "7:04", text: "Overnight refill → chart" },
+    { t: "7:06", text: "Cancel visit → chart" },
+    { t: "8:12", text: "Maya on the main line" },
+    { t: "8:14", text: "Friday 10:20 held" },
+    { t: "Hold", text: "Aetna · nobody waiting" },
   ],
 } as const;
 
@@ -171,6 +172,64 @@ export const DOEHOME_FLOAT = {
   denials: [
     { payer: "UHC", reason: "Auth lapse", due: "Now" },
   ],
+  allowedLabel: "Allowed",
+  paidAmtLabel: "Paid",
+  underLabel: "Kept by payer",
+  allowed: "$220",
+  paidAmt: "$180",
+} as const;
+
+export const DOEHOME_CHART = {
+  id: "chart",
+  kicker: "Chart",
+  title: ["If it happened,", "it’s in the chart."],
+  lede: "Calls, bookings, holds, and denials write back to the record. The front desk does not retype Doe at the end of the day.",
+  patient: "Dana K.",
+  clinic: "Harbor Ortho",
+  fields: [
+    { k: "Visit", v: "Fri 10:20 · held" },
+    { k: "Note", v: "Refill returned 7:04am" },
+    { k: "Auth", v: "Aetna A-4419" },
+  ],
+  sources: ["Pulse", "Fabric", "Float"],
+} as const;
+
+export const DOEHOME_HANDOFF = {
+  id: "handoff",
+  kicker: "Takeover",
+  title: ["A person can take", "any live job."],
+  lede: "Pulse, Fabric, and Float keep the thread. When someone at Harbor takes over, they are not starting from a voicemail.",
+  agent: { name: "Maya", role: "Pulse · front desk" },
+  human: { name: "Maya Chen", role: "At the desk" },
+  context: ["Dana K.", "Friday 10:20", "MRI follow-up"],
+  cta: "Take over",
+} as const;
+
+export const DOEHOME_CONNECT = {
+  id: "connect",
+  kicker: "Connect",
+  title: ["Plugs into the stack", "you already run."],
+  lede: "Doe does not ask the clinic to leave Athena, Epic, or the fax. Genome sits underneath. Agents read and write through what you have.",
+  ports: [
+    { name: "Athena", kind: "EHR" },
+    { name: "Epic", kind: "EHR" },
+    { name: "Fax", kind: "Records" },
+  ],
+  hub: "Harbor Genome",
+} as const;
+
+export const DOEHOME_OPEN = {
+  id: "open",
+  kicker: "Open",
+  title: ["Overnight work is", "waiting at the door."],
+  lede: "The clinic does not open to a voicemail pile. Pulse returned the calls. Notes are on the chart. Today is already moving.",
+  closed: "Closed 6p–8a",
+  opened: "Open 8:00am",
+  items: [
+    { at: "11:42pm", task: "Refill request", done: "On the chart" },
+    { at: "1:18am", task: "Cancel visit", done: "On the chart" },
+    { at: "5:02am", task: "New patient", done: "On the chart" },
+  ],
 } as const;
 
 export const DOEHOME_STACK = {
@@ -238,6 +297,7 @@ export const DOEHOME_FOOTER = {
       links: [
         { href: "/story", label: "Story" },
         { href: "/product", label: "Product" },
+        { href: "#chart", label: "Chart" },
         { href: "#faq", label: "FAQ" },
       ],
     },
