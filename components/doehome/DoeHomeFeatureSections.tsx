@@ -44,7 +44,7 @@ const BOOK_BUSY = new Set(["Mon-9:00", "Tue-10:20", "Wed-9:00", "Wed-11:40", "Th
 
 function GenomeBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 640 : 500);
+  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 640 : 500);
   const harbor = DOEHOME_GENOME.clinics.find((item) => item.id === "harbor") ?? DOEHOME_GENOME.clinics[0];
 
   return (
@@ -67,7 +67,7 @@ function GenomeBody({ revealed }: { revealed: boolean }) {
               {open ? (
                 <ol>
                   {DOEHOME_GENOME.providers.map((provider, providerIndex) => (
-                    <li key={provider.id} className={lit >= 3 && providerIndex === 0 ? "is-this" : undefined}>
+                    <li key={provider.id} className={providerIndex === 0 ? "is-this" : undefined}>
                       <b>{provider.name}</b>
                       <em>{provider.note}</em>
                     </li>
@@ -78,25 +78,53 @@ function GenomeBody({ revealed }: { revealed: boolean }) {
           );
         })}
       </ul>
-      <div className="doehome-map__stack">
-        <div className="doehome-map__apps">
-          {DOEHOME_STACK.products.map((item, index) => (
-            <article key={item.name} className={lit >= 3 ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
-              <b>{item.name}</b>
-              <span>{item.body}</span>
-            </article>
-          ))}
-        </div>
-        <div className={`doehome-map__base${lit >= 4 ? " is-on" : ""}`}>
-          <b>{DOEHOME_STACK.foundation.name}</b>
-          <span>{harbor.model}</span>
-          <em>{harbor.version}</em>
-        </div>
+      <div className={`doehome-map__base${lit >= 3 ? " is-on" : ""}`}>
+        <b>{DOEHOME_STACK.foundation.name}</b>
+        <span>{harbor.model}</span>
+        <em>{harbor.version}</em>
       </div>
-      <p className={`doehome-map__train${lit >= 4 ? " is-on" : ""}`}>
+      <p className={`doehome-map__train${lit >= 3 ? " is-on" : ""}`}>
         {DOEHOME_GENOME.trainCta}
         <span>{DOEHOME_GENOME.trainWhen}</span>
       </p>
+    </Sheet>
+  );
+}
+
+function StackBody({ revealed }: { revealed: boolean }) {
+  const { variant } = useDoeHomePageVariant();
+  const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 560 : 420);
+  const core = DOEHOME_STACK.foundation;
+
+  return (
+    <Sheet className="doehome-suite">
+      <a className={`doehome-suite__core${lit >= 1 ? " is-on" : ""}`} href={core.href}>
+        <span>{core.kicker}</span>
+        <b>{core.name}</b>
+        <p>{core.body}</p>
+        <i aria-hidden="true" />
+      </a>
+      <div className={`doehome-suite__tree${lit >= 2 ? " is-on" : ""}`} aria-hidden="true">
+        <em />
+        <span />
+        <b />
+        <b />
+        <b />
+      </div>
+      <div className="doehome-suite__apps">
+        {DOEHOME_STACK.products.map((item, index) => (
+          <a
+            key={item.name}
+            className={lit >= 3 ? "is-on" : undefined}
+            href={item.href}
+            style={{ "--n": index } as CSSProperties}
+          >
+            <span>{item.kicker}</span>
+            <b>{item.name}</b>
+            <p>{item.body}</p>
+          </a>
+        ))}
+      </div>
     </Sheet>
   );
 }
@@ -530,6 +558,16 @@ export function DoeHomeFeatureSections() {
         variant="rise"
       >
         {(revealed) => <GenomeBody revealed={revealed} />}
+      </FeatureSection>
+      <FeatureSection
+        id={DOEHOME_STACK.id}
+        title={DOEHOME_STACK.title}
+        lede={DOEHOME_STACK.lede}
+        src={DOEHOME_SHADERS.stack}
+        mesh="arches"
+        variant="rise"
+      >
+        {(revealed) => <StackBody revealed={revealed} />}
       </FeatureSection>
       <FeatureSection
         id={DOEHOME_PULSE.id}
