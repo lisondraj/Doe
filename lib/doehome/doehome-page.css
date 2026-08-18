@@ -274,6 +274,57 @@ html[data-doehome-page]:has(.doephone-mobile-root) body {
   text-transform: uppercase;
 }
 
+.doehome-shader {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: clamp(8.75rem, 16vw, 13.75rem);
+  background: #1a1208;
+}
+
+.doehome-shader--tall {
+  height: clamp(11rem, 24vw, 18.5rem);
+}
+
+.doehome-shader__img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  image-rendering: auto;
+}
+
+.doehome-shader-frame {
+  position: relative;
+  isolation: isolate;
+  align-self: stretch;
+  min-height: 22rem;
+  overflow: hidden;
+  background: #1a1208;
+}
+
+.doehome-shader-frame .doehome-shader__img {
+  z-index: 0;
+}
+
+.doehome-shader-frame__ui {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100%;
+  min-height: 22rem;
+  padding: 0.9rem;
+}
+
+.doehome-shader-frame .doehome-tape {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
 .doehome-win {
   border: 1px solid var(--di-line);
   background: var(--di-white);
@@ -1753,6 +1804,23 @@ html[data-doehome-page]:has(.doephone-mobile-root) body {
 .doeinsure-root--iphone .doehome-tape {
   min-height: 0;
   padding: 1rem 0.95rem 1.05rem;
+}
+
+.doeinsure-root--iphone .doehome-shader {
+  height: 7.75rem;
+}
+
+.doeinsure-root--iphone .doehome-shader--tall {
+  height: 10.75rem;
+}
+
+.doeinsure-root--iphone .doehome-shader-frame {
+  min-height: 0;
+}
+
+.doeinsure-root--iphone .doehome-shader-frame__ui {
+  min-height: 0;
+  padding: 0.7rem;
 }
 
 .doeinsure-root--iphone .doehome-feature--core {

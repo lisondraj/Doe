@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 
 import { DoeHomeFeatureSections, DoeHomeStackRack } from "@/components/doehome/DoeHomeFeatureSections";
+import { DoeHomeShaderBand, DoeHomeShaderFrame } from "@/components/doehome/DoeHomeShaderImage";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import {
   DOEHOME_CONTACT_EMAIL,
@@ -13,6 +14,7 @@ import {
   DOEHOME_STACK,
   DOEHOME_STATS,
 } from "@/lib/doehome/doehome-copy";
+import { DOEHOME_SHADERS } from "@/lib/doehome/doehome-shaders";
 import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
 import { useDoeHomeStep } from "@/lib/doehome/use-doehome-step";
 
@@ -188,7 +190,9 @@ export function DoeHomePageContent() {
                 {DOEHOME_HERO.secondaryCta}
               </a>
             </div>
-            <HeroTape />
+            <DoeHomeShaderFrame src={DOEHOME_SHADERS.hero} priority>
+              <HeroTape />
+            </DoeHomeShaderFrame>
           </div>
         </div>
         <div className="doeinsure-stats" aria-label="Doe at a glance">
@@ -210,6 +214,8 @@ export function DoeHomePageContent() {
       </section>
 
       <DoeHomeFeatureSections />
+
+      <DoeHomeShaderBand src={DOEHOME_SHADERS.board} />
 
       <section className="doeinsure-section" id="platform">
         <div className="doeinsure-wrap">
@@ -253,6 +259,8 @@ export function DoeHomePageContent() {
           </DoeInsureReveal>
         </div>
       </section>
+
+      <DoeHomeShaderBand src={DOEHOME_SHADERS.cta} />
 
       <section className="doeinsure-section" id="request">
         <div className="doeinsure-wrap">

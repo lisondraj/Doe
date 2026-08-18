@@ -3,6 +3,7 @@
 import type { CSSProperties, ReactNode } from "react";
 
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
+import { DoeHomeShaderBand } from "@/components/doehome/DoeHomeShaderImage";
 import {
   DOEHOME_AUTH,
   DOEHOME_BOARD,
@@ -18,6 +19,7 @@ import {
   DOEHOME_SCRIBE,
   DOEHOME_STACK,
 } from "@/lib/doehome/doehome-copy";
+import { DOEHOME_SHADERS } from "@/lib/doehome/doehome-shaders";
 import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
 import { useDoeHomeStep } from "@/lib/doehome/use-doehome-step";
 
@@ -705,26 +707,31 @@ export function DoeHomeStackRack() {
 export function DoeHomeFeatureSections() {
   return (
     <>
+      <DoeHomeShaderBand src={DOEHOME_SHADERS.genome} priority />
       <section className="doeinsure-section doehome-feature doehome-feature--core" id="genome">
         <div className="doeinsure-wrap">
           <DoeInsureReveal variant="rise">{(revealed) => <GenomeBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
+      <DoeHomeShaderBand src={DOEHOME_SHADERS.pulse} />
       <section className="doeinsure-section doeinsure-section--gray" id="pulse">
         <div className="doeinsure-wrap">
           <DoeInsureReveal variant="left">{(revealed) => <PulseBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
+      <DoeHomeShaderBand src={DOEHOME_SHADERS.fabric} tone="tall" />
       <section className="doeinsure-section" id="fabric">
         <div className="doeinsure-wrap">
           <DoeInsureReveal variant="right">{(revealed) => <FabricBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
+      <DoeHomeShaderBand src={DOEHOME_SHADERS.float} />
       <section className="doeinsure-section doeinsure-section--gray" id="float">
         <div className="doeinsure-wrap">
           <DoeInsureReveal variant="rise">{(revealed) => <FloatBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
+      <DoeHomeShaderBand src={DOEHOME_SHADERS.chart} />
       <section className="doeinsure-section" id="chart">
         <div className="doeinsure-wrap">
           <DoeInsureReveal variant="left">{(revealed) => <ChartBody revealed={revealed} />}</DoeInsureReveal>
@@ -740,11 +747,13 @@ export function DoeHomeFeatureSections() {
           <DoeInsureReveal variant="rise">{(revealed) => <ConnectBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
+      <DoeHomeShaderBand src={DOEHOME_SHADERS.open} />
       <section className="doeinsure-section doeinsure-section--gray" id="open">
         <div className="doeinsure-wrap">
           <DoeInsureReveal variant="left">{(revealed) => <OpenBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
+      <DoeHomeShaderBand src={DOEHOME_SHADERS.book} tone="tall" />
       <section className="doeinsure-section" id="book">
         <div className="doeinsure-wrap">
           <DoeInsureReveal variant="rise">{(revealed) => <BookBody revealed={revealed} />}</DoeInsureReveal>
