@@ -6915,6 +6915,93 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   -webkit-text-fill-color: transparent;
 }
 
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__note-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__note--scan {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 7.25rem;
+  overflow: hidden;
+  align-items: flex-start;
+  font-size: clamp(0.98rem, 1.1vw, 1.06rem);
+  line-height: 1.52;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__note-panel.is-in .doeinsure-claim__note--scan {
+  opacity: 1;
+  transform: none;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__note-panel:not(.is-in) .doeinsure-claim__note--scan {
+  opacity: 0;
+  transform: translateY(0.28rem);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__note-panel.is-in .doeinsure-claim__note--scan {
+  transition: opacity 420ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__note-panel .doeinsure-claim__cursor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: var(--di-blue-gradient);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__note-panel.is-reading .doeinsure-claim__cursor {
+  opacity: 1;
+  animation: doeinsure-read-cursor var(--claim-scan-ms, 4.44s) linear infinite;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__note-panel .doeinsure-claim__mark {
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0.06em 0.08em;
+  margin: 0 -0.02em;
+  border-bottom: 1px solid transparent;
+  transition: background-color 280ms ease, border-color 280ms ease, color 280ms ease;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__note-panel .doeinsure-claim__mark.is-on {
+  border-bottom-color: var(--di-blue);
+  background: rgba(48, 80, 224, 0.12);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__meter {
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--di-line);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__meter i {
+  display: block;
+  height: 100%;
+  background: var(--di-blue-gradient);
+  transition: width 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__note-panel .doeinsure-claim__mark.is-on {
+  border-bottom-color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__meter {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__meter i {
+  background: #ffffff;
+}
+
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(12.5rem, 0.82fr);
