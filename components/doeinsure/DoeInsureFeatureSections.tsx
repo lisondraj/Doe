@@ -3,13 +3,13 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
-import { DOEINSURE_CLASS, DOEINSURE_RADAR } from "@/lib/doeinsure/doeinsure-copy";
+import { DOEINSURE_PHI, DOEINSURE_RADAR } from "@/lib/doeinsure/doeinsure-copy";
 import { useDoeInsurePageVariant } from "@/lib/doeinsure/use-doeinsure-page-variant";
 
 const RADAR_STEP_MS = 920;
 const RADAR_STEP_MS_IPHONE = 1120;
-const CLASS_STEP_MS = 1600;
-const CLASS_STEP_MS_IPHONE = 1840;
+const PHI_STEP_MS = 980;
+const PHI_STEP_MS_IPHONE = 1180;
 const RADAR_CX = 100;
 const RADAR_CY = 100;
 const RADAR_R = 78;
@@ -102,61 +102,71 @@ function RadarBody({ revealed }: { revealed: boolean }) {
   );
 }
 
-function ClassBody({ revealed }: { revealed: boolean }) {
+function PhiBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeInsurePageVariant();
-  const stepMs = variant === "phone" ? CLASS_STEP_MS_IPHONE : CLASS_STEP_MS;
-  const [index, setIndex] = useState(0);
+  const stepMs = variant === "phone" ? PHI_STEP_MS_IPHONE : PHI_STEP_MS;
+  const [onCount, setOnCount] = useState(0);
   const [auto, setAuto] = useState(false);
-  const items = DOEINSURE_CLASS.items;
-  const complete = index >= items.length;
-  const current = items[Math.min(index, items.length - 1)];
+  const toggles = DOEINSURE_PHI.toggles;
+  const complete = onCount >= toggles.length;
 
   useEffect(() => {
     if (!revealed) return;
-    setIndex(0);
+    setOnCount(0);
     setAuto(true);
   }, [revealed]);
 
   useEffect(() => {
     if (!auto || complete) return undefined;
-    const id = window.setTimeout(() => setIndex((currentIndex) => currentIndex + 1), stepMs);
+    const id = window.setTimeout(() => setOnCount((current) => current + 1), stepMs);
     return () => window.clearTimeout(id);
-  }, [auto, complete, index, stepMs]);
+  }, [auto, complete, onCount, stepMs]);
 
   return (
     <>
-      <header className="doeinsure-class__head">
-        <h2 className="doeinsure-class__title">
-          {DOEINSURE_CLASS.title.map((line) => (
+      <header className="doeinsure-phi__head">
+        <h2 className="doeinsure-phi__title">
+          {DOEINSURE_PHI.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
         </h2>
-        <p className="doeinsure-class__lede">{DOEINSURE_CLASS.lede}</p>
+        <p className="doeinsure-phi__lede">{DOEINSURE_PHI.lede}</p>
       </header>
 
-      <div className={`doeinsure-class${complete ? " is-done" : ""}`}>
-        <p className="doeinsure-class__meta">
-          <span>{complete ? DOEINSURE_CLASS.bound : DOEINSURE_CLASS.reading}</span>
-          <em>
-            {String(Math.min(index + 1, items.length)).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
-          </em>
-        </p>
-        <b key={current.name} className="doeinsure-class__word">
-          {current.name}
-        </b>
-        <p key={`${current.name}-line`} className="doeinsure-class__line">
-          {current.line}
-        </p>
-        <ol className="doeinsure-class__index" aria-hidden="true">
-          {items.map((item, itemIndex) => (
-            <li
-              key={item.name}
-              className={itemIndex === Math.min(index, items.length - 1) ? "is-on" : itemIndex < index ? "is-past" : undefined}
-            >
-              {item.name}
-            </li>
-          ))}
-        </ol>
+      <div className={`doeinsure-phi${complete ? " is-ready" : ""}`}>
+        <div className="doeinsure-phi__panel">
+          <header className="doeinsure-phi__bar">
+            <span>PHI path</span>
+            <em>{complete ? DOEINSURE_PHI.ready : DOEINSURE_PHI.mapping}</em>
+          </header>
+          <ul className="doeinsure-phi__toggles">
+            {toggles.map((item, index) => {
+              const on = index < onCount;
+              return (
+                <li key={item.id} className={on ? "is-on" : undefined}>
+                  <span>
+                    <b>{item.label}</b>
+                    <em>{item.hint}</em>
+                  </span>
+                  <i aria-hidden="true">
+                    <u />
+                  </i>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        <aside className="doeinsure-phi__cover">
+          <span>{DOEINSURE_PHI.coverLabel}</span>
+          <ul>
+            {DOEINSURE_PHI.cover.map((line, index) => (
+              <li key={line} className={onCount > index ? "is-on" : undefined}>
+                {line}
+              </li>
+            ))}
+          </ul>
+        </aside>
       </div>
     </>
   );
@@ -170,9 +180,9 @@ export function DoeInsureFeatureSections() {
           <DoeInsureReveal variant="rise">{(revealed) => <RadarBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
-      <section className="doeinsure-section" id="class">
+      <section className="doeinsure-section" id="phi">
         <div className="doeinsure-wrap">
-          <DoeInsureReveal variant="rise">{(revealed) => <ClassBody revealed={revealed} />}</DoeInsureReveal>
+          <DoeInsureReveal variant="rise">{(revealed) => <PhiBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
     </>

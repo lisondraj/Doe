@@ -7151,15 +7151,15 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   color: #ffffff;
 }
 
-.doeinsure-class__head {
+.doeinsure-phi__head {
   display: grid;
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 0.7fr);
   gap: 2rem;
   align-items: end;
-  margin-bottom: 2.8rem;
+  margin-bottom: 2.4rem;
 }
 
-.doeinsure-section h2.doeinsure-class__title {
+.doeinsure-section h2.doeinsure-phi__title {
   max-width: 12ch;
   margin: 0;
   color: var(--di-ink);
@@ -7169,13 +7169,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   line-height: 0.94;
 }
 
-.doeinsure-class__title span {
+.doeinsure-phi__title span {
   display: block;
 }
 
-.doeinsure-class__lede {
+.doeinsure-phi__lede {
   margin: 0;
-  max-width: 28ch;
+  max-width: 30ch;
   color: var(--di-muted);
   font-size: 1.08rem;
   font-weight: 500;
@@ -7183,72 +7183,144 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   line-height: 1.4;
 }
 
-.doeinsure-class__meta {
+.doeinsure-phi {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(12rem, 0.65fr);
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.doeinsure-phi__panel,
+.doeinsure-phi__cover {
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+}
+
+.doeinsure-phi__bar {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  margin: 0 0 0.35rem;
+  padding: 0.95rem 1.1rem;
+  border-bottom: 1px solid var(--di-line);
+}
+
+.doeinsure-phi__bar span,
+.doeinsure-phi__cover > span {
   color: var(--di-muted);
   font-size: 0.68rem;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-.doeinsure-class.is-done .doeinsure-class__meta span {
-  color: var(--di-blue);
-}
-
-.doeinsure-class__meta em {
+.doeinsure-phi__bar em {
+  color: var(--di-ink);
+  font-size: 0.82rem;
   font-style: normal;
-  font-variant-numeric: tabular-nums;
-}
-
-.doeinsure-class__word {
-  display: block;
-  min-height: 0.95em;
-  color: var(--di-ink);
-  font-size: clamp(3.6rem, 10vw, 8.2rem);
   font-weight: 500;
-  letter-spacing: -0.08em;
-  line-height: 0.9;
-  animation: doeinsure-class-in 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  letter-spacing: -0.02em;
 }
 
-.doeinsure-class__line {
-  margin: 0.85rem 0 0;
-  min-height: 1.5em;
-  color: var(--di-muted);
-  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  animation: doeinsure-class-in 560ms 60ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.doeinsure-class__index {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.85rem 1.4rem;
-  margin: 2.4rem 0 0;
-  padding: 1.15rem 0 0;
-  list-style: none;
-  border-top: 1px solid var(--di-line);
-}
-
-.doeinsure-class__index li {
-  color: var(--di-muted);
-  font-size: 0.92rem;
-  font-weight: 500;
-  letter-spacing: -0.03em;
-}
-
-.doeinsure-class__index li.is-past {
-  color: var(--di-ink);
-}
-
-.doeinsure-class__index li.is-on {
+.doeinsure-phi.is-ready .doeinsure-phi__bar em {
   color: var(--di-blue);
+}
+
+.doeinsure-phi__toggles {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doeinsure-phi__toggles li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.7rem;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--di-line);
+}
+
+.doeinsure-phi__toggles li:last-child {
+  border-bottom: 0;
+}
+
+.doeinsure-phi__toggles b {
+  display: block;
+  color: var(--di-ink);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-phi__toggles em {
+  display: block;
+  margin-top: 0.18rem;
+  color: var(--di-muted);
+  font-size: 0.78rem;
+  font-style: normal;
+  letter-spacing: -0.01em;
+}
+
+.doeinsure-phi__toggles i {
+  position: relative;
+  display: block;
+  width: 2.7rem;
+  height: 1.45rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-gray);
+}
+
+.doeinsure-phi__toggles i u {
+  position: absolute;
+  top: 0.12rem;
+  left: 0.12rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  background: var(--di-white);
+  border: 1px solid var(--di-line);
+  transition: left 320ms cubic-bezier(0.16, 1, 0.3, 1), background-color 320ms ease, border-color 320ms ease;
+}
+
+.doeinsure-phi__toggles li.is-on i {
+  background: var(--di-blue-gradient);
+  border-color: var(--di-blue);
+}
+
+.doeinsure-phi__toggles li.is-on i u {
+  left: 1.32rem;
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.doeinsure-phi__cover {
+  display: flex;
+  flex-direction: column;
+  padding: 0.95rem 1.1rem 1.15rem;
+}
+
+.doeinsure-phi__cover ul {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doeinsure-phi__cover li {
+  color: var(--di-line);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.doeinsure-phi__cover li.is-on {
+  color: var(--di-ink);
 }
 
 .doeinsure-root--iphone .doeinsure-section--print::after {
@@ -7266,7 +7338,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-section h2.doeinsure-radar__title,
-.doeinsure-root--iphone .doeinsure-section h2.doeinsure-class__title {
+.doeinsure-root--iphone .doeinsure-section h2.doeinsure-phi__title {
   font-size: clamp(1.95rem, 8.8vw, 2.55rem);
 }
 
@@ -7284,28 +7356,27 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   grid-template-columns: 1fr;
 }
 
-.doeinsure-root--iphone .doeinsure-class__head {
+.doeinsure-root--iphone .doeinsure-phi__head {
   grid-template-columns: 1fr;
   gap: 1rem;
-  margin-bottom: 1.8rem;
+  margin-bottom: 1.6rem;
 }
 
-.doeinsure-root--iphone .doeinsure-class__lede {
+.doeinsure-root--iphone .doeinsure-phi__lede {
   max-width: none;
   font-size: 1rem;
 }
 
-.doeinsure-root--iphone .doeinsure-class__word {
-  font-size: clamp(3.1rem, 16vw, 4.4rem);
+.doeinsure-root--iphone .doeinsure-phi {
+  grid-template-columns: 1fr;
 }
 
-.doeinsure-root--iphone .doeinsure-class__line {
+.doeinsure-root--iphone .doeinsure-phi__toggles li {
+  padding: 0.9rem 1rem;
+}
+
+.doeinsure-root--iphone .doeinsure-phi__cover li {
   font-size: 1.05rem;
-}
-
-.doeinsure-root--iphone .doeinsure-class__index {
-  gap: 0.7rem 1.1rem;
-  margin-top: 1.8rem;
 }
 
 @keyframes doeinsure-radar-blink {
@@ -7314,15 +7385,9 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   }
 }
 
-@keyframes doeinsure-class-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.4rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
+@keyframes doeinsure-radar-blink {
+  50% {
+    opacity: 0.15;
   }
 }
 
@@ -7365,8 +7430,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
   .doeinsure-radar__status i,
   .doeinsure-radar__sweep,
-  .doeinsure-class__word,
-  .doeinsure-class__line {
+  .doeinsure-phi__toggles i u {
     animation: none !important;
     transform: none;
   }
