@@ -5697,6 +5697,25 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   cursor: wait;
 }
 
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-link__bar {
+  position: relative;
+  z-index: 1;
+  min-height: 5.4375rem;
+  padding: 0 1.35rem;
+  border-top: 0;
+  align-items: center;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-link__bar::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: 1.125rem;
+  background: var(--di-white);
+}
+
 .doeinsure-link__map-label {
   display: none;
 }
