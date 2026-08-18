@@ -2898,7 +2898,10 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-rung {
   box-sizing: border-box;
-  min-height: 8.35rem;
+  min-height: 9.1rem;
+  grid-template-columns: 7.4rem minmax(11rem, 0.78fr) minmax(11.5rem, 0.85fr) minmax(0, 1.5fr);
+  gap: 0.4rem 1.65rem;
+  padding: 1.15rem 1.45rem 1.2rem;
 }
 
 .doeinsure-rung.is-filled {
@@ -2920,7 +2923,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-rung__limit {
-  font-size: 2.69rem;
+  font-size: 3.05rem;
 }
 
 .doeinsure-rung.is-filled .doeinsure-rung__limit {
@@ -2944,6 +2947,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 1.1;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-rung__who h3 {
+  font-size: clamp(1.9rem, 2.2vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
 }
 
 .doeinsure-rung__who em {
@@ -2974,6 +2984,27 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   font-size: 0.6rem;
   font-weight: 600;
   letter-spacing: 0.02em;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-rung__who em {
+  font-size: 0.84rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-rung .doeinsure-stage-block__tag {
+  min-height: 1.72rem;
+  padding: 0.26rem 0.58rem;
+  font-size: 0.7rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-rung li {
+  font-size: 0.88rem;
+  line-height: 1.38;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-rung li::before {
+  width: 0.36rem;
+  height: 0.36rem;
+  margin-right: 0.42rem;
 }
 
 .doeinsure-rung.is-filled .doeinsure-rung__who h3 {
@@ -3039,7 +3070,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-root--iphone .doeinsure-rung__limit {
   grid-column: 2;
   grid-row: 1;
-  font-size: clamp(1.55rem, 7.4vw, 2rem);
+  font-size: clamp(1.68rem, 7.8vw, 2.15rem);
 }
 
 .doeinsure-root--iphone .doeinsure-rung__who {
@@ -3048,7 +3079,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-rung__who h3 {
-  font-size: clamp(1.75rem, 8.2vw, 2.15rem);
+  font-size: clamp(1.95rem, 8.8vw, 2.38rem);
   font-weight: 600;
   letter-spacing: -0.05em;
   line-height: 1.02;
@@ -3064,9 +3095,17 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-rung .doeinsure-stage-block__tag {
-  min-height: 1.75rem;
-  padding: 0.28rem 0.62rem;
-  font-size: 0.68rem;
+  min-height: 1.85rem;
+  padding: 0.3rem 0.68rem;
+  font-size: 0.74rem;
+}
+
+.doeinsure-root--iphone .doeinsure-rung__who em {
+  font-size: 0.78rem;
+}
+
+.doeinsure-root--iphone .doeinsure-rung li {
+  font-size: 0.84rem;
 }
 
 .doeinsure-root--iphone #stages .doeinsure-rung.is-filled .doeinsure-stage-block__tag {
