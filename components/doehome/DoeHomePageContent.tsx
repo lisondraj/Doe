@@ -17,7 +17,7 @@ import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
 import { useDoeHomeStep } from "@/lib/doehome/use-doehome-step";
 
 function mailtoDoeHome(lines: string[], subjectName: string) {
-  const subject = encodeURIComponent(`Doe — ${subjectName}`);
+  const subject = encodeURIComponent(`Doe: ${subjectName}`);
   const body = encodeURIComponent(lines.filter(Boolean).join("\n"));
   window.location.href = `mailto:${DOEHOME_CONTACT_EMAIL}?subject=${subject}&body=${body}`;
 }
@@ -214,11 +214,9 @@ export function DoeHomePageContent() {
       <section className="doeinsure-section" id="platform">
         <div className="doeinsure-wrap">
           <DoeInsureReveal>
-            <h2>
+            <h2 className="doehome-section-title">
               {DOEHOME_STACK.title.map((line) => (
-                <span key={line} className="doeinsure-stages-title__line">
-                  {line}
-                </span>
+                <span key={line}>{line}</span>
               ))}
             </h2>
             <DoeHomeStackRack />
@@ -229,7 +227,11 @@ export function DoeHomePageContent() {
       <section className="doeinsure-section doeinsure-section--gray" id="faq">
         <div className="doeinsure-wrap">
           <DoeInsureReveal>
-            <h2>{DOEHOME_FAQ.title}</h2>
+            <h2 className="doehome-section-title">
+              {DOEHOME_FAQ.title.map((line) => (
+                <span key={line}>{line}</span>
+              ))}
+            </h2>
             <div className="doeinsure-faq">
               {DOEHOME_FAQ.items.map((item, index) => {
                 const open = faq === index;
@@ -256,7 +258,11 @@ export function DoeHomePageContent() {
         <div className="doeinsure-wrap">
           <DoeInsureReveal className="doeinsure-cta-grid">
             <div>
-              <h2>{DOEHOME_CTA.title}</h2>
+              <h2 className="doehome-section-title">
+                {DOEHOME_CTA.title.map((line) => (
+                  <span key={line}>{line}</span>
+                ))}
+              </h2>
               <p className="doeinsure-hero__lede doeinsure-cta__lede">
                 <span>{DOEHOME_CTA.body}</span>
               </p>

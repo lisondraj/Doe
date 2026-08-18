@@ -51,8 +51,7 @@ function GenomeBody({ revealed }: { revealed: boolean }) {
   return (
     <div className="doehome-core">
       <header className="doehome-genome__head">
-        <p className="doehome-genome__kicker">Genome</p>
-        <h2 className="doehome-genome__title">
+        <h2 className="doehome-section-title doehome-genome__title">
           {DOEHOME_GENOME.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
@@ -60,14 +59,7 @@ function GenomeBody({ revealed }: { revealed: boolean }) {
         <p className="doehome-genome__lede">{DOEHOME_GENOME.lede}</p>
       </header>
 
-      <Window title={`${DOEHOME_GENOME.group.name} · models`} className={`doehome-map${lit >= 1 ? " is-wired" : ""}`}>
-        <p className="doehome-map__crumb">
-          {DOEHOME_GENOME.group.name}
-          <i />
-          {harbor.name}
-          <i />
-          {harbor.model}
-        </p>
+      <Window title={DOEHOME_GENOME.groupWindowTitle} className={`doehome-map${lit >= 1 ? " is-wired" : ""}`}>
         <div className="doehome-map__tree">
           <p className="doehome-map__hub">{DOEHOME_GENOME.group.name}</p>
           <svg className="doehome-map__wires" viewBox="0 0 400 72" preserveAspectRatio="none" aria-hidden="true">
@@ -113,9 +105,7 @@ function GenomeBody({ revealed }: { revealed: boolean }) {
           </div>
           <div className={`doehome-map__train${lit >= 5 ? " is-on" : ""}`}>
             <span>{DOEHOME_GENOME.trainCta}</span>
-            <em>
-              {DOEHOME_GENOME.trainWhen} · {DOEHOME_GENOME.trainSignals}
-            </em>
+            <em>{DOEHOME_GENOME.trainMeta}</em>
             <i />
           </div>
         </div>
@@ -131,8 +121,7 @@ function PulseBody({ revealed }: { revealed: boolean }) {
   return (
     <>
       <header className="doehome-pulse__head">
-        <p className="doehome-pulse__kicker">Pulse</p>
-        <h2 className="doehome-pulse__title">
+        <h2 className="doehome-section-title doehome-pulse__title">
           {DOEHOME_PULSE.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
@@ -146,9 +135,7 @@ function PulseBody({ revealed }: { revealed: boolean }) {
           <div className="doehome-handset__screen">
             <header>
               <span>{DOEHOME_PULSE.number}</span>
-              <b className="doehome-pill">
-                {DOEHOME_PULSE.call.agent} · {DOEHOME_PULSE.live}
-              </b>
+              <b className="doehome-pill">{DOEHOME_PULSE.call.liveLabel}</b>
             </header>
             <span className="doehome-handset__wave" aria-hidden="true">
               <i />
@@ -180,7 +167,7 @@ function PulseBody({ revealed }: { revealed: boolean }) {
               <div>
                 <b>{agent.name}</b>
                 <span>
-                  {agent.voice} · {agent.hours}
+                  {agent.voice}, {agent.hours}
                 </span>
               </div>
               <em>{agent.time}</em>
@@ -204,8 +191,7 @@ function FabricBody({ revealed }: { revealed: boolean }) {
   return (
     <>
       <header className="doehome-fabric__head">
-        <p className="doehome-fabric__kicker">Fabric</p>
-        <h2 className="doehome-fabric__title">
+        <h2 className="doehome-section-title doehome-fabric__title">
           {DOEHOME_FABRIC.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
@@ -274,8 +260,7 @@ function FloatBody({ revealed }: { revealed: boolean }) {
   return (
     <>
       <header className="doehome-float__head">
-        <p className="doehome-float__kicker">Float</p>
-        <h2 className="doehome-float__title">
+        <h2 className="doehome-section-title doehome-float__title">
           {DOEHOME_FLOAT.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
@@ -283,7 +268,7 @@ function FloatBody({ revealed }: { revealed: boolean }) {
         <p className="doehome-float__lede">{DOEHOME_FLOAT.lede}</p>
       </header>
 
-      <Window title={`${DOEHOME_FLOAT.hold.payer} · remittance`} className="doehome-cut">
+      <Window title={DOEHOME_FLOAT.windowTitle} className="doehome-cut">
         <ul className="doehome-cut__ledger">
           {DOEHOME_FLOAT.claims.map((row, index) => (
             <li key={row.claim} className={lit >= 1 && index <= lit ? "is-on" : undefined}>
@@ -328,52 +313,47 @@ function ChartBody({ revealed }: { revealed: boolean }) {
   return (
     <>
       <header className="doehome-extra__head">
-        <p className="doehome-genome__kicker">{DOEHOME_CHART.kicker}</p>
-        <h2 className="doehome-extra__title">
+        <h2 className="doehome-section-title doehome-extra__title">
           {DOEHOME_CHART.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
         </h2>
         <p className="doehome-genome__lede">{DOEHOME_CHART.lede}</p>
       </header>
-      <div className="doehome-ehr">
-        <aside>
+      <Window title={DOEHOME_CHART.windowTitle} className="doehome-ehr">
+        <div className="doehome-ehr__inbox">
           <span>Inbox</span>
-          <button type="button" className="is-this">
-            {DOEHOME_CHART.patient}
-          </button>
-          <button type="button">Luis M.</button>
-          <button type="button">Helen R.</button>
-        </aside>
-        <Window title={`${DOEHOME_CHART.clinic} · chart`} className="doehome-ehr__main">
-          <div className="doehome-ehr__who">
-            <i />
-            <div>
-              <b>{DOEHOME_CHART.patient}</b>
-              <span>
-                {DOEHOME_CHART.mrn} · {DOEHOME_CHART.clinic}
-              </span>
-            </div>
+          {DOEHOME_CHART.inbox.map((name, index) => (
+            <button key={name} type="button" className={index === 0 ? "is-this" : undefined}>
+              {name}
+            </button>
+          ))}
+        </div>
+        <div className="doehome-ehr__who">
+          <i />
+          <div>
+            <b>{DOEHOME_CHART.patient}</b>
+            <span>{DOEHOME_CHART.patientMeta}</span>
           </div>
-          <nav className="doehome-ehr__tabs" aria-label="Chart tabs">
-            {DOEHOME_CHART.tabs.map((tab, index) => (
-              <span key={tab} className={index === 0 ? "is-on" : undefined}>
-                {tab}
-              </span>
-            ))}
-          </nav>
-          <ul>
-            {DOEHOME_CHART.fields.map((field, index) => (
-              <li key={field.k} className={lit >= 1 + index ? "is-on" : undefined}>
-                <span>{field.k}</span>
-                <b>{field.v}</b>
-                <i />
-              </li>
-            ))}
-          </ul>
-          <p className={`doehome-ehr__toast${lit >= 4 ? " is-on" : ""}`}>Wrote from {DOEHOME_CHART.sources[0]}</p>
-        </Window>
-      </div>
+        </div>
+        <nav className="doehome-ehr__tabs" aria-label="Chart tabs">
+          {DOEHOME_CHART.tabs.map((tab, index) => (
+            <span key={tab} className={index === 0 ? "is-on" : undefined}>
+              {tab}
+            </span>
+          ))}
+        </nav>
+        <ul>
+          {DOEHOME_CHART.fields.map((field, index) => (
+            <li key={field.k} className={lit >= 1 + index ? "is-on" : undefined}>
+              <span>{field.k}</span>
+              <b>{field.v}</b>
+              <i />
+            </li>
+          ))}
+        </ul>
+        <p className={`doehome-ehr__toast${lit >= 4 ? " is-on" : ""}`}>Wrote from {DOEHOME_CHART.sources[0]}</p>
+      </Window>
     </>
   );
 }
@@ -386,8 +366,7 @@ function HandoffBody({ revealed }: { revealed: boolean }) {
   return (
     <>
       <header className="doehome-extra__head">
-        <p className="doehome-genome__kicker">{DOEHOME_HANDOFF.kicker}</p>
-        <h2 className="doehome-extra__title">
+        <h2 className="doehome-section-title doehome-extra__title">
           {DOEHOME_HANDOFF.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
@@ -437,8 +416,7 @@ function ConnectBody({ revealed }: { revealed: boolean }) {
   return (
     <>
       <header className="doehome-extra__head">
-        <p className="doehome-genome__kicker">{DOEHOME_CONNECT.kicker}</p>
-        <h2 className="doehome-extra__title">
+        <h2 className="doehome-section-title doehome-extra__title">
           {DOEHOME_CONNECT.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
@@ -477,8 +455,7 @@ function OpenBody({ revealed }: { revealed: boolean }) {
   return (
     <>
       <header className="doehome-extra__head">
-        <p className="doehome-genome__kicker">{DOEHOME_OPEN.kicker}</p>
-        <h2 className="doehome-extra__title">
+        <h2 className="doehome-section-title doehome-extra__title">
           {DOEHOME_OPEN.title.map((line) => (
             <span key={line}>{line}</span>
           ))}

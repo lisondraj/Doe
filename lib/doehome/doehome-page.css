@@ -13,16 +13,19 @@
   text-overflow: ellipsis;
 }
 
-.doehome-genome__kicker,
-.doehome-pulse__kicker,
-.doehome-fabric__kicker,
-.doehome-float__kicker {
+.doehome-section-title {
+  max-width: max-content;
   margin: 0;
-  color: var(--di-blue);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+}
+
+.doehome-section-title span,
+.doehome-genome__title span,
+.doehome-pulse__title span,
+.doehome-fabric__title span,
+.doehome-float__title span,
+.doehome-extra__title span {
+  display: block;
+  white-space: nowrap;
 }
 
 .doehome-genome__head,
@@ -38,22 +41,6 @@
 
 .doehome-core .doehome-genome__head {
   margin-bottom: 0;
-}
-
-.doeinsure-section h2.doehome-genome__title,
-.doeinsure-section h2.doehome-pulse__title,
-.doeinsure-section h2.doehome-fabric__title,
-.doeinsure-section h2.doehome-float__title,
-.doeinsure-section h2.doehome-extra__title {
-  max-width: 16ch;
-}
-
-.doehome-genome__title span,
-.doehome-pulse__title span,
-.doehome-fabric__title span,
-.doehome-float__title span,
-.doehome-extra__title span {
-  display: block;
 }
 
 .doehome-genome__lede,
@@ -215,17 +202,8 @@
   align-items: start;
 }
 
-.doeinsure-root:not(.doeinsure-root--iphone) #genome h2.doehome-genome__title {
-  max-width: 11ch;
-  font-size: clamp(2.35rem, 3.5vw, 3.35rem);
-  line-height: 0.94;
-  letter-spacing: -0.07em;
-}
-
 .doehome-ver {
   display: inline-block;
-  padding: 0.12rem 0.4rem;
-  border: 1px solid var(--di-blue);
   color: var(--di-blue);
   font-size: 0.68rem;
   font-style: normal;
@@ -233,22 +211,6 @@
   letter-spacing: 0.02em;
   line-height: 1.3;
   white-space: nowrap;
-}
-
-.doehome-map__crumb {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin: 0 0 1rem;
-  color: var(--di-muted);
-  font-size: 0.75rem;
-}
-
-.doehome-map__crumb i {
-  width: 0.35rem;
-  height: 0.35rem;
-  background: var(--di-line);
 }
 
 .doehome-map__hub {
@@ -319,7 +281,6 @@
 }
 
 .doehome-map__sites .is-this .doehome-ver {
-  border-color: #ffffff;
   color: #ffffff;
 }
 
@@ -887,23 +848,20 @@
   animation-play-state: running;
 }
 
-.doehome-ehr {
+.doehome-ehr .doehome-win__body {
   display: grid;
-  grid-template-columns: 9.5rem minmax(0, 1fr);
-  border: 1px solid var(--di-line);
+  gap: 0.85rem;
 }
 
-.doehome-ehr aside {
+.doehome-ehr__inbox {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
-  background: var(--di-line);
-  border-right: 1px solid var(--di-line);
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
 }
 
-.doehome-ehr aside span {
-  padding: 0.7rem 0.8rem 0.4rem;
-  background: var(--di-gray);
+.doehome-ehr__inbox span {
+  margin-right: 0.35rem;
   color: var(--di-muted);
   font-size: 0.68rem;
   font-weight: 600;
@@ -911,22 +869,19 @@
   text-transform: uppercase;
 }
 
-.doehome-ehr aside button {
+.doehome-ehr__inbox button {
   appearance: none;
-  padding: 0.7rem 0.8rem;
-  border: 0;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--di-line);
   background: var(--di-white);
-  text-align: left;
   font: inherit;
+  font-size: 0.82rem;
 }
 
-.doehome-ehr aside .is-this {
+.doehome-ehr__inbox .is-this {
   background: var(--di-blue);
+  border-color: var(--di-blue);
   color: #ffffff;
-}
-
-.doehome-ehr .doehome-win {
-  border: 0;
 }
 
 .doehome-ehr__who {
@@ -1191,7 +1146,6 @@
 }
 
 .doehome-jacks > p .doehome-ver {
-  border-color: #ffffff;
   color: #ffffff;
 }
 
@@ -1408,16 +1362,14 @@
   padding-bottom: 2.6rem;
 }
 
-.doeinsure-root--iphone #genome h2.doehome-genome__title {
-  max-width: 12ch;
-  font-size: clamp(1.85rem, 8.4vw, 2.35rem);
+.doeinsure-root--iphone .doehome-section-title span {
+  white-space: normal;
 }
 
 .doeinsure-root--iphone .doehome-map__sites,
 .doeinsure-root--iphone .doehome-map__mds,
 .doeinsure-root--iphone .doehome-map__pipes,
 .doeinsure-root--iphone .doehome-pulse-ui,
-.doeinsure-root--iphone .doehome-ehr,
 .doeinsure-root--iphone .doehome-xfer,
 .doeinsure-root--iphone .doehome-jacks ul,
 .doeinsure-root--iphone .doehome-dawn ul,
