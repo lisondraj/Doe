@@ -858,4 +858,24 @@ export const DOEINSURE_FOOTER = {
   legal: "Doe Insure is a registered MGA.",
   email: DOEINSURE_CONTACT_EMAIL,
   fill: "#3050e0",
+  productLabel: "Product",
+  columns: [
+    {
+      title: "Platform",
+      links: [
+        { href: "#stack", label: "Stack" },
+        { href: "#issue", label: "Issue" },
+        { href: "#claim", label: "Claim" },
+        { href: "#read", label: "Read" },
+      ],
+    },
+    {
+      title: "Underwriting",
+      links: [
+        { href: "#radar", label: "Radar" },
+        { href: "#phi", label: "PHI" },
+        { href: "#underwrite", label: "Underwrite" },
+      ],
+    },
+  ],
 } as const;

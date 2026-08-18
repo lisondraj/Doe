@@ -1856,12 +1856,19 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-footer__inner {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(8rem, 0.7fr) minmax(10rem, 0.9fr);
-  gap: 3.5rem 4.5rem;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 2.1fr) minmax(10rem, 0.85fr);
+  gap: 3.5rem 3.5rem;
   align-items: start;
   width: min(100%, 72rem);
   padding-top: 5.25rem;
   padding-bottom: 3.4rem;
+}
+
+.doeinsure-footer__columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem 3rem;
+  align-items: start;
 }
 
 .doeinsure-footer__brand {
@@ -1944,6 +1951,14 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   letter-spacing: -0.02em;
 }
 
+.doeinsure-root:not(.doeinsure-root--iphone) a.doeinsure-footer__quote {
+  color: var(--di-blue);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) a.doeinsure-footer__quote:hover {
+  color: var(--di-blue);
+}
+
 .doeinsure-footer__coverage {
   display: none;
 }
@@ -1984,6 +1999,16 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   gap: 2.4rem;
   padding-top: 2.8rem;
   padding-bottom: 2.1rem;
+}
+
+.doeinsure-root--iphone .doeinsure-footer__columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem 1.5rem;
+  padding-top: 0;
+}
+
+.doeinsure-root--iphone .doeinsure-footer__columns .doeinsure-footer__nav:last-child {
+  grid-column: 1 / -1;
 }
 
 .doeinsure-root--iphone .doeinsure-footer__brand {

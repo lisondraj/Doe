@@ -12,15 +12,28 @@ export function DoeInsureFooter() {
           <p className="doeinsure-footer__blurb">{DOEINSURE_FOOTER.blurb}</p>
         </div>
 
-        <nav className="doeinsure-footer__nav" aria-label="Footer">
-          <span className="doeinsure-footer__label">Product</span>
-          {DOEINSURE_NAV_LINKS.map((link) => (
-            <a key={link.href} href={link.href}>
-              {link.label}
-            </a>
+        <div className="doeinsure-footer__columns">
+          <nav className="doeinsure-footer__nav" aria-label={DOEINSURE_FOOTER.productLabel}>
+            <span className="doeinsure-footer__label">{DOEINSURE_FOOTER.productLabel}</span>
+            {DOEINSURE_NAV_LINKS.map((link) => (
+              <a key={link.href} href={link.href}>
+                {link.label}
+              </a>
+            ))}
+            <a href="/">Doe</a>
+          </nav>
+
+          {DOEINSURE_FOOTER.columns.map((column) => (
+            <nav key={column.title} className="doeinsure-footer__nav" aria-label={column.title}>
+              <span className="doeinsure-footer__label">{column.title}</span>
+              {column.links.map((link) => (
+                <a key={link.href} href={link.href}>
+                  {link.label}
+                </a>
+              ))}
+            </nav>
           ))}
-          <a href="/">Doe</a>
-        </nav>
+        </div>
 
         <div className="doeinsure-footer__cta">
           <a className="doeinsure-footer__quote" href="#request">
