@@ -713,12 +713,15 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-shader-frame__ui {
   position: relative;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100%;
   min-height: 28.5rem;
   overflow: hidden;
+}
+
+.doehome-shader-frame__ui:has(.doehome-scene--stack) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 2.15rem 1.85rem;
 }
 
@@ -1501,70 +1504,6 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   color: var(--doehome-ink);
 }
 
-.doeinsure-root--iphone .doehome-shader-frame,
-.doeinsure-root--iphone .doehome-shader-frame__ui {
-  min-height: 22.5rem;
-}
-
-.doeinsure-root--iphone .doehome-scene--crop-br,
-.doeinsure-root--iphone .doehome-scene--crop-bl,
-.doeinsure-root--iphone .doehome-scene--crop-tr,
-.doeinsure-root--iphone .doehome-scene--crop-tl,
-.doeinsure-root--iphone .doehome-scene--crop-center {
-  left: -6%;
-  top: -4%;
-  width: 118%;
-  min-height: 118%;
-}
-
-.doeinsure-root--iphone .doehome-scene > header b,
-.doeinsure-root--iphone .doehome-scene--focus article header b {
-  font-size: 1.32rem;
-}
-
-.doeinsure-root--iphone .doehome-grid,
-.doeinsure-root--iphone .doehome-scene--nodes,
-.doeinsure-root--iphone .doehome-scene--week,
-.doeinsure-root--iphone .doehome-scene--board,
-.doeinsure-root--iphone .doehome-scene--focus > article,
-.doeinsure-root--iphone .doehome-intake article {
-  min-width: 28rem;
-}
-
-.doeinsure-root--iphone .doehome-scene--tiles ul {
-  grid-template-columns: repeat(4, minmax(5.4rem, 1fr));
-}
-
-.doeinsure-root--iphone .doehome-node__split,
-.doeinsure-root--iphone .doehome-board {
-  grid-template-columns: 1fr 1fr;
-}
-
-.doeinsure-root--iphone .doehome-section-title,
-.doehome-root.doeinsure-root--iphone .doeinsure-section h2,
-.doehome-root.doeinsure-root--iphone h2.doehome-section-title {
-  font-size: clamp(1.48rem, 6.6vw, 1.88rem);
-  line-height: 1.16;
-  overflow: visible;
-}
-
-.doeinsure-root--iphone .doehome-section-title span,
-.doehome-root.doeinsure-root--iphone .doeinsure-hero__line {
-  white-space: nowrap;
-}
-
-.doehome-root.doeinsure-root--iphone .doeinsure-hero h1,
-.doehome-root.doeinsure-root--iphone .doeinsure-hero__title {
-  font-size: clamp(1.42rem, 6.2vw, 1.78rem);
-  line-height: 1.16;
-  overflow: visible;
-}
-
-.doeinsure-root--iphone .doehome-genome__lede,
-.doeinsure-root--iphone .doehome-extra__head p:last-child {
-  font-size: 0.98rem;
-}
-
 .doehome-scene--stack {
   gap: 0.55rem;
   width: min(72%, 22rem);
@@ -1607,7 +1546,6 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.15rem 0.9rem;
 }
 
 .doeinsure-root--iphone .doehome-scene--crop-br,
@@ -1678,9 +1616,123 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   overflow: visible;
 }
 
-.doeinsure-root--iphone .doehome-genome__lede,
-.doeinsure-root--iphone .doehome-extra__head p:last-child {
-  font-size: 0.98rem;
+.doeinsure-root--iphone .doehome-shader-frame__ui:has(.doehome-scene--stack) {
+  padding: 1.15rem 0.9rem;
+}
+
+.doeinsure-root--iphone .doehome-shader-frame__ui:not(:has(.doehome-scene--stack)) {
+  padding: 0;
+}
+
+.doeinsure-root--iphone #float .doehome-grid--pay .doehome-grid__head,
+.doeinsure-root--iphone #float .doehome-grid--pay .doehome-grid__row {
+  grid-template-columns: 1.4rem minmax(4.2rem, 1fr) 3.6rem 3.2rem 3.2rem;
+  gap: 0.3rem;
+  min-height: 1.85rem;
+}
+
+.doeinsure-root--iphone #chart .doehome-grid--chart .doehome-grid__head,
+.doeinsure-root--iphone #chart .doehome-grid--chart .doehome-grid__row {
+  grid-template-columns: 1.4rem minmax(3.8rem, 0.85fr) minmax(4.8rem, 1.15fr) 3.4rem;
+  gap: 0.3rem;
+  min-height: 1.85rem;
+}
+
+.doeinsure-root--iphone #open .doehome-grid--open .doehome-grid__head,
+.doeinsure-root--iphone #open .doehome-grid--open .doehome-grid__row {
+  grid-template-columns: 1.4rem minmax(4rem, 1fr) minmax(4.2rem, 1fr) 3.8rem;
+  gap: 0.3rem;
+  min-height: 1.85rem;
+}
+
+.doeinsure-root--iphone #float .doehome-grid__head,
+.doeinsure-root--iphone #float .doehome-grid__row,
+.doeinsure-root--iphone #chart .doehome-grid__head,
+.doeinsure-root--iphone #chart .doehome-grid__row,
+.doeinsure-root--iphone #open .doehome-grid__head,
+.doeinsure-root--iphone #open .doehome-grid__row {
+  font-size: 0.68rem;
+}
+
+.doeinsure-root--iphone #float .doehome-grid__row b,
+.doeinsure-root--iphone #chart .doehome-grid__row b,
+.doeinsure-root--iphone #open .doehome-grid__row b {
+  font-size: 0.72rem;
+}
+
+.doeinsure-root--iphone #book .doehome-scene--week {
+  gap: 0.65rem;
+  padding: 1rem 0.75rem 1.05rem;
+}
+
+.doeinsure-root--iphone #book .doehome-week {
+  grid-template-columns: 2rem repeat(5, minmax(0, 1fr));
+  gap: 0.28rem;
+}
+
+.doeinsure-root--iphone #book .doehome-week > span,
+.doeinsure-root--iphone #book .doehome-week > b,
+.doeinsure-root--iphone #book .doehome-week > em {
+  min-height: 2.15rem;
+}
+
+.doeinsure-root--iphone #book .doehome-week > b,
+.doeinsure-root--iphone #book .doehome-week > em {
+  font-size: 0.58rem;
+}
+
+.doeinsure-root--iphone #book .doehome-week > span {
+  padding: 0.35rem 0.28rem;
+}
+
+.doeinsure-root--iphone #book .doehome-week > span.is-held b {
+  font-size: 0.68rem;
+}
+
+.doeinsure-root--iphone #book .doehome-week > span.is-held em {
+  font-size: 0.56rem;
+}
+
+.doeinsure-root--iphone #board .doehome-scene--board {
+  gap: 0.7rem;
+  padding: 1rem 0.75rem 1.05rem;
+}
+
+.doeinsure-root--iphone #board .doehome-board {
+  grid-template-columns: 1fr;
+  gap: 0.45rem;
+}
+
+.doeinsure-root--iphone #board .doehome-board section {
+  min-height: auto;
+  padding: 0.65rem 0.6rem 0.7rem;
+}
+
+.doeinsure-root--iphone #board .doehome-board h3 {
+  font-size: 0.82rem;
+}
+
+.doeinsure-root--iphone #board .doehome-board b {
+  font-size: 0.78rem;
+}
+
+.doeinsure-root--iphone #board .doehome-board li span {
+  font-size: 0.68rem;
+}
+
+.doeinsure-root--iphone #handoff .doehome-scene--focus,
+.doeinsure-root--iphone #scribe .doehome-scene--focus,
+.doeinsure-root--iphone #auth .doehome-scene--focus {
+  width: min(100%, 17.5rem);
+}
+
+.doeinsure-root--iphone #handoff .doehome-scene__action,
+.doeinsure-root--iphone #scribe .doehome-scene__action,
+.doeinsure-root--iphone #auth .doehome-scene__action {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.82rem;
+  text-align: center;
 }
 
 @media (prefers-reduced-motion: reduce) {
