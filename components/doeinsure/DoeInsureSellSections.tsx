@@ -1156,12 +1156,14 @@ function ReadBody({ revealed }: { revealed: boolean }) {
         <div className={`doeinsure-read${complete ? " is-on" : ""}`}>
           <div className="doeinsure-read__desk">
             <article
-              className={`doeinsure-read__page${reading ? " is-reading" : ""}${complete ? " is-on" : ""}`}
+              className={`doeinsure-read__page${reading ? " is-reading" : ""}${variant === "phone" && complete ? " is-on" : ""}`}
               style={{ "--read-scan-ms": `${stepMs * packet.fields.length}ms` } as CSSProperties}
             >
-              <header className="doeinsure-read__status">
-                <em>{status}</em>
-              </header>
+              {variant === "phone" ? (
+                <header className="doeinsure-read__status">
+                  <em>{status}</em>
+                </header>
+              ) : null}
               <div className="doeinsure-read__sheet">
                 <header className="doeinsure-read__sheet-head">
                   <strong>{packet.file}</strong>
@@ -1193,6 +1195,11 @@ function ReadBody({ revealed }: { revealed: boolean }) {
             </article>
 
             <aside className={`doeinsure-read__extract${complete ? " is-on" : ""}`}>
+              {variant !== "phone" ? (
+                <header className="doeinsure-read__extract-head">
+                  <em>{status}</em>
+                </header>
+              ) : null}
               <ul>
                 {packet.fields.map((field, index) => {
                   const on = index < extracted;

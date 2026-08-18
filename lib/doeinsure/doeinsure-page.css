@@ -2011,11 +2011,15 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   height: 0;
   min-height: 100%;
   overflow: hidden;
-  padding-top: 1.2rem;
 }
 
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-read__extract-head {
   flex: 0 0 auto;
+  margin-bottom: 0.85rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-read__extract-head em {
+  font-size: clamp(1.45rem, 2.4vw, 1.9rem);
 }
 
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-read__extract ul {
