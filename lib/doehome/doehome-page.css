@@ -90,6 +90,12 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   border-bottom: 0;
 }
 
+.doehome-root .doeinsure-nav,
+.doehome-root .doeinsure-nav.is-scrolled,
+.doehome-root .doeinsure-nav.is-open {
+  border-bottom: 1px solid var(--doehome-gold-line);
+}
+
 .doehome-root .doeinsure-nav__promo-link,
 .doehome-root .doeinsure-nav__promo-cta {
   color: #e8c08e;
