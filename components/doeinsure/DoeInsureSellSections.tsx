@@ -944,27 +944,28 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
 
   const desk = (
     <div className="doeinsure-claim__layout" key={active.id}>
-      <div className="doeinsure-claim__rail" role="tablist" aria-label="Incidents">
-        {DOEINSURE_CLAIM.incidents.map((item, index) => (
-          <button
-            key={item.id}
-            type="button"
-            role="tab"
-            aria-selected={incident === index}
-            className={incident === index ? "is-on" : undefined}
-            onClick={() => pickIncident(index)}
-          >
-            <span>{item.line}</span>
-            <b>{item.name}</b>
-            <em>{item.reserve}</em>
-          </button>
-        ))}
-      </div>
+      <div className="doeinsure-claim__desk">
+        <div className="doeinsure-claim__rail" role="tablist" aria-label="Incidents">
+          {DOEINSURE_CLAIM.incidents.map((item, index) => (
+            <button
+              key={item.id}
+              type="button"
+              role="tab"
+              aria-selected={incident === index}
+              className={incident === index ? "is-on" : undefined}
+              onClick={() => pickIncident(index)}
+            >
+              <span>{item.line}</span>
+              <b>{item.name}</b>
+              <em>{item.reserve}</em>
+            </button>
+          ))}
+        </div>
 
-      <article
-        className="doeinsure-claim__main"
-        style={{ "--claim-scan-ms": `${stepMs * 5}ms` } as CSSProperties}
-      >
+        <article
+          className="doeinsure-claim__main"
+          style={{ "--claim-scan-ms": `${stepMs * 5}ms` } as CSSProperties}
+        >
         <header className="doeinsure-claim__main-head">
           <strong className={filed ? "is-on" : undefined}>
             {filed ? active.number : DOEINSURE_CLAIM.draftTitle}
@@ -1015,6 +1016,7 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
           </div>
         </div>
       </article>
+      </div>
 
       <aside className={`doeinsure-claim__side${filed ? " is-on" : ""}`}>
         <p className="doeinsure-claim__status">
