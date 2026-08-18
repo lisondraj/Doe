@@ -1768,6 +1768,68 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   border-color: var(--di-blue);
 }
 
+.doeinsure-root:not(.doeinsure-root--iphone) #request {
+  padding-bottom: 2.75rem;
+  overflow: visible;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) #request .doeinsure-reveal > *,
+.doeinsure-root:not(.doeinsure-root--iphone) #request .doeinsure-reveal.is-in > * {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  animation: none;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) #request .doeinsure-cta-grid {
+  align-items: start;
+  padding-bottom: 0.15rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-footer {
+  margin-top: 0;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-read__sheet {
+  min-height: 0;
+  justify-content: flex-start;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-read__sheet p {
+  flex: 1;
+  font-size: clamp(1.24rem, 1.58vw, 1.52rem);
+  line-height: 1.46;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-read__mark {
+  padding: 0.06em 0.08em;
+  margin: 0 -0.02em;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-read__mark.is-on {
+  border-bottom-color: var(--di-blue);
+  background: rgba(48, 80, 224, 0.12);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-read__extract li {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.18rem;
+  min-height: 0;
+  padding: 0.58rem 0.8rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-read__extract li:not(.is-on) b {
+  display: none;
+  min-height: 0;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-read__extract li.is-on b {
+  max-width: none;
+  width: 100%;
+  text-align: left;
+}
+
 .doeinsure-footer {
   display: flex;
   flex-direction: column;
