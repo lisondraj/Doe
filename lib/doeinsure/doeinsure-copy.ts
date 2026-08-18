@@ -631,7 +631,6 @@ export const DOEINSURE_READ = {
   reading: "Reading",
   filed: "In the file",
   pagesLabel: "pages",
-  extractLabel: "Extracted",
   packet: {
     id: "msa",
     file: "NORTHWELL_MSA.PDF",

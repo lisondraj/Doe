@@ -1158,9 +1158,12 @@ function ReadBody({ revealed }: { revealed: boolean }) {
         <div className={`doeinsure-read${complete ? " is-on" : ""}`}>
           <div className="doeinsure-read__desk">
             <article
-              className={`doeinsure-read__page${reading ? " is-reading" : ""}`}
+              className={`doeinsure-read__page${reading ? " is-reading" : ""}${complete ? " is-on" : ""}`}
               style={{ "--read-scan-ms": `${stepMs * packet.fields.length}ms` } as CSSProperties}
             >
+              <header className="doeinsure-read__status">
+                <em>{status}</em>
+              </header>
               <div className="doeinsure-read__sheet">
                 <header className="doeinsure-read__sheet-head">
                   <strong>{packet.file}</strong>
@@ -1192,10 +1195,6 @@ function ReadBody({ revealed }: { revealed: boolean }) {
             </article>
 
             <aside className={`doeinsure-read__extract${complete ? " is-on" : ""}`}>
-              <header className="doeinsure-read__extract-head">
-                <span>{DOEINSURE_READ.extractLabel}</span>
-                <em>{status}</em>
-              </header>
               <ul>
                 {packet.fields.map((field, index) => {
                   const on = index < extracted;
