@@ -771,17 +771,17 @@ export const DOEINSURE_RADAR = {
   ],
 } as const;
 
-export const DOEINSURE_NAMED = {
-  id: "named",
-  title: ["Name the hospital.", "Keep the company."],
-  lede: "One form for healthcare AI. The startup, the health system, and the clinic that asked for the COI.",
-  writing: "Writing the form",
-  bound: "On the same form",
-  parties: [
-    { name: "Harbor Notes, Inc.", role: "Named insured" },
-    { name: "Northwell Health", role: "Additional insured · primary" },
-    { name: "Evening clinic 14", role: "Certificate holder" },
-    { name: "$10M Tech E&O", role: "Limit matched to the MSA" },
+export const DOEINSURE_CLASS = {
+  id: "class",
+  title: ["Bind the class", "you actually ship."],
+  lede: "Ambient, RCM, imaging, copilots. Doe writes the product — not a generic software box.",
+  reading: "Classifying",
+  bound: "Class bound",
+  items: [
+    { name: "Ambient", line: "PHI at capture. The scribe in the room." },
+    { name: "RCM", line: "Agents on claims, eligibility, and denial." },
+    { name: "Imaging", line: "Reads in the pathway. SaMD if it is one." },
+    { name: "Copilot", line: "Human in the loop. Orders the model never places." },
   ],
 } as const;
 

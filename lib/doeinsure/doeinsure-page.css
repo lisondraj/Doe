@@ -7151,16 +7151,16 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   color: #ffffff;
 }
 
-.doeinsure-named__head {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-width: 36rem;
-  margin-bottom: 3rem;
+.doeinsure-class__head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 0.7fr);
+  gap: 2rem;
+  align-items: end;
+  margin-bottom: 2.8rem;
 }
 
-.doeinsure-section h2.doeinsure-named__title {
-  max-width: 14ch;
+.doeinsure-section h2.doeinsure-class__title {
+  max-width: 12ch;
   margin: 0;
   color: var(--di-ink);
   font-size: clamp(2.2rem, 4.4vw, 3.7rem);
@@ -7169,13 +7169,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   line-height: 0.94;
 }
 
-.doeinsure-named__title span {
+.doeinsure-class__title span {
   display: block;
 }
 
-.doeinsure-named__lede {
+.doeinsure-class__lede {
   margin: 0;
-  max-width: 34ch;
+  max-width: 28ch;
   color: var(--di-muted);
   font-size: 1.08rem;
   font-weight: 500;
@@ -7183,8 +7183,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   line-height: 1.4;
 }
 
-.doeinsure-named__state {
-  margin: 0 0 1.4rem;
+.doeinsure-class__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.35rem;
   color: var(--di-muted);
   font-size: 0.68rem;
   font-weight: 600;
@@ -7192,53 +7196,59 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   text-transform: uppercase;
 }
 
-.doeinsure-named.is-done .doeinsure-named__state {
+.doeinsure-class.is-done .doeinsure-class__meta span {
   color: var(--di-blue);
 }
 
-.doeinsure-named ol {
+.doeinsure-class__meta em {
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+.doeinsure-class__word {
+  display: block;
+  min-height: 0.95em;
+  color: var(--di-ink);
+  font-size: clamp(3.6rem, 10vw, 8.2rem);
+  font-weight: 500;
+  letter-spacing: -0.08em;
+  line-height: 0.9;
+  animation: doeinsure-class-in 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-class__line {
+  margin: 0.85rem 0 0;
+  min-height: 1.5em;
+  color: var(--di-muted);
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  animation: doeinsure-class-in 560ms 60ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-class__index {
   display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.4rem;
+  margin: 2.4rem 0 0;
+  padding: 1.15rem 0 0;
   list-style: none;
-}
-
-.doeinsure-named li {
-  display: flex;
-  flex-direction: column;
-  gap: 0.28rem;
-  padding: 1.15rem 0 1.25rem;
-}
-
-.doeinsure-named li + li {
   border-top: 1px solid var(--di-line);
 }
 
-.doeinsure-named li strong {
-  min-height: 1.05em;
-  color: var(--di-ink);
-  font-size: clamp(2rem, 4.2vw, 3.35rem);
-  font-weight: 500;
-  letter-spacing: -0.065em;
-  line-height: 1.02;
-}
-
-.doeinsure-named li span {
-  min-height: 1.2em;
+.doeinsure-class__index li {
   color: var(--di-muted);
   font-size: 0.92rem;
   font-weight: 500;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
-.doeinsure-named li:not(.is-on) strong,
-.doeinsure-named li:not(.is-on) span {
-  visibility: hidden;
+.doeinsure-class__index li.is-past {
+  color: var(--di-ink);
 }
 
-.doeinsure-named li.is-on strong {
-  animation: doeinsure-named-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+.doeinsure-class__index li.is-on {
+  color: var(--di-blue);
 }
 
 .doeinsure-root--iphone .doeinsure-section--print::after {
@@ -7256,7 +7266,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-section h2.doeinsure-radar__title,
-.doeinsure-root--iphone .doeinsure-section h2.doeinsure-named__title {
+.doeinsure-root--iphone .doeinsure-section h2.doeinsure-class__title {
   font-size: clamp(1.95rem, 8.8vw, 2.55rem);
 }
 
@@ -7274,21 +7284,28 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   grid-template-columns: 1fr;
 }
 
-.doeinsure-root--iphone .doeinsure-named__head {
-  margin-bottom: 2rem;
+.doeinsure-root--iphone .doeinsure-class__head {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
 }
 
-.doeinsure-root--iphone .doeinsure-named__lede {
+.doeinsure-root--iphone .doeinsure-class__lede {
   max-width: none;
   font-size: 1rem;
 }
 
-.doeinsure-root--iphone .doeinsure-named li {
-  padding: 0.95rem 0 1.05rem;
+.doeinsure-root--iphone .doeinsure-class__word {
+  font-size: clamp(3.1rem, 16vw, 4.4rem);
 }
 
-.doeinsure-root--iphone .doeinsure-named li strong {
-  font-size: clamp(1.7rem, 8vw, 2.25rem);
+.doeinsure-root--iphone .doeinsure-class__line {
+  font-size: 1.05rem;
+}
+
+.doeinsure-root--iphone .doeinsure-class__index {
+  gap: 0.7rem 1.1rem;
+  margin-top: 1.8rem;
 }
 
 @keyframes doeinsure-radar-blink {
@@ -7297,10 +7314,10 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   }
 }
 
-@keyframes doeinsure-named-in {
+@keyframes doeinsure-class-in {
   from {
     opacity: 0;
-    transform: translateY(0.35rem);
+    transform: translateY(0.4rem);
   }
 
   to {
@@ -7348,7 +7365,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
   .doeinsure-radar__status i,
   .doeinsure-radar__sweep,
-  .doeinsure-named li.is-on strong {
+  .doeinsure-class__word,
+  .doeinsure-class__line {
     animation: none !important;
     transform: none;
   }

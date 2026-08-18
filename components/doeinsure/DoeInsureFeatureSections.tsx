@@ -3,13 +3,13 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
-import { DOEINSURE_NAMED, DOEINSURE_RADAR } from "@/lib/doeinsure/doeinsure-copy";
+import { DOEINSURE_CLASS, DOEINSURE_RADAR } from "@/lib/doeinsure/doeinsure-copy";
 import { useDoeInsurePageVariant } from "@/lib/doeinsure/use-doeinsure-page-variant";
 
 const RADAR_STEP_MS = 920;
 const RADAR_STEP_MS_IPHONE = 1120;
-const NAMED_STEP_MS = 1050;
-const NAMED_STEP_MS_IPHONE = 1260;
+const CLASS_STEP_MS = 1600;
+const CLASS_STEP_MS_IPHONE = 1840;
 const RADAR_CX = 100;
 const RADAR_CY = 100;
 const RADAR_R = 78;
@@ -102,49 +102,60 @@ function RadarBody({ revealed }: { revealed: boolean }) {
   );
 }
 
-function NamedBody({ revealed }: { revealed: boolean }) {
+function ClassBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeInsurePageVariant();
-  const stepMs = variant === "phone" ? NAMED_STEP_MS_IPHONE : NAMED_STEP_MS;
-  const [shown, setShown] = useState(0);
+  const stepMs = variant === "phone" ? CLASS_STEP_MS_IPHONE : CLASS_STEP_MS;
+  const [index, setIndex] = useState(0);
   const [auto, setAuto] = useState(false);
-  const parties = DOEINSURE_NAMED.parties;
-  const complete = shown >= parties.length;
+  const items = DOEINSURE_CLASS.items;
+  const complete = index >= items.length;
+  const current = items[Math.min(index, items.length - 1)];
 
   useEffect(() => {
     if (!revealed) return;
-    setShown(0);
+    setIndex(0);
     setAuto(true);
   }, [revealed]);
 
   useEffect(() => {
     if (!auto || complete) return undefined;
-    const id = window.setTimeout(() => setShown((current) => current + 1), stepMs);
+    const id = window.setTimeout(() => setIndex((currentIndex) => currentIndex + 1), stepMs);
     return () => window.clearTimeout(id);
-  }, [auto, complete, shown, stepMs]);
+  }, [auto, complete, index, stepMs]);
 
   return (
     <>
-      <header className="doeinsure-named__head">
-        <h2 className="doeinsure-named__title">
-          {DOEINSURE_NAMED.title.map((line) => (
+      <header className="doeinsure-class__head">
+        <h2 className="doeinsure-class__title">
+          {DOEINSURE_CLASS.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
         </h2>
-        <p className="doeinsure-named__lede">{DOEINSURE_NAMED.lede}</p>
+        <p className="doeinsure-class__lede">{DOEINSURE_CLASS.lede}</p>
       </header>
 
-      <div className={`doeinsure-named${complete ? " is-done" : ""}`}>
-        <p className="doeinsure-named__state">{complete ? DOEINSURE_NAMED.bound : DOEINSURE_NAMED.writing}</p>
-        <ol>
-          {parties.map((party, index) => {
-            const on = index < shown;
-            return (
-              <li key={party.name} className={on ? "is-on" : undefined}>
-                <strong aria-hidden={!on}>{party.name}</strong>
-                <span aria-hidden={!on}>{party.role}</span>
-              </li>
-            );
-          })}
+      <div className={`doeinsure-class${complete ? " is-done" : ""}`}>
+        <p className="doeinsure-class__meta">
+          <span>{complete ? DOEINSURE_CLASS.bound : DOEINSURE_CLASS.reading}</span>
+          <em>
+            {String(Math.min(index + 1, items.length)).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
+          </em>
+        </p>
+        <b key={current.name} className="doeinsure-class__word">
+          {current.name}
+        </b>
+        <p key={`${current.name}-line`} className="doeinsure-class__line">
+          {current.line}
+        </p>
+        <ol className="doeinsure-class__index" aria-hidden="true">
+          {items.map((item, itemIndex) => (
+            <li
+              key={item.name}
+              className={itemIndex === Math.min(index, items.length - 1) ? "is-on" : itemIndex < index ? "is-past" : undefined}
+            >
+              {item.name}
+            </li>
+          ))}
         </ol>
       </div>
     </>
@@ -159,9 +170,9 @@ export function DoeInsureFeatureSections() {
           <DoeInsureReveal variant="rise">{(revealed) => <RadarBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
-      <section className="doeinsure-section" id="named">
+      <section className="doeinsure-section" id="class">
         <div className="doeinsure-wrap">
-          <DoeInsureReveal variant="rise">{(revealed) => <NamedBody revealed={revealed} />}</DoeInsureReveal>
+          <DoeInsureReveal variant="rise">{(revealed) => <ClassBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
     </>
