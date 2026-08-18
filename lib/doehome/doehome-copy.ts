@@ -1,9 +1,5 @@
 export const DOEHOME_CONTACT_EMAIL = "james@doe.care";
 
-/** Solid promo banner on `/doehomepage`. Top overscroll matches this; bottom stays espresso. */
-export const DOEHOME_GOLD_SOLID = "#d4a574";
-export const DOEHOME_PAGE_SURFACE = "#1a1208";
-
 export const DOEHOME_PAGE_TITLE = "Doe";
 export const DOEHOME_PAGE_DESCRIPTION =
   "Doe is an AI platform for clinics. Genome gives each clinic its own intelligence. Pulse answers the phones. Fabric builds your agents. Float runs the financial work.";
