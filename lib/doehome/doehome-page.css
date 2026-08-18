@@ -713,9 +713,13 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-shader-frame__ui {
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100%;
   min-height: 28.5rem;
   overflow: hidden;
+  padding: 2.15rem 1.85rem;
 }
 
 
@@ -843,6 +847,18 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   min-height: 132%;
 }
 
+.doehome-scene--card,
+.doehome-scene--stack {
+  position: relative;
+  left: auto;
+  top: auto;
+  min-height: auto;
+}
+
+.doehome-scene--mid {
+  flex: 0 0 auto;
+}
+
 .doehome-scene > header,
 .doehome-scene--focus > article,
 .doehome-scene--focus > p,
@@ -854,7 +870,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-scene--nodes > p,
 .doehome-scene--tiles li,
 .doehome-board section,
-.doehome-week > span.is-held {
+.doehome-week > span.is-held,
+.doehome-pill {
   opacity: 0;
   transform: translate3d(0, 0.7rem, 0);
   transition:
@@ -874,7 +891,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-scene--nodes > p.is-on,
 .doehome-scene--tiles li.is-on,
 .doehome-board section.is-on,
-.doehome-week > span.is-held {
+.doehome-week > span.is-held,
+.doehome-pill.is-on {
   opacity: 1;
   transform: none;
 }
