@@ -57,6 +57,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   --doehome-cream: #f2e8da;
   --doehome-cream-muted: rgba(242, 232, 218, 0.72);
   --doehome-gold-line: rgba(232, 192, 142, 0.24);
+  --doehome-ui-scale: calc(5 / 6);
   background: var(--doehome-page);
   color: var(--doehome-cream);
 }
@@ -748,7 +749,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   position: relative;
   isolation: isolate;
   align-self: stretch;
-  min-height: 26rem;
+  min-height: calc(26rem * var(--doehome-ui-scale));
   overflow: hidden;
   background: #1a1208;
 }
@@ -766,6 +767,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   height: 100%;
   min-height: 26rem;
   padding: 1.25rem 1.55rem;
+  zoom: var(--doehome-ui-scale);
 }
 
 .doehome-shader-frame .doehome-tape {
