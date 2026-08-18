@@ -4188,11 +4188,17 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__systems,
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-doc.doeinsure-match__doc,
-.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__file,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__file:not(.is-on),
 .doeinsure-root--iphone .doeinsure-doc.doeinsure-match__doc,
 .doeinsure-root--iphone .doeinsure-match__file {
   border: 1px solid var(--di-line);
   background: var(--di-white);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__file.is-on {
+  border-color: var(--di-blue);
+  background: var(--di-blue-gradient);
+  color: #ffffff;
 }
 
 .doeinsure-root--iphone .doeinsure-match {
@@ -4854,12 +4860,12 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-match__file.is-on .doeinsure-btn {
   border-color: #ffffff;
-  background-color: #ffffff;
-  background-image: var(--di-blue-gradient-h), linear-gradient(#ffffff, #ffffff);
-  background-clip: text, padding-box;
-  -webkit-background-clip: text, padding-box;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  background: #ffffff;
+  background-image: none;
+  color: var(--di-blue);
+  -webkit-text-fill-color: var(--di-blue);
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
 }
 
 .doeinsure-match__progress {
@@ -4920,10 +4926,6 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-match__updates li.is-wait {
   color: var(--di-muted);
   font-weight: 400;
-}
-
-.doeinsure-match__file.is-on .doeinsure-match__updates li {
-  border-color: rgba(37, 99, 235, 0.18);
 }
 
 .doeinsure-match__file .doeinsure-scan__limits {
