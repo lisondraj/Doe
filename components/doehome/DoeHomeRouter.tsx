@@ -16,8 +16,9 @@ function DoeHomeGoldDefs() {
           <stop offset="100%" stopColor="#130e09" />
         </linearGradient>
         <linearGradient id="doeinsure-blue-gradient-h" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#c4965e" />
-          <stop offset="100%" stopColor="#8d5e2e" />
+          <stop offset="0%" stopColor="#e8c08e" />
+          <stop offset="52%" stopColor="#d4a574" />
+          <stop offset="100%" stopColor="#d4a574" stopOpacity="0.72" />
         </linearGradient>
       </defs>
     </svg>

@@ -8,7 +8,7 @@ import {
 } from "@/lib/doephone/phone-layout-viewport";
 import { DOEHOME_PATH } from "@/lib/site-domains";
 
-const SURFACE = "#fffdf8";
+const SURFACE = "#1a1208";
 const IPHONE_OVERFLOW = "#1a1208";
 
 /** Runs before paint on `/doehomepage` — same chrome as /doeinsure. */

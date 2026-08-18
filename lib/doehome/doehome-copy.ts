@@ -27,8 +27,8 @@ export const DOEHOME_NAV = {
 } as const;
 
 export const DOEHOME_HERO = {
-  title: "Building",
-  tagline: ["personalized", "intelligence for every clinic."],
+  title: "Building personalized",
+  tagline: ["intelligence for every clinic."],
   lede: "Genome learns your workflow. Pulse, Fabric, and Float run on top of it: phones, agents, and the financial work the front desk should not still be doing by hand.",
   emailLabel: "Work email",
   emailPlaceholder: "you@clinic.com",
@@ -57,7 +57,7 @@ export const DOEHOME_STATS = [
 
 export const DOEHOME_GENOME = {
   id: "genome",
-  title: ["Not a shared hospital model.", "Yours."],
+  title: ["Not a shared model.", "Yours."],
   lede: "Genome is the reason to buy Doe. A group can run a model per clinic. A clinic can run a model per provider. Each one is post-trained on that team’s workflow: prior auth, referrals, visit prep, so the software actually knows how you work.",
   genericLabel: "Generic hospital model",
   genericNote: "Same answers at every site",
@@ -103,7 +103,7 @@ export const DOEHOME_GENOME = {
 
 export const DOEHOME_PULSE = {
   id: "pulse",
-  title: ["The clinic line", "does not go to voicemail."],
+  title: ["The clinic line", "never hits voicemail."],
   lede: "Pulse is voice AI on every live line: front desk, prior auth, nights. Each agent has its own voice, language, tone, and hours. Overnight calls come back at open, written to the chart.",
   number: "(416) 555-0140",
   live: "Live",
@@ -219,7 +219,7 @@ export const DOEHOME_HANDOFF = {
 
 export const DOEHOME_CONNECT = {
   id: "connect",
-  title: ["Plugs into the stack", "you already run."],
+  title: ["Plugs into the stack", "you already have."],
   lede: "Doe does not ask the clinic to leave Athena, Epic, or the fax. The model sits underneath. Agents read and write through what you have.",
   ports: [
     { name: "Athena", kind: "EHR" },
