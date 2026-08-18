@@ -232,6 +232,10 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   background: #1a1208;
 }
 
+.doehome-root .doeinsure-hero {
+  overflow: visible;
+}
+
 .doehome-root .doeinsure-section {
   overflow: hidden;
 }
@@ -339,8 +343,15 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   }
 }
 
-.doehome-root .doeinsure-hero__stage::before {
-  z-index: 1;
+.doehome-root .doeinsure-hero::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  pointer-events: none;
   background-color: #1a1208;
   background-image: radial-gradient(
     circle at 1px 1px,
@@ -358,13 +369,23 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   mask-composite: intersect;
 }
 
-.doehome-root.doeinsure-root--iphone .doeinsure-hero__stage::before {
+.doehome-root .doeinsure-hero__stage::before {
+  content: none;
+}
+
+.doehome-root.doeinsure-root--iphone .doeinsure-hero::before {
   -webkit-mask-image:
     linear-gradient(to right, transparent 0%, #000 0.75rem, #000 calc(100% - 0.75rem), transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 1.25rem, #000 calc(100% - 1.25rem), transparent 100%);
   mask-image:
     linear-gradient(to right, transparent 0%, #000 0.75rem, #000 calc(100% - 0.75rem), transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 1.25rem, #000 calc(100% - 1.25rem), transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+.doehome-root.doeinsure-root--iphone .doeinsure-hero__stage::before {
+  content: none;
 }
 
 .doehome-root .doeinsure-hero__lede,
