@@ -4926,6 +4926,22 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   opacity: 0.82;
 }
 
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__reader {
+  flex: 0 0 auto;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__clauses {
+  flex: 1 1 auto;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__clauses button {
+  justify-content: center;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__clause-top {
+  min-height: 1.35rem;
+}
+
 .doeinsure-doc ul {
   display: flex;
   flex-direction: column;
@@ -5004,7 +5020,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-match__file.is-on .doeinsure-match__updates > span,
 .doeinsure-match__file.is-on .doeinsure-scan__limits span,
 .doeinsure-match__file.is-on .doeinsure-scan__limits b,
-.doeinsure-match__file.is-on .doeinsure-match__updates li {
+.doeinsure-match__file.is-on .doeinsure-match__updates li,
+.doeinsure-match__file.is-on .doeinsure-match__update {
   color: #ffffff;
 }
 
@@ -5033,6 +5050,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-match__file.is-on .doeinsure-match__updates li {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: transparent;
+}
+
+.doeinsure-match__file.is-on .doeinsure-match__update {
   border-color: rgba(255, 255, 255, 0.28);
   background: transparent;
 }
@@ -5103,6 +5125,23 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-match__updates li.is-wait {
+  color: var(--di-muted);
+  font-weight: 400;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__update {
+  margin: 0;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+  color: var(--di-ink);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__update.is-wait {
   color: var(--di-muted);
   font-weight: 400;
 }

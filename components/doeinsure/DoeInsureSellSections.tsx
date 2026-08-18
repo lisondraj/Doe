@@ -183,6 +183,10 @@ function MatchBody({ revealed }: { revealed: boolean }) {
   const limitMatched = Boolean(done[`${scenario}-limit`]);
   const workingLimit = limitMatched || complete ? active.ask : active.from;
   const progress = clauseTotal ? (matchedCount / clauseTotal) * 100 : 0;
+  const latestPolicyUpdate = active.clauses.reduce<string | null>((latest, clause) => {
+    if (done[`${scenario}-${clause.id}`]) return clause.policyMatch;
+    return latest;
+  }, null);
   const policyUpdates = active.clauses
     .filter((clause) => done[`${scenario}-${clause.id}`])
     .map((clause) => clause.policyMatch);
@@ -326,15 +330,24 @@ function MatchBody({ revealed }: { revealed: boolean }) {
             </div>
             <div className="doeinsure-match__updates">
               <span>{DOEINSURE_MATCH.policyUpdates}</span>
-              <ul>
-                {policyUpdates.length ? (
-                  policyUpdates.map((update) => (
-                    <li key={update}>{update}</li>
-                  ))
-                ) : (
-                  <li className="is-wait">{DOEINSURE_MATCH.waitingUpdates}</li>
-                )}
-              </ul>
+              {variant === "phone" ? (
+                <ul>
+                  {policyUpdates.length ? (
+                    policyUpdates.map((update) => (
+                      <li key={update}>{update}</li>
+                    ))
+                  ) : (
+                    <li className="is-wait">{DOEINSURE_MATCH.waitingUpdates}</li>
+                  )}
+                </ul>
+              ) : (
+                <p
+                  className={`doeinsure-match__update${latestPolicyUpdate ? "" : " is-wait"}`}
+                  key={latestPolicyUpdate ?? "wait"}
+                >
+                  {latestPolicyUpdate ?? DOEINSURE_MATCH.waitingUpdates}
+                </p>
+              )}
             </div>
             {complete ? (
               <a className="doeinsure-btn" href="#request">
