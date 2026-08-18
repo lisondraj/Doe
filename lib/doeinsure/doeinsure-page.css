@@ -1696,6 +1696,19 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   gap: 1.8rem;
 }
 
+.doeinsure-cta__lede {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.doeinsure-cta__arrow {
+  width: 1.35rem;
+  flex-shrink: 0;
+  margin-top: 0.08em;
+}
+
 .doeinsure-form {
   display: flex;
   flex-direction: column;

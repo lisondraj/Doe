@@ -774,7 +774,6 @@ export const DOEINSURE_RADAR = {
 export const DOEINSURE_PHI = {
   id: "phi",
   title: ["Tell the file", "where PHI lives."],
-  lede: "Training, inference, the room. Doe maps the PHI path, then writes cyber, privacy, and E&O around it.",
   mapping: "Mapping PHI",
   ready: "BAA pack ready",
   coverLabel: "On this file",
@@ -841,8 +840,8 @@ export const DOEINSURE_FAQ = {
 
 export const DOEINSURE_CTA = {
   eyebrow: "Get coverage",
-  title: "Tell us who you are.",
-  body: "Name, company, and a work email. Add the website if you have one — we will take it from there.",
+  title: "Get an instant quote.",
+  body: "Tell us more about the product you're building",
   submit: "Send",
   fields: {
     name: "Name",

@@ -130,7 +130,6 @@ function PhiBody({ revealed }: { revealed: boolean }) {
             <span key={line}>{line}</span>
           ))}
         </h2>
-        <p className="doeinsure-phi__lede">{DOEINSURE_PHI.lede}</p>
       </header>
 
       <div className={`doeinsure-phi${complete ? " is-ready" : ""}`}>

@@ -355,7 +355,19 @@ export function DoeInsurePageContent() {
           <DoeInsureReveal className="doeinsure-cta-grid">
             <div>
               <h2>{DOEINSURE_CTA.title}</h2>
-              <p className="doeinsure-hero__lede">{DOEINSURE_CTA.body}</p>
+              <p className="doeinsure-hero__lede doeinsure-cta__lede">
+                <span>{DOEINSURE_CTA.body}</span>
+                <svg className="doeinsure-cta__arrow" viewBox="0 0 20 12" aria-hidden="true">
+                  <path
+                    d="M0 6h14M10 2l5 4-5 4"
+                    fill="none"
+                    stroke="url(#doeinsure-blue-gradient-h)"
+                    strokeWidth="1.75"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </p>
             </div>
             <DoeInsureIntakeForm email={email} onEmailChange={setEmail} />
           </DoeInsureReveal>
