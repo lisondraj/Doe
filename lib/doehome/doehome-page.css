@@ -533,6 +533,54 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   color: var(--doehome-cream-muted);
 }
 
+.doehome-root #request.doehome-cta-strip {
+  position: relative;
+  padding-top: 3.5rem;
+  padding-bottom: 2.75rem;
+  background: #221910;
+  border-top: 1px solid var(--doehome-gold-line);
+}
+
+.doehome-root #request.doehome-cta-strip::before,
+.doehome-root #request.doehome-cta-strip::after {
+  content: none;
+}
+
+.doehome-root #request .doeinsure-cta-grid {
+  align-items: start;
+  gap: 2.75rem;
+}
+
+.doehome-root #request .doehome-section-title {
+  margin-bottom: 0.85rem;
+}
+
+.doehome-root #request .doeinsure-cta__lede {
+  margin: 0;
+  max-width: 28rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #request .doeinsure-reveal > *,
+.doehome-root:not(.doeinsure-root--iphone) #request .doeinsure-reveal.is-in > * {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  animation: none;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #request .doeinsure-cta-grid {
+  padding-bottom: 0.15rem;
+}
+
+.doehome-root.doeinsure-root--iphone #request.doehome-cta-strip {
+  padding-top: 2.5rem;
+  padding-bottom: 2rem;
+}
+
+.doehome-root.doeinsure-root--iphone #request .doeinsure-cta-grid {
+  gap: 1.5rem;
+}
+
 .doehome-root .doeinsure-footer,
 .doehome-root.doeinsure-root--iphone .doeinsure-footer,
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-footer {

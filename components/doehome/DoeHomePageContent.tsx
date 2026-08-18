@@ -258,29 +258,20 @@ export function DoeHomePageContent() {
         </div>
       </section>
 
-      <section className="doeinsure-section doehome-section--mesh-dots" id="request">
-        <div className="doeinsure-wrap doehome-feature">
-          <DoeInsureReveal>
-            <header className="doehome-extra__head">
+      <section className="doeinsure-section doehome-cta-strip" id="request">
+        <div className="doeinsure-wrap">
+          <DoeInsureReveal className="doeinsure-cta-grid">
+            <div>
               <h2 className="doehome-section-title">
                 {DOEHOME_CTA.title.map((line) => (
                   <span key={line}>{line}</span>
                 ))}
               </h2>
-              <p className="doehome-genome__lede">{DOEHOME_CTA.body}</p>
-            </header>
-            <DoeHomeShaderFrame src={DOEHOME_SHADERS.cta}>
-              <div className="doehome-scene doehome-scene--card doehome-scene--mid doehome-intake is-on">
-                <header className="is-on">
-                  <em>Waitlist</em>
-                  <div>
-                    <b>Bring Doe into clinic</b>
-                    <span>We’ll follow up</span>
-                  </div>
-                </header>
-                <IntakeForm email={email} onEmailChange={setEmail} />
-              </div>
-            </DoeHomeShaderFrame>
+              <p className="doeinsure-hero__lede doeinsure-cta__lede">
+                <span>{DOEHOME_CTA.body}</span>
+              </p>
+            </div>
+            <IntakeForm email={email} onEmailChange={setEmail} />
           </DoeInsureReveal>
         </div>
       </section>
