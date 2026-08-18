@@ -313,11 +313,14 @@ export const DOEHOME_BOARD = {
 
 export const DOEHOME_STACK = {
   title: ["One platform.", "Genome underneath."],
-  items: [
-    { name: "Genome", body: "Your model, or a model per provider, or per site in a group, post-trained on approved workflow outcomes." },
-    { name: "Pulse", body: "Voice agents on every line, including overnight. Written back to the chart." },
-    { name: "Fabric", body: "No-code agents for the workflows you actually run, on your model." },
-    { name: "Float", body: "Payer hold, underpayments, coding, and denials: the financial work that used to sit in a queue." },
+  foundation: {
+    name: "Genome",
+    body: "The clinic model. Pulse, Fabric, and Float run on it.",
+  },
+  products: [
+    { name: "Pulse", body: "Voice on every line, including overnight. Written back to the chart." },
+    { name: "Fabric", body: "Agents for the workflows you actually run, on your model." },
+    { name: "Float", body: "Payer hold, underpayments, coding, and denials." },
   ],
 } as const;
 

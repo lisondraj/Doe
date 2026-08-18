@@ -46,6 +46,7 @@ function GenomeBody({ revealed }: { revealed: boolean }) {
   const harbor = DOEHOME_GENOME.clinics.find((item) => item.id === "harbor") ?? DOEHOME_GENOME.clinics[0];
 
   return (
+    <>
     <Sheet className="doehome-roster">
       <p className="doehome-sheet__kicker">{DOEHOME_GENOME.group.name}</p>
       <ul>
@@ -76,6 +77,21 @@ function GenomeBody({ revealed }: { revealed: boolean }) {
         <span>{DOEHOME_GENOME.trainWhen}</span>
       </p>
     </Sheet>
+    <Sheet className="doehome-foundation">
+      <div className="doehome-foundation__apps">
+        {DOEHOME_STACK.products.map((item) => (
+          <article key={item.name}>
+            <b>{item.name}</b>
+            <p>{item.body}</p>
+          </article>
+        ))}
+      </div>
+      <div className="doehome-foundation__base">
+        <b>{DOEHOME_STACK.foundation.name}</b>
+        <p>{DOEHOME_STACK.foundation.body}</p>
+      </div>
+    </Sheet>
+    </>
   );
 }
 
@@ -370,21 +386,6 @@ function BoardBody({ revealed }: { revealed: boolean }) {
         </section>
       ))}
     </Sheet>
-  );
-}
-
-export function DoeHomeStackRack() {
-  return (
-    <DoeHomeShaderFrame src={DOEHOME_SHADERS.stack}>
-      <Sheet className="doehome-stack">
-        {DOEHOME_STACK.items.map((item) => (
-          <article key={item.name}>
-            <b>{item.name}</b>
-            <p>{item.body}</p>
-          </article>
-        ))}
-      </Sheet>
-    </DoeHomeShaderFrame>
   );
 }
 

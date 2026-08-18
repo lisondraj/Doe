@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 
-import { DoeHomeFeatureSections, DoeHomeStackRack } from "@/components/doehome/DoeHomeFeatureSections";
+import { DoeHomeFeatureSections } from "@/components/doehome/DoeHomeFeatureSections";
 import { DoeHomeShaderFrame } from "@/components/doehome/DoeHomeShaderImage";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import {
@@ -11,7 +11,6 @@ import {
   DOEHOME_FAQ,
   DOEHOME_HERO,
   DOEHOME_HERO_TAPE,
-  DOEHOME_STACK,
   DOEHOME_STATS,
 } from "@/lib/doehome/doehome-copy";
 import { DOEHOME_SHADERS } from "@/lib/doehome/doehome-shaders";
@@ -214,19 +213,6 @@ export function DoeHomePageContent() {
       </section>
 
       <DoeHomeFeatureSections />
-
-      <section className="doeinsure-section" id="platform">
-        <div className="doeinsure-wrap doehome-feature">
-          <DoeInsureReveal>
-            <h2 className="doehome-section-title">
-              {DOEHOME_STACK.title.map((line) => (
-                <span key={line}>{line}</span>
-              ))}
-            </h2>
-            <DoeHomeStackRack />
-          </DoeInsureReveal>
-        </div>
-      </section>
 
       <section className="doeinsure-section doeinsure-section--gray" id="faq">
         <div className="doeinsure-wrap">
