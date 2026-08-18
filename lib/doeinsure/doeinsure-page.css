@@ -540,11 +540,14 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-hero__stage {
   display: flex;
   align-items: center;
-  min-height: clamp(40rem, 78vh, 52rem);
+  min-height: 33rem;
 }
 
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-hero__grid {
   width: 100%;
+  min-width: 0;
+  padding-top: 1.5rem;
+  padding-bottom: 5.75rem;
 }
 
 .doeinsure-hero__grid {
