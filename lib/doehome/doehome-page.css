@@ -239,6 +239,11 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   overflow: visible;
 }
 
+.doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero__grid {
+  width: min(100%, 72rem);
+  margin-inline: auto;
+}
+
 .doehome-root .doeinsure-section {
   overflow: hidden;
 }
