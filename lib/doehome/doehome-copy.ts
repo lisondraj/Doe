@@ -19,7 +19,7 @@ export const DOEHOME_NAV = {
   promos: [
     "Your clinic. Your model.",
     "Pulse answers every line.",
-    "Agents on your Genome.",
+    "Agents on your model.",
   ],
   promoCta: "Join waitlist",
   menuOpen: "Open menu",
@@ -39,7 +39,7 @@ export const DOEHOME_HERO = {
 export const DOEHOME_HERO_TAPE = {
   clinic: "Harbor Ortho",
   heading: "This morning",
-  foot: "Genome v2.1 · underneath it all",
+  foot: "Version 2.1 · underneath it all",
   lines: [
     { t: "7:04", text: "Overnight refill → chart" },
     { t: "7:06", text: "Cancel visit → chart" },
@@ -52,7 +52,7 @@ export const DOEHOME_HERO_TAPE = {
 export const DOEHOME_STATS = [
   { value: "Yours", label: "A model trained on your clinic — not a generic one." },
   { value: "One", label: "Phones, agents, and financial work on one platform." },
-  { value: "Kept", label: "Routine work stays on your Genome." },
+  { value: "Kept", label: "Routine work stays on your model." },
 ] as const;
 
 export const DOEHOME_GENOME = {
@@ -61,32 +61,32 @@ export const DOEHOME_GENOME = {
   lede: "Genome is the reason to buy Doe. A group can run a model per clinic. A clinic can run a model per provider. Each one is post-trained on that team’s workflow — prior auth, referrals, visit prep — so the software actually knows how you work.",
   genericLabel: "Generic hospital model",
   genericNote: "Same answers at every site",
-  yoursLabel: "Harbor Genome",
+  yoursLabel: "Harbor model",
   yoursNote: "Post-trained on this clinic",
   groupLabel: "Group",
   clinicLabel: "Clinic",
   providerLabel: "Provider",
-  modelLabel: "On this Genome",
+  modelLabel: "This model",
   trainLabel: "Weekly train from approved work",
-  trainCta: "Train v2.2",
+  trainCta: "Train Version 2.2",
   trainWhen: "Sunday 6:00pm",
   trainSignals: "1,284 outcomes",
-  clinicPathLabel: "Stays on Harbor Genome",
+  clinicPathLabel: "Stays on Harbor’s model",
   frontierLabel: "Frontier only if needed",
   group: {
     name: "Northstar Health",
     count: "4 clinic models",
   },
   clinics: [
-    { id: "riverside", name: "Riverside", model: "Riverside Genome", version: "v1.8" },
-    { id: "harbor", name: "Harbor Ortho", model: "Harbor Genome", version: "v2.1" },
-    { id: "oakridge", name: "Oakridge", model: "Oakridge Genome", version: "v1.4" },
-    { id: "westlake", name: "Westlake", model: "Westlake Genome", version: "v1.9" },
+    { id: "riverside", name: "Riverside", model: "Riverside model", version: "Version 1.8" },
+    { id: "harbor", name: "Harbor Ortho", model: "Harbor model", version: "Version 2.1" },
+    { id: "oakridge", name: "Oakridge", model: "Oakridge model", version: "Version 1.4" },
+    { id: "westlake", name: "Westlake", model: "Westlake model", version: "Version 1.9" },
   ],
   providers: [
-    { id: "chen", name: "Dr. Chen", model: "Chen Genome", note: "Visit prep · referrals" },
-    { id: "ruiz", name: "Dr. Ruiz", model: "Ruiz Genome", note: "Prior auth · imaging" },
-    { id: "patel", name: "Dr. Patel", model: "Patel Genome", note: "Scribe · follow-up" },
+    { id: "chen", name: "Dr. Chen", model: "Chen model", note: "Visit prep · referrals" },
+    { id: "ruiz", name: "Dr. Ruiz", model: "Ruiz model", note: "Prior auth · imaging" },
+    { id: "patel", name: "Dr. Patel", model: "Patel model", note: "Scribe · follow-up" },
   ],
   submodels: [
     { id: "pa", task: "Prior auth" },
@@ -133,9 +133,9 @@ export const DOEHOME_PULSE = {
 
 export const DOEHOME_FABRIC = {
   id: "fabric",
-  title: ["Build the workflow.", "It runs on your Genome."],
+  title: ["Build the workflow.", "It runs on your model."],
   lede: "Fabric is how the clinic designs its own agents — no engineering ticket. A referral becomes a branch, a missing record becomes a human handoff, and the whole flow runs on Harbor’s model, not a generic one.",
-  runsOn: "Runs on Harbor Genome",
+  runsOn: "Runs on Harbor’s model",
   prompt: "Describe a block…",
   tools: ["Start", "If", "Human"],
   steps: [
@@ -161,6 +161,11 @@ export const DOEHOME_FLOAT = {
   paidLabel: "Paid",
   contract: 100,
   paid: 82,
+  claims: [
+    { payer: "Aetna", claim: "A-4419", allowed: "$220", paid: "$180", cut: 82 },
+    { payer: "UHC", claim: "U-1182", allowed: "$410", paid: "$410", cut: 100 },
+    { payer: "Cigna", claim: "C-7731", allowed: "$185", paid: "$140", cut: 76 },
+  ],
   hold: {
     payer: "Aetna",
     task: "Prior auth · Harbor",
@@ -186,6 +191,8 @@ export const DOEHOME_CHART = {
   lede: "Calls, bookings, holds, and denials write back to the record. The front desk does not retype Doe at the end of the day.",
   patient: "Dana K.",
   clinic: "Harbor Ortho",
+  mrn: "MRN 4419",
+  tabs: ["Chart", "Notes", "Auth"],
   fields: [
     { k: "Visit", v: "Fri 10:20 · held" },
     { k: "Note", v: "Refill returned 7:04am" },
@@ -209,13 +216,14 @@ export const DOEHOME_CONNECT = {
   id: "connect",
   kicker: "Connect",
   title: ["Plugs into the stack", "you already run."],
-  lede: "Doe does not ask the clinic to leave Athena, Epic, or the fax. Genome sits underneath. Agents read and write through what you have.",
+  lede: "Doe does not ask the clinic to leave Athena, Epic, or the fax. The model sits underneath. Agents read and write through what you have.",
   ports: [
     { name: "Athena", kind: "EHR" },
     { name: "Epic", kind: "EHR" },
     { name: "Fax", kind: "Records" },
   ],
-  hub: "Harbor Genome",
+  hub: "Harbor model",
+  hubVersion: "Version 2.1",
 } as const;
 
 export const DOEHOME_OPEN = {
@@ -235,9 +243,9 @@ export const DOEHOME_OPEN = {
 export const DOEHOME_STACK = {
   title: ["One platform.", "Genome underneath."],
   items: [
-    { name: "Genome", body: "The clinic’s own model — or a model per provider, or per site in a group — post-trained on approved workflow outcomes." },
+    { name: "Genome", body: "Your model — or a model per provider, or per site in a group — post-trained on approved workflow outcomes." },
     { name: "Pulse", body: "Voice agents on every line, including overnight. Written back to the chart." },
-    { name: "Fabric", body: "No-code agents for the workflows you actually run, on your Genome." },
+    { name: "Fabric", body: "No-code agents for the workflows you actually run, on your model." },
     { name: "Float", body: "Payer hold, underpayments, coding, and denials — the financial work that used to sit in a queue." },
   ],
 } as const;
@@ -251,7 +259,7 @@ export const DOEHOME_FAQ = {
     },
     {
       q: "Where does patient data go?",
-      a: "Routine work stays on the clinic’s own Genome. Only hard cases route to a frontier model. Workflow outcomes used for weekly training are ones your team already approved.",
+      a: "Routine work stays on the clinic’s own model. Only hard cases route to a frontier model. Workflow outcomes used for weekly training are ones your team already approved.",
     },
     {
       q: "What does Pulse do?",
@@ -259,7 +267,7 @@ export const DOEHOME_FAQ = {
     },
     {
       q: "Do we need engineers to use Fabric?",
-      a: "No. Fabric is a visual builder. Describe a step, add a branch, add a human handoff. Agents run on your Genome, not a generic model.",
+      a: "No. Fabric is a visual builder. Describe a step, add a branch, add a human handoff. Agents run on your model, not a generic one.",
     },
     {
       q: "How is Float different from a billing vendor?",
@@ -267,7 +275,7 @@ export const DOEHOME_FAQ = {
     },
     {
       q: "Can a group see every clinic?",
-      a: "Yes. A group owner watches every clinic Genome from one dashboard, then opens a location to see the workflow submodels and providers underneath it.",
+      a: "Yes. A group owner watches every clinic’s model from one dashboard, then opens a location to see the workflow and providers underneath it.",
     },
   ],
 } as const;

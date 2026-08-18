@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 
-import { DoeHomeFeatureSections } from "@/components/doehome/DoeHomeFeatureSections";
+import { DoeHomeFeatureSections, DoeHomeStackRack } from "@/components/doehome/DoeHomeFeatureSections";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import {
   DOEHOME_CONTACT_EMAIL,
@@ -221,14 +221,7 @@ export function DoeHomePageContent() {
                 </span>
               ))}
             </h2>
-            <div className="doeinsure-grid">
-              {DOEHOME_STACK.items.map((item) => (
-                <article key={item.name} className="doeinsure-tile">
-                  <h3>{item.name}</h3>
-                  <p>{item.body}</p>
-                </article>
-              ))}
-            </div>
+            <DoeHomeStackRack />
           </DoeInsureReveal>
         </div>
       </section>
