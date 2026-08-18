@@ -440,7 +440,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   background: #1a1208;
   color: var(--doehome-cream);
   margin-top: 0;
-  border-top: 0;
+  border-top: 1px solid var(--doehome-gold-line);
 }
 
 .doehome-root .doeinsure-footer__blurb,
