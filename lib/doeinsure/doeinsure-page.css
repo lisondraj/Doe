@@ -7151,16 +7151,16 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   color: #ffffff;
 }
 
-.doeinsure-path__head {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 0.7fr);
-  gap: 2.5rem;
-  align-items: end;
-  margin-bottom: 3.4rem;
+.doeinsure-named__head {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 36rem;
+  margin-bottom: 3rem;
 }
 
-.doeinsure-section h2.doeinsure-path__title {
-  max-width: 12ch;
+.doeinsure-section h2.doeinsure-named__title {
+  max-width: 14ch;
   margin: 0;
   color: var(--di-ink);
   font-size: clamp(2.2rem, 4.4vw, 3.7rem);
@@ -7169,13 +7169,13 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   line-height: 0.94;
 }
 
-.doeinsure-path__title span {
+.doeinsure-named__title span {
   display: block;
 }
 
-.doeinsure-path__lede {
+.doeinsure-named__lede {
   margin: 0;
-  max-width: 28ch;
+  max-width: 34ch;
   color: var(--di-muted);
   font-size: 1.08rem;
   font-weight: 500;
@@ -7183,95 +7183,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   line-height: 1.4;
 }
 
-.doeinsure-path {
-  position: relative;
-}
-
-.doeinsure-path__rail {
-  position: absolute;
-  left: 0.42rem;
-  right: 0.42rem;
-  top: 0.42rem;
-  height: 1px;
-  background: var(--di-line);
-}
-
-.doeinsure-path__rail::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: var(--path-fill, 0%);
-  height: 100%;
-  background: var(--di-blue);
-  transition: width 720ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.doeinsure-path ol {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1.6rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.doeinsure-path li {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  padding-top: 1.55rem;
-  color: var(--di-muted);
-}
-
-.doeinsure-path li::before {
-  content: "";
-  position: absolute;
-  top: 0.18rem;
-  left: 0.18rem;
-  width: 0.5rem;
-  height: 0.5rem;
-  background: var(--di-white);
-  border: 1px solid var(--di-line);
-}
-
-.doeinsure-path li.is-here::before,
-.doeinsure-path li.is-on::before {
-  background: var(--di-blue);
-  border-color: var(--di-blue);
-}
-
-.doeinsure-path li em {
-  color: inherit;
-  font-size: 0.68rem;
-  font-style: normal;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-}
-
-.doeinsure-path li strong {
-  color: inherit;
-  font-size: 1.45rem;
-  font-weight: 500;
-  letter-spacing: -0.05em;
-}
-
-.doeinsure-path li span {
-  max-width: 16ch;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.35;
-}
-
-.doeinsure-path li.is-here,
-.doeinsure-path li.is-on {
-  color: var(--di-ink);
-}
-
-.doeinsure-path__state {
-  margin: 2.1rem 0 0;
+.doeinsure-named__state {
+  margin: 0 0 1.4rem;
   color: var(--di-muted);
   font-size: 0.68rem;
   font-weight: 600;
@@ -7279,8 +7192,53 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   text-transform: uppercase;
 }
 
-.doeinsure-path.is-done .doeinsure-path__state {
+.doeinsure-named.is-done .doeinsure-named__state {
   color: var(--di-blue);
+}
+
+.doeinsure-named ol {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doeinsure-named li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  padding: 1.15rem 0 1.25rem;
+}
+
+.doeinsure-named li + li {
+  border-top: 1px solid var(--di-line);
+}
+
+.doeinsure-named li strong {
+  min-height: 1.05em;
+  color: var(--di-ink);
+  font-size: clamp(2rem, 4.2vw, 3.35rem);
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  line-height: 1.02;
+}
+
+.doeinsure-named li span {
+  min-height: 1.2em;
+  color: var(--di-muted);
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-named li:not(.is-on) strong,
+.doeinsure-named li:not(.is-on) span {
+  visibility: hidden;
+}
+
+.doeinsure-named li.is-on strong {
+  animation: doeinsure-named-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .doeinsure-root--iphone .doeinsure-section--print::after {
@@ -7298,7 +7256,7 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 }
 
 .doeinsure-root--iphone .doeinsure-section h2.doeinsure-radar__title,
-.doeinsure-root--iphone .doeinsure-section h2.doeinsure-path__title {
+.doeinsure-root--iphone .doeinsure-section h2.doeinsure-named__title {
   font-size: clamp(1.95rem, 8.8vw, 2.55rem);
 }
 
@@ -7316,62 +7274,38 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   grid-template-columns: 1fr;
 }
 
-.doeinsure-root--iphone .doeinsure-path__head {
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin-bottom: 2.1rem;
+.doeinsure-root--iphone .doeinsure-named__head {
+  margin-bottom: 2rem;
 }
 
-.doeinsure-root--iphone .doeinsure-path__lede {
+.doeinsure-root--iphone .doeinsure-named__lede {
   max-width: none;
   font-size: 1rem;
 }
 
-.doeinsure-root--iphone .doeinsure-path__rail {
-  left: 0.42rem;
-  right: auto;
-  top: 0.42rem;
-  bottom: 0.42rem;
-  width: 1px;
-  height: auto;
+.doeinsure-root--iphone .doeinsure-named li {
+  padding: 0.95rem 0 1.05rem;
 }
 
-.doeinsure-root--iphone .doeinsure-path__rail::after {
-  width: 100%;
-  height: var(--path-fill, 0%);
-  transition: height 720ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.doeinsure-root--iphone .doeinsure-path ol {
-  grid-template-columns: 1fr;
-  gap: 0;
-}
-
-.doeinsure-root--iphone .doeinsure-path li {
-  padding: 0 0 1.55rem 1.55rem;
-}
-
-.doeinsure-root--iphone .doeinsure-path li::before {
-  top: 0.18rem;
-  left: 0.18rem;
-}
-
-.doeinsure-root--iphone .doeinsure-path li strong {
-  font-size: 1.28rem;
-}
-
-.doeinsure-root--iphone .doeinsure-path li span {
-  max-width: none;
-}
-
-.doeinsure-root--iphone .doeinsure-path__state {
-  margin-top: 0.4rem;
-  padding-left: 1.55rem;
+.doeinsure-root--iphone .doeinsure-named li strong {
+  font-size: clamp(1.7rem, 8vw, 2.25rem);
 }
 
 @keyframes doeinsure-radar-blink {
   50% {
     opacity: 0.15;
+  }
+}
+
+@keyframes doeinsure-named-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -7413,7 +7347,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   }
 
   .doeinsure-radar__status i,
-  .doeinsure-radar__sweep {
+  .doeinsure-radar__sweep,
+  .doeinsure-named li.is-on strong {
     animation: none !important;
     transform: none;
   }

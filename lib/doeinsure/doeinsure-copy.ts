@@ -771,17 +771,17 @@ export const DOEINSURE_RADAR = {
   ],
 } as const;
 
-export const DOEINSURE_PATH = {
-  id: "path",
-  title: ["Coverage that sits", "in the care path."],
-  lede: "Generic tech policies stop at downtime. Doe follows the model from the room to the hospital paper.",
-  covered: "On cover",
-  walking: "Walking the path",
-  steps: [
-    { n: "01", name: "Capture", cover: "Ambient audio and PHI at the bedside." },
-    { n: "02", name: "Inference", cover: "The model call, the log, the human in loop." },
-    { n: "03", name: "Clinic", cover: "The note, the order, the patient in front of it." },
-    { n: "04", name: "Contract", cover: "Named insured, the limit, the Friday ask." },
+export const DOEINSURE_NAMED = {
+  id: "named",
+  title: ["Name the hospital.", "Keep the company."],
+  lede: "One form for healthcare AI. The startup, the health system, and the clinic that asked for the COI.",
+  writing: "Writing the form",
+  bound: "On the same form",
+  parties: [
+    { name: "Harbor Notes, Inc.", role: "Named insured" },
+    { name: "Northwell Health", role: "Additional insured · primary" },
+    { name: "Evening clinic 14", role: "Certificate holder" },
+    { name: "$10M Tech E&O", role: "Limit matched to the MSA" },
   ],
 } as const;
 

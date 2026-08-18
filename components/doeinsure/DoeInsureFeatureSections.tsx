@@ -3,13 +3,13 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
-import { DOEINSURE_PATH, DOEINSURE_RADAR } from "@/lib/doeinsure/doeinsure-copy";
+import { DOEINSURE_NAMED, DOEINSURE_RADAR } from "@/lib/doeinsure/doeinsure-copy";
 import { useDoeInsurePageVariant } from "@/lib/doeinsure/use-doeinsure-page-variant";
 
 const RADAR_STEP_MS = 920;
 const RADAR_STEP_MS_IPHONE = 1120;
-const PATH_STEP_MS = 1100;
-const PATH_STEP_MS_IPHONE = 1320;
+const NAMED_STEP_MS = 1050;
+const NAMED_STEP_MS_IPHONE = 1260;
 const RADAR_CX = 100;
 const RADAR_CY = 100;
 const RADAR_R = 78;
@@ -102,57 +102,50 @@ function RadarBody({ revealed }: { revealed: boolean }) {
   );
 }
 
-function PathBody({ revealed }: { revealed: boolean }) {
+function NamedBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeInsurePageVariant();
-  const stepMs = variant === "phone" ? PATH_STEP_MS_IPHONE : PATH_STEP_MS;
-  const [step, setStep] = useState(0);
+  const stepMs = variant === "phone" ? NAMED_STEP_MS_IPHONE : NAMED_STEP_MS;
+  const [shown, setShown] = useState(0);
   const [auto, setAuto] = useState(false);
-  const steps = DOEINSURE_PATH.steps;
-  const complete = step >= steps.length;
-  const fill = (Math.min(step, steps.length - 1) / (steps.length - 1)) * 100;
+  const parties = DOEINSURE_NAMED.parties;
+  const complete = shown >= parties.length;
 
   useEffect(() => {
     if (!revealed) return;
-    setStep(0);
+    setShown(0);
     setAuto(true);
   }, [revealed]);
 
   useEffect(() => {
     if (!auto || complete) return undefined;
-    const id = window.setTimeout(() => setStep((current) => current + 1), stepMs);
+    const id = window.setTimeout(() => setShown((current) => current + 1), stepMs);
     return () => window.clearTimeout(id);
-  }, [auto, complete, step, stepMs]);
+  }, [auto, complete, shown, stepMs]);
 
   return (
     <>
-      <header className="doeinsure-path__head">
-        <h2 className="doeinsure-path__title">
-          {DOEINSURE_PATH.title.map((line) => (
+      <header className="doeinsure-named__head">
+        <h2 className="doeinsure-named__title">
+          {DOEINSURE_NAMED.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
         </h2>
-        <p className="doeinsure-path__lede">{DOEINSURE_PATH.lede}</p>
+        <p className="doeinsure-named__lede">{DOEINSURE_NAMED.lede}</p>
       </header>
 
-      <div
-        className={`doeinsure-path${complete ? " is-done" : ""}`}
-        style={{ "--path-fill": `${complete ? 100 : fill}%` } as CSSProperties}
-      >
-        <i className="doeinsure-path__rail" aria-hidden="true" />
+      <div className={`doeinsure-named${complete ? " is-done" : ""}`}>
+        <p className="doeinsure-named__state">{complete ? DOEINSURE_NAMED.bound : DOEINSURE_NAMED.writing}</p>
         <ol>
-          {steps.map((item, index) => {
-            const on = index < step;
-            const here = index === step && !complete;
+          {parties.map((party, index) => {
+            const on = index < shown;
             return (
-              <li key={item.n} className={`${on ? "is-on" : ""}${here ? " is-here" : ""}`}>
-                <em>{item.n}</em>
-                <strong>{item.name}</strong>
-                <span>{item.cover}</span>
+              <li key={party.name} className={on ? "is-on" : undefined}>
+                <strong aria-hidden={!on}>{party.name}</strong>
+                <span aria-hidden={!on}>{party.role}</span>
               </li>
             );
           })}
         </ol>
-        <p className="doeinsure-path__state">{complete ? DOEINSURE_PATH.covered : DOEINSURE_PATH.walking}</p>
       </div>
     </>
   );
@@ -166,9 +159,9 @@ export function DoeInsureFeatureSections() {
           <DoeInsureReveal variant="rise">{(revealed) => <RadarBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
-      <section className="doeinsure-section" id="path">
+      <section className="doeinsure-section" id="named">
         <div className="doeinsure-wrap">
-          <DoeInsureReveal variant="rise">{(revealed) => <PathBody revealed={revealed} />}</DoeInsureReveal>
+          <DoeInsureReveal variant="rise">{(revealed) => <NamedBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
     </>
