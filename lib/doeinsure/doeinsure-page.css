@@ -21,14 +21,14 @@ html[data-doeinsure-page][data-layout="desktop"] body {
 }
 
 html[data-doeinsure-page]:has(.doephone-mobile-root) {
-  --doe-page-surface: #3050e0;
-  --proto-page-bg: #3050e0;
+  --doe-page-surface: var(--di-blue);
+  --proto-page-bg: var(--di-blue);
   background-color: var(--di-blue);
   background-image: none;
 }
 
 html[data-doeinsure-page]:has(.doephone-mobile-root) body {
-  background-color: transparent !important;
+  background-color: var(--di-blue) !important;
   background-image: none;
 }
 
@@ -183,6 +183,11 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   line-height: 1.2;
   padding-top: 0.38rem;
   padding-bottom: 0.38rem;
+}
+
+.doeinsure-root--iphone .doeinsure-nav__promo {
+  background: var(--di-blue);
+  background-image: none;
 }
 
 .doeinsure-root--iphone .doeinsure-nav__promo-track {
