@@ -4,6 +4,9 @@ import type { CSSProperties, ReactNode } from "react";
 
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import {
+  DOEHOME_AUTH,
+  DOEHOME_BOARD,
+  DOEHOME_BOOK,
   DOEHOME_CHART,
   DOEHOME_CONNECT,
   DOEHOME_FABRIC,
@@ -12,6 +15,7 @@ import {
   DOEHOME_HANDOFF,
   DOEHOME_OPEN,
   DOEHOME_PULSE,
+  DOEHOME_SCRIBE,
   DOEHOME_STACK,
 } from "@/lib/doehome/doehome-copy";
 import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
@@ -484,6 +488,163 @@ function OpenBody({ revealed }: { revealed: boolean }) {
   );
 }
 
+function BookBody({ revealed }: { revealed: boolean }) {
+  const { variant } = useDoeHomePageVariant();
+  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 560 : 440);
+  const held = DOEHOME_BOOK.held;
+
+  return (
+    <>
+      <header className="doehome-extra__head">
+        <h2 className="doehome-section-title doehome-extra__title">
+          {DOEHOME_BOOK.title.map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </h2>
+        <p className="doehome-genome__lede">{DOEHOME_BOOK.lede}</p>
+      </header>
+      <Window title={DOEHOME_BOOK.windowTitle} className={`doehome-week${lit >= 1 ? " is-on" : ""}`}>
+        <div className="doehome-week__grid">
+          <span className="doehome-week__corner" />
+          {DOEHOME_BOOK.days.map((day) => (
+            <b key={day} className={day === held.day && lit >= 2 ? "is-this" : undefined}>
+              {day}
+            </b>
+          ))}
+          {DOEHOME_BOOK.hours.flatMap((hour) => [
+            <em key={`${hour}-label`}>{hour}</em>,
+            ...DOEHOME_BOOK.days.map((day) => {
+              const isHeld = day === held.day && hour === held.hour;
+              return (
+                <span key={`${day}-${hour}`} className={isHeld && lit >= 3 ? "is-held" : undefined}>
+                  {isHeld && lit >= 3 ? (
+                    <>
+                      <b>{held.label}</b>
+                      <i>{held.name}</i>
+                    </>
+                  ) : null}
+                </span>
+              );
+            }),
+          ])}
+        </div>
+      </Window>
+    </>
+  );
+}
+
+function ScribeBody({ revealed }: { revealed: boolean }) {
+  const { variant } = useDoeHomePageVariant();
+  const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 580 : 460);
+
+  return (
+    <>
+      <header className="doehome-extra__head">
+        <h2 className="doehome-section-title doehome-extra__title">
+          {DOEHOME_SCRIBE.title.map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </h2>
+        <p className="doehome-genome__lede">{DOEHOME_SCRIBE.lede}</p>
+      </header>
+      <Window title={DOEHOME_SCRIBE.windowTitle} className={`doehome-scribe${lit >= 1 ? " is-live" : ""}`} live={lit >= 1}>
+        <div className="doehome-scribe__who">
+          <span>{DOEHOME_SCRIBE.room}</span>
+          <b>{DOEHOME_SCRIBE.patient}</b>
+        </div>
+        <span className="doehome-handset__wave" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+        </span>
+        <ul>
+          {DOEHOME_SCRIBE.lines.map((line, index) => (
+            <li key={line} className={lit >= 2 + index ? "is-on" : undefined}>
+              <i />
+              <b>{line}</b>
+            </li>
+          ))}
+        </ul>
+        <p className={lit >= 4 ? "is-on" : undefined}>{DOEHOME_SCRIBE.stamp}</p>
+      </Window>
+    </>
+  );
+}
+
+function AuthBody({ revealed }: { revealed: boolean }) {
+  const { variant } = useDoeHomePageVariant();
+  const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 600 : 480);
+
+  return (
+    <>
+      <header className="doehome-extra__head">
+        <h2 className="doehome-section-title doehome-extra__title">
+          {DOEHOME_AUTH.title.map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </h2>
+        <p className="doehome-genome__lede">{DOEHOME_AUTH.lede}</p>
+      </header>
+      <div className={`doehome-pack${lit >= 4 ? " is-sent" : ""}`}>
+        <div className="doehome-pack__stack">
+          {DOEHOME_AUTH.pages.map((page, index) => (
+            <article
+              key={page.id}
+              className={index < lit ? "is-on" : undefined}
+              style={{ "--n": index } as CSSProperties}
+            >
+              <span>{DOEHOME_AUTH.payer}</span>
+              <b>{page.label}</b>
+              <em>{DOEHOME_AUTH.ref}</em>
+            </article>
+          ))}
+        </div>
+        <p className={lit >= 4 ? "is-on" : undefined}>{DOEHOME_AUTH.stamp}</p>
+      </div>
+    </>
+  );
+}
+
+function BoardBody({ revealed }: { revealed: boolean }) {
+  const { variant } = useDoeHomePageVariant();
+  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 560 : 440);
+
+  return (
+    <>
+      <header className="doehome-extra__head">
+        <h2 className="doehome-section-title doehome-extra__title">
+          {DOEHOME_BOARD.title.map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </h2>
+        <p className="doehome-genome__lede">{DOEHOME_BOARD.lede}</p>
+      </header>
+      <Window title={DOEHOME_BOARD.windowTitle} className="doehome-board">
+        <div className="doehome-board__cols">
+          {DOEHOME_BOARD.columns.map((column, index) => (
+            <section key={column.id} className={index < lit ? "is-on" : undefined}>
+              <h3>{column.name}</h3>
+              <ul>
+                {column.cards.map((card) => (
+                  <li key={card.id}>
+                    <b>{card.title}</b>
+                    <span>{card.meta}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </Window>
+    </>
+  );
+}
+
 function RackUi({ name }: { name: string }) {
   if (name === "Genome") {
     return (
@@ -582,6 +743,26 @@ export function DoeHomeFeatureSections() {
       <section className="doeinsure-section doeinsure-section--gray" id="open">
         <div className="doeinsure-wrap">
           <DoeInsureReveal variant="left">{(revealed) => <OpenBody revealed={revealed} />}</DoeInsureReveal>
+        </div>
+      </section>
+      <section className="doeinsure-section" id="book">
+        <div className="doeinsure-wrap">
+          <DoeInsureReveal variant="rise">{(revealed) => <BookBody revealed={revealed} />}</DoeInsureReveal>
+        </div>
+      </section>
+      <section className="doeinsure-section doeinsure-section--gray" id="scribe">
+        <div className="doeinsure-wrap">
+          <DoeInsureReveal variant="left">{(revealed) => <ScribeBody revealed={revealed} />}</DoeInsureReveal>
+        </div>
+      </section>
+      <section className="doeinsure-section" id="auth">
+        <div className="doeinsure-wrap">
+          <DoeInsureReveal variant="right">{(revealed) => <AuthBody revealed={revealed} />}</DoeInsureReveal>
+        </div>
+      </section>
+      <section className="doeinsure-section doeinsure-section--gray" id="board">
+        <div className="doeinsure-wrap">
+          <DoeInsureReveal variant="rise">{(revealed) => <BoardBody revealed={revealed} />}</DoeInsureReveal>
         </div>
       </section>
     </>

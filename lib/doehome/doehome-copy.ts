@@ -243,6 +243,74 @@ export const DOEHOME_OPEN = {
   ],
 } as const;
 
+export const DOEHOME_BOOK = {
+  id: "book",
+  title: ["The open slot is", "already held."],
+  lede: "Pulse books while the line is live. The week grid updates, the slot is pinned, and the chart already has Friday 10:20.",
+  windowTitle: "Harbor Ortho week",
+  days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+  hours: ["9:00", "10:20", "11:40"],
+  held: { day: "Fri", hour: "10:20", name: "Dana K.", label: "Held" },
+} as const;
+
+export const DOEHOME_SCRIBE = {
+  id: "scribe",
+  title: ["The visit writes", "its own note."],
+  lede: "Ambient capture sits in the room. The Harbor model turns the visit into a note, then writes it back so Dr. Chen is not typing after the patient leaves.",
+  windowTitle: "Exam 2, Dr. Chen",
+  room: "Exam 2",
+  provider: "Dr. Chen",
+  patient: "Dana K.",
+  lines: [
+    "MRI follow-up, right knee",
+    "Hold Friday 10:20",
+    "Refill already on the chart",
+  ],
+  stamp: "Wrote to chart",
+} as const;
+
+export const DOEHOME_AUTH = {
+  id: "auth",
+  title: ["The auth packet", "builds itself."],
+  lede: "Float stays on payer hold. The packet fills from the visit: order, clinic note, imaging. Harbor sends it before anyone sits on a queue.",
+  windowTitle: "Aetna A-4419",
+  payer: "Aetna",
+  ref: "A-4419",
+  pages: [
+    { id: "order", label: "Order" },
+    { id: "note", label: "Clinic note" },
+    { id: "image", label: "Imaging" },
+  ],
+  stamp: "Sent",
+} as const;
+
+export const DOEHOME_BOARD = {
+  id: "board",
+  title: ["Today is already", "a work board."],
+  lede: "Overnight work, live lines, and chart write-backs sit on one board. The front desk opens to a day that has already started.",
+  windowTitle: "Harbor Ortho today",
+  columns: [
+    {
+      id: "overnight",
+      name: "Overnight",
+      cards: [
+        { id: "refill", title: "Refill request", meta: "On the chart" },
+        { id: "cancel", title: "Cancel visit", meta: "On the chart" },
+      ],
+    },
+    {
+      id: "live",
+      name: "Live",
+      cards: [{ id: "dana", title: "Dana K.", meta: "Main line" }],
+    },
+    {
+      id: "chart",
+      name: "Chart",
+      cards: [{ id: "hold", title: "Friday 10:20", meta: "Held" }],
+    },
+  ],
+} as const;
+
 export const DOEHOME_STACK = {
   title: ["One platform.", "Genome underneath."],
   items: [
@@ -309,6 +377,7 @@ export const DOEHOME_FOOTER = {
         { href: "/story", label: "Story" },
         { href: "/product", label: "Product" },
         { href: "#chart", label: "Chart" },
+        { href: "#book", label: "Book" },
         { href: "#faq", label: "FAQ" },
       ],
     },
