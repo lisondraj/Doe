@@ -22,32 +22,8 @@ import { DOEHOME_SHADERS } from "@/lib/doehome/doehome-shaders";
 import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
 import { useDoeHomeStep } from "@/lib/doehome/use-doehome-step";
 
-function Scene({
-  className = "",
-  children,
-}: {
-  className?: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className={`doehome-scene${className ? ` ${className}` : ""}`} aria-hidden="true">
-      {children}
-    </div>
-  );
-}
-
-function FileMark() {
-  return <i className="doehome-file" aria-hidden="true" />;
-}
-
-function Wave({ count = 8, on = true }: { count?: number; on?: boolean }) {
-  return (
-    <i className={`doehome-wave${on ? " is-on" : ""}`} aria-hidden="true">
-      {Array.from({ length: count }, (_, index) => (
-        <em key={index} style={{ "--n": index } as CSSProperties} />
-      ))}
-    </i>
-  );
+function Sheet({ className = "", children }: { className?: string; children: ReactNode }) {
+  return <div className={`doehome-sheet${className ? ` ${className}` : ""}`}>{children}</div>;
 }
 
 function FeatureHeading({ title, lede }: { title: readonly string[]; lede: string }) {
@@ -67,326 +43,329 @@ const BOOK_BUSY = new Set(["Mon-9:00", "Tue-10:20", "Wed-9:00", "Wed-11:40", "Th
 
 function GenomeBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_GENOME.clinics.length + 1, variant === "phone" ? 520 : 420);
+  const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 640 : 500);
+  const harbor = DOEHOME_GENOME.clinics.find((item) => item.id === "harbor") ?? DOEHOME_GENOME.clinics[0];
 
   return (
-    <Scene className="doehome-scene--grid doehome-scene--crop-br">
-      <header className={lit >= 1 ? "is-on" : undefined}>
-        <span>{DOEHOME_GENOME.group.name}</span>
-        <b>{DOEHOME_GENOME.tableTitle}</b>
-      </header>
-      <div className="doehome-grid doehome-grid--genome">
-        <div className="doehome-grid__head">
-          <span />
-          {DOEHOME_GENOME.columns.map((column) => (
-            <span key={column}>{column}</span>
-          ))}
-        </div>
-        {DOEHOME_GENOME.clinics.map((clinic, index) => (
-          <div
-            key={clinic.id}
-            className={`doehome-grid__row${clinic.id === "harbor" ? " is-this" : ""}${
-              index < lit - 1 ? " is-on" : ""
-            }`}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <em>{index + 1}</em>
-            <b>
-              <FileMark />
-              {clinic.name}
-            </b>
-            <span>{clinic.model}</span>
-            <span>{clinic.version}</span>
-            <span>{clinic.state}</span>
-          </div>
-        ))}
-        <div className="doehome-grid__row doehome-grid__row--ghost" aria-hidden="true">
-          <em>5</em>
-          <b>
-            <FileMark />
-            Dr. Chen
-          </b>
-          <span>Chen model</span>
-          <span>Visit prep…</span>
-          <span>Idle</span>
-        </div>
+    <Sheet className={`doehome-atlas${lit >= 1 ? " is-on" : ""}`}>
+      <div className="doehome-atlas__bar">
+        <b>{DOEHOME_GENOME.group.name}</b>
+        <span>{DOEHOME_GENOME.group.count}</span>
       </div>
-    </Scene>
+      <div className="doehome-atlas__field">
+        <div className={`doehome-atlas__core${lit >= 2 ? " is-on" : ""}`}>
+          <i aria-hidden="true" />
+          <i aria-hidden="true" />
+          <b>{harbor.model}</b>
+          <span>{harbor.version}</span>
+        </div>
+        <ul>
+          {DOEHOME_GENOME.clinics.map((clinic, index) => (
+            <li
+              key={clinic.id}
+              className={clinic.id === harbor.id && lit >= 2 ? "is-this" : undefined}
+              style={{ "--n": index } as CSSProperties}
+            >
+              <em aria-hidden="true" />
+              <b>{clinic.name}</b>
+              <span>{clinic.version}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <ol className={lit >= 3 ? "is-on" : undefined}>
+        {DOEHOME_GENOME.providers.map((provider, index) => (
+          <li key={provider.id} className={index === 0 ? "is-this" : undefined} style={{ "--n": index } as CSSProperties}>
+            <b>{provider.name}</b>
+            <span>{provider.note}</span>
+          </li>
+        ))}
+      </ol>
+      <p className={lit >= 4 ? "is-on" : undefined}>
+        {DOEHOME_GENOME.trainCta}
+        <span>{DOEHOME_GENOME.trainWhen}</span>
+        <i aria-hidden="true" />
+      </p>
+    </Sheet>
   );
 }
 
 function PulseBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_PULSE.call.turns.length + 2, variant === "phone" ? 560 : 440);
+  const { lit } = useDoeHomeStep(revealed, 5, variant === "phone" ? 680 : 520);
 
   return (
-    <Scene className="doehome-scene--focus doehome-scene--crop-tr">
-      <article className={lit >= 1 ? "is-on" : undefined}>
+    <Sheet className="doehome-switch">
+      <div className="doehome-switch__live">
         <header>
-          <em>Live</em>
           <div>
-            <b>
-              {DOEHOME_PULSE.call.agent} · {DOEHOME_PULSE.agents[0].name}
-            </b>
-            <span>{DOEHOME_PULSE.number}</span>
+            <b>{DOEHOME_PULSE.number}</b>
+            <span>{DOEHOME_PULSE.call.liveLabel}</span>
           </div>
-          <Wave on={lit >= 1} />
+          <i className={`doehome-wave${lit >= 1 ? " is-on" : ""}`} aria-hidden="true">
+            {Array.from({ length: 9 }, (_, index) => (
+              <em key={index} style={{ "--n": index } as CSSProperties} />
+            ))}
+          </i>
         </header>
         <ol>
           {DOEHOME_PULSE.call.turns.map((turn, index) => (
             <li
               key={`${turn.who}-${index}`}
               className={`${turn.who === "Maya" ? "is-agent" : "is-patient"}${lit >= 2 + index ? " is-on" : ""}`}
-              style={{ "--n": index } as CSSProperties}
             >
               <span>{turn.who}</span>
               <p>{turn.text}</p>
             </li>
           ))}
         </ol>
-      </article>
-      <p className={`doehome-scene__action${lit >= DOEHOME_PULSE.call.turns.length + 2 ? " is-on" : ""}`}>
-        {DOEHOME_PULSE.human}
-      </p>
-    </Scene>
+        <em className={lit >= 5 ? "is-on" : undefined}>{DOEHOME_PULSE.human}</em>
+      </div>
+      <ul className="doehome-switch__agents">
+        {DOEHOME_PULSE.agents.map((agent, index) => (
+          <li key={agent.id} className={lit >= 1 && index === 0 ? "is-on" : undefined}>
+            <i className={agent.state === "Live" ? "is-live" : undefined} aria-hidden="true" />
+            <b>{agent.name}</b>
+            <span>{agent.voice}</span>
+            <em>{agent.time}</em>
+          </li>
+        ))}
+      </ul>
+    </Sheet>
   );
 }
 
 function FabricBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 520 : 400);
+  const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 600 : 460);
   const [start, branch, thenStep, human] = DOEHOME_FABRIC.steps;
 
   return (
-    <Scene className="doehome-scene--nodes doehome-scene--crop-bl">
-      <p className={lit >= 1 ? "is-on" : undefined}>{DOEHOME_FABRIC.runsOn}</p>
-      <div className={`doehome-node${lit >= 1 ? " is-on" : ""}`}>
+    <Sheet className="doehome-flow">
+      <p>{DOEHOME_FABRIC.runsOn}</p>
+      <div className={`doehome-flow__node${lit >= 1 ? " is-on" : ""}`}>
         <span>{start.kicker}</span>
         <b>{start.label}</b>
       </div>
-      <i className={`doehome-node__wire${lit >= 2 ? " is-on" : ""}`} aria-hidden="true" />
-      <div className={`doehome-node${lit >= 2 ? " is-on" : ""}`}>
+      <i className={`doehome-flow__wire${lit >= 2 ? " is-on" : ""}`} aria-hidden="true" />
+      <div className={`doehome-flow__node is-if${lit >= 2 ? " is-on" : ""}`}>
         <span>{branch.kicker}</span>
         <b>{branch.label}</b>
       </div>
-      <div className="doehome-node__split">
-        <div className={`doehome-node${lit >= 3 ? " is-on" : ""}`}>
+      <div className={`doehome-flow__fork${lit >= 3 ? " is-on" : ""}`} aria-hidden="true">
+        <span />
+        <span />
+      </div>
+      <div className="doehome-flow__ends">
+        <div className={`doehome-flow__node is-yes${lit >= 3 ? " is-on" : ""}`}>
           <span>Yes</span>
           <b>{thenStep.label}</b>
         </div>
-        <div className={`doehome-node${lit >= 4 ? " is-on" : ""}`}>
-          <span>Human</span>
+        <div className={`doehome-flow__node is-no${lit >= 4 ? " is-on" : ""}`}>
+          <span>No</span>
           <b>{human.label}</b>
         </div>
       </div>
-    </Scene>
+    </Sheet>
   );
 }
 
 function FloatBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_FLOAT.claims.length + 1, variant === "phone" ? 520 : 400);
+  const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 600 : 480);
 
   return (
-    <Scene className="doehome-scene--grid doehome-scene--crop-tl">
-      <header className={lit >= 1 ? "is-on" : undefined}>
+    <Sheet className="doehome-pay">
+      <header>
+        <b>{DOEHOME_FLOAT.windowTitle}</b>
         <span>{DOEHOME_FLOAT.hold.ref}</span>
-        <b>{DOEHOME_FLOAT.tableTitle}</b>
       </header>
-      <div className="doehome-grid doehome-grid--pay">
-        <div className="doehome-grid__head">
-          <span />
-          {DOEHOME_FLOAT.columns.map((column) => (
-            <span key={column}>{column}</span>
-          ))}
-        </div>
+      <ul>
         {DOEHOME_FLOAT.claims.map((row, index) => (
-          <div
-            key={row.claim}
-            className={`doehome-grid__row${index === 0 ? " is-this" : ""}${index < lit - 1 ? " is-on" : ""}`}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <em>{index + 1}</em>
-            <b>
-              <FileMark />
-              {row.payer}
-            </b>
-            <span>{row.claim}</span>
-            <span>{row.allowed}</span>
-            <span>{row.paid}</span>
-          </div>
+          <li key={row.claim} className={index < lit ? "is-on" : undefined}>
+            <div>
+              <b>{row.payer}</b>
+              <span>
+                {row.paid} of {row.allowed}
+              </span>
+            </div>
+            <div className="doehome-pay__track" aria-hidden="true">
+              <em style={{ width: `${row.cut}%` }} />
+            </div>
+          </li>
         ))}
-        <div className={`doehome-grid__foot${lit >= DOEHOME_FLOAT.claims.length ? " is-on" : ""}`}>
-          <b>{DOEHOME_FLOAT.underpay}</b>
-          <span>{DOEHOME_FLOAT.underpayNote}</span>
-        </div>
+      </ul>
+      <p className={`doehome-pay__gap${lit >= 3 ? " is-on" : ""}`}>
+        <b>{DOEHOME_FLOAT.underpay}</b>
+        <span>{DOEHOME_FLOAT.underpayNote}</span>
+      </p>
+      <div className={`doehome-pay__hold${lit >= 4 ? " is-on" : ""}`}>
+        <span>
+          {DOEHOME_FLOAT.hold.status}
+          <b>{DOEHOME_FLOAT.hold.timer}</b>
+        </span>
+        <em>{DOEHOME_FLOAT.hold.note}</em>
+        <i aria-hidden="true" />
       </div>
-    </Scene>
+    </Sheet>
   );
 }
 
 function ChartBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_CHART.fields.length + 1, variant === "phone" ? 500 : 380);
+  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 580 : 460);
 
   return (
-    <Scene className="doehome-scene--grid doehome-scene--crop-br">
-      <header className={lit >= 1 ? "is-on" : undefined}>
-        <span>
-          {DOEHOME_CHART.patient} · {DOEHOME_CHART.mrn}
-        </span>
-        <b>{DOEHOME_CHART.tableTitle}</b>
-      </header>
-      <div className="doehome-grid doehome-grid--chart">
-        <div className="doehome-grid__head">
-          <span />
-          {DOEHOME_CHART.columns.map((column) => (
-            <span key={column}>{column}</span>
-          ))}
-        </div>
-        {DOEHOME_CHART.fields.map((field, index) => (
-          <div
-            key={field.k}
-            className={`doehome-grid__row${index === 0 ? " is-this" : ""}${index < lit - 1 ? " is-on" : ""}`}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <em>{index + 1}</em>
-            <b>
-              <FileMark />
-              {field.k}
-            </b>
-            <span>{field.v}</span>
-            <span>{DOEHOME_CHART.sources[index]}</span>
-          </div>
+    <Sheet className="doehome-record">
+      <aside>
+        {DOEHOME_CHART.inbox.map((name, index) => (
+          <span key={name} className={index === 0 && lit >= 1 ? "is-on" : undefined}>
+            {name}
+          </span>
         ))}
-        <div className="doehome-grid__row doehome-grid__row--ghost">
-          <em>4</em>
-          <b>
-            <FileMark />
-            Referral
-          </b>
-          <span>Imaging packet…</span>
-          <span>Fabric</span>
-        </div>
+      </aside>
+      <div className="doehome-record__file">
+        <header>
+          <div>
+            <b>{DOEHOME_CHART.patient}</b>
+            <span>{DOEHOME_CHART.mrn}</span>
+          </div>
+          <nav>
+            {DOEHOME_CHART.tabs.map((tab, index) => (
+              <span key={tab} className={index === 0 ? "is-on" : undefined}>
+                {tab}
+              </span>
+            ))}
+          </nav>
+        </header>
+        <ul>
+          {DOEHOME_CHART.fields.map((field, index) => (
+            <li key={field.k} className={lit >= 1 + index ? "is-on" : undefined}>
+              <span>{field.k}</span>
+              <b>{field.v}</b>
+              <em>{DOEHOME_CHART.sources[index]}</em>
+            </li>
+          ))}
+        </ul>
       </div>
-    </Scene>
+    </Sheet>
   );
 }
 
 function HandoffBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_HANDOFF.context.length + 2, variant === "phone" ? 540 : 420);
+  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 640 : 520);
   const lastTurn = DOEHOME_PULSE.call.turns[DOEHOME_PULSE.call.turns.length - 1];
 
   return (
-    <Scene className="doehome-scene--focus doehome-scene--crop-bl">
+    <Sheet className={`doehome-pass${lit >= 3 ? " is-taken" : ""}`}>
       <article className={lit >= 1 ? "is-on" : undefined}>
-        <header>
-          <em>{DOEHOME_HANDOFF.badge}</em>
-          <div>
-            <b>{DOEHOME_HANDOFF.cardTitle}</b>
-            <span>
-              {DOEHOME_HANDOFF.agent.name} · {DOEHOME_HANDOFF.agent.role}
-            </span>
-          </div>
-        </header>
+        <span>{DOEHOME_HANDOFF.agent.role}</span>
+        <b>{DOEHOME_HANDOFF.agent.name}</b>
         <p>{lastTurn.text}</p>
+        <i className="doehome-wave is-on" aria-hidden="true">
+          {Array.from({ length: 7 }, (_, index) => (
+            <em key={index} style={{ "--n": index } as CSSProperties} />
+          ))}
+        </i>
+      </article>
+      <div className={`doehome-pass__thread${lit >= 2 ? " is-on" : ""}`}>
+        <span aria-hidden="true" />
+        <b aria-hidden="true" />
+        <em>{DOEHOME_HANDOFF.cta}</em>
+      </div>
+      <article className={lit >= 3 ? "is-on" : undefined}>
+        <span>{DOEHOME_HANDOFF.human.role}</span>
+        <b>{DOEHOME_HANDOFF.human.name}</b>
         <ul>
           {DOEHOME_HANDOFF.context.map((item, index) => (
-            <li key={item} className={lit >= 2 + index ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
-              <FileMark />
-              <b>{item}</b>
+            <li key={item} style={{ "--n": index } as CSSProperties}>
+              {item}
             </li>
           ))}
         </ul>
       </article>
-      <p className={`doehome-scene__action${lit >= DOEHOME_HANDOFF.context.length + 2 ? " is-on" : ""}`}>
-        {DOEHOME_HANDOFF.cta}
-      </p>
-    </Scene>
+    </Sheet>
   );
 }
 
 function ConnectBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 460 : 360);
+  const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 560 : 440);
 
   return (
-    <Scene className="doehome-scene--tiles doehome-scene--crop-center">
-      <ul className={lit >= 1 ? "is-on" : undefined}>
-        {DOEHOME_CONNECT.tiles.map((tile, index) => (
-          <li
-            key={tile.name}
-            className={lit >= 1 ? "is-on" : undefined}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <b>{tile.mark}</b>
-            <span>{tile.name}</span>
+    <Sheet className={`doehome-ports${lit >= 1 ? " is-on" : ""}`}>
+      <div className={`doehome-ports__core${lit >= 1 ? " is-on" : ""}`}>
+        <i aria-hidden="true" />
+        <b>{DOEHOME_CONNECT.hub}</b>
+        <span>{DOEHOME_CONNECT.hubVersion}</span>
+      </div>
+      <div className={`doehome-ports__wires${lit >= 2 ? " is-on" : ""}`} aria-hidden="true">
+        {DOEHOME_CONNECT.ports.map((port, index) => (
+          <span key={port.name} style={{ "--n": index } as CSSProperties}>
+            <em />
+          </span>
+        ))}
+      </div>
+      <ul>
+        {DOEHOME_CONNECT.ports.map((port, index) => (
+          <li key={port.name} className={index < Math.max(0, lit - 1) ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
+            <b>{port.name}</b>
+            <span>{port.kind}</span>
           </li>
         ))}
       </ul>
-    </Scene>
+    </Sheet>
   );
 }
 
 function OpenBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_OPEN.items.length + 1, variant === "phone" ? 520 : 400);
+  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 620 : 500);
 
   return (
-    <Scene className="doehome-scene--grid doehome-scene--crop-tl">
-      <header className={lit >= 1 ? "is-on" : undefined}>
-        <span>{DOEHOME_OPEN.opened}</span>
-        <b>{DOEHOME_OPEN.tableTitle}</b>
-      </header>
-      <div className="doehome-grid doehome-grid--open">
-        <div className="doehome-grid__head">
-          <span />
-          {DOEHOME_OPEN.columns.map((column) => (
-            <span key={column}>{column}</span>
-          ))}
-        </div>
-        {DOEHOME_OPEN.items.map((item, index) => (
-          <div
-            key={item.task}
-            className={`doehome-grid__row${index === 0 ? " is-this" : ""}${index < lit - 1 ? " is-on" : ""}`}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <em>{index + 1}</em>
-            <b>
-              <FileMark />
-              {item.at}
-            </b>
-            <span>{item.task}</span>
-            <span>{item.done}</span>
-          </div>
-        ))}
-        <div className="doehome-grid__row doehome-grid__row--ghost">
-          <em>4</em>
-          <b>
-            <FileMark />
-            6:41am
-          </b>
-          <span>Referral file…</span>
-          <span>On the chart</span>
-        </div>
+    <Sheet className={`doehome-unlock${lit >= 2 ? " is-open" : ""}`}>
+      <div className="doehome-unlock__shade" aria-hidden="true">
+        <b>{DOEHOME_OPEN.closed}</b>
+        <i />
       </div>
-    </Scene>
+      <header className={lit >= 2 ? "is-on" : undefined}>
+        <div>
+          <b>{DOEHOME_OPEN.opened}</b>
+          <span>Harbor Ortho</span>
+        </div>
+        <em aria-hidden="true">
+          <i />
+        </em>
+      </header>
+      <ol>
+        {DOEHOME_OPEN.items.map((item, index) => (
+          <li key={item.task} className={lit >= 3 ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
+            <span>{item.at}</span>
+            <div>
+              <b>{item.task}</b>
+              <em>{item.done}</em>
+            </div>
+            <i aria-hidden="true" />
+          </li>
+        ))}
+      </ol>
+    </Sheet>
   );
 }
 
 function BookBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 500 : 380);
+  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 560 : 440);
   const held = DOEHOME_BOOK.held;
 
   return (
-    <Scene className={`doehome-scene--week doehome-scene--crop-br${lit >= 3 ? " is-pinned" : ""}`}>
-      <header className={lit >= 1 ? "is-on" : undefined}>
-        <span className={lit >= 2 ? "is-on" : undefined}>{held.label}</span>
+    <Sheet className={`doehome-diary${lit >= 1 ? " is-on" : ""}${lit >= 3 ? " is-pinned" : ""}`}>
+      <header>
         <b>{DOEHOME_BOOK.windowTitle}</b>
+        <span className={lit >= 2 ? "is-on" : undefined}>{held.label}</span>
       </header>
-      <div className="doehome-week">
+      <div className="doehome-diary__grid">
         <span />
         {DOEHOME_BOOK.days.map((day) => (
           <b key={day} className={day === held.day && lit >= 2 ? "is-this" : undefined}>
@@ -401,12 +380,11 @@ function BookBody({ revealed }: { revealed: boolean }) {
             return (
               <span
                 key={`${day}-${hour}`}
-                className={`${busy ? "is-busy" : ""}${isHeld ? " is-target" : ""}${
-                  isHeld && lit >= 3 ? " is-held" : ""
-                }`.trim() || undefined}
+                className={`${busy ? "is-busy" : ""}${isHeld ? " is-target" : ""}${isHeld && lit >= 3 ? " is-held" : ""}`.trim() || undefined}
               >
                 {isHeld ? (
                   <>
+                    <i className="doehome-diary__pin" aria-hidden="true" />
                     <b>{held.name}</b>
                     <em>{held.label}</em>
                   </>
@@ -416,112 +394,106 @@ function BookBody({ revealed }: { revealed: boolean }) {
           }),
         ])}
       </div>
-    </Scene>
+    </Sheet>
   );
 }
 
 function ScribeBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_SCRIBE.lines.length + 2, variant === "phone" ? 520 : 400);
+  const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 580 : 460);
 
   return (
-    <Scene className="doehome-scene--focus doehome-scene--crop-tr">
-      <article className={lit >= 1 ? "is-on" : undefined}>
-        <header>
-          <em>{DOEHOME_SCRIBE.badge}</em>
-          <div>
-            <b>{DOEHOME_SCRIBE.cardTitle}</b>
-            <span>
-              {DOEHOME_SCRIBE.room} · {DOEHOME_SCRIBE.provider}
-            </span>
-          </div>
-          <Wave on={lit >= 1} count={10} />
-        </header>
+    <Sheet className="doehome-note">
+      <div className={`doehome-note__live${lit >= 1 ? " is-on" : ""}`}>
+        <span>
+          {DOEHOME_SCRIBE.room}
+          <b>{DOEHOME_SCRIBE.provider}</b>
+        </span>
+        <i className="doehome-wave is-on" aria-hidden="true">
+          {Array.from({ length: 12 }, (_, index) => (
+            <em key={index} style={{ "--n": index } as CSSProperties} />
+          ))}
+        </i>
+      </div>
+      <div className="doehome-note__page">
         <p>{DOEHOME_SCRIBE.patient}</p>
         <ul>
           {DOEHOME_SCRIBE.lines.map((line, index) => (
-            <li key={line} className={lit >= 2 + index ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
+            <li key={line} className={lit >= 1 + index ? "is-on" : undefined}>
               {line}
             </li>
           ))}
         </ul>
-      </article>
-      <p className={`doehome-scene__action${lit >= DOEHOME_SCRIBE.lines.length + 2 ? " is-on" : ""}`}>
-        {DOEHOME_SCRIBE.stamp}
-      </p>
-    </Scene>
+        <em className={lit >= 4 ? "is-on" : undefined}>{DOEHOME_SCRIBE.stamp}</em>
+      </div>
+    </Sheet>
   );
 }
 
 function AuthBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_AUTH.files.length + 2, variant === "phone" ? 520 : 400);
+  const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 600 : 480);
 
   return (
-    <Scene className="doehome-scene--focus doehome-scene--crop-bl">
-      <article className={lit >= 1 ? "is-on" : undefined}>
-        <header>
-          <em>{DOEHOME_AUTH.badge}</em>
-          <div>
-            <b>{DOEHOME_AUTH.cardTitle}</b>
-            <span>
-              {DOEHOME_AUTH.payer} · {DOEHOME_AUTH.ref}
-            </span>
-          </div>
-        </header>
-        <ul>
-          {DOEHOME_AUTH.files.map((file, index) => (
-            <li key={file.name} className={lit >= 2 + index ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
-              <FileMark />
-              <div>
-                <b>{file.name}</b>
-                <span>{file.meta}</span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </article>
-      <p className={`doehome-scene__action${lit >= DOEHOME_AUTH.files.length + 2 ? " is-on" : ""}`}>
-        {DOEHOME_AUTH.action}
-      </p>
-    </Scene>
+    <div className={`doehome-pack${lit >= 4 ? " is-sent" : ""}`}>
+      <div className="doehome-pack__stack">
+        {DOEHOME_AUTH.pages.map((page, index) => (
+          <article
+            key={page.id}
+            className={index < lit ? "is-on" : undefined}
+            style={{ "--n": index } as CSSProperties}
+          >
+            <header>
+              <span>{DOEHOME_AUTH.payer}</span>
+              <em>
+                {index + 1} of {DOEHOME_AUTH.pages.length}
+              </em>
+            </header>
+            <b>{page.label}</b>
+            <i className="doehome-pack__rules" aria-hidden="true" />
+            <span>{DOEHOME_AUTH.ref}</span>
+          </article>
+        ))}
+      </div>
+      <p className={lit >= 4 ? "is-on" : undefined}>{DOEHOME_AUTH.stamp}</p>
+    </div>
   );
 }
 
 function BoardBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_BOARD.columns.length + 1, variant === "phone" ? 500 : 380);
+  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 560 : 440);
 
   return (
-    <Scene className="doehome-scene--board doehome-scene--crop-br">
-      <header className={lit >= 1 ? "is-on" : undefined}>
-        <span>{DOEHOME_BOARD.windowTitle}</span>
-        <b>{DOEHOME_BOARD.boardTitle}</b>
-      </header>
-      <div className="doehome-board">
-        {DOEHOME_BOARD.columns.map((column, index) => (
-          <section
-            key={column.id}
-            className={index < lit - 1 ? "is-on" : undefined}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <h3>
-              {column.name}
-              <span>{column.cards.length}</span>
-            </h3>
-            <ul>
-              {column.cards.map((card) => (
-                <li key={card.id} className={column.id === "live" ? "is-live" : undefined}>
-                  {column.id === "live" ? <Wave count={6} /> : null}
-                  <b>{card.title}</b>
-                  <span>{card.meta}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+    <Sheet className={`doehome-lane${lit >= 1 ? " is-on" : ""}`}>
+      <div className={`doehome-lane__rail${lit >= 2 ? " is-on" : ""}`} aria-hidden="true">
+        <span />
+        <b />
       </div>
-    </Scene>
+      {DOEHOME_BOARD.columns.map((column, index) => (
+        <section key={column.id} className={index < lit ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
+          <h3>
+            {column.name}
+            <span>{column.cards.length}</span>
+          </h3>
+          <ul>
+            {column.cards.map((card, cardIndex) => (
+              <li key={card.id} className={column.id === "live" ? "is-live" : undefined} style={{ "--c": cardIndex } as CSSProperties}>
+                {column.id === "live" ? (
+                  <i className="doehome-wave is-on" aria-hidden="true">
+                    {Array.from({ length: 6 }, (_, waveIndex) => (
+                      <em key={waveIndex} style={{ "--n": waveIndex } as CSSProperties} />
+                    ))}
+                  </i>
+                ) : null}
+                <b>{card.title}</b>
+                <span>{card.meta}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </Sheet>
   );
 }
 
