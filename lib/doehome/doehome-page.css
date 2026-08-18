@@ -4,8 +4,8 @@ html[data-doehome-page] {
   --di-blue: #1a1208;
   --di-blue-deep: #130e09;
   --di-blue-light: #271f17;
-  --di-blue-gradient: linear-gradient(180deg, #221910 0%, #1a1208 52%, #130e09 100%);
-  --di-blue-gradient-soft: linear-gradient(180deg, #2a2118 0%, #1a1208 50%, #130e09 100%);
+  --di-blue-gradient: #1a1208;
+  --di-blue-gradient-soft: #1a1208;
   --doehealth-gold-text-gradient: linear-gradient(
     180deg,
     #e8c08e 0%,
@@ -37,8 +37,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   --di-blue: #1a1208;
   --di-blue-deep: #130e09;
   --di-blue-light: #271f17;
-  --di-blue-gradient: linear-gradient(180deg, #221910 0%, #1a1208 52%, #130e09 100%);
-  --di-blue-gradient-soft: linear-gradient(180deg, #2a2118 0%, #1a1208 50%, #130e09 100%);
+  --di-blue-gradient: #1a1208;
+  --di-blue-gradient-soft: #1a1208;
   --doehealth-gold-text-gradient: linear-gradient(
     180deg,
     #e8c08e 0%,
@@ -65,17 +65,29 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   color: #f2e8da;
 }
 
-.doehome-root .doeinsure-nav {
-  background: var(--doehome-page);
-  border-bottom-color: var(--doehome-gold-line);
+.doehome-root .doeinsure-nav,
+.doehome-root .doeinsure-nav.is-scrolled,
+.doehome-root .doeinsure-nav.is-open,
+.doehome-root .doeinsure-nav__bar,
+.doehome-root .doeinsure-nav__panel,
+.doehome-root .doeinsure-nav__panel.is-open,
+.doehome-root.doeinsure-root--iphone .doeinsure-nav.is-open .doeinsure-nav__bar,
+.doehome-root.doeinsure-root--iphone .doeinsure-nav.is-open .doeinsure-nav__panel,
+.doehome-root.doeinsure-root--iphone .doeinsure-nav.is-open .doeinsure-nav__panel.is-open {
+  background: #1a1208;
+  background-image: none;
+  border: 0;
+  border-bottom: 0;
 }
 
 .doehome-root .doeinsure-nav__promo,
-.doehome-root.doeinsure-root--iphone .doeinsure-nav__promo {
+.doehome-root.doeinsure-root--iphone .doeinsure-nav__promo,
+.doehome-root.doeinsure-root--iphone .doeinsure-nav.is-open .doeinsure-nav__promo {
   background: #1a1208;
   background-image: none;
   color: #e8c08e;
-  border-bottom: 1px solid var(--doehome-gold-line);
+  border: 0;
+  border-bottom: 0;
 }
 
 .doehome-root .doeinsure-nav__promo-link,
@@ -109,13 +121,9 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   color: #1a1208;
 }
 
-.doehome-root .doeinsure-nav__panel {
-  background: var(--doehome-page);
-  border-bottom-color: var(--doehome-gold-line);
-}
-
 .doehome-root .doeinsure-nav__panel a:not(.doeinsure-btn) {
   color: var(--doehome-cream);
+  border-bottom-color: var(--doehome-gold-line);
 }
 
 .doehome-root .doeinsure-nav__panel a.is-on,
@@ -178,12 +186,23 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   line-height: 1.16;
 }
 
+.doehome-root .doeinsure-hero,
+.doehome-root .doeinsure-hero__stage,
+.doehome-root main,
+.doehome-root.doeinsure-root--iphone main {
+  background: #1a1208;
+}
+
 .doehome-root .doeinsure-hero__stage::before {
   background-color: #1a1208;
-  background-image: none;
-  -webkit-mask-image: none;
-  mask-image: none;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(232, 192, 142, 0.2) 1px,
+    transparent 0
+  );
+  background-size: 20px 20px;
 }
+
 .doehome-root .doeinsure-hero__lede,
 .doehome-root .doehome-genome__lede,
 .doehome-root .doehome-pulse__lede,
@@ -289,9 +308,13 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   color: var(--doehome-cream-muted);
 }
 
-.doehome-root .doeinsure-footer {
-  background: #130e09;
+.doehome-root .doeinsure-footer,
+.doehome-root.doeinsure-root--iphone .doeinsure-footer,
+.doehome-root:not(.doeinsure-root--iphone) .doeinsure-footer {
+  background: #1a1208;
   color: var(--doehome-cream);
+  margin-top: 0;
+  border-top: 0;
 }
 
 .doehome-root .doeinsure-footer__blurb,
@@ -311,12 +334,30 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 }
 
 .doehome-root .doeinsure-footer__quote,
+.doehome-root a.doeinsure-footer__quote,
 .doehome-root:not(.doeinsure-root--iphone) a.doeinsure-footer__quote,
-.doehome-root:not(.doeinsure-root--iphone) a.doeinsure-footer__quote:hover {
+.doehome-root .doeinsure-footer__coverage,
+.doehome-root a.doeinsure-footer__coverage,
+.doehome-root.doeinsure-root--iphone .doeinsure-footer__coverage,
+.doehome-root.doeinsure-root--iphone a.doeinsure-footer__coverage {
+  border: 1px solid transparent;
   border-color: #b8845c;
   background: var(--doehealth-gold-fill-gradient);
   color: #1a1208;
   -webkit-text-fill-color: #1a1208;
+}
+
+.doehome-root .doeinsure-footer__quote:hover,
+.doehome-root a.doeinsure-footer__quote:hover,
+.doehome-root:not(.doeinsure-root--iphone) a.doeinsure-footer__quote:hover,
+.doehome-root .doeinsure-footer__coverage:hover,
+.doehome-root a.doeinsure-footer__coverage:hover,
+.doehome-root.doeinsure-root--iphone .doeinsure-footer__coverage:hover,
+.doehome-root.doeinsure-root--iphone a.doeinsure-footer__coverage:hover {
+  background: transparent;
+  border-color: #e8c08e;
+  color: #e8c08e;
+  -webkit-text-fill-color: #e8c08e;
 }
 
 .doehome-root .doeinsure-footer__bar {
