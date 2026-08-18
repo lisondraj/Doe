@@ -6,10 +6,11 @@ import {
   phoneLayoutViewportBootstrapScript,
   phoneOverflowChromeBootstrapScript,
 } from "@/lib/doephone/phone-layout-viewport";
+import { DOEHOME_OVERFLOW_SURFACE } from "@/lib/doehome/doehome-copy";
 import { DOEHOME_PATH } from "@/lib/site-domains";
 
-const SURFACE = "#1a1208";
-const IPHONE_OVERFLOW = "#1a1208";
+const SURFACE = DOEHOME_OVERFLOW_SURFACE;
+const IPHONE_OVERFLOW = DOEHOME_OVERFLOW_SURFACE;
 
 /** Runs before paint on `/doehomepage` — same chrome as /doeinsure. */
 export function doeHomeRouteBootstrapScript(): string {
