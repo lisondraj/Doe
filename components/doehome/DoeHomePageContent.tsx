@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 
 import { DoeHomeFeatureSections, DoeHomeStackRack } from "@/components/doehome/DoeHomeFeatureSections";
-import { DoeHomeShaderBand, DoeHomeShaderFrame } from "@/components/doehome/DoeHomeShaderImage";
+import { DoeHomeShaderFrame } from "@/components/doehome/DoeHomeShaderImage";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import {
   DOEHOME_CONTACT_EMAIL,
@@ -215,10 +215,8 @@ export function DoeHomePageContent() {
 
       <DoeHomeFeatureSections />
 
-      <DoeHomeShaderBand src={DOEHOME_SHADERS.board} />
-
       <section className="doeinsure-section" id="platform">
-        <div className="doeinsure-wrap">
+        <div className="doeinsure-wrap doehome-feature">
           <DoeInsureReveal>
             <h2 className="doehome-section-title">
               {DOEHOME_STACK.title.map((line) => (
@@ -260,22 +258,22 @@ export function DoeHomePageContent() {
         </div>
       </section>
 
-      <DoeHomeShaderBand src={DOEHOME_SHADERS.cta} />
-
       <section className="doeinsure-section" id="request">
-        <div className="doeinsure-wrap">
-          <DoeInsureReveal className="doeinsure-cta-grid">
-            <div>
+        <div className="doeinsure-wrap doehome-feature">
+          <DoeInsureReveal>
+            <header className="doehome-extra__head">
               <h2 className="doehome-section-title">
                 {DOEHOME_CTA.title.map((line) => (
                   <span key={line}>{line}</span>
                 ))}
               </h2>
-              <p className="doeinsure-hero__lede doeinsure-cta__lede">
-                <span>{DOEHOME_CTA.body}</span>
-              </p>
-            </div>
-            <IntakeForm email={email} onEmailChange={setEmail} />
+              <p className="doehome-genome__lede">{DOEHOME_CTA.body}</p>
+            </header>
+            <DoeHomeShaderFrame src={DOEHOME_SHADERS.cta}>
+              <div className="doehome-sheet doehome-intake">
+                <IntakeForm email={email} onEmailChange={setEmail} />
+              </div>
+            </DoeHomeShaderFrame>
           </DoeInsureReveal>
         </div>
       </section>
