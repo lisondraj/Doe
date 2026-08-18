@@ -1738,8 +1738,8 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 .doeinsure-field span {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 0.6rem;
+  justify-content: flex-start;
+  gap: 0;
   color: var(--di-muted);
   font-size: 0.78rem;
   font-weight: 600;
@@ -1752,6 +1752,17 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: none;
+}
+
+.doeinsure-field__mark {
+  margin-left: 0.16rem;
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-style: normal;
+  font-weight: 600;
 }
 
 .doeinsure-field input,

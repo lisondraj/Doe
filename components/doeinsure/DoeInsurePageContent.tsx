@@ -99,11 +99,21 @@ function DoeInsureIntakeForm({
   return (
     <form className="doeinsure-form doeinsure-form--intake" onSubmit={onSubmit}>
       <label className="doeinsure-field">
-        <span>{DOEINSURE_CTA.fields.name}</span>
+        <span>
+          {DOEINSURE_CTA.fields.name}
+          <i className="doeinsure-field__mark" aria-hidden="true">
+            *
+          </i>
+        </span>
         <input value={name} onChange={(event) => setName(event.target.value)} name="name" autoComplete="name" required />
       </label>
       <label className="doeinsure-field">
-        <span>{DOEINSURE_CTA.fields.company}</span>
+        <span>
+          {DOEINSURE_CTA.fields.company}
+          <i className="doeinsure-field__mark" aria-hidden="true">
+            *
+          </i>
+        </span>
         <input
           value={company}
           onChange={(event) => setCompany(event.target.value)}
@@ -113,10 +123,7 @@ function DoeInsureIntakeForm({
         />
       </label>
       <label className="doeinsure-field">
-        <span>
-          {DOEINSURE_CTA.fields.website}
-          <em>{DOEINSURE_CTA.fields.websiteHint}</em>
-        </span>
+        <span>{DOEINSURE_CTA.fields.website}</span>
         <input
           value={website}
           onChange={(event) => setWebsite(event.target.value)}
@@ -128,7 +135,12 @@ function DoeInsureIntakeForm({
         />
       </label>
       <label className="doeinsure-field">
-        <span>{DOEINSURE_CTA.fields.email}</span>
+        <span>
+          {DOEINSURE_CTA.fields.email}
+          <i className="doeinsure-field__mark" aria-hidden="true">
+            *
+          </i>
+        </span>
         <input
           value={email}
           onChange={(event) => onEmailChange(event.target.value)}

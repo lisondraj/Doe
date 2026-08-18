@@ -892,7 +892,6 @@ export const DOEINSURE_CTA = {
     name: "Name",
     company: "Company name",
     website: "Website",
-    websiteHint: "If applicable",
     email: "Work email",
   },
 } as const;
