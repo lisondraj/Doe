@@ -40,29 +40,35 @@ function FeatureHeading({ title, lede }: { title: readonly string[]; lede: strin
   );
 }
 
+const BOOK_BUSY = new Set(["Mon-9:00", "Tue-10:20", "Wed-9:00", "Wed-11:40", "Thu-10:20"]);
+
 function GenomeBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
   const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 640 : 500);
   const harbor = DOEHOME_GENOME.clinics.find((item) => item.id === "harbor") ?? DOEHOME_GENOME.clinics[0];
 
   return (
-    <>
-    <Sheet className="doehome-roster">
-      <p className="doehome-sheet__kicker">{DOEHOME_GENOME.group.name}</p>
-      <ul>
+    <Sheet className="doehome-map">
+      <div className="doehome-map__bar">
+        <b>{DOEHOME_GENOME.group.name}</b>
+        <span>{DOEHOME_GENOME.group.count}</span>
+      </div>
+      <ul className="doehome-map__sites">
         {DOEHOME_GENOME.clinics.map((clinic) => {
           const open = clinic.id === harbor.id && lit >= 2;
           return (
-            <li key={clinic.id} className={open ? "is-this" : undefined} style={{ opacity: lit >= 1 ? 1 : 0.28 }}>
-              <div>
-                <b>{clinic.name}</b>
-                <span>{clinic.version}</span>
-              </div>
+            <li
+              key={clinic.id}
+              className={open ? "is-this" : undefined}
+              style={{ opacity: lit >= 1 ? 1 : 0.32 }}
+            >
+              <b>{clinic.name}</b>
+              <span>{clinic.version}</span>
               {open ? (
                 <ol>
                   {DOEHOME_GENOME.providers.map((provider, providerIndex) => (
                     <li key={provider.id} className={lit >= 3 && providerIndex === 0 ? "is-this" : undefined}>
-                      {provider.name}
+                      <b>{provider.name}</b>
                       <em>{provider.note}</em>
                     </li>
                   ))}
@@ -72,57 +78,66 @@ function GenomeBody({ revealed }: { revealed: boolean }) {
           );
         })}
       </ul>
-      <p className={`doehome-roster__train${lit >= 4 ? " is-on" : ""}`}>
+      <div className="doehome-map__stack">
+        <div className="doehome-map__apps">
+          {DOEHOME_STACK.products.map((item, index) => (
+            <article key={item.name} className={lit >= 3 ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
+              <b>{item.name}</b>
+              <span>{item.body}</span>
+            </article>
+          ))}
+        </div>
+        <div className={`doehome-map__base${lit >= 4 ? " is-on" : ""}`}>
+          <b>{DOEHOME_STACK.foundation.name}</b>
+          <span>{harbor.model}</span>
+          <em>{harbor.version}</em>
+        </div>
+      </div>
+      <p className={`doehome-map__train${lit >= 4 ? " is-on" : ""}`}>
         {DOEHOME_GENOME.trainCta}
         <span>{DOEHOME_GENOME.trainWhen}</span>
       </p>
     </Sheet>
-    <Sheet className="doehome-foundation">
-      <div className="doehome-foundation__apps">
-        {DOEHOME_STACK.products.map((item) => (
-          <article key={item.name}>
-            <b>{item.name}</b>
-            <p>{item.body}</p>
-          </article>
-        ))}
-      </div>
-      <div className="doehome-foundation__base">
-        <b>{DOEHOME_STACK.foundation.name}</b>
-        <p>{DOEHOME_STACK.foundation.body}</p>
-      </div>
-    </Sheet>
-    </>
   );
 }
 
 function PulseBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, 5, variant === "phone" ? 680 : 540);
+  const { lit } = useDoeHomeStep(revealed, 5, variant === "phone" ? 680 : 520);
 
   return (
-    <Sheet className="doehome-lines">
-      <div className="doehome-lines__call">
-        <p>
-          {DOEHOME_PULSE.number}
-          <span>{DOEHOME_PULSE.call.liveLabel}</span>
-        </p>
-        <dl>
+    <Sheet className="doehome-switch">
+      <div className="doehome-switch__live">
+        <header>
+          <div>
+            <b>{DOEHOME_PULSE.number}</b>
+            <span>{DOEHOME_PULSE.call.liveLabel}</span>
+          </div>
+          <i className={`doehome-wave${lit >= 1 ? " is-on" : ""}`} aria-hidden="true">
+            {Array.from({ length: 9 }, (_, index) => (
+              <em key={index} style={{ "--n": index } as CSSProperties} />
+            ))}
+          </i>
+        </header>
+        <ol>
           {DOEHOME_PULSE.call.turns.map((turn, index) => (
-            <div key={`${turn.who}-${index}`} className={lit >= 2 + index ? "is-on" : undefined}>
-              <dt>{turn.who}</dt>
-              <dd>{turn.text}</dd>
-            </div>
+            <li
+              key={`${turn.who}-${index}`}
+              className={`${turn.who === "Maya" ? "is-agent" : "is-patient"}${lit >= 2 + index ? " is-on" : ""}`}
+            >
+              <span>{turn.who}</span>
+              <p>{turn.text}</p>
+            </li>
           ))}
-        </dl>
-        <span className={lit >= 5 ? "is-on" : undefined}>{DOEHOME_PULSE.human}</span>
+        </ol>
+        <em className={lit >= 5 ? "is-on" : undefined}>{DOEHOME_PULSE.human}</em>
       </div>
-      <ul>
-        {DOEHOME_PULSE.agents.map((agent) => (
-          <li key={agent.id} className={lit >= 1 && agent.state === "Live" ? "is-on" : undefined}>
+      <ul className="doehome-switch__agents">
+        {DOEHOME_PULSE.agents.map((agent, index) => (
+          <li key={agent.id} className={lit >= 1 && index === 0 ? "is-on" : undefined}>
+            <i className={agent.state === "Live" ? "is-live" : undefined} aria-hidden="true" />
             <b>{agent.name}</b>
-            <span>
-              {agent.voice}, {agent.hours}
-            </span>
+            <span>{agent.voice}</span>
             <em>{agent.time}</em>
           </li>
         ))}
@@ -137,26 +152,31 @@ function FabricBody({ revealed }: { revealed: boolean }) {
   const [start, branch, thenStep, human] = DOEHOME_FABRIC.steps;
 
   return (
-    <Sheet className="doehome-recipe">
-      <p className="doehome-sheet__kicker">{DOEHOME_FABRIC.runsOn}</p>
-      <ol>
-        <li className={lit >= 1 ? "is-on" : undefined}>
-          <b>1</b>
-          <span>{start.label}</span>
-        </li>
-        <li className={lit >= 2 ? "is-on" : undefined}>
-          <b>2</b>
-          <span>{branch.label}</span>
-        </li>
-        <li className={`doehome-recipe__split${lit >= 3 ? " is-on" : ""}`}>
+    <Sheet className="doehome-flow">
+      <p>{DOEHOME_FABRIC.runsOn}</p>
+      <div className={`doehome-flow__node${lit >= 1 ? " is-on" : ""}`}>
+        <span>{start.kicker}</span>
+        <b>{start.label}</b>
+      </div>
+      <i className={`doehome-flow__wire${lit >= 2 ? " is-on" : ""}`} aria-hidden="true" />
+      <div className={`doehome-flow__node is-if${lit >= 2 ? " is-on" : ""}`}>
+        <span>{branch.kicker}</span>
+        <b>{branch.label}</b>
+      </div>
+      <div className={`doehome-flow__fork${lit >= 3 ? " is-on" : ""}`} aria-hidden="true">
+        <span />
+        <span />
+      </div>
+      <div className="doehome-flow__ends">
+        <div className={`doehome-flow__node is-yes${lit >= 3 ? " is-on" : ""}`}>
           <span>Yes</span>
-          <em>{thenStep.label}</em>
-        </li>
-        <li className={`doehome-recipe__split${lit >= 4 ? " is-on" : ""}`}>
+          <b>{thenStep.label}</b>
+        </div>
+        <div className={`doehome-flow__node is-no${lit >= 4 ? " is-on" : ""}`}>
           <span>No</span>
-          <em>{human.label}</em>
-        </li>
-      </ol>
+          <b>{human.label}</b>
+        </div>
+      </div>
     </Sheet>
   );
 }
@@ -166,26 +186,38 @@ function FloatBody({ revealed }: { revealed: boolean }) {
   const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 600 : 480);
 
   return (
-    <Sheet className="doehome-eob">
-      <p className="doehome-sheet__kicker">{DOEHOME_FLOAT.windowTitle}</p>
+    <Sheet className="doehome-pay">
+      <header>
+        <b>{DOEHOME_FLOAT.windowTitle}</b>
+        <span>{DOEHOME_FLOAT.hold.ref}</span>
+      </header>
       <ul>
         {DOEHOME_FLOAT.claims.map((row, index) => (
           <li key={row.claim} className={index < lit ? "is-on" : undefined}>
-            <b>{row.payer}</b>
-            <span>{row.claim}</span>
-            <em>
-              {row.paid} of {row.allowed}
-            </em>
+            <div>
+              <b>{row.payer}</b>
+              <span>
+                {row.paid} of {row.allowed}
+              </span>
+            </div>
+            <div className="doehome-pay__track" aria-hidden="true">
+              <em style={{ width: `${row.cut}%` }} />
+            </div>
           </li>
         ))}
       </ul>
-      <p className={`doehome-eob__sum${lit >= 3 ? " is-on" : ""}`}>
+      <p className={`doehome-pay__gap${lit >= 3 ? " is-on" : ""}`}>
         <b>{DOEHOME_FLOAT.underpay}</b>
         <span>{DOEHOME_FLOAT.underpayNote}</span>
       </p>
-      <p className={`doehome-eob__hold${lit >= 4 ? " is-on" : ""}`}>
-        {DOEHOME_FLOAT.hold.status} {DOEHOME_FLOAT.hold.timer}. {DOEHOME_FLOAT.hold.note}.
-      </p>
+      <div className={`doehome-pay__hold${lit >= 4 ? " is-on" : ""}`}>
+        <span>
+          {DOEHOME_FLOAT.hold.status}
+          <b>{DOEHOME_FLOAT.hold.timer}</b>
+        </span>
+        <em>{DOEHOME_FLOAT.hold.note}</em>
+        <i aria-hidden="true" />
+      </div>
     </Sheet>
   );
 }
@@ -195,20 +227,38 @@ function ChartBody({ revealed }: { revealed: boolean }) {
   const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 580 : 460);
 
   return (
-    <Sheet className="doehome-chart">
-      <p className="doehome-sheet__kicker">{DOEHOME_CHART.clinic}</p>
-      <p className="doehome-chart__who">
-        <b>{DOEHOME_CHART.patient}</b>
-        <span>{DOEHOME_CHART.patientMeta}</span>
-      </p>
-      <dl>
-        {DOEHOME_CHART.fields.map((field, index) => (
-          <div key={field.k} className={lit >= 1 + index ? "is-on" : undefined}>
-            <dt>{field.k}</dt>
-            <dd>{field.v}</dd>
-          </div>
+    <Sheet className="doehome-record">
+      <aside>
+        {DOEHOME_CHART.inbox.map((name, index) => (
+          <span key={name} className={index === 0 && lit >= 1 ? "is-on" : undefined}>
+            {name}
+          </span>
         ))}
-      </dl>
+      </aside>
+      <div className="doehome-record__file">
+        <header>
+          <div>
+            <b>{DOEHOME_CHART.patient}</b>
+            <span>{DOEHOME_CHART.mrn}</span>
+          </div>
+          <nav>
+            {DOEHOME_CHART.tabs.map((tab, index) => (
+              <span key={tab} className={index === 0 ? "is-on" : undefined}>
+                {tab}
+              </span>
+            ))}
+          </nav>
+        </header>
+        <ul>
+          {DOEHOME_CHART.fields.map((field, index) => (
+            <li key={field.k} className={lit >= 1 + index ? "is-on" : undefined}>
+              <span>{field.k}</span>
+              <b>{field.v}</b>
+              <em>{DOEHOME_CHART.sources[index]}</em>
+            </li>
+          ))}
+        </ul>
+      </div>
     </Sheet>
   );
 }
@@ -219,22 +269,22 @@ function HandoffBody({ revealed }: { revealed: boolean }) {
   const lastTurn = DOEHOME_PULSE.call.turns[DOEHOME_PULSE.call.turns.length - 1];
 
   return (
-    <Sheet className={`doehome-pass${lit >= 3 ? " is-taken" : ""}`}>
-      <div className={lit >= 1 ? "is-on" : undefined}>
-        <b>{DOEHOME_HANDOFF.agent.name}</b>
+    <Sheet className={`doehome-take${lit >= 3 ? " is-taken" : ""}`}>
+      <article className={lit >= 1 ? "is-on" : undefined}>
         <span>{DOEHOME_HANDOFF.agent.role}</span>
+        <b>{DOEHOME_HANDOFF.agent.name}</b>
         <p>{lastTurn.text}</p>
-      </div>
+      </article>
       <em className={lit >= 2 ? "is-on" : undefined}>{DOEHOME_HANDOFF.cta}</em>
-      <div className={lit >= 3 ? "is-on" : undefined}>
-        <b>{DOEHOME_HANDOFF.human.name}</b>
+      <article className={lit >= 3 ? "is-on" : undefined}>
         <span>{DOEHOME_HANDOFF.human.role}</span>
+        <b>{DOEHOME_HANDOFF.human.name}</b>
         <ul>
           {DOEHOME_HANDOFF.context.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ul>
-      </div>
+      </article>
     </Sheet>
   );
 }
@@ -244,19 +294,24 @@ function ConnectBody({ revealed }: { revealed: boolean }) {
   const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 560 : 440);
 
   return (
-    <Sheet className="doehome-ports">
+    <Sheet className="doehome-hub">
+      <div className={`doehome-hub__core${lit >= 1 ? " is-on" : ""}`}>
+        <b>{DOEHOME_CONNECT.hub}</b>
+        <span>{DOEHOME_CONNECT.hubVersion}</span>
+      </div>
+      <div className={`doehome-hub__wires${lit >= 2 ? " is-on" : ""}`} aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
       <ul>
         {DOEHOME_CONNECT.ports.map((port, index) => (
-          <li key={port.name} className={index < lit ? "is-on" : undefined}>
+          <li key={port.name} className={index < Math.max(0, lit - 1) ? "is-on" : undefined}>
             <b>{port.name}</b>
             <span>{port.kind}</span>
           </li>
         ))}
       </ul>
-      <p className={lit >= 4 ? "is-on" : undefined}>
-        <b>{DOEHOME_CONNECT.hub}</b>
-        <span>{DOEHOME_CONNECT.hubVersion}</span>
-      </p>
     </Sheet>
   );
 }
@@ -266,20 +321,25 @@ function OpenBody({ revealed }: { revealed: boolean }) {
   const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 620 : 500);
 
   return (
-    <Sheet className={`doehome-morning${lit >= 2 ? " is-open" : ""}`}>
-      <div className="doehome-morning__shade" aria-hidden="true">
+    <Sheet className={`doehome-dawn${lit >= 2 ? " is-open" : ""}`}>
+      <div className="doehome-dawn__shade" aria-hidden="true">
         <span>{DOEHOME_OPEN.closed}</span>
       </div>
-      <p className="doehome-sheet__kicker">{DOEHOME_OPEN.opened}</p>
-      <ul>
+      <header>
+        <b>{DOEHOME_OPEN.opened}</b>
+        <span>Harbor Ortho</span>
+      </header>
+      <ol>
         {DOEHOME_OPEN.items.map((item, index) => (
           <li key={item.task} className={lit >= 3 || index === 0 ? "is-on" : undefined}>
             <span>{item.at}</span>
-            <b>{item.task}</b>
-            <em>{item.done}</em>
+            <div>
+              <b>{item.task}</b>
+              <em>{item.done}</em>
+            </div>
           </li>
         ))}
-      </ul>
+      </ol>
     </Sheet>
   );
 }
@@ -291,7 +351,10 @@ function BookBody({ revealed }: { revealed: boolean }) {
 
   return (
     <Sheet className={`doehome-diary${lit >= 1 ? " is-on" : ""}`}>
-      <p className="doehome-sheet__kicker">{DOEHOME_BOOK.windowTitle}</p>
+      <header>
+        <b>{DOEHOME_BOOK.windowTitle}</b>
+        <span>{held.label}</span>
+      </header>
       <div className="doehome-diary__grid">
         <span />
         {DOEHOME_BOOK.days.map((day) => (
@@ -303,8 +366,12 @@ function BookBody({ revealed }: { revealed: boolean }) {
           <em key={`${hour}-label`}>{hour}</em>,
           ...DOEHOME_BOOK.days.map((day) => {
             const isHeld = day === held.day && hour === held.hour;
+            const busy = BOOK_BUSY.has(`${day}-${hour}`);
             return (
-              <span key={`${day}-${hour}`} className={isHeld && lit >= 3 ? "is-held" : undefined}>
+              <span
+                key={`${day}-${hour}`}
+                className={`${busy ? "is-busy" : ""}${isHeld && lit >= 3 ? " is-held" : ""}`.trim() || undefined}
+              >
                 {isHeld && lit >= 3 ? (
                   <>
                     <b>{held.name}</b>
@@ -325,19 +392,29 @@ function ScribeBody({ revealed }: { revealed: boolean }) {
   const { lit } = useDoeHomeStep(revealed, 4, variant === "phone" ? 580 : 460);
 
   return (
-    <Sheet className="doehome-exam">
-      <p className="doehome-sheet__kicker">
-        {DOEHOME_SCRIBE.room}, {DOEHOME_SCRIBE.provider}
-      </p>
-      <p className="doehome-exam__who">{DOEHOME_SCRIBE.patient}</p>
-      <ul>
-        {DOEHOME_SCRIBE.lines.map((line, index) => (
-          <li key={line} className={lit >= 1 + index ? "is-on" : undefined}>
-            {line}
-          </li>
-        ))}
-      </ul>
-      <p className={`doehome-exam__stamp${lit >= 4 ? " is-on" : ""}`}>{DOEHOME_SCRIBE.stamp}</p>
+    <Sheet className="doehome-note">
+      <div className={`doehome-note__live${lit >= 1 ? " is-on" : ""}`}>
+        <span>
+          {DOEHOME_SCRIBE.room}
+          <b>{DOEHOME_SCRIBE.provider}</b>
+        </span>
+        <i className="doehome-wave is-on" aria-hidden="true">
+          {Array.from({ length: 12 }, (_, index) => (
+            <em key={index} style={{ "--n": index } as CSSProperties} />
+          ))}
+        </i>
+      </div>
+      <div className="doehome-note__page">
+        <p>{DOEHOME_SCRIBE.patient}</p>
+        <ul>
+          {DOEHOME_SCRIBE.lines.map((line, index) => (
+            <li key={line} className={lit >= 1 + index ? "is-on" : undefined}>
+              {line}
+            </li>
+          ))}
+        </ul>
+        <em className={lit >= 4 ? "is-on" : undefined}>{DOEHOME_SCRIBE.stamp}</em>
+      </div>
     </Sheet>
   );
 }
@@ -355,9 +432,15 @@ function AuthBody({ revealed }: { revealed: boolean }) {
             className={index < lit ? "is-on" : undefined}
             style={{ "--n": index } as CSSProperties}
           >
-            <span>{DOEHOME_AUTH.payer}</span>
+            <header>
+              <span>{DOEHOME_AUTH.payer}</span>
+              <em>
+                {index + 1} of {DOEHOME_AUTH.pages.length}
+              </em>
+            </header>
             <b>{page.label}</b>
-            <em>{DOEHOME_AUTH.ref}</em>
+            <i className="doehome-pack__rules" aria-hidden="true" />
+            <span>{DOEHOME_AUTH.ref}</span>
           </article>
         ))}
       </div>
@@ -371,10 +454,13 @@ function BoardBody({ revealed }: { revealed: boolean }) {
   const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 560 : 440);
 
   return (
-    <Sheet className="doehome-lanes">
+    <Sheet className="doehome-kanban">
       {DOEHOME_BOARD.columns.map((column, index) => (
         <section key={column.id} className={index < lit ? "is-on" : undefined}>
-          <h3>{column.name}</h3>
+          <h3>
+            {column.name}
+            <span>{column.cards.length}</span>
+          </h3>
           <ul>
             {column.cards.map((card) => (
               <li key={card.id}>
