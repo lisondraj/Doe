@@ -49,14 +49,11 @@ export const DOEHOME_HERO_TAPE = {
   ],
 } as const;
 
-export const DOEHOME_JUMPS = {
-  genome: { href: "#genome", name: "Genome" },
-  products: [
-    { href: "#fabric", name: "Fabric" },
-    { href: "#pulse", name: "Pulse" },
-    { href: "#float", name: "Float" },
-  ],
-} as const;
+export const DOEHOME_STATS = [
+  { value: "Yours", label: "A model trained on your clinic, not a generic one." },
+  { value: "One", label: "Phones, agents, and financial work on one platform." },
+  { value: "Kept", label: "Routine work stays on your model." },
+] as const;
 
 export const DOEHOME_GENOME = {
   id: "genome",
@@ -315,34 +312,15 @@ export const DOEHOME_BOARD = {
 } as const;
 
 export const DOEHOME_STACK = {
-  id: "platform",
   title: ["One platform.", "Genome underneath."],
-  lede: "Pulse, Fabric, and Float run on the clinic’s own model. Each one is a layer on Genome, not a separate product you bolt on later.",
   foundation: {
     name: "Genome",
-    kicker: "The clinic model",
-    body: "Post-trained on how this site works: prior auth, referrals, visit prep. Pulse, Fabric, and Float all sit on it.",
-    href: "#genome",
+    body: "The clinic model. Pulse, Fabric, and Float run on it.",
   },
   products: [
-    {
-      name: "Fabric",
-      kicker: "Agents",
-      body: "Design the workflows you actually run. A referral becomes a branch. A missing record becomes a human handoff.",
-      href: "#fabric",
-    },
-    {
-      name: "Pulse",
-      kicker: "Voice",
-      body: "The clinic line never hits voicemail. Overnight calls come back at open, written to the chart.",
-      href: "#pulse",
-    },
-    {
-      name: "Float",
-      kicker: "Money",
-      body: "Agents sit on payer hold. Remittance is checked against the contract. Denials go out before they expire.",
-      href: "#float",
-    },
+    { name: "Pulse", body: "Voice on every line, including overnight. Written back to the chart." },
+    { name: "Fabric", body: "Agents for the workflows you actually run, on your model." },
+    { name: "Float", body: "Payer hold, underpayments, coding, and denials." },
   ],
 } as const;
 

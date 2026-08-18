@@ -11,7 +11,7 @@ import {
   DOEHOME_FAQ,
   DOEHOME_HERO,
   DOEHOME_HERO_TAPE,
-  DOEHOME_JUMPS,
+  DOEHOME_STATS,
 } from "@/lib/doehome/doehome-copy";
 import { DOEHOME_SHADERS } from "@/lib/doehome/doehome-shaders";
 import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
@@ -166,6 +166,7 @@ function HeroTape() {
 
 export function DoeHomePageContent() {
   const [email, setEmail] = useState("");
+  const [stat, setStat] = useState(0);
   const [faq, setFaq] = useState<number | null>(0);
 
   return (
@@ -193,18 +194,22 @@ export function DoeHomePageContent() {
             </DoeHomeShaderFrame>
           </div>
         </div>
-        <nav className="doeinsure-stats doehome-jumps" aria-label="Doe products">
-          <div className="doeinsure-wrap doehome-jumps__grid">
-            <a className="doehome-jumps__btn doehome-jumps__genome" href={DOEHOME_JUMPS.genome.href}>
-              {DOEHOME_JUMPS.genome.name}
-            </a>
-            {DOEHOME_JUMPS.products.map((item) => (
-              <a key={item.name} className={`doehome-jumps__btn doehome-jumps__${item.name.toLowerCase()}`} href={item.href}>
-                {item.name}
-              </a>
+        <div className="doeinsure-stats" aria-label="Doe at a glance">
+          <div className="doeinsure-wrap doeinsure-stats__row">
+            {DOEHOME_STATS.map((item, index) => (
+              <button
+                key={item.label}
+                type="button"
+                className={`doeinsure-stat${stat === index ? " is-on" : ""}`}
+                aria-pressed={stat === index}
+                onClick={() => setStat(index)}
+              >
+                <b>{item.value}</b>
+                <span>{item.label}</span>
+              </button>
             ))}
           </div>
-        </nav>
+        </div>
       </section>
 
       <DoeHomeFeatureSections />
