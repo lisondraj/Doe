@@ -253,7 +253,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   overflow: hidden;
 }
 
-.doehome-root .doeinsure-hero__stage::before {
+.doehome-root .doeinsure-hero::before {
   content: "";
   position: absolute;
   z-index: 0;
@@ -269,28 +269,9 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
     transparent 0
   );
   background-size: 20px 20px;
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 3.5rem, #000 calc(100% - 3.5rem), transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 1.75rem, #000 calc(100% - 1.75rem), transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to right, transparent 0%, #000 3.5rem, #000 calc(100% - 3.5rem), transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 1.75rem, #000 calc(100% - 1.75rem), transparent 100%);
-  mask-composite: intersect;
 }
 
-.doehome-root.doeinsure-root--iphone .doeinsure-hero__stage::before {
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 0.85rem, #000 calc(100% - 0.85rem), transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 1rem, #000 calc(100% - 1rem), transparent 100%);
-  mask-image:
-    linear-gradient(to right, transparent 0%, #000 0.85rem, #000 calc(100% - 0.85rem), transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 1rem, #000 calc(100% - 1rem), transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
-}
-
-.doehome-root .doeinsure-hero::before {
+.doehome-root .doeinsure-hero__stage::before {
   content: none;
 }
 
