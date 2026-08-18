@@ -10,15 +10,15 @@ import {
 } from "@/lib/doeinsure/doeinsure-page-variant";
 import { applyPhoneLayoutViewportMeta, phoneLayoutViewportContent } from "@/lib/doephone/phone-layout-viewport";
 
-export type { DoeInsurePageVariant } from "@/lib/doeinsure/doeinsure-page-variant";
+export type DoeHomePageVariant = DoeInsurePageVariant;
 
 function applyPhoneDocumentAttrs() {
   const html = document.documentElement;
   const body = document.body;
   html.setAttribute("data-doeinsure-page", "true");
+  html.setAttribute("data-doehome-page", "true");
   html.removeAttribute("data-home-page");
   html.removeAttribute("data-about-page");
-  html.removeAttribute("data-doehome-page");
   html.setAttribute("data-doeforvc-always-phone", "true");
   html.removeAttribute("data-layout");
   body.classList.remove("desktop-route");
@@ -30,9 +30,9 @@ function applyDesktopDocumentAttrs() {
   const meta = document.querySelector('meta[name="viewport"]');
 
   html.setAttribute("data-doeinsure-page", "true");
+  html.setAttribute("data-doehome-page", "true");
   html.removeAttribute("data-home-page");
   html.removeAttribute("data-about-page");
-  html.removeAttribute("data-doehome-page");
   html.removeAttribute("data-doeforvc-always-phone");
   html.removeAttribute("data-doephone-pinching");
   html.setAttribute("data-layout", "desktop");
@@ -43,8 +43,8 @@ function applyDesktopDocumentAttrs() {
   meta?.setAttribute("content", DOEINSURE_DEVICE_VIEWPORT);
 }
 
-export function useDoeInsurePageVariant() {
-  const [variant, setVariant] = useState<DoeInsurePageVariant>("phone");
+export function useDoeHomePageVariant() {
+  const [variant, setVariant] = useState<DoeHomePageVariant>("phone");
   const [ready, setReady] = useState(false);
 
   useLayoutEffect(() => {
@@ -54,7 +54,6 @@ export function useDoeInsurePageVariant() {
 
   useEffect(() => {
     if (!ready) return undefined;
-
     const sync = () => setVariant(resolveDoeInsurePageVariant());
     sync();
     const mq = window.matchMedia(DOEINSURE_DESKTOP_MEDIA_QUERY);
@@ -64,26 +63,21 @@ export function useDoeInsurePageVariant() {
 
   useLayoutEffect(() => {
     if (!ready) return;
-
     if (variant === "desktop") {
       applyDesktopDocumentAttrs();
       return;
     }
-
     applyPhoneDocumentAttrs();
     applyPhoneLayoutViewportMeta();
   }, [ready, variant]);
 
   useEffect(() => {
     if (!ready || variant !== "phone") return undefined;
-
     const html = document.documentElement;
     const meta = document.querySelector('meta[name="viewport"]');
     const prevViewport = meta?.getAttribute("content") ?? "";
-
     html.setAttribute("data-doephone-pinching", "true");
     meta?.setAttribute("content", phoneLayoutViewportContent());
-
     return () => {
       html.removeAttribute("data-doephone-pinching");
       if (meta) {

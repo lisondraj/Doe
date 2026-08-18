@@ -22,6 +22,8 @@ export const DESIGNERS_PATH = "/designers";
 export const DOEHEALTH_PATH = "/doehealth";
 /** Specialty insurance for healthcare AI companies. */
 export const DOEINSURE_PATH = "/doeinsure";
+/** Doe clinic AI platform landing — Insure-style marketing page. */
+export const DOEHOME_PATH = "/doehomepage";
 
 /** Former primary home — Voice Agents hero (preview at /legacymain). */
 export const LEGACY_MAIN_PATH = "/legacymain";
