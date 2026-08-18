@@ -3,17 +3,25 @@
 import { useEffect, useId, useState } from "react";
 
 import { DOEINSURE_NAV, DOEINSURE_NAV_LINKS } from "@/lib/doeinsure/doeinsure-copy";
-import { useDoeInsurePageVariant } from "@/lib/doeinsure/use-doeinsure-page-variant";
 
 const SECTION_IDS = DOEINSURE_NAV_LINKS.map((link) => link.href.slice(1));
 
+const PROMO_STEP_MS = 5200;
+
 export function DoeInsureNav() {
   const panelId = useId();
-  const { variant } = useDoeInsurePageVariant();
-  const isDesktop = variant !== "phone";
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("#stages");
+  const [promoIndex, setPromoIndex] = useState(0);
+  const promos = DOEINSURE_NAV.promos;
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setPromoIndex((current) => (current + 1) % promos.length);
+    }, PROMO_STEP_MS);
+    return () => window.clearInterval(id);
+  }, [promos.length]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -73,26 +81,30 @@ export function DoeInsureNav() {
 
   return (
     <header className={`doeinsure-nav${scrolled ? " is-scrolled" : ""}${open ? " is-open" : ""}`}>
-      {isDesktop ? (
-        <div className="doeinsure-nav__promo">
-          <a className="doeinsure-nav__promo-link" href="#request" onClick={() => go("#request")}>
-            <span>{DOEINSURE_NAV.promo}</span>
-            <span className="doeinsure-nav__promo-cta">
-              {DOEINSURE_NAV.promoCta}
-              <svg className="doeinsure-nav__promo-arrow" viewBox="0 0 20 12" aria-hidden="true">
-                <path
-                  d="M0 6h14M10 2l5 4-5 4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.75"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </span>
-          </a>
-        </div>
-      ) : null}
+      <div className="doeinsure-nav__promo">
+        <a className="doeinsure-nav__promo-link" href="#request" onClick={() => go("#request")}>
+          <span className="doeinsure-nav__promo-track" aria-live="polite">
+            {promos.map((promo, index) => (
+              <span key={promo} className={promoIndex === index ? "is-on" : undefined}>
+                {promo}
+              </span>
+            ))}
+          </span>
+          <span className="doeinsure-nav__promo-cta">
+            {DOEINSURE_NAV.promoCta}
+            <svg className="doeinsure-nav__promo-arrow" viewBox="0 0 20 12" aria-hidden="true">
+              <path
+                d="M0 6h14M10 2l5 4-5 4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </span>
+        </a>
+      </div>
 
       <div className="doeinsure-nav__bar">
         <a className="doeinsure-nav__mark" href="#top" onClick={() => go("#top")}>

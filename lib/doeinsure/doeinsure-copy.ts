@@ -16,7 +16,11 @@ export const DOEINSURE_NAV = {
   markAccent: "Insure",
   cta: "Get Your Quote",
   ctaShort: "Get Your Quote",
-  promo: "Lock in launch discount pricing for your entire first year!",
+  promos: [
+    "Lock in launch discount pricing for your entire first year!",
+    "Discount for YC healthcare companies!",
+    "For VC-backed startups, your portfolio may have a discount!",
+  ],
   promoCta: "Get your quote",
   menuOpen: "Open menu",
   menuClose: "Close menu",
