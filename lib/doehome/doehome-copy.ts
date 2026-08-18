@@ -27,9 +27,9 @@ export const DOEHOME_NAV = {
 } as const;
 
 export const DOEHOME_HERO = {
-  title: "Doe",
-  tagline: ["An AI platform", "for clinics."],
-  lede: "We're bringing personalized intelligence to every clinic. Genome learns your workflow. Pulse, Fabric, and Float run on top of it: phones, agents, and the financial work the front desk should not still be doing by hand.",
+  title: "Building",
+  tagline: ["personalized", "intelligence for every clinic."],
+  lede: "Genome learns your workflow. Pulse, Fabric, and Float run on top of it: phones, agents, and the financial work the front desk should not still be doing by hand.",
   emailLabel: "Work email",
   emailPlaceholder: "you@clinic.com",
   primaryCta: "Join Waitlist",
@@ -300,7 +300,7 @@ export const DOEHOME_FOOTER = {
   coverageCta: "Join waitlist",
   legal: "Doe is an AI platform for clinics.",
   email: DOEHOME_CONTACT_EMAIL,
-  fill: "#3050e0",
+  fill: "#1a1208",
   productLabel: "Product",
   columns: [
     {

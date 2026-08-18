@@ -1,4 +1,137 @@
-/* /doehomepage — unique product + platform UIs on the Insure color system. */
+/* /doehomepage — Doe brown + gold, mapped onto the Insure layout. */
+
+html[data-doehome-page] {
+  --di-blue: #1a1208;
+  --di-blue-deep: #130e09;
+  --di-blue-light: #271f17;
+  --di-blue-gradient: linear-gradient(180deg, #221910 0%, #1a1208 52%, #130e09 100%);
+  --di-blue-gradient-soft: linear-gradient(180deg, #2a2118 0%, #1a1208 50%, #130e09 100%);
+  --di-blue-gradient-h: linear-gradient(180deg, #c4965e 0%, #b07a42 52%, #8d5e2e 100%);
+  --doehealth-gold-text-gradient: linear-gradient(
+    180deg,
+    #c4965e 0%,
+    #b07a42 52%,
+    #8d5e2e 100%
+  );
+  --doehealth-gold-fill-gradient: linear-gradient(180deg, #e8c08e 0%, #d4a574 58%, #b8845c 100%);
+  --doe-page-surface: #fffdf8;
+  --proto-page-bg: #fffdf8;
+  background-color: #fffdf8;
+}
+
+html[data-doehome-page] body,
+html[data-doehome-page][data-layout="desktop"] body {
+  background-color: #fffdf8 !important;
+}
+
+html[data-doehome-page]:has(.doephone-mobile-root) {
+  --doe-page-surface: #1a1208;
+  --proto-page-bg: #1a1208;
+  background-color: #1a1208;
+}
+
+html[data-doehome-page]:has(.doephone-mobile-root) body {
+  background-color: #1a1208 !important;
+}
+
+.doehome-root {
+  --di-white: #fffdf8;
+  --di-gray: #f4ead9;
+  --di-blue: #1a1208;
+  --di-blue-deep: #130e09;
+  --di-blue-light: #271f17;
+  --di-blue-gradient: linear-gradient(180deg, #221910 0%, #1a1208 52%, #130e09 100%);
+  --di-blue-gradient-soft: linear-gradient(180deg, #2a2118 0%, #1a1208 50%, #130e09 100%);
+  --di-blue-gradient-h: linear-gradient(180deg, #c4965e 0%, #b07a42 52%, #8d5e2e 100%);
+  --di-ink: #1a1208;
+  --di-muted: #6e5d4c;
+  --di-line: #e4d5c0;
+  background: var(--di-white);
+  color: var(--di-ink);
+}
+
+.doehome-root .doeinsure-nav__promo-link,
+.doehome-root .doeinsure-nav__promo-cta {
+  color: #f2e0c6;
+  -webkit-text-fill-color: #f2e0c6;
+}
+
+.doehome-root a.doeinsure-btn,
+.doehome-root button.doeinsure-btn,
+.doehome-root .doeinsure-btn {
+  border-color: #b8845c;
+  background: var(--doehealth-gold-fill-gradient, linear-gradient(180deg, #e8c08e 0%, #d4a574 58%, #b8845c 100%));
+  color: #1a1208;
+  -webkit-text-fill-color: #1a1208;
+}
+
+.doehome-root a.doeinsure-btn:hover,
+.doehome-root button.doeinsure-btn:hover,
+.doehome-root .doeinsure-btn:hover {
+  background: #1a1208;
+  border-color: #1a1208;
+  color: #f2e0c6;
+  -webkit-text-fill-color: #f2e0c6;
+}
+
+.doehome-root .doeinsure-nav__mark,
+.doehome-root .doeinsure-footer__mark {
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.doehome-root .doeinsure-nav__mark-line {
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.doehome-root .doeinsure-footer__mark-line {
+  background-image: linear-gradient(180deg, #e8c08e 0%, #d4a574 52%, rgba(212, 165, 116, 0.88) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.doehome-root .doeinsure-nav__links a.is-on::after {
+  background: var(--doehealth-gold-fill-gradient, linear-gradient(180deg, #e8c08e 0%, #d4a574 58%, #b8845c 100%));
+}
+
+.doehome-root .doeinsure-hero h1,
+.doehome-root .doeinsure-hero__title {
+  font-size: clamp(2.35rem, 4vw, 3.55rem);
+  letter-spacing: -0.06em;
+}
+
+.doehome-root .doeinsure-hero__line:last-child {
+  white-space: normal;
+}
+
+.doehome-root .doeinsure-hero__line,
+.doehome-root .doehome-section-title span,
+.doehome-root h2.doehome-genome__title span,
+.doehome-root h2.doehome-pulse__title span,
+.doehome-root h2.doehome-fabric__title span,
+.doehome-root h2.doehome-float__title span,
+.doehome-root h2.doehome-extra__title span {
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.doehome-root .doehome-ver {
+  color: #b07a42;
+}
+
+.doehome-root .doehome-map__sites .is-this .doehome-ver,
+.doehome-root .doehome-jacks > p .doehome-ver {
+  color: #f2e0c6;
+}
 
 .doeinsure-root .doeinsure-nav__promo-track {
   white-space: nowrap;
@@ -1363,6 +1496,10 @@
 }
 
 .doeinsure-root--iphone .doehome-section-title span {
+  white-space: normal;
+}
+
+.doehome-root.doeinsure-root--iphone .doeinsure-hero__line:last-child {
   white-space: normal;
 }
 

@@ -1,4 +1,5 @@
 import { DOEHOME_FOOTER, DOEHOME_NAV, DOEHOME_NAV_LINKS } from "@/lib/doehome/doehome-copy";
+import { lora } from "@/lib/home/fonts";
 
 export function DoeHomeFooter() {
   return (
@@ -6,7 +7,7 @@ export function DoeHomeFooter() {
       <div className="doeinsure-wrap doeinsure-footer__inner">
         <div className="doeinsure-footer__brand">
           <a className="doeinsure-footer__mark" href="#top">
-            <span className="doeinsure-footer__mark-line">{DOEHOME_NAV.mark}</span>
+            <span className={`doeinsure-footer__mark-line ${lora.className}`}>{DOEHOME_NAV.mark}</span>
           </a>
           <p className="doeinsure-footer__blurb">{DOEHOME_FOOTER.blurb}</p>
         </div>

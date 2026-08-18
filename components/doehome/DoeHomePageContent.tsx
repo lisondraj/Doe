@@ -175,7 +175,7 @@ export function DoeHomePageContent() {
           <div className="doeinsure-wrap doeinsure-hero__grid">
             <div className="doeinsure-hero__copy">
               <h1 className="doeinsure-hero__title">
-                <span className="doeinsure-hero__line doeinsure-hero__line--accent">{DOEHOME_HERO.title}</span>
+                <span className="doeinsure-hero__line">{DOEHOME_HERO.title}</span>
                 {DOEHOME_HERO.tagline.map((line) => (
                   <span key={line} className="doeinsure-hero__line">
                     {line}

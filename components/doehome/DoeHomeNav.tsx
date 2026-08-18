@@ -3,6 +3,7 @@
 import { useEffect, useId, useState } from "react";
 
 import { DOEHOME_NAV, DOEHOME_NAV_LINKS } from "@/lib/doehome/doehome-copy";
+import { lora } from "@/lib/home/fonts";
 
 const SECTION_IDS = DOEHOME_NAV_LINKS.map((link) => link.href.slice(1));
 const PROMO_STEP_MS = 5200;
@@ -103,7 +104,7 @@ export function DoeHomeNav() {
 
       <div className="doeinsure-nav__bar">
         <a className="doeinsure-nav__mark" href="#top" onClick={() => go("#top")}>
-          <span className="doeinsure-nav__mark-line">{DOEHOME_NAV.mark}</span>
+          <span className={`doeinsure-nav__mark-line ${lora.className}`}>{DOEHOME_NAV.mark}</span>
         </a>
 
         <nav className="doeinsure-nav__links" aria-label="Doe">

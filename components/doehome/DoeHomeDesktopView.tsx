@@ -6,7 +6,7 @@ import { dmSans } from "@/lib/home/fonts";
 export function DoeHomeDesktopView() {
   return (
     <div
-      className={`doeinsure-root doeinsure-root--desktop ${dmSans.variable} ${dmSans.className}`}
+      className={`doehome-root doeinsure-root doeinsure-root--desktop ${dmSans.variable} ${dmSans.className}`}
       data-doeforvc-view="desktop"
     >
       <DoeHomeNav />

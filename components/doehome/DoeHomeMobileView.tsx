@@ -26,7 +26,7 @@ export function DoeHomeMobileView() {
 
   return (
     <div
-      className={`doeinsure-root doeinsure-root--iphone doephone-mobile-root ${dmSans.variable} ${dmSans.className}`}
+      className={`doehome-root doeinsure-root doeinsure-root--iphone doephone-mobile-root ${dmSans.variable} ${dmSans.className}`}
       data-doeforvc-view="iphone"
     >
       <DoeHomeNav />
