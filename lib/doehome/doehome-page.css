@@ -209,8 +209,113 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   background: #1a1208;
 }
 
+.doehome-root .doeinsure-hero,
+.doehome-root .doeinsure-section,
+.doehome-root .doeinsure-section--gray {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #1a1208;
+}
+
+.doehome-root .doeinsure-hero__stage {
+  isolation: isolate;
+}
+
+.doehome-root .doeinsure-hero__stage::after,
+.doehome-root .doeinsure-hero .doeinsure-stats::after,
+.doehome-root .doeinsure-section::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  background: #241910;
+  opacity: 0;
+  pointer-events: none;
+  animation: doehome-brown-pulse 9.5s ease-in-out infinite;
+}
+
+.doehome-root .doeinsure-section--gray::after {
+  animation-delay: -4.75s;
+}
+
+.doehome-root .doeinsure-section::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  pointer-events: none;
+  background-image: repeating-radial-gradient(
+    circle at 50% 118%,
+    transparent 0,
+    transparent 31px,
+    rgba(232, 192, 142, 0.14) 31px,
+    rgba(232, 192, 142, 0.14) 32px
+  );
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+}
+
+.doehome-root.doeinsure-root--iphone .doeinsure-section::before {
+  background-image: repeating-radial-gradient(
+    circle at 50% 118%,
+    transparent 0,
+    transparent 24px,
+    rgba(232, 192, 142, 0.14) 24px,
+    rgba(232, 192, 142, 0.14) 25px
+  );
+}
+
+.doehome-root .doeinsure-section--gray::before {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(232, 192, 142, 0.18) 1px,
+    transparent 0
+  );
+  background-size: 20px 20px;
+}
+
+.doehome-root.doeinsure-root--iphone .doeinsure-section--gray::before {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(232, 192, 142, 0.18) 1px,
+    transparent 0
+  );
+  background-size: 20px 20px;
+}
+
+.doehome-root .doeinsure-stats {
+  position: relative;
+  isolation: isolate;
+}
+
+.doehome-root .doeinsure-hero > *,
+.doehome-root .doeinsure-section > *,
+.doehome-root .doeinsure-hero__stage > *,
+.doehome-root .doeinsure-stats > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes doehome-brown-pulse {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
 .doehome-root .doeinsure-hero__stage::before {
-  background-color: #1a1208;
+  z-index: 1;
+  background-color: transparent;
   background-image: radial-gradient(
     circle at 1px 1px,
     rgba(232, 192, 142, 0.2) 1px,
@@ -272,7 +377,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-root .doeinsure-stats,
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doeinsure-stats,
 .doehome-root.doeinsure-root--iphone .doeinsure-hero .doeinsure-stats {
-  background: var(--doehome-page);
+  background: transparent;
   border-color: var(--doehome-gold-line);
 }
 
@@ -298,10 +403,6 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 
 .doehome-root .doeinsure-stat span {
   color: var(--doehome-cream-muted);
-}
-
-.doehome-root .doeinsure-section--gray {
-  background: var(--doehome-page-raised);
 }
 
 .doehome-root .doeinsure-faq {
@@ -2093,6 +2194,13 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .doehome-root .doeinsure-hero__stage::after,
+  .doehome-root .doeinsure-hero .doeinsure-stats::after,
+  .doehome-root .doeinsure-section::after {
+    animation: none;
+    opacity: 0;
+  }
+
   .doehome-wave.is-on em,
   .doehome-switch__agents i.is-live,
   .doehome-pay__hold.is-on i::after {
