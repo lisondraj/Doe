@@ -143,18 +143,19 @@ function IntakeForm({
 
 function HeroTape() {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(true, DOEHOME_HERO_TAPE.lines.length + 1, variant === "phone" ? 420 : 340);
+  const { lit } = useDoeHomeStep(true, DOEHOME_HERO_TAPE.lines.length + 1, variant === "phone" ? 400 : 320);
 
   return (
-    <div className="doehome-scene doehome-scene--card doehome-scene--mid" aria-hidden="true">
+    <div className="doehome-scene doehome-find" aria-hidden="true">
       <header className={lit >= 1 ? "is-on" : undefined}>
         <span>
           {DOEHOME_HERO_TAPE.clinic} · {DOEHOME_HERO_TAPE.heading}
         </span>
         <b>{DOEHOME_HERO_TAPE.title}</b>
       </header>
-      <div className="doehome-table doehome-table--3">
-        <div className="doehome-table__head">
+      <div className="doehome-find__grid">
+        <div className="doehome-find__head">
+          <span />
           {DOEHOME_HERO_TAPE.columns.map((column) => (
             <span key={column}>{column}</span>
           ))}
@@ -162,9 +163,10 @@ function HeroTape() {
         {DOEHOME_HERO_TAPE.lines.map((line, index) => (
           <div
             key={line.text}
-            className={`doehome-table__row${index === 2 ? " is-this" : ""}${index < lit - 1 ? " is-on" : ""}`}
+            className={`doehome-find__row${index === 2 ? " is-this" : ""}${index < lit - 1 ? " is-on" : ""}`}
             style={{ "--n": index } as CSSProperties}
           >
+            <em>{index + 1}</em>
             <b>
               <i className="doehome-file" aria-hidden="true" />
               {line.text}
@@ -270,15 +272,17 @@ export function DoeHomePageContent() {
               <p className="doehome-genome__lede">{DOEHOME_CTA.body}</p>
             </header>
             <DoeHomeShaderFrame src={DOEHOME_SHADERS.cta}>
-              <div className="doehome-scene doehome-scene--card doehome-scene--mid doehome-intake is-on">
-                <header className="is-on">
-                  <em>Waitlist</em>
-                  <div>
-                    <b>Bring Doe into clinic</b>
-                    <span>We’ll follow up</span>
-                  </div>
-                </header>
-                <IntakeForm email={email} onEmailChange={setEmail} />
+              <div className="doehome-scene doehome-packet doehome-intake">
+                <article className="is-on">
+                  <header className="is-on">
+                    <em>Waitlist</em>
+                    <div>
+                      <b>Bring Doe into clinic</b>
+                      <span>We’ll follow up</span>
+                    </div>
+                  </header>
+                  <IntakeForm email={email} onEmailChange={setEmail} />
+                </article>
               </div>
             </DoeHomeShaderFrame>
           </DoeInsureReveal>

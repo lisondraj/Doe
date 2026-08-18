@@ -5,18 +5,13 @@ import type { CSSProperties, ReactNode } from "react";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import { DoeHomeShaderFrame } from "@/components/doehome/DoeHomeShaderImage";
 import {
-  DOEHOME_AUTH,
-  DOEHOME_BOARD,
-  DOEHOME_BOOK,
-  DOEHOME_CHART,
-  DOEHOME_CONNECT,
-  DOEHOME_FABRIC,
-  DOEHOME_FLOAT,
   DOEHOME_GENOME,
-  DOEHOME_HANDOFF,
-  DOEHOME_OPEN,
-  DOEHOME_PULSE,
-  DOEHOME_SCRIBE,
+  DOEHOME_LINE,
+  DOEHOME_PACKET,
+  DOEHOME_RECORD,
+  DOEHOME_SLOT,
+  DOEHOME_STACK,
+  DOEHOME_WIRE,
 } from "@/lib/doehome/doehome-copy";
 import { DOEHOME_SHADERS } from "@/lib/doehome/doehome-shaders";
 import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
@@ -27,20 +22,6 @@ function Scene({ className = "", children }: { className?: string; children: Rea
     <div className={`doehome-scene${className ? ` ${className}` : ""}`} aria-hidden="true">
       {children}
     </div>
-  );
-}
-
-function FileMark() {
-  return <i className="doehome-file" aria-hidden="true" />;
-}
-
-function Wave({ count = 8 }: { count?: number }) {
-  return (
-    <i className="doehome-wave is-on" aria-hidden="true">
-      {Array.from({ length: count }, (_, index) => (
-        <em key={index} style={{ "--n": index } as CSSProperties} />
-      ))}
-    </i>
   );
 }
 
@@ -57,212 +38,30 @@ function FeatureHeading({ title, lede }: { title: readonly string[]; lede: strin
   );
 }
 
-const BOOK_BUSY = new Set(["Mon-9:00", "Tue-10:20", "Wed-9:00", "Wed-11:40", "Thu-10:20"]);
+const SLOT_BUSY = new Set(["Wed-9:00", "Thu-10:20", "Thu-11:40"]);
 
 function GenomeBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_GENOME.clinics.length + 1, variant === "phone" ? 480 : 380);
+  const { lit } = useDoeHomeStep(revealed, 5, variant === "phone" ? 420 : 340);
+  const harbor = DOEHOME_GENOME.clinics.find((item) => item.id === "harbor") ?? DOEHOME_GENOME.clinics[0];
+  const others = DOEHOME_GENOME.clinics.filter((item) => item.id !== "harbor");
 
   return (
-    <Scene className="doehome-scene--card doehome-scene--bleed-r">
-      <header className={lit >= 1 ? "is-on" : undefined}>
+    <Scene className="doehome-orbit">
+      <article className={`doehome-orbit__core${lit >= 1 ? " is-on" : ""}`}>
         <span>{DOEHOME_GENOME.group.name}</span>
-        <b>{DOEHOME_GENOME.tableTitle}</b>
-      </header>
-      <div className="doehome-table doehome-table--3">
-        <div className="doehome-table__head">
-          {DOEHOME_GENOME.columns.map((column) => (
-            <span key={column}>{column}</span>
-          ))}
-        </div>
-        {DOEHOME_GENOME.clinics.map((clinic, index) => (
-          <div
-            key={clinic.id}
-            className={`doehome-table__row${clinic.id === "harbor" ? " is-this" : ""}${index < lit - 1 ? " is-on" : ""}`}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <b>
-              <FileMark />
-              {clinic.name}
-            </b>
-            <span>{clinic.model}</span>
-            <span>{clinic.version}</span>
-          </div>
-        ))}
-      </div>
-    </Scene>
-  );
-}
-
-function PulseBody({ revealed }: { revealed: boolean }) {
-  const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_PULSE.call.turns.length + 1, variant === "phone" ? 520 : 400);
-
-  return (
-    <Scene className="doehome-scene--card doehome-scene--mid">
-      <header className={lit >= 1 ? "is-on" : undefined}>
-        <em>Live</em>
-        <div>
-          <b>
-            {DOEHOME_PULSE.call.agent} · {DOEHOME_PULSE.agents[0].name}
-          </b>
-          <span>{DOEHOME_PULSE.number}</span>
-        </div>
-        {lit >= 1 ? <Wave /> : null}
-      </header>
-      <ol className="doehome-talk">
-        {DOEHOME_PULSE.call.turns.map((turn, index) => (
-          <li
-            key={`${turn.who}-${index}`}
-            className={`${turn.who === "Maya" ? "is-agent" : ""}${lit >= 2 + index ? " is-on" : ""}`.trim()}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <span>{turn.who}</span>
-            <p>{turn.text}</p>
-          </li>
-        ))}
-      </ol>
-    </Scene>
-  );
-}
-
-function FabricBody({ revealed }: { revealed: boolean }) {
-  const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_FABRIC.steps.length, variant === "phone" ? 460 : 360);
-
-  return (
-    <Scene className="doehome-scene--stack doehome-scene--mid">
-      {DOEHOME_FABRIC.steps.map((step, index) => (
-        <div key={step.id} className={`doehome-pill${index < lit ? " is-on" : ""}`} style={{ "--n": index } as CSSProperties}>
-          <span>{step.kicker}</span>
-          <b>{step.label}</b>
-        </div>
-      ))}
-    </Scene>
-  );
-}
-
-function FloatBody({ revealed }: { revealed: boolean }) {
-  const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_FLOAT.claims.length + 1, variant === "phone" ? 480 : 380);
-
-  return (
-    <Scene className="doehome-scene--card doehome-scene--bleed-l">
-      <header className={lit >= 1 ? "is-on" : undefined}>
-        <span>{DOEHOME_FLOAT.hold.ref}</span>
-        <b>{DOEHOME_FLOAT.tableTitle}</b>
-      </header>
-      <div className="doehome-table doehome-table--3">
-        <div className="doehome-table__head">
-          {DOEHOME_FLOAT.columns.map((column) => (
-            <span key={column}>{column}</span>
-          ))}
-        </div>
-        {DOEHOME_FLOAT.claims.map((row, index) => (
-          <div
-            key={row.claim}
-            className={`doehome-table__row${index === 0 ? " is-this" : ""}${index < lit - 1 ? " is-on" : ""}`}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <b>
-              <FileMark />
-              {row.payer}
-            </b>
-            <span>{row.allowed}</span>
-            <span>{row.paid}</span>
-          </div>
-        ))}
-      </div>
-      <p className={`doehome-scene__note${lit >= DOEHOME_FLOAT.claims.length ? " is-on" : ""}`}>
-        <b>{DOEHOME_FLOAT.underpay}</b>
-        <span>{DOEHOME_FLOAT.underpayNote}</span>
-      </p>
-    </Scene>
-  );
-}
-
-function ChartBody({ revealed }: { revealed: boolean }) {
-  const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_CHART.fields.length + 1, variant === "phone" ? 460 : 360);
-
-  return (
-    <Scene className="doehome-scene--card doehome-scene--bleed-b">
-      <header className={lit >= 1 ? "is-on" : undefined}>
-        <span>
-          {DOEHOME_CHART.patient} · {DOEHOME_CHART.mrn}
-        </span>
-        <b>{DOEHOME_CHART.tableTitle}</b>
-      </header>
-      <div className="doehome-table doehome-table--3">
-        <div className="doehome-table__head">
-          {DOEHOME_CHART.columns.map((column) => (
-            <span key={column}>{column}</span>
-          ))}
-        </div>
-        {DOEHOME_CHART.fields.map((field, index) => (
-          <div
-            key={field.k}
-            className={`doehome-table__row${index === 0 ? " is-this" : ""}${index < lit - 1 ? " is-on" : ""}`}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <b>
-              <FileMark />
-              {field.k}
-            </b>
-            <span>{field.v}</span>
-            <span>{DOEHOME_CHART.sources[index]}</span>
-          </div>
-        ))}
-      </div>
-    </Scene>
-  );
-}
-
-function HandoffBody({ revealed }: { revealed: boolean }) {
-  const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_HANDOFF.context.length + 2, variant === "phone" ? 500 : 400);
-  const lastTurn = DOEHOME_PULSE.call.turns[DOEHOME_PULSE.call.turns.length - 1];
-
-  return (
-    <Scene className="doehome-scene--pair doehome-scene--mid">
-      <article className={lit >= 1 ? "is-on" : undefined}>
-        <header>
-          <em>{DOEHOME_HANDOFF.badge}</em>
-          <div>
-            <b>{DOEHOME_HANDOFF.cardTitle}</b>
-            <span>
-              {DOEHOME_HANDOFF.agent.name} · {DOEHOME_HANDOFF.agent.role}
-            </span>
-          </div>
-        </header>
-        <p>{lastTurn.text}</p>
-        <ul className="doehome-files">
-          {DOEHOME_HANDOFF.context.map((item, index) => (
-            <li key={item} className={lit >= 2 + index ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
-              <FileMark />
-              <b>{item}</b>
-            </li>
-          ))}
-        </ul>
+        <b>{harbor.model}</b>
+        <em>{harbor.version}</em>
       </article>
-      <span className={`doehome-scene__cta${lit >= DOEHOME_HANDOFF.context.length + 2 ? " is-on" : ""}`}>
-        {DOEHOME_HANDOFF.cta}
-      </span>
-    </Scene>
-  );
-}
-
-function ConnectBody({ revealed }: { revealed: boolean }) {
-  const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, 2, variant === "phone" ? 420 : 320);
-
-  return (
-    <Scene className="doehome-scene--tiles doehome-scene--bleed-c">
       <ul>
-        {DOEHOME_CONNECT.tiles.map((tile, index) => (
-          <li key={tile.name} className={lit >= 1 ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
-            <b>{tile.mark}</b>
-            <span>{tile.name}</span>
+        {others.map((clinic, index) => (
+          <li
+            key={clinic.id}
+            className={lit >= 2 + index ? "is-on" : undefined}
+            style={{ "--n": index } as CSSProperties}
+          >
+            <b>{clinic.name}</b>
+            <span>{clinic.version}</span>
           </li>
         ))}
       </ul>
@@ -270,64 +69,123 @@ function ConnectBody({ revealed }: { revealed: boolean }) {
   );
 }
 
-function OpenBody({ revealed }: { revealed: boolean }) {
+function PlatformBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_OPEN.items.length + 1, variant === "phone" ? 480 : 380);
+  const { lit } = useDoeHomeStep(revealed, 2, variant === "phone" ? 360 : 280);
 
   return (
-    <Scene className="doehome-scene--card doehome-scene--mid">
-      <header className={lit >= 1 ? "is-on" : undefined}>
-        <span>{DOEHOME_OPEN.opened}</span>
-        <b>{DOEHOME_OPEN.tableTitle}</b>
-      </header>
-      <div className="doehome-table doehome-table--3">
-        <div className="doehome-table__head">
-          {DOEHOME_OPEN.columns.map((column) => (
-            <span key={column}>{column}</span>
-          ))}
-        </div>
-        {DOEHOME_OPEN.items.map((item, index) => (
-          <div
-            key={item.task}
-            className={`doehome-table__row${index === 0 ? " is-this" : ""}${index < lit - 1 ? " is-on" : ""}`}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <b>
-              <FileMark />
-              {item.at}
-            </b>
-            <span>{item.task}</span>
-            <span>{item.done}</span>
-          </div>
+    <Scene className="doehome-suite">
+      <ul>
+        {DOEHOME_STACK.products.map((product, index) => (
+          <li key={product.id} className={lit >= 1 ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
+            <b>{product.mark}</b>
+            <strong>{product.name}</strong>
+            <span>{product.body}</span>
+          </li>
         ))}
-      </div>
+      </ul>
     </Scene>
   );
 }
 
-function BookBody({ revealed }: { revealed: boolean }) {
+function LineBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 460 : 360);
-  const held = DOEHOME_BOOK.held;
+  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 480 : 380);
 
   return (
-    <Scene className={`doehome-scene--card doehome-scene--bleed-r${lit >= 3 ? " is-pinned" : ""}`}>
+    <Scene className="doehome-live">
+      <div className={`doehome-live__wave${lit >= 1 ? " is-on" : ""}`} aria-hidden="true">
+        {Array.from({ length: 18 }, (_, index) => (
+          <em key={index} style={{ "--n": index, "--h": 28 + ((index * 37) % 72) } as CSSProperties} />
+        ))}
+      </div>
+      <article className={lit >= 2 ? "is-on" : undefined}>
+        <em>{DOEHOME_LINE.status}</em>
+        <b>
+          {DOEHOME_LINE.agent} · {DOEHOME_LINE.role}
+        </b>
+        <span>{DOEHOME_LINE.number}</span>
+        <p>{DOEHOME_LINE.hold}</p>
+      </article>
+    </Scene>
+  );
+}
+
+function WireBody({ revealed }: { revealed: boolean }) {
+  const { variant } = useDoeHomePageVariant();
+  const { lit } = useDoeHomeStep(revealed, 2, variant === "phone" ? 360 : 280);
+
+  return (
+    <Scene className="doehome-tiles">
+      <ul>
+        {DOEHOME_WIRE.tiles.map((tile, index) => (
+          <li key={tile.name} className={lit >= 1 ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
+            <b>{tile.mark}</b>
+          </li>
+        ))}
+      </ul>
+    </Scene>
+  );
+}
+
+function PacketBody({ revealed }: { revealed: boolean }) {
+  const { variant } = useDoeHomePageVariant();
+  const { lit } = useDoeHomeStep(revealed, DOEHOME_PACKET.files.length + 2, variant === "phone" ? 480 : 380);
+
+  return (
+    <Scene className="doehome-packet">
+      <article className={lit >= 1 ? "is-on" : undefined}>
+        <header>
+          <em>{DOEHOME_PACKET.badge}</em>
+          <div>
+            <b>{DOEHOME_PACKET.cardTitle}</b>
+            <span>
+              {DOEHOME_PACKET.payer} · {DOEHOME_PACKET.ref}
+            </span>
+          </div>
+        </header>
+        <ul>
+          {DOEHOME_PACKET.files.map((file, index) => (
+            <li key={file.name} className={lit >= 2 + index ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
+              <i className="doehome-file" aria-hidden="true" />
+              <div>
+                <b>{file.name}</b>
+                <span>{file.meta}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </article>
+      <span className={`doehome-packet__cta${lit >= DOEHOME_PACKET.files.length + 2 ? " is-on" : ""}`}>
+        {DOEHOME_PACKET.action}
+      </span>
+    </Scene>
+  );
+}
+
+function SlotBody({ revealed }: { revealed: boolean }) {
+  const { variant } = useDoeHomePageVariant();
+  const { lit } = useDoeHomeStep(revealed, 3, variant === "phone" ? 440 : 340);
+  const held = DOEHOME_SLOT.held;
+
+  return (
+    <Scene className={`doehome-slot${lit >= 3 ? " is-pinned" : ""}`}>
       <header className={lit >= 1 ? "is-on" : undefined}>
         <span>{held.label}</span>
-        <b>{DOEHOME_BOOK.windowTitle}</b>
+        <b>{DOEHOME_SLOT.windowTitle}</b>
       </header>
-      <div className="doehome-week">
+      <div className="doehome-slot__grid">
         <span />
-        {DOEHOME_BOOK.days.map((day) => (
+        {DOEHOME_SLOT.days.map((day) => (
           <b key={day} className={day === held.day && lit >= 2 ? "is-this" : undefined}>
             {day}
           </b>
         ))}
-        {DOEHOME_BOOK.hours.flatMap((hour) => [
+        {DOEHOME_SLOT.hours.flatMap((hour) => [
           <em key={`${hour}-label`}>{hour}</em>,
-          ...DOEHOME_BOOK.days.map((day) => {
+          ...DOEHOME_SLOT.days.map((day) => {
             const isHeld = day === held.day && hour === held.hour;
-            const busy = BOOK_BUSY.has(`${day}-${hour}`);
+            const busy = SLOT_BUSY.has(`${day}-${hour}`);
             return (
               <span
                 key={`${day}-${hour}`}
@@ -343,100 +201,27 @@ function BookBody({ revealed }: { revealed: boolean }) {
   );
 }
 
-function ScribeBody({ revealed }: { revealed: boolean }) {
+function RecordBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_SCRIBE.lines.length + 2, variant === "phone" ? 480 : 380);
+  const { lit } = useDoeHomeStep(revealed, DOEHOME_RECORD.fields.length + 2, variant === "phone" ? 460 : 360);
 
   return (
-    <Scene className="doehome-scene--card doehome-scene--mid">
+    <Scene className="doehome-filecard">
       <header className={lit >= 1 ? "is-on" : undefined}>
-        <em>{DOEHOME_SCRIBE.badge}</em>
-        <div>
-          <b>{DOEHOME_SCRIBE.cardTitle}</b>
-          <span>
-            {DOEHOME_SCRIBE.room} · {DOEHOME_SCRIBE.provider}
-          </span>
-        </div>
+        <span>
+          {DOEHOME_RECORD.clinic} · {DOEHOME_RECORD.mrn}
+        </span>
+        <b>{DOEHOME_RECORD.patient}</b>
       </header>
-      <p className={`doehome-scene__lede${lit >= 1 ? " is-on" : ""}`}>{DOEHOME_SCRIBE.patient}</p>
-      <ul className="doehome-lines">
-        {DOEHOME_SCRIBE.lines.map((line, index) => (
-          <li key={line} className={lit >= 2 + index ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
-            {line}
-          </li>
-        ))}
-      </ul>
-      <span className={`doehome-scene__stamp${lit >= DOEHOME_SCRIBE.lines.length + 2 ? " is-on" : ""}`}>
-        {DOEHOME_SCRIBE.stamp}
-      </span>
-    </Scene>
-  );
-}
-
-function AuthBody({ revealed }: { revealed: boolean }) {
-  const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_AUTH.files.length + 2, variant === "phone" ? 500 : 400);
-
-  return (
-    <Scene className="doehome-scene--pair doehome-scene--mid">
-      <article className={lit >= 1 ? "is-on" : undefined}>
-        <header>
-          <em>{DOEHOME_AUTH.badge}</em>
-          <div>
-            <b>{DOEHOME_AUTH.cardTitle}</b>
-            <span>
-              {DOEHOME_AUTH.payer} · {DOEHOME_AUTH.ref}
-            </span>
+      <dl>
+        {DOEHOME_RECORD.fields.map((field, index) => (
+          <div key={field.k} className={lit >= 2 + index ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
+            <dt>{field.k}</dt>
+            <dd>{field.v}</dd>
           </div>
-        </header>
-        <ul className="doehome-files">
-          {DOEHOME_AUTH.files.map((file, index) => (
-            <li key={file.name} className={lit >= 2 + index ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
-              <FileMark />
-              <div>
-                <b>{file.name}</b>
-                <span>{file.meta}</span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </article>
-      <span className={`doehome-scene__cta${lit >= DOEHOME_AUTH.files.length + 2 ? " is-on" : ""}`}>
-        {DOEHOME_AUTH.action}
-      </span>
-    </Scene>
-  );
-}
-
-function BoardBody({ revealed }: { revealed: boolean }) {
-  const { variant } = useDoeHomePageVariant();
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_BOARD.columns.length + 1, variant === "phone" ? 460 : 360);
-
-  return (
-    <Scene className="doehome-scene--card doehome-scene--bleed-r doehome-scene--wide">
-      <header className={lit >= 1 ? "is-on" : undefined}>
-        <span>{DOEHOME_BOARD.windowTitle}</span>
-        <b>{DOEHOME_BOARD.boardTitle}</b>
-      </header>
-      <div className="doehome-board">
-        {DOEHOME_BOARD.columns.map((column, index) => (
-          <section key={column.id} className={index < lit - 1 ? "is-on" : undefined} style={{ "--n": index } as CSSProperties}>
-            <h3>
-              {column.name}
-              <span>{column.cards.length}</span>
-            </h3>
-            <ul>
-              {column.cards.map((card) => (
-                <li key={card.id} className={column.id === "live" ? "is-live" : undefined}>
-                  {column.id === "live" ? <Wave count={6} /> : null}
-                  <b>{card.title}</b>
-                  <span>{card.meta}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
         ))}
-      </div>
+      </dl>
+      <em className={lit >= DOEHOME_RECORD.fields.length + 2 ? "is-on" : undefined}>{DOEHOME_RECORD.stamp}</em>
     </Scene>
   );
 }
@@ -498,114 +283,64 @@ export function DoeHomeFeatureSections() {
         {(revealed) => <GenomeBody revealed={revealed} />}
       </FeatureSection>
       <FeatureSection
-        id={DOEHOME_PULSE.id}
-        title={DOEHOME_PULSE.title}
-        lede={DOEHOME_PULSE.lede}
+        id={DOEHOME_STACK.id}
+        title={DOEHOME_STACK.title}
+        lede={DOEHOME_STACK.lede}
+        src={DOEHOME_SHADERS.stack}
+        gray
+        variant="left"
+      >
+        {(revealed) => <PlatformBody revealed={revealed} />}
+      </FeatureSection>
+      <FeatureSection
+        id={DOEHOME_LINE.id}
+        title={DOEHOME_LINE.title}
+        lede={DOEHOME_LINE.lede}
         src={DOEHOME_SHADERS.pulse}
-        gray
-        variant="left"
-      >
-        {(revealed) => <PulseBody revealed={revealed} />}
-      </FeatureSection>
-      <FeatureSection
-        id={DOEHOME_FABRIC.id}
-        title={DOEHOME_FABRIC.title}
-        lede={DOEHOME_FABRIC.lede}
-        src={DOEHOME_SHADERS.fabric}
         mesh="arches"
         variant="right"
       >
-        {(revealed) => <FabricBody revealed={revealed} />}
+        {(revealed) => <LineBody revealed={revealed} />}
       </FeatureSection>
       <FeatureSection
-        id={DOEHOME_FLOAT.id}
-        title={DOEHOME_FLOAT.title}
-        lede={DOEHOME_FLOAT.lede}
-        src={DOEHOME_SHADERS.float}
-        gray
-        variant="rise"
-      >
-        {(revealed) => <FloatBody revealed={revealed} />}
-      </FeatureSection>
-      <FeatureSection
-        id={DOEHOME_CHART.id}
-        title={DOEHOME_CHART.title}
-        lede={DOEHOME_CHART.lede}
-        src={DOEHOME_SHADERS.chart}
-        mesh="dots"
-        variant="left"
-      >
-        {(revealed) => <ChartBody revealed={revealed} />}
-      </FeatureSection>
-      <FeatureSection
-        id={DOEHOME_HANDOFF.id}
-        title={DOEHOME_HANDOFF.title}
-        lede={DOEHOME_HANDOFF.lede}
-        src={DOEHOME_SHADERS.handoff}
-        gray
-        variant="right"
-      >
-        {(revealed) => <HandoffBody revealed={revealed} />}
-      </FeatureSection>
-      <FeatureSection
-        id={DOEHOME_CONNECT.id}
-        title={DOEHOME_CONNECT.title}
-        lede={DOEHOME_CONNECT.lede}
+        id={DOEHOME_WIRE.id}
+        title={DOEHOME_WIRE.title}
+        lede={DOEHOME_WIRE.lede}
         src={DOEHOME_SHADERS.connect}
-        mesh="arches"
+        gray
         variant="rise"
       >
-        {(revealed) => <ConnectBody revealed={revealed} />}
+        {(revealed) => <WireBody revealed={revealed} />}
       </FeatureSection>
       <FeatureSection
-        id={DOEHOME_OPEN.id}
-        title={DOEHOME_OPEN.title}
-        lede={DOEHOME_OPEN.lede}
-        src={DOEHOME_SHADERS.open}
-        gray
-        variant="left"
-      >
-        {(revealed) => <OpenBody revealed={revealed} />}
-      </FeatureSection>
-      <FeatureSection
-        id={DOEHOME_BOOK.id}
-        title={DOEHOME_BOOK.title}
-        lede={DOEHOME_BOOK.lede}
-        src={DOEHOME_SHADERS.book}
-        mesh="dots"
-        variant="rise"
-      >
-        {(revealed) => <BookBody revealed={revealed} />}
-      </FeatureSection>
-      <FeatureSection
-        id={DOEHOME_SCRIBE.id}
-        title={DOEHOME_SCRIBE.title}
-        lede={DOEHOME_SCRIBE.lede}
-        src={DOEHOME_SHADERS.scribe}
-        gray
-        variant="left"
-      >
-        {(revealed) => <ScribeBody revealed={revealed} />}
-      </FeatureSection>
-      <FeatureSection
-        id={DOEHOME_AUTH.id}
-        title={DOEHOME_AUTH.title}
-        lede={DOEHOME_AUTH.lede}
+        id={DOEHOME_PACKET.id}
+        title={DOEHOME_PACKET.title}
+        lede={DOEHOME_PACKET.lede}
         src={DOEHOME_SHADERS.auth}
-        mesh="arches"
+        mesh="dots"
+        variant="left"
+      >
+        {(revealed) => <PacketBody revealed={revealed} />}
+      </FeatureSection>
+      <FeatureSection
+        id={DOEHOME_SLOT.id}
+        title={DOEHOME_SLOT.title}
+        lede={DOEHOME_SLOT.lede}
+        src={DOEHOME_SHADERS.book}
+        gray
         variant="right"
       >
-        {(revealed) => <AuthBody revealed={revealed} />}
+        {(revealed) => <SlotBody revealed={revealed} />}
       </FeatureSection>
       <FeatureSection
-        id={DOEHOME_BOARD.id}
-        title={DOEHOME_BOARD.title}
-        lede={DOEHOME_BOARD.lede}
-        src={DOEHOME_SHADERS.board}
-        gray
+        id={DOEHOME_RECORD.id}
+        title={DOEHOME_RECORD.title}
+        lede={DOEHOME_RECORD.lede}
+        src={DOEHOME_SHADERS.chart}
+        mesh="arches"
         variant="rise"
       >
-        {(revealed) => <BoardBody revealed={revealed} />}
+        {(revealed) => <RecordBody revealed={revealed} />}
       </FeatureSection>
     </>
   );
