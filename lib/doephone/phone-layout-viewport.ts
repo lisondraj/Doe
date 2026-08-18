@@ -54,7 +54,29 @@ export function applyPhoneOverflowChrome(surfaceColor: string): void {
   if (themeColor) themeColor.setAttribute("content", color);
 }
 
+/** Top rubber-band vs bottom rubber-band can use different colors (e.g. promo banner vs footer). */
+export function applyPhoneSplitOverflowChrome(topColor: string, bottomColor: string): void {
+  if (typeof document === "undefined") return;
+
+  const html = document.documentElement;
+  const top = topColor.toLowerCase();
+  const bottom = bottomColor.toLowerCase();
+  html.style.setProperty("--doe-page-surface", bottom);
+  html.style.setProperty("--proto-page-bg", bottom);
+  html.style.backgroundColor = top;
+  if (document.body) document.body.style.backgroundColor = bottom;
+
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  if (themeColor) themeColor.setAttribute("content", top);
+}
+
 export function phoneOverflowChromeBootstrapScript(surfaceColor = "#ede8df"): string {
   const color = JSON.stringify(surfaceColor);
   return `(function(){try{var html=document.documentElement;html.style.setProperty("--doe-page-surface",${color});html.style.setProperty("--proto-page-bg",${color});html.style.backgroundColor=${color};if(document.body)document.body.style.backgroundColor=${color};var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute("content",${color});}catch(e){}})();`;
+}
+
+export function phoneSplitOverflowChromeBootstrapScript(topColor: string, bottomColor: string): string {
+  const top = JSON.stringify(topColor);
+  const bottom = JSON.stringify(bottomColor);
+  return `(function(){try{var html=document.documentElement;html.style.setProperty("--doe-page-surface",${bottom});html.style.setProperty("--proto-page-bg",${bottom});html.style.backgroundColor=${top};if(document.body)document.body.style.backgroundColor=${bottom};var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute("content",${top});}catch(e){}})();`;
 }
