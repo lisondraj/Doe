@@ -5000,14 +5000,31 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__clauses {
   flex: 1 1 auto;
+  background: var(--di-blue);
+  border-color: var(--di-blue);
 }
 
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__clauses button {
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 0.42rem;
+  padding: 0.95rem 1rem 1rem;
+  border-left: 0;
+  transition: background-color 320ms ease, color 320ms ease;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__clauses button.is-on {
+  border-left: 0;
+  background: var(--di-gray);
 }
 
 .doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__clause-top {
+  align-items: center;
   min-height: 1.35rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-match__clauses strong {
+  display: block;
+  line-height: 1.42;
 }
 
 .doeinsure-doc ul {

@@ -156,6 +156,8 @@ function ScaleBody({
 
 const MATCH_SCAN_MS = 900;
 const MATCH_SCAN_MS_IPHONE = 2600;
+const MATCH_ALL_STEP_MS = 780;
+const MATCH_ALL_STEP_MS_IPHONE = 480;
 
 function MatchSection() {
   return (
@@ -209,12 +211,13 @@ function MatchBody({ revealed }: { revealed: boolean }) {
 
   const matchAll = () => {
     if (!revealed || scanning || matchingAll || complete) return;
+    const stepMs = variant === "phone" ? MATCH_ALL_STEP_MS_IPHONE : MATCH_ALL_STEP_MS;
     setMatchingAll(true);
     active.clauses.forEach((clause, index) => {
       window.setTimeout(() => {
         setDone((current) => ({ ...current, [`${scenario}-${clause.id}`]: true }));
         if (index === active.clauses.length - 1) setMatchingAll(false);
-      }, (index + 1) * 480);
+      }, (index + 1) * stepMs);
     });
   };
 
