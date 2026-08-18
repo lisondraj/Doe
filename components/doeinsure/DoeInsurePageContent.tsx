@@ -27,7 +27,15 @@ function mailtoDoeInsure(lines: string[], subjectName: string) {
   window.location.href = `mailto:${DOEINSURE_CONTACT_EMAIL}?subject=${subject}&body=${body}`;
 }
 
-function StageTags({ tags }: { tags: readonly string[] }) {
+function StageTags({
+  tags,
+  desktopTag,
+  showDesktopTag = false,
+}: {
+  tags: readonly string[];
+  desktopTag?: string;
+  showDesktopTag?: boolean;
+}) {
   return (
     <div className="doeinsure-stage-block__tags">
       {tags.map((tag) => (
@@ -35,6 +43,9 @@ function StageTags({ tags }: { tags: readonly string[] }) {
           {tag}
         </span>
       ))}
+      {showDesktopTag && desktopTag ? (
+        <span className="doeinsure-stage-block__tag doeinsure-stage-block__tag--desktop">{desktopTag}</span>
+      ) : null}
     </div>
   );
 }
@@ -241,6 +252,7 @@ function UnderwriteBody({ revealed }: { revealed: boolean }) {
 export function DoeInsurePageContent() {
   const [email, setEmail] = useState("");
   const [stat, setStat] = useState(0);
+  const { variant } = useDoeInsurePageVariant();
   const { ladderRef, activeIndex: stage } = useDoeInsureLadderScroll(DOEINSURE_STAGES.items.length);
   const [faq, setFaq] = useState<number | null>(0);
 
@@ -312,7 +324,11 @@ export function DoeInsurePageContent() {
                       <h3>{item.name}</h3>
                       <em>{item.badge}</em>
                     </span>
-                    <StageTags tags={item.tags} />
+                    <StageTags
+                      tags={item.tags}
+                      desktopTag={item.desktopTag}
+                      showDesktopTag={variant !== "phone"}
+                    />
                     <ul>
                       {item.includes.map((line) => (
                         <li key={line}>{line}</li>
