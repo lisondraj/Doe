@@ -32,7 +32,7 @@ export const DOEINSURE_HERO = {
   lede: "Coverage for new and existing healthcare AI companies. Connect the stack, quote from live data, and raise limits the hour a hospital asks.",
   emailLabel: "Work email",
   emailPlaceholder: "you@company.com",
-  primaryCta: "Get started",
+  primaryCta: "Get Your Quote",
   secondaryCta: "See the platform",
 } as const;
 
