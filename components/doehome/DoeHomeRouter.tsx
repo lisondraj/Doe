@@ -1,3 +1,5 @@
+"use client";
+
 import { DoeHomeDesktopView } from "@/components/doehome/DoeHomeDesktopView";
 import { DoeHomeMobileView } from "@/components/doehome/DoeHomeMobileView";
 import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
