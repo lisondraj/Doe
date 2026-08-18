@@ -457,7 +457,7 @@ function FeatureSection({
   lede: string;
   src: string;
   gray?: boolean;
-  mesh?: "dots" | "arches";
+  mesh?: "dots" | "arches" | "waves";
   priority?: boolean;
   variant?: "rise" | "left" | "right";
   children: (revealed: boolean) => ReactNode;
@@ -532,7 +532,7 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_CHART.title}
         lede={DOEHOME_CHART.lede}
         src={DOEHOME_SHADERS.chart}
-        mesh="dots"
+        mesh="waves"
         variant="left"
       >
         {(revealed) => <ChartBody revealed={revealed} />}
@@ -552,7 +552,7 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_CONNECT.title}
         lede={DOEHOME_CONNECT.lede}
         src={DOEHOME_SHADERS.connect}
-        mesh="arches"
+        mesh="dots"
         variant="rise"
       >
         {(revealed) => <ConnectBody revealed={revealed} />}
@@ -572,7 +572,7 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_BOOK.title}
         lede={DOEHOME_BOOK.lede}
         src={DOEHOME_SHADERS.book}
-        mesh="dots"
+        mesh="arches"
         variant="rise"
       >
         {(revealed) => <BookBody revealed={revealed} />}
@@ -592,7 +592,7 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_AUTH.title}
         lede={DOEHOME_AUTH.lede}
         src={DOEHOME_SHADERS.auth}
-        mesh="arches"
+        mesh="waves"
         variant="right"
       >
         {(revealed) => <AuthBody revealed={revealed} />}
