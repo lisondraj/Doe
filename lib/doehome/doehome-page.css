@@ -251,7 +251,30 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   animation-delay: -4.75s;
 }
 
-.doehome-root .doeinsure-section::before {
+.doehome-root .doeinsure-section--gray::before {
+  content: none;
+}
+
+.doehome-root .doehome-section--mesh-dots::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(232, 192, 142, 0.18) 1px,
+    transparent 0
+  );
+  background-size: 20px 20px;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+}
+
+.doehome-root .doehome-section--mesh-arches::before {
   content: "";
   position: absolute;
   z-index: 1;
@@ -271,7 +294,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
 }
 
-.doehome-root.doeinsure-root--iphone .doeinsure-section::before {
+.doehome-root.doeinsure-root--iphone .doehome-section--mesh-arches::before {
   background-image: repeating-radial-gradient(
     circle at 50% 118%,
     transparent 0,
@@ -279,24 +302,6 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
     rgba(232, 192, 142, 0.14) 24px,
     rgba(232, 192, 142, 0.14) 25px
   );
-}
-
-.doehome-root .doeinsure-section--gray::before {
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    rgba(232, 192, 142, 0.18) 1px,
-    transparent 0
-  );
-  background-size: 20px 20px;
-}
-
-.doehome-root.doeinsure-root--iphone .doeinsure-section--gray::before {
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    rgba(232, 192, 142, 0.18) 1px,
-    transparent 0
-  );
-  background-size: 20px 20px;
 }
 
 .doehome-root .doeinsure-stats {

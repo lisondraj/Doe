@@ -481,6 +481,7 @@ function FeatureSection({
   lede,
   src,
   gray = false,
+  mesh,
   priority = false,
   variant = "rise",
   children,
@@ -490,12 +491,16 @@ function FeatureSection({
   lede: string;
   src: string;
   gray?: boolean;
+  mesh?: "dots" | "arches";
   priority?: boolean;
   variant?: "rise" | "left" | "right";
   children: (revealed: boolean) => ReactNode;
 }) {
   return (
-    <section className={`doeinsure-section${gray ? " doeinsure-section--gray" : ""}`} id={id}>
+    <section
+      className={`doeinsure-section${gray ? " doeinsure-section--gray" : ""}${mesh ? ` doehome-section--mesh-${mesh}` : ""}`}
+      id={id}
+    >
       <div className="doeinsure-wrap doehome-feature">
         <DoeInsureReveal variant={variant}>
           {(revealed) => (
@@ -520,6 +525,7 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_GENOME.title}
         lede={DOEHOME_GENOME.lede}
         src={DOEHOME_SHADERS.genome}
+        mesh="dots"
         priority
         variant="rise"
       >
@@ -540,6 +546,7 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_FABRIC.title}
         lede={DOEHOME_FABRIC.lede}
         src={DOEHOME_SHADERS.fabric}
+        mesh="arches"
         variant="right"
       >
         {(revealed) => <FabricBody revealed={revealed} />}
@@ -559,6 +566,7 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_CHART.title}
         lede={DOEHOME_CHART.lede}
         src={DOEHOME_SHADERS.chart}
+        mesh="dots"
         variant="left"
       >
         {(revealed) => <ChartBody revealed={revealed} />}
@@ -578,6 +586,7 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_CONNECT.title}
         lede={DOEHOME_CONNECT.lede}
         src={DOEHOME_SHADERS.connect}
+        mesh="arches"
         variant="rise"
       >
         {(revealed) => <ConnectBody revealed={revealed} />}
@@ -597,6 +606,7 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_BOOK.title}
         lede={DOEHOME_BOOK.lede}
         src={DOEHOME_SHADERS.book}
+        mesh="dots"
         variant="rise"
       >
         {(revealed) => <BookBody revealed={revealed} />}
@@ -616,6 +626,7 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_AUTH.title}
         lede={DOEHOME_AUTH.lede}
         src={DOEHOME_SHADERS.auth}
+        mesh="arches"
         variant="right"
       >
         {(revealed) => <AuthBody revealed={revealed} />}

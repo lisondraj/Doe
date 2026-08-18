@@ -244,7 +244,7 @@ export function DoeHomePageContent() {
         </div>
       </section>
 
-      <section className="doeinsure-section" id="request">
+      <section className="doeinsure-section doehome-section--mesh-dots" id="request">
         <div className="doeinsure-wrap doehome-feature">
           <DoeInsureReveal>
             <header className="doehome-extra__head">
