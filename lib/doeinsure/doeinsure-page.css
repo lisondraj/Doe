@@ -6672,6 +6672,455 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   -webkit-text-fill-color: transparent;
 }
 
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__layout {
+  display: grid;
+  grid-template-columns: minmax(10.5rem, 0.78fr) minmax(0, 1.42fr) minmax(12.5rem, 0.8fr);
+  gap: 1px;
+  align-items: stretch;
+  border: 1px solid var(--di-line);
+  background: var(--di-line);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__rail,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__main,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__side {
+  background: var(--di-white);
+  transition: background-color 420ms ease, border-color 420ms ease, color 420ms ease;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__rail {
+  display: flex;
+  flex-direction: column;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__rail button {
+  appearance: none;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.24rem;
+  padding: 1.05rem 1.15rem 1.1rem;
+  border: 0;
+  border-bottom: 1px solid var(--di-line);
+  background: transparent;
+  color: var(--di-muted);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__rail button:last-child {
+  border-bottom: 0;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__rail button span {
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__rail button b {
+  color: var(--di-ink);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__rail button em {
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__rail button.is-on {
+  background: var(--di-blue-gradient);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__rail button.is-on b,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__rail button.is-on em {
+  background-image: none;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-height: 22rem;
+  padding: 1.35rem 1.45rem 1.5rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__main-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__main-head strong {
+  color: var(--di-ink);
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__main-head strong.is-on {
+  animation: doeinsure-claim-stamp 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__main-head span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem;
+  color: var(--di-muted);
+  font-size: 0.88rem;
+  letter-spacing: -0.02em;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__main-head span em {
+  color: var(--di-blue);
+  font-size: 0.64rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__track {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--di-line);
+  background: var(--di-gray);
+  overflow: hidden;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__track li {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.38rem;
+  padding: 0.62rem 0.42rem 0.68rem;
+  border-right: 1px solid var(--di-line);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__track li:last-child {
+  border-right: 0;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__track li i {
+  display: block;
+  height: 0.24rem;
+  background: var(--di-line);
+  transition: background-color 280ms ease;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__track li.is-on i {
+  background: var(--di-blue-gradient);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__track li span {
+  color: var(--di-muted);
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__track li.is-on span {
+  color: var(--di-blue);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__note--desk {
+  flex: 1 1 auto;
+  min-height: 7.25rem;
+  margin: 0;
+  font-size: clamp(1.02rem, 1.25vw, 1.14rem);
+  line-height: 1.52;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  border: 1px solid var(--di-line);
+  background: var(--di-line);
+  overflow: hidden;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__metrics > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  padding: 0.85rem 1rem 0.92rem;
+  background: var(--di-gray);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__metrics span {
+  color: var(--di-muted);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__metrics b {
+  min-height: 1.2em;
+  color: var(--di-ink);
+  font-size: clamp(1.35rem, 2vw, 1.72rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__metrics:not(.is-in) b {
+  visibility: hidden;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__metrics.is-in b {
+  animation: doeinsure-claim-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-height: 22rem;
+  padding: 1.35rem 1.25rem 1.45rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__status {
+  margin: 0;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__status em {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--di-ink);
+  font-size: clamp(1.85rem, 2.8vw, 2.45rem);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__status em.is-ready {
+  background-image: var(--di-blue-gradient-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__stack > span {
+  color: var(--di-muted);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__stack-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0.45rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--di-line);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__stack-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1.35rem;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.58rem 0;
+  border-bottom: 1px solid var(--di-line);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__stack-list li span {
+  color: var(--di-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  opacity: 0.42;
+  transition: opacity 280ms ease, color 280ms ease;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__stack-list li i {
+  display: block;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid var(--di-line);
+  background: var(--di-gray);
+  transition: background-color 280ms ease, border-color 280ms ease;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__stack-list.is-in li.is-on span {
+  color: var(--di-ink);
+  opacity: 1;
+  animation: doeinsure-claim-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--chip, 0) * 90ms);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__stack-list.is-in li.is-on i {
+  border-color: var(--di-blue);
+  background: var(--di-blue-gradient);
+  animation: doeinsure-claim-chip 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--chip, 0) * 90ms);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__routing {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  margin-top: auto;
+  border: 1px solid var(--di-line);
+  background: var(--di-line);
+  overflow: hidden;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__routing > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.72rem 0.8rem 0.78rem;
+  background: var(--di-gray);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__routing span {
+  color: var(--di-muted);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__routing b {
+  min-height: 1.2em;
+  color: var(--di-ink);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__routing:not(.is-in) b {
+  visibility: hidden;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__routing.is-in b {
+  animation: doeinsure-claim-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim__side .doeinsure-btn {
+  width: 100%;
+  margin-top: 0.15rem;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__main,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__side {
+  background: var(--di-blue-gradient);
+  color: #ffffff;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__main-head strong,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__main-head span,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__main-head span em,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__note--desk,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__metrics span,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__metrics b,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__status em,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__stack > span,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__stack-list li span,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__routing span,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__routing b {
+  background-image: none;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__note--desk,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__metrics,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__routing {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__metrics > div,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__routing > div {
+  background: transparent;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__track {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__track li {
+  border-right-color: rgba(255, 255, 255, 0.18);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__track li i {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__track li.is-on i {
+  background: #ffffff;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__track li span,
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__track li.is-on span {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__stack-list {
+  border-top-color: rgba(255, 255, 255, 0.22);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__stack-list li {
+  border-bottom-color: rgba(255, 255, 255, 0.18);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__stack-list li i {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__stack-list.is-in li.is-on i {
+  border-color: #ffffff;
+  background: #ffffff;
+}
+
+.doeinsure-root:not(.doeinsure-root--iphone) .doeinsure-claim.is-on .doeinsure-claim__side .doeinsure-btn {
+  border-color: #ffffff;
+  background: #ffffff;
+  background-image: none;
+  color: var(--di-blue);
+  -webkit-text-fill-color: var(--di-blue);
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+}
+
 .doeinsure-root--iphone .doeinsure-claim__ticket {
   max-width: none;
   gap: 0.7rem;
