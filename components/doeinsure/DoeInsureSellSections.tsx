@@ -784,9 +784,10 @@ function IssueBody({ revealed }: { revealed: boolean }) {
   );
 }
 
-const CLAIM_STEP_MS = 920;
+const CLAIM_STEP_MS = 1480;
 const CLAIM_STEP_MS_IPHONE = 1080;
-const CLAIM_HOLD_MS = 1600;
+const CLAIM_HOLD_MS = 2400;
+const CLAIM_HOLD_MS_IPHONE = 1600;
 const CLAIM_LAST_STEP = 5;
 
 function ClaimSection() {
@@ -804,6 +805,7 @@ function ClaimSection() {
 function ClaimBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeInsurePageVariant();
   const stepMs = variant === "phone" ? CLAIM_STEP_MS_IPHONE : CLAIM_STEP_MS;
+  const holdMs = variant === "phone" ? CLAIM_HOLD_MS_IPHONE : CLAIM_HOLD_MS;
   const incidentCount = DOEINSURE_CLAIM.incidents.length;
   const [incident, setIncident] = useState(0);
   const [step, setStep] = useState(0);
@@ -845,9 +847,9 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
     const id = window.setTimeout(() => {
       setIncident((current) => current + 1);
       setStep(0);
-    }, CLAIM_HOLD_MS);
+    }, holdMs);
     return () => window.clearTimeout(id);
-  }, [auto, filed, incident, incidentCount]);
+  }, [auto, filed, incident, incidentCount, holdMs]);
 
   const fileClaim = () => {
     if (!ready || filed) return;
@@ -860,6 +862,10 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
     setIncident(index);
     setStep(0);
   };
+
+  const noteMarksLit = Math.max(0, step - 2);
+  const noteReading = noteOn && !filed;
+  const noteMarkIds = active.noteExcerpt.flatMap((part) => (part.mark ? [part.mark] : []));
 
   const trackSteps = [
     { id: "incident", label: "Incident" },
@@ -955,7 +961,10 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
         ))}
       </div>
 
-      <article className="doeinsure-claim__main">
+      <article
+        className="doeinsure-claim__main"
+        style={{ "--claim-scan-ms": `${stepMs * 5}ms` } as CSSProperties}
+      >
         <header className="doeinsure-claim__main-head">
           <strong className={filed ? "is-on" : undefined}>
             {filed ? active.number : DOEINSURE_CLAIM.draftTitle}
@@ -975,8 +984,24 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
           ))}
         </ol>
 
-        <p className={`doeinsure-claim__note doeinsure-claim__note--desk${noteOn ? " is-in" : ""}`}>
-          <span aria-hidden={!noteOn}>{active.note}</span>
+        <p
+          className={`doeinsure-claim__note doeinsure-claim__note--desk${noteOn ? " is-in" : ""}${noteReading ? " is-reading" : ""}`}
+        >
+          <i className="doeinsure-claim__cursor" aria-hidden="true" />
+          {active.noteExcerpt.map((part, index) => {
+            const marked = Boolean(
+              part.mark &&
+                noteMarkIds.findIndex((markId) => markId === part.mark) < noteMarksLit,
+            );
+            return (
+              <span
+                key={`${active.id}-note-${index}`}
+                className={part.mark ? `doeinsure-claim__mark${marked ? " is-on" : ""}` : undefined}
+              >
+                {part.text}
+              </span>
+            );
+          })}
         </p>
 
         <div className={`doeinsure-claim__metrics${factsOn ? " is-in" : ""}`}>
@@ -991,7 +1016,7 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
         </div>
       </article>
 
-      <aside className="doeinsure-claim__side">
+      <aside className={`doeinsure-claim__side${filed ? " is-on" : ""}`}>
         <p className="doeinsure-claim__status">
           <em className={filed ? "is-on" : ready ? "is-ready" : undefined}>{status}</em>
         </p>
