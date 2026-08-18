@@ -156,6 +156,17 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   overflow: visible;
 }
 
+.doehome-root .doeinsure-nav__mark {
+  font-size: 1.52rem;
+  line-height: 1;
+  align-self: center;
+}
+
+.doehome-root.doeinsure-root--iphone .doeinsure-nav__mark {
+  font-size: 1.78rem;
+  letter-spacing: -0.06em;
+}
+
 .doehome-root .doeinsure-nav__mark-line,
 .doehome-root .doeinsure-footer__mark-line {
   background: var(--doehealth-gold-text-gradient);
@@ -166,6 +177,11 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   padding-bottom: 0.12em;
   overflow: visible;
   line-height: 1.12;
+}
+
+.doehome-root .doeinsure-nav__mark-line {
+  padding-bottom: 0.04em;
+  line-height: 1;
 }
 
 .doehome-root .doeinsure-hero h1,
