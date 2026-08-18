@@ -57,7 +57,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   --doehome-cream: #f2e8da;
   --doehome-cream-muted: rgba(242, 232, 218, 0.72);
   --doehome-gold-line: rgba(232, 192, 142, 0.24);
-  --doehome-ui-scale: calc(5 / 6);
+  --doehome-ui-scale: calc(4 / 6);
   background: var(--doehome-page);
   color: var(--doehome-cream);
 }
