@@ -841,6 +841,63 @@ export const DOEINSURE_PHI = {
   ],
 } as const;
 
+export const DOEINSURE_PRIOR = {
+  id: "prior",
+  title: ["Cover the clinics", "you already served."],
+  statusRewind: "Rewinding retro date",
+  statusLocked: "Prior acts locked",
+  today: "Today",
+  retroLabel: "Retroactive date",
+  years: [
+    { year: "2026", clinic: "Harbor Notes · live", count: "3 sites" },
+    { year: "2025", clinic: "Northwell Ambient", count: "11 sites" },
+    { year: "2024", clinic: "Mayo Imaging Labs", count: "First go-live" },
+    { year: "2023", clinic: "Pilot cohort", count: "Prior acts" },
+  ],
+} as const;
+
+export const DOEINSURE_RELEASES = {
+  id: "releases",
+  title: ["Ship a model.", "It's already on the policy."],
+  shipping: "Shipping",
+  onPolicy: "On policy",
+  items: [
+    { version: "v0.8", name: "Ambient capture", date: "Jan 12", note: "PHI at mic" },
+    { version: "v1.0", name: "Clinic scribe", date: "Mar 4", note: "Human in loop" },
+    { version: "v1.2", name: "Agent drafts", date: "May 19", note: "RCM path" },
+    { version: "v1.4", name: "SaMD candidate", date: "Jul 8", note: "CDS, not device" },
+  ],
+} as const;
+
+export const DOEINSURE_TOWER = {
+  id: "tower",
+  title: ["Stack the lines.", "Raise the tower."],
+  totalLabel: "Combined tower",
+  total: "$18M",
+  layers: [
+    { id: "cyber", name: "Cyber and privacy", limit: "$5M", width: 58 },
+    { id: "eo", name: "Technology E&O", limit: "$5M", width: 58 },
+    { id: "product", name: "Product liability", limit: "$2M", width: 32 },
+    { id: "do", name: "Directors and officers", limit: "$6M", width: 76 },
+  ],
+} as const;
+
+export const DOEINSURE_PULSE = {
+  id: "pulse",
+  title: ["The file rewrites", "itself overnight."],
+  clock: "02:14",
+  clockLabel: "Last rewrite",
+  waiting: "Night cycle",
+  done: "File current",
+  events: [
+    { time: "00:12", line: "Encryption at rest confirmed · 3 regions" },
+    { time: "00:47", line: "Protected branches 100%" },
+    { time: "01:19", line: "SOC 2 Type II still current" },
+    { time: "01:58", line: "v1.4 model card landed" },
+    { time: "02:14", line: "Score 72 · clear to quote" },
+  ],
+} as const;
+
 export const DOEINSURE_UNDERWRITE = {
   eyebrow: "What we look at",
   title: "Read from the stack, not a stale PDF.",
