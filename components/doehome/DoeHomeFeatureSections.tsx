@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
-
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import {
   DOEHOME_FABRIC,
@@ -10,50 +8,22 @@ import {
   DOEHOME_PULSE,
 } from "@/lib/doehome/doehome-copy";
 import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
-
-function useSteppedReveal(revealed: boolean, count: number, stepMs: number) {
-  const [lit, setLit] = useState(0);
-  const [auto, setAuto] = useState(false);
-  const complete = lit >= count;
-
-  useEffect(() => {
-    if (!revealed) return;
-    setLit(0);
-    setAuto(true);
-  }, [revealed]);
-
-  useEffect(() => {
-    if (!auto || complete) return undefined;
-    const id = window.setTimeout(() => setLit((current) => current + 1), stepMs);
-    return () => window.clearTimeout(id);
-  }, [auto, complete, lit, stepMs]);
-
-  return { lit, complete };
-}
+import { useDoeHomeStep } from "@/lib/doehome/use-doehome-step";
 
 function GenomeBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const stepMs = variant === "phone" ? 640 : 480;
-  const clinicCount = DOEHOME_GENOME.clinics.length;
-  const providerCount = DOEHOME_GENOME.providers.length;
-  const subCount = DOEHOME_GENOME.submodels.length;
-  const { lit, complete } = useSteppedReveal(
-    revealed,
-    1 + clinicCount + providerCount + subCount + 1,
-    stepMs,
-  );
-  const clinicsLit = Math.max(0, lit - 1);
-  const providersLit = Math.max(0, lit - 1 - clinicCount);
-  const subsOn = Math.max(0, lit - 1 - clinicCount - providerCount);
+  const stepMs = variant === "phone" ? 700 : 540;
+  const { lit, complete } = useDoeHomeStep(revealed, 7, stepMs);
+  const clinicsOn = lit >= 2;
+  const harborOn = lit >= 3;
+  const providersOn = lit >= 4;
+  const chenOn = lit >= 5;
+  const pathsOn = lit >= 6;
   const trainOn = complete;
-  const harborIndex = DOEHOME_GENOME.clinics.findIndex((item) => item.id === "harbor");
-  const clinic = DOEHOME_GENOME.clinics[harborIndex] ?? DOEHOME_GENOME.clinics[0];
-  const provider = DOEHOME_GENOME.providers[0];
-  const harborOn = clinicsLit > harborIndex;
-  const providerOn = providersLit > 0;
+  const harbor = DOEHOME_GENOME.clinics.find((item) => item.id === "harbor") ?? DOEHOME_GENOME.clinics[0];
 
   return (
-    <>
+    <div className="doehome-core">
       <header className="doehome-genome__head">
         <p className="doehome-genome__kicker">Genome</p>
         <h2 className="doehome-genome__title">
@@ -64,78 +34,82 @@ function GenomeBody({ revealed }: { revealed: boolean }) {
         <p className="doehome-genome__lede">{DOEHOME_GENOME.lede}</p>
       </header>
 
-      <div className={`doehome-genome${complete ? " is-on" : ""}`}>
-        <div className="doehome-genome__cols">
-          <div className={`doehome-genome__col${lit >= 1 ? " is-on" : ""}`}>
+      <div className={`doehome-nest${complete ? " is-on" : ""}`} aria-hidden="true">
+        <div className="doehome-nest__compare">
+          <p className={lit >= 1 ? "is-on" : undefined}>
+            <b>{DOEHOME_GENOME.genericLabel}</b>
+            <span>{DOEHOME_GENOME.genericNote}</span>
+          </p>
+          <p className={harborOn ? "is-on is-yours" : undefined}>
+            <b>{DOEHOME_GENOME.yoursLabel}</b>
+            <span>{DOEHOME_GENOME.yoursNote}</span>
+          </p>
+        </div>
+
+        <div className={`doehome-nest__group${lit >= 1 ? " is-on" : ""}`}>
+          <header>
             <span>{DOEHOME_GENOME.groupLabel}</span>
             <b>{DOEHOME_GENOME.group.name}</b>
             <em>{DOEHOME_GENOME.group.count}</em>
-          </div>
-          <div className={`doehome-genome__col${harborOn ? " is-on" : ""}`}>
-            <span>{DOEHOME_GENOME.clinicLabel}</span>
-            <b>{clinic.name}</b>
-            <em>
-              {clinic.model} · {clinic.version}
-            </em>
-          </div>
-          <div className={`doehome-genome__col${providerOn ? " is-on" : ""}`}>
-            <span>{DOEHOME_GENOME.providerLabel}</span>
-            <b>{provider.name}</b>
-            <em>{provider.note}</em>
-          </div>
-        </div>
-
-        <ul className="doehome-genome__fleet">
-          {DOEHOME_GENOME.clinics.map((item, index) => (
-            <li
-              key={item.id}
-              className={`${index < clinicsLit ? "is-on" : ""}${item.id === clinic.id && harborOn ? " is-selected" : ""}`.trim()}
-            >
-              <b>{item.name}</b>
-              <em>{item.version}</em>
-            </li>
-          ))}
-        </ul>
-
-        <ul className="doehome-genome__providers">
-          {DOEHOME_GENOME.providers.map((item, index) => (
-            <li key={item.id} className={index < providersLit ? "is-on" : undefined}>
-              <span>{DOEHOME_GENOME.providerLabel}</span>
-              <b>{item.name}</b>
-              <em>{item.model}</em>
-            </li>
-          ))}
-        </ul>
-
-        <div className="doehome-genome__file">
-          <header>
-            <span>{DOEHOME_GENOME.modelLabel}</span>
-            <b>
-              {providerOn ? provider.model : clinic.model} · {clinic.version}
-            </b>
           </header>
-          <ul>
-            {DOEHOME_GENOME.submodels.map((item, index) => (
-              <li key={item.id} className={subsOn > index ? "is-on" : undefined}>
-                {item.task}
-              </li>
-            ))}
+
+          <ul className="doehome-nest__sites">
+            {DOEHOME_GENOME.clinics.map((item) => {
+              const selected = item.id === harbor.id && harborOn;
+              return (
+                <li
+                  key={item.id}
+                  className={`${clinicsOn ? "is-on" : ""}${selected ? " is-selected" : ""}`.trim()}
+                >
+                  <b>{item.name}</b>
+                  <em>{item.version}</em>
+                </li>
+              );
+            })}
           </ul>
-          <aside className="doehome-genome__router">
-            <p>
-              <span>Clinic Genome</span>
-              {DOEHOME_GENOME.router.clinic.map((task) => (
-                <i key={task}>{task}</i>
+
+          <div className={`doehome-nest__clinic${harborOn ? " is-on" : ""}`}>
+            <header>
+              <span>{DOEHOME_GENOME.clinicLabel}</span>
+              <b>
+                {harbor.model} · {harbor.version}
+              </b>
+            </header>
+
+            <ul className="doehome-nest__mds">
+              {DOEHOME_GENOME.providers.map((item, index) => (
+                <li
+                  key={item.id}
+                  className={`${providersOn ? "is-on" : ""}${index === 0 && chenOn ? " is-focus" : ""}`.trim()}
+                >
+                  <span>{DOEHOME_GENOME.providerLabel}</span>
+                  <b>{item.name}</b>
+                  <em>{item.note}</em>
+                </li>
               ))}
-            </p>
-            <p>
-              <span>{DOEHOME_GENOME.frontierLabel}</span>
-              {DOEHOME_GENOME.router.frontier.map((task) => (
-                <i key={task}>{task}</i>
+            </ul>
+
+            <ul className="doehome-nest__dna">
+              {DOEHOME_GENOME.submodels.map((item, index) => (
+                <li key={item.id} className={chenOn && index <= 2 ? "is-on" : undefined}>
+                  {item.task}
+                </li>
               ))}
-            </p>
-          </aside>
-          <div className={`doehome-genome__train${trainOn ? " is-on" : ""}`}>
+            </ul>
+
+            <div className={`doehome-nest__paths${pathsOn ? " is-on" : ""}`}>
+              <p className="doehome-nest__path doehome-nest__path--clinic">
+                <span>{DOEHOME_GENOME.clinicPathLabel}</span>
+                <b>{DOEHOME_GENOME.router.clinic.join(" · ")}</b>
+              </p>
+              <p className="doehome-nest__path doehome-nest__path--frontier">
+                <span>{DOEHOME_GENOME.frontierLabel}</span>
+                <b>{DOEHOME_GENOME.router.frontier.join(" · ")}</b>
+              </p>
+            </div>
+          </div>
+
+          <div className={`doehome-nest__train${trainOn ? " is-on" : ""}`}>
             <span>
               {DOEHOME_GENOME.trainLabel}
               <em>
@@ -146,16 +120,21 @@ function GenomeBody({ revealed }: { revealed: boolean }) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
 function PulseBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const stepMs = variant === "phone" ? 780 : 620;
-  const { lit, complete } = useSteppedReveal(revealed, DOEHOME_PULSE.agents.length + DOEHOME_PULSE.call.turns.length, stepMs);
-  const agentsLit = Math.min(DOEHOME_PULSE.agents.length, lit);
+  const stepMs = variant === "phone" ? 760 : 600;
+  const { lit, complete } = useDoeHomeStep(
+    revealed,
+    DOEHOME_PULSE.agents.length + DOEHOME_PULSE.call.turns.length,
+    stepMs,
+  );
+  const linesLit = Math.min(DOEHOME_PULSE.agents.length, lit);
   const turnsLit = Math.max(0, lit - DOEHOME_PULSE.agents.length);
+  const liveId = DOEHOME_PULSE.agents[0]?.id;
 
   return (
     <>
@@ -169,41 +148,67 @@ function PulseBody({ revealed }: { revealed: boolean }) {
         <p className="doehome-pulse__lede">{DOEHOME_PULSE.lede}</p>
       </header>
 
-      <div className={`doehome-pulse${complete ? " is-on" : ""}`}>
-        <ul className="doehome-pulse__floor">
-          {DOEHOME_PULSE.agents.map((agent, index) => (
-            <li key={agent.id} className={index < agentsLit ? "is-on" : undefined}>
-              <b>{agent.name}</b>
-              <span>
-                {agent.voice} · {agent.language} · {agent.tone}
-              </span>
-              <em>{agent.state}</em>
-              <i>{agent.time}</i>
-            </li>
-          ))}
-        </ul>
-        <article className="doehome-pulse__call">
+      <div className={`doehome-board${complete ? " is-on" : ""}`}>
+        <div className="doehome-board__switch">
           <header>
             <span>{DOEHOME_PULSE.call.line}</span>
-            <b>{DOEHOME_PULSE.call.agent}</b>
+            <b>{DOEHOME_PULSE.number}</b>
           </header>
-          {DOEHOME_PULSE.call.turns.map((turn, index) => (
-            <p key={`${turn.who}-${index}`} className={index < turnsLit ? "is-on" : undefined}>
-              <b>{turn.who}</b>
-              <span>{turn.text}</span>
-            </p>
-          ))}
-        </article>
-        <ul className="doehome-pulse__nights">
-          <li className="doehome-pulse__nights-label">{DOEHOME_PULSE.nights.label}</li>
+          <ul>
+            {DOEHOME_PULSE.agents.map((agent, index) => {
+              const on = index < linesLit;
+              const live = agent.id === liveId && on;
+              return (
+                <li key={agent.id} className={`${on ? "is-on" : ""}${live ? " is-live" : ""}`.trim()}>
+                  <i aria-hidden="true" />
+                  <div>
+                    <b>{agent.name}</b>
+                    <span>
+                      {agent.voice} · {agent.language} · {agent.hours}
+                    </span>
+                  </div>
+                  <em>{live ? DOEHOME_PULSE.live : agent.state}</em>
+                  <strong>{agent.time}</strong>
+                  {live ? (
+                    <div className="doehome-board__live">
+                      <span className="doehome-board__wave" aria-hidden="true">
+                        <i />
+                        <i />
+                        <i />
+                        <i />
+                        <i />
+                        <i />
+                        <i />
+                      </span>
+                      {DOEHOME_PULSE.call.turns.map((turn, turnIndex) => (
+                        <p key={`${turn.who}-${turnIndex}`} className={turnIndex < turnsLit ? "is-on" : undefined}>
+                          <b>{turn.who}</b>
+                          {turn.text}
+                        </p>
+                      ))}
+                    </div>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        <ol className="doehome-board__night">
+          <li className="doehome-board__night-head">{DOEHOME_PULSE.nights.label}</li>
+          <li className="doehome-board__spine" aria-hidden="true">
+            <span>6p</span>
+            <span>12a</span>
+            <span>8a</span>
+          </li>
           {DOEHOME_PULSE.nights.items.map((item, index) => (
             <li key={item.task} className={complete || index < turnsLit ? "is-on" : undefined}>
-              <span>{item.at}</span>
               <b>{item.task}</b>
-              <em>{item.done}</em>
+              <span>{item.at}</span>
+              <em>back {item.done}</em>
             </li>
           ))}
-        </ul>
+        </ol>
       </div>
     </>
   );
@@ -211,8 +216,12 @@ function PulseBody({ revealed }: { revealed: boolean }) {
 
 function FabricBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const stepMs = variant === "phone" ? 700 : 540;
-  const { lit, complete } = useSteppedReveal(revealed, DOEHOME_FABRIC.steps.length, stepMs);
+  const stepMs = variant === "phone" ? 680 : 520;
+  const { lit, complete } = useDoeHomeStep(revealed, 4, stepMs);
+  const start = DOEHOME_FABRIC.steps[0];
+  const branch = DOEHOME_FABRIC.steps[1];
+  const thenStep = DOEHOME_FABRIC.steps[2];
+  const human = DOEHOME_FABRIC.steps[3];
 
   return (
     <>
@@ -226,27 +235,28 @@ function FabricBody({ revealed }: { revealed: boolean }) {
         <p className="doehome-fabric__lede">{DOEHOME_FABRIC.lede}</p>
       </header>
 
-      <div className={`doehome-fabric${complete ? " is-on" : ""}`}>
-        <div className="doehome-fabric__canvas">
-          <p className="doehome-fabric__prompt">{DOEHOME_FABRIC.prompt}</p>
-          <ol>
-            {DOEHOME_FABRIC.steps.map((step, index) => (
-              <li key={step.id} className={index < lit ? "is-on" : undefined}>
-                <span>{step.kicker}</span>
-                <b>{step.label}</b>
-              </li>
-            ))}
-          </ol>
-        </div>
-        <ul className="doehome-fabric__library">
-          {DOEHOME_FABRIC.library.map((item, index) => (
-            <li key={item.id} className={index < lit ? "is-on" : undefined}>
-              <b>{item.title}</b>
-              <span>{item.source}</span>
-              <em>{item.uses}</em>
-            </li>
-          ))}
-        </ul>
+      <div className={`doehome-flow${complete ? " is-on" : ""}`}>
+        <p className="doehome-flow__runs">{DOEHOME_FABRIC.runsOn}</p>
+        <ol>
+          <li className={lit >= 1 ? "is-on" : undefined}>
+            <span>{start.kicker}</span>
+            <b>{start.label}</b>
+          </li>
+          <li className={lit >= 2 ? "is-on" : undefined}>
+            <span>{branch.kicker}</span>
+            <b>{branch.label}</b>
+          </li>
+          <li className={`doehome-flow__split${lit >= 3 ? " is-on" : ""}`}>
+            <div className={lit >= 3 ? "is-on" : undefined}>
+              <span>{thenStep.kicker}</span>
+              <b>{thenStep.label}</b>
+            </div>
+            <div className={lit >= 4 ? "is-on doehome-flow__human" : "doehome-flow__human"}>
+              <span>{human.kicker}</span>
+              <b>{human.label}</b>
+            </div>
+          </li>
+        </ol>
       </div>
     </>
   );
@@ -254,10 +264,9 @@ function FabricBody({ revealed }: { revealed: boolean }) {
 
 function FloatBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
-  const stepMs = variant === "phone" ? 680 : 520;
-  const { lit, complete } = useSteppedReveal(revealed, DOEHOME_FLOAT.rates.length + DOEHOME_FLOAT.denials.length, stepMs);
-  const ratesLit = Math.min(DOEHOME_FLOAT.rates.length, lit);
-  const denialsLit = Math.max(0, lit - DOEHOME_FLOAT.rates.length);
+  const stepMs = variant === "phone" ? 640 : 500;
+  const { lit, complete } = useDoeHomeStep(revealed, 4, stepMs);
+  const denial = DOEHOME_FLOAT.denials[0];
 
   return (
     <>
@@ -271,45 +280,39 @@ function FloatBody({ revealed }: { revealed: boolean }) {
         <p className="doehome-float__lede">{DOEHOME_FLOAT.lede}</p>
       </header>
 
-      <div className={`doehome-float${complete ? " is-on" : ""}`}>
-        <article className={`doehome-float__hold${lit > 0 ? " is-on" : ""}`}>
-          <span>{DOEHOME_FLOAT.hold.status}</span>
-          <b>{DOEHOME_FLOAT.hold.timer}</b>
-          <em>
-            {DOEHOME_FLOAT.hold.payer} · {DOEHOME_FLOAT.hold.task} · {DOEHOME_FLOAT.hold.ref}
-          </em>
-        </article>
-        <ul className="doehome-float__rates">
-          {DOEHOME_FLOAT.rates.map((row, index) => (
-            <li
-              key={row.name}
-              className={index < ratesLit ? "is-on" : undefined}
-              style={{ "--float-w": `${row.paid}%` } as CSSProperties}
-            >
-              <span>{row.name}</span>
-              <i />
-              <b>{row.delta}</b>
-            </li>
-          ))}
-        </ul>
-        <ul className="doehome-float__codes">
-          {DOEHOME_FLOAT.codes.map((row, index) => (
-            <li key={row.code} className={index < ratesLit ? "is-on" : undefined}>
-              <b>{row.code}</b>
-              <span>{row.label}</span>
-              <em>{row.hint}</em>
-            </li>
-          ))}
-        </ul>
-        <ul className="doehome-float__denials">
-          {DOEHOME_FLOAT.denials.map((item, index) => (
-            <li key={item.payer} className={index < denialsLit ? "is-on" : undefined}>
-              <b>{item.payer}</b>
-              <span>{item.reason}</span>
-              <em>{item.due}</em>
-            </li>
-          ))}
-        </ul>
+      <div className={`doehome-gap${complete ? " is-on" : ""}`}>
+        <div className={`doehome-gap__sum${lit >= 1 ? " is-on" : ""}`}>
+          <b>{DOEHOME_FLOAT.underpay}</b>
+          <span>{DOEHOME_FLOAT.underpayNote}</span>
+        </div>
+        <div className={`doehome-gap__bars${lit >= 2 ? " is-on" : ""}`}>
+          <p>
+            <span>{DOEHOME_FLOAT.contractLabel}</span>
+            <i style={{ width: `${DOEHOME_FLOAT.contract}%` }} />
+          </p>
+          <p>
+            <span>{DOEHOME_FLOAT.paidLabel}</span>
+            <i className="doehome-gap__paid" style={{ width: `${DOEHOME_FLOAT.paid}%` }} />
+          </p>
+        </div>
+        <div className={`doehome-gap__hold${lit >= 3 ? " is-on" : ""}`}>
+          <em />
+          <b>
+            {DOEHOME_FLOAT.hold.status} {DOEHOME_FLOAT.hold.timer}
+          </b>
+          <span>
+            {DOEHOME_FLOAT.hold.payer} · {DOEHOME_FLOAT.hold.task}
+          </span>
+          <small>{DOEHOME_FLOAT.hold.note}</small>
+        </div>
+        {denial ? (
+          <p className={`doehome-gap__due${lit >= 4 ? " is-on" : ""}`}>
+            <span>{denial.due}</span>
+            <b>
+              {denial.payer} · {denial.reason}
+            </b>
+          </p>
+        ) : null}
       </div>
     </>
   );
@@ -318,7 +321,7 @@ function FloatBody({ revealed }: { revealed: boolean }) {
 export function DoeHomeFeatureSections() {
   return (
     <>
-      <section className="doeinsure-section" id="genome">
+      <section className="doeinsure-section doehome-feature doehome-feature--core" id="genome">
         <div className="doeinsure-wrap">
           <DoeInsureReveal variant="rise">{(revealed) => <GenomeBody revealed={revealed} />}</DoeInsureReveal>
         </div>

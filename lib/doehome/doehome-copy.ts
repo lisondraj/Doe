@@ -17,9 +17,9 @@ export const DOEHOME_NAV = {
   cta: "Join Waitlist",
   ctaShort: "Join Waitlist",
   promos: [
-    "Genome — a model for your clinic, not a generic one.",
-    "Pulse answers the line. Overnight calls come back at open.",
-    "Fabric builds agents on your Genome. Float watches what payers actually send.",
+    "Your clinic. Your model.",
+    "Pulse answers every line.",
+    "Agents on your Genome.",
   ],
   promoCta: "Join waitlist",
   menuOpen: "Open menu",
@@ -36,72 +36,42 @@ export const DOEHOME_HERO = {
   secondaryCta: "See Genome",
 } as const;
 
-export const DOEHOME_PRODUCTS = [
-  {
-    id: "genome",
-    kicker: "Core",
-    name: "Genome",
-    limit: "Clinic model",
-    limitLabel: "Post-trained on your workflow",
-    status: "Live",
-    rider: "Group · clinic · provider",
-    insuredLabel: "Named clinic",
-    insured: "Harbor Ortho",
-  },
-  {
-    id: "pulse",
-    kicker: "Voice",
-    name: "Pulse",
-    limit: "4 live lines",
-    limitLabel: "Front desk, prior auth, nights",
-    status: "Answering",
-    rider: "Writes to chart",
-    insuredLabel: "Main line",
-    insured: "(416) 555-0140",
-  },
-  {
-    id: "fabric",
-    kicker: "Build",
-    name: "Fabric",
-    limit: "No-code agents",
-    limitLabel: "On your clinic Genome",
-    status: "Canvas",
-    rider: "Human handoff",
-    insuredLabel: "Flow",
-    insured: "New referral → book visit",
-  },
-  {
-    id: "float",
-    kicker: "Finance",
-    name: "Float",
-    limit: "Underpaid $18k",
-    limitLabel: "Aetna vs contracted rate",
-    status: "Watching",
-    rider: "Appeals queued",
-    insuredLabel: "Clinic",
-    insured: "Harbor Ortho",
-  },
-] as const;
+export const DOEHOME_HERO_STACK = {
+  coreName: "Genome",
+  coreClinic: "Harbor Ortho",
+  coreLine: "Your clinic’s own model. Everything else runs on it.",
+  version: "v2.1",
+  apps: [
+    { id: "pulse", name: "Pulse", line: "Answers the phones" },
+    { id: "fabric", name: "Fabric", line: "Builds your agents" },
+    { id: "float", name: "Float", line: "Runs the money" },
+  ],
+} as const;
 
 export const DOEHOME_STATS = [
-  { value: "47", label: "Calls in the last 24 hours — 83% resolved without a person" },
-  { value: "4", label: "Overnight voicemails Pulse returned at open, written to chart" },
-  { value: "v2.1", label: "Harbor Genome — trained on last week’s approved outcomes" },
+  { value: "Yours", label: "A model trained on your clinic — not a generic one." },
+  { value: "One", label: "Phones, agents, and financial work on one platform." },
+  { value: "Kept", label: "Routine work stays on your Genome." },
 ] as const;
 
 export const DOEHOME_GENOME = {
   id: "genome",
-  title: ["Every clinic gets their", "own intelligence model."],
-  lede: "Genome is the core of Doe. A group can run a model per clinic. A clinic can run a model per provider. Each one is post-trained on that team’s workflow data — prior auth, referrals, visit prep — not a generic hospital model.",
+  title: ["Not a shared hospital", "model. Yours."],
+  lede: "Genome is the reason to buy Doe. A group can run a model per clinic. A clinic can run a model per provider. Each one is post-trained on that team’s workflow — prior auth, referrals, visit prep — so the software actually knows how you work.",
+  genericLabel: "Generic hospital model",
+  genericNote: "Same answers at every site",
+  yoursLabel: "Harbor Genome",
+  yoursNote: "Post-trained on this clinic",
   groupLabel: "Group",
   clinicLabel: "Clinic",
   providerLabel: "Provider",
   modelLabel: "On this Genome",
-  trainLabel: "Weekly train",
+  trainLabel: "Weekly train from approved work",
   trainCta: "Train v2.2",
   trainWhen: "Sunday 6:00pm",
   trainSignals: "1,284 outcomes",
-  frontierLabel: "Frontier only when needed",
+  clinicPathLabel: "Stays on Harbor Genome",
+  frontierLabel: "Frontier only if needed",
   group: {
     name: "Northstar Health",
     count: "4 clinic models",
@@ -130,10 +100,11 @@ export const DOEHOME_GENOME = {
 
 export const DOEHOME_PULSE = {
   id: "pulse",
-  title: ["Pulse answers the clinic", "on every live line."],
-  lede: "Voice AI agents for the front desk, prior auth, and overnight coverage. Each agent has its own voice, language, tone, and hours. When a call needs a person, Pulse holds context and hands it over.",
-  live: "4 live",
-  human: "1 with you",
+  title: ["The clinic line", "does not go to voicemail."],
+  lede: "Pulse is voice AI on every live line — front desk, prior auth, nights. Each agent has its own voice, language, tone, and hours. Overnight calls come back at open, written to the chart.",
+  number: "(416) 555-0140",
+  live: "Live",
+  human: "Take over",
   agents: [
     { id: "desk", name: "Front desk", voice: "Maya", language: "EN · ES", tone: "Warm", state: "Live", time: "0:42", hours: "8a–6p" },
     { id: "auth", name: "Prior auth", voice: "Cole", language: "EN", tone: "Direct", state: "Hold", time: "4:18", hours: "Always" },
@@ -161,8 +132,9 @@ export const DOEHOME_PULSE = {
 
 export const DOEHOME_FABRIC = {
   id: "fabric",
-  title: ["Build the agents", "your clinic actually runs."],
-  lede: "Fabric is a visual builder for clinic agents. Describe a step, drag a branch, add a human handoff. The agents you build run on your clinic’s Genome — not a generic model.",
+  title: ["Build the workflow.", "It runs on your Genome."],
+  lede: "Fabric is how the clinic designs its own agents — no engineering ticket. A referral becomes a branch, a missing record becomes a human handoff, and the whole flow runs on Harbor’s model, not a generic one.",
+  runsOn: "Runs on Harbor Genome",
   prompt: "Describe a block…",
   tools: ["Start", "If", "Human"],
   steps: [
@@ -180,23 +152,24 @@ export const DOEHOME_FABRIC = {
 
 export const DOEHOME_FLOAT = {
   id: "float",
-  title: ["Financial work that", "does not wait on hold."],
-  lede: "Float is the financial management layer. Agents stay on payer hold. Remittance is checked against contracted rates. Codes come from the visit. Denials are appealed before they expire.",
-  hold: { payer: "Aetna", task: "Prior auth · Harbor", timer: "14:22", status: "On hold", ref: "A-4419" },
-  rates: [
-    { name: "Aetna", paid: 82, delta: "−$18k" },
-    { name: "UHC", paid: 91, delta: "−$12k" },
-    { name: "BCBS", paid: 96, delta: "−$6k" },
-  ],
-  codes: [
-    { code: "99214", label: "Est. office", hint: "96%" },
-    { code: "20610", label: "Joint inj.", hint: "Confirm" },
-    { code: "J3301", label: "Kenalog", hint: "88%" },
-  ],
+  title: ["See the money", "payers are keeping."],
+  lede: "Float is the financial layer. Agents sit on payer hold so your front desk does not. Remittance is checked against the contract. Codes come from the visit. Denials are appealed before they expire.",
+  underpay: "−$18k",
+  underpayNote: "Aetna paid 82% of contracted rate this month",
+  contractLabel: "Contract",
+  paidLabel: "Paid",
+  contract: 100,
+  paid: 82,
+  hold: {
+    payer: "Aetna",
+    task: "Prior auth · Harbor",
+    timer: "14:22",
+    status: "On hold",
+    ref: "A-4419",
+    note: "No one from Harbor is waiting",
+  },
   denials: [
-    { payer: "Aetna", reason: "Missing notes", due: "Fri" },
-    { payer: "UHC", reason: "Auth lapse", due: "Live" },
-    { payer: "BCBS", reason: "Bundling", due: "Mon" },
+    { payer: "UHC", reason: "Auth lapse", due: "Now" },
   ],
 } as const;
 

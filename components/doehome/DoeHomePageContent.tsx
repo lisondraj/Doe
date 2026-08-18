@@ -9,10 +9,12 @@ import {
   DOEHOME_CTA,
   DOEHOME_FAQ,
   DOEHOME_HERO,
-  DOEHOME_PRODUCTS,
+  DOEHOME_HERO_STACK,
   DOEHOME_STACK,
   DOEHOME_STATS,
 } from "@/lib/doehome/doehome-copy";
+import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
+import { useDoeHomeStep } from "@/lib/doehome/use-doehome-step";
 
 function mailtoDoeHome(lines: string[], subjectName: string) {
   const subject = encodeURIComponent(`Doe — ${subjectName}`);
@@ -138,34 +140,36 @@ function IntakeForm({
   );
 }
 
-function ProductPreview() {
-  const [index, setIndex] = useState(0);
-  const product = DOEHOME_PRODUCTS[index];
+function HeroStack() {
+  const { variant } = useDoeHomePageVariant();
+  const { lit } = useDoeHomeStep(true, 5, variant === "phone" ? 460 : 360);
+  const coreOn = lit >= 1;
+  const stemsOn = lit >= 2;
+  const appsLit = Math.max(0, lit - 2);
 
   return (
-    <button
-      type="button"
-      className="doeinsure-card doeinsure-card--click doeinsure-hero__file"
-      aria-label="Doe products. Click to see another."
-      onClick={() => setIndex((current) => (current + 1) % DOEHOME_PRODUCTS.length)}
-    >
-      <div className="doeinsure-card__kicker">
-        <span>{product.kicker}</span>
+    <div className="doehome-hero-stack" aria-hidden="true">
+      <div className={`doehome-hero-stack__apps${stemsOn ? " is-on" : ""}`}>
+        {DOEHOME_HERO_STACK.apps.map((app, index) => (
+          <article key={app.id} className={index < appsLit ? "is-on" : undefined}>
+            <span>{app.name}</span>
+            <b>{app.line}</b>
+          </article>
+        ))}
+      </div>
+      <div className={`doehome-hero-stack__stems${stemsOn ? " is-on" : ""}`} aria-hidden="true">
+        {DOEHOME_HERO_STACK.apps.map((app) => (
+          <i key={app.id} />
+        ))}
+      </div>
+      <div className={`doehome-hero-stack__core${coreOn ? " is-on" : ""}`}>
         <span>
-          {index + 1} / {DOEHOME_PRODUCTS.length}
+          {DOEHOME_HERO_STACK.coreName} · {DOEHOME_HERO_STACK.version}
         </span>
+        <b>{DOEHOME_HERO_STACK.coreClinic}</b>
+        <em>{DOEHOME_HERO_STACK.coreLine}</em>
       </div>
-      <p className="doeinsure-card__name">{product.name}</p>
-      <p className="doeinsure-card__limit">{product.limit}</p>
-      <p className="doeinsure-card__meta">{product.limitLabel}</p>
-      <div className="doeinsure-pills">
-        <span className="doeinsure-pill">{product.status}</span>
-        <span className="doeinsure-pill doeinsure-pill--outline">{product.rider}</span>
-      </div>
-      <span className="doeinsure-card__insured-label">{product.insuredLabel}</span>
-      <span className="doeinsure-card__insured">{product.insured}</span>
-      <span className="doeinsure-card__hint">click for Pulse, Fabric, Float, Genome</span>
-    </button>
+    </div>
   );
 }
 
@@ -194,7 +198,7 @@ export function DoeHomePageContent() {
                 {DOEHOME_HERO.secondaryCta}
               </a>
             </div>
-            <ProductPreview />
+            <HeroStack />
           </div>
         </div>
         <div className="doeinsure-stats" aria-label="Doe at a glance">
