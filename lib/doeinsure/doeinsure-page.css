@@ -7251,23 +7251,54 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-read__desk {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(14rem, 0.8fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
   align-items: stretch;
 }
 
-.doeinsure-read__page,
+.doeinsure-read__page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  border: 1px solid var(--di-line);
+  background: var(--di-white);
+  gap: 0.65rem;
+  padding: 0.85rem 0.85rem 0.9rem;
+}
+
+.doeinsure-read__status {
+  display: flex;
+  align-items: baseline;
+  margin: -0.85rem -0.85rem 0;
+  padding: 1.2rem 1.25rem 0.85rem;
+  transition: background-color 420ms ease, border-color 420ms ease, color 420ms ease;
+}
+
+.doeinsure-read__status em {
+  color: var(--di-ink);
+  font-size: clamp(1.45rem, 2.4vw, 1.9rem);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+  transition: color 420ms ease;
+}
+
+.doeinsure-read__page.is-on .doeinsure-read__status {
+  background: var(--di-blue-gradient);
+  border-bottom: 1px solid var(--di-blue);
+}
+
+.doeinsure-read__page.is-on .doeinsure-read__status em {
+  color: #ffffff;
+}
+
 .doeinsure-read__extract {
   display: flex;
   flex-direction: column;
   min-height: 100%;
   border: 1px solid var(--di-line);
   background: var(--di-white);
-}
-
-.doeinsure-read__page {
-  gap: 0.65rem;
-  padding: 0.85rem 0.85rem 0.9rem;
 }
 
 .doeinsure-read__sheet {
@@ -7478,9 +7509,17 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   grid-template-columns: 1fr;
 }
 
-.doeinsure-root--iphone .doeinsure-read__page,
-.doeinsure-root--iphone .doeinsure-read__extract {
+.doeinsure-root--iphone .doeinsure-read__page {
   padding: 0.85rem 0.85rem 0.9rem;
+}
+
+.doeinsure-root--iphone .doeinsure-read__status {
+  margin: -0.85rem -0.85rem 0;
+  padding: 1rem 1rem 0.75rem;
+}
+
+.doeinsure-root--iphone .doeinsure-read__status em {
+  font-size: clamp(1.45rem, 7vw, 1.85rem);
 }
 
 .doeinsure-root--iphone .doeinsure-read__sheet {
