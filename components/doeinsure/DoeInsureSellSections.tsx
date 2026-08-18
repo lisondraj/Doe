@@ -962,83 +962,81 @@ function ClaimBody({ revealed }: { revealed: boolean }) {
 
   const desk = (
     <div className="doeinsure-claim__layout" key={active.id}>
-      <div className="doeinsure-claim__desk">
-        <div className="doeinsure-claim__rail" role="tablist" aria-label="Incidents">
-          {DOEINSURE_CLAIM.incidents.map((item, index) => (
-            <button
-              key={item.id}
-              type="button"
-              role="tab"
-              aria-selected={incident === index}
-              className={incident === index ? "is-on" : undefined}
-              onClick={() => pickIncident(index)}
-            >
-              <span>{item.line}</span>
-              <b>{item.name}</b>
-              <em>{item.reserve}</em>
-            </button>
+      <div className="doeinsure-claim__rail" role="tablist" aria-label="Incidents">
+        {DOEINSURE_CLAIM.incidents.map((item, index) => (
+          <button
+            key={item.id}
+            type="button"
+            role="tab"
+            aria-selected={incident === index}
+            className={incident === index ? "is-on" : undefined}
+            onClick={() => pickIncident(index)}
+          >
+            <span>{item.line}</span>
+            <b>{item.name}</b>
+            <em>{item.reserve}</em>
+          </button>
+        ))}
+      </div>
+
+      <article
+        className="doeinsure-claim__main"
+        style={{ "--claim-scan-ms": `${stepMs * noteMarkIds.length}ms` } as CSSProperties}
+      >
+        <header className="doeinsure-claim__main-head">
+          <strong className={filed ? "is-on" : undefined}>
+            {filed ? active.number : DOEINSURE_CLAIM.draftTitle}
+          </strong>
+          <span>
+            {DOEINSURE_CLAIM.company}
+            <em>{active.line}</em>
+          </span>
+        </header>
+
+        <ol className="doeinsure-claim__track" aria-hidden="true">
+          {trackSteps.map((item, index) => (
+            <li key={item.id} className={step > index ? "is-on" : undefined}>
+              <i />
+              <span>{item.label}</span>
+            </li>
           ))}
+        </ol>
+
+        <p
+          className={`doeinsure-claim__note doeinsure-claim__note--desk${noteOn ? " is-in" : ""}${noteReading ? " is-reading" : ""}`}
+        >
+          <i className="doeinsure-claim__cursor" aria-hidden="true" />
+          {active.noteExcerpt.map((part, index) => {
+            const marked = Boolean(
+              part.mark &&
+                noteMarkIds.findIndex((markId) => markId === part.mark) < noteMarksLit,
+            );
+            return (
+              <span
+                key={`${active.id}-note-${index}`}
+                className={part.mark ? `doeinsure-claim__mark${marked ? " is-on" : ""}` : undefined}
+              >
+                {part.text}
+              </span>
+            );
+          })}
+        </p>
+
+        <div className="doeinsure-claim__meter" aria-hidden="true">
+          <i style={{ width: `${noteMeterPct}%` }} />
         </div>
 
-        <article
-          className="doeinsure-claim__main"
-          style={{ "--claim-scan-ms": `${stepMs * noteMarkIds.length}ms` } as CSSProperties}
-        >
-          <header className="doeinsure-claim__main-head">
-            <strong className={filed ? "is-on" : undefined}>
-              {filed ? active.number : DOEINSURE_CLAIM.draftTitle}
-            </strong>
-            <span>
-              {DOEINSURE_CLAIM.company}
-              <em>{active.line}</em>
-            </span>
-          </header>
-
-          <ol className="doeinsure-claim__track" aria-hidden="true">
-            {trackSteps.map((item, index) => (
-              <li key={item.id} className={step > index ? "is-on" : undefined}>
-                <i />
-                <span>{item.label}</span>
-              </li>
-            ))}
-          </ol>
-
-          <p
-            className={`doeinsure-claim__note doeinsure-claim__note--desk${noteOn ? " is-in" : ""}${noteReading ? " is-reading" : ""}`}
-          >
-            <i className="doeinsure-claim__cursor" aria-hidden="true" />
-            {active.noteExcerpt.map((part, index) => {
-              const marked = Boolean(
-                part.mark &&
-                  noteMarkIds.findIndex((markId) => markId === part.mark) < noteMarksLit,
-              );
-              return (
-                <span
-                  key={`${active.id}-note-${index}`}
-                  className={part.mark ? `doeinsure-claim__mark${marked ? " is-on" : ""}` : undefined}
-                >
-                  {part.text}
-                </span>
-              );
-            })}
-          </p>
-
-          <div className="doeinsure-claim__meter" aria-hidden="true">
-            <i style={{ width: `${noteMeterPct}%` }} />
+        <div className={`doeinsure-claim__metrics${factsOn ? " is-in" : ""}`}>
+          <div>
+            <span>{DOEINSURE_CLAIM.whenLabel}</span>
+            <b aria-hidden={!factsOn}>{active.when}</b>
           </div>
-
-          <div className={`doeinsure-claim__metrics${factsOn ? " is-in" : ""}`}>
-            <div>
-              <span>{DOEINSURE_CLAIM.whenLabel}</span>
-              <b aria-hidden={!factsOn}>{active.when}</b>
-            </div>
-            <div>
-              <span>{DOEINSURE_CLAIM.reserveLabel}</span>
-              <b aria-hidden={!factsOn}>{active.reserve}</b>
-            </div>
+          <div>
+            <span>{DOEINSURE_CLAIM.reserveLabel}</span>
+            <b aria-hidden={!factsOn}>{active.reserve}</b>
           </div>
-        </article>
-      </div>
+        </div>
+      </article>
 
       <aside className={`doeinsure-claim__side${filed ? " is-on" : ""}`}>
         <p className="doeinsure-claim__status">
