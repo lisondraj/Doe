@@ -10,9 +10,9 @@ export const DOEHOME_PAGE_DESCRIPTION =
 
 export const DOEHOME_NAV_LINKS = [
   { href: "#genome", label: "Genome" },
-  { href: "#platform", label: "Platform" },
-  { href: "#line", label: "Line" },
-  { href: "#chart", label: "Chart" },
+  { href: "#pulse", label: "Pulse" },
+  { href: "#fabric", label: "Fabric" },
+  { href: "#float", label: "Float" },
 ] as const;
 
 export const DOEHOME_NAV = {
@@ -348,87 +348,15 @@ export const DOEHOME_BOARD = {
 } as const;
 
 export const DOEHOME_STACK = {
-  id: "platform",
-  title: ["One platform.", "Four products."],
-  lede: "Genome is the clinic model. Pulse, Fabric, and Float run on it: the line, the agents, and the money. One operating system, not four vendors.",
+  title: ["One platform.", "Genome underneath."],
+  foundation: {
+    name: "Genome",
+    body: "The clinic model. Pulse, Fabric, and Float run on it.",
+  },
   products: [
-    { id: "genome", mark: "Ge", name: "Genome", body: "A model per clinic." },
-    { id: "pulse", mark: "Pu", name: "Pulse", body: "Voice on every line." },
-    { id: "fabric", mark: "Fa", name: "Fabric", body: "Agents you design." },
-    { id: "float", mark: "Fl", name: "Float", body: "The financial layer." },
-  ],
-} as const;
-
-export const DOEHOME_LINE = {
-  id: "line",
-  title: ["The clinic line", "never hits voicemail."],
-  lede: "Pulse answers front desk, prior auth, and nights. Overnight calls come back at open, already written to the chart.",
-  number: "(416) 555-0140",
-  agent: "Maya",
-  role: "Front desk",
-  patient: "Dana K.",
-  status: "Live",
-  hold: "Friday 10:20 held",
-} as const;
-
-export const DOEHOME_WIRE = {
-  id: "wire",
-  title: ["Plugs into the stack", "you already have."],
-  lede: "Doe sits underneath Athena, Epic, and the fax. Agents read and write through what Harbor already runs.",
-  tiles: [
-    { mark: "At", name: "Athena" },
-    { mark: "Ep", name: "Epic" },
-    { mark: "Fx", name: "Fax" },
-    { mark: "eC", name: "eCW" },
-    { mark: "Av", name: "Availity" },
-    { mark: "Ss", name: "Surescripts" },
-    { mark: "El", name: "Elation" },
-    { mark: "DC", name: "DrChrono" },
-    { mark: "Wy", name: "Waystar" },
-    { mark: "RC", name: "RingCentral" },
-    { mark: "Tw", name: "Twilio" },
-    { mark: "Ng", name: "NextGen" },
-  ],
-} as const;
-
-export const DOEHOME_PACKET = {
-  id: "packet",
-  title: ["The auth packet", "builds itself."],
-  lede: "Float stays on payer hold. The packet fills from the visit: order, clinic note, imaging. Harbor sends it before anyone sits on a queue.",
-  badge: "Pending",
-  cardTitle: "Review packet",
-  payer: "Aetna",
-  ref: "A-4419",
-  action: "Submit prior authorization",
-  files: [
-    { name: "Order.pdf", meta: "Harbor Ortho" },
-    { name: "Clinic_note.pdf", meta: "Dr. Chen" },
-    { name: "Imaging.pdf", meta: "Right knee MRI" },
-  ],
-} as const;
-
-export const DOEHOME_SLOT = {
-  id: "slot",
-  title: ["The open slot is", "already held."],
-  lede: "Pulse books while the line is live. The week grid updates, the slot is pinned, and the chart already has Friday 10:20.",
-  windowTitle: "Harbor week",
-  days: ["Wed", "Thu", "Fri"],
-  hours: ["9:00", "10:20", "11:40"],
-  held: { day: "Fri", hour: "10:20", name: "Dana K.", label: "Held" },
-} as const;
-
-export const DOEHOME_RECORD = {
-  id: "chart",
-  title: ["If it happened,", "it’s in the chart."],
-  lede: "Calls, bookings, holds, and denials write back to the record. The front desk does not retype Doe at the end of the day.",
-  patient: "Dana K.",
-  mrn: "MRN 4419",
-  clinic: "Harbor Ortho",
-  stamp: "Wrote to chart",
-  fields: [
-    { k: "Visit", v: "Fri 10:20, held" },
-    { k: "Note", v: "Refill returned 7:04am" },
-    { k: "Auth", v: "Aetna A-4419" },
+    { name: "Pulse", body: "Voice on every line, including overnight. Written back to the chart." },
+    { name: "Fabric", body: "Agents for the workflows you actually run, on your model." },
+    { name: "Float", body: "Payer hold, underpayments, coding, and denials." },
   ],
 } as const;
 
@@ -485,10 +413,10 @@ export const DOEHOME_FOOTER = {
     {
       title: "Company",
       links: [
-        {   href: "/story", label: "Story" },
+        { href: "/story", label: "Story" },
         { href: "/product", label: "Product" },
-        { href: "#platform", label: "Platform" },
         { href: "#chart", label: "Chart" },
+        { href: "#book", label: "Book" },
         { href: "#faq", label: "FAQ" },
       ],
     },
