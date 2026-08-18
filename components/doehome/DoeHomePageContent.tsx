@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState, type CSSProperties } from "react";
+import { FormEvent, useState } from "react";
 
 import { DoeHomeFeatureSections } from "@/components/doehome/DoeHomeFeatureSections";
 import { DoeHomeShaderFrame } from "@/components/doehome/DoeHomeShaderImage";
@@ -146,34 +146,20 @@ function HeroTape() {
   const { lit } = useDoeHomeStep(true, DOEHOME_HERO_TAPE.lines.length + 1, variant === "phone" ? 420 : 340);
 
   return (
-    <div className="doehome-scene doehome-scene--card doehome-scene--mid" aria-hidden="true">
+    <div className="doehome-tape" aria-hidden="true">
       <header className={lit >= 1 ? "is-on" : undefined}>
-        <span>
-          {DOEHOME_HERO_TAPE.clinic} · {DOEHOME_HERO_TAPE.heading}
-        </span>
-        <b>{DOEHOME_HERO_TAPE.title}</b>
+        <span>{DOEHOME_HERO_TAPE.heading}</span>
+        <b>{DOEHOME_HERO_TAPE.clinic}</b>
       </header>
-      <div className="doehome-table doehome-table--3">
-        <div className="doehome-table__head">
-          {DOEHOME_HERO_TAPE.columns.map((column) => (
-            <span key={column}>{column}</span>
-          ))}
-        </div>
+      <ol>
         {DOEHOME_HERO_TAPE.lines.map((line, index) => (
-          <div
-            key={line.text}
-            className={`doehome-table__row${index === 2 ? " is-this" : ""}${index < lit - 1 ? " is-on" : ""}`}
-            style={{ "--n": index } as CSSProperties}
-          >
-            <b>
-              <i className="doehome-file" aria-hidden="true" />
-              {line.text}
-            </b>
-            <span>{line.chart}</span>
-            <span>{line.source}</span>
-          </div>
+          <li key={line.text} className={index < lit - 1 ? "is-on" : undefined}>
+            <span>{line.t}</span>
+            <b>{line.text}</b>
+          </li>
         ))}
-      </div>
+      </ol>
+      <p className={lit > DOEHOME_HERO_TAPE.lines.length ? "is-on" : undefined}>{DOEHOME_HERO_TAPE.foot}</p>
     </div>
   );
 }
@@ -270,14 +256,7 @@ export function DoeHomePageContent() {
               <p className="doehome-genome__lede">{DOEHOME_CTA.body}</p>
             </header>
             <DoeHomeShaderFrame src={DOEHOME_SHADERS.cta}>
-              <div className="doehome-scene doehome-scene--card doehome-scene--mid doehome-intake is-on">
-                <header className="is-on">
-                  <em>Waitlist</em>
-                  <div>
-                    <b>Bring Doe into clinic</b>
-                    <span>We’ll follow up</span>
-                  </div>
-                </header>
+              <div className="doehome-sheet doehome-intake">
                 <IntakeForm email={email} onEmailChange={setEmail} />
               </div>
             </DoeHomeShaderFrame>
