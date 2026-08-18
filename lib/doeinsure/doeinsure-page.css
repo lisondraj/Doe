@@ -11,6 +11,10 @@ html[data-doeinsure-page] {
   background-color: #ffffff;
 }
 
+html[data-doeinsure-page][data-layout="desktop"] {
+  scroll-padding-top: 6.85rem;
+}
+
 html[data-doeinsure-page] body,
 html[data-doeinsure-page][data-layout="desktop"] body {
   background-color: #ffffff !important;
@@ -52,6 +56,10 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
 
 .doeinsure-root--desktop {
   --di-inset: calc(var(--desktop-page-inset-x, 2.5rem) / 9 * 2 / 3);
+  --doeinsure-nav-promo-height: 2.35rem;
+  --doeinsure-nav-bar-height: 4.5rem;
+  --doeinsure-nav-stack-height: calc(var(--doeinsure-nav-promo-height) + var(--doeinsure-nav-bar-height));
+  padding-top: var(--doeinsure-nav-stack-height);
 }
 
 .doeinsure-root *,
@@ -112,6 +120,61 @@ html[data-doeinsure-page]:has(.doephone-mobile-root) body {
   border-bottom: 1px solid var(--di-line);
   background: var(--di-white);
   overflow: visible;
+}
+
+.doeinsure-root--desktop .doeinsure-nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.doeinsure-nav__promo {
+  display: none;
+}
+
+.doeinsure-root--desktop .doeinsure-nav__promo {
+  display: block;
+  background: var(--di-blue-gradient);
+  color: #ffffff;
+}
+
+.doeinsure-nav__promo-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  width: min(100%, 72rem);
+  min-height: var(--doeinsure-nav-promo-height);
+  margin: 0 auto;
+  padding: 0.45rem max(var(--di-inset), env(safe-area-inset-right, 0px)) 0.45rem
+    max(var(--di-inset), env(safe-area-inset-left, 0px));
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.doeinsure-nav__promo-link:hover {
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.doeinsure-nav__promo-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.doeinsure-nav__promo-arrow {
+  width: 1.15rem;
+  flex-shrink: 0;
 }
 
 .doeinsure-nav.is-scrolled {

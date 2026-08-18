@@ -16,6 +16,8 @@ export const DOEINSURE_NAV = {
   markAccent: "Insure",
   cta: "Get Your Quote",
   ctaShort: "Get Your Quote",
+  promo: "Lock in launch discount pricing for your entire first year!",
+  promoCta: "Get your quote",
   menuOpen: "Open menu",
   menuClose: "Close menu",
 } as const;
