@@ -43,13 +43,15 @@ export const DOEHOME_HERO = {
 export const DOEHOME_HERO_TAPE = {
   clinic: "Harbor Ortho",
   heading: "This morning",
+  title: "Overnight write-back",
+  columns: ["Event", "Chart", "Source"],
   foot: "Version 2.1 underneath it all",
   lines: [
-    { t: "7:04", text: "Overnight refill → chart" },
-    { t: "7:06", text: "Cancel visit → chart" },
-    { t: "8:12", text: "Maya on the main line" },
-    { t: "8:14", text: "Friday 10:20 held" },
-    { t: "Hold", text: "Aetna, nobody waiting" },
+    { t: "7:04", text: "Overnight refill", chart: "Dana K. · note", source: "Pulse" },
+    { t: "7:06", text: "Cancel visit", chart: "Dana K. · schedule", source: "Pulse" },
+    { t: "8:12", text: "Maya on the main line", chart: "Live thread", source: "Pulse" },
+    { t: "8:14", text: "Friday 10:20 held", chart: "Dana K. · visit", source: "Pulse" },
+    { t: "Hold", text: "Aetna, nobody waiting", chart: "A-4419 · auth", source: "Float" },
   ],
 } as const;
 
@@ -83,11 +85,13 @@ export const DOEHOME_GENOME = {
     name: "Northstar Health",
     count: "4 clinic models",
   },
+  tableTitle: "Clinic model discovery",
+  columns: ["Clinic", "Model", "Version", "State"],
   clinics: [
-    { id: "riverside", name: "Riverside", model: "Riverside model", version: "Version 1.8" },
-    { id: "harbor", name: "Harbor Ortho", model: "Harbor model", version: "Version 2.1" },
-    { id: "oakridge", name: "Oakridge", model: "Oakridge model", version: "Version 1.4" },
-    { id: "westlake", name: "Westlake", model: "Westlake model", version: "Version 1.9" },
+    { id: "riverside", name: "Riverside", model: "Riverside model", version: "Version 1.8", state: "Idle" },
+    { id: "harbor", name: "Harbor Ortho", model: "Harbor model", version: "Version 2.1", state: "Live" },
+    { id: "oakridge", name: "Oakridge", model: "Oakridge model", version: "Version 1.4", state: "Idle" },
+    { id: "westlake", name: "Westlake", model: "Westlake model", version: "Version 1.9", state: "Train" },
   ],
   providers: [
     { id: "chen", name: "Dr. Chen", model: "Chen model", note: "Visit prep, referrals" },
@@ -163,6 +167,8 @@ export const DOEHOME_FLOAT = {
   title: ["See the money", "payers are keeping."],
   lede: "Float is the financial layer. Agents sit on payer hold so your front desk does not. Remittance is checked against the contract. Codes come from the visit. Denials are appealed before they expire.",
   windowTitle: "Aetna remittance",
+  tableTitle: "Contract vs paid",
+  columns: ["Payer", "Claim", "Allowed", "Paid"],
   underpay: "−$18k",
   underpayNote: "Aetna paid 82% of contracted rate this month",
   contractLabel: "Contract",
@@ -201,6 +207,8 @@ export const DOEHOME_CHART = {
   mrn: "MRN 4419",
   patientMeta: "MRN 4419, Harbor Ortho",
   windowTitle: "Harbor Ortho chart",
+  tableTitle: "Chart write-back",
+  columns: ["Field", "Value", "Source"],
   tabs: ["Chart", "Notes", "Auth"],
   inbox: ["Dana K.", "Luis M.", "Helen R."],
   fields: [
@@ -219,6 +227,8 @@ export const DOEHOME_HANDOFF = {
   human: { name: "Maya Chen", role: "At the desk" },
   context: ["Dana K.", "Friday 10:20", "MRI follow-up"],
   cta: "Take over",
+  badge: "Live thread",
+  cardTitle: "Take over this job",
 } as const;
 
 export const DOEHOME_CONNECT = {
@@ -230,6 +240,26 @@ export const DOEHOME_CONNECT = {
     { name: "Epic", kind: "EHR" },
     { name: "Fax", kind: "Records" },
   ],
+  tiles: [
+    { mark: "At", name: "Athena" },
+    { mark: "Ep", name: "Epic" },
+    { mark: "Fx", name: "Fax" },
+    { mark: "eC", name: "eClinicalWorks" },
+    { mark: "DC", name: "DrChrono" },
+    { mark: "Av", name: "Availity" },
+    { mark: "Ss", name: "Surescripts" },
+    { mark: "Wy", name: "Waystar" },
+    { mark: "El", name: "Elation" },
+    { mark: "MD", name: "ModMed" },
+    { mark: "RC", name: "RingCentral" },
+    { mark: "Tw", name: "Twilio" },
+    { mark: "Ng", name: "NextGen" },
+    { mark: "Gw", name: "Greenway" },
+    { mark: "AM", name: "AdvancedMD" },
+    { mark: "Ph", name: "Phreesia" },
+    { mark: "CM", name: "CoverMyMeds" },
+    { mark: "CH", name: "Change" },
+  ],
   hub: "Harbor model",
   hubVersion: "Version 2.1",
 } as const;
@@ -240,6 +270,8 @@ export const DOEHOME_OPEN = {
   lede: "The clinic does not open to a voicemail pile. Pulse returned the calls. Notes are on the chart. Today is already moving.",
   closed: "Closed 6p to 8a",
   opened: "Open 8:00am",
+  tableTitle: "Waiting at the door",
+  columns: ["Overnight", "Task", "Chart"],
   items: [
     { at: "11:42pm", task: "Refill request", done: "On the chart" },
     { at: "1:18am", task: "Cancel visit", done: "On the chart" },
@@ -271,6 +303,8 @@ export const DOEHOME_SCRIBE = {
     "Refill already on the chart",
   ],
   stamp: "Wrote to chart",
+  badge: "Ambient",
+  cardTitle: "Visit note",
 } as const;
 
 export const DOEHOME_AUTH = {
@@ -286,6 +320,14 @@ export const DOEHOME_AUTH = {
     { id: "image", label: "Imaging" },
   ],
   stamp: "Sent",
+  badge: "Pending",
+  cardTitle: "Review packet",
+  action: "Submit prior authorization",
+  files: [
+    { name: "Order.pdf", meta: "Harbor Ortho" },
+    { name: "Clinic_note.pdf", meta: "Dr. Chen" },
+    { name: "Imaging.pdf", meta: "Right knee MRI" },
+  ],
 } as const;
 
 export const DOEHOME_BOARD = {
@@ -293,6 +335,7 @@ export const DOEHOME_BOARD = {
   title: ["Today is already", "a work board."],
   lede: "Overnight work, live lines, and chart write-backs sit on one board. The front desk opens to a day that has already started.",
   windowTitle: "Harbor Ortho today",
+  boardTitle: "Today’s board",
   columns: [
     {
       id: "overnight",
