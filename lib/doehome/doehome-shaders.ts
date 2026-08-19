@@ -13,6 +13,9 @@ import {
   STORY_TEAM_MATTHEW_POSTER,
 } from "@/lib/story/story-shader-posters";
 
+/** iPhone hero Genome stat — static landing graphic. */
+export const DOEHOME_GENOME_LANDING_IMAGE = "/doehome/genome-landing.png";
+
 /** Baked Doe grain shaders used as images on `/doehomepage`. */
 export const DOEHOME_SHADERS = {
   hero: STORY_MEET_DOE_POSTERS[0],

@@ -21,7 +21,7 @@ import {
   DOEHOME_IPHONE_STAT_ROW,
   DOEHOME_STATS,
 } from "@/lib/doehome/doehome-copy";
-import { DOEHOME_SHADERS } from "@/lib/doehome/doehome-shaders";
+import { DOEHOME_SHADERS, DOEHOME_GENOME_LANDING_IMAGE } from "@/lib/doehome/doehome-shaders";
 import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
 import { useDoeHomeStep } from "@/lib/doehome/use-doehome-step";
 
@@ -223,6 +223,17 @@ export function DoeHomePageContent() {
                   >
                     <DoeHomeProductWordmark product="genome" iphoneProductRow />
                     <DoeHomeIphoneStatTagline label={DOEHOME_IPHONE_GENOME_TAGLINE} />
+                    <div className="doehome-stat-iphone-genome-art" aria-hidden="true">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={DOEHOME_GENOME_LANDING_IMAGE}
+                        alt=""
+                        draggable={false}
+                        loading="eager"
+                        decoding="async"
+                        fetchPriority="high"
+                      />
+                    </div>
                   </a>
                 </div>
                 <div
