@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 
+import { DoeLinkArrow } from "@/components/shared/DoeLinkArrow";
 import { DOEHOME_NAV, DOEHOME_NAV_LINKS } from "@/lib/doehome/doehome-copy";
 import { lora } from "@/lib/home/fonts";
 
@@ -88,16 +89,7 @@ export function DoeHomeNav() {
           </span>
           <span className="doeinsure-nav__promo-cta">
             {DOEHOME_NAV.promoCta}
-            <svg className="doeinsure-nav__promo-arrow" viewBox="0 0 20 12" aria-hidden="true">
-              <path
-                d="M0 6h14M10 2l5 4-5 4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <DoeLinkArrow className="doeinsure-nav__promo-arrow" />
           </span>
         </a>
       </div>

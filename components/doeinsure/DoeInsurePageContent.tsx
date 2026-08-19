@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState, type CSSProperties } from "react";
 
 import { DoeInsureFeatureSections } from "@/components/doeinsure/DoeInsureFeatureSections";
+import { DoeLinkArrow } from "@/components/shared/DoeLinkArrow";
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
 import { DoeInsureSellSections } from "@/components/doeinsure/DoeInsureSellSections";
 import {
@@ -385,16 +386,10 @@ export function DoeInsurePageContent() {
               <h2>{DOEINSURE_CTA.title}</h2>
               <p className="doeinsure-hero__lede doeinsure-cta__lede">
                 <span>{DOEINSURE_CTA.body}</span>
-                <svg className="doeinsure-cta__arrow" viewBox="0 0 20 12" aria-hidden="true">
-                  <path
-                    d="M0 6h14M10 2l5 4-5 4"
-                    fill="none"
-                    stroke="url(#doeinsure-blue-gradient-h)"
-                    strokeWidth="1.75"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <DoeLinkArrow
+                  className="doeinsure-cta__arrow"
+                  stroke="url(#doeinsure-blue-gradient-h)"
+                />
               </p>
             </div>
             <DoeInsureIntakeForm email={email} onEmailChange={setEmail} />

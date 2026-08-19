@@ -1,33 +1,26 @@
-import { dmSans } from "@/lib/home/fonts";
-import { STORY_GENOME_ROUTER } from "@/lib/story/story-genome-visuals";
+import { dmSans, suisseIntl } from "@/lib/home/fonts";
+import { STORY_GENOME_KEPT } from "@/lib/story/story-genome-visuals";
 
-/** Task router — routine work stays on the clinic model; hard cases go to frontier. */
+/** Square Genome tile — patient information stays on Harbor Genome. */
 export function StoryGenomeModelRouter() {
-  const lanes = [STORY_GENOME_ROUTER.personal, STORY_GENOME_ROUTER.frontier] as const;
-
   return (
-    <div className={`story-genome-stage story-genome-stage--router ${dmSans.className}`} aria-hidden="true">
-      <div className="story-genome-card story-genome-router">
-        <span className="story-genome-router__kicker">Incoming</span>
-        {lanes.map((lane, index) => (
-          <div
-            key={lane.label}
-            className={`story-genome-router__lane${index === 0 ? " story-genome-router__lane--personal" : " story-genome-router__lane--frontier"}`}
-          >
-            <div className="story-genome-router__lane-head">
-              <div className="story-genome-router__lane-copy">
-                <span className={`story-genome-router__lane-label ${dmSans.className}`}>{lane.label}</span>
-                <span className="story-genome-router__lane-note">{lane.note}</span>
-              </div>
-              <span className={`story-genome-router__lane-count ${dmSans.className}`}>{lane.count}</span>
-            </div>
-            <div className="story-genome-router__lane-tasks">
-              {lane.tasks.map((task) => (
-                <span key={task}>{task}</span>
-              ))}
-            </div>
-          </div>
-        ))}
+    <div className={`story-genome-stage story-genome-stage--kept ${dmSans.className}`} aria-hidden="true">
+      <div className="story-genome-card story-genome-kept">
+        <span className="story-genome-kept__clinic">{STORY_GENOME_KEPT.clinic}</span>
+
+        <div className="story-genome-kept__stack">
+          <i />
+          <i />
+          <i />
+        </div>
+
+        <p className={`story-genome-kept__kept m-0 ${dmSans.className}`}>{STORY_GENOME_KEPT.kept}</p>
+        <span className="story-genome-kept__kept-label">{STORY_GENOME_KEPT.keptLabel}</span>
+
+        <div className="story-genome-kept__sent">
+          <b className={dmSans.className}>{STORY_GENOME_KEPT.sent}</b>
+          <span className={suisseIntl.className}>{STORY_GENOME_KEPT.sentLabel}</span>
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import { DoeLinkArrow } from "@/components/shared/DoeLinkArrow";
 import { inter } from "@/lib/home/fonts";
 import type { DoeHealthTopBannerSlide } from "@/lib/doehealth/doehealth-top-banner-slides";
 import {
@@ -10,27 +11,6 @@ import {
   DOEHEALTH_TOP_BANNER_ROTATE_MS,
   DOEHEALTH_TOP_BANNER_SLIDES,
 } from "@/lib/doehealth/doehealth-top-banner-slides";
-
-function BannerArrow() {
-  return (
-    <svg
-      className="doe-home-top-banner__arrow"
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      fill="none"
-      aria-hidden
-    >
-      <path
-        d="M2.5 6h7M6.75 3.25 9.5 6 6.75 8.75"
-        stroke="currentColor"
-        strokeWidth="1.35"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 function BannerSlideText({
   slide,
@@ -61,7 +41,7 @@ function BannerSlideText({
       <span>{slide.message}</span>
       <Link href={slide.linkHref} className="doe-home-top-banner__link">
         {slide.linkLabel}
-        <BannerArrow />
+        <DoeLinkArrow className="doe-home-top-banner__arrow" width={12} height={12} />
       </Link>
     </p>
   );
@@ -209,7 +189,7 @@ export function DoeHealthTopBanner({
           <span>{activeSlide.message}</span>
           <Link href={activeSlide.linkHref} className="doe-home-top-banner__link">
             {activeSlide.linkLabel}
-            <BannerArrow />
+            <DoeLinkArrow className="doe-home-top-banner__arrow" width={12} height={12} />
           </Link>
         </p>
       )}

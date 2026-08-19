@@ -2,7 +2,7 @@ export const STORY_FLOAT_HOLD = {
   status: "On hold",
   timer: "14:22",
   payer: "Aetna",
-  task: "Prior auth · Harbor",
+  task: "Prior auth",
   ref: "A-4419",
   note: "Writes to chart",
   beats: [
@@ -14,9 +14,9 @@ export const STORY_FLOAT_HOLD = {
 
 export const STORY_FLOAT_RATES = {
   rows: [
-    { id: "aetna", name: "Aetna", paid: "82%", bar: 82, delta: "−$18k", of: "of contract", dispute: true },
-    { id: "uhc", name: "UHC", paid: "91%", bar: 91, delta: "−$12k", of: "of contract", dispute: false },
-    { id: "bcbs", name: "BCBS", paid: "96%", bar: 96, delta: "−$6k", of: "of contract", dispute: false },
+    { id: "aetna", name: "Aetna", paid: "82%", delta: "−$18k", of: "of contract", dispute: true },
+    { id: "uhc", name: "UHC", paid: "91%", delta: "−$12k", of: "of contract", dispute: false },
+    { id: "bcbs", name: "BCBS", paid: "96%", delta: "−$6k", of: "of contract", dispute: false },
   ],
 } as const;
 
@@ -24,18 +24,18 @@ export const STORY_FLOAT_CODES = {
   clinic: "Harbor Ortho",
   patient: "Dana K.",
   rows: [
-    { id: "eam", code: "99214", label: "Est. office", hint: "96%", bar: 96, confirm: false },
-    { id: "inj", code: "20610", label: "Joint inj.", hint: "Confirm", bar: 54, confirm: true },
-    { id: "med", code: "J3301", label: "Kenalog", hint: "88%", bar: 88, confirm: false },
+    { id: "eam", code: "99214", label: "Est. office", hint: "96%", confirm: false },
+    { id: "inj", code: "20610", label: "Joint inj.", hint: "Confirm", confirm: true },
+    { id: "med", code: "J3301", label: "Kenalog", hint: "88%", confirm: false },
   ],
 } as const;
 
 export const STORY_FLOAT_DENIALS = {
   eyebrow: "Open denials",
-  count: "3 due",
+  count: "3",
   items: [
-    { id: "aetna", payer: "Aetna", reason: "Missing notes", due: "Fri" },
     { id: "uhc", payer: "UHC", reason: "Auth lapse", due: "Live" },
+    { id: "aetna", payer: "Aetna", reason: "Missing notes", due: "Fri" },
     { id: "bcbs", payer: "BCBS", reason: "Bundling", due: "Mon" },
   ],
 } as const;

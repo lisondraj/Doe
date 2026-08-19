@@ -1,56 +1,55 @@
+import type { CSSProperties } from "react";
+
 import { dmSans, suisseIntl } from "@/lib/home/fonts";
 import { STORY_FABRIC_CANVAS } from "@/lib/story/story-fabric-visuals";
 
-/** Tall Fabric tile — typed builder with a branch, handoff, and clinic apps. */
+/** Tall Fabric tile — branch weights, canvas nodes, and a human handoff. */
 export function StoryFabricCanvas() {
   return (
     <div className={`story-fabric-stage story-fabric-stage--canvas ${dmSans.className}`} aria-hidden="true">
-      <div className="story-fabric-card story-fabric-canvas">
-        <div className="story-fabric-canvas__apps">
-          {STORY_FABRIC_CANVAS.apps.map((app) => (
-            <span key={app}>{app}</span>
-          ))}
+      <div className="story-fabric-build">
+        <div className="story-fabric-card story-fabric-panel">
+          <span className="story-fabric-panel__kicker">{STORY_FABRIC_CANVAS.branch.kicker}</span>
+          <div className="story-fabric-paths">
+            {STORY_FABRIC_CANVAS.branch.paths.map((path) => (
+              <div key={path.id} className="story-fabric-paths__row">
+                <div className="story-fabric-paths__head">
+                  <span className={`story-fabric-paths__label ${suisseIntl.className}`}>{path.label}</span>
+                  <span className={`story-fabric-paths__value ${dmSans.className}`}>{path.fill}</span>
+                </div>
+                <span className="story-fabric-paths__track">
+                  <i
+                    style={{ "--story-fabric-fill": `${path.fill}%` } as CSSProperties & { "--story-fabric-fill": string }}
+                  />
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="story-fabric-canvas__field">
-          {STORY_FABRIC_CANVAS.steps.map((step) => (
-            <div key={step.id} className="story-fabric-canvas__wrap">
-              <div className="story-fabric-canvas__block">
-                <span className="story-fabric-canvas__kicker">{step.kicker}</span>
-                <span className={`story-fabric-canvas__label ${suisseIntl.className}`}>{step.label}</span>
-              </div>
-              <span className="story-fabric-canvas__stem" />
-            </div>
-          ))}
-
-          <div className="story-fabric-canvas__fork">
-            {STORY_FABRIC_CANVAS.outcomes.map((outcome) => (
-              <div
-                key={outcome.id}
-                className={`story-fabric-canvas__block story-fabric-canvas__block--${outcome.id}`}
+        <div className="story-fabric-card story-fabric-panel">
+          <span className="story-fabric-panel__kicker">{STORY_FABRIC_CANVAS.start.kicker}</span>
+          <div className="story-fabric-nodes">
+            {STORY_FABRIC_CANVAS.start.nodes.map((node) => (
+              <span
+                key={node.id}
+                className={`story-fabric-nodes__block${node.on ? " is-on" : ""} ${suisseIntl.className}`}
               >
-                <span className="story-fabric-canvas__kicker">{outcome.kicker}</span>
-                <span className={`story-fabric-canvas__label ${suisseIntl.className}`}>{outcome.label}</span>
-              </div>
+                {node.label}
+              </span>
             ))}
-          </div>
-
-          <span className="story-fabric-canvas__stem" />
-
-          <div className="story-fabric-canvas__block story-fabric-canvas__block--human">
-            <span className="story-fabric-canvas__kicker">{STORY_FABRIC_CANVAS.handoff.kicker}</span>
-            <span className={`story-fabric-canvas__label ${suisseIntl.className}`}>
-              {STORY_FABRIC_CANVAS.handoff.label}
-            </span>
           </div>
         </div>
 
-        <div className="story-fabric-canvas__dock">
-          <span className="story-fabric-canvas__prompt">{STORY_FABRIC_CANVAS.prompt}</span>
-          <div className="story-fabric-canvas__tools">
-            {STORY_FABRIC_CANVAS.tools.map((tool) => (
-              <span key={tool}>{tool}</span>
-            ))}
+        <div className="story-fabric-card story-fabric-panel">
+          <span className="story-fabric-panel__kicker">{STORY_FABRIC_CANVAS.handoff.kicker}</span>
+          <div className="story-fabric-handoff">
+            <span className={`story-fabric-handoff__mark ${dmSans.className}`}>
+              {STORY_FABRIC_CANVAS.handoff.mark}
+            </span>
+            <span className={`story-fabric-handoff__name ${suisseIntl.className}`}>
+              {STORY_FABRIC_CANVAS.handoff.name}
+            </span>
           </div>
         </div>
       </div>

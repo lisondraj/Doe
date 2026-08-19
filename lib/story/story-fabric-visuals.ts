@@ -1,97 +1,81 @@
 export const STORY_FABRIC_CANVAS = {
-  prompt: "Describe a block…",
-  tools: ["Start", "If", "Human"],
-  apps: ["Athena", "Epic", "Fax"],
-  steps: [
-    { id: "start", kicker: "Start", label: "New referral" },
-    { id: "if", kicker: "If", label: "Records complete?" },
-  ],
-  outcomes: [
-    { id: "then", kicker: "Then", label: "Book visit" },
-    { id: "else", kicker: "Else", label: "Request records" },
-  ],
-  handoff: { kicker: "Human", label: "Covering MD" },
+  branch: {
+    kicker: "If records in?",
+    paths: [
+      { id: "then", label: "Book visit", fill: 78 },
+      { id: "else", label: "Request", fill: 36 },
+    ],
+  },
+  start: {
+    kicker: "Canvas",
+    nodes: [
+      { id: "now", label: "New referral", on: true },
+      { id: "next", label: "If", on: false },
+      { id: "then", label: "Then", on: false },
+    ],
+  },
+  handoff: {
+    kicker: "Handoff",
+    mark: "MD",
+    name: "Covering MD",
+  },
 } as const;
 
 export const STORY_FABRIC_TONE = [
   {
     id: "maya",
     name: "Maya",
-    role: "Front desk",
-    specialty: "Pediatrics",
-    sample: "Friday 10:20 is open.",
-    tone: "Warm",
-    pace: "Calm",
     language: "EN · ES",
+    levels: [
+      { id: "tone", label: "Warm", fill: 86 },
+      { id: "pace", label: "Calm", fill: 40 },
+    ],
   },
   {
     id: "cole",
     name: "Cole",
-    role: "Follow-up",
-    specialty: "Ortho",
-    sample: "Your MRI is in. I’ll send it.",
-    tone: "Direct",
-    pace: "Brisk",
     language: "EN",
+    levels: [
+      { id: "tone", label: "Direct", fill: 32 },
+      { id: "pace", label: "Brisk", fill: 88 },
+    ],
   },
 ] as const;
 
 export const STORY_FABRIC_LIBRARY = {
-  eyebrow: "Community · 3 flows",
-  items: [
+  kicker: "Peer flow",
+  title: "Pre-op intake",
+  count: "1.2k",
+  label: "clinics on this flow",
+  sent: "1",
+  sentLabel: "your clinic",
+  clinics: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0] as const,
+} as const;
+
+export const STORY_FABRIC_SIM = {
+  booth: {
+    kicker: "Private",
+    count: "0",
+    label: "live calls",
+    sent: "3",
+    sentLabel: "tested",
+    slots: [1, 1, 1] as const,
+  },
+  runs: [
     {
-      id: "preop",
-      title: "Pre-op intake",
-      source: "Texas · colorectal",
-      uses: "1.2k",
-      selected: true,
+      id: "parent",
+      scenario: "Angry parent",
+      result: "Escalate",
+      turns: [82, 48, 94],
     },
     {
-      id: "auth",
-      title: "Prior auth packet",
-      source: "Ohio · ortho",
-      uses: "840",
-      selected: false,
-    },
-    {
-      id: "refill",
-      title: "Refill triage",
-      source: "NY · peds",
-      uses: "610",
-      selected: false,
+      id: "senior",
+      scenario: "Confused senior",
+      result: "Repeat",
+      turns: [64, 64, 46],
     },
   ],
 } as const;
-
-export const STORY_FABRIC_SIM = [
-  {
-    id: "parent",
-    scenario: "Angry parent",
-    result: "Escalate",
-    mode: "Private",
-    who: "Parent",
-    text: "Nobody called me back.",
-    agent: "I’ll page the covering MA now.",
-  },
-  {
-    id: "senior",
-    scenario: "Confused senior",
-    result: "Repeat",
-    mode: "Private",
-    who: "Helen",
-    text: "Is this about Thursday?",
-    agent: "Yes — 10:20 with Dr. Chen.",
-  },
-  {
-    id: "rush",
-    scenario: "Rushed new patient",
-    result: "Book",
-    mode: "Private",
-    who: "Luis",
-    text: "Can I come in today?",
-    agent: "2:40 is open. I’ll hold it.",
-  },
-] as const;
 
 export const STORY_FABRIC_GOLD_TITLES = {
   canvas: ["Build clinic agents with", "branches and a human handoff."],

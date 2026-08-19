@@ -2,6 +2,8 @@
 
 import { useEffect, useId, useState } from "react";
 
+import { DoeLinkArrow } from "@/components/shared/DoeLinkArrow";
+
 import { DOEINSURE_NAV, DOEINSURE_NAV_LINKS } from "@/lib/doeinsure/doeinsure-copy";
 
 const SECTION_IDS = DOEINSURE_NAV_LINKS.map((link) => link.href.slice(1));
@@ -92,16 +94,7 @@ export function DoeInsureNav() {
           </span>
           <span className="doeinsure-nav__promo-cta">
             {DOEINSURE_NAV.promoCta}
-            <svg className="doeinsure-nav__promo-arrow" viewBox="0 0 20 12" aria-hidden="true">
-              <path
-                d="M0 6h14M10 2l5 4-5 4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <DoeLinkArrow className="doeinsure-nav__promo-arrow" />
           </span>
         </a>
       </div>

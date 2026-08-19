@@ -30,29 +30,9 @@ import {
   DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS,
   DOEHEALTH_HERO_HEADLINE_ROTATE_MS,
 } from "@/lib/doehealth/doehealth-hero-carousel";
+import { DoeLinkArrow } from "@/components/shared/DoeLinkArrow";
 import { inter } from "@/lib/home/fonts";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
-
-function HeroReadMoreArrow() {
-  return (
-    <svg
-      className="doehealth-hero-read-more__arrow"
-      width="16"
-      height="16"
-      viewBox="0 0 12 12"
-      fill="none"
-      aria-hidden
-    >
-      <path
-        d="M2.5 6h7M6.75 3.25 9.5 6 6.75 8.75"
-        stroke="currentColor"
-        strokeWidth="1.35"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 function HeroCarouselNavChevron({ direction }: { direction: "prev" | "next" }) {
   return (
@@ -86,7 +66,7 @@ function HeroReadMoreRow({ entry }: { entry: DoeHomeHeroHeadlineEntry }) {
       {entry.readMoreLinks.map((link) => (
         <Link key={link.href} href={link.href} className="doehealth-hero-read-more">
           <span className="doehealth-hero-read-more__label">{link.label}</span>
-          <HeroReadMoreArrow />
+          <DoeLinkArrow className="doehealth-hero-read-more__arrow" width={16} height={16} />
         </Link>
       ))}
     </div>
@@ -600,7 +580,7 @@ export function DoePhoneHeroSection({
                   {heroReadMoreLinks.map((link) => (
                     <Link key={link.href} href={link.href} className="doehealth-hero-read-more">
                       <span className="doehealth-hero-read-more__label">{link.label}</span>
-                      <HeroReadMoreArrow />
+                      <DoeLinkArrow className="doehealth-hero-read-more__arrow" width={16} height={16} />
                     </Link>
                   ))}
                 </div>
@@ -610,7 +590,7 @@ export function DoePhoneHeroSection({
                   className={`doehealth-hero-read-more pointer-events-auto ${inter.className}`}
                 >
                   <span className="doehealth-hero-read-more__label">{heroReadMoreLabel}</span>
-                  <HeroReadMoreArrow />
+                  <DoeLinkArrow className="doehealth-hero-read-more__arrow" width={16} height={16} />
                 </Link>
               ) : null}
             </>

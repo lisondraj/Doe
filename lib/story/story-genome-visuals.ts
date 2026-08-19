@@ -1,81 +1,61 @@
-export const STORY_GENOME_FLEET = {
-  group: "Northstar Health",
-  clinicCount: "4 models",
+export const STORY_GENOME_SEALS = {
   clinics: [
-    { id: "riverside", name: "Riverside", selected: false },
-    { id: "harbor", name: "Harbor", selected: true },
-    { id: "oakridge", name: "Oakridge", selected: false },
-    { id: "westlake", name: "Westlake", selected: false },
+    { id: "harbor", initials: "HO", name: "Harbor", version: "v2.1", selected: true },
+    { id: "riverside", initials: "RI", name: "Riverside", version: "v1.9", selected: false },
+    { id: "oakridge", initials: "OR", name: "Oakridge", version: "v2.0", selected: false },
+    { id: "westlake", initials: "WL", name: "Westlake", version: "v1.8", selected: false },
   ],
-  selected: {
-    name: "Harbor Ortho",
-    model: "Harbor Genome",
-    version: "v2.1",
-    submodels: [
-      { id: "pa", task: "Prior auth" },
-      { id: "ri", task: "Referral" },
-      { id: "vp", task: "Visit prep" },
-    ],
-  },
 } as const;
 
-export const STORY_GENOME_ROUTER = {
-  personal: {
-    label: "Your model",
-    note: "Clinic",
-    count: "3",
-    tasks: ["Confirm visit", "Visit summary", "Referral file"],
-  },
-  frontier: {
-    label: "Frontier",
-    note: "Shared",
-    count: "1",
-    tasks: ["Denial appeal"],
-  },
+export const STORY_GENOME_KEPT = {
+  clinic: "Harbor Genome",
+  kept: "1,204",
+  keptLabel: "on this Genome",
+  sent: "0",
+  sentLabel: "to Frontier",
 } as const;
 
-export const STORY_GENOME_TRAIN = {
-  when: "Sunday 6:00pm",
-  clinic: "Harbor Ortho",
-  toVersion: "v2.2",
-  fromVersion: "v2.1",
-  sources: ["Prior auth", "Referral", "Visit prep"],
-  signals: "1,284 outcomes",
-  cta: "Train",
-} as const;
-
-export const STORY_GENOME_AGENTS = {
-  model: "Harbor Genome",
-  modelNote: "Your model",
-  left: { id: "intake", kicker: "Trigger", label: "Front desk" },
-  right: [
-    { id: "auth", kicker: "Agent", label: "Prior auth" },
-    { id: "referral", kicker: "Agent", label: "Referral" },
+export const STORY_GENOME_SUNDAY = {
+  day: "Sun",
+  time: "6:00",
+  count: "v2.2",
+  from: "v2.1",
+  countLabel: "from 1,284 tasks",
+  marks: [
+    { id: "mon", label: "M" },
+    { id: "tue", label: "T" },
+    { id: "wed", label: "W" },
+    { id: "thu", label: "T" },
+    { id: "fri", label: "F" },
+    { id: "sat", label: "S" },
+    { id: "sun", label: "S" },
   ],
-  presets: [
-    { id: "scribe", label: "Scribe" },
-    { id: "billing", label: "Billing" },
-    { id: "triage", label: "Triage" },
+} as const;
+
+export const STORY_GENOME_KNOWS = {
+  clinic: "Harbor Genome",
+  layers: [
+    { id: "desk", label: "Front desk", count: "412", share: 100 },
+    { id: "auth", label: "Prior auth", count: "286", share: 78 },
+    { id: "referral", label: "Referral", count: "194", share: 56 },
+    { id: "prep", label: "Visit prep", count: "128", share: 38 },
   ],
 } as const;
 
 export const STORY_GENOME_GOLD_TITLES = {
-  fleet: ["Every clinic gets their", "own intelligence model."],
-  router: ["Sensitive patient information", "sent to clinic's own model"],
-  train: ["Clinics can train their model", "off last week's completed tasks"],
-  agents: [
-    "No-code canvas to build",
-    "agents on top of clinic's intelligence.",
-  ],
+  seals: ["Every clinic gets their", "own Genome."],
+  kept: ["Patient information stays", "on Harbor's Genome."],
+  sunday: ["Train next Genome", "off last week's work."],
+  knows: ["Agents run on top of", "the clinic's Genome."],
 } as const;
 
 export const STORY_GENOME_TILE_COPY = {
-  fleet:
-    "A group owner can watch every clinic’s Genome from one dashboard, then open a location to see the workflow submodels underneath it.",
-  router:
-    "Genome routes routine work to the clinic’s own model and sends only the hard cases to a frontier model.",
-  train:
-    "At the end of the week, prompt Genome to train the next version from approved workflow outcomes.",
-  agents:
-    "In Fabric, the agents you build run on your clinic’s Genome — not a generic model.",
+  seals:
+    "Each clinic in the group has its own Genome. Harbor’s v2.1 is not Riverside’s, and none of them is a shared generic model.",
+  kept:
+    "Sensitive patient information is sent to Harbor’s own Genome. Routine work stays there; nothing PHI is handed to a frontier model.",
+  sunday:
+    "Sunday close trains the next Harbor Genome from last week’s completed tasks — 1,284 approved outcomes become v2.2.",
+  knows:
+    "The agents you build sit on Harbor’s Genome. Front desk, prior auth, referral, and visit prep all run on this clinic’s intelligence.",
 } as const;

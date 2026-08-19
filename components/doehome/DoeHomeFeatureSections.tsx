@@ -3,6 +3,10 @@
 import type { CSSProperties, ReactNode } from "react";
 
 import { DoeInsureReveal } from "@/components/doeinsure/DoeInsureReveal";
+import {
+  doeHomeProductWordmarkLabel,
+  type DoeHomeProductWordmarkId,
+} from "@/components/doehome/DoeHomeProductWordmark";
 import { DoeHomeShaderFrame } from "@/components/doehome/DoeHomeShaderImage";
 import {
   DOEHOME_AUTH,
@@ -50,7 +54,18 @@ function Wave({ count = 8, on = true }: { count?: number; on?: boolean }) {
   );
 }
 
-function FeatureHeading({ title, lede }: { title: readonly string[]; lede: string }) {
+function FeatureHeading({
+  title,
+  lede,
+  productLink,
+}: {
+  title: readonly string[];
+  lede: string;
+  productLink?: DoeHomeProductWordmarkId;
+}) {
+  const productWord = productLink ? doeHomeProductWordmarkLabel(productLink) : null;
+  const ledeStartsWithProduct = productWord && lede.startsWith(productWord);
+
   return (
     <header className="doehome-extra__head">
       <h2 className="doehome-section-title">
@@ -58,7 +73,18 @@ function FeatureHeading({ title, lede }: { title: readonly string[]; lede: strin
           <span key={line}>{line}</span>
         ))}
       </h2>
-      <p className="doehome-genome__lede">{lede}</p>
+      <p className="doehome-feature__lede">
+        {ledeStartsWithProduct ? (
+          <>
+            <a className="doehome-feature__lede-link" href={`#${productLink}`}>
+              {productWord}
+            </a>
+            {lede.slice(productWord.length)}
+          </>
+        ) : (
+          lede
+        )}
+      </p>
     </header>
   );
 }
@@ -519,6 +545,7 @@ function FeatureSection({
   mesh,
   priority = false,
   variant = "rise",
+  productLink,
   children,
 }: {
   id: string;
@@ -529,6 +556,7 @@ function FeatureSection({
   mesh?: "dots" | "arches" | "waves";
   priority?: boolean;
   variant?: "rise" | "left" | "right";
+  productLink?: DoeHomeProductWordmarkId;
   children: (revealed: boolean) => ReactNode;
 }) {
   return (
@@ -540,7 +568,7 @@ function FeatureSection({
         <DoeInsureReveal variant={variant}>
           {(revealed) => (
             <>
-              <FeatureHeading title={title} lede={lede} />
+              <FeatureHeading title={title} lede={lede} productLink={productLink} />
               <DoeHomeShaderFrame src={src} priority={priority}>
                 {children(revealed)}
               </DoeHomeShaderFrame>
@@ -560,9 +588,9 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_GENOME.title}
         lede={DOEHOME_GENOME.lede}
         src={DOEHOME_SHADERS.genome}
-        mesh="dots"
         priority
         variant="rise"
+        productLink="genome"
       >
         {(revealed) => <GenomeBody revealed={revealed} />}
       </FeatureSection>
@@ -572,7 +600,9 @@ export function DoeHomeFeatureSections() {
         lede={DOEHOME_PULSE.lede}
         src={DOEHOME_SHADERS.pulse}
         gray
+        mesh="arches"
         variant="left"
+        productLink="pulse"
       >
         {(revealed) => <PulseBody revealed={revealed} />}
       </FeatureSection>
@@ -581,7 +611,6 @@ export function DoeHomeFeatureSections() {
         title={DOEHOME_FABRIC.title}
         lede={DOEHOME_FABRIC.lede}
         src={DOEHOME_SHADERS.fabric}
-        mesh="arches"
         variant="right"
       >
         {(revealed) => <FabricBody revealed={revealed} />}

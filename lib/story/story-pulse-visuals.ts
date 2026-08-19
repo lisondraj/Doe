@@ -4,27 +4,24 @@ export const STORY_PULSE_VOICES = [
     name: "Front Desk",
     voice: "Maya",
     language: "EN · ES",
-    tone: "Warm",
-    pace: "Calm",
     hours: "8a–6p",
+    print: [42, 78, 55, 92, 64],
   },
   {
     id: "auth",
     name: "Prior Auth",
     voice: "Cole",
     language: "EN",
-    tone: "Direct",
-    pace: "Brisk",
     hours: "Always",
+    print: [70, 48, 88, 36, 74],
   },
   {
     id: "nights",
     name: "After Hours",
     voice: "Lina",
     language: "EN · FR",
-    tone: "Soft",
-    pace: "Slow",
     hours: "6p–8a",
+    print: [28, 62, 44, 80, 52],
   },
 ] as const;
 
@@ -36,11 +33,7 @@ export const STORY_PULSE_DESK = {
   agent: "Maya",
   role: "Front desk",
   note: "Wrote to chart",
-  turns: [
-    { who: "Dana", text: "Can I move Thursday to Friday?" },
-    { who: "Maya", text: "Friday 10:20 is open. I’ll hold it." },
-    { who: "Dana", text: "That’s perfect — thank you." },
-  ],
+  print: [72, 88, 54, 94, 62, 80, 48, 70],
 } as const;
 
 export const STORY_PULSE_LIVE = {
@@ -61,12 +54,12 @@ export const STORY_PULSE_LIVE = {
 
 export const STORY_PULSE_NIGHTS = {
   eyebrow: "Overnight",
-  returned: "3 returned",
+  returned: "3",
   note: "Written to chart",
   items: [
-    { id: "refill", at: "11:42pm", task: "Refill request", done: "7:04am" },
-    { id: "cancel", at: "1:18am", task: "Cancel visit", done: "7:06am" },
-    { id: "new", at: "5:02am", task: "New patient", done: "7:11am" },
+    { id: "refill", at: "11:42pm", task: "Refill", done: "7:04am", fill: 88 },
+    { id: "cancel", at: "1:18am", task: "Cancel", done: "7:06am", fill: 64 },
+    { id: "new", at: "5:02am", task: "New visit", done: "7:11am", fill: 36 },
   ],
 } as const;
 
