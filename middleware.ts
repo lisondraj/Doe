@@ -18,6 +18,7 @@ import {
   shouldEnforceDomainRouting,
 } from "@/lib/site-domains";
 import { FEDERATED_CLINIC_INTELLIGENCE_PATH } from "@/lib/blog/federated-clinic-intelligence-article";
+import { CLINIC_SPECIALTY_WORKFLOWS_PATH } from "@/lib/blog/clinic-specialty-workflows-article";
 import { OUR_FOUNDER_STORY_PATH } from "@/lib/blog/our-founder-story-article";
 import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 
@@ -155,6 +156,10 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname === FEDERATED_CLINIC_INTELLIGENCE_PATH && isPrimaryHost(host)) {
+    return applyLandingSiteHeaders(NextResponse.next());
+  }
+
+  if (pathname === CLINIC_SPECIALTY_WORKFLOWS_PATH && isPrimaryHost(host)) {
     return applyLandingSiteHeaders(NextResponse.next());
   }
 

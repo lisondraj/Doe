@@ -1,5 +1,6 @@
 import { ABOUT_STYLE_BLANK_PAGE_PATHS } from "@/lib/about/about-style-blank-pages";
 import { BLOG_LANDING_PATH } from "@/lib/blog/blog-landing-posts";
+import { CLINIC_SPECIALTY_WORKFLOWS_PATH } from "@/lib/blog/clinic-specialty-workflows-article";
 import { BLENDED_INTELLIGENCE_PATH } from "@/lib/blog/blended-intelligence-article";
 import { INTRODUCING_FABRIC_PATH } from "@/lib/blog/introducing-fabric-article";
 import { INTRODUCING_FLOAT_PATH } from "@/lib/blog/introducing-float-article";
@@ -32,6 +33,7 @@ export const ABOUT_STYLE_PAGE_PATHS = [
   GENOME_IS_BUILT_FOR_YOU_PATH,
   INTELLIGENCE_FOR_EVERY_CLINIC_PATH,
   FEDERATED_CLINIC_INTELLIGENCE_PATH,
+  CLINIC_SPECIALTY_WORKFLOWS_PATH,
   PULSE_CALL_HISTORY_PATH,
   PULSE_AMBIENT_PATH,
   ...ABOUT_STYLE_BLANK_PAGE_PATHS,
