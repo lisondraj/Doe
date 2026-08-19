@@ -996,12 +996,52 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-root #fabric .doehome-scene--stack {
   align-self: center;
   margin-inline: auto;
-  width: min(66%, 20rem);
+  width: min(62%, 19rem);
   gap: 0.72rem;
+  transform: scale(0.88);
+  transform-origin: center center;
 }
 
 .doehome-root #fabric .doehome-pill {
   border-radius: 0.35rem;
+  background: var(--doehome-paper);
+  border: 1px solid var(--doehome-ink-line);
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
+}
+
+.doehome-root #connect .doehome-shader-frame {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  max-width: 31rem;
+  margin-inline: auto;
+}
+
+.doehome-root #connect .doehome-shader-frame__ui {
+  position: relative;
+  display: block;
+  padding: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.doehome-root #connect .doehome-shader-frame__ui > .doehome-scene--tiles {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 132%;
+  min-height: 132%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+}
+
+.doehome-root #connect .doehome-scene--tiles li {
+  border-radius: 0.35rem;
+  background: var(--doehome-paper);
+  border: 1px solid var(--doehome-ink-line);
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
 }
 
 .doehome-shader-frame__ui {
@@ -1183,6 +1223,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-scene > header,
 .doehome-scene--focus > article,
 .doehome-scene--focus > p,
+.doehome-float__lead,
+.doehome-float__meta,
 .doehome-grid__row,
 .doehome-grid__foot,
 .doehome-table__head,
@@ -1205,6 +1247,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-scene > header.is-on,
 .doehome-scene--focus > article.is-on,
 .doehome-scene--focus > p.is-on,
+.doehome-float__lead.is-on,
+.doehome-float__meta.is-on,
 .doehome-grid__row.is-on,
 .doehome-grid__foot.is-on,
 .doehome-table__head.is-on,
@@ -1332,7 +1376,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 
 .doehome-grid--pay .doehome-grid__head,
 .doehome-grid--pay .doehome-grid__row {
-  grid-template-columns: 2.4rem minmax(8rem, 1fr) 6.2rem 5.4rem 5.4rem;
+  grid-template-columns: minmax(8rem, 1fr) 6.2rem 5.4rem 5.4rem;
 }
 
 .doehome-root:not(.doeinsure-root--iphone) #float .doehome-shader-frame__ui {
@@ -1358,7 +1402,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 
 .doehome-root:not(.doeinsure-root--iphone) #float .doehome-grid--pay .doehome-grid__head,
 .doehome-root:not(.doeinsure-root--iphone) #float .doehome-grid--pay .doehome-grid__row {
-  grid-template-columns: 1.5rem minmax(0, 1fr) minmax(4.5rem, 0.75fr) minmax(4.2rem, 0.7fr) minmax(4.2rem, 0.7fr);
+  grid-template-columns: minmax(0, 1fr) minmax(4.5rem, 0.75fr) minmax(4.2rem, 0.7fr) minmax(4.2rem, 0.7fr);
   gap: 0.5rem;
   min-height: 2.35rem;
   padding-inline: 0.1rem;
@@ -1372,14 +1416,66 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   font-size: 0.88rem;
 }
 
-.doehome-root:not(.doeinsure-root--iphone) #float .doehome-grid__foot {
-  flex-wrap: wrap;
-  gap: 0.35rem 0.65rem;
+.doehome-root #float .doehome-grid--pay .doehome-grid__row {
+  border-bottom: 0;
 }
 
-.doehome-root:not(.doeinsure-root--iphone) #float .doehome-grid__foot span {
-  font-size: 0.82rem;
-  min-width: 0;
+.doehome-root #float .doehome-float__lead {
+  display: grid;
+  gap: 0.28rem;
+  align-self: flex-start;
+  margin: 0;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--doehome-ink-line);
+}
+
+.doehome-root #float .doehome-float__underpay {
+  margin: 0;
+  color: #8a4b2a;
+  font-size: 2.75rem;
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+}
+
+.doehome-root #float .doehome-float__note {
+  display: grid;
+  gap: 0.06rem;
+  margin: 0;
+  max-width: 11rem;
+  color: var(--doehome-ink-muted);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.28;
+}
+
+.doehome-root #float .doehome-float__note span {
+  display: block;
+}
+
+.doehome-root #float .doehome-float__meta {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.55rem 0 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.doehome-root #float .doehome-float__meta span {
+  color: var(--doehome-ink-muted);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.doehome-root #float .doehome-float__meta strong {
+  color: var(--doehome-ink);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.12;
 }
 
 .doehome-grid--chart .doehome-grid__head,
@@ -1913,6 +2009,10 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doeinsure-root--iphone .doehome-shader-frame {
   --doehome-iphone-glass-pad: 0.48rem;
   --doehome-iphone-glass-radius: 1rem;
+  --doehome-iphone-glass-border: 1px solid rgba(255, 245, 230, 0.22);
+  --doehome-iphone-glass-fill: rgba(255, 245, 230, 0.07);
+  --doehome-iphone-glass-inset: inset 0 1px 0 rgba(255, 245, 230, 0.14);
+  --doehome-iphone-glass-blur: blur(11px) saturate(1.05);
   border-radius: var(--doehome-iphone-glass-radius);
   border: 1px solid rgba(255, 245, 230, 0.16);
   isolation: auto;
@@ -1945,11 +2045,40 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   z-index: -1;
   pointer-events: none;
   border-radius: 0.35rem;
-  border: 1px solid rgba(255, 245, 230, 0.28);
-  background: rgba(255, 245, 230, 0.1);
-  backdrop-filter: blur(14px) saturate(1.1);
-  -webkit-backdrop-filter: blur(14px) saturate(1.1);
-  box-shadow: inset 0 1px 0 rgba(255, 245, 230, 0.18);
+  border: var(--doehome-iphone-glass-border);
+  background: var(--doehome-iphone-glass-fill);
+  backdrop-filter: var(--doehome-iphone-glass-blur);
+  -webkit-backdrop-filter: var(--doehome-iphone-glass-blur);
+  box-shadow: var(--doehome-iphone-glass-inset);
+}
+
+.doeinsure-root--iphone .doehome-iphone-glass-card {
+  position: relative;
+  isolation: isolate;
+  transform: translateZ(0);
+  border-radius: 0.35rem;
+  background: var(--doehome-paper);
+  border: 1px solid var(--doehome-ink-line);
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
+}
+
+.doeinsure-root--iphone .doehome-iphone-glass-card::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--doehome-iphone-glass-pad));
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 0.35rem;
+  border: var(--doehome-iphone-glass-border);
+  background: var(--doehome-iphone-glass-fill);
+  backdrop-filter: var(--doehome-iphone-glass-blur);
+  -webkit-backdrop-filter: var(--doehome-iphone-glass-blur);
+  box-shadow: var(--doehome-iphone-glass-inset);
+}
+
+.doeinsure-root--iphone .doehome-iphone-glass-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .doeinsure-root--iphone .doehome-shader-frame__ui > .doehome-scene:not(.doehome-scene--focus):not(.doehome-scene--stack)::before {
@@ -2186,40 +2315,13 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   top: auto;
   align-self: center;
   margin-inline: auto;
-  width: min(68%, 14rem);
+  width: min(64%, 13.25rem);
   min-height: auto;
-  gap: 0.9rem;
+  gap: calc(var(--doehome-iphone-glass-pad) * 2 + 0.55rem);
 }
 
 .doehome-root.doeinsure-root--iphone #fabric .doehome-pill {
-  position: relative;
-  isolation: isolate;
-  z-index: 0;
-  padding: 0.7rem 0.8rem 0.74rem;
-  border: 0;
-  border-radius: 0.35rem;
-  background: transparent;
-  box-shadow: none;
-}
-
-.doehome-root.doeinsure-root--iphone #fabric .doehome-pill::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  border-radius: inherit;
-  border: 1px solid rgba(255, 245, 230, 0.28);
-  background: rgba(255, 245, 230, 0.1);
-  backdrop-filter: blur(14px) saturate(1.1);
-  -webkit-backdrop-filter: blur(14px) saturate(1.1);
-  box-shadow: inset 0 1px 0 rgba(255, 245, 230, 0.18);
-}
-
-.doehome-root.doeinsure-root--iphone #fabric .doehome-pill span,
-.doehome-root.doeinsure-root--iphone #fabric .doehome-pill b {
-  position: relative;
-  z-index: 1;
+  padding: 0.78rem 0.88rem 0.82rem;
 }
 
 .doehome-root.doeinsure-root--iphone #fabric .doehome-pill span {
@@ -2228,6 +2330,41 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 
 .doehome-root.doeinsure-root--iphone #fabric .doehome-pill b {
   font-size: 0.94rem;
+}
+
+/* Connect — iPhone: square shader, centered tile grid cropped on all edges */
+.doehome-root.doeinsure-root--iphone #connect .doehome-shader-frame,
+.doehome-root.doeinsure-root--iphone #connect .doehome-shader-frame__ui {
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  aspect-ratio: 1 / 1;
+}
+
+.doehome-root.doeinsure-root--iphone #connect .doehome-shader-frame__ui {
+  display: block;
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+}
+
+.doehome-root.doeinsure-root--iphone #connect .doehome-shader-frame__ui > .doehome-scene--tiles {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 136%;
+  min-height: 136%;
+  max-width: none;
+  transform: translate(-50%, -50%);
+  padding: 0;
+}
+
+.doehome-root.doeinsure-root--iphone #connect .doehome-shader-frame__ui > .doehome-scene--tiles::before {
+  display: none;
+}
+
+.doehome-root.doeinsure-root--iphone #connect .doehome-scene--tiles ul {
+  gap: calc(var(--doehome-iphone-glass-pad) * 2 + 0.42rem);
 }
 
 /* Float — iPhone: centered pay grid, shader rim visible */
@@ -2260,7 +2397,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 
 .doehome-root.doeinsure-root--iphone #float .doehome-grid--pay .doehome-grid__head,
 .doehome-root.doeinsure-root--iphone #float .doehome-grid--pay .doehome-grid__row {
-  grid-template-columns: 1.15rem minmax(0, 1fr) 2.75rem 2.55rem 2.55rem;
+  grid-template-columns: minmax(0, 1fr) 2.75rem 2.55rem 2.55rem;
   gap: 0.28rem;
   min-height: 1.85rem;
   padding-inline: 0.05rem;
@@ -2275,28 +2412,22 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   font-size: 0.72rem;
 }
 
-.doehome-root.doeinsure-root--iphone #float .doehome-scene > header span {
-  font-size: 0.58rem;
+.doehome-root.doeinsure-root--iphone #float .doehome-float__meta span {
+  font-size: 0.52rem;
 }
 
-.doehome-root.doeinsure-root--iphone #float .doehome-scene > header b {
-  font-size: 1.02rem;
+.doehome-root.doeinsure-root--iphone #float .doehome-float__meta strong {
+  font-size: 0.92rem;
 }
 
-.doehome-root.doeinsure-root--iphone #float .doehome-grid__foot {
-  flex-wrap: wrap;
-  gap: 0.25rem 0.45rem;
-  margin-top: 0.55rem;
-  padding-top: 0.62rem;
+.doehome-root.doeinsure-root--iphone #float .doehome-float__underpay {
+  font-size: 2.15rem;
 }
 
-.doehome-root.doeinsure-root--iphone #float .doehome-grid__foot b {
-  font-size: 1.08rem;
-}
-
-.doehome-root.doeinsure-root--iphone #float .doehome-grid__foot span {
-  font-size: 0.68rem;
-  line-height: 1.25;
+.doehome-root.doeinsure-root--iphone #float .doehome-float__note {
+  max-width: 9.5rem;
+  font-size: 0.62rem;
+  line-height: 1.22;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2312,6 +2443,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   .doehome-scene > header,
   .doehome-scene--focus > article,
   .doehome-scene--focus > p,
+  .doehome-float__lead,
+  .doehome-float__meta,
   .doehome-grid__row,
   .doehome-grid__foot,
   .doehome-table__head,

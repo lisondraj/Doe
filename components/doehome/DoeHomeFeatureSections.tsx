@@ -185,7 +185,11 @@ function FabricBody({ revealed }: { revealed: boolean }) {
   return (
     <Scene className="doehome-scene--stack doehome-scene--mid">
       {DOEHOME_FABRIC.steps.map((step, index) => (
-        <div key={step.id} className={`doehome-pill${index < lit ? " is-on" : ""}`} style={{ "--n": index } as CSSProperties}>
+        <div
+          key={step.id}
+          className={`doehome-pill doehome-iphone-glass-card${index < lit ? " is-on" : ""}`}
+          style={{ "--n": index } as CSSProperties}
+        >
           <span>{step.kicker}</span>
           <b>{step.label}</b>
         </div>
@@ -200,13 +204,19 @@ function FloatBody({ revealed }: { revealed: boolean }) {
 
   return (
     <Scene className="doehome-scene--grid doehome-scene--crop-tl">
-      <header className={lit >= 1 ? "is-on" : undefined}>
-        <span>{DOEHOME_FLOAT.hold.ref}</span>
-        <b>{DOEHOME_FLOAT.tableTitle}</b>
-      </header>
+      <div
+        className={`doehome-float__lead${lit >= DOEHOME_FLOAT.claims.length ? " is-on" : ""}`}
+        style={{ "--n": 0 } as CSSProperties}
+      >
+        <b className="doehome-float__underpay">{DOEHOME_FLOAT.underpay}</b>
+        <p className="doehome-float__note">
+          {DOEHOME_FLOAT.underpayNote.map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </p>
+      </div>
       <div className="doehome-grid doehome-grid--pay">
         <div className="doehome-grid__head">
-          <span />
           {DOEHOME_FLOAT.columns.map((column) => (
             <span key={column}>{column}</span>
           ))}
@@ -217,20 +227,16 @@ function FloatBody({ revealed }: { revealed: boolean }) {
             className={`doehome-grid__row${index === 0 ? " is-this" : ""}${index < lit - 1 ? " is-on" : ""}`}
             style={{ "--n": index } as CSSProperties}
           >
-            <em>{index + 1}</em>
-            <b>
-              <FileMark />
-              {row.payer}
-            </b>
+            <b>{row.payer}</b>
             <span>{row.claim}</span>
             <span>{row.allowed}</span>
             <span>{row.paid}</span>
           </div>
         ))}
-        <div className={`doehome-grid__foot${lit >= DOEHOME_FLOAT.claims.length ? " is-on" : ""}`}>
-          <b>{DOEHOME_FLOAT.underpay}</b>
-          <span>{DOEHOME_FLOAT.underpayNote}</span>
-        </div>
+      </div>
+      <div className={`doehome-float__meta${lit >= 1 ? " is-on" : ""}`}>
+        <span>{DOEHOME_FLOAT.hold.ref}</span>
+        <strong>{DOEHOME_FLOAT.tableTitle}</strong>
       </div>
     </Scene>
   );
@@ -328,7 +334,7 @@ function ConnectBody({ revealed }: { revealed: boolean }) {
         {DOEHOME_CONNECT.tiles.map((tile, index) => (
           <li
             key={tile.name}
-            className={lit >= 1 ? "is-on" : undefined}
+            className={`doehome-iphone-glass-card${lit >= 1 ? " is-on" : ""}`}
             style={{ "--n": index } as CSSProperties}
           >
             <b>{tile.mark}</b>
