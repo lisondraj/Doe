@@ -134,6 +134,11 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   color: #1a1208;
 }
 
+.doehome-root .doeinsure-nav:not(.is-open) .doeinsure-nav__menu:hover {
+  border-color: #e8c08e;
+  color: var(--doehome-cream);
+}
+
 .doehome-root .doeinsure-nav__panel a:not(.doeinsure-btn) {
   color: var(--doehome-cream);
   border-bottom-color: var(--doehome-gold-line);
@@ -155,11 +160,19 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 
 .doehome-root a.doeinsure-btn:hover,
 .doehome-root button.doeinsure-btn:hover,
-.doehome-root .doeinsure-btn:hover {
-  background: transparent;
-  border-color: #e8c08e;
-  color: #e8c08e;
-  -webkit-text-fill-color: #e8c08e;
+.doehome-root .doeinsure-btn:hover,
+.doehome-root .doeinsure-footer__quote:hover,
+.doehome-root a.doeinsure-footer__quote:hover,
+.doehome-root:not(.doeinsure-root--iphone) a.doeinsure-footer__quote:hover,
+.doehome-root .doeinsure-footer__coverage:hover,
+.doehome-root a.doeinsure-footer__coverage:hover,
+.doehome-root.doeinsure-root--iphone .doeinsure-footer__coverage:hover,
+.doehome-root.doeinsure-root--iphone a.doeinsure-footer__coverage:hover {
+  background-color: #1a1208;
+  background-image: none;
+  border-color: #1a1208;
+  color: var(--doehome-cream);
+  -webkit-text-fill-color: var(--doehome-cream);
 }
 
 .doehome-root .doeinsure-nav__mark,
@@ -433,6 +446,10 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-root .doeinsure-hero__secondary:hover {
   border-bottom-color: #e8c08e;
   background-image: var(--doehealth-gold-text-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doehome-root .doeinsure-hero-form input,
@@ -741,6 +758,10 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   color: var(--doehome-cream);
 }
 
+.doehome-root .doeinsure-faq button:hover {
+  color: #e8c08e;
+}
+
 .doehome-root .doeinsure-faq button i {
   background-image: var(--doehealth-gold-text-gradient);
 }
@@ -853,19 +874,6 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   background: var(--doehealth-gold-fill-gradient);
   color: #1a1208;
   -webkit-text-fill-color: #1a1208;
-}
-
-.doehome-root .doeinsure-footer__quote:hover,
-.doehome-root a.doeinsure-footer__quote:hover,
-.doehome-root:not(.doeinsure-root--iphone) a.doeinsure-footer__quote:hover,
-.doehome-root .doeinsure-footer__coverage:hover,
-.doehome-root a.doeinsure-footer__coverage:hover,
-.doehome-root.doeinsure-root--iphone .doeinsure-footer__coverage:hover,
-.doehome-root.doeinsure-root--iphone a.doeinsure-footer__coverage:hover {
-  background: transparent;
-  border-color: #e8c08e;
-  color: #e8c08e;
-  -webkit-text-fill-color: #e8c08e;
 }
 
 .doehome-root .doeinsure-footer__bar {
