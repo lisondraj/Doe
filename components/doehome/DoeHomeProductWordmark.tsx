@@ -77,37 +77,27 @@ export function DoeHomeProductWordmark({
   );
 }
 
-/** Tagline under iPhone hero stat wordmarks. */
-export function DoeHomeIphoneStatTagline({
-  label,
-  showArrow = true,
-  linked = false,
-}: {
-  label: string | readonly string[];
-  showArrow?: boolean;
-  linked?: boolean;
-}) {
+/** Tagline + gold arrow under iPhone hero stat wordmarks. */
+export function DoeHomeIphoneStatTagline({ label }: { label: string | readonly string[] }) {
   const lines = typeof label === "string" ? [label] : label;
   const stacked = lines.length > 1;
 
-  const arrow = showArrow ? <DoeLinkArrow className="doehome-stat-iphone-tagline__arrow" /> : null;
+  const arrow = <DoeLinkArrow className="doehome-stat-iphone-tagline__arrow" />;
 
   return (
-    <span
-      className={`doehome-stat-iphone-tagline${stacked ? " doehome-stat-iphone-tagline--stacked" : ""}${linked ? " doehome-stat-iphone-tagline--link" : ""}`}
-    >
+    <span className={`doehome-stat-iphone-tagline${stacked ? " doehome-stat-iphone-tagline--stacked" : ""}`}>
       <span className="doehome-stat-iphone-tagline__text">
         {lines.map((line, index) => (
           <span
             key={line}
-            className={`doehome-stat-iphone-tagline__line${stacked && showArrow && index === lines.length - 1 ? " doehome-stat-iphone-tagline__line--with-arrow" : ""}`}
+            className={`doehome-stat-iphone-tagline__line${stacked && index === lines.length - 1 ? " doehome-stat-iphone-tagline__line--with-arrow" : ""}`}
           >
             <span className="doehome-stat-iphone-tagline__label">{line}</span>
-            {stacked && showArrow && index === lines.length - 1 ? arrow : null}
+            {stacked && index === lines.length - 1 ? arrow : null}
           </span>
         ))}
       </span>
-      {!stacked && showArrow ? arrow : null}
+      {!stacked ? arrow : null}
     </span>
   );
 }

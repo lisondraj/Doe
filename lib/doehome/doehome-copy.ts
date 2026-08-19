@@ -322,7 +322,7 @@ export const DOEHOME_SCRIBE = {
     "Hold Friday 10:20",
     "Refill already on the chart",
   ],
-  stamp: "Wrote to chart",
+  stamp: "Transfer to Chart",
   badge: "Ambient",
   cardTitle: "Visit note",
 } as const;
@@ -393,66 +393,54 @@ export const DOEHOME_STACK = {
 
 export const DOEHOME_FAQ = {
   title: ["Built for the teams", "who deliver care."],
-  sections: [
+  items: [
     {
-      id: "genome",
-      label: "Genome",
-      items: [
-        {
-          q: "What is Genome?",
-          a: "Your clinic’s intelligence model — one per site or per provider, post-trained on how your team actually works.",
-        },
-        {
-          q: "Where does patient data go?",
-          a: "Routine work stays on your model. Hard cases can route to a frontier model. Weekly training uses outcomes your team already approved.",
-        },
-        {
-          q: "Can a group see every clinic?",
-          a: "Yes. Owners watch every clinic model from one dashboard, then open a location to see workflows and providers underneath.",
-        },
-      ],
+      q: "What is Doe?",
+      a: "Doe is an AI platform for clinics. Genome gives each site its own intelligence. Pulse answers the phones. Fabric builds your agents. Float runs the financial work. Everything writes back to the chart you already use.",
     },
     {
-      id: "pulse",
-      label: "Pulse",
-      items: [
-        {
-          q: "What lines does Pulse cover?",
-          a: "Front desk, prior auth, scheduling, and after hours. Each line gets its own agent with voice, language, tone, and hours.",
-        },
-        {
-          q: "What happens overnight?",
-          a: "Calls are still answered. Voicemails and tasks write back to the chart when you open.",
-        },
-      ],
+      q: "What is Genome?",
+      a: "Your clinic's intelligence model. A group can run one per site. A clinic can run one per provider. Each model learns from your team's workflow, from prior auth and referrals to visit prep, so the software fits how you actually work.",
     },
     {
-      id: "fabric",
-      label: "Fabric",
-      items: [
-        {
-          q: "Do we need engineers?",
-          a: "No. Fabric is a visual builder — trigger, branch, human handoff, publish without an engineering ticket.",
-        },
-        {
-          q: "Which model runs a flow?",
-          a: "Your clinic’s Genome model, not a generic one shared across customers.",
-        },
-      ],
+      q: "What is Pulse?",
+      a: "Voice AI for your clinic lines. Front desk, prior auth, scheduling, and after hours each get their own agent with voice, language, tone, and hours. Every call gets answered, and overnight voicemails return at open on the chart.",
     },
     {
-      id: "float",
-      label: "Float",
-      items: [
-        {
-          q: "How is Float different from a billing vendor?",
-          a: "Agents stay on payer hold, check remittance against contract, pull codes from the visit, and queue denials before they expire.",
-        },
-        {
-          q: "Where do outcomes go?",
-          a: "Back to the chart and the stack you already run — Athena, Epic, fax, and the rest.",
-        },
-      ],
+      q: "What is Fabric?",
+      a: "A no-code canvas for building your own agents. Start with a trigger, add branches and human handoffs, and publish without an engineering ticket. Every flow runs on your clinic's Genome model, not a generic one shared across customers.",
+    },
+    {
+      q: "What is Float?",
+      a: "The financial layer. Agents sit on payer hold so your front desk does not. Remittance is checked against the contract. Codes come from the visit. Denials are appealed before they expire.",
+    },
+    {
+      q: "Does Doe replace our EHR?",
+      a: "No. Doe plugs into Athena, Epic, eClinicalWorks, and the rest of your stack. Agents read and write through what you already run. Your team keeps the same chart.",
+    },
+    {
+      q: "Do we need engineers to use Doe?",
+      a: "No. Pulse goes live on your lines. Fabric is a visual builder. Float and Genome run in the background. Your front desk and ops team can take over live jobs without filing a ticket.",
+    },
+    {
+      q: "Where does patient data go?",
+      a: "Routine work stays on your clinic model. Hard cases can route to a frontier model when needed. Weekly training uses outcomes your team already approved.",
+    },
+    {
+      q: "Can a group see every clinic?",
+      a: "Yes. Owners watch every clinic model from one dashboard, then open a location to see workflows and providers underneath.",
+    },
+    {
+      q: "What happens overnight?",
+      a: "Calls are still answered. Refills, cancellations, and new patient requests write back to the chart before the door opens. Your team starts the day with work already done.",
+    },
+    {
+      q: "Can staff take over a live call or job?",
+      a: "Yes. Pulse, Fabric, and Float keep the thread. When someone at the desk takes over, they see the patient, the task, and the context. They are not starting from a voicemail.",
+    },
+    {
+      q: "How is Float different from a billing vendor?",
+      a: "Float does not just report denials. Agents stay on payer hold, check remittance against contract, pull codes from the visit, and queue appeals before they expire. Outcomes go back to the chart and the stack you already run.",
     },
   ],
 } as const;
