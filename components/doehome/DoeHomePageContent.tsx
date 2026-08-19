@@ -270,19 +270,34 @@ export function DoeHomePageContent() {
                 <span key={line}>{line}</span>
               ))}
             </h2>
-            <div className="doeinsure-faq">
-              {DOEHOME_FAQ.items.map((item, index) => {
-                const open = faq === index;
+            <div className="doeinsure-faq doehome-faq">
+              {DOEHOME_FAQ.sections.map((section, sectionIndex) => {
+                const sectionOffset = DOEHOME_FAQ.sections
+                  .slice(0, sectionIndex)
+                  .reduce((count, entry) => count + entry.items.length, 0);
+
                 return (
-                  <div key={item.q} className={open ? "is-on" : undefined}>
-                    <button type="button" aria-expanded={open} onClick={() => setFaq(open ? null : index)}>
-                      <span>{item.q}</span>
-                      <i aria-hidden="true">{open ? "–" : "+"}</i>
-                    </button>
-                    <div className={`doeinsure-fold${open ? " is-on" : ""}`}>
-                      <div>
-                        <p>{item.a}</p>
-                      </div>
+                  <div key={section.id} className="doehome-faq__section">
+                    <h3 className="doehome-faq__label">{section.label}</h3>
+                    <div className="doehome-faq__items">
+                      {section.items.map((item, itemIndex) => {
+                        const index = sectionOffset + itemIndex;
+                        const open = faq === index;
+
+                        return (
+                          <div key={item.q} className={open ? "is-on" : undefined}>
+                            <button type="button" aria-expanded={open} onClick={() => setFaq(open ? null : index)}>
+                              <span>{item.q}</span>
+                              <i aria-hidden="true">{open ? "–" : "+"}</i>
+                            </button>
+                            <div className={`doeinsure-fold${open ? " is-on" : ""}`}>
+                              <div>
+                                <p>{item.a}</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 );

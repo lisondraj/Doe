@@ -393,30 +393,66 @@ export const DOEHOME_STACK = {
 
 export const DOEHOME_FAQ = {
   title: ["Built for the teams", "who deliver care."],
-  items: [
+  sections: [
     {
-      q: "What is Genome?",
-      a: "Genome is Doe’s core product: an intelligence model for your clinic. Multi-site groups can run a model per clinic. Clinics can run a model per provider. Each is post-trained on that team’s workflow data.",
+      id: "genome",
+      label: "Genome",
+      items: [
+        {
+          q: "What is Genome?",
+          a: "Your clinic’s intelligence model — one per site or per provider, post-trained on how your team actually works.",
+        },
+        {
+          q: "Where does patient data go?",
+          a: "Routine work stays on your model. Hard cases can route to a frontier model. Weekly training uses outcomes your team already approved.",
+        },
+        {
+          q: "Can a group see every clinic?",
+          a: "Yes. Owners watch every clinic model from one dashboard, then open a location to see workflows and providers underneath.",
+        },
+      ],
     },
     {
-      q: "Where does patient data go?",
-      a: "Routine work stays on the clinic’s own model. Only hard cases route to a frontier model. Workflow outcomes used for weekly training are ones your team already approved.",
+      id: "pulse",
+      label: "Pulse",
+      items: [
+        {
+          q: "What lines does Pulse cover?",
+          a: "Front desk, prior auth, scheduling, and after hours. Each line gets its own agent with voice, language, tone, and hours.",
+        },
+        {
+          q: "What happens overnight?",
+          a: "Calls are still answered. Voicemails and tasks write back to the chart when you open.",
+        },
+      ],
     },
     {
-      q: "What does Pulse do?",
-      a: "Pulse is voice AI for the clinic line. Separate agents for front desk, prior auth, and nights, each with their own voice, language, tone, and hours. Overnight voicemail is returned at open.",
+      id: "fabric",
+      label: "Fabric",
+      items: [
+        {
+          q: "Do we need engineers?",
+          a: "No. Fabric is a visual builder — trigger, branch, human handoff, publish without an engineering ticket.",
+        },
+        {
+          q: "Which model runs a flow?",
+          a: "Your clinic’s Genome model, not a generic one shared across customers.",
+        },
+      ],
     },
     {
-      q: "Do we need engineers to use Fabric?",
-      a: "No. Fabric is a visual builder. Describe a step, add a branch, add a human handoff. Agents run on your model, not a generic one.",
-    },
-    {
-      q: "How is Float different from a billing vendor?",
-      a: "Float watches remittance against contracted rates, stays on payer hold, suggests codes from the visit, and queues denials before they expire. It writes outcomes back to the chart.",
-    },
-    {
-      q: "Can a group see every clinic?",
-      a: "Yes. A group owner watches every clinic’s model from one dashboard, then opens a location to see the workflow and providers underneath it.",
+      id: "float",
+      label: "Float",
+      items: [
+        {
+          q: "How is Float different from a billing vendor?",
+          a: "Agents stay on payer hold, check remittance against contract, pull codes from the visit, and queue denials before they expire.",
+        },
+        {
+          q: "Where do outcomes go?",
+          a: "Back to the chart and the stack you already run — Athena, Epic, fax, and the rest.",
+        },
+      ],
     },
   ],
 } as const;
