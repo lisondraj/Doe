@@ -47,4 +47,14 @@ export type AboutStyleArticleContentBlock =
       id: string;
       shaderVariant: AboutStyleFeatureShaderVariant;
       caption: string;
+    }
+  | {
+      /** Doe homepage-style UI mock composited on a baked shader, with a figure caption. */
+      type: "doehomeScene";
+      id: string;
+      shaderSrc: string;
+      specialty: string;
+      functionLabel: string;
+      details: readonly string[];
+      caption: string;
     };

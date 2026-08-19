@@ -50,6 +50,10 @@ import {
   PULSE_CALL_HISTORY_ARTICLE,
   PULSE_CALL_HISTORY_PATH,
 } from "@/lib/blog/pulse-call-history-article";
+import {
+  CLINIC_SPECIALTY_WORKFLOWS_ARTICLE,
+  CLINIC_SPECIALTY_WORKFLOWS_PATH,
+} from "@/lib/blog/clinic-specialty-workflows-article";
 import { blogLandingPreviewShader, BLOG_PREVIEW_BROADER_DOE_VISION_SUBHEADING } from "@/lib/blog/blog-landing-preview-shaders";
 import { blogCarouselPreviewShader } from "@/lib/blog/blog-carousel-preview-shaders";
 import { blogPostCategory, type BlogPostCategory } from "@/lib/blog/blog-post-categories";
@@ -73,6 +77,18 @@ export type BlogLandingPost = {
 
 /** Featured posts on /blog — Pulse sub-features, flagship launches, and Broader Doe Vision. */
 export const BLOG_LANDING_POSTS: readonly BlogLandingPost[] = [
+  {
+    slug: CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.slug,
+    path: CLINIC_SPECIALTY_WORKFLOWS_PATH,
+    title: `${CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.title} ${CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.titleLine2}`,
+    category: blogPostCategory(CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.slug)!,
+    subheading: CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.subheading,
+    excerpt: CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.excerpt,
+    byline: CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.byline,
+    date: CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.date,
+    previewShaderVariant: blogLandingPreviewShader(CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.slug),
+    carouselShaderVariant: blogCarouselPreviewShader(CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.slug),
+  },
   {
     slug: FEDERATED_CLINIC_INTELLIGENCE_ARTICLE.slug,
     path: FEDERATED_CLINIC_INTELLIGENCE_PATH,

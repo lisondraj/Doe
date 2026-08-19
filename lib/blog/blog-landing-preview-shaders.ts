@@ -9,6 +9,7 @@ export const BLOG_LANDING_PREVIEW_SHADERS: Record<string, AboutStyleFeatureShade
   "introducing-float": "active-agents-band",
   "intelligence-for-every-clinic": "prototype",
   "federated-clinic-intelligence": "validate",
+  "clinic-specialty-workflows": "front-desk",
   "introducing-genome": "looking-ahead",
   "blended-intelligence": "integrate",
   "genome-is-built-for-you": "front-desk",

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { ClinicSpecialtyWorkflowFigure } from "@/components/blog/ClinicSpecialtyWorkflowsArticle";
 import { ProtoGrainGradient } from "@/components/proto/ProtoGrainGradient";
 import { BlogShaderBackdropImage } from "@/components/blog/BlogShaderBackdropImage";
 import { aboutStyleFeatureShaderSurface } from "@/lib/blog/about-style-feature-card";
@@ -138,6 +139,27 @@ export function AboutStyleArticleContentBlocks({
                   {renderBoldSegments(block.continuation)}&rdquo;
                 </span>
               </blockquote>
+            </figure>
+          );
+        }
+
+        if (block.type === "doehomeScene") {
+          return (
+            <figure key={block.id} className="about-style-shader-figure m-0">
+              <div
+                className={`about-style-shader-figure__shader relative aspect-square w-full overflow-hidden ${DOEPHONE_SECTION_CAROUSEL_RADIUS}`}
+                aria-hidden
+              >
+                <ClinicSpecialtyWorkflowFigure
+                  shaderSrc={block.shaderSrc}
+                  specialty={block.specialty}
+                  functionLabel={block.functionLabel}
+                  details={block.details}
+                />
+              </div>
+              <figcaption className={`${ABOUT_STYLE_SHADER_CAPTION_TW} mt-3 iphone-page:mt-4`}>
+                {block.caption}
+              </figcaption>
             </figure>
           );
         }

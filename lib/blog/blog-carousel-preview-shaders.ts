@@ -16,6 +16,7 @@ export const BLOG_CAROUSEL_PREVIEW_SHADERS: Record<string, ProtoGrainGradientVar
   "introducing-float": "prototype",
   "intelligence-for-every-clinic": "meet-proto-stack-1",
   "federated-clinic-intelligence": "integrate",
+  "clinic-specialty-workflows": "prototype",
   "introducing-genome": "shortlist",
   "blended-intelligence": "meet-proto-stack-1",
   "genome-is-built-for-you": "meet-proto",
