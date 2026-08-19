@@ -72,6 +72,18 @@ export const CLINIC_SPECIALTY_WORKFLOWS_ARTICLE = {
     },
     {
       type: "subheading",
+      text: "Build for variation from the start.",
+    },
+    {
+      type: "paragraph",
+      text: "We are planning Doe around this reality from the beginning. Rather than treating each practice's workflow as an exception added later, we are designing the core of the product to hold the common context of care while making room for the ways teams differ: who does the work, when it happens, what information matters, and where a handoff needs to go next.",
+    },
+    {
+      type: "paragraph",
+      text: "That means building adaptable workflows, clear ownership, and a shared patient thread into the foundation, so a practice does not have to choose between a system that is consistent and one that feels like its own. The goal is for Doe to learn the shape of the work with a team, then make that work easier to run.",
+    },
+    {
+      type: "subheading",
       text: "Built to grow with the practice.",
     },
     {

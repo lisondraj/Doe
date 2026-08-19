@@ -11,7 +11,7 @@ export const LINKEDIN4_CAROUSEL = {
     kicker: "Diagnostic Imaging",
   },
   focused: {
-    kicker: "Plastic Surgery,",
+    kicker: "Plastic Surgery",
     middle: "Dermatology",
     label: "& Aesthetic Clinics",
   },
