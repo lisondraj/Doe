@@ -1587,13 +1587,18 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 }
 
 
-.doeinsure-root--iphone .doehome-shader-frame {
-  --doehome-iphone-glass-pad: 1.35rem;
-  --doehome-iphone-glass-radius: 1rem;
+.doeinsure-root--iphone .doehome-shader-frame,
+.doeinsure-root--iphone .doehome-shader-frame__ui {
   min-height: 22.5rem;
-  isolation: auto;
-  overflow: visible;
+}
+
+.doeinsure-root--iphone .doehome-shader-frame {
+  --doehome-iphone-glass-rim: 0.48rem;
+  --doehome-iphone-ui-pad: 1.35rem;
+  --doehome-iphone-glass-radius: 1rem;
+  overflow: hidden;
   border-radius: var(--doehome-iphone-glass-radius);
+  isolation: auto;
 }
 
 .doeinsure-root--iphone .doehome-shader-frame .doehome-shader__img {
@@ -1607,19 +1612,17 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   z-index: 2;
   pointer-events: none;
   border-radius: inherit;
-  padding: var(--doehome-iphone-glass-pad);
-  border: 1px solid rgba(255, 245, 230, 0.42);
+  padding: var(--doehome-iphone-glass-rim);
+  border: 1px solid rgba(255, 245, 230, 0.3);
   background: linear-gradient(
     145deg,
-    rgba(255, 245, 230, 0.34) 0%,
-    rgba(255, 245, 230, 0.16) 42%,
-    rgba(255, 245, 230, 0.28) 100%
+    rgba(255, 245, 230, 0.24) 0%,
+    rgba(255, 245, 230, 0.11) 50%,
+    rgba(255, 245, 230, 0.2) 100%
   );
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 245, 230, 0.36),
-    inset 0 0 28px rgba(255, 245, 230, 0.08);
+  backdrop-filter: blur(12px) saturate(1.1);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  box-shadow: inset 0 1px 0 rgba(255, 245, 230, 0.22);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -1632,11 +1635,10 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 }
 
 .doeinsure-root--iphone .doehome-shader-frame__ui {
-  min-height: 22.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--doehome-iphone-glass-pad);
+  padding: var(--doehome-iphone-ui-pad);
   background: transparent;
   border: none;
   box-shadow: none;
