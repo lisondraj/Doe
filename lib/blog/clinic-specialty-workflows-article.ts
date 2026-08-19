@@ -1,5 +1,4 @@
 import type { AboutStyleLongformArticle } from "@/lib/blog/about-style-longform-article";
-import { DOEHOME_SHADERS } from "@/lib/doehome/doehome-shaders";
 import { DESIGN5_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
 
 export const CLINIC_SPECIALTY_WORKFLOWS_SLUG = "clinic-specialty-workflows";
@@ -9,89 +8,79 @@ export const CLINIC_SPECIALTY_WORKFLOWS_PATH = `/blog/${CLINIC_SPECIALTY_WORKFLO
 export const CLINIC_SPECIALTY_WORKFLOWS_ARTICLE = {
   slug: CLINIC_SPECIALTY_WORKFLOWS_SLUG,
   path: CLINIC_SPECIALTY_WORKFLOWS_PATH,
-  title: "Built for the way",
-  titleLine2: "each clinic practices",
+  title: "Healthcare is not",
+  titleLine2: "one kind of practice",
   excerpt:
-    "How Doe is being built for diagnostic imaging, endocrine and weight management, aesthetic care, home care, concierge medicine, and other specialty clinic workflows.",
-  subheading: "Specialty workflows on one foundation.",
+    "A first-person perspective on the many ways healthcare practices operate, and how Doe can adapt to help each one grow.",
+  subheading: "An operating model should fit the work.",
   openingLede:
-    "Doe is a clinical operations system that adapts to specialty workflow—not a generic assistant placed on top of the same old queue.",
+    "The more I learned about medicine, the clearer it became: the best operating system should adapt to how care is actually delivered.",
   openingLedeContinuation:
-    "A diagnostic imaging center, an endocrine practice, and a concierge clinician all need the same fundamental things: reliable patient context, clear ownership, and a record of what happened next. But their work does not look the same. Doe is being built so that every specialty can run its own operating model on a shared, accountable foundation.",
+    "As I made my way through medical school, I expected to learn about the breadth of medicine through diagnoses and treatments. I did. But I also started to see another kind of variation: the extraordinary number of ways a healthcare practice can work.",
+  openingLedeContinuation2:
+    "A procedure-driven team has a different rhythm from a longitudinal care practice. A referral-heavy service has different pressure points from a team managing recurring communication, follow-up, and preparation.",
   byline: "By Doe",
   date: "August 19, 2026",
   heroBackdrop: DESIGN5_BACKDROP,
   contentBlocks: [
     {
       type: "paragraph",
-      text: "The core stays consistent: a unified patient thread, workflow-aware agents, role-based routing, and reviewable actions. The surface changes to match the clinic—its care journey, terminology, staff roles, follow-up cadence, and the systems it already uses.",
+      text: "That distinction matters. Growth in healthcare is not only about seeing more patients. It is about giving people enough context to move work forward, keeping promises from falling through, and making every handoff easier to understand. The operating model has to fit the practice before it can make the practice better.",
     },
     {
-      type: "doehomeScene",
-      id: "clinic-imaging-ui",
-      shaderSrc: DOEHOME_SHADERS.chart,
-      specialty: "Diagnostic imaging",
-      functionLabel: "Order-to-result coordination",
-      details: ["MRI knee · authorization due", "Prior study found", "Result review queued"],
-      caption: "UI for imaging order intake, authorization status, and result follow-up.",
+      type: "shader",
+      id: "specialty-practice-cadence",
+      shaderVariant: "front-desk",
+      caption: "Every practice has its own cadence, language, and definition of a completed handoff.",
     },
     {
       type: "subheading",
-      text: "One foundation. Configured for the specialty.",
+      text: "One platform should not mean one workflow.",
     },
     {
       type: "paragraph",
-      text: "For diagnostic imaging, Doe can coordinate intake, prior authorization, preparation instructions, result routing, and the next recommended action. For endocrine and weight management practices, it can keep medication, labs, coaching, and recurring clinical review connected across months of care.",
+      text: "At Doe, we are building the foundation once and reshaping it around the work in front of a team. The patient thread, the ability to understand context, and the accountability behind each action stay consistent. What changes is how the system speaks the practice's language: its roles, timing, intake, approvals, documentation, follow-up, and definition of a useful next step.",
     },
     {
-      type: "doehomeScene",
-      id: "clinic-endocrine-ui",
-      shaderSrc: DOEHOME_SHADERS.genome,
-      specialty: "Endocrine & weight management",
-      functionLabel: "Longitudinal care plans",
-      details: ["A1c due in 14 days", "GLP-1 refill review", "Nutrition check-in sent"],
-      caption: "UI for medication follow-up, lab reminders, and care-plan check-ins.",
+      type: "shader",
+      id: "specialty-care-journey",
+      shaderVariant: "ambient",
+      caption: "The operational model should follow the care journey, not force the journey into a generic queue.",
     },
     {
       type: "paragraph",
-      text: "Plastic surgery, dermatology, and aesthetic clinics need a different rhythm: consultation preparation, informed consent, photography workflows, procedure readiness, and highly responsive post-procedure communication. Home-care teams, nurse practitioners, physician assistants, and concierge clinicians need a mobile-first operating layer that follows care across homes, hospitals, and the clinic—not one that assumes every decision happens at a front desk.",
+      text: "This is not customization for its own sake. It is how software earns the right to be part of care delivery. A system that respects a team's actual operating model can help make the moments around care more reliable, reduce the work that gets recreated by hand, and reveal where the next improvement should come from.",
     },
     {
-      type: "doehomeScene",
-      id: "clinic-aesthetics-ui",
-      shaderSrc: DOEHOME_SHADERS.pulse,
-      specialty: "Plastic surgery & aesthetics",
-      functionLabel: "Consult-to-procedure flow",
-      details: ["Consultation packet complete", "Photo consent received", "Day-3 recovery check"],
-      caption: "UI for consultation intake, photo consent, and post-procedure messaging.",
+      type: "shader",
+      id: "specialty-operational-knowledge",
+      shaderVariant: "customize-agents-band",
+      caption: "Specialty knowledge belongs in the way work is routed, reviewed, and improved over time.",
     },
     {
       type: "quote",
-      id: "clinic-models-quote",
-      lead: "Doe is being shaped for specialty practices, independent clinicians, multi-site groups, and teams building new care models",
+      id: "specialty-growth-quote",
+      lead: "I came away from medical school with a deep respect for how much tacit knowledge lives inside a strong practice",
       continuation:
-        "The point is not to force them into a generic workflow. It is to make their existing expertise **easier to operate, inspect, and improve**.",
+        "Doe should make that knowledge **easier to use and improve**, not flatten it into a generic set of tasks.",
     },
     {
-      type: "doehomeScene",
-      id: "clinic-home-care-ui",
-      shaderSrc: DOEHOME_SHADERS.handoff,
-      specialty: "Home care & concierge medicine",
-      functionLabel: "Field care coordination",
-      details: ["Home visit routed", "NP handoff prepared", "Follow-up call scheduled"],
-      caption: "UI for visit routing, clinician handoffs, and patient follow-up.",
+      type: "shader",
+      id: "specialty-shared-foundation",
+      shaderVariant: "integrate",
+      caption: "A shared foundation can still make room for very different ways of delivering care.",
     },
     {
       type: "subheading",
-      text: "Purpose-built, without a separate system for every team.",
+      text: "Built to grow with the practice.",
     },
     {
       type: "paragraph",
-      text: "Specialty configuration should not create a new silo. A referral, a result, a clinician decision, and a patient message all remain part of the same thread. Doe can route work by license and responsibility, preserve the evidence behind a recommendation, and keep teams in control of the actions that affect care.",
+      text: "When a practice grows, the gaps between people, systems, and patient expectations become more visible. Doe is designed to keep the work connected as volume increases: to turn the important parts of a team's process into a shared operating model, give people a clear place to take over, and preserve the context behind every decision.",
     },
     {
       type: "paragraph",
-      text: "We are starting with the operational moments that create the most friction: intake, scheduling, authorizations, documentation, results, follow-up, and handoffs. Then we adapt the UI and automation around the real work of the clinic.",
+      text: "The goal is not to prescribe how every practice should run. It is to give every kind of practice a platform that can become more useful as the team learns, changes, and grows.",
     },
   ],
   bodyParagraphs: [],
@@ -103,12 +92,13 @@ export const CLINIC_SPECIALTY_WORKFLOWS_ARTICLE = {
   thesisPoints: [],
   closing: "",
   finalParagraph:
-    "Doe is being built so specialty clinics can keep their own operating model—on a shared, accountable foundation.",
+    "Doe is being built so every practice can keep its own operating model on a shared, accountable foundation.",
   emailInviteHeadline: "Continue the conversation.",
   emailInviteLabel: "Contact Doe",
 } satisfies AboutStyleLongformArticle;
 
-export const CLINIC_SPECIALTY_WORKFLOWS_TITLE = `${CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.title} ${CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.titleLine2}`;
+export const CLINIC_SPECIALTY_WORKFLOWS_TITLE =
+  `${CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.title} ${CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.titleLine2}`;
 
 export const CLINIC_SPECIALTY_WORKFLOWS_EXCERPT = CLINIC_SPECIALTY_WORKFLOWS_ARTICLE.excerpt;
 
