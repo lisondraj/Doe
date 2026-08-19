@@ -12,7 +12,7 @@ export const CLINIC_SPECIALTY_WORKFLOWS_ARTICLE = {
   titleLine2: "one kind of practice",
   excerpt:
     "A first-person perspective on the many ways healthcare practices operate, and how Doe can adapt to help each one grow.",
-  subheading: "An operating model should fit the work.",
+  subheading: "An operating model built for every provider.",
   openingLede:
     "The more I learned about medicine, the clearer it became: the best operating system should adapt to how care is actually delivered.",
   openingLedeContinuation:
