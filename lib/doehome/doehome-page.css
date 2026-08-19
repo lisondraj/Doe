@@ -1594,18 +1594,18 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 }
 
 .doeinsure-root--iphone .doehome-shader-frame__ui {
-  --doehome-iphone-glass-pad: 0.48rem;
-  --doehome-iphone-glass-radius: 0.62rem;
+  --doehome-iphone-glass-pad: 0.95rem;
+  --doehome-iphone-glass-radius: 0.85rem;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--doehome-iphone-glass-pad);
   border-radius: var(--doehome-iphone-glass-radius);
-  border: 1px solid rgba(255, 245, 230, 0.16);
-  background: rgba(255, 245, 230, 0.045);
-  backdrop-filter: blur(10px) saturate(1.06);
-  -webkit-backdrop-filter: blur(10px) saturate(1.06);
-  box-shadow: inset 0 1px 0 rgba(255, 245, 230, 0.1);
+  border: 1px solid rgba(255, 245, 230, 0.22);
+  background: rgba(255, 245, 230, 0.065);
+  backdrop-filter: blur(12px) saturate(1.08);
+  -webkit-backdrop-filter: blur(12px) saturate(1.08);
+  box-shadow: inset 0 1px 0 rgba(255, 245, 230, 0.14);
   overflow: hidden;
 }
 
@@ -1614,25 +1614,47 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doeinsure-root--iphone .doehome-shader-frame__ui > .doehome-scene--crop-tr,
 .doeinsure-root--iphone .doehome-shader-frame__ui > .doehome-scene--crop-tl,
 .doeinsure-root--iphone .doehome-shader-frame__ui > .doehome-scene--crop-center {
-  width: 116%;
-  min-height: 116%;
+  width: 108%;
+  min-height: 108%;
+}
+
+.doeinsure-root--iphone .doehome-shader-frame__ui > .doehome-scene--focus {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 100%;
+  max-width: 100%;
+  min-height: auto;
+  height: auto;
+  flex: 0 1 auto;
+  align-self: center;
+  gap: 0.65rem;
+}
+
+.doeinsure-root--iphone .doehome-scene--focus > article {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .doeinsure-root--iphone .doehome-grid,
 .doeinsure-root--iphone .doehome-scene--nodes,
 .doeinsure-root--iphone .doehome-scene--week,
 .doeinsure-root--iphone .doehome-scene--board,
-.doeinsure-root--iphone .doehome-scene--focus > article,
 .doeinsure-root--iphone .doehome-intake article {
-  min-width: 26.5rem;
+  min-width: 25rem;
 }
 
 .doeinsure-root--iphone .doehome-scene--stack {
   position: relative;
   left: auto;
   top: auto;
-  width: min(84%, 16.5rem);
+  width: min(80%, 16rem);
   min-height: auto;
+}
+
+.doeinsure-root--iphone .doehome-scene__action {
+  max-width: 100%;
 }
 
 .doeinsure-root--iphone .doehome-scene > header b,
