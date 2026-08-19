@@ -238,7 +238,7 @@ export function DoeHomePageContent() {
                       aria-label={`${doeHomeProductWordmarkLabel(product)} — ${tagline}`}
                     >
                       <DoeHomeProductWordmark product={product} iphoneProductRow />
-                      <DoeHomeIphoneStatTagline label={tagline} />
+                      <DoeHomeIphoneStatTagline label={tagline} showArrow={false} linked />
                     </a>
                   ))}
                 </div>
