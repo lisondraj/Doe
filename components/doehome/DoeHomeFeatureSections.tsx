@@ -145,7 +145,7 @@ function PulseBody({ revealed }: { revealed: boolean }) {
   const { variant } = useDoeHomePageVariant();
   const live = DOEHOME_PULSE.agents[0];
   const caller = DOEHOME_PULSE.call.turns[0];
-  const { lit } = useDoeHomeStep(revealed, DOEHOME_PULSE.agents.length + 1, variant === "phone" ? 480 : 360);
+  const { lit } = useDoeHomeStep(revealed, 1, variant === "phone" ? 480 : 360);
 
   return (
     <Scene className="doehome-scene--call">
@@ -154,7 +154,6 @@ function PulseBody({ revealed }: { revealed: boolean }) {
         style={{ "--n": 0 } as CSSProperties}
       >
         <header>
-          <em>{DOEHOME_PULSE.live}</em>
           <span>{live.time}</span>
         </header>
         <div className="doehome-call__who">
@@ -168,23 +167,6 @@ function PulseBody({ revealed }: { revealed: boolean }) {
         <p>{caller.text}</p>
         <strong>{DOEHOME_PULSE.human}</strong>
       </article>
-      <ul className="doehome-call__lines">
-        {DOEHOME_PULSE.agents.map((agent, index) => (
-          <li
-            key={agent.id}
-            className={`doehome-iphone-glass-card${index === 0 ? " is-this" : ""}${
-              lit >= 2 + index ? " is-on" : ""
-            }`}
-            style={{ "--n": index + 1 } as CSSProperties}
-          >
-            <b>{agent.name}</b>
-            <span>
-              {agent.voice} · {agent.time}
-            </span>
-            <em>{agent.state}</em>
-          </li>
-        ))}
-      </ul>
     </Scene>
   );
 }
@@ -460,13 +442,10 @@ function ScribeBody({ revealed }: { revealed: boolean }) {
         style={{ "--n": 0 } as CSSProperties}
       >
         <header>
-          <div>
-            <b>{DOEHOME_SCRIBE.patient}</b>
-            <span>
-              {DOEHOME_SCRIBE.room} · {DOEHOME_SCRIBE.provider}
-            </span>
-          </div>
-          <Wave on={lit >= 1} count={9} />
+          <b>{DOEHOME_SCRIBE.patient}</b>
+          <span>
+            {DOEHOME_SCRIBE.room} · {DOEHOME_SCRIBE.provider}
+          </span>
         </header>
         <ul>
           {DOEHOME_SCRIBE.lines.map((line, index) => (
