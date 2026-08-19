@@ -33,7 +33,7 @@ export const DOEHOME_NAV = {
 export const DOEHOME_HERO = {
   title: "Building personalized",
   tagline: ["intelligence for every clinic."],
-  lede: "Genome learns your workflow. Pulse, Fabric, and Float run on top of it: phones, agents, and the financial work the front desk should not still be doing by hand.",
+  lede: "Doe is an AI-native operating system for your patient. Sign up to secure an intelligent model for your clinic.",
   emailLabel: "Work email",
   emailPlaceholder: "you@clinic.com",
   primaryCta: "Join Waitlist",
@@ -43,27 +43,48 @@ export const DOEHOME_HERO = {
 export const DOEHOME_HERO_TAPE = {
   clinic: "Harbor Ortho",
   heading: "This morning",
-  title: "Overnight write-back",
+  title: "After Hours Summary",
   columns: ["Event", "Chart", "Source"],
   foot: "Version 2.1 underneath it all",
   lines: [
     { t: "7:04", text: "Overnight refill", chart: "Dana K. · note", source: "Pulse" },
-    { t: "7:06", text: "Cancel visit", chart: "Dana K. · schedule", source: "Pulse" },
-    { t: "8:12", text: "Maya on the main line", chart: "Live thread", source: "Pulse" },
-    { t: "8:14", text: "Friday 10:20 held", chart: "Dana K. · visit", source: "Pulse" },
+    { t: "7:06", text: "Cancel visit", chart: "Marcus T. · schedule", source: "Human" },
+    { t: "8:12", text: "Maya on the main line", chart: "Elena R. · call", source: "Pulse" },
+    { t: "8:14", text: "Friday 10:20 held", chart: "James L. · visit", source: "Human" },
   ],
 } as const;
 
 export const DOEHOME_STATS = [
-  { value: "Yours", label: "A model trained on your clinic, not a generic one." },
-  { value: "One", label: "Phones, agents, and financial work on one platform." },
-  { value: "Kept", label: "Routine work stays on your model." },
+  {
+    value: "Your Own Model",
+    label: "Genome brings security & frontier intelligence to every clinic.",
+    productLink: "genome",
+  },
+  {
+    value: "Full-Suite of AI Agents",
+    label: "Fabric is a no-code canvas that allows you to automate any workflow.",
+    productLink: "fabric",
+  },
+  {
+    value: "AI for Your Finances",
+    label: "Float handles remittance, contracts, and denials for the front desk.",
+    productLink: "float",
+  },
 ] as const;
+
+/** iPhone hero stat row — Fabric, Pulse, Float (Genome sits above). */
+export const DOEHOME_IPHONE_STAT_ROW = [
+  { product: "fabric", tagline: "Design AI Agents" },
+  { product: "pulse", tagline: "Voice Agents" },
+  { product: "float", tagline: "AI for Your Finances" },
+] as const;
+
+export const DOEHOME_IPHONE_GENOME_TAGLINE = ["Personalized intelligence", "for your clinic"] as const;
 
 export const DOEHOME_GENOME = {
   id: "genome",
-  title: ["Not a shared model.", "Yours."],
-  lede: "Genome is the reason to buy Doe. A group can run a model per clinic. A clinic can run a model per provider. Each one is post-trained on that team’s workflow: prior auth, referrals, visit prep, so the software actually knows how you work.",
+  title: ["Intelligence for every", "clinic and provider."],
+  lede: "Genome gives every clinic and provider its own model. A group can run one per site. A clinic can run one per provider. Each model learns from your team’s workflow, from prior auth and referrals to visit prep, so the software fits how you actually work.",
   genericLabel: "Generic hospital model",
   genericNote: "Same answers at every site",
   yoursLabel: "Harbor model",
@@ -110,8 +131,8 @@ export const DOEHOME_GENOME = {
 
 export const DOEHOME_PULSE = {
   id: "pulse",
-  title: ["The clinic line", "never hits voicemail."],
-  lede: "Pulse is voice AI on every live line: front desk, prior auth, nights. Each agent has its own voice, language, tone, and hours. Overnight calls come back at open, written to the chart.",
+  title: ["Voice agents answer", "every single call."],
+  lede: "Pulse is voice AI for your clinic lines. Front desk, prior auth, and after hours each get their own agent with voice, language, and hours. Every call gets answered, and overnight voicemails return at open on the chart.",
   number: "(416) 555-0140",
   live: "Live",
   human: "Take over",
@@ -143,8 +164,8 @@ export const DOEHOME_PULSE = {
 
 export const DOEHOME_FABRIC = {
   id: "fabric",
-  title: ["Build the workflow.", "Runs on your model."],
-  lede: "Fabric is how the clinic designs its own agents, no engineering ticket. A referral becomes a branch, a missing record becomes a human handoff, and the whole flow runs on Harbor’s model, not a generic one.",
+  title: ["A canvas to build", "your own agents."],
+  lede: "Fabric is a no-code canvas for building your own agents. Start with a trigger, add branches and human handoffs, and publish without an engineering ticket. Every flow runs on your clinic’s model, not a generic one.",
   runsOn: "Runs on Harbor’s model",
   prompt: "Describe a block…",
   tools: ["Start", "If", "Human"],
@@ -166,10 +187,10 @@ export const DOEHOME_FLOAT = {
   title: ["See the money", "payers are keeping."],
   lede: "Float is the financial layer. Agents sit on payer hold so your front desk does not. Remittance is checked against the contract. Codes come from the visit. Denials are appealed before they expire.",
   windowTitle: "Aetna remittance",
-  tableTitle: "Contract vs paid",
-  columns: ["Payer", "Claim", "Allowed", "Paid"],
+  tableTitle: "Would you like me to call?",
+  columns: ["Payer", "Claim", "Allow.", "Paid"],
   underpay: "−$18k",
-  underpayNote: "Aetna paid 82% of contracted rate this month",
+  underpayNote: ["Aetna paid 82% of contracted", "rate this month"] as const,
   contractLabel: "Contract",
   paidLabel: "Paid",
   contract: 100,
@@ -190,7 +211,7 @@ export const DOEHOME_FLOAT = {
   denials: [
     { payer: "UHC", reason: "Auth lapse", due: "Now" },
   ],
-  allowedLabel: "Allowed",
+  allowedLabel: "Allow.",
   paidAmtLabel: "Paid",
   underLabel: "Kept by payer",
   allowed: "$220",
@@ -301,7 +322,7 @@ export const DOEHOME_SCRIBE = {
     "Hold Friday 10:20",
     "Refill already on the chart",
   ],
-  stamp: "Wrote to chart",
+  stamp: "Transfer to Chart",
   badge: "Ambient",
   cardTitle: "Visit note",
 } as const;
@@ -374,28 +395,52 @@ export const DOEHOME_FAQ = {
   title: ["Built for the teams", "who deliver care."],
   items: [
     {
+      q: "What is Doe?",
+      a: "Doe is an AI platform for clinics. Genome gives each site its own intelligence. Pulse answers the phones. Fabric builds your agents. Float runs the financial work. Everything writes back to the chart you already use.",
+    },
+    {
       q: "What is Genome?",
-      a: "Genome is Doe’s core product: an intelligence model for your clinic. Multi-site groups can run a model per clinic. Clinics can run a model per provider. Each is post-trained on that team’s workflow data.",
+      a: "Your clinic's intelligence model. A group can run one per site. A clinic can run one per provider. Each model learns from your team's workflow, from prior auth and referrals to visit prep, so the software fits how you actually work.",
+    },
+    {
+      q: "What is Pulse?",
+      a: "Voice AI for your clinic lines. Front desk, prior auth, scheduling, and after hours each get their own agent with voice, language, tone, and hours. Every call gets answered, and overnight voicemails return at open on the chart.",
+    },
+    {
+      q: "What is Fabric?",
+      a: "A no-code canvas for building your own agents. Start with a trigger, add branches and human handoffs, and publish without an engineering ticket. Every flow runs on your clinic's Genome model, not a generic one shared across customers.",
+    },
+    {
+      q: "What is Float?",
+      a: "The financial layer. Agents sit on payer hold so your front desk does not. Remittance is checked against the contract. Codes come from the visit. Denials are appealed before they expire.",
+    },
+    {
+      q: "Does Doe replace our EHR?",
+      a: "No. Doe plugs into Athena, Epic, eClinicalWorks, and the rest of your stack. Agents read and write through what you already run. Your team keeps the same chart.",
+    },
+    {
+      q: "Do we need engineers to use Doe?",
+      a: "No. Pulse goes live on your lines. Fabric is a visual builder. Float and Genome run in the background. Your front desk and ops team can take over live jobs without filing a ticket.",
     },
     {
       q: "Where does patient data go?",
-      a: "Routine work stays on the clinic’s own model. Only hard cases route to a frontier model. Workflow outcomes used for weekly training are ones your team already approved.",
-    },
-    {
-      q: "What does Pulse do?",
-      a: "Pulse is voice AI for the clinic line. Separate agents for front desk, prior auth, and nights, each with their own voice, language, tone, and hours. Overnight voicemail is returned at open.",
-    },
-    {
-      q: "Do we need engineers to use Fabric?",
-      a: "No. Fabric is a visual builder. Describe a step, add a branch, add a human handoff. Agents run on your model, not a generic one.",
-    },
-    {
-      q: "How is Float different from a billing vendor?",
-      a: "Float watches remittance against contracted rates, stays on payer hold, suggests codes from the visit, and queues denials before they expire. It writes outcomes back to the chart.",
+      a: "Routine work stays on your clinic model. Hard cases can route to a frontier model when needed. Weekly training uses outcomes your team already approved.",
     },
     {
       q: "Can a group see every clinic?",
-      a: "Yes. A group owner watches every clinic’s model from one dashboard, then opens a location to see the workflow and providers underneath it.",
+      a: "Yes. Owners watch every clinic model from one dashboard, then open a location to see workflows and providers underneath.",
+    },
+    {
+      q: "What happens overnight?",
+      a: "Calls are still answered. Refills, cancellations, and new patient requests write back to the chart before the door opens. Your team starts the day with work already done.",
+    },
+    {
+      q: "Can staff take over a live call or job?",
+      a: "Yes. Pulse, Fabric, and Float keep the thread. When someone at the desk takes over, they see the patient, the task, and the context. They are not starting from a voicemail.",
+    },
+    {
+      q: "How is Float different from a billing vendor?",
+      a: "Float does not just report denials. Agents stay on payer hold, check remittance against contract, pull codes from the visit, and queue appeals before they expire. Outcomes go back to the chart and the stack you already run.",
     },
   ],
 } as const;

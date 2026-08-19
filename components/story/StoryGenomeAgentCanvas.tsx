@@ -1,46 +1,27 @@
-import { dmSans, suisseIntl } from "@/lib/home/fonts";
-import { STORY_GENOME_AGENTS } from "@/lib/story/story-genome-visuals";
+import type { CSSProperties } from "react";
 
-/** Fabric canvas — agents you build run on the clinic’s Genome. */
+import { dmSans, suisseIntl } from "@/lib/home/fonts";
+import { STORY_GENOME_KNOWS } from "@/lib/story/story-genome-visuals";
+
+/** Wide Genome tile — clinic agents running on Harbor Genome. */
 export function StoryGenomeAgentCanvas() {
   return (
-    <div className={`story-genome-stage story-genome-stage--agents ${dmSans.className}`} aria-hidden="true">
-      <div className="story-genome-card story-genome-canvas">
-        <div className="story-genome-canvas__field">
-          <div className="story-genome-canvas__flow">
-            <div className="story-genome-canvas__node">
-              <span className="story-genome-canvas__node-note">{STORY_GENOME_AGENTS.left.kicker}</span>
-              <span className={`story-genome-canvas__node-label ${suisseIntl.className}`}>
-                {STORY_GENOME_AGENTS.left.label}
-              </span>
-            </div>
-            <span className="story-genome-canvas__rail" />
-            <div className="story-genome-canvas__node story-genome-canvas__node--model">
-              <span className={`story-genome-canvas__node-label ${suisseIntl.className}`}>
-                {STORY_GENOME_AGENTS.model}
-              </span>
-              <span className="story-genome-canvas__node-note">{STORY_GENOME_AGENTS.modelNote}</span>
-            </div>
-            <span className="story-genome-canvas__rail" />
-            <div className="story-genome-canvas__stack">
-              {STORY_GENOME_AGENTS.right.map((node) => (
-                <div key={node.id} className="story-genome-canvas__node">
-                  <span className="story-genome-canvas__node-note">{node.kicker}</span>
-                  <span className={`story-genome-canvas__node-label ${suisseIntl.className}`}>{node.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+    <div className={`story-genome-stage story-genome-stage--knows ${dmSans.className}`} aria-hidden="true">
+      <div className="story-genome-card story-genome-knows">
+        <span className={`story-genome-knows__clinic ${suisseIntl.className}`}>{STORY_GENOME_KNOWS.clinic}</span>
 
-        <div className="story-genome-canvas__dock">
-          <span className="story-genome-canvas__dock-label">Add</span>
-          {STORY_GENOME_AGENTS.presets.map((preset) => (
-            <span key={preset.id} className="story-genome-canvas__chip">
-              {preset.label}
-            </span>
+        <ul className="story-genome-knows__layers m-0 list-none p-0">
+          {STORY_GENOME_KNOWS.layers.map((layer, index) => (
+            <li
+              key={layer.id}
+              className={`story-genome-knows__layer story-genome-knows__layer--${index + 1}`}
+              style={{ "--story-genome-share": `${layer.share}%` } as CSSProperties & { "--story-genome-share": string }}
+            >
+              <span className={`story-genome-knows__label ${suisseIntl.className}`}>{layer.label}</span>
+              <span className={`story-genome-knows__years ${dmSans.className}`}>{layer.count}</span>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </div>
   );

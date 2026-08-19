@@ -62,6 +62,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   --doehome-ink: #1a1208;
   --doehome-ink-muted: rgba(26, 18, 8, 0.58);
   --doehome-ink-line: rgba(26, 18, 8, 0.14);
+  --doehome-iphone-stat-mark: 6.25rem;
+  --doehome-iphone-stat-mark-genome: 9.25rem;
   background: var(--doehome-page);
   color: var(--doehome-cream);
 }
@@ -132,6 +134,11 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   color: #1a1208;
 }
 
+.doehome-root .doeinsure-nav:not(.is-open) .doeinsure-nav__menu:hover {
+  border-color: #e8c08e;
+  color: var(--doehome-cream);
+}
+
 .doehome-root .doeinsure-nav__panel a:not(.doeinsure-btn) {
   color: var(--doehome-cream);
   border-bottom-color: var(--doehome-gold-line);
@@ -153,11 +160,19 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 
 .doehome-root a.doeinsure-btn:hover,
 .doehome-root button.doeinsure-btn:hover,
-.doehome-root .doeinsure-btn:hover {
-  background: transparent;
-  border-color: #e8c08e;
-  color: #e8c08e;
-  -webkit-text-fill-color: #e8c08e;
+.doehome-root .doeinsure-btn:hover,
+.doehome-root .doeinsure-footer__quote:hover,
+.doehome-root a.doeinsure-footer__quote:hover,
+.doehome-root:not(.doeinsure-root--iphone) a.doeinsure-footer__quote:hover,
+.doehome-root .doeinsure-footer__coverage:hover,
+.doehome-root a.doeinsure-footer__coverage:hover,
+.doehome-root.doeinsure-root--iphone .doeinsure-footer__coverage:hover,
+.doehome-root.doeinsure-root--iphone a.doeinsure-footer__coverage:hover {
+  background-color: #1a1208;
+  background-image: none;
+  border-color: #1a1208;
+  color: var(--doehome-cream);
+  -webkit-text-fill-color: var(--doehome-cream);
 }
 
 .doehome-root .doeinsure-nav__mark,
@@ -206,9 +221,13 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-root .doeinsure-hero__title {
   max-width: none;
   overflow: visible;
-  font-size: clamp(1.85rem, 2.7vw, 2.45rem);
   letter-spacing: -0.05em;
   line-height: 1.16;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero h1,
+.doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero__title {
+  font-size: clamp(1.95rem, 2.95vw, 2.7rem);
 }
 
 .doehome-root .doeinsure-section h2,
@@ -221,7 +240,6 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 }
 
 .doehome-root .doeinsure-hero,
-.doehome-root .doeinsure-hero__stage,
 .doehome-root main,
 .doehome-root.doeinsure-root--iphone main {
   background: #1a1208;
@@ -242,6 +260,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero__grid {
   width: min(100%, 72rem);
   margin-inline: auto;
+  grid-template-columns: minmax(0, 1fr) minmax(21rem, 1.05fr);
+  gap: 3.25rem;
 }
 
 .doehome-root .doeinsure-section {
@@ -250,38 +270,19 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 
 .doehome-root .doeinsure-hero__stage {
   isolation: isolate;
-  overflow: hidden;
-}
-
-.doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero::before {
-  content: none;
-}
-
-.doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero__stage::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  bottom: 0;
-  left: calc(50% - 50vw);
-  right: calc(50% - 50vw);
-  pointer-events: none;
-  background-color: #1a1208;
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    rgba(232, 192, 142, 0.2) 1px,
-    transparent 0
-  );
-  background-size: 20px 20px;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
-  mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  overflow: visible;
+  background: transparent;
 }
 
 .doehome-root .doeinsure-hero::before {
+  content: none;
+}
+
+.doehome-root .doeinsure-hero__stage::before {
   content: "";
   position: absolute;
   z-index: 0;
-  top: 0;
+  top: -5.75rem;
   bottom: 0;
   left: calc(50% - 50vw);
   right: calc(50% - 50vw);
@@ -293,14 +294,18 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
     transparent 0
   );
   background-size: 20px 20px;
-}
-
-.doehome-root .doeinsure-hero__stage::before {
-  content: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
 }
 
 .doehome-root.doeinsure-root--iphone .doeinsure-hero__stage::before {
-  content: none;
+  top: -1.55rem;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
 }
 
 .doehome-root .doeinsure-hero__stage::after,
@@ -441,6 +446,10 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-root .doeinsure-hero__secondary:hover {
   border-bottom-color: #e8c08e;
   background-image: var(--doehealth-gold-text-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .doehome-root .doeinsure-hero-form input,
@@ -489,28 +498,244 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   border-right: 1px solid var(--doehome-gold-line);
 }
 
-.doehome-root .doeinsure-stat {
+.doehome-root .doeinsure-stat,
+.doehome-root .doehome-stat {
   border-color: var(--doehome-gold-line);
-}
-
-.doehome-root .doeinsure-stat.is-on {
-  background: var(--doehome-page-raised);
+  cursor: default;
 }
 
 .doehome-root .doeinsure-stat b,
-.doehome-root .doeinsure-stat.is-on b {
+.doehome-root .doehome-stat b {
   background: var(--doehealth-gold-text-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  line-height: 1.14;
-  padding-bottom: 0.08em;
+  line-height: 1.22;
+  padding-block: 0.06em 0.12em;
   overflow: visible;
+}
+
+.doehome-root .doehome-product-wordmark {
+  display: block;
+  overflow: visible;
+  flex: none;
+  height: auto;
+  max-width: none;
 }
 
 .doehome-root .doeinsure-stat span {
   color: var(--doehome-cream-muted);
+}
+
+.doehome-root .doehome-stat-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.42rem;
+  line-height: 1.45;
+}
+
+.doehome-root .doehome-stat-copy__text {
+  display: block;
+}
+
+.doehome-root .doehome-stat-product-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.34rem;
+  margin-left: 0;
+  color: #e8c08e;
+  text-decoration: none;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+.doehome-root .doehome-stat-product-link:hover {
+  color: #f2e8da;
+}
+
+.doehome-root .doehome-stat-product-link .doehome-product-wordmark {
+  display: inline-block;
+  width: 5rem;
+  height: auto;
+  margin-right: 0;
+  vertical-align: -0.08em;
+}
+
+.doehome-root .doehome-stat-product-link__arrow {
+  width: 1.3rem;
+  height: auto;
+  flex: none;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doeinsure-stat,
+.doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-stat {
+  padding-left: 1.5rem;
+}
+
+.doehome-root.doeinsure-root--iphone .doeinsure-hero .doeinsure-stat,
+.doehome-root.doeinsure-root--iphone .doeinsure-hero .doehome-stat {
+  grid-template-columns: 7.35rem minmax(0, 1fr);
+  align-items: center;
+  overflow: visible;
+}
+
+.doehome-root.doeinsure-root--iphone .doeinsure-hero .doeinsure-stats,
+.doehome-root.doeinsure-root--iphone .doeinsure-hero .doeinsure-stats__row {
+  overflow: visible;
+}
+
+.doehome-root.doeinsure-root--iphone .doeinsure-hero .doeinsure-stats > .doeinsure-stats__row {
+  width: 100%;
+  max-width: none;
+  padding-inline: 0;
+}
+
+.doehome-root.doeinsure-root--iphone .doeinsure-hero .doehome-stat--iphone-genome {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding-block: 1.05rem 0.95rem;
+  padding-inline: max(var(--di-inset), env(safe-area-inset-left, 0px))
+    max(var(--di-inset), env(safe-area-inset-right, 0px));
+  border-bottom: 1px solid var(--doehome-gold-line);
+  overflow: visible;
+  text-align: center;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-genome-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-genome-link:hover .doehome-stat-iphone-tagline__arrow,
+.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-product:hover .doehome-stat-iphone-tagline__arrow {
+  color: #f2e8da;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-genome-link .doehome-product-wordmark {
+  width: var(--doehome-iphone-stat-mark-genome);
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+  flex: none;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-tagline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  max-width: 100%;
+  color: var(--doehome-cream-muted);
+  font-size: 0.92rem;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-tagline__text {
+  display: block;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-tagline--stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-tagline--stacked .doehome-stat-iphone-tagline__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.06rem;
+  line-height: 1.28;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-tagline__line {
+  display: block;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-tagline__line--with-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-tagline__arrow {
+  width: 1.15rem;
+  height: auto;
+  flex: none;
+  color: #e8c08e;
+}
+
+.doehome-root.doeinsure-root--iphone .doeinsure-hero .doehome-stat--iphone-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  align-items: stretch;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border-bottom: 0;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat--iphone-row .doehome-stat-iphone-product {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  gap: 0.45rem;
+  min-width: 0;
+  padding: 0.85rem 0.35rem 0.95rem;
+  overflow: visible;
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+  border-left: 1px solid var(--doehome-gold-line);
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat--iphone-row .doehome-stat-iphone-tagline {
+  font-size: 0.68rem;
+  line-height: 1.28;
+  gap: 0.22rem;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat--iphone-row .doehome-stat-iphone-tagline__arrow {
+  width: 0.95rem;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat--iphone-row .doehome-stat-iphone-product:first-child {
+  border-left: 0;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat--iphone-row .doehome-product-wordmark {
+  display: block;
+  width: var(--doehome-iphone-stat-mark);
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+  flex: none;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doeinsure-stat b,
+.doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-stat b {
+  font-size: clamp(1.95rem, 2.75vw, 2.55rem);
+  line-height: 1.18;
+  padding-block: 0.08em 0.14em;
 }
 
 .doehome-root .doeinsure-faq {
@@ -518,11 +743,23 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 }
 
 .doehome-root .doeinsure-faq > div {
-  border-bottom-color: var(--doehome-gold-line);
+  border-bottom: none;
+}
+
+.doehome-root .doehome-faq__items > div {
+  border-bottom: 1px solid var(--doehome-gold-line);
+}
+
+.doehome-root .doehome-faq__items > div:first-child button {
+  border-top: 0;
 }
 
 .doehome-root .doeinsure-faq button {
   color: var(--doehome-cream);
+}
+
+.doehome-root .doeinsure-faq button:hover {
+  color: #e8c08e;
 }
 
 .doehome-root .doeinsure-faq button i {
@@ -531,6 +768,10 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 
 .doehome-root .doeinsure-faq p {
   color: var(--doehome-cream-muted);
+}
+
+.doehome-root .doehome-faq {
+  display: block;
 }
 
 .doehome-root #request.doehome-cta-strip {
@@ -620,19 +861,6 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   -webkit-text-fill-color: #1a1208;
 }
 
-.doehome-root .doeinsure-footer__quote:hover,
-.doehome-root a.doeinsure-footer__quote:hover,
-.doehome-root:not(.doeinsure-root--iphone) a.doeinsure-footer__quote:hover,
-.doehome-root .doeinsure-footer__coverage:hover,
-.doehome-root a.doeinsure-footer__coverage:hover,
-.doehome-root.doeinsure-root--iphone .doeinsure-footer__coverage:hover,
-.doehome-root.doeinsure-root--iphone a.doeinsure-footer__coverage:hover {
-  background: transparent;
-  border-color: #e8c08e;
-  color: #e8c08e;
-  -webkit-text-fill-color: #e8c08e;
-}
-
 .doehome-root .doeinsure-footer__bar {
   border-top-color: var(--doehome-gold-line);
 }
@@ -715,13 +943,28 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-genome__lede,
 .doehome-pulse__lede,
 .doehome-fabric__lede,
-.doehome-float__lede {
+.doehome-float__lede,
+.doehome-feature__lede {
+  display: block;
   margin: 0;
-  color: var(--di-muted);
+  max-width: 46rem;
+  color: var(--doehome-cream-muted);
   font-size: 1.05rem;
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.45;
+}
+
+.doehome-feature__lede-link {
+  color: #e8c08e;
+  text-decoration: underline;
+  text-decoration-color: rgba(232, 192, 142, 0.72);
+  text-underline-offset: 0.14em;
+}
+
+.doehome-feature__lede-link:hover {
+  color: #f2e8da;
+  text-decoration-color: rgba(242, 232, 218, 0.85);
 }
 
 .doehome-shader {
@@ -760,6 +1003,94 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   z-index: 0;
 }
 
+.doehome-root #fabric .doehome-shader__img {
+  object-position: center top;
+}
+
+.doehome-root #fabric .doehome-shader-frame__ui {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doehome-root #fabric .doehome-scene--stack {
+  align-self: center;
+  margin-inline: auto;
+  width: min(62%, 19rem);
+  gap: 0.72rem;
+  transform: scale(0.88);
+  transform-origin: center center;
+}
+
+.doehome-root #fabric .doehome-pill {
+  border-radius: 0.35rem;
+  background: var(--doehome-paper);
+  border: 1px solid var(--doehome-ink-line);
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0ms linear,
+    transform 820ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--n, 0) * 95ms);
+}
+
+.doehome-root #fabric .doehome-pill.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+.doehome-root #fabric .doehome-pill span,
+.doehome-root #fabric .doehome-pill b {
+  opacity: 0;
+  transform: translate3d(0, 0.7rem, 0);
+  transition:
+    opacity 820ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 820ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--n, 0) * 95ms + 80ms);
+}
+
+.doehome-root #fabric .doehome-pill.is-on span,
+.doehome-root #fabric .doehome-pill.is-on b {
+  opacity: 1;
+  transform: none;
+}
+
+.doehome-root #connect .doehome-shader-frame {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  max-width: 31rem;
+  margin-inline: auto;
+}
+
+.doehome-root #connect .doehome-shader-frame__ui {
+  position: relative;
+  display: block;
+  padding: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.doehome-root #connect .doehome-shader-frame__ui > .doehome-scene--tiles {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 132%;
+  min-height: 132%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+}
+
+.doehome-root #connect .doehome-scene--tiles li {
+  border-radius: 0.35rem;
+  background: var(--doehome-paper);
+  border: 1px solid var(--doehome-ink-line);
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
+}
+
 .doehome-shader-frame__ui {
   position: relative;
   z-index: 1;
@@ -768,7 +1099,12 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   overflow: hidden;
 }
 
-.doehome-shader-frame__ui:has(.doehome-scene--stack) {
+.doehome-shader-frame__ui:has(.doehome-scene--stack),
+.doehome-shader-frame__ui:has(.doehome-scene--call),
+.doehome-shader-frame__ui:has(.doehome-scene--pass),
+.doehome-shader-frame__ui:has(.doehome-scene--door),
+.doehome-shader-frame__ui:has(.doehome-scene--note),
+.doehome-shader-frame__ui:has(.doehome-scene--pack) {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -781,8 +1117,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   width: 100%;
   min-height: 0;
   height: auto;
-  max-height: 17.25rem;
-  aspect-ratio: 5 / 4;
+  max-height: 23.75rem;
+  aspect-ratio: 5 / 3.55;
 }
 
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-shader-frame__ui {
@@ -793,7 +1129,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   gap: 0;
   min-height: 0;
   height: 100%;
-  padding: 0.7rem 0.85rem 0.72rem;
+  padding: 1.15rem 0.95rem 0.92rem;
 }
 
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-shader-frame__ui .doehome-scene {
@@ -801,49 +1137,73 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   left: auto;
   top: auto;
   flex: 0 0 auto;
-  width: 100%;
+  width: min(100%, 86%);
+  margin-inline: auto;
   min-height: 0;
-  gap: 0.5rem;
-  padding: 0.78rem 0.88rem 0.82rem;
+  gap: 0.46rem;
+  padding: 0.74rem 0.84rem 0.78rem;
   box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
 }
 
-.doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-shader-frame__ui .doehome-scene > header {
+.doehome-root .doeinsure-hero .doehome-shader-frame__ui .doehome-scene > header {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 0.3rem 0.55rem;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
   padding-bottom: 0.5rem;
 }
 
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-shader-frame__ui .doehome-scene > header span {
-  font-size: 0.56rem;
+  font-size: 0.54rem;
+  margin-left: auto;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-shader-frame__ui .doehome-scene > header b {
-  font-size: 1.02rem;
+  font-size: 0.98rem;
   line-height: 1.12;
+  margin-right: auto;
+  text-align: left;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-table--3 .doehome-table__head,
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-table--3 .doehome-table__row {
-  grid-template-columns: minmax(6.25rem, 1.15fr) minmax(5.25rem, 1fr) 4.35rem;
-  gap: 0.4rem;
-  min-height: 1.82rem;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) auto;
+  gap: 0.38rem;
+  min-height: 1.74rem;
+}
+
+.doehome-root .doeinsure-hero .doehome-table--3 .doehome-table__head span:first-child,
+.doehome-root .doeinsure-hero .doehome-table--3 .doehome-table__row b {
+  text-align: left;
+}
+
+.doehome-root .doeinsure-hero .doehome-table--3 .doehome-table__head span:last-child,
+.doehome-root .doeinsure-hero .doehome-table--3 .doehome-table__row > span:last-child {
+  text-align: right;
+  justify-self: end;
+}
+
+.doehome-root .doeinsure-hero .doehome-table--3 {
+  padding-inline: 0.72rem;
 }
 
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-table__head {
-  font-size: 0.54rem;
+  font-size: 0.52rem;
 }
 
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-table__row {
-  font-size: 0.76rem;
+  font-size: 0.72rem;
 }
 
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-file {
-  width: 0.58rem;
-  height: 0.76rem;
-  margin-right: 0.32rem;
+  width: 0.52rem;
+  height: 0.68rem;
+  margin-right: 0.28rem;
 }
 
 .doehome-root:not(.doeinsure-root--iphone) .doeinsure-hero .doehome-shader-frame__ui .doehome-scene--stack {
@@ -901,7 +1261,12 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 }
 
 .doehome-scene--card,
-.doehome-scene--stack {
+.doehome-scene--stack,
+.doehome-scene--call,
+.doehome-scene--pass,
+.doehome-scene--door,
+.doehome-scene--note,
+.doehome-scene--pack {
   position: relative;
   left: auto;
   top: auto;
@@ -915,8 +1280,12 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-scene > header,
 .doehome-scene--focus > article,
 .doehome-scene--focus > p,
+.doehome-float__lead,
+.doehome-float__meta,
+.doehome-grid__head,
 .doehome-grid__row,
 .doehome-grid__foot,
+.doehome-table__head,
 .doehome-table__row,
 .doehome-node,
 .doehome-node__wire,
@@ -924,6 +1293,14 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-scene--tiles li,
 .doehome-board section,
 .doehome-week > span.is-held,
+.doehome-call,
+.doehome-call__lines li,
+.doehome-door__job,
+.doehome-note,
+.doehome-note li,
+.doehome-note strong,
+.doehome-pack__stack article,
+.doehome-pack > p,
 .doehome-pill {
   opacity: 0;
   transform: translate3d(0, 0.7rem, 0);
@@ -936,8 +1313,12 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-scene > header.is-on,
 .doehome-scene--focus > article.is-on,
 .doehome-scene--focus > p.is-on,
+.doehome-float__lead.is-on,
+.doehome-float__meta.is-on,
+.doehome-grid__head.is-on,
 .doehome-grid__row.is-on,
 .doehome-grid__foot.is-on,
+.doehome-table__head.is-on,
 .doehome-table__row.is-on,
 .doehome-node.is-on,
 .doehome-node__wire.is-on,
@@ -945,6 +1326,14 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doehome-scene--tiles li.is-on,
 .doehome-board section.is-on,
 .doehome-week > span.is-held,
+.doehome-call.is-on,
+.doehome-call__lines li.is-on,
+.doehome-door__job.is-on,
+.doehome-note.is-on,
+.doehome-note li.is-on,
+.doehome-note strong.is-on,
+.doehome-pack__stack article.is-on,
+.doehome-pack > p.is-on,
 .doehome-pill.is-on {
   opacity: 1;
   transform: none;
@@ -1062,7 +1451,106 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 
 .doehome-grid--pay .doehome-grid__head,
 .doehome-grid--pay .doehome-grid__row {
-  grid-template-columns: 2.4rem minmax(8rem, 1fr) 6.2rem 5.4rem 5.4rem;
+  grid-template-columns: minmax(8rem, 1fr) 6.2rem 5.4rem 5.4rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #float .doehome-shader-frame__ui {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.85rem 1.65rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #float .doehome-scene--crop-tl {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: min(100%, 31rem);
+  min-height: auto;
+  padding: 1.35rem 1.4rem 1.45rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #float .doehome-grid {
+  min-width: 0;
+  width: 100%;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #float .doehome-grid--pay .doehome-grid__head,
+.doehome-root:not(.doeinsure-root--iphone) #float .doehome-grid--pay .doehome-grid__row {
+  grid-template-columns: minmax(0, 1fr) minmax(4.5rem, 0.75fr) minmax(4.2rem, 0.7fr) minmax(4.2rem, 0.7fr);
+  gap: 0.5rem;
+  min-height: 2.35rem;
+  padding-inline: 0.1rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #float .doehome-grid__head {
+  font-size: 0.64rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #float .doehome-grid__row {
+  font-size: 0.88rem;
+}
+
+.doehome-root #float .doehome-grid--pay .doehome-grid__row {
+  border-bottom: 0;
+}
+
+.doehome-root #float .doehome-float__lead {
+  display: grid;
+  gap: 0.28rem;
+  align-self: flex-start;
+  margin: 0;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--doehome-ink-line);
+}
+
+.doehome-root #float .doehome-float__underpay {
+  margin: 0;
+  color: #8a4b2a;
+  font-size: 2.75rem;
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+}
+
+.doehome-root #float .doehome-float__note {
+  display: grid;
+  gap: 0.06rem;
+  margin: 0;
+  max-width: 11rem;
+  color: var(--doehome-ink-muted);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.28;
+}
+
+.doehome-root #float .doehome-float__note span {
+  display: block;
+}
+
+.doehome-root #float .doehome-float__meta {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.55rem 0 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.doehome-root #float .doehome-float__meta span {
+  color: var(--doehome-ink-muted);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.doehome-root #float .doehome-float__meta strong {
+  color: var(--doehome-ink);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.12;
 }
 
 .doehome-grid--chart .doehome-grid__head,
@@ -1438,6 +1926,13 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   padding: 0.55rem 0.6rem;
 }
 
+.doehome-week > span.doehome-week__corner {
+  min-height: 1.8rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
 .doehome-week > span.is-busy {
   background: repeating-linear-gradient(
     -45deg,
@@ -1554,7 +2049,12 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   color: var(--doehome-ink);
 }
 
-.doehome-scene--stack {
+.doehome-scene--stack,
+.doehome-scene--call,
+.doehome-scene--pass,
+.doehome-scene--door,
+.doehome-scene--note,
+.doehome-scene--pack {
   gap: 0.55rem;
   width: min(72%, 22rem);
   padding: 0;
@@ -1586,6 +2086,419 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   letter-spacing: -0.03em;
 }
 
+.doehome-root #pulse .doehome-scene--call {
+  align-self: center;
+  margin-inline: auto;
+  width: min(68%, 20.5rem);
+  gap: 0.62rem;
+}
+
+.doehome-call {
+  display: grid;
+  justify-items: center;
+  gap: 0.62rem;
+  width: 100%;
+  padding: 1.05rem 1.15rem 1.1rem;
+  text-align: center;
+  border: 1px solid var(--doehome-ink-line);
+  border-radius: 0.35rem;
+  background: var(--doehome-paper);
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
+}
+
+.doehome-call header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 0.6rem;
+}
+
+.doehome-call header em {
+  display: inline-flex;
+  align-items: center;
+  height: 1.35rem;
+  padding: 0 0.55rem;
+  background: rgba(212, 165, 116, 0.42);
+  color: #3d2714;
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.doehome-call header span {
+  color: var(--doehome-ink-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.doehome-call__who {
+  display: grid;
+  gap: 0.12rem;
+  justify-items: center;
+}
+
+.doehome-call__who b {
+  color: var(--doehome-ink);
+  font-size: 1.85rem;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.doehome-call__who span {
+  color: var(--doehome-ink-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.doehome-call .doehome-wave {
+  height: 1.45rem;
+  margin: 0.15rem 0 0;
+}
+
+.doehome-call p {
+  margin: 0;
+  max-width: 16rem;
+  color: var(--doehome-ink);
+  font-size: 0.92rem;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+}
+
+.doehome-call strong {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.12rem;
+  padding: 0.52rem 0.9rem;
+  border: 1px solid rgba(26, 18, 8, 0.12);
+  background: #d7c4a8;
+  color: var(--doehome-ink);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.doehome-call__lines {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doehome-call__lines li {
+  display: grid;
+  gap: 0.08rem;
+  padding: 0.62rem 0.7rem 0.66rem;
+  border: 1px solid var(--doehome-ink-line);
+  border-radius: 0.35rem;
+  background: var(--doehome-paper);
+  box-shadow: 0 10px 22px rgba(10, 6, 2, 0.18);
+}
+
+.doehome-call__lines li.is-this {
+  background: rgba(232, 192, 142, 0.22);
+}
+
+.doehome-call__lines b {
+  font-size: 0.82rem;
+  font-weight: 550;
+  letter-spacing: -0.03em;
+}
+
+.doehome-call__lines span {
+  color: var(--doehome-ink-muted);
+  font-size: 0.62rem;
+  letter-spacing: -0.02em;
+}
+
+.doehome-call__lines em {
+  color: #8a4b2a;
+  font-size: 0.56rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #handoff .doehome-shader-frame__ui {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 0;
+  min-height: 0;
+  height: 100%;
+  padding: 1.15rem 0.95rem 0.92rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #handoff .doehome-scene--card {
+  position: relative;
+  left: auto;
+  top: auto;
+  flex: 0 0 auto;
+  width: min(100%, 86%);
+  margin-inline: auto;
+  min-height: 0;
+  gap: 0.46rem;
+  padding: 0.74rem 0.84rem 0.78rem;
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
+}
+
+.doehome-root #handoff .doehome-scene--card > header {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #handoff .doehome-scene--card > header span {
+  font-size: 0.54rem;
+  margin-left: auto;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #handoff .doehome-scene--card > header b {
+  font-size: 0.98rem;
+  line-height: 1.12;
+  margin-right: auto;
+  text-align: left;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #handoff .doehome-table--3 .doehome-table__head,
+.doehome-root:not(.doeinsure-root--iphone) #handoff .doehome-table--3 .doehome-table__row {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) auto;
+  gap: 0.38rem;
+  min-height: 1.74rem;
+}
+
+.doehome-root #handoff .doehome-table--3 {
+  padding-inline: 0.72rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #handoff .doehome-table__head {
+  font-size: 0.52rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) #handoff .doehome-table__row {
+  font-size: 0.72rem;
+}
+
+.doehome-root #open .doehome-scene--door {
+  align-self: center;
+  justify-content: center;
+  margin: auto;
+  width: min(62%, 18.5rem);
+  gap: 0.7rem;
+}
+
+.doehome-scene--door ol {
+  display: grid;
+  gap: 0.62rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doehome-door__job {
+  display: grid;
+  gap: 0.08rem;
+  padding: 0.7rem 0.78rem 0.74rem;
+  border: 1px solid var(--doehome-ink-line);
+  border-radius: 0.35rem;
+  background: var(--doehome-paper);
+  box-shadow: 0 12px 26px rgba(10, 6, 2, 0.2);
+}
+
+.doehome-door__job.is-this {
+  background: rgba(232, 192, 142, 0.22);
+}
+
+.doehome-door__job span {
+  color: #8a4b2a;
+  font-size: 0.62rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doehome-door__job b {
+  font-size: 0.98rem;
+  font-weight: 550;
+  letter-spacing: -0.03em;
+}
+
+.doehome-door__job em {
+  color: var(--doehome-ink-muted);
+  font-size: 0.68rem;
+  font-style: normal;
+}
+
+.doehome-root #scribe .doehome-scene--note {
+  align-self: center;
+  margin-inline: auto;
+  width: min(64%, 20rem);
+}
+
+.doehome-note {
+  display: grid;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 1rem 1.05rem 1.05rem 1.15rem;
+  border: 1px solid var(--doehome-ink-line);
+  border-radius: 0.35rem;
+  background: var(--doehome-paper);
+  box-shadow:
+    0 14px 30px rgba(10, 6, 2, 0.24),
+    inset 3px 0 0 #d4a574;
+}
+
+.doehome-note header {
+  display: grid;
+  gap: 0.08rem;
+}
+
+.doehome-note header b {
+  font-size: 1.28rem;
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.doehome-note header span {
+  color: var(--doehome-ink-muted);
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.doehome-note ul {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doehome-note li {
+  padding: 0.48rem 0;
+  border-bottom: 1px solid var(--doehome-ink-line);
+  font-size: 0.92rem;
+  letter-spacing: -0.03em;
+}
+
+.doehome-note strong {
+  justify-self: start;
+  margin-top: 0.15rem;
+  padding: 0.48rem 0.8rem;
+  border: 1px solid rgba(26, 18, 8, 0.12);
+  background: #d7c4a8;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.doehome-root #auth .doehome-scene--pack {
+  align-self: center;
+  margin-inline: auto;
+  width: min(78%, 22.5rem);
+}
+
+.doehome-pack {
+  position: relative;
+  min-height: 16.5rem;
+}
+
+.doehome-pack__stack {
+  position: relative;
+  min-height: 14.25rem;
+}
+
+.doehome-pack__stack article {
+  position: absolute;
+  left: calc(var(--n, 0) * 1.15rem);
+  top: calc(var(--n, 0) * 0.95rem);
+  z-index: calc(var(--n, 0) + 1);
+  display: grid;
+  align-content: start;
+  gap: 0.32rem;
+  width: min(16.5rem, calc(100% - 2.2rem));
+  min-height: 9.8rem;
+  padding: 0.88rem 0.95rem 0.9rem;
+  border: 1px solid var(--doehome-ink-line);
+  border-radius: 0.35rem;
+  background: var(--doehome-paper);
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
+  transform: translate3d(0, 0.7rem, 0) rotate(calc(var(--n, 0) * -1.5deg));
+}
+
+.doehome-pack__stack article.is-on {
+  transform: rotate(calc(var(--n, 0) * -1.5deg));
+}
+
+.doehome-pack__stack article header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.doehome-pack__stack article span,
+.doehome-pack__stack article em {
+  color: var(--doehome-ink-muted);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doehome-pack__stack article b {
+  color: var(--doehome-ink);
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1.12;
+}
+
+.doehome-pack__rules {
+  display: block;
+  height: 3.4rem;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 0.68rem,
+    rgba(26, 18, 8, 0.12) 0.68rem 0.72rem
+  );
+}
+
+.doehome-pack > p {
+  position: absolute;
+  right: 0.2rem;
+  bottom: 0.15rem;
+  z-index: 4;
+  margin: 0;
+  padding: 0.48rem 0.78rem;
+  background: #d7c4a8;
+  color: var(--doehome-ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
 
 .doeinsure-root--iphone .doehome-shader-frame,
 .doeinsure-root--iphone .doehome-shader-frame__ui {
@@ -1596,6 +2509,10 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doeinsure-root--iphone .doehome-shader-frame {
   --doehome-iphone-glass-pad: 0.48rem;
   --doehome-iphone-glass-radius: 1rem;
+  --doehome-iphone-glass-border: 1px solid rgba(255, 245, 230, 0.22);
+  --doehome-iphone-glass-fill: rgba(255, 245, 230, 0.07);
+  --doehome-iphone-glass-inset: inset 0 1px 0 rgba(255, 245, 230, 0.14);
+  --doehome-iphone-glass-blur: blur(11px) saturate(1.05);
   border-radius: var(--doehome-iphone-glass-radius);
   border: 1px solid rgba(255, 245, 230, 0.16);
   isolation: auto;
@@ -1628,11 +2545,40 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   z-index: -1;
   pointer-events: none;
   border-radius: 0.35rem;
-  border: 1px solid rgba(255, 245, 230, 0.28);
-  background: rgba(255, 245, 230, 0.1);
-  backdrop-filter: blur(14px) saturate(1.1);
-  -webkit-backdrop-filter: blur(14px) saturate(1.1);
-  box-shadow: inset 0 1px 0 rgba(255, 245, 230, 0.18);
+  border: var(--doehome-iphone-glass-border);
+  background: var(--doehome-iphone-glass-fill);
+  backdrop-filter: var(--doehome-iphone-glass-blur);
+  -webkit-backdrop-filter: var(--doehome-iphone-glass-blur);
+  box-shadow: var(--doehome-iphone-glass-inset);
+}
+
+.doeinsure-root--iphone .doehome-iphone-glass-card {
+  position: relative;
+  isolation: isolate;
+  transform: translateZ(0);
+  border-radius: 0.35rem;
+  background: var(--doehome-paper);
+  border: 1px solid var(--doehome-ink-line);
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
+}
+
+.doeinsure-root--iphone .doehome-iphone-glass-card::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--doehome-iphone-glass-pad));
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 0.35rem;
+  border: var(--doehome-iphone-glass-border);
+  background: var(--doehome-iphone-glass-fill);
+  backdrop-filter: var(--doehome-iphone-glass-blur);
+  -webkit-backdrop-filter: var(--doehome-iphone-glass-blur);
+  box-shadow: var(--doehome-iphone-glass-inset);
+}
+
+.doeinsure-root--iphone .doehome-iphone-glass-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .doeinsure-root--iphone .doehome-shader-frame__ui > .doehome-scene:not(.doehome-scene--focus):not(.doehome-scene--stack)::before {
@@ -1813,6 +2759,441 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   font-size: 0.98rem;
 }
 
+/* Pulse — centered live-call HUD, hero glass on island + line chips */
+.doehome-root.doeinsure-root--iphone #pulse .doehome-shader-frame__ui {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.05rem 0.9rem;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-shader-frame__ui > .doehome-scene--call {
+  position: relative;
+  left: auto;
+  top: auto;
+  align-self: center;
+  width: min(78%, 16.25rem);
+  min-height: auto;
+  max-width: calc(100% - 1.6rem);
+  gap: calc(var(--doehome-iphone-glass-pad) * 2 + 0.42rem);
+  padding: 0;
+  transform: none;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-shader-frame__ui > .doehome-scene--call::before {
+  display: none;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call {
+  padding: 0.88rem 0.92rem 0.94rem;
+  gap: 0.5rem;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call header em {
+  height: 1.22rem;
+  font-size: 0.54rem;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call__who b {
+  font-size: 1.42rem;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call__who span {
+  font-size: 0.64rem;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call p {
+  font-size: 0.76rem;
+  max-width: 13.5rem;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call strong {
+  font-size: 0.72rem;
+  padding: 0.42rem 0.72rem;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call__lines {
+  gap: calc(var(--doehome-iphone-glass-pad) * 2 + 0.28rem);
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call__lines li {
+  padding: 0.52rem 0.58rem 0.56rem;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call__lines b {
+  font-size: 0.7rem;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call,
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call__lines li {
+  transition:
+    opacity 0ms linear,
+    transform 820ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--n, 0) * 95ms);
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call header,
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call__who,
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call .doehome-wave,
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call p,
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call strong,
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call__lines li > * {
+  opacity: 0;
+  transform: translate3d(0, 0.45rem, 0);
+  transition:
+    opacity 820ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 820ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--n, 0) * 95ms + 80ms);
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call.is-on header,
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call.is-on .doehome-call__who,
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call.is-on .doehome-wave,
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call.is-on p,
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call.is-on strong,
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call__lines li.is-on > * {
+  opacity: 1;
+  transform: none;
+}
+
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call:not(.is-on),
+.doehome-root.doeinsure-root--iphone #pulse .doehome-call__lines li:not(.is-on) {
+  pointer-events: none;
+}
+
+/* Fabric — iPhone: hero glass on each pill, centered stack */
+.doehome-root.doeinsure-root--iphone #fabric .doehome-shader-frame__ui {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.1rem 0.95rem;
+}
+
+.doehome-root.doeinsure-root--iphone #fabric .doehome-shader-frame__ui > .doehome-scene--stack {
+  padding: 0;
+}
+
+.doehome-root.doeinsure-root--iphone #fabric .doehome-shader-frame__ui > .doehome-scene--stack::before {
+  display: none;
+}
+
+.doehome-root.doeinsure-root--iphone #fabric .doehome-scene--stack {
+  position: relative;
+  left: auto;
+  top: auto;
+  align-self: center;
+  margin-inline: auto;
+  width: min(64%, 13.25rem);
+  min-height: auto;
+  gap: calc(var(--doehome-iphone-glass-pad) * 2 + 0.55rem);
+}
+
+.doehome-root.doeinsure-root--iphone #fabric .doehome-pill.doehome-iphone-glass-card {
+  padding: 0.78rem 0.88rem 0.82rem;
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
+}
+
+.doehome-root.doeinsure-root--iphone #fabric .doehome-pill {
+  opacity: 1;
+  transform: none;
+}
+
+.doehome-root.doeinsure-root--iphone #fabric .doehome-pill span,
+.doehome-root.doeinsure-root--iphone #fabric .doehome-pill b {
+  opacity: 0;
+  transform: translate3d(0, 0.45rem, 0);
+  transition:
+    opacity 820ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 820ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--n, 0) * 95ms + 80ms);
+}
+
+.doehome-root.doeinsure-root--iphone #fabric .doehome-pill:not(.is-on) {
+  pointer-events: none;
+}
+
+.doehome-root.doeinsure-root--iphone #fabric .doehome-pill.is-on span,
+.doehome-root.doeinsure-root--iphone #fabric .doehome-pill.is-on b {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--n, 0) * 95ms + 80ms);
+}
+
+.doehome-root.doeinsure-root--iphone #fabric .doehome-pill span {
+  font-size: 0.56rem;
+}
+
+.doehome-root.doeinsure-root--iphone #fabric .doehome-pill b {
+  font-size: 0.94rem;
+}
+
+/* Handoff — live job table on hero glass card */
+.doehome-root.doeinsure-root--iphone #handoff .doehome-shader-frame__ui {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22.5rem;
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+}
+
+.doehome-root.doeinsure-root--iphone #handoff .doehome-shader-frame__ui .doehome-scene {
+  position: relative;
+  left: auto;
+  top: auto;
+  flex: 0 0 auto;
+  width: auto;
+  max-width: 100%;
+  min-height: 0;
+  gap: 0.5rem;
+  padding: 0.78rem 0.88rem 0.82rem;
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24);
+}
+
+.doehome-root.doeinsure-root--iphone #handoff .doehome-scene > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.3rem 0.55rem;
+  padding-bottom: 0.5rem;
+}
+
+.doehome-root.doeinsure-root--iphone #handoff .doehome-scene > header span {
+  font-size: 0.56rem;
+}
+
+.doehome-root.doeinsure-root--iphone #handoff .doehome-scene > header b {
+  font-size: 1.02rem;
+  line-height: 1.12;
+}
+
+.doehome-root.doeinsure-root--iphone #handoff .doehome-table--3 .doehome-table__head,
+.doehome-root.doeinsure-root--iphone #handoff .doehome-table--3 .doehome-table__row {
+  grid-template-columns: minmax(6.25rem, 1.15fr) minmax(5.25rem, 1fr) 4.35rem;
+  gap: 0.4rem;
+  min-height: 1.82rem;
+}
+
+.doehome-root.doeinsure-root--iphone #handoff .doehome-table__head {
+  font-size: 0.54rem;
+}
+
+.doehome-root.doeinsure-root--iphone #handoff .doehome-table__row {
+  font-size: 0.76rem;
+}
+
+.doehome-root.doeinsure-root--iphone #open .doehome-shader-frame__ui,
+.doehome-root.doeinsure-root--iphone #scribe .doehome-shader-frame__ui,
+.doehome-root.doeinsure-root--iphone #auth .doehome-shader-frame__ui {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.05rem 0.9rem;
+}
+
+.doehome-root.doeinsure-root--iphone #open .doehome-shader-frame__ui > .doehome-scene--door,
+.doehome-root.doeinsure-root--iphone #scribe .doehome-shader-frame__ui > .doehome-scene--note,
+.doehome-root.doeinsure-root--iphone #auth .doehome-shader-frame__ui > .doehome-scene--pack {
+  position: relative;
+  left: auto;
+  top: auto;
+  align-self: center;
+  min-height: auto;
+  padding: 0;
+  transform: none;
+}
+
+.doehome-root.doeinsure-root--iphone #open .doehome-shader-frame__ui > .doehome-scene--door::before,
+.doehome-root.doeinsure-root--iphone #scribe .doehome-shader-frame__ui > .doehome-scene--note::before,
+.doehome-root.doeinsure-root--iphone #auth .doehome-shader-frame__ui > .doehome-scene--pack::before {
+  display: none;
+}
+
+.doehome-root.doeinsure-root--iphone #open .doehome-scene--door {
+  width: min(72%, 14.75rem);
+  max-width: calc(100% - 1.6rem);
+  justify-content: center;
+  gap: calc(var(--doehome-iphone-glass-pad) * 2 + 0.42rem);
+}
+
+.doehome-root.doeinsure-root--iphone #open .doehome-door__job,
+.doehome-root.doeinsure-root--iphone #scribe .doehome-note,
+.doehome-root.doeinsure-root--iphone #auth .doehome-pack__stack article {
+  transition:
+    opacity 0ms linear,
+    transform 820ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--n, 0) * 95ms);
+}
+
+.doehome-root.doeinsure-root--iphone #open .doehome-door__job {
+  padding: 0.62rem 0.7rem 0.66rem;
+}
+
+.doehome-root.doeinsure-root--iphone #open .doehome-door__job b {
+  font-size: 0.84rem;
+}
+
+.doehome-root.doeinsure-root--iphone #scribe .doehome-scene--note {
+  width: min(78%, 16rem);
+  max-width: calc(100% - 1.6rem);
+}
+
+.doehome-root.doeinsure-root--iphone #scribe .doehome-note.doehome-iphone-glass-card {
+  padding: 0.82rem 0.86rem 0.88rem 0.95rem;
+  box-shadow: 0 14px 30px rgba(10, 6, 2, 0.24), inset 3px 0 0 #d4a574;
+}
+
+.doehome-root.doeinsure-root--iphone #scribe .doehome-note header b {
+  font-size: 1.08rem;
+}
+
+.doehome-root.doeinsure-root--iphone #scribe .doehome-note li {
+  font-size: 0.76rem;
+  padding: 0.4rem 0;
+}
+
+.doehome-root.doeinsure-root--iphone #scribe .doehome-note strong {
+  font-size: 0.68rem;
+  padding: 0.4rem 0.68rem;
+}
+
+.doehome-root.doeinsure-root--iphone #auth .doehome-scene--pack {
+  width: min(88%, 17.5rem);
+  max-width: calc(100% - 1.2rem);
+}
+
+.doehome-root.doeinsure-root--iphone #auth .doehome-pack {
+  min-height: 13.5rem;
+}
+
+.doehome-root.doeinsure-root--iphone #auth .doehome-pack__stack {
+  min-height: 11.75rem;
+}
+
+.doehome-root.doeinsure-root--iphone #auth .doehome-pack__stack article {
+  left: calc(var(--n, 0) * 0.82rem);
+  top: calc(var(--n, 0) * 0.72rem);
+  width: min(13.25rem, calc(100% - 1.6rem));
+  min-height: 8.2rem;
+  padding: 0.72rem 0.78rem 0.74rem;
+}
+
+.doehome-root.doeinsure-root--iphone #auth .doehome-pack__stack article.is-on {
+  transform: rotate(calc(var(--n, 0) * -1.5deg));
+}
+
+.doehome-root.doeinsure-root--iphone #auth .doehome-pack__stack article b {
+  font-size: 1.12rem;
+}
+
+.doehome-root.doeinsure-root--iphone #auth .doehome-pack__rules {
+  height: 2.6rem;
+}
+
+.doehome-root.doeinsure-root--iphone #auth .doehome-pack > p {
+  font-size: 0.68rem;
+  padding: 0.4rem 0.62rem;
+}
+
+/* Connect — iPhone: square shader, centered tile grid cropped on all edges */
+.doehome-root.doeinsure-root--iphone #connect .doehome-shader-frame,
+.doehome-root.doeinsure-root--iphone #connect .doehome-shader-frame__ui {
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  aspect-ratio: 1 / 1;
+}
+
+.doehome-root.doeinsure-root--iphone #connect .doehome-shader-frame__ui {
+  display: block;
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+}
+
+.doehome-root.doeinsure-root--iphone #connect .doehome-shader-frame__ui > .doehome-scene--tiles {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 136%;
+  min-height: 136%;
+  max-width: none;
+  transform: translate(-50%, -50%);
+  padding: 0;
+}
+
+.doehome-root.doeinsure-root--iphone #connect .doehome-shader-frame__ui > .doehome-scene--tiles::before {
+  display: none;
+}
+
+.doehome-root.doeinsure-root--iphone #connect .doehome-scene--tiles ul {
+  gap: calc(var(--doehome-iphone-glass-pad) * 2 + 0.42rem);
+}
+
+/* Float — iPhone: centered pay grid, shader rim visible */
+.doehome-root.doeinsure-root--iphone #float .doehome-shader-frame__ui {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.15rem 0.95rem;
+}
+
+.doehome-root.doeinsure-root--iphone #float .doehome-shader-frame__ui > .doehome-scene--grid.doehome-scene--crop-tl {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: min(84%, 16.75rem);
+  max-width: calc(100% - 1.8rem);
+  min-height: auto;
+  height: auto;
+  flex: 0 1 auto;
+  align-self: center;
+  gap: 0.72rem;
+  padding: 0.92rem 0.98rem 1rem;
+  transform: none;
+}
+
+.doehome-root.doeinsure-root--iphone #float .doehome-grid {
+  min-width: 0;
+  width: 100%;
+}
+
+.doehome-root.doeinsure-root--iphone #float .doehome-grid--pay .doehome-grid__head,
+.doehome-root.doeinsure-root--iphone #float .doehome-grid--pay .doehome-grid__row {
+  grid-template-columns: minmax(0, 1fr) 2.75rem 2.55rem 2.55rem;
+  gap: 0.28rem;
+  min-height: 1.85rem;
+  padding-inline: 0.05rem;
+}
+
+.doehome-root.doeinsure-root--iphone #float .doehome-grid__head {
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+}
+
+.doehome-root.doeinsure-root--iphone #float .doehome-grid__row {
+  font-size: 0.72rem;
+}
+
+.doehome-root.doeinsure-root--iphone #float .doehome-float__meta span {
+  font-size: 0.52rem;
+}
+
+.doehome-root.doeinsure-root--iphone #float .doehome-float__meta strong {
+  font-size: 0.92rem;
+}
+
+.doehome-root.doeinsure-root--iphone #float .doehome-float__underpay {
+  font-size: 2.15rem;
+}
+
+.doehome-root.doeinsure-root--iphone #float .doehome-float__note {
+  max-width: 9.5rem;
+  font-size: 0.62rem;
+  line-height: 1.22;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .doehome-root .doeinsure-section::after {
     animation: none;
@@ -1826,8 +3207,14 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   .doehome-scene > header,
   .doehome-scene--focus > article,
   .doehome-scene--focus > p,
+  .doehome-float__lead,
+  .doehome-float__meta,
+  .doehome-grid__head,
   .doehome-grid__row,
+  .doehome-root #fabric .doehome-pill span,
+  .doehome-root #fabric .doehome-pill b,
   .doehome-grid__foot,
+  .doehome-table__head,
   .doehome-table__row,
   .doehome-node,
   .doehome-node__wire,
@@ -1835,6 +3222,20 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   .doehome-scene--tiles li,
   .doehome-board section,
   .doehome-week > span.is-held,
+  .doehome-call,
+  .doehome-call__lines li,
+  .doehome-door__job,
+  .doehome-note,
+  .doehome-note li,
+  .doehome-note strong,
+  .doehome-pack__stack article,
+  .doehome-pack > p,
+  .doehome-root.doeinsure-root--iphone #pulse .doehome-call header,
+  .doehome-root.doeinsure-root--iphone #pulse .doehome-call__who,
+  .doehome-root.doeinsure-root--iphone #pulse .doehome-call .doehome-wave,
+  .doehome-root.doeinsure-root--iphone #pulse .doehome-call p,
+  .doehome-root.doeinsure-root--iphone #pulse .doehome-call strong,
+  .doehome-root.doeinsure-root--iphone #pulse .doehome-call__lines li > *,
   .doehome-pill {
     opacity: 1 !important;
     transform: none !important;
