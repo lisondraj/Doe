@@ -1594,18 +1594,18 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 }
 
 .doeinsure-root--iphone .doehome-shader-frame__ui {
-  --doehome-iphone-glass-pad: 0.95rem;
-  --doehome-iphone-glass-radius: 0.85rem;
+  --doehome-iphone-glass-pad: 1.35rem;
+  --doehome-iphone-glass-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--doehome-iphone-glass-pad);
   border-radius: var(--doehome-iphone-glass-radius);
-  border: 1px solid rgba(255, 245, 230, 0.22);
-  background: rgba(255, 245, 230, 0.065);
-  backdrop-filter: blur(12px) saturate(1.08);
-  -webkit-backdrop-filter: blur(12px) saturate(1.08);
-  box-shadow: inset 0 1px 0 rgba(255, 245, 230, 0.14);
+  border: 1px solid rgba(255, 245, 230, 0.24);
+  background: rgba(255, 245, 230, 0.075);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  box-shadow: inset 0 1px 0 rgba(255, 245, 230, 0.16);
   overflow: hidden;
 }
 
@@ -1614,8 +1614,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doeinsure-root--iphone .doehome-shader-frame__ui > .doehome-scene--crop-tr,
 .doeinsure-root--iphone .doehome-shader-frame__ui > .doehome-scene--crop-tl,
 .doeinsure-root--iphone .doehome-shader-frame__ui > .doehome-scene--crop-center {
-  width: 108%;
-  min-height: 108%;
+  width: 102%;
+  min-height: 102%;
 }
 
 .doeinsure-root--iphone .doehome-shader-frame__ui > .doehome-scene--focus {
@@ -1642,14 +1642,14 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 .doeinsure-root--iphone .doehome-scene--week,
 .doeinsure-root--iphone .doehome-scene--board,
 .doeinsure-root--iphone .doehome-intake article {
-  min-width: 25rem;
+  min-width: 23.5rem;
 }
 
 .doeinsure-root--iphone .doehome-scene--stack {
   position: relative;
   left: auto;
   top: auto;
-  width: min(80%, 16rem);
+  width: min(76%, 15rem);
   min-height: auto;
 }
 
