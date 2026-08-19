@@ -596,7 +596,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   display: grid;
   place-items: center;
   width: 100%;
-  padding-block: 2.1rem;
+  padding-block: 2.1rem 0.75rem;
   padding-inline: 0;
   border-bottom: 1px solid var(--doehome-gold-line);
   overflow: hidden;
