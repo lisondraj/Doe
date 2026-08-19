@@ -1639,20 +1639,18 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   align-self: stretch;
   width: 100%;
   min-height: 22.5rem;
-  height: auto;
+  height: 22.5rem;
   max-height: none;
   aspect-ratio: auto;
 }
 
 .doehome-root.doeinsure-root--iphone .doeinsure-hero .doehome-shader-frame__ui {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0;
   min-height: 22.5rem;
   height: 100%;
-  padding: 1.15rem 0.9rem;
+  padding: 0;
   overflow: hidden;
 }
 
@@ -1661,8 +1659,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   left: auto;
   top: auto;
   flex: 0 0 auto;
-  width: 100%;
-  max-width: 100%;
+  width: auto;
+  max-width: calc(100% - 1.8rem);
   min-height: 0;
   gap: 0.5rem;
   padding: 0.78rem 0.88rem 0.82rem;
