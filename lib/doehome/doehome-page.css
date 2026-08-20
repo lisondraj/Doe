@@ -2000,8 +2000,18 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 }
 
 .doehome-scene--focus article li.is-agent {
+  position: relative;
   padding-left: 0.85rem;
-  border-left: 2px solid #d4a574;
+  border-left: 2px solid var(--doehome-gold-solid);
+}
+
+.doehome-scene--focus article li.is-agent span {
+  color: var(--doehome-gold-solid);
+  font-weight: 600;
+}
+
+.doeinsure-root--iphone .doehome-scene--focus article li.is-agent {
+  padding-left: 0.75rem;
 }
 
 .doehome-scene__action {
