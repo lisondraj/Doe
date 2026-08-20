@@ -3,6 +3,7 @@
 import { FormEvent, useState, type CSSProperties } from "react";
 
 import { DoeHomeFeatureSections } from "@/components/doehome/DoeHomeFeatureSections";
+import { DoeHomeGenomeStatBand } from "@/components/doehome/DoeHomeGenomeStatBand";
 import {
   DoeHomeIphoneStatTagline,
   DoeHomeProductWordmark,
@@ -17,11 +18,10 @@ import {
   DOEHOME_FAQ,
   DOEHOME_HERO,
   DOEHOME_HERO_TAPE,
-  DOEHOME_IPHONE_GENOME_TAGLINE,
   DOEHOME_IPHONE_STAT_ROW,
   DOEHOME_STATS,
 } from "@/lib/doehome/doehome-copy";
-import { DOEHOME_SHADERS, DOEHOME_GENOME_LANDING_IMAGE } from "@/lib/doehome/doehome-shaders";
+import { DOEHOME_SHADERS } from "@/lib/doehome/doehome-shaders";
 import { useDoeHomePageVariant } from "@/lib/doehome/use-doehome-page-variant";
 import { useDoeHomeStep } from "@/lib/doehome/use-doehome-step";
 
@@ -212,62 +212,47 @@ export function DoeHomePageContent() {
           </div>
         </div>
         <div className="doeinsure-stats" aria-label="Doe at a glance">
-          <div className="doeinsure-wrap doeinsure-stats__row">
-            {variant === "phone" ? (
-              <>
-                <div className="doehome-stat--iphone-genome" aria-label="Genome">
+          {variant === "phone" ? (
+            <div className="doeinsure-wrap doeinsure-stats__row">
+              <DoeHomeGenomeStatBand className="doehome-stat--iphone-genome" />
+              <div
+                className="doehome-stat--iphone-row"
+                role="group"
+                aria-label="Fabric, Pulse, Float"
+              >
+                {DOEHOME_IPHONE_STAT_ROW.map(({ product, tagline }) => (
                   <a
-                    className="doehome-stat-iphone-genome-link"
-                    href="#genome"
-                    aria-label={`Genome — ${DOEHOME_IPHONE_GENOME_TAGLINE.join(" ")}`}
+                    key={product}
+                    className="doehome-stat-iphone-product"
+                    href={`#${product}`}
+                    aria-label={`${doeHomeProductWordmarkLabel(product)} — ${tagline}`}
                   >
-                    <DoeHomeProductWordmark product="genome" iphoneProductRow />
-                    <DoeHomeIphoneStatTagline label={DOEHOME_IPHONE_GENOME_TAGLINE} />
-                    <div className="doehome-stat-iphone-genome-art" aria-hidden="true">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={DOEHOME_GENOME_LANDING_IMAGE}
-                        alt=""
-                        draggable={false}
-                        loading="eager"
-                        decoding="async"
-                        fetchPriority="high"
-                      />
-                    </div>
+                    <DoeHomeProductWordmark product={product} iphoneProductRow />
+                    <DoeHomeIphoneStatTagline label={tagline} />
                   </a>
-                </div>
-                <div
-                  className="doehome-stat--iphone-row"
-                  role="group"
-                  aria-label="Fabric, Pulse, Float"
-                >
-                  {DOEHOME_IPHONE_STAT_ROW.map(({ product, tagline }) => (
-                    <a
-                      key={product}
-                      className="doehome-stat-iphone-product"
-                      href={`#${product}`}
-                      aria-label={`${doeHomeProductWordmarkLabel(product)} — ${tagline}`}
-                    >
-                      <DoeHomeProductWordmark product={product} iphoneProductRow />
-                      <DoeHomeIphoneStatTagline label={tagline} />
-                    </a>
-                  ))}
-                </div>
-              </>
-            ) : (
-              DOEHOME_STATS.map((item) => (
-                <div key={item.value} className="doeinsure-stat doehome-stat">
-                  <b>{item.value}</b>
-                  <span className="doehome-stat-copy">
-                    <span className="doehome-stat-copy__text">{item.label}</span>
-                    {"productLink" in item && item.productLink ? (
-                      <DoeHomeStatProductLink product={item.productLink} />
-                    ) : null}
-                  </span>
-                </div>
-              ))
-            )}
-          </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="doeinsure-wrap doehome-stat--desktop-genome">
+                <DoeHomeGenomeStatBand wordmarkAnchorStart />
+              </div>
+              <div className="doeinsure-wrap doeinsure-stats__row">
+                {DOEHOME_STATS.map((item) => (
+                  <div key={item.value} className="doeinsure-stat doehome-stat">
+                    <b>{item.value}</b>
+                    <span className="doehome-stat-copy">
+                      <span className="doehome-stat-copy__text">{item.label}</span>
+                      {"productLink" in item && item.productLink ? (
+                        <DoeHomeStatProductLink product={item.productLink} matchCopySize />
+                      ) : null}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
 

@@ -61,7 +61,7 @@ export const DOEHOME_STATS = [
     productLink: "genome",
   },
   {
-    value: "Full-Suite of AI Agents",
+    value: "Suite of AI Agents",
     label: "Fabric is a no-code canvas that allows you to automate any workflow.",
     productLink: "fabric",
   },

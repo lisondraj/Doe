@@ -64,6 +64,8 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   --doehome-ink-line: rgba(26, 18, 8, 0.14);
   --doehome-iphone-stat-mark: 6.25rem;
   --doehome-iphone-stat-mark-genome: calc(18.5rem * 5 / 6);
+  --doehome-desktop-stat-mark-genome: min(45rem, 68vw);
+  --doehome-desktop-wave-mesh: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='784' height='348' viewBox='-42 -4 784 356'%3E%3Cpath d='M-42 40 Q175 0 350 40 T742 40' fill='none' stroke='rgba(232%2C192%2C142%2C0.06)' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M-42 98 Q175 58 350 98 T742 98' fill='none' stroke='rgba(232%2C192%2C142%2C0.06)' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M-42 156 Q175 116 350 156 T742 156' fill='none' stroke='rgba(232%2C192%2C142%2C0.06)' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M-42 214 Q175 174 350 214 T742 214' fill='none' stroke='rgba(232%2C192%2C142%2C0.06)' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M-42 272 Q175 232 350 272 T742 272' fill='none' stroke='rgba(232%2C192%2C142%2C0.06)' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M-42 330 Q175 290 350 330 T742 330' fill='none' stroke='rgba(232%2C192%2C142%2C0.06)' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
   background: var(--doehome-page);
   color: var(--doehome-cream);
 }
@@ -405,6 +407,19 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   background-size: 624px 278px;
 }
 
+.doehome-root:not(.doeinsure-root--iphone) #pulse.doehome-section--mesh-arches::before,
+.doehome-root:not(.doeinsure-root--iphone) #chart.doehome-section--mesh-waves::before,
+.doehome-root:not(.doeinsure-root--iphone) #connect.doehome-section--mesh-dots::before,
+.doehome-root:not(.doeinsure-root--iphone) #book.doehome-section--mesh-arches::before,
+.doehome-root:not(.doeinsure-root--iphone) #auth.doehome-section--mesh-waves::before {
+  opacity: 0.38;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome > * {
+  position: relative;
+  z-index: 1;
+}
+
 .doehome-root .doeinsure-stats {
   position: relative;
   isolation: isolate;
@@ -498,6 +513,170 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   border-right: 1px solid var(--doehome-gold-line);
 }
 
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome {
+  position: relative;
+  isolation: isolate;
+  border-left: 1px solid var(--doehome-gold-line);
+  border-right: 1px solid var(--doehome-gold-line);
+  border-bottom: 1px solid var(--doehome-gold-line);
+  width: 100%;
+  overflow: hidden;
+  text-align: left;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-iphone-genome-link {
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  min-height: 12.25rem;
+  border: 0;
+  padding: 1.1rem 1.5rem;
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  isolation: isolate;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-iphone-genome-link::before {
+  content: "";
+  grid-column: 1;
+  grid-row: 1;
+  align-self: stretch;
+  justify-self: stretch;
+  z-index: 0;
+  margin: -1.1rem -3rem -1.1rem -1.5rem;
+  pointer-events: none;
+  background-image: var(--doehome-desktop-wave-mesh);
+  background-size: 784px 348px;
+  background-repeat: repeat;
+  background-position: left top;
+  -webkit-mask-image:
+    linear-gradient(180deg, transparent 0%, #000 10%, #000 90%, transparent 100%),
+    linear-gradient(90deg, #000 0%, #000 66%, rgba(0, 0, 0, 0.82) 80%, rgba(0, 0, 0, 0.38) 92%, transparent 100%);
+  mask-image:
+    linear-gradient(180deg, transparent 0%, #000 10%, #000 90%, transparent 100%),
+    linear-gradient(90deg, #000 0%, #000 66%, rgba(0, 0, 0, 0.82) 80%, rgba(0, 0, 0, 0.38) 92%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-genome-copy,
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-iphone-genome-art {
+  position: relative;
+  z-index: 1;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-genome-copy {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-iphone-genome-art {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-genome-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  align-self: center;
+  gap: 0.32rem;
+  max-width: min(100%, 48rem);
+  margin-left: 11rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-genome-copy .doehome-product-wordmark {
+  width: var(--doehome-desktop-stat-mark-genome);
+  max-width: 100%;
+  height: auto;
+  margin-inline: 0;
+  flex: none;
+  align-self: flex-start;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-genome-copy .doehome-stat-iphone-tagline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: flex-start;
+  width: 100%;
+  gap: 0.28rem;
+  max-width: none;
+  color: var(--doehome-cream-muted);
+  font-size: 1.16rem;
+  line-height: 1.34;
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-genome-copy .doehome-stat-iphone-tagline__text {
+  display: block;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-genome-copy .doehome-stat-iphone-tagline--stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.04rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-genome-copy .doehome-stat-iphone-tagline--stacked .doehome-stat-iphone-tagline__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.04rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-genome-copy .doehome-stat-iphone-tagline__line--with-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-genome-copy .doehome-stat-iphone-tagline__arrow {
+  width: 1.15rem;
+  height: auto;
+  flex: none;
+  color: #e8c08e;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-iphone-genome-link:hover .doehome-stat-iphone-tagline__arrow {
+  color: #f2e8da;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-iphone-genome-art {
+  align-self: center;
+  justify-self: center;
+  display: block;
+  width: calc(100% * 5 / 6);
+  max-width: none;
+  margin-inline: auto;
+  transform: translateX(-1.75rem);
+  line-height: 0;
+  overflow: hidden;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat--desktop-genome .doehome-stat-iphone-genome-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  object-fit: cover;
+  object-position: center;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
 .doehome-root .doeinsure-stat,
 .doehome-root .doehome-stat {
   border-color: var(--doehome-gold-line);
@@ -528,23 +707,51 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   color: var(--doehome-cream-muted);
 }
 
-.doehome-root .doehome-stat-copy {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.42rem;
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat-copy {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 500;
   line-height: 1.45;
 }
 
-.doehome-root .doehome-stat-copy__text {
-  display: block;
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat-copy__text {
+  display: inline;
 }
 
-.doehome-root .doehome-stat-product-link {
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat-product-link--copy-size {
+  display: inline;
+  margin-left: 0.35rem;
+  color: #e8c08e;
+  text-decoration: none;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat-product-link--copy-size .doehome-stat-product-link__label {
+  background: var(--doehealth-gold-text-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font: inherit;
+  letter-spacing: -0.01em;
+  vertical-align: baseline;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat-product-link--copy-size .doehome-stat-product-link__arrow {
+  display: inline-block;
+  width: 0.82em;
+  height: 0.82em;
+  margin-left: 0.06em;
+  vertical-align: -0.06em;
+  flex: none;
+}
+
+.doehome-root:not(.doeinsure-root--iphone) .doehome-stat-product-link {
   display: inline-flex;
-  align-items: center;
-  gap: 0.34rem;
-  margin-left: 0;
+  align-items: baseline;
+  gap: 0.1rem;
+  margin-left: 0.35rem;
   color: #e8c08e;
   text-decoration: none;
   vertical-align: baseline;
@@ -608,7 +815,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-  gap: 0.45rem;
+  gap: 0;
   width: 100%;
   border: 0;
   padding: 0;
@@ -617,17 +824,25 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   text-decoration: none;
 }
 
-.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-genome-link .doehome-product-wordmark,
-.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-genome-link .doehome-stat-iphone-tagline {
+.doehome-root.doeinsure-root--iphone .doehome-stat-genome-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.doehome-root.doeinsure-root--iphone .doehome-stat-genome-copy .doehome-product-wordmark,
+.doehome-root.doeinsure-root--iphone .doehome-stat-genome-copy .doehome-stat-iphone-tagline {
   padding-inline: max(var(--di-inset), env(safe-area-inset-left, 0px))
     max(var(--di-inset), env(safe-area-inset-right, 0px));
 }
 
-.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-genome-link .doehome-stat-iphone-tagline {
+.doehome-root.doeinsure-root--iphone .doehome-stat-genome-copy .doehome-stat-iphone-tagline {
   padding-bottom: 0;
 }
 
-.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-genome-link .doehome-product-wordmark {
+.doehome-root.doeinsure-root--iphone .doehome-stat-genome-copy .doehome-product-wordmark {
   align-self: center;
 }
 
@@ -661,7 +876,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   color: #f2e8da;
 }
 
-.doehome-root.doeinsure-root--iphone .doehome-stat-iphone-genome-link .doehome-product-wordmark {
+.doehome-root.doeinsure-root--iphone .doehome-stat-genome-copy .doehome-product-wordmark {
   width: var(--doehome-iphone-stat-mark-genome);
   max-width: 100%;
   height: auto;
@@ -1028,6 +1243,17 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
   image-rendering: auto;
 }
 
+.doehome-root .doehome-shader-frame {
+  --doehome-iphone-glass-pad: 0.48rem;
+  --doehome-iphone-glass-radius: 1rem;
+  --doehome-iphone-glass-border: 1px solid rgba(255, 245, 230, 0.22);
+  --doehome-iphone-glass-fill: rgba(255, 245, 230, 0.07);
+  --doehome-iphone-glass-inset: inset 0 1px 0 rgba(255, 245, 230, 0.14);
+  --doehome-iphone-glass-blur: blur(11px) saturate(1.05);
+  border-radius: var(--doehome-iphone-glass-radius);
+  border: 1px solid rgba(255, 245, 230, 0.16);
+}
+
 .doehome-shader-frame {
   position: relative;
   isolation: isolate;
@@ -1039,6 +1265,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 
 .doehome-shader-frame .doehome-shader__img {
   z-index: 0;
+  border-radius: inherit;
 }
 
 .doehome-root #fabric .doehome-shader__img {
@@ -2545,19 +2772,7 @@ html[data-doehome-page]:has(.doephone-mobile-root) {
 }
 
 .doeinsure-root--iphone .doehome-shader-frame {
-  --doehome-iphone-glass-pad: 0.48rem;
-  --doehome-iphone-glass-radius: 1rem;
-  --doehome-iphone-glass-border: 1px solid rgba(255, 245, 230, 0.22);
-  --doehome-iphone-glass-fill: rgba(255, 245, 230, 0.07);
-  --doehome-iphone-glass-inset: inset 0 1px 0 rgba(255, 245, 230, 0.14);
-  --doehome-iphone-glass-blur: blur(11px) saturate(1.05);
-  border-radius: var(--doehome-iphone-glass-radius);
-  border: 1px solid rgba(255, 245, 230, 0.16);
   isolation: auto;
-}
-
-.doeinsure-root--iphone .doehome-shader-frame .doehome-shader__img {
-  border-radius: inherit;
 }
 
 .doeinsure-root--iphone .doehome-shader-frame__ui {

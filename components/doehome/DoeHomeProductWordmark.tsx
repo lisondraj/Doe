@@ -29,11 +29,13 @@ export function DoeHomeProductWordmark({
   stat = false,
   iphoneLead = false,
   iphoneProductRow = false,
+  anchorStart = false,
 }: {
   product: DoeHomeProductWordmarkId;
   stat?: boolean;
   iphoneLead?: boolean;
   iphoneProductRow?: boolean;
+  anchorStart?: boolean;
 }) {
   const mark = PRODUCT_WORDMARKS[product];
   const width = iphoneProductRow
@@ -50,7 +52,8 @@ export function DoeHomeProductWordmark({
   const viewBoxWidth = matchFloatRowSize
     ? IPHONE_PRODUCT_ROW_VIEWBOX_WIDTH
     : Number(mark.viewBox.split(/\s+/)[2]);
-  const textX = iphoneProductRow ? viewBoxWidth / 2 : 0;
+  const centerInRow = iphoneProductRow && !anchorStart;
+  const textX = centerInRow ? viewBoxWidth / 2 : 0;
 
   return (
     <svg
@@ -64,7 +67,7 @@ export function DoeHomeProductWordmark({
       <text
         x={textX}
         y="9.5"
-        textAnchor={iphoneProductRow ? "middle" : undefined}
+        textAnchor={centerInRow ? "middle" : undefined}
         fill="url(#doeinsure-blue-gradient-h)"
         style={{ fontFamily: suisseIntl.style.fontFamily }}
         fontSize="10.5"
@@ -103,17 +106,27 @@ export function DoeHomeIphoneStatTagline({ label }: { label: string | readonly s
 }
 
 /** Gold product link at the end of a hero stat description. */
-export function DoeHomeStatProductLink({ product }: { product: DoeHomeProductWordmarkId }) {
+export function DoeHomeStatProductLink({
+  product,
+  matchCopySize = false,
+}: {
+  product: DoeHomeProductWordmarkId;
+  matchCopySize?: boolean;
+}) {
   const label = doeHomeProductWordmarkLabel(product);
 
   return (
     <a
-      className="doehome-stat-product-link"
+      className={`doehome-stat-product-link${matchCopySize ? " doehome-stat-product-link--copy-size" : ""}`}
       href={`#${product}`}
       aria-label={`See ${label}`}
       onClick={(event) => event.stopPropagation()}
     >
-      <DoeHomeProductWordmark product={product} stat />
+      {matchCopySize ? (
+        <span className="doehome-stat-product-link__label">{label}</span>
+      ) : (
+        <DoeHomeProductWordmark product={product} stat />
+      )}
       <DoeLinkArrow className="doehome-stat-product-link__arrow" />
     </a>
   );
