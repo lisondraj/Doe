@@ -42,6 +42,10 @@ export const CLINIC_SPECIALTY_WORKFLOWS_ARTICLE = {
       text: "At Doe, we are building the foundation once and reshaping it around the work in front of a team. The patient thread, the ability to understand context, and the accountability behind each action stay consistent. What changes is how the system speaks the practice's language: its roles, timing, intake, approvals, documentation, follow-up, and definition of a useful next step.",
     },
     {
+      type: "paragraph",
+      text: "The goal is not to make every care journey look alike. It is to make the recurring work around that journey legible: what is waiting, who owns it, what information is missing, and when a clinician needs to decide. A useful operating layer should reduce the number of handoffs that disappear into a phone note, portal message, spreadsheet, or inbox.",
+    },
+    {
       type: "shader",
       id: "specialty-care-journey",
       shaderVariant: "ambient",
@@ -56,6 +60,25 @@ export const CLINIC_SPECIALTY_WORKFLOWS_ARTICLE = {
       id: "specialty-operational-knowledge",
       shaderVariant: "customize-agents-band",
       caption: "Specialty knowledge belongs in the way work is routed, reviewed, and improved over time.",
+    },
+    {
+      type: "subheading",
+      text: "Start with the work that repeats.",
+    },
+    {
+      type: "paragraph",
+      text: "Specialty operations are full of repeatable moments that are important precisely because they are easy to overlook: confirming that an imaging order is ready before the patient arrives, checking whether a lab was completed before a medication review, preparing the right consent materials, or closing the loop after a procedure. These are strong places to begin because teams can define the expected outcome, review the work before it is sent, and improve the workflow over time.",
+    },
+    {
+      type: "bullets",
+      id: "clinic-workflow-starting-points",
+      items: [
+        "**Intake and readiness:** collect the information, records, consents, and benefits checks needed for the next step.",
+        "**Scheduling and coordination:** route requests to the right role and keep appointments, preparation, and follow-up connected.",
+        "**Documentation and review:** prepare a complete draft or checklist while leaving clinical judgment and final approval with the team.",
+        "**Patient communication:** make the next action clear, timely, and consistent with the clinic’s own voice and protocols.",
+        "**Handoffs and escalation:** surface work that requires a nurse, advanced practice clinician, physician, or administrative owner before it becomes a delay.",
+      ],
     },
     {
       type: "quote",
@@ -83,6 +106,10 @@ export const CLINIC_SPECIALTY_WORKFLOWS_ARTICLE = {
       text: "That means building adaptable workflows, clear ownership, and a shared patient thread into the foundation, so a practice does not have to choose between a system that is consistent and one that feels like its own. The goal is for Doe to learn the shape of the work with a team, then make that work easier to run.",
     },
     {
+      type: "paragraph",
+      text: "A specialty clinic does not need to replace every system on day one to gain a better operating model. The first workflow may be a narrow one—result follow-up, a pre-procedure checklist, a refill review, or a home-visit handoff. Once the team trusts the context, ownership, and review process, adjacent workflows can connect to the same patient thread instead of becoming another isolated tool.",
+    },
+    {
       type: "subheading",
       text: "Built to grow with the practice.",
     },
@@ -93,6 +120,26 @@ export const CLINIC_SPECIALTY_WORKFLOWS_ARTICLE = {
     {
       type: "paragraph",
       text: "The goal is not to prescribe how every practice should run. It is to give every kind of practice a platform that can become more useful as the team learns, changes, and grows.",
+    },
+    {
+      type: "paragraph",
+      text: "That sequence makes the work easier to evaluate in the setting where it actually happens. It also makes the operation clearer over time: where time is spent, where decisions stall, and which changes improve continuity. The same foundation can support a single clinician, a growing specialty practice, or a distributed group without losing the record of responsibility.",
+    },
+    {
+      type: "goldParagraph",
+      text: "The most durable clinical software earns its place one reliable workflow at a time—then makes every connected workflow more useful because the context is already there.",
+    },
+    {
+      type: "subheading",
+      text: "Built to be accountable in the details.",
+    },
+    {
+      type: "paragraph",
+      text: "Care teams should be able to see why work was routed, which information informed a draft, and who reviewed the next step. Doe is designed around that visibility. It should be possible to inspect a workflow without reconstructing it from disconnected tabs, and possible to improve a process without asking staff to work around yet another black box.",
+    },
+    {
+      type: "paragraph",
+      text: "This is especially important as a clinic adds services, locations, and team members. The operating model has to preserve the practical knowledge that made the practice work in the first place: how it prioritizes, how it escalates, and how it communicates with patients. Configuration is not just branding or templates. It is how the system learns to support a clinic’s standards while keeping the people responsible for care in control.",
     },
   ],
   bodyParagraphs: [],
