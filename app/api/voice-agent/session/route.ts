@@ -38,7 +38,7 @@ export async function POST() {
           transcription: { model: "gpt-4o-mini-transcribe" },
         },
         output: {
-          format: { type: "audio/pcm" },
+          format: { type: "audio/pcm", rate: 24000 },
           voice,
         },
       },
