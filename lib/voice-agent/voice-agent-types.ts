@@ -31,6 +31,7 @@ export interface VoiceAgentHistoryRecord {
   startedAt: string;
   endedAt: string;
   transcript: VoiceAgentTranscriptEntry[];
+  adviceTranscript: VoiceAgentTranscriptEntry[];
   feedback: VoiceAgentFeedback | null;
 }
 

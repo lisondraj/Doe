@@ -73,6 +73,22 @@
   color: rgba(244, 236, 225, 0.5);
 }
 
+.voice-agent-page__back {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--va-gold-bright);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  padding: 0.2rem 0;
+}
+
+.voice-agent-page__back:active {
+  opacity: 0.7;
+}
+
 /* ---- Start / connecting / error screens ---- */
 
 .voice-agent-page__hero {
@@ -244,9 +260,49 @@
   letter-spacing: -0.01em;
 }
 
-.voice-agent-page__history-meta {
-  font-size: 0.75rem;
-  color: rgba(244, 236, 225, 0.5);
+.voice-agent-page__login {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+  text-align: left;
+}
+
+.voice-agent-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.voice-agent-page__field span {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--va-gold-bright);
+}
+
+.voice-agent-page__field input {
+  appearance: none;
+  width: 100%;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(232, 192, 142, 0.28);
+  background: rgba(255, 255, 255, 0.05);
+  color: #f4ece1;
+  font: inherit;
+  font-size: 1rem;
+  padding: 0.85rem 0.95rem;
+}
+
+.voice-agent-page__field input:focus {
+  outline: none;
+  border-color: rgba(232, 192, 142, 0.7);
+}
+
+.voice-agent-page__login .voice-agent-page__cta {
+  width: 100%;
+  min-width: 0;
+  margin-top: 0.35rem;
 }
 
 .voice-agent-page__error {
@@ -648,4 +704,38 @@
   gap: 0.55rem;
   text-align: center;
   padding: 0.2rem 0 0.15rem;
+}
+
+.voice-agent-page__modal {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: max(1.6rem, env(safe-area-inset-top)) 1.35rem max(1.6rem, env(safe-area-inset-bottom));
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(232, 192, 142, 0.14) 0%, transparent 55%),
+    linear-gradient(165deg, #2a1c12 0%, #1a1208 46%, #120c08 100%);
+  color: #f4ece1;
+}
+
+.voice-agent-page__modal-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.voice-agent-page__modal-pane {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.voice-agent-page__modal-pane .voice-agent-page__transcript {
+  flex: 1;
 }

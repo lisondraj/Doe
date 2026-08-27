@@ -94,6 +94,18 @@ function errorEventMessage(event: Record<string, unknown>): string {
   return typeof event.message === "string" ? event.message : "";
 }
 
+function compactTranscriptForPrompt(entries: readonly VoiceAgentTranscriptEntry[]): string {
+  const lines = entries
+    .filter((entry) => entry.text.trim())
+    .map((entry) => `${entry.role === "user" ? "Candidate" : "Dr. Osler"}: ${entry.text.trim()}`);
+  let text = lines.join("\n");
+  const max = 6000;
+  if (text.length <= max) return text;
+  text = text.slice(text.length - max);
+  const firstBreak = text.indexOf("\n");
+  return firstBreak > 0 ? text.slice(firstBreak + 1) : text;
+}
+
 let uid = 0;
 function nextId(prefix: string): string {
   uid += 1;
@@ -107,18 +119,37 @@ function newSessionId(): string {
   return nextId("session");
 }
 
+function updateTranscriptList(
+  entries: VoiceAgentTranscriptEntry[],
+  itemId: string,
+  text: string,
+  final: boolean,
+): VoiceAgentTranscriptEntry[] {
+  if (isRealtimeApiNoise(text)) {
+    return entries.filter((entry) => entry.id !== itemId);
+  }
+  const idx = entries.findIndex((entry) => entry.id === itemId);
+  const nextEntry: VoiceAgentTranscriptEntry = { id: itemId, role: "assistant", text, final };
+  if (idx === -1) return [...entries, nextEntry];
+  const next = [...entries];
+  next[idx] = { ...next[idx], ...nextEntry };
+  return next;
+}
+
 export function useVoiceAgentSession() {
   const [screen, setScreen] = useState<VoiceAgentScreen>("start");
   const [mode, setMode] = useState<VoiceAgentMode>("practice");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [setup, setSetup] = useState<VoiceAgentSetup | null>(null);
   const [transcript, setTranscript] = useState<VoiceAgentTranscriptEntry[]>([]);
+  const [adviceTranscript, setAdviceTranscript] = useState<VoiceAgentTranscriptEntry[]>([]);
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
   const [feedback, setFeedback] = useState<VoiceAgentFeedback | null>(null);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [userSpeaking, setUserSpeaking] = useState(false);
   const [assistantSpeaking, setAssistantSpeaking] = useState(false);
   const [coachingActive, setCoachingActive] = useState(false);
+  const [askMoreOpen, setAskMoreOpen] = useState(false);
   const [history, setHistory] = useState<VoiceAgentHistoryRecord[]>([]);
 
   const sessionRef = useRef<VoiceAgentRealtimeSession | null>(null);
@@ -127,14 +158,16 @@ export function useVoiceAgentSession() {
   const endRequestedRef = useRef(false);
   const sessionIdRef = useRef<string | null>(null);
   const startedAtRef = useRef<string | null>(null);
+  const adviceModeRef = useRef(false);
   const persistSnapshotRef = useRef({
     mode: "practice" as VoiceAgentMode,
     setup: null as VoiceAgentSetup | null,
     transcript: [] as VoiceAgentTranscriptEntry[],
+    adviceTranscript: [] as VoiceAgentTranscriptEntry[],
     feedback: null as VoiceAgentFeedback | null,
   });
 
-  persistSnapshotRef.current = { mode, setup, transcript, feedback };
+  persistSnapshotRef.current = { mode, setup, transcript, adviceTranscript, feedback };
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -150,8 +183,9 @@ export function useVoiceAgentSession() {
 
     const snap = persistSnapshotRef.current;
     const cleaned = transcriptForHistory(snap.transcript);
+    const cleanedAdvice = transcriptForHistory(snap.adviceTranscript);
     const topic = snap.setup?.topic?.trim() ?? "";
-    if (!topic && cleaned.length === 0) return;
+    if (!topic && cleaned.length === 0 && cleanedAdvice.length === 0) return;
 
     const records = upsertVoiceAgentHistory({
       id: sessionId,
@@ -161,9 +195,10 @@ export function useVoiceAgentSession() {
       startedAt,
       endedAt: new Date().toISOString(),
       transcript: cleaned,
+      adviceTranscript: cleanedAdvice,
       feedback: snap.feedback,
     });
-    setHistory(records);
+    void Promise.resolve(records).then(setHistory);
   }, []);
 
   const persistHistoryRef = useRef(persistHistory);
@@ -177,7 +212,7 @@ export function useVoiceAgentSession() {
   }, [stopTimer]);
 
   useEffect(() => {
-    setHistory(loadVoiceAgentHistory());
+    void loadVoiceAgentHistory().then(setHistory);
   }, []);
 
   useEffect(() => {
@@ -191,7 +226,7 @@ export function useVoiceAgentSession() {
     if (screen === "start" || screen === "connecting" || screen === "error") return;
     const timer = window.setTimeout(() => persistHistoryRef.current(), 1200);
     return () => window.clearTimeout(timer);
-  }, [screen, transcript, setup, feedback]);
+  }, [screen, transcript, adviceTranscript, setup, feedback]);
 
   const requestStationEnd = useCallback(() => {
     const session = sessionRef.current;
@@ -321,6 +356,7 @@ export function useVoiceAgentSession() {
   const handleServerEvent = useCallback(
     (event: Record<string, unknown>) => {
       const type = event.type;
+      const patchList = adviceModeRef.current ? setAdviceTranscript : setTranscript;
 
       if (type === "input_audio_buffer.speech_started") {
         setUserSpeaking(true);
@@ -345,20 +381,8 @@ export function useVoiceAgentSession() {
         const prior = assistantBufferRef.current.get(itemId) ?? "";
         const merged = prior + delta;
         assistantBufferRef.current.set(itemId, merged);
-        if (isRealtimeApiNoise(merged)) {
-          setTranscript((entries) => entries.filter((entry) => entry.id !== itemId));
-          return;
-        }
         setAssistantSpeaking(true);
-        setTranscript((entries) => {
-          const idx = entries.findIndex((entry) => entry.id === itemId);
-          if (idx === -1) {
-            return [...entries, { id: itemId, role: "assistant", text: merged, final: false }];
-          }
-          const next = [...entries];
-          next[idx] = { ...next[idx], text: merged };
-          return next;
-        });
+        patchList((entries) => updateTranscriptList(entries, itemId, merged, false));
         return;
       }
 
@@ -369,29 +393,14 @@ export function useVoiceAgentSession() {
             ? event.transcript
             : assistantBufferRef.current.get(itemId) ?? "";
         assistantBufferRef.current.delete(itemId);
-        if (isRealtimeApiNoise(finalText)) {
-          setTranscript((entries) => entries.filter((entry) => entry.id !== itemId));
-          return;
-        }
-        setTranscript((entries) => {
-          const idx = entries.findIndex((entry) => entry.id === itemId);
-          if (idx === -1) {
-            return [...entries, { id: itemId, role: "assistant", text: finalText, final: true }];
-          }
-          const next = [...entries];
-          next[idx] = { ...next[idx], text: finalText, final: true };
-          return next;
-        });
+        patchList((entries) => updateTranscriptList(entries, itemId, finalText, true));
         return;
       }
 
       if (type === "conversation.item.input_audio_transcription.completed") {
         const text = typeof event.transcript === "string" ? event.transcript.trim() : "";
         if (!text) return;
-        setTranscript((entries) => [
-          ...entries,
-          { id: nextId("user"), role: "user", text, final: true },
-        ]);
+        patchList((entries) => [...entries, { id: nextId("user"), role: "user", text, final: true }]);
         return;
       }
 
@@ -415,6 +424,29 @@ export function useVoiceAgentSession() {
     [handleFunctionCall],
   );
 
+  const attachSession = useCallback(
+    (session: VoiceAgentRealtimeSession, onOpen: () => void) => {
+      sessionRef.current = session;
+      session.dataChannel.addEventListener("open", onOpen);
+      session.dataChannel.addEventListener("message", (messageEvent) => {
+        try {
+          const parsed = JSON.parse(messageEvent.data);
+          handleServerEvent(parsed);
+        } catch {
+          /** ignore malformed events */
+        }
+      });
+      session.peerConnection.addEventListener("connectionstatechange", () => {
+        const state = session.peerConnection.connectionState;
+        if (state === "failed" || state === "disconnected" || state === "closed") {
+          setUserSpeaking(false);
+          setAssistantSpeaking(false);
+        }
+      });
+    },
+    [handleServerEvent],
+  );
+
   const start = useCallback(
     async (nextMode: VoiceAgentMode) => {
       setErrorMessage(null);
@@ -422,9 +454,12 @@ export function useVoiceAgentSession() {
       setScreen("connecting");
       setSetup(null);
       setTranscript([]);
+      setAdviceTranscript([]);
       setCheckedItems(new Set());
       setFeedback(null);
       setCoachingActive(false);
+      setAskMoreOpen(false);
+      adviceModeRef.current = false;
       assistantBufferRef.current.clear();
       endRequestedRef.current = false;
       sessionIdRef.current = newSessionId();
@@ -432,57 +467,56 @@ export function useVoiceAgentSession() {
 
       try {
         const session = await connectVoiceAgentRealtimeSession(nextMode);
-        sessionRef.current = session;
-
-        session.dataChannel.addEventListener("open", () => {
-          setScreen("session");
-        });
-
-        session.dataChannel.addEventListener("message", (messageEvent) => {
-          try {
-            const parsed = JSON.parse(messageEvent.data);
-            handleServerEvent(parsed);
-          } catch {
-            /** ignore malformed events */
-          }
-        });
-
-        session.peerConnection.addEventListener("connectionstatechange", () => {
-          const state = session.peerConnection.connectionState;
-          if (state === "failed" || state === "disconnected" || state === "closed") {
-            setUserSpeaking(false);
-            setAssistantSpeaking(false);
-          }
-        });
+        attachSession(session, () => setScreen("session"));
       } catch (error) {
         teardown();
         setErrorMessage(error instanceof Error ? error.message : "Could not start the voice agent.");
         setScreen("error");
       }
     },
-    [handleServerEvent, teardown],
+    [attachSession, teardown],
   );
 
   const endStationEarly = useCallback(() => {
     requestStationEnd();
   }, [requestStationEnd]);
 
-  const beginCoaching = useCallback(() => {
+  const closeAskMore = useCallback(() => {
     const session = sessionRef.current;
-    if (!session) {
-      setErrorMessage("The voice session ended. Start a new session to keep talking.");
-      return;
-    }
-    if (
-      !sendSystemPrompt(
-        "[SYSTEM] The candidate is ready for post-station coaching. You are now Dr. Osler the examiner and coach — not the patient. In one short sentence, invite them to ask for tips, missed questions, better phrasing, or what a strong candidate would do on this station. Then wait for their question and keep going back and forth.",
-      )
-    ) {
-      return;
-    }
-    setVoiceAgentMicEnabled(session, true);
-    setCoachingActive(true);
-  }, [sendSystemPrompt]);
+    if (session) setVoiceAgentMicEnabled(session, false);
+    setCoachingActive(false);
+    setAskMoreOpen(false);
+  }, []);
+
+  const openAskMore = useCallback(
+    (prompt: string) => {
+      const session = sessionRef.current;
+      if (!session) {
+        setErrorMessage("The voice session ended. Start a new session to keep talking.");
+        return;
+      }
+
+      const firstOpen = !adviceModeRef.current;
+      adviceModeRef.current = true;
+      setAskMoreOpen(true);
+
+      if (firstOpen && !sendSystemPrompt(prompt)) {
+        adviceModeRef.current = false;
+        setAskMoreOpen(false);
+        return;
+      }
+
+      setVoiceAgentMicEnabled(session, true);
+      setCoachingActive(true);
+    },
+    [sendSystemPrompt],
+  );
+
+  const beginCoaching = useCallback(() => {
+    openAskMore(
+      "[SYSTEM] The candidate is ready for post-station coaching. You are now Dr. Osler the examiner and coach — not the patient. In one short sentence, invite them to ask for tips, missed questions, better phrasing, or what a strong candidate would do on this station. Then wait for their question and keep going back and forth.",
+    );
+  }, [openAskMore]);
 
   const beginDeepDive = useCallback(() => {
     const session = sessionRef.current;
@@ -499,42 +533,68 @@ export function useVoiceAgentSession() {
     }
     setVoiceAgentMicEnabled(session, false);
     setCoachingActive(false);
+    setAskMoreOpen(false);
     setScreen("deepdive");
   }, [sendSystemPrompt]);
 
   const beginDeepDiveQuestions = useCallback(() => {
-    const session = sessionRef.current;
-    if (!session) {
-      setErrorMessage("The voice session ended. Start a new session to keep talking.");
-      return;
-    }
-    if (
-      !sendSystemPrompt(
-        "[SYSTEM] The candidate wants follow-up questions on this deep dive. Invite them in one short sentence to ask anything — more history questions, DDX, investigations, or management — then wait and keep going back and forth in the same level of detail.",
-      )
-    ) {
-      return;
-    }
-    setVoiceAgentMicEnabled(session, true);
-    setCoachingActive(true);
-  }, [sendSystemPrompt]);
+    openAskMore(
+      "[SYSTEM] The candidate wants follow-up questions on this deep dive. Invite them in one short sentence to ask anything — more history questions, DDX, investigations, or management — then wait and keep going back and forth in the same level of detail.",
+    );
+  }, [openAskMore]);
 
   const beginAskMore = useCallback(() => {
-    const session = sessionRef.current;
-    if (!session) {
-      setErrorMessage("The voice session ended. Start a new session to keep talking.");
-      return;
-    }
-    if (
-      !sendSystemPrompt(
-        "[SYSTEM] The candidate tapped Ask more. Invite them in one short sentence to ask anything about this topic — more history questions, DDX, investigations, management, or examiner questions — then wait and keep going back and forth in the same level of detail.",
-      )
-    ) {
-      return;
-    }
-    setVoiceAgentMicEnabled(session, true);
-    setCoachingActive(true);
-  }, [sendSystemPrompt]);
+    openAskMore(
+      "[SYSTEM] The candidate tapped Ask more about this session. Invite them in one short sentence to ask anything about this topic — more history questions, DDX, investigations, management, or examiner questions — then wait and keep going back and forth in the same level of detail.",
+    );
+  }, [openAskMore]);
+
+  const startAskMoreFromHistory = useCallback(
+    async (record: VoiceAgentHistoryRecord) => {
+      persistHistory();
+      teardown();
+
+      setErrorMessage(null);
+      setMode(record.mode);
+      setScreen("connecting");
+      setSetup({
+        durationMinutes: 0,
+        topic: record.topic,
+        stationType: record.stationType ?? "history",
+        checklist: [],
+      });
+      setTranscript(record.transcript);
+      setAdviceTranscript(record.adviceTranscript ?? []);
+      setCheckedItems(new Set());
+      setFeedback(record.feedback);
+      setCoachingActive(false);
+      setAskMoreOpen(false);
+      adviceModeRef.current = true;
+      assistantBufferRef.current.clear();
+      endRequestedRef.current = false;
+      sessionIdRef.current = record.id;
+      startedAtRef.current = record.startedAt;
+
+      try {
+        const session = await connectVoiceAgentRealtimeSession(record.mode, { followup: true });
+        attachSession(session, () => {
+          setScreen(record.mode === "practice" && record.feedback ? "feedback" : "learning");
+          setAskMoreOpen(true);
+          setCoachingActive(true);
+          setVoiceAgentMicEnabled(session, true);
+          const original = compactTranscriptForPrompt(record.transcript);
+          sendSystemPrompt(
+            `[SYSTEM] The candidate tapped Ask more about this session. Topic: ${record.topic}. Original transcript:\n${original || "(none captured)"}\nInvite them in one short sentence to ask more, then wait and keep going back and forth.`,
+          );
+        });
+      } catch (error) {
+        teardown();
+        setErrorMessage(error instanceof Error ? error.message : "Could not start the voice agent.");
+        setScreen("error");
+      }
+    },
+    [attachSession, persistHistory, sendSystemPrompt, teardown],
+  );
 
   const toggleChecklistItem = useCallback((item: string) => {
     setCheckedItems((prev) => {
@@ -553,17 +613,33 @@ export function useVoiceAgentSession() {
     teardown();
     sessionIdRef.current = null;
     startedAtRef.current = null;
+    adviceModeRef.current = false;
     setScreen("start");
     setErrorMessage(null);
     setSetup(null);
     setTranscript([]);
+    setAdviceTranscript([]);
     setCheckedItems(new Set());
     setFeedback(null);
     setCoachingActive(false);
+    setAskMoreOpen(false);
     setRemainingSeconds(0);
     setUserSpeaking(false);
     setAssistantSpeaking(false);
   }, [persistHistory, teardown]);
+
+  const goBack = useCallback(() => {
+    if (askMoreOpen) {
+      closeAskMore();
+      return;
+    }
+    if (screen === "deepdive") {
+      setCoachingActive(false);
+      setScreen("feedback");
+      return;
+    }
+    reset();
+  }, [askMoreOpen, closeAskMore, reset, screen]);
 
   return {
     screen,
@@ -571,12 +647,14 @@ export function useVoiceAgentSession() {
     errorMessage,
     setup,
     transcript,
+    adviceTranscript,
     checkedItems,
     feedback,
     remainingSeconds,
     userSpeaking,
     assistantSpeaking,
     coachingActive,
+    askMoreOpen,
     history,
     start,
     endStationEarly,
@@ -584,7 +662,10 @@ export function useVoiceAgentSession() {
     beginDeepDive,
     beginDeepDiveQuestions,
     beginAskMore,
+    startAskMoreFromHistory,
+    closeAskMore,
     toggleChecklistItem,
+    goBack,
     reset,
   };
 }

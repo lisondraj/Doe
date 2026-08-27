@@ -1,5 +1,6 @@
-/** localStorage history for /voice-agent practice and learning sessions. */
+/** Chat history for /voice-agent — Supabase is the source of truth. */
 
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import type {
   VoiceAgentFeedback,
   VoiceAgentHistoryRecord,
@@ -8,8 +9,19 @@ import type {
   VoiceAgentTranscriptEntry,
 } from "@/lib/voice-agent/voice-agent-types";
 
-const HISTORY_KEY = "doe-voice-agent-history-v1";
 const MAX_RECORDS = 40;
+
+interface VoiceAgentSessionRow {
+  id: string;
+  mode: string;
+  topic: string;
+  station_type: string | null;
+  started_at: string;
+  ended_at: string;
+  transcript: unknown;
+  advice_transcript: unknown;
+  feedback: unknown;
+}
 
 function isMode(value: unknown): value is VoiceAgentMode {
   return value === "practice" || value === "learn";
@@ -39,48 +51,84 @@ function isFeedback(value: unknown): value is VoiceAgentFeedback {
   );
 }
 
-function isHistoryRecord(value: unknown): value is VoiceAgentHistoryRecord {
-  if (typeof value !== "object" || value === null) return false;
-  const record = value as VoiceAgentHistoryRecord;
-  return (
-    typeof record.id === "string" &&
-    isMode(record.mode) &&
-    typeof record.topic === "string" &&
-    (record.stationType === null || isStationType(record.stationType)) &&
-    typeof record.startedAt === "string" &&
-    typeof record.endedAt === "string" &&
-    Array.isArray(record.transcript) &&
-    record.transcript.every(isTranscriptEntry) &&
-    (record.feedback === null || isFeedback(record.feedback))
-  );
+function toTranscript(value: unknown): VoiceAgentTranscriptEntry[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(isTranscriptEntry).map((entry) => ({
+    id: entry.id,
+    role: entry.role,
+    text: entry.text,
+    final: true,
+  }));
 }
 
-export function loadVoiceAgentHistory(): VoiceAgentHistoryRecord[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(HISTORY_KEY);
-    if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(isHistoryRecord);
-  } catch {
+function rowToRecord(row: VoiceAgentSessionRow): VoiceAgentHistoryRecord | null {
+  if (!isMode(row.mode) || typeof row.topic !== "string") return null;
+  const stationType = row.station_type === null ? null : isStationType(row.station_type) ? row.station_type : null;
+  const feedback = row.feedback === null ? null : isFeedback(row.feedback) ? row.feedback : null;
+  return {
+    id: row.id,
+    mode: row.mode,
+    topic: row.topic,
+    stationType,
+    startedAt: row.started_at,
+    endedAt: row.ended_at,
+    transcript: toTranscript(row.transcript),
+    adviceTranscript: toTranscript(row.advice_transcript),
+    feedback,
+  };
+}
+
+export async function loadVoiceAgentHistory(): Promise<VoiceAgentHistoryRecord[]> {
+  const supabase = createSupabaseBrowserClient();
+  const { data, error } = await supabase
+    .from("voice_agent_sessions")
+    .select(
+      "id, mode, topic, station_type, started_at, ended_at, transcript, advice_transcript, feedback",
+    )
+    .order("ended_at", { ascending: false })
+    .limit(MAX_RECORDS);
+
+  if (error || !data) {
+    if (error) console.error("voice-agent history load", error);
     return [];
   }
+
+  return data
+    .map((row) => rowToRecord(row as VoiceAgentSessionRow))
+    .filter((record): record is VoiceAgentHistoryRecord => record !== null);
 }
 
-export function upsertVoiceAgentHistory(record: VoiceAgentHistoryRecord): VoiceAgentHistoryRecord[] {
-  const existing = loadVoiceAgentHistory();
-  const next = [record, ...existing.filter((entry) => entry.id !== record.id)]
-    .sort((a, b) => (a.endedAt < b.endedAt ? 1 : -1))
-    .slice(0, MAX_RECORDS);
+export async function upsertVoiceAgentHistory(
+  record: VoiceAgentHistoryRecord,
+): Promise<VoiceAgentHistoryRecord[]> {
+  const supabase = createSupabaseBrowserClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
 
-  try {
-    window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
-  } catch {
-    /** quota or private mode — keep in-memory list */
+  const { error } = await supabase.from("voice_agent_sessions").upsert(
+    {
+      id: record.id,
+      user_id: user.id,
+      mode: record.mode,
+      topic: record.topic,
+      station_type: record.stationType,
+      started_at: record.startedAt,
+      ended_at: record.endedAt,
+      transcript: record.transcript,
+      advice_transcript: record.adviceTranscript ?? [],
+      feedback: record.feedback,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "id" },
+  );
+
+  if (error) {
+    console.error("voice-agent history upsert", error);
   }
 
-  return next;
+  return loadVoiceAgentHistory();
 }
 
 export function transcriptForHistory(

@@ -12,11 +12,14 @@ export interface VoiceAgentRealtimeSession {
 
 const REALTIME_CALLS_URL = "https://api.openai.com/v1/realtime/calls";
 
-async function fetchEphemeralKey(mode: VoiceAgentMode): Promise<string> {
+async function fetchEphemeralKey(
+  mode: VoiceAgentMode,
+  options?: { followup?: boolean },
+): Promise<string> {
   const response = await fetch("/api/voice-agent/session", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mode }),
+    body: JSON.stringify({ mode, followup: options?.followup === true }),
   });
   const data = await response.json().catch(() => null);
 
@@ -34,8 +37,9 @@ async function fetchEphemeralKey(mode: VoiceAgentMode): Promise<string> {
 
 export async function connectVoiceAgentRealtimeSession(
   mode: VoiceAgentMode = "practice",
+  options?: { followup?: boolean },
 ): Promise<VoiceAgentRealtimeSession> {
-  const ephemeralKey = await fetchEphemeralKey(mode);
+  const ephemeralKey = await fetchEphemeralKey(mode, options);
 
   const peerConnection = new RTCPeerConnection();
 

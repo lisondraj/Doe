@@ -90,16 +90,20 @@ async function handleAdminAccess(request: NextRequest): Promise<NextResponse | n
 
 export async function middleware(request: NextRequest) {
   const host = requestHostFromHeaders(request.headers);
+  const { pathname } = request.nextUrl;
   const adminResponse = await handleAdminAccess(request);
   if (adminResponse) {
     return adminResponse;
   }
 
+  if (pathname === "/voice-agent" || pathname.startsWith("/api/voice-agent/")) {
+    const { response } = await createSupabaseMiddlewareClient(request);
+    return applyLandingSiteHeaders(response);
+  }
+
   if (!shouldEnforceDomainRouting(host)) {
     return NextResponse.next();
   }
-
-  const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/api/")) {
     return NextResponse.next();

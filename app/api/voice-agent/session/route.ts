@@ -1,9 +1,11 @@
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   VOICE_AGENT_DEFAULT_MODEL,
   VOICE_AGENT_DEFAULT_VOICE,
+  VOICE_AGENT_FOLLOWUP_INSTRUCTIONS,
   VOICE_AGENT_INSTRUCTIONS,
   VOICE_AGENT_LEARNING_INSTRUCTIONS,
   VOICE_AGENT_LEARNING_TOOLS,
@@ -14,18 +16,32 @@ import type { VoiceAgentMode } from "@/lib/voice-agent/voice-agent-types";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-async function readMode(request: Request): Promise<VoiceAgentMode> {
+async function readSessionOptions(request: Request): Promise<{
+  mode: VoiceAgentMode;
+  followup: boolean;
+}> {
   try {
-    const body = (await request.json()) as { mode?: unknown };
-    if (body?.mode === "learn") return "learn";
+    const body = (await request.json()) as { mode?: unknown; followup?: unknown };
+    return {
+      mode: body?.mode === "learn" ? "learn" : "practice",
+      followup: body?.followup === true,
+    };
   } catch {
-    /** empty or non-JSON body defaults to practice */
+    return { mode: "practice", followup: false };
   }
-  return "practice";
 }
 
 /** Mints a short-lived OpenAI Realtime client secret so the browser never sees the real API key. */
 export async function POST(request: Request) {
+  const supabase = createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Sign in to start a voice session." }, { status: 401 });
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
 
   if (!apiKey) {
@@ -35,16 +51,22 @@ export async function POST(request: Request) {
     );
   }
 
-  const mode = await readMode(request);
+  const { mode, followup } = await readSessionOptions(request);
   const model = process.env.OPENAI_REALTIME_MODEL || VOICE_AGENT_DEFAULT_MODEL;
   const voice = process.env.OPENAI_REALTIME_VOICE || VOICE_AGENT_DEFAULT_VOICE;
   const learning = mode === "learn";
+  const instructions = followup
+    ? VOICE_AGENT_FOLLOWUP_INSTRUCTIONS
+    : learning
+      ? VOICE_AGENT_LEARNING_INSTRUCTIONS
+      : VOICE_AGENT_INSTRUCTIONS;
+  const tools = followup ? [] : learning ? VOICE_AGENT_LEARNING_TOOLS : VOICE_AGENT_TOOLS;
 
   const sessionConfig = {
     session: {
       type: "realtime",
       model,
-      instructions: learning ? VOICE_AGENT_LEARNING_INSTRUCTIONS : VOICE_AGENT_INSTRUCTIONS,
+      instructions,
       output_modalities: ["audio"],
       audio: {
         input: {
@@ -57,8 +79,7 @@ export async function POST(request: Request) {
           voice,
         },
       },
-      tools: learning ? VOICE_AGENT_LEARNING_TOOLS : VOICE_AGENT_TOOLS,
-      tool_choice: "auto",
+      ...(tools.length > 0 ? { tools, tool_choice: "auto" as const } : {}),
     },
   };
 
