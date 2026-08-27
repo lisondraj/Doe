@@ -15,7 +15,13 @@ import type {
   VoiceAgentTranscriptEntry,
 } from "@/lib/voice-agent/voice-agent-types";
 
-export type VoiceAgentScreen = "start" | "connecting" | "session" | "feedback" | "error";
+export type VoiceAgentScreen =
+  | "start"
+  | "connecting"
+  | "session"
+  | "feedback"
+  | "deepdive"
+  | "error";
 
 interface RealtimeFunctionCallItem {
   type: "function_call";
@@ -211,6 +217,25 @@ export function useVoiceAgentSession() {
     [startTimer, stopTimer],
   );
 
+  const sendSystemPrompt = useCallback((text: string) => {
+    const session = sessionRef.current;
+    if (!session || session.dataChannel.readyState !== "open") {
+      setErrorMessage("The voice session ended. Start a new session to keep talking.");
+      return false;
+    }
+    setErrorMessage(null);
+    sendRealtimeEvent(session.dataChannel, {
+      type: "conversation.item.create",
+      item: {
+        type: "message",
+        role: "user",
+        content: [{ type: "input_text", text }],
+      },
+    });
+    sendRealtimeEvent(session.dataChannel, { type: "response.create" });
+    return true;
+  }, []);
+
   const handleServerEvent = useCallback(
     (event: Record<string, unknown>) => {
       const type = event.type;
@@ -356,29 +381,55 @@ export function useVoiceAgentSession() {
 
   const beginCoaching = useCallback(() => {
     const session = sessionRef.current;
-    if (!session || session.dataChannel.readyState !== "open") {
+    if (!session) {
       setErrorMessage("The voice session ended. Start a new session to keep talking.");
       return;
     }
-    setErrorMessage(null);
+    if (
+      !sendSystemPrompt(
+        "[SYSTEM] The candidate is ready for post-station coaching. You are now Dr. Osler the examiner and coach — not the patient. In one short sentence, invite them to ask for tips, missed questions, better phrasing, or what a strong candidate would do on this station. Then wait for their question and keep going back and forth.",
+      )
+    ) {
+      return;
+    }
     setVoiceAgentMicEnabled(session, true);
     setCoachingActive(true);
-    sendRealtimeEvent(session.dataChannel, {
-      type: "conversation.item.create",
-      item: {
-        type: "message",
-        role: "user",
-        content: [
-          {
-            type: "input_text",
-            text:
-              "[SYSTEM] The candidate is ready for post-station coaching. You are now Dr. Osler the examiner and coach — not the patient. In one short sentence, invite them to ask for tips, missed questions, better phrasing, or what a strong candidate would do on this station. Then wait for their question and keep going back and forth.",
-          },
-        ],
-      },
-    });
-    sendRealtimeEvent(session.dataChannel, { type: "response.create" });
-  }, []);
+  }, [sendSystemPrompt]);
+
+  const beginDeepDive = useCallback(() => {
+    const session = sessionRef.current;
+    if (!session) {
+      setErrorMessage("The voice session ended. Start a new session to keep talking.");
+      return;
+    }
+    if (
+      !sendSystemPrompt(
+        "[SYSTEM] Start a topic DEEP DIVE now. You are Dr. Osler the examiner-teacher, not the patient. Give a VERY detailed spoken teaching on this station's exact topic. Cover in order, with real OSCE-ready detail: (1) History — the specific questions to ask, grouped, with example phrasing; (2) Differential diagnosis — ranked, including can't-miss diagnoses and why each is in or out; (3) Examination if relevant; (4) Investigations; (5) Management and counseling / safety-netting. Be thorough, not brief. When finished, stop and wait. Do not invite questions yet.",
+      )
+    ) {
+      return;
+    }
+    setVoiceAgentMicEnabled(session, false);
+    setCoachingActive(false);
+    setScreen("deepdive");
+  }, [sendSystemPrompt]);
+
+  const beginDeepDiveQuestions = useCallback(() => {
+    const session = sessionRef.current;
+    if (!session) {
+      setErrorMessage("The voice session ended. Start a new session to keep talking.");
+      return;
+    }
+    if (
+      !sendSystemPrompt(
+        "[SYSTEM] The candidate wants follow-up questions on this deep dive. Invite them in one short sentence to ask anything — more history questions, DDX, investigations, or management — then wait and keep going back and forth in the same level of detail.",
+      )
+    ) {
+      return;
+    }
+    setVoiceAgentMicEnabled(session, true);
+    setCoachingActive(true);
+  }, [sendSystemPrompt]);
 
   const toggleChecklistItem = useCallback((item: string) => {
     setCheckedItems((prev) => {
@@ -420,6 +471,8 @@ export function useVoiceAgentSession() {
     start,
     endStationEarly,
     beginCoaching,
+    beginDeepDive,
+    beginDeepDiveQuestions,
     toggleChecklistItem,
     reset,
   };
