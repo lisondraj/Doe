@@ -1,5 +1,7 @@
 /** Browser-side WebRTC connection to the OpenAI Realtime API for the /voice-agent OSCE coach. */
 
+import type { VoiceAgentMode } from "@/lib/voice-agent/voice-agent-types";
+
 export interface VoiceAgentRealtimeSession {
   peerConnection: RTCPeerConnection;
   dataChannel: RTCDataChannel;
@@ -10,8 +12,12 @@ export interface VoiceAgentRealtimeSession {
 
 const REALTIME_CALLS_URL = "https://api.openai.com/v1/realtime/calls";
 
-async function fetchEphemeralKey(): Promise<string> {
-  const response = await fetch("/api/voice-agent/session", { method: "POST" });
+async function fetchEphemeralKey(mode: VoiceAgentMode): Promise<string> {
+  const response = await fetch("/api/voice-agent/session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mode }),
+  });
   const data = await response.json().catch(() => null);
 
   if (!response.ok || !data) {
@@ -26,8 +32,10 @@ async function fetchEphemeralKey(): Promise<string> {
   return value;
 }
 
-export async function connectVoiceAgentRealtimeSession(): Promise<VoiceAgentRealtimeSession> {
-  const ephemeralKey = await fetchEphemeralKey();
+export async function connectVoiceAgentRealtimeSession(
+  mode: VoiceAgentMode = "practice",
+): Promise<VoiceAgentRealtimeSession> {
+  const ephemeralKey = await fetchEphemeralKey(mode);
 
   const peerConnection = new RTCPeerConnection();
 

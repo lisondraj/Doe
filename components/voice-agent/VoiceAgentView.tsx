@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import "@/lib/voice-agent/voice-agent-page.css";
 import { useVoiceAgentSession } from "@/lib/voice-agent/use-voice-agent-session";
-import { VOICE_AGENT_STATION_LABELS } from "@/lib/voice-agent/voice-agent-types";
+import type { VoiceAgentHistoryRecord } from "@/lib/voice-agent/voice-agent-types";
+import {
+  VOICE_AGENT_MODE_LABELS,
+  VOICE_AGENT_STATION_LABELS,
+} from "@/lib/voice-agent/voice-agent-types";
 
 function formatClock(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60);
@@ -12,9 +17,30 @@ function formatClock(totalSeconds: number): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
+function formatHistoryWhen(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function historyMeta(record: VoiceAgentHistoryRecord): string {
+  const when = formatHistoryWhen(record.endedAt || record.startedAt);
+  if (record.mode === "learn") {
+    return [VOICE_AGENT_MODE_LABELS.learn, when].filter(Boolean).join(" · ");
+  }
+  const station = record.stationType ? VOICE_AGENT_STATION_LABELS[record.stationType] : null;
+  return [VOICE_AGENT_MODE_LABELS.practice, station, when].filter(Boolean).join(" · ");
+}
+
 export function VoiceAgentView() {
   const {
     screen,
+    mode,
     errorMessage,
     setup,
     transcript,
@@ -24,15 +50,18 @@ export function VoiceAgentView() {
     userSpeaking,
     assistantSpeaking,
     coachingActive,
+    history,
     start,
     endStationEarly,
     beginCoaching,
     beginDeepDive,
     beginDeepDiveQuestions,
+    beginAskMore,
     toggleChecklistItem,
     reset,
   } = useVoiceAgentSession();
 
+  const [selectedHistory, setSelectedHistory] = useState<VoiceAgentHistoryRecord | null>(null);
   const transcriptEndRef = useRef<HTMLDivElement | null>(null);
 
   const orbState = userSpeaking ? "user" : assistantSpeaking ? "assistant" : "idle";
@@ -56,40 +85,145 @@ export function VoiceAgentView() {
   );
 
   useEffect(() => {
-    if (screen !== "feedback" && screen !== "deepdive" && screen !== "session") return;
+    if (screen !== "feedback" && screen !== "deepdive" && screen !== "learning" && screen !== "session") {
+      return;
+    }
     transcriptEndRef.current?.scrollIntoView({ block: "end" });
   }, [screen, visibleTranscript.length, coachingActive]);
+
+  useEffect(() => {
+    if (screen !== "start") setSelectedHistory(null);
+  }, [screen]);
 
   return (
     <div className="voice-agent-page">
       <div className="voice-agent-page__frame">
         <div className="voice-agent-page__scroll">
           <div className="voice-agent-page__brand">
-            <span className="voice-agent-page__wordmark">Doe</span>
+            <Link href="/" className="voice-agent-page__wordmark" aria-label="Doe home">
+              Doe
+            </Link>
             <span className="voice-agent-page__kicker">OSCE Voice Coach</span>
           </div>
 
-          {screen === "start" && (
-            <div className="voice-agent-page__hero">
-              <div className="voice-agent-page__orb-wrap" data-state="idle">
-                <div className="voice-agent-page__orb" />
+          {screen === "start" && !selectedHistory && (
+            <div className="voice-agent-page__home">
+              <div className="voice-agent-page__hero">
+                <div className="voice-agent-page__orb-wrap" data-state="idle">
+                  <div className="voice-agent-page__orb" />
+                </div>
+                <h1 className="voice-agent-page__title">Practice your OSCE, out loud.</h1>
+                <p className="voice-agent-page__subtitle">
+                  Run a timed station with Dr. Osler, or start a learning session on any topic —
+                  history questions, DDX, investigations and management, then the top 10 examiner
+                  questions.
+                </p>
+                <div className="voice-agent-page__cta-stack">
+                  <button
+                    type="button"
+                    className="voice-agent-page__cta"
+                    onClick={() => {
+                      void start("practice");
+                    }}
+                  >
+                    Start Practice
+                  </button>
+                  <button
+                    type="button"
+                    className="voice-agent-page__cta voice-agent-page__cta--secondary"
+                    onClick={() => {
+                      void start("learn");
+                    }}
+                  >
+                    Start Learning Section
+                  </button>
+                </div>
+                <p className="voice-agent-page__hint">Requires microphone access.</p>
               </div>
-              <h1 className="voice-agent-page__title">Practice your OSCE, out loud.</h1>
-              <p className="voice-agent-page__subtitle">
-                Tap start, then tell your examiner the duration, topic, and station type by voice.
-                History, physical exam, or management &amp; counseling — Dr. Osler will run the
-                station with you and give a spoken debrief at the end.
-              </p>
-              <button
-                type="button"
-                className="voice-agent-page__cta"
-                onClick={() => {
-                  void start();
-                }}
-              >
-                Start session
-              </button>
-              <p className="voice-agent-page__hint">Requires microphone access.</p>
+
+              {history.length > 0 && (
+                <section className="voice-agent-page__history" aria-label="Session history">
+                  <h2 className="voice-agent-page__history-heading">Session history</h2>
+                  <ul className="voice-agent-page__history-list">
+                    {history.map((record) => (
+                      <li key={record.id}>
+                        <button
+                          type="button"
+                          className="voice-agent-page__history-item"
+                          onClick={() => setSelectedHistory(record)}
+                        >
+                          <span className="voice-agent-page__history-topic">{record.topic}</span>
+                          <span className="voice-agent-page__history-meta">{historyMeta(record)}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+            </div>
+          )}
+
+          {screen === "start" && selectedHistory && (
+            <div className="voice-agent-page__feedback">
+              <div className="voice-agent-page__feedback-body">
+                <h2 className="voice-agent-page__feedback-title">{selectedHistory.topic}</h2>
+                <p className="voice-agent-page__feedback-summary">{historyMeta(selectedHistory)}</p>
+
+                {selectedHistory.feedback?.overallImpression ? (
+                  <p className="voice-agent-page__feedback-summary">
+                    {selectedHistory.feedback.overallImpression}
+                  </p>
+                ) : null}
+
+                {selectedHistory.feedback && selectedHistory.feedback.strengths.length > 0 && (
+                  <div className="voice-agent-page__feedback-card">
+                    <h3>What went well</h3>
+                    <ul>
+                      {selectedHistory.feedback.strengths.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {selectedHistory.feedback && selectedHistory.feedback.improvements.length > 0 && (
+                  <div className="voice-agent-page__feedback-card">
+                    <h3>What to improve</h3>
+                    <ul>
+                      {selectedHistory.feedback.improvements.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="voice-agent-page__transcript-block">
+                  <h3 className="voice-agent-page__transcript-heading">Transcript</h3>
+                  <div className="voice-agent-page__transcript voice-agent-page__transcript--full">
+                    {selectedHistory.transcript.length === 0 ? (
+                      <p className="voice-agent-page__hint">No spoken turns were captured.</p>
+                    ) : (
+                      selectedHistory.transcript.map((entry) => (
+                        <div
+                          key={entry.id}
+                          className={`voice-agent-page__bubble voice-agent-page__bubble--${entry.role}`}
+                        >
+                          {entry.text}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="voice-agent-page__actions">
+                <button
+                  type="button"
+                  className="voice-agent-page__cta voice-agent-page__cta--ghost"
+                  onClick={() => setSelectedHistory(null)}
+                >
+                  Back
+                </button>
+              </div>
             </div>
           )}
 
@@ -98,7 +232,9 @@ export function VoiceAgentView() {
               <div className="voice-agent-page__orb-wrap" data-state="assistant">
                 <div className="voice-agent-page__orb" />
               </div>
-              <p className="voice-agent-page__connecting-label">Connecting to your examiner…</p>
+              <p className="voice-agent-page__connecting-label">
+                {mode === "learn" ? "Connecting to your teacher…" : "Connecting to your examiner…"}
+              </p>
             </div>
           )}
 
@@ -111,7 +247,7 @@ export function VoiceAgentView() {
                 type="button"
                 className="voice-agent-page__cta"
                 onClick={() => {
-                  void start();
+                  void start(mode);
                 }}
               >
                 Try again
@@ -133,8 +269,9 @@ export function VoiceAgentView() {
                     <div className="voice-agent-page__orb" />
                   </div>
                   <p className="voice-agent-page__subtitle">
-                    Answer with your voice: how many minutes, what topic, and whether this is a
-                    history, physical exam, or management &amp; counseling station.
+                    {mode === "learn"
+                      ? "Answer with your voice: what topic would you like to learn about?"
+                      : "Answer with your voice: how many minutes, what topic, and whether this is a history, physical exam, or management & counseling station."}
                   </p>
                 </>
               )}
@@ -146,7 +283,9 @@ export function VoiceAgentView() {
                       {userSpeaking
                         ? "Listening…"
                         : assistantSpeaking
-                          ? "Examiner speaking…"
+                          ? mode === "learn"
+                            ? "Teacher speaking…"
+                            : "Examiner speaking…"
                           : "Mic live"}
                     </div>
                     <div
@@ -327,14 +466,17 @@ export function VoiceAgentView() {
             </div>
           )}
 
-          {screen === "deepdive" && (
+          {(screen === "deepdive" || screen === "learning") && (
             <div className="voice-agent-page__feedback">
               <div className="voice-agent-page__feedback-body">
                 <h2 className="voice-agent-page__feedback-title">
-                  Deep dive{setup?.topic ? ` · ${setup.topic}` : ""}
+                  {screen === "learning" ? "Learning" : "Deep dive"}
+                  {setup?.topic ? ` · ${setup.topic}` : ""}
                 </h2>
                 <p className="voice-agent-page__feedback-summary">
-                  History questions, differential diagnosis, and management — in detail.
+                  {screen === "learning"
+                    ? "History questions, DDX, investigations and management, then the top 10 examiner questions."
+                    : "History questions, differential diagnosis, and management — in detail."}
                 </p>
                 <div className="voice-agent-page__transcript-block">
                   <h3 className="voice-agent-page__transcript-heading">Teaching</h3>
@@ -361,16 +503,18 @@ export function VoiceAgentView() {
                         ? "Listening…"
                         : assistantSpeaking
                           ? "Coach speaking…"
-                          : "Mic live — ask a follow-up"}
+                          : screen === "learning"
+                            ? "Mic live — ask more"
+                            : "Mic live — ask a follow-up"}
                     </div>
                   </div>
                 ) : (
                   <button
                     type="button"
                     className="voice-agent-page__cta"
-                    onClick={beginDeepDiveQuestions}
+                    onClick={screen === "learning" ? beginAskMore : beginDeepDiveQuestions}
                   >
-                    Ask further questions
+                    {screen === "learning" ? "Ask more" : "Ask further questions"}
                   </button>
                 )}
 

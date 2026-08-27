@@ -5,14 +5,27 @@ import {
   VOICE_AGENT_DEFAULT_MODEL,
   VOICE_AGENT_DEFAULT_VOICE,
   VOICE_AGENT_INSTRUCTIONS,
+  VOICE_AGENT_LEARNING_INSTRUCTIONS,
+  VOICE_AGENT_LEARNING_TOOLS,
   VOICE_AGENT_TOOLS,
 } from "@/lib/voice-agent/voice-agent-prompt";
+import type { VoiceAgentMode } from "@/lib/voice-agent/voice-agent-types";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+async function readMode(request: Request): Promise<VoiceAgentMode> {
+  try {
+    const body = (await request.json()) as { mode?: unknown };
+    if (body?.mode === "learn") return "learn";
+  } catch {
+    /** empty or non-JSON body defaults to practice */
+  }
+  return "practice";
+}
+
 /** Mints a short-lived OpenAI Realtime client secret so the browser never sees the real API key. */
-export async function POST() {
+export async function POST(request: Request) {
   const apiKey = process.env.OPENAI_API_KEY;
 
   if (!apiKey) {
@@ -22,14 +35,16 @@ export async function POST() {
     );
   }
 
+  const mode = await readMode(request);
   const model = process.env.OPENAI_REALTIME_MODEL || VOICE_AGENT_DEFAULT_MODEL;
   const voice = process.env.OPENAI_REALTIME_VOICE || VOICE_AGENT_DEFAULT_VOICE;
+  const learning = mode === "learn";
 
   const sessionConfig = {
     session: {
       type: "realtime",
       model,
-      instructions: VOICE_AGENT_INSTRUCTIONS,
+      instructions: learning ? VOICE_AGENT_LEARNING_INSTRUCTIONS : VOICE_AGENT_INSTRUCTIONS,
       output_modalities: ["audio"],
       audio: {
         input: {
@@ -42,7 +57,7 @@ export async function POST() {
           voice,
         },
       },
-      tools: VOICE_AGENT_TOOLS,
+      tools: learning ? VOICE_AGENT_LEARNING_TOOLS : VOICE_AGENT_TOOLS,
       tool_choice: "auto",
     },
   };

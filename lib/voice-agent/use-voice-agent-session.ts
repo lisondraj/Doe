@@ -3,6 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
+  loadVoiceAgentHistory,
+  transcriptForHistory,
+  upsertVoiceAgentHistory,
+} from "@/lib/voice-agent/voice-agent-history";
+import {
   connectVoiceAgentRealtimeSession,
   sendRealtimeEvent,
   setVoiceAgentMicEnabled,
@@ -10,6 +15,8 @@ import {
 } from "@/lib/voice-agent/voice-agent-realtime-client";
 import type {
   VoiceAgentFeedback,
+  VoiceAgentHistoryRecord,
+  VoiceAgentMode,
   VoiceAgentSetup,
   VoiceAgentStationType,
   VoiceAgentTranscriptEntry,
@@ -21,6 +28,7 @@ export type VoiceAgentScreen =
   | "session"
   | "feedback"
   | "deepdive"
+  | "learning"
   | "error";
 
 interface RealtimeFunctionCallItem {
@@ -92,8 +100,16 @@ function nextId(prefix: string): string {
   return `${prefix}-${uid}`;
 }
 
+function newSessionId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return nextId("session");
+}
+
 export function useVoiceAgentSession() {
   const [screen, setScreen] = useState<VoiceAgentScreen>("start");
+  const [mode, setMode] = useState<VoiceAgentMode>("practice");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [setup, setSetup] = useState<VoiceAgentSetup | null>(null);
   const [transcript, setTranscript] = useState<VoiceAgentTranscriptEntry[]>([]);
@@ -103,11 +119,22 @@ export function useVoiceAgentSession() {
   const [userSpeaking, setUserSpeaking] = useState(false);
   const [assistantSpeaking, setAssistantSpeaking] = useState(false);
   const [coachingActive, setCoachingActive] = useState(false);
+  const [history, setHistory] = useState<VoiceAgentHistoryRecord[]>([]);
 
   const sessionRef = useRef<VoiceAgentRealtimeSession | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const assistantBufferRef = useRef<Map<string, string>>(new Map());
   const endRequestedRef = useRef(false);
+  const sessionIdRef = useRef<string | null>(null);
+  const startedAtRef = useRef<string | null>(null);
+  const persistSnapshotRef = useRef({
+    mode: "practice" as VoiceAgentMode,
+    setup: null as VoiceAgentSetup | null,
+    transcript: [] as VoiceAgentTranscriptEntry[],
+    feedback: null as VoiceAgentFeedback | null,
+  });
+
+  persistSnapshotRef.current = { mode, setup, transcript, feedback };
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -116,6 +143,32 @@ export function useVoiceAgentSession() {
     }
   }, []);
 
+  const persistHistory = useCallback(() => {
+    const sessionId = sessionIdRef.current;
+    const startedAt = startedAtRef.current;
+    if (!sessionId || !startedAt) return;
+
+    const snap = persistSnapshotRef.current;
+    const cleaned = transcriptForHistory(snap.transcript);
+    const topic = snap.setup?.topic?.trim() ?? "";
+    if (!topic && cleaned.length === 0) return;
+
+    const records = upsertVoiceAgentHistory({
+      id: sessionId,
+      mode: snap.mode,
+      topic: topic || (snap.mode === "learn" ? "Learning session" : "Practice session"),
+      stationType: snap.setup?.stationType ?? null,
+      startedAt,
+      endedAt: new Date().toISOString(),
+      transcript: cleaned,
+      feedback: snap.feedback,
+    });
+    setHistory(records);
+  }, []);
+
+  const persistHistoryRef = useRef(persistHistory);
+  persistHistoryRef.current = persistHistory;
+
   const teardown = useCallback(() => {
     stopTimer();
     sessionRef.current?.close();
@@ -123,7 +176,22 @@ export function useVoiceAgentSession() {
     endRequestedRef.current = false;
   }, [stopTimer]);
 
-  useEffect(() => teardown, [teardown]);
+  useEffect(() => {
+    setHistory(loadVoiceAgentHistory());
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      persistHistoryRef.current();
+      teardown();
+    };
+  }, [teardown]);
+
+  useEffect(() => {
+    if (screen === "start" || screen === "connecting" || screen === "error") return;
+    const timer = window.setTimeout(() => persistHistoryRef.current(), 1200);
+    return () => window.clearTimeout(timer);
+  }, [screen, transcript, setup, feedback]);
 
   const requestStationEnd = useCallback(() => {
     const session = sessionRef.current;
@@ -198,6 +266,20 @@ export function useVoiceAgentSession() {
         setSetup(nextSetup);
         setCheckedItems(new Set());
         startTimer(durationMinutes);
+        return;
+      }
+
+      if (item.name === "configure_learning_session") {
+        const nextSetup: VoiceAgentSetup = {
+          durationMinutes: 0,
+          topic: typeof args.topic === "string" && args.topic ? args.topic : "Clinical topic",
+          stationType: "history",
+          checklist: [],
+        };
+        setSetup(nextSetup);
+        setVoiceAgentMicEnabled(session, false);
+        setCoachingActive(false);
+        setScreen("learning");
         return;
       }
 
@@ -333,47 +415,53 @@ export function useVoiceAgentSession() {
     [handleFunctionCall],
   );
 
-  const start = useCallback(async () => {
-    setErrorMessage(null);
-    setScreen("connecting");
-    setSetup(null);
-    setTranscript([]);
-    setCheckedItems(new Set());
-    setFeedback(null);
-    setCoachingActive(false);
-    assistantBufferRef.current.clear();
-    endRequestedRef.current = false;
+  const start = useCallback(
+    async (nextMode: VoiceAgentMode) => {
+      setErrorMessage(null);
+      setMode(nextMode);
+      setScreen("connecting");
+      setSetup(null);
+      setTranscript([]);
+      setCheckedItems(new Set());
+      setFeedback(null);
+      setCoachingActive(false);
+      assistantBufferRef.current.clear();
+      endRequestedRef.current = false;
+      sessionIdRef.current = newSessionId();
+      startedAtRef.current = new Date().toISOString();
 
-    try {
-      const session = await connectVoiceAgentRealtimeSession();
-      sessionRef.current = session;
+      try {
+        const session = await connectVoiceAgentRealtimeSession(nextMode);
+        sessionRef.current = session;
 
-      session.dataChannel.addEventListener("open", () => {
-        setScreen("session");
-      });
+        session.dataChannel.addEventListener("open", () => {
+          setScreen("session");
+        });
 
-      session.dataChannel.addEventListener("message", (messageEvent) => {
-        try {
-          const parsed = JSON.parse(messageEvent.data);
-          handleServerEvent(parsed);
-        } catch {
-          /** ignore malformed events */
-        }
-      });
+        session.dataChannel.addEventListener("message", (messageEvent) => {
+          try {
+            const parsed = JSON.parse(messageEvent.data);
+            handleServerEvent(parsed);
+          } catch {
+            /** ignore malformed events */
+          }
+        });
 
-      session.peerConnection.addEventListener("connectionstatechange", () => {
-        const state = session.peerConnection.connectionState;
-        if (state === "failed" || state === "disconnected" || state === "closed") {
-          setUserSpeaking(false);
-          setAssistantSpeaking(false);
-        }
-      });
-    } catch (error) {
-      teardown();
-      setErrorMessage(error instanceof Error ? error.message : "Could not start the voice agent.");
-      setScreen("error");
-    }
-  }, [handleServerEvent, teardown]);
+        session.peerConnection.addEventListener("connectionstatechange", () => {
+          const state = session.peerConnection.connectionState;
+          if (state === "failed" || state === "disconnected" || state === "closed") {
+            setUserSpeaking(false);
+            setAssistantSpeaking(false);
+          }
+        });
+      } catch (error) {
+        teardown();
+        setErrorMessage(error instanceof Error ? error.message : "Could not start the voice agent.");
+        setScreen("error");
+      }
+    },
+    [handleServerEvent, teardown],
+  );
 
   const endStationEarly = useCallback(() => {
     requestStationEnd();
@@ -431,6 +519,23 @@ export function useVoiceAgentSession() {
     setCoachingActive(true);
   }, [sendSystemPrompt]);
 
+  const beginAskMore = useCallback(() => {
+    const session = sessionRef.current;
+    if (!session) {
+      setErrorMessage("The voice session ended. Start a new session to keep talking.");
+      return;
+    }
+    if (
+      !sendSystemPrompt(
+        "[SYSTEM] The candidate tapped Ask more. Invite them in one short sentence to ask anything about this topic — more history questions, DDX, investigations, management, or examiner questions — then wait and keep going back and forth in the same level of detail.",
+      )
+    ) {
+      return;
+    }
+    setVoiceAgentMicEnabled(session, true);
+    setCoachingActive(true);
+  }, [sendSystemPrompt]);
+
   const toggleChecklistItem = useCallback((item: string) => {
     setCheckedItems((prev) => {
       const next = new Set(prev);
@@ -444,7 +549,10 @@ export function useVoiceAgentSession() {
   }, []);
 
   const reset = useCallback(() => {
+    persistHistory();
     teardown();
+    sessionIdRef.current = null;
+    startedAtRef.current = null;
     setScreen("start");
     setErrorMessage(null);
     setSetup(null);
@@ -455,10 +563,11 @@ export function useVoiceAgentSession() {
     setRemainingSeconds(0);
     setUserSpeaking(false);
     setAssistantSpeaking(false);
-  }, [teardown]);
+  }, [persistHistory, teardown]);
 
   return {
     screen,
+    mode,
     errorMessage,
     setup,
     transcript,
@@ -468,11 +577,13 @@ export function useVoiceAgentSession() {
     userSpeaking,
     assistantSpeaking,
     coachingActive,
+    history,
     start,
     endStationEarly,
     beginCoaching,
     beginDeepDive,
     beginDeepDiveQuestions,
+    beginAskMore,
     toggleChecklistItem,
     reset,
   };

@@ -1,6 +1,8 @@
 /** Station formats modeled on real OSCE (Objective Structured Clinical Examination) circuits. */
 export type VoiceAgentStationType = "history" | "physical_exam" | "management_counseling";
 
+export type VoiceAgentMode = "practice" | "learn";
+
 export interface VoiceAgentSetup {
   durationMinutes: number;
   topic: string;
@@ -21,8 +23,24 @@ export interface VoiceAgentFeedback {
   overallImpression: string;
 }
 
+export interface VoiceAgentHistoryRecord {
+  id: string;
+  mode: VoiceAgentMode;
+  topic: string;
+  stationType: VoiceAgentStationType | null;
+  startedAt: string;
+  endedAt: string;
+  transcript: VoiceAgentTranscriptEntry[];
+  feedback: VoiceAgentFeedback | null;
+}
+
 export const VOICE_AGENT_STATION_LABELS: Record<VoiceAgentStationType, string> = {
   history: "History taking",
   physical_exam: "Physical examination",
   management_counseling: "Management & counseling",
+};
+
+export const VOICE_AGENT_MODE_LABELS: Record<VoiceAgentMode, string> = {
+  practice: "Practice",
+  learn: "Learning",
 };

@@ -10,7 +10,7 @@ const VOICE_AGENT_PATH = "/voice-agent";
 export const metadata: Metadata = {
   title: "OSCE Voice Coach · Doe",
   description:
-    "A voice-only OSCE exam prep coach — configure your station by voice, run a timed history, physical exam, or management & counseling station, then get a spoken debrief.",
+    "A voice-only OSCE exam prep coach — practice a timed station, or start a learning session on history, DDX, investigations, management, and examiner questions.",
   alternates: {
     canonical: `${primarySiteOrigin()}${VOICE_AGENT_PATH}`,
   },
