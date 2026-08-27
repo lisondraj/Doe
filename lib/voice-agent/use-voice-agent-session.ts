@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { fetchVoiceAgentLesson } from "@/lib/voice-agent/voice-agent-lesson";
 import {
   loadVoiceAgentHistory,
   transcriptForHistory,
@@ -18,6 +19,7 @@ import {
 import type {
   VoiceAgentFeedback,
   VoiceAgentHistoryRecord,
+  VoiceAgentLesson,
   VoiceAgentMode,
   VoiceAgentSetup,
   VoiceAgentStationType,
@@ -153,6 +155,9 @@ export function useVoiceAgentSession() {
   const [coachingActive, setCoachingActive] = useState(false);
   const [askMoreOpen, setAskMoreOpen] = useState(false);
   const [history, setHistory] = useState<VoiceAgentHistoryRecord[]>([]);
+  const [lesson, setLesson] = useState<VoiceAgentLesson | null>(null);
+  const [lessonLoading, setLessonLoading] = useState(false);
+  const [lessonError, setLessonError] = useState<string | null>(null);
 
   const sessionRef = useRef<VoiceAgentRealtimeSession | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -162,15 +167,17 @@ export function useVoiceAgentSession() {
   const startedAtRef = useRef<string | null>(null);
   const adviceModeRef = useRef(false);
   const micEnabledBeforeNotesRef = useRef(true);
+  const lessonRequestRef = useRef(0);
   const persistSnapshotRef = useRef({
     mode: "practice" as VoiceAgentMode,
     setup: null as VoiceAgentSetup | null,
     transcript: [] as VoiceAgentTranscriptEntry[],
     adviceTranscript: [] as VoiceAgentTranscriptEntry[],
     feedback: null as VoiceAgentFeedback | null,
+    lesson: null as VoiceAgentLesson | null,
   });
 
-  persistSnapshotRef.current = { mode, setup, transcript, adviceTranscript, feedback };
+  persistSnapshotRef.current = { mode, setup, transcript, adviceTranscript, feedback, lesson };
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -188,7 +195,7 @@ export function useVoiceAgentSession() {
     const cleaned = transcriptForHistory(snap.transcript);
     const cleanedAdvice = transcriptForHistory(snap.adviceTranscript);
     const topic = snap.setup?.topic?.trim() ?? "";
-    if (!topic && cleaned.length === 0 && cleanedAdvice.length === 0) return;
+    if (!topic && cleaned.length === 0 && cleanedAdvice.length === 0 && !snap.lesson) return;
 
     const records = upsertVoiceAgentHistory({
       id: sessionId,
@@ -200,6 +207,7 @@ export function useVoiceAgentSession() {
       transcript: cleaned,
       adviceTranscript: cleanedAdvice,
       feedback: snap.feedback,
+      lesson: snap.lesson,
     });
     void Promise.resolve(records).then(setHistory);
   }, []);
@@ -227,9 +235,22 @@ export function useVoiceAgentSession() {
 
   useEffect(() => {
     if (screen === "start" || screen === "connecting" || screen === "error") return;
-    const timer = window.setTimeout(() => persistHistoryRef.current(), 1200);
+    const timer = window.setTimeout(() => persistHistoryRef.current(), 400);
     return () => window.clearTimeout(timer);
-  }, [screen, transcript, adviceTranscript, setup, feedback]);
+  }, [screen, transcript, adviceTranscript, setup, feedback, lesson, askMoreOpen]);
+
+  useEffect(() => {
+    const flush = () => persistHistoryRef.current();
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
 
   const requestStationEnd = useCallback(() => {
     const session = sessionRef.current;
@@ -270,6 +291,25 @@ export function useVoiceAgentSession() {
     },
     [requestStationEnd, stopTimer],
   );
+
+  const loadLesson = useCallback(async (topic: string, kind: "learn" | "deepdive") => {
+    const trimmed = topic.trim();
+    if (!trimmed) return;
+    const requestId = lessonRequestRef.current + 1;
+    lessonRequestRef.current = requestId;
+    setLessonLoading(true);
+    setLessonError(null);
+    try {
+      const next = await fetchVoiceAgentLesson(trimmed, kind);
+      if (lessonRequestRef.current !== requestId) return;
+      setLesson(next);
+    } catch (error) {
+      if (lessonRequestRef.current !== requestId) return;
+      setLessonError(error instanceof Error ? error.message : "Could not generate the teaching page.");
+    } finally {
+      if (lessonRequestRef.current === requestId) setLessonLoading(false);
+    }
+  }, []);
 
   const handleFunctionCall = useCallback(
     (item: RealtimeFunctionCallItem) => {
@@ -318,6 +358,7 @@ export function useVoiceAgentSession() {
         setVoiceAgentMicEnabled(session, false);
         setCoachingActive(false);
         setScreen("learning");
+        void loadLesson(nextSetup.topic, "learn");
         return;
       }
 
@@ -334,7 +375,7 @@ export function useVoiceAgentSession() {
         setScreen("feedback");
       }
     },
-    [startTimer, stopTimer],
+    [loadLesson, startTimer, stopTimer],
   );
 
   const sendSystemPrompt = useCallback((text: string) => {
@@ -460,6 +501,9 @@ export function useVoiceAgentSession() {
       setAdviceTranscript([]);
       setCheckedItems(new Set());
       setFeedback(null);
+      setLesson(null);
+      setLessonError(null);
+      setLessonLoading(false);
       setCoachingActive(false);
       setAskMoreOpen(false);
       adviceModeRef.current = false;
@@ -489,7 +533,8 @@ export function useVoiceAgentSession() {
     if (session) setVoiceAgentMicEnabled(session, false);
     setCoachingActive(false);
     setAskMoreOpen(false);
-  }, []);
+    persistHistory();
+  }, [persistHistory]);
 
   const openAskMore = useCallback(
     (prompt: string) => {
@@ -502,6 +547,7 @@ export function useVoiceAgentSession() {
       const firstOpen = !adviceModeRef.current;
       adviceModeRef.current = true;
       setAskMoreOpen(true);
+      persistHistory();
 
       if (firstOpen && !sendSystemPrompt(prompt)) {
         adviceModeRef.current = false;
@@ -512,7 +558,7 @@ export function useVoiceAgentSession() {
       setVoiceAgentMicEnabled(session, true);
       setCoachingActive(true);
     },
-    [sendSystemPrompt],
+    [persistHistory, sendSystemPrompt],
   );
 
   const beginCoaching = useCallback(() => {
@@ -527,18 +573,16 @@ export function useVoiceAgentSession() {
       setErrorMessage("The voice session ended. Start a new session to keep talking.");
       return;
     }
-    if (
-      !sendSystemPrompt(
-        "[SYSTEM] Start a topic DEEP DIVE now. You are Dr. Osler the examiner-teacher, not the patient. Give a VERY detailed spoken teaching on this station's exact topic. Cover in order, with real OSCE-ready detail: (1) History — the specific questions to ask, grouped, with example phrasing; (2) Differential diagnosis — ranked, including can't-miss diagnoses and why each is in or out; (3) Examination if relevant; (4) Investigations; (5) Management and counseling / safety-netting. Be thorough, not brief. When finished, stop and wait. Do not invite questions yet.",
-      )
-    ) {
-      return;
-    }
+    const topic = persistSnapshotRef.current.setup?.topic || "this topic";
     setVoiceAgentMicEnabled(session, false);
     setCoachingActive(false);
     setAskMoreOpen(false);
     setScreen("deepdive");
-  }, [sendSystemPrompt]);
+    void loadLesson(topic, "deepdive");
+    sendSystemPrompt(
+      "[SYSTEM] A detailed teaching PAGE is now on the candidate's screen. Do not lecture the topic out loud. Stay quiet, or say one short sentence that the page is ready. Wait until they tap Ask more.",
+    );
+  }, [loadLesson, sendSystemPrompt]);
 
   const beginDeepDiveQuestions = useCallback(() => {
     openAskMore(
@@ -570,6 +614,9 @@ export function useVoiceAgentSession() {
       setAdviceTranscript(record.adviceTranscript ?? []);
       setCheckedItems(new Set());
       setFeedback(record.feedback);
+      setLesson(record.lesson);
+      setLessonError(null);
+      setLessonLoading(false);
       setCoachingActive(false);
       setAskMoreOpen(false);
       adviceModeRef.current = true;
@@ -586,9 +633,11 @@ export function useVoiceAgentSession() {
           setCoachingActive(true);
           setVoiceAgentMicEnabled(session, true);
           const original = compactTranscriptForPrompt(record.transcript);
+          const extra = compactTranscriptForPrompt(record.adviceTranscript ?? []);
           sendSystemPrompt(
-            `[SYSTEM] The candidate tapped Ask more about this session. Topic: ${record.topic}. Original transcript:\n${original || "(none captured)"}\nInvite them in one short sentence to ask more, then wait and keep going back and forth.`,
+            `[SYSTEM] The candidate tapped Ask more about this session. Topic: ${record.topic}. Original transcript:\n${original || "(none captured)"}\nExtra advice so far:\n${extra || "(none yet)"}\nA teaching page may already be on screen — do not re-read it. Invite them in one short sentence to ask more, then wait and keep going back and forth.`,
           );
+          if (!record.lesson) void loadLesson(record.topic, record.mode === "learn" ? "learn" : "deepdive");
         });
       } catch (error) {
         teardown();
@@ -596,7 +645,7 @@ export function useVoiceAgentSession() {
         setScreen("error");
       }
     },
-    [attachSession, persistHistory, sendSystemPrompt, teardown],
+    [attachSession, loadLesson, persistHistory, sendSystemPrompt, teardown],
   );
 
   const toggleChecklistItem = useCallback((item: string) => {
@@ -624,6 +673,9 @@ export function useVoiceAgentSession() {
     setAdviceTranscript([]);
     setCheckedItems(new Set());
     setFeedback(null);
+    setLesson(null);
+    setLessonError(null);
+    setLessonLoading(false);
     setCoachingActive(false);
     setAskMoreOpen(false);
     setRemainingSeconds(0);
@@ -685,6 +737,9 @@ export function useVoiceAgentSession() {
     coachingActive,
     askMoreOpen,
     history,
+    lesson,
+    lessonLoading,
+    lessonError,
     start,
     endStationEarly,
     beginCoaching,
@@ -697,5 +752,10 @@ export function useVoiceAgentSession() {
     goBack,
     reset,
     acquireNoteMic,
+    reloadLesson: () => {
+      const topic = persistSnapshotRef.current.setup?.topic;
+      if (!topic) return;
+      void loadLesson(topic, persistSnapshotRef.current.mode === "learn" || screen === "deepdive" ? (screen === "deepdive" ? "deepdive" : "learn") : "learn");
+    },
   };
 }

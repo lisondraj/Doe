@@ -1,13 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
+import { VoiceAgentLessonPage } from "@/components/voice-agent/VoiceAgentLessonPage";
 import { VoiceAgentNotesPanel } from "@/components/voice-agent/VoiceAgentNotesPanel";
 import "@/lib/voice-agent/voice-agent-page.css";
+import { fetchVoiceAgentLesson } from "@/lib/voice-agent/voice-agent-lesson";
+import { upsertVoiceAgentHistory } from "@/lib/voice-agent/voice-agent-history";
 import { useVoiceAgentAuth } from "@/lib/voice-agent/use-voice-agent-auth";
 import { useVoiceAgentSession } from "@/lib/voice-agent/use-voice-agent-session";
-import type { VoiceAgentHistoryRecord, VoiceAgentTranscriptEntry } from "@/lib/voice-agent/voice-agent-types";
+import type {
+  VoiceAgentHistoryRecord,
+  VoiceAgentLesson,
+  VoiceAgentTranscriptEntry,
+} from "@/lib/voice-agent/voice-agent-types";
 import {
   VOICE_AGENT_MODE_LABELS,
   VOICE_AGENT_STATION_LABELS,
@@ -58,17 +64,24 @@ function BrandBar({
   onBack,
   notesOpen,
   onToggleNotes,
+  onWordmarkClick,
 }: {
   showBack?: boolean;
   onBack?: () => void;
   notesOpen?: boolean;
   onToggleNotes?: () => void;
+  onWordmarkClick?: () => void;
 }) {
   return (
     <div className="voice-agent-page__brand">
-      <Link href="/" className="voice-agent-page__wordmark" aria-label="Doe home">
+      <button
+        type="button"
+        className="voice-agent-page__wordmark"
+        aria-label="OSCE home"
+        onClick={onWordmarkClick}
+      >
         Doe
-      </Link>
+      </button>
       <div className="voice-agent-page__brand-actions">
         {showBack ? (
           <button type="button" className="voice-agent-page__back" onClick={onBack}>
@@ -88,6 +101,42 @@ function BrandBar({
         ) : (
           <span className="voice-agent-page__kicker">OSCE Voice Coach</span>
         )}
+      </div>
+    </div>
+  );
+}
+
+function ConfirmHomeModal({
+  open,
+  timedSession,
+  onCancel,
+  onConfirm,
+}: {
+  open: boolean;
+  timedSession: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  if (!open) return null;
+  return (
+    <div className="voice-agent-page__confirm" role="dialog" aria-modal="true" aria-labelledby="voice-agent-home-confirm-title">
+      <div className="voice-agent-page__confirm-card">
+        <h2 id="voice-agent-home-confirm-title" className="voice-agent-page__feedback-title">
+          {timedSession ? "End this station?" : "Go to home?"}
+        </h2>
+        <p className="voice-agent-page__feedback-summary">
+          {timedSession
+            ? "This timed station is still running. Leaving now will end it early. Progress so far will be saved."
+            : "Return to the OSCE home? You can reopen this from chat history."}
+        </p>
+        <div className="voice-agent-page__confirm-actions">
+          <button type="button" className="voice-agent-page__cta voice-agent-page__cta--ghost" onClick={onCancel}>
+            Stay
+          </button>
+          <button type="button" className="voice-agent-page__cta" onClick={onConfirm}>
+            {timedSession ? "End station & go home" : "Go home"}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -268,6 +317,9 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
     coachingActive,
     askMoreOpen,
     history,
+    lesson,
+    lessonLoading,
+    lessonError,
     start,
     endStationEarly,
     beginCoaching,
@@ -278,11 +330,18 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
     closeAskMore,
     toggleChecklistItem,
     goBack,
+    reset,
     acquireNoteMic,
+    reloadLesson,
   } = useVoiceAgentSession();
 
   const [selectedHistory, setSelectedHistory] = useState<VoiceAgentHistoryRecord | null>(null);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [homeConfirmOpen, setHomeConfirmOpen] = useState(false);
+  const [historyLesson, setHistoryLesson] = useState<VoiceAgentLesson | null>(null);
+  const [historyLessonLoading, setHistoryLessonLoading] = useState(false);
+  const [historyLessonError, setHistoryLessonError] = useState<string | null>(null);
+  const [historyLessonRetry, setHistoryLessonRetry] = useState(0);
 
   const orbState = userSpeaking ? "user" : assistantSpeaking ? "assistant" : "idle";
   const isLowTime = remainingSeconds > 0 && remainingSeconds <= 30;
@@ -296,7 +355,54 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
     if (screen !== "start") setSelectedHistory(null);
   }, [screen]);
 
+  useEffect(() => {
+    if (!selectedHistory) {
+      setHistoryLesson(null);
+      setHistoryLessonLoading(false);
+      setHistoryLessonError(null);
+      return;
+    }
+    if (selectedHistory.lesson) {
+      setHistoryLesson(selectedHistory.lesson);
+      setHistoryLessonLoading(false);
+      setHistoryLessonError(null);
+      return;
+    }
+    if (selectedHistory.mode !== "learn") {
+      setHistoryLesson(null);
+      setHistoryLessonLoading(false);
+      setHistoryLessonError(null);
+      return;
+    }
+    let cancelled = false;
+    setHistoryLessonLoading(true);
+    setHistoryLessonError(null);
+    const record = selectedHistory;
+    void fetchVoiceAgentLesson(record.topic, "learn")
+      .then(async (generated) => {
+        if (cancelled) return;
+        setHistoryLesson(generated);
+        await upsertVoiceAgentHistory({ ...record, lesson: generated });
+        if (!cancelled) setSelectedHistory((current) => (current?.id === record.id ? { ...current, lesson: generated } : current));
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setHistoryLesson(null);
+        setHistoryLessonError(error instanceof Error ? error.message : "Could not generate the teaching page.");
+      })
+      .finally(() => {
+        if (!cancelled) setHistoryLessonLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedHistory?.id, selectedHistory?.lesson, selectedHistory?.mode, selectedHistory?.topic, historyLessonRetry]);
+
   const handleBack = () => {
+    if (homeConfirmOpen) {
+      setHomeConfirmOpen(false);
+      return;
+    }
     if (notesOpen) {
       setNotesOpen(false);
       return;
@@ -312,6 +418,23 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
     goBack();
   };
 
+  const atCoachHome = screen === "start" && !selectedHistory && !askMoreOpen && !notesOpen;
+  const timedSessionLive =
+    mode === "practice" && screen === "session" && Boolean(setup) && remainingSeconds > 0;
+
+  const requestGoHome = () => {
+    if (atCoachHome) return;
+    setHomeConfirmOpen(true);
+  };
+
+  const confirmGoHome = () => {
+    setHomeConfirmOpen(false);
+    setNotesOpen(false);
+    if (askMoreOpen) closeAskMore();
+    setSelectedHistory(null);
+    if (screen !== "start") reset();
+  };
+
   return (
     <div className="voice-agent-page">
       <div className="voice-agent-page__frame">
@@ -321,6 +444,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
             onBack={handleBack}
             notesOpen={notesOpen}
             onToggleNotes={() => setNotesOpen((open) => !open)}
+            onWordmarkClick={requestGoHome}
           />
 
           {screen === "start" && !selectedHistory && (
@@ -423,19 +547,29 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                   </div>
                 )}
 
-                <div className="voice-agent-page__split">
-                  <div className="voice-agent-page__transcript-block">
-                    <h3 className="voice-agent-page__transcript-heading">Transcript</h3>
-                    <TranscriptThread entries={selectedHistory.transcript} />
-                  </div>
-
-                  {(selectedHistory.adviceTranscript?.length ?? 0) > 0 && (
+                {selectedHistory.mode === "learn" || selectedHistory.lesson ? (
+                  <VoiceAgentLessonPage
+                    lesson={historyLesson ?? selectedHistory.lesson}
+                    loading={historyLessonLoading}
+                    topic={selectedHistory.topic}
+                    error={historyLessonError}
+                    onRetry={() => setHistoryLessonRetry((value) => value + 1)}
+                  />
+                ) : (
+                  <div className="voice-agent-page__split">
                     <div className="voice-agent-page__transcript-block">
-                      <h3 className="voice-agent-page__transcript-heading">Extra advice</h3>
-                      <TranscriptThread entries={selectedHistory.adviceTranscript} />
+                      <h3 className="voice-agent-page__transcript-heading">Transcript</h3>
+                      <TranscriptThread entries={selectedHistory.transcript} />
                     </div>
-                  )}
-                </div>
+
+                    {(selectedHistory.adviceTranscript?.length ?? 0) > 0 && (
+                      <div className="voice-agent-page__transcript-block">
+                        <h3 className="voice-agent-page__transcript-heading">Extra advice</h3>
+                        <TranscriptThread entries={selectedHistory.adviceTranscript} />
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="voice-agent-page__actions">
                 <button
@@ -682,14 +816,15 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                   {setup?.topic ? ` · ${setup.topic}` : ""}
                 </h2>
                 <p className="voice-agent-page__feedback-summary">
-                  {screen === "learning"
-                    ? "History questions, DDX, investigations and management, then the top 10 examiner questions."
-                    : "History questions, differential diagnosis, and management — in detail."}
+                  Bullet-first OSCE teaching. Tap Ask more to talk it through.
                 </p>
-                <div className="voice-agent-page__transcript-block">
-                  <h3 className="voice-agent-page__transcript-heading">Teaching</h3>
-                  <TranscriptThread entries={sessionEntries} />
-                </div>
+                <VoiceAgentLessonPage
+                  lesson={lesson}
+                  loading={lessonLoading}
+                  topic={setup?.topic}
+                  error={lessonError}
+                  onRetry={reloadLesson}
+                />
               </div>
 
               <div className="voice-agent-page__actions">
@@ -720,16 +855,25 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
               onBack={closeAskMore}
               notesOpen={notesOpen}
               onToggleNotes={() => setNotesOpen((open) => !open)}
+              onWordmarkClick={requestGoHome}
             />
             <h2 className="voice-agent-page__feedback-title">Ask more about this session</h2>
             <p className="voice-agent-page__feedback-summary">
-              {setup?.topic ? `${setup.topic} — ` : ""}session transcript and extra advice.
+              {setup?.topic ? `${setup.topic} — ` : ""}voice follow-up. Close anytime; it saves to this session.
             </p>
-            <div className="voice-agent-page__modal-body">
-              <section className="voice-agent-page__modal-pane">
-                <h3 className="voice-agent-page__transcript-heading">Transcript</h3>
-                <TranscriptThread entries={sessionEntries} />
-              </section>
+            <div
+              className={`voice-agent-page__modal-body${
+                screen === "learning" || screen === "deepdive" || mode === "learn"
+                  ? " voice-agent-page__modal-body--single"
+                  : ""
+              }`}
+            >
+              {screen !== "learning" && screen !== "deepdive" && mode !== "learn" ? (
+                <section className="voice-agent-page__modal-pane">
+                  <h3 className="voice-agent-page__transcript-heading">Transcript</h3>
+                  <TranscriptThread entries={sessionEntries} />
+                </section>
+              ) : null}
               <section className="voice-agent-page__modal-pane">
                 <h3 className="voice-agent-page__transcript-heading">Extra advice</h3>
                 <TranscriptThread
@@ -764,9 +908,17 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
         <VoiceAgentNotesPanel
           open={notesOpen}
           onClose={() => setNotesOpen(false)}
+          onWordmarkClick={requestGoHome}
           hintTopic={setup?.topic || selectedHistory?.topic}
           hintCategory={setup?.stationType ?? selectedHistory?.stationType}
           acquireNoteMic={acquireNoteMic}
+        />
+
+        <ConfirmHomeModal
+          open={homeConfirmOpen}
+          timedSession={timedSessionLive}
+          onCancel={() => setHomeConfirmOpen(false)}
+          onConfirm={confirmGoHome}
         />
       </div>
     </div>

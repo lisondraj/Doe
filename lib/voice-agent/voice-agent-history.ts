@@ -1,6 +1,7 @@
 /** Chat history for /voice-agent — Supabase is the source of truth. */
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { parseVoiceAgentLesson } from "@/lib/voice-agent/voice-agent-lesson";
 import type {
   VoiceAgentFeedback,
   VoiceAgentHistoryRecord,
@@ -21,6 +22,7 @@ interface VoiceAgentSessionRow {
   transcript: unknown;
   advice_transcript: unknown;
   feedback: unknown;
+  lesson: unknown;
 }
 
 function isMode(value: unknown): value is VoiceAgentMode {
@@ -75,6 +77,7 @@ function rowToRecord(row: VoiceAgentSessionRow): VoiceAgentHistoryRecord | null 
     transcript: toTranscript(row.transcript),
     adviceTranscript: toTranscript(row.advice_transcript),
     feedback,
+    lesson: parseVoiceAgentLesson(row.lesson),
   };
 }
 
@@ -83,7 +86,7 @@ export async function loadVoiceAgentHistory(): Promise<VoiceAgentHistoryRecord[]
   const { data, error } = await supabase
     .from("voice_agent_sessions")
     .select(
-      "id, mode, topic, station_type, started_at, ended_at, transcript, advice_transcript, feedback",
+      "id, mode, topic, station_type, started_at, ended_at, transcript, advice_transcript, feedback, lesson",
     )
     .order("ended_at", { ascending: false })
     .limit(MAX_RECORDS);
@@ -119,6 +122,7 @@ export async function upsertVoiceAgentHistory(
       transcript: record.transcript,
       advice_transcript: record.adviceTranscript ?? [],
       feedback: record.feedback,
+      lesson: record.lesson,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "id" },
@@ -135,7 +139,7 @@ export function transcriptForHistory(
   transcript: readonly VoiceAgentTranscriptEntry[],
 ): VoiceAgentTranscriptEntry[] {
   return transcript
-    .filter((entry) => entry.final && entry.text.trim().length > 0)
+    .filter((entry) => entry.text.trim().length > 0)
     .map((entry) => ({
       id: entry.id,
       role: entry.role,

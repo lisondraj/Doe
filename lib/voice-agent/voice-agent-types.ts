@@ -17,6 +17,37 @@ export interface VoiceAgentTranscriptEntry {
   final: boolean;
 }
 
+export interface VoiceAgentLessonGroup {
+  heading: string;
+  bullets: string[];
+}
+
+export interface VoiceAgentLessonDdxItem {
+  name: string;
+  why: string;
+}
+
+export interface VoiceAgentLessonQuestion {
+  question: string;
+  answer: string;
+}
+
+export interface VoiceAgentLesson {
+  topic: string;
+  hook: string;
+  history: VoiceAgentLessonGroup[];
+  ddxCantMiss: string[];
+  ddxRanked: VoiceAgentLessonDdxItem[];
+  exam: string[];
+  investigationsFirstLine: string[];
+  investigationsNextLine: string[];
+  managementImmediate: string[];
+  managementTreatment: string[];
+  counseling: string[];
+  safetyNet: string[];
+  examinerQuestions: VoiceAgentLessonQuestion[];
+}
+
 export interface VoiceAgentFeedback {
   strengths: readonly string[];
   improvements: readonly string[];
@@ -33,6 +64,7 @@ export interface VoiceAgentHistoryRecord {
   transcript: VoiceAgentTranscriptEntry[];
   adviceTranscript: VoiceAgentTranscriptEntry[];
   feedback: VoiceAgentFeedback | null;
+  lesson: VoiceAgentLesson | null;
 }
 
 export const VOICE_AGENT_STATION_LABELS: Record<VoiceAgentStationType, string> = {

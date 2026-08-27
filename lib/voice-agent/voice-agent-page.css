@@ -61,6 +61,10 @@
 }
 
 .voice-agent-page__wordmark {
+  appearance: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   font-family: "Lora", Georgia, serif;
   font-size: 1.05rem;
   letter-spacing: 0.02em;
@@ -70,6 +74,10 @@
   -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
+}
+
+.voice-agent-page__wordmark:active {
+  opacity: 0.75;
 }
 
 .voice-agent-page__kicker {
@@ -647,11 +655,143 @@
   letter-spacing: -0.01em;
 }
 
-.voice-agent-page__feedback-summary {
+.voice-agent-page__lesson {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.voice-agent-page__lesson-hook {
   margin: 0;
-  font-size: 0.92rem;
-  line-height: 1.55;
-  color: rgba(244, 236, 225, 0.82);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: rgba(244, 236, 225, 0.9);
+}
+
+.voice-agent-page__lesson-card {
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.voice-agent-page__lesson-card h3 {
+  margin: 0 0 0.65rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--va-gold-bright);
+}
+
+.voice-agent-page__lesson-kicker,
+.voice-agent-page__lesson-group h4 {
+  margin: 0.7rem 0 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(242, 221, 176, 0.72);
+}
+
+.voice-agent-page__lesson-group h4:first-child,
+.voice-agent-page__lesson-kicker:first-of-type {
+  margin-top: 0;
+}
+
+.voice-agent-page__lesson-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.voice-agent-page__lesson-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.38rem;
+}
+
+.voice-agent-page__lesson-list li {
+  font-size: 0.86rem;
+  line-height: 1.4;
+  color: rgba(244, 236, 225, 0.88);
+  padding-left: 1rem;
+  position: relative;
+}
+
+.voice-agent-page__lesson-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.48em;
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: var(--va-gold-bright);
+}
+
+.voice-agent-page__lesson-split {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.voice-agent-page__lesson-qs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  counter-reset: va-q;
+}
+
+.voice-agent-page__lesson-qs li {
+  counter-increment: va-q;
+  padding-left: 1.7rem;
+  position: relative;
+}
+
+.voice-agent-page__lesson-qs li::before {
+  content: counter(va-q);
+  position: absolute;
+  left: 0;
+  top: 0.05rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--va-gold-bright);
+}
+
+.voice-agent-page__lesson-q {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.voice-agent-page__lesson-a {
+  margin: 0.3rem 0 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: rgba(244, 236, 225, 0.78);
+}
+
+.voice-agent-page__lesson-skel {
+  height: 7.5rem;
+  border-radius: 1rem;
+  background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+  background-size: 200% 100%;
+  animation: va-skel 1.2s ease-in-out infinite;
+}
+
+@keyframes va-skel {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.voice-agent-page__modal-body--single {
+  flex-direction: column;
 }
 
 .voice-agent-page__feedback-card {
@@ -786,8 +926,39 @@
   flex: 1;
 }
 
-.voice-agent-page__notes {
-  z-index: 40;
+.voice-agent-page__confirm {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(7, 5, 4, 0.62);
+}
+
+.voice-agent-page__confirm-card {
+  width: min(22.5rem, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.25rem 1.2rem 1.15rem;
+  border-radius: 1.25rem;
+  background:
+    linear-gradient(165deg, #2a1c12 0%, #1a1208 55%, #120c08 100%);
+  border: 1px solid rgba(232, 192, 142, 0.22);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+}
+
+.voice-agent-page__confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.voice-agent-page__confirm-actions .voice-agent-page__cta {
+  width: 100%;
+  margin-top: 0;
 }
 
 .voice-agent-page__notes-head {
@@ -1106,6 +1277,16 @@
     flex-direction: row;
   }
 
+  .voice-agent-page__modal-body--single {
+    flex-direction: column;
+  }
+
+  .voice-agent-page__lesson-split {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
   .voice-agent-page__modal .voice-agent-page__actions {
     flex-direction: row;
     align-items: center;
@@ -1141,5 +1322,14 @@
   .voice-agent-page__notes .voice-agent-page__cta {
     width: 100%;
     max-width: 22rem;
+  }
+
+  .voice-agent-page__confirm-actions {
+    flex-direction: row;
+  }
+
+  .voice-agent-page__confirm-actions .voice-agent-page__cta {
+    width: auto;
+    flex: 1;
   }
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
@@ -39,12 +38,14 @@ function isStationType(value: unknown): value is VoiceAgentStationType {
 export function VoiceAgentNotesPanel({
   open,
   onClose,
+  onWordmarkClick,
   hintTopic,
   hintCategory,
   acquireNoteMic,
 }: {
   open: boolean;
   onClose: () => void;
+  onWordmarkClick?: () => void;
   hintTopic?: string | null;
   hintCategory?: VoiceAgentStationType | null;
   acquireNoteMic: () => Promise<NoteMicHandle>;
@@ -189,9 +190,14 @@ export function VoiceAgentNotesPanel({
   return (
     <div className="voice-agent-page__modal voice-agent-page__notes" role="dialog" aria-modal="true" aria-label="Notes">
       <div className="voice-agent-page__brand">
-        <Link href="/" className="voice-agent-page__wordmark" aria-label="Doe home">
+        <button
+          type="button"
+          className="voice-agent-page__wordmark"
+          aria-label="OSCE home"
+          onClick={onWordmarkClick}
+        >
           Doe
-        </Link>
+        </button>
         <div className="voice-agent-page__brand-actions">
           <button
             type="button"
