@@ -27,6 +27,8 @@ export function VoiceAgentView() {
     start,
     endStationEarly,
     beginCoaching,
+    beginDeepDive,
+    beginDeepDiveQuestions,
     toggleChecklistItem,
     reset,
   } = useVoiceAgentSession();
@@ -35,6 +37,7 @@ export function VoiceAgentView() {
 
   const orbState = userSpeaking ? "user" : assistantSpeaking ? "assistant" : "idle";
   const isLowTime = remainingSeconds > 0 && remainingSeconds <= 30;
+  const hasTranscript = transcript.some((entry) => entry.text.trim());
 
   const visibleTranscript = useMemo(
     () =>
@@ -53,7 +56,7 @@ export function VoiceAgentView() {
   );
 
   useEffect(() => {
-    if (screen !== "feedback") return;
+    if (screen !== "feedback" && screen !== "deepdive" && screen !== "session") return;
     transcriptEndRef.current?.scrollIntoView({ block: "end" });
   }, [screen, visibleTranscript.length, coachingActive]);
 
@@ -117,24 +120,56 @@ export function VoiceAgentView() {
           )}
 
           {screen === "session" && !setup && (
-            <div className="voice-agent-page__configuring">
-              <div className="voice-agent-page__orb-wrap" data-state={orbState}>
-                <div className="voice-agent-page__orb" />
-              </div>
-              <p className="voice-agent-page__subtitle">
-                Answer with your voice: how many minutes, what topic, and whether this is a
-                history, physical exam, or management &amp; counseling station.
-              </p>
-              <div className="voice-agent-page__transcript" style={{ flex: "none", maxHeight: "26vh" }}>
-                {visibleTranscript.slice(-6).map((entry) => (
-                  <div
-                    key={entry.id}
-                    className={`voice-agent-page__bubble voice-agent-page__bubble--${entry.role}`}
-                  >
-                    {entry.text}
+            <div
+              className={`voice-agent-page__configuring${
+                hasTranscript
+                  ? " voice-agent-page__configuring--live"
+                  : " voice-agent-page__configuring--empty"
+              }`}
+            >
+              {!hasTranscript && (
+                <>
+                  <div className="voice-agent-page__orb-wrap" data-state={orbState}>
+                    <div className="voice-agent-page__orb" />
                   </div>
-                ))}
-              </div>
+                  <p className="voice-agent-page__subtitle">
+                    Answer with your voice: how many minutes, what topic, and whether this is a
+                    history, physical exam, or management &amp; counseling station.
+                  </p>
+                </>
+              )}
+              {hasTranscript && (
+                <>
+                  <div className="voice-agent-page__status-row">
+                    <div className="voice-agent-page__mic-row">
+                      <span className="voice-agent-page__mic-dot" data-active={userSpeaking} />
+                      {userSpeaking
+                        ? "Listening…"
+                        : assistantSpeaking
+                          ? "Examiner speaking…"
+                          : "Mic live"}
+                    </div>
+                    <div
+                      className="voice-agent-page__orb-wrap"
+                      data-state={orbState}
+                      style={{ width: "2.8rem", height: "2.8rem" }}
+                    >
+                      <div className="voice-agent-page__orb" style={{ width: "1.8rem", height: "1.8rem" }} />
+                    </div>
+                  </div>
+                  <div className="voice-agent-page__transcript voice-agent-page__transcript--full">
+                    {visibleTranscript.map((entry) => (
+                      <div
+                        key={entry.id}
+                        className={`voice-agent-page__bubble voice-agent-page__bubble--${entry.role}`}
+                      >
+                        {entry.text}
+                      </div>
+                    ))}
+                    <div ref={transcriptEndRef} />
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -176,8 +211,8 @@ export function VoiceAgentView() {
                 </ul>
               )}
 
-              <div className="voice-agent-page__transcript">
-                {visibleTranscript.slice(-12).map((entry) => (
+              <div className="voice-agent-page__transcript voice-agent-page__transcript--full">
+                {visibleTranscript.map((entry) => (
                   <div
                     key={entry.id}
                     className={`voice-agent-page__bubble voice-agent-page__bubble--${entry.role}`}
@@ -185,12 +220,10 @@ export function VoiceAgentView() {
                     {entry.text}
                   </div>
                 ))}
+                <div ref={transcriptEndRef} />
               </div>
 
               <div className="voice-agent-page__footer">
-                <div className="voice-agent-page__orb-wrap" data-state={orbState} style={{ width: "5.5rem", height: "5.5rem" }}>
-                  <div className="voice-agent-page__orb" style={{ width: "3.6rem", height: "3.6rem" }} />
-                </div>
                 <div className="voice-agent-page__mic-row">
                   <span className="voice-agent-page__mic-dot" data-active={userSpeaking} />
                   {userSpeaking ? "Listening…" : assistantSpeaking ? "Examiner speaking…" : "Mic live"}
@@ -208,83 +241,149 @@ export function VoiceAgentView() {
 
           {screen === "feedback" && feedback && (
             <div className="voice-agent-page__feedback">
-              <h2 className="voice-agent-page__feedback-title">Station complete</h2>
-              <p className="voice-agent-page__feedback-summary">{feedback.overallImpression}</p>
+              <div className="voice-agent-page__feedback-body">
+                <h2 className="voice-agent-page__feedback-title">Station complete</h2>
+                <p className="voice-agent-page__feedback-summary">{feedback.overallImpression}</p>
 
-              {feedback.strengths.length > 0 && (
-                <div className="voice-agent-page__feedback-card">
-                  <h3>What went well</h3>
-                  <ul>
-                    {feedback.strengths.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
+                {feedback.strengths.length > 0 && (
+                  <div className="voice-agent-page__feedback-card">
+                    <h3>What went well</h3>
+                    <ul>
+                      {feedback.strengths.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {feedback.improvements.length > 0 && (
+                  <div className="voice-agent-page__feedback-card">
+                    <h3>What to improve</h3>
+                    <ul>
+                      {feedback.improvements.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="voice-agent-page__transcript-block">
+                  <h3 className="voice-agent-page__transcript-heading">Full transcript</h3>
+                  <div className="voice-agent-page__transcript voice-agent-page__transcript--full">
+                    {visibleTranscript.length === 0 ? (
+                      <p className="voice-agent-page__hint">No spoken turns were captured.</p>
+                    ) : (
+                      visibleTranscript.map((entry) => (
+                        <div
+                          key={entry.id}
+                          className={`voice-agent-page__bubble voice-agent-page__bubble--${entry.role}`}
+                        >
+                          {entry.text}
+                        </div>
+                      ))
+                    )}
+                    <div ref={transcriptEndRef} />
+                  </div>
                 </div>
-              )}
+              </div>
 
-              {feedback.improvements.length > 0 && (
-                <div className="voice-agent-page__feedback-card">
-                  <h3>What to improve</h3>
-                  <ul>
-                    {feedback.improvements.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <div className="voice-agent-page__actions">
+                {coachingActive ? (
+                  <div className="voice-agent-page__coaching">
+                    <div className="voice-agent-page__mic-row">
+                      <span className="voice-agent-page__mic-dot" data-active={userSpeaking} />
+                      {userSpeaking
+                        ? "Listening…"
+                        : assistantSpeaking
+                          ? "Coach speaking…"
+                          : "Mic live — ask for tips"}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="voice-agent-page__cta voice-agent-page__cta--secondary"
+                      onClick={beginDeepDive}
+                    >
+                      Deep dive this topic
+                    </button>
+                    <button type="button" className="voice-agent-page__cta" onClick={beginCoaching}>
+                      Ask for more tips
+                    </button>
+                  </>
+                )}
 
-              <div className="voice-agent-page__transcript-block">
-                <h3 className="voice-agent-page__transcript-heading">Full transcript</h3>
-                <div className="voice-agent-page__transcript voice-agent-page__transcript--full">
-                  {visibleTranscript.length === 0 ? (
-                    <p className="voice-agent-page__hint">No spoken turns were captured.</p>
-                  ) : (
-                    visibleTranscript.map((entry) => (
+                {errorMessage && <p className="voice-agent-page__error">{errorMessage}</p>}
+
+                <button
+                  type="button"
+                  className="voice-agent-page__cta voice-agent-page__cta--ghost"
+                  onClick={reset}
+                >
+                  Start new session
+                </button>
+              </div>
+            </div>
+          )}
+
+          {screen === "deepdive" && (
+            <div className="voice-agent-page__feedback">
+              <div className="voice-agent-page__feedback-body">
+                <h2 className="voice-agent-page__feedback-title">
+                  Deep dive{setup?.topic ? ` · ${setup.topic}` : ""}
+                </h2>
+                <p className="voice-agent-page__feedback-summary">
+                  History questions, differential diagnosis, and management — in detail.
+                </p>
+                <div className="voice-agent-page__transcript-block">
+                  <h3 className="voice-agent-page__transcript-heading">Teaching</h3>
+                  <div className="voice-agent-page__transcript voice-agent-page__transcript--full">
+                    {visibleTranscript.map((entry) => (
                       <div
                         key={entry.id}
                         className={`voice-agent-page__bubble voice-agent-page__bubble--${entry.role}`}
                       >
                         {entry.text}
                       </div>
-                    ))
-                  )}
-                  <div ref={transcriptEndRef} />
+                    ))}
+                    <div ref={transcriptEndRef} />
+                  </div>
                 </div>
               </div>
 
-              {coachingActive ? (
-                <div className="voice-agent-page__coaching">
-                  <div className="voice-agent-page__orb-wrap" data-state={orbState} style={{ width: "5.5rem", height: "5.5rem" }}>
-                    <div className="voice-agent-page__orb" style={{ width: "3.6rem", height: "3.6rem" }} />
+              <div className="voice-agent-page__actions">
+                {coachingActive ? (
+                  <div className="voice-agent-page__coaching">
+                    <div className="voice-agent-page__mic-row">
+                      <span className="voice-agent-page__mic-dot" data-active={userSpeaking} />
+                      {userSpeaking
+                        ? "Listening…"
+                        : assistantSpeaking
+                          ? "Coach speaking…"
+                          : "Mic live — ask a follow-up"}
+                    </div>
                   </div>
-                  <div className="voice-agent-page__mic-row">
-                    <span className="voice-agent-page__mic-dot" data-active={userSpeaking} />
-                    {userSpeaking
-                      ? "Listening…"
-                      : assistantSpeaking
-                        ? "Coach speaking…"
-                        : "Mic live — ask for tips"}
-                  </div>
-                  <p className="voice-agent-page__hint">
-                    Ask anything: missed questions, phrasing, red flags, or what a strong candidate
-                    would do next.
-                  </p>
-                </div>
-              ) : (
+                ) : (
+                  <button
+                    type="button"
+                    className="voice-agent-page__cta"
+                    onClick={beginDeepDiveQuestions}
+                  >
+                    Ask further questions
+                  </button>
+                )}
+
+                {errorMessage && <p className="voice-agent-page__error">{errorMessage}</p>}
+
                 <button
                   type="button"
-                  className="voice-agent-page__cta"
-                  onClick={beginCoaching}
+                  className="voice-agent-page__cta voice-agent-page__cta--ghost"
+                  onClick={reset}
                 >
-                  Ask for more tips
+                  Start new session
                 </button>
-              )}
-
-              {errorMessage && <p className="voice-agent-page__error">{errorMessage}</p>}
-
-              <button type="button" className="voice-agent-page__cta voice-agent-page__cta--ghost" onClick={reset}>
-                Start new session
-              </button>
+              </div>
             </div>
           )}
         </div>
