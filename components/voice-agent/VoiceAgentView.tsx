@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import "@/lib/voice-agent/voice-agent-page.css";
 import { useVoiceAgentAuth } from "@/lib/voice-agent/use-voice-agent-auth";
@@ -55,27 +55,34 @@ function visibleEntries(transcript: readonly VoiceAgentTranscriptEntry[]): Voice
 function TranscriptThread({
   entries,
   empty,
-  endRef,
 }: {
   entries: readonly VoiceAgentTranscriptEntry[];
   empty?: string;
-  endRef?: RefObject<HTMLDivElement | null>;
 }) {
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const root = scrollerRef.current;
+    if (!root) return;
+    root.scrollTop = root.scrollHeight;
+  }, [entries]);
+
   return (
-    <div className="voice-agent-page__transcript voice-agent-page__transcript--full">
-      {entries.length === 0 ? (
-        <p className="voice-agent-page__hint">{empty ?? "No spoken turns were captured."}</p>
-      ) : (
-        entries.map((entry) => (
-          <div
-            key={entry.id}
-            className={`voice-agent-page__bubble voice-agent-page__bubble--${entry.role}`}
-          >
-            {entry.text}
-          </div>
-        ))
-      )}
-      {endRef ? <div ref={endRef} /> : null}
+    <div ref={scrollerRef} className="voice-agent-page__transcript voice-agent-page__transcript--full">
+      <div className="voice-agent-page__transcript-log">
+        {entries.length === 0 ? (
+          <p className="voice-agent-page__hint">{empty ?? "No spoken turns were captured."}</p>
+        ) : (
+          entries.map((entry) => (
+            <div
+              key={entry.id}
+              className={`voice-agent-page__bubble voice-agent-page__bubble--${entry.role}`}
+            >
+              {entry.text}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
@@ -243,8 +250,6 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
   } = useVoiceAgentSession();
 
   const [selectedHistory, setSelectedHistory] = useState<VoiceAgentHistoryRecord | null>(null);
-  const transcriptEndRef = useRef<HTMLDivElement | null>(null);
-  const adviceEndRef = useRef<HTMLDivElement | null>(null);
 
   const orbState = userSpeaking ? "user" : assistantSpeaking ? "assistant" : "idle";
   const isLowTime = remainingSeconds > 0 && remainingSeconds <= 30;
@@ -253,19 +258,6 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
 
   const sessionEntries = useMemo(() => visibleEntries(transcript), [transcript]);
   const adviceEntries = useMemo(() => visibleEntries(adviceTranscript), [adviceTranscript]);
-
-  useEffect(() => {
-    if (screen !== "feedback" && screen !== "deepdive" && screen !== "learning" && screen !== "session") {
-      return;
-    }
-    if (askMoreOpen) return;
-    transcriptEndRef.current?.scrollIntoView({ block: "end" });
-  }, [screen, sessionEntries.length, coachingActive, askMoreOpen]);
-
-  useEffect(() => {
-    if (!askMoreOpen) return;
-    adviceEndRef.current?.scrollIntoView({ block: "end" });
-  }, [askMoreOpen, adviceEntries.length, coachingActive]);
 
   useEffect(() => {
     if (screen !== "start") setSelectedHistory(null);
@@ -516,7 +508,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                       <div className="voice-agent-page__orb" style={{ width: "1.8rem", height: "1.8rem" }} />
                     </div>
                   </div>
-                  <TranscriptThread entries={sessionEntries} endRef={transcriptEndRef} />
+                  <TranscriptThread entries={sessionEntries} />
                 </>
               )}
               <div className="voice-agent-page__footer">
@@ -569,7 +561,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                 </ul>
               )}
 
-              <TranscriptThread entries={sessionEntries} endRef={transcriptEndRef} />
+              <TranscriptThread entries={sessionEntries} />
 
               <div className="voice-agent-page__footer">
                 <div className="voice-agent-page__mic-row">
@@ -624,7 +616,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
 
                 <div className="voice-agent-page__transcript-block">
                   <h3 className="voice-agent-page__transcript-heading">Transcript</h3>
-                  <TranscriptThread entries={sessionEntries} empty="No spoken turns were captured." endRef={transcriptEndRef} />
+                  <TranscriptThread entries={sessionEntries} empty="No spoken turns were captured." />
                 </div>
               </div>
 
@@ -665,7 +657,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                 </p>
                 <div className="voice-agent-page__transcript-block">
                   <h3 className="voice-agent-page__transcript-heading">Teaching</h3>
-                  <TranscriptThread entries={sessionEntries} endRef={transcriptEndRef} />
+                  <TranscriptThread entries={sessionEntries} />
                 </div>
               </div>
 
@@ -714,7 +706,6 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                 <TranscriptThread
                   entries={adviceEntries}
                   empty="Ask anything — extra advice will show up here."
-                  endRef={adviceEndRef}
                 />
               </section>
             </div>

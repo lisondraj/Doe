@@ -513,17 +513,29 @@
 
 .voice-agent-page__transcript {
   flex: 1;
+  align-self: stretch;
+  width: 100%;
   min-height: 0;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  overflow-anchor: none;
+  display: block;
   padding: 0.2rem 0.1rem;
   -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
   mask-image: linear-gradient(180deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
 }
 
+.voice-agent-page__transcript-log {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 0.5rem;
+  min-height: min-content;
+}
+
 .voice-agent-page__bubble {
+  width: fit-content;
   max-width: 86%;
   padding: 0.55rem 0.8rem;
   border-radius: 1rem;
@@ -532,7 +544,7 @@
 }
 
 .voice-agent-page__bubble--assistant {
-  align-self: flex-start;
+  margin-right: auto;
   background: rgba(232, 192, 142, 0.12);
   border: 1px solid rgba(232, 192, 142, 0.18);
   color: rgba(244, 236, 225, 0.92);
@@ -540,7 +552,7 @@
 }
 
 .voice-agent-page__bubble--user {
-  align-self: flex-end;
+  margin-left: auto;
   background: rgba(255, 255, 255, 0.08);
   color: rgba(244, 236, 225, 0.85);
   border-bottom-right-radius: 0.3rem;
