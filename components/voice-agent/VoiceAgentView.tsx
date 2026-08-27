@@ -36,9 +36,21 @@ export function VoiceAgentView() {
   const orbState = userSpeaking ? "user" : assistantSpeaking ? "assistant" : "idle";
   const isLowTime = remainingSeconds > 0 && remainingSeconds <= 30;
 
-  const visibleTranscript = useMemo(() => transcript.filter((entry) => entry.text.trim()), [
-    transcript,
-  ]);
+  const visibleTranscript = useMemo(
+    () =>
+      transcript.filter((entry) => {
+        const text = entry.text.trim();
+        if (!text) return false;
+        const normalized = text.toLowerCase();
+        return (
+          !normalized.includes("missing required parameter") &&
+          !normalized.startsWith("missing required") &&
+          !normalized.includes("invalid_request_error") &&
+          !normalized.includes("unknown parameter")
+        );
+      }),
+    [transcript],
+  );
 
   useEffect(() => {
     if (screen !== "feedback") return;

@@ -9,9 +9,9 @@ FOLLOW THIS FLOW EXACTLY:
    a. How many minutes should the station run for (typical OSCE stations run 5-15 minutes)?
    b. What clinical topic or case should the station focus on (e.g. "chest pain", "type 2 diabetes counseling", "cardiovascular examination")?
    c. Is this a HISTORY-taking station, a PHYSICAL EXAMINATION station, or a MANAGEMENT/COUNSELING station?
-3. As soon as you have all three answers, silently call the configure_session function with duration_minutes, topic, and station_type.
-   - If station_type is "physical_exam", also include a checklist array of 6-10 short, ordered clinical steps a strong candidate should perform for that exact exam (e.g. for a cardiovascular exam: "Wash hands and introduce yourself", "Expose the chest with consent", "Inspect for scars, pulsations and deformities", "Palpate the apex beat", "Auscultate all four valve areas", "Check for peripheral pulses and edema", "Thank the patient and offer to wash hands").
-   - For "history" or "management_counseling" stations you may omit the checklist or leave it empty.
+3. As soon as you have all three answers, silently call the configure_session function with duration_minutes, topic, station_type, AND checklist (always include checklist).
+   - If station_type is "physical_exam", checklist must be 6-10 short, ordered clinical steps a strong candidate should perform for that exact exam (e.g. for a cardiovascular exam: "Wash hands and introduce yourself", "Expose the chest with consent", "Inspect for scars, pulsations and deformities", "Palpate the apex beat", "Auscultate all four valve areas", "Check for peripheral pulses and edema", "Thank the patient and offer to wash hands").
+   - For "history" or "management_counseling" stations, pass checklist as an empty array.
    - Immediately after calling the function, confirm the setup out loud in one brief sentence and move straight into character for the station. Do not wait for further confirmation.
 4. Run the station in character based on station_type:
    - history: You ARE the patient. Answer the candidate's questions realistically and consistently with the chosen topic. Only reveal information they specifically ask about. Stay in character, use natural patient language, and show appropriate emotion.
@@ -55,10 +55,11 @@ export const VOICE_AGENT_TOOLS = [
           type: "array",
           items: { type: "string" },
           description:
-            "For physical_exam stations only: 6-10 short, ordered clinical steps the candidate should perform.",
+            "For physical_exam stations: 6-10 short, ordered clinical steps. For history or management_counseling, pass an empty array.",
         },
       },
-      required: ["duration_minutes", "topic", "station_type"],
+      required: ["duration_minutes", "topic", "station_type", "checklist"],
+      additionalProperties: false,
     },
   },
   {
@@ -85,9 +86,10 @@ export const VOICE_AGENT_TOOLS = [
         },
       },
       required: ["strengths", "improvements", "overall_impression"],
+      additionalProperties: false,
     },
   },
-] as const;
+];
 
 export const VOICE_AGENT_DEFAULT_MODEL = "gpt-realtime";
 export const VOICE_AGENT_DEFAULT_VOICE = "marin";

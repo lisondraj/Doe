@@ -38,7 +38,13 @@ function isFunctionCallItem(item: unknown): item is RealtimeFunctionCallItem {
 }
 
 function clampDuration(minutes: unknown): number {
-  const value = typeof minutes === "number" && Number.isFinite(minutes) ? minutes : 8;
+  const parsed =
+    typeof minutes === "number"
+      ? minutes
+      : typeof minutes === "string"
+        ? Number.parseFloat(minutes)
+        : Number.NaN;
+  const value = Number.isFinite(parsed) ? parsed : 8;
   return Math.min(20, Math.max(3, Math.round(value)));
 }
 
@@ -52,6 +58,26 @@ function toStationType(value: unknown): VoiceAgentStationType {
 function toStringArray(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   return value.filter((entry): entry is string => typeof entry === "string" && entry.length > 0);
+}
+
+function isRealtimeApiNoise(text: string): boolean {
+  const normalized = text.toLowerCase();
+  return (
+    normalized.includes("missing required parameter") ||
+    normalized.startsWith("missing required") ||
+    normalized.includes("invalid_request_error") ||
+    normalized.includes("unknown parameter") ||
+    /session\.tools\[\d+\]/.test(normalized)
+  );
+}
+
+function errorEventMessage(event: Record<string, unknown>): string {
+  const nested = event.error;
+  if (typeof nested === "object" && nested !== null) {
+    const message = (nested as { message?: unknown }).message;
+    if (typeof message === "string") return message;
+  }
+  return typeof event.message === "string" ? event.message : "";
 }
 
 let uid = 0;
@@ -212,6 +238,10 @@ export function useVoiceAgentSession() {
         const prior = assistantBufferRef.current.get(itemId) ?? "";
         const merged = prior + delta;
         assistantBufferRef.current.set(itemId, merged);
+        if (isRealtimeApiNoise(merged)) {
+          setTranscript((entries) => entries.filter((entry) => entry.id !== itemId));
+          return;
+        }
         setAssistantSpeaking(true);
         setTranscript((entries) => {
           const idx = entries.findIndex((entry) => entry.id === itemId);
@@ -232,6 +262,10 @@ export function useVoiceAgentSession() {
             ? event.transcript
             : assistantBufferRef.current.get(itemId) ?? "";
         assistantBufferRef.current.delete(itemId);
+        if (isRealtimeApiNoise(finalText)) {
+          setTranscript((entries) => entries.filter((entry) => entry.id !== itemId));
+          return;
+        }
         setTranscript((entries) => {
           const idx = entries.findIndex((entry) => entry.id === itemId);
           if (idx === -1) {
@@ -263,7 +297,12 @@ export function useVoiceAgentSession() {
       }
 
       if (type === "error") {
+        const message = errorEventMessage(event);
         console.error("voice-agent realtime error", event);
+        if (isRealtimeApiNoise(message) && sessionRef.current) {
+          sendRealtimeEvent(sessionRef.current.dataChannel, { type: "response.cancel" });
+        }
+        return;
       }
     },
     [handleFunctionCall],
