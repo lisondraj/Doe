@@ -45,3 +45,30 @@ export const VOICE_AGENT_MODE_LABELS: Record<VoiceAgentMode, string> = {
   practice: "Practice",
   learn: "Learning",
 };
+
+export const VOICE_AGENT_NOTE_CATEGORIES: readonly VoiceAgentStationType[] = [
+  "history",
+  "physical_exam",
+  "management_counseling",
+];
+
+export const VOICE_AGENT_NOTE_CATEGORY_LABELS: Record<VoiceAgentStationType, string> = {
+  history: "History",
+  physical_exam: "Physical exam",
+  management_counseling: "Management / counselling",
+};
+
+export interface VoiceAgentNote {
+  id: string;
+  topic: string;
+  category: VoiceAgentStationType;
+  text: string;
+  createdAt: string;
+}
+
+export interface VoiceAgentNoteGroup {
+  topic: string;
+  count: number;
+  updatedAt: string;
+  notesByCategory: Record<VoiceAgentStationType, VoiceAgentNote[]>;
+}

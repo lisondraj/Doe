@@ -7,6 +7,7 @@ export interface VoiceAgentRealtimeSession {
   dataChannel: RTCDataChannel;
   audioElement: HTMLAudioElement;
   micStream: MediaStream;
+  audioSender: RTCRtpSender | null;
   close: () => void;
 }
 
@@ -57,7 +58,12 @@ export async function connectVoiceAgentRealtimeSession(
     throw new Error("Microphone access is required for the OSCE voice coach.");
   }
 
-  micStream.getTracks().forEach((track) => peerConnection.addTrack(track, micStream));
+  const audioTrack = micStream.getAudioTracks()[0] ?? null;
+  const audioSender = audioTrack ? peerConnection.addTrack(audioTrack, micStream) : null;
+  micStream.getTracks().forEach((track) => {
+    if (track === audioTrack) return;
+    peerConnection.addTrack(track, micStream);
+  });
 
   const dataChannel = peerConnection.createDataChannel("oai-events");
 
@@ -103,7 +109,7 @@ export async function connectVoiceAgentRealtimeSession(
     micStream.getTracks().forEach((track) => track.stop());
   };
 
-  return { peerConnection, dataChannel, audioElement, micStream, close };
+  return { peerConnection, dataChannel, audioElement, micStream, audioSender, close };
 }
 
 export function sendRealtimeEvent(dataChannel: RTCDataChannel, event: Record<string, unknown>) {
@@ -115,4 +121,14 @@ export function setVoiceAgentMicEnabled(session: VoiceAgentRealtimeSession, enab
   session.micStream.getAudioTracks().forEach((track) => {
     track.enabled = enabled;
   });
+}
+
+export function detachVoiceAgentMic(session: VoiceAgentRealtimeSession) {
+  if (session.audioSender) void session.audioSender.replaceTrack(null);
+}
+
+export function attachVoiceAgentMic(session: VoiceAgentRealtimeSession) {
+  const track = session.micStream.getAudioTracks()[0];
+  if (!track || !session.audioSender) return;
+  void session.audioSender.replaceTrack(track);
 }

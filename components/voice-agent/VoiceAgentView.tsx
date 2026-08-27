@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
+import { VoiceAgentNotesPanel } from "@/components/voice-agent/VoiceAgentNotesPanel";
 import "@/lib/voice-agent/voice-agent-page.css";
 import { useVoiceAgentAuth } from "@/lib/voice-agent/use-voice-agent-auth";
 import { useVoiceAgentSession } from "@/lib/voice-agent/use-voice-agent-session";
@@ -50,6 +51,46 @@ function visibleEntries(transcript: readonly VoiceAgentTranscriptEntry[]): Voice
       !normalized.includes("unknown parameter")
     );
   });
+}
+
+function BrandBar({
+  showBack,
+  onBack,
+  notesOpen,
+  onToggleNotes,
+}: {
+  showBack?: boolean;
+  onBack?: () => void;
+  notesOpen?: boolean;
+  onToggleNotes?: () => void;
+}) {
+  return (
+    <div className="voice-agent-page__brand">
+      <Link href="/" className="voice-agent-page__wordmark" aria-label="Doe home">
+        Doe
+      </Link>
+      <div className="voice-agent-page__brand-actions">
+        {showBack ? (
+          <button type="button" className="voice-agent-page__back" onClick={onBack}>
+            Back
+          </button>
+        ) : null}
+        {onToggleNotes ? (
+          <button
+            type="button"
+            className="voice-agent-page__notes-toggle"
+            data-open={notesOpen ? "true" : "false"}
+            aria-pressed={notesOpen ? true : false}
+            onClick={onToggleNotes}
+          >
+            {notesOpen ? "Close" : "Notes"}
+          </button>
+        ) : (
+          <span className="voice-agent-page__kicker">OSCE Voice Coach</span>
+        )}
+      </div>
+    </div>
+  );
 }
 
 function TranscriptThread({
@@ -123,12 +164,7 @@ export function VoiceAgentView() {
       <div className="voice-agent-page">
         <div className="voice-agent-page__frame">
           <div className="voice-agent-page__scroll">
-            <div className="voice-agent-page__brand">
-              <Link href="/" className="voice-agent-page__wordmark" aria-label="Doe home">
-                Doe
-              </Link>
-              <span className="voice-agent-page__kicker">OSCE Voice Coach</span>
-            </div>
+            <BrandBar />
             <div className="voice-agent-page__hero">
               <div className="voice-agent-page__orb-wrap" data-state="assistant">
                 <div className="voice-agent-page__orb" />
@@ -171,12 +207,7 @@ function VoiceAgentLogin({
     <div className="voice-agent-page">
       <div className="voice-agent-page__frame">
         <div className="voice-agent-page__scroll">
-          <div className="voice-agent-page__brand">
-            <Link href="/" className="voice-agent-page__wordmark" aria-label="Doe home">
-              Doe
-            </Link>
-            <span className="voice-agent-page__kicker">OSCE Voice Coach</span>
-          </div>
+          <BrandBar />
           <div className="voice-agent-page__home">
             <div className="voice-agent-page__hero">
               <div className="voice-agent-page__orb-wrap" data-state="idle">
@@ -247,9 +278,11 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
     closeAskMore,
     toggleChecklistItem,
     goBack,
+    acquireNoteMic,
   } = useVoiceAgentSession();
 
   const [selectedHistory, setSelectedHistory] = useState<VoiceAgentHistoryRecord | null>(null);
+  const [notesOpen, setNotesOpen] = useState(false);
 
   const orbState = userSpeaking ? "user" : assistantSpeaking ? "assistant" : "idle";
   const isLowTime = remainingSeconds > 0 && remainingSeconds <= 30;
@@ -264,6 +297,10 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
   }, [screen]);
 
   const handleBack = () => {
+    if (notesOpen) {
+      setNotesOpen(false);
+      return;
+    }
     if (askMoreOpen) {
       closeAskMore();
       return;
@@ -279,18 +316,12 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
     <div className="voice-agent-page">
       <div className="voice-agent-page__frame">
         <div className="voice-agent-page__scroll">
-          <div className="voice-agent-page__brand">
-            <Link href="/" className="voice-agent-page__wordmark" aria-label="Doe home">
-              Doe
-            </Link>
-            {showBack ? (
-              <button type="button" className="voice-agent-page__back" onClick={handleBack}>
-                Back
-              </button>
-            ) : (
-              <span className="voice-agent-page__kicker">OSCE Voice Coach</span>
-            )}
-          </div>
+          <BrandBar
+            showBack={showBack}
+            onBack={handleBack}
+            notesOpen={notesOpen}
+            onToggleNotes={() => setNotesOpen((open) => !open)}
+          />
 
           {screen === "start" && !selectedHistory && (
             <div className="voice-agent-page__home">
@@ -684,14 +715,12 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
 
         {askMoreOpen && (
           <div className="voice-agent-page__modal" role="dialog" aria-modal="true" aria-label="Ask more about this session">
-            <div className="voice-agent-page__brand">
-              <Link href="/" className="voice-agent-page__wordmark" aria-label="Doe home">
-                Doe
-              </Link>
-              <button type="button" className="voice-agent-page__back" onClick={closeAskMore}>
-                Back
-              </button>
-            </div>
+            <BrandBar
+              showBack
+              onBack={closeAskMore}
+              notesOpen={notesOpen}
+              onToggleNotes={() => setNotesOpen((open) => !open)}
+            />
             <h2 className="voice-agent-page__feedback-title">Ask more about this session</h2>
             <p className="voice-agent-page__feedback-summary">
               {setup?.topic ? `${setup.topic} — ` : ""}session transcript and extra advice.
@@ -731,6 +760,14 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
             </div>
           </div>
         )}
+
+        <VoiceAgentNotesPanel
+          open={notesOpen}
+          onClose={() => setNotesOpen(false)}
+          hintTopic={setup?.topic || selectedHistory?.topic}
+          hintCategory={setup?.stationType ?? selectedHistory?.stationType}
+          acquireNoteMic={acquireNoteMic}
+        />
       </div>
     </div>
   );

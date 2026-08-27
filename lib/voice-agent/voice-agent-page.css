@@ -54,6 +54,12 @@
   margin-bottom: 1.1rem;
 }
 
+.voice-agent-page__brand-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
 .voice-agent-page__wordmark {
   font-family: "Lora", Georgia, serif;
   font-size: 1.05rem;
@@ -87,6 +93,29 @@
 
 .voice-agent-page__back:active {
   opacity: 0.7;
+}
+
+.voice-agent-page__notes-toggle {
+  appearance: none;
+  border: 1px solid rgba(232, 192, 142, 0.38);
+  background: rgba(232, 192, 142, 0.1);
+  color: var(--va-gold-bright);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.38rem 0.8rem;
+  cursor: pointer;
+}
+
+.voice-agent-page__notes-toggle[data-open="true"] {
+  background: rgba(232, 192, 142, 0.22);
+  border-color: var(--va-gold-bright);
+}
+
+.voice-agent-page__notes-toggle:active {
+  opacity: 0.75;
 }
 
 /* ---- Start / connecting / error screens ---- */
@@ -757,6 +786,126 @@
   flex: 1;
 }
 
+.voice-agent-page__notes {
+  z-index: 40;
+}
+
+.voice-agent-page__notes-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.voice-agent-page__notes-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.voice-agent-page__notes-topics {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.voice-agent-page__notes-topic {
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.voice-agent-page__notes-topic-toggle {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 0.95rem;
+  border: none;
+  background: transparent;
+  color: #f4ece1;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.voice-agent-page__notes-count {
+  flex-shrink: 0;
+  min-width: 1.5rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--va-gold-bright);
+  background: rgba(232, 192, 142, 0.14);
+  text-align: center;
+}
+
+.voice-agent-page__notes-category {
+  padding: 0 0.95rem 0.85rem;
+}
+
+.voice-agent-page__notes-category h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--va-gold-bright);
+}
+
+.voice-agent-page__notes-category ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.voice-agent-page__notes-category li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.7rem 0.75rem;
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.voice-agent-page__notes-category p {
+  margin: 0;
+  flex: 1;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: rgba(244, 236, 225, 0.9);
+}
+
+.voice-agent-page__notes-delete {
+  appearance: none;
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(244, 236, 225, 0.55);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.voice-agent-page__cta[data-recording="true"] {
+  background: #6fe08c;
+  color: #102016;
+  box-shadow: 0 12px 30px rgba(111, 224, 140, 0.28);
+}
+
 .voice-agent-page__split {
   display: flex;
   flex-direction: column;
@@ -967,5 +1116,30 @@
   .voice-agent-page__modal .voice-agent-page__cta {
     width: auto;
     min-width: 10rem;
+  }
+
+  .voice-agent-page__notes-head,
+  .voice-agent-page__notes-body {
+    max-width: 1180px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .voice-agent-page__notes-topics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .voice-agent-page__notes .voice-agent-page__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .voice-agent-page__notes .voice-agent-page__cta {
+    width: 100%;
+    max-width: 22rem;
   }
 }

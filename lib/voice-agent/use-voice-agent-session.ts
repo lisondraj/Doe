@@ -8,7 +8,9 @@ import {
   upsertVoiceAgentHistory,
 } from "@/lib/voice-agent/voice-agent-history";
 import {
+  attachVoiceAgentMic,
   connectVoiceAgentRealtimeSession,
+  detachVoiceAgentMic,
   sendRealtimeEvent,
   setVoiceAgentMicEnabled,
   type VoiceAgentRealtimeSession,
@@ -159,6 +161,7 @@ export function useVoiceAgentSession() {
   const sessionIdRef = useRef<string | null>(null);
   const startedAtRef = useRef<string | null>(null);
   const adviceModeRef = useRef(false);
+  const micEnabledBeforeNotesRef = useRef(true);
   const persistSnapshotRef = useRef({
     mode: "practice" as VoiceAgentMode,
     setup: null as VoiceAgentSetup | null,
@@ -641,6 +644,32 @@ export function useVoiceAgentSession() {
     reset();
   }, [askMoreOpen, closeAskMore, reset, screen]);
 
+  const acquireNoteMic = useCallback(async () => {
+    const session = sessionRef.current;
+    if (session) {
+      micEnabledBeforeNotesRef.current = session.micStream.getAudioTracks().some((track) => track.enabled);
+      detachVoiceAgentMic(session);
+      setVoiceAgentMicEnabled(session, true);
+      return {
+        stream: session.micStream,
+        release: () => {
+          const current = sessionRef.current;
+          if (!current) return;
+          setVoiceAgentMicEnabled(current, micEnabledBeforeNotesRef.current);
+          attachVoiceAgentMic(current);
+        },
+      };
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    return {
+      stream,
+      release: () => {
+        stream.getTracks().forEach((track) => track.stop());
+      },
+    };
+  }, []);
+
   return {
     screen,
     mode,
@@ -667,5 +696,6 @@ export function useVoiceAgentSession() {
     toggleChecklistItem,
     goBack,
     reset,
+    acquireNoteMic,
   };
 }
