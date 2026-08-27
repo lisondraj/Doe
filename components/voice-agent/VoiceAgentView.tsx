@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
 
 import "@/lib/voice-agent/voice-agent-page.css";
 import { useVoiceAgentAuth } from "@/lib/voice-agent/use-voice-agent-auth";
@@ -82,6 +82,34 @@ function TranscriptThread({
 
 export function VoiceAgentView() {
   const { user, ready, signIn, signOut } = useVoiceAgentAuth();
+
+  useLayoutEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const media = window.matchMedia("(min-width: 900px)");
+
+    const apply = () => {
+      const desktop = media.matches;
+      html.setAttribute("data-voice-agent-layout", desktop ? "desktop" : "phone");
+      if (desktop) {
+        html.setAttribute("data-layout", "desktop");
+        html.removeAttribute("data-doeforvc-always-phone");
+        body.classList.add("desktop-route");
+      } else {
+        html.removeAttribute("data-layout");
+        body.classList.remove("desktop-route");
+      }
+    };
+
+    apply();
+    media.addEventListener("change", apply);
+    return () => {
+      media.removeEventListener("change", apply);
+      html.removeAttribute("data-voice-agent-layout");
+      html.removeAttribute("data-layout");
+      body.classList.remove("desktop-route");
+    };
+  }, []);
 
   if (!ready) {
     return (
@@ -330,7 +358,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
               </section>
               <button
                 type="button"
-                className="voice-agent-page__cta voice-agent-page__cta--ghost"
+                className="voice-agent-page__cta voice-agent-page__cta--ghost voice-agent-page__signout"
                 onClick={onSignOut}
               >
                 Sign out
@@ -372,17 +400,19 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                   </div>
                 )}
 
-                <div className="voice-agent-page__transcript-block">
-                  <h3 className="voice-agent-page__transcript-heading">Transcript</h3>
-                  <TranscriptThread entries={selectedHistory.transcript} />
-                </div>
-
-                {(selectedHistory.adviceTranscript?.length ?? 0) > 0 && (
+                <div className="voice-agent-page__split">
                   <div className="voice-agent-page__transcript-block">
-                    <h3 className="voice-agent-page__transcript-heading">Extra advice</h3>
-                    <TranscriptThread entries={selectedHistory.adviceTranscript} />
+                    <h3 className="voice-agent-page__transcript-heading">Transcript</h3>
+                    <TranscriptThread entries={selectedHistory.transcript} />
                   </div>
-                )}
+
+                  {(selectedHistory.adviceTranscript?.length ?? 0) > 0 && (
+                    <div className="voice-agent-page__transcript-block">
+                      <h3 className="voice-agent-page__transcript-heading">Extra advice</h3>
+                      <TranscriptThread entries={selectedHistory.adviceTranscript} />
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="voice-agent-page__actions">
                 <button
