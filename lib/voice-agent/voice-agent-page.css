@@ -459,13 +459,37 @@
   background: var(--va-gold-bright);
 }
 
-.voice-agent-page__transcript-toggle {
-  align-self: flex-start;
-  background: none;
-  border: none;
-  color: rgba(244, 236, 225, 0.5);
+.voice-agent-page__transcript-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-height: 0;
+}
+
+.voice-agent-page__transcript-heading {
+  margin: 0;
   font-size: 0.78rem;
-  padding: 0;
-  cursor: pointer;
-  text-decoration: underline;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--va-gold-bright);
+}
+
+.voice-agent-page__transcript--full {
+  flex: none;
+  max-height: 38vh;
+  padding: 0.75rem 0.7rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.voice-agent-page__coaching {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  text-align: center;
+  padding: 0.4rem 0 0.2rem;
 }

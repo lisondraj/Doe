@@ -98,3 +98,9 @@ export function sendRealtimeEvent(dataChannel: RTCDataChannel, event: Record<str
   if (dataChannel.readyState !== "open") return;
   dataChannel.send(JSON.stringify(event));
 }
+
+export function setVoiceAgentMicEnabled(session: VoiceAgentRealtimeSession, enabled: boolean) {
+  session.micStream.getAudioTracks().forEach((track) => {
+    track.enabled = enabled;
+  });
+}

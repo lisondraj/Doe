@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import "@/lib/voice-agent/voice-agent-page.css";
 import { useVoiceAgentSession } from "@/lib/voice-agent/use-voice-agent-session";
@@ -23,13 +23,15 @@ export function VoiceAgentView() {
     remainingSeconds,
     userSpeaking,
     assistantSpeaking,
+    coachingActive,
     start,
     endStationEarly,
+    beginCoaching,
     toggleChecklistItem,
     reset,
   } = useVoiceAgentSession();
 
-  const [showFullTranscript, setShowFullTranscript] = useState(false);
+  const transcriptEndRef = useRef<HTMLDivElement | null>(null);
 
   const orbState = userSpeaking ? "user" : assistantSpeaking ? "assistant" : "idle";
   const isLowTime = remainingSeconds > 0 && remainingSeconds <= 30;
@@ -37,6 +39,11 @@ export function VoiceAgentView() {
   const visibleTranscript = useMemo(() => transcript.filter((entry) => entry.text.trim()), [
     transcript,
   ]);
+
+  useEffect(() => {
+    if (screen !== "feedback") return;
+    transcriptEndRef.current?.scrollIntoView({ block: "end" });
+  }, [screen, visibleTranscript.length, coachingActive]);
 
   return (
     <div className="voice-agent-page">
@@ -214,28 +221,56 @@ export function VoiceAgentView() {
                 </div>
               )}
 
-              <button
-                type="button"
-                className="voice-agent-page__transcript-toggle"
-                onClick={() => setShowFullTranscript((value) => !value)}
-              >
-                {showFullTranscript ? "Hide full transcript" : "Show full transcript"}
-              </button>
-
-              {showFullTranscript && (
-                <div className="voice-agent-page__transcript" style={{ maxHeight: "28vh" }}>
-                  {visibleTranscript.map((entry) => (
-                    <div
-                      key={entry.id}
-                      className={`voice-agent-page__bubble voice-agent-page__bubble--${entry.role}`}
-                    >
-                      {entry.text}
-                    </div>
-                  ))}
+              <div className="voice-agent-page__transcript-block">
+                <h3 className="voice-agent-page__transcript-heading">Full transcript</h3>
+                <div className="voice-agent-page__transcript voice-agent-page__transcript--full">
+                  {visibleTranscript.length === 0 ? (
+                    <p className="voice-agent-page__hint">No spoken turns were captured.</p>
+                  ) : (
+                    visibleTranscript.map((entry) => (
+                      <div
+                        key={entry.id}
+                        className={`voice-agent-page__bubble voice-agent-page__bubble--${entry.role}`}
+                      >
+                        {entry.text}
+                      </div>
+                    ))
+                  )}
+                  <div ref={transcriptEndRef} />
                 </div>
+              </div>
+
+              {coachingActive ? (
+                <div className="voice-agent-page__coaching">
+                  <div className="voice-agent-page__orb-wrap" data-state={orbState} style={{ width: "5.5rem", height: "5.5rem" }}>
+                    <div className="voice-agent-page__orb" style={{ width: "3.6rem", height: "3.6rem" }} />
+                  </div>
+                  <div className="voice-agent-page__mic-row">
+                    <span className="voice-agent-page__mic-dot" data-active={userSpeaking} />
+                    {userSpeaking
+                      ? "Listening…"
+                      : assistantSpeaking
+                        ? "Coach speaking…"
+                        : "Mic live — ask for tips"}
+                  </div>
+                  <p className="voice-agent-page__hint">
+                    Ask anything: missed questions, phrasing, red flags, or what a strong candidate
+                    would do next.
+                  </p>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="voice-agent-page__cta"
+                  onClick={beginCoaching}
+                >
+                  Ask for more tips
+                </button>
               )}
 
-              <button type="button" className="voice-agent-page__cta" onClick={reset}>
+              {errorMessage && <p className="voice-agent-page__error">{errorMessage}</p>}
+
+              <button type="button" className="voice-agent-page__cta voice-agent-page__cta--ghost" onClick={reset}>
                 Start new session
               </button>
             </div>

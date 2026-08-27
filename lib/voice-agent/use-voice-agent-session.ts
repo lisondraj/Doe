@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   connectVoiceAgentRealtimeSession,
   sendRealtimeEvent,
+  setVoiceAgentMicEnabled,
   type VoiceAgentRealtimeSession,
 } from "@/lib/voice-agent/voice-agent-realtime-client";
 import type {
@@ -69,6 +70,7 @@ export function useVoiceAgentSession() {
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [userSpeaking, setUserSpeaking] = useState(false);
   const [assistantSpeaking, setAssistantSpeaking] = useState(false);
+  const [coachingActive, setCoachingActive] = useState(false);
 
   const sessionRef = useRef<VoiceAgentRealtimeSession | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -169,6 +171,8 @@ export function useVoiceAgentSession() {
 
       if (item.name === "end_session") {
         stopTimer();
+        setVoiceAgentMicEnabled(session, false);
+        setCoachingActive(false);
         setFeedback({
           strengths: toStringArray(args.strengths),
           improvements: toStringArray(args.improvements),
@@ -272,6 +276,7 @@ export function useVoiceAgentSession() {
     setTranscript([]);
     setCheckedItems(new Set());
     setFeedback(null);
+    setCoachingActive(false);
     assistantBufferRef.current.clear();
     endRequestedRef.current = false;
 
@@ -310,6 +315,32 @@ export function useVoiceAgentSession() {
     requestStationEnd();
   }, [requestStationEnd]);
 
+  const beginCoaching = useCallback(() => {
+    const session = sessionRef.current;
+    if (!session || session.dataChannel.readyState !== "open") {
+      setErrorMessage("The voice session ended. Start a new session to keep talking.");
+      return;
+    }
+    setErrorMessage(null);
+    setVoiceAgentMicEnabled(session, true);
+    setCoachingActive(true);
+    sendRealtimeEvent(session.dataChannel, {
+      type: "conversation.item.create",
+      item: {
+        type: "message",
+        role: "user",
+        content: [
+          {
+            type: "input_text",
+            text:
+              "[SYSTEM] The candidate is ready for post-station coaching. You are now Dr. Osler the examiner and coach — not the patient. In one short sentence, invite them to ask for tips, missed questions, better phrasing, or what a strong candidate would do on this station. Then wait for their question and keep going back and forth.",
+          },
+        ],
+      },
+    });
+    sendRealtimeEvent(session.dataChannel, { type: "response.create" });
+  }, []);
+
   const toggleChecklistItem = useCallback((item: string) => {
     setCheckedItems((prev) => {
       const next = new Set(prev);
@@ -330,6 +361,7 @@ export function useVoiceAgentSession() {
     setTranscript([]);
     setCheckedItems(new Set());
     setFeedback(null);
+    setCoachingActive(false);
     setRemainingSeconds(0);
     setUserSpeaking(false);
     setAssistantSpeaking(false);
@@ -345,8 +377,10 @@ export function useVoiceAgentSession() {
     remainingSeconds,
     userSpeaking,
     assistantSpeaking,
+    coachingActive,
     start,
     endStationEarly,
+    beginCoaching,
     toggleChecklistItem,
     reset,
   };
