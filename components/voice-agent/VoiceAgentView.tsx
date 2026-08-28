@@ -227,6 +227,25 @@ function QualityToggle({
   );
 }
 
+function TakeMicButton({
+  assistantSpeaking,
+  onInterrupt,
+}: {
+  assistantSpeaking: boolean;
+  onInterrupt: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={`voice-agent-page__cta${assistantSpeaking ? "" : " voice-agent-page__cta--secondary"}`}
+      aria-label="Turn on the microphone and stop the coach"
+      onClick={onInterrupt}
+    >
+      Take the mic
+    </button>
+  );
+}
+
 function VoiceSettingsModal({
   open,
   settings,
@@ -495,6 +514,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
     goBack,
     reset,
     acquireNoteMic,
+    interruptAssistant,
     applyVoiceSettings,
     voiceSettings,
     reloadLesson,
@@ -808,6 +828,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                 </>
               )}
               <div className="voice-agent-page__footer">
+                <TakeMicButton assistantSpeaking={assistantSpeaking} onInterrupt={interruptAssistant} />
                 <button
                   type="button"
                   className="voice-agent-page__cta voice-agent-page__cta--ghost"
@@ -864,6 +885,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                   <span className="voice-agent-page__mic-dot" data-active={userSpeaking} />
                   {userSpeaking ? "Listening…" : assistantSpeaking ? "Examiner speaking…" : "Mic live"}
                 </div>
+                <TakeMicButton assistantSpeaking={assistantSpeaking} onInterrupt={interruptAssistant} />
                 <button
                   type="button"
                   className="voice-agent-page__cta voice-agent-page__cta--ghost"
@@ -1029,6 +1051,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                 </div>
               </div>
               {errorMessage && <p className="voice-agent-page__error">{errorMessage}</p>}
+              <TakeMicButton assistantSpeaking={assistantSpeaking} onInterrupt={interruptAssistant} />
               <button
                 type="button"
                 className="voice-agent-page__cta voice-agent-page__cta--ghost"

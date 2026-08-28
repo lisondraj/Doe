@@ -188,9 +188,11 @@ export function useVoiceAgentSession() {
   voiceSettingsRef.current = voiceSettings;
   const micDesiredRef = useRef(true);
   const playbackMuteRef = useRef(false);
+  const bargeInRef = useRef(false);
   const notesActiveRef = useRef(false);
   const sawOutputBufferRef = useRef(false);
   const unmuteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const bargeInTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   persistSnapshotRef.current = { mode, setup, transcript, adviceTranscript, feedback, lesson };
 
@@ -209,6 +211,7 @@ export function useVoiceAgentSession() {
   );
 
   const muteForAssistantOutput = useCallback(() => {
+    if (bargeInRef.current) return;
     if (unmuteTimerRef.current) {
       clearTimeout(unmuteTimerRef.current);
       unmuteTimerRef.current = null;
@@ -219,6 +222,34 @@ export function useVoiceAgentSession() {
     if (alreadyMuted) return;
     const session = sessionRef.current;
     if (session) sendRealtimeEvent(session.dataChannel, { type: "input_audio_buffer.clear" });
+  }, [applyMicGate]);
+
+  const interruptAssistant = useCallback(() => {
+    if (bargeInTimerRef.current) clearTimeout(bargeInTimerRef.current);
+    bargeInRef.current = true;
+    bargeInTimerRef.current = setTimeout(() => {
+      bargeInTimerRef.current = null;
+      bargeInRef.current = false;
+    }, 1200);
+
+    if (unmuteTimerRef.current) {
+      clearTimeout(unmuteTimerRef.current);
+      unmuteTimerRef.current = null;
+    }
+    playbackMuteRef.current = false;
+    setAssistantSpeaking(false);
+    applyMicGate();
+
+    const session = sessionRef.current;
+    if (!session) return;
+
+    sendRealtimeEvent(session.dataChannel, { type: "response.cancel" });
+    sendRealtimeEvent(session.dataChannel, { type: "output_audio_buffer.clear" });
+    sendRealtimeEvent(session.dataChannel, { type: "input_audio_buffer.clear" });
+    session.audioElement.muted = true;
+    window.setTimeout(() => {
+      if (sessionRef.current === session) session.audioElement.muted = false;
+    }, 120);
   }, [applyMicGate]);
 
   const releaseAssistantOutputMute = useCallback(() => {
@@ -281,6 +312,11 @@ export function useVoiceAgentSession() {
       clearTimeout(unmuteTimerRef.current);
       unmuteTimerRef.current = null;
     }
+    if (bargeInTimerRef.current) {
+      clearTimeout(bargeInTimerRef.current);
+      bargeInTimerRef.current = null;
+    }
+    bargeInRef.current = false;
     sessionRef.current?.close();
     sessionRef.current = null;
     endRequestedRef.current = false;
@@ -485,6 +521,11 @@ export function useVoiceAgentSession() {
           if (session) sendRealtimeEvent(session.dataChannel, { type: "input_audio_buffer.clear" });
           return;
         }
+        bargeInRef.current = false;
+        if (bargeInTimerRef.current) {
+          clearTimeout(bargeInTimerRef.current);
+          bargeInTimerRef.current = null;
+        }
         setUserSpeaking(true);
         return;
       }
@@ -493,6 +534,11 @@ export function useVoiceAgentSession() {
         return;
       }
       if (type === "output_audio_buffer.started") {
+        if (bargeInRef.current) {
+          const session = sessionRef.current;
+          if (session) sendRealtimeEvent(session.dataChannel, { type: "output_audio_buffer.clear" });
+          return;
+        }
         sawOutputBufferRef.current = true;
         muteForAssistantOutput();
         setAssistantSpeaking(true);
@@ -875,6 +921,7 @@ export function useVoiceAgentSession() {
     goBack,
     reset,
     acquireNoteMic,
+    interruptAssistant,
     applyVoiceSettings,
     voiceSettings,
     reloadLesson: () => {
