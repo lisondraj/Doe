@@ -64,12 +64,16 @@ function BrandBar({
   onBack,
   notesOpen,
   onToggleNotes,
+  historyOpen,
+  onToggleHistory,
   onWordmarkClick,
 }: {
   showBack?: boolean;
   onBack?: () => void;
   notesOpen?: boolean;
   onToggleNotes?: () => void;
+  historyOpen?: boolean;
+  onToggleHistory?: () => void;
   onWordmarkClick?: () => void;
 }) {
   return (
@@ -88,10 +92,21 @@ function BrandBar({
             Back
           </button>
         ) : null}
+        {onToggleHistory ? (
+          <button
+            type="button"
+            className="voice-agent-page__chrome-toggle"
+            data-open={historyOpen ? "true" : "false"}
+            aria-pressed={historyOpen ? true : false}
+            onClick={onToggleHistory}
+          >
+            {historyOpen ? "Close" : "History"}
+          </button>
+        ) : null}
         {onToggleNotes ? (
           <button
             type="button"
-            className="voice-agent-page__notes-toggle"
+            className="voice-agent-page__chrome-toggle"
             data-open={notesOpen ? "true" : "false"}
             aria-pressed={notesOpen ? true : false}
             onClick={onToggleNotes}
@@ -99,7 +114,7 @@ function BrandBar({
             {notesOpen ? "Close" : "Notes"}
           </button>
         ) : (
-          <span className="voice-agent-page__kicker">OSCE Voice Coach</span>
+          onToggleHistory ? null : <span className="voice-agent-page__kicker">OSCE Voice Coach</span>
         )}
       </div>
     </div>
@@ -337,6 +352,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
 
   const [selectedHistory, setSelectedHistory] = useState<VoiceAgentHistoryRecord | null>(null);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [homeConfirmOpen, setHomeConfirmOpen] = useState(false);
   const [historyLesson, setHistoryLesson] = useState<VoiceAgentLesson | null>(null);
   const [historyLessonLoading, setHistoryLessonLoading] = useState(false);
@@ -346,14 +362,10 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
   const orbState = userSpeaking ? "user" : assistantSpeaking ? "assistant" : "idle";
   const isLowTime = remainingSeconds > 0 && remainingSeconds <= 30;
   const hasTranscript = transcript.some((entry) => entry.text.trim());
-  const showBack = askMoreOpen || selectedHistory !== null || screen !== "start";
+  const showBack = askMoreOpen || screen !== "start";
 
   const sessionEntries = useMemo(() => visibleEntries(transcript), [transcript]);
   const adviceEntries = useMemo(() => visibleEntries(adviceTranscript), [adviceTranscript]);
-
-  useEffect(() => {
-    if (screen !== "start") setSelectedHistory(null);
-  }, [screen]);
 
   useEffect(() => {
     if (!selectedHistory) {
@@ -403,6 +415,11 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
       setHomeConfirmOpen(false);
       return;
     }
+    if (historyOpen) {
+      if (selectedHistory) setSelectedHistory(null);
+      else setHistoryOpen(false);
+      return;
+    }
     if (notesOpen) {
       setNotesOpen(false);
       return;
@@ -411,14 +428,11 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
       closeAskMore();
       return;
     }
-    if (selectedHistory && screen === "start") {
-      setSelectedHistory(null);
-      return;
-    }
     goBack();
   };
 
-  const atCoachHome = screen === "start" && !selectedHistory && !askMoreOpen && !notesOpen;
+  const atCoachHome =
+    screen === "start" && !selectedHistory && !askMoreOpen && !notesOpen && !historyOpen;
   const timedSessionLive =
     mode === "practice" && screen === "session" && Boolean(setup) && remainingSeconds > 0;
 
@@ -430,9 +444,27 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
   const confirmGoHome = () => {
     setHomeConfirmOpen(false);
     setNotesOpen(false);
+    setHistoryOpen(false);
     if (askMoreOpen) closeAskMore();
     setSelectedHistory(null);
     if (screen !== "start") reset();
+  };
+
+  const openHistory = (record?: VoiceAgentHistoryRecord) => {
+    setNotesOpen(false);
+    setSelectedHistory(record ?? null);
+    setHistoryOpen(true);
+  };
+
+  const toggleHistory = () => {
+    setNotesOpen(false);
+    setHistoryOpen((open) => !open);
+    setSelectedHistory(null);
+  };
+
+  const toggleNotes = () => {
+    setHistoryOpen(false);
+    setNotesOpen((open) => !open);
   };
 
   return (
@@ -443,11 +475,13 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
             showBack={showBack}
             onBack={handleBack}
             notesOpen={notesOpen}
-            onToggleNotes={() => setNotesOpen((open) => !open)}
+            onToggleNotes={toggleNotes}
+            historyOpen={historyOpen}
+            onToggleHistory={toggleHistory}
             onWordmarkClick={requestGoHome}
           />
 
-          {screen === "start" && !selectedHistory && (
+          {screen === "start" && (
             <div className="voice-agent-page__home">
               <div className="voice-agent-page__hero">
                 <div className="voice-agent-page__orb-wrap" data-state="idle">
@@ -493,7 +527,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                         <button
                           type="button"
                           className="voice-agent-page__history-item"
-                          onClick={() => setSelectedHistory(record)}
+                          onClick={() => openHistory(record)}
                         >
                           <span className="voice-agent-page__history-topic">{record.topic}</span>
                           <span className="voice-agent-page__history-meta">{historyMeta(record)}</span>
@@ -510,85 +544,6 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
               >
                 Sign out
               </button>
-            </div>
-          )}
-
-          {screen === "start" && selectedHistory && (
-            <div className="voice-agent-page__feedback">
-              <div className="voice-agent-page__feedback-body">
-                <h2 className="voice-agent-page__feedback-title">{selectedHistory.topic}</h2>
-                <p className="voice-agent-page__feedback-summary">{historyMeta(selectedHistory)}</p>
-
-                {selectedHistory.feedback?.overallImpression ? (
-                  <p className="voice-agent-page__feedback-summary">
-                    {selectedHistory.feedback.overallImpression}
-                  </p>
-                ) : null}
-
-                {selectedHistory.feedback && selectedHistory.feedback.strengths.length > 0 && (
-                  <div className="voice-agent-page__feedback-card">
-                    <h3>What went well</h3>
-                    <ul>
-                      {selectedHistory.feedback.strengths.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {selectedHistory.feedback && selectedHistory.feedback.improvements.length > 0 && (
-                  <div className="voice-agent-page__feedback-card">
-                    <h3>What to improve</h3>
-                    <ul>
-                      {selectedHistory.feedback.improvements.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {selectedHistory.mode === "learn" || selectedHistory.lesson ? (
-                  <VoiceAgentLessonPage
-                    lesson={historyLesson ?? selectedHistory.lesson}
-                    loading={historyLessonLoading}
-                    topic={selectedHistory.topic}
-                    error={historyLessonError}
-                    onRetry={() => setHistoryLessonRetry((value) => value + 1)}
-                  />
-                ) : (
-                  <div className="voice-agent-page__split">
-                    <div className="voice-agent-page__transcript-block">
-                      <h3 className="voice-agent-page__transcript-heading">Transcript</h3>
-                      <TranscriptThread entries={selectedHistory.transcript} />
-                    </div>
-
-                    {(selectedHistory.adviceTranscript?.length ?? 0) > 0 && (
-                      <div className="voice-agent-page__transcript-block">
-                        <h3 className="voice-agent-page__transcript-heading">Extra advice</h3>
-                        <TranscriptThread entries={selectedHistory.adviceTranscript} />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className="voice-agent-page__actions">
-                <button
-                  type="button"
-                  className="voice-agent-page__cta"
-                  onClick={() => {
-                    void startAskMoreFromHistory(selectedHistory);
-                  }}
-                >
-                  Ask more about this session
-                </button>
-                <button
-                  type="button"
-                  className="voice-agent-page__cta voice-agent-page__cta--ghost"
-                  onClick={() => setSelectedHistory(null)}
-                >
-                  Back
-                </button>
-              </div>
             </div>
           )}
 
@@ -854,7 +809,9 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
               showBack
               onBack={closeAskMore}
               notesOpen={notesOpen}
-              onToggleNotes={() => setNotesOpen((open) => !open)}
+              onToggleNotes={toggleNotes}
+              historyOpen={historyOpen}
+              onToggleHistory={toggleHistory}
               onWordmarkClick={requestGoHome}
             />
             <h2 className="voice-agent-page__feedback-title">Ask more about this session</h2>
@@ -902,6 +859,124 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                 Back
               </button>
             </div>
+          </div>
+        )}
+
+        {historyOpen && (
+          <div className="voice-agent-page__modal voice-agent-page__history-panel" role="dialog" aria-modal="true" aria-label="Session history">
+            <BrandBar
+              showBack={Boolean(selectedHistory)}
+              onBack={() => setSelectedHistory(null)}
+              notesOpen={notesOpen}
+              onToggleNotes={toggleNotes}
+              historyOpen
+              onToggleHistory={toggleHistory}
+              onWordmarkClick={requestGoHome}
+            />
+            {!selectedHistory ? (
+              <>
+                <h2 className="voice-agent-page__feedback-title">History</h2>
+                <p className="voice-agent-page__feedback-summary">Reopen any saved practice or learning session.</p>
+                <div className="voice-agent-page__history-panel-body">
+                  {history.length === 0 ? (
+                    <p className="voice-agent-page__hint">No saved sessions yet. Practice or learn to start one.</p>
+                  ) : (
+                    <ul className="voice-agent-page__history-list">
+                      {history.map((record) => (
+                        <li key={record.id}>
+                          <button
+                            type="button"
+                            className="voice-agent-page__history-item"
+                            onClick={() => setSelectedHistory(record)}
+                          >
+                            <span className="voice-agent-page__history-topic">{record.topic}</span>
+                            <span className="voice-agent-page__history-meta">{historyMeta(record)}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="voice-agent-page__feedback-body">
+                  <h2 className="voice-agent-page__feedback-title">{selectedHistory.topic}</h2>
+                  <p className="voice-agent-page__feedback-summary">{historyMeta(selectedHistory)}</p>
+
+                  {selectedHistory.feedback?.overallImpression ? (
+                    <p className="voice-agent-page__feedback-summary">
+                      {selectedHistory.feedback.overallImpression}
+                    </p>
+                  ) : null}
+
+                  {selectedHistory.feedback && selectedHistory.feedback.strengths.length > 0 && (
+                    <div className="voice-agent-page__feedback-card">
+                      <h3>What went well</h3>
+                      <ul>
+                        {selectedHistory.feedback.strengths.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {selectedHistory.feedback && selectedHistory.feedback.improvements.length > 0 && (
+                    <div className="voice-agent-page__feedback-card">
+                      <h3>What to improve</h3>
+                      <ul>
+                        {selectedHistory.feedback.improvements.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {selectedHistory.mode === "learn" || selectedHistory.lesson ? (
+                    <VoiceAgentLessonPage
+                      lesson={historyLesson ?? selectedHistory.lesson}
+                      loading={historyLessonLoading}
+                      topic={selectedHistory.topic}
+                      error={historyLessonError}
+                      onRetry={() => setHistoryLessonRetry((value) => value + 1)}
+                    />
+                  ) : (
+                    <div className="voice-agent-page__split">
+                      <div className="voice-agent-page__transcript-block">
+                        <h3 className="voice-agent-page__transcript-heading">Transcript</h3>
+                        <TranscriptThread entries={selectedHistory.transcript} />
+                      </div>
+
+                      {(selectedHistory.adviceTranscript?.length ?? 0) > 0 && (
+                        <div className="voice-agent-page__transcript-block">
+                          <h3 className="voice-agent-page__transcript-heading">Extra advice</h3>
+                          <TranscriptThread entries={selectedHistory.adviceTranscript} />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="voice-agent-page__actions">
+                  <button
+                    type="button"
+                    className="voice-agent-page__cta"
+                    onClick={() => {
+                      setHistoryOpen(false);
+                      void startAskMoreFromHistory(selectedHistory);
+                    }}
+                  >
+                    Ask more about this session
+                  </button>
+                  <button
+                    type="button"
+                    className="voice-agent-page__cta voice-agent-page__cta--ghost"
+                    onClick={() => setSelectedHistory(null)}
+                  >
+                    Back
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
 

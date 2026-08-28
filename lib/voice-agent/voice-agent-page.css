@@ -103,6 +103,7 @@
   opacity: 0.7;
 }
 
+.voice-agent-page__chrome-toggle,
 .voice-agent-page__notes-toggle {
   appearance: none;
   border: 1px solid rgba(232, 192, 142, 0.38);
@@ -117,11 +118,13 @@
   cursor: pointer;
 }
 
+.voice-agent-page__chrome-toggle[data-open="true"],
 .voice-agent-page__notes-toggle[data-open="true"] {
   background: rgba(232, 192, 142, 0.22);
   border-color: var(--va-gold-bright);
 }
 
+.voice-agent-page__chrome-toggle:active,
 .voice-agent-page__notes-toggle:active {
   opacity: 0.75;
 }
@@ -959,6 +962,20 @@
 .voice-agent-page__confirm-actions .voice-agent-page__cta {
   width: 100%;
   margin-top: 0;
+}
+
+.voice-agent-page__notes {
+  z-index: 40;
+}
+
+.voice-agent-page__history-panel {
+  z-index: 42;
+}
+
+.voice-agent-page__history-panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .voice-agent-page__notes-head {
