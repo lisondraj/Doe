@@ -89,7 +89,12 @@ export async function POST(request: Request) {
       audio: {
         input: {
           format: { type: "audio/pcm", rate: 24000 },
-          turn_detection: { type: "semantic_vad" },
+          turn_detection: {
+            type: "semantic_vad",
+            create_response: true,
+            interrupt_response: false,
+          },
+          noise_reduction: { type: "near_field" },
           transcription: { model: "gpt-4o-mini-transcribe" },
         },
         output: {

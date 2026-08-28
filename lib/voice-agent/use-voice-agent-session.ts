@@ -173,7 +173,6 @@ export function useVoiceAgentSession() {
   const sessionIdRef = useRef<string | null>(null);
   const startedAtRef = useRef<string | null>(null);
   const adviceModeRef = useRef(false);
-  const micEnabledBeforeNotesRef = useRef(true);
   const lessonRequestRef = useRef(0);
   const persistSnapshotRef = useRef({
     mode: "practice" as VoiceAgentMode,
@@ -185,8 +184,49 @@ export function useVoiceAgentSession() {
   });
   const voiceSettingsRef = useRef(voiceSettings);
   voiceSettingsRef.current = voiceSettings;
+  const micDesiredRef = useRef(true);
+  const playbackMuteRef = useRef(false);
+  const notesActiveRef = useRef(false);
+  const sawOutputBufferRef = useRef(false);
+  const unmuteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   persistSnapshotRef.current = { mode, setup, transcript, adviceTranscript, feedback, lesson };
+
+  const applyMicGate = useCallback(() => {
+    const session = sessionRef.current;
+    if (!session || notesActiveRef.current) return;
+    setVoiceAgentMicEnabled(session, micDesiredRef.current && !playbackMuteRef.current);
+  }, []);
+
+  const setMicDesired = useCallback(
+    (enabled: boolean) => {
+      micDesiredRef.current = enabled;
+      applyMicGate();
+    },
+    [applyMicGate],
+  );
+
+  const muteForAssistantOutput = useCallback(() => {
+    if (unmuteTimerRef.current) {
+      clearTimeout(unmuteTimerRef.current);
+      unmuteTimerRef.current = null;
+    }
+    const alreadyMuted = playbackMuteRef.current;
+    playbackMuteRef.current = true;
+    applyMicGate();
+    if (alreadyMuted) return;
+    const session = sessionRef.current;
+    if (session) sendRealtimeEvent(session.dataChannel, { type: "input_audio_buffer.clear" });
+  }, [applyMicGate]);
+
+  const releaseAssistantOutputMute = useCallback(() => {
+    if (unmuteTimerRef.current) clearTimeout(unmuteTimerRef.current);
+    unmuteTimerRef.current = setTimeout(() => {
+      unmuteTimerRef.current = null;
+      playbackMuteRef.current = false;
+      applyMicGate();
+    }, 450);
+  }, [applyMicGate]);
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -226,9 +266,17 @@ export function useVoiceAgentSession() {
 
   const teardown = useCallback(() => {
     stopTimer();
+    if (unmuteTimerRef.current) {
+      clearTimeout(unmuteTimerRef.current);
+      unmuteTimerRef.current = null;
+    }
     sessionRef.current?.close();
     sessionRef.current = null;
     endRequestedRef.current = false;
+    micDesiredRef.current = true;
+    playbackMuteRef.current = false;
+    notesActiveRef.current = false;
+    sawOutputBufferRef.current = false;
   }, [stopTimer]);
 
   useEffect(() => {
@@ -364,7 +412,7 @@ export function useVoiceAgentSession() {
           checklist: [],
         };
         setSetup(nextSetup);
-        setVoiceAgentMicEnabled(session, false);
+        setMicDesired(false);
         setCoachingActive(false);
         setScreen("learning");
         void loadLesson(nextSetup.topic, "learn");
@@ -373,7 +421,7 @@ export function useVoiceAgentSession() {
 
       if (item.name === "end_session") {
         stopTimer();
-        setVoiceAgentMicEnabled(session, false);
+        setMicDesired(false);
         setCoachingActive(false);
         setFeedback({
           strengths: toStringArray(args.strengths),
@@ -384,7 +432,7 @@ export function useVoiceAgentSession() {
         setScreen("feedback");
       }
     },
-    [loadLesson, startTimer, stopTimer],
+    [loadLesson, setMicDesired, startTimer, stopTimer],
   );
 
   const sendSystemPrompt = useCallback((text: string) => {
@@ -412,6 +460,11 @@ export function useVoiceAgentSession() {
       const patchList = adviceModeRef.current ? setAdviceTranscript : setTranscript;
 
       if (type === "input_audio_buffer.speech_started") {
+        if (playbackMuteRef.current) {
+          const session = sessionRef.current;
+          if (session) sendRealtimeEvent(session.dataChannel, { type: "input_audio_buffer.clear" });
+          return;
+        }
         setUserSpeaking(true);
         return;
       }
@@ -420,11 +473,15 @@ export function useVoiceAgentSession() {
         return;
       }
       if (type === "output_audio_buffer.started") {
+        sawOutputBufferRef.current = true;
+        muteForAssistantOutput();
         setAssistantSpeaking(true);
         return;
       }
       if (type === "output_audio_buffer.stopped" || type === "output_audio_buffer.cleared") {
+        sawOutputBufferRef.current = false;
         setAssistantSpeaking(false);
+        releaseAssistantOutputMute();
         return;
       }
 
@@ -434,6 +491,7 @@ export function useVoiceAgentSession() {
         const prior = assistantBufferRef.current.get(itemId) ?? "";
         const merged = prior + delta;
         assistantBufferRef.current.set(itemId, merged);
+        muteForAssistantOutput();
         setAssistantSpeaking(true);
         patchList((entries) => updateTranscriptList(entries, itemId, merged, false));
         return;
@@ -451,6 +509,7 @@ export function useVoiceAgentSession() {
       }
 
       if (type === "conversation.item.input_audio_transcription.completed") {
+        if (playbackMuteRef.current) return;
         const text = typeof event.transcript === "string" ? event.transcript.trim() : "";
         if (!text) return;
         patchList((entries) => [...entries, { id: nextId("user"), role: "user", text, final: true }]);
@@ -461,25 +520,29 @@ export function useVoiceAgentSession() {
         const response = (event as unknown as RealtimeResponseDoneEvent).response;
         const output = Array.isArray(response?.output) ? response!.output! : [];
         output.filter(isFunctionCallItem).forEach(handleFunctionCall);
-        setAssistantSpeaking(false);
+        if (!sawOutputBufferRef.current) {
+          setAssistantSpeaking(false);
+          releaseAssistantOutputMute();
+        }
         return;
       }
 
       if (type === "error") {
         const message = errorEventMessage(event);
         console.error("voice-agent realtime error", event);
-        if (isRealtimeApiNoise(message) && sessionRef.current) {
+        if (isRealtimeApiNoise(message) && /session\.tools\[\d+\]/.test(message.toLowerCase()) && sessionRef.current) {
           sendRealtimeEvent(sessionRef.current.dataChannel, { type: "response.cancel" });
         }
         return;
       }
     },
-    [handleFunctionCall],
+    [handleFunctionCall, muteForAssistantOutput, releaseAssistantOutputMute],
   );
 
   const attachSession = useCallback(
     (session: VoiceAgentRealtimeSession, onOpen: () => void) => {
       sessionRef.current = session;
+      applyMicGate();
       session.dataChannel.addEventListener("open", onOpen);
       session.dataChannel.addEventListener("message", (messageEvent) => {
         try {
@@ -494,10 +557,11 @@ export function useVoiceAgentSession() {
         if (state === "failed" || state === "disconnected" || state === "closed") {
           setUserSpeaking(false);
           setAssistantSpeaking(false);
+          playbackMuteRef.current = false;
         }
       });
     },
-    [handleServerEvent],
+    [applyMicGate, handleServerEvent],
   );
 
   const start = useCallback(
@@ -520,6 +584,9 @@ export function useVoiceAgentSession() {
       endRequestedRef.current = false;
       sessionIdRef.current = newSessionId();
       startedAtRef.current = new Date().toISOString();
+      micDesiredRef.current = true;
+      playbackMuteRef.current = false;
+      sawOutputBufferRef.current = false;
 
       try {
         const session = await connectVoiceAgentRealtimeSession(nextMode, voiceSettingsRef.current);
@@ -538,12 +605,11 @@ export function useVoiceAgentSession() {
   }, [requestStationEnd]);
 
   const closeAskMore = useCallback(() => {
-    const session = sessionRef.current;
-    if (session) setVoiceAgentMicEnabled(session, false);
+    setMicDesired(false);
     setCoachingActive(false);
     setAskMoreOpen(false);
     persistHistory();
-  }, [persistHistory]);
+  }, [persistHistory, setMicDesired]);
 
   const openAskMore = useCallback(
     (prompt: string) => {
@@ -564,10 +630,10 @@ export function useVoiceAgentSession() {
         return;
       }
 
-      setVoiceAgentMicEnabled(session, true);
+      setMicDesired(true);
       setCoachingActive(true);
     },
-    [persistHistory, sendSystemPrompt],
+    [persistHistory, sendSystemPrompt, setMicDesired],
   );
 
   const beginCoaching = useCallback(() => {
@@ -583,7 +649,7 @@ export function useVoiceAgentSession() {
       return;
     }
     const topic = persistSnapshotRef.current.setup?.topic || "this topic";
-    setVoiceAgentMicEnabled(session, false);
+    setMicDesired(false);
     setCoachingActive(false);
     setAskMoreOpen(false);
     setScreen("deepdive");
@@ -591,7 +657,7 @@ export function useVoiceAgentSession() {
     sendSystemPrompt(
       "[SYSTEM] A detailed teaching PAGE is now on the candidate's screen. Do not lecture the topic out loud. Stay quiet, or say one short sentence that the page is ready. Wait until they tap Ask more.",
     );
-  }, [loadLesson, sendSystemPrompt]);
+  }, [loadLesson, sendSystemPrompt, setMicDesired]);
 
   const beginDeepDiveQuestions = useCallback(() => {
     openAskMore(
@@ -643,7 +709,7 @@ export function useVoiceAgentSession() {
           setScreen(record.mode === "practice" && record.feedback ? "feedback" : "learning");
           setAskMoreOpen(true);
           setCoachingActive(true);
-          setVoiceAgentMicEnabled(session, true);
+          setMicDesired(true);
           const original = compactTranscriptForPrompt(record.transcript);
           const extra = compactTranscriptForPrompt(record.adviceTranscript ?? []);
           sendSystemPrompt(
@@ -657,7 +723,7 @@ export function useVoiceAgentSession() {
         setScreen("error");
       }
     },
-    [attachSession, loadLesson, persistHistory, sendSystemPrompt, teardown],
+    [attachSession, loadLesson, persistHistory, sendSystemPrompt, setMicDesired, teardown],
   );
 
   const toggleChecklistItem = useCallback((item: string) => {
@@ -732,16 +798,19 @@ export function useVoiceAgentSession() {
   const acquireNoteMic = useCallback(async () => {
     const session = sessionRef.current;
     if (session) {
-      micEnabledBeforeNotesRef.current = session.micStream.getAudioTracks().some((track) => track.enabled);
+      notesActiveRef.current = true;
       detachVoiceAgentMic(session);
-      setVoiceAgentMicEnabled(session, true);
+      session.micStream.getAudioTracks().forEach((track) => {
+        track.enabled = true;
+      });
       return {
         stream: session.micStream,
         release: () => {
+          notesActiveRef.current = false;
           const current = sessionRef.current;
           if (!current) return;
-          setVoiceAgentMicEnabled(current, micEnabledBeforeNotesRef.current);
           attachVoiceAgentMic(current);
+          applyMicGate();
         },
       };
     }
@@ -753,7 +822,7 @@ export function useVoiceAgentSession() {
         stream.getTracks().forEach((track) => track.stop());
       },
     };
-  }, []);
+  }, [applyMicGate]);
 
   return {
     screen,

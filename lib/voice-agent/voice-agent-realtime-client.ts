@@ -52,6 +52,9 @@ export async function connectVoiceAgentRealtimeSession(
 
   const audioElement = document.createElement("audio");
   audioElement.autoplay = true;
+  audioElement.setAttribute("playsinline", "true");
+  audioElement.style.display = "none";
+  document.body.appendChild(audioElement);
   const nativeSpeed =
     typeof options?.speed === "number" && Number.isFinite(options.speed) ? options.speed : 1;
   audioElement.playbackRate = 1;
@@ -61,9 +64,17 @@ export async function connectVoiceAgentRealtimeSession(
 
   let micStream: MediaStream;
   try {
-    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    micStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: false,
+        channelCount: 1,
+      },
+    });
   } catch {
     peerConnection.close();
+    audioElement.remove();
     throw new Error("Microphone access is required for the OSCE voice coach.");
   }
 
@@ -92,12 +103,14 @@ export async function connectVoiceAgentRealtimeSession(
   } catch {
     peerConnection.close();
     micStream.getTracks().forEach((track) => track.stop());
+    audioElement.remove();
     throw new Error("Could not reach the voice agent. Check your connection and try again.");
   }
 
   if (!sdpResponse.ok) {
     peerConnection.close();
     micStream.getTracks().forEach((track) => track.stop());
+    audioElement.remove();
     throw new Error("Could not negotiate the voice session with OpenAI.");
   }
 
@@ -116,6 +129,8 @@ export async function connectVoiceAgentRealtimeSession(
       /** already closed */
     }
     micStream.getTracks().forEach((track) => track.stop());
+    audioElement.srcObject = null;
+    audioElement.remove();
   };
 
   return { peerConnection, dataChannel, audioElement, micStream, audioSender, nativeSpeed, close };
