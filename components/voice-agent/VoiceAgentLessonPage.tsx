@@ -96,7 +96,7 @@ export function VoiceAgentLessonPage({
       <LessonCard title="Differential diagnosis">
         {lesson.ddxCantMiss.length > 0 ? (
           <>
-            <h4 className="voice-agent-page__lesson-kicker">Can't miss</h4>
+            <h4 className="voice-agent-page__lesson-kicker">Can&apos;t miss</h4>
             <LessonList items={lesson.ddxCantMiss} />
           </>
         ) : null}

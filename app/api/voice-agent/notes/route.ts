@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canonicalTopicName, tidyTopicName } from "@/lib/voice-agent/voice-agent-note-topics";
-import type { VoiceAgentStationType } from "@/lib/voice-agent/voice-agent-types";
+import { parseVoiceAgentNote } from "@/lib/voice-agent/voice-agent-notes";
+import type { VoiceAgentNote, VoiceAgentStationType } from "@/lib/voice-agent/voice-agent-types";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -184,9 +185,34 @@ export async function POST(request: Request) {
     }
 
     const classified = await classifyNote(apiKey, spoken, existingTopics, hintTopic, hintCategory);
+    const topic = canonicalTopicName(classified.topic, existingTopics.length ? existingTopics : [classified.topic]);
+
+    const { error: insertError } = await supabase.from("voice_agent_notes").insert({
+      user_id: user.id,
+      topic,
+      category: classified.category,
+      body: classified.text,
+    });
+    if (insertError) {
+      console.error("voice-agent notes insert", insertError);
+      return NextResponse.json({ error: "Could not save that note." }, { status: 500 });
+    }
+
+    const { data: noteRows } = await supabase
+      .from("voice_agent_notes")
+      .select("id, topic, category, body, created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    const notes = (noteRows ?? [])
+      .map((row) => parseVoiceAgentNote(row))
+      .filter((note): note is VoiceAgentNote => note !== null);
+
     return NextResponse.json({
-      ...classified,
-      topic: canonicalTopicName(classified.topic, existingTopics.length ? existingTopics : [classified.topic]),
+      text: classified.text,
+      topic,
+      category: classified.category,
+      notes,
     });
   } catch (error) {
     console.error("voice-agent notes capture error", error);

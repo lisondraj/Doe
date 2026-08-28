@@ -1,6 +1,5 @@
-/** Chat history for /voice-agent — Supabase is the source of truth. */
+/** Chat history for /voice-agent — saved to the signed-in user's Supabase row. */
 
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { parseVoiceAgentLesson } from "@/lib/voice-agent/voice-agent-lesson";
 import type {
   VoiceAgentFeedback,
@@ -9,21 +8,6 @@ import type {
   VoiceAgentStationType,
   VoiceAgentTranscriptEntry,
 } from "@/lib/voice-agent/voice-agent-types";
-
-const MAX_RECORDS = 40;
-
-interface VoiceAgentSessionRow {
-  id: string;
-  mode: string;
-  topic: string;
-  station_type: string | null;
-  started_at: string;
-  ended_at: string;
-  transcript: unknown;
-  advice_transcript: unknown;
-  feedback: unknown;
-  lesson: unknown;
-}
 
 function isMode(value: unknown): value is VoiceAgentMode {
   return value === "practice" || value === "learn";
@@ -63,76 +47,96 @@ function toTranscript(value: unknown): VoiceAgentTranscriptEntry[] {
   }));
 }
 
-function rowToRecord(row: VoiceAgentSessionRow): VoiceAgentHistoryRecord | null {
-  if (!isMode(row.mode) || typeof row.topic !== "string") return null;
-  const stationType = row.station_type === null ? null : isStationType(row.station_type) ? row.station_type : null;
-  const feedback = row.feedback === null ? null : isFeedback(row.feedback) ? row.feedback : null;
+function readString(value: unknown): string | null {
+  return typeof value === "string" && value.trim() ? value : null;
+}
+
+export function parseVoiceAgentHistoryRecord(value: unknown): VoiceAgentHistoryRecord | null {
+  if (typeof value !== "object" || value === null) return null;
+  const row = value as Record<string, unknown>;
+  const id = readString(row.id);
+  const mode = row.mode;
+  const topic = readString(row.topic);
+  if (!id || !isMode(mode) || !topic) return null;
+
+  const stationRaw = row.stationType ?? row.station_type;
+  const stationType = stationRaw === null || stationRaw === undefined ? null : isStationType(stationRaw) ? stationRaw : null;
+  const feedbackRaw = row.feedback;
+  const feedback = feedbackRaw === null || feedbackRaw === undefined ? null : isFeedback(feedbackRaw) ? feedbackRaw : null;
+  const startedAt = readString(row.startedAt) ?? readString(row.started_at);
+  const endedAt = readString(row.endedAt) ?? readString(row.ended_at);
+  if (!startedAt || !endedAt) return null;
+
   return {
-    id: row.id,
-    mode: row.mode,
-    topic: row.topic,
+    id,
+    mode,
+    topic,
     stationType,
-    startedAt: row.started_at,
-    endedAt: row.ended_at,
+    startedAt,
+    endedAt,
     transcript: toTranscript(row.transcript),
-    adviceTranscript: toTranscript(row.advice_transcript),
+    adviceTranscript: toTranscript(row.adviceTranscript ?? row.advice_transcript),
     feedback,
     lesson: parseVoiceAgentLesson(row.lesson),
   };
 }
 
-export async function loadVoiceAgentHistory(): Promise<VoiceAgentHistoryRecord[]> {
-  const supabase = createSupabaseBrowserClient();
-  const { data, error } = await supabase
-    .from("voice_agent_sessions")
-    .select(
-      "id, mode, topic, station_type, started_at, ended_at, transcript, advice_transcript, feedback, lesson",
-    )
-    .order("ended_at", { ascending: false })
-    .limit(MAX_RECORDS);
+export function serializeVoiceAgentHistoryRecord(record: VoiceAgentHistoryRecord, userId: string) {
+  return {
+    id: record.id,
+    user_id: userId,
+    mode: record.mode,
+    topic: record.topic,
+    station_type: record.stationType,
+    started_at: record.startedAt,
+    ended_at: record.endedAt,
+    transcript: record.transcript,
+    advice_transcript: record.adviceTranscript ?? [],
+    feedback: record.feedback,
+    lesson: record.lesson,
+    updated_at: new Date().toISOString(),
+  };
+}
 
-  if (error || !data) {
-    if (error) console.error("voice-agent history load", error);
+export async function loadVoiceAgentHistory(): Promise<VoiceAgentHistoryRecord[]> {
+  const response = await fetch("/api/voice-agent/history", { cache: "no-store" });
+  const data = (await response.json().catch(() => null)) as { history?: unknown } | null;
+  if (!response.ok || !data || !Array.isArray(data.history)) {
+    if (!response.ok) console.error("voice-agent history load", data);
     return [];
   }
-
-  return data
-    .map((row) => rowToRecord(row as VoiceAgentSessionRow))
+  return data.history
+    .map((row) => parseVoiceAgentHistoryRecord(row))
     .filter((record): record is VoiceAgentHistoryRecord => record !== null);
 }
 
 export async function upsertVoiceAgentHistory(
   record: VoiceAgentHistoryRecord,
-): Promise<VoiceAgentHistoryRecord[]> {
-  const supabase = createSupabaseBrowserClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return [];
+  options?: { keepalive?: boolean },
+): Promise<VoiceAgentHistoryRecord[] | null> {
+  const parsed = parseVoiceAgentHistoryRecord(record);
+  if (!parsed) return null;
 
-  const { error } = await supabase.from("voice_agent_sessions").upsert(
-    {
-      id: record.id,
-      user_id: user.id,
-      mode: record.mode,
-      topic: record.topic,
-      station_type: record.stationType,
-      started_at: record.startedAt,
-      ended_at: record.endedAt,
-      transcript: record.transcript,
-      advice_transcript: record.adviceTranscript ?? [],
-      feedback: record.feedback,
-      lesson: record.lesson,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "id" },
-  );
-
-  if (error) {
+  try {
+    const response = await fetch("/api/voice-agent/history", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(parsed),
+      keepalive: options?.keepalive === true,
+      cache: "no-store",
+    });
+    const data = (await response.json().catch(() => null)) as { history?: unknown } | null;
+    if (!response.ok || !data || !Array.isArray(data.history)) {
+      if (!response.ok) console.error("voice-agent history upsert", data);
+      return null;
+    }
+    return data.history
+      .map((row) => parseVoiceAgentHistoryRecord(row))
+      .filter((entry): entry is VoiceAgentHistoryRecord => entry !== null);
+  } catch (error) {
     console.error("voice-agent history upsert", error);
+    return null;
   }
-
-  return loadVoiceAgentHistory();
 }
 
 export function transcriptForHistory(

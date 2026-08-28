@@ -19,7 +19,9 @@ import {
 } from "@/lib/voice-agent/voice-agent-realtime-client";
 import {
   loadVoiceAgentSettings,
+  loadVoiceAgentSettingsFromAccount,
   saveVoiceAgentSettings,
+  saveVoiceAgentSettingsToAccount,
   type VoiceAgentVoiceSettings,
 } from "@/lib/voice-agent/voice-agent-settings";
 import type {
@@ -235,7 +237,7 @@ export function useVoiceAgentSession() {
     }
   }, []);
 
-  const persistHistory = useCallback(() => {
+  const persistHistory = useCallback((options?: { keepalive?: boolean }) => {
     const sessionId = sessionIdRef.current;
     const startedAt = startedAtRef.current;
     if (!sessionId || !startedAt) return;
@@ -246,19 +248,28 @@ export function useVoiceAgentSession() {
     const topic = snap.setup?.topic?.trim() ?? "";
     if (!topic && cleaned.length === 0 && cleanedAdvice.length === 0 && !snap.lesson) return;
 
-    const records = upsertVoiceAgentHistory({
-      id: sessionId,
-      mode: snap.mode,
-      topic: topic || (snap.mode === "learn" ? "Learning session" : "Practice session"),
-      stationType: snap.setup?.stationType ?? null,
-      startedAt,
-      endedAt: new Date().toISOString(),
-      transcript: cleaned,
-      adviceTranscript: cleanedAdvice,
-      feedback: snap.feedback,
-      lesson: snap.lesson,
+    const records = upsertVoiceAgentHistory(
+      {
+        id: sessionId,
+        mode: snap.mode,
+        topic: topic || (snap.mode === "learn" ? "Learning session" : "Practice session"),
+        stationType: snap.setup?.stationType ?? null,
+        startedAt,
+        endedAt: new Date().toISOString(),
+        transcript: cleaned,
+        adviceTranscript: cleanedAdvice,
+        feedback: snap.feedback,
+        lesson: snap.lesson,
+      },
+      {
+        keepalive:
+          options?.keepalive === true ||
+          (typeof document !== "undefined" && document.visibilityState === "hidden"),
+      },
+    );
+    void records.then((next) => {
+      if (next) setHistory(next);
     });
-    void Promise.resolve(records).then(setHistory);
   }, []);
 
   const persistHistoryRef = useRef(persistHistory);
@@ -281,11 +292,20 @@ export function useVoiceAgentSession() {
 
   useEffect(() => {
     void loadVoiceAgentHistory().then(setHistory);
+    void loadVoiceAgentSettingsFromAccount().then((settings) => {
+      if (!settings) {
+        void saveVoiceAgentSettingsToAccount(voiceSettingsRef.current);
+        return;
+      }
+      voiceSettingsRef.current = settings;
+      setVoiceSettings(settings);
+      saveVoiceAgentSettings(settings);
+    });
   }, []);
 
   useEffect(() => {
     return () => {
-      persistHistoryRef.current();
+      persistHistoryRef.current({ keepalive: true });
       teardown();
     };
   }, [teardown]);
@@ -297,7 +317,7 @@ export function useVoiceAgentSession() {
   }, [screen, transcript, adviceTranscript, setup, feedback, lesson, askMoreOpen]);
 
   useEffect(() => {
-    const flush = () => persistHistoryRef.current();
+    const flush = () => persistHistoryRef.current({ keepalive: true });
     const onVisibility = () => {
       if (document.visibilityState === "hidden") flush();
     };
@@ -779,6 +799,7 @@ export function useVoiceAgentSession() {
     voiceSettingsRef.current = next;
     setVoiceSettings(next);
     saveVoiceAgentSettings(next);
+    void saveVoiceAgentSettingsToAccount(next);
     const session = sessionRef.current;
     if (!session) return;
     setVoiceAgentPlaybackRate(session, next.speed);

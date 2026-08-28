@@ -63,6 +63,38 @@ export function saveVoiceAgentSettings(settings: VoiceAgentVoiceSettings) {
   );
 }
 
+export async function loadVoiceAgentSettingsFromAccount(): Promise<VoiceAgentVoiceSettings | null> {
+  try {
+    const response = await fetch("/api/voice-agent/settings", { cache: "no-store" });
+    const data = (await response.json().catch(() => null)) as { settings?: unknown } | null;
+    if (!response.ok || !data) return null;
+    if (!data.settings || typeof data.settings !== "object") return null;
+    const parsed = data.settings as { voice?: unknown; speed?: unknown };
+    return {
+      voice: isVoiceAgentVoiceId(parsed.voice) ? parsed.voice : VOICE_AGENT_DEFAULT_SETTINGS.voice,
+      speed: clampVoiceAgentSpeed(parsed.speed),
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function saveVoiceAgentSettingsToAccount(settings: VoiceAgentVoiceSettings): Promise<void> {
+  try {
+    await fetch("/api/voice-agent/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        voice: isVoiceAgentVoiceId(settings.voice) ? settings.voice : VOICE_AGENT_DEFAULT_SETTINGS.voice,
+        speed: clampVoiceAgentSpeed(settings.speed),
+      }),
+      cache: "no-store",
+    });
+  } catch {
+    /** local cache already holds the value */
+  }
+}
+
 export function formatVoiceAgentSpeed(speed: number): string {
   return `${clampVoiceAgentSpeed(speed).toFixed(2).replace(/0$/, "").replace(/\.0$/, "")}×`;
 }

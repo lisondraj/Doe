@@ -23,19 +23,20 @@ function isStationType(value: unknown): value is VoiceAgentStationType {
   return value === "history" || value === "physical_exam" || value === "management_counseling";
 }
 
+export function parseVoiceAgentNote(value: unknown): VoiceAgentNote | null {
+  if (typeof value !== "object" || value === null) return null;
+  const row = value as Record<string, unknown>;
+  const id = typeof row.id === "string" ? row.id : null;
+  const topic = typeof row.topic === "string" ? row.topic.trim() : "";
+  const category = row.category;
+  const body = typeof row.body === "string" ? row.body : typeof row.text === "string" ? row.text : "";
+  const createdAt = typeof row.created_at === "string" ? row.created_at : typeof row.createdAt === "string" ? row.createdAt : "";
+  if (!id || !topic || !isStationType(category) || !body.trim() || !createdAt) return null;
+  return { id, topic, category, text: body.trim(), createdAt };
+}
+
 function rowToNote(row: VoiceAgentNoteRow): VoiceAgentNote | null {
-  if (!isStationType(row.category) || typeof row.topic !== "string" || typeof row.body !== "string") {
-    return null;
-  }
-  const text = row.body.trim();
-  if (!text) return null;
-  return {
-    id: row.id,
-    topic: row.topic.trim(),
-    category: row.category,
-    text,
-    createdAt: row.created_at,
-  };
+  return parseVoiceAgentNote(row);
 }
 
 export async function loadVoiceAgentNotes(): Promise<VoiceAgentNote[]> {

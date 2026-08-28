@@ -17,6 +17,7 @@
     "export:blog-about-shaders": "STORY_SHADER_BASE_URL=http://127.0.0.1:3001 node scripts/export-blog-about-shaders.mjs"
   },
   "dependencies": {
+    "@paper-design/shaders": "^0.0.76",
     "@paper-design/shaders-react": "^0.0.76",
     "@remotion/cli": "^4.0.499",
     "@remotion/google-fonts": "^4.0.499",

@@ -7,6 +7,7 @@ import {
   groupNotesByTopic,
   insertVoiceAgentNote,
   loadVoiceAgentNotes,
+  parseVoiceAgentNote,
 } from "@/lib/voice-agent/voice-agent-notes";
 import type { VoiceAgentNote, VoiceAgentStationType } from "@/lib/voice-agent/voice-agent-types";
 import {
@@ -119,6 +120,7 @@ export function VoiceAgentNotesPanel({
         text?: unknown;
         topic?: unknown;
         category?: unknown;
+        notes?: unknown;
         error?: unknown;
       } | null;
 
@@ -126,11 +128,13 @@ export function VoiceAgentNotesPanel({
         throw new Error(typeof data?.error === "string" ? data.error : "Could not save that note.");
       }
 
-      const saved = await insertVoiceAgentNote({
-        topic: data.topic,
-        category: isStationType(data.category) ? data.category : hintCategory ?? "history",
-        text: data.text,
-      });
+      const saved = Array.isArray(data.notes)
+        ? data.notes.map((note) => parseVoiceAgentNote(note)).filter((note): note is VoiceAgentNote => note !== null)
+        : await insertVoiceAgentNote({
+            topic: data.topic,
+            category: isStationType(data.category) ? data.category : hintCategory ?? "history",
+            text: data.text,
+          });
       setNotes(saved);
       setOpenTopic(canonicalDisplayTopic(data.topic, saved));
       setPhase("idle");
