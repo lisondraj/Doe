@@ -15,15 +15,23 @@ export const VOICE_AGENT_SPEED_MIN = 0.75;
 export const VOICE_AGENT_SPEED_MAX = 1.5;
 export const VOICE_AGENT_DEFAULT_SPEED = 1;
 
+export type VoiceAgentQuality = "full" | "saver";
+
 export interface VoiceAgentVoiceSettings {
   voice: VoiceAgentVoiceId;
   speed: number;
+  quality: VoiceAgentQuality;
 }
 
 export const VOICE_AGENT_DEFAULT_SETTINGS: VoiceAgentVoiceSettings = {
   voice: VOICE_AGENT_DEFAULT_VOICE as VoiceAgentVoiceId,
   speed: VOICE_AGENT_DEFAULT_SPEED,
+  quality: "saver",
 };
+
+export function isVoiceAgentQuality(value: unknown): value is VoiceAgentQuality {
+  return value === "full" || value === "saver";
+}
 
 const STORAGE_KEY = "doe-voice-agent-settings";
 
@@ -42,10 +50,11 @@ export function loadVoiceAgentSettings(): VoiceAgentVoiceSettings {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return VOICE_AGENT_DEFAULT_SETTINGS;
-    const parsed = JSON.parse(raw) as { voice?: unknown; speed?: unknown };
+    const parsed = JSON.parse(raw) as { voice?: unknown; speed?: unknown; quality?: unknown };
     return {
       voice: isVoiceAgentVoiceId(parsed.voice) ? parsed.voice : VOICE_AGENT_DEFAULT_SETTINGS.voice,
       speed: clampVoiceAgentSpeed(parsed.speed),
+      quality: isVoiceAgentQuality(parsed.quality) ? parsed.quality : VOICE_AGENT_DEFAULT_SETTINGS.quality,
     };
   } catch {
     return VOICE_AGENT_DEFAULT_SETTINGS;
@@ -59,6 +68,7 @@ export function saveVoiceAgentSettings(settings: VoiceAgentVoiceSettings) {
     JSON.stringify({
       voice: isVoiceAgentVoiceId(settings.voice) ? settings.voice : VOICE_AGENT_DEFAULT_SETTINGS.voice,
       speed: clampVoiceAgentSpeed(settings.speed),
+      quality: isVoiceAgentQuality(settings.quality) ? settings.quality : VOICE_AGENT_DEFAULT_SETTINGS.quality,
     }),
   );
 }
@@ -69,10 +79,11 @@ export async function loadVoiceAgentSettingsFromAccount(): Promise<VoiceAgentVoi
     const data = (await response.json().catch(() => null)) as { settings?: unknown } | null;
     if (!response.ok || !data) return null;
     if (!data.settings || typeof data.settings !== "object") return null;
-    const parsed = data.settings as { voice?: unknown; speed?: unknown };
+    const parsed = data.settings as { voice?: unknown; speed?: unknown; quality?: unknown };
     return {
       voice: isVoiceAgentVoiceId(parsed.voice) ? parsed.voice : VOICE_AGENT_DEFAULT_SETTINGS.voice,
       speed: clampVoiceAgentSpeed(parsed.speed),
+      quality: isVoiceAgentQuality(parsed.quality) ? parsed.quality : VOICE_AGENT_DEFAULT_SETTINGS.quality,
     };
   } catch {
     return null;
@@ -87,6 +98,7 @@ export async function saveVoiceAgentSettingsToAccount(settings: VoiceAgentVoiceS
       body: JSON.stringify({
         voice: isVoiceAgentVoiceId(settings.voice) ? settings.voice : VOICE_AGENT_DEFAULT_SETTINGS.voice,
         speed: clampVoiceAgentSpeed(settings.speed),
+        quality: isVoiceAgentQuality(settings.quality) ? settings.quality : VOICE_AGENT_DEFAULT_SETTINGS.quality,
       }),
       cache: "no-store",
     });

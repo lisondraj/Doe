@@ -15,6 +15,7 @@ import {
   VOICE_AGENT_VOICES,
   clampVoiceAgentSpeed,
   formatVoiceAgentSpeed,
+  type VoiceAgentQuality,
   type VoiceAgentVoiceId,
   type VoiceAgentVoiceSettings,
 } from "@/lib/voice-agent/voice-agent-settings";
@@ -197,6 +198,35 @@ function ConfirmHomeModal({
   );
 }
 
+function QualityToggle({
+  quality,
+  onChange,
+}: {
+  quality: VoiceAgentQuality;
+  onChange: (quality: VoiceAgentQuality) => void;
+}) {
+  return (
+    <div className="voice-agent-page__quality" role="group" aria-label="Voice model">
+      <button
+        type="button"
+        className="voice-agent-page__quality-option"
+        data-active={quality === "saver" ? "true" : "false"}
+        onClick={() => onChange("saver")}
+      >
+        Saver
+      </button>
+      <button
+        type="button"
+        className="voice-agent-page__quality-option"
+        data-active={quality === "full" ? "true" : "false"}
+        onClick={() => onChange("full")}
+      >
+        Full
+      </button>
+    </div>
+  );
+}
+
 function VoiceSettingsModal({
   open,
   settings,
@@ -222,8 +252,15 @@ function VoiceSettingsModal({
           Voice settings
         </h2>
         <p className="voice-agent-page__feedback-summary">
-          Change how the coach speaks. Rate applies right away; voice applies on the next session.
+          Change how the coach speaks. Rate applies right away; voice and model apply on the next session.
         </p>
+        <div className="voice-agent-page__field">
+          <span>Model</span>
+          <QualityToggle
+            quality={settings.quality}
+            onChange={(quality) => onChange({ ...settings, quality })}
+          />
+        </div>
         <label className="voice-agent-page__field">
           <span>Speaking rate · {formatVoiceAgentSpeed(settings.speed)}</span>
           <input
@@ -622,6 +659,15 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
                   Run a timed station with Dr. Osler, or start a learning session on any topic —
                   history questions, DDX, investigations and management, then the top 10 examiner
                   questions.
+                </p>
+                <QualityToggle
+                  quality={voiceSettings.quality}
+                  onChange={(quality) => applyVoiceSettings({ ...voiceSettings, quality })}
+                />
+                <p className="voice-agent-page__quality-hint">
+                  {voiceSettings.quality === "saver"
+                    ? "Saver uses OpenAI mini realtime — about 3x cheaper, still runs stations, tools, and teaching."
+                    : "Full uses the current high-quality realtime model. Better nuance, higher API cost."}
                 </p>
                 <div className="voice-agent-page__cta-stack">
                   <button

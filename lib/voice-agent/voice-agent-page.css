@@ -346,6 +346,49 @@
   margin-top: 0.25rem;
 }
 
+.voice-agent-page__quality {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: min(22rem, 100%);
+  padding: 0.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 192, 142, 0.28);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.voice-agent-page__quality-option {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: rgba(244, 236, 225, 0.7);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.55rem 0.4rem;
+  cursor: pointer;
+}
+
+.voice-agent-page__quality-option[data-active="true"] {
+  background: rgba(232, 192, 142, 0.22);
+  color: var(--va-gold-bright);
+}
+
+.voice-agent-page__quality-hint {
+  max-width: 22rem;
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(244, 236, 225, 0.52);
+  text-align: center;
+}
+
+.voice-agent-page__settings .voice-agent-page__quality {
+  width: 100%;
+}
+
 .voice-agent-page__cta-stack .voice-agent-page__cta {
   width: 100%;
   min-width: 0;

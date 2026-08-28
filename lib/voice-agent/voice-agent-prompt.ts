@@ -137,4 +137,10 @@ export const VOICE_AGENT_LEARNING_TOOLS = [
 ];
 
 export const VOICE_AGENT_DEFAULT_MODEL = "gpt-realtime";
+export const VOICE_AGENT_SAVER_MODEL = "gpt-realtime-2.1-mini";
+export const VOICE_AGENT_SAVER_FALLBACK_MODEL = "gpt-realtime-mini";
 export const VOICE_AGENT_DEFAULT_VOICE = "marin";
+
+export const VOICE_AGENT_SAVER_INSTRUCTIONS_SUFFIX = `
+
+SAVER MODE: Keep every spoken turn to one or two short sentences. As soon as you have the required fields, call the matching function immediately and silently — never mention tools, never ask for confirmation, never lecture the page out loud.`;

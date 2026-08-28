@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   clampVoiceAgentSpeed,
+  isVoiceAgentQuality,
   isVoiceAgentVoiceId,
   VOICE_AGENT_DEFAULT_SETTINGS,
   type VoiceAgentVoiceSettings,
@@ -12,10 +13,11 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 function parseSettings(value: unknown): VoiceAgentVoiceSettings {
-  const body = value && typeof value === "object" ? (value as { voice?: unknown; speed?: unknown }) : {};
+  const body = value && typeof value === "object" ? (value as { voice?: unknown; speed?: unknown; quality?: unknown }) : {};
   return {
     voice: isVoiceAgentVoiceId(body.voice) ? body.voice : VOICE_AGENT_DEFAULT_SETTINGS.voice,
     speed: clampVoiceAgentSpeed(body.speed),
+    quality: isVoiceAgentQuality(body.quality) ? body.quality : VOICE_AGENT_DEFAULT_SETTINGS.quality,
   };
 }
 
@@ -31,7 +33,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("voice_agent_settings")
-    .select("voice, speed")
+    .select("voice, speed, quality")
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -70,6 +72,7 @@ export async function PUT(request: Request) {
       user_id: user.id,
       voice: settings.voice,
       speed: settings.speed,
+      quality: settings.quality,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "user_id" },

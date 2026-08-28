@@ -16,7 +16,7 @@ const REALTIME_CALLS_URL = "https://api.openai.com/v1/realtime/calls";
 
 async function fetchEphemeralKey(
   mode: VoiceAgentMode,
-  options?: { followup?: boolean; voice?: string; speed?: number },
+  options?: { followup?: boolean; voice?: string; speed?: number; quality?: string },
 ): Promise<string> {
   const response = await fetch("/api/voice-agent/session", {
     method: "POST",
@@ -26,6 +26,7 @@ async function fetchEphemeralKey(
       followup: options?.followup === true,
       voice: options?.voice,
       speed: options?.speed,
+      quality: options?.quality,
     }),
   });
   const data = await response.json().catch(() => null);
@@ -44,7 +45,7 @@ async function fetchEphemeralKey(
 
 export async function connectVoiceAgentRealtimeSession(
   mode: VoiceAgentMode = "practice",
-  options?: { followup?: boolean; voice?: string; speed?: number },
+  options?: { followup?: boolean; voice?: string; speed?: number; quality?: string },
 ): Promise<VoiceAgentRealtimeSession> {
   const ephemeralKey = await fetchEphemeralKey(mode, options);
 
