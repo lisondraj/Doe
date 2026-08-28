@@ -14,8 +14,14 @@ import {
   detachVoiceAgentMic,
   sendRealtimeEvent,
   setVoiceAgentMicEnabled,
+  setVoiceAgentPlaybackRate,
   type VoiceAgentRealtimeSession,
 } from "@/lib/voice-agent/voice-agent-realtime-client";
+import {
+  loadVoiceAgentSettings,
+  saveVoiceAgentSettings,
+  type VoiceAgentVoiceSettings,
+} from "@/lib/voice-agent/voice-agent-settings";
 import type {
   VoiceAgentFeedback,
   VoiceAgentHistoryRecord,
@@ -158,6 +164,7 @@ export function useVoiceAgentSession() {
   const [lesson, setLesson] = useState<VoiceAgentLesson | null>(null);
   const [lessonLoading, setLessonLoading] = useState(false);
   const [lessonError, setLessonError] = useState<string | null>(null);
+  const [voiceSettings, setVoiceSettings] = useState<VoiceAgentVoiceSettings>(loadVoiceAgentSettings);
 
   const sessionRef = useRef<VoiceAgentRealtimeSession | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -176,6 +183,8 @@ export function useVoiceAgentSession() {
     feedback: null as VoiceAgentFeedback | null,
     lesson: null as VoiceAgentLesson | null,
   });
+  const voiceSettingsRef = useRef(voiceSettings);
+  voiceSettingsRef.current = voiceSettings;
 
   persistSnapshotRef.current = { mode, setup, transcript, adviceTranscript, feedback, lesson };
 
@@ -513,7 +522,7 @@ export function useVoiceAgentSession() {
       startedAtRef.current = new Date().toISOString();
 
       try {
-        const session = await connectVoiceAgentRealtimeSession(nextMode);
+        const session = await connectVoiceAgentRealtimeSession(nextMode, voiceSettingsRef.current);
         attachSession(session, () => setScreen("session"));
       } catch (error) {
         teardown();
@@ -626,7 +635,10 @@ export function useVoiceAgentSession() {
       startedAtRef.current = record.startedAt;
 
       try {
-        const session = await connectVoiceAgentRealtimeSession(record.mode, { followup: true });
+        const session = await connectVoiceAgentRealtimeSession(record.mode, {
+          followup: true,
+          ...voiceSettingsRef.current,
+        });
         attachSession(session, () => {
           setScreen(record.mode === "practice" && record.feedback ? "feedback" : "learning");
           setAskMoreOpen(true);
@@ -696,6 +708,27 @@ export function useVoiceAgentSession() {
     reset();
   }, [askMoreOpen, closeAskMore, reset, screen]);
 
+  const applyVoiceSettings = useCallback((next: VoiceAgentVoiceSettings) => {
+    const previous = voiceSettingsRef.current;
+    voiceSettingsRef.current = next;
+    setVoiceSettings(next);
+    saveVoiceAgentSettings(next);
+    const session = sessionRef.current;
+    if (!session) return;
+    setVoiceAgentPlaybackRate(session, next.speed);
+    if (previous.voice === next.voice) return;
+    sendRealtimeEvent(session.dataChannel, {
+      type: "session.update",
+      session: {
+        audio: {
+          output: {
+            voice: next.voice,
+          },
+        },
+      },
+    });
+  }, []);
+
   const acquireNoteMic = useCallback(async () => {
     const session = sessionRef.current;
     if (session) {
@@ -752,6 +785,8 @@ export function useVoiceAgentSession() {
     goBack,
     reset,
     acquireNoteMic,
+    applyVoiceSettings,
+    voiceSettings,
     reloadLesson: () => {
       const topic = persistSnapshotRef.current.setup?.topic;
       if (!topic) return;

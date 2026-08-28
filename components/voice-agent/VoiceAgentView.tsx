@@ -9,6 +9,15 @@ import { fetchVoiceAgentLesson } from "@/lib/voice-agent/voice-agent-lesson";
 import { upsertVoiceAgentHistory } from "@/lib/voice-agent/voice-agent-history";
 import { useVoiceAgentAuth } from "@/lib/voice-agent/use-voice-agent-auth";
 import { useVoiceAgentSession } from "@/lib/voice-agent/use-voice-agent-session";
+import {
+  VOICE_AGENT_SPEED_MAX,
+  VOICE_AGENT_SPEED_MIN,
+  VOICE_AGENT_VOICES,
+  clampVoiceAgentSpeed,
+  formatVoiceAgentSpeed,
+  type VoiceAgentVoiceId,
+  type VoiceAgentVoiceSettings,
+} from "@/lib/voice-agent/voice-agent-settings";
 import type {
   VoiceAgentHistoryRecord,
   VoiceAgentLesson,
@@ -62,6 +71,8 @@ function visibleEntries(transcript: readonly VoiceAgentTranscriptEntry[]): Voice
 function BrandBar({
   showBack,
   onBack,
+  settingsOpen,
+  onToggleSettings,
   notesOpen,
   onToggleNotes,
   historyOpen,
@@ -70,6 +81,8 @@ function BrandBar({
 }: {
   showBack?: boolean;
   onBack?: () => void;
+  settingsOpen?: boolean;
+  onToggleSettings?: () => void;
   notesOpen?: boolean;
   onToggleNotes?: () => void;
   historyOpen?: boolean;
@@ -90,6 +103,18 @@ function BrandBar({
         {showBack ? (
           <button type="button" className="voice-agent-page__back" onClick={onBack}>
             Back
+          </button>
+        ) : null}
+        {onToggleSettings ? (
+          <button
+            type="button"
+            className="voice-agent-page__settings-toggle"
+            data-open={settingsOpen ? "true" : "false"}
+            aria-label="Voice settings"
+            aria-pressed={settingsOpen ? true : false}
+            onClick={onToggleSettings}
+          >
+            <SettingsGlyph />
           </button>
         ) : null}
         {onToggleHistory ? (
@@ -118,6 +143,21 @@ function BrandBar({
         )}
       </div>
     </div>
+  );
+}
+
+function SettingsGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="3.1" fill="none" stroke="currentColor" strokeWidth="1.7" />
+      <path
+        d="M19.4 13.1a1.4 1.4 0 0 0 0-2.2l-1.1-.7c-.1-.4-.2-.7-.4-1.1l.2-1.3a1.4 1.4 0 0 0-1.1-1.6l-1.3-.2c-.3-.2-.7-.3-1.1-.4l-.7-1.1a1.4 1.4 0 0 0-2.2 0l-.7 1.1c-.4.1-.7.2-1.1.4l-1.3.2a1.4 1.4 0 0 0-1.1 1.6l.2 1.3c-.2.4-.3.7-.4 1.1l-1.1.7a1.4 1.4 0 0 0 0 2.2l1.1.7c.1.4.2.7.4 1.1l-.2 1.3a1.4 1.4 0 0 0 1.1 1.6l1.3.2c.3.2.7.3 1.1.4l.7 1.1a1.4 1.4 0 0 0 2.2 0l.7-1.1c.4-.1.7-.2 1.1-.4l1.3-.2a1.4 1.4 0 0 0 1.1-1.6l-.2-1.3c.2-.4.3-.7.4-1.1z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 
@@ -150,6 +190,77 @@ function ConfirmHomeModal({
           </button>
           <button type="button" className="voice-agent-page__cta" onClick={onConfirm}>
             {timedSession ? "End station & go home" : "Go home"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function VoiceSettingsModal({
+  open,
+  settings,
+  onChange,
+  onClose,
+}: {
+  open: boolean;
+  settings: VoiceAgentVoiceSettings;
+  onChange: (next: VoiceAgentVoiceSettings) => void;
+  onClose: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div
+      className="voice-agent-page__confirm voice-agent-page__settings"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="voice-agent-settings-title"
+    >
+      <div className="voice-agent-page__confirm-card">
+        <h2 id="voice-agent-settings-title" className="voice-agent-page__feedback-title">
+          Voice settings
+        </h2>
+        <p className="voice-agent-page__feedback-summary">
+          Change how the coach speaks. Rate applies right away; voice applies on the next session.
+        </p>
+        <label className="voice-agent-page__field">
+          <span>Speaking rate · {formatVoiceAgentSpeed(settings.speed)}</span>
+          <input
+            type="range"
+            min={VOICE_AGENT_SPEED_MIN}
+            max={VOICE_AGENT_SPEED_MAX}
+            step={0.05}
+            value={settings.speed}
+            onChange={(event) =>
+              onChange({ ...settings, speed: clampVoiceAgentSpeed(event.target.value) })
+            }
+          />
+          <div className="voice-agent-page__speed-marks">
+            <span>Slow</span>
+            <span>Normal</span>
+            <span>Fast</span>
+          </div>
+        </label>
+        <div className="voice-agent-page__field">
+          <span>Voice</span>
+          <div className="voice-agent-page__voice-grid">
+            {VOICE_AGENT_VOICES.map((voice) => (
+              <button
+                key={voice.id}
+                type="button"
+                className="voice-agent-page__voice-chip"
+                data-active={settings.voice === voice.id ? "true" : "false"}
+                onClick={() => onChange({ ...settings, voice: voice.id as VoiceAgentVoiceId })}
+              >
+                {voice.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="voice-agent-page__confirm-actions">
+          <button type="button" className="voice-agent-page__cta" onClick={onClose}>
+            Done
           </button>
         </div>
       </div>
@@ -347,6 +458,8 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
     goBack,
     reset,
     acquireNoteMic,
+    applyVoiceSettings,
+    voiceSettings,
     reloadLesson,
   } = useVoiceAgentSession();
 
@@ -354,6 +467,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
   const [notesOpen, setNotesOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [homeConfirmOpen, setHomeConfirmOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [historyLesson, setHistoryLesson] = useState<VoiceAgentLesson | null>(null);
   const [historyLessonLoading, setHistoryLessonLoading] = useState(false);
   const [historyLessonError, setHistoryLessonError] = useState<string | null>(null);
@@ -415,6 +529,10 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
       setHomeConfirmOpen(false);
       return;
     }
+    if (settingsOpen) {
+      setSettingsOpen(false);
+      return;
+    }
     if (historyOpen) {
       if (selectedHistory) setSelectedHistory(null);
       else setHistoryOpen(false);
@@ -443,6 +561,7 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
 
   const confirmGoHome = () => {
     setHomeConfirmOpen(false);
+    setSettingsOpen(false);
     setNotesOpen(false);
     setHistoryOpen(false);
     if (askMoreOpen) closeAskMore();
@@ -451,18 +570,27 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
   };
 
   const openHistory = (record?: VoiceAgentHistoryRecord) => {
+    setSettingsOpen(false);
     setNotesOpen(false);
     setSelectedHistory(record ?? null);
     setHistoryOpen(true);
   };
 
+  const toggleSettings = () => {
+    setHistoryOpen(false);
+    setNotesOpen(false);
+    setSettingsOpen((open) => !open);
+  };
+
   const toggleHistory = () => {
+    setSettingsOpen(false);
     setNotesOpen(false);
     setHistoryOpen((open) => !open);
     setSelectedHistory(null);
   };
 
   const toggleNotes = () => {
+    setSettingsOpen(false);
     setHistoryOpen(false);
     setNotesOpen((open) => !open);
   };
@@ -474,6 +602,8 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
           <BrandBar
             showBack={showBack}
             onBack={handleBack}
+            settingsOpen={settingsOpen}
+            onToggleSettings={toggleSettings}
             notesOpen={notesOpen}
             onToggleNotes={toggleNotes}
             historyOpen={historyOpen}
@@ -808,6 +938,8 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
             <BrandBar
               showBack
               onBack={closeAskMore}
+              settingsOpen={settingsOpen}
+              onToggleSettings={toggleSettings}
               notesOpen={notesOpen}
               onToggleNotes={toggleNotes}
               historyOpen={historyOpen}
@@ -867,6 +999,8 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
             <BrandBar
               showBack={Boolean(selectedHistory)}
               onBack={() => setSelectedHistory(null)}
+              settingsOpen={settingsOpen}
+              onToggleSettings={toggleSettings}
               notesOpen={notesOpen}
               onToggleNotes={toggleNotes}
               historyOpen
@@ -994,6 +1128,13 @@ function VoiceAgentApp({ onSignOut }: { onSignOut: () => void }) {
           timedSession={timedSessionLive}
           onCancel={() => setHomeConfirmOpen(false)}
           onConfirm={confirmGoHome}
+        />
+
+        <VoiceSettingsModal
+          open={settingsOpen}
+          settings={voiceSettings}
+          onChange={applyVoiceSettings}
+          onClose={() => setSettingsOpen(false)}
         />
       </div>
     </div>

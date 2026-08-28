@@ -11,6 +11,10 @@ import {
   VOICE_AGENT_LEARNING_TOOLS,
   VOICE_AGENT_TOOLS,
 } from "@/lib/voice-agent/voice-agent-prompt";
+import {
+  clampVoiceAgentSpeed,
+  isVoiceAgentVoiceId,
+} from "@/lib/voice-agent/voice-agent-settings";
 import type { VoiceAgentMode } from "@/lib/voice-agent/voice-agent-types";
 
 export const dynamic = "force-dynamic";
@@ -19,15 +23,30 @@ export const runtime = "nodejs";
 async function readSessionOptions(request: Request): Promise<{
   mode: VoiceAgentMode;
   followup: boolean;
+  voice: string;
+  speed: number;
 }> {
+  const fallback = {
+    mode: "practice" as VoiceAgentMode,
+    followup: false,
+    voice: process.env.OPENAI_REALTIME_VOICE || VOICE_AGENT_DEFAULT_VOICE,
+    speed: 1,
+  };
   try {
-    const body = (await request.json()) as { mode?: unknown; followup?: unknown };
+    const body = (await request.json()) as {
+      mode?: unknown;
+      followup?: unknown;
+      voice?: unknown;
+      speed?: unknown;
+    };
     return {
       mode: body?.mode === "learn" ? "learn" : "practice",
       followup: body?.followup === true,
+      voice: isVoiceAgentVoiceId(body?.voice) ? body.voice : fallback.voice,
+      speed: clampVoiceAgentSpeed(body?.speed),
     };
   } catch {
-    return { mode: "practice", followup: false };
+    return fallback;
   }
 }
 
@@ -51,9 +70,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const { mode, followup } = await readSessionOptions(request);
+  const { mode, followup, voice, speed } = await readSessionOptions(request);
   const model = process.env.OPENAI_REALTIME_MODEL || VOICE_AGENT_DEFAULT_MODEL;
-  const voice = process.env.OPENAI_REALTIME_VOICE || VOICE_AGENT_DEFAULT_VOICE;
   const learning = mode === "learn";
   const instructions = followup
     ? VOICE_AGENT_FOLLOWUP_INSTRUCTIONS
@@ -77,6 +95,7 @@ export async function POST(request: Request) {
         output: {
           format: { type: "audio/pcm", rate: 24000 },
           voice,
+          speed,
         },
       },
       ...(tools.length > 0 ? { tools, tool_choice: "auto" as const } : {}),

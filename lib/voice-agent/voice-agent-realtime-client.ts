@@ -8,6 +8,7 @@ export interface VoiceAgentRealtimeSession {
   audioElement: HTMLAudioElement;
   micStream: MediaStream;
   audioSender: RTCRtpSender | null;
+  nativeSpeed: number;
   close: () => void;
 }
 
@@ -15,12 +16,17 @@ const REALTIME_CALLS_URL = "https://api.openai.com/v1/realtime/calls";
 
 async function fetchEphemeralKey(
   mode: VoiceAgentMode,
-  options?: { followup?: boolean },
+  options?: { followup?: boolean; voice?: string; speed?: number },
 ): Promise<string> {
   const response = await fetch("/api/voice-agent/session", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mode, followup: options?.followup === true }),
+    body: JSON.stringify({
+      mode,
+      followup: options?.followup === true,
+      voice: options?.voice,
+      speed: options?.speed,
+    }),
   });
   const data = await response.json().catch(() => null);
 
@@ -38,7 +44,7 @@ async function fetchEphemeralKey(
 
 export async function connectVoiceAgentRealtimeSession(
   mode: VoiceAgentMode = "practice",
-  options?: { followup?: boolean },
+  options?: { followup?: boolean; voice?: string; speed?: number },
 ): Promise<VoiceAgentRealtimeSession> {
   const ephemeralKey = await fetchEphemeralKey(mode, options);
 
@@ -46,6 +52,9 @@ export async function connectVoiceAgentRealtimeSession(
 
   const audioElement = document.createElement("audio");
   audioElement.autoplay = true;
+  const nativeSpeed =
+    typeof options?.speed === "number" && Number.isFinite(options.speed) ? options.speed : 1;
+  audioElement.playbackRate = 1;
   peerConnection.ontrack = (event) => {
     audioElement.srcObject = event.streams[0];
   };
@@ -109,7 +118,7 @@ export async function connectVoiceAgentRealtimeSession(
     micStream.getTracks().forEach((track) => track.stop());
   };
 
-  return { peerConnection, dataChannel, audioElement, micStream, audioSender, close };
+  return { peerConnection, dataChannel, audioElement, micStream, audioSender, nativeSpeed, close };
 }
 
 export function sendRealtimeEvent(dataChannel: RTCDataChannel, event: Record<string, unknown>) {
@@ -131,4 +140,9 @@ export function attachVoiceAgentMic(session: VoiceAgentRealtimeSession) {
   const track = session.micStream.getAudioTracks()[0];
   if (!track || !session.audioSender) return;
   void session.audioSender.replaceTrack(track);
+}
+
+export function setVoiceAgentPlaybackRate(session: VoiceAgentRealtimeSession, speed: number) {
+  const native = session.nativeSpeed > 0 ? session.nativeSpeed : 1;
+  session.audioElement.playbackRate = speed / native;
 }
