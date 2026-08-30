@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  isBlockedBrowsePage,
   normalizeBrowserUrl,
   resolveResearchBrowseTarget,
 } from "@/lib/doedtc/doedtc-browser-allowlist";
@@ -64,15 +65,42 @@ test("resolveResearchBrowseTarget turns google type mayo into a Google search", 
   }
 });
 
-test("resolveResearchBrowseTarget uses google for topic-only queries", () => {
+test("resolveResearchBrowseTarget uses DuckDuckGo for topic-only queries", () => {
   const result = resolveResearchBrowseTarget({
     url: "",
     intent: "asthma triggers",
   });
   assert.ok(!("ok" in result));
   if ("ok" in result) return;
-  assert.equal(result.host, "google.com");
-  assert.match(result.targetUrl, /search\?q=/);
+  assert.equal(result.host, "duckduckgo.com");
+  assert.match(result.targetUrl, /html\.duckduckgo\.com\/html\/\?q=/);
+});
+
+test("isBlockedBrowsePage detects Google sorry interstitial", () => {
+  assert.equal(
+    isBlockedBrowsePage({
+      url: "https://www.google.com/sorry/index",
+      title: "",
+      excerpt: "",
+    }),
+    true,
+  );
+  assert.equal(
+    isBlockedBrowsePage({
+      url: "https://www.google.com/search?q=mayo",
+      title: "",
+      excerpt: "Our systems have detected unusual traffic from your computer network.",
+    }),
+    true,
+  );
+  assert.equal(
+    isBlockedBrowsePage({
+      url: "https://html.duckduckgo.com/html/?q=mayo",
+      title: "mayo at DuckDuckGo",
+      excerpt: "Mayo Clinic - Mayo Clinic is a nonprofit American academic medical center.",
+    }),
+    false,
+  );
 });
 
 test("normalizeBrowserUrl preserves path and query without scheme", () => {

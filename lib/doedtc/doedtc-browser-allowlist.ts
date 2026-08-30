@@ -101,11 +101,68 @@ export function normalizeBrowserUrl(input: string): { host: string; targetUrl: s
   return { host, targetUrl: browserUrlForHost(host) };
 }
 
-/** Build a Google search URL. */
-export function researchSearchUrl(query: string): string {
+/** DuckDuckGo HTML results — default for research (bot-tolerant). */
+export function duckduckgoSearchUrl(query: string): string {
+  const trimmed = query.trim();
+  if (!trimmed) return "https://html.duckduckgo.com/html/";
+  return `https://html.duckduckgo.com/html/?q=${encodeURIComponent(trimmed)}`;
+}
+
+/** Explicit Google search (used only when the user asks for Google). */
+export function googleSearchUrl(query: string): string {
   const trimmed = query.trim();
   if (!trimmed) return browserUrlForHost("google.com");
   return `https://www.google.com/search?q=${encodeURIComponent(trimmed)}`;
+}
+
+/** Default research search URL (DuckDuckGo HTML). */
+export function researchSearchUrl(query: string): string {
+  return duckduckgoSearchUrl(query);
+}
+
+export function isDuckDuckGoBrowseHost(host: string): boolean {
+  const normalized = normalizeBrowserHost(host);
+  return normalized === "duckduckgo.com" || normalized.endsWith(".duckduckgo.com");
+}
+
+export function extractSearchQueryFromUrl(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.includes("google.")) {
+      return parsed.searchParams.get("q")?.trim() || null;
+    }
+    if (parsed.hostname.includes("duckduckgo.")) {
+      return parsed.searchParams.get("q")?.trim() || null;
+    }
+    for (const key of ["q", "query", "search"]) {
+      const value = parsed.searchParams.get(key)?.trim();
+      if (value) return value;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+export function isBlockedBrowsePage(params: {
+  url?: string;
+  title?: string;
+  excerpt?: string;
+}): boolean {
+  const url = params.url ?? "";
+  const title = (params.title ?? "").toLowerCase();
+  const excerpt = (params.excerpt ?? "").toLowerCase();
+  const combined = `${title} ${excerpt}`;
+
+  if (/\/sorry|google\.com\/sorry/i.test(url)) return true;
+  if (combined.includes("unusual traffic")) return true;
+  if (combined.includes("detected unusual traffic")) return true;
+  if (combined.includes("are you a robot")) return true;
+  if (combined.includes("verify you are human")) return true;
+  if (combined.includes("before you continue to google")) return true;
+  if (title.includes("sorry") && combined.includes("automated")) return true;
+
+  return false;
 }
 
 function stripScreenshotTail(text: string): string {
@@ -152,9 +209,9 @@ export function siteSearchUrl(host: string, query: string): string {
     case "medlineplus.gov":
       return `https://medlineplus.gov/search/?query=${q}`;
     case "google.com":
-      return researchSearchUrl(query);
+      return googleSearchUrl(query);
     default:
-      return researchSearchUrl(`site:${normalizedHost} ${query}`);
+      return duckduckgoSearchUrl(`site:${normalizedHost} ${query}`);
   }
 }
 
@@ -171,6 +228,9 @@ export function resolveResearchBrowseTarget(params: {
 
   const alias = resolveSiteAlias(raw);
   const searchQuery = extractSearchQuery(intent) || extractSearchQuery(combined);
+  const wantsGoogle =
+    isGoogleBrowseHost(alias ?? "") ||
+    /\bgoogle(?:\.com)?\b/i.test(combined);
 
   try {
     if (raw && (raw.includes("://") || raw.includes(".") || raw.includes("/") || raw.includes("?"))) {
@@ -180,7 +240,7 @@ export function resolveResearchBrowseTarget(params: {
       const typedQuery = /(?:^|\b)(?:type|search(?:\s+for)?|look\s*up)\b/i.test(intent);
       targetUrl =
         searchQuery && isGoogleBrowseHost(host)
-          ? researchSearchUrl(searchQuery)
+          ? googleSearchUrl(searchQuery)
           : searchQuery && typedQuery && hostOnly
             ? siteSearchUrl(host, searchQuery)
             : normalized.targetUrl;
@@ -191,11 +251,21 @@ export function resolveResearchBrowseTarget(params: {
       host = alias;
       targetUrl = browserUrlForHost(host);
     } else if (searchQuery) {
-      host = "google.com";
-      targetUrl = researchSearchUrl(searchQuery);
+      if (wantsGoogle) {
+        host = "google.com";
+        targetUrl = googleSearchUrl(searchQuery);
+      } else {
+        host = "duckduckgo.com";
+        targetUrl = researchSearchUrl(searchQuery);
+      }
     } else if (raw) {
-      host = "google.com";
-      targetUrl = researchSearchUrl(raw);
+      if (wantsGoogle) {
+        host = "google.com";
+        targetUrl = googleSearchUrl(raw);
+      } else {
+        host = "duckduckgo.com";
+        targetUrl = researchSearchUrl(raw);
+      }
     } else {
       return { ok: false, error: "A URL or search topic is required." };
     }

@@ -3,8 +3,12 @@ import { Kernel } from "@onkernel/sdk";
 import {
   assertBrowserHostAllowed,
   browserUrlForHost,
+  extractSearchQueryFromUrl,
+  isBlockedBrowsePage,
+  isDuckDuckGoBrowseHost,
   normalizeBrowserHost,
   normalizeBrowserUrl,
+  researchSearchUrl,
   resolveResearchBrowseTarget,
 } from "@/lib/doedtc/doedtc-browser-allowlist";
 import {
@@ -155,16 +159,19 @@ async function retrieveKernelSession(sessionId: string): Promise<KernelBrowser |
   }
 }
 
-async function createKernelSession(job: DoeDtcBrowserJobRow): Promise<KernelBrowser> {
+async function createKernelSession(
+  job: DoeDtcBrowserJobRow,
+  startUrl?: string,
+): Promise<KernelBrowser> {
   const kernel = getKernel();
   const saveProfile = Boolean(job.kernel_profile_id) && shouldSaveKernelProfile(job);
 
   const browser = await kernel.browsers.create({
     stealth: true,
-    headless: true,
+    headless: false,
     timeout_seconds: KERNEL_SESSION_TIMEOUT_SECONDS,
     profile: job.kernel_profile_id ? { id: job.kernel_profile_id } : undefined,
-    start_url: job.allowed_host ? browserUrlForHost(job.allowed_host) : undefined,
+    start_url: startUrl ?? undefined,
     ...(saveProfile ? { profile_save_changes: true } : {}),
   } as Parameters<Kernel["browsers"]["create"]>[0]);
 
@@ -174,7 +181,10 @@ async function createKernelSession(job: DoeDtcBrowserJobRow): Promise<KernelBrow
   };
 }
 
-async function ensureKernelSession(job: DoeDtcBrowserJobRow): Promise<{
+async function ensureKernelSession(
+  job: DoeDtcBrowserJobRow,
+  startUrl?: string,
+): Promise<{
   job: DoeDtcBrowserJobRow;
   kernelBrowser: KernelBrowser;
 }> {
@@ -203,7 +213,7 @@ async function ensureKernelSession(job: DoeDtcBrowserJobRow): Promise<{
     });
   }
 
-  const kernelBrowser = await createKernelSession(activeJob);
+  const kernelBrowser = await createKernelSession(activeJob, startUrl);
   const updated = await updateDoeDtcBrowserJob({
     jobId: activeJob.id,
     userId: activeJob.user_id,
@@ -309,6 +319,67 @@ async function captureShot(params: {
   };
 }
 
+async function gotoAndExtract(sessionId: string, targetUrl: string): Promise<BrowserExtract> {
+  try {
+    await runPlaywright(
+      sessionId,
+      `await page.goto(${JSON.stringify(targetUrl)}, { waitUntil: 'domcontentloaded', timeout: 45000 });`,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not open that page.";
+    warnKernelFailure("navigate", error);
+    return { ok: false, error: message };
+  }
+
+  return extractPage(sessionId);
+}
+
+async function navigateResearchWithFailover(params: {
+  user: DoeDtcUserRow;
+  job: DoeDtcBrowserJobRow;
+  kernelBrowser: KernelBrowser;
+  targetUrl: string;
+  host: string;
+  searchQueryHint?: string;
+}): Promise<BrowserExtract> {
+  let extract = await gotoAndExtract(params.kernelBrowser.session_id, params.targetUrl);
+  if (!extract.ok) return extract;
+
+  if (!isBlockedBrowsePage(extract)) {
+    return extract;
+  }
+
+  const searchQuery =
+    params.searchQueryHint?.trim() ||
+    extractSearchQueryFromUrl(params.targetUrl) ||
+    extractSearchQueryFromUrl(extract.url ?? "");
+
+  if (!searchQuery || isDuckDuckGoBrowseHost(params.host)) {
+    return { ok: false, error: "Search blocked by bot detection." };
+  }
+
+  warnKernelFailure(
+    "research failover",
+    new Error(`Blocked on ${params.host}; retrying DuckDuckGo for "${searchQuery}"`),
+  );
+
+  const ddgUrl = researchSearchUrl(searchQuery);
+  extract = await gotoAndExtract(params.kernelBrowser.session_id, ddgUrl);
+  if (!extract.ok) return extract;
+
+  if (isBlockedBrowsePage(extract)) {
+    return { ok: false, error: "Search blocked by bot detection." };
+  }
+
+  await updateDoeDtcBrowserJob({
+    jobId: params.job.id,
+    userId: params.user.id,
+    patch: { allowed_host: "duckduckgo.com" },
+  });
+
+  return extract;
+}
+
 export async function startDoeDtcBrowserTask(params: {
   user: DoeDtcUserRow;
   intent: string;
@@ -362,6 +433,7 @@ export async function startDoeDtcBrowserTask(params: {
       user: params.user,
       jobId: job.id,
       url: targetUrl,
+      searchQueryHint: params.intent,
     });
     if (!navigated.ok) {
       const error = navigated.error ?? "Could not open that page.";
@@ -413,6 +485,7 @@ export async function navigateDoeDtcBrowser(params: {
   user: DoeDtcUserRow;
   jobId: string;
   url: string;
+  searchQueryHint?: string;
 }): Promise<BrowserExtract> {
   const job = await getDoeDtcBrowserJob({ jobId: params.jobId, userId: params.user.id });
   if (!job || !["open", "needs_login"].includes(job.status)) {
@@ -426,27 +499,35 @@ export async function navigateDoeDtcBrowser(params: {
     declaredHost: job.mode === "research" ? host : job.allowed_host,
   });
 
-  const { job: activeJob, kernelBrowser } = await ensureKernelSession(job);
   const targetUrl = params.url.includes("://")
     ? params.url
     : normalizeBrowserUrl(params.url).targetUrl;
 
-  try {
-    await runPlaywright(
-      kernelBrowser.session_id,
-      `await page.goto(${JSON.stringify(targetUrl)}, { waitUntil: 'domcontentloaded', timeout: 45000 });`,
-    );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Could not open that page.";
-    warnKernelFailure("navigate", error);
-    return { ok: false, error: message };
+  const { job: activeJob, kernelBrowser } = await ensureKernelSession(job, targetUrl);
+
+  let extract: BrowserExtract;
+  if (job.mode === "research") {
+    extract = await navigateResearchWithFailover({
+      user: params.user,
+      job: activeJob,
+      kernelBrowser,
+      targetUrl,
+      host,
+      searchQueryHint: params.searchQueryHint,
+    });
+  } else {
+    extract = await gotoAndExtract(kernelBrowser.session_id, targetUrl);
   }
 
-  if (host !== activeJob.allowed_host) {
+  if (!extract.ok) {
+    return extract;
+  }
+
+  if (host !== activeJob.allowed_host && !isDuckDuckGoBrowseHost(host)) {
     await attachKernelProfileToJob({ ...activeJob, allowed_host: host });
   }
 
-  return extractPage(kernelBrowser.session_id);
+  return extract;
 }
 
 export async function actDoeDtcBrowser(params: {
@@ -540,6 +621,9 @@ export async function snapshotDoeDtcBrowser(params: {
 
   const { kernelBrowser } = await ensureKernelSession(job);
   const extract = await extractPage(kernelBrowser.session_id);
+  if (isBlockedBrowsePage(extract)) {
+    return { ok: false, error: "Search blocked by bot detection." };
+  }
   const shot = await captureShot({
     user: params.user,
     job,
