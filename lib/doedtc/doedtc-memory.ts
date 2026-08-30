@@ -1,6 +1,15 @@
 import MemoryClient from "mem0ai";
 
-import { sanitizeMem0Text, shouldSkipMem0Memory } from "@/lib/doedtc/doedtc-privacy";
+import {
+  DOE_MEM0_AGENT_ID,
+  DOE_MEM0_METADATA,
+  doeDtcMem0SearchFilters,
+} from "@/lib/doedtc/doedtc-mem0-constants";
+import {
+  redactDoeDtcLogText,
+  sanitizeMem0Text,
+  shouldSkipMem0Memory,
+} from "@/lib/doedtc/doedtc-privacy";
 
 let client: MemoryClient | null = null;
 
@@ -13,6 +22,11 @@ function getMem0Client(): MemoryClient | null {
   return client;
 }
 
+function warnMem0Failure(action: string, error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+  console.warn(`[doedtc:mem0] ${action} failed: ${redactDoeDtcLogText(message)}`);
+}
+
 export async function searchDoeDtcMem0Memories(params: {
   userId: string;
   query: string;
@@ -23,7 +37,7 @@ export async function searchDoeDtcMem0Memories(params: {
 
   try {
     const results = await mem0.search(params.query, {
-      filters: { user_id: params.userId },
+      filters: doeDtcMem0SearchFilters(params.userId),
       topK: params.topK ?? 5,
     });
     const rows = Array.isArray(results)
@@ -36,7 +50,8 @@ export async function searchDoeDtcMem0Memories(params: {
       .map((row) => ("memory" in row ? String(row.memory ?? "") : ""))
       .filter(Boolean)
       .slice(0, 5);
-  } catch {
+  } catch (error) {
+    warnMem0Failure("search", error);
     return [];
   }
 }
@@ -61,10 +76,14 @@ export async function addDoeDtcMem0Turn(params: {
         { role: "user", content: userText },
         { role: "assistant", content: assistantText },
       ],
-      { user_id: params.userId },
+      {
+        userId: params.userId,
+        agentId: DOE_MEM0_AGENT_ID,
+        metadata: { ...DOE_MEM0_METADATA },
+      },
     );
-  } catch {
-    // Mem0 is best-effort; Supabase remains source of truth.
+  } catch (error) {
+    warnMem0Failure("add turn", error);
   }
 }
 
@@ -79,9 +98,13 @@ export async function addDoeDtcMem0Fact(params: {
   if (!fact || shouldSkipMem0Memory(fact)) return;
 
   try {
-    await mem0.add([{ role: "user", content: fact }], { user_id: params.userId });
-  } catch {
-    // Best-effort dual-write.
+    await mem0.add([{ role: "user", content: fact }], {
+      userId: params.userId,
+      agentId: DOE_MEM0_AGENT_ID,
+      metadata: { ...DOE_MEM0_METADATA },
+    });
+  } catch (error) {
+    warnMem0Failure("add fact", error);
   }
 }
 

@@ -24,14 +24,19 @@ export function sanitizeMem0Text(text: string): string {
 }
 
 export function shouldSkipMem0Memory(text: string): boolean {
+  if (/https?:\/\//i.test(text)) return true;
+
+  for (const pattern of SECRET_PATTERNS) {
+    if (pattern.test(text)) return true;
+  }
+
   const lower = text.toLowerCase();
   return (
-    lower.includes("password") ||
-    lower.includes("otp") ||
-    lower.includes("vault") ||
-    lower.includes("locker") ||
-    lower.includes("ssn") ||
-    lower.includes("credit card") ||
-    /https?:\/\//i.test(text)
+    /\bpassword\b/.test(lower) ||
+    /\botp\b/.test(lower) ||
+    /\bpin\b/.test(lower) ||
+    /\bssn\b/.test(lower) ||
+    /\bcredit card\b/.test(lower) ||
+    /\bcvv\b/.test(lower)
   );
 }

@@ -1,5 +1,4 @@
 import { Kernel } from "@onkernel/sdk";
-import { chromium } from "playwright-core";
 
 import {
   assertBrowserHostAllowed,
@@ -17,8 +16,9 @@ import {
   insertDoeDtcBrowserShot,
   updateDoeDtcBrowserJob,
 } from "@/lib/doedtc/doedtc-browser-db";
-import { uploadDoeDtcBrowserShot } from "@/lib/doedtc/doedtc-shots";
 import { doeDtcVaultUrl, doeDtcWorkUrl } from "@/lib/doedtc/doedtc-copy";
+import { redactDoeDtcLogText } from "@/lib/doedtc/doedtc-privacy";
+import { uploadDoeDtcBrowserShot } from "@/lib/doedtc/doedtc-shots";
 import type {
   DoeDtcBrowserJobRow,
   DoeDtcBrowserPendingAction,
@@ -27,7 +27,6 @@ import type {
 
 type KernelBrowser = {
   session_id: string;
-  cdp_ws_url: string;
   browser_live_view_url?: string | null;
 };
 
@@ -45,6 +44,7 @@ type BrowserSnapshotResult = BrowserExtract & {
 };
 
 const EXCERPT_MAX = 800;
+const KERNEL_SESSION_TIMEOUT_SECONDS = 1800;
 const WRITE_DENY_SELECTORS = [
   'button[type="submit"]',
   'input[type="submit"]',
@@ -63,29 +63,117 @@ function isKernelConfigured(): boolean {
   return Boolean(process.env.KERNEL_API_KEY?.trim());
 }
 
+function warnKernelFailure(action: string, error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+  console.warn(`[doedtc:kernel] ${action} failed: ${redactDoeDtcLogText(message)}`);
+}
+
+function kernelProfileName(userId: string, host: string): string {
+  const safeHost = host.replace(/[^a-z0-9.-]/gi, "-").slice(0, 40);
+  return `doe-${userId.slice(0, 8)}-${safeHost}`.slice(0, 64);
+}
+
+function shouldSaveKernelProfile(job: DoeDtcBrowserJobRow): boolean {
+  return job.mode === "login" || job.mode === "write" || job.login_attempts > 0;
+}
+
+async function ensureDoeDtcKernelProfile(userId: string, host: string): Promise<string> {
+  const kernel = getKernel();
+  const name = kernelProfileName(userId, host);
+
+  try {
+    const existing = await kernel.profiles.retrieve(name);
+    return existing.id;
+  } catch {
+    try {
+      const created = await kernel.profiles.create({ name });
+      return created.id;
+    } catch (createError) {
+      warnKernelFailure("create profile", createError);
+      throw createError instanceof Error ? createError : new Error("Could not create browser profile.");
+    }
+  }
+}
+
+async function attachKernelProfileToJob(job: DoeDtcBrowserJobRow): Promise<DoeDtcBrowserJobRow> {
+  if (job.kernel_profile_id || !job.allowed_host) {
+    return job;
+  }
+
+  const profileId = await ensureDoeDtcKernelProfile(job.user_id, job.allowed_host);
+  return updateDoeDtcBrowserJob({
+    jobId: job.id,
+    userId: job.user_id,
+    patch: { kernel_profile_id: profileId },
+  });
+}
+
+async function retrieveKernelSession(sessionId: string): Promise<KernelBrowser | null> {
+  try {
+    const kernel = getKernel();
+    const browser = await kernel.browsers.retrieve(sessionId);
+    return {
+      session_id: browser.session_id,
+      browser_live_view_url: browser.browser_live_view_url ?? null,
+    };
+  } catch (error) {
+    warnKernelFailure("retrieve session", error);
+    return null;
+  }
+}
+
+async function createKernelSession(job: DoeDtcBrowserJobRow): Promise<KernelBrowser> {
+  const kernel = getKernel();
+  const saveProfile = Boolean(job.kernel_profile_id) && shouldSaveKernelProfile(job);
+
+  const browser = await kernel.browsers.create({
+    stealth: true,
+    headless: true,
+    timeout_seconds: KERNEL_SESSION_TIMEOUT_SECONDS,
+    profile: job.kernel_profile_id ? { id: job.kernel_profile_id } : undefined,
+    start_url: job.allowed_host ? browserUrlForHost(job.allowed_host) : undefined,
+    ...(saveProfile ? { profile_save_changes: true } : {}),
+  } as Parameters<Kernel["browsers"]["create"]>[0]);
+
+  return {
+    session_id: browser.session_id,
+    browser_live_view_url: browser.browser_live_view_url ?? null,
+  };
+}
+
 async function ensureKernelSession(job: DoeDtcBrowserJobRow): Promise<{
   job: DoeDtcBrowserJobRow;
   kernelBrowser: KernelBrowser;
 }> {
-  if (job.kernel_session_id) {
-    return {
-      job,
-      kernelBrowser: {
-        session_id: job.kernel_session_id,
-        cdp_ws_url: "",
-        browser_live_view_url: job.browser_live_view_url,
-      },
-    };
+  let activeJob = await attachKernelProfileToJob(job);
+
+  if (activeJob.kernel_session_id) {
+    const existing = await retrieveKernelSession(activeJob.kernel_session_id);
+    if (existing) {
+      if (
+        existing.browser_live_view_url &&
+        existing.browser_live_view_url !== activeJob.browser_live_view_url
+      ) {
+        activeJob = await updateDoeDtcBrowserJob({
+          jobId: activeJob.id,
+          userId: activeJob.user_id,
+          patch: { browser_live_view_url: existing.browser_live_view_url },
+        });
+      }
+      return { job: activeJob, kernelBrowser: existing };
+    }
+
+    activeJob = await updateDoeDtcBrowserJob({
+      jobId: activeJob.id,
+      userId: activeJob.user_id,
+      patch: { kernel_session_id: null, browser_live_view_url: null },
+    });
   }
 
-  const kernel = getKernel();
-  const kernelBrowser = (await kernel.browsers.create({
-    profile: job.kernel_profile_id ? { id: job.kernel_profile_id } : undefined,
-  })) as KernelBrowser;
-
+  const kernelBrowser = await createKernelSession(activeJob);
   const updated = await updateDoeDtcBrowserJob({
-    jobId: job.id,
-    userId: job.user_id,
+    jobId: activeJob.id,
+    userId: activeJob.user_id,
     patch: {
       kernel_session_id: kernelBrowser.session_id,
       browser_live_view_url: kernelBrowser.browser_live_view_url ?? null,
@@ -100,8 +188,8 @@ async function deleteKernelSession(sessionId: string | null | undefined): Promis
   try {
     const kernel = getKernel();
     await kernel.browsers.deleteByID(sessionId);
-  } catch {
-    // Session may already be gone.
+  } catch (error) {
+    warnKernelFailure("delete session", error);
   }
 }
 
@@ -111,44 +199,18 @@ async function runPlaywright<T>(sessionId: string, code: string): Promise<T> {
   return response.result as T;
 }
 
-async function runPlaywrightOverCdp<T>(
-  cdpWsUrl: string,
-  runner: (page: import("playwright-core").Page) => Promise<T>,
-): Promise<T> {
-  const browser = await chromium.connectOverCDP(cdpWsUrl);
-  try {
-    const context = browser.contexts()[0] ?? (await browser.newContext());
-    const page = context.pages()[0] ?? (await context.newPage());
-    return await runner(page);
-  } finally {
-    await browser.close();
-  }
-}
-
-async function redactSensitiveFields(sessionId: string, cdpWsUrl?: string): Promise<void> {
-  const redactCode = `
+async function redactSensitiveFields(sessionId: string): Promise<void> {
+  await runPlaywright(
+    sessionId,
+    `
     await page.evaluate(() => {
       document.querySelectorAll('input[type="password"], input[autocomplete="one-time-code"]').forEach((el) => {
         el.setAttribute('data-doedtc-redacted', 'true');
         el.style.filter = 'blur(8px)';
       });
     });
-  `;
-
-  if (cdpWsUrl) {
-    await runPlaywrightOverCdp(cdpWsUrl, async (page) => {
-      await page.evaluate(() => {
-        document
-          .querySelectorAll('input[type="password"], input[autocomplete="one-time-code"]')
-          .forEach((el) => {
-            (el as HTMLElement).style.filter = "blur(8px)";
-          });
-      });
-    });
-    return;
-  }
-
-  await runPlaywright(sessionId, redactCode);
+  `,
+  );
 }
 
 async function extractPage(sessionId: string): Promise<BrowserExtract> {
@@ -168,24 +230,16 @@ async function captureShot(params: {
   user: DoeDtcUserRow;
   job: DoeDtcBrowserJobRow;
   sessionId: string;
-  cdpWsUrl?: string;
   kind: "progress" | "review" | "result" | "error";
   caption?: string;
 }): Promise<{ workToken: string; workUrl: string; blobUrl: string }> {
-  await redactSensitiveFields(params.sessionId, params.cdpWsUrl);
+  await redactSensitiveFields(params.sessionId);
 
-  let jpegBuffer: Buffer;
-  if (params.cdpWsUrl) {
-    jpegBuffer = await runPlaywrightOverCdp(params.cdpWsUrl, async (page) =>
-      page.screenshot({ type: "jpeg", quality: 70, fullPage: false }),
-    );
-  } else {
-    const base64 = await runPlaywright<string>(
-      params.sessionId,
-      `return (await page.screenshot({ type: 'jpeg', quality: 70, fullPage: false })).toString('base64');`,
-    );
-    jpegBuffer = Buffer.from(base64, "base64");
-  }
+  const base64 = await runPlaywright<string>(
+    params.sessionId,
+    `return (await page.screenshot({ type: 'jpeg', quality: 70, fullPage: false })).toString('base64');`,
+  );
+  const jpegBuffer = Buffer.from(base64, "base64");
 
   const uploaded = await uploadDoeDtcBrowserShot({
     userId: params.user.id,
@@ -237,12 +291,14 @@ export async function startDoeDtcBrowserTask(params: {
     const mode = params.mode ?? "research";
     assertBrowserHostAllowed({ host, mode, declaredHost: mode === "research" ? null : host });
 
-    const job = await createDoeDtcBrowserJob({
+    let job = await createDoeDtcBrowserJob({
       userId: params.user.id,
       intent: params.intent,
       allowedHost: host,
       mode,
     });
+
+    job = await attachKernelProfileToJob(job);
 
     return { ok: true, jobId: job.id, host };
   } catch (error) {
@@ -277,6 +333,10 @@ export async function navigateDoeDtcBrowser(params: {
     kernelBrowser.session_id,
     `await page.goto(${JSON.stringify(targetUrl)}, { waitUntil: 'domcontentloaded', timeout: 45000 });`,
   );
+
+  if (host !== activeJob.allowed_host) {
+    await attachKernelProfileToJob({ ...activeJob, allowed_host: host });
+  }
 
   return extractPage(kernelBrowser.session_id);
 }
@@ -360,11 +420,12 @@ export async function requestDoeDtcVaultLink(params: {
   if (!job) return { ok: false, error: "Browser task not found." };
 
   const host = normalizeBrowserHost(params.host);
-  await updateDoeDtcBrowserJob({
+  let updatedJob = await updateDoeDtcBrowserJob({
     jobId: job.id,
     userId: params.user.id,
     patch: { allowed_host: host, mode: "login", status: "needs_login" },
   });
+  updatedJob = await attachKernelProfileToJob(updatedJob);
 
   const token = await createDoeDtcWorkToken({
     userId: params.user.id,
@@ -412,11 +473,12 @@ export async function attemptDoeDtcVaultLogin(params: {
     return { ok: false, reason: "login_failed" };
   }
 
-  const { kernelBrowser } = await ensureKernelSession(job);
-  await updateDoeDtcBrowserJob({
-    jobId: job.id,
+  let activeJob = await attachKernelProfileToJob(job);
+  const { kernelBrowser } = await ensureKernelSession(activeJob);
+  activeJob = await updateDoeDtcBrowserJob({
+    jobId: activeJob.id,
     userId: params.userId,
-    patch: { login_attempts: job.login_attempts + 1 },
+    patch: { login_attempts: activeJob.login_attempts + 1 },
   });
 
   try {
@@ -446,7 +508,7 @@ export async function attemptDoeDtcVaultLogin(params: {
 
     if (failed) {
       await updateDoeDtcBrowserJob({
-        jobId: job.id,
+        jobId: activeJob.id,
         userId: params.userId,
         patch: { status: "failed", outcome: "Login failed." },
       });
@@ -456,14 +518,15 @@ export async function attemptDoeDtcVaultLogin(params: {
 
     await clearDoeDtcVaultPassword({ userId: params.userId, host: params.host });
     await updateDoeDtcBrowserJob({
-      jobId: job.id,
+      jobId: activeJob.id,
       userId: params.userId,
       patch: { status: "open", outcome: "Logged in." },
     });
     return { ok: true };
-  } catch {
+  } catch (error) {
+    warnKernelFailure("vault login", error);
     await updateDoeDtcBrowserJob({
-      jobId: job.id,
+      jobId: activeJob.id,
       userId: params.userId,
       patch: { status: "failed", outcome: "Login failed." },
     });
@@ -536,6 +599,7 @@ export async function commitDoeDtcBrowserTask(params: {
     await deleteKernelSession(kernelBrowser.session_id);
     return { ok: true, outcome: extract.title ?? "Action completed." };
   } catch (error) {
+    warnKernelFailure("commit", error);
     await updateDoeDtcBrowserJob({
       jobId: job.id,
       userId: params.userId,
