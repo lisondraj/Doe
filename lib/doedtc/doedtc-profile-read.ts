@@ -17,6 +17,7 @@ export const DOEDTC_PROFILE_READ_TABS = [
   "locker",
   "share",
   "trackers",
+  "guides",
   "accountability",
   "feedback",
 ] as const satisfies readonly DoeDtcProfileTab[];
@@ -175,6 +176,16 @@ function formatTrackersTab(snapshot: DoeDtcProfileSnapshot): string {
     .join("\n");
 }
 
+function formatGuidesTab(snapshot: DoeDtcProfileSnapshot): string {
+  if (snapshot.guides.length === 0) return "No saved guides yet.";
+  return snapshot.guides
+    .map((guide) => {
+      const updated = guide.updated_at.slice(0, 16).replace("T", " ");
+      return `- ${guide.title} | topic: ${guide.topic} | layout: ${guide.layout} | blocks: ${guide.blocks.length} | updated: ${updated} | id: ${guide.id}`;
+    })
+    .join("\n");
+}
+
 function formatAccountabilityTab(snapshot: DoeDtcProfileSnapshot): string {
   if (snapshot.accountabilityPacts.length === 0) return "No accountability pacts.";
   return snapshot.accountabilityPacts
@@ -233,6 +244,8 @@ export function formatDoeDtcProfileTab(
       return formatShareTab(snapshot);
     case "trackers":
       return formatTrackersTab(snapshot);
+    case "guides":
+      return formatGuidesTab(snapshot);
     case "accountability":
       return formatAccountabilityTab(snapshot);
     case "feedback":
@@ -261,6 +274,11 @@ export function formatDoeDtcProfileOverview(snapshot: DoeDtcProfileSnapshot): st
       snapshot.artifacts.length === 0
         ? "None yet"
         : snapshot.artifacts.map((row) => row.title).join(", ")
+    }`,
+    `Guides: ${
+      snapshot.guides.length === 0
+        ? "None saved"
+        : snapshot.guides.map((row) => row.title).join(", ")
     }`,
     `Accountability: ${
       snapshot.accountabilityPacts.length === 0

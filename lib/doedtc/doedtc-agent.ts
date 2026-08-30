@@ -14,7 +14,7 @@ import {
   formatMem0Block,
   searchDoeDtcMem0Memories,
 } from "@/lib/doedtc/doedtc-memory";
-import { doeDtcAppUrl, doeDtcCareUrl, doeDtcFeedbackUrl, doeDtcListenUrl, doeDtcPrepareUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
+import { doeDtcAppUrl, doeDtcCareUrl, doeDtcFeedbackUrl, doeDtcGuideUrl, doeDtcListenUrl, doeDtcPrepareUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
 import {
   formatDoeDtcAppointmentWhen,
   normalizeDoeDtcAppointmentTiming,
@@ -81,6 +81,18 @@ import {
   normalizeScheduledTimezone,
   parseScheduledSendAt,
 } from "@/lib/doedtc/doedtc-scheduled";
+import {
+  createDoeDtcGuide,
+  listGuidesForUser,
+  saveDoeDtcGuide,
+  updateDoeDtcGuide,
+} from "@/lib/doedtc/doedtc-guides-db";
+import {
+  formatGuideForAgent,
+  isGuideSaveOfferText,
+  normalizeGuideBlocks,
+  normalizeGuideLayout,
+} from "@/lib/doedtc/doedtc-guides";
 import { sendDoeDtcFamilyInviteMessage, sendDoeDtcHouseholdAccessRevokedNotice } from "@/lib/doedtc/doedtc-messaging";
 import {
   DOEDTC_PROFILE_READ_TABS,
@@ -507,6 +519,91 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "create_guide",
+      description:
+        "Create a visual how-to guide from typed blocks (hero, steps, checklist, timeline, dose_card, site_map, callout, do_dont, faq, facts, illustration). Call when they ask for a guide, visual instructions, or how-to (e.g. take Ozempic). Do NOT auto-save to profile — ask if they want it saved after sending the link.",
+      parameters: {
+        type: "object",
+        properties: {
+          topic: { type: "string", description: "Plain-language request, e.g. take Ozempic properly." },
+          title: { type: "string", description: "Short page title." },
+          layout: {
+            type: "string",
+            enum: ["howto", "schedule", "checklist", "explainer", "comparison"],
+          },
+          blocks: {
+            type: "array",
+            description:
+              "Ordered blocks. Each needs kind and fields for that kind. Always include educational disclaimer via disclaimer kind or let the server append one.",
+            items: { type: "object" },
+          },
+        },
+        required: ["topic", "title"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "save_guide",
+      description: "Save a guide to the user's profile Guides tab after they confirm.",
+      parameters: {
+        type: "object",
+        properties: {
+          guide_id: { type: "string" },
+          title_hint: { type: "string" },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "update_guide",
+      description:
+        "Edit an existing guide — replace blocks, add steps, retitle, etc. Use guide_id or title_hint to pick the guide.",
+      parameters: {
+        type: "object",
+        properties: {
+          guide_id: { type: "string" },
+          title_hint: { type: "string" },
+          title: { type: "string" },
+          topic: { type: "string" },
+          layout: {
+            type: "string",
+            enum: ["howto", "schedule", "checklist", "explainer", "comparison"],
+          },
+          blocks: { type: "array", items: { type: "object" } },
+          replace_blocks: { type: "boolean", description: "If true, replace all blocks. If false, append/patch." },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "list_guides",
+      description: "List recent guides (saved and unsaved).",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "send_guide_link",
+      description: "Re-send the link for an existing guide (e.g. send my Ozempic guide).",
+      parameters: {
+        type: "object",
+        properties: {
+          guide_id: { type: "string" },
+          title_hint: { type: "string" },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "submit_ticket",
       description:
         "Submit user feedback or a bug report. Call when they ask to send feedback, report a bug, or file something that went wrong. Do not use for one-off product questions.",
@@ -582,7 +679,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "read_profile",
       description:
-        "Read a Doe profile tab (dashboard/integrations, appointments, results, conditions, family, locker, share, trackers, accountability, feedback). Use this to answer questions about what is already saved — Whoop, Apple Health, meds, locker sites, results, share codes, custom trackers, accountability pacts, feedback/bug reports. Never invent status. This is a read, not an add.",
+        "Read a Doe profile tab (dashboard/integrations, appointments, results, conditions, family, locker, share, trackers, guides, accountability, feedback). Use this to answer questions about what is already saved — Whoop, Apple Health, meds, locker sites, results, share codes, custom trackers, saved guides, accountability pacts, feedback/bug reports. Never invent status. This is a read, not an add.",
       parameters: {
         type: "object",
         properties: {
@@ -976,6 +1073,7 @@ export type DoeDtcAgentTurnResult = {
   profileUrl?: string;
   feedbackUrl?: string;
   prepareUrl?: string;
+  guideUrl?: string;
   workUrl?: string;
   screenshotUrl?: string;
   vaultUrl?: string;
@@ -986,6 +1084,7 @@ export type DoeDtcAgentTurnResult = {
   browserNeedsConfirm?: boolean;
   assessmentRan: boolean;
   preserveScheduleOffer?: boolean;
+  preserveGuideSaveOffer?: boolean;
 };
 
 const URL_IN_TEXT = /https?:\/\/\S+/gi;
@@ -1050,11 +1149,13 @@ function stripMarkdownFromReply(text: string): string {
 
 export function sanitizeDoeDtcReplyText(
   text: string,
-  options?: { keepCloserRate?: number; preserveScheduleOffer?: boolean },
+  options?: { keepCloserRate?: number; preserveScheduleOffer?: boolean; preserveGuideSaveOffer?: boolean },
 ): string {
   const withoutMarkdown = stripMarkdownFromReply(text);
   const withoutUrls = withoutMarkdown.replace(URL_IN_TEXT, "");
-  const shouldPreserveOffer = options?.preserveScheduleOffer && isScheduleOfferText(withoutUrls);
+  const shouldPreserveOffer =
+    (options?.preserveScheduleOffer && isScheduleOfferText(withoutUrls)) ||
+    (options?.preserveGuideSaveOffer && isGuideSaveOfferText(withoutUrls));
   const stripped = shouldPreserveOffer ? withoutUrls : withoutUrls.replace(CLOSER_TAIL, "");
   const rate = options?.keepCloserRate ?? KEEP_CLOSER_RATE;
   const keepCloser = stripped !== withoutUrls && Math.random() < rate;
@@ -1257,18 +1358,24 @@ function buildReplyFromTurnState(params: {
   profileUrl?: string;
   feedbackUrl?: string;
   prepareUrl?: string;
+  guideUrl?: string;
   browserUserMessage?: string;
   preserveScheduleOffer?: boolean;
+  preserveGuideSaveOffer?: boolean;
 }): string {
   if (params.browserUserMessage?.trim()) {
     return sanitizeDoeDtcReplyText(params.browserUserMessage, {
       preserveScheduleOffer: params.preserveScheduleOffer,
+      preserveGuideSaveOffer: params.preserveGuideSaveOffer,
     });
   }
 
   const trimmed = params.modelContent?.trim();
   if (trimmed) {
-    return sanitizeDoeDtcReplyText(trimmed, { preserveScheduleOffer: params.preserveScheduleOffer });
+    return sanitizeDoeDtcReplyText(trimmed, {
+      preserveScheduleOffer: params.preserveScheduleOffer,
+      preserveGuideSaveOffer: params.preserveGuideSaveOffer,
+    });
   }
 
   if (params.assessmentSummary) return params.assessmentSummary;
@@ -1286,6 +1393,7 @@ function buildReplyFromTurnState(params: {
   if (params.profileUrl) return "Sending your profile link.";
   if (params.feedbackUrl) return "Sending a link to track your report.";
   if (params.prepareUrl) return "Sending your visit prep summary.";
+  if (params.guideUrl) return "Sending your guide.";
 
   return "Got it.";
 }
@@ -1303,6 +1411,7 @@ function buildSystemPrompt(params: {
   householdLog: string;
   accountabilityLog: string;
   scheduledLog: string;
+  guidesLog: string;
   profileOverview: string;
 }): string {
   return `You are Doe, a warm consumer health companion over iMessage.
@@ -1336,6 +1445,9 @@ ${params.accountabilityLog}
 Scheduled texts:
 ${params.scheduledLog}
 
+Guides (saved + recent):
+${params.guidesLog}
+
 Relevant memories:
 ${params.relevantMemories}
 
@@ -1365,6 +1477,7 @@ What you can do:
 - After creating a tracker or logging a useful entry, send_profile_link with tab=trackers and artifact id so they can view/edit it.
 - Submit feedback or bug reports (submit_ticket) when they ask to send feedback or report a bug. After submitting, send the track link. Read feedback tab with read_profile.
 - Create a visit-prep summary (create_preparation) when they say prepare, or ask for something to share with their provider, doctor, visit, or refill. Use a general health snapshot if they do not name a reason. After creating, send the prep link with the 5-digit provider code. For a family member, build it from their profile — a tracker is also saved on their Trackers tab.
+- Visual guides (create_guide): when they ask for a how-to, visual instructions, or guide (e.g. take Ozempic properly), compose blocks from the catalog (hero, steps, checklist, timeline, dose_card, site_map, callout, do_dont, faq, facts, illustration). Pick layout howto/schedule/checklist/explainer/comparison. Use profile meds when relevant. After create_guide, send the guide link and ask "Want me to save this to your profile?" — wait for yes before save_guide. update_guide to edit (add steps, change copy). list_guides / send_guide_link to resend. Do NOT use create_preparation for how-to guides.
 - After logging an appointment, or when they mention an upcoming visit or refill, you may briefly offer to prepare a provider summary — not every turn, and do not create it unless they ask or say prepare.
 - If a tool fails, you cannot complete a task, or you made a mistake, mention they can text "report a bug" or "send feedback" and you will file it. Do not auto-file unless they ask.
 - Browse the web via start_browser_task. For "go to Google and type mayo" (or screenshot the result), call once with url google and intent type mayo — that opens the Google results page and screenshots it. Do not try to type into Google with a CSS selector.
@@ -1552,10 +1665,11 @@ export async function runDoeDtcAgentTurn(params: {
   inboundText: string;
   inboundMessageId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
-  const [snapshot, messageHistory, relevantMemoryRows] = await Promise.all([
+  const [snapshot, messageHistory, relevantMemoryRows, recentGuides] = await Promise.all([
     getDoeDtcProfileSnapshot(params.user.id),
     listDoeDtcMessages(params.user.id, 40),
     searchDoeDtcMem0Memories({ userId: params.user.id, query: params.inboundText, topK: 5 }),
+    listGuidesForUser(params.user.id),
   ]);
 
   const systemPrompt = buildSystemPrompt({
@@ -1576,6 +1690,10 @@ export async function runDoeDtcAgentTurn(params: {
     }),
     accountabilityLog: formatAccountabilityForAgent(snapshot.accountabilityPacts),
     scheduledLog: formatScheduledTextForAgent(snapshot.scheduledTexts.filter((row) => row.status === "pending")),
+    guidesLog:
+      recentGuides.length === 0
+        ? "None yet."
+        : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
     profileOverview: formatDoeDtcProfileOverview(snapshot),
   });
 
@@ -1591,6 +1709,7 @@ export async function runDoeDtcAgentTurn(params: {
   let profileUrl: string | undefined;
   let feedbackUrl: string | undefined;
   let prepareUrl: string | undefined;
+  let guideUrl: string | undefined;
   let workUrl: string | undefined;
   let screenshotUrl: string | undefined;
   let vaultUrl: string | undefined;
@@ -1605,6 +1724,7 @@ export async function runDoeDtcAgentTurn(params: {
   let browserUserMessage: string | undefined;
   let lastModelContent: string | null = null;
   let preserveScheduleOffer = false;
+  let preserveGuideSaveOffer = false;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
     const { message } = await callDoeDtcAgent(messages);
@@ -1626,7 +1746,9 @@ export async function runDoeDtcAgentTurn(params: {
         profileUrl,
         feedbackUrl,
         prepareUrl,
+        guideUrl,
         preserveScheduleOffer,
+        preserveGuideSaveOffer,
       });
 
       const fulfilled = await fulfillClaimedLinks({
@@ -1658,7 +1780,9 @@ export async function runDoeDtcAgentTurn(params: {
           profileUrl,
           feedbackUrl,
           prepareUrl,
+          guideUrl,
           preserveScheduleOffer,
+          preserveGuideSaveOffer,
         });
       }
 
@@ -1669,6 +1793,7 @@ export async function runDoeDtcAgentTurn(params: {
         profileUrl,
         feedbackUrl,
         prepareUrl,
+        guideUrl,
         workUrl,
         screenshotUrl,
         vaultUrl,
@@ -1679,6 +1804,7 @@ export async function runDoeDtcAgentTurn(params: {
         browserNeedsConfirm,
         assessmentRan,
         preserveScheduleOffer,
+        preserveGuideSaveOffer,
       };
     }
 
@@ -2053,6 +2179,84 @@ export async function runDoeDtcAgentTurn(params: {
             on_subject_profile: subject.subjectUserId !== params.user.id,
             link_sent_separately: true,
           };
+        } else if (toolCall.function.name === "create_guide") {
+          const topic = String(args.topic ?? "").trim();
+          const title = String(args.title ?? "").trim();
+          if (!topic || !title) throw new Error("topic and title are required.");
+          const blocks = Array.isArray(args.blocks) ? normalizeGuideBlocks(args.blocks) : undefined;
+          const row = await createDoeDtcGuide({
+            userId: params.user.id,
+            title,
+            topic,
+            layout: normalizeGuideLayout(args.layout),
+            blocks,
+          });
+          guideUrl = doeDtcGuideUrl(params.user.care_token, { guide: row.id });
+          preserveGuideSaveOffer = true;
+          output = {
+            ok: true,
+            id: row.id,
+            title: row.title,
+            layout: row.layout,
+            blocks: row.blocks.length,
+            link_sent_separately: true,
+            next_step: "Ask if they want you to save this to their profile before calling save_guide.",
+          };
+        } else if (toolCall.function.name === "save_guide") {
+          const row = await saveDoeDtcGuide({
+            userId: params.user.id,
+            guideId: typeof args.guide_id === "string" ? args.guide_id : undefined,
+            titleHint: typeof args.title_hint === "string" ? args.title_hint : undefined,
+          });
+          profileUrl = doeDtcAppUrl(params.user.care_token, { tab: "guides" });
+          output = { ok: true, id: row.id, title: row.title, saved: true };
+        } else if (toolCall.function.name === "update_guide") {
+          const row = await updateDoeDtcGuide({
+            userId: params.user.id,
+            guideId: typeof args.guide_id === "string" ? args.guide_id : undefined,
+            titleHint: typeof args.title_hint === "string" ? args.title_hint : undefined,
+            title: typeof args.title === "string" ? args.title : undefined,
+            topic: typeof args.topic === "string" ? args.topic : undefined,
+            layout: args.layout ? normalizeGuideLayout(args.layout) : undefined,
+            blocks: Array.isArray(args.blocks) ? normalizeGuideBlocks(args.blocks) : undefined,
+            replaceBlocks: args.replace_blocks === true,
+          });
+          guideUrl = doeDtcGuideUrl(params.user.care_token, { guide: row.id });
+          output = {
+            ok: true,
+            id: row.id,
+            title: row.title,
+            blocks: row.blocks.length,
+            link_sent_separately: true,
+          };
+        } else if (toolCall.function.name === "list_guides") {
+          const rows = await listGuidesForUser(params.user.id);
+          output = {
+            ok: true,
+            guides: rows.map((row) => ({
+              id: row.id,
+              title: row.title,
+              topic: row.topic,
+              saved: Boolean(row.saved_at),
+              layout: row.layout,
+            })),
+          };
+        } else if (toolCall.function.name === "send_guide_link") {
+          const rows = await listGuidesForUser(params.user.id);
+          const guideId = typeof args.guide_id === "string" ? args.guide_id.trim() : "";
+          const titleHint = typeof args.title_hint === "string" ? args.title_hint.trim() : "";
+          const match = guideId
+            ? rows.find((row) => row.id === guideId)
+            : titleHint
+              ? rows.find(
+                  (row) =>
+                    row.title.toLowerCase().includes(titleHint.toLowerCase()) ||
+                    row.topic.toLowerCase().includes(titleHint.toLowerCase()),
+                )
+              : rows[0];
+          if (!match) throw new Error("Guide not found.");
+          guideUrl = doeDtcGuideUrl(params.user.care_token, { guide: match.id });
+          output = { ok: true, id: match.id, title: match.title, link_sent_separately: true };
         } else if (toolCall.function.name === "submit_ticket") {
           const kind = args.kind === "bug" ? "bug" : "feedback";
           const title = String(args.title ?? "").trim();
@@ -2569,13 +2773,16 @@ export async function runDoeDtcAgentTurn(params: {
       profileUrl,
       feedbackUrl,
       prepareUrl,
+      guideUrl,
       preserveScheduleOffer,
+      preserveGuideSaveOffer,
     }),
     careUrl: assessmentRan ? careUrl : undefined,
     listenUrl,
     profileUrl,
     feedbackUrl,
     prepareUrl,
+    guideUrl,
     workUrl,
     screenshotUrl,
     vaultUrl,
@@ -2586,5 +2793,6 @@ export async function runDoeDtcAgentTurn(params: {
     browserNeedsConfirm,
     assessmentRan,
     preserveScheduleOffer,
+    preserveGuideSaveOffer,
   };
 }

@@ -64,6 +64,7 @@ export const DOEDTC_PROFILE = {
   navLocker: "Locker",
   navShare: "Share",
   navTrackers: "Trackers",
+  navGuides: "Guides",
   navAccountability: "Accountability",
   navFeedback: "Feedback",
   invalidTokenTitle: "Profile unavailable",
@@ -148,6 +149,12 @@ export const DOEDTC_PROFILE = {
   trackersLastEntryLabel: "Last entry",
   trackersNoEntries: "No entries yet.",
   trackersSelectTracker: "Select a tracker",
+  guidesTitle: "Guides",
+  guidesEmpty: "No guides saved yet. Ask Doe in iMessage for a how-to guide.",
+  guidesViewLabel: "Open guide",
+  guidesUnsaveLabel: "Remove from profile",
+  guidesArchiveLabel: "Archive guide",
+  guidesSavedLabel: "Saved to profile",
   accountabilityTitle: "Accountability",
   accountabilityEmpty: "No accountability pacts yet. Text Doe to set up check-ins with a partner or for a family member.",
   accountabilityGoalLabel: "Goal",
@@ -222,6 +229,7 @@ export const DOEDTC_LINQ = {
   profileLinkIntro: "Here's your profile.",
   feedbackLinkIntro: "Track your feedback or bug report here.",
   prepareLinkIntro: "Here's your visit prep summary.",
+  guideLinkIntro: "Here's your guide.",
   listenIntro: "Open Listen to record your appointment. Press End call when you're done.",
   careLinkIntro: "Here's your symptom review.",
   allSetMessage:
@@ -321,6 +329,13 @@ export function doeDtcPrepareUrl(
   return url.toString();
 }
 
+export function doeDtcGuideUrl(token: string, options?: { guide?: string }): string {
+  const url = new URL(`${doeDtcPublicOrigin()}${DOEDTC_PATH}/guide`);
+  url.searchParams.set("t", token);
+  if (options?.guide) url.searchParams.set("g", options.guide);
+  return url.toString();
+}
+
 export function doeDtcViewUrl(): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/view`;
 }
@@ -360,6 +375,18 @@ export const DOEDTC_PREPARE = {
   invalidTokenBody: "Complete Get Started in iMessage to access visit prep.",
   emptyTitle: "Nothing to show yet",
   emptyBody: "Ask Doe to prepare again once you've added meds, symptoms, or trackers.",
+} as const;
+
+export const DOEDTC_GUIDE = {
+  pageTitle: "Guide",
+  subtitle: "A visual how-to from Doe.",
+  invalidTokenTitle: "Guide unavailable",
+  invalidTokenBody: "Complete Get Started in iMessage to access your guides.",
+  saveLabel: "Save to profile",
+  savingLabel: "Saving…",
+  savedLabel: "Saved to profile",
+  openInAppLabel: "Open in profile",
+  archiveLabel: "Archive guide",
 } as const;
 
 export const DOEDTC_VIEW = {

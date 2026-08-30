@@ -517,6 +517,7 @@ export async function handleSymptomInbound(params: {
 
   const replyText = sanitizeDoeDtcReplyText(turn.replyText, {
     preserveScheduleOffer: turn.preserveScheduleOffer,
+    preserveGuideSaveOffer: turn.preserveGuideSaveOffer,
   });
   const replyToMessageId =
     params.inboundMessageId &&
@@ -620,6 +621,23 @@ export async function handleSymptomInbound(params: {
       to: params.user.phone,
       url: turn.prepareUrl,
       idempotencyKey: `doedtc-agent-prepare-${params.user.id}-${idSuffix}`,
+    });
+  }
+
+  if (turn.guideUrl) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.guideLinkIntro,
+      idempotencyKey: `doedtc-agent-guide-intro-${params.user.id}-${idSuffix}`,
+    });
+    await sendDoeDtcLinkOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      url: turn.guideUrl,
+      idempotencyKey: `doedtc-agent-guide-${params.user.id}-${idSuffix}`,
     });
   }
 

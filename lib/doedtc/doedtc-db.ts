@@ -19,6 +19,7 @@ import {
 } from "@/lib/doedtc/doedtc-household";
 import { listAccountabilityPactViewsForProfile } from "@/lib/doedtc/doedtc-accountability-db";
 import { listScheduledTextsForUser } from "@/lib/doedtc/doedtc-scheduled-db";
+import { getDoeDtcGuideById, listSavedGuidesForUser } from "@/lib/doedtc/doedtc-guides-db";
 import { createDoeDtcToken, isTokenExpired, onboardingTokenExpiresAt } from "@/lib/doedtc/doedtc-tokens";
 import type {
   DoeDtcArtifactEntryRow,
@@ -559,6 +560,7 @@ export async function getDoeDtcProfileSnapshot(
     household,
     accountabilityPacts,
     scheduledTexts,
+    guides,
   ] = await Promise.all([
     supabase
       .from("doedtc_users")
@@ -599,6 +601,7 @@ export async function getDoeDtcProfileSnapshot(
       includeWithdrawn: true,
     }),
     listScheduledTextsForUser(viewerUserId),
+    listSavedGuidesForUser(userId),
   ]);
 
   if (userResult.error) throw new Error(userResult.error.message);
@@ -622,6 +625,7 @@ export async function getDoeDtcProfileSnapshot(
     household,
     accountabilityPacts,
     scheduledTexts,
+    guides,
   };
 }
 

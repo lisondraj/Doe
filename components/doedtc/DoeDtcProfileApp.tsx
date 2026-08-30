@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { DoeDtcNav } from "@/components/doedtc/DoeDtcNav";
 import { DoeDtcArtifactView } from "@/components/doedtc/DoeDtcArtifactView";
 import { DoeDtcFeedbackView } from "@/components/doedtc/DoeDtcFeedbackView";
+import { DoeDtcGuideView } from "@/components/doedtc/DoeDtcGuideView";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import {
   DOEDTC_GET_STARTED,
@@ -82,6 +83,7 @@ type DoeDtcProfileAppProps = {
   initialTab: DoeDtcProfileTab;
   initialArtifactId?: string | null;
   initialTicketId?: string | null;
+  initialGuideId?: string | null;
   viewingMemberUserId?: string | null;
 };
 
@@ -92,12 +94,14 @@ export function DoeDtcProfileApp({
   initialTab,
   initialArtifactId = null,
   initialTicketId = null,
+  initialGuideId = null,
   viewingMemberUserId = null,
 }: DoeDtcProfileAppProps) {
   const [tab, setTab] = useState<DoeDtcProfileTab>(initialTab);
   const [snapshot, setSnapshot] = useState(initialSnapshot);
   const [focusedArtifactId, setFocusedArtifactId] = useState<string | null>(initialArtifactId);
   const [focusedTicketId, setFocusedTicketId] = useState<string | null>(initialTicketId);
+  const [focusedGuideId, setFocusedGuideId] = useState<string | null>(initialGuideId);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -177,6 +181,12 @@ export function DoeDtcProfileApp({
       setFocusedTicketId(initialTicketId);
     }
   }, [initialTicketId]);
+
+  useEffect(() => {
+    if (initialGuideId) {
+      setFocusedGuideId(initialGuideId);
+    }
+  }, [initialGuideId]);
 
   useEffect(() => {
     void refetchSnapshot();
@@ -263,6 +273,16 @@ export function DoeDtcProfileApp({
           onAction={runAction}
           focusedArtifactId={focusedArtifactId}
           onFocusArtifact={setFocusedArtifactId}
+        />
+      ) : null}
+      {tab === "guides" ? (
+        <GuidesTab
+          token={token}
+          snapshot={snapshot}
+          busy={busy}
+          onAction={runAction}
+          focusedGuideId={focusedGuideId}
+          onFocusGuide={setFocusedGuideId}
         />
       ) : null}
       {tab === "accountability" ? (
@@ -1188,6 +1208,77 @@ function ShareTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
         >
           {DOEDTC_PROFILE.shareGenerateLabel}
         </button>
+      )}
+    </div>
+  );
+}
+
+function GuidesTab({
+  token,
+  snapshot,
+  busy,
+  onAction,
+  focusedGuideId,
+  onFocusGuide,
+}: TabProps & {
+  token: string;
+  focusedGuideId: string | null;
+  onFocusGuide: (guideId: string | null) => void;
+}) {
+  const activeGuide =
+    snapshot.guides.find((guide) => guide.id === focusedGuideId) ?? snapshot.guides[0] ?? null;
+
+  return (
+    <div>
+      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.guidesTitle}</h2>
+      {snapshot.guides.length === 0 ? (
+        <p className="doedtc-empty">{DOEDTC_PROFILE.guidesEmpty}</p>
+      ) : (
+        <>
+          {snapshot.guides.length > 1 ? (
+            <div className="doedtc-artifact-picker" role="tablist" aria-label="Guides">
+              {snapshot.guides.map((guide) => (
+                <button
+                  key={guide.id}
+                  type="button"
+                  aria-current={activeGuide?.id === guide.id ? "true" : undefined}
+                  onClick={() => onFocusGuide(guide.id)}
+                >
+                  {guide.title}
+                </button>
+              ))}
+            </div>
+          ) : null}
+          {activeGuide ? (
+            <>
+              <div className="doedtc-inline-actions" style={{ marginBottom: "0.85rem" }}>
+                <a
+                  className="doedtc-button doedtc-button--secondary"
+                  href={`/doedtc/guide?t=${encodeURIComponent(token)}&g=${encodeURIComponent(activeGuide.id)}`}
+                >
+                  {DOEDTC_PROFILE.guidesViewLabel}
+                </a>
+                <button
+                  type="button"
+                  className="doedtc-button doedtc-button--secondary"
+                  disabled={busy}
+                  onClick={() => void onAction("unsave_guide", { guideId: activeGuide.id })}
+                >
+                  {DOEDTC_PROFILE.guidesUnsaveLabel}
+                </button>
+                <button
+                  type="button"
+                  className="doedtc-button doedtc-button--danger"
+                  disabled={busy}
+                  onClick={() => void onAction("archive_guide", { guideId: activeGuide.id })}
+                >
+                  {DOEDTC_PROFILE.guidesArchiveLabel}
+                </button>
+              </div>
+              <DoeDtcGuideView guide={activeGuide} />
+            </>
+          ) : null}
+        </>
       )}
     </div>
   );

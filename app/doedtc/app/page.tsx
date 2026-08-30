@@ -53,11 +53,13 @@ const VALID_TABS = new Set<DoeDtcProfileTab>([
   "locker",
   "share",
   "trackers",
+  "guides",
+  "accountability",
   "feedback",
 ]);
 
 type PageProps = {
-  searchParams: Promise<{ t?: string; tab?: string; artifact?: string; ticket?: string; member?: string }>;
+  searchParams: Promise<{ t?: string; tab?: string; artifact?: string; ticket?: string; guide?: string; member?: string }>;
 };
 
 export default async function DoeDtcAppPage({ searchParams }: PageProps) {
@@ -69,6 +71,7 @@ export default async function DoeDtcAppPage({ searchParams }: PageProps) {
     : "dashboard";
   const initialArtifactId = params.artifact?.trim() || null;
   const initialTicketId = params.ticket?.trim() || null;
+  const initialGuideId = params.guide?.trim() || null;
   const viewingMemberUserId = params.member?.trim() || null;
 
   let valid = false;
@@ -96,6 +99,7 @@ export default async function DoeDtcAppPage({ searchParams }: PageProps) {
       initialTab={initialTab}
       initialArtifactId={initialArtifactId}
       initialTicketId={initialTicketId}
+      initialGuideId={initialGuideId}
       viewingMemberUserId={viewingMemberUserId}
     />
   );

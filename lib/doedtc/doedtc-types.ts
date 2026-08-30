@@ -290,6 +290,54 @@ export type DoeDtcPreparationRow = {
   created_at: string;
 };
 
+export type DoeDtcGuideLayout = "howto" | "schedule" | "checklist" | "explainer" | "comparison";
+
+export type DoeDtcGuideBlockKind =
+  | "hero"
+  | "steps"
+  | "callout"
+  | "checklist"
+  | "timeline"
+  | "dose_card"
+  | "site_map"
+  | "do_dont"
+  | "faq"
+  | "facts"
+  | "illustration"
+  | "disclaimer";
+
+export type DoeDtcGuideBlock = {
+  id: string;
+  kind: DoeDtcGuideBlockKind;
+  title?: string;
+  body?: string;
+  tone?: "tip" | "warning" | "info";
+  steps?: Array<{ title: string; body?: string; duration?: string }>;
+  items?: string[] | Array<{ question: string; answer: string }> | Array<{ label: string; value: string }>;
+  entries?: Array<{ label: string; detail?: string }>;
+  medication?: string;
+  dose?: string;
+  cadence?: string;
+  site?: string;
+  sites?: Array<"abdomen" | "thigh" | "arm">;
+  dos?: string[];
+  donts?: string[];
+  preset?: "pen" | "fridge" | "clock" | "rotate";
+};
+
+export type DoeDtcGuideRow = {
+  id: string;
+  user_id: string;
+  title: string;
+  topic: string;
+  layout: DoeDtcGuideLayout;
+  blocks: DoeDtcGuideBlock[];
+  saved_at: string | null;
+  archived_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type DoeDtcAccountabilityPactStatus =
   | "draft"
   | "pending_partner"
@@ -431,6 +479,7 @@ export type DoeDtcProfileSnapshot = {
   household: DoeDtcHouseholdSnapshot;
   accountabilityPacts: DoeDtcAccountabilityPactView[];
   scheduledTexts: DoeDtcScheduledTextRow[];
+  guides: DoeDtcGuideRow[];
 };
 
 export type DoeDtcMedicationRow = {
@@ -518,6 +567,7 @@ export type DoeDtcProfileTab =
   | "locker"
   | "share"
   | "trackers"
+  | "guides"
   | "accountability"
   | "feedback";
 

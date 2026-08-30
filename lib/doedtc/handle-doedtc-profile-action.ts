@@ -27,6 +27,11 @@ import {
   updateDoeDtcArtifactEntry,
 } from "@/lib/doedtc/doedtc-db";
 import {
+  archiveDoeDtcGuide,
+  saveDoeDtcGuide,
+  unsaveDoeDtcGuide,
+} from "@/lib/doedtc/doedtc-guides-db";
+import {
   pauseAccountabilityPact,
   resumeAccountabilityPact,
   withdrawAccountabilityPact,
@@ -381,6 +386,24 @@ export async function handleDoeDtcProfileAction(params: {
           household: snapshotBefore.household.household,
         });
       }
+      break;
+    }
+    case "save_guide": {
+      const guideId = String(params.payload.guideId ?? "").trim();
+      if (!guideId) throw new Error("Missing guide.");
+      await saveDoeDtcGuide({ userId: user.id, guideId });
+      break;
+    }
+    case "unsave_guide": {
+      const guideId = String(params.payload.guideId ?? "").trim();
+      if (!guideId) throw new Error("Missing guide.");
+      await unsaveDoeDtcGuide({ userId: user.id, guideId });
+      break;
+    }
+    case "archive_guide": {
+      const guideId = String(params.payload.guideId ?? "").trim();
+      if (!guideId) throw new Error("Missing guide.");
+      await archiveDoeDtcGuide({ userId: user.id, guideId });
       break;
     }
     default:
