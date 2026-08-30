@@ -21,7 +21,7 @@ import {
 import { addDoeDtcMem0Turn } from "@/lib/doedtc/doedtc-memory";
 import { normalizePhoneToE164 } from "@/lib/doedtc/doedtc-phone";
 import { redactDoeDtcLogText } from "@/lib/doedtc/doedtc-privacy";
-import { linqAddReaction, linqSendLink, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
+import { linqAddReaction, linqSendLink, linqSendMedia, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 const OPT_OUT_KEYWORDS = new Set(["STOP", "UNSUBSCRIBE", "OPTOUT", "CANCEL", "END", "QUIT"]);
@@ -183,6 +183,28 @@ async function sendDoeDtcLinkOutbound(params: {
     userId: params.user.id,
     direction: "outbound",
     body: params.url,
+  });
+}
+
+async function sendDoeDtcMediaOutbound(params: {
+  user: DoeDtcUserRow;
+  chatId?: string;
+  to?: string;
+  url: string;
+  caption?: string;
+  idempotencyKey: string;
+}): Promise<void> {
+  await linqSendMedia({
+    to: params.to ?? params.user.phone,
+    chatId: params.chatId ?? params.user.linq_chat_id ?? undefined,
+    url: params.url,
+    caption: params.caption,
+    idempotencyKey: params.idempotencyKey,
+  });
+  await logDoeDtcMessage({
+    userId: params.user.id,
+    direction: "outbound",
+    body: params.caption ? `${params.caption} ${params.url}` : params.url,
   });
 }
 
@@ -437,6 +459,7 @@ export async function handleSymptomInbound(params: {
       turn.listenUrl ||
       turn.profileUrl ||
       turn.workUrl ||
+      turn.screenshotUrl ||
       turn.vaultUrl ||
       turn.liveViewUrl ||
       turn.sessionUrl,
@@ -513,7 +536,16 @@ export async function handleSymptomInbound(params: {
     });
   }
 
-  if (turn.workUrl) {
+  if (turn.screenshotUrl) {
+    await sendDoeDtcMediaOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      url: turn.screenshotUrl,
+      caption: DOEDTC_LINQ.screenshotIntro,
+      idempotencyKey: `doedtc-agent-shot-${params.user.id}-${idSuffix}`,
+    });
+  } else if (turn.workUrl) {
     await sendDoeDtcOutbound({
       user: params.user,
       chatId,

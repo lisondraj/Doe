@@ -12,7 +12,12 @@ export type LinqLinkPart = {
   value: string;
 };
 
-export type LinqMessagePart = LinqTextPart | LinqLinkPart;
+export type LinqMediaPart = {
+  type: "media";
+  url: string;
+};
+
+export type LinqMessagePart = LinqTextPart | LinqLinkPart | LinqMediaPart;
 
 export type LinqSendMessageResponse = {
   chat_id: string;
@@ -167,6 +172,26 @@ export async function linqSendLink(params: {
     to: params.to,
     chatId: params.chatId,
     parts: [{ type: "link", value: params.url }],
+    idempotencyKey: params.idempotencyKey,
+  });
+}
+
+export async function linqSendMedia(params: {
+  to?: string;
+  chatId?: string;
+  url: string;
+  caption?: string;
+  idempotencyKey?: string;
+}): Promise<LinqSendMessageResponse | { message?: { id: string } }> {
+  const parts: LinqMessagePart[] = [];
+  if (params.caption?.trim()) {
+    parts.push({ type: "text", value: params.caption.trim() });
+  }
+  parts.push({ type: "media", url: params.url });
+  return linqSendParts({
+    to: params.to,
+    chatId: params.chatId,
+    parts,
     idempotencyKey: params.idempotencyKey,
   });
 }

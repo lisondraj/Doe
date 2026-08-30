@@ -55,6 +55,14 @@ test("sanitizeDoeDtcReplyText strips URLs from replies", () => {
   assert.ok(!cleaned.includes("https://"));
 });
 
+test("sanitizeDoeDtcReplyText usually strips feel-free closers", () => {
+  const cleaned = sanitizeDoeDtcReplyText(
+    "Got it. Feel free to let me know if you have any questions.",
+    { keepCloserRate: 0 },
+  );
+  assert.equal(cleaned, "Got it");
+});
+
 test("normalizeDoeDtcFamilyRelationship maps son and daughter to child", () => {
   assert.equal(normalizeDoeDtcFamilyRelationship("son"), "child");
   assert.equal(normalizeDoeDtcFamilyRelationship("daughter"), "child");

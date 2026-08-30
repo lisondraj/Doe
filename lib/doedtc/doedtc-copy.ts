@@ -163,9 +163,11 @@ export const DOEDTC_LINQ = {
   profileLinkIntro: "Here's your profile.",
   listenIntro: "Open Listen to record your appointment. Press End call when you're done.",
   careLinkIntro: "Here's your symptom review.",
-  allSetMessage: "All set! Let's get started. Text your symptoms anytime.",
+  allSetMessage:
+    "All set! Let's get started. Text your symptoms anytime. Let me know if you want to learn more about what I can do.",
   assessmentIntro: "Here's what I found based on what you shared:",
   workIntro: "Here's what I found in the browser.",
+  screenshotIntro: "Here's a screenshot of the page.",
   vaultIntro: "Use this secure page to sign in. Doe never stores your password in iMessage.",
   liveViewIntro: "Open Live View to sign in yourself. Doe will keep the session ready afterward.",
   sessionIntro: "Watch Doe work live — browser and tasks in one place.",

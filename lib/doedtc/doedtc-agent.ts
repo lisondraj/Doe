@@ -249,7 +249,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "start_browser_task",
       description:
-        "Look something up on the web. For approved health and reference sites (Mayo, CDC, NIH, MedlinePlus, Wikipedia, Google), call immediately with the site URL or a search topic. Opens the page and returns an excerpt plus a preview link.",
+        "Look something up on the web. For approved health and reference sites (Mayo, CDC, NIH, MedlinePlus, Wikipedia, Google), call immediately with the site URL or a search topic. Opens the page, screenshots it, and sends the screenshot to the patient.",
       parameters: {
         type: "object",
         properties: {
@@ -295,7 +295,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "browser_snapshot",
-      description: "Capture a screenshot preview and return a short page excerpt.",
+      description:
+        "Screenshot the current browser page and send the image to the patient in iMessage. Use when they ask for a screenshot, picture, or to see the page.",
       parameters: {
         type: "object",
         properties: {
@@ -334,7 +335,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "show_session",
       description:
-        "Send the Doe live session page when the patient wants to watch browsing and a browser task is active. Never send the raw Kernel URL.",
+        "Send the Doe live session page so the patient can watch the browser work. Use when they ask to watch, stream, see a live session, or follow along — if a browser task is active. Never say you cannot stream. Never send the raw Kernel URL.",
       parameters: {
         type: "object",
         properties: {},
@@ -405,6 +406,7 @@ export type DoeDtcAgentTurnResult = {
   listenUrl?: string;
   profileUrl?: string;
   workUrl?: string;
+  screenshotUrl?: string;
   vaultUrl?: string;
   liveViewUrl?: string;
   sessionUrl?: string;
@@ -416,12 +418,18 @@ export type DoeDtcAgentTurnResult = {
 
 const URL_IN_TEXT = /https?:\/\/\S+/gi;
 const CLOSER_TAIL =
-  /(?:\s*[.!]+\s*)?(?:feel free to ask(?: me)?(?:(?: if you have)?(?: any)? questions?)?|let me know if (?:you have )?(?:any )?(?:questions|you need anything)|don'?t hesitate to (?:ask|reach out))[!.,]?\s*$/i;
+  /(?:\s*[.!]+\s*)?(?:feel free to (?:ask|let me know|reach out|text|message)(?:\b.{0,80})?|let me know if (?:you(?:'d| would)? (?:like|want|need)|you have |there's ).{0,80}|just let me know(?:\b.{0,60})?|don'?t hesitate to (?:ask|reach out|text).{0,40}|happy to (?:help|chat|look).{0,40}|(?:is there )?anything else I can (?:help|do).{0,40}|what else can I (?:help|do).{0,40})[!?.,]?\s*$/i;
+const KEEP_CLOSER_RATE = 0.18;
 
-export function sanitizeDoeDtcReplyText(text: string): string {
-  return text
-    .replace(URL_IN_TEXT, "")
-    .replace(CLOSER_TAIL, "")
+export function sanitizeDoeDtcReplyText(
+  text: string,
+  options?: { keepCloserRate?: number },
+): string {
+  const withoutUrls = text.replace(URL_IN_TEXT, "");
+  const stripped = withoutUrls.replace(CLOSER_TAIL, "");
+  const rate = options?.keepCloserRate ?? KEEP_CLOSER_RATE;
+  const keepCloser = stripped !== withoutUrls && Math.random() < rate;
+  return (keepCloser ? withoutUrls : stripped)
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/[ \t]{2,}/g, " ")
@@ -513,14 +521,38 @@ function replyClaimsProfileLink(text: string): boolean {
   );
 }
 
+function inboundWantsLiveSession(text: string): boolean {
+  return /\b(watch|stream|live(?:\s+(?:view|session|browser|sandbox))?|see (?:the )?(?:browser|session|sandbox)|follow along)\b/i.test(
+    text,
+  );
+}
+
+function replyRefusesLiveSession(text: string): boolean {
+  return /\b(can'?t|cannot|unable to|don'?t|won'?t|not able to)\b.{0,60}\b(stream|live|watch|session)\b/i.test(
+    text,
+  );
+}
+
+function replyClaimsSessionLink(text: string): boolean {
+  return (
+    /\b(session|live view|watch|sandbox)\b/i.test(text) &&
+    /\b(link|send(?:ing)?|here'?s)\b/i.test(text)
+  );
+}
+
 async function fulfillClaimedLinks(params: {
   user: DoeDtcUserRow;
   replyText: string;
+  inboundText: string;
   listenUrl?: string;
   profileUrl?: string;
-}): Promise<{ listenUrl?: string; profileUrl?: string }> {
+  sessionUrl?: string;
+  activeBrowserJobId: string | null;
+}): Promise<{ listenUrl?: string; profileUrl?: string; sessionUrl?: string; replyText: string }> {
   let listenUrl = params.listenUrl;
   let profileUrl = params.profileUrl;
+  let sessionUrl = params.sessionUrl;
+  let replyText = params.replyText;
 
   if (!listenUrl && replyClaimsListenLink(params.replyText)) {
     const session = await createDoeDtcListenSession({ userId: params.user.id });
@@ -531,7 +563,21 @@ async function fulfillClaimedLinks(params: {
     profileUrl = doeDtcAppUrl(params.user.care_token);
   }
 
-  return { listenUrl, profileUrl };
+  const shouldSendSession =
+    Boolean(params.activeBrowserJobId) &&
+    (inboundWantsLiveSession(params.inboundText) ||
+      replyClaimsSessionLink(params.replyText) ||
+      replyRefusesLiveSession(params.replyText));
+
+  if (!sessionUrl && shouldSendSession) {
+    sessionUrl = doeDtcSessionUrl(params.user.care_token);
+  }
+
+  if (sessionUrl && replyRefusesLiveSession(replyText)) {
+    replyText = "Sending a live session link so you can watch.";
+  }
+
+  return { listenUrl, profileUrl, sessionUrl, replyText };
 }
 
 function buildReplyFromTurnState(params: {
@@ -540,6 +586,7 @@ function buildReplyFromTurnState(params: {
   browserNeedsConfirm: boolean;
   browserExcerpt?: string;
   workUrl?: string;
+  screenshotUrl?: string;
   vaultUrl?: string;
   liveViewUrl?: string;
   sessionUrl?: string;
@@ -556,6 +603,7 @@ function buildReplyFromTurnState(params: {
     return snippet.length > 0 ? snippet : "Here's what I found — sending a preview.";
   }
   if (params.workUrl) return "Here's what I found — sending a preview.";
+  if (params.screenshotUrl) return "Here's a screenshot of the page.";
   if (params.vaultUrl) return "Sending a secure sign-in link.";
   if (params.liveViewUrl) return "Sending a Live View link so you can sign in.";
   if (params.sessionUrl) return "Sending a live session link so you can watch.";
@@ -610,9 +658,10 @@ What you can do:
 - Add family members to the Family chart (log_family_member) — never remember_fact for family.
 - Send a Listen link to record and transcribe visits (start_listen).
 - Send the profile / dashboard link (send_profile_link).
-- Look up health info on approved sites via start_browser_task (Mayo, CDC, NIH, MedlinePlus, Wikipedia, Google).
+- Look up health info on approved sites via start_browser_task (Mayo, CDC, NIH, MedlinePlus, Wikipedia, Google). Research tasks screenshot the page and send that image in iMessage.
+- Screenshot the current page with browser_snapshot when they ask for a picture, screenshot, or to see the page.
 - Help with patient portals via request_vault or request_live_login — never ask for passwords in iMessage.
-- Send the live session page (show_session) when the patient wants to watch browsing and a browser task is active — not for portal sign-in.
+- Send the live session page (show_session) when they want to watch, stream, or follow the browser and a task is active. You can send a live session. Never say you cannot stream or watch a live browser.
 - Store preferences and general context with remember_fact — not for meds, conditions, or family chart entries.
 
 Parallel work:
@@ -631,9 +680,9 @@ Core invariant:
 
 Style:
 - Short iMessage replies (1-4 sentences). Warm, plain language.
-- Ask 1-2 clarifying questions when details are thin.
+- Only ask a clarifying question when you cannot act without it.
 - Refer back to appointments, family, and memories naturally.
-- Do not end with "feel free to ask" or similar closers.
+- Do not invite another message on most turns. A soft closer ("let me know if…") is fine rarely — not most replies.
 
 Safety:
 - Never invent appointment dates or times. Use log_appointment with approximate timing when vague.
@@ -821,6 +870,7 @@ export async function runDoeDtcAgentTurn(params: {
   let listenUrl: string | undefined;
   let profileUrl: string | undefined;
   let workUrl: string | undefined;
+  let screenshotUrl: string | undefined;
   let vaultUrl: string | undefined;
   let liveViewUrl: string | undefined;
   let sessionUrl: string | undefined;
@@ -853,11 +903,16 @@ export async function runDoeDtcAgentTurn(params: {
       const fulfilled = await fulfillClaimedLinks({
         user: params.user,
         replyText,
+        inboundText: params.inboundText,
         listenUrl,
         profileUrl,
+        sessionUrl,
+        activeBrowserJobId,
       });
       listenUrl = fulfilled.listenUrl;
       profileUrl = fulfilled.profileUrl;
+      sessionUrl = fulfilled.sessionUrl;
+      replyText = fulfilled.replyText;
 
       if (!message.content?.trim()) {
         replyText = buildReplyFromTurnState({
@@ -879,6 +934,7 @@ export async function runDoeDtcAgentTurn(params: {
         listenUrl,
         profileUrl,
         workUrl,
+        screenshotUrl,
         vaultUrl,
         liveViewUrl,
         sessionUrl,
@@ -1041,6 +1097,9 @@ export async function runDoeDtcAgentTurn(params: {
             if (started.workUrl) {
               workUrl = started.workUrl;
             }
+            if (started.screenshotUrl) {
+              screenshotUrl = started.screenshotUrl;
+            }
             if (started.excerpt) {
               browserExcerpt = started.excerpt;
             }
@@ -1051,6 +1110,7 @@ export async function runDoeDtcAgentTurn(params: {
               url: started.url,
               title: started.title,
               excerpt: started.excerpt,
+              screenshot_sent_separately: Boolean(started.screenshotUrl),
               link_sent_separately: Boolean(started.workUrl),
             };
           }
@@ -1085,6 +1145,9 @@ export async function runDoeDtcAgentTurn(params: {
           if (result.workUrl) {
             workUrl = result.workUrl;
           }
+          if (result.screenshotUrl) {
+            screenshotUrl = result.screenshotUrl;
+          }
           if (result.excerpt) {
             browserExcerpt = result.excerpt;
           }
@@ -1093,6 +1156,7 @@ export async function runDoeDtcAgentTurn(params: {
             url: result.url,
             title: result.title,
             excerpt: result.excerpt,
+            screenshot_sent_separately: Boolean(result.screenshotUrl),
             link_sent_separately: Boolean(result.workUrl),
           };
         } else if (toolCall.function.name === "request_vault") {
@@ -1157,6 +1221,9 @@ export async function runDoeDtcAgentTurn(params: {
           if (result.workUrl) {
             workUrl = result.workUrl;
           }
+          if (result.screenshotUrl) {
+            screenshotUrl = result.screenshotUrl;
+          }
           if (result.excerpt) {
             browserExcerpt = result.excerpt;
           }
@@ -1204,15 +1271,19 @@ export async function runDoeDtcAgentTurn(params: {
   const fulfilled = await fulfillClaimedLinks({
     user: params.user,
     replyText: lastModelContent ?? "",
+    inboundText: params.inboundText,
     listenUrl,
     profileUrl,
+    sessionUrl,
+    activeBrowserJobId,
   });
   listenUrl = fulfilled.listenUrl;
   profileUrl = fulfilled.profileUrl;
+  sessionUrl = fulfilled.sessionUrl;
 
   return {
     replyText: buildReplyFromTurnState({
-      modelContent: lastModelContent,
+      modelContent: fulfilled.replyText,
       assessmentSummary,
       browserNeedsConfirm,
       browserExcerpt,
@@ -1227,6 +1298,7 @@ export async function runDoeDtcAgentTurn(params: {
     listenUrl,
     profileUrl,
     workUrl,
+    screenshotUrl,
     vaultUrl,
     liveViewUrl,
     sessionUrl,

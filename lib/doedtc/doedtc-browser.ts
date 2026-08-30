@@ -42,6 +42,7 @@ type BrowserExtract = {
 type BrowserSnapshotResult = BrowserExtract & {
   workToken?: string;
   workUrl?: string;
+  screenshotUrl?: string;
 };
 
 export type StartDoeDtcBrowserTaskResult =
@@ -53,6 +54,7 @@ export type StartDoeDtcBrowserTaskResult =
       title?: string;
       excerpt?: string;
       workUrl?: string;
+      screenshotUrl?: string;
     }
   | { ok: false; error: string; user_message: string };
 
@@ -387,6 +389,7 @@ export async function startDoeDtcBrowserTask(params: {
       title: snapshot.title,
       excerpt: snapshot.excerpt,
       workUrl: snapshot.workUrl,
+      screenshotUrl: snapshot.screenshotUrl,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not start browser task.";
@@ -497,6 +500,7 @@ export async function snapshotDoeDtcBrowser(params: {
     ...extract,
     workToken: shot.workToken,
     workUrl: shot.workUrl,
+    screenshotUrl: shot.blobUrl,
   };
 }
 
