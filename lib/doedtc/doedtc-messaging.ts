@@ -5,6 +5,7 @@ import {
   doeDtcGetStartedUrl,
 } from "@/lib/doedtc/doedtc-copy";
 import {
+  activateDoeDtcUser,
   beginDoeDtcOnboarding,
   ensureDoeDtcUserForInbound,
   getDoeDtcProfileLists,
@@ -17,7 +18,7 @@ import {
   upsertInvitedDoeDtcUser,
 } from "@/lib/doedtc/doedtc-db";
 import { normalizePhoneToE164 } from "@/lib/doedtc/doedtc-phone";
-import { linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
+import { linqSendLink, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
 import type { DoeDtcAssessmentResult, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 const OPT_OUT_KEYWORDS = new Set(["STOP", "UNSUBSCRIBE", "OPTOUT", "CANCEL", "END", "QUIT"]);
@@ -91,13 +92,7 @@ export function extractChatMetadata(payload: unknown): {
 
 export function extractWebhookEventType(payload: unknown, headerEvent?: string | null): string {
   const body = payload as LinqWebhookPayload;
-  return (
-    headerEvent ??
-    body.event_type ??
-    body.type ??
-    body.event ??
-    ""
-  );
+  return headerEvent ?? body.event_type ?? body.type ?? body.event ?? "";
 }
 
 export function normalizeInboundCommand(text: string): string {
@@ -138,10 +133,31 @@ async function sendDoeDtcOutbound(params: {
   });
 }
 
+async function sendDoeDtcLinkOutbound(params: {
+  user: DoeDtcUserRow;
+  chatId?: string;
+  to?: string;
+  url: string;
+  idempotencyKey: string;
+}): Promise<void> {
+  await linqSendLink({
+    to: params.to ?? params.user.phone,
+    chatId: params.chatId ?? params.user.linq_chat_id ?? undefined,
+    url: params.url,
+    idempotencyKey: params.idempotencyKey,
+  });
+  await logDoeDtcMessage({
+    userId: params.user.id,
+    direction: "outbound",
+    body: params.url,
+  });
+}
+
 export async function sendDoeDtcConsentMessage(params: {
   user: DoeDtcUserRow;
   chatId?: string;
   fromNumber?: string;
+  idempotencyKey?: string;
 }): Promise<DoeDtcUserRow> {
   const updated = await markDoeDtcUserPendingConfirm({
     userId: params.user.id,
@@ -152,11 +168,49 @@ export async function sendDoeDtcConsentMessage(params: {
   await sendDoeDtcOutbound({
     user: updated,
     chatId: params.chatId ?? updated.linq_chat_id ?? undefined,
+    to: updated.phone,
     text: DOEDTC_LINQ.consentMessage,
-    idempotencyKey: `doedtc-consent-${updated.id}`,
+    idempotencyKey: params.idempotencyKey ?? `doedtc-consent-${updated.id}`,
   });
 
   return updated;
+}
+
+export async function sendGetStartedMessages(params: {
+  user: DoeDtcUserRow;
+  phone: string;
+  chatId?: string;
+  fromNumber?: string;
+}): Promise<void> {
+  const onboarded = await beginDoeDtcOnboarding({
+    phone: params.phone,
+    chatId: params.chatId ?? params.user.linq_chat_id,
+    fromNumber: params.fromNumber ?? params.user.linq_from_number,
+  });
+
+  const getStartedUrl = doeDtcGetStartedUrl(onboarded.onboarding_token ?? "");
+  const chatId = params.chatId ?? onboarded.linq_chat_id ?? undefined;
+
+  await sendDoeDtcOutbound({
+    user: onboarded,
+    chatId,
+    to: params.phone,
+    text: DOEDTC_LINQ.getStartedIntro,
+    idempotencyKey: `doedtc-get-started-intro-${onboarded.id}-${onboarded.onboarding_token}`,
+  });
+
+  await sendDoeDtcLinkOutbound({
+    user: onboarded,
+    chatId,
+    to: params.phone,
+    url: getStartedUrl,
+    idempotencyKey: `doedtc-get-started-link-${onboarded.id}-${onboarded.onboarding_token}`,
+  });
+
+  await shareDoeDtcLinqContactCard({
+    chatId,
+    fromNumber: params.fromNumber ?? onboarded.linq_from_number,
+  });
 }
 
 export async function startDoeDtcFromLanding(phoneRaw: string): Promise<{ phone: string }> {
@@ -172,14 +226,14 @@ export async function startDoeDtcFromLanding(phoneRaw: string): Promise<{ phone:
     idempotencyKey: `doedtc-start-${user.id}`,
   });
 
-  const updated = await markDoeDtcUserPendingConfirm({
+  await updateDoeDtcUserChat({
     userId: user.id,
     chatId: response.chat_id,
     fromNumber: response.from,
   });
 
   await logDoeDtcMessage({
-    userId: updated.id,
+    userId: user.id,
     direction: "outbound",
     body: DOEDTC_LINQ.helloMessage,
     linqMessageId: response.message?.id ?? null,
@@ -190,18 +244,6 @@ export async function startDoeDtcFromLanding(phoneRaw: string): Promise<{ phone:
     fromNumber: response.from,
   });
 
-  try {
-    await sendDoeDtcOutbound({
-      user: updated,
-      chatId: response.chat_id,
-      to: phone,
-      text: DOEDTC_LINQ.consentMessage,
-      idempotencyKey: `doedtc-consent-landing-${updated.id}`,
-    });
-  } catch (error) {
-    console.warn("[doedtc/start] consent follow-up failed:", error);
-  }
-
   return { phone };
 }
 
@@ -211,36 +253,28 @@ export async function handleHiDoeInbound(params: {
   chatId?: string;
   fromNumber?: string;
 }): Promise<void> {
-  const chatId = params.chatId ?? params.user.linq_chat_id ?? undefined;
-
-  if (params.user.status === "pending_confirm") {
+  if (params.user.status === "active") {
     await sendDoeDtcOutbound({
       user: params.user,
-      chatId,
-      text: DOEDTC_LINQ.confirmReminder,
-      idempotencyKey: `doedtc-confirm-reminder-${params.user.id}`,
+      chatId: params.chatId,
+      to: params.phone,
+      text: "You're already set up with Doe. Text your symptoms anytime.",
+      idempotencyKey: `doedtc-already-active-hi-${params.user.id}`,
     });
     return;
   }
 
-  if (params.user.status === "onboarding") {
-    await handleConfirmInbound({
-      user: params.user,
-      phone: params.phone,
-      chatId,
-      fromNumber: params.fromNumber,
-    });
-    return;
-  }
-
-  if (params.user.status === "invited") {
+  if (params.user.status === "pending_confirm") {
     await sendDoeDtcConsentMessage({
       user: params.user,
-      chatId,
+      chatId: params.chatId,
       fromNumber: params.fromNumber,
+      idempotencyKey: `doedtc-consent-hi-${params.user.id}-${Date.now()}`,
     });
     return;
   }
+
+  await sendGetStartedMessages(params);
 }
 
 export async function handleConfirmInbound(params: {
@@ -249,43 +283,34 @@ export async function handleConfirmInbound(params: {
   chatId?: string;
   fromNumber?: string;
 }): Promise<void> {
-  const onboarded = await beginDoeDtcOnboarding({
-    phone: params.phone,
-    chatId: params.chatId ?? params.user.linq_chat_id,
-    fromNumber: params.fromNumber ?? params.user.linq_from_number,
-  });
+  if (params.user.status !== "pending_confirm") {
+    if (params.user.status === "onboarding" || params.user.status === "invited") {
+      await sendGetStartedMessages(params);
+      return;
+    }
+    if (params.user.status === "active") {
+      await sendDoeDtcOutbound({
+        user: params.user,
+        chatId: params.chatId,
+        to: params.phone,
+        text: "You're already set up with Doe. Text your symptoms anytime.",
+        idempotencyKey: `doedtc-already-active-${params.user.id}`,
+      });
+    }
+    return;
+  }
 
-  const getStartedUrl = doeDtcGetStartedUrl(onboarded.onboarding_token ?? "");
-  const chatId = params.chatId ?? onboarded.linq_chat_id ?? undefined;
-  const body = `${DOEDTC_LINQ.getStartedIntro}\n${getStartedUrl}`;
-
-  await sendDoeDtcOutbound({
-    user: onboarded,
-    chatId,
-    to: params.phone,
-    text: body,
-    idempotencyKey: `doedtc-get-started-${onboarded.id}-${onboarded.onboarding_token}`,
-  });
-
-  await shareDoeDtcLinqContactCard({
-    chatId,
-    fromNumber: params.fromNumber ?? onboarded.linq_from_number,
-  });
+  const activated = await activateDoeDtcUser(params.user.id);
+  await sendDoeDtcAllSet(activated);
 }
 
 export async function sendDoeDtcAllSet(user: DoeDtcUserRow): Promise<void> {
-  const chatId = user.linq_chat_id ?? undefined;
-  await linqSendText({
+  await sendDoeDtcOutbound({
+    user,
+    chatId: user.linq_chat_id ?? undefined,
     to: user.phone,
-    chatId,
     text: DOEDTC_LINQ.allSetMessage,
     idempotencyKey: `doedtc-all-set-${user.id}`,
-  });
-
-  await logDoeDtcMessage({
-    userId: user.id,
-    direction: "outbound",
-    body: DOEDTC_LINQ.allSetMessage,
   });
 }
 
@@ -321,19 +346,26 @@ export async function handleSymptomInbound(params: {
 
   const careUrl = doeDtcCareUrl(params.user.care_token);
   const chatId = params.user.linq_chat_id ?? undefined;
-  const summary = `${DOEDTC_LINQ.assessmentIntro}\n\n${result.summary}\n\n${careUrl}`;
+  const summary = `${DOEDTC_LINQ.assessmentIntro}\n\n${result.summary}`;
 
   await linqSendText({
     to: params.user.phone,
     chatId,
     text: summary,
-    idempotencyKey: `doedtc-assessment-${params.user.id}-${params.webhookEventId ?? Date.now()}`,
+    idempotencyKey: `doedtc-assessment-summary-${params.user.id}-${params.webhookEventId ?? Date.now()}`,
+  });
+
+  await linqSendLink({
+    to: params.user.phone,
+    chatId,
+    url: careUrl,
+    idempotencyKey: `doedtc-assessment-link-${params.user.id}-${params.webhookEventId ?? Date.now()}`,
   });
 
   await logDoeDtcMessage({
     userId: params.user.id,
     direction: "outbound",
-    body: summary,
+    body: `${summary}\n${careUrl}`,
   });
 }
 
@@ -466,27 +498,7 @@ export async function processDoeDtcInboundWebhook(params: {
   }
 
   if (isConfirmMessage(text)) {
-    if (user.status === "active") {
-      await sendDoeDtcOutbound({
-        user,
-        chatId,
-        text: "You're already set up with Doe. Text your symptoms anytime.",
-        idempotencyKey: `doedtc-already-active-${user.id}`,
-      });
-      return;
-    }
-
-    if (user.status === "onboarding") {
-      await handleConfirmInbound({ user, phone, chatId, fromNumber });
-      return;
-    }
-
-    if (user.status === "pending_confirm" || user.status === "invited") {
-      await handleConfirmInbound({ user, phone, chatId, fromNumber });
-      return;
-    }
-
-    await sendDoeDtcConsentMessage({ user, chatId, fromNumber });
+    await handleConfirmInbound({ user, phone, chatId, fromNumber });
     return;
   }
 
@@ -499,28 +511,10 @@ export async function processDoeDtcInboundWebhook(params: {
     return;
   }
 
-  if (user.status === "pending_confirm") {
-    await sendDoeDtcOutbound({
-      user,
-      chatId,
-      text: DOEDTC_LINQ.confirmReminder,
-      idempotencyKey: `doedtc-confirm-reminder-${user.id}-${params.webhookEventId ?? Date.now()}`,
-    });
-    return;
-  }
-
   if (user.status === "onboarding") {
-    const chatId = user.linq_chat_id ?? undefined;
-    const getStartedUrl = doeDtcGetStartedUrl(user.onboarding_token ?? "");
-    await sendDoeDtcOutbound({
-      user,
-      chatId,
-      to: user.phone,
-      text: `${DOEDTC_LINQ.getStartedIntro}\n${getStartedUrl}`,
-      idempotencyKey: `doedtc-onboarding-reminder-${user.id}`,
-    });
+    await sendGetStartedMessages({ user, phone, chatId, fromNumber });
     return;
   }
 
-  await handleHiDoeInbound({ user, phone, chatId, fromNumber });
+  // invited / pending_confirm: wait for Hi Doe or CONFIRM; no stray reminders
 }

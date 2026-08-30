@@ -8,14 +8,13 @@ export const DOEDTC_LANDING = {
   eyebrow: "Health AI companion",
   headline: "Meet Doe.",
   subhead:
-    "A personal health companion you can text on iMessage. Share symptoms, get clinical evidence, and understand what might be going on — in plain language.",
+    "A personal health companion you can text on iMessage. Share symptoms, get clinical evidence, and understand what might be going on in plain language.",
   phoneLabel: "Your phone number",
   phonePlaceholder: "(555) 555-0100",
   submitLabel: "Text me to start",
   submittingLabel: "Sending…",
   successTitle: "Check iMessage",
-  successBody:
-    "Doe just texted you in iMessage. Reply Hi Doe, then type CONFIRM to continue.",
+  successBody: "Doe just texted you. Reply Hi Doe to get your Get Started link.",
   errorGeneric: "Something went wrong. Please try again.",
 } as const;
 
@@ -34,8 +33,9 @@ export const DOEDTC_GET_STARTED = {
   submittingLabel: "Saving…",
   invalidTokenTitle: "Link expired",
   invalidTokenBody: "Text Hi Doe to your Doe number to get a fresh Get Started link.",
-  allSetTitle: "All set!",
-  allSetBody: "Let's get started. Open Messages to continue with Doe.",
+  allSetTitle: "Almost there",
+  allSetBody:
+    "Open Messages. Doe sent a confirmation. Type CONFIRM to finish and start using Doe.",
   openMessagesLabel: "Open Messages",
 } as const;
 
@@ -55,12 +55,12 @@ export const DOEDTC_CARE = {
 } as const;
 
 export const DOEDTC_LINQ = {
-  helloMessage: "Hey — I'm Doe, your health companion. Reply Hi Doe when you're ready to get started.",
+  helloMessage:
+    "Hey, I'm Doe, your health companion. Reply Hi Doe when you're ready to get started.",
   consentMessage:
     "Before we get started: Doe is an AI health companion that supports your entire health journey. However, by using Doe, you confirm that you are voluntarily sharing information regarding your health. Doe has very strict data-retention policies in place that do not save or sell your data. Type CONFIRM before moving forward.",
-  confirmReminder: "When you're ready, type CONFIRM to continue.",
-  getStartedIntro: "Get Started with Doe — tap to set up your profile:",
-  allSetMessage: "All set! Let's get started.",
+  getStartedIntro: "Get Started with Doe. Tap the link below to set up your profile.",
+  allSetMessage: "All set! Let's get started. Text your symptoms anytime.",
   assessmentIntro: "Here's what I found based on what you shared:",
 } as const;
 

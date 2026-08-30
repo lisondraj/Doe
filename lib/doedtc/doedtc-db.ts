@@ -74,6 +74,9 @@ export async function beginDoeDtcOnboarding(params: {
     if (existing.status === "opted_out") {
       throw new Error("This number has opted out of Doe messages.");
     }
+    if (existing.status === "pending_confirm" || existing.status === "active") {
+      throw new Error("This number already finished Get Started. Type CONFIRM in iMessage if needed.");
+    }
     const { data, error } = await supabase
       .from("doedtc_users")
       .update({
@@ -214,7 +217,7 @@ export async function saveDoeDtcOnboarding(params: {
   whyDoe: string;
 }): Promise<DoeDtcUserRow> {
   const user = await getDoeDtcUserByOnboardingToken(params.token);
-  if (!user || isTokenExpired(user.onboarding_token_expires_at)) {
+  if (!user || user.status !== "onboarding" || isTokenExpired(user.onboarding_token_expires_at)) {
     throw new Error("This Get Started link is invalid or expired.");
   }
 
@@ -225,7 +228,7 @@ export async function saveDoeDtcOnboarding(params: {
       full_name: params.fullName,
       email: params.email,
       why_doe: params.whyDoe,
-      status: "active",
+      status: "pending_confirm",
       onboarding_token: null,
       onboarding_token_expires_at: null,
     })
@@ -250,6 +253,18 @@ export async function saveDoeDtcOnboarding(params: {
   }
 
   return updated as DoeDtcUserRow;
+}
+
+export async function activateDoeDtcUser(userId: string): Promise<DoeDtcUserRow> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_users")
+    .update({ status: "active" })
+    .eq("id", userId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcUserRow;
 }
 
 export async function getLatestDoeDtcAssessment(userId: string): Promise<DoeDtcAssessmentRow | null> {
@@ -301,5 +316,9 @@ export async function saveDoeDtcAssessment(params: {
 }
 
 export function isValidOnboardingUser(user: DoeDtcUserRow | null): user is DoeDtcUserRow {
-  return Boolean(user && !isTokenExpired(user.onboarding_token_expires_at));
+  return Boolean(
+    user &&
+      user.status === "onboarding" &&
+      !isTokenExpired(user.onboarding_token_expires_at),
+  );
 }

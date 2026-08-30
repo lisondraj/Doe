@@ -5,13 +5,43 @@ import {
   getDoeDtcUserByCareToken,
   getLatestDoeDtcAssessment,
 } from "@/lib/doedtc/doedtc-db";
-import { DOEDTC_CARE } from "@/lib/doedtc/doedtc-copy";
+import {
+  DOEDTC_CARE,
+  DOEDTC_PAGE_DESCRIPTION,
+  doeDtcContactCardImageUrl,
+  doeDtcPublicOrigin,
+} from "@/lib/doedtc/doedtc-copy";
+import { DOEDTC_PATH } from "@/lib/site-domains";
 import type { DoeDtcAssessmentResult } from "@/lib/doedtc/doedtc-types";
 
 export const dynamic = "force-dynamic";
 
+const ogImage = doeDtcContactCardImageUrl();
+
 export const metadata: Metadata = {
   title: `${DOEDTC_CARE.title} · Doe`,
+  description: DOEDTC_PAGE_DESCRIPTION,
+  openGraph: {
+    title: DOEDTC_CARE.title,
+    description: DOEDTC_PAGE_DESCRIPTION,
+    url: `${doeDtcPublicOrigin()}${DOEDTC_PATH}/care`,
+    siteName: "Doe",
+    images: [
+      {
+        url: ogImage,
+        width: 1024,
+        height: 1024,
+        alt: "Doe",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: DOEDTC_CARE.title,
+    description: DOEDTC_PAGE_DESCRIPTION,
+    images: [ogImage],
+  },
 };
 
 type PageProps = {

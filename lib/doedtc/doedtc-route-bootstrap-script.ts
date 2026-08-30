@@ -5,7 +5,7 @@ import {
 } from "@/lib/doephone/phone-layout-viewport";
 import { DOEDTC_PATH } from "@/lib/site-domains";
 
-/** Runs before paint on `/doedtc*` — always iPhone chrome with cream overflow. */
+/** Runs before paint on `/doedtc*` - always iPhone chrome with cream overflow. */
 export function doeDtcRouteBootstrapScript(): string {
   const viewportBootstrap = phoneLayoutViewportBootstrapScript();
   const overflowBootstrap = phoneOverflowChromeBootstrapScript(DOEDTC_OVERFLOW_SURFACE);

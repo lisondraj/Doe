@@ -1,5 +1,5 @@
 import { saveDoeDtcOnboarding } from "@/lib/doedtc/doedtc-db";
-import { sendDoeDtcAllSet } from "@/lib/doedtc/doedtc-messaging";
+import { sendDoeDtcConsentMessage } from "@/lib/doedtc/doedtc-messaging";
 import type { DoeDtcOnboardPayload } from "@/lib/doedtc/doedtc-types";
 
 function cleanList(values: unknown): string[] {
@@ -34,7 +34,12 @@ export async function submitDoeDtcOnboarding(payload: DoeDtcOnboardPayload) {
     whyDoe,
   });
 
-  await sendDoeDtcAllSet(user);
+  await sendDoeDtcConsentMessage({
+    user,
+    chatId: user.linq_chat_id ?? undefined,
+    fromNumber: user.linq_from_number ?? undefined,
+    idempotencyKey: `doedtc-consent-post-onboard-${user.id}`,
+  });
 
   return {
     ok: true as const,
