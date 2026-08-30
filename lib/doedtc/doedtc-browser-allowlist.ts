@@ -75,3 +75,47 @@ export function browserUrlForHost(host: string): string {
   const normalized = normalizeBrowserHost(host);
   return `https://${normalized}`;
 }
+
+/** Build a Google search URL on the allowlisted google.com host. */
+export function researchSearchUrl(query: string): string {
+  const trimmed = query.trim();
+  if (!trimmed) return browserUrlForHost("google.com");
+  return `https://www.google.com/search?q=${encodeURIComponent(trimmed)}`;
+}
+
+export function resolveResearchBrowseTarget(params: {
+  url: string;
+  intent: string;
+}): { host: string; targetUrl: string } | { ok: false; error: string } {
+  const raw = params.url.trim();
+  const intent = params.intent.trim();
+
+  let host: string;
+  let targetUrl: string;
+
+  if (raw.includes("://") || raw.includes(".") || raw.includes("/")) {
+    host = normalizeBrowserHost(raw);
+    targetUrl = raw.includes("://") ? raw : browserUrlForHost(host);
+  } else if (intent) {
+    host = "google.com";
+    targetUrl = researchSearchUrl(intent);
+  } else if (raw) {
+    host = "google.com";
+    targetUrl = researchSearchUrl(raw);
+  } else {
+    return { ok: false, error: "A URL or search topic is required." };
+  }
+
+  if (isDeniedBrowserHost(host)) {
+    return { ok: false, error: "That site is not allowed." };
+  }
+
+  if (!isResearchBrowserHost(host)) {
+    return {
+      ok: false,
+      error: "Research browsing is limited to approved health and reference sites.",
+    };
+  }
+
+  return { host, targetUrl };
+}

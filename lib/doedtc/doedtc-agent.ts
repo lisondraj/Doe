@@ -44,7 +44,8 @@ import type {
   DoeDtcUserRow,
 } from "@/lib/doedtc/doedtc-types";
 
-const DOEDTC_AGENT_MODEL = "gpt-4o-mini";
+const DOEDTC_AGENT_MODEL = "gpt-4o";
+const DOEDTC_ASSESSMENT_MODEL = "gpt-4o-mini";
 const MAX_TOOL_ROUNDS = 8;
 
 export const DOEDTC_AGENT_TOOLS = [
@@ -183,7 +184,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "start_listen",
       description:
-        "Start a Listen session so the user can record and transcribe a medical appointment on the web. Call when they ask to listen, record, or transcribe a visit.",
+        "Create a Listen session for recording and transcribing a medical visit. You MUST call this before telling the user a Listen link is coming.",
       parameters: {
         type: "object",
         properties: {
@@ -200,7 +201,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "send_profile_link",
       description:
-        "Send the user their Doe profile link. Call whenever they ask for their profile, dashboard, appointments page, or a profile link.",
+        "Send the user's Doe profile link. You MUST call this before telling the user a profile or dashboard link is coming.",
       parameters: {
         type: "object",
         properties: {},
@@ -211,7 +212,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "start_browser_task",
-      description: "Start a research browser task on an allowed site. Ask before opening unknown sites.",
+      description:
+        "Look something up on the web. For approved health and reference sites (Mayo, CDC, NIH, MedlinePlus, Wikipedia, Google), call immediately with the site URL or a search topic. Opens the page and returns an excerpt plus a preview link.",
       parameters: {
         type: "object",
         properties: {
@@ -430,6 +432,70 @@ function todayLabel(): string {
   });
 }
 
+function replyClaimsListenLink(text: string): boolean {
+  return (
+    /\b(listen|record(?:ing)?|transcrib(?:e|ing)?)\b/i.test(text) &&
+    /\b(link|send(?:ing)?|here'?s)\b/i.test(text)
+  );
+}
+
+function replyClaimsProfileLink(text: string): boolean {
+  return (
+    /\b(profile|dashboard|appointments?\s*page)\b/i.test(text) &&
+    /\b(link|send(?:ing)?|here'?s)\b/i.test(text)
+  );
+}
+
+async function fulfillClaimedLinks(params: {
+  user: DoeDtcUserRow;
+  replyText: string;
+  listenUrl?: string;
+  profileUrl?: string;
+}): Promise<{ listenUrl?: string; profileUrl?: string }> {
+  let listenUrl = params.listenUrl;
+  let profileUrl = params.profileUrl;
+
+  if (!listenUrl && replyClaimsListenLink(params.replyText)) {
+    const session = await createDoeDtcListenSession({ userId: params.user.id });
+    listenUrl = doeDtcListenUrl(params.user.care_token, session.id);
+  }
+
+  if (!profileUrl && replyClaimsProfileLink(params.replyText)) {
+    profileUrl = doeDtcAppUrl(params.user.care_token);
+  }
+
+  return { listenUrl, profileUrl };
+}
+
+function buildReplyFromTurnState(params: {
+  modelContent?: string | null;
+  assessmentSummary?: string;
+  browserNeedsConfirm: boolean;
+  browserExcerpt?: string;
+  workUrl?: string;
+  vaultUrl?: string;
+  liveViewUrl?: string;
+  listenUrl?: string;
+  profileUrl?: string;
+}): string {
+  const trimmed = params.modelContent?.trim();
+  if (trimmed) return sanitizeDoeDtcReplyText(trimmed);
+
+  if (params.assessmentSummary) return params.assessmentSummary;
+  if (params.browserNeedsConfirm) return "Reply CONFIRM to proceed, or STOP to cancel.";
+  if (params.browserExcerpt) {
+    const snippet = params.browserExcerpt.replace(/\s+/g, " ").trim().slice(0, 280);
+    return snippet.length > 0 ? snippet : "Here's what I found — sending a preview.";
+  }
+  if (params.workUrl) return "Here's what I found — sending a preview.";
+  if (params.vaultUrl) return "Sending a secure sign-in link.";
+  if (params.liveViewUrl) return "Sending a Live View link so you can sign in.";
+  if (params.listenUrl) return "Sending a Listen link to record your visit.";
+  if (params.profileUrl) return "Sending your profile link.";
+
+  return "Got it.";
+}
+
 function buildSystemPrompt(params: {
   user: DoeDtcUserRow;
   medications: string[];
@@ -441,7 +507,7 @@ function buildSystemPrompt(params: {
   relevantMemories: string;
   familyLog: string;
 }): string {
-  return `You are Doe, a consumer health companion over iMessage.
+  return `You are Doe, a warm consumer health companion over iMessage.
 
 Today is ${todayLabel()}.
 
@@ -469,33 +535,32 @@ ${params.symptomLog}
 Prior assessments:
 ${params.assessmentHistory}
 
-Rules:
-- Keep iMessage replies short (1-4 sentences). Warm, plain language.
-- When the user reports symptoms, call log_symptoms.
-- When the user mentions an appointment or visit, ask what it is for if missing.
-- Never invent a calendar date or time. If they only say vague timing (next week, soon), use log_appointment with timing_precision approximate and timing_note in their words — no starts_at.
-- If they name a specific day without a time (next Tuesday), use timing_precision day with starts_at for that day only.
-- Use timing_precision exact only when they give a specific time.
-- Before stating any appointment date or time in a reply, read the Appointments chart. For approximate entries, repeat their vague wording — never convert it to a specific datetime.
-- If the user says they never gave a date, apologize briefly and ask which day the appointment is.
-- Refer back to upcoming appointments, family members, and remembered facts naturally in later turns.
-- When the user names a family member with a relationship (e.g. "my son Bob", "mother Jane"), call log_family_member. Use child for son or daughter. Do not use remember_fact for family members that belong on the Family tab.
-- Store other durable non-symptom facts with remember_fact (doctor names, preferences, general context).
-- When the user wants to record or transcribe a visit, call start_listen. Tell them you are sending a Listen link.
-- When the user asks for their profile, dashboard, appointments page, or a profile link, call send_profile_link. Say you are sending the link. Never say you cannot send it.
-- When the user asks whether you logged a family member, answer from the Family chart above.
-- For health research, prefer start_browser_task on approved sites. Ask before opening unknown sites.
-- Never ask for passwords, OTPs, or portal credentials in iMessage. Use request_vault or request_live_login instead.
-- Never claim login success without browser extract evidence. Never mention Kernel, tools, or internal systems.
-- After a successful browser snapshot with useful findings, you may store a one-line outcome via remember_fact (e.g. "Looked up CDC flu page — peak season Dec–Feb").
-- Irreversible browser actions require request_commit, then the patient replies CONFIRM.
-- Never put URLs in your reply. Links are always sent as a separate iMessage.
-- Do not end with "feel free to ask", "let me know if you have questions", or similar closers. Just stop.
-- Ask 1-2 clarifying questions when details are thin (timing, severity, location, triggers).
-- Call run_assessment when you have enough signal or the user asks what it might be / wants a review.
+What you can do:
+- Log symptoms, run structured reviews, track appointments and family members, remember durable facts.
+- Send a Listen link to record and transcribe visits (start_listen).
+- Send the profile / dashboard link (send_profile_link).
+- Look up health info on approved sites via start_browser_task (Mayo, CDC, NIH, MedlinePlus, Wikipedia, Google).
+- Help with patient portals via request_vault or request_live_login — never ask for passwords in iMessage.
+
+Core invariant:
+- Do the action with tools first, then describe the result in plain language.
+- Never claim you sent a link, opened a page, or logged in unless the matching tool succeeded.
+- Never put URLs in your reply — links arrive as separate iMessages.
+- Never mention tools, Kernel, or internal systems.
+
+Style:
+- Short iMessage replies (1-4 sentences). Warm, plain language.
+- Ask 1-2 clarifying questions when details are thin.
+- Refer back to appointments, family, and memories naturally.
+- Do not end with "feel free to ask" or similar closers.
+
+Safety:
+- Never invent appointment dates or times. Use log_appointment with approximate timing when vague.
+- For approximate appointments, repeat the user's vague wording — never convert to an exact datetime.
+- Use log_family_member for named family (child for son/daughter); remember_fact for other durable facts.
 - Never claim a definitive diagnosis. Flag emergencies clearly.
-- You may log symptoms and assess in the same turn when appropriate.
-- Do not mention tools or internal systems to the user.`;
+- Irreversible browser actions need request_commit, then the patient replies CONFIRM.
+- After useful browser findings, you may store a one-line outcome via remember_fact.`;
 }
 
 export async function generateDoeDtcAssessment(params: {
@@ -517,7 +582,7 @@ export async function generateDoeDtcAssessment(params: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: DOEDTC_AGENT_MODEL,
+      model: DOEDTC_ASSESSMENT_MODEL,
       temperature: 0.2,
       response_format: { type: "json_object" },
       messages: [
@@ -678,27 +743,47 @@ export async function runDoeDtcAgentTurn(params: {
   let browserNeedsConfirm = false;
   let activeBrowserJobId: string | null = await getActiveDoeDtcBrowserJobId(params.user.id);
   let assessmentSummary: string | undefined;
+  let browserExcerpt: string | undefined;
+  let lastModelContent: string | null = null;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
     const { message } = await callDoeDtcAgent(messages);
+    lastModelContent = message.content;
 
     if (!message.tool_calls?.length) {
-      const fallback = assessmentRan
-        ? assessmentSummary ?? "I put together a review for you."
-        : browserNeedsConfirm
-          ? "Reply CONFIRM to proceed, or STOP to cancel."
-          : workUrl
-            ? "I am sending a browser preview."
-            : vaultUrl
-              ? "I am sending a secure sign-in link."
-              : liveViewUrl
-                ? "I am sending a Live View link."
-                : listenUrl
-                  ? "I am sending a Listen link."
-                  : profileUrl
-                    ? "I am sending your profile link."
-                    : "Thanks for sharing. Tell me more about what you are feeling.";
-      const replyText = sanitizeDoeDtcReplyText(message.content?.trim() || fallback) || fallback;
+      let replyText = buildReplyFromTurnState({
+        modelContent: message.content,
+        assessmentSummary,
+        browserNeedsConfirm,
+        browserExcerpt,
+        workUrl,
+        vaultUrl,
+        liveViewUrl,
+        listenUrl,
+        profileUrl,
+      });
+
+      const fulfilled = await fulfillClaimedLinks({
+        user: params.user,
+        replyText,
+        listenUrl,
+        profileUrl,
+      });
+      listenUrl = fulfilled.listenUrl;
+      profileUrl = fulfilled.profileUrl;
+
+      if (!message.content?.trim()) {
+        replyText = buildReplyFromTurnState({
+          assessmentSummary,
+          browserNeedsConfirm,
+          browserExcerpt,
+          workUrl,
+          vaultUrl,
+          liveViewUrl,
+          listenUrl,
+          profileUrl,
+        });
+      }
 
       return {
         replyText,
@@ -843,10 +928,28 @@ export async function runDoeDtcAgentTurn(params: {
                 : "research",
           });
           if (!started.ok) {
-            output = { ok: false, error: started.error };
+            output = {
+              ok: false,
+              error: started.error,
+              user_message: started.user_message,
+            };
           } else {
             activeBrowserJobId = started.jobId;
-            output = { ok: true, job_id: started.jobId, host: started.host };
+            if (started.workUrl) {
+              workUrl = started.workUrl;
+            }
+            if (started.excerpt) {
+              browserExcerpt = started.excerpt;
+            }
+            output = {
+              ok: true,
+              job_id: started.jobId,
+              host: started.host,
+              url: started.url,
+              title: started.title,
+              excerpt: started.excerpt,
+              link_sent_separately: Boolean(started.workUrl),
+            };
           }
         } else if (toolCall.function.name === "browser_navigate") {
           const jobId = activeBrowserJobId ?? "";
@@ -878,6 +981,9 @@ export async function runDoeDtcAgentTurn(params: {
           });
           if (result.workUrl) {
             workUrl = result.workUrl;
+          }
+          if (result.excerpt) {
+            browserExcerpt = result.excerpt;
           }
           output = {
             ok: result.ok,
@@ -922,6 +1028,9 @@ export async function runDoeDtcAgentTurn(params: {
           if (result.workUrl) {
             workUrl = result.workUrl;
           }
+          if (result.excerpt) {
+            browserExcerpt = result.excerpt;
+          }
           browserNeedsConfirm = true;
           output = {
             ok: result.ok,
@@ -963,10 +1072,27 @@ export async function runDoeDtcAgentTurn(params: {
     }
   }
 
+  const fulfilled = await fulfillClaimedLinks({
+    user: params.user,
+    replyText: lastModelContent ?? "",
+    listenUrl,
+    profileUrl,
+  });
+  listenUrl = fulfilled.listenUrl;
+  profileUrl = fulfilled.profileUrl;
+
   return {
-    replyText: sanitizeDoeDtcReplyText(
-      assessmentSummary ?? "I am still reviewing what you shared. One moment.",
-    ),
+    replyText: buildReplyFromTurnState({
+      modelContent: lastModelContent,
+      assessmentSummary,
+      browserNeedsConfirm,
+      browserExcerpt,
+      workUrl,
+      vaultUrl,
+      liveViewUrl,
+      listenUrl,
+      profileUrl,
+    }),
     careUrl: assessmentRan ? careUrl : undefined,
     listenUrl,
     profileUrl,

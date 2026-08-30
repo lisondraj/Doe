@@ -76,7 +76,19 @@ export async function createDoeDtcBrowserJob(params: {
   mode?: DoeDtcBrowserMode;
 }): Promise<DoeDtcBrowserJobRow> {
   const existing = await getOpenDoeDtcBrowserJob(params.userId);
+  const mode = params.mode ?? "research";
+
   if (existing) {
+    if (mode === "research" && existing.mode === "research" && existing.status === "open") {
+      return updateDoeDtcBrowserJob({
+        jobId: existing.id,
+        userId: params.userId,
+        patch: {
+          intent: params.intent.trim(),
+          allowed_host: params.allowedHost?.trim() || existing.allowed_host,
+        },
+      });
+    }
     throw new Error("You already have an active browser task. Reply STOP to cancel it first.");
   }
 
@@ -111,6 +123,7 @@ export async function updateDoeDtcBrowserJob(params: {
     outcome: string | null;
     allowed_host: string | null;
     mode: DoeDtcBrowserMode;
+    intent: string;
   }>;
 }): Promise<DoeDtcBrowserJobRow> {
   const supabase = createSupabaseAdmin();

@@ -4,6 +4,7 @@ import {
   assertBrowserHostAllowed,
   browserUrlForHost,
   normalizeBrowserHost,
+  resolveResearchBrowseTarget,
 } from "@/lib/doedtc/doedtc-browser-allowlist";
 import {
   cancelOpenDoeDtcBrowserJobs,
@@ -43,6 +44,18 @@ type BrowserSnapshotResult = BrowserExtract & {
   workUrl?: string;
 };
 
+export type StartDoeDtcBrowserTaskResult =
+  | {
+      ok: true;
+      jobId: string;
+      host: string;
+      url?: string;
+      title?: string;
+      excerpt?: string;
+      workUrl?: string;
+    }
+  | { ok: false; error: string; user_message: string };
+
 const EXCERPT_MAX = 800;
 const KERNEL_SESSION_TIMEOUT_SECONDS = 1800;
 const WRITE_DENY_SELECTORS = [
@@ -61,6 +74,26 @@ function getKernel(): Kernel {
 
 function isKernelConfigured(): boolean {
   return Boolean(process.env.KERNEL_API_KEY?.trim());
+}
+
+export function toUserSafeBrowserError(error: string): string {
+  const lower = error.toLowerCase();
+  if (lower.includes("not configured")) {
+    return "Web lookup isn't available right now. I can still help from what I know.";
+  }
+  if (lower.includes("approved health") || lower.includes("approved health and reference")) {
+    return "I can look that up on Mayo Clinic, CDC, NIH, MedlinePlus, or Wikipedia — which should I use?";
+  }
+  if (lower.includes("not allowed") || lower.includes("that site is not allowed")) {
+    return "I can't open that site.";
+  }
+  if (lower.includes("active browser task") || lower.includes("reply stop")) {
+    return "Reply STOP to cancel your current browser task, then ask again.";
+  }
+  if (lower.includes("patient-declared")) {
+    return "For that portal I'll send a secure sign-in link instead of browsing directly.";
+  }
+  return "I couldn't complete that web lookup. Try a health site like Mayo Clinic or CDC, or ask another way.";
 }
 
 function warnKernelFailure(action: string, error: unknown): void {
@@ -281,15 +314,36 @@ export async function startDoeDtcBrowserTask(params: {
   intent: string;
   url: string;
   mode?: "research" | "login" | "write";
-}): Promise<{ ok: true; jobId: string; host: string } | { ok: false; error: string }> {
+}): Promise<StartDoeDtcBrowserTaskResult> {
   if (!isKernelConfigured()) {
-    return { ok: false, error: "Browser automation is not configured." };
+    const error = "Browser automation is not configured.";
+    return { ok: false, error, user_message: toUserSafeBrowserError(error) };
   }
 
   try {
-    const host = normalizeBrowserHost(params.url);
     const mode = params.mode ?? "research";
-    assertBrowserHostAllowed({ host, mode, declaredHost: mode === "research" ? null : host });
+    let host: string;
+    let targetUrl: string;
+
+    if (mode === "research") {
+      const resolved = resolveResearchBrowseTarget({
+        url: params.url,
+        intent: params.intent,
+      });
+      if ("ok" in resolved) {
+        return {
+          ok: false,
+          error: resolved.error,
+          user_message: toUserSafeBrowserError(resolved.error),
+        };
+      }
+      host = resolved.host;
+      targetUrl = resolved.targetUrl;
+    } else {
+      host = normalizeBrowserHost(params.url);
+      targetUrl = params.url.includes("://") ? params.url : browserUrlForHost(host);
+      assertBrowserHostAllowed({ host, mode, declaredHost: host });
+    }
 
     let job = await createDoeDtcBrowserJob({
       userId: params.user.id,
@@ -300,11 +354,46 @@ export async function startDoeDtcBrowserTask(params: {
 
     job = await attachKernelProfileToJob(job);
 
-    return { ok: true, jobId: job.id, host };
+    if (mode !== "research") {
+      return { ok: true, jobId: job.id, host };
+    }
+
+    const navigated = await navigateDoeDtcBrowser({
+      user: params.user,
+      jobId: job.id,
+      url: targetUrl,
+    });
+    if (!navigated.ok) {
+      const error = navigated.error ?? "Could not open that page.";
+      return { ok: false, error, user_message: toUserSafeBrowserError(error) };
+    }
+
+    const snapshot = await snapshotDoeDtcBrowser({
+      user: params.user,
+      jobId: job.id,
+      caption: params.intent,
+      kind: "progress",
+    });
+    if (!snapshot.ok) {
+      const error = snapshot.error ?? "Could not capture a browser preview.";
+      return { ok: false, error, user_message: toUserSafeBrowserError(error) };
+    }
+
+    return {
+      ok: true,
+      jobId: job.id,
+      host,
+      url: snapshot.url,
+      title: snapshot.title,
+      excerpt: snapshot.excerpt,
+      workUrl: snapshot.workUrl,
+    };
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not start browser task.";
     return {
       ok: false,
-      error: error instanceof Error ? error.message : "Could not start browser task.",
+      error: message,
+      user_message: toUserSafeBrowserError(message),
     };
   }
 }
