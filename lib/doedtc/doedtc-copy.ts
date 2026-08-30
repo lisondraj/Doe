@@ -1,4 +1,5 @@
 import { DOEDTC_PATH, primarySiteOrigin } from "@/lib/site-domains";
+import { buildDoeDtcAllSetMessage } from "@/lib/doedtc/doedtc-consumer-features";
 
 export const DOEDTC_PAGE_TITLE = "Doe";
 export const DOEDTC_PAGE_DESCRIPTION =
@@ -237,8 +238,8 @@ export const DOEDTC_LINQ = {
   artifactShareLinkIntro: "Here's your shared tracker.",
   listenIntro: "Open Listen to record your appointment. Press End call when you're done.",
   careLinkIntro: "Here's your symptom review.",
-  allSetMessage:
-    "All set! Let's get started. Text your symptoms anytime. Let me know if you want to learn more about what I can do.",
+  allSetMessage: buildDoeDtcAllSetMessage(),
+  alreadyActiveMessage: "You're already set up with Doe. Ask anytime to see your profile.",
   assessmentIntro: "Here's what I found based on what you shared:",
   workIntro: "Here's what I found in the browser.",
   screenshotIntro: "Here's a screenshot of the page.",

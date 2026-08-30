@@ -317,7 +317,7 @@ export async function handleHiDoeInbound(params: {
       user: params.user,
       chatId: params.chatId,
       to: params.phone,
-      text: "You're already set up with Doe. Text your symptoms anytime.",
+      text: DOEDTC_LINQ.alreadyActiveMessage,
       idempotencyKey: `doedtc-already-active-hi-${params.user.id}`,
     });
     return;
@@ -370,7 +370,7 @@ export async function handleConfirmInbound(params: {
         user: params.user,
         chatId: params.chatId,
         to: params.phone,
-        text: "You're already set up with Doe. Text your symptoms anytime.",
+        text: DOEDTC_LINQ.alreadyActiveMessage,
         idempotencyKey: `doedtc-already-active-${params.user.id}`,
       });
     }
@@ -465,12 +465,22 @@ export async function sendDoeDtcHouseholdAccessRevokedNotice(params: {
 }
 
 export async function sendDoeDtcAllSet(user: DoeDtcUserRow): Promise<void> {
+  const chatId = user.linq_chat_id ?? undefined;
+
   await sendDoeDtcOutbound({
     user,
-    chatId: user.linq_chat_id ?? undefined,
+    chatId,
     to: user.phone,
     text: DOEDTC_LINQ.allSetMessage,
     idempotencyKey: `doedtc-all-set-${user.id}`,
+  });
+
+  await sendDoeDtcLinkOutbound({
+    user,
+    chatId,
+    to: user.phone,
+    url: doeDtcAppUrl(user.care_token),
+    idempotencyKey: `doedtc-all-set-profile-${user.id}`,
   });
 }
 
