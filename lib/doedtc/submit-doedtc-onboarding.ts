@@ -1,6 +1,10 @@
-import { saveDoeDtcOnboarding } from "@/lib/doedtc/doedtc-db";
+import {
+  createDoeDtcHouseholdInvite,
+  getDoeDtcHouseholdSnapshot,
+  saveDoeDtcOnboarding,
+} from "@/lib/doedtc/doedtc-db";
 import { doeDtcAppUrl } from "@/lib/doedtc/doedtc-copy";
-import { sendDoeDtcConsentMessage } from "@/lib/doedtc/doedtc-messaging";
+import { sendDoeDtcConsentMessage, sendDoeDtcFamilyInviteMessage } from "@/lib/doedtc/doedtc-messaging";
 import type { DoeDtcFamilyRelationship, DoeDtcOnboardPayload } from "@/lib/doedtc/doedtc-types";
 
 function cleanList(values: unknown): string[] {
@@ -23,7 +27,7 @@ const RELATIONSHIPS = new Set<DoeDtcFamilyRelationship>([
   "other",
 ]);
 
-function cleanFamilyMembers(values: unknown): DoeDtcOnboardPayload["familyMembers"] {
+function cleanFamilyMembers(values: unknown): NonNullable<DoeDtcOnboardPayload["familyMembers"]> {
   if (!Array.isArray(values)) return [];
   return values
     .map((value) => {
@@ -41,6 +45,7 @@ function cleanFamilyMembers(values: unknown): DoeDtcOnboardPayload["familyMember
         relationship: relationship as DoeDtcFamilyRelationship,
         phone: phone || null,
         dateOfBirth: dateOfBirth || null,
+        sendInvite: Boolean(row.sendInvite) && Boolean(phone),
       };
     })
     .filter((value): value is NonNullable<typeof value> => Boolean(value))
@@ -80,6 +85,34 @@ export async function submitDoeDtcOnboarding(payload: DoeDtcOnboardPayload) {
     fromNumber: user.linq_from_number ?? undefined,
     idempotencyKey: `doedtc-consent-post-onboard-${user.id}`,
   });
+
+  const queuedInvites = familyMembers.filter((member) => member.sendInvite && member.phone);
+  if (queuedInvites.length > 0) {
+    const household = await getDoeDtcHouseholdSnapshot(user.id);
+    for (const member of queuedInvites) {
+      const row = household.members.find(
+        (item) =>
+          item.role !== "admin" &&
+          item.full_name.trim().toLowerCase() === member.fullName.trim().toLowerCase() &&
+          item.relationship === member.relationship,
+      );
+      if (!row) continue;
+      try {
+        const { invite, member: invited } = await createDoeDtcHouseholdInvite({
+          adminUserId: user.id,
+          memberId: row.id,
+        });
+        await sendDoeDtcFamilyInviteMessage({
+          adminUser: user,
+          memberPhone: invited.phone!,
+          inviteToken: invite.token,
+          memberName: invited.full_name,
+        });
+      } catch {
+        // Onboarding still succeeds; the admin can resend from the Family tab.
+      }
+    }
+  }
 
   const profileHref = doeDtcAppUrl(user.care_token);
 

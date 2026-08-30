@@ -78,6 +78,7 @@ type FamilyDraft = {
   phone: string;
   noPhone: boolean;
   dateOfBirth: string;
+  sendInvite: boolean;
 };
 
 type DoeDtcGetStartedFormProps = {
@@ -100,6 +101,7 @@ export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps
     phone: "",
     noPhone: false,
     dateOfBirth: "",
+    sendInvite: false,
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState("");
@@ -155,6 +157,7 @@ export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps
       phone: "",
       noPhone: false,
       dateOfBirth: "",
+      sendInvite: false,
     });
   }
 
@@ -181,6 +184,7 @@ export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps
             phone: member.noPhone ? null : member.phone || null,
             dateOfBirth:
               member.relationship === "child" && member.dateOfBirth ? member.dateOfBirth : null,
+            sendInvite: Boolean(member.sendInvite && member.phone),
           })),
         }),
       });
@@ -261,6 +265,23 @@ export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps
                   {member.phone ? <p className="doedtc-row-item__meta">{member.phone}</p> : null}
                 </div>
                 <div className="doedtc-row-item__actions">
+                  {member.phone ? (
+                    <button
+                      className="doedtc-button doedtc-button--secondary"
+                      type="button"
+                      onClick={() =>
+                        setFamilyMembers(
+                          familyMembers.map((item) =>
+                            item.id === member.id ? { ...item, sendInvite: !item.sendInvite } : item,
+                          ),
+                        )
+                      }
+                    >
+                      {member.sendInvite
+                        ? DOEDTC_GET_STARTED.familyInviteQueuedLabel
+                        : DOEDTC_GET_STARTED.familyInviteLabel}
+                    </button>
+                  ) : null}
                   <button
                     className="doedtc-icon-button"
                     type="button"

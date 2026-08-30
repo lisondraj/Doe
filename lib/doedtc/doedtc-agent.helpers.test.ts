@@ -133,6 +133,14 @@ test("sanitizeDoeDtcReplyText strips want-me-to closers", () => {
     sanitizeDoeDtcReplyText("Done. Let me know.", { keepCloserRate: 0 }),
     "Done",
   );
+  assert.equal(
+    sanitizeDoeDtcReplyText("All set, if there's anything you need.", { keepCloserRate: 0 }),
+    "All set",
+  );
+  assert.equal(
+    sanitizeDoeDtcReplyText("Logged it. If you need anything, here if you need me.", { keepCloserRate: 0 }),
+    "Logged it",
+  );
 });
 
 test("extractInboundMessageId reads current and legacy Linq payloads", () => {
@@ -201,6 +209,13 @@ test("formatDoeDtcProfileTab reads Whoop from the dashboard tab", () => {
     artifacts: [],
     artifactEntries: [],
     tickets: [],
+    household: {
+      household: null,
+      members: [],
+      memberAccess: [],
+      isAdmin: false,
+      viewerMemberId: null,
+    },
   };
   const dashboard = formatDoeDtcProfileTab(snapshot, "dashboard");
   assert.match(dashboard, /Whoop: not connected/);

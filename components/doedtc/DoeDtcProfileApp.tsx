@@ -137,7 +137,9 @@ export function DoeDtcProfileApp({
   const refetchSnapshot = useCallback(async () => {
     if (!valid) return;
     try {
-      const response = await fetch(`/api/doedtc/profile?t=${encodeURIComponent(token)}`, {
+      const params = new URLSearchParams({ t: token });
+      if (viewingMemberUserId) params.set("member", viewingMemberUserId);
+      const response = await fetch(`/api/doedtc/profile?${params.toString()}`, {
         cache: "no-store",
       });
       const json = (await response.json()) as {
@@ -150,7 +152,7 @@ export function DoeDtcProfileApp({
     } catch {
       // Ignore background refresh failures.
     }
-  }, [token, valid]);
+  }, [token, valid, viewingMemberUserId]);
 
   useEffect(() => {
     void refetchSnapshot();
@@ -185,6 +187,13 @@ export function DoeDtcProfileApp({
     return name || "Your profile";
   }, [snapshot, viewingMemberUserId]);
 
+  const canEditSubject = useMemo(() => {
+    if (!viewingMemberUserId || !snapshot) return true;
+    return snapshot.household.memberAccess.some(
+      (row) => row.userId === viewingMemberUserId && row.canEdit,
+    );
+  }, [snapshot, viewingMemberUserId]);
+
   if (!valid || !snapshot) {
     return (
       <DoeDtcPageShell>
@@ -201,6 +210,12 @@ export function DoeDtcProfileApp({
       <DoeDtcNav token={token} activeTab={tab} onTabChange={setTab} />
       <header className="doedtc-header">
         <h1 className={`doedtc-headline ${dmSans.className}`}>{greeting}</h1>
+        {viewingMemberUserId ? (
+          <p className="doedtc-muted" style={{ marginTop: "0.35rem" }}>
+            {canEditSubject ? null : `${DOEDTC_PROFILE.familyReadOnlyHint} `}
+            <a href={doeDtcAppUrl(token, { tab: "family" })}>{DOEDTC_PROFILE.familyBackLabel}</a>
+          </p>
+        ) : null}
       </header>
 
       {error ? <p className="doedtc-error">{error}</p> : null}
@@ -209,6 +224,7 @@ export function DoeDtcProfileApp({
         <DashboardTab
           snapshot={snapshot}
           busy={busy}
+          readOnly={!canEditSubject}
           onAction={runAction}
           onOpenTrackers={(artifactId) => {
             setFocusedArtifactId(artifactId ?? null);
@@ -221,21 +237,28 @@ export function DoeDtcProfileApp({
         />
       ) : null}
       {tab === "appointments" ? (
-        <AppointmentsTab snapshot={snapshot} busy={busy} onAction={runAction} />
+        <AppointmentsTab snapshot={snapshot} busy={busy} readOnly={!canEditSubject} onAction={runAction} />
       ) : null}
-      {tab === "results" ? <ResultsTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
+      {tab === "results" ? (
+        <ResultsTab snapshot={snapshot} busy={busy} readOnly={!canEditSubject} onAction={runAction} />
+      ) : null}
       {tab === "conditions" ? (
-        <ConditionsTab snapshot={snapshot} busy={busy} onAction={runAction} />
+        <ConditionsTab snapshot={snapshot} busy={busy} readOnly={!canEditSubject} onAction={runAction} />
       ) : null}
       {tab === "family" ? (
         <FamilyTab token={token} snapshot={snapshot} busy={busy} onAction={runAction} />
       ) : null}
-      {tab === "locker" ? <LockerTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
-      {tab === "share" ? <ShareTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
+      {tab === "locker" ? (
+        <LockerTab snapshot={snapshot} busy={busy} readOnly={!canEditSubject} onAction={runAction} />
+      ) : null}
+      {tab === "share" ? (
+        <ShareTab snapshot={snapshot} busy={busy} readOnly={!canEditSubject} onAction={runAction} />
+      ) : null}
       {tab === "trackers" ? (
         <TrackersTab
           snapshot={snapshot}
           busy={busy}
+          readOnly={!canEditSubject}
           onAction={runAction}
           focusedArtifactId={focusedArtifactId}
           onFocusArtifact={setFocusedArtifactId}
@@ -245,6 +268,7 @@ export function DoeDtcProfileApp({
         <FeedbackTab
           snapshot={snapshot}
           busy={busy}
+          readOnly={!canEditSubject}
           onAction={runAction}
           focusedTicketId={focusedTicketId}
           onFocusTicket={setFocusedTicketId}
@@ -257,6 +281,7 @@ export function DoeDtcProfileApp({
 type TabProps = {
   snapshot: DoeDtcProfileSnapshot;
   busy: boolean;
+  readOnly?: boolean;
   onAction: (action: string, payload?: Record<string, unknown>) => Promise<void>;
 };
 
@@ -267,6 +292,7 @@ function MedicalListEditor({
   addAction,
   removeAction,
   busy,
+  readOnly = false,
   onAction,
 }: {
   label: string;
@@ -275,6 +301,7 @@ function MedicalListEditor({
   addAction: string;
   removeAction: string;
   busy: boolean;
+  readOnly?: boolean;
   onAction: (action: string, payload?: Record<string, unknown>) => Promise<void>;
 }) {
   const [draft, setDraft] = useState("");
@@ -299,18 +326,21 @@ function MedicalListEditor({
           {values.map((value) => (
             <span className="doedtc-tag" key={value.toLowerCase()}>
               {value}
-              <button
-                type="button"
-                aria-label={`Remove ${value}`}
-                disabled={busy}
-                onClick={() => onAction(removeAction, { name: value })}
-              >
-                ×
-              </button>
+              {readOnly ? null : (
+                <button
+                  type="button"
+                  aria-label={`Remove ${value}`}
+                  disabled={busy}
+                  onClick={() => onAction(removeAction, { name: value })}
+                >
+                  ×
+                </button>
+              )}
             </span>
           ))}
         </div>
       )}
+      {readOnly ? null : (
       <div className="doedtc-add-row" style={{ marginTop: "0.75rem" }}>
         <input
           className="doedtc-input"
@@ -334,6 +364,7 @@ function MedicalListEditor({
           Add
         </button>
       </div>
+      )}
     </div>
   );
 }
@@ -341,6 +372,7 @@ function MedicalListEditor({
 function DashboardTab({
   snapshot,
   busy,
+  readOnly = false,
   onAction,
   onOpenTrackers,
   onOpenFeedback,
@@ -373,6 +405,7 @@ function DashboardTab({
             addAction="add_medication"
             removeAction="remove_medication"
             busy={busy}
+            readOnly={readOnly}
             onAction={onAction}
           />
           <div style={{ marginTop: "1.25rem" }}>
@@ -383,6 +416,7 @@ function DashboardTab({
               addAction="add_condition"
               removeAction="remove_condition"
               busy={busy}
+              readOnly={readOnly}
               onAction={onAction}
             />
           </div>
@@ -446,14 +480,14 @@ function DashboardTab({
             title={DOEDTC_PROFILE.whoopTitle}
             body={DOEDTC_PROFILE.whoopBody}
             status={healthStatus(snapshot, "whoop")}
-            busy={busy}
+            busy={busy || readOnly}
             onConnect={() => onAction("connect_health", { provider: "whoop" })}
           />
           <IntegrationCard
             title={DOEDTC_PROFILE.appleHealthTitle}
             body={DOEDTC_PROFILE.appleHealthBody}
             status={healthStatus(snapshot, "apple_health")}
-            busy={busy}
+            busy={busy || readOnly}
             onConnect={() => onAction("connect_health", { provider: "apple_health" })}
           />
         </div>
@@ -462,7 +496,7 @@ function DashboardTab({
   );
 }
 
-function ConditionsTab({ snapshot, busy, onAction }: TabProps) {
+function ConditionsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
   return (
     <div>
       <div className="doedtc-section">
@@ -475,6 +509,7 @@ function ConditionsTab({ snapshot, busy, onAction }: TabProps) {
             addAction="add_condition"
             removeAction="remove_condition"
             busy={busy}
+            readOnly={readOnly}
             onAction={onAction}
           />
         </div>
@@ -490,6 +525,7 @@ function ConditionsTab({ snapshot, busy, onAction }: TabProps) {
             addAction="add_medication"
             removeAction="remove_medication"
             busy={busy}
+            readOnly={readOnly}
             onAction={onAction}
           />
         </div>
@@ -557,7 +593,7 @@ function IntegrationCard({
   );
 }
 
-function AppointmentsTab({ snapshot, busy, onAction }: TabProps) {
+function AppointmentsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
   const [title, setTitle] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointmentTime, setAppointmentTime] = useState("");
@@ -632,14 +668,16 @@ function AppointmentsTab({ snapshot, busy, onAction }: TabProps) {
                   {linkedSessions.map((session) => renderListenSession(session))}
                 </div>
                 <div className="doedtc-row-item__actions">
-                  <button
-                    className="doedtc-icon-button"
-                    type="button"
-                    disabled={busy}
-                    onClick={() => onAction("remove_appointment", { appointmentId: appointment.id })}
-                  >
-                    {DOEDTC_PROFILE.removeLabel}
-                  </button>
+                  {readOnly ? null : (
+                    <button
+                      className="doedtc-icon-button"
+                      type="button"
+                      disabled={busy}
+                      onClick={() => onAction("remove_appointment", { appointmentId: appointment.id })}
+                    >
+                      {DOEDTC_PROFILE.removeLabel}
+                    </button>
+                  )}
                 </div>
               </li>
             );
@@ -664,6 +702,7 @@ function AppointmentsTab({ snapshot, busy, onAction }: TabProps) {
         )}
       </div>
 
+      {readOnly ? null : (
       <form
         className="doedtc-card doedtc-card--spaced doedtc-form"
         onSubmit={async (event) => {
@@ -711,11 +750,12 @@ function AppointmentsTab({ snapshot, busy, onAction }: TabProps) {
           {DOEDTC_PROFILE.addAppointmentLabel}
         </button>
       </form>
+      )}
     </div>
   );
 }
 
-function ResultsTab({ snapshot, busy, onAction }: TabProps) {
+function ResultsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
   const [title, setTitle] = useState("");
   const [resultedAt, setResultedAt] = useState("");
   const [source, setSource] = useState("");
@@ -737,20 +777,23 @@ function ResultsTab({ snapshot, busy, onAction }: TabProps) {
                 {result.summary ? <p className="doedtc-body">{result.summary}</p> : null}
               </div>
               <div className="doedtc-row-item__actions">
-                <button
-                  className="doedtc-icon-button"
-                  type="button"
-                  disabled={busy}
-                  onClick={() => onAction("remove_result", { resultId: result.id })}
-                >
-                  {DOEDTC_PROFILE.removeLabel}
-                </button>
+                {readOnly ? null : (
+                  <button
+                    className="doedtc-icon-button"
+                    type="button"
+                    disabled={busy}
+                    onClick={() => onAction("remove_result", { resultId: result.id })}
+                  >
+                    {DOEDTC_PROFILE.removeLabel}
+                  </button>
+                )}
               </div>
             </li>
           ))}
         </ul>
       )}
 
+      {readOnly ? null : (
       <form
         className="doedtc-card doedtc-card--spaced"
         onSubmit={async (event) => {
@@ -786,6 +829,7 @@ function ResultsTab({ snapshot, busy, onAction }: TabProps) {
           {DOEDTC_PROFILE.addResultLabel}
         </button>
       </form>
+      )}
     </div>
   );
 }
@@ -950,7 +994,7 @@ function FamilyTab({
   );
 }
 
-function LockerTab({ snapshot, busy, onAction }: TabProps) {
+function LockerTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
   const [label, setLabel] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -971,20 +1015,23 @@ function LockerTab({ snapshot, busy, onAction }: TabProps) {
                 <p className="doedtc-row-item__meta">{DOEDTC_PROFILE.lockerSavedPassword}</p>
               </div>
               <div className="doedtc-row-item__actions">
-                <button
-                  className="doedtc-icon-button"
-                  type="button"
-                  disabled={busy}
-                  onClick={() => onAction("remove_locker", { itemId: item.id })}
-                >
-                  {DOEDTC_PROFILE.removeLabel}
-                </button>
+                {readOnly ? null : (
+                  <button
+                    className="doedtc-icon-button"
+                    type="button"
+                    disabled={busy}
+                    onClick={() => onAction("remove_locker", { itemId: item.id })}
+                  >
+                    {DOEDTC_PROFILE.removeLabel}
+                  </button>
+                )}
               </div>
             </li>
           ))}
         </ul>
       )}
 
+      {readOnly ? null : (
       <form
         className="doedtc-card doedtc-card--spaced"
         onSubmit={async (event) => {
@@ -1015,11 +1062,12 @@ function LockerTab({ snapshot, busy, onAction }: TabProps) {
           {DOEDTC_PROFILE.addLockerLabel}
         </button>
       </form>
+      )}
     </div>
   );
 }
 
-function ShareTab({ snapshot, busy, onAction }: TabProps) {
+function ShareTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
   return (
     <div>
       <h2 className="doedtc-section-title">{DOEDTC_PROFILE.shareTitle}</h2>
@@ -1037,27 +1085,31 @@ function ShareTab({ snapshot, busy, onAction }: TabProps) {
                 </p>
               </div>
               <div className="doedtc-row-item__actions">
-                <button
-                  className="doedtc-icon-button"
-                  type="button"
-                  disabled={busy}
-                  onClick={() => onAction("revoke_share", { shareCodeId: code.id })}
-                >
-                  {DOEDTC_PROFILE.shareRevokeLabel}
-                </button>
+                {readOnly ? null : (
+                  <button
+                    className="doedtc-icon-button"
+                    type="button"
+                    disabled={busy}
+                    onClick={() => onAction("revoke_share", { shareCodeId: code.id })}
+                  >
+                    {DOEDTC_PROFILE.shareRevokeLabel}
+                  </button>
+                )}
               </div>
             </li>
           ))}
         </ul>
       )}
-      <button
-        className="doedtc-button"
-        type="button"
-        disabled={busy}
-        onClick={() => onAction("generate_share")}
-      >
-        {DOEDTC_PROFILE.shareGenerateLabel}
-      </button>
+      {readOnly ? null : (
+        <button
+          className="doedtc-button"
+          type="button"
+          disabled={busy}
+          onClick={() => onAction("generate_share")}
+        >
+          {DOEDTC_PROFILE.shareGenerateLabel}
+        </button>
+      )}
     </div>
   );
 }
@@ -1065,6 +1117,7 @@ function ShareTab({ snapshot, busy, onAction }: TabProps) {
 function TrackersTab({
   snapshot,
   busy,
+  readOnly = false,
   onAction,
   focusedArtifactId,
   onFocusArtifact,
@@ -1104,7 +1157,7 @@ function TrackersTab({
               entries={snapshot.artifactEntries.filter(
                 (entry) => entry.artifact_id === activeArtifact.id,
               )}
-              busy={busy}
+              busy={busy || readOnly}
               onAction={async (action, payload) => {
                 await onAction(action, payload);
                 if (action === "archive_artifact") {
@@ -1124,6 +1177,7 @@ function TrackersTab({
 function FeedbackTab({
   snapshot,
   busy,
+  readOnly = false,
   onAction,
   focusedTicketId,
   onFocusTicket,
@@ -1137,7 +1191,7 @@ function FeedbackTab({
       <DoeDtcFeedbackView
         tickets={snapshot.tickets}
         focusedTicketId={focusedTicketId}
-        busy={busy}
+        busy={busy || readOnly}
         onSubmit={async (payload) => {
           await onAction("submit_ticket", payload);
           onFocusTicket(null);

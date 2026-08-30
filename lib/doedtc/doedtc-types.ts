@@ -97,6 +97,7 @@ export type DoeDtcFamilyMemberInput = {
   relationship: DoeDtcFamilyRelationship;
   phone?: string | null;
   dateOfBirth?: string | null;
+  sendInvite?: boolean;
 };
 
 export type DoeDtcHouseholdRole = "admin" | "member";

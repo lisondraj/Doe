@@ -224,6 +224,8 @@ export const DOEDTC_AGENT_TOOLS = [
         type: "object",
         properties: {
           name: { type: "string", description: "Medication name, e.g. Metformin." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["name"],
       },
@@ -239,6 +241,8 @@ export const DOEDTC_AGENT_TOOLS = [
         type: "object",
         properties: {
           name: { type: "string", description: "Condition name, e.g. Asthma." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["name"],
       },
@@ -255,6 +259,8 @@ export const DOEDTC_AGENT_TOOLS = [
         properties: {
           from: { type: "string", description: "Current medication name on the profile." },
           to: { type: "string", description: "Replacement medication name." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["from", "to"],
       },
@@ -269,6 +275,8 @@ export const DOEDTC_AGENT_TOOLS = [
         type: "object",
         properties: {
           name: { type: "string", description: "Medication name to remove." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["name"],
       },
@@ -285,6 +293,8 @@ export const DOEDTC_AGENT_TOOLS = [
         properties: {
           from: { type: "string", description: "Current condition name on the profile." },
           to: { type: "string", description: "Replacement condition name." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["from", "to"],
       },
@@ -299,6 +309,8 @@ export const DOEDTC_AGENT_TOOLS = [
         type: "object",
         properties: {
           name: { type: "string", description: "Condition name to remove." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["name"],
       },
@@ -523,10 +535,14 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "send_profile_link",
       description:
-        "Send the user's Doe profile link. You MUST call this before telling the user a profile or dashboard link is coming.",
+        "Send the user's Doe profile link. You MUST call this before telling the user a profile or dashboard link is coming. For a family member, pass member_id or member_name.",
       parameters: {
         type: "object",
-        properties: {},
+        properties: {
+          tab: { type: "string", description: "Optional profile tab to open." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
       },
     },
   },
@@ -1043,7 +1059,7 @@ What you can do:
 - Create profile trackers (create_profile_artifact) when they want to track, log, count, or keep a list over time — e.g. Ozempic shots, water, mood. Do not create trackers for one-off questions. Prefer updating an existing matching tracker over a duplicate. Log entries with log_artifact_entry. Read trackers tab with read_profile.
 - After creating a tracker or logging a useful entry, send_profile_link with tab=trackers and artifact id so they can view/edit it.
 - Submit feedback or bug reports (submit_ticket) when they ask to send feedback or report a bug. After submitting, send the track link. Read feedback tab with read_profile.
-- Create a visit-prep summary (create_preparation) when they say prepare, or ask for something to share with their provider, doctor, visit, or refill. Use a general health snapshot if they do not name a reason. After creating, send the prep link with the 5-digit provider code.
+- Create a visit-prep summary (create_preparation) when they say prepare, or ask for something to share with their provider, doctor, visit, or refill. Use a general health snapshot if they do not name a reason. After creating, send the prep link with the 5-digit provider code. For a family member, build it from their profile — a tracker is also saved on their Trackers tab.
 - After logging an appointment, or when they mention an upcoming visit or refill, you may briefly offer to prepare a provider summary — not every turn, and do not create it unless they ask or say prepare.
 - If a tool fails, you cannot complete a task, or you made a mistake, mention they can text "report a bug" or "send feedback" and you will file it. Do not auto-file unless they ask.
 - Browse the web via start_browser_task. For "go to Google and type mayo" (or screenshot the result), call once with url google and intent type mayo — that opens the Google results page and screenshots it. Do not try to type into Google with a CSS selector.
@@ -1499,37 +1515,73 @@ export async function runDoeDtcAgentTurn(params: {
             invite_sent: true,
           };
         } else if (toolCall.function.name === "add_medication") {
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: true,
+          });
+          if ("error" in subject) throw new Error(subject.error);
           const name = String(args.name ?? "").trim();
           if (!name) throw new Error("Medication name is required.");
-          const result = await appendDoeDtcMedication({ userId: params.user.id, name });
-          output = { ok: true, name: result.name, added: result.added };
+          const result = await appendDoeDtcMedication({ userId: subject.subjectUserId, name });
+          output = { ok: true, name: result.name, added: result.added, subject: subject.subjectMemberName ?? "you" };
         } else if (toolCall.function.name === "update_medication") {
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: true,
+          });
+          if ("error" in subject) throw new Error(subject.error);
           const from = String(args.from ?? "").trim();
           const to = String(args.to ?? "").trim();
           if (!from || !to) throw new Error("Both medication names are required.");
-          const result = await renameDoeDtcMedication({ userId: params.user.id, from, to });
-          output = { ok: true, from: result.from, to: result.to, updated: result.updated };
+          const result = await renameDoeDtcMedication({ userId: subject.subjectUserId, from, to });
+          output = { ok: true, from: result.from, to: result.to, updated: result.updated, subject: subject.subjectMemberName ?? "you" };
         } else if (toolCall.function.name === "remove_medication") {
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: true,
+          });
+          if ("error" in subject) throw new Error(subject.error);
           const name = String(args.name ?? "").trim();
           if (!name) throw new Error("Medication name is required.");
-          const result = await removeDoeDtcMedication({ userId: params.user.id, name });
-          output = { ok: true, name: result.name, removed: result.removed };
+          const result = await removeDoeDtcMedication({ userId: subject.subjectUserId, name });
+          output = { ok: true, name: result.name, removed: result.removed, subject: subject.subjectMemberName ?? "you" };
         } else if (toolCall.function.name === "add_condition") {
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: true,
+          });
+          if ("error" in subject) throw new Error(subject.error);
           const name = String(args.name ?? "").trim();
           if (!name) throw new Error("Condition name is required.");
-          const result = await appendDoeDtcCondition({ userId: params.user.id, name });
-          output = { ok: true, name: result.name, added: result.added };
+          const result = await appendDoeDtcCondition({ userId: subject.subjectUserId, name });
+          output = { ok: true, name: result.name, added: result.added, subject: subject.subjectMemberName ?? "you" };
         } else if (toolCall.function.name === "update_condition") {
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: true,
+          });
+          if ("error" in subject) throw new Error(subject.error);
           const from = String(args.from ?? "").trim();
           const to = String(args.to ?? "").trim();
           if (!from || !to) throw new Error("Both condition names are required.");
-          const result = await renameDoeDtcCondition({ userId: params.user.id, from, to });
-          output = { ok: true, from: result.from, to: result.to, updated: result.updated };
+          const result = await renameDoeDtcCondition({ userId: subject.subjectUserId, from, to });
+          output = { ok: true, from: result.from, to: result.to, updated: result.updated, subject: subject.subjectMemberName ?? "you" };
         } else if (toolCall.function.name === "remove_condition") {
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: true,
+          });
+          if ("error" in subject) throw new Error(subject.error);
           const name = String(args.name ?? "").trim();
           if (!name) throw new Error("Condition name is required.");
-          const result = await removeDoeDtcCondition({ userId: params.user.id, name });
-          output = { ok: true, name: result.name, removed: result.removed };
+          const result = await removeDoeDtcCondition({ userId: subject.subjectUserId, name });
+          output = { ok: true, name: result.name, removed: result.removed, subject: subject.subjectMemberName ?? "you" };
         } else if (toolCall.function.name === "create_profile_artifact") {
           const subject = await resolveAgentHouseholdSubject({
             viewerUserId: params.user.id,
@@ -1910,8 +1962,16 @@ export async function runDoeDtcAgentTurn(params: {
           listenUrl = doeDtcListenUrl(params.user.care_token, session.id);
           output = { ok: true, session_id: session.id, link_sent_separately: true };
         } else if (toolCall.function.name === "send_profile_link") {
-          profileUrl = doeDtcAppUrl(params.user.care_token);
-          output = { ok: true, link_sent_separately: true };
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+          });
+          if ("error" in subject) throw new Error(subject.error);
+          profileUrl = doeDtcAppUrl(params.user.care_token, {
+            tab: typeof args.tab === "string" ? args.tab : undefined,
+            member: subject.subjectUserId !== params.user.id ? subject.subjectUserId : undefined,
+          });
+          output = { ok: true, subject: subject.subjectMemberName ?? "you", link_sent_separately: true };
         } else if (toolCall.function.name === "read_profile") {
           const tab = String(args.tab ?? "") as DoeDtcProfileTab;
           if (!DOEDTC_PROFILE_READ_TABS.includes(tab)) {

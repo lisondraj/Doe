@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getDoeDtcHouseholdInviteByToken, getDoeDtcProfileSnapshot, getDoeDtcUserByCareToken, loadDoeDtcHouseholdAccessContext } from "@/lib/doedtc/doedtc-db";
+import { getDoeDtcHouseholdInviteByToken, loadDoeDtcHouseholdAccessContext } from "@/lib/doedtc/doedtc-db";
 import { isHouseholdMemberAdult } from "@/lib/doedtc/doedtc-household";
 import { submitDoeDtcJoinFamily } from "@/lib/doedtc/submit-doedtc-join-family";
 import type { DoeDtcHouseholdConsentLevel } from "@/lib/doedtc/doedtc-types";

@@ -1618,9 +1618,9 @@ async function listDoeDtcHouseholdConsents(householdId: string): Promise<DoeDtcH
 }
 
 export async function getDoeDtcHouseholdSnapshot(viewerUserId: string): Promise<DoeDtcHouseholdSnapshot> {
-  const household = await getDoeDtcHouseholdByUserId(viewerUserId);
+  let household = await getDoeDtcHouseholdByUserId(viewerUserId);
   if (!household) {
-    return { household: null, members: [], memberAccess: [], isAdmin: false, viewerMemberId: null };
+    household = await ensureDoeDtcHouseholdForAdmin(viewerUserId);
   }
   const [members, consents] = await Promise.all([
     listDoeDtcHouseholdMembers(household.id),
@@ -1661,9 +1661,9 @@ export async function loadDoeDtcHouseholdAccessContext(userId: string): Promise<
   members: DoeDtcHouseholdMemberRow[];
   consents: DoeDtcHouseholdConsentRow[];
 }> {
-  const household = await getDoeDtcHouseholdByUserId(userId);
+  let household = await getDoeDtcHouseholdByUserId(userId);
   if (!household) {
-    return { household: null, members: [], consents: [] };
+    household = await ensureDoeDtcHouseholdForAdmin(userId);
   }
   const [members, consents] = await Promise.all([
     listDoeDtcHouseholdMembers(household.id),
