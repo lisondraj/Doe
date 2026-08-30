@@ -185,6 +185,7 @@ export const DOEDTC_LINQ = {
   profileIntro: "Your Doe profile is ready. Tap the link below to manage appointments, family, and more.",
   profileLinkIntro: "Here's your profile.",
   feedbackLinkIntro: "Track your feedback or bug report here.",
+  prepareLinkIntro: "Here's your visit prep summary.",
   listenIntro: "Open Listen to record your appointment. Press End call when you're done.",
   careLinkIntro: "Here's your symptom review.",
   allSetMessage:
@@ -248,6 +249,20 @@ export function doeDtcAppUrl(
   return url.toString();
 }
 
+export function doeDtcPrepareUrl(
+  token: string,
+  options?: { preparation?: string },
+): string {
+  const url = new URL(`${doeDtcPublicOrigin()}${DOEDTC_PATH}/prepare`);
+  url.searchParams.set("t", token);
+  if (options?.preparation) url.searchParams.set("p", options.preparation);
+  return url.toString();
+}
+
+export function doeDtcViewUrl(): string {
+  return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/view`;
+}
+
 export function doeDtcFeedbackUrl(
   token: string,
   options?: { ticket?: string },
@@ -273,6 +288,29 @@ export function doeDtcVaultUrl(vaultToken: string): string {
 export function doeDtcSessionUrl(careToken: string): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/session?t=${encodeURIComponent(careToken)}`;
 }
+
+export const DOEDTC_PREPARE = {
+  pageTitle: "Visit prep",
+  subtitle: "Share this summary with your provider.",
+  codeBannerTitle: "Provider code",
+  codeBannerBody: "Give this 5-digit code to your provider. They can enter it at doe.care/doedtc/view on their phone.",
+  invalidTokenTitle: "Prep unavailable",
+  invalidTokenBody: "Complete Get Started in iMessage to access visit prep.",
+  emptyTitle: "Nothing to show yet",
+  emptyBody: "Ask Doe to prepare again once you've added meds, symptoms, or trackers.",
+} as const;
+
+export const DOEDTC_VIEW = {
+  pageTitle: "View patient summary",
+  subtitle: "Enter the 5-digit code the patient shared with you.",
+  codeLabel: "Provider code",
+  codePlaceholder: "12345",
+  submitLabel: "View summary",
+  invalidCodeTitle: "Code not found",
+  invalidCodeBody: "That code is invalid or expired. Ask the patient for a fresh code from Doe.",
+  expiredTitle: "Summary expired",
+  expiredBody: "This summary expired. Ask the patient to prepare a new one in iMessage.",
+} as const;
 
 export const DOEDTC_FEEDBACK = {
   pageTitle: "Feedback and bugs",

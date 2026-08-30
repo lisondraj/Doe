@@ -8,6 +8,7 @@ import {
   normalizeArtifactValues,
   slugifyArtifactTitle,
 } from "@/lib/doedtc/doedtc-artifacts";
+import { buildDoeDtcPreparationPayload } from "@/lib/doedtc/doedtc-prepare";
 import { createDoeDtcToken, isTokenExpired, onboardingTokenExpiresAt } from "@/lib/doedtc/doedtc-tokens";
 import type {
   DoeDtcArtifactEntryRow,
@@ -25,6 +26,8 @@ import type {
   DoeDtcMemoryRow,
   DoeDtcMessageRow,
   DoeDtcProfileSnapshot,
+  DoeDtcPreparationPayload,
+  DoeDtcPreparationRow,
   DoeDtcResultRow,
   DoeDtcShareCodeRow,
   DoeDtcSymptomRow,
@@ -1375,4 +1378,109 @@ export async function listDoeDtcListenSessions(
     .limit(limit);
   if (error) throw new Error(error.message);
   return (data as DoeDtcListenSessionRow[]) ?? [];
+}
+
+function randomDoeDtcPreparationCode(): string {
+  return String(Math.floor(10000 + Math.random() * 90000));
+}
+
+function mapPreparationRow(row: Record<string, unknown>): DoeDtcPreparationRow {
+  const payload = row.payload;
+  return {
+    ...(row as DoeDtcPreparationRow),
+    payload:
+      payload && typeof payload === "object" && !Array.isArray(payload)
+        ? (payload as DoeDtcPreparationPayload)
+        : {
+            title: String(row.title ?? "Health summary"),
+            reason: null,
+            generatedAt: String(row.created_at ?? new Date().toISOString()),
+            patientName: null,
+            widgets: [],
+          },
+  };
+}
+
+async function uniqueActivePreparationCode(supabase: ReturnType<typeof createSupabaseAdmin>): Promise<string> {
+  for (let attempt = 0; attempt < 12; attempt += 1) {
+    const code = randomDoeDtcPreparationCode();
+    const { data, error } = await supabase
+      .from("doedtc_preparations")
+      .select("id")
+      .eq("code", code)
+      .gt("expires_at", new Date().toISOString())
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!data) return code;
+  }
+  throw new Error("Unable to generate a provider code. Try again.");
+}
+
+export async function createDoeDtcPreparation(params: {
+  userId: string;
+  reason?: string | null;
+  title?: string | null;
+}): Promise<DoeDtcPreparationRow> {
+  const payload = await buildDoeDtcPreparationPayload({
+    userId: params.userId,
+    reason: params.reason,
+    title: params.title,
+  });
+  const supabase = createSupabaseAdmin();
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7);
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const code = await uniqueActivePreparationCode(supabase);
+    const { data, error } = await supabase
+      .from("doedtc_preparations")
+      .insert({
+        user_id: params.userId,
+        code,
+        title: payload.title,
+        reason: payload.reason,
+        payload,
+        expires_at: expiresAt.toISOString(),
+      })
+      .select("*")
+      .single();
+    if (!error) return mapPreparationRow(data as Record<string, unknown>);
+    if (!error.message.includes("duplicate key")) throw new Error(error.message);
+  }
+
+  throw new Error("Unable to create preparation. Try again.");
+}
+
+export async function getDoeDtcPreparationById(params: {
+  userId: string;
+  preparationId: string;
+}): Promise<DoeDtcPreparationRow | null> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_preparations")
+    .select("*")
+    .eq("user_id", params.userId)
+    .eq("id", params.preparationId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+  const row = mapPreparationRow(data as Record<string, unknown>);
+  if (new Date(row.expires_at).getTime() <= Date.now()) return null;
+  return row;
+}
+
+export async function getDoeDtcPreparationByCode(code: string): Promise<DoeDtcPreparationRow | null> {
+  const normalized = code.trim().replace(/\D/g, "");
+  if (normalized.length !== 5) return null;
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_preparations")
+    .select("*")
+    .eq("code", normalized)
+    .gt("expires_at", new Date().toISOString())
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data ? mapPreparationRow(data as Record<string, unknown>) : null;
 }

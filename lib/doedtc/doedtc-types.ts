@@ -179,6 +179,47 @@ export type DoeDtcTicketRow = {
   updated_at: string;
 };
 
+export type DoeDtcPreparationWidgetKind =
+  | "header"
+  | "medications"
+  | "conditions"
+  | "symptoms"
+  | "appointments"
+  | "results"
+  | "family"
+  | "notes"
+  | "tracker_series"
+  | "tracker_log";
+
+export type DoeDtcPreparationWidget = {
+  kind: DoeDtcPreparationWidgetKind;
+  title: string;
+  body?: string;
+  items?: string[];
+  artifactTitle?: string;
+  fieldLabel?: string;
+  points?: Array<{ at: string; value: number }>;
+};
+
+export type DoeDtcPreparationPayload = {
+  title: string;
+  reason: string | null;
+  generatedAt: string;
+  patientName: string | null;
+  widgets: DoeDtcPreparationWidget[];
+};
+
+export type DoeDtcPreparationRow = {
+  id: string;
+  user_id: string;
+  code: string;
+  title: string;
+  reason: string | null;
+  payload: DoeDtcPreparationPayload;
+  expires_at: string;
+  created_at: string;
+};
+
 export type DoeDtcProfileSnapshot = {
   user: Pick<
     DoeDtcUserRow,

@@ -14,7 +14,7 @@ import {
   formatMem0Block,
   searchDoeDtcMem0Memories,
 } from "@/lib/doedtc/doedtc-memory";
-import { doeDtcAppUrl, doeDtcCareUrl, doeDtcFeedbackUrl, doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
+import { doeDtcAppUrl, doeDtcCareUrl, doeDtcFeedbackUrl, doeDtcListenUrl, doeDtcPrepareUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
 import {
   formatDoeDtcAppointmentWhen,
   normalizeDoeDtcAppointmentTiming,
@@ -37,6 +37,7 @@ import {
   updateDoeDtcArtifact,
   updateDoeDtcArtifactEntry,
   createDoeDtcListenSession,
+  createDoeDtcPreparation,
   createDoeDtcTicket,
   getDoeDtcProfileSnapshot,
   insertDoeDtcMemory,
@@ -408,6 +409,24 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "create_preparation",
+      description:
+        "Create a one-off visit-prep summary the patient can share with their provider via a 5-digit code. Call when they say prepare, or ask for a summary for their doctor, visit, or refill. Use a general health snapshot if no specific reason is given.",
+      parameters: {
+        type: "object",
+        properties: {
+          title: { type: "string", description: "Optional short title for the summary page." },
+          reason: {
+            type: "string",
+            description: "Optional visit reason, e.g. Ozempic refill, annual checkup.",
+          },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "submit_ticket",
       description:
         "Submit user feedback or a bug report. Call when they ask to send feedback, report a bug, or file something that went wrong. Do not use for one-off product questions.",
@@ -662,6 +681,7 @@ export type DoeDtcAgentTurnResult = {
   listenUrl?: string;
   profileUrl?: string;
   feedbackUrl?: string;
+  prepareUrl?: string;
   workUrl?: string;
   screenshotUrl?: string;
   vaultUrl?: string;
@@ -859,6 +879,7 @@ function buildReplyFromTurnState(params: {
   listenUrl?: string;
   profileUrl?: string;
   feedbackUrl?: string;
+  prepareUrl?: string;
   browserUserMessage?: string;
 }): string {
   if (params.browserUserMessage?.trim()) {
@@ -882,6 +903,7 @@ function buildReplyFromTurnState(params: {
   if (params.listenUrl) return "Sending a Listen link to record your visit.";
   if (params.profileUrl) return "Sending your profile link.";
   if (params.feedbackUrl) return "Sending a link to track your report.";
+  if (params.prepareUrl) return "Sending your visit prep summary.";
 
   return "Got it.";
 }
@@ -942,6 +964,8 @@ What you can do:
 - Create profile trackers (create_profile_artifact) when they want to track, log, count, or keep a list over time — e.g. Ozempic shots, water, mood. Do not create trackers for one-off questions. Prefer updating an existing matching tracker over a duplicate. Log entries with log_artifact_entry. Read trackers tab with read_profile.
 - After creating a tracker or logging a useful entry, send_profile_link with tab=trackers and artifact id so they can view/edit it.
 - Submit feedback or bug reports (submit_ticket) when they ask to send feedback or report a bug. After submitting, send the track link. Read feedback tab with read_profile.
+- Create a visit-prep summary (create_preparation) when they say prepare, or ask for something to share with their provider, doctor, visit, or refill. Use a general health snapshot if they do not name a reason. After creating, send the prep link with the 5-digit provider code.
+- After logging an appointment, or when they mention an upcoming visit or refill, you may briefly offer to prepare a provider summary — not every turn, and do not create it unless they ask or say prepare.
 - If a tool fails, you cannot complete a task, or you made a mistake, mention they can text "report a bug" or "send feedback" and you will file it. Do not auto-file unless they ask.
 - Browse the web via start_browser_task. For "go to Google and type mayo" (or screenshot the result), call once with url google and intent type mayo — that opens the Google results page and screenshots it. Do not try to type into Google with a CSS selector.
 - Screenshot the current page with browser_snapshot when they ask for a picture, screenshot, or to see the page.
@@ -1155,6 +1179,7 @@ export async function runDoeDtcAgentTurn(params: {
   let listenUrl: string | undefined;
   let profileUrl: string | undefined;
   let feedbackUrl: string | undefined;
+  let prepareUrl: string | undefined;
   let workUrl: string | undefined;
   let screenshotUrl: string | undefined;
   let vaultUrl: string | undefined;
@@ -1188,6 +1213,7 @@ export async function runDoeDtcAgentTurn(params: {
         listenUrl,
         profileUrl,
         feedbackUrl,
+        prepareUrl,
       });
 
       const fulfilled = await fulfillClaimedLinks({
@@ -1218,6 +1244,7 @@ export async function runDoeDtcAgentTurn(params: {
           listenUrl,
           profileUrl,
           feedbackUrl,
+          prepareUrl,
         });
       }
 
@@ -1227,6 +1254,7 @@ export async function runDoeDtcAgentTurn(params: {
         listenUrl,
         profileUrl,
         feedbackUrl,
+        prepareUrl,
         workUrl,
         screenshotUrl,
         vaultUrl,
@@ -1487,6 +1515,20 @@ export async function runDoeDtcAgentTurn(params: {
           if (!entryId) throw new Error("entry_id is required.");
           await removeDoeDtcArtifactEntry({ userId: params.user.id, entryId });
           output = { ok: true, id: entryId, removed: true };
+        } else if (toolCall.function.name === "create_preparation") {
+          const row = await createDoeDtcPreparation({
+            userId: params.user.id,
+            title: typeof args.title === "string" ? args.title : undefined,
+            reason: typeof args.reason === "string" ? args.reason : undefined,
+          });
+          prepareUrl = doeDtcPrepareUrl(params.user.care_token, { preparation: row.id });
+          output = {
+            ok: true,
+            id: row.id,
+            code: row.code,
+            title: row.title,
+            link_sent_separately: true,
+          };
         } else if (toolCall.function.name === "submit_ticket") {
           const kind = args.kind === "bug" ? "bug" : "feedback";
           const title = String(args.title ?? "").trim();
@@ -1767,11 +1809,13 @@ export async function runDoeDtcAgentTurn(params: {
       listenUrl,
       profileUrl,
       feedbackUrl,
+      prepareUrl,
     }),
     careUrl: assessmentRan ? careUrl : undefined,
     listenUrl,
     profileUrl,
     feedbackUrl,
+    prepareUrl,
     workUrl,
     screenshotUrl,
     vaultUrl,
