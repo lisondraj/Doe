@@ -752,6 +752,52 @@ const URL_IN_TEXT = /https?:\/\/\S+/gi;
 const CLOSER_TAIL =
   /(?:\s*[,.!]+\s*)?(?:feel free to (?:ask|let me know|reach out|text|message)(?:\b.{0,80})?|let me know if (?:you(?:'d| would)? (?:like|want|need)|you have |there's |you need ).{0,80}|if there(?:'s| is) anything you need.{0,40}|if you need anything.{0,40}|here if you need me.{0,20}|just let me know(?:\b.{0,60})?|let me know\.[!?.,]?\s*$|don'?t hesitate to (?:ask|reach out|text).{0,40}|happy to (?:help|chat|look)(?:\b.{0,40})?(?: if you want)?|(?:is there )?anything else I can (?:help|do).{0,40}|what else can I (?:help|do).{0,40}|want me to .{0,80}|i can also (?:help|look|check|do|add).{0,60}|just say the word[!?.,]?\s*$)[!?.,]?\s*$/i;
 const KEEP_CLOSER_RATE = 0.08;
+const INCOMPLETE_FRAGMENT_START =
+  /^(if|when|want|let me|feel free|i can also|what else|anything else|is there)\b/i;
+
+function looksIncompleteFragment(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return true;
+  if (/[.!?]$/.test(trimmed)) return false;
+  if (INCOMPLETE_FRAGMENT_START.test(trimmed)) return true;
+  if (/[,;…]$/.test(trimmed) || /\.{2,}$/.test(trimmed)) return true;
+  if (/\bif you\b/i.test(trimmed)) return true;
+  return false;
+}
+
+function splitCompleteAndTrailing(text: string): { complete: string[]; trailing: string | null } {
+  const trimmed = text.trim();
+  if (!trimmed) return { complete: [], trailing: null };
+
+  const complete: string[] = [];
+  const regex = /[^.!?]+[.!?]+/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(trimmed)) !== null) {
+    complete.push(match[0].trim());
+    lastIndex = regex.lastIndex;
+  }
+  const trailing = trimmed.slice(lastIndex).trim();
+  return { complete, trailing: trailing || null };
+}
+
+function dropIncompleteTrailingSentence(text: string): string {
+  const trimmed = text.trim();
+  if (!trimmed) return "All set.";
+
+  const { complete, trailing } = splitCompleteAndTrailing(trimmed);
+
+  if (trailing && looksIncompleteFragment(trailing)) {
+    const joined = complete.join(" ").trim();
+    return joined || "All set.";
+  }
+
+  if (complete.length === 0 && looksIncompleteFragment(trimmed)) {
+    return "All set.";
+  }
+
+  return trimmed;
+}
 
 function stripMarkdownFromReply(text: string): string {
   return text
@@ -771,12 +817,13 @@ export function sanitizeDoeDtcReplyText(
   const stripped = withoutUrls.replace(CLOSER_TAIL, "");
   const rate = options?.keepCloserRate ?? KEEP_CLOSER_RATE;
   const keepCloser = stripped !== withoutUrls && Math.random() < rate;
-  return (keepCloser ? withoutUrls : stripped)
+  const normalized = (keepCloser ? withoutUrls : stripped)
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/[ \t]{2,}/g, " ")
     .replace(/[,;]+(?:\s*[.!]*)?\s*$/g, "")
     .trim();
+  return dropIncompleteTrailingSentence(normalized);
 }
 
 function compactTranscript(messages: DoeDtcMessageRow[]): string {
@@ -1078,6 +1125,8 @@ iMessage texture:
 
 Core invariant:
 - Do the action with tools first, then describe the result in plain language.
+- Every reply must be one or more finished sentences. Never stop mid-clause or mid-offer (no fragments like "If you want family…").
+- If a thought will not fit, omit it and send a shorter complete sentence instead.
 - Never claim you sent a link, opened a page, or logged in unless the matching tool succeeded.
 - If a browser tool returns user_message, use that exact wording in your reply.
 - Never put URLs in your reply — links arrive as separate iMessages.
@@ -1086,7 +1135,8 @@ Core invariant:
 Style:
 - Short iMessage replies (1-4 sentences). Warm, plain language.
 - Never use markdown — no **bold**, __italics__, or \`code\`. iMessage will not render it.
-- Never end a reply with a comma.
+- Never end a reply with a comma or a dangling clause. Each sentence must fully complete its thought.
+- If you cannot finish an offer or follow-up, drop it — never send a truncated line like "If you want family…" or "Want me to…".
 - Only ask a clarifying question when you cannot act without it.
 - Refer back to appointments, family, and memories naturally.
 - Do not invite another message on most turns. A soft closer ("let me know if…") is fine rarely — not most replies.

@@ -143,6 +143,26 @@ test("sanitizeDoeDtcReplyText strips want-me-to closers", () => {
   );
 });
 
+test("sanitizeDoeDtcReplyText drops dangling family-offer fragments after closer strip", () => {
+  const cleaned = sanitizeDoeDtcReplyText(
+    "Logged Simon. If you want family invites sent, let me know.",
+    { keepCloserRate: 0 },
+  );
+  assert.equal(cleaned, "Logged Simon.");
+  assert.ok(!cleaned.includes("If you want family"));
+});
+
+test("sanitizeDoeDtcReplyText replaces whole-reply fragments with a complete fallback", () => {
+  assert.equal(
+    sanitizeDoeDtcReplyText("If you want family…", { keepCloserRate: 0 }),
+    "All set.",
+  );
+  assert.equal(
+    sanitizeDoeDtcReplyText("If you want family invites sent", { keepCloserRate: 0 }),
+    "All set.",
+  );
+});
+
 test("extractInboundMessageId reads current and legacy Linq payloads", () => {
   assert.equal(
     extractInboundMessageId({ data: { id: "v2-message-id", parts: [] } }),
