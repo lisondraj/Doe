@@ -448,7 +448,7 @@ export type DoeDtcAgentTurnResult = {
 
 const URL_IN_TEXT = /https?:\/\/\S+/gi;
 const CLOSER_TAIL =
-  /(?:\s*[.!]+\s*)?(?:feel free to (?:ask|let me know|reach out|text|message)(?:\b.{0,80})?|let me know if (?:you(?:'d| would)? (?:like|want|need)|you have |there's ).{0,80}|just let me know(?:\b.{0,60})?|don'?t hesitate to (?:ask|reach out|text).{0,40}|happy to (?:help|chat|look).{0,40}|(?:is there )?anything else I can (?:help|do).{0,40}|what else can I (?:help|do).{0,40})[!?.,]?\s*$/i;
+  /(?:\s*[,.!]+\s*)?(?:feel free to (?:ask|let me know|reach out|text|message)(?:\b.{0,80})?|let me know if (?:you(?:'d| would)? (?:like|want|need)|you have |there's ).{0,80}|just let me know(?:\b.{0,60})?|don'?t hesitate to (?:ask|reach out|text).{0,40}|happy to (?:help|chat|look).{0,40}|(?:is there )?anything else I can (?:help|do).{0,40}|what else can I (?:help|do).{0,40})[!?.,]?\s*$/i;
 const KEEP_CLOSER_RATE = 0.18;
 
 export function sanitizeDoeDtcReplyText(
@@ -463,6 +463,7 @@ export function sanitizeDoeDtcReplyText(
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/[ \t]{2,}/g, " ")
+    .replace(/[,;]+(?:\s*[.!]*)?\s*$/g, "")
     .trim();
 }
 
@@ -720,6 +721,7 @@ Core invariant:
 
 Style:
 - Short iMessage replies (1-4 sentences). Warm, plain language.
+- Never end a reply with a comma.
 - Only ask a clarifying question when you cannot act without it.
 - Refer back to appointments, family, and memories naturally.
 - Do not invite another message on most turns. A soft closer ("let me know if…") is fine rarely — not most replies.

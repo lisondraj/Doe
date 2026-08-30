@@ -47,7 +47,7 @@ function buildLinqMessage(params: {
     parts: params.parts,
     ...(params.idempotencyKey ? { idempotency_key: params.idempotencyKey } : {}),
     ...(params.replyToMessageId
-      ? { reply_to: { message_id: params.replyToMessageId } }
+      ? { reply_to: { message_id: params.replyToMessageId, part_index: 0 } }
       : {}),
   };
 }
@@ -124,6 +124,7 @@ export async function linqSendParts(params: {
         to: params.to,
         parts: params.parts,
         idempotencyKey: params.idempotencyKey,
+        replyToMessageId: params.replyToMessageId,
       });
     } catch (error) {
       if (!params.chatId) throw lastError(error);
@@ -131,6 +132,7 @@ export async function linqSendParts(params: {
         chatId: params.chatId,
         parts: params.parts,
         idempotencyKey: params.idempotencyKey,
+        replyToMessageId: params.replyToMessageId,
       });
     }
   }
@@ -143,6 +145,7 @@ export async function linqSendParts(params: {
     chatId: params.chatId,
     parts: params.parts,
     idempotencyKey: params.idempotencyKey,
+    replyToMessageId: params.replyToMessageId,
   });
 }
 
@@ -244,6 +247,47 @@ export async function linqShareContactCard(chatId: string): Promise<void> {
   });
 }
 
+const TAPBACK_BY_EMOJI: Record<string, "love" | "like" | "dislike" | "laugh" | "emphasize" | "question"> =
+  {
+    "❤️": "love",
+    "❤": "love",
+    "♥": "love",
+    "♥️": "love",
+    "👍": "like",
+    "👎": "dislike",
+    "😂": "laugh",
+    "😆": "laugh",
+    "😄": "laugh",
+    "‼️": "emphasize",
+    "❗": "emphasize",
+    "❓": "question",
+    "❔": "question",
+  };
+
+function firstGrapheme(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
+    for (const part of new Intl.Segmenter("en", { granularity: "grapheme" }).segment(trimmed)) {
+      return part.segment;
+    }
+  }
+  return [...trimmed][0] ?? "";
+}
+
+export function linqReactionPayload(emoji: string): {
+  operation: "add";
+  type: "love" | "like" | "dislike" | "laugh" | "emphasize" | "question" | "custom";
+  custom_emoji?: string;
+} {
+  const grapheme = firstGrapheme(emoji);
+  const tapback = TAPBACK_BY_EMOJI[grapheme];
+  if (tapback) {
+    return { operation: "add", type: tapback };
+  }
+  return { operation: "add", type: "custom", custom_emoji: grapheme };
+}
+
 export async function linqAddReaction(params: {
   messageId: string;
   emoji: string;
@@ -255,10 +299,7 @@ export async function linqAddReaction(params: {
 
   await linqRequest<unknown>(`/v3/messages/${encodeURIComponent(params.messageId)}/reactions`, {
     method: "POST",
-    body: JSON.stringify({
-      type: "custom",
-      custom_emoji: emoji,
-    }),
+    body: JSON.stringify(linqReactionPayload(emoji)),
   });
 }
 

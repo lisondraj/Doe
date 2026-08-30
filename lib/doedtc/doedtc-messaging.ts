@@ -79,7 +79,11 @@ export function extractInboundPhone(payload: unknown): string | null {
 
 export function extractInboundMessageId(payload: unknown): string | undefined {
   const body = payload as LinqWebhookPayload;
-  const id = body.data?.message?.id ?? body.data?.id ?? body.message?.id;
+  const id =
+    body.data?.message?.id ??
+    body.data?.id ??
+    (body.data as { message_id?: string } | undefined)?.message_id ??
+    body.message?.id;
   if (typeof id !== "string") return undefined;
   const trimmed = id.trim();
   return trimmed || undefined;
@@ -131,17 +135,14 @@ function shouldApplyReaction(params: { text: string; emoji?: string }): boolean 
   if (isConfirmMessage(params.text) || isOptOutMessage(params.text) || isHiDoeMessage(params.text)) {
     return false;
   }
-  return Math.random() < 0.35;
+  return true;
 }
 
 function shouldApplyThreadReply(params: {
   replyToInbound?: boolean;
   replyText: string;
-  hasSeparateLinks: boolean;
 }): boolean {
-  if (!params.replyToInbound || !params.replyText.trim()) return false;
-  if (params.hasSeparateLinks && !params.replyText.trim()) return false;
-  return Math.random() < 0.65;
+  return Boolean(params.replyToInbound && params.replyText.trim());
 }
 
 async function sendDoeDtcOutbound(params: {
@@ -454,22 +455,11 @@ export async function handleSymptomInbound(params: {
   }
 
   const replyText = sanitizeDoeDtcReplyText(turn.replyText);
-  const hasSeparateLinks = Boolean(
-    turn.careUrl ||
-      turn.listenUrl ||
-      turn.profileUrl ||
-      turn.workUrl ||
-      turn.screenshotUrl ||
-      turn.vaultUrl ||
-      turn.liveViewUrl ||
-      turn.sessionUrl,
-  );
   const replyToMessageId =
     params.inboundMessageId &&
     shouldApplyThreadReply({
       replyToInbound: turn.replyToInbound,
       replyText,
-      hasSeparateLinks,
     })
       ? params.inboundMessageId
       : undefined;

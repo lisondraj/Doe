@@ -7,6 +7,8 @@ import {
 } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { toUserSafeBrowserError } from "@/lib/doedtc/doedtc-browser";
 import { sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
+import { extractInboundMessageId } from "@/lib/doedtc/doedtc-messaging";
+import { linqReactionPayload } from "@/lib/doedtc/linq";
 import { formatDoeDtcIntegrations, formatDoeDtcProfileTab } from "@/lib/doedtc/doedtc-profile-read";
 import {
   normalizeDoeDtcFamilyRelationship,
@@ -101,6 +103,34 @@ test("sanitizeDoeDtcReplyText usually strips feel-free closers", () => {
     { keepCloserRate: 0 },
   );
   assert.equal(cleaned, "Got it");
+});
+
+test("sanitizeDoeDtcReplyText does not leave a trailing comma", () => {
+  assert.equal(
+    sanitizeDoeDtcReplyText("Got it, let me know if you have any questions.", { keepCloserRate: 0 }),
+    "Got it",
+  );
+  assert.equal(sanitizeDoeDtcReplyText("I logged that,"), "I logged that");
+});
+
+test("extractInboundMessageId reads current and legacy Linq payloads", () => {
+  assert.equal(
+    extractInboundMessageId({ data: { id: "v2-message-id", parts: [] } }),
+    "v2-message-id",
+  );
+  assert.equal(
+    extractInboundMessageId({ data: { message: { id: "legacy-message-id" } } }),
+    "legacy-message-id",
+  );
+});
+
+test("linqReactionPayload adds tapbacks and custom emoji", () => {
+  assert.deepEqual(linqReactionPayload("👍"), { operation: "add", type: "like" });
+  assert.deepEqual(linqReactionPayload("🙏"), {
+    operation: "add",
+    type: "custom",
+    custom_emoji: "🙏",
+  });
 });
 
 test("normalizeDoeDtcFamilyRelationship maps son and daughter to child", () => {
