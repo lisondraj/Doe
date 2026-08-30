@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { DoeDtcDropdown } from "@/components/doedtc/DoeDtcDropdown";
+import { DoeDtcToggle } from "@/components/doedtc/DoeDtcToggle";
 import { DoeDtcTrackerChart } from "@/components/doedtc/DoeDtcTrackerChart";
 import {
   buildArtifactSeriesPoints,
@@ -68,35 +70,27 @@ function ArtifactFieldInput({
   const id = `artifact-field-${field.key}`;
   if (field.type === "boolean") {
     return (
-      <label className="doedtc-checkbox-row" htmlFor={id}>
-        <input
-          id={id}
-          type="checkbox"
-          checked={Boolean(value)}
-          disabled={disabled}
-          onChange={(event) => onChange(event.target.checked)}
-        />
-        <span>{field.label}</span>
-      </label>
+      <DoeDtcToggle
+        id={id}
+        className="doedtc-form-toggle"
+        label={field.label}
+        checked={Boolean(value)}
+        disabled={disabled}
+        onChange={onChange}
+      />
     );
   }
   if (field.type === "select") {
     return (
-      <div>
-        <label className="doedtc-label" htmlFor={id}>{field.label}</label>
-        <select
-          id={id}
-          className="doedtc-input"
-          value={String(value ?? "")}
-          disabled={disabled}
-          onChange={(event) => onChange(event.target.value)}
-        >
-          <option value="">{field.optional ? "Optional" : "Select…"}</option>
-          {(field.options ?? []).map((option) => (
-            <option key={option} value={option}>{option}</option>
-          ))}
-        </select>
-      </div>
+      <DoeDtcDropdown
+        id={id}
+        label={field.label}
+        value={String(value ?? "")}
+        disabled={disabled}
+        placeholder={field.optional ? "Optional" : "Select…"}
+        options={(field.options ?? []).map((option) => ({ value: option, label: option }))}
+        onChange={(next) => onChange(next)}
+      />
     );
   }
   const inputType =

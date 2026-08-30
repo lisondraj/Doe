@@ -51,7 +51,7 @@ export function DoeDtcGuidePageClient({ token, valid, guide }: DoeDtcGuidePageCl
 
   return (
     <DoeDtcPageShell>
-      <DoeDtcTopBar href={`/doedtc/app?t=${encodeURIComponent(token)}`} />
+      <DoeDtcTopBar compact href={`/doedtc/app?t=${encodeURIComponent(token)}`} />
       <div className="doedtc-guide__actions">
         {!saved ? (
           <button type="button" className="doedtc-button" disabled={busy} onClick={() => void saveGuide()}>

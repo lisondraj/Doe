@@ -52,7 +52,7 @@ export function DoeDtcVaultView({ token, valid, host }: DoeDtcVaultViewProps) {
 
   return (
     <DoeDtcPageShell>
-      <DoeDtcTopBar />
+      <DoeDtcTopBar compact />
       <header className="doedtc-header">
         <h1 className={`doedtc-headline ${dmSans.className}`}>{title}</h1>
       </header>

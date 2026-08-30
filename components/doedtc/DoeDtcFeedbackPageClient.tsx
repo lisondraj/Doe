@@ -89,7 +89,7 @@ export function DoeDtcFeedbackPageClient({
 
   return (
     <DoeDtcPageShell>
-      <DoeDtcTopBar href={`/doedtc/app?t=${encodeURIComponent(token)}&tab=feedback`} />
+      <DoeDtcTopBar compact href={`/doedtc/app?t=${encodeURIComponent(token)}&tab=feedback`} />
       <header className="doedtc-header">
         <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_FEEDBACK.pageTitle}</h1>
         <p className="doedtc-muted">{DOEDTC_FEEDBACK.subtitle}</p>

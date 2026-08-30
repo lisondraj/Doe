@@ -168,7 +168,7 @@ function GuideBlock({ block }: { block: DoeDtcGuideBlock }) {
             </ul>
           </div>
           <div className="doedtc-card doedtc-card--flat doedtc-guide__dodont-col">
-            <h3 className="doedtc-section-title">Don't</h3>
+            <h3 className="doedtc-section-title">Don&apos;t</h3>
             <ul className="doedtc-prepare__list">
               {(block.donts ?? []).map((item) => (
                 <li key={`${block.id}-dont-${item}`}>{item}</li>

@@ -14,7 +14,7 @@ type DoeDtcGetStartedRouterProps = {
 export function DoeDtcGetStartedRouter({ token, valid }: DoeDtcGetStartedRouterProps) {
   return (
     <DoeDtcPageShell>
-      <DoeDtcTopBar href={`/doedtc/get-started?t=${encodeURIComponent(token)}`} />
+      <DoeDtcTopBar compact href={`/doedtc/get-started?t=${encodeURIComponent(token)}`} />
       <header className="doedtc-header">
         <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_GET_STARTED.title}</h1>
         <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_GET_STARTED.subtitle}</p>

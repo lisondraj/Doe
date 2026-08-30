@@ -174,7 +174,7 @@ export function DoeDtcListenView({
   if (!valid || !sessionId) {
     return (
       <DoeDtcPageShell>
-        <DoeDtcTopBar />
+        <DoeDtcTopBar compact />
         <div className="doedtc-card doedtc-card--flat">
           <strong>{DOEDTC_LISTEN.invalidTokenTitle}</strong>
           <p>{DOEDTC_LISTEN.invalidTokenBody}</p>
@@ -185,7 +185,7 @@ export function DoeDtcListenView({
 
   return (
     <DoeDtcPageShell>
-      <DoeDtcTopBar href={profileHref || "/doedtc"} />
+      <DoeDtcTopBar compact href={profileHref || "/doedtc"} />
       <header className="doedtc-header">
         <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_LISTEN.pageTitle}</h1>
         <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_LISTEN.subtitle}</p>

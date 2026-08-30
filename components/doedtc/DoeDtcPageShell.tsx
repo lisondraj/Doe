@@ -7,12 +7,14 @@ import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-v
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { dmSans, lora } from "@/lib/home/fonts";
 import "@/lib/doedtc/doedtc-page.css";
+import "@/lib/doedtc/doedtc-light-ui.css";
 
 type DoeDtcPageShellProps = {
   children: ReactNode;
+  landing?: boolean;
 };
 
-export function DoeDtcPageShell({ children }: DoeDtcPageShellProps) {
+export function DoeDtcPageShell({ children, landing = false }: DoeDtcPageShellProps) {
   const { variant, ready } = useDoeDtcPageVariant();
   const isPhone = !ready || variant === "phone";
 
@@ -21,7 +23,7 @@ export function DoeDtcPageShell({ children }: DoeDtcPageShellProps) {
 
   return (
     <div
-      className={`doedtc-root ${lora.variable} ${dmSans.className} ${dmSans.variable}`}
+      className={`doedtc-root ${landing ? "doedtc-root--landing " : ""}${lora.variable} ${dmSans.className} ${dmSans.variable}`}
       data-doedtc-variant={ready ? variant : "phone"}
       suppressHydrationWarning
     >

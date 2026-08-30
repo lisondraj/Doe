@@ -79,14 +79,14 @@ html[data-about-page] body {
  * Dynamic Island ears, and rubber-band overscroll.
  */
 html[data-doedtc-page] {
-  --doe-page-surface: #1b1410;
-  --doe-page-surface-raised: #271f17;
-  --doe-page-surface-sunken: #130e09;
-  --proto-page-bg: #1b1410;
-  background-color: #1b1410;
+  --doe-page-surface: #f8f9fa;
+  --doe-page-surface-raised: #ffffff;
+  --doe-page-surface-sunken: #f2f2f7;
+  --proto-page-bg: #f8f9fa;
+  background-color: #f8f9fa;
 }
 html[data-doedtc-page] body {
-  background-color: #1b1410;
+  background-color: #f8f9fa;
   overscroll-behavior-y: none;
 }
 /*

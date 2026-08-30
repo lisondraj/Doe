@@ -14,7 +14,7 @@ type DoeDtcWorkViewProps = {
 export function DoeDtcWorkView({ valid, preview }: DoeDtcWorkViewProps) {
   return (
     <DoeDtcPageShell>
-      <DoeDtcTopBar />
+      <DoeDtcTopBar compact />
       <header className="doedtc-header">
         <h1 className={`doedtc-headline ${dmSans.className}`}>
           {!valid || !preview ? DOEDTC_WORK.invalidTitle : DOEDTC_WORK.pageTitle}

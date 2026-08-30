@@ -58,7 +58,7 @@ export default async function DoeDtcJoinFamilyPage({ searchParams }: PageProps) 
 
   return (
     <DoeDtcPageShell>
-      <DoeDtcTopBar href={`/doedtc/join-family?i=${encodeURIComponent(inviteToken)}`} />
+      <DoeDtcTopBar compact href={`/doedtc/join-family?i=${encodeURIComponent(inviteToken)}`} />
       <header className="doedtc-header">
         <h1 className={`doedtc-headline ${dmSans.className}`}>
           {valid ? DOEDTC_JOIN_FAMILY.title : DOEDTC_JOIN_FAMILY.invalidInviteTitle}

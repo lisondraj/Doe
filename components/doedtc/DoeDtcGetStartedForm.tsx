@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { DoeDtcDropdown } from "@/components/doedtc/DoeDtcDropdown";
+import { DoeDtcToggle } from "@/components/doedtc/DoeDtcToggle";
 import { DOEDTC_GET_STARTED } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcFamilyRelationship } from "@/lib/doedtc/doedtc-types";
 
@@ -303,23 +305,17 @@ export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps
           />
         </div>
         <div style={{ marginTop: "0.75rem" }}>
-          <label className="doedtc-label">{DOEDTC_GET_STARTED.familyRelationshipLabel}</label>
-          <select
-            className="doedtc-select"
+          <DoeDtcDropdown
+            label={DOEDTC_GET_STARTED.familyRelationshipLabel}
             value={familyDraft.relationship}
-            onChange={(event) =>
+            options={RELATIONSHIP_OPTIONS}
+            onChange={(value) =>
               setFamilyDraft({
                 ...familyDraft,
-                relationship: event.target.value as DoeDtcFamilyRelationship,
+                relationship: value,
               })
             }
-          >
-            {RELATIONSHIP_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          />
         </div>
         {familyDraft.relationship === "child" ? (
           <div style={{ marginTop: "0.75rem" }}>
@@ -342,14 +338,12 @@ export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps
             />
           </div>
         ) : null}
-        <label style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginTop: "0.75rem" }}>
-          <input
-            type="checkbox"
-            checked={familyDraft.noPhone}
-            onChange={(event) => setFamilyDraft({ ...familyDraft, noPhone: event.target.checked })}
-          />
-          <span>{DOEDTC_GET_STARTED.familyNoPhoneLabel}</span>
-        </label>
+        <DoeDtcToggle
+          className="doedtc-form-toggle"
+          label={DOEDTC_GET_STARTED.familyNoPhoneLabel}
+          checked={familyDraft.noPhone}
+          onChange={(checked) => setFamilyDraft({ ...familyDraft, noPhone: checked })}
+        />
         <button
           className="doedtc-button doedtc-button--secondary"
           type="button"

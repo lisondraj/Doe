@@ -8,9 +8,9 @@ import { dmSans } from "@/lib/home/fonts";
 
 export function DoeDtcRouter() {
   return (
-    <DoeDtcPageShell>
-      <DoeDtcTopBar />
-      <header className="doedtc-header">
+    <DoeDtcPageShell landing>
+      <DoeDtcTopBar compact />
+      <header className="doedtc-header doedtc-header--landing">
         <p className="doedtc-eyebrow">{DOEDTC_LANDING.eyebrow}</p>
         <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_LANDING.headline}</h1>
         <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_LANDING.subhead}</p>

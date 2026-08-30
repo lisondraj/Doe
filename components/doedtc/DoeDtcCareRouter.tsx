@@ -16,7 +16,7 @@ type DoeDtcCareRouterProps = {
 export function DoeDtcCareRouter({ assessment, symptoms, valid }: DoeDtcCareRouterProps) {
   return (
     <DoeDtcPageShell>
-      <DoeDtcTopBar />
+      <DoeDtcTopBar compact />
       <header className="doedtc-header">
         <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_CARE.title}</h1>
       </header>

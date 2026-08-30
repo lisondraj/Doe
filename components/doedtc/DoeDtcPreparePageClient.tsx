@@ -32,7 +32,7 @@ export function DoeDtcPreparePageClient({
 
   return (
     <DoeDtcPageShell>
-      <DoeDtcTopBar href={`/doedtc/app?t=${encodeURIComponent(token)}`} />
+      <DoeDtcTopBar compact href={`/doedtc/app?t=${encodeURIComponent(token)}`} />
       <DoeDtcPrepareView code={preparation.code} payload={preparation.payload} />
     </DoeDtcPageShell>
   );

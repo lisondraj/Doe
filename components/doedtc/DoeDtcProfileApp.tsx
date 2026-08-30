@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { DoeDtcNav } from "@/components/doedtc/DoeDtcNav";
+import { DoeDtcDropdown } from "@/components/doedtc/DoeDtcDropdown";
+import { DoeDtcToggle } from "@/components/doedtc/DoeDtcToggle";
 import { DoeDtcArtifactView } from "@/components/doedtc/DoeDtcArtifactView";
 import { DoeDtcArtifactMiniSparkline } from "@/components/doedtc/DoeDtcTrackerChart";
 import { DoeDtcFeedbackView } from "@/components/doedtc/DoeDtcFeedbackView";
@@ -224,18 +226,26 @@ export function DoeDtcProfileApp({
 
   return (
     <DoeDtcPageShell>
-      <DoeDtcNav token={token} activeTab={tab} onTabChange={setTab} />
-      <header className="doedtc-header">
-        <h1 className={`doedtc-headline ${dmSans.className}`}>{greeting}</h1>
-        {viewingMemberUserId ? (
-          <p className="doedtc-muted" style={{ marginTop: "0.35rem" }}>
-            {canEditSubject ? null : `${DOEDTC_PROFILE.familyReadOnlyHint} `}
-            <a href={doeDtcAppUrl(token, { tab: "family" })}>{DOEDTC_PROFILE.familyBackLabel}</a>
-          </p>
+      <DoeDtcNav
+        token={token}
+        activeTab={tab}
+        onTabChange={setTab}
+        displayName={snapshot.user.full_name}
+        subtitle={snapshot.user.email}
+      >
+        {tab === "dashboard" ? (
+          <header className="doedtc-header">
+            <h1 className={`doedtc-headline ${dmSans.className}`}>{greeting}</h1>
+            {viewingMemberUserId ? (
+              <p className="doedtc-muted" style={{ marginTop: "0.35rem" }}>
+                {canEditSubject ? null : `${DOEDTC_PROFILE.familyReadOnlyHint} `}
+                <a href={doeDtcAppUrl(token, { tab: "family" })}>{DOEDTC_PROFILE.familyBackLabel}</a>
+              </p>
+            ) : null}
+          </header>
         ) : null}
-      </header>
 
-      {error ? <p className="doedtc-error">{error}</p> : null}
+        {error ? <p className="doedtc-error">{error}</p> : null}
 
       {tab === "dashboard" ? (
         <DashboardTab
@@ -304,6 +314,7 @@ export function DoeDtcProfileApp({
           onFocusTicket={setFocusedTicketId}
         />
       ) : null}
+      </DoeDtcNav>
     </DoeDtcPageShell>
   );
 }
@@ -1070,18 +1081,12 @@ function FamilyTab({
           <label className="doedtc-label">{DOEDTC_GET_STARTED.familyNameLabel}</label>
           <input className="doedtc-input" value={fullName} onChange={(event) => setFullName(event.target.value)} />
           <div style={{ marginTop: "0.75rem" }}>
-            <label className="doedtc-label">{DOEDTC_GET_STARTED.familyRelationshipLabel}</label>
-            <select
-              className="doedtc-select"
+            <DoeDtcDropdown
+              label={DOEDTC_GET_STARTED.familyRelationshipLabel}
               value={relationship}
-              onChange={(event) => setRelationship(event.target.value as DoeDtcFamilyRelationship)}
-            >
-              {RELATIONSHIP_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              options={RELATIONSHIP_OPTIONS}
+              onChange={(value) => setRelationship(value as DoeDtcFamilyRelationship)}
+            />
           </div>
           {relationship === "child" ? (
             <div style={{ marginTop: "0.75rem" }}>
@@ -1101,10 +1106,12 @@ function FamilyTab({
               <input className="doedtc-input" value={phone} onChange={(event) => setPhone(event.target.value)} />
             </div>
           ) : null}
-          <label style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginTop: "0.75rem" }}>
-            <input type="checkbox" checked={noPhone} onChange={(event) => setNoPhone(event.target.checked)} />
-            <span>{DOEDTC_GET_STARTED.familyNoPhoneLabel}</span>
-          </label>
+          <DoeDtcToggle
+            className="doedtc-form-toggle"
+            label={DOEDTC_GET_STARTED.familyNoPhoneLabel}
+            checked={noPhone}
+            onChange={setNoPhone}
+          />
           <button className="doedtc-button" type="submit" disabled={busy || !fullName.trim()}>
             {DOEDTC_GET_STARTED.familyAddLabel}
           </button>

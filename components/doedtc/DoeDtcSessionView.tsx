@@ -29,7 +29,7 @@ export function DoeDtcSessionView({ valid, session }: DoeDtcSessionViewProps) {
 
   return (
     <DoeDtcPageShell>
-      <DoeDtcTopBar />
+      <DoeDtcTopBar compact />
       <header className="doedtc-header">
         <h1 className={`doedtc-headline ${dmSans.className}`}>
           {!valid || !session ? DOEDTC_SESSION.invalidTitle : DOEDTC_SESSION.pageTitle}

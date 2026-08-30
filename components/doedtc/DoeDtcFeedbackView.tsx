@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { DoeDtcDropdown } from "@/components/doedtc/DoeDtcDropdown";
 import { DOEDTC_PROFILE } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcTicketKind, DoeDtcTicketRow, DoeDtcTicketStatus } from "@/lib/doedtc/doedtc-types";
 
@@ -139,19 +140,17 @@ export function DoeDtcFeedbackView({
       {showForm && onSubmit ? (
         <form className="doedtc-card doedtc-card--spaced doedtc-feedback__form" onSubmit={(event) => void handleSubmit(event)}>
           <h3 className="doedtc-section-title">{DOEDTC_PROFILE.feedbackSubmitLabel}</h3>
-          <label className="doedtc-label" htmlFor="feedback-kind">
-            {DOEDTC_PROFILE.feedbackKindLabel}
-          </label>
-          <select
+          <DoeDtcDropdown
             id="feedback-kind"
-            className="doedtc-input"
+            label={DOEDTC_PROFILE.feedbackKindLabel}
             value={kind}
             disabled={busy}
-            onChange={(event) => setKind(event.target.value as DoeDtcTicketKind)}
-          >
-            <option value="feedback">{DOEDTC_PROFILE.feedbackKindFeedback}</option>
-            <option value="bug">{DOEDTC_PROFILE.feedbackKindBug}</option>
-          </select>
+            options={[
+              { value: "feedback", label: DOEDTC_PROFILE.feedbackKindFeedback },
+              { value: "bug", label: DOEDTC_PROFILE.feedbackKindBug },
+            ]}
+            onChange={setKind}
+          />
           <div style={{ marginTop: "0.75rem" }}>
             <label className="doedtc-label" htmlFor="feedback-title">
               {DOEDTC_PROFILE.feedbackTitleLabel}

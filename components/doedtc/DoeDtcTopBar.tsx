@@ -8,16 +8,17 @@ import { useDoeDtcPageVariant } from "@/lib/doedtc/use-doedtc-page-variant";
 type DoeDtcTopBarProps = {
   href?: string;
   trailing?: React.ReactNode;
+  compact?: boolean;
 };
 
-export function DoeDtcTopBar({ href = "/doedtc", trailing }: DoeDtcTopBarProps) {
+export function DoeDtcTopBar({ href = "/doedtc", trailing, compact = false }: DoeDtcTopBarProps) {
   const { variant, ready } = useDoeDtcPageVariant();
   const isPhone = !ready || variant === "phone";
 
   return (
-    <div className={`doedtc-topbar${isPhone ? " doedtc-nav--phone" : ""}`}>
+    <div className={`doedtc-topbar${isPhone ? " doedtc-nav--phone" : ""}${compact ? " doedtc-topbar--compact" : ""}`}>
       <Link className="doedtc-nav__wordmark" href={href}>
-        <DoeDtcWordmark />
+        <DoeDtcWordmark compact={compact} />
       </Link>
       {trailing}
     </div>
