@@ -6,6 +6,7 @@ import {
   isAdminAllowedEmail,
 } from "@/lib/admin/admin-auth";
 import {
+  DOEDTC_PATH,
   JOIN_PATH,
   PARTNERS_PATH,
   isDesignersHost,
@@ -164,6 +165,13 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname === CLINIC_SPECIALTY_WORKFLOWS_PATH && isPrimaryHost(host)) {
+    return applyLandingSiteHeaders(NextResponse.next());
+  }
+
+  if (
+    (pathname === DOEDTC_PATH || pathname.startsWith(`${DOEDTC_PATH}/`)) &&
+    isPrimaryHost(host)
+  ) {
     return applyLandingSiteHeaders(NextResponse.next());
   }
 

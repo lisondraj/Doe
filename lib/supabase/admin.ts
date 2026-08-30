@@ -51,6 +51,14 @@ export type CampusAmbassadorApplicationRow = {
   linkedin_url: string;
 };
 
+export type {
+  DoeDtcAssessmentRow,
+  DoeDtcConditionRow,
+  DoeDtcMedicationRow,
+  DoeDtcMessageRow,
+  DoeDtcUserRow,
+} from "@/lib/doedtc/doedtc-types";
+
 export function createSupabaseAdmin(): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

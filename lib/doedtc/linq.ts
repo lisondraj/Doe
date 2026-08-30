@@ -1,0 +1,157 @@
+import { createHmac, timingSafeEqual } from "crypto";
+
+const LINQ_API_BASE = "https://api.linqapp.com/api/partner";
+
+export type LinqTextPart = {
+  type: "text";
+  value: string;
+};
+
+export type LinqLinkPart = {
+  type: "link";
+  value: string;
+};
+
+export type LinqMessagePart = LinqTextPart | LinqLinkPart;
+
+export type LinqSendMessageResponse = {
+  chat_id: string;
+  created_new_chat: boolean;
+  from: string;
+  service?: string;
+  message?: {
+    id: string;
+  };
+};
+
+function getLinqApiKey(): string {
+  const key = process.env.LINQ_API_KEY;
+  if (!key || key.startsWith("your-")) {
+    throw new Error("Linq is not configured: LINQ_API_KEY is missing.");
+  }
+  return key;
+}
+
+async function linqRequest<T>(path: string, init: RequestInit): Promise<T> {
+  const response = await fetch(`${LINQ_API_BASE}${path}`, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${getLinqApiKey()}`,
+      "Content-Type": "application/json",
+      ...(init.headers ?? {}),
+    },
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Linq request failed (${response.status}): ${body.slice(0, 400)}`);
+  }
+
+  return (await response.json()) as T;
+}
+
+export async function linqSendToPhone(params: {
+  to: string;
+  parts: LinqMessagePart[];
+  idempotencyKey?: string;
+}): Promise<LinqSendMessageResponse> {
+  return linqRequest<LinqSendMessageResponse>("/v3/messages", {
+    method: "POST",
+    body: JSON.stringify({
+      to: [params.to],
+      message: {
+        preferred_service: "iMessage",
+        parts: params.parts,
+        ...(params.idempotencyKey ? { idempotency_key: params.idempotencyKey } : {}),
+      },
+    }),
+  });
+}
+
+export async function linqSendToChat(params: {
+  chatId: string;
+  parts: LinqMessagePart[];
+  idempotencyKey?: string;
+}): Promise<{ message?: { id: string } }> {
+  return linqRequest<{ message?: { id: string } }>(`/v3/chats/${params.chatId}/messages`, {
+    method: "POST",
+    body: JSON.stringify({
+      message: {
+        preferred_service: "iMessage",
+        parts: params.parts,
+        ...(params.idempotencyKey ? { idempotency_key: params.idempotencyKey } : {}),
+      },
+    }),
+  });
+}
+
+export async function linqSendText(params: {
+  to?: string;
+  chatId?: string;
+  text: string;
+  idempotencyKey?: string;
+}): Promise<LinqSendMessageResponse | { message?: { id: string } }> {
+  const parts: LinqTextPart[] = [{ type: "text", value: params.text }];
+  if (params.chatId) {
+    return linqSendToChat({ chatId: params.chatId, parts, idempotencyKey: params.idempotencyKey });
+  }
+  if (!params.to) {
+    throw new Error("Either to or chatId is required to send a Linq message.");
+  }
+  return linqSendToPhone({ to: params.to, parts, idempotencyKey: params.idempotencyKey });
+}
+
+export async function linqSendLink(params: {
+  to?: string;
+  chatId?: string;
+  url: string;
+  idempotencyKey?: string;
+}): Promise<LinqSendMessageResponse | { message?: { id: string } }> {
+  const parts: LinqLinkPart[] = [{ type: "link", value: params.url }];
+  if (params.chatId) {
+    return linqSendToChat({ chatId: params.chatId, parts, idempotencyKey: params.idempotencyKey });
+  }
+  if (!params.to) {
+    throw new Error("Either to or chatId is required to send a Linq link.");
+  }
+  return linqSendToPhone({ to: params.to, parts, idempotencyKey: params.idempotencyKey });
+}
+
+export function verifyLinqWebhookSignature(params: {
+  rawBody: string;
+  headers: Headers;
+}): boolean {
+  const secret = process.env.LINQ_WEBHOOK_SECRET;
+  if (!secret) {
+    throw new Error("Linq webhook secret is not configured.");
+  }
+
+  const msgId = params.headers.get("webhook-id");
+  const timestamp = params.headers.get("webhook-timestamp");
+  const signature = params.headers.get("webhook-signature");
+  if (!msgId || !timestamp || !signature) {
+    return false;
+  }
+
+  const ts = Number.parseInt(timestamp, 10);
+  if (!Number.isFinite(ts) || Math.abs(Date.now() / 1000 - ts) > 300) {
+    return false;
+  }
+
+  const secretStr = secret.startsWith("whsec_") ? secret.slice(6) : secret;
+  const keyBytes = Buffer.from(secretStr, "base64");
+  const signedContent = `${msgId}.${timestamp}.${params.rawBody}`;
+  const expected = createHmac("sha256", keyBytes).update(signedContent).digest("base64");
+
+  return signature.split(" ").some((sig) => {
+    if (!sig.startsWith("v1,")) return false;
+    try {
+      return timingSafeEqual(
+        Buffer.from(expected, "base64"),
+        Buffer.from(sig.slice(3), "base64"),
+      );
+    } catch {
+      return false;
+    }
+  });
+}

@@ -9,6 +9,7 @@ import { homeRouteBootstrapScript } from "@/lib/home/home-route-bootstrap-script
 import { premedRouteBootstrapScript } from "@/lib/premed/premed-route-bootstrap-script";
 import { doeHomeRouteBootstrapScript } from "@/lib/doehome/doehome-route-bootstrap-script";
 import { doeInsureRouteBootstrapScript } from "@/lib/doeinsure/doeinsure-route-bootstrap-script";
+import { doeDtcRouteBootstrapScript } from "@/lib/doedtc/doedtc-route-bootstrap-script";
 import { productRouteBootstrapScript } from "@/lib/product/product-route-bootstrap-script";
 import { storyRouteBootstrapScript } from "@/lib/story/story-route-bootstrap-script";
 import { DESIGNERS_SITE_HOST } from "@/lib/site-domains";
@@ -46,6 +47,7 @@ const productBootstrap = productRouteBootstrapScript();
 const storyBootstrap = storyRouteBootstrapScript();
 const doeInsureBootstrap = doeInsureRouteBootstrapScript();
 const doeHomeBootstrap = doeHomeRouteBootstrapScript();
+const doeDtcBootstrap = doeDtcRouteBootstrapScript();
 
 export default function RootLayout({
   children,
@@ -63,6 +65,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: storyBootstrap }} />
         <script dangerouslySetInnerHTML={{ __html: doeInsureBootstrap }} />
         <script dangerouslySetInnerHTML={{ __html: doeHomeBootstrap }} />
+        <script dangerouslySetInnerHTML={{ __html: doeDtcBootstrap }} />
       </head>
       <body className={`${inter.variable} font-sans antialiased wide-desktop:overflow-hidden`}>
         <RootChrome>{children}</RootChrome>

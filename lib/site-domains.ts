@@ -24,6 +24,8 @@ export const DOEHEALTH_PATH = "/doehealth";
 export const DOEINSURE_PATH = "/doeinsure";
 /** Doe clinic AI platform landing — Insure-style marketing page. */
 export const DOEHOME_PATH = "/doehomepage";
+/** Consumer health AI companion — iMessage-first DTC product. */
+export const DOEDTC_PATH = "/doedtc";
 
 /** Former primary home — Voice Agents hero (preview at /legacymain). */
 export const LEGACY_MAIN_PATH = "/legacymain";
