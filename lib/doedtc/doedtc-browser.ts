@@ -24,6 +24,7 @@ import {
 } from "@/lib/doedtc/doedtc-browser-db";
 import { doeDtcVaultUrl, doeDtcWorkUrl } from "@/lib/doedtc/doedtc-copy";
 import { redactDoeDtcLogText } from "@/lib/doedtc/doedtc-privacy";
+import { addDoeDtcMem0PlaybookNote } from "@/lib/doedtc/doedtc-memory";
 import { uploadDoeDtcBrowserShot } from "@/lib/doedtc/doedtc-shots";
 import type {
   DoeDtcBrowserJobRow,
@@ -433,6 +434,10 @@ async function navigateResearchWithFailover(params: {
     "research failover",
     new Error(`Blocked on ${params.host}; recreating session and retrying DuckDuckGo for "${searchQuery}"`),
   );
+  void addDoeDtcMem0PlaybookNote({
+    userId: params.user.id,
+    note: "When a research page is blocked by unusual traffic, delete the Kernel session and create a new one on the residential proxy before opening DuckDuckGo. Do not reuse the blocked tab.",
+  });
 
   const ddgUrl = researchSearchUrl(searchQuery);
   const recreated = await recreateKernelBrowserSession({
@@ -685,8 +690,76 @@ export async function actDoeDtcBrowser(params: {
 
     return extractPage(kernelBrowser.session_id);
   } catch (error) {
+    warnKernelFailure("act playwright", error);
+    const fallback = await computerDoeDtcBrowser({
+      user: params.user,
+      jobId: params.jobId,
+      action:
+        params.action === "type"
+          ? { type: "type_text", text: params.text ?? "" }
+          : params.action === "click"
+            ? { type: "click_mouse", x: 640, y: 360 }
+            : { type: "scroll", x: 640, y: 400, deltaY: 4 },
+    });
+    if (fallback.ok) return fallback;
     const message = error instanceof Error ? error.message : "Browser action failed.";
-    warnKernelFailure("act", error);
+    return { ok: false, error: message };
+  }
+}
+
+export type DoeDtcComputerAction =
+  | { type: "screenshot" }
+  | { type: "click_mouse"; x: number; y: number }
+  | { type: "type_text"; text: string }
+  | { type: "press_key"; keys: string[] }
+  | { type: "scroll"; x?: number; y?: number; deltaY?: number };
+
+export async function computerDoeDtcBrowser(params: {
+  user: DoeDtcUserRow;
+  jobId: string;
+  action: DoeDtcComputerAction;
+}): Promise<BrowserExtract> {
+  const job = await getDoeDtcBrowserJob({ jobId: params.jobId, userId: params.user.id });
+  if (!job || job.status !== "open") {
+    return { ok: false, error: "Browser task is not open for actions." };
+  }
+  if (job.mode === "write" && params.action.type !== "screenshot") {
+    return { ok: false, error: "Write actions require CONFIRM first." };
+  }
+
+  const { kernelBrowser } = await ensureKernelSession(job);
+  const kernel = getKernel();
+  const sessionId = kernelBrowser.session_id;
+
+  try {
+    if (params.action.type === "screenshot") {
+      await kernel.browsers.computer.captureScreenshot(sessionId);
+      return extractPage(sessionId);
+    }
+    if (params.action.type === "click_mouse") {
+      await kernel.browsers.computer.clickMouse(sessionId, {
+        x: params.action.x,
+        y: params.action.y,
+      });
+    } else if (params.action.type === "type_text") {
+      await kernel.browsers.computer.typeText(sessionId, {
+        text: params.action.text,
+        delay: 20,
+      });
+      await kernel.browsers.computer.pressKey(sessionId, { keys: ["Return"] });
+    } else if (params.action.type === "press_key") {
+      await kernel.browsers.computer.pressKey(sessionId, { keys: params.action.keys });
+    } else {
+      await kernel.browsers.computer.scroll(sessionId, {
+        x: params.action.x ?? 640,
+        y: params.action.y ?? 400,
+        delta_y: params.action.deltaY ?? 4,
+      });
+    }
+    return extractPage(sessionId);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Computer action failed.";
+    warnKernelFailure("computer", error);
     return { ok: false, error: message };
   }
 }

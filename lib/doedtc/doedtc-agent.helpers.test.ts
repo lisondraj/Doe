@@ -288,6 +288,7 @@ test("formatDoeDtcProfileTab reads Whoop from the dashboard tab", () => {
     },
     accountabilityPacts: [],
     scheduledTexts: [],
+    workflows: [],
     guides: [],
   };
   const dashboard = formatDoeDtcProfileTab(snapshot, "dashboard");

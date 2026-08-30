@@ -546,6 +546,7 @@ export type DoeDtcProfileSnapshot = {
   household: DoeDtcHouseholdSnapshot;
   accountabilityPacts: DoeDtcAccountabilityPactView[];
   scheduledTexts: DoeDtcScheduledTextRow[];
+  workflows: DoeDtcWorkflowRow[];
   guides: DoeDtcGuideRow[];
 };
 

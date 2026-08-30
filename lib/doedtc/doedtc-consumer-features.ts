@@ -8,12 +8,12 @@ export const DOE_DTC_CONSUMER_FEATURES = [
     tools: ["log_symptoms", "run_assessment"],
   },
   {
-    line: "Remind me to take my Ozempic at 8 tonight",
-    tools: ["propose_scheduled_text", "schedule_text"],
+    line: "Remind me to take my Ozempic at 8 tonight, or ping me in 5 seconds",
+    tools: ["schedule_text"],
   },
   {
     line: "Add my son Simon, or make sure the kids take a bath",
-    tools: ["log_family_member", "propose_accountability"],
+    tools: ["log_family_member", "start_habit_workflow"],
   },
   {
     line: "I started a new inhaler, or I have a refill next Wednesday",
@@ -33,7 +33,7 @@ export const DOE_DTC_CONSUMER_FEATURES = [
   },
   {
     line: "Look up asthma on Mayo, or screenshot the page",
-    tools: ["start_browser_task", "browser_snapshot"],
+    tools: ["start_browser_task", "browser_snapshot", "browser_computer"],
   },
   {
     line: "Is my Whoop connected?",

@@ -39,6 +39,7 @@ import {
   withdrawAccountabilityPact,
 } from "@/lib/doedtc/doedtc-accountability-db";
 import { cancelScheduledText } from "@/lib/doedtc/doedtc-scheduled-db";
+import { cancelWorkflow } from "@/lib/doedtc/doedtc-workflows";
 import { normalizeDoeDtcFamilyRelationship, resolveDoeDtcFamilyMemberName } from "@/lib/doedtc/doedtc-family-relationship";
 import { sendDoeDtcFamilyInviteMessage, sendDoeDtcHouseholdAccessRevokedNotice } from "@/lib/doedtc/doedtc-messaging";
 import type {
@@ -395,6 +396,13 @@ export async function handleDoeDtcProfileAction(params: {
       const scheduledTextId = String(params.payload.scheduledTextId ?? "").trim();
       if (!scheduledTextId) throw new Error("Missing scheduled text.");
       await cancelScheduledText({ userId: user.id, scheduledTextId });
+      break;
+    }
+    case "cancel_habit_workflow": {
+      const workflowId = String(params.payload.workflowId ?? "").trim();
+      if (!workflowId) throw new Error("Missing habit workflow.");
+      const cancelled = await cancelWorkflow({ userId: user.id, workflowId });
+      if (!cancelled) throw new Error("Habit workflow not found.");
       break;
     }
     case "revoke_household_access": {

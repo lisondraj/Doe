@@ -1376,9 +1376,49 @@ function AccountabilityTab({
   onAction,
 }: TabProps) {
   const pacts = snapshot.accountabilityPacts;
+  const workflows = snapshot.workflows ?? [];
 
   return (
     <div>
+      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.habitWorkflowsTitle}</h2>
+      {workflows.length === 0 ? (
+        <p className="doedtc-empty">{DOEDTC_PROFILE.habitWorkflowsEmpty}</p>
+      ) : (
+        <ul className="doedtc-list">
+          {workflows.map((row) => {
+            const nextLabel = row.next_run_at
+              ? row.next_run_at.slice(0, 16).replace("T", " ")
+              : row.phase === "awaiting_reply"
+                ? "Waiting for a reply"
+                : "n/a";
+            return (
+              <li key={row.id} className="doedtc-card" style={{ marginBottom: "0.75rem" }}>
+                <strong>{row.goal}</strong>
+                <p className="doedtc-muted" style={{ marginTop: "0.35rem" }}>
+                  {DOEDTC_PROFILE.habitWorkflowsSubjectLabel}: {row.config.subject_name}
+                </p>
+                <p className="doedtc-muted">
+                  {DOEDTC_PROFILE.habitWorkflowsPhaseLabel}: {row.phase}
+                  {" · "}
+                  {DOEDTC_PROFILE.habitWorkflowsNextLabel}: {nextLabel}
+                </p>
+                {row.status === "active" ? (
+                  <div className="doedtc-inline-actions" style={{ marginTop: "0.75rem" }}>
+                    <button
+                      type="button"
+                      className="doedtc-button doedtc-button--secondary"
+                      disabled={busy}
+                      onClick={() => onAction("cancel_habit_workflow", { workflowId: row.id })}
+                    >
+                      {DOEDTC_PROFILE.habitWorkflowsCancelLabel}
+                    </button>
+                  </div>
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
+      )}
       <h2 className="doedtc-section-title">{DOEDTC_PROFILE.accountabilityTitle}</h2>
       {pacts.length === 0 ? (
         <p className="doedtc-empty">{DOEDTC_PROFILE.accountabilityEmpty}</p>

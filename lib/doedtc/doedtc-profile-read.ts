@@ -187,29 +187,41 @@ function formatGuidesTab(snapshot: DoeDtcProfileSnapshot): string {
 }
 
 function formatAccountabilityTab(snapshot: DoeDtcProfileSnapshot): string {
-  if (snapshot.accountabilityPacts.length === 0) return "No accountability pacts.";
-  return snapshot.accountabilityPacts
-    .map((view) => {
-      const partners = view.participants.filter((row) => row.role === "partner");
-      const parts = [
-        `${view.pact.title} | goal: ${view.pact.goal}`,
-        `id: ${view.pact.id}`,
-        `status: ${view.pact.status}`,
-        `subject: ${view.subjectName ?? "self"}`,
-        `cadence: ${view.pact.mechanics.cadence}`,
-        `streak: ${view.streak}`,
-      ];
-      if (partners.length > 0) {
-        parts.push(`partners: ${partners.map((row) => `${row.full_name} (${row.status})`).join("; ")}`);
-      }
-      if (view.lastEvent) {
-        parts.push(
-          `last: ${view.lastEvent.kind}${view.lastEvent.outcome ? ` (${view.lastEvent.outcome})` : ""}`,
-        );
-      }
-      return `- ${parts.join(" | ")}`;
-    })
-    .join("\n");
+  const pacts =
+    snapshot.accountabilityPacts.length === 0
+      ? "No accountability pacts."
+      : snapshot.accountabilityPacts
+          .map((view) => {
+            const partners = view.participants.filter((row) => row.role === "partner");
+            const parts = [
+              `${view.pact.title} | goal: ${view.pact.goal}`,
+              `id: ${view.pact.id}`,
+              `status: ${view.pact.status}`,
+              `subject: ${view.subjectName ?? "self"}`,
+              `cadence: ${view.pact.mechanics.cadence}`,
+              `streak: ${view.streak}`,
+            ];
+            if (partners.length > 0) {
+              parts.push(`partners: ${partners.map((row) => `${row.full_name} (${row.status})`).join("; ")}`);
+            }
+            if (view.lastEvent) {
+              parts.push(
+                `last: ${view.lastEvent.kind}${view.lastEvent.outcome ? ` (${view.lastEvent.outcome})` : ""}`,
+              );
+            }
+            return `- ${parts.join(" | ")}`;
+          })
+          .join("\n");
+  const workflows =
+    (snapshot.workflows ?? []).length === 0
+      ? "No daily habit workflows."
+      : snapshot.workflows
+          .map((row) => {
+            const when = row.next_run_at?.slice(0, 16).replace("T", " ") ?? "n/a";
+            return `- ${row.goal} | subject: ${row.config.subject_name} | next: ${when} | phase: ${row.phase} | id: ${row.id}`;
+          })
+          .join("\n");
+  return `Accountability pacts:\n${pacts}\n\nDaily habits:\n${workflows}`;
 }
 
 function formatFeedbackTab(snapshot: DoeDtcProfileSnapshot): string {
@@ -289,6 +301,11 @@ export function formatDoeDtcProfileOverview(snapshot: DoeDtcProfileSnapshot): st
       snapshot.scheduledTexts.filter((row) => row.status === "pending").length === 0
         ? "None pending"
         : `${snapshot.scheduledTexts.filter((row) => row.status === "pending").length} pending`
+    }`,
+    `Daily habits: ${
+      (snapshot.workflows ?? []).length === 0
+        ? "None yet"
+        : snapshot.workflows.map((row) => row.goal).join(", ")
     }`,
     `Feedback/bugs: ${
       snapshot.tickets.length === 0

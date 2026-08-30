@@ -24,6 +24,7 @@ import {
 } from "@/lib/doedtc/doedtc-household";
 import { listAccountabilityPactViewsForProfile } from "@/lib/doedtc/doedtc-accountability-db";
 import { listScheduledTextsForUser } from "@/lib/doedtc/doedtc-scheduled-db";
+import { listActiveWorkflowsForUser } from "@/lib/doedtc/doedtc-workflows";
 import { getDoeDtcGuideById, listSavedGuidesForUser } from "@/lib/doedtc/doedtc-guides-db";
 import { createDoeDtcToken, isTokenExpired, onboardingTokenExpiresAt } from "@/lib/doedtc/doedtc-tokens";
 import type {
@@ -58,6 +59,7 @@ import type {
   DoeDtcTicketKind,
   DoeDtcTicketRow,
   DoeDtcUserRow,
+  DoeDtcWorkflowRow,
 } from "@/lib/doedtc/doedtc-types";
 
 export async function getDoeDtcUserByPhone(phone: string): Promise<DoeDtcUserRow | null> {
@@ -566,6 +568,7 @@ export async function getDoeDtcProfileSnapshot(
     accountabilityPacts,
     scheduledTexts,
     guides,
+    workflows,
   ] = await Promise.all([
     supabase
       .from("doedtc_users")
@@ -607,6 +610,7 @@ export async function getDoeDtcProfileSnapshot(
     }),
     listScheduledTextsForUser(viewerUserId),
     listSavedGuidesForUser(userId),
+    listActiveWorkflowsForUser(userId).catch(() => [] as DoeDtcWorkflowRow[]),
   ]);
 
   if (userResult.error) throw new Error(userResult.error.message);
@@ -631,6 +635,7 @@ export async function getDoeDtcProfileSnapshot(
     accountabilityPacts,
     scheduledTexts,
     guides,
+    workflows,
   };
 }
 

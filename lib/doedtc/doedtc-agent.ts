@@ -1,5 +1,6 @@
 import {
   actDoeDtcBrowser,
+  computerDoeDtcBrowser,
   getActiveDoeDtcBrowserJobId,
   navigateDoeDtcBrowser,
   requestDoeDtcBrowserCommit,
@@ -16,6 +17,7 @@ import {
   looksCapabilityHedge,
 } from "@/lib/doedtc/doedtc-agent-voice";
 import { DOE_AGENT_ACTION_POLICY } from "@/lib/doedtc/doedtc-agent-policy";
+import { DOE_AGENT_PRIMITIVES_PROMPT } from "@/lib/doedtc/doedtc-primitives";
 import {
   buildScheduledTextPendingArgs,
   executeAgentPendingCommit,
@@ -848,6 +850,28 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "browser_computer",
+      description:
+        "Kernel computer SDK: click at x/y, type, press keys, scroll, or screenshot when CSS selectors fail or a page is an interstitial. Prefer browser_act with a selector when one exists.",
+      parameters: {
+        type: "object",
+        properties: {
+          action: {
+            type: "string",
+            enum: ["click_mouse", "type_text", "press_key", "scroll", "screenshot"],
+          },
+          x: { type: "number" },
+          y: { type: "number" },
+          text: { type: "string" },
+          keys: { type: "array", items: { type: "string" } },
+        },
+        required: ["action"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "browser_snapshot",
       description:
         "Screenshot the current browser page and send the image to the patient in iMessage. Use when they ask for a screenshot, picture, or to see the page.",
@@ -1583,6 +1607,8 @@ function buildSystemPrompt(params: {
 
 ${DOE_AGENT_ACTION_POLICY}
 
+${DOE_AGENT_PRIMITIVES_PROMPT}
+
 Now (user local time): ${params.nowLabel}.
 ${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
 Playbook (how you've corrected yourself before):
@@ -1657,8 +1683,7 @@ ${DOE_AGENT_MAKE_SURE_ROUTING}
 - Visual guides (create_guide): when they ask for a how-to, visual instructions, or guide (e.g. take Ozempic properly), compose blocks from the catalog (hero, steps, checklist, timeline, dose_card, site_map, callout, do_dont, faq, facts, illustration). Pick layout howto/schedule/checklist/explainer/comparison. Use profile meds when relevant. After create_guide, send the guide link and ask "Want me to save this to your profile?" — wait for yes before save_guide. update_guide to edit (add steps, change copy). list_guides / send_guide_link to resend. Do NOT use create_preparation for how-to guides.
 - After logging an appointment, or when they mention an upcoming visit or refill, you may briefly offer to prepare a provider summary — not every turn, and do not create it unless they ask or say prepare.
 - If a tool fails, you cannot complete a task, or you made a mistake, mention they can text "report a bug" or "send feedback" and you will file it. Do not auto-file unless they ask.
-- Browse the web via start_browser_task. For "go to Google and type mayo" (or screenshot the result), call once with url google and intent type mayo — that opens search results and screenshots them. Do not try to type into Google with a CSS selector. For general topics without naming Google, one call with the query in intent is enough.
-- Screenshot the current page with browser_snapshot when they ask for a picture, screenshot, or to see the page.
+- Browse via start_browser_task (Kernel residential proxy). If selectors fail or you have x/y, browser_computer uses the Kernel computer SDK. Screenshot with browser_snapshot.
 - Help with patient portals via request_vault or request_live_login — never ask for passwords in iMessage.
 - Send the live session page (show_session) when they want to watch, stream, or follow the browser and a task is active. You can send a live session. Never say you cannot stream or watch a live browser.
 - Store preferences and general context with remember_fact — not for meds, conditions, or family chart entries.
@@ -2609,6 +2634,42 @@ export async function runDoeDtcAgentTurn(params: {
             };
           } else if (!result.ok) {
             browserUserMessage = toUserSafeBrowserError(result.error ?? "Browser action failed.");
+            output = { ...result, user_message: browserUserMessage };
+          } else {
+            output = result;
+          }
+        } else if (toolCall.function.name === "browser_computer") {
+          const jobId = activeBrowserJobId ?? "";
+          const actionName = String(args.action ?? "").trim();
+          const result = await computerDoeDtcBrowser({
+            user: params.user,
+            jobId,
+            action:
+              actionName === "click_mouse"
+                ? {
+                    type: "click_mouse",
+                    x: typeof args.x === "number" ? args.x : 640,
+                    y: typeof args.y === "number" ? args.y : 360,
+                  }
+                : actionName === "type_text"
+                  ? { type: "type_text", text: typeof args.text === "string" ? args.text : "" }
+                  : actionName === "press_key"
+                    ? {
+                        type: "press_key",
+                        keys: Array.isArray(args.keys)
+                          ? args.keys.filter((key): key is string => typeof key === "string")
+                          : ["Return"],
+                      }
+                    : actionName === "screenshot"
+                      ? { type: "screenshot" }
+                      : {
+                          type: "scroll",
+                          x: typeof args.x === "number" ? args.x : 640,
+                          y: typeof args.y === "number" ? args.y : 400,
+                        },
+          });
+          if (!result.ok) {
+            browserUserMessage = toUserSafeBrowserError(result.error ?? "Computer action failed.");
             output = { ...result, user_message: browserUserMessage };
           } else {
             output = result;
