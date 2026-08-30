@@ -17,6 +17,7 @@ export const DOEDTC_PROFILE_READ_TABS = [
   "locker",
   "share",
   "trackers",
+  "feedback",
 ] as const satisfies readonly DoeDtcProfileTab[];
 
 const HEALTH_PROVIDERS: Array<{ id: DoeDtcHealthProvider; label: string }> = [
@@ -156,6 +157,17 @@ function formatTrackersTab(snapshot: DoeDtcProfileSnapshot): string {
     .join("\n");
 }
 
+function formatFeedbackTab(snapshot: DoeDtcProfileSnapshot): string {
+  if (snapshot.tickets.length === 0) return "No feedback or bug reports yet.";
+  return snapshot.tickets
+    .slice(0, 12)
+    .map((row) => {
+      const when = row.created_at.slice(0, 16).replace("T", " ");
+      return `- [${row.kind}] ${row.title} | status: ${row.status} | ${when} | id: ${row.id}\n  ${row.body}`;
+    })
+    .join("\n");
+}
+
 export function formatDoeDtcProfileTab(
   snapshot: DoeDtcProfileSnapshot,
   tab: DoeDtcProfileTab,
@@ -177,6 +189,8 @@ export function formatDoeDtcProfileTab(
       return formatShareTab(snapshot);
     case "trackers":
       return formatTrackersTab(snapshot);
+    case "feedback":
+      return formatFeedbackTab(snapshot);
     default:
       return "Unknown profile tab.";
   }
@@ -201,6 +215,11 @@ export function formatDoeDtcProfileOverview(snapshot: DoeDtcProfileSnapshot): st
       snapshot.artifacts.length === 0
         ? "None yet"
         : snapshot.artifacts.map((row) => row.title).join(", ")
+    }`,
+    `Feedback/bugs: ${
+      snapshot.tickets.length === 0
+        ? "None yet"
+        : `${snapshot.tickets.filter((row) => row.status !== "resolved").length} open`
     }`,
   ].join("\n");
 }

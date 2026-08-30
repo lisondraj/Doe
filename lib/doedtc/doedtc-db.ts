@@ -29,6 +29,8 @@ import type {
   DoeDtcShareCodeRow,
   DoeDtcSymptomRow,
   DoeDtcSymptomSeverity,
+  DoeDtcTicketKind,
+  DoeDtcTicketRow,
   DoeDtcUserRow,
 } from "@/lib/doedtc/doedtc-types";
 
@@ -494,6 +496,7 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
     assessments,
     artifacts,
     artifactEntries,
+    tickets,
   ] = await Promise.all([
     supabase
       .from("doedtc_users")
@@ -526,6 +529,7 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
     listDoeDtcAssessments(userId, 3),
     listDoeDtcArtifacts(userId),
     listDoeDtcArtifactEntriesForUser(userId, 120),
+    listDoeDtcTickets(userId),
   ]);
 
   if (userResult.error) throw new Error(userResult.error.message);
@@ -545,7 +549,49 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
     assessments,
     artifacts,
     artifactEntries,
+    tickets,
   };
+}
+
+export async function listDoeDtcTickets(userId: string): Promise<DoeDtcTicketRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_tickets")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcTicketRow[]) ?? [];
+}
+
+export async function createDoeDtcTicket(params: {
+  userId: string;
+  kind: DoeDtcTicketKind;
+  title: string;
+  body: string;
+}): Promise<DoeDtcTicketRow> {
+  const title = params.title.trim();
+  const body = params.body.trim();
+  if (!title) throw new Error("Title is required.");
+  if (!body) throw new Error("Description is required.");
+  if (params.kind !== "feedback" && params.kind !== "bug") {
+    throw new Error("Ticket kind must be feedback or bug.");
+  }
+
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_tickets")
+    .insert({
+      user_id: params.userId,
+      kind: params.kind,
+      title,
+      body,
+      status: "open",
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcTicketRow;
 }
 
 function mapArtifactRow(row: Record<string, unknown>): DoeDtcArtifactRow {

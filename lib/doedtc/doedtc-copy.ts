@@ -61,6 +61,7 @@ export const DOEDTC_PROFILE = {
   navLocker: "Locker",
   navShare: "Share",
   navTrackers: "Trackers",
+  navFeedback: "Feedback",
   invalidTokenTitle: "Profile unavailable",
   invalidTokenBody: "Complete Get Started in iMessage to access your profile.",
   dashboardWhyLabel: "Why Doe",
@@ -125,6 +126,19 @@ export const DOEDTC_PROFILE = {
   trackersLastEntryLabel: "Last entry",
   trackersNoEntries: "No entries yet.",
   trackersSelectTracker: "Select a tracker",
+  feedbackTitle: "Feedback and bugs",
+  feedbackEmpty: "No reports yet. Text Doe to send feedback or report a bug.",
+  feedbackDashboardTitle: "Open reports",
+  feedbackKindFeedback: "Feedback",
+  feedbackKindBug: "Bug",
+  feedbackStatusOpen: "Open",
+  feedbackStatusInProgress: "In progress",
+  feedbackStatusResolved: "Resolved",
+  feedbackSubmitLabel: "Submit report",
+  feedbackTitleLabel: "Title",
+  feedbackBodyLabel: "What happened?",
+  feedbackKindLabel: "Type",
+  feedbackSubmittedTitle: "Report submitted",
 } as const;
 
 export const DOEDTC_LISTEN = {
@@ -170,6 +184,7 @@ export const DOEDTC_LINQ = {
   getStartedIntro: "Get Started with Doe. Tap the link below to set up your profile.",
   profileIntro: "Your Doe profile is ready. Tap the link below to manage appointments, family, and more.",
   profileLinkIntro: "Here's your profile.",
+  feedbackLinkIntro: "Track your feedback or bug report here.",
   listenIntro: "Open Listen to record your appointment. Press End call when you're done.",
   careLinkIntro: "Here's your symptom review.",
   allSetMessage:
@@ -233,6 +248,16 @@ export function doeDtcAppUrl(
   return url.toString();
 }
 
+export function doeDtcFeedbackUrl(
+  token: string,
+  options?: { ticket?: string },
+): string {
+  const url = new URL(`${doeDtcPublicOrigin()}${DOEDTC_PATH}/feedback`);
+  url.searchParams.set("t", token);
+  if (options?.ticket) url.searchParams.set("ticket", options.ticket);
+  return url.toString();
+}
+
 export function doeDtcListenUrl(careToken: string, sessionId: string): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/listen?t=${encodeURIComponent(careToken)}&s=${encodeURIComponent(sessionId)}`;
 }
@@ -248,6 +273,13 @@ export function doeDtcVaultUrl(vaultToken: string): string {
 export function doeDtcSessionUrl(careToken: string): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/session?t=${encodeURIComponent(careToken)}`;
 }
+
+export const DOEDTC_FEEDBACK = {
+  pageTitle: "Feedback and bugs",
+  subtitle: "Track feedback and bug reports you send to Doe.",
+  invalidTokenTitle: "Reports unavailable",
+  invalidTokenBody: "Complete Get Started in iMessage to view your reports.",
+} as const;
 
 export const DOEDTC_WORK = {
   pageTitle: "Browser preview",

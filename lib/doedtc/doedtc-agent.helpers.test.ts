@@ -113,6 +113,28 @@ test("sanitizeDoeDtcReplyText does not leave a trailing comma", () => {
   assert.equal(sanitizeDoeDtcReplyText("I logged that,"), "I logged that");
 });
 
+test("sanitizeDoeDtcReplyText strips markdown formatting", () => {
+  assert.equal(
+    sanitizeDoeDtcReplyText("Your **Ozempic** dose is logged.", { keepCloserRate: 0 }),
+    "Your Ozempic dose is logged.",
+  );
+  assert.equal(
+    sanitizeDoeDtcReplyText("Use `profile` to view it.", { keepCloserRate: 0 }),
+    "Use profile to view it.",
+  );
+});
+
+test("sanitizeDoeDtcReplyText strips want-me-to closers", () => {
+  assert.equal(
+    sanitizeDoeDtcReplyText("Logged your shot. Want me to add a reminder too?", { keepCloserRate: 0 }),
+    "Logged your shot",
+  );
+  assert.equal(
+    sanitizeDoeDtcReplyText("Done. Let me know.", { keepCloserRate: 0 }),
+    "Done",
+  );
+});
+
 test("extractInboundMessageId reads current and legacy Linq payloads", () => {
   assert.equal(
     extractInboundMessageId({ data: { id: "v2-message-id", parts: [] } }),
@@ -178,6 +200,7 @@ test("formatDoeDtcProfileTab reads Whoop from the dashboard tab", () => {
     assessments: [],
     artifacts: [],
     artifactEntries: [],
+    tickets: [],
   };
   const dashboard = formatDoeDtcProfileTab(snapshot, "dashboard");
   assert.match(dashboard, /Whoop: not connected/);

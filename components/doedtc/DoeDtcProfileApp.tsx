@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { DoeDtcNav } from "@/components/doedtc/DoeDtcNav";
 import { DoeDtcArtifactView } from "@/components/doedtc/DoeDtcArtifactView";
+import { DoeDtcFeedbackView } from "@/components/doedtc/DoeDtcFeedbackView";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import {
   DOEDTC_GET_STARTED,
@@ -78,6 +79,7 @@ type DoeDtcProfileAppProps = {
   initialSnapshot: DoeDtcProfileSnapshot | null;
   initialTab: DoeDtcProfileTab;
   initialArtifactId?: string | null;
+  initialTicketId?: string | null;
 };
 
 export function DoeDtcProfileApp({
@@ -86,10 +88,12 @@ export function DoeDtcProfileApp({
   initialSnapshot,
   initialTab,
   initialArtifactId = null,
+  initialTicketId = null,
 }: DoeDtcProfileAppProps) {
   const [tab, setTab] = useState<DoeDtcProfileTab>(initialTab);
   const [snapshot, setSnapshot] = useState(initialSnapshot);
   const [focusedArtifactId, setFocusedArtifactId] = useState<string | null>(initialArtifactId);
+  const [focusedTicketId, setFocusedTicketId] = useState<string | null>(initialTicketId);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -157,6 +161,12 @@ export function DoeDtcProfileApp({
   }, [initialArtifactId]);
 
   useEffect(() => {
+    if (initialTicketId) {
+      setFocusedTicketId(initialTicketId);
+    }
+  }, [initialTicketId]);
+
+  useEffect(() => {
     void refetchSnapshot();
   }, [tab, refetchSnapshot]);
 
@@ -191,6 +201,10 @@ export function DoeDtcProfileApp({
             setFocusedArtifactId(artifactId ?? null);
             setTab("trackers");
           }}
+          onOpenFeedback={(ticketId) => {
+            setFocusedTicketId(ticketId ?? null);
+            setTab("feedback");
+          }}
         />
       ) : null}
       {tab === "appointments" ? (
@@ -210,6 +224,15 @@ export function DoeDtcProfileApp({
           onAction={runAction}
           focusedArtifactId={focusedArtifactId}
           onFocusArtifact={setFocusedArtifactId}
+        />
+      ) : null}
+      {tab === "feedback" ? (
+        <FeedbackTab
+          snapshot={snapshot}
+          busy={busy}
+          onAction={runAction}
+          focusedTicketId={focusedTicketId}
+          onFocusTicket={setFocusedTicketId}
         />
       ) : null}
     </DoeDtcPageShell>
@@ -305,13 +328,18 @@ function DashboardTab({
   busy,
   onAction,
   onOpenTrackers,
-}: TabProps & { onOpenTrackers: (artifactId?: string | null) => void }) {
+  onOpenFeedback,
+}: TabProps & {
+  onOpenTrackers: (artifactId?: string | null) => void;
+  onOpenFeedback: (ticketId?: string | null) => void;
+}) {
   const trackerCards = snapshot.artifacts.map((artifact) => {
     const lastEntry = snapshot.artifactEntries
       .filter((entry) => entry.artifact_id === artifact.id)
       .sort((a, b) => b.occurred_at.localeCompare(a.occurred_at))[0];
     return { artifact, lastEntry };
   });
+  const openTickets = snapshot.tickets.filter((ticket) => ticket.status !== "resolved");
 
   return (
     <div>
@@ -362,6 +390,33 @@ function DashboardTab({
                   {lastEntry
                     ? formatArtifactEntryValues(artifact, lastEntry.values)
                     : DOEDTC_PROFILE.trackersNoEntries}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {openTickets.length > 0 ? (
+        <div className="doedtc-section">
+          <h2 className="doedtc-section-title">{DOEDTC_PROFILE.feedbackDashboardTitle}</h2>
+          <div className="doedtc-tracker-strip">
+            {openTickets.slice(0, 4).map((ticket) => (
+              <button
+                key={ticket.id}
+                type="button"
+                className="doedtc-card doedtc-card--flat doedtc-tracker-card"
+                onClick={() => onOpenFeedback(ticket.id)}
+              >
+                <strong>{ticket.title}</strong>
+                <p className="doedtc-muted">
+                  {ticket.kind === "bug"
+                    ? DOEDTC_PROFILE.feedbackKindBug
+                    : DOEDTC_PROFILE.feedbackKindFeedback}{" "}
+                  ·{" "}
+                  {ticket.status === "in_progress"
+                    ? DOEDTC_PROFILE.feedbackStatusInProgress
+                    : DOEDTC_PROFILE.feedbackStatusOpen}
                 </p>
               </button>
             ))}
@@ -970,6 +1025,32 @@ function TrackersTab({
           )}
         </>
       )}
+    </div>
+  );
+}
+
+function FeedbackTab({
+  snapshot,
+  busy,
+  onAction,
+  focusedTicketId,
+  onFocusTicket,
+}: TabProps & {
+  focusedTicketId: string | null;
+  onFocusTicket: (ticketId: string | null) => void;
+}) {
+  return (
+    <div>
+      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.feedbackTitle}</h2>
+      <DoeDtcFeedbackView
+        tickets={snapshot.tickets}
+        focusedTicketId={focusedTicketId}
+        busy={busy}
+        onSubmit={async (payload) => {
+          await onAction("submit_ticket", payload);
+          onFocusTicket(null);
+        }}
+      />
     </div>
   );
 }

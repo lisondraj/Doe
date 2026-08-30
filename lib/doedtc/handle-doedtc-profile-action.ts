@@ -6,6 +6,7 @@ import {
   appendDoeDtcCondition,
   appendDoeDtcMedication,
   archiveDoeDtcArtifact,
+  createDoeDtcTicket,
   generateDoeDtcShareCode,
   getDoeDtcProfileSnapshot,
   getDoeDtcUserByCareToken,
@@ -209,6 +210,14 @@ export async function handleDoeDtcProfileAction(params: {
       const artifactId = String(params.payload.artifactId ?? "");
       if (!artifactId) throw new Error("Missing tracker.");
       await archiveDoeDtcArtifact({ userId: user.id, artifactId });
+      break;
+    }
+    case "submit_ticket": {
+      const kind = params.payload.kind === "bug" ? "bug" : "feedback";
+      const title = String(params.payload.title ?? "").trim();
+      const body = String(params.payload.body ?? "").trim();
+      if (!title || !body) throw new Error("Title and description are required.");
+      await createDoeDtcTicket({ userId: user.id, kind, title, body });
       break;
     }
     default:

@@ -14,7 +14,7 @@ import {
   formatMem0Block,
   searchDoeDtcMem0Memories,
 } from "@/lib/doedtc/doedtc-memory";
-import { doeDtcAppUrl, doeDtcCareUrl, doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
+import { doeDtcAppUrl, doeDtcCareUrl, doeDtcFeedbackUrl, doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
 import {
   formatDoeDtcAppointmentWhen,
   normalizeDoeDtcAppointmentTiming,
@@ -37,6 +37,7 @@ import {
   updateDoeDtcArtifact,
   updateDoeDtcArtifactEntry,
   createDoeDtcListenSession,
+  createDoeDtcTicket,
   getDoeDtcProfileSnapshot,
   insertDoeDtcMemory,
   insertDoeDtcSymptom,
@@ -407,6 +408,27 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "submit_ticket",
+      description:
+        "Submit user feedback or a bug report. Call when they ask to send feedback, report a bug, or file something that went wrong. Do not use for one-off product questions.",
+      parameters: {
+        type: "object",
+        properties: {
+          kind: {
+            type: "string",
+            enum: ["feedback", "bug"],
+            description: "feedback for suggestions; bug for something broken or a mistake.",
+          },
+          title: { type: "string", description: "Short summary." },
+          body: { type: "string", description: "Full description of the feedback or bug." },
+        },
+        required: ["kind", "title", "body"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "remember_fact",
       description:
         "Store a durable preference or context (doctor name, travel plans). Not for symptoms, family chart entries, medications, or conditions.",
@@ -457,7 +479,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "read_profile",
       description:
-        "Read a Doe profile tab (dashboard/integrations, appointments, results, conditions, family, locker, share, trackers). Use this to answer questions about what is already saved — Whoop, Apple Health, meds, locker sites, results, share codes, custom trackers. Never invent status. This is a read, not an add.",
+        "Read a Doe profile tab (dashboard/integrations, appointments, results, conditions, family, locker, share, trackers, feedback). Use this to answer questions about what is already saved — Whoop, Apple Health, meds, locker sites, results, share codes, custom trackers, feedback/bug reports. Never invent status. This is a read, not an add.",
       parameters: {
         type: "object",
         properties: {
@@ -639,6 +661,7 @@ export type DoeDtcAgentTurnResult = {
   careUrl?: string;
   listenUrl?: string;
   profileUrl?: string;
+  feedbackUrl?: string;
   workUrl?: string;
   screenshotUrl?: string;
   vaultUrl?: string;
@@ -652,14 +675,24 @@ export type DoeDtcAgentTurnResult = {
 
 const URL_IN_TEXT = /https?:\/\/\S+/gi;
 const CLOSER_TAIL =
-  /(?:\s*[,.!]+\s*)?(?:feel free to (?:ask|let me know|reach out|text|message)(?:\b.{0,80})?|let me know if (?:you(?:'d| would)? (?:like|want|need)|you have |there's ).{0,80}|just let me know(?:\b.{0,60})?|don'?t hesitate to (?:ask|reach out|text).{0,40}|happy to (?:help|chat|look).{0,40}|(?:is there )?anything else I can (?:help|do).{0,40}|what else can I (?:help|do).{0,40})[!?.,]?\s*$/i;
-const KEEP_CLOSER_RATE = 0.18;
+  /(?:\s*[,.!]+\s*)?(?:feel free to (?:ask|let me know|reach out|text|message)(?:\b.{0,80})?|let me know if (?:you(?:'d| would)? (?:like|want|need)|you have |there's ).{0,80}|just let me know(?:\b.{0,60})?|let me know\.[!?.,]?\s*$|don'?t hesitate to (?:ask|reach out|text).{0,40}|happy to (?:help|chat|look)(?:\b.{0,40})?(?: if you want)?|(?:is there )?anything else I can (?:help|do).{0,40}|what else can I (?:help|do).{0,40}|want me to .{0,80}|i can also (?:help|look|check|do|add).{0,60}|just say the word[!?.,]?\s*$)[!?.,]?\s*$/i;
+const KEEP_CLOSER_RATE = 0.08;
+
+function stripMarkdownFromReply(text: string): string {
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/__([^_]+)__/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*([^*\n]+)\*/g, "$1")
+    .replace(/_([^_\n]+)_/g, "$1");
+}
 
 export function sanitizeDoeDtcReplyText(
   text: string,
   options?: { keepCloserRate?: number },
 ): string {
-  const withoutUrls = text.replace(URL_IN_TEXT, "");
+  const withoutMarkdown = stripMarkdownFromReply(text);
+  const withoutUrls = withoutMarkdown.replace(URL_IN_TEXT, "");
   const stripped = withoutUrls.replace(CLOSER_TAIL, "");
   const rate = options?.keepCloserRate ?? KEEP_CLOSER_RATE;
   const keepCloser = stripped !== withoutUrls && Math.random() < rate;
@@ -825,6 +858,7 @@ function buildReplyFromTurnState(params: {
   sessionUrl?: string;
   listenUrl?: string;
   profileUrl?: string;
+  feedbackUrl?: string;
   browserUserMessage?: string;
 }): string {
   if (params.browserUserMessage?.trim()) {
@@ -847,6 +881,7 @@ function buildReplyFromTurnState(params: {
   if (params.sessionUrl) return "Sending a live session link so you can watch.";
   if (params.listenUrl) return "Sending a Listen link to record your visit.";
   if (params.profileUrl) return "Sending your profile link.";
+  if (params.feedbackUrl) return "Sending a link to track your report.";
 
   return "Got it.";
 }
@@ -906,6 +941,8 @@ What you can do:
 - Send the profile / dashboard link (send_profile_link).
 - Create profile trackers (create_profile_artifact) when they want to track, log, count, or keep a list over time — e.g. Ozempic shots, water, mood. Do not create trackers for one-off questions. Prefer updating an existing matching tracker over a duplicate. Log entries with log_artifact_entry. Read trackers tab with read_profile.
 - After creating a tracker or logging a useful entry, send_profile_link with tab=trackers and artifact id so they can view/edit it.
+- Submit feedback or bug reports (submit_ticket) when they ask to send feedback or report a bug. After submitting, send the track link. Read feedback tab with read_profile.
+- If a tool fails, you cannot complete a task, or you made a mistake, mention they can text "report a bug" or "send feedback" and you will file it. Do not auto-file unless they ask.
 - Browse the web via start_browser_task. For "go to Google and type mayo" (or screenshot the result), call once with url google and intent type mayo — that opens the Google results page and screenshots it. Do not try to type into Google with a CSS selector.
 - Screenshot the current page with browser_snapshot when they ask for a picture, screenshot, or to see the page.
 - Help with patient portals via request_vault or request_live_login — never ask for passwords in iMessage.
@@ -929,6 +966,7 @@ Core invariant:
 
 Style:
 - Short iMessage replies (1-4 sentences). Warm, plain language.
+- Never use markdown — no **bold**, __italics__, or \`code\`. iMessage will not render it.
 - Never end a reply with a comma.
 - Only ask a clarifying question when you cannot act without it.
 - Refer back to appointments, family, and memories naturally.
@@ -1116,6 +1154,7 @@ export async function runDoeDtcAgentTurn(params: {
   let careUrl: string | undefined;
   let listenUrl: string | undefined;
   let profileUrl: string | undefined;
+  let feedbackUrl: string | undefined;
   let workUrl: string | undefined;
   let screenshotUrl: string | undefined;
   let vaultUrl: string | undefined;
@@ -1148,6 +1187,7 @@ export async function runDoeDtcAgentTurn(params: {
         sessionUrl,
         listenUrl,
         profileUrl,
+        feedbackUrl,
       });
 
       const fulfilled = await fulfillClaimedLinks({
@@ -1177,6 +1217,7 @@ export async function runDoeDtcAgentTurn(params: {
           sessionUrl,
           listenUrl,
           profileUrl,
+          feedbackUrl,
         });
       }
 
@@ -1185,6 +1226,7 @@ export async function runDoeDtcAgentTurn(params: {
         careUrl: assessmentRan ? careUrl : undefined,
         listenUrl,
         profileUrl,
+        feedbackUrl,
         workUrl,
         screenshotUrl,
         vaultUrl,
@@ -1445,6 +1487,26 @@ export async function runDoeDtcAgentTurn(params: {
           if (!entryId) throw new Error("entry_id is required.");
           await removeDoeDtcArtifactEntry({ userId: params.user.id, entryId });
           output = { ok: true, id: entryId, removed: true };
+        } else if (toolCall.function.name === "submit_ticket") {
+          const kind = args.kind === "bug" ? "bug" : "feedback";
+          const title = String(args.title ?? "").trim();
+          const body = String(args.body ?? "").trim();
+          if (!title || !body) throw new Error("Title and description are required.");
+          const row = await createDoeDtcTicket({
+            userId: params.user.id,
+            kind,
+            title,
+            body,
+          });
+          feedbackUrl = doeDtcFeedbackUrl(params.user.care_token, { ticket: row.id });
+          output = {
+            ok: true,
+            id: row.id,
+            kind: row.kind,
+            title: row.title,
+            status: row.status,
+            link_sent_separately: true,
+          };
         } else if (toolCall.function.name === "remember_fact") {
           const fact = String(args.fact ?? "").trim();
           if (!fact) throw new Error("Fact is required.");
@@ -1704,10 +1766,12 @@ export async function runDoeDtcAgentTurn(params: {
       sessionUrl,
       listenUrl,
       profileUrl,
+      feedbackUrl,
     }),
     careUrl: assessmentRan ? careUrl : undefined,
     listenUrl,
     profileUrl,
+    feedbackUrl,
     workUrl,
     screenshotUrl,
     vaultUrl,

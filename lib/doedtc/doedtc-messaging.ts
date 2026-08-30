@@ -526,6 +526,23 @@ export async function handleSymptomInbound(params: {
     });
   }
 
+  if (turn.feedbackUrl) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.feedbackLinkIntro,
+      idempotencyKey: `doedtc-agent-feedback-intro-${params.user.id}-${idSuffix}`,
+    });
+    await sendDoeDtcLinkOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      url: turn.feedbackUrl,
+      idempotencyKey: `doedtc-agent-feedback-${params.user.id}-${idSuffix}`,
+    });
+  }
+
   if (turn.screenshotUrl) {
     await sendDoeDtcMediaOutbound({
       user: params.user,

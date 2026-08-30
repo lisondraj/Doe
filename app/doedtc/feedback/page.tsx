@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 
-import { DoeDtcProfileApp } from "@/components/doedtc/DoeDtcProfileApp";
+import { DoeDtcFeedbackPageClient } from "@/components/doedtc/DoeDtcFeedbackPageClient";
 import { getDoeDtcProfileSnapshot, getDoeDtcUserByCareToken } from "@/lib/doedtc/doedtc-db";
 import {
-  DOEDTC_PAGE_DESCRIPTION,
-  DOEDTC_PROFILE,
+  DOEDTC_FEEDBACK,
   DOEDTC_LINK_PREVIEW_IMAGE,
+  DOEDTC_PAGE_DESCRIPTION,
   doeDtcLinkPreviewImageUrl,
   doeDtcPublicOrigin,
 } from "@/lib/doedtc/doedtc-copy";
-import type { DoeDtcProfileSnapshot, DoeDtcProfileTab } from "@/lib/doedtc/doedtc-types";
+import type { DoeDtcProfileSnapshot } from "@/lib/doedtc/doedtc-types";
 import { DOEDTC_PATH } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
@@ -19,12 +19,12 @@ export const fetchCache = "force-no-store";
 const ogImage = doeDtcLinkPreviewImageUrl();
 
 export const metadata: Metadata = {
-  title: `${DOEDTC_PROFILE.pageTitle} · Doe`,
+  title: `${DOEDTC_FEEDBACK.pageTitle} · Doe`,
   description: DOEDTC_PAGE_DESCRIPTION,
   openGraph: {
-    title: DOEDTC_PROFILE.pageTitle,
-    description: DOEDTC_PAGE_DESCRIPTION,
-    url: `${doeDtcPublicOrigin()}${DOEDTC_PATH}/app`,
+    title: DOEDTC_FEEDBACK.pageTitle,
+    description: DOEDTC_FEEDBACK.subtitle,
+    url: `${doeDtcPublicOrigin()}${DOEDTC_PATH}/feedback`,
     siteName: "Doe",
     images: [
       {
@@ -38,37 +38,20 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: DOEDTC_PROFILE.pageTitle,
-    description: DOEDTC_PAGE_DESCRIPTION,
+    title: DOEDTC_FEEDBACK.pageTitle,
+    description: DOEDTC_FEEDBACK.subtitle,
     images: [ogImage],
   },
 };
 
-const VALID_TABS = new Set<DoeDtcProfileTab>([
-  "dashboard",
-  "appointments",
-  "results",
-  "conditions",
-  "family",
-  "locker",
-  "share",
-  "trackers",
-  "feedback",
-]);
-
 type PageProps = {
-  searchParams: Promise<{ t?: string; tab?: string; artifact?: string; ticket?: string }>;
+  searchParams: Promise<{ t?: string; ticket?: string }>;
 };
 
-export default async function DoeDtcAppPage({ searchParams }: PageProps) {
+export default async function DoeDtcFeedbackPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const token = params.t?.trim() ?? "";
-  const tabParam = params.tab?.trim() ?? "dashboard";
-  const initialTab = VALID_TABS.has(tabParam as DoeDtcProfileTab)
-    ? (tabParam as DoeDtcProfileTab)
-    : "dashboard";
-  const initialArtifactId = params.artifact?.trim() || null;
-  const initialTicketId = params.ticket?.trim() || null;
+  const focusedTicketId = params.ticket?.trim() || null;
 
   let valid = false;
   let snapshot: DoeDtcProfileSnapshot | null = null;
@@ -87,13 +70,11 @@ export default async function DoeDtcAppPage({ searchParams }: PageProps) {
   }
 
   return (
-    <DoeDtcProfileApp
+    <DoeDtcFeedbackPageClient
       token={token}
       valid={valid}
       initialSnapshot={snapshot}
-      initialTab={initialTab}
-      initialArtifactId={initialArtifactId}
-      initialTicketId={initialTicketId}
+      focusedTicketId={focusedTicketId}
     />
   );
 }

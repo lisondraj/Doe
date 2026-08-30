@@ -862,3 +862,36 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-tracker-strip,
   border-color: var(--doedtc-gold);
   color: var(--doedtc-gold);
 }
+
+.doedtc-feedback__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.doedtc-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--doedtc-border);
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--doedtc-gold);
+}
+
+.doedtc-badge--muted {
+  color: var(--doedtc-muted);
+}
+
+.doedtc-feedback__row {
+  width: 100%;
+  text-align: left;
+}
+
+.doedtc-textarea {
+  min-height: 6rem;
+  resize: vertical;
+}

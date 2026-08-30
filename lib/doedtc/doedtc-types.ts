@@ -164,6 +164,21 @@ export type DoeDtcArtifactEntryRow = {
   updated_at: string;
 };
 
+export type DoeDtcTicketKind = "feedback" | "bug";
+
+export type DoeDtcTicketStatus = "open" | "in_progress" | "resolved";
+
+export type DoeDtcTicketRow = {
+  id: string;
+  user_id: string;
+  kind: DoeDtcTicketKind;
+  title: string;
+  body: string;
+  status: DoeDtcTicketStatus;
+  created_at: string;
+  updated_at: string;
+};
+
 export type DoeDtcProfileSnapshot = {
   user: Pick<
     DoeDtcUserRow,
@@ -182,6 +197,7 @@ export type DoeDtcProfileSnapshot = {
   assessments: DoeDtcAssessmentRow[];
   artifacts: DoeDtcArtifactRow[];
   artifactEntries: DoeDtcArtifactEntryRow[];
+  tickets: DoeDtcTicketRow[];
 };
 
 export type DoeDtcMedicationRow = {
@@ -268,7 +284,8 @@ export type DoeDtcProfileTab =
   | "family"
   | "locker"
   | "share"
-  | "trackers";
+  | "trackers"
+  | "feedback";
 
 export type DoeDtcBrowserJobStatus =
   | "open"
