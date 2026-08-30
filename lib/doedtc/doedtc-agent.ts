@@ -22,6 +22,8 @@ import {
 import {
   addDoeDtcAppointment,
   addDoeDtcFamilyMember,
+  appendDoeDtcCondition,
+  appendDoeDtcMedication,
   createDoeDtcListenSession,
   getDoeDtcProfileLists,
   insertDoeDtcMemory,
@@ -34,6 +36,10 @@ import {
   listDoeDtcSymptoms,
   saveDoeDtcAssessment,
 } from "@/lib/doedtc/doedtc-db";
+import {
+  normalizeDoeDtcFamilyRelationship,
+  resolveDoeDtcFamilyMemberName,
+} from "@/lib/doedtc/doedtc-family-relationship";
 import type {
   DoeDtcAppointmentRow,
   DoeDtcAssessmentResult,
@@ -135,7 +141,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "log_family_member",
       description:
-        "Add or update the user's family chart when they name a person and relationship (e.g. son Bob, mother Jane). Use child for son/daughter. Name is required.",
+        "Add a person to the user's Family chart. Call for each named family member. Use relationship child for sons/daughters. If they mention kids without names, still call with full_name Child.",
       parameters: {
         type: "object",
         properties: {
@@ -163,9 +169,39 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "add_medication",
+      description:
+        "Add a medication to the user's profile. Call when they mention a medicine they take. Never use remember_fact for medications.",
+      parameters: {
+        type: "object",
+        properties: {
+          name: { type: "string", description: "Medication name, e.g. Metformin." },
+        },
+        required: ["name"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "add_condition",
+      description:
+        "Add a medical condition or diagnosis to the user's profile. Call when they mention a condition they have. Never use remember_fact for conditions.",
+      parameters: {
+        type: "object",
+        properties: {
+          name: { type: "string", description: "Condition name, e.g. Asthma." },
+        },
+        required: ["name"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "remember_fact",
       description:
-        "Store a durable fact about the user for future conversations (doctor name, preference, travel, family context). Not for symptoms.",
+        "Store a durable preference or context (doctor name, travel plans). Not for symptoms, family chart entries, medications, or conditions.",
       parameters: {
         type: "object",
         properties: {
@@ -412,17 +448,6 @@ function formatFamilyLog(familyMembers: DoeDtcFamilyMemberRow[]): string {
     .join("\n");
 }
 
-const FAMILY_RELATIONSHIPS = new Set<DoeDtcFamilyRelationship>([
-  "grandmother",
-  "grandfather",
-  "mother",
-  "father",
-  "child",
-  "sibling",
-  "partner",
-  "other",
-]);
-
 function todayLabel(): string {
   return new Date().toLocaleDateString(undefined, {
     weekday: "long",
@@ -536,11 +561,14 @@ Prior assessments:
 ${params.assessmentHistory}
 
 What you can do:
-- Log symptoms, run structured reviews, track appointments and family members, remember durable facts.
+- Log symptoms, run structured reviews, track appointments and family members.
+- Add medications (add_medication) and conditions (add_condition) to the profile.
+- Add family members to the Family chart (log_family_member) — never remember_fact for family.
 - Send a Listen link to record and transcribe visits (start_listen).
 - Send the profile / dashboard link (send_profile_link).
 - Look up health info on approved sites via start_browser_task (Mayo, CDC, NIH, MedlinePlus, Wikipedia, Google).
 - Help with patient portals via request_vault or request_live_login — never ask for passwords in iMessage.
+- Store preferences and general context with remember_fact — not for meds, conditions, or family chart entries.
 
 Core invariant:
 - Do the action with tools first, then describe the result in plain language.
@@ -557,7 +585,8 @@ Style:
 Safety:
 - Never invent appointment dates or times. Use log_appointment with approximate timing when vague.
 - For approximate appointments, repeat the user's vague wording — never convert to an exact datetime.
-- Use log_family_member for named family (child for son/daughter); remember_fact for other durable facts.
+- Use log_family_member for every family chart entry. Use relationship child for sons/daughters. If names are missing, use full_name Child.
+- Use add_medication and add_condition for profile medical info — never remember_fact for those.
 - Never claim a definitive diagnosis. Flag emergencies clearly.
 - Irreversible browser actions need request_commit, then the patient replies CONFIRM.
 - After useful browser findings, you may store a one-line outcome via remember_fact.`;
@@ -889,16 +918,18 @@ export async function runDoeDtcAgentTurn(params: {
             fact: `Appointment: ${row.title} — ${when}`,
           });
         } else if (toolCall.function.name === "log_family_member") {
-          const fullName = String(args.full_name ?? "").trim();
-          const relationship = String(args.relationship ?? "").trim();
+          const relationshipRaw = String(args.relationship ?? "").trim();
+          const relationship = normalizeDoeDtcFamilyRelationship(relationshipRaw);
+          if (!relationship) throw new Error("Invalid relationship.");
+          const fullName = resolveDoeDtcFamilyMemberName({
+            fullName: String(args.full_name ?? ""),
+            relationship,
+          });
           if (!fullName) throw new Error("full_name is required.");
-          if (!FAMILY_RELATIONSHIPS.has(relationship as DoeDtcFamilyRelationship)) {
-            throw new Error("Invalid relationship.");
-          }
           const row = await addDoeDtcFamilyMember({
             userId: params.user.id,
             fullName,
-            relationship: relationship as DoeDtcFamilyRelationship,
+            relationship,
             phone: typeof args.phone === "string" ? args.phone : null,
           });
           output = {
@@ -907,6 +938,16 @@ export async function runDoeDtcAgentTurn(params: {
             full_name: row.full_name,
             relationship: row.relationship,
           };
+        } else if (toolCall.function.name === "add_medication") {
+          const name = String(args.name ?? "").trim();
+          if (!name) throw new Error("Medication name is required.");
+          const result = await appendDoeDtcMedication({ userId: params.user.id, name });
+          output = { ok: true, name: result.name, added: result.added };
+        } else if (toolCall.function.name === "add_condition") {
+          const name = String(args.name ?? "").trim();
+          if (!name) throw new Error("Condition name is required.");
+          const result = await appendDoeDtcCondition({ userId: params.user.id, name });
+          output = { ok: true, name: result.name, added: result.added };
         } else if (toolCall.function.name === "remember_fact") {
           const fact = String(args.fact ?? "").trim();
           if (!fact) throw new Error("Fact is required.");

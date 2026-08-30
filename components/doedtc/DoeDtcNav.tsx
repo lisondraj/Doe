@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
-import { DoeDtcWordmark } from "@/components/doedtc/DoeDtcWordmark";
+import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_PROFILE } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcProfileTab } from "@/lib/doedtc/doedtc-types";
 import { useDoeDtcPageVariant } from "@/lib/doedtc/use-doedtc-page-variant";
@@ -97,23 +97,23 @@ export function DoeDtcNav({ token, activeTab, onTabChange }: DoeDtcNavProps) {
   return (
     <>
       <nav className={`doedtc-nav${isPhone ? " doedtc-nav--phone" : ""}`} aria-label="Profile">
-        <div className="doedtc-nav__bar">
-          <Link className="doedtc-nav__wordmark" href={`/doedtc/app?t=${encodeURIComponent(token)}`}>
-            <DoeDtcWordmark />
-          </Link>
-          {isPhone ? (
-            <button
-              type="button"
-              className="doedtc-nav__menu"
-              aria-label="Open menu"
-              aria-expanded={sidebarOpen}
-              aria-controls="doedtc-nav-sidebar"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <MenuIcon />
-            </button>
-          ) : null}
-        </div>
+        <DoeDtcTopBar
+          href={`/doedtc/app?t=${encodeURIComponent(token)}`}
+          trailing={
+            isPhone ? (
+              <button
+                type="button"
+                className="doedtc-nav__menu"
+                aria-label="Open menu"
+                aria-expanded={sidebarOpen}
+                aria-controls="doedtc-nav-sidebar"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <MenuIcon />
+              </button>
+            ) : null
+          }
+        />
         {!isPhone ? (
           <div className="doedtc-nav__tabs">{PROFILE_TABS.map((tab) => renderTabControl(tab, activeTab === tab.id))}</div>
         ) : null}

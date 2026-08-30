@@ -85,6 +85,30 @@ export function DoeDtcCareView({ assessment, symptoms, valid }: DoeDtcCareViewPr
         </div>
       )}
 
+      <aside className="doedtc-care-aside">
+        <div className="doedtc-section">
+          <h2 className="doedtc-section-title">{DOEDTC_CARE.symptomLogLabel}</h2>
+          <div className="doedtc-card doedtc-card--flat">
+            {symptoms.length === 0 ? (
+              <p className="doedtc-empty">{DOEDTC_CARE.symptomLogEmpty}</p>
+            ) : (
+              <ul className="doedtc-symptom-log">
+                {symptoms.map((symptom) => (
+                  <li className="doedtc-symptom-item" key={symptom.id}>
+                    <time className="doedtc-symptom-date" dateTime={symptom.reported_at}>
+                      {formatSymptomDate(symptom.reported_at)}
+                    </time>
+                    <p className="doedtc-body">{symptom.summary?.trim() || symptom.raw_text}</p>
+                    {symptom.severity !== "unknown" ? (
+                      <p className="doedtc-symptom-meta">Severity: {symptom.severity}</p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </aside>
     </div>
   );
 }

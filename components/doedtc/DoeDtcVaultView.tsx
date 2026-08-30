@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
+import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_VAULT } from "@/lib/doedtc/doedtc-copy";
 import { dmSans } from "@/lib/home/fonts";
 
@@ -43,21 +44,29 @@ export function DoeDtcVaultView({ token, valid, host }: DoeDtcVaultViewProps) {
     }
   }
 
+  const title = !valid
+    ? DOEDTC_VAULT.invalidTitle
+    : done
+      ? DOEDTC_VAULT.successTitle
+      : DOEDTC_VAULT.pageTitle;
+
   return (
     <DoeDtcPageShell>
+      <DoeDtcTopBar />
+      <header className="doedtc-header">
+        <h1 className={`doedtc-headline ${dmSans.className}`}>{title}</h1>
+      </header>
+
       {!valid ? (
-        <section className="doedtc-card">
-          <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_VAULT.invalidTitle}</h1>
+        <section className="doedtc-card doedtc-card--flat">
           <p className="doedtc-body">{DOEDTC_VAULT.invalidBody}</p>
         </section>
       ) : done ? (
-        <section className="doedtc-card">
-          <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_VAULT.successTitle}</h1>
+        <section className="doedtc-card doedtc-card--flat">
           <p className="doedtc-body">{DOEDTC_VAULT.successBody}</p>
         </section>
       ) : (
-        <section className="doedtc-card">
-          <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_VAULT.pageTitle}</h1>
+        <section className="doedtc-card doedtc-card--flat">
           <form className="doedtc-form" onSubmit={handleSubmit} autoComplete="off">
             <label className="doedtc-label">{DOEDTC_VAULT.hostLabel}</label>
             <input className="doedtc-input" value={host} readOnly />

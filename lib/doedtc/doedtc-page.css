@@ -130,6 +130,8 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-shell,
   border-radius: 1.15rem;
   background: var(--doedtc-raised);
   border: 1px solid var(--doedtc-border);
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .doedtc-card--spaced {
@@ -163,6 +165,9 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-shell,
 .doedtc-textarea,
 .doedtc-select {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 0.9rem 1rem;
   border-radius: 0.875rem;
   border: 1px solid var(--doedtc-border);
@@ -178,11 +183,48 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-shell,
 }
 
 .doedtc-input[type="date"],
+.doedtc-input[type="time"],
 .doedtc-input[type="datetime-local"] {
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
   font-size: 16px;
+}
+
+.doedtc-datetime-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.doedtc-form {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.doedtc-form .doedtc-button {
+  margin-top: 0.35rem;
+}
+
+.doedtc-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+}
+
+html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-topbar.doedtc-nav--phone,
+.doedtc-root[data-doedtc-variant="phone"] .doedtc-topbar.doedtc-nav--phone {
+  margin-bottom: 0.15rem;
+}
+
+html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-topbar.doedtc-nav--phone .doedtc-wordmark,
+.doedtc-root[data-doedtc-variant="phone"] .doedtc-topbar.doedtc-nav--phone .doedtc-wordmark {
+  font-size: clamp(2.1rem, 8vw, 2.75rem);
+  font-weight: 400;
 }
 
 .doedtc-input:focus,
@@ -554,12 +596,20 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-nav--phone .doedtc-w
   border-radius: 1rem;
   background: var(--doedtc-sunken);
   border: 1px solid var(--doedtc-border);
+  min-width: 0;
+}
+
+.doedtc-row-item__body {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
 }
 
 .doedtc-row-item__meta {
   margin-top: 0.25rem;
   font-size: 1rem;
   color: var(--doedtc-muted);
+  overflow-wrap: anywhere;
 }
 
 .doedtc-row-item__actions {

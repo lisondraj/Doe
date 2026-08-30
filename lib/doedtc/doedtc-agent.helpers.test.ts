@@ -4,6 +4,10 @@ import test from "node:test";
 import { resolveResearchBrowseTarget } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { toUserSafeBrowserError } from "@/lib/doedtc/doedtc-browser";
 import { sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
+import {
+  normalizeDoeDtcFamilyRelationship,
+  resolveDoeDtcFamilyMemberName,
+} from "@/lib/doedtc/doedtc-family-relationship";
 
 test("resolveResearchBrowseTarget accepts allowlisted hosts", () => {
   const result = resolveResearchBrowseTarget({
@@ -49,4 +53,17 @@ test("toUserSafeBrowserError maps kernel and allowlist errors", () => {
 test("sanitizeDoeDtcReplyText strips URLs from replies", () => {
   const cleaned = sanitizeDoeDtcReplyText("Here is the link https://example.com/foo");
   assert.ok(!cleaned.includes("https://"));
+});
+
+test("normalizeDoeDtcFamilyRelationship maps son and daughter to child", () => {
+  assert.equal(normalizeDoeDtcFamilyRelationship("son"), "child");
+  assert.equal(normalizeDoeDtcFamilyRelationship("daughter"), "child");
+  assert.equal(normalizeDoeDtcFamilyRelationship("wife"), "partner");
+});
+
+test("resolveDoeDtcFamilyMemberName defaults unnamed children", () => {
+  assert.equal(
+    resolveDoeDtcFamilyMemberName({ fullName: "", relationship: "child" }),
+    "Child",
+  );
 });

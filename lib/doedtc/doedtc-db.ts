@@ -721,6 +721,62 @@ export async function revokeDoeDtcShareCode(params: {
   if (error) throw new Error(error.message);
 }
 
+export async function appendDoeDtcMedication(params: {
+  userId: string;
+  name: string;
+}): Promise<{ added: boolean; name: string }> {
+  const name = params.name.trim();
+  if (!name) throw new Error("Medication name is required.");
+
+  const profile = await getDoeDtcProfileLists(params.userId);
+  if (profile.medications.some((existing) => existing.toLowerCase() === name.toLowerCase())) {
+    return { added: false, name };
+  }
+
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase.from("doedtc_medications").insert({
+    user_id: params.userId,
+    name,
+  });
+  if (error) throw new Error(error.message);
+
+  const { error: userError } = await supabase
+    .from("doedtc_users")
+    .update({ medical_deferred: false })
+    .eq("id", params.userId);
+  if (userError) throw new Error(userError.message);
+
+  return { added: true, name };
+}
+
+export async function appendDoeDtcCondition(params: {
+  userId: string;
+  name: string;
+}): Promise<{ added: boolean; name: string }> {
+  const name = params.name.trim();
+  if (!name) throw new Error("Condition name is required.");
+
+  const profile = await getDoeDtcProfileLists(params.userId);
+  if (profile.conditions.some((existing) => existing.toLowerCase() === name.toLowerCase())) {
+    return { added: false, name };
+  }
+
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase.from("doedtc_conditions").insert({
+    user_id: params.userId,
+    name,
+  });
+  if (error) throw new Error(error.message);
+
+  const { error: userError } = await supabase
+    .from("doedtc_users")
+    .update({ medical_deferred: false })
+    .eq("id", params.userId);
+  if (userError) throw new Error(userError.message);
+
+  return { added: true, name };
+}
+
 export async function updateDoeDtcMedicalProfile(params: {
   userId: string;
   medications: string[];

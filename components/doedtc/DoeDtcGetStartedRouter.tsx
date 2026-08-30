@@ -2,7 +2,7 @@
 
 import { DoeDtcGetStartedForm } from "@/components/doedtc/DoeDtcGetStartedForm";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
-import { DoeDtcWordmark } from "@/components/doedtc/DoeDtcWordmark";
+import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_GET_STARTED } from "@/lib/doedtc/doedtc-copy";
 import { dmSans } from "@/lib/home/fonts";
 
@@ -14,8 +14,8 @@ type DoeDtcGetStartedRouterProps = {
 export function DoeDtcGetStartedRouter({ token, valid }: DoeDtcGetStartedRouterProps) {
   return (
     <DoeDtcPageShell>
+      <DoeDtcTopBar href={`/doedtc/get-started?t=${encodeURIComponent(token)}`} />
       <header className="doedtc-header">
-        <DoeDtcWordmark />
         <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_GET_STARTED.title}</h1>
         <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_GET_STARTED.subtitle}</p>
       </header>

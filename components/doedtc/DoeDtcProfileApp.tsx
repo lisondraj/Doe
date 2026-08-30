@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { DoeDtcNav } from "@/components/doedtc/DoeDtcNav";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
@@ -116,6 +116,29 @@ export function DoeDtcProfileApp({
     [token],
   );
 
+  useEffect(() => {
+    if (!valid) return undefined;
+
+    async function refetchSnapshot() {
+      if (document.visibilityState !== "visible") return;
+      try {
+        const response = await fetch(`/api/doedtc/profile?t=${encodeURIComponent(token)}`);
+        const json = (await response.json()) as {
+          ok?: boolean;
+          snapshot?: DoeDtcProfileSnapshot;
+        };
+        if (response.ok && json.ok && json.snapshot) {
+          setSnapshot(json.snapshot);
+        }
+      } catch {
+        // Ignore background refresh failures.
+      }
+    }
+
+    document.addEventListener("visibilitychange", refetchSnapshot);
+    return () => document.removeEventListener("visibilitychange", refetchSnapshot);
+  }, [token, valid]);
+
   const greeting = useMemo(() => snapshot?.user.full_name?.trim() || "Your profile", [snapshot]);
 
   if (!valid || !snapshot) {
@@ -165,6 +188,11 @@ function DashboardTab({ snapshot, busy, onAction }: TabProps) {
   const [conditionDraft, setConditionDraft] = useState("");
   const [medications, setMedications] = useState(snapshot.medications);
   const [conditions, setConditions] = useState(snapshot.conditions);
+
+  useEffect(() => {
+    setMedications(snapshot.medications);
+    setConditions(snapshot.conditions);
+  }, [snapshot.medications, snapshot.conditions]);
 
   return (
     <div>
@@ -294,23 +322,58 @@ function DashboardTab({ snapshot, busy, onAction }: TabProps) {
 function ConditionsTab({ snapshot }: { snapshot: DoeDtcProfileSnapshot }) {
   return (
     <div>
-      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.conditionsTitle}</h2>
-      <div className="doedtc-card doedtc-card--flat">
-        <p className="doedtc-eyebrow">{DOEDTC_PROFILE.symptomsBoxTitle}</p>
-        {snapshot.symptoms.length === 0 ? (
-          <p className="doedtc-empty">{DOEDTC_PROFILE.dashboardSymptomsEmpty}</p>
-        ) : (
-          <ul className="doedtc-symptom-log">
-            {snapshot.symptoms.map((symptom) => (
-              <li className="doedtc-symptom-item" key={symptom.id}>
-                <time className="doedtc-symptom-date" dateTime={symptom.reported_at}>
-                  {formatDateTime(symptom.reported_at)}
-                </time>
-                <p className="doedtc-body">{symptom.summary?.trim() || symptom.raw_text}</p>
-              </li>
-            ))}
-          </ul>
-        )}
+      <div className="doedtc-section">
+        <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.conditionsLabel}</h2>
+        <div className="doedtc-card doedtc-card--flat">
+          {snapshot.conditions.length === 0 ? (
+            <p className="doedtc-empty">{DOEDTC_PROFILE.dashboardMedicalDeferred}</p>
+          ) : (
+            <div className="doedtc-tag-list">
+              {snapshot.conditions.map((value) => (
+                <span className="doedtc-tag doedtc-tag--readonly" key={value}>
+                  {value}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="doedtc-section">
+        <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.medicationsLabel}</h2>
+        <div className="doedtc-card doedtc-card--flat">
+          {snapshot.medications.length === 0 ? (
+            <p className="doedtc-empty">{DOEDTC_PROFILE.dashboardMedicalDeferred}</p>
+          ) : (
+            <div className="doedtc-tag-list">
+              {snapshot.medications.map((value) => (
+                <span className="doedtc-tag doedtc-tag--readonly" key={value}>
+                  {value}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="doedtc-section">
+        <h2 className="doedtc-section-title">{DOEDTC_PROFILE.symptomsBoxTitle}</h2>
+        <div className="doedtc-card doedtc-card--flat">
+          {snapshot.symptoms.length === 0 ? (
+            <p className="doedtc-empty">{DOEDTC_PROFILE.dashboardSymptomsEmpty}</p>
+          ) : (
+            <ul className="doedtc-symptom-log">
+              {snapshot.symptoms.map((symptom) => (
+                <li className="doedtc-symptom-item" key={symptom.id}>
+                  <time className="doedtc-symptom-date" dateTime={symptom.reported_at}>
+                    {formatDateTime(symptom.reported_at)}
+                  </time>
+                  <p className="doedtc-body">{symptom.summary?.trim() || symptom.raw_text}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -357,7 +420,8 @@ function IntegrationCard({
 
 function AppointmentsTab({ snapshot, busy, onAction }: TabProps) {
   const [title, setTitle] = useState("");
-  const [startsAt, setStartsAt] = useState("");
+  const [appointmentDate, setAppointmentDate] = useState("");
+  const [appointmentTime, setAppointmentTime] = useState("");
   const [location, setLocation] = useState("");
   const [notes, setNotes] = useState("");
   const [expandedListenId, setExpandedListenId] = useState<string | null>(null);
@@ -416,7 +480,7 @@ function AppointmentsTab({ snapshot, busy, onAction }: TabProps) {
             const linkedSessions = sessionsByAppointment.get(appointment.id) ?? [];
             return (
               <li className="doedtc-row-item" key={appointment.id}>
-                <div style={{ width: "100%" }}>
+                <div className="doedtc-row-item__body">
                   <strong>{appointment.title}</strong>
                   <p className="doedtc-row-item__meta">
                     {appointment.timing_note?.trim() ||
@@ -454,7 +518,7 @@ function AppointmentsTab({ snapshot, busy, onAction }: TabProps) {
           <ul className="doedtc-row-list">
             {standaloneSessions.map((session) => (
               <li className="doedtc-row-item" key={session.id}>
-                <div style={{ width: "100%" }}>{renderListenSession(session)}</div>
+                <div className="doedtc-row-item__body">{renderListenSession(session)}</div>
               </li>
             ))}
           </ul>
@@ -462,33 +526,45 @@ function AppointmentsTab({ snapshot, busy, onAction }: TabProps) {
       </div>
 
       <form
-        className="doedtc-card doedtc-card--spaced"
+        className="doedtc-card doedtc-card--spaced doedtc-form"
         onSubmit={async (event) => {
           event.preventDefault();
+          const startsAt =
+            appointmentDate && appointmentTime ? `${appointmentDate}T${appointmentTime}` : "";
           await onAction("add_appointment", { title, startsAt, location, notes });
           setTitle("");
-          setStartsAt("");
+          setAppointmentDate("");
+          setAppointmentTime("");
           setLocation("");
           setNotes("");
         }}
       >
         <label className="doedtc-label">{DOEDTC_PROFILE.appointmentTitleLabel}</label>
         <input className="doedtc-input" value={title} onChange={(event) => setTitle(event.target.value)} required />
-        <div style={{ marginTop: "0.75rem" }}>
+        <div>
           <label className="doedtc-label">{DOEDTC_PROFILE.appointmentWhenLabel}</label>
-          <input
-            className="doedtc-input"
-            type="datetime-local"
-            value={startsAt}
-            onChange={(event) => setStartsAt(event.target.value)}
-            required
-          />
+          <div className="doedtc-datetime-row">
+            <input
+              className="doedtc-input"
+              type="date"
+              value={appointmentDate}
+              onChange={(event) => setAppointmentDate(event.target.value)}
+              required
+            />
+            <input
+              className="doedtc-input"
+              type="time"
+              value={appointmentTime}
+              onChange={(event) => setAppointmentTime(event.target.value)}
+              required
+            />
+          </div>
         </div>
-        <div style={{ marginTop: "0.75rem" }}>
+        <div>
           <label className="doedtc-label">{DOEDTC_PROFILE.appointmentLocationLabel}</label>
           <input className="doedtc-input" value={location} onChange={(event) => setLocation(event.target.value)} />
         </div>
-        <div style={{ marginTop: "0.75rem" }}>
+        <div>
           <label className="doedtc-label">{DOEDTC_PROFILE.appointmentNotesLabel}</label>
           <textarea className="doedtc-textarea" value={notes} onChange={(event) => setNotes(event.target.value)} />
         </div>

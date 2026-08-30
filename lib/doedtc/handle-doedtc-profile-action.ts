@@ -14,6 +14,7 @@ import {
   setDoeDtcHealthConnectionPending,
   updateDoeDtcMedicalProfile,
 } from "@/lib/doedtc/doedtc-db";
+import { normalizeDoeDtcFamilyRelationship, resolveDoeDtcFamilyMemberName } from "@/lib/doedtc/doedtc-family-relationship";
 import type {
   DoeDtcFamilyRelationship,
   DoeDtcHealthProvider,
@@ -29,17 +30,6 @@ function cleanList(values: unknown): string[] {
     .slice(0, 30);
 }
 
-const RELATIONSHIPS = new Set<DoeDtcFamilyRelationship>([
-  "grandmother",
-  "grandfather",
-  "mother",
-  "father",
-  "child",
-  "sibling",
-  "partner",
-  "other",
-]);
-
 const PROVIDERS = new Set<DoeDtcHealthProvider>(["whoop", "apple_health"]);
 
 export async function handleDoeDtcProfileAction(params: {
@@ -54,16 +44,21 @@ export async function handleDoeDtcProfileAction(params: {
 
   switch (params.action) {
     case "add_family": {
-      const relationship = params.payload.relationship;
-      if (typeof relationship !== "string" || !RELATIONSHIPS.has(relationship as DoeDtcFamilyRelationship)) {
+      const relationshipRaw = params.payload.relationship;
+      if (typeof relationshipRaw !== "string") {
         throw new Error("Choose a relationship.");
       }
-      const fullName = String(params.payload.fullName ?? "").trim();
+      const relationship = normalizeDoeDtcFamilyRelationship(relationshipRaw);
+      if (!relationship) throw new Error("Choose a relationship.");
+      const fullName = resolveDoeDtcFamilyMemberName({
+        fullName: String(params.payload.fullName ?? ""),
+        relationship,
+      });
       if (!fullName) throw new Error("Name is required.");
       await addDoeDtcFamilyMember({
         userId: user.id,
         fullName,
-        relationship: relationship as DoeDtcFamilyRelationship,
+        relationship,
         phone: typeof params.payload.phone === "string" ? params.payload.phone : null,
       });
       break;

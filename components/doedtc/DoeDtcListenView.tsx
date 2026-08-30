@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
-import { DoeDtcWordmark } from "@/components/doedtc/DoeDtcWordmark";
+import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_LISTEN } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcListenSessionRow } from "@/lib/doedtc/doedtc-types";
 import { dmSans } from "@/lib/home/fonts";
@@ -174,7 +174,8 @@ export function DoeDtcListenView({
   if (!valid || !sessionId) {
     return (
       <DoeDtcPageShell>
-        <div className="doedtc-card">
+        <DoeDtcTopBar />
+        <div className="doedtc-card doedtc-card--flat">
           <strong>{DOEDTC_LISTEN.invalidTokenTitle}</strong>
           <p>{DOEDTC_LISTEN.invalidTokenBody}</p>
         </div>
@@ -184,13 +185,13 @@ export function DoeDtcListenView({
 
   return (
     <DoeDtcPageShell>
+      <DoeDtcTopBar href={profileHref || "/doedtc"} />
       <header className="doedtc-header">
-        <DoeDtcWordmark />
         <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_LISTEN.pageTitle}</h1>
         <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_LISTEN.subtitle}</p>
       </header>
 
-      <div className="doedtc-card doedtc-listen-panel">
+      <div className="doedtc-card doedtc-card--flat doedtc-listen-panel">
         {phase === "idle" ? (
           <>
             <p className="doedtc-muted">{DOEDTC_LISTEN.maxDurationHint}</p>
