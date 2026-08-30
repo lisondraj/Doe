@@ -192,6 +192,13 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-profile-layout .doed
   flex-direction: column;
   min-height: 100dvh;
   min-height: 100lvh;
+}
+
+.doedtc-root--profile {
+  background: #f8f9fa;
+}
+
+.doedtc-root--landing.doedtc-root--has-footer {
   background: #60a5fa;
 }
 

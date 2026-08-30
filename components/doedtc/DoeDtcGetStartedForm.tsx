@@ -86,9 +86,10 @@ type FamilyDraft = {
 type DoeDtcGetStartedFormProps = {
   token: string;
   valid: boolean;
+  preview?: boolean;
 };
 
-export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps) {
+export function DoeDtcGetStartedForm({ token, valid, preview = false }: DoeDtcGetStartedFormProps) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [whyDoe, setWhyDoe] = useState("");
@@ -169,6 +170,11 @@ export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps
     setError("");
 
     try {
+      if (preview) {
+        setProfileHref("/profile");
+        setStatus("success");
+        return;
+      }
       const response = await fetch("/api/doedtc/onboard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
