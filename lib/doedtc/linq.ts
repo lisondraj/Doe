@@ -76,11 +76,9 @@ export async function linqSendToChat(params: {
   return linqRequest<{ message?: { id: string } }>(`/v3/chats/${params.chatId}/messages`, {
     method: "POST",
     body: JSON.stringify({
-      message: {
-        preferred_service: "iMessage",
-        parts: params.parts,
-        ...(params.idempotencyKey ? { idempotency_key: params.idempotencyKey } : {}),
-      },
+      preferred_service: "iMessage",
+      parts: params.parts,
+      ...(params.idempotencyKey ? { idempotency_key: params.idempotencyKey } : {}),
     }),
   });
 }

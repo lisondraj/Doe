@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 
-import { processDoeDtcInboundWebhook } from "@/lib/doedtc/doedtc-messaging";
+import {
+  extractWebhookEventType,
+  processDoeDtcInboundWebhook,
+} from "@/lib/doedtc/doedtc-messaging";
 import { verifyLinqWebhookSignature } from "@/lib/doedtc/linq";
 
 export const dynamic = "force-dynamic";
@@ -29,11 +32,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Invalid JSON payload." }, { status: 400 });
   }
 
-  const eventType =
-    request.headers.get("X-Webhook-Event") ??
-    (payload as { type?: string; event?: string }).type ??
-    (payload as { type?: string; event?: string }).event ??
-    "";
+  const eventType = extractWebhookEventType(
+    payload,
+    request.headers.get("X-Webhook-Event"),
+  );
 
   if (eventType && eventType !== "message.received") {
     return NextResponse.json({ ok: true, ignored: true });

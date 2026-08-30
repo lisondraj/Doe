@@ -122,6 +122,60 @@ export async function updateDoeDtcUserChat(params: {
   if (error) throw new Error(error.message);
 }
 
+export async function markDoeDtcUserPendingConfirm(params: {
+  userId: string;
+  chatId?: string | null;
+  fromNumber?: string | null;
+}): Promise<DoeDtcUserRow> {
+  const supabase = createSupabaseAdmin();
+  const patch: Record<string, string> = { status: "pending_confirm" };
+  if (params.chatId) patch.linq_chat_id = params.chatId;
+  if (params.fromNumber) patch.linq_from_number = params.fromNumber;
+
+  const { data, error } = await supabase
+    .from("doedtc_users")
+    .update(patch)
+    .eq("id", params.userId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcUserRow;
+}
+
+export async function ensureDoeDtcUserForInbound(params: {
+  phone: string;
+  chatId?: string | null;
+  fromNumber?: string | null;
+}): Promise<DoeDtcUserRow> {
+  const existing = await getDoeDtcUserByPhone(params.phone);
+  if (existing) {
+    if (existing.status === "opted_out") {
+      throw new Error("This number has opted out of Doe messages.");
+    }
+    await updateDoeDtcUserChat({
+      userId: existing.id,
+      chatId: params.chatId,
+      fromNumber: params.fromNumber,
+    });
+    return (await getDoeDtcUserByPhone(params.phone)) ?? existing;
+  }
+
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_users")
+    .insert({
+      phone: params.phone,
+      status: "invited",
+      care_token: createDoeDtcToken(),
+      linq_chat_id: params.chatId ?? null,
+      linq_from_number: params.fromNumber ?? null,
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcUserRow;
+}
+
 export async function markDoeDtcUserOptedOut(phone: string): Promise<void> {
   const supabase = createSupabaseAdmin();
   const { error } = await supabase

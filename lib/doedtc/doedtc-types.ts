@@ -1,4 +1,9 @@
-export type DoeDtcUserStatus = "invited" | "onboarding" | "active" | "opted_out";
+export type DoeDtcUserStatus =
+  | "invited"
+  | "pending_confirm"
+  | "onboarding"
+  | "active"
+  | "opted_out";
 
 export type DoeDtcUserRow = {
   id: string;
