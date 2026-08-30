@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useState } from "react";
 
-import { DOEDTC_FOOTER_OVERFLOW_SURFACE, DOEDTC_OVERFLOW_SURFACE } from "@/lib/doedtc/doedtc-chrome";
+import { DOEDTC_OVERFLOW_SURFACE } from "@/lib/doedtc/doedtc-chrome";
 import {
   DOEDTC_DESKTOP_MEDIA_QUERY,
   DOEDTC_DEVICE_VIEWPORT,
@@ -12,7 +12,6 @@ import {
 import {
   applyPhoneLayoutViewportMeta,
   applyPhoneOverflowChrome,
-  applyPhoneSplitOverflowChrome,
 } from "@/lib/doephone/phone-layout-viewport";
 
 type UseDoeDtcPageVariantOptions = {
@@ -20,8 +19,7 @@ type UseDoeDtcPageVariantOptions = {
   brandFooter?: boolean;
 };
 
-export function useDoeDtcPageVariant(options: UseDoeDtcPageVariantOptions = {}) {
-  const brandFooter = options.brandFooter ?? options.profile ?? false;
+export function useDoeDtcPageVariant(_options: UseDoeDtcPageVariantOptions = {}) {
   const [variant, setVariant] = useState<DoeDtcPageVariant>("phone");
   const [ready, setReady] = useState(false);
 
@@ -57,9 +55,7 @@ export function useDoeDtcPageVariant(options: UseDoeDtcPageVariantOptions = {}) 
       body.classList.add("desktop-route");
       const meta = document.querySelector('meta[name="viewport"]');
       meta?.setAttribute("content", DOEDTC_DEVICE_VIEWPORT);
-      if (brandFooter) {
-        applyPhoneSplitOverflowChrome(DOEDTC_OVERFLOW_SURFACE, DOEDTC_FOOTER_OVERFLOW_SURFACE);
-      }
+      applyPhoneOverflowChrome(DOEDTC_OVERFLOW_SURFACE);
       return;
     }
 
@@ -67,12 +63,8 @@ export function useDoeDtcPageVariant(options: UseDoeDtcPageVariantOptions = {}) 
     html.removeAttribute("data-layout");
     body.classList.remove("desktop-route");
     applyPhoneLayoutViewportMeta();
-    if (brandFooter) {
-      applyPhoneSplitOverflowChrome(DOEDTC_OVERFLOW_SURFACE, DOEDTC_FOOTER_OVERFLOW_SURFACE);
-    } else {
-      applyPhoneOverflowChrome(DOEDTC_OVERFLOW_SURFACE);
-    }
-  }, [brandFooter, ready, variant]);
+    applyPhoneOverflowChrome(DOEDTC_OVERFLOW_SURFACE);
+  }, [ready, variant]);
 
   return { variant, ready };
 }

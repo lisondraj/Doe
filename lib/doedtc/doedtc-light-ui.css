@@ -1,6 +1,6 @@
 /* Light Soar-like chrome — avatar nav, settings, dropdowns, toggles */
 .doedtc-root--landing {
-  background: #60a5fa;
+  background: #f8f9fa;
 }
 
 .doedtc-root--landing .doedtc-shell {
@@ -199,17 +199,19 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-profile-layout .doed
 }
 
 .doedtc-root--landing.doedtc-root--has-footer {
-  background: #60a5fa;
+  background: #f8f9fa;
 }
 
+html[data-doedtc-page],
 html[data-doedtc-page]:has(.doedtc-root--has-footer) {
   background-color: #f8f9fa !important;
   --doe-page-surface: #f8f9fa;
-  --proto-page-bg: #60a5fa;
+  --proto-page-bg: #f8f9fa;
 }
 
+html[data-doedtc-page] body,
 html[data-doedtc-page]:has(.doedtc-root--has-footer) body {
-  background-color: #60a5fa !important;
+  background-color: #f8f9fa !important;
 }
 
 .doedtc-shell--brand-footer {
