@@ -6,6 +6,7 @@ import {
   DOEDTC_LINQ,
   doeDtcAppUrl,
   doeDtcGetStartedUrl,
+  doeDtcJoinFamilyUrl,
 } from "@/lib/doedtc/doedtc-copy";
 import {
   activateDoeDtcUser,
@@ -400,6 +401,39 @@ export async function sendDoeDtcProfileLinkMessage(params: {
     to: params.user.phone,
     url: profileUrl,
     idempotencyKey: `${params.idempotencyKey ?? `doedtc-profile-link-${params.user.id}`}-link`,
+  });
+}
+
+export async function sendDoeDtcFamilyInviteMessage(params: {
+  adminUser: DoeDtcUserRow;
+  memberPhone: string;
+  inviteToken: string;
+  memberName: string;
+}): Promise<void> {
+  const phone = normalizePhoneToE164(params.memberPhone) ?? params.memberPhone.trim();
+  const joinUrl = doeDtcJoinFamilyUrl(params.inviteToken);
+  const intro = `${params.adminUser.full_name?.trim() || "Your family"} invited you to join them on Doe.`;
+
+  await linqSendText({
+    to: phone,
+    text: `${intro}\n\n${DOEDTC_LINQ.familyInviteIntro}`,
+    idempotencyKey: `doedtc-family-invite-intro-${params.inviteToken}`,
+  });
+  await logDoeDtcMessage({
+    userId: params.adminUser.id,
+    direction: "outbound",
+    body: intro,
+  });
+
+  await linqSendLink({
+    to: phone,
+    url: joinUrl,
+    idempotencyKey: `doedtc-family-invite-link-${params.inviteToken}`,
+  });
+  await logDoeDtcMessage({
+    userId: params.adminUser.id,
+    direction: "outbound",
+    body: joinUrl,
   });
 }
 

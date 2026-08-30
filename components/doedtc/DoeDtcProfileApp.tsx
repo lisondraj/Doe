@@ -9,6 +9,7 @@ import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import {
   DOEDTC_GET_STARTED,
   DOEDTC_PROFILE,
+  doeDtcAppUrl,
 } from "@/lib/doedtc/doedtc-copy";
 import { formatArtifactEntryValues } from "@/lib/doedtc/doedtc-artifacts";
 import type {
@@ -80,6 +81,7 @@ type DoeDtcProfileAppProps = {
   initialTab: DoeDtcProfileTab;
   initialArtifactId?: string | null;
   initialTicketId?: string | null;
+  viewingMemberUserId?: string | null;
 };
 
 export function DoeDtcProfileApp({
@@ -89,6 +91,7 @@ export function DoeDtcProfileApp({
   initialTab,
   initialArtifactId = null,
   initialTicketId = null,
+  viewingMemberUserId = null,
 }: DoeDtcProfileAppProps) {
   const [tab, setTab] = useState<DoeDtcProfileTab>(initialTab);
   const [snapshot, setSnapshot] = useState(initialSnapshot);
@@ -105,7 +108,13 @@ export function DoeDtcProfileApp({
         const response = await fetch("/api/doedtc/profile", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, action, payload }),
+          body: JSON.stringify({
+            token,
+            action,
+            payload: viewingMemberUserId
+              ? { ...payload, subjectUserId: viewingMemberUserId }
+              : payload,
+          }),
         });
         const json = (await response.json()) as {
           ok?: boolean;
@@ -122,7 +131,7 @@ export function DoeDtcProfileApp({
         setBusy(false);
       }
     },
-    [token],
+    [token, viewingMemberUserId],
   );
 
   const refetchSnapshot = useCallback(async () => {
@@ -170,7 +179,11 @@ export function DoeDtcProfileApp({
     void refetchSnapshot();
   }, [tab, refetchSnapshot]);
 
-  const greeting = useMemo(() => snapshot?.user.full_name?.trim() || "Your profile", [snapshot]);
+  const greeting = useMemo(() => {
+    const name = snapshot?.user.full_name?.trim();
+    if (viewingMemberUserId && name) return `${name}'s profile`;
+    return name || "Your profile";
+  }, [snapshot, viewingMemberUserId]);
 
   if (!valid || !snapshot) {
     return (
@@ -214,7 +227,9 @@ export function DoeDtcProfileApp({
       {tab === "conditions" ? (
         <ConditionsTab snapshot={snapshot} busy={busy} onAction={runAction} />
       ) : null}
-      {tab === "family" ? <FamilyTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
+      {tab === "family" ? (
+        <FamilyTab token={token} snapshot={snapshot} busy={busy} onAction={runAction} />
+      ) : null}
       {tab === "locker" ? <LockerTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
       {tab === "share" ? <ShareTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
       {tab === "trackers" ? (
@@ -775,85 +790,162 @@ function ResultsTab({ snapshot, busy, onAction }: TabProps) {
   );
 }
 
-function FamilyTab({ snapshot, busy, onAction }: TabProps) {
+function FamilyTab({
+  token,
+  snapshot,
+  busy,
+  onAction,
+}: TabProps & { token: string }) {
   const [fullName, setFullName] = useState("");
   const [relationship, setRelationship] = useState<DoeDtcFamilyRelationship>("other");
   const [phone, setPhone] = useState("");
   const [noPhone, setNoPhone] = useState(false);
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [inviteBusyId, setInviteBusyId] = useState<string | null>(null);
+
+  const members = snapshot.household.members;
+  const isAdmin = snapshot.household.isAdmin;
+  const accessByMemberId = useMemo(
+    () => new Map(snapshot.household.memberAccess.map((row) => [row.memberId, row])),
+    [snapshot.household.memberAccess],
+  );
+
+  async function sendInvite(memberId: string) {
+    setInviteBusyId(memberId);
+    try {
+      await onAction("send_family_invite", { householdMemberId: memberId });
+    } finally {
+      setInviteBusyId(null);
+    }
+  }
 
   return (
     <div>
       <h2 className="doedtc-section-title">{DOEDTC_PROFILE.familyTitle}</h2>
-      {snapshot.familyMembers.length === 0 ? (
+      {members.length === 0 ? (
         <p className="doedtc-empty">{DOEDTC_PROFILE.familyEmpty}</p>
       ) : (
         <ul className="doedtc-row-list">
-          {snapshot.familyMembers.map((member) => (
-            <li className="doedtc-row-item" key={member.id}>
-              <div>
-                <strong>{member.full_name}</strong>
-                <p className="doedtc-row-item__meta">{relationshipLabel(member.relationship)}</p>
-                {member.phone ? <p className="doedtc-row-item__meta">{member.phone}</p> : null}
-              </div>
-              <div className="doedtc-row-item__actions">
-                <button
-                  className="doedtc-icon-button"
-                  type="button"
-                  disabled={busy}
-                  onClick={() => onAction("remove_family", { memberId: member.id })}
-                >
-                  {DOEDTC_PROFILE.removeLabel}
-                </button>
-              </div>
-            </li>
-          ))}
+          {members.map((member) => {
+            const access = accessByMemberId.get(member.id);
+            const canView = Boolean(access?.canView && access.userId);
+            return (
+              <li className="doedtc-row-item" key={member.id}>
+                <div>
+                  <strong>
+                    {member.full_name}
+                    {member.role === "admin" ? (
+                      <span className="doedtc-tag" style={{ marginLeft: "0.5rem" }}>
+                        {DOEDTC_PROFILE.familyAdminBadge}
+                      </span>
+                    ) : null}
+                  </strong>
+                  <p className="doedtc-row-item__meta">{relationshipLabel(member.relationship)}</p>
+                  {member.phone ? <p className="doedtc-row-item__meta">{member.phone}</p> : null}
+                  <p className="doedtc-row-item__meta">
+                    {member.status === "active"
+                      ? DOEDTC_PROFILE.familyActiveLabel
+                      : DOEDTC_PROFILE.familyPendingLabel}
+                  </p>
+                </div>
+                <div className="doedtc-row-item__actions">
+                  {canView && access?.userId ? (
+                    <a
+                      className="doedtc-button doedtc-button--secondary"
+                      href={doeDtcAppUrl(token, { tab: "dashboard", member: access.userId })}
+                    >
+                      {DOEDTC_PROFILE.familyViewProfileLabel}
+                    </a>
+                  ) : null}
+                  {isAdmin && member.role !== "admin" && member.phone && member.status !== "active" ? (
+                    <button
+                      className="doedtc-button doedtc-button--secondary"
+                      type="button"
+                      disabled={busy || inviteBusyId === member.id}
+                      onClick={() => void sendInvite(member.id)}
+                    >
+                      {inviteBusyId === member.id
+                        ? DOEDTC_PROFILE.familyInvitingLabel
+                        : DOEDTC_PROFILE.familyInviteLabel}
+                    </button>
+                  ) : null}
+                  {isAdmin && member.role !== "admin" ? (
+                    <button
+                      className="doedtc-icon-button"
+                      type="button"
+                      disabled={busy}
+                      onClick={() => onAction("remove_family", { householdMemberId: member.id })}
+                    >
+                      {DOEDTC_PROFILE.removeLabel}
+                    </button>
+                  ) : null}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
 
-      <form
-        className="doedtc-card doedtc-card--spaced"
-        onSubmit={async (event) => {
-          event.preventDefault();
-          await onAction("add_family", {
-            fullName,
-            relationship,
-            phone: noPhone ? null : phone,
-          });
-          setFullName("");
-          setPhone("");
-          setNoPhone(false);
-        }}
-      >
-        <label className="doedtc-label">{DOEDTC_GET_STARTED.familyNameLabel}</label>
-        <input className="doedtc-input" value={fullName} onChange={(event) => setFullName(event.target.value)} />
-        <div style={{ marginTop: "0.75rem" }}>
-          <label className="doedtc-label">{DOEDTC_GET_STARTED.familyRelationshipLabel}</label>
-          <select
-            className="doedtc-select"
-            value={relationship}
-            onChange={(event) => setRelationship(event.target.value as DoeDtcFamilyRelationship)}
-          >
-            {RELATIONSHIP_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        {!noPhone ? (
+      {isAdmin ? (
+        <form
+          className="doedtc-card doedtc-card--spaced"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            await onAction("add_family", {
+              fullName,
+              relationship,
+              phone: noPhone ? null : phone,
+              dateOfBirth: relationship === "child" && dateOfBirth ? dateOfBirth : null,
+            });
+            setFullName("");
+            setPhone("");
+            setNoPhone(false);
+            setDateOfBirth("");
+          }}
+        >
+          <label className="doedtc-label">{DOEDTC_GET_STARTED.familyNameLabel}</label>
+          <input className="doedtc-input" value={fullName} onChange={(event) => setFullName(event.target.value)} />
           <div style={{ marginTop: "0.75rem" }}>
-            <label className="doedtc-label">{DOEDTC_GET_STARTED.familyPhoneLabel}</label>
-            <input className="doedtc-input" value={phone} onChange={(event) => setPhone(event.target.value)} />
+            <label className="doedtc-label">{DOEDTC_GET_STARTED.familyRelationshipLabel}</label>
+            <select
+              className="doedtc-select"
+              value={relationship}
+              onChange={(event) => setRelationship(event.target.value as DoeDtcFamilyRelationship)}
+            >
+              {RELATIONSHIP_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
-        ) : null}
-        <label style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginTop: "0.75rem" }}>
-          <input type="checkbox" checked={noPhone} onChange={(event) => setNoPhone(event.target.checked)} />
-          <span>{DOEDTC_GET_STARTED.familyNoPhoneLabel}</span>
-        </label>
-        <button className="doedtc-button" type="submit" disabled={busy || !fullName.trim()}>
-          {DOEDTC_GET_STARTED.familyAddLabel}
-        </button>
-      </form>
+          {relationship === "child" ? (
+            <div style={{ marginTop: "0.75rem" }}>
+              <label className="doedtc-label">{DOEDTC_PROFILE.familyDobLabel}</label>
+              <input
+                className="doedtc-input"
+                type="date"
+                value={dateOfBirth}
+                onChange={(event) => setDateOfBirth(event.target.value)}
+              />
+              <p className="doedtc-muted">{DOEDTC_PROFILE.familyDobHint}</p>
+            </div>
+          ) : null}
+          {!noPhone ? (
+            <div style={{ marginTop: "0.75rem" }}>
+              <label className="doedtc-label">{DOEDTC_GET_STARTED.familyPhoneLabel}</label>
+              <input className="doedtc-input" value={phone} onChange={(event) => setPhone(event.target.value)} />
+            </div>
+          ) : null}
+          <label style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginTop: "0.75rem" }}>
+            <input type="checkbox" checked={noPhone} onChange={(event) => setNoPhone(event.target.checked)} />
+            <span>{DOEDTC_GET_STARTED.familyNoPhoneLabel}</span>
+          </label>
+          <button className="doedtc-button" type="submit" disabled={busy || !fullName.trim()}>
+            {DOEDTC_GET_STARTED.familyAddLabel}
+          </button>
+        </form>
+      ) : null}
     </div>
   );
 }

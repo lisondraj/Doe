@@ -9,6 +9,12 @@ import {
   slugifyArtifactTitle,
 } from "@/lib/doedtc/doedtc-artifacts";
 import { buildDoeDtcPreparationPayload } from "@/lib/doedtc/doedtc-prepare";
+import {
+  canEditMemberProfile,
+  canViewMemberProfile,
+  findHouseholdMemberByName,
+  isHouseholdAdmin,
+} from "@/lib/doedtc/doedtc-household";
 import { createDoeDtcToken, isTokenExpired, onboardingTokenExpiresAt } from "@/lib/doedtc/doedtc-tokens";
 import type {
   DoeDtcArtifactEntryRow,
@@ -21,6 +27,12 @@ import type {
   DoeDtcFamilyMemberRow,
   DoeDtcHealthConnectionRow,
   DoeDtcHealthProvider,
+  DoeDtcHouseholdConsentLevel,
+  DoeDtcHouseholdConsentRow,
+  DoeDtcHouseholdInviteRow,
+  DoeDtcHouseholdMemberRow,
+  DoeDtcHouseholdRow,
+  DoeDtcHouseholdSnapshot,
   DoeDtcListenSessionRow,
   DoeDtcLockerItemRow,
   DoeDtcMemoryRow,
@@ -305,6 +317,34 @@ export async function saveDoeDtcOnboarding(params: {
     if (familyError) throw new Error(familyError.message);
   }
 
+  const household = await ensureDoeDtcHouseholdForAdmin(user.id);
+  for (const member of (params.familyMembers ?? []).filter((row) => row.fullName.trim()).slice(0, 20)) {
+    const members = await listDoeDtcHouseholdMembers(household.id);
+    const duplicate = members.find(
+      (row) =>
+        row.full_name.trim().toLowerCase() === member.fullName.trim().toLowerCase() &&
+        row.relationship === member.relationship,
+    );
+    if (duplicate) {
+      if (member.dateOfBirth?.trim()) {
+        await supabase
+          .from("doedtc_household_members")
+          .update({ date_of_birth: member.dateOfBirth.trim() })
+          .eq("id", duplicate.id);
+      }
+      continue;
+    }
+    await supabase.from("doedtc_household_members").insert({
+      household_id: household.id,
+      full_name: member.fullName.trim(),
+      relationship: member.relationship,
+      phone: member.phone?.trim() || null,
+      date_of_birth: member.dateOfBirth?.trim() || null,
+      role: "member",
+      status: "pending",
+    });
+  }
+
   return updated as DoeDtcUserRow;
 }
 
@@ -483,7 +523,18 @@ function randomDoeDtcShareCodeValue(): string {
   return `DOE-${suffix}`;
 }
 
-export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcProfileSnapshot> {
+export async function getDoeDtcProfileSnapshot(
+  userId: string,
+  options?: { viewerUserId?: string },
+): Promise<DoeDtcProfileSnapshot> {
+  const viewerUserId = options?.viewerUserId ?? userId;
+  if (viewerUserId !== userId) {
+    const allowed = await canViewerAccessSubjectProfile({ viewerUserId, subjectUserId: userId });
+    if (!allowed.canView) {
+      throw new Error("You do not have permission to view this profile.");
+    }
+  }
+
   const supabase = createSupabaseAdmin();
   const [
     userResult,
@@ -500,6 +551,7 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
     artifacts,
     artifactEntries,
     tickets,
+    household,
   ] = await Promise.all([
     supabase
       .from("doedtc_users")
@@ -533,6 +585,7 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
     listDoeDtcArtifacts(userId),
     listDoeDtcArtifactEntriesForUser(userId, 120),
     listDoeDtcTickets(userId),
+    getDoeDtcHouseholdSnapshot(viewerUserId),
   ]);
 
   if (userResult.error) throw new Error(userResult.error.message);
@@ -553,6 +606,7 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
     artifacts,
     artifactEntries,
     tickets,
+    household,
   };
 }
 
@@ -882,6 +936,7 @@ export async function addDoeDtcFamilyMember(params: {
   fullName: string;
   relationship: DoeDtcFamilyMemberInput["relationship"];
   phone?: string | null;
+  dateOfBirth?: string | null;
 }): Promise<DoeDtcFamilyMemberRow> {
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase
@@ -895,6 +950,32 @@ export async function addDoeDtcFamilyMember(params: {
     .select("*")
     .single();
   if (error) throw new Error(error.message);
+
+  try {
+    const household = await getDoeDtcHouseholdByUserId(params.userId);
+    if (household?.admin_user_id === params.userId) {
+      const members = await listDoeDtcHouseholdMembers(household.id);
+      const duplicate = members.find(
+        (row) =>
+          row.full_name.trim().toLowerCase() === params.fullName.trim().toLowerCase() &&
+          row.relationship === params.relationship,
+      );
+      if (!duplicate) {
+        await supabase.from("doedtc_household_members").insert({
+          household_id: household.id,
+          full_name: params.fullName.trim(),
+          relationship: params.relationship,
+          phone: params.phone?.trim() || null,
+          date_of_birth: params.dateOfBirth?.trim() || null,
+          role: "member",
+          status: "pending",
+        });
+      }
+    }
+  } catch {
+    // Household sync is best-effort for legacy add path.
+  }
+
   return data as DoeDtcFamilyMemberRow;
 }
 
@@ -1483,4 +1564,571 @@ export async function getDoeDtcPreparationByCode(code: string): Promise<DoeDtcPr
     .maybeSingle();
   if (error) throw new Error(error.message);
   return data ? mapPreparationRow(data as Record<string, unknown>) : null;
+}
+
+async function getDoeDtcHouseholdByUserId(userId: string): Promise<DoeDtcHouseholdRow | null> {
+  const supabase = createSupabaseAdmin();
+  const { data: adminRow, error: adminError } = await supabase
+    .from("doedtc_households")
+    .select("*")
+    .eq("admin_user_id", userId)
+    .maybeSingle();
+  if (adminError) throw new Error(adminError.message);
+  if (adminRow) return adminRow as DoeDtcHouseholdRow;
+
+  const { data: memberRow, error: memberError } = await supabase
+    .from("doedtc_household_members")
+    .select("household_id")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (memberError) throw new Error(memberError.message);
+  if (!memberRow?.household_id) return null;
+
+  const { data, error } = await supabase
+    .from("doedtc_households")
+    .select("*")
+    .eq("id", memberRow.household_id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcHouseholdRow | null) ?? null;
+}
+
+async function listDoeDtcHouseholdMembers(householdId: string): Promise<DoeDtcHouseholdMemberRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_household_members")
+    .select("*")
+    .eq("household_id", householdId)
+    .order("created_at");
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcHouseholdMemberRow[]) ?? [];
+}
+
+async function listDoeDtcHouseholdConsents(householdId: string): Promise<DoeDtcHouseholdConsentRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_household_consents")
+    .select("*")
+    .eq("household_id", householdId);
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcHouseholdConsentRow[]) ?? [];
+}
+
+export async function getDoeDtcHouseholdSnapshot(viewerUserId: string): Promise<DoeDtcHouseholdSnapshot> {
+  const household = await getDoeDtcHouseholdByUserId(viewerUserId);
+  if (!household) {
+    return { household: null, members: [], memberAccess: [], isAdmin: false, viewerMemberId: null };
+  }
+  const [members, consents] = await Promise.all([
+    listDoeDtcHouseholdMembers(household.id),
+    listDoeDtcHouseholdConsents(household.id),
+  ]);
+  const viewerMember = members.find((row) => row.user_id === viewerUserId) ?? null;
+  const memberAccess = members.map((row) => {
+    if (!row.user_id) {
+      return { memberId: row.id, userId: null, canView: false, canEdit: false };
+    }
+    const canView = canViewMemberProfile({
+      household,
+      members,
+      consents,
+      viewerUserId,
+      subjectUserId: row.user_id,
+    });
+    const canEdit = canEditMemberProfile({
+      household,
+      members,
+      consents,
+      viewerUserId,
+      subjectUserId: row.user_id,
+    });
+    return { memberId: row.id, userId: row.user_id, canView, canEdit };
+  });
+  return {
+    household,
+    members,
+    memberAccess,
+    isAdmin: isHouseholdAdmin({ household, viewerUserId }),
+    viewerMemberId: viewerMember?.id ?? null,
+  };
+}
+
+export async function loadDoeDtcHouseholdAccessContext(userId: string): Promise<{
+  household: DoeDtcHouseholdRow | null;
+  members: DoeDtcHouseholdMemberRow[];
+  consents: DoeDtcHouseholdConsentRow[];
+}> {
+  const household = await getDoeDtcHouseholdByUserId(userId);
+  if (!household) {
+    return { household: null, members: [], consents: [] };
+  }
+  const [members, consents] = await Promise.all([
+    listDoeDtcHouseholdMembers(household.id),
+    listDoeDtcHouseholdConsents(household.id),
+  ]);
+  return { household, members, consents };
+}
+
+export async function canViewerAccessSubjectProfile(params: {
+  viewerUserId: string;
+  subjectUserId: string;
+}): Promise<{ canView: boolean; canEdit: boolean }> {
+  if (params.viewerUserId === params.subjectUserId) {
+    return { canView: true, canEdit: true };
+  }
+  const { household, members, consents } = await loadDoeDtcHouseholdAccessContext(params.viewerUserId);
+  if (!household) return { canView: false, canEdit: false };
+  const canView = canViewMemberProfile({
+    household,
+    members,
+    consents,
+    viewerUserId: params.viewerUserId,
+    subjectUserId: params.subjectUserId,
+  });
+  const canEdit = canEditMemberProfile({
+    household,
+    members,
+    consents,
+    viewerUserId: params.viewerUserId,
+    subjectUserId: params.subjectUserId,
+  });
+  return { canView, canEdit };
+}
+
+export async function resolveDoeDtcHouseholdSubject(params: {
+  viewerUserId: string;
+  memberId?: string | null;
+  memberName?: string | null;
+}): Promise<
+  | {
+      subjectUserId: string;
+      subjectMember: DoeDtcHouseholdMemberRow;
+      canView: boolean;
+      canEdit: boolean;
+    }
+  | { error: string }
+> {
+  const { household, members, consents } = await loadDoeDtcHouseholdAccessContext(params.viewerUserId);
+  if (!household) return { error: "No household found." };
+
+  let subjectMember: DoeDtcHouseholdMemberRow | null = null;
+  if (params.memberId?.trim()) {
+    subjectMember = members.find((row) => row.id === params.memberId?.trim()) ?? null;
+  } else if (params.memberName?.trim()) {
+    subjectMember = findHouseholdMemberByName(members, params.memberName.trim());
+  }
+
+  if (!subjectMember) return { error: "Family member not found in your household." };
+  if (!subjectMember.user_id) {
+    return {
+      error: `${subjectMember.full_name} has not joined Doe yet. Offer to send a family invite.`,
+    };
+  }
+
+  const access = await canViewerAccessSubjectProfile({
+    viewerUserId: params.viewerUserId,
+    subjectUserId: subjectMember.user_id,
+  });
+  if (!access.canView) {
+    return { error: `You do not have permission to view ${subjectMember.full_name}'s profile.` };
+  }
+
+  return {
+    subjectUserId: subjectMember.user_id,
+    subjectMember,
+    canView: access.canView,
+    canEdit: access.canEdit,
+  };
+}
+
+export async function ensureDoeDtcHouseholdForAdmin(adminUserId: string): Promise<DoeDtcHouseholdRow> {
+  const existing = await getDoeDtcHouseholdByUserId(adminUserId);
+  if (existing && existing.admin_user_id === adminUserId) return existing;
+
+  const supabase = createSupabaseAdmin();
+  const { data: user, error: userError } = await supabase
+    .from("doedtc_users")
+    .select("id, full_name, phone")
+    .eq("id", adminUserId)
+    .single();
+  if (userError) throw new Error(userError.message);
+
+  const { data: household, error } = await supabase
+    .from("doedtc_households")
+    .insert({ admin_user_id: adminUserId })
+    .select("*")
+    .single();
+  if (error) {
+    if (error.message.includes("duplicate key")) {
+      const retry = await getDoeDtcHouseholdByUserId(adminUserId);
+      if (retry) return retry;
+    }
+    throw new Error(error.message);
+  }
+
+  const adminMember = {
+    household_id: household.id,
+    user_id: adminUserId,
+    full_name: (user.full_name as string | null)?.trim() || "Admin",
+    relationship: "other" as const,
+    phone: (user.phone as string | null) ?? null,
+    role: "admin" as const,
+    status: "active" as const,
+  };
+  const { error: memberError } = await supabase.from("doedtc_household_members").insert(adminMember);
+  if (memberError && !memberError.message.includes("duplicate key")) {
+    throw new Error(memberError.message);
+  }
+
+  await importLegacyFamilyMembersToHousehold(adminUserId, household.id);
+  return household as DoeDtcHouseholdRow;
+}
+
+async function importLegacyFamilyMembersToHousehold(
+  adminUserId: string,
+  householdId: string,
+): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { data: legacyRows, error } = await supabase
+    .from("doedtc_family_members")
+    .select("*")
+    .eq("user_id", adminUserId)
+    .order("created_at");
+  if (error) throw new Error(error.message);
+
+  const existingMembers = await listDoeDtcHouseholdMembers(householdId);
+  for (const legacy of (legacyRows as DoeDtcFamilyMemberRow[]) ?? []) {
+    const duplicate = existingMembers.find(
+      (row) =>
+        row.full_name.trim().toLowerCase() === legacy.full_name.trim().toLowerCase() &&
+        row.relationship === legacy.relationship,
+    );
+    if (duplicate) continue;
+    const { error: insertError } = await supabase.from("doedtc_household_members").insert({
+      household_id: householdId,
+      full_name: legacy.full_name,
+      relationship: legacy.relationship,
+      phone: legacy.phone,
+      role: "member",
+      status: legacy.phone ? "pending" : "pending",
+    });
+    if (insertError && !insertError.message.includes("duplicate key")) {
+      throw new Error(insertError.message);
+    }
+  }
+}
+
+async function syncLegacyFamilyMemberFromHousehold(params: {
+  adminUserId: string;
+  fullName: string;
+  relationship: DoeDtcFamilyMemberInput["relationship"];
+  phone?: string | null;
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { data: existing } = await supabase
+    .from("doedtc_family_members")
+    .select("id")
+    .eq("user_id", params.adminUserId)
+    .ilike("full_name", params.fullName.trim())
+    .eq("relationship", params.relationship)
+    .maybeSingle();
+  if (existing) return;
+
+  const { error } = await supabase.from("doedtc_family_members").insert({
+    user_id: params.adminUserId,
+    full_name: params.fullName.trim(),
+    relationship: params.relationship,
+    phone: params.phone?.trim() || null,
+  });
+  if (error && !error.message.includes("duplicate key")) throw new Error(error.message);
+}
+
+export async function addDoeDtcHouseholdMember(params: {
+  adminUserId: string;
+  fullName: string;
+  relationship: DoeDtcFamilyMemberInput["relationship"];
+  phone?: string | null;
+  dateOfBirth?: string | null;
+}): Promise<DoeDtcHouseholdMemberRow> {
+  const household = await ensureDoeDtcHouseholdForAdmin(params.adminUserId);
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_household_members")
+    .insert({
+      household_id: household.id,
+      full_name: params.fullName.trim(),
+      relationship: params.relationship,
+      phone: params.phone?.trim() || null,
+      date_of_birth: params.dateOfBirth?.trim() || null,
+      role: "member",
+      status: "pending",
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+
+  await syncLegacyFamilyMemberFromHousehold({
+    adminUserId: params.adminUserId,
+    fullName: params.fullName,
+    relationship: params.relationship,
+    phone: params.phone,
+  });
+
+  return data as DoeDtcHouseholdMemberRow;
+}
+
+export async function removeDoeDtcHouseholdMember(params: {
+  adminUserId: string;
+  memberId: string;
+}): Promise<void> {
+  const household = await getDoeDtcHouseholdByUserId(params.adminUserId);
+  if (!household || household.admin_user_id !== params.adminUserId) {
+    throw new Error("Only the household admin can remove members.");
+  }
+
+  const supabase = createSupabaseAdmin();
+  const { data: member, error: memberError } = await supabase
+    .from("doedtc_household_members")
+    .select("*")
+    .eq("id", params.memberId)
+    .eq("household_id", household.id)
+    .maybeSingle();
+  if (memberError) throw new Error(memberError.message);
+  if (!member) throw new Error("Member not found.");
+  if ((member as DoeDtcHouseholdMemberRow).role === "admin") {
+    throw new Error("Cannot remove the household admin.");
+  }
+
+  const row = member as DoeDtcHouseholdMemberRow;
+  const { error } = await supabase.from("doedtc_household_members").delete().eq("id", params.memberId);
+  if (error) throw new Error(error.message);
+
+  const { error: legacyError } = await supabase
+    .from("doedtc_family_members")
+    .delete()
+    .eq("user_id", params.adminUserId)
+    .ilike("full_name", row.full_name.trim())
+    .eq("relationship", row.relationship);
+  if (legacyError) throw new Error(legacyError.message);
+}
+
+function householdInviteExpiresAt(): string {
+  return new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
+}
+
+export async function createDoeDtcHouseholdInvite(params: {
+  adminUserId: string;
+  memberId: string;
+}): Promise<{ invite: DoeDtcHouseholdInviteRow; member: DoeDtcHouseholdMemberRow }> {
+  const household = await getDoeDtcHouseholdByUserId(params.adminUserId);
+  if (!household || household.admin_user_id !== params.adminUserId) {
+    throw new Error("Only the household admin can send invites.");
+  }
+
+  const supabase = createSupabaseAdmin();
+  const { data: member, error: memberError } = await supabase
+    .from("doedtc_household_members")
+    .select("*")
+    .eq("id", params.memberId)
+    .eq("household_id", household.id)
+    .single();
+  if (memberError) throw new Error(memberError.message);
+  const memberRow = member as DoeDtcHouseholdMemberRow;
+  if (!memberRow.phone?.trim()) {
+    throw new Error("Add a phone number before sending an invite.");
+  }
+  if (memberRow.role === "admin") {
+    throw new Error("The admin is already on Doe.");
+  }
+
+  const token = createDoeDtcToken();
+  const { data: invite, error } = await supabase
+    .from("doedtc_household_invites")
+    .insert({
+      household_id: household.id,
+      member_id: memberRow.id,
+      token,
+      expires_at: householdInviteExpiresAt(),
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return { invite: invite as DoeDtcHouseholdInviteRow, member: memberRow };
+}
+
+export async function getDoeDtcHouseholdInviteByToken(token: string): Promise<{
+  invite: DoeDtcHouseholdInviteRow;
+  member: DoeDtcHouseholdMemberRow;
+  household: DoeDtcHouseholdRow;
+} | null> {
+  const supabase = createSupabaseAdmin();
+  const { data: invite, error } = await supabase
+    .from("doedtc_household_invites")
+    .select("*")
+    .eq("token", token.trim())
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!invite) return null;
+  const inviteRow = invite as DoeDtcHouseholdInviteRow;
+  if (isTokenExpired(inviteRow.expires_at)) return null;
+
+  const [{ data: member, error: memberError }, { data: household, error: householdError }] =
+    await Promise.all([
+      supabase
+        .from("doedtc_household_members")
+        .select("*")
+        .eq("id", inviteRow.member_id)
+        .maybeSingle(),
+      supabase
+        .from("doedtc_households")
+        .select("*")
+        .eq("id", inviteRow.household_id)
+        .maybeSingle(),
+    ]);
+  if (memberError) throw new Error(memberError.message);
+  if (householdError) throw new Error(householdError.message);
+  if (!member || !household) return null;
+
+  return {
+    invite: inviteRow,
+    member: member as DoeDtcHouseholdMemberRow,
+    household: household as DoeDtcHouseholdRow,
+  };
+}
+
+export async function completeDoeDtcHouseholdJoin(params: {
+  inviteToken: string;
+  fullName: string;
+  email: string;
+  medications?: string[];
+  conditions?: string[];
+  medicalDeferred?: boolean;
+  shareHealth?: DoeDtcHouseholdConsentLevel;
+  allowEdits?: DoeDtcHouseholdConsentLevel;
+  shareMemberIds?: string[];
+  editMemberIds?: string[];
+}): Promise<DoeDtcUserRow> {
+  const inviteContext = await getDoeDtcHouseholdInviteByToken(params.inviteToken);
+  if (!inviteContext) throw new Error("This invite link is invalid or expired.");
+
+  const phone = inviteContext.member.phone?.trim();
+  if (!phone) throw new Error("Invite is missing a phone number.");
+
+  const fullName = params.fullName.trim();
+  const email = params.email.trim();
+  if (!fullName) throw new Error("Full name is required.");
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new Error("Enter a valid email address.");
+  }
+
+  const medicalDeferred = Boolean(params.medicalDeferred);
+  const supabase = createSupabaseAdmin();
+  let user = await getDoeDtcUserByPhone(phone);
+  if (!user) {
+    user = await upsertInvitedDoeDtcUser(phone);
+  }
+  if (user.status === "opted_out") {
+    throw new Error("This number has opted out of Doe messages.");
+  }
+
+  const { data: updatedUser, error: userError } = await supabase
+    .from("doedtc_users")
+    .update({
+      full_name: fullName,
+      email,
+      why_doe: "Joined family household on Doe.",
+      medical_deferred: medicalDeferred,
+      status: "pending_confirm",
+      onboarding_token: null,
+      onboarding_token_expires_at: null,
+    })
+    .eq("id", user.id)
+    .select("*")
+    .single();
+  if (userError) throw new Error(userError.message);
+  user = updatedUser as DoeDtcUserRow;
+
+  await supabase.from("doedtc_medications").delete().eq("user_id", user.id);
+  await supabase.from("doedtc_conditions").delete().eq("user_id", user.id);
+  if (!medicalDeferred) {
+    const meds = (params.medications ?? [])
+      .map((name) => name.trim())
+      .filter(Boolean)
+      .slice(0, 30)
+      .map((name) => ({ user_id: user!.id, name }));
+    const conditions = (params.conditions ?? [])
+      .map((name) => name.trim())
+      .filter(Boolean)
+      .slice(0, 30)
+      .map((name) => ({ user_id: user!.id, name }));
+    if (meds.length > 0) {
+      const { error } = await supabase.from("doedtc_medications").insert(meds);
+      if (error) throw new Error(error.message);
+    }
+    if (conditions.length > 0) {
+      const { error } = await supabase.from("doedtc_conditions").insert(conditions);
+      if (error) throw new Error(error.message);
+    }
+  }
+
+  const { error: memberError } = await supabase
+    .from("doedtc_household_members")
+    .update({
+      user_id: user.id,
+      full_name: fullName,
+      status: "active",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", inviteContext.member.id);
+  if (memberError) throw new Error(memberError.message);
+
+  const shareHealth = params.shareHealth ?? "none";
+  const allowEdits = params.allowEdits ?? "none";
+  const { error: consentError } = await supabase.from("doedtc_household_consents").upsert(
+    {
+      user_id: user.id,
+      household_id: inviteContext.household.id,
+      share_health: shareHealth,
+      allow_edits: allowEdits,
+      share_member_ids: params.shareMemberIds ?? [],
+      edit_member_ids: params.editMemberIds ?? [],
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,household_id" },
+  );
+  if (consentError) throw new Error(consentError.message);
+
+  return user;
+}
+
+export async function saveDoeDtcHouseholdConsent(params: {
+  userId: string;
+  householdId: string;
+  shareHealth: DoeDtcHouseholdConsentLevel;
+  allowEdits: DoeDtcHouseholdConsentLevel;
+  shareMemberIds?: string[];
+  editMemberIds?: string[];
+}): Promise<DoeDtcHouseholdConsentRow> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_household_consents")
+    .upsert(
+      {
+        user_id: params.userId,
+        household_id: params.householdId,
+        share_health: params.shareHealth,
+        allow_edits: params.allowEdits,
+        share_member_ids: params.shareMemberIds ?? [],
+        edit_member_ids: params.editMemberIds ?? [],
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id,household_id" },
+    )
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcHouseholdConsentRow;
 }

@@ -45,6 +45,8 @@ export const DOEDTC_GET_STARTED = {
   familyPhoneLabel: "Phone (optional)",
   familyNoPhoneLabel: "No number",
   familyAddLabel: "Add person",
+  familyInviteLabel: "Text invite",
+  familyDobLabel: "Date of birth (optional)",
   medicalSectionTitle: "Medical info",
   medicalNowLabel: "Add now",
   medicalLaterLabel: "Add later",
@@ -101,6 +103,15 @@ export const DOEDTC_PROFILE = {
   addResultLabel: "Add result",
   familyTitle: "Family",
   familyEmpty: "No family members yet.",
+  familyAdminBadge: "Admin",
+  familyInviteLabel: "Text invite",
+  familyInvitingLabel: "Sending…",
+  familyInviteSent: "Invite sent.",
+  familyPendingLabel: "Invite pending",
+  familyActiveLabel: "On Doe",
+  familyViewProfileLabel: "View profile",
+  familyDobLabel: "Date of birth (optional)",
+  familyDobHint: "Needed for children 18+ to set sharing preferences.",
   lockerTitle: "Locker",
   lockerHint: "Doe will never ask for these in iMessage.",
   lockerEmpty: "No saved credentials yet.",
@@ -197,6 +208,7 @@ export const DOEDTC_LINQ = {
   liveViewIntro: "Open Live View to sign in yourself. Doe will keep the session ready afterward.",
   sessionIntro: "Watch Doe work live — browser and tasks in one place.",
   browserConfirmPrompt: "Reply CONFIRM to proceed, or STOP to cancel.",
+  familyInviteIntro: "You're invited to join a family on Doe. Tap the link to set up your profile.",
 } as const;
 
 export function doeDtcPublicOrigin(): string {
@@ -240,14 +252,39 @@ export function doeDtcCareUrl(token: string): string {
 
 export function doeDtcAppUrl(
   token: string,
-  options?: { tab?: string; artifact?: string },
+  options?: { tab?: string; artifact?: string; member?: string },
 ): string {
   const url = new URL(`${doeDtcPublicOrigin()}${DOEDTC_PATH}/app`);
   url.searchParams.set("t", token);
   if (options?.tab) url.searchParams.set("tab", options.tab);
   if (options?.artifact) url.searchParams.set("artifact", options.artifact);
+  if (options?.member) url.searchParams.set("member", options.member);
   return url.toString();
 }
+
+export function doeDtcJoinFamilyUrl(inviteToken: string): string {
+  return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/join-family?i=${encodeURIComponent(inviteToken)}`;
+}
+
+export const DOEDTC_JOIN_FAMILY = {
+  title: "Join your family on Doe",
+  subtitle: "Set up your profile to share health info with your household.",
+  invalidInviteTitle: "Invite unavailable",
+  invalidInviteBody: "This invite link is invalid or expired. Ask your family admin to send a new one.",
+  consentTitle: "Sharing preferences",
+  consentSubtitle: "You're 18 or older. Choose what your household can see and edit.",
+  shareHealthLabel: "Share health info",
+  allowEditsLabel: "Allow family to edit your profile",
+  consentAllLabel: "Yes — everyone",
+  consentNoneLabel: "No",
+  consentCertainLabel: "Certain members",
+  consentMembersLabel: "Choose members",
+  submitLabel: "Join family",
+  submittingLabel: "Saving…",
+  allSetTitle: "Almost there",
+  allSetBody: "Open Messages. Doe sent a confirmation. Type CONFIRM to finish.",
+  openMessagesLabel: "Open Messages",
+} as const;
 
 export function doeDtcPrepareUrl(
   token: string,

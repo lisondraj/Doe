@@ -57,7 +57,7 @@ const VALID_TABS = new Set<DoeDtcProfileTab>([
 ]);
 
 type PageProps = {
-  searchParams: Promise<{ t?: string; tab?: string; artifact?: string; ticket?: string }>;
+  searchParams: Promise<{ t?: string; tab?: string; artifact?: string; ticket?: string; member?: string }>;
 };
 
 export default async function DoeDtcAppPage({ searchParams }: PageProps) {
@@ -69,6 +69,7 @@ export default async function DoeDtcAppPage({ searchParams }: PageProps) {
     : "dashboard";
   const initialArtifactId = params.artifact?.trim() || null;
   const initialTicketId = params.ticket?.trim() || null;
+  const viewingMemberUserId = params.member?.trim() || null;
 
   let valid = false;
   let snapshot: DoeDtcProfileSnapshot | null = null;
@@ -78,7 +79,8 @@ export default async function DoeDtcAppPage({ searchParams }: PageProps) {
       const user = await getDoeDtcUserByCareToken(token);
       valid = Boolean(user);
       if (user) {
-        snapshot = await getDoeDtcProfileSnapshot(user.id);
+        const subjectUserId = viewingMemberUserId || user.id;
+        snapshot = await getDoeDtcProfileSnapshot(subjectUserId, { viewerUserId: user.id });
       }
     } catch {
       valid = false;
@@ -94,6 +96,7 @@ export default async function DoeDtcAppPage({ searchParams }: PageProps) {
       initialTab={initialTab}
       initialArtifactId={initialArtifactId}
       initialTicketId={initialTicketId}
+      viewingMemberUserId={viewingMemberUserId}
     />
   );
 }

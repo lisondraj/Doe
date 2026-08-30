@@ -77,6 +77,7 @@ type FamilyDraft = {
   relationship: DoeDtcFamilyRelationship;
   phone: string;
   noPhone: boolean;
+  dateOfBirth: string;
 };
 
 type DoeDtcGetStartedFormProps = {
@@ -98,6 +99,7 @@ export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps
     relationship: "other",
     phone: "",
     noPhone: false,
+    dateOfBirth: "",
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState("");
@@ -152,6 +154,7 @@ export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps
       relationship: "other",
       phone: "",
       noPhone: false,
+      dateOfBirth: "",
     });
   }
 
@@ -176,6 +179,8 @@ export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps
             fullName: member.fullName,
             relationship: member.relationship,
             phone: member.noPhone ? null : member.phone || null,
+            dateOfBirth:
+              member.relationship === "child" && member.dateOfBirth ? member.dateOfBirth : null,
           })),
         }),
       });
@@ -295,6 +300,17 @@ export function DoeDtcGetStartedForm({ token, valid }: DoeDtcGetStartedFormProps
             ))}
           </select>
         </div>
+        {familyDraft.relationship === "child" ? (
+          <div style={{ marginTop: "0.75rem" }}>
+            <label className="doedtc-label">{DOEDTC_GET_STARTED.familyDobLabel}</label>
+            <input
+              className="doedtc-input"
+              type="date"
+              value={familyDraft.dateOfBirth}
+              onChange={(event) => setFamilyDraft({ ...familyDraft, dateOfBirth: event.target.value })}
+            />
+          </div>
+        ) : null}
         {!familyDraft.noPhone ? (
           <div style={{ marginTop: "0.75rem" }}>
             <label className="doedtc-label">{DOEDTC_GET_STARTED.familyPhoneLabel}</label>

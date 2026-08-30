@@ -1,11 +1,13 @@
 import {
   addDoeDtcAppointment,
-  addDoeDtcFamilyMember,
+  addDoeDtcHouseholdMember,
   addDoeDtcLockerItem,
   addDoeDtcResult,
   appendDoeDtcCondition,
   appendDoeDtcMedication,
   archiveDoeDtcArtifact,
+  canViewerAccessSubjectProfile,
+  createDoeDtcHouseholdInvite,
   createDoeDtcTicket,
   generateDoeDtcShareCode,
   getDoeDtcProfileSnapshot,
@@ -14,7 +16,7 @@ import {
   removeDoeDtcAppointment,
   removeDoeDtcArtifactEntry,
   removeDoeDtcCondition,
-  removeDoeDtcFamilyMember,
+  removeDoeDtcHouseholdMember,
   removeDoeDtcLockerItem,
   removeDoeDtcMedication,
   removeDoeDtcResult,
@@ -24,13 +26,30 @@ import {
   updateDoeDtcArtifactEntry,
 } from "@/lib/doedtc/doedtc-db";
 import { normalizeDoeDtcFamilyRelationship, resolveDoeDtcFamilyMemberName } from "@/lib/doedtc/doedtc-family-relationship";
+import { sendDoeDtcFamilyInviteMessage } from "@/lib/doedtc/doedtc-messaging";
 import type {
-  DoeDtcFamilyRelationship,
   DoeDtcHealthProvider,
   DoeDtcProfileSnapshot,
+  DoeDtcUserRow,
 } from "@/lib/doedtc/doedtc-types";
 
 const PROVIDERS = new Set<DoeDtcHealthProvider>(["whoop", "apple_health"]);
+
+async function resolveWriteTargetUser(params: {
+  viewer: DoeDtcUserRow;
+  subjectUserId?: string | null;
+}): Promise<string> {
+  const subjectUserId = params.subjectUserId?.trim() || params.viewer.id;
+  if (subjectUserId === params.viewer.id) return params.viewer.id;
+  const access = await canViewerAccessSubjectProfile({
+    viewerUserId: params.viewer.id,
+    subjectUserId,
+  });
+  if (!access.canEdit) {
+    throw new Error("You do not have permission to edit this profile.");
+  }
+  return subjectUserId;
+}
 
 export async function handleDoeDtcProfileAction(params: {
   token: string;
@@ -41,6 +60,10 @@ export async function handleDoeDtcProfileAction(params: {
   if (!user) {
     throw new Error("Profile link is invalid.");
   }
+
+  const subjectUserIdRaw =
+    typeof params.payload.subjectUserId === "string" ? params.payload.subjectUserId : null;
+  const snapshotSubjectUserId = subjectUserIdRaw?.trim() || user.id;
 
   switch (params.action) {
     case "add_family": {
@@ -55,26 +78,47 @@ export async function handleDoeDtcProfileAction(params: {
         relationship,
       });
       if (!fullName) throw new Error("Name is required.");
-      await addDoeDtcFamilyMember({
-        userId: user.id,
+      await addDoeDtcHouseholdMember({
+        adminUserId: user.id,
         fullName,
         relationship,
         phone: typeof params.payload.phone === "string" ? params.payload.phone : null,
+        dateOfBirth:
+          typeof params.payload.dateOfBirth === "string" ? params.payload.dateOfBirth : null,
       });
       break;
     }
     case "remove_family": {
-      const memberId = String(params.payload.memberId ?? "");
+      const memberId = String(params.payload.householdMemberId ?? params.payload.memberId ?? "");
       if (!memberId) throw new Error("Missing family member.");
-      await removeDoeDtcFamilyMember({ userId: user.id, memberId });
+      await removeDoeDtcHouseholdMember({ adminUserId: user.id, memberId });
+      break;
+    }
+    case "send_family_invite": {
+      const memberId = String(params.payload.householdMemberId ?? params.payload.memberId ?? "");
+      if (!memberId) throw new Error("Missing family member.");
+      const { invite, member } = await createDoeDtcHouseholdInvite({
+        adminUserId: user.id,
+        memberId,
+      });
+      await sendDoeDtcFamilyInviteMessage({
+        adminUser: user,
+        memberPhone: member.phone!,
+        inviteToken: invite.token,
+        memberName: member.full_name,
+      });
       break;
     }
     case "add_appointment": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const title = String(params.payload.title ?? "").trim();
       const startsAt = String(params.payload.startsAt ?? "").trim();
       if (!title || !startsAt) throw new Error("Title and date are required.");
       await addDoeDtcAppointment({
-        userId: user.id,
+        userId: targetUserId,
         title,
         startsAt: new Date(startsAt).toISOString(),
         location: typeof params.payload.location === "string" ? params.payload.location : null,
@@ -83,17 +127,25 @@ export async function handleDoeDtcProfileAction(params: {
       break;
     }
     case "remove_appointment": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const appointmentId = String(params.payload.appointmentId ?? "");
       if (!appointmentId) throw new Error("Missing appointment.");
-      await removeDoeDtcAppointment({ userId: user.id, appointmentId });
+      await removeDoeDtcAppointment({ userId: targetUserId, appointmentId });
       break;
     }
     case "add_result": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const title = String(params.payload.title ?? "").trim();
       const resultedAt = String(params.payload.resultedAt ?? "").trim();
       if (!title || !resultedAt) throw new Error("Title and date are required.");
       await addDoeDtcResult({
-        userId: user.id,
+        userId: targetUserId,
         title,
         resultedAt: new Date(resultedAt).toISOString(),
         source: typeof params.payload.source === "string" ? params.payload.source : null,
@@ -102,74 +154,116 @@ export async function handleDoeDtcProfileAction(params: {
       break;
     }
     case "remove_result": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const resultId = String(params.payload.resultId ?? "");
       if (!resultId) throw new Error("Missing result.");
-      await removeDoeDtcResult({ userId: user.id, resultId });
+      await removeDoeDtcResult({ userId: targetUserId, resultId });
       break;
     }
     case "add_locker": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const label = String(params.payload.label ?? "").trim();
       const username = String(params.payload.username ?? "").trim();
       const password = String(params.payload.password ?? "");
       if (!label || !password) throw new Error("Label and password are required.");
-      await addDoeDtcLockerItem({ userId: user.id, label, username, password });
+      await addDoeDtcLockerItem({ userId: targetUserId, label, username, password });
       break;
     }
     case "remove_locker": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const itemId = String(params.payload.itemId ?? "");
       if (!itemId) throw new Error("Missing locker item.");
-      await removeDoeDtcLockerItem({ userId: user.id, itemId });
+      await removeDoeDtcLockerItem({ userId: targetUserId, itemId });
       break;
     }
     case "connect_health": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const provider = params.payload.provider;
       if (typeof provider !== "string" || !PROVIDERS.has(provider as DoeDtcHealthProvider)) {
         throw new Error("Unknown provider.");
       }
       await setDoeDtcHealthConnectionPending({
-        userId: user.id,
+        userId: targetUserId,
         provider: provider as DoeDtcHealthProvider,
       });
       break;
     }
     case "generate_share":
-      await generateDoeDtcShareCode({ userId: user.id });
+      await generateDoeDtcShareCode({
+        userId: await resolveWriteTargetUser({ viewer: user, subjectUserId: subjectUserIdRaw }),
+      });
       break;
     case "revoke_share": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const shareCodeId = String(params.payload.shareCodeId ?? "");
       if (!shareCodeId) throw new Error("Missing share code.");
-      await revokeDoeDtcShareCode({ userId: user.id, shareCodeId });
+      await revokeDoeDtcShareCode({ userId: targetUserId, shareCodeId });
       break;
     }
     case "add_medication": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const name = String(params.payload.name ?? "").trim();
       if (!name) throw new Error("Medication name is required.");
-      await appendDoeDtcMedication({ userId: user.id, name });
+      await appendDoeDtcMedication({ userId: targetUserId, name });
       break;
     }
     case "remove_medication": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const name = String(params.payload.name ?? "").trim();
       if (!name) throw new Error("Medication name is required.");
-      await removeDoeDtcMedication({ userId: user.id, name });
+      await removeDoeDtcMedication({ userId: targetUserId, name });
       break;
     }
     case "add_condition": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const name = String(params.payload.name ?? "").trim();
       if (!name) throw new Error("Condition name is required.");
-      await appendDoeDtcCondition({ userId: user.id, name });
+      await appendDoeDtcCondition({ userId: targetUserId, name });
       break;
     }
     case "remove_condition": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const name = String(params.payload.name ?? "").trim();
       if (!name) throw new Error("Condition name is required.");
-      await removeDoeDtcCondition({ userId: user.id, name });
+      await removeDoeDtcCondition({ userId: targetUserId, name });
       break;
     }
     case "add_artifact_entry": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const artifactId = String(params.payload.artifactId ?? "");
       if (!artifactId) throw new Error("Missing tracker.");
       await logDoeDtcArtifactEntry({
-        userId: user.id,
+        userId: targetUserId,
         artifactId,
         values: params.payload.values,
         occurredAt:
@@ -178,10 +272,14 @@ export async function handleDoeDtcProfileAction(params: {
       break;
     }
     case "update_artifact_entry": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const entryId = String(params.payload.entryId ?? "");
       if (!entryId) throw new Error("Missing entry.");
       await updateDoeDtcArtifactEntry({
-        userId: user.id,
+        userId: targetUserId,
         entryId,
         values: params.payload.values,
         occurredAt:
@@ -190,16 +288,24 @@ export async function handleDoeDtcProfileAction(params: {
       break;
     }
     case "remove_artifact_entry": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const entryId = String(params.payload.entryId ?? "");
       if (!entryId) throw new Error("Missing entry.");
-      await removeDoeDtcArtifactEntry({ userId: user.id, entryId });
+      await removeDoeDtcArtifactEntry({ userId: targetUserId, entryId });
       break;
     }
     case "update_artifact": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const artifactId = String(params.payload.artifactId ?? "");
       if (!artifactId) throw new Error("Missing tracker.");
       await updateDoeDtcArtifact({
-        userId: user.id,
+        userId: targetUserId,
         artifactId,
         title: typeof params.payload.title === "string" ? params.payload.title : undefined,
         fields: params.payload.fields,
@@ -207,23 +313,33 @@ export async function handleDoeDtcProfileAction(params: {
       break;
     }
     case "archive_artifact": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const artifactId = String(params.payload.artifactId ?? "");
       if (!artifactId) throw new Error("Missing tracker.");
-      await archiveDoeDtcArtifact({ userId: user.id, artifactId });
+      await archiveDoeDtcArtifact({ userId: targetUserId, artifactId });
       break;
     }
     case "submit_ticket": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
       const kind = params.payload.kind === "bug" ? "bug" : "feedback";
       const title = String(params.payload.title ?? "").trim();
       const body = String(params.payload.body ?? "").trim();
       if (!title || !body) throw new Error("Title and description are required.");
-      await createDoeDtcTicket({ userId: user.id, kind, title, body });
+      await createDoeDtcTicket({ userId: targetUserId, kind, title, body });
       break;
     }
     default:
       throw new Error("Unknown action.");
   }
 
-  const snapshot = await getDoeDtcProfileSnapshot(user.id);
+  const snapshot = await getDoeDtcProfileSnapshot(snapshotSubjectUserId, {
+    viewerUserId: user.id,
+  });
   return { snapshot };
 }

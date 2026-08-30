@@ -96,6 +96,71 @@ export type DoeDtcFamilyMemberInput = {
   fullName: string;
   relationship: DoeDtcFamilyRelationship;
   phone?: string | null;
+  dateOfBirth?: string | null;
+};
+
+export type DoeDtcHouseholdRole = "admin" | "member";
+
+export type DoeDtcHouseholdMemberStatus = "pending" | "active";
+
+export type DoeDtcHouseholdConsentLevel = "all" | "none" | "certain";
+
+export type DoeDtcHouseholdRow = {
+  id: string;
+  admin_user_id: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DoeDtcHouseholdMemberRow = {
+  id: string;
+  household_id: string;
+  user_id: string | null;
+  full_name: string;
+  relationship: DoeDtcFamilyRelationship;
+  phone: string | null;
+  date_of_birth: string | null;
+  role: DoeDtcHouseholdRole;
+  status: DoeDtcHouseholdMemberStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DoeDtcHouseholdInviteRow = {
+  id: string;
+  household_id: string;
+  member_id: string;
+  token: string;
+  expires_at: string;
+  sent_at: string;
+  created_at: string;
+};
+
+export type DoeDtcHouseholdConsentRow = {
+  id: string;
+  user_id: string;
+  household_id: string;
+  share_health: DoeDtcHouseholdConsentLevel;
+  allow_edits: DoeDtcHouseholdConsentLevel;
+  share_member_ids: string[];
+  edit_member_ids: string[];
+  created_at: string;
+  updated_at: string;
+};
+
+export type DoeDtcHouseholdMemberAccess = {
+  memberId: string;
+  userId: string | null;
+  canView: boolean;
+  canEdit: boolean;
+};
+
+export type DoeDtcHouseholdSnapshot = {
+  household: DoeDtcHouseholdRow | null;
+  members: DoeDtcHouseholdMemberRow[];
+  memberAccess: DoeDtcHouseholdMemberAccess[];
+  isAdmin: boolean;
+  viewerMemberId: string | null;
 };
 
 export type DoeDtcListenSessionStatus = "pending" | "completed" | "failed";
@@ -239,6 +304,7 @@ export type DoeDtcProfileSnapshot = {
   artifacts: DoeDtcArtifactRow[];
   artifactEntries: DoeDtcArtifactEntryRow[];
   tickets: DoeDtcTicketRow[];
+  household: DoeDtcHouseholdSnapshot;
 };
 
 export type DoeDtcMedicationRow = {

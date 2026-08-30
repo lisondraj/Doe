@@ -35,10 +35,12 @@ function cleanFamilyMembers(values: unknown): DoeDtcOnboardPayload["familyMember
         return null;
       }
       const phone = typeof row.phone === "string" ? row.phone.trim() : "";
+      const dateOfBirth = typeof row.dateOfBirth === "string" ? row.dateOfBirth.trim() : "";
       return {
         fullName,
         relationship: relationship as DoeDtcFamilyRelationship,
         phone: phone || null,
+        dateOfBirth: dateOfBirth || null,
       };
     })
     .filter((value): value is NonNullable<typeof value> => Boolean(value))

@@ -10,6 +10,7 @@ export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
     const token = url.searchParams.get("t")?.trim() ?? "";
+    const memberUserId = url.searchParams.get("member")?.trim() ?? "";
     if (!token) {
       return NextResponse.json({ ok: false, error: "Missing token." }, { status: 400 });
     }
@@ -19,9 +20,10 @@ export async function GET(request: Request) {
       return NextResponse.json({ ok: false, error: "Profile link is invalid." }, { status: 404 });
     }
 
-    const snapshot = await getDoeDtcProfileSnapshot(user.id);
+    const subjectUserId = memberUserId || user.id;
+    const snapshot = await getDoeDtcProfileSnapshot(subjectUserId, { viewerUserId: user.id });
     return NextResponse.json(
-      { ok: true, snapshot },
+      { ok: true, snapshot, viewingMemberUserId: subjectUserId !== user.id ? subjectUserId : null },
       { headers: { "Cache-Control": "no-store, max-age=0" } },
     );
   } catch (error) {

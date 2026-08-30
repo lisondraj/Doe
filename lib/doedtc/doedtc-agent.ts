@@ -22,11 +22,12 @@ import {
 } from "@/lib/doedtc/doedtc-appointment-timing";
 import {
   addDoeDtcAppointment,
-  addDoeDtcFamilyMember,
+  addDoeDtcHouseholdMember,
   appendDoeDtcCondition,
   appendDoeDtcMedication,
   archiveDoeDtcArtifact,
   createDoeDtcArtifact,
+  createDoeDtcHouseholdInvite,
   findDoeDtcArtifactByTitle,
   logDoeDtcArtifactEntry,
   removeDoeDtcArtifactEntry,
@@ -34,6 +35,8 @@ import {
   removeDoeDtcMedication,
   renameDoeDtcCondition,
   renameDoeDtcMedication,
+  resolveDoeDtcHouseholdSubject,
+  loadDoeDtcHouseholdAccessContext,
   updateDoeDtcArtifact,
   updateDoeDtcArtifactEntry,
   createDoeDtcListenSession,
@@ -46,6 +49,8 @@ import {
   listDoeDtcMessages,
   saveDoeDtcAssessment,
 } from "@/lib/doedtc/doedtc-db";
+import { findHouseholdMemberByName, formatHouseholdForAgent } from "@/lib/doedtc/doedtc-household";
+import { sendDoeDtcFamilyInviteMessage } from "@/lib/doedtc/doedtc-messaging";
 import {
   DOEDTC_PROFILE_READ_TABS,
   formatDoeDtcProfileOverview,
@@ -70,6 +75,11 @@ import type {
 const DOEDTC_AGENT_MODEL = "gpt-4o";
 const DOEDTC_ASSESSMENT_MODEL = "gpt-4o-mini";
 const MAX_TOOL_ROUNDS = 8;
+
+const HOUSEHOLD_MEMBER_PARAMS = {
+  member_id: { type: "string", description: "Household member id from the family tab." },
+  member_name: { type: "string", description: "Family member name when id is unknown." },
+} as const;
 
 export const DOEDTC_AGENT_TOOLS = [
   {
@@ -148,6 +158,8 @@ export const DOEDTC_AGENT_TOOLS = [
           },
           location: { type: "string", description: "Clinic or location if known." },
           notes: { type: "string", description: "Any extra context the user shared." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["title", "timing_precision"],
       },
@@ -178,8 +190,27 @@ export const DOEDTC_AGENT_TOOLS = [
             description: "Use child for son or daughter.",
           },
           phone: { type: "string", description: "Phone number if the user shared one." },
+          date_of_birth: {
+            type: "string",
+            description: "Optional ISO date for children — needed for 18+ consent on invite.",
+          },
         },
         required: ["full_name", "relationship"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "send_family_invite",
+      description:
+        "Text a family invite link to a household member who has a phone but has not joined Doe yet. Only call after the user says yes.",
+      parameters: {
+        type: "object",
+        properties: {
+          member_id: { type: "string", description: "Household member id." },
+          member_name: { type: "string", description: "Family member name if id is unknown." },
+        },
       },
     },
   },
@@ -307,6 +338,8 @@ export const DOEDTC_AGENT_TOOLS = [
               required: ["key", "label", "type"],
             },
           },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["title"],
       },
@@ -368,6 +401,8 @@ export const DOEDTC_AGENT_TOOLS = [
             type: "string",
             description: "Optional ISO datetime for when this happened.",
           },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["artifact_id", "values"],
       },
@@ -420,6 +455,8 @@ export const DOEDTC_AGENT_TOOLS = [
             type: "string",
             description: "Optional visit reason, e.g. Ozempic refill, annual checkup.",
           },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
       },
     },
@@ -507,6 +544,8 @@ export const DOEDTC_AGENT_TOOLS = [
             enum: [...DOEDTC_PROFILE_READ_TABS],
             description: "Profile tab to read. Use dashboard for Whoop, Apple Health, name, and email.",
           },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["tab"],
       },
@@ -695,7 +734,7 @@ export type DoeDtcAgentTurnResult = {
 
 const URL_IN_TEXT = /https?:\/\/\S+/gi;
 const CLOSER_TAIL =
-  /(?:\s*[,.!]+\s*)?(?:feel free to (?:ask|let me know|reach out|text|message)(?:\b.{0,80})?|let me know if (?:you(?:'d| would)? (?:like|want|need)|you have |there's ).{0,80}|just let me know(?:\b.{0,60})?|let me know\.[!?.,]?\s*$|don'?t hesitate to (?:ask|reach out|text).{0,40}|happy to (?:help|chat|look)(?:\b.{0,40})?(?: if you want)?|(?:is there )?anything else I can (?:help|do).{0,40}|what else can I (?:help|do).{0,40}|want me to .{0,80}|i can also (?:help|look|check|do|add).{0,60}|just say the word[!?.,]?\s*$)[!?.,]?\s*$/i;
+  /(?:\s*[,.!]+\s*)?(?:feel free to (?:ask|let me know|reach out|text|message)(?:\b.{0,80})?|let me know if (?:you(?:'d| would)? (?:like|want|need)|you have |there's |you need ).{0,80}|if there(?:'s| is) anything you need.{0,40}|if you need anything.{0,40}|here if you need me.{0,20}|just let me know(?:\b.{0,60})?|let me know\.[!?.,]?\s*$|don'?t hesitate to (?:ask|reach out|text).{0,40}|happy to (?:help|chat|look)(?:\b.{0,40})?(?: if you want)?|(?:is there )?anything else I can (?:help|do).{0,40}|what else can I (?:help|do).{0,40}|want me to .{0,80}|i can also (?:help|look|check|do|add).{0,60}|just say the word[!?.,]?\s*$)[!?.,]?\s*$/i;
 const KEEP_CLOSER_RATE = 0.08;
 
 function stripMarkdownFromReply(text: string): string {
@@ -791,6 +830,39 @@ function todayLabel(): string {
     month: "long",
     day: "numeric",
   });
+}
+
+async function resolveAgentHouseholdSubject(params: {
+  viewerUserId: string;
+  args: Record<string, unknown>;
+  requireEdit?: boolean;
+}): Promise<
+  | { subjectUserId: string; subjectMemberName?: string }
+  | { error: string }
+> {
+  const memberId = typeof params.args.member_id === "string" ? params.args.member_id.trim() : "";
+  const memberName = typeof params.args.member_name === "string" ? params.args.member_name.trim() : "";
+  if (!memberId && !memberName) {
+    return { subjectUserId: params.viewerUserId };
+  }
+  const resolved = await resolveDoeDtcHouseholdSubject({
+    viewerUserId: params.viewerUserId,
+    memberId: memberId || null,
+    memberName: memberName || null,
+  });
+  if ("error" in resolved) return { error: resolved.error };
+  if (!resolved.canView) {
+    return { error: `You do not have permission to view ${resolved.subjectMember.full_name}'s profile.` };
+  }
+  if (params.requireEdit && !resolved.canEdit) {
+    return {
+      error: `You do not have permission to edit ${resolved.subjectMember.full_name}'s profile.`,
+    };
+  }
+  return {
+    subjectUserId: resolved.subjectUserId,
+    subjectMemberName: resolved.subjectMember.full_name,
+  };
 }
 
 function replyClaimsListenLink(text: string): boolean {
@@ -918,6 +990,7 @@ function buildSystemPrompt(params: {
   appointmentLog: string;
   relevantMemories: string;
   familyLog: string;
+  householdLog: string;
   profileOverview: string;
 }): string {
   return `You are Doe, a warm consumer health companion over iMessage.
@@ -942,6 +1015,9 @@ ${params.appointmentLog}
 Family chart:
 ${params.familyLog}
 
+Household (shared family):
+${params.householdLog}
+
 Relevant memories:
 ${params.relevantMemories}
 
@@ -957,6 +1033,9 @@ What you can do:
 - To change a medication or condition, use update_medication / update_condition. Never add a second copy and leave the old name.
 - To delete one, use remove_medication / remove_condition.
 - Add family members to the Family chart (log_family_member) — never remember_fact for family.
+- If a named family member has a phone but has not joined Doe yet, you may offer to send an invite (send_family_invite) — do not auto-invite without a yes. Same after log_family_member when a phone is present.
+- When they ask how a family member is doing, their next appointment, symptoms last week, or to prepare a child's summary, use read_profile / create_preparation / trackers with member_id or member_name — do not say you cannot see family.
+- send_family_invite texts a join link. Only the household admin can add/remove members or send invites.
 - Send a Listen link to record and transcribe visits (start_listen).
 - Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
 - If they want to connect Whoop or Apple Health, tell them the current status and send_profile_link so they can tap Connect. Do not treat a status question as an add.
@@ -1165,6 +1244,11 @@ export async function runDoeDtcAgentTurn(params: {
     appointmentLog: formatAppointmentLog(snapshot.appointments),
     relevantMemories: formatMem0Block(relevantMemoryRows),
     familyLog: formatFamilyLog(snapshot.familyMembers),
+    householdLog: formatHouseholdForAgent({
+      household: snapshot.household.household,
+      members: snapshot.household.members,
+      viewerUserId: params.user.id,
+    }),
     profileOverview: formatDoeDtcProfileOverview(snapshot),
   });
 
@@ -1328,6 +1412,12 @@ export async function runDoeDtcAgentTurn(params: {
             link_sent_separately: true,
           };
         } else if (toolCall.function.name === "log_appointment") {
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: true,
+          });
+          if ("error" in subject) throw new Error(subject.error);
           const precision = String(args.timing_precision ?? "").trim() as DoeDtcAppointmentTimingPrecision;
           const normalized = normalizeDoeDtcAppointmentTiming({
             title: String(args.title ?? ""),
@@ -1338,7 +1428,7 @@ export async function runDoeDtcAgentTurn(params: {
             notes: typeof args.notes === "string" ? args.notes : null,
           });
           const row = await addDoeDtcAppointment({
-            userId: params.user.id,
+            userId: subject.subjectUserId,
             title: normalized.title,
             startsAt: normalized.startsAt,
             timingNote: normalized.timingNote,
@@ -1366,17 +1456,47 @@ export async function runDoeDtcAgentTurn(params: {
             relationship,
           });
           if (!fullName) throw new Error("full_name is required.");
-          const row = await addDoeDtcFamilyMember({
-            userId: params.user.id,
+          const row = await addDoeDtcHouseholdMember({
+            adminUserId: params.user.id,
             fullName,
             relationship,
             phone: typeof args.phone === "string" ? args.phone : null,
+            dateOfBirth: typeof args.date_of_birth === "string" ? args.date_of_birth : null,
           });
           output = {
             ok: true,
             id: row.id,
             full_name: row.full_name,
             relationship: row.relationship,
+            status: row.status,
+            invite_available: Boolean(row.phone && row.status === "pending"),
+          };
+        } else if (toolCall.function.name === "send_family_invite") {
+          const memberId = String(args.member_id ?? "").trim();
+          const memberName = String(args.member_name ?? "").trim();
+          let resolvedMemberId = memberId;
+          if (!resolvedMemberId && memberName) {
+            const { members } = await loadDoeDtcHouseholdAccessContext(params.user.id);
+            const member = findHouseholdMemberByName(members, memberName);
+            if (!member) throw new Error("Family member not found.");
+            resolvedMemberId = member.id;
+          }
+          if (!resolvedMemberId) throw new Error("member_id or member_name is required.");
+          const { invite, member } = await createDoeDtcHouseholdInvite({
+            adminUserId: params.user.id,
+            memberId: resolvedMemberId,
+          });
+          await sendDoeDtcFamilyInviteMessage({
+            adminUser: params.user,
+            memberPhone: member.phone!,
+            inviteToken: invite.token,
+            memberName: member.full_name,
+          });
+          output = {
+            ok: true,
+            member_id: member.id,
+            full_name: member.full_name,
+            invite_sent: true,
           };
         } else if (toolCall.function.name === "add_medication") {
           const name = String(args.name ?? "").trim();
@@ -1411,16 +1531,22 @@ export async function runDoeDtcAgentTurn(params: {
           const result = await removeDoeDtcCondition({ userId: params.user.id, name });
           output = { ok: true, name: result.name, removed: result.removed };
         } else if (toolCall.function.name === "create_profile_artifact") {
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: true,
+          });
+          if ("error" in subject) throw new Error(subject.error);
           const title = String(args.title ?? "").trim();
           if (!title) throw new Error("Tracker title is required.");
           const existing = await findDoeDtcArtifactByTitle({
-            userId: params.user.id,
+            userId: subject.subjectUserId,
             title,
           });
           const row =
             existing ??
             (await createDoeDtcArtifact({
-              userId: params.user.id,
+              userId: subject.subjectUserId,
               title,
               kind:
                 args.kind === "counter" ||
@@ -1434,6 +1560,7 @@ export async function runDoeDtcAgentTurn(params: {
           profileUrl = doeDtcAppUrl(params.user.care_token, {
             tab: "trackers",
             artifact: row.id,
+            member: subject.subjectUserId !== params.user.id ? subject.subjectUserId : undefined,
           });
           output = {
             ok: true,
@@ -1441,6 +1568,7 @@ export async function runDoeDtcAgentTurn(params: {
             title: row.title,
             kind: row.kind,
             created: !existing,
+            subject: subject.subjectMemberName ?? "you",
             link_sent_separately: true,
           };
         } else if (toolCall.function.name === "update_profile_artifact") {
@@ -1476,10 +1604,16 @@ export async function runDoeDtcAgentTurn(params: {
             };
           }
         } else if (toolCall.function.name === "log_artifact_entry") {
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: true,
+          });
+          if ("error" in subject) throw new Error(subject.error);
           const artifactId = String(args.artifact_id ?? "").trim();
           if (!artifactId) throw new Error("artifact_id is required.");
           const row = await logDoeDtcArtifactEntry({
-            userId: params.user.id,
+            userId: subject.subjectUserId,
             artifactId,
             values: args.values,
             occurredAt: typeof args.occurred_at === "string" ? args.occurred_at : null,
@@ -1487,12 +1621,14 @@ export async function runDoeDtcAgentTurn(params: {
           profileUrl = doeDtcAppUrl(params.user.care_token, {
             tab: "trackers",
             artifact: artifactId,
+            member: subject.subjectUserId !== params.user.id ? subject.subjectUserId : undefined,
           });
           output = {
             ok: true,
             id: row.id,
             artifact_id: artifactId,
             occurred_at: row.occurred_at,
+            subject: subject.subjectMemberName ?? "you",
             link_sent_separately: true,
           };
         } else if (toolCall.function.name === "update_artifact_entry") {
@@ -1516,17 +1652,38 @@ export async function runDoeDtcAgentTurn(params: {
           await removeDoeDtcArtifactEntry({ userId: params.user.id, entryId });
           output = { ok: true, id: entryId, removed: true };
         } else if (toolCall.function.name === "create_preparation") {
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: false,
+          });
+          if ("error" in subject) throw new Error(subject.error);
+          const prepTitle =
+            typeof args.title === "string"
+              ? args.title
+              : subject.subjectMemberName
+                ? `${subject.subjectMemberName} — visit prep`
+                : undefined;
           const row = await createDoeDtcPreparation({
-            userId: params.user.id,
-            title: typeof args.title === "string" ? args.title : undefined,
+            userId: subject.subjectUserId,
+            title: prepTitle,
             reason: typeof args.reason === "string" ? args.reason : undefined,
           });
+          if (subject.subjectUserId !== params.user.id && typeof args.reason === "string") {
+            await createDoeDtcArtifact({
+              userId: subject.subjectUserId,
+              title: args.reason.slice(0, 80),
+              kind: "log",
+            });
+          }
           prepareUrl = doeDtcPrepareUrl(params.user.care_token, { preparation: row.id });
           output = {
             ok: true,
             id: row.id,
             code: row.code,
             title: row.title,
+            subject: subject.subjectMemberName ?? "you",
+            on_subject_profile: subject.subjectUserId !== params.user.id,
             link_sent_separately: true,
           };
         } else if (toolCall.function.name === "submit_ticket") {
@@ -1760,8 +1917,25 @@ export async function runDoeDtcAgentTurn(params: {
           if (!DOEDTC_PROFILE_READ_TABS.includes(tab)) {
             output = { ok: false, error: "Unknown profile tab." };
           } else {
-            const read = await readDoeDtcProfileTab({ userId: params.user.id, tab });
-            output = { ok: true, tab: read.tab, content: read.content };
+            const subject = await resolveAgentHouseholdSubject({
+              viewerUserId: params.user.id,
+              args,
+            });
+            if ("error" in subject) {
+              output = { ok: false, error: subject.error };
+            } else {
+              const read = await readDoeDtcProfileTab({
+                userId: subject.subjectUserId,
+                tab,
+                viewerUserId: params.user.id,
+              });
+              output = {
+                ok: true,
+                tab: read.tab,
+                content: read.content,
+                subject: subject.subjectMemberName ?? "you",
+              };
+            }
           }
         } else {
           output = { ok: false, error: "Unknown tool" };
