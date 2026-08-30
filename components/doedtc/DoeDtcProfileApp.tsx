@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { DoeDtcNav } from "@/components/doedtc/DoeDtcNav";
 import { DoeDtcArtifactView } from "@/components/doedtc/DoeDtcArtifactView";
+import { DoeDtcArtifactMiniSparkline } from "@/components/doedtc/DoeDtcTrackerChart";
 import { DoeDtcFeedbackView } from "@/components/doedtc/DoeDtcFeedbackView";
 import { DoeDtcGuideView } from "@/components/doedtc/DoeDtcGuideView";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
@@ -11,8 +12,13 @@ import {
   DOEDTC_GET_STARTED,
   DOEDTC_PROFILE,
   doeDtcAppUrl,
+  doeDtcArtifactShareUrl,
 } from "@/lib/doedtc/doedtc-copy";
-import { formatArtifactEntryValues } from "@/lib/doedtc/doedtc-artifacts";
+import {
+  buildArtifactSeriesPoints,
+  formatArtifactEntryValues,
+  pickPrimaryNumericField,
+} from "@/lib/doedtc/doedtc-artifacts";
 import { memberCurrentlySharesWithHousehold } from "@/lib/doedtc/doedtc-household";
 import type {
   DoeDtcFamilyRelationship,
@@ -452,21 +458,36 @@ function DashboardTab({
         <div className="doedtc-section">
           <h2 className="doedtc-section-title">{DOEDTC_PROFILE.trackersDashboardTitle}</h2>
           <div className="doedtc-tracker-strip">
-            {trackerCards.map(({ artifact, lastEntry }) => (
+            {trackerCards.map(({ artifact, lastEntry }) => {
+              const numericField = pickPrimaryNumericField(artifact.config.fields);
+              const points = numericField
+                ? buildArtifactSeriesPoints({
+                    entries: snapshot.artifactEntries.filter((entry) => entry.artifact_id === artifact.id),
+                    fieldKey: numericField.key,
+                    limit: 12,
+                  })
+                : [];
+              return (
               <button
                 key={artifact.id}
                 type="button"
                 className="doedtc-card doedtc-card--flat doedtc-tracker-card"
                 onClick={() => onOpenTrackers(artifact.id)}
               >
-                <strong>{artifact.title}</strong>
-                <p className="doedtc-muted">
-                  {lastEntry
-                    ? formatArtifactEntryValues(artifact, lastEntry.values)
-                    : DOEDTC_PROFILE.trackersNoEntries}
-                </p>
+                <div className="doedtc-tracker-card__row">
+                  <div>
+                    <strong>{artifact.title}</strong>
+                    <p className="doedtc-muted">
+                      {lastEntry
+                        ? formatArtifactEntryValues(artifact, lastEntry.values)
+                        : DOEDTC_PROFILE.trackersNoEntries}
+                    </p>
+                  </div>
+                  <DoeDtcArtifactMiniSparkline points={points} />
+                </div>
               </button>
-            ))}
+            );
+            })}
           </div>
         </div>
       ) : null}
@@ -1328,6 +1349,11 @@ function TrackersTab({
                 (entry) => entry.artifact_id === activeArtifact.id,
               )}
               busy={busy || readOnly}
+              shareUrl={
+                activeArtifact.share_token
+                  ? doeDtcArtifactShareUrl(activeArtifact.share_token)
+                  : null
+              }
               onAction={async (action, payload) => {
                 await onAction(action, payload);
                 if (action === "archive_artifact") {

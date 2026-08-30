@@ -2,9 +2,14 @@ import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { encryptDoeDtcSecret } from "@/lib/doedtc/doedtc-crypto";
 import {
   defaultArtifactFieldsForTitle,
+  defaultBlocksForLayout,
+  defaultGoalForTitle,
+  defaultLayoutForTitle,
+  normalizeArtifactBlocks,
   normalizeArtifactConfig,
   normalizeArtifactFields,
   normalizeArtifactKind,
+  normalizeArtifactLayout,
   normalizeArtifactValues,
   slugifyArtifactTitle,
 } from "@/lib/doedtc/doedtc-artifacts";
@@ -671,9 +676,27 @@ export async function createDoeDtcTicket(params: {
 }
 
 function mapArtifactRow(row: Record<string, unknown>): DoeDtcArtifactRow {
+  const layout = normalizeArtifactLayout(row.layout);
+  const config = normalizeArtifactConfig(row.config);
+  const blocks =
+    Array.isArray(row.blocks) && (row.blocks as unknown[]).length > 0
+      ? normalizeArtifactBlocks(row.blocks)
+      : defaultBlocksForLayout({ layout, title: String(row.title ?? ""), fields: config.fields });
+  const goalRaw = row.goal;
+  const goal =
+    typeof goalRaw === "number" && Number.isFinite(goalRaw)
+      ? goalRaw
+      : goalRaw === null || goalRaw === undefined
+        ? null
+        : Number(goalRaw);
   return {
     ...(row as DoeDtcArtifactRow),
-    config: normalizeArtifactConfig(row.config),
+    layout,
+    blocks,
+    goal: Number.isFinite(goal as number) ? (goal as number) : null,
+    share_token: typeof row.share_token === "string" ? row.share_token : null,
+    shared_at: typeof row.shared_at === "string" ? row.shared_at : null,
+    config,
   };
 }
 
@@ -757,11 +780,23 @@ export async function createDoeDtcArtifact(params: {
   userId: string;
   title: string;
   kind?: DoeDtcArtifactKind;
+  layout?: import("@/lib/doedtc/doedtc-types").DoeDtcArtifactLayout;
   fields?: unknown;
+  blocks?: unknown;
+  goal?: number | null;
 }): Promise<DoeDtcArtifactRow> {
   const title = params.title.trim();
   if (!title) throw new Error("Tracker title is required.");
   const fields = normalizeArtifactFields(params.fields ?? defaultArtifactFieldsForTitle(title));
+  const layout = normalizeArtifactLayout(params.layout ?? defaultLayoutForTitle(title));
+  const blocks =
+    params.blocks !== undefined
+      ? normalizeArtifactBlocks(params.blocks)
+      : defaultBlocksForLayout({ layout, title, fields });
+  const goal =
+    params.goal !== undefined && params.goal !== null
+      ? params.goal
+      : defaultGoalForTitle(title);
   const slug = await uniqueArtifactSlug(params.userId, title);
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase
@@ -771,6 +806,9 @@ export async function createDoeDtcArtifact(params: {
       slug,
       title,
       kind: normalizeArtifactKind(params.kind),
+      layout,
+      blocks,
+      goal,
       config: { fields },
     })
     .select("*")
@@ -784,7 +822,10 @@ export async function updateDoeDtcArtifact(params: {
   artifactId: string;
   title?: string;
   kind?: DoeDtcArtifactKind;
+  layout?: import("@/lib/doedtc/doedtc-types").DoeDtcArtifactLayout;
   fields?: unknown;
+  blocks?: unknown;
+  goal?: number | null;
 }): Promise<DoeDtcArtifactRow> {
   const artifact = await getDoeDtcArtifactById({
     userId: params.userId,
@@ -801,14 +842,101 @@ export async function updateDoeDtcArtifact(params: {
   if (params.kind) {
     patch.kind = normalizeArtifactKind(params.kind);
   }
+  if (params.layout) {
+    patch.layout = normalizeArtifactLayout(params.layout);
+  }
   if (params.fields !== undefined) {
     patch.config = { fields: normalizeArtifactFields(params.fields) };
+  }
+  if (params.blocks !== undefined) {
+    patch.blocks = normalizeArtifactBlocks(params.blocks);
+  }
+  if (params.goal !== undefined) {
+    patch.goal = params.goal;
   }
 
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase
     .from("doedtc_artifacts")
     .update(patch)
+    .eq("user_id", params.userId)
+    .eq("id", params.artifactId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return mapArtifactRow(data as Record<string, unknown>);
+}
+
+export async function getDoeDtcArtifactByShareToken(
+  shareToken: string,
+): Promise<{ artifact: DoeDtcArtifactRow; entries: DoeDtcArtifactEntryRow[] } | null> {
+  const token = shareToken.trim();
+  if (!token) return null;
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_artifacts")
+    .select("*")
+    .eq("share_token", token)
+    .is("archived_at", null)
+    .not("shared_at", "is", null)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+  const artifact = mapArtifactRow(data as Record<string, unknown>);
+  const entries = await listDoeDtcArtifactEntries({
+    userId: artifact.user_id,
+    artifactId: artifact.id,
+    limit: 120,
+  });
+  return { artifact, entries };
+}
+
+export async function shareDoeDtcArtifact(params: {
+  userId: string;
+  artifactId?: string;
+  titleHint?: string;
+}): Promise<DoeDtcArtifactRow> {
+  const artifacts = await listDoeDtcArtifacts(params.userId);
+  const needle = params.titleHint?.trim().toLowerCase();
+  const artifact = params.artifactId
+    ? artifacts.find((row) => row.id === params.artifactId)
+    : needle
+      ? artifacts.find(
+          (row) =>
+            row.title.toLowerCase().includes(needle) || row.slug.toLowerCase().includes(needle),
+        )
+      : artifacts[0];
+  if (!artifact) throw new Error("Tracker not found.");
+
+  const shareToken = artifact.share_token ?? createDoeDtcToken();
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_artifacts")
+    .update({
+      share_token: shareToken,
+      shared_at: artifact.shared_at ?? new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("user_id", params.userId)
+    .eq("id", artifact.id)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return mapArtifactRow(data as Record<string, unknown>);
+}
+
+export async function unshareDoeDtcArtifact(params: {
+  userId: string;
+  artifactId: string;
+}): Promise<DoeDtcArtifactRow> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_artifacts")
+    .update({
+      share_token: null,
+      shared_at: null,
+      updated_at: new Date().toISOString(),
+    })
     .eq("user_id", params.userId)
     .eq("id", params.artifactId)
     .select("*")

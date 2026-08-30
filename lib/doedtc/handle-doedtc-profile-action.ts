@@ -23,6 +23,8 @@ import {
   revokeDoeDtcShareCode,
   revokeDoeDtcHouseholdAccess,
   setDoeDtcHealthConnectionPending,
+  shareDoeDtcArtifact,
+  unshareDoeDtcArtifact,
   updateDoeDtcArtifact,
   updateDoeDtcArtifactEntry,
 } from "@/lib/doedtc/doedtc-db";
@@ -332,6 +334,27 @@ export async function handleDoeDtcProfileAction(params: {
       const artifactId = String(params.payload.artifactId ?? "");
       if (!artifactId) throw new Error("Missing tracker.");
       await archiveDoeDtcArtifact({ userId: targetUserId, artifactId });
+      break;
+    }
+    case "share_artifact": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
+      const artifactId = String(params.payload.artifactId ?? "").trim() || undefined;
+      const titleHint =
+        typeof params.payload.titleHint === "string" ? params.payload.titleHint : undefined;
+      await shareDoeDtcArtifact({ userId: targetUserId, artifactId, titleHint });
+      break;
+    }
+    case "unshare_artifact": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
+      const artifactId = String(params.payload.artifactId ?? "");
+      if (!artifactId) throw new Error("Missing tracker.");
+      await unshareDoeDtcArtifact({ userId: targetUserId, artifactId });
       break;
     }
     case "submit_ticket": {

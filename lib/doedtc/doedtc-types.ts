@@ -192,6 +192,34 @@ export type DoeDtcMemoryRow = {
 
 export type DoeDtcArtifactKind = "log" | "counter" | "checklist" | "score";
 
+export type DoeDtcArtifactLayout = "log" | "series" | "counter" | "checklist" | "score";
+
+export type DoeDtcArtifactBlockKind =
+  | "hero"
+  | "stats"
+  | "chart"
+  | "counter"
+  | "gauge"
+  | "week_grid"
+  | "checklist_today"
+  | "form"
+  | "log"
+  | "goal"
+  | "callout"
+  | "illustration";
+
+export type DoeDtcArtifactBlock = {
+  id: string;
+  kind: DoeDtcArtifactBlockKind;
+  title?: string;
+  body?: string;
+  tone?: "tip" | "warning" | "info";
+  fieldKey?: string;
+  fieldLabel?: string;
+  preset?: "plate" | "glass" | "scale" | "shot";
+  max?: number;
+};
+
 export type DoeDtcArtifactFieldType =
   | "text"
   | "number"
@@ -218,6 +246,11 @@ export type DoeDtcArtifactRow = {
   slug: string;
   title: string;
   kind: DoeDtcArtifactKind;
+  layout: DoeDtcArtifactLayout;
+  blocks: DoeDtcArtifactBlock[];
+  goal: number | null;
+  share_token: string | null;
+  shared_at: string | null;
   config: DoeDtcArtifactConfig;
   archived_at: string | null;
   created_at: string;

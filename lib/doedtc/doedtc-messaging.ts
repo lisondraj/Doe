@@ -641,6 +641,23 @@ export async function handleSymptomInbound(params: {
     });
   }
 
+  if (turn.artifactShareUrl) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.artifactShareLinkIntro,
+      idempotencyKey: `doedtc-agent-artifact-share-intro-${params.user.id}-${idSuffix}`,
+    });
+    await sendDoeDtcLinkOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      url: turn.artifactShareUrl,
+      idempotencyKey: `doedtc-agent-artifact-share-${params.user.id}-${idSuffix}`,
+    });
+  }
+
   if (turn.screenshotUrl) {
     await sendDoeDtcMediaOutbound({
       user: params.user,

@@ -146,6 +146,10 @@ export const DOEDTC_PROFILE = {
   trackersDashboardTitle: "Trackers",
   trackersAddEntryLabel: "Add entry",
   trackersArchiveLabel: "Archive tracker",
+  trackersShareLabel: "Share tracker",
+  trackersUnshareLabel: "Stop sharing",
+  trackersSharedLabel: "Shared",
+  trackersOpenShareLabel: "Open share link",
   trackersLastEntryLabel: "Last entry",
   trackersNoEntries: "No entries yet.",
   trackersSelectTracker: "Select a tracker",
@@ -230,6 +234,7 @@ export const DOEDTC_LINQ = {
   feedbackLinkIntro: "Track your feedback or bug report here.",
   prepareLinkIntro: "Here's your visit prep summary.",
   guideLinkIntro: "Here's your guide.",
+  artifactShareLinkIntro: "Here's your shared tracker.",
   listenIntro: "Open Listen to record your appointment. Press End call when you're done.",
   careLinkIntro: "Here's your symptom review.",
   allSetMessage:
@@ -335,6 +340,19 @@ export function doeDtcGuideUrl(token: string, options?: { guide?: string }): str
   if (options?.guide) url.searchParams.set("g", options.guide);
   return url.toString();
 }
+
+export function doeDtcArtifactShareUrl(shareToken: string): string {
+  const url = new URL(`${doeDtcPublicOrigin()}${DOEDTC_PATH}/artifact`);
+  url.searchParams.set("s", shareToken);
+  return url.toString();
+}
+
+export const DOEDTC_ARTIFACT = {
+  pageTitle: "Shared tracker",
+  subtitle: "A read-only view from Doe.",
+  invalidTokenTitle: "Tracker unavailable",
+  invalidTokenBody: "This share link is invalid or sharing was turned off.",
+} as const;
 
 export function doeDtcViewUrl(): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/view`;

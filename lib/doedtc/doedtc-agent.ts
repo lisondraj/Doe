@@ -14,12 +14,13 @@ import {
   formatMem0Block,
   searchDoeDtcMem0Memories,
 } from "@/lib/doedtc/doedtc-memory";
-import { doeDtcAppUrl, doeDtcCareUrl, doeDtcFeedbackUrl, doeDtcGuideUrl, doeDtcListenUrl, doeDtcPrepareUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
+import { doeDtcAppUrl, doeDtcArtifactShareUrl, doeDtcCareUrl, doeDtcFeedbackUrl, doeDtcGuideUrl, doeDtcListenUrl, doeDtcPrepareUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
 import {
   formatDoeDtcAppointmentWhen,
   normalizeDoeDtcAppointmentTiming,
   type DoeDtcAppointmentTimingPrecision,
 } from "@/lib/doedtc/doedtc-appointment-timing";
+import { normalizeArtifactLayout } from "@/lib/doedtc/doedtc-artifacts";
 import {
   addDoeDtcAppointment,
   addDoeDtcHouseholdMember,
@@ -37,6 +38,8 @@ import {
   renameDoeDtcMedication,
   resolveDoeDtcHouseholdSubject,
   revokeDoeDtcHouseholdAccess,
+  shareDoeDtcArtifact,
+  unshareDoeDtcArtifact,
   updateDoeDtcArtifact,
   updateDoeDtcArtifactEntry,
   createDoeDtcListenSession,
@@ -393,6 +396,24 @@ export const DOEDTC_AGENT_TOOLS = [
               required: ["key", "label", "type"],
             },
           },
+          layout: {
+            type: "string",
+            enum: ["log", "series", "counter", "checklist", "score"],
+            description: "Visual layout. Calorie/weight → series; water → counter; mood → score.",
+          },
+          blocks: {
+            type: "array",
+            description:
+              "Presentation blocks (hero, stats, chart, counter, gauge, week_grid, checklist_today, form, log, goal, callout, illustration). Max ~10.",
+            items: {
+              type: "object",
+              additionalProperties: true,
+            },
+          },
+          goal: {
+            type: "number",
+            description: "Optional numeric goal for chart goal line (e.g. daily calorie target).",
+          },
           member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
           member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
@@ -432,6 +453,15 @@ export const DOEDTC_AGENT_TOOLS = [
               required: ["key", "label", "type"],
             },
           },
+          layout: {
+            type: "string",
+            enum: ["log", "series", "counter", "checklist", "score"],
+          },
+          blocks: {
+            type: "array",
+            items: { type: "object", additionalProperties: true },
+          },
+          goal: { type: "number" },
           archive: { type: "boolean", description: "Set true to archive this tracker." },
         },
         required: ["artifact_id"],
@@ -460,6 +490,35 @@ export const DOEDTC_AGENT_TOOLS = [
           member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["artifact_id", "values"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "share_artifact",
+      description:
+        "Share a profile tracker via a public read-only link. Call only after they ask to share a named tracker. Never auto-share on create.",
+      parameters: {
+        type: "object",
+        properties: {
+          artifact_id: { type: "string", description: "Tracker id from read_profile." },
+          title: { type: "string", description: "Tracker title if id unknown." },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "unshare_artifact",
+      description: "Stop sharing a profile tracker (revokes the public link).",
+      parameters: {
+        type: "object",
+        properties: {
+          artifact_id: { type: "string", description: "Tracker id." },
+        },
+        required: ["artifact_id"],
       },
     },
   },
@@ -668,6 +727,10 @@ export const DOEDTC_AGENT_TOOLS = [
         type: "object",
         properties: {
           tab: { type: "string", description: "Optional profile tab to open." },
+          artifact: {
+            type: "string",
+            description: "Optional tracker id to deep-link on the Trackers tab (private profile link, not public share).",
+          },
           member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
           member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
@@ -1074,6 +1137,7 @@ export type DoeDtcAgentTurnResult = {
   feedbackUrl?: string;
   prepareUrl?: string;
   guideUrl?: string;
+  artifactShareUrl?: string;
   workUrl?: string;
   screenshotUrl?: string;
   vaultUrl?: string;
@@ -1359,6 +1423,7 @@ function buildReplyFromTurnState(params: {
   feedbackUrl?: string;
   prepareUrl?: string;
   guideUrl?: string;
+  artifactShareUrl?: string;
   browserUserMessage?: string;
   preserveScheduleOffer?: boolean;
   preserveGuideSaveOffer?: boolean;
@@ -1394,6 +1459,7 @@ function buildReplyFromTurnState(params: {
   if (params.feedbackUrl) return "Sending a link to track your report.";
   if (params.prepareUrl) return "Sending your visit prep summary.";
   if (params.guideUrl) return "Sending your guide.";
+  if (params.artifactShareUrl) return "Sending your shared tracker link.";
 
   return "Got it.";
 }
@@ -1473,8 +1539,9 @@ What you can do:
 - Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
 - If they want to connect Whoop or Apple Health, tell them the current status and send_profile_link so they can tap Connect. Do not treat a status question as an add.
 - Send the profile / dashboard link (send_profile_link).
-- Create profile trackers (create_profile_artifact) when they want to track, log, count, or keep a list over time — e.g. Ozempic shots, water, mood. Do not create trackers for one-off questions. Prefer updating an existing matching tracker over a duplicate. Log entries with log_artifact_entry. Read trackers tab with read_profile.
-- After creating a tracker or logging a useful entry, send_profile_link with tab=trackers and artifact id so they can view/edit it.
+- Create profile trackers (create_profile_artifact) when they want to track, log, count, or keep a list over time — e.g. Ozempic shots, water, mood, calories. Compose layout and presentation blocks: calorie/food → layout series with calories number field + chart block; water → counter; mood → score + gauge. Do not create trackers for one-off questions. Prefer updating an existing matching tracker over a duplicate. Log entries with log_artifact_entry. Read trackers tab with read_profile.
+- After creating a tracker or logging a useful entry, send_profile_link with tab=trackers and artifact id so they can view/edit it (private profile link).
+- share_artifact when they ask to share a named tracker publicly (read-only link). unshare_artifact when they ask to stop sharing. Never auto-share on create. "Share my calorie tracker" → share_artifact, not create_preparation. "Send my tracker" without share → send_profile_link with artifact.
 - Submit feedback or bug reports (submit_ticket) when they ask to send feedback or report a bug. After submitting, send the track link. Read feedback tab with read_profile.
 - Create a visit-prep summary (create_preparation) when they say prepare, or ask for something to share with their provider, doctor, visit, or refill. Use a general health snapshot if they do not name a reason. After creating, send the prep link with the 5-digit provider code. For a family member, build it from their profile — a tracker is also saved on their Trackers tab.
 - Visual guides (create_guide): when they ask for a how-to, visual instructions, or guide (e.g. take Ozempic properly), compose blocks from the catalog (hero, steps, checklist, timeline, dose_card, site_map, callout, do_dont, faq, facts, illustration). Pick layout howto/schedule/checklist/explainer/comparison. Use profile meds when relevant. After create_guide, send the guide link and ask "Want me to save this to your profile?" — wait for yes before save_guide. update_guide to edit (add steps, change copy). list_guides / send_guide_link to resend. Do NOT use create_preparation for how-to guides.
@@ -1710,6 +1777,7 @@ export async function runDoeDtcAgentTurn(params: {
   let feedbackUrl: string | undefined;
   let prepareUrl: string | undefined;
   let guideUrl: string | undefined;
+  let artifactShareUrl: string | undefined;
   let workUrl: string | undefined;
   let screenshotUrl: string | undefined;
   let vaultUrl: string | undefined;
@@ -1747,6 +1815,7 @@ export async function runDoeDtcAgentTurn(params: {
         feedbackUrl,
         prepareUrl,
         guideUrl,
+        artifactShareUrl,
         preserveScheduleOffer,
         preserveGuideSaveOffer,
       });
@@ -1781,6 +1850,7 @@ export async function runDoeDtcAgentTurn(params: {
           feedbackUrl,
           prepareUrl,
           guideUrl,
+          artifactShareUrl,
           preserveScheduleOffer,
           preserveGuideSaveOffer,
         });
@@ -1794,6 +1864,7 @@ export async function runDoeDtcAgentTurn(params: {
         feedbackUrl,
         prepareUrl,
         guideUrl,
+        artifactShareUrl,
         workUrl,
         screenshotUrl,
         vaultUrl,
@@ -2048,7 +2119,10 @@ export async function runDoeDtcAgentTurn(params: {
                 args.kind === "log"
                   ? args.kind
                   : undefined,
+              layout: typeof args.layout === "string" ? normalizeArtifactLayout(args.layout) : undefined,
               fields: args.fields,
+              blocks: args.blocks,
+              goal: typeof args.goal === "number" ? args.goal : undefined,
             }));
           profileUrl = doeDtcAppUrl(params.user.care_token, {
             tab: "trackers",
@@ -2082,7 +2156,10 @@ export async function runDoeDtcAgentTurn(params: {
                 args.kind === "log"
                   ? args.kind
                   : undefined,
+              layout: typeof args.layout === "string" ? normalizeArtifactLayout(args.layout) : undefined,
               fields: args.fields,
+              blocks: args.blocks,
+              goal: typeof args.goal === "number" ? args.goal : args.goal === null ? null : undefined,
             });
             profileUrl = doeDtcAppUrl(params.user.care_token, {
               tab: "trackers",
@@ -2124,6 +2201,28 @@ export async function runDoeDtcAgentTurn(params: {
             subject: subject.subjectMemberName ?? "you",
             link_sent_separately: true,
           };
+        } else if (toolCall.function.name === "share_artifact") {
+          const artifactId = typeof args.artifact_id === "string" ? args.artifact_id.trim() : undefined;
+          const titleHint = typeof args.title === "string" ? args.title.trim() : undefined;
+          const row = await shareDoeDtcArtifact({
+            userId: params.user.id,
+            artifactId,
+            titleHint,
+          });
+          if (!row.share_token) throw new Error("Could not create share link.");
+          artifactShareUrl = doeDtcArtifactShareUrl(row.share_token);
+          output = {
+            ok: true,
+            id: row.id,
+            title: row.title,
+            shared: true,
+            link_sent_separately: true,
+          };
+        } else if (toolCall.function.name === "unshare_artifact") {
+          const artifactId = String(args.artifact_id ?? "").trim();
+          if (!artifactId) throw new Error("artifact_id is required.");
+          const row = await unshareDoeDtcArtifact({ userId: params.user.id, artifactId });
+          output = { ok: true, id: row.id, title: row.title, shared: false };
         } else if (toolCall.function.name === "update_artifact_entry") {
           const entryId = String(args.entry_id ?? "").trim();
           if (!entryId) throw new Error("entry_id is required.");
@@ -2488,6 +2587,7 @@ export async function runDoeDtcAgentTurn(params: {
           if ("error" in subject) throw new Error(subject.error);
           profileUrl = doeDtcAppUrl(params.user.care_token, {
             tab: typeof args.tab === "string" ? args.tab : undefined,
+            artifact: typeof args.artifact === "string" ? args.artifact.trim() : undefined,
             member: subject.subjectUserId !== params.user.id ? subject.subjectUserId : undefined,
           });
           output = { ok: true, subject: subject.subjectMemberName ?? "you", link_sent_separately: true };
@@ -2772,10 +2872,11 @@ export async function runDoeDtcAgentTurn(params: {
       listenUrl,
       profileUrl,
       feedbackUrl,
-      prepareUrl,
-      guideUrl,
-      preserveScheduleOffer,
-      preserveGuideSaveOffer,
+        prepareUrl,
+        guideUrl,
+        artifactShareUrl,
+        preserveScheduleOffer,
+        preserveGuideSaveOffer,
     }),
     careUrl: assessmentRan ? careUrl : undefined,
     listenUrl,
@@ -2783,6 +2884,7 @@ export async function runDoeDtcAgentTurn(params: {
     feedbackUrl,
     prepareUrl,
     guideUrl,
+    artifactShareUrl,
     workUrl,
     screenshotUrl,
     vaultUrl,
