@@ -490,6 +490,40 @@ export type DoeDtcScheduledTextRow = {
   updated_at: string;
 };
 
+export type DoeDtcWorkflowStatus = "active" | "paused" | "cancelled";
+
+export type DoeDtcWorkflowPhase = "scheduled" | "awaiting_reply";
+
+export type DoeDtcWorkflowConfig = {
+  cadence: "daily";
+  timezone: string;
+  check_in_hour: number;
+  check_in_body: string;
+  subject_phone: string;
+  subject_user_id: string | null;
+  subject_name: string;
+  notify_phone: string;
+  notify_user_id: string | null;
+  notify_name: string;
+  await_timeout_minutes: number;
+};
+
+export type DoeDtcWorkflowRow = {
+  id: string;
+  owner_user_id: string;
+  subject_member_id: string | null;
+  goal: string;
+  config: DoeDtcWorkflowConfig;
+  status: DoeDtcWorkflowStatus;
+  phase: DoeDtcWorkflowPhase;
+  next_run_at: string | null;
+  awaiting_from_phone: string | null;
+  awaiting_until: string | null;
+  correlation_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type DoeDtcProfileSnapshot = {
   user: Pick<
     DoeDtcUserRow,

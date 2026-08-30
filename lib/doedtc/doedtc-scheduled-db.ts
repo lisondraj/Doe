@@ -10,6 +10,8 @@ import {
   ensureFutureSendAt,
   normalizeScheduledTimezone,
   parseScheduledSendAt,
+  scheduledDelayMs,
+  shouldSendScheduledTextInline,
 } from "@/lib/doedtc/doedtc-scheduled";
 import { linqSendText } from "@/lib/doedtc/linq";
 import type {
@@ -231,6 +233,62 @@ async function logScheduledOutbound(userId: string, body: string): Promise<void>
     body,
   });
 }
+
+function sleepMs(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export async function sendScheduledTextInline(params: {
+  creator: DoeDtcUserRow;
+  intent: string;
+  body: string;
+  sendAt: Date;
+  timezone?: string | null;
+  memberId?: string | null;
+  memberName?: string | null;
+}): Promise<DoeDtcScheduledTextRow> {
+  const recipient = await resolveScheduledTextRecipient({
+    creator: params.creator,
+    memberId: params.memberId,
+    memberName: params.memberName,
+  });
+  const timezone = normalizeScheduledTimezone(params.timezone);
+  const delayMs = scheduledDelayMs(params.sendAt);
+  if (delayMs > 0) {
+    await sleepMs(delayMs);
+  }
+
+  await linqSendText({
+    to: recipient.recipientPhone,
+    text: params.body.trim(),
+    idempotencyKey: `doedtc-inline-${params.creator.id}-${params.sendAt.getTime()}-${recipient.recipientPhone}`,
+  });
+  const logUserId = recipient.recipientUserId ?? params.creator.id;
+  await logScheduledOutbound(logUserId, params.body.trim());
+
+  const supabase = createSupabaseAdmin();
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("doedtc_scheduled_texts")
+    .insert({
+      created_by_user_id: params.creator.id,
+      recipient_user_id: recipient.recipientUserId,
+      recipient_member_id: recipient.recipientMemberId,
+      recipient_phone: recipient.recipientPhone,
+      send_at: params.sendAt.toISOString(),
+      timezone,
+      intent: params.intent.trim(),
+      body: params.body.trim(),
+      status: "sent",
+      sent_at: now,
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcScheduledTextRow;
+}
+
+export { shouldSendScheduledTextInline };
 
 export async function processScheduledTextTick(id: string): Promise<void> {
   const supabase = createSupabaseAdmin();

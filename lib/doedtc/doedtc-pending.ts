@@ -4,6 +4,7 @@ export type DoeDtcAgentPendingKind =
   | "schedule_text"
   | "save_guide"
   | "start_accountability"
+  | "start_habit_workflow"
   | "send_family_invite";
 
 export type DoeDtcAgentPendingRow = {

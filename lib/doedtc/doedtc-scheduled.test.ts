@@ -24,6 +24,12 @@ test("parseScheduledSendAt accepts in N hours", () => {
   assert.equal(when.toISOString(), "2026-08-30T14:00:00.000Z");
 });
 
+test("parseScheduledSendAt accepts in 5 seconds", () => {
+  const from = new Date("2026-08-30T12:00:00.000Z");
+  const when = parseScheduledSendAt("in 5 seconds", from);
+  assert.equal(when.toISOString(), "2026-08-30T12:00:05.000Z");
+});
+
 test("isScheduleOfferText detects reminder offers", () => {
   assert.equal(isScheduleOfferText("Do you want me to text you at 8am?"), true);
   assert.equal(isScheduleOfferText("Logged your shot."), false);

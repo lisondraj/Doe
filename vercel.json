@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/doedtc/accountability/tick",
-      "schedule": "*/15 * * * *"
+      "schedule": "* * * * *"
     }
   ]
 }

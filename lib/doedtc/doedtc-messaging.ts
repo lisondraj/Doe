@@ -22,6 +22,7 @@ import {
 } from "@/lib/doedtc/doedtc-db";
 import { addDoeDtcMem0Turn } from "@/lib/doedtc/doedtc-memory";
 import { tryHandleAccountabilityInbound } from "@/lib/doedtc/doedtc-accountability-db";
+import { tryHandleWorkflowInbound } from "@/lib/doedtc/doedtc-workflows";
 import { normalizePhoneToE164 } from "@/lib/doedtc/doedtc-phone";
 import { redactDoeDtcLogText } from "@/lib/doedtc/doedtc-privacy";
 import { linqAddReaction, linqSendLink, linqSendMedia, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
@@ -819,6 +820,9 @@ export async function processDoeDtcInboundWebhook(params: {
     await handleConfirmInbound({ user, phone, chatId, fromNumber });
     return;
   }
+
+  const workflowHandled = await tryHandleWorkflowInbound({ phone, text, user });
+  if (workflowHandled) return;
 
   const accountabilityHandled = await tryHandleAccountabilityInbound({ phone, text, user });
   if (accountabilityHandled) return;

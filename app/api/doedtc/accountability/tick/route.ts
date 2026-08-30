@@ -8,6 +8,7 @@ import {
   listDueScheduledTexts,
   processScheduledTextTick,
 } from "@/lib/doedtc/doedtc-scheduled-db";
+import { listDueWorkflows, processWorkflowTick } from "@/lib/doedtc/doedtc-workflows";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -54,10 +55,26 @@ export async function GET(request: Request) {
     }
   }
 
+  const dueWorkflows = await listDueWorkflows();
+  const workflowResults: Array<{ workflowId: string; ok: boolean; error?: string }> = [];
+  for (const row of dueWorkflows) {
+    try {
+      await processWorkflowTick(row.id);
+      workflowResults.push({ workflowId: row.id, ok: true });
+    } catch (error) {
+      workflowResults.push({
+        workflowId: row.id,
+        ok: false,
+        error: error instanceof Error ? error.message : "Tick failed",
+      });
+    }
+  }
+
   return NextResponse.json({
     ok: true,
-    processed: pactResults.length + textResults.length,
+    processed: pactResults.length + textResults.length + workflowResults.length,
     accountability: pactResults,
     scheduledTexts: textResults,
+    workflows: workflowResults,
   });
 }

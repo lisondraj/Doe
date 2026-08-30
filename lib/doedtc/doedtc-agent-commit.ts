@@ -6,13 +6,19 @@ import type { DoeDtcAgentPendingRow } from "@/lib/doedtc/doedtc-pending";
 import {
   createScheduledText,
   resolveScheduledTextRecipient,
+  sendScheduledTextInline,
 } from "@/lib/doedtc/doedtc-scheduled-db";
 import {
   ensureFutureSendAt,
   formatScheduledSendAtLabel,
   normalizeScheduledTimezone,
   parseScheduledSendAt,
+  shouldSendScheduledTextInline,
 } from "@/lib/doedtc/doedtc-scheduled";
+import {
+  buildHabitWorkflowConfig,
+  createHabitWorkflow,
+} from "@/lib/doedtc/doedtc-workflows";
 import {
   createDoeDtcHouseholdInvite,
   loadDoeDtcHouseholdAccessContext,
@@ -50,6 +56,22 @@ export async function executeAgentPendingCommit(params: {
         const beforeRoll = sendAt.toISOString();
         sendAt = ensureFutureSendAt(sendAt, new Date(), timezone);
         const rolled = sendAt.toISOString() !== beforeRoll;
+
+        if (shouldSendScheduledTextInline(sendAt, new Date())) {
+          await sendScheduledTextInline({
+            creator: params.user,
+            intent: String(args.intent ?? "").trim(),
+            body: String(args.body ?? "").trim(),
+            sendAt,
+            timezone,
+            memberId: typeof args.member_id === "string" ? args.member_id : null,
+            memberName: typeof args.member_name === "string" ? args.member_name : null,
+          });
+          return {
+            ok: true,
+            replyHint: `Done — I'll text you in a few seconds.`,
+          };
+        }
 
         const row = await createScheduledText({
           creator: params.user,
@@ -125,6 +147,49 @@ export async function executeAgentPendingCommit(params: {
           ok: true,
           replyHint: `Accountability pact "${view.pact.title}" is live.`,
           profileUrl: doeDtcAppUrl(params.user.care_token, { tab: "accountability" }),
+        };
+      }
+      case "start_habit_workflow": {
+        const goal = String(args.goal ?? "").trim();
+        if (!goal) throw new Error("goal is required.");
+        let subjectMemberId: string | null = null;
+        let subjectName = String(args.subject_name ?? "").trim() || params.user.full_name || "You";
+        if (args.member_id || args.member_name) {
+          const subject = await resolveDoeDtcHouseholdSubject({
+            viewerUserId: params.user.id,
+            memberId: typeof args.member_id === "string" ? args.member_id : null,
+            memberName: typeof args.member_name === "string" ? args.member_name : null,
+          });
+          if ("error" in subject) throw new Error(subject.error);
+          if (!subject.canEdit) {
+            throw new Error(`You do not have permission to edit ${subject.subjectMember.full_name}'s profile.`);
+          }
+          subjectMemberId = subject.subjectMember.id;
+          subjectName = subject.subjectMember.full_name;
+        }
+        const timezone = normalizeScheduledTimezone(
+          typeof args.timezone === "string" ? args.timezone : undefined,
+        );
+        const config = await buildHabitWorkflowConfig({
+          owner: params.user,
+          goal,
+          subjectName,
+          subjectMemberId,
+          checkInHour: typeof args.check_in_hour === "number" ? args.check_in_hour : undefined,
+          checkInBody: typeof args.check_in_body === "string" ? args.check_in_body : undefined,
+          awaitTimeoutMinutes:
+            typeof args.await_timeout_minutes === "number" ? args.await_timeout_minutes : undefined,
+          timezone,
+        });
+        const workflow = await createHabitWorkflow({
+          owner: params.user,
+          goal,
+          config,
+          subjectMemberId,
+        });
+        return {
+          ok: true,
+          replyHint: `I'll text ${config.subject_name} at ${config.check_in_hour}:00 each day for ${workflow.goal} and ping you if they don't reply.`,
         };
       }
       case "send_family_invite": {

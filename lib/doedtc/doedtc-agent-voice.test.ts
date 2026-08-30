@@ -14,7 +14,7 @@ test("buildDoeAgentVoiceBlock includes capable-friend stance", () => {
   const block = buildDoeAgentVoiceBlock();
   assert.match(block, /does the thing, not a menu of features/);
   assert.match(block, /Never open with what you cannot do/);
-  assert.match(block, /One plan, not a fork/);
+  assert.match(block, /When they already asked with enough detail, act/);
   assert.match(block, /sharp friend/);
 });
 
@@ -24,10 +24,11 @@ test("voice block excludes hedge product names from examples", () => {
   assert.doesNotMatch(DOE_AGENT_FEW_SHOTS, /I can't directly/i);
 });
 
-test("few-shots include bath and meds examples", () => {
+test("few-shots include bath, timer, and meds examples", () => {
   assert.match(DOE_AGENT_FEW_SHOTS, /take a bath/);
   assert.match(DOE_AGENT_FEW_SHOTS, /Maya and Leo/);
   assert.match(DOE_AGENT_FEW_SHOTS, /take my meds/);
+  assert.match(DOE_AGENT_FEW_SHOTS, /5 seconds/);
 });
 
 test("looksCapabilityHedge detects opening disclaimers", () => {

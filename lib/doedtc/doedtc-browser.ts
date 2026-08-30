@@ -65,6 +65,7 @@ export type StartDoeDtcBrowserTaskResult =
 
 const EXCERPT_MAX = 800;
 const KERNEL_SESSION_TIMEOUT_SECONDS = 1800;
+const DOEDTC_RESEARCH_PROXY_NAME = "doedtc-research-us";
 const WRITE_DENY_SELECTORS = [
   'button[type="submit"]',
   'input[type="submit"]',
@@ -77,6 +78,49 @@ function getKernel(): Kernel {
     throw new Error("Browser automation is not configured.");
   }
   return new Kernel({ apiKey });
+}
+
+let cachedResearchProxyId: string | null | undefined;
+
+export async function ensureDoeDtcResearchProxy(): Promise<string | null> {
+  if (cachedResearchProxyId !== undefined) {
+    return cachedResearchProxyId;
+  }
+  if (!isKernelConfigured()) {
+    cachedResearchProxyId = null;
+    return null;
+  }
+
+  const kernel = getKernel();
+  try {
+    for await (const proxy of kernel.proxies.list({ name: DOEDTC_RESEARCH_PROXY_NAME })) {
+      if (proxy.id) {
+        cachedResearchProxyId = proxy.id;
+        return proxy.id;
+      }
+    }
+  } catch (error) {
+    warnKernelFailure("list proxies", error);
+  }
+
+  for (const type of ["residential", "isp"] as const) {
+    try {
+      const created = await kernel.proxies.create({
+        type,
+        name: DOEDTC_RESEARCH_PROXY_NAME,
+        config: { country: "US" },
+      });
+      if (created.id) {
+        cachedResearchProxyId = created.id;
+        return created.id;
+      }
+    } catch (error) {
+      warnKernelFailure(`create ${type} proxy`, error);
+    }
+  }
+
+  cachedResearchProxyId = null;
+  return null;
 }
 
 function isKernelConfigured(): boolean {
@@ -165,6 +209,7 @@ async function createKernelSession(
 ): Promise<KernelBrowser> {
   const kernel = getKernel();
   const saveProfile = Boolean(job.kernel_profile_id) && shouldSaveKernelProfile(job);
+  const proxyId = await ensureDoeDtcResearchProxy();
 
   const browser = await kernel.browsers.create({
     stealth: true,
@@ -172,6 +217,7 @@ async function createKernelSession(
     timeout_seconds: KERNEL_SESSION_TIMEOUT_SECONDS,
     profile: job.kernel_profile_id ? { id: job.kernel_profile_id } : undefined,
     start_url: startUrl ?? undefined,
+    ...(proxyId ? { proxy: { id: proxyId } } : {}),
     ...(saveProfile ? { profile_save_changes: true } : {}),
   } as Parameters<Kernel["browsers"]["create"]>[0]);
 
@@ -179,6 +225,28 @@ async function createKernelSession(
     session_id: browser.session_id,
     browser_live_view_url: browser.browser_live_view_url ?? null,
   };
+}
+
+export async function recreateKernelBrowserSession(params: {
+  job: DoeDtcBrowserJobRow;
+  startUrl: string;
+}): Promise<{ job: DoeDtcBrowserJobRow; kernelBrowser: KernelBrowser }> {
+  await deleteKernelSession(params.job.kernel_session_id);
+  const cleared = await updateDoeDtcBrowserJob({
+    jobId: params.job.id,
+    userId: params.job.user_id,
+    patch: { kernel_session_id: null, browser_live_view_url: null },
+  });
+  const kernelBrowser = await createKernelSession(cleared, params.startUrl);
+  const updated = await updateDoeDtcBrowserJob({
+    jobId: cleared.id,
+    userId: cleared.user_id,
+    patch: {
+      kernel_session_id: kernelBrowser.session_id,
+      browser_live_view_url: kernelBrowser.browser_live_view_url ?? null,
+    },
+  });
+  return { job: updated, kernelBrowser };
 }
 
 async function ensureKernelSession(
@@ -341,8 +409,11 @@ async function navigateResearchWithFailover(params: {
   targetUrl: string;
   host: string;
   searchQueryHint?: string;
-}): Promise<BrowserExtract> {
-  let extract = await gotoAndExtract(params.kernelBrowser.session_id, params.targetUrl);
+}): Promise<BrowserExtract & { kernelBrowser?: KernelBrowser; job?: DoeDtcBrowserJobRow }> {
+  let activeJob = params.job;
+  let activeBrowser = params.kernelBrowser;
+
+  let extract = await gotoAndExtract(activeBrowser.session_id, params.targetUrl);
   if (!extract.ok) return extract;
 
   if (!isBlockedBrowsePage(extract)) {
@@ -360,24 +431,31 @@ async function navigateResearchWithFailover(params: {
 
   warnKernelFailure(
     "research failover",
-    new Error(`Blocked on ${params.host}; retrying DuckDuckGo for "${searchQuery}"`),
+    new Error(`Blocked on ${params.host}; recreating session and retrying DuckDuckGo for "${searchQuery}"`),
   );
 
   const ddgUrl = researchSearchUrl(searchQuery);
-  extract = await gotoAndExtract(params.kernelBrowser.session_id, ddgUrl);
-  if (!extract.ok) return extract;
+  const recreated = await recreateKernelBrowserSession({
+    job: activeJob,
+    startUrl: ddgUrl,
+  });
+  activeJob = recreated.job;
+  activeBrowser = recreated.kernelBrowser;
+
+  extract = await gotoAndExtract(activeBrowser.session_id, ddgUrl);
+  if (!extract.ok) return { ...extract, kernelBrowser: activeBrowser, job: activeJob };
 
   if (isBlockedBrowsePage(extract)) {
     return { ok: false, error: "Search blocked by bot detection." };
   }
 
   await updateDoeDtcBrowserJob({
-    jobId: params.job.id,
+    jobId: activeJob.id,
     userId: params.user.id,
     patch: { allowed_host: "duckduckgo.com" },
   });
 
-  return extract;
+  return { ...extract, kernelBrowser: activeBrowser, job: activeJob };
 }
 
 export async function startDoeDtcBrowserTask(params: {
@@ -506,8 +584,10 @@ export async function navigateDoeDtcBrowser(params: {
   const { job: activeJob, kernelBrowser } = await ensureKernelSession(job, targetUrl);
 
   let extract: BrowserExtract;
+  let navigatedJob = activeJob;
+  let navigatedBrowser = kernelBrowser;
   if (job.mode === "research") {
-    extract = await navigateResearchWithFailover({
+    const failover = await navigateResearchWithFailover({
       user: params.user,
       job: activeJob,
       kernelBrowser,
@@ -515,16 +595,19 @@ export async function navigateDoeDtcBrowser(params: {
       host,
       searchQueryHint: params.searchQueryHint,
     });
+    if (failover.job) navigatedJob = failover.job;
+    if (failover.kernelBrowser) navigatedBrowser = failover.kernelBrowser;
+    extract = failover;
   } else {
-    extract = await gotoAndExtract(kernelBrowser.session_id, targetUrl);
+    extract = await gotoAndExtract(navigatedBrowser.session_id, targetUrl);
   }
 
   if (!extract.ok) {
     return extract;
   }
 
-  if (host !== activeJob.allowed_host && !isDuckDuckGoBrowseHost(host)) {
-    await attachKernelProfileToJob({ ...activeJob, allowed_host: host });
+  if (host !== navigatedJob.allowed_host && !isDuckDuckGoBrowseHost(host)) {
+    await attachKernelProfileToJob({ ...navigatedJob, allowed_host: host });
   }
 
   return extract;

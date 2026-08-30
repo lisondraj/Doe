@@ -15,6 +15,7 @@ import {
   hasConcretePlan,
   looksCapabilityHedge,
 } from "@/lib/doedtc/doedtc-agent-voice";
+import { DOE_AGENT_ACTION_POLICY } from "@/lib/doedtc/doedtc-agent-policy";
 import {
   buildScheduledTextPendingArgs,
   executeAgentPendingCommit,
@@ -96,6 +97,7 @@ import {
   createScheduledText,
   listScheduledTextsForUser,
   resolveScheduledTextRecipient,
+  sendScheduledTextInline,
 } from "@/lib/doedtc/doedtc-scheduled-db";
 import {
   agentNowLabel,
@@ -106,7 +108,15 @@ import {
   isScheduleOfferText,
   normalizeScheduledTimezone,
   parseScheduledSendAt,
+  shouldSendScheduledTextInline,
 } from "@/lib/doedtc/doedtc-scheduled";
+import {
+  buildHabitWorkflowConfig,
+  cancelWorkflow,
+  createHabitWorkflow,
+  formatWorkflowsForAgent,
+  listActiveWorkflowsForUser,
+} from "@/lib/doedtc/doedtc-workflows";
 import {
   createDoeDtcGuide,
   listGuidesForUser,
@@ -891,7 +901,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "propose_scheduled_text",
       description:
-        "Propose a one-time text at a specific time — reminders, nags, make-sure-they-do-it tonight. Call when they want a message sent later for themselves or a family member. Pick a default time if obvious. Do NOT persist until they confirm.",
+        "Draft a one-time text when who/when is ambiguous or it texts someone else without a clear ask. If they already asked with enough detail, call schedule_text instead. Do NOT persist until they confirm.",
       parameters: {
         type: "object",
         properties: {
@@ -900,7 +910,7 @@ export const DOEDTC_AGENT_TOOLS = [
           send_at: {
             type: "string",
             description:
-              "Local wall-clock time in the user's timezone — phrases like tomorrow at 8am, at 8, 8pm, in 2 hours, or naive ISO like 2026-08-30T08:00. Do not append Z for local times.",
+              "Local wall-clock time — tomorrow at 8am, at 8, 8pm, in 2 hours, in 5 seconds, for 30 seconds, or naive ISO like 2026-08-30T08:00. Sub-minute timers send inline.",
           },
           timezone: { type: "string", description: "IANA timezone, e.g. America/New_York. Defaults to Eastern." },
           member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
@@ -914,7 +924,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "schedule_text",
-      description: "Schedule a one-time outbound text after the user confirms.",
+      description:
+        "Commit a one-time outbound text. Default when they already asked (timers, self-reminders, make-sure tonight). Supports in N seconds for sub-minute timers.",
       parameters: {
         type: "object",
         properties: {
@@ -970,7 +981,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "propose_accountability",
       description:
-        "Propose recurring check-ins for a habit or goal (make sure they keep doing X, daily routines, partner support). Call first — pick who gets pinged and a default time. Do NOT persist until they confirm.",
+        "Draft recurring check-ins when who/when is ambiguous or it texts someone else without a clear ask. If they already asked with names and a reasonable time, call start_accountability or start_habit_workflow instead. Do NOT persist until they confirm.",
       parameters: {
         type: "object",
         properties: {
@@ -1004,7 +1015,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "start_accountability",
       description:
-        "Create an accountability pact after the user confirms. Generates SMS copy and schedules check-ins. Invite partner only if they already agreed.",
+        "Commit recurring check-ins (legacy pact). Prefer start_habit_workflow for daily habits with miss notify. Call when they already asked or after confirm.",
       parameters: {
         type: "object",
         properties: {
@@ -1019,6 +1030,64 @@ export const DOEDTC_AGENT_TOOLS = [
           member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["goal", "subject_name"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "propose_habit_workflow",
+      description:
+        "Draft a daily habit workflow (send → await reply → notify on miss) when who/when is ambiguous or it texts someone else without a clear ask. If they already asked, call start_habit_workflow instead.",
+      parameters: {
+        type: "object",
+        properties: {
+          goal: { type: "string", description: "Plain-language habit goal." },
+          subject_name: { type: "string", description: "Who the habit is for." },
+          check_in_hour: { type: "number", description: "0-23 local hour. Default evening ~19." },
+          check_in_body: { type: "string", description: "SMS body for the daily ping." },
+          await_timeout_minutes: { type: "number", description: "Minutes to wait for reply before notifying parent. Default 120." },
+          timezone: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["goal", "subject_name"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "start_habit_workflow",
+      description:
+        "Commit a daily habit workflow: text subject at check_in_hour, await yes/no, notify owner on miss. Default for make-sure-daily asks when they already asked.",
+      parameters: {
+        type: "object",
+        properties: {
+          goal: { type: "string" },
+          subject_name: { type: "string" },
+          check_in_hour: { type: "number" },
+          check_in_body: { type: "string" },
+          await_timeout_minutes: { type: "number" },
+          timezone: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["goal", "subject_name"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "cancel_habit_workflow",
+      description: "Cancel an active habit workflow.",
+      parameters: {
+        type: "object",
+        properties: {
+          workflow_id: { type: "string" },
+          goal_hint: { type: "string" },
+        },
       },
     },
   },
@@ -1505,11 +1574,14 @@ function buildSystemPrompt(params: {
   householdLog: string;
   accountabilityLog: string;
   scheduledLog: string;
+  workflowsLog: string;
   guidesLog: string;
   profileOverview: string;
   nowLabel: string;
 }): string {
   return `${buildDoeAgentVoiceBlock()}
+
+${DOE_AGENT_ACTION_POLICY}
 
 Now (user local time): ${params.nowLabel}.
 ${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
@@ -1544,6 +1616,9 @@ ${params.accountabilityLog}
 Scheduled texts:
 ${params.scheduledLog}
 
+Habit workflows:
+${params.workflowsLog}
+
 Guides (saved + recent):
 ${params.guidesLog}
 
@@ -1566,8 +1641,9 @@ What you can do:
 - When they ask how a family member is doing, their next appointment, symptoms last week, or to prepare a child's summary, use read_profile / create_preparation / trackers with member_id or member_name — do not say you cannot see family.
 - send_family_invite texts a join link. Only the household admin can add/remove members or send invites.
 ${DOE_AGENT_MAKE_SURE_ROUTING}
-- Accountability (recurring habits): call propose_accountability first — state one plan in plain language ("I'll check in with you every evening"), wait for yes, then start_accountability. Infer who gets the ping (owner/parent for young children; the person themselves for recovery). Use privacy high for sensitive goals — vague partner invite copy, never invent a diagnosis. Generate SMS from the goal; only owner can withdraw (withdraw_accountability after confirm). Partners can leave without killing the pact. pause/resume for vacations. log_accountability_checkin on yes/no replies. Read accountability tab with read_profile.
-- Scheduled texts (one-time tonight/tomorrow): call propose_scheduled_text first — state the plan ("I'll text Maya at 7"), wait for yes, then schedule_text. You may schedule for a family member only if household can_view is true (or admin + phone for pending). list_scheduled_texts / cancel_scheduled_text to manage. Never auto-schedule.
+- One-time texts / timers: schedule_text when they already asked (including in N seconds). propose_scheduled_text only if confirm_once applies. list_scheduled_texts / cancel_scheduled_text to manage.
+- Daily habits (shower, bath, meds, routines): start_habit_workflow when they already asked — texts subject, awaits reply, notifies owner on miss (~2h). propose_habit_workflow only if ambiguous. cancel_habit_workflow to stop.
+- Accountability pacts (legacy recurring): start_accountability when they already asked; propose_accountability only if ambiguous. withdraw/pause/resume as before. Read accountability tab with read_profile.
 - Household sharing: only members with can_view can see another member's health profile. revoke_household_access is self-only — minors may revoke immediately after they ask; adults need explicit confirmation (confirmed: true). Never revoke for someone else.
 - Send a Listen link to record and transcribe visits (start_listen).
 - Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
@@ -1797,6 +1873,7 @@ export async function runDoeDtcAgentTurn(params: {
     : "";
   const playbookBlock =
     playbookNotes.length > 0 ? playbookNotes.map((note) => `- ${note}`).join("\n") : "None yet.";
+  const activeWorkflows = await listActiveWorkflowsForUser(params.user.id);
 
   const systemPrompt = buildSystemPrompt({
     user: params.user,
@@ -1818,6 +1895,7 @@ export async function runDoeDtcAgentTurn(params: {
     }),
     accountabilityLog: formatAccountabilityForAgent(snapshot.accountabilityPacts),
     scheduledLog: formatScheduledTextForAgent(snapshot.scheduledTexts.filter((row) => row.status === "pending")),
+    workflowsLog: formatWorkflowsForAgent(activeWorkflows),
     guidesLog:
       recentGuides.length === 0
         ? "None yet."
@@ -2692,7 +2770,7 @@ export async function runDoeDtcAgentTurn(params: {
             send_at: built.sendAtIso,
             send_at_label: formatScheduledSendAtLabel(new Date(built.sendAtIso), timezone),
             recipient: built.recipientName,
-            next_step: "Ask if they want you to text them at that time before calling schedule_text.",
+            next_step: "Only ask for confirmation if a slot is missing or it texts someone else.",
           };
         } else if (toolCall.function.name === "schedule_text") {
           const timezone = normalizeScheduledTimezone(
@@ -2703,36 +2781,52 @@ export async function runDoeDtcAgentTurn(params: {
           const sendAtRaw = String(args.send_at ?? "").trim();
           let rolledForward = false;
           let row;
+          const now = new Date();
+          let sendAt = parseScheduledSendAt(sendAtRaw, now, timezone);
           try {
-            row = await createScheduledText({
-              creator: params.user,
-              intent,
-              body,
-              sendAtRaw,
-              timezone,
-              memberId: typeof args.member_id === "string" ? args.member_id : null,
-              memberName: typeof args.member_name === "string" ? args.member_name : null,
-            });
+            sendAt = ensureFutureSendAt(sendAt, now, timezone);
           } catch {
-            const sendAt = ensureFutureSendAt(
-              parseScheduledSendAt(sendAtRaw, new Date(), timezone),
-              new Date(),
-              timezone,
-            );
-            row = await createScheduledText({
-              creator: params.user,
-              intent,
-              body,
-              sendAtIso: sendAt.toISOString(),
-              timezone,
-              memberId: typeof args.member_id === "string" ? args.member_id : null,
-              memberName: typeof args.member_name === "string" ? args.member_name : null,
-            });
+            sendAt = ensureFutureSendAt(parseScheduledSendAt(sendAtRaw, now, timezone), now, timezone);
             rolledForward = true;
             await addDoeDtcMem0PlaybookNote({
               userId: params.user.id,
               note: "When scheduling reminders, roll past clock times forward one local day instead of treating them as already passed.",
             });
+          }
+
+          if (shouldSendScheduledTextInline(sendAt, now)) {
+            row = await sendScheduledTextInline({
+              creator: params.user,
+              intent,
+              body,
+              sendAt,
+              timezone,
+              memberId: typeof args.member_id === "string" ? args.member_id : null,
+              memberName: typeof args.member_name === "string" ? args.member_name : null,
+            });
+          } else {
+            try {
+              row = await createScheduledText({
+                creator: params.user,
+                intent,
+                body,
+                sendAtRaw,
+                timezone,
+                memberId: typeof args.member_id === "string" ? args.member_id : null,
+                memberName: typeof args.member_name === "string" ? args.member_name : null,
+              });
+            } catch {
+              row = await createScheduledText({
+                creator: params.user,
+                intent,
+                body,
+                sendAtIso: sendAt.toISOString(),
+                timezone,
+                memberId: typeof args.member_id === "string" ? args.member_id : null,
+                memberName: typeof args.member_name === "string" ? args.member_name : null,
+              });
+              rolledForward = true;
+            }
           }
           await clearAgentPending(params.user.id);
           output = {
@@ -2740,6 +2834,8 @@ export async function runDoeDtcAgentTurn(params: {
             scheduled_text_id: row.id,
             send_at: row.send_at,
             recipient_phone: row.recipient_phone,
+            status: row.status,
+            sent_inline: row.status === "sent" && shouldSendScheduledTextInline(new Date(row.send_at), now),
             rolled_forward: rolledForward || undefined,
           };
         } else if (toolCall.function.name === "cancel_scheduled_text") {
@@ -2809,7 +2905,7 @@ export async function runDoeDtcAgentTurn(params: {
             partner_name: typeof args.partner_name === "string" ? args.partner_name : null,
             partner_phone: typeof args.partner_phone === "string" ? args.partner_phone : null,
             mechanics,
-            next_step: "Ask the user to confirm before calling start_accountability.",
+            next_step: "Only ask for confirmation if a slot is missing or it texts someone else.",
           };
         } else if (toolCall.function.name === "start_accountability") {
           const goal = String(args.goal ?? "").trim();
@@ -2849,6 +2945,98 @@ export async function runDoeDtcAgentTurn(params: {
             subject: subjectName,
             link_sent_separately: true,
           };
+        } else if (toolCall.function.name === "propose_habit_workflow") {
+          const goal = String(args.goal ?? "").trim();
+          if (!goal) throw new Error("goal is required.");
+          const subjectName = String(args.subject_name ?? "").trim() || params.user.full_name || "You";
+          const timezone = normalizeScheduledTimezone(
+            typeof args.timezone === "string" ? args.timezone : undefined,
+          );
+          const config = await buildHabitWorkflowConfig({
+            owner: params.user,
+            goal,
+            subjectName,
+            subjectMemberId: typeof args.member_id === "string" ? args.member_id : null,
+            checkInHour: typeof args.check_in_hour === "number" ? args.check_in_hour : undefined,
+            checkInBody: typeof args.check_in_body === "string" ? args.check_in_body : undefined,
+            awaitTimeoutMinutes:
+              typeof args.await_timeout_minutes === "number" ? args.await_timeout_minutes : undefined,
+            timezone,
+          });
+          await setAgentPending({
+            userId: params.user.id,
+            kind: "start_habit_workflow",
+            commitTool: "start_habit_workflow",
+            args: {
+              goal,
+              subject_name: subjectName,
+              check_in_hour: config.check_in_hour,
+              check_in_body: config.check_in_body,
+              await_timeout_minutes: config.await_timeout_minutes,
+              timezone: config.timezone,
+              member_id: typeof args.member_id === "string" ? args.member_id : undefined,
+              member_name: typeof args.member_name === "string" ? args.member_name : undefined,
+            },
+            summary: `Daily habit for ${subjectName}: ${goal}`,
+          });
+          preservePendingOffer = true;
+          output = {
+            ok: true,
+            draft: true,
+            goal,
+            subject_name: subjectName,
+            check_in_hour: config.check_in_hour,
+            await_timeout_minutes: config.await_timeout_minutes,
+            next_step: "Only ask for confirmation if a slot is missing or it texts someone else.",
+          };
+        } else if (toolCall.function.name === "start_habit_workflow") {
+          const goal = String(args.goal ?? "").trim();
+          if (!goal) throw new Error("goal is required.");
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: true,
+          });
+          if ("error" in subject) throw new Error(subject.error);
+          const subjectName =
+            String(args.subject_name ?? "").trim() || subject.subjectMemberName || params.user.full_name || "You";
+          const timezone = normalizeScheduledTimezone(
+            typeof args.timezone === "string" ? args.timezone : undefined,
+          );
+          const config = await buildHabitWorkflowConfig({
+            owner: params.user,
+            goal,
+            subjectName,
+            subjectMemberId: subject.subjectMemberId ?? null,
+            checkInHour: typeof args.check_in_hour === "number" ? args.check_in_hour : undefined,
+            checkInBody: typeof args.check_in_body === "string" ? args.check_in_body : undefined,
+            awaitTimeoutMinutes:
+              typeof args.await_timeout_minutes === "number" ? args.await_timeout_minutes : undefined,
+            timezone,
+          });
+          const workflow = await createHabitWorkflow({
+            owner: params.user,
+            goal,
+            config,
+            subjectMemberId: subject.subjectMemberId ?? null,
+          });
+          await clearAgentPending(params.user.id);
+          output = {
+            ok: true,
+            workflow_id: workflow.id,
+            goal: workflow.goal,
+            subject: config.subject_name,
+            check_in_hour: config.check_in_hour,
+            next_run_at: workflow.next_run_at,
+          };
+        } else if (toolCall.function.name === "cancel_habit_workflow") {
+          const cancelled = await cancelWorkflow({
+            userId: params.user.id,
+            workflowId: typeof args.workflow_id === "string" ? args.workflow_id : undefined,
+            goalHint: typeof args.goal_hint === "string" ? args.goal_hint : undefined,
+          });
+          if (!cancelled) throw new Error("Habit workflow not found.");
+          output = { ok: true, workflow_id: cancelled.id, status: cancelled.status };
         } else if (toolCall.function.name === "invite_accountability_partner") {
           const pactId = String(args.pact_id ?? "").trim();
           const partnerPhone = String(args.partner_phone ?? "").trim();

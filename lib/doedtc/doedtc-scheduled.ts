@@ -2,6 +2,9 @@ import type { DoeDtcScheduledTextRow } from "@/lib/doedtc/doedtc-types";
 
 export const DEFAULT_TIMEZONE = "America/New_York";
 
+/** Sub-minute delays are sent inline (sleep + Linq) instead of waiting for cron. */
+export const INLINE_SCHEDULE_MAX_MS = 45_000;
+
 export function normalizeScheduledTimezone(raw?: string | null): string {
   return typeof raw === "string" && raw.trim() ? raw.trim() : DEFAULT_TIMEZONE;
 }
@@ -159,6 +162,16 @@ export function parseScheduledSendAt(
     return new Date(from.getTime() + Number(inMinutesMatch[1]) * 60 * 1000);
   }
 
+  const inSecondsMatch = lower.match(/^in\s+(\d+)\s+seconds?$/i);
+  if (inSecondsMatch) {
+    return new Date(from.getTime() + Number(inSecondsMatch[1]) * 1000);
+  }
+
+  const forSecondsMatch = lower.match(/^for\s+(\d+)\s+seconds?$/i);
+  if (forSecondsMatch) {
+    return new Date(from.getTime() + Number(forSecondsMatch[1]) * 1000);
+  }
+
   const todayMatch = lower.match(/^today(?:\s+at\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?$/i);
   if (todayMatch) {
     const parts = applyTimeParts(nowParts, todayMatch[1], todayMatch[2], todayMatch[3]);
@@ -200,6 +213,15 @@ export function parseScheduledSendAt(
 
   if (!Number.isNaN(absolute.getTime())) return absolute;
   throw new Error("Could not parse send time.");
+}
+
+export function scheduledDelayMs(sendAt: Date, from = new Date()): number {
+  return Math.max(0, sendAt.getTime() - from.getTime());
+}
+
+export function shouldSendScheduledTextInline(sendAt: Date, from = new Date()): boolean {
+  const delayMs = scheduledDelayMs(sendAt, from);
+  return delayMs > 0 && delayMs < INLINE_SCHEDULE_MAX_MS;
 }
 
 export function agentNowLabel(timezone = DEFAULT_TIMEZONE): string {
