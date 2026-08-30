@@ -25,10 +25,17 @@ import {
   addDoeDtcFamilyMember,
   appendDoeDtcCondition,
   appendDoeDtcMedication,
+  archiveDoeDtcArtifact,
+  createDoeDtcArtifact,
+  findDoeDtcArtifactByTitle,
+  logDoeDtcArtifactEntry,
+  removeDoeDtcArtifactEntry,
   removeDoeDtcCondition,
   removeDoeDtcMedication,
   renameDoeDtcCondition,
   renameDoeDtcMedication,
+  updateDoeDtcArtifact,
+  updateDoeDtcArtifactEntry,
   createDoeDtcListenSession,
   getDoeDtcProfileSnapshot,
   insertDoeDtcMemory,
@@ -267,6 +274,139 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "create_profile_artifact",
+      description:
+        "Create a schema-driven tracker on the user's profile (e.g. Ozempic shots, water intake, mood). Use when they want to track, log, count, or keep a list over time — not for one-off questions. Prefer updating an existing matching tracker instead of creating a duplicate.",
+      parameters: {
+        type: "object",
+        properties: {
+          title: { type: "string", description: "Tracker title, e.g. Ozempic shots." },
+          kind: {
+            type: "string",
+            enum: ["log", "counter", "checklist", "score"],
+            description: "Tracker type. Default log.",
+          },
+          fields: {
+            type: "array",
+            description:
+              "Form fields for each entry. Each item: key, label, type (text|number|select|date|datetime|boolean), optional options array for select, optional boolean optional.",
+            items: {
+              type: "object",
+              properties: {
+                key: { type: "string" },
+                label: { type: "string" },
+                type: {
+                  type: "string",
+                  enum: ["text", "number", "select", "date", "datetime", "boolean"],
+                },
+                optional: { type: "boolean" },
+                options: { type: "array", items: { type: "string" } },
+              },
+              required: ["key", "label", "type"],
+            },
+          },
+        },
+        required: ["title"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "update_profile_artifact",
+      description:
+        "Rename a tracker, change its fields, or archive it. Use artifact_id from read_profile trackers tab.",
+      parameters: {
+        type: "object",
+        properties: {
+          artifact_id: { type: "string", description: "Tracker id." },
+          title: { type: "string", description: "New title." },
+          kind: {
+            type: "string",
+            enum: ["log", "counter", "checklist", "score"],
+          },
+          fields: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                key: { type: "string" },
+                label: { type: "string" },
+                type: {
+                  type: "string",
+                  enum: ["text", "number", "select", "date", "datetime", "boolean"],
+                },
+                optional: { type: "boolean" },
+                options: { type: "array", items: { type: "string" } },
+              },
+              required: ["key", "label", "type"],
+            },
+          },
+          archive: { type: "boolean", description: "Set true to archive this tracker." },
+        },
+        required: ["artifact_id"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "log_artifact_entry",
+      description: "Log a new entry on a profile tracker.",
+      parameters: {
+        type: "object",
+        properties: {
+          artifact_id: { type: "string", description: "Tracker id." },
+          values: {
+            type: "object",
+            description: "Field values keyed by field key.",
+            additionalProperties: true,
+          },
+          occurred_at: {
+            type: "string",
+            description: "Optional ISO datetime for when this happened.",
+          },
+        },
+        required: ["artifact_id", "values"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "update_artifact_entry",
+      description: "Update an existing tracker entry.",
+      parameters: {
+        type: "object",
+        properties: {
+          entry_id: { type: "string", description: "Entry id." },
+          values: {
+            type: "object",
+            additionalProperties: true,
+          },
+          occurred_at: { type: "string" },
+        },
+        required: ["entry_id"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "remove_artifact_entry",
+      description: "Delete a tracker entry.",
+      parameters: {
+        type: "object",
+        properties: {
+          entry_id: { type: "string", description: "Entry id." },
+        },
+        required: ["entry_id"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "remember_fact",
       description:
         "Store a durable preference or context (doctor name, travel plans). Not for symptoms, family chart entries, medications, or conditions.",
@@ -317,7 +457,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "read_profile",
       description:
-        "Read a Doe profile tab (dashboard/integrations, appointments, results, conditions, family, locker, share). Use this to answer questions about what is already saved — Whoop, Apple Health, meds, locker sites, results, share codes. Never invent status. This is a read, not an add.",
+        "Read a Doe profile tab (dashboard/integrations, appointments, results, conditions, family, locker, share, trackers). Use this to answer questions about what is already saved — Whoop, Apple Health, meds, locker sites, results, share codes, custom trackers. Never invent status. This is a read, not an add.",
       parameters: {
         type: "object",
         properties: {
@@ -764,6 +904,8 @@ What you can do:
 - Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
 - If they want to connect Whoop or Apple Health, tell them the current status and send_profile_link so they can tap Connect. Do not treat a status question as an add.
 - Send the profile / dashboard link (send_profile_link).
+- Create profile trackers (create_profile_artifact) when they want to track, log, count, or keep a list over time — e.g. Ozempic shots, water, mood. Do not create trackers for one-off questions. Prefer updating an existing matching tracker over a duplicate. Log entries with log_artifact_entry. Read trackers tab with read_profile.
+- After creating a tracker or logging a useful entry, send_profile_link with tab=trackers and artifact id so they can view/edit it.
 - Browse the web via start_browser_task. For "go to Google and type mayo" (or screenshot the result), call once with url google and intent type mayo — that opens the Google results page and screenshots it. Do not try to type into Google with a CSS selector.
 - Screenshot the current page with browser_snapshot when they ask for a picture, screenshot, or to see the page.
 - Help with patient portals via request_vault or request_live_login — never ask for passwords in iMessage.
@@ -1198,6 +1340,111 @@ export async function runDoeDtcAgentTurn(params: {
           if (!name) throw new Error("Condition name is required.");
           const result = await removeDoeDtcCondition({ userId: params.user.id, name });
           output = { ok: true, name: result.name, removed: result.removed };
+        } else if (toolCall.function.name === "create_profile_artifact") {
+          const title = String(args.title ?? "").trim();
+          if (!title) throw new Error("Tracker title is required.");
+          const existing = await findDoeDtcArtifactByTitle({
+            userId: params.user.id,
+            title,
+          });
+          const row =
+            existing ??
+            (await createDoeDtcArtifact({
+              userId: params.user.id,
+              title,
+              kind:
+                args.kind === "counter" ||
+                args.kind === "checklist" ||
+                args.kind === "score" ||
+                args.kind === "log"
+                  ? args.kind
+                  : undefined,
+              fields: args.fields,
+            }));
+          profileUrl = doeDtcAppUrl(params.user.care_token, {
+            tab: "trackers",
+            artifact: row.id,
+          });
+          output = {
+            ok: true,
+            id: row.id,
+            title: row.title,
+            kind: row.kind,
+            created: !existing,
+            link_sent_separately: true,
+          };
+        } else if (toolCall.function.name === "update_profile_artifact") {
+          const artifactId = String(args.artifact_id ?? "").trim();
+          if (!artifactId) throw new Error("artifact_id is required.");
+          if (args.archive === true) {
+            await archiveDoeDtcArtifact({ userId: params.user.id, artifactId });
+            output = { ok: true, id: artifactId, archived: true };
+          } else {
+            const row = await updateDoeDtcArtifact({
+              userId: params.user.id,
+              artifactId,
+              title: typeof args.title === "string" ? args.title : undefined,
+              kind:
+                args.kind === "counter" ||
+                args.kind === "checklist" ||
+                args.kind === "score" ||
+                args.kind === "log"
+                  ? args.kind
+                  : undefined,
+              fields: args.fields,
+            });
+            profileUrl = doeDtcAppUrl(params.user.care_token, {
+              tab: "trackers",
+              artifact: row.id,
+            });
+            output = {
+              ok: true,
+              id: row.id,
+              title: row.title,
+              kind: row.kind,
+              link_sent_separately: true,
+            };
+          }
+        } else if (toolCall.function.name === "log_artifact_entry") {
+          const artifactId = String(args.artifact_id ?? "").trim();
+          if (!artifactId) throw new Error("artifact_id is required.");
+          const row = await logDoeDtcArtifactEntry({
+            userId: params.user.id,
+            artifactId,
+            values: args.values,
+            occurredAt: typeof args.occurred_at === "string" ? args.occurred_at : null,
+          });
+          profileUrl = doeDtcAppUrl(params.user.care_token, {
+            tab: "trackers",
+            artifact: artifactId,
+          });
+          output = {
+            ok: true,
+            id: row.id,
+            artifact_id: artifactId,
+            occurred_at: row.occurred_at,
+            link_sent_separately: true,
+          };
+        } else if (toolCall.function.name === "update_artifact_entry") {
+          const entryId = String(args.entry_id ?? "").trim();
+          if (!entryId) throw new Error("entry_id is required.");
+          const row = await updateDoeDtcArtifactEntry({
+            userId: params.user.id,
+            entryId,
+            values: args.values,
+            occurredAt: typeof args.occurred_at === "string" ? args.occurred_at : null,
+          });
+          output = {
+            ok: true,
+            id: row.id,
+            artifact_id: row.artifact_id,
+            occurred_at: row.occurred_at,
+          };
+        } else if (toolCall.function.name === "remove_artifact_entry") {
+          const entryId = String(args.entry_id ?? "").trim();
+          if (!entryId) throw new Error("entry_id is required.");
+          await removeDoeDtcArtifactEntry({ userId: params.user.id, entryId });
+          output = { ok: true, id: entryId, removed: true };
         } else if (toolCall.function.name === "remember_fact") {
           const fact = String(args.fact ?? "").trim();
           if (!fact) throw new Error("Fact is required.");

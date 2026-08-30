@@ -5,10 +5,13 @@ import {
   addDoeDtcResult,
   appendDoeDtcCondition,
   appendDoeDtcMedication,
+  archiveDoeDtcArtifact,
   generateDoeDtcShareCode,
   getDoeDtcProfileSnapshot,
   getDoeDtcUserByCareToken,
+  logDoeDtcArtifactEntry,
   removeDoeDtcAppointment,
+  removeDoeDtcArtifactEntry,
   removeDoeDtcCondition,
   removeDoeDtcFamilyMember,
   removeDoeDtcLockerItem,
@@ -16,6 +19,8 @@ import {
   removeDoeDtcResult,
   revokeDoeDtcShareCode,
   setDoeDtcHealthConnectionPending,
+  updateDoeDtcArtifact,
+  updateDoeDtcArtifactEntry,
 } from "@/lib/doedtc/doedtc-db";
 import { normalizeDoeDtcFamilyRelationship, resolveDoeDtcFamilyMemberName } from "@/lib/doedtc/doedtc-family-relationship";
 import type {
@@ -157,6 +162,53 @@ export async function handleDoeDtcProfileAction(params: {
       const name = String(params.payload.name ?? "").trim();
       if (!name) throw new Error("Condition name is required.");
       await removeDoeDtcCondition({ userId: user.id, name });
+      break;
+    }
+    case "add_artifact_entry": {
+      const artifactId = String(params.payload.artifactId ?? "");
+      if (!artifactId) throw new Error("Missing tracker.");
+      await logDoeDtcArtifactEntry({
+        userId: user.id,
+        artifactId,
+        values: params.payload.values,
+        occurredAt:
+          typeof params.payload.occurredAt === "string" ? params.payload.occurredAt : null,
+      });
+      break;
+    }
+    case "update_artifact_entry": {
+      const entryId = String(params.payload.entryId ?? "");
+      if (!entryId) throw new Error("Missing entry.");
+      await updateDoeDtcArtifactEntry({
+        userId: user.id,
+        entryId,
+        values: params.payload.values,
+        occurredAt:
+          typeof params.payload.occurredAt === "string" ? params.payload.occurredAt : null,
+      });
+      break;
+    }
+    case "remove_artifact_entry": {
+      const entryId = String(params.payload.entryId ?? "");
+      if (!entryId) throw new Error("Missing entry.");
+      await removeDoeDtcArtifactEntry({ userId: user.id, entryId });
+      break;
+    }
+    case "update_artifact": {
+      const artifactId = String(params.payload.artifactId ?? "");
+      if (!artifactId) throw new Error("Missing tracker.");
+      await updateDoeDtcArtifact({
+        userId: user.id,
+        artifactId,
+        title: typeof params.payload.title === "string" ? params.payload.title : undefined,
+        fields: params.payload.fields,
+      });
+      break;
+    }
+    case "archive_artifact": {
+      const artifactId = String(params.payload.artifactId ?? "");
+      if (!artifactId) throw new Error("Missing tracker.");
+      await archiveDoeDtcArtifact({ userId: user.id, artifactId });
       break;
     }
     default:

@@ -120,6 +120,50 @@ export type DoeDtcMemoryRow = {
   created_at: string;
 };
 
+export type DoeDtcArtifactKind = "log" | "counter" | "checklist" | "score";
+
+export type DoeDtcArtifactFieldType =
+  | "text"
+  | "number"
+  | "select"
+  | "date"
+  | "datetime"
+  | "boolean";
+
+export type DoeDtcArtifactField = {
+  key: string;
+  label: string;
+  type: DoeDtcArtifactFieldType;
+  optional?: boolean;
+  options?: string[];
+};
+
+export type DoeDtcArtifactConfig = {
+  fields: DoeDtcArtifactField[];
+};
+
+export type DoeDtcArtifactRow = {
+  id: string;
+  user_id: string;
+  slug: string;
+  title: string;
+  kind: DoeDtcArtifactKind;
+  config: DoeDtcArtifactConfig;
+  archived_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DoeDtcArtifactEntryRow = {
+  id: string;
+  artifact_id: string;
+  user_id: string;
+  occurred_at: string;
+  values: Record<string, string | number | boolean>;
+  created_at: string;
+  updated_at: string;
+};
+
 export type DoeDtcProfileSnapshot = {
   user: Pick<
     DoeDtcUserRow,
@@ -136,6 +180,8 @@ export type DoeDtcProfileSnapshot = {
   shareCodes: DoeDtcShareCodeRow[];
   symptoms: DoeDtcSymptomRow[];
   assessments: DoeDtcAssessmentRow[];
+  artifacts: DoeDtcArtifactRow[];
+  artifactEntries: DoeDtcArtifactEntryRow[];
 };
 
 export type DoeDtcMedicationRow = {
@@ -221,7 +267,8 @@ export type DoeDtcProfileTab =
   | "conditions"
   | "family"
   | "locker"
-  | "share";
+  | "share"
+  | "trackers";
 
 export type DoeDtcBrowserJobStatus =
   | "open"

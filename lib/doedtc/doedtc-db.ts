@@ -1,7 +1,18 @@
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { encryptDoeDtcSecret } from "@/lib/doedtc/doedtc-crypto";
+import {
+  defaultArtifactFieldsForTitle,
+  normalizeArtifactConfig,
+  normalizeArtifactFields,
+  normalizeArtifactKind,
+  normalizeArtifactValues,
+  slugifyArtifactTitle,
+} from "@/lib/doedtc/doedtc-artifacts";
 import { createDoeDtcToken, isTokenExpired, onboardingTokenExpiresAt } from "@/lib/doedtc/doedtc-tokens";
 import type {
+  DoeDtcArtifactEntryRow,
+  DoeDtcArtifactKind,
+  DoeDtcArtifactRow,
   DoeDtcAssessmentResult,
   DoeDtcAssessmentRow,
   DoeDtcAppointmentRow,
@@ -481,6 +492,8 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
     shareCodes,
     symptoms,
     assessments,
+    artifacts,
+    artifactEntries,
   ] = await Promise.all([
     supabase
       .from("doedtc_users")
@@ -511,6 +524,8 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
       .order("created_at", { ascending: false }),
     listDoeDtcSymptoms(userId, 8),
     listDoeDtcAssessments(userId, 3),
+    listDoeDtcArtifacts(userId),
+    listDoeDtcArtifactEntriesForUser(userId, 120),
   ]);
 
   if (userResult.error) throw new Error(userResult.error.message);
@@ -528,7 +543,289 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
     shareCodes: (shareCodes.data as DoeDtcShareCodeRow[]) ?? [],
     symptoms,
     assessments,
+    artifacts,
+    artifactEntries,
   };
+}
+
+function mapArtifactRow(row: Record<string, unknown>): DoeDtcArtifactRow {
+  return {
+    ...(row as DoeDtcArtifactRow),
+    config: normalizeArtifactConfig(row.config),
+  };
+}
+
+function mapArtifactEntryRow(row: Record<string, unknown>): DoeDtcArtifactEntryRow {
+  const values = row.values;
+  return {
+    ...(row as DoeDtcArtifactEntryRow),
+    values:
+      values && typeof values === "object" && !Array.isArray(values)
+        ? (values as Record<string, string | number | boolean>)
+        : {},
+  };
+}
+
+async function uniqueArtifactSlug(userId: string, title: string): Promise<string> {
+  const base = slugifyArtifactTitle(title);
+  const supabase = createSupabaseAdmin();
+  let slug = base;
+  let suffix = 2;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("doedtc_artifacts")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("slug", slug)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!data) return slug;
+    slug = `${base}-${suffix}`;
+    suffix += 1;
+  }
+}
+
+export async function listDoeDtcArtifacts(userId: string): Promise<DoeDtcArtifactRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_artifacts")
+    .select("*")
+    .eq("user_id", userId)
+    .is("archived_at", null)
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return ((data as Record<string, unknown>[]) ?? []).map(mapArtifactRow);
+}
+
+export async function getDoeDtcArtifactById(params: {
+  userId: string;
+  artifactId: string;
+}): Promise<DoeDtcArtifactRow | null> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_artifacts")
+    .select("*")
+    .eq("user_id", params.userId)
+    .eq("id", params.artifactId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data ? mapArtifactRow(data as Record<string, unknown>) : null;
+}
+
+export async function findDoeDtcArtifactByTitle(params: {
+  userId: string;
+  title: string;
+}): Promise<DoeDtcArtifactRow | null> {
+  const title = params.title.trim();
+  if (!title) return null;
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_artifacts")
+    .select("*")
+    .eq("user_id", params.userId)
+    .is("archived_at", null)
+    .ilike("title", title)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data ? mapArtifactRow(data as Record<string, unknown>) : null;
+}
+
+export async function createDoeDtcArtifact(params: {
+  userId: string;
+  title: string;
+  kind?: DoeDtcArtifactKind;
+  fields?: unknown;
+}): Promise<DoeDtcArtifactRow> {
+  const title = params.title.trim();
+  if (!title) throw new Error("Tracker title is required.");
+  const fields = normalizeArtifactFields(params.fields ?? defaultArtifactFieldsForTitle(title));
+  const slug = await uniqueArtifactSlug(params.userId, title);
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_artifacts")
+    .insert({
+      user_id: params.userId,
+      slug,
+      title,
+      kind: normalizeArtifactKind(params.kind),
+      config: { fields },
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return mapArtifactRow(data as Record<string, unknown>);
+}
+
+export async function updateDoeDtcArtifact(params: {
+  userId: string;
+  artifactId: string;
+  title?: string;
+  kind?: DoeDtcArtifactKind;
+  fields?: unknown;
+}): Promise<DoeDtcArtifactRow> {
+  const artifact = await getDoeDtcArtifactById({
+    userId: params.userId,
+    artifactId: params.artifactId,
+  });
+  if (!artifact) throw new Error("Tracker not found.");
+
+  const patch: Record<string, unknown> = {
+    updated_at: new Date().toISOString(),
+  };
+  if (typeof params.title === "string" && params.title.trim()) {
+    patch.title = params.title.trim();
+  }
+  if (params.kind) {
+    patch.kind = normalizeArtifactKind(params.kind);
+  }
+  if (params.fields !== undefined) {
+    patch.config = { fields: normalizeArtifactFields(params.fields) };
+  }
+
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_artifacts")
+    .update(patch)
+    .eq("user_id", params.userId)
+    .eq("id", params.artifactId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return mapArtifactRow(data as Record<string, unknown>);
+}
+
+export async function archiveDoeDtcArtifact(params: {
+  userId: string;
+  artifactId: string;
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("doedtc_artifacts")
+    .update({
+      archived_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("user_id", params.userId)
+    .eq("id", params.artifactId);
+  if (error) throw new Error(error.message);
+}
+
+export async function listDoeDtcArtifactEntries(params: {
+  userId: string;
+  artifactId: string;
+  limit?: number;
+}): Promise<DoeDtcArtifactEntryRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_artifact_entries")
+    .select("*")
+    .eq("user_id", params.userId)
+    .eq("artifact_id", params.artifactId)
+    .order("occurred_at", { ascending: false })
+    .limit(params.limit ?? 50);
+  if (error) throw new Error(error.message);
+  return ((data as Record<string, unknown>[]) ?? []).map(mapArtifactEntryRow);
+}
+
+export async function listDoeDtcArtifactEntriesForUser(
+  userId: string,
+  limit = 120,
+): Promise<DoeDtcArtifactEntryRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_artifact_entries")
+    .select("*")
+    .eq("user_id", userId)
+    .order("occurred_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return ((data as Record<string, unknown>[]) ?? []).map(mapArtifactEntryRow);
+}
+
+export async function logDoeDtcArtifactEntry(params: {
+  userId: string;
+  artifactId: string;
+  values?: unknown;
+  occurredAt?: string | null;
+}): Promise<DoeDtcArtifactEntryRow> {
+  const artifact = await getDoeDtcArtifactById({
+    userId: params.userId,
+    artifactId: params.artifactId,
+  });
+  if (!artifact) throw new Error("Tracker not found.");
+  if (artifact.archived_at) throw new Error("Tracker is archived.");
+
+  const values = normalizeArtifactValues(artifact.config.fields, params.values ?? {});
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_artifact_entries")
+    .insert({
+      artifact_id: params.artifactId,
+      user_id: params.userId,
+      occurred_at: params.occurredAt ?? new Date().toISOString(),
+      values,
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return mapArtifactEntryRow(data as Record<string, unknown>);
+}
+
+export async function updateDoeDtcArtifactEntry(params: {
+  userId: string;
+  entryId: string;
+  values?: unknown;
+  occurredAt?: string | null;
+}): Promise<DoeDtcArtifactEntryRow> {
+  const supabase = createSupabaseAdmin();
+  const { data: existing, error: existingError } = await supabase
+    .from("doedtc_artifact_entries")
+    .select("*")
+    .eq("user_id", params.userId)
+    .eq("id", params.entryId)
+    .maybeSingle();
+  if (existingError) throw new Error(existingError.message);
+  if (!existing) throw new Error("Entry not found.");
+
+  const artifact = await getDoeDtcArtifactById({
+    userId: params.userId,
+    artifactId: String(existing.artifact_id),
+  });
+  if (!artifact) throw new Error("Tracker not found.");
+
+  const patch: Record<string, unknown> = {
+    updated_at: new Date().toISOString(),
+  };
+  if (params.values !== undefined) {
+    patch.values = normalizeArtifactValues(artifact.config.fields, params.values);
+  }
+  if (params.occurredAt) {
+    patch.occurred_at = params.occurredAt;
+  }
+
+  const { data, error } = await supabase
+    .from("doedtc_artifact_entries")
+    .update(patch)
+    .eq("user_id", params.userId)
+    .eq("id", params.entryId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return mapArtifactEntryRow(data as Record<string, unknown>);
+}
+
+export async function removeDoeDtcArtifactEntry(params: {
+  userId: string;
+  entryId: string;
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("doedtc_artifact_entries")
+    .delete()
+    .eq("user_id", params.userId)
+    .eq("id", params.entryId);
+  if (error) throw new Error(error.message);
 }
 
 export async function addDoeDtcFamilyMember(params: {

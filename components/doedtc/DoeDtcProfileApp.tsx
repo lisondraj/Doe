@@ -3,11 +3,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { DoeDtcNav } from "@/components/doedtc/DoeDtcNav";
+import { DoeDtcArtifactView } from "@/components/doedtc/DoeDtcArtifactView";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import {
   DOEDTC_GET_STARTED,
   DOEDTC_PROFILE,
 } from "@/lib/doedtc/doedtc-copy";
+import { formatArtifactEntryValues } from "@/lib/doedtc/doedtc-artifacts";
 import type {
   DoeDtcFamilyRelationship,
   DoeDtcHealthProvider,
@@ -75,6 +77,7 @@ type DoeDtcProfileAppProps = {
   valid: boolean;
   initialSnapshot: DoeDtcProfileSnapshot | null;
   initialTab: DoeDtcProfileTab;
+  initialArtifactId?: string | null;
 };
 
 export function DoeDtcProfileApp({
@@ -82,9 +85,11 @@ export function DoeDtcProfileApp({
   valid,
   initialSnapshot,
   initialTab,
+  initialArtifactId = null,
 }: DoeDtcProfileAppProps) {
   const [tab, setTab] = useState<DoeDtcProfileTab>(initialTab);
   const [snapshot, setSnapshot] = useState(initialSnapshot);
+  const [focusedArtifactId, setFocusedArtifactId] = useState<string | null>(initialArtifactId);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -146,6 +151,12 @@ export function DoeDtcProfileApp({
   }, [refetchSnapshot]);
 
   useEffect(() => {
+    if (initialArtifactId) {
+      setFocusedArtifactId(initialArtifactId);
+    }
+  }, [initialArtifactId]);
+
+  useEffect(() => {
     void refetchSnapshot();
   }, [tab, refetchSnapshot]);
 
@@ -172,7 +183,15 @@ export function DoeDtcProfileApp({
       {error ? <p className="doedtc-error">{error}</p> : null}
 
       {tab === "dashboard" ? (
-        <DashboardTab snapshot={snapshot} busy={busy} onAction={runAction} />
+        <DashboardTab
+          snapshot={snapshot}
+          busy={busy}
+          onAction={runAction}
+          onOpenTrackers={(artifactId) => {
+            setFocusedArtifactId(artifactId ?? null);
+            setTab("trackers");
+          }}
+        />
       ) : null}
       {tab === "appointments" ? (
         <AppointmentsTab snapshot={snapshot} busy={busy} onAction={runAction} />
@@ -184,6 +203,15 @@ export function DoeDtcProfileApp({
       {tab === "family" ? <FamilyTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
       {tab === "locker" ? <LockerTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
       {tab === "share" ? <ShareTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
+      {tab === "trackers" ? (
+        <TrackersTab
+          snapshot={snapshot}
+          busy={busy}
+          onAction={runAction}
+          focusedArtifactId={focusedArtifactId}
+          onFocusArtifact={setFocusedArtifactId}
+        />
+      ) : null}
     </DoeDtcPageShell>
   );
 }
@@ -272,7 +300,19 @@ function MedicalListEditor({
   );
 }
 
-function DashboardTab({ snapshot, busy, onAction }: TabProps) {
+function DashboardTab({
+  snapshot,
+  busy,
+  onAction,
+  onOpenTrackers,
+}: TabProps & { onOpenTrackers: (artifactId?: string | null) => void }) {
+  const trackerCards = snapshot.artifacts.map((artifact) => {
+    const lastEntry = snapshot.artifactEntries
+      .filter((entry) => entry.artifact_id === artifact.id)
+      .sort((a, b) => b.occurred_at.localeCompare(a.occurred_at))[0];
+    return { artifact, lastEntry };
+  });
+
   return (
     <div>
       <div className="doedtc-card doedtc-card--flat">
@@ -305,6 +345,29 @@ function DashboardTab({ snapshot, busy, onAction }: TabProps) {
           </div>
         </div>
       </div>
+
+      {trackerCards.length > 0 ? (
+        <div className="doedtc-section">
+          <h2 className="doedtc-section-title">{DOEDTC_PROFILE.trackersDashboardTitle}</h2>
+          <div className="doedtc-tracker-strip">
+            {trackerCards.map(({ artifact, lastEntry }) => (
+              <button
+                key={artifact.id}
+                type="button"
+                className="doedtc-card doedtc-card--flat doedtc-tracker-card"
+                onClick={() => onOpenTrackers(artifact.id)}
+              >
+                <strong>{artifact.title}</strong>
+                <p className="doedtc-muted">
+                  {lastEntry
+                    ? formatArtifactEntryValues(artifact, lastEntry.values)
+                    : DOEDTC_PROFILE.trackersNoEntries}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <div className="doedtc-section">
         <h2 className="doedtc-section-title">{DOEDTC_PROFILE.dashboardIntegrationsLabel}</h2>
@@ -848,6 +911,65 @@ function ShareTab({ snapshot, busy, onAction }: TabProps) {
       >
         {DOEDTC_PROFILE.shareGenerateLabel}
       </button>
+    </div>
+  );
+}
+
+function TrackersTab({
+  snapshot,
+  busy,
+  onAction,
+  focusedArtifactId,
+  onFocusArtifact,
+}: TabProps & {
+  focusedArtifactId: string | null;
+  onFocusArtifact: (artifactId: string | null) => void;
+}) {
+  const activeArtifact =
+    snapshot.artifacts.find((artifact) => artifact.id === focusedArtifactId) ??
+    snapshot.artifacts[0] ??
+    null;
+
+  return (
+    <div>
+      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.trackersTitle}</h2>
+      {snapshot.artifacts.length === 0 ? (
+        <p className="doedtc-empty">{DOEDTC_PROFILE.trackersEmpty}</p>
+      ) : (
+        <>
+          {snapshot.artifacts.length > 1 ? (
+            <div className="doedtc-artifact-picker" role="tablist" aria-label="Trackers">
+              {snapshot.artifacts.map((artifact) => (
+                <button
+                  key={artifact.id}
+                  type="button"
+                  aria-current={activeArtifact?.id === artifact.id ? "true" : undefined}
+                  onClick={() => onFocusArtifact(artifact.id)}
+                >
+                  {artifact.title}
+                </button>
+              ))}
+            </div>
+          ) : null}
+          {activeArtifact ? (
+            <DoeDtcArtifactView
+              artifact={activeArtifact}
+              entries={snapshot.artifactEntries.filter(
+                (entry) => entry.artifact_id === activeArtifact.id,
+              )}
+              busy={busy}
+              onAction={async (action, payload) => {
+                await onAction(action, payload);
+                if (action === "archive_artifact") {
+                  onFocusArtifact(null);
+                }
+              }}
+            />
+          ) : (
+            <p className="doedtc-muted">{DOEDTC_PROFILE.trackersSelectTracker}</p>
+          )}
+        </>
+      )}
     </div>
   );
 }

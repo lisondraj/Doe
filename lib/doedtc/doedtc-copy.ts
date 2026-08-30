@@ -60,6 +60,7 @@ export const DOEDTC_PROFILE = {
   navFamily: "Family",
   navLocker: "Locker",
   navShare: "Share",
+  navTrackers: "Trackers",
   invalidTokenTitle: "Profile unavailable",
   invalidTokenBody: "Complete Get Started in iMessage to access your profile.",
   dashboardWhyLabel: "Why Doe",
@@ -116,6 +117,14 @@ export const DOEDTC_PROFILE = {
   removeLabel: "Remove",
   saveLabel: "Save",
   savingLabel: "Saving…",
+  trackersTitle: "Trackers",
+  trackersEmpty: "No trackers yet. Ask Doe in iMessage to track something — like Ozempic shots or daily symptoms.",
+  trackersDashboardTitle: "Trackers",
+  trackersAddEntryLabel: "Add entry",
+  trackersArchiveLabel: "Archive tracker",
+  trackersLastEntryLabel: "Last entry",
+  trackersNoEntries: "No entries yet.",
+  trackersSelectTracker: "Select a tracker",
 } as const;
 
 export const DOEDTC_LISTEN = {
@@ -213,8 +222,15 @@ export function doeDtcCareUrl(token: string): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/care?t=${encodeURIComponent(token)}`;
 }
 
-export function doeDtcAppUrl(token: string): string {
-  return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/app?t=${encodeURIComponent(token)}`;
+export function doeDtcAppUrl(
+  token: string,
+  options?: { tab?: string; artifact?: string },
+): string {
+  const url = new URL(`${doeDtcPublicOrigin()}${DOEDTC_PATH}/app`);
+  url.searchParams.set("t", token);
+  if (options?.tab) url.searchParams.set("tab", options.tab);
+  if (options?.artifact) url.searchParams.set("artifact", options.artifact);
+  return url.toString();
 }
 
 export function doeDtcListenUrl(careToken: string, sessionId: string): string {

@@ -52,10 +52,11 @@ const VALID_TABS = new Set<DoeDtcProfileTab>([
   "family",
   "locker",
   "share",
+  "trackers",
 ]);
 
 type PageProps = {
-  searchParams: Promise<{ t?: string; tab?: string }>;
+  searchParams: Promise<{ t?: string; tab?: string; artifact?: string }>;
 };
 
 export default async function DoeDtcAppPage({ searchParams }: PageProps) {
@@ -65,6 +66,7 @@ export default async function DoeDtcAppPage({ searchParams }: PageProps) {
   const initialTab = VALID_TABS.has(tabParam as DoeDtcProfileTab)
     ? (tabParam as DoeDtcProfileTab)
     : "dashboard";
+  const initialArtifactId = params.artifact?.trim() || null;
 
   let valid = false;
   let snapshot: DoeDtcProfileSnapshot | null = null;
@@ -88,6 +90,7 @@ export default async function DoeDtcAppPage({ searchParams }: PageProps) {
       valid={valid}
       initialSnapshot={snapshot}
       initialTab={initialTab}
+      initialArtifactId={initialArtifactId}
     />
   );
 }

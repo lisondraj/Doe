@@ -1,4 +1,5 @@
 import { formatDoeDtcAppointmentWhen } from "@/lib/doedtc/doedtc-appointment-timing";
+import { formatArtifactEntryValues } from "@/lib/doedtc/doedtc-artifacts";
 import { getDoeDtcProfileSnapshot } from "@/lib/doedtc/doedtc-db";
 import type {
   DoeDtcHealthConnectionStatus,
@@ -15,6 +16,7 @@ export const DOEDTC_PROFILE_READ_TABS = [
   "family",
   "locker",
   "share",
+  "trackers",
 ] as const satisfies readonly DoeDtcProfileTab[];
 
 const HEALTH_PROVIDERS: Array<{ id: DoeDtcHealthProvider; label: string }> = [
@@ -132,6 +134,28 @@ function formatShareTab(snapshot: DoeDtcProfileSnapshot): string {
     .join("\n");
 }
 
+function formatTrackersTab(snapshot: DoeDtcProfileSnapshot): string {
+  if (snapshot.artifacts.length === 0) return "No trackers yet.";
+  return snapshot.artifacts
+    .map((artifact) => {
+      const entries = snapshot.artifactEntries
+        .filter((entry) => entry.artifact_id === artifact.id)
+        .slice(0, 5);
+      const entryLines =
+        entries.length === 0
+          ? "  (no entries yet)"
+          : entries
+              .map((entry) => {
+                const when = entry.occurred_at.slice(0, 16).replace("T", " ");
+                const summary = formatArtifactEntryValues(artifact, entry.values);
+                return `  - ${when} | ${summary} | id: ${entry.id}`;
+              })
+              .join("\n");
+      return `- ${artifact.title} (${artifact.kind}) | id: ${artifact.id}\n${entryLines}`;
+    })
+    .join("\n");
+}
+
 export function formatDoeDtcProfileTab(
   snapshot: DoeDtcProfileSnapshot,
   tab: DoeDtcProfileTab,
@@ -151,6 +175,8 @@ export function formatDoeDtcProfileTab(
       return formatLockerTab(snapshot);
     case "share":
       return formatShareTab(snapshot);
+    case "trackers":
+      return formatTrackersTab(snapshot);
     default:
       return "Unknown profile tab.";
   }
@@ -171,6 +197,11 @@ export function formatDoeDtcProfileOverview(snapshot: DoeDtcProfileSnapshot): st
     }`,
     `Share codes: ${snapshot.shareCodes.length === 0 ? "None active" : `${snapshot.shareCodes.length} active`}`,
     `Listen: ${listenPending} pending, ${listenDone} completed`,
+    `Trackers: ${
+      snapshot.artifacts.length === 0
+        ? "None yet"
+        : snapshot.artifacts.map((row) => row.title).join(", ")
+    }`,
   ].join("\n");
 }
 

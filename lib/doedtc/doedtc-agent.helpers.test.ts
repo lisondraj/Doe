@@ -176,6 +176,8 @@ test("formatDoeDtcProfileTab reads Whoop from the dashboard tab", () => {
     shareCodes: [],
     symptoms: [],
     assessments: [],
+    artifacts: [],
+    artifactEntries: [],
   };
   const dashboard = formatDoeDtcProfileTab(snapshot, "dashboard");
   assert.match(dashboard, /Whoop: not connected/);
