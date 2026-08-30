@@ -25,6 +25,10 @@ import {
   addDoeDtcFamilyMember,
   appendDoeDtcCondition,
   appendDoeDtcMedication,
+  removeDoeDtcCondition,
+  removeDoeDtcMedication,
+  renameDoeDtcCondition,
+  renameDoeDtcMedication,
   createDoeDtcListenSession,
   getDoeDtcProfileSnapshot,
   insertDoeDtcMemory,
@@ -175,7 +179,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "add_medication",
       description:
-        "Add a medication to the user's profile. Call when they mention a medicine they take. Never use remember_fact for medications.",
+        "Add a medication to the user's profile. Call when they mention a medicine they take. Never use remember_fact for medications. If they are changing an existing medication, use update_medication instead.",
       parameters: {
         type: "object",
         properties: {
@@ -190,11 +194,71 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "add_condition",
       description:
-        "Add a medical condition or diagnosis to the user's profile. Call when they mention a condition they have. Never use remember_fact for conditions.",
+        "Add a medical condition or diagnosis to the user's profile. Call when they mention a condition they have. Never use remember_fact for conditions. If they are changing an existing condition, use update_condition instead.",
       parameters: {
         type: "object",
         properties: {
           name: { type: "string", description: "Condition name, e.g. Asthma." },
+        },
+        required: ["name"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "update_medication",
+      description:
+        "Replace an existing medication name on the profile. Use when they correct or change a medication. Do not add a second copy.",
+      parameters: {
+        type: "object",
+        properties: {
+          from: { type: "string", description: "Current medication name on the profile." },
+          to: { type: "string", description: "Replacement medication name." },
+        },
+        required: ["from", "to"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "remove_medication",
+      description: "Remove a medication from the profile.",
+      parameters: {
+        type: "object",
+        properties: {
+          name: { type: "string", description: "Medication name to remove." },
+        },
+        required: ["name"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "update_condition",
+      description:
+        "Replace an existing condition name on the profile. Use when they correct or change a condition. Do not add a second copy.",
+      parameters: {
+        type: "object",
+        properties: {
+          from: { type: "string", description: "Current condition name on the profile." },
+          to: { type: "string", description: "Replacement condition name." },
+        },
+        required: ["from", "to"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "remove_condition",
+      description: "Remove a medical condition from the profile.",
+      parameters: {
+        type: "object",
+        properties: {
+          name: { type: "string", description: "Condition name to remove." },
         },
         required: ["name"],
       },
@@ -693,6 +757,8 @@ ${params.assessmentHistory}
 What you can do:
 - Log symptoms, run structured reviews, track appointments and family members.
 - Add medications (add_medication) and conditions (add_condition) to the profile.
+- To change a medication or condition, use update_medication / update_condition. Never add a second copy and leave the old name.
+- To delete one, use remove_medication / remove_condition.
 - Add family members to the Family chart (log_family_member) — never remember_fact for family.
 - Send a Listen link to record and transcribe visits (start_listen).
 - Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
@@ -731,6 +797,7 @@ Safety:
 - For approximate appointments, repeat the user's vague wording — never convert to an exact datetime.
 - Use log_family_member for every family chart entry. Use relationship child for sons/daughters. If names are missing, use full_name Child.
 - Use add_medication and add_condition for profile medical info — never remember_fact for those.
+- When the patient corrects a med or condition, update or remove the existing row. Do not leave the old name on the profile.
 - Never claim a definitive diagnosis. Flag emergencies clearly.
 - Irreversible browser actions need request_commit, then the patient replies CONFIRM.
 - After useful browser findings, you may store a one-line outcome via remember_fact.`;
@@ -1104,11 +1171,33 @@ export async function runDoeDtcAgentTurn(params: {
           if (!name) throw new Error("Medication name is required.");
           const result = await appendDoeDtcMedication({ userId: params.user.id, name });
           output = { ok: true, name: result.name, added: result.added };
+        } else if (toolCall.function.name === "update_medication") {
+          const from = String(args.from ?? "").trim();
+          const to = String(args.to ?? "").trim();
+          if (!from || !to) throw new Error("Both medication names are required.");
+          const result = await renameDoeDtcMedication({ userId: params.user.id, from, to });
+          output = { ok: true, from: result.from, to: result.to, updated: result.updated };
+        } else if (toolCall.function.name === "remove_medication") {
+          const name = String(args.name ?? "").trim();
+          if (!name) throw new Error("Medication name is required.");
+          const result = await removeDoeDtcMedication({ userId: params.user.id, name });
+          output = { ok: true, name: result.name, removed: result.removed };
         } else if (toolCall.function.name === "add_condition") {
           const name = String(args.name ?? "").trim();
           if (!name) throw new Error("Condition name is required.");
           const result = await appendDoeDtcCondition({ userId: params.user.id, name });
           output = { ok: true, name: result.name, added: result.added };
+        } else if (toolCall.function.name === "update_condition") {
+          const from = String(args.from ?? "").trim();
+          const to = String(args.to ?? "").trim();
+          if (!from || !to) throw new Error("Both condition names are required.");
+          const result = await renameDoeDtcCondition({ userId: params.user.id, from, to });
+          output = { ok: true, from: result.from, to: result.to, updated: result.updated };
+        } else if (toolCall.function.name === "remove_condition") {
+          const name = String(args.name ?? "").trim();
+          if (!name) throw new Error("Condition name is required.");
+          const result = await removeDoeDtcCondition({ userId: params.user.id, name });
+          output = { ok: true, name: result.name, removed: result.removed };
         } else if (toolCall.function.name === "remember_fact") {
           const fact = String(args.fact ?? "").trim();
           if (!fact) throw new Error("Fact is required.");

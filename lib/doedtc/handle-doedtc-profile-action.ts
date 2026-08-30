@@ -3,16 +3,19 @@ import {
   addDoeDtcFamilyMember,
   addDoeDtcLockerItem,
   addDoeDtcResult,
+  appendDoeDtcCondition,
+  appendDoeDtcMedication,
   generateDoeDtcShareCode,
   getDoeDtcProfileSnapshot,
   getDoeDtcUserByCareToken,
   removeDoeDtcAppointment,
+  removeDoeDtcCondition,
   removeDoeDtcFamilyMember,
   removeDoeDtcLockerItem,
+  removeDoeDtcMedication,
   removeDoeDtcResult,
   revokeDoeDtcShareCode,
   setDoeDtcHealthConnectionPending,
-  updateDoeDtcMedicalProfile,
 } from "@/lib/doedtc/doedtc-db";
 import { normalizeDoeDtcFamilyRelationship, resolveDoeDtcFamilyMemberName } from "@/lib/doedtc/doedtc-family-relationship";
 import type {
@@ -20,15 +23,6 @@ import type {
   DoeDtcHealthProvider,
   DoeDtcProfileSnapshot,
 } from "@/lib/doedtc/doedtc-types";
-
-function cleanList(values: unknown): string[] {
-  if (!Array.isArray(values)) return [];
-  return values
-    .filter((value): value is string => typeof value === "string")
-    .map((value) => value.trim())
-    .filter(Boolean)
-    .slice(0, 30);
-}
 
 const PROVIDERS = new Set<DoeDtcHealthProvider>(["whoop", "apple_health"]);
 
@@ -141,13 +135,30 @@ export async function handleDoeDtcProfileAction(params: {
       await revokeDoeDtcShareCode({ userId: user.id, shareCodeId });
       break;
     }
-    case "update_medical":
-      await updateDoeDtcMedicalProfile({
-        userId: user.id,
-        medications: cleanList(params.payload.medications),
-        conditions: cleanList(params.payload.conditions),
-      });
+    case "add_medication": {
+      const name = String(params.payload.name ?? "").trim();
+      if (!name) throw new Error("Medication name is required.");
+      await appendDoeDtcMedication({ userId: user.id, name });
       break;
+    }
+    case "remove_medication": {
+      const name = String(params.payload.name ?? "").trim();
+      if (!name) throw new Error("Medication name is required.");
+      await removeDoeDtcMedication({ userId: user.id, name });
+      break;
+    }
+    case "add_condition": {
+      const name = String(params.payload.name ?? "").trim();
+      if (!name) throw new Error("Condition name is required.");
+      await appendDoeDtcCondition({ userId: user.id, name });
+      break;
+    }
+    case "remove_condition": {
+      const name = String(params.payload.name ?? "").trim();
+      if (!name) throw new Error("Condition name is required.");
+      await removeDoeDtcCondition({ userId: user.id, name });
+      break;
+    }
     default:
       throw new Error("Unknown action.");
   }

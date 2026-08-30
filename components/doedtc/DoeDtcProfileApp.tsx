@@ -116,28 +116,38 @@ export function DoeDtcProfileApp({
     [token],
   );
 
-  useEffect(() => {
-    if (!valid) return undefined;
-
-    async function refetchSnapshot() {
-      if (document.visibilityState !== "visible") return;
-      try {
-        const response = await fetch(`/api/doedtc/profile?t=${encodeURIComponent(token)}`);
-        const json = (await response.json()) as {
-          ok?: boolean;
-          snapshot?: DoeDtcProfileSnapshot;
-        };
-        if (response.ok && json.ok && json.snapshot) {
-          setSnapshot(json.snapshot);
-        }
-      } catch {
-        // Ignore background refresh failures.
+  const refetchSnapshot = useCallback(async () => {
+    if (!valid) return;
+    try {
+      const response = await fetch(`/api/doedtc/profile?t=${encodeURIComponent(token)}`, {
+        cache: "no-store",
+      });
+      const json = (await response.json()) as {
+        ok?: boolean;
+        snapshot?: DoeDtcProfileSnapshot;
+      };
+      if (response.ok && json.ok && json.snapshot) {
+        setSnapshot(json.snapshot);
       }
+    } catch {
+      // Ignore background refresh failures.
+    }
+  }, [token, valid]);
+
+  useEffect(() => {
+    void refetchSnapshot();
+
+    function onVisibility() {
+      if (document.visibilityState === "visible") void refetchSnapshot();
     }
 
-    document.addEventListener("visibilitychange", refetchSnapshot);
-    return () => document.removeEventListener("visibilitychange", refetchSnapshot);
-  }, [token, valid]);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [refetchSnapshot]);
+
+  useEffect(() => {
+    void refetchSnapshot();
+  }, [tab, refetchSnapshot]);
 
   const greeting = useMemo(() => snapshot?.user.full_name?.trim() || "Your profile", [snapshot]);
 
@@ -168,7 +178,9 @@ export function DoeDtcProfileApp({
         <AppointmentsTab snapshot={snapshot} busy={busy} onAction={runAction} />
       ) : null}
       {tab === "results" ? <ResultsTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
-      {tab === "conditions" ? <ConditionsTab snapshot={snapshot} /> : null}
+      {tab === "conditions" ? (
+        <ConditionsTab snapshot={snapshot} busy={busy} onAction={runAction} />
+      ) : null}
       {tab === "family" ? <FamilyTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
       {tab === "locker" ? <LockerTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
       {tab === "share" ? <ShareTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
@@ -182,18 +194,85 @@ type TabProps = {
   onAction: (action: string, payload?: Record<string, unknown>) => Promise<void>;
 };
 
+function MedicalListEditor({
+  label,
+  placeholder,
+  values,
+  addAction,
+  removeAction,
+  busy,
+  onAction,
+}: {
+  label: string;
+  placeholder: string;
+  values: string[];
+  addAction: string;
+  removeAction: string;
+  busy: boolean;
+  onAction: (action: string, payload?: Record<string, unknown>) => Promise<void>;
+}) {
+  const [draft, setDraft] = useState("");
+
+  async function addValue() {
+    const next = draft.trim();
+    if (!next || values.some((value) => value.toLowerCase() === next.toLowerCase())) {
+      setDraft("");
+      return;
+    }
+    await onAction(addAction, { name: next });
+    setDraft("");
+  }
+
+  return (
+    <div>
+      <p className="doedtc-label">{label}</p>
+      {values.length === 0 ? (
+        <p className="doedtc-muted">{DOEDTC_PROFILE.dashboardMedicalDeferred}</p>
+      ) : (
+        <div className="doedtc-tag-list">
+          {values.map((value) => (
+            <span className="doedtc-tag" key={value.toLowerCase()}>
+              {value}
+              <button
+                type="button"
+                aria-label={`Remove ${value}`}
+                disabled={busy}
+                onClick={() => onAction(removeAction, { name: value })}
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+      <div className="doedtc-add-row" style={{ marginTop: "0.75rem" }}>
+        <input
+          className="doedtc-input"
+          value={draft}
+          placeholder={placeholder}
+          disabled={busy}
+          onChange={(event) => setDraft(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              void addValue();
+            }
+          }}
+        />
+        <button
+          className="doedtc-button doedtc-button--secondary doedtc-button--inline"
+          type="button"
+          disabled={busy}
+          onClick={() => void addValue()}
+        >
+          Add
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function DashboardTab({ snapshot, busy, onAction }: TabProps) {
-  const [showMedicalForm, setShowMedicalForm] = useState(false);
-  const [medDraft, setMedDraft] = useState("");
-  const [conditionDraft, setConditionDraft] = useState("");
-  const [medications, setMedications] = useState(snapshot.medications);
-  const [conditions, setConditions] = useState(snapshot.conditions);
-
-  useEffect(() => {
-    setMedications(snapshot.medications);
-    setConditions(snapshot.conditions);
-  }, [snapshot.medications, snapshot.conditions]);
-
   return (
     <div>
       <div className="doedtc-card doedtc-card--flat">
@@ -203,97 +282,28 @@ function DashboardTab({ snapshot, busy, onAction }: TabProps) {
 
       <div className="doedtc-section">
         <h2 className="doedtc-section-title">{DOEDTC_PROFILE.dashboardMedicalLabel}</h2>
-        {snapshot.user.medical_deferred && medications.length === 0 && conditions.length === 0 ? (
-          <div className="doedtc-card">
-            <p className="doedtc-muted">{DOEDTC_PROFILE.dashboardMedicalDeferred}</p>
-            {!showMedicalForm ? (
-              <button
-                className="doedtc-button doedtc-button--secondary"
-                type="button"
-                disabled={busy}
-                onClick={() => setShowMedicalForm(true)}
-              >
-                {DOEDTC_PROFILE.dashboardAddMedical}
-              </button>
-            ) : null}
+        <div className="doedtc-card">
+          <MedicalListEditor
+            label={DOEDTC_GET_STARTED.medicationsLabel}
+            placeholder={DOEDTC_GET_STARTED.medicationsPlaceholder}
+            values={snapshot.medications}
+            addAction="add_medication"
+            removeAction="remove_medication"
+            busy={busy}
+            onAction={onAction}
+          />
+          <div style={{ marginTop: "1.25rem" }}>
+            <MedicalListEditor
+              label={DOEDTC_GET_STARTED.conditionsLabel}
+              placeholder={DOEDTC_GET_STARTED.conditionsPlaceholder}
+              values={snapshot.conditions}
+              addAction="add_condition"
+              removeAction="remove_condition"
+              busy={busy}
+              onAction={onAction}
+            />
           </div>
-        ) : (
-          <div className="doedtc-card">
-            <p className="doedtc-label">{DOEDTC_GET_STARTED.medicationsLabel}</p>
-            <div className="doedtc-tag-list">
-              {medications.map((value) => (
-                <span className="doedtc-tag doedtc-tag--readonly" key={value}>
-                  {value}
-                </span>
-              ))}
-            </div>
-            <p className="doedtc-label" style={{ marginTop: "1rem" }}>
-              {DOEDTC_GET_STARTED.conditionsLabel}
-            </p>
-            <div className="doedtc-tag-list">
-              {conditions.map((value) => (
-                <span className="doedtc-tag doedtc-tag--readonly" key={value}>
-                  {value}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {(showMedicalForm || (!snapshot.user.medical_deferred && medications.length === 0)) && (
-          <form
-            className="doedtc-card doedtc-card--spaced"
-            onSubmit={async (event) => {
-              event.preventDefault();
-              await onAction("update_medical", { medications, conditions });
-              setShowMedicalForm(false);
-            }}
-          >
-            <div className="doedtc-add-row">
-              <input
-                className="doedtc-input"
-                value={medDraft}
-                placeholder={DOEDTC_GET_STARTED.medicationsPlaceholder}
-                onChange={(event) => setMedDraft(event.target.value)}
-              />
-              <button
-                className="doedtc-button doedtc-button--secondary doedtc-button--inline"
-                type="button"
-                onClick={() => {
-                  const next = medDraft.trim();
-                  if (!next || medications.includes(next)) return;
-                  setMedications([...medications, next]);
-                  setMedDraft("");
-                }}
-              >
-                Add
-              </button>
-            </div>
-            <div className="doedtc-add-row" style={{ marginTop: "0.75rem" }}>
-              <input
-                className="doedtc-input"
-                value={conditionDraft}
-                placeholder={DOEDTC_GET_STARTED.conditionsPlaceholder}
-                onChange={(event) => setConditionDraft(event.target.value)}
-              />
-              <button
-                className="doedtc-button doedtc-button--secondary doedtc-button--inline"
-                type="button"
-                onClick={() => {
-                  const next = conditionDraft.trim();
-                  if (!next || conditions.includes(next)) return;
-                  setConditions([...conditions, next]);
-                  setConditionDraft("");
-                }}
-              >
-                Add
-              </button>
-            </div>
-            <button className="doedtc-button" type="submit" disabled={busy}>
-              {busy ? DOEDTC_PROFILE.savingLabel : DOEDTC_PROFILE.saveLabel}
-            </button>
-          </form>
-        )}
+        </div>
       </div>
 
       <div className="doedtc-section">
@@ -319,40 +329,36 @@ function DashboardTab({ snapshot, busy, onAction }: TabProps) {
   );
 }
 
-function ConditionsTab({ snapshot }: { snapshot: DoeDtcProfileSnapshot }) {
+function ConditionsTab({ snapshot, busy, onAction }: TabProps) {
   return (
     <div>
       <div className="doedtc-section">
         <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.conditionsLabel}</h2>
-        <div className="doedtc-card doedtc-card--flat">
-          {snapshot.conditions.length === 0 ? (
-            <p className="doedtc-empty">{DOEDTC_PROFILE.dashboardMedicalDeferred}</p>
-          ) : (
-            <div className="doedtc-tag-list">
-              {snapshot.conditions.map((value) => (
-                <span className="doedtc-tag doedtc-tag--readonly" key={value}>
-                  {value}
-                </span>
-              ))}
-            </div>
-          )}
+        <div className="doedtc-card">
+          <MedicalListEditor
+            label={DOEDTC_GET_STARTED.conditionsLabel}
+            placeholder={DOEDTC_GET_STARTED.conditionsPlaceholder}
+            values={snapshot.conditions}
+            addAction="add_condition"
+            removeAction="remove_condition"
+            busy={busy}
+            onAction={onAction}
+          />
         </div>
       </div>
 
       <div className="doedtc-section">
         <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.medicationsLabel}</h2>
-        <div className="doedtc-card doedtc-card--flat">
-          {snapshot.medications.length === 0 ? (
-            <p className="doedtc-empty">{DOEDTC_PROFILE.dashboardMedicalDeferred}</p>
-          ) : (
-            <div className="doedtc-tag-list">
-              {snapshot.medications.map((value) => (
-                <span className="doedtc-tag doedtc-tag--readonly" key={value}>
-                  {value}
-                </span>
-              ))}
-            </div>
-          )}
+        <div className="doedtc-card">
+          <MedicalListEditor
+            label={DOEDTC_GET_STARTED.medicationsLabel}
+            placeholder={DOEDTC_GET_STARTED.medicationsPlaceholder}
+            values={snapshot.medications}
+            addAction="add_medication"
+            removeAction="remove_medication"
+            busy={busy}
+            onAction={onAction}
+          />
         </div>
       </div>
 

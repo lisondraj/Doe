@@ -317,19 +317,35 @@ export async function getLatestDoeDtcAssessment(userId: string): Promise<DoeDtcA
   return (data as DoeDtcAssessmentRow | null) ?? null;
 }
 
+function uniqueProfileNames(names: string[]): string[] {
+  const seen = new Set<string>();
+  const unique: string[] = [];
+  for (const raw of names) {
+    const name = raw.trim();
+    const key = name.toLowerCase();
+    if (!name || seen.has(key)) continue;
+    seen.add(key);
+    unique.push(name);
+  }
+  return unique;
+}
+
 export async function getDoeDtcProfileLists(userId: string): Promise<{
   medications: string[];
   conditions: string[];
 }> {
   const supabase = createSupabaseAdmin();
-  const [{ data: meds }, { data: conditions }] = await Promise.all([
-    supabase.from("doedtc_medications").select("name").eq("user_id", userId),
-    supabase.from("doedtc_conditions").select("name").eq("user_id", userId),
-  ]);
+  const [{ data: meds, error: medsError }, { data: conditions, error: conditionsError }] =
+    await Promise.all([
+      supabase.from("doedtc_medications").select("name").eq("user_id", userId).order("created_at"),
+      supabase.from("doedtc_conditions").select("name").eq("user_id", userId).order("created_at"),
+    ]);
+  if (medsError) throw new Error(medsError.message);
+  if (conditionsError) throw new Error(conditionsError.message);
 
   return {
-    medications: (meds ?? []).map((row) => row.name as string),
-    conditions: (conditions ?? []).map((row) => row.name as string),
+    medications: uniqueProfileNames((meds ?? []).map((row) => row.name as string)),
+    conditions: uniqueProfileNames((conditions ?? []).map((row) => row.name as string)),
   };
 }
 
@@ -775,6 +791,66 @@ export async function appendDoeDtcCondition(params: {
   if (userError) throw new Error(userError.message);
 
   return { added: true, name };
+}
+
+export async function removeDoeDtcMedication(params: {
+  userId: string;
+  name: string;
+}): Promise<{ removed: boolean; name: string }> {
+  const name = params.name.trim();
+  if (!name) throw new Error("Medication name is required.");
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_medications")
+    .delete()
+    .eq("user_id", params.userId)
+    .ilike("name", name)
+    .select("name");
+  if (error) throw new Error(error.message);
+  return { removed: (data ?? []).length > 0, name };
+}
+
+export async function removeDoeDtcCondition(params: {
+  userId: string;
+  name: string;
+}): Promise<{ removed: boolean; name: string }> {
+  const name = params.name.trim();
+  if (!name) throw new Error("Condition name is required.");
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_conditions")
+    .delete()
+    .eq("user_id", params.userId)
+    .ilike("name", name)
+    .select("name");
+  if (error) throw new Error(error.message);
+  return { removed: (data ?? []).length > 0, name };
+}
+
+export async function renameDoeDtcMedication(params: {
+  userId: string;
+  from: string;
+  to: string;
+}): Promise<{ updated: boolean; from: string; to: string }> {
+  const from = params.from.trim();
+  const to = params.to.trim();
+  if (!from || !to) throw new Error("Both medication names are required.");
+  await removeDoeDtcMedication({ userId: params.userId, name: from });
+  const added = await appendDoeDtcMedication({ userId: params.userId, name: to });
+  return { updated: true, from, to: added.name };
+}
+
+export async function renameDoeDtcCondition(params: {
+  userId: string;
+  from: string;
+  to: string;
+}): Promise<{ updated: boolean; from: string; to: string }> {
+  const from = params.from.trim();
+  const to = params.to.trim();
+  if (!from || !to) throw new Error("Both condition names are required.");
+  await removeDoeDtcCondition({ userId: params.userId, name: from });
+  const added = await appendDoeDtcCondition({ userId: params.userId, name: to });
+  return { updated: true, from, to: added.name };
 }
 
 export async function updateDoeDtcMedicalProfile(params: {

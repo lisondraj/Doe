@@ -20,7 +20,10 @@ export async function GET(request: Request) {
     }
 
     const snapshot = await getDoeDtcProfileSnapshot(user.id);
-    return NextResponse.json({ ok: true, snapshot });
+    return NextResponse.json(
+      { ok: true, snapshot },
+      { headers: { "Cache-Control": "no-store, max-age=0" } },
+    );
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unable to load profile.";
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
