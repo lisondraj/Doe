@@ -117,6 +117,55 @@ export async function linqSendLink(params: {
   return linqSendToPhone({ to: params.to, parts, idempotencyKey: params.idempotencyKey });
 }
 
+export type LinqContactCard = {
+  phone_number: string;
+  first_name: string;
+  last_name?: string;
+  image_url?: string;
+  is_active?: boolean;
+};
+
+export async function linqCreateContactCard(params: {
+  phoneNumber: string;
+  firstName: string;
+  lastName?: string;
+  imageUrl: string;
+}): Promise<LinqContactCard> {
+  return linqRequest<LinqContactCard>("/v3/contact_card", {
+    method: "POST",
+    body: JSON.stringify({
+      phone_number: params.phoneNumber,
+      first_name: params.firstName,
+      ...(params.lastName ? { last_name: params.lastName } : {}),
+      image_url: params.imageUrl,
+    }),
+  });
+}
+
+export async function linqUpdateContactCard(params: {
+  phoneNumber: string;
+  firstName?: string;
+  lastName?: string;
+  imageUrl?: string;
+}): Promise<LinqContactCard> {
+  return linqRequest<LinqContactCard>("/v3/contact_card", {
+    method: "PATCH",
+    body: JSON.stringify({
+      phone_number: params.phoneNumber,
+      ...(params.firstName ? { first_name: params.firstName } : {}),
+      ...(params.lastName ? { last_name: params.lastName } : {}),
+      ...(params.imageUrl ? { image_url: params.imageUrl } : {}),
+    }),
+  });
+}
+
+export async function linqShareContactCard(chatId: string): Promise<void> {
+  await linqRequest<unknown>(`/v3/chats/${chatId}/share_contact_card`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
+
 export function verifyLinqWebhookSignature(params: {
   rawBody: string;
   headers: Headers;

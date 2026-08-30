@@ -65,6 +65,21 @@ export function doeDtcPublicOrigin(): string {
   return process.env.DOEDTC_PUBLIC_ORIGIN?.replace(/\/$/, "") ?? primarySiteOrigin();
 }
 
+export function doeDtcContactCardImageUrl(): string {
+  return (
+    process.env.DOEDTC_CONTACT_CARD_IMAGE_URL?.trim() ||
+    `${doeDtcPublicOrigin()}/images/doe-contact-card.png`
+  );
+}
+
+/** E.164 sending line for Linq contact card setup. Falls back to the chat from-number. */
+export function doeDtcLinqPhoneNumber(fromNumber?: string | null): string | null {
+  const configured = process.env.DOEDTC_LINQ_PHONE_NUMBER?.trim();
+  if (configured) return configured;
+  if (fromNumber?.trim()) return fromNumber.trim();
+  return null;
+}
+
 export function doeDtcGetStartedUrl(token: string): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/get-started?t=${encodeURIComponent(token)}`;
 }

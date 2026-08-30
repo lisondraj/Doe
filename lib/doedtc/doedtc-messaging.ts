@@ -1,3 +1,4 @@
+import { shareDoeDtcLinqContactCard } from "@/lib/doedtc/doedtc-contact-card";
 import {
   DOEDTC_LINQ,
   doeDtcCareUrl,
@@ -117,6 +118,11 @@ export async function startDoeDtcFromLanding(phoneRaw: string): Promise<{ phone:
     linqMessageId: response.message?.id ?? null,
   });
 
+  await shareDoeDtcLinqContactCard({
+    chatId: response.chat_id,
+    fromNumber: response.from,
+  });
+
   return { phone };
 }
 
@@ -139,6 +145,11 @@ export async function handleHiDoeInbound(params: {
     to: chatId ? undefined : params.phone,
     text: DOEDTC_LINQ.getStartedIntro,
     idempotencyKey: `doedtc-get-started-intro-${user.id}-${user.onboarding_token}`,
+  });
+
+  await shareDoeDtcLinqContactCard({
+    chatId,
+    fromNumber: params.fromNumber ?? user.linq_from_number,
   });
 
   await linqSendLink({
