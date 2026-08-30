@@ -36,7 +36,7 @@ import {
   renameDoeDtcCondition,
   renameDoeDtcMedication,
   resolveDoeDtcHouseholdSubject,
-  loadDoeDtcHouseholdAccessContext,
+  revokeDoeDtcHouseholdAccess,
   updateDoeDtcArtifact,
   updateDoeDtcArtifactEntry,
   createDoeDtcListenSession,
@@ -47,11 +47,13 @@ import {
   insertDoeDtcSymptom,
   linkDoeDtcSymptomToAssessment,
   listDoeDtcMessages,
+  loadDoeDtcHouseholdAccessContext,
   saveDoeDtcAssessment,
 } from "@/lib/doedtc/doedtc-db";
 import {
   findHouseholdMemberByName,
   formatHouseholdForAgent,
+  isHouseholdMemberAdult,
 } from "@/lib/doedtc/doedtc-household";
 import {
   findAccountabilityPactForUser,
@@ -66,7 +68,20 @@ import {
   formatAccountabilityForAgent,
   normalizeAccountabilityMechanics,
 } from "@/lib/doedtc/doedtc-accountability";
-import { sendDoeDtcFamilyInviteMessage } from "@/lib/doedtc/doedtc-messaging";
+import {
+  cancelScheduledText,
+  createScheduledText,
+  listScheduledTextsForUser,
+  resolveScheduledTextRecipient,
+} from "@/lib/doedtc/doedtc-scheduled-db";
+import {
+  formatScheduledSendAtLabel,
+  formatScheduledTextForAgent,
+  isScheduleOfferText,
+  normalizeScheduledTimezone,
+  parseScheduledSendAt,
+} from "@/lib/doedtc/doedtc-scheduled";
+import { sendDoeDtcFamilyInviteMessage, sendDoeDtcHouseholdAccessRevokedNotice } from "@/lib/doedtc/doedtc-messaging";
 import {
   DOEDTC_PROFILE_READ_TABS,
   formatDoeDtcProfileOverview,
@@ -691,6 +706,81 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "propose_scheduled_text",
+      description:
+        "Propose a one-time text at a specific time. Call when they want a reminder or message sent later — for themselves or a family member they can access. Do NOT persist until they confirm.",
+      parameters: {
+        type: "object",
+        properties: {
+          intent: { type: "string", description: "Plain-language reason for the text." },
+          body: { type: "string", description: "SMS body to send." },
+          send_at: { type: "string", description: "ISO datetime or phrases like tomorrow at 8am, in 2 hours." },
+          timezone: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["intent", "body", "send_at"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "schedule_text",
+      description: "Schedule a one-time outbound text after the user confirms.",
+      parameters: {
+        type: "object",
+        properties: {
+          intent: { type: "string" },
+          body: { type: "string" },
+          send_at: { type: "string" },
+          timezone: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["intent", "body", "send_at"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "cancel_scheduled_text",
+      description: "Cancel a pending scheduled text.",
+      parameters: {
+        type: "object",
+        properties: {
+          scheduled_text_id: { type: "string" },
+          intent_hint: { type: "string" },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "list_scheduled_texts",
+      description: "List pending scheduled texts for the user.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "revoke_household_access",
+      description:
+        "Revoke this user's household profile sharing (self only). Under 18: after they clearly ask. 18+: only after explicit confirmation.",
+      parameters: {
+        type: "object",
+        properties: {
+          confirmed: { type: "boolean", description: "True only after the user explicitly confirms." },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "propose_accountability",
       description:
         "Propose an accountability pact (goal + people + check-in mechanics). Call first when they want accountability, habit tracking with a partner, or scheduled check-ins. Do NOT persist or invite until they confirm.",
@@ -895,6 +985,7 @@ export type DoeDtcAgentTurnResult = {
   replyToInbound?: boolean;
   browserNeedsConfirm?: boolean;
   assessmentRan: boolean;
+  preserveScheduleOffer?: boolean;
 };
 
 const URL_IN_TEXT = /https?:\/\/\S+/gi;
@@ -959,11 +1050,12 @@ function stripMarkdownFromReply(text: string): string {
 
 export function sanitizeDoeDtcReplyText(
   text: string,
-  options?: { keepCloserRate?: number },
+  options?: { keepCloserRate?: number; preserveScheduleOffer?: boolean },
 ): string {
   const withoutMarkdown = stripMarkdownFromReply(text);
   const withoutUrls = withoutMarkdown.replace(URL_IN_TEXT, "");
-  const stripped = withoutUrls.replace(CLOSER_TAIL, "");
+  const shouldPreserveOffer = options?.preserveScheduleOffer && isScheduleOfferText(withoutUrls);
+  const stripped = shouldPreserveOffer ? withoutUrls : withoutUrls.replace(CLOSER_TAIL, "");
   const rate = options?.keepCloserRate ?? KEEP_CLOSER_RATE;
   const keepCloser = stripped !== withoutUrls && Math.random() < rate;
   const normalized = (keepCloser ? withoutUrls : stripped)
@@ -1166,13 +1258,18 @@ function buildReplyFromTurnState(params: {
   feedbackUrl?: string;
   prepareUrl?: string;
   browserUserMessage?: string;
+  preserveScheduleOffer?: boolean;
 }): string {
   if (params.browserUserMessage?.trim()) {
-    return sanitizeDoeDtcReplyText(params.browserUserMessage);
+    return sanitizeDoeDtcReplyText(params.browserUserMessage, {
+      preserveScheduleOffer: params.preserveScheduleOffer,
+    });
   }
 
   const trimmed = params.modelContent?.trim();
-  if (trimmed) return sanitizeDoeDtcReplyText(trimmed);
+  if (trimmed) {
+    return sanitizeDoeDtcReplyText(trimmed, { preserveScheduleOffer: params.preserveScheduleOffer });
+  }
 
   if (params.assessmentSummary) return params.assessmentSummary;
   if (params.browserNeedsConfirm) return "Reply CONFIRM to proceed, or STOP to cancel.";
@@ -1205,6 +1302,7 @@ function buildSystemPrompt(params: {
   familyLog: string;
   householdLog: string;
   accountabilityLog: string;
+  scheduledLog: string;
   profileOverview: string;
 }): string {
   return `You are Doe, a warm consumer health companion over iMessage.
@@ -1235,6 +1333,9 @@ ${params.householdLog}
 Accountability pacts:
 ${params.accountabilityLog}
 
+Scheduled texts:
+${params.scheduledLog}
+
 Relevant memories:
 ${params.relevantMemories}
 
@@ -1254,6 +1355,8 @@ What you can do:
 - When they ask how a family member is doing, their next appointment, symptoms last week, or to prepare a child's summary, use read_profile / create_preparation / trackers with member_id or member_name — do not say you cannot see family.
 - send_family_invite texts a join link. Only the household admin can add/remove members or send invites.
 - Accountability: when they want to stay accountable, quit something, track a kid's habit, or involve a partner/sponsor, call propose_accountability first — summarize mechanics and wait for yes before start_accountability. Infer who gets the ping (parent for a young child; the person themselves for recovery). Use privacy high for sensitive goals — vague partner invite copy, never invent a diagnosis. Generate SMS from the goal; only owner can withdraw (withdraw_accountability after confirm). Partners can leave without killing the pact. pause/resume for vacations. log_accountability_checkin on yes/no replies. Read accountability tab with read_profile.
+- Scheduled texts: when they want a reminder or message at a specific time ("text me tomorrow at 8", "remind Maya at 7"), call propose_scheduled_text first, then ask "Do you want me to text you at [time]?" (or text [name]). Wait for yes before schedule_text. You may schedule for a family member only if household can_view is true (or admin + phone for pending). list_scheduled_texts / cancel_scheduled_text to manage. Never auto-schedule.
+- Household sharing: only members with can_view can see another member's health profile. revoke_household_access is self-only — minors may revoke immediately after they ask; adults need explicit confirmation (confirmed: true). Never revoke for someone else.
 - Send a Listen link to record and transcribe visits (start_listen).
 - Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
 - If they want to connect Whoop or Apple Health, tell them the current status and send_profile_link so they can tap Connect. Do not treat a status question as an add.
@@ -1468,9 +1571,11 @@ export async function runDoeDtcAgentTurn(params: {
     householdLog: formatHouseholdForAgent({
       household: snapshot.household.household,
       members: snapshot.household.members,
+      consents: snapshot.household.consents,
       viewerUserId: params.user.id,
     }),
     accountabilityLog: formatAccountabilityForAgent(snapshot.accountabilityPacts),
+    scheduledLog: formatScheduledTextForAgent(snapshot.scheduledTexts.filter((row) => row.status === "pending")),
     profileOverview: formatDoeDtcProfileOverview(snapshot),
   });
 
@@ -1499,6 +1604,7 @@ export async function runDoeDtcAgentTurn(params: {
   let browserExcerpt: string | undefined;
   let browserUserMessage: string | undefined;
   let lastModelContent: string | null = null;
+  let preserveScheduleOffer = false;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
     const { message } = await callDoeDtcAgent(messages);
@@ -1520,6 +1626,7 @@ export async function runDoeDtcAgentTurn(params: {
         profileUrl,
         feedbackUrl,
         prepareUrl,
+        preserveScheduleOffer,
       });
 
       const fulfilled = await fulfillClaimedLinks({
@@ -1551,6 +1658,7 @@ export async function runDoeDtcAgentTurn(params: {
           profileUrl,
           feedbackUrl,
           prepareUrl,
+          preserveScheduleOffer,
         });
       }
 
@@ -1570,6 +1678,7 @@ export async function runDoeDtcAgentTurn(params: {
         replyToInbound,
         browserNeedsConfirm,
         assessmentRan,
+        preserveScheduleOffer,
       };
     }
 
@@ -2178,6 +2287,76 @@ export async function runDoeDtcAgentTurn(params: {
             member: subject.subjectUserId !== params.user.id ? subject.subjectUserId : undefined,
           });
           output = { ok: true, subject: subject.subjectMemberName ?? "you", link_sent_separately: true };
+        } else if (toolCall.function.name === "propose_scheduled_text") {
+          const intent = String(args.intent ?? "").trim();
+          const body = String(args.body ?? "").trim();
+          const sendAtRaw = String(args.send_at ?? "").trim();
+          if (!intent || !body || !sendAtRaw) throw new Error("intent, body, and send_at are required.");
+          const timezone = normalizeScheduledTimezone(
+            typeof args.timezone === "string" ? args.timezone : undefined,
+          );
+          const sendAt = parseScheduledSendAt(sendAtRaw);
+          const recipient = await resolveScheduledTextRecipient({
+            creator: params.user,
+            memberId: typeof args.member_id === "string" ? args.member_id : null,
+            memberName: typeof args.member_name === "string" ? args.member_name : null,
+          });
+          preserveScheduleOffer = true;
+          output = {
+            ok: true,
+            draft: true,
+            intent,
+            body,
+            send_at: sendAt.toISOString(),
+            send_at_label: formatScheduledSendAtLabel(sendAt, timezone),
+            recipient: recipient.recipientName,
+            next_step: "Ask if they want you to text them at that time before calling schedule_text.",
+          };
+        } else if (toolCall.function.name === "schedule_text") {
+          const row = await createScheduledText({
+            creator: params.user,
+            intent: String(args.intent ?? "").trim(),
+            body: String(args.body ?? "").trim(),
+            sendAtRaw: String(args.send_at ?? "").trim(),
+            timezone: typeof args.timezone === "string" ? args.timezone : undefined,
+            memberId: typeof args.member_id === "string" ? args.member_id : null,
+            memberName: typeof args.member_name === "string" ? args.member_name : null,
+          });
+          output = {
+            ok: true,
+            scheduled_text_id: row.id,
+            send_at: row.send_at,
+            recipient_phone: row.recipient_phone,
+          };
+        } else if (toolCall.function.name === "cancel_scheduled_text") {
+          const cancelled = await cancelScheduledText({
+            userId: params.user.id,
+            scheduledTextId:
+              typeof args.scheduled_text_id === "string" ? args.scheduled_text_id : undefined,
+            intentHint: typeof args.intent_hint === "string" ? args.intent_hint : undefined,
+          });
+          if (!cancelled) throw new Error("Scheduled text not found.");
+          output = { ok: true, scheduled_text_id: cancelled.id, status: cancelled.status };
+        } else if (toolCall.function.name === "list_scheduled_texts") {
+          const rows = await listScheduledTextsForUser(params.user.id);
+          output = {
+            ok: true,
+            scheduled_texts: rows.filter((row) => row.status === "pending"),
+          };
+        } else if (toolCall.function.name === "revoke_household_access") {
+          const member = snapshot.household.viewerMember;
+          if (!member) throw new Error("You are not in a household.");
+          const isAdult =
+            member.relationship !== "child" || isHouseholdMemberAdult(member.date_of_birth);
+          if (isAdult && args.confirmed !== true) {
+            throw new Error("Explicit confirmation is required before revoking household access.");
+          }
+          const result = await revokeDoeDtcHouseholdAccess({ userId: params.user.id });
+          await sendDoeDtcHouseholdAccessRevokedNotice({
+            memberName: result.memberName,
+            household: snapshot.household.household!,
+          });
+          output = { ok: true, revoked: true, member_name: result.memberName };
         } else if (toolCall.function.name === "propose_accountability") {
           const goal = String(args.goal ?? "").trim();
           if (!goal) throw new Error("goal is required.");
@@ -2390,6 +2569,7 @@ export async function runDoeDtcAgentTurn(params: {
       profileUrl,
       feedbackUrl,
       prepareUrl,
+      preserveScheduleOffer,
     }),
     careUrl: assessmentRan ? careUrl : undefined,
     listenUrl,
@@ -2405,5 +2585,6 @@ export async function runDoeDtcAgentTurn(params: {
     replyToInbound,
     browserNeedsConfirm,
     assessmentRan,
+    preserveScheduleOffer,
   };
 }

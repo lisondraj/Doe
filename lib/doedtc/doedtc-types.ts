@@ -145,6 +145,7 @@ export type DoeDtcHouseholdConsentRow = {
   allow_edits: DoeDtcHouseholdConsentLevel;
   share_member_ids: string[];
   edit_member_ids: string[];
+  access_revoked_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -159,9 +160,12 @@ export type DoeDtcHouseholdMemberAccess = {
 export type DoeDtcHouseholdSnapshot = {
   household: DoeDtcHouseholdRow | null;
   members: DoeDtcHouseholdMemberRow[];
+  consents: DoeDtcHouseholdConsentRow[];
   memberAccess: DoeDtcHouseholdMemberAccess[];
   isAdmin: boolean;
   viewerMemberId: string | null;
+  viewerConsent: DoeDtcHouseholdConsentRow | null;
+  viewerMember: DoeDtcHouseholdMemberRow | null;
 };
 
 export type DoeDtcListenSessionStatus = "pending" | "completed" | "failed";
@@ -386,6 +390,25 @@ export type DoeDtcAccountabilityPactView = {
   isOwner: boolean;
 };
 
+export type DoeDtcScheduledTextStatus = "pending" | "sent" | "cancelled" | "failed";
+
+export type DoeDtcScheduledTextRow = {
+  id: string;
+  created_by_user_id: string;
+  recipient_user_id: string | null;
+  recipient_member_id: string | null;
+  recipient_phone: string;
+  send_at: string;
+  timezone: string;
+  intent: string;
+  body: string;
+  status: DoeDtcScheduledTextStatus;
+  sent_at: string | null;
+  error: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type DoeDtcProfileSnapshot = {
   user: Pick<
     DoeDtcUserRow,
@@ -407,6 +430,7 @@ export type DoeDtcProfileSnapshot = {
   tickets: DoeDtcTicketRow[];
   household: DoeDtcHouseholdSnapshot;
   accountabilityPacts: DoeDtcAccountabilityPactView[];
+  scheduledTexts: DoeDtcScheduledTextRow[];
 };
 
 export type DoeDtcMedicationRow = {

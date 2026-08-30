@@ -1,3 +1,4 @@
+import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { runDoeDtcAgentTurn, sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
 import { commitDoeDtcBrowserTask, stopDoeDtcBrowserForUser } from "@/lib/doedtc/doedtc-browser";
 import { getPendingConfirmDoeDtcBrowserJob } from "@/lib/doedtc/doedtc-browser-db";
@@ -438,6 +439,31 @@ export async function sendDoeDtcFamilyInviteMessage(params: {
   });
 }
 
+export async function sendDoeDtcHouseholdAccessRevokedNotice(params: {
+  memberName: string;
+  household: { admin_user_id: string };
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { data: adminUser } = await supabase
+    .from("doedtc_users")
+    .select("*")
+    .eq("id", params.household.admin_user_id)
+    .maybeSingle();
+  if (!adminUser) return;
+  const admin = adminUser as DoeDtcUserRow;
+  const text = `${params.memberName.trim()} stopped sharing their Doe profile with the household.`;
+  await linqSendText({
+    to: admin.phone,
+    text,
+    idempotencyKey: `doedtc-household-revoke-${params.household.admin_user_id}-${Date.now()}`,
+  });
+  await logDoeDtcMessage({
+    userId: admin.id,
+    direction: "outbound",
+    body: text,
+  });
+}
+
 export async function sendDoeDtcAllSet(user: DoeDtcUserRow): Promise<void> {
   await sendDoeDtcOutbound({
     user,
@@ -489,7 +515,9 @@ export async function handleSymptomInbound(params: {
     }
   }
 
-  const replyText = sanitizeDoeDtcReplyText(turn.replyText);
+  const replyText = sanitizeDoeDtcReplyText(turn.replyText, {
+    preserveScheduleOffer: turn.preserveScheduleOffer,
+  });
   const replyToMessageId =
     params.inboundMessageId &&
     shouldApplyThreadReply({

@@ -113,6 +113,7 @@ test("certain-member consent allows only listed household members", () => {
       allow_edits: "none",
       share_member_ids: ["admin-m"],
       edit_member_ids: [],
+      access_revoked_at: null,
       created_at: "",
       updated_at: "",
     },
@@ -144,6 +145,43 @@ test("certain-member consent allows only listed household members", () => {
       consents,
       viewerUserId: "admin-user",
       subjectUserId: "adult-child",
+    }),
+    false,
+  );
+});
+
+test("minor revoke blocks admin view even without prior consent row", () => {
+  const members = [
+    member({ id: "admin-m", user_id: "admin-user", role: "admin", full_name: "Parent" }),
+    member({
+      id: "child-m",
+      user_id: "child-user",
+      relationship: "child",
+      full_name: "Kid",
+      date_of_birth: yearsAgo(10),
+    }),
+  ];
+  const consents: DoeDtcHouseholdConsentRow[] = [
+    {
+      id: "c1",
+      user_id: "child-user",
+      household_id: "h1",
+      share_health: "none",
+      allow_edits: "none",
+      share_member_ids: [],
+      edit_member_ids: [],
+      access_revoked_at: new Date().toISOString(),
+      created_at: "",
+      updated_at: "",
+    },
+  ];
+  assert.equal(
+    canViewMemberProfile({
+      household,
+      members,
+      consents,
+      viewerUserId: "admin-user",
+      subjectUserId: "child-user",
     }),
     false,
   );

@@ -21,6 +21,7 @@ import {
   removeDoeDtcMedication,
   removeDoeDtcResult,
   revokeDoeDtcShareCode,
+  revokeDoeDtcHouseholdAccess,
   setDoeDtcHealthConnectionPending,
   updateDoeDtcArtifact,
   updateDoeDtcArtifactEntry,
@@ -30,8 +31,9 @@ import {
   resumeAccountabilityPact,
   withdrawAccountabilityPact,
 } from "@/lib/doedtc/doedtc-accountability-db";
+import { cancelScheduledText } from "@/lib/doedtc/doedtc-scheduled-db";
 import { normalizeDoeDtcFamilyRelationship, resolveDoeDtcFamilyMemberName } from "@/lib/doedtc/doedtc-family-relationship";
-import { sendDoeDtcFamilyInviteMessage } from "@/lib/doedtc/doedtc-messaging";
+import { sendDoeDtcFamilyInviteMessage, sendDoeDtcHouseholdAccessRevokedNotice } from "@/lib/doedtc/doedtc-messaging";
 import type {
   DoeDtcHealthProvider,
   DoeDtcProfileSnapshot,
@@ -359,6 +361,26 @@ export async function handleDoeDtcProfileAction(params: {
       const pactId = String(params.payload.pactId ?? "").trim();
       if (!pactId) throw new Error("Missing accountability pact.");
       await resumeAccountabilityPact({ ownerUserId: user.id, pactId });
+      break;
+    }
+    case "cancel_scheduled_text": {
+      const scheduledTextId = String(params.payload.scheduledTextId ?? "").trim();
+      if (!scheduledTextId) throw new Error("Missing scheduled text.");
+      await cancelScheduledText({ userId: user.id, scheduledTextId });
+      break;
+    }
+    case "revoke_household_access": {
+      if (params.payload.confirmed !== true) {
+        throw new Error("Please confirm before stopping household sharing.");
+      }
+      const result = await revokeDoeDtcHouseholdAccess({ userId: user.id });
+      const snapshotBefore = await getDoeDtcProfileSnapshot(user.id, { viewerUserId: user.id });
+      if (snapshotBefore.household.household) {
+        await sendDoeDtcHouseholdAccessRevokedNotice({
+          memberName: result.memberName,
+          household: snapshotBefore.household.household,
+        });
+      }
       break;
     }
     default:

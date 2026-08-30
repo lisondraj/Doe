@@ -12,6 +12,7 @@ import {
   doeDtcAppUrl,
 } from "@/lib/doedtc/doedtc-copy";
 import { formatArtifactEntryValues } from "@/lib/doedtc/doedtc-artifacts";
+import { memberCurrentlySharesWithHousehold } from "@/lib/doedtc/doedtc-household";
 import type {
   DoeDtcFamilyRelationship,
   DoeDtcHealthProvider,
@@ -390,6 +391,7 @@ function DashboardTab({
     return { artifact, lastEntry };
   });
   const openTickets = snapshot.tickets.filter((ticket) => ticket.status !== "resolved");
+  const pendingScheduledTexts = snapshot.scheduledTexts.filter((row) => row.status === "pending");
 
   return (
     <div>
@@ -446,6 +448,34 @@ function DashboardTab({
               </button>
             ))}
           </div>
+        </div>
+      ) : null}
+
+      {pendingScheduledTexts.length > 0 ? (
+        <div className="doedtc-section">
+          <h2 className="doedtc-section-title">{DOEDTC_PROFILE.scheduledTextsTitle}</h2>
+          <ul className="doedtc-list">
+            {pendingScheduledTexts.map((row) => (
+              <li key={row.id} className="doedtc-card" style={{ marginBottom: "0.75rem" }}>
+                <strong>{row.intent}</strong>
+                <p className="doedtc-muted" style={{ marginTop: "0.35rem" }}>
+                  {formatDateTime(row.send_at)} · {row.recipient_phone}
+                </p>
+                <p className="doedtc-muted">{row.body}</p>
+                {!readOnly ? (
+                  <button
+                    type="button"
+                    className="doedtc-button doedtc-button--secondary"
+                    style={{ marginTop: "0.75rem" }}
+                    disabled={busy}
+                    onClick={() => onAction("cancel_scheduled_text", { scheduledTextId: row.id })}
+                  >
+                    {DOEDTC_PROFILE.scheduledTextsCancelLabel}
+                  </button>
+                ) : null}
+              </li>
+            ))}
+          </ul>
         </div>
       ) : null}
 
@@ -849,9 +879,17 @@ function FamilyTab({
   const [noPhone, setNoPhone] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [inviteBusyId, setInviteBusyId] = useState<string | null>(null);
+  const [revokeConfirmOpen, setRevokeConfirmOpen] = useState(false);
 
   const members = snapshot.household.members;
   const isAdmin = snapshot.household.isAdmin;
+  const viewerMember = snapshot.household.viewerMember;
+  const viewerShares = viewerMember
+    ? memberCurrentlySharesWithHousehold({
+        member: viewerMember,
+        consent: snapshot.household.viewerConsent,
+      })
+    : false;
   const accessByMemberId = useMemo(
     () => new Map(snapshot.household.memberAccess.map((row) => [row.memberId, row])),
     [snapshot.household.memberAccess],
@@ -932,6 +970,44 @@ function FamilyTab({
           })}
         </ul>
       )}
+
+      {viewerShares && viewerMember && viewerMember.role !== "admin" ? (
+        <div className="doedtc-card doedtc-card--spaced">
+          <p className="doedtc-muted">{DOEDTC_PROFILE.familyRevokeAccessHint}</p>
+          {!revokeConfirmOpen ? (
+            <button
+              type="button"
+              className="doedtc-button doedtc-button--danger"
+              disabled={busy}
+              onClick={() => setRevokeConfirmOpen(true)}
+            >
+              {DOEDTC_PROFILE.familyRevokeAccessLabel}
+            </button>
+          ) : (
+            <div className="doedtc-inline-actions">
+              <button
+                type="button"
+                className="doedtc-button doedtc-button--danger"
+                disabled={busy}
+                onClick={async () => {
+                  await onAction("revoke_household_access", { confirmed: true });
+                  setRevokeConfirmOpen(false);
+                }}
+              >
+                {DOEDTC_PROFILE.familyRevokeConfirmLabel}
+              </button>
+              <button
+                type="button"
+                className="doedtc-button doedtc-button--secondary"
+                disabled={busy}
+                onClick={() => setRevokeConfirmOpen(false)}
+              >
+                {DOEDTC_PROFILE.familyRevokeCancelLabel}
+              </button>
+            </div>
+          )}
+        </div>
+      ) : null}
 
       {isAdmin ? (
         <form

@@ -28,6 +28,30 @@ function consentAllows(
   return memberIds.includes(viewerMemberId);
 }
 
+function subjectAccessRevoked(
+  consents: DoeDtcHouseholdConsentRow[],
+  subjectUserId: string,
+): boolean {
+  const consent = consents.find((row) => row.user_id === subjectUserId);
+  return Boolean(consent?.access_revoked_at);
+}
+
+export function memberCurrentlySharesWithHousehold(params: {
+  member: DoeDtcHouseholdMemberRow;
+  consent: DoeDtcHouseholdConsentRow | null;
+}): boolean {
+  if (params.consent?.access_revoked_at) return false;
+  if (
+    params.member.relationship === "child" &&
+    !isHouseholdMemberAdult(params.member.date_of_birth) &&
+    !params.consent
+  ) {
+    return true;
+  }
+  if (!params.consent) return false;
+  return params.consent.share_health !== "none" || params.consent.allow_edits !== "none";
+}
+
 export function canViewMemberProfile(params: {
   household: DoeDtcHouseholdRow;
   members: DoeDtcHouseholdMemberRow[];
@@ -43,6 +67,7 @@ export function canViewMemberProfile(params: {
 
   if (viewerMember.role === "admin") {
     if (subjectMember.relationship === "child" && !isHouseholdMemberAdult(subjectMember.date_of_birth)) {
+      if (subjectAccessRevoked(params.consents, params.subjectUserId)) return false;
       return true;
     }
     const consent = params.consents.find((row) => row.user_id === params.subjectUserId);
@@ -70,6 +95,7 @@ export function canEditMemberProfile(params: {
 
   if (viewerMember.role === "admin") {
     if (subjectMember.relationship === "child" && !isHouseholdMemberAdult(subjectMember.date_of_birth)) {
+      if (subjectAccessRevoked(params.consents, params.subjectUserId)) return false;
       return true;
     }
     const consent = params.consents.find((row) => row.user_id === params.subjectUserId);
@@ -92,19 +118,39 @@ export function isHouseholdAdmin(params: {
 export function formatHouseholdForAgent(params: {
   household: DoeDtcHouseholdRow | null;
   members: DoeDtcHouseholdMemberRow[];
+  consents: DoeDtcHouseholdConsentRow[];
   viewerUserId: string;
 }): string {
   if (!params.household || params.members.length === 0) return "No household set up.";
+  const viewerIsAdmin = isHouseholdAdmin({ household: params.household, viewerUserId: params.viewerUserId });
   return params.members
     .map((row) => {
       const parts = [
         `${row.full_name} (${row.relationship})`,
         `role: ${row.role}`,
         `status: ${row.status}`,
+        `member_id: ${row.id}`,
       ];
-      if (row.phone) parts.push(`phone: ${row.phone}`);
-      if (row.user_id) parts.push(`user_id: ${row.user_id}`);
-      parts.push(`member_id: ${row.id}`);
+      if (row.user_id && row.user_id !== params.viewerUserId) {
+        const canView = canViewMemberProfile({
+          household: params.household!,
+          members: params.members,
+          consents: params.consents,
+          viewerUserId: params.viewerUserId,
+          subjectUserId: row.user_id,
+        });
+        const canEdit = canEditMemberProfile({
+          household: params.household!,
+          members: params.members,
+          consents: params.consents,
+          viewerUserId: params.viewerUserId,
+          subjectUserId: row.user_id,
+        });
+        parts.push(`can_view: ${canView}`, `can_edit: ${canEdit}`);
+      } else if (row.user_id === params.viewerUserId) {
+        parts.push("self");
+      }
+      if (viewerIsAdmin && row.phone) parts.push(`phone: ${row.phone}`);
       if (row.role === "admin") parts.push("admin");
       return `- ${parts.join(" | ")}`;
     })

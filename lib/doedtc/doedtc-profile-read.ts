@@ -267,6 +267,11 @@ export function formatDoeDtcProfileOverview(snapshot: DoeDtcProfileSnapshot): st
         ? "None yet"
         : snapshot.accountabilityPacts.map((row) => row.pact.title).join(", ")
     }`,
+    `Scheduled texts: ${
+      snapshot.scheduledTexts.filter((row) => row.status === "pending").length === 0
+        ? "None pending"
+        : `${snapshot.scheduledTexts.filter((row) => row.status === "pending").length} pending`
+    }`,
     `Feedback/bugs: ${
       snapshot.tickets.length === 0
         ? "None yet"

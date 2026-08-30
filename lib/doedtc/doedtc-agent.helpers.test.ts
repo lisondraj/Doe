@@ -232,11 +232,15 @@ test("formatDoeDtcProfileTab reads Whoop from the dashboard tab", () => {
     household: {
       household: null,
       members: [],
+      consents: [],
       memberAccess: [],
       isAdmin: false,
       viewerMemberId: null,
+      viewerConsent: null,
+      viewerMember: null,
     },
     accountabilityPacts: [],
+    scheduledTexts: [],
   };
   const dashboard = formatDoeDtcProfileTab(snapshot, "dashboard");
   assert.match(dashboard, /Whoop: not connected/);

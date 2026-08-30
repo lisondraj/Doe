@@ -14,8 +14,11 @@ import {
   canViewMemberProfile,
   findHouseholdMemberByName,
   isHouseholdAdmin,
+  isHouseholdMemberAdult,
+  memberCurrentlySharesWithHousehold,
 } from "@/lib/doedtc/doedtc-household";
 import { listAccountabilityPactViewsForProfile } from "@/lib/doedtc/doedtc-accountability-db";
+import { listScheduledTextsForUser } from "@/lib/doedtc/doedtc-scheduled-db";
 import { createDoeDtcToken, isTokenExpired, onboardingTokenExpiresAt } from "@/lib/doedtc/doedtc-tokens";
 import type {
   DoeDtcArtifactEntryRow,
@@ -43,6 +46,7 @@ import type {
   DoeDtcPreparationRow,
   DoeDtcResultRow,
   DoeDtcShareCodeRow,
+  DoeDtcScheduledTextRow,
   DoeDtcSymptomRow,
   DoeDtcSymptomSeverity,
   DoeDtcTicketKind,
@@ -554,6 +558,7 @@ export async function getDoeDtcProfileSnapshot(
     tickets,
     household,
     accountabilityPacts,
+    scheduledTexts,
   ] = await Promise.all([
     supabase
       .from("doedtc_users")
@@ -593,6 +598,7 @@ export async function getDoeDtcProfileSnapshot(
       viewerUserId,
       includeWithdrawn: true,
     }),
+    listScheduledTextsForUser(viewerUserId),
   ]);
 
   if (userResult.error) throw new Error(userResult.error.message);
@@ -615,6 +621,7 @@ export async function getDoeDtcProfileSnapshot(
     tickets,
     household,
     accountabilityPacts,
+    scheduledTexts,
   };
 }
 
@@ -1658,9 +1665,12 @@ export async function getDoeDtcHouseholdSnapshot(viewerUserId: string): Promise<
   return {
     household,
     members,
+    consents,
     memberAccess,
     isAdmin: isHouseholdAdmin({ household, viewerUserId }),
     viewerMemberId: viewerMember?.id ?? null,
+    viewerConsent: consents.find((row) => row.user_id === viewerUserId) ?? null,
+    viewerMember: viewerMember ?? null,
   };
 }
 
@@ -1862,6 +1872,9 @@ export async function addDoeDtcHouseholdMember(params: {
   dateOfBirth?: string | null;
 }): Promise<DoeDtcHouseholdMemberRow> {
   const household = await ensureDoeDtcHouseholdForAdmin(params.adminUserId);
+  if (!isHouseholdAdmin({ household, viewerUserId: params.adminUserId })) {
+    throw new Error("Only the household admin can add family members.");
+  }
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase
     .from("doedtc_household_members")
@@ -2139,4 +2152,49 @@ export async function saveDoeDtcHouseholdConsent(params: {
     .single();
   if (error) throw new Error(error.message);
   return data as DoeDtcHouseholdConsentRow;
+}
+
+export async function revokeDoeDtcHouseholdAccess(params: {
+  userId: string;
+}): Promise<{ consent: DoeDtcHouseholdConsentRow; memberName: string; isMinor: boolean }> {
+  const { household, members, consents } = await loadDoeDtcHouseholdAccessContext(params.userId);
+  if (!household) throw new Error("No household found.");
+  const member = members.find((row) => row.user_id === params.userId);
+  if (!member) throw new Error("Household member not found.");
+  if (member.role === "admin") {
+    throw new Error("The household admin cannot revoke their own household access this way.");
+  }
+
+  const isMinor =
+    member.relationship === "child" && !isHouseholdMemberAdult(member.date_of_birth);
+  const existing = consents.find((row) => row.user_id === params.userId) ?? null;
+  if (!memberCurrentlySharesWithHousehold({ member, consent: existing })) {
+    throw new Error("You are not currently sharing profile access with your household.");
+  }
+
+  const consent = await saveDoeDtcHouseholdConsent({
+    userId: params.userId,
+    householdId: household.id,
+    shareHealth: "none",
+    allowEdits: "none",
+    shareMemberIds: [],
+    editMemberIds: [],
+  });
+
+  const supabase = createSupabaseAdmin();
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("doedtc_household_consents")
+    .update({ access_revoked_at: now, updated_at: now })
+    .eq("user_id", params.userId)
+    .eq("household_id", household.id)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+
+  return {
+    consent: data as DoeDtcHouseholdConsentRow,
+    memberName: member.full_name,
+    isMinor,
+  };
 }
