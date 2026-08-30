@@ -268,11 +268,12 @@ function firstGrapheme(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return "";
   if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
-    for (const part of new Intl.Segmenter("en", { granularity: "grapheme" }).segment(trimmed)) {
-      return part.segment;
-    }
+    const parts = Array.from(
+      new Intl.Segmenter("en", { granularity: "grapheme" }).segment(trimmed),
+    );
+    if (parts[0]) return parts[0].segment;
   }
-  return [...trimmed][0] ?? "";
+  return Array.from(trimmed)[0] ?? "";
 }
 
 export function linqReactionPayload(emoji: string): {
