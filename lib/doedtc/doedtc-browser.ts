@@ -368,26 +368,36 @@ export async function startDoeDtcBrowserTask(params: {
       return { ok: false, error, user_message: toUserSafeBrowserError(error) };
     }
 
-    const snapshot = await snapshotDoeDtcBrowser({
-      user: params.user,
-      jobId: job.id,
-      caption: params.intent,
-      kind: "progress",
-    });
-    if (!snapshot.ok) {
-      const error = snapshot.error ?? "Could not capture a browser preview.";
-      return { ok: false, error, user_message: toUserSafeBrowserError(error) };
+    try {
+      const snapshot = await snapshotDoeDtcBrowser({
+        user: params.user,
+        jobId: job.id,
+        caption: params.intent,
+        kind: "progress",
+      });
+      if (snapshot.ok) {
+        return {
+          ok: true,
+          jobId: job.id,
+          host,
+          url: snapshot.url,
+          title: snapshot.title,
+          excerpt: snapshot.excerpt,
+          workUrl: snapshot.workUrl,
+          screenshotUrl: snapshot.screenshotUrl,
+        };
+      }
+    } catch (error) {
+      warnKernelFailure("start snapshot", error);
     }
 
     return {
       ok: true,
       jobId: job.id,
       host,
-      url: snapshot.url,
-      title: snapshot.title,
-      excerpt: snapshot.excerpt,
-      workUrl: snapshot.workUrl,
-      screenshotUrl: snapshot.screenshotUrl,
+      url: navigated.url,
+      title: navigated.title,
+      excerpt: navigated.excerpt,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not start browser task.";
@@ -421,10 +431,16 @@ export async function navigateDoeDtcBrowser(params: {
     ? params.url
     : normalizeBrowserUrl(params.url).targetUrl;
 
-  await runPlaywright(
-    kernelBrowser.session_id,
-    `await page.goto(${JSON.stringify(targetUrl)}, { waitUntil: 'domcontentloaded', timeout: 45000 });`,
-  );
+  try {
+    await runPlaywright(
+      kernelBrowser.session_id,
+      `await page.goto(${JSON.stringify(targetUrl)}, { waitUntil: 'domcontentloaded', timeout: 45000 });`,
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not open that page.";
+    warnKernelFailure("navigate", error);
+    return { ok: false, error: message };
+  }
 
   if (host !== activeJob.allowed_host) {
     await attachKernelProfileToJob({ ...activeJob, allowed_host: host });
@@ -450,7 +466,7 @@ export async function actDoeDtcBrowser(params: {
 
   const { kernelBrowser } = await ensureKernelSession(job);
   const selector = params.selector?.trim();
-  if (!selector && params.action !== "scroll") {
+  if (!selector && params.action === "click") {
     return { ok: false, error: "Selector is required." };
   }
 
@@ -458,21 +474,57 @@ export async function actDoeDtcBrowser(params: {
     return { ok: false, error: "That action needs confirmation first." };
   }
 
-  if (params.action === "click") {
-    await runPlaywright(
-      kernelBrowser.session_id,
-      `await page.click(${JSON.stringify(selector)}, { timeout: 15000 });`,
-    );
-  } else if (params.action === "type") {
-    await runPlaywright(
-      kernelBrowser.session_id,
-      `await page.fill(${JSON.stringify(selector)}, ${JSON.stringify(params.text ?? "")});`,
-    );
-  } else {
-    await runPlaywright(kernelBrowser.session_id, `await page.mouse.wheel(0, 600);`);
-  }
+  try {
+    if (params.action === "click") {
+      await runPlaywright(
+        kernelBrowser.session_id,
+        `await page.click(${JSON.stringify(selector)}, { timeout: 15000 });`,
+      );
+    } else if (params.action === "type") {
+      const text = params.text ?? "";
+      await runPlaywright(
+        kernelBrowser.session_id,
+        `
+          const text = ${JSON.stringify(text)};
+          const selectors = [
+            ${selector ? `${JSON.stringify(selector)},` : ""}
+            'textarea[name="q"]',
+            'input[name="q"]',
+            'input[type="search"]',
+            'textarea[aria-label*="Search" i]',
+            'input[aria-label*="Search" i]',
+            'input[type="text"]',
+            'textarea',
+          ].filter(Boolean);
 
-  return extractPage(kernelBrowser.session_id);
+          let filled = false;
+          for (const sel of selectors) {
+            const loc = page.locator(sel).first();
+            if (await loc.count()) {
+              try {
+                await loc.fill(text, { timeout: 8000 });
+                filled = true;
+                break;
+              } catch {}
+            }
+          }
+
+          if (!filled) {
+            await page.keyboard.type(text, { delay: 20 });
+          }
+          await page.keyboard.press('Enter');
+        `,
+      );
+    } else {
+      await runPlaywright(kernelBrowser.session_id, `await page.mouse.wheel(0, 600);`);
+    }
+
+    return extractPage(kernelBrowser.session_id);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Browser action failed.";
+    warnKernelFailure("act", error);
+    return { ok: false, error: message };
+  }
 }
 
 export async function snapshotDoeDtcBrowser(params: {

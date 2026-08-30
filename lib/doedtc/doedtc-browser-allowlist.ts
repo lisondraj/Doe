@@ -108,8 +108,32 @@ export function researchSearchUrl(query: string): string {
   return `https://www.google.com/search?q=${encodeURIComponent(trimmed)}`;
 }
 
+function stripScreenshotTail(text: string): string {
+  return text
+    .replace(
+      /\s+(?:and\s+)?(?:then\s+)?(?:ss|s\/s|screenshot|snap(?:shot)?|send(?:ing)?\s+(?:a\s+)?(?:ss|screenshot)|ss\s+(?:the\s+)?result).*$/i,
+      "",
+    )
+    .trim();
+}
+
 export function extractSearchQuery(text: string): string {
-  return text.trim().replace(/^search\s+/i, "").trim();
+  let q = stripScreenshotTail(text.trim());
+  q = q.replace(/^(?:please\s+)?(?:open(?:\s+(?:the\s+)?)?(?:browser\s+)?)?/i, "").trim();
+  q = q.replace(/^(?:go\s*to|goto|visit|open)\s+/i, "").trim();
+
+  const googleThenType = q.match(
+    /^(?:google(?:\.com)?)(?:\s+and)?\s+(?:type|search(?:\s+for)?|look\s*up)\s+(.+)$/i,
+  );
+  if (googleThenType?.[1]) return googleThenType[1].trim();
+
+  q = q.replace(/^(?:search(?:\s+for)?|type|look\s*up|lookup)\s+/i, "").trim();
+  return q;
+}
+
+export function isGoogleBrowseHost(host: string): boolean {
+  const normalized = normalizeBrowserHost(host);
+  return normalized === "google.com" || normalized.endsWith(".google.com");
 }
 
 export function siteSearchUrl(host: string, query: string): string {
@@ -140,52 +164,43 @@ export function resolveResearchBrowseTarget(params: {
 }): { host: string; targetUrl: string } | { ok: false; error: string } {
   const raw = params.url.trim();
   const intent = params.intent.trim();
+  const combined = [raw, intent].filter(Boolean).join(" ");
 
   let host: string;
   let targetUrl: string;
 
   const alias = resolveSiteAlias(raw);
-  const searchQuery = intent ? extractSearchQuery(intent) || intent : "";
+  const searchQuery = extractSearchQuery(intent) || extractSearchQuery(combined);
 
-  if (alias && searchQuery) {
-    host = alias;
-    targetUrl = siteSearchUrl(host, searchQuery);
-  } else if (raw.includes("://") || raw.includes(".") || raw.includes("/") || raw.includes("?")) {
-    try {
+  try {
+    if (raw && (raw.includes("://") || raw.includes(".") || raw.includes("/") || raw.includes("?"))) {
       const normalized = normalizeBrowserUrl(raw);
       host = normalized.host;
-      targetUrl = normalized.targetUrl;
-    } catch {
-      return { ok: false, error: "Could not parse that URL." };
-    }
-  } else if (alias) {
-    host = alias;
-    targetUrl = browserUrlForHost(host);
-  } else if (raw && searchQuery) {
-    host = normalizeBrowserHost(raw);
-    if (host.includes(".")) {
+      const hostOnly = !/\/.+/.test(raw.replace(/^https?:\/\//, "").split("?")[0] ?? "");
+      const typedQuery = /(?:^|\b)(?:type|search(?:\s+for)?|look\s*up)\b/i.test(intent);
+      targetUrl =
+        searchQuery && isGoogleBrowseHost(host)
+          ? researchSearchUrl(searchQuery)
+          : searchQuery && typedQuery && hostOnly
+            ? siteSearchUrl(host, searchQuery)
+            : normalized.targetUrl;
+    } else if (alias && searchQuery) {
+      host = alias;
       targetUrl = siteSearchUrl(host, searchQuery);
-    } else {
+    } else if (alias) {
+      host = alias;
+      targetUrl = browserUrlForHost(host);
+    } else if (searchQuery) {
       host = "google.com";
-      targetUrl = researchSearchUrl(`${raw} ${searchQuery}`);
-    }
-  } else if (searchQuery) {
-    host = "google.com";
-    targetUrl = researchSearchUrl(searchQuery);
-  } else if (raw) {
-    const aliasOnly = resolveSiteAlias(raw);
-    if (aliasOnly) {
-      host = aliasOnly;
-      targetUrl = browserUrlForHost(host);
-    } else if (raw.includes(".")) {
-      host = normalizeBrowserHost(raw);
-      targetUrl = browserUrlForHost(host);
-    } else {
+      targetUrl = researchSearchUrl(searchQuery);
+    } else if (raw) {
       host = "google.com";
       targetUrl = researchSearchUrl(raw);
+    } else {
+      return { ok: false, error: "A URL or search topic is required." };
     }
-  } else {
-    return { ok: false, error: "A URL or search topic is required." };
+  } catch {
+    return { ok: false, error: "Could not parse that URL." };
   }
 
   if (isDeniedBrowserHost(host)) {

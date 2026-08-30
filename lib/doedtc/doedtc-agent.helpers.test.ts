@@ -46,6 +46,22 @@ test("resolveResearchBrowseTarget resolves mayo search asthma", () => {
   assert.match(result.targetUrl, /mayoclinic\.org\/search\/search-results\?q=asthma/);
 });
 
+test("resolveResearchBrowseTarget turns google type mayo into a Google search", () => {
+  for (const params of [
+    { url: "google", intent: "type mayo" },
+    { url: "google.com", intent: "type mayo" },
+    { url: "https://www.google.com", intent: "type mayo and SS result" },
+    { url: "google", intent: "goto google type mayo and SS result" },
+    { url: "", intent: "open browser goto google type mayo" },
+  ]) {
+    const result = resolveResearchBrowseTarget(params);
+    assert.ok(!("ok" in result), JSON.stringify(params));
+    if ("ok" in result) return;
+    assert.equal(result.host, "google.com");
+    assert.match(result.targetUrl, /google\.com\/search\?q=mayo/);
+  }
+});
+
 test("resolveResearchBrowseTarget uses google for topic-only queries", () => {
   const result = resolveResearchBrowseTarget({
     url: "",

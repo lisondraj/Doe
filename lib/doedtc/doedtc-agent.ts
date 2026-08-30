@@ -7,6 +7,7 @@ import {
   requestDoeDtcVaultLink,
   snapshotDoeDtcBrowser,
   startDoeDtcBrowserTask,
+  toUserSafeBrowserError,
 } from "@/lib/doedtc/doedtc-browser";
 import {
   addDoeDtcMem0Fact,
@@ -271,21 +272,21 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "start_browser_task",
       description:
-        "Browse the web. Call with a URL or site nickname (mayo, cdc, google) plus what to search or do. Opens the page, screenshots it, and sends the screenshot to the patient.",
+        "Browse the web and screenshot the page. For 'go to Google and type mayo', call once with url google and intent type mayo — do not type into the box yourself. Selector is optional for later typing.",
       parameters: {
         type: "object",
         properties: {
           intent: {
             type: "string",
-            description: "What to find or do, e.g. search asthma.",
+            description: "What to find or do, e.g. type mayo, search asthma.",
           },
           url: {
             type: "string",
-            description: "Site nickname (mayo, cdc), hostname, or full URL.",
+            description: "Site nickname (mayo, google), hostname, or full URL. Optional if intent has the site.",
           },
           mode: { type: "string", enum: ["research", "login", "write"] },
         },
-        required: ["intent", "url"],
+        required: ["intent"],
       },
     },
   },
@@ -307,7 +308,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "browser_act",
-      description: "Click, type, or scroll in the active browser task. No submit/book/pay actions.",
+      description:
+        "Click, type, or scroll in the active browser task. For type, selector is optional — Doe finds the search box. Prefer start_browser_task with the query instead of typing on Google.",
       parameters: {
         type: "object",
         properties: {
@@ -695,7 +697,7 @@ What you can do:
 - Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
 - If they want to connect Whoop or Apple Health, tell them the current status and send_profile_link so they can tap Connect. Do not treat a status question as an add.
 - Send the profile / dashboard link (send_profile_link).
-- Browse the web via start_browser_task with a site nickname or URL plus intent (e.g. url mayo, intent search asthma). Research tasks screenshot the page and send that image in iMessage. Call the tool — do not refuse or say you cannot look something up if the tool succeeds.
+- Browse the web via start_browser_task. For "go to Google and type mayo" (or screenshot the result), call once with url google and intent type mayo — that opens the Google results page and screenshots it. Do not try to type into Google with a CSS selector.
 - Screenshot the current page with browser_snapshot when they ask for a picture, screenshot, or to see the page.
 - Help with patient portals via request_vault or request_live_login — never ask for passwords in iMessage.
 - Send the live session page (show_session) when they want to watch, stream, or follow the browser and a task is active. You can send a live session. Never say you cannot stream or watch a live browser.
@@ -1174,7 +1176,28 @@ export async function runDoeDtcAgentTurn(params: {
             selector: typeof args.selector === "string" ? args.selector : undefined,
             text: typeof args.text === "string" ? args.text : undefined,
           });
-          output = result;
+          if (
+            result.ok &&
+            /\b(ss|screenshot|snap(?:shot)?|picture|photo)\b/i.test(params.inboundText)
+          ) {
+            const shot = await snapshotDoeDtcBrowser({
+              user: params.user,
+              jobId,
+              caption: typeof args.text === "string" ? args.text : params.inboundText,
+            });
+            if (shot.workUrl) workUrl = shot.workUrl;
+            if (shot.screenshotUrl) screenshotUrl = shot.screenshotUrl;
+            if (shot.excerpt) browserExcerpt = shot.excerpt;
+            output = {
+              ...result,
+              screenshot_sent_separately: Boolean(shot.screenshotUrl),
+            };
+          } else if (!result.ok) {
+            browserUserMessage = toUserSafeBrowserError(result.error ?? "Browser action failed.");
+            output = { ...result, user_message: browserUserMessage };
+          } else {
+            output = result;
+          }
         } else if (toolCall.function.name === "browser_snapshot") {
           const jobId = activeBrowserJobId ?? "";
           const result = await snapshotDoeDtcBrowser({
