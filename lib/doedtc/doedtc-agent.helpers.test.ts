@@ -171,6 +171,25 @@ test("sanitizeDoeDtcReplyText strips want-me-to closers", () => {
   );
 });
 
+test("sanitizeDoeDtcReplyText keeps confirmation questions instead of cutting off at Do you", () => {
+  const cleaned = sanitizeDoeDtcReplyText(
+    "I can set up a reminder for you to order your refill. Do you want me to set that?",
+    { keepCloserRate: 0 },
+  );
+  assert.match(cleaned, /reminder/);
+  assert.match(cleaned, /do you want me to set that/i);
+  assert.doesNotMatch(cleaned, /do you$/i);
+});
+
+test("sanitizeDoeDtcReplyText drops a leftover Do you fragment", () => {
+  assert.equal(
+    sanitizeDoeDtcReplyText("I can set up a reminder for you to order your refill. Do you", {
+      keepCloserRate: 0,
+    }),
+    "I can set up a reminder for you to order your refill.",
+  );
+});
+
 test("sanitizeDoeDtcReplyText drops dangling family-offer fragments after closer strip", () => {
   const cleaned = sanitizeDoeDtcReplyText(
     "Logged Simon. If you want family invites sent, let me know.",

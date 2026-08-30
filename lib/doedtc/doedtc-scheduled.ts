@@ -250,7 +250,7 @@ export function formatScheduledSendAtLabel(sendAt: Date, timezone: string): stri
 }
 
 export function isScheduleOfferText(text: string): boolean {
-  return /\b(text you|text me|remind you|remind me|send you a text|scheduled text|schedule (?:this|that|it)|want me to text)\b/i.test(
+  return /\b(text you|text me|remind you|remind me|set up a reminder|send you a text|scheduled text|schedule (?:this|that|it)|want me to (?:text|set|schedule|remind))\b/i.test(
     text,
   );
 }
@@ -258,6 +258,8 @@ export function isScheduleOfferText(text: string): boolean {
 export function isPendingOfferText(text: string): boolean {
   return (
     isScheduleOfferText(text) ||
-    /\b(want me to save|save this to your profile|start this accountability|confirm before)\b/i.test(text)
+    /\b(want me to save|save this to your profile|start this accountability|confirm before|want me to set that)\b/i.test(
+      text,
+    )
   );
 }
