@@ -182,10 +182,15 @@ export function doeDtcContactCardImageUrl(): string {
   );
 }
 
+export const DOEDTC_LINK_PREVIEW_IMAGE = {
+  width: 2400,
+  height: 1260,
+} as const;
+
 export function doeDtcLinkPreviewImageUrl(): string {
   return (
     process.env.DOEDTC_LINK_PREVIEW_IMAGE_URL?.trim() ||
-    `${doeDtcPublicOrigin()}/images/doe-link-banner.png`
+    `${doeDtcPublicOrigin()}/images/doe-link-banner.jpg`
   );
 }
 

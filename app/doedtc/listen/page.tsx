@@ -5,6 +5,7 @@ import { getDoeDtcListenSession, getDoeDtcUserByCareToken } from "@/lib/doedtc/d
 import {
   DOEDTC_LISTEN,
   DOEDTC_PAGE_DESCRIPTION,
+  DOEDTC_LINK_PREVIEW_IMAGE,
   doeDtcLinkPreviewImageUrl,
   doeDtcPublicOrigin,
 } from "@/lib/doedtc/doedtc-copy";
@@ -26,8 +27,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: ogImage,
-        width: 1200,
-        height: 630,
+        width: DOEDTC_LINK_PREVIEW_IMAGE.width,
+        height: DOEDTC_LINK_PREVIEW_IMAGE.height,
         alt: "Doe",
       },
     ],

@@ -5,6 +5,7 @@ import { getDoeDtcVaultTokenContext } from "@/lib/doedtc/doedtc-browser-db";
 import {
   DOEDTC_PAGE_DESCRIPTION,
   DOEDTC_VAULT,
+  DOEDTC_LINK_PREVIEW_IMAGE,
   doeDtcLinkPreviewImageUrl,
   doeDtcPublicOrigin,
 } from "@/lib/doedtc/doedtc-copy";
@@ -22,7 +23,14 @@ export const metadata: Metadata = {
     description: DOEDTC_PAGE_DESCRIPTION,
     url: `${doeDtcPublicOrigin()}${DOEDTC_PATH}/vault`,
     siteName: "Doe",
-    images: [{ url: ogImage, width: 1200, height: 630, alt: "Doe" }],
+    images: [
+      {
+        url: ogImage,
+        width: DOEDTC_LINK_PREVIEW_IMAGE.width,
+        height: DOEDTC_LINK_PREVIEW_IMAGE.height,
+        alt: "Doe",
+      },
+    ],
     type: "website",
   },
 };

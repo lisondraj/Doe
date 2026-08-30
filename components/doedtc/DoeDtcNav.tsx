@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { DoeDtcWordmark } from "@/components/doedtc/DoeDtcWordmark";
 import { DOEDTC_PROFILE } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcProfileTab } from "@/lib/doedtc/doedtc-types";
 import { useDoeDtcPageVariant } from "@/lib/doedtc/use-doedtc-page-variant";
 
-const DESKTOP_TABS: Array<{ id: DoeDtcProfileTab; label: string }> = [
+const PROFILE_TABS: Array<{ id: DoeDtcProfileTab; label: string }> = [
   { id: "dashboard", label: DOEDTC_PROFILE.navDashboard },
   { id: "appointments", label: DOEDTC_PROFILE.navAppointments },
   { id: "results", label: DOEDTC_PROFILE.navResults },
@@ -17,21 +17,6 @@ const DESKTOP_TABS: Array<{ id: DoeDtcProfileTab; label: string }> = [
   { id: "locker", label: DOEDTC_PROFILE.navLocker },
   { id: "share", label: DOEDTC_PROFILE.navShare },
 ];
-
-const PHONE_PRIMARY_TABS: Array<{ id: DoeDtcProfileTab; label: string }> = [
-  { id: "dashboard", label: "Home" },
-  { id: "appointments", label: "Appts" },
-  { id: "conditions", label: "Conditions" },
-  { id: "family", label: "Family" },
-];
-
-const PHONE_MORE_TABS: Array<{ id: DoeDtcProfileTab; label: string }> = [
-  { id: "results", label: DOEDTC_PROFILE.navResults },
-  { id: "locker", label: DOEDTC_PROFILE.navLocker },
-  { id: "share", label: DOEDTC_PROFILE.navShare },
-];
-
-const PHONE_MORE_TAB_IDS = new Set<DoeDtcProfileTab>(PHONE_MORE_TABS.map((tab) => tab.id));
 
 type DoeDtcNavProps = {
   token: string;
@@ -43,32 +28,47 @@ function tabClassName(active: boolean): string {
   return `doedtc-nav__tab${active ? " doedtc-nav__tab--active" : ""}`;
 }
 
+function MenuIcon() {
+  return (
+    <svg width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden>
+      <path d="M1 1.5h20" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+      <path d="M1 8h20" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+      <path d="M1 14.5h20" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function DoeDtcNav({ token, activeTab, onTabChange }: DoeDtcNavProps) {
   const { variant, ready } = useDoeDtcPageVariant();
   const isPhone = !ready || variant === "phone";
-  const [moreOpen, setMoreOpen] = useState(false);
-  const moreSheetRef = useRef<HTMLDivElement>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const closeMore = useCallback(() => setMoreOpen(false), []);
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
   useEffect(() => {
-    if (!moreOpen) return undefined;
+    if (!sidebarOpen) return undefined;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeMore();
+      if (event.key === "Escape") closeSidebar();
     };
 
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [closeMore, moreOpen]);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [closeSidebar, sidebarOpen]);
 
   useEffect(() => {
-    closeMore();
-  }, [activeTab, closeMore]);
+    closeSidebar();
+  }, [activeTab, closeSidebar]);
 
   const selectTab = (tab: DoeDtcProfileTab) => {
     onTabChange?.(tab);
-    closeMore();
+    closeSidebar();
   };
 
   const renderTabControl = (tab: { id: DoeDtcProfileTab; label: string }, active: boolean) =>
@@ -88,63 +88,62 @@ export function DoeDtcNav({ token, activeTab, onTabChange }: DoeDtcNavProps) {
         className={tabClassName(active)}
         href={`/doedtc/app?t=${encodeURIComponent(token)}&tab=${tab.id}`}
         aria-current={active ? "page" : undefined}
-        onClick={closeMore}
+        onClick={closeSidebar}
       >
         {tab.label}
       </Link>
     );
 
-  const moreActive = PHONE_MORE_TAB_IDS.has(activeTab);
-
   return (
     <>
       <nav className={`doedtc-nav${isPhone ? " doedtc-nav--phone" : ""}`} aria-label="Profile">
-        <Link className="doedtc-nav__wordmark" href={`/doedtc/app?t=${encodeURIComponent(token)}`}>
-          <DoeDtcWordmark />
-        </Link>
+        <div className="doedtc-nav__bar">
+          <Link className="doedtc-nav__wordmark" href={`/doedtc/app?t=${encodeURIComponent(token)}`}>
+            <DoeDtcWordmark />
+          </Link>
+          {isPhone ? (
+            <button
+              type="button"
+              className="doedtc-nav__menu"
+              aria-label="Open menu"
+              aria-expanded={sidebarOpen}
+              aria-controls="doedtc-nav-sidebar"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <MenuIcon />
+            </button>
+          ) : null}
+        </div>
         {!isPhone ? (
-          <div className="doedtc-nav__tabs">{DESKTOP_TABS.map((tab) => renderTabControl(tab, activeTab === tab.id))}</div>
+          <div className="doedtc-nav__tabs">{PROFILE_TABS.map((tab) => renderTabControl(tab, activeTab === tab.id))}</div>
         ) : null}
       </nav>
 
-      {isPhone ? (
+      {isPhone && sidebarOpen ? (
         <>
-          {moreOpen ? (
-            <button
-              type="button"
-              className="doedtc-tabbar__backdrop"
-              aria-label="Close menu"
-              onClick={closeMore}
-            />
-          ) : null}
-
-          {moreOpen ? (
-            <div
-              ref={moreSheetRef}
-              className="doedtc-tabbar__sheet"
-              role="dialog"
-              aria-modal="true"
-              aria-label="More tabs"
-            >
-              <p className="doedtc-tabbar__sheet-title">More</p>
-              <div className="doedtc-tabbar__sheet-list">
-                {PHONE_MORE_TABS.map((tab) => renderTabControl(tab, activeTab === tab.id))}
-              </div>
+          <button
+            type="button"
+            className="doedtc-sidebar__backdrop"
+            aria-label="Close menu"
+            onClick={closeSidebar}
+          />
+          <aside
+            id="doedtc-nav-sidebar"
+            className="doedtc-sidebar"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Profile menu"
+          >
+            <div className="doedtc-sidebar__header">
+              <p className="doedtc-sidebar__title">Menu</p>
+              <button type="button" className="doedtc-sidebar__close" aria-label="Close menu" onClick={closeSidebar}>
+                Close
+              </button>
             </div>
-          ) : null}
-
-          <div className="doedtc-tabbar" role="tablist" aria-label="Profile tabs">
-            {PHONE_PRIMARY_TABS.map((tab) => renderTabControl(tab, activeTab === tab.id))}
-            <button
-              type="button"
-              className={`doedtc-nav__tab doedtc-tabbar__more${moreActive ? " doedtc-nav__tab--active" : ""}`}
-              aria-expanded={moreOpen}
-              aria-haspopup="dialog"
-              onClick={() => setMoreOpen((open) => !open)}
-            >
-              More
-            </button>
-          </div>
+            <div className="doedtc-sidebar__list">
+              {PROFILE_TABS.map((tab) => renderTabControl(tab, activeTab === tab.id))}
+            </div>
+          </aside>
         </>
       ) : null}
     </>

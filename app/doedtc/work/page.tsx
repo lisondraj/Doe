@@ -5,6 +5,7 @@ import { getDoeDtcWorkPreview } from "@/lib/doedtc/doedtc-browser-db";
 import {
   DOEDTC_PAGE_DESCRIPTION,
   DOEDTC_WORK,
+  DOEDTC_LINK_PREVIEW_IMAGE,
   doeDtcLinkPreviewImageUrl,
   doeDtcPublicOrigin,
 } from "@/lib/doedtc/doedtc-copy";
@@ -33,8 +34,8 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
       images: [
         {
           url: ogImage,
-          width: 1200,
-          height: 630,
+          width: preview?.imageUrl ? 1200 : DOEDTC_LINK_PREVIEW_IMAGE.width,
+          height: preview?.imageUrl ? 630 : DOEDTC_LINK_PREVIEW_IMAGE.height,
           alt: preview?.caption || "Doe browser preview",
         },
       ],

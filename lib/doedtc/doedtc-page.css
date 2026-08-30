@@ -49,7 +49,7 @@ html[data-doedtc-page]:has(.doedtc-root) {
 
 html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-shell,
 .doedtc-root[data-doedtc-variant="phone"] .doedtc-shell {
-  padding-bottom: max(5.5rem, calc(env(safe-area-inset-bottom, 0px) + 4.75rem));
+  padding-bottom: max(2rem, calc(env(safe-area-inset-bottom, 0px) + 1.25rem));
 }
 
 html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-shell,
@@ -397,8 +397,31 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-care-grid,
   border-bottom: 1px solid var(--doedtc-border);
 }
 
+.doedtc-nav__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+}
+
 .doedtc-nav__wordmark {
   margin: 0;
+}
+
+.doedtc-nav__menu {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-right: -0.55rem;
+  border: none;
+  background: transparent;
+  color: var(--doedtc-ink);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .doedtc-nav__tabs {
@@ -441,59 +464,41 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-nav--phone .doedtc-w
   font-weight: 400;
 }
 
-.doedtc-tabbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 40;
-  display: flex;
-  align-items: stretch;
-  justify-content: space-around;
-  gap: 0.15rem;
-  padding: 0.45rem 0.35rem max(0.55rem, env(safe-area-inset-bottom, 0px));
-  background: rgba(27, 20, 16, 0.96);
-  border-top: 1px solid var(--doedtc-border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.doedtc-tabbar .doedtc-nav__tab,
-.doedtc-tabbar__more {
-  flex: 1 1 0;
-  min-width: 0;
-  padding: 0.35rem 0.15rem;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  text-align: center;
-  line-height: 1.15;
-}
-
-.doedtc-tabbar__backdrop {
+.doedtc-sidebar__backdrop {
   position: fixed;
   inset: 0;
-  z-index: 39;
+  z-index: 50;
   border: none;
   background: rgba(19, 14, 9, 0.55);
   cursor: default;
 }
 
-.doedtc-tabbar__sheet {
+.doedtc-sidebar {
   position: fixed;
-  left: 0;
+  top: 0;
   right: 0;
   bottom: 0;
-  z-index: 41;
-  padding: 1rem 1.25rem max(1.15rem, calc(env(safe-area-inset-bottom, 0px) + 4.5rem));
-  border-top-left-radius: 1.15rem;
-  border-top-right-radius: 1.15rem;
+  z-index: 51;
+  display: flex;
+  flex-direction: column;
+  width: min(18.5rem, 82vw);
+  padding: max(1.15rem, env(safe-area-inset-top, 0px)) max(1.25rem, env(safe-area-inset-right, 0px))
+    max(1.25rem, env(safe-area-inset-bottom, 0px)) 1.25rem;
   background: var(--doedtc-raised);
-  border-top: 1px solid var(--doedtc-border);
+  border-left: 1px solid var(--doedtc-border);
+  box-shadow: -18px 0 40px rgba(0, 0, 0, 0.28);
 }
 
-.doedtc-tabbar__sheet-title {
-  margin: 0 0 0.75rem;
+.doedtc-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.15rem;
+}
+
+.doedtc-sidebar__title {
+  margin: 0;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -501,15 +506,26 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-nav--phone .doedtc-w
   color: var(--doedtc-muted);
 }
 
-.doedtc-tabbar__sheet-list {
-  display: grid;
-  gap: 0.15rem;
+.doedtc-sidebar__close {
+  border: none;
+  background: transparent;
+  color: var(--doedtc-gold);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.doedtc-tabbar__sheet-list .doedtc-nav__tab {
+.doedtc-sidebar__list {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.doedtc-sidebar__list .doedtc-nav__tab {
   width: 100%;
-  padding: 0.75rem 0.35rem;
-  font-size: 1rem;
+  padding: 0.85rem 0.15rem;
+  font-size: 1.15rem;
   text-align: left;
 }
 
