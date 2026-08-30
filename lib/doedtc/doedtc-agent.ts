@@ -1,6 +1,7 @@
 import { doeDtcAppUrl, doeDtcCareUrl, doeDtcListenUrl } from "@/lib/doedtc/doedtc-copy";
 import {
   addDoeDtcAppointment,
+  addDoeDtcFamilyMember,
   createDoeDtcListenSession,
   getDoeDtcProfileLists,
   insertDoeDtcMemory,
@@ -8,6 +9,7 @@ import {
   linkDoeDtcSymptomToAssessment,
   listDoeDtcAppointments,
   listDoeDtcAssessments,
+  listDoeDtcFamilyMembers,
   listDoeDtcMemories,
   listDoeDtcMessages,
   listDoeDtcSymptoms,
@@ -16,6 +18,8 @@ import {
 import type {
   DoeDtcAppointmentRow,
   DoeDtcAssessmentResult,
+  DoeDtcFamilyMemberRow,
+  DoeDtcFamilyRelationship,
   DoeDtcMemoryRow,
   DoeDtcMessageRow,
   DoeDtcSymptomRow,
@@ -92,6 +96,36 @@ export const DOEDTC_AGENT_TOOLS = [
           notes: { type: "string", description: "Any extra context the user shared." },
         },
         required: ["title", "starts_at"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "log_family_member",
+      description:
+        "Add or update the user's family chart when they name a person and relationship (e.g. son Bob, mother Jane). Use child for son/daughter. Name is required.",
+      parameters: {
+        type: "object",
+        properties: {
+          full_name: { type: "string", description: "The family member's name." },
+          relationship: {
+            type: "string",
+            enum: [
+              "grandmother",
+              "grandfather",
+              "mother",
+              "father",
+              "child",
+              "sibling",
+              "partner",
+              "other",
+            ],
+            description: "Use child for son or daughter.",
+          },
+          phone: { type: "string", description: "Phone number if the user shared one." },
+        },
+        required: ["full_name", "relationship"],
       },
     },
   },
@@ -240,6 +274,29 @@ function formatMemoryLog(memories: DoeDtcMemoryRow[]): string {
   return memories.map((row) => `- [${row.category}] ${row.fact}`).join("\n");
 }
 
+function formatFamilyLog(familyMembers: DoeDtcFamilyMemberRow[]): string {
+  if (familyMembers.length === 0) return "No family members logged.";
+  return familyMembers
+    .map((row) => {
+      const parts = [`${row.full_name} (${row.relationship})`];
+      if (row.phone) parts.push(`phone: ${row.phone}`);
+      parts.push(`id: ${row.id}`);
+      return `- ${parts.join(" | ")}`;
+    })
+    .join("\n");
+}
+
+const FAMILY_RELATIONSHIPS = new Set<DoeDtcFamilyRelationship>([
+  "grandmother",
+  "grandfather",
+  "mother",
+  "father",
+  "child",
+  "sibling",
+  "partner",
+  "other",
+]);
+
 function todayLabel(): string {
   return new Date().toLocaleDateString(undefined, {
     weekday: "long",
@@ -258,6 +315,7 @@ function buildSystemPrompt(params: {
   assessmentHistory: string;
   appointmentLog: string;
   memoryLog: string;
+  familyLog: string;
 }): string {
   return `You are Doe, a consumer health companion over iMessage.
 
@@ -275,6 +333,9 @@ ${params.transcript || "No prior messages."}
 Appointments:
 ${params.appointmentLog}
 
+Family chart:
+${params.familyLog}
+
 Remembered facts:
 ${params.memoryLog}
 
@@ -288,10 +349,12 @@ Rules:
 - Keep iMessage replies short (1-4 sentences). Warm, plain language.
 - When the user reports symptoms, call log_symptoms.
 - When the user mentions an appointment or visit (e.g. "I have an appointment next Tuesday"), ask what it is for if missing, then call log_appointment with a resolved ISO datetime.
-- Refer back to upcoming appointments and remembered facts naturally in later turns.
-- Store durable non-symptom facts with remember_fact (doctor names, preferences, context).
+- Refer back to upcoming appointments, family members, and remembered facts naturally in later turns.
+- When the user names a family member with a relationship (e.g. "my son Bob", "mother Jane"), call log_family_member. Use child for son or daughter. Do not use remember_fact for family members that belong on the Family tab.
+- Store other durable non-symptom facts with remember_fact (doctor names, preferences, general context).
 - When the user wants to record or transcribe a visit, call start_listen. Tell them you are sending a Listen link.
 - When the user asks for their profile, dashboard, appointments page, or a profile link, call send_profile_link. Say you are sending the link. Never say you cannot send it.
+- When the user asks whether you logged a family member, answer from the Family chart above.
 - Never put URLs in your reply. Links are always sent as a separate iMessage.
 - Do not end with "feel free to ask", "let me know if you have questions", or similar closers. Just stop.
 - Ask 1-2 clarifying questions when details are thin (timing, severity, location, triggers).
@@ -442,13 +505,15 @@ export async function runDoeDtcAgentTurn(params: {
   user: DoeDtcUserRow;
   inboundText: string;
 }): Promise<DoeDtcAgentTurnResult> {
-  const [profile, messageHistory, symptoms, assessments, appointments, memories] = await Promise.all([
+  const [profile, messageHistory, symptoms, assessments, appointments, memories, familyMembers] =
+    await Promise.all([
     getDoeDtcProfileLists(params.user.id),
     listDoeDtcMessages(params.user.id, 40),
     listDoeDtcSymptoms(params.user.id, 10),
     listDoeDtcAssessments(params.user.id, 3),
     listDoeDtcAppointments(params.user.id, 8),
     listDoeDtcMemories(params.user.id, 20),
+    listDoeDtcFamilyMembers(params.user.id, 12),
   ]);
 
   const systemPrompt = buildSystemPrompt({
@@ -460,6 +525,7 @@ export async function runDoeDtcAgentTurn(params: {
     assessmentHistory: formatAssessmentHistory(assessments),
     appointmentLog: formatAppointmentLog(appointments),
     memoryLog: formatMemoryLog(memories),
+    familyLog: formatFamilyLog(familyMembers),
   });
 
   const messages: ChatMessage[] = [
@@ -574,6 +640,25 @@ export async function runDoeDtcAgentTurn(params: {
             notes: typeof args.notes === "string" ? args.notes : null,
           });
           output = { ok: true, id: row.id, title: row.title, starts_at: row.starts_at };
+        } else if (toolCall.function.name === "log_family_member") {
+          const fullName = String(args.full_name ?? "").trim();
+          const relationship = String(args.relationship ?? "").trim();
+          if (!fullName) throw new Error("full_name is required.");
+          if (!FAMILY_RELATIONSHIPS.has(relationship as DoeDtcFamilyRelationship)) {
+            throw new Error("Invalid relationship.");
+          }
+          const row = await addDoeDtcFamilyMember({
+            userId: params.user.id,
+            fullName,
+            relationship: relationship as DoeDtcFamilyRelationship,
+            phone: typeof args.phone === "string" ? args.phone : null,
+          });
+          output = {
+            ok: true,
+            id: row.id,
+            full_name: row.full_name,
+            relationship: row.relationship,
+          };
         } else if (toolCall.function.name === "remember_fact") {
           const fact = String(args.fact ?? "").trim();
           if (!fact) throw new Error("Fact is required.");

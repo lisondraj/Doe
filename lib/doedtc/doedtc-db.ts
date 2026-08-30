@@ -762,6 +762,21 @@ export async function listDoeDtcAppointments(
   return (data as DoeDtcAppointmentRow[]) ?? [];
 }
 
+export async function listDoeDtcFamilyMembers(
+  userId: string,
+  limit = 12,
+): Promise<DoeDtcFamilyMemberRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_family_members")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcFamilyMemberRow[]) ?? [];
+}
+
 export async function listDoeDtcMemories(userId: string, limit = 20): Promise<DoeDtcMemoryRow[]> {
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase

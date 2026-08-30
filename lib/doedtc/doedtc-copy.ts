@@ -178,6 +178,13 @@ export function doeDtcContactCardImageUrl(): string {
   );
 }
 
+export function doeDtcLinkPreviewImageUrl(): string {
+  return (
+    process.env.DOEDTC_LINK_PREVIEW_IMAGE_URL?.trim() ||
+    `${doeDtcPublicOrigin()}/images/doe-link-banner.png`
+  );
+}
+
 /** E.164 sending line for Linq contact card setup. Falls back to the chat from-number. */
 export function doeDtcLinqPhoneNumber(fromNumber?: string | null): string | null {
   const configured = process.env.DOEDTC_LINQ_PHONE_NUMBER?.trim();

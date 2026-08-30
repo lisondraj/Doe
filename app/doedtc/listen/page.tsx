@@ -5,7 +5,7 @@ import { getDoeDtcListenSession, getDoeDtcUserByCareToken } from "@/lib/doedtc/d
 import {
   DOEDTC_LISTEN,
   DOEDTC_PAGE_DESCRIPTION,
-  doeDtcContactCardImageUrl,
+  doeDtcLinkPreviewImageUrl,
   doeDtcPublicOrigin,
 } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcListenSessionRow } from "@/lib/doedtc/doedtc-types";
@@ -13,7 +13,7 @@ import { DOEDTC_PATH } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
-const ogImage = doeDtcContactCardImageUrl();
+const ogImage = doeDtcLinkPreviewImageUrl();
 
 export const metadata: Metadata = {
   title: `${DOEDTC_LISTEN.pageTitle} · Doe`,
@@ -26,8 +26,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: ogImage,
-        width: 1024,
-        height: 1024,
+        width: 1200,
+        height: 630,
         alt: "Doe",
       },
     ],

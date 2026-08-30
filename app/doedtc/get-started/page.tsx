@@ -5,14 +5,14 @@ import { getDoeDtcUserByOnboardingToken, isValidOnboardingUser } from "@/lib/doe
 import {
   DOEDTC_GET_STARTED,
   DOEDTC_PAGE_DESCRIPTION,
-  doeDtcContactCardImageUrl,
+  doeDtcLinkPreviewImageUrl,
   doeDtcPublicOrigin,
 } from "@/lib/doedtc/doedtc-copy";
 import { DOEDTC_PATH } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
-const ogImage = doeDtcContactCardImageUrl();
+const ogImage = doeDtcLinkPreviewImageUrl();
 
 export const metadata: Metadata = {
   title: `${DOEDTC_GET_STARTED.title} · Doe`,
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: ogImage,
-        width: 1024,
-        height: 1024,
+        width: 1200,
+        height: 630,
         alt: "Doe",
       },
     ],
