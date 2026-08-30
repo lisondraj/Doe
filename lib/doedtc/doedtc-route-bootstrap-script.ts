@@ -1,21 +1,15 @@
-import {
-  DOEDTC_DESKTOP_MEDIA_QUERY,
-  DOEDTC_DEVICE_VIEWPORT,
-} from "@/lib/doedtc/doedtc-page-variant";
+import { DOEDTC_OVERFLOW_SURFACE } from "@/lib/doedtc/doedtc-chrome";
 import {
   phoneLayoutViewportBootstrapScript,
   phoneOverflowChromeBootstrapScript,
 } from "@/lib/doephone/phone-layout-viewport";
 import { DOEDTC_PATH } from "@/lib/site-domains";
-import { DOE_PAGE_SURFACE } from "@/lib/home/doe-page-colors";
 
-/** Runs before paint on `/doedtc` — cream health brand on phone and desktop. */
+/** Runs before paint on `/doedtc*` — always iPhone chrome with cream overflow. */
 export function doeDtcRouteBootstrapScript(): string {
   const viewportBootstrap = phoneLayoutViewportBootstrapScript();
-  const overflowBootstrap = phoneOverflowChromeBootstrapScript(DOE_PAGE_SURFACE);
+  const overflowBootstrap = phoneOverflowChromeBootstrapScript(DOEDTC_OVERFLOW_SURFACE);
   const routePath = JSON.stringify(DOEDTC_PATH);
-  const deviceViewport = JSON.stringify(DOEDTC_DEVICE_VIEWPORT);
-  const desktopMq = JSON.stringify(DOEDTC_DESKTOP_MEDIA_QUERY);
 
-  return `(function(){try{if(!location.pathname.startsWith(${routePath}))return;var html=document.documentElement;var body=document.body;var meta=document.querySelector('meta[name="viewport"]');html.removeAttribute("data-home-page");html.removeAttribute("data-about-page");html.removeAttribute("data-doeinsure-page");html.setAttribute("data-doedtc-page","true");var desktop=window.matchMedia(${desktopMq}).matches||window.innerWidth>=1024;if(desktop){${overflowBootstrap}html.removeAttribute("data-doeforvc-always-phone");html.removeAttribute("data-doephone-pinching");html.setAttribute("data-layout","desktop");if(body)body.classList.add("desktop-route");html.style.removeProperty("--app-vw");html.style.removeProperty("--app-vh");html.style.removeProperty("--app-vv-offset-top");if(meta)meta.setAttribute("content",${deviceViewport});return;}${overflowBootstrap}html.setAttribute("data-doeforvc-always-phone","true");html.removeAttribute("data-layout");if(body)body.classList.remove("desktop-route");${viewportBootstrap}}catch(e){}})();`;
+  return `(function(){try{if(!location.pathname.startsWith(${routePath}))return;var html=document.documentElement;var body=document.body;html.removeAttribute("data-home-page");html.removeAttribute("data-about-page");html.removeAttribute("data-doeinsure-page");html.removeAttribute("data-doehome-page");html.removeAttribute("data-layout");html.removeAttribute("data-doephone-pinching");html.setAttribute("data-doedtc-page","true");html.setAttribute("data-doeforvc-always-phone","true");if(body)body.classList.remove("desktop-route");${overflowBootstrap}${viewportBootstrap}}catch(e){}})();`;
 }
