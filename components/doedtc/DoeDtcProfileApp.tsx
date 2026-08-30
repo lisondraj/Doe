@@ -418,7 +418,10 @@ function AppointmentsTab({ snapshot, busy, onAction }: TabProps) {
               <li className="doedtc-row-item" key={appointment.id}>
                 <div style={{ width: "100%" }}>
                   <strong>{appointment.title}</strong>
-                  <p className="doedtc-row-item__meta">{formatDateTime(appointment.starts_at)}</p>
+                  <p className="doedtc-row-item__meta">
+                    {appointment.timing_note?.trim() ||
+                      (appointment.starts_at ? formatDateTime(appointment.starts_at) : "Date not set")}
+                  </p>
                   {appointment.location ? (
                     <p className="doedtc-row-item__meta">{appointment.location}</p>
                   ) : null}

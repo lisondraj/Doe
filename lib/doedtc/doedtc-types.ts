@@ -45,7 +45,8 @@ export type DoeDtcAppointmentRow = {
   id: string;
   user_id: string;
   title: string;
-  starts_at: string;
+  starts_at: string | null;
+  timing_note: string | null;
   location: string | null;
   notes: string | null;
   created_at: string;

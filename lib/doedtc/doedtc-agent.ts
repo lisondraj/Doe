@@ -1,5 +1,10 @@
 import { doeDtcAppUrl, doeDtcCareUrl, doeDtcListenUrl } from "@/lib/doedtc/doedtc-copy";
 import {
+  formatDoeDtcAppointmentWhen,
+  normalizeDoeDtcAppointmentTiming,
+  type DoeDtcAppointmentTimingPrecision,
+} from "@/lib/doedtc/doedtc-appointment-timing";
+import {
   addDoeDtcAppointment,
   addDoeDtcFamilyMember,
   createDoeDtcListenSession,
@@ -83,19 +88,31 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "log_appointment",
       description:
-        "Save an upcoming or past medical appointment when the user mentions a visit, checkup, or date. Ask what it is for if missing.",
+        "Save a medical appointment. Never invent a date or time. Use approximate when timing is vague (next week, soon). Use day when the user names a specific day without a time. Use exact only when they give date and time.",
       parameters: {
         type: "object",
         properties: {
-          title: { type: "string", description: "What the appointment is for, e.g. Primary care follow-up." },
+          title: { type: "string", description: "What the appointment is for, e.g. Asthma follow-up." },
+          timing_precision: {
+            type: "string",
+            enum: ["exact", "day", "approximate"],
+            description:
+              "exact = user gave date and time. day = user named a specific day only. approximate = vague window like next week or soon.",
+          },
           starts_at: {
             type: "string",
-            description: "ISO 8601 datetime for the appointment based on today's date context.",
+            description:
+              "ISO 8601 datetime. Required for exact or day. Omit for approximate — never guess.",
+          },
+          timing_note: {
+            type: "string",
+            description:
+              "User's exact vague wording, e.g. next week. Required when timing_precision is approximate.",
           },
           location: { type: "string", description: "Clinic or location if known." },
           notes: { type: "string", description: "Any extra context the user shared." },
         },
-        required: ["title", "starts_at"],
+        required: ["title", "timing_precision"],
       },
     },
   },
@@ -253,14 +270,9 @@ function formatAppointmentLog(appointments: DoeDtcAppointmentRow[]): string {
   if (appointments.length === 0) return "No appointments logged.";
   return appointments
     .map((row) => {
-      const when = new Date(row.starts_at).toLocaleString(undefined, {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-      });
-      const parts = [`${when}: ${row.title}`];
+      const when = formatDoeDtcAppointmentWhen(row);
+      const parts = [`${row.title} | when: ${when}`];
+      if (row.timing_note) parts.push("(approximate — do not state as an exact calendar datetime)");
       if (row.location) parts.push(`at ${row.location}`);
       if (row.notes) parts.push(`notes: ${row.notes}`);
       parts.push(`id: ${row.id}`);
@@ -348,7 +360,12 @@ ${params.assessmentHistory}
 Rules:
 - Keep iMessage replies short (1-4 sentences). Warm, plain language.
 - When the user reports symptoms, call log_symptoms.
-- When the user mentions an appointment or visit (e.g. "I have an appointment next Tuesday"), ask what it is for if missing, then call log_appointment with a resolved ISO datetime.
+- When the user mentions an appointment or visit, ask what it is for if missing.
+- Never invent a calendar date or time. If they only say vague timing (next week, soon), use log_appointment with timing_precision approximate and timing_note in their words — no starts_at.
+- If they name a specific day without a time (next Tuesday), use timing_precision day with starts_at for that day only.
+- Use timing_precision exact only when they give a specific time.
+- Before stating any appointment date or time in a reply, read the Appointments chart. For approximate entries, repeat their vague wording — never convert it to a specific datetime.
+- If the user says they never gave a date, apologize briefly and ask which day the appointment is.
 - Refer back to upcoming appointments, family members, and remembered facts naturally in later turns.
 - When the user names a family member with a relationship (e.g. "my son Bob", "mother Jane"), call log_family_member. Use child for son or daughter. Do not use remember_fact for family members that belong on the Family tab.
 - Store other durable non-symptom facts with remember_fact (doctor names, preferences, general context).
@@ -623,23 +640,30 @@ export async function runDoeDtcAgentTurn(params: {
             link_sent_separately: true,
           };
         } else if (toolCall.function.name === "log_appointment") {
-          const title = String(args.title ?? "").trim();
-          const startsAt = String(args.starts_at ?? "").trim();
-          if (!title || !startsAt) {
-            throw new Error("Title and starts_at are required.");
-          }
-          const parsedDate = new Date(startsAt);
-          if (Number.isNaN(parsedDate.getTime())) {
-            throw new Error("Invalid appointment datetime.");
-          }
-          const row = await addDoeDtcAppointment({
-            userId: params.user.id,
-            title,
-            startsAt: parsedDate.toISOString(),
+          const precision = String(args.timing_precision ?? "").trim() as DoeDtcAppointmentTimingPrecision;
+          const normalized = normalizeDoeDtcAppointmentTiming({
+            title: String(args.title ?? ""),
+            timing_precision: precision,
+            starts_at: typeof args.starts_at === "string" ? args.starts_at : null,
+            timing_note: typeof args.timing_note === "string" ? args.timing_note : null,
             location: typeof args.location === "string" ? args.location : null,
             notes: typeof args.notes === "string" ? args.notes : null,
           });
-          output = { ok: true, id: row.id, title: row.title, starts_at: row.starts_at };
+          const row = await addDoeDtcAppointment({
+            userId: params.user.id,
+            title: normalized.title,
+            startsAt: normalized.startsAt,
+            timingNote: normalized.timingNote,
+            location: normalized.location,
+            notes: normalized.notes,
+          });
+          output = {
+            ok: true,
+            id: row.id,
+            title: row.title,
+            starts_at: row.starts_at,
+            timing_note: row.timing_note,
+          };
         } else if (toolCall.function.name === "log_family_member") {
           const fullName = String(args.full_name ?? "").trim();
           const relationship = String(args.relationship ?? "").trim();

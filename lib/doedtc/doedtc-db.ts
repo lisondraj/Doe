@@ -552,7 +552,8 @@ export async function removeDoeDtcFamilyMember(params: {
 export async function addDoeDtcAppointment(params: {
   userId: string;
   title: string;
-  startsAt: string;
+  startsAt?: string | null;
+  timingNote?: string | null;
   location?: string | null;
   notes?: string | null;
 }): Promise<DoeDtcAppointmentRow> {
@@ -562,7 +563,8 @@ export async function addDoeDtcAppointment(params: {
     .insert({
       user_id: params.userId,
       title: params.title.trim(),
-      starts_at: params.startsAt,
+      starts_at: params.startsAt ?? null,
+      timing_note: params.timingNote?.trim() || null,
       location: params.location?.trim() || null,
       notes: params.notes?.trim() || null,
     })
