@@ -17,6 +17,7 @@
     "export:blog-about-shaders": "STORY_SHADER_BASE_URL=http://127.0.0.1:3001 node scripts/export-blog-about-shaders.mjs"
   },
   "dependencies": {
+    "@onkernel/sdk": "^0.96.0",
     "@paper-design/shaders": "^0.0.76",
     "@paper-design/shaders-react": "^0.0.76",
     "@remotion/cli": "^4.0.499",
@@ -24,10 +25,13 @@
     "@remotion/player": "^4.0.499",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.108.2",
+    "@vercel/blob": "^2.8.0",
     "html-to-image": "^1.11.13",
     "jspdf": "^4.2.1",
+    "mem0ai": "^3.1.7",
     "minipass": "^7.1.3",
     "next": "^14.2.0",
+    "playwright-core": "^1.62.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "remotion": "^4.0.499",

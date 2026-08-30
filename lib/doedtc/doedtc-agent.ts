@@ -1,3 +1,18 @@
+import {
+  actDoeDtcBrowser,
+  getActiveDoeDtcBrowserJobId,
+  navigateDoeDtcBrowser,
+  requestDoeDtcBrowserCommit,
+  requestDoeDtcLiveLogin,
+  requestDoeDtcVaultLink,
+  snapshotDoeDtcBrowser,
+  startDoeDtcBrowserTask,
+} from "@/lib/doedtc/doedtc-browser";
+import {
+  addDoeDtcMem0Fact,
+  formatMem0Block,
+  searchDoeDtcMem0Memories,
+} from "@/lib/doedtc/doedtc-memory";
 import { doeDtcAppUrl, doeDtcCareUrl, doeDtcListenUrl } from "@/lib/doedtc/doedtc-copy";
 import {
   formatDoeDtcAppointmentWhen,
@@ -15,7 +30,6 @@ import {
   listDoeDtcAppointments,
   listDoeDtcAssessments,
   listDoeDtcFamilyMembers,
-  listDoeDtcMemories,
   listDoeDtcMessages,
   listDoeDtcSymptoms,
   saveDoeDtcAssessment,
@@ -25,14 +39,13 @@ import type {
   DoeDtcAssessmentResult,
   DoeDtcFamilyMemberRow,
   DoeDtcFamilyRelationship,
-  DoeDtcMemoryRow,
   DoeDtcMessageRow,
   DoeDtcSymptomRow,
   DoeDtcUserRow,
 } from "@/lib/doedtc/doedtc-types";
 
 const DOEDTC_AGENT_MODEL = "gpt-4o-mini";
-const MAX_TOOL_ROUNDS = 5;
+const MAX_TOOL_ROUNDS = 8;
 
 export const DOEDTC_AGENT_TOOLS = [
   {
@@ -194,6 +207,106 @@ export const DOEDTC_AGENT_TOOLS = [
       },
     },
   },
+  {
+    type: "function" as const,
+    function: {
+      name: "start_browser_task",
+      description: "Start a research browser task on an allowed site. Ask before opening unknown sites.",
+      parameters: {
+        type: "object",
+        properties: {
+          intent: { type: "string", description: "What the user wants to find or do." },
+          url: { type: "string", description: "Starting URL or hostname." },
+          mode: { type: "string", enum: ["research", "login", "write"] },
+        },
+        required: ["intent", "url"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "browser_navigate",
+      description: "Navigate the active browser task to a URL on the allowlist.",
+      parameters: {
+        type: "object",
+        properties: {
+          url: { type: "string" },
+        },
+        required: ["url"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "browser_act",
+      description: "Click, type, or scroll in the active browser task. No submit/book/pay actions.",
+      parameters: {
+        type: "object",
+        properties: {
+          action: { type: "string", enum: ["click", "type", "scroll"] },
+          selector: { type: "string" },
+          text: { type: "string" },
+        },
+        required: ["action"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "browser_snapshot",
+      description: "Capture a screenshot preview and return a short page excerpt.",
+      parameters: {
+        type: "object",
+        properties: {
+          caption: { type: "string" },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "request_vault",
+      description: "Send a secure vault link so the patient can sign in on the web. Never ask for passwords in iMessage.",
+      parameters: {
+        type: "object",
+        properties: {
+          host: { type: "string", description: "Site hostname, e.g. mychart.example.org" },
+        },
+        required: ["host"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "request_live_login",
+      description: "Send a Live View link so the patient can log in themselves.",
+      parameters: {
+        type: "object",
+        properties: {},
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "request_commit",
+      description: "Prepare an irreversible browser action and ask the patient to reply CONFIRM.",
+      parameters: {
+        type: "object",
+        properties: {
+          selector: { type: "string" },
+          label: { type: "string", description: "Plain-language description of the action." },
+          url: { type: "string" },
+        },
+        required: ["selector", "label"],
+      },
+    },
+  },
 ];
 
 type ChatMessage =
@@ -214,6 +327,10 @@ export type DoeDtcAgentTurnResult = {
   careUrl?: string;
   listenUrl?: string;
   profileUrl?: string;
+  workUrl?: string;
+  vaultUrl?: string;
+  liveViewUrl?: string;
+  browserNeedsConfirm?: boolean;
   assessmentRan: boolean;
 };
 
@@ -281,11 +398,6 @@ function formatAppointmentLog(appointments: DoeDtcAppointmentRow[]): string {
     .join("\n");
 }
 
-function formatMemoryLog(memories: DoeDtcMemoryRow[]): string {
-  if (memories.length === 0) return "No stored memories yet.";
-  return memories.map((row) => `- [${row.category}] ${row.fact}`).join("\n");
-}
-
 function formatFamilyLog(familyMembers: DoeDtcFamilyMemberRow[]): string {
   if (familyMembers.length === 0) return "No family members logged.";
   return familyMembers
@@ -326,7 +438,7 @@ function buildSystemPrompt(params: {
   symptomLog: string;
   assessmentHistory: string;
   appointmentLog: string;
-  memoryLog: string;
+  relevantMemories: string;
   familyLog: string;
 }): string {
   return `You are Doe, a consumer health companion over iMessage.
@@ -348,8 +460,8 @@ ${params.appointmentLog}
 Family chart:
 ${params.familyLog}
 
-Remembered facts:
-${params.memoryLog}
+Relevant memories:
+${params.relevantMemories}
 
 Symptom log:
 ${params.symptomLog}
@@ -372,6 +484,10 @@ Rules:
 - When the user wants to record or transcribe a visit, call start_listen. Tell them you are sending a Listen link.
 - When the user asks for their profile, dashboard, appointments page, or a profile link, call send_profile_link. Say you are sending the link. Never say you cannot send it.
 - When the user asks whether you logged a family member, answer from the Family chart above.
+- For health research, prefer start_browser_task on approved sites. Ask before opening unknown sites.
+- Never ask for passwords, OTPs, or portal credentials in iMessage. Use request_vault or request_live_login instead.
+- Never claim login success without browser extract evidence. Never mention Kernel, tools, or internal systems.
+- Irreversible browser actions require request_commit, then the patient replies CONFIRM.
 - Never put URLs in your reply. Links are always sent as a separate iMessage.
 - Do not end with "feel free to ask", "let me know if you have questions", or similar closers. Just stop.
 - Ask 1-2 clarifying questions when details are thin (timing, severity, location, triggers).
@@ -522,15 +638,15 @@ export async function runDoeDtcAgentTurn(params: {
   user: DoeDtcUserRow;
   inboundText: string;
 }): Promise<DoeDtcAgentTurnResult> {
-  const [profile, messageHistory, symptoms, assessments, appointments, memories, familyMembers] =
+  const [profile, messageHistory, symptoms, assessments, appointments, familyMembers, relevantMemoryRows] =
     await Promise.all([
     getDoeDtcProfileLists(params.user.id),
     listDoeDtcMessages(params.user.id, 40),
     listDoeDtcSymptoms(params.user.id, 10),
     listDoeDtcAssessments(params.user.id, 3),
     listDoeDtcAppointments(params.user.id, 8),
-    listDoeDtcMemories(params.user.id, 20),
     listDoeDtcFamilyMembers(params.user.id, 12),
+    searchDoeDtcMem0Memories({ userId: params.user.id, query: params.inboundText, topK: 5 }),
   ]);
 
   const systemPrompt = buildSystemPrompt({
@@ -541,7 +657,7 @@ export async function runDoeDtcAgentTurn(params: {
     symptomLog: formatSymptomLog(symptoms),
     assessmentHistory: formatAssessmentHistory(assessments),
     appointmentLog: formatAppointmentLog(appointments),
-    memoryLog: formatMemoryLog(memories),
+    relevantMemories: formatMem0Block(relevantMemoryRows),
     familyLog: formatFamilyLog(familyMembers),
   });
 
@@ -555,6 +671,11 @@ export async function runDoeDtcAgentTurn(params: {
   let careUrl: string | undefined;
   let listenUrl: string | undefined;
   let profileUrl: string | undefined;
+  let workUrl: string | undefined;
+  let vaultUrl: string | undefined;
+  let liveViewUrl: string | undefined;
+  let browserNeedsConfirm = false;
+  let activeBrowserJobId: string | null = await getActiveDoeDtcBrowserJobId(params.user.id);
   let assessmentSummary: string | undefined;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
@@ -563,11 +684,19 @@ export async function runDoeDtcAgentTurn(params: {
     if (!message.tool_calls?.length) {
       const fallback = assessmentRan
         ? assessmentSummary ?? "I put together a review for you."
-        : listenUrl
-          ? "I am sending a Listen link."
-          : profileUrl
-            ? "I am sending your profile link."
-            : "Thanks for sharing. Tell me more about what you are feeling.";
+        : browserNeedsConfirm
+          ? "Reply CONFIRM to proceed, or STOP to cancel."
+          : workUrl
+            ? "I am sending a browser preview."
+            : vaultUrl
+              ? "I am sending a secure sign-in link."
+              : liveViewUrl
+                ? "I am sending a Live View link."
+                : listenUrl
+                  ? "I am sending a Listen link."
+                  : profileUrl
+                    ? "I am sending your profile link."
+                    : "Thanks for sharing. Tell me more about what you are feeling.";
       const replyText = sanitizeDoeDtcReplyText(message.content?.trim() || fallback) || fallback;
 
       return {
@@ -575,6 +704,10 @@ export async function runDoeDtcAgentTurn(params: {
         careUrl: assessmentRan ? careUrl : undefined,
         listenUrl,
         profileUrl,
+        workUrl,
+        vaultUrl,
+        liveViewUrl,
+        browserNeedsConfirm,
         assessmentRan,
       };
     }
@@ -664,6 +797,11 @@ export async function runDoeDtcAgentTurn(params: {
             starts_at: row.starts_at,
             timing_note: row.timing_note,
           };
+          const when = formatDoeDtcAppointmentWhen(row);
+          await addDoeDtcMem0Fact({
+            userId: params.user.id,
+            fact: `Appointment: ${row.title} — ${when}`,
+          });
         } else if (toolCall.function.name === "log_family_member") {
           const fullName = String(args.full_name ?? "").trim();
           const relationship = String(args.relationship ?? "").trim();
@@ -691,7 +829,107 @@ export async function runDoeDtcAgentTurn(params: {
             fact,
             category: typeof args.category === "string" ? args.category : "general",
           });
+          await addDoeDtcMem0Fact({ userId: params.user.id, fact: row.fact });
           output = { ok: true, id: row.id, fact: row.fact };
+        } else if (toolCall.function.name === "start_browser_task") {
+          const started = await startDoeDtcBrowserTask({
+            user: params.user,
+            intent: String(args.intent ?? ""),
+            url: String(args.url ?? ""),
+            mode:
+              args.mode === "login" || args.mode === "write" || args.mode === "research"
+                ? args.mode
+                : "research",
+          });
+          if (!started.ok) {
+            output = { ok: false, error: started.error };
+          } else {
+            activeBrowserJobId = started.jobId;
+            output = { ok: true, job_id: started.jobId, host: started.host };
+          }
+        } else if (toolCall.function.name === "browser_navigate") {
+          const jobId = activeBrowserJobId ?? "";
+          const result = await navigateDoeDtcBrowser({
+            user: params.user,
+            jobId,
+            url: String(args.url ?? ""),
+          });
+          output = result;
+        } else if (toolCall.function.name === "browser_act") {
+          const jobId = activeBrowserJobId ?? "";
+          const result = await actDoeDtcBrowser({
+            user: params.user,
+            jobId,
+            action:
+              args.action === "click" || args.action === "type" || args.action === "scroll"
+                ? args.action
+                : "scroll",
+            selector: typeof args.selector === "string" ? args.selector : undefined,
+            text: typeof args.text === "string" ? args.text : undefined,
+          });
+          output = result;
+        } else if (toolCall.function.name === "browser_snapshot") {
+          const jobId = activeBrowserJobId ?? "";
+          const result = await snapshotDoeDtcBrowser({
+            user: params.user,
+            jobId,
+            caption: typeof args.caption === "string" ? args.caption : undefined,
+          });
+          if (result.workUrl) {
+            workUrl = result.workUrl;
+          }
+          output = {
+            ok: result.ok,
+            url: result.url,
+            title: result.title,
+            excerpt: result.excerpt,
+            link_sent_separately: Boolean(result.workUrl),
+          };
+        } else if (toolCall.function.name === "request_vault") {
+          const jobId = activeBrowserJobId ?? "";
+          const vault = await requestDoeDtcVaultLink({
+            user: params.user,
+            jobId,
+            host: String(args.host ?? ""),
+          });
+          if (!vault.ok) {
+            output = vault;
+          } else {
+            vaultUrl = vault.vaultUrl;
+            output = { ok: true, link_sent_separately: true };
+          }
+        } else if (toolCall.function.name === "request_live_login") {
+          const jobId = activeBrowserJobId ?? "";
+          const live = await requestDoeDtcLiveLogin({ user: params.user, jobId });
+          if (!live.ok) {
+            output = live;
+          } else {
+            liveViewUrl = live.liveViewUrl;
+            output = { ok: true, link_sent_separately: true };
+          }
+        } else if (toolCall.function.name === "request_commit") {
+          const jobId = activeBrowserJobId ?? "";
+          const result = await requestDoeDtcBrowserCommit({
+            user: params.user,
+            jobId,
+            pendingAction: {
+              selector: String(args.selector ?? ""),
+              label: String(args.label ?? ""),
+              url: typeof args.url === "string" ? args.url : undefined,
+            },
+          });
+          if (result.workUrl) {
+            workUrl = result.workUrl;
+          }
+          browserNeedsConfirm = true;
+          output = {
+            ok: result.ok,
+            url: result.url,
+            title: result.title,
+            excerpt: result.excerpt,
+            awaiting_confirm: true,
+            link_sent_separately: Boolean(result.workUrl),
+          };
         } else if (toolCall.function.name === "start_listen") {
           const appointmentId =
             typeof args.appointment_id === "string" && args.appointment_id.trim()
@@ -731,6 +969,10 @@ export async function runDoeDtcAgentTurn(params: {
     careUrl: assessmentRan ? careUrl : undefined,
     listenUrl,
     profileUrl,
+    workUrl,
+    vaultUrl,
+    liveViewUrl,
+    browserNeedsConfirm,
     assessmentRan,
   };
 }

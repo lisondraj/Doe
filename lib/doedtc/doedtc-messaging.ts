@@ -1,4 +1,6 @@
 import { runDoeDtcAgentTurn, sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
+import { commitDoeDtcBrowserTask, stopDoeDtcBrowserForUser } from "@/lib/doedtc/doedtc-browser";
+import { getPendingConfirmDoeDtcBrowserJob } from "@/lib/doedtc/doedtc-browser-db";
 import { shareDoeDtcLinqContactCard } from "@/lib/doedtc/doedtc-contact-card";
 import {
   DOEDTC_LINQ,
@@ -16,7 +18,9 @@ import {
   updateDoeDtcUserChat,
   upsertInvitedDoeDtcUser,
 } from "@/lib/doedtc/doedtc-db";
+import { addDoeDtcMem0Turn } from "@/lib/doedtc/doedtc-memory";
 import { normalizePhoneToE164 } from "@/lib/doedtc/doedtc-phone";
+import { redactDoeDtcLogText } from "@/lib/doedtc/doedtc-privacy";
 import { linqSendLink, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
@@ -282,6 +286,24 @@ export async function handleConfirmInbound(params: {
   chatId?: string;
   fromNumber?: string;
 }): Promise<void> {
+  const pendingBrowser = await getPendingConfirmDoeDtcBrowserJob(params.user.id);
+  if (pendingBrowser) {
+    const result = await commitDoeDtcBrowserTask({
+      userId: params.user.id,
+      jobId: pendingBrowser.id,
+    });
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId: params.chatId,
+      to: params.phone,
+      text: result.ok
+        ? `Done — ${result.outcome}`
+        : "That browser action could not be completed. Tell me if you want to try again.",
+      idempotencyKey: `doedtc-browser-commit-${params.user.id}-${pendingBrowser.id}`,
+    });
+    return;
+  }
+
   if (params.user.status !== "pending_confirm") {
     if (params.user.status === "onboarding" || params.user.status === "invited") {
       await sendGetStartedMessages(params);
@@ -339,6 +361,10 @@ export async function sendDoeDtcAllSet(user: DoeDtcUserRow): Promise<void> {
 }
 
 export async function handleOptOutInbound(phone: string): Promise<void> {
+  const user = await getDoeDtcUserByPhone(phone);
+  if (user) {
+    await stopDoeDtcBrowserForUser(user.id);
+  }
   await markDoeDtcUserOptedOut(phone);
 }
 
@@ -416,6 +442,73 @@ export async function handleSymptomInbound(params: {
       idempotencyKey: `doedtc-agent-profile-${params.user.id}-${idSuffix}`,
     });
   }
+
+  if (turn.workUrl) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.workIntro,
+      idempotencyKey: `doedtc-agent-work-intro-${params.user.id}-${idSuffix}`,
+    });
+    await sendDoeDtcLinkOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      url: turn.workUrl,
+      idempotencyKey: `doedtc-agent-work-${params.user.id}-${idSuffix}`,
+    });
+  }
+
+  if (turn.vaultUrl) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.vaultIntro,
+      idempotencyKey: `doedtc-agent-vault-intro-${params.user.id}-${idSuffix}`,
+    });
+    await sendDoeDtcLinkOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      url: turn.vaultUrl,
+      idempotencyKey: `doedtc-agent-vault-${params.user.id}-${idSuffix}`,
+    });
+  }
+
+  if (turn.liveViewUrl) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.liveViewIntro,
+      idempotencyKey: `doedtc-agent-live-intro-${params.user.id}-${idSuffix}`,
+    });
+    await sendDoeDtcLinkOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      url: turn.liveViewUrl,
+      idempotencyKey: `doedtc-agent-live-${params.user.id}-${idSuffix}`,
+    });
+  }
+
+  if (turn.browserNeedsConfirm) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.browserConfirmPrompt,
+      idempotencyKey: `doedtc-agent-browser-confirm-${params.user.id}-${idSuffix}`,
+    });
+  }
+
+  void addDoeDtcMem0Turn({
+    userId: params.user.id,
+    inboundText: params.text,
+    replyText,
+  });
 }
 
 export async function processDoeDtcInboundWebhook(params: {
@@ -437,6 +530,9 @@ export async function processDoeDtcInboundWebhook(params: {
       body: text,
       webhookEventId: params.webhookEventId ?? null,
     });
+    if (process.env.NODE_ENV === "production") {
+      console.info("[doedtc] opt-out", redactDoeDtcLogText(text));
+    }
     return;
   }
 

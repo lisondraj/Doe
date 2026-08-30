@@ -513,6 +513,14 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-nav--phone .doedtc-w
   text-align: left;
 }
 
+.doedtc-work-shot {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--doedtc-border);
+}
+
 .doedtc-row-list {
   list-style: none;
   margin: 0.75rem 0 0;

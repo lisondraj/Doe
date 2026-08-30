@@ -223,6 +223,84 @@ export type DoeDtcProfileTab =
   | "locker"
   | "share";
 
+export type DoeDtcBrowserJobStatus =
+  | "open"
+  | "needs_login"
+  | "pending_confirm"
+  | "committed"
+  | "failed"
+  | "cancelled";
+
+export type DoeDtcBrowserMode = "research" | "login" | "write";
+
+export type DoeDtcBrowserShotKind = "progress" | "review" | "result" | "error";
+
+export type DoeDtcBrowserPendingAction = {
+  selector: string;
+  label: string;
+  url?: string;
+};
+
+export type DoeDtcBrowserJobRow = {
+  id: string;
+  user_id: string;
+  status: DoeDtcBrowserJobStatus;
+  intent: string;
+  allowed_host: string | null;
+  mode: DoeDtcBrowserMode;
+  kernel_session_id: string | null;
+  kernel_profile_id: string | null;
+  browser_live_view_url: string | null;
+  pending_action: DoeDtcBrowserPendingAction | null;
+  last_work_token: string | null;
+  login_attempts: number;
+  confirmed_at: string | null;
+  outcome: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DoeDtcVaultItemRow = {
+  id: string;
+  user_id: string;
+  host: string;
+  username: string;
+  password_ciphertext: string | null;
+  iv: string | null;
+  key_version: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DoeDtcBrowserShotRow = {
+  id: string;
+  user_id: string;
+  job_id: string;
+  blob_url: string;
+  pathname: string;
+  expires_at: string;
+  kind: DoeDtcBrowserShotKind;
+  caption: string | null;
+  created_at: string;
+};
+
+export type DoeDtcWorkTokenRow = {
+  token: string;
+  user_id: string;
+  job_id: string;
+  shot_id: string | null;
+  purpose: "work" | "vault";
+  expires_at: string;
+  created_at: string;
+};
+
+export type DoeDtcWorkPreview = {
+  caption: string;
+  imageUrl: string;
+  jobIntent: string;
+  expiresAt: string;
+};
+
 export type DoeDtcStartPayload = {
   phone: string;
 };

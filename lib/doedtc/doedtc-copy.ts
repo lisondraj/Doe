@@ -165,6 +165,10 @@ export const DOEDTC_LINQ = {
   careLinkIntro: "Here's your symptom review.",
   allSetMessage: "All set! Let's get started. Text your symptoms anytime.",
   assessmentIntro: "Here's what I found based on what you shared:",
+  workIntro: "Here's what I found in the browser.",
+  vaultIntro: "Use this secure page to sign in. Doe never stores your password in iMessage.",
+  liveViewIntro: "Open Live View to sign in yourself. Doe will keep the session ready afterward.",
+  browserConfirmPrompt: "Reply CONFIRM to proceed, or STOP to cancel.",
 } as const;
 
 export function doeDtcPublicOrigin(): string {
@@ -208,6 +212,35 @@ export function doeDtcAppUrl(token: string): string {
 export function doeDtcListenUrl(careToken: string, sessionId: string): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/listen?t=${encodeURIComponent(careToken)}&s=${encodeURIComponent(sessionId)}`;
 }
+
+export function doeDtcWorkUrl(workToken: string): string {
+  return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/work?t=${encodeURIComponent(workToken)}`;
+}
+
+export function doeDtcVaultUrl(vaultToken: string): string {
+  return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/vault?t=${encodeURIComponent(vaultToken)}`;
+}
+
+export const DOEDTC_WORK = {
+  pageTitle: "Browser preview",
+  invalidTitle: "Preview unavailable",
+  invalidBody: "This preview link expired. Ask Doe to browse again.",
+  captionFallback: "Browser snapshot",
+} as const;
+
+export const DOEDTC_VAULT = {
+  pageTitle: "Secure sign-in",
+  invalidTitle: "Sign-in unavailable",
+  invalidBody: "This sign-in link expired. Ask Doe to try again.",
+  hostLabel: "Site",
+  usernameLabel: "Username",
+  passwordLabel: "Password",
+  submitLabel: "Save and sign in",
+  submittingLabel: "Signing in…",
+  successTitle: "Saved",
+  successBody: "Doe will try signing in once. Check iMessage for next steps.",
+  errorGeneric: "Something went wrong. Please try again.",
+} as const;
 
 export function doeDtcAppointmentsUrl(token: string): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/app?t=${encodeURIComponent(token)}&tab=appointments`;
