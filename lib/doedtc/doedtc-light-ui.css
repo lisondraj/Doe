@@ -195,11 +195,14 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-profile-layout .doed
   background: #60a5fa;
 }
 
-html[data-doedtc-page]:has(.doedtc-root--has-footer),
+html[data-doedtc-page]:has(.doedtc-root--has-footer) {
+  background-color: #f8f9fa !important;
+  --doe-page-surface: #f8f9fa;
+  --proto-page-bg: #60a5fa;
+}
+
 html[data-doedtc-page]:has(.doedtc-root--has-footer) body {
   background-color: #60a5fa !important;
-  --doe-page-surface: #60a5fa;
-  --proto-page-bg: #60a5fa;
 }
 
 .doedtc-shell--brand-footer {

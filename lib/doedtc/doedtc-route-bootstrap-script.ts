@@ -1,15 +1,19 @@
-import { DOEDTC_OVERFLOW_SURFACE } from "@/lib/doedtc/doedtc-chrome";
+import { DOEDTC_FOOTER_OVERFLOW_SURFACE, DOEDTC_OVERFLOW_SURFACE } from "@/lib/doedtc/doedtc-chrome";
 import {
   phoneLayoutViewportBootstrapScript,
   phoneOverflowChromeBootstrapScript,
+  phoneSplitOverflowChromeBootstrapScript,
 } from "@/lib/doephone/phone-layout-viewport";
 import { DOEDTC_PATH } from "@/lib/site-domains";
 
-/** Runs before paint on `/doedtc*` - sets page marker and brown overflow; variant resolved client-side. */
+/** Runs before paint on `/doedtc*` - sets page marker and overflow; variant resolved client-side. */
 export function doeDtcRouteBootstrapScript(): string {
   const viewportBootstrap = phoneLayoutViewportBootstrapScript();
   const overflowBootstrap = phoneOverflowChromeBootstrapScript(DOEDTC_OVERFLOW_SURFACE);
-  const profileOverflowBootstrap = phoneOverflowChromeBootstrapScript("#60a5fa");
+  const profileOverflowBootstrap = phoneSplitOverflowChromeBootstrapScript(
+    DOEDTC_OVERFLOW_SURFACE,
+    DOEDTC_FOOTER_OVERFLOW_SURFACE,
+  );
   const routePath = JSON.stringify(DOEDTC_PATH);
 
   return `(function(){try{var path=location.pathname;if(!path.startsWith(${routePath})&&path!=="/profile")return;var html=document.documentElement;var body=document.body;html.removeAttribute("data-home-page");html.removeAttribute("data-about-page");html.removeAttribute("data-doeinsure-page");html.removeAttribute("data-doehome-page");html.removeAttribute("data-layout");html.removeAttribute("data-doephone-pinching");html.setAttribute("data-doedtc-page","true");var desktop=window.matchMedia("(min-width: 1024px)").matches||window.innerWidth>=1024;html.setAttribute("data-doedtc-variant",desktop?"desktop":"phone");var brandFooter=path==="/profile"||path.startsWith(${routePath});if(brandFooter){${profileOverflowBootstrap}}if(desktop){html.removeAttribute("data-doeforvc-always-phone");if(body)body.classList.add("desktop-route");}else{html.setAttribute("data-doeforvc-always-phone","true");if(body)body.classList.remove("desktop-route");if(!brandFooter){${overflowBootstrap}}${viewportBootstrap}}}catch(e){}})();`;
