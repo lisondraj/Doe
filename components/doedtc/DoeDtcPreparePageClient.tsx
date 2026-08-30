@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { DoeDtcPrepareView } from "@/components/doedtc/DoeDtcPrepareView";
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_PREPARE } from "@/lib/doedtc/doedtc-copy";
@@ -22,10 +23,8 @@ export function DoeDtcPreparePageClient({
   if (!valid || !preparation) {
     return (
       <DoeDtcPageShell>
-        <div className="doedtc-card">
-          <strong>{DOEDTC_PREPARE.invalidTokenTitle}</strong>
-          <p>{DOEDTC_PREPARE.invalidTokenBody}</p>
-        </div>
+        <DoeDtcPageHeader title={DOEDTC_PREPARE.invalidTokenTitle} />
+        <p className="doedtc-muted">{DOEDTC_PREPARE.invalidTokenBody}</p>
       </DoeDtcPageShell>
     );
   }

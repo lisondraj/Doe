@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   defaultBlocksForLayout,
   defaultLayoutForTitle,
+  formatPrimaryArtifactReading,
   normalizeArtifactBlocks,
   normalizeArtifactLayout,
   pickPrimaryNumericField,
@@ -40,6 +41,30 @@ test("calorie title maps to series layout with chart block", () => {
   assert.ok(blocks.some((block) => block.kind === "chart"));
   assert.ok(blocks.some((block) => block.kind === "stats"));
   assert.equal(pickPrimaryNumericField(fields)?.key, "calories");
+});
+
+test("formatPrimaryArtifactReading prefers numeric value with unit", () => {
+  const artifact = {
+    config: {
+      fields: [
+        { key: "weight", label: "Weight (lb)", type: "number" as const },
+        { key: "notes", label: "Notes", type: "text" as const, optional: true },
+      ],
+    },
+  };
+  assert.equal(formatPrimaryArtifactReading(artifact, { weight: 185, notes: "morning" }), "185 lb");
+});
+
+test("formatPrimaryArtifactReading falls back to first populated field", () => {
+  const artifact = {
+    config: {
+      fields: [
+        { key: "dose", label: "Dose", type: "select" as const, options: ["0.5 mg", "1 mg"] },
+        { key: "site", label: "Site", type: "select" as const, options: ["abdomen"] },
+      ],
+    },
+  };
+  assert.equal(formatPrimaryArtifactReading(artifact, { dose: "1 mg", site: "abdomen" }), "1 mg");
 });
 
 test("doeDtcArtifactShareUrl uses dedicated artifact share param", () => {

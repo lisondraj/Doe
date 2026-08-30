@@ -158,6 +158,34 @@ export function formatArtifactEntryValues(
   return parts.length > 0 ? parts.join(" | ") : "Entry logged";
 }
 
+function unitFromFieldLabel(label: string): string | null {
+  const match = label.match(/\(([^)]+)\)/);
+  return match ? match[1] : null;
+}
+
+export function formatPrimaryArtifactReading(
+  artifact: Pick<DoeDtcArtifactRow, "config">,
+  values: Record<string, string | number | boolean>,
+): string | null {
+  const numericField = pickPrimaryNumericField(artifact.config.fields);
+  if (numericField) {
+    const value = values[numericField.key];
+    if (value !== undefined && value !== null && value !== "") {
+      const unit = unitFromFieldLabel(numericField.label);
+      return unit ? `${value} ${unit}` : String(value);
+    }
+  }
+
+  const firstField = artifact.config.fields.find((field) => {
+    const value = values[field.key];
+    return value !== undefined && value !== null && value !== "";
+  });
+  if (!firstField) return null;
+
+  const value = values[firstField.key];
+  return String(value);
+}
+
 export function defaultArtifactFieldsForTitle(title: string): DoeDtcArtifactField[] {
   const lower = title.toLowerCase();
   if (lower.includes("calorie") || lower.includes("kcal") || lower.includes("food")) {

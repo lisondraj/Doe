@@ -572,7 +572,7 @@ export async function getDoeDtcProfileSnapshot(
   ] = await Promise.all([
     supabase
       .from("doedtc_users")
-      .select("id, full_name, email, why_doe, medical_deferred, care_token")
+      .select("id, full_name, email, phone, why_doe, medical_deferred, care_token")
       .eq("id", userId)
       .single(),
     getDoeDtcProfileLists(userId),

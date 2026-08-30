@@ -16,6 +16,7 @@ type DoeDtcNavProps = {
   displayName?: string | null;
   subtitle?: string | null;
   children?: React.ReactNode;
+  homeHref?: string;
 };
 
 export function DoeDtcNav({
@@ -25,6 +26,7 @@ export function DoeDtcNav({
   displayName,
   subtitle,
   children,
+  homeHref,
 }: DoeDtcNavProps) {
   const { variant, ready } = useDoeDtcPageVariant();
   const isPhone = !ready || variant === "phone";
@@ -71,7 +73,7 @@ export function DoeDtcNav({
       <div className="doedtc-profile-layout__main">
         <nav className={`doedtc-nav${isPhone ? " doedtc-nav--phone" : ""}`} aria-label="Profile">
           <DoeDtcTopBar
-            href={`/doedtc/app?t=${encodeURIComponent(token)}`}
+            href={homeHref ?? `/doedtc/app?t=${encodeURIComponent(token)}`}
             compact
             trailing={
               <DoeDtcAvatarMenu
@@ -85,13 +87,7 @@ export function DoeDtcNav({
           />
         </nav>
 
-        {showStackedHeader ? (
-          <DoeDtcPageHeader
-            title={doeDtcProfileTabLabel(activeTab)}
-            onBack={() => setSettingsOpen(true)}
-            onClose={() => selectTab("dashboard")}
-          />
-        ) : null}
+        {showStackedHeader ? <DoeDtcPageHeader title={doeDtcProfileTabLabel(activeTab)} /> : null}
 
         {children}
       </div>

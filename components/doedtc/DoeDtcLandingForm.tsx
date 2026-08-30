@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { DoeDtcPhoneInput } from "@/components/doedtc/DoeDtcPhoneInput";
 import { DOEDTC_LANDING } from "@/lib/doedtc/doedtc-copy";
 
 export function DoeDtcLandingForm() {
@@ -42,18 +43,12 @@ export function DoeDtcLandingForm() {
 
   return (
     <form className="doedtc-card" onSubmit={onSubmit}>
-      <label className="doedtc-label" htmlFor="doedtc-phone">
-        {DOEDTC_LANDING.phoneLabel}
-      </label>
-      <input
+      <DoeDtcPhoneInput
         id="doedtc-phone"
-        className="doedtc-input"
-        type="tel"
-        autoComplete="tel"
-        placeholder={DOEDTC_LANDING.phonePlaceholder}
+        label={DOEDTC_LANDING.phoneLabel}
         value={phone}
-        onChange={(event) => setPhone(event.target.value)}
-        required
+        onChange={setPhone}
+        disabled={status === "loading"}
       />
       {error ? <p className="doedtc-error">{error}</p> : null}
       <button className="doedtc-button" type="submit" disabled={status === "loading"}>

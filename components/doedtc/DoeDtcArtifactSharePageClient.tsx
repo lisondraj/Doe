@@ -1,6 +1,7 @@
 "use client";
 
 import { DoeDtcArtifactBlocks } from "@/components/doedtc/DoeDtcArtifactBlocks";
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DOEDTC_ARTIFACT } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcArtifactEntryRow, DoeDtcArtifactRow } from "@/lib/doedtc/doedtc-types";
@@ -19,21 +20,17 @@ export function DoeDtcArtifactSharePageClient({
   if (!valid || !artifact) {
     return (
       <DoeDtcPageShell>
-        <div className="doedtc-card">
-          <strong>{DOEDTC_ARTIFACT.invalidTokenTitle}</strong>
-          <p>{DOEDTC_ARTIFACT.invalidTokenBody}</p>
-        </div>
+        <DoeDtcPageHeader title={DOEDTC_ARTIFACT.invalidTokenTitle} />
+        <p className="doedtc-muted">{DOEDTC_ARTIFACT.invalidTokenBody}</p>
       </DoeDtcPageShell>
     );
   }
 
   return (
     <DoeDtcPageShell>
-      <header className="doedtc-header">
-        <p className="doedtc-eyebrow">{DOEDTC_ARTIFACT.pageTitle}</p>
-        <h1 className="doedtc-headline">{artifact.title}</h1>
-        <p className="doedtc-muted">{DOEDTC_ARTIFACT.subtitle}</p>
-      </header>
+      <p className="doedtc-eyebrow">{DOEDTC_ARTIFACT.pageTitle}</p>
+      <DoeDtcPageHeader title={artifact.title} />
+      <p className="doedtc-muted">{DOEDTC_ARTIFACT.subtitle}</p>
       <DoeDtcArtifactBlocks artifact={artifact} entries={entries} busy={false} readOnly onAction={async () => {}} />
     </DoeDtcPageShell>
   );

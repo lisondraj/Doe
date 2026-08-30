@@ -3,10 +3,10 @@
 import { useState } from "react";
 
 import { DoeDtcPrepareView } from "@/components/doedtc/DoeDtcPrepareView";
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DOEDTC_VIEW } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcPreparationRow } from "@/lib/doedtc/doedtc-types";
-import { dmSans } from "@/lib/home/fonts";
 
 export function DoeDtcViewPageClient() {
   const [code, setCode] = useState("");
@@ -46,10 +46,8 @@ export function DoeDtcViewPageClient() {
 
   return (
     <DoeDtcPageShell>
-      <header className="doedtc-header">
-        <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_VIEW.pageTitle}</h1>
-        <p className="doedtc-muted">{DOEDTC_VIEW.subtitle}</p>
-      </header>
+      <DoeDtcPageHeader title={DOEDTC_VIEW.pageTitle} />
+      <p className="doedtc-muted">{DOEDTC_VIEW.subtitle}</p>
 
       {!preparation ? (
         <form

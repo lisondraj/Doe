@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-import { dmSans, lora } from "@/lib/home/fonts";
+import { lora } from "@/lib/home/fonts";
 
 type DoeDtcWordmarkProps = {
   className?: string;
@@ -8,14 +8,13 @@ type DoeDtcWordmarkProps = {
 };
 
 const wordmarkStyle: CSSProperties = { fontFamily: lora.style.fontFamily };
-const compactStyle: CSSProperties = { fontFamily: dmSans.style.fontFamily };
 
 export function DoeDtcWordmark({ className, compact = false }: DoeDtcWordmarkProps) {
   if (compact) {
     return (
       <span
-        className={`doedtc-wordmark doedtc-wordmark--header ${dmSans.className}${className ? ` ${className}` : ""}`}
-        style={compactStyle}
+        className={`doedtc-wordmark doedtc-wordmark--header ${lora.className}${className ? ` ${className}` : ""}`}
+        style={wordmarkStyle}
       >
         Doe
       </span>

@@ -6,7 +6,7 @@ import { DoeDtcNav } from "@/components/doedtc/DoeDtcNav";
 import { DoeDtcDropdown } from "@/components/doedtc/DoeDtcDropdown";
 import { DoeDtcToggle } from "@/components/doedtc/DoeDtcToggle";
 import { DoeDtcArtifactView } from "@/components/doedtc/DoeDtcArtifactView";
-import { DoeDtcArtifactMiniSparkline } from "@/components/doedtc/DoeDtcTrackerChart";
+import { DoeDtcTrackerCarousel } from "@/components/doedtc/DoeDtcTrackerCarousel";
 import { DoeDtcFeedbackView } from "@/components/doedtc/DoeDtcFeedbackView";
 import { DoeDtcGuideView } from "@/components/doedtc/DoeDtcGuideView";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
@@ -16,11 +16,13 @@ import {
   doeDtcAppUrl,
   doeDtcArtifactShareUrl,
 } from "@/lib/doedtc/doedtc-copy";
+import { applyDoeDtcPreviewAction } from "@/lib/doedtc/doedtc-preview-snapshot";
 import {
   buildArtifactSeriesPoints,
-  formatArtifactEntryValues,
+  formatPrimaryArtifactReading,
   pickPrimaryNumericField,
 } from "@/lib/doedtc/doedtc-artifacts";
+import { formatPhoneForDisplay } from "@/lib/doedtc/doedtc-phone";
 import { memberCurrentlySharesWithHousehold } from "@/lib/doedtc/doedtc-household";
 import type {
   DoeDtcFamilyRelationship,
@@ -28,7 +30,7 @@ import type {
   DoeDtcProfileSnapshot,
   DoeDtcProfileTab,
 } from "@/lib/doedtc/doedtc-types";
-import { dmSans } from "@/lib/home/fonts";
+import { dmSans, plusJakartaSans } from "@/lib/home/fonts";
 
 const RELATIONSHIP_OPTIONS: Array<{ value: DoeDtcFamilyRelationship; label: string }> = [
   { value: "grandmother", label: "Grandmother" },
@@ -93,6 +95,8 @@ type DoeDtcProfileAppProps = {
   initialTicketId?: string | null;
   initialGuideId?: string | null;
   viewingMemberUserId?: string | null;
+  preview?: boolean;
+  homeHref?: string;
 };
 
 export function DoeDtcProfileApp({
@@ -104,6 +108,8 @@ export function DoeDtcProfileApp({
   initialTicketId = null,
   initialGuideId = null,
   viewingMemberUserId = null,
+  preview = false,
+  homeHref,
 }: DoeDtcProfileAppProps) {
   const [tab, setTab] = useState<DoeDtcProfileTab>(initialTab);
   const [snapshot, setSnapshot] = useState(initialSnapshot);
@@ -118,6 +124,10 @@ export function DoeDtcProfileApp({
       setBusy(true);
       setError("");
       try {
+        if (preview) {
+          setSnapshot((current) => (current ? applyDoeDtcPreviewAction(current, action, payload) : current));
+          return;
+        }
         const response = await fetch("/api/doedtc/profile", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -144,11 +154,11 @@ export function DoeDtcProfileApp({
         setBusy(false);
       }
     },
-    [token, viewingMemberUserId],
+    [preview, token, viewingMemberUserId],
   );
 
   const refetchSnapshot = useCallback(async () => {
-    if (!valid) return;
+    if (preview || !valid) return;
     try {
       const params = new URLSearchParams({ t: token });
       if (viewingMemberUserId) params.set("member", viewingMemberUserId);
@@ -165,7 +175,7 @@ export function DoeDtcProfileApp({
     } catch {
       // Ignore background refresh failures.
     }
-  }, [token, valid, viewingMemberUserId]);
+  }, [preview, token, valid, viewingMemberUserId]);
 
   useEffect(() => {
     void refetchSnapshot();
@@ -206,6 +216,9 @@ export function DoeDtcProfileApp({
     return name || "Your profile";
   }, [snapshot, viewingMemberUserId]);
 
+  const profilePhone = snapshot?.user.phone?.trim() || null;
+  const profilePhoneDisplay = profilePhone ? formatPhoneForDisplay(profilePhone) : null;
+
   const canEditSubject = useMemo(() => {
     if (!viewingMemberUserId || !snapshot) return true;
     return snapshot.household.memberAccess.some(
@@ -215,7 +228,7 @@ export function DoeDtcProfileApp({
 
   if (!valid || !snapshot) {
     return (
-      <DoeDtcPageShell>
+      <DoeDtcPageShell profile>
         <div className="doedtc-card">
           <strong>{DOEDTC_PROFILE.invalidTokenTitle}</strong>
           <p>{DOEDTC_PROFILE.invalidTokenBody}</p>
@@ -225,21 +238,31 @@ export function DoeDtcProfileApp({
   }
 
   return (
-    <DoeDtcPageShell>
+    <DoeDtcPageShell profile>
       <DoeDtcNav
         token={token}
         activeTab={tab}
         onTabChange={setTab}
         displayName={snapshot.user.full_name}
         subtitle={snapshot.user.email}
+        homeHref={homeHref}
       >
         {tab === "dashboard" ? (
           <header className="doedtc-header">
-            <h1 className={`doedtc-headline ${dmSans.className}`}>{greeting}</h1>
+            <div className="doedtc-profile-name-box">
+              <div className="doedtc-profile-name-box__content">
+                <h1 className={`doedtc-headline doedtc-profile-name-box__title ${plusJakartaSans.className}`}>{greeting}</h1>
+                {profilePhoneDisplay ? (
+                  <a className="doedtc-profile-phone-banner" href={`tel:${profilePhone}`}>
+                    <span className="doedtc-profile-phone-banner__number">{profilePhoneDisplay}</span>
+                  </a>
+                ) : null}
+              </div>
+            </div>
             {viewingMemberUserId ? (
               <p className="doedtc-muted" style={{ marginTop: "0.35rem" }}>
                 {canEditSubject ? null : `${DOEDTC_PROFILE.familyReadOnlyHint} `}
-                <a href={doeDtcAppUrl(token, { tab: "family" })}>{DOEDTC_PROFILE.familyBackLabel}</a>
+                <a href={homeHref ?? doeDtcAppUrl(token, { tab: "family" })}>{DOEDTC_PROFILE.familyBackLabel}</a>
               </p>
             ) : null}
           </header>
@@ -257,10 +280,6 @@ export function DoeDtcProfileApp({
             setFocusedArtifactId(artifactId ?? null);
             setTab("trackers");
           }}
-          onOpenFeedback={(ticketId) => {
-            setFocusedTicketId(ticketId ?? null);
-            setTab("feedback");
-          }}
         />
       ) : null}
       {tab === "appointments" ? (
@@ -273,7 +292,7 @@ export function DoeDtcProfileApp({
         <ConditionsTab snapshot={snapshot} busy={busy} readOnly={!canEditSubject} onAction={runAction} />
       ) : null}
       {tab === "family" ? (
-        <FamilyTab token={token} snapshot={snapshot} busy={busy} onAction={runAction} />
+        <FamilyTab token={token} snapshot={snapshot} busy={busy} onAction={runAction} preview={preview} />
       ) : null}
       {tab === "locker" ? (
         <LockerTab snapshot={snapshot} busy={busy} readOnly={!canEditSubject} onAction={runAction} />
@@ -299,6 +318,7 @@ export function DoeDtcProfileApp({
           onAction={runAction}
           focusedGuideId={focusedGuideId}
           onFocusGuide={setFocusedGuideId}
+          preview={preview}
         />
       ) : null}
       {tab === "accountability" ? (
@@ -358,10 +378,10 @@ function MedicalListEditor({
   }
 
   return (
-    <div>
-      <p className="doedtc-label">{label}</p>
+    <div className="doedtc-medical-box">
+      <p className="doedtc-medical-box__title">{label}</p>
       {values.length === 0 ? (
-        <p className="doedtc-muted">{DOEDTC_PROFILE.dashboardMedicalDeferred}</p>
+        <p className="doedtc-medical-box__empty">{placeholder}</p>
       ) : (
         <div className="doedtc-tag-list">
           {values.map((value) => (
@@ -382,29 +402,29 @@ function MedicalListEditor({
         </div>
       )}
       {readOnly ? null : (
-      <div className="doedtc-add-row" style={{ marginTop: "0.75rem" }}>
-        <input
-          className="doedtc-input"
-          value={draft}
-          placeholder={placeholder}
-          disabled={busy}
-          onChange={(event) => setDraft(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              event.preventDefault();
-              void addValue();
-            }
-          }}
-        />
-        <button
-          className="doedtc-button doedtc-button--secondary doedtc-button--inline"
-          type="button"
-          disabled={busy}
-          onClick={() => void addValue()}
-        >
-          Add
-        </button>
-      </div>
+        <div className="doedtc-add-row doedtc-medical-box__add">
+          <input
+            className="doedtc-input"
+            value={draft}
+            placeholder={placeholder}
+            disabled={busy}
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                void addValue();
+              }
+            }}
+          />
+          <button
+            className="doedtc-button doedtc-button--secondary doedtc-button--inline"
+            type="button"
+            disabled={busy}
+            onClick={() => void addValue()}
+          >
+            Add
+          </button>
+        </div>
       )}
     </div>
   );
@@ -416,10 +436,8 @@ function DashboardTab({
   readOnly = false,
   onAction,
   onOpenTrackers,
-  onOpenFeedback,
 }: TabProps & {
   onOpenTrackers: (artifactId?: string | null) => void;
-  onOpenFeedback: (ticketId?: string | null) => void;
 }) {
   const trackerCards = snapshot.artifacts.map((artifact) => {
     const lastEntry = snapshot.artifactEntries
@@ -427,19 +445,11 @@ function DashboardTab({
       .sort((a, b) => b.occurred_at.localeCompare(a.occurred_at))[0];
     return { artifact, lastEntry };
   });
-  const openTickets = snapshot.tickets.filter((ticket) => ticket.status !== "resolved");
-  const pendingScheduledTexts = snapshot.scheduledTexts.filter((row) => row.status === "pending");
 
   return (
     <div>
-      <div className="doedtc-card doedtc-card--flat">
-        <p className="doedtc-eyebrow">{DOEDTC_PROFILE.dashboardWhyLabel}</p>
-        <p className="doedtc-body">{snapshot.user.why_doe}</p>
-      </div>
-
-      <div className="doedtc-section">
-        <h2 className="doedtc-section-title">{DOEDTC_PROFILE.dashboardMedicalLabel}</h2>
-        <div className="doedtc-card">
+      <div className="doedtc-medical-grid">
+        <div className="doedtc-card doedtc-card--flat">
           <MedicalListEditor
             label={DOEDTC_GET_STARTED.medicationsLabel}
             placeholder={DOEDTC_GET_STARTED.medicationsPlaceholder}
@@ -450,112 +460,40 @@ function DashboardTab({
             readOnly={readOnly}
             onAction={onAction}
           />
-          <div style={{ marginTop: "1.25rem" }}>
-            <MedicalListEditor
-              label={DOEDTC_GET_STARTED.conditionsLabel}
-              placeholder={DOEDTC_GET_STARTED.conditionsPlaceholder}
-              values={snapshot.conditions}
-              addAction="add_condition"
-              removeAction="remove_condition"
-              busy={busy}
-              readOnly={readOnly}
-              onAction={onAction}
-            />
-          </div>
+        </div>
+        <div className="doedtc-card doedtc-card--flat">
+          <MedicalListEditor
+            label={DOEDTC_GET_STARTED.conditionsLabel}
+            placeholder={DOEDTC_GET_STARTED.conditionsPlaceholder}
+            values={snapshot.conditions}
+            addAction="add_condition"
+            removeAction="remove_condition"
+            busy={busy}
+            readOnly={readOnly}
+            onAction={onAction}
+          />
         </div>
       </div>
 
       {trackerCards.length > 0 ? (
-        <div className="doedtc-section">
-          <h2 className="doedtc-section-title">{DOEDTC_PROFILE.trackersDashboardTitle}</h2>
-          <div className="doedtc-tracker-strip">
-            {trackerCards.map(({ artifact, lastEntry }) => {
-              const numericField = pickPrimaryNumericField(artifact.config.fields);
-              const points = numericField
-                ? buildArtifactSeriesPoints({
-                    entries: snapshot.artifactEntries.filter((entry) => entry.artifact_id === artifact.id),
-                    fieldKey: numericField.key,
-                    limit: 12,
-                  })
-                : [];
-              return (
-              <button
-                key={artifact.id}
-                type="button"
-                className="doedtc-card doedtc-card--flat doedtc-tracker-card"
-                onClick={() => onOpenTrackers(artifact.id)}
-              >
-                <div className="doedtc-tracker-card__row">
-                  <div>
-                    <strong>{artifact.title}</strong>
-                    <p className="doedtc-muted">
-                      {lastEntry
-                        ? formatArtifactEntryValues(artifact, lastEntry.values)
-                        : DOEDTC_PROFILE.trackersNoEntries}
-                    </p>
-                  </div>
-                  <DoeDtcArtifactMiniSparkline points={points} />
-                </div>
-              </button>
-            );
-            })}
-          </div>
-        </div>
-      ) : null}
-
-      {pendingScheduledTexts.length > 0 ? (
-        <div className="doedtc-section">
-          <h2 className="doedtc-section-title">{DOEDTC_PROFILE.scheduledTextsTitle}</h2>
-          <ul className="doedtc-list">
-            {pendingScheduledTexts.map((row) => (
-              <li key={row.id} className="doedtc-card" style={{ marginBottom: "0.75rem" }}>
-                <strong>{row.intent}</strong>
-                <p className="doedtc-muted" style={{ marginTop: "0.35rem" }}>
-                  {formatDateTime(row.send_at)} · {row.recipient_phone}
-                </p>
-                <p className="doedtc-muted">{row.body}</p>
-                {!readOnly ? (
-                  <button
-                    type="button"
-                    className="doedtc-button doedtc-button--secondary"
-                    style={{ marginTop: "0.75rem" }}
-                    disabled={busy}
-                    onClick={() => onAction("cancel_scheduled_text", { scheduledTextId: row.id })}
-                  >
-                    {DOEDTC_PROFILE.scheduledTextsCancelLabel}
-                  </button>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-
-      {openTickets.length > 0 ? (
-        <div className="doedtc-section">
-          <h2 className="doedtc-section-title">{DOEDTC_PROFILE.feedbackDashboardTitle}</h2>
-          <div className="doedtc-tracker-strip">
-            {openTickets.slice(0, 4).map((ticket) => (
-              <button
-                key={ticket.id}
-                type="button"
-                className="doedtc-card doedtc-card--flat doedtc-tracker-card"
-                onClick={() => onOpenFeedback(ticket.id)}
-              >
-                <strong>{ticket.title}</strong>
-                <p className="doedtc-muted">
-                  {ticket.kind === "bug"
-                    ? DOEDTC_PROFILE.feedbackKindBug
-                    : DOEDTC_PROFILE.feedbackKindFeedback}{" "}
-                  ·{" "}
-                  {ticket.status === "in_progress"
-                    ? DOEDTC_PROFILE.feedbackStatusInProgress
-                    : DOEDTC_PROFILE.feedbackStatusOpen}
-                </p>
-              </button>
-            ))}
-          </div>
-        </div>
+        <DoeDtcTrackerCarousel
+          cards={trackerCards.map(({ artifact, lastEntry }) => {
+            const numericField = pickPrimaryNumericField(artifact.config.fields);
+            const points = numericField
+              ? buildArtifactSeriesPoints({
+                  entries: snapshot.artifactEntries.filter((entry) => entry.artifact_id === artifact.id),
+                  fieldKey: numericField.key,
+                  limit: 12,
+                })
+              : [];
+            return {
+              artifact,
+              lastReading: lastEntry ? formatPrimaryArtifactReading(artifact, lastEntry.values) : null,
+              points,
+            };
+          })}
+          onOpen={onOpenTrackers}
+        />
       ) : null}
 
       <div className="doedtc-section">
@@ -584,9 +522,8 @@ function DashboardTab({
 function ConditionsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
   return (
     <div>
-      <div className="doedtc-section">
-        <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.conditionsLabel}</h2>
-        <div className="doedtc-card">
+      <div className="doedtc-medical-grid">
+        <div className="doedtc-card doedtc-card--flat">
           <MedicalListEditor
             label={DOEDTC_GET_STARTED.conditionsLabel}
             placeholder={DOEDTC_GET_STARTED.conditionsPlaceholder}
@@ -598,11 +535,7 @@ function ConditionsTab({ snapshot, busy, readOnly = false, onAction }: TabProps)
             onAction={onAction}
           />
         </div>
-      </div>
-
-      <div className="doedtc-section">
-        <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.medicationsLabel}</h2>
-        <div className="doedtc-card">
+        <div className="doedtc-card doedtc-card--flat">
           <MedicalListEditor
             label={DOEDTC_GET_STARTED.medicationsLabel}
             placeholder={DOEDTC_GET_STARTED.medicationsPlaceholder}
@@ -924,7 +857,8 @@ function FamilyTab({
   snapshot,
   busy,
   onAction,
-}: TabProps & { token: string }) {
+  preview = false,
+}: TabProps & { token: string; preview?: boolean }) {
   const [fullName, setFullName] = useState("");
   const [relationship, setRelationship] = useState<DoeDtcFamilyRelationship>("other");
   const [phone, setPhone] = useState("");
@@ -986,7 +920,7 @@ function FamilyTab({
                   </p>
                 </div>
                 <div className="doedtc-row-item__actions">
-                  {canView && access?.userId ? (
+                  {canView && access?.userId && !preview ? (
                     <a
                       className="doedtc-button doedtc-button--secondary"
                       href={doeDtcAppUrl(token, { tab: "dashboard", member: access.userId })}
@@ -1248,10 +1182,12 @@ function GuidesTab({
   onAction,
   focusedGuideId,
   onFocusGuide,
+  preview = false,
 }: TabProps & {
   token: string;
   focusedGuideId: string | null;
   onFocusGuide: (guideId: string | null) => void;
+  preview?: boolean;
 }) {
   const activeGuide =
     snapshot.guides.find((guide) => guide.id === focusedGuideId) ?? snapshot.guides[0] ?? null;
@@ -1280,12 +1216,14 @@ function GuidesTab({
           {activeGuide ? (
             <>
               <div className="doedtc-inline-actions" style={{ marginBottom: "0.85rem" }}>
+                {preview ? null : (
                 <a
                   className="doedtc-button doedtc-button--secondary"
                   href={`/doedtc/guide?t=${encodeURIComponent(token)}&g=${encodeURIComponent(activeGuide.id)}`}
                 >
                   {DOEDTC_PROFILE.guidesViewLabel}
                 </a>
+                )}
                 <button
                   type="button"
                   className="doedtc-button doedtc-button--secondary"

@@ -136,6 +136,62 @@ export function DoeDtcTrackerChart({ title, points, goal }: DoeDtcTrackerChartPr
   );
 }
 
+type DoeDtcTrackerCarouselChartProps = {
+  points: ArtifactSeriesPoint[];
+  goal?: number | null;
+};
+
+export function DoeDtcTrackerCarouselChart({ points, goal }: DoeDtcTrackerCarouselChartProps) {
+  if (points.length < 2) {
+    return (
+      <div className="doedtc-tracker-carousel__chart-empty" aria-hidden>
+        <span className="doedtc-muted">Log two entries to see your trend.</span>
+      </div>
+    );
+  }
+
+  const width = 320;
+  const height = 120;
+  const padding = 12;
+  const values = points.map((point) => point.value);
+  let min = Math.min(...values);
+  let max = Math.max(...values);
+  if (goal !== null && goal !== undefined) {
+    min = Math.min(min, goal);
+    max = Math.max(max, goal);
+  }
+  const rangeSpan = max - min || 1;
+
+  const coords = points.map((point, index) => {
+    const x = padding + (index / (points.length - 1)) * (width - padding * 2);
+    const y = height - padding - ((point.value - min) / rangeSpan) * (height - padding * 2);
+    return `${x},${y}`;
+  });
+
+  const polyline = coords.join(" ");
+  const area = `${padding},${height - padding} ${polyline} ${width - padding},${height - padding}`;
+
+  return (
+    <svg
+      className="doedtc-tracker-carousel__chart-svg"
+      viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="none"
+      role="img"
+      aria-hidden
+    >
+      <polygon points={area} fill="currentColor" opacity={0.1} />
+      <polyline
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        points={polyline}
+      />
+    </svg>
+  );
+}
+
 export function DoeDtcArtifactMiniSparkline({ points }: { points: ArtifactSeriesPoint[] }) {
   if (points.length < 2) return null;
   const width = 96;

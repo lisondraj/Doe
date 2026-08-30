@@ -1,6 +1,7 @@
 "use client";
 
 import { DoeDtcGetStartedForm } from "@/components/doedtc/DoeDtcGetStartedForm";
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_GET_STARTED } from "@/lib/doedtc/doedtc-copy";
@@ -15,10 +16,8 @@ export function DoeDtcGetStartedRouter({ token, valid }: DoeDtcGetStartedRouterP
   return (
     <DoeDtcPageShell>
       <DoeDtcTopBar compact href={`/doedtc/get-started?t=${encodeURIComponent(token)}`} />
-      <header className="doedtc-header">
-        <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_GET_STARTED.title}</h1>
-        <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_GET_STARTED.subtitle}</p>
-      </header>
+      <DoeDtcPageHeader title={DOEDTC_GET_STARTED.title} />
+      <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_GET_STARTED.subtitle}</p>
       <DoeDtcGetStartedForm token={token} valid={valid} />
     </DoeDtcPageShell>
   );

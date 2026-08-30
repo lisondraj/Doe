@@ -14,7 +14,15 @@ import {
   applyPhoneOverflowChrome,
 } from "@/lib/doephone/phone-layout-viewport";
 
-export function useDoeDtcPageVariant() {
+const DOEDTC_PROFILE_FOOTER_SURFACE = "#60a5fa";
+
+type UseDoeDtcPageVariantOptions = {
+  profile?: boolean;
+  brandFooter?: boolean;
+};
+
+export function useDoeDtcPageVariant(options: UseDoeDtcPageVariantOptions = {}) {
+  const brandFooter = options.brandFooter ?? options.profile ?? false;
   const [variant, setVariant] = useState<DoeDtcPageVariant>("phone");
   const [ready, setReady] = useState(false);
 
@@ -50,6 +58,9 @@ export function useDoeDtcPageVariant() {
       body.classList.add("desktop-route");
       const meta = document.querySelector('meta[name="viewport"]');
       meta?.setAttribute("content", DOEDTC_DEVICE_VIEWPORT);
+      if (brandFooter) {
+        applyPhoneOverflowChrome(DOEDTC_PROFILE_FOOTER_SURFACE);
+      }
       return;
     }
 
@@ -57,8 +68,12 @@ export function useDoeDtcPageVariant() {
     html.removeAttribute("data-layout");
     body.classList.remove("desktop-route");
     applyPhoneLayoutViewportMeta();
-    applyPhoneOverflowChrome(DOEDTC_OVERFLOW_SURFACE);
-  }, [ready, variant]);
+    if (brandFooter) {
+      applyPhoneOverflowChrome(DOEDTC_PROFILE_FOOTER_SURFACE);
+    } else {
+      applyPhoneOverflowChrome(DOEDTC_OVERFLOW_SURFACE);
+    }
+  }, [brandFooter, ready, variant]);
 
   return { variant, ready };
 }

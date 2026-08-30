@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_LISTEN } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcListenSessionRow } from "@/lib/doedtc/doedtc-types";
@@ -175,10 +176,8 @@ export function DoeDtcListenView({
     return (
       <DoeDtcPageShell>
         <DoeDtcTopBar compact />
-        <div className="doedtc-card doedtc-card--flat">
-          <strong>{DOEDTC_LISTEN.invalidTokenTitle}</strong>
-          <p>{DOEDTC_LISTEN.invalidTokenBody}</p>
-        </div>
+        <DoeDtcPageHeader title={DOEDTC_LISTEN.invalidTokenTitle} />
+        <p className="doedtc-muted">{DOEDTC_LISTEN.invalidTokenBody}</p>
       </DoeDtcPageShell>
     );
   }
@@ -186,10 +185,8 @@ export function DoeDtcListenView({
   return (
     <DoeDtcPageShell>
       <DoeDtcTopBar compact href={profileHref || "/doedtc"} />
-      <header className="doedtc-header">
-        <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_LISTEN.pageTitle}</h1>
-        <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_LISTEN.subtitle}</p>
-      </header>
+      <DoeDtcPageHeader title={DOEDTC_LISTEN.pageTitle} />
+      <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_LISTEN.subtitle}</p>
 
       <div className="doedtc-card doedtc-card--flat doedtc-listen-panel">
         {phase === "idle" ? (

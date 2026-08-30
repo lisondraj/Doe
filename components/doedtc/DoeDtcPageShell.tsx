@@ -12,10 +12,13 @@ import "@/lib/doedtc/doedtc-light-ui.css";
 type DoeDtcPageShellProps = {
   children: ReactNode;
   landing?: boolean;
+  profile?: boolean;
 };
 
-export function DoeDtcPageShell({ children, landing = false }: DoeDtcPageShellProps) {
-  const { variant, ready } = useDoeDtcPageVariant();
+export function DoeDtcPageShell({ children, landing = false, profile = false }: DoeDtcPageShellProps) {
+  const useProfileChrome = !landing;
+  const showBrandFooter = landing || useProfileChrome;
+  const { variant, ready } = useDoeDtcPageVariant({ brandFooter: showBrandFooter });
   const isPhone = !ready || variant === "phone";
 
   useDoePhoneLayoutViewport();
@@ -23,11 +26,16 @@ export function DoeDtcPageShell({ children, landing = false }: DoeDtcPageShellPr
 
   return (
     <div
-      className={`doedtc-root ${landing ? "doedtc-root--landing " : ""}${lora.variable} ${dmSans.className} ${dmSans.variable}`}
+      className={`doedtc-root ${landing ? "doedtc-root--landing " : ""}${useProfileChrome ? "doedtc-root--profile " : ""}${showBrandFooter ? "doedtc-root--has-footer " : ""}${lora.variable} ${dmSans.className} ${dmSans.variable}`}
       data-doedtc-variant={ready ? variant : "phone"}
       suppressHydrationWarning
     >
-      <div className="doedtc-shell">{children}</div>
+      <div className={`doedtc-shell${showBrandFooter ? " doedtc-shell--brand-footer" : ""}`}>{children}</div>
+      {showBrandFooter ? (
+        <footer className="doedtc-profile-footer">
+          <span className={`doedtc-profile-footer__wordmark ${lora.className}`}>Doe</span>
+        </footer>
+      ) : null}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { DoeDtcProfileTabIconGlyph } from "@/components/doedtc/DoeDtcProfileTabIcon";
+import { DoeDtcWordmark } from "@/components/doedtc/DoeDtcWordmark";
 import { DOEDTC_PROFILE_TABS } from "@/lib/doedtc/doedtc-profile-tabs";
 import type { DoeDtcProfileTab } from "@/lib/doedtc/doedtc-types";
 
@@ -24,20 +25,20 @@ export function DoeDtcSettingsList({ activeTab, onSelect, variant, onClose }: Do
 
   return (
     <div className={`doedtc-settings${isOverlay ? " doedtc-settings--overlay" : " doedtc-settings--sidebar"}`}>
-      {isOverlay ? (
-        <div className="doedtc-settings__header">
-          <h2 className="doedtc-settings__title">Settings</h2>
-          {onClose ? (
-            <button type="button" className="doedtc-settings__close" aria-label="Close settings" onClick={onClose}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                <path d="M4 4l8 8M12 4 4 12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+      {isOverlay && onClose ? (
+        <div className="doedtc-settings__overlay-nav">
+          <div className="doedtc-topbar doedtc-nav--phone doedtc-topbar--compact">
+            <span className="doedtc-nav__wordmark doedtc-settings__wordmark" aria-hidden>
+              <DoeDtcWordmark compact />
+            </span>
+            <button type="button" className="doedtc-nav-icon" aria-label="Close settings" onClick={onClose}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+                <path d="M5 5l10 10M15 5 5 15" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
               </svg>
             </button>
-          ) : null}
+          </div>
         </div>
-      ) : (
-        <p className="doedtc-settings__eyebrow">Settings</p>
-      )}
+      ) : null}
       <div className="doedtc-settings__group" role="list">
         {DOEDTC_PROFILE_TABS.map((tab) => {
           const active = tab.id === activeTab;

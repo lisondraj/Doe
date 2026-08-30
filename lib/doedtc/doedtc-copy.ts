@@ -7,9 +7,10 @@ export const DOEDTC_PAGE_DESCRIPTION =
 
 export const DOEDTC_LANDING = {
   eyebrow: "Health AI companion",
-  headline: "Meet Doe.",
+  headlineLine1: "Your personal",
+  headlineLine2: "health companion.",
   subhead:
-    "A personal health companion you can text on iMessage. Share symptoms, get clinical evidence, and understand what might be going on in plain language.",
+    "Hi there! We built Doe because we believe everyone should have a health companion they can reach. Text us when something feels off for clear answers and support.",
   phoneLabel: "Your phone number",
   phonePlaceholder: "(555) 555-0100",
   submitLabel: "Text me to start",

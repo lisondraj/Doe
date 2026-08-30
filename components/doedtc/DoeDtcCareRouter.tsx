@@ -1,11 +1,11 @@
 "use client";
 
 import { DoeDtcCareView } from "@/components/doedtc/DoeDtcCareView";
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_CARE } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcAssessmentResult, DoeDtcSymptomRow } from "@/lib/doedtc/doedtc-types";
-import { dmSans } from "@/lib/home/fonts";
 
 type DoeDtcCareRouterProps = {
   assessment: DoeDtcAssessmentResult | null;
@@ -17,9 +17,7 @@ export function DoeDtcCareRouter({ assessment, symptoms, valid }: DoeDtcCareRout
   return (
     <DoeDtcPageShell>
       <DoeDtcTopBar compact />
-      <header className="doedtc-header">
-        <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_CARE.title}</h1>
-      </header>
+      <DoeDtcPageHeader title={DOEDTC_CARE.title} />
       <DoeDtcCareView assessment={assessment} symptoms={symptoms} valid={valid} />
     </DoeDtcPageShell>
   );

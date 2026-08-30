@@ -1,6 +1,7 @@
 "use client";
 
 import type { DoeDtcPreparationPayload, DoeDtcPreparationWidget } from "@/lib/doedtc/doedtc-types";
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DOEDTC_PREPARE } from "@/lib/doedtc/doedtc-copy";
 import { dmSans } from "@/lib/home/fonts";
 
@@ -108,10 +109,8 @@ export function DoeDtcPrepareView({ code, payload, showCodeBanner = true }: DoeD
         </div>
       ) : null}
 
-      <header className="doedtc-header">
-        <h1 className={`doedtc-headline ${dmSans.className}`}>{payload.title}</h1>
-        {payload.reason ? <p className="doedtc-muted">{payload.reason}</p> : null}
-      </header>
+      <DoeDtcPageHeader title={payload.title} />
+      {payload.reason ? <p className="doedtc-muted">{payload.reason}</p> : null}
 
       {payload.widgets.length === 0 ? (
         <div className="doedtc-card">

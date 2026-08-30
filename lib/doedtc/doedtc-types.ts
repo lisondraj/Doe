@@ -527,7 +527,7 @@ export type DoeDtcWorkflowRow = {
 export type DoeDtcProfileSnapshot = {
   user: Pick<
     DoeDtcUserRow,
-    "id" | "full_name" | "email" | "why_doe" | "medical_deferred" | "care_token"
+    "id" | "full_name" | "email" | "phone" | "why_doe" | "medical_deferred" | "care_token"
   >;
   medications: string[];
   conditions: string[];

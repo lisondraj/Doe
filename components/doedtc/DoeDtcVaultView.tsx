@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_VAULT } from "@/lib/doedtc/doedtc-copy";
-import { dmSans } from "@/lib/home/fonts";
 
 type DoeDtcVaultViewProps = {
   token: string;
@@ -53,9 +53,7 @@ export function DoeDtcVaultView({ token, valid, host }: DoeDtcVaultViewProps) {
   return (
     <DoeDtcPageShell>
       <DoeDtcTopBar compact />
-      <header className="doedtc-header">
-        <h1 className={`doedtc-headline ${dmSans.className}`}>{title}</h1>
-      </header>
+      <DoeDtcPageHeader title={title} />
 
       {!valid ? (
         <section className="doedtc-card doedtc-card--flat">

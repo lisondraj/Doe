@@ -249,6 +249,7 @@ test("formatDoeDtcProfileTab reads Whoop from the dashboard tab", () => {
       id: "u1",
       full_name: "James",
       email: null,
+      phone: "+15555550100",
       why_doe: null,
       medical_deferred: false,
       care_token: "t",

@@ -10,12 +10,16 @@ export function DoeDtcRouter() {
   return (
     <DoeDtcPageShell landing>
       <DoeDtcTopBar compact />
-      <header className="doedtc-header doedtc-header--landing">
-        <p className="doedtc-eyebrow">{DOEDTC_LANDING.eyebrow}</p>
-        <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_LANDING.headline}</h1>
-        <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_LANDING.subhead}</p>
-      </header>
-      <DoeDtcLandingForm />
+      <div className="doedtc-landing-body">
+        <header className="doedtc-header doedtc-header--landing">
+          <h1 className={`doedtc-headline doedtc-headline--landing ${dmSans.className}`}>
+            <span className="doedtc-headline__line">{DOEDTC_LANDING.headlineLine1}</span>
+            <span className="doedtc-headline__line">{DOEDTC_LANDING.headlineLine2}</span>
+          </h1>
+          <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_LANDING.subhead}</p>
+        </header>
+        <DoeDtcLandingForm />
+      </div>
     </DoeDtcPageShell>
   );
 }

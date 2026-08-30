@@ -1,5 +1,6 @@
 "use client";
 
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_WORK } from "@/lib/doedtc/doedtc-copy";
@@ -15,14 +16,10 @@ export function DoeDtcWorkView({ valid, preview }: DoeDtcWorkViewProps) {
   return (
     <DoeDtcPageShell>
       <DoeDtcTopBar compact />
-      <header className="doedtc-header">
-        <h1 className={`doedtc-headline ${dmSans.className}`}>
-          {!valid || !preview ? DOEDTC_WORK.invalidTitle : DOEDTC_WORK.pageTitle}
-        </h1>
-        {!valid || !preview ? (
-          <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_WORK.invalidBody}</p>
-        ) : null}
-      </header>
+      <DoeDtcPageHeader title={!valid || !preview ? DOEDTC_WORK.invalidTitle : DOEDTC_WORK.pageTitle} />
+      {!valid || !preview ? (
+        <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_WORK.invalidBody}</p>
+      ) : null}
 
       {!valid || !preview ? null : (
         <section className="doedtc-card doedtc-card--flat">

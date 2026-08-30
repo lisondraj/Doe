@@ -276,7 +276,7 @@ export async function sendGetStartedMessages(params: {
 export async function startDoeDtcFromLanding(phoneRaw: string): Promise<{ phone: string }> {
   const phone = normalizePhoneToE164(phoneRaw);
   if (!phone) {
-    throw new Error("Enter a valid US or Canadian phone number.");
+    throw new Error("Enter a valid phone number with country code.");
   }
 
   const user = await upsertInvitedDoeDtcUser(phone);

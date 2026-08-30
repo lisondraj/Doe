@@ -1,5 +1,6 @@
 "use client";
 
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_SESSION } from "@/lib/doedtc/doedtc-copy";
@@ -30,14 +31,10 @@ export function DoeDtcSessionView({ valid, session }: DoeDtcSessionViewProps) {
   return (
     <DoeDtcPageShell>
       <DoeDtcTopBar compact />
-      <header className="doedtc-header">
-        <h1 className={`doedtc-headline ${dmSans.className}`}>
-          {!valid || !session ? DOEDTC_SESSION.invalidTitle : DOEDTC_SESSION.pageTitle}
-        </h1>
-        {!valid || !session ? (
-          <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_SESSION.invalidBody}</p>
-        ) : null}
-      </header>
+      <DoeDtcPageHeader title={!valid || !session ? DOEDTC_SESSION.invalidTitle : DOEDTC_SESSION.pageTitle} />
+      {!valid || !session ? (
+        <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_SESSION.invalidBody}</p>
+      ) : null}
 
       {!valid || !session ? null : (
         <div className="doedtc-session">

@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { DoeDtcFeedbackView } from "@/components/doedtc/DoeDtcFeedbackView";
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_FEEDBACK } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcProfileSnapshot, DoeDtcTicketKind } from "@/lib/doedtc/doedtc-types";
-import { dmSans } from "@/lib/home/fonts";
 
 type DoeDtcFeedbackPageClientProps = {
   token: string;
@@ -79,10 +79,8 @@ export function DoeDtcFeedbackPageClient({
   if (!valid || !snapshot) {
     return (
       <DoeDtcPageShell>
-        <div className="doedtc-card">
-          <strong>{DOEDTC_FEEDBACK.invalidTokenTitle}</strong>
-          <p>{DOEDTC_FEEDBACK.invalidTokenBody}</p>
-        </div>
+        <DoeDtcPageHeader title={DOEDTC_FEEDBACK.invalidTokenTitle} />
+        <p className="doedtc-muted">{DOEDTC_FEEDBACK.invalidTokenBody}</p>
       </DoeDtcPageShell>
     );
   }
@@ -90,10 +88,8 @@ export function DoeDtcFeedbackPageClient({
   return (
     <DoeDtcPageShell>
       <DoeDtcTopBar compact href={`/doedtc/app?t=${encodeURIComponent(token)}&tab=feedback`} />
-      <header className="doedtc-header">
-        <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_FEEDBACK.pageTitle}</h1>
-        <p className="doedtc-muted">{DOEDTC_FEEDBACK.subtitle}</p>
-      </header>
+      <DoeDtcPageHeader title={DOEDTC_FEEDBACK.pageTitle} />
+      <p className="doedtc-muted">{DOEDTC_FEEDBACK.subtitle}</p>
       {error ? <p className="doedtc-error">{error}</p> : null}
       <DoeDtcFeedbackView
         tickets={snapshot.tickets}

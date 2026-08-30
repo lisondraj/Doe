@@ -1,6 +1,7 @@
 "use client";
 
 import { dmSans } from "@/lib/home/fonts";
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import type { DoeDtcGuideBlock, DoeDtcGuideRow } from "@/lib/doedtc/doedtc-types";
 
 function GuideIllustration({ preset }: { preset: "pen" | "fridge" | "clock" | "rotate" }) {
@@ -228,11 +229,9 @@ type DoeDtcGuideViewProps = {
 export function DoeDtcGuideView({ guide }: DoeDtcGuideViewProps) {
   return (
     <div className="doedtc-guide">
-      <header className="doedtc-header">
-        <p className="doedtc-eyebrow">{guide.layout.replace("_", " ")}</p>
-        <h1 className={`doedtc-headline ${dmSans.className}`}>{guide.title}</h1>
-        {guide.topic ? <p className="doedtc-muted">{guide.topic}</p> : null}
-      </header>
+      <p className="doedtc-eyebrow">{guide.layout.replace("_", " ")}</p>
+      <DoeDtcPageHeader title={guide.title} />
+      {guide.topic ? <p className="doedtc-muted">{guide.topic}</p> : null}
       <div className="doedtc-guide__blocks">
         {guide.blocks.map((block) => (
           <GuideBlock key={block.id} block={block} />

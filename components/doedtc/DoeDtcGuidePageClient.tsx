@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { DoeDtcGuideView } from "@/components/doedtc/DoeDtcGuideView";
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import { DOEDTC_GUIDE } from "@/lib/doedtc/doedtc-copy";
@@ -21,10 +22,8 @@ export function DoeDtcGuidePageClient({ token, valid, guide }: DoeDtcGuidePageCl
   if (!valid || !guide) {
     return (
       <DoeDtcPageShell>
-        <div className="doedtc-card">
-          <strong>{DOEDTC_GUIDE.invalidTokenTitle}</strong>
-          <p>{DOEDTC_GUIDE.invalidTokenBody}</p>
-        </div>
+        <DoeDtcPageHeader title={DOEDTC_GUIDE.invalidTokenTitle} />
+        <p className="doedtc-muted">{DOEDTC_GUIDE.invalidTokenBody}</p>
       </DoeDtcPageShell>
     );
   }

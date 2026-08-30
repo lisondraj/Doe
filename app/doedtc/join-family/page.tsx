@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { DoeDtcJoinFamilyForm } from "@/components/doedtc/DoeDtcJoinFamilyForm";
+import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
 import {
@@ -59,12 +60,8 @@ export default async function DoeDtcJoinFamilyPage({ searchParams }: PageProps) 
   return (
     <DoeDtcPageShell>
       <DoeDtcTopBar compact href={`/doedtc/join-family?i=${encodeURIComponent(inviteToken)}`} />
-      <header className="doedtc-header">
-        <h1 className={`doedtc-headline ${dmSans.className}`}>
-          {valid ? DOEDTC_JOIN_FAMILY.title : DOEDTC_JOIN_FAMILY.invalidInviteTitle}
-        </h1>
-        {valid ? <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_JOIN_FAMILY.subtitle}</p> : null}
-      </header>
+      <DoeDtcPageHeader title={valid ? DOEDTC_JOIN_FAMILY.title : DOEDTC_JOIN_FAMILY.invalidInviteTitle} />
+      {valid ? <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_JOIN_FAMILY.subtitle}</p> : null}
       {inviteToken ? <DoeDtcJoinFamilyForm inviteToken={inviteToken} /> : null}
     </DoeDtcPageShell>
   );
