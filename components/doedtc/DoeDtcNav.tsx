@@ -8,6 +8,7 @@ import { doeDtcProfileTabLabel } from "@/lib/doedtc/doedtc-profile-tabs";
 import type { DoeDtcProfileTab } from "@/lib/doedtc/doedtc-types";
 import { useDoeDtcPageVariant } from "@/lib/doedtc/use-doedtc-page-variant";
 import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 type DoeDtcNavProps = {
   token: string;
@@ -31,8 +32,13 @@ export function DoeDtcNav({
   const { variant, ready } = useDoeDtcPageVariant();
   const isPhone = !ready || variant === "phone";
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [portalReady, setPortalReady] = useState(false);
 
   const closeSettings = useCallback(() => setSettingsOpen(false), []);
+
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
 
   useEffect(() => {
     if (!settingsOpen) return undefined;
@@ -61,6 +67,31 @@ export function DoeDtcNav({
   };
 
   const showStackedHeader = isPhone && activeTab !== "dashboard";
+
+  const settingsOverlay =
+    isPhone && settingsOpen ? (
+      <>
+        <button
+          type="button"
+          className="doedtc-settings__backdrop"
+          aria-label="Close settings"
+          onClick={closeSettings}
+        />
+        <div
+          className="doedtc-settings__sheet doedtc-profile-layout doedtc-profile-layout--phone"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Settings"
+        >
+          <DoeDtcSettingsList
+            activeTab={activeTab}
+            variant="overlay"
+            onSelect={selectTab}
+            onClose={closeSettings}
+          />
+        </div>
+      </>
+    ) : null;
 
   return (
     <div className={`doedtc-profile-layout${isPhone ? " doedtc-profile-layout--phone" : " doedtc-profile-layout--desktop"}`}>
@@ -92,24 +123,7 @@ export function DoeDtcNav({
         {children}
       </div>
 
-      {isPhone && settingsOpen ? (
-        <>
-          <button
-            type="button"
-            className="doedtc-settings__backdrop"
-            aria-label="Close settings"
-            onClick={closeSettings}
-          />
-          <div className="doedtc-settings__sheet" role="dialog" aria-modal="true" aria-label="Settings">
-            <DoeDtcSettingsList
-              activeTab={activeTab}
-              variant="overlay"
-              onSelect={selectTab}
-              onClose={closeSettings}
-            />
-          </div>
-        </>
-      ) : null}
+      {portalReady && settingsOverlay ? createPortal(settingsOverlay, document.body) : null}
     </div>
   );
 }

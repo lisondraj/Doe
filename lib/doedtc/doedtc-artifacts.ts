@@ -363,6 +363,38 @@ export function pickPrimaryNumericField(fields: DoeDtcArtifactField[]): DoeDtcAr
   return fields.find((field) => field.type === "number") ?? null;
 }
 
+export function coerceArtifactSeriesValue(raw: unknown): number | null {
+  if (typeof raw === "number" && Number.isFinite(raw)) return raw;
+  const text = String(raw ?? "").trim();
+  if (!text) return null;
+  const direct = Number(text);
+  if (Number.isFinite(direct)) return direct;
+  const match = text.match(/-?\d+(?:\.\d+)?/);
+  if (!match) return null;
+  const value = Number(match[0]);
+  return Number.isFinite(value) ? value : null;
+}
+
+export function pickPrimarySeriesField(
+  fields: DoeDtcArtifactField[],
+  entries: DoeDtcArtifactEntryRow[],
+): DoeDtcArtifactField | null {
+  const numeric = pickPrimaryNumericField(fields);
+  if (numeric) {
+    const points = buildArtifactSeriesPoints({ entries, fieldKey: numeric.key, limit: 12 });
+    if (points.length > 0) return numeric;
+  }
+
+  let best: { field: DoeDtcArtifactField; count: number } | null = null;
+  for (const field of fields) {
+    const count = buildArtifactSeriesPoints({ entries, fieldKey: field.key, limit: 12 }).length;
+    if (count > (best?.count ?? 0)) {
+      best = { field, count };
+    }
+  }
+  return best && best.count > 0 ? best.field : numeric;
+}
+
 export function defaultBlocksForLayout(params: {
   layout: DoeDtcArtifactLayout;
   title: string;
@@ -442,9 +474,8 @@ export function buildArtifactSeriesPoints(params: {
 }): ArtifactSeriesPoint[] {
   return params.entries
     .map((entry) => {
-      const raw = entry.values[params.fieldKey];
-      const value = typeof raw === "number" ? raw : Number(String(raw ?? ""));
-      if (!Number.isFinite(value)) return null;
+      const value = coerceArtifactSeriesValue(entry.values[params.fieldKey]);
+      if (value === null) return null;
       return { at: entry.occurred_at, value };
     })
     .filter((point): point is ArtifactSeriesPoint => point !== null)

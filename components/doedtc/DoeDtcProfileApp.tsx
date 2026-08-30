@@ -20,7 +20,7 @@ import { applyDoeDtcPreviewAction } from "@/lib/doedtc/doedtc-preview-snapshot";
 import {
   buildArtifactSeriesPoints,
   formatPrimaryArtifactReading,
-  pickPrimaryNumericField,
+  pickPrimarySeriesField,
 } from "@/lib/doedtc/doedtc-artifacts";
 import { formatPhoneForDisplay } from "@/lib/doedtc/doedtc-phone";
 import { memberCurrentlySharesWithHousehold } from "@/lib/doedtc/doedtc-household";
@@ -478,11 +478,12 @@ function DashboardTab({
       {trackerCards.length > 0 ? (
         <DoeDtcTrackerCarousel
           cards={trackerCards.map(({ artifact, lastEntry }) => {
-            const numericField = pickPrimaryNumericField(artifact.config.fields);
-            const points = numericField
+            const entries = snapshot.artifactEntries.filter((entry) => entry.artifact_id === artifact.id);
+            const seriesField = pickPrimarySeriesField(artifact.config.fields, entries);
+            const points = seriesField
               ? buildArtifactSeriesPoints({
-                  entries: snapshot.artifactEntries.filter((entry) => entry.artifact_id === artifact.id),
-                  fieldKey: numericField.key,
+                  entries,
+                  fieldKey: seriesField.key,
                   limit: 12,
                 })
               : [];

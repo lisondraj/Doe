@@ -2,12 +2,15 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  buildArtifactSeriesPoints,
+  coerceArtifactSeriesValue,
   defaultBlocksForLayout,
   defaultLayoutForTitle,
   formatPrimaryArtifactReading,
   normalizeArtifactBlocks,
   normalizeArtifactLayout,
   pickPrimaryNumericField,
+  pickPrimarySeriesField,
 } from "@/lib/doedtc/doedtc-artifacts";
 import { doeDtcArtifactShareUrl } from "@/lib/doedtc/doedtc-copy";
 
@@ -65,6 +68,45 @@ test("formatPrimaryArtifactReading falls back to first populated field", () => {
     },
   };
   assert.equal(formatPrimaryArtifactReading(artifact, { dose: "1 mg", site: "abdomen" }), "1 mg");
+});
+
+test("coerceArtifactSeriesValue reads numbers from unit strings", () => {
+  assert.equal(coerceArtifactSeriesValue(185), 185);
+  assert.equal(coerceArtifactSeriesValue("1 mg"), 1);
+  assert.equal(coerceArtifactSeriesValue("0.25 mg"), 0.25);
+  assert.equal(coerceArtifactSeriesValue("abdomen"), null);
+});
+
+test("pickPrimarySeriesField uses select doses when no numeric field has points", () => {
+  const fields = [
+    { key: "dose", label: "Dose", type: "select" as const, options: ["0.5 mg", "1 mg"] },
+    { key: "site", label: "Site", type: "select" as const, options: ["abdomen"] },
+  ];
+  const entries = [
+    {
+      id: "e1",
+      artifact_id: "a1",
+      user_id: "u1",
+      occurred_at: "2026-08-01T00:00:00.000Z",
+      values: { dose: "0.5 mg", site: "abdomen" },
+      created_at: "2026-08-01T00:00:00.000Z",
+      updated_at: "2026-08-01T00:00:00.000Z",
+    },
+    {
+      id: "e2",
+      artifact_id: "a1",
+      user_id: "u1",
+      occurred_at: "2026-08-08T00:00:00.000Z",
+      values: { dose: "1 mg", site: "thigh" },
+      created_at: "2026-08-08T00:00:00.000Z",
+      updated_at: "2026-08-08T00:00:00.000Z",
+    },
+  ];
+  assert.equal(pickPrimarySeriesField(fields, entries)?.key, "dose");
+  assert.deepEqual(
+    buildArtifactSeriesPoints({ entries, fieldKey: "dose" }).map((point) => point.value),
+    [0.5, 1],
+  );
 });
 
 test("doeDtcArtifactShareUrl uses dedicated artifact share param", () => {

@@ -344,7 +344,7 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-medical-grid,
 .doedtc-tracker-carousel {
   --doedtc-tracker-card-height: 11rem;
   --doedtc-tracker-peek: 1.5rem;
-  --doedtc-tracker-gutter: 2.25rem;
+  --doedtc-tracker-gutter: min(2.25rem, var(--proto-phone-gutter-left, 1.5rem));
   --doedtc-tracker-shadow: 2.5rem;
   position: relative;
   width: calc(100% + var(--doedtc-tracker-gutter) * 2);
@@ -506,6 +506,7 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-tracker-carousel,
     0 16px 36px rgba(15, 23, 42, 0.06);
 }
 
+.doedtc-root--profile:not(.doedtc-root--landing) .doedtc-tracker-carousel__card,
 .doedtc-profile-layout .doedtc-tracker-carousel__card {
   position: absolute;
   overflow: visible;
@@ -935,6 +936,12 @@ html[data-doedtc-page] .doedtc-profile-phone-banner:active {
   overflow: auto;
 }
 
+.doedtc-settings__sheet.doedtc-profile-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.doedtc-settings__sheet.doedtc-profile-layout--phone,
 .doedtc-profile-layout--phone .doedtc-settings__sheet {
   padding-top: max(1.5rem, env(safe-area-inset-top, 0px));
   padding-bottom: max(2rem, calc(env(safe-area-inset-bottom, 0px) + 1.25rem));
