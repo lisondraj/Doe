@@ -4,6 +4,7 @@ import { DoeDtcCareRouter } from "@/components/doedtc/DoeDtcCareRouter";
 import {
   getDoeDtcUserByCareToken,
   getLatestDoeDtcAssessment,
+  listDoeDtcSymptoms,
 } from "@/lib/doedtc/doedtc-db";
 import {
   DOEDTC_CARE,
@@ -12,7 +13,7 @@ import {
   doeDtcPublicOrigin,
 } from "@/lib/doedtc/doedtc-copy";
 import { DOEDTC_PATH } from "@/lib/site-domains";
-import type { DoeDtcAssessmentResult } from "@/lib/doedtc/doedtc-types";
+import type { DoeDtcAssessmentResult, DoeDtcSymptomRow } from "@/lib/doedtc/doedtc-types";
 
 export const dynamic = "force-dynamic";
 
@@ -53,20 +54,26 @@ export default async function DoeDtcCarePage({ searchParams }: PageProps) {
   const token = params.t?.trim() ?? "";
   let valid = false;
   let assessment: DoeDtcAssessmentResult | null = null;
+  let symptoms: DoeDtcSymptomRow[] = [];
 
   if (token) {
     try {
       const user = await getDoeDtcUserByCareToken(token);
       valid = Boolean(user);
       if (user) {
-        const latest = await getLatestDoeDtcAssessment(user.id);
+        const [latest, symptomRows] = await Promise.all([
+          getLatestDoeDtcAssessment(user.id),
+          listDoeDtcSymptoms(user.id, 12),
+        ]);
         assessment = latest?.result ?? null;
+        symptoms = symptomRows;
       }
     } catch {
       valid = false;
       assessment = null;
+      symptoms = [];
     }
   }
 
-  return <DoeDtcCareRouter assessment={assessment} valid={valid} />;
+  return <DoeDtcCareRouter assessment={assessment} symptoms={symptoms} valid={valid} />;
 }

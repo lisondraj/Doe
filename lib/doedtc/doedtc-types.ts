@@ -71,6 +71,21 @@ export type DoeDtcAssessmentRow = {
   created_at: string;
 };
 
+export type DoeDtcSymptomSeverity = "mild" | "moderate" | "severe" | "unknown";
+
+export type DoeDtcSymptomRow = {
+  id: string;
+  user_id: string;
+  reported_at: string;
+  raw_text: string;
+  summary: string | null;
+  severity: DoeDtcSymptomSeverity;
+  onset: string | null;
+  tags: string[];
+  assessment_id: string | null;
+  created_at: string;
+};
+
 export type DoeDtcOnboardPayload = {
   token: string;
   fullName: string;

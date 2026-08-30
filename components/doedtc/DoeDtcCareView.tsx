@@ -1,12 +1,26 @@
 import { DOEDTC_CARE } from "@/lib/doedtc/doedtc-copy";
-import type { DoeDtcAssessmentResult } from "@/lib/doedtc/doedtc-types";
+import type { DoeDtcAssessmentResult, DoeDtcSymptomRow } from "@/lib/doedtc/doedtc-types";
 
 type DoeDtcCareViewProps = {
   assessment: DoeDtcAssessmentResult | null;
+  symptoms: DoeDtcSymptomRow[];
   valid: boolean;
 };
 
-export function DoeDtcCareView({ assessment, valid }: DoeDtcCareViewProps) {
+function formatSymptomDate(value: string): string {
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    }).format(new Date(value));
+  } catch {
+    return value;
+  }
+}
+
+export function DoeDtcCareView({ assessment, symptoms, valid }: DoeDtcCareViewProps) {
   if (!valid) {
     return (
       <div className="doedtc-card">
@@ -16,62 +30,94 @@ export function DoeDtcCareView({ assessment, valid }: DoeDtcCareViewProps) {
     );
   }
 
-  if (!assessment) {
-    return (
-      <div className="doedtc-card">
-        <strong>{DOEDTC_CARE.noAssessmentTitle}</strong>
-        <p>{DOEDTC_CARE.noAssessmentBody}</p>
-      </div>
-    );
-  }
-
   return (
-    <div>
-      <div className="doedtc-card">
-        <p className="doedtc-eyebrow">{DOEDTC_CARE.presentingLabel}</p>
-        <p>{assessment.presentingSymptoms}</p>
-        <p style={{ marginTop: "0.75rem" }}>{assessment.summary}</p>
-      </div>
+    <div className="doedtc-care-grid">
+      {assessment ? (
+        <section className="doedtc-care-main">
+          <div className="doedtc-card">
+            <p className="doedtc-eyebrow">{DOEDTC_CARE.presentingLabel}</p>
+            <p className="doedtc-body">{assessment.presentingSymptoms}</p>
+            <p className="doedtc-body doedtc-body--spaced">{assessment.summary}</p>
+          </div>
 
-      <div style={{ marginTop: "1.5rem" }}>
-        <h2 className="doedtc-label">{DOEDTC_CARE.findingsLabel}</h2>
-        {assessment.findings.map((finding) => (
-          <article className="doedtc-finding" key={`${finding.name}-${finding.why}`}>
-            <h3>
-              {finding.name}
-              <span style={{ marginLeft: "0.5rem", color: "#8a7868", fontWeight: 500 }}>
-                ({finding.likelihood})
-              </span>
-            </h3>
-            <p style={{ marginTop: "0.35rem", color: "#8a7868" }}>{finding.why}</p>
-            {finding.evidence.length > 0 ? (
-              <ul>
-                {finding.evidence.map((item) => (
+          <div className="doedtc-section">
+            <h2 className="doedtc-section-title">{DOEDTC_CARE.findingsLabel}</h2>
+            {assessment.findings.map((finding) => (
+              <article className="doedtc-finding" key={`${finding.name}-${finding.why}`}>
+                <h3>
+                  {finding.name}
+                  <span className="doedtc-finding-likelihood">({finding.likelihood})</span>
+                </h3>
+                <p className="doedtc-muted">{finding.why}</p>
+                {finding.evidence.length > 0 ? (
+                  <ul>
+                    {finding.evidence.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </article>
+            ))}
+          </div>
+
+          {assessment.cantMiss.length > 0 ? (
+            <div className="doedtc-card doedtc-card--spaced">
+              <p className="doedtc-eyebrow">{DOEDTC_CARE.cantMissLabel}</p>
+              <ul className="doedtc-list">
+                {assessment.cantMiss.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-            ) : null}
-          </article>
-        ))}
-      </div>
+            </div>
+          ) : null}
 
-      {assessment.cantMiss.length > 0 ? (
-        <div className="doedtc-card" style={{ marginTop: "1.5rem" }}>
-          <p className="doedtc-eyebrow">{DOEDTC_CARE.cantMissLabel}</p>
-          <ul style={{ marginTop: "0.5rem", paddingLeft: "1.1rem" }}>
-            {assessment.cantMiss.map((item) => (
-              <li key={item}>{item}</li>
+          <div className="doedtc-card doedtc-card--spaced">
+            <p className="doedtc-eyebrow">{DOEDTC_CARE.urgencyLabel}</p>
+            <p className="doedtc-body">{assessment.urgency}</p>
+          </div>
+
+          <p className="doedtc-disclaimer">{assessment.disclaimer || DOEDTC_CARE.disclaimer}</p>
+        </section>
+      ) : (
+        <div className="doedtc-card">
+          <strong>{DOEDTC_CARE.noAssessmentTitle}</strong>
+          <p>{DOEDTC_CARE.noAssessmentBody}</p>
+        </div>
+      )}
+
+      <aside className="doedtc-care-aside">
+        <h2 className="doedtc-section-title">{DOEDTC_CARE.symptomLogLabel}</h2>
+        {symptoms.length === 0 ? (
+          <div className="doedtc-card">
+            <p className="doedtc-muted">{DOEDTC_CARE.symptomLogEmpty}</p>
+          </div>
+        ) : (
+          <ul className="doedtc-symptom-log">
+            {symptoms.map((symptom) => (
+              <li className="doedtc-symptom-item" key={symptom.id}>
+                <time className="doedtc-symptom-date" dateTime={symptom.reported_at}>
+                  {formatSymptomDate(symptom.reported_at)}
+                </time>
+                <p className="doedtc-body">{symptom.summary?.trim() || symptom.raw_text}</p>
+                {symptom.severity !== "unknown" ? (
+                  <p className="doedtc-symptom-meta">
+                    {DOEDTC_CARE.severityLabel}: {symptom.severity}
+                  </p>
+                ) : null}
+                {symptom.tags.length > 0 ? (
+                  <div className="doedtc-tag-list doedtc-tag-list--compact">
+                    {symptom.tags.map((tag) => (
+                      <span className="doedtc-tag doedtc-tag--readonly" key={tag}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+              </li>
             ))}
           </ul>
-        </div>
-      ) : null}
-
-      <div className="doedtc-card" style={{ marginTop: "1.5rem" }}>
-        <p className="doedtc-eyebrow">{DOEDTC_CARE.urgencyLabel}</p>
-        <p style={{ marginTop: "0.5rem" }}>{assessment.urgency}</p>
-      </div>
-
-      <p className="doedtc-disclaimer">{assessment.disclaimer || DOEDTC_CARE.disclaimer}</p>
+        )}
+      </aside>
     </div>
   );
 }

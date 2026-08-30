@@ -52,6 +52,9 @@ export const DOEDTC_CARE = {
   invalidTokenBody: "Text your symptoms to Doe in iMessage to get a fresh care link.",
   noAssessmentTitle: "No assessment yet",
   noAssessmentBody: "Text your symptoms to Doe in iMessage to receive a personalized review.",
+  symptomLogLabel: "Recent symptoms",
+  symptomLogEmpty: "No symptoms logged yet. Text Doe in iMessage to start tracking.",
+  severityLabel: "Severity",
 } as const;
 
 export const DOEDTC_LINQ = {

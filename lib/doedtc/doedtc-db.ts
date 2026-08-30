@@ -3,6 +3,9 @@ import { createDoeDtcToken, isTokenExpired, onboardingTokenExpiresAt } from "@/l
 import type {
   DoeDtcAssessmentResult,
   DoeDtcAssessmentRow,
+  DoeDtcMessageRow,
+  DoeDtcSymptomRow,
+  DoeDtcSymptomSeverity,
   DoeDtcUserRow,
 } from "@/lib/doedtc/doedtc-types";
 
@@ -321,4 +324,86 @@ export function isValidOnboardingUser(user: DoeDtcUserRow | null): user is DoeDt
       user.status === "onboarding" &&
       !isTokenExpired(user.onboarding_token_expires_at),
   );
+}
+
+export async function listDoeDtcMessages(
+  userId: string,
+  limit = 20,
+): Promise<DoeDtcMessageRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_messages")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return ((data as DoeDtcMessageRow[]) ?? []).reverse();
+}
+
+export async function listDoeDtcAssessments(
+  userId: string,
+  limit = 3,
+): Promise<DoeDtcAssessmentRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_assessments")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcAssessmentRow[]) ?? [];
+}
+
+export async function listDoeDtcSymptoms(
+  userId: string,
+  limit = 10,
+): Promise<DoeDtcSymptomRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_symptoms")
+    .select("*")
+    .eq("user_id", userId)
+    .order("reported_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcSymptomRow[]) ?? [];
+}
+
+export async function insertDoeDtcSymptom(params: {
+  userId: string;
+  rawText: string;
+  summary?: string | null;
+  severity?: DoeDtcSymptomSeverity;
+  onset?: string | null;
+  tags?: string[];
+}): Promise<DoeDtcSymptomRow> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_symptoms")
+    .insert({
+      user_id: params.userId,
+      raw_text: params.rawText,
+      summary: params.summary ?? null,
+      severity: params.severity ?? "unknown",
+      onset: params.onset ?? null,
+      tags: params.tags ?? [],
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcSymptomRow;
+}
+
+export async function linkDoeDtcSymptomToAssessment(params: {
+  symptomId: string;
+  assessmentId: string;
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("doedtc_symptoms")
+    .update({ assessment_id: params.assessmentId })
+    .eq("id", params.symptomId);
+  if (error) throw new Error(error.message);
 }

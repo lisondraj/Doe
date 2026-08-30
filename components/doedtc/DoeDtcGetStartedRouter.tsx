@@ -1,9 +1,9 @@
 "use client";
 
 import { DoeDtcGetStartedForm } from "@/components/doedtc/DoeDtcGetStartedForm";
-import { DoeDtcPhoneShell } from "@/components/doedtc/DoeDtcPhoneShell";
+import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DOEDTC_GET_STARTED } from "@/lib/doedtc/doedtc-copy";
-import { lora } from "@/lib/home/fonts";
+import { lora, suisseIntl } from "@/lib/home/fonts";
 
 type DoeDtcGetStartedRouterProps = {
   token: string;
@@ -12,11 +12,13 @@ type DoeDtcGetStartedRouterProps = {
 
 export function DoeDtcGetStartedRouter({ token, valid }: DoeDtcGetStartedRouterProps) {
   return (
-    <DoeDtcPhoneShell>
-      <p className="doedtc-wordmark">Doe</p>
-      <h1 className={`doedtc-headline ${lora.className}`}>{DOEDTC_GET_STARTED.title}</h1>
-      <p className="doedtc-subhead">{DOEDTC_GET_STARTED.subtitle}</p>
+    <DoeDtcPageShell>
+      <header className="doedtc-header">
+        <p className="doedtc-wordmark doedtc-wordmark--gold">Doe</p>
+        <h1 className={`doedtc-headline ${lora.className}`}>{DOEDTC_GET_STARTED.title}</h1>
+        <p className={`doedtc-display ${suisseIntl.className}`}>{DOEDTC_GET_STARTED.subtitle}</p>
+      </header>
       <DoeDtcGetStartedForm token={token} valid={valid} />
-    </DoeDtcPhoneShell>
+    </DoeDtcPageShell>
   );
 }

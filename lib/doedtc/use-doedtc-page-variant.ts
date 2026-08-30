@@ -2,13 +2,17 @@
 
 import { useEffect, useLayoutEffect, useState } from "react";
 
+import { DOEDTC_OVERFLOW_SURFACE } from "@/lib/doedtc/doedtc-chrome";
 import {
   DOEDTC_DESKTOP_MEDIA_QUERY,
   DOEDTC_DEVICE_VIEWPORT,
   resolveDoeDtcPageVariant,
   type DoeDtcPageVariant,
 } from "@/lib/doedtc/doedtc-page-variant";
-import { applyPhoneLayoutViewportMeta } from "@/lib/doephone/phone-layout-viewport";
+import {
+  applyPhoneLayoutViewportMeta,
+  applyPhoneOverflowChrome,
+} from "@/lib/doephone/phone-layout-viewport";
 
 export function useDoeDtcPageVariant() {
   const [variant, setVariant] = useState<DoeDtcPageVariant>("phone");
@@ -38,6 +42,7 @@ export function useDoeDtcPageVariant() {
     const html = document.documentElement;
     const body = document.body;
     html.setAttribute("data-doedtc-page", "true");
+    html.setAttribute("data-doedtc-variant", variant);
 
     if (variant === "desktop") {
       html.removeAttribute("data-doeforvc-always-phone");
@@ -52,6 +57,7 @@ export function useDoeDtcPageVariant() {
     html.removeAttribute("data-layout");
     body.classList.remove("desktop-route");
     applyPhoneLayoutViewportMeta();
+    applyPhoneOverflowChrome(DOEDTC_OVERFLOW_SURFACE);
   }, [ready, variant]);
 
   return { variant, ready };
