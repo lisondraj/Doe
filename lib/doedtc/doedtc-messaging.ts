@@ -1,4 +1,4 @@
-import { runDoeDtcAgentTurn } from "@/lib/doedtc/doedtc-agent";
+import { runDoeDtcAgentTurn, sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
 import { shareDoeDtcLinqContactCard } from "@/lib/doedtc/doedtc-contact-card";
 import {
   DOEDTC_LINQ,
@@ -355,15 +355,25 @@ export async function handleSymptomInbound(params: {
     inboundText: params.text,
   });
 
-  await sendDoeDtcOutbound({
-    user: params.user,
-    chatId,
-    to: params.user.phone,
-    text: turn.replyText,
-    idempotencyKey: `doedtc-agent-reply-${params.user.id}-${idSuffix}`,
-  });
+  const replyText = sanitizeDoeDtcReplyText(turn.replyText);
+  if (replyText) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: replyText,
+      idempotencyKey: `doedtc-agent-reply-${params.user.id}-${idSuffix}`,
+    });
+  }
 
   if (turn.assessmentRan && turn.careUrl) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.careLinkIntro,
+      idempotencyKey: `doedtc-agent-care-intro-${params.user.id}-${idSuffix}`,
+    });
     await sendDoeDtcLinkOutbound({
       user: params.user,
       chatId,
@@ -387,6 +397,23 @@ export async function handleSymptomInbound(params: {
       to: params.user.phone,
       url: turn.listenUrl,
       idempotencyKey: `doedtc-agent-listen-${params.user.id}-${idSuffix}`,
+    });
+  }
+
+  if (turn.profileUrl) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.profileLinkIntro,
+      idempotencyKey: `doedtc-agent-profile-intro-${params.user.id}-${idSuffix}`,
+    });
+    await sendDoeDtcLinkOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      url: turn.profileUrl,
+      idempotencyKey: `doedtc-agent-profile-${params.user.id}-${idSuffix}`,
     });
   }
 }

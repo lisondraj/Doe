@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 
+import { DoeDtcWordmark } from "@/components/doedtc/DoeDtcWordmark";
 import { DOEDTC_PROFILE } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcProfileTab } from "@/lib/doedtc/doedtc-types";
-import { lora } from "@/lib/home/fonts";
 
 const TABS: Array<{ id: DoeDtcProfileTab; label: string }> = [
   { id: "dashboard", label: DOEDTC_PROFILE.navDashboard },
   { id: "appointments", label: DOEDTC_PROFILE.navAppointments },
   { id: "results", label: DOEDTC_PROFILE.navResults },
+  { id: "conditions", label: DOEDTC_PROFILE.navConditions },
   { id: "family", label: DOEDTC_PROFILE.navFamily },
   { id: "locker", label: DOEDTC_PROFILE.navLocker },
   { id: "share", label: DOEDTC_PROFILE.navShare },
@@ -24,11 +25,8 @@ type DoeDtcNavProps = {
 export function DoeDtcNav({ token, activeTab, onTabChange }: DoeDtcNavProps) {
   return (
     <nav className="doedtc-nav" aria-label="Profile">
-      <Link
-        className={`doedtc-wordmark doedtc-wordmark--gold doedtc-nav__wordmark ${lora.className}`}
-        href={`/doedtc/app?t=${encodeURIComponent(token)}`}
-      >
-        Doe
+      <Link className="doedtc-nav__wordmark" href={`/doedtc/app?t=${encodeURIComponent(token)}`}>
+        <DoeDtcWordmark />
       </Link>
       <div className="doedtc-nav__tabs">
         {TABS.map((tab) =>

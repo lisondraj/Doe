@@ -2,9 +2,10 @@
 
 import { DoeDtcCareView } from "@/components/doedtc/DoeDtcCareView";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
+import { DoeDtcWordmark } from "@/components/doedtc/DoeDtcWordmark";
 import { DOEDTC_CARE } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcAssessmentResult, DoeDtcSymptomRow } from "@/lib/doedtc/doedtc-types";
-import { dmSans, lora } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 
 type DoeDtcCareRouterProps = {
   assessment: DoeDtcAssessmentResult | null;
@@ -16,7 +17,7 @@ export function DoeDtcCareRouter({ assessment, symptoms, valid }: DoeDtcCareRout
   return (
     <DoeDtcPageShell>
       <header className="doedtc-header">
-        <p className={`doedtc-wordmark doedtc-wordmark--gold ${lora.className}`}>Doe</p>
+        <DoeDtcWordmark />
         <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_CARE.title}</h1>
       </header>
       <DoeDtcCareView assessment={assessment} symptoms={symptoms} valid={valid} />

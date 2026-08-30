@@ -217,6 +217,7 @@ export type DoeDtcProfileTab =
   | "dashboard"
   | "appointments"
   | "results"
+  | "conditions"
   | "family"
   | "locker"
   | "share";

@@ -1,4 +1,4 @@
-import { doeDtcCareUrl, doeDtcListenUrl } from "@/lib/doedtc/doedtc-copy";
+import { doeDtcAppUrl, doeDtcCareUrl, doeDtcListenUrl } from "@/lib/doedtc/doedtc-copy";
 import {
   addDoeDtcAppointment,
   createDoeDtcListenSession,
@@ -131,6 +131,18 @@ export const DOEDTC_AGENT_TOOLS = [
       },
     },
   },
+  {
+    type: "function" as const,
+    function: {
+      name: "send_profile_link",
+      description:
+        "Send the user their Doe profile link. Call whenever they ask for their profile, dashboard, appointments page, or a profile link.",
+      parameters: {
+        type: "object",
+        properties: {},
+      },
+    },
+  },
 ];
 
 type ChatMessage =
@@ -150,8 +162,23 @@ export type DoeDtcAgentTurnResult = {
   replyText: string;
   careUrl?: string;
   listenUrl?: string;
+  profileUrl?: string;
   assessmentRan: boolean;
 };
+
+const URL_IN_TEXT = /https?:\/\/\S+/gi;
+const CLOSER_TAIL =
+  /(?:\s*[.!]+\s*)?(?:feel free to ask(?: me)?(?:(?: if you have)?(?: any)? questions?)?|let me know if (?:you have )?(?:any )?(?:questions|you need anything)|don'?t hesitate to (?:ask|reach out))[!.,]?\s*$/i;
+
+export function sanitizeDoeDtcReplyText(text: string): string {
+  return text
+    .replace(URL_IN_TEXT, "")
+    .replace(CLOSER_TAIL, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+}
 
 function compactTranscript(messages: DoeDtcMessageRow[]): string {
   const lines = messages
@@ -264,6 +291,9 @@ Rules:
 - Refer back to upcoming appointments and remembered facts naturally in later turns.
 - Store durable non-symptom facts with remember_fact (doctor names, preferences, context).
 - When the user wants to record or transcribe a visit, call start_listen. Tell them you are sending a Listen link.
+- When the user asks for their profile, dashboard, appointments page, or a profile link, call send_profile_link. Say you are sending the link. Never say you cannot send it.
+- Never put URLs in your reply. Links are always sent as a separate iMessage.
+- Do not end with "feel free to ask", "let me know if you have questions", or similar closers. Just stop.
 - Ask 1-2 clarifying questions when details are thin (timing, severity, location, triggers).
 - Call run_assessment when you have enough signal or the user asks what it might be / wants a review.
 - Never claim a definitive diagnosis. Flag emergencies clearly.
@@ -441,24 +471,27 @@ export async function runDoeDtcAgentTurn(params: {
   let assessmentRan = false;
   let careUrl: string | undefined;
   let listenUrl: string | undefined;
+  let profileUrl: string | undefined;
   let assessmentSummary: string | undefined;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
     const { message } = await callDoeDtcAgent(messages);
 
     if (!message.tool_calls?.length) {
-      const replyText =
-        message.content?.trim() ||
-        (assessmentRan
-          ? assessmentSummary ?? "I put together a review for you."
-          : listenUrl
-            ? "I sent you a Listen link. Tap it when you are ready to record."
-            : "Thanks for sharing. Tell me more about what you are feeling.");
+      const fallback = assessmentRan
+        ? assessmentSummary ?? "I put together a review for you."
+        : listenUrl
+          ? "I am sending a Listen link."
+          : profileUrl
+            ? "I am sending your profile link."
+            : "Thanks for sharing. Tell me more about what you are feeling.";
+      const replyText = sanitizeDoeDtcReplyText(message.content?.trim() || fallback) || fallback;
 
       return {
         replyText,
         careUrl: assessmentRan ? careUrl : undefined,
         listenUrl,
+        profileUrl,
         assessmentRan,
       };
     }
@@ -521,7 +554,7 @@ export async function runDoeDtcAgentTurn(params: {
             ok: true,
             assessment_id: saved.id,
             summary: result.summary,
-            care_url: careUrl,
+            link_sent_separately: true,
           };
         } else if (toolCall.function.name === "log_appointment") {
           const title = String(args.title ?? "").trim();
@@ -560,7 +593,10 @@ export async function runDoeDtcAgentTurn(params: {
             appointmentId,
           });
           listenUrl = doeDtcListenUrl(params.user.care_token, session.id);
-          output = { ok: true, session_id: session.id, listen_url: listenUrl };
+          output = { ok: true, session_id: session.id, link_sent_separately: true };
+        } else if (toolCall.function.name === "send_profile_link") {
+          profileUrl = doeDtcAppUrl(params.user.care_token);
+          output = { ok: true, link_sent_separately: true };
         } else {
           output = { ok: false, error: "Unknown tool" };
         }
@@ -580,9 +616,12 @@ export async function runDoeDtcAgentTurn(params: {
   }
 
   return {
-    replyText: assessmentSummary ?? "I am still reviewing what you shared. One moment.",
+    replyText: sanitizeDoeDtcReplyText(
+      assessmentSummary ?? "I am still reviewing what you shared. One moment.",
+    ),
     careUrl: assessmentRan ? careUrl : undefined,
     listenUrl,
+    profileUrl,
     assessmentRan,
   };
 }

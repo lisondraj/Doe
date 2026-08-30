@@ -145,6 +145,7 @@ export function DoeDtcProfileApp({
         <AppointmentsTab snapshot={snapshot} busy={busy} onAction={runAction} />
       ) : null}
       {tab === "results" ? <ResultsTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
+      {tab === "conditions" ? <ConditionsTab snapshot={snapshot} /> : null}
       {tab === "family" ? <FamilyTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
       {tab === "locker" ? <LockerTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
       {tab === "share" ? <ShareTab snapshot={snapshot} busy={busy} onAction={runAction} /> : null}
@@ -268,24 +269,6 @@ function DashboardTab({ snapshot, busy, onAction }: TabProps) {
       </div>
 
       <div className="doedtc-section">
-        <h2 className="doedtc-section-title">{DOEDTC_PROFILE.dashboardSymptomsLabel}</h2>
-        {snapshot.symptoms.length === 0 ? (
-          <p className="doedtc-empty">{DOEDTC_PROFILE.dashboardSymptomsEmpty}</p>
-        ) : (
-          <ul className="doedtc-symptom-log">
-            {snapshot.symptoms.map((symptom) => (
-              <li className="doedtc-symptom-item" key={symptom.id}>
-                <time className="doedtc-symptom-date" dateTime={symptom.reported_at}>
-                  {formatDateTime(symptom.reported_at)}
-                </time>
-                <p className="doedtc-body">{symptom.summary?.trim() || symptom.raw_text}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <div className="doedtc-section">
         <h2 className="doedtc-section-title">{DOEDTC_PROFILE.dashboardIntegrationsLabel}</h2>
         <div className="doedtc-integration-grid">
           <IntegrationCard
@@ -303,6 +286,31 @@ function DashboardTab({ snapshot, busy, onAction }: TabProps) {
             onConnect={() => onAction("connect_health", { provider: "apple_health" })}
           />
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ConditionsTab({ snapshot }: { snapshot: DoeDtcProfileSnapshot }) {
+  return (
+    <div>
+      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.conditionsTitle}</h2>
+      <div className="doedtc-card doedtc-card--flat">
+        <p className="doedtc-eyebrow">{DOEDTC_PROFILE.symptomsBoxTitle}</p>
+        {snapshot.symptoms.length === 0 ? (
+          <p className="doedtc-empty">{DOEDTC_PROFILE.dashboardSymptomsEmpty}</p>
+        ) : (
+          <ul className="doedtc-symptom-log">
+            {snapshot.symptoms.map((symptom) => (
+              <li className="doedtc-symptom-item" key={symptom.id}>
+                <time className="doedtc-symptom-date" dateTime={symptom.reported_at}>
+                  {formatDateTime(symptom.reported_at)}
+                </time>
+                <p className="doedtc-body">{symptom.summary?.trim() || symptom.raw_text}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

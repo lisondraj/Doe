@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
+import { DoeDtcWordmark } from "@/components/doedtc/DoeDtcWordmark";
 import { DOEDTC_LISTEN } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcListenSessionRow } from "@/lib/doedtc/doedtc-types";
-import { dmSans, lora } from "@/lib/home/fonts";
+import { dmSans } from "@/lib/home/fonts";
 
 const MAX_DURATION_MS = 60 * 60 * 1000;
 
@@ -184,7 +185,7 @@ export function DoeDtcListenView({
   return (
     <DoeDtcPageShell>
       <header className="doedtc-header">
-        <p className={`doedtc-wordmark doedtc-wordmark--gold ${lora.className}`}>Doe</p>
+        <DoeDtcWordmark />
         <h1 className={`doedtc-headline ${dmSans.className}`}>{DOEDTC_LISTEN.pageTitle}</h1>
         <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_LISTEN.subtitle}</p>
       </header>

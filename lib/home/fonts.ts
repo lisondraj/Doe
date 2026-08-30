@@ -5,6 +5,7 @@ export const lora = Lora({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
+  variable: "--font-lora",
 });
 
 /** doehealth closing carousel — serif distinct from Lora wordmark. */

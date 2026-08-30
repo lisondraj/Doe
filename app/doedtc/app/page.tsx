@@ -45,6 +45,7 @@ const VALID_TABS = new Set<DoeDtcProfileTab>([
   "dashboard",
   "appointments",
   "results",
+  "conditions",
   "family",
   "locker",
   "share",
