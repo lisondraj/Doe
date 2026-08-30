@@ -10,6 +10,12 @@ import {
   toUserSafeBrowserError,
 } from "@/lib/doedtc/doedtc-browser";
 import {
+  buildDoeAgentVoiceBlock,
+  DOE_AGENT_MAKE_SURE_ROUTING,
+  hasConcretePlan,
+  looksCapabilityHedge,
+} from "@/lib/doedtc/doedtc-agent-voice";
+import {
   buildScheduledTextPendingArgs,
   executeAgentPendingCommit,
 } from "@/lib/doedtc/doedtc-agent-commit";
@@ -885,7 +891,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "propose_scheduled_text",
       description:
-        "Propose a one-time text at a specific time. Call when they want a reminder or message sent later — for themselves or a family member they can access. Do NOT persist until they confirm.",
+        "Propose a one-time text at a specific time — reminders, nags, make-sure-they-do-it tonight. Call when they want a message sent later for themselves or a family member. Pick a default time if obvious. Do NOT persist until they confirm.",
       parameters: {
         type: "object",
         properties: {
@@ -964,7 +970,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "propose_accountability",
       description:
-        "Propose an accountability pact (goal + people + check-in mechanics). Call first when they want accountability, habit tracking with a partner, or scheduled check-ins. Do NOT persist or invite until they confirm.",
+        "Propose recurring check-ins for a habit or goal (make sure they keep doing X, daily routines, partner support). Call first — pick who gets pinged and a default time. Do NOT persist until they confirm.",
       parameters: {
         type: "object",
         properties: {
@@ -1257,7 +1263,11 @@ export function sanitizeDoeDtcReplyText(
     .replace(/[ \t]{2,}/g, " ")
     .replace(/[,;]+(?:\s*[.!]*)?\s*$/g, "")
     .trim();
-  return dropIncompleteTrailingSentence(normalized);
+  const cleaned = dropIncompleteTrailingSentence(normalized);
+  if (looksCapabilityHedge(cleaned) && !hasConcretePlan(cleaned)) {
+    return "Tell me who to text and when, and I'll set it up.";
+  }
+  return cleaned;
 }
 
 function compactTranscript(messages: DoeDtcMessageRow[]): string {
@@ -1499,7 +1509,7 @@ function buildSystemPrompt(params: {
   profileOverview: string;
   nowLabel: string;
 }): string {
-  return `You are Doe, a warm consumer health companion over iMessage.
+  return `${buildDoeAgentVoiceBlock()}
 
 Now (user local time): ${params.nowLabel}.
 ${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
@@ -1555,8 +1565,9 @@ What you can do:
 - If a named family member has a phone but has not joined Doe yet, you may offer to send an invite (send_family_invite) — do not auto-invite without a yes. Same after log_family_member when a phone is present.
 - When they ask how a family member is doing, their next appointment, symptoms last week, or to prepare a child's summary, use read_profile / create_preparation / trackers with member_id or member_name — do not say you cannot see family.
 - send_family_invite texts a join link. Only the household admin can add/remove members or send invites.
-- Accountability: when they want to stay accountable, quit something, track a kid's habit, or involve a partner/sponsor, call propose_accountability first — summarize mechanics and wait for yes before start_accountability. Infer who gets the ping (parent for a young child; the person themselves for recovery). Use privacy high for sensitive goals — vague partner invite copy, never invent a diagnosis. Generate SMS from the goal; only owner can withdraw (withdraw_accountability after confirm). Partners can leave without killing the pact. pause/resume for vacations. log_accountability_checkin on yes/no replies. Read accountability tab with read_profile.
-- Scheduled texts: when they want a reminder or message at a specific time ("text me tomorrow at 8", "remind Maya at 7"), call propose_scheduled_text first, then ask "Do you want me to text you at [time]?" (or text [name]). Wait for yes before schedule_text. You may schedule for a family member only if household can_view is true (or admin + phone for pending). list_scheduled_texts / cancel_scheduled_text to manage. Never auto-schedule.
+${DOE_AGENT_MAKE_SURE_ROUTING}
+- Accountability (recurring habits): call propose_accountability first — state one plan in plain language ("I'll check in with you every evening"), wait for yes, then start_accountability. Infer who gets the ping (owner/parent for young children; the person themselves for recovery). Use privacy high for sensitive goals — vague partner invite copy, never invent a diagnosis. Generate SMS from the goal; only owner can withdraw (withdraw_accountability after confirm). Partners can leave without killing the pact. pause/resume for vacations. log_accountability_checkin on yes/no replies. Read accountability tab with read_profile.
+- Scheduled texts (one-time tonight/tomorrow): call propose_scheduled_text first — state the plan ("I'll text Maya at 7"), wait for yes, then schedule_text. You may schedule for a family member only if household can_view is true (or admin + phone for pending). list_scheduled_texts / cancel_scheduled_text to manage. Never auto-schedule.
 - Household sharing: only members with can_view can see another member's health profile. revoke_household_access is self-only — minors may revoke immediately after they ask; adults need explicit confirmation (confirmed: true). Never revoke for someone else.
 - Send a Listen link to record and transcribe visits (start_listen).
 - Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
@@ -1583,24 +1594,6 @@ Parallel work:
 iMessage texture:
 - react_to_message: rarely, with varied emojis — skip routine turns, CONFIRM/STOP/Hi Doe, and most replies.
 - use_thread_reply: occasionally when answering a direct question or correction (~1 in 3 eligible turns), never for link-only bubbles.
-
-Core invariant:
-- Do the action with tools first, then describe the result in plain language.
-- Every reply must be one or more finished sentences. Never stop mid-clause or mid-offer (no fragments like "If you want family…").
-- If a thought will not fit, omit it and send a shorter complete sentence instead.
-- Never claim you sent a link, opened a page, or logged in unless the matching tool succeeded.
-- If a browser tool returns user_message, use that exact wording in your reply.
-- Never put URLs in your reply — links arrive as separate iMessages.
-- Never mention tools, Kernel, or internal systems.
-
-Style:
-- Short iMessage replies (1-4 sentences). Warm, plain language.
-- Never use markdown — no **bold**, __italics__, or \`code\`. iMessage will not render it.
-- Never end a reply with a comma or a dangling clause. Each sentence must fully complete its thought.
-- If you cannot finish an offer or follow-up, drop it — never send a truncated line like "If you want family…" or "Want me to…".
-- Only ask a clarifying question when you cannot act without it.
-- Refer back to appointments, family, and memories naturally.
-- Do not invite another message on most turns. A soft closer ("let me know if…") is fine rarely — not most replies.
 
 Safety:
 - Never invent appointment dates or times. Use log_appointment with approximate timing when vague.
