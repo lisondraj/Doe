@@ -372,6 +372,23 @@ export async function handleSymptomInbound(params: {
       idempotencyKey: `doedtc-agent-care-${params.user.id}-${idSuffix}`,
     });
   }
+
+  if (turn.listenUrl) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.listenIntro,
+      idempotencyKey: `doedtc-agent-listen-intro-${params.user.id}-${idSuffix}`,
+    });
+    await sendDoeDtcLinkOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      url: turn.listenUrl,
+      idempotencyKey: `doedtc-agent-listen-${params.user.id}-${idSuffix}`,
+    });
+  }
 }
 
 export async function processDoeDtcInboundWebhook(params: {

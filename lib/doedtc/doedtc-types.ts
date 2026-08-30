@@ -97,6 +97,28 @@ export type DoeDtcFamilyMemberInput = {
   phone?: string | null;
 };
 
+export type DoeDtcListenSessionStatus = "pending" | "completed" | "failed";
+
+export type DoeDtcListenSessionRow = {
+  id: string;
+  user_id: string;
+  appointment_id: string | null;
+  status: DoeDtcListenSessionStatus;
+  transcript: string | null;
+  summary: string | null;
+  duration_seconds: number | null;
+  completed_at: string | null;
+  created_at: string;
+};
+
+export type DoeDtcMemoryRow = {
+  id: string;
+  user_id: string;
+  fact: string;
+  category: string;
+  created_at: string;
+};
+
 export type DoeDtcProfileSnapshot = {
   user: Pick<
     DoeDtcUserRow,
@@ -106,6 +128,7 @@ export type DoeDtcProfileSnapshot = {
   conditions: string[];
   familyMembers: DoeDtcFamilyMemberRow[];
   appointments: DoeDtcAppointmentRow[];
+  listenSessions: DoeDtcListenSessionRow[];
   results: DoeDtcResultRow[];
   lockerItems: DoeDtcLockerItemRow[];
   healthConnections: DoeDtcHealthConnectionRow[];

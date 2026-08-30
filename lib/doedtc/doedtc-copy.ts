@@ -82,6 +82,12 @@ export const DOEDTC_PROFILE = {
   appointmentLocationLabel: "Location (optional)",
   appointmentNotesLabel: "Notes (optional)",
   addAppointmentLabel: "Add appointment",
+  listenSectionTitle: "Listen recordings",
+  listenSectionEmpty: "No Listen recordings yet. Text Doe to start a Listen session.",
+  listenDurationLabel: "Duration",
+  listenViewTranscript: "View transcript",
+  listenHideTranscript: "Hide transcript",
+  listenLinkedTo: "Linked to appointment",
   resultsTitle: "Results log",
   resultsEmpty: "No results yet. Add labs or imaging when you have them.",
   resultTitleLabel: "Title",
@@ -110,6 +116,23 @@ export const DOEDTC_PROFILE = {
   savingLabel: "Saving…",
 } as const;
 
+export const DOEDTC_LISTEN = {
+  pageTitle: "Listen",
+  subtitle: "Record your medical appointment. Doe will transcribe it when you end the call.",
+  invalidTokenTitle: "Session unavailable",
+  invalidTokenBody: "Text Doe in iMessage to start a new Listen session.",
+  recordLabel: "Record",
+  listeningLabel: "Listening",
+  endCallLabel: "End call",
+  buildingLabel: "Building transcription…",
+  savedTitle: "Transcript saved",
+  savedBody: "Find this recording under Appointments in your profile.",
+  openProfileLabel: "Open Appointments",
+  errorGeneric: "Something went wrong. Try again or text Doe for a new link.",
+  micDenied: "Microphone access is required to record.",
+  maxDurationHint: "Recordings are limited to 60 minutes.",
+} as const;
+
 export const DOEDTC_CARE = {
   title: "Your symptom review",
   presentingLabel: "What you shared",
@@ -135,6 +158,7 @@ export const DOEDTC_LINQ = {
     "Before we get started: Doe is an AI health companion that supports your entire health journey. However, by using Doe, you confirm that you are voluntarily sharing information regarding your health. Doe has very strict data-retention policies in place that do not save or sell your data. Type CONFIRM before moving forward.",
   getStartedIntro: "Get Started with Doe. Tap the link below to set up your profile.",
   profileIntro: "Your Doe profile is ready. Tap the link below to manage appointments, family, and more.",
+  listenIntro: "Tap below to open Listen and record your appointment. Press End call when you're done.",
   allSetMessage: "All set! Let's get started. Text your symptoms anytime.",
   assessmentIntro: "Here's what I found based on what you shared:",
 } as const;
@@ -168,6 +192,14 @@ export function doeDtcCareUrl(token: string): string {
 
 export function doeDtcAppUrl(token: string): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/app?t=${encodeURIComponent(token)}`;
+}
+
+export function doeDtcListenUrl(careToken: string, sessionId: string): string {
+  return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/listen?t=${encodeURIComponent(careToken)}&s=${encodeURIComponent(sessionId)}`;
+}
+
+export function doeDtcAppointmentsUrl(token: string): string {
+  return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/app?t=${encodeURIComponent(token)}&tab=appointments`;
 }
 
 export function doeDtcMessagesDeepLink(phone: string): string {

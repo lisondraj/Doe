@@ -53,6 +53,12 @@ function formatDate(value: string): string {
   }
 }
 
+function formatDuration(totalSeconds: number): string {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
 function relationshipLabel(value: string): string {
   return RELATIONSHIP_OPTIONS.find((option) => option.value === value)?.label ?? value;
 }
@@ -346,6 +352,50 @@ function AppointmentsTab({ snapshot, busy, onAction }: TabProps) {
   const [startsAt, setStartsAt] = useState("");
   const [location, setLocation] = useState("");
   const [notes, setNotes] = useState("");
+  const [expandedListenId, setExpandedListenId] = useState<string | null>(null);
+
+  const completedSessions = snapshot.listenSessions.filter((row) => row.status === "completed");
+  const sessionsByAppointment = new Map<string, typeof completedSessions>();
+  const standaloneSessions: typeof completedSessions = [];
+
+  for (const session of completedSessions) {
+    if (session.appointment_id) {
+      const list = sessionsByAppointment.get(session.appointment_id) ?? [];
+      list.push(session);
+      sessionsByAppointment.set(session.appointment_id, list);
+    } else {
+      standaloneSessions.push(session);
+    }
+  }
+
+  function renderListenSession(session: (typeof completedSessions)[number]) {
+    const expanded = expandedListenId === session.id;
+    return (
+      <div className="doedtc-listen-nested" key={session.id}>
+        <strong>Listen</strong>
+        <p className="doedtc-row-item__meta">
+          {formatDateTime(session.completed_at ?? session.created_at)}
+          {session.duration_seconds
+            ? ` · ${DOEDTC_PROFILE.listenDurationLabel}: ${formatDuration(session.duration_seconds)}`
+            : null}
+        </p>
+        {session.summary ? <p className="doedtc-body">{session.summary}</p> : null}
+        {session.transcript ? (
+          <>
+            <button
+              className="doedtc-icon-button"
+              type="button"
+              style={{ marginTop: "0.5rem" }}
+              onClick={() => setExpandedListenId(expanded ? null : session.id)}
+            >
+              {expanded ? DOEDTC_PROFILE.listenHideTranscript : DOEDTC_PROFILE.listenViewTranscript}
+            </button>
+            {expanded ? <p className="doedtc-body">{session.transcript}</p> : null}
+          </>
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -354,30 +404,51 @@ function AppointmentsTab({ snapshot, busy, onAction }: TabProps) {
         <p className="doedtc-empty">{DOEDTC_PROFILE.appointmentsEmpty}</p>
       ) : (
         <ul className="doedtc-row-list">
-          {snapshot.appointments.map((appointment) => (
-            <li className="doedtc-row-item" key={appointment.id}>
-              <div>
-                <strong>{appointment.title}</strong>
-                <p className="doedtc-row-item__meta">{formatDateTime(appointment.starts_at)}</p>
-                {appointment.location ? (
-                  <p className="doedtc-row-item__meta">{appointment.location}</p>
-                ) : null}
-                {appointment.notes ? <p className="doedtc-body">{appointment.notes}</p> : null}
-              </div>
-              <div className="doedtc-row-item__actions">
-                <button
-                  className="doedtc-icon-button"
-                  type="button"
-                  disabled={busy}
-                  onClick={() => onAction("remove_appointment", { appointmentId: appointment.id })}
-                >
-                  {DOEDTC_PROFILE.removeLabel}
-                </button>
-              </div>
-            </li>
-          ))}
+          {snapshot.appointments.map((appointment) => {
+            const linkedSessions = sessionsByAppointment.get(appointment.id) ?? [];
+            return (
+              <li className="doedtc-row-item" key={appointment.id}>
+                <div style={{ width: "100%" }}>
+                  <strong>{appointment.title}</strong>
+                  <p className="doedtc-row-item__meta">{formatDateTime(appointment.starts_at)}</p>
+                  {appointment.location ? (
+                    <p className="doedtc-row-item__meta">{appointment.location}</p>
+                  ) : null}
+                  {appointment.notes ? <p className="doedtc-body">{appointment.notes}</p> : null}
+                  {linkedSessions.map((session) => renderListenSession(session))}
+                </div>
+                <div className="doedtc-row-item__actions">
+                  <button
+                    className="doedtc-icon-button"
+                    type="button"
+                    disabled={busy}
+                    onClick={() => onAction("remove_appointment", { appointmentId: appointment.id })}
+                  >
+                    {DOEDTC_PROFILE.removeLabel}
+                  </button>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
+
+      <div className="doedtc-section">
+        <h2 className="doedtc-section-title">{DOEDTC_PROFILE.listenSectionTitle}</h2>
+        {completedSessions.length === 0 ? (
+          <p className="doedtc-empty">{DOEDTC_PROFILE.listenSectionEmpty}</p>
+        ) : standaloneSessions.length === 0 ? (
+          <p className="doedtc-muted">{DOEDTC_PROFILE.listenLinkedTo}</p>
+        ) : (
+          <ul className="doedtc-row-list">
+            {standaloneSessions.map((session) => (
+              <li className="doedtc-row-item" key={session.id}>
+                <div style={{ width: "100%" }}>{renderListenSession(session)}</div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       <form
         className="doedtc-card doedtc-card--spaced"

@@ -1,15 +1,22 @@
-import { doeDtcCareUrl } from "@/lib/doedtc/doedtc-copy";
+import { doeDtcCareUrl, doeDtcListenUrl } from "@/lib/doedtc/doedtc-copy";
 import {
+  addDoeDtcAppointment,
+  createDoeDtcListenSession,
   getDoeDtcProfileLists,
+  insertDoeDtcMemory,
   insertDoeDtcSymptom,
   linkDoeDtcSymptomToAssessment,
+  listDoeDtcAppointments,
   listDoeDtcAssessments,
+  listDoeDtcMemories,
   listDoeDtcMessages,
   listDoeDtcSymptoms,
   saveDoeDtcAssessment,
 } from "@/lib/doedtc/doedtc-db";
 import type {
+  DoeDtcAppointmentRow,
   DoeDtcAssessmentResult,
+  DoeDtcMemoryRow,
   DoeDtcMessageRow,
   DoeDtcSymptomRow,
   DoeDtcUserRow,
@@ -67,6 +74,63 @@ export const DOEDTC_AGENT_TOOLS = [
       },
     },
   },
+  {
+    type: "function" as const,
+    function: {
+      name: "log_appointment",
+      description:
+        "Save an upcoming or past medical appointment when the user mentions a visit, checkup, or date. Ask what it is for if missing.",
+      parameters: {
+        type: "object",
+        properties: {
+          title: { type: "string", description: "What the appointment is for, e.g. Primary care follow-up." },
+          starts_at: {
+            type: "string",
+            description: "ISO 8601 datetime for the appointment based on today's date context.",
+          },
+          location: { type: "string", description: "Clinic or location if known." },
+          notes: { type: "string", description: "Any extra context the user shared." },
+        },
+        required: ["title", "starts_at"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "remember_fact",
+      description:
+        "Store a durable fact about the user for future conversations (doctor name, preference, travel, family context). Not for symptoms.",
+      parameters: {
+        type: "object",
+        properties: {
+          fact: { type: "string", description: "The fact to remember in plain language." },
+          category: {
+            type: "string",
+            description: "Short category like provider, preference, family, general.",
+          },
+        },
+        required: ["fact"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "start_listen",
+      description:
+        "Start a Listen session so the user can record and transcribe a medical appointment on the web. Call when they ask to listen, record, or transcribe a visit.",
+      parameters: {
+        type: "object",
+        properties: {
+          appointment_id: {
+            type: "string",
+            description: "Optional existing appointment id to link this recording to.",
+          },
+        },
+      },
+    },
+  },
 ];
 
 type ChatMessage =
@@ -85,6 +149,7 @@ type ChatMessage =
 export type DoeDtcAgentTurnResult = {
   replyText: string;
   careUrl?: string;
+  listenUrl?: string;
   assessmentRan: boolean;
 };
 
@@ -96,8 +161,8 @@ function compactTranscript(messages: DoeDtcMessageRow[]): string {
       return `${speaker}: ${entry.body.trim()}`;
     });
   const joined = lines.join("\n");
-  if (joined.length <= 6000) return joined;
-  return joined.slice(joined.length - 6000);
+  if (joined.length <= 9000) return joined;
+  return joined.slice(joined.length - 9000);
 }
 
 function formatSymptomLog(symptoms: DoeDtcSymptomRow[]): string {
@@ -123,6 +188,40 @@ function formatAssessmentHistory(
     .join("\n");
 }
 
+function formatAppointmentLog(appointments: DoeDtcAppointmentRow[]): string {
+  if (appointments.length === 0) return "No appointments logged.";
+  return appointments
+    .map((row) => {
+      const when = new Date(row.starts_at).toLocaleString(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      });
+      const parts = [`${when}: ${row.title}`];
+      if (row.location) parts.push(`at ${row.location}`);
+      if (row.notes) parts.push(`notes: ${row.notes}`);
+      parts.push(`id: ${row.id}`);
+      return `- ${parts.join(" | ")}`;
+    })
+    .join("\n");
+}
+
+function formatMemoryLog(memories: DoeDtcMemoryRow[]): string {
+  if (memories.length === 0) return "No stored memories yet.";
+  return memories.map((row) => `- [${row.category}] ${row.fact}`).join("\n");
+}
+
+function todayLabel(): string {
+  return new Date().toLocaleDateString(undefined, {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
 function buildSystemPrompt(params: {
   user: DoeDtcUserRow;
   medications: string[];
@@ -130,8 +229,12 @@ function buildSystemPrompt(params: {
   transcript: string;
   symptomLog: string;
   assessmentHistory: string;
+  appointmentLog: string;
+  memoryLog: string;
 }): string {
   return `You are Doe, a consumer health companion over iMessage.
+
+Today is ${todayLabel()}.
 
 Profile:
 - Name: ${params.user.full_name ?? "Unknown"}
@@ -142,6 +245,12 @@ Profile:
 Recent conversation:
 ${params.transcript || "No prior messages."}
 
+Appointments:
+${params.appointmentLog}
+
+Remembered facts:
+${params.memoryLog}
+
 Symptom log:
 ${params.symptomLog}
 
@@ -151,6 +260,10 @@ ${params.assessmentHistory}
 Rules:
 - Keep iMessage replies short (1-4 sentences). Warm, plain language.
 - When the user reports symptoms, call log_symptoms.
+- When the user mentions an appointment or visit (e.g. "I have an appointment next Tuesday"), ask what it is for if missing, then call log_appointment with a resolved ISO datetime.
+- Refer back to upcoming appointments and remembered facts naturally in later turns.
+- Store durable non-symptom facts with remember_fact (doctor names, preferences, context).
+- When the user wants to record or transcribe a visit, call start_listen. Tell them you are sending a Listen link.
 - Ask 1-2 clarifying questions when details are thin (timing, severity, location, triggers).
 - Call run_assessment when you have enough signal or the user asks what it might be / wants a review.
 - Never claim a definitive diagnosis. Flag emergencies clearly.
@@ -299,11 +412,13 @@ export async function runDoeDtcAgentTurn(params: {
   user: DoeDtcUserRow;
   inboundText: string;
 }): Promise<DoeDtcAgentTurnResult> {
-  const [profile, messageHistory, symptoms, assessments] = await Promise.all([
+  const [profile, messageHistory, symptoms, assessments, appointments, memories] = await Promise.all([
     getDoeDtcProfileLists(params.user.id),
-    listDoeDtcMessages(params.user.id, 20),
+    listDoeDtcMessages(params.user.id, 40),
     listDoeDtcSymptoms(params.user.id, 10),
     listDoeDtcAssessments(params.user.id, 3),
+    listDoeDtcAppointments(params.user.id, 8),
+    listDoeDtcMemories(params.user.id, 20),
   ]);
 
   const systemPrompt = buildSystemPrompt({
@@ -313,6 +428,8 @@ export async function runDoeDtcAgentTurn(params: {
     transcript: compactTranscript(messageHistory),
     symptomLog: formatSymptomLog(symptoms),
     assessmentHistory: formatAssessmentHistory(assessments),
+    appointmentLog: formatAppointmentLog(appointments),
+    memoryLog: formatMemoryLog(memories),
   });
 
   const messages: ChatMessage[] = [
@@ -323,6 +440,7 @@ export async function runDoeDtcAgentTurn(params: {
   let latestSymptomId: string | null = null;
   let assessmentRan = false;
   let careUrl: string | undefined;
+  let listenUrl: string | undefined;
   let assessmentSummary: string | undefined;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
@@ -333,11 +451,14 @@ export async function runDoeDtcAgentTurn(params: {
         message.content?.trim() ||
         (assessmentRan
           ? assessmentSummary ?? "I put together a review for you."
-          : "Thanks for sharing. Tell me more about what you are feeling.");
+          : listenUrl
+            ? "I sent you a Listen link. Tap it when you are ready to record."
+            : "Thanks for sharing. Tell me more about what you are feeling.");
 
       return {
         replyText,
         careUrl: assessmentRan ? careUrl : undefined,
+        listenUrl,
         assessmentRan,
       };
     }
@@ -402,6 +523,44 @@ export async function runDoeDtcAgentTurn(params: {
             summary: result.summary,
             care_url: careUrl,
           };
+        } else if (toolCall.function.name === "log_appointment") {
+          const title = String(args.title ?? "").trim();
+          const startsAt = String(args.starts_at ?? "").trim();
+          if (!title || !startsAt) {
+            throw new Error("Title and starts_at are required.");
+          }
+          const parsedDate = new Date(startsAt);
+          if (Number.isNaN(parsedDate.getTime())) {
+            throw new Error("Invalid appointment datetime.");
+          }
+          const row = await addDoeDtcAppointment({
+            userId: params.user.id,
+            title,
+            startsAt: parsedDate.toISOString(),
+            location: typeof args.location === "string" ? args.location : null,
+            notes: typeof args.notes === "string" ? args.notes : null,
+          });
+          output = { ok: true, id: row.id, title: row.title, starts_at: row.starts_at };
+        } else if (toolCall.function.name === "remember_fact") {
+          const fact = String(args.fact ?? "").trim();
+          if (!fact) throw new Error("Fact is required.");
+          const row = await insertDoeDtcMemory({
+            userId: params.user.id,
+            fact,
+            category: typeof args.category === "string" ? args.category : "general",
+          });
+          output = { ok: true, id: row.id, fact: row.fact };
+        } else if (toolCall.function.name === "start_listen") {
+          const appointmentId =
+            typeof args.appointment_id === "string" && args.appointment_id.trim()
+              ? args.appointment_id.trim()
+              : null;
+          const session = await createDoeDtcListenSession({
+            userId: params.user.id,
+            appointmentId,
+          });
+          listenUrl = doeDtcListenUrl(params.user.care_token, session.id);
+          output = { ok: true, session_id: session.id, listen_url: listenUrl };
         } else {
           output = { ok: false, error: "Unknown tool" };
         }
@@ -423,6 +582,7 @@ export async function runDoeDtcAgentTurn(params: {
   return {
     replyText: assessmentSummary ?? "I am still reviewing what you shared. One moment.",
     careUrl: assessmentRan ? careUrl : undefined,
+    listenUrl,
     assessmentRan,
   };
 }

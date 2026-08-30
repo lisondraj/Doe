@@ -503,3 +503,42 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-care-grid,
   font-size: 0.925rem;
   line-height: 1.5;
 }
+
+.doedtc-listen-panel {
+  text-align: center;
+}
+
+.doedtc-listen-status {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--doedtc-gold);
+}
+
+.doedtc-listen-timer {
+  margin: 0.75rem 0 1.25rem;
+  font-size: clamp(2.5rem, 8vw, 3.5rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.doedtc-listen-transcript {
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.doedtc-listen-transcript summary {
+  cursor: pointer;
+  color: var(--doedtc-gold);
+  font-size: 0.875rem;
+}
+
+.doedtc-listen-nested {
+  margin-top: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.875rem;
+  background: rgba(242, 232, 218, 0.04);
+  border: 1px solid var(--doedtc-border);
+}

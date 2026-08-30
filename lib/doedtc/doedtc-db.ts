@@ -9,7 +9,9 @@ import type {
   DoeDtcFamilyMemberRow,
   DoeDtcHealthConnectionRow,
   DoeDtcHealthProvider,
+  DoeDtcListenSessionRow,
   DoeDtcLockerItemRow,
+  DoeDtcMemoryRow,
   DoeDtcMessageRow,
   DoeDtcProfileSnapshot,
   DoeDtcResultRow,
@@ -456,6 +458,7 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
     profileLists,
     familyMembers,
     appointments,
+    listenSessions,
     results,
     lockerItems,
     healthConnections,
@@ -471,6 +474,11 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
     getDoeDtcProfileLists(userId),
     supabase.from("doedtc_family_members").select("*").eq("user_id", userId).order("created_at"),
     supabase.from("doedtc_appointments").select("*").eq("user_id", userId).order("starts_at"),
+    supabase
+      .from("doedtc_listen_sessions")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false }),
     supabase.from("doedtc_results").select("*").eq("user_id", userId).order("resulted_at", { ascending: false }),
     supabase
       .from("doedtc_locker_items")
@@ -497,6 +505,7 @@ export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcPr
     conditions: profileLists.conditions,
     familyMembers: (familyMembers.data as DoeDtcFamilyMemberRow[]) ?? [],
     appointments: (appointments.data as DoeDtcAppointmentRow[]) ?? [],
+    listenSessions: (listenSessions.data as DoeDtcListenSessionRow[]) ?? [],
     results: (results.data as DoeDtcResultRow[]) ?? [],
     lockerItems: (lockerItems.data as DoeDtcLockerItemRow[]) ?? [],
     healthConnections: (healthConnections.data as DoeDtcHealthConnectionRow[]) ?? [],
@@ -736,4 +745,142 @@ export async function updateDoeDtcMedicalProfile(params: {
     .update({ medical_deferred: false })
     .eq("id", params.userId);
   if (userError) throw new Error(userError.message);
+}
+
+export async function listDoeDtcAppointments(
+  userId: string,
+  limit = 8,
+): Promise<DoeDtcAppointmentRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_appointments")
+    .select("*")
+    .eq("user_id", userId)
+    .order("starts_at", { ascending: true })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcAppointmentRow[]) ?? [];
+}
+
+export async function listDoeDtcMemories(userId: string, limit = 20): Promise<DoeDtcMemoryRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_memories")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcMemoryRow[]) ?? [];
+}
+
+export async function insertDoeDtcMemory(params: {
+  userId: string;
+  fact: string;
+  category?: string;
+}): Promise<DoeDtcMemoryRow> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_memories")
+    .insert({
+      user_id: params.userId,
+      fact: params.fact.trim(),
+      category: params.category?.trim() || "general",
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcMemoryRow;
+}
+
+export async function createDoeDtcListenSession(params: {
+  userId: string;
+  appointmentId?: string | null;
+}): Promise<DoeDtcListenSessionRow> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_listen_sessions")
+    .insert({
+      user_id: params.userId,
+      appointment_id: params.appointmentId ?? null,
+      status: "pending",
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcListenSessionRow;
+}
+
+export async function getDoeDtcListenSession(params: {
+  sessionId: string;
+  userId: string;
+}): Promise<DoeDtcListenSessionRow | null> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_listen_sessions")
+    .select("*")
+    .eq("id", params.sessionId)
+    .eq("user_id", params.userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcListenSessionRow | null) ?? null;
+}
+
+export async function completeDoeDtcListenSession(params: {
+  sessionId: string;
+  userId: string;
+  transcript: string;
+  summary: string;
+  durationSeconds: number;
+  appointmentId?: string | null;
+}): Promise<DoeDtcListenSessionRow> {
+  const supabase = createSupabaseAdmin();
+  const patch: Record<string, unknown> = {
+    status: "completed",
+    transcript: params.transcript,
+    summary: params.summary,
+    duration_seconds: params.durationSeconds,
+    completed_at: new Date().toISOString(),
+  };
+  if (params.appointmentId) {
+    patch.appointment_id = params.appointmentId;
+  }
+
+  const { data, error } = await supabase
+    .from("doedtc_listen_sessions")
+    .update(patch)
+    .eq("id", params.sessionId)
+    .eq("user_id", params.userId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcListenSessionRow;
+}
+
+export async function failDoeDtcListenSession(params: {
+  sessionId: string;
+  userId: string;
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("doedtc_listen_sessions")
+    .update({ status: "failed" })
+    .eq("id", params.sessionId)
+    .eq("user_id", params.userId);
+  if (error) throw new Error(error.message);
+}
+
+export async function listDoeDtcListenSessions(
+  userId: string,
+  limit = 20,
+): Promise<DoeDtcListenSessionRow[]> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_listen_sessions")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcListenSessionRow[]) ?? [];
 }
