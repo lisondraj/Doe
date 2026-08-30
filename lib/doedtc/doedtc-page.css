@@ -178,7 +178,7 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-shell,
   background: var(--doedtc-sunken);
   color: inherit;
   font: inherit;
-  font-size: 1.05rem;
+  font-size: 16px;
 }
 
 .doedtc-textarea {

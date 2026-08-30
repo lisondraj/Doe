@@ -48,6 +48,18 @@ html:has(.doephone-mobile-root) body {
   overscroll-behavior-y: none;
 }
 /*
+ * iOS Safari zooms focused form controls when computed font-size is under 16px.
+ * Phone layouts use a 14.5px rem base, so keep real fields at 16px.
+ */
+html[data-doeforvc-always-phone] input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not([type="file"]):not([type="image"]):not([type="color"]),
+html[data-doeforvc-always-phone] textarea,
+html[data-doeforvc-always-phone] select,
+html[data-doedtc-page] input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="range"]):not([type="file"]):not([type="image"]):not([type="color"]),
+html[data-doedtc-page] textarea,
+html[data-doedtc-page] select {
+  font-size: 16px !important;
+}
+/*
  * /about — surface tokens as soon as bootstrap sets data-about-page (before shell mounts).
  */
 html[data-about-page] {

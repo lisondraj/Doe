@@ -157,7 +157,7 @@ export const DOEDTC_LINQ = {
   helloMessage:
     "Hey, I'm Doe, your health companion. Reply Hi Doe when you're ready to get started.",
   consentMessage:
-    "Before we get started: Doe is an AI health companion that supports your entire health journey. However, by using Doe, you confirm that you are voluntarily sharing information regarding your health. Doe has very strict data-retention policies in place that do not save or sell your data. Type CONFIRM before moving forward.",
+    "Before we get started:\n\nDoe is an AI health companion that supports your entire health journey.\n\nBy using Doe, you confirm that you are voluntarily sharing information regarding your health. Doe has very strict data-retention policies in place that do not save or sell your data.\n\nIf you are in a mental health crisis or any emergency, call 911 or go to the nearest emergency room. Doe is not a crisis line and is not a substitute for emergency care.\n\nType CONFIRM before moving forward.",
   getStartedIntro: "Get Started with Doe. Tap the link below to set up your profile.",
   profileIntro: "Your Doe profile is ready. Tap the link below to manage appointments, family, and more.",
   profileLinkIntro: "Here's your profile.",

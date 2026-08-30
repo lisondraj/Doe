@@ -1,9 +1,6 @@
 import { saveDoeDtcOnboarding } from "@/lib/doedtc/doedtc-db";
 import { doeDtcAppUrl } from "@/lib/doedtc/doedtc-copy";
-import {
-  sendDoeDtcConsentMessage,
-  sendDoeDtcProfileLinkMessage,
-} from "@/lib/doedtc/doedtc-messaging";
+import { sendDoeDtcConsentMessage } from "@/lib/doedtc/doedtc-messaging";
 import type { DoeDtcFamilyRelationship, DoeDtcOnboardPayload } from "@/lib/doedtc/doedtc-types";
 
 function cleanList(values: unknown): string[] {
@@ -80,12 +77,6 @@ export async function submitDoeDtcOnboarding(payload: DoeDtcOnboardPayload) {
     chatId: user.linq_chat_id ?? undefined,
     fromNumber: user.linq_from_number ?? undefined,
     idempotencyKey: `doedtc-consent-post-onboard-${user.id}`,
-  });
-
-  await sendDoeDtcProfileLinkMessage({
-    user,
-    chatId: user.linq_chat_id ?? undefined,
-    idempotencyKey: `doedtc-profile-link-post-onboard-${user.id}`,
   });
 
   const profileHref = doeDtcAppUrl(user.care_token);
