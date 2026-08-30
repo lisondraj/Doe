@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { resolveResearchBrowseTarget } from "@/lib/doedtc/doedtc-browser-allowlist";
+import {
+  normalizeBrowserUrl,
+  resolveResearchBrowseTarget,
+} from "@/lib/doedtc/doedtc-browser-allowlist";
 import { toUserSafeBrowserError } from "@/lib/doedtc/doedtc-browser";
 import { sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
 import { formatDoeDtcIntegrations, formatDoeDtcProfileTab } from "@/lib/doedtc/doedtc-profile-read";
@@ -10,7 +13,7 @@ import {
   resolveDoeDtcFamilyMemberName,
 } from "@/lib/doedtc/doedtc-family-relationship";
 
-test("resolveResearchBrowseTarget accepts allowlisted hosts", () => {
+test("resolveResearchBrowseTarget accepts direct URLs", () => {
   const result = resolveResearchBrowseTarget({
     url: "https://www.cdc.gov/flu",
     intent: "flu season",
@@ -21,12 +24,26 @@ test("resolveResearchBrowseTarget accepts allowlisted hosts", () => {
   assert.match(result.targetUrl, /cdc\.gov\/flu/);
 });
 
-test("resolveResearchBrowseTarget rejects off-allowlist hosts", () => {
+test("resolveResearchBrowseTarget accepts any non-denied host", () => {
   const result = resolveResearchBrowseTarget({
     url: "https://example.com",
     intent: "health info",
   });
-  assert.ok("ok" in result && result.ok === false);
+  assert.ok(!("ok" in result));
+  if ("ok" in result) return;
+  assert.equal(result.host, "example.com");
+  assert.match(result.targetUrl, /^https:\/\/example\.com\/?$/);
+});
+
+test("resolveResearchBrowseTarget resolves mayo search asthma", () => {
+  const result = resolveResearchBrowseTarget({
+    url: "mayo",
+    intent: "search asthma",
+  });
+  assert.ok(!("ok" in result));
+  if ("ok" in result) return;
+  assert.equal(result.host, "mayoclinic.org");
+  assert.match(result.targetUrl, /mayoclinic\.org\/search\/search-results\?q=asthma/);
 });
 
 test("resolveResearchBrowseTarget uses google for topic-only queries", () => {
@@ -40,14 +57,20 @@ test("resolveResearchBrowseTarget uses google for topic-only queries", () => {
   assert.match(result.targetUrl, /search\?q=/);
 });
 
-test("toUserSafeBrowserError maps kernel and allowlist errors", () => {
+test("normalizeBrowserUrl preserves path and query without scheme", () => {
+  const normalized = normalizeBrowserUrl("mayoclinic.org/search/search-results?q=asthma");
+  assert.equal(normalized.host, "mayoclinic.org");
+  assert.match(normalized.targetUrl, /search-results\?q=asthma/);
+});
+
+test("toUserSafeBrowserError maps kernel errors", () => {
   assert.match(
     toUserSafeBrowserError("Browser automation is not configured."),
     /isn't available right now/i,
   );
   assert.match(
-    toUserSafeBrowserError("Research browsing is limited to approved health and reference sites."),
-    /Mayo Clinic/i,
+    toUserSafeBrowserError("That site is not allowed."),
+    /can't open that site/i,
   );
 });
 

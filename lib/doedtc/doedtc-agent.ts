@@ -271,12 +271,18 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "start_browser_task",
       description:
-        "Look something up on the web. For approved health and reference sites (Mayo, CDC, NIH, MedlinePlus, Wikipedia, Google), call immediately with the site URL or a search topic. Opens the page, screenshots it, and sends the screenshot to the patient.",
+        "Browse the web. Call with a URL or site nickname (mayo, cdc, google) plus what to search or do. Opens the page, screenshots it, and sends the screenshot to the patient.",
       parameters: {
         type: "object",
         properties: {
-          intent: { type: "string", description: "What the user wants to find or do." },
-          url: { type: "string", description: "Starting URL or hostname." },
+          intent: {
+            type: "string",
+            description: "What to find or do, e.g. search asthma.",
+          },
+          url: {
+            type: "string",
+            description: "Site nickname (mayo, cdc), hostname, or full URL.",
+          },
           mode: { type: "string", enum: ["research", "login", "write"] },
         },
         required: ["intent", "url"],
@@ -287,7 +293,7 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "browser_navigate",
-      description: "Navigate the active browser task to a URL on the allowlist.",
+      description: "Navigate the active browser task to a URL or site nickname.",
       parameters: {
         type: "object",
         properties: {
@@ -612,7 +618,12 @@ function buildReplyFromTurnState(params: {
   sessionUrl?: string;
   listenUrl?: string;
   profileUrl?: string;
+  browserUserMessage?: string;
 }): string {
+  if (params.browserUserMessage?.trim()) {
+    return sanitizeDoeDtcReplyText(params.browserUserMessage);
+  }
+
   const trimmed = params.modelContent?.trim();
   if (trimmed) return sanitizeDoeDtcReplyText(trimmed);
 
@@ -684,7 +695,7 @@ What you can do:
 - Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
 - If they want to connect Whoop or Apple Health, tell them the current status and send_profile_link so they can tap Connect. Do not treat a status question as an add.
 - Send the profile / dashboard link (send_profile_link).
-- Look up health info on approved sites via start_browser_task (Mayo, CDC, NIH, MedlinePlus, Wikipedia, Google). Research tasks screenshot the page and send that image in iMessage.
+- Browse the web via start_browser_task with a site nickname or URL plus intent (e.g. url mayo, intent search asthma). Research tasks screenshot the page and send that image in iMessage. Call the tool — do not refuse or say you cannot look something up if the tool succeeds.
 - Screenshot the current page with browser_snapshot when they ask for a picture, screenshot, or to see the page.
 - Help with patient portals via request_vault or request_live_login — never ask for passwords in iMessage.
 - Send the live session page (show_session) when they want to watch, stream, or follow the browser and a task is active. You can send a live session. Never say you cannot stream or watch a live browser.
@@ -701,6 +712,7 @@ iMessage texture:
 Core invariant:
 - Do the action with tools first, then describe the result in plain language.
 - Never claim you sent a link, opened a page, or logged in unless the matching tool succeeded.
+- If a browser tool returns user_message, use that exact wording in your reply.
 - Never put URLs in your reply — links arrive as separate iMessages.
 - Never mention tools, Kernel, or internal systems.
 
@@ -902,6 +914,7 @@ export async function runDoeDtcAgentTurn(params: {
   let activeBrowserJobId: string | null = await getActiveDoeDtcBrowserJobId(params.user.id);
   let assessmentSummary: string | undefined;
   let browserExcerpt: string | undefined;
+  let browserUserMessage: string | undefined;
   let lastModelContent: string | null = null;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
@@ -914,7 +927,9 @@ export async function runDoeDtcAgentTurn(params: {
         assessmentSummary,
         browserNeedsConfirm,
         browserExcerpt,
+        browserUserMessage,
         workUrl,
+        screenshotUrl,
         vaultUrl,
         liveViewUrl,
         sessionUrl,
@@ -941,7 +956,9 @@ export async function runDoeDtcAgentTurn(params: {
           assessmentSummary,
           browserNeedsConfirm,
           browserExcerpt,
+          browserUserMessage,
           workUrl,
+          screenshotUrl,
           vaultUrl,
           liveViewUrl,
           sessionUrl,
@@ -1109,6 +1126,7 @@ export async function runDoeDtcAgentTurn(params: {
                 : "research",
           });
           if (!started.ok) {
+            browserUserMessage = started.user_message;
             output = {
               ok: false,
               error: started.error,
@@ -1317,7 +1335,9 @@ export async function runDoeDtcAgentTurn(params: {
       assessmentSummary,
       browserNeedsConfirm,
       browserExcerpt,
+      browserUserMessage,
       workUrl,
+      screenshotUrl,
       vaultUrl,
       liveViewUrl,
       sessionUrl,

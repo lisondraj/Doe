@@ -4,6 +4,7 @@ import {
   assertBrowserHostAllowed,
   browserUrlForHost,
   normalizeBrowserHost,
+  normalizeBrowserUrl,
   resolveResearchBrowseTarget,
 } from "@/lib/doedtc/doedtc-browser-allowlist";
 import {
@@ -83,9 +84,6 @@ export function toUserSafeBrowserError(error: string): string {
   if (lower.includes("not configured")) {
     return "Web lookup isn't available right now. I can still help from what I know.";
   }
-  if (lower.includes("approved health") || lower.includes("approved health and reference")) {
-    return "I can look that up on Mayo Clinic, CDC, NIH, MedlinePlus, or Wikipedia — which should I use?";
-  }
   if (lower.includes("not allowed") || lower.includes("that site is not allowed")) {
     return "I can't open that site.";
   }
@@ -95,7 +93,7 @@ export function toUserSafeBrowserError(error: string): string {
   if (lower.includes("patient-declared")) {
     return "For that portal I'll send a secure sign-in link instead of browsing directly.";
   }
-  return "I couldn't complete that web lookup. Try a health site like Mayo Clinic or CDC, or ask another way.";
+  return "I couldn't complete that web lookup. Try again or ask another way.";
 }
 
 function warnKernelFailure(action: string, error: unknown): void {
@@ -415,11 +413,13 @@ export async function navigateDoeDtcBrowser(params: {
   assertBrowserHostAllowed({
     host,
     mode: job.mode,
-    declaredHost: job.allowed_host,
+    declaredHost: job.mode === "research" ? host : job.allowed_host,
   });
 
   const { job: activeJob, kernelBrowser } = await ensureKernelSession(job);
-  const targetUrl = params.url.includes("://") ? params.url : browserUrlForHost(host);
+  const targetUrl = params.url.includes("://")
+    ? params.url
+    : normalizeBrowserUrl(params.url).targetUrl;
 
   await runPlaywright(
     kernelBrowser.session_id,
