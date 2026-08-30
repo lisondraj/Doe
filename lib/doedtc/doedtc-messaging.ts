@@ -17,7 +17,7 @@ import {
   upsertInvitedDoeDtcUser,
 } from "@/lib/doedtc/doedtc-db";
 import { normalizePhoneToE164 } from "@/lib/doedtc/doedtc-phone";
-import { linqSendLink, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
+import { linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
 import type { DoeDtcAssessmentResult, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 const OPT_OUT_KEYWORDS = new Set(["STOP", "UNSUBSCRIBE", "OPTOUT", "CANCEL", "END", "QUIT"]);
@@ -77,9 +77,15 @@ export function extractChatMetadata(payload: unknown): {
 } {
   const body = payload as LinqWebhookPayload;
 
+  const ownerHandle = (body.data as { chat?: { owner_handle?: { handle?: string; is_me?: boolean } } })
+    ?.chat?.owner_handle;
+
   return {
     chatId: body.data?.chat?.id ?? body.data?.chat_id ?? body.data?.message?.chat_id,
-    fromNumber: body.data?.from ?? body.data?.message?.from,
+    fromNumber:
+      (ownerHandle?.is_me ? ownerHandle.handle : undefined) ??
+      body.data?.from ??
+      body.data?.message?.from,
   };
 }
 
@@ -119,10 +125,9 @@ async function sendDoeDtcOutbound(params: {
   text: string;
   idempotencyKey: string;
 }): Promise<void> {
-  const chatId = params.chatId ?? params.user.linq_chat_id ?? undefined;
   await linqSendText({
-    chatId,
-    to: chatId ? undefined : params.to ?? params.user.phone,
+    to: params.to ?? params.user.phone,
+    chatId: params.chatId ?? params.user.linq_chat_id ?? undefined,
     text: params.text,
     idempotencyKey: params.idempotencyKey,
   });
@@ -185,12 +190,17 @@ export async function startDoeDtcFromLanding(phoneRaw: string): Promise<{ phone:
     fromNumber: response.from,
   });
 
-  await sendDoeDtcOutbound({
-    user: updated,
-    chatId: response.chat_id,
-    text: DOEDTC_LINQ.consentMessage,
-    idempotencyKey: `doedtc-consent-landing-${updated.id}`,
-  });
+  try {
+    await sendDoeDtcOutbound({
+      user: updated,
+      chatId: response.chat_id,
+      to: phone,
+      text: DOEDTC_LINQ.consentMessage,
+      idempotencyKey: `doedtc-consent-landing-${updated.id}`,
+    });
+  } catch (error) {
+    console.warn("[doedtc/start] consent follow-up failed:", error);
+  }
 
   return { phone };
 }
@@ -247,38 +257,27 @@ export async function handleConfirmInbound(params: {
 
   const getStartedUrl = doeDtcGetStartedUrl(onboarded.onboarding_token ?? "");
   const chatId = params.chatId ?? onboarded.linq_chat_id ?? undefined;
+  const body = `${DOEDTC_LINQ.getStartedIntro}\n${getStartedUrl}`;
 
   await sendDoeDtcOutbound({
     user: onboarded,
     chatId,
-    text: DOEDTC_LINQ.getStartedIntro,
-    idempotencyKey: `doedtc-get-started-intro-${onboarded.id}-${onboarded.onboarding_token}`,
+    to: params.phone,
+    text: body,
+    idempotencyKey: `doedtc-get-started-${onboarded.id}-${onboarded.onboarding_token}`,
   });
 
   await shareDoeDtcLinqContactCard({
     chatId,
     fromNumber: params.fromNumber ?? onboarded.linq_from_number,
   });
-
-  await linqSendLink({
-    chatId,
-    to: chatId ? undefined : params.phone,
-    url: getStartedUrl,
-    idempotencyKey: `doedtc-get-started-link-${onboarded.id}-${onboarded.onboarding_token}`,
-  });
-
-  await logDoeDtcMessage({
-    userId: onboarded.id,
-    direction: "outbound",
-    body: `${DOEDTC_LINQ.getStartedIntro} ${getStartedUrl}`,
-  });
 }
 
 export async function sendDoeDtcAllSet(user: DoeDtcUserRow): Promise<void> {
   const chatId = user.linq_chat_id ?? undefined;
   await linqSendText({
+    to: user.phone,
     chatId,
-    to: chatId ? undefined : user.phone,
     text: DOEDTC_LINQ.allSetMessage,
     idempotencyKey: `doedtc-all-set-${user.id}`,
   });
@@ -322,26 +321,19 @@ export async function handleSymptomInbound(params: {
 
   const careUrl = doeDtcCareUrl(params.user.care_token);
   const chatId = params.user.linq_chat_id ?? undefined;
-  const summary = `${DOEDTC_LINQ.assessmentIntro}\n\n${result.summary}`;
+  const summary = `${DOEDTC_LINQ.assessmentIntro}\n\n${result.summary}\n\n${careUrl}`;
 
   await linqSendText({
+    to: params.user.phone,
     chatId,
-    to: chatId ? undefined : params.user.phone,
     text: summary,
-    idempotencyKey: `doedtc-assessment-summary-${params.user.id}-${params.webhookEventId ?? Date.now()}`,
-  });
-
-  await linqSendLink({
-    chatId,
-    to: chatId ? undefined : params.user.phone,
-    url: careUrl,
-    idempotencyKey: `doedtc-assessment-link-${params.user.id}-${params.webhookEventId ?? Date.now()}`,
+    idempotencyKey: `doedtc-assessment-${params.user.id}-${params.webhookEventId ?? Date.now()}`,
   });
 
   await logDoeDtcMessage({
     userId: params.user.id,
     direction: "outbound",
-    body: `${summary}\n${careUrl}`,
+    body: summary,
   });
 }
 
@@ -523,14 +515,9 @@ export async function processDoeDtcInboundWebhook(params: {
     await sendDoeDtcOutbound({
       user,
       chatId,
-      text: DOEDTC_LINQ.getStartedIntro,
-      idempotencyKey: `doedtc-onboarding-reminder-intro-${user.id}`,
-    });
-    await linqSendLink({
-      chatId,
-      to: chatId ? undefined : user.phone,
-      url: getStartedUrl,
-      idempotencyKey: `doedtc-onboarding-reminder-link-${user.id}`,
+      to: user.phone,
+      text: `${DOEDTC_LINQ.getStartedIntro}\n${getStartedUrl}`,
+      idempotencyKey: `doedtc-onboarding-reminder-${user.id}`,
     });
     return;
   }

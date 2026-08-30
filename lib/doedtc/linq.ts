@@ -32,12 +32,23 @@ function getLinqApiKey(): string {
   return key;
 }
 
+function buildLinqMessage(params: {
+  parts: LinqMessagePart[];
+  idempotencyKey?: string;
+}) {
+  return {
+    preferred_service: "iMessage",
+    parts: params.parts,
+    ...(params.idempotencyKey ? { idempotency_key: params.idempotencyKey } : {}),
+  };
+}
+
 async function linqRequest<T>(path: string, init: RequestInit): Promise<T> {
   const response = await fetch(`${LINQ_API_BASE}${path}`, {
     ...init,
     headers: {
       Authorization: `Bearer ${getLinqApiKey()}`,
-      "Content-Type": "application/json",
+      ...(init.body ? { "Content-Type": "application/json" } : {}),
       ...(init.headers ?? {}),
     },
   });
@@ -47,7 +58,16 @@ async function linqRequest<T>(path: string, init: RequestInit): Promise<T> {
     throw new Error(`Linq request failed (${response.status}): ${body.slice(0, 400)}`);
   }
 
-  return (await response.json()) as T;
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  const text = await response.text();
+  if (!text) {
+    return undefined as T;
+  }
+
+  return JSON.parse(text) as T;
 }
 
 export async function linqSendToPhone(params: {
@@ -59,11 +79,7 @@ export async function linqSendToPhone(params: {
     method: "POST",
     body: JSON.stringify({
       to: [params.to],
-      message: {
-        preferred_service: "iMessage",
-        parts: params.parts,
-        ...(params.idempotencyKey ? { idempotency_key: params.idempotencyKey } : {}),
-      },
+      message: buildLinqMessage(params),
     }),
   });
 }
@@ -76,10 +92,45 @@ export async function linqSendToChat(params: {
   return linqRequest<{ message?: { id: string } }>(`/v3/chats/${params.chatId}/messages`, {
     method: "POST",
     body: JSON.stringify({
-      preferred_service: "iMessage",
-      parts: params.parts,
-      ...(params.idempotencyKey ? { idempotency_key: params.idempotencyKey } : {}),
+      message: buildLinqMessage(params),
     }),
+  });
+}
+
+export async function linqSendParts(params: {
+  to?: string;
+  chatId?: string;
+  parts: LinqMessagePart[];
+  idempotencyKey?: string;
+}): Promise<LinqSendMessageResponse | { message?: { id: string } }> {
+  const lastError = (error: unknown) =>
+    error instanceof Error ? error : new Error("Linq send failed.");
+
+  if (params.to) {
+    try {
+      return await linqSendToPhone({
+        to: params.to,
+        parts: params.parts,
+        idempotencyKey: params.idempotencyKey,
+      });
+    } catch (error) {
+      if (!params.chatId) throw lastError(error);
+      return linqSendToChat({
+        chatId: params.chatId,
+        parts: params.parts,
+        idempotencyKey: params.idempotencyKey,
+      });
+    }
+  }
+
+  if (!params.chatId) {
+    throw new Error("Either to or chatId is required to send a Linq message.");
+  }
+
+  return linqSendToChat({
+    chatId: params.chatId,
+    parts: params.parts,
+    idempotencyKey: params.idempotencyKey,
   });
 }
 
@@ -89,14 +140,12 @@ export async function linqSendText(params: {
   text: string;
   idempotencyKey?: string;
 }): Promise<LinqSendMessageResponse | { message?: { id: string } }> {
-  const parts: LinqTextPart[] = [{ type: "text", value: params.text }];
-  if (params.chatId) {
-    return linqSendToChat({ chatId: params.chatId, parts, idempotencyKey: params.idempotencyKey });
-  }
-  if (!params.to) {
-    throw new Error("Either to or chatId is required to send a Linq message.");
-  }
-  return linqSendToPhone({ to: params.to, parts, idempotencyKey: params.idempotencyKey });
+  return linqSendParts({
+    to: params.to,
+    chatId: params.chatId,
+    parts: [{ type: "text", value: params.text }],
+    idempotencyKey: params.idempotencyKey,
+  });
 }
 
 export async function linqSendLink(params: {
@@ -105,14 +154,12 @@ export async function linqSendLink(params: {
   url: string;
   idempotencyKey?: string;
 }): Promise<LinqSendMessageResponse | { message?: { id: string } }> {
-  const parts: LinqLinkPart[] = [{ type: "link", value: params.url }];
-  if (params.chatId) {
-    return linqSendToChat({ chatId: params.chatId, parts, idempotencyKey: params.idempotencyKey });
-  }
-  if (!params.to) {
-    throw new Error("Either to or chatId is required to send a Linq link.");
-  }
-  return linqSendToPhone({ to: params.to, parts, idempotencyKey: params.idempotencyKey });
+  return linqSendParts({
+    to: params.to,
+    chatId: params.chatId,
+    parts: [{ type: "link", value: params.url }],
+    idempotencyKey: params.idempotencyKey,
+  });
 }
 
 export type LinqContactCard = {
@@ -160,7 +207,6 @@ export async function linqUpdateContactCard(params: {
 export async function linqShareContactCard(chatId: string): Promise<void> {
   await linqRequest<unknown>(`/v3/chats/${chatId}/share_contact_card`, {
     method: "POST",
-    body: JSON.stringify({}),
   });
 }
 
