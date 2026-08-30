@@ -49,7 +49,23 @@ import {
   listDoeDtcMessages,
   saveDoeDtcAssessment,
 } from "@/lib/doedtc/doedtc-db";
-import { findHouseholdMemberByName, formatHouseholdForAgent } from "@/lib/doedtc/doedtc-household";
+import {
+  findHouseholdMemberByName,
+  formatHouseholdForAgent,
+} from "@/lib/doedtc/doedtc-household";
+import {
+  findAccountabilityPactForUser,
+  inviteAccountabilityPartner,
+  logAccountabilityCheckIn,
+  pauseAccountabilityPact,
+  resumeAccountabilityPact,
+  startAccountabilityPact,
+  withdrawAccountabilityPact,
+} from "@/lib/doedtc/doedtc-accountability-db";
+import {
+  formatAccountabilityForAgent,
+  normalizeAccountabilityMechanics,
+} from "@/lib/doedtc/doedtc-accountability";
 import { sendDoeDtcFamilyInviteMessage } from "@/lib/doedtc/doedtc-messaging";
 import {
   DOEDTC_PROFILE_READ_TABS,
@@ -551,7 +567,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "read_profile",
       description:
-        "Read a Doe profile tab (dashboard/integrations, appointments, results, conditions, family, locker, share, trackers, feedback). Use this to answer questions about what is already saved — Whoop, Apple Health, meds, locker sites, results, share codes, custom trackers, feedback/bug reports. Never invent status. This is a read, not an add.",
+        "Read a Doe profile tab (dashboard/integrations, appointments, results, conditions, family, locker, share, trackers, accountability, feedback). Use this to answer questions about what is already saved — Whoop, Apple Health, meds, locker sites, results, share codes, custom trackers, accountability pacts, feedback/bug reports. Never invent status. This is a read, not an add.",
       parameters: {
         type: "object",
         properties: {
@@ -669,6 +685,139 @@ export const DOEDTC_AGENT_TOOLS = [
       parameters: {
         type: "object",
         properties: {},
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "propose_accountability",
+      description:
+        "Propose an accountability pact (goal + people + check-in mechanics). Call first when they want accountability, habit tracking with a partner, or scheduled check-ins. Do NOT persist or invite until they confirm.",
+      parameters: {
+        type: "object",
+        properties: {
+          title: { type: "string", description: "Short title, e.g. Evening brushing." },
+          goal: { type: "string", description: "Plain-language goal." },
+          subject_name: { type: "string", description: "Who the goal is for." },
+          involve_partner: { type: "boolean", description: "Whether a partner/sponsor should be invited." },
+          partner_name: { type: "string" },
+          partner_phone: { type: "string" },
+          mechanics: {
+            type: "object",
+            properties: {
+              cadence: { type: "string", enum: ["daily", "weekdays", "weekly", "on_demand"] },
+              timezone: { type: "string" },
+              check_in_hour: { type: "number", description: "0-23 local hour for scheduled ping." },
+              who_gets_check_in: { type: "string", enum: ["subject", "partner", "both", "owner"] },
+              confirmation: { type: "string", enum: ["self", "partner", "either"] },
+              miss_notify_partner: { type: "boolean" },
+              privacy: { type: "string", enum: ["high", "normal"] },
+            },
+          },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["goal", "subject_name"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "start_accountability",
+      description:
+        "Create an accountability pact after the user confirms. Generates SMS copy and schedules check-ins. Invite partner only if they already agreed.",
+      parameters: {
+        type: "object",
+        properties: {
+          title: { type: "string" },
+          goal: { type: "string" },
+          subject_name: { type: "string" },
+          involve_partner: { type: "boolean" },
+          partner_name: { type: "string" },
+          partner_phone: { type: "string" },
+          mechanics: { type: "object" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["goal", "subject_name"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "invite_accountability_partner",
+      description: "Text a partner invite for an existing pact after the user confirms phone/name.",
+      parameters: {
+        type: "object",
+        properties: {
+          pact_id: { type: "string" },
+          partner_name: { type: "string" },
+          partner_phone: { type: "string" },
+        },
+        required: ["partner_phone"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "log_accountability_checkin",
+      description: "Log a yes/no/skip check-in on an accountability pact.",
+      parameters: {
+        type: "object",
+        properties: {
+          pact_id: { type: "string" },
+          goal_hint: { type: "string", description: "Goal or title if pact_id unknown." },
+          outcome: { type: "string", enum: ["yes", "no", "skip"] },
+          note: { type: "string" },
+        },
+        required: ["outcome"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "withdraw_accountability",
+      description: "Withdraw a pact (owner only) after explicit confirmation. Stops check-ins and notifies participants.",
+      parameters: {
+        type: "object",
+        properties: {
+          pact_id: { type: "string" },
+          goal_hint: { type: "string" },
+          reason: { type: "string" },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "pause_accountability",
+      description: "Pause scheduled check-ins without deleting history (owner only).",
+      parameters: {
+        type: "object",
+        properties: {
+          pact_id: { type: "string" },
+          goal_hint: { type: "string" },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "resume_accountability",
+      description: "Resume a paused accountability pact (owner only).",
+      parameters: {
+        type: "object",
+        properties: {
+          pact_id: { type: "string" },
+          goal_hint: { type: "string" },
+        },
       },
     },
   },
@@ -900,7 +1049,7 @@ async function resolveAgentHouseholdSubject(params: {
   args: Record<string, unknown>;
   requireEdit?: boolean;
 }): Promise<
-  | { subjectUserId: string; subjectMemberName?: string }
+  | { subjectUserId: string; subjectMemberId?: string; subjectMemberName?: string }
   | { error: string }
 > {
   const memberId = typeof params.args.member_id === "string" ? params.args.member_id.trim() : "";
@@ -924,6 +1073,7 @@ async function resolveAgentHouseholdSubject(params: {
   }
   return {
     subjectUserId: resolved.subjectUserId,
+    subjectMemberId: resolved.subjectMember.id,
     subjectMemberName: resolved.subjectMember.full_name,
   };
 }
@@ -1054,6 +1204,7 @@ function buildSystemPrompt(params: {
   relevantMemories: string;
   familyLog: string;
   householdLog: string;
+  accountabilityLog: string;
   profileOverview: string;
 }): string {
   return `You are Doe, a warm consumer health companion over iMessage.
@@ -1081,6 +1232,9 @@ ${params.familyLog}
 Household (shared family):
 ${params.householdLog}
 
+Accountability pacts:
+${params.accountabilityLog}
+
 Relevant memories:
 ${params.relevantMemories}
 
@@ -1099,6 +1253,7 @@ What you can do:
 - If a named family member has a phone but has not joined Doe yet, you may offer to send an invite (send_family_invite) — do not auto-invite without a yes. Same after log_family_member when a phone is present.
 - When they ask how a family member is doing, their next appointment, symptoms last week, or to prepare a child's summary, use read_profile / create_preparation / trackers with member_id or member_name — do not say you cannot see family.
 - send_family_invite texts a join link. Only the household admin can add/remove members or send invites.
+- Accountability: when they want to stay accountable, quit something, track a kid's habit, or involve a partner/sponsor, call propose_accountability first — summarize mechanics and wait for yes before start_accountability. Infer who gets the ping (parent for a young child; the person themselves for recovery). Use privacy high for sensitive goals — vague partner invite copy, never invent a diagnosis. Generate SMS from the goal; only owner can withdraw (withdraw_accountability after confirm). Partners can leave without killing the pact. pause/resume for vacations. log_accountability_checkin on yes/no replies. Read accountability tab with read_profile.
 - Send a Listen link to record and transcribe visits (start_listen).
 - Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
 - If they want to connect Whoop or Apple Health, tell them the current status and send_profile_link so they can tap Connect. Do not treat a status question as an add.
@@ -1315,6 +1470,7 @@ export async function runDoeDtcAgentTurn(params: {
       members: snapshot.household.members,
       viewerUserId: params.user.id,
     }),
+    accountabilityLog: formatAccountabilityForAgent(snapshot.accountabilityPacts),
     profileOverview: formatDoeDtcProfileOverview(snapshot),
   });
 
@@ -2022,6 +2178,146 @@ export async function runDoeDtcAgentTurn(params: {
             member: subject.subjectUserId !== params.user.id ? subject.subjectUserId : undefined,
           });
           output = { ok: true, subject: subject.subjectMemberName ?? "you", link_sent_separately: true };
+        } else if (toolCall.function.name === "propose_accountability") {
+          const goal = String(args.goal ?? "").trim();
+          if (!goal) throw new Error("goal is required.");
+          const subjectName = String(args.subject_name ?? "").trim() || params.user.full_name || "You";
+          const mechanics = normalizeAccountabilityMechanics(
+            args.mechanics && typeof args.mechanics === "object"
+              ? (args.mechanics as Record<string, unknown>)
+              : undefined,
+          );
+          output = {
+            ok: true,
+            draft: true,
+            title: String(args.title ?? goal).trim(),
+            goal,
+            subject_name: subjectName,
+            involve_partner: Boolean(args.involve_partner ?? args.involve_partner),
+            partner_name: typeof args.partner_name === "string" ? args.partner_name : null,
+            partner_phone: typeof args.partner_phone === "string" ? args.partner_phone : null,
+            mechanics,
+            next_step: "Ask the user to confirm before calling start_accountability.",
+          };
+        } else if (toolCall.function.name === "start_accountability") {
+          const goal = String(args.goal ?? "").trim();
+          if (!goal) throw new Error("goal is required.");
+          const subject = await resolveAgentHouseholdSubject({
+            viewerUserId: params.user.id,
+            args,
+            requireEdit: true,
+          });
+          if ("error" in subject) throw new Error(subject.error);
+          const subjectName =
+            String(args.subject_name ?? "").trim() || subject.subjectMemberName || params.user.full_name || "You";
+          const mechanics = normalizeAccountabilityMechanics(
+            args.mechanics && typeof args.mechanics === "object"
+              ? (args.mechanics as Record<string, unknown>)
+              : undefined,
+          );
+          const view = await startAccountabilityPact({
+            owner: params.user,
+            title: String(args.title ?? goal).trim(),
+            goal,
+            mechanics,
+            subjectUserId: subject.subjectUserId,
+            subjectMemberId: subject.subjectMemberId ?? null,
+            subjectName,
+            partnerName: typeof args.partner_name === "string" ? args.partner_name : null,
+            partnerPhone: typeof args.partner_phone === "string" ? args.partner_phone : null,
+            involvePartner: Boolean(args.involve_partner ?? args.involve_partner),
+          });
+          profileUrl = doeDtcAppUrl(params.user.care_token, { tab: "accountability" });
+          output = {
+            ok: true,
+            pact_id: view.pact.id,
+            title: view.pact.title,
+            status: view.pact.status,
+            subject: subjectName,
+            link_sent_separately: true,
+          };
+        } else if (toolCall.function.name === "invite_accountability_partner") {
+          const pactId = String(args.pact_id ?? "").trim();
+          const partnerPhone = String(args.partner_phone ?? "").trim();
+          if (!partnerPhone) throw new Error("partner_phone is required.");
+          let resolvedPactId = pactId;
+          if (!resolvedPactId) {
+            const pact = await findAccountabilityPactForUser({ userId: params.user.id });
+            if (!pact) throw new Error("Accountability pact not found.");
+            resolvedPactId = pact.id;
+          }
+          await inviteAccountabilityPartner({
+            owner: params.user,
+            pactId: resolvedPactId,
+            partnerName: typeof args.partner_name === "string" ? args.partner_name : undefined,
+            partnerPhone,
+          });
+          output = { ok: true, pact_id: resolvedPactId, invite_sent: true };
+        } else if (toolCall.function.name === "log_accountability_checkin") {
+          const outcomeRaw = String(args.outcome ?? "").trim();
+          if (outcomeRaw !== "yes" && outcomeRaw !== "no" && outcomeRaw !== "skip") {
+            throw new Error("outcome must be yes, no, or skip.");
+          }
+          const pactId = String(args.pact_id ?? "").trim();
+          const pact =
+            (pactId
+              ? await findAccountabilityPactForUser({ userId: params.user.id, pactId })
+              : null) ??
+            (await findAccountabilityPactForUser({
+              userId: params.user.id,
+              goalHint: typeof args.goal_hint === "string" ? args.goal_hint : undefined,
+            }));
+          if (!pact) throw new Error("Accountability pact not found.");
+          const event = await logAccountabilityCheckIn({
+            pactId: pact.id,
+            actorUserId: params.user.id,
+            outcome: outcomeRaw,
+            note: typeof args.note === "string" ? args.note : null,
+          });
+          output = { ok: true, pact_id: pact.id, outcome: event.outcome, event_id: event.id };
+        } else if (toolCall.function.name === "withdraw_accountability") {
+          const pactId = String(args.pact_id ?? "").trim();
+          const pact =
+            (pactId
+              ? await findAccountabilityPactForUser({ userId: params.user.id, pactId })
+              : null) ??
+            (await findAccountabilityPactForUser({
+              userId: params.user.id,
+              goalHint: typeof args.goal_hint === "string" ? args.goal_hint : undefined,
+            }));
+          if (!pact) throw new Error("Accountability pact not found.");
+          const view = await withdrawAccountabilityPact({
+            ownerUserId: params.user.id,
+            pactId: pact.id,
+            reason: typeof args.reason === "string" ? args.reason : null,
+          });
+          output = { ok: true, pact_id: view.pact.id, status: view.pact.status };
+        } else if (toolCall.function.name === "pause_accountability") {
+          const pactId = String(args.pact_id ?? "").trim();
+          const pact =
+            (pactId
+              ? await findAccountabilityPactForUser({ userId: params.user.id, pactId })
+              : null) ??
+            (await findAccountabilityPactForUser({
+              userId: params.user.id,
+              goalHint: typeof args.goal_hint === "string" ? args.goal_hint : undefined,
+            }));
+          if (!pact) throw new Error("Accountability pact not found.");
+          const view = await pauseAccountabilityPact({ ownerUserId: params.user.id, pactId: pact.id });
+          output = { ok: true, pact_id: view.pact.id, status: view.pact.status };
+        } else if (toolCall.function.name === "resume_accountability") {
+          const pactId = String(args.pact_id ?? "").trim();
+          const pact =
+            (pactId
+              ? await findAccountabilityPactForUser({ userId: params.user.id, pactId })
+              : null) ??
+            (await findAccountabilityPactForUser({
+              userId: params.user.id,
+              goalHint: typeof args.goal_hint === "string" ? args.goal_hint : undefined,
+            }));
+          if (!pact) throw new Error("Accountability pact not found.");
+          const view = await resumeAccountabilityPact({ ownerUserId: params.user.id, pactId: pact.id });
+          output = { ok: true, pact_id: view.pact.id, status: view.pact.status };
         } else if (toolCall.function.name === "read_profile") {
           const tab = String(args.tab ?? "") as DoeDtcProfileTab;
           if (!DOEDTC_PROFILE_READ_TABS.includes(tab)) {

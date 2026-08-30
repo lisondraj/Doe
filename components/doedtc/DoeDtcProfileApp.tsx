@@ -264,6 +264,9 @@ export function DoeDtcProfileApp({
           onFocusArtifact={setFocusedArtifactId}
         />
       ) : null}
+      {tab === "accountability" ? (
+        <AccountabilityTab snapshot={snapshot} busy={busy} onAction={runAction} />
+      ) : null}
       {tab === "feedback" ? (
         <FeedbackTab
           snapshot={snapshot}
@@ -1169,6 +1172,103 @@ function TrackersTab({
             <p className="doedtc-muted">{DOEDTC_PROFILE.trackersSelectTracker}</p>
           )}
         </>
+      )}
+    </div>
+  );
+}
+
+function AccountabilityTab({
+  snapshot,
+  busy,
+  onAction,
+}: TabProps) {
+  const pacts = snapshot.accountabilityPacts;
+
+  return (
+    <div>
+      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.accountabilityTitle}</h2>
+      {pacts.length === 0 ? (
+        <p className="doedtc-empty">{DOEDTC_PROFILE.accountabilityEmpty}</p>
+      ) : (
+        <ul className="doedtc-list">
+          {pacts.map((view) => {
+            const partners = view.participants.filter((row) => row.role === "partner");
+            const lastLabel = view.lastEvent
+              ? `${view.lastEvent.kind}${view.lastEvent.outcome ? ` (${view.lastEvent.outcome})` : ""}`
+              : "None yet";
+            return (
+              <li key={view.pact.id} className="doedtc-card" style={{ marginBottom: "0.75rem" }}>
+                <strong>{view.pact.title}</strong>
+                <p className="doedtc-muted" style={{ marginTop: "0.35rem" }}>
+                  {DOEDTC_PROFILE.accountabilityGoalLabel}: {view.pact.goal}
+                </p>
+                <p className="doedtc-muted">
+                  {DOEDTC_PROFILE.accountabilityStatusLabel}: {view.pact.status}
+                  {" · "}
+                  {DOEDTC_PROFILE.accountabilityCadenceLabel}: {view.pact.mechanics.cadence}
+                  {" · "}
+                  {DOEDTC_PROFILE.accountabilityStreakLabel}: {view.streak}
+                </p>
+                {view.subjectName ? (
+                  <p className="doedtc-muted">
+                    {DOEDTC_PROFILE.accountabilitySubjectLabel}: {view.subjectName}
+                  </p>
+                ) : null}
+                {partners.length > 0 ? (
+                  <p className="doedtc-muted">
+                    {DOEDTC_PROFILE.accountabilityPartnerLabel}:{" "}
+                    {partners.map((row) => `${row.full_name} (${row.status})`).join(", ")}
+                  </p>
+                ) : null}
+                <p className="doedtc-muted">
+                  {DOEDTC_PROFILE.accountabilityLastCheckInLabel}: {lastLabel}
+                </p>
+                {view.isOwner && view.pact.status !== "withdrawn" ? (
+                  <p className="doedtc-muted" style={{ marginTop: "0.5rem" }}>
+                    {DOEDTC_PROFILE.accountabilityOwnerHint}
+                  </p>
+                ) : null}
+                {!view.isOwner && view.viewerRole === "partner" ? (
+                  <p className="doedtc-muted" style={{ marginTop: "0.5rem" }}>
+                    {DOEDTC_PROFILE.accountabilityPartnerHint}
+                  </p>
+                ) : null}
+                {view.isOwner && view.pact.status !== "withdrawn" ? (
+                  <div className="doedtc-inline-actions" style={{ marginTop: "0.75rem" }}>
+                    {view.pact.status === "active" || view.pact.status === "pending_partner" ? (
+                      <button
+                        type="button"
+                        className="doedtc-button doedtc-button--secondary"
+                        disabled={busy}
+                        onClick={() => onAction("pause_accountability", { pactId: view.pact.id })}
+                      >
+                        {DOEDTC_PROFILE.accountabilityPauseLabel}
+                      </button>
+                    ) : null}
+                    {view.pact.status === "paused" ? (
+                      <button
+                        type="button"
+                        className="doedtc-button"
+                        disabled={busy}
+                        onClick={() => onAction("resume_accountability", { pactId: view.pact.id })}
+                      >
+                        {DOEDTC_PROFILE.accountabilityResumeLabel}
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      className="doedtc-button doedtc-button--danger"
+                      disabled={busy}
+                      onClick={() => onAction("withdraw_accountability", { pactId: view.pact.id })}
+                    >
+                      {DOEDTC_PROFILE.accountabilityWithdrawLabel}
+                    </button>
+                  </div>
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
       )}
     </div>
   );

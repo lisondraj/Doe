@@ -286,6 +286,106 @@ export type DoeDtcPreparationRow = {
   created_at: string;
 };
 
+export type DoeDtcAccountabilityPactStatus =
+  | "draft"
+  | "pending_partner"
+  | "active"
+  | "paused"
+  | "withdrawn"
+  | "completed";
+
+export type DoeDtcAccountabilityCadence = "daily" | "weekdays" | "weekly" | "on_demand";
+
+export type DoeDtcAccountabilityMechanics = {
+  cadence: DoeDtcAccountabilityCadence;
+  timezone: string;
+  check_in_hour: number;
+  quiet_hours?: { start: number; end: number };
+  who_gets_check_in: "subject" | "partner" | "both" | "owner";
+  confirmation: "self" | "partner" | "either";
+  miss_notify_partner: boolean;
+  privacy: "high" | "normal";
+};
+
+export type DoeDtcAccountabilityMessagePack = {
+  partner_invite: string;
+  check_in: string;
+  check_in_variants: string[];
+  miss: string;
+  celebrate: string;
+  withdraw: string;
+};
+
+export type DoeDtcAccountabilityPactRow = {
+  id: string;
+  owner_user_id: string;
+  subject_user_id: string | null;
+  subject_member_id: string | null;
+  title: string;
+  goal: string;
+  status: DoeDtcAccountabilityPactStatus;
+  mechanics: DoeDtcAccountabilityMechanics;
+  message_pack: DoeDtcAccountabilityMessagePack;
+  next_check_in_at: string | null;
+  last_check_in_prompt_at: string | null;
+  withdrawn_at: string | null;
+  withdrawn_reason: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DoeDtcAccountabilityParticipantRole = "owner" | "subject" | "partner";
+
+export type DoeDtcAccountabilityParticipantStatus = "pending" | "active" | "declined" | "removed";
+
+export type DoeDtcAccountabilityParticipantRow = {
+  id: string;
+  pact_id: string;
+  user_id: string | null;
+  household_member_id: string | null;
+  phone: string | null;
+  full_name: string;
+  role: DoeDtcAccountabilityParticipantRole;
+  status: DoeDtcAccountabilityParticipantStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DoeDtcAccountabilityEventKind =
+  | "check_in"
+  | "check_in_prompt"
+  | "miss"
+  | "invite_sent"
+  | "partner_joined"
+  | "withdrawn"
+  | "paused"
+  | "resumed"
+  | "note";
+
+export type DoeDtcAccountabilityCheckInOutcome = "yes" | "no" | "skip";
+
+export type DoeDtcAccountabilityEventRow = {
+  id: string;
+  pact_id: string;
+  actor_user_id: string | null;
+  kind: DoeDtcAccountabilityEventKind;
+  outcome: DoeDtcAccountabilityCheckInOutcome | null;
+  body: string | null;
+  occurred_at: string;
+  created_at: string;
+};
+
+export type DoeDtcAccountabilityPactView = {
+  pact: DoeDtcAccountabilityPactRow;
+  participants: DoeDtcAccountabilityParticipantRow[];
+  events: DoeDtcAccountabilityEventRow[];
+  streak: number;
+  lastEvent: DoeDtcAccountabilityEventRow | null;
+  subjectName: string | null;
+  viewerRole: DoeDtcAccountabilityParticipantRole | null;
+  isOwner: boolean;
+};
+
 export type DoeDtcProfileSnapshot = {
   user: Pick<
     DoeDtcUserRow,
@@ -306,6 +406,7 @@ export type DoeDtcProfileSnapshot = {
   artifactEntries: DoeDtcArtifactEntryRow[];
   tickets: DoeDtcTicketRow[];
   household: DoeDtcHouseholdSnapshot;
+  accountabilityPacts: DoeDtcAccountabilityPactView[];
 };
 
 export type DoeDtcMedicationRow = {
@@ -393,6 +494,7 @@ export type DoeDtcProfileTab =
   | "locker"
   | "share"
   | "trackers"
+  | "accountability"
   | "feedback";
 
 export type DoeDtcBrowserJobStatus =

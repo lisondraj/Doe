@@ -25,6 +25,11 @@ import {
   updateDoeDtcArtifact,
   updateDoeDtcArtifactEntry,
 } from "@/lib/doedtc/doedtc-db";
+import {
+  pauseAccountabilityPact,
+  resumeAccountabilityPact,
+  withdrawAccountabilityPact,
+} from "@/lib/doedtc/doedtc-accountability-db";
 import { normalizeDoeDtcFamilyRelationship, resolveDoeDtcFamilyMemberName } from "@/lib/doedtc/doedtc-family-relationship";
 import { sendDoeDtcFamilyInviteMessage } from "@/lib/doedtc/doedtc-messaging";
 import type {
@@ -332,6 +337,28 @@ export async function handleDoeDtcProfileAction(params: {
       const body = String(params.payload.body ?? "").trim();
       if (!title || !body) throw new Error("Title and description are required.");
       await createDoeDtcTicket({ userId: targetUserId, kind, title, body });
+      break;
+    }
+    case "withdraw_accountability": {
+      const pactId = String(params.payload.pactId ?? "").trim();
+      if (!pactId) throw new Error("Missing accountability pact.");
+      await withdrawAccountabilityPact({
+        ownerUserId: user.id,
+        pactId,
+        reason: typeof params.payload.reason === "string" ? params.payload.reason : null,
+      });
+      break;
+    }
+    case "pause_accountability": {
+      const pactId = String(params.payload.pactId ?? "").trim();
+      if (!pactId) throw new Error("Missing accountability pact.");
+      await pauseAccountabilityPact({ ownerUserId: user.id, pactId });
+      break;
+    }
+    case "resume_accountability": {
+      const pactId = String(params.payload.pactId ?? "").trim();
+      if (!pactId) throw new Error("Missing accountability pact.");
+      await resumeAccountabilityPact({ ownerUserId: user.id, pactId });
       break;
     }
     default:

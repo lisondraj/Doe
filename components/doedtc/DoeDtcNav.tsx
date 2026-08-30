@@ -17,6 +17,7 @@ const PROFILE_TABS: Array<{ id: DoeDtcProfileTab; label: string }> = [
   { id: "locker", label: DOEDTC_PROFILE.navLocker },
   { id: "share", label: DOEDTC_PROFILE.navShare },
   { id: "trackers", label: DOEDTC_PROFILE.navTrackers },
+  { id: "accountability", label: DOEDTC_PROFILE.navAccountability },
   { id: "feedback", label: DOEDTC_PROFILE.navFeedback },
 ];
 

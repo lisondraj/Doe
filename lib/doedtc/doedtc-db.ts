@@ -15,6 +15,7 @@ import {
   findHouseholdMemberByName,
   isHouseholdAdmin,
 } from "@/lib/doedtc/doedtc-household";
+import { listAccountabilityPactViewsForProfile } from "@/lib/doedtc/doedtc-accountability-db";
 import { createDoeDtcToken, isTokenExpired, onboardingTokenExpiresAt } from "@/lib/doedtc/doedtc-tokens";
 import type {
   DoeDtcArtifactEntryRow,
@@ -552,6 +553,7 @@ export async function getDoeDtcProfileSnapshot(
     artifactEntries,
     tickets,
     household,
+    accountabilityPacts,
   ] = await Promise.all([
     supabase
       .from("doedtc_users")
@@ -586,6 +588,11 @@ export async function getDoeDtcProfileSnapshot(
     listDoeDtcArtifactEntriesForUser(userId, 120),
     listDoeDtcTickets(userId),
     getDoeDtcHouseholdSnapshot(viewerUserId),
+    listAccountabilityPactViewsForProfile({
+      profileUserId: userId,
+      viewerUserId,
+      includeWithdrawn: true,
+    }),
   ]);
 
   if (userResult.error) throw new Error(userResult.error.message);
@@ -607,6 +614,7 @@ export async function getDoeDtcProfileSnapshot(
     artifactEntries,
     tickets,
     household,
+    accountabilityPacts,
   };
 }
 

@@ -17,6 +17,7 @@ export const DOEDTC_PROFILE_READ_TABS = [
   "locker",
   "share",
   "trackers",
+  "accountability",
   "feedback",
 ] as const satisfies readonly DoeDtcProfileTab[];
 
@@ -174,6 +175,32 @@ function formatTrackersTab(snapshot: DoeDtcProfileSnapshot): string {
     .join("\n");
 }
 
+function formatAccountabilityTab(snapshot: DoeDtcProfileSnapshot): string {
+  if (snapshot.accountabilityPacts.length === 0) return "No accountability pacts.";
+  return snapshot.accountabilityPacts
+    .map((view) => {
+      const partners = view.participants.filter((row) => row.role === "partner");
+      const parts = [
+        `${view.pact.title} | goal: ${view.pact.goal}`,
+        `id: ${view.pact.id}`,
+        `status: ${view.pact.status}`,
+        `subject: ${view.subjectName ?? "self"}`,
+        `cadence: ${view.pact.mechanics.cadence}`,
+        `streak: ${view.streak}`,
+      ];
+      if (partners.length > 0) {
+        parts.push(`partners: ${partners.map((row) => `${row.full_name} (${row.status})`).join("; ")}`);
+      }
+      if (view.lastEvent) {
+        parts.push(
+          `last: ${view.lastEvent.kind}${view.lastEvent.outcome ? ` (${view.lastEvent.outcome})` : ""}`,
+        );
+      }
+      return `- ${parts.join(" | ")}`;
+    })
+    .join("\n");
+}
+
 function formatFeedbackTab(snapshot: DoeDtcProfileSnapshot): string {
   if (snapshot.tickets.length === 0) return "No feedback or bug reports yet.";
   return snapshot.tickets
@@ -206,6 +233,8 @@ export function formatDoeDtcProfileTab(
       return formatShareTab(snapshot);
     case "trackers":
       return formatTrackersTab(snapshot);
+    case "accountability":
+      return formatAccountabilityTab(snapshot);
     case "feedback":
       return formatFeedbackTab(snapshot);
     default:
@@ -232,6 +261,11 @@ export function formatDoeDtcProfileOverview(snapshot: DoeDtcProfileSnapshot): st
       snapshot.artifacts.length === 0
         ? "None yet"
         : snapshot.artifacts.map((row) => row.title).join(", ")
+    }`,
+    `Accountability: ${
+      snapshot.accountabilityPacts.length === 0
+        ? "None yet"
+        : snapshot.accountabilityPacts.map((row) => row.pact.title).join(", ")
     }`,
     `Feedback/bugs: ${
       snapshot.tickets.length === 0
