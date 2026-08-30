@@ -63,18 +63,18 @@ html[data-about-page] body {
   background-color: var(--doe-page-surface);
 }
 /*
- * /doedtc — iPhone consumer pages. Cream overflow for Safari chrome,
+ * /doedtc — iPhone consumer pages. Brown overflow for Safari chrome,
  * Dynamic Island ears, and rubber-band overscroll.
  */
 html[data-doedtc-page] {
-  --doe-page-surface: #ede8df;
-  --doe-page-surface-raised: #f2ece4;
-  --doe-page-surface-sunken: #e4ddd2;
-  --proto-page-bg: #ede8df;
-  background-color: #ede8df;
+  --doe-page-surface: #1b1410;
+  --doe-page-surface-raised: #271f17;
+  --doe-page-surface-sunken: #130e09;
+  --proto-page-bg: #1b1410;
+  background-color: #1b1410;
 }
 html[data-doedtc-page] body {
-  background-color: #ede8df;
+  background-color: #1b1410;
   overscroll-behavior-y: none;
 }
 /*

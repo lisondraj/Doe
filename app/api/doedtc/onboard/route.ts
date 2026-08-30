@@ -16,6 +16,8 @@ export async function POST(request: Request) {
       medications: Array.isArray(body.medications) ? body.medications : [],
       conditions: Array.isArray(body.conditions) ? body.conditions : [],
       whyDoe: String(body.whyDoe ?? ""),
+      familyMembers: Array.isArray(body.familyMembers) ? body.familyMembers : [],
+      medicalDeferred: Boolean(body.medicalDeferred),
     });
     return NextResponse.json(result);
   } catch (error) {

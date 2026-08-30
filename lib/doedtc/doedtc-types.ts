@@ -19,6 +19,99 @@ export type DoeDtcUserRow = {
   care_token: string;
   linq_chat_id: string | null;
   linq_from_number: string | null;
+  medical_deferred?: boolean;
+};
+
+export type DoeDtcFamilyRelationship =
+  | "grandmother"
+  | "grandfather"
+  | "mother"
+  | "father"
+  | "child"
+  | "sibling"
+  | "partner"
+  | "other";
+
+export type DoeDtcFamilyMemberRow = {
+  id: string;
+  user_id: string;
+  full_name: string;
+  relationship: DoeDtcFamilyRelationship;
+  phone: string | null;
+  created_at: string;
+};
+
+export type DoeDtcAppointmentRow = {
+  id: string;
+  user_id: string;
+  title: string;
+  starts_at: string;
+  location: string | null;
+  notes: string | null;
+  created_at: string;
+};
+
+export type DoeDtcResultRow = {
+  id: string;
+  user_id: string;
+  title: string;
+  resulted_at: string;
+  source: string | null;
+  summary: string | null;
+  created_at: string;
+};
+
+export type DoeDtcLockerItemRow = {
+  id: string;
+  user_id: string;
+  label: string;
+  username: string;
+  created_at: string;
+};
+
+export type DoeDtcHealthProvider = "whoop" | "apple_health";
+
+export type DoeDtcHealthConnectionStatus = "disconnected" | "pending" | "connected";
+
+export type DoeDtcHealthConnectionRow = {
+  id: string;
+  user_id: string;
+  provider: DoeDtcHealthProvider;
+  status: DoeDtcHealthConnectionStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DoeDtcShareCodeRow = {
+  id: string;
+  user_id: string;
+  code: string;
+  expires_at: string;
+  revoked_at: string | null;
+  created_at: string;
+};
+
+export type DoeDtcFamilyMemberInput = {
+  fullName: string;
+  relationship: DoeDtcFamilyRelationship;
+  phone?: string | null;
+};
+
+export type DoeDtcProfileSnapshot = {
+  user: Pick<
+    DoeDtcUserRow,
+    "id" | "full_name" | "email" | "why_doe" | "medical_deferred" | "care_token"
+  >;
+  medications: string[];
+  conditions: string[];
+  familyMembers: DoeDtcFamilyMemberRow[];
+  appointments: DoeDtcAppointmentRow[];
+  results: DoeDtcResultRow[];
+  lockerItems: DoeDtcLockerItemRow[];
+  healthConnections: DoeDtcHealthConnectionRow[];
+  shareCodes: DoeDtcShareCodeRow[];
+  symptoms: DoeDtcSymptomRow[];
+  assessments: DoeDtcAssessmentRow[];
 };
 
 export type DoeDtcMedicationRow = {
@@ -93,7 +186,17 @@ export type DoeDtcOnboardPayload = {
   medications: string[];
   conditions: string[];
   whyDoe: string;
+  familyMembers?: DoeDtcFamilyMemberInput[];
+  medicalDeferred?: boolean;
 };
+
+export type DoeDtcProfileTab =
+  | "dashboard"
+  | "appointments"
+  | "results"
+  | "family"
+  | "locker"
+  | "share";
 
 export type DoeDtcStartPayload = {
   phone: string;

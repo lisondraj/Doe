@@ -37,6 +37,77 @@ export const DOEDTC_GET_STARTED = {
   allSetBody:
     "Open Messages. Doe sent a confirmation. Type CONFIRM to finish and start using Doe.",
   openMessagesLabel: "Open Messages",
+  openProfileLabel: "Open your profile",
+  familySectionTitle: "Family (optional)",
+  familySectionHint: "Add people you care for. You can skip and add them later.",
+  familyNameLabel: "Name",
+  familyRelationshipLabel: "Relationship",
+  familyPhoneLabel: "Phone (optional)",
+  familyNoPhoneLabel: "No number",
+  familyAddLabel: "Add person",
+  medicalSectionTitle: "Medical info",
+  medicalNowLabel: "Add now",
+  medicalLaterLabel: "Add later",
+  medicalLaterHint: "You can add medications and conditions from your profile dashboard.",
+} as const;
+
+export const DOEDTC_PROFILE = {
+  pageTitle: "Your profile",
+  navDashboard: "Dashboard",
+  navAppointments: "Appointments",
+  navResults: "Results",
+  navFamily: "Family",
+  navLocker: "Locker",
+  navShare: "Share",
+  invalidTokenTitle: "Profile unavailable",
+  invalidTokenBody: "Complete Get Started in iMessage to access your profile.",
+  dashboardWhyLabel: "Why Doe",
+  dashboardMedicalLabel: "Medical info",
+  dashboardMedicalDeferred: "You chose to add medical info later.",
+  dashboardAddMedical: "Add medical info",
+  dashboardSymptomsLabel: "Recent symptoms",
+  dashboardSymptomsEmpty: "No symptoms logged yet. Text Doe in iMessage.",
+  dashboardIntegrationsLabel: "Integrations",
+  whoopTitle: "Whoop",
+  whoopBody: "Connect your Whoop band to share recovery and strain with Doe.",
+  appleHealthTitle: "Apple Health",
+  appleHealthBody: "Apple Health requires the Doe app. Save your interest here for now.",
+  connectLabel: "Connect",
+  pendingLabel: "Pending",
+  connectedLabel: "Connected",
+  appointmentsTitle: "Appointment log",
+  appointmentsEmpty: "No appointments yet. Add your next visit.",
+  appointmentTitleLabel: "Title",
+  appointmentWhenLabel: "Date & time",
+  appointmentLocationLabel: "Location (optional)",
+  appointmentNotesLabel: "Notes (optional)",
+  addAppointmentLabel: "Add appointment",
+  resultsTitle: "Results log",
+  resultsEmpty: "No results yet. Add labs or imaging when you have them.",
+  resultTitleLabel: "Title",
+  resultDateLabel: "Date",
+  resultSourceLabel: "Source (optional)",
+  resultSummaryLabel: "Summary (optional)",
+  addResultLabel: "Add result",
+  familyTitle: "Family",
+  familyEmpty: "No family members yet.",
+  lockerTitle: "Locker",
+  lockerHint: "Doe will never ask for these in iMessage.",
+  lockerEmpty: "No saved credentials yet.",
+  lockerLabelField: "Site or app",
+  lockerUsernameField: "Username",
+  lockerPasswordField: "Password",
+  lockerSavedPassword: "••••••••",
+  addLockerLabel: "Save credential",
+  shareTitle: "Share with your physician",
+  shareBody: "Generate a short code to show your physician. They can enter it in Doe when redeem is available.",
+  shareGenerateLabel: "Generate code",
+  shareRevokeLabel: "Revoke",
+  shareExpiresLabel: "Expires",
+  shareEmpty: "No active share codes.",
+  removeLabel: "Remove",
+  saveLabel: "Save",
+  savingLabel: "Saving…",
 } as const;
 
 export const DOEDTC_CARE = {
@@ -63,6 +134,7 @@ export const DOEDTC_LINQ = {
   consentMessage:
     "Before we get started: Doe is an AI health companion that supports your entire health journey. However, by using Doe, you confirm that you are voluntarily sharing information regarding your health. Doe has very strict data-retention policies in place that do not save or sell your data. Type CONFIRM before moving forward.",
   getStartedIntro: "Get Started with Doe. Tap the link below to set up your profile.",
+  profileIntro: "Your Doe profile is ready. Tap the link below to manage appointments, family, and more.",
   allSetMessage: "All set! Let's get started. Text your symptoms anytime.",
   assessmentIntro: "Here's what I found based on what you shared:",
 } as const;
@@ -92,6 +164,10 @@ export function doeDtcGetStartedUrl(token: string): string {
 
 export function doeDtcCareUrl(token: string): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/care?t=${encodeURIComponent(token)}`;
+}
+
+export function doeDtcAppUrl(token: string): string {
+  return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/app?t=${encodeURIComponent(token)}`;
 }
 
 export function doeDtcMessagesDeepLink(phone: string): string {

@@ -1,6 +1,10 @@
 import { saveDoeDtcOnboarding } from "@/lib/doedtc/doedtc-db";
-import { sendDoeDtcConsentMessage } from "@/lib/doedtc/doedtc-messaging";
-import type { DoeDtcOnboardPayload } from "@/lib/doedtc/doedtc-types";
+import { doeDtcAppUrl } from "@/lib/doedtc/doedtc-copy";
+import {
+  sendDoeDtcConsentMessage,
+  sendDoeDtcProfileLinkMessage,
+} from "@/lib/doedtc/doedtc-messaging";
+import type { DoeDtcFamilyRelationship, DoeDtcOnboardPayload } from "@/lib/doedtc/doedtc-types";
 
 function cleanList(values: unknown): string[] {
   if (!Array.isArray(values)) return [];
@@ -11,12 +15,47 @@ function cleanList(values: unknown): string[] {
     .slice(0, 30);
 }
 
+const RELATIONSHIPS = new Set<DoeDtcFamilyRelationship>([
+  "grandmother",
+  "grandfather",
+  "mother",
+  "father",
+  "child",
+  "sibling",
+  "partner",
+  "other",
+]);
+
+function cleanFamilyMembers(values: unknown): DoeDtcOnboardPayload["familyMembers"] {
+  if (!Array.isArray(values)) return [];
+  return values
+    .map((value) => {
+      if (!value || typeof value !== "object") return null;
+      const row = value as Record<string, unknown>;
+      const fullName = typeof row.fullName === "string" ? row.fullName.trim() : "";
+      const relationship = row.relationship;
+      if (!fullName || typeof relationship !== "string" || !RELATIONSHIPS.has(relationship as DoeDtcFamilyRelationship)) {
+        return null;
+      }
+      const phone = typeof row.phone === "string" ? row.phone.trim() : "";
+      return {
+        fullName,
+        relationship: relationship as DoeDtcFamilyRelationship,
+        phone: phone || null,
+      };
+    })
+    .filter((value): value is NonNullable<typeof value> => Boolean(value))
+    .slice(0, 20);
+}
+
 export async function submitDoeDtcOnboarding(payload: DoeDtcOnboardPayload) {
   const fullName = payload.fullName.trim();
   const email = payload.email.trim();
   const whyDoe = payload.whyDoe.trim();
-  const medications = cleanList(payload.medications);
-  const conditions = cleanList(payload.conditions);
+  const medicalDeferred = Boolean(payload.medicalDeferred);
+  const medications = medicalDeferred ? [] : cleanList(payload.medications);
+  const conditions = medicalDeferred ? [] : cleanList(payload.conditions);
+  const familyMembers = cleanFamilyMembers(payload.familyMembers);
 
   if (!payload.token.trim()) throw new Error("Missing onboarding token.");
   if (!fullName) throw new Error("Full name is required.");
@@ -32,6 +71,8 @@ export async function submitDoeDtcOnboarding(payload: DoeDtcOnboardPayload) {
     medications,
     conditions,
     whyDoe,
+    familyMembers,
+    medicalDeferred,
   });
 
   await sendDoeDtcConsentMessage({
@@ -41,8 +82,17 @@ export async function submitDoeDtcOnboarding(payload: DoeDtcOnboardPayload) {
     idempotencyKey: `doedtc-consent-post-onboard-${user.id}`,
   });
 
+  await sendDoeDtcProfileLinkMessage({
+    user,
+    chatId: user.linq_chat_id ?? undefined,
+    idempotencyKey: `doedtc-profile-link-post-onboard-${user.id}`,
+  });
+
+  const profileHref = doeDtcAppUrl(user.care_token);
+
   return {
     ok: true as const,
+    profileHref,
     messagesHref: user.linq_from_number
       ? `sms:${user.linq_from_number.replace(/\D/g, "")}`
       : `sms:${user.phone.replace(/\D/g, "")}`,

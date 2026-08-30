@@ -5,7 +5,7 @@ import {
 } from "@/lib/doephone/phone-layout-viewport";
 import { DOEDTC_PATH } from "@/lib/site-domains";
 
-/** Runs before paint on `/doedtc*` - sets page marker and cream overflow; variant resolved client-side. */
+/** Runs before paint on `/doedtc*` - sets page marker and brown overflow; variant resolved client-side. */
 export function doeDtcRouteBootstrapScript(): string {
   const viewportBootstrap = phoneLayoutViewportBootstrapScript();
   const overflowBootstrap = phoneOverflowChromeBootstrapScript(DOEDTC_OVERFLOW_SURFACE);

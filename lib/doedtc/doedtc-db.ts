@@ -1,9 +1,19 @@
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
+import { encryptDoeDtcSecret } from "@/lib/doedtc/doedtc-crypto";
 import { createDoeDtcToken, isTokenExpired, onboardingTokenExpiresAt } from "@/lib/doedtc/doedtc-tokens";
 import type {
   DoeDtcAssessmentResult,
   DoeDtcAssessmentRow,
+  DoeDtcAppointmentRow,
+  DoeDtcFamilyMemberInput,
+  DoeDtcFamilyMemberRow,
+  DoeDtcHealthConnectionRow,
+  DoeDtcHealthProvider,
+  DoeDtcLockerItemRow,
   DoeDtcMessageRow,
+  DoeDtcProfileSnapshot,
+  DoeDtcResultRow,
+  DoeDtcShareCodeRow,
   DoeDtcSymptomRow,
   DoeDtcSymptomSeverity,
   DoeDtcUserRow,
@@ -218,12 +228,15 @@ export async function saveDoeDtcOnboarding(params: {
   medications: string[];
   conditions: string[];
   whyDoe: string;
+  familyMembers?: DoeDtcFamilyMemberInput[];
+  medicalDeferred?: boolean;
 }): Promise<DoeDtcUserRow> {
   const user = await getDoeDtcUserByOnboardingToken(params.token);
   if (!user || user.status !== "onboarding" || isTokenExpired(user.onboarding_token_expires_at)) {
     throw new Error("This Get Started link is invalid or expired.");
   }
 
+  const medicalDeferred = Boolean(params.medicalDeferred);
   const supabase = createSupabaseAdmin();
   const { data: updated, error } = await supabase
     .from("doedtc_users")
@@ -231,6 +244,7 @@ export async function saveDoeDtcOnboarding(params: {
       full_name: params.fullName,
       email: params.email,
       why_doe: params.whyDoe,
+      medical_deferred: medicalDeferred,
       status: "pending_confirm",
       onboarding_token: null,
       onboarding_token_expires_at: null,
@@ -242,17 +256,35 @@ export async function saveDoeDtcOnboarding(params: {
 
   await supabase.from("doedtc_medications").delete().eq("user_id", user.id);
   await supabase.from("doedtc_conditions").delete().eq("user_id", user.id);
+  await supabase.from("doedtc_family_members").delete().eq("user_id", user.id);
 
-  const meds = params.medications.map((name) => ({ user_id: user.id, name }));
-  const conditions = params.conditions.map((name) => ({ user_id: user.id, name }));
+  if (!medicalDeferred) {
+    const meds = params.medications.map((name) => ({ user_id: user.id, name }));
+    const conditions = params.conditions.map((name) => ({ user_id: user.id, name }));
 
-  if (meds.length > 0) {
-    const { error: medsError } = await supabase.from("doedtc_medications").insert(meds);
-    if (medsError) throw new Error(medsError.message);
+    if (meds.length > 0) {
+      const { error: medsError } = await supabase.from("doedtc_medications").insert(meds);
+      if (medsError) throw new Error(medsError.message);
+    }
+    if (conditions.length > 0) {
+      const { error: conditionsError } = await supabase.from("doedtc_conditions").insert(conditions);
+      if (conditionsError) throw new Error(conditionsError.message);
+    }
   }
-  if (conditions.length > 0) {
-    const { error: conditionsError } = await supabase.from("doedtc_conditions").insert(conditions);
-    if (conditionsError) throw new Error(conditionsError.message);
+
+  const familyRows = (params.familyMembers ?? [])
+    .filter((member) => member.fullName.trim())
+    .slice(0, 20)
+    .map((member) => ({
+      user_id: user.id,
+      full_name: member.fullName.trim(),
+      relationship: member.relationship,
+      phone: member.phone?.trim() || null,
+    }));
+
+  if (familyRows.length > 0) {
+    const { error: familyError } = await supabase.from("doedtc_family_members").insert(familyRows);
+    if (familyError) throw new Error(familyError.message);
   }
 
   return updated as DoeDtcUserRow;
@@ -406,4 +438,302 @@ export async function linkDoeDtcSymptomToAssessment(params: {
     .update({ assessment_id: params.assessmentId })
     .eq("id", params.symptomId);
   if (error) throw new Error(error.message);
+}
+
+function randomDoeDtcShareCodeValue(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let suffix = "";
+  for (let i = 0; i < 4; i += 1) {
+    suffix += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return `DOE-${suffix}`;
+}
+
+export async function getDoeDtcProfileSnapshot(userId: string): Promise<DoeDtcProfileSnapshot> {
+  const supabase = createSupabaseAdmin();
+  const [
+    userResult,
+    profileLists,
+    familyMembers,
+    appointments,
+    results,
+    lockerItems,
+    healthConnections,
+    shareCodes,
+    symptoms,
+    assessments,
+  ] = await Promise.all([
+    supabase
+      .from("doedtc_users")
+      .select("id, full_name, email, why_doe, medical_deferred, care_token")
+      .eq("id", userId)
+      .single(),
+    getDoeDtcProfileLists(userId),
+    supabase.from("doedtc_family_members").select("*").eq("user_id", userId).order("created_at"),
+    supabase.from("doedtc_appointments").select("*").eq("user_id", userId).order("starts_at"),
+    supabase.from("doedtc_results").select("*").eq("user_id", userId).order("resulted_at", { ascending: false }),
+    supabase
+      .from("doedtc_locker_items")
+      .select("id, user_id, label, username, created_at")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false }),
+    supabase.from("doedtc_health_connections").select("*").eq("user_id", userId),
+    supabase
+      .from("doedtc_share_codes")
+      .select("*")
+      .eq("user_id", userId)
+      .is("revoked_at", null)
+      .gt("expires_at", new Date().toISOString())
+      .order("created_at", { ascending: false }),
+    listDoeDtcSymptoms(userId, 8),
+    listDoeDtcAssessments(userId, 3),
+  ]);
+
+  if (userResult.error) throw new Error(userResult.error.message);
+
+  return {
+    user: userResult.data as DoeDtcProfileSnapshot["user"],
+    medications: profileLists.medications,
+    conditions: profileLists.conditions,
+    familyMembers: (familyMembers.data as DoeDtcFamilyMemberRow[]) ?? [],
+    appointments: (appointments.data as DoeDtcAppointmentRow[]) ?? [],
+    results: (results.data as DoeDtcResultRow[]) ?? [],
+    lockerItems: (lockerItems.data as DoeDtcLockerItemRow[]) ?? [],
+    healthConnections: (healthConnections.data as DoeDtcHealthConnectionRow[]) ?? [],
+    shareCodes: (shareCodes.data as DoeDtcShareCodeRow[]) ?? [],
+    symptoms,
+    assessments,
+  };
+}
+
+export async function addDoeDtcFamilyMember(params: {
+  userId: string;
+  fullName: string;
+  relationship: DoeDtcFamilyMemberInput["relationship"];
+  phone?: string | null;
+}): Promise<DoeDtcFamilyMemberRow> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_family_members")
+    .insert({
+      user_id: params.userId,
+      full_name: params.fullName.trim(),
+      relationship: params.relationship,
+      phone: params.phone?.trim() || null,
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcFamilyMemberRow;
+}
+
+export async function removeDoeDtcFamilyMember(params: {
+  userId: string;
+  memberId: string;
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("doedtc_family_members")
+    .delete()
+    .eq("user_id", params.userId)
+    .eq("id", params.memberId);
+  if (error) throw new Error(error.message);
+}
+
+export async function addDoeDtcAppointment(params: {
+  userId: string;
+  title: string;
+  startsAt: string;
+  location?: string | null;
+  notes?: string | null;
+}): Promise<DoeDtcAppointmentRow> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_appointments")
+    .insert({
+      user_id: params.userId,
+      title: params.title.trim(),
+      starts_at: params.startsAt,
+      location: params.location?.trim() || null,
+      notes: params.notes?.trim() || null,
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcAppointmentRow;
+}
+
+export async function removeDoeDtcAppointment(params: {
+  userId: string;
+  appointmentId: string;
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("doedtc_appointments")
+    .delete()
+    .eq("user_id", params.userId)
+    .eq("id", params.appointmentId);
+  if (error) throw new Error(error.message);
+}
+
+export async function addDoeDtcResult(params: {
+  userId: string;
+  title: string;
+  resultedAt: string;
+  source?: string | null;
+  summary?: string | null;
+}): Promise<DoeDtcResultRow> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_results")
+    .insert({
+      user_id: params.userId,
+      title: params.title.trim(),
+      resulted_at: params.resultedAt,
+      source: params.source?.trim() || null,
+      summary: params.summary?.trim() || null,
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcResultRow;
+}
+
+export async function removeDoeDtcResult(params: {
+  userId: string;
+  resultId: string;
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("doedtc_results")
+    .delete()
+    .eq("user_id", params.userId)
+    .eq("id", params.resultId);
+  if (error) throw new Error(error.message);
+}
+
+export async function addDoeDtcLockerItem(params: {
+  userId: string;
+  label: string;
+  username: string;
+  password: string;
+}): Promise<DoeDtcLockerItemRow> {
+  const encrypted = encryptDoeDtcSecret(params.password);
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_locker_items")
+    .insert({
+      user_id: params.userId,
+      label: params.label.trim(),
+      username: params.username.trim(),
+      password_ciphertext: encrypted.ciphertext,
+      iv: encrypted.iv,
+      key_version: encrypted.keyVersion,
+    })
+    .select("id, user_id, label, username, created_at")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcLockerItemRow;
+}
+
+export async function removeDoeDtcLockerItem(params: {
+  userId: string;
+  itemId: string;
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("doedtc_locker_items")
+    .delete()
+    .eq("user_id", params.userId)
+    .eq("id", params.itemId);
+  if (error) throw new Error(error.message);
+}
+
+export async function setDoeDtcHealthConnectionPending(params: {
+  userId: string;
+  provider: DoeDtcHealthProvider;
+}): Promise<DoeDtcHealthConnectionRow> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_health_connections")
+    .upsert(
+      {
+        user_id: params.userId,
+        provider: params.provider,
+        status: "pending",
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id,provider" },
+    )
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcHealthConnectionRow;
+}
+
+export async function generateDoeDtcShareCode(params: {
+  userId: string;
+  expiresInDays?: number;
+}): Promise<DoeDtcShareCodeRow> {
+  const supabase = createSupabaseAdmin();
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + (params.expiresInDays ?? 7));
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const code = randomDoeDtcShareCodeValue();
+    const { data, error } = await supabase
+      .from("doedtc_share_codes")
+      .insert({
+        user_id: params.userId,
+        code,
+        expires_at: expiresAt.toISOString(),
+      })
+      .select("*")
+      .single();
+    if (!error) return data as DoeDtcShareCodeRow;
+    if (!error.message.includes("duplicate key")) throw new Error(error.message);
+  }
+
+  throw new Error("Unable to generate a share code. Try again.");
+}
+
+export async function revokeDoeDtcShareCode(params: {
+  userId: string;
+  shareCodeId: string;
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("doedtc_share_codes")
+    .update({ revoked_at: new Date().toISOString() })
+    .eq("user_id", params.userId)
+    .eq("id", params.shareCodeId);
+  if (error) throw new Error(error.message);
+}
+
+export async function updateDoeDtcMedicalProfile(params: {
+  userId: string;
+  medications: string[];
+  conditions: string[];
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  await supabase.from("doedtc_medications").delete().eq("user_id", params.userId);
+  await supabase.from("doedtc_conditions").delete().eq("user_id", params.userId);
+
+  const meds = params.medications.map((name) => ({ user_id: params.userId, name }));
+  const conditions = params.conditions.map((name) => ({ user_id: params.userId, name }));
+
+  if (meds.length > 0) {
+    const { error } = await supabase.from("doedtc_medications").insert(meds);
+    if (error) throw new Error(error.message);
+  }
+  if (conditions.length > 0) {
+    const { error } = await supabase.from("doedtc_conditions").insert(conditions);
+    if (error) throw new Error(error.message);
+  }
+
+  const { error: userError } = await supabase
+    .from("doedtc_users")
+    .update({ medical_deferred: false })
+    .eq("id", params.userId);
+  if (userError) throw new Error(userError.message);
 }

@@ -2,6 +2,7 @@ import { runDoeDtcAgentTurn } from "@/lib/doedtc/doedtc-agent";
 import { shareDoeDtcLinqContactCard } from "@/lib/doedtc/doedtc-contact-card";
 import {
   DOEDTC_LINQ,
+  doeDtcAppUrl,
   doeDtcGetStartedUrl,
 } from "@/lib/doedtc/doedtc-copy";
 import {
@@ -300,6 +301,31 @@ export async function handleConfirmInbound(params: {
 
   const activated = await activateDoeDtcUser(params.user.id);
   await sendDoeDtcAllSet(activated);
+}
+
+export async function sendDoeDtcProfileLinkMessage(params: {
+  user: DoeDtcUserRow;
+  chatId?: string;
+  idempotencyKey?: string;
+}): Promise<void> {
+  const profileUrl = doeDtcAppUrl(params.user.care_token);
+  const chatId = params.chatId ?? params.user.linq_chat_id ?? undefined;
+
+  await sendDoeDtcOutbound({
+    user: params.user,
+    chatId,
+    to: params.user.phone,
+    text: DOEDTC_LINQ.profileIntro,
+    idempotencyKey: params.idempotencyKey ?? `doedtc-profile-intro-${params.user.id}`,
+  });
+
+  await sendDoeDtcLinkOutbound({
+    user: params.user,
+    chatId,
+    to: params.user.phone,
+    url: profileUrl,
+    idempotencyKey: `${params.idempotencyKey ?? `doedtc-profile-link-${params.user.id}`}-link`,
+  });
 }
 
 export async function sendDoeDtcAllSet(user: DoeDtcUserRow): Promise<void> {
