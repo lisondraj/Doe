@@ -4,6 +4,7 @@ import test from "node:test";
 import { resolveResearchBrowseTarget } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { toUserSafeBrowserError } from "@/lib/doedtc/doedtc-browser";
 import { sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
+import { formatDoeDtcIntegrations, formatDoeDtcProfileTab } from "@/lib/doedtc/doedtc-profile-read";
 import {
   normalizeDoeDtcFamilyRelationship,
   resolveDoeDtcFamilyMemberName,
@@ -74,4 +75,40 @@ test("resolveDoeDtcFamilyMemberName defaults unnamed children", () => {
     resolveDoeDtcFamilyMemberName({ fullName: "", relationship: "child" }),
     "Child",
   );
+});
+
+test("formatDoeDtcProfileTab reads Whoop from the dashboard tab", () => {
+  const snapshot = {
+    user: {
+      id: "u1",
+      full_name: "James",
+      email: null,
+      why_doe: null,
+      medical_deferred: false,
+      care_token: "t",
+    },
+    medications: [],
+    conditions: [],
+    familyMembers: [],
+    appointments: [],
+    listenSessions: [],
+    results: [],
+    lockerItems: [],
+    healthConnections: [
+      {
+        id: "h1",
+        user_id: "u1",
+        provider: "whoop" as const,
+        status: "disconnected" as const,
+        created_at: "",
+        updated_at: "",
+      },
+    ],
+    shareCodes: [],
+    symptoms: [],
+    assessments: [],
+  };
+  const dashboard = formatDoeDtcProfileTab(snapshot, "dashboard");
+  assert.match(dashboard, /Whoop: not connected/);
+  assert.match(formatDoeDtcIntegrations(snapshot), /Whoop: not connected/);
 });

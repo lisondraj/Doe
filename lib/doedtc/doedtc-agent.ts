@@ -25,17 +25,18 @@ import {
   appendDoeDtcCondition,
   appendDoeDtcMedication,
   createDoeDtcListenSession,
-  getDoeDtcProfileLists,
+  getDoeDtcProfileSnapshot,
   insertDoeDtcMemory,
   insertDoeDtcSymptom,
   linkDoeDtcSymptomToAssessment,
-  listDoeDtcAppointments,
-  listDoeDtcAssessments,
-  listDoeDtcFamilyMembers,
   listDoeDtcMessages,
-  listDoeDtcSymptoms,
   saveDoeDtcAssessment,
 } from "@/lib/doedtc/doedtc-db";
+import {
+  DOEDTC_PROFILE_READ_TABS,
+  formatDoeDtcProfileOverview,
+  readDoeDtcProfileTab,
+} from "@/lib/doedtc/doedtc-profile-read";
 import {
   normalizeDoeDtcFamilyRelationship,
   resolveDoeDtcFamilyMemberName,
@@ -43,9 +44,11 @@ import {
 import type {
   DoeDtcAppointmentRow,
   DoeDtcAssessmentResult,
+  DoeDtcAssessmentRow,
   DoeDtcFamilyMemberRow,
   DoeDtcFamilyRelationship,
   DoeDtcMessageRow,
+  DoeDtcProfileTab,
   DoeDtcSymptomRow,
   DoeDtcUserRow,
 } from "@/lib/doedtc/doedtc-types";
@@ -241,6 +244,25 @@ export const DOEDTC_AGENT_TOOLS = [
       parameters: {
         type: "object",
         properties: {},
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "read_profile",
+      description:
+        "Read a Doe profile tab (dashboard/integrations, appointments, results, conditions, family, locker, share). Use this to answer questions about what is already saved — Whoop, Apple Health, meds, locker sites, results, share codes. Never invent status. This is a read, not an add.",
+      parameters: {
+        type: "object",
+        properties: {
+          tab: {
+            type: "string",
+            enum: [...DOEDTC_PROFILE_READ_TABS],
+            description: "Profile tab to read. Use dashboard for Whoop, Apple Health, name, and email.",
+          },
+        },
+        required: ["tab"],
       },
     },
   },
@@ -462,9 +484,7 @@ function formatSymptomLog(symptoms: DoeDtcSymptomRow[]): string {
     .join("\n");
 }
 
-function formatAssessmentHistory(
-  assessments: Awaited<ReturnType<typeof listDoeDtcAssessments>>,
-): string {
+function formatAssessmentHistory(assessments: DoeDtcAssessmentRow[]): string {
   if (assessments.length === 0) return "No prior assessments.";
   return assessments
     .map((row) => `- ${row.result.summary} (reported: ${row.symptoms_text.slice(0, 120)})`)
@@ -623,6 +643,7 @@ function buildSystemPrompt(params: {
   appointmentLog: string;
   relevantMemories: string;
   familyLog: string;
+  profileOverview: string;
 }): string {
   return `You are Doe, a warm consumer health companion over iMessage.
 
@@ -633,6 +654,9 @@ Profile:
 - Medications: ${params.medications.join(", ") || "None listed"}
 - Conditions: ${params.conditions.join(", ") || "None listed"}
 - Why using Doe: ${params.user.why_doe ?? "Not specified"}
+
+Profile tabs (read with read_profile if you need more detail):
+${params.profileOverview}
 
 Recent conversation:
 ${params.transcript || "No prior messages."}
@@ -657,6 +681,8 @@ What you can do:
 - Add medications (add_medication) and conditions (add_condition) to the profile.
 - Add family members to the Family chart (log_family_member) — never remember_fact for family.
 - Send a Listen link to record and transcribe visits (start_listen).
+- Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
+- If they want to connect Whoop or Apple Health, tell them the current status and send_profile_link so they can tap Connect. Do not treat a status question as an add.
 - Send the profile / dashboard link (send_profile_link).
 - Look up health info on approved sites via start_browser_task (Mayo, CDC, NIH, MedlinePlus, Wikipedia, Google). Research tasks screenshot the page and send that image in iMessage.
 - Screenshot the current page with browser_snapshot when they ask for a picture, screenshot, or to see the page.
@@ -836,27 +862,23 @@ export async function runDoeDtcAgentTurn(params: {
   inboundText: string;
   inboundMessageId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
-  const [profile, messageHistory, symptoms, assessments, appointments, familyMembers, relevantMemoryRows] =
-    await Promise.all([
-    getDoeDtcProfileLists(params.user.id),
+  const [snapshot, messageHistory, relevantMemoryRows] = await Promise.all([
+    getDoeDtcProfileSnapshot(params.user.id),
     listDoeDtcMessages(params.user.id, 40),
-    listDoeDtcSymptoms(params.user.id, 10),
-    listDoeDtcAssessments(params.user.id, 3),
-    listDoeDtcAppointments(params.user.id, 8),
-    listDoeDtcFamilyMembers(params.user.id, 12),
     searchDoeDtcMem0Memories({ userId: params.user.id, query: params.inboundText, topK: 5 }),
   ]);
 
   const systemPrompt = buildSystemPrompt({
     user: params.user,
-    medications: profile.medications,
-    conditions: profile.conditions,
+    medications: snapshot.medications,
+    conditions: snapshot.conditions,
     transcript: compactTranscript(messageHistory),
-    symptomLog: formatSymptomLog(symptoms),
-    assessmentHistory: formatAssessmentHistory(assessments),
-    appointmentLog: formatAppointmentLog(appointments),
+    symptomLog: formatSymptomLog(snapshot.symptoms),
+    assessmentHistory: formatAssessmentHistory(snapshot.assessments),
+    appointmentLog: formatAppointmentLog(snapshot.appointments),
     relevantMemories: formatMem0Block(relevantMemoryRows),
-    familyLog: formatFamilyLog(familyMembers),
+    familyLog: formatFamilyLog(snapshot.familyMembers),
+    profileOverview: formatDoeDtcProfileOverview(snapshot),
   });
 
   const messages: ChatMessage[] = [
@@ -980,8 +1002,8 @@ export async function runDoeDtcAgentTurn(params: {
           const symptomsText = String(args.symptoms_text ?? params.inboundText).trim();
           const result = await generateDoeDtcAssessment({
             symptomsText,
-            medications: profile.medications,
-            conditions: profile.conditions,
+            medications: snapshot.medications,
+            conditions: snapshot.conditions,
             whyDoe: params.user.why_doe ?? "",
             focus: typeof args.focus === "string" ? args.focus : undefined,
           });
@@ -1250,6 +1272,14 @@ export async function runDoeDtcAgentTurn(params: {
         } else if (toolCall.function.name === "send_profile_link") {
           profileUrl = doeDtcAppUrl(params.user.care_token);
           output = { ok: true, link_sent_separately: true };
+        } else if (toolCall.function.name === "read_profile") {
+          const tab = String(args.tab ?? "") as DoeDtcProfileTab;
+          if (!DOEDTC_PROFILE_READ_TABS.includes(tab)) {
+            output = { ok: false, error: "Unknown profile tab." };
+          } else {
+            const read = await readDoeDtcProfileTab({ userId: params.user.id, tab });
+            output = { ok: true, tab: read.tab, content: read.content };
+          }
         } else {
           output = { ok: false, error: "Unknown tool" };
         }
