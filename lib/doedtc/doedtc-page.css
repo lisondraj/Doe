@@ -118,6 +118,10 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-shell,
   margin-top: 0.75rem;
 }
 
+.doedtc-body--muted {
+  color: var(--doedtc-muted);
+}
+
 .doedtc-muted {
   color: var(--doedtc-muted);
   font-size: 1.05rem;
@@ -127,7 +131,7 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-shell,
 .doedtc-card {
   margin-top: 1.25rem;
   padding: 1.25rem;
-  border-radius: 1.15rem;
+  border-radius: 0.575rem;
   background: var(--doedtc-raised);
   border: 1px solid var(--doedtc-border);
   min-width: 0;
@@ -169,7 +173,7 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-shell,
   max-width: 100%;
   box-sizing: border-box;
   padding: 0.9rem 1rem;
-  border-radius: 0.875rem;
+  border-radius: 0.4375rem;
   border: 1px solid var(--doedtc-border);
   background: var(--doedtc-sunken);
   color: inherit;
@@ -281,7 +285,7 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-button,
 .doedtc-success {
   margin-top: 1.5rem;
   padding: 1.15rem;
-  border-radius: 1.15rem;
+  border-radius: 0.575rem;
   background: rgba(212, 165, 116, 0.12);
   border: 1px solid rgba(212, 165, 116, 0.28);
 }
@@ -348,7 +352,7 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-button,
 .doedtc-finding {
   margin-top: 0.85rem;
   padding: 1rem 1.1rem;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   background: var(--doedtc-sunken);
   border: 1px solid var(--doedtc-border);
 }
@@ -376,7 +380,7 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-button,
 .doedtc-disclaimer {
   margin-top: 1.35rem;
   padding: 1rem;
-  border-radius: 0.875rem;
+  border-radius: 0.4375rem;
   background: rgba(242, 232, 218, 0.06);
   font-size: 1.02rem;
   line-height: 1.55;
@@ -409,7 +413,7 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-care-grid,
 
 .doedtc-symptom-item {
   padding: 1rem 1.05rem;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   background: var(--doedtc-raised);
   border: 1px solid var(--doedtc-border);
 }
@@ -575,8 +579,73 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-nav--phone .doedtc-w
   display: block;
   width: 100%;
   margin-top: 1rem;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--doedtc-border);
+}
+
+.doedtc-session {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 900px) {
+  .doedtc-session {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+    align-items: start;
+  }
+}
+
+.doedtc-session__live,
+.doedtc-session__tasks {
+  min-width: 0;
+}
+
+.doedtc-session-live {
+  margin-top: 0.75rem;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 0.575rem;
+  border: 1px solid var(--doedtc-border);
+  overflow: hidden;
+  background: var(--doedtc-sunken);
+}
+
+.doedtc-session-live iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.doedtc-session-empty {
+  margin-top: 0.75rem;
+  padding: 2rem 1.25rem;
+  border-radius: 0.575rem;
+  border: 1px dashed var(--doedtc-border);
+  background: var(--doedtc-sunken);
+  text-align: center;
+}
+
+.doedtc-tag {
+  flex-shrink: 0;
+  align-self: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border: 1px solid var(--doedtc-border);
+  color: var(--doedtc-muted);
+}
+
+.doedtc-tag--active {
+  color: var(--doedtc-gold);
+  border-color: color-mix(in srgb, var(--doedtc-gold) 35%, var(--doedtc-border));
+}
+
+.doedtc-tag--waiting {
+  color: var(--doedtc-text);
 }
 
 .doedtc-row-list {
@@ -593,7 +662,7 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-nav--phone .doedtc-w
   justify-content: space-between;
   gap: 0.75rem;
   padding: 1rem 1.05rem;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   background: var(--doedtc-sunken);
   border: 1px solid var(--doedtc-border);
   min-width: 0;
@@ -637,7 +706,7 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-nav--phone .doedtc-w
 .doedtc-toggle {
   flex: 1;
   padding: 0.75rem 0.85rem;
-  border-radius: 0.875rem;
+  border-radius: 0.4375rem;
   border: 1px solid var(--doedtc-border);
   background: transparent;
   color: var(--doedtc-muted);
@@ -660,7 +729,7 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-nav--phone .doedtc-w
 
 .doedtc-integration-card {
   padding: 1rem 1.05rem;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   background: var(--doedtc-sunken);
   border: 1px solid var(--doedtc-border);
 }
@@ -714,7 +783,7 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-nav--phone .doedtc-w
 .doedtc-listen-nested {
   margin-top: 0.75rem;
   padding: 0.85rem 1rem;
-  border-radius: 0.875rem;
+  border-radius: 0.4375rem;
   background: rgba(242, 232, 218, 0.04);
   border: 1px solid var(--doedtc-border);
 }

@@ -301,6 +301,22 @@ export type DoeDtcWorkPreview = {
   expiresAt: string;
 };
 
+export type DoeDtcSessionTaskStatus = "active" | "pending" | "waiting";
+
+export type DoeDtcSessionTask = {
+  id: string;
+  label: string;
+  detail?: string;
+  status: DoeDtcSessionTaskStatus;
+};
+
+export type DoeDtcSessionPageData = {
+  liveViewUrl: string | null;
+  browserIntent: string | null;
+  browserStatus: DoeDtcBrowserJobStatus | null;
+  tasks: DoeDtcSessionTask[];
+};
+
 export type DoeDtcStartPayload = {
   phone: string;
 };

@@ -715,6 +715,35 @@ export async function getActiveDoeDtcBrowserJobId(userId: string): Promise<strin
   return job?.id ?? null;
 }
 
+export async function resolveDoeDtcSessionLiveView(userId: string): Promise<{
+  liveViewUrl: string | null;
+  browserIntent: string | null;
+  browserStatus: DoeDtcBrowserJobRow["status"] | null;
+} | null> {
+  if (!isKernelConfigured()) return null;
+
+  const job = await getOpenDoeDtcBrowserJob(userId);
+  if (!job) {
+    return { liveViewUrl: null, browserIntent: null, browserStatus: null };
+  }
+
+  try {
+    const { kernelBrowser } = await ensureKernelSession(job);
+    return {
+      liveViewUrl: kernelBrowser.browser_live_view_url ?? job.browser_live_view_url ?? null,
+      browserIntent: job.intent,
+      browserStatus: job.status,
+    };
+  } catch (error) {
+    warnKernelFailure("session live view", error);
+    return {
+      liveViewUrl: job.browser_live_view_url,
+      browserIntent: job.intent,
+      browserStatus: job.status,
+    };
+  }
+}
+
 export function isDoeDtcBrowserEnabled(): boolean {
   return isKernelConfigured();
 }

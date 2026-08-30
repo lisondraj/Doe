@@ -35,11 +35,15 @@ function getLinqApiKey(): string {
 function buildLinqMessage(params: {
   parts: LinqMessagePart[];
   idempotencyKey?: string;
+  replyToMessageId?: string;
 }) {
   return {
     preferred_service: "iMessage",
     parts: params.parts,
     ...(params.idempotencyKey ? { idempotency_key: params.idempotencyKey } : {}),
+    ...(params.replyToMessageId
+      ? { reply_to: { message_id: params.replyToMessageId } }
+      : {}),
   };
 }
 
@@ -74,6 +78,7 @@ export async function linqSendToPhone(params: {
   to: string;
   parts: LinqMessagePart[];
   idempotencyKey?: string;
+  replyToMessageId?: string;
 }): Promise<LinqSendMessageResponse> {
   return linqRequest<LinqSendMessageResponse>("/v3/messages", {
     method: "POST",
@@ -88,6 +93,7 @@ export async function linqSendToChat(params: {
   chatId: string;
   parts: LinqMessagePart[];
   idempotencyKey?: string;
+  replyToMessageId?: string;
 }): Promise<{ message?: { id: string } }> {
   return linqRequest<{ message?: { id: string } }>(`/v3/chats/${params.chatId}/messages`, {
     method: "POST",
@@ -102,6 +108,7 @@ export async function linqSendParts(params: {
   chatId?: string;
   parts: LinqMessagePart[];
   idempotencyKey?: string;
+  replyToMessageId?: string;
 }): Promise<LinqSendMessageResponse | { message?: { id: string } }> {
   const lastError = (error: unknown) =>
     error instanceof Error ? error : new Error("Linq send failed.");
@@ -139,12 +146,14 @@ export async function linqSendText(params: {
   chatId?: string;
   text: string;
   idempotencyKey?: string;
+  replyToMessageId?: string;
 }): Promise<LinqSendMessageResponse | { message?: { id: string } }> {
   return linqSendParts({
     to: params.to,
     chatId: params.chatId,
     parts: [{ type: "text", value: params.text }],
     idempotencyKey: params.idempotencyKey,
+    replyToMessageId: params.replyToMessageId,
   });
 }
 
@@ -207,6 +216,24 @@ export async function linqUpdateContactCard(params: {
 export async function linqShareContactCard(chatId: string): Promise<void> {
   await linqRequest<unknown>(`/v3/chats/${chatId}/share_contact_card`, {
     method: "POST",
+  });
+}
+
+export async function linqAddReaction(params: {
+  messageId: string;
+  emoji: string;
+}): Promise<void> {
+  const emoji = params.emoji.trim();
+  if (!emoji) {
+    throw new Error("Reaction emoji is required.");
+  }
+
+  await linqRequest<unknown>(`/v3/messages/${encodeURIComponent(params.messageId)}/reactions`, {
+    method: "POST",
+    body: JSON.stringify({
+      type: "custom",
+      custom_emoji: emoji,
+    }),
   });
 }
 

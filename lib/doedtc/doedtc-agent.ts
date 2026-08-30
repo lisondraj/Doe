@@ -13,7 +13,7 @@ import {
   formatMem0Block,
   searchDoeDtcMem0Memories,
 } from "@/lib/doedtc/doedtc-memory";
-import { doeDtcAppUrl, doeDtcCareUrl, doeDtcListenUrl } from "@/lib/doedtc/doedtc-copy";
+import { doeDtcAppUrl, doeDtcCareUrl, doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
 import {
   formatDoeDtcAppointmentWhen,
   normalizeDoeDtcAppointmentTiming,
@@ -332,6 +332,45 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "show_session",
+      description:
+        "Send the Doe live session page when the patient wants to watch browsing and a browser task is active. Never send the raw Kernel URL.",
+      parameters: {
+        type: "object",
+        properties: {},
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "react_to_message",
+      description:
+        "Rarely react to the patient's latest iMessage with a custom emoji. Use sparingly — not every turn, not for CONFIRM/STOP/Hi Doe. Vary emojis.",
+      parameters: {
+        type: "object",
+        properties: {
+          emoji: { type: "string", description: "Single emoji, e.g. 👍, 🙏, 💪" },
+        },
+        required: ["emoji"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "use_thread_reply",
+      description:
+        "Occasionally reply in-thread to the patient's latest iMessage (iOS reply-to). Use for direct answers or corrections — not every turn, never for link-only replies.",
+      parameters: {
+        type: "object",
+        properties: {},
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "request_commit",
       description: "Prepare an irreversible browser action and ask the patient to reply CONFIRM.",
       parameters: {
@@ -368,6 +407,9 @@ export type DoeDtcAgentTurnResult = {
   workUrl?: string;
   vaultUrl?: string;
   liveViewUrl?: string;
+  sessionUrl?: string;
+  reactionEmoji?: string;
+  replyToInbound?: boolean;
   browserNeedsConfirm?: boolean;
   assessmentRan: boolean;
 };
@@ -500,6 +542,7 @@ function buildReplyFromTurnState(params: {
   workUrl?: string;
   vaultUrl?: string;
   liveViewUrl?: string;
+  sessionUrl?: string;
   listenUrl?: string;
   profileUrl?: string;
 }): string {
@@ -515,6 +558,7 @@ function buildReplyFromTurnState(params: {
   if (params.workUrl) return "Here's what I found — sending a preview.";
   if (params.vaultUrl) return "Sending a secure sign-in link.";
   if (params.liveViewUrl) return "Sending a Live View link so you can sign in.";
+  if (params.sessionUrl) return "Sending a live session link so you can watch.";
   if (params.listenUrl) return "Sending a Listen link to record your visit.";
   if (params.profileUrl) return "Sending your profile link.";
 
@@ -568,7 +612,16 @@ What you can do:
 - Send the profile / dashboard link (send_profile_link).
 - Look up health info on approved sites via start_browser_task (Mayo, CDC, NIH, MedlinePlus, Wikipedia, Google).
 - Help with patient portals via request_vault or request_live_login — never ask for passwords in iMessage.
+- Send the live session page (show_session) when the patient wants to watch browsing and a browser task is active — not for portal sign-in.
 - Store preferences and general context with remember_fact — not for meds, conditions, or family chart entries.
+
+Parallel work:
+- Only one browser task runs at a time, but you may run other tools in the same turn (log symptoms, family, meds, start_listen, etc.) while a browser job is open.
+- Do not wait for browsing to finish before saving profile or appointment data.
+
+iMessage texture:
+- react_to_message: rarely, with varied emojis — skip routine turns, CONFIRM/STOP/Hi Doe, and most replies.
+- use_thread_reply: occasionally when answering a direct question or correction (~1 in 3 eligible turns), never for link-only bubbles.
 
 Core invariant:
 - Do the action with tools first, then describe the result in plain language.
@@ -732,6 +785,7 @@ async function callDoeDtcAgent(messages: ChatMessage[]): Promise<{
 export async function runDoeDtcAgentTurn(params: {
   user: DoeDtcUserRow;
   inboundText: string;
+  inboundMessageId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   const [profile, messageHistory, symptoms, assessments, appointments, familyMembers, relevantMemoryRows] =
     await Promise.all([
@@ -769,6 +823,9 @@ export async function runDoeDtcAgentTurn(params: {
   let workUrl: string | undefined;
   let vaultUrl: string | undefined;
   let liveViewUrl: string | undefined;
+  let sessionUrl: string | undefined;
+  let reactionEmoji: string | undefined;
+  let replyToInbound = false;
   let browserNeedsConfirm = false;
   let activeBrowserJobId: string | null = await getActiveDoeDtcBrowserJobId(params.user.id);
   let assessmentSummary: string | undefined;
@@ -788,6 +845,7 @@ export async function runDoeDtcAgentTurn(params: {
         workUrl,
         vaultUrl,
         liveViewUrl,
+        sessionUrl,
         listenUrl,
         profileUrl,
       });
@@ -809,6 +867,7 @@ export async function runDoeDtcAgentTurn(params: {
           workUrl,
           vaultUrl,
           liveViewUrl,
+          sessionUrl,
           listenUrl,
           profileUrl,
         });
@@ -822,6 +881,9 @@ export async function runDoeDtcAgentTurn(params: {
         workUrl,
         vaultUrl,
         liveViewUrl,
+        sessionUrl,
+        reactionEmoji,
+        replyToInbound,
         browserNeedsConfirm,
         assessmentRan,
       };
@@ -1055,6 +1117,32 @@ export async function runDoeDtcAgentTurn(params: {
             liveViewUrl = live.liveViewUrl;
             output = { ok: true, link_sent_separately: true };
           }
+        } else if (toolCall.function.name === "show_session") {
+          if (!activeBrowserJobId) {
+            output = { ok: false, error: "No active browser task to watch." };
+          } else {
+            sessionUrl = doeDtcSessionUrl(params.user.care_token);
+            output = { ok: true, link_sent_separately: true };
+          }
+        } else if (toolCall.function.name === "react_to_message") {
+          if (!params.inboundMessageId) {
+            output = { ok: false, error: "No inbound message to react to." };
+          } else {
+            const emoji = String(args.emoji ?? "").trim();
+            if (!emoji) {
+              output = { ok: false, error: "Emoji is required." };
+            } else {
+              reactionEmoji = emoji.slice(0, 8);
+              output = { ok: true, queued: true };
+            }
+          }
+        } else if (toolCall.function.name === "use_thread_reply") {
+          if (!params.inboundMessageId) {
+            output = { ok: false, error: "No inbound message to reply to." };
+          } else {
+            replyToInbound = true;
+            output = { ok: true, queued: true };
+          }
         } else if (toolCall.function.name === "request_commit") {
           const jobId = activeBrowserJobId ?? "";
           const result = await requestDoeDtcBrowserCommit({
@@ -1131,6 +1219,7 @@ export async function runDoeDtcAgentTurn(params: {
       workUrl,
       vaultUrl,
       liveViewUrl,
+      sessionUrl,
       listenUrl,
       profileUrl,
     }),
@@ -1140,6 +1229,9 @@ export async function runDoeDtcAgentTurn(params: {
     workUrl,
     vaultUrl,
     liveViewUrl,
+    sessionUrl,
+    reactionEmoji,
+    replyToInbound,
     browserNeedsConfirm,
     assessmentRan,
   };

@@ -21,7 +21,7 @@ import {
 import { addDoeDtcMem0Turn } from "@/lib/doedtc/doedtc-memory";
 import { normalizePhoneToE164 } from "@/lib/doedtc/doedtc-phone";
 import { redactDoeDtcLogText } from "@/lib/doedtc/doedtc-privacy";
-import { linqSendLink, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
+import { linqAddReaction, linqSendLink, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 const OPT_OUT_KEYWORDS = new Set(["STOP", "UNSUBSCRIBE", "OPTOUT", "CANCEL", "END", "QUIT"]);
@@ -31,8 +31,10 @@ type LinqWebhookPayload = {
   type?: string;
   event?: string;
   data?: {
+    id?: string;
     parts?: Array<{ type?: string; value?: string }>;
     message?: {
+      id?: string;
       parts?: Array<{ type?: string; value?: string }>;
       chat_id?: string;
       from?: string;
@@ -43,7 +45,7 @@ type LinqWebhookPayload = {
     chat?: { id?: string };
     chat_id?: string;
   };
-  message?: { parts?: Array<{ type?: string; value?: string }> };
+  message?: { id?: string; parts?: Array<{ type?: string; value?: string }> };
   from?: string;
 };
 
@@ -73,6 +75,14 @@ export function extractInboundPhone(payload: unknown): string | null {
 
   if (typeof raw !== "string") return null;
   return normalizePhoneToE164(raw) ?? raw;
+}
+
+export function extractInboundMessageId(payload: unknown): string | undefined {
+  const body = payload as LinqWebhookPayload;
+  const id = body.data?.message?.id ?? body.data?.id ?? body.message?.id;
+  if (typeof id !== "string") return undefined;
+  const trimmed = id.trim();
+  return trimmed || undefined;
 }
 
 export function extractChatMetadata(payload: unknown): {
@@ -116,18 +126,38 @@ export function isOptOutMessage(text: string): boolean {
   return /^opt[\s-]?out$/i.test(trimmed);
 }
 
+function shouldApplyReaction(params: { text: string; emoji?: string }): boolean {
+  if (!params.emoji?.trim()) return false;
+  if (isConfirmMessage(params.text) || isOptOutMessage(params.text) || isHiDoeMessage(params.text)) {
+    return false;
+  }
+  return Math.random() < 0.35;
+}
+
+function shouldApplyThreadReply(params: {
+  replyToInbound?: boolean;
+  replyText: string;
+  hasSeparateLinks: boolean;
+}): boolean {
+  if (!params.replyToInbound || !params.replyText.trim()) return false;
+  if (params.hasSeparateLinks && !params.replyText.trim()) return false;
+  return Math.random() < 0.65;
+}
+
 async function sendDoeDtcOutbound(params: {
   user: DoeDtcUserRow;
   chatId?: string;
   to?: string;
   text: string;
   idempotencyKey: string;
+  replyToMessageId?: string;
 }): Promise<void> {
   await linqSendText({
     to: params.to ?? params.user.phone,
     chatId: params.chatId ?? params.user.linq_chat_id ?? undefined,
     text: params.text,
     idempotencyKey: params.idempotencyKey,
+    replyToMessageId: params.replyToMessageId,
   });
   await logDoeDtcMessage({
     userId: params.user.id,
@@ -372,6 +402,7 @@ export async function handleSymptomInbound(params: {
   user: DoeDtcUserRow;
   text: string;
   webhookEventId?: string;
+  inboundMessageId?: string;
 }): Promise<void> {
   const chatId = params.user.linq_chat_id ?? undefined;
   const idSuffix = params.webhookEventId ?? Date.now();
@@ -379,9 +410,47 @@ export async function handleSymptomInbound(params: {
   const turn = await runDoeDtcAgentTurn({
     user: params.user,
     inboundText: params.text,
+    inboundMessageId: params.inboundMessageId,
   });
 
+  if (
+    turn.reactionEmoji &&
+    params.inboundMessageId &&
+    shouldApplyReaction({ text: params.text, emoji: turn.reactionEmoji })
+  ) {
+    try {
+      await linqAddReaction({
+        messageId: params.inboundMessageId,
+        emoji: turn.reactionEmoji,
+      });
+    } catch (error) {
+      console.warn(
+        "[doedtc] reaction failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }
+
   const replyText = sanitizeDoeDtcReplyText(turn.replyText);
+  const hasSeparateLinks = Boolean(
+    turn.careUrl ||
+      turn.listenUrl ||
+      turn.profileUrl ||
+      turn.workUrl ||
+      turn.vaultUrl ||
+      turn.liveViewUrl ||
+      turn.sessionUrl,
+  );
+  const replyToMessageId =
+    params.inboundMessageId &&
+    shouldApplyThreadReply({
+      replyToInbound: turn.replyToInbound,
+      replyText,
+      hasSeparateLinks,
+    })
+      ? params.inboundMessageId
+      : undefined;
+
   if (replyText) {
     await sendDoeDtcOutbound({
       user: params.user,
@@ -389,6 +458,7 @@ export async function handleSymptomInbound(params: {
       to: params.user.phone,
       text: replyText,
       idempotencyKey: `doedtc-agent-reply-${params.user.id}-${idSuffix}`,
+      replyToMessageId,
     });
   }
 
@@ -494,6 +564,23 @@ export async function handleSymptomInbound(params: {
     });
   }
 
+  if (turn.sessionUrl) {
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.sessionIntro,
+      idempotencyKey: `doedtc-agent-session-intro-${params.user.id}-${idSuffix}`,
+    });
+    await sendDoeDtcLinkOutbound({
+      user: params.user,
+      chatId,
+      to: params.user.phone,
+      url: turn.sessionUrl,
+      idempotencyKey: `doedtc-agent-session-${params.user.id}-${idSuffix}`,
+    });
+  }
+
   if (turn.browserNeedsConfirm) {
     await sendDoeDtcOutbound({
       user: params.user,
@@ -517,6 +604,7 @@ export async function processDoeDtcInboundWebhook(params: {
 }): Promise<void> {
   const phone = extractInboundPhone(params.payload);
   const text = extractInboundText(params.payload);
+  const inboundMessageId = extractInboundMessageId(params.payload);
   if (!phone || !text) return;
 
   const { chatId, fromNumber } = extractChatMetadata(params.payload);
@@ -555,6 +643,7 @@ export async function processDoeDtcInboundWebhook(params: {
     userId: user.id,
     direction: "inbound",
     body: text,
+    linqMessageId: inboundMessageId ?? null,
     webhookEventId: params.webhookEventId ?? null,
   });
 
@@ -573,6 +662,7 @@ export async function processDoeDtcInboundWebhook(params: {
       user,
       text,
       webhookEventId: params.webhookEventId,
+      inboundMessageId,
     });
     return;
   }

@@ -168,6 +168,7 @@ export const DOEDTC_LINQ = {
   workIntro: "Here's what I found in the browser.",
   vaultIntro: "Use this secure page to sign in. Doe never stores your password in iMessage.",
   liveViewIntro: "Open Live View to sign in yourself. Doe will keep the session ready afterward.",
+  sessionIntro: "Watch Doe work live — browser and tasks in one place.",
   browserConfirmPrompt: "Reply CONFIRM to proceed, or STOP to cancel.",
 } as const;
 
@@ -226,6 +227,10 @@ export function doeDtcVaultUrl(vaultToken: string): string {
   return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/vault?t=${encodeURIComponent(vaultToken)}`;
 }
 
+export function doeDtcSessionUrl(careToken: string): string {
+  return `${doeDtcPublicOrigin()}${DOEDTC_PATH}/session?t=${encodeURIComponent(careToken)}`;
+}
+
 export const DOEDTC_WORK = {
   pageTitle: "Browser preview",
   invalidTitle: "Preview unavailable",
@@ -245,6 +250,19 @@ export const DOEDTC_VAULT = {
   successTitle: "Saved",
   successBody: "Doe will try signing in once. Check iMessage for next steps.",
   errorGeneric: "Something went wrong. Please try again.",
+} as const;
+
+export const DOEDTC_SESSION = {
+  pageTitle: "Live session",
+  invalidTitle: "Session unavailable",
+  invalidBody: "This session link isn't valid. Text Doe to get a new one.",
+  emptyTitle: "Nothing running right now",
+  emptyBody: "When Doe is browsing or working on something, you'll see it here live.",
+  liveLabel: "Live browser",
+  tasksLabel: "What Doe is doing",
+  statusActive: "Active",
+  statusPending: "Queued",
+  statusWaiting: "Waiting",
 } as const;
 
 export function doeDtcAppointmentsUrl(token: string): string {
