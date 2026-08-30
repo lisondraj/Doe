@@ -10,10 +10,24 @@ import {
   toUserSafeBrowserError,
 } from "@/lib/doedtc/doedtc-browser";
 import {
+  buildScheduledTextPendingArgs,
+  executeAgentPendingCommit,
+} from "@/lib/doedtc/doedtc-agent-commit";
+import {
   addDoeDtcMem0Fact,
+  addDoeDtcMem0PlaybookNote,
   formatMem0Block,
   searchDoeDtcMem0Memories,
+  searchDoeDtcMem0Playbook,
 } from "@/lib/doedtc/doedtc-memory";
+import {
+  clearAgentPending,
+  formatAgentPendingForPrompt,
+  getAgentPending,
+  parseAffirmation,
+  parseDecline,
+  setAgentPending,
+} from "@/lib/doedtc/doedtc-pending";
 import { doeDtcAppUrl, doeDtcArtifactShareUrl, doeDtcCareUrl, doeDtcFeedbackUrl, doeDtcGuideUrl, doeDtcListenUrl, doeDtcPrepareUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
 import {
   formatDoeDtcAppointmentWhen,
@@ -78,8 +92,11 @@ import {
   resolveScheduledTextRecipient,
 } from "@/lib/doedtc/doedtc-scheduled-db";
 import {
+  agentNowLabel,
+  ensureFutureSendAt,
   formatScheduledSendAtLabel,
   formatScheduledTextForAgent,
+  isPendingOfferText,
   isScheduleOfferText,
   normalizeScheduledTimezone,
   parseScheduledSendAt,
@@ -874,8 +891,12 @@ export const DOEDTC_AGENT_TOOLS = [
         properties: {
           intent: { type: "string", description: "Plain-language reason for the text." },
           body: { type: "string", description: "SMS body to send." },
-          send_at: { type: "string", description: "ISO datetime or phrases like tomorrow at 8am, in 2 hours." },
-          timezone: { type: "string" },
+          send_at: {
+            type: "string",
+            description:
+              "Local wall-clock time in the user's timezone — phrases like tomorrow at 8am, at 8, 8pm, in 2 hours, or naive ISO like 2026-08-30T08:00. Do not append Z for local times.",
+          },
+          timezone: { type: "string", description: "IANA timezone, e.g. America/New_York. Defaults to Eastern." },
           member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
           member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
@@ -1147,8 +1168,7 @@ export type DoeDtcAgentTurnResult = {
   replyToInbound?: boolean;
   browserNeedsConfirm?: boolean;
   assessmentRan: boolean;
-  preserveScheduleOffer?: boolean;
-  preserveGuideSaveOffer?: boolean;
+  preservePendingOffer?: boolean;
 };
 
 const URL_IN_TEXT = /https?:\/\/\S+/gi;
@@ -1213,11 +1233,19 @@ function stripMarkdownFromReply(text: string): string {
 
 export function sanitizeDoeDtcReplyText(
   text: string,
-  options?: { keepCloserRate?: number; preserveScheduleOffer?: boolean; preserveGuideSaveOffer?: boolean },
+  options?: {
+    keepCloserRate?: number;
+    preservePendingOffer?: boolean;
+    /** @deprecated use preservePendingOffer */
+    preserveScheduleOffer?: boolean;
+    /** @deprecated use preservePendingOffer */
+    preserveGuideSaveOffer?: boolean;
+  },
 ): string {
   const withoutMarkdown = stripMarkdownFromReply(text);
   const withoutUrls = withoutMarkdown.replace(URL_IN_TEXT, "");
   const shouldPreserveOffer =
+    (options?.preservePendingOffer && isPendingOfferText(withoutUrls)) ||
     (options?.preserveScheduleOffer && isScheduleOfferText(withoutUrls)) ||
     (options?.preserveGuideSaveOffer && isGuideSaveOfferText(withoutUrls));
   const stripped = shouldPreserveOffer ? withoutUrls : withoutUrls.replace(CLOSER_TAIL, "");
@@ -1290,15 +1318,6 @@ function formatFamilyLog(familyMembers: DoeDtcFamilyMemberRow[]): string {
       return `- ${parts.join(" | ")}`;
     })
     .join("\n");
-}
-
-function todayLabel(): string {
-  return new Date().toLocaleDateString(undefined, {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 }
 
 async function resolveAgentHouseholdSubject(params: {
@@ -1425,21 +1444,18 @@ function buildReplyFromTurnState(params: {
   guideUrl?: string;
   artifactShareUrl?: string;
   browserUserMessage?: string;
-  preserveScheduleOffer?: boolean;
-  preserveGuideSaveOffer?: boolean;
+  preservePendingOffer?: boolean;
 }): string {
   if (params.browserUserMessage?.trim()) {
     return sanitizeDoeDtcReplyText(params.browserUserMessage, {
-      preserveScheduleOffer: params.preserveScheduleOffer,
-      preserveGuideSaveOffer: params.preserveGuideSaveOffer,
+      preservePendingOffer: params.preservePendingOffer,
     });
   }
 
   const trimmed = params.modelContent?.trim();
   if (trimmed) {
     return sanitizeDoeDtcReplyText(trimmed, {
-      preserveScheduleOffer: params.preserveScheduleOffer,
-      preserveGuideSaveOffer: params.preserveGuideSaveOffer,
+      preservePendingOffer: params.preservePendingOffer,
     });
   }
 
@@ -1473,18 +1489,25 @@ function buildSystemPrompt(params: {
   assessmentHistory: string;
   appointmentLog: string;
   relevantMemories: string;
+  playbookNotes: string;
+  pendingBlock: string;
   familyLog: string;
   householdLog: string;
   accountabilityLog: string;
   scheduledLog: string;
   guidesLog: string;
   profileOverview: string;
+  nowLabel: string;
 }): string {
   return `You are Doe, a warm consumer health companion over iMessage.
 
-Today is ${todayLabel()}.
+Now (user local time): ${params.nowLabel}.
+${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
+Playbook (how you've corrected yourself before):
+${params.playbookNotes}
 
 Profile:
+
 - Name: ${params.user.full_name ?? "Unknown"}
 - Medications: ${params.medications.join(", ") || "None listed"}
 - Conditions: ${params.conditions.join(", ") || "None listed"}
@@ -1732,12 +1755,55 @@ export async function runDoeDtcAgentTurn(params: {
   inboundText: string;
   inboundMessageId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
-  const [snapshot, messageHistory, relevantMemoryRows, recentGuides] = await Promise.all([
-    getDoeDtcProfileSnapshot(params.user.id),
-    listDoeDtcMessages(params.user.id, 40),
-    searchDoeDtcMem0Memories({ userId: params.user.id, query: params.inboundText, topK: 5 }),
-    listGuidesForUser(params.user.id),
-  ]);
+  const timezone = normalizeScheduledTimezone(null);
+
+  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, pendingRow, playbookNotes] =
+    await Promise.all([
+      getDoeDtcProfileSnapshot(params.user.id),
+      listDoeDtcMessages(params.user.id, 40),
+      searchDoeDtcMem0Memories({ userId: params.user.id, query: params.inboundText, topK: 5 }),
+      listGuidesForUser(params.user.id),
+      getAgentPending(params.user.id),
+      searchDoeDtcMem0Playbook({ userId: params.user.id, query: params.inboundText, topK: 3 }),
+    ]);
+
+  if (pendingRow && parseDecline(params.inboundText)) {
+    await clearAgentPending(params.user.id);
+    return {
+      replyText: "Okay, I won't.",
+      assessmentRan: false,
+    };
+  }
+
+  let affirmCommitFailedNote: string | null = null;
+  if (pendingRow && parseAffirmation(params.inboundText)) {
+    let commit = await executeAgentPendingCommit({ user: params.user, pending: pendingRow });
+    if (!commit.ok && commit.recoverable) {
+      commit = await executeAgentPendingCommit({
+        user: params.user,
+        pending: pendingRow,
+        allowRollForward: true,
+      });
+    }
+    if (commit.ok) {
+      await clearAgentPending(params.user.id);
+      if (commit.playbookNote) {
+        await addDoeDtcMem0PlaybookNote({ userId: params.user.id, note: commit.playbookNote });
+      }
+      return {
+        replyText: sanitizeDoeDtcReplyText(commit.replyHint),
+        profileUrl: commit.profileUrl,
+        assessmentRan: false,
+      };
+    }
+    affirmCommitFailedNote = `Pending ${pendingRow.commit_tool} failed: ${commit.error}. Fix the stored args and call ${pendingRow.commit_tool} — do not propose again or re-ask the same confirmation.`;
+  }
+
+  const pendingBlock = pendingRow
+    ? `${formatAgentPendingForPrompt(pendingRow)}${affirmCommitFailedNote ? `\n${affirmCommitFailedNote}` : ""}`
+    : "";
+  const playbookBlock =
+    playbookNotes.length > 0 ? playbookNotes.map((note) => `- ${note}`).join("\n") : "None yet.";
 
   const systemPrompt = buildSystemPrompt({
     user: params.user,
@@ -1748,6 +1814,8 @@ export async function runDoeDtcAgentTurn(params: {
     assessmentHistory: formatAssessmentHistory(snapshot.assessments),
     appointmentLog: formatAppointmentLog(snapshot.appointments),
     relevantMemories: formatMem0Block(relevantMemoryRows),
+    playbookNotes: playbookBlock,
+    pendingBlock,
     familyLog: formatFamilyLog(snapshot.familyMembers),
     householdLog: formatHouseholdForAgent({
       household: snapshot.household.household,
@@ -1762,6 +1830,7 @@ export async function runDoeDtcAgentTurn(params: {
         ? "None yet."
         : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
     profileOverview: formatDoeDtcProfileOverview(snapshot),
+    nowLabel: agentNowLabel(timezone),
   });
 
   const messages: ChatMessage[] = [
@@ -1791,10 +1860,11 @@ export async function runDoeDtcAgentTurn(params: {
   let browserExcerpt: string | undefined;
   let browserUserMessage: string | undefined;
   let lastModelContent: string | null = null;
-  let preserveScheduleOffer = false;
-  let preserveGuideSaveOffer = false;
+  let preservePendingOffer = false;
+  let reflectionNoteInjected = false;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
+    const toolErrorsThisRound: string[] = [];
     const { message } = await callDoeDtcAgent(messages);
     lastModelContent = message.content;
 
@@ -1816,8 +1886,7 @@ export async function runDoeDtcAgentTurn(params: {
         prepareUrl,
         guideUrl,
         artifactShareUrl,
-        preserveScheduleOffer,
-        preserveGuideSaveOffer,
+        preservePendingOffer,
       });
 
       const fulfilled = await fulfillClaimedLinks({
@@ -1851,8 +1920,7 @@ export async function runDoeDtcAgentTurn(params: {
           prepareUrl,
           guideUrl,
           artifactShareUrl,
-          preserveScheduleOffer,
-          preserveGuideSaveOffer,
+          preservePendingOffer,
         });
       }
 
@@ -1874,8 +1942,7 @@ export async function runDoeDtcAgentTurn(params: {
         replyToInbound,
         browserNeedsConfirm,
         assessmentRan,
-        preserveScheduleOffer,
-        preserveGuideSaveOffer,
+        preservePendingOffer,
       };
     }
 
@@ -2291,7 +2358,14 @@ export async function runDoeDtcAgentTurn(params: {
             blocks,
           });
           guideUrl = doeDtcGuideUrl(params.user.care_token, { guide: row.id });
-          preserveGuideSaveOffer = true;
+          await setAgentPending({
+            userId: params.user.id,
+            kind: "save_guide",
+            commitTool: "save_guide",
+            args: { guide_id: row.id },
+            summary: `Save guide "${row.title}" to profile`,
+          });
+          preservePendingOffer = true;
           output = {
             ok: true,
             id: row.id,
@@ -2308,6 +2382,7 @@ export async function runDoeDtcAgentTurn(params: {
             titleHint: typeof args.title_hint === "string" ? args.title_hint : undefined,
           });
           profileUrl = doeDtcAppUrl(params.user.care_token, { tab: "guides" });
+          await clearAgentPending(params.user.id);
           output = { ok: true, id: row.id, title: row.title, saved: true };
         } else if (toolCall.function.name === "update_guide") {
           const row = await updateDoeDtcGuide({
@@ -2599,38 +2674,80 @@ export async function runDoeDtcAgentTurn(params: {
           const timezone = normalizeScheduledTimezone(
             typeof args.timezone === "string" ? args.timezone : undefined,
           );
-          const sendAt = parseScheduledSendAt(sendAtRaw);
-          const recipient = await resolveScheduledTextRecipient({
-            creator: params.user,
+          const built = await buildScheduledTextPendingArgs({
+            user: params.user,
+            intent,
+            body,
+            sendAtRaw,
+            timezone,
             memberId: typeof args.member_id === "string" ? args.member_id : null,
             memberName: typeof args.member_name === "string" ? args.member_name : null,
           });
-          preserveScheduleOffer = true;
+          await setAgentPending({
+            userId: params.user.id,
+            kind: "schedule_text",
+            commitTool: "schedule_text",
+            args: built.args,
+            summary: built.summary,
+          });
+          preservePendingOffer = true;
           output = {
             ok: true,
             draft: true,
             intent,
             body,
-            send_at: sendAt.toISOString(),
-            send_at_label: formatScheduledSendAtLabel(sendAt, timezone),
-            recipient: recipient.recipientName,
+            send_at: built.sendAtIso,
+            send_at_label: formatScheduledSendAtLabel(new Date(built.sendAtIso), timezone),
+            recipient: built.recipientName,
             next_step: "Ask if they want you to text them at that time before calling schedule_text.",
           };
         } else if (toolCall.function.name === "schedule_text") {
-          const row = await createScheduledText({
-            creator: params.user,
-            intent: String(args.intent ?? "").trim(),
-            body: String(args.body ?? "").trim(),
-            sendAtRaw: String(args.send_at ?? "").trim(),
-            timezone: typeof args.timezone === "string" ? args.timezone : undefined,
-            memberId: typeof args.member_id === "string" ? args.member_id : null,
-            memberName: typeof args.member_name === "string" ? args.member_name : null,
-          });
+          const timezone = normalizeScheduledTimezone(
+            typeof args.timezone === "string" ? args.timezone : undefined,
+          );
+          const intent = String(args.intent ?? "").trim();
+          const body = String(args.body ?? "").trim();
+          const sendAtRaw = String(args.send_at ?? "").trim();
+          let rolledForward = false;
+          let row;
+          try {
+            row = await createScheduledText({
+              creator: params.user,
+              intent,
+              body,
+              sendAtRaw,
+              timezone,
+              memberId: typeof args.member_id === "string" ? args.member_id : null,
+              memberName: typeof args.member_name === "string" ? args.member_name : null,
+            });
+          } catch {
+            const sendAt = ensureFutureSendAt(
+              parseScheduledSendAt(sendAtRaw, new Date(), timezone),
+              new Date(),
+              timezone,
+            );
+            row = await createScheduledText({
+              creator: params.user,
+              intent,
+              body,
+              sendAtIso: sendAt.toISOString(),
+              timezone,
+              memberId: typeof args.member_id === "string" ? args.member_id : null,
+              memberName: typeof args.member_name === "string" ? args.member_name : null,
+            });
+            rolledForward = true;
+            await addDoeDtcMem0PlaybookNote({
+              userId: params.user.id,
+              note: "When scheduling reminders, roll past clock times forward one local day instead of treating them as already passed.",
+            });
+          }
+          await clearAgentPending(params.user.id);
           output = {
             ok: true,
             scheduled_text_id: row.id,
             send_at: row.send_at,
             recipient_phone: row.recipient_phone,
+            rolled_forward: rolledForward || undefined,
           };
         } else if (toolCall.function.name === "cancel_scheduled_text") {
           const cancelled = await cancelScheduledText({
@@ -2670,10 +2787,29 @@ export async function runDoeDtcAgentTurn(params: {
               ? (args.mechanics as Record<string, unknown>)
               : undefined,
           );
+          const title = String(args.title ?? goal).trim();
+          await setAgentPending({
+            userId: params.user.id,
+            kind: "start_accountability",
+            commitTool: "start_accountability",
+            args: {
+              title,
+              goal,
+              subject_name: subjectName,
+              involve_partner: Boolean(args.involve_partner),
+              partner_name: typeof args.partner_name === "string" ? args.partner_name : undefined,
+              partner_phone: typeof args.partner_phone === "string" ? args.partner_phone : undefined,
+              member_id: typeof args.member_id === "string" ? args.member_id : undefined,
+              member_name: typeof args.member_name === "string" ? args.member_name : undefined,
+              mechanics,
+            },
+            summary: `Start accountability for ${subjectName}: ${goal}`,
+          });
+          preservePendingOffer = true;
           output = {
             ok: true,
             draft: true,
-            title: String(args.title ?? goal).trim(),
+            title,
             goal,
             subject_name: subjectName,
             involve_partner: Boolean(args.involve_partner ?? args.involve_partner),
@@ -2711,6 +2847,7 @@ export async function runDoeDtcAgentTurn(params: {
             involvePartner: Boolean(args.involve_partner ?? args.involve_partner),
           });
           profileUrl = doeDtcAppUrl(params.user.care_token, { tab: "accountability" });
+          await clearAgentPending(params.user.id);
           output = {
             ok: true,
             pact_id: view.pact.id,
@@ -2830,16 +2967,29 @@ export async function runDoeDtcAgentTurn(params: {
           output = { ok: false, error: "Unknown tool" };
         }
       } catch (error) {
+        const message = error instanceof Error ? error.message : "Tool execution failed.";
         output = {
           ok: false,
-          error: error instanceof Error ? error.message : "Tool execution failed.",
+          error: message,
         };
+      }
+
+      if (output.ok === false && typeof output.error === "string") {
+        toolErrorsThisRound.push(`${toolCall.function.name}: ${output.error}`);
       }
 
       messages.push({
         role: "tool",
         tool_call_id: toolCall.id,
         content: JSON.stringify(output),
+      });
+    }
+
+    if (toolErrorsThisRound.length > 0 && !reflectionNoteInjected) {
+      reflectionNoteInjected = true;
+      messages.push({
+        role: "system",
+        content: `Tool error(s): ${toolErrorsThisRound.join("; ")}. Fix the tool args and commit — do not re-ask the same confirmation. Do not tell the user the time already passed unless they asked for a time that cannot work.`,
       });
     }
   }
@@ -2872,11 +3022,10 @@ export async function runDoeDtcAgentTurn(params: {
       listenUrl,
       profileUrl,
       feedbackUrl,
-        prepareUrl,
-        guideUrl,
-        artifactShareUrl,
-        preserveScheduleOffer,
-        preserveGuideSaveOffer,
+      prepareUrl,
+      guideUrl,
+      artifactShareUrl,
+      preservePendingOffer,
     }),
     careUrl: assessmentRan ? careUrl : undefined,
     listenUrl,
@@ -2894,7 +3043,6 @@ export async function runDoeDtcAgentTurn(params: {
     replyToInbound,
     browserNeedsConfirm,
     assessmentRan,
-    preserveScheduleOffer,
-    preserveGuideSaveOffer,
+    preservePendingOffer,
   };
 }

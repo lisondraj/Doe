@@ -516,8 +516,7 @@ export async function handleSymptomInbound(params: {
   }
 
   const replyText = sanitizeDoeDtcReplyText(turn.replyText, {
-    preserveScheduleOffer: turn.preserveScheduleOffer,
-    preserveGuideSaveOffer: turn.preserveGuideSaveOffer,
+    preservePendingOffer: turn.preservePendingOffer,
   });
   const replyToMessageId =
     params.inboundMessageId &&

@@ -38,7 +38,7 @@ test("isGuideSaveOfferText detects save-to-profile offers", () => {
 test("sanitizeDoeDtcReplyText preserves guide save offer when requested", () => {
   const cleaned = sanitizeDoeDtcReplyText("Want me to save this to your profile?", {
     keepCloserRate: 0,
-    preserveGuideSaveOffer: true,
+    preservePendingOffer: true,
   });
   assert.match(cleaned.toLowerCase(), /save.*profile/);
 });

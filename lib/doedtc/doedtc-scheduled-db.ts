@@ -7,6 +7,7 @@ import {
 } from "@/lib/doedtc/doedtc-household";
 import { normalizePhoneToE164 } from "@/lib/doedtc/doedtc-phone";
 import {
+  ensureFutureSendAt,
   normalizeScheduledTimezone,
   parseScheduledSendAt,
 } from "@/lib/doedtc/doedtc-scheduled";
@@ -128,7 +129,8 @@ export async function createScheduledText(params: {
   creator: DoeDtcUserRow;
   intent: string;
   body: string;
-  sendAtRaw: string;
+  sendAtRaw?: string;
+  sendAtIso?: string;
   timezone?: string | null;
   memberId?: string | null;
   memberName?: string | null;
@@ -139,10 +141,13 @@ export async function createScheduledText(params: {
     memberName: params.memberName,
   });
   const timezone = normalizeScheduledTimezone(params.timezone);
-  const sendAt = parseScheduledSendAt(params.sendAtRaw);
-  if (sendAt.getTime() <= Date.now()) {
-    throw new Error("Send time must be in the future.");
-  }
+  const sendAt = params.sendAtIso
+    ? ensureFutureSendAt(new Date(params.sendAtIso), new Date(), timezone)
+    : ensureFutureSendAt(
+        parseScheduledSendAt(params.sendAtRaw ?? "", new Date(), timezone),
+        new Date(),
+        timezone,
+      );
 
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase
