@@ -264,7 +264,7 @@ export function doeDtcPublicOrigin(): string {
 export function doeDtcContactCardImageUrl(): string {
   return (
     process.env.DOEDTC_CONTACT_CARD_IMAGE_URL?.trim() ||
-    `${doeDtcPublicOrigin()}/images/doe-contact-card.png?v=20260830`
+    `${doeDtcPublicOrigin()}/images/doe-contact-card.png?v=20260830b`
   );
 }
 
@@ -276,7 +276,7 @@ export const DOEDTC_LINK_PREVIEW_IMAGE = {
 export function doeDtcLinkPreviewImageUrl(): string {
   return (
     process.env.DOEDTC_LINK_PREVIEW_IMAGE_URL?.trim() ||
-    `${doeDtcPublicOrigin()}/images/doe-link-banner.jpg?v=20260830`
+    `${doeDtcPublicOrigin()}/images/doe-link-banner.png?v=20260830b`
   );
 }
 

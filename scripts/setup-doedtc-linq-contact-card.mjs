@@ -14,7 +14,7 @@ const apiKey = process.env.LINQ_API_KEY;
 const phoneNumber = process.env.DOEDTC_LINQ_PHONE_NUMBER;
 const origin = (process.env.DOEDTC_PUBLIC_ORIGIN ?? "https://doe.care").replace(/\/$/, "");
 const imageUrl =
-  process.env.DOEDTC_CONTACT_CARD_IMAGE_URL?.trim() || `${origin}/images/doe-contact-card.png?v=20260830`;
+  process.env.DOEDTC_CONTACT_CARD_IMAGE_URL?.trim() || `${origin}/images/doe-contact-card.png?v=20260830b`;
 
 if (!apiKey) {
   console.error("Missing LINQ_API_KEY.");
