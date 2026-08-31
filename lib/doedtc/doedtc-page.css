@@ -20,17 +20,17 @@ html[data-doedtc-page] {
   --doedtc-shadow-soft: 0 4px 18px rgba(15, 23, 42, 0.06);
   --doedtc-avatar: #ffb088;
   --doedtc-danger: #ff3b30;
-  background-color: #60a5fa;
+  background-color: #f8f9fa;
   color: #1c1c1e;
 }
 
 html[data-doedtc-page] body {
-  background-color: #60a5fa;
+  background-color: #f8f9fa;
   overscroll-behavior-y: none;
 }
 
 html[data-doedtc-page]:has(.doedtc-root) {
-  background-color: #60a5fa;
+  background-color: #f8f9fa;
 }
 
 .doedtc-root {

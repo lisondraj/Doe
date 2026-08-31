@@ -75,19 +75,18 @@ html[data-about-page] body {
   background-color: var(--doe-page-surface);
 }
 /*
- * /doedtc — iOS paints body on both rubber-bands. Canvas is footer blue;
- * a top-only cream/white image keeps the pull-down bounce matching the sheet.
+ * /doedtc — cream/white html+body for Safari chrome and TOP rubber-band.
+ * Footer blue lives on the page root; a well below the Doe wordmark covers pull-up.
  */
 html[data-doedtc-page] {
   --doe-page-surface: #f8f9fa;
   --doe-page-surface-raised: #ffffff;
   --doe-page-surface-sunken: #f2f2f7;
-  --doedtc-top-overflow: #f8f9fa;
   --proto-page-bg: #f8f9fa;
-  background-color: #60a5fa;
+  background-color: #f8f9fa;
 }
 html[data-doedtc-page] body {
-  background-color: #60a5fa;
+  background-color: #f8f9fa;
   overscroll-behavior-y: none;
 }
 /*

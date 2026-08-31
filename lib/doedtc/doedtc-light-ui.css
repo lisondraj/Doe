@@ -195,10 +195,11 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-profile-layout .doed
 }
 
 /*
- * Split iPhone overflow. iOS paints `body` on BOTH bounces, so:
- *   background-color = footer blue          → BOTTOM rubber-band
- *   background-image (top 120lvh only)      → TOP rubber-band stays cream/white
- * Do not set body to a solid cream/white — that is the white strip under the Doe footer.
+ * Split iPhone overflow without painting html/body two colors:
+ *   html/body = cream (app) or white (landing) → status bar + TOP rubber-band
+ *   .doedtc-root--has-footer = footer blue
+ *   ::after well below the Doe wordmark → pull-up scrolls into blue instead of
+ *     the Safari gutter (which always matches body, i.e. cream/white)
  */
 .doedtc-root--profile,
 .doedtc-root--has-footer,
@@ -208,33 +209,38 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-profile-layout .doed
   box-shadow: 0 100vmax 0 0 #60a5fa;
 }
 
+.doedtc-root--has-footer::after {
+  content: "";
+  display: block;
+  flex-shrink: 0;
+  width: 100%;
+  height: 55lvh;
+  background: #60a5fa;
+  pointer-events: none;
+}
+
 html[data-doedtc-page],
-html[data-doedtc-page]:has(.doedtc-root--has-footer),
-html[data-doedtc-page]:has(.doedtc-root--landing) {
-  --doedtc-top-overflow: #f8f9fa;
+html[data-doedtc-page]:has(.doedtc-root--has-footer) {
+  background-color: #f8f9fa !important;
   --doe-page-surface: #f8f9fa;
   --proto-page-bg: #f8f9fa;
-  background-color: #60a5fa !important;
-  background-image: linear-gradient(var(--doedtc-top-overflow, #f8f9fa), var(--doedtc-top-overflow, #f8f9fa)) !important;
-  background-repeat: no-repeat !important;
-  background-position: top !important;
-  background-size: 100% 120lvh !important;
 }
 
 html[data-doedtc-page]:has(.doedtc-root--landing) {
-  --doedtc-top-overflow: #ffffff;
+  background-color: #ffffff !important;
   --doe-page-surface: #ffffff;
   --proto-page-bg: #ffffff;
 }
 
 html[data-doedtc-page] body,
-html[data-doedtc-page]:has(.doedtc-root--has-footer) body,
+html[data-doedtc-page]:has(.doedtc-root--has-footer) body {
+  background-color: #f8f9fa !important;
+  background-image: none !important;
+}
+
 html[data-doedtc-page]:has(.doedtc-root--landing) body {
-  background-color: #60a5fa !important;
-  background-image: linear-gradient(var(--doedtc-top-overflow, #f8f9fa), var(--doedtc-top-overflow, #f8f9fa)) !important;
-  background-repeat: no-repeat !important;
-  background-position: top !important;
-  background-size: 100% 120lvh !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
 }
 
 .doedtc-shell--brand-footer {
