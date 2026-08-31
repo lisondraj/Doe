@@ -20,7 +20,7 @@ html[data-doedtc-page] {
   --doedtc-shadow-soft: 0 4px 18px rgba(15, 23, 42, 0.06);
   --doedtc-avatar: #ffb088;
   --doedtc-danger: #ff3b30;
-  background-color: #f8f9fa;
+  background-color: #60a5fa;
   color: #1c1c1e;
 }
 
@@ -30,7 +30,7 @@ html[data-doedtc-page] body {
 }
 
 html[data-doedtc-page]:has(.doedtc-root) {
-  background-color: #f8f9fa;
+  background-color: #60a5fa;
 }
 
 .doedtc-root {

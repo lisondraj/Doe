@@ -196,11 +196,10 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-profile-layout .doed
 
 /*
  * Split iPhone overflow — keep these two colors independent:
- *   html/body  = cream (app) or white (landing)  → status bar + TOP rubber-band
- *   .doedtc-root--has-footer = footer blue + downward box-shadow
- *       → punch-out behind the rounded cream sheet + BOTTOM rubber-band
- * Painting body blue turns the top bounce blue. Painting the root cream
- * leaves a white hairline at the footer join and cream bottom overscroll.
+ *   body = cream (app) or white (landing)  → status bar + TOP rubber-band
+ *   html = footer blue                     → BOTTOM rubber-band (Safari canvas)
+ * Painting body blue turns the top bounce blue.
+ * Painting html cream/white turns the bottom bounce white (the overscroll screenshot).
  */
 .doedtc-root--profile,
 .doedtc-root--has-footer,
@@ -211,15 +210,14 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-profile-layout .doed
 }
 
 html[data-doedtc-page],
-html[data-doedtc-page]:has(.doedtc-root--has-footer) {
-  background-color: #f8f9fa !important;
+html[data-doedtc-page]:has(.doedtc-root--has-footer),
+html[data-doedtc-page]:has(.doedtc-root--landing) {
+  background-color: #60a5fa !important;
   --doe-page-surface: #f8f9fa;
   --proto-page-bg: #f8f9fa;
-  overflow-x: clip;
 }
 
 html[data-doedtc-page]:has(.doedtc-root--landing) {
-  background-color: #ffffff !important;
   --doe-page-surface: #ffffff;
   --proto-page-bg: #ffffff;
 }

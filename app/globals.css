@@ -75,16 +75,15 @@ html[data-about-page] body {
   background-color: var(--doe-page-surface);
 }
 /*
- * /doedtc — iPhone consumer pages. Cream/white html+body for Safari chrome,
- * Dynamic Island ears, and TOP rubber-band. Footer blue is painted on the
- * page root + footer box-shadow, never on html/body (iOS reveals body at the top).
+ * /doedtc — iPhone consumer pages. Body stays cream/white for TOP rubber-band
+ * and status bar. html is footer blue so the BOTTOM bounce matches the Doe band.
  */
 html[data-doedtc-page] {
   --doe-page-surface: #f8f9fa;
   --doe-page-surface-raised: #ffffff;
   --doe-page-surface-sunken: #f2f2f7;
   --proto-page-bg: #f8f9fa;
-  background-color: #f8f9fa;
+  background-color: #60a5fa;
 }
 html[data-doedtc-page] body {
   background-color: #f8f9fa;
