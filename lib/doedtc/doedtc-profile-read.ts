@@ -1,11 +1,13 @@
 import { formatDoeDtcAppointmentWhen } from "@/lib/doedtc/doedtc-appointment-timing";
 import { formatArtifactEntryValues } from "@/lib/doedtc/doedtc-artifacts";
 import { getDoeDtcProfileSnapshot } from "@/lib/doedtc/doedtc-db";
-import type {
-  DoeDtcHealthConnectionStatus,
-  DoeDtcHealthProvider,
-  DoeDtcProfileSnapshot,
-  DoeDtcProfileTab,
+import { doeDtcFindPhoneCountry } from "@/lib/doedtc/doedtc-phone-countries";
+import {
+  doeDtcGenderLabel,
+  type DoeDtcHealthConnectionStatus,
+  type DoeDtcHealthProvider,
+  type DoeDtcProfileSnapshot,
+  type DoeDtcProfileTab,
 } from "@/lib/doedtc/doedtc-types";
 
 export const DOEDTC_PROFILE_READ_TABS = [
@@ -56,7 +58,9 @@ function formatDashboardTab(snapshot: DoeDtcProfileSnapshot): string {
   const lines = [
     `Name: ${user.full_name ?? "Unknown"}`,
     `Email: ${user.email ?? "Not listed"}`,
-    `Why Doe: ${user.why_doe ?? "Not specified"}`,
+    `Gender: ${doeDtcGenderLabel(user.gender)}`,
+    `Date of birth: ${user.date_of_birth ?? "Not specified"}`,
+    `Country: ${user.country ? doeDtcFindPhoneCountry(user.country).name : "Not specified"}`,
     `Medical info: ${user.medical_deferred ? "Deferred — they chose to add later." : "On file"}`,
     `Medications: ${snapshot.medications.join(", ") || "None listed"}`,
     `Conditions: ${snapshot.conditions.join(", ") || "None listed"}`,

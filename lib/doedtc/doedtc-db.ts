@@ -36,6 +36,7 @@ import type {
   DoeDtcAppointmentRow,
   DoeDtcFamilyMemberInput,
   DoeDtcFamilyMemberRow,
+  DoeDtcGender,
   DoeDtcHealthConnectionRow,
   DoeDtcHealthProvider,
   DoeDtcHouseholdConsentLevel,
@@ -268,9 +269,11 @@ export async function saveDoeDtcOnboarding(params: {
   token: string;
   fullName: string;
   email: string;
+  gender: DoeDtcGender;
+  country: string;
+  dateOfBirth: string;
   medications: string[];
   conditions: string[];
-  whyDoe: string;
   familyMembers?: DoeDtcFamilyMemberInput[];
   medicalDeferred?: boolean;
 }): Promise<DoeDtcUserRow> {
@@ -286,7 +289,9 @@ export async function saveDoeDtcOnboarding(params: {
     .update({
       full_name: params.fullName,
       email: params.email,
-      why_doe: params.whyDoe,
+      gender: params.gender,
+      country: params.country,
+      date_of_birth: params.dateOfBirth,
       medical_deferred: medicalDeferred,
       status: "pending_confirm",
       onboarding_token: null,
@@ -339,10 +344,13 @@ export async function saveDoeDtcOnboarding(params: {
         row.relationship === member.relationship,
     );
     if (duplicate) {
-      if (member.dateOfBirth?.trim()) {
+      if (member.dateOfBirth?.trim() || member.gender) {
         await supabase
           .from("doedtc_household_members")
-          .update({ date_of_birth: member.dateOfBirth.trim() })
+          .update({
+            date_of_birth: member.dateOfBirth?.trim() || null,
+            gender: member.gender ?? null,
+          })
           .eq("id", duplicate.id);
       }
       continue;
@@ -353,6 +361,7 @@ export async function saveDoeDtcOnboarding(params: {
       relationship: member.relationship,
       phone: member.phone?.trim() || null,
       date_of_birth: member.dateOfBirth?.trim() || null,
+      gender: member.gender ?? null,
       role: "member",
       status: "pending",
     });
@@ -572,7 +581,7 @@ export async function getDoeDtcProfileSnapshot(
   ] = await Promise.all([
     supabase
       .from("doedtc_users")
-      .select("id, full_name, email, phone, why_doe, medical_deferred, care_token")
+      .select("id, full_name, email, phone, why_doe, gender, country, date_of_birth, medical_deferred, care_token")
       .eq("id", userId)
       .single(),
     getDoeDtcProfileLists(userId),
@@ -1089,6 +1098,7 @@ export async function addDoeDtcFamilyMember(params: {
   relationship: DoeDtcFamilyMemberInput["relationship"];
   phone?: string | null;
   dateOfBirth?: string | null;
+  gender?: DoeDtcFamilyMemberInput["gender"];
 }): Promise<DoeDtcFamilyMemberRow> {
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase
@@ -1119,6 +1129,7 @@ export async function addDoeDtcFamilyMember(params: {
           relationship: params.relationship,
           phone: params.phone?.trim() || null,
           date_of_birth: params.dateOfBirth?.trim() || null,
+          gender: params.gender ?? null,
           role: "member",
           status: "pending",
         });
@@ -2007,6 +2018,7 @@ export async function addDoeDtcHouseholdMember(params: {
   relationship: DoeDtcFamilyMemberInput["relationship"];
   phone?: string | null;
   dateOfBirth?: string | null;
+  gender?: DoeDtcFamilyMemberInput["gender"];
 }): Promise<DoeDtcHouseholdMemberRow> {
   const household = await ensureDoeDtcHouseholdForAdmin(params.adminUserId);
   if (!isHouseholdAdmin({ household, viewerUserId: params.adminUserId })) {
@@ -2021,6 +2033,7 @@ export async function addDoeDtcHouseholdMember(params: {
       relationship: params.relationship,
       phone: params.phone?.trim() || null,
       date_of_birth: params.dateOfBirth?.trim() || null,
+      gender: params.gender ?? null,
       role: "member",
       status: "pending",
     })

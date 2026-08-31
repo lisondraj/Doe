@@ -5,6 +5,19 @@ export type DoeDtcUserStatus =
   | "active"
   | "opted_out";
 
+export type DoeDtcGender = "female" | "male" | "nonbinary" | "prefer_not";
+
+export const DOEDTC_GENDERS: ReadonlyArray<{ value: DoeDtcGender; label: string }> = [
+  { value: "female", label: "Female" },
+  { value: "male", label: "Male" },
+  { value: "nonbinary", label: "Non-binary" },
+  { value: "prefer_not", label: "Prefer not to say" },
+];
+
+export function doeDtcGenderLabel(gender: string | null | undefined): string {
+  return DOEDTC_GENDERS.find((option) => option.value === gender)?.label ?? "Not specified";
+}
+
 export type DoeDtcUserRow = {
   id: string;
   created_at: string;
@@ -13,6 +26,9 @@ export type DoeDtcUserRow = {
   full_name: string | null;
   email: string | null;
   why_doe: string | null;
+  gender: DoeDtcGender | null;
+  country: string | null;
+  date_of_birth: string | null;
   status: DoeDtcUserStatus;
   onboarding_token: string | null;
   onboarding_token_expires_at: string | null;
@@ -97,6 +113,7 @@ export type DoeDtcFamilyMemberInput = {
   relationship: DoeDtcFamilyRelationship;
   phone?: string | null;
   dateOfBirth?: string | null;
+  gender?: DoeDtcGender | null;
   sendInvite?: boolean;
 };
 
@@ -121,6 +138,7 @@ export type DoeDtcHouseholdMemberRow = {
   relationship: DoeDtcFamilyRelationship;
   phone: string | null;
   date_of_birth: string | null;
+  gender: DoeDtcGender | null;
   role: DoeDtcHouseholdRole;
   status: DoeDtcHouseholdMemberStatus;
   created_at: string;
@@ -527,7 +545,7 @@ export type DoeDtcWorkflowRow = {
 export type DoeDtcProfileSnapshot = {
   user: Pick<
     DoeDtcUserRow,
-    "id" | "full_name" | "email" | "phone" | "why_doe" | "medical_deferred" | "care_token"
+    "id" | "full_name" | "email" | "phone" | "why_doe" | "gender" | "country" | "date_of_birth" | "medical_deferred" | "care_token"
   >;
   medications: string[];
   conditions: string[];
@@ -619,9 +637,12 @@ export type DoeDtcOnboardPayload = {
   token: string;
   fullName: string;
   email: string;
+  dateOfBirth: string;
+  gender: DoeDtcGender | "";
+  country: string;
   medications: string[];
   conditions: string[];
-  whyDoe: string;
+  whyDoe?: string;
   familyMembers?: DoeDtcFamilyMemberInput[];
   medicalDeferred?: boolean;
 };

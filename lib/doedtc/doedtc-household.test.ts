@@ -34,6 +34,7 @@ function member(overrides: Partial<DoeDtcHouseholdMemberRow>): DoeDtcHouseholdMe
     relationship: "other",
     phone: null,
     date_of_birth: null,
+    gender: null,
     role: "member",
     status: "active",
     created_at: "",

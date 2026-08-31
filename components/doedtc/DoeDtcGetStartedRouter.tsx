@@ -1,10 +1,9 @@
 "use client";
 
 import { DoeDtcGetStartedForm } from "@/components/doedtc/DoeDtcGetStartedForm";
-import { DoeDtcPageHeader } from "@/components/doedtc/DoeDtcPageHeader";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { DoeDtcTopBar } from "@/components/doedtc/DoeDtcTopBar";
-import { DOEDTC_GET_STARTED } from "@/lib/doedtc/doedtc-copy";
+import { DOEDTC_LANDING } from "@/lib/doedtc/doedtc-copy";
 import { dmSans } from "@/lib/home/fonts";
 
 type DoeDtcGetStartedRouterProps = {
@@ -12,6 +11,7 @@ type DoeDtcGetStartedRouterProps = {
   valid: boolean;
   preview?: boolean;
   homeHref?: string;
+  initialStep?: "profile" | "medical";
 };
 
 export function DoeDtcGetStartedRouter({
@@ -19,13 +19,19 @@ export function DoeDtcGetStartedRouter({
   valid,
   preview = false,
   homeHref,
+  initialStep = "profile",
 }: DoeDtcGetStartedRouterProps) {
   return (
     <DoeDtcPageShell>
       <DoeDtcTopBar compact href={homeHref ?? `/doedtc/get-started?t=${encodeURIComponent(token)}`} />
-      <DoeDtcPageHeader title={DOEDTC_GET_STARTED.title} />
-      <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_GET_STARTED.subtitle}</p>
-      <DoeDtcGetStartedForm token={token} valid={valid} preview={preview} />
+      <header className="doedtc-header doedtc-header--landing">
+        <h1 className={`doedtc-headline doedtc-headline--landing ${dmSans.className}`}>
+          <span className="doedtc-headline__line">{DOEDTC_LANDING.headlineLine1}</span>
+          <span className="doedtc-headline__line">{DOEDTC_LANDING.headlineLine2}</span>
+        </h1>
+        <p className={`doedtc-display ${dmSans.className}`}>{DOEDTC_LANDING.subhead}</p>
+      </header>
+      <DoeDtcGetStartedForm token={token} valid={valid} preview={preview} initialStep={initialStep} />
     </DoeDtcPageShell>
   );
 }

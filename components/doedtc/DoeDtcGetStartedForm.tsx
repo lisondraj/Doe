@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
+import { DoeDtcDobMenu } from "@/components/doedtc/DoeDtcDobMenu";
 import { DoeDtcDropdown } from "@/components/doedtc/DoeDtcDropdown";
-import { DoeDtcToggle } from "@/components/doedtc/DoeDtcToggle";
 import { DOEDTC_GET_STARTED } from "@/lib/doedtc/doedtc-copy";
-import type { DoeDtcFamilyRelationship } from "@/lib/doedtc/doedtc-types";
+import { doeDtcFindPhoneCountry, DOEDTC_PHONE_COUNTRIES } from "@/lib/doedtc/doedtc-phone-countries";
+import { doeDtcGenderLabel, DOEDTC_GENDERS, type DoeDtcFamilyRelationship, type DoeDtcGender } from "@/lib/doedtc/doedtc-types";
 
 type TagFieldProps = {
   label: string;
@@ -62,6 +63,57 @@ function TagField({ label, placeholder, values, onChange }: TagFieldProps) {
   );
 }
 
+function NextArrowIcon() {
+  return (
+    <svg width="32" height="32" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path
+        d="M3 8h10M9 4l4 4-4 4"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function EditPencilIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path
+        d="M11.2 2.6a1.15 1.15 0 0 1 1.63 1.62L6.1 10.95 3.5 11.5l.55-2.6 7.15-6.3z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path d="M10.35 3.45l2.2 2.2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+const MONTH_LABELS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+function formatDobLabel(value: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return value || "—";
+  const month = MONTH_LABELS[Number(match[2]) - 1];
+  if (!month) return value;
+  return `${month} ${Number(match[3])}, ${match[1]}`;
+}
+
 const RELATIONSHIP_OPTIONS: Array<{ value: DoeDtcFamilyRelationship; label: string }> = [
   { value: "grandmother", label: "Grandmother" },
   { value: "grandfather", label: "Grandfather" },
@@ -77,32 +129,61 @@ type FamilyDraft = {
   id: string;
   fullName: string;
   relationship: DoeDtcFamilyRelationship;
+  gender: DoeDtcGender | "";
   phone: string;
-  noPhone: boolean;
+  textPhone: boolean | null;
   dateOfBirth: string;
   sendInvite: boolean;
 };
+
+type DoeDtcOnboardStep = "profile" | "medical";
 
 type DoeDtcGetStartedFormProps = {
   token: string;
   valid: boolean;
   preview?: boolean;
+  initialStep?: DoeDtcOnboardStep;
 };
 
-export function DoeDtcGetStartedForm({ token, valid, preview = false }: DoeDtcGetStartedFormProps) {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [whyDoe, setWhyDoe] = useState("");
+export function DoeDtcGetStartedForm({
+  token,
+  valid,
+  preview = false,
+  initialStep = "profile",
+}: DoeDtcGetStartedFormProps) {
+  const previewFilled = preview && initialStep === "medical";
+  const [fullName, setFullName] = useState(previewFilled ? "James Lisondra" : "");
+  const [email, setEmail] = useState(previewFilled ? "james@doe.care" : "");
+  const [dateOfBirth, setDateOfBirth] = useState(previewFilled ? "1994-03-12" : "");
+  const [gender, setGender] = useState<DoeDtcGender | "">(previewFilled ? "male" : "");
+  const [country, setCountry] = useState(previewFilled ? "CA" : "");
   const [medications, setMedications] = useState<string[]>([]);
   const [conditions, setConditions] = useState<string[]>([]);
   const [medicalMode, setMedicalMode] = useState<"now" | "later">("now");
-  const [familyMembers, setFamilyMembers] = useState<FamilyDraft[]>([]);
+  const [familyMembers, setFamilyMembers] = useState<FamilyDraft[]>(
+    previewFilled
+      ? [
+          {
+            id: "preview-simon",
+            fullName: "Simon",
+            relationship: "child",
+            gender: "male",
+            phone: "",
+            textPhone: false,
+            dateOfBirth: "2016-08-30",
+            sendInvite: false,
+          },
+        ]
+      : [],
+  );
+  const [familyOpen, setFamilyOpen] = useState(false);
   const [familyDraft, setFamilyDraft] = useState<FamilyDraft>({
     id: "draft",
     fullName: "",
     relationship: "other",
+    gender: "",
     phone: "",
-    noPhone: false,
+    textPhone: null,
     dateOfBirth: "",
     sendInvite: false,
   });
@@ -110,6 +191,8 @@ export function DoeDtcGetStartedForm({ token, valid, preview = false }: DoeDtcGe
   const [error, setError] = useState("");
   const [messagesHref, setMessagesHref] = useState("");
   const [profileHref, setProfileHref] = useState("");
+  const [step, setStep] = useState<"profile" | "medical">(initialStep);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const disabled = useMemo(() => !valid || status === "loading" || status === "success", [status, valid]);
 
@@ -150,15 +233,17 @@ export function DoeDtcGetStartedForm({ token, valid, preview = false }: DoeDtcGe
         ...familyDraft,
         id: `${Date.now()}-${familyMembers.length}`,
         fullName: name,
-        phone: familyDraft.noPhone ? "" : familyDraft.phone.trim(),
+        phone: familyDraft.textPhone ? familyDraft.phone.trim() : "",
+        sendInvite: Boolean(familyDraft.textPhone && familyDraft.phone.trim()),
       },
     ]);
     setFamilyDraft({
       id: "draft",
       fullName: "",
       relationship: "other",
+      gender: "",
       phone: "",
-      noPhone: false,
+      textPhone: null,
       dateOfBirth: "",
       sendInvite: false,
     });
@@ -166,6 +251,10 @@ export function DoeDtcGetStartedForm({ token, valid, preview = false }: DoeDtcGe
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (step !== "medical") {
+      goNext();
+      return;
+    }
     setStatus("loading");
     setError("");
 
@@ -182,17 +271,19 @@ export function DoeDtcGetStartedForm({ token, valid, preview = false }: DoeDtcGe
           token,
           fullName,
           email,
+          dateOfBirth,
+          gender,
+          country,
           medications: medicalMode === "now" ? medications : [],
           conditions: medicalMode === "now" ? conditions : [],
-          whyDoe,
           medicalDeferred: medicalMode === "later",
           familyMembers: familyMembers.map((member) => ({
             fullName: member.fullName,
             relationship: member.relationship,
-            phone: member.noPhone ? null : member.phone || null,
-            dateOfBirth:
-              member.relationship === "child" && member.dateOfBirth ? member.dateOfBirth : null,
-            sendInvite: Boolean(member.sendInvite && member.phone),
+            gender: member.gender || null,
+            phone: member.textPhone ? member.phone || null : null,
+            dateOfBirth: member.dateOfBirth || null,
+            sendInvite: Boolean(member.textPhone && member.phone),
           })),
         }),
       });
@@ -214,53 +305,104 @@ export function DoeDtcGetStartedForm({ token, valid, preview = false }: DoeDtcGe
     }
   }
 
-  return (
-    <form className="doedtc-card" onSubmit={onSubmit}>
-      <label className="doedtc-label" htmlFor="doedtc-full-name">
-        {DOEDTC_GET_STARTED.fullNameLabel}
-      </label>
-      <input
-        id="doedtc-full-name"
-        className="doedtc-input"
-        value={fullName}
-        onChange={(event) => setFullName(event.target.value)}
-        required
-        disabled={disabled}
-      />
+  function goNext() {
+    if (formRef.current && !formRef.current.checkValidity()) {
+      formRef.current.reportValidity();
+      return;
+    }
+    if (!dateOfBirth) {
+      setError("Select your date of birth.");
+      return;
+    }
+    if (!gender) {
+      setError("Select a gender.");
+      return;
+    }
+    if (!country) {
+      setError("Select a country.");
+      return;
+    }
+    setError("");
+    setStep("medical");
+    window.scrollTo(0, 0);
+  }
 
-      <div style={{ marginTop: "1rem" }}>
-        <label className="doedtc-label" htmlFor="doedtc-email">
-          {DOEDTC_GET_STARTED.emailLabel}
+  function goBack() {
+    setError("");
+    setStep("profile");
+    window.scrollTo(0, 0);
+  }
+
+  return (
+    <form ref={formRef} onSubmit={onSubmit}>
+      {step === "profile" ? (
+        <>
+      <div className="doedtc-card">
+        <label className="doedtc-label" htmlFor="doedtc-full-name">
+          {DOEDTC_GET_STARTED.fullNameLabel}
         </label>
         <input
-          id="doedtc-email"
+          id="doedtc-full-name"
           className="doedtc-input"
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          value={fullName}
+          onChange={(event) => setFullName(event.target.value)}
           required
           disabled={disabled}
         />
+
+        <div style={{ marginTop: "1rem" }}>
+          <label className="doedtc-label" htmlFor="doedtc-email">
+            {DOEDTC_GET_STARTED.emailLabel}
+          </label>
+          <input
+            id="doedtc-email"
+            className="doedtc-input"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+            disabled={disabled}
+          />
+        </div>
+
+        <div style={{ marginTop: "1rem" }}>
+          <DoeDtcDobMenu
+            id="doedtc-dob"
+            label={DOEDTC_GET_STARTED.dobLabel}
+            value={dateOfBirth}
+            placeholder={DOEDTC_GET_STARTED.dobPlaceholder}
+            disabled={disabled}
+            onChange={setDateOfBirth}
+          />
+        </div>
+
+        <div className="doedtc-field-row">
+          <DoeDtcDropdown<DoeDtcGender | "">
+            id="doedtc-gender"
+            variant="onboard"
+            label={DOEDTC_GET_STARTED.genderLabel}
+            value={gender}
+            options={DOEDTC_GENDERS}
+            disabled={disabled}
+            onChange={setGender}
+          />
+          <DoeDtcDropdown
+            id="doedtc-country"
+            variant="onboard"
+            label={DOEDTC_GET_STARTED.countryLabel}
+            value={country}
+            options={DOEDTC_PHONE_COUNTRIES.map((item) => ({ value: item.iso, label: item.name }))}
+            disabled={disabled}
+            onChange={setCountry}
+          />
+        </div>
       </div>
 
-      <div style={{ marginTop: "1.25rem" }}>
-        <label className="doedtc-label" htmlFor="doedtc-why">
-          {DOEDTC_GET_STARTED.whyLabel}
-        </label>
-        <textarea
-          id="doedtc-why"
-          className="doedtc-textarea"
-          value={whyDoe}
-          onChange={(event) => setWhyDoe(event.target.value)}
-          placeholder={DOEDTC_GET_STARTED.whyPlaceholder}
-          required
-          disabled={disabled}
-        />
-      </div>
-
-      <div className="doedtc-section">
+      <div className="doedtc-card">
         <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.familySectionTitle}</h2>
         <p className="doedtc-muted">{DOEDTC_GET_STARTED.familySectionHint}</p>
+        {familyOpen ? (
+          <>
         {familyMembers.length > 0 ? (
           <ul className="doedtc-row-list">
             {familyMembers.map((member) => (
@@ -312,6 +454,7 @@ export function DoeDtcGetStartedForm({ token, valid, preview = false }: DoeDtcGe
         </div>
         <div style={{ marginTop: "0.75rem" }}>
           <DoeDtcDropdown
+            variant="onboard"
             label={DOEDTC_GET_STARTED.familyRelationshipLabel}
             value={familyDraft.relationship}
             options={RELATIONSHIP_OPTIONS}
@@ -323,18 +466,43 @@ export function DoeDtcGetStartedForm({ token, valid, preview = false }: DoeDtcGe
             }
           />
         </div>
-        {familyDraft.relationship === "child" ? (
-          <div style={{ marginTop: "0.75rem" }}>
-            <label className="doedtc-label">{DOEDTC_GET_STARTED.familyDobLabel}</label>
-            <input
-              className="doedtc-input"
-              type="date"
-              value={familyDraft.dateOfBirth}
-              onChange={(event) => setFamilyDraft({ ...familyDraft, dateOfBirth: event.target.value })}
-            />
+        <div style={{ marginTop: "0.75rem" }}>
+          <DoeDtcDropdown<DoeDtcGender | "">
+            variant="onboard"
+            label={DOEDTC_GET_STARTED.genderLabel}
+            value={familyDraft.gender}
+            options={DOEDTC_GENDERS}
+            onChange={(value) => setFamilyDraft({ ...familyDraft, gender: value })}
+          />
+        </div>
+        <div style={{ marginTop: "0.75rem" }}>
+          <DoeDtcDobMenu
+            label={DOEDTC_GET_STARTED.familyDobLabel}
+            value={familyDraft.dateOfBirth}
+            placeholder={DOEDTC_GET_STARTED.familyDobPlaceholder}
+            onChange={(value) => setFamilyDraft({ ...familyDraft, dateOfBirth: value })}
+          />
+        </div>
+        <div style={{ marginTop: "0.75rem" }}>
+          <p className="doedtc-label">{DOEDTC_GET_STARTED.familyPhonePrompt}</p>
+          <div className="doedtc-toggle-row">
+            <button
+              type="button"
+              className={`doedtc-toggle${familyDraft.textPhone === true ? " doedtc-toggle--active" : ""}`}
+              onClick={() => setFamilyDraft({ ...familyDraft, textPhone: true })}
+            >
+              {DOEDTC_GET_STARTED.familyPhoneYes}
+            </button>
+            <button
+              type="button"
+              className={`doedtc-toggle${familyDraft.textPhone === false ? " doedtc-toggle--active" : ""}`}
+              onClick={() => setFamilyDraft({ ...familyDraft, textPhone: false, phone: "" })}
+            >
+              {DOEDTC_GET_STARTED.familyPhoneNo}
+            </button>
           </div>
-        ) : null}
-        {!familyDraft.noPhone ? (
+        </div>
+        {familyDraft.textPhone ? (
           <div style={{ marginTop: "0.75rem" }}>
             <label className="doedtc-label">{DOEDTC_GET_STARTED.familyPhoneLabel}</label>
             <input
@@ -344,67 +512,138 @@ export function DoeDtcGetStartedForm({ token, valid, preview = false }: DoeDtcGe
             />
           </div>
         ) : null}
-        <DoeDtcToggle
-          className="doedtc-form-toggle"
-          label={DOEDTC_GET_STARTED.familyNoPhoneLabel}
-          checked={familyDraft.noPhone}
-          onChange={(checked) => setFamilyDraft({ ...familyDraft, noPhone: checked })}
-        />
         <button
           className="doedtc-button doedtc-button--secondary"
           type="button"
           onClick={addFamilyMember}
-          disabled={!familyDraft.fullName.trim()}
+          disabled={!familyDraft.fullName.trim() || (familyDraft.textPhone === true && !familyDraft.phone.trim())}
         >
           {DOEDTC_GET_STARTED.familyAddLabel}
         </button>
-      </div>
-
-      <div className="doedtc-section">
-        <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.medicalSectionTitle}</h2>
-        <div className="doedtc-toggle-row">
-          <button
-            type="button"
-            className={`doedtc-toggle${medicalMode === "now" ? " doedtc-toggle--active" : ""}`}
-            onClick={() => setMedicalMode("now")}
-          >
-            {DOEDTC_GET_STARTED.medicalNowLabel}
-          </button>
-          <button
-            type="button"
-            className={`doedtc-toggle${medicalMode === "later" ? " doedtc-toggle--active" : ""}`}
-            onClick={() => setMedicalMode("later")}
-          >
-            {DOEDTC_GET_STARTED.medicalLaterLabel}
-          </button>
-        </div>
-        {medicalMode === "later" ? (
-          <p className="doedtc-muted" style={{ marginTop: "0.75rem" }}>
-            {DOEDTC_GET_STARTED.medicalLaterHint}
-          </p>
-        ) : (
-          <>
-            <TagField
-              label={DOEDTC_GET_STARTED.medicationsLabel}
-              placeholder={DOEDTC_GET_STARTED.medicationsPlaceholder}
-              values={medications}
-              onChange={setMedications}
-            />
-            <TagField
-              label={DOEDTC_GET_STARTED.conditionsLabel}
-              placeholder={DOEDTC_GET_STARTED.conditionsPlaceholder}
-              values={conditions}
-              onChange={setConditions}
-            />
           </>
+        ) : (
+          <button
+            className="doedtc-button"
+            type="button"
+            onClick={() => setFamilyOpen(true)}
+          >
+            {DOEDTC_GET_STARTED.familyBuildLabel}
+          </button>
         )}
       </div>
-
-      {error ? <p className="doedtc-error">{error}</p> : null}
-
-      <button className="doedtc-button" type="submit" disabled={disabled}>
-        {status === "loading" ? DOEDTC_GET_STARTED.submittingLabel : DOEDTC_GET_STARTED.submitLabel}
-      </button>
+          {error ? <p className="doedtc-error">{error}</p> : null}
+          <div className="doedtc-onboard-actions">
+            <button
+              className="doedtc-onboard-next"
+              type="button"
+              aria-label={DOEDTC_GET_STARTED.nextLabel}
+              onClick={goNext}
+              disabled={disabled}
+            >
+              <NextArrowIcon />
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="doedtc-card doedtc-onboard-summary">
+            <div className="doedtc-onboard-summary__body">
+            <div className="doedtc-onboard-summary__row">
+              <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.fullNameLabel}</span>
+              <strong>{fullName.trim() || "—"}</strong>
+            </div>
+            <div className="doedtc-onboard-summary__row">
+              <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.emailLabel}</span>
+              <p>{email.trim() || "—"}</p>
+            </div>
+            <div className="doedtc-onboard-summary__row">
+              <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.dobLabel}</span>
+              <p>{formatDobLabel(dateOfBirth)}</p>
+            </div>
+            <div className="doedtc-onboard-summary__split">
+              <div className="doedtc-onboard-summary__row">
+                <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.genderLabel}</span>
+                <p>{gender ? doeDtcGenderLabel(gender) : "—"}</p>
+              </div>
+              <div className="doedtc-onboard-summary__row">
+                <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.countryLabel}</span>
+                <p>{country ? doeDtcFindPhoneCountry(country).name : "—"}</p>
+              </div>
+            </div>
+            <div className="doedtc-onboard-summary__row">
+              <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.familySectionTitle}</span>
+              {familyMembers.length > 0 ? (
+                <ul className="doedtc-onboard-summary__family">
+                  {familyMembers.map((member) => (
+                    <li key={member.id}>
+                      {member.fullName}
+                      <span>
+                        {RELATIONSHIP_OPTIONS.find((option) => option.value === member.relationship)?.label}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="doedtc-muted">{DOEDTC_GET_STARTED.summaryFamilyEmpty}</p>
+              )}
+            </div>
+            </div>
+            <button
+              type="button"
+              className="doedtc-onboard-summary__edit"
+              aria-label={DOEDTC_GET_STARTED.summaryEditLabel}
+              onClick={goBack}
+            >
+              <EditPencilIcon />
+            </button>
+          </div>
+          <div className="doedtc-card">
+            <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.medicalSectionTitle}</h2>
+            <div className="doedtc-toggle-row">
+              <button
+                type="button"
+                className={`doedtc-toggle${medicalMode === "now" ? " doedtc-toggle--active" : ""}`}
+                onClick={() => setMedicalMode("now")}
+              >
+                {DOEDTC_GET_STARTED.medicalNowLabel}
+              </button>
+              <button
+                type="button"
+                className={`doedtc-toggle${medicalMode === "later" ? " doedtc-toggle--active" : ""}`}
+                onClick={() => setMedicalMode("later")}
+              >
+                {DOEDTC_GET_STARTED.medicalLaterLabel}
+              </button>
+            </div>
+            {medicalMode === "later" ? (
+              <p className="doedtc-muted" style={{ marginTop: "0.75rem" }}>
+                {DOEDTC_GET_STARTED.medicalLaterHint}
+              </p>
+            ) : (
+              <>
+                <TagField
+                  label={DOEDTC_GET_STARTED.medicationsLabel}
+                  placeholder={DOEDTC_GET_STARTED.medicationsPlaceholder}
+                  values={medications}
+                  onChange={setMedications}
+                />
+                <TagField
+                  label={DOEDTC_GET_STARTED.conditionsLabel}
+                  placeholder={DOEDTC_GET_STARTED.conditionsPlaceholder}
+                  values={conditions}
+                  onChange={setConditions}
+                />
+              </>
+            )}
+          </div>
+          {error ? <p className="doedtc-error">{error}</p> : null}
+          <div className="doedtc-onboard-actions">
+            <button className="doedtc-button" type="submit" disabled={disabled}>
+              {status === "loading" ? DOEDTC_GET_STARTED.submittingLabel : DOEDTC_GET_STARTED.submitLabel}
+            </button>
+          </div>
+        </>
+      )}
     </form>
   );
 }

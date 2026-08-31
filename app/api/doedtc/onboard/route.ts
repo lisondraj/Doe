@@ -13,9 +13,11 @@ export async function POST(request: Request) {
       token: String(body.token ?? ""),
       fullName: String(body.fullName ?? ""),
       email: String(body.email ?? ""),
+      gender: (body.gender ?? "") as DoeDtcOnboardPayload["gender"],
+      dateOfBirth: String(body.dateOfBirth ?? ""),
+      country: String(body.country ?? ""),
       medications: Array.isArray(body.medications) ? body.medications : [],
       conditions: Array.isArray(body.conditions) ? body.conditions : [],
-      whyDoe: String(body.whyDoe ?? ""),
       familyMembers: Array.isArray(body.familyMembers) ? body.familyMembers : [],
       medicalDeferred: Boolean(body.medicalDeferred),
     });

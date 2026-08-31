@@ -43,6 +43,8 @@ import {
   normalizeDoeDtcAppointmentTiming,
   type DoeDtcAppointmentTimingPrecision,
 } from "@/lib/doedtc/doedtc-appointment-timing";
+import { doeDtcFindPhoneCountry } from "@/lib/doedtc/doedtc-phone-countries";
+import { doeDtcGenderLabel } from "@/lib/doedtc/doedtc-types";
 import { normalizeArtifactLayout } from "@/lib/doedtc/doedtc-artifacts";
 import {
   addDoeDtcAppointment,
@@ -1619,7 +1621,9 @@ Profile:
 - Name: ${params.user.full_name ?? "Unknown"}
 - Medications: ${params.medications.join(", ") || "None listed"}
 - Conditions: ${params.conditions.join(", ") || "None listed"}
-- Why using Doe: ${params.user.why_doe ?? "Not specified"}
+- Gender: ${doeDtcGenderLabel(params.user.gender)}
+- Date of birth: ${params.user.date_of_birth ?? "Not specified"}
+- Country: ${params.user.country ? doeDtcFindPhoneCountry(params.user.country).name : "Not specified"}
 
 Profile tabs (read with read_profile if you need more detail):
 ${params.profileOverview}
