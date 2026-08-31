@@ -19,6 +19,16 @@ import {
   searchDoeDtcMem0Memories,
   searchDoeDtcMem0Playbook,
 } from "@/lib/doedtc/doedtc-memory";
+import { formatAccountabilityForAgent } from "@/lib/doedtc/doedtc-accountability";
+import { formatHouseholdForAgent } from "@/lib/doedtc/doedtc-household";
+import { formatGuideForAgent } from "@/lib/doedtc/doedtc-guides";
+import {
+  agentNowLabel,
+  formatScheduledTextForAgent,
+  normalizeScheduledTimezone,
+} from "@/lib/doedtc/doedtc-scheduled";
+import { formatWorkflowsForAgent, listActiveWorkflowsForUser } from "@/lib/doedtc/doedtc-workflows";
+import { formatDoeDtcProfileOverview } from "@/lib/doedtc/doedtc-profile-read";
 import { getAgentPending, formatAgentPendingForPrompt } from "@/lib/doedtc/doedtc-pending";
 
 export async function runDoeDtcAgentSelftest(): Promise<Record<string, unknown>> {
