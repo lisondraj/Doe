@@ -722,11 +722,11 @@ export async function executeDoeDtcTool(params: {
         };
       } else {
         state.activeBrowserJobId = started.jobId;
-        if (started.state.workUrl) {
-          state.workUrl = started.state.workUrl;
+        if (started.workUrl) {
+          state.workUrl = started.workUrl;
         }
-        if (started.state.screenshotUrl) {
-          state.screenshotUrl = started.state.screenshotUrl;
+        if (started.screenshotUrl) {
+          state.screenshotUrl = started.screenshotUrl;
         }
         if (started.excerpt) {
           state.browserExcerpt = started.excerpt;
@@ -738,8 +738,8 @@ export async function executeDoeDtcTool(params: {
           url: started.url,
           title: started.title,
           excerpt: started.excerpt,
-          screenshot_sent_separately: Boolean(started.state.screenshotUrl),
-          link_sent_separately: Boolean(started.state.workUrl),
+          screenshot_sent_separately: Boolean(started.screenshotUrl),
+          link_sent_separately: Boolean(started.workUrl),
         };
       }
     } else if (name === "browser_navigate") {
@@ -771,12 +771,12 @@ export async function executeDoeDtcTool(params: {
           jobId,
           caption: typeof args.text === "string" ? args.text : ctx.inboundText,
         });
-        if (shot.state.workUrl) state.workUrl = shot.state.workUrl;
-        if (shot.state.screenshotUrl) state.screenshotUrl = shot.state.screenshotUrl;
+        if (shot.workUrl) state.workUrl = shot.workUrl;
+        if (shot.screenshotUrl) state.screenshotUrl = shot.screenshotUrl;
         if (shot.excerpt) state.browserExcerpt = shot.excerpt;
         output = {
           ...result,
-          screenshot_sent_separately: Boolean(shot.state.screenshotUrl),
+          screenshot_sent_separately: Boolean(shot.screenshotUrl),
         };
       } else if (!result.ok) {
         state.browserUserMessage = toUserSafeBrowserError(result.error ?? "Browser action failed.");
@@ -818,11 +818,11 @@ export async function executeDoeDtcTool(params: {
         state.browserUserMessage = toUserSafeBrowserError(result.error ?? "Computer action failed.");
         output = { ...result, user_message: state.browserUserMessage };
       } else {
-        if (result.state.workUrl) {
-          state.workUrl = result.state.workUrl;
+        if (result.workUrl) {
+          state.workUrl = result.workUrl;
         }
-        if (result.state.screenshotUrl) {
-          state.screenshotUrl = result.state.screenshotUrl;
+        if (result.screenshotUrl) {
+          state.screenshotUrl = result.screenshotUrl;
         }
         if (result.excerpt) {
           state.browserExcerpt = result.excerpt;
@@ -832,8 +832,8 @@ export async function executeDoeDtcTool(params: {
           url: result.url,
           title: result.title,
           excerpt: result.excerpt,
-          screenshot_sent_separately: Boolean(result.state.screenshotUrl),
-          link_sent_separately: Boolean(result.state.workUrl),
+          screenshot_sent_separately: Boolean(result.screenshotUrl),
+          link_sent_separately: Boolean(result.workUrl),
         };
       }
     } else if (name === "browser_snapshot") {
@@ -843,11 +843,11 @@ export async function executeDoeDtcTool(params: {
         jobId,
         caption: typeof args.caption === "string" ? args.caption : undefined,
       });
-      if (result.state.workUrl) {
-        state.workUrl = result.state.workUrl;
+      if (result.workUrl) {
+        state.workUrl = result.workUrl;
       }
-      if (result.state.screenshotUrl) {
-        state.screenshotUrl = result.state.screenshotUrl;
+      if (result.screenshotUrl) {
+        state.screenshotUrl = result.screenshotUrl;
       }
       if (result.excerpt) {
         state.browserExcerpt = result.excerpt;
@@ -857,8 +857,8 @@ export async function executeDoeDtcTool(params: {
         url: result.url,
         title: result.title,
         excerpt: result.excerpt,
-        screenshot_sent_separately: Boolean(result.state.screenshotUrl),
-        link_sent_separately: Boolean(result.state.workUrl),
+        screenshot_sent_separately: Boolean(result.screenshotUrl),
+        link_sent_separately: Boolean(result.workUrl),
       };
     } else if (name === "request_vault") {
       const jobId = state.activeBrowserJobId ?? "";
@@ -870,7 +870,7 @@ export async function executeDoeDtcTool(params: {
       if (!vault.ok) {
         output = vault;
       } else {
-        state.vaultUrl = vault.state.vaultUrl;
+        state.vaultUrl = vault.vaultUrl;
         output = { ok: true, link_sent_separately: true };
       }
     } else if (name === "request_live_login") {
@@ -879,7 +879,7 @@ export async function executeDoeDtcTool(params: {
       if (!live.ok) {
         output = live;
       } else {
-        state.liveViewUrl = live.state.liveViewUrl;
+        state.liveViewUrl = live.liveViewUrl;
         output = { ok: true, link_sent_separately: true };
       }
     } else if (name === "show_session") {
@@ -919,11 +919,11 @@ export async function executeDoeDtcTool(params: {
           url: typeof args.url === "string" ? args.url : undefined,
         },
       });
-      if (result.state.workUrl) {
-        state.workUrl = result.state.workUrl;
+      if (result.workUrl) {
+        state.workUrl = result.workUrl;
       }
-      if (result.state.screenshotUrl) {
-        state.screenshotUrl = result.state.screenshotUrl;
+      if (result.screenshotUrl) {
+        state.screenshotUrl = result.screenshotUrl;
       }
       if (result.excerpt) {
         state.browserExcerpt = result.excerpt;
@@ -935,7 +935,7 @@ export async function executeDoeDtcTool(params: {
         title: result.title,
         excerpt: result.excerpt,
         awaiting_confirm: true,
-        link_sent_separately: Boolean(result.state.workUrl),
+        link_sent_separately: Boolean(result.workUrl),
       };
     } else if (name === "start_listen") {
       const appointmentId =

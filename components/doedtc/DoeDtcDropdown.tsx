@@ -12,7 +12,7 @@ type DoeDtcDropdownProps<T extends string = string> = {
   id?: string;
   label?: string;
   value: T;
-  options: DoeDtcDropdownOption<T>[];
+  options: readonly DoeDtcDropdownOption<T>[];
   disabled?: boolean;
   placeholder?: string;
   onChange: (value: T) => void;

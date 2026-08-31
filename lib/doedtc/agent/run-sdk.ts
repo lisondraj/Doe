@@ -72,7 +72,7 @@ function formatAssessmentHistory(
   if (assessments.length === 0) return "None yet.";
   return assessments
     .slice(0, 5)
-    .map((row) => `- ${row.summary ?? row.symptoms_text}`)
+    .map((row) => `- ${row.result.summary} (reported: ${row.symptoms_text.slice(0, 120)})`)
     .join("\n");
 }
 
@@ -158,10 +158,10 @@ async function loadRunContext(params: {
     snapshot,
     turnState: createInitialToolTurnState(activeBrowserJobId),
     instructions,
-  } as DoeDtcRunContext & { instructions: string };
+  };
 }
 
-function createDoeManagerAgent(ctx: DoeDtcRunContext & { instructions: string }) {
+function createDoeManagerAgent(ctx: DoeDtcRunContext): Agent<DoeDtcRunContext, typeof DoeReplySchema> {
   return createDoeSpecialistAgents(ctx).manager;
 }
 

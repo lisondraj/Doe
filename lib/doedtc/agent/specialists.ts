@@ -73,7 +73,7 @@ function subsetTools(ctx: DoeDtcRunContext, allowed: Set<string>) {
   return createDoeDtcSdkTools(ctx).filter((entry) => allowed.has(entry.name));
 }
 
-export function createDoeSpecialistAgents(ctx: DoeDtcRunContext & { instructions: string }) {
+export function createDoeSpecialistAgents(ctx: DoeDtcRunContext) {
   const healthRecord = new Agent<DoeDtcRunContext>({
     name: "healthRecord",
     instructions: "Handle symptoms, assessments, meds, conditions, appointments, family, and profile reads.",
@@ -98,7 +98,7 @@ export function createDoeSpecialistAgents(ctx: DoeDtcRunContext & { instructions
     tools: subsetTools(ctx, BROWSER_TOOLS),
   });
 
-  const manager = new Agent<DoeDtcRunContext>({
+  const manager = new Agent<DoeDtcRunContext, typeof DoeReplySchema>({
     name: "Doe",
     instructions: ctx.instructions,
     model: resolveDoeDtcAgentModel(),

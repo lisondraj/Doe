@@ -45,8 +45,8 @@ export async function sendDoeDtcFileOutbound(params: {
   await linqSendMedia({
     chatId: params.chatId,
     to: params.to,
-    mediaUrl: params.blobUrl,
-    text: params.caption,
+    url: params.blobUrl,
+    caption: params.caption,
     idempotencyKey: params.idempotencyKey,
   });
   await logDoeDtcMessage({

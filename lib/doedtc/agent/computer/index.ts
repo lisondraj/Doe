@@ -9,7 +9,6 @@ import {
 } from "@/lib/doedtc/doedtc-browser";
 import { getDoeDtcFile } from "@/lib/doedtc/doedtc-files-db";
 import { sendDoeDtcFileOutbound } from "@/lib/doedtc/doedtc-files";
-import type { DoeDtcRunContext } from "@/lib/doedtc/agent/types";
 
 export type ComputerRunContext = {
   taskText: string;
@@ -27,6 +26,15 @@ function execNeedsApproval(command: string): boolean {
   return !ALLOWED_EXEC_PREFIXES.some((prefix) => trimmed.startsWith(prefix));
 }
 
+function requireComputerContext(
+  runContext: { context?: ComputerRunContext } | undefined,
+): ComputerRunContext {
+  if (!runContext?.context) {
+    throw new Error("Computer context is missing.");
+  }
+  return runContext.context;
+}
+
 export function createComputerSpecialistAgent(ctx: ComputerRunContext) {
   return new Agent<ComputerRunContext>({
     name: "computer",
@@ -40,7 +48,8 @@ Never access health profile data. Use low-level primitives only.`,
         description: "Read a file from the VM.",
         parameters: z.object({ path: z.string() }),
         execute: async ({ path }, runContext) => {
-          const buffer = await readFileFromSession({ sessionId: runContext.context.sessionId, path });
+          const context = requireComputerContext(runContext);
+          const buffer = await readFileFromSession({ sessionId: context.sessionId, path });
           return { ok: true, bytes: buffer.byteLength, preview: buffer.toString("utf8").slice(0, 500) };
         },
       }),
@@ -49,11 +58,12 @@ Never access health profile data. Use low-level primitives only.`,
         description: "Write a stored doedtc file onto the VM.",
         parameters: z.object({ path: z.string(), file_id: z.string() }),
         execute: async ({ path, file_id }, runContext) => {
-          const file = await getDoeDtcFile({ userId: runContext.context.userId, fileId: file_id });
+          const context = requireComputerContext(runContext);
+          const file = await getDoeDtcFile({ userId: context.userId, fileId: file_id });
           if (!file) return { ok: false, error: "File not found." };
           const response = await fetch(file.blob_url);
           const buffer = Buffer.from(await response.arrayBuffer());
-          await writeFileToSession({ sessionId: runContext.context.sessionId, path, content: buffer });
+          await writeFileToSession({ sessionId: context.sessionId, path, content: buffer });
           return { ok: true, path, bytes: buffer.byteLength };
         },
       }),
@@ -62,7 +72,8 @@ Never access health profile data. Use low-level primitives only.`,
         description: "List files in a VM directory.",
         parameters: z.object({ path: z.string().default("/home/kernel") }),
         execute: async ({ path }, runContext) => {
-          const files = await listSessionFiles(runContext.context.sessionId, path);
+          const context = requireComputerContext(runContext);
+          const files = await listSessionFiles(context.sessionId, path);
           return { ok: true, files };
         },
       }),
@@ -70,9 +81,10 @@ Never access health profile data. Use low-level primitives only.`,
         name: "computer_exec",
         description: "Run a shell command on the VM.",
         parameters: z.object({ command: z.string() }),
-        needsApproval: ({ command }) => execNeedsApproval(command),
+        needsApproval: async (_runContext, input) => execNeedsApproval(String(input.command ?? "")),
         execute: async ({ command }, runContext) => {
-          const result = await execInSession({ sessionId: runContext.context.sessionId, command });
+          const context = requireComputerContext(runContext);
+          const result = await execInSession({ sessionId: context.sessionId, command });
           return { ok: result.exitCode === 0, ...result };
         },
       }),
@@ -81,12 +93,13 @@ Never access health profile data. Use low-level primitives only.`,
         description: "Send a generated file back to the patient via iMessage.",
         parameters: z.object({ file_id: z.string(), caption: z.string().nullable().default(null) }),
         execute: async ({ file_id, caption }, runContext) => {
-          const file = await getDoeDtcFile({ userId: runContext.context.userId, fileId: file_id });
+          const context = requireComputerContext(runContext);
+          const file = await getDoeDtcFile({ userId: context.userId, fileId: file_id });
           if (!file) return { ok: false, error: "File not found." };
           await sendDoeDtcFileOutbound({
-            user: { id: runContext.context.userId, phone: runContext.context.phone } as never,
-            chatId: runContext.context.chatId,
-            to: runContext.context.phone,
+            user: { id: context.userId, phone: context.phone } as never,
+            chatId: context.chatId,
+            to: context.phone,
             blobUrl: file.blob_url,
             caption: caption ?? undefined,
             idempotencyKey: `doedtc-computer-file-${file_id}-${Date.now()}`,

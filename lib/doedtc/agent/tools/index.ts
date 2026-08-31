@@ -34,6 +34,13 @@ export function doeDtcToolNames(): readonly string[] {
   return DOE_DTC_TOOL_NAMES;
 }
 
+function requireRunContext(runContext: { context: unknown } | undefined): DoeDtcRunContext {
+  if (!runContext?.context) {
+    throw new Error("Doe agent run context is missing.");
+  }
+  return runContext.context as DoeDtcRunContext;
+}
+
 export function createDoeDtcSdkTools(ctx: DoeDtcRunContext) {
   return DOEDTC_AGENT_TOOLS.filter(
     (entry) => !STRUCTURED_OUTPUT_ONLY.has(entry.function.name),
@@ -45,7 +52,7 @@ export function createDoeDtcSdkTools(ctx: DoeDtcRunContext) {
       parameters: looseParamsSchema(),
       needsApproval: APPROVAL_TOOLS.has(name),
       isEnabled: ({ runContext }) => {
-        const runtimeCtx = runContext.context as DoeDtcRunContext;
+        const runtimeCtx = requireRunContext(runContext);
         if (BROWSER_TOOLS.has(name)) {
           return Boolean(runtimeCtx.turnState.activeBrowserJobId);
         }
@@ -55,7 +62,7 @@ export function createDoeDtcSdkTools(ctx: DoeDtcRunContext) {
         return true;
       },
       execute: async (args, runContext) => {
-        const runtimeCtx = runContext.context as DoeDtcRunContext;
+        const runtimeCtx = requireRunContext(runContext);
         return executeDoeDtcTool({
           name,
           args: args as Record<string, unknown>,

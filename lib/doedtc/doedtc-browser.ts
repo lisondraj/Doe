@@ -1085,9 +1085,8 @@ export async function readFileFromSession(params: {
 
 export async function listSessionFiles(sessionId: string, path = "/home/kernel"): Promise<string[]> {
   const kernel = getKernel();
-  const result = await kernel.browsers.fs.listFiles(sessionId, { path });
-  const json = (await result.json()) as { entries?: Array<{ path?: string; name?: string }> };
-  return (json.entries ?? []).map((entry) => entry.path ?? entry.name ?? "").filter(Boolean);
+  const entries = await kernel.browsers.fs.listFiles(sessionId, { path });
+  return entries.map((entry) => entry.path ?? entry.name).filter(Boolean);
 }
 
 export async function execInSession(params: {
@@ -1096,10 +1095,9 @@ export async function execInSession(params: {
 }): Promise<{ stdout: string; stderr: string; exitCode: number }> {
   const kernel = getKernel();
   const result = await kernel.browsers.process.exec(params.sessionId, { command: params.command });
-  const json = (await result.json()) as { stdout?: string; stderr?: string; exit_code?: number };
   return {
-    stdout: json.stdout ?? "",
-    stderr: json.stderr ?? "",
-    exitCode: json.exit_code ?? 1,
+    stdout: result.stdout_b64 ? Buffer.from(result.stdout_b64, "base64").toString("utf8") : "",
+    stderr: result.stderr_b64 ? Buffer.from(result.stderr_b64, "base64").toString("utf8") : "",
+    exitCode: result.exit_code ?? 1,
   };
 }

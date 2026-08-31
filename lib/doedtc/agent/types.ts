@@ -19,6 +19,7 @@ export type DoeDtcRunContext = {
   inboundMessageId?: string;
   snapshot: DoeDtcProfileSnapshot;
   turnState: DoeDtcToolTurnState;
+  instructions: string;
 };
 
 export const DOE_DTC_TURN_RESULT_FIELDS = [
