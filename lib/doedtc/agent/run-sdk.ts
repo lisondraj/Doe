@@ -36,10 +36,15 @@ import {
 } from "@/lib/doedtc/doedtc-reminder-intent";
 import {
   clearAgentPending,
+  extractRunStateSerialized,
   formatAgentPendingForPrompt,
   getAgentPending,
+  isCommitPending,
+  isRunStatePending,
   parseAffirmation,
   parseDecline,
+  setAgentPending,
+  type DoeDtcAgentPendingRow,
 } from "@/lib/doedtc/doedtc-pending";
 import { sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
 import { createDoeDtcAgentTurnId } from "@/lib/doedtc/doedtc-agent-audit";
@@ -118,14 +123,16 @@ async function loadRunContext(params: {
   inboundMessageId?: string;
   turnId?: string;
   reminderDirective?: string | null;
+  pendingRow?: DoeDtcAgentPendingRow | null;
 }): Promise<DoeDtcRunContext> {
-  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, pendingRow, playbookNotes, activeBrowserJobId] =
+  const pendingRow = params.pendingRow ?? (await getAgentPending(params.user.id));
+
+  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
       listDoeDtcMessages(params.user.id, 40),
       searchDoeDtcMem0Memories({ userId: params.user.id, query: params.inboundText, topK: 5 }),
       listGuidesForUser(params.user.id),
-      getAgentPending(params.user.id),
       searchDoeDtcMem0Playbook({ userId: params.user.id, query: params.inboundText, topK: 3 }),
       getActiveDoeDtcBrowserJobId(params.user.id),
     ]);
@@ -183,15 +190,201 @@ function createDoeManagerAgent(ctx: DoeDtcRunContext): Agent<DoeDtcRunContext, t
   return createDoeSpecialistAgents(ctx).manager;
 }
 
+async function commitAwaitingBodyPending(params: {
+  user: DoeDtcUserRow;
+  pendingRow: DoeDtcAgentPendingRow;
+  body: string;
+}): Promise<DoeDtcAgentTurnResult | null> {
+  let commit = await executeAgentPendingCommit({
+    user: params.user,
+    pending: {
+      ...params.pendingRow,
+      args: buildAwaitingBodyCommitArgs(params.pendingRow.args, params.body),
+    },
+  });
+  if (!commit.ok && commit.recoverable) {
+    commit = await executeAgentPendingCommit({
+      user: params.user,
+      pending: {
+        ...params.pendingRow,
+        args: buildAwaitingBodyCommitArgs(params.pendingRow.args, params.body),
+      },
+      allowRollForward: true,
+    });
+  }
+  if (commit.ok) {
+    await clearAgentPending(params.user.id);
+    if (commit.playbookNote) {
+      await addDoeDtcMem0PlaybookNote({ userId: params.user.id, note: commit.playbookNote });
+    }
+    return {
+      replyText: sanitizeDoeDtcReplyText(commit.replyHint),
+      profileUrl: commit.profileUrl,
+      assessmentRan: false,
+    };
+  }
+
+  if (!commit.recoverable) {
+    await clearAgentPending(params.user.id);
+  }
+  return null;
+}
+
+async function commitStoredPending(params: {
+  user: DoeDtcUserRow;
+  pendingRow: DoeDtcAgentPendingRow;
+}): Promise<DoeDtcAgentTurnResult | null> {
+  let commit = await executeAgentPendingCommit({ user: params.user, pending: params.pendingRow });
+  if (!commit.ok && commit.recoverable) {
+    commit = await executeAgentPendingCommit({
+      user: params.user,
+      pending: params.pendingRow,
+      allowRollForward: true,
+    });
+  }
+  if (commit.ok) {
+    await clearAgentPending(params.user.id);
+    if (commit.playbookNote) {
+      await addDoeDtcMem0PlaybookNote({ userId: params.user.id, note: commit.playbookNote });
+    }
+    return {
+      replyText: sanitizeDoeDtcReplyText(commit.replyHint),
+      profileUrl: commit.profileUrl,
+      assessmentRan: false,
+    };
+  }
+
+  if (!commit.recoverable) {
+    await clearAgentPending(params.user.id);
+  }
+  return null;
+}
+
+async function resumeRunStatePending(params: {
+  user: DoeDtcUserRow;
+  inboundText: string;
+  inboundMessageId?: string;
+  turnId?: string;
+  pendingRow: DoeDtcAgentPendingRow;
+  approve: boolean;
+}): Promise<DoeDtcAgentTurnResult> {
+  const serialized = extractRunStateSerialized(params.pendingRow.args);
+  if (!serialized) {
+    await clearAgentPending(params.user.id);
+    return { replyText: DEGENERATE_TURN_REPLY, assessmentRan: false, degenerate: true };
+  }
+
+  const loaded = await loadRunContext({
+    user: params.user,
+    inboundText: params.inboundText,
+    inboundMessageId: params.inboundMessageId,
+    turnId: params.turnId,
+    pendingRow: params.pendingRow,
+  });
+  const agent = createDoeManagerAgent(loaded);
+  const runState = await RunState.fromString(agent, serialized);
+  const interruption = runState.getInterruptions()[0];
+
+  if (interruption) {
+    if (params.approve) {
+      runState.approve(interruption);
+    } else {
+      runState.reject(interruption, { message: "User declined." });
+    }
+  }
+
+  const result = await run(agent, runState, { context: loaded, maxTurns: 12 });
+
+  if (result.interruptions?.length) {
+    const nextInterruption = result.interruptions[0];
+    await setAgentPending({
+      userId: params.user.id,
+      kind: "schedule_text",
+      commitTool: nextInterruption?.name ?? "approval",
+      args: { runState: result.state.toString() },
+      summary: nextInterruption?.name
+        ? `Waiting for approval to run ${nextInterruption.name}.`
+        : "Waiting for your confirmation.",
+    });
+    loaded.turnState.preservePendingOffer = true;
+  } else {
+    await clearAgentPending(params.user.id);
+  }
+
+  return finalizeSdkRun({
+    result,
+    loaded,
+    inboundText: params.inboundText,
+    inboundMessageId: params.inboundMessageId,
+  });
+}
+
+async function finalizeSdkRun(params: {
+  result: {
+    finalOutput?: unknown;
+    interruptions?: Array<{ name?: string }>;
+  };
+  loaded: DoeDtcRunContext;
+  inboundText: string;
+  inboundMessageId?: string;
+}): Promise<DoeDtcAgentTurnResult> {
+  const safety = await applyReminderSafetyNet({
+    user: params.loaded.user,
+    inboundText: params.inboundText,
+    ctx: {
+      user: params.loaded.user,
+      inboundText: params.inboundText,
+      inboundMessageId: params.inboundMessageId,
+      snapshot: params.loaded.snapshot,
+    },
+    state: params.loaded.turnState,
+    toolsExecuted: params.loaded.turnState.toolsExecuted,
+  });
+
+  const finalOutput = params.result.finalOutput as DoeReply | undefined;
+  let rawReply = finalOutput?.reply?.trim() || "";
+  if (safety.applied && safety.replyHint) {
+    rawReply = safety.replyHint;
+  }
+
+  const degenerate = isDegenerateTurn({
+    replyText: rawReply,
+    toolsExecuted: params.loaded.turnState.toolsExecuted,
+    state: params.loaded.turnState,
+  });
+
+  const replyText = sanitizeDoeDtcReplyText(
+    degenerate ? DEGENERATE_TURN_REPLY : rawReply || DEGENERATE_TURN_REPLY,
+    { preservePendingOffer: params.loaded.turnState.preservePendingOffer },
+  );
+
+  if (finalOutput && !degenerate) {
+    await resolveDoeReplyDeliverables({ reply: finalOutput, ctx: params.loaded });
+  }
+
+  const turnResult = assembleTurnResult({
+    replyText,
+    turnState: params.loaded.turnState,
+  });
+  return { ...turnResult, degenerate: degenerate || !rawReply };
+}
+
 export async function runDoeDtcAgentTurnSdk(params: {
   user: DoeDtcUserRow;
   inboundText: string;
   inboundMessageId?: string;
   turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
-  const pendingRow = await getAgentPending(params.user.id);
+  let pendingRow = await getAgentPending(params.user.id);
 
   if (pendingRow && parseDecline(params.inboundText)) {
+    if (isRunStatePending(pendingRow.args)) {
+      return resumeRunStatePending({
+        ...params,
+        pendingRow,
+        approve: false,
+      });
+    }
     await clearAgentPending(params.user.id);
     return { replyText: "Okay, I won't.", assessmentRan: false };
   }
@@ -199,34 +392,12 @@ export async function runDoeDtcAgentTurnSdk(params: {
   if (pendingRow && isAwaitingBodyPending(pendingRow.args) && !parseDecline(params.inboundText)) {
     const body = params.inboundText.trim();
     if (body) {
-      let commit = await executeAgentPendingCommit({
+      const committed = await commitAwaitingBodyPending({
         user: params.user,
-        pending: {
-          ...pendingRow,
-          args: buildAwaitingBodyCommitArgs(pendingRow.args, body),
-        },
+        pendingRow,
+        body,
       });
-      if (!commit.ok && commit.recoverable) {
-        commit = await executeAgentPendingCommit({
-          user: params.user,
-          pending: {
-            ...pendingRow,
-            args: buildAwaitingBodyCommitArgs(pendingRow.args, body),
-          },
-          allowRollForward: true,
-        });
-      }
-      if (commit.ok) {
-        await clearAgentPending(params.user.id);
-        if (commit.playbookNote) {
-          await addDoeDtcMem0PlaybookNote({ userId: params.user.id, note: commit.playbookNote });
-        }
-        return {
-          replyText: sanitizeDoeDtcReplyText(commit.replyHint),
-          profileUrl: commit.profileUrl,
-          assessmentRan: false,
-        };
-      }
+      if (committed) return committed;
     }
   }
 
@@ -242,97 +413,53 @@ export async function runDoeDtcAgentTurnSdk(params: {
     };
   }
 
-  if (pendingRow && parseAffirmation(params.inboundText)) {
-    let commit = await executeAgentPendingCommit({ user: params.user, pending: pendingRow });
-    if (!commit.ok && commit.recoverable) {
-      commit = await executeAgentPendingCommit({
-        user: params.user,
-        pending: pendingRow,
-        allowRollForward: true,
-      });
-    }
-    if (commit.ok) {
-      await clearAgentPending(params.user.id);
-      if (commit.playbookNote) {
-        await addDoeDtcMem0PlaybookNote({ userId: params.user.id, note: commit.playbookNote });
-      }
-      return {
-        replyText: sanitizeDoeDtcReplyText(commit.replyHint),
-        profileUrl: commit.profileUrl,
-        assessmentRan: false,
-      };
-    }
+  if (pendingRow && isRunStatePending(pendingRow.args) && parseAffirmation(params.inboundText)) {
+    return resumeRunStatePending({
+      ...params,
+      pendingRow,
+      approve: true,
+    });
+  }
+
+  if (pendingRow && isCommitPending(pendingRow.args) && parseAffirmation(params.inboundText)) {
+    const committed = await commitStoredPending({ user: params.user, pendingRow });
+    if (committed) return committed;
+    pendingRow = await getAgentPending(params.user.id);
+  }
+
+  if (pendingRow && isRunStatePending(pendingRow.args)) {
+    await clearAgentPending(params.user.id);
+    pendingRow = null;
   }
 
   const loaded = await loadRunContext({
     ...params,
     reminderDirective: buildReminderIntentDirective(reminderIntent),
+    pendingRow,
   });
   const agent = createDoeManagerAgent(loaded);
 
-  let runState: RunState<DoeDtcRunContext, Agent<DoeDtcRunContext, typeof DoeReplySchema>> | null = null;
-  if (pendingRow?.args && typeof pendingRow.args === "object" && "runState" in pendingRow.args) {
-    const serialized = String((pendingRow.args as { runState?: string }).runState ?? "");
-    if (serialized) {
-      runState = await RunState.fromString(agent, serialized);
-    }
-  }
-
-  const result = runState
-    ? await run(agent, runState, { context: loaded, maxTurns: 12 })
-    : await run(agent, params.inboundText, { context: loaded, maxTurns: 12 });
+  const result = await run(agent, params.inboundText, { context: loaded, maxTurns: 12 });
 
   if (result.interruptions?.length) {
     await clearAgentPending(params.user.id);
-    const { setAgentPending } = await import("@/lib/doedtc/doedtc-pending");
     const interruption = result.interruptions[0];
     await setAgentPending({
       userId: params.user.id,
       kind: "schedule_text",
       commitTool: interruption?.name ?? "approval",
       args: { runState: result.state.toString() },
-      summary: "Waiting for your confirmation.",
+      summary: interruption?.name
+        ? `Waiting for approval to run ${interruption.name}.`
+        : "Waiting for your confirmation.",
     });
     loaded.turnState.preservePendingOffer = true;
   }
 
-  const safety = await applyReminderSafetyNet({
-    user: params.user,
+  return finalizeSdkRun({
+    result,
+    loaded,
     inboundText: params.inboundText,
-    ctx: {
-      user: params.user,
-      inboundText: params.inboundText,
-      inboundMessageId: params.inboundMessageId,
-      snapshot: loaded.snapshot,
-    },
-    state: loaded.turnState,
-    toolsExecuted: loaded.turnState.toolsExecuted,
+    inboundMessageId: params.inboundMessageId,
   });
-
-  const finalOutput = result.finalOutput as DoeReply | undefined;
-  let rawReply = finalOutput?.reply?.trim() || "";
-  if (safety.applied && safety.replyHint) {
-    rawReply = safety.replyHint;
-  }
-
-  const degenerate = isDegenerateTurn({
-    replyText: rawReply,
-    toolsExecuted: loaded.turnState.toolsExecuted,
-    state: loaded.turnState,
-  });
-
-  const replyText = sanitizeDoeDtcReplyText(
-    degenerate ? DEGENERATE_TURN_REPLY : rawReply || DEGENERATE_TURN_REPLY,
-    { preservePendingOffer: loaded.turnState.preservePendingOffer },
-  );
-
-  if (finalOutput && !degenerate) {
-    await resolveDoeReplyDeliverables({ reply: finalOutput, ctx: loaded });
-  }
-
-  const turnResult = assembleTurnResult({
-    replyText,
-    turnState: loaded.turnState,
-  });
-  return { ...turnResult, degenerate: degenerate || !rawReply };
 }

@@ -52,9 +52,15 @@ import {
   searchDoeDtcMem0Playbook,
 } from "@/lib/doedtc/doedtc-memory";
 import {
+  fetchOpenAiWithRetry,
+  guardAgentPromptSize,
+} from "@/lib/doedtc/agent/openai-retry";
+import {
   clearAgentPending,
   formatAgentPendingForPrompt,
   getAgentPending,
+  isCommitPending,
+  isRunStatePending,
   parseAffirmation,
   parseDecline,
   setAgentPending,
@@ -552,7 +558,7 @@ Safety:
 - Irreversible browser actions need request_commit, then the patient replies CONFIRM.
 - After useful browser findings, you may store a one-line outcome via remember_fact.`;
   assertToolPromptCoverage(prompt);
-  return prompt;
+  return guardAgentPromptSize(prompt);
 }
 
 export { DOEDTC_AGENT_TOOLS } from "@/lib/doedtc/doedtc-agent-tools";
@@ -577,7 +583,7 @@ async function callDoeDtcAgent(
     throw new Error("Doe agent is not configured: OPENAI_API_KEY is missing.");
   }
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetchOpenAiWithRetry("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -719,15 +725,15 @@ export async function runDoeDtcAgentTurnLegacy(params: {
 }): Promise<DoeDtcAgentTurnResult> {
   const timezone = normalizeScheduledTimezone(null);
 
-  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, pendingRow, playbookNotes] =
+  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
       listDoeDtcMessages(params.user.id, 40),
       searchDoeDtcMem0Memories({ userId: params.user.id, query: params.inboundText, topK: 5 }),
       listGuidesForUser(params.user.id),
-      getAgentPending(params.user.id),
       searchDoeDtcMem0Playbook({ userId: params.user.id, query: params.inboundText, topK: 3 }),
     ]);
+  let pendingRow = await getAgentPending(params.user.id);
 
   if (pendingRow && parseDecline(params.inboundText)) {
     await clearAgentPending(params.user.id);
@@ -768,6 +774,9 @@ export async function runDoeDtcAgentTurnLegacy(params: {
           assessmentRan: false,
         };
       }
+      if (!commit.recoverable) {
+        await clearAgentPending(params.user.id);
+      }
     }
   }
 
@@ -784,7 +793,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   }
 
   let affirmCommitFailedNote: string | null = null;
-  if (pendingRow && parseAffirmation(params.inboundText)) {
+  if (pendingRow && isCommitPending(pendingRow.args) && parseAffirmation(params.inboundText)) {
     let commit = await executeAgentPendingCommit({ user: params.user, pending: pendingRow });
     if (!commit.ok && commit.recoverable) {
       commit = await executeAgentPendingCommit({
@@ -804,7 +813,17 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         assessmentRan: false,
       };
     }
-    affirmCommitFailedNote = `Pending ${pendingRow.commit_tool} failed: ${commit.error}. Fix the stored args and call ${pendingRow.commit_tool} — do not propose again or re-ask the same confirmation.`;
+    if (!commit.recoverable) {
+      await clearAgentPending(params.user.id);
+      pendingRow = null;
+    } else {
+      affirmCommitFailedNote = `Pending ${pendingRow.commit_tool} failed: ${commit.error}. Fix the stored args and call ${pendingRow.commit_tool} — do not propose again or re-ask the same confirmation.`;
+    }
+  }
+
+  if (pendingRow && isRunStatePending(pendingRow.args)) {
+    await clearAgentPending(params.user.id);
+    pendingRow = null;
   }
 
   const pendingBlock = pendingRow
