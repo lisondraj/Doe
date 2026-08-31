@@ -718,7 +718,8 @@ export async function computerDoeDtcBrowser(params: {
   user: DoeDtcUserRow;
   jobId: string;
   action: DoeDtcComputerAction;
-}): Promise<BrowserExtract> {
+  caption?: string;
+}): Promise<BrowserSnapshotResult> {
   const job = await getDoeDtcBrowserJob({ jobId: params.jobId, userId: params.user.id });
   if (!job || job.status !== "open") {
     return { ok: false, error: "Browser task is not open for actions." };
@@ -733,8 +734,23 @@ export async function computerDoeDtcBrowser(params: {
 
   try {
     if (params.action.type === "screenshot") {
-      await kernel.browsers.computer.captureScreenshot(sessionId);
-      return extractPage(sessionId);
+      const extract = await extractPage(sessionId);
+      if (isBlockedBrowsePage(extract)) {
+        return { ok: false, error: "Search blocked by bot detection." };
+      }
+      const shot = await captureShot({
+        user: params.user,
+        job,
+        sessionId,
+        kind: "progress",
+        caption: params.caption,
+      });
+      return {
+        ...extract,
+        workToken: shot.workToken,
+        workUrl: shot.workUrl,
+        screenshotUrl: shot.blobUrl,
+      };
     }
     if (params.action.type === "click_mouse") {
       await kernel.browsers.computer.clickMouse(sessionId, {
@@ -1042,4 +1058,48 @@ export async function resolveDoeDtcSessionLiveView(userId: string): Promise<{
 
 export function isDoeDtcBrowserEnabled(): boolean {
   return isKernelConfigured();
+}
+
+export async function writeFileToSession(params: {
+  sessionId: string;
+  path: string;
+  content: Buffer | string;
+}): Promise<void> {
+  const kernel = getKernel();
+  const body = typeof params.content === "string" ? Buffer.from(params.content) : params.content;
+  await kernel.browsers.fs.writeFile(
+    params.sessionId,
+    new Blob([new Uint8Array(body)]),
+    { path: params.path },
+  );
+}
+
+export async function readFileFromSession(params: {
+  sessionId: string;
+  path: string;
+}): Promise<Buffer> {
+  const kernel = getKernel();
+  const result = await kernel.browsers.fs.readFile(params.sessionId, { path: params.path });
+  return Buffer.from(await result.arrayBuffer());
+}
+
+export async function listSessionFiles(sessionId: string, path = "/home/kernel"): Promise<string[]> {
+  const kernel = getKernel();
+  const result = await kernel.browsers.fs.listFiles(sessionId, { path });
+  const json = (await result.json()) as { entries?: Array<{ path?: string; name?: string }> };
+  return (json.entries ?? []).map((entry) => entry.path ?? entry.name ?? "").filter(Boolean);
+}
+
+export async function execInSession(params: {
+  sessionId: string;
+  command: string;
+}): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+  const kernel = getKernel();
+  const result = await kernel.browsers.process.exec(params.sessionId, { command: params.command });
+  const json = (await result.json()) as { stdout?: string; stderr?: string; exit_code?: number };
+  return {
+    stdout: json.stdout ?? "",
+    stderr: json.stderr ?? "",
+    exitCode: json.exit_code ?? 1,
+  };
 }

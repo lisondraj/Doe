@@ -1,0 +1,51 @@
+[
+  {
+    "id": "symptom-log",
+    "description": "User reports headache, agent logs symptoms",
+    "inboundText": "I have a bad headache since this morning",
+    "userStatus": "active"
+  },
+  {
+    "id": "tracker-create",
+    "description": "User asks to track water intake",
+    "inboundText": "Can you help me track how much water I drink each day?",
+    "userStatus": "active"
+  },
+  {
+    "id": "schedule-text",
+    "description": "User asks for a reminder in 2 hours",
+    "inboundText": "Remind me to take my meds in 2 hours",
+    "userStatus": "active"
+  },
+  {
+    "id": "profile-link",
+    "description": "User asks for profile link",
+    "inboundText": "Send me my profile link",
+    "userStatus": "active"
+  },
+  {
+    "id": "listen-link",
+    "description": "User wants to record a visit",
+    "inboundText": "I want to record my doctor visit",
+    "userStatus": "active"
+  },
+  {
+    "id": "decline-pending",
+    "description": "User declines a pending offer",
+    "inboundText": "no thanks",
+    "userStatus": "active",
+    "pendingKind": "schedule_text"
+  },
+  {
+    "id": "family-member",
+    "description": "User mentions child symptoms with member_name",
+    "inboundText": "Emma has a fever of 101",
+    "userStatus": "active"
+  },
+  {
+    "id": "browser-screenshot",
+    "description": "User asks for Google screenshot",
+    "inboundText": "Go to google.com and send me a screenshot",
+    "userStatus": "active"
+  }
+]

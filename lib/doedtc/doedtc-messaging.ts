@@ -36,10 +36,10 @@ type LinqWebhookPayload = {
   event?: string;
   data?: {
     id?: string;
-    parts?: Array<{ type?: string; value?: string }>;
+    parts?: Array<{ type?: string; value?: string; url?: string; mime_type?: string; filename?: string }>;
     message?: {
       id?: string;
-      parts?: Array<{ type?: string; value?: string }>;
+      parts?: Array<{ type?: string; value?: string; url?: string; mime_type?: string; filename?: string }>;
       chat_id?: string;
       from?: string;
     };
@@ -49,19 +49,39 @@ type LinqWebhookPayload = {
     chat?: { id?: string };
     chat_id?: string;
   };
-  message?: { id?: string; parts?: Array<{ type?: string; value?: string }> };
+  message?: { id?: string; parts?: Array<{ type?: string; value?: string; url?: string; mime_type?: string; filename?: string }> };
   from?: string;
 };
 
-export function extractInboundText(payload: unknown): string {
+export type InboundMediaAttachment = {
+  url: string;
+  mime?: string;
+  filename?: string;
+};
+
+function inboundParts(payload: unknown): Array<{ type?: string; value?: string; url?: string; mime_type?: string; filename?: string }> {
   const body = payload as LinqWebhookPayload;
-  const parts =
+  return (
     body.data?.parts ??
     body.data?.message?.parts ??
     body.message?.parts ??
-    [];
+    []
+  );
+}
 
-  return parts
+export function extractInboundMedia(payload: unknown): InboundMediaAttachment[] {
+  return inboundParts(payload)
+    .filter((part) => part.type === "media" && typeof part.url === "string")
+    .map((part) => ({
+      url: part.url!.trim(),
+      mime: typeof part.mime_type === "string" ? part.mime_type : undefined,
+      filename: typeof part.filename === "string" ? part.filename : undefined,
+    }))
+    .filter((part) => part.url.length > 0);
+}
+
+export function extractInboundText(payload: unknown): string {
+  return inboundParts(payload)
     .filter((part) => part.type === "text" && typeof part.value === "string")
     .map((part) => part.value?.trim() ?? "")
     .join("\n")
@@ -768,8 +788,9 @@ export async function processDoeDtcInboundWebhook(params: {
 }): Promise<void> {
   const phone = extractInboundPhone(params.payload);
   const text = extractInboundText(params.payload);
+  const inboundMedia = extractInboundMedia(params.payload);
   const inboundMessageId = extractInboundMessageId(params.payload);
-  if (!phone || !text) return;
+  if (!phone || (!text && inboundMedia.length === 0)) return;
 
   const { chatId, fromNumber } = extractChatMetadata(params.payload);
   let user = await getDoeDtcUserByPhone(phone);
@@ -806,10 +827,19 @@ export async function processDoeDtcInboundWebhook(params: {
   await logDoeDtcMessage({
     userId: user.id,
     direction: "inbound",
-    body: text,
+    body: text || (inboundMedia.length > 0 ? "[attachment]" : ""),
     linqMessageId: inboundMessageId ?? null,
     webhookEventId: params.webhookEventId ?? null,
   });
+
+  let agentInboundText = text;
+  if (inboundMedia.length > 0) {
+    const { ingestInboundDoeDtcMedia } = await import("@/lib/doedtc/doedtc-files");
+    const fileIds = await ingestInboundDoeDtcMedia({ user, attachments: inboundMedia });
+    if (fileIds.length > 0) {
+      agentInboundText = [text, `[attachments: ${fileIds.join(", ")}]`].filter(Boolean).join("\n");
+    }
+  }
 
   if (isHiDoeMessage(text)) {
     await handleHiDoeInbound({ user, phone, chatId, fromNumber });
@@ -830,7 +860,7 @@ export async function processDoeDtcInboundWebhook(params: {
   if (user.status === "active") {
     await handleSymptomInbound({
       user,
-      text,
+      text: agentInboundText,
       webhookEventId: params.webhookEventId,
       inboundMessageId,
     });
