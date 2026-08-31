@@ -326,6 +326,7 @@ html[data-doedtc-page]:has(.doedtc-root--landing) body {
   line-height: 0.82;
   letter-spacing: -0.04em;
   text-align: center;
+  transform: translateX(-0.03em);
   color: #ffffff;
   -webkit-text-fill-color: #ffffff;
   background: none;
