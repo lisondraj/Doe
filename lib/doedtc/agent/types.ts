@@ -39,6 +39,7 @@ export const DOE_DTC_TURN_RESULT_FIELDS = [
   "reactionEmoji",
   "replyToInbound",
   "browserNeedsConfirm",
+  "browserJobDispatched",
   "assessmentRan",
   "preservePendingOffer",
 ] as const;

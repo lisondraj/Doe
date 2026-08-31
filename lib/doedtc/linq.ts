@@ -276,22 +276,26 @@ function firstGrapheme(value: string): string {
   return Array.from(trimmed)[0] ?? "";
 }
 
-export function linqReactionPayload(emoji: string): {
-  operation: "add";
+export function linqReactionPayload(
+  emoji: string,
+  operation: "add" | "remove" = "add",
+): {
+  operation: "add" | "remove";
   type: "love" | "like" | "dislike" | "laugh" | "emphasize" | "question" | "custom";
   custom_emoji?: string;
 } {
   const grapheme = firstGrapheme(emoji);
   const tapback = TAPBACK_BY_EMOJI[grapheme];
   if (tapback) {
-    return { operation: "add", type: tapback };
+    return { operation, type: tapback };
   }
-  return { operation: "add", type: "custom", custom_emoji: grapheme };
+  return { operation, type: "custom", custom_emoji: grapheme };
 }
 
-export async function linqAddReaction(params: {
+export async function linqSetReaction(params: {
   messageId: string;
   emoji: string;
+  operation?: "add" | "remove";
 }): Promise<void> {
   const emoji = params.emoji.trim();
   if (!emoji) {
@@ -300,7 +304,39 @@ export async function linqAddReaction(params: {
 
   await linqRequest<unknown>(`/v3/messages/${encodeURIComponent(params.messageId)}/reactions`, {
     method: "POST",
-    body: JSON.stringify(linqReactionPayload(emoji)),
+    body: JSON.stringify(linqReactionPayload(emoji, params.operation ?? "add")),
+  });
+}
+
+export async function linqAddReaction(params: {
+  messageId: string;
+  emoji: string;
+}): Promise<void> {
+  await linqSetReaction({ messageId: params.messageId, emoji: params.emoji, operation: "add" });
+}
+
+export async function linqRemoveReaction(params: {
+  messageId: string;
+  emoji: string;
+}): Promise<void> {
+  await linqSetReaction({ messageId: params.messageId, emoji: params.emoji, operation: "remove" });
+}
+
+export async function linqMarkChatRead(chatId: string): Promise<void> {
+  await linqRequest<unknown>(`/v3/chats/${encodeURIComponent(chatId)}/read`, {
+    method: "POST",
+  });
+}
+
+export async function linqStartTyping(chatId: string): Promise<void> {
+  await linqRequest<unknown>(`/v3/chats/${encodeURIComponent(chatId)}/typing`, {
+    method: "POST",
+  });
+}
+
+export async function linqStopTyping(chatId: string): Promise<void> {
+  await linqRequest<unknown>(`/v3/chats/${encodeURIComponent(chatId)}/typing`, {
+    method: "DELETE",
   });
 }
 

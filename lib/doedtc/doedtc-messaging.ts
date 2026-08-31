@@ -1,5 +1,6 @@
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
-import { runDoeDtcAgentTurn, sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
+import { runDoeDtcAgentTurn, sanitizeDoeDtcReplyText, type DoeDtcAgentTurnResult } from "@/lib/doedtc/doedtc-agent";
+import { createDoeDtcAgentTurnId, recentDoeDtcTurnsUsedThreadReply } from "@/lib/doedtc/doedtc-agent-audit";
 import { commitDoeDtcBrowserTask, stopDoeDtcBrowserForUser } from "@/lib/doedtc/doedtc-browser";
 import { getPendingConfirmDoeDtcBrowserJob } from "@/lib/doedtc/doedtc-browser-db";
 import { shareDoeDtcLinqContactCard } from "@/lib/doedtc/doedtc-contact-card";
@@ -25,7 +26,13 @@ import { tryHandleAccountabilityInbound } from "@/lib/doedtc/doedtc-accountabili
 import { tryHandleWorkflowInbound } from "@/lib/doedtc/doedtc-workflows";
 import { normalizePhoneToE164 } from "@/lib/doedtc/doedtc-phone";
 import { redactDoeDtcLogText } from "@/lib/doedtc/doedtc-privacy";
-import { linqAddReaction, linqSendLink, linqSendMedia, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
+import {
+  AGENT_TURN_FALLBACK_REPLY,
+  beginDoeDtcTurnLifecycle,
+  completeDoeDtcTurnLifecycle,
+  withAgentTurnTimeout,
+} from "@/lib/doedtc/doedtc-turn-lifecycle";
+import { linqSendLink, linqSendMedia, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 const OPT_OUT_KEYWORDS = new Set(["STOP", "UNSUBSCRIBE", "OPTOUT", "CANCEL", "END", "QUIT"]);
@@ -154,19 +161,18 @@ export function isOptOutMessage(text: string): boolean {
   return /^opt[\s-]?out$/i.test(trimmed);
 }
 
-function shouldApplyReaction(params: { text: string; emoji?: string }): boolean {
-  if (!params.emoji?.trim()) return false;
-  if (isConfirmMessage(params.text) || isOptOutMessage(params.text) || isHiDoeMessage(params.text)) {
-    return false;
-  }
-  return true;
-}
 
-function shouldApplyThreadReply(params: {
+async function shouldApplyThreadReply(params: {
+  userId: string;
   replyToInbound?: boolean;
   replyText: string;
-}): boolean {
-  return Boolean(params.replyToInbound && params.replyText.trim());
+  inboundMessageId?: string;
+}): Promise<boolean> {
+  if (!params.replyToInbound || !params.replyText.trim() || !params.inboundMessageId) {
+    return false;
+  }
+  const recentUsed = await recentDoeDtcTurnsUsedThreadReply({ userId: params.userId, limit: 2 });
+  return !recentUsed;
 }
 
 async function sendDoeDtcOutbound(params: {
@@ -230,6 +236,22 @@ async function sendDoeDtcMediaOutbound(params: {
     userId: params.user.id,
     direction: "outbound",
     body: params.caption ? `${params.caption} ${params.url}` : params.url,
+  });
+}
+
+export async function sendDoeDtcBrowserScreenshotOutbound(params: {
+  user: DoeDtcUserRow;
+  chatId?: string;
+  screenshotUrl: string;
+  idempotencyKey: string;
+}): Promise<void> {
+  await sendDoeDtcMediaOutbound({
+    user: params.user,
+    chatId: params.chatId,
+    to: params.user.phone,
+    url: params.screenshotUrl,
+    caption: DOEDTC_LINQ.screenshotIntro,
+    idempotencyKey: params.idempotencyKey,
   });
 }
 
@@ -521,42 +543,60 @@ export async function handleSymptomInbound(params: {
 }): Promise<void> {
   const chatId = params.user.linq_chat_id ?? undefined;
   const idSuffix = params.webhookEventId ?? Date.now();
+  const turnId = createDoeDtcAgentTurnId();
 
-  const turn = await runDoeDtcAgentTurn({
+  await beginDoeDtcTurnLifecycle({
+    turnId,
     user: params.user,
     inboundText: params.text,
     inboundMessageId: params.inboundMessageId,
+    chatId,
   });
 
-  if (
-    turn.reactionEmoji &&
-    params.inboundMessageId &&
-    shouldApplyReaction({ text: params.text, emoji: turn.reactionEmoji })
-  ) {
-    try {
-      await linqAddReaction({
-        messageId: params.inboundMessageId,
-        emoji: turn.reactionEmoji,
-      });
-    } catch (error) {
-      console.warn(
-        "[doedtc] reaction failed:",
-        error instanceof Error ? error.message : String(error),
-      );
-    }
+  let turn: DoeDtcAgentTurnResult;
+  let agentFailed = false;
+  let agentError: string | undefined;
+
+  try {
+    turn = await withAgentTurnTimeout(
+      runDoeDtcAgentTurn({
+        user: params.user,
+        inboundText: params.text,
+        inboundMessageId: params.inboundMessageId,
+        turnId,
+      }),
+    );
+  } catch (error) {
+    agentFailed = true;
+    agentError = error instanceof Error ? error.message : "Agent turn failed.";
+    turn = {
+      replyText: AGENT_TURN_FALLBACK_REPLY,
+      assessmentRan: false,
+      replyToInbound: false,
+    };
   }
 
   const replyText = sanitizeDoeDtcReplyText(turn.replyText, {
     preservePendingOffer: turn.preservePendingOffer,
   });
+  const threadReply = await shouldApplyThreadReply({
+    userId: params.user.id,
+    replyToInbound: turn.replyToInbound,
+    replyText,
+    inboundMessageId: params.inboundMessageId,
+  });
   const replyToMessageId =
-    params.inboundMessageId &&
-    shouldApplyThreadReply({
-      replyToInbound: turn.replyToInbound,
-      replyText,
-    })
-      ? params.inboundMessageId
-      : undefined;
+    params.inboundMessageId && threadReply ? params.inboundMessageId : undefined;
+
+  await completeDoeDtcTurnLifecycle({
+    turnId,
+    inboundMessageId: params.inboundMessageId,
+    replyText,
+    threadReply,
+    deferFinalReaction: Boolean(turn.browserJobDispatched) && !agentFailed,
+    failed: agentFailed,
+    error: agentError,
+  });
 
   if (replyText) {
     await sendDoeDtcOutbound({
@@ -688,7 +728,7 @@ export async function handleSymptomInbound(params: {
     });
   }
 
-  if (turn.screenshotUrl) {
+  if (turn.screenshotUrl && !turn.browserJobDispatched) {
     await sendDoeDtcMediaOutbound({
       user: params.user,
       chatId,
@@ -697,7 +737,7 @@ export async function handleSymptomInbound(params: {
       caption: DOEDTC_LINQ.screenshotIntro,
       idempotencyKey: `doedtc-agent-shot-${params.user.id}-${idSuffix}`,
     });
-  } else if (turn.workUrl) {
+  } else if (turn.workUrl && !turn.browserJobDispatched) {
     await sendDoeDtcOutbound({
       user: params.user,
       chatId,
@@ -824,13 +864,16 @@ export async function processDoeDtcInboundWebhook(params: {
     user = (await getDoeDtcUserByPhone(phone)) ?? user;
   }
 
-  await logDoeDtcMessage({
+  const inboundLog = await logDoeDtcMessage({
     userId: user.id,
     direction: "inbound",
     body: text || (inboundMedia.length > 0 ? "[attachment]" : ""),
     linqMessageId: inboundMessageId ?? null,
     webhookEventId: params.webhookEventId ?? null,
   });
+  if (!inboundLog.logged && params.webhookEventId) {
+    return;
+  }
 
   let agentInboundText = text;
   if (inboundMedia.length > 0) {

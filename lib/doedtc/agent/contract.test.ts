@@ -5,7 +5,7 @@ import { DOE_DTC_TURN_RESULT_FIELDS } from "./types.ts";
 
 describe("DoeDtcAgentTurnResult contract", () => {
   it("defines all fields consumed by doedtc-messaging", () => {
-    assert.equal(DOE_DTC_TURN_RESULT_FIELDS.length, 18);
+    assert.equal(DOE_DTC_TURN_RESULT_FIELDS.length, 19);
     assert.deepEqual([...DOE_DTC_TURN_RESULT_FIELDS], [
       "replyText",
       "careUrl",
@@ -23,6 +23,7 @@ describe("DoeDtcAgentTurnResult contract", () => {
       "reactionEmoji",
       "replyToInbound",
       "browserNeedsConfirm",
+      "browserJobDispatched",
       "assessmentRan",
       "preservePendingOffer",
     ]);

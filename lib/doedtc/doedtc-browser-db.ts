@@ -15,6 +15,7 @@ import type {
 
 const WORK_TOKEN_TTL_MS = 60 * 60 * 1000;
 const SHOT_TTL_MS = 24 * 60 * 60 * 1000;
+export const KERNEL_SESSION_TIMEOUT_SECONDS = 1800;
 
 function workTokenExpiresAt(): string {
   return new Date(Date.now() + WORK_TOKEN_TTL_MS).toISOString();
@@ -22,6 +23,26 @@ function workTokenExpiresAt(): string {
 
 function shotExpiresAt(): string {
   return new Date(Date.now() + SHOT_TTL_MS).toISOString();
+}
+
+function isStaleOpenBrowserJob(row: DoeDtcBrowserJobRow): boolean {
+  const updatedAt = Date.parse(row.updated_at);
+  if (!Number.isFinite(updatedAt)) return false;
+  return Date.now() - updatedAt > KERNEL_SESSION_TIMEOUT_SECONDS * 1000;
+}
+
+async function failStaleBrowserJob(row: DoeDtcBrowserJobRow): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("doedtc_browser_jobs")
+    .update({
+      status: "failed",
+      outcome: "auto-expired: kernel session timeout",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", row.id)
+    .eq("user_id", row.user_id);
+  if (error) throw new Error(error.message);
 }
 
 export async function getOpenDoeDtcBrowserJob(userId: string): Promise<DoeDtcBrowserJobRow | null> {
@@ -35,7 +56,37 @@ export async function getOpenDoeDtcBrowserJob(userId: string): Promise<DoeDtcBro
     .limit(1)
     .maybeSingle();
   if (error) throw new Error(error.message);
-  return (data as DoeDtcBrowserJobRow | null) ?? null;
+  const row = (data as DoeDtcBrowserJobRow | null) ?? null;
+  if (!row) return null;
+  if (isStaleOpenBrowserJob(row)) {
+    await failStaleBrowserJob(row);
+    return null;
+  }
+  return row;
+}
+
+export async function listOpenDoeDtcBrowserJobs(userId?: string): Promise<DoeDtcBrowserJobRow[]> {
+  const supabase = createSupabaseAdmin();
+  let query = supabase
+    .from("doedtc_browser_jobs")
+    .select("*")
+    .in("status", ["open", "needs_login", "pending_confirm"])
+    .order("updated_at", { ascending: false });
+  if (userId) {
+    query = query.eq("user_id", userId);
+  }
+  const { data, error } = await query;
+  if (error) throw new Error(error.message);
+  const rows = (data ?? []) as DoeDtcBrowserJobRow[];
+  const active: DoeDtcBrowserJobRow[] = [];
+  for (const row of rows) {
+    if (isStaleOpenBrowserJob(row)) {
+      await failStaleBrowserJob(row);
+      continue;
+    }
+    active.push(row);
+  }
+  return active;
 }
 
 export async function getPendingConfirmDoeDtcBrowserJob(
@@ -64,6 +115,17 @@ export async function getDoeDtcBrowserJob(params: {
     .select("*")
     .eq("id", params.jobId)
     .eq("user_id", params.userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcBrowserJobRow | null) ?? null;
+}
+
+export async function getDoeDtcBrowserJobById(jobId: string): Promise<DoeDtcBrowserJobRow | null> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_browser_jobs")
+    .select("*")
+    .eq("id", jobId)
     .maybeSingle();
   if (error) throw new Error(error.message);
   return (data as DoeDtcBrowserJobRow | null) ?? null;
@@ -104,7 +166,13 @@ export async function createDoeDtcBrowserJob(params: {
     })
     .select("*")
     .single();
-  if (error) throw new Error(error.message);
+  if (error) {
+    if (error.message.includes("duplicate key") || error.code === "23505") {
+      const existingJob = await getOpenDoeDtcBrowserJob(params.userId);
+      if (existingJob) return existingJob;
+    }
+    throw new Error(error.message);
+  }
   return data as DoeDtcBrowserJobRow;
 }
 

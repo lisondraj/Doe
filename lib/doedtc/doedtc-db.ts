@@ -93,6 +93,39 @@ export async function getDoeDtcUserByCareToken(token: string): Promise<DoeDtcUse
   return (data as DoeDtcUserRow | null) ?? null;
 }
 
+export async function getDoeDtcUserById(userId: string): Promise<DoeDtcUserRow | null> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_users")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcUserRow | null) ?? null;
+}
+
+export async function getDoeDtcWatchUser(): Promise<DoeDtcUserRow | null> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_users")
+    .select("*")
+    .eq("status", "active")
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (data) return data as DoeDtcUserRow;
+
+  const { data: fallback, error: fallbackError } = await supabase
+    .from("doedtc_users")
+    .select("*")
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (fallbackError) throw new Error(fallbackError.message);
+  return (fallback as DoeDtcUserRow | null) ?? null;
+}
+
 export async function upsertInvitedDoeDtcUser(phone: string): Promise<DoeDtcUserRow> {
   const supabase = createSupabaseAdmin();
   const existing = await getDoeDtcUserByPhone(phone);
@@ -252,7 +285,7 @@ export async function logDoeDtcMessage(params: {
   body: string;
   linqMessageId?: string | null;
   webhookEventId?: string | null;
-}): Promise<void> {
+}): Promise<{ logged: boolean }> {
   const supabase = createSupabaseAdmin();
   const { error } = await supabase.from("doedtc_messages").insert({
     user_id: params.userId ?? null,
@@ -261,9 +294,25 @@ export async function logDoeDtcMessage(params: {
     linq_message_id: params.linqMessageId ?? null,
     webhook_event_id: params.webhookEventId ?? null,
   });
-  if (error && !error.message.includes("duplicate key")) {
+  if (error) {
+    if (error.message.includes("duplicate key")) {
+      return { logged: false };
+    }
     throw new Error(error.message);
   }
+  return { logged: true };
+}
+
+export async function hasDoeDtcWebhookEvent(webhookEventId: string): Promise<boolean> {
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_messages")
+    .select("id")
+    .eq("webhook_event_id", webhookEventId)
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return Boolean(data);
 }
 
 export async function saveDoeDtcOnboarding(params: {

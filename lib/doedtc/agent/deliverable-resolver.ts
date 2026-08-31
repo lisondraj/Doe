@@ -62,6 +62,7 @@ export function assembleTurnResult(params: {
     reactionEmoji: turnState.reactionEmoji,
     replyToInbound: turnState.replyToInbound,
     browserNeedsConfirm: turnState.browserNeedsConfirm,
+    browserJobDispatched: turnState.browserJobDispatched,
     assessmentRan: turnState.assessmentRan,
     preservePendingOffer: turnState.preservePendingOffer,
   };

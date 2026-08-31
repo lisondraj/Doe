@@ -105,6 +105,7 @@ async function loadRunContext(params: {
   user: DoeDtcUserRow;
   inboundText: string;
   inboundMessageId?: string;
+  turnId?: string;
 }): Promise<DoeDtcRunContext> {
   const [snapshot, messageHistory, relevantMemoryRows, recentGuides, pendingRow, playbookNotes, activeBrowserJobId] =
     await Promise.all([
@@ -159,7 +160,7 @@ async function loadRunContext(params: {
     snapshot,
     turnState: {
       ...createInitialToolTurnState(activeBrowserJobId),
-      turnId: createDoeDtcAgentTurnId(),
+      turnId: params.turnId ?? createDoeDtcAgentTurnId(),
     },
     instructions,
   };
@@ -173,6 +174,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
   user: DoeDtcUserRow;
   inboundText: string;
   inboundMessageId?: string;
+  turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   const pendingRow = await getAgentPending(params.user.id);
 

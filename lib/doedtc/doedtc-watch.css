@@ -1,0 +1,162 @@
+.doe-watch {
+  min-height: 100vh;
+  background: #0b0f14;
+  color: #e8edf2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  padding: 24px 16px 48px;
+}
+
+.doe-watch__header {
+  max-width: 960px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.doe-watch__title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.doe-watch__meta {
+  font-size: 12px;
+  color: #8b98a5;
+}
+
+.doe-watch__lane {
+  max-width: 960px;
+  margin: 0 auto 20px;
+  border: 1px solid #1f2a37;
+  border-radius: 12px;
+  background: #111820;
+  padding: 14px 16px;
+}
+
+.doe-watch__lane-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7dd3fc;
+  margin-bottom: 10px;
+}
+
+.doe-watch__browser-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 12px;
+}
+
+.doe-watch__stale {
+  color: #fbbf24;
+}
+
+.doe-watch__timeline {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.doe-watch__turn {
+  border: 1px solid #1f2a37;
+  border-radius: 12px;
+  background: #111820;
+  padding: 14px 16px;
+}
+
+.doe-watch__turn--live {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.2);
+  animation: doe-watch-pulse 2s ease-in-out infinite;
+}
+
+@keyframes doe-watch-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.88;
+  }
+}
+
+.doe-watch__turn-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.doe-watch__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #1f2937;
+  color: #cbd5e1;
+}
+
+.doe-watch__pill--working {
+  background: #1e3a5f;
+  color: #7dd3fc;
+}
+
+.doe-watch__pill--done {
+  background: #14532d;
+  color: #86efac;
+}
+
+.doe-watch__pill--failed {
+  background: #450a0a;
+  color: #fca5a5;
+}
+
+.doe-watch__inbound {
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #f8fafc;
+}
+
+.doe-watch__timestamps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 6px;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-bottom: 10px;
+}
+
+.doe-watch__tools {
+  border-top: 1px solid #1f2a37;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.doe-watch__tool {
+  font-size: 11px;
+  padding: 4px 0;
+  color: #cbd5e1;
+}
+
+.doe-watch__tool--fail {
+  color: #fca5a5;
+}
+
+.doe-watch__reply {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #e2e8f0;
+}
+
+.doe-watch__error {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #fca5a5;
+}

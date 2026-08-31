@@ -6,9 +6,10 @@ import {
   requestDoeDtcLiveLogin,
   requestDoeDtcVaultLink,
   snapshotDoeDtcBrowser,
-  startDoeDtcBrowserTask,
+  startDoeDtcBrowserTaskAsync,
   toUserSafeBrowserError,
 } from "@/lib/doedtc/doedtc-browser";
+import { getDoeDtcBrowserJobById } from "@/lib/doedtc/doedtc-browser-db";
 import { buildScheduledTextPendingArgs } from "@/lib/doedtc/doedtc-agent-commit";
 import {
   addDoeDtcMem0Fact,
@@ -150,6 +151,8 @@ export type DoeDtcToolTurnState = {
   replyToInbound: boolean;
   browserNeedsConfirm: boolean;
   activeBrowserJobId: string | null;
+  browserJobDispatched?: boolean;
+  browserBusy?: boolean;
   browserExcerpt?: string;
   browserUserMessage?: string;
   preservePendingOffer: boolean;
@@ -907,43 +910,46 @@ async function executeDoeDtcToolInner(params: {
       if (!row) throw new Error("Memory not found.");
       output = { ok: true, id: row.id, fact: row.fact, removed: true };
     } else if (name === "start_browser_task") {
-      const started = await startDoeDtcBrowserTask({
-        user: ctx.user,
-        intent: String(args.intent ?? ""),
-        url: String(args.url ?? ""),
-        mode:
-          args.mode === "login" || args.mode === "write" || args.mode === "research"
-            ? args.mode
-            : "research",
-      });
-      if (!started.ok) {
-        state.browserUserMessage = started.user_message;
-        output = {
-          ok: false,
-          error: started.error,
-          user_message: started.user_message,
-        };
+      if (state.browserBusy) {
+        output = { ok: false, error: "Browser task already running in this turn." };
       } else {
-        state.activeBrowserJobId = started.jobId;
-        if (started.workUrl) {
-          state.workUrl = started.workUrl;
+        state.browserBusy = true;
+        const started = await startDoeDtcBrowserTaskAsync({
+          user: ctx.user,
+          intent: String(args.intent ?? ""),
+          url: String(args.url ?? ""),
+          mode:
+            args.mode === "login" || args.mode === "write" || args.mode === "research"
+              ? args.mode
+              : "research",
+          turnId: state.turnId,
+        });
+        if (!started.ok) {
+          state.browserUserMessage = started.user_message;
+          state.browserBusy = false;
+          output = {
+            ok: false,
+            error: started.error,
+            user_message: started.user_message,
+          };
+        } else {
+          state.activeBrowserJobId = started.jobId;
+          state.browserJobDispatched = true;
+          if (state.turnId) {
+            const { markDoeDtcTurnBrowsing } = await import("@/lib/doedtc/doedtc-turn-lifecycle");
+            void markDoeDtcTurnBrowsing({
+              turnId: state.turnId,
+              browserJobId: started.jobId,
+            });
+          }
+          output = {
+            ok: true,
+            status: "running",
+            job_id: started.jobId,
+            host: started.host,
+            screenshot_pending: true,
+          };
         }
-        if (started.screenshotUrl) {
-          state.screenshotUrl = started.screenshotUrl;
-        }
-        if (started.excerpt) {
-          state.browserExcerpt = started.excerpt;
-        }
-        output = {
-          ok: true,
-          job_id: started.jobId,
-          host: started.host,
-          url: started.url,
-          title: started.title,
-          excerpt: started.excerpt,
-          screenshot_sent_separately: Boolean(started.screenshotUrl),
-          link_sent_separately: Boolean(started.workUrl),
-        };
       }
     } else if (name === "browser_navigate") {
       const jobId = state.activeBrowserJobId ?? "";
@@ -1041,28 +1047,57 @@ async function executeDoeDtcToolInner(params: {
       }
     } else if (name === "browser_snapshot") {
       const jobId = state.activeBrowserJobId ?? "";
-      const result = await snapshotDoeDtcBrowser({
+      const pollMs = state.browserJobDispatched ? 20_000 : 0;
+      const started = Date.now();
+      let result = await snapshotDoeDtcBrowser({
         user: ctx.user,
         jobId,
         caption: typeof args.caption === "string" ? args.caption : undefined,
       });
-      if (result.workUrl) {
-        state.workUrl = result.workUrl;
+
+      while (
+        state.browserJobDispatched &&
+        !result.screenshotUrl &&
+        Date.now() - started < pollMs
+      ) {
+        const job = await getDoeDtcBrowserJobById(jobId);
+        if (job?.status === "committed" || job?.status === "failed") {
+          break;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        result = await snapshotDoeDtcBrowser({
+          user: ctx.user,
+          jobId,
+          caption: typeof args.caption === "string" ? args.caption : undefined,
+        });
       }
-      if (result.screenshotUrl) {
-        state.screenshotUrl = result.screenshotUrl;
+
+      if (state.browserJobDispatched && !result.screenshotUrl && !result.workUrl) {
+        output = {
+          ok: true,
+          status: "pending",
+          job_id: jobId,
+          message: "Screenshot is still rendering — it will arrive as a follow-up message.",
+        };
+      } else {
+        if (result.workUrl) {
+          state.workUrl = result.workUrl;
+        }
+        if (result.screenshotUrl) {
+          state.screenshotUrl = result.screenshotUrl;
+        }
+        if (result.excerpt) {
+          state.browserExcerpt = result.excerpt;
+        }
+        output = {
+          ok: result.ok,
+          url: result.url,
+          title: result.title,
+          excerpt: result.excerpt,
+          screenshot_sent_separately: Boolean(result.screenshotUrl),
+          link_sent_separately: Boolean(result.workUrl),
+        };
       }
-      if (result.excerpt) {
-        state.browserExcerpt = result.excerpt;
-      }
-      output = {
-        ok: result.ok,
-        url: result.url,
-        title: result.title,
-        excerpt: result.excerpt,
-        screenshot_sent_separately: Boolean(result.screenshotUrl),
-        link_sent_separately: Boolean(result.workUrl),
-      };
     } else if (name === "request_vault") {
       const jobId = state.activeBrowserJobId ?? "";
       const vault = await requestDoeDtcVaultLink({

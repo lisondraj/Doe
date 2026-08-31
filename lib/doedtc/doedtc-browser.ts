@@ -20,6 +20,7 @@ import {
   getDoeDtcVaultCredentials,
   getOpenDoeDtcBrowserJob,
   insertDoeDtcBrowserShot,
+  KERNEL_SESSION_TIMEOUT_SECONDS,
   updateDoeDtcBrowserJob,
 } from "@/lib/doedtc/doedtc-browser-db";
 import { doeDtcVaultUrl, doeDtcWorkUrl } from "@/lib/doedtc/doedtc-copy";
@@ -65,7 +66,6 @@ export type StartDoeDtcBrowserTaskResult =
   | { ok: false; error: string; user_message: string };
 
 const EXCERPT_MAX = 800;
-const KERNEL_SESSION_TIMEOUT_SECONDS = 1800;
 const DOEDTC_RESEARCH_PROXY_NAME = "doedtc-research-us";
 const WRITE_DENY_SELECTORS = [
   'button[type="submit"]',
@@ -553,6 +553,68 @@ export async function startDoeDtcBrowserTask(params: {
       url: navigated.url,
       title: navigated.title,
       excerpt: navigated.excerpt,
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not start browser task.";
+    return {
+      ok: false,
+      error: message,
+      user_message: toUserSafeBrowserError(message),
+    };
+  }
+}
+
+export async function startDoeDtcBrowserTaskAsync(params: {
+  user: DoeDtcUserRow;
+  intent: string;
+  url: string;
+  mode?: "research" | "login" | "write";
+  turnId?: string;
+}): Promise<StartDoeDtcBrowserTaskResult & { status?: "running" }> {
+  if (!isKernelConfigured()) {
+    const error = "Browser automation is not configured.";
+    return { ok: false, error, user_message: toUserSafeBrowserError(error) };
+  }
+
+  try {
+    const mode = params.mode ?? "research";
+    let host: string;
+
+    if (mode === "research") {
+      const resolved = resolveResearchBrowseTarget({
+        url: params.url,
+        intent: params.intent,
+      });
+      if ("ok" in resolved) {
+        return {
+          ok: false,
+          error: resolved.error,
+          user_message: toUserSafeBrowserError(resolved.error),
+        };
+      }
+      host = resolved.host;
+    } else {
+      host = normalizeBrowserHost(params.url);
+      assertBrowserHostAllowed({ host, mode, declaredHost: host });
+    }
+
+    let job = await createDoeDtcBrowserJob({
+      userId: params.user.id,
+      intent: params.intent,
+      allowedHost: host,
+      mode,
+    });
+
+    job = await attachKernelProfileToJob(job);
+
+    const { dispatchDoeDtcBrowserAdvance } = await import("@/lib/doedtc/doedtc-browser-advance");
+    dispatchDoeDtcBrowserAdvance({ jobId: job.id, turnId: params.turnId });
+
+    return {
+      ok: true,
+      jobId: job.id,
+      host,
+      status: "running",
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not start browser task.";

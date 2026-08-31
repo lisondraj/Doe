@@ -4,6 +4,7 @@ import {
   reconcileReplyClaims,
   shouldRetryEmptyRefusal,
 } from "@/lib/doedtc/agent/honesty";
+import { executeDoeDtcToolCallsPartitioned } from "@/lib/doedtc/agent/tool-parallel";
 import {
   assertToolPromptCoverage,
   buildDoeDtcToolCapabilityPrompt,
@@ -197,6 +198,7 @@ export type DoeDtcAgentTurnResult = {
   reactionEmoji?: string;
   replyToInbound?: boolean;
   browserNeedsConfirm?: boolean;
+  browserJobDispatched?: boolean;
   assessmentRan: boolean;
   preservePendingOffer?: boolean;
 };
@@ -519,11 +521,12 @@ ${buildDoeDtcToolCapabilityPrompt()}
 ${DOE_AGENT_MAKE_SURE_ROUTING}
 
 Parallel work:
-- Only one browser task runs at a time, but you may run other tools in the same turn (log symptoms, family, meds, start_listen, etc.) while a browser job is open.
+- Only one browser task runs at a time. Browsing continues in the background — the screenshot arrives as a follow-up iMessage.
+- You may run other tools in the same turn (log symptoms, family, meds, start_listen, etc.) while a browser job is open.
 - Do not wait for browsing to finish before saving profile or appointment data.
 
 iMessage texture:
-- react_to_message: rarely, with varied emojis — skip routine turns, CONFIRM/STOP/Hi Doe, and most replies.
+- react_to_message: records intent only — lifecycle reactions (👍 while working, ✅ when done) are handled automatically. Do not expect a separate tapback from this tool.
 - use_thread_reply: occasionally when answering a direct question or correction (~1 in 3 eligible turns), never for link-only bubbles.
 
 Safety:
@@ -542,7 +545,10 @@ Safety:
 export { DOEDTC_AGENT_TOOLS } from "@/lib/doedtc/doedtc-agent-tools";
 export { generateDoeDtcAssessment } from "@/lib/doedtc/doedtc-assessment";
 
-async function callDoeDtcAgent(messages: ChatMessage[]): Promise<{
+async function callDoeDtcAgent(
+  messages: ChatMessage[],
+  tools: typeof DOEDTC_AGENT_TOOLS = DOEDTC_AGENT_TOOLS,
+): Promise<{
   message: {
     content: string | null;
     tool_calls?: Array<{
@@ -566,7 +572,7 @@ async function callDoeDtcAgent(messages: ChatMessage[]): Promise<{
     body: JSON.stringify({
       model: resolveDoeDtcAgentModel(),
       temperature: AGENT_TOOL_TEMPERATURE,
-      tools: DOEDTC_AGENT_TOOLS,
+      tools,
       tool_choice: "auto",
       messages,
     }),
@@ -598,10 +604,35 @@ async function callDoeDtcAgent(messages: ChatMessage[]): Promise<{
   return { message };
 }
 
+const LEGACY_BROWSER_ONLY_TOOLS = new Set([
+  "browser_navigate",
+  "browser_act",
+  "browser_computer",
+  "browser_snapshot",
+  "request_vault",
+  "request_live_login",
+  "show_session",
+  "request_commit",
+]);
+
+function filterLegacyAgentTools(activeBrowserJobId: string | null) {
+  return DOEDTC_AGENT_TOOLS.filter((tool) => {
+    const name = tool.function.name;
+    if (name === "start_browser_task") {
+      return !activeBrowserJobId;
+    }
+    if (LEGACY_BROWSER_ONLY_TOOLS.has(name)) {
+      return Boolean(activeBrowserJobId);
+    }
+    return true;
+  });
+}
+
 export async function runDoeDtcAgentTurnLegacy(params: {
   user: DoeDtcUserRow;
   inboundText: string;
   inboundMessageId?: string;
+  turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   const timezone = normalizeScheduledTimezone(null);
 
@@ -691,14 +722,15 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const turnState = createInitialToolTurnState(
     await getActiveDoeDtcBrowserJobId(params.user.id),
   );
-  turnState.turnId = createDoeDtcAgentTurnId();
+  turnState.turnId = params.turnId ?? createDoeDtcAgentTurnId();
+  const legacyTools = filterLegacyAgentTools(turnState.activeBrowserJobId);
   let lastModelContent: string | null = null;
   let reflectionNoteInjected = false;
   let refusalRetryInjected = false;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
     const toolErrorsThisRound: string[] = [];
-    const { message } = await callDoeDtcAgent(messages);
+    const { message } = await callDoeDtcAgent(messages, legacyTools);
     lastModelContent = message.content;
 
     if (!message.tool_calls?.length) {
@@ -791,6 +823,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         reactionEmoji: turnState.reactionEmoji,
         replyToInbound: turnState.replyToInbound,
         browserNeedsConfirm: turnState.browserNeedsConfirm,
+        browserJobDispatched: turnState.browserJobDispatched,
         assessmentRan: turnState.assessmentRan,
         preservePendingOffer: turnState.preservePendingOffer,
       };
@@ -809,19 +842,25 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       snapshot,
     };
 
-    for (const toolCall of message.tool_calls) {
-      const args = JSON.parse(toolCall.function.arguments) as Record<string, unknown>;
-      const output = await executeDoeDtcTool({
-        name: toolCall.function.name,
-        args,
-        ctx: toolCtx,
-        state: turnState,
-      });
+    const outputs = await executeDoeDtcToolCallsPartitioned({
+      toolCalls: message.tool_calls,
+      executeOne: async (toolCall) => {
+        const args = JSON.parse(toolCall.function.arguments) as Record<string, unknown>;
+        return executeDoeDtcTool({
+          name: toolCall.function.name,
+          args,
+          ctx: toolCtx,
+          state: turnState,
+        });
+      },
+    });
 
+    for (let index = 0; index < message.tool_calls.length; index += 1) {
+      const toolCall = message.tool_calls[index]!;
+      const output = outputs[index]!;
       if (output.ok === false && typeof output.error === "string") {
         toolErrorsThisRound.push(`${toolCall.function.name}: ${output.error}`);
       }
-
       messages.push({
         role: "tool",
         tool_call_id: toolCall.id,
@@ -884,6 +923,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     reactionEmoji: turnState.reactionEmoji,
     replyToInbound: turnState.replyToInbound,
     browserNeedsConfirm: turnState.browserNeedsConfirm,
+    browserJobDispatched: turnState.browserJobDispatched,
     assessmentRan: turnState.assessmentRan,
     preservePendingOffer: turnState.preservePendingOffer,
   };
@@ -893,6 +933,7 @@ export async function runDoeDtcAgentTurn(params: {
   user: import("@/lib/doedtc/doedtc-types").DoeDtcUserRow;
   inboundText: string;
   inboundMessageId?: string;
+  turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   if (resolveDoeDtcAgentRuntime() === "sdk") {
     const { runDoeDtcAgentTurnSdk } = await import("@/lib/doedtc/agent/run-sdk");
