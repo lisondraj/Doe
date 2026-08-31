@@ -2,10 +2,7 @@
 
 import { useEffect, useLayoutEffect, useState } from "react";
 
-import {
-  DOEDTC_FOOTER_OVERFLOW_SURFACE,
-  doeDtcTopOverflowSurface,
-} from "@/lib/doedtc/doedtc-chrome";
+import { doeDtcTopOverflowSurface } from "@/lib/doedtc/doedtc-chrome";
 import {
   DOEDTC_DESKTOP_MEDIA_QUERY,
   DOEDTC_DEVICE_VIEWPORT,
@@ -14,7 +11,7 @@ import {
 } from "@/lib/doedtc/doedtc-page-variant";
 import {
   applyPhoneLayoutViewportMeta,
-  applyPhoneSplitOverflowChrome,
+  applyPhoneOverflowChrome,
 } from "@/lib/doephone/phone-layout-viewport";
 
 type UseDoeDtcPageVariantOptions = {
@@ -58,10 +55,7 @@ export function useDoeDtcPageVariant(_options: UseDoeDtcPageVariantOptions = {})
       body.classList.add("desktop-route");
       const meta = document.querySelector('meta[name="viewport"]');
       meta?.setAttribute("content", DOEDTC_DEVICE_VIEWPORT);
-      applyPhoneSplitOverflowChrome(
-        doeDtcTopOverflowSurface(window.location.pathname),
-        DOEDTC_FOOTER_OVERFLOW_SURFACE,
-      );
+      applyPhoneOverflowChrome(doeDtcTopOverflowSurface(window.location.pathname));
       return;
     }
 
@@ -69,10 +63,7 @@ export function useDoeDtcPageVariant(_options: UseDoeDtcPageVariantOptions = {})
     html.removeAttribute("data-layout");
     body.classList.remove("desktop-route");
     applyPhoneLayoutViewportMeta();
-    applyPhoneSplitOverflowChrome(
-      doeDtcTopOverflowSurface(window.location.pathname),
-      DOEDTC_FOOTER_OVERFLOW_SURFACE,
-    );
+    applyPhoneOverflowChrome(doeDtcTopOverflowSurface(window.location.pathname));
   }, [ready, variant]);
 
   return { variant, ready };

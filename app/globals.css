@@ -75,8 +75,8 @@ html[data-about-page] body {
   background-color: var(--doe-page-surface);
 }
 /*
- * /doedtc — iPhone consumer pages. Brown overflow for Safari chrome,
- * Dynamic Island ears, and rubber-band overscroll.
+ * /doedtc — iPhone consumer pages. Cream overflow for Safari chrome,
+ * Dynamic Island ears, and rubber-band overscroll (footer blue is painted on the page, not html/body).
  */
 html[data-doedtc-page] {
   --doe-page-surface: #f8f9fa;
