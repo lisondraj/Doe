@@ -7,6 +7,7 @@ import { DoeDtcDropdown } from "@/components/doedtc/DoeDtcDropdown";
 import { DoeDtcToggle } from "@/components/doedtc/DoeDtcToggle";
 import { DoeDtcArtifactView } from "@/components/doedtc/DoeDtcArtifactView";
 import { DoeDtcTrackerCarousel } from "@/components/doedtc/DoeDtcTrackerCarousel";
+import { DoeDtcTrackerChart } from "@/components/doedtc/DoeDtcTrackerChart";
 import { DoeDtcFeedbackView } from "@/components/doedtc/DoeDtcFeedbackView";
 import { DoeDtcGuideView } from "@/components/doedtc/DoeDtcGuideView";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
@@ -14,7 +15,6 @@ import {
   DOEDTC_GET_STARTED,
   DOEDTC_PROFILE,
   doeDtcAppUrl,
-  doeDtcArtifactShareUrl,
 } from "@/lib/doedtc/doedtc-copy";
 import { applyDoeDtcPreviewAction } from "@/lib/doedtc/doedtc-preview-snapshot";
 import {
@@ -25,11 +25,22 @@ import {
 import { formatPhoneForDisplay } from "@/lib/doedtc/doedtc-phone";
 import { memberCurrentlySharesWithHousehold } from "@/lib/doedtc/doedtc-household";
 import type {
+  DoeDtcAppointmentRow,
   DoeDtcFamilyRelationship,
+  DoeDtcGuideRow,
   DoeDtcHealthProvider,
+  DoeDtcListenSessionRow,
   DoeDtcProfileSnapshot,
   DoeDtcProfileTab,
+  DoeDtcResultKind,
 } from "@/lib/doedtc/doedtc-types";
+import { interlockSpans, symptomsLinkedToName } from "@/lib/doedtc/doedtc-conditions-view";
+import {
+  groupLabsByCategory,
+  partitionResults,
+  type DoeDtcLabCategory,
+  type DoeDtcResultView,
+} from "@/lib/doedtc/doedtc-results-view";
 import { dmSans, plusJakartaSans } from "@/lib/home/fonts";
 
 const RELATIONSHIP_OPTIONS: Array<{ value: DoeDtcFamilyRelationship; label: string }> = [
@@ -59,11 +70,12 @@ function formatDateTime(value: string): string {
 
 function formatDate(value: string): string {
   try {
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T12:00:00`) : new Date(value);
     return new Intl.DateTimeFormat(undefined, {
       month: "short",
       day: "numeric",
       year: "numeric",
-    }).format(new Date(value));
+    }).format(date);
   } catch {
     return value;
   }
@@ -77,6 +89,92 @@ function formatDuration(totalSeconds: number): string {
 
 function relationshipLabel(value: string): string {
   return RELATIONSHIP_OPTIONS.find((option) => option.value === value)?.label ?? value;
+}
+
+function appointmentStartMs(row: DoeDtcAppointmentRow): number | null {
+  if (!row.starts_at) return null;
+  const value = new Date(row.starts_at).getTime();
+  return Number.isNaN(value) ? null : value;
+}
+
+function isUpcomingAppointment(row: DoeDtcAppointmentRow, now = Date.now()): boolean {
+  const start = appointmentStartMs(row);
+  return start == null || start >= now;
+}
+
+function sortAppointments(rows: DoeDtcAppointmentRow[], upcoming: boolean): DoeDtcAppointmentRow[] {
+  return [...rows].sort((a, b) => {
+    const aTime = appointmentStartMs(a);
+    const bTime = appointmentStartMs(b);
+    if (aTime == null && bTime == null) return 0;
+    if (aTime == null) return 1;
+    if (bTime == null) return -1;
+    return upcoming ? aTime - bTime : bTime - aTime;
+  });
+}
+
+function appointmentDateParts(row: DoeDtcAppointmentRow): {
+  month: string;
+  day: string;
+  weekday: string;
+  time: string;
+  whenLabel: string;
+} {
+  const note = row.timing_note?.trim() ?? "";
+  if (note) {
+    return {
+      month: "Soon",
+      day: "·",
+      weekday: note,
+      time: "",
+      whenLabel: note,
+    };
+  }
+
+  const start = appointmentStartMs(row);
+  if (start == null) {
+    return {
+      month: "TBD",
+      day: "—",
+      weekday: DOEDTC_PROFILE.appointmentWhenUnset,
+      time: "",
+      whenLabel: DOEDTC_PROFILE.appointmentWhenUnset,
+    };
+  }
+
+  const date = new Date(start);
+  const month = new Intl.DateTimeFormat(undefined, { month: "short" }).format(date);
+  const day = String(date.getDate());
+  const weekday = new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(date);
+  const time = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(date);
+  return {
+    month,
+    day,
+    weekday,
+    time,
+    whenLabel: `${weekday} · ${time}`,
+  };
+}
+
+function labCategoryLabel(category: DoeDtcLabCategory): string {
+  switch (category) {
+    case "general":
+      return DOEDTC_PROFILE.resultsCategoryGeneral;
+    case "metabolic":
+      return DOEDTC_PROFILE.resultsCategoryMetabolic;
+    case "kidney":
+      return DOEDTC_PROFILE.resultsCategoryKidney;
+    case "liver":
+      return DOEDTC_PROFILE.resultsCategoryLiver;
+    case "lipids":
+      return DOEDTC_PROFILE.resultsCategoryLipids;
+    case "thyroid":
+      return DOEDTC_PROFILE.resultsCategoryThyroid;
+    case "inflammation":
+      return DOEDTC_PROFILE.resultsCategoryInflammation;
+    default:
+      return DOEDTC_PROFILE.resultsCategoryOther;
+  }
 }
 
 function healthStatus(
@@ -246,6 +344,19 @@ export function DoeDtcProfileApp({
         displayName={snapshot.user.full_name}
         subtitle={snapshot.user.email}
         homeHref={homeHref}
+        onBack={
+          tab === "guides" && focusedGuideId
+            ? () => setFocusedGuideId(null)
+            : tab === "trackers" && focusedArtifactId
+              ? () => setFocusedArtifactId(null)
+              : undefined
+        }
+        backLabel={tab === "trackers" ? DOEDTC_PROFILE.trackersBackLabel : DOEDTC_PROFILE.guidesBackLabel}
+        pageTitle={
+          tab === "trackers" && focusedArtifactId
+            ? snapshot.artifacts.find((artifact) => artifact.id === focusedArtifactId)?.title
+            : undefined
+        }
       >
         {tab === "dashboard" ? (
           <header className="doedtc-header">
@@ -312,13 +423,11 @@ export function DoeDtcProfileApp({
       ) : null}
       {tab === "guides" ? (
         <GuidesTab
-          token={token}
           snapshot={snapshot}
           busy={busy}
           onAction={runAction}
           focusedGuideId={focusedGuideId}
           onFocusGuide={setFocusedGuideId}
-          preview={preview}
         />
       ) : null}
       {tab === "accountability" ? (
@@ -520,55 +629,232 @@ function DashboardTab({
   );
 }
 
-function ConditionsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
-  return (
-    <div>
-      <div className="doedtc-medical-grid">
-        <div className="doedtc-card doedtc-card--flat">
-          <MedicalListEditor
-            label={DOEDTC_GET_STARTED.conditionsLabel}
-            placeholder={DOEDTC_GET_STARTED.conditionsPlaceholder}
-            values={snapshot.conditions}
-            addAction="add_condition"
-            removeAction="remove_condition"
-            busy={busy}
-            readOnly={readOnly}
-            onAction={onAction}
-          />
-        </div>
-        <div className="doedtc-card doedtc-card--flat">
-          <MedicalListEditor
-            label={DOEDTC_GET_STARTED.medicationsLabel}
-            placeholder={DOEDTC_GET_STARTED.medicationsPlaceholder}
-            values={snapshot.medications}
-            addAction="add_medication"
-            removeAction="remove_medication"
-            busy={busy}
-            readOnly={readOnly}
-            onAction={onAction}
-          />
-        </div>
-      </div>
+function severityLabel(value: string): string {
+  if (value === "mild") return DOEDTC_PROFILE.symptomsSeverityMild;
+  if (value === "moderate") return DOEDTC_PROFILE.symptomsSeverityModerate;
+  if (value === "severe") return DOEDTC_PROFILE.symptomsSeveritySevere;
+  return value;
+}
 
-      <div className="doedtc-section">
-        <h2 className="doedtc-section-title">{DOEDTC_PROFILE.symptomsBoxTitle}</h2>
-        <div className="doedtc-card doedtc-card--flat">
-          {snapshot.symptoms.length === 0 ? (
-            <p className="doedtc-empty">{DOEDTC_PROFILE.dashboardSymptomsEmpty}</p>
-          ) : (
-            <ul className="doedtc-symptom-log">
-              {snapshot.symptoms.map((symptom) => (
-                <li className="doedtc-symptom-item" key={symptom.id}>
-                  <time className="doedtc-symptom-date" dateTime={symptom.reported_at}>
-                    {formatDateTime(symptom.reported_at)}
-                  </time>
-                  <p className="doedtc-body">{symptom.summary?.trim() || symptom.raw_text}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+function calendarChip(value: string): { month: string; day: string } {
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T12:00:00`) : new Date(value);
+  if (Number.isNaN(date.getTime())) return { month: "—", day: "—" };
+  return {
+    month: new Intl.DateTimeFormat(undefined, { month: "short" }).format(date),
+    day: String(date.getDate()),
+  };
+}
+
+function NameAddForm({
+  label,
+  saveLabel,
+  cancelLabel,
+  busy,
+  onSave,
+  onCancel,
+}: {
+  label: string;
+  saveLabel: string;
+  cancelLabel: string;
+  busy: boolean;
+  onSave: (name: string) => Promise<void>;
+  onCancel: () => void;
+}) {
+  const [name, setName] = useState("");
+  const fieldId = `name-add-${label.toLowerCase().replace(/\s+/g, "-")}`;
+  return (
+    <form
+      className="doedtc-card doedtc-form doedtc-conditions__form"
+      onSubmit={async (event) => {
+        event.preventDefault();
+        const next = name.trim();
+        if (!next) return;
+        await onSave(next);
+        setName("");
+      }}
+    >
+      <label className="doedtc-label" htmlFor={fieldId}>
+        {label}
+      </label>
+      <input
+        id={fieldId}
+        className="doedtc-input"
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+        required
+      />
+      <div className="doedtc-appointments__form-actions">
+        <button className="doedtc-button" type="submit" disabled={busy || !name.trim()}>
+          {saveLabel}
+        </button>
+        <button className="doedtc-button doedtc-button--secondary" type="button" disabled={busy} onClick={onCancel}>
+          {cancelLabel}
+        </button>
       </div>
+    </form>
+  );
+}
+
+function ConditionsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
+  const [addingCondition, setAddingCondition] = useState(snapshot.conditions.length === 0 && !readOnly);
+  const [addingMedication, setAddingMedication] = useState(false);
+  const conditionSpans = interlockSpans(snapshot.conditions.length);
+  const medicationSpans = interlockSpans(snapshot.medications.length);
+  const symptoms = [...snapshot.symptoms].sort((a, b) => b.reported_at.localeCompare(a.reported_at));
+
+  return (
+    <div className="doedtc-conditions">
+      <section className="doedtc-conditions__group">
+        <h2 className="doedtc-section-title">{DOEDTC_PROFILE.conditionsTitle}</h2>
+        {snapshot.conditions.length === 0 ? (
+          <p className="doedtc-empty">{DOEDTC_PROFILE.conditionsEmpty}</p>
+        ) : (
+          <div className="doedtc-condition-grid">
+            {snapshot.conditions.map((name, index) => {
+              const linked = symptomsLinkedToName(name, symptoms);
+              return (
+                <article
+                  className={`doedtc-condition-tile doedtc-condition-tile--${conditionSpans[index] ?? "single"}`}
+                  key={name.toLowerCase()}
+                >
+                  <div className="doedtc-condition-tile__top">
+                    <h3 className={`doedtc-condition-tile__name ${plusJakartaSans.className}`}>{name}</h3>
+                    {readOnly ? null : (
+                      <button
+                        className="doedtc-icon-button"
+                        type="button"
+                        disabled={busy}
+                        onClick={() => onAction("remove_condition", { name })}
+                      >
+                        {DOEDTC_PROFILE.removeLabel}
+                      </button>
+                    )}
+                  </div>
+                  {linked.length > 0 ? (
+                    <p className="doedtc-condition-tile__meta">
+                      {linked.length}{" "}
+                      {linked.length === 1
+                        ? DOEDTC_PROFILE.conditionsLinkedSymptom
+                        : DOEDTC_PROFILE.conditionsLinkedSymptoms}
+                    </p>
+                  ) : null}
+                </article>
+              );
+            })}
+          </div>
+        )}
+        {readOnly ? null : addingCondition ? (
+          <NameAddForm
+            label={DOEDTC_PROFILE.conditionsNameLabel}
+            saveLabel={DOEDTC_PROFILE.conditionsAddSave}
+            cancelLabel={DOEDTC_PROFILE.conditionsAddCancel}
+            busy={busy}
+            onSave={async (name) => {
+              await onAction("add_condition", { name });
+              setAddingCondition(false);
+            }}
+            onCancel={() => setAddingCondition(false)}
+          />
+        ) : (
+          <button
+            className="doedtc-button doedtc-button--secondary doedtc-conditions__add"
+            type="button"
+            disabled={busy}
+            onClick={() => setAddingCondition(true)}
+          >
+            {DOEDTC_PROFILE.conditionsAddOpen}
+          </button>
+        )}
+      </section>
+
+      <section className="doedtc-conditions__group">
+        <h2 className="doedtc-section-title">{DOEDTC_PROFILE.medicationsTitle}</h2>
+        {snapshot.medications.length === 0 ? (
+          <p className="doedtc-empty">{DOEDTC_PROFILE.medicationsEmpty}</p>
+        ) : (
+          <div className="doedtc-condition-grid">
+            {snapshot.medications.map((name, index) => (
+              <article
+                className={`doedtc-med-tile doedtc-condition-tile--${medicationSpans[index] ?? "single"}`}
+                key={name.toLowerCase()}
+              >
+                <div className="doedtc-condition-tile__top">
+                  <h3 className={`doedtc-condition-tile__name ${plusJakartaSans.className}`}>{name}</h3>
+                  {readOnly ? null : (
+                    <button
+                      className="doedtc-icon-button"
+                      type="button"
+                      disabled={busy}
+                      onClick={() => onAction("remove_medication", { name })}
+                    >
+                      {DOEDTC_PROFILE.removeLabel}
+                    </button>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+        {readOnly ? null : addingMedication ? (
+          <NameAddForm
+            label={DOEDTC_PROFILE.medicationsNameLabel}
+            saveLabel={DOEDTC_PROFILE.medicationsAddSave}
+            cancelLabel={DOEDTC_PROFILE.medicationsAddCancel}
+            busy={busy}
+            onSave={async (name) => {
+              await onAction("add_medication", { name });
+              setAddingMedication(false);
+            }}
+            onCancel={() => setAddingMedication(false)}
+          />
+        ) : (
+          <button
+            className="doedtc-button doedtc-button--secondary doedtc-conditions__add"
+            type="button"
+            disabled={busy}
+            onClick={() => setAddingMedication(true)}
+          >
+            {DOEDTC_PROFILE.medicationsAddOpen}
+          </button>
+        )}
+      </section>
+
+      <section className="doedtc-conditions__group">
+        <h2 className="doedtc-section-title">{DOEDTC_PROFILE.symptomsBoxTitle}</h2>
+        {symptoms.length === 0 ? (
+          <p className="doedtc-empty">{DOEDTC_PROFILE.dashboardSymptomsEmpty}</p>
+        ) : (
+          <ul className="doedtc-visit-list">
+            {symptoms.map((symptom) => {
+              const chip = calendarChip(symptom.reported_at);
+              const title = symptom.summary?.trim() || symptom.raw_text;
+              return (
+                <li className="doedtc-visit-card" key={symptom.id}>
+                  <div className="doedtc-visit-card__date" aria-hidden="true">
+                    <span className="doedtc-visit-card__month">{chip.month}</span>
+                    <span className="doedtc-visit-card__day">{chip.day}</span>
+                  </div>
+                  <div className="doedtc-visit-card__body">
+                    <div className="doedtc-visit-card__top">
+                      <strong>{title}</strong>
+                      {symptom.severity && symptom.severity !== "unknown" ? (
+                        <span className={`doedtc-tag doedtc-tag--${symptom.severity}`}>
+                          {severityLabel(symptom.severity)}
+                        </span>
+                      ) : null}
+                    </div>
+                    <p className="doedtc-row-item__meta">{formatDateTime(symptom.reported_at)}</p>
+                    {symptom.onset ? <p className="doedtc-row-item__meta">{symptom.onset}</p> : null}
+                    {symptom.assessment_id ? (
+                      <span className="doedtc-tag">{DOEDTC_PROFILE.symptomsAssessedLabel}</span>
+                    ) : null}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
@@ -613,16 +899,18 @@ function IntegrationCard({
 }
 
 function AppointmentsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
+  const empty = snapshot.appointments.length === 0;
   const [title, setTitle] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointmentTime, setAppointmentTime] = useState("");
   const [location, setLocation] = useState("");
   const [notes, setNotes] = useState("");
+  const [adding, setAdding] = useState(empty);
   const [expandedListenId, setExpandedListenId] = useState<string | null>(null);
 
   const completedSessions = snapshot.listenSessions.filter((row) => row.status === "completed");
-  const sessionsByAppointment = new Map<string, typeof completedSessions>();
-  const standaloneSessions: typeof completedSessions = [];
+  const sessionsByAppointment = new Map<string, DoeDtcListenSessionRow[]>();
+  const standaloneSessions: DoeDtcListenSessionRow[] = [];
 
   for (const session of completedSessions) {
     if (session.appointment_id) {
@@ -634,220 +922,497 @@ function AppointmentsTab({ snapshot, busy, readOnly = false, onAction }: TabProp
     }
   }
 
-  function renderListenSession(session: (typeof completedSessions)[number]) {
+  const upcoming = sortAppointments(
+    snapshot.appointments.filter((row) => isUpcomingAppointment(row)),
+    true,
+  );
+  const past = sortAppointments(
+    snapshot.appointments.filter((row) => !isUpcomingAppointment(row)),
+    false,
+  );
+
+  function resetAddForm() {
+    setTitle("");
+    setAppointmentDate("");
+    setAppointmentTime("");
+    setLocation("");
+    setNotes("");
+  }
+
+  function renderListenSession(session: DoeDtcListenSessionRow) {
     const expanded = expandedListenId === session.id;
     return (
-      <div className="doedtc-listen-nested" key={session.id}>
-        <strong>Listen</strong>
-        <p className="doedtc-row-item__meta">
-          {formatDateTime(session.completed_at ?? session.created_at)}
-          {session.duration_seconds
-            ? ` · ${DOEDTC_PROFILE.listenDurationLabel}: ${formatDuration(session.duration_seconds)}`
-            : null}
-        </p>
+      <div className="doedtc-listen-nested doedtc-listen-nested--compact" key={session.id}>
+        <div className="doedtc-listen-nested__head">
+          <span className="doedtc-listen-nested__mark" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none">
+              <rect x="6" y="1.5" width="4" height="7.5" rx="2" stroke="currentColor" strokeWidth="1.4" />
+              <path d="M3.5 7.75a4.5 4.5 0 0 0 9 0" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              <path d="M8 12.25v2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
+          </span>
+          <div>
+            <strong>{DOEDTC_PROFILE.appointmentListenLabel}</strong>
+            <p className="doedtc-row-item__meta">
+              {formatDateTime(session.completed_at ?? session.created_at)}
+              {session.duration_seconds ? ` · ${formatDuration(session.duration_seconds)}` : null}
+            </p>
+          </div>
+        </div>
         {session.summary ? <p className="doedtc-body">{session.summary}</p> : null}
         {session.transcript ? (
           <>
             <button
               className="doedtc-icon-button"
               type="button"
-              style={{ marginTop: "0.5rem" }}
               onClick={() => setExpandedListenId(expanded ? null : session.id)}
             >
               {expanded ? DOEDTC_PROFILE.listenHideTranscript : DOEDTC_PROFILE.listenViewTranscript}
             </button>
-            {expanded ? <p className="doedtc-body">{session.transcript}</p> : null}
+            {expanded ? <p className="doedtc-body doedtc-listen-nested__transcript">{session.transcript}</p> : null}
           </>
         ) : null}
       </div>
     );
   }
 
+  function renderVisit(appointment: DoeDtcAppointmentRow, pastVisit: boolean) {
+    const parts = appointmentDateParts(appointment);
+    const linkedSessions = sessionsByAppointment.get(appointment.id) ?? [];
+    return (
+      <li
+        className={`doedtc-visit-card${pastVisit ? " doedtc-visit-card--past" : ""}`}
+        key={appointment.id}
+      >
+        <div className="doedtc-visit-card__date" aria-hidden="true">
+          <span className="doedtc-visit-card__month">{parts.month}</span>
+          <span className="doedtc-visit-card__day">{parts.day}</span>
+        </div>
+        <div className="doedtc-visit-card__body">
+          <div className="doedtc-visit-card__top">
+            <div>
+              <strong>{appointment.title}</strong>
+              <p className="doedtc-row-item__meta">{parts.whenLabel}</p>
+            </div>
+            {readOnly ? null : (
+              <button
+                className="doedtc-icon-button"
+                type="button"
+                disabled={busy}
+                onClick={() => onAction("remove_appointment", { appointmentId: appointment.id })}
+              >
+                {DOEDTC_PROFILE.removeLabel}
+              </button>
+            )}
+          </div>
+          {appointment.location ? (
+            <p className="doedtc-row-item__meta">{appointment.location}</p>
+          ) : null}
+          {appointment.notes ? <p className="doedtc-body">{appointment.notes}</p> : null}
+          {linkedSessions.map((session) => renderListenSession(session))}
+        </div>
+      </li>
+    );
+  }
+
   return (
-    <div>
-      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.appointmentsTitle}</h2>
-      {snapshot.appointments.length === 0 ? (
-        <p className="doedtc-empty">{DOEDTC_PROFILE.appointmentsEmpty}</p>
+    <div className="doedtc-appointments">
+      {readOnly ? null : adding ? (
+        <form
+          className="doedtc-card doedtc-form doedtc-appointments__form"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            const startsAt =
+              appointmentDate && appointmentTime ? `${appointmentDate}T${appointmentTime}` : "";
+            await onAction("add_appointment", { title, startsAt, location, notes });
+            resetAddForm();
+            setAdding(false);
+          }}
+        >
+          <label className="doedtc-label" htmlFor="appointment-title">
+            {DOEDTC_PROFILE.appointmentTitleLabel}
+          </label>
+          <input
+            id="appointment-title"
+            className="doedtc-input"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            required
+          />
+          <div>
+            <label className="doedtc-label" htmlFor="appointment-date">
+              {DOEDTC_PROFILE.appointmentWhenLabel}
+            </label>
+            <div className="doedtc-datetime-row">
+              <input
+                id="appointment-date"
+                className="doedtc-input"
+                type="date"
+                value={appointmentDate}
+                onChange={(event) => setAppointmentDate(event.target.value)}
+                required
+              />
+              <input
+                id="appointment-time"
+                className="doedtc-input"
+                type="time"
+                value={appointmentTime}
+                onChange={(event) => setAppointmentTime(event.target.value)}
+                required
+                aria-label="Time"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="doedtc-label" htmlFor="appointment-location">
+              {DOEDTC_PROFILE.appointmentLocationLabel}
+            </label>
+            <input
+              id="appointment-location"
+              className="doedtc-input"
+              value={location}
+              onChange={(event) => setLocation(event.target.value)}
+            />
+          </div>
+          <div>
+            <label className="doedtc-label" htmlFor="appointment-notes">
+              {DOEDTC_PROFILE.appointmentNotesLabel}
+            </label>
+            <textarea
+              id="appointment-notes"
+              className="doedtc-textarea"
+              value={notes}
+              onChange={(event) => setNotes(event.target.value)}
+            />
+          </div>
+          <div className="doedtc-appointments__form-actions">
+            <button className="doedtc-button" type="submit" disabled={busy}>
+              {DOEDTC_PROFILE.addAppointmentLabel}
+            </button>
+            {empty ? null : (
+              <button
+                className="doedtc-button doedtc-button--secondary"
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  resetAddForm();
+                  setAdding(false);
+                }}
+              >
+                {DOEDTC_PROFILE.appointmentsAddCancel}
+              </button>
+            )}
+          </div>
+        </form>
       ) : (
-        <ul className="doedtc-row-list">
-          {snapshot.appointments.map((appointment) => {
-            const linkedSessions = sessionsByAppointment.get(appointment.id) ?? [];
-            return (
-              <li className="doedtc-row-item" key={appointment.id}>
-                <div className="doedtc-row-item__body">
-                  <strong>{appointment.title}</strong>
-                  <p className="doedtc-row-item__meta">
-                    {appointment.timing_note?.trim() ||
-                      (appointment.starts_at ? formatDateTime(appointment.starts_at) : "Date not set")}
-                  </p>
-                  {appointment.location ? (
-                    <p className="doedtc-row-item__meta">{appointment.location}</p>
-                  ) : null}
-                  {appointment.notes ? <p className="doedtc-body">{appointment.notes}</p> : null}
-                  {linkedSessions.map((session) => renderListenSession(session))}
-                </div>
-                <div className="doedtc-row-item__actions">
-                  {readOnly ? null : (
-                    <button
-                      className="doedtc-icon-button"
-                      type="button"
-                      disabled={busy}
-                      onClick={() => onAction("remove_appointment", { appointmentId: appointment.id })}
-                    >
-                      {DOEDTC_PROFILE.removeLabel}
-                    </button>
-                  )}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <button
+          className="doedtc-button doedtc-appointments__add"
+          type="button"
+          disabled={busy}
+          onClick={() => setAdding(true)}
+        >
+          {DOEDTC_PROFILE.appointmentsAddOpen}
+        </button>
       )}
 
-      <div className="doedtc-section">
-        <h2 className="doedtc-section-title">{DOEDTC_PROFILE.listenSectionTitle}</h2>
-        {completedSessions.length === 0 ? (
-          <p className="doedtc-empty">{DOEDTC_PROFILE.listenSectionEmpty}</p>
-        ) : standaloneSessions.length === 0 ? (
-          <p className="doedtc-muted">{DOEDTC_PROFILE.listenLinkedTo}</p>
-        ) : (
-          <ul className="doedtc-row-list">
+      {empty && !adding ? <p className="doedtc-empty">{DOEDTC_PROFILE.appointmentsEmpty}</p> : null}
+
+      {upcoming.length > 0 ? (
+        <section className="doedtc-appointments__group">
+          <h2 className="doedtc-section-title">
+            {DOEDTC_PROFILE.appointmentsUpcoming}
+            <span className="doedtc-appointments__count">{upcoming.length}</span>
+          </h2>
+          <ul className="doedtc-visit-list">{upcoming.map((row) => renderVisit(row, false))}</ul>
+        </section>
+      ) : null}
+
+      {past.length > 0 ? (
+        <section className="doedtc-appointments__group">
+          <h2 className="doedtc-section-title">
+            {DOEDTC_PROFILE.appointmentsPast}
+            <span className="doedtc-appointments__count">{past.length}</span>
+          </h2>
+          <ul className="doedtc-visit-list">{past.map((row) => renderVisit(row, true))}</ul>
+        </section>
+      ) : null}
+
+      {standaloneSessions.length > 0 ? (
+        <section className="doedtc-appointments__group">
+          <h2 className="doedtc-section-title">{DOEDTC_PROFILE.listenSectionTitle}</h2>
+          <ul className="doedtc-visit-list">
             {standaloneSessions.map((session) => (
-              <li className="doedtc-row-item" key={session.id}>
-                <div className="doedtc-row-item__body">{renderListenSession(session)}</div>
+              <li className="doedtc-visit-card" key={session.id}>
+                <div className="doedtc-visit-card__body">{renderListenSession(session)}</div>
               </li>
             ))}
           </ul>
-        )}
-      </div>
-
-      {readOnly ? null : (
-      <form
-        className="doedtc-card doedtc-card--spaced doedtc-form"
-        onSubmit={async (event) => {
-          event.preventDefault();
-          const startsAt =
-            appointmentDate && appointmentTime ? `${appointmentDate}T${appointmentTime}` : "";
-          await onAction("add_appointment", { title, startsAt, location, notes });
-          setTitle("");
-          setAppointmentDate("");
-          setAppointmentTime("");
-          setLocation("");
-          setNotes("");
-        }}
-      >
-        <label className="doedtc-label">{DOEDTC_PROFILE.appointmentTitleLabel}</label>
-        <input className="doedtc-input" value={title} onChange={(event) => setTitle(event.target.value)} required />
-        <div>
-          <label className="doedtc-label">{DOEDTC_PROFILE.appointmentWhenLabel}</label>
-          <div className="doedtc-datetime-row">
-            <input
-              className="doedtc-input"
-              type="date"
-              value={appointmentDate}
-              onChange={(event) => setAppointmentDate(event.target.value)}
-              required
-            />
-            <input
-              className="doedtc-input"
-              type="time"
-              value={appointmentTime}
-              onChange={(event) => setAppointmentTime(event.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div>
-          <label className="doedtc-label">{DOEDTC_PROFILE.appointmentLocationLabel}</label>
-          <input className="doedtc-input" value={location} onChange={(event) => setLocation(event.target.value)} />
-        </div>
-        <div>
-          <label className="doedtc-label">{DOEDTC_PROFILE.appointmentNotesLabel}</label>
-          <textarea className="doedtc-textarea" value={notes} onChange={(event) => setNotes(event.target.value)} />
-        </div>
-        <button className="doedtc-button" type="submit" disabled={busy}>
-          {DOEDTC_PROFILE.addAppointmentLabel}
-        </button>
-      </form>
-      )}
+        </section>
+      ) : null}
     </div>
   );
 }
 
 function ResultsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
+  const slices: Array<{ id: DoeDtcResultKind; label: string }> = [
+    { id: "lab", label: DOEDTC_PROFILE.resultsSliceLabs },
+    { id: "imaging", label: DOEDTC_PROFILE.resultsSliceImaging },
+    { id: "micro", label: DOEDTC_PROFILE.resultsSliceMicro },
+  ];
+  const [slice, setSlice] = useState<DoeDtcResultKind>("lab");
   const [title, setTitle] = useState("");
   const [resultedAt, setResultedAt] = useState("");
   const [source, setSource] = useState("");
   const [summary, setSummary] = useState("");
+  const [adding, setAdding] = useState(false);
+
+  const partitioned = partitionResults(snapshot.results);
+  const labGroups = groupLabsByCategory(partitioned.labs);
+  const featuredImaging = partitioned.imaging[0] ?? null;
+  const olderImaging = partitioned.imaging.slice(1);
+  const sliceIndex = slices.findIndex((row) => row.id === slice);
+  const sliceRows =
+    slice === "lab" ? partitioned.labs : slice === "imaging" ? partitioned.imaging : partitioned.micro;
+  const sliceEmpty =
+    slice === "lab"
+      ? DOEDTC_PROFILE.resultsLabsEmpty
+      : slice === "imaging"
+        ? DOEDTC_PROFILE.resultsImagingEmpty
+        : DOEDTC_PROFILE.resultsMicroEmpty;
+
+  function resetAddForm() {
+    setTitle("");
+    setResultedAt("");
+    setSource("");
+    setSummary("");
+  }
+
+  function renderRemove(resultId: string) {
+    if (readOnly) return null;
+    return (
+      <button
+        className="doedtc-icon-button"
+        type="button"
+        disabled={busy}
+        onClick={() => onAction("remove_result", { resultId })}
+      >
+        {DOEDTC_PROFILE.removeLabel}
+      </button>
+    );
+  }
+
+  function renderLabTile(tile: DoeDtcResultView & { span: "single" | "wide" | "tall" }) {
+    return (
+      <article
+        className={`doedtc-lab-tile doedtc-lab-tile--${tile.span}${tile.flag ? " doedtc-lab-tile--alert" : ""}`}
+        key={tile.id}
+      >
+        <div className="doedtc-lab-tile__top">
+          <h3 className={`doedtc-lab-tile__name ${plusJakartaSans.className}`}>{tile.title}</h3>
+          {renderRemove(tile.id)}
+        </div>
+        {tile.reading ? (
+          <>
+            <p className="doedtc-lab-tile__value">{tile.reading.value}</p>
+            {tile.reading.detail ? <p className="doedtc-lab-tile__detail">{tile.reading.detail}</p> : null}
+            {tile.flag ? (
+              <p className="doedtc-lab-tile__flag">{tile.flag === "high" ? "High" : "Low"}</p>
+            ) : null}
+          </>
+        ) : tile.summary ? (
+          <p className="doedtc-lab-tile__summary">{tile.summary}</p>
+        ) : null}
+        <p className="doedtc-lab-tile__meta">
+          {formatDate(tile.resulted_at)}
+          {tile.source ? ` · ${tile.source}` : ""}
+        </p>
+      </article>
+    );
+  }
 
   return (
-    <div>
-      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.resultsTitle}</h2>
-      {snapshot.results.length === 0 ? (
-        <p className="doedtc-empty">{DOEDTC_PROFILE.resultsEmpty}</p>
-      ) : (
-        <ul className="doedtc-row-list">
-          {snapshot.results.map((result) => (
-            <li className="doedtc-row-item" key={result.id}>
-              <div>
-                <strong>{result.title}</strong>
-                <p className="doedtc-row-item__meta">{formatDate(result.resulted_at)}</p>
-                {result.source ? <p className="doedtc-row-item__meta">{result.source}</p> : null}
-                {result.summary ? <p className="doedtc-body">{result.summary}</p> : null}
-              </div>
-              <div className="doedtc-row-item__actions">
-                {readOnly ? null : (
-                  <button
-                    className="doedtc-icon-button"
-                    type="button"
-                    disabled={busy}
-                    onClick={() => onAction("remove_result", { resultId: result.id })}
-                  >
-                    {DOEDTC_PROFILE.removeLabel}
-                  </button>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="doedtc-results">
+      <div className="doedtc-results-slider" role="tablist" aria-label={DOEDTC_PROFILE.resultsTitle}>
+        <span
+          className="doedtc-results-slider__thumb"
+          style={{ left: `calc(0.22rem + ${Math.max(sliceIndex, 0)} * ((100% - 0.44rem) / 3))` }}
+          aria-hidden="true"
+        />
+        {slices.map((row) => (
+          <button
+            key={row.id}
+            className={`doedtc-results-slider__btn${slice === row.id ? " doedtc-results-slider__btn--active" : ""}`}
+            type="button"
+            role="tab"
+            aria-selected={slice === row.id}
+            onClick={() => setSlice(row.id)}
+          >
+            {row.label}
+          </button>
+        ))}
+      </div>
 
-      {readOnly ? null : (
-      <form
-        className="doedtc-card doedtc-card--spaced"
-        onSubmit={async (event) => {
-          event.preventDefault();
-          await onAction("add_result", { title, resultedAt, source, summary });
-          setTitle("");
-          setResultedAt("");
-          setSource("");
-          setSummary("");
-        }}
-      >
-        <label className="doedtc-label">{DOEDTC_PROFILE.resultTitleLabel}</label>
-        <input className="doedtc-input" value={title} onChange={(event) => setTitle(event.target.value)} required />
-        <div style={{ marginTop: "0.75rem" }}>
-          <label className="doedtc-label">{DOEDTC_PROFILE.resultDateLabel}</label>
+      {slice === "lab" ? (
+        sliceRows.length === 0 ? (
+          <p className="doedtc-empty">{sliceEmpty}</p>
+        ) : (
+          <div className="doedtc-results__labs">
+            {labGroups.map((group) => (
+              <section className="doedtc-lab-group" key={group.category}>
+                <h2 className="doedtc-section-title">{labCategoryLabel(group.category)}</h2>
+                <div className="doedtc-lab-grid">{group.tiles.map((tile) => renderLabTile(tile))}</div>
+              </section>
+            ))}
+          </div>
+        )
+      ) : null}
+
+      {slice === "imaging" ? (
+        sliceRows.length === 0 ? (
+          <p className="doedtc-empty">{sliceEmpty}</p>
+        ) : (
+          <div className="doedtc-imaging">
+            {featuredImaging ? (
+              <article className="doedtc-imaging-hero">
+                <div className="doedtc-imaging-hero__top">
+                  <p className="doedtc-imaging-hero__kicker">{formatDate(featuredImaging.resulted_at)}</p>
+                  {renderRemove(featuredImaging.id)}
+                </div>
+                <h3 className={`doedtc-imaging-hero__title ${plusJakartaSans.className}`}>
+                  {featuredImaging.title}
+                </h3>
+                {featuredImaging.source ? (
+                  <p className="doedtc-imaging-hero__source">{featuredImaging.source}</p>
+                ) : null}
+                {featuredImaging.summary ? (
+                  <p className="doedtc-imaging-hero__summary">{featuredImaging.summary}</p>
+                ) : null}
+              </article>
+            ) : null}
+            {olderImaging.length > 0 ? (
+              <ul className="doedtc-row-list">
+                {olderImaging.map((row) => (
+                  <li className="doedtc-row-item" key={row.id}>
+                    <div className="doedtc-row-item__body">
+                      <strong>{row.title}</strong>
+                      <p className="doedtc-row-item__meta">
+                        {formatDate(row.resulted_at)}
+                        {row.source ? ` · ${row.source}` : ""}
+                      </p>
+                      {row.summary ? <p className="doedtc-body">{row.summary}</p> : null}
+                    </div>
+                    <div className="doedtc-row-item__actions">{renderRemove(row.id)}</div>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        )
+      ) : null}
+
+      {slice === "micro" ? (
+        sliceRows.length === 0 ? (
+          <p className="doedtc-empty">{sliceEmpty}</p>
+        ) : (
+          <ul className="doedtc-row-list">
+            {partitioned.micro.map((row) => (
+              <li className="doedtc-row-item" key={row.id}>
+                <div className="doedtc-row-item__body">
+                  <strong>{row.title}</strong>
+                  <p className="doedtc-row-item__meta">
+                    {formatDate(row.resulted_at)}
+                    {row.source ? ` · ${row.source}` : ""}
+                  </p>
+                  {row.summary ? <p className="doedtc-body">{row.summary}</p> : null}
+                </div>
+                <div className="doedtc-row-item__actions">{renderRemove(row.id)}</div>
+              </li>
+            ))}
+          </ul>
+        )
+      ) : null}
+
+      {readOnly ? null : adding ? (
+        <form
+          className="doedtc-card doedtc-form doedtc-results__form"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            await onAction("add_result", { title, resultedAt, source, summary, kind: slice });
+            resetAddForm();
+            setAdding(false);
+          }}
+        >
+          <label className="doedtc-label" htmlFor="result-title">
+            {DOEDTC_PROFILE.resultTitleLabel}
+          </label>
           <input
+            id="result-title"
             className="doedtc-input"
-            type="date"
-            value={resultedAt}
-            onChange={(event) => setResultedAt(event.target.value)}
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
             required
           />
-        </div>
-        <div style={{ marginTop: "0.75rem" }}>
-          <label className="doedtc-label">{DOEDTC_PROFILE.resultSourceLabel}</label>
-          <input className="doedtc-input" value={source} onChange={(event) => setSource(event.target.value)} />
-        </div>
-        <div style={{ marginTop: "0.75rem" }}>
-          <label className="doedtc-label">{DOEDTC_PROFILE.resultSummaryLabel}</label>
-          <textarea className="doedtc-textarea" value={summary} onChange={(event) => setSummary(event.target.value)} />
-        </div>
-        <button className="doedtc-button" type="submit" disabled={busy}>
-          {DOEDTC_PROFILE.addResultLabel}
+          <div>
+            <label className="doedtc-label" htmlFor="result-date">
+              {DOEDTC_PROFILE.resultDateLabel}
+            </label>
+            <input
+              id="result-date"
+              className="doedtc-input"
+              type="date"
+              value={resultedAt}
+              onChange={(event) => setResultedAt(event.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="doedtc-label" htmlFor="result-source">
+              {DOEDTC_PROFILE.resultSourceLabel}
+            </label>
+            <input
+              id="result-source"
+              className="doedtc-input"
+              value={source}
+              onChange={(event) => setSource(event.target.value)}
+            />
+          </div>
+          <div>
+            <label className="doedtc-label" htmlFor="result-summary">
+              {DOEDTC_PROFILE.resultSummaryLabel}
+            </label>
+            <textarea
+              id="result-summary"
+              className="doedtc-textarea"
+              value={summary}
+              onChange={(event) => setSummary(event.target.value)}
+            />
+          </div>
+          <div className="doedtc-appointments__form-actions">
+            <button className="doedtc-button" type="submit" disabled={busy}>
+              {DOEDTC_PROFILE.addResultLabel}
+            </button>
+            <button
+              className="doedtc-button doedtc-button--secondary"
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                resetAddForm();
+                setAdding(false);
+              }}
+            >
+              {DOEDTC_PROFILE.resultsAddCancel}
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button
+          className="doedtc-button doedtc-button--secondary doedtc-results__add"
+          type="button"
+          disabled={busy}
+          onClick={() => setAdding(true)}
+        >
+          {DOEDTC_PROFILE.resultsAddOpen}
         </button>
-      </form>
       )}
     </div>
   );
@@ -1017,6 +1582,7 @@ function FamilyTab({
           <input className="doedtc-input" value={fullName} onChange={(event) => setFullName(event.target.value)} />
           <div style={{ marginTop: "0.75rem" }}>
             <DoeDtcDropdown
+              variant="onboard"
               label={DOEDTC_GET_STARTED.familyRelationshipLabel}
               value={relationship}
               options={RELATIONSHIP_OPTIONS}
@@ -1177,78 +1743,102 @@ function ShareTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
 }
 
 function GuidesTab({
-  token,
   snapshot,
   busy,
   onAction,
   focusedGuideId,
   onFocusGuide,
-  preview = false,
 }: TabProps & {
-  token: string;
   focusedGuideId: string | null;
   onFocusGuide: (guideId: string | null) => void;
-  preview?: boolean;
 }) {
-  const activeGuide =
-    snapshot.guides.find((guide) => guide.id === focusedGuideId) ?? snapshot.guides[0] ?? null;
+  const activeGuide = snapshot.guides.find((guide) => guide.id === focusedGuideId) ?? null;
+  const library = [...snapshot.guides].sort((a, b) => b.updated_at.localeCompare(a.updated_at));
+
+  if (activeGuide) {
+    return (
+      <div className="doedtc-guides">
+        <DoeDtcGuideView guide={activeGuide} hideHeader />
+        <div className="doedtc-guides__footer">
+          <button
+            type="button"
+            className="doedtc-button doedtc-button--secondary"
+            disabled={busy}
+            onClick={async () => {
+              await onAction("unsave_guide", { guideId: activeGuide.id });
+              onFocusGuide(null);
+            }}
+          >
+            {DOEDTC_PROFILE.guidesUnsaveLabel}
+          </button>
+          <button
+            type="button"
+            className="doedtc-button doedtc-button--danger"
+            disabled={busy}
+            onClick={async () => {
+              await onAction("archive_guide", { guideId: activeGuide.id });
+              onFocusGuide(null);
+            }}
+          >
+            {DOEDTC_PROFILE.guidesArchiveLabel}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.guidesTitle}</h2>
-      {snapshot.guides.length === 0 ? (
+    <div className="doedtc-guides">
+      {library.length === 0 ? (
         <p className="doedtc-empty">{DOEDTC_PROFILE.guidesEmpty}</p>
       ) : (
-        <>
-          {snapshot.guides.length > 1 ? (
-            <div className="doedtc-artifact-picker" role="tablist" aria-label="Guides">
-              {snapshot.guides.map((guide) => (
+        <ul className="doedtc-guide-library">
+          {library.map((guide) => {
+            const excerpt = guideExcerpt(guide);
+            const steps = guideStepCount(guide);
+            return (
+              <li key={guide.id}>
                 <button
-                  key={guide.id}
                   type="button"
-                  aria-current={activeGuide?.id === guide.id ? "true" : undefined}
+                  className="doedtc-guide-preview"
                   onClick={() => onFocusGuide(guide.id)}
                 >
-                  {guide.title}
+                  <h3 className={`doedtc-guide-preview__title ${plusJakartaSans.className}`}>{guide.title}</h3>
+                  {excerpt ? <p className="doedtc-guide-preview__excerpt">{excerpt}</p> : null}
+                  {steps > 0 ? (
+                    <p className="doedtc-guide-preview__meta">
+                      {steps} {DOEDTC_PROFILE.guidesStepsLabel}
+                    </p>
+                  ) : null}
                 </button>
-              ))}
-            </div>
-          ) : null}
-          {activeGuide ? (
-            <>
-              <div className="doedtc-inline-actions" style={{ marginBottom: "0.85rem" }}>
-                {preview ? null : (
-                <a
-                  className="doedtc-button doedtc-button--secondary"
-                  href={`/doedtc/guide?t=${encodeURIComponent(token)}&g=${encodeURIComponent(activeGuide.id)}`}
-                >
-                  {DOEDTC_PROFILE.guidesViewLabel}
-                </a>
-                )}
-                <button
-                  type="button"
-                  className="doedtc-button doedtc-button--secondary"
-                  disabled={busy}
-                  onClick={() => void onAction("unsave_guide", { guideId: activeGuide.id })}
-                >
-                  {DOEDTC_PROFILE.guidesUnsaveLabel}
-                </button>
-                <button
-                  type="button"
-                  className="doedtc-button doedtc-button--danger"
-                  disabled={busy}
-                  onClick={() => void onAction("archive_guide", { guideId: activeGuide.id })}
-                >
-                  {DOEDTC_PROFILE.guidesArchiveLabel}
-                </button>
-              </div>
-              <DoeDtcGuideView guide={activeGuide} />
-            </>
-          ) : null}
-        </>
+              </li>
+            );
+          })}
+        </ul>
       )}
     </div>
   );
+}
+
+function guideExcerpt(guide: DoeDtcGuideRow): string {
+  const hero = guide.blocks.find((block) => block.kind === "hero");
+  if (hero?.body?.trim()) return hero.body.trim();
+  const steps = guide.blocks.find((block) => block.kind === "steps");
+  return steps?.steps?.[0]?.title ?? "";
+}
+
+function guideStepCount(guide: DoeDtcGuideRow): number {
+  return guide.blocks.find((block) => block.kind === "steps")?.steps?.length ?? 0;
+}
+
+function trackerRecency(
+  artifact: { id: string; updated_at: string },
+  entries: Array<{ artifact_id: string; occurred_at: string }>,
+): string {
+  const last = entries
+    .filter((entry) => entry.artifact_id === artifact.id)
+    .sort((a, b) => b.occurred_at.localeCompare(a.occurred_at))[0];
+  return last?.occurred_at ?? artifact.updated_at;
 }
 
 function TrackersTab({
@@ -1262,56 +1852,110 @@ function TrackersTab({
   focusedArtifactId: string | null;
   onFocusArtifact: (artifactId: string | null) => void;
 }) {
-  const activeArtifact =
-    snapshot.artifacts.find((artifact) => artifact.id === focusedArtifactId) ??
-    snapshot.artifacts[0] ??
-    null;
+  const library = [...snapshot.artifacts].sort((a, b) => {
+    const aEntries = snapshot.artifactEntries.filter((entry) => entry.artifact_id === a.id);
+    const bEntries = snapshot.artifactEntries.filter((entry) => entry.artifact_id === b.id);
+    const aField = pickPrimarySeriesField(a.config.fields, aEntries);
+    const bField = pickPrimarySeriesField(b.config.fields, bEntries);
+    const aPoints = aField
+      ? buildArtifactSeriesPoints({ entries: aEntries, fieldKey: aField.key, limit: 12 }).length
+      : 0;
+    const bPoints = bField
+      ? buildArtifactSeriesPoints({ entries: bEntries, fieldKey: bField.key, limit: 12 }).length
+      : 0;
+    if (aPoints !== bPoints) return bPoints - aPoints;
+    return trackerRecency(b, snapshot.artifactEntries).localeCompare(
+      trackerRecency(a, snapshot.artifactEntries),
+    );
+  });
+  const activeArtifact = snapshot.artifacts.find((artifact) => artifact.id === focusedArtifactId) ?? null;
+
+  function trackerModel(artifact: (typeof library)[number]) {
+    const entries = snapshot.artifactEntries
+      .filter((entry) => entry.artifact_id === artifact.id)
+      .sort((a, b) => b.occurred_at.localeCompare(a.occurred_at));
+    const lastEntry = entries[0] ?? null;
+    const seriesField = pickPrimarySeriesField(artifact.config.fields, entries);
+    return {
+      artifact,
+      entries,
+      lastReading: lastEntry ? formatPrimaryArtifactReading(artifact, lastEntry.values) : null,
+      lastAt: lastEntry?.occurred_at ?? artifact.updated_at,
+      points: seriesField
+        ? buildArtifactSeriesPoints({
+            entries,
+            fieldKey: seriesField.key,
+            limit: 12,
+          })
+        : [],
+    };
+  }
+
+  if (activeArtifact) {
+    return (
+      <div className="doedtc-trackers">
+        <DoeDtcArtifactView
+          artifact={activeArtifact}
+          entries={snapshot.artifactEntries.filter((entry) => entry.artifact_id === activeArtifact.id)}
+          busy={busy || readOnly}
+          onAction={onAction}
+        />
+        {readOnly ? null : (
+          <div className="doedtc-trackers__footer">
+            <button
+              type="button"
+              className="doedtc-button doedtc-button--danger"
+              disabled={busy}
+              onClick={async () => {
+                await onAction("archive_artifact", { artifactId: activeArtifact.id });
+                onFocusArtifact(null);
+              }}
+            >
+              {DOEDTC_PROFILE.trackersArchiveLabel}
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (library.length === 0) {
+    return <p className="doedtc-empty">{DOEDTC_PROFILE.trackersEmpty}</p>;
+  }
+
+  const [main, ...rest] = library.map(trackerModel);
 
   return (
-    <div>
-      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.trackersTitle}</h2>
-      {snapshot.artifacts.length === 0 ? (
-        <p className="doedtc-empty">{DOEDTC_PROFILE.trackersEmpty}</p>
-      ) : (
-        <>
-          {snapshot.artifacts.length > 1 ? (
-            <div className="doedtc-artifact-picker" role="tablist" aria-label="Trackers">
-              {snapshot.artifacts.map((artifact) => (
-                <button
-                  key={artifact.id}
-                  type="button"
-                  aria-current={activeArtifact?.id === artifact.id ? "true" : undefined}
-                  onClick={() => onFocusArtifact(artifact.id)}
-                >
-                  {artifact.title}
-                </button>
-              ))}
-            </div>
-          ) : null}
-          {activeArtifact ? (
-            <DoeDtcArtifactView
-              artifact={activeArtifact}
-              entries={snapshot.artifactEntries.filter(
-                (entry) => entry.artifact_id === activeArtifact.id,
-              )}
-              busy={busy || readOnly}
-              shareUrl={
-                activeArtifact.share_token
-                  ? doeDtcArtifactShareUrl(activeArtifact.share_token)
-                  : null
-              }
-              onAction={async (action, payload) => {
-                await onAction(action, payload);
-                if (action === "archive_artifact") {
-                  onFocusArtifact(null);
-                }
-              }}
-            />
-          ) : (
-            <p className="doedtc-muted">{DOEDTC_PROFILE.trackersSelectTracker}</p>
-          )}
-        </>
-      )}
+    <div className="doedtc-trackers">
+      <DoeDtcTrackerChart
+        title="Trend"
+        points={main.points}
+        goal={main.artifact.goal}
+        onOpen={() => onFocusArtifact(main.artifact.id)}
+      />
+      {rest.length > 0 ? (
+        <ul className="doedtc-tracker-list">
+          {rest.map((card) => (
+            <li key={card.artifact.id}>
+              <button
+                type="button"
+                className="doedtc-tracker-item"
+                onClick={() => onFocusArtifact(card.artifact.id)}
+              >
+                <div className="doedtc-tracker-item__copy">
+                  <h3 className={`doedtc-tracker-item__title ${plusJakartaSans.className}`}>
+                    {card.artifact.title}
+                  </h3>
+                  <p className="doedtc-tracker-item__meta">{formatDate(card.lastAt)}</p>
+                </div>
+                <p className="doedtc-tracker-item__value">
+                  {card.lastReading ?? DOEDTC_PROFILE.trackersNoEntries}
+                </p>
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   );
 }
@@ -1465,17 +2109,15 @@ function FeedbackTab({
   onFocusTicket: (ticketId: string | null) => void;
 }) {
   return (
-    <div>
-      <h2 className="doedtc-section-title">{DOEDTC_PROFILE.feedbackTitle}</h2>
-      <DoeDtcFeedbackView
-        tickets={snapshot.tickets}
-        focusedTicketId={focusedTicketId}
-        busy={busy || readOnly}
-        onSubmit={async (payload) => {
-          await onAction("submit_ticket", payload);
-          onFocusTicket(null);
-        }}
-      />
-    </div>
+    <DoeDtcFeedbackView
+      tickets={snapshot.tickets}
+      focusedTicketId={focusedTicketId}
+      busy={busy || readOnly}
+      showForm={!readOnly}
+      onSubmit={async (payload) => {
+        await onAction("submit_ticket", payload);
+        onFocusTicket(null);
+      }}
+    />
   );
 }

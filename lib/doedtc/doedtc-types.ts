@@ -68,6 +68,8 @@ export type DoeDtcAppointmentRow = {
   created_at: string;
 };
 
+export type DoeDtcResultKind = "lab" | "imaging" | "micro";
+
 export type DoeDtcResultRow = {
   id: string;
   user_id: string;
@@ -76,6 +78,7 @@ export type DoeDtcResultRow = {
   source: string | null;
   summary: string | null;
   created_at: string;
+  kind?: DoeDtcResultKind | null;
 };
 
 export type DoeDtcLockerItemRow = {

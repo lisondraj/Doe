@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { DoeDtcDobMenu } from "@/components/doedtc/DoeDtcDobMenu";
 import { DoeDtcDropdown } from "@/components/doedtc/DoeDtcDropdown";
 import { DOEDTC_GET_STARTED } from "@/lib/doedtc/doedtc-copy";
+import { dmSans } from "@/lib/home/fonts";
 import { doeDtcFindPhoneCountry, DOEDTC_PHONE_COUNTRIES } from "@/lib/doedtc/doedtc-phone-countries";
 import { doeDtcGenderLabel, DOEDTC_GENDERS, type DoeDtcFamilyRelationship, type DoeDtcGender } from "@/lib/doedtc/doedtc-types";
 
@@ -63,6 +64,20 @@ function TagField({ label, placeholder, values, onChange }: TagFieldProps) {
   );
 }
 
+function CheckCircleIcon() {
+  return (
+    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M6.5 12.2 10.2 16 17.5 8"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function NextArrowIcon() {
   return (
     <svg width="32" height="32" viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -70,6 +85,27 @@ function NextArrowIcon() {
         d="M3 8h10M9 4l4 4-4 4"
         stroke="currentColor"
         strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function LinkIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path
+        d="M6.4 9.6a3.2 3.2 0 0 0 4.53 0l1.67-1.67a3.2 3.2 0 0 0-4.53-4.53L7.2 4.27"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9.6 6.4a3.2 3.2 0 0 0-4.53 0L3.4 8.07a3.2 3.2 0 0 0 4.53 4.53L8.8 11.73"
+        stroke="currentColor"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -136,13 +172,23 @@ type FamilyDraft = {
   sendInvite: boolean;
 };
 
-type DoeDtcOnboardStep = "profile" | "medical";
+type OnboardConnectionId = "outlook" | "gmail" | "twitter" | "linkedin";
+
+const ONBOARD_CONNECTIONS: Array<{ id: OnboardConnectionId; label: string }> = [
+  { id: "outlook", label: DOEDTC_GET_STARTED.connectionsOutlook },
+  { id: "gmail", label: DOEDTC_GET_STARTED.connectionsGmail },
+  { id: "twitter", label: DOEDTC_GET_STARTED.connectionsTwitter },
+  { id: "linkedin", label: DOEDTC_GET_STARTED.connectionsLinkedin },
+];
+
+type DoeDtcOnboardStep = "profile" | "medical" | "review" | "success";
 
 type DoeDtcGetStartedFormProps = {
   token: string;
   valid: boolean;
   preview?: boolean;
   initialStep?: DoeDtcOnboardStep;
+  onComplete?: () => void;
 };
 
 export function DoeDtcGetStartedForm({
@@ -150,8 +196,9 @@ export function DoeDtcGetStartedForm({
   valid,
   preview = false,
   initialStep = "profile",
+  onComplete,
 }: DoeDtcGetStartedFormProps) {
-  const previewFilled = preview && initialStep === "medical";
+  const previewFilled = preview && initialStep !== "profile";
   const [fullName, setFullName] = useState(previewFilled ? "James Lisondra" : "");
   const [email, setEmail] = useState(previewFilled ? "james@doe.care" : "");
   const [dateOfBirth, setDateOfBirth] = useState(previewFilled ? "1994-03-12" : "");
@@ -160,6 +207,8 @@ export function DoeDtcGetStartedForm({
   const [medications, setMedications] = useState<string[]>([]);
   const [conditions, setConditions] = useState<string[]>([]);
   const [medicalMode, setMedicalMode] = useState<"now" | "later">("now");
+  const [connectionsMode, setConnectionsMode] = useState<"now" | "later">("later");
+  const [linkedConnections, setLinkedConnections] = useState<OnboardConnectionId[]>([]);
   const [familyMembers, setFamilyMembers] = useState<FamilyDraft[]>(
     previewFilled
       ? [
@@ -187,14 +236,20 @@ export function DoeDtcGetStartedForm({
     dateOfBirth: "",
     sendInvite: false,
   });
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
+    initialStep === "success" ? "success" : "idle",
+  );
   const [error, setError] = useState("");
   const [messagesHref, setMessagesHref] = useState("");
   const [profileHref, setProfileHref] = useState("");
-  const [step, setStep] = useState<"profile" | "medical">(initialStep);
+  const [step, setStep] = useState<DoeDtcOnboardStep>(initialStep);
   const formRef = useRef<HTMLFormElement>(null);
 
   const disabled = useMemo(() => !valid || status === "loading" || status === "success", [status, valid]);
+
+  useEffect(() => {
+    if (status === "success") onComplete?.();
+  }, [onComplete, status]);
 
   if (!valid) {
     return (
@@ -206,20 +261,35 @@ export function DoeDtcGetStartedForm({
   }
 
   if (status === "success") {
+    const fallbackHref = messagesHref || profileHref || "#";
     return (
-      <div className="doedtc-card">
-        <strong>{DOEDTC_GET_STARTED.allSetTitle}</strong>
-        <p>{DOEDTC_GET_STARTED.allSetBody}</p>
-        {profileHref ? (
-          <a className="doedtc-button" href={profileHref}>
-            {DOEDTC_GET_STARTED.openProfileLabel}
-          </a>
-        ) : null}
-        {messagesHref ? (
-          <a className="doedtc-button doedtc-button--secondary" href={messagesHref}>
-            {DOEDTC_GET_STARTED.openMessagesLabel}
-          </a>
-        ) : null}
+      <div className="doedtc-onboard-success">
+        <div className="doedtc-onboard-success__stage">
+          <div className="doedtc-onboard-success__center">
+            <div className="doedtc-onboard-success__mark" aria-hidden>
+              <CheckCircleIcon />
+            </div>
+            <h1 className={`doedtc-onboard-success__title ${dmSans.className}`}>
+              {DOEDTC_GET_STARTED.allSetTitle}
+            </h1>
+            <p className="doedtc-onboard-success__body">{DOEDTC_GET_STARTED.allSetBody}</p>
+          </div>
+          <p className="doedtc-onboard-success__fallback">
+            {DOEDTC_GET_STARTED.allSetNoTextPrefix}{" "}
+            <a className="doedtc-onboard-success__fallback-link" href={fallbackHref}>
+              {DOEDTC_GET_STARTED.allSetNoTextAction}
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+                <path
+                  d="M3 8h10M9 4l4 4-4 4"
+                  stroke="currentColor"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </a>
+          </p>
+        </div>
       </div>
     );
   }
@@ -251,8 +321,12 @@ export function DoeDtcGetStartedForm({
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (step !== "medical") {
-      goNext();
+    if (step === "profile") {
+      goToMedical();
+      return;
+    }
+    if (step === "medical") {
+      goToReview();
       return;
     }
     setStatus("loading");
@@ -261,6 +335,7 @@ export function DoeDtcGetStartedForm({
     try {
       if (preview) {
         setProfileHref("/profile");
+        setMessagesHref("sms:");
         setStatus("success");
         return;
       }
@@ -305,32 +380,227 @@ export function DoeDtcGetStartedForm({
     }
   }
 
-  function goNext() {
+  function validateProfileStep(): boolean {
     if (formRef.current && !formRef.current.checkValidity()) {
       formRef.current.reportValidity();
-      return;
+      return false;
     }
     if (!dateOfBirth) {
       setError("Select your date of birth.");
-      return;
+      return false;
     }
     if (!gender) {
       setError("Select a gender.");
-      return;
+      return false;
     }
     if (!country) {
       setError("Select a country.");
-      return;
+      return false;
     }
+    setError("");
+    return true;
+  }
+
+  function goToMedical() {
+    if (!validateProfileStep()) return;
+    setStep("medical");
+    window.scrollTo(0, 0);
+  }
+
+  function goToReview() {
+    setError("");
+    setStep("review");
+    window.scrollTo(0, 0);
+  }
+
+  function goBackToProfile() {
+    setError("");
+    setStep("profile");
+    window.scrollTo(0, 0);
+  }
+
+  function goBackToMedical() {
     setError("");
     setStep("medical");
     window.scrollTo(0, 0);
   }
 
-  function goBack() {
-    setError("");
-    setStep("profile");
-    window.scrollTo(0, 0);
+  function renderProfileSummary(onEdit: () => void) {
+    return (
+      <div className="doedtc-card doedtc-onboard-summary">
+        <div className="doedtc-onboard-summary__body">
+          <div className="doedtc-onboard-summary__row">
+            <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.fullNameLabel}</span>
+            <strong>{fullName.trim() || "—"}</strong>
+          </div>
+          <div className="doedtc-onboard-summary__row">
+            <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.emailLabel}</span>
+            <p>{email.trim() || "—"}</p>
+          </div>
+          <div className="doedtc-onboard-summary__row">
+            <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.dobLabel}</span>
+            <p>{formatDobLabel(dateOfBirth)}</p>
+          </div>
+          <div className="doedtc-onboard-summary__split">
+            <div className="doedtc-onboard-summary__row">
+              <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.genderLabel}</span>
+              <p>{gender ? doeDtcGenderLabel(gender) : "—"}</p>
+            </div>
+            <div className="doedtc-onboard-summary__row">
+              <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.countryLabel}</span>
+              <p>{country ? doeDtcFindPhoneCountry(country).name : "—"}</p>
+            </div>
+          </div>
+          <div className="doedtc-onboard-summary__row">
+            <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.familySectionTitle}</span>
+            {familyMembers.length > 0 ? (
+              <ul className="doedtc-onboard-summary__family">
+                {familyMembers.map((member) => (
+                  <li key={member.id}>
+                    {member.fullName}
+                    <span>
+                      {RELATIONSHIP_OPTIONS.find((option) => option.value === member.relationship)?.label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="doedtc-muted">{DOEDTC_GET_STARTED.summaryFamilyEmpty}</p>
+            )}
+          </div>
+        </div>
+        <button
+          type="button"
+          className="doedtc-onboard-summary__edit"
+          aria-label={DOEDTC_GET_STARTED.summaryEditLabel}
+          onClick={onEdit}
+        >
+          <EditPencilIcon />
+        </button>
+      </div>
+    );
+  }
+
+  function renderOnboardNext(onClick: () => void) {
+    return (
+      <div className="doedtc-onboard-actions">
+        <button
+          className="doedtc-onboard-next"
+          type="button"
+          aria-label={DOEDTC_GET_STARTED.nextLabel}
+          onClick={onClick}
+          disabled={disabled}
+        >
+          <NextArrowIcon />
+        </button>
+      </div>
+    );
+  }
+
+  function renderMedicalSummary(onEdit: () => void) {
+    return (
+      <div className="doedtc-card doedtc-onboard-summary">
+        <div className="doedtc-onboard-summary__body">
+          <div className="doedtc-onboard-summary__row">
+            <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.medicalSectionTitle}</span>
+            {medicalMode === "later" ? (
+              <p className="doedtc-muted">{DOEDTC_GET_STARTED.summaryMedicalDeferred}</p>
+            ) : null}
+          </div>
+          {medicalMode === "now" ? (
+            <>
+              <div className="doedtc-onboard-summary__row">
+                <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.medicationsLabel}</span>
+                {medications.length > 0 ? (
+                  <p>{medications.join(", ")}</p>
+                ) : (
+                  <p className="doedtc-muted">{DOEDTC_GET_STARTED.summaryMedicationsEmpty}</p>
+                )}
+              </div>
+              <div className="doedtc-onboard-summary__row">
+                <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.conditionsLabel}</span>
+                {conditions.length > 0 ? (
+                  <p>{conditions.join(", ")}</p>
+                ) : (
+                  <p className="doedtc-muted">{DOEDTC_GET_STARTED.summaryConditionsEmpty}</p>
+                )}
+              </div>
+            </>
+          ) : null}
+        </div>
+        <button
+          type="button"
+          className="doedtc-onboard-summary__edit"
+          aria-label={DOEDTC_GET_STARTED.summaryEditLabel}
+          onClick={onEdit}
+        >
+          <EditPencilIcon />
+        </button>
+      </div>
+    );
+  }
+
+  function toggleConnection(id: OnboardConnectionId) {
+    if (connectionsMode !== "now") return;
+    setLinkedConnections((current) =>
+      current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
+    );
+  }
+
+  function renderConnectionsBox() {
+    const active = connectionsMode === "now";
+    return (
+      <div className="doedtc-card">
+        <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.connectionsSectionTitle}</h2>
+        <div className="doedtc-toggle-row">
+          <button
+            type="button"
+            className={`doedtc-toggle${connectionsMode === "now" ? " doedtc-toggle--active" : ""}`}
+            onClick={() => setConnectionsMode("now")}
+          >
+            {DOEDTC_GET_STARTED.connectionsNowLabel}
+          </button>
+          <button
+            type="button"
+            className={`doedtc-toggle${connectionsMode === "later" ? " doedtc-toggle--active" : ""}`}
+            onClick={() => setConnectionsMode("later")}
+          >
+            {DOEDTC_GET_STARTED.connectionsLaterLabel}
+          </button>
+        </div>
+        {connectionsMode === "later" ? (
+          <p className="doedtc-muted" style={{ marginTop: "0.75rem" }}>
+            {DOEDTC_GET_STARTED.connectionsLaterHint}
+          </p>
+        ) : null}
+        <ul className={`doedtc-onboard-connections${active ? "" : " doedtc-onboard-connections--inactive"}`}>
+          {ONBOARD_CONNECTIONS.map((connection) => {
+            const linked = linkedConnections.includes(connection.id);
+            return (
+              <li
+                className={`doedtc-onboard-connection${linked ? " doedtc-onboard-connection--linked" : ""}`}
+                key={connection.id}
+              >
+                <span>{connection.label}</span>
+                <button
+                  type="button"
+                  className="doedtc-onboard-connection__link"
+                  aria-label={
+                    linked
+                      ? `${DOEDTC_GET_STARTED.connectionsLinkedLabel} ${connection.label}`
+                      : `${DOEDTC_GET_STARTED.connectionsLinkLabel} ${connection.label}`
+                  }
+                  disabled={!active}
+                  onClick={() => toggleConnection(connection.id)}
+                >
+                  <LinkIcon />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
   }
 
   return (
@@ -532,71 +802,11 @@ export function DoeDtcGetStartedForm({
         )}
       </div>
           {error ? <p className="doedtc-error">{error}</p> : null}
-          <div className="doedtc-onboard-actions">
-            <button
-              className="doedtc-onboard-next"
-              type="button"
-              aria-label={DOEDTC_GET_STARTED.nextLabel}
-              onClick={goNext}
-              disabled={disabled}
-            >
-              <NextArrowIcon />
-            </button>
-          </div>
+          {renderOnboardNext(goToMedical)}
         </>
-      ) : (
+      ) : step === "medical" ? (
         <>
-          <div className="doedtc-card doedtc-onboard-summary">
-            <div className="doedtc-onboard-summary__body">
-            <div className="doedtc-onboard-summary__row">
-              <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.fullNameLabel}</span>
-              <strong>{fullName.trim() || "—"}</strong>
-            </div>
-            <div className="doedtc-onboard-summary__row">
-              <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.emailLabel}</span>
-              <p>{email.trim() || "—"}</p>
-            </div>
-            <div className="doedtc-onboard-summary__row">
-              <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.dobLabel}</span>
-              <p>{formatDobLabel(dateOfBirth)}</p>
-            </div>
-            <div className="doedtc-onboard-summary__split">
-              <div className="doedtc-onboard-summary__row">
-                <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.genderLabel}</span>
-                <p>{gender ? doeDtcGenderLabel(gender) : "—"}</p>
-              </div>
-              <div className="doedtc-onboard-summary__row">
-                <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.countryLabel}</span>
-                <p>{country ? doeDtcFindPhoneCountry(country).name : "—"}</p>
-              </div>
-            </div>
-            <div className="doedtc-onboard-summary__row">
-              <span className="doedtc-onboard-summary__label">{DOEDTC_GET_STARTED.familySectionTitle}</span>
-              {familyMembers.length > 0 ? (
-                <ul className="doedtc-onboard-summary__family">
-                  {familyMembers.map((member) => (
-                    <li key={member.id}>
-                      {member.fullName}
-                      <span>
-                        {RELATIONSHIP_OPTIONS.find((option) => option.value === member.relationship)?.label}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="doedtc-muted">{DOEDTC_GET_STARTED.summaryFamilyEmpty}</p>
-              )}
-            </div>
-            </div>
-            <button
-              type="button"
-              className="doedtc-onboard-summary__edit"
-              aria-label={DOEDTC_GET_STARTED.summaryEditLabel}
-              onClick={goBack}
-            >
-              <EditPencilIcon />
-            </button>
-          </div>
+          {renderProfileSummary(goBackToProfile)}
           <div className="doedtc-card">
             <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.medicalSectionTitle}</h2>
             <div className="doedtc-toggle-row">
@@ -636,6 +846,15 @@ export function DoeDtcGetStartedForm({
               </>
             )}
           </div>
+          {error ? <p className="doedtc-error">{error}</p> : null}
+          {renderOnboardNext(goToReview)}
+        </>
+      ) : (
+        <>
+          <h2 className="doedtc-section-title">{DOEDTC_GET_STARTED.reviewSectionTitle}</h2>
+          {renderProfileSummary(goBackToProfile)}
+          {renderMedicalSummary(goBackToMedical)}
+          {renderConnectionsBox()}
           {error ? <p className="doedtc-error">{error}</p> : null}
           <div className="doedtc-onboard-actions">
             <button className="doedtc-button" type="submit" disabled={disabled}>

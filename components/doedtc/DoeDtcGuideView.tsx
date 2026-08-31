@@ -224,14 +224,16 @@ function GuideBlock({ block }: { block: DoeDtcGuideBlock }) {
 
 type DoeDtcGuideViewProps = {
   guide: Pick<DoeDtcGuideRow, "title" | "topic" | "layout" | "blocks">;
+  hideHeader?: boolean;
 };
 
-export function DoeDtcGuideView({ guide }: DoeDtcGuideViewProps) {
+export function DoeDtcGuideView({
+  guide,
+  hideHeader = false,
+}: DoeDtcGuideViewProps) {
   return (
     <div className="doedtc-guide">
-      <p className="doedtc-eyebrow">{guide.layout.replace("_", " ")}</p>
-      <DoeDtcPageHeader title={guide.title} />
-      {guide.topic ? <p className="doedtc-muted">{guide.topic}</p> : null}
+      {hideHeader ? null : <DoeDtcPageHeader title={guide.title} />}
       <div className="doedtc-guide__blocks">
         {guide.blocks.map((block) => (
           <GuideBlock key={block.id} block={block} />

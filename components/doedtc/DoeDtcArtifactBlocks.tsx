@@ -84,6 +84,7 @@ function ArtifactFieldInput({
     return (
       <DoeDtcDropdown
         id={id}
+        variant="onboard"
         label={field.label}
         value={String(value ?? "")}
         disabled={disabled}
@@ -388,6 +389,7 @@ type DoeDtcArtifactBlocksProps = {
   readOnly?: boolean;
   onAction: (action: string, payload?: Record<string, unknown>) => Promise<void>;
   headerActions?: React.ReactNode;
+  hideHero?: boolean;
 };
 
 export function DoeDtcArtifactBlocks({
@@ -397,6 +399,7 @@ export function DoeDtcArtifactBlocks({
   readOnly = false,
   onAction,
   headerActions,
+  hideHero = false,
 }: DoeDtcArtifactBlocksProps) {
   const [draft, setDraft] = useState<Record<string, string | boolean>>(() =>
     emptyValues(artifact.config.fields),
@@ -433,9 +436,11 @@ export function DoeDtcArtifactBlocks({
         <div className="doedtc-artifact__header-actions">{headerActions}</div>
       ) : null}
       <div className="doedtc-artifact__blocks">
-        {blocks.map((block) => (
-          <ArtifactBlock key={block.id} block={block} ctx={ctx} />
-        ))}
+        {blocks
+          .filter((block) => !(hideHero && block.kind === "hero"))
+          .map((block) => (
+            <ArtifactBlock key={block.id} block={block} ctx={ctx} />
+          ))}
       </div>
     </div>
   );

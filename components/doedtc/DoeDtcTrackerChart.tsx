@@ -17,17 +17,37 @@ type DoeDtcTrackerChartProps = {
   title: string;
   points: ArtifactSeriesPoint[];
   goal?: number | null;
+  onOpen?: () => void;
 };
 
-export function DoeDtcTrackerChart({ title, points, goal }: DoeDtcTrackerChartProps) {
+export function DoeDtcTrackerChart({ title, points, goal, onOpen }: DoeDtcTrackerChartProps) {
   const [range, setRange] = useState<ChartRange>("30d");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  const filtered = useMemo(() => filterPointsByRange(points, range), [points, range]);
+  const filtered = useMemo(() => {
+    const next = filterPointsByRange(points, range);
+    return next.length >= 2 || range === "all" ? next : points;
+  }, [points, range]);
+  const featured = Boolean(onOpen);
 
   if (filtered.length < 2) {
     return (
-      <div className="doedtc-card doedtc-card--flat">
+      <div
+        className={`doedtc-card doedtc-card--flat doedtc-artifact__chart${featured ? " doedtc-artifact__chart--featured" : ""}`}
+        role={onOpen ? "button" : undefined}
+        tabIndex={onOpen ? 0 : undefined}
+        onClick={onOpen}
+        onKeyDown={
+          onOpen
+            ? (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onOpen();
+                }
+              }
+            : undefined
+        }
+      >
         <h3 className="doedtc-section-title">{title}</h3>
         <p className="doedtc-muted">Log at least two entries to see your trend.</p>
       </div>
@@ -35,7 +55,7 @@ export function DoeDtcTrackerChart({ title, points, goal }: DoeDtcTrackerChartPr
   }
 
   const width = 320;
-  const height = 140;
+  const height = featured ? 168 : 140;
   const padding = 16;
   const values = filtered.map((point) => point.value);
   let min = Math.min(...values);
@@ -62,7 +82,22 @@ export function DoeDtcTrackerChart({ title, points, goal }: DoeDtcTrackerChartPr
       : null;
 
   return (
-    <div className="doedtc-card doedtc-card--flat doedtc-artifact__chart">
+    <div
+      className={`doedtc-card doedtc-card--flat doedtc-artifact__chart${featured ? " doedtc-artifact__chart--featured" : ""}`}
+      role={onOpen ? "button" : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      onClick={onOpen}
+      onKeyDown={
+        onOpen
+          ? (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onOpen();
+              }
+            }
+          : undefined
+      }
+    >
       <div className="doedtc-artifact__chart-header">
         <h3 className="doedtc-section-title">{title}</h3>
         <div className="doedtc-artifact__range-chips">
@@ -71,7 +106,8 @@ export function DoeDtcTrackerChart({ title, points, goal }: DoeDtcTrackerChartPr
               key={chip}
               type="button"
               className={`doedtc-artifact__range-chip${range === chip ? " doedtc-artifact__range-chip--active" : ""}`}
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 setRange(chip);
                 setActiveIndex(null);
               }}
@@ -87,22 +123,30 @@ export function DoeDtcTrackerChart({ title, points, goal }: DoeDtcTrackerChartPr
         role="img"
         aria-label={`${title} chart`}
       >
+        <line
+          x1={padding}
+          y1={height - padding}
+          x2={width - padding}
+          y2={height - padding}
+          stroke="#d1d1d6"
+          strokeDasharray="4 4"
+        />
         {goalY !== null ? (
           <line
             x1={padding}
             y1={goalY}
             x2={width - padding}
             y2={goalY}
-            stroke="currentColor"
+            stroke="#c7c7cc"
             strokeDasharray="4 4"
-            opacity={0.45}
+            opacity={0.7}
           />
         ) : null}
-        <polygon points={area} fill="currentColor" opacity={0.08} />
+        <polygon points={area} fill="#e8e8ed" />
         <polyline
           fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
+          stroke="#1c1c1e"
+          strokeWidth="2.75"
           strokeLinecap="round"
           strokeLinejoin="round"
           points={polyline}
@@ -112,12 +156,15 @@ export function DoeDtcTrackerChart({ title, points, goal }: DoeDtcTrackerChartPr
             key={coord.index}
             cx={coord.x}
             cy={coord.y}
-            r={activeIndex === coord.index ? 5 : 3.5}
-            fill="currentColor"
+            r={activeIndex === coord.index ? 5 : 4}
+            fill="#1c1c1e"
             opacity={activeIndex === null || activeIndex === coord.index ? 1 : 0.35}
             onMouseEnter={() => setActiveIndex(coord.index)}
             onMouseLeave={() => setActiveIndex(null)}
-            onClick={() => setActiveIndex(coord.index)}
+            onClick={(event) => {
+              event.stopPropagation();
+              setActiveIndex(coord.index);
+            }}
             style={{ cursor: "pointer" }}
           />
         ))}

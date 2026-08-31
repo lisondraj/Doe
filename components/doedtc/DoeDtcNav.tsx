@@ -18,6 +18,9 @@ type DoeDtcNavProps = {
   subtitle?: string | null;
   children?: React.ReactNode;
   homeHref?: string;
+  onBack?: () => void;
+  backLabel?: string;
+  pageTitle?: string;
 };
 
 export function DoeDtcNav({
@@ -28,6 +31,9 @@ export function DoeDtcNav({
   subtitle,
   children,
   homeHref,
+  onBack,
+  backLabel,
+  pageTitle,
 }: DoeDtcNavProps) {
   const { variant, ready } = useDoeDtcPageVariant();
   const isPhone = !ready || variant === "phone";
@@ -66,7 +72,7 @@ export function DoeDtcNav({
     closeSettings();
   };
 
-  const showStackedHeader = isPhone && activeTab !== "dashboard";
+  const showStackedHeader = (isPhone && activeTab !== "dashboard") || Boolean(onBack);
 
   const settingsOverlay =
     isPhone && settingsOpen ? (
@@ -118,7 +124,13 @@ export function DoeDtcNav({
           />
         </nav>
 
-        {showStackedHeader ? <DoeDtcPageHeader title={doeDtcProfileTabLabel(activeTab)} /> : null}
+        {showStackedHeader ? (
+          <DoeDtcPageHeader
+            title={pageTitle ?? doeDtcProfileTabLabel(activeTab)}
+            onBack={onBack}
+            backLabel={backLabel}
+          />
+        ) : null}
 
         {children}
       </div>

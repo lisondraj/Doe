@@ -11,7 +11,7 @@ type DoeDtcGetStartedRouterProps = {
   valid: boolean;
   preview?: boolean;
   homeHref?: string;
-  initialStep?: "profile" | "medical";
+  initialStep?: "profile" | "medical" | "review" | "success";
 };
 
 export function DoeDtcGetStartedRouter({
