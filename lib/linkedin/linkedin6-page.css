@@ -1,0 +1,120 @@
+.linkedin6-page {
+  --linkedin6-frame-width: 1200;
+  --linkedin6-frame-height: 627;
+  --linkedin6-brown: #1a1208;
+  --linkedin6-gold: #e8c08e;
+  --linkedin6-gold-bright: #f2ddb0;
+  --linkedin6-gold-text-gradient: linear-gradient(
+    180deg,
+    #f2ddb0 0%,
+    #e8c08e 22%,
+    #d4a574 100%
+  );
+  --linkedin6-ui-overlap: 56px;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  overflow: hidden;
+}
+
+.linkedin6-page__frame {
+  container-type: inline-size;
+  container-name: linkedin6;
+  position: relative;
+  width: min(1200px, 100vw, calc(100dvh * var(--linkedin6-frame-width) / var(--linkedin6-frame-height)));
+  aspect-ratio: 1200 / 627;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.linkedin6-page__stage {
+  position: absolute;
+  inset: 0;
+  width: 1200px;
+  height: 627px;
+  transform-origin: top left;
+  transform: scale(calc(100cqw / 1200));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--linkedin6-brown);
+}
+
+.linkedin6-page__glass {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 24px 56px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.linkedin6-page__glass-body {
+  display: flex;
+  width: 280px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.linkedin6-page__glass-pane {
+  width: 280px;
+  height: 280px;
+  flex-shrink: 0;
+}
+
+.linkedin6-page__ui {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: calc(-1 * var(--linkedin6-ui-overlap));
+  padding-top: 4px;
+  text-align: center;
+}
+
+.linkedin6-page__title {
+  margin: 0;
+  font-size: 72px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  background: var(--linkedin6-gold-text-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.linkedin6-page__tagline {
+  margin: 0;
+  color: rgba(232, 192, 142, 0.72);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.linkedin6-page__pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linkedin6-page__pill {
+  padding: 7px 14px;
+  border: 1px solid rgba(232, 192, 142, 0.22);
+  border-radius: 999px;
+  background: rgba(232, 192, 142, 0.06);
+  color: var(--linkedin6-gold-bright);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
