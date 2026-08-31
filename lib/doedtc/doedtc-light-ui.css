@@ -1,6 +1,6 @@
 /* Light Soar-like chrome — avatar nav, settings, dropdowns, toggles */
 .doedtc-root--landing {
-  background: #f8f9fa;
+  background: #60a5fa;
 }
 
 .doedtc-root--landing .doedtc-shell {
@@ -10,7 +10,7 @@
 }
 
 .doedtc-root--landing .doedtc-shell--brand-footer {
-  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 42%, #dbeafe 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 16%, #dbeafe 42%, #dbeafe 100%);
 }
 
 html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-root--landing .doedtc-shell--brand-footer,
@@ -199,19 +199,23 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-profile-layout .doed
 }
 
 .doedtc-root--landing.doedtc-root--has-footer {
-  background: #f8f9fa;
+  background: #60a5fa;
 }
 
 html[data-doedtc-page],
 html[data-doedtc-page]:has(.doedtc-root--has-footer) {
   background-color: #f8f9fa !important;
-  --doe-page-surface: #f8f9fa;
-  --proto-page-bg: #f8f9fa;
+  --doe-page-surface: #60a5fa;
+  --proto-page-bg: #60a5fa;
+}
+
+html[data-doedtc-page]:has(.doedtc-root--landing) {
+  background-color: #ffffff !important;
 }
 
 html[data-doedtc-page] body,
 html[data-doedtc-page]:has(.doedtc-root--has-footer) body {
-  background-color: #f8f9fa !important;
+  background-color: #60a5fa !important;
 }
 
 .doedtc-shell--brand-footer {

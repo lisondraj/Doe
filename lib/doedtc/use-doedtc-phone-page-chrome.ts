@@ -2,15 +2,18 @@
 
 import { useLayoutEffect } from "react";
 
-import { DOEDTC_OVERFLOW_SURFACE } from "@/lib/doedtc/doedtc-chrome";
+import {
+  DOEDTC_FOOTER_OVERFLOW_SURFACE,
+  doeDtcTopOverflowSurface,
+} from "@/lib/doedtc/doedtc-chrome";
 import {
   applyPhoneLayoutViewportMeta,
-  applyPhoneOverflowChrome,
+  applyPhoneSplitOverflowChrome,
 } from "@/lib/doephone/phone-layout-viewport";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
-/** All /doedtc pages stay in iPhone view with cream overflow chrome. */
+/** All /doedtc pages stay in iPhone view with cream top overflow and blue footer overflow. */
 export function useDoeDtcPhonePageChrome() {
   useDoePhoneLayoutViewport();
   useDoePhoneStableViewport(true);
@@ -30,7 +33,10 @@ export function useDoeDtcPhonePageChrome() {
     body.classList.remove("desktop-route");
 
     applyPhoneLayoutViewportMeta();
-    applyPhoneOverflowChrome(DOEDTC_OVERFLOW_SURFACE);
+    applyPhoneSplitOverflowChrome(
+      doeDtcTopOverflowSurface(window.location.pathname),
+      DOEDTC_FOOTER_OVERFLOW_SURFACE,
+    );
 
     try {
       sessionStorage.removeItem(`doephone-app-viewport-lock:${location.hostname}`);
