@@ -5,7 +5,11 @@ export const DOEDTC_OVERFLOW_SURFACE = "#F8F9FA";
 export const DOEDTC_PAGE_SURFACE = "#F8F9FA";
 /** Landing page top rubber-band — matches the white at the top of the landing gradient. */
 export const DOEDTC_LANDING_OVERFLOW_SURFACE = "#ffffff";
-/** Footer fill. Do not paint this on html/body — iOS uses body for the TOP bounce. */
+/**
+ * Footer / bottom rubber-band fill.
+ * iOS Safari: `html` is the document canvas (BOTTOM bounce), `body` is the TOP bounce.
+ * Never paint this on `body` — that turns the top rubber-band blue.
+ */
 export const DOEDTC_FOOTER_OVERFLOW_SURFACE = "#60a5fa";
 
 export function isDoeDtcLandingPath(pathname: string): boolean {
@@ -16,17 +20,18 @@ export function doeDtcTopOverflowSurface(pathname: string): string {
   return isDoeDtcLandingPath(pathname) ? DOEDTC_LANDING_OVERFLOW_SURFACE : DOEDTC_OVERFLOW_SURFACE;
 }
 
-/** html/body + theme-color stay cream/white so the top bounce and status bar stay put. */
+/** html = footer blue (bottom bounce), body + theme-color = cream/white (top bounce). */
 export function applyDoeDtcOverflowChrome(pathname: string): void {
   if (typeof document === "undefined") return;
 
   const top = doeDtcTopOverflowSurface(pathname).toLowerCase();
+  const bottom = DOEDTC_FOOTER_OVERFLOW_SURFACE.toLowerCase();
   const html = document.documentElement;
 
   html.style.setProperty("--doe-page-surface", top);
   html.style.setProperty("--proto-page-bg", top);
   html.style.removeProperty("--doedtc-top-overflow");
-  html.style.backgroundColor = top;
+  html.style.backgroundColor = bottom;
   html.style.removeProperty("background-image");
   html.style.removeProperty("background-size");
   html.style.removeProperty("background-repeat");
@@ -46,5 +51,6 @@ export function applyDoeDtcOverflowChrome(pathname: string): void {
 
 export function doeDtcOverflowChromeBootstrapScript(topColor: string): string {
   const top = JSON.stringify(topColor.toLowerCase());
-  return `(function(){try{var html=document.documentElement;var body=document.body;html.style.setProperty("--doe-page-surface",${top});html.style.setProperty("--proto-page-bg",${top});html.style.removeProperty("--doedtc-top-overflow");html.style.backgroundColor=${top};html.style.removeProperty("background-image");html.style.removeProperty("background-size");html.style.removeProperty("background-repeat");html.style.removeProperty("background-position");if(body){body.style.backgroundColor=${top};body.style.removeProperty("background-image");body.style.removeProperty("background-size");body.style.removeProperty("background-repeat");body.style.removeProperty("background-position");}var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute("content",${top});}catch(e){}})();`;
+  const bottom = JSON.stringify(DOEDTC_FOOTER_OVERFLOW_SURFACE.toLowerCase());
+  return `(function(){try{var html=document.documentElement;var body=document.body;html.style.setProperty("--doe-page-surface",${top});html.style.setProperty("--proto-page-bg",${top});html.style.removeProperty("--doedtc-top-overflow");html.style.backgroundColor=${bottom};html.style.removeProperty("background-image");html.style.removeProperty("background-size");html.style.removeProperty("background-repeat");html.style.removeProperty("background-position");if(body){body.style.backgroundColor=${top};body.style.removeProperty("background-image");body.style.removeProperty("background-size");body.style.removeProperty("background-repeat");body.style.removeProperty("background-position");}var tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.setAttribute("content",${top});}catch(e){}})();`;
 }

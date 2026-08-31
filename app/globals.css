@@ -75,15 +75,16 @@ html[data-about-page] body {
   background-color: var(--doe-page-surface);
 }
 /*
- * /doedtc — cream/white html+body for Safari chrome and TOP rubber-band.
- * Footer blue lives on the page root; a well below the Doe wordmark covers pull-up.
+ * /doedtc — body stays cream/white for TOP rubber-band and status bar.
+ * html is footer blue so the BOTTOM bounce matches the Doe band.
+ * A well below the wordmark covers pull-up when iOS paints body on both edges.
  */
 html[data-doedtc-page] {
   --doe-page-surface: #f8f9fa;
   --doe-page-surface-raised: #ffffff;
   --doe-page-surface-sunken: #f2f2f7;
   --proto-page-bg: #f8f9fa;
-  background-color: #f8f9fa;
+  background-color: #60a5fa;
 }
 html[data-doedtc-page] body {
   background-color: #f8f9fa;
