@@ -8,6 +8,11 @@ import {
 } from "@/lib/doedtc/agent/deliverable-resolver";
 import { createInitialToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 import { createDoeSpecialistAgents } from "@/lib/doedtc/agent/specialists";
+import {
+  compactTranscriptForAgent,
+  DEGENERATE_TURN_REPLY,
+  isDegenerateTurn,
+} from "@/lib/doedtc/agent/turn-integrity";
 import { DoeReplySchema, type DoeDtcRunContext, type DoeReply } from "@/lib/doedtc/agent/types";
 import {
   buildDoeDtcAgentSystemPrompt,
@@ -20,6 +25,15 @@ import {
   searchDoeDtcMem0Memories,
   searchDoeDtcMem0Playbook,
 } from "@/lib/doedtc/doedtc-memory";
+import {
+  applyReminderSafetyNet,
+  buildAwaitingBodyCommitArgs,
+  buildReminderClarifyingQuestion,
+  buildReminderIntentDirective,
+  isAwaitingBodyPending,
+  parseReminderIntent,
+  storeAwaitingBodyReminderPending,
+} from "@/lib/doedtc/doedtc-reminder-intent";
 import {
   clearAgentPending,
   formatAgentPendingForPrompt,
@@ -51,10 +65,7 @@ import { listGuidesForUser } from "@/lib/doedtc/doedtc-guides-db";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 function compactTranscript(messages: Awaited<ReturnType<typeof listDoeDtcMessages>>): string {
-  return messages
-    .slice(-20)
-    .map((row) => `${row.direction === "inbound" ? "User" : "Doe"}: ${row.body}`)
-    .join("\n");
+  return compactTranscriptForAgent(messages, 20);
 }
 
 function formatSymptomLog(
@@ -106,6 +117,7 @@ async function loadRunContext(params: {
   inboundText: string;
   inboundMessageId?: string;
   turnId?: string;
+  reminderDirective?: string | null;
 }): Promise<DoeDtcRunContext> {
   const [snapshot, messageHistory, relevantMemoryRows, recentGuides, pendingRow, playbookNotes, activeBrowserJobId] =
     await Promise.all([
@@ -124,34 +136,35 @@ async function loadRunContext(params: {
   const playbookBlock =
     playbookNotes.length > 0 ? playbookNotes.map((note) => `- ${note}`).join("\n") : "None yet.";
 
-  const instructions = buildDoeDtcAgentSystemPrompt({
-    user: params.user,
-    medications: snapshot.medications,
-    conditions: snapshot.conditions,
-    transcript: compactTranscript(messageHistory),
-    symptomLog: formatSymptomLog(snapshot.symptoms),
-    assessmentHistory: formatAssessmentHistory(snapshot.assessments),
-    appointmentLog: formatAppointmentLog(snapshot.appointments),
-    relevantMemories: formatMem0Block(relevantMemoryRows),
-    playbookNotes: playbookBlock,
-    pendingBlock,
-    familyLog: formatFamilyLog(snapshot.familyMembers),
-    householdLog: formatHouseholdForAgent({
-      household: snapshot.household.household,
-      members: snapshot.household.members,
-      consents: snapshot.household.consents,
-      viewerUserId: params.user.id,
-    }),
-    accountabilityLog: formatAccountabilityForAgent(snapshot.accountabilityPacts),
-    scheduledLog: formatScheduledTextForAgent(snapshot.scheduledTexts.filter((row) => row.status === "pending")),
-    workflowsLog: formatWorkflowsForAgent(activeWorkflows),
-    guidesLog:
-      recentGuides.length === 0
-        ? "None yet."
-        : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
-    profileOverview: formatDoeDtcProfileOverview(snapshot),
-    nowLabel: agentNowLabel(timezone),
-  });
+  const instructions =
+    buildDoeDtcAgentSystemPrompt({
+      user: params.user,
+      medications: snapshot.medications,
+      conditions: snapshot.conditions,
+      transcript: compactTranscript(messageHistory),
+      symptomLog: formatSymptomLog(snapshot.symptoms),
+      assessmentHistory: formatAssessmentHistory(snapshot.assessments),
+      appointmentLog: formatAppointmentLog(snapshot.appointments),
+      relevantMemories: formatMem0Block(relevantMemoryRows),
+      playbookNotes: playbookBlock,
+      pendingBlock,
+      familyLog: formatFamilyLog(snapshot.familyMembers),
+      householdLog: formatHouseholdForAgent({
+        household: snapshot.household.household,
+        members: snapshot.household.members,
+        consents: snapshot.household.consents,
+        viewerUserId: params.user.id,
+      }),
+      accountabilityLog: formatAccountabilityForAgent(snapshot.accountabilityPacts),
+      scheduledLog: formatScheduledTextForAgent(snapshot.scheduledTexts.filter((row) => row.status === "pending")),
+      workflowsLog: formatWorkflowsForAgent(activeWorkflows),
+      guidesLog:
+        recentGuides.length === 0
+          ? "None yet."
+          : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
+      profileOverview: formatDoeDtcProfileOverview(snapshot),
+      nowLabel: agentNowLabel(timezone),
+    }) + (params.reminderDirective ? `\n\n${params.reminderDirective}` : "");
 
   return {
     user: params.user,
@@ -183,6 +196,52 @@ export async function runDoeDtcAgentTurnSdk(params: {
     return { replyText: "Okay, I won't.", assessmentRan: false };
   }
 
+  if (pendingRow && isAwaitingBodyPending(pendingRow.args) && !parseDecline(params.inboundText)) {
+    const body = params.inboundText.trim();
+    if (body) {
+      let commit = await executeAgentPendingCommit({
+        user: params.user,
+        pending: {
+          ...pendingRow,
+          args: buildAwaitingBodyCommitArgs(pendingRow.args, body),
+        },
+      });
+      if (!commit.ok && commit.recoverable) {
+        commit = await executeAgentPendingCommit({
+          user: params.user,
+          pending: {
+            ...pendingRow,
+            args: buildAwaitingBodyCommitArgs(pendingRow.args, body),
+          },
+          allowRollForward: true,
+        });
+      }
+      if (commit.ok) {
+        await clearAgentPending(params.user.id);
+        if (commit.playbookNote) {
+          await addDoeDtcMem0PlaybookNote({ userId: params.user.id, note: commit.playbookNote });
+        }
+        return {
+          replyText: sanitizeDoeDtcReplyText(commit.replyHint),
+          profileUrl: commit.profileUrl,
+          assessmentRan: false,
+        };
+      }
+    }
+  }
+
+  const reminderIntent = parseReminderIntent(params.inboundText);
+  if (!pendingRow && reminderIntent.matched && reminderIntent.missingSlot === "body") {
+    await storeAwaitingBodyReminderPending({ user: params.user, intent: reminderIntent });
+    return {
+      replyText: sanitizeDoeDtcReplyText(buildReminderClarifyingQuestion(reminderIntent), {
+        preservePendingOffer: true,
+      }),
+      assessmentRan: false,
+      preservePendingOffer: true,
+    };
+  }
+
   if (pendingRow && parseAffirmation(params.inboundText)) {
     let commit = await executeAgentPendingCommit({ user: params.user, pending: pendingRow });
     if (!commit.ok && commit.recoverable) {
@@ -205,7 +264,10 @@ export async function runDoeDtcAgentTurnSdk(params: {
     }
   }
 
-  const loaded = await loadRunContext(params);
+  const loaded = await loadRunContext({
+    ...params,
+    reminderDirective: buildReminderIntentDirective(reminderIntent),
+  });
   const agent = createDoeManagerAgent(loaded);
 
   let runState: RunState<DoeDtcRunContext, Agent<DoeDtcRunContext, typeof DoeReplySchema>> | null = null;
@@ -222,7 +284,6 @@ export async function runDoeDtcAgentTurnSdk(params: {
 
   if (result.interruptions?.length) {
     await clearAgentPending(params.user.id);
-    // Store serialized run state for approval resume — uses pending table args JSON
     const { setAgentPending } = await import("@/lib/doedtc/doedtc-pending");
     const interruption = result.interruptions[0];
     await setAgentPending({
@@ -235,15 +296,43 @@ export async function runDoeDtcAgentTurnSdk(params: {
     loaded.turnState.preservePendingOffer = true;
   }
 
+  const safety = await applyReminderSafetyNet({
+    user: params.user,
+    inboundText: params.inboundText,
+    ctx: {
+      user: params.user,
+      inboundText: params.inboundText,
+      inboundMessageId: params.inboundMessageId,
+      snapshot: loaded.snapshot,
+    },
+    state: loaded.turnState,
+    toolsExecuted: loaded.turnState.toolsExecuted,
+  });
+
   const finalOutput = result.finalOutput as DoeReply | undefined;
+  let rawReply = finalOutput?.reply?.trim() || "";
+  if (safety.applied && safety.replyHint) {
+    rawReply = safety.replyHint;
+  }
+
+  const degenerate = isDegenerateTurn({
+    replyText: rawReply,
+    toolsExecuted: loaded.turnState.toolsExecuted,
+    state: loaded.turnState,
+  });
+
   const replyText = sanitizeDoeDtcReplyText(
-    finalOutput?.reply ?? "Got it.",
+    degenerate ? DEGENERATE_TURN_REPLY : rawReply || DEGENERATE_TURN_REPLY,
     { preservePendingOffer: loaded.turnState.preservePendingOffer },
   );
 
-  if (finalOutput) {
+  if (finalOutput && !degenerate) {
     await resolveDoeReplyDeliverables({ reply: finalOutput, ctx: loaded });
   }
 
-  return assembleTurnResult({ replyText, turnState: loaded.turnState });
+  const turnResult = assembleTurnResult({
+    replyText,
+    turnState: loaded.turnState,
+  });
+  return { ...turnResult, degenerate: degenerate || !rawReply };
 }

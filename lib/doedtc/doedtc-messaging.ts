@@ -566,6 +566,10 @@ export async function handleSymptomInbound(params: {
         turnId,
       }),
     );
+    if (turn.degenerate) {
+      agentFailed = true;
+      agentError = "Degenerate agent turn — no meaningful reply or tool action.";
+    }
   } catch (error) {
     agentFailed = true;
     agentError = error instanceof Error ? error.message : "Agent turn failed.";
@@ -579,6 +583,23 @@ export async function handleSymptomInbound(params: {
   const replyText = sanitizeDoeDtcReplyText(turn.replyText, {
     preservePendingOffer: turn.preservePendingOffer,
   });
+  if (agentFailed) {
+    turn = {
+      ...turn,
+      careUrl: undefined,
+      listenUrl: undefined,
+      profileUrl: undefined,
+      feedbackUrl: undefined,
+      prepareUrl: undefined,
+      guideUrl: undefined,
+      artifactShareUrl: undefined,
+      workUrl: undefined,
+      screenshotUrl: undefined,
+      vaultUrl: undefined,
+      liveViewUrl: undefined,
+      sessionUrl: undefined,
+    };
+  }
   const threadReply = await shouldApplyThreadReply({
     userId: params.user.id,
     replyToInbound: turn.replyToInbound,

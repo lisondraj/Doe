@@ -2,9 +2,11 @@ import { randomUUID } from "node:crypto";
 
 import { createDoeDtcListenSession } from "@/lib/doedtc/doedtc-db";
 import { doeDtcAppUrl, doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
+import { applyReminderSafetyNet } from "@/lib/doedtc/doedtc-reminder-intent";
+import { meaningfulToolSucceeded } from "@/lib/doedtc/agent/turn-integrity";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
 import type { DoeDtcToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
-import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
+import type { DoeDtcProfileSnapshot, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 const REFUSAL_PATTERN =
   /\b(can'?t|cannot|unable to|not able to|don'?t have (?:the )?(?:ability|access)|won'?t be able to)\b/i;
@@ -15,7 +17,7 @@ const CLAIM_REGISTRY: Array<{
   id: string;
   claim: RegExp;
   requiredTools: string[];
-  repair?: "profile" | "listen" | "session" | "invite_correction";
+  repair?: "profile" | "listen" | "session" | "invite_correction" | "schedule";
 }> = [
   {
     id: "profile_link",
@@ -41,6 +43,12 @@ const CLAIM_REGISTRY: Array<{
     requiredTools: ["send_family_invite"],
     repair: "invite_correction",
   },
+  {
+    id: "scheduled_text",
+    claim: /\b(?:i'?ll|i will|done —)\s+(?:text|ping|remind)\s+you\b.*\b(?:in|at)\s+\d+\s*(?:second|minute|hour)/i,
+    requiredTools: ["schedule_text", "propose_scheduled_text"],
+    repair: "schedule",
+  },
 ];
 
 export function looksLikeRefusal(text: string): boolean {
@@ -53,7 +61,7 @@ export function shouldRetryEmptyRefusal(params: {
   replyText: string;
   toolsExecuted: DoeDtcAgentToolExecutionRecord[];
 }): boolean {
-  return looksLikeRefusal(params.replyText) && params.toolsExecuted.length === 0;
+  return looksLikeRefusal(params.replyText) && !meaningfulToolSucceeded(params.toolsExecuted);
 }
 
 export function buildRefusalRetrySystemMessage(inboundText: string): string {
@@ -93,6 +101,7 @@ export async function reconcileReplyClaims(params: {
   replyText: string;
   state: DoeDtcToolTurnState;
   toolsExecuted: DoeDtcAgentToolExecutionRecord[];
+  snapshot?: DoeDtcProfileSnapshot;
 }): Promise<{
   replyText: string;
   listenUrl?: string;
@@ -119,6 +128,21 @@ export async function reconcileReplyClaims(params: {
     } else if (entry.repair === "invite_correction") {
       const corrected = buildInviteCorrectionReply(params.state);
       if (corrected) replyText = corrected;
+    } else if (entry.repair === "schedule" && params.snapshot) {
+      const repaired = await applyReminderSafetyNet({
+        user: params.user,
+        inboundText: params.inboundText,
+        ctx: {
+          user: params.user,
+          inboundText: params.inboundText,
+          snapshot: params.snapshot,
+        },
+        state: params.state,
+        toolsExecuted: params.toolsExecuted,
+      });
+      if (repaired.applied && repaired.replyHint) {
+        replyText = repaired.replyHint;
+      }
     }
   }
 

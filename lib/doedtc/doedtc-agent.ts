@@ -4,6 +4,21 @@ import {
   reconcileReplyClaims,
   shouldRetryEmptyRefusal,
 } from "@/lib/doedtc/agent/honesty";
+import {
+  applyReminderSafetyNet,
+  buildAwaitingBodyCommitArgs,
+  buildReminderClarifyingQuestion,
+  buildReminderIntentDirective,
+  isAwaitingBodyPending,
+  parseReminderIntent,
+  storeAwaitingBodyReminderPending,
+} from "@/lib/doedtc/doedtc-reminder-intent";
+import {
+  buildForcedReplySystemMessage,
+  compactTranscriptForAgent,
+  DEGENERATE_TURN_REPLY,
+  isDegenerateTurn,
+} from "@/lib/doedtc/agent/turn-integrity";
 import { executeDoeDtcToolCallsPartitioned } from "@/lib/doedtc/agent/tool-parallel";
 import {
   assertToolPromptCoverage,
@@ -201,6 +216,7 @@ export type DoeDtcAgentTurnResult = {
   browserJobDispatched?: boolean;
   assessmentRan: boolean;
   preservePendingOffer?: boolean;
+  degenerate?: boolean;
 };
 
 const URL_IN_TEXT = /https?:\/\/\S+/gi;
@@ -297,13 +313,10 @@ export function sanitizeDoeDtcReplyText(
 }
 
 function compactTranscript(messages: DoeDtcMessageRow[]): string {
-  const lines = messages
-    .filter((entry) => entry.body.trim())
-    .map((entry) => {
-      const speaker = entry.direction === "inbound" ? "User" : "Doe";
-      return `${speaker}: ${entry.body.trim()}`;
-    });
-  const joined = lines.join("\n");
+  const joined = compactTranscriptForAgent(
+    messages.filter((entry) => entry.body.trim()),
+    20,
+  );
   if (joined.length <= 9000) return joined;
   return joined.slice(joined.length - 9000);
 }
@@ -409,7 +422,7 @@ function buildReplyFromTurnState(params: {
   artifactShareUrl?: string;
   browserUserMessage?: string;
   preservePendingOffer?: boolean;
-}): string {
+}): string | null {
   if (params.browserUserMessage?.trim()) {
     return sanitizeDoeDtcReplyText(params.browserUserMessage, {
       preservePendingOffer: params.preservePendingOffer,
@@ -441,7 +454,7 @@ function buildReplyFromTurnState(params: {
   if (params.guideUrl) return "Sending your guide.";
   if (params.artifactShareUrl) return "Sending your shared tracker link.";
 
-  return "Got it.";
+  return null;
 }
 
 export function buildDoeDtcAgentSystemPrompt(params: {
@@ -548,6 +561,7 @@ export { generateDoeDtcAssessment } from "@/lib/doedtc/doedtc-assessment";
 async function callDoeDtcAgent(
   messages: ChatMessage[],
   tools: typeof DOEDTC_AGENT_TOOLS = DOEDTC_AGENT_TOOLS,
+  options?: { toolChoice?: "auto" | "none" },
 ): Promise<{
   message: {
     content: string | null;
@@ -572,8 +586,7 @@ async function callDoeDtcAgent(
     body: JSON.stringify({
       model: resolveDoeDtcAgentModel(),
       temperature: AGENT_TOOL_TEMPERATURE,
-      tools,
-      tool_choice: "auto",
+      ...(options?.toolChoice === "none" ? {} : { tools, tool_choice: options?.toolChoice ?? "auto" }),
       messages,
     }),
   });
@@ -628,6 +641,76 @@ function filterLegacyAgentTools(activeBrowserJobId: string | null) {
   });
 }
 
+type LegacyToolTurnState = ReturnType<typeof createInitialToolTurnState>;
+
+function assembleLegacyTurnResult(params: {
+  replyText: string;
+  turnState: LegacyToolTurnState;
+  degenerate?: boolean;
+}): DoeDtcAgentTurnResult {
+  return {
+    replyText: params.replyText,
+    careUrl: params.turnState.assessmentRan ? params.turnState.careUrl : undefined,
+    listenUrl: params.turnState.listenUrl,
+    profileUrl: params.turnState.profileUrl,
+    feedbackUrl: params.turnState.feedbackUrl,
+    prepareUrl: params.turnState.prepareUrl,
+    guideUrl: params.turnState.guideUrl,
+    artifactShareUrl: params.turnState.artifactShareUrl,
+    workUrl: params.turnState.workUrl,
+    screenshotUrl: params.turnState.screenshotUrl,
+    vaultUrl: params.turnState.vaultUrl,
+    liveViewUrl: params.turnState.liveViewUrl,
+    sessionUrl: params.turnState.sessionUrl,
+    reactionEmoji: params.turnState.reactionEmoji,
+    replyToInbound: params.turnState.replyToInbound,
+    browserNeedsConfirm: params.turnState.browserNeedsConfirm,
+    browserJobDispatched: params.turnState.browserJobDispatched,
+    assessmentRan: params.turnState.assessmentRan,
+    preservePendingOffer: params.turnState.preservePendingOffer,
+    degenerate: params.degenerate,
+  };
+}
+
+async function forceLegacyTextReply(params: {
+  messages: ChatMessage[];
+  inboundText: string;
+}): Promise<string | null> {
+  params.messages.push({
+    role: "system",
+    content: buildForcedReplySystemMessage(params.inboundText),
+  });
+  const { message } = await callDoeDtcAgent(params.messages, [], { toolChoice: "none" });
+  return message.content?.trim() || null;
+}
+
+async function finalizeLegacyTurnReply(params: {
+  replyText: string | null;
+  messages: ChatMessage[];
+  inboundText: string;
+  turnState: LegacyToolTurnState;
+}): Promise<{ replyText: string; degenerate: boolean }> {
+  let replyText = params.replyText?.trim() || null;
+  if (!replyText) {
+    replyText = await forceLegacyTextReply({
+      messages: params.messages,
+      inboundText: params.inboundText,
+    });
+  }
+
+  const degenerate = isDegenerateTurn({
+    replyText,
+    toolsExecuted: params.turnState.toolsExecuted,
+    state: params.turnState,
+  });
+
+  if (degenerate) {
+    return { replyText: DEGENERATE_TURN_REPLY, degenerate: true };
+  }
+
+  return { replyText: replyText!, degenerate: false };
+}
+
 export async function runDoeDtcAgentTurnLegacy(params: {
   user: DoeDtcUserRow;
   inboundText: string;
@@ -651,6 +734,52 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     return {
       replyText: "Okay, I won't.",
       assessmentRan: false,
+    };
+  }
+
+  if (pendingRow && isAwaitingBodyPending(pendingRow.args) && !parseDecline(params.inboundText)) {
+    const body = params.inboundText.trim();
+    if (body) {
+      let commit = await executeAgentPendingCommit({
+        user: params.user,
+        pending: {
+          ...pendingRow,
+          args: buildAwaitingBodyCommitArgs(pendingRow.args, body),
+        },
+      });
+      if (!commit.ok && commit.recoverable) {
+        commit = await executeAgentPendingCommit({
+          user: params.user,
+          pending: {
+            ...pendingRow,
+            args: buildAwaitingBodyCommitArgs(pendingRow.args, body),
+          },
+          allowRollForward: true,
+        });
+      }
+      if (commit.ok) {
+        await clearAgentPending(params.user.id);
+        if (commit.playbookNote) {
+          await addDoeDtcMem0PlaybookNote({ userId: params.user.id, note: commit.playbookNote });
+        }
+        return {
+          replyText: sanitizeDoeDtcReplyText(commit.replyHint),
+          profileUrl: commit.profileUrl,
+          assessmentRan: false,
+        };
+      }
+    }
+  }
+
+  const reminderIntent = parseReminderIntent(params.inboundText);
+  if (!pendingRow && reminderIntent.matched && reminderIntent.missingSlot === "body") {
+    await storeAwaitingBodyReminderPending({ user: params.user, intent: reminderIntent });
+    return {
+      replyText: sanitizeDoeDtcReplyText(buildReminderClarifyingQuestion(reminderIntent), {
+        preservePendingOffer: true,
+      }),
+      assessmentRan: false,
+      preservePendingOffer: true,
     };
   }
 
@@ -684,6 +813,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const playbookBlock =
     playbookNotes.length > 0 ? playbookNotes.map((note) => `- ${note}`).join("\n") : "None yet.";
   const activeWorkflows = await listActiveWorkflowsForUser(params.user.id);
+  const reminderDirective = buildReminderIntentDirective(reminderIntent);
 
   const systemPrompt = buildDoeDtcAgentSystemPrompt({
     user: params.user,
@@ -712,7 +842,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
     profileOverview: formatDoeDtcProfileOverview(snapshot),
     nowLabel: agentNowLabel(timezone),
-  });
+  }) + (reminderDirective ? `\n\n${reminderDirective}` : "");
 
   const messages: ChatMessage[] = [
     { role: "system", content: systemPrompt },
@@ -724,9 +854,42 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   );
   turnState.turnId = params.turnId ?? createDoeDtcAgentTurnId();
   const legacyTools = filterLegacyAgentTools(turnState.activeBrowserJobId);
+  const toolCtx = {
+    user: params.user,
+    inboundText: params.inboundText,
+    inboundMessageId: params.inboundMessageId,
+    snapshot,
+  };
   let lastModelContent: string | null = null;
   let reflectionNoteInjected = false;
   let refusalRetryInjected = false;
+
+  const finishLegacyTurn = async (replyText: string | null): Promise<DoeDtcAgentTurnResult> => {
+    const safety = await applyReminderSafetyNet({
+      user: params.user,
+      inboundText: params.inboundText,
+      ctx: toolCtx,
+      state: turnState,
+      toolsExecuted: turnState.toolsExecuted,
+    });
+    let resolvedReply = replyText;
+    if (safety.applied && safety.replyHint) {
+      resolvedReply = safety.replyHint;
+    }
+    const finalized = await finalizeLegacyTurnReply({
+      replyText: resolvedReply,
+      messages,
+      inboundText: params.inboundText,
+      turnState,
+    });
+    return assembleLegacyTurnResult({
+      replyText: sanitizeDoeDtcReplyText(finalized.replyText, {
+        preservePendingOffer: turnState.preservePendingOffer,
+      }),
+      turnState,
+      degenerate: finalized.degenerate,
+    });
+  };
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
     const toolErrorsThisRound: string[] = [];
@@ -756,7 +919,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
 
       if (
         shouldRetryEmptyRefusal({
-          replyText,
+          replyText: replyText ?? "",
           toolsExecuted: turnState.toolsExecuted ?? [],
         }) &&
         !refusalRetryInjected
@@ -776,16 +939,17 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       const reconciled = await reconcileReplyClaims({
         user: params.user,
         inboundText: params.inboundText,
-        replyText,
+        replyText: replyText ?? "",
         state: turnState,
         toolsExecuted: turnState.toolsExecuted ?? [],
+        snapshot,
       });
       turnState.listenUrl = reconciled.listenUrl ?? turnState.listenUrl;
       turnState.profileUrl = reconciled.profileUrl ?? turnState.profileUrl;
       turnState.sessionUrl = reconciled.sessionUrl ?? turnState.sessionUrl;
-      replyText = reconciled.replyText;
+      replyText = reconciled.replyText || replyText;
 
-      if (!message.content?.trim()) {
+      if (!replyText?.trim()) {
         replyText = buildReplyFromTurnState({
           assessmentSummary: turnState.assessmentSummary,
           browserNeedsConfirm: turnState.browserNeedsConfirm,
@@ -806,27 +970,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         });
       }
 
-      return {
-        replyText,
-        careUrl: turnState.assessmentRan ? turnState.careUrl : undefined,
-        listenUrl: turnState.listenUrl,
-        profileUrl: turnState.profileUrl,
-        feedbackUrl: turnState.feedbackUrl,
-        prepareUrl: turnState.prepareUrl,
-        guideUrl: turnState.guideUrl,
-        artifactShareUrl: turnState.artifactShareUrl,
-        workUrl: turnState.workUrl,
-        screenshotUrl: turnState.screenshotUrl,
-        vaultUrl: turnState.vaultUrl,
-        liveViewUrl: turnState.liveViewUrl,
-        sessionUrl: turnState.sessionUrl,
-        reactionEmoji: turnState.reactionEmoji,
-        replyToInbound: turnState.replyToInbound,
-        browserNeedsConfirm: turnState.browserNeedsConfirm,
-        browserJobDispatched: turnState.browserJobDispatched,
-        assessmentRan: turnState.assessmentRan,
-        preservePendingOffer: turnState.preservePendingOffer,
-      };
+      return finishLegacyTurn(replyText);
     }
 
     messages.push({
@@ -834,13 +978,6 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       content: message.content,
       tool_calls: message.tool_calls,
     });
-
-    const toolCtx = {
-      user: params.user,
-      inboundText: params.inboundText,
-      inboundMessageId: params.inboundMessageId,
-      snapshot,
-    };
 
     const outputs = await executeDoeDtcToolCallsPartitioned({
       toolCalls: message.tool_calls,
@@ -883,14 +1020,21 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     replyText: lastModelContent ?? "",
     state: turnState,
     toolsExecuted: turnState.toolsExecuted ?? [],
+    snapshot,
   });
   turnState.listenUrl = reconciled.listenUrl ?? turnState.listenUrl;
   turnState.profileUrl = reconciled.profileUrl ?? turnState.profileUrl;
   turnState.sessionUrl = reconciled.sessionUrl ?? turnState.sessionUrl;
 
-  return {
-    replyText: buildReplyFromTurnState({
-      modelContent: reconciled.replyText,
+  messages.push({
+    role: "system",
+    content: buildForcedReplySystemMessage(params.inboundText),
+  });
+  const { message: forcedMessage } = await callDoeDtcAgent(messages, [], { toolChoice: "none" });
+
+  const replyText =
+    buildReplyFromTurnState({
+      modelContent: forcedMessage.content ?? reconciled.replyText,
       assessmentSummary: turnState.assessmentSummary,
       browserNeedsConfirm: turnState.browserNeedsConfirm,
       browserExcerpt: turnState.browserExcerpt,
@@ -907,26 +1051,9 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       guideUrl: turnState.guideUrl,
       artifactShareUrl: turnState.artifactShareUrl,
       preservePendingOffer: turnState.preservePendingOffer,
-    }),
-    careUrl: turnState.assessmentRan ? turnState.careUrl : undefined,
-    listenUrl: turnState.listenUrl,
-    profileUrl: turnState.profileUrl,
-    feedbackUrl: turnState.feedbackUrl,
-    prepareUrl: turnState.prepareUrl,
-    guideUrl: turnState.guideUrl,
-    artifactShareUrl: turnState.artifactShareUrl,
-    workUrl: turnState.workUrl,
-    screenshotUrl: turnState.screenshotUrl,
-    vaultUrl: turnState.vaultUrl,
-    liveViewUrl: turnState.liveViewUrl,
-    sessionUrl: turnState.sessionUrl,
-    reactionEmoji: turnState.reactionEmoji,
-    replyToInbound: turnState.replyToInbound,
-    browserNeedsConfirm: turnState.browserNeedsConfirm,
-    browserJobDispatched: turnState.browserJobDispatched,
-    assessmentRan: turnState.assessmentRan,
-    preservePendingOffer: turnState.preservePendingOffer,
-  };
+    }) ?? forcedMessage.content;
+
+  return finishLegacyTurn(replyText);
 }
 
 export async function runDoeDtcAgentTurn(params: {

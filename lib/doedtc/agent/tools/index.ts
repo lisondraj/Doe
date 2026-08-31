@@ -8,7 +8,6 @@ import type { DoeDtcRunContext } from "@/lib/doedtc/agent/types";
 const STRUCTURED_OUTPUT_ONLY = new Set(["react_to_message", "use_thread_reply"]);
 
 const APPROVAL_TOOLS = new Set([
-  "schedule_text",
   "save_guide",
   "start_accountability",
   "start_habit_workflow",

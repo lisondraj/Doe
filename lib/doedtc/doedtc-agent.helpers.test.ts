@@ -8,6 +8,13 @@ import {
 } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { toUserSafeBrowserError } from "@/lib/doedtc/doedtc-browser";
 import { sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
+import {
+  compactTranscriptForAgent,
+  isDegenerateTurn,
+  isFillerReply,
+  toolCallSignature,
+} from "@/lib/doedtc/agent/turn-integrity";
+import { shouldRetryEmptyRefusal } from "@/lib/doedtc/agent/honesty";
 import { extractInboundMessageId } from "@/lib/doedtc/doedtc-messaging";
 import { linqReactionPayload } from "@/lib/doedtc/linq";
 import { formatDoeDtcIntegrations, formatDoeDtcProfileTab } from "@/lib/doedtc/doedtc-profile-read";
@@ -298,4 +305,62 @@ test("formatDoeDtcProfileTab reads Whoop from the dashboard tab", () => {
   const dashboard = formatDoeDtcProfileTab(snapshot, "dashboard");
   assert.match(dashboard, /Whoop: not connected/);
   assert.match(formatDoeDtcIntegrations(snapshot), /Whoop: not connected/);
+});
+
+test("isFillerReply detects Got it and bare URLs", () => {
+  assert.equal(isFillerReply("Got it."), true);
+  assert.equal(isFillerReply("https://doe.care/foo"), true);
+  assert.equal(isFillerReply("You have three kids."), false);
+});
+
+test("compactTranscriptForAgent drops filler outbound rows", () => {
+  const transcript = compactTranscriptForAgent([
+    { direction: "inbound", body: "Hey" },
+    { direction: "outbound", body: "Got it." },
+    { direction: "inbound", body: "What are my meds" },
+    { direction: "outbound", body: "Ozempic weekly." },
+  ]);
+  assert.match(transcript, /User: Hey/);
+  assert.doesNotMatch(transcript, /Doe: Got it/);
+  assert.match(transcript, /Ozempic weekly/);
+});
+
+test("isDegenerateTurn flags empty filler replies without meaningful tools", () => {
+  assert.equal(
+    isDegenerateTurn({
+      replyText: "Got it.",
+      toolsExecuted: [{ name: "send_profile_link", ok: true }],
+    }),
+    true,
+  );
+  assert.equal(
+    isDegenerateTurn({
+      replyText: "Done — I'll text you in 5 seconds.",
+      toolsExecuted: [{ name: "schedule_text", ok: true }],
+    }),
+    false,
+  );
+});
+
+test("toolCallSignature is stable for identical args", () => {
+  const first = toolCallSignature("send_profile_link", {});
+  const second = toolCallSignature("send_profile_link", {});
+  assert.equal(first, second);
+});
+
+test("shouldRetryEmptyRefusal ignores no-op tool calls", () => {
+  assert.equal(
+    shouldRetryEmptyRefusal({
+      replyText: "I can't take a screenshot directly.",
+      toolsExecuted: [{ name: "send_profile_link", ok: true }],
+    }),
+    true,
+  );
+  assert.equal(
+    shouldRetryEmptyRefusal({
+      replyText: "I can't take a screenshot directly.",
+      toolsExecuted: [{ name: "start_browser_task", ok: true }],
+    }),
+    false,
+  );
 });

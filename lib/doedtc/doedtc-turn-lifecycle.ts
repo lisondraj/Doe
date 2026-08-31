@@ -16,7 +16,7 @@ export const DOE_DTC_DONE_REACTION = "✅";
 export const DOE_DTC_FAILED_REACTION = "👎";
 export const AGENT_TURN_TIMEOUT_MS = 240_000;
 export const AGENT_TURN_FALLBACK_REPLY =
-  "Something broke on my side on that one — trying again now.";
+  "Something broke on my side — give that another try in a moment.";
 
 export async function beginDoeDtcTurnLifecycle(params: {
   turnId: string;

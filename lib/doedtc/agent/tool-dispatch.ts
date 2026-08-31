@@ -125,12 +125,19 @@ import {
   ensureTurnId,
   recordToolExecution,
 } from "@/lib/doedtc/agent/honesty";
+import {
+  REPEAT_TOOL_ERROR,
+  shouldAllowProfileLink,
+  toolCallSignature,
+} from "@/lib/doedtc/agent/turn-integrity";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
 import type { DoeDtcFamilyMemberInput, DoeDtcProfileSnapshot, DoeDtcProfileTab, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 export type DoeDtcToolTurnState = {
   turnId?: string;
   toolsExecuted?: DoeDtcAgentToolExecutionRecord[];
+  seenToolSignatures?: Set<string>;
+  profileLinkCalls?: number;
   familyInvitesSent?: string[];
   familyInviteErrors?: string[];
   latestSymptomId: string | null;
@@ -223,6 +230,29 @@ export async function executeDoeDtcTool(params: {
 }): Promise<Record<string, unknown>> {
   const { name, args, ctx, state } = params;
   ensureTurnId(state);
+
+  if (!state.seenToolSignatures) {
+    state.seenToolSignatures = new Set();
+  }
+  const signature = toolCallSignature(name, args);
+  if (state.seenToolSignatures.has(signature)) {
+    return { ok: false, error: REPEAT_TOOL_ERROR };
+  }
+  state.seenToolSignatures.add(signature);
+
+  if (name === "send_profile_link") {
+    state.profileLinkCalls = (state.profileLinkCalls ?? 0) + 1;
+    if (
+      !shouldAllowProfileLink({
+        inboundText: ctx.inboundText,
+        state,
+        profileLinkCalls: state.profileLinkCalls,
+      })
+    ) {
+      return { ok: false, error: "Profile link not needed for this request." };
+    }
+  }
+
   const started = Date.now();
   let output: Record<string, unknown>;
   try {
