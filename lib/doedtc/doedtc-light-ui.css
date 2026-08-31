@@ -195,11 +195,10 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-profile-layout .doed
 }
 
 /*
- * Split iPhone overflow — keep these two colors independent:
- *   body = cream (app) or white (landing)  → status bar + TOP rubber-band
- *   html = footer blue                     → BOTTOM rubber-band (Safari canvas)
- * Painting body blue turns the top bounce blue.
- * Painting html cream/white turns the bottom bounce white (the overscroll screenshot).
+ * Split iPhone overflow. iOS paints `body` on BOTH bounces, so:
+ *   background-color = footer blue          → BOTTOM rubber-band
+ *   background-image (top 120lvh only)      → TOP rubber-band stays cream/white
+ * Do not set body to a solid cream/white — that is the white strip under the Doe footer.
  */
 .doedtc-root--profile,
 .doedtc-root--has-footer,
@@ -212,23 +211,30 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-profile-layout .doed
 html[data-doedtc-page],
 html[data-doedtc-page]:has(.doedtc-root--has-footer),
 html[data-doedtc-page]:has(.doedtc-root--landing) {
-  background-color: #60a5fa !important;
+  --doedtc-top-overflow: #f8f9fa;
   --doe-page-surface: #f8f9fa;
   --proto-page-bg: #f8f9fa;
+  background-color: #60a5fa !important;
+  background-image: linear-gradient(var(--doedtc-top-overflow, #f8f9fa), var(--doedtc-top-overflow, #f8f9fa)) !important;
+  background-repeat: no-repeat !important;
+  background-position: top !important;
+  background-size: 100% 120lvh !important;
 }
 
 html[data-doedtc-page]:has(.doedtc-root--landing) {
+  --doedtc-top-overflow: #ffffff;
   --doe-page-surface: #ffffff;
   --proto-page-bg: #ffffff;
 }
 
 html[data-doedtc-page] body,
-html[data-doedtc-page]:has(.doedtc-root--has-footer) body {
-  background-color: #f8f9fa !important;
-}
-
+html[data-doedtc-page]:has(.doedtc-root--has-footer) body,
 html[data-doedtc-page]:has(.doedtc-root--landing) body {
-  background-color: #ffffff !important;
+  background-color: #60a5fa !important;
+  background-image: linear-gradient(var(--doedtc-top-overflow, #f8f9fa), var(--doedtc-top-overflow, #f8f9fa)) !important;
+  background-repeat: no-repeat !important;
+  background-position: top !important;
+  background-size: 100% 120lvh !important;
 }
 
 .doedtc-shell--brand-footer {
