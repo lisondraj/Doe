@@ -39,19 +39,26 @@ import {
   archiveDoeDtcArtifact,
   createDoeDtcArtifact,
   createDoeDtcHouseholdInvite,
+  deleteDoeDtcMemory,
   findDoeDtcArtifactByTitle,
   logDoeDtcArtifactEntry,
+  removeDoeDtcAppointment,
   removeDoeDtcArtifactEntry,
   removeDoeDtcCondition,
   removeDoeDtcMedication,
+  removeDoeDtcHouseholdMember,
+  removeDoeDtcSymptom,
   renameDoeDtcCondition,
   renameDoeDtcMedication,
   resolveDoeDtcHouseholdSubject,
   revokeDoeDtcHouseholdAccess,
   shareDoeDtcArtifact,
   unshareDoeDtcArtifact,
+  updateDoeDtcAppointment,
   updateDoeDtcArtifact,
   updateDoeDtcArtifactEntry,
+  updateDoeDtcHouseholdMember,
+  updateDoeDtcSymptom,
   createDoeDtcListenSession,
   createDoeDtcPreparation,
   createDoeDtcTicket,
@@ -112,9 +119,19 @@ import {
   resolveDoeDtcFamilyMemberName,
 } from "@/lib/doedtc/doedtc-family-relationship";
 import { generateDoeDtcAssessment } from "@/lib/doedtc/doedtc-assessment";
-import type { DoeDtcProfileSnapshot, DoeDtcProfileTab, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
+import { logDoeDtcAgentToolCall } from "@/lib/doedtc/doedtc-agent-audit";
+import {
+  ensureTurnId,
+  recordToolExecution,
+} from "@/lib/doedtc/agent/honesty";
+import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
+import type { DoeDtcFamilyMemberInput, DoeDtcProfileSnapshot, DoeDtcProfileTab, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 export type DoeDtcToolTurnState = {
+  turnId?: string;
+  toolsExecuted?: DoeDtcAgentToolExecutionRecord[];
+  familyInvitesSent?: string[];
+  familyInviteErrors?: string[];
   latestSymptomId: string | null;
   assessmentRan: boolean;
   careUrl?: string;
@@ -148,6 +165,10 @@ export type DoeDtcToolExecutionContext = {
 
 export function createInitialToolTurnState(activeBrowserJobId: string | null): DoeDtcToolTurnState {
   return {
+    turnId: undefined,
+    toolsExecuted: [],
+    familyInvitesSent: [],
+    familyInviteErrors: [],
     latestSymptomId: null,
     assessmentRan: false,
     replyToInbound: false,
@@ -192,6 +213,38 @@ async function resolveAgentHouseholdSubject(params: {
 }
 
 export async function executeDoeDtcTool(params: {
+  name: string;
+  args: Record<string, unknown>;
+  ctx: DoeDtcToolExecutionContext;
+  state: DoeDtcToolTurnState;
+}): Promise<Record<string, unknown>> {
+  const { name, args, ctx, state } = params;
+  ensureTurnId(state);
+  const started = Date.now();
+  let output: Record<string, unknown>;
+  try {
+    output = await executeDoeDtcToolInner({ name, args, ctx, state });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Tool execution failed.";
+    output = { ok: false, error: message };
+  }
+
+  const ok = output.ok !== false;
+  const errorText = typeof output.error === "string" ? output.error : undefined;
+  recordToolExecution(state, { name, ok, error: errorText });
+  void logDoeDtcAgentToolCall({
+    turnId: state.turnId!,
+    userId: ctx.user.id,
+    toolName: name,
+    args,
+    ok,
+    error: errorText,
+    durationMs: Date.now() - started,
+  });
+  return output;
+}
+
+async function executeDoeDtcToolInner(params: {
   name: string;
   args: Record<string, unknown>;
   ctx: DoeDtcToolExecutionContext;
@@ -323,18 +376,160 @@ export async function executeDoeDtcTool(params: {
         adminUserId: ctx.user.id,
         memberId: resolvedMemberId,
       });
+      const memberPhone = member.phone?.trim();
+      if (!memberPhone) throw new Error("Add a phone number before sending an invite.");
       await sendDoeDtcFamilyInviteMessage({
         adminUser: ctx.user,
-        memberPhone: member.phone!,
+        memberPhone,
         inviteToken: invite.token,
         memberName: member.full_name,
       });
+      if (!state.familyInvitesSent) state.familyInvitesSent = [];
+      state.familyInvitesSent.push(member.full_name);
       output = {
         ok: true,
         member_id: member.id,
         full_name: member.full_name,
         invite_sent: true,
       };
+    } else if (name === "update_family_member") {
+      const relationshipRaw =
+        typeof args.relationship === "string" ? String(args.relationship).trim() : undefined;
+      const relationship = relationshipRaw
+        ? normalizeDoeDtcFamilyRelationship(relationshipRaw)
+        : undefined;
+      if (relationshipRaw && !relationship) throw new Error("Invalid relationship.");
+      const row = await updateDoeDtcHouseholdMember({
+        adminUserId: ctx.user.id,
+        memberId: typeof args.member_id === "string" ? args.member_id : undefined,
+        memberName: typeof args.member_name === "string" ? args.member_name : undefined,
+        fullName: typeof args.full_name === "string" ? args.full_name : undefined,
+        relationship: relationship ?? undefined,
+        phone: args.phone === null ? null : typeof args.phone === "string" ? args.phone : undefined,
+        dateOfBirth:
+          args.date_of_birth === null
+            ? null
+            : typeof args.date_of_birth === "string"
+              ? args.date_of_birth
+              : undefined,
+        gender:
+          args.gender === null
+            ? null
+            : typeof args.gender === "string"
+              ? (args.gender as DoeDtcFamilyMemberInput["gender"])
+              : undefined,
+      });
+      output = {
+        ok: true,
+        id: row.id,
+        full_name: row.full_name,
+        relationship: row.relationship,
+        status: row.status,
+        invite_available: Boolean(row.phone && row.status === "pending"),
+        updated: true,
+      };
+    } else if (name === "remove_family_member") {
+      const memberId = String(args.member_id ?? "").trim();
+      const memberName = String(args.member_name ?? "").trim();
+      let resolvedMemberId = memberId;
+      if (!resolvedMemberId && memberName) {
+        const { members } = await loadDoeDtcHouseholdAccessContext(ctx.user.id);
+        const member = findHouseholdMemberByName(members, memberName);
+        if (!member) throw new Error("Family member not found.");
+        resolvedMemberId = member.id;
+      }
+      if (!resolvedMemberId) throw new Error("member_id or member_name is required.");
+      await removeDoeDtcHouseholdMember({
+        adminUserId: ctx.user.id,
+        memberId: resolvedMemberId,
+      });
+      output = { ok: true, member_id: resolvedMemberId, removed: true };
+    } else if (name === "update_appointment") {
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
+      const appointmentId = String(args.appointment_id ?? "").trim();
+      if (!appointmentId) throw new Error("appointment_id is required.");
+      const precision =
+        typeof args.timing_precision === "string"
+          ? (String(args.timing_precision).trim() as DoeDtcAppointmentTimingPrecision)
+          : undefined;
+      const normalized =
+        precision !== undefined
+          ? normalizeDoeDtcAppointmentTiming({
+              title: typeof args.title === "string" ? args.title : "",
+              timing_precision: precision,
+              starts_at: typeof args.starts_at === "string" ? args.starts_at : null,
+              timing_note: typeof args.timing_note === "string" ? args.timing_note : null,
+              location: typeof args.location === "string" ? args.location : null,
+              notes: typeof args.notes === "string" ? args.notes : null,
+            })
+          : null;
+      const row = await updateDoeDtcAppointment({
+        userId: subject.subjectUserId,
+        appointmentId,
+        title: normalized?.title ?? (typeof args.title === "string" ? args.title : undefined),
+        startsAt:
+          normalized?.startsAt ??
+          (typeof args.starts_at === "string" ? args.starts_at : undefined),
+        timingNote:
+          normalized?.timingNote ??
+          (typeof args.timing_note === "string" ? args.timing_note : undefined),
+        location:
+          normalized?.location ??
+          (typeof args.location === "string" ? args.location : undefined),
+        notes: normalized?.notes ?? (typeof args.notes === "string" ? args.notes : undefined),
+      });
+      output = {
+        ok: true,
+        id: row.id,
+        title: row.title,
+        starts_at: row.starts_at,
+        timing_note: row.timing_note,
+        updated: true,
+      };
+    } else if (name === "cancel_appointment") {
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
+      const appointmentId = String(args.appointment_id ?? "").trim();
+      if (!appointmentId) throw new Error("appointment_id is required.");
+      await removeDoeDtcAppointment({
+        userId: subject.subjectUserId,
+        appointmentId,
+      });
+      output = { ok: true, appointment_id: appointmentId, cancelled: true };
+    } else if (name === "update_symptom") {
+      const symptomId = String(args.symptom_id ?? state.latestSymptomId ?? "").trim();
+      if (!symptomId) throw new Error("symptom_id is required.");
+      const row = await updateDoeDtcSymptom({
+        userId: ctx.user.id,
+        symptomId,
+        rawText: typeof args.raw_text === "string" ? args.raw_text : undefined,
+        summary: typeof args.summary === "string" ? args.summary : undefined,
+        severity:
+          args.severity === "mild" ||
+          args.severity === "moderate" ||
+          args.severity === "severe"
+            ? args.severity
+            : undefined,
+        onset: typeof args.onset === "string" ? args.onset : undefined,
+        tags: Array.isArray(args.tags)
+          ? args.tags.filter((tag): tag is string => typeof tag === "string").slice(0, 12)
+          : undefined,
+      });
+      output = { ok: true, id: row.id, updated: true };
+    } else if (name === "remove_symptom") {
+      const symptomId = String(args.symptom_id ?? state.latestSymptomId ?? "").trim();
+      if (!symptomId) throw new Error("symptom_id is required.");
+      await removeDoeDtcSymptom({ userId: ctx.user.id, symptomId });
+      output = { ok: true, symptom_id: symptomId, removed: true };
     } else if (name === "add_medication") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,
@@ -342,9 +537,9 @@ export async function executeDoeDtcTool(params: {
         requireEdit: true,
       });
       if ("error" in subject) throw new Error(subject.error);
-      const name = String(args.name ?? "").trim();
-      if (!name) throw new Error("Medication name is required.");
-      const result = await appendDoeDtcMedication({ userId: subject.subjectUserId, name });
+      const medName = String(args.name ?? "").trim();
+      if (!medName) throw new Error("Medication name is required.");
+      const result = await appendDoeDtcMedication({ userId: subject.subjectUserId, name: medName });
       output = { ok: true, name: result.name, added: result.added, subject: subject.subjectMemberName ?? "you" };
     } else if (name === "update_medication") {
       const subject = await resolveAgentHouseholdSubject({
@@ -703,6 +898,14 @@ export async function executeDoeDtcTool(params: {
       });
       await addDoeDtcMem0Fact({ userId: ctx.user.id, fact: row.fact });
       output = { ok: true, id: row.id, fact: row.fact };
+    } else if (name === "forget_fact") {
+      const row = await deleteDoeDtcMemory({
+        userId: ctx.user.id,
+        memoryId: typeof args.memory_id === "string" ? args.memory_id : undefined,
+        factHint: typeof args.fact === "string" ? args.fact : undefined,
+      });
+      if (!row) throw new Error("Memory not found.");
+      output = { ok: true, id: row.id, fact: row.fact, removed: true };
     } else if (name === "start_browser_task") {
       const started = await startDoeDtcBrowserTask({
         user: ctx.user,
@@ -1372,16 +1575,22 @@ export async function executeDoeDtcTool(params: {
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Tool execution failed.";
-    return { ok: false, error: message };
+    throw new Error(message);
   }
   return output;
 }
 
 export const DOE_DTC_TOOL_NAMES = [
   "log_symptoms",
+  "update_symptom",
+  "remove_symptom",
   "run_assessment",
   "log_appointment",
+  "update_appointment",
+  "cancel_appointment",
   "log_family_member",
+  "update_family_member",
+  "remove_family_member",
   "send_family_invite",
   "add_medication",
   "update_medication",
@@ -1404,6 +1613,7 @@ export const DOE_DTC_TOOL_NAMES = [
   "send_guide_link",
   "submit_ticket",
   "remember_fact",
+  "forget_fact",
   "start_browser_task",
   "browser_navigate",
   "browser_act",

@@ -27,6 +27,7 @@ import { listScheduledTextsForUser } from "@/lib/doedtc/doedtc-scheduled-db";
 import { listActiveWorkflowsForUser } from "@/lib/doedtc/doedtc-workflows";
 import { getDoeDtcGuideById, listSavedGuidesForUser } from "@/lib/doedtc/doedtc-guides-db";
 import { createDoeDtcToken, isTokenExpired, onboardingTokenExpiresAt } from "@/lib/doedtc/doedtc-tokens";
+import { normalizePhoneToE164 } from "@/lib/doedtc/doedtc-phone";
 import type {
   DoeDtcArtifactEntryRow,
   DoeDtcArtifactKind,
@@ -522,6 +523,46 @@ export async function insertDoeDtcSymptom(params: {
     .single();
   if (error) throw new Error(error.message);
   return data as DoeDtcSymptomRow;
+}
+
+export async function updateDoeDtcSymptom(params: {
+  userId: string;
+  symptomId: string;
+  rawText?: string;
+  summary?: string | null;
+  severity?: DoeDtcSymptomSeverity;
+  onset?: string | null;
+  tags?: string[];
+}): Promise<DoeDtcSymptomRow> {
+  const supabase = createSupabaseAdmin();
+  const patch: Record<string, unknown> = {};
+  if (params.rawText !== undefined) patch.raw_text = params.rawText.trim();
+  if (params.summary !== undefined) patch.summary = params.summary;
+  if (params.severity !== undefined) patch.severity = params.severity;
+  if (params.onset !== undefined) patch.onset = params.onset;
+  if (params.tags !== undefined) patch.tags = params.tags;
+  const { data, error } = await supabase
+    .from("doedtc_symptoms")
+    .update(patch)
+    .eq("user_id", params.userId)
+    .eq("id", params.symptomId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcSymptomRow;
+}
+
+export async function removeDoeDtcSymptom(params: {
+  userId: string;
+  symptomId: string;
+}): Promise<void> {
+  const supabase = createSupabaseAdmin();
+  const { error } = await supabase
+    .from("doedtc_symptoms")
+    .delete()
+    .eq("user_id", params.userId)
+    .eq("id", params.symptomId);
+  if (error) throw new Error(error.message);
 }
 
 export async function linkDoeDtcSymptomToAssessment(params: {
@@ -1180,6 +1221,33 @@ export async function addDoeDtcAppointment(params: {
   return data as DoeDtcAppointmentRow;
 }
 
+export async function updateDoeDtcAppointment(params: {
+  userId: string;
+  appointmentId: string;
+  title?: string;
+  startsAt?: string | null;
+  timingNote?: string | null;
+  location?: string | null;
+  notes?: string | null;
+}): Promise<DoeDtcAppointmentRow> {
+  const supabase = createSupabaseAdmin();
+  const patch: Record<string, unknown> = {};
+  if (params.title !== undefined) patch.title = params.title.trim();
+  if (params.startsAt !== undefined) patch.starts_at = params.startsAt;
+  if (params.timingNote !== undefined) patch.timing_note = params.timingNote?.trim() || null;
+  if (params.location !== undefined) patch.location = params.location?.trim() || null;
+  if (params.notes !== undefined) patch.notes = params.notes?.trim() || null;
+  const { data, error } = await supabase
+    .from("doedtc_appointments")
+    .update(patch)
+    .eq("user_id", params.userId)
+    .eq("id", params.appointmentId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcAppointmentRow;
+}
+
 export async function removeDoeDtcAppointment(params: {
   userId: string;
   appointmentId: string;
@@ -1530,6 +1598,28 @@ export async function insertDoeDtcMemory(params: {
     .single();
   if (error) throw new Error(error.message);
   return data as DoeDtcMemoryRow;
+}
+
+export async function deleteDoeDtcMemory(params: {
+  userId: string;
+  memoryId?: string;
+  factHint?: string;
+}): Promise<DoeDtcMemoryRow | null> {
+  const supabase = createSupabaseAdmin();
+  let query = supabase.from("doedtc_memories").select("*").eq("user_id", params.userId);
+  if (params.memoryId) {
+    query = query.eq("id", params.memoryId);
+  } else if (params.factHint?.trim()) {
+    query = query.ilike("fact", `%${params.factHint.trim()}%`);
+  } else {
+    throw new Error("memory_id or fact hint is required.");
+  }
+  const { data: row, error: findError } = await query.order("created_at", { ascending: false }).limit(1).maybeSingle();
+  if (findError) throw new Error(findError.message);
+  if (!row) return null;
+  const { error } = await supabase.from("doedtc_memories").delete().eq("id", row.id);
+  if (error) throw new Error(error.message);
+  return row as DoeDtcMemoryRow;
 }
 
 export async function createDoeDtcListenSession(params: {
@@ -2012,6 +2102,69 @@ async function syncLegacyFamilyMemberFromHousehold(params: {
   if (error && !error.message.includes("duplicate key")) throw new Error(error.message);
 }
 
+function normalizeOptionalHouseholdPhone(raw: string | null | undefined): string | null {
+  if (!raw?.trim()) return null;
+  const normalized = normalizePhoneToE164(raw.trim());
+  if (!normalized) {
+    throw new Error("Phone number must include area code or country code (e.g. +1…).");
+  }
+  return normalized;
+}
+
+export async function updateDoeDtcHouseholdMember(params: {
+  adminUserId: string;
+  memberId?: string;
+  memberName?: string;
+  fullName?: string;
+  relationship?: DoeDtcFamilyMemberInput["relationship"];
+  phone?: string | null;
+  dateOfBirth?: string | null;
+  gender?: DoeDtcFamilyMemberInput["gender"] | null;
+}): Promise<DoeDtcHouseholdMemberRow> {
+  const household = await ensureDoeDtcHouseholdForAdmin(params.adminUserId);
+  if (!isHouseholdAdmin({ household, viewerUserId: params.adminUserId })) {
+    throw new Error("Only the household admin can update family members.");
+  }
+  const { members } = await loadDoeDtcHouseholdAccessContext(params.adminUserId);
+  let member =
+    (params.memberId ? members.find((row) => row.id === params.memberId) : null) ??
+    (params.memberName ? findHouseholdMemberByName(members, params.memberName) : null);
+  if (!member) throw new Error("Family member not found.");
+  if (member.role === "admin") throw new Error("Cannot update the household admin row.");
+
+  const patch: Record<string, unknown> = {};
+  if (params.fullName?.trim()) patch.full_name = params.fullName.trim();
+  if (params.relationship) patch.relationship = params.relationship;
+  if (params.phone !== undefined) patch.phone = normalizeOptionalHouseholdPhone(params.phone);
+  if (params.dateOfBirth !== undefined) patch.date_of_birth = params.dateOfBirth?.trim() || null;
+  if (params.gender !== undefined) patch.gender = params.gender;
+
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_household_members")
+    .update(patch)
+    .eq("id", member.id)
+    .eq("household_id", household.id)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  member = data as DoeDtcHouseholdMemberRow;
+
+  if (params.phone !== undefined || params.fullName) {
+    await supabase
+      .from("doedtc_family_members")
+      .update({
+        full_name: member.full_name,
+        phone: member.phone,
+        relationship: member.relationship,
+      })
+      .eq("user_id", params.adminUserId)
+      .ilike("full_name", member.full_name.trim());
+  }
+
+  return member;
+}
+
 export async function addDoeDtcHouseholdMember(params: {
   adminUserId: string;
   fullName: string;
@@ -2024,6 +2177,24 @@ export async function addDoeDtcHouseholdMember(params: {
   if (!isHouseholdAdmin({ household, viewerUserId: params.adminUserId })) {
     throw new Error("Only the household admin can add family members.");
   }
+  const normalizedPhone = params.phone !== undefined ? normalizeOptionalHouseholdPhone(params.phone) : null;
+  const { members } = await loadDoeDtcHouseholdAccessContext(params.adminUserId);
+  const existing = members.find(
+    (row) =>
+      row.role !== "admin" &&
+      row.full_name.trim().toLowerCase() === params.fullName.trim().toLowerCase(),
+  );
+  if (existing) {
+    return updateDoeDtcHouseholdMember({
+      adminUserId: params.adminUserId,
+      memberId: existing.id,
+      relationship: params.relationship,
+      phone: normalizedPhone,
+      dateOfBirth: params.dateOfBirth ?? undefined,
+      gender: params.gender ?? undefined,
+    });
+  }
+
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase
     .from("doedtc_household_members")
@@ -2031,7 +2202,7 @@ export async function addDoeDtcHouseholdMember(params: {
       household_id: household.id,
       full_name: params.fullName.trim(),
       relationship: params.relationship,
-      phone: params.phone?.trim() || null,
+      phone: normalizedPhone,
       date_of_birth: params.dateOfBirth?.trim() || null,
       gender: params.gender ?? null,
       role: "member",
@@ -2039,13 +2210,25 @@ export async function addDoeDtcHouseholdMember(params: {
     })
     .select("*")
     .single();
-  if (error) throw new Error(error.message);
+  if (error) {
+    if (error.message.includes("duplicate key") || error.code === "23505") {
+      return updateDoeDtcHouseholdMember({
+        adminUserId: params.adminUserId,
+        memberName: params.fullName,
+        relationship: params.relationship,
+        phone: normalizedPhone,
+        dateOfBirth: params.dateOfBirth ?? undefined,
+        gender: params.gender ?? undefined,
+      });
+    }
+    throw new Error(error.message);
+  }
 
   await syncLegacyFamilyMemberFromHousehold({
     adminUserId: params.adminUserId,
     fullName: params.fullName,
     relationship: params.relationship,
-    phone: params.phone,
+    phone: normalizedPhone,
   });
 
   return data as DoeDtcHouseholdMemberRow;

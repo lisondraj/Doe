@@ -19,6 +19,7 @@ describe("golden transcript harness scaffolding", () => {
   });
 
   it("tool registry matches dispatch names", () => {
+    assert.equal(doeDtcToolNames().length, DOE_DTC_TOOL_NAMES.length);
     assert.deepEqual([...doeDtcToolNames()], [...DOE_DTC_TOOL_NAMES]);
   });
 

@@ -150,7 +150,10 @@ export function formatHouseholdForAgent(params: {
       } else if (row.user_id === params.viewerUserId) {
         parts.push("self");
       }
-      if (viewerIsAdmin && row.phone) parts.push(`phone: ${row.phone}`);
+      if (viewerIsAdmin && row.role !== "admin") {
+        parts.push(row.phone ? `phone: ${row.phone}` : "phone: none");
+        parts.push(`invite_available: ${Boolean(row.phone && row.status === "pending")}`);
+      }
       if (row.role === "admin") parts.push("admin");
       return `- ${parts.join(" | ")}`;
     })

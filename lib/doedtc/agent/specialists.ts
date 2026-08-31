@@ -4,11 +4,19 @@ import { createDoeDtcSdkTools } from "@/lib/doedtc/agent/tools";
 import { doeReplyOutputGuardrail } from "@/lib/doedtc/agent/guardrails";
 import { DoeReplySchema, resolveDoeDtcAgentModel, type DoeDtcRunContext } from "@/lib/doedtc/agent/types";
 
+const model = () => resolveDoeDtcAgentModel();
+
 const HEALTH_TOOLS = new Set([
   "log_symptoms",
+  "update_symptom",
+  "remove_symptom",
   "run_assessment",
   "log_appointment",
+  "update_appointment",
+  "cancel_appointment",
   "log_family_member",
+  "update_family_member",
+  "remove_family_member",
   "send_family_invite",
   "add_medication",
   "update_medication",
@@ -26,8 +34,10 @@ const HEALTH_TOOLS = new Set([
   "create_preparation",
   "read_profile",
   "remember_fact",
+  "forget_fact",
   "submit_ticket",
   "revoke_household_access",
+  "send_profile_link",
 ]);
 
 const GUIDE_TOOLS = new Set([
@@ -66,7 +76,6 @@ const BROWSER_TOOLS = new Set([
   "show_session",
   "request_commit",
   "start_listen",
-  "send_profile_link",
 ]);
 
 function subsetTools(ctx: DoeDtcRunContext, allowed: Set<string>) {
@@ -74,34 +83,40 @@ function subsetTools(ctx: DoeDtcRunContext, allowed: Set<string>) {
 }
 
 export function createDoeSpecialistAgents(ctx: DoeDtcRunContext) {
+  const sharedInstructions = ctx.instructions;
+
   const healthRecord = new Agent<DoeDtcRunContext>({
     name: "healthRecord",
-    instructions: "Handle symptoms, assessments, meds, conditions, appointments, family, and profile reads.",
+    instructions: sharedInstructions,
+    model: model(),
     tools: subsetTools(ctx, HEALTH_TOOLS),
   });
 
   const guides = new Agent<DoeDtcRunContext>({
     name: "guides",
-    instructions: "Create, update, save, and send visual how-to guides.",
+    instructions: sharedInstructions,
+    model: model(),
     tools: subsetTools(ctx, GUIDE_TOOLS),
   });
 
   const scheduling = new Agent<DoeDtcRunContext>({
     name: "scheduling",
-    instructions: "Schedule texts, accountability pacts, and habit workflows.",
+    instructions: sharedInstructions,
+    model: model(),
     tools: subsetTools(ctx, SCHEDULING_TOOLS),
   });
 
   const browser = new Agent<DoeDtcRunContext>({
     name: "browser",
-    instructions: "Run Kernel browser tasks, snapshots, vault, listen links, and profile links.",
+    instructions: sharedInstructions,
+    model: model(),
     tools: subsetTools(ctx, BROWSER_TOOLS),
   });
 
   const manager = new Agent<DoeDtcRunContext, typeof DoeReplySchema>({
     name: "Doe",
-    instructions: ctx.instructions,
-    model: resolveDoeDtcAgentModel(),
+    instructions: sharedInstructions,
+    model: model(),
     outputType: DoeReplySchema,
     outputGuardrails: [doeReplyOutputGuardrail],
     tools: [

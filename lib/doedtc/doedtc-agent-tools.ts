@@ -35,6 +35,38 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "update_symptom",
+      description: "Update a logged symptom entry when the user corrects it.",
+      parameters: {
+        type: "object",
+        properties: {
+          symptom_id: { type: "string", description: "Symptom row id from the symptom log." },
+          raw_text: { type: "string" },
+          summary: { type: "string" },
+          severity: { type: "string", enum: ["mild", "moderate", "severe", "unknown"] },
+          onset: { type: "string" },
+          tags: { type: "array", items: { type: "string" } },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "remove_symptom",
+      description: "Remove a logged symptom when the user asks to delete it.",
+      parameters: {
+        type: "object",
+        properties: {
+          symptom_id: { type: "string", description: "Symptom row id from the symptom log." },
+        },
+        required: ["symptom_id"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "run_assessment",
       description:
         "Generate a structured clinical review when there is enough information or the user asks what it might be.",
@@ -92,9 +124,47 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "update_appointment",
+      description: "Reschedule or edit an existing appointment.",
+      parameters: {
+        type: "object",
+        properties: {
+          appointment_id: { type: "string", description: "Appointment id from the appointments log." },
+          title: { type: "string" },
+          timing_precision: { type: "string", enum: ["exact", "day", "approximate"] },
+          starts_at: { type: "string" },
+          timing_note: { type: "string" },
+          location: { type: "string" },
+          notes: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["appointment_id"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "cancel_appointment",
+      description: "Cancel/remove an appointment the user no longer has.",
+      parameters: {
+        type: "object",
+        properties: {
+          appointment_id: { type: "string", description: "Appointment id from the appointments log." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["appointment_id"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "log_family_member",
       description:
-        "Add a person to the user's Family chart. Call for each named family member. Use relationship child for sons/daughters. If they mention kids without names, still call with full_name Child.",
+        "Add a household member. If they already exist, use update_family_member instead — never create a duplicate.",
       parameters: {
         type: "object",
         properties: {
@@ -126,9 +196,46 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "update_family_member",
+      description:
+        "Update an existing household member — name, phone, date of birth, gender, or relationship. Use when the user corrects family info.",
+      parameters: {
+        type: "object",
+        properties: {
+          member_id: { type: "string", description: "Household member id." },
+          member_name: { type: "string", description: "Family member name if id is unknown." },
+          full_name: { type: "string" },
+          relationship: {
+            type: "string",
+            enum: ["grandmother", "grandfather", "mother", "father", "child", "sibling", "partner", "other"],
+          },
+          phone: { type: "string", description: "Phone number including area code or country code." },
+          date_of_birth: { type: "string" },
+          gender: { type: "string", enum: ["female", "male", "non_binary", "prefer_not_to_say"] },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "remove_family_member",
+      description: "Remove a household member from the family chart. Admin only.",
+      parameters: {
+        type: "object",
+        properties: {
+          member_id: { type: "string" },
+          member_name: { type: "string" },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "send_family_invite",
       description:
-        "Text a family invite link to a household member who has a phone but has not joined Doe yet. Only call after the user says yes.",
+        "Text a join link to a household member with a phone who has not joined Doe yet. A direct ask to send invites counts as yes.",
       parameters: {
         type: "object",
         properties: {
@@ -575,6 +682,20 @@ export const DOEDTC_AGENT_TOOLS = [
           },
         },
         required: ["fact"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "forget_fact",
+      description: "Remove a stored preference when the user asks you to forget something.",
+      parameters: {
+        type: "object",
+        properties: {
+          memory_id: { type: "string", description: "Memory row id if known." },
+          fact: { type: "string", description: "Text to match against stored memories." },
+        },
       },
     },
   },

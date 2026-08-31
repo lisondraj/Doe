@@ -1,4 +1,14 @@
-import { resolveDoeDtcAgentRuntime } from "@/lib/doedtc/agent/types";
+import { resolveDoeDtcAgentRuntime, resolveDoeDtcAgentModel } from "@/lib/doedtc/agent/types";
+import {
+  buildRefusalRetrySystemMessage,
+  reconcileReplyClaims,
+  shouldRetryEmptyRefusal,
+} from "@/lib/doedtc/agent/honesty";
+import {
+  assertToolPromptCoverage,
+  buildDoeDtcToolCapabilityPrompt,
+} from "@/lib/doedtc/agent/tool-prompt-registry";
+import { createDoeDtcAgentTurnId } from "@/lib/doedtc/doedtc-agent-audit";
 import { getActiveDoeDtcBrowserJobId } from "@/lib/doedtc/doedtc-browser";
 import {
   createInitialToolTurnState,
@@ -151,9 +161,9 @@ import type {
   DoeDtcUserRow,
 } from "@/lib/doedtc/doedtc-types";
 
-const DOEDTC_AGENT_MODEL = "gpt-4o";
 const DOEDTC_ASSESSMENT_MODEL = "gpt-4o-mini";
 const MAX_TOOL_ROUNDS = 8;
+const AGENT_TOOL_TEMPERATURE = 0.25;
 
 
 
@@ -305,6 +315,7 @@ function formatSymptomLog(symptoms: DoeDtcSymptomRow[]): string {
       if (row.severity !== "unknown") parts.push(`severity: ${row.severity}`);
       if (row.onset) parts.push(`onset: ${row.onset}`);
       if (row.tags.length > 0) parts.push(`tags: ${row.tags.join(", ")}`);
+      parts.push(`symptom_id: ${row.id}`);
       return `- ${parts.join(" | ")}`;
     })
     .join("\n");
@@ -376,79 +387,6 @@ async function resolveAgentHouseholdSubject(params: {
     subjectMemberId: resolved.subjectMember.id,
     subjectMemberName: resolved.subjectMember.full_name,
   };
-}
-
-function replyClaimsListenLink(text: string): boolean {
-  return (
-    /\b(listen|record(?:ing)?|transcrib(?:e|ing)?)\b/i.test(text) &&
-    /\b(link|send(?:ing)?|here'?s)\b/i.test(text)
-  );
-}
-
-function replyClaimsProfileLink(text: string): boolean {
-  return (
-    /\b(profile|dashboard|appointments?\s*page)\b/i.test(text) &&
-    /\b(link|send(?:ing)?|here'?s)\b/i.test(text)
-  );
-}
-
-function inboundWantsLiveSession(text: string): boolean {
-  return /\b(watch|stream|live(?:\s+(?:view|session|browser|sandbox))?|see (?:the )?(?:browser|session|sandbox)|follow along)\b/i.test(
-    text,
-  );
-}
-
-function replyRefusesLiveSession(text: string): boolean {
-  return /\b(can'?t|cannot|unable to|don'?t|won'?t|not able to)\b.{0,60}\b(stream|live|watch|session)\b/i.test(
-    text,
-  );
-}
-
-function replyClaimsSessionLink(text: string): boolean {
-  return (
-    /\b(session|live view|watch|sandbox)\b/i.test(text) &&
-    /\b(link|send(?:ing)?|here'?s)\b/i.test(text)
-  );
-}
-
-async function fulfillClaimedLinks(params: {
-  user: DoeDtcUserRow;
-  replyText: string;
-  inboundText: string;
-  listenUrl?: string;
-  profileUrl?: string;
-  sessionUrl?: string;
-  activeBrowserJobId: string | null;
-}): Promise<{ listenUrl?: string; profileUrl?: string; sessionUrl?: string; replyText: string }> {
-  let listenUrl = params.listenUrl;
-  let profileUrl = params.profileUrl;
-  let sessionUrl = params.sessionUrl;
-  let replyText = params.replyText;
-
-  if (!listenUrl && replyClaimsListenLink(params.replyText)) {
-    const session = await createDoeDtcListenSession({ userId: params.user.id });
-    listenUrl = doeDtcListenUrl(params.user.care_token, session.id);
-  }
-
-  if (!profileUrl && replyClaimsProfileLink(params.replyText)) {
-    profileUrl = doeDtcAppUrl(params.user.care_token);
-  }
-
-  const shouldSendSession =
-    Boolean(params.activeBrowserJobId) &&
-    (inboundWantsLiveSession(params.inboundText) ||
-      replyClaimsSessionLink(params.replyText) ||
-      replyRefusesLiveSession(params.replyText));
-
-  if (!sessionUrl && shouldSendSession) {
-    sessionUrl = doeDtcSessionUrl(params.user.care_token);
-  }
-
-  if (sessionUrl && replyRefusesLiveSession(replyText)) {
-    replyText = "Sending a live session link so you can watch.";
-  }
-
-  return { listenUrl, profileUrl, sessionUrl, replyText };
 }
 
 function buildReplyFromTurnState(params: {
@@ -524,7 +462,7 @@ export function buildDoeDtcAgentSystemPrompt(params: {
   profileOverview: string;
   nowLabel: string;
 }): string {
-  return `${buildDoeAgentVoiceBlock()}
+  const prompt = `${buildDoeAgentVoiceBlock()}
 
 ${DOE_AGENT_ACTION_POLICY}
 
@@ -553,9 +491,6 @@ ${params.transcript || "No prior messages."}
 Appointments:
 ${params.appointmentLog}
 
-Family chart:
-${params.familyLog}
-
 Household (shared family):
 ${params.householdLog}
 
@@ -580,36 +515,8 @@ ${params.symptomLog}
 Prior assessments:
 ${params.assessmentHistory}
 
-What you can do:
-- Log symptoms, run structured reviews, track appointments and family members.
-- Add medications (add_medication) and conditions (add_condition) to the profile.
-- To change a medication or condition, use update_medication / update_condition. Never add a second copy and leave the old name.
-- To delete one, use remove_medication / remove_condition.
-- Add family members to the Family chart (log_family_member) — never remember_fact for family.
-- If a named family member has a phone but has not joined Doe yet, you may offer to send an invite (send_family_invite) — do not auto-invite without a yes. Same after log_family_member when a phone is present.
-- When they ask how a family member is doing, their next appointment, symptoms last week, or to prepare a child's summary, use read_profile / create_preparation / trackers with member_id or member_name — do not say you cannot see family.
-- send_family_invite texts a join link. Only the household admin can add/remove members or send invites.
+${buildDoeDtcToolCapabilityPrompt()}
 ${DOE_AGENT_MAKE_SURE_ROUTING}
-- One-time texts / timers: schedule_text when they already asked (including in N seconds). propose_scheduled_text only if confirm_once applies. list_scheduled_texts / cancel_scheduled_text to manage.
-- Daily habits (shower, bath, meds, routines): start_habit_workflow when they already asked — texts subject, awaits reply, notifies owner on miss (~2h). propose_habit_workflow only if ambiguous. cancel_habit_workflow to stop.
-- Accountability pacts (legacy recurring): start_accountability when they already asked; propose_accountability only if ambiguous. withdraw/pause/resume as before. Read accountability tab with read_profile.
-- Household sharing: only members with can_view can see another member's health profile. revoke_household_access is self-only — minors may revoke immediately after they ask; adults need explicit confirmation (confirmed: true). Never revoke for someone else.
-- Send a Listen link to record and transcribe visits (start_listen).
-- Read any profile tab with read_profile — dashboard includes Whoop and Apple Health. Answer from that data. Never say you cannot add or cannot see Whoop, locker, results, family, or share.
-- If they want to connect Whoop or Apple Health, tell them the current status and send_profile_link so they can tap Connect. Do not treat a status question as an add.
-- Send the profile / dashboard link (send_profile_link).
-- Create profile trackers (create_profile_artifact) when they want to track, log, count, or keep a list over time — e.g. Ozempic shots, water, mood, calories. Compose layout and presentation blocks: calorie/food → layout series with calories number field + chart block; water → counter; mood → score + gauge. Do not create trackers for one-off questions. Prefer updating an existing matching tracker over a duplicate. Log entries with log_artifact_entry. Read trackers tab with read_profile.
-- After creating a tracker or logging a useful entry, send_profile_link with tab=trackers and artifact id so they can view/edit it (private profile link).
-- share_artifact when they ask to share a named tracker publicly (read-only link). unshare_artifact when they ask to stop sharing. Never auto-share on create. "Share my calorie tracker" → share_artifact, not create_preparation. "Send my tracker" without share → send_profile_link with artifact.
-- Submit feedback or bug reports (submit_ticket) when they ask to send feedback or report a bug. After submitting, send the track link. Read feedback tab with read_profile.
-- Create a visit-prep summary (create_preparation) when they say prepare, or ask for something to share with their provider, doctor, visit, or refill. Use a general health snapshot if they do not name a reason. After creating, send the prep link with the 5-digit provider code. For a family member, build it from their profile — a tracker is also saved on their Trackers tab.
-- Visual guides (create_guide): when they ask for a how-to, visual instructions, or guide (e.g. take Ozempic properly), compose blocks from the catalog (hero, steps, checklist, timeline, dose_card, site_map, callout, do_dont, faq, facts, illustration). Pick layout howto/schedule/checklist/explainer/comparison. Use profile meds when relevant. After create_guide, send the guide link and ask "Want me to save this to your profile?" — wait for yes before save_guide. update_guide to edit (add steps, change copy). list_guides / send_guide_link to resend. Do NOT use create_preparation for how-to guides.
-- After logging an appointment, or when they mention an upcoming visit or refill, you may briefly offer to prepare a provider summary — not every turn, and do not create it unless they ask or say prepare.
-- If a tool fails, you cannot complete a task, or you made a mistake, mention they can text "report a bug" or "send feedback" and you will file it. Do not auto-file unless they ask.
-- Browse via start_browser_task (Kernel residential proxy). If selectors fail or you have x/y, browser_computer uses the Kernel computer SDK. Screenshot with browser_snapshot.
-- Help with patient portals via request_vault or request_live_login — never ask for passwords in iMessage.
-- Send the live session page (show_session) when they want to watch, stream, or follow the browser and a task is active. You can send a live session. Never say you cannot stream or watch a live browser.
-- Store preferences and general context with remember_fact — not for meds, conditions, or family chart entries.
 
 Parallel work:
 - Only one browser task runs at a time, but you may run other tools in the same turn (log symptoms, family, meds, start_listen, etc.) while a browser job is open.
@@ -622,12 +529,14 @@ iMessage texture:
 Safety:
 - Never invent appointment dates or times. Use log_appointment with approximate timing when vague.
 - For approximate appointments, repeat the user's vague wording — never convert to an exact datetime.
-- Use log_family_member for every family chart entry. Use relationship child for sons/daughters. If names are missing, use full_name Child.
+- Use log_family_member for new family members and update_family_member for corrections. Use relationship child for sons/daughters.
 - Use add_medication and add_condition for profile medical info — never remember_fact for those.
 - When the patient corrects a med or condition, update or remove the existing row. Do not leave the old name on the profile.
 - Never claim a definitive diagnosis. Flag emergencies clearly.
 - Irreversible browser actions need request_commit, then the patient replies CONFIRM.
 - After useful browser findings, you may store a one-line outcome via remember_fact.`;
+  assertToolPromptCoverage(prompt);
+  return prompt;
 }
 
 export { DOEDTC_AGENT_TOOLS } from "@/lib/doedtc/doedtc-agent-tools";
@@ -655,8 +564,8 @@ async function callDoeDtcAgent(messages: ChatMessage[]): Promise<{
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: DOEDTC_AGENT_MODEL,
-      temperature: 0.4,
+      model: resolveDoeDtcAgentModel(),
+      temperature: AGENT_TOOL_TEMPERATURE,
       tools: DOEDTC_AGENT_TOOLS,
       tool_choice: "auto",
       messages,
@@ -782,8 +691,10 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const turnState = createInitialToolTurnState(
     await getActiveDoeDtcBrowserJobId(params.user.id),
   );
+  turnState.turnId = createDoeDtcAgentTurnId();
   let lastModelContent: string | null = null;
   let reflectionNoteInjected = false;
+  let refusalRetryInjected = false;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
     const toolErrorsThisRound: string[] = [];
@@ -811,19 +722,36 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         preservePendingOffer: turnState.preservePendingOffer,
       });
 
-      const fulfilled = await fulfillClaimedLinks({
+      if (
+        shouldRetryEmptyRefusal({
+          replyText,
+          toolsExecuted: turnState.toolsExecuted ?? [],
+        }) &&
+        !refusalRetryInjected
+      ) {
+        refusalRetryInjected = true;
+        messages.push({
+          role: "assistant",
+          content: message.content,
+        });
+        messages.push({
+          role: "system",
+          content: buildRefusalRetrySystemMessage(params.inboundText),
+        });
+        continue;
+      }
+
+      const reconciled = await reconcileReplyClaims({
         user: params.user,
-        replyText,
         inboundText: params.inboundText,
-        listenUrl: turnState.listenUrl,
-        profileUrl: turnState.profileUrl,
-        sessionUrl: turnState.sessionUrl,
-        activeBrowserJobId: turnState.activeBrowserJobId,
+        replyText,
+        state: turnState,
+        toolsExecuted: turnState.toolsExecuted ?? [],
       });
-      turnState.listenUrl = fulfilled.listenUrl;
-      turnState.profileUrl = fulfilled.profileUrl;
-      turnState.sessionUrl = fulfilled.sessionUrl;
-      replyText = fulfilled.replyText;
+      turnState.listenUrl = reconciled.listenUrl ?? turnState.listenUrl;
+      turnState.profileUrl = reconciled.profileUrl ?? turnState.profileUrl;
+      turnState.sessionUrl = reconciled.sessionUrl ?? turnState.sessionUrl;
+      replyText = reconciled.replyText;
 
       if (!message.content?.trim()) {
         replyText = buildReplyFromTurnState({
@@ -910,22 +838,20 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     }
   }
 
-  const fulfilled = await fulfillClaimedLinks({
+  const reconciled = await reconcileReplyClaims({
     user: params.user,
-    replyText: lastModelContent ?? "",
     inboundText: params.inboundText,
-    listenUrl: turnState.listenUrl,
-    profileUrl: turnState.profileUrl,
-    sessionUrl: turnState.sessionUrl,
-    activeBrowserJobId: turnState.activeBrowserJobId,
+    replyText: lastModelContent ?? "",
+    state: turnState,
+    toolsExecuted: turnState.toolsExecuted ?? [],
   });
-  turnState.listenUrl = fulfilled.listenUrl;
-  turnState.profileUrl = fulfilled.profileUrl;
-  turnState.sessionUrl = fulfilled.sessionUrl;
+  turnState.listenUrl = reconciled.listenUrl ?? turnState.listenUrl;
+  turnState.profileUrl = reconciled.profileUrl ?? turnState.profileUrl;
+  turnState.sessionUrl = reconciled.sessionUrl ?? turnState.sessionUrl;
 
   return {
     replyText: buildReplyFromTurnState({
-      modelContent: fulfilled.replyText,
+      modelContent: reconciled.replyText,
       assessmentSummary: turnState.assessmentSummary,
       browserNeedsConfirm: turnState.browserNeedsConfirm,
       browserExcerpt: turnState.browserExcerpt,

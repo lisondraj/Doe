@@ -28,6 +28,7 @@ import {
   parseDecline,
 } from "@/lib/doedtc/doedtc-pending";
 import { sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
+import { createDoeDtcAgentTurnId } from "@/lib/doedtc/doedtc-agent-audit";
 import {
   formatAccountabilityForAgent,
 } from "@/lib/doedtc/doedtc-accountability";
@@ -156,7 +157,10 @@ async function loadRunContext(params: {
     inboundText: params.inboundText,
     inboundMessageId: params.inboundMessageId,
     snapshot,
-    turnState: createInitialToolTurnState(activeBrowserJobId),
+    turnState: {
+      ...createInitialToolTurnState(activeBrowserJobId),
+      turnId: createDoeDtcAgentTurnId(),
+    },
     instructions,
   };
 }
