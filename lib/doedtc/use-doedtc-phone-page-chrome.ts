@@ -10,7 +10,7 @@ import {
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 
-/** All /doedtc pages stay in iPhone view with cream (or landing white) top overflow. */
+/** All /doedtc pages stay in iPhone view with cream (or landing white) top overflow; footer blue is on the page root. */
 export function useDoeDtcPhonePageChrome() {
   useDoePhoneLayoutViewport();
   useDoePhoneStableViewport(true);

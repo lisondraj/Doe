@@ -36,9 +36,12 @@ html[data-doedtc-page]:has(.doedtc-root) {
 .doedtc-root {
   min-height: 100dvh;
   min-height: 100lvh;
-  background: var(--doedtc-surface);
   color: var(--doedtc-ink);
   -webkit-text-size-adjust: 100%;
+}
+
+.doedtc-root:not(.doedtc-root--has-footer) {
+  background: var(--doedtc-surface);
 }
 
 .doedtc-shell {

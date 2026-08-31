@@ -1,8 +1,6 @@
 /* Light Soar-like chrome — avatar nav, settings, dropdowns, toggles */
 .doedtc-root--landing {
   background: #60a5fa;
-  /* Bottom rubber-band only — body stays cream/white so Safari top bounce is not blue. */
-  box-shadow: 0 100vmax 0 0 #60a5fa;
 }
 
 .doedtc-root--landing .doedtc-shell {
@@ -196,12 +194,20 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-profile-layout .doed
   min-height: 100lvh;
 }
 
-.doedtc-root--profile {
-  background: #f8f9fa;
-}
-
+/*
+ * Split iPhone overflow — keep these two colors independent:
+ *   html/body  = cream (app) or white (landing)  → status bar + TOP rubber-band
+ *   .doedtc-root--has-footer = footer blue + downward box-shadow
+ *       → punch-out behind the rounded cream sheet + BOTTOM rubber-band
+ * Painting body blue turns the top bounce blue. Painting the root cream
+ * leaves a white hairline at the footer join and cream bottom overscroll.
+ */
+.doedtc-root--profile,
+.doedtc-root--has-footer,
+.doedtc-root--landing,
 .doedtc-root--landing.doedtc-root--has-footer {
   background: #60a5fa;
+  box-shadow: 0 100vmax 0 0 #60a5fa;
 }
 
 html[data-doedtc-page],
@@ -209,6 +215,7 @@ html[data-doedtc-page]:has(.doedtc-root--has-footer) {
   background-color: #f8f9fa !important;
   --doe-page-surface: #f8f9fa;
   --proto-page-bg: #f8f9fa;
+  overflow-x: clip;
 }
 
 html[data-doedtc-page]:has(.doedtc-root--landing) {
@@ -259,7 +266,7 @@ html[data-doedtc-page]:has(.doedtc-root--landing) body {
   position: relative;
   z-index: 0;
   width: 100%;
-  margin: -1.75rem 0 -4px;
+  margin: -1.75rem 0 0;
   padding-top: calc(clamp(6.75rem, 19vw, 9.25rem) + 1.75rem);
   padding-right: max(0.4rem, env(safe-area-inset-right, 0px));
   padding-bottom: max(0.15rem, env(safe-area-inset-bottom, 0px));

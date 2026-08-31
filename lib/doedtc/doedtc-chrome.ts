@@ -5,7 +5,11 @@ export const DOEDTC_OVERFLOW_SURFACE = "#F8F9FA";
 export const DOEDTC_PAGE_SURFACE = "#F8F9FA";
 /** Landing page top rubber-band — matches the white at the top of the landing gradient. */
 export const DOEDTC_LANDING_OVERFLOW_SURFACE = "#ffffff";
-/** Footer / bottom rubber-band fill. Never paint this on html/body — iOS reveals body at the top bounce. */
+/**
+ * Footer / bottom rubber-band fill.
+ * Paint this on `.doedtc-root--has-footer` + footer box-shadow only.
+ * Never paint it on html/body — iOS Safari reveals the body color on the TOP bounce.
+ */
 export const DOEDTC_FOOTER_OVERFLOW_SURFACE = "#60a5fa";
 
 export function isDoeDtcLandingPath(pathname: string): boolean {
