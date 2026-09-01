@@ -446,6 +446,15 @@ async function executeDoeDtcToolInner(params: {
         status: row.status,
         invite_available: Boolean(row.phone && row.status === "pending"),
       };
+      const { consumeHeldDocumentWritesForMember } = await import(
+        "@/lib/doedtc/agent/document-parse"
+      );
+      await consumeHeldDocumentWritesForMember({
+        user: ctx.user,
+        snapshot: ctx.snapshot,
+        inboundText: ctx.inboundText,
+        memberName: row.full_name,
+      });
     } else if (name === "send_family_invite") {
       const memberId = String(args.member_id ?? "").trim();
       const memberName = String(args.member_name ?? "").trim();

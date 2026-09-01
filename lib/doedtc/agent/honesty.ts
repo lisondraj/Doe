@@ -149,7 +149,7 @@ export function shouldRetryEmptyRefusal(params: {
 }
 
 export function buildRefusalRetrySystemMessage(inboundText: string): string {
-  return `You refused, stalled, or said you were working on it / would send later without starting a tool. The user asked: "${inboundText.slice(0, 280)}". Call the matching tool now (parse_document, start_browser_task, schedule_text, send_family_invite, read_profile, etc.). If they sent a file, parse_document first and say you are saving it. Do not promise a later send unless a tool already started. Only refuse after a tool actually failed.`;
+  return `You refused, stalled, or said you were working on it / would send later without starting a tool. The user asked: "${inboundText.slice(0, 280)}". Call the matching tool now (parse_document, start_browser_task, schedule_text, send_family_invite, read_profile, etc.). If they sent a file, parse_document first. Save only when the name on the page is the user or someone on the household. Do not promise a later send unless a tool already started. Only refuse after a tool actually failed.`;
 }
 
 export function toolSucceeded(

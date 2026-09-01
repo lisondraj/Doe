@@ -276,6 +276,16 @@ export async function executeAgentPendingCommit(params: {
           replyHint: `Sent ${member.full_name} a join link.`,
         };
       }
+      case "commit_document_writes": {
+        const { resolveHeldDocumentIdentity } = await import("@/lib/doedtc/agent/document-parse");
+        const resolved = await resolveHeldDocumentIdentity({
+          user: params.user,
+          inboundText: "yes",
+          pending: params.pending,
+        });
+        if (!resolved) throw new Error("Could not save that photo.");
+        return { ok: true, replyHint: resolved.replyText };
+      }
       default:
         throw new Error(`Unknown pending commit tool: ${params.pending.commit_tool}`);
     }

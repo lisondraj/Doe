@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   formatAgentPendingForPrompt,
   isCommitPending,
+  isDocumentIdentityPending,
   isPendingExpired,
   isRunStatePending,
   PENDING_PROMPT_ARGS_MAX_CHARS,
@@ -25,6 +26,22 @@ test("isRunStatePending detects serialized SDK state", () => {
 test("isCommitPending excludes runState-only rows", () => {
   assert.equal(isCommitPending({ runState: "abc" }), false);
   assert.equal(isCommitPending({ body: "stretch", send_at: "in 10 seconds" }), true);
+});
+
+test("document identity pending steers who / invite / refuse", () => {
+  assert.equal(isDocumentIdentityPending({ document_identity: true, patient_name: "Malik" }), true);
+  const formatted = formatAgentPendingForPrompt({
+    user_id: "user-1",
+    kind: "parse_document",
+    commit_tool: "commit_document_writes",
+    args: { document_identity: true, patient_name: "Ojewale Malik" },
+    summary: "Photo named Ojewale Malik.",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+  assert.match(formatted, /Ojewale Malik/);
+  assert.match(formatted, /invite/);
+  assert.match(formatted, /cannot add this photo/);
 });
 
 test("formatAgentPendingForPrompt never embeds runState blob", () => {

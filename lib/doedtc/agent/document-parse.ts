@@ -10,12 +10,50 @@ import {
 } from "@/lib/doedtc/agent/attachments";
 import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { fetchOpenAiWithRetry } from "@/lib/doedtc/agent/openai-retry";
-import { executeDoeDtcTool } from "@/lib/doedtc/agent/tool-dispatch";
+import { createInitialToolTurnState, executeDoeDtcTool } from "@/lib/doedtc/agent/tool-dispatch";
 import { resolveDoeDtcAgentModel } from "@/lib/doedtc/agent/types";
+import { addDoeDtcHouseholdMember, getDoeDtcProfileSnapshot } from "@/lib/doedtc/doedtc-db";
+import { normalizeDoeDtcFamilyRelationship } from "@/lib/doedtc/doedtc-family-relationship";
 import { getDoeDtcFile } from "@/lib/doedtc/doedtc-files-db";
 import type { HouseholdMemberLike } from "@/lib/doedtc/doedtc-household-policy";
-import type { DoeDtcProfileSnapshot, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
+import {
+  clearAgentPending,
+  getAgentPending,
+  isDocumentIdentityPending,
+  setAgentPending,
+  type DoeDtcAgentPendingRow,
+} from "@/lib/doedtc/doedtc-pending";
+import type {
+  DoeDtcFamilyRelationship,
+  DoeDtcProfileSnapshot,
+  DoeDtcUserRow,
+} from "@/lib/doedtc/doedtc-types";
 import type { DoeDtcToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
+
+export const CANT_ADD_PHOTO_REPLY = "I can't add this photo.";
+
+const NAME_JUNK_TOKENS = new Set([
+  "null",
+  "undefined",
+  "none",
+  "n/a",
+  "na",
+  "unknown",
+  "patient",
+  "name",
+  "mr",
+  "mrs",
+  "ms",
+  "miss",
+  "dr",
+  "prof",
+  "sir",
+]);
+
+const SELF_CLAIM_RE =
+  /\b(?:it'?s|that'?s|this is)\s+me\b|\b(?:they'?re|these are|this is|it'?s)\s+mine\b|\bmy own\b|\b(?:those|these) are my (?:own )?(?:labs?|results?)\b/i;
+
+const INVITE_ASK_RE = /\b(?:invite|add (?:them|him|her|to (?:the |my )?household))\b/i;
 
 export const DOCUMENT_KINDS = [
   "lab_panel",
@@ -243,36 +281,205 @@ export function normalizeDocumentParseResult(raw: unknown): DocumentParseResult 
   };
 }
 
+export type DocumentSubjectDisposition = "self" | "household" | "unknown_name" | "unnamed";
+
+export type DocumentSubjectResolution = {
+  name: string | null;
+  printedName: string | null;
+  onChart: boolean;
+  matchesUser: boolean;
+  canSave: boolean;
+  disposition: DocumentSubjectDisposition;
+};
+
+export function nameTokens(value?: string | null): string[] {
+  if (!value?.trim()) return [];
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s'-]/g, " ")
+    .split(/[\s'-]+/)
+    .map((token) => token.trim())
+    .filter((token) => token.length >= 2 && !NAME_JUNK_TOKENS.has(token) && !/^\d+(yrs?|years?)?$/.test(token));
+}
+
+export function namesLooselyMatch(left?: string | null, right?: string | null): boolean {
+  const a = nameTokens(left);
+  const b = nameTokens(right);
+  if (a.length === 0 || b.length === 0) return false;
+  const setA = new Set(a);
+  const setB = new Set(b);
+  if (a.length === b.length && a.every((token) => setB.has(token))) return true;
+
+  const [shorter, longer] = a.length <= b.length ? [a, setB] : [b, setA];
+  const subset = shorter.every((token) => longer.has(token));
+  if (!subset) {
+    if (a.length >= 2 && b.length >= 2 && a[0] === b[0] && a[a.length - 1] === b[b.length - 1]) {
+      return true;
+    }
+    return false;
+  }
+  if (!shorter.some((token) => token.length >= 3)) return false;
+  if (a.length >= 2 && b.length >= 2 && a[0] !== b[0] && a[a.length - 1] !== b[b.length - 1]) {
+    return false;
+  }
+  return true;
+}
+
+function findHouseholdMatch(
+  members: HouseholdMemberLike[],
+  name: string,
+): HouseholdMemberLike | null {
+  return (
+    members.find((row) => namesLooselyMatch(row.full_name, name)) ??
+    (nameTokens(name).length === 1
+      ? members.find((row) => namesLooselyMatch(row.full_name.split(/\s+/)[0] ?? "", name))
+      : null) ??
+    null
+  );
+}
+
 export function resolveDocumentPatientName(params: {
   parsedName?: string | null;
   caption: string;
   members: HouseholdMemberLike[];
   viewerUserId: string;
-}): { name: string | null; onChart: boolean } {
+  viewerName?: string | null;
+}): DocumentSubjectResolution {
+  const printed = params.parsedName?.trim() || null;
   const captionMentions = extractChartMentions({
     inboundText: params.caption,
     members: params.members,
     viewerUserId: params.viewerUserId,
   });
+
+  const resolveKnown = (raw: string): DocumentSubjectResolution => {
+    if (namesLooselyMatch(raw, params.viewerName)) {
+      return {
+        name: params.viewerName?.trim() || raw,
+        printedName: printed,
+        onChart: true,
+        matchesUser: true,
+        canSave: true,
+        disposition: "self",
+      };
+    }
+    const member = findHouseholdMatch(params.members, raw);
+    if (member) {
+      const matchesUser = Boolean(member.user_id && member.user_id === params.viewerUserId);
+      return {
+        name: member.full_name,
+        printedName: printed,
+        onChart: true,
+        matchesUser,
+        canSave: true,
+        disposition: matchesUser ? "self" : "household",
+      };
+    }
+    return {
+      name: raw,
+      printedName: printed,
+      onChart: false,
+      matchesUser: false,
+      canSave: false,
+      disposition: "unknown_name",
+    };
+  };
+
+  if (printed) {
+    const fromDoc = extractChartMentions({
+      inboundText: `for ${printed}`,
+      members: params.members,
+      viewerUserId: params.viewerUserId,
+    });
+    if (fromDoc.mentioned[0] && namesLooselyMatch(printed, fromDoc.mentioned[0].full_name)) {
+      return resolveKnown(fromDoc.mentioned[0].full_name);
+    }
+    return resolveKnown(printed);
+  }
+
   if (captionMentions.mentioned[0]) {
-    return { name: captionMentions.mentioned[0].full_name, onChart: true };
+    return resolveKnown(captionMentions.mentioned[0].full_name);
   }
   if (captionMentions.unknownNames[0]) {
-    return { name: captionMentions.unknownNames[0], onChart: false };
+    return resolveKnown(captionMentions.unknownNames[0]);
+  }
+  if (namesLooselyMatch(params.caption, params.viewerName)) {
+    return resolveKnown(params.viewerName!.trim());
   }
 
-  const parsed = params.parsedName?.trim();
-  if (!parsed) return { name: null, onChart: false };
+  return {
+    name: null,
+    printedName: null,
+    onChart: false,
+    matchesUser: false,
+    canSave: false,
+    disposition: "unnamed",
+  };
+}
 
-  const fromDoc = extractChartMentions({
-    inboundText: `for ${parsed}`,
+export type DocumentIdentityReply =
+  | { action: "decline" }
+  | { action: "save_self" }
+  | { action: "save_other"; name: string; invite: boolean; relationship: DoeDtcFamilyRelationship }
+  | { action: "unresolved" };
+
+function relationshipFromIdentityReply(text: string): DoeDtcFamilyRelationship {
+  const match = text.match(
+    /\b(son|daughter|kid|child|wife|husband|spouse|partner|mom|mother|dad|father|brother|sister|grandma|grandpa)\b/i,
+  );
+  return normalizeDoeDtcFamilyRelationship(match?.[1] ?? "") ?? "other";
+}
+
+export function interpretDocumentIdentityReply(params: {
+  inboundText: string;
+  viewerName?: string | null;
+  members: HouseholdMemberLike[];
+  viewerUserId: string;
+  printedName?: string | null;
+}): DocumentIdentityReply {
+  const text = params.inboundText.trim();
+  if (!text) return { action: "unresolved" };
+  if (/^(no|nope|nah|don't|do not|stop|cancel|nevermind|never mind|not now|skip)\b/i.test(text)) {
+    return { action: "decline" };
+  }
+  if (SELF_CLAIM_RE.test(text) || namesLooselyMatch(text, params.viewerName)) {
+    return { action: "save_self" };
+  }
+
+  const mentions = extractChartMentions({
+    inboundText: text,
     members: params.members,
     viewerUserId: params.viewerUserId,
   });
-  if (fromDoc.mentioned[0]) {
-    return { name: fromDoc.mentioned[0].full_name, onChart: true };
+  const named = mentions.mentioned[0]?.full_name ?? mentions.unknownNames[0] ?? null;
+  const invite = INVITE_ASK_RE.test(text);
+  if (named) {
+    if (namesLooselyMatch(named, params.viewerName)) return { action: "save_self" };
+    return {
+      action: "save_other",
+      name: named,
+      invite,
+      relationship: relationshipFromIdentityReply(text),
+    };
   }
-  return { name: parsed, onChart: false };
+
+  if (
+    params.printedName &&
+    (/^(yes|y|yep|yeah|sure|ok|okay|do it|go ahead|please|confirm|sounds good|that works)\b/i.test(
+      text,
+    ) ||
+      invite)
+  ) {
+    if (namesLooselyMatch(params.printedName, params.viewerName)) return { action: "save_self" };
+    return {
+      action: "save_other",
+      name: params.printedName,
+      invite: true,
+      relationship: relationshipFromIdentityReply(text),
+    };
+  }
+
+  return { action: "unresolved" };
 }
 
 export function applyDocumentSubjectToWrites(
@@ -327,7 +534,9 @@ export function shouldAutoCommitDocumentParse(params: {
   parse: DocumentParseResult;
   inboundText: string;
   attachmentTurn: boolean;
+  canSave?: boolean;
 }): boolean {
+  if (params.canSave === false) return false;
   if (!params.attachmentTurn) return false;
   if (params.parse.confidence < 0.82) return false;
   if (params.parse.kind === "other") return false;
@@ -532,18 +741,24 @@ export async function runParseDocumentTool(params: {
     caption: params.caption ?? params.inboundText,
     members: params.snapshot.household?.members ?? [],
     viewerUserId: params.user.id,
+    viewerName: params.user.full_name,
   });
-  const writes = subject.onChart
-    ? applyDocumentSubjectToWrites(parse.writes, subject.name)
+  const writes = subject.canSave
+    ? applyDocumentSubjectToWrites(
+        parse.writes,
+        subject.matchesUser ? null : subject.name,
+      )
     : parse.writes;
 
   const autoCommit =
-    params.autoCommit ??
-    shouldAutoCommitDocumentParse({
-      parse: { ...parse, writes },
-      inboundText: params.inboundText,
-      attachmentTurn: true,
-    });
+    subject.canSave &&
+    (params.autoCommit ??
+      shouldAutoCommitDocumentParse({
+        parse: { ...parse, writes },
+        inboundText: params.inboundText,
+        attachmentTurn: true,
+        canSave: subject.canSave,
+      }));
 
   let writeResults: Array<{ tool: string; ok: boolean; output?: unknown; error?: string }> = [];
   if (autoCommit && writes.length > 0) {
@@ -556,13 +771,39 @@ export async function runParseDocumentTool(params: {
     });
   }
 
+  if (!subject.canSave && subject.disposition === "unknown_name" && writes.length > 0) {
+    try {
+      await setAgentPending({
+        userId: params.user.id,
+        kind: "parse_document",
+        commitTool: "commit_document_writes",
+        args: {
+          document_identity: true,
+          writes,
+          patient_name: subject.name,
+          file_ids: fileIds,
+        },
+        summary: `Photo named ${subject.name}. Ask who they are and whether to invite them to the household.`,
+      });
+    } catch (error) {
+      console.warn(
+        "[doedtc] document identity pending failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }
+
   const result = {
     ok: true,
     kind: parse.kind,
     confidence: parse.confidence,
     summary: parse.summary,
     patient_name: subject.name,
+    printed_name: subject.printedName,
     subject_on_chart: subject.onChart,
+    matches_user: subject.matchesUser,
+    can_save: subject.canSave,
+    disposition: subject.disposition,
     vision_ready: visionReady,
     proposed_writes: writes,
     auto_committed: autoCommit,
@@ -603,9 +844,155 @@ export async function ensureInboundDocumentParsed(params: {
 export function formatDocumentParseForPrompt(output: Record<string, unknown> | null): string | null {
   if (!output || output.ok === false) return null;
   const summary = typeof output.summary === "string" ? output.summary.trim() : "";
+  const name = typeof output.patient_name === "string" ? output.patient_name.trim() : "";
+  const disposition = typeof output.disposition === "string" ? output.disposition : "";
+  if (disposition === "unnamed" || (output.can_save === false && !name)) {
+    return `Inbound document was read but has no patient name. Do not save it. Tell them you can't add this photo. Do not claim it is on the chart. Do not call parse_document again.`;
+  }
+  if (output.can_save === false && (disposition === "unknown_name" || name)) {
+    return `Inbound document was read (${summary || "health document"}). The name on it is ${name || "someone else"}, not the user and not on the household. Do not save it. Ask who it is and if they want to invite them to the household. If they will not say, tell them you can't add this photo. Do not call parse_document again.`;
+  }
   if (!summary) return null;
   const saved = output.auto_committed === true;
   return `Inbound document already parsed and ${saved ? "saved to the chart" : "read"}: ${summary}. Do not say you could not read it. Narrate what landed. Do not call parse_document again.`;
+}
+
+function heldDocumentWrites(pending: DoeDtcAgentPendingRow): Array<{
+  tool: ParseDocumentWriteTool;
+  args: Record<string, unknown>;
+}> {
+  const raw = pending.args.writes;
+  if (!Array.isArray(raw)) return [];
+  return raw.filter(
+    (row): row is { tool: ParseDocumentWriteTool; args: Record<string, unknown> } =>
+      Boolean(row && typeof row === "object" && "tool" in row && "args" in row),
+  );
+}
+
+export async function commitHeldDocumentWrites(params: {
+  user: DoeDtcUserRow;
+  snapshot: DoeDtcProfileSnapshot;
+  inboundText: string;
+  writes: Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }>;
+  memberName?: string | null;
+}): Promise<Array<{ tool: string; ok: boolean; output?: unknown; error?: string }>> {
+  const writes = applyDocumentSubjectToWrites(params.writes, params.memberName ?? null);
+  return executeDocumentParseWrites({
+    user: params.user,
+    inboundText: params.inboundText,
+    snapshot: params.snapshot,
+    state: createInitialToolTurnState(null),
+    writes,
+  });
+}
+
+export async function consumeHeldDocumentWritesForMember(params: {
+  user: DoeDtcUserRow;
+  snapshot: DoeDtcProfileSnapshot;
+  inboundText: string;
+  memberName: string;
+}): Promise<boolean> {
+  const pending = await getAgentPending(params.user.id);
+  if (!pending || !isDocumentIdentityPending(pending.args)) return false;
+  const printed =
+    typeof pending.args.patient_name === "string" ? pending.args.patient_name : null;
+  if (printed && !namesLooselyMatch(printed, params.memberName)) return false;
+  const writes = heldDocumentWrites(pending);
+  if (writes.length === 0) return false;
+  await commitHeldDocumentWrites({
+    user: params.user,
+    snapshot: params.snapshot,
+    inboundText: params.inboundText,
+    writes,
+    memberName: params.memberName,
+  });
+  await clearAgentPending(params.user.id);
+  return true;
+}
+
+export async function resolveHeldDocumentIdentity(params: {
+  user: DoeDtcUserRow;
+  inboundText: string;
+  pending: DoeDtcAgentPendingRow;
+}): Promise<{ replyText: string; assessmentRan: false } | null> {
+  if (!isDocumentIdentityPending(params.pending.args) && params.pending.kind !== "parse_document") {
+    return null;
+  }
+  const snapshot = await getDoeDtcProfileSnapshot(params.user.id);
+  const printed =
+    typeof params.pending.args.patient_name === "string"
+      ? params.pending.args.patient_name
+      : null;
+  const decision = interpretDocumentIdentityReply({
+    inboundText: params.inboundText,
+    viewerName: params.user.full_name,
+    members: snapshot.household?.members ?? [],
+    viewerUserId: params.user.id,
+    printedName: printed,
+  });
+  if (decision.action === "unresolved") return null;
+  if (decision.action === "decline") {
+    await clearAgentPending(params.user.id);
+    return { replyText: CANT_ADD_PHOTO_REPLY, assessmentRan: false };
+  }
+
+  const writes = heldDocumentWrites(params.pending);
+  if (writes.length === 0) {
+    await clearAgentPending(params.user.id);
+    return { replyText: CANT_ADD_PHOTO_REPLY, assessmentRan: false };
+  }
+
+  if (decision.action === "save_self") {
+    await commitHeldDocumentWrites({
+      user: params.user,
+      snapshot,
+      inboundText: params.inboundText,
+      writes,
+    });
+    await clearAgentPending(params.user.id);
+    return { replyText: "Saved this to your chart.", assessmentRan: false };
+  }
+
+  const existing = (snapshot.household?.members ?? []).find((row) =>
+    namesLooselyMatch(row.full_name, decision.name),
+  );
+  let memberName = existing?.full_name ?? decision.name;
+  if (!existing) {
+    try {
+      const row = await addDoeDtcHouseholdMember({
+        adminUserId: params.user.id,
+        fullName: decision.name,
+        relationship: decision.relationship,
+      });
+      memberName = row.full_name;
+    } catch (error) {
+      console.warn(
+        "[doedtc] document household add failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+      await clearAgentPending(params.user.id);
+      return { replyText: CANT_ADD_PHOTO_REPLY, assessmentRan: false };
+    }
+  }
+
+  await commitHeldDocumentWrites({
+    user: params.user,
+    snapshot,
+    inboundText: params.inboundText,
+    writes,
+    memberName,
+  });
+  await clearAgentPending(params.user.id);
+  if (decision.invite) {
+    return {
+      replyText: `Saved this to ${memberName}'s chart. Share a number if you want me to invite them to the household.`,
+      assessmentRan: false,
+    };
+  }
+  return {
+    replyText: `Saved this to ${memberName}'s chart. Want me to invite them to the household?`,
+    assessmentRan: false,
+  };
 }
 
 export async function runReadAttachmentTool(params: {

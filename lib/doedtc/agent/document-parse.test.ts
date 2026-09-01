@@ -4,7 +4,10 @@ import { describe, it } from "node:test";
 import {
   applyDocumentSubjectToWrites,
   buildDocumentSavingNotice,
+  formatDocumentParseForPrompt,
+  interpretDocumentIdentityReply,
   mapLabPanelToLogResultWrites,
+  namesLooselyMatch,
   normalizeDocumentParseResult,
   resolveDocumentPatientName,
   sanitizeDocumentParseSummary,
@@ -55,6 +58,7 @@ describe("document parse", () => {
           kind: "lab_panel",
           confidence: 0.9,
           summary: "Lab panel",
+          patient_name: null,
           writes: [{ tool: "log_result", args: { title: "A1C", resulted_at: "2026-08-15" } }],
         },
         inboundText: "[attachments: file-1]",
@@ -82,18 +86,24 @@ describe("document parse", () => {
       caption: "[attachments: file-1]",
       members,
       viewerUserId: "parent-1",
+      viewerName: "James Lisondra",
     });
     assert.equal(onChart.name, "Simon");
     assert.equal(onChart.onChart, true);
+    assert.equal(onChart.canSave, true);
+    assert.equal(onChart.disposition, "household");
 
     const unknown = resolveDocumentPatientName({
       parsedName: "Riley",
       caption: "",
       members,
       viewerUserId: "parent-1",
+      viewerName: "James Lisondra",
     });
     assert.equal(unknown.name, "Riley");
     assert.equal(unknown.onChart, false);
+    assert.equal(unknown.canSave, false);
+    assert.equal(unknown.disposition, "unknown_name");
 
     const writes = applyDocumentSubjectToWrites(
       [{ tool: "log_result", args: { title: "A1C", resulted_at: "2026-08-15" } }],
@@ -134,6 +144,7 @@ describe("document parse", () => {
           kind: "other",
           confidence: 0.4,
           summary: "Not sure what this is",
+          patient_name: null,
           writes: [],
         },
         inboundText: "[attachments: file-2]",
@@ -141,5 +152,135 @@ describe("document parse", () => {
       }),
       false,
     );
+  });
+
+  it("matches printed names to the user without exact spelling", () => {
+    assert.equal(namesLooselyMatch("OJEWALE MALIK null", "Malik Ojewale"), true);
+    assert.equal(namesLooselyMatch("James Lisondra", "James"), true);
+    assert.equal(namesLooselyMatch("James Lisondra", "Ojewale Malik"), false);
+    assert.equal(namesLooselyMatch("James Brown", "James Lisondra"), false);
+
+    const self = resolveDocumentPatientName({
+      parsedName: "OJEWALE MALIK null",
+      caption: "[attachments: file-1]",
+      members: [],
+      viewerUserId: "user-1",
+      viewerName: "Malik Ojewale",
+    });
+    assert.equal(self.matchesUser, true);
+    assert.equal(self.canSave, true);
+    assert.equal(self.disposition, "self");
+
+    const unnamed = resolveDocumentPatientName({
+      parsedName: null,
+      caption: "[attachments: file-1]",
+      members: [],
+      viewerUserId: "user-1",
+      viewerName: "James Lisondra",
+    });
+    assert.equal(unnamed.disposition, "unnamed");
+    assert.equal(unnamed.canSave, false);
+  });
+
+  it("does not auto-commit when the printed name is not the user or household", () => {
+    assert.equal(
+      shouldAutoCommitDocumentParse({
+        parse: {
+          kind: "lab_panel",
+          confidence: 0.95,
+          summary: "Liver panel",
+          patient_name: "Ojewale Malik",
+          writes: [{ tool: "log_result", args: { title: "ALT", resulted_at: "2023-02-28" } }],
+        },
+        inboundText: "[attachments: file-1]",
+        attachmentTurn: true,
+        canSave: false,
+      }),
+      false,
+    );
+  });
+
+  it("asks who it is or refuses the photo from parse output", () => {
+    assert.match(
+      formatDocumentParseForPrompt({
+        ok: true,
+        summary: "Liver function test",
+        patient_name: "Ojewale Malik",
+        can_save: false,
+        disposition: "unknown_name",
+        auto_committed: false,
+      }) ?? "",
+      /invite them to the household/i,
+    );
+    assert.match(
+      formatDocumentParseForPrompt({
+        ok: true,
+        summary: "A photo",
+        patient_name: null,
+        can_save: false,
+        disposition: "unnamed",
+        auto_committed: false,
+      }) ?? "",
+      /can't add this photo/i,
+    );
+  });
+
+  it("reads who / invite replies for a held document", () => {
+    const members = [
+      {
+        id: "m-simon",
+        full_name: "Simon",
+        user_id: null,
+        phone: null,
+        status: "pending" as const,
+        relationship: "child" as const,
+        role: "member" as const,
+        gender: "male" as const,
+      },
+    ];
+    assert.equal(
+      interpretDocumentIdentityReply({
+        inboundText: "that's me",
+        viewerName: "James Lisondra",
+        members,
+        viewerUserId: "parent-1",
+        printedName: "Ojewale Malik",
+      }).action,
+      "save_self",
+    );
+    assert.equal(
+      interpretDocumentIdentityReply({
+        inboundText: "no",
+        viewerName: "James Lisondra",
+        members,
+        viewerUserId: "parent-1",
+        printedName: "Ojewale Malik",
+      }).action,
+      "decline",
+    );
+    const invite = interpretDocumentIdentityReply({
+      inboundText: "yes invite him",
+      viewerName: "James Lisondra",
+      members,
+      viewerUserId: "parent-1",
+      printedName: "Ojewale Malik",
+    });
+    assert.equal(invite.action, "save_other");
+    if (invite.action === "save_other") {
+      assert.equal(invite.name, "Ojewale Malik");
+      assert.equal(invite.invite, true);
+    }
+    const son = interpretDocumentIdentityReply({
+      inboundText: "that's my son Simon",
+      viewerName: "James Lisondra",
+      members,
+      viewerUserId: "parent-1",
+      printedName: "Ojewale Malik",
+    });
+    assert.equal(son.action, "save_other");
+    if (son.action === "save_other") {
+      assert.equal(son.name, "Simon");
+      assert.equal(son.relationship, "child");
+    }
   });
 });

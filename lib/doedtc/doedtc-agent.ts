@@ -94,6 +94,7 @@ import {
   formatAgentPendingForPrompt,
   getAgentPending,
   isCommitPending,
+  isDocumentIdentityPending,
   isRunStatePending,
   parseAffirmation,
   parseDecline,
@@ -893,6 +894,16 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       loadActiveWork({ userId: params.user.id, currentTurnId: params.turnId }),
     ]);
   let pendingRow = await getAgentPending(params.user.id);
+
+  if (pendingRow && (isDocumentIdentityPending(pendingRow.args) || pendingRow.kind === "parse_document")) {
+    const { resolveHeldDocumentIdentity } = await import("@/lib/doedtc/agent/document-parse");
+    const resolved = await resolveHeldDocumentIdentity({
+      user: params.user,
+      inboundText: params.inboundText,
+      pending: pendingRow,
+    });
+    if (resolved) return resolved;
+  }
 
   if (pendingRow && parseDecline(params.inboundText)) {
     await clearAgentPending(params.user.id);

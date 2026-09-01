@@ -6,7 +6,8 @@ export type DoeDtcAgentPendingKind =
   | "start_accountability"
   | "start_habit_workflow"
   | "start_workflow"
-  | "send_family_invite";
+  | "send_family_invite"
+  | "parse_document";
 
 export type DoeDtcAgentPendingRow = {
   user_id: string;
@@ -48,6 +49,10 @@ export function isCommitPending(args: Record<string, unknown>): boolean {
   return Object.keys(args).length > 0;
 }
 
+export function isDocumentIdentityPending(args: Record<string, unknown>): boolean {
+  return args.document_identity === true;
+}
+
 export function extractRunStateSerialized(args: Record<string, unknown>): string | null {
   if (!isRunStatePending(args)) return null;
   return String(args.runState).trim();
@@ -84,6 +89,14 @@ function truncateJson(value: unknown, maxChars: number): string {
 export function formatAgentPendingForPrompt(pending: DoeDtcAgentPendingRow): string {
   if (isRunStatePending(pending.args)) {
     return `Pending SDK approval: ${pending.summary}. If they affirm, continue the interrupted action. If they decline, cancel it. Do not call propose_* again.`;
+  }
+
+  if (pending.kind === "parse_document" || isDocumentIdentityPending(pending.args)) {
+    const name =
+      typeof pending.args.patient_name === "string" && pending.args.patient_name.trim()
+        ? pending.args.patient_name.trim()
+        : "someone";
+    return `Pending document: the name on the page is ${name}, not the user and not on the household. If they say it is them, save to their chart. If they name who it is, add that person if needed, ask/send a household invite, then save. If they decline or will not say, tell them you cannot add this photo. Do not claim it is already saved.`;
   }
 
   const argsForPrompt = sanitizePendingArgsForPrompt(pending.args);

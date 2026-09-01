@@ -248,7 +248,7 @@ describe("agent honesty invariants", () => {
   it("builds a refusal retry nudge", () => {
     assert.match(buildRefusalRetrySystemMessage("screenshot google.com"), /start_browser_task/);
     assert.match(buildRefusalRetrySystemMessage("[attachments: file-1]"), /parse_document/);
-    assert.match(buildRefusalRetrySystemMessage("[attachments: file-1]"), /saving it/);
+    assert.match(buildRefusalRetrySystemMessage("[attachments: file-1]"), /household/);
   });
 
   it("matches invite claims", () => {
