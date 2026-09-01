@@ -435,7 +435,7 @@ export function buildDoeDtcToolCapabilityPrompt(signals?: DoeAgentPromptSignals)
   const tier2 = buildTier2Blocks(signals);
 
   return [
-    "What you can do (use tools — attempt before refusing):",
+    "Tools (internal — never list these to the user; attempt before refusing):",
     ...tier1Sections,
     "",
     "Routing detail:",

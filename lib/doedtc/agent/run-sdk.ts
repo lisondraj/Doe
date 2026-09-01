@@ -37,6 +37,12 @@ import {
 } from "@/lib/doedtc/doedtc-agent";
 import { buildDoeAgentPromptSignals } from "@/lib/doedtc/agent/tool-prompt-registry";
 import { formatActiveWorkBlock, loadActiveWork } from "@/lib/doedtc/agent/active-work";
+import {
+  askedWhatYouCanDo,
+  buildCapabilityRetrySystemMessage,
+  formatCapabilityAskBlock,
+  looksLikeCapabilityBrochure,
+} from "@/lib/doedtc/agent/capability-ask";
 import { buildSituationBrief, formatSituationBriefBlock } from "@/lib/doedtc/agent/situation-brief";
 import { executeAgentPendingCommit } from "@/lib/doedtc/doedtc-agent-commit";
 import {
@@ -240,6 +246,9 @@ async function loadRunContext(params: {
     promptSignals,
     situationBrief,
     activeWorkBlock: formatActiveWorkBlock(activeWorkItems),
+    capabilityAskBlock: askedWhatYouCanDo(deliverableInboundText)
+      ? formatCapabilityAskBlock()
+      : undefined,
     turnMode: turnMode.mode,
   };
 
@@ -410,12 +419,17 @@ async function resumeRunStatePending(params: {
 }
 
 function shouldRetrySdkReply(loaded: DoeDtcRunContext, replyText: string): boolean {
-  return shouldRetryEmptyRefusal({
-    replyText,
-    toolsExecuted: loaded.turnState.toolsExecuted ?? [],
-    turnMode: loaded.turnMode?.mode,
-    inboundText: loaded.inboundText,
-  });
+  if (
+    shouldRetryEmptyRefusal({
+      replyText,
+      toolsExecuted: loaded.turnState.toolsExecuted ?? [],
+      turnMode: loaded.turnMode?.mode,
+      inboundText: loaded.inboundText,
+    })
+  ) {
+    return true;
+  }
+  return askedWhatYouCanDo(loaded.inboundText) && looksLikeCapabilityBrochure(replyText);
 }
 
 async function finalizeSdkRun(params: {
@@ -611,7 +625,10 @@ export async function runDoeDtcAgentTurnSdk(params: {
     return firstPass;
   }
 
-  const retryNudge = buildRefusalRetrySystemMessage(loaded.inboundText);
+  const retryNudge =
+    askedWhatYouCanDo(loaded.inboundText) && looksLikeCapabilityBrochure(firstPass.replyText)
+      ? buildCapabilityRetrySystemMessage()
+      : buildRefusalRetrySystemMessage(loaded.inboundText);
   loaded.instructions = `${loaded.instructions}\n\n${retryNudge}`;
   if (loaded.plannerInstructions) {
     loaded.plannerInstructions = `${loaded.plannerInstructions}\n\n${retryNudge}`;

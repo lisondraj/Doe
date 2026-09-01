@@ -196,6 +196,7 @@ describe("policy and voice upgrades", () => {
     assert.match(DOE_AGENT_FEW_SHOTS, /What are you working on/);
     assert.match(DOE_AGENT_INSTINCTS, /Any site, any search/);
     assert.match(DOE_AGENT_FEW_SHOTS, /start_browser_task/);
+    assert.match(DOE_AGENT_FEW_SHOTS, /What can you do/);
     assert.doesNotMatch(DOE_AGENT_FEW_SHOTS, /accountability pack/i);
     assert.doesNotMatch(DOE_AGENT_FEW_SHOTS, /I can't directly/i);
   });

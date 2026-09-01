@@ -302,6 +302,8 @@ describe("tool capability prompt", () => {
     assert.match(prompt, /never answer from chat history/);
     assert.match(prompt, /Reply to this message now/);
     assert.match(prompt, /Never say you are working on it/);
+    assert.match(prompt, /Never recite a capabilities menu/);
+    assert.doesNotMatch(prompt, /What you can do \(use tools/);
   });
 
   it("treats I've set a reminder as a schedule claim, not only in N seconds", () => {

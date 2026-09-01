@@ -60,6 +60,12 @@ import {
 } from "@/lib/doedtc/agent/turn-mode";
 import { DOE_AGENT_ACTION_POLICY, DOE_AGENT_RESOLUTION_POLICY } from "@/lib/doedtc/doedtc-agent-policy";
 import { formatActiveWorkBlock, loadActiveWork } from "@/lib/doedtc/agent/active-work";
+import {
+  askedWhatYouCanDo,
+  buildCapabilityRetrySystemMessage,
+  formatCapabilityAskBlock,
+  looksLikeCapabilityBrochure,
+} from "@/lib/doedtc/agent/capability-ask";
 import { buildSituationBrief, formatSituationBriefBlock } from "@/lib/doedtc/agent/situation-brief";
 import { DOE_AGENT_PRIMITIVES_PROMPT } from "@/lib/doedtc/doedtc-primitives";
 import {
@@ -541,6 +547,7 @@ export type DoeDtcAgentPromptParams = {
   promptSignals?: DoeAgentPromptSignals;
   situationBrief?: string;
   activeWorkBlock?: string;
+  capabilityAskBlock?: string;
   turnMode?: TurnMode;
 };
 
@@ -548,6 +555,7 @@ function buildDoeAgentContextBlock(params: DoeDtcAgentPromptParams): string {
   return `Now (user local time): ${params.nowLabel}.
 ${params.situationBrief ? `\n${params.situationBrief}\n` : ""}
 ${params.activeWorkBlock ? `\n${params.activeWorkBlock}\n` : ""}
+${params.capabilityAskBlock ? `\n${params.capabilityAskBlock}\n` : ""}
 ${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
 Playbook (how you've corrected yourself before):
 ${params.playbookNotes}
@@ -1045,6 +1053,9 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     promptSignals,
     situationBrief,
     activeWorkBlock: formatActiveWorkBlock(activeWorkItems),
+    capabilityAskBlock: askedWhatYouCanDo(deliverableInboundText)
+      ? formatCapabilityAskBlock()
+      : undefined,
     turnMode: turnMode.mode,
   }) + (reminderDirective ? `\n\n${reminderDirective}` : "");
 
@@ -1131,13 +1142,15 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       });
 
       if (
-        shouldRetryEmptyRefusal({
+        !refusalRetryInjected &&
+        (shouldRetryEmptyRefusal({
           replyText: replyText ?? "",
           toolsExecuted: turnState.toolsExecuted ?? [],
           turnMode: turnMode.mode,
           inboundText: deliverableInboundText,
-        }) &&
-        !refusalRetryInjected
+        }) ||
+          (askedWhatYouCanDo(deliverableInboundText) &&
+            looksLikeCapabilityBrochure(replyText ?? "")))
       ) {
         refusalRetryInjected = true;
         messages.push({
@@ -1146,7 +1159,11 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         });
         messages.push({
           role: "system",
-          content: buildRefusalRetrySystemMessage(deliverableInboundText),
+          content:
+            askedWhatYouCanDo(deliverableInboundText) &&
+            looksLikeCapabilityBrochure(replyText ?? "")
+              ? buildCapabilityRetrySystemMessage()
+              : buildRefusalRetrySystemMessage(deliverableInboundText),
         });
         continue;
       }

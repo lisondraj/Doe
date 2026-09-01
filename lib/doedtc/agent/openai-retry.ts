@@ -71,7 +71,7 @@ export function guardAgentPromptSize(prompt: string, maxChars = AGENT_PROMPT_MAX
 
   const sections: Array<{ marker: string; nextMarker: string | null }> = [
     { marker: "Recent conversation:\n", nextMarker: "\n\nAppointments:" },
-    { marker: "Prior assessments:\n", nextMarker: "\n\nWhat you can do" },
+    { marker: "Prior assessments:\n", nextMarker: "\n\nTools (internal" },
     { marker: "Symptom log:\n", nextMarker: "\n\nPrior assessments:" },
     { marker: "Relevant memories:\n", nextMarker: "\n\nSymptom log:" },
   ];

@@ -143,6 +143,7 @@ export function buildTurnModeVoiceBlock(mode: TurnMode): string {
     case "conversation":
       return `Mode (conversation):
 - Answer what they asked. Use chart context, Recent conversation, and read_profile when a tab is thin.
+- If they ask what you can do, do not recite a product menu. One or two friend sentences. Never "I can help manage health information, set reminders."
 - Continue the thread — do not repeat your last message. Tools stay available when they asked to browse, search, screenshot, log, parse, or schedule. Do not auto-schedule or log unprompted.`;
     case "action":
       return "";
