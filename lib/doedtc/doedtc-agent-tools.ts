@@ -188,6 +188,20 @@ export const DOEDTC_AGENT_TOOLS = [
             type: "string",
             description: "Optional ISO date for children — needed for 18+ consent on invite.",
           },
+          gender: {
+            type: "string",
+            enum: ["female", "male", "nonbinary", "prefer_not"],
+          },
+          medications: {
+            type: "array",
+            items: { type: "string" },
+            description: "Medications to show on their family card.",
+          },
+          conditions: {
+            type: "array",
+            items: { type: "string" },
+            description: "Conditions to show on their family card.",
+          },
         },
         required: ["full_name", "relationship"],
       },
@@ -211,7 +225,28 @@ export const DOEDTC_AGENT_TOOLS = [
           },
           phone: { type: "string", description: "Phone number including area code or country code." },
           date_of_birth: { type: "string" },
-          gender: { type: "string", enum: ["female", "male", "non_binary", "prefer_not_to_say"] },
+          gender: { type: "string", enum: ["female", "male", "nonbinary", "prefer_not"] },
+          medications: { type: "array", items: { type: "string" } },
+          conditions: { type: "array", items: { type: "string" } },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "update_profile",
+      description:
+        "Update this user's profile details that show on the dashboard: name, email, date of birth, gender, country, or why they use Doe.",
+      parameters: {
+        type: "object",
+        properties: {
+          full_name: { type: "string" },
+          email: { type: "string" },
+          date_of_birth: { type: "string", description: "ISO date YYYY-MM-DD." },
+          gender: { type: "string", enum: ["female", "male", "nonbinary", "prefer_not"] },
+          country: { type: "string", description: "2-letter country code, e.g. US." },
+          why_doe: { type: "string" },
         },
       },
     },
@@ -381,8 +416,84 @@ export const DOEDTC_AGENT_TOOLS = [
         type: "object",
         properties: {
           result_id: { type: "string", description: "Result row id from read_profile results tab." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["result_id"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "update_result",
+      description:
+        "Edit a logged lab/imaging result (title, date, source, or summary). result_id from read_profile results tab.",
+      parameters: {
+        type: "object",
+        properties: {
+          result_id: { type: "string" },
+          title: { type: "string" },
+          resulted_at: { type: "string" },
+          source: { type: "string" },
+          summary: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["result_id"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "add_locker_item",
+      description: "Save a portal or site login to the Locker tab (label, username, password).",
+      parameters: {
+        type: "object",
+        properties: {
+          label: { type: "string", description: "Site or portal name." },
+          username: { type: "string" },
+          password: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["label", "username", "password"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "update_locker_item",
+      description: "Update a locker credential. item_id from read_profile locker tab.",
+      parameters: {
+        type: "object",
+        properties: {
+          item_id: { type: "string" },
+          label: { type: "string" },
+          username: { type: "string" },
+          password: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["item_id"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "remove_locker_item",
+      description: "Delete a locker credential. item_id from read_profile locker tab.",
+      parameters: {
+        type: "object",
+        properties: {
+          item_id: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["item_id"],
       },
     },
   },
@@ -487,6 +598,8 @@ export const DOEDTC_AGENT_TOOLS = [
           },
           goal: { type: "number" },
           archive: { type: "boolean", description: "Set true to archive this tracker." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["artifact_id"],
       },
@@ -563,6 +676,8 @@ export const DOEDTC_AGENT_TOOLS = [
             additionalProperties: true,
           },
           occurred_at: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["entry_id"],
       },
@@ -578,6 +693,8 @@ export const DOEDTC_AGENT_TOOLS = [
         type: "object",
         properties: {
           entry_id: { type: "string", description: "Entry id from read_profile trackers tab." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["entry_id"],
       },

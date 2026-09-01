@@ -73,6 +73,9 @@ describe("tool prompt registry", () => {
   it("agent tool schemas include new gap tools", () => {
     const names = new Set(DOEDTC_AGENT_TOOLS.map((entry) => entry.function.name));
     assert.ok(names.has("log_result"));
+    assert.ok(names.has("update_result"));
+    assert.ok(names.has("update_profile"));
+    assert.ok(names.has("add_locker_item"));
     assert.ok(names.has("remove_result"));
     assert.ok(names.has("read_listen_session"));
     assert.ok(names.has("start_workflow"));

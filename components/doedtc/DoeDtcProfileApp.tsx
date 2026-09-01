@@ -24,6 +24,7 @@ import {
   pickPrimarySeriesField,
 } from "@/lib/doedtc/doedtc-artifacts";
 import { formatPhoneForDisplay } from "@/lib/doedtc/doedtc-phone";
+import { doeDtcFindPhoneCountry } from "@/lib/doedtc/doedtc-phone-countries";
 import { memberCurrentlySharesWithHousehold } from "@/lib/doedtc/doedtc-household";
 import type {
   DoeDtcAppointmentRow,
@@ -37,7 +38,7 @@ import type {
   DoeDtcProfileTab,
   DoeDtcResultKind,
 } from "@/lib/doedtc/doedtc-types";
-import { DOEDTC_GENDERS } from "@/lib/doedtc/doedtc-types";
+import { DOEDTC_GENDERS, doeDtcGenderLabel } from "@/lib/doedtc/doedtc-types";
 import { doeDtcVisibleProfileTab } from "@/lib/doedtc/doedtc-profile-tabs";
 import { interlockSpans, symptomsLinkedToName } from "@/lib/doedtc/doedtc-conditions-view";
 import {
@@ -855,8 +856,31 @@ function DashboardTab({
     return { artifact, lastEntry };
   });
 
+  const aboutRows = [
+    { label: DOEDTC_PROFILE.dashboardNameLabel, value: snapshot.user.full_name?.trim() },
+    { label: DOEDTC_PROFILE.dashboardEmailLabel, value: snapshot.user.email?.trim() },
+    { label: DOEDTC_PROFILE.dashboardDobLabel, value: snapshot.user.date_of_birth },
+    { label: DOEDTC_PROFILE.dashboardGenderLabel, value: snapshot.user.gender ? doeDtcGenderLabel(snapshot.user.gender) : null },
+    {
+      label: DOEDTC_PROFILE.dashboardCountryLabel,
+      value: snapshot.user.country ? doeDtcFindPhoneCountry(snapshot.user.country).name : null,
+    },
+    { label: DOEDTC_PROFILE.dashboardWhyLabel, value: snapshot.user.why_doe?.trim() },
+  ];
+
   return (
     <div>
+      <section className="doedtc-card doedtc-card--flat">
+        <p className="doedtc-medical-box__title">{DOEDTC_PROFILE.dashboardAboutLabel}</p>
+        <dl className="doedtc-profile-about">
+          {aboutRows.map((row) => (
+            <div className="doedtc-profile-about__row" key={row.label}>
+              <dt>{row.label}</dt>
+              <dd>{row.value || DOEDTC_PROFILE.dashboardNotListed}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
       <div className="doedtc-medical-grid">
         <div className="doedtc-card doedtc-card--flat">
           <MedicalListEditor
@@ -1988,6 +2012,16 @@ function FamilyTab({
                         : DOEDTC_PROFILE.familyPendingLabel}
                     </p>
                     {phoneDisplay ? <p className="doedtc-family-card__meta">{phoneDisplay}</p> : null}
+                    {member.date_of_birth || member.gender ? (
+                      <p className="doedtc-family-card__meta">
+                        {[
+                          member.date_of_birth,
+                          member.gender ? doeDtcGenderLabel(member.gender) : null,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                    ) : null}
                   </div>
                   <FamilyCardMenu
                     canView={Boolean(viewHref)}

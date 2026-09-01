@@ -35,6 +35,7 @@ import {
 import { normalizeArtifactLayout } from "@/lib/doedtc/doedtc-artifacts";
 import {
   addDoeDtcAppointment,
+  addDoeDtcLockerItem,
   addDoeDtcResult,
   addDoeDtcHouseholdMember,
   appendDoeDtcCondition,
@@ -45,7 +46,9 @@ import {
   deleteDoeDtcMemory,
   findDoeDtcArtifactByTitle,
   logDoeDtcArtifactEntry,
+  patchHouseholdMemberChartList,
   removeDoeDtcAppointment,
+  removeDoeDtcLockerItem,
   removeDoeDtcResult,
   removeDoeDtcArtifactEntry,
   removeDoeDtcCondition,
@@ -62,7 +65,10 @@ import {
   updateDoeDtcArtifact,
   updateDoeDtcArtifactEntry,
   updateDoeDtcHouseholdMember,
+  updateDoeDtcLockerItem,
+  updateDoeDtcResult,
   updateDoeDtcSymptom,
+  updateDoeDtcUserProfile,
   createDoeDtcListenSession,
   getDoeDtcListenSession,
   createDoeDtcPreparation,
@@ -152,7 +158,8 @@ import {
 import type { DoeDtcAttachmentContext } from "@/lib/doedtc/agent/attachments";
 import { runParseDocumentTool, runReadAttachmentTool } from "@/lib/doedtc/agent/document-parse";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
-import type { DoeDtcFamilyMemberInput, DoeDtcProfileSnapshot, DoeDtcProfileTab, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
+import type { DoeDtcProfileSnapshot, DoeDtcProfileTab, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
+import { normalizeDoeDtcGender } from "@/lib/doedtc/doedtc-types";
 
 export type DoeDtcToolTurnState = {
   turnId?: string;
@@ -261,10 +268,88 @@ function withHouseholdProxyMeta(
   return {
     ...output,
     proxied: true,
-    logged_on: "parent_chart",
+    logged_on: "family_card",
     for_member: subject.subjectMemberName,
     next_step: subject.nextStep,
   };
+}
+
+function stringList(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  return value.filter((row): row is string => typeof row === "string");
+}
+
+async function writeHouseholdChartName(params: {
+  viewerUserId: string;
+  subject: {
+    subjectUserId: string;
+    subjectMemberId?: string;
+    proxied?: boolean;
+  };
+  list: "medications" | "conditions";
+  action: "add" | "remove" | "rename";
+  name: string;
+  to?: string;
+}): Promise<{ updated: boolean; name: string; to?: string; added?: boolean; removed?: boolean }> {
+  if (params.subject.proxied && params.subject.subjectMemberId) {
+    const result = await patchHouseholdMemberChartList({
+      adminUserId: params.viewerUserId,
+      memberId: params.subject.subjectMemberId,
+      list: params.list,
+      action: params.action,
+      name: params.name,
+      to: params.to,
+    });
+    return {
+      updated: result.updated,
+      name: result.name,
+      to: result.to,
+      added: params.action === "add",
+      removed: params.action === "remove",
+    };
+  }
+  if (params.list === "medications") {
+    if (params.action === "add") {
+      const result = await appendDoeDtcMedication({
+        userId: params.subject.subjectUserId,
+        name: params.name,
+      });
+      return { updated: result.added, name: result.name, added: result.added };
+    }
+    if (params.action === "remove") {
+      const result = await removeDoeDtcMedication({
+        userId: params.subject.subjectUserId,
+        name: params.name,
+      });
+      return { updated: result.removed, name: result.name, removed: result.removed };
+    }
+    const result = await renameDoeDtcMedication({
+      userId: params.subject.subjectUserId,
+      from: params.name,
+      to: params.to ?? "",
+    });
+    return { updated: result.updated, name: result.from, to: result.to };
+  }
+  if (params.action === "add") {
+    const result = await appendDoeDtcCondition({
+      userId: params.subject.subjectUserId,
+      name: params.name,
+    });
+    return { updated: result.added, name: result.name, added: result.added };
+  }
+  if (params.action === "remove") {
+    const result = await removeDoeDtcCondition({
+      userId: params.subject.subjectUserId,
+      name: params.name,
+    });
+    return { updated: result.removed, name: result.name, removed: result.removed };
+  }
+  const result = await renameDoeDtcCondition({
+    userId: params.subject.subjectUserId,
+    from: params.name,
+    to: params.to ?? "",
+  });
+  return { updated: result.updated, name: result.from, to: result.to };
 }
 
 export async function executeDoeDtcTool(params: {
@@ -437,6 +522,9 @@ async function executeDoeDtcToolInner(params: {
         relationship,
         phone: typeof args.phone === "string" ? args.phone : null,
         dateOfBirth: typeof args.date_of_birth === "string" ? args.date_of_birth : null,
+        gender: args.gender == null ? undefined : (normalizeDoeDtcGender(args.gender) ?? undefined),
+        medications: stringList(args.medications),
+        conditions: stringList(args.conditions),
       });
       output = {
         ok: true,
@@ -510,8 +598,10 @@ async function executeDoeDtcToolInner(params: {
           args.gender === null
             ? null
             : typeof args.gender === "string"
-              ? (args.gender as DoeDtcFamilyMemberInput["gender"])
+              ? normalizeDoeDtcGender(args.gender)
               : undefined,
+        medications: stringList(args.medications),
+        conditions: stringList(args.conditions),
       });
       output = {
         ok: true,
@@ -520,6 +610,51 @@ async function executeDoeDtcToolInner(params: {
         relationship: row.relationship,
         status: row.status,
         invite_available: Boolean(row.phone && row.status === "pending"),
+        updated: true,
+      };
+    } else if (name === "update_profile") {
+      const gender =
+        args.gender === null
+          ? null
+          : args.gender === undefined
+            ? undefined
+            : normalizeDoeDtcGender(args.gender);
+      if (args.gender !== undefined && args.gender !== null && !gender) {
+        throw new Error("Invalid gender.");
+      }
+      const row = await updateDoeDtcUserProfile({
+        userId: ctx.user.id,
+        fullName: typeof args.full_name === "string" ? args.full_name : undefined,
+        email:
+          args.email === null ? null : typeof args.email === "string" ? args.email : undefined,
+        dateOfBirth:
+          args.date_of_birth === null
+            ? null
+            : typeof args.date_of_birth === "string"
+              ? args.date_of_birth
+              : undefined,
+        gender,
+        country:
+          args.country === null
+            ? null
+            : typeof args.country === "string"
+              ? args.country
+              : undefined,
+        whyDoe:
+          args.why_doe === null
+            ? null
+            : typeof args.why_doe === "string"
+              ? args.why_doe
+              : undefined,
+      });
+      output = {
+        ok: true,
+        full_name: row.full_name,
+        email: row.email,
+        date_of_birth: row.date_of_birth,
+        gender: row.gender,
+        country: row.country,
+        why_doe: row.why_doe,
         updated: true,
       };
     } else if (name === "remove_family_member") {
@@ -633,9 +768,15 @@ async function executeDoeDtcToolInner(params: {
       if ("error" in subject) throw new Error(subject.error);
       const medName = String(args.name ?? "").trim();
       if (!medName) throw new Error("Medication name is required.");
-      const result = await appendDoeDtcMedication({ userId: subject.subjectUserId, name: medName });
+      const result = await writeHouseholdChartName({
+        viewerUserId: ctx.user.id,
+        subject,
+        list: "medications",
+        action: "add",
+        name: medName,
+      });
       output = withHouseholdProxyMeta(
-        { ok: true, name: result.name, added: result.added, subject: subject.subjectMemberName ?? "you" },
+        { ok: true, name: result.name, added: result.added ?? result.updated, subject: subject.subjectMemberName ?? "you" },
         subject,
       );
     } else if (name === "update_medication") {
@@ -648,8 +789,18 @@ async function executeDoeDtcToolInner(params: {
       const from = String(args.from ?? "").trim();
       const to = String(args.to ?? "").trim();
       if (!from || !to) throw new Error("Both medication names are required.");
-      const result = await renameDoeDtcMedication({ userId: subject.subjectUserId, from, to });
-      output = { ok: true, from: result.from, to: result.to, updated: result.updated, subject: subject.subjectMemberName ?? "you" };
+      const result = await writeHouseholdChartName({
+        viewerUserId: ctx.user.id,
+        subject,
+        list: "medications",
+        action: "rename",
+        name: from,
+        to,
+      });
+      output = withHouseholdProxyMeta(
+        { ok: true, from: result.name, to: result.to, updated: result.updated, subject: subject.subjectMemberName ?? "you" },
+        subject,
+      );
     } else if (name === "remove_medication") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,
@@ -659,8 +810,17 @@ async function executeDoeDtcToolInner(params: {
       if ("error" in subject) throw new Error(subject.error);
       const name = String(args.name ?? "").trim();
       if (!name) throw new Error("Medication name is required.");
-      const result = await removeDoeDtcMedication({ userId: subject.subjectUserId, name });
-      output = { ok: true, name: result.name, removed: result.removed, subject: subject.subjectMemberName ?? "you" };
+      const result = await writeHouseholdChartName({
+        viewerUserId: ctx.user.id,
+        subject,
+        list: "medications",
+        action: "remove",
+        name,
+      });
+      output = withHouseholdProxyMeta(
+        { ok: true, name: result.name, removed: result.removed ?? result.updated, subject: subject.subjectMemberName ?? "you" },
+        subject,
+      );
     } else if (name === "add_condition") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,
@@ -670,9 +830,15 @@ async function executeDoeDtcToolInner(params: {
       if ("error" in subject) throw new Error(subject.error);
       const name = String(args.name ?? "").trim();
       if (!name) throw new Error("Condition name is required.");
-      const result = await appendDoeDtcCondition({ userId: subject.subjectUserId, name });
+      const result = await writeHouseholdChartName({
+        viewerUserId: ctx.user.id,
+        subject,
+        list: "conditions",
+        action: "add",
+        name,
+      });
       output = withHouseholdProxyMeta(
-        { ok: true, name: result.name, added: result.added, subject: subject.subjectMemberName ?? "you" },
+        { ok: true, name: result.name, added: result.added ?? result.updated, subject: subject.subjectMemberName ?? "you" },
         subject,
       );
     } else if (name === "update_condition") {
@@ -685,8 +851,18 @@ async function executeDoeDtcToolInner(params: {
       const from = String(args.from ?? "").trim();
       const to = String(args.to ?? "").trim();
       if (!from || !to) throw new Error("Both condition names are required.");
-      const result = await renameDoeDtcCondition({ userId: subject.subjectUserId, from, to });
-      output = { ok: true, from: result.from, to: result.to, updated: result.updated, subject: subject.subjectMemberName ?? "you" };
+      const result = await writeHouseholdChartName({
+        viewerUserId: ctx.user.id,
+        subject,
+        list: "conditions",
+        action: "rename",
+        name: from,
+        to,
+      });
+      output = withHouseholdProxyMeta(
+        { ok: true, from: result.name, to: result.to, updated: result.updated, subject: subject.subjectMemberName ?? "you" },
+        subject,
+      );
     } else if (name === "remove_condition") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,
@@ -696,8 +872,17 @@ async function executeDoeDtcToolInner(params: {
       if ("error" in subject) throw new Error(subject.error);
       const name = String(args.name ?? "").trim();
       if (!name) throw new Error("Condition name is required.");
-      const result = await removeDoeDtcCondition({ userId: subject.subjectUserId, name });
-      output = { ok: true, name: result.name, removed: result.removed, subject: subject.subjectMemberName ?? "you" };
+      const result = await writeHouseholdChartName({
+        viewerUserId: ctx.user.id,
+        subject,
+        list: "conditions",
+        action: "remove",
+        name,
+      });
+      output = withHouseholdProxyMeta(
+        { ok: true, name: result.name, removed: result.removed ?? result.updated, subject: subject.subjectMemberName ?? "you" },
+        subject,
+      );
     } else if (name === "log_result") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,
@@ -723,10 +908,110 @@ async function executeDoeDtcToolInner(params: {
         subject: subject.subjectMemberName ?? "you",
       };
     } else if (name === "remove_result") {
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
       const resultId = String(args.result_id ?? "").trim();
       if (!resultId) throw new Error("result_id is required.");
-      await removeDoeDtcResult({ userId: ctx.user.id, resultId });
-      output = { ok: true, id: resultId, removed: true };
+      await removeDoeDtcResult({ userId: subject.subjectUserId, resultId });
+      output = withHouseholdProxyMeta(
+        { ok: true, id: resultId, removed: true, subject: subject.subjectMemberName ?? "you" },
+        subject,
+      );
+    } else if (name === "update_result") {
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
+      const resultId = String(args.result_id ?? "").trim();
+      if (!resultId) throw new Error("result_id is required.");
+      const row = await updateDoeDtcResult({
+        userId: subject.subjectUserId,
+        resultId,
+        title: typeof args.title === "string" ? args.title : undefined,
+        resultedAt: typeof args.resulted_at === "string" ? args.resulted_at : undefined,
+        source: args.source === null ? null : typeof args.source === "string" ? args.source : undefined,
+        summary:
+          args.summary === null ? null : typeof args.summary === "string" ? args.summary : undefined,
+      });
+      output = withHouseholdProxyMeta(
+        {
+          ok: true,
+          id: row.id,
+          title: row.title,
+          resulted_at: row.resulted_at,
+          updated: true,
+          subject: subject.subjectMemberName ?? "you",
+        },
+        subject,
+      );
+    } else if (name === "add_locker_item") {
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
+      if (subject.proxied) {
+        throw new Error("Invite them to Doe before saving locker credentials on their chart.");
+      }
+      const label = String(args.label ?? "").trim();
+      const username = String(args.username ?? "").trim();
+      const password = String(args.password ?? "");
+      if (!label || !username || !password) throw new Error("label, username, and password are required.");
+      const row = await addDoeDtcLockerItem({
+        userId: subject.subjectUserId,
+        label,
+        username,
+        password,
+      });
+      output = {
+        ok: true,
+        id: row.id,
+        label: row.label,
+        username: row.username,
+        subject: subject.subjectMemberName ?? "you",
+      };
+    } else if (name === "update_locker_item") {
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
+      const itemId = String(args.item_id ?? "").trim();
+      if (!itemId) throw new Error("item_id is required.");
+      const row = await updateDoeDtcLockerItem({
+        userId: subject.subjectUserId,
+        itemId,
+        label: typeof args.label === "string" ? args.label : undefined,
+        username: typeof args.username === "string" ? args.username : undefined,
+        password: typeof args.password === "string" ? args.password : undefined,
+      });
+      output = {
+        ok: true,
+        id: row.id,
+        label: row.label,
+        username: row.username,
+        updated: true,
+        subject: subject.subjectMemberName ?? "you",
+      };
+    } else if (name === "remove_locker_item") {
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
+      const itemId = String(args.item_id ?? "").trim();
+      if (!itemId) throw new Error("item_id is required.");
+      await removeDoeDtcLockerItem({ userId: subject.subjectUserId, itemId });
+      output = { ok: true, id: itemId, removed: true, subject: subject.subjectMemberName ?? "you" };
     } else if (name === "create_profile_artifact") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,
@@ -777,14 +1062,20 @@ async function executeDoeDtcToolInner(params: {
         link_sent_separately: Boolean(state.profileUrl),
       };
     } else if (name === "update_profile_artifact") {
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
       const artifactId = String(args.artifact_id ?? "").trim();
       if (!artifactId) throw new Error("artifact_id is required.");
       if (args.archive === true) {
-        await archiveDoeDtcArtifact({ userId: ctx.user.id, artifactId });
-        output = { ok: true, id: artifactId, archived: true };
+        await archiveDoeDtcArtifact({ userId: subject.subjectUserId, artifactId });
+        output = { ok: true, id: artifactId, archived: true, subject: subject.subjectMemberName ?? "you" };
       } else {
         const row = await updateDoeDtcArtifact({
-          userId: ctx.user.id,
+          userId: subject.subjectUserId,
           artifactId,
           title: typeof args.title === "string" ? args.title : undefined,
           kind:
@@ -806,6 +1097,7 @@ async function executeDoeDtcToolInner(params: {
             snapshot: ctx.snapshot,
             tab: "trackers",
             artifact: row.id,
+            member: subject.subjectUserId !== ctx.user.id ? subject.subjectUserId : undefined,
           });
         }
         output = {
@@ -813,6 +1105,7 @@ async function executeDoeDtcToolInner(params: {
           id: row.id,
           title: row.title,
           kind: row.kind,
+          subject: subject.subjectMemberName ?? "you",
           link_sent_separately: Boolean(state.profileUrl),
         };
       }
@@ -872,10 +1165,16 @@ async function executeDoeDtcToolInner(params: {
       const row = await unshareDoeDtcArtifact({ userId: ctx.user.id, artifactId });
       output = { ok: true, id: row.id, title: row.title, shared: false };
     } else if (name === "update_artifact_entry") {
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
       const entryId = String(args.entry_id ?? "").trim();
       if (!entryId) throw new Error("entry_id is required.");
       const row = await updateDoeDtcArtifactEntry({
-        userId: ctx.user.id,
+        userId: subject.subjectUserId,
         entryId,
         values: args.values,
         occurredAt: typeof args.occurred_at === "string" ? args.occurred_at : null,
@@ -885,12 +1184,19 @@ async function executeDoeDtcToolInner(params: {
         id: row.id,
         artifact_id: row.artifact_id,
         occurred_at: row.occurred_at,
+        subject: subject.subjectMemberName ?? "you",
       };
     } else if (name === "remove_artifact_entry") {
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
       const entryId = String(args.entry_id ?? "").trim();
       if (!entryId) throw new Error("entry_id is required.");
-      await removeDoeDtcArtifactEntry({ userId: ctx.user.id, entryId });
-      output = { ok: true, id: entryId, removed: true };
+      await removeDoeDtcArtifactEntry({ userId: subject.subjectUserId, entryId });
+      output = { ok: true, id: entryId, removed: true, subject: subject.subjectMemberName ?? "you" };
     } else if (name === "create_preparation") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,
@@ -1930,6 +2236,7 @@ export const DOE_DTC_TOOL_NAMES = [
   "cancel_appointment",
   "log_family_member",
   "update_family_member",
+  "update_profile",
   "remove_family_member",
   "send_family_invite",
   "add_medication",
@@ -1939,7 +2246,11 @@ export const DOE_DTC_TOOL_NAMES = [
   "update_condition",
   "remove_condition",
   "log_result",
+  "update_result",
   "remove_result",
+  "add_locker_item",
+  "update_locker_item",
+  "remove_locker_item",
   "create_profile_artifact",
   "update_profile_artifact",
   "log_artifact_entry",

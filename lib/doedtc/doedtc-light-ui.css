@@ -377,6 +377,28 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-medical-grid,
   color: var(--doedtc-ink);
 }
 
+.doedtc-profile-about {
+  margin: 0.75rem 0 0;
+}
+
+.doedtc-profile-about__row {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 8rem) 1fr;
+  gap: 0.5rem 0.85rem;
+  padding: 0.35rem 0;
+}
+
+.doedtc-profile-about__row dt {
+  margin: 0;
+  color: var(--doedtc-muted);
+  font-size: 0.85rem;
+}
+
+.doedtc-profile-about__row dd {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
 .doedtc-medical-box__empty {
   margin: 0;
   color: var(--doedtc-muted);

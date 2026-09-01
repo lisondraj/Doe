@@ -61,6 +61,7 @@ function formatDashboardTab(snapshot: DoeDtcProfileSnapshot): string {
     `Gender: ${doeDtcGenderLabel(user.gender)}`,
     `Date of birth: ${user.date_of_birth ?? "Not specified"}`,
     `Country: ${user.country ? doeDtcFindPhoneCountry(user.country).name : "Not specified"}`,
+    `Why Doe: ${user.why_doe?.trim() || "Not listed"}`,
     `Medical info: ${user.medical_deferred ? "Deferred — they chose to add later." : "On file"}`,
     `Medications: ${snapshot.medications.join(", ") || "None listed"}`,
     `Conditions: ${snapshot.conditions.join(", ") || "None listed"}`,
@@ -94,6 +95,7 @@ function formatResultsTab(snapshot: DoeDtcProfileSnapshot): string {
       const parts = [row.title, `date: ${row.resulted_at.slice(0, 10)}`];
       if (row.source) parts.push(`source: ${row.source}`);
       if (row.summary) parts.push(row.summary);
+      parts.push(`id: ${row.id}`);
       return `- ${parts.join(" | ")}`;
     })
     .join("\n");
@@ -126,6 +128,8 @@ function formatFamilyTab(snapshot: DoeDtcProfileSnapshot): string {
           `role: ${row.role}`,
         ];
         if (row.phone) parts.push(`phone: ${row.phone}`);
+        if (row.date_of_birth) parts.push(`dob: ${row.date_of_birth}`);
+        if (row.gender) parts.push(`gender: ${doeDtcGenderLabel(row.gender)}`);
         if (row.medications?.length) parts.push(`meds: ${row.medications.join(", ")}`);
         if (row.conditions?.length) parts.push(`conditions: ${row.conditions.join(", ")}`);
         if (row.user_id) parts.push(`user_id: ${row.user_id}`);
@@ -149,7 +153,7 @@ function formatFamilyTab(snapshot: DoeDtcProfileSnapshot): string {
 function formatLockerTab(snapshot: DoeDtcProfileSnapshot): string {
   if (snapshot.lockerItems.length === 0) return "No locker credentials saved.";
   return snapshot.lockerItems
-    .map((row) => `- ${row.label}${row.username ? ` | username: ${row.username}` : ""}`)
+    .map((row) => `- ${row.label}${row.username ? ` | username: ${row.username}` : ""} | id: ${row.id}`)
     .join("\n");
 }
 

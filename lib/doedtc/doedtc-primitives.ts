@@ -100,6 +100,10 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
       "log_family_member",
       "update_family_member",
       "remove_family_member",
+      "update_profile",
+      "add_locker_item",
+      "update_locker_item",
+      "remove_locker_item",
     ],
   },
   {
@@ -121,7 +125,12 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
       "read_profile",
       "parse_document",
       "log_result",
+      "update_result",
       "remove_result",
+      "update_profile",
+      "add_locker_item",
+      "update_locker_item",
+      "remove_locker_item",
     ],
   },
   {
@@ -132,7 +141,7 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
   {
     verb: "results.log",
     backends: ["supabase"],
-    tools: ["log_result", "remove_result", "parse_document"],
+    tools: ["log_result", "update_result", "remove_result", "parse_document"],
   },
   {
     verb: "tracker.create",

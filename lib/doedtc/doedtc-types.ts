@@ -18,6 +18,17 @@ export function doeDtcGenderLabel(gender: string | null | undefined): string {
   return DOEDTC_GENDERS.find((option) => option.value === gender)?.label ?? "Not specified";
 }
 
+export function normalizeDoeDtcGender(value: unknown): DoeDtcGender | null {
+  const raw = String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
+  if (raw === "female" || raw === "male") return raw;
+  if (raw === "nonbinary" || raw === "non_binary") return "nonbinary";
+  if (raw === "prefer_not" || raw === "prefer_not_to_say") return "prefer_not";
+  return null;
+}
+
 export type DoeDtcUserRow = {
   id: string;
   created_at: string;

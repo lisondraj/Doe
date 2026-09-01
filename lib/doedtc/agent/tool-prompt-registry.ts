@@ -72,7 +72,12 @@ export const TOOL_DOMAINS: Record<(typeof DOE_DTC_TOOL_NAMES)[number], DoeToolDo
   update_condition: "health_chart",
   remove_condition: "health_chart",
   log_result: "health_chart",
+  update_result: "health_chart",
   remove_result: "health_chart",
+  add_locker_item: "health_chart",
+  update_locker_item: "health_chart",
+  remove_locker_item: "health_chart",
+  update_profile: "health_chart",
   read_profile: "health_chart",
   read_attachment: "health_chart",
   parse_document: "health_chart",
@@ -156,8 +161,18 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   remove_condition: "remove_condition — remove a condition that no longer applies.",
   log_result:
     "log_result — log a lab/imaging result they report (title, date, optional summary). Not for symptoms — use log_symptoms. Confirm in chat. send_profile_link only if they asked where/show labs. Read results tab with read_profile first if unsure what's logged.",
+  update_result:
+    "update_result — edit title, date, source, or summary on a logged result. result_id from read_profile results tab.",
   remove_result:
     "remove_result — delete a logged result. result_id from read_profile results tab — never ask the user for an id you can read.",
+  update_profile:
+    "update_profile — change name, email, date of birth, gender, country, or why they use Doe. These show on the dashboard About card.",
+  add_locker_item:
+    "add_locker_item — save a portal login to the Locker tab. Confirm in chat. Do not repeat the password.",
+  update_locker_item:
+    "update_locker_item — change locker label, username, or password. item_id from read_profile locker tab.",
+  remove_locker_item:
+    "remove_locker_item — delete a locker credential. item_id from read_profile locker tab.",
   read_profile:
     "read_profile — pull any profile tab before answering what is saved (meds, conditions, results, trackers, Whoop, family). Answer in iMessage. Send a link only when they asked to see/show/where. Never invent status. Ids for writes live in these logs — do not ask the user for ids.",
   read_attachment:
@@ -227,9 +242,9 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   resume_accountability:
     "resume_accountability — resume a paused pact.",
   log_family_member:
-    "log_family_member — add household member. If name exists on chart, update_family_member — never duplicate. relationship child for sons/daughters.",
+    "log_family_member — add household member. If name exists on chart, update_family_member — never duplicate. relationship child for sons/daughters. Can include gender, meds, and conditions for their family card.",
   update_family_member:
-    "update_family_member — correct name, phone, DOB, gender, relationship. member_id from Household log.",
+    "update_family_member — correct name, phone, DOB, gender, relationship, meds, or conditions. member_id from Household log.",
   remove_family_member:
     "remove_family_member — remove from household chart. Admin only. member_id from Household log.",
   send_family_invite:

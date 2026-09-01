@@ -1347,6 +1347,41 @@ export async function removeDoeDtcResult(params: {
   if (error) throw new Error(error.message);
 }
 
+export async function updateDoeDtcResult(params: {
+  userId: string;
+  resultId: string;
+  title?: string;
+  resultedAt?: string;
+  source?: string | null;
+  summary?: string | null;
+}): Promise<DoeDtcResultRow> {
+  const patch: Record<string, unknown> = {};
+  if (params.title !== undefined) {
+    const title = params.title.trim();
+    if (!title) throw new Error("Result title cannot be empty.");
+    patch.title = title;
+  }
+  if (params.resultedAt !== undefined) {
+    const resultedAt = params.resultedAt.trim();
+    if (!resultedAt) throw new Error("Result date cannot be empty.");
+    patch.resulted_at = resultedAt;
+  }
+  if (params.source !== undefined) patch.source = params.source?.trim() || null;
+  if (params.summary !== undefined) patch.summary = params.summary?.trim() || null;
+  if (Object.keys(patch).length === 0) throw new Error("Nothing to update.");
+
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_results")
+    .update(patch)
+    .eq("user_id", params.userId)
+    .eq("id", params.resultId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcResultRow;
+}
+
 export async function addDoeDtcLockerItem(params: {
   userId: string;
   label: string;
@@ -1365,6 +1400,40 @@ export async function addDoeDtcLockerItem(params: {
       iv: encrypted.iv,
       key_version: encrypted.keyVersion,
     })
+    .select("id, user_id, label, username, created_at")
+    .single();
+  if (error) throw new Error(error.message);
+  return data as DoeDtcLockerItemRow;
+}
+
+export async function updateDoeDtcLockerItem(params: {
+  userId: string;
+  itemId: string;
+  label?: string;
+  username?: string;
+  password?: string;
+}): Promise<DoeDtcLockerItemRow> {
+  const patch: Record<string, unknown> = {};
+  if (params.label !== undefined) {
+    const label = params.label.trim();
+    if (!label) throw new Error("Locker label cannot be empty.");
+    patch.label = label;
+  }
+  if (params.username !== undefined) patch.username = params.username.trim();
+  if (params.password !== undefined) {
+    const encrypted = encryptDoeDtcSecret(params.password);
+    patch.password_ciphertext = encrypted.ciphertext;
+    patch.iv = encrypted.iv;
+    patch.key_version = encrypted.keyVersion;
+  }
+  if (Object.keys(patch).length === 0) throw new Error("Nothing to update.");
+
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_locker_items")
+    .update(patch)
+    .eq("user_id", params.userId)
+    .eq("id", params.itemId)
     .select("id, user_id, label, username, created_at")
     .single();
   if (error) throw new Error(error.message);
@@ -1559,6 +1628,121 @@ export async function renameDoeDtcCondition(params: {
   await removeDoeDtcCondition({ userId: params.userId, name: from });
   const added = await appendDoeDtcCondition({ userId: params.userId, name: to });
   return { updated: true, from, to: added.name };
+}
+
+export async function updateDoeDtcUserProfile(params: {
+  userId: string;
+  fullName?: string;
+  email?: string | null;
+  dateOfBirth?: string | null;
+  gender?: DoeDtcGender | null;
+  country?: string | null;
+  whyDoe?: string | null;
+  medicalDeferred?: boolean;
+}): Promise<DoeDtcUserRow> {
+  const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (params.fullName !== undefined) {
+    const name = params.fullName.trim();
+    if (!name) throw new Error("Name cannot be empty.");
+    patch.full_name = name;
+  }
+  if (params.email !== undefined) {
+    const email = params.email?.trim() || null;
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new Error("Email looks invalid.");
+    }
+    patch.email = email;
+  }
+  if (params.dateOfBirth !== undefined) {
+    const dob = params.dateOfBirth?.trim() || null;
+    if (dob && !/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
+      throw new Error("Date of birth must be YYYY-MM-DD.");
+    }
+    patch.date_of_birth = dob;
+  }
+  if (params.gender !== undefined) patch.gender = params.gender;
+  if (params.country !== undefined) {
+    const country = params.country?.trim().toUpperCase() || null;
+    if (country && !/^[A-Z]{2}$/.test(country)) {
+      throw new Error("Country must be a 2-letter code.");
+    }
+    patch.country = country;
+  }
+  if (params.whyDoe !== undefined) patch.why_doe = params.whyDoe?.trim() || null;
+  if (params.medicalDeferred !== undefined) patch.medical_deferred = params.medicalDeferred;
+
+  if (Object.keys(patch).length <= 1) throw new Error("Nothing to update.");
+
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_users")
+    .update(patch)
+    .eq("id", params.userId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  const user = data as DoeDtcUserRow;
+
+  const householdPatch: Record<string, unknown> = {};
+  if (params.fullName !== undefined) householdPatch.full_name = user.full_name;
+  if (params.dateOfBirth !== undefined) householdPatch.date_of_birth = user.date_of_birth;
+  if (params.gender !== undefined) householdPatch.gender = user.gender;
+  if (Object.keys(householdPatch).length > 0) {
+    await supabase
+      .from("doedtc_household_members")
+      .update(householdPatch)
+      .eq("user_id", params.userId);
+  }
+
+  return user;
+}
+
+export async function patchHouseholdMemberChartList(params: {
+  adminUserId: string;
+  memberId?: string;
+  memberName?: string;
+  list: "medications" | "conditions";
+  action: "add" | "remove" | "rename";
+  name: string;
+  to?: string;
+}): Promise<{ updated: boolean; name: string; to?: string; items: string[] }> {
+  const { members } = await loadDoeDtcHouseholdAccessContext(params.adminUserId);
+  const member =
+    (params.memberId ? members.find((row) => row.id === params.memberId) : null) ??
+    (params.memberName ? findHouseholdMemberByName(members, params.memberName) : null);
+  if (!member) throw new Error("Family member not found.");
+
+  const current = uniqueProfileNames(member[params.list] ?? []);
+  const from = params.name.trim();
+  if (!from) throw new Error("Name is required.");
+  let next = current;
+  if (params.action === "add") {
+    next = uniqueProfileNames([...current, from]);
+  } else if (params.action === "remove") {
+    next = current.filter((item) => item.toLowerCase() !== from.toLowerCase());
+  } else {
+    const to = params.to?.trim();
+    if (!to) throw new Error("Replacement name is required.");
+    next = uniqueProfileNames(
+      current.map((item) => (item.toLowerCase() === from.toLowerCase() ? to : item)),
+    );
+    if (!next.some((item) => item.toLowerCase() === to.toLowerCase())) {
+      next = uniqueProfileNames([...next, to]);
+    }
+  }
+
+  const updated = await updateDoeDtcHouseholdMember({
+    adminUserId: params.adminUserId,
+    memberId: member.id,
+    medications: params.list === "medications" ? next : undefined,
+    conditions: params.list === "conditions" ? next : undefined,
+  });
+  return {
+    updated: true,
+    name: from,
+    to: params.to?.trim(),
+    items: (params.list === "medications" ? updated.medications : updated.conditions) ?? next,
+  };
 }
 
 export async function updateDoeDtcMedicalProfile(params: {
