@@ -108,14 +108,25 @@ export async function advanceDoeDtcBrowserJob(params: {
       kind: "result",
     });
 
-    if (snapshot.screenshotUrl) {
-      await sendDoeDtcBrowserScreenshotOutbound({
-        user,
-        chatId: user.linq_chat_id ?? undefined,
-        screenshotUrl: snapshot.screenshotUrl,
-        idempotencyKey: `doedtc-browser-advance-${resolvedJob.id}`,
+    if (!snapshot.ok || !snapshot.screenshotUrl) {
+      const error = snapshot.error ?? "Could not capture a screenshot.";
+      await updateDoeDtcBrowserJob({
+        jobId: resolvedJob.id,
+        userId: user.id,
+        patch: {
+          status: "failed",
+          outcome: error,
+        },
       });
+      return { ok: false, error };
     }
+
+    await sendDoeDtcBrowserScreenshotOutbound({
+      user,
+      chatId: user.linq_chat_id ?? undefined,
+      screenshotUrl: snapshot.screenshotUrl,
+      idempotencyKey: `doedtc-browser-advance-${resolvedJob.id}`,
+    });
 
     await updateDoeDtcBrowserJob({
       jobId: resolvedJob.id,

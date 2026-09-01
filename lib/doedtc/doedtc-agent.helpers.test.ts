@@ -7,7 +7,11 @@ import {
   normalizeBrowserUrl,
   resolveResearchBrowseTarget,
 } from "@/lib/doedtc/doedtc-browser-allowlist";
-import { toUserSafeBrowserError } from "@/lib/doedtc/doedtc-browser";
+import {
+  isKernelProxyPlanError,
+  kernelBrowserCreateAttempts,
+  toUserSafeBrowserError,
+} from "@/lib/doedtc/doedtc-browser";
 import { sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
 import {
   compactTranscriptForAgent,
@@ -168,6 +172,28 @@ test("toUserSafeBrowserError maps kernel errors", () => {
     toUserSafeBrowserError("That site is not allowed."),
     /can't open that site/i,
   );
+  assert.match(
+    toUserSafeBrowserError("403 Proxies require a paid plan. Please visit [url] to upgrade!"),
+    /couldn't take that screenshot/i,
+  );
+});
+
+test("isKernelProxyPlanError detects Kernel paid-proxy 403s", () => {
+  assert.equal(
+    isKernelProxyPlanError("403 Proxies require a paid plan. Please visit [url] to upgrade!"),
+    true,
+  );
+  assert.equal(isKernelProxyPlanError(new Error("Could not open that page.")), false);
+});
+
+test("kernelBrowserCreateAttempts retries without a paid proxy", () => {
+  const withProxy = kernelBrowserCreateAttempts("proxy-1");
+  assert.equal(withProxy[0]?.proxyId, "proxy-1");
+  assert.equal(withProxy.some((attempt) => attempt.disableDefaultProxy && !attempt.proxyId), true);
+
+  const withoutProxy = kernelBrowserCreateAttempts(null);
+  assert.equal(withoutProxy.every((attempt) => !attempt.proxyId), true);
+  assert.equal(withoutProxy.some((attempt) => attempt.disableDefaultProxy), true);
 });
 
 test("sanitizeDoeDtcReplyText strips URLs from replies", () => {

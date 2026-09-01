@@ -142,16 +142,28 @@ export async function createDoeDtcBrowserJob(params: {
 
   if (existing) {
     if (mode === "research" && existing.mode === "research" && existing.status === "open") {
-      return updateDoeDtcBrowserJob({
-        jobId: existing.id,
-        userId: params.userId,
-        patch: {
-          intent: params.intent.trim(),
-          allowed_host: params.allowedHost?.trim() || existing.allowed_host,
-        },
-      });
+      if (!existing.kernel_session_id) {
+        await updateDoeDtcBrowserJob({
+          jobId: existing.id,
+          userId: params.userId,
+          patch: {
+            status: "failed",
+            outcome: "auto-cancelled: browser session never started",
+          },
+        });
+      } else {
+        return updateDoeDtcBrowserJob({
+          jobId: existing.id,
+          userId: params.userId,
+          patch: {
+            intent: params.intent.trim(),
+            allowed_host: params.allowedHost?.trim() || existing.allowed_host,
+          },
+        });
+      }
+    } else {
+      throw new Error("You already have an active browser task. Reply STOP to cancel it first.");
     }
-    throw new Error("You already have an active browser task. Reply STOP to cancel it first.");
   }
 
   const supabase = createSupabaseAdmin();

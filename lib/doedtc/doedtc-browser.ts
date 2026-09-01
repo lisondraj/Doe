@@ -82,8 +82,35 @@ function getKernel(): Kernel {
 }
 
 let cachedResearchProxyId: string | null | undefined;
+let researchProxyUnusable = false;
+
+export function isKernelProxyPlanError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /prox(?:y|ies).*(?:paid plan|upgrade)|403.*prox/i.test(message);
+}
+
+export function kernelBrowserCreateAttempts(proxyId: string | null): Array<{
+  proxyId?: string;
+  disableDefaultProxy?: boolean;
+  headless: boolean;
+}> {
+  const attempts: Array<{
+    proxyId?: string;
+    disableDefaultProxy?: boolean;
+    headless: boolean;
+  }> = [];
+  if (proxyId) {
+    attempts.push({ proxyId, headless: false });
+  }
+  attempts.push({ disableDefaultProxy: true, headless: false });
+  attempts.push({ disableDefaultProxy: true, headless: true });
+  return attempts;
+}
 
 export async function ensureDoeDtcResearchProxy(): Promise<string | null> {
+  if (researchProxyUnusable) {
+    return null;
+  }
   if (cachedResearchProxyId !== undefined) {
     return cachedResearchProxyId;
   }
@@ -142,6 +169,9 @@ export function toUserSafeBrowserError(error: string): string {
   if (lower.includes("patient-declared")) {
     return "For that portal I'll send a secure sign-in link instead of browsing directly.";
   }
+  if (isKernelProxyPlanError(error) || lower.includes("screenshot storage")) {
+    return "I couldn't take that screenshot just now. Ask me again and I'll retry.";
+  }
   return "I couldn't complete that web lookup. Try again or ask another way.";
 }
 
@@ -182,12 +212,17 @@ async function attachKernelProfileToJob(job: DoeDtcBrowserJobRow): Promise<DoeDt
     return job;
   }
 
-  const profileId = await ensureDoeDtcKernelProfile(job.user_id, job.allowed_host);
-  return updateDoeDtcBrowserJob({
-    jobId: job.id,
-    userId: job.user_id,
-    patch: { kernel_profile_id: profileId },
-  });
+  try {
+    const profileId = await ensureDoeDtcKernelProfile(job.user_id, job.allowed_host);
+    return updateDoeDtcBrowserJob({
+      jobId: job.id,
+      userId: job.user_id,
+      patch: { kernel_profile_id: profileId },
+    });
+  } catch (error) {
+    warnKernelFailure("attach profile", error);
+    return job;
+  }
 }
 
 async function retrieveKernelSession(sessionId: string): Promise<KernelBrowser | null> {
@@ -211,21 +246,51 @@ async function createKernelSession(
   const kernel = getKernel();
   const saveProfile = Boolean(job.kernel_profile_id) && shouldSaveKernelProfile(job);
   const proxyId = await ensureDoeDtcResearchProxy();
+  const attempts = kernelBrowserCreateAttempts(proxyId);
 
-  const browser = await kernel.browsers.create({
-    stealth: true,
-    headless: false,
-    timeout_seconds: KERNEL_SESSION_TIMEOUT_SECONDS,
-    profile: job.kernel_profile_id ? { id: job.kernel_profile_id } : undefined,
-    start_url: startUrl ?? undefined,
-    ...(proxyId ? { proxy: { id: proxyId } } : {}),
-    ...(saveProfile ? { profile_save_changes: true } : {}),
-  } as Parameters<Kernel["browsers"]["create"]>[0]);
+  let lastError: unknown;
+  for (const attempt of attempts) {
+    try {
+      const browser = await kernel.browsers.create({
+        stealth: true,
+        headless: attempt.headless,
+        timeout_seconds: KERNEL_SESSION_TIMEOUT_SECONDS,
+        profile: job.kernel_profile_id ? { id: job.kernel_profile_id } : undefined,
+        start_url: startUrl ?? undefined,
+        ...(attempt.proxyId ? { proxy: { id: attempt.proxyId } } : {}),
+        ...(attempt.disableDefaultProxy ? { disable_default_proxy: true } : {}),
+        ...(saveProfile ? { profile_save_changes: true } : {}),
+      } as Parameters<Kernel["browsers"]["create"]>[0]);
 
-  return {
-    session_id: browser.session_id,
-    browser_live_view_url: browser.browser_live_view_url ?? null,
-  };
+      return {
+        session_id: browser.session_id,
+        browser_live_view_url: browser.browser_live_view_url ?? null,
+      };
+    } catch (error) {
+      lastError = error;
+      warnKernelFailure(
+        attempt.proxyId
+          ? "create session with research proxy"
+          : attempt.headless
+            ? "create headless session without proxy"
+            : "create session without proxy",
+        error,
+      );
+      if (isKernelProxyPlanError(error)) {
+        researchProxyUnusable = true;
+        cachedResearchProxyId = null;
+        continue;
+      }
+      if (attempt.proxyId) {
+        continue;
+      }
+      throw error instanceof Error ? error : new Error("Could not start a browser session.");
+    }
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Could not start a browser session.");
 }
 
 export async function recreateKernelBrowserSession(params: {
@@ -463,6 +528,18 @@ async function navigateResearchWithFailover(params: {
   return { ...extract, kernelBrowser: activeBrowser, job: activeJob };
 }
 
+async function markBrowserJobFailed(params: {
+  jobId: string;
+  userId: string;
+  outcome: string;
+}): Promise<void> {
+  await updateDoeDtcBrowserJob({
+    jobId: params.jobId,
+    userId: params.userId,
+    patch: { status: "failed", outcome: params.outcome.slice(0, 500) },
+  }).catch((error) => warnKernelFailure("mark job failed", error));
+}
+
 export async function startDoeDtcBrowserTask(params: {
   user: DoeDtcUserRow;
   intent: string;
@@ -474,6 +551,7 @@ export async function startDoeDtcBrowserTask(params: {
     return { ok: false, error, user_message: toUserSafeBrowserError(error) };
   }
 
+  let jobId: string | undefined;
   try {
     const mode = params.mode ?? "research";
     let host: string;
@@ -505,6 +583,7 @@ export async function startDoeDtcBrowserTask(params: {
       allowedHost: host,
       mode,
     });
+    jobId = job.id;
 
     job = await attachKernelProfileToJob(job);
 
@@ -520,42 +599,50 @@ export async function startDoeDtcBrowserTask(params: {
     });
     if (!navigated.ok) {
       const error = navigated.error ?? "Could not open that page.";
+      await markBrowserJobFailed({
+        jobId: job.id,
+        userId: params.user.id,
+        outcome: error,
+      });
       return { ok: false, error, user_message: toUserSafeBrowserError(error) };
     }
 
-    try {
-      const snapshot = await snapshotDoeDtcBrowser({
-        user: params.user,
+    const snapshot = await snapshotDoeDtcBrowser({
+      user: params.user,
+      jobId: job.id,
+      caption: params.intent,
+      kind: "result",
+    });
+    if (!snapshot.ok || !snapshot.screenshotUrl) {
+      const error = snapshot.error ?? "Could not capture a screenshot.";
+      warnKernelFailure("start snapshot", new Error(error));
+      await markBrowserJobFailed({
         jobId: job.id,
-        caption: params.intent,
-        kind: "progress",
+        userId: params.user.id,
+        outcome: error,
       });
-      if (snapshot.ok) {
-        return {
-          ok: true,
-          jobId: job.id,
-          host,
-          url: snapshot.url,
-          title: snapshot.title,
-          excerpt: snapshot.excerpt,
-          workUrl: snapshot.workUrl,
-          screenshotUrl: snapshot.screenshotUrl,
-        };
-      }
-    } catch (error) {
-      warnKernelFailure("start snapshot", error);
+      return { ok: false, error, user_message: toUserSafeBrowserError(error) };
     }
 
     return {
       ok: true,
       jobId: job.id,
       host,
-      url: navigated.url,
-      title: navigated.title,
-      excerpt: navigated.excerpt,
+      url: snapshot.url ?? navigated.url,
+      title: snapshot.title ?? navigated.title,
+      excerpt: snapshot.excerpt ?? navigated.excerpt,
+      workUrl: snapshot.workUrl,
+      screenshotUrl: snapshot.screenshotUrl,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not start browser task.";
+    if (jobId) {
+      await markBrowserJobFailed({
+        jobId,
+        userId: params.user.id,
+        outcome: message,
+      });
+    }
     return {
       ok: false,
       error: message,
@@ -571,32 +658,24 @@ export async function startDoeDtcBrowserTaskAsync(params: {
   mode?: "research" | "login" | "write";
   turnId?: string;
 }): Promise<StartDoeDtcBrowserTaskResult & { status?: "running" }> {
+  const mode = params.mode ?? "research";
+  if (mode === "research") {
+    return startDoeDtcBrowserTask({
+      user: params.user,
+      intent: params.intent,
+      url: params.url,
+      mode,
+    });
+  }
+
   if (!isKernelConfigured()) {
     const error = "Browser automation is not configured.";
     return { ok: false, error, user_message: toUserSafeBrowserError(error) };
   }
 
   try {
-    const mode = params.mode ?? "research";
-    let host: string;
-
-    if (mode === "research") {
-      const resolved = resolveResearchBrowseTarget({
-        url: params.url,
-        intent: params.intent,
-      });
-      if ("ok" in resolved) {
-        return {
-          ok: false,
-          error: resolved.error,
-          user_message: toUserSafeBrowserError(resolved.error),
-        };
-      }
-      host = resolved.host;
-    } else {
-      host = normalizeBrowserHost(params.url);
-      assertBrowserHostAllowed({ host, mode, declaredHost: host });
-    }
+    const host = normalizeBrowserHost(params.url);
+    assertBrowserHostAllowed({ host, mode, declaredHost: host });
 
     let job = await createDoeDtcBrowserJob({
       userId: params.user.id,
@@ -648,7 +727,17 @@ export async function navigateDoeDtcBrowser(params: {
     ? params.url
     : normalizeBrowserUrl(params.url).targetUrl;
 
-  const { job: activeJob, kernelBrowser } = await ensureKernelSession(job, targetUrl);
+  let activeJob: DoeDtcBrowserJobRow;
+  let kernelBrowser: KernelBrowser;
+  try {
+    const ensured = await ensureKernelSession(job, targetUrl);
+    activeJob = ensured.job;
+    kernelBrowser = ensured.kernelBrowser;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not start a browser session.";
+    warnKernelFailure("ensure session", error);
+    return { ok: false, error: message };
+  }
 
   let extract: BrowserExtract;
   let navigatedJob = activeJob;
@@ -853,25 +942,31 @@ export async function snapshotDoeDtcBrowser(params: {
     return { ok: false, error: "No active browser task." };
   }
 
-  const { kernelBrowser } = await ensureKernelSession(job);
-  const extract = await extractPage(kernelBrowser.session_id);
-  if (isBlockedBrowsePage(extract)) {
-    return { ok: false, error: "Search blocked by bot detection." };
-  }
-  const shot = await captureShot({
-    user: params.user,
-    job,
-    sessionId: kernelBrowser.session_id,
-    kind: params.kind ?? "progress",
-    caption: params.caption,
-  });
+  try {
+    const { kernelBrowser } = await ensureKernelSession(job);
+    const extract = await extractPage(kernelBrowser.session_id);
+    if (isBlockedBrowsePage(extract)) {
+      return { ok: false, error: "Search blocked by bot detection." };
+    }
+    const shot = await captureShot({
+      user: params.user,
+      job,
+      sessionId: kernelBrowser.session_id,
+      kind: params.kind ?? "progress",
+      caption: params.caption,
+    });
 
-  return {
-    ...extract,
-    workToken: shot.workToken,
-    workUrl: shot.workUrl,
-    screenshotUrl: shot.blobUrl,
-  };
+    return {
+      ...extract,
+      workToken: shot.workToken,
+      workUrl: shot.workUrl,
+      screenshotUrl: shot.blobUrl,
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not capture a screenshot.";
+    warnKernelFailure("snapshot", error);
+    return { ok: false, error: message };
+  }
 }
 
 export async function requestDoeDtcVaultLink(params: {
