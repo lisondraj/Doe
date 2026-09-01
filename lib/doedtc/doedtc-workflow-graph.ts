@@ -174,7 +174,7 @@ export function buildComposedWorkflowGraph(params: ComposedWorkflowParams): Work
     },
   ];
 
-  let timeoutTarget = done.id;
+  let timeoutTarget = done;
 
   if (params.reminder_body?.trim()) {
     const sendReminder = nodeId("remind");

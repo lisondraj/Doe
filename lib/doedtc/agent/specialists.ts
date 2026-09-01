@@ -70,7 +70,8 @@ export function createDoeSpecialistAgents(ctx: DoeDtcRunContext) {
     name: "Doe",
     instructions: ctx.plannerInstructions ?? ctx.instructions,
     model: model(),
-    outputType: DoePlanSchema,
+    outputType: DoeReplySchema,
+    outputGuardrails: [doeReplyOutputGuardrail],
     tools: [
       healthRecord.asTool({ toolName: "health_record", toolDescription: "Health chart reads and writes." }),
       guides.asTool({ toolName: "guides", toolDescription: "Visual guide authoring." }),
