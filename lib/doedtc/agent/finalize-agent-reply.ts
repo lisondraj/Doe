@@ -71,7 +71,6 @@ export async function finalizeAgentReply(params: {
     degenerate ? DEGENERATE_TURN_REPLY : rawReply || DEGENERATE_TURN_REPLY,
     {
       preservePendingOffer: params.turnState.preservePendingOffer,
-      turnMode: params.turnMode.mode,
     },
   );
 

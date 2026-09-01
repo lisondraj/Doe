@@ -21,7 +21,7 @@ const CRISIS_RE =
 const DISTRESS_RE =
   /\b(?:can'?t function|cannot function|can barely|overwhelmed|hopeless|worthless|everything is too much|falling apart|i give up|don'?t know how much longer|can'?t cope|can not cope)\b/i;
 
-/** Commit tools hidden unless mode is action (photo parse stays on action intent). */
+/** Commit tools gated only in distress (and crisis disables all tools). */
 export const TURN_MODE_COMMIT_TOOLS = new Set([
   "schedule_text",
   "propose_scheduled_text",
@@ -66,16 +66,9 @@ export function shouldSkipRefusalRetry(mode: TurnMode): boolean {
   return isNonActionTurnMode(mode);
 }
 
-export function shouldSkipHedgeRewrite(mode: TurnMode): boolean {
-  return mode === "distress" || mode === "conversation" || mode === "crisis";
-}
-
 export function toolEnabledForTurnMode(toolName: string, mode: TurnMode, intent: ActionIntent): boolean {
   if (mode === "crisis") return false;
-  if (mode === "action") return true;
-  if (intent === "parse_document" && toolName === "parse_document") return true;
-  if (intent === "parse_document" && toolName === "read_attachment") return true;
-  if (TURN_MODE_COMMIT_TOOLS.has(toolName)) return false;
+  if (mode === "distress" && TURN_MODE_COMMIT_TOOLS.has(toolName)) return false;
   return true;
 }
 
@@ -86,7 +79,7 @@ function formatTurnModePromptBlock(mode: TurnMode): string {
     case "distress":
       return "Primary mode: distress. Stay with them. No schedule_text, log_symptoms, or parse_document unless they explicitly asked. One human question max.";
     case "conversation":
-      return "Primary mode: conversation. Answer the question from chart context if helpful. Do not call schedule_text or dump the reminder file. No auto-logging.";
+      return "Primary mode: conversation. Answer from chart context when helpful. Tools stay available — use read_profile, log_result, parse_document when they asked. Do not auto-schedule or dump the reminder file unless they asked.";
     case "action":
       return "Primary mode: action. Use commit tools for the primary intent.";
   }
@@ -132,7 +125,7 @@ export function classifyTurnMode(params: {
     mode: "conversation",
     intent: params.intent,
     emergencyOrDiagnosis: false,
-    disableCommitTools: true,
+    disableCommitTools: false,
     promptBlock: formatTurnModePromptBlock("conversation"),
   };
 }
@@ -149,8 +142,8 @@ export function buildTurnModeVoiceBlock(mode: TurnMode): string {
 - One short question is fine. No corporate sympathy.`;
     case "conversation":
       return `Mode (conversation):
-- Answer what they asked. Use chart context if it helps explain fatigue, meds, sleep, etc.
-- Do not offer to set a reminder or log symptoms unless they asked.`;
+- Answer what they asked. Use chart context and read_profile when a tab is thin.
+- Tools stay available when they explicitly asked to log, parse, or schedule. Do not auto-schedule or log unprompted.`;
     case "action":
       return "";
   }

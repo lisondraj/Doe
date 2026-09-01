@@ -5,7 +5,7 @@ import {
   classifyAgentAction,
   inboundAlreadyAsked,
 } from "@/lib/doedtc/doedtc-agent-policy";
-import { buildDoeAgentVoiceBlock, hasConcretePlan } from "@/lib/doedtc/doedtc-agent-voice";
+import { buildDoeAgentVoiceBlock } from "@/lib/doedtc/doedtc-agent-voice";
 import {
   buildDefaultHabitCheckInBody,
   computeWorkflowNextRunAt,
@@ -45,10 +45,6 @@ test("buildDoeAgentVoiceBlock does not instruct wait for yes before schedule_tex
   assert.doesNotMatch(block, /wait for yes before schedule_text/i);
   assert.doesNotMatch(block, /Never auto-schedule/i);
   assert.match(block, /schedule_text/i);
-});
-
-test("hasConcretePlan accepts done timer replies", () => {
-  assert.equal(hasConcretePlan("Done. I'll text you in 5 seconds."), true);
 });
 
 test("parseScheduledSendAt accepts in 5 seconds", async () => {

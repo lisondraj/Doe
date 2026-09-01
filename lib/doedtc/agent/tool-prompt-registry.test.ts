@@ -181,9 +181,8 @@ describe("policy and voice upgrades", () => {
     assert.match(block, /Instincts:/);
     assert.match(DOE_AGENT_STYLE, /extra offer/i);
     assert.match(DOE_AGENT_FEW_SHOTS, /take a bath/);
-    assert.match(DOE_AGENT_FEW_SHOTS, /Maya and Leo/);
-    assert.match(DOE_AGENT_FEW_SHOTS, /take my meds/);
-    assert.match(DOE_AGENT_FEW_SHOTS, /5 seconds/);
+    assert.match(DOE_AGENT_FEW_SHOTS, /wording is yours/);
+    assert.match(DOE_AGENT_INSTINCTS, /lab results/i);
     assert.match(DOE_AGENT_FEW_SHOTS, /log_artifact_entry/);
     assert.match(DOE_AGENT_FEW_SHOTS, /create_guide/);
     assert.match(DOE_AGENT_FEW_SHOTS, /read_listen_session/);

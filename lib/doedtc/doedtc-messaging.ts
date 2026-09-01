@@ -1,5 +1,5 @@
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
-import { runDoeDtcAgentTurn, sanitizeDoeDtcReplyText, type DoeDtcAgentTurnResult } from "@/lib/doedtc/doedtc-agent";
+import { runDoeDtcAgentTurn, type DoeDtcAgentTurnResult } from "@/lib/doedtc/doedtc-agent";
 import { createDoeDtcAgentTurnId, recentDoeDtcTurnsUsedThreadReply } from "@/lib/doedtc/doedtc-agent-audit";
 import { commitDoeDtcBrowserTask, stopDoeDtcBrowserForUser } from "@/lib/doedtc/doedtc-browser";
 import { getPendingConfirmDoeDtcBrowserJob } from "@/lib/doedtc/doedtc-browser-db";
@@ -631,9 +631,7 @@ export async function handleSymptomInbound(params: {
     };
   }
 
-  const replyText = sanitizeDoeDtcReplyText(turn.replyText, {
-    preservePendingOffer: turn.preservePendingOffer,
-  });
+  const replyText = turn.replyText;
   if (agentFailed) {
     turn = {
       ...turn,

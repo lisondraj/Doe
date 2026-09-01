@@ -13,7 +13,6 @@ import {
 } from "@/lib/doedtc/agent/honesty";
 import {
   buildAwaitingBodyCommitArgs,
-  buildReminderClarifyingQuestion,
   buildReminderIntentDirective,
   isAwaitingBodyPending,
   parseReminderIntent,
@@ -46,13 +45,10 @@ import { generateDoeDtcAssessment } from "@/lib/doedtc/doedtc-assessment";
 import {
   buildDoeAgentVoiceBlock,
   DOE_AGENT_MAKE_SURE_ROUTING,
-  hasConcretePlan,
-  looksCapabilityHedge,
 } from "@/lib/doedtc/doedtc-agent-voice";
 import { finalizeAgentReply } from "@/lib/doedtc/agent/finalize-agent-reply";
 import {
   CRISIS_REPLY,
-  shouldSkipHedgeRewrite,
   toolEnabledForTurnMode,
   type TurnMode,
   type TurnModeResult,
@@ -282,17 +278,16 @@ function splitCompleteAndTrailing(text: string): { complete: string[]; trailing:
 
 function dropIncompleteTrailingSentence(text: string): string {
   const trimmed = text.trim();
-  if (!trimmed) return "All set.";
+  if (!trimmed) return "";
 
   const { complete, trailing } = splitCompleteAndTrailing(trimmed);
 
   if (trailing && looksIncompleteFragment(trailing)) {
-    const joined = complete.join(" ").trim();
-    return joined || "All set.";
+    return complete.join(" ").trim();
   }
 
   if (complete.length === 0 && looksIncompleteFragment(trimmed)) {
-    return "All set.";
+    return "";
   }
 
   return trimmed;
@@ -323,7 +318,6 @@ export function sanitizeDoeDtcReplyText(
     preserveScheduleOffer?: boolean;
     /** @deprecated use preservePendingOffer */
     preserveGuideSaveOffer?: boolean;
-    turnMode?: TurnMode;
   },
 ): string {
   const withoutMarkdown = stripEmDashesFromReply(stripMarkdownFromReply(text));
@@ -341,15 +335,7 @@ export function sanitizeDoeDtcReplyText(
     .replace(/[ \t]{2,}/g, " ")
     .replace(/[,;]+(?:\s*[.!]*)?\s*$/g, "")
     .trim();
-  const cleaned = dropIncompleteTrailingSentence(normalized);
-  if (
-    !shouldSkipHedgeRewrite(options?.turnMode ?? "action") &&
-    looksCapabilityHedge(cleaned) &&
-    !hasConcretePlan(cleaned)
-  ) {
-    return "Tell me who to text and when, and I'll set it up.";
-  }
-  return cleaned;
+  return dropIncompleteTrailingSentence(normalized);
 }
 
 function compactTranscript(
@@ -909,13 +895,6 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const reminderIntent = parseReminderIntent(params.inboundText);
   if (!pendingRow && reminderIntent.matched && reminderIntent.missingSlot === "body") {
     await storeAwaitingBodyReminderPending({ user: params.user, intent: reminderIntent });
-    return {
-      replyText: sanitizeDoeDtcReplyText(buildReminderClarifyingQuestion(reminderIntent), {
-        preservePendingOffer: true,
-      }),
-      assessmentRan: false,
-      preservePendingOffer: true,
-    };
   }
 
   let affirmCommitFailedNote: string | null = null;
@@ -988,7 +967,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
 
   if (turnMode.mode === "crisis") {
     return {
-      replyText: sanitizeDoeDtcReplyText(CRISIS_REPLY, { turnMode: "crisis" }),
+      replyText: sanitizeDoeDtcReplyText(CRISIS_REPLY),
       assessmentRan: false,
     };
   }

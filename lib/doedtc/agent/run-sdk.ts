@@ -37,7 +37,6 @@ import {
 } from "@/lib/doedtc/doedtc-memory";
 import {
   buildAwaitingBodyCommitArgs,
-  buildReminderClarifyingQuestion,
   buildReminderIntentDirective,
   isAwaitingBodyPending,
   parseReminderIntent,
@@ -474,13 +473,6 @@ export async function runDoeDtcAgentTurnSdk(params: {
   const reminderIntent = parseReminderIntent(params.inboundText);
   if (!pendingRow && reminderIntent.matched && reminderIntent.missingSlot === "body") {
     await storeAwaitingBodyReminderPending({ user: params.user, intent: reminderIntent });
-    return {
-      replyText: sanitizeDoeDtcReplyText(buildReminderClarifyingQuestion(reminderIntent), {
-        preservePendingOffer: true,
-      }),
-      assessmentRan: false,
-      preservePendingOffer: true,
-    };
   }
 
   if (pendingRow && isRunStatePending(pendingRow.args) && parseAffirmation(params.inboundText)) {
@@ -510,7 +502,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
 
   if (loaded.turnMode?.mode === "crisis") {
     return {
-      replyText: sanitizeDoeDtcReplyText(CRISIS_REPLY, { turnMode: "crisis" }),
+      replyText: sanitizeDoeDtcReplyText(CRISIS_REPLY),
       assessmentRan: false,
     };
   }

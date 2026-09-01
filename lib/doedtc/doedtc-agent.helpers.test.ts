@@ -215,14 +215,11 @@ test("sanitizeDoeDtcReplyText drops dangling family-offer fragments after closer
   assert.ok(!cleaned.includes("If you want family"));
 });
 
-test("sanitizeDoeDtcReplyText replaces whole-reply fragments with a complete fallback", () => {
-  assert.equal(
-    sanitizeDoeDtcReplyText("If you want family…", { keepCloserRate: 0 }),
-    "All set.",
-  );
+test("sanitizeDoeDtcReplyText drops whole-reply fragments without a canned fallback", () => {
+  assert.equal(sanitizeDoeDtcReplyText("If you want family…", { keepCloserRate: 0 }), "");
   assert.equal(
     sanitizeDoeDtcReplyText("If you want family invites sent", { keepCloserRate: 0 }),
-    "All set.",
+    "",
   );
 });
 

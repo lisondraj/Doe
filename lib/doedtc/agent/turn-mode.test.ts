@@ -11,10 +11,23 @@ import {
 } from "@/lib/doedtc/agent/turn-mode";
 import { sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
 
-test("Why am I so tired classifies as conversation", () => {
+test("Why am I so tired classifies as conversation with tools available", () => {
   const result = classifyTurnMode({ inboundText: "Why am I so tired", intent: "none" });
   assert.equal(result.mode, "conversation");
-  assert.equal(result.disableCommitTools, true);
+  assert.equal(result.disableCommitTools, false);
+  assert.equal(toolEnabledForTurnMode("read_profile", "conversation", "none"), true);
+  assert.equal(toolEnabledForTurnMode("log_result", "conversation", "none"), true);
+});
+
+test("lab results question keeps read and log tools in conversation mode", () => {
+  const result = classifyTurnMode({
+    inboundText: "What were my lab results earlier today",
+    intent: "none",
+  });
+  assert.equal(result.mode, "conversation");
+  assert.equal(toolEnabledForTurnMode("read_profile", result.mode, result.intent), true);
+  assert.equal(toolEnabledForTurnMode("log_result", result.mode, result.intent), true);
+  assert.equal(toolEnabledForTurnMode("parse_document", result.mode, result.intent), true);
 });
 
 test("I don't wanna be here classifies as crisis with 988 reply", () => {
@@ -23,6 +36,7 @@ test("I don't wanna be here classifies as crisis with 988 reply", () => {
   assert.equal(result.mode, "crisis");
   assert.equal(result.emergencyOrDiagnosis, true);
   assert.match(CRISIS_REPLY, /988/);
+  assert.equal(toolEnabledForTurnMode("read_profile", "crisis", "none"), false);
 });
 
 test("I can't function classifies as distress without commit tools", () => {
@@ -57,9 +71,18 @@ test("photo inbound stays action with parse_document enabled", () => {
   assert.equal(toolEnabledForTurnMode("parse_document", "action", "parse_document"), true);
 });
 
-test("conversation reply is not hedge-rewritten into reminder offer", () => {
+test("hedge replies are not rewritten into scheduling prompts", () => {
+  const reply = sanitizeDoeDtcReplyText(
+    "I can't directly retrieve your lab results from earlier today.",
+    { keepCloserRate: 0 },
+  );
+  assert.doesNotMatch(reply, /Tell me who to text/);
+  assert.match(reply, /lab results/i);
+});
+
+test("conversation replies pass through unchanged", () => {
   const reply = sanitizeDoeDtcReplyText("I don't see any fatigue logs yet.", {
-    turnMode: "conversation",
+    keepCloserRate: 0,
   });
   assert.doesNotMatch(reply, /Tell me who to text/);
   assert.match(reply, /fatigue/i);

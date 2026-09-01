@@ -6,8 +6,6 @@ import {
   buildDoeAgentVoiceBlock,
   DOE_AGENT_FEW_SHOTS,
   DOE_AGENT_STANCE,
-  hasConcretePlan,
-  looksCapabilityHedge,
 } from "@/lib/doedtc/doedtc-agent-voice";
 
 test("buildDoeAgentVoiceBlock includes capable-friend stance", () => {
@@ -16,6 +14,7 @@ test("buildDoeAgentVoiceBlock includes capable-friend stance", () => {
   assert.match(block, /Never open with what you cannot do/);
   assert.match(block, /When they already asked with enough detail, act/);
   assert.match(block, /sharp friend/);
+  assert.match(block, /Compose from the Primitives block/);
 });
 
 test("voice block excludes hedge product names from examples", () => {
@@ -24,37 +23,18 @@ test("voice block excludes hedge product names from examples", () => {
   assert.doesNotMatch(DOE_AGENT_FEW_SHOTS, /I can't directly/i);
 });
 
-test("few-shots include bath, timer, and meds examples", () => {
+test("few-shots describe routing without mandating exact reply text", () => {
   assert.match(DOE_AGENT_FEW_SHOTS, /take a bath/);
-  assert.match(DOE_AGENT_FEW_SHOTS, /Maya and Leo/);
-  assert.match(DOE_AGENT_FEW_SHOTS, /take my meds/);
-  assert.match(DOE_AGENT_FEW_SHOTS, /5 seconds/);
+  assert.match(DOE_AGENT_FEW_SHOTS, /wording is yours/);
+  assert.doesNotMatch(DOE_AGENT_FEW_SHOTS, /Done\. I'll text you in 5 seconds/);
 });
 
-test("looksCapabilityHedge detects opening disclaimers", () => {
-  assert.equal(
-    looksCapabilityHedge("I can't directly ensure your kids take a bath, but I can help."),
-    true,
-  );
-  assert.equal(looksCapabilityHedge("I cannot physically make sure they bathe."), true);
-  assert.equal(looksCapabilityHedge("Doe is not a doctor and this is not a diagnosis."), false);
-  assert.equal(
-    looksCapabilityHedge("I'll text Maya and Leo at 7. I can't be there in person but I'll ping them."),
-    false,
-  );
-});
-
-test("hasConcretePlan detects actionable offers", () => {
-  assert.equal(hasConcretePlan("I'll text Maya and Leo at 7 tonight."), true);
-  assert.equal(hasConcretePlan("I can't directly ensure that."), false);
-});
-
-test("sanitizeDoeDtcReplyText rewrites hedge-only replies", () => {
-  const cleaned = sanitizeDoeDtcReplyText(
-    "I can't directly ensure your kids take a bath, but I can help you set up a reminder.",
-    { keepCloserRate: 0 },
-  );
-  assert.match(cleaned, /who to text and when/i);
+test("sanitizeDoeDtcReplyText preserves hedge replies", () => {
+  const original =
+    "I can't directly ensure your kids take a bath, but I can help you set up a reminder.";
+  const cleaned = sanitizeDoeDtcReplyText(original, { keepCloserRate: 0 });
+  assert.match(cleaned, /can't directly ensure/i);
+  assert.doesNotMatch(cleaned, /who to text and when/i);
 });
 
 test("sanitizeDoeDtcReplyText keeps replies that include a plan", () => {
