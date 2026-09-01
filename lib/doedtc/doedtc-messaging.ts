@@ -104,31 +104,33 @@ export function attachmentIdFromMediaPart(part: {
 }
 
 export function extractInboundMedia(payload: unknown): InboundMediaAttachment[] {
-  return inboundParts(payload)
-    .map((part) => {
-      const type = (part.type ?? "").toLowerCase();
-      if (type === "text" || type === "link") return null;
-      const rawUrl =
-        (typeof part.url === "string" && part.url.trim()) ||
-        (typeof part.value === "string" && /^https?:\/\//i.test(part.value.trim()) ? part.value.trim() : "");
-      const mime = typeof part.mime_type === "string" ? part.mime_type : undefined;
-      const looksLikeMedia =
-        type === "media" ||
-        type === "image" ||
-        type === "attachment" ||
-        Boolean(mime?.startsWith("image/")) ||
-        Boolean(rawUrl && type === "");
-      if (!looksLikeMedia) return null;
-      const attachmentId = attachmentIdFromMediaPart(part);
-      if (!rawUrl && !attachmentId) return null;
-      return {
-        url: rawUrl || undefined,
-        mime,
-        filename: typeof part.filename === "string" ? part.filename : undefined,
-        attachmentId,
-      };
-    })
-    .filter((part): part is InboundMediaAttachment => Boolean(part));
+  const attachments: InboundMediaAttachment[] = [];
+  for (const part of inboundParts(payload)) {
+    const type = (part.type ?? "").toLowerCase();
+    if (type === "text" || type === "link") continue;
+    const rawUrl =
+      typeof part.url === "string" && part.url.trim()
+        ? part.url.trim()
+        : typeof part.value === "string" && /^https?:\/\//i.test(part.value.trim())
+          ? part.value.trim()
+          : "";
+    const mime = typeof part.mime_type === "string" ? part.mime_type : undefined;
+    const looksLikeMedia =
+      type === "media" ||
+      type === "image" ||
+      type === "attachment" ||
+      Boolean(mime?.startsWith("image/")) ||
+      Boolean(rawUrl && type === "");
+    if (!looksLikeMedia) continue;
+    const attachmentId = attachmentIdFromMediaPart(part);
+    if (!rawUrl && !attachmentId) continue;
+    const row: InboundMediaAttachment = { mime };
+    if (rawUrl) row.url = rawUrl;
+    if (typeof part.filename === "string") row.filename = part.filename;
+    if (attachmentId) row.attachmentId = attachmentId;
+    attachments.push(row);
+  }
+  return attachments;
 }
 
 export function extractInboundText(payload: unknown): string {
@@ -976,7 +978,7 @@ export async function processDoeDtcInboundWebhook(params: {
             attachmentId: row.attachmentId || current?.attachmentId,
           });
         }
-        inboundMedia.splice(0, inboundMedia.length, ...byKey.values());
+        inboundMedia = Array.from(byKey.values());
       }
     } catch (error) {
       console.warn(
