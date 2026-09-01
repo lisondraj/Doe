@@ -946,7 +946,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "list_scheduled_texts",
-      description: "List pending scheduled texts for the user.",
+      description:
+        "Live file for reminders: committed upcoming texts, recently sent, and any uncommitted draft. Use this for existence questions — never answer from chat history. Drafts are not set.",
       parameters: { type: "object", properties: {} },
     },
   },

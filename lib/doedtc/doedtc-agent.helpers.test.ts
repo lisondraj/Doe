@@ -12,6 +12,7 @@ import {
   compactTranscriptForAgent,
   isDegenerateTurn,
   isFillerReply,
+  schedulingToolSucceeded,
   toolCallSignature,
 } from "@/lib/doedtc/agent/turn-integrity";
 import { shouldRetryEmptyRefusal } from "@/lib/doedtc/agent/honesty";
@@ -323,6 +324,12 @@ test("compactTranscriptForAgent drops filler outbound rows", () => {
   assert.match(transcript, /User: Hey/);
   assert.doesNotMatch(transcript, /Doe: Got it/);
   assert.match(transcript, /Ozempic weekly/);
+});
+
+test("schedulingToolSucceeded requires schedule_text, not propose", () => {
+  assert.equal(schedulingToolSucceeded([{ name: "propose_scheduled_text", ok: true }]), false);
+  assert.equal(schedulingToolSucceeded([{ name: "schedule_text", ok: true }]), true);
+  assert.equal(schedulingToolSucceeded([{ name: "schedule_text", ok: false }]), false);
 });
 
 test("isDegenerateTurn flags empty filler replies without meaningful tools", () => {

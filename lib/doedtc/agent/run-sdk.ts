@@ -25,6 +25,8 @@ import {
   searchDoeDtcMem0Memories,
   searchDoeDtcMem0Playbook,
 } from "@/lib/doedtc/doedtc-memory";
+import { groundReplyInCommittedState } from "@/lib/doedtc/agent/committed-state";
+import { reconcileReplyClaims } from "@/lib/doedtc/agent/honesty";
 import {
   applyReminderSafetyNet,
   buildAwaitingBodyCommitArgs,
@@ -55,7 +57,8 @@ import { formatHouseholdForAgent } from "@/lib/doedtc/doedtc-household";
 import { formatGuideForAgent } from "@/lib/doedtc/doedtc-guides";
 import {
   agentNowLabel,
-  formatScheduledTextForAgent,
+  buildScheduledTextFile,
+  formatScheduledTextFileForAgent,
   normalizeScheduledTimezone,
 } from "@/lib/doedtc/doedtc-scheduled";
 import { formatWorkflowsForAgent, listActiveWorkflowsForUser } from "@/lib/doedtc/doedtc-workflows";
@@ -163,7 +166,9 @@ async function loadRunContext(params: {
         viewerUserId: params.user.id,
       }),
       accountabilityLog: formatAccountabilityForAgent(snapshot.accountabilityPacts),
-      scheduledLog: formatScheduledTextForAgent(snapshot.scheduledTexts.filter((row) => row.status === "pending")),
+      scheduledLog: formatScheduledTextFileForAgent(
+        buildScheduledTextFile({ rows: snapshot.scheduledTexts, pending: pendingRow }),
+      ),
       workflowsLog: formatWorkflowsForAgent(activeWorkflows),
       guidesLog:
         recentGuides.length === 0
@@ -346,6 +351,27 @@ async function finalizeSdkRun(params: {
   if (safety.applied && safety.replyHint) {
     rawReply = safety.replyHint;
   }
+
+  const reconciled = await reconcileReplyClaims({
+    user: params.loaded.user,
+    inboundText: params.inboundText,
+    replyText: rawReply,
+    state: params.loaded.turnState,
+    toolsExecuted: params.loaded.turnState.toolsExecuted ?? [],
+    snapshot: params.loaded.snapshot,
+  });
+  params.loaded.turnState.listenUrl = reconciled.listenUrl ?? params.loaded.turnState.listenUrl;
+  params.loaded.turnState.profileUrl = reconciled.profileUrl ?? params.loaded.turnState.profileUrl;
+  params.loaded.turnState.sessionUrl = reconciled.sessionUrl ?? params.loaded.turnState.sessionUrl;
+  rawReply = reconciled.replyText || rawReply;
+
+  const grounded = await groundReplyInCommittedState({
+    userId: params.loaded.user.id,
+    inboundText: params.inboundText,
+    replyText: rawReply,
+    toolsExecuted: params.loaded.turnState.toolsExecuted,
+  });
+  rawReply = grounded.replyText;
 
   const degenerate = isDegenerateTurn({
     replyText: rawReply,

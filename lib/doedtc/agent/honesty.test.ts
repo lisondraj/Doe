@@ -108,5 +108,7 @@ describe("tool capability prompt", () => {
       nowLabel: "Mon 9:00 AM",
     });
     assertToolPromptCoverage(prompt);
+    assert.match(prompt, /Do not use prior bubbles/);
+    assert.match(prompt, /propose_scheduled_text is a draft/);
   });
 });

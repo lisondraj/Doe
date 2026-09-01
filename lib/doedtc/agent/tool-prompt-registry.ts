@@ -21,6 +21,8 @@ const PROMPT_OVERRIDES: Partial<Record<(typeof DOE_DTC_TOOL_NAMES)[number], stri
   browser_snapshot: "Capture a screenshot of the active browser page (browser_snapshot).",
   send_profile_link:
     "Send the profile/dashboard link (send_profile_link) only when they ask for their profile or after creating a tracker — never as a fallback for a failed task.",
+  list_scheduled_texts:
+    "Read the live reminder file (list_scheduled_texts): committed upcoming, recently sent, and drafts. Use this for existence questions — never answer from chat history.",
   read_profile:
     "Read any profile tab (read_profile). Dashboard includes Whoop and Apple Health — answer from that data.",
   show_session:

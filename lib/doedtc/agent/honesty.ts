@@ -45,8 +45,9 @@ const CLAIM_REGISTRY: Array<{
   },
   {
     id: "scheduled_text",
-    claim: /\b(?:i'?ll|i will|done —)\s+(?:text|ping|remind)\s+you\b.*\b(?:in|at)\s+\d+\s*(?:second|minute|hour)/i,
-    requiredTools: ["schedule_text", "propose_scheduled_text"],
+    claim:
+      /\b(?:i(?:'ve| have) set.{0,40}reminder|(?:i(?:'ll| will)|done —)\s+(?:text|ping|remind)\s+you\b)/i,
+    requiredTools: ["schedule_text"],
     repair: "schedule",
   },
 ];

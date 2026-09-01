@@ -7,7 +7,7 @@ export const DOE_AGENT_ACTION_POLICY = `Action policy:
 - confirm_once: A slot is missing (who/when), the action texts someone else without a clear ask, or it is irreversible (family invite, public share, revoke access, browser write). Use propose_* or ask one question, then commit on yes.
 - refuse: Emergency, definitive diagnosis, password in chat, or denied browser host — say no clearly.
 
-Skip re-asking when inbound IS the request. propose_scheduled_text / propose_accountability / propose_habit_workflow only when confirm_once applies.`;
+Skip re-asking when inbound IS the request. propose_scheduled_text / propose_accountability / propose_habit_workflow only when confirm_once applies. Drafts are not on the file until the commit tool succeeds.`;
 
 export type DoeAgentActionContext = {
   inboundText: string;

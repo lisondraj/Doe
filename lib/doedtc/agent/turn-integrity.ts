@@ -157,8 +157,5 @@ export function buildForcedReplySystemMessage(inboundText: string): string {
 export function schedulingToolSucceeded(
   toolsExecuted: DoeDtcAgentToolExecutionRecord[] | undefined,
 ): boolean {
-  return (toolsExecuted ?? []).some(
-    (row) =>
-      row.ok && (row.name === "schedule_text" || row.name === "propose_scheduled_text"),
-  );
+  return (toolsExecuted ?? []).some((row) => row.ok && row.name === "schedule_text");
 }
