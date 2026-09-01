@@ -364,19 +364,33 @@ function labelScheduledIntent(intent: string): string {
   return trimmed || "reminder";
 }
 
+function summarizeScheduledRows(
+  rows: Array<{ intent: string }>,
+  prefix: string,
+): string | null {
+  if (rows.length === 0) return null;
+  const labels = rows.map((row) => labelScheduledIntent(row.intent));
+  const unique = Array.from(new Set(labels));
+  if (rows.length === 1) {
+    return `${prefix}: ${unique[0]}.`;
+  }
+  if (unique.length === 1) {
+    return `${rows.length} ${unique[0]}s ${prefix.toLowerCase()}.`;
+  }
+  const preview = unique.slice(0, 3).join(", ");
+  const extra = unique.length > 3 ? ` and ${unique.length - 3} more` : "";
+  return `${prefix}: ${preview}${extra}.`;
+}
+
 export function formatScheduledTextFileReply(file: ScheduledTextFile): string {
   if (scheduledTextFileIsEmpty(file)) {
     return "There's nothing set right now.";
   }
   const parts: string[] = [];
-  if (file.committed.length > 0) {
-    const names = file.committed.map((row) => labelScheduledIntent(row.intent)).join(", ");
-    parts.push(`On the file: ${names}.`);
-  }
-  if (file.recentlySent.length > 0) {
-    const names = file.recentlySent.map((row) => labelScheduledIntent(row.intent)).join(", ");
-    parts.push(`Already sent: ${names}.`);
-  }
+  const committed = summarizeScheduledRows(file.committed, "On the file");
+  if (committed) parts.push(committed);
+  const sent = summarizeScheduledRows(file.recentlySent, "Already sent");
+  if (sent) parts.push(sent);
   if (file.draft) {
     parts.push(
       file.draft.awaitingBody

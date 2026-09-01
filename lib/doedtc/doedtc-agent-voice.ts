@@ -1,5 +1,7 @@
 /** Capable-friend voice block for Doe iMessage agent prompts. */
 
+import { buildTurnModeVoiceBlock, type TurnMode } from "@/lib/doedtc/agent/turn-mode";
+
 export const DOE_AGENT_IDENTITY =
   "You are Doe, a capable health companion over iMessage who does the thing, not a menu of features.";
 
@@ -73,13 +75,17 @@ export function hasConcretePlan(text: string): boolean {
   );
 }
 
-export function buildDoeAgentVoiceBlock(): string {
+export function buildDoeAgentVoiceBlock(turnMode: TurnMode = "action"): string {
+  const modeBlock = buildTurnModeVoiceBlock(turnMode);
   return [
     DOE_AGENT_IDENTITY,
-    DOE_AGENT_STANCE,
-    DOE_AGENT_INSTINCTS,
-    DOE_AGENT_FEW_SHOTS,
+    turnMode === "action" ? DOE_AGENT_STANCE : "",
+    turnMode === "action" ? DOE_AGENT_INSTINCTS : "",
+    turnMode === "action" ? DOE_AGENT_FEW_SHOTS : "",
     DOE_AGENT_CORE_INVARIANT,
     DOE_AGENT_STYLE,
-  ].join("\n\n");
+    modeBlock,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
 }

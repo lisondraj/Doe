@@ -45,8 +45,11 @@ test("inboundAsksReminderStatus detects file questions", () => {
 });
 
 test("replyClaimsReminderEmpty and Set", () => {
-  assert.equal(replyClaimsReminderEmpty("There's nothing set right now"), true);
-  assert.equal(replyClaimsReminderEmpty("Currently, there are no reminders set for you."), true);
+  assert.equal(replyClaimsReminderEmpty("There's nothing set right now"), false);
+  assert.equal(
+    replyClaimsReminderEmpty("There are no reminders set for you right now."),
+    true,
+  );
   assert.equal(replyClaimsReminderSet("I've set a reminder for Fred's appointment tomorrow."), true);
   assert.equal(replyClaimsReminderSet("Logged your shot."), false);
 });
@@ -175,4 +178,74 @@ test("reconcileReplyWithLiveChart rewrites unbacked Fred appointment claim", () 
     viewerUserId: "u1",
   });
   assert.match(reply, /Fred isn't on the household/i);
+});
+
+test("fatigue conversation is not replaced by reminder file dump", () => {
+  const sentRows = [
+    row({ id: "s1", intent: "", status: "sent" }),
+    row({ id: "s2", intent: "", status: "sent" }),
+    row({ id: "s3", intent: "", status: "sent" }),
+  ];
+  const file = buildScheduledTextFile({ rows: sentRows, pending: null });
+  const chartFile = buildChartFile({
+    snapshot: {
+      user: { id: "user-1" },
+      household: { household: null, members: [], consents: [] },
+      appointments: [],
+      artifacts: [],
+      scheduledTexts: sentRows,
+    } as never,
+  });
+  const modelReply = "I don't see any fatigue logs in your chart yet.";
+  const scoped = reconcileReplyWithScheduledTextFile({
+    inboundText: "Why am I so tired",
+    replyText: modelReply,
+    file,
+    scheduleTextSucceeded: false,
+    turnMode: "conversation",
+  });
+  assert.equal(scoped, modelReply);
+
+  const grounded = reconcileReplyWithLiveChart({
+    userId: "user-1",
+    inboundText: "Why am I so tired",
+    replyText: modelReply,
+    file: chartFile,
+    toolsExecuted: [],
+    viewerUserId: "user-1",
+    turnMode: "conversation",
+  });
+  assert.equal(grounded, modelReply);
+  assert.doesNotMatch(grounded, /Already sent/i);
+});
+
+test("reminder status ask still grounds to live file", () => {
+  const sentRows = [
+    row({ id: "s1", intent: "", status: "sent" }),
+    row({ id: "s2", intent: "", status: "sent" }),
+  ];
+  const file = buildScheduledTextFile({ rows: sentRows, pending: null });
+  const reply = reconcileReplyWithScheduledTextFile({
+    inboundText: "any reminders set?",
+    replyText: "There are no reminders set for you.",
+    file,
+    scheduleTextSucceeded: false,
+    turnMode: "action",
+  });
+  assert.match(reply, /Already sent/i);
+  assert.match(reply, /2 reminders/i);
+});
+
+test("formatScheduledTextFileReply summarizes repeated empty intents", () => {
+  const file = buildScheduledTextFile({
+    rows: [
+      row({ id: "s1", intent: "", status: "sent" }),
+      row({ id: "s2", intent: "", status: "sent" }),
+      row({ id: "s3", intent: "", status: "sent" }),
+    ],
+    pending: null,
+  });
+  const reply = formatScheduledTextFileReply(file);
+  assert.match(reply, /3 reminders already sent/i);
+  assert.doesNotMatch(reply, /reminder, reminder, reminder/i);
 });

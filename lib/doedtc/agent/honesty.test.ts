@@ -23,7 +23,7 @@ describe("agent honesty invariants", () => {
     assert.equal(looksLikeRefusal("Sent Simon an invite."), false);
   });
 
-  it("blocks empty-tool refusals", () => {
+  it("blocks empty-tool refusals on action turns only", () => {
     assert.equal(
       shouldRetryEmptyRefusal({
         replyText: "I can't edit PDFs directly.",
@@ -34,9 +34,10 @@ describe("agent honesty invariants", () => {
     assert.equal(
       shouldRetryEmptyRefusal({
         replyText: "I can't edit PDFs directly.",
-        toolsExecuted: [{ name: "react_to_message", ok: true }],
+        toolsExecuted: [],
+        turnMode: "conversation",
       }),
-      true,
+      false,
     );
     assert.equal(
       shouldRetryEmptyRefusal({

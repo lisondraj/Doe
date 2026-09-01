@@ -1,3 +1,4 @@
+import type { TurnModeResult } from "@/lib/doedtc/agent/turn-mode";
 import type { DoeDtcAttachmentContext } from "@/lib/doedtc/agent/attachments";
 import type { DoeDtcProfileSnapshot, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 import type { DoeDtcToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
@@ -20,6 +21,7 @@ export type DoeDtcRunContext = {
   inboundMessageId?: string;
   inboundFileIds?: string[];
   attachmentContext?: DoeDtcAttachmentContext;
+  turnMode?: TurnModeResult;
   snapshot: DoeDtcProfileSnapshot;
   turnState: DoeDtcToolTurnState;
   instructions: string;

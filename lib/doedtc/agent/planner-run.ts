@@ -70,7 +70,7 @@ export async function executeDoePlan(params: {
         step.tool,
       ),
     ),
-    emergencyOrDiagnosis: plan.action === "refuse",
+    emergencyOrDiagnosis: ctx.turnMode?.emergencyOrDiagnosis ?? plan.action === "refuse",
   });
 
   if (!validation.ok) {

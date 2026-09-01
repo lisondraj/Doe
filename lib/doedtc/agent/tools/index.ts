@@ -4,6 +4,7 @@ import { z } from "zod";
 import { DOEDTC_AGENT_TOOLS } from "@/lib/doedtc/doedtc-agent-tools";
 import { executeDoeDtcTool, DOE_DTC_TOOL_NAMES } from "@/lib/doedtc/agent/tool-dispatch";
 import type { DoeDtcRunContext } from "@/lib/doedtc/agent/types";
+import { toolEnabledForTurnMode } from "@/lib/doedtc/agent/turn-mode";
 
 const STRUCTURED_OUTPUT_ONLY = new Set(["react_to_message", "use_thread_reply"]);
 
@@ -53,6 +54,11 @@ export function createDoeDtcSdkTools(ctx: DoeDtcRunContext) {
       needsApproval: APPROVAL_TOOLS.has(name),
       isEnabled: ({ runContext }) => {
         const runtimeCtx = requireRunContext(runContext);
+        const turnMode = runtimeCtx.turnMode?.mode ?? "action";
+        const intent = runtimeCtx.turnMode?.intent ?? "none";
+        if (!toolEnabledForTurnMode(name, turnMode, intent)) {
+          return false;
+        }
         if (BROWSER_TOOLS.has(name)) {
           return Boolean(runtimeCtx.turnState.activeBrowserJobId);
         }

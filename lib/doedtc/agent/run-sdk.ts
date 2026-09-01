@@ -11,8 +11,8 @@ import {
   assembleTurnResult,
   resolveDoeReplyDeliverables,
 } from "@/lib/doedtc/agent/deliverable-resolver";
-import { groundReplyInCommittedState } from "@/lib/doedtc/agent/committed-state";
-import { reconcileReplyClaims } from "@/lib/doedtc/agent/honesty";
+import { finalizeAgentReply } from "@/lib/doedtc/agent/finalize-agent-reply";
+import { CRISIS_REPLY } from "@/lib/doedtc/agent/turn-mode";
 import { createInitialToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 import { buildSpecialistInstructionMap, createDoeSpecialistAgents } from "@/lib/doedtc/agent/specialists";
 import { executeDoePlan, runDoePlannerTurn } from "@/lib/doedtc/agent/planner-run";
@@ -36,7 +36,6 @@ import {
   searchDoeDtcMem0Playbook,
 } from "@/lib/doedtc/doedtc-memory";
 import {
-  applyReminderSafetyNet,
   buildAwaitingBodyCommitArgs,
   buildReminderClarifyingQuestion,
   buildReminderIntentDirective,
@@ -176,16 +175,16 @@ async function loadRunContext(params: {
     pendingRow,
   });
 
-  const situationBrief = formatSituationBriefBlock(
-    buildSituationBrief({
-      inboundText: params.inboundText,
-      viewerUserId: params.user.id,
-      viewerName: params.user.full_name,
-      members: snapshot.household.members,
-      artifacts: snapshot.artifacts,
-      guides: snapshot.guides,
-    }),
-  );
+  const brief = buildSituationBrief({
+    inboundText: params.inboundText,
+    viewerUserId: params.user.id,
+    viewerName: params.user.full_name,
+    members: snapshot.household.members,
+    artifacts: snapshot.artifacts,
+    guides: snapshot.guides,
+  });
+  const situationBrief = formatSituationBriefBlock(brief);
+  const turnMode = brief.actionSlots.turnMode;
 
   const promptParams = {
     user: params.user,
@@ -219,6 +218,7 @@ async function loadRunContext(params: {
     nowLabel: agentNowLabel(timezone),
     promptSignals,
     situationBrief,
+    turnMode: turnMode.mode,
   };
 
   const promptSplit = buildSpecialistInstructionMap({
@@ -243,6 +243,7 @@ async function loadRunContext(params: {
     inboundMessageId: params.inboundMessageId,
     inboundFileIds: params.inboundFileIds,
     attachmentContext,
+    turnMode,
     snapshot,
     turnState: {
       ...createInitialToolTurnState(activeBrowserJobId),
@@ -396,68 +397,42 @@ async function finalizeSdkRun(params: {
   inboundText: string;
   inboundMessageId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
-  const safety = await applyReminderSafetyNet({
+  const finalOutput = params.result.finalOutput as DoeReply | undefined;
+  let rawReply = finalOutput?.reply?.trim() || "";
+
+  const finalized = await finalizeAgentReply({
     user: params.loaded.user,
     inboundText: params.inboundText,
-    ctx: {
+    inboundMessageId: params.inboundMessageId,
+    replyText: rawReply,
+    turnState: params.loaded.turnState,
+    snapshot: params.loaded.snapshot,
+    turnMode: params.loaded.turnMode ?? {
+      mode: "action",
+      intent: "none",
+      emergencyOrDiagnosis: false,
+      disableCommitTools: false,
+      promptBlock: "",
+    },
+    toolCtx: {
       user: params.loaded.user,
       inboundText: params.inboundText,
       inboundMessageId: params.inboundMessageId,
       snapshot: params.loaded.snapshot,
+      attachmentContext: params.loaded.attachmentContext,
     },
-    state: params.loaded.turnState,
-    toolsExecuted: params.loaded.turnState.toolsExecuted,
   });
 
-  const finalOutput = params.result.finalOutput as DoeReply | undefined;
-  let rawReply = finalOutput?.reply?.trim() || "";
-  if (safety.applied && safety.replyHint) {
-    rawReply = safety.replyHint;
-  }
-
-  const reconciled = await reconcileReplyClaims({
-    user: params.loaded.user,
-    inboundText: params.inboundText,
-    replyText: rawReply,
-    state: params.loaded.turnState,
-    toolsExecuted: params.loaded.turnState.toolsExecuted ?? [],
-    snapshot: params.loaded.snapshot,
-  });
-  params.loaded.turnState.listenUrl = reconciled.listenUrl ?? params.loaded.turnState.listenUrl;
-  params.loaded.turnState.profileUrl = reconciled.profileUrl ?? params.loaded.turnState.profileUrl;
-  params.loaded.turnState.sessionUrl = reconciled.sessionUrl ?? params.loaded.turnState.sessionUrl;
-  params.loaded.turnState.guideUrl = reconciled.guideUrl ?? params.loaded.turnState.guideUrl;
-  rawReply = reconciled.replyText || rawReply;
-
-  const grounded = await groundReplyInCommittedState({
-    userId: params.loaded.user.id,
-    inboundText: params.inboundText,
-    replyText: rawReply,
-    toolsExecuted: params.loaded.turnState.toolsExecuted,
-  });
-  rawReply = grounded.replyText;
-
-  const degenerate = isDegenerateTurn({
-    replyText: rawReply,
-    toolsExecuted: params.loaded.turnState.toolsExecuted,
-    state: params.loaded.turnState,
-  });
-
-  const replyText = sanitizeDoeDtcReplyText(
-    degenerate ? DEGENERATE_TURN_REPLY : rawReply || DEGENERATE_TURN_REPLY,
-    { preservePendingOffer: params.loaded.turnState.preservePendingOffer },
-  );
-
-  if (finalOutput && !degenerate) {
+  if (finalOutput && !finalized.degenerate) {
     await resolveDoeReplyDeliverables({ reply: finalOutput, ctx: params.loaded });
   }
 
   const turnResult = assembleTurnResult({
-    replyText,
+    replyText: finalized.replyText,
     turnState: params.loaded.turnState,
     inboundText: params.inboundText,
   });
-  return { ...turnResult, degenerate: degenerate || !rawReply };
+  return { ...turnResult, degenerate: finalized.degenerate };
 }
 
 export async function runDoeDtcAgentTurnSdk(params: {
@@ -530,19 +505,47 @@ export async function runDoeDtcAgentTurnSdk(params: {
     pendingRow,
   });
 
+  if (loaded.turnMode?.mode === "crisis") {
+    return {
+      replyText: sanitizeDoeDtcReplyText(CRISIS_REPLY, { turnMode: "crisis" }),
+      assessmentRan: false,
+    };
+  }
+
   const plan = await runDoePlannerTurn(loaded);
   if (plan) {
     const executed = await executeDoePlan({ plan, ctx: loaded });
     if (executed.ok) {
-      const replyText = sanitizeDoeDtcReplyText(executed.reply, {
-        preservePendingOffer: loaded.turnState.preservePendingOffer || executed.preservePending,
+      const finalized = await finalizeAgentReply({
+        user: loaded.user,
+        inboundText: params.inboundText,
+        inboundMessageId: params.inboundMessageId,
+        replyText: executed.reply,
+        turnState: loaded.turnState,
+        snapshot: loaded.snapshot,
+        turnMode: loaded.turnMode ?? {
+          mode: "action",
+          intent: "none",
+          emergencyOrDiagnosis: false,
+          disableCommitTools: false,
+          promptBlock: "",
+        },
+        toolCtx: {
+          user: loaded.user,
+          inboundText: params.inboundText,
+          inboundMessageId: params.inboundMessageId,
+          snapshot: loaded.snapshot,
+          attachmentContext: loaded.attachmentContext,
+        },
       });
+      loaded.turnState.preservePendingOffer =
+        loaded.turnState.preservePendingOffer || Boolean(executed.preservePending);
       const turnResult = assembleTurnResult({
-        replyText,
+        replyText: finalized.replyText,
         turnState: loaded.turnState,
         inboundText: params.inboundText,
       });
-      return { ...turnResult, degenerate: !executed.reply.trim() };
+      return { ...turnResult, degenerate: finalized.degenerate };
     }
   }
 

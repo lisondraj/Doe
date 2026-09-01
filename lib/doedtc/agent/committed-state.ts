@@ -6,6 +6,7 @@ import {
   type ChartFile,
 } from "@/lib/doedtc/agent/chart-file";
 import { schedulingToolSucceeded } from "@/lib/doedtc/agent/turn-integrity";
+import { shouldSkipReminderGrounding, type TurnMode } from "@/lib/doedtc/agent/turn-mode";
 import { getDoeDtcProfileSnapshot } from "@/lib/doedtc/doedtc-db";
 import { getAgentPending } from "@/lib/doedtc/doedtc-pending";
 import {
@@ -15,26 +16,24 @@ import {
   type ScheduledTextFile,
 } from "@/lib/doedtc/doedtc-scheduled";
 import { listScheduledTextsForUser } from "@/lib/doedtc/doedtc-scheduled-db";
+import { inboundAsksReminderStatus as reminderStatusAsk } from "@/lib/doedtc/doedtc-reminder-intent";
 import type { DoeDtcHouseholdMemberRow } from "@/lib/doedtc/doedtc-types";
 
 export function inboundAsksReminderStatus(text: string): boolean {
-  const trimmed = text.trim();
-  if (!trimmed) return false;
-  if (
-    /\b(?:in my file|any reminders?|reminders? (?:set|in)|what(?:'s| is) (?:set|on (?:the|my) file)|do i have (?:a |any )?(?:reminder|scheduled)|are there any reminders?)\b/i.test(
-      trimmed,
-    )
-  ) {
-    return true;
-  }
-  if (/^what about this\??$/i.test(trimmed)) return true;
-  return false;
+  return reminderStatusAsk(text);
 }
 
 export function replyClaimsReminderEmpty(text: string): boolean {
-  return /\b(?:no reminders?|nothing set|nothing (?:is )?set(?: right now)?|don'?t see any|do not see any|there(?:'s| is) nothing(?: set)?)\b/i.test(
+  if (!/\b(?:reminder|scheduled|on (?:the|your|my) file|set for you|in your file)\b/i.test(text)) {
+    return false;
+  }
+  return /\b(?:no reminders?|nothing set|nothing (?:is )?set(?: right now)?|there(?:'s| is) nothing(?: set)?)\b/i.test(
     text,
   );
+}
+
+export function replyMentionsReminders(text: string): boolean {
+  return /\b(?:reminder|scheduled|on (?:the|your|my) file|in your file)\b/i.test(text);
 }
 
 export function replyClaimsReminderSet(text: string): boolean {
@@ -53,10 +52,14 @@ export function reconcileReplyWithScheduledTextFile(params: {
   replyText: string;
   file: ScheduledTextFile;
   scheduleTextSucceeded: boolean;
+  turnMode?: TurnMode;
 }): string {
   const asksStatus = inboundAsksReminderStatus(params.inboundText);
   const claimsEmpty = replyClaimsReminderEmpty(params.replyText);
   const claimsSet = replyClaimsReminderSet(params.replyText);
+  if (params.turnMode && shouldSkipReminderGrounding(params.turnMode) && !asksStatus) {
+    return params.replyText;
+  }
   if (!asksStatus && !claimsEmpty && !claimsSet) {
     return params.replyText;
   }
@@ -114,12 +117,14 @@ export function reconcileReplyWithLiveChart(params: {
   file: ChartFile;
   toolsExecuted?: DoeDtcAgentToolExecutionRecord[];
   viewerUserId: string;
+  turnMode?: TurnMode;
 }): string {
   const reminderFirst = reconcileReplyWithScheduledTextFile({
     inboundText: params.inboundText,
     replyText: params.replyText,
     file: params.file.reminders,
     scheduleTextSucceeded: schedulingToolSucceeded(params.toolsExecuted),
+    turnMode: params.turnMode,
   });
 
   return reconcileReplyWithChartFile({
@@ -134,6 +139,7 @@ export function reconcileReplyWithLiveChart(params: {
     logAppointmentSucceeded: toolSucceeded(params.toolsExecuted, "log_appointment"),
     logFamilyMemberSucceeded: toolSucceeded(params.toolsExecuted, "log_family_member"),
     logArtifactEntrySucceeded: toolSucceeded(params.toolsExecuted, "log_artifact_entry"),
+    turnMode: params.turnMode,
   });
 }
 
@@ -142,6 +148,7 @@ export async function groundReplyInCommittedState(params: {
   inboundText: string;
   replyText: string;
   toolsExecuted?: DoeDtcAgentToolExecutionRecord[];
+  turnMode?: TurnMode;
 }): Promise<{ replyText: string; file: ScheduledTextFile; chartFile: ChartFile }> {
   const asksReminder = inboundAsksReminderStatus(params.inboundText);
   const claimsReminder =
@@ -153,9 +160,12 @@ export async function groundReplyInCommittedState(params: {
   ]);
 
   const chartFile = buildChartFile({ snapshot, pending });
+  const skipReminderClaims =
+    params.turnMode && shouldSkipReminderGrounding(params.turnMode) && !asksReminder;
+
   const needsGrounding =
     asksReminder ||
-    claimsReminder ||
+    (!skipReminderClaims && claimsReminder) ||
     /\b(?:booked|logged|saved|added)\b/i.test(params.replyText) ||
     /\b(?:on (?:the|my) chart|appointment)\b/i.test(params.inboundText);
 
@@ -174,6 +184,7 @@ export async function groundReplyInCommittedState(params: {
     file: chartFile,
     toolsExecuted: params.toolsExecuted,
     viewerUserId: params.userId,
+    turnMode: params.turnMode,
   });
 
   return { replyText, file: chartFile.reminders, chartFile };

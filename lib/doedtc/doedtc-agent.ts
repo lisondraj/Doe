@@ -11,9 +11,7 @@ import {
   reconcileReplyClaims,
   shouldRetryEmptyRefusal,
 } from "@/lib/doedtc/agent/honesty";
-import { groundReplyInCommittedState } from "@/lib/doedtc/agent/committed-state";
 import {
-  applyReminderSafetyNet,
   buildAwaitingBodyCommitArgs,
   buildReminderClarifyingQuestion,
   buildReminderIntentDirective,
@@ -51,6 +49,14 @@ import {
   hasConcretePlan,
   looksCapabilityHedge,
 } from "@/lib/doedtc/doedtc-agent-voice";
+import { finalizeAgentReply } from "@/lib/doedtc/agent/finalize-agent-reply";
+import {
+  CRISIS_REPLY,
+  shouldSkipHedgeRewrite,
+  toolEnabledForTurnMode,
+  type TurnMode,
+  type TurnModeResult,
+} from "@/lib/doedtc/agent/turn-mode";
 import { DOE_AGENT_ACTION_POLICY, DOE_AGENT_RESOLUTION_POLICY } from "@/lib/doedtc/doedtc-agent-policy";
 import { buildSituationBrief, formatSituationBriefBlock } from "@/lib/doedtc/agent/situation-brief";
 import { DOE_AGENT_PRIMITIVES_PROMPT } from "@/lib/doedtc/doedtc-primitives";
@@ -317,6 +323,7 @@ export function sanitizeDoeDtcReplyText(
     preserveScheduleOffer?: boolean;
     /** @deprecated use preservePendingOffer */
     preserveGuideSaveOffer?: boolean;
+    turnMode?: TurnMode;
   },
 ): string {
   const withoutMarkdown = stripEmDashesFromReply(stripMarkdownFromReply(text));
@@ -335,7 +342,11 @@ export function sanitizeDoeDtcReplyText(
     .replace(/[,;]+(?:\s*[.!]*)?\s*$/g, "")
     .trim();
   const cleaned = dropIncompleteTrailingSentence(normalized);
-  if (looksCapabilityHedge(cleaned) && !hasConcretePlan(cleaned)) {
+  if (
+    !shouldSkipHedgeRewrite(options?.turnMode ?? "action") &&
+    looksCapabilityHedge(cleaned) &&
+    !hasConcretePlan(cleaned)
+  ) {
     return "Tell me who to text and when, and I'll set it up.";
   }
   return cleaned;
@@ -522,6 +533,7 @@ export type DoeDtcAgentPromptParams = {
   nowLabel: string;
   promptSignals?: DoeAgentPromptSignals;
   situationBrief?: string;
+  turnMode?: TurnMode;
 };
 
 function buildDoeAgentContextBlock(params: DoeDtcAgentPromptParams): string {
@@ -605,7 +617,7 @@ Safety:
 - After useful browser findings, you may store a one-line outcome via remember_fact.`;
 
 export function buildDoePlannerSystemPrompt(params: DoeDtcAgentPromptParams): string {
-  const prompt = `${buildDoeAgentVoiceBlock()}
+  const prompt = `${buildDoeAgentVoiceBlock(params.turnMode ?? "action")}
 
 ${DOE_AGENT_ACTION_POLICY}
 
@@ -639,7 +651,7 @@ ${DOE_AGENT_SAFETY_TAIL}`;
 }
 
 export function buildDoeDtcAgentSystemPrompt(params: DoeDtcAgentPromptParams): string {
-  const prompt = `${buildDoeAgentVoiceBlock()}
+  const prompt = `${buildDoeAgentVoiceBlock(params.turnMode ?? "action")}
 
 ${DOE_AGENT_ACTION_POLICY}
 
@@ -730,9 +742,16 @@ const LEGACY_BROWSER_ONLY_TOOLS = new Set([
   "request_commit",
 ]);
 
-function filterLegacyAgentTools(activeBrowserJobId: string | null) {
+function filterLegacyAgentTools(
+  activeBrowserJobId: string | null,
+  turnMode: TurnMode = "action",
+  intent: TurnModeResult["intent"] = "none",
+) {
   return DOEDTC_AGENT_TOOLS.filter((tool) => {
     const name = tool.function.name;
+    if (!toolEnabledForTurnMode(name, turnMode, intent)) {
+      return false;
+    }
     if (name === "start_browser_task") {
       return !activeBrowserJobId;
     }
@@ -946,16 +965,16 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     pendingRow,
   });
 
-  const situationBrief = formatSituationBriefBlock(
-    buildSituationBrief({
-      inboundText: params.inboundText,
-      viewerUserId: params.user.id,
-      viewerName: params.user.full_name,
-      members: snapshot.household.members,
-      artifacts: snapshot.artifacts,
-      guides: snapshot.guides,
-    }),
-  );
+  const brief = buildSituationBrief({
+    inboundText: params.inboundText,
+    viewerUserId: params.user.id,
+    viewerName: params.user.full_name,
+    members: snapshot.household.members,
+    artifacts: snapshot.artifacts,
+    guides: snapshot.guides,
+  });
+  const situationBrief = formatSituationBriefBlock(brief);
+  const turnMode = brief.actionSlots.turnMode;
 
   const attachmentContext = await loadDoeDtcAttachmentContext({
     userId: params.user.id,
@@ -964,6 +983,13 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   });
   const filesById = new Map(attachmentContext.recentFiles.map((file) => [file.id, file]));
   const recentInboundFiles = attachmentContext.recentFiles.filter((file) => file.source === "inbound");
+
+  if (turnMode.mode === "crisis") {
+    return {
+      replyText: sanitizeDoeDtcReplyText(CRISIS_REPLY, { turnMode: "crisis" }),
+      assessmentRan: false,
+    };
+  }
 
   const systemPrompt = buildDoeDtcAgentSystemPrompt({
     user: params.user,
@@ -997,6 +1023,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     nowLabel: agentNowLabel(timezone),
     promptSignals,
     situationBrief,
+    turnMode: turnMode.mode,
   }) + (reminderDirective ? `\n\n${reminderDirective}` : "");
 
   const messages: ChatMessage[] = [
@@ -1012,7 +1039,11 @@ export async function runDoeDtcAgentTurnLegacy(params: {
 
   const turnState = createInitialToolTurnState(activeBrowserJobId);
   turnState.turnId = params.turnId ?? createDoeDtcAgentTurnId();
-  const legacyTools = filterLegacyAgentTools(turnState.activeBrowserJobId);
+  const legacyTools = filterLegacyAgentTools(
+    turnState.activeBrowserJobId,
+    turnMode.mode,
+    turnMode.intent,
+  );
   const toolCtx = {
     user: params.user,
     inboundText: params.inboundText,
@@ -1025,36 +1056,26 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   let refusalRetryInjected = false;
 
   const finishLegacyTurn = async (replyText: string | null): Promise<DoeDtcAgentTurnResult> => {
-    const safety = await applyReminderSafetyNet({
+    let resolved = replyText?.trim() || "";
+    if (!resolved) {
+      resolved =
+        (await forceLegacyTextReply({
+          messages,
+          inboundText: params.inboundText,
+        })) ?? "";
+    }
+    const finalized = await finalizeAgentReply({
       user: params.user,
       inboundText: params.inboundText,
-      ctx: toolCtx,
-      state: turnState,
-      toolsExecuted: turnState.toolsExecuted,
-    });
-    let resolvedReply = replyText;
-    if (safety.applied && safety.replyHint) {
-      resolvedReply = safety.replyHint;
-    }
-    const grounded = await groundReplyInCommittedState({
-      userId: params.user.id,
-      inboundText: params.inboundText,
-      replyText: resolvedReply ?? "",
-      toolsExecuted: turnState.toolsExecuted,
-    });
-    if (grounded.replyText) {
-      resolvedReply = grounded.replyText;
-    }
-    const finalized = await finalizeLegacyTurnReply({
-      replyText: resolvedReply,
-      messages,
-      inboundText: params.inboundText,
+      inboundMessageId: params.inboundMessageId,
+      replyText: resolved,
       turnState,
+      snapshot,
+      turnMode,
+      toolCtx,
     });
     return assembleLegacyTurnResult({
-      replyText: sanitizeDoeDtcReplyText(finalized.replyText, {
-        preservePendingOffer: turnState.preservePendingOffer,
-      }),
+      replyText: finalized.replyText,
       turnState,
       inboundText: params.inboundText,
       degenerate: finalized.degenerate,
@@ -1091,6 +1112,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         shouldRetryEmptyRefusal({
           replyText: replyText ?? "",
           toolsExecuted: turnState.toolsExecuted ?? [],
+          turnMode: turnMode.mode,
         }) &&
         !refusalRetryInjected
       ) {

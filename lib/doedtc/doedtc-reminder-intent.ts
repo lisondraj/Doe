@@ -70,6 +70,20 @@ function extractSendAtPhrase(text: string): string | null {
   return extractRelativeTimePhrase(text) ?? extractClockTimePhrase(text);
 }
 
+export function inboundAsksReminderStatus(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  if (
+    /\b(?:in my file|any reminders?|reminders? (?:set|in)|what(?:'s| is) (?:set|on (?:the|my) file)|do i have (?:a |any )?(?:reminder|scheduled)|are there any reminders?)\b/i.test(
+      trimmed,
+    )
+  ) {
+    return true;
+  }
+  if (/^what about this\??$/i.test(trimmed)) return true;
+  return false;
+}
+
 export function parseReminderIntent(text: string): ReminderIntent {
   const trimmed = text.trim();
   if (!trimmed || !REMINDER_TRIGGER_RE.test(trimmed)) {

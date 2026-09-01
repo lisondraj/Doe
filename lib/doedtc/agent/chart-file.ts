@@ -5,6 +5,13 @@ import {
   formatScheduledTextFileReply,
   type ScheduledTextFile,
 } from "@/lib/doedtc/doedtc-scheduled";
+import {
+  inboundAsksReminderStatus,
+  replyClaimsReminderEmpty,
+  replyClaimsReminderSet,
+  replyMentionsReminders,
+} from "@/lib/doedtc/agent/committed-state";
+import { shouldSkipReminderGrounding, type TurnMode } from "@/lib/doedtc/agent/turn-mode";
 import type {
   DoeDtcAppointmentRow,
   DoeDtcArtifactRow,
@@ -142,6 +149,7 @@ export function reconcileReplyWithChartFile(params: {
   logAppointmentSucceeded: boolean;
   logFamilyMemberSucceeded: boolean;
   logArtifactEntrySucceeded: boolean;
+  turnMode?: TurnMode;
 }): string {
   let reply = params.replyText;
 
@@ -185,9 +193,14 @@ export function reconcileReplyWithChartFile(params: {
   }
 
   const reminderReply = formatScheduledTextFileReply(params.file.reminders);
+  const asksReminder = inboundAsksReminderStatus(params.inboundText);
+  const claimsReminder =
+    replyClaimsReminderEmpty(params.replyText) || replyClaimsReminderSet(params.replyText);
+  const skipReminder =
+    params.turnMode && shouldSkipReminderGrounding(params.turnMode) && !asksReminder;
   if (
-    (/\b(?:no reminders?|nothing set)\b/i.test(reply) ||
-      /\b(?:i(?:'ve| have) set|reminder (?:is|for))\b/i.test(reply)) &&
+    !skipReminder &&
+    (asksReminder || claimsReminder || replyMentionsReminders(params.replyText)) &&
     params.file.reminders.committed.length + params.file.reminders.recentlySent.length > 0
   ) {
     return reminderReply;

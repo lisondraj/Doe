@@ -113,7 +113,16 @@ export function looksLikeRefusal(text: string): boolean {
 export function shouldRetryEmptyRefusal(params: {
   replyText: string;
   toolsExecuted: DoeDtcAgentToolExecutionRecord[];
+  turnMode?: import("@/lib/doedtc/agent/turn-mode").TurnMode;
 }): boolean {
+  if (
+    params.turnMode &&
+    (params.turnMode === "crisis" ||
+      params.turnMode === "distress" ||
+      params.turnMode === "conversation")
+  ) {
+    return false;
+  }
   return looksLikeRefusal(params.replyText) && !meaningfulToolSucceeded(params.toolsExecuted);
 }
 

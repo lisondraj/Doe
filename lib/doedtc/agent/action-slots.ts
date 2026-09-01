@@ -1,6 +1,7 @@
 /** Per-turn intent + slot fill + blockers — combinatorial anticipation without case lists. */
 
 import { inboundHasAttachments, parseInboundAttachmentIds } from "@/lib/doedtc/agent/attachments";
+import { classifyTurnMode, type TurnModeResult } from "@/lib/doedtc/agent/turn-mode";
 import {
   findMatchingArtifact,
   findMatchingGuide,
@@ -20,7 +21,7 @@ import {
   type HouseholdActionKind,
   type HouseholdMemberLike,
 } from "@/lib/doedtc/doedtc-household-policy";
-import { parseReminderIntent } from "@/lib/doedtc/doedtc-reminder-intent";
+import { parseReminderIntent, inboundAsksReminderStatus } from "@/lib/doedtc/doedtc-reminder-intent";
 import type {
   DoeDtcArtifactRow,
   DoeDtcFamilyRelationship,
@@ -61,6 +62,7 @@ export type ActionBlocker = {
 
 export type ActionSlotResult = {
   intent: ActionIntent;
+  turnMode: TurnModeResult;
   householdAction: HouseholdActionKind | null;
   subjectName: string | null;
   subjectMember: HouseholdMemberLike | null;
@@ -274,6 +276,8 @@ export function inferPrimaryIntent(params: {
     return "parse_document";
   }
   if (!text) return "none";
+
+  if (inboundAsksReminderStatus(text)) return "schedule_text";
 
   if (inboundLooksLikeInvite(text)) return "invite";
 
@@ -602,6 +606,7 @@ export function resolveActionSlots(params: {
     artifacts,
     guides,
   });
+  const turnMode = classifyTurnMode({ inboundText: params.inboundText, intent });
 
   const { mentioned, unknownNames } = extractChartMentions({
     inboundText: params.inboundText,
@@ -673,6 +678,7 @@ export function resolveActionSlots(params: {
 
   return {
     intent,
+    turnMode,
     householdAction,
     subjectName: subjectName ?? unknownNames[0] ?? subjectMember?.full_name ?? null,
     subjectMember,
@@ -687,6 +693,8 @@ export function resolveActionSlots(params: {
 
 export function formatActionSlotsBlock(result: ActionSlotResult): string {
   const body = result.promptBlock.trim();
-  if (!body) return "";
-  return `Action slots (do not recite):\n${body}`;
+  const modeLine = result.turnMode.promptBlock.trim();
+  const combined = [modeLine, body].filter(Boolean).join("\n");
+  if (!combined) return "";
+  return `Action slots (do not recite):\n${combined}`;
 }
