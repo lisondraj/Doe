@@ -130,6 +130,89 @@ describe("agent honesty invariants", () => {
     assert.equal(reconciled.profileUrl, undefined);
   });
 
+  it("does not auto-send a link after a chart write", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText: "add metformin to my chart",
+      replyText: "Added metformin to your chart.",
+      state: { toolsExecuted: [] } as never,
+      toolsExecuted: [{ name: "add_medication", ok: true }],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.equal(reconciled.profileUrl, undefined);
+  });
+
+  it("auto-sends results tab for a labs location ask", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText: "Where are my labs",
+      replyText: "You can view them in the app.",
+      state: { toolsExecuted: [] } as never,
+      toolsExecuted: [],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.ok(reconciled.profileUrl);
+    assert.match(reconciled.profileUrl!, /tab=results/);
+  });
+
+  it("retries empty-tool I'll-send-later claims, but not status asks", () => {
+    assert.equal(
+      shouldRetryEmptyRefusal({
+        replyText: "I'm working on it, I'll send in a minute",
+        toolsExecuted: [],
+        inboundText: "screenshot kaiser",
+      }),
+      true,
+    );
+    assert.equal(
+      shouldRetryEmptyRefusal({
+        replyText: "I'm working on it, I'll send in a minute",
+        toolsExecuted: [{ name: "start_browser_task", ok: true }],
+        inboundText: "screenshot kaiser",
+      }),
+      false,
+    );
+    assert.equal(
+      shouldRetryEmptyRefusal({
+        replyText: "I'm working on the Kaiser screenshot and a reminder for Maya.",
+        toolsExecuted: [],
+        inboundText: "what are you working on",
+      }),
+      false,
+    );
+  });
+
+  it("retries empty-tool stalls on chart writes and chart reads", () => {
+    assert.equal(
+      shouldRetryEmptyRefusal({
+        replyText: "I can help with that.",
+        toolsExecuted: [],
+        inboundText: "add metformin to my chart",
+      }),
+      true,
+    );
+    assert.equal(
+      shouldRetryEmptyRefusal({
+        replyText: "I can help with that.",
+        toolsExecuted: [],
+        inboundText: "What were my lab results",
+      }),
+      true,
+    );
+  });
+
   it("builds a refusal retry nudge", () => {
     assert.match(buildRefusalRetrySystemMessage("screenshot google.com"), /start_browser_task/);
   });
@@ -194,8 +277,11 @@ describe("tool capability prompt", () => {
     });
     assertToolPromptCoverage(prompt);
     assert.match(prompt, /Do not use prior bubbles/);
+    assert.match(prompt, /do not repeat your last Doe message/i);
     assert.match(prompt, /propose_scheduled_text is a draft/);
     assert.match(prompt, /never answer from chat history/);
+    assert.match(prompt, /Reply to this message now/);
+    assert.match(prompt, /Never say you are working on it/);
   });
 
   it("treats I've set a reminder as a schedule claim, not only in N seconds", () => {

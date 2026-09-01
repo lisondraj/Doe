@@ -1,4 +1,5 @@
 import { doeDtcAppUrl } from "@/lib/doedtc/doedtc-copy";
+import { looksLikeIncidentalChartMention } from "@/lib/doedtc/agent/chart-gap";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
 import type { DoeDtcProfileSnapshot } from "@/lib/doedtc/doedtc-types";
 
@@ -21,9 +22,10 @@ export type AppLinkOptions = {
 };
 
 const LINK_ASK_RE =
-  /\b(send|sending|share|shared|text me|forward|dm me|link|url|open|get|give me|where(?:'?s| is)|need|show me|show)\b/i;
+  /\b(send|sending|share|shared|text me|forward|dm me|link|url|open|get|give me|where(?:'?s| is| are)|need|show me|show)\b/i;
 
-const PROFILE_NOUN_RE = /\b(profile|dashboard|appointments?\s*page|my chart|my app)\b/i;
+const PROFILE_NOUN_RE =
+  /\b(profile|dashboard|appointments?\s*page|my chart|my app|chart|labs?|lab results?|results?|bloodwork|blood\s+work)\b/i;
 const TRACKER_NOUN_RE =
   /\b(trackers?|weight(?:\s+log|\s+tracker)|artifact|log\s+link|(?:my\s+)?shots)\b/i;
 const TRACKER_SEND_NOUN_RE =
@@ -43,6 +45,32 @@ const TRACK_BUILD_RE =
 
 export function wantsOutboundLink(text: string): boolean {
   return LINK_ASK_RE.test(text);
+}
+
+/** Add/log/save to the chart — not a request to text a deep link. */
+export function looksLikeChartWrite(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  if (
+    /\b(?:add|log|save|put|record|update|remove)\b.{0,48}\b(?:to (?:my |the )?(?:chart|profile)|(?:my )?(?:chart|profile|meds?|medications?|conditions?|labs?|results?|trackers?|bloodwork))\b/i.test(
+      trimmed,
+    )
+  ) {
+    return true;
+  }
+  if (looksLikeIncidentalChartMention(trimmed)) return false;
+  if (/\b(?:i take|i(?:'m| am) (?:on|taking)|prescribed|started taking)\b/i.test(trimmed)) {
+    return true;
+  }
+  if (/\bdiagnosed (?:with|as)\b/i.test(trimmed)) return true;
+  if (
+    /\b(?:my )?(?:a1c|hemoglobin|cholesterol|ldl|hdl|glucose|tsh|cbc|vitamin d)\b.{0,32}\b(?:was|is|came back|of|at)\b/i.test(
+      trimmed,
+    )
+  ) {
+    return true;
+  }
+  return false;
 }
 
 export function findMatchingArtifact(
@@ -84,17 +112,23 @@ export function interpretDeliverableAsk(inboundText: string): Set<DeliverableKin
   if (!text) return kinds;
 
   const linkish = wantsOutboundLink(text);
+  const chartWrite = looksLikeChartWrite(text);
 
-  if (PROFILE_NOUN_RE.test(text) && (linkish || /\b(send|share|open)\b/i.test(text))) {
+  if (
+    !chartWrite &&
+    PROFILE_NOUN_RE.test(text) &&
+    (linkish || /\b(send|share|open)\b/i.test(text))
+  ) {
     kinds.add("profile");
   }
-  if (TRACKER_NOUN_RE.test(text) && linkish && !SHARE_NOUN_RE.test(text)) {
+  if (!chartWrite && TRACKER_NOUN_RE.test(text) && linkish && !SHARE_NOUN_RE.test(text)) {
     kinds.add("tracker");
   } else if (
+    !chartWrite &&
     TRACKER_SEND_NOUN_RE.test(text) &&
     linkish &&
     !SHARE_NOUN_RE.test(text) &&
-    /\b(where(?:'?s| is)|need|show me|show|get|give me|send|share|link|url)\b/i.test(text)
+    /\b(where(?:'?s| is| are)|need|show me|show|get|give me|send|share|link|url)\b/i.test(text)
   ) {
     kinds.add("tracker");
   }
@@ -138,7 +172,7 @@ export function interpretBuildIntent(params: {
   const wantsTrack =
     TRACK_BUILD_RE.test(text) ||
     (TRACKER_SEND_NOUN_RE.test(text) &&
-      /\b(where(?:'?s| is)|need|show me|i need)\b/i.test(text) &&
+      /\b(where(?:'?s| is| are)|need|show me|i need)\b/i.test(text) &&
       !findMatchingArtifact(text, params.snapshot?.artifacts));
 
   if (wantsTrack && !findMatchingArtifact(text, params.snapshot?.artifacts)) {
@@ -150,8 +184,19 @@ export function interpretBuildIntent(params: {
 }
 
 export function askedForPrivateAppLink(inboundText: string): boolean {
+  if (looksLikeChartWrite(inboundText)) return false;
   const kinds = interpretDeliverableAsk(inboundText);
   return kinds.has("profile") || kinds.has("tracker");
+}
+
+/** Pull what's already on the chart — answer in iMessage, don't send a link. */
+export function looksLikeChartRead(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  if (looksLikeChartWrite(trimmed) || askedForPrivateAppLink(trimmed)) return false;
+  return /\b(?:what(?:'s| is| are| were)|which|list|do i (?:still )?have)\b.{0,48}\b(?:meds?|medications?|conditions?|labs?|results?|trackers?|on (?:my |the )?chart|on (?:my )?profile)\b/i.test(
+    trimmed,
+  );
 }
 
 export function askedForDeliverable(inboundText: string, kind: DeliverableKind): boolean {
@@ -175,13 +220,36 @@ function priorInboundHadDeliverableAsk(body: string): boolean {
   );
 }
 
+const BARE_URL_RE = /^https?:\/\/\S+$/i;
+
+export function outboundLooksLikeDeliverableSend(body: string): boolean {
+  const trimmed = body.trim();
+  if (!trimmed) return false;
+  if (BARE_URL_RE.test(trimmed)) return true;
+  if (/^sending\b/i.test(trimmed)) return true;
+  return /\b(?:sent|sending|here'?s)\b.{0,48}\b(?:link|profile|tracker|guide|listen|chart)\b/i.test(
+    trimmed,
+  );
+}
+
 /** Short follow-ups (? / send it) continue the last deliverable ask in the thread. */
 export function resolveDeliverableInboundText(params: {
   inboundText: string;
   priorInboundBodies?: string[];
+  lastOutboundBody?: string | null;
 }): string {
   const trimmed = params.inboundText.trim();
   if (!isShortDeliverableFollowUp(trimmed)) return trimmed;
+
+  const lastOutbound = params.lastOutboundBody?.trim() ?? "";
+  const questionPoke = /^\?+$/.test(trimmed);
+  if (
+    questionPoke &&
+    lastOutbound &&
+    outboundLooksLikeDeliverableSend(lastOutbound)
+  ) {
+    return trimmed;
+  }
 
   const prior = [...(params.priorInboundBodies ?? [])]
     .map((body) => body.trim())
@@ -200,6 +268,16 @@ export function priorInboundBodiesFromMessages(
   messages: Array<{ direction: string; body: string }>,
 ): string[] {
   return messages.filter((row) => row.direction === "inbound").map((row) => row.body);
+}
+
+export function lastOutboundBodyFromMessages(
+  messages: Array<{ direction: string; body: string }>,
+): string | undefined {
+  for (let i = messages.length - 1; i >= 0; i -= 1) {
+    const row = messages[i];
+    if (row.direction === "outbound" && row.body.trim()) return row.body;
+  }
+  return undefined;
 }
 
 export function inferAppLinkOptions(params: {

@@ -12,6 +12,7 @@ import {
   findMatchingGuide,
   interpretBuildIntent,
   interpretDeliverableAsk,
+  looksLikeChartWrite,
 } from "@/lib/doedtc/agent/deliverable-policy";
 import { inboundAlreadyAsked } from "@/lib/doedtc/doedtc-agent-policy";
 import {
@@ -22,7 +23,10 @@ import {
   routeHouseholdSubject,
   type HouseholdMemberLike,
 } from "@/lib/doedtc/doedtc-household-policy";
-import type { DoeDtcArtifactRow, DoeDtcGuideRow } from "@/lib/doedtc/doedtc-types";
+import {
+  extractUnownedChartItems,
+  formatChartGapOfferLine,
+} from "@/lib/doedtc/agent/chart-gap";
 
 export { extractChartMentions } from "@/lib/doedtc/agent/action-slots";
 export type { ActionBlocker, ActionSlotResult } from "@/lib/doedtc/agent/action-slots";
@@ -32,7 +36,8 @@ export type SituationOpportunityKind =
   | "sibling_offer"
   | "build_guide"
   | "build_tracker"
-  | "send_existing";
+  | "send_existing"
+  | "chart_gap";
 
 export type SituationOpportunity = {
   kind: SituationOpportunityKind;
@@ -78,12 +83,38 @@ function pickExtraOffer(params: {
   members: HouseholdMemberLike[];
   artifacts: Array<Pick<DoeDtcArtifactRow, "id" | "title" | "archived_at">>;
   guides: Array<Pick<DoeDtcGuideRow, "id" | "title" | "topic">>;
+  medications?: string[];
+  conditions?: string[];
+  resultTitles?: string[];
   mentioned: HouseholdMemberLike[];
   unknownNames: string[];
   pluralGroup: boolean;
   primaryBlockers: ActionBlocker[];
 }): SituationOpportunity | null {
   const text = params.inboundText;
+  const blocking = params.primaryBlockers.some((row) => row.blocksPrimary);
+  const gaps = extractUnownedChartItems({
+    inboundText: text,
+    medications: params.medications,
+    conditions: params.conditions,
+    artifactTitles: params.artifacts.map((row) => row.title),
+    resultTitles: params.resultTitles,
+    householdNames: params.members.map((row) => row.full_name),
+  });
+  if (
+    gaps.length > 0 &&
+    params.unknownNames.length === 0 &&
+    !blocking &&
+    !looksLikeChartWrite(text)
+  ) {
+    const gap = gaps[0]!;
+    return {
+      kind: "chart_gap",
+      confidence: "high",
+      tool: gap.tool,
+      promptLine: formatChartGapOfferLine(gap),
+    };
+  }
   const writeOrJoin =
     inboundLooksLikeProfileWrite(text) ||
     inboundLooksLikeInvite(text) ||
@@ -214,6 +245,9 @@ export function buildSituationBrief(params: {
   members: HouseholdMemberLike[];
   artifacts?: Array<Pick<DoeDtcArtifactRow, "id" | "title" | "archived_at">>;
   guides?: Array<Pick<DoeDtcGuideRow, "id" | "title" | "topic">>;
+  medications?: string[];
+  conditions?: string[];
+  resultTitles?: string[];
 }): SituationBrief {
   const actionSlots = resolveActionSlots({
     inboundText: params.inboundText,
@@ -235,6 +269,9 @@ export function buildSituationBrief(params: {
     members: params.members,
     artifacts: params.artifacts ?? [],
     guides: params.guides ?? [],
+    medications: params.medications,
+    conditions: params.conditions,
+    resultTitles: params.resultTitles,
     mentioned,
     unknownNames,
     pluralGroup,

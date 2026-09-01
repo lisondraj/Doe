@@ -142,8 +142,8 @@ export function buildTurnModeVoiceBlock(mode: TurnMode): string {
 - One short question is fine. No corporate sympathy.`;
     case "conversation":
       return `Mode (conversation):
-- Answer what they asked. Use chart context and read_profile when a tab is thin.
-- Tools stay available when they explicitly asked to log, parse, or schedule. Do not auto-schedule or log unprompted.`;
+- Answer what they asked. Use chart context, Recent conversation, and read_profile when a tab is thin.
+- Continue the thread — do not repeat your last message. Tools stay available when they explicitly asked to log, parse, or schedule. Do not auto-schedule or log unprompted.`;
     case "action":
       return "";
   }

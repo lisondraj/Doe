@@ -1,5 +1,6 @@
 /** Deterministic household action routing — joined vs pending vs unknown. */
 
+import { looksLikeChartWrite } from "@/lib/doedtc/agent/deliverable-policy";
 import { inboundAlreadyAsked } from "@/lib/doedtc/doedtc-agent-policy";
 import type { DoeDtcHouseholdMemberRow } from "@/lib/doedtc/doedtc-types";
 
@@ -28,6 +29,7 @@ export function inboundLooksLikeHabitOrReminder(text: string): boolean {
 }
 
 export function inboundLooksLikeProfileWrite(text: string): boolean {
+  if (looksLikeChartWrite(text)) return true;
   return (
     /\b(appointment|dentist|doctor(?:'s)?(?:\s+visit)?|checkup|check-up|meds?\b|medication|prescription|log (?:an? )?(?:appointment|visit)|add (?:her|his|their) (?:meds?|medication))\b/i.test(
       text,

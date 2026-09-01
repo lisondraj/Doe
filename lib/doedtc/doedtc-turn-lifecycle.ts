@@ -11,10 +11,12 @@ import {
 } from "@/lib/doedtc/linq";
 import {
   inboundLooksComplex,
+  isLifecycleReactionEmoji,
   LIFECYCLE_DONE_EMOJI,
   LIFECYCLE_FAILED_EMOJI,
   LIFECYCLE_WORKING_EMOJI,
   pickMatchingReaction,
+  stableTextHash,
 } from "@/lib/doedtc/doedtc-reactions";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
@@ -215,6 +217,7 @@ export async function completeDoeDtcTurnLifecycle(params: {
   deferFinalReaction?: boolean;
   error?: string;
   failed?: boolean;
+  agentReaction?: string;
 }): Promise<void> {
   const pending = await takePendingWorkingReaction(params.turnId);
   const matchingReactionApplied = pending?.kind === "matching" && pending.applied;
@@ -225,6 +228,14 @@ export async function completeDoeDtcTurnLifecycle(params: {
     deferFinalReaction: params.deferFinalReaction,
     failed: params.failed,
   });
+
+  const agentEmoji = params.agentReaction?.trim().slice(0, 8) ?? "";
+  const canApplyAgent =
+    action === "none" &&
+    Boolean(params.inboundMessageId) &&
+    Boolean(agentEmoji) &&
+    !isLifecycleReactionEmoji(agentEmoji) &&
+    stableTextHash(`${params.inboundMessageId}:${agentEmoji}`) % 2 === 0;
 
   if (action === "ensure_working" && params.inboundMessageId) {
     await swapDoeDtcTurnReaction({
@@ -250,6 +261,11 @@ export async function completeDoeDtcTurnLifecycle(params: {
       fromEmoji: DOE_DTC_WORKING_REACTION,
       toEmoji: DOE_DTC_FAILED_REACTION,
     });
+  } else if (canApplyAgent && params.inboundMessageId) {
+    await swapDoeDtcTurnReaction({
+      inboundMessageId: params.inboundMessageId,
+      toEmoji: agentEmoji,
+    });
   }
 
   const finalReaction =
@@ -259,7 +275,9 @@ export async function completeDoeDtcTurnLifecycle(params: {
         ? DOE_DTC_FAILED_REACTION
         : action === "swap_done"
           ? DOE_DTC_DONE_REACTION
-          : undefined;
+          : canApplyAgent
+            ? agentEmoji
+            : undefined;
   const status = params.failed ? "failed" : params.deferFinalReaction ? "browsing" : "done";
 
   await updateDoeDtcAgentTurnRecord({

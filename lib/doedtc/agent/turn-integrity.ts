@@ -1,6 +1,7 @@
 import {
   askedForPrivateAppLink,
   interpretBuildIntent,
+  outboundLooksLikeDeliverableSend,
 } from "@/lib/doedtc/agent/deliverable-policy";
 import { DOEDTC_LINQ } from "@/lib/doedtc/doedtc-copy";
 import { AGENT_TURN_FALLBACK_REPLY } from "@/lib/doedtc/doedtc-turn-lifecycle";
@@ -137,17 +138,45 @@ export function shouldAllowProfileLink(params: {
   );
 }
 
+const BARE_URL_RE = /^https?:\/\/\S+$/i;
+
+export function isBareUrlReply(text: string): boolean {
+  return BARE_URL_RE.test(text.trim());
+}
+
+function isTranscriptFillerOutbound(body: string): boolean {
+  if (isBareUrlReply(body) || outboundLooksLikeDeliverableSend(body)) return false;
+  return isFillerReply(body);
+}
+
+export const TRANSCRIPT_LINK_SENT_MARKER = "[sent a link]";
+
 export function compactTranscriptForAgent(
   messages: Array<{ direction: string; body: string }>,
   maxMessages = 20,
 ): string {
-  return messages
-    .slice(-maxMessages)
-    .filter((row) => {
+  const sliced = messages.slice(-maxMessages);
+  let lastOutboundIndex = -1;
+  for (let i = sliced.length - 1; i >= 0; i -= 1) {
+    if (sliced[i].direction === "outbound") {
+      lastOutboundIndex = i;
+      break;
+    }
+  }
+
+  return sliced
+    .filter((row, index) => {
       if (row.direction !== "outbound") return true;
-      return !isFillerReply(row.body);
+      if (index === lastOutboundIndex) return true;
+      return !isTranscriptFillerOutbound(row.body);
     })
-    .map((row) => `${row.direction === "inbound" ? "User" : "Doe"}: ${row.body}`)
+    .map((row) => {
+      const body =
+        row.direction === "outbound" && isBareUrlReply(row.body)
+          ? TRANSCRIPT_LINK_SENT_MARKER
+          : row.body;
+      return `${row.direction === "inbound" ? "User" : "Doe"}: ${body}`;
+    })
     .join("\n");
 }
 

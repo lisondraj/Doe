@@ -8,6 +8,8 @@ import {
   interpretBuildIntent,
   interpretDeliverableAsk,
   isShortDeliverableFollowUp,
+  looksLikeChartRead,
+  looksLikeChartWrite,
   resolveDeliverableInboundText,
   shouldHonorStructuredSend,
 } from "@/lib/doedtc/agent/deliverable-policy";
@@ -16,13 +18,16 @@ import { shouldAllowProfileLink } from "@/lib/doedtc/agent/turn-integrity";
 import { replyClaimsAction } from "@/lib/doedtc/agent/honesty";
 
 describe("deliverable ask detection", () => {
-  it("treats profile/tracker link asks as private app links", () => {
+  it("treats profile/tracker/labs location asks as private app links", () => {
     assert.equal(askedForPrivateAppLink("Send me my profile link"), true);
     assert.equal(askedForPrivateAppLink("send link of my weight tracker"), true);
     assert.equal(askedForPrivateAppLink("can you text me the weight tracker url"), true);
     assert.equal(askedForPrivateAppLink("Where is my weight tracker"), true);
     assert.equal(askedForPrivateAppLink("I need my tracker"), true);
     assert.equal(askedForPrivateAppLink("show me my tracker"), true);
+    assert.equal(askedForPrivateAppLink("Where are my labs"), true);
+    assert.equal(askedForPrivateAppLink("show me my lab results"), true);
+    assert.equal(askedForPrivateAppLink("Where's my chart"), true);
   });
 
   it("does not treat routine health or logging turns as link asks", () => {
@@ -31,6 +36,26 @@ describe("deliverable ask detection", () => {
     assert.equal(askedForPrivateAppLink("Remind me ozempic in 10 seconds"), false);
     assert.equal(askedForPrivateAppLink("Yes save it to my profile"), false);
     assert.equal(askedForPrivateAppLink("I need to take ozempic"), false);
+    assert.equal(askedForPrivateAppLink("add metformin to my chart"), false);
+    assert.equal(askedForPrivateAppLink("I take metformin"), false);
+    assert.equal(askedForPrivateAppLink("My A1C was 6.2 last week"), false);
+    assert.equal(askedForPrivateAppLink("What were my lab results"), false);
+  });
+
+  it("classifies chart writes separately from location asks", () => {
+    assert.equal(looksLikeChartWrite("add metformin to my chart"), true);
+    assert.equal(looksLikeChartWrite("I take metformin"), true);
+    assert.equal(looksLikeChartWrite("My A1C was 6.2 last week"), true);
+    assert.equal(looksLikeChartWrite("Yes save it to my profile"), true);
+    assert.equal(looksLikeChartWrite("Where are my labs"), false);
+    assert.equal(looksLikeChartWrite("What were my lab results"), false);
+    assert.equal(looksLikeChartWrite("I have a headache"), false);
+    assert.equal(looksLikeChartWrite("im taking my viagra tomorrow"), false);
+    assert.equal(looksLikeChartWrite("I take metformin"), true);
+    assert.equal(looksLikeChartRead("What were my lab results"), true);
+    assert.equal(looksLikeChartRead("what's on my chart"), true);
+    assert.equal(looksLikeChartRead("Where are my labs"), false);
+    assert.equal(looksLikeChartRead("add metformin to my chart"), false);
   });
 
   it("classifies how-to as build-guide when no matching guide exists", () => {
@@ -110,6 +135,30 @@ describe("deliverable ask detection", () => {
         priorInboundBodies: ["Where's my profile"],
       }),
       "I have a headache",
+    );
+    assert.equal(
+      resolveDeliverableInboundText({
+        inboundText: "?",
+        priorInboundBodies: ["Where's my profile"],
+        lastOutboundBody: "https://doe.care/app?t=x",
+      }),
+      "?",
+    );
+    assert.equal(
+      resolveDeliverableInboundText({
+        inboundText: "?",
+        priorInboundBodies: ["Where's my profile"],
+        lastOutboundBody: "You can view your profile details here",
+      }),
+      "Where's my profile",
+    );
+    assert.equal(
+      resolveDeliverableInboundText({
+        inboundText: "send it",
+        priorInboundBodies: ["Where's my profile"],
+        lastOutboundBody: "https://doe.care/app?t=x",
+      }),
+      "Where's my profile",
     );
   });
 });

@@ -666,6 +666,7 @@ export async function handleSymptomInbound(params: {
     deferFinalReaction: Boolean(turn.browserJobDispatched) && !agentFailed,
     failed: agentFailed,
     error: agentError,
+    agentReaction: turn.reactionEmoji,
   });
 
   const firstOutbound = replyText || turn.careUrl || turn.listenUrl || turn.profileUrl || "";

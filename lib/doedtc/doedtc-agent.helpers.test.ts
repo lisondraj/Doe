@@ -340,6 +340,27 @@ test("compactTranscriptForAgent drops filler outbound rows", () => {
   assert.match(transcript, /Ozempic weekly/);
 });
 
+test("compactTranscriptForAgent keeps the last outbound even when filler", () => {
+  const transcript = compactTranscriptForAgent([
+    { direction: "inbound", body: "Hey" },
+    { direction: "outbound", body: "Got it." },
+  ]);
+  assert.match(transcript, /Doe: Got it/);
+});
+
+test("compactTranscriptForAgent keeps the last outbound and sent-link bubbles", () => {
+  const transcript = compactTranscriptForAgent([
+    { direction: "inbound", body: "Where's my profile" },
+    { direction: "outbound", body: "Sending your profile link." },
+    { direction: "outbound", body: "https://doe.care/app?t=x" },
+    { direction: "inbound", body: "?" },
+  ]);
+  assert.match(transcript, /Where's my profile/);
+  assert.match(transcript, /Sending your profile link/);
+  assert.match(transcript, /\[sent a link\]/);
+  assert.doesNotMatch(transcript, /https:\/\/doe\.care/);
+});
+
 test("schedulingToolSucceeded requires schedule_text, not propose", () => {
   assert.equal(schedulingToolSucceeded([{ name: "propose_scheduled_text", ok: true }]), false);
   assert.equal(schedulingToolSucceeded([{ name: "schedule_text", ok: true }]), true);

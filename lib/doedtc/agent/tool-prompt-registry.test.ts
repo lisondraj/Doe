@@ -48,6 +48,7 @@ describe("tool prompt registry", () => {
     });
     assert.match(prompt, /How-to \/ tracker confusion/);
     assert.match(prompt, /create_guide/);
+    assert.match(prompt, /Parallel turns/);
     assert.doesNotMatch(prompt, /Tracker routing \(trackers on profile\)/);
   });
 
@@ -131,13 +132,18 @@ describe("tool prompt registry", () => {
       profileOverview: "Overview",
       nowLabel: "Mon 7pm",
       situationBrief: "Situation (do not recite):\nNamed but not on chart: Riley.",
+      activeWorkBlock:
+        "Active work (other parallel tasks — describe these in plain language when they ask what you're doing):\n- Browser (open): Kaiser screenshot",
     };
     const planner = buildDoePlannerSystemPrompt(params);
     const manager = buildDoeDtcAgentSystemPrompt(params);
     assert.match(planner, /Family log:/);
     assert.match(planner, /Situation \(do not recite\)/);
+    assert.match(planner, /Kaiser screenshot/);
+    assert.match(planner, /This message is its own turn/);
     assert.match(manager, /Family log:/);
     assert.match(manager, /- Maya \(child\)/);
+    assert.match(manager, /Kaiser screenshot/);
   });
 
   it("defaults agent runtime to sdk", () => {
@@ -186,6 +192,8 @@ describe("policy and voice upgrades", () => {
     assert.match(DOE_AGENT_FEW_SHOTS, /log_artifact_entry/);
     assert.match(DOE_AGENT_FEW_SHOTS, /create_guide/);
     assert.match(DOE_AGENT_FEW_SHOTS, /read_listen_session/);
+    assert.match(DOE_AGENT_INSTINCTS, /Reply to this message now/);
+    assert.match(DOE_AGENT_FEW_SHOTS, /What are you working on/);
     assert.doesNotMatch(DOE_AGENT_FEW_SHOTS, /accountability pack/i);
     assert.doesNotMatch(DOE_AGENT_FEW_SHOTS, /I can't directly/i);
   });

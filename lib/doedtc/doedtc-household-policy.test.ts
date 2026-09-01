@@ -156,7 +156,10 @@ describe("intent sniffers", () => {
   it("detects habit vs appointment writes", () => {
     assert.equal(inboundLooksLikeHabitOrReminder("Remind Maya to take a bath every night"), true);
     assert.equal(inboundLooksLikeProfileWrite("Log Riley's dentist appointment next Tuesday"), true);
+    assert.equal(inboundLooksLikeProfileWrite("add metformin to my chart"), true);
+    assert.equal(inboundLooksLikeProfileWrite("I take metformin"), true);
     assert.equal(inboundLooksLikeProfileWrite("where is my tracker"), false);
+    assert.equal(inboundLooksLikeProfileWrite("Where are my labs"), false);
   });
 });
 

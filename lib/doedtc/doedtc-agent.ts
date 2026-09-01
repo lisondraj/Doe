@@ -1,5 +1,6 @@
 import {
   applyDeliverablePolicyToTurnState,
+  lastOutboundBodyFromMessages,
   priorInboundBodiesFromMessages,
   resolveDeliverableInboundText,
 } from "@/lib/doedtc/agent/deliverable-policy";
@@ -58,6 +59,7 @@ import {
   type TurnModeResult,
 } from "@/lib/doedtc/agent/turn-mode";
 import { DOE_AGENT_ACTION_POLICY, DOE_AGENT_RESOLUTION_POLICY } from "@/lib/doedtc/doedtc-agent-policy";
+import { formatActiveWorkBlock, loadActiveWork } from "@/lib/doedtc/agent/active-work";
 import { buildSituationBrief, formatSituationBriefBlock } from "@/lib/doedtc/agent/situation-brief";
 import { DOE_AGENT_PRIMITIVES_PROMPT } from "@/lib/doedtc/doedtc-primitives";
 import {
@@ -538,12 +540,14 @@ export type DoeDtcAgentPromptParams = {
   nowLabel: string;
   promptSignals?: DoeAgentPromptSignals;
   situationBrief?: string;
+  activeWorkBlock?: string;
   turnMode?: TurnMode;
 };
 
 function buildDoeAgentContextBlock(params: DoeDtcAgentPromptParams): string {
   return `Now (user local time): ${params.nowLabel}.
 ${params.situationBrief ? `\n${params.situationBrief}\n` : ""}
+${params.activeWorkBlock ? `\n${params.activeWorkBlock}\n` : ""}
 ${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
 Playbook (how you've corrected yourself before):
 ${params.playbookNotes}
@@ -563,6 +567,14 @@ ${params.profileOverview}
 Recent conversation:
 ${params.transcript || "No prior messages."}
 
+Thread:
+- Continue from Recent conversation (what they said and what you said). Do not repeat your last Doe line.
+- If they already answered who/when/what, use it. Do not re-ask.
+- If you already sent a link ([sent a link] or a Sending… bubble), do not send it again unless they ask to resend.
+- If they ask what is set or what is in the file, call list_scheduled_texts. Do not use prior bubbles as proof it is in the file.
+- Say something is set only after schedule_text returns an id.
+- propose_scheduled_text is a draft: "I can set this if you want" — wait for yes. Drafts are not in the file.
+
 Recent attachments (read_attachment / parse_document):
 ${params.recentAttachmentsLog}
 
@@ -580,11 +592,6 @@ ${params.accountabilityLog}
 
 Scheduled texts:
 ${params.scheduledLog}
-
-Reminders vs the file:
-- If they ask what is set or what is in the file, call list_scheduled_texts. Do not use prior bubbles.
-- Say something is set only after schedule_text returns an id.
-- propose_scheduled_text is a draft: "I can set this if you want" — wait for yes. Drafts are not in the file.
 
 Habit workflows:
 ${params.workflowsLog}
@@ -606,9 +613,12 @@ const DOE_AGENT_SAFETY_TAIL = `Parallel work:
 - Only one browser task runs at a time. Browsing continues in the background — the screenshot arrives as a follow-up iMessage.
 - You may run other tools in the same turn (log symptoms, family, meds, start_listen, etc.) while a browser job is open.
 - Do not wait for browsing to finish before saving profile or appointment data.
+- Each inbound is its own turn. Reply to this message now. Other Active work continues in parallel — do not stall this reply on those jobs.
+- If they ask what you're working on, describe Active work in plain language. If none, say you're on this message.
+- Never say you are working on it or will send it in a minute unless a tool already started (browser job, scheduled send). If you can finish this turn, do it now.
 
 iMessage texture:
-- react_to_message: skip. Doe adds 👍/✅ only on complex work (browse, screenshot, portal). Occasional matching tapbacks stay put. Most turns have no reaction. Never add 👍 or ✅ yourself.
+- react_to_message: optional. Use a single emoji that fits what they said (😂 🙏 💙 💪 👀 ❓). Most turns have no reaction. Never use 👍, ✅, or 👎 — those are reserved for long-running work.
 - use_thread_reply: occasionally when answering a direct question or correction (~1 in 3 eligible turns), never for link-only bubbles.
 
 Safety:
@@ -855,7 +865,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
 }): Promise<DoeDtcAgentTurnResult> {
   const timezone = normalizeScheduledTimezone(null);
 
-  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId] =
+  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, activeWorkItems] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
       listDoeDtcMessages(params.user.id, 40),
@@ -863,6 +873,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       listGuidesForUser(params.user.id),
       searchDoeDtcMem0Playbook({ userId: params.user.id, query: params.inboundText, topK: 3 }),
       getActiveDoeDtcBrowserJobId(params.user.id),
+      loadActiveWork({ userId: params.user.id, currentTurnId: params.turnId }),
     ]);
   let pendingRow = await getAgentPending(params.user.id);
 
@@ -967,6 +978,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const deliverableInboundText = resolveDeliverableInboundText({
     inboundText: params.inboundText,
     priorInboundBodies: priorInboundBodiesFromMessages(messageHistory),
+    lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
   });
 
   const brief = buildSituationBrief({
@@ -976,6 +988,9 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     members: snapshot.household.members,
     artifacts: snapshot.artifacts,
     guides: snapshot.guides,
+    medications: snapshot.medications,
+    conditions: snapshot.conditions,
+    resultTitles: snapshot.results.map((row) => row.title),
   });
   const situationBrief = formatSituationBriefBlock(brief);
   const turnMode = brief.actionSlots.turnMode;
@@ -1028,6 +1043,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     nowLabel: agentNowLabel(timezone),
     promptSignals,
     situationBrief,
+    activeWorkBlock: formatActiveWorkBlock(activeWorkItems),
     turnMode: turnMode.mode,
   }) + (reminderDirective ? `\n\n${reminderDirective}` : "");
 

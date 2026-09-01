@@ -197,4 +197,28 @@ describe("situation brief gaps", () => {
     assert.ok(brief.opportunity);
     assert.equal(brief.promptBlock.includes("Extra offer"), true);
   });
+
+  it("offers to add a mentioned item that is not on the chart", () => {
+    const brief = buildSituationBrief({
+      inboundText: "im taking my viagra tomorrow",
+      viewerUserId: "parent-1",
+      members: [parent],
+      medications: [],
+    });
+    assert.equal(brief.opportunity?.kind, "chart_gap");
+    assert.equal(brief.opportunity?.tool, "add_medication");
+    assert.match(brief.opportunity?.promptLine ?? "", /not on medications/i);
+    assert.match(brief.opportunity?.promptLine ?? "", /confirm_once/);
+    assert.doesNotMatch(brief.opportunity?.promptLine ?? "", /would you like me to add it/i);
+  });
+
+  it("does not re-offer an item already on the chart", () => {
+    const brief = buildSituationBrief({
+      inboundText: "im taking my viagra tomorrow",
+      viewerUserId: "parent-1",
+      members: [parent],
+      medications: ["Viagra"],
+    });
+    assert.notEqual(brief.opportunity?.kind, "chart_gap");
+  });
 });

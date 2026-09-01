@@ -1,11 +1,14 @@
 import { randomUUID } from "node:crypto";
 
+import { askedAboutActiveWork, looksLikeDeferredWorkClaim } from "@/lib/doedtc/agent/active-work";
 import {
   askedForDeliverable,
   askedForPrivateAppLink,
   buildPrivateAppLink,
   findMatchingGuide,
   interpretBuildIntent,
+  looksLikeChartRead,
+  looksLikeChartWrite,
 } from "@/lib/doedtc/agent/deliverable-policy";
 import { createDoeDtcListenSession } from "@/lib/doedtc/doedtc-db";
 import { doeDtcGuideUrl, doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
@@ -126,8 +129,15 @@ export function shouldRetryEmptyRefusal(params: {
     inbound &&
     (askedForPrivateAppLink(inbound) ||
       askedForDeliverable(inbound, "listen") ||
-      askedForDeliverable(inbound, "guide"))
+      askedForDeliverable(inbound, "guide") ||
+      looksLikeChartWrite(inbound) ||
+      looksLikeChartRead(inbound))
   ) {
+    return true;
+  }
+
+  if (looksLikeDeferredWorkClaim(params.replyText)) {
+    if (askedAboutActiveWork(inbound)) return looksLikeRefusal(params.replyText);
     return true;
   }
 
@@ -135,7 +145,7 @@ export function shouldRetryEmptyRefusal(params: {
 }
 
 export function buildRefusalRetrySystemMessage(inboundText: string): string {
-  return `You refused without calling any tools. The user asked: "${inboundText.slice(0, 280)}". You have real tools — attempt the task (start_browser_task, send_family_invite, read_profile, etc.) before saying you cannot do it. Only refuse after a tool actually failed.`;
+  return `You refused, stalled, or said you were working on it / would send later without starting a tool. The user asked: "${inboundText.slice(0, 280)}". Call the matching tool now (start_browser_task, schedule_text, send_family_invite, read_profile, etc.). Do not promise a later send unless a tool already started. Only refuse after a tool actually failed.`;
 }
 
 export function toolSucceeded(

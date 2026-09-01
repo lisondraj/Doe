@@ -4,6 +4,7 @@ import test from "node:test";
 import { resolveTurnReactionAction } from "@/lib/doedtc/doedtc-turn-lifecycle";
 import {
   inboundLooksComplex,
+  inferAmbientReaction,
   inferMatchingReaction,
   pickMatchingReaction,
 } from "@/lib/doedtc/doedtc-reactions";
@@ -84,7 +85,15 @@ test("only complex inbound qualifies for lifecycle 👍/✅", () => {
 test("matching reactions are occasional and stay semantic", () => {
   assert.equal(inferMatchingReaction("lol that's hilarious"), "😂");
   assert.equal(inferMatchingReaction("yes"), null);
-  assert.equal(inferMatchingReaction("remind me in 5 seconds"), null);
+  assert.ok(["🙏", "❤️"].includes(inferMatchingReaction("thanks so much") ?? ""));
   assert.equal(pickMatchingReaction("lol that's hilarious", { hash: 0 }), "😂");
   assert.equal(pickMatchingReaction("lol that's hilarious", { hash: 1 }), null);
+});
+
+test("ambient reactions cover ordinary health asks but stay gated", () => {
+  assert.ok(["👌", "⏰"].includes(inferAmbientReaction("remind me in 5 seconds") ?? ""));
+  assert.ok(["💪", "🙌"].includes(inferAmbientReaction("im taking my viagra tomorrow") ?? ""));
+  assert.equal(inferAmbientReaction("yes"), null);
+  assert.equal(pickMatchingReaction("remind me in 5 seconds", { hash: 1, ambientEvery: 4 }), null);
+  assert.ok(pickMatchingReaction("remind me in 5 seconds", { hash: 4, ambientEvery: 4 }));
 });

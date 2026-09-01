@@ -1,3 +1,4 @@
+import { isLifecycleReactionEmoji } from "@/lib/doedtc/doedtc-reactions";
 import {
   actDoeDtcBrowser,
   computerDoeDtcBrowser,
@@ -1275,6 +1276,19 @@ async function executeDoeDtcToolInner(params: {
         output = { ok: true, link_sent_separately: true };
       }
     } else if (name === "react_to_message") {
+      if (!ctx.inboundMessageId) {
+        output = { ok: false, error: "No inbound message to react to." };
+      } else {
+        const emoji = String(args.emoji ?? "").trim();
+        if (!emoji) {
+          output = { ok: false, error: "Emoji is required." };
+        } else if (isLifecycleReactionEmoji(emoji)) {
+          output = { ok: false, error: "Use a content tapback, not 👍/✅/👎." };
+        } else {
+          state.reactionEmoji = emoji.slice(0, 8);
+          output = { ok: true, queued: true };
+        }
+      }
       if (!ctx.inboundMessageId) {
         output = { ok: false, error: "No inbound message to react to." };
       } else {

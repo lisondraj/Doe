@@ -145,6 +145,29 @@ export async function getDoeDtcAgentTurn(turnId: string): Promise<DoeDtcAgentTur
   return (data as DoeDtcAgentTurnRow | null) ?? null;
 }
 
+export async function listInFlightDoeDtcAgentTurns(params: {
+  userId: string;
+  excludeTurnId?: string;
+  limit?: number;
+}): Promise<DoeDtcAgentTurnRow[]> {
+  const supabase = createSupabaseAdmin();
+  const since = new Date(Date.now() - 20 * 60 * 1000).toISOString();
+  let query = supabase
+    .from("doedtc_agent_turns")
+    .select("*")
+    .eq("user_id", params.userId)
+    .in("status", ["received", "read", "working", "browsing"])
+    .gte("created_at", since)
+    .order("created_at", { ascending: false })
+    .limit(params.limit ?? 8);
+  if (params.excludeTurnId) {
+    query = query.neq("id", params.excludeTurnId);
+  }
+  const { data, error } = await query;
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcAgentTurnRow[]) ?? [];
+}
+
 export async function listDoeDtcAgentTurns(params: {
   userId: string;
   limit?: number;

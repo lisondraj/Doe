@@ -12,10 +12,15 @@ import {
   resolveDoeReplyDeliverables,
 } from "@/lib/doedtc/agent/deliverable-resolver";
 import {
+  lastOutboundBodyFromMessages,
   priorInboundBodiesFromMessages,
   resolveDeliverableInboundText,
 } from "@/lib/doedtc/agent/deliverable-policy";
 import { finalizeAgentReply } from "@/lib/doedtc/agent/finalize-agent-reply";
+import {
+  buildRefusalRetrySystemMessage,
+  shouldRetryEmptyRefusal,
+} from "@/lib/doedtc/agent/honesty";
 import { CRISIS_REPLY } from "@/lib/doedtc/agent/turn-mode";
 import { createInitialToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 import { buildSpecialistInstructionMap, createDoeSpecialistAgents } from "@/lib/doedtc/agent/specialists";
@@ -31,6 +36,7 @@ import {
   type DoeDtcAgentTurnResult,
 } from "@/lib/doedtc/doedtc-agent";
 import { buildDoeAgentPromptSignals } from "@/lib/doedtc/agent/tool-prompt-registry";
+import { formatActiveWorkBlock, loadActiveWork } from "@/lib/doedtc/agent/active-work";
 import { buildSituationBrief, formatSituationBriefBlock } from "@/lib/doedtc/agent/situation-brief";
 import { executeAgentPendingCommit } from "@/lib/doedtc/doedtc-agent-commit";
 import {
@@ -149,7 +155,7 @@ async function loadRunContext(params: {
 }): Promise<DoeDtcRunContext> {
   const pendingRow = params.pendingRow ?? (await getAgentPending(params.user.id));
 
-  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, attachmentContext] =
+  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, attachmentContext, activeWorkItems] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
       listDoeDtcMessages(params.user.id, 40),
@@ -163,6 +169,7 @@ async function loadRunContext(params: {
         inboundFileIds: params.inboundFileIds,
         extraVisionUrls: params.extraVisionUrls,
       }),
+      loadActiveWork({ userId: params.user.id, currentTurnId: params.turnId }),
     ]);
 
   const filesById = new Map(attachmentContext.recentFiles.map((file) => [file.id, file]));
@@ -183,6 +190,7 @@ async function loadRunContext(params: {
   const deliverableInboundText = resolveDeliverableInboundText({
     inboundText: params.inboundText,
     priorInboundBodies: priorInboundBodiesFromMessages(messageHistory),
+    lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
   });
 
   const brief = buildSituationBrief({
@@ -192,6 +200,9 @@ async function loadRunContext(params: {
     members: snapshot.household.members,
     artifacts: snapshot.artifacts,
     guides: snapshot.guides,
+    medications: snapshot.medications,
+    conditions: snapshot.conditions,
+    resultTitles: snapshot.results.map((row) => row.title),
   });
   const situationBrief = formatSituationBriefBlock(brief);
   const turnMode = brief.actionSlots.turnMode;
@@ -228,6 +239,7 @@ async function loadRunContext(params: {
     nowLabel: agentNowLabel(timezone),
     promptSignals,
     situationBrief,
+    activeWorkBlock: formatActiveWorkBlock(activeWorkItems),
     turnMode: turnMode.mode,
   };
 
@@ -397,6 +409,15 @@ async function resumeRunStatePending(params: {
   });
 }
 
+function shouldRetrySdkReply(loaded: DoeDtcRunContext, replyText: string): boolean {
+  return shouldRetryEmptyRefusal({
+    replyText,
+    toolsExecuted: loaded.turnState.toolsExecuted ?? [],
+    turnMode: loaded.turnMode?.mode,
+    inboundText: loaded.inboundText,
+  });
+}
+
 async function finalizeSdkRun(params: {
   result: {
     finalOutput?: unknown;
@@ -518,7 +539,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
   const plan = await runDoePlannerTurn(loaded);
   if (plan) {
     const executed = await executeDoePlan({ plan, ctx: loaded });
-    if (executed.ok) {
+    if (executed.ok && !shouldRetrySdkReply(loaded, executed.reply)) {
       const finalized = await finalizeAgentReply({
         user: loaded.user,
         inboundText: loaded.inboundText,
@@ -552,15 +573,58 @@ export async function runDoeDtcAgentTurnSdk(params: {
     }
   }
 
-  const agent = createDoeSpecialistAgents(loaded).manager;
   const visionInput = buildSdkVisionUserInput(
     loaded.attachmentContext?.inboundTextForModel ?? params.inboundText,
     loaded.attachmentContext?.visionImageUrls ?? [],
   );
   const sdkInput = typeof visionInput === "string" ? visionInput : [user(visionInput)];
 
-  const result = await run(agent, sdkInput, { context: loaded, maxTurns: 12 });
+  const runManager = async () => {
+    const agent = createDoeSpecialistAgents(loaded).manager;
+    return run(agent, sdkInput, { context: loaded, maxTurns: 12 });
+  };
 
+  let result = await runManager();
+
+  if (result.interruptions?.length) {
+    await clearAgentPending(params.user.id);
+    const interruption = result.interruptions[0];
+    await setAgentPending({
+      userId: params.user.id,
+      kind: "schedule_text",
+      commitTool: interruption?.name ?? "approval",
+      args: { runState: result.state.toString() },
+      summary: interruption?.name
+        ? `Waiting for approval to run ${interruption.name}.`
+        : "Waiting for your confirmation.",
+    });
+    loaded.turnState.preservePendingOffer = true;
+  }
+
+  const firstPass = await finalizeSdkRun({
+    result,
+    loaded,
+    inboundMessageId: params.inboundMessageId,
+  });
+
+  if (result.interruptions?.length || !shouldRetrySdkReply(loaded, firstPass.replyText)) {
+    return firstPass;
+  }
+
+  const retryNudge = buildRefusalRetrySystemMessage(loaded.inboundText);
+  loaded.instructions = `${loaded.instructions}\n\n${retryNudge}`;
+  if (loaded.plannerInstructions) {
+    loaded.plannerInstructions = `${loaded.plannerInstructions}\n\n${retryNudge}`;
+  }
+  if (loaded.specialistInstructions) {
+    for (const key of Object.keys(loaded.specialistInstructions) as Array<
+      keyof NonNullable<typeof loaded.specialistInstructions>
+    >) {
+      const current = loaded.specialistInstructions[key];
+      if (current) loaded.specialistInstructions[key] = `${current}\n\n${retryNudge}`;
+    }
+  }
+  result = await runManager();
   if (result.interruptions?.length) {
     await clearAgentPending(params.user.id);
     const interruption = result.interruptions[0];

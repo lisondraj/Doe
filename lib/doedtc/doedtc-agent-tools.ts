@@ -1310,7 +1310,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "react_to_message",
       description:
-        "Skip. Doe adds 👍/✅ only on complex work (browse, screenshot, portal). Occasional matching tapbacks stay put. Most turns have no reaction. Never add 👍 or ✅.",
+        "Optional tapback that fits what they said. Most turns skip. Never 👍, ✅, or 👎.",
       parameters: {
         type: "object",
         properties: {

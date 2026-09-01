@@ -145,21 +145,21 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   cancel_appointment:
     "cancel_appointment — remove an appointment they no longer have. appointment_id from Appointments log.",
   add_medication:
-    "add_medication — add a med they take. Never remember_fact for meds. If correcting an existing med, use update_medication — not a second add.",
+    "add_medication — add a med they take or ask to put on the chart. Never remember_fact for meds. Confirm in the reply. Do not send_profile_link after adding unless they asked to see the chart. If correcting an existing med, use update_medication — not a second add.",
   update_medication:
     "update_medication — rename/replace a med on profile (from → to). Do not add_medication a duplicate.",
   remove_medication: "remove_medication — remove a med they stopped. Name from profile or conditions tab read.",
   add_condition:
-    "add_condition — add a diagnosis/condition. Never remember_fact for conditions. Correct with update_condition, not a second add.",
+    "add_condition — add a diagnosis/condition they have or ask to put on the chart. Never remember_fact for conditions. Confirm in the reply — no consolation profile link. Correct with update_condition, not a second add.",
   update_condition:
     "update_condition — rename/replace a condition (from → to). Do not add_condition a duplicate.",
   remove_condition: "remove_condition — remove a condition that no longer applies.",
   log_result:
-    "log_result — log a lab/imaging result they report (title, date, optional summary). Not for symptoms — use log_symptoms. Read results tab with read_profile first if unsure what's logged.",
+    "log_result — log a lab/imaging result they report (title, date, optional summary). Not for symptoms — use log_symptoms. Confirm in chat. send_profile_link only if they asked where/show labs. Read results tab with read_profile first if unsure what's logged.",
   remove_result:
     "remove_result — delete a logged result. result_id from read_profile results tab — never ask the user for an id you can read.",
   read_profile:
-    "read_profile — read any profile tab before answering what is saved (Whoop, Apple Health, trackers, family, results). Never invent status. Ids for writes live in these logs — do not ask the user for ids.",
+    "read_profile — pull any profile tab before answering what is saved (meds, conditions, results, trackers, Whoop, family). Answer in iMessage. Send a link only when they asked to see/show/where. Never invent status. Ids for writes live in these logs — do not ask the user for ids.",
   read_attachment:
     "read_attachment — fetch a stored inbound photo/PDF by file id from Recent attachments. Use when they refer to an earlier image.",
   parse_document:
@@ -261,11 +261,11 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   submit_ticket:
     "submit_ticket — feedback or bug report. Not for clinical questions.",
   react_to_message:
-    "react_to_message — skip. Doe adds 👍/✅ only on complex work. Occasional matching tapbacks stay put. Most turns have no reaction. Never add 👍 or ✅.",
+    "react_to_message — optional tapback that fits what they said (😂 🙏 💙 💪 👀 ❓). Most turns skip. Never 👍, ✅, or 👎.",
   use_thread_reply:
     "use_thread_reply — occasionally reply in-thread for direct answers (~1 in 3 eligible turns).",
   send_profile_link:
-    "send_profile_link — private app/tracker link when they asked (send/show/where is/need + tracker, profile, chart, or labs). Pass tab=results for labs. Act first — call this before narrating. Never use \"here\" as a URL placeholder. Never send after assessment, logging, or as a consolation prize.",
+    "send_profile_link — private app/tracker link only when they asked to see it (send/show/where is/need + tracker, profile, chart, or labs). Pass tab=results for labs, tab=trackers + artifact for a tracker. Never send after add_medication, add_condition, log_result, log_artifact_entry, assessment, or as a consolation prize. Never use \"here\" as a URL placeholder.",
 };
 
 function tier2Enabled(signals: DoeAgentPromptSignals | undefined, key: keyof DoeAgentPromptSignals): boolean {
@@ -293,6 +293,8 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
   blocks.push(`How-to / tracker confusion (always):
 - "How do I take X" / don't know how → list_guides first; reuse + send_guide_link if a match exists, otherwise create_guide and send the link. Ask once if they want it saved.
 - "Where is my tracker" / profile / chart / labs / need / show me → send_profile_link (tab=results when labs). Act first, then one finished reply. Do not say "here" — the link is a separate iMessage.
+- Add/log a med, condition, lab, or tracker entry → write tool, confirm in chat. Do not send_profile_link.
+- "What were my labs" / what's on my chart / my meds → read_profile that tab and answer. Link only if they also asked to see/show/where.
 - "Help me track X" / track my X with no matching tracker → create_profile_artifact, then send the link.
 - Primary action first, then at most one complete offer (save the guide, same for a sibling).`);
 
@@ -339,6 +341,11 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
 - Daily + reply + miss notify → start_habit_workflow (preferred).
 - Partner / cadence / legacy pact → start_accountability.
 - Missing who/when → propose_* once, then commit on yes.`);
+
+  blocks.push(`Parallel turns (always):
+- This inbound is one turn. Reply to it now. Other Active work continues.
+- If they ask what you're doing, describe Active work in plain language.
+- Do not say you'll send later or that you're working on it unless start_browser_task or schedule_text already ran.`);
 
   return blocks;
 }
@@ -388,6 +395,7 @@ export function buildDoeSpecialistToolCapabilityPrompt(
   });
 
   const tier2 = buildTier2Blocks(signals).filter((block) => {
+    if (block.includes("Parallel turns")) return true;
     if (specialist === "browser") return block.includes("Browser");
     if (specialist === "scheduling") return block.includes("Reminder") || block.includes("Household");
     if (specialist === "healthRecord") {
@@ -433,6 +441,7 @@ export function buildDoeDtcToolCapabilityPrompt(signals?: DoeAgentPromptSignals)
     ...tier2.map((block) => block),
     "",
     "- You have real tools. Attempt the task before saying you cannot do it.",
+    "- Never say you are working on it or will send later unless a tool already started.",
     "- Never send a profile or tracker link unless they asked for that link this turn.",
     "- When correcting profile data, update or remove the existing row — never add a second copy.",
     "- Resolve ids from logs above (read_profile, Symptom log, Appointments, Household) — do not ask the user for ids.",
