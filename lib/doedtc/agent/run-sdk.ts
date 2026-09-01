@@ -547,9 +547,11 @@ export async function runDoeDtcAgentTurnSdk(params: {
   }
 
   const agent = createDoeSpecialistAgents(loaded).manager;
-  const sdkInput = user(
-    buildSdkVisionUserInput(loaded.attachmentContext?.inboundTextForModel ?? params.inboundText, loaded.attachmentContext?.visionImageUrls ?? []),
+  const visionInput = buildSdkVisionUserInput(
+    loaded.attachmentContext?.inboundTextForModel ?? params.inboundText,
+    loaded.attachmentContext?.visionImageUrls ?? [],
   );
+  const sdkInput = typeof visionInput === "string" ? visionInput : [user(visionInput)];
 
   const result = await run(agent, sdkInput, { context: loaded, maxTurns: 12 });
 

@@ -154,7 +154,7 @@ export function replaceInboundAttachmentMarkers(
   });
 
   if (BARE_ATTACHMENT_BODY.test(replaced.trim())) {
-    const newest = [...filesById.values()].sort(
+    const newest = Array.from(filesById.values()).sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     )[0];
     if (newest) {
@@ -215,7 +215,7 @@ export async function loadDoeDtcAttachmentContext(params: {
   inboundFileIds?: string[];
 }): Promise<DoeDtcAttachmentContext> {
   const parsedIds = parseInboundAttachmentIds(params.inboundText);
-  const thisTurnFileIds = [...new Set([...(params.inboundFileIds ?? []), ...parsedIds])];
+  const thisTurnFileIds = Array.from(new Set([...(params.inboundFileIds ?? []), ...parsedIds]));
   const recentFiles = await listRecentDoeDtcFiles(params.userId, 12);
 
   const filesById = new Map(recentFiles.map((file) => [file.id, file]));
@@ -237,11 +237,11 @@ export async function loadDoeDtcAttachmentContext(params: {
 
   return {
     thisTurnFileIds,
-    recentFiles: [...filesById.values()].sort(
+    recentFiles: Array.from(filesById.values()).sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     ),
     visionImageUrls,
-    recentFilesLog: formatRecentDoeDtcFilesLog([...filesById.values()].slice(0, 10)),
+    recentFilesLog: formatRecentDoeDtcFilesLog(Array.from(filesById.values()).slice(0, 10)),
     inboundTextForModel,
   };
 }

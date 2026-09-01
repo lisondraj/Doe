@@ -39,7 +39,7 @@ export type ParseDocumentWriteTool = (typeof PARSE_DOCUMENT_WRITE_TOOLS)[number]
 
 const DocumentWriteSchema = z.object({
   tool: z.enum(PARSE_DOCUMENT_WRITE_TOOLS),
-  args: z.record(z.unknown()),
+  args: z.record(z.string(), z.unknown()),
 });
 
 export const DocumentParseSchema = z.object({
