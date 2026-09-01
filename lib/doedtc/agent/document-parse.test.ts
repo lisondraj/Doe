@@ -5,9 +5,12 @@ import {
   applyDocumentSubjectToWrites,
   buildDocumentSavingNotice,
   extractResultedAtFromText,
+  extractTitleIsNameReply,
   formatDocumentParseForPrompt,
   interpretDocumentIdentityReply,
+  looksLikePersonNameResultTitle,
   looksLikeSaveDocumentToOwnChart,
+  preferredLabResultTitle,
   mapLabPanelToLogResultWrites,
   namesLooselyMatch,
   normalizeDocumentParseResult,
@@ -345,6 +348,23 @@ describe("document parse", () => {
     assert.equal(looksLikeSaveDocumentToOwnChart("These are mine"), true);
     assert.equal(looksLikeSaveDocumentToOwnChart("Log these results to my chart"), true);
     assert.equal(extractResultedAtFromText("Title is James and 5/6/2024"), "2024-05-06");
+    assert.equal(extractTitleIsNameReply("Title is James and 5/6/2024"), "James");
+    assert.equal(
+      looksLikePersonNameResultTitle({ title: "James", viewerName: "James Lisondra" }),
+      true,
+    );
+    assert.equal(
+      looksLikePersonNameResultTitle({ title: "Liver function test", viewerName: "James Lisondra" }),
+      false,
+    );
+    assert.equal(
+      preferredLabResultTitle({
+        title: "James",
+        fallback: "Liver function test",
+        viewerName: "James Lisondra",
+      }),
+      "Liver function test",
+    );
     const claimed = resolveDocumentPatientName({
       parsedName: "Ojewale Malik",
       caption: "These are mine",

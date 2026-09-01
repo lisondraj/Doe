@@ -285,6 +285,21 @@ describe("agent honesty invariants", () => {
     });
     assert.match(reconciled.replyText, /not on your chart yet/i);
   });
+
+  it("does not ask them for a title when logging a parsed lab photo", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText: "Log these results to my chart",
+      replyText: "I need the title and date for these liver function test results to log them properly.",
+      state: { toolsExecuted: [{ name: "parse_document", ok: true }] } as import("@/lib/doedtc/agent/tool-dispatch").DoeDtcToolTurnState,
+      toolsExecuted: [{ name: "parse_document", ok: true }],
+    });
+    assert.match(reconciled.replyText, /don't need to give me a title/i);
+  });
 });
 
 describe("tool capability prompt", () => {

@@ -903,9 +903,25 @@ async function executeDoeDtcToolInner(params: {
       let source = typeof args.source === "string" ? args.source : null;
       let summary = typeof args.summary === "string" ? args.summary : null;
       let heldOutput: Record<string, unknown> | null = null;
+      const {
+        commitReadyDocumentWrites,
+        extractResultedAtFromText,
+        looksLikePersonNameResultTitle,
+        looksLikeSaveDocumentToOwnChart,
+        preferredLabResultTitle,
+      } = await import("@/lib/doedtc/agent/document-parse");
+      const memberNames = (ctx.snapshot.household?.members ?? []).map((row) => row.full_name);
+      if (
+        title &&
+        looksLikePersonNameResultTitle({
+          title,
+          viewerName: ctx.user.full_name,
+          memberNames,
+        })
+      ) {
+        title = "";
+      }
       if (!title || !resultedAt) {
-        const { commitReadyDocumentWrites, extractResultedAtFromText, looksLikeSaveDocumentToOwnChart } =
-          await import("@/lib/doedtc/agent/document-parse");
         const inboundDate = extractResultedAtFromText(ctx.inboundText);
         if (inboundDate && !resultedAt) resultedAt = inboundDate;
         const shouldCommitHeld =
@@ -939,7 +955,18 @@ async function executeDoeDtcToolInner(params: {
               typeof (row as { args?: { title?: unknown } }).args?.title === "string",
           ) as { args?: Record<string, unknown> } | undefined;
           if (first?.args) {
-            if (!title) title = String(first.args.title ?? "").trim();
+            if (!title) {
+              title = preferredLabResultTitle({
+                title: typeof first.args.title === "string" ? first.args.title : null,
+                fallback:
+                  typeof state.documentParse?.summary === "string" &&
+                  /\b(?:liver|lft)\b/i.test(state.documentParse.summary)
+                    ? "Liver function test"
+                    : "Lab results",
+                viewerName: ctx.user.full_name,
+                memberNames,
+              });
+            }
             if (!resultedAt) resultedAt = String(first.args.resulted_at ?? "").trim();
             if (!summary && typeof first.args.summary === "string") summary = first.args.summary;
             if (!source && typeof first.args.source === "string") source = first.args.source;
@@ -949,7 +976,17 @@ async function executeDoeDtcToolInner(params: {
       if (heldOutput) {
         output = heldOutput;
       } else {
-        if (!title || !resultedAt) throw new Error("title and resulted_at are required.");
+        title = preferredLabResultTitle({
+          title,
+          fallback: "Lab results",
+          viewerName: ctx.user.full_name,
+          memberNames,
+        });
+        if (!resultedAt) {
+          throw new Error(
+            "Use the test name from the document, never their name, and never ask them for a title.",
+          );
+        }
         const row = await addDoeDtcResult({
           userId: subject.subjectUserId,
           title,

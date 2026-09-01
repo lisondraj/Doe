@@ -160,7 +160,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
     "update_condition — rename/replace a condition (from → to). Do not add_condition a duplicate.",
   remove_condition: "remove_condition — remove a condition that no longer applies.",
   log_result:
-    "log_result — log a lab/imaging result they report (title, date, optional summary). Not for symptoms — use log_symptoms. Confirm in chat. send_profile_link only if they asked where/show labs. Read results tab with read_profile first if unsure what's logged.",
+    "log_result — log a lab/imaging result they report. title is the TEST name (A1C, Liver function test), never their name. Never ask them for a title. If they say \"title is James\" they mean they are James. Date from the report or what they said. Not for symptoms — use log_symptoms.",
   update_result:
     "update_result — edit title, date, source, or summary on a logged result. result_id from read_profile results tab.",
   remove_result:

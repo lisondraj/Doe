@@ -328,6 +328,58 @@ function inboundNamesViewer(text: string, viewerName?: string | null): boolean {
   return new RegExp(`\\b${escaped}\\b`, "i").test(text);
 }
 
+export function extractTitleIsNameReply(text: string): string | null {
+  const match = text.match(/\btitle\s*(?:is|:)\s+([^,\n]+)/i);
+  if (!match?.[1]) return null;
+  return match[1]
+    .replace(/\s+and\s+\d{1,2}\/\d{1,2}\/\d{2,4}.*$/i, "")
+    .replace(/\s+and\s+20\d{2}-\d{2}-\d{2}.*$/i, "")
+    .trim();
+}
+
+export function looksLikePersonNameResultTitle(params: {
+  title: string;
+  viewerName?: string | null;
+  memberNames?: string[];
+}): boolean {
+  const title = params.title.trim();
+  if (!title) return false;
+  const fromTitleReply = extractTitleIsNameReply(`title is ${title}`) ?? title;
+  if (namesLooselyMatch(fromTitleReply, params.viewerName) || namesLooselyMatch(title, params.viewerName)) {
+    return true;
+  }
+  if (params.memberNames?.some((name) => namesLooselyMatch(title, name) || namesLooselyMatch(fromTitleReply, name))) {
+    return true;
+  }
+  const first = nameTokens(params.viewerName)[0];
+  const tokens = nameTokens(title);
+  return Boolean(first && tokens.length <= 2 && tokens.includes(first));
+}
+
+export function preferredLabResultTitle(params: {
+  title?: string | null;
+  fallback?: string | null;
+  viewerName?: string | null;
+  memberNames?: string[];
+}): string {
+  const candidates = [params.title, params.fallback, "Lab results"];
+  for (const candidate of candidates) {
+    const trimmed = candidate?.trim() ?? "";
+    if (!trimmed) continue;
+    if (
+      looksLikePersonNameResultTitle({
+        title: trimmed,
+        viewerName: params.viewerName,
+        memberNames: params.memberNames,
+      })
+    ) {
+      continue;
+    }
+    return trimmed;
+  }
+  return "Lab results";
+}
+
 export type DocumentSubjectDisposition = "self" | "household" | "unknown_name" | "unnamed";
 
 export type DocumentSubjectResolution = {
@@ -499,10 +551,12 @@ export function interpretDocumentIdentityReply(params: {
   if (/^(no|nope|nah|don't|do not|stop|cancel|nevermind|never mind|not now|skip)\b/i.test(text)) {
     return { action: "decline" };
   }
+  const titleName = extractTitleIsNameReply(text);
   if (
     SELF_CLAIM_RE.test(text) ||
     looksLikeSaveDocumentToOwnChart(text) ||
     namesLooselyMatch(text, params.viewerName) ||
+    (titleName && namesLooselyMatch(titleName, params.viewerName)) ||
     (inboundNamesViewer(text, params.viewerName) && Boolean(extractResultedAtFromText(text)))
   ) {
     return { action: "save_self" };
@@ -921,7 +975,7 @@ export function formatDocumentParseForPrompt(output: Record<string, unknown> | n
   if (!summary) return null;
   const saved = output.auto_committed === true;
   if (!saved) {
-    return `Inbound document already parsed: ${summary}. Writes are ready. If they said these are theirs or asked to log/save them, those rows should already be committed. Do not ask for a title or date. Do not claim they are on the chart unless write_results show ok. Do not call parse_document again.`;
+    return `Inbound document already parsed: ${summary}. Writes are ready. If they said these are theirs or asked to log/save them, those rows should already be committed. Do not ask for a title or date. Title is the test name (Liver function test, ALT), never their name. If they say "title is James" they mean they are James. Do not claim they are on the chart unless write_results show ok. Do not call parse_document again.`;
   }
   return `Inbound document already parsed and saved to the chart: ${summary}. Do not say you could not read it. Narrate what landed. Do not call parse_document again.`;
 }
@@ -947,14 +1001,25 @@ function pendingFileIds(pending: DoeDtcAgentPendingRow): string[] {
 function applyInboundDateToWrites(
   writes: Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }>,
   inboundText: string,
+  viewerName?: string | null,
 ): Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }> {
   const dated = extractResultedAtFromText(inboundText);
-  if (!dated) return writes;
-  return writes.map((row) =>
-    row.tool === "log_result"
-      ? { ...row, args: { ...row.args, resulted_at: dated } }
-      : row,
-  );
+  return writes.map((row) => {
+    if (row.tool !== "log_result") return row;
+    const title = preferredLabResultTitle({
+      title: typeof row.args.title === "string" ? row.args.title : null,
+      fallback: "Lab results",
+      viewerName,
+    });
+    return {
+      ...row,
+      args: {
+        ...row.args,
+        title,
+        ...(dated ? { resulted_at: dated } : {}),
+      },
+    };
+  });
 }
 
 function writesFromParseOutput(
@@ -1000,7 +1065,7 @@ export async function commitReadyDocumentWrites(params: {
       writes = writesFromParseOutput(parsed);
     }
   }
-  writes = applyInboundDateToWrites(writes, params.inboundText);
+  writes = applyInboundDateToWrites(writes, params.inboundText, params.user.full_name);
   if (writes.length === 0) {
     return { committed: false, results: [] };
   }
@@ -1082,7 +1147,11 @@ export async function resolveHeldDocumentIdentity(params: {
     return { replyText: CANT_ADD_PHOTO_REPLY, assessmentRan: false };
   }
 
-  let writes = applyInboundDateToWrites(heldDocumentWrites(params.pending), params.inboundText);
+  let writes = applyInboundDateToWrites(
+    heldDocumentWrites(params.pending),
+    params.inboundText,
+    params.user.full_name,
+  );
   if (writes.length === 0) {
     const fileIds = pendingFileIds(params.pending);
     if (fileIds.length > 0) {
@@ -1094,7 +1163,11 @@ export async function resolveHeldDocumentIdentity(params: {
         fileIds,
         autoCommit: false,
       });
-      writes = applyInboundDateToWrites(writesFromParseOutput(parsed), params.inboundText);
+      writes = applyInboundDateToWrites(
+        writesFromParseOutput(parsed),
+        params.inboundText,
+        params.user.full_name,
+      );
     }
   }
   if (writes.length === 0) {

@@ -40,7 +40,8 @@ const CLAIM_REGISTRY: Array<{
       | "guide"
       | "invite_correction"
       | "schedule"
-      | "false_write";
+      | "false_write"
+      | "dont_ask_title";
     writeClaim?: boolean;
 }> = [
   {
@@ -102,6 +103,14 @@ const CLAIM_REGISTRY: Array<{
       /\b(?:i(?:'ve| have) logged|i logged|logged your|saved (?:your|the|these))\b.{0,72}\b(?:a1c|lab|result|results|bloodwork|cbc|glucose|cholesterol|liver|lft|panel)\b/i,
     requiredTools: ["log_result"],
     repair: "false_write",
+    writeClaim: true,
+  },
+  {
+    id: "asked_for_result_title",
+    claim:
+      /\b(?:i need|need the|could you share|share that with me)\b.{0,40}\b(?:title and date|title)\b|\btitle and date for (?:these|this|the)\b/i,
+    requiredTools: [],
+    repair: "dont_ask_title",
     writeClaim: true,
   },
   {
@@ -274,6 +283,9 @@ export async function reconcileReplyClaims(params: {
       }
     } else if (entry.repair === "false_write") {
       replyText = "Those results are not on your chart yet. Say log them again and I'll save what I read.";
+    } else if (entry.repair === "dont_ask_title") {
+      replyText =
+        "I already have the test from the photo. You don't need to give me a title. That's the test name, not your name.";
     }
   }
 

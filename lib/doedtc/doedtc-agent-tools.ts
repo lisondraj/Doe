@@ -388,11 +388,14 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "log_result",
       description:
-        "Log a lab, imaging, or test result they report (e.g. A1C 6.1). Not for symptoms — use log_symptoms. Read read_profile results tab first if checking what's logged.",
+        "Log a lab, imaging, or test result they report (e.g. A1C 6.1). title is the test name, never a person's name. Never ask them for a title. Not for symptoms — use log_symptoms.",
       parameters: {
         type: "object",
         properties: {
-          title: { type: "string", description: "Result name, e.g. A1C, Chest X-ray." },
+          title: {
+            type: "string",
+            description: "Test name from the report, e.g. A1C or Liver function test. Never a person's name.",
+          },
           resulted_at: {
             type: "string",
             description: "ISO date or datetime when result came back.",
