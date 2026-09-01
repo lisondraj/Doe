@@ -94,7 +94,7 @@ export async function handleDoeDtcProfileAction(params: {
         relationship,
       });
       if (!fullName) throw new Error("Name is required.");
-      await addDoeDtcHouseholdMember({
+      const member = await addDoeDtcHouseholdMember({
         adminUserId: user.id,
         fullName,
         relationship,
@@ -110,6 +110,22 @@ export async function handleDoeDtcProfileAction(params: {
           ? params.payload.conditions.map((item) => String(item ?? "").trim()).filter(Boolean)
           : [],
       });
+      if (params.payload.sendInvite === true && member.phone) {
+        try {
+          const { invite, member: invited } = await createDoeDtcHouseholdInvite({
+            adminUserId: user.id,
+            memberId: member.id,
+          });
+          await sendDoeDtcFamilyInviteMessage({
+            adminUser: user,
+            memberPhone: invited.phone!,
+            inviteToken: invite.token,
+            memberName: invited.full_name,
+          });
+        } catch {
+          // Person is saved; they can resend from the family card menu.
+        }
+      }
       break;
     }
     case "remove_family": {

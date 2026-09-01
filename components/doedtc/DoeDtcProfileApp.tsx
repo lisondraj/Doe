@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 
 import { DoeDtcNav } from "@/components/doedtc/DoeDtcNav";
@@ -103,6 +103,234 @@ function memberInitial(name: string): string {
 
 function memberChartList(member: Pick<DoeDtcHouseholdMemberRow, "medications" | "conditions">): string[] {
   return [...(member.medications ?? []), ...(member.conditions ?? [])];
+}
+
+function memberFirstName(name: string): string {
+  const trimmed = name.trim();
+  if (!trimmed) return "—";
+  return trimmed.split(/\s+/)[0] ?? trimmed;
+}
+
+function sortHouseholdByDob(a: DoeDtcHouseholdMemberRow, b: DoeDtcHouseholdMemberRow): number {
+  if (a.date_of_birth && b.date_of_birth) return a.date_of_birth.localeCompare(b.date_of_birth);
+  if (a.date_of_birth) return -1;
+  if (b.date_of_birth) return 1;
+  return a.full_name.localeCompare(b.full_name);
+}
+
+type FamilyTreeNode = {
+  member: DoeDtcHouseholdMemberRow;
+  you: boolean;
+};
+
+function familyTreeRows(
+  members: DoeDtcHouseholdMemberRow[],
+  viewerMemberId: string | null,
+): FamilyTreeNode[][] {
+  const admin = members.find((row) => row.role === "admin") ?? members[0];
+  if (!admin) return [];
+  const rest = members.filter((row) => row.id !== admin.id);
+  const pick = (relationship: DoeDtcFamilyRelationship) =>
+    rest.filter((row) => row.relationship === relationship);
+  const rows: FamilyTreeNode[][] = [];
+  const mark = (member: DoeDtcHouseholdMemberRow): FamilyTreeNode => ({
+    member,
+    you: member.id === viewerMemberId,
+  });
+
+  const grandparents = [...pick("grandmother"), ...pick("grandfather")];
+  const parents = [...pick("mother"), ...pick("father")];
+  const siblings = pick("sibling").slice().sort(sortHouseholdByDob);
+  const partners = pick("partner");
+  const children = pick("child").slice().sort(sortHouseholdByDob);
+  const others = pick("other");
+
+  if (grandparents.length) rows.push(grandparents.map(mark));
+  if (parents.length) rows.push(parents.map(mark));
+  rows.push([...siblings.map(mark), mark(admin), ...partners.map(mark)]);
+  if (children.length) rows.push(children.map(mark));
+  if (others.length) rows.push(others.map(mark));
+  return rows;
+}
+
+function FamilyTreeCard({
+  members,
+  viewerMemberId,
+}: {
+  members: DoeDtcHouseholdMemberRow[];
+  viewerMemberId: string | null;
+}) {
+  const rows = familyTreeRows(members, viewerMemberId);
+  if (rows.length === 0) return null;
+
+  return (
+    <section className="doedtc-family-tree" aria-label={DOEDTC_PROFILE.familyTreeLabel}>
+      {rows.map((row, index) => (
+        <div className="doedtc-family-tree__generation" key={row.map((node) => node.member.id).join("-")}>
+          {index > 0 ? (
+            <div className="doedtc-family-tree__connector" aria-hidden>
+              <span className="doedtc-family-tree__stem" />
+            </div>
+          ) : null}
+          <div
+            className={`doedtc-family-tree__row${index > 0 && row.length > 1 ? " doedtc-family-tree__row--branch" : ""}`}
+            style={
+              index > 0 && row.length > 1
+                ? ({ "--tree-bar": `${Math.min(82, 22 + row.length * 12)}%` } as CSSProperties)
+                : undefined
+            }
+          >
+            {row.map((node) => (
+              <a
+                className={`doedtc-family-tree__node${node.you ? " doedtc-family-tree__node--you" : ""}${
+                  node.member.status !== "active" && !node.you ? " doedtc-family-tree__node--pending" : ""
+                }`}
+                href={`#family-member-${node.member.id}`}
+                key={node.member.id}
+              >
+                <span className="doedtc-family-tree__dot">{memberInitial(node.member.full_name)}</span>
+                <span className={`doedtc-family-tree__label ${plusJakartaSans.className}`}>
+                  {node.you ? DOEDTC_PROFILE.familyYouBadge : memberFirstName(node.member.full_name)}
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function FamilyCardMenu({
+  canView,
+  viewHref,
+  canInvite,
+  canRemove,
+  inviting,
+  busy,
+  onInvite,
+  onRemove,
+}: {
+  canView: boolean;
+  viewHref: string | null;
+  canInvite: boolean;
+  canRemove: boolean;
+  inviting: boolean;
+  busy: boolean;
+  onInvite: () => void;
+  onRemove: () => void;
+}) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointer(event: PointerEvent) {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+        setConfirmRemove(false);
+      }
+    }
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+        setConfirmRemove(false);
+      }
+    }
+    window.addEventListener("pointerdown", onPointer);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("pointerdown", onPointer);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  if (!canView && !canInvite && !canRemove) return null;
+
+  return (
+    <div className={`doedtc-family-card__menu${open ? " doedtc-family-card__menu--open" : ""}`} ref={rootRef}>
+      <button
+        className="doedtc-family-card__more"
+        type="button"
+        aria-label={DOEDTC_PROFILE.familyMoreLabel}
+        aria-expanded={open}
+        onClick={() => {
+          setOpen((value) => !value);
+          setConfirmRemove(false);
+        }}
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+          <circle cx="9" cy="4.25" r="1.35" fill="currentColor" />
+          <circle cx="9" cy="9" r="1.35" fill="currentColor" />
+          <circle cx="9" cy="13.75" r="1.35" fill="currentColor" />
+        </svg>
+      </button>
+      {open ? (
+        <div className="doedtc-family-card__panel" role="menu">
+          {confirmRemove ? (
+            <>
+              <p className="doedtc-family-card__panel-copy">{DOEDTC_PROFILE.familyRemoveConfirm}</p>
+              <button
+                className="doedtc-family-card__panel-item doedtc-family-card__panel-item--danger"
+                type="button"
+                role="menuitem"
+                disabled={busy}
+                onClick={() => {
+                  setOpen(false);
+                  setConfirmRemove(false);
+                  onRemove();
+                }}
+              >
+                {DOEDTC_PROFILE.removeLabel}
+              </button>
+              <button
+                className="doedtc-family-card__panel-item"
+                type="button"
+                role="menuitem"
+                onClick={() => setConfirmRemove(false)}
+              >
+                {DOEDTC_PROFILE.familyAddCancel}
+              </button>
+            </>
+          ) : (
+            <>
+              {canView && viewHref ? (
+                <a className="doedtc-family-card__panel-item" href={viewHref} role="menuitem">
+                  {DOEDTC_PROFILE.familyViewProfileLabel}
+                </a>
+              ) : null}
+              {canInvite ? (
+                <button
+                  className="doedtc-family-card__panel-item"
+                  type="button"
+                  role="menuitem"
+                  disabled={busy || inviting}
+                  onClick={() => {
+                    setOpen(false);
+                    onInvite();
+                  }}
+                >
+                  {inviting ? DOEDTC_PROFILE.familyInvitingLabel : DOEDTC_PROFILE.familyInviteLabel}
+                </button>
+              ) : null}
+              {canRemove ? (
+                <button
+                  className="doedtc-family-card__panel-item doedtc-family-card__panel-item--danger"
+                  type="button"
+                  role="menuitem"
+                  disabled={busy}
+                  onClick={() => setConfirmRemove(true)}
+                >
+                  {DOEDTC_PROFILE.removeLabel}
+                </button>
+              ) : null}
+            </>
+          )}
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 function ChipField({
@@ -1605,6 +1833,7 @@ function FamilyTab({
                     gender: gender || null,
                     medications,
                     conditions,
+                    sendInvite: textPhone === true,
                   });
                   closeAddForm();
                 }}
@@ -1720,7 +1949,9 @@ function FamilyTab({
 
   return (
     <div className="doedtc-family">
-      <p className="doedtc-muted">{DOEDTC_PROFILE.familyHint}</p>
+      {members.length > 0 ? (
+        <FamilyTreeCard members={members} viewerMemberId={viewerMember?.id ?? null} />
+      ) : null}
       {members.length === 0 ? (
         <p className="doedtc-empty">{DOEDTC_PROFILE.familyEmpty}</p>
       ) : (
@@ -1731,8 +1962,12 @@ function FamilyTab({
             const isYou = viewerMember?.id === member.id;
             const chart = memberChartList(member);
             const phoneDisplay = member.phone ? formatPhoneForDisplay(member.phone) : null;
+            const viewHref =
+              canView && access?.userId && !preview
+                ? doeDtcAppUrl(token, { tab: "dashboard", member: access.userId })
+                : null;
             return (
-              <li className="doedtc-family-card" key={member.id}>
+              <li className="doedtc-family-card" id={`family-member-${member.id}`} key={member.id}>
                 <div className="doedtc-family-card__top">
                   <span className="doedtc-family-card__avatar" aria-hidden>
                     {memberInitial(member.full_name)}
@@ -1754,6 +1989,18 @@ function FamilyTab({
                     </p>
                     {phoneDisplay ? <p className="doedtc-family-card__meta">{phoneDisplay}</p> : null}
                   </div>
+                  <FamilyCardMenu
+                    canView={Boolean(viewHref)}
+                    viewHref={viewHref}
+                    canInvite={Boolean(
+                      isAdmin && member.role !== "admin" && member.phone && member.status !== "active",
+                    )}
+                    canRemove={Boolean(isAdmin && member.role !== "admin")}
+                    inviting={inviteBusyId === member.id}
+                    busy={busy}
+                    onInvite={() => void sendInvite(member.id)}
+                    onRemove={() => void onAction("remove_family", { householdMemberId: member.id })}
+                  />
                 </div>
                 {chart.length > 0 ? (
                   <div className="doedtc-tag-list doedtc-tag-list--compact">
@@ -1762,40 +2009,6 @@ function FamilyTab({
                         {item}
                       </span>
                     ))}
-                  </div>
-                ) : null}
-                {canView || (isAdmin && member.role !== "admin") ? (
-                  <div className="doedtc-family-card__actions">
-                    {canView && access?.userId && !preview ? (
-                      <a
-                        className="doedtc-button doedtc-button--secondary doedtc-button--inline"
-                        href={doeDtcAppUrl(token, { tab: "dashboard", member: access.userId })}
-                      >
-                        {DOEDTC_PROFILE.familyViewProfileLabel}
-                      </a>
-                    ) : null}
-                    {isAdmin && member.role !== "admin" && member.phone && member.status !== "active" ? (
-                      <button
-                        className="doedtc-button doedtc-button--secondary doedtc-button--inline"
-                        type="button"
-                        disabled={busy || inviteBusyId === member.id}
-                        onClick={() => void sendInvite(member.id)}
-                      >
-                        {inviteBusyId === member.id
-                          ? DOEDTC_PROFILE.familyInvitingLabel
-                          : DOEDTC_PROFILE.familyInviteLabel}
-                      </button>
-                    ) : null}
-                    {isAdmin && member.role !== "admin" ? (
-                      <button
-                        className="doedtc-icon-button"
-                        type="button"
-                        disabled={busy}
-                        onClick={() => onAction("remove_family", { householdMemberId: member.id })}
-                      >
-                        {DOEDTC_PROFILE.removeLabel}
-                      </button>
-                    ) : null}
                   </div>
                 ) : null}
               </li>
