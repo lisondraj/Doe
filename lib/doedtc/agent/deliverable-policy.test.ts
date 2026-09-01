@@ -5,6 +5,7 @@ import {
   askedForPrivateAppLink,
   applyDeliverablePolicyToTurnState,
   inferAppLinkOptions,
+  interpretBuildIntent,
   interpretDeliverableAsk,
   shouldHonorStructuredSend,
 } from "@/lib/doedtc/agent/deliverable-policy";
@@ -17,6 +18,9 @@ describe("deliverable ask detection", () => {
     assert.equal(askedForPrivateAppLink("Send me my profile link"), true);
     assert.equal(askedForPrivateAppLink("send link of my weight tracker"), true);
     assert.equal(askedForPrivateAppLink("can you text me the weight tracker url"), true);
+    assert.equal(askedForPrivateAppLink("Where is my weight tracker"), true);
+    assert.equal(askedForPrivateAppLink("I need my tracker"), true);
+    assert.equal(askedForPrivateAppLink("show me my tracker"), true);
   });
 
   it("does not treat routine health or logging turns as link asks", () => {
@@ -24,6 +28,34 @@ describe("deliverable ask detection", () => {
     assert.equal(askedForPrivateAppLink("Log 3 glasses of water today"), false);
     assert.equal(askedForPrivateAppLink("Remind me ozempic in 10 seconds"), false);
     assert.equal(askedForPrivateAppLink("Yes save it to my profile"), false);
+    assert.equal(askedForPrivateAppLink("I need to take ozempic"), false);
+  });
+
+  it("classifies how-to as build-guide when no matching guide exists", () => {
+    assert.equal(interpretBuildIntent({ inboundText: "how do I take ozempic" }), "guide");
+    assert.equal(interpretBuildIntent({ inboundText: "I don't know how to inject this" }), "guide");
+    assert.equal(
+      interpretBuildIntent({
+        inboundText: "how do I take ozempic",
+        snapshot: { artifacts: [], guides: [{ id: "g1", title: "Ozempic shots", topic: "ozempic" }] } as never,
+      }),
+      null,
+    );
+  });
+
+  it("classifies track-my with no artifact as build-tracker", () => {
+    assert.equal(interpretBuildIntent({ inboundText: "help me track my shots" }), "tracker");
+    assert.equal(interpretBuildIntent({ inboundText: "track my water" }), "tracker");
+    assert.equal(
+      interpretBuildIntent({
+        inboundText: "track my water",
+        snapshot: {
+          artifacts: [{ id: "a1", title: "Water", archived_at: null }],
+          guides: [],
+        } as never,
+      }),
+      null,
+    );
   });
 
   it("classifies listen/share separately from profile", () => {
@@ -74,6 +106,14 @@ describe("profile link gate", () => {
       }),
       true,
     );
+    assert.equal(
+      shouldAllowProfileLink({
+        inboundText: "Where is my weight tracker",
+        state: { assessmentRan: false, guideUrl: undefined, prepareUrl: undefined, artifactShareUrl: undefined },
+        profileLinkCalls: 0,
+      }),
+      true,
+    );
   });
 });
 
@@ -81,6 +121,15 @@ describe("structured send and leftover URLs", () => {
   it("ignores unsolicited profile send[] entries", () => {
     assert.equal(shouldHonorStructuredSend("profile", "I have a headache", []), false);
     assert.equal(shouldHonorStructuredSend("profile", "send me my profile", []), true);
+  });
+
+  it("honors structured guide send when they asked or built", () => {
+    assert.equal(shouldHonorStructuredSend("guide", "how do I take ozempic", []), true);
+    assert.equal(
+      shouldHonorStructuredSend("guide", "thanks", [{ name: "create_guide", ok: true }]),
+      true,
+    );
+    assert.equal(shouldHonorStructuredSend("guide", "I have a headache", []), false);
   });
 
   it("strips leaked profile URLs when the user did not ask and no producing tool ran", () => {

@@ -1,8 +1,9 @@
 import { createDoeDtcListenSession } from "@/lib/doedtc/doedtc-db";
-import { doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
+import { doeDtcGuideUrl, doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
 import {
   applyDeliverablePolicyToTurnState,
   buildPrivateAppLink,
+  findMatchingGuide,
   shouldHonorStructuredSend,
 } from "@/lib/doedtc/agent/deliverable-policy";
 import type { DoeReply } from "@/lib/doedtc/agent/types";
@@ -16,31 +17,48 @@ export async function resolveDoeReplyDeliverables(params: {
   const { reply, ctx } = params;
   const { user, turnState, inboundText } = ctx;
   const toolsExecuted = turnState.toolsExecuted;
+  const snapshot = ctx.snapshot;
   const updates: Partial<DoeDtcAgentTurnResult> = {};
 
   for (const item of reply.send) {
     if (item === "listen" && !turnState.listenUrl) {
-      if (!shouldHonorStructuredSend("listen", inboundText, toolsExecuted)) continue;
+      if (!shouldHonorStructuredSend("listen", inboundText, toolsExecuted, snapshot)) continue;
       const session = await createDoeDtcListenSession({ userId: user.id });
       turnState.listenUrl = doeDtcListenUrl(user.care_token, session.id);
       updates.listenUrl = turnState.listenUrl;
     }
     if ((item === "profile" || item === "tracker") && !turnState.profileUrl) {
       if (
-        !shouldHonorStructuredSend("profile", inboundText, toolsExecuted) &&
-        !shouldHonorStructuredSend("tracker", inboundText, toolsExecuted)
+        !shouldHonorStructuredSend("profile", inboundText, toolsExecuted, snapshot) &&
+        !shouldHonorStructuredSend("tracker", inboundText, toolsExecuted, snapshot)
       ) {
         continue;
       }
       turnState.profileUrl = buildPrivateAppLink({
         careToken: user.care_token,
         inboundText,
-        snapshot: ctx.snapshot,
+        snapshot,
       });
       updates.profileUrl = turnState.profileUrl;
     }
+    if (item === "guide" && !turnState.guideUrl) {
+      if (!shouldHonorStructuredSend("guide", inboundText, toolsExecuted, snapshot)) continue;
+      const match = findMatchingGuide(inboundText, snapshot.guides);
+      if (match) {
+        turnState.guideUrl = doeDtcGuideUrl(user.care_token, { guide: match.id });
+        updates.guideUrl = turnState.guideUrl;
+      }
+    }
+    if (item === "prepare") {
+      if (!shouldHonorStructuredSend("prepare", inboundText, toolsExecuted, snapshot)) continue;
+      if (turnState.prepareUrl) updates.prepareUrl = turnState.prepareUrl;
+    }
+    if (item === "vault") {
+      if (!shouldHonorStructuredSend("vault", inboundText, toolsExecuted, snapshot)) continue;
+      if (turnState.vaultUrl) updates.vaultUrl = turnState.vaultUrl;
+    }
     if (item === "session" && !turnState.sessionUrl && turnState.activeBrowserJobId) {
-      if (!shouldHonorStructuredSend("session", inboundText, toolsExecuted)) continue;
+      if (!shouldHonorStructuredSend("session", inboundText, toolsExecuted, snapshot)) continue;
       turnState.sessionUrl = doeDtcSessionUrl(user.care_token);
       updates.sessionUrl = turnState.sessionUrl;
     }

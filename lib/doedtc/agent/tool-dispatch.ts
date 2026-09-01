@@ -139,6 +139,7 @@ import {
   askedForPrivateAppLink,
   buildPrivateAppLink,
 } from "@/lib/doedtc/agent/deliverable-policy";
+import { appointmentNotesForProxy } from "@/lib/doedtc/doedtc-household-policy";
 import {
   REPEAT_TOOL_ERROR,
   shouldAllowProfileLink,
@@ -207,7 +208,13 @@ async function resolveAgentHouseholdSubject(params: {
   args: Record<string, unknown>;
   requireEdit?: boolean;
 }): Promise<
-  | { subjectUserId: string; subjectMemberId?: string; subjectMemberName?: string }
+  | {
+      subjectUserId: string;
+      subjectMemberId?: string;
+      subjectMemberName?: string;
+      proxied?: boolean;
+      nextStep?: string;
+    }
   | { error: string }
 > {
   const memberId = typeof params.args.member_id === "string" ? params.args.member_id.trim() : "";
@@ -233,6 +240,22 @@ async function resolveAgentHouseholdSubject(params: {
     subjectUserId: resolved.subjectUserId,
     subjectMemberId: resolved.subjectMember.id,
     subjectMemberName: resolved.subjectMember.full_name,
+    proxied: resolved.proxied,
+    nextStep: resolved.nextStep,
+  };
+}
+
+function withHouseholdProxyMeta(
+  output: Record<string, unknown>,
+  subject: { proxied?: boolean; nextStep?: string; subjectMemberName?: string },
+): Record<string, unknown> {
+  if (!subject.proxied) return output;
+  return {
+    ...output,
+    proxied: true,
+    logged_on: "parent_chart",
+    for_member: subject.subjectMemberName,
+    next_step: subject.nextStep,
   };
 }
 
@@ -370,15 +393,22 @@ async function executeDoeDtcToolInner(params: {
         startsAt: normalized.startsAt,
         timingNote: normalized.timingNote,
         location: normalized.location,
-        notes: normalized.notes,
+        notes: appointmentNotesForProxy({
+          notes: normalized.notes,
+          proxied: subject.proxied,
+          memberName: subject.subjectMemberName,
+        }),
       });
-      output = {
-        ok: true,
-        id: row.id,
-        title: row.title,
-        starts_at: row.starts_at,
-        timing_note: row.timing_note,
-      };
+      output = withHouseholdProxyMeta(
+        {
+          ok: true,
+          id: row.id,
+          title: row.title,
+          starts_at: row.starts_at,
+          timing_note: row.timing_note,
+        },
+        subject,
+      );
       const when = formatDoeDtcAppointmentWhen(row);
       await addDoeDtcMem0Fact({
         userId: ctx.user.id,
@@ -587,7 +617,10 @@ async function executeDoeDtcToolInner(params: {
       const medName = String(args.name ?? "").trim();
       if (!medName) throw new Error("Medication name is required.");
       const result = await appendDoeDtcMedication({ userId: subject.subjectUserId, name: medName });
-      output = { ok: true, name: result.name, added: result.added, subject: subject.subjectMemberName ?? "you" };
+      output = withHouseholdProxyMeta(
+        { ok: true, name: result.name, added: result.added, subject: subject.subjectMemberName ?? "you" },
+        subject,
+      );
     } else if (name === "update_medication") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,
@@ -621,7 +654,10 @@ async function executeDoeDtcToolInner(params: {
       const name = String(args.name ?? "").trim();
       if (!name) throw new Error("Condition name is required.");
       const result = await appendDoeDtcCondition({ userId: subject.subjectUserId, name });
-      output = { ok: true, name: result.name, added: result.added, subject: subject.subjectMemberName ?? "you" };
+      output = withHouseholdProxyMeta(
+        { ok: true, name: result.name, added: result.added, subject: subject.subjectMemberName ?? "you" },
+        subject,
+      );
     } else if (name === "update_condition") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,

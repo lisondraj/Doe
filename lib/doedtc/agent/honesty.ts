@@ -4,9 +4,11 @@ import {
   askedForDeliverable,
   askedForPrivateAppLink,
   buildPrivateAppLink,
+  findMatchingGuide,
+  interpretBuildIntent,
 } from "@/lib/doedtc/agent/deliverable-policy";
 import { createDoeDtcListenSession } from "@/lib/doedtc/doedtc-db";
-import { doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
+import { doeDtcGuideUrl, doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
 import { applyReminderSafetyNet } from "@/lib/doedtc/doedtc-reminder-intent";
 import { meaningfulToolSucceeded } from "@/lib/doedtc/agent/turn-integrity";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
@@ -22,7 +24,7 @@ const CLAIM_REGISTRY: Array<{
   id: string;
   claim: RegExp;
   requiredTools: string[];
-  repair?: "profile" | "tracker" | "listen" | "session" | "invite_correction" | "schedule";
+    repair?: "profile" | "tracker" | "listen" | "session" | "guide" | "invite_correction" | "schedule";
 }> = [
   {
     id: "profile_link",
@@ -37,6 +39,13 @@ const CLAIM_REGISTRY: Array<{
       /\b(send(?:ing)?|here'?s|share)\b.{0,48}\b(tracker|weight(?:\s+log)?|artifact)\b|\b(tracker|weight(?:\s+tracker)?)\b.{0,24}\b(link|url)\b/i,
     requiredTools: ["send_profile_link", "share_artifact", "create_profile_artifact"],
     repair: "tracker",
+  },
+  {
+    id: "guide_link",
+    claim:
+      /\b(send(?:ing)?|here'?s|share)\b.{0,48}\b(guide|how-?to|instructions)\b|\b(guide|how-?to|instructions)\b.{0,24}\b(link|url)\b/i,
+    requiredTools: ["create_guide", "send_guide_link"],
+    repair: "guide",
   },
   {
     id: "listen_link",
@@ -125,11 +134,17 @@ export async function reconcileReplyClaims(params: {
   listenUrl?: string;
   profileUrl?: string;
   sessionUrl?: string;
+  guideUrl?: string;
 }> {
   let replyText = params.replyText;
   let listenUrl = params.state.listenUrl;
   let profileUrl = params.state.profileUrl;
   let sessionUrl = params.state.sessionUrl;
+  let guideUrl = params.state.guideUrl;
+  const build = interpretBuildIntent({
+    inboundText: params.inboundText,
+    snapshot: params.snapshot,
+  });
 
   for (const entry of CLAIM_REGISTRY) {
     if (!replyClaimsAction(replyText, entry.claim)) continue;
@@ -141,12 +156,18 @@ export async function reconcileReplyClaims(params: {
       const session = await createDoeDtcListenSession({ userId: params.user.id });
       listenUrl = doeDtcListenUrl(params.user.care_token, session.id);
     } else if ((entry.repair === "profile" || entry.repair === "tracker") && !profileUrl) {
-      if (!askedForPrivateAppLink(params.inboundText)) continue;
+      if (!askedForPrivateAppLink(params.inboundText) && build !== "tracker") continue;
       profileUrl = buildPrivateAppLink({
         careToken: params.user.care_token,
         inboundText: params.inboundText,
         snapshot: params.snapshot,
       });
+    } else if (entry.repair === "guide" && !guideUrl) {
+      if (!askedForDeliverable(params.inboundText, "guide") && build !== "guide") continue;
+      const match = findMatchingGuide(params.inboundText, params.snapshot?.guides);
+      if (match) {
+        guideUrl = doeDtcGuideUrl(params.user.care_token, { guide: match.id });
+      }
     } else if (entry.repair === "session" && !sessionUrl && params.state.activeBrowserJobId) {
       if (!askedForDeliverable(params.inboundText, "session")) continue;
       sessionUrl = doeDtcSessionUrl(params.user.care_token);
@@ -173,7 +194,7 @@ export async function reconcileReplyClaims(params: {
 
   if (
     !profileUrl &&
-    askedForPrivateAppLink(params.inboundText) &&
+    (askedForPrivateAppLink(params.inboundText) || build === "tracker") &&
     !looksLikeRefusal(replyText) &&
     /\b(i(?:'ll| will) send|sending|here'?s|on (?:its|the) way)\b/i.test(replyText)
   ) {
@@ -196,6 +217,18 @@ export async function reconcileReplyClaims(params: {
   }
 
   if (
+    !guideUrl &&
+    (askedForDeliverable(params.inboundText, "guide") || build === "guide") &&
+    !looksLikeRefusal(replyText) &&
+    /\b(i(?:'ll| will) send|sending|here'?s|on (?:its|the) way)\b/i.test(replyText)
+  ) {
+    const match = findMatchingGuide(params.inboundText, params.snapshot?.guides);
+    if (match) {
+      guideUrl = doeDtcGuideUrl(params.user.care_token, { guide: match.id });
+    }
+  }
+
+  if (
     !sessionUrl &&
     params.state.activeBrowserJobId &&
     askedForDeliverable(params.inboundText, "session")
@@ -203,7 +236,7 @@ export async function reconcileReplyClaims(params: {
     sessionUrl = doeDtcSessionUrl(params.user.care_token);
   }
 
-  return { replyText, listenUrl, profileUrl, sessionUrl };
+  return { replyText, listenUrl, profileUrl, sessionUrl, guideUrl };
 }
 
 export function recordToolExecution(

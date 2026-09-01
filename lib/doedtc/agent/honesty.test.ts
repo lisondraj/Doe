@@ -33,7 +33,7 @@ describe("agent honesty invariants", () => {
     assert.equal(
       shouldRetryEmptyRefusal({
         replyText: "I can't edit PDFs directly.",
-        toolsExecuted: [{ name: "send_profile_link", ok: true }],
+        toolsExecuted: [{ name: "react_to_message", ok: true }],
       }),
       true,
     );

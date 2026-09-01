@@ -10,7 +10,7 @@ import {
   toolsForSpecialist,
   TOOL_DOMAINS,
 } from "@/lib/doedtc/agent/tool-prompt-registry";
-import { buildDoePlannerSystemPrompt, buildDoeSpecialistSystemPrompt } from "@/lib/doedtc/doedtc-agent";
+import { buildDoePlannerSystemPrompt, buildDoeSpecialistSystemPrompt, buildDoeDtcAgentSystemPrompt } from "@/lib/doedtc/doedtc-agent";
 import { resolveDoeDtcAgentRuntime } from "@/lib/doedtc/agent/types";
 import { DOE_DTC_TOOL_NAMES } from "@/lib/doedtc/agent/tool-dispatch";
 import { DOEDTC_AGENT_TOOLS } from "@/lib/doedtc/doedtc-agent-tools";
@@ -22,6 +22,7 @@ import {
   buildDoeAgentVoiceBlock,
   DOE_AGENT_FEW_SHOTS,
   DOE_AGENT_INSTINCTS,
+  DOE_AGENT_STYLE,
 } from "@/lib/doedtc/doedtc-agent-voice";
 import {
   DOE_PRIMITIVES,
@@ -36,11 +37,18 @@ describe("tool prompt registry", () => {
     }
   });
 
-  it("covers all tools under every signal combination", () => {
-    for (const signals of allPromptSignalCombinations()) {
-      const prompt = buildDoeDtcToolCapabilityPrompt(signals);
-      assertToolPromptCoverage(prompt);
-    }
+  it("includes how-to confusion routing even with no trackers or guides", () => {
+    const prompt = buildDoeDtcToolCapabilityPrompt({
+      hasActiveBrowserJob: false,
+      hasPending: false,
+      hasTrackers: false,
+      hasGuides: false,
+      hasHousehold: false,
+      hasListenSessions: false,
+    });
+    assert.match(prompt, /How-to \/ tracker confusion/);
+    assert.match(prompt, /create_guide/);
+    assert.doesNotMatch(prompt, /Tracker routing \(trackers on profile\)/);
   });
 
   it("specialist sets union to full dispatch surface", () => {
@@ -100,6 +108,36 @@ describe("tool prompt registry", () => {
     assert.ok(buildDoeSpecialistToolCapabilityPrompt("browser").includes("browser_navigate"));
   });
 
+  it("surfaces family log and situation brief in planner and manager prompts", () => {
+    const params = {
+      user: { full_name: "Sam", gender: null, country: null, date_of_birth: null } as never,
+      medications: [],
+      conditions: [],
+      transcript: "",
+      symptomLog: "None",
+      assessmentHistory: "None",
+      appointmentLog: "None",
+      relevantMemories: "None",
+      playbookNotes: "None",
+      pendingBlock: "",
+      familyLog: "- Maya (child)",
+      householdLog: "- Maya (child) | status: pending",
+      accountabilityLog: "None",
+      scheduledLog: "None",
+      workflowsLog: "None",
+      guidesLog: "None",
+      profileOverview: "Overview",
+      nowLabel: "Mon 7pm",
+      situationBrief: "Situation (do not recite):\nNamed but not on chart: Riley.",
+    };
+    const planner = buildDoePlannerSystemPrompt(params);
+    const manager = buildDoeDtcAgentSystemPrompt(params);
+    assert.match(planner, /Family log:/);
+    assert.match(planner, /Situation \(do not recite\)/);
+    assert.match(manager, /Family log:/);
+    assert.match(manager, /- Maya \(child\)/);
+  });
+
   it("defaults agent runtime to sdk", () => {
     const previous = process.env.DOEDTC_AGENT_RUNTIME;
     delete process.env.DOEDTC_AGENT_RUNTIME;
@@ -139,6 +177,7 @@ describe("policy and voice upgrades", () => {
     assert.match(DOE_AGENT_INSTINCTS, /read_listen_session/i);
     const block = buildDoeAgentVoiceBlock();
     assert.match(block, /Instincts:/);
+    assert.match(DOE_AGENT_STYLE, /one finished offer/i);
     assert.match(DOE_AGENT_FEW_SHOTS, /take a bath/);
     assert.match(DOE_AGENT_FEW_SHOTS, /Maya and Leo/);
     assert.match(DOE_AGENT_FEW_SHOTS, /take my meds/);

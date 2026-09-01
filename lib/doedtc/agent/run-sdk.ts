@@ -21,6 +21,7 @@ import {
   type DoeDtcAgentTurnResult,
 } from "@/lib/doedtc/doedtc-agent";
 import { buildDoeAgentPromptSignals } from "@/lib/doedtc/agent/tool-prompt-registry";
+import { buildSituationBrief, formatSituationBriefBlock } from "@/lib/doedtc/agent/situation-brief";
 import { executeAgentPendingCommit } from "@/lib/doedtc/doedtc-agent-commit";
 import {
   addDoeDtcMem0PlaybookNote,
@@ -152,6 +153,17 @@ async function loadRunContext(params: {
     pendingRow,
   });
 
+  const situationBrief = formatSituationBriefBlock(
+    buildSituationBrief({
+      inboundText: params.inboundText,
+      viewerUserId: params.user.id,
+      viewerName: params.user.full_name,
+      members: snapshot.household.members,
+      artifacts: snapshot.artifacts,
+      guides: snapshot.guides,
+    }),
+  );
+
   const promptParams = {
     user: params.user,
     medications: snapshot.medications,
@@ -180,6 +192,7 @@ async function loadRunContext(params: {
     profileOverview: formatDoeDtcProfileOverview(snapshot),
     nowLabel: agentNowLabel(timezone),
     promptSignals,
+    situationBrief,
   };
 
   const promptSplit = buildSpecialistInstructionMap({
@@ -400,6 +413,7 @@ async function finalizeSdkRun(params: {
   params.loaded.turnState.listenUrl = reconciled.listenUrl ?? params.loaded.turnState.listenUrl;
   params.loaded.turnState.profileUrl = reconciled.profileUrl ?? params.loaded.turnState.profileUrl;
   params.loaded.turnState.sessionUrl = reconciled.sessionUrl ?? params.loaded.turnState.sessionUrl;
+  params.loaded.turnState.guideUrl = reconciled.guideUrl ?? params.loaded.turnState.guideUrl;
 
   const turnResult = assembleTurnResult({
     replyText: reconciled.replyText || replyText,

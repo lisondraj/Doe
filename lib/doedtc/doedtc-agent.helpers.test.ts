@@ -329,9 +329,23 @@ test("isDegenerateTurn flags empty filler replies without meaningful tools", () 
   assert.equal(
     isDegenerateTurn({
       replyText: "Got it.",
-      toolsExecuted: [{ name: "send_profile_link", ok: true }],
+      toolsExecuted: [{ name: "react_to_message", ok: true }],
     }),
     true,
+  );
+  assert.equal(
+    isDegenerateTurn({
+      replyText: "Got it.",
+      toolsExecuted: [{ name: "send_profile_link", ok: true }],
+    }),
+    false,
+  );
+  assert.equal(
+    isDegenerateTurn({
+      replyText: "Sending your guide.",
+      toolsExecuted: [{ name: "send_guide_link", ok: true }],
+    }),
+    false,
   );
   assert.equal(
     isDegenerateTurn({
@@ -352,7 +366,7 @@ test("shouldRetryEmptyRefusal ignores no-op tool calls", () => {
   assert.equal(
     shouldRetryEmptyRefusal({
       replyText: "I can't take a screenshot directly.",
-      toolsExecuted: [{ name: "send_profile_link", ok: true }],
+      toolsExecuted: [{ name: "react_to_message", ok: true }],
     }),
     true,
   );

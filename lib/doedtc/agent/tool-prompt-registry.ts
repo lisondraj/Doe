@@ -259,7 +259,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   use_thread_reply:
     "use_thread_reply — occasionally reply in-thread for direct answers (~1 in 3 eligible turns).",
   send_profile_link:
-    "send_profile_link — private app/tracker link ONLY when they asked for that link. Pass tab/artifact for a tracker. Never send after assessment, logging, or as a consolation prize.",
+    "send_profile_link — private app/tracker link when they asked (send/show/where is/need + tracker or profile). Pass tab/artifact for a tracker. Never send after assessment, logging, or as a consolation prize.",
 };
 
 function tier2Enabled(signals: DoeAgentPromptSignals | undefined, key: keyof DoeAgentPromptSignals): boolean {
@@ -284,6 +284,12 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
 - New tracker only when no matching title exists → create_profile_artifact.`);
   }
 
+  blocks.push(`How-to / tracker confusion (always):
+- "How do I take X" / don't know how → list_guides first; reuse + send_guide_link if a match exists, otherwise create_guide and send the link. Ask once if they want it saved.
+- "Where is my tracker" / need / show me a tracker → send_profile_link if a matching tracker exists; otherwise create_profile_artifact then send the link.
+- "Help me track X" / track my X with no matching tracker → create_profile_artifact, then send the link.
+- Primary action first, then at most one complete offer (save the guide, same for a sibling).`);
+
   if (tier2Enabled(signals, "hasGuides")) {
     blocks.push(`Guide routing (guides exist):
 - create_guide → link sent, saved_at null, pending save offer registered.
@@ -293,9 +299,12 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
 
   if (tier2Enabled(signals, "hasHousehold")) {
     blocks.push(`Household routing (family on chart):
-- Names on chart → pass member_name on meds, symptoms, appointments, habits, trackers.
-- Young kids without phones → text parent (schedule_text / start_habit_workflow to owner phone).
-- Kids with phones → text them; parent gets miss notify on habit workflows.`);
+- Names on chart → pass member_name on writes for that person (meds, symptoms, appointments, habits, trackers).
+- Joined members → act on their chart / text them. Do not re-invite.
+- Pending + phone → schedule_text / start_habit_workflow to them; profile writes log on the parent chart with a member note, then one invite offer (confirm_once unless they already asked).
+- Pending, no phone → habits text the parent; profile writes log on the parent chart or ask for a number. Do not invent SMS.
+- Unknown name → one question: add them with log_family_member. Do not invent a flow.
+- Never auto-text siblings or unmentioned members. At most one sibling offer after a child habit.`);
   }
 
   if (tier2Enabled(signals, "hasListenSessions")) {
@@ -376,12 +385,13 @@ export function buildDoeSpecialistToolCapabilityPrompt(
     if (specialist === "healthRecord") {
       return (
         block.includes("Tracker") ||
+        block.includes("How-to") ||
         block.includes("Listen") ||
         block.includes("Household") ||
         block.includes("Pending")
       );
     }
-    if (specialist === "guides") return block.includes("Guide");
+    if (specialist === "guides") return block.includes("Guide") || block.includes("How-to");
     return false;
   });
 

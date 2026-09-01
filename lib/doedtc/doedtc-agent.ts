@@ -45,6 +45,7 @@ import {
   looksCapabilityHedge,
 } from "@/lib/doedtc/doedtc-agent-voice";
 import { DOE_AGENT_ACTION_POLICY, DOE_AGENT_RESOLUTION_POLICY } from "@/lib/doedtc/doedtc-agent-policy";
+import { buildSituationBrief, formatSituationBriefBlock } from "@/lib/doedtc/agent/situation-brief";
 import { DOE_AGENT_PRIMITIVES_PROMPT } from "@/lib/doedtc/doedtc-primitives";
 import {
   buildScheduledTextPendingArgs,
@@ -387,7 +388,13 @@ async function resolveAgentHouseholdSubject(params: {
   args: Record<string, unknown>;
   requireEdit?: boolean;
 }): Promise<
-  | { subjectUserId: string; subjectMemberId?: string; subjectMemberName?: string }
+  | {
+      subjectUserId: string;
+      subjectMemberId?: string;
+      subjectMemberName?: string;
+      proxied?: boolean;
+      nextStep?: string;
+    }
   | { error: string }
 > {
   const memberId = typeof params.args.member_id === "string" ? params.args.member_id.trim() : "";
@@ -413,6 +420,8 @@ async function resolveAgentHouseholdSubject(params: {
     subjectUserId: resolved.subjectUserId,
     subjectMemberId: resolved.subjectMember.id,
     subjectMemberName: resolved.subjectMember.full_name,
+    proxied: resolved.proxied,
+    nextStep: resolved.nextStep,
   };
 }
 
@@ -489,10 +498,12 @@ export type DoeDtcAgentPromptParams = {
   profileOverview: string;
   nowLabel: string;
   promptSignals?: DoeAgentPromptSignals;
+  situationBrief?: string;
 };
 
 function buildDoeAgentContextBlock(params: DoeDtcAgentPromptParams): string {
   return `Now (user local time): ${params.nowLabel}.
+${params.situationBrief ? `\n${params.situationBrief}\n` : ""}
 ${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
 Playbook (how you've corrected yourself before):
 ${params.playbookNotes}
@@ -517,6 +528,9 @@ ${params.appointmentLog}
 
 Household (shared family):
 ${params.householdLog}
+
+Family log:
+${params.familyLog}
 
 Accountability pacts:
 ${params.accountabilityLog}
@@ -900,6 +914,17 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     pendingRow,
   });
 
+  const situationBrief = formatSituationBriefBlock(
+    buildSituationBrief({
+      inboundText: params.inboundText,
+      viewerUserId: params.user.id,
+      viewerName: params.user.full_name,
+      members: snapshot.household.members,
+      artifacts: snapshot.artifacts,
+      guides: snapshot.guides,
+    }),
+  );
+
   const systemPrompt = buildDoeDtcAgentSystemPrompt({
     user: params.user,
     medications: snapshot.medications,
@@ -928,6 +953,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     profileOverview: formatDoeDtcProfileOverview(snapshot),
     nowLabel: agentNowLabel(timezone),
     promptSignals,
+    situationBrief,
   }) + (reminderDirective ? `\n\n${reminderDirective}` : "");
 
   const messages: ChatMessage[] = [
@@ -1032,6 +1058,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       turnState.listenUrl = reconciled.listenUrl ?? turnState.listenUrl;
       turnState.profileUrl = reconciled.profileUrl ?? turnState.profileUrl;
       turnState.sessionUrl = reconciled.sessionUrl ?? turnState.sessionUrl;
+      turnState.guideUrl = reconciled.guideUrl ?? turnState.guideUrl;
       replyText = reconciled.replyText || replyText;
 
       if (!replyText?.trim()) {
@@ -1110,6 +1137,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   turnState.listenUrl = reconciled.listenUrl ?? turnState.listenUrl;
   turnState.profileUrl = reconciled.profileUrl ?? turnState.profileUrl;
   turnState.sessionUrl = reconciled.sessionUrl ?? turnState.sessionUrl;
+  turnState.guideUrl = reconciled.guideUrl ?? turnState.guideUrl;
 
   messages.push({
     role: "system",

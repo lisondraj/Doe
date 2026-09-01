@@ -22,7 +22,7 @@ import {
   isHouseholdMemberAdult,
   memberCurrentlySharesWithHousehold,
 } from "@/lib/doedtc/doedtc-household";
-import { listAccountabilityPactViewsForProfile } from "@/lib/doedtc/doedtc-accountability-db";
+import { parentProxyNextStep } from "@/lib/doedtc/doedtc-household-policy";
 import { listScheduledTextsForUser } from "@/lib/doedtc/doedtc-scheduled-db";
 import { listActiveWorkflowsForUser } from "@/lib/doedtc/doedtc-workflows";
 import { getDoeDtcGuideById, listSavedGuidesForUser } from "@/lib/doedtc/doedtc-guides-db";
@@ -2013,10 +2013,12 @@ export async function resolveDoeDtcHouseholdSubject(params: {
       subjectMember: DoeDtcHouseholdMemberRow;
       canView: boolean;
       canEdit: boolean;
+      proxied?: boolean;
+      nextStep?: string;
     }
   | { error: string }
 > {
-  const { household, members, consents } = await loadDoeDtcHouseholdAccessContext(params.viewerUserId);
+  const { household, members } = await loadDoeDtcHouseholdAccessContext(params.viewerUserId);
   if (!household) return { error: "No household found." };
 
   let subjectMember: DoeDtcHouseholdMemberRow | null = null;
@@ -2029,7 +2031,12 @@ export async function resolveDoeDtcHouseholdSubject(params: {
   if (!subjectMember) return { error: "Family member not found in your household." };
   if (!subjectMember.user_id) {
     return {
-      error: `${subjectMember.full_name} has not joined Doe yet. Offer to send a family invite.`,
+      subjectUserId: params.viewerUserId,
+      subjectMember,
+      canView: true,
+      canEdit: true,
+      proxied: true,
+      nextStep: parentProxyNextStep(subjectMember),
     };
   }
 

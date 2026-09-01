@@ -1,11 +1,13 @@
-import { askedForPrivateAppLink } from "@/lib/doedtc/agent/deliverable-policy";
+import {
+  askedForPrivateAppLink,
+  interpretBuildIntent,
+} from "@/lib/doedtc/agent/deliverable-policy";
 import { DOEDTC_LINQ } from "@/lib/doedtc/doedtc-copy";
 import { AGENT_TURN_FALLBACK_REPLY } from "@/lib/doedtc/doedtc-turn-lifecycle";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
 import type { DoeDtcToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 
 export const NO_OP_TOOLS = new Set([
-  "send_profile_link",
   "react_to_message",
   "use_thread_reply",
   "read_profile",
@@ -123,13 +125,16 @@ export function shouldAllowProfileLink(params: {
   inboundText: string;
   state: Pick<
     DoeDtcToolTurnState,
-    "assessmentRan" | "guideUrl" | "prepareUrl" | "artifactShareUrl"
+    "assessmentRan" | "guideUrl" | "prepareUrl" | "artifactShareUrl" | "profileUrl"
   >;
   profileLinkCalls: number;
 }): boolean {
   if (params.profileLinkCalls >= 1) return false;
-  void params.state;
-  return askedForPrivateAppLink(params.inboundText);
+  if (askedForPrivateAppLink(params.inboundText)) return true;
+  return (
+    interpretBuildIntent({ inboundText: params.inboundText }) === "tracker" &&
+    Boolean(params.state.profileUrl)
+  );
 }
 
 export function compactTranscriptForAgent(
