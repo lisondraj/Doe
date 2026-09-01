@@ -7,6 +7,12 @@ const CONFIRMATION_BODY_RE =
   /\b(?:absolutely|sure|of course|got it|okay|ok|done)[,.\s!]*(?:i(?:'ll| will)|i can)\s+(?:text|remind|ping)\s+you\b/i;
 const WILL_REMIND_RE = /\b(?:i(?:'ll| will)|i can)\s+(?:text|remind|ping)\s+you\b/i;
 
+const POLITE_PREFIX_RE =
+  /^(?:hey(?:\s+doe)?|hi(?:\s+doe)?|please|can you|could you|would you|will you)[,.\s]+/i;
+
+const REMIND_WRAPPER_RE =
+  /^(?:please\s+)?(?:remind(?:\s+me(?:\s+to)?|\s+to)|text\s+me(?:\s+(?:to|about|with))?|ping\s+me(?:\s+to)?|don'?t forget(?:\s+to)?|remember(?:\s+to)?)\s+/i;
+
 function stripTimePhrases(text: string): string {
   return text
     .replace(RELATIVE_TIME_RE, " ")
@@ -26,32 +32,58 @@ export function looksLikeConfirmationBody(text: string): boolean {
   return false;
 }
 
-export function stripRemindWrapper(text: string): string {
-  let body = text.trim();
-  body = body.replace(/^(?:please\s+)?remind(?:\s+me)?(?:\s+to)?\s+/i, "");
-  body = body.replace(/^(?:please\s+)?text\s+me(?:\s+(?:to|about|with))?\s+/i, "");
-  body = stripTimePhrases(body);
-  body = body.replace(/\b(?:with\s+a\s+reminder|with\s+a\s+timer|a\s+reminder)\b/gi, "").trim();
-  body = body.replace(/^[,.\-–—:\s]+/, "").replace(/[,.\-–—:\s]+$/, "").trim();
+export function looksLikeRemindCommand(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  return /(?:remind(?:\s+me)?|text\s+me|ping\s+me|don'?t forget|remember to)\b/i.test(trimmed);
+}
+
+/** The thing to remember — never the ask, timer, or confirmation. */
+export function toReminderPayload(text: string): string {
+  let body = text.trim().replace(/^["'“”]+|["'“”]+$/g, "").trim();
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    const before = body;
+    body = body.replace(POLITE_PREFIX_RE, "").trim();
+    body = stripTimePhrases(body);
+    body = body.replace(REMIND_WRAPPER_RE, "").trim();
+    body = body.replace(/^to\s+/i, "").trim();
+    body = body.replace(/\b(?:with\s+a\s+reminder|with\s+a\s+timer|a\s+reminder)\b/gi, "").trim();
+    body = body.replace(/^[,.\-–—:\s]+/, "").replace(/[,.\-–—:\s]+$/, "").trim();
+    if (body === before) break;
+  }
   return body;
 }
 
+export function stripRemindWrapper(text: string): string {
+  return toReminderPayload(text);
+}
+
+function isEmptyReminderLabel(text: string): boolean {
+  if (!text) return true;
+  if (/^(?:a|an)?\s*reminder$/i.test(text)) return true;
+  if (/^(?:me|to|us|please)$/i.test(text)) return true;
+  return looksLikeConfirmationBody(text);
+}
+
 export function extractReminderBody(text: string): string | null {
+  const payload = toReminderPayload(text);
+  if (payload && !isEmptyReminderLabel(payload) && !looksLikeRemindCommand(payload)) {
+    return payload;
+  }
+
   const textMeMatch = text.match(/\btext\s+me(?:\s+with)?\s+(.+)$/i);
   if (textMeMatch) {
-    let candidate = stripTimePhrases(textMeMatch[1]!.trim());
-    candidate = candidate.replace(/\b(?:a|an)\s+reminder\b/gi, "").trim();
-    if (candidate && !/^(?:a|an)?\s*reminder$/i.test(candidate) && !looksLikeConfirmationBody(candidate)) {
+    const candidate = toReminderPayload(textMeMatch[1]!);
+    if (candidate && !isEmptyReminderLabel(candidate) && !looksLikeRemindCommand(candidate)) {
       return candidate;
     }
   }
 
-  const remindToMatch = text.match(/\bremind(?:\s+me)?\s+(?:to\s+)?(.+)$/i);
+  const remindToMatch = text.match(/\bremind(?:\s+me(?:\s+to)?|\s+to)\s+(.+)$/i);
   if (remindToMatch) {
-    let body = stripTimePhrases(remindToMatch[1]!.trim());
-    body = body.replace(/\b(?:with\s+a\s+reminder|with\s+a\s+timer)\b/gi, "").trim();
-    if (body && !/^(?:a|an)?\s*reminder$/i.test(body) && !looksLikeConfirmationBody(body)) {
-      return body;
+    const candidate = toReminderPayload(remindToMatch[1]!);
+    if (candidate && !isEmptyReminderLabel(candidate) && !looksLikeRemindCommand(candidate)) {
+      return candidate;
     }
   }
 
@@ -59,43 +91,39 @@ export function extractReminderBody(text: string): string | null {
     return null;
   }
 
-  const stripped = stripRemindWrapper(text);
-  if (
-    stripped &&
-    !/^(?:a|an)?\s*reminder$/i.test(stripped) &&
-    !looksLikeConfirmationBody(stripped) &&
-    stripped.toLowerCase() !== text.trim().toLowerCase()
-  ) {
-    return stripped;
-  }
-
   return null;
 }
 
 function fallbackReminderLabel(intent?: string): string {
   const trimmed = intent?.trim();
-  if (trimmed && trimmed.toLowerCase() !== "reminder") return trimmed;
+  if (trimmed && trimmed.toLowerCase() !== "reminder" && !looksLikeRemindCommand(trimmed)) {
+    return trimmed;
+  }
   return "Reminder";
 }
 
-/** Reminder payload is the thing to remember — never the confirmation sentence. */
+/** Reminder payload is the thing to remember — never the confirmation sentence or the ask. */
 export function sanitizeScheduledTextBody(params: {
   body: string;
   inboundText?: string;
   intent?: string;
 }): string {
-  let body = params.body.trim();
   const fromInbound = params.inboundText ? extractReminderBody(params.inboundText) : null;
+  let body = toReminderPayload(params.body);
 
-  if (!body || looksLikeConfirmationBody(body)) {
-    body = fromInbound || stripRemindWrapper(params.body) || fallbackReminderLabel(params.intent);
-  } else if (/^(?:please\s+)?(?:remind(?:\s+me)?|text\s+me)\b/i.test(body)) {
-    body = stripRemindWrapper(body) || fromInbound || fallbackReminderLabel(params.intent);
+  if (isEmptyReminderLabel(body) || looksLikeRemindCommand(body)) {
+    body = fromInbound || fallbackReminderLabel(params.intent);
+  } else if (fromInbound && looksLikeRemindCommand(params.body) && !looksLikeRemindCommand(fromInbound)) {
+    body = fromInbound;
   }
 
-  if (!body || looksLikeConfirmationBody(body) || /^(?:a|an)?\s*reminder$/i.test(body)) {
+  if (isEmptyReminderLabel(body) || looksLikeRemindCommand(body)) {
     body = fromInbound || fallbackReminderLabel(params.intent);
   }
 
-  return body.trim();
+  body = toReminderPayload(body);
+  if (isEmptyReminderLabel(body) || looksLikeRemindCommand(body)) {
+    return fallbackReminderLabel(params.intent);
+  }
+  return body;
 }

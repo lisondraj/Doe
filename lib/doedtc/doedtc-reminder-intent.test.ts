@@ -85,3 +85,40 @@ test("sanitizeScheduledTextBody never sends the confirmation or raw remind-me wr
     "hi",
   );
 });
+
+test("sanitizeScheduledTextBody strips restated asks even without inbound", () => {
+  assert.equal(
+    sanitizeScheduledTextBody({
+      body: "remind to take ozempic",
+      intent: "reminder",
+    }),
+    "take ozempic",
+  );
+  assert.equal(
+    sanitizeScheduledTextBody({
+      body: "Can you remind to take ozempic in 10 seconds",
+      intent: "reminder",
+    }),
+    "take ozempic",
+  );
+  assert.equal(
+    sanitizeScheduledTextBody({
+      body: "in 10 seconds remind to take ozempic",
+      intent: "reminder",
+    }),
+    "take ozempic",
+  );
+  assert.equal(
+    sanitizeScheduledTextBody({
+      body: "remind me to take ozempic",
+      inboundText: "remind to take ozempic in 10 seconds",
+    }),
+    "take ozempic",
+  );
+});
+
+test("parseReminderIntent payload is the task not the remind-command", () => {
+  const intent = parseReminderIntent("remind to take ozempic in 10 seconds");
+  assert.equal(intent.matched, true);
+  assert.equal(intent.body, "take ozempic");
+});
