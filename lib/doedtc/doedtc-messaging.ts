@@ -39,16 +39,26 @@ import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 const OPT_OUT_KEYWORDS = new Set(["STOP", "UNSUBSCRIBE", "OPTOUT", "CANCEL", "END", "QUIT"]);
 
+type LinqWebhookMediaPart = {
+  type?: string;
+  value?: string;
+  url?: string;
+  mime_type?: string;
+  filename?: string;
+  id?: string;
+  attachment_id?: string;
+};
+
 type LinqWebhookPayload = {
   event_type?: string;
   type?: string;
   event?: string;
   data?: {
     id?: string;
-    parts?: Array<{ type?: string; value?: string; url?: string; mime_type?: string; filename?: string }>;
+    parts?: LinqWebhookMediaPart[];
     message?: {
       id?: string;
-      parts?: Array<{ type?: string; value?: string; url?: string; mime_type?: string; filename?: string }>;
+      parts?: LinqWebhookMediaPart[];
       chat_id?: string;
       from?: string;
     };
@@ -58,17 +68,21 @@ type LinqWebhookPayload = {
     chat?: { id?: string };
     chat_id?: string;
   };
-  message?: { id?: string; parts?: Array<{ type?: string; value?: string; url?: string; mime_type?: string; filename?: string }> };
+  message?: { id?: string; parts?: LinqWebhookMediaPart[] };
   from?: string;
 };
 
 export type InboundMediaAttachment = {
-  url: string;
+  url?: string;
   mime?: string;
   filename?: string;
+  attachmentId?: string;
 };
 
-function inboundParts(payload: unknown): Array<{ type?: string; value?: string; url?: string; mime_type?: string; filename?: string }> {
+const ATTACHMENT_UUID_RE =
+  /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+
+function inboundParts(payload: unknown): LinqWebhookMediaPart[] {
   const body = payload as LinqWebhookPayload;
   return (
     body.data?.parts ??
@@ -78,15 +92,31 @@ function inboundParts(payload: unknown): Array<{ type?: string; value?: string; 
   );
 }
 
+export function attachmentIdFromMediaPart(part: {
+  id?: string;
+  attachment_id?: string;
+  url?: string;
+}): string | undefined {
+  const direct = part.attachment_id?.trim() || part.id?.trim();
+  if (direct) return direct;
+  const fromUrl = part.url?.match(ATTACHMENT_UUID_RE)?.[0];
+  return fromUrl;
+}
+
 export function extractInboundMedia(payload: unknown): InboundMediaAttachment[] {
   return inboundParts(payload)
-    .filter((part) => part.type === "media" && typeof part.url === "string")
-    .map((part) => ({
-      url: part.url!.trim(),
-      mime: typeof part.mime_type === "string" ? part.mime_type : undefined,
-      filename: typeof part.filename === "string" ? part.filename : undefined,
-    }))
-    .filter((part) => part.url.length > 0);
+    .filter((part) => part.type === "media")
+    .map((part) => {
+      const url = typeof part.url === "string" ? part.url.trim() : "";
+      const attachmentId = attachmentIdFromMediaPart(part);
+      return {
+        url: url || undefined,
+        mime: typeof part.mime_type === "string" ? part.mime_type : undefined,
+        filename: typeof part.filename === "string" ? part.filename : undefined,
+        attachmentId,
+      };
+    })
+    .filter((part) => Boolean(part.url || part.attachmentId));
 }
 
 export function extractInboundText(payload: unknown): string {
@@ -919,17 +949,35 @@ export async function processDoeDtcInboundWebhook(params: {
   let agentInboundText = text;
   let inboundFileIds: string[] = [];
   if (inboundMedia.length > 0) {
-    const { ingestInboundDoeDtcMedia } = await import("@/lib/doedtc/doedtc-files");
-    inboundFileIds = await ingestInboundDoeDtcMedia({ user, attachments: inboundMedia });
-    if (inboundFileIds.length > 0) {
-      agentInboundText = [text, `[attachments: ${inboundFileIds.join(", ")}]`].filter(Boolean).join("\n");
+    try {
+      const { ingestInboundDoeDtcMedia } = await import("@/lib/doedtc/doedtc-files");
+      inboundFileIds = await ingestInboundDoeDtcMedia({ user, attachments: inboundMedia });
+    } catch (error) {
+      console.error(
+        "[doedtc] inbound media ingest failed:",
+        error instanceof Error ? error.message : String(error),
+      );
     }
+  }
+
+  if (inboundFileIds.length === 0) {
+    const { listRecentDoeDtcFiles } = await import("@/lib/doedtc/doedtc-files-db");
+    const { bindRecentInboundFileIds } = await import("@/lib/doedtc/agent/attachments");
+    inboundFileIds = bindRecentInboundFileIds({
+      inboundText: text,
+      thisTurnFileIds: inboundFileIds,
+      recentFiles: await listRecentDoeDtcFiles(user.id, 8),
+    });
+  }
+
+  if (inboundFileIds.length > 0) {
+    agentInboundText = [text, `[attachments: ${inboundFileIds.join(", ")}]`].filter(Boolean).join("\n");
   }
 
   if (isDuplicateWebhook) {
     // First attempt may have logged the message but failed before ingest/agent finished.
-    if (inboundMedia.length === 0) return;
-    if (inboundFileIds.length === 0) return;
+    if (inboundMedia.length === 0 && inboundFileIds.length === 0) return;
+    if (inboundMedia.length > 0 && inboundFileIds.length === 0) return;
   }
 
   if (isHiDoeMessage(text)) {

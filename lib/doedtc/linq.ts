@@ -199,6 +199,20 @@ export async function linqSendMedia(params: {
   });
 }
 
+export type LinqAttachmentMeta = {
+  id: string;
+  filename?: string;
+  content_type?: string;
+  download_url?: string;
+  size_bytes?: number;
+};
+
+export async function linqGetAttachment(attachmentId: string): Promise<LinqAttachmentMeta> {
+  return linqRequest<LinqAttachmentMeta>(`/v3/attachments/${attachmentId}`, {
+    method: "GET",
+  });
+}
+
 export type LinqContactCard = {
   phone_number: string;
   first_name: string;

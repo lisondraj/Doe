@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  bindRecentInboundFileIds,
   enrichTranscriptBodiesForAgent,
   formatDoeDtcFileLogLine,
   inboundHasAttachments,
@@ -79,5 +80,36 @@ describe("attachments", () => {
 
   it("stripEmDash removes em dash characters", () => {
     assert.equal(stripEmDash("A1C is 7.8 % — high"), "A1C is 7.8 % - high");
+  });
+
+  it("binds a fresh inbound photo when the user refers to it", () => {
+    const bound = bindRecentInboundFileIds({
+      inboundText: "It's up there",
+      thisTurnFileIds: [],
+      recentFiles: [file({ id: "file-1", source: "inbound", created_at: "2026-09-01T16:26:44.000Z" })],
+      nowMs: Date.parse("2026-09-01T16:26:53.000Z"),
+    });
+    assert.deepEqual(bound, ["file-1"]);
+  });
+
+  it("does not bind stale files or unrelated text", () => {
+    assert.deepEqual(
+      bindRecentInboundFileIds({
+        inboundText: "It's up there",
+        thisTurnFileIds: [],
+        recentFiles: [file({ id: "file-1", source: "inbound", created_at: "2026-08-01T16:26:44.000Z" })],
+        nowMs: Date.parse("2026-09-01T16:26:53.000Z"),
+      }),
+      [],
+    );
+    assert.deepEqual(
+      bindRecentInboundFileIds({
+        inboundText: "How much water should I drink",
+        thisTurnFileIds: [],
+        recentFiles: [file({ id: "file-1", source: "inbound", created_at: "2026-09-01T16:26:44.000Z" })],
+        nowMs: Date.parse("2026-09-01T16:26:53.000Z"),
+      }),
+      [],
+    );
   });
 });

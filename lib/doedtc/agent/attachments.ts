@@ -43,6 +43,33 @@ export function inboundHasAttachments(text: string): boolean {
   return INBOUND_ATTACHMENTS_RE.test(text) || BARE_ATTACHMENT_BODY.test(text.trim());
 }
 
+export const RECENT_INBOUND_BIND_MS = 20 * 60_000;
+
+const REFERS_TO_PRIOR_ATTACHMENT_RE =
+  /\b(labs?|results?|chart|photo|picture|image|scan|report|attachment|here it is|up there|add that|got this|i sent)\b/i;
+
+export function bindRecentInboundFileIds(params: {
+  inboundText: string;
+  thisTurnFileIds: string[];
+  recentFiles: Array<Pick<DoeDtcFileRow, "id" | "source" | "created_at">>;
+  nowMs?: number;
+}): string[] {
+  if (params.thisTurnFileIds.length > 0) return params.thisTurnFileIds;
+  if (inboundHasAttachments(params.inboundText)) return params.thisTurnFileIds;
+  if (!REFERS_TO_PRIOR_ATTACHMENT_RE.test(params.inboundText)) return params.thisTurnFileIds;
+
+  const now = params.nowMs ?? Date.now();
+  const newest = params.recentFiles
+    .filter(
+      (file) =>
+        file.source === "inbound" &&
+        now - new Date(file.created_at).getTime() <= RECENT_INBOUND_BIND_MS,
+    )
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+
+  return newest ? [newest.id] : params.thisTurnFileIds;
+}
+
 export function stripEmDash(text: string): string {
   return text.replace(/\u2014/g, "-").replace(/\s+-\s+/g, " - ");
 }
@@ -215,8 +242,12 @@ export async function loadDoeDtcAttachmentContext(params: {
   inboundFileIds?: string[];
 }): Promise<DoeDtcAttachmentContext> {
   const parsedIds = parseInboundAttachmentIds(params.inboundText);
-  const thisTurnFileIds = Array.from(new Set([...(params.inboundFileIds ?? []), ...parsedIds]));
   const recentFiles = await listRecentDoeDtcFiles(params.userId, 12);
+  const thisTurnFileIds = bindRecentInboundFileIds({
+    inboundText: params.inboundText,
+    thisTurnFileIds: Array.from(new Set([...(params.inboundFileIds ?? []), ...parsedIds])),
+    recentFiles,
+  });
 
   const filesById = new Map(recentFiles.map((file) => [file.id, file]));
   for (const fileId of thisTurnFileIds) {
@@ -233,7 +264,15 @@ export async function loadDoeDtcAttachmentContext(params: {
     .filter((row): row is DoeDtcFileRow => Boolean(row));
 
   const visionImageUrls = await resolveVisionUrlsForFiles(thisTurnFiles);
-  const inboundTextForModel = replaceInboundAttachmentMarkers(params.inboundText, filesById);
+  let inboundTextForModel = replaceInboundAttachmentMarkers(params.inboundText, filesById);
+  if (thisTurnFiles.length > 0 && !inboundHasAttachments(inboundTextForModel)) {
+    inboundTextForModel = [
+      inboundTextForModel,
+      `[attachments: ${thisTurnFiles.map((file) => formatDoeDtcFileLogLine(file)).join("; ")}]`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+  }
 
   return {
     thisTurnFileIds,
