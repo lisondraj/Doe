@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { extractChartMentions } from "@/lib/doedtc/agent/action-slots";
 import {
   describeDoeDtcAttachment,
   resolveVisionUrlsForFiles,
@@ -10,6 +11,7 @@ import { fetchOpenAiWithRetry } from "@/lib/doedtc/agent/openai-retry";
 import { executeDoeDtcTool } from "@/lib/doedtc/agent/tool-dispatch";
 import { resolveDoeDtcAgentModel } from "@/lib/doedtc/agent/types";
 import { getDoeDtcFile } from "@/lib/doedtc/doedtc-files-db";
+import type { HouseholdMemberLike } from "@/lib/doedtc/doedtc-household-policy";
 import type { DoeDtcProfileSnapshot, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 import type { DoeDtcToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 
@@ -46,13 +48,16 @@ export const DocumentParseSchema = z.object({
   kind: z.enum(DOCUMENT_KINDS),
   confidence: z.number().min(0).max(1),
   summary: z.string(),
+  patient_name: z.string().trim().min(1).nullable().optional(),
   writes: z.array(DocumentWriteSchema).default([]),
 });
 
 export type DocumentParseResult = z.infer<typeof DocumentParseSchema>;
 
 const DOCUMENT_PARSE_SYSTEM = `You extract structured health document data from photos or PDF page images.
-Return JSON only with keys: kind, confidence, summary, writes.
+Return JSON only with keys: kind, confidence, summary, patient_name, writes.
+
+Read the patient / subject name printed on the document first (Patient, Name, Child, DOB block). Put that in patient_name. Then extract the results. A parent may send a child's labs with no caption — still name the child.
 
 kind is one of: lab_panel, medication_list, appointment, vaccine, rx, insurance, id_card, other.
 confidence is 0 to 1.
@@ -77,11 +82,77 @@ export function normalizeDocumentParseResult(raw: unknown): DocumentParseResult 
   return {
     ...parsed,
     summary: sanitizeDocumentParseSummary(parsed.summary),
+    patient_name: parsed.patient_name?.trim() || null,
     writes: parsed.writes.map((row) => ({
       tool: row.tool,
       args: row.args,
     })),
   };
+}
+
+export function resolveDocumentPatientName(params: {
+  parsedName?: string | null;
+  caption: string;
+  members: HouseholdMemberLike[];
+  viewerUserId: string;
+}): { name: string | null; onChart: boolean } {
+  const captionMentions = extractChartMentions({
+    inboundText: params.caption,
+    members: params.members,
+    viewerUserId: params.viewerUserId,
+  });
+  if (captionMentions.mentioned[0]) {
+    return { name: captionMentions.mentioned[0].full_name, onChart: true };
+  }
+  if (captionMentions.unknownNames[0]) {
+    return { name: captionMentions.unknownNames[0], onChart: false };
+  }
+
+  const parsed = params.parsedName?.trim();
+  if (!parsed) return { name: null, onChart: false };
+
+  const fromDoc = extractChartMentions({
+    inboundText: `for ${parsed}`,
+    members: params.members,
+    viewerUserId: params.viewerUserId,
+  });
+  if (fromDoc.mentioned[0]) {
+    return { name: fromDoc.mentioned[0].full_name, onChart: true };
+  }
+  return { name: parsed, onChart: false };
+}
+
+export function applyDocumentSubjectToWrites(
+  writes: Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }>,
+  memberName: string | null,
+): Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }> {
+  const name = memberName?.trim();
+  if (!name) return writes;
+  return writes.map((row) => ({
+    ...row,
+    args: {
+      ...row.args,
+      member_name:
+        typeof row.args.member_name === "string" && row.args.member_name.trim()
+          ? row.args.member_name
+          : name,
+    },
+  }));
+}
+
+export function buildDocumentSavingNotice(params: {
+  inboundText: string;
+  memberName?: string | null;
+}): string {
+  const name = params.memberName?.trim();
+  if (name) return `Saving this to ${name}'s chart now.`;
+  const guessed = extractChartMentions({
+    inboundText: params.inboundText.replace(/\[attachments:[^\]]+\]/gi, "").replace(/\[attachment\]/gi, ""),
+    members: [],
+  });
+  const fromCaption = guessed.mentioned[0]?.full_name ?? guessed.unknownNames[0];
+  if (fromCaption) return `Saving this to ${fromCaption}'s chart now.`;
+  return "Saving this now.";
 }
 
 export function mapLabPanelToLogResultWrites(params: {
@@ -183,6 +254,7 @@ export async function parseDoeDtcDocuments(params: {
   userId: string;
   fileIds: string[];
   caption?: string;
+  fallbackVisionUrls?: string[];
 }): Promise<{
   parse: DocumentParseResult;
   fileIds: string[];
@@ -192,11 +264,30 @@ export async function parseDoeDtcDocuments(params: {
     await Promise.all(params.fileIds.map((fileId) => getDoeDtcFile({ userId: params.userId, fileId })))
   ).filter((row): row is NonNullable<typeof row> => Boolean(row));
 
-  if (files.length === 0) {
+  if (files.length === 0 && (params.fallbackVisionUrls?.length ?? 0) === 0) {
     throw new Error("No matching files for this user.");
   }
 
-  const visionUrls = await resolveVisionUrlsForFiles(files, 4);
+  const fromFiles = files.length > 0 ? await resolveVisionUrlsForFiles(files, 4) : [];
+  const visionUrls = [
+    ...fromFiles,
+    ...(params.fallbackVisionUrls ?? []).filter(Boolean),
+  ].slice(0, 4);
+
+  if (visionUrls.length === 0) {
+    return {
+      parse: {
+        kind: "other",
+        confidence: 0,
+        summary: "The file arrived but I could not open a readable page yet.",
+        patient_name: null,
+        writes: [],
+      },
+      fileIds: files.map((file) => file.id),
+      visionReady: false,
+    };
+  }
+
   const parse = await visionJsonParse({
     imageUrls: visionUrls,
     caption: params.caption,
@@ -205,7 +296,7 @@ export async function parseDoeDtcDocuments(params: {
   return {
     parse,
     fileIds: files.map((file) => file.id),
-    visionReady: visionUrls.length > 0,
+    visionReady: true,
   };
 }
 
@@ -249,7 +340,7 @@ export async function runParseDocumentTool(params: {
   fileIds: string[];
   caption?: string;
   autoCommit?: boolean;
-  attachmentContext?: Pick<DoeDtcAttachmentContext, "thisTurnFileIds">;
+  attachmentContext?: Pick<DoeDtcAttachmentContext, "thisTurnFileIds" | "visionImageUrls">;
 }): Promise<Record<string, unknown>> {
   const fileIds =
     params.fileIds.length > 0
@@ -266,24 +357,35 @@ export async function runParseDocumentTool(params: {
     userId: params.user.id,
     fileIds,
     caption: params.caption ?? params.inboundText,
+    fallbackVisionUrls: params.attachmentContext?.visionImageUrls,
   });
+
+  const subject = resolveDocumentPatientName({
+    parsedName: parse.patient_name,
+    caption: params.caption ?? params.inboundText,
+    members: params.snapshot.household?.members ?? [],
+    viewerUserId: params.user.id,
+  });
+  const writes = subject.onChart
+    ? applyDocumentSubjectToWrites(parse.writes, subject.name)
+    : parse.writes;
 
   const autoCommit =
     params.autoCommit ??
     shouldAutoCommitDocumentParse({
-      parse,
+      parse: { ...parse, writes },
       inboundText: params.inboundText,
       attachmentTurn: true,
     });
 
   let writeResults: Array<{ tool: string; ok: boolean; output?: unknown; error?: string }> = [];
-  if (autoCommit && parse.writes.length > 0) {
+  if (autoCommit && writes.length > 0) {
     writeResults = await executeDocumentParseWrites({
       user: params.user,
       inboundText: params.inboundText,
       snapshot: params.snapshot,
       state: params.state,
-      writes: parse.writes,
+      writes,
     });
   }
 
@@ -292,8 +394,10 @@ export async function runParseDocumentTool(params: {
     kind: parse.kind,
     confidence: parse.confidence,
     summary: parse.summary,
+    patient_name: subject.name,
+    subject_on_chart: subject.onChart,
     vision_ready: visionReady,
-    proposed_writes: parse.writes,
+    proposed_writes: writes,
     auto_committed: autoCommit,
     write_results: writeResults,
     file_ids: fileIds,

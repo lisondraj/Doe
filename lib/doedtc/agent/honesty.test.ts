@@ -22,6 +22,7 @@ describe("agent honesty invariants", () => {
   it("detects generic refusals", () => {
     assert.equal(looksLikeRefusal("I can't take a screenshot directly."), true);
     assert.equal(looksLikeRefusal("You might try visiting Google.com in your browser."), true);
+    assert.equal(looksLikeRefusal("I couldn't read the document you sent."), true);
     assert.equal(looksLikeRefusal("Sent Simon an invite."), false);
   });
 
@@ -187,6 +188,17 @@ describe("agent honesty invariants", () => {
     );
   });
 
+  it("retries empty-tool document read refusals", () => {
+    assert.equal(
+      shouldRetryEmptyRefusal({
+        replyText: "I couldn't read the document you sent.",
+        toolsExecuted: [],
+        inboundText: "[attachments: file-1]",
+      }),
+      true,
+    );
+  });
+
   it("retries empty-tool I'll-send-later claims, but not status asks", () => {
     assert.equal(
       shouldRetryEmptyRefusal({
@@ -235,6 +247,8 @@ describe("agent honesty invariants", () => {
 
   it("builds a refusal retry nudge", () => {
     assert.match(buildRefusalRetrySystemMessage("screenshot google.com"), /start_browser_task/);
+    assert.match(buildRefusalRetrySystemMessage("[attachments: file-1]"), /parse_document/);
+    assert.match(buildRefusalRetrySystemMessage("[attachments: file-1]"), /saving it/);
   });
 
   it("matches invite claims", () => {

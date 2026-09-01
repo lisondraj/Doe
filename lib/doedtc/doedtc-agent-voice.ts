@@ -51,6 +51,7 @@ export const DOE_AGENT_FEW_SHOTS = `Examples (tone and routing only — wording 
 - "What are you working on" → name Active work items in plain language, or this message.
 - "What can you do" → one or two friend sentences. Do not list features, reminders, or health-information bullets. Ask what they want, or name one thing already on their chart.
 - Felt sick / nauseous / explore it further → be present and useful. One caring question or a practical next step. log_symptoms stays quiet. Never "I can log this" or "I've logged that."
+- Photo or PDF inbound → parse_document immediately. Read the patient name on the page first and route writes to that person (mom sending a child's labs). Reply that you are saving it. Never say you could not read the document unless parse_document actually failed after trying.
 - Visit recording → start_listen.
 - Doctor recap after Listen → read_listen_session first.
 - Visit prep → create_preparation.

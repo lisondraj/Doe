@@ -841,7 +841,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "parse_document",
       description:
-        "Vision-parse a photo or PDF page into structured chart writes (labs, meds, appointments, etc.). Call on inbound attachments before narrating what landed. High confidence photo sends auto-commit writes; ambiguous docs describe and ask once.",
+        "Vision-parse a photo or PDF into chart writes. Read the patient name first and route to that person. Call on every inbound attachment. Reply that you are saving it. Never say you could not read the file until this tool failed.",
       parameters: {
         type: "object",
         properties: {

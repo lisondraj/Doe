@@ -531,7 +531,7 @@ function buildArtifactBlockers(params: {
         confidence: "high",
         userFacing: "I'll read what they sent",
         promptLine:
-          "Inbound attachment present. parse_document first, then commit proposed writes when confidence is high. Describe and ask once when unclear.",
+          "Inbound attachment present. Reply that you are saving it. parse_document first — read the patient name on the page and route writes to that person. Commit when confidence is high. Never say you could not read it until parse_document failed.",
         tool: "parse_document",
         blocksPrimary: false,
       },

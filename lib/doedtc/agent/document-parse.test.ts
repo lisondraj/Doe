@@ -2,8 +2,11 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  applyDocumentSubjectToWrites,
+  buildDocumentSavingNotice,
   mapLabPanelToLogResultWrites,
   normalizeDocumentParseResult,
+  resolveDocumentPatientName,
   sanitizeDocumentParseSummary,
   shouldAutoCommitDocumentParse,
 } from "@/lib/doedtc/agent/document-parse";
@@ -36,10 +39,12 @@ describe("document parse", () => {
       kind: "lab_panel",
       confidence: 0.91,
       summary: "Lab panel from August",
+      patient_name: "  Simon  ",
       writes: [{ tool: "log_result", args: { title: "A1C", resulted_at: "2026-08-15" } }],
     });
     assert.equal(parsed.kind, "lab_panel");
     assert.equal(parsed.writes.length, 1);
+    assert.equal(parsed.patient_name, "Simon");
     assert.doesNotMatch(parsed.summary, /\u2014/);
   });
 
@@ -57,6 +62,46 @@ describe("document parse", () => {
       }),
       true,
     );
+  });
+
+  it("routes a named child on the chart and guesses a caption name", () => {
+    const members = [
+      {
+        id: "m-simon",
+        full_name: "Simon",
+        user_id: null,
+        phone: null,
+        status: "pending" as const,
+        relationship: "child" as const,
+        role: "member" as const,
+        gender: "male" as const,
+      },
+    ];
+    const onChart = resolveDocumentPatientName({
+      parsedName: "Simon Lisondra",
+      caption: "[attachments: file-1]",
+      members,
+      viewerUserId: "parent-1",
+    });
+    assert.equal(onChart.name, "Simon");
+    assert.equal(onChart.onChart, true);
+
+    const unknown = resolveDocumentPatientName({
+      parsedName: "Riley",
+      caption: "",
+      members,
+      viewerUserId: "parent-1",
+    });
+    assert.equal(unknown.name, "Riley");
+    assert.equal(unknown.onChart, false);
+
+    const writes = applyDocumentSubjectToWrites(
+      [{ tool: "log_result", args: { title: "A1C", resulted_at: "2026-08-15" } }],
+      "Simon",
+    );
+    assert.equal(writes[0]?.args.member_name, "Simon");
+    assert.equal(buildDocumentSavingNotice({ inboundText: "Simon's labs" }), "Saving this to Simon's chart now.");
+    assert.equal(buildDocumentSavingNotice({ inboundText: "[attachments: file-1]" }), "Saving this now.");
   });
 
   it("does not auto-commit low-confidence other documents", () => {

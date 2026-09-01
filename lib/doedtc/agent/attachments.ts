@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { promisify } from "node:util";
 
 import { getDoeDtcFile, listRecentDoeDtcFiles, type DoeDtcFileRow } from "@/lib/doedtc/doedtc-files-db";
+import { bufferToVisionDataUrl } from "@/lib/doedtc/doedtc-files";
 
 const execFileAsync = promisify(execFile);
 
@@ -149,6 +150,15 @@ export async function resolveVisionUrlForFile(file: DoeDtcFileRow): Promise<stri
   }
   if (isPdfFile(file)) {
     return rasterizePdfFirstPage(file.blob_url);
+  }
+  if (file.mime?.toLowerCase().startsWith("image/") || /\.(heic|heif|jpe?g|png|gif|webp)$/i.test(file.filename ?? "")) {
+    try {
+      const response = await fetch(file.blob_url);
+      if (!response.ok) return null;
+      return bufferToVisionDataUrl(Buffer.from(await response.arrayBuffer()), file.mime ?? undefined);
+    } catch {
+      return null;
+    }
   }
   return null;
 }

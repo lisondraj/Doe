@@ -10,6 +10,7 @@ import {
   looksLikeChartRead,
   looksLikeChartWrite,
 } from "@/lib/doedtc/agent/deliverable-policy";
+import { inboundHasAttachments } from "@/lib/doedtc/agent/attachments";
 import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { createDoeDtcListenSession } from "@/lib/doedtc/doedtc-db";
 import { doeDtcGuideUrl, doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
@@ -20,7 +21,7 @@ import type { DoeDtcToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 import type { DoeDtcProfileSnapshot, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 const REFUSAL_PATTERN =
-  /\b(can'?t|cannot|unable to|not able to|wasn'?t able to|couldn'?t complete|don'?t have (?:the )?(?:ability|access)|won'?t be able to|without specific (?:details|information)|need (?:a |the )?(?:specific )?(?:url|page|link))\b/i;
+  /\b(can'?t|cannot|unable to|not able to|wasn'?t able to|couldn'?t (?:complete|read|open|see|parse)|can'?t read|don'?t have (?:the )?(?:ability|access)|won'?t be able to|without specific (?:details|information)|need (?:a |the )?(?:specific )?(?:url|page|link))\b/i;
 const SELF_HELP_PATTERN =
   /\b(you might try|try visiting|in your browser|yourself|on your (?:own|phone|device))\b/i;
 
@@ -133,7 +134,8 @@ export function shouldRetryEmptyRefusal(params: {
       askedForDeliverable(inbound, "guide") ||
       looksLikeChartWrite(inbound) ||
       looksLikeChartRead(inbound) ||
-      looksLikeBrowseAsk(inbound))
+      looksLikeBrowseAsk(inbound) ||
+      inboundHasAttachments(inbound))
   ) {
     return true;
   }
@@ -147,7 +149,7 @@ export function shouldRetryEmptyRefusal(params: {
 }
 
 export function buildRefusalRetrySystemMessage(inboundText: string): string {
-  return `You refused, stalled, or said you were working on it / would send later without starting a tool. The user asked: "${inboundText.slice(0, 280)}". Call the matching tool now (start_browser_task, schedule_text, send_family_invite, read_profile, etc.). Do not promise a later send unless a tool already started. Only refuse after a tool actually failed.`;
+  return `You refused, stalled, or said you were working on it / would send later without starting a tool. The user asked: "${inboundText.slice(0, 280)}". Call the matching tool now (parse_document, start_browser_task, schedule_text, send_family_invite, read_profile, etc.). If they sent a file, parse_document first and say you are saving it. Do not promise a later send unless a tool already started. Only refuse after a tool actually failed.`;
 }
 
 export function toolSucceeded(

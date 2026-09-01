@@ -163,7 +163,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   read_attachment:
     "read_attachment — fetch a stored inbound photo/PDF by file id from Recent attachments. Use when they refer to an earlier image.",
   parse_document:
-    "parse_document — vision-parse labs, Rx bottles, appointment cards, vaccine records into chart writes. On photo inbound, parse first then commit. Describe low-confidence docs and ask once before writing.",
+    "parse_document — vision-parse labs, Rx, appointments into chart writes. Read the patient name first and route to that household member. On photo inbound, parse first, say you are saving it, then commit. Never say you could not read the file until this tool failed. Describe low-confidence docs and ask once before writing.",
   create_preparation:
     "create_preparation — one-off visit-prep summary with a 5-digit share code for their doctor. Not a guide — use create_guide for how-to visuals.",
   create_profile_artifact:

@@ -1,4 +1,6 @@
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
+import { inboundHasAttachments } from "@/lib/doedtc/agent/attachments";
+import { buildDocumentSavingNotice } from "@/lib/doedtc/agent/document-parse";
 import { runDoeDtcAgentTurn, type DoeDtcAgentTurnResult } from "@/lib/doedtc/doedtc-agent";
 import { createDoeDtcAgentTurnId, recentDoeDtcTurnsUsedThreadReply } from "@/lib/doedtc/doedtc-agent-audit";
 import { commitDoeDtcBrowserTask, stopDoeDtcBrowserForUser } from "@/lib/doedtc/doedtc-browser";
@@ -601,6 +603,26 @@ export async function handleSymptomInbound(params: {
     inboundMessageId: params.inboundMessageId,
     chatId,
   });
+
+  if (
+    inboundHasAttachments(params.text) ||
+    (params.inboundFileIds?.length ?? 0) > 0 ||
+    (params.extraVisionUrls?.length ?? 0) > 0
+  ) {
+    try {
+      await sendDoeDtcOutbound({
+        user: params.user,
+        chatId,
+        text: buildDocumentSavingNotice({ inboundText: params.text }),
+        idempotencyKey: `doedtc-saving-${idSuffix}`,
+      });
+    } catch (error) {
+      console.warn(
+        "[doedtc] document saving notice failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }
 
   let turn: DoeDtcAgentTurnResult;
   let agentFailed = false;
