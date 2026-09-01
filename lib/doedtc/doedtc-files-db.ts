@@ -13,6 +13,14 @@ export type DoeDtcFileRow = {
   created_at: string;
 };
 
+function isDoeDtcFilesSchemaError(message: string): boolean {
+  return /doedtc_files/i.test(message) && /(schema cache|does not exist|relation)/i.test(message);
+}
+
+function warnDoeDtcFilesLookupFailure(operation: string, error: { message: string }): void {
+  console.warn(`[doedtc:files] ${operation} failed:`, error.message);
+}
+
 export async function insertDoeDtcFile(params: {
   userId: string;
   blobUrl: string;
@@ -51,7 +59,13 @@ export async function getDoeDtcFile(params: {
     .eq("id", params.fileId)
     .eq("user_id", params.userId)
     .maybeSingle();
-  if (error) throw new Error(error.message);
+  if (error) {
+    if (isDoeDtcFilesSchemaError(error.message)) {
+      warnDoeDtcFilesLookupFailure("get", error);
+      return null;
+    }
+    throw new Error(error.message);
+  }
   return (data as DoeDtcFileRow | null) ?? null;
 }
 
@@ -63,6 +77,12 @@ export async function listRecentDoeDtcFiles(userId: string, limit = 10): Promise
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(limit);
-  if (error) throw new Error(error.message);
+  if (error) {
+    if (isDoeDtcFilesSchemaError(error.message)) {
+      warnDoeDtcFilesLookupFailure("list recent", error);
+      return [];
+    }
+    throw new Error(error.message);
+  }
   return (data ?? []) as DoeDtcFileRow[];
 }

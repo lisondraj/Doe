@@ -914,9 +914,7 @@ export async function processDoeDtcInboundWebhook(params: {
     linqMessageId: inboundMessageId ?? null,
     webhookEventId: params.webhookEventId ?? null,
   });
-  if (!inboundLog.logged && params.webhookEventId) {
-    return;
-  }
+  const isDuplicateWebhook = !inboundLog.logged && Boolean(params.webhookEventId);
 
   let agentInboundText = text;
   let inboundFileIds: string[] = [];
@@ -926,6 +924,12 @@ export async function processDoeDtcInboundWebhook(params: {
     if (inboundFileIds.length > 0) {
       agentInboundText = [text, `[attachments: ${inboundFileIds.join(", ")}]`].filter(Boolean).join("\n");
     }
+  }
+
+  if (isDuplicateWebhook) {
+    // First attempt may have logged the message but failed before ingest/agent finished.
+    if (inboundMedia.length === 0) return;
+    if (inboundFileIds.length === 0) return;
   }
 
   if (isHiDoeMessage(text)) {

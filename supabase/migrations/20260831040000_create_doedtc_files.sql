@@ -13,3 +13,5 @@ create table if not exists public.doedtc_files (
 
 create index if not exists doedtc_files_user_id_created_at_idx
   on public.doedtc_files (user_id, created_at desc);
+
+alter table public.doedtc_files enable row level security;
