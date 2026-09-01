@@ -303,6 +303,7 @@ describe("tool capability prompt", () => {
     assert.match(prompt, /Reply to this message now/);
     assert.match(prompt, /Never say you are working on it/);
     assert.match(prompt, /Never recite a capabilities menu/);
+    assert.match(prompt, /Never lead a sick or worried turn with logging/);
     assert.doesNotMatch(prompt, /What you can do \(use tools/);
   });
 

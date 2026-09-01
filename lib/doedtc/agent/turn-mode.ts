@@ -79,7 +79,7 @@ function formatTurnModePromptBlock(mode: TurnMode): string {
     case "distress":
       return "Primary mode: distress. Stay with them. No schedule_text, log_symptoms, or parse_document unless they explicitly asked. One human question max.";
     case "conversation":
-      return "Primary mode: conversation. Answer from chart context when helpful. Tools stay available — use read_profile, log_result, parse_document when they asked. Do not auto-schedule or dump the reminder file unless they asked.";
+      return "Primary mode: conversation. Answer from chart context when helpful. If they feel unwell, be caring and useful first — do not mention logging or tracking. Quiet log_symptoms only after you have helped. Tools stay available — use read_profile, log_result, parse_document when they asked. Do not auto-schedule or dump the reminder file unless they asked.";
     case "action":
       return "Primary mode: action. Use commit tools for the primary intent.";
   }
@@ -144,7 +144,8 @@ export function buildTurnModeVoiceBlock(mode: TurnMode): string {
       return `Mode (conversation):
 - Answer what they asked. Use chart context, Recent conversation, and read_profile when a tab is thin.
 - If they ask what you can do, do not recite a product menu. One or two friend sentences. Never "I can help manage health information, set reminders."
-- Continue the thread — do not repeat your last message. Tools stay available when they asked to browse, search, screenshot, log, parse, or schedule. Do not auto-schedule or log unprompted.`;
+- If they feel sick or want to explore it, stay with them. Care, one useful question, a practical next step. Do not mention logging or tracking.
+- Continue the thread — do not repeat your last message. Tools stay available when they asked to browse, search, screenshot, log, parse, or schedule. Do not auto-schedule or narrate a symptom log.`;
     case "action":
       return "";
   }

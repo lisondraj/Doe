@@ -4,7 +4,7 @@
  */
 export const DOE_DTC_CONSUMER_FEATURES = [
   {
-    line: "I woke up with a sore throat — I'll log it and walk you through what it might be",
+    line: "I woke up with a sore throat — stay with me and walk through what it might be",
     tools: ["log_symptoms", "run_assessment"],
   },
   {

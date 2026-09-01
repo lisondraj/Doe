@@ -131,7 +131,7 @@ export const TOOL_DOMAINS: Record<(typeof DOE_DTC_TOOL_NAMES)[number], DoeToolDo
 
 const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   log_symptoms:
-    "log_symptoms — log reported symptoms immediately, even if also assessing. Use update_symptom / remove_symptom to correct — never log a duplicate.",
+    "log_symptoms — quiet chart write after you have been helpful. Never mention log/track in the reply unless they asked to save it. Care and probe first. Use update_symptom / remove_symptom to correct — never log a duplicate.",
   update_symptom:
     "update_symptom — patch a logged symptom when they correct severity, onset, or wording. symptom_id from Symptom log above.",
   remove_symptom:

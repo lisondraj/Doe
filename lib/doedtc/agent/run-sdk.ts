@@ -43,6 +43,12 @@ import {
   formatCapabilityAskBlock,
   looksLikeCapabilityBrochure,
 } from "@/lib/doedtc/agent/capability-ask";
+import {
+  buildUnwellCareRetrySystemMessage,
+  formatUnwellCareBlock,
+  looksLikeLogNarration,
+  looksLikeUnwellShare,
+} from "@/lib/doedtc/agent/unwell-care";
 import { buildSituationBrief, formatSituationBriefBlock } from "@/lib/doedtc/agent/situation-brief";
 import { executeAgentPendingCommit } from "@/lib/doedtc/doedtc-agent-commit";
 import {
@@ -249,6 +255,9 @@ async function loadRunContext(params: {
     capabilityAskBlock: askedWhatYouCanDo(deliverableInboundText)
       ? formatCapabilityAskBlock()
       : undefined,
+    unwellCareBlock: looksLikeUnwellShare(deliverableInboundText)
+      ? formatUnwellCareBlock()
+      : undefined,
     turnMode: turnMode.mode,
   };
 
@@ -429,7 +438,10 @@ function shouldRetrySdkReply(loaded: DoeDtcRunContext, replyText: string): boole
   ) {
     return true;
   }
-  return askedWhatYouCanDo(loaded.inboundText) && looksLikeCapabilityBrochure(replyText);
+  if (askedWhatYouCanDo(loaded.inboundText) && looksLikeCapabilityBrochure(replyText)) {
+    return true;
+  }
+  return looksLikeUnwellShare(loaded.inboundText) && looksLikeLogNarration(replyText);
 }
 
 async function finalizeSdkRun(params: {
@@ -626,9 +638,11 @@ export async function runDoeDtcAgentTurnSdk(params: {
   }
 
   const retryNudge =
-    askedWhatYouCanDo(loaded.inboundText) && looksLikeCapabilityBrochure(firstPass.replyText)
-      ? buildCapabilityRetrySystemMessage()
-      : buildRefusalRetrySystemMessage(loaded.inboundText);
+    looksLikeUnwellShare(loaded.inboundText) && looksLikeLogNarration(firstPass.replyText)
+      ? buildUnwellCareRetrySystemMessage()
+      : askedWhatYouCanDo(loaded.inboundText) && looksLikeCapabilityBrochure(firstPass.replyText)
+        ? buildCapabilityRetrySystemMessage()
+        : buildRefusalRetrySystemMessage(loaded.inboundText);
   loaded.instructions = `${loaded.instructions}\n\n${retryNudge}`;
   if (loaded.plannerInstructions) {
     loaded.plannerInstructions = `${loaded.plannerInstructions}\n\n${retryNudge}`;

@@ -225,8 +225,8 @@ export const DOE_AGENT_PRIMITIVES_PROMPT = `Primitives (compose these — do not
 - message.schedule → schedule_text (timers, one-shot). Persist immediately, confirm now, fire later — never block the confirmation on the reminder. Body is the thing to remember, not “I’ll remind you”. Not for daily habits.
 - message.await_reply + habit.recurring → start_habit_workflow or start_workflow (composed graph for multi-step nag).
 - habit.recurring → start_accountability when partner/cadence/privacy matters; else start_habit_workflow or start_workflow.
-- health.chart → read_profile to pull what's saved; log/update/remove on symptoms, meds, conditions, appointments, labs. Confirm in the reply. Do not send a chart link after a write.
-- health.assess → run_assessment when they ask what it might be — not a definitive diagnosis.
+- health.chart → read_profile to pull what's saved; log/update/remove on meds, conditions, appointments, labs. Feeling unwell → care first; log_symptoms quietly later and do not narrate the log unless they asked to save it. Do not send a chart link after a write.
+- health.assess → stay with them and probe when they feel sick or want to explore it. run_assessment when they ask what it might be — not a definitive diagnosis. Never pivot to "I'll log/track that."
 - results.log → log_result / remove_result for labs and imaging they report (also health.chart).
 - tracker.create / tracker.log / tracker.share → create_profile_artifact once, then log_artifact_entry; share_artifact only on explicit ask. After a log, do not send_profile_link unless they asked to see it.
 - guide.author → create_guide (link first), save_guide after yes, update_guide to edit/archive/unsave.

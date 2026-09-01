@@ -66,6 +66,12 @@ import {
   formatCapabilityAskBlock,
   looksLikeCapabilityBrochure,
 } from "@/lib/doedtc/agent/capability-ask";
+import {
+  buildUnwellCareRetrySystemMessage,
+  formatUnwellCareBlock,
+  looksLikeLogNarration,
+  looksLikeUnwellShare,
+} from "@/lib/doedtc/agent/unwell-care";
 import { buildSituationBrief, formatSituationBriefBlock } from "@/lib/doedtc/agent/situation-brief";
 import { DOE_AGENT_PRIMITIVES_PROMPT } from "@/lib/doedtc/doedtc-primitives";
 import {
@@ -548,6 +554,7 @@ export type DoeDtcAgentPromptParams = {
   situationBrief?: string;
   activeWorkBlock?: string;
   capabilityAskBlock?: string;
+  unwellCareBlock?: string;
   turnMode?: TurnMode;
 };
 
@@ -556,6 +563,7 @@ function buildDoeAgentContextBlock(params: DoeDtcAgentPromptParams): string {
 ${params.situationBrief ? `\n${params.situationBrief}\n` : ""}
 ${params.activeWorkBlock ? `\n${params.activeWorkBlock}\n` : ""}
 ${params.capabilityAskBlock ? `\n${params.capabilityAskBlock}\n` : ""}
+${params.unwellCareBlock ? `\n${params.unwellCareBlock}\n` : ""}
 ${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
 Playbook (how you've corrected yourself before):
 ${params.playbookNotes}
@@ -1056,6 +1064,9 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     capabilityAskBlock: askedWhatYouCanDo(deliverableInboundText)
       ? formatCapabilityAskBlock()
       : undefined,
+    unwellCareBlock: looksLikeUnwellShare(deliverableInboundText)
+      ? formatUnwellCareBlock()
+      : undefined,
     turnMode: turnMode.mode,
   }) + (reminderDirective ? `\n\n${reminderDirective}` : "");
 
@@ -1141,6 +1152,12 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         preservePendingOffer: turnState.preservePendingOffer,
       });
 
+      const unwellLogRetry =
+        looksLikeUnwellShare(deliverableInboundText) &&
+        looksLikeLogNarration(replyText ?? "");
+      const capabilityRetry =
+        askedWhatYouCanDo(deliverableInboundText) &&
+        looksLikeCapabilityBrochure(replyText ?? "");
       if (
         !refusalRetryInjected &&
         (shouldRetryEmptyRefusal({
@@ -1149,8 +1166,8 @@ export async function runDoeDtcAgentTurnLegacy(params: {
           turnMode: turnMode.mode,
           inboundText: deliverableInboundText,
         }) ||
-          (askedWhatYouCanDo(deliverableInboundText) &&
-            looksLikeCapabilityBrochure(replyText ?? "")))
+          capabilityRetry ||
+          unwellLogRetry)
       ) {
         refusalRetryInjected = true;
         messages.push({
@@ -1159,9 +1176,9 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         });
         messages.push({
           role: "system",
-          content:
-            askedWhatYouCanDo(deliverableInboundText) &&
-            looksLikeCapabilityBrochure(replyText ?? "")
+          content: unwellLogRetry
+            ? buildUnwellCareRetrySystemMessage()
+            : capabilityRetry
               ? buildCapabilityRetrySystemMessage()
               : buildRefusalRetrySystemMessage(deliverableInboundText),
         });

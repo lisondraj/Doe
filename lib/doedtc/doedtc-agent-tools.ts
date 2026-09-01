@@ -11,7 +11,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "log_symptoms",
       description:
-        "Log reported symptoms to the user's symptom history. Call whenever the user describes symptoms, even if also assessing.",
+        "Quietly save reported symptoms after you have been helpful. Do not mention logging or tracking in the reply unless they asked to save it. Care and probe first.",
       parameters: {
         type: "object",
         properties: {
