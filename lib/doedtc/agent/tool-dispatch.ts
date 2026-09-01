@@ -10,6 +10,7 @@ import {
   startDoeDtcBrowserTaskAsync,
   toUserSafeBrowserError,
 } from "@/lib/doedtc/doedtc-browser";
+import { browserIntentFromInbound } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { getDoeDtcBrowserJobById } from "@/lib/doedtc/doedtc-browser-db";
 import { buildScheduledTextPendingArgs } from "@/lib/doedtc/doedtc-agent-commit";
 import {
@@ -1064,7 +1065,7 @@ async function executeDoeDtcToolInner(params: {
         state.browserBusy = true;
         const started = await startDoeDtcBrowserTaskAsync({
           user: ctx.user,
-          intent: String(args.intent ?? ""),
+          intent: String(args.intent ?? "").trim() || browserIntentFromInbound(ctx.inboundText),
           url: String(args.url ?? ""),
           mode:
             args.mode === "login" || args.mode === "write" || args.mode === "research"

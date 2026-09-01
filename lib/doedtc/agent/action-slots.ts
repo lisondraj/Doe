@@ -277,6 +277,18 @@ export function inferPrimaryIntent(params: {
   guides?: Array<Pick<DoeDtcGuideRow, "id" | "title" | "topic">>;
 }): ActionIntent {
   const text = params.inboundText.trim();
+  const caption = text
+    .replace(/\[attachments:[^\]]+\]/gi, "")
+    .replace(/\[attachment\]/gi, "")
+    .trim();
+  if (
+    looksLikeBrowseAsk(caption || text) &&
+    !askedForPrivateAppLink(text) &&
+    !looksLikeChartRead(text) &&
+    !looksLikeChartWrite(text)
+  ) {
+    return "browse";
+  }
   if (inboundHasAttachments(text) || parseInboundAttachmentIds(text).length > 0) {
     return "parse_document";
   }
@@ -310,15 +322,6 @@ export function inferPrimaryIntent(params: {
   if (ask.has("guide")) return "send_or_build_guide";
 
   if (inboundLooksLikeProfileWrite(text)) return "profile_write";
-
-  if (
-    looksLikeBrowseAsk(text) &&
-    !askedForPrivateAppLink(text) &&
-    !looksLikeChartRead(text) &&
-    !looksLikeChartWrite(text)
-  ) {
-    return "browse";
-  }
 
   return "none";
 }

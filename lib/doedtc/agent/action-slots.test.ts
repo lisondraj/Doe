@@ -93,6 +93,15 @@ describe("action slots", () => {
     assert.equal(slots.actionClass, "act_now");
   });
 
+  it("prefers browse over a leftover attachment on a Google screenshot ask", () => {
+    assert.equal(
+      inferPrimaryIntent({
+        inboundText: "Goto google ss the homepage and send the photo here\n[attachments: file-1]",
+      }),
+      "browse",
+    );
+  });
+
   it("infers parse_document when inbound has attachments", () => {
     assert.equal(
       inferPrimaryIntent({ inboundText: "[attachments: file-1]" }),

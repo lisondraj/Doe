@@ -6,6 +6,7 @@ import { promisify } from "node:util";
 
 import { getDoeDtcFile, listRecentDoeDtcFiles, type DoeDtcFileRow } from "@/lib/doedtc/doedtc-files-db";
 import { bufferToVisionDataUrl } from "@/lib/doedtc/doedtc-files";
+import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
 
 const execFileAsync = promisify(execFile);
 
@@ -57,6 +58,7 @@ export function bindRecentInboundFileIds(params: {
 }): string[] {
   if (params.thisTurnFileIds.length > 0) return params.thisTurnFileIds;
   if (inboundHasAttachments(params.inboundText)) return params.thisTurnFileIds;
+  if (looksLikeBrowseAsk(params.inboundText)) return params.thisTurnFileIds;
   if (!REFERS_TO_PRIOR_ATTACHMENT_RE.test(params.inboundText)) return params.thisTurnFileIds;
 
   const now = params.nowMs ?? Date.now();

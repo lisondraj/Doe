@@ -111,5 +111,14 @@ describe("attachments", () => {
       }),
       [],
     );
+    assert.deepEqual(
+      bindRecentInboundFileIds({
+        inboundText: "Goto google ss the homepage and send the photo here",
+        thisTurnFileIds: [],
+        recentFiles: [file({ id: "file-1", source: "inbound", created_at: "2026-09-01T16:26:44.000Z" })],
+        nowMs: Date.parse("2026-09-01T16:26:53.000Z"),
+      }),
+      [],
+    );
   });
 });

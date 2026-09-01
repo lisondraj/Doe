@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  browserIntentFromInbound,
   isBlockedBrowsePage,
   normalizeBrowserUrl,
   resolveResearchBrowseTarget,
@@ -63,6 +64,28 @@ test("resolveResearchBrowseTarget resolves mayo search asthma", () => {
   if ("ok" in result) return;
   assert.equal(result.host, "mayoclinic.org");
   assert.match(result.targetUrl, /mayoclinic\.org\/search\/search-results\?q=asthma/);
+});
+
+test("resolveResearchBrowseTarget screenshots the Google homepage", () => {
+  const result = resolveResearchBrowseTarget({
+    url: "",
+    intent: "Goto google ss the homepage and send the photo here",
+  });
+  assert.ok(!("ok" in result));
+  if ("ok" in result) return;
+  assert.equal(result.host, "google.com");
+  assert.match(result.targetUrl, /^https:\/\/google\.com\/?$/);
+});
+
+test("resolveResearchBrowseTarget fills from an empty tool call using the inbound ask", () => {
+  const intent = browserIntentFromInbound(
+    "Goto google ss the homepage and send the photo here\n[attachments: file-1]",
+  );
+  const result = resolveResearchBrowseTarget({ url: "", intent });
+  assert.ok(!("ok" in result));
+  if ("ok" in result) return;
+  assert.equal(result.host, "google.com");
+  assert.match(result.targetUrl, /^https:\/\/google\.com\/?$/);
 });
 
 test("resolveResearchBrowseTarget turns go-to-google search-up into a Google query", () => {

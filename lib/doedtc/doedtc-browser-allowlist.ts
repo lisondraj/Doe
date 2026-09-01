@@ -150,6 +150,22 @@ function stripScreenshotTail(text: string): string {
     .trim();
 }
 
+export function stripInboundAttachmentMarkers(text: string): string {
+  return text
+    .replace(/\[attachments:[^\]]+\]/gi, "")
+    .replace(/\[attachment\]/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function browserIntentFromInbound(text: string): string {
+  return stripInboundAttachmentMarkers(text);
+}
+
+export function looksLikeHomepageAsk(text: string): boolean {
+  return /\b(?:home\s*page|homepage|home screen|landing(?:\s+page)?)\b/i.test(text);
+}
+
 export function looksLikeBrowseAsk(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return false;
@@ -233,6 +249,13 @@ export function resolveResearchBrowseTarget(params: {
   const wantsGoogle =
     isGoogleBrowseHost(alias ?? "") ||
     /\bgoogle(?:\.com)?\b/i.test(combined);
+
+  if (
+    wantsGoogle &&
+    (looksLikeHomepageAsk(combined) || /^(google(?:\.com)?)$/i.test(searchQuery))
+  ) {
+    return { host: "google.com", targetUrl: browserUrlForHost("google.com") };
+  }
 
   try {
     if (raw && (raw.includes("://") || raw.includes(".") || raw.includes("/") || raw.includes("?"))) {
