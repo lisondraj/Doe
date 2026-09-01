@@ -2,81 +2,10 @@ import { Agent } from "@openai/agents";
 
 import { createDoeDtcSdkTools } from "@/lib/doedtc/agent/tools";
 import { doeReplyOutputGuardrail } from "@/lib/doedtc/agent/guardrails";
+import { toolsForSpecialist } from "@/lib/doedtc/agent/tool-prompt-registry";
 import { DoeReplySchema, resolveDoeDtcAgentModel, type DoeDtcRunContext } from "@/lib/doedtc/agent/types";
 
 const model = () => resolveDoeDtcAgentModel();
-
-const HEALTH_TOOLS = new Set([
-  "log_symptoms",
-  "update_symptom",
-  "remove_symptom",
-  "run_assessment",
-  "log_appointment",
-  "update_appointment",
-  "cancel_appointment",
-  "log_family_member",
-  "update_family_member",
-  "remove_family_member",
-  "send_family_invite",
-  "add_medication",
-  "update_medication",
-  "remove_medication",
-  "add_condition",
-  "update_condition",
-  "remove_condition",
-  "create_profile_artifact",
-  "update_profile_artifact",
-  "log_artifact_entry",
-  "share_artifact",
-  "unshare_artifact",
-  "update_artifact_entry",
-  "remove_artifact_entry",
-  "create_preparation",
-  "read_profile",
-  "remember_fact",
-  "forget_fact",
-  "submit_ticket",
-  "revoke_household_access",
-  "send_profile_link",
-]);
-
-const GUIDE_TOOLS = new Set([
-  "create_guide",
-  "save_guide",
-  "update_guide",
-  "list_guides",
-  "send_guide_link",
-]);
-
-const SCHEDULING_TOOLS = new Set([
-  "propose_scheduled_text",
-  "schedule_text",
-  "cancel_scheduled_text",
-  "list_scheduled_texts",
-  "propose_accountability",
-  "start_accountability",
-  "propose_habit_workflow",
-  "start_habit_workflow",
-  "cancel_habit_workflow",
-  "invite_accountability_partner",
-  "log_accountability_checkin",
-  "withdraw_accountability",
-  "pause_accountability",
-  "resume_accountability",
-]);
-
-const BROWSER_TOOLS = new Set([
-  "start_browser_task",
-  "browser_navigate",
-  "browser_act",
-  "browser_computer",
-  "browser_snapshot",
-  "request_vault",
-  "request_live_login",
-  "show_session",
-  "request_commit",
-  "start_listen",
-]);
 
 function subsetTools(ctx: DoeDtcRunContext, allowed: Set<string>) {
   return createDoeDtcSdkTools(ctx).filter((entry) => allowed.has(entry.name));
@@ -89,28 +18,28 @@ export function createDoeSpecialistAgents(ctx: DoeDtcRunContext) {
     name: "healthRecord",
     instructions: sharedInstructions,
     model: model(),
-    tools: subsetTools(ctx, HEALTH_TOOLS),
+    tools: subsetTools(ctx, toolsForSpecialist("healthRecord")),
   });
 
   const guides = new Agent<DoeDtcRunContext>({
     name: "guides",
     instructions: sharedInstructions,
     model: model(),
-    tools: subsetTools(ctx, GUIDE_TOOLS),
+    tools: subsetTools(ctx, toolsForSpecialist("guides")),
   });
 
   const scheduling = new Agent<DoeDtcRunContext>({
     name: "scheduling",
     instructions: sharedInstructions,
     model: model(),
-    tools: subsetTools(ctx, SCHEDULING_TOOLS),
+    tools: subsetTools(ctx, toolsForSpecialist("scheduling")),
   });
 
   const browser = new Agent<DoeDtcRunContext>({
     name: "browser",
     instructions: sharedInstructions,
     model: model(),
-    tools: subsetTools(ctx, BROWSER_TOOLS),
+    tools: subsetTools(ctx, toolsForSpecialist("browser")),
   });
 
   const manager = new Agent<DoeDtcRunContext, typeof DoeReplySchema>({

@@ -22,7 +22,9 @@ import {
 import { executeDoeDtcToolCallsPartitioned } from "@/lib/doedtc/agent/tool-parallel";
 import {
   assertToolPromptCoverage,
+  buildDoeAgentPromptSignals,
   buildDoeDtcToolCapabilityPrompt,
+  type DoeAgentPromptSignals,
 } from "@/lib/doedtc/agent/tool-prompt-registry";
 import { createDoeDtcAgentTurnId } from "@/lib/doedtc/doedtc-agent-audit";
 import { getActiveDoeDtcBrowserJobId } from "@/lib/doedtc/doedtc-browser";
@@ -38,7 +40,7 @@ import {
   hasConcretePlan,
   looksCapabilityHedge,
 } from "@/lib/doedtc/doedtc-agent-voice";
-import { DOE_AGENT_ACTION_POLICY } from "@/lib/doedtc/doedtc-agent-policy";
+import { DOE_AGENT_ACTION_POLICY, DOE_AGENT_RESOLUTION_POLICY } from "@/lib/doedtc/doedtc-agent-policy";
 import { DOE_AGENT_PRIMITIVES_PROMPT } from "@/lib/doedtc/doedtc-primitives";
 import {
   buildScheduledTextPendingArgs,
@@ -482,10 +484,13 @@ export function buildDoeDtcAgentSystemPrompt(params: {
   guidesLog: string;
   profileOverview: string;
   nowLabel: string;
+  promptSignals?: DoeAgentPromptSignals;
 }): string {
   const prompt = `${buildDoeAgentVoiceBlock()}
 
 ${DOE_AGENT_ACTION_POLICY}
+
+${DOE_AGENT_RESOLUTION_POLICY}
 
 ${DOE_AGENT_PRIMITIVES_PROMPT}
 
@@ -536,7 +541,7 @@ ${params.symptomLog}
 Prior assessments:
 ${params.assessmentHistory}
 
-${buildDoeDtcToolCapabilityPrompt()}
+${buildDoeDtcToolCapabilityPrompt(params.promptSignals)}
 ${DOE_AGENT_MAKE_SURE_ROUTING}
 
 Parallel work:
@@ -725,13 +730,14 @@ export async function runDoeDtcAgentTurnLegacy(params: {
 }): Promise<DoeDtcAgentTurnResult> {
   const timezone = normalizeScheduledTimezone(null);
 
-  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes] =
+  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
       listDoeDtcMessages(params.user.id, 40),
       searchDoeDtcMem0Memories({ userId: params.user.id, query: params.inboundText, topK: 5 }),
       listGuidesForUser(params.user.id),
       searchDoeDtcMem0Playbook({ userId: params.user.id, query: params.inboundText, topK: 3 }),
+      getActiveDoeDtcBrowserJobId(params.user.id),
     ]);
   let pendingRow = await getAgentPending(params.user.id);
 
@@ -834,6 +840,12 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const activeWorkflows = await listActiveWorkflowsForUser(params.user.id);
   const reminderDirective = buildReminderIntentDirective(reminderIntent);
 
+  const promptSignals = buildDoeAgentPromptSignals({
+    snapshot,
+    activeBrowserJobId,
+    pendingRow,
+  });
+
   const systemPrompt = buildDoeDtcAgentSystemPrompt({
     user: params.user,
     medications: snapshot.medications,
@@ -861,6 +873,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
     profileOverview: formatDoeDtcProfileOverview(snapshot),
     nowLabel: agentNowLabel(timezone),
+    promptSignals,
   }) + (reminderDirective ? `\n\n${reminderDirective}` : "");
 
   const messages: ChatMessage[] = [
@@ -868,9 +881,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     { role: "user", content: params.inboundText },
   ];
 
-  const turnState = createInitialToolTurnState(
-    await getActiveDoeDtcBrowserJobId(params.user.id),
-  );
+  const turnState = createInitialToolTurnState(activeBrowserJobId);
   turnState.turnId = params.turnId ?? createDoeDtcAgentTurnId();
   const legacyTools = filterLegacyAgentTools(turnState.activeBrowserJobId);
   const toolCtx = {

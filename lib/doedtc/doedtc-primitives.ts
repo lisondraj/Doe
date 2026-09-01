@@ -9,11 +9,26 @@ export type DoePrimitiveVerb =
   | "habit.recurring"
   | "profile.read"
   | "profile.write"
+  | "health.chart"
+  | "health.assess"
+  | "results.log"
+  | "tracker.create"
+  | "tracker.log"
+  | "tracker.share"
+  | "guide.author"
+  | "visit.prepare"
+  | "visit.listen"
+  | "visit.recall"
+  | "household.add"
+  | "household.invite"
+  | "household.revoke"
   | "browser.research"
   | "browser.act"
   | "browser.commit"
   | "memory.remember"
-  | "memory.recall";
+  | "memory.recall"
+  | "feedback.submit"
+  | "imessage.texture";
 
 export type DoePrimitive = {
   verb: DoePrimitiveVerb;
@@ -25,7 +40,7 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
   {
     verb: "message.send",
     backends: ["linq"],
-    tools: [],
+    tools: ["schedule_text"],
   },
   {
     verb: "message.schedule",
@@ -46,25 +61,117 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
       "cancel_habit_workflow",
       "start_accountability",
       "propose_accountability",
+      "invite_accountability_partner",
+      "log_accountability_checkin",
+      "withdraw_accountability",
+      "pause_accountability",
+      "resume_accountability",
     ],
   },
   {
     verb: "profile.read",
     backends: ["supabase"],
-    tools: ["read_profile", "send_profile_link"],
+    tools: ["read_profile", "send_profile_link", "list_guides", "list_scheduled_texts"],
   },
   {
     verb: "profile.write",
     backends: ["supabase"],
     tools: [
       "log_symptoms",
+      "update_symptom",
+      "remove_symptom",
       "add_medication",
+      "update_medication",
+      "remove_medication",
       "add_condition",
-      "log_family_member",
+      "update_condition",
+      "remove_condition",
       "log_appointment",
-      "create_profile_artifact",
-      "log_artifact_entry",
+      "update_appointment",
+      "cancel_appointment",
+      "log_family_member",
+      "update_family_member",
+      "remove_family_member",
     ],
+  },
+  {
+    verb: "health.chart",
+    backends: ["supabase"],
+    tools: [
+      "log_symptoms",
+      "update_symptom",
+      "remove_symptom",
+      "add_medication",
+      "update_medication",
+      "remove_medication",
+      "add_condition",
+      "update_condition",
+      "remove_condition",
+      "log_appointment",
+      "update_appointment",
+      "cancel_appointment",
+      "read_profile",
+    ],
+  },
+  {
+    verb: "health.assess",
+    backends: ["supabase"],
+    tools: ["run_assessment"],
+  },
+  {
+    verb: "results.log",
+    backends: ["supabase"],
+    tools: ["log_result", "remove_result"],
+  },
+  {
+    verb: "tracker.create",
+    backends: ["supabase"],
+    tools: ["create_profile_artifact", "update_profile_artifact"],
+  },
+  {
+    verb: "tracker.log",
+    backends: ["supabase"],
+    tools: ["log_artifact_entry", "update_artifact_entry", "remove_artifact_entry"],
+  },
+  {
+    verb: "tracker.share",
+    backends: ["supabase"],
+    tools: ["share_artifact", "unshare_artifact"],
+  },
+  {
+    verb: "guide.author",
+    backends: ["supabase"],
+    tools: ["create_guide", "save_guide", "update_guide", "send_guide_link", "list_guides"],
+  },
+  {
+    verb: "visit.prepare",
+    backends: ["supabase"],
+    tools: ["create_preparation"],
+  },
+  {
+    verb: "visit.listen",
+    backends: ["supabase"],
+    tools: ["start_listen"],
+  },
+  {
+    verb: "visit.recall",
+    backends: ["supabase"],
+    tools: ["read_listen_session"],
+  },
+  {
+    verb: "household.add",
+    backends: ["supabase"],
+    tools: ["log_family_member", "update_family_member", "remove_family_member"],
+  },
+  {
+    verb: "household.invite",
+    backends: ["linq", "supabase"],
+    tools: ["send_family_invite"],
+  },
+  {
+    verb: "household.revoke",
+    backends: ["supabase"],
+    tools: ["revoke_household_access"],
   },
   {
     verb: "browser.research",
@@ -79,27 +186,45 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
   {
     verb: "browser.commit",
     backends: ["kernel"],
-    tools: ["request_commit"],
+    tools: ["request_commit", "request_vault", "request_live_login", "show_session"],
   },
   {
     verb: "memory.remember",
     backends: ["mem0"],
-    tools: ["remember_fact"],
+    tools: ["remember_fact", "forget_fact"],
   },
   {
     verb: "memory.recall",
     backends: ["mem0"],
-    tools: [],
+    tools: ["read_profile"],
+  },
+  {
+    verb: "feedback.submit",
+    backends: ["supabase"],
+    tools: ["submit_ticket"],
+  },
+  {
+    verb: "imessage.texture",
+    backends: ["linq"],
+    tools: ["react_to_message", "use_thread_reply", "send_profile_link"],
   },
 ] as const;
 
 export const DOE_AGENT_PRIMITIVES_PROMPT = `Primitives (compose these — do not invent a new feature per ask):
-- message.schedule → schedule_text (timers, one-shot later). Inline if under ~45 seconds.
-- message.await_reply + habit.recurring → start_habit_workflow (daily send → wait for yes/no → notify on miss).
-- profile.read / profile.write → read_profile and the matching write tools.
-- browser.research → start_browser_task (Kernel residential proxy). browser.act → browser_act or browser_computer (Kernel computer SDK) when selectors fail or you have x/y.
-- browser.commit → request_commit then CONFIRM for writes.
-- memory.remember / memory.recall → remember_fact; recall is automatic from Mem0.`;
+- message.schedule → schedule_text (timers, one-shot). Inline if under ~45 seconds. Not for daily habits.
+- message.await_reply + habit.recurring → start_habit_workflow (daily ping → wait for reply → notify owner on miss).
+- habit.recurring → start_accountability when partner/cadence/privacy matters; else start_habit_workflow.
+- health.chart → read_profile + log/update/remove on symptoms, meds, conditions, appointments.
+- health.assess → run_assessment when they ask what it might be — not a definitive diagnosis.
+- results.log → log_result / remove_result for labs and imaging they report.
+- tracker.create / tracker.log / tracker.share → create_profile_artifact once, then log_artifact_entry; share_artifact only on explicit ask.
+- guide.author → create_guide (link first), save_guide after yes, update_guide to edit/archive/unsave.
+- visit.prepare → create_preparation for doctor/refill summary. visit.listen → start_listen. visit.recall → read_listen_session.
+- household.add / household.invite / household.revoke → family chart, send_family_invite, revoke_household_access.
+- browser.research → start_browser_task. browser.act → browser_act or browser_computer. browser.commit → request_commit then CONFIRM.
+- memory.remember / memory.recall → remember_fact / forget_fact; recall also from Mem0 memories in prompt.
+- feedback.submit → submit_ticket for bugs or product feedback.
+- imessage.texture → react_to_message / use_thread_reply sparingly; send_profile_link when they ask for profile.`;
 
 export function toolsForPrimitive(verb: DoePrimitiveVerb): readonly string[] {
   return DOE_PRIMITIVES.find((row) => row.verb === verb)?.tools ?? [];
@@ -111,4 +236,8 @@ export function backendsForPrimitive(verb: DoePrimitiveVerb): readonly DoePrimit
 
 export function primitiveToolNames(): string[] {
   return Array.from(new Set(DOE_PRIMITIVES.flatMap((row) => [...row.tools])));
+}
+
+export function primitiveCoverageForTool(toolName: string): DoePrimitiveVerb[] {
+  return DOE_PRIMITIVES.filter((row) => row.tools.includes(toolName)).map((row) => row.verb);
 }

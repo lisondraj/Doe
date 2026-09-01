@@ -18,6 +18,7 @@ import {
   buildDoeDtcAgentSystemPrompt,
   type DoeDtcAgentTurnResult,
 } from "@/lib/doedtc/doedtc-agent";
+import { buildDoeAgentPromptSignals } from "@/lib/doedtc/agent/tool-prompt-registry";
 import { executeAgentPendingCommit } from "@/lib/doedtc/doedtc-agent-commit";
 import {
   addDoeDtcMem0PlaybookNote,
@@ -143,6 +144,12 @@ async function loadRunContext(params: {
   const playbookBlock =
     playbookNotes.length > 0 ? playbookNotes.map((note) => `- ${note}`).join("\n") : "None yet.";
 
+  const promptSignals = buildDoeAgentPromptSignals({
+    snapshot,
+    activeBrowserJobId,
+    pendingRow,
+  });
+
   const instructions =
     buildDoeDtcAgentSystemPrompt({
       user: params.user,
@@ -171,6 +178,7 @@ async function loadRunContext(params: {
           : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
       profileOverview: formatDoeDtcProfileOverview(snapshot),
       nowLabel: agentNowLabel(timezone),
+      promptSignals,
     }) + (params.reminderDirective ? `\n\n${params.reminderDirective}` : "");
 
   return {

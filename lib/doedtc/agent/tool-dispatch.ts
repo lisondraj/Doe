@@ -34,6 +34,7 @@ import {
 import { normalizeArtifactLayout } from "@/lib/doedtc/doedtc-artifacts";
 import {
   addDoeDtcAppointment,
+  addDoeDtcResult,
   addDoeDtcHouseholdMember,
   appendDoeDtcCondition,
   appendDoeDtcMedication,
@@ -44,6 +45,7 @@ import {
   findDoeDtcArtifactByTitle,
   logDoeDtcArtifactEntry,
   removeDoeDtcAppointment,
+  removeDoeDtcResult,
   removeDoeDtcArtifactEntry,
   removeDoeDtcCondition,
   removeDoeDtcMedication,
@@ -61,6 +63,7 @@ import {
   updateDoeDtcHouseholdMember,
   updateDoeDtcSymptom,
   createDoeDtcListenSession,
+  getDoeDtcListenSession,
   createDoeDtcPreparation,
   createDoeDtcTicket,
   insertDoeDtcMemory,
@@ -100,12 +103,15 @@ import {
   listActiveWorkflowsForUser,
 } from "@/lib/doedtc/doedtc-workflows";
 import {
+  archiveDoeDtcGuide,
   createDoeDtcGuide,
   listGuidesForUser,
   saveDoeDtcGuide,
+  unsaveDoeDtcGuide,
   updateDoeDtcGuide,
 } from "@/lib/doedtc/doedtc-guides-db";
 import {
+  findGuideByTitleHint,
   formatGuideForAgent,
   normalizeGuideBlocks,
   normalizeGuideLayout,
@@ -631,6 +637,35 @@ async function executeDoeDtcToolInner(params: {
       if (!name) throw new Error("Condition name is required.");
       const result = await removeDoeDtcCondition({ userId: subject.subjectUserId, name });
       output = { ok: true, name: result.name, removed: result.removed, subject: subject.subjectMemberName ?? "you" };
+    } else if (name === "log_result") {
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
+      const title = String(args.title ?? "").trim();
+      const resultedAt = String(args.resulted_at ?? "").trim();
+      if (!title || !resultedAt) throw new Error("title and resulted_at are required.");
+      const row = await addDoeDtcResult({
+        userId: subject.subjectUserId,
+        title,
+        resultedAt,
+        source: typeof args.source === "string" ? args.source : null,
+        summary: typeof args.summary === "string" ? args.summary : null,
+      });
+      output = {
+        ok: true,
+        id: row.id,
+        title: row.title,
+        resulted_at: row.resulted_at,
+        subject: subject.subjectMemberName ?? "you",
+      };
+    } else if (name === "remove_result") {
+      const resultId = String(args.result_id ?? "").trim();
+      if (!resultId) throw new Error("result_id is required.");
+      await removeDoeDtcResult({ userId: ctx.user.id, resultId });
+      output = { ok: true, id: resultId, removed: true };
     } else if (name === "create_profile_artifact") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,
@@ -855,24 +890,43 @@ async function executeDoeDtcToolInner(params: {
       await clearAgentPending(ctx.user.id);
       output = { ok: true, id: row.id, title: row.title, saved: true };
     } else if (name === "update_guide") {
-      const row = await updateDoeDtcGuide({
-        userId: ctx.user.id,
-        guideId: typeof args.guide_id === "string" ? args.guide_id : undefined,
-        titleHint: typeof args.title_hint === "string" ? args.title_hint : undefined,
-        title: typeof args.title === "string" ? args.title : undefined,
-        topic: typeof args.topic === "string" ? args.topic : undefined,
-        layout: args.layout ? normalizeGuideLayout(args.layout) : undefined,
-        blocks: Array.isArray(args.blocks) ? normalizeGuideBlocks(args.blocks) : undefined,
-        replaceBlocks: args.replace_blocks === true,
-      });
-      state.guideUrl = doeDtcGuideUrl(ctx.user.care_token, { guide: row.id });
-      output = {
-        ok: true,
-        id: row.id,
-        title: row.title,
-        blocks: row.blocks.length,
-        link_sent_separately: true,
-      };
+      if (args.archive === true || args.unsave === true) {
+        const rows = await listGuidesForUser(ctx.user.id);
+        const guideId = typeof args.guide_id === "string" ? args.guide_id.trim() : "";
+        const titleHint = typeof args.title_hint === "string" ? args.title_hint.trim() : "";
+        const target = guideId
+          ? rows.find((row) => row.id === guideId)
+          : titleHint
+            ? findGuideByTitleHint(rows, titleHint)
+            : rows[0];
+        if (!target) throw new Error("Guide not found.");
+        if (args.archive === true) {
+          const row = await archiveDoeDtcGuide({ userId: ctx.user.id, guideId: target.id });
+          output = { ok: true, id: row.id, title: row.title, archived: true };
+        } else {
+          const row = await unsaveDoeDtcGuide({ userId: ctx.user.id, guideId: target.id });
+          output = { ok: true, id: row.id, title: row.title, unsaved: true };
+        }
+      } else {
+        const row = await updateDoeDtcGuide({
+          userId: ctx.user.id,
+          guideId: typeof args.guide_id === "string" ? args.guide_id : undefined,
+          titleHint: typeof args.title_hint === "string" ? args.title_hint : undefined,
+          title: typeof args.title === "string" ? args.title : undefined,
+          topic: typeof args.topic === "string" ? args.topic : undefined,
+          layout: args.layout ? normalizeGuideLayout(args.layout) : undefined,
+          blocks: Array.isArray(args.blocks) ? normalizeGuideBlocks(args.blocks) : undefined,
+          replaceBlocks: args.replace_blocks === true,
+        });
+        state.guideUrl = doeDtcGuideUrl(ctx.user.care_token, { guide: row.id });
+        output = {
+          ok: true,
+          id: row.id,
+          title: row.title,
+          blocks: row.blocks.length,
+          link_sent_separately: true,
+        };
+      }
     } else if (name === "list_guides") {
       const rows = await listGuidesForUser(ctx.user.id);
       output = {
@@ -1216,6 +1270,36 @@ async function executeDoeDtcToolInner(params: {
       });
       state.listenUrl = doeDtcListenUrl(ctx.user.care_token, session.id);
       output = { ok: true, session_id: session.id, link_sent_separately: true };
+    } else if (name === "read_listen_session") {
+      const sessionId = typeof args.session_id === "string" ? args.session_id.trim() : "";
+      let session = sessionId
+        ? await getDoeDtcListenSession({ sessionId, userId: ctx.user.id })
+        : null;
+      if (!session) {
+        session =
+          ctx.snapshot.listenSessions.find((row) => row.status === "completed") ??
+          ctx.snapshot.listenSessions[0] ??
+          null;
+      }
+      if (!session) {
+        output = { ok: false, error: "No Listen session found." };
+      } else if (session.status !== "completed") {
+        output = {
+          ok: false,
+          error: "Session not completed yet.",
+          session_id: session.id,
+          status: session.status,
+        };
+      } else {
+        output = {
+          ok: true,
+          session_id: session.id,
+          status: session.status,
+          summary: session.summary,
+          transcript: session.transcript?.slice(0, 4000) ?? null,
+          completed_at: session.completed_at,
+        };
+      }
     } else if (name === "send_profile_link") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,
@@ -1663,6 +1747,8 @@ export const DOE_DTC_TOOL_NAMES = [
   "add_condition",
   "update_condition",
   "remove_condition",
+  "log_result",
+  "remove_result",
   "create_profile_artifact",
   "update_profile_artifact",
   "log_artifact_entry",
@@ -1691,6 +1777,7 @@ export const DOE_DTC_TOOL_NAMES = [
   "use_thread_reply",
   "request_commit",
   "start_listen",
+  "read_listen_session",
   "send_profile_link",
   "propose_scheduled_text",
   "schedule_text",

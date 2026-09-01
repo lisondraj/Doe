@@ -335,7 +335,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "remove_condition",
-      description: "Remove a medical condition from the profile.",
+      description:
+        "Remove a medical condition from the profile when they stopped having it. Not for correcting a name — use update_condition. Name from read_profile conditions tab.",
       parameters: {
         type: "object",
         properties: {
@@ -344,6 +345,44 @@ export const DOEDTC_AGENT_TOOLS = [
           member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
         },
         required: ["name"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "log_result",
+      description:
+        "Log a lab, imaging, or test result they report (e.g. A1C 6.1). Not for symptoms — use log_symptoms. Read read_profile results tab first if checking what's logged.",
+      parameters: {
+        type: "object",
+        properties: {
+          title: { type: "string", description: "Result name, e.g. A1C, Chest X-ray." },
+          resulted_at: {
+            type: "string",
+            description: "ISO date or datetime when result came back.",
+          },
+          source: { type: "string", description: "Lab or facility if known." },
+          summary: { type: "string", description: "Values or notes, e.g. 6.1%." },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["title", "resulted_at"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "remove_result",
+      description:
+        "Delete a logged lab/imaging result. result_id from read_profile results tab — do not ask the user for an id you can read.",
+      parameters: {
+        type: "object",
+        properties: {
+          result_id: { type: "string", description: "Result row id from read_profile results tab." },
+        },
+        required: ["result_id"],
       },
     },
   },
@@ -411,7 +450,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "update_profile_artifact",
       description:
-        "Rename a tracker, change its fields, or archive it. Use artifact_id from read_profile trackers tab.",
+        "Rename a tracker, change fields/layout, or archive:true to delete. artifact_id from read_profile trackers tab. Not for logging an entry — use log_artifact_entry.",
       parameters: {
         type: "object",
         properties: {
@@ -457,11 +496,12 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "log_artifact_entry",
-      description: "Log a new entry on a profile tracker.",
+      description:
+        "Append one entry to an existing tracker. values keys must match field keys from read_profile trackers tab. artifact_id from same tab. Not create_profile_artifact.",
       parameters: {
         type: "object",
         properties: {
-          artifact_id: { type: "string", description: "Tracker id." },
+          artifact_id: { type: "string", description: "Tracker id from read_profile trackers tab." },
           values: {
             type: "object",
             description: "Field values keyed by field key.",
@@ -497,7 +537,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "unshare_artifact",
-      description: "Stop sharing a profile tracker (revokes the public link).",
+      description:
+        "Revoke a tracker's public share link. artifact_id from read_profile trackers tab. Not unshare for guides.",
       parameters: {
         type: "object",
         properties: {
@@ -511,11 +552,12 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "update_artifact_entry",
-      description: "Update an existing tracker entry.",
+      description:
+        "Fix an existing tracker entry's values or timestamp. entry_id from read_profile trackers tab. Not log_artifact_entry.",
       parameters: {
         type: "object",
         properties: {
-          entry_id: { type: "string", description: "Entry id." },
+          entry_id: { type: "string", description: "Entry id from read_profile trackers tab." },
           values: {
             type: "object",
             additionalProperties: true,
@@ -530,11 +572,12 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "remove_artifact_entry",
-      description: "Delete a tracker entry.",
+      description:
+        "Delete one tracker entry. entry_id from read_profile trackers tab.",
       parameters: {
         type: "object",
         properties: {
-          entry_id: { type: "string", description: "Entry id." },
+          entry_id: { type: "string", description: "Entry id from read_profile trackers tab." },
         },
         required: ["entry_id"],
       },
@@ -590,7 +633,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "save_guide",
-      description: "Save a guide to the user's profile Guides tab after they confirm.",
+      description:
+        "Save a guide to profile Guides tab after they confirm yes. guide_id from create_guide output or list_guides. Not needed on create — link sends immediately.",
       parameters: {
         type: "object",
         properties: {
@@ -605,12 +649,12 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "update_guide",
       description:
-        "Edit an existing guide — replace blocks, add steps, retitle, etc. Use guide_id or title_hint to pick the guide.",
+        "Edit guide blocks/title, or archive:true to delete, or unsave:true to remove from profile (keeps link). guide_id or title_hint from list_guides. Not create_guide.",
       parameters: {
         type: "object",
         properties: {
-          guide_id: { type: "string" },
-          title_hint: { type: "string" },
+          guide_id: { type: "string", description: "Guide id from list_guides." },
+          title_hint: { type: "string", description: "Title substring if id unknown." },
           title: { type: "string" },
           topic: { type: "string" },
           layout: {
@@ -619,6 +663,8 @@ export const DOEDTC_AGENT_TOOLS = [
           },
           blocks: { type: "array", items: { type: "object" } },
           replace_blocks: { type: "boolean", description: "If true, replace all blocks. If false, append/patch." },
+          archive: { type: "boolean", description: "Set true to permanently archive/delete the guide." },
+          unsave: { type: "boolean", description: "Set true to remove from profile Guides tab without deleting." },
         },
       },
     },
@@ -627,7 +673,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "list_guides",
-      description: "List recent guides (saved and unsaved).",
+      description:
+        "List recent guides with ids (saved and unsaved). Call before update_guide, send_guide_link, or archive/unsave.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -704,13 +751,30 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "start_listen",
       description:
-        "Create a Listen session for recording and transcribing a medical visit. You MUST call this before telling the user a Listen link is coming.",
+        "Create a Listen session before saying a recording link is coming. Optional appointment_id from Appointments log. Not read_listen_session.",
       parameters: {
         type: "object",
         properties: {
           appointment_id: {
             type: "string",
-            description: "Optional existing appointment id to link this recording to.",
+            description: "Appointment id from Appointments log to link this recording.",
+          },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "read_listen_session",
+      description:
+        "Read completed visit transcript and summary. Use when they ask what the doctor said. session_id optional — defaults to most recent completed. Not start_listen.",
+      parameters: {
+        type: "object",
+        properties: {
+          session_id: {
+            type: "string",
+            description: "Listen session id if known; omit for most recent completed.",
           },
         },
       },
@@ -784,7 +848,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "browser_navigate",
-      description: "Navigate the active browser task to a URL or site nickname.",
+      description:
+        "Navigate the active browser job to a URL or site nickname (google, mayo). Requires start_browser_task first — no active job means call start_browser_task instead.",
       parameters: {
         type: "object",
         properties: {
@@ -851,7 +916,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "request_vault",
-      description: "Send a secure vault link so the patient can sign in on the web. Never ask for passwords in iMessage.",
+      description:
+        "Send secure vault sign-in link for a patient portal (host required). Never ask for passwords in chat. Not request_live_login — vault is async secure handoff.",
       parameters: {
         type: "object",
         properties: {
@@ -865,7 +931,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "request_live_login",
-      description: "Send a Live View link so the patient can log in themselves.",
+      description:
+        "Send Live View link so they sign in while watching the browser. Not request_vault — use when they will type credentials themselves.",
       parameters: {
         type: "object",
         properties: {},
@@ -946,7 +1013,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "list_scheduled_texts",
-      description: "List pending scheduled texts for the user.",
+      description:
+        "List pending one-shot scheduled texts with scheduled_text_id before cancel_scheduled_text.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -1116,7 +1184,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "withdraw_accountability",
-      description: "Withdraw a pact (owner only) after explicit confirmation. Stops check-ins and notifies participants.",
+      description:
+        "End an accountability pact after explicit owner confirmation. Stops check-ins. Not pause_accountability.",
       parameters: {
         type: "object",
         properties: {
@@ -1131,7 +1200,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "pause_accountability",
-      description: "Pause scheduled check-ins without deleting history (owner only).",
+      description:
+        "Pause recurring pact check-ins without deleting history. Owner only. pact_id from Accountability pacts log.",
       parameters: {
         type: "object",
         properties: {
@@ -1145,7 +1215,8 @@ export const DOEDTC_AGENT_TOOLS = [
     type: "function" as const,
     function: {
       name: "resume_accountability",
-      description: "Resume a paused accountability pact (owner only).",
+      description:
+        "Resume a paused accountability pact. Owner only. pact_id from Accountability pacts log.",
       parameters: {
         type: "object",
         properties: {

@@ -47,5 +47,30 @@
     "description": "User asks for Google screenshot",
     "inboundText": "Go to google.com and send me a screenshot",
     "userStatus": "active"
+  },
+  {
+    "id": "tracker-entry-log",
+    "description": "User logs water on existing tracker",
+    "inboundText": "Log 3 glasses of water today",
+    "userStatus": "active"
+  },
+  {
+    "id": "med-correction",
+    "description": "User corrects medication name",
+    "inboundText": "Actually it's Metformin not Metforman",
+    "userStatus": "active"
+  },
+  {
+    "id": "listen-recall",
+    "description": "User asks what doctor said after visit",
+    "inboundText": "What did my doctor say about my dosage?",
+    "userStatus": "active"
+  },
+  {
+    "id": "guide-save-confirm",
+    "description": "User confirms saving a guide",
+    "inboundText": "Yes save it to my profile",
+    "userStatus": "active",
+    "pendingKind": "save_guide"
   }
 ]

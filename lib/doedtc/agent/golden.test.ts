@@ -15,7 +15,7 @@ const fixtures = JSON.parse(
 
 describe("golden transcript harness scaffolding", () => {
   it("loads fixture catalog", () => {
-    assert.ok(fixtures.length >= 8);
+    assert.ok(fixtures.length >= 12);
   });
 
   it("tool registry matches dispatch names", () => {
