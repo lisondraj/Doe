@@ -824,6 +824,45 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "read_attachment",
+      description:
+        "Fetch a stored inbound file by id from the Recent attachments log. Returns filename, mime, blob URL, and whether vision is ready. Use when they refer to an earlier photo or PDF.",
+      parameters: {
+        type: "object",
+        properties: {
+          file_id: { type: "string", description: "File id from Recent attachments or transcript." },
+        },
+        required: ["file_id"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "parse_document",
+      description:
+        "Vision-parse a photo or PDF page into structured chart writes (labs, meds, appointments, etc.). Call on inbound attachments before narrating what landed. High confidence photo sends auto-commit writes; ambiguous docs describe and ask once.",
+      parameters: {
+        type: "object",
+        properties: {
+          file_ids: {
+            type: "array",
+            items: { type: "string" },
+            description: "One or more file ids. Defaults to attachments on this turn.",
+          },
+          file_id: { type: "string", description: "Single file id shorthand." },
+          caption: { type: "string", description: "Optional user caption for context." },
+          auto_commit: {
+            type: "boolean",
+            description: "When true, run proposed writes immediately. Default follows confidence rules.",
+          },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "start_browser_task",
       description:
         "Browse the web and screenshot the page. For 'go to Google and type mayo', call once with url google and intent type mayo — do not type into the box yourself. Selector is optional for later typing.",

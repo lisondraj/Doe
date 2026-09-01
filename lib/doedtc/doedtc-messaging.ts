@@ -540,6 +540,7 @@ export async function handleOptOutInbound(phone: string): Promise<void> {
 export async function handleSymptomInbound(params: {
   user: DoeDtcUserRow;
   text: string;
+  inboundFileIds?: string[];
   webhookEventId?: string;
   inboundMessageId?: string;
 }): Promise<void> {
@@ -565,6 +566,7 @@ export async function handleSymptomInbound(params: {
       runDoeDtcAgentTurn({
         user: params.user,
         inboundText: params.text,
+        inboundFileIds: params.inboundFileIds,
         inboundMessageId: params.inboundMessageId,
         turnId,
       }),
@@ -917,11 +919,12 @@ export async function processDoeDtcInboundWebhook(params: {
   }
 
   let agentInboundText = text;
+  let inboundFileIds: string[] = [];
   if (inboundMedia.length > 0) {
     const { ingestInboundDoeDtcMedia } = await import("@/lib/doedtc/doedtc-files");
-    const fileIds = await ingestInboundDoeDtcMedia({ user, attachments: inboundMedia });
-    if (fileIds.length > 0) {
-      agentInboundText = [text, `[attachments: ${fileIds.join(", ")}]`].filter(Boolean).join("\n");
+    inboundFileIds = await ingestInboundDoeDtcMedia({ user, attachments: inboundMedia });
+    if (inboundFileIds.length > 0) {
+      agentInboundText = [text, `[attachments: ${inboundFileIds.join(", ")}]`].filter(Boolean).join("\n");
     }
   }
 
@@ -945,6 +948,7 @@ export async function processDoeDtcInboundWebhook(params: {
     await handleSymptomInbound({
       user,
       text: agentInboundText,
+      inboundFileIds,
       webhookEventId: params.webhookEventId,
       inboundMessageId,
     });

@@ -117,6 +117,7 @@ export async function executeDoePlan(params: {
           inboundText: ctx.inboundText,
           inboundMessageId: ctx.inboundMessageId,
           snapshot: ctx.snapshot,
+          attachmentContext: ctx.attachmentContext,
         },
         state: ctx.turnState,
       });
@@ -145,6 +146,7 @@ export async function executeDoePlan(params: {
           inboundText: ctx.inboundText,
           inboundMessageId: ctx.inboundMessageId,
           snapshot: ctx.snapshot,
+          attachmentContext: ctx.attachmentContext,
         },
         state: ctx.turnState,
       });
@@ -159,6 +161,7 @@ export async function executeDoePlan(params: {
             inboundText: ctx.inboundText,
             inboundMessageId: ctx.inboundMessageId,
             snapshot: ctx.snapshot,
+            attachmentContext: ctx.attachmentContext,
           },
           state: ctx.turnState,
         });

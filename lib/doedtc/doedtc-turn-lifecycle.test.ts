@@ -57,6 +57,11 @@ test("browser jobs keep a working tapback until the job finishes", () => {
   );
 });
 
+test("attachment turns count as complex work", () => {
+  assert.equal(inboundLooksComplex("[attachments: file-1]"), true);
+  assert.equal(inboundLooksComplex("here are my labs [attachments: file-1]"), true);
+});
+
 test("failed slow turns swap to failed; fast failures stay quiet", () => {
   assert.equal(
     resolveTurnReactionAction({ workingReactionApplied: true, failed: true }),

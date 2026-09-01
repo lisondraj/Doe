@@ -1,5 +1,7 @@
 /** iMessage tapbacks: lifecycle 👍/✅ only on complex work; occasional matching emoji otherwise. */
 
+import { inboundHasAttachments } from "@/lib/doedtc/agent/attachments";
+
 export const LIFECYCLE_WORKING_EMOJI = "👍";
 export const LIFECYCLE_DONE_EMOJI = "✅";
 export const LIFECYCLE_FAILED_EMOJI = "👎";
@@ -17,6 +19,7 @@ export function inboundSkipsReaction(text: string): boolean {
 export function inboundLooksComplex(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed || inboundSkipsReaction(trimmed)) return false;
+  if (inboundHasAttachments(trimmed)) return true;
   return COMPLEX_TASK_RE.test(trimmed);
 }
 

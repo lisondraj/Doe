@@ -105,6 +105,7 @@ describe("tool capability prompt", () => {
       scheduledLog: "None",
       workflowsLog: "None",
       guidesLog: "None",
+      recentAttachmentsLog: "None yet.",
       profileOverview: "dashboard",
       nowLabel: "Mon 9:00 AM",
     });

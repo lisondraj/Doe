@@ -1,5 +1,6 @@
 /** Per-turn intent + slot fill + blockers — combinatorial anticipation without case lists. */
 
+import { inboundHasAttachments, parseInboundAttachmentIds } from "@/lib/doedtc/agent/attachments";
 import {
   findMatchingArtifact,
   findMatchingGuide,
@@ -28,6 +29,7 @@ import type {
 } from "@/lib/doedtc/doedtc-types";
 
 export type ActionIntent =
+  | "parse_document"
   | "log_appointment"
   | "schedule_text"
   | "profile_write"
@@ -268,6 +270,9 @@ export function inferPrimaryIntent(params: {
   guides?: Array<Pick<DoeDtcGuideRow, "id" | "title" | "topic">>;
 }): ActionIntent {
   const text = params.inboundText.trim();
+  if (inboundHasAttachments(text) || parseInboundAttachmentIds(text).length > 0) {
+    return "parse_document";
+  }
   if (!text) return "none";
 
   if (inboundLooksLikeInvite(text)) return "invite";
@@ -500,6 +505,19 @@ function buildArtifactBlockers(params: {
         },
       ];
     }
+  }
+  if (params.intent === "parse_document") {
+    return [
+      {
+        slot: "artifact",
+        confidence: "high",
+        userFacing: "I'll read what they sent",
+        promptLine:
+          "Inbound attachment present. parse_document first, then commit proposed writes when confidence is high. Describe and ask once when unclear.",
+        tool: "parse_document",
+        blocksPrimary: false,
+      },
+    ];
   }
   return [];
 }

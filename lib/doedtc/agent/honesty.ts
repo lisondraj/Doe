@@ -83,6 +83,16 @@ const CLAIM_REGISTRY: Array<{
     requiredTools: ["log_appointment"],
   },
   {
+    id: "result_logged",
+    claim: /\b(?:i(?:'ve| have)? logged|logged|saved)\b.{0,48}\b(?:a1c|lab|result|results|bloodwork|cbc|glucose|cholesterol)\b/i,
+    requiredTools: ["log_result", "parse_document"],
+  },
+  {
+    id: "medication_logged",
+    claim: /\b(?:i(?:'ve| have)? logged|logged|added)\b.{0,40}\b(?:med(?:ication)?|rx|prescription)\b/i,
+    requiredTools: ["add_medication", "parse_document"],
+  },
+  {
     id: "member_added",
     claim: /\b(?:i(?:'ve| have) added|added)\b.{0,32}\b(?:to (?:the|your) (?:chart|household|family)|on (?:the|your) chart)\b/i,
     requiredTools: ["log_family_member"],

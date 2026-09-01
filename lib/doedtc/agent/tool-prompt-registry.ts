@@ -74,6 +74,8 @@ export const TOOL_DOMAINS: Record<(typeof DOE_DTC_TOOL_NAMES)[number], DoeToolDo
   log_result: "health_chart",
   remove_result: "health_chart",
   read_profile: "health_chart",
+  read_attachment: "health_chart",
+  parse_document: "health_chart",
   create_preparation: "visit",
   create_profile_artifact: "trackers",
   update_profile_artifact: "trackers",
@@ -158,6 +160,10 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
     "remove_result — delete a logged result. result_id from read_profile results tab — never ask the user for an id you can read.",
   read_profile:
     "read_profile — read any profile tab before answering what is saved (Whoop, Apple Health, trackers, family, results). Never invent status. Ids for writes live in these logs — do not ask the user for ids.",
+  read_attachment:
+    "read_attachment — fetch a stored inbound photo/PDF by file id from Recent attachments. Use when they refer to an earlier image.",
+  parse_document:
+    "parse_document — vision-parse labs, Rx bottles, appointment cards, vaccine records into chart writes. On photo inbound, parse first then commit. Describe low-confidence docs and ask once before writing.",
   create_preparation:
     "create_preparation — one-off visit-prep summary with a 5-digit share code for their doctor. Not a guide — use create_guide for how-to visuals.",
   create_profile_artifact:

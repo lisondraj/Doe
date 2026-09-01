@@ -1,3 +1,4 @@
+import type { DoeDtcAttachmentContext } from "@/lib/doedtc/agent/attachments";
 import type { DoeDtcProfileSnapshot, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 import type { DoeDtcToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 import { z } from "zod";
@@ -17,6 +18,8 @@ export type DoeDtcRunContext = {
   user: DoeDtcUserRow;
   inboundText: string;
   inboundMessageId?: string;
+  inboundFileIds?: string[];
+  attachmentContext?: DoeDtcAttachmentContext;
   snapshot: DoeDtcProfileSnapshot;
   turnState: DoeDtcToolTurnState;
   instructions: string;

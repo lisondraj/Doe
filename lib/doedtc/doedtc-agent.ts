@@ -1,4 +1,10 @@
 import { applyDeliverablePolicyToTurnState } from "@/lib/doedtc/agent/deliverable-policy";
+import {
+  buildLegacyVisionUserContent,
+  enrichTranscriptBodiesForAgent,
+  loadDoeDtcAttachmentContext,
+  type VisionContentPart,
+} from "@/lib/doedtc/agent/attachments";
 import { resolveDoeDtcAgentRuntime, resolveDoeDtcAgentModel } from "@/lib/doedtc/agent/types";
 import {
   buildRefusalRetrySystemMessage,
@@ -199,7 +205,8 @@ const AGENT_TOOL_TEMPERATURE = 0.25;
 
 
 type ChatMessage =
-  | { role: "system" | "user" | "assistant"; content: string }
+  | { role: "system" | "assistant"; content: string }
+  | { role: "user"; content: string | VisionContentPart[] }
   | {
       role: "assistant";
       content: string | null;
@@ -334,11 +341,17 @@ export function sanitizeDoeDtcReplyText(
   return cleaned;
 }
 
-function compactTranscript(messages: DoeDtcMessageRow[]): string {
-  const joined = compactTranscriptForAgent(
-    messages.filter((entry) => entry.body.trim()),
-    20,
-  );
+function compactTranscript(
+  messages: DoeDtcMessageRow[],
+  filesById?: Map<string, import("@/lib/doedtc/doedtc-files-db").DoeDtcFileRow>,
+  recentInboundFiles?: import("@/lib/doedtc/doedtc-files-db").DoeDtcFileRow[],
+): string {
+  const filtered = messages.filter((entry) => entry.body.trim());
+  const enriched =
+    filesById && recentInboundFiles
+      ? enrichTranscriptBodiesForAgent(filtered, filesById, recentInboundFiles)
+      : filtered;
+  const joined = compactTranscriptForAgent(enriched, 20);
   if (joined.length <= 9000) return joined;
   return joined.slice(joined.length - 9000);
 }
@@ -504,6 +517,7 @@ export type DoeDtcAgentPromptParams = {
   scheduledLog: string;
   workflowsLog: string;
   guidesLog: string;
+  recentAttachmentsLog: string;
   profileOverview: string;
   nowLabel: string;
   promptSignals?: DoeAgentPromptSignals;
@@ -531,6 +545,9 @@ ${params.profileOverview}
 
 Recent conversation:
 ${params.transcript || "No prior messages."}
+
+Recent attachments (read_attachment / parse_document):
+${params.recentAttachmentsLog}
 
 Appointments:
 ${params.appointmentLog}
@@ -808,6 +825,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   user: DoeDtcUserRow;
   inboundText: string;
   inboundMessageId?: string;
+  inboundFileIds?: string[];
   turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   const timezone = normalizeScheduledTimezone(null);
@@ -939,11 +957,19 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     }),
   );
 
+  const attachmentContext = await loadDoeDtcAttachmentContext({
+    userId: params.user.id,
+    inboundText: params.inboundText,
+    inboundFileIds: params.inboundFileIds,
+  });
+  const filesById = new Map(attachmentContext.recentFiles.map((file) => [file.id, file]));
+  const recentInboundFiles = attachmentContext.recentFiles.filter((file) => file.source === "inbound");
+
   const systemPrompt = buildDoeDtcAgentSystemPrompt({
     user: params.user,
     medications: snapshot.medications,
     conditions: snapshot.conditions,
-    transcript: compactTranscript(messageHistory),
+    transcript: compactTranscript(messageHistory, filesById, recentInboundFiles),
     symptomLog: formatSymptomLog(snapshot.symptoms),
     assessmentHistory: formatAssessmentHistory(snapshot.assessments),
     appointmentLog: formatAppointmentLog(snapshot.appointments),
@@ -966,6 +992,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       recentGuides.length === 0
         ? "None yet."
         : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
+    recentAttachmentsLog: attachmentContext.recentFilesLog,
     profileOverview: formatDoeDtcProfileOverview(snapshot),
     nowLabel: agentNowLabel(timezone),
     promptSignals,
@@ -974,7 +1001,13 @@ export async function runDoeDtcAgentTurnLegacy(params: {
 
   const messages: ChatMessage[] = [
     { role: "system", content: systemPrompt },
-    { role: "user", content: params.inboundText },
+    {
+      role: "user",
+      content: buildLegacyVisionUserContent(
+        attachmentContext.inboundTextForModel,
+        attachmentContext.visionImageUrls,
+      ),
+    },
   ];
 
   const turnState = createInitialToolTurnState(activeBrowserJobId);
@@ -985,6 +1018,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     inboundText: params.inboundText,
     inboundMessageId: params.inboundMessageId,
     snapshot,
+    attachmentContext,
   };
   let lastModelContent: string | null = null;
   let reflectionNoteInjected = false;
@@ -1198,6 +1232,7 @@ export async function runDoeDtcAgentTurn(params: {
   user: import("@/lib/doedtc/doedtc-types").DoeDtcUserRow;
   inboundText: string;
   inboundMessageId?: string;
+  inboundFileIds?: string[];
   turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   if (resolveDoeDtcAgentRuntime() === "sdk") {

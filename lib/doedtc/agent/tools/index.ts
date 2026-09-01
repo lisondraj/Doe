@@ -71,6 +71,7 @@ export function createDoeDtcSdkTools(ctx: DoeDtcRunContext) {
             inboundText: runtimeCtx.inboundText,
             inboundMessageId: runtimeCtx.inboundMessageId,
             snapshot: runtimeCtx.snapshot,
+            attachmentContext: runtimeCtx.attachmentContext,
           },
           state: runtimeCtx.turnState,
         });

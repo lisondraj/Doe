@@ -79,7 +79,7 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
   {
     verb: "profile.read",
     backends: ["supabase"],
-    tools: ["read_profile", "send_profile_link", "list_guides", "list_scheduled_texts"],
+    tools: ["read_profile", "send_profile_link", "list_guides", "list_scheduled_texts", "read_attachment"],
   },
   {
     verb: "profile.write",
@@ -119,6 +119,7 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
       "update_appointment",
       "cancel_appointment",
       "read_profile",
+      "parse_document",
     ],
   },
   {
@@ -129,7 +130,7 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
   {
     verb: "results.log",
     backends: ["supabase"],
-    tools: ["log_result", "remove_result"],
+    tools: ["log_result", "remove_result", "parse_document"],
   },
   {
     verb: "tracker.create",

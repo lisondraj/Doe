@@ -76,6 +76,25 @@ describe("action slots", () => {
     assert.match(slots.blockers.find((row) => row.slot === "phone")?.userFacing ?? "", /don't have a number/i);
   });
 
+  it("infers parse_document when inbound has attachments", () => {
+    assert.equal(
+      inferPrimaryIntent({ inboundText: "[attachments: file-1]" }),
+      "parse_document",
+    );
+  });
+
+  it("surfaces parse_document steering for photo inbound", () => {
+    const slots = resolveActionSlots({
+      inboundText: "[attachments: file-1]",
+      viewerUserId: "parent-1",
+      members: [parent],
+      artifacts: [],
+      guides: [],
+    });
+    assert.equal(slots.intent, "parse_document");
+    assert.ok(slots.blockers.some((row) => row.tool === "parse_document"));
+  });
+
   it("allows act_now for joined member with appointment timing", () => {
     const fred = member({
       id: "m-fred",

@@ -1,6 +1,11 @@
-import { run, RunState } from "@openai/agents";
+import { run, RunState, user } from "@openai/agents";
 import type { Agent } from "@openai/agents";
 
+import {
+  buildSdkVisionUserInput,
+  enrichTranscriptBodiesForAgent,
+  loadDoeDtcAttachmentContext,
+} from "@/lib/doedtc/agent/attachments";
 import { getActiveDoeDtcBrowserJobId } from "@/lib/doedtc/doedtc-browser";
 import {
   assembleTurnResult,
@@ -74,9 +79,16 @@ import {
 } from "@/lib/doedtc/doedtc-db";
 import { listGuidesForUser } from "@/lib/doedtc/doedtc-guides-db";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
+import type { DoeDtcFileRow } from "@/lib/doedtc/doedtc-files-db";
 
-function compactTranscript(messages: Awaited<ReturnType<typeof listDoeDtcMessages>>): string {
-  return compactTranscriptForAgent(messages, 20);
+function compactTranscript(
+  messages: Awaited<ReturnType<typeof listDoeDtcMessages>>,
+  filesById: Map<string, DoeDtcFileRow>,
+  recentInboundFiles: DoeDtcFileRow[],
+): string {
+  const filtered = messages.filter((entry) => entry.body.trim());
+  const enriched = enrichTranscriptBodiesForAgent(filtered, filesById, recentInboundFiles);
+  return compactTranscriptForAgent(enriched, 20);
 }
 
 function formatSymptomLog(
@@ -127,13 +139,14 @@ async function loadRunContext(params: {
   user: DoeDtcUserRow;
   inboundText: string;
   inboundMessageId?: string;
+  inboundFileIds?: string[];
   turnId?: string;
   reminderDirective?: string | null;
   pendingRow?: DoeDtcAgentPendingRow | null;
 }): Promise<DoeDtcRunContext> {
   const pendingRow = params.pendingRow ?? (await getAgentPending(params.user.id));
 
-  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId] =
+  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, attachmentContext] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
       listDoeDtcMessages(params.user.id, 40),
@@ -141,7 +154,15 @@ async function loadRunContext(params: {
       listGuidesForUser(params.user.id),
       searchDoeDtcMem0Playbook({ userId: params.user.id, query: params.inboundText, topK: 3 }),
       getActiveDoeDtcBrowserJobId(params.user.id),
+      loadDoeDtcAttachmentContext({
+        userId: params.user.id,
+        inboundText: params.inboundText,
+        inboundFileIds: params.inboundFileIds,
+      }),
     ]);
+
+  const filesById = new Map(attachmentContext.recentFiles.map((file) => [file.id, file]));
+  const recentInboundFiles = attachmentContext.recentFiles.filter((file) => file.source === "inbound");
 
   const timezone = normalizeScheduledTimezone(null);
   const activeWorkflows = await listActiveWorkflowsForUser(params.user.id);
@@ -170,7 +191,7 @@ async function loadRunContext(params: {
     user: params.user,
     medications: snapshot.medications,
     conditions: snapshot.conditions,
-    transcript: compactTranscript(messageHistory),
+    transcript: compactTranscript(messageHistory, filesById, recentInboundFiles),
     symptomLog: formatSymptomLog(snapshot.symptoms),
     assessmentHistory: formatAssessmentHistory(snapshot.assessments),
     appointmentLog: formatAppointmentLog(snapshot.appointments),
@@ -193,6 +214,7 @@ async function loadRunContext(params: {
       recentGuides.length === 0
         ? "None yet."
         : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
+    recentAttachmentsLog: attachmentContext.recentFilesLog,
     profileOverview: formatDoeDtcProfileOverview(snapshot),
     nowLabel: agentNowLabel(timezone),
     promptSignals,
@@ -219,6 +241,8 @@ async function loadRunContext(params: {
     user: params.user,
     inboundText: params.inboundText,
     inboundMessageId: params.inboundMessageId,
+    inboundFileIds: params.inboundFileIds,
+    attachmentContext,
     snapshot,
     turnState: {
       ...createInitialToolTurnState(activeBrowserJobId),
@@ -440,6 +464,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
   user: DoeDtcUserRow;
   inboundText: string;
   inboundMessageId?: string;
+  inboundFileIds?: string[];
   turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   let pendingRow = await getAgentPending(params.user.id);
@@ -522,8 +547,11 @@ export async function runDoeDtcAgentTurnSdk(params: {
   }
 
   const agent = createDoeSpecialistAgents(loaded).manager;
+  const sdkInput = user(
+    buildSdkVisionUserInput(loaded.attachmentContext?.inboundTextForModel ?? params.inboundText, loaded.attachmentContext?.visionImageUrls ?? []),
+  );
 
-  const result = await run(agent, params.inboundText, { context: loaded, maxTurns: 12 });
+  const result = await run(agent, sdkInput, { context: loaded, maxTurns: 12 });
 
   if (result.interruptions?.length) {
     await clearAgentPending(params.user.id);

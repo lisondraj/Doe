@@ -91,6 +91,7 @@ export async function runDoeDtcAgentSelftest(): Promise<Record<string, unknown>>
         recentGuides.length === 0
           ? "None yet."
           : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
+      recentAttachmentsLog: "None yet.",
       profileOverview: formatDoeDtcProfileOverview(snapshot),
       nowLabel: agentNowLabel(timezone),
     });

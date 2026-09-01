@@ -96,6 +96,7 @@ describe("tool prompt registry", () => {
       scheduledLog: "None",
       workflowsLog: "None",
       guidesLog: "None",
+      recentAttachmentsLog: "None yet.",
       profileOverview: "Overview",
       nowLabel: "Mon 7pm",
     };
@@ -126,6 +127,7 @@ describe("tool prompt registry", () => {
       scheduledLog: "None",
       workflowsLog: "None",
       guidesLog: "None",
+      recentAttachmentsLog: "None yet.",
       profileOverview: "Overview",
       nowLabel: "Mon 7pm",
       situationBrief: "Situation (do not recite):\nNamed but not on chart: Riley.",

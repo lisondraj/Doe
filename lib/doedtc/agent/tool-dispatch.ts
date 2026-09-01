@@ -147,6 +147,8 @@ import {
   shouldAllowProfileLink,
   toolCallSignature,
 } from "@/lib/doedtc/agent/turn-integrity";
+import type { DoeDtcAttachmentContext } from "@/lib/doedtc/agent/attachments";
+import { runParseDocumentTool, runReadAttachmentTool } from "@/lib/doedtc/agent/document-parse";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
 import type { DoeDtcFamilyMemberInput, DoeDtcProfileSnapshot, DoeDtcProfileTab, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
@@ -188,6 +190,7 @@ export type DoeDtcToolExecutionContext = {
   inboundText: string;
   inboundMessageId?: string;
   snapshot: DoeDtcProfileSnapshot;
+  attachmentContext?: DoeDtcAttachmentContext;
 };
 
 export function createInitialToolTurnState(activeBrowserJobId: string | null): DoeDtcToolTurnState {
@@ -1873,6 +1876,26 @@ async function executeDoeDtcToolInner(params: {
           };
         }
       }
+    } else if (name === "read_attachment") {
+      const fileId = String(args.file_id ?? "").trim();
+      if (!fileId) throw new Error("file_id is required.");
+      output = await runReadAttachmentTool({ userId: ctx.user.id, fileId });
+    } else if (name === "parse_document") {
+      const fileIds = Array.isArray(args.file_ids)
+        ? args.file_ids.filter((row): row is string => typeof row === "string").map((row) => row.trim()).filter(Boolean)
+        : typeof args.file_id === "string" && args.file_id.trim()
+          ? [args.file_id.trim()]
+          : [];
+      output = await runParseDocumentTool({
+        user: ctx.user,
+        inboundText: ctx.inboundText,
+        snapshot: ctx.snapshot,
+        state,
+        fileIds,
+        caption: typeof args.caption === "string" ? args.caption : undefined,
+        autoCommit: typeof args.auto_commit === "boolean" ? args.auto_commit : undefined,
+        attachmentContext: ctx.attachmentContext,
+      });
     } else {
       output = { ok: false, error: "Unknown tool" };
     }
@@ -1951,4 +1974,6 @@ export const DOE_DTC_TOOL_NAMES = [
   "pause_accountability",
   "resume_accountability",
   "read_profile",
+  "read_attachment",
+  "parse_document",
 ] as const;
