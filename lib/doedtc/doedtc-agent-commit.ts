@@ -146,7 +146,7 @@ export async function executeAgentPendingCommit(params: {
         return {
           ok: true,
           replyHint: `Accountability pact "${view.pact.title}" is live.`,
-          profileUrl: doeDtcAppUrl(params.user.care_token, { tab: "accountability" }),
+          profileUrl: doeDtcAppUrl(params.user.care_token, { tab: "dashboard" }),
         };
       }
       case "start_habit_workflow": {

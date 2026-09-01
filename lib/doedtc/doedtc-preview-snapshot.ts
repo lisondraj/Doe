@@ -35,9 +35,12 @@ function householdMember(params: {
   relationship: DoeDtcFamilyRelationship;
   phone?: string | null;
   dateOfBirth?: string | null;
+  gender?: DoeDtcHouseholdMemberRow["gender"];
   role: "admin" | "member";
   status: "pending" | "active";
   userId?: string | null;
+  medications?: string[];
+  conditions?: string[];
 }): DoeDtcHouseholdMemberRow {
   return {
     id: params.id,
@@ -47,9 +50,11 @@ function householdMember(params: {
     relationship: params.relationship,
     phone: params.phone ?? null,
     date_of_birth: params.dateOfBirth ?? null,
-    gender: null,
+    gender: params.gender ?? null,
     role: params.role,
     status: params.status,
+    medications: params.medications ?? [],
+    conditions: params.conditions ?? [],
     created_at: iso(40),
     updated_at: iso(2),
   };
@@ -373,22 +378,29 @@ export function createDoeDtcPreviewSnapshot(): DoeDtcProfileSnapshot {
       relationship: "child",
       phone: "7838584858",
       dateOfBirth: "1979-08-30",
+      gender: "male",
       role: "member",
       status: "pending",
+      medications: ["Ventolin"],
+      conditions: ["Asthma"],
     }),
     householdMember({
       id: CLARISSA_MEMBER_ID,
       fullName: "Clarissa",
       relationship: "child",
       dateOfBirth: "2007-08-30",
+      gender: "female",
       role: "member",
       status: "pending",
+      medications: ["Sertraline"],
+      conditions: [],
     }),
     householdMember({
       id: MARK_MEMBER_ID,
       fullName: "Mark",
       relationship: "child",
       dateOfBirth: "2021-08-30",
+      gender: "male",
       role: "member",
       status: "pending",
     }),
@@ -928,6 +940,19 @@ export function applyDoeDtcPreviewAction(
         relationship: relationship || "other",
         phone: typeof payload.phone === "string" ? payload.phone : null,
         dateOfBirth: typeof payload.dateOfBirth === "string" ? payload.dateOfBirth : null,
+        gender:
+          payload.gender === "female" ||
+          payload.gender === "male" ||
+          payload.gender === "nonbinary" ||
+          payload.gender === "prefer_not"
+            ? payload.gender
+            : null,
+        medications: Array.isArray(payload.medications)
+          ? payload.medications.map((item) => String(item ?? "").trim()).filter(Boolean)
+          : [],
+        conditions: Array.isArray(payload.conditions)
+          ? payload.conditions.map((item) => String(item ?? "").trim()).filter(Boolean)
+          : [],
         role: "member",
         status: "pending",
       });

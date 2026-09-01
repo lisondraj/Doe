@@ -1426,7 +1426,7 @@ async function executeDoeDtcToolInner(params: {
         partnerPhone: typeof args.partner_phone === "string" ? args.partner_phone : null,
         involvePartner: Boolean(args.involve_partner ?? args.involve_partner),
       });
-      state.profileUrl = doeDtcAppUrl(ctx.user.care_token, { tab: "accountability" });
+      state.profileUrl = doeDtcAppUrl(ctx.user.care_token, { tab: "dashboard" });
       await clearAgentPending(ctx.user.id);
       output = {
         ok: true,

@@ -2169,6 +2169,8 @@ export async function updateDoeDtcHouseholdMember(params: {
   phone?: string | null;
   dateOfBirth?: string | null;
   gender?: DoeDtcFamilyMemberInput["gender"] | null;
+  medications?: string[];
+  conditions?: string[];
 }): Promise<DoeDtcHouseholdMemberRow> {
   const household = await ensureDoeDtcHouseholdForAdmin(params.adminUserId);
   if (!isHouseholdAdmin({ household, viewerUserId: params.adminUserId })) {
@@ -2187,6 +2189,8 @@ export async function updateDoeDtcHouseholdMember(params: {
   if (params.phone !== undefined) patch.phone = normalizeOptionalHouseholdPhone(params.phone);
   if (params.dateOfBirth !== undefined) patch.date_of_birth = params.dateOfBirth?.trim() || null;
   if (params.gender !== undefined) patch.gender = params.gender;
+  if (params.medications) patch.medications = uniqueProfileNames(params.medications);
+  if (params.conditions) patch.conditions = uniqueProfileNames(params.conditions);
 
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase
@@ -2221,12 +2225,16 @@ export async function addDoeDtcHouseholdMember(params: {
   phone?: string | null;
   dateOfBirth?: string | null;
   gender?: DoeDtcFamilyMemberInput["gender"];
+  medications?: string[];
+  conditions?: string[];
 }): Promise<DoeDtcHouseholdMemberRow> {
   const household = await ensureDoeDtcHouseholdForAdmin(params.adminUserId);
   if (!isHouseholdAdmin({ household, viewerUserId: params.adminUserId })) {
     throw new Error("Only the household admin can add family members.");
   }
   const normalizedPhone = params.phone !== undefined ? normalizeOptionalHouseholdPhone(params.phone) : null;
+  const medications = uniqueProfileNames(params.medications ?? []);
+  const conditions = uniqueProfileNames(params.conditions ?? []);
   const { members } = await loadDoeDtcHouseholdAccessContext(params.adminUserId);
   const existing = members.find(
     (row) =>
@@ -2241,6 +2249,8 @@ export async function addDoeDtcHouseholdMember(params: {
       phone: normalizedPhone,
       dateOfBirth: params.dateOfBirth ?? undefined,
       gender: params.gender ?? undefined,
+      medications,
+      conditions,
     });
   }
 
@@ -2254,6 +2264,8 @@ export async function addDoeDtcHouseholdMember(params: {
       phone: normalizedPhone,
       date_of_birth: params.dateOfBirth?.trim() || null,
       gender: params.gender ?? null,
+      medications,
+      conditions,
       role: "member",
       status: "pending",
     })
@@ -2268,6 +2280,8 @@ export async function addDoeDtcHouseholdMember(params: {
         phone: normalizedPhone,
         dateOfBirth: params.dateOfBirth ?? undefined,
         gender: params.gender ?? undefined,
+        medications,
+        conditions,
       });
     }
     throw new Error(error.message);

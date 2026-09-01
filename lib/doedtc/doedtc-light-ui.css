@@ -840,6 +840,46 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-tracker-carousel,
   z-index: 1;
 }
 
+.doedtc-root--profile:not(.doedtc-root--landing) .doedtc-family-card,
+.doedtc-profile-layout .doedtc-family-card,
+.doedtc-modal__sheet {
+  position: relative;
+  isolation: isolate;
+  background: var(--doedtc-punch-bg);
+  border: var(--doedtc-punch-border);
+  box-shadow: var(--doedtc-punch-shadow);
+}
+
+.doedtc-root--profile:not(.doedtc-root--landing) .doedtc-family-card::before,
+.doedtc-profile-layout .doedtc-family-card::before,
+.doedtc-modal__sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(255, 255, 255, 0.12) 42%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.doedtc-root--profile:not(.doedtc-root--landing) .doedtc-family-card__avatar,
+.doedtc-profile-layout .doedtc-family-card__avatar {
+  background: var(--doedtc-punch-bg);
+  border: var(--doedtc-punch-border);
+  box-shadow: var(--doedtc-punch-shadow-compact);
+}
+
+.doedtc-root--profile:not(.doedtc-root--landing) .doedtc-family-card > *,
+.doedtc-profile-layout .doedtc-family-card > *,
+.doedtc-modal__sheet > * {
+  position: relative;
+  z-index: 1;
+}
+
 .doedtc-root--profile:not(.doedtc-root--landing) .doedtc-lab-tile--alert,
 .doedtc-profile-layout .doedtc-lab-tile--alert {
   background: linear-gradient(180deg, #fff8f7 0%, #ffe9e6 46%, #ffd5d0 100%);

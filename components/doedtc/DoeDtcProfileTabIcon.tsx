@@ -66,15 +66,6 @@ export function DoeDtcProfileTabIconGlyph({ icon, className }: Props) {
           <circle cx="10" cy="10" r="1" fill="currentColor" />
         </svg>
       );
-    case "share":
-      return (
-        <svg {...shared}>
-          <circle cx="14.5" cy="5.5" r="2" stroke="currentColor" strokeWidth="1.5" />
-          <circle cx="5.5" cy="10" r="2" stroke="currentColor" strokeWidth="1.5" />
-          <circle cx="14.5" cy="14.5" r="2" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M7.3 9l5.4-2.8M7.3 11l5.4 2.8" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
-      );
     case "trackers":
       return (
         <svg {...shared}>
@@ -86,13 +77,6 @@ export function DoeDtcProfileTabIconGlyph({ icon, className }: Props) {
         <svg {...shared}>
           <path d="M5 4.5h10v11H5z" stroke="currentColor" strokeWidth="1.5" />
           <path d="M8 4.5V16M12 4.5V16" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
-      );
-    case "accountability":
-      return (
-        <svg {...shared}>
-          <path d="M10 3.5v13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M6.5 7.5 10 4l3.5 3.5M6.5 12.5 10 16l3.5-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       );
     case "feedback":

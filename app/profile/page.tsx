@@ -11,10 +11,8 @@ const VALID_TABS = new Set<DoeDtcProfileTab>([
   "conditions",
   "family",
   "locker",
-  "share",
   "trackers",
   "guides",
-  "accountability",
   "feedback",
 ]);
 

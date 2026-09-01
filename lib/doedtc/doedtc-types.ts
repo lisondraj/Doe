@@ -144,6 +144,8 @@ export type DoeDtcHouseholdMemberRow = {
   gender: DoeDtcGender | null;
   role: DoeDtcHouseholdRole;
   status: DoeDtcHouseholdMemberStatus;
+  medications?: string[] | null;
+  conditions?: string[] | null;
   created_at: string;
   updated_at: string;
 };

@@ -14,10 +14,8 @@ export type DoeDtcProfileTabIcon =
   | "conditions"
   | "family"
   | "locker"
-  | "share"
   | "trackers"
   | "guides"
-  | "accountability"
   | "feedback";
 
 export const DOEDTC_PROFILE_TABS: DoeDtcProfileTabConfig[] = [
@@ -27,12 +25,16 @@ export const DOEDTC_PROFILE_TABS: DoeDtcProfileTabConfig[] = [
   { id: "conditions", label: DOEDTC_PROFILE.navConditions, icon: "conditions" },
   { id: "family", label: DOEDTC_PROFILE.navFamily, icon: "family" },
   { id: "locker", label: DOEDTC_PROFILE.navLocker, icon: "locker" },
-  { id: "share", label: DOEDTC_PROFILE.navShare, icon: "share" },
   { id: "trackers", label: DOEDTC_PROFILE.navTrackers, icon: "trackers" },
   { id: "guides", label: DOEDTC_PROFILE.navGuides, icon: "guides" },
-  { id: "accountability", label: DOEDTC_PROFILE.navAccountability, icon: "accountability" },
   { id: "feedback", label: DOEDTC_PROFILE.navFeedback, icon: "feedback" },
 ];
+
+const HIDDEN_PROFILE_TABS = new Set<DoeDtcProfileTab>(["share", "accountability"]);
+
+export function doeDtcVisibleProfileTab(tab: DoeDtcProfileTab): DoeDtcProfileTab {
+  return HIDDEN_PROFILE_TABS.has(tab) ? "dashboard" : tab;
+}
 
 export function doeDtcProfileTabLabel(tab: DoeDtcProfileTab): string {
   return DOEDTC_PROFILE_TABS.find((row) => row.id === tab)?.label ?? tab;

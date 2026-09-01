@@ -126,6 +126,8 @@ function formatFamilyTab(snapshot: DoeDtcProfileSnapshot): string {
           `role: ${row.role}`,
         ];
         if (row.phone) parts.push(`phone: ${row.phone}`);
+        if (row.medications?.length) parts.push(`meds: ${row.medications.join(", ")}`);
+        if (row.conditions?.length) parts.push(`conditions: ${row.conditions.join(", ")}`);
         if (row.user_id) parts.push(`user_id: ${row.user_id}`);
         parts.push(`member_id: ${row.id}`);
         if (row.status === "pending" && row.phone) parts.push("invite not joined");

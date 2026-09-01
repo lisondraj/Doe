@@ -43,6 +43,7 @@ import { cancelWorkflow } from "@/lib/doedtc/doedtc-workflows";
 import { normalizeDoeDtcFamilyRelationship, resolveDoeDtcFamilyMemberName } from "@/lib/doedtc/doedtc-family-relationship";
 import { sendDoeDtcFamilyInviteMessage, sendDoeDtcHouseholdAccessRevokedNotice } from "@/lib/doedtc/doedtc-messaging";
 import type {
+  DoeDtcGender,
   DoeDtcHealthProvider,
   DoeDtcProfileSnapshot,
   DoeDtcUserRow,
@@ -100,6 +101,14 @@ export async function handleDoeDtcProfileAction(params: {
         phone: typeof params.payload.phone === "string" ? params.payload.phone : null,
         dateOfBirth:
           typeof params.payload.dateOfBirth === "string" ? params.payload.dateOfBirth : null,
+        gender:
+          typeof params.payload.gender === "string" ? (params.payload.gender as DoeDtcGender) : null,
+        medications: Array.isArray(params.payload.medications)
+          ? params.payload.medications.map((item) => String(item ?? "").trim()).filter(Boolean)
+          : [],
+        conditions: Array.isArray(params.payload.conditions)
+          ? params.payload.conditions.map((item) => String(item ?? "").trim()).filter(Boolean)
+          : [],
       });
       break;
     }
