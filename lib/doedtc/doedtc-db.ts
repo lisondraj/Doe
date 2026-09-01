@@ -23,6 +23,7 @@ import {
   memberCurrentlySharesWithHousehold,
 } from "@/lib/doedtc/doedtc-household";
 import { parentProxyNextStep } from "@/lib/doedtc/doedtc-household-policy";
+import { listAccountabilityPactViewsForProfile } from "@/lib/doedtc/doedtc-accountability-db";
 import { listScheduledTextsForUser } from "@/lib/doedtc/doedtc-scheduled-db";
 import { listActiveWorkflowsForUser } from "@/lib/doedtc/doedtc-workflows";
 import { getDoeDtcGuideById, listSavedGuidesForUser } from "@/lib/doedtc/doedtc-guides-db";
