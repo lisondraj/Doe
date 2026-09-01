@@ -6,9 +6,12 @@ import {
   assertRegistryComplete,
   assertToolPromptCoverage,
   buildDoeDtcToolCapabilityPrompt,
+  buildDoeSpecialistToolCapabilityPrompt,
   toolsForSpecialist,
   TOOL_DOMAINS,
 } from "@/lib/doedtc/agent/tool-prompt-registry";
+import { buildDoePlannerSystemPrompt, buildDoeSpecialistSystemPrompt } from "@/lib/doedtc/doedtc-agent";
+import { resolveDoeDtcAgentRuntime } from "@/lib/doedtc/agent/types";
 import { DOE_DTC_TOOL_NAMES } from "@/lib/doedtc/agent/tool-dispatch";
 import { DOEDTC_AGENT_TOOLS } from "@/lib/doedtc/doedtc-agent-tools";
 import {
@@ -63,6 +66,48 @@ describe("tool prompt registry", () => {
     assert.ok(names.has("log_result"));
     assert.ok(names.has("remove_result"));
     assert.ok(names.has("read_listen_session"));
+    assert.ok(names.has("start_workflow"));
+    assert.ok(names.has("propose_workflow"));
+  });
+
+  it("planner prompt omits full tool catalog; specialist prompt is narrower", () => {
+    const params = {
+      user: { full_name: "Sam", gender: null, country: null, date_of_birth: null } as never,
+      medications: [],
+      conditions: [],
+      transcript: "",
+      symptomLog: "None",
+      assessmentHistory: "None",
+      appointmentLog: "None",
+      relevantMemories: "None",
+      playbookNotes: "None",
+      pendingBlock: "",
+      familyLog: "None",
+      householdLog: "None",
+      accountabilityLog: "None",
+      scheduledLog: "None",
+      workflowsLog: "None",
+      guidesLog: "None",
+      profileOverview: "Overview",
+      nowLabel: "Mon 7pm",
+    };
+    const planner = buildDoePlannerSystemPrompt(params);
+    const scheduling = buildDoeSpecialistSystemPrompt("scheduling", params);
+    const full = buildDoeDtcToolCapabilityPrompt();
+    assert.doesNotMatch(planner, /browser_navigate/);
+    assert.match(scheduling, /start_workflow/);
+    assert.ok(full.length > scheduling.length);
+    assert.ok(buildDoeSpecialistToolCapabilityPrompt("browser").includes("browser_navigate"));
+  });
+
+  it("defaults agent runtime to sdk", () => {
+    const previous = process.env.DOEDTC_AGENT_RUNTIME;
+    delete process.env.DOEDTC_AGENT_RUNTIME;
+    assert.equal(resolveDoeDtcAgentRuntime(), "sdk");
+    process.env.DOEDTC_AGENT_RUNTIME = "legacy";
+    assert.equal(resolveDoeDtcAgentRuntime(), "legacy");
+    if (previous === undefined) delete process.env.DOEDTC_AGENT_RUNTIME;
+    else process.env.DOEDTC_AGENT_RUNTIME = previous;
   });
 });
 

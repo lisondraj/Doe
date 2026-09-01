@@ -15,8 +15,35 @@ export const DOE_DTC_WORKING_REACTION = "👍";
 export const DOE_DTC_DONE_REACTION = "✅";
 export const DOE_DTC_FAILED_REACTION = "👎";
 export const AGENT_TURN_TIMEOUT_MS = 240_000;
+export const WORKING_REACTION_DELAY_MS = 1_200;
 export const AGENT_TURN_FALLBACK_REPLY =
   "Something broke on my side — give that another try in a moment.";
+
+type PendingWorkingReaction = {
+  cancelled: boolean;
+  applied: boolean;
+  applying?: Promise<void>;
+  timer: ReturnType<typeof setTimeout>;
+  inboundMessageId: string;
+};
+
+const pendingWorkingReactions = new Map<string, PendingWorkingReaction>();
+
+export type DoeTurnReactionAction = "none" | "ensure_working" | "swap_done" | "swap_failed";
+
+export function resolveTurnReactionAction(params: {
+  workingReactionApplied: boolean;
+  deferFinalReaction?: boolean;
+  failed?: boolean;
+}): DoeTurnReactionAction {
+  if (params.failed) {
+    return params.workingReactionApplied ? "swap_failed" : "none";
+  }
+  if (params.deferFinalReaction) {
+    return params.workingReactionApplied ? "none" : "ensure_working";
+  }
+  return params.workingReactionApplied ? "swap_done" : "none";
+}
 
 export async function beginDoeDtcTurnLifecycle(params: {
   turnId: string;
@@ -56,14 +83,34 @@ export async function beginDoeDtcTurnLifecycle(params: {
     }
   }
 
-  if (params.inboundMessageId) {
+  if (!params.inboundMessageId) return;
+
+  const pending: PendingWorkingReaction = {
+    cancelled: false,
+    applied: false,
+    inboundMessageId: params.inboundMessageId,
+    timer: setTimeout(() => {
+      void applyWorkingReaction(params.turnId);
+    }, WORKING_REACTION_DELAY_MS),
+  };
+  pendingWorkingReactions.set(params.turnId, pending);
+}
+
+async function applyWorkingReaction(turnId: string): Promise<void> {
+  const pending = pendingWorkingReactions.get(turnId);
+  if (!pending || pending.cancelled || pending.applied) return;
+
+  pending.applying = (async () => {
+    if (pending.cancelled || pending.applied) return;
     try {
       await linqAddReaction({
-        messageId: params.inboundMessageId,
+        messageId: pending.inboundMessageId,
         emoji: DOE_DTC_WORKING_REACTION,
       });
+      pending.applied = true;
+      if (pending.cancelled) return;
       await updateDoeDtcAgentTurnRecord({
-        turnId: params.turnId,
+        turnId,
         patch: {
           status: "working",
           working_at: new Date().toISOString(),
@@ -75,7 +122,8 @@ export async function beginDoeDtcTurnLifecycle(params: {
         error instanceof Error ? error.message : String(error),
       );
     }
-  }
+  })();
+  await pending.applying;
 }
 
 export async function markDoeDtcTurnBrowsing(params: {
@@ -113,6 +161,18 @@ export async function swapDoeDtcTurnReaction(params: {
   }
 }
 
+async function takePendingWorkingReaction(
+  turnId: string,
+): Promise<PendingWorkingReaction | undefined> {
+  const pending = pendingWorkingReactions.get(turnId);
+  if (!pending) return undefined;
+  pending.cancelled = true;
+  clearTimeout(pending.timer);
+  pendingWorkingReactions.delete(turnId);
+  if (pending.applying) await pending.applying;
+  return pending;
+}
+
 export async function completeDoeDtcTurnLifecycle(params: {
   turnId: string;
   inboundMessageId?: string;
@@ -122,22 +182,47 @@ export async function completeDoeDtcTurnLifecycle(params: {
   error?: string;
   failed?: boolean;
 }): Promise<void> {
-  const finalReaction = params.failed ? DOE_DTC_FAILED_REACTION : DOE_DTC_DONE_REACTION;
-  const status = params.failed ? "failed" : params.deferFinalReaction ? "browsing" : "done";
+  const pending = await takePendingWorkingReaction(params.turnId);
+  const workingReactionApplied = Boolean(pending?.applied);
+  const action = resolveTurnReactionAction({
+    workingReactionApplied,
+    deferFinalReaction: params.deferFinalReaction,
+    failed: params.failed,
+  });
 
-  if (!params.deferFinalReaction) {
+  if (action === "ensure_working" && params.inboundMessageId) {
     await swapDoeDtcTurnReaction({
       inboundMessageId: params.inboundMessageId,
-      fromEmoji: params.failed ? undefined : DOE_DTC_WORKING_REACTION,
-      toEmoji: finalReaction,
+      toEmoji: DOE_DTC_WORKING_REACTION,
     });
-  } else if (params.failed) {
+    await updateDoeDtcAgentTurnRecord({
+      turnId: params.turnId,
+      patch: {
+        status: "working",
+        working_at: new Date().toISOString(),
+      },
+    });
+  } else if (action === "swap_done") {
+    await swapDoeDtcTurnReaction({
+      inboundMessageId: params.inboundMessageId,
+      fromEmoji: DOE_DTC_WORKING_REACTION,
+      toEmoji: DOE_DTC_DONE_REACTION,
+    });
+  } else if (action === "swap_failed") {
     await swapDoeDtcTurnReaction({
       inboundMessageId: params.inboundMessageId,
       fromEmoji: DOE_DTC_WORKING_REACTION,
       toEmoji: DOE_DTC_FAILED_REACTION,
     });
   }
+
+  const finalReaction =
+    action === "swap_failed"
+      ? DOE_DTC_FAILED_REACTION
+      : action === "swap_done"
+        ? DOE_DTC_DONE_REACTION
+        : undefined;
+  const status = params.failed ? "failed" : params.deferFinalReaction ? "browsing" : "done";
 
   await updateDoeDtcAgentTurnRecord({
     turnId: params.turnId,
@@ -146,7 +231,7 @@ export async function completeDoeDtcTurnLifecycle(params: {
       done_at: params.deferFinalReaction && !params.failed ? undefined : new Date().toISOString(),
       reply_text: params.replyText,
       thread_reply: params.threadReply,
-      final_reaction: params.deferFinalReaction && !params.failed ? undefined : finalReaction,
+      final_reaction: finalReaction,
       error: params.error,
     },
   });
@@ -158,18 +243,21 @@ export async function finalizeDoeDtcTurnAfterBrowser(params: {
   const turn = await getDoeDtcAgentTurn(params.turnId);
   if (!turn?.inbound_message_id) return;
 
-  await swapDoeDtcTurnReaction({
-    inboundMessageId: turn.inbound_message_id,
-    fromEmoji: DOE_DTC_WORKING_REACTION,
-    toEmoji: DOE_DTC_DONE_REACTION,
-  });
+  const hadWorkingReaction = Boolean(turn.working_at);
+  if (hadWorkingReaction) {
+    await swapDoeDtcTurnReaction({
+      inboundMessageId: turn.inbound_message_id,
+      fromEmoji: DOE_DTC_WORKING_REACTION,
+      toEmoji: DOE_DTC_DONE_REACTION,
+    });
+  }
 
   await updateDoeDtcAgentTurnRecord({
     turnId: params.turnId,
     patch: {
       status: "done",
       done_at: new Date().toISOString(),
-      final_reaction: DOE_DTC_DONE_REACTION,
+      final_reaction: hadWorkingReaction ? DOE_DTC_DONE_REACTION : undefined,
     },
   });
 }

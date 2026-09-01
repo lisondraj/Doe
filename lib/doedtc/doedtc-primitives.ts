@@ -50,7 +50,13 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
   {
     verb: "message.await_reply",
     backends: ["linq", "supabase"],
-    tools: ["start_habit_workflow", "propose_habit_workflow", "cancel_habit_workflow"],
+    tools: [
+      "start_habit_workflow",
+      "propose_habit_workflow",
+      "start_workflow",
+      "propose_workflow",
+      "cancel_habit_workflow",
+    ],
   },
   {
     verb: "habit.recurring",
@@ -58,6 +64,8 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
     tools: [
       "start_habit_workflow",
       "propose_habit_workflow",
+      "start_workflow",
+      "propose_workflow",
       "cancel_habit_workflow",
       "start_accountability",
       "propose_accountability",
@@ -212,8 +220,8 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
 
 export const DOE_AGENT_PRIMITIVES_PROMPT = `Primitives (compose these — do not invent a new feature per ask):
 - message.schedule → schedule_text (timers, one-shot). Inline if under ~45 seconds. Not for daily habits.
-- message.await_reply + habit.recurring → start_habit_workflow (daily ping → wait for reply → notify owner on miss).
-- habit.recurring → start_accountability when partner/cadence/privacy matters; else start_habit_workflow.
+- message.await_reply + habit.recurring → start_habit_workflow or start_workflow (composed graph for multi-step nag).
+- habit.recurring → start_accountability when partner/cadence/privacy matters; else start_habit_workflow or start_workflow.
 - health.chart → read_profile + log/update/remove on symptoms, meds, conditions, appointments.
 - health.assess → run_assessment when they ask what it might be — not a definitive diagnosis.
 - results.log → log_result / remove_result for labs and imaging they report.
@@ -224,7 +232,7 @@ export const DOE_AGENT_PRIMITIVES_PROMPT = `Primitives (compose these — do not
 - browser.research → start_browser_task. browser.act → browser_act or browser_computer. browser.commit → request_commit then CONFIRM.
 - memory.remember / memory.recall → remember_fact / forget_fact; recall also from Mem0 memories in prompt.
 - feedback.submit → submit_ticket for bugs or product feedback.
-- imessage.texture → react_to_message / use_thread_reply sparingly; send_profile_link when they ask for profile.`;
+- imessage.texture → skip react_to_message on routine turns; use_thread_reply sparingly; send_profile_link when they ask for profile.`;
 
 export function toolsForPrimitive(verb: DoePrimitiveVerb): readonly string[] {
   return DOE_PRIMITIVES.find((row) => row.verb === verb)?.tools ?? [];

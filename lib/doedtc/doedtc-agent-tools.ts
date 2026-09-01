@@ -1136,6 +1136,46 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "propose_workflow",
+      description:
+        "Draft a composed workflow graph when who/when is ambiguous or it texts someone else without a clear ask. Graph uses closed nodes: recur_daily, send_message, wait_for_reply, wait_until, done.",
+      parameters: {
+        type: "object",
+        properties: {
+          goal: { type: "string", description: "Plain-language workflow goal." },
+          graph: { type: "object", description: "Workflow graph (version 1, entry, nodes)." },
+          subject_name: { type: "string" },
+          timezone: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["goal", "graph"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "start_workflow",
+      description:
+        "Commit a composed workflow graph (send/wait/branch/escalate/recur). Use when they already asked with enough detail. Max 12 nodes.",
+      parameters: {
+        type: "object",
+        properties: {
+          goal: { type: "string" },
+          graph: { type: "object", description: "Workflow graph (version 1, entry, nodes)." },
+          subject_name: { type: "string" },
+          timezone: { type: "string" },
+          member_id: HOUSEHOLD_MEMBER_PARAMS.member_id,
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+        },
+        required: ["goal", "graph"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "cancel_habit_workflow",
       description: "Cancel an active habit workflow.",
       parameters: {
@@ -1231,7 +1271,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "react_to_message",
       description:
-        "Rarely react to the patient's latest iMessage with a custom emoji. Use sparingly — not every turn, not for CONFIRM/STOP/Hi Doe. Vary emojis.",
+        "Skip almost always. Do not react on short or routine turns. Lifecycle 👍/✅ are added automatically only when a task is taking longer.",
       parameters: {
         type: "object",
         properties: {

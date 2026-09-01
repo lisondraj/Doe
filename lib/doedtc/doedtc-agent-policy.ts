@@ -1,5 +1,9 @@
 /** Deterministic action policy — act vs confirm vs refuse (not per-feature recipes). */
 
+import type { WorkflowGraph } from "@/lib/doedtc/doedtc-workflow-graph";
+import { validateWorkflowGraph } from "@/lib/doedtc/doedtc-workflow-graph";
+import type { DoePlan } from "@/lib/doedtc/agent/plan-schema";
+
 export type DoeAgentActionClass = "act_now" | "confirm_once" | "refuse";
 
 export type DoeDataWriteClass = "create" | "update" | "remove";
@@ -54,7 +58,76 @@ export function classifyDataWrite(text: string): DoeDataWriteClass {
 export function inboundAlreadyAsked(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return false;
-  return /\b(?:can you|could you|please|set a timer|remind me|text me|make sure|help my|schedule|in \d+ seconds?|for \d+ seconds?|log my|track my|screenshot|go to)\b/i.test(
+  return /\b(?:can you|could you|please|set a timer|remind me|text me|text \w+|message \w+|make sure|help my|schedule|in \d+ seconds?|for \d+ seconds?|log my|track my|screenshot|go to)\b/i.test(
     trimmed,
   );
+}
+
+export type DoePlanValidationContext = {
+  inboundText: string;
+  textsThirdParty?: boolean;
+  missingSlot?: boolean;
+  irreversible?: boolean;
+  emergencyOrDiagnosis?: boolean;
+};
+
+export type DoePlanValidationResult =
+  | { ok: true; action: DoeAgentActionClass }
+  | { ok: false; action: DoeAgentActionClass; reason: string };
+
+export function validateDoePlan(
+  plan: DoePlan,
+  context: DoePlanValidationContext,
+): DoePlanValidationResult {
+  let action = classifyAgentAction({
+    inboundText: context.inboundText,
+    textsThirdParty: context.textsThirdParty,
+    missingSlot: context.missingSlot,
+    irreversible: context.irreversible,
+    emergencyOrDiagnosis: context.emergencyOrDiagnosis,
+  });
+
+  if (
+    action === "confirm_once" &&
+    inboundAlreadyAsked(context.inboundText) &&
+    !context.missingSlot &&
+    !context.irreversible &&
+    !context.emergencyOrDiagnosis
+  ) {
+    action = "act_now";
+  }
+
+  if (plan.action === "refuse" || action === "refuse") {
+    return action === "refuse"
+      ? { ok: true, action: "refuse" }
+      : { ok: false, action: "refuse", reason: "Plan marked refuse but policy allows action." };
+  }
+
+  if (action === "confirm_once" && plan.action === "act_now") {
+    return {
+      ok: false,
+      action: "confirm_once",
+      reason: "Plan commits without confirmation but policy requires confirm_once.",
+    };
+  }
+
+  if (plan.workflow && "graph" in plan.workflow && plan.workflow.graph) {
+    const graph = plan.workflow.graph as WorkflowGraph;
+    const validation = validateWorkflowGraph(graph);
+    if (!validation.ok) {
+      return { ok: false, action: "confirm_once", reason: validation.error };
+    }
+  }
+
+  for (const step of plan.immediate) {
+    if (!step.tool?.trim()) {
+      return { ok: false, action: "confirm_once", reason: "Immediate step missing tool name." };
+    }
+  }
+
+  if (!plan.reply?.trim()) {
+    return { ok: false, action: "confirm_once", reason: "Plan reply is required." };
+  }
+
+  return { ok: true, action: plan.action ?? action };
 }

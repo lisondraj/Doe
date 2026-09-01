@@ -515,7 +515,18 @@ export type DoeDtcScheduledTextRow = {
 
 export type DoeDtcWorkflowStatus = "active" | "paused" | "cancelled";
 
-export type DoeDtcWorkflowPhase = "scheduled" | "awaiting_reply";
+export type DoeDtcWorkflowPhase = "scheduled" | "awaiting_reply" | "waiting_until";
+
+export type DoeDtcWorkflowGraph = {
+  version: 1;
+  entry: string;
+  nodes: Array<{
+    id: string;
+    kind: "recur_daily" | "send_message" | "wait_for_reply" | "wait_until" | "done";
+    params: Record<string, unknown>;
+    out?: Partial<Record<"next" | "yes" | "no" | "timeout" | "skip", string>>;
+  }>;
+};
 
 export type DoeDtcWorkflowConfig = {
   cadence: "daily";
@@ -529,6 +540,8 @@ export type DoeDtcWorkflowConfig = {
   notify_user_id: string | null;
   notify_name: string;
   await_timeout_minutes: number;
+  graph?: DoeDtcWorkflowGraph;
+  cursor?: string;
 };
 
 export type DoeDtcWorkflowRow = {

@@ -20,6 +20,10 @@ export type DoeDtcRunContext = {
   snapshot: DoeDtcProfileSnapshot;
   turnState: DoeDtcToolTurnState;
   instructions: string;
+  plannerInstructions?: string;
+  specialistInstructions?: Partial<
+    Record<"healthRecord" | "guides" | "scheduling" | "browser", string>
+  >;
 };
 
 export const DOE_DTC_TURN_RESULT_FIELDS = [
@@ -48,7 +52,8 @@ export type DoeDtcAgentRuntime = "legacy" | "sdk";
 
 export function resolveDoeDtcAgentRuntime(): DoeDtcAgentRuntime {
   const value = process.env.DOEDTC_AGENT_RUNTIME?.trim().toLowerCase();
-  return value === "sdk" ? "sdk" : "legacy";
+  if (value === "legacy") return "legacy";
+  return "sdk";
 }
 
 export function resolveDoeDtcAgentModel(): string {

@@ -97,6 +97,8 @@ export const TOOL_DOMAINS: Record<(typeof DOE_DTC_TOOL_NAMES)[number], DoeToolDo
   start_accountability: "reminders_habits",
   propose_habit_workflow: "reminders_habits",
   start_habit_workflow: "reminders_habits",
+  propose_workflow: "reminders_habits",
+  start_workflow: "reminders_habits",
   cancel_habit_workflow: "reminders_habits",
   invite_accountability_partner: "reminders_habits",
   log_accountability_checkin: "reminders_habits",
@@ -198,6 +200,10 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
     "propose_habit_workflow — draft daily habit (text → await reply → notify owner on miss) when who/when ambiguous. If they already asked, start_habit_workflow.",
   start_habit_workflow:
     "start_habit_workflow — commit daily habit with miss notify. Preferred for make-sure-daily / nag / bath / meds every day. Not for one-shot tonight — use schedule_text.",
+  propose_workflow:
+    "propose_workflow — draft composed graph (send/wait/branch/escalate) when confirm_once applies. If they already asked, start_workflow.",
+  start_workflow:
+    "start_workflow — commit composed workflow graph. Multi-step nag (reminder + wait_until + escalate). Not for simple daily habit — use start_habit_workflow.",
   cancel_habit_workflow:
     "cancel_habit_workflow — stop active habit workflow. workflow_id from Habit workflows log.",
   propose_accountability:
@@ -249,7 +255,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   submit_ticket:
     "submit_ticket — feedback or bug report. Not for clinical questions.",
   react_to_message:
-    "react_to_message — rarely react with emoji; skip routine turns and CONFIRM/STOP.",
+    "react_to_message — skip almost always. Lifecycle 👍/✅ only appear on slower tasks automatically. Never react on short replies, CONFIRM, or STOP.",
   use_thread_reply:
     "use_thread_reply — occasionally reply in-thread for direct answers (~1 in 3 eligible turns).",
   send_profile_link:
@@ -345,6 +351,45 @@ export function toolsForSpecialist(specialist: DoeSpecialistId): Set<string> {
   return new Set(
     DOE_DTC_TOOL_NAMES.filter((name) => domains.includes(TOOL_DOMAINS[name])),
   );
+}
+
+export function buildDoeSpecialistToolCapabilityPrompt(
+  specialist: DoeSpecialistId,
+  signals?: DoeAgentPromptSignals,
+): string {
+  const domains = SPECIALIST_DOMAINS[specialist];
+  const tier1Sections = domains.map((domain) => {
+    const tools = toolsForDomain(domain);
+    const lines = tools.map((name) => {
+      const override = PROMPT_OVERRIDES[name];
+      if (override) return `  - ${override}`;
+      const tool = DOEDTC_AGENT_TOOLS.find((entry) => entry.function.name === name);
+      const description = tool?.function.description?.trim();
+      return description ? `  - ${name}: ${description}` : `  - ${name}`;
+    });
+    return [`${DOMAIN_HEADERS[domain]}`, ...lines].join("\n");
+  });
+
+  const tier2 = buildTier2Blocks(signals).filter((block) => {
+    if (specialist === "browser") return block.includes("Browser");
+    if (specialist === "scheduling") return block.includes("Reminder") || block.includes("Household");
+    if (specialist === "healthRecord") {
+      return (
+        block.includes("Tracker") ||
+        block.includes("Listen") ||
+        block.includes("Household") ||
+        block.includes("Pending")
+      );
+    }
+    if (specialist === "guides") return block.includes("Guide");
+    return false;
+  });
+
+  return [
+    `Specialist tools (${specialist}):`,
+    ...tier1Sections,
+    ...(tier2.length ? ["", "Routing detail:", ...tier2] : []),
+  ].join("\n");
 }
 
 export function buildDoeDtcToolCapabilityPrompt(signals?: DoeAgentPromptSignals): string {

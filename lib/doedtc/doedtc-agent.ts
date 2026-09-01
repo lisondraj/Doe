@@ -24,8 +24,11 @@ import {
   assertToolPromptCoverage,
   buildDoeAgentPromptSignals,
   buildDoeDtcToolCapabilityPrompt,
+  buildDoeSpecialistToolCapabilityPrompt,
   type DoeAgentPromptSignals,
+  type DoeSpecialistId,
 } from "@/lib/doedtc/agent/tool-prompt-registry";
+import { buildPlannerInstructionsBlock } from "@/lib/doedtc/agent/plan-schema";
 import { createDoeDtcAgentTurnId } from "@/lib/doedtc/doedtc-agent-audit";
 import { getActiveDoeDtcBrowserJobId } from "@/lib/doedtc/doedtc-browser";
 import {
@@ -465,7 +468,7 @@ function buildReplyFromTurnState(params: {
   return null;
 }
 
-export function buildDoeDtcAgentSystemPrompt(params: {
+export type DoeDtcAgentPromptParams = {
   user: DoeDtcUserRow;
   medications: string[];
   conditions: string[];
@@ -485,16 +488,10 @@ export function buildDoeDtcAgentSystemPrompt(params: {
   profileOverview: string;
   nowLabel: string;
   promptSignals?: DoeAgentPromptSignals;
-}): string {
-  const prompt = `${buildDoeAgentVoiceBlock()}
+};
 
-${DOE_AGENT_ACTION_POLICY}
-
-${DOE_AGENT_RESOLUTION_POLICY}
-
-${DOE_AGENT_PRIMITIVES_PROMPT}
-
-Now (user local time): ${params.nowLabel}.
+function buildDoeAgentContextBlock(params: DoeDtcAgentPromptParams): string {
+  return `Now (user local time): ${params.nowLabel}.
 ${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
 Playbook (how you've corrected yourself before):
 ${params.playbookNotes}
@@ -539,18 +536,16 @@ Symptom log:
 ${params.symptomLog}
 
 Prior assessments:
-${params.assessmentHistory}
+${params.assessmentHistory}`;
+}
 
-${buildDoeDtcToolCapabilityPrompt(params.promptSignals)}
-${DOE_AGENT_MAKE_SURE_ROUTING}
-
-Parallel work:
+const DOE_AGENT_SAFETY_TAIL = `Parallel work:
 - Only one browser task runs at a time. Browsing continues in the background — the screenshot arrives as a follow-up iMessage.
 - You may run other tools in the same turn (log symptoms, family, meds, start_listen, etc.) while a browser job is open.
 - Do not wait for browsing to finish before saving profile or appointment data.
 
 iMessage texture:
-- react_to_message: records intent only — lifecycle reactions (👍 while working, ✅ when done) are handled automatically. Do not expect a separate tapback from this tool.
+- react_to_message: skip on routine turns. Lifecycle tapbacks (👍 while working, ✅ when done) are added automatically only on slower tasks — do not add your own.
 - use_thread_reply: occasionally when answering a direct question or correction (~1 in 3 eligible turns), never for link-only bubbles.
 
 Safety:
@@ -562,6 +557,56 @@ Safety:
 - Never claim a definitive diagnosis. Flag emergencies clearly.
 - Irreversible browser actions need request_commit, then the patient replies CONFIRM.
 - After useful browser findings, you may store a one-line outcome via remember_fact.`;
+
+export function buildDoePlannerSystemPrompt(params: DoeDtcAgentPromptParams): string {
+  const prompt = `${buildDoeAgentVoiceBlock()}
+
+${DOE_AGENT_ACTION_POLICY}
+
+${DOE_AGENT_RESOLUTION_POLICY}
+
+${DOE_AGENT_PRIMITIVES_PROMPT}
+
+${buildPlannerInstructionsBlock()}
+
+${buildDoeAgentContextBlock(params)}
+${DOE_AGENT_MAKE_SURE_ROUTING}
+
+${DOE_AGENT_SAFETY_TAIL}`;
+  return guardAgentPromptSize(prompt);
+}
+
+export function buildDoeSpecialistSystemPrompt(
+  specialist: DoeSpecialistId,
+  params: DoeDtcAgentPromptParams,
+): string {
+  const prompt = `${DOE_AGENT_ACTION_POLICY}
+
+${DOE_AGENT_RESOLUTION_POLICY}
+
+${buildDoeAgentContextBlock(params)}
+
+${buildDoeSpecialistToolCapabilityPrompt(specialist, params.promptSignals)}
+
+${DOE_AGENT_SAFETY_TAIL}`;
+  return guardAgentPromptSize(prompt);
+}
+
+export function buildDoeDtcAgentSystemPrompt(params: DoeDtcAgentPromptParams): string {
+  const prompt = `${buildDoeAgentVoiceBlock()}
+
+${DOE_AGENT_ACTION_POLICY}
+
+${DOE_AGENT_RESOLUTION_POLICY}
+
+${DOE_AGENT_PRIMITIVES_PROMPT}
+
+${buildDoeAgentContextBlock(params)}
+
+${buildDoeDtcToolCapabilityPrompt(params.promptSignals)}
+${DOE_AGENT_MAKE_SURE_ROUTING}
+
+${DOE_AGENT_SAFETY_TAIL}`;
   assertToolPromptCoverage(prompt);
   return guardAgentPromptSize(prompt);
 }

@@ -11,6 +11,7 @@ const APPROVAL_TOOLS = new Set([
   "save_guide",
   "start_accountability",
   "start_habit_workflow",
+  "start_workflow",
   "request_commit",
 ]);
 

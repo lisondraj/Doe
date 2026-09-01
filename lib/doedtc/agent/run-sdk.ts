@@ -7,7 +7,8 @@ import {
   resolveDoeReplyDeliverables,
 } from "@/lib/doedtc/agent/deliverable-resolver";
 import { createInitialToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
-import { createDoeSpecialistAgents } from "@/lib/doedtc/agent/specialists";
+import { buildSpecialistInstructionMap, createDoeSpecialistAgents } from "@/lib/doedtc/agent/specialists";
+import { executeDoePlan, runDoePlannerTurn } from "@/lib/doedtc/agent/planner-run";
 import {
   compactTranscriptForAgent,
   DEGENERATE_TURN_REPLY,
@@ -150,36 +151,51 @@ async function loadRunContext(params: {
     pendingRow,
   });
 
+  const promptParams = {
+    user: params.user,
+    medications: snapshot.medications,
+    conditions: snapshot.conditions,
+    transcript: compactTranscript(messageHistory),
+    symptomLog: formatSymptomLog(snapshot.symptoms),
+    assessmentHistory: formatAssessmentHistory(snapshot.assessments),
+    appointmentLog: formatAppointmentLog(snapshot.appointments),
+    relevantMemories: formatMem0Block(relevantMemoryRows),
+    playbookNotes: playbookBlock,
+    pendingBlock,
+    familyLog: formatFamilyLog(snapshot.familyMembers),
+    householdLog: formatHouseholdForAgent({
+      household: snapshot.household.household,
+      members: snapshot.household.members,
+      consents: snapshot.household.consents,
+      viewerUserId: params.user.id,
+    }),
+    accountabilityLog: formatAccountabilityForAgent(snapshot.accountabilityPacts),
+    scheduledLog: formatScheduledTextForAgent(snapshot.scheduledTexts.filter((row) => row.status === "pending")),
+    workflowsLog: formatWorkflowsForAgent(activeWorkflows),
+    guidesLog:
+      recentGuides.length === 0
+        ? "None yet."
+        : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
+    profileOverview: formatDoeDtcProfileOverview(snapshot),
+    nowLabel: agentNowLabel(timezone),
+    promptSignals,
+  };
+
+  const promptSplit = buildSpecialistInstructionMap({
+    user: params.user,
+    inboundText: params.inboundText,
+    inboundMessageId: params.inboundMessageId,
+    snapshot,
+    turnState: {
+      ...createInitialToolTurnState(activeBrowserJobId),
+      turnId: params.turnId ?? createDoeDtcAgentTurnId(),
+    },
+    instructions: "",
+    promptParams,
+  });
+
   const instructions =
-    buildDoeDtcAgentSystemPrompt({
-      user: params.user,
-      medications: snapshot.medications,
-      conditions: snapshot.conditions,
-      transcript: compactTranscript(messageHistory),
-      symptomLog: formatSymptomLog(snapshot.symptoms),
-      assessmentHistory: formatAssessmentHistory(snapshot.assessments),
-      appointmentLog: formatAppointmentLog(snapshot.appointments),
-      relevantMemories: formatMem0Block(relevantMemoryRows),
-      playbookNotes: playbookBlock,
-      pendingBlock,
-      familyLog: formatFamilyLog(snapshot.familyMembers),
-      householdLog: formatHouseholdForAgent({
-        household: snapshot.household.household,
-        members: snapshot.household.members,
-        consents: snapshot.household.consents,
-        viewerUserId: params.user.id,
-      }),
-      accountabilityLog: formatAccountabilityForAgent(snapshot.accountabilityPacts),
-      scheduledLog: formatScheduledTextForAgent(snapshot.scheduledTexts.filter((row) => row.status === "pending")),
-      workflowsLog: formatWorkflowsForAgent(activeWorkflows),
-      guidesLog:
-        recentGuides.length === 0
-          ? "None yet."
-          : recentGuides.map((row) => `- ${formatGuideForAgent(row)} | id: ${row.id}`).join("\n"),
-      profileOverview: formatDoeDtcProfileOverview(snapshot),
-      nowLabel: agentNowLabel(timezone),
-      promptSignals,
-    }) + (params.reminderDirective ? `\n\n${params.reminderDirective}` : "");
+    buildDoeDtcAgentSystemPrompt(promptParams) + (params.reminderDirective ? `\n\n${params.reminderDirective}` : "");
 
   return {
     user: params.user,
@@ -191,6 +207,8 @@ async function loadRunContext(params: {
       turnId: params.turnId ?? createDoeDtcAgentTurnId(),
     },
     instructions,
+    plannerInstructions: promptSplit.plannerInstructions + (params.reminderDirective ? `\n\n${params.reminderDirective}` : ""),
+    specialistInstructions: promptSplit.specialistInstructions,
   };
 }
 
@@ -445,7 +463,23 @@ export async function runDoeDtcAgentTurnSdk(params: {
     reminderDirective: buildReminderIntentDirective(reminderIntent),
     pendingRow,
   });
-  const agent = createDoeManagerAgent(loaded);
+
+  const plan = await runDoePlannerTurn(loaded);
+  if (plan) {
+    const executed = await executeDoePlan({ plan, ctx: loaded });
+    if (executed.ok) {
+      const replyText = sanitizeDoeDtcReplyText(executed.reply, {
+        preservePendingOffer: loaded.turnState.preservePendingOffer || executed.preservePending,
+      });
+      const turnResult = assembleTurnResult({
+        replyText,
+        turnState: loaded.turnState,
+      });
+      return { ...turnResult, degenerate: !executed.reply.trim() };
+    }
+  }
+
+  const agent = createDoeSpecialistAgents(loaded).manager;
 
   const result = await run(agent, params.inboundText, { context: loaded, maxTurns: 12 });
 

@@ -12,6 +12,8 @@ const SERIAL_TOOL_NAMES = new Set([
   "save_guide",
   "start_accountability",
   "start_habit_workflow",
+  "start_workflow",
+  "propose_workflow",
 ]);
 
 export function isSerialDoeDtcTool(name: string): boolean {

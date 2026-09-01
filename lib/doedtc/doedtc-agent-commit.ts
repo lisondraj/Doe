@@ -17,8 +17,13 @@ import {
 } from "@/lib/doedtc/doedtc-scheduled";
 import {
   buildHabitWorkflowConfig,
+  createComposedWorkflow,
   createHabitWorkflow,
 } from "@/lib/doedtc/doedtc-workflows";
+import {
+  validateWorkflowGraph,
+  type WorkflowGraph,
+} from "@/lib/doedtc/doedtc-workflow-graph";
 import {
   createDoeDtcHouseholdInvite,
   loadDoeDtcHouseholdAccessContext,
@@ -190,6 +195,62 @@ export async function executeAgentPendingCommit(params: {
         return {
           ok: true,
           replyHint: `I'll text ${config.subject_name} at ${config.check_in_hour}:00 each day for ${workflow.goal} and ping you if they don't reply.`,
+        };
+      }
+      case "start_workflow": {
+        const goal = String(args.goal ?? "").trim();
+        if (!goal) throw new Error("goal is required.");
+        const graphRaw = args.graph;
+        if (!graphRaw || typeof graphRaw !== "object") throw new Error("graph is required.");
+        const graph = graphRaw as WorkflowGraph;
+        const validation = validateWorkflowGraph(graph);
+        if (!validation.ok) throw new Error(validation.error);
+        let subjectMemberId: string | null = null;
+        let subjectName = String(args.subject_name ?? "").trim() || params.user.full_name || "You";
+        if (args.member_id || args.member_name) {
+          const subject = await resolveDoeDtcHouseholdSubject({
+            viewerUserId: params.user.id,
+            memberId: typeof args.member_id === "string" ? args.member_id : null,
+            memberName: typeof args.member_name === "string" ? args.member_name : null,
+          });
+          if ("error" in subject) throw new Error(subject.error);
+          if (!subject.canEdit) {
+            throw new Error(`You do not have permission to edit ${subject.subjectMember.full_name}'s profile.`);
+          }
+          subjectMemberId = subject.subjectMember.id;
+          subjectName = subject.subjectMember.full_name;
+        }
+        const timezone = normalizeScheduledTimezone(
+          typeof args.timezone === "string" ? args.timezone : undefined,
+        );
+        const baseConfig = await buildHabitWorkflowConfig({
+          owner: params.user,
+          goal,
+          subjectName,
+          subjectMemberId,
+          timezone,
+        });
+        const workflow = await createComposedWorkflow({
+          owner: params.user,
+          goal,
+          graph,
+          composed: {
+            timezone: baseConfig.timezone,
+            subject_phone: baseConfig.subject_phone,
+            subject_user_id: baseConfig.subject_user_id,
+            subject_name: baseConfig.subject_name,
+            notify_phone: baseConfig.notify_phone,
+            notify_user_id: baseConfig.notify_user_id,
+            notify_name: baseConfig.notify_name,
+            daily_hour: baseConfig.check_in_hour,
+            initial_body: baseConfig.check_in_body,
+            await_minutes: baseConfig.await_timeout_minutes,
+          },
+          subjectMemberId,
+        });
+        return {
+          ok: true,
+          replyHint: `Workflow live for ${baseConfig.subject_name}: ${workflow.goal}.`,
         };
       }
       case "send_family_invite": {

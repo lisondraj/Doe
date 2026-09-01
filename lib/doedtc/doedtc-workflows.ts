@@ -1,5 +1,3 @@
-import { randomUUID } from "node:crypto";
-
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import {
   computeNextCheckInAt,
@@ -13,10 +11,29 @@ import { linqSendText } from "@/lib/doedtc/linq";
 import type {
   DoeDtcUserRow,
   DoeDtcWorkflowConfig,
+  DoeDtcWorkflowGraph,
   DoeDtcWorkflowRow,
 } from "@/lib/doedtc/doedtc-types";
 import { loadDoeDtcHouseholdAccessContext } from "@/lib/doedtc/doedtc-db";
 import { findHouseholdMemberByName } from "@/lib/doedtc/doedtc-household";
+import {
+  advanceWorkflowGraph,
+  attachGraphToConfig,
+  buildComposedWorkflowGraph,
+  compileHabitDefaultGraph,
+  computeGraphNextRunAt,
+  parseWorkflowInboundOutcome,
+  resolveWorkflowGraphRuntime,
+  type ComposedWorkflowParams,
+  type WorkflowGraph,
+} from "@/lib/doedtc/doedtc-workflow-graph";
+
+function parseGraph(raw: unknown): DoeDtcWorkflowGraph | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const graph = raw as Partial<DoeDtcWorkflowGraph>;
+  if (graph.version !== 1 || !graph.entry || !Array.isArray(graph.nodes)) return undefined;
+  return graph as DoeDtcWorkflowGraph;
+}
 
 function rowToConfig(raw: unknown): DoeDtcWorkflowConfig {
   const fallback: DoeDtcWorkflowConfig = {
@@ -50,6 +67,8 @@ function rowToConfig(raw: unknown): DoeDtcWorkflowConfig {
       typeof config.await_timeout_minutes === "number"
         ? config.await_timeout_minutes
         : fallback.await_timeout_minutes,
+    graph: parseGraph(config.graph),
+    cursor: typeof config.cursor === "string" ? config.cursor : undefined,
   };
 }
 
@@ -69,10 +88,60 @@ async function logWorkflowOutbound(userId: string, body: string): Promise<void> 
   });
 }
 
+async function persistWorkflowGraphState(
+  workflowId: string,
+  config: DoeDtcWorkflowConfig,
+  step: Awaited<ReturnType<typeof advanceWorkflowGraph>>,
+): Promise<DoeDtcWorkflowRow> {
+  const supabase = createSupabaseAdmin();
+  const nextConfig = attachGraphToConfig(config, step.graph, step.cursor);
+  const { data, error } = await supabase
+    .from("doedtc_workflows")
+    .update({
+      config: nextConfig,
+      phase: step.phase,
+      next_run_at: step.next_run_at,
+      awaiting_from_phone: step.awaiting_from_phone,
+      awaiting_until: step.awaiting_until,
+      correlation_id: step.correlation_id,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", workflowId)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return mapWorkflowRow(data as Record<string, unknown>);
+}
+
+async function runWorkflowGraphStep(
+  workflow: DoeDtcWorkflowRow,
+  trigger: "tick" | "inbound",
+  outcome?: "yes" | "no" | "skip",
+): Promise<DoeDtcWorkflowRow> {
+  const runtime = resolveWorkflowGraphRuntime(workflow.config);
+  const step = await advanceWorkflowGraph({
+    runtime,
+    trigger,
+    outcome,
+    ctx: {
+      config: workflow.config,
+      workflow,
+      sendText: async ({ to, body, idempotencyKey }) => {
+        await linqSendText({ to, text: body, idempotencyKey });
+      },
+      logOutbound: logWorkflowOutbound,
+    },
+  });
+  return persistWorkflowGraphState(workflow.id, workflow.config, step);
+}
+
 export function computeWorkflowNextRunAt(
   config: DoeDtcWorkflowConfig,
   from = new Date(),
 ): Date {
+  const runtime = resolveWorkflowGraphRuntime(config);
+  const fromGraph = computeGraphNextRunAt(runtime.graph, runtime.cursor, config.timezone, from);
+  if (fromGraph) return fromGraph;
   const next = computeNextCheckInAt(
     {
       cadence: "daily",
@@ -118,7 +187,9 @@ export async function createHabitWorkflow(params: {
   subjectMemberId?: string | null;
   startAt?: Date;
 }): Promise<DoeDtcWorkflowRow> {
-  const nextRunAt = params.startAt ?? computeWorkflowNextRunAt(params.config);
+  const graph = compileHabitDefaultGraph(params.config);
+  const config = attachGraphToConfig(params.config, graph);
+  const nextRunAt = params.startAt ?? computeWorkflowNextRunAt(config);
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase
     .from("doedtc_workflows")
@@ -126,7 +197,50 @@ export async function createHabitWorkflow(params: {
       owner_user_id: params.owner.id,
       subject_member_id: params.subjectMemberId ?? null,
       goal: params.goal.trim(),
-      config: params.config,
+      config,
+      status: "active",
+      phase: "scheduled",
+      next_run_at: nextRunAt.toISOString(),
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return mapWorkflowRow(data as Record<string, unknown>);
+}
+
+export async function createComposedWorkflow(params: {
+  owner: DoeDtcUserRow;
+  goal: string;
+  composed: ComposedWorkflowParams;
+  graph?: WorkflowGraph;
+  subjectMemberId?: string | null;
+  startAt?: Date;
+}): Promise<DoeDtcWorkflowRow> {
+  const graph = params.graph ?? buildComposedWorkflowGraph(params.composed);
+  const config: DoeDtcWorkflowConfig = {
+    cadence: "daily",
+    timezone: params.composed.timezone,
+    check_in_hour: params.composed.daily_hour,
+    check_in_body: params.composed.initial_body,
+    subject_phone: params.composed.subject_phone,
+    subject_user_id: params.composed.subject_user_id,
+    subject_name: params.composed.subject_name,
+    notify_phone: params.composed.notify_phone,
+    notify_user_id: params.composed.notify_user_id,
+    notify_name: params.composed.notify_name,
+    await_timeout_minutes: params.composed.await_minutes,
+    graph,
+    cursor: graph.entry,
+  };
+  const nextRunAt = params.startAt ?? computeWorkflowNextRunAt(config);
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_workflows")
+    .insert({
+      owner_user_id: params.owner.id,
+      subject_member_id: params.subjectMemberId ?? null,
+      goal: params.goal.trim(),
+      config,
       status: "active",
       phase: "scheduled",
       next_run_at: nextRunAt.toISOString(),
@@ -155,7 +269,19 @@ export async function listDueWorkflows(now = new Date()): Promise<DoeDtcWorkflow
     .lte("awaiting_until", now.toISOString());
   if (timedOutError) throw new Error(timedOutError.message);
 
-  const rows = [...((scheduled as Record<string, unknown>[]) ?? []), ...((timedOut as Record<string, unknown>[]) ?? [])];
+  const { data: waitingUntil, error: waitingUntilError } = await supabase
+    .from("doedtc_workflows")
+    .select("*")
+    .eq("status", "active")
+    .eq("phase", "waiting_until")
+    .lte("next_run_at", now.toISOString());
+  if (waitingUntilError) throw new Error(waitingUntilError.message);
+
+  const rows = [
+    ...((scheduled as Record<string, unknown>[]) ?? []),
+    ...((timedOut as Record<string, unknown>[]) ?? []),
+    ...((waitingUntil as Record<string, unknown>[]) ?? []),
+  ];
   const seen = new Set<string>();
   return rows
     .map(mapWorkflowRow)
@@ -164,71 +290,6 @@ export async function listDueWorkflows(now = new Date()): Promise<DoeDtcWorkflow
       seen.add(row.id);
       return true;
     });
-}
-
-async function sendWorkflowCheckIn(workflow: DoeDtcWorkflowRow): Promise<DoeDtcWorkflowRow> {
-  const config = workflow.config;
-  const correlationId = randomUUID();
-  const now = new Date();
-  const awaitingUntil = new Date(now.getTime() + config.await_timeout_minutes * 60 * 1000);
-
-  await linqSendText({
-    to: config.subject_phone,
-    text: config.check_in_body,
-    idempotencyKey: `doedtc-workflow-checkin-${workflow.id}-${correlationId}`,
-  });
-  const logUserId = config.subject_user_id ?? workflow.owner_user_id;
-  await logWorkflowOutbound(logUserId, config.check_in_body);
-
-  const supabase = createSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("doedtc_workflows")
-    .update({
-      phase: "awaiting_reply",
-      awaiting_from_phone: config.subject_phone,
-      awaiting_until: awaitingUntil.toISOString(),
-      correlation_id: correlationId,
-      next_run_at: null,
-      updated_at: now.toISOString(),
-    })
-    .eq("id", workflow.id)
-    .select("*")
-    .single();
-  if (error) throw new Error(error.message);
-  return mapWorkflowRow(data as Record<string, unknown>);
-}
-
-async function notifyWorkflowMiss(workflow: DoeDtcWorkflowRow): Promise<DoeDtcWorkflowRow> {
-  const config = workflow.config;
-  const body = `${config.subject_name} didn't reply to the ${workflow.goal} check-in.`;
-  await linqSendText({
-    to: config.notify_phone,
-    text: body,
-    idempotencyKey: `doedtc-workflow-miss-${workflow.id}-${workflow.correlation_id ?? "none"}`,
-  });
-  const logUserId = config.notify_user_id ?? workflow.owner_user_id;
-  await logWorkflowOutbound(logUserId, body);
-  return advanceWorkflowToNextDay(workflow);
-}
-
-async function advanceWorkflowToNextDay(workflow: DoeDtcWorkflowRow): Promise<DoeDtcWorkflowRow> {
-  const nextRunAt = computeWorkflowNextRunAt(workflow.config);
-  const supabase = createSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("doedtc_workflows")
-    .update({
-      phase: "scheduled",
-      next_run_at: nextRunAt.toISOString(),
-      awaiting_from_phone: null,
-      awaiting_until: null,
-      correlation_id: null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", workflow.id)
-    .select("*")
-    .single();
-  if (error) throw new Error(error.message);
-  return mapWorkflowRow(data as Record<string, unknown>);
 }
 
 export async function processWorkflowTick(workflowId: string): Promise<void> {
@@ -241,26 +302,14 @@ export async function processWorkflowTick(workflowId: string): Promise<void> {
   if (error) throw new Error(error.message);
   const workflow = mapWorkflowRow(data as Record<string, unknown>);
   if (workflow.status !== "active") return;
-
-  if (workflow.phase === "scheduled") {
-    await sendWorkflowCheckIn(workflow);
-    return;
-  }
-
-  if (workflow.phase === "awaiting_reply") {
-    await notifyWorkflowMiss(workflow);
-  }
+  await runWorkflowGraphStep(workflow, "tick");
 }
 
 export async function handleWorkflowReply(params: {
   workflow: DoeDtcWorkflowRow;
   outcome: "yes" | "no" | "skip";
 }): Promise<void> {
-  if (params.outcome === "no") {
-    await notifyWorkflowMiss(params.workflow);
-    return;
-  }
-  await advanceWorkflowToNextDay(params.workflow);
+  await runWorkflowGraphStep(params.workflow, "inbound", params.outcome);
 }
 
 export async function tryHandleWorkflowInbound(params: {
@@ -269,7 +318,7 @@ export async function tryHandleWorkflowInbound(params: {
   user: DoeDtcUserRow | null;
 }): Promise<boolean> {
   const phone = normalizePhoneToE164(params.phone) ?? params.phone.trim();
-  const outcome = parseCheckInOutcome(params.text);
+  const outcome = parseWorkflowInboundOutcome(params.text);
   if (!outcome) return false;
 
   const supabase = createSupabaseAdmin();
@@ -277,7 +326,7 @@ export async function tryHandleWorkflowInbound(params: {
     .from("doedtc_workflows")
     .select("*")
     .eq("status", "active")
-    .eq("phase", "awaiting_reply")
+    .in("phase", ["awaiting_reply", "waiting_until"])
     .eq("awaiting_from_phone", phone)
     .order("updated_at", { ascending: false })
     .limit(5);
@@ -378,3 +427,5 @@ export async function buildHabitWorkflowConfig(params: {
     await_timeout_minutes: params.awaitTimeoutMinutes ?? 120,
   };
 }
+
+export { parseCheckInOutcome };

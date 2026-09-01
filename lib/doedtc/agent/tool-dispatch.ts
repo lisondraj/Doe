@@ -99,9 +99,14 @@ import {
 import {
   buildHabitWorkflowConfig,
   cancelWorkflow,
+  createComposedWorkflow,
   createHabitWorkflow,
   listActiveWorkflowsForUser,
 } from "@/lib/doedtc/doedtc-workflows";
+import {
+  validateWorkflowGraph,
+  type WorkflowGraph,
+} from "@/lib/doedtc/doedtc-workflow-graph";
 import {
   archiveDoeDtcGuide,
   createDoeDtcGuide,
@@ -1604,6 +1609,88 @@ async function executeDoeDtcToolInner(params: {
         check_in_hour: config.check_in_hour,
         next_run_at: workflow.next_run_at,
       };
+    } else if (name === "propose_workflow") {
+      const goal = String(args.goal ?? "").trim();
+      if (!goal) throw new Error("goal is required.");
+      const graphRaw = args.graph;
+      if (!graphRaw || typeof graphRaw !== "object") throw new Error("graph is required.");
+      const validation = validateWorkflowGraph(graphRaw as WorkflowGraph);
+      if (!validation.ok) throw new Error(validation.error);
+      await setAgentPending({
+        userId: ctx.user.id,
+        kind: "start_workflow",
+        commitTool: "start_workflow",
+        args: {
+          goal,
+          graph: graphRaw,
+          subject_name: typeof args.subject_name === "string" ? args.subject_name : undefined,
+          member_id: typeof args.member_id === "string" ? args.member_id : undefined,
+          member_name: typeof args.member_name === "string" ? args.member_name : undefined,
+          timezone: typeof args.timezone === "string" ? args.timezone : undefined,
+        },
+        summary: `Workflow: ${goal}`,
+      });
+      state.preservePendingOffer = true;
+      output = {
+        ok: true,
+        draft: true,
+        goal,
+        node_count: (graphRaw as WorkflowGraph).nodes.length,
+        next_step: "Confirm to start the composed workflow.",
+      };
+    } else if (name === "start_workflow") {
+      const goal = String(args.goal ?? "").trim();
+      if (!goal) throw new Error("goal is required.");
+      const graphRaw = args.graph;
+      if (!graphRaw || typeof graphRaw !== "object") throw new Error("graph is required.");
+      const graph = graphRaw as WorkflowGraph;
+      const validation = validateWorkflowGraph(graph);
+      if (!validation.ok) throw new Error(validation.error);
+      const subject = await resolveAgentHouseholdSubject({
+        viewerUserId: ctx.user.id,
+        args,
+        requireEdit: true,
+      });
+      if ("error" in subject) throw new Error(subject.error);
+      const subjectName =
+        String(args.subject_name ?? "").trim() || subject.subjectMemberName || ctx.user.full_name || "You";
+      const timezone = normalizeScheduledTimezone(
+        typeof args.timezone === "string" ? args.timezone : undefined,
+      );
+      const baseConfig = await buildHabitWorkflowConfig({
+        owner: ctx.user,
+        goal,
+        subjectName,
+        subjectMemberId: subject.subjectMemberId ?? null,
+        timezone,
+      });
+      const workflow = await createComposedWorkflow({
+        owner: ctx.user,
+        goal,
+        graph,
+        composed: {
+          timezone: baseConfig.timezone,
+          subject_phone: baseConfig.subject_phone,
+          subject_user_id: baseConfig.subject_user_id,
+          subject_name: baseConfig.subject_name,
+          notify_phone: baseConfig.notify_phone,
+          notify_user_id: baseConfig.notify_user_id,
+          notify_name: baseConfig.notify_name,
+          daily_hour: baseConfig.check_in_hour,
+          initial_body: baseConfig.check_in_body,
+          await_minutes: baseConfig.await_timeout_minutes,
+        },
+        subjectMemberId: subject.subjectMemberId ?? null,
+      });
+      await clearAgentPending(ctx.user.id);
+      output = {
+        ok: true,
+        workflow_id: workflow.id,
+        goal: workflow.goal,
+        subject: baseConfig.subject_name,
+        node_count: graph.nodes.length,
+        next_run_at: workflow.next_run_at,
+      };
     } else if (name === "cancel_habit_workflow") {
       const cancelled = await cancelWorkflow({
         userId: ctx.user.id,
@@ -1788,6 +1875,8 @@ export const DOE_DTC_TOOL_NAMES = [
   "start_accountability",
   "propose_habit_workflow",
   "start_habit_workflow",
+  "propose_workflow",
+  "start_workflow",
   "cancel_habit_workflow",
   "invite_accountability_partner",
   "log_accountability_checkin",
