@@ -9,6 +9,7 @@ import {
   type DoeDtcAttachmentContext,
 } from "@/lib/doedtc/agent/attachments";
 import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
+import { looksLikeChartWrite } from "@/lib/doedtc/agent/deliverable-policy";
 import { fetchOpenAiWithRetry } from "@/lib/doedtc/agent/openai-retry";
 import { createInitialToolTurnState, executeDoeDtcTool } from "@/lib/doedtc/agent/tool-dispatch";
 import { resolveDoeDtcAgentModel } from "@/lib/doedtc/agent/types";
@@ -52,6 +53,9 @@ const NAME_JUNK_TOKENS = new Set([
 
 const SELF_CLAIM_RE =
   /\b(?:it'?s|that'?s|this is)\s+me\b|\b(?:they'?re|these are|this is|it'?s)\s+mine\b|\bmy own\b|\b(?:those|these) are my (?:own )?(?:labs?|results?)\b/i;
+
+const SAVE_OWN_RESULTS_RE =
+  /\b(?:log|save|add|put|record)\b.{0,48}\b(?:these|this|them|it)\b.{0,40}\b(?:chart|profile|results?)\b/i;
 
 const INVITE_ASK_RE = /\b(?:invite|add (?:them|him|her|to (?:the |my )?household))\b/i;
 
@@ -244,7 +248,7 @@ export function normalizeDocumentParseResult(raw: unknown): DocumentParseResult 
       : Array.isArray(record.analytes)
         ? record.analytes
         : [];
-  const writes = writeRows
+  const writes: Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }> = writeRows
     .map((row) => asRecord(row))
     .filter((row): row is Record<string, unknown> => Boolean(row))
     .map((row) => {
@@ -271,14 +275,57 @@ export function normalizeDocumentParseResult(raw: unknown): DocumentParseResult 
       : typeof record.patient === "string" && record.patient.trim()
         ? record.patient.trim()
         : null;
+  const summary = sanitizeDocumentParseSummary(String(record.summary ?? ""));
+  if (writes.length === 0 && (kind === "lab_panel" || /\b(?:labs?|lft|liver|panel|results?)\b/i.test(summary))) {
+    writes.push({
+      tool: "log_result",
+      args: {
+        title: /\b(?:liver|lft)\b/i.test(summary) ? "Liver function test" : "Lab panel",
+        resulted_at: fallbackDate,
+        summary: summary || null,
+        source: "document photo",
+      },
+    });
+  }
 
   return {
     kind,
     confidence,
-    summary: sanitizeDocumentParseSummary(String(record.summary ?? "")),
+    summary,
     patient_name: patientName,
     writes,
   };
+}
+
+export function extractResultedAtFromText(text: string): string | null {
+  const iso = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
+  if (iso?.[1]) return iso[1];
+  const us = text.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/);
+  if (!us) return null;
+  const month = Number(us[1]);
+  const day = Number(us[2]);
+  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+  let year = Number(us[3]);
+  if (year < 100) year += 2000;
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+export function looksLikeSaveDocumentToOwnChart(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  if (SELF_CLAIM_RE.test(trimmed)) return true;
+  if (/\b(?:family(?: profile)?|household)\b/i.test(trimmed) && INVITE_ASK_RE.test(trimmed)) {
+    return false;
+  }
+  if (SAVE_OWN_RESULTS_RE.test(trimmed)) return true;
+  return looksLikeChartWrite(trimmed) && /\b(?:these|this|them|mine|my chart)\b/i.test(trimmed);
+}
+
+function inboundNamesViewer(text: string, viewerName?: string | null): boolean {
+  const first = nameTokens(viewerName)[0];
+  if (!first || first.length < 3) return false;
+  const escaped = first.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`\\b${escaped}\\b`, "i").test(text);
 }
 
 export type DocumentSubjectDisposition = "self" | "household" | "unknown_name" | "unnamed";
@@ -346,6 +393,16 @@ export function resolveDocumentPatientName(params: {
   viewerName?: string | null;
 }): DocumentSubjectResolution {
   const printed = params.parsedName?.trim() || null;
+  if (looksLikeSaveDocumentToOwnChart(params.caption)) {
+    return {
+      name: params.viewerName?.trim() || printed,
+      printedName: printed,
+      onChart: true,
+      matchesUser: true,
+      canSave: true,
+      disposition: "self",
+    };
+  }
   const captionMentions = extractChartMentions({
     inboundText: params.caption,
     members: params.members,
@@ -442,7 +499,12 @@ export function interpretDocumentIdentityReply(params: {
   if (/^(no|nope|nah|don't|do not|stop|cancel|nevermind|never mind|not now|skip)\b/i.test(text)) {
     return { action: "decline" };
   }
-  if (SELF_CLAIM_RE.test(text) || namesLooselyMatch(text, params.viewerName)) {
+  if (
+    SELF_CLAIM_RE.test(text) ||
+    looksLikeSaveDocumentToOwnChart(text) ||
+    namesLooselyMatch(text, params.viewerName) ||
+    (inboundNamesViewer(text, params.viewerName) && Boolean(extractResultedAtFromText(text)))
+  ) {
     return { action: "save_self" };
   }
 
@@ -547,6 +609,7 @@ export function shouldAutoCommitDocumentParse(params: {
     .trim()
     .toLowerCase();
   if (!caption) return true;
+  if (looksLikeSaveDocumentToOwnChart(params.inboundText)) return true;
   return /\b(?:here'?s|my|labs?|results?|rx|prescription|meds?|appointment|card|vaccine|shot record)\b/i.test(
     caption,
   );
@@ -771,19 +834,22 @@ export async function runParseDocumentTool(params: {
     });
   }
 
-  if (!subject.canSave && subject.disposition === "unknown_name" && writes.length > 0) {
+  if (!autoCommit && (writes.length > 0 || fileIds.length > 0)) {
     try {
       await setAgentPending({
         userId: params.user.id,
         kind: "parse_document",
         commitTool: "commit_document_writes",
         args: {
-          document_identity: true,
+          document_identity: !subject.canSave,
           writes,
           patient_name: subject.name,
           file_ids: fileIds,
+          summary: parse.summary,
         },
-        summary: `Photo named ${subject.name}. Ask who they are and whether to invite them to the household.`,
+        summary: subject.canSave
+          ? `Document read, not saved yet: ${parse.summary || "health document"}`
+          : `Photo named ${subject.name ?? "someone else"}. Ask who they are and whether to invite them to the household.`,
       });
     } catch (error) {
       console.warn(
@@ -854,7 +920,10 @@ export function formatDocumentParseForPrompt(output: Record<string, unknown> | n
   }
   if (!summary) return null;
   const saved = output.auto_committed === true;
-  return `Inbound document already parsed and ${saved ? "saved to the chart" : "read"}: ${summary}. Do not say you could not read it. Narrate what landed. Do not call parse_document again.`;
+  if (!saved) {
+    return `Inbound document already parsed: ${summary}. Writes are ready. If they said these are theirs or asked to log/save them, those rows should already be committed. Do not ask for a title or date. Do not claim they are on the chart unless write_results show ok. Do not call parse_document again.`;
+  }
+  return `Inbound document already parsed and saved to the chart: ${summary}. Do not say you could not read it. Narrate what landed. Do not call parse_document again.`;
 }
 
 function heldDocumentWrites(pending: DoeDtcAgentPendingRow): Array<{
@@ -867,6 +936,83 @@ function heldDocumentWrites(pending: DoeDtcAgentPendingRow): Array<{
     (row): row is { tool: ParseDocumentWriteTool; args: Record<string, unknown> } =>
       Boolean(row && typeof row === "object" && "tool" in row && "args" in row),
   );
+}
+
+function pendingFileIds(pending: DoeDtcAgentPendingRow): string[] {
+  const raw = pending.args.file_ids;
+  if (!Array.isArray(raw)) return [];
+  return raw.filter((row): row is string => typeof row === "string" && row.trim().length > 0);
+}
+
+function applyInboundDateToWrites(
+  writes: Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }>,
+  inboundText: string,
+): Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }> {
+  const dated = extractResultedAtFromText(inboundText);
+  if (!dated) return writes;
+  return writes.map((row) =>
+    row.tool === "log_result"
+      ? { ...row, args: { ...row.args, resulted_at: dated } }
+      : row,
+  );
+}
+
+function writesFromParseOutput(
+  output: Record<string, unknown> | null | undefined,
+): Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }> {
+  const raw = output?.proposed_writes;
+  if (!Array.isArray(raw)) return [];
+  return raw.filter(
+    (row): row is { tool: ParseDocumentWriteTool; args: Record<string, unknown> } =>
+      Boolean(row && typeof row === "object" && "tool" in row && "args" in row),
+  );
+}
+
+export async function commitReadyDocumentWrites(params: {
+  user: DoeDtcUserRow;
+  snapshot: DoeDtcProfileSnapshot;
+  inboundText: string;
+  state?: DoeDtcToolTurnState;
+  memberName?: string | null;
+}): Promise<{
+  committed: boolean;
+  results: Array<{ tool: string; ok: boolean; output?: unknown; error?: string }>;
+}> {
+  const pending = await getAgentPending(params.user.id);
+  let writes =
+    pending && (isDocumentIdentityPending(pending.args) || pending.kind === "parse_document")
+      ? heldDocumentWrites(pending)
+      : [];
+  if (writes.length === 0) {
+    writes = writesFromParseOutput(params.state?.documentParse);
+  }
+  if (writes.length === 0 && pending) {
+    const fileIds = pendingFileIds(pending);
+    if (fileIds.length > 0) {
+      const parsed = await runParseDocumentTool({
+        user: params.user,
+        inboundText: params.inboundText,
+        snapshot: params.snapshot,
+        state: createInitialToolTurnState(null),
+        fileIds,
+        autoCommit: false,
+      });
+      writes = writesFromParseOutput(parsed);
+    }
+  }
+  writes = applyInboundDateToWrites(writes, params.inboundText);
+  if (writes.length === 0) {
+    return { committed: false, results: [] };
+  }
+  const results = await commitHeldDocumentWrites({
+    user: params.user,
+    snapshot: params.snapshot,
+    inboundText: params.inboundText,
+    writes,
+    memberName: params.memberName,
+  });
+  await clearAgentPending(params.user.id);
+  return { committed: results.some((row) => row.ok), results };
 }
 
 export async function commitHeldDocumentWrites(params: {
@@ -936,7 +1082,21 @@ export async function resolveHeldDocumentIdentity(params: {
     return { replyText: CANT_ADD_PHOTO_REPLY, assessmentRan: false };
   }
 
-  const writes = heldDocumentWrites(params.pending);
+  let writes = applyInboundDateToWrites(heldDocumentWrites(params.pending), params.inboundText);
+  if (writes.length === 0) {
+    const fileIds = pendingFileIds(params.pending);
+    if (fileIds.length > 0) {
+      const parsed = await runParseDocumentTool({
+        user: params.user,
+        inboundText: params.inboundText,
+        snapshot,
+        state: createInitialToolTurnState(null),
+        fileIds,
+        autoCommit: false,
+      });
+      writes = applyInboundDateToWrites(writesFromParseOutput(parsed), params.inboundText);
+    }
+  }
   if (writes.length === 0) {
     await clearAgentPending(params.user.id);
     return { replyText: CANT_ADD_PHOTO_REPLY, assessmentRan: false };

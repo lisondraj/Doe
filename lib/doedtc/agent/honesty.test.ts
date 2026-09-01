@@ -262,6 +262,29 @@ describe("agent honesty invariants", () => {
     assert.equal(toolSucceeded([{ name: "send_family_invite", ok: true }], "send_family_invite"), true);
     assert.equal(toolSucceeded([{ name: "send_family_invite", ok: false }], "send_family_invite"), false);
   });
+
+  it("does not let a failed log_result claim the labs were saved", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText: "Title is James and 5/6/2024",
+      replyText: 'I\'ve logged your liver function test results under "James" for May 6, 2024',
+      state: {
+        toolsExecuted: [
+          { name: "parse_document", ok: true },
+          { name: "log_result", ok: false, error: "title and resulted_at are required." },
+        ],
+      } as import("@/lib/doedtc/agent/tool-dispatch").DoeDtcToolTurnState,
+      toolsExecuted: [
+        { name: "parse_document", ok: true },
+        { name: "log_result", ok: false, error: "title and resulted_at are required." },
+      ],
+    });
+    assert.match(reconciled.replyText, /not on your chart yet/i);
+  });
 });
 
 describe("tool capability prompt", () => {

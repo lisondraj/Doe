@@ -4,8 +4,10 @@ import { describe, it } from "node:test";
 import {
   applyDocumentSubjectToWrites,
   buildDocumentSavingNotice,
+  extractResultedAtFromText,
   formatDocumentParseForPrompt,
   interpretDocumentIdentityReply,
+  looksLikeSaveDocumentToOwnChart,
   mapLabPanelToLogResultWrites,
   namesLooselyMatch,
   normalizeDocumentParseResult,
@@ -258,6 +260,18 @@ describe("document parse", () => {
       }).action,
       "decline",
     );
+    const addFamily = interpretDocumentIdentityReply({
+      inboundText: "Add them to my family profile",
+      viewerName: "James Lisondra",
+      members,
+      viewerUserId: "parent-1",
+      printedName: "Ojewale Malik",
+    });
+    assert.equal(addFamily.action, "save_other");
+    if (addFamily.action === "save_other") {
+      assert.equal(addFamily.name, "Ojewale Malik");
+      assert.equal(addFamily.invite, true);
+    }
     const invite = interpretDocumentIdentityReply({
       inboundText: "yes invite him",
       viewerName: "James Lisondra",
@@ -282,5 +296,78 @@ describe("document parse", () => {
       assert.equal(son.name, "Simon");
       assert.equal(son.relationship, "child");
     }
+    assert.equal(
+      interpretDocumentIdentityReply({
+        inboundText: "These are mine",
+        viewerName: "James Lisondra",
+        members,
+        viewerUserId: "parent-1",
+        printedName: "Ojewale Malik",
+      }).action,
+      "save_self",
+    );
+    assert.equal(
+      interpretDocumentIdentityReply({
+        inboundText: "Log these results to my chart",
+        viewerName: "James Lisondra",
+        members,
+        viewerUserId: "parent-1",
+        printedName: "Ojewale Malik",
+      }).action,
+      "save_self",
+    );
+    assert.equal(
+      interpretDocumentIdentityReply({
+        inboundText: "Title is James and 5/6/2024",
+        viewerName: "James Lisondra",
+        members,
+        viewerUserId: "parent-1",
+        printedName: "Ojewale Malik",
+      }).action,
+      "save_self",
+    );
+  });
+
+  it("synthesizes a lab write when vision returns a summary but no rows", () => {
+    const parsed = normalizeDocumentParseResult({
+      kind: "lab_panel",
+      confidence: 0.9,
+      summary: "Liver function test with ALT and AST in range and ALP slightly high.",
+      patient_name: "Ojewale Malik",
+      writes: [],
+    });
+    assert.equal(parsed.writes.length, 1);
+    assert.equal(parsed.writes[0]?.tool, "log_result");
+    assert.equal(parsed.writes[0]?.args.title, "Liver function test");
+  });
+
+  it("treats these-are-mine and log-these as a save to the user's chart", () => {
+    assert.equal(looksLikeSaveDocumentToOwnChart("These are mine"), true);
+    assert.equal(looksLikeSaveDocumentToOwnChart("Log these results to my chart"), true);
+    assert.equal(extractResultedAtFromText("Title is James and 5/6/2024"), "2024-05-06");
+    const claimed = resolveDocumentPatientName({
+      parsedName: "Ojewale Malik",
+      caption: "These are mine",
+      members: [],
+      viewerUserId: "user-1",
+      viewerName: "James Lisondra",
+    });
+    assert.equal(claimed.canSave, true);
+    assert.equal(claimed.disposition, "self");
+    assert.equal(
+      shouldAutoCommitDocumentParse({
+        parse: {
+          kind: "lab_panel",
+          confidence: 0.9,
+          summary: "Liver panel",
+          patient_name: "Ojewale Malik",
+          writes: [{ tool: "log_result", args: { title: "ALT", resulted_at: "2024-05-06" } }],
+        },
+        inboundText: "These are mine",
+        attachmentTurn: true,
+        canSave: true,
+      }),
+      true,
+    );
   });
 });

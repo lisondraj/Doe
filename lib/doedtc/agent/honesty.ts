@@ -32,7 +32,16 @@ const CLAIM_REGISTRY: Array<{
   id: string;
   claim: RegExp;
   requiredTools: string[];
-    repair?: "profile" | "tracker" | "listen" | "session" | "guide" | "invite_correction" | "schedule";
+    repair?:
+      | "profile"
+      | "tracker"
+      | "listen"
+      | "session"
+      | "guide"
+      | "invite_correction"
+      | "schedule"
+      | "false_write";
+    writeClaim?: boolean;
 }> = [
   {
     id: "profile_link",
@@ -89,8 +98,11 @@ const CLAIM_REGISTRY: Array<{
   },
   {
     id: "result_logged",
-    claim: /\b(?:i(?:'ve| have)? logged|logged|saved)\b.{0,48}\b(?:a1c|lab|result|results|bloodwork|cbc|glucose|cholesterol)\b/i,
-    requiredTools: ["log_result", "parse_document"],
+    claim:
+      /\b(?:i(?:'ve| have) logged|i logged|logged your|saved (?:your|the|these))\b.{0,72}\b(?:a1c|lab|result|results|bloodwork|cbc|glucose|cholesterol|liver|lft|panel)\b/i,
+    requiredTools: ["log_result"],
+    repair: "false_write",
+    writeClaim: true,
   },
   {
     id: "medication_logged",
@@ -207,8 +219,19 @@ export async function reconcileReplyClaims(params: {
   });
 
   for (const entry of CLAIM_REGISTRY) {
-    if (!replyClaimsAction(replyText, entry.claim)) continue;
-    const backed = entry.requiredTools.some((tool) => toolSucceeded(params.toolsExecuted, tool));
+    const claimed = entry.writeClaim
+      ? entry.claim.test(replyText)
+      : replyClaimsAction(replyText, entry.claim);
+    if (!claimed) continue;
+    const parseSaved =
+      entry.id === "result_logged" &&
+      params.state.documentParse?.auto_committed === true &&
+      Array.isArray(params.state.documentParse.write_results) &&
+      params.state.documentParse.write_results.some(
+        (row) => row && typeof row === "object" && (row as { ok?: boolean }).ok === true,
+      );
+    const backed =
+      entry.requiredTools.some((tool) => toolSucceeded(params.toolsExecuted, tool)) || parseSaved;
     if (backed) continue;
 
     if (entry.repair === "listen" && !listenUrl) {
@@ -249,6 +272,8 @@ export async function reconcileReplyClaims(params: {
       if (repaired.applied && repaired.replyHint) {
         replyText = repaired.replyHint;
       }
+    } else if (entry.repair === "false_write") {
+      replyText = "Those results are not on your chart yet. Say log them again and I'll save what I read.";
     }
   }
 

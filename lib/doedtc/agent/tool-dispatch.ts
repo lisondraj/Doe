@@ -509,12 +509,20 @@ async function executeDoeDtcToolInner(params: {
       });
     } else if (name === "log_family_member") {
       const relationshipRaw = String(args.relationship ?? "").trim();
-      const relationship = normalizeDoeDtcFamilyRelationship(relationshipRaw);
-      if (!relationship) throw new Error("Invalid relationship.");
-      const fullName = resolveDoeDtcFamilyMemberName({
-        fullName: String(args.full_name ?? ""),
+      const relationship = normalizeDoeDtcFamilyRelationship(relationshipRaw) ?? "other";
+      let fullName = resolveDoeDtcFamilyMemberName({
+        fullName: String(args.full_name ?? args.name ?? ""),
         relationship,
       });
+      if (!fullName) {
+        const pending = await getAgentPending(ctx.user.id);
+        const pendingName =
+          typeof pending?.args.patient_name === "string" ? pending.args.patient_name.trim() : "";
+        fullName = resolveDoeDtcFamilyMemberName({
+          fullName: pendingName,
+          relationship,
+        });
+      }
       if (!fullName) throw new Error("full_name is required.");
       const row = await addDoeDtcHouseholdMember({
         adminUserId: ctx.user.id,
@@ -890,23 +898,73 @@ async function executeDoeDtcToolInner(params: {
         requireEdit: true,
       });
       if ("error" in subject) throw new Error(subject.error);
-      const title = String(args.title ?? "").trim();
-      const resultedAt = String(args.resulted_at ?? "").trim();
-      if (!title || !resultedAt) throw new Error("title and resulted_at are required.");
-      const row = await addDoeDtcResult({
-        userId: subject.subjectUserId,
-        title,
-        resultedAt,
-        source: typeof args.source === "string" ? args.source : null,
-        summary: typeof args.summary === "string" ? args.summary : null,
-      });
-      output = {
-        ok: true,
-        id: row.id,
-        title: row.title,
-        resulted_at: row.resulted_at,
-        subject: subject.subjectMemberName ?? "you",
-      };
+      let title = String(args.title ?? "").trim();
+      let resultedAt = String(args.resulted_at ?? "").trim();
+      let source = typeof args.source === "string" ? args.source : null;
+      let summary = typeof args.summary === "string" ? args.summary : null;
+      let heldOutput: Record<string, unknown> | null = null;
+      if (!title || !resultedAt) {
+        const { commitReadyDocumentWrites, extractResultedAtFromText, looksLikeSaveDocumentToOwnChart } =
+          await import("@/lib/doedtc/agent/document-parse");
+        const inboundDate = extractResultedAtFromText(ctx.inboundText);
+        if (inboundDate && !resultedAt) resultedAt = inboundDate;
+        const shouldCommitHeld =
+          looksLikeSaveDocumentToOwnChart(ctx.inboundText) || !title;
+        if (shouldCommitHeld) {
+          const held = await commitReadyDocumentWrites({
+            user: ctx.user,
+            snapshot: ctx.snapshot,
+            inboundText: ctx.inboundText,
+            state,
+            memberName: subject.proxied ? subject.subjectMemberName : null,
+          });
+          if (held.committed) {
+            heldOutput = {
+              ok: true,
+              saved: held.results.filter((row) => row.ok).length,
+              write_results: held.results,
+              subject: subject.subjectMemberName ?? "you",
+            };
+          }
+        }
+        if (!heldOutput) {
+          const parsedWrites = Array.isArray(state.documentParse?.proposed_writes)
+            ? state.documentParse.proposed_writes
+            : [];
+          const first = parsedWrites.find(
+            (row) =>
+              row &&
+              typeof row === "object" &&
+              (row as { tool?: string }).tool === "log_result" &&
+              typeof (row as { args?: { title?: unknown } }).args?.title === "string",
+          ) as { args?: Record<string, unknown> } | undefined;
+          if (first?.args) {
+            if (!title) title = String(first.args.title ?? "").trim();
+            if (!resultedAt) resultedAt = String(first.args.resulted_at ?? "").trim();
+            if (!summary && typeof first.args.summary === "string") summary = first.args.summary;
+            if (!source && typeof first.args.source === "string") source = first.args.source;
+          }
+        }
+      }
+      if (heldOutput) {
+        output = heldOutput;
+      } else {
+        if (!title || !resultedAt) throw new Error("title and resulted_at are required.");
+        const row = await addDoeDtcResult({
+          userId: subject.subjectUserId,
+          title,
+          resultedAt,
+          source,
+          summary,
+        });
+        output = {
+          ok: true,
+          id: row.id,
+          title: row.title,
+          resulted_at: row.resulted_at,
+          subject: subject.subjectMemberName ?? "you",
+        };
+      }
     } else if (name === "remove_result") {
       const subject = await resolveAgentHouseholdSubject({
         viewerUserId: ctx.user.id,
