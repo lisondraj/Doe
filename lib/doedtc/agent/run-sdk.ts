@@ -261,21 +261,37 @@ async function loadRunContext(params: {
     turnMode: turnMode.mode,
   };
 
+  const turnState = {
+    ...createInitialToolTurnState(activeBrowserJobId),
+    turnId: params.turnId ?? createDoeDtcAgentTurnId(),
+  };
+  const { ensureInboundDocumentParsed, formatDocumentParseForPrompt } = await import(
+    "@/lib/doedtc/agent/document-parse"
+  );
+  const parseNote = formatDocumentParseForPrompt(
+    await ensureInboundDocumentParsed({
+      user: params.user,
+      inboundText: deliverableInboundText,
+      snapshot,
+      state: turnState,
+      attachmentContext,
+    }),
+  );
+
   const promptSplit = buildSpecialistInstructionMap({
     user: params.user,
     inboundText: deliverableInboundText,
     inboundMessageId: params.inboundMessageId,
     snapshot,
-    turnState: {
-      ...createInitialToolTurnState(activeBrowserJobId),
-      turnId: params.turnId ?? createDoeDtcAgentTurnId(),
-    },
+    turnState,
     instructions: "",
     promptParams,
   });
 
   const instructions =
-    buildDoeDtcAgentSystemPrompt(promptParams) + (params.reminderDirective ? `\n\n${params.reminderDirective}` : "");
+    buildDoeDtcAgentSystemPrompt(promptParams) +
+    (params.reminderDirective ? `\n\n${params.reminderDirective}` : "") +
+    (parseNote ? `\n\n${parseNote}` : "");
 
   return {
     user: params.user,
@@ -285,12 +301,12 @@ async function loadRunContext(params: {
     attachmentContext,
     turnMode,
     snapshot,
-    turnState: {
-      ...createInitialToolTurnState(activeBrowserJobId),
-      turnId: params.turnId ?? createDoeDtcAgentTurnId(),
-    },
+    turnState,
     instructions,
-    plannerInstructions: promptSplit.plannerInstructions + (params.reminderDirective ? `\n\n${params.reminderDirective}` : ""),
+    plannerInstructions:
+      promptSplit.plannerInstructions +
+      (params.reminderDirective ? `\n\n${params.reminderDirective}` : "") +
+      (parseNote ? `\n\n${parseNote}` : ""),
     specialistInstructions: promptSplit.specialistInstructions,
   };
 }

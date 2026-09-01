@@ -1083,6 +1083,21 @@ export async function runDoeDtcAgentTurnLegacy(params: {
 
   const turnState = createInitialToolTurnState(activeBrowserJobId);
   turnState.turnId = params.turnId ?? createDoeDtcAgentTurnId();
+  const { ensureInboundDocumentParsed, formatDocumentParseForPrompt } = await import(
+    "@/lib/doedtc/agent/document-parse"
+  );
+  const parseNote = formatDocumentParseForPrompt(
+    await ensureInboundDocumentParsed({
+      user: params.user,
+      inboundText: deliverableInboundText,
+      snapshot,
+      state: turnState,
+      attachmentContext,
+    }),
+  );
+  if (parseNote) {
+    messages.push({ role: "system", content: parseNote });
+  }
   const legacyTools = filterLegacyAgentTools(
     turnState.activeBrowserJobId,
     turnMode.mode,

@@ -104,6 +104,29 @@ describe("document parse", () => {
     assert.equal(buildDocumentSavingNotice({ inboundText: "[attachments: file-1]" }), "Saving this now.");
   });
 
+  it("keeps messy vision JSON instead of failing the whole parse", () => {
+    const parsed = normalizeDocumentParseResult({
+      kind: "labs",
+      confidence: "0.9",
+      summary: "Liver panel from today",
+      patient_name: "",
+      results: [
+        { analyte: "ALT", value: "32", unit: "U/L", date: "2026-09-01" },
+        { tool: "log_results", args: { title: "AST", resulted_at: "2026-09-01", summary: "28 U/L" } },
+        { tool: "not_a_real_tool", name: "" },
+      ],
+    });
+    assert.equal(parsed.kind, "lab_panel");
+    assert.equal(parsed.confidence, 0.9);
+    assert.equal(parsed.patient_name, null);
+    assert.equal(parsed.writes.length, 2);
+    assert.equal(parsed.writes[0]?.tool, "log_result");
+    assert.equal(parsed.writes[0]?.args.title, "ALT");
+    assert.equal(parsed.writes[0]?.args.summary, "32 · U/L");
+    assert.equal(parsed.writes[1]?.tool, "log_result");
+    assert.equal(parsed.writes[1]?.args.title, "AST");
+  });
+
   it("does not auto-commit low-confidence other documents", () => {
     assert.equal(
       shouldAutoCommitDocumentParse({

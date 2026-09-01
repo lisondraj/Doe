@@ -3,10 +3,12 @@ import { z } from "zod";
 import { extractChartMentions } from "@/lib/doedtc/agent/action-slots";
 import {
   describeDoeDtcAttachment,
+  inboundHasAttachments,
   resolveVisionUrlsForFiles,
   stripEmDash,
   type DoeDtcAttachmentContext,
 } from "@/lib/doedtc/agent/attachments";
+import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { fetchOpenAiWithRetry } from "@/lib/doedtc/agent/openai-retry";
 import { executeDoeDtcTool } from "@/lib/doedtc/agent/tool-dispatch";
 import { resolveDoeDtcAgentModel } from "@/lib/doedtc/agent/types";
@@ -52,7 +54,121 @@ export const DocumentParseSchema = z.object({
   writes: z.array(DocumentWriteSchema).default([]),
 });
 
-export type DocumentParseResult = z.infer<typeof DocumentParseSchema>;
+export type DocumentParseResult = {
+  kind: DocumentKind;
+  confidence: number;
+  summary: string;
+  patient_name: string | null;
+  writes: Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }>;
+};
+
+const WRITE_TOOL_ALIASES: Record<string, ParseDocumentWriteTool> = {
+  log_results: "log_result",
+  log_lab: "log_result",
+  log_labs: "log_result",
+  add_result: "log_result",
+  add_lab: "log_result",
+  save_result: "log_result",
+  create_result: "log_result",
+  log_test: "log_result",
+  log_value: "log_result",
+  add_med: "add_medication",
+  add_meds: "add_medication",
+  log_medication: "add_medication",
+  add_rx: "add_medication",
+  add_diagnosis: "add_condition",
+  log_condition: "add_condition",
+  log_appt: "log_appointment",
+  add_appointment: "log_appointment",
+  book_appointment: "log_appointment",
+  log_symptom: "log_symptoms",
+  add_symptom: "log_symptoms",
+  remember: "remember_fact",
+  add_fact: "remember_fact",
+  save_fact: "remember_fact",
+};
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function coerceDocumentKind(value: unknown): DocumentKind {
+  const raw = String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
+  if ((DOCUMENT_KINDS as readonly string[]).includes(raw)) return raw as DocumentKind;
+  if (/\b(labs?|lft|blood|cbc|a1c|panel|results?|liver|metabolic)\b/.test(raw)) return "lab_panel";
+  if (/\b(med|rx|prescription|medication)\b/.test(raw)) return "medication_list";
+  if (/\b(appt|appointment|visit|checkup)\b/.test(raw)) return "appointment";
+  if (/\b(vaccine|shot|immunization)\b/.test(raw)) return "vaccine";
+  if (/\b(insurance|coverage)\b/.test(raw)) return "insurance";
+  if (/\b(id|license|passport)\b/.test(raw)) return "id_card";
+  return "other";
+}
+
+function coerceResultedAt(value: unknown, fallback: string): string {
+  if (typeof value === "string" && value.trim()) {
+    const trimmed = value.trim();
+    if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) return trimmed.slice(0, 10);
+    const parsed = Date.parse(trimmed);
+    if (Number.isFinite(parsed)) return new Date(parsed).toISOString().slice(0, 10);
+  }
+  return fallback;
+}
+
+function coerceWriteTool(value: unknown, kind: DocumentKind, row: Record<string, unknown>): ParseDocumentWriteTool | null {
+  const raw = String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
+  if ((PARSE_DOCUMENT_WRITE_TOOLS as readonly string[]).includes(raw)) {
+    return raw as ParseDocumentWriteTool;
+  }
+  if (raw && WRITE_TOOL_ALIASES[raw]) return WRITE_TOOL_ALIASES[raw]!;
+  if (row.title || row.analyte || row.test || row.value || row.resulted_at || row.result) {
+    return "log_result";
+  }
+  if (kind === "medication_list" && (row.name || row.medication)) return "add_medication";
+  if (kind === "appointment" && (row.title || row.name || row.when)) return "log_appointment";
+  if (kind === "lab_panel") return "log_result";
+  return null;
+}
+
+function coerceWriteArgs(
+  tool: ParseDocumentWriteTool,
+  row: Record<string, unknown>,
+  fallbackDate: string,
+): Record<string, unknown> {
+  const nested = asRecord(row.args) ?? {};
+  const merged = { ...row, ...nested };
+  delete merged.tool;
+  delete merged.args;
+  if (tool === "log_result") {
+    const title = String(merged.title ?? merged.analyte ?? merged.test ?? merged.name ?? "").trim();
+    return {
+      title,
+      resulted_at: coerceResultedAt(merged.resulted_at ?? merged.date ?? merged.collected_at, fallbackDate),
+      summary:
+        typeof merged.summary === "string" && merged.summary.trim()
+          ? merged.summary.trim()
+          : [merged.value, merged.flag, merged.range, merged.unit]
+              .filter((part) => part != null && String(part).trim())
+              .map((part) => String(part).trim())
+              .join(" · ") || null,
+      source: typeof merged.source === "string" ? merged.source : "document photo",
+    };
+  }
+  if (tool === "add_medication") {
+    return { name: String(merged.name ?? merged.medication ?? merged.title ?? "").trim() };
+  }
+  if (tool === "add_condition") {
+    return { name: String(merged.name ?? merged.condition ?? merged.title ?? "").trim() };
+  }
+  return merged;
+}
 
 const DOCUMENT_PARSE_SYSTEM = `You extract structured health document data from photos or PDF page images.
 Return JSON only with keys: kind, confidence, summary, patient_name, writes.
@@ -78,15 +194,52 @@ export function sanitizeDocumentParseSummary(summary: string): string {
 }
 
 export function normalizeDocumentParseResult(raw: unknown): DocumentParseResult {
-  const parsed = DocumentParseSchema.parse(raw);
+  const record = asRecord(raw) ?? {};
+  const kind = coerceDocumentKind(record.kind ?? record.type ?? record.document_kind);
+  const fallbackDate =
+    coerceResultedAt(record.date ?? record.collected_at ?? record.resulted_at, "") ||
+    new Date().toISOString().slice(0, 10);
+  const writeRows = Array.isArray(record.writes)
+    ? record.writes
+    : Array.isArray(record.results)
+      ? record.results
+      : Array.isArray(record.analytes)
+        ? record.analytes
+        : [];
+  const writes = writeRows
+    .map((row) => asRecord(row))
+    .filter((row): row is Record<string, unknown> => Boolean(row))
+    .map((row) => {
+      const tool = coerceWriteTool(row.tool, kind, row);
+      if (!tool) return null;
+      const args = coerceWriteArgs(tool, row, fallbackDate);
+      if (tool === "log_result" && !String(args.title ?? "").trim()) return null;
+      if ((tool === "add_medication" || tool === "add_condition") && !String(args.name ?? "").trim()) {
+        return null;
+      }
+      return { tool, args };
+    })
+    .filter((row): row is { tool: ParseDocumentWriteTool; args: Record<string, unknown> } => Boolean(row));
+
+  const confidenceRaw = Number(record.confidence);
+  const confidence = Number.isFinite(confidenceRaw)
+    ? Math.min(1, Math.max(0, confidenceRaw))
+    : writes.length > 0
+      ? 0.88
+      : 0.4;
+  const patientName =
+    typeof record.patient_name === "string" && record.patient_name.trim()
+      ? record.patient_name.trim()
+      : typeof record.patient === "string" && record.patient.trim()
+        ? record.patient.trim()
+        : null;
+
   return {
-    ...parsed,
-    summary: sanitizeDocumentParseSummary(parsed.summary),
-    patient_name: parsed.patient_name?.trim() || null,
-    writes: parsed.writes.map((row) => ({
-      tool: row.tool,
-      args: row.args,
-    })),
+    kind,
+    confidence,
+    summary: sanitizeDocumentParseSummary(String(record.summary ?? "")),
+    patient_name: patientName,
+    writes,
   };
 }
 
@@ -247,7 +400,17 @@ async function visionJsonParse(params: {
     throw new Error("Document parse returned no content.");
   }
 
-  return normalizeDocumentParseResult(JSON.parse(content));
+  try {
+    return normalizeDocumentParseResult(JSON.parse(content));
+  } catch {
+    return {
+      kind: "other",
+      confidence: 0,
+      summary: "I could see the file but the structured read was messy.",
+      patient_name: null,
+      writes: [],
+    };
+  }
 }
 
 export async function parseDoeDtcDocuments(params: {
@@ -342,6 +505,10 @@ export async function runParseDocumentTool(params: {
   autoCommit?: boolean;
   attachmentContext?: Pick<DoeDtcAttachmentContext, "thisTurnFileIds" | "visionImageUrls">;
 }): Promise<Record<string, unknown>> {
+  if (params.state.documentParse) {
+    return params.state.documentParse;
+  }
+
   const fileIds =
     params.fileIds.length > 0
       ? params.fileIds
@@ -389,7 +556,7 @@ export async function runParseDocumentTool(params: {
     });
   }
 
-  return {
+  const result = {
     ok: true,
     kind: parse.kind,
     confidence: parse.confidence,
@@ -402,6 +569,43 @@ export async function runParseDocumentTool(params: {
     write_results: writeResults,
     file_ids: fileIds,
   };
+  params.state.documentParse = result;
+  return result;
+}
+
+export async function ensureInboundDocumentParsed(params: {
+  user: DoeDtcUserRow;
+  inboundText: string;
+  snapshot: DoeDtcProfileSnapshot;
+  state: DoeDtcToolTurnState;
+  attachmentContext?: DoeDtcAttachmentContext;
+}): Promise<Record<string, unknown> | null> {
+  if (looksLikeBrowseAsk(params.inboundText)) return null;
+  const fileIds = params.attachmentContext?.thisTurnFileIds ?? [];
+  if (fileIds.length === 0 && !inboundHasAttachments(params.inboundText)) return null;
+  if (params.state.toolsExecuted?.some((row) => row.name === "parse_document" && row.ok)) {
+    return params.state.documentParse ?? null;
+  }
+
+  return executeDoeDtcTool({
+    name: "parse_document",
+    args: fileIds.length > 0 ? { file_ids: fileIds } : {},
+    ctx: {
+      user: params.user,
+      inboundText: params.inboundText,
+      snapshot: params.snapshot,
+      attachmentContext: params.attachmentContext,
+    },
+    state: params.state,
+  });
+}
+
+export function formatDocumentParseForPrompt(output: Record<string, unknown> | null): string | null {
+  if (!output || output.ok === false) return null;
+  const summary = typeof output.summary === "string" ? output.summary.trim() : "";
+  if (!summary) return null;
+  const saved = output.auto_committed === true;
+  return `Inbound document already parsed and ${saved ? "saved to the chart" : "read"}: ${summary}. Do not say you could not read it. Narrate what landed. Do not call parse_document again.`;
 }
 
 export async function runReadAttachmentTool(params: {

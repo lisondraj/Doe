@@ -185,6 +185,7 @@ export type DoeDtcToolTurnState = {
   browserUserMessage?: string;
   preservePendingOffer: boolean;
   assessmentSummary?: string;
+  documentParse?: Record<string, unknown>;
 };
 
 export type DoeDtcToolExecutionContext = {
