@@ -785,7 +785,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "send_profile_link",
       description:
-        "Send the user's Doe profile link. You MUST call this before telling the user a profile or dashboard link is coming. For a family member, pass member_id or member_name.",
+        "Send the user's Doe profile or tracker link. Call only when they asked for that link. For a named tracker pass tab=trackers and artifact id. For a family member, pass member_id or member_name.",
       parameters: {
         type: "object",
         properties: {
@@ -980,7 +980,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "schedule_text",
       description:
-        "Commit a one-time outbound text. Default when they already asked (timers, self-reminders, make-sure tonight). Supports in N seconds for sub-minute timers.",
+        "Commit a one-time outbound text. Default when they already asked (timers, self-reminders). body is the reminder itself (e.g. ozempic), never the confirmation sentence. Confirmation goes in the chat reply now; the scheduled send fires later.",
       parameters: {
         type: "object",
         properties: {

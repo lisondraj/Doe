@@ -13,6 +13,7 @@ import {
   scheduledDelayMs,
   shouldSendScheduledTextInline,
 } from "@/lib/doedtc/doedtc-scheduled";
+import { sanitizeScheduledTextBody } from "@/lib/doedtc/doedtc-reminder-body";
 import { linqSendText } from "@/lib/doedtc/linq";
 import type {
   DoeDtcHouseholdConsentRow,
@@ -134,6 +135,7 @@ export async function createScheduledText(params: {
   sendAtRaw?: string;
   sendAtIso?: string;
   timezone?: string | null;
+  inboundText?: string | null;
   memberId?: string | null;
   memberName?: string | null;
 }): Promise<DoeDtcScheduledTextRow> {
@@ -150,6 +152,11 @@ export async function createScheduledText(params: {
         new Date(),
         timezone,
       );
+  const body = sanitizeScheduledTextBody({
+    body: params.body,
+    inboundText: params.inboundText ?? undefined,
+    intent: params.intent,
+  });
 
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase
@@ -162,13 +169,15 @@ export async function createScheduledText(params: {
       send_at: sendAt.toISOString(),
       timezone,
       intent: params.intent.trim(),
-      body: params.body.trim(),
+      body,
       status: "pending",
     })
     .select("*")
     .single();
   if (error) throw new Error(error.message);
-  return data as DoeDtcScheduledTextRow;
+  const row = data as DoeDtcScheduledTextRow;
+  enqueueInlineScheduledSend(row);
+  return row;
 }
 
 export async function listScheduledTextsForUser(userId: string): Promise<DoeDtcScheduledTextRow[]> {
@@ -238,54 +247,55 @@ function sleepMs(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+type PendingInlineSend = {
+  id: string;
+  sendAt: Date;
+};
+
+const pendingInlineSends: PendingInlineSend[] = [];
+
+export function enqueueInlineScheduledSend(row: Pick<DoeDtcScheduledTextRow, "id" | "send_at">): void {
+  const sendAt = new Date(row.send_at);
+  if (!shouldSendScheduledTextInline(sendAt)) return;
+  if (pendingInlineSends.some((job) => job.id === row.id)) return;
+  pendingInlineSends.push({ id: row.id, sendAt });
+}
+
+/**
+ * Fire short-delay scheduled texts after the inbound reply has already been sent.
+ * Callers must send the confirmation first, then await this.
+ */
+export async function settleInlineScheduledSends(): Promise<void> {
+  const jobs = pendingInlineSends.splice(0);
+  await Promise.all(
+    jobs.map(async (job) => {
+      const delayMs = scheduledDelayMs(job.sendAt);
+      if (delayMs > 0) await sleepMs(delayMs);
+      await processScheduledTextTick(job.id);
+    }),
+  );
+}
+
 export async function sendScheduledTextInline(params: {
   creator: DoeDtcUserRow;
   intent: string;
   body: string;
   sendAt: Date;
   timezone?: string | null;
+  inboundText?: string | null;
   memberId?: string | null;
   memberName?: string | null;
 }): Promise<DoeDtcScheduledTextRow> {
-  const recipient = await resolveScheduledTextRecipient({
+  return createScheduledText({
     creator: params.creator,
+    intent: params.intent,
+    body: params.body,
+    sendAtIso: params.sendAt.toISOString(),
+    timezone: params.timezone,
+    inboundText: params.inboundText,
     memberId: params.memberId,
     memberName: params.memberName,
   });
-  const timezone = normalizeScheduledTimezone(params.timezone);
-  const delayMs = scheduledDelayMs(params.sendAt);
-  if (delayMs > 0) {
-    await sleepMs(delayMs);
-  }
-
-  await linqSendText({
-    to: recipient.recipientPhone,
-    text: params.body.trim(),
-    idempotencyKey: `doedtc-inline-${params.creator.id}-${params.sendAt.getTime()}-${recipient.recipientPhone}`,
-  });
-  const logUserId = recipient.recipientUserId ?? params.creator.id;
-  await logScheduledOutbound(logUserId, params.body.trim());
-
-  const supabase = createSupabaseAdmin();
-  const now = new Date().toISOString();
-  const { data, error } = await supabase
-    .from("doedtc_scheduled_texts")
-    .insert({
-      created_by_user_id: params.creator.id,
-      recipient_user_id: recipient.recipientUserId,
-      recipient_member_id: recipient.recipientMemberId,
-      recipient_phone: recipient.recipientPhone,
-      send_at: params.sendAt.toISOString(),
-      timezone,
-      intent: params.intent.trim(),
-      body: params.body.trim(),
-      status: "sent",
-      sent_at: now,
-    })
-    .select("*")
-    .single();
-  if (error) throw new Error(error.message);
-  return data as DoeDtcScheduledTextRow;
 }
 
 export { shouldSendScheduledTextInline };
@@ -321,13 +331,17 @@ export async function processScheduledTextTick(id: string): Promise<void> {
   }
 
   try {
+    const body = sanitizeScheduledTextBody({
+      body: scheduled.body,
+      intent: scheduled.intent,
+    });
     await linqSendText({
       to: scheduled.recipient_phone,
-      text: scheduled.body,
+      text: body,
       idempotencyKey: `doedtc-scheduled-${scheduled.id}`,
     });
     const logUserId = scheduled.recipient_user_id ?? scheduled.created_by_user_id;
-    await logScheduledOutbound(logUserId, scheduled.body);
+    await logScheduledOutbound(logUserId, body);
     await supabase
       .from("doedtc_scheduled_texts")
       .update({

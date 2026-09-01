@@ -2,7 +2,7 @@ import type { DoeDtcScheduledTextRow } from "@/lib/doedtc/doedtc-types";
 
 export const DEFAULT_TIMEZONE = "America/New_York";
 
-/** Sub-minute delays are sent inline (sleep + Linq) instead of waiting for cron. */
+/** Sub-minute delays fire from the inbound worker after the confirmation reply is sent. */
 export const INLINE_SCHEDULE_MAX_MS = 45_000;
 
 export function normalizeScheduledTimezone(raw?: string | null): string {

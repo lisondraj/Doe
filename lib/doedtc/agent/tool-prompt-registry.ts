@@ -191,7 +191,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   propose_scheduled_text:
     "propose_scheduled_text — draft one-shot text when who/when/body is ambiguous or texts someone else without clear ask. If they already asked with detail, schedule_text instead.",
   schedule_text:
-    "schedule_text — commit one-shot reminder/timer (in N seconds sends inline). Default for timers and self-reminders. Not for daily habits — use start_habit_workflow.",
+    "schedule_text — commit one-shot reminder/timer. Confirm in this reply; the reminder fires later. body is the thing to remember, not the confirmation. Not for daily habits — use start_habit_workflow.",
   cancel_scheduled_text:
     "cancel_scheduled_text — cancel pending one-shot. scheduled_text_id from Scheduled texts log or list_scheduled_texts.",
   list_scheduled_texts:
@@ -259,7 +259,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   use_thread_reply:
     "use_thread_reply — occasionally reply in-thread for direct answers (~1 in 3 eligible turns).",
   send_profile_link:
-    "send_profile_link — private profile/dashboard link when they ask or after tracker/guide/prep. Never substitute for a failed browser task.",
+    "send_profile_link — private app/tracker link ONLY when they asked for that link. Pass tab/artifact for a tracker. Never send after assessment, logging, or as a consolation prize.",
 };
 
 function tier2Enabled(signals: DoeAgentPromptSignals | undefined, key: keyof DoeAgentPromptSignals): boolean {
@@ -415,7 +415,7 @@ export function buildDoeDtcToolCapabilityPrompt(signals?: DoeAgentPromptSignals)
     ...tier2.map((block) => block),
     "",
     "- You have real tools. Attempt the task before saying you cannot do it.",
-    "- Never send a profile link as a substitute for a task you did not complete.",
+    "- Never send a profile or tracker link unless they asked for that link this turn.",
     "- When correcting profile data, update or remove the existing row — never add a second copy.",
     "- Resolve ids from logs above (read_profile, Symptom log, Appointments, Household) — do not ask the user for ids.",
   ].join("\n");

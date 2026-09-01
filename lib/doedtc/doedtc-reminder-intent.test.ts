@@ -5,6 +5,7 @@ import {
   buildReminderClarifyingQuestion,
   buildReminderIntentDirective,
   parseReminderIntent,
+  sanitizeScheduledTextBody,
 } from "@/lib/doedtc/doedtc-reminder-intent";
 
 test("parseReminderIntent extracts time and body from complete ask", () => {
@@ -47,4 +48,40 @@ test("buildReminderClarifyingQuestion is short", () => {
   const intent = parseReminderIntent("remind me in 5 seconds");
   const question = buildReminderClarifyingQuestion(intent);
   assert.match(question.toLowerCase(), /about what/);
+});
+
+test("parseReminderIntent extracts named reminder bodies and clock times", () => {
+  const relative = parseReminderIntent("remind me ozempic in 10 seconds");
+  assert.equal(relative.matched, true);
+  assert.equal(relative.body, "ozempic");
+
+  const clock = parseReminderIntent("remind me to take ozempic at 8pm");
+  assert.equal(clock.matched, true);
+  assert.equal(clock.sendAtPhrase, "at 8pm");
+  assert.equal(clock.body, "take ozempic");
+});
+
+test("sanitizeScheduledTextBody never sends the confirmation or raw remind-me wrapper", () => {
+  assert.equal(
+    sanitizeScheduledTextBody({
+      body: "Absolutely I will remind you",
+      inboundText: "remind me ozempic in 10 seconds",
+      intent: "reminder",
+    }),
+    "ozempic",
+  );
+  assert.equal(
+    sanitizeScheduledTextBody({
+      body: "remind me ozempic",
+      inboundText: "remind me ozempic in 10 seconds",
+    }),
+    "ozempic",
+  );
+  assert.equal(
+    sanitizeScheduledTextBody({
+      body: "hi",
+      inboundText: "In 5 seconds text me hi",
+    }),
+    "hi",
+  );
 });

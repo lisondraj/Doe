@@ -7,13 +7,24 @@ import { schedulingToolSucceeded } from "@/lib/doedtc/agent/turn-integrity";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
 import { classifyAgentAction, inboundAlreadyAsked } from "@/lib/doedtc/doedtc-agent-policy";
 import { setAgentPending } from "@/lib/doedtc/doedtc-pending";
+import { extractReminderBody } from "@/lib/doedtc/doedtc-reminder-body";
 import { normalizeScheduledTimezone } from "@/lib/doedtc/doedtc-scheduled";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
+
+export {
+  extractReminderBody,
+  looksLikeConfirmationBody,
+  sanitizeScheduledTextBody,
+  stripRemindWrapper,
+} from "@/lib/doedtc/doedtc-reminder-body";
 
 const REMINDER_TRIGGER_RE =
   /\b(?:remind(?:er)?|text me|ping me|timer|schedule(?:\s+a)?|set a timer)\b/i;
 
 const RELATIVE_TIME_RE = /\b(?:in|for)\s+(\d+)\s+(seconds?|minutes?|hours?)\b/i;
+const CLOCK_TIME_RE = /\b(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b/i;
+const NAMED_DAY_TIME_RE =
+  /\b(today|tomorrow)(?:\s+at\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?\b/i;
 
 export type ReminderIntent = {
   matched: boolean;
@@ -33,34 +44,30 @@ function extractRelativeTimePhrase(text: string): string | null {
   return normalizeRelativeTimePhrase(match);
 }
 
-function extractReminderBody(text: string): string | null {
-  const textMeMatch = text.match(/\btext\s+me(?:\s+with)?\s+(.+)$/i);
-  if (textMeMatch) {
-    let candidate = textMeMatch[1]!.trim();
-    candidate = candidate.replace(RELATIVE_TIME_RE, "").trim();
-    candidate = candidate.replace(/\b(?:a|an)\s+reminder\b/gi, "").trim();
-    if (candidate && !/^(?:a|an)?\s*reminder$/i.test(candidate)) {
-      return candidate;
+function extractClockTimePhrase(text: string): string | null {
+  const named = text.match(NAMED_DAY_TIME_RE);
+  if (named) {
+    const day = named[1]!.toLowerCase();
+    if (named[2]) {
+      const minute = named[3] ? `:${named[3]}` : "";
+      const meridiem = named[4] ? named[4].toLowerCase() : "";
+      return `${day} at ${named[2]}${minute}${meridiem ? ` ${meridiem}` : ""}`.replace(/\s+/g, " ").trim();
     }
+    return day;
   }
 
-  const remindToMatch = text.match(
-    /\bremind(?:\s+me)?\s+(?:to\s+)?(.+?)(?:\s+(?:in|for)\s+\d+\s+(?:seconds?|minutes?|hours?))?\s*$/i,
-  );
-  if (remindToMatch) {
-    let body = remindToMatch[1]!.trim();
-    body = body.replace(RELATIVE_TIME_RE, "").trim();
-    body = body.replace(/\b(?:with\s+a\s+reminder|with\s+a\s+timer)\b/gi, "").trim();
-    if (body && !/^(?:a|an)?\s*reminder$/i.test(body)) {
-      return body;
-    }
-  }
-
-  if (/\b(?:with\s+a\s+reminder|with\s+a\s+timer|reminder\s+in)\b/i.test(text)) {
-    return null;
+  const clock = text.match(CLOCK_TIME_RE);
+  if (clock) {
+    const minute = clock[2] ? `:${clock[2]}` : "";
+    const meridiem = clock[3] ? clock[3].toLowerCase() : "";
+    return `at ${clock[1]}${minute}${meridiem}`.trim();
   }
 
   return null;
+}
+
+function extractSendAtPhrase(text: string): string | null {
+  return extractRelativeTimePhrase(text) ?? extractClockTimePhrase(text);
 }
 
 export function parseReminderIntent(text: string): ReminderIntent {
@@ -69,7 +76,7 @@ export function parseReminderIntent(text: string): ReminderIntent {
     return { matched: false, sendAtPhrase: null, body: null, missingSlot: null };
   }
 
-  const sendAtPhrase = extractRelativeTimePhrase(trimmed);
+  const sendAtPhrase = extractSendAtPhrase(trimmed);
   if (!sendAtPhrase) {
     return { matched: false, sendAtPhrase: null, body: null, missingSlot: null };
   }

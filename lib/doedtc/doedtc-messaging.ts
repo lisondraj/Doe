@@ -22,6 +22,8 @@ import {
   upsertInvitedDoeDtcUser,
 } from "@/lib/doedtc/doedtc-db";
 import { addDoeDtcMem0Turn } from "@/lib/doedtc/doedtc-memory";
+import { waitForOutboundThinkTime } from "@/lib/doedtc/doedtc-outbound-pacing";
+import { settleInlineScheduledSends } from "@/lib/doedtc/doedtc-scheduled-db";
 import { tryHandleAccountabilityInbound } from "@/lib/doedtc/doedtc-accountability-db";
 import { tryHandleWorkflowInbound } from "@/lib/doedtc/doedtc-workflows";
 import { normalizePhoneToE164 } from "@/lib/doedtc/doedtc-phone";
@@ -544,6 +546,7 @@ export async function handleSymptomInbound(params: {
   const chatId = params.user.linq_chat_id ?? undefined;
   const idSuffix = params.webhookEventId ?? Date.now();
   const turnId = createDoeDtcAgentTurnId();
+  const turnStartedAtMs = Date.now();
 
   await beginDoeDtcTurnLifecycle({
     turnId,
@@ -618,6 +621,14 @@ export async function handleSymptomInbound(params: {
     failed: agentFailed,
     error: agentError,
   });
+
+  const firstOutbound = replyText || turn.careUrl || turn.listenUrl || turn.profileUrl || "";
+  if (firstOutbound) {
+    await waitForOutboundThinkTime({
+      startedAtMs: turnStartedAtMs,
+      replyText: replyText || firstOutbound,
+    });
+  }
 
   if (replyText) {
     await sendDoeDtcOutbound({
@@ -841,6 +852,15 @@ export async function handleSymptomInbound(params: {
     inboundText: params.text,
     replyText,
   });
+
+  try {
+    await settleInlineScheduledSends();
+  } catch (error) {
+    console.warn(
+      "[doedtc] inline scheduled send failed:",
+      error instanceof Error ? error.message : String(error),
+    );
+  }
 }
 
 export async function processDoeDtcInboundWebhook(params: {

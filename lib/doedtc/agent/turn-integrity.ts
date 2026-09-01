@@ -1,3 +1,4 @@
+import { askedForPrivateAppLink } from "@/lib/doedtc/agent/deliverable-policy";
 import { DOEDTC_LINQ } from "@/lib/doedtc/doedtc-copy";
 import { AGENT_TURN_FALLBACK_REPLY } from "@/lib/doedtc/doedtc-turn-lifecycle";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
@@ -127,13 +128,8 @@ export function shouldAllowProfileLink(params: {
   profileLinkCalls: number;
 }): boolean {
   if (params.profileLinkCalls >= 1) return false;
-  const inbound = params.inboundText.toLowerCase();
-  if (/\b(profile|dashboard|appointments?\s*page|my chart)\b/i.test(inbound)) return true;
-  if (params.state.assessmentRan) return true;
-  if (params.state.guideUrl) return true;
-  if (params.state.prepareUrl) return true;
-  if (params.state.artifactShareUrl) return true;
-  return false;
+  void params.state;
+  return askedForPrivateAppLink(params.inboundText);
 }
 
 export function compactTranscriptForAgent(

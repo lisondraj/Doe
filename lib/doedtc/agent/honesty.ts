@@ -1,7 +1,12 @@
 import { randomUUID } from "node:crypto";
 
+import {
+  askedForDeliverable,
+  askedForPrivateAppLink,
+  buildPrivateAppLink,
+} from "@/lib/doedtc/agent/deliverable-policy";
 import { createDoeDtcListenSession } from "@/lib/doedtc/doedtc-db";
-import { doeDtcAppUrl, doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
+import { doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
 import { applyReminderSafetyNet } from "@/lib/doedtc/doedtc-reminder-intent";
 import { meaningfulToolSucceeded } from "@/lib/doedtc/agent/turn-integrity";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
@@ -17,23 +22,33 @@ const CLAIM_REGISTRY: Array<{
   id: string;
   claim: RegExp;
   requiredTools: string[];
-  repair?: "profile" | "listen" | "session" | "invite_correction" | "schedule";
+  repair?: "profile" | "tracker" | "listen" | "session" | "invite_correction" | "schedule";
 }> = [
   {
     id: "profile_link",
-    claim: /\b(profile|dashboard|appointments?\s*page)\b/i,
+    claim:
+      /\b(send(?:ing)?|here'?s|share)\b.{0,48}\b(profile|dashboard|appointments?\s*page)\b|\b(profile|dashboard|appointments?\s*page)\b.{0,24}\b(link|url)\b/i,
     requiredTools: ["send_profile_link"],
     repair: "profile",
   },
   {
+    id: "tracker_link",
+    claim:
+      /\b(send(?:ing)?|here'?s|share)\b.{0,48}\b(tracker|weight(?:\s+log)?|artifact)\b|\b(tracker|weight(?:\s+tracker)?)\b.{0,24}\b(link|url)\b/i,
+    requiredTools: ["send_profile_link", "share_artifact", "create_profile_artifact"],
+    repair: "tracker",
+  },
+  {
     id: "listen_link",
-    claim: /\b(listen|record(?:ing)?|transcrib(?:e|ing)?)\b/i,
+    claim:
+      /\b(send(?:ing)?|here'?s)\b.{0,40}\b(listen|recording)\b|\b(listen|recording)\b.{0,20}\b(link|url)\b/i,
     requiredTools: ["start_listen"],
     repair: "listen",
   },
   {
     id: "session_link",
-    claim: /\b(session|live view|watch|sandbox)\b/i,
+    claim:
+      /\b(send(?:ing)?|here'?s)\b.{0,40}\b(session|live view)\b|\b(session|live view)\b.{0,20}\b(link|url)\b/i,
     requiredTools: ["show_session"],
     repair: "session",
   },
@@ -76,7 +91,10 @@ export function toolSucceeded(
 }
 
 export function replyClaimsAction(text: string, claim: RegExp): boolean {
-  return claim.test(text) && /\b(link|send(?:ing)?|here'?s|will|i'?ll|on the way|in a moment)\b/i.test(text);
+  return (
+    claim.test(text) &&
+    /\b(link|send(?:ing)?|here'?s|on the way|in a moment|text you|remind you)\b/i.test(text)
+  );
 }
 
 function buildInviteCorrectionReply(state: DoeDtcToolTurnState): string | null {
@@ -119,11 +137,18 @@ export async function reconcileReplyClaims(params: {
     if (backed) continue;
 
     if (entry.repair === "listen" && !listenUrl) {
+      if (!askedForDeliverable(params.inboundText, "listen")) continue;
       const session = await createDoeDtcListenSession({ userId: params.user.id });
       listenUrl = doeDtcListenUrl(params.user.care_token, session.id);
-    } else if (entry.repair === "profile" && !profileUrl) {
-      profileUrl = doeDtcAppUrl(params.user.care_token);
+    } else if ((entry.repair === "profile" || entry.repair === "tracker") && !profileUrl) {
+      if (!askedForPrivateAppLink(params.inboundText)) continue;
+      profileUrl = buildPrivateAppLink({
+        careToken: params.user.care_token,
+        inboundText: params.inboundText,
+        snapshot: params.snapshot,
+      });
     } else if (entry.repair === "session" && !sessionUrl && params.state.activeBrowserJobId) {
+      if (!askedForDeliverable(params.inboundText, "session")) continue;
       sessionUrl = doeDtcSessionUrl(params.user.care_token);
     } else if (entry.repair === "invite_correction") {
       const corrected = buildInviteCorrectionReply(params.state);
@@ -146,13 +171,35 @@ export async function reconcileReplyClaims(params: {
     }
   }
 
-  const shouldSendSession =
-    Boolean(params.state.activeBrowserJobId) &&
-    (/\b(watch|stream|live)\b/i.test(params.inboundText) ||
-      (replyClaimsAction(replyText, /\b(session|live view|watch|sandbox)\b/i) &&
-        !toolSucceeded(params.toolsExecuted, "show_session")));
+  if (
+    !profileUrl &&
+    askedForPrivateAppLink(params.inboundText) &&
+    !looksLikeRefusal(replyText) &&
+    /\b(i(?:'ll| will) send|sending|here'?s|on (?:its|the) way)\b/i.test(replyText)
+  ) {
+    profileUrl = buildPrivateAppLink({
+      careToken: params.user.care_token,
+      inboundText: params.inboundText,
+      snapshot: params.snapshot,
+    });
+  }
 
-  if (!sessionUrl && shouldSendSession) {
+  if (
+    !listenUrl &&
+    askedForDeliverable(params.inboundText, "listen") &&
+    !looksLikeRefusal(replyText) &&
+    !toolSucceeded(params.toolsExecuted, "start_listen") &&
+    /\b(i(?:'ll| will) send|sending|here'?s)\b/i.test(replyText)
+  ) {
+    const session = await createDoeDtcListenSession({ userId: params.user.id });
+    listenUrl = doeDtcListenUrl(params.user.care_token, session.id);
+  }
+
+  if (
+    !sessionUrl &&
+    params.state.activeBrowserJobId &&
+    askedForDeliverable(params.inboundText, "session")
+  ) {
     sessionUrl = doeDtcSessionUrl(params.user.care_token);
   }
 

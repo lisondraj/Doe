@@ -17,7 +17,6 @@ import {
 } from "@/lib/doedtc/doedtc-memory";
 import { clearAgentPending, setAgentPending } from "@/lib/doedtc/doedtc-pending";
 import {
-  doeDtcAppUrl,
   doeDtcArtifactShareUrl,
   doeDtcCareUrl,
   doeDtcFeedbackUrl,
@@ -136,6 +135,10 @@ import {
   ensureTurnId,
   recordToolExecution,
 } from "@/lib/doedtc/agent/honesty";
+import {
+  askedForPrivateAppLink,
+  buildPrivateAppLink,
+} from "@/lib/doedtc/agent/deliverable-policy";
 import {
   REPEAT_TOOL_ERROR,
   shouldAllowProfileLink,
@@ -701,11 +704,16 @@ async function executeDoeDtcToolInner(params: {
           blocks: args.blocks,
           goal: typeof args.goal === "number" ? args.goal : undefined,
         }));
-      state.profileUrl = doeDtcAppUrl(ctx.user.care_token, {
-        tab: "trackers",
-        artifact: row.id,
-        member: subject.subjectUserId !== ctx.user.id ? subject.subjectUserId : undefined,
-      });
+      if (!existing || askedForPrivateAppLink(ctx.inboundText)) {
+        state.profileUrl = buildPrivateAppLink({
+          careToken: ctx.user.care_token,
+          inboundText: ctx.inboundText,
+          snapshot: ctx.snapshot,
+          tab: "trackers",
+          artifact: row.id,
+          member: subject.subjectUserId !== ctx.user.id ? subject.subjectUserId : undefined,
+        });
+      }
       output = {
         ok: true,
         id: row.id,
@@ -713,7 +721,7 @@ async function executeDoeDtcToolInner(params: {
         kind: row.kind,
         created: !existing,
         subject: subject.subjectMemberName ?? "you",
-        link_sent_separately: true,
+        link_sent_separately: Boolean(state.profileUrl),
       };
     } else if (name === "update_profile_artifact") {
       const artifactId = String(args.artifact_id ?? "").trim();
@@ -738,16 +746,21 @@ async function executeDoeDtcToolInner(params: {
           blocks: args.blocks,
           goal: typeof args.goal === "number" ? args.goal : args.goal === null ? null : undefined,
         });
-        state.profileUrl = doeDtcAppUrl(ctx.user.care_token, {
-          tab: "trackers",
-          artifact: row.id,
-        });
+        if (askedForPrivateAppLink(ctx.inboundText)) {
+          state.profileUrl = buildPrivateAppLink({
+            careToken: ctx.user.care_token,
+            inboundText: ctx.inboundText,
+            snapshot: ctx.snapshot,
+            tab: "trackers",
+            artifact: row.id,
+          });
+        }
         output = {
           ok: true,
           id: row.id,
           title: row.title,
           kind: row.kind,
-          link_sent_separately: true,
+          link_sent_separately: Boolean(state.profileUrl),
         };
       }
     } else if (name === "log_artifact_entry") {
@@ -765,18 +778,23 @@ async function executeDoeDtcToolInner(params: {
         values: args.values,
         occurredAt: typeof args.occurred_at === "string" ? args.occurred_at : null,
       });
-      state.profileUrl = doeDtcAppUrl(ctx.user.care_token, {
-        tab: "trackers",
-        artifact: artifactId,
-        member: subject.subjectUserId !== ctx.user.id ? subject.subjectUserId : undefined,
-      });
+      if (askedForPrivateAppLink(ctx.inboundText)) {
+        state.profileUrl = buildPrivateAppLink({
+          careToken: ctx.user.care_token,
+          inboundText: ctx.inboundText,
+          snapshot: ctx.snapshot,
+          tab: "trackers",
+          artifact: artifactId,
+          member: subject.subjectUserId !== ctx.user.id ? subject.subjectUserId : undefined,
+        });
+      }
       output = {
         ok: true,
         id: row.id,
         artifact_id: artifactId,
         occurred_at: row.occurred_at,
         subject: subject.subjectMemberName ?? "you",
-        link_sent_separately: true,
+        link_sent_separately: Boolean(state.profileUrl),
       };
     } else if (name === "share_artifact") {
       const artifactId = typeof args.artifact_id === "string" ? args.artifact_id.trim() : undefined;
@@ -891,7 +909,6 @@ async function executeDoeDtcToolInner(params: {
         guideId: typeof args.guide_id === "string" ? args.guide_id : undefined,
         titleHint: typeof args.title_hint === "string" ? args.title_hint : undefined,
       });
-      state.profileUrl = doeDtcAppUrl(ctx.user.care_token, { tab: "guides" });
       await clearAgentPending(ctx.user.id);
       output = { ok: true, id: row.id, title: row.title, saved: true };
     } else if (name === "update_guide") {
@@ -1311,7 +1328,10 @@ async function executeDoeDtcToolInner(params: {
         args,
       });
       if ("error" in subject) throw new Error(subject.error);
-      state.profileUrl = doeDtcAppUrl(ctx.user.care_token, {
+      state.profileUrl = buildPrivateAppLink({
+        careToken: ctx.user.care_token,
+        inboundText: ctx.inboundText,
+        snapshot: ctx.snapshot,
         tab: typeof args.tab === "string" ? args.tab : undefined,
         artifact: typeof args.artifact === "string" ? args.artifact.trim() : undefined,
         member: subject.subjectUserId !== ctx.user.id ? subject.subjectUserId : undefined,
@@ -1381,6 +1401,7 @@ async function executeDoeDtcToolInner(params: {
           body,
           sendAt,
           timezone,
+          inboundText: ctx.inboundText,
           memberId: typeof args.member_id === "string" ? args.member_id : null,
           memberName: typeof args.member_name === "string" ? args.member_name : null,
         });
@@ -1392,6 +1413,7 @@ async function executeDoeDtcToolInner(params: {
             body,
             sendAtRaw,
             timezone,
+            inboundText: ctx.inboundText,
             memberId: typeof args.member_id === "string" ? args.member_id : null,
             memberName: typeof args.member_name === "string" ? args.member_name : null,
           });
@@ -1402,6 +1424,7 @@ async function executeDoeDtcToolInner(params: {
             body,
             sendAtIso: sendAt.toISOString(),
             timezone,
+            inboundText: ctx.inboundText,
             memberId: typeof args.member_id === "string" ? args.member_id : null,
             memberName: typeof args.member_name === "string" ? args.member_name : null,
           });
@@ -1409,13 +1432,16 @@ async function executeDoeDtcToolInner(params: {
         }
       }
       await clearAgentPending(ctx.user.id);
+      const firesSoon = shouldSendScheduledTextInline(new Date(row.send_at), now);
       output = {
         ok: true,
         scheduled_text_id: row.id,
         send_at: row.send_at,
         recipient_phone: row.recipient_phone,
         status: row.status,
-        sent_inline: row.status === "sent" && shouldSendScheduledTextInline(new Date(row.send_at), now),
+        sent_inline: false,
+        queued: true,
+        fires_after_this_reply: firesSoon || undefined,
         rolled_forward: rolledForward || undefined,
       };
     } else if (name === "cancel_scheduled_text") {
@@ -1515,7 +1541,6 @@ async function executeDoeDtcToolInner(params: {
         partnerPhone: typeof args.partner_phone === "string" ? args.partner_phone : null,
         involvePartner: Boolean(args.involve_partner ?? args.involve_partner),
       });
-      state.profileUrl = doeDtcAppUrl(ctx.user.care_token, { tab: "dashboard" });
       await clearAgentPending(ctx.user.id);
       output = {
         ok: true,
@@ -1523,7 +1548,7 @@ async function executeDoeDtcToolInner(params: {
         title: view.pact.title,
         status: view.pact.status,
         subject: subjectName,
-        link_sent_separately: true,
+        link_sent_separately: Boolean(state.profileUrl),
       };
     } else if (name === "propose_habit_workflow") {
       const goal = String(args.goal ?? "").trim();

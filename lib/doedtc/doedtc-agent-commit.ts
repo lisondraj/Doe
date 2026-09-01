@@ -1,6 +1,5 @@
 import { startAccountabilityPact } from "@/lib/doedtc/doedtc-accountability-db";
 import { normalizeAccountabilityMechanics } from "@/lib/doedtc/doedtc-accountability";
-import { doeDtcAppUrl } from "@/lib/doedtc/doedtc-copy";
 import { saveDoeDtcGuide } from "@/lib/doedtc/doedtc-guides-db";
 import type { DoeDtcAgentPendingRow } from "@/lib/doedtc/doedtc-pending";
 import {
@@ -108,7 +107,6 @@ export async function executeAgentPendingCommit(params: {
         return {
           ok: true,
           replyHint: `Saved "${row.title}" to your profile.`,
-          profileUrl: doeDtcAppUrl(params.user.care_token, { tab: "guides" }),
         };
       }
       case "start_accountability": {
@@ -151,7 +149,6 @@ export async function executeAgentPendingCommit(params: {
         return {
           ok: true,
           replyHint: `Accountability pact "${view.pact.title}" is live.`,
-          profileUrl: doeDtcAppUrl(params.user.care_token, { tab: "dashboard" }),
         };
       }
       case "start_habit_workflow": {

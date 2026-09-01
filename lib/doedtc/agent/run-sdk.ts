@@ -6,6 +6,7 @@ import {
   assembleTurnResult,
   resolveDoeReplyDeliverables,
 } from "@/lib/doedtc/agent/deliverable-resolver";
+import { reconcileReplyClaims } from "@/lib/doedtc/agent/honesty";
 import { createInitialToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 import { buildSpecialistInstructionMap, createDoeSpecialistAgents } from "@/lib/doedtc/agent/specialists";
 import { executeDoePlan, runDoePlannerTurn } from "@/lib/doedtc/agent/planner-run";
@@ -388,9 +389,22 @@ async function finalizeSdkRun(params: {
     await resolveDoeReplyDeliverables({ reply: finalOutput, ctx: params.loaded });
   }
 
-  const turnResult = assembleTurnResult({
+  const reconciled = await reconcileReplyClaims({
+    user: params.loaded.user,
+    inboundText: params.inboundText,
     replyText,
+    state: params.loaded.turnState,
+    toolsExecuted: params.loaded.turnState.toolsExecuted ?? [],
+    snapshot: params.loaded.snapshot,
+  });
+  params.loaded.turnState.listenUrl = reconciled.listenUrl ?? params.loaded.turnState.listenUrl;
+  params.loaded.turnState.profileUrl = reconciled.profileUrl ?? params.loaded.turnState.profileUrl;
+  params.loaded.turnState.sessionUrl = reconciled.sessionUrl ?? params.loaded.turnState.sessionUrl;
+
+  const turnResult = assembleTurnResult({
+    replyText: reconciled.replyText || replyText,
     turnState: params.loaded.turnState,
+    inboundText: params.inboundText,
   });
   return { ...turnResult, degenerate: degenerate || !rawReply };
 }
@@ -474,6 +488,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
       const turnResult = assembleTurnResult({
         replyText,
         turnState: loaded.turnState,
+        inboundText: params.inboundText,
       });
       return { ...turnResult, degenerate: !executed.reply.trim() };
     }

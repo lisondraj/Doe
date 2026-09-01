@@ -219,7 +219,7 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
 ] as const;
 
 export const DOE_AGENT_PRIMITIVES_PROMPT = `Primitives (compose these — do not invent a new feature per ask):
-- message.schedule → schedule_text (timers, one-shot). Inline if under ~45 seconds. Not for daily habits.
+- message.schedule → schedule_text (timers, one-shot). Persist immediately, confirm now, fire later — never block the confirmation on the reminder. Body is the thing to remember, not “I’ll remind you”. Not for daily habits.
 - message.await_reply + habit.recurring → start_habit_workflow or start_workflow (composed graph for multi-step nag).
 - habit.recurring → start_accountability when partner/cadence/privacy matters; else start_habit_workflow or start_workflow.
 - health.chart → read_profile + log/update/remove on symptoms, meds, conditions, appointments.
@@ -232,7 +232,7 @@ export const DOE_AGENT_PRIMITIVES_PROMPT = `Primitives (compose these — do not
 - browser.research → start_browser_task. browser.act → browser_act or browser_computer. browser.commit → request_commit then CONFIRM.
 - memory.remember / memory.recall → remember_fact / forget_fact; recall also from Mem0 memories in prompt.
 - feedback.submit → submit_ticket for bugs or product feedback.
-- imessage.texture → skip react_to_message on routine turns; use_thread_reply sparingly; send_profile_link when they ask for profile.`;
+- imessage.texture → skip react_to_message on routine turns; use_thread_reply sparingly; send_profile_link only when they ask for a profile/tracker link.`;
 
 export function toolsForPrimitive(verb: DoePrimitiveVerb): readonly string[] {
   return DOE_PRIMITIVES.find((row) => row.verb === verb)?.tools ?? [];

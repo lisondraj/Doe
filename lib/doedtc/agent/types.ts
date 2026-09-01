@@ -5,7 +5,7 @@ import { z } from "zod";
 export const DoeReplySchema = z.object({
   reply: z.string().describe("Plain iMessage text. No markdown, no URLs."),
   send: z
-    .array(z.enum(["profile", "listen", "guide", "prepare", "session", "vault"]))
+    .array(z.enum(["profile", "tracker", "listen", "guide", "prepare", "session", "vault"]))
     .default([]),
   reaction: z.string().nullable().default(null),
   threadReply: z.boolean().default(false),

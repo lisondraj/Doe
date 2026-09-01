@@ -1,3 +1,4 @@
+import { applyDeliverablePolicyToTurnState } from "@/lib/doedtc/agent/deliverable-policy";
 import { resolveDoeDtcAgentRuntime, resolveDoeDtcAgentModel } from "@/lib/doedtc/agent/types";
 import {
   buildRefusalRetrySystemMessage,
@@ -702,8 +703,16 @@ type LegacyToolTurnState = ReturnType<typeof createInitialToolTurnState>;
 function assembleLegacyTurnResult(params: {
   replyText: string;
   turnState: LegacyToolTurnState;
+  inboundText?: string;
   degenerate?: boolean;
 }): DoeDtcAgentTurnResult {
+  if (params.inboundText) {
+    applyDeliverablePolicyToTurnState({
+      inboundText: params.inboundText,
+      turnState: params.turnState,
+      toolsExecuted: params.turnState.toolsExecuted,
+    });
+  }
   return {
     replyText: params.replyText,
     careUrl: params.turnState.assessmentRan ? params.turnState.careUrl : undefined,
@@ -962,6 +971,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         preservePendingOffer: turnState.preservePendingOffer,
       }),
       turnState,
+      inboundText: params.inboundText,
       degenerate: finalized.degenerate,
     });
   };
