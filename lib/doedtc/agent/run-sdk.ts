@@ -15,6 +15,7 @@ import {
   priorInboundBodiesFromMessages,
   resolveDeliverableInboundText,
 } from "@/lib/doedtc/agent/deliverable-policy";
+import { finalizeAgentReply } from "@/lib/doedtc/agent/finalize-agent-reply";
 import { CRISIS_REPLY } from "@/lib/doedtc/agent/turn-mode";
 import { createInitialToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 import { buildSpecialistInstructionMap, createDoeSpecialistAgents } from "@/lib/doedtc/agent/specialists";
@@ -578,7 +579,6 @@ export async function runDoeDtcAgentTurnSdk(params: {
   return finalizeSdkRun({
     result,
     loaded,
-    inboundText: params.inboundText,
     inboundMessageId: params.inboundMessageId,
   });
 }
