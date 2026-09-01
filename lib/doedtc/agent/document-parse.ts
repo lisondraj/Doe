@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { extractChartMentions } from "@/lib/doedtc/agent/action-slots";
+import { extractChartMentions, isPlausiblePersonName } from "@/lib/doedtc/agent/action-slots";
 import {
   describeDoeDtcAttachment,
   inboundHasAttachments,
@@ -56,6 +56,9 @@ const SELF_CLAIM_RE =
 
 const SAVE_OWN_RESULTS_RE =
   /\b(?:log|save|add|put|record)\b.{0,48}\b(?:these|this|them|it)\b.{0,40}\b(?:chart|profile|results?)\b/i;
+
+const SAVE_DEMONSTRATIVE_RE =
+  /\b(?:log|save|add|put|record)\s+(?:these|this|them|it|that|those)\b/i;
 
 const INVITE_ASK_RE = /\b(?:invite|add (?:them|him|her|to (?:the |my )?household))\b/i;
 
@@ -317,7 +320,7 @@ export function looksLikeSaveDocumentToOwnChart(text: string): boolean {
   if (/\b(?:family(?: profile)?|household)\b/i.test(trimmed) && INVITE_ASK_RE.test(trimmed)) {
     return false;
   }
-  if (SAVE_OWN_RESULTS_RE.test(trimmed)) return true;
+  if (SAVE_OWN_RESULTS_RE.test(trimmed) || SAVE_DEMONSTRATIVE_RE.test(trimmed)) return true;
   return looksLikeChartWrite(trimmed) && /\b(?:these|this|them|mine|my chart)\b/i.test(trimmed);
 }
 
@@ -567,7 +570,9 @@ export function interpretDocumentIdentityReply(params: {
     members: params.members,
     viewerUserId: params.viewerUserId,
   });
-  const named = mentions.mentioned[0]?.full_name ?? mentions.unknownNames[0] ?? null;
+  const named = [mentions.mentioned[0]?.full_name, mentions.unknownNames[0]].find(
+    (name) => typeof name === "string" && isPlausiblePersonName(name),
+  );
   const invite = INVITE_ASK_RE.test(text);
   if (named) {
     if (namesLooselyMatch(named, params.viewerName)) return { action: "save_self" };

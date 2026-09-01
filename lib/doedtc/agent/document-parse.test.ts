@@ -347,6 +347,17 @@ describe("document parse", () => {
   it("treats these-are-mine and log-these as a save to the user's chart", () => {
     assert.equal(looksLikeSaveDocumentToOwnChart("These are mine"), true);
     assert.equal(looksLikeSaveDocumentToOwnChart("Log these results to my chart"), true);
+    assert.equal(looksLikeSaveDocumentToOwnChart("Log these"), true);
+    assert.equal(
+      interpretDocumentIdentityReply({
+        inboundText: "Log these",
+        viewerName: "James Lisondra",
+        members: [],
+        viewerUserId: "parent-1",
+        printedName: "Ojewale Malik",
+      }).action,
+      "save_self",
+    );
     assert.equal(extractResultedAtFromText("Title is James and 5/6/2024"), "2024-05-06");
     assert.equal(extractTitleIsNameReply("Title is James and 5/6/2024"), "James");
     assert.equal(

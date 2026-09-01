@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   extractChartMentions,
   inferPrimaryIntent,
+  isPlausiblePersonName,
   resolveActionSlots,
 } from "@/lib/doedtc/agent/action-slots";
 import type { HouseholdMemberLike } from "@/lib/doedtc/doedtc-household-policy";
@@ -39,6 +40,22 @@ describe("action slots", () => {
       viewerUserId: "parent-1",
     });
     assert.deepEqual(found.unknownNames, ["Fred"]);
+  });
+
+  it("does not treat demonstratives or objects after log/save as people", () => {
+    assert.equal(isPlausiblePersonName("These"), false);
+    assert.equal(isPlausiblePersonName("this"), false);
+    assert.equal(isPlausiblePersonName("them"), false);
+    assert.equal(isPlausiblePersonName("LFT"), false);
+    assert.equal(isPlausiblePersonName("Fred"), true);
+    for (const inbound of ["Log these", "log this", "save that", "add those", "log it", "save the results"]) {
+      const found = extractChartMentions({
+        inboundText: inbound,
+        members: [parent],
+        viewerUserId: "parent-1",
+      });
+      assert.deepEqual(found.unknownNames, [], inbound);
+    }
   });
 
   it("infers log_appointment for Book Fred's appointment", () => {
