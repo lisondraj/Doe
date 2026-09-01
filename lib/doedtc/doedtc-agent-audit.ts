@@ -134,6 +134,23 @@ export async function updateDoeDtcAgentTurnRecord(params: {
   }
 }
 
+export async function listDoeDtcAgentTurnsByInboundMessageId(
+  inboundMessageId: string,
+  limit = 8,
+): Promise<DoeDtcAgentTurnRow[]> {
+  const id = inboundMessageId.trim();
+  if (!id) return [];
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_agent_turns")
+    .select("*")
+    .eq("inbound_message_id", id)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return (data as DoeDtcAgentTurnRow[]) ?? [];
+}
+
 export async function getDoeDtcAgentTurn(turnId: string): Promise<DoeDtcAgentTurnRow | null> {
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase

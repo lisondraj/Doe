@@ -1,4 +1,4 @@
-/** iMessage tapbacks: lifecycle 👍/✅ on long-running browse/listen work only. Photos and documents get no tapback. */
+/** iMessage tapbacks: lifecycle 👍/✅ on complex work; occasional content-matched emoji otherwise. */
 
 import { inboundHasAttachments } from "@/lib/doedtc/agent/attachments";
 import { inboundLooksLikeCrisis, inboundLooksLikeDistress } from "@/lib/doedtc/agent/turn-mode";
@@ -16,7 +16,6 @@ const COMPLEX_TASK_RE =
 export function inboundSkipsReaction(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return true;
-  if (inboundHasAttachments(trimmed)) return true;
   if (inboundLooksLikeCrisis(trimmed) || inboundLooksLikeDistress(trimmed)) return true;
   return SKIP_REACTION_RE.test(trimmed);
 }
@@ -24,6 +23,7 @@ export function inboundSkipsReaction(text: string): boolean {
 export function inboundLooksComplex(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed || inboundSkipsReaction(trimmed)) return false;
+  if (inboundHasAttachments(trimmed)) return true;
   return COMPLEX_TASK_RE.test(trimmed);
 }
 

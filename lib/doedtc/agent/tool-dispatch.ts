@@ -1289,17 +1289,6 @@ async function executeDoeDtcToolInner(params: {
           output = { ok: true, queued: true };
         }
       }
-      if (!ctx.inboundMessageId) {
-        output = { ok: false, error: "No inbound message to react to." };
-      } else {
-        const emoji = String(args.emoji ?? "").trim();
-        if (!emoji) {
-          output = { ok: false, error: "Emoji is required." };
-        } else {
-          state.reactionEmoji = emoji.slice(0, 8);
-          output = { ok: true, queued: true };
-        }
-      }
     } else if (name === "use_thread_reply") {
       if (!ctx.inboundMessageId) {
         output = { ok: false, error: "No inbound message to reply to." };

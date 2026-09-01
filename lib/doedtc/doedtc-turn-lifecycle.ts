@@ -1,7 +1,9 @@
 import {
   getDoeDtcAgentTurn,
+  listDoeDtcAgentTurnsByInboundMessageId,
   startDoeDtcAgentTurnRecord,
   updateDoeDtcAgentTurnRecord,
+  type DoeDtcAgentTurnRow,
 } from "@/lib/doedtc/doedtc-agent-audit";
 import {
   linqAddReaction,
@@ -11,7 +13,6 @@ import {
 } from "@/lib/doedtc/linq";
 import {
   inboundLooksComplex,
-  inboundSkipsReaction,
   isLifecycleReactionEmoji,
   LIFECYCLE_DONE_EMOJI,
   LIFECYCLE_FAILED_EMOJI,
@@ -42,8 +43,82 @@ type PendingWorkingReaction = {
 };
 
 const pendingWorkingReactions = new Map<string, PendingWorkingReaction>();
+const inboundTurnClaims = new Map<string, { turnId: string; claimedAtMs: number }>();
+const inboundReactionApplied = new Map<string, string>();
 
 export type DoeTurnReactionAction = "none" | "ensure_working" | "swap_done" | "swap_failed" | "keep_matching";
+
+export function shouldSkipDuplicateInboundTurn(
+  existing: Array<Pick<DoeDtcAgentTurnRow, "status" | "created_at">>,
+  nowMs = Date.now(),
+): boolean {
+  for (const row of existing) {
+    if (row.status === "failed") continue;
+    if (row.status === "done") return true;
+    const ageMs = nowMs - new Date(row.created_at).getTime();
+    if (Number.isFinite(ageMs) && ageMs >= 0 && ageMs < AGENT_TURN_TIMEOUT_MS) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function existingInboundReaction(
+  existing: Array<Pick<DoeDtcAgentTurnRow, "working_at" | "final_reaction">>,
+): string | null {
+  for (const row of existing) {
+    const finalReaction = row.final_reaction?.trim();
+    if (finalReaction) return finalReaction;
+  }
+  if (existing.some((row) => row.working_at)) return DOE_DTC_WORKING_REACTION;
+  return null;
+}
+
+export function shouldApplyInboundReaction(
+  current: string | null | undefined,
+  next: string,
+): boolean {
+  const target = next.trim();
+  if (!target) return false;
+  if (current === target) return false;
+  if (current === DOE_DTC_DONE_REACTION || current === DOE_DTC_FAILED_REACTION) return false;
+  return true;
+}
+
+export function claimInboundTurn(
+  inboundMessageId: string,
+  turnId: string,
+  nowMs = Date.now(),
+): boolean {
+  const id = inboundMessageId.trim();
+  if (!id) return true;
+  const existing = inboundTurnClaims.get(id);
+  if (existing && existing.turnId !== turnId && nowMs - existing.claimedAtMs < AGENT_TURN_TIMEOUT_MS) {
+    return false;
+  }
+  inboundTurnClaims.set(id, { turnId, claimedAtMs: nowMs });
+  return true;
+}
+
+function rememberInboundReaction(inboundMessageId: string, emoji: string): void {
+  inboundReactionApplied.set(inboundMessageId, emoji);
+}
+
+function currentInboundReaction(inboundMessageId: string): string | undefined {
+  return inboundReactionApplied.get(inboundMessageId);
+}
+
+async function hydrateInboundReaction(inboundMessageId: string): Promise<string | null> {
+  const cached = currentInboundReaction(inboundMessageId);
+  if (cached) return cached;
+  try {
+    const existing = existingInboundReaction(await listDoeDtcAgentTurnsByInboundMessageId(inboundMessageId));
+    if (existing) rememberInboundReaction(inboundMessageId, existing);
+    return existing;
+  } catch {
+    return currentInboundReaction(inboundMessageId) ?? null;
+  }
+}
 
 export function resolveTurnReactionAction(params: {
   workingReactionApplied: boolean;
@@ -101,6 +176,9 @@ export async function beginDoeDtcTurnLifecycle(params: {
 
   if (!params.inboundMessageId) return;
 
+  const alreadyReacted = await hydrateInboundReaction(params.inboundMessageId);
+  if (alreadyReacted) return;
+
   const matching = pickMatchingReaction(params.inboundText);
   if (matching) {
     const pending: PendingWorkingReaction = {
@@ -136,6 +214,15 @@ async function applyNamedReaction(turnId: string, emoji: string): Promise<void> 
 
   pending.applying = (async () => {
     if (pending.cancelled || pending.applied) return;
+    const current = currentInboundReaction(pending.inboundMessageId);
+    if (!shouldApplyInboundReaction(current, emoji)) {
+      if (current === emoji) {
+        pending.applied = true;
+        pending.emoji = emoji;
+      }
+      return;
+    }
+    rememberInboundReaction(pending.inboundMessageId, emoji);
     try {
       await linqAddReaction({
         messageId: pending.inboundMessageId,
@@ -182,8 +269,13 @@ export async function swapDoeDtcTurnReaction(params: {
   toEmoji: string;
 }): Promise<void> {
   if (!params.inboundMessageId) return;
+  const current =
+    currentInboundReaction(params.inboundMessageId) ??
+    (await hydrateInboundReaction(params.inboundMessageId));
+  if (!shouldApplyInboundReaction(current, params.toEmoji)) return;
+  rememberInboundReaction(params.inboundMessageId, params.toEmoji);
   try {
-    if (params.fromEmoji) {
+    if (params.fromEmoji && params.fromEmoji !== params.toEmoji && current === params.fromEmoji) {
       await linqRemoveReaction({
         messageId: params.inboundMessageId,
         emoji: params.fromEmoji,
@@ -213,7 +305,6 @@ async function takePendingWorkingReaction(
 export async function completeDoeDtcTurnLifecycle(params: {
   turnId: string;
   inboundMessageId?: string;
-  inboundText?: string;
   replyText: string;
   threadReply: boolean;
   deferFinalReaction?: boolean;
@@ -231,11 +322,9 @@ export async function completeDoeDtcTurnLifecycle(params: {
     failed: params.failed,
   });
 
-  const skipTapbacks = Boolean(params.inboundText && inboundSkipsReaction(params.inboundText));
   const agentEmoji = params.agentReaction?.trim().slice(0, 8) ?? "";
   const canApplyAgent =
     action === "none" &&
-    !skipTapbacks &&
     Boolean(params.inboundMessageId) &&
     Boolean(agentEmoji) &&
     !isLifecycleReactionEmoji(agentEmoji) &&

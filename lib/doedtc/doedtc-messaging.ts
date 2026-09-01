@@ -2,7 +2,11 @@ import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { inboundHasAttachments } from "@/lib/doedtc/agent/attachments";
 import { buildDocumentSavingNotice } from "@/lib/doedtc/agent/document-parse";
 import { runDoeDtcAgentTurn, type DoeDtcAgentTurnResult } from "@/lib/doedtc/doedtc-agent";
-import { createDoeDtcAgentTurnId, recentDoeDtcTurnsUsedThreadReply } from "@/lib/doedtc/doedtc-agent-audit";
+import {
+  createDoeDtcAgentTurnId,
+  listDoeDtcAgentTurnsByInboundMessageId,
+  recentDoeDtcTurnsUsedThreadReply,
+} from "@/lib/doedtc/doedtc-agent-audit";
 import { commitDoeDtcBrowserTask, stopDoeDtcBrowserForUser } from "@/lib/doedtc/doedtc-browser";
 import { getPendingConfirmDoeDtcBrowserJob } from "@/lib/doedtc/doedtc-browser-db";
 import { shareDoeDtcLinqContactCard } from "@/lib/doedtc/doedtc-contact-card";
@@ -33,7 +37,9 @@ import { redactDoeDtcLogText } from "@/lib/doedtc/doedtc-privacy";
 import {
   AGENT_TURN_FALLBACK_REPLY,
   beginDoeDtcTurnLifecycle,
+  claimInboundTurn,
   completeDoeDtcTurnLifecycle,
+  shouldSkipDuplicateInboundTurn,
   withAgentTurnTimeout,
 } from "@/lib/doedtc/doedtc-turn-lifecycle";
 import { linqGetMessage, linqSendLink, linqSendMedia, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
@@ -596,6 +602,23 @@ export async function handleSymptomInbound(params: {
   const turnId = createDoeDtcAgentTurnId();
   const turnStartedAtMs = Date.now();
 
+  if (params.inboundMessageId) {
+    if (!claimInboundTurn(params.inboundMessageId, turnId)) {
+      return;
+    }
+    try {
+      const existing = await listDoeDtcAgentTurnsByInboundMessageId(params.inboundMessageId);
+      if (shouldSkipDuplicateInboundTurn(existing)) {
+        return;
+      }
+    } catch (error) {
+      console.warn(
+        "[doedtc] inbound turn lookup failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }
+
   await beginDoeDtcTurnLifecycle({
     turnId,
     user: params.user,
@@ -683,7 +706,6 @@ export async function handleSymptomInbound(params: {
   await completeDoeDtcTurnLifecycle({
     turnId,
     inboundMessageId: params.inboundMessageId,
-    inboundText: params.text,
     replyText,
     threadReply,
     deferFinalReaction: Boolean(turn.browserJobDispatched) && !agentFailed,
