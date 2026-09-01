@@ -683,6 +683,7 @@ export async function handleSymptomInbound(params: {
   await completeDoeDtcTurnLifecycle({
     turnId,
     inboundMessageId: params.inboundMessageId,
+    inboundText: params.text,
     replyText,
     threadReply,
     deferFinalReaction: Boolean(turn.browserJobDispatched) && !agentFailed,

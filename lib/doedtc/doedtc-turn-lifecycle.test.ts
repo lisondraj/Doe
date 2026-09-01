@@ -4,6 +4,7 @@ import test from "node:test";
 import { resolveTurnReactionAction } from "@/lib/doedtc/doedtc-turn-lifecycle";
 import {
   inboundLooksComplex,
+  inboundSkipsReaction,
   inferAmbientReaction,
   inferMatchingReaction,
   pickMatchingReaction,
@@ -58,9 +59,13 @@ test("browser jobs keep a working tapback until the job finishes", () => {
   );
 });
 
-test("attachment turns count as complex work", () => {
-  assert.equal(inboundLooksComplex("[attachments: file-1]"), true);
-  assert.equal(inboundLooksComplex("here are my labs [attachments: file-1]"), true);
+test("attachment turns skip like-to-checkmark and other tapbacks", () => {
+  assert.equal(inboundSkipsReaction("[attachments: file-1]"), true);
+  assert.equal(inboundSkipsReaction("here are my labs [attachments: file-1]"), true);
+  assert.equal(inboundLooksComplex("[attachments: file-1]"), false);
+  assert.equal(inboundLooksComplex("here are my labs [attachments: file-1]"), false);
+  assert.equal(inferMatchingReaction("thanks so much [attachments: file-1]"), null);
+  assert.equal(pickMatchingReaction("here are my labs [attachments: file-1]", { hash: 0 }), null);
 });
 
 test("failed slow turns swap to failed; fast failures stay quiet", () => {

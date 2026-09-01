@@ -11,6 +11,7 @@ import {
 } from "@/lib/doedtc/linq";
 import {
   inboundLooksComplex,
+  inboundSkipsReaction,
   isLifecycleReactionEmoji,
   LIFECYCLE_DONE_EMOJI,
   LIFECYCLE_FAILED_EMOJI,
@@ -212,6 +213,7 @@ async function takePendingWorkingReaction(
 export async function completeDoeDtcTurnLifecycle(params: {
   turnId: string;
   inboundMessageId?: string;
+  inboundText?: string;
   replyText: string;
   threadReply: boolean;
   deferFinalReaction?: boolean;
@@ -229,9 +231,11 @@ export async function completeDoeDtcTurnLifecycle(params: {
     failed: params.failed,
   });
 
+  const skipTapbacks = Boolean(params.inboundText && inboundSkipsReaction(params.inboundText));
   const agentEmoji = params.agentReaction?.trim().slice(0, 8) ?? "";
   const canApplyAgent =
     action === "none" &&
+    !skipTapbacks &&
     Boolean(params.inboundMessageId) &&
     Boolean(agentEmoji) &&
     !isLifecycleReactionEmoji(agentEmoji) &&
