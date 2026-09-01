@@ -746,13 +746,6 @@ export async function handleSymptomInbound(params: {
   }
 
   if (turn.profileUrl) {
-    await sendDoeDtcOutbound({
-      user: params.user,
-      chatId,
-      to: params.user.phone,
-      text: DOEDTC_LINQ.profileLinkIntro,
-      idempotencyKey: `doedtc-agent-profile-intro-${params.user.id}-${idSuffix}`,
-    });
     await sendDoeDtcLinkOutbound({
       user: params.user,
       chatId,
