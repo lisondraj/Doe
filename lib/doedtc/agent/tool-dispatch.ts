@@ -15,7 +15,7 @@ import {
   addDoeDtcMem0Fact,
   addDoeDtcMem0PlaybookNote,
 } from "@/lib/doedtc/doedtc-memory";
-import { clearAgentPending, setAgentPending } from "@/lib/doedtc/doedtc-pending";
+import { clearAgentPending, getAgentPending, setAgentPending } from "@/lib/doedtc/doedtc-pending";
 import {
   doeDtcArtifactShareUrl,
   doeDtcCareUrl,
@@ -89,10 +89,12 @@ import {
   sendScheduledTextInline,
 } from "@/lib/doedtc/doedtc-scheduled-db";
 import {
+  buildScheduledTextFile,
   ensureFutureSendAt,
   formatScheduledSendAtLabel,
   normalizeScheduledTimezone,
   parseScheduledSendAt,
+  serializeScheduledTextFile,
   shouldSendScheduledTextInline,
 } from "@/lib/doedtc/doedtc-scheduled";
 import {
@@ -1490,10 +1492,14 @@ async function executeDoeDtcToolInner(params: {
       if (!cancelled) throw new Error("Scheduled text not found.");
       output = { ok: true, scheduled_text_id: cancelled.id, status: cancelled.status };
     } else if (name === "list_scheduled_texts") {
-      const rows = await listScheduledTextsForUser(ctx.user.id);
+      const [rows, pending] = await Promise.all([
+        listScheduledTextsForUser(ctx.user.id),
+        getAgentPending(ctx.user.id),
+      ]);
+      const file = buildScheduledTextFile({ rows, pending });
       output = {
         ok: true,
-        scheduled_texts: rows.filter((row) => row.status === "pending"),
+        ...serializeScheduledTextFile(file),
       };
     } else if (name === "revoke_household_access") {
       const member = ctx.snapshot.household.viewerMember;

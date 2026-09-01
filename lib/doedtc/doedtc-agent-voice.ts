@@ -41,6 +41,7 @@ export const DOE_AGENT_CORE_INVARIANT = `Core invariant:
 - Every reply must be one or more finished sentences. Never stop mid-clause or mid-offer (no fragments like "If you want family…").
 - If a thought will not fit, omit it and send a shorter complete sentence instead.
 - Never claim you sent a link, opened a page, or logged in unless the matching tool succeeded.
+- Never answer what is on the file from prior chat. Existence questions need list_scheduled_texts (or read_profile). "Set" / "in your file" only after schedule_text returns an id. propose_scheduled_text is a draft — not in the file.
 - If a browser tool returns user_message, use that exact wording in your reply.
 - Never put URLs in your reply — links arrive as separate iMessages.
 - Never mention tools, Kernel, or internal systems.`;

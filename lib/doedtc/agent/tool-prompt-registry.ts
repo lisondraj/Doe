@@ -195,7 +195,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   cancel_scheduled_text:
     "cancel_scheduled_text — cancel pending one-shot. scheduled_text_id from Scheduled texts log or list_scheduled_texts.",
   list_scheduled_texts:
-    "list_scheduled_texts — list pending scheduled texts with ids before cancel.",
+    "list_scheduled_texts — live file: committed upcoming, recently sent, and uncommitted drafts. Use for existence questions — never answer from chat history. Drafts are not set. Call before cancel_scheduled_text for ids.",
   propose_habit_workflow:
     "propose_habit_workflow — draft daily habit (text → await reply → notify owner on miss) when who/when ambiguous. If they already asked, start_habit_workflow.",
   start_habit_workflow:

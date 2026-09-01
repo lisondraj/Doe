@@ -247,14 +247,144 @@ export function agentNowLabel(timezone = DEFAULT_TIMEZONE): string {
   }
 }
 
+export type ScheduledTextFileDraft = {
+  intent: string;
+  sendAt: string | null;
+  summary: string;
+  awaitingBody: boolean;
+};
+
+export type ScheduledTextFile = {
+  committed: DoeDtcScheduledTextRow[];
+  recentlySent: DoeDtcScheduledTextRow[];
+  draft: ScheduledTextFileDraft | null;
+};
+
+export function buildScheduledTextFile(params: {
+  rows: DoeDtcScheduledTextRow[];
+  pending?: { kind: string; summary: string; args: Record<string, unknown> } | null;
+}): ScheduledTextFile {
+  const committed = params.rows.filter((row) => row.status === "pending");
+  const recentlySent = params.rows.filter((row) => row.status === "sent");
+  const pending = params.pending;
+  const isRunState = typeof pending?.args.runState === "string" && String(pending.args.runState).trim().length > 0;
+  let draft: ScheduledTextFileDraft | null = null;
+  if (pending && pending.kind === "schedule_text" && !isRunState) {
+    draft = {
+      intent: typeof pending.args.intent === "string" && pending.args.intent.trim()
+        ? pending.args.intent.trim()
+        : "reminder",
+      sendAt: typeof pending.args.send_at === "string" ? pending.args.send_at : null,
+      summary: pending.summary,
+      awaitingBody: pending.args.awaiting_body === true,
+    };
+  }
+  return { committed, recentlySent, draft };
+}
+
+export function scheduledTextFileIsEmpty(file: ScheduledTextFile): boolean {
+  return file.committed.length === 0 && file.recentlySent.length === 0 && file.draft === null;
+}
+
+function formatScheduledTextRowForAgent(row: DoeDtcScheduledTextRow): string {
+  const when = row.send_at.slice(0, 16).replace("T", " ");
+  return `- ${row.intent} | to: ${row.recipient_phone} | at: ${when} | status: ${row.status} | id: ${row.id}`;
+}
+
 export function formatScheduledTextForAgent(rows: DoeDtcScheduledTextRow[]): string {
   if (rows.length === 0) return "No scheduled texts.";
-  return rows
-    .map((row) => {
-      const when = row.send_at.slice(0, 16).replace("T", " ");
-      return `- ${row.intent} | to: ${row.recipient_phone} | at: ${when} | status: ${row.status} | id: ${row.id}`;
-    })
-    .join("\n");
+  return rows.map(formatScheduledTextRowForAgent).join("\n");
+}
+
+export function formatScheduledTextFileForAgent(file: ScheduledTextFile): string {
+  const parts: string[] = [];
+  if (file.committed.length > 0) {
+    parts.push("Committed (on the file):");
+    parts.push(...file.committed.map(formatScheduledTextRowForAgent));
+  }
+  if (file.recentlySent.length > 0) {
+    parts.push("Recently sent (already delivered, not upcoming):");
+    parts.push(...file.recentlySent.map(formatScheduledTextRowForAgent));
+  }
+  if (file.draft) {
+    const wait = file.draft.awaitingBody ? " Still waiting for the reminder body." : "";
+    parts.push(`Draft (NOT on the file until they confirm): ${file.draft.summary}.${wait}`);
+  }
+  if (parts.length === 0) return "No scheduled texts. No drafts.";
+  return parts.join("\n");
+}
+
+export function serializeScheduledTextFile(file: ScheduledTextFile): {
+  committed: Array<{
+    id: string;
+    intent: string;
+    send_at: string;
+    status: string;
+    recipient_phone: string;
+  }>;
+  recently_sent: Array<{
+    id: string;
+    intent: string;
+    send_at: string;
+    status: string;
+    recipient_phone: string;
+  }>;
+  draft: {
+    draft: true;
+    intent: string;
+    send_at: string | null;
+    summary: string;
+    awaiting_body: boolean;
+  } | null;
+} {
+  const serializeRow = (row: DoeDtcScheduledTextRow) => ({
+    id: row.id,
+    intent: row.intent,
+    send_at: row.send_at,
+    status: row.status,
+    recipient_phone: row.recipient_phone,
+  });
+  return {
+    committed: file.committed.map(serializeRow),
+    recently_sent: file.recentlySent.map(serializeRow),
+    draft: file.draft
+      ? {
+          draft: true,
+          intent: file.draft.intent,
+          send_at: file.draft.sendAt,
+          summary: file.draft.summary,
+          awaiting_body: file.draft.awaitingBody,
+        }
+      : null,
+  };
+}
+
+function labelScheduledIntent(intent: string): string {
+  const trimmed = intent.trim();
+  return trimmed || "reminder";
+}
+
+export function formatScheduledTextFileReply(file: ScheduledTextFile): string {
+  if (scheduledTextFileIsEmpty(file)) {
+    return "There's nothing set right now.";
+  }
+  const parts: string[] = [];
+  if (file.committed.length > 0) {
+    const names = file.committed.map((row) => labelScheduledIntent(row.intent)).join(", ");
+    parts.push(`On the file: ${names}.`);
+  }
+  if (file.recentlySent.length > 0) {
+    const names = file.recentlySent.map((row) => labelScheduledIntent(row.intent)).join(", ");
+    parts.push(`Already sent: ${names}.`);
+  }
+  if (file.draft) {
+    parts.push(
+      file.draft.awaitingBody
+        ? `I have a draft for ${labelScheduledIntent(file.draft.intent)} — tell me what it should say and I'll set it.`
+        : `I drafted ${file.draft.summary} — it's not in your file until you confirm.`,
+    );
+  }
+  return parts.join(" ");
 }
 
 export function formatScheduledSendAtLabel(sendAt: Date, timezone: string): string {

@@ -6,6 +6,7 @@ import {
   looksLikeRefusal,
   replyClaimsAction,
   shouldRetryEmptyRefusal,
+  SCHEDULED_TEXT_CLAIM,
   toolSucceeded,
 } from "@/lib/doedtc/agent/honesty";
 import {
@@ -108,5 +109,14 @@ describe("tool capability prompt", () => {
       nowLabel: "Mon 9:00 AM",
     });
     assertToolPromptCoverage(prompt);
+    assert.match(prompt, /Do not use prior bubbles/);
+    assert.match(prompt, /propose_scheduled_text is a draft/);
+    assert.match(prompt, /never answer from chat history/);
+  });
+
+  it("treats I've set a reminder as a schedule claim, not only in N seconds", () => {
+    assert.equal(SCHEDULED_TEXT_CLAIM.test("I've set a reminder for Fred's appointment tomorrow."), true);
+    assert.equal(SCHEDULED_TEXT_CLAIM.test("I'll text you tomorrow morning."), true);
+    assert.equal(SCHEDULED_TEXT_CLAIM.test("I can set this if you want."), false);
   });
 });

@@ -1,0 +1,155 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import {
+  inboundAsksReminderStatus,
+  reconcileReplyWithScheduledTextFile,
+  replyClaimsReminderEmpty,
+  replyClaimsReminderSet,
+} from "@/lib/doedtc/agent/committed-state";
+import {
+  buildScheduledTextFile,
+  formatScheduledTextFileForAgent,
+  formatScheduledTextFileReply,
+  type ScheduledTextFile,
+} from "@/lib/doedtc/doedtc-scheduled";
+import type { DoeDtcScheduledTextRow } from "@/lib/doedtc/doedtc-types";
+
+function row(partial: Partial<DoeDtcScheduledTextRow> & { intent: string; status: "pending" | "sent" }): DoeDtcScheduledTextRow {
+  return {
+    id: partial.id ?? "row-1",
+    created_by_user_id: "user-1",
+    recipient_user_id: "user-1",
+    recipient_member_id: null,
+    recipient_phone: "+15555550100",
+    send_at: partial.send_at ?? "2026-09-02T12:00:00.000Z",
+    timezone: "America/New_York",
+    intent: partial.intent,
+    body: partial.body ?? "body",
+    status: partial.status,
+    sent_at: partial.status === "sent" ? "2026-09-01T12:00:00.000Z" : null,
+    error: null,
+    created_at: "",
+    updated_at: "",
+  };
+}
+
+const emptyFile: ScheduledTextFile = { committed: [], recentlySent: [], draft: null };
+
+test("inboundAsksReminderStatus detects file questions", () => {
+  assert.equal(inboundAsksReminderStatus("So are there any reminders in my file"), true);
+  assert.equal(inboundAsksReminderStatus("What about this"), true);
+  assert.equal(inboundAsksReminderStatus("set a timer for 5 seconds"), false);
+});
+
+test("replyClaimsReminderEmpty and Set", () => {
+  assert.equal(replyClaimsReminderEmpty("There's nothing set right now"), true);
+  assert.equal(replyClaimsReminderEmpty("Currently, there are no reminders set for you."), true);
+  assert.equal(replyClaimsReminderSet("I've set a reminder for Fred's appointment tomorrow."), true);
+  assert.equal(replyClaimsReminderSet("Logged your shot."), false);
+});
+
+test("buildScheduledTextFile splits committed, sent, and schedule drafts", () => {
+  const file = buildScheduledTextFile({
+    rows: [row({ intent: "Fred appointment", status: "pending" }), row({ id: "s2", intent: "timer", status: "sent" })],
+    pending: {
+      kind: "schedule_text",
+      summary: "Clarissa reminder tomorrow",
+      args: { intent: "Clarissa reminder", send_at: "tomorrow", body: "hi" },
+    },
+  });
+  assert.equal(file.committed.length, 1);
+  assert.equal(file.recentlySent.length, 1);
+  assert.equal(file.draft?.intent, "Clarissa reminder");
+});
+
+test("buildScheduledTextFile ignores RunState pending as a reminder draft", () => {
+  const file = buildScheduledTextFile({
+    rows: [],
+    pending: { kind: "schedule_text", summary: "SDK", args: { runState: "blob" } },
+  });
+  assert.equal(file.draft, null);
+});
+
+test("formatScheduledTextFileForAgent labels drafts as not on the file", () => {
+  const formatted = formatScheduledTextFileForAgent(
+    buildScheduledTextFile({
+      rows: [],
+      pending: {
+        kind: "schedule_text",
+        summary: "Clarissa reminder",
+        args: { intent: "Clarissa reminder", send_at: "tomorrow" },
+      },
+    }),
+  );
+  assert.match(formatted, /Draft \(NOT on the file/);
+  assert.doesNotMatch(formatted, /^No scheduled texts\.$/);
+});
+
+test("propose then status ask rewrites to draft, not nothing and not I've set", () => {
+  const file = buildScheduledTextFile({
+    rows: [],
+    pending: {
+      kind: "schedule_text",
+      summary: "Clarissa reminder tomorrow",
+      args: { intent: "Clarissa reminder", send_at: "tomorrow", body: "hi" },
+    },
+  });
+  const reply = reconcileReplyWithScheduledTextFile({
+    inboundText: "So are there any reminders in my file",
+    replyText: "There's nothing set right now",
+    file,
+    scheduleTextSucceeded: false,
+  });
+  assert.match(reply, /drafted/i);
+  assert.doesNotMatch(reply, /nothing set/i);
+  assert.doesNotMatch(reply, /I've set/i);
+});
+
+test("committed row then status ask names the reminder", () => {
+  const file: ScheduledTextFile = {
+    committed: [row({ intent: "Fred's appointment", status: "pending" })],
+    recentlySent: [],
+    draft: null,
+  };
+  const reply = reconcileReplyWithScheduledTextFile({
+    inboundText: "are there any reminders in my file",
+    replyText: "There's nothing set right now",
+    file,
+    scheduleTextSucceeded: false,
+  });
+  assert.match(reply, /Fred's appointment/);
+  assert.doesNotMatch(reply, /nothing set/i);
+});
+
+test("empty committed and empty draft allows nothing set", () => {
+  const reply = reconcileReplyWithScheduledTextFile({
+    inboundText: "are there any reminders in my file",
+    replyText: "I've set a reminder for Fred's appointment tomorrow.",
+    file: emptyFile,
+    scheduleTextSucceeded: false,
+  });
+  assert.equal(reply, formatScheduledTextFileReply(emptyFile));
+  assert.match(reply, /nothing set/i);
+});
+
+test("unbacked I've set with empty file does not echo the transcript", () => {
+  const reply = reconcileReplyWithScheduledTextFile({
+    inboundText: "What about this",
+    replyText: "I've set a reminder for Fred's appointment tomorrow.",
+    file: emptyFile,
+    scheduleTextSucceeded: false,
+  });
+  assert.doesNotMatch(reply, /Fred/);
+  assert.match(reply, /nothing set/i);
+});
+
+test("schedule_text success keeps a set claim when the file is still catching up", () => {
+  const reply = reconcileReplyWithScheduledTextFile({
+    inboundText: "remind me tomorrow",
+    replyText: "I've set a reminder for tomorrow.",
+    file: emptyFile,
+    scheduleTextSucceeded: true,
+  });
+  assert.match(reply, /I've set/);
+});

@@ -1014,7 +1014,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "list_scheduled_texts",
       description:
-        "List pending one-shot scheduled texts with scheduled_text_id before cancel_scheduled_text.",
+        "Live file for reminders: committed upcoming texts, recently sent, and any uncommitted draft. Use this for existence questions — never answer from chat history. Drafts are not set. Call before cancel_scheduled_text for ids.",
       parameters: { type: "object", properties: {} },
     },
   },

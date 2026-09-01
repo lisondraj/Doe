@@ -304,9 +304,10 @@ export function formatDoeDtcProfileOverview(snapshot: DoeDtcProfileSnapshot): st
         : snapshot.accountabilityPacts.map((row) => row.pact.title).join(", ")
     }`,
     `Scheduled texts: ${
-      snapshot.scheduledTexts.filter((row) => row.status === "pending").length === 0
-        ? "None pending"
-        : `${snapshot.scheduledTexts.filter((row) => row.status === "pending").length} pending`
+      snapshot.scheduledTexts.filter((row) => row.status === "pending").length === 0 &&
+      snapshot.scheduledTexts.filter((row) => row.status === "sent").length === 0
+        ? "None on the file"
+        : `${snapshot.scheduledTexts.filter((row) => row.status === "pending").length} upcoming, ${snapshot.scheduledTexts.filter((row) => row.status === "sent").length} recently sent`
     }`,
     `Daily habits: ${
       (snapshot.workflows ?? []).length === 0

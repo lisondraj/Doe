@@ -5,6 +5,7 @@ import {
   reconcileReplyClaims,
   shouldRetryEmptyRefusal,
 } from "@/lib/doedtc/agent/honesty";
+import { groundReplyInCommittedState } from "@/lib/doedtc/agent/committed-state";
 import {
   applyReminderSafetyNet,
   buildAwaitingBodyCommitArgs,
@@ -142,7 +143,8 @@ import {
   agentNowLabel,
   ensureFutureSendAt,
   formatScheduledSendAtLabel,
-  formatScheduledTextForAgent,
+  formatScheduledTextFileForAgent,
+  buildScheduledTextFile,
   isPendingOfferText,
   isScheduleOfferText,
   normalizeScheduledTimezone,
@@ -537,6 +539,11 @@ ${params.accountabilityLog}
 
 Scheduled texts:
 ${params.scheduledLog}
+
+Reminders vs the file:
+- If they ask what is set or what is in the file, call list_scheduled_texts. Do not use prior bubbles.
+- Say something is set only after schedule_text returns an id.
+- propose_scheduled_text is a draft: "I can set this if you want" — wait for yes. Drafts are not in the file.
 
 Habit workflows:
 ${params.workflowsLog}
@@ -944,7 +951,9 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       viewerUserId: params.user.id,
     }),
     accountabilityLog: formatAccountabilityForAgent(snapshot.accountabilityPacts),
-    scheduledLog: formatScheduledTextForAgent(snapshot.scheduledTexts.filter((row) => row.status === "pending")),
+    scheduledLog: formatScheduledTextFileForAgent(
+      buildScheduledTextFile({ rows: snapshot.scheduledTexts, pending: pendingRow }),
+    ),
     workflowsLog: formatWorkflowsForAgent(activeWorkflows),
     guidesLog:
       recentGuides.length === 0
@@ -985,6 +994,15 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     let resolvedReply = replyText;
     if (safety.applied && safety.replyHint) {
       resolvedReply = safety.replyHint;
+    }
+    const grounded = await groundReplyInCommittedState({
+      userId: params.user.id,
+      inboundText: params.inboundText,
+      replyText: resolvedReply ?? "",
+      toolsExecuted: turnState.toolsExecuted,
+    });
+    if (grounded.replyText) {
+      resolvedReply = grounded.replyText;
     }
     const finalized = await finalizeLegacyTurnReply({
       replyText: resolvedReply,

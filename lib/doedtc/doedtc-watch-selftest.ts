@@ -24,7 +24,8 @@ import { formatHouseholdForAgent } from "@/lib/doedtc/doedtc-household";
 import { formatGuideForAgent } from "@/lib/doedtc/doedtc-guides";
 import {
   agentNowLabel,
-  formatScheduledTextForAgent,
+  buildScheduledTextFile,
+  formatScheduledTextFileForAgent,
   normalizeScheduledTimezone,
 } from "@/lib/doedtc/doedtc-scheduled";
 import { formatWorkflowsForAgent, listActiveWorkflowsForUser } from "@/lib/doedtc/doedtc-workflows";
@@ -82,7 +83,9 @@ export async function runDoeDtcAgentSelftest(): Promise<Record<string, unknown>>
         viewerUserId: user.id,
       }),
       accountabilityLog: formatAccountabilityForAgent(snapshot.accountabilityPacts),
-      scheduledLog: formatScheduledTextForAgent(snapshot.scheduledTexts.filter((row) => row.status === "pending")),
+      scheduledLog: formatScheduledTextFileForAgent(
+        buildScheduledTextFile({ rows: snapshot.scheduledTexts, pending: pendingRow }),
+      ),
       workflowsLog: formatWorkflowsForAgent(activeWorkflows),
       guidesLog:
         recentGuides.length === 0

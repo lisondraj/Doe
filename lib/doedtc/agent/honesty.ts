@@ -20,6 +20,9 @@ const REFUSAL_PATTERN =
 const SELF_HELP_PATTERN =
   /\b(you might try|try visiting|in your browser|yourself|on your (?:own|phone|device))\b/i;
 
+export const SCHEDULED_TEXT_CLAIM =
+  /\b(?:i(?:'ve| have) set.{0,40}reminder|(?:i(?:'ll| will)|done —)\s+(?:text|ping|remind)\s+you\b)/i;
+
 const CLAIM_REGISTRY: Array<{
   id: string;
   claim: RegExp;
@@ -69,8 +72,8 @@ const CLAIM_REGISTRY: Array<{
   },
   {
     id: "scheduled_text",
-    claim: /\b(?:i'?ll|i will|done —)\s+(?:text|ping|remind)\s+you\b.*\b(?:in|at)\s+\d+\s*(?:second|minute|hour)/i,
-    requiredTools: ["schedule_text", "propose_scheduled_text"],
+    claim: SCHEDULED_TEXT_CLAIM,
+    requiredTools: ["schedule_text"],
     repair: "schedule",
   },
 ];
