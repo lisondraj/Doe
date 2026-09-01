@@ -139,6 +139,7 @@ async function loadRunContext(params: {
   inboundText: string;
   inboundMessageId?: string;
   inboundFileIds?: string[];
+  extraVisionUrls?: string[];
   turnId?: string;
   reminderDirective?: string | null;
   pendingRow?: DoeDtcAgentPendingRow | null;
@@ -157,6 +158,7 @@ async function loadRunContext(params: {
         userId: params.user.id,
         inboundText: params.inboundText,
         inboundFileIds: params.inboundFileIds,
+        extraVisionUrls: params.extraVisionUrls,
       }),
     ]);
 
@@ -440,6 +442,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
   inboundText: string;
   inboundMessageId?: string;
   inboundFileIds?: string[];
+  extraVisionUrls?: string[];
   turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   let pendingRow = await getAgentPending(params.user.id);

@@ -213,6 +213,26 @@ export async function linqGetAttachment(attachmentId: string): Promise<LinqAttac
   });
 }
 
+export type LinqStoredMessage = {
+  id?: string;
+  chat_id?: string;
+  parts?: Array<{
+    type?: string;
+    value?: string;
+    url?: string;
+    id?: string;
+    attachment_id?: string;
+    mime_type?: string;
+    filename?: string;
+  }>;
+};
+
+export async function linqGetMessage(messageId: string): Promise<LinqStoredMessage> {
+  return linqRequest<LinqStoredMessage>(`/v3/messages/${encodeURIComponent(messageId)}`, {
+    method: "GET",
+  });
+}
+
 export type LinqContactCard = {
   phone_number: string;
   first_name: string;

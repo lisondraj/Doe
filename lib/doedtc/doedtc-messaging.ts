@@ -34,7 +34,7 @@ import {
   completeDoeDtcTurnLifecycle,
   withAgentTurnTimeout,
 } from "@/lib/doedtc/doedtc-turn-lifecycle";
-import { linqSendLink, linqSendMedia, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
+import { linqGetMessage, linqSendLink, linqSendMedia, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 const OPT_OUT_KEYWORDS = new Set(["STOP", "UNSUBSCRIBE", "OPTOUT", "CANCEL", "END", "QUIT"]);
@@ -105,18 +105,30 @@ export function attachmentIdFromMediaPart(part: {
 
 export function extractInboundMedia(payload: unknown): InboundMediaAttachment[] {
   return inboundParts(payload)
-    .filter((part) => part.type === "media")
     .map((part) => {
-      const url = typeof part.url === "string" ? part.url.trim() : "";
+      const type = (part.type ?? "").toLowerCase();
+      if (type === "text" || type === "link") return null;
+      const rawUrl =
+        (typeof part.url === "string" && part.url.trim()) ||
+        (typeof part.value === "string" && /^https?:\/\//i.test(part.value.trim()) ? part.value.trim() : "");
+      const mime = typeof part.mime_type === "string" ? part.mime_type : undefined;
+      const looksLikeMedia =
+        type === "media" ||
+        type === "image" ||
+        type === "attachment" ||
+        Boolean(mime?.startsWith("image/")) ||
+        Boolean(rawUrl && type === "");
+      if (!looksLikeMedia) return null;
       const attachmentId = attachmentIdFromMediaPart(part);
+      if (!rawUrl && !attachmentId) return null;
       return {
-        url: url || undefined,
-        mime: typeof part.mime_type === "string" ? part.mime_type : undefined,
+        url: rawUrl || undefined,
+        mime,
         filename: typeof part.filename === "string" ? part.filename : undefined,
         attachmentId,
       };
     })
-    .filter((part) => Boolean(part.url || part.attachmentId));
+    .filter((part): part is InboundMediaAttachment => Boolean(part));
 }
 
 export function extractInboundText(payload: unknown): string {
@@ -571,6 +583,7 @@ export async function handleSymptomInbound(params: {
   user: DoeDtcUserRow;
   text: string;
   inboundFileIds?: string[];
+  extraVisionUrls?: string[];
   webhookEventId?: string;
   inboundMessageId?: string;
 }): Promise<void> {
@@ -597,6 +610,7 @@ export async function handleSymptomInbound(params: {
         user: params.user,
         inboundText: params.text,
         inboundFileIds: params.inboundFileIds,
+        extraVisionUrls: params.extraVisionUrls,
         inboundMessageId: params.inboundMessageId,
         turnId,
       }),
@@ -901,7 +915,7 @@ export async function processDoeDtcInboundWebhook(params: {
 }): Promise<void> {
   const phone = extractInboundPhone(params.payload);
   const text = extractInboundText(params.payload);
-  const inboundMedia = extractInboundMedia(params.payload);
+  let inboundMedia = extractInboundMedia(params.payload);
   const inboundMessageId = extractInboundMessageId(params.payload);
   if (!phone || (!text && inboundMedia.length === 0)) return;
 
@@ -946,12 +960,41 @@ export async function processDoeDtcInboundWebhook(params: {
   });
   const isDuplicateWebhook = !inboundLog.logged && Boolean(params.webhookEventId);
 
+  if (inboundMessageId && inboundMedia.length > 0) {
+    try {
+      const message = await linqGetMessage(inboundMessageId);
+      const fromApi = extractInboundMedia({ data: { parts: message.parts ?? [] } });
+      if (fromApi.length > 0) {
+        const byKey = new Map<string, InboundMediaAttachment>();
+        for (const row of [...inboundMedia, ...fromApi]) {
+          const key = row.attachmentId || row.url || `${row.filename ?? ""}:${row.mime ?? ""}`;
+          const current = byKey.get(key);
+          byKey.set(key, {
+            url: row.url || current?.url,
+            mime: row.mime || current?.mime,
+            filename: row.filename || current?.filename,
+            attachmentId: row.attachmentId || current?.attachmentId,
+          });
+        }
+        inboundMedia.splice(0, inboundMedia.length, ...byKey.values());
+      }
+    } catch (error) {
+      console.warn(
+        "[doedtc] linq message hydrate failed:",
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }
+
   let agentInboundText = text;
   let inboundFileIds: string[] = [];
+  let extraVisionUrls: string[] = [];
   if (inboundMedia.length > 0) {
     try {
       const { ingestInboundDoeDtcMedia } = await import("@/lib/doedtc/doedtc-files");
-      inboundFileIds = await ingestInboundDoeDtcMedia({ user, attachments: inboundMedia });
+      const ingested = await ingestInboundDoeDtcMedia({ user, attachments: inboundMedia });
+      inboundFileIds = ingested.fileIds;
+      extraVisionUrls = ingested.visionUrls;
     } catch (error) {
       console.error(
         "[doedtc] inbound media ingest failed:",
@@ -972,12 +1015,18 @@ export async function processDoeDtcInboundWebhook(params: {
 
   if (inboundFileIds.length > 0) {
     agentInboundText = [text, `[attachments: ${inboundFileIds.join(", ")}]`].filter(Boolean).join("\n");
+  } else if (inboundMedia.length > 0 || extraVisionUrls.length > 0) {
+    agentInboundText = [text, "[attachment]"].filter(Boolean).join("\n");
   }
 
   if (isDuplicateWebhook) {
     // First attempt may have logged the message but failed before ingest/agent finished.
-    if (inboundMedia.length === 0 && inboundFileIds.length === 0) return;
-    if (inboundMedia.length > 0 && inboundFileIds.length === 0) return;
+    if (inboundMedia.length === 0 && inboundFileIds.length === 0 && extraVisionUrls.length === 0) {
+      return;
+    }
+    if (inboundMedia.length > 0 && inboundFileIds.length === 0 && extraVisionUrls.length === 0) {
+      return;
+    }
   }
 
   if (isHiDoeMessage(text)) {
@@ -1001,6 +1050,7 @@ export async function processDoeDtcInboundWebhook(params: {
       user,
       text: agentInboundText,
       inboundFileIds,
+      extraVisionUrls,
       webhookEventId: params.webhookEventId,
       inboundMessageId,
     });

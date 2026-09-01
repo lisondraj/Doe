@@ -845,6 +845,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   inboundText: string;
   inboundMessageId?: string;
   inboundFileIds?: string[];
+  extraVisionUrls?: string[];
   turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   const timezone = normalizeScheduledTimezone(null);
@@ -980,6 +981,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     userId: params.user.id,
     inboundText: params.inboundText,
     inboundFileIds: params.inboundFileIds,
+    extraVisionUrls: params.extraVisionUrls,
   });
   const filesById = new Map(attachmentContext.recentFiles.map((file) => [file.id, file]));
   const recentInboundFiles = attachmentContext.recentFiles.filter((file) => file.source === "inbound");
@@ -1255,6 +1257,7 @@ export async function runDoeDtcAgentTurn(params: {
   inboundText: string;
   inboundMessageId?: string;
   inboundFileIds?: string[];
+  extraVisionUrls?: string[];
   turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   if (resolveDoeDtcAgentRuntime() === "sdk") {

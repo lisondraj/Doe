@@ -44,7 +44,13 @@ export async function insertDoeDtcFile(params: {
     })
     .select("*")
     .single();
-  if (error) throw new Error(error.message);
+  if (error) {
+    if (isDoeDtcFilesSchemaError(error.message)) {
+      warnDoeDtcFilesLookupFailure("insert", error);
+      throw new Error(`doedtc_files unavailable: ${error.message}`);
+    }
+    throw new Error(error.message);
+  }
   return data as DoeDtcFileRow;
 }
 

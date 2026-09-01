@@ -240,6 +240,7 @@ export async function loadDoeDtcAttachmentContext(params: {
   userId: string;
   inboundText: string;
   inboundFileIds?: string[];
+  extraVisionUrls?: string[];
 }): Promise<DoeDtcAttachmentContext> {
   const parsedIds = parseInboundAttachmentIds(params.inboundText);
   const recentFiles = await listRecentDoeDtcFiles(params.userId, 12);
@@ -263,7 +264,11 @@ export async function loadDoeDtcAttachmentContext(params: {
     .map((id) => filesById.get(id))
     .filter((row): row is DoeDtcFileRow => Boolean(row));
 
-  const visionImageUrls = await resolveVisionUrlsForFiles(thisTurnFiles);
+  const extraVisionUrls = (params.extraVisionUrls ?? []).filter(Boolean);
+  const visionImageUrls = [
+    ...extraVisionUrls,
+    ...(await resolveVisionUrlsForFiles(thisTurnFiles, Math.max(0, 4 - extraVisionUrls.length))),
+  ].slice(0, 4);
   let inboundTextForModel = replaceInboundAttachmentMarkers(params.inboundText, filesById);
   if (thisTurnFiles.length > 0 && !inboundHasAttachments(inboundTextForModel)) {
     inboundTextForModel = [
