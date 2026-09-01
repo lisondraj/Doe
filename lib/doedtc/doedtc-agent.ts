@@ -1,4 +1,8 @@
-import { applyDeliverablePolicyToTurnState } from "@/lib/doedtc/agent/deliverable-policy";
+import {
+  applyDeliverablePolicyToTurnState,
+  priorInboundBodiesFromMessages,
+  resolveDeliverableInboundText,
+} from "@/lib/doedtc/agent/deliverable-policy";
 import {
   buildLegacyVisionUserContent,
   enrichTranscriptBodiesForAgent,
@@ -249,11 +253,26 @@ const CLOSER_TAIL =
 const KEEP_CLOSER_RATE = 0.08;
 const INCOMPLETE_FRAGMENT_START =
   /^(if|when|want|let me|feel free|i can also|what else|anything else|is there|do you|would you|should i|can i|could you)\b/i;
+const DANGLING_CONJUNCTION_TAIL = /\b(?:but|and|so|or)\s*[,;…]*\s*$/i;
+
+function dropDanglingConjunctionTail(text: string): string {
+  let trimmed = text.trim();
+  if (!trimmed) return "";
+
+  while (DANGLING_CONJUNCTION_TAIL.test(trimmed)) {
+    trimmed = trimmed.replace(DANGLING_CONJUNCTION_TAIL, "").trim();
+  }
+  if (/,\s*$/.test(trimmed)) {
+    trimmed = trimmed.replace(/,\s*$/, "").trim();
+  }
+  return trimmed;
+}
 
 function looksIncompleteFragment(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return true;
   if (/[.!?]$/.test(trimmed)) return false;
+  if (DANGLING_CONJUNCTION_TAIL.test(trimmed)) return true;
   if (INCOMPLETE_FRAGMENT_START.test(trimmed)) return true;
   if (/[,;…]$/.test(trimmed) || /\.{2,}$/.test(trimmed)) return true;
   if (/\bif you\b/i.test(trimmed)) return true;
@@ -335,7 +354,7 @@ export function sanitizeDoeDtcReplyText(
     .replace(/[ \t]{2,}/g, " ")
     .replace(/[,;]+(?:\s*[.!]*)?\s*$/g, "")
     .trim();
-  return dropIncompleteTrailingSentence(normalized);
+  return dropIncompleteTrailingSentence(dropDanglingConjunctionTail(normalized));
 }
 
 function compactTranscript(
@@ -945,8 +964,13 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     pendingRow,
   });
 
-  const brief = buildSituationBrief({
+  const deliverableInboundText = resolveDeliverableInboundText({
     inboundText: params.inboundText,
+    priorInboundBodies: priorInboundBodiesFromMessages(messageHistory),
+  });
+
+  const brief = buildSituationBrief({
+    inboundText: deliverableInboundText,
     viewerUserId: params.user.id,
     viewerName: params.user.full_name,
     members: snapshot.household.members,
@@ -1027,7 +1051,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   );
   const toolCtx = {
     user: params.user,
-    inboundText: params.inboundText,
+    inboundText: deliverableInboundText,
     inboundMessageId: params.inboundMessageId,
     snapshot,
     attachmentContext,
@@ -1047,7 +1071,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     }
     const finalized = await finalizeAgentReply({
       user: params.user,
-      inboundText: params.inboundText,
+      inboundText: deliverableInboundText,
       inboundMessageId: params.inboundMessageId,
       replyText: resolved,
       turnState,
@@ -1058,7 +1082,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     return assembleLegacyTurnResult({
       replyText: finalized.replyText,
       turnState,
-      inboundText: params.inboundText,
+      inboundText: deliverableInboundText,
       degenerate: finalized.degenerate,
     });
   };
@@ -1094,6 +1118,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
           replyText: replyText ?? "",
           toolsExecuted: turnState.toolsExecuted ?? [],
           turnMode: turnMode.mode,
+          inboundText: deliverableInboundText,
         }) &&
         !refusalRetryInjected
       ) {
@@ -1104,14 +1129,14 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         });
         messages.push({
           role: "system",
-          content: buildRefusalRetrySystemMessage(params.inboundText),
+          content: buildRefusalRetrySystemMessage(deliverableInboundText),
         });
         continue;
       }
 
       const reconciled = await reconcileReplyClaims({
         user: params.user,
-        inboundText: params.inboundText,
+        inboundText: deliverableInboundText,
         replyText: replyText ?? "",
         state: turnState,
         toolsExecuted: turnState.toolsExecuted ?? [],
@@ -1190,7 +1215,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
 
   const reconciled = await reconcileReplyClaims({
     user: params.user,
-    inboundText: params.inboundText,
+    inboundText: deliverableInboundText,
     replyText: lastModelContent ?? "",
     state: turnState,
     toolsExecuted: turnState.toolsExecuted ?? [],

@@ -7,6 +7,8 @@ import {
   inferAppLinkOptions,
   interpretBuildIntent,
   interpretDeliverableAsk,
+  isShortDeliverableFollowUp,
+  resolveDeliverableInboundText,
   shouldHonorStructuredSend,
 } from "@/lib/doedtc/agent/deliverable-policy";
 import { remainingOutboundThinkMs as pacingMs } from "@/lib/doedtc/doedtc-outbound-pacing";
@@ -82,6 +84,33 @@ describe("deliverable ask detection", () => {
     });
     assert.equal(options.tab, "trackers");
     assert.equal(options.artifact, "art-1");
+  });
+
+  it("infers results tab for labs wording", () => {
+    const options = inferAppLinkOptions({
+      inboundText: "Where are my lab results",
+      snapshot: { artifacts: [] } as never,
+    });
+    assert.equal(options.tab, "results");
+  });
+
+  it("binds short follow-ups to the last deliverable ask", () => {
+    assert.equal(isShortDeliverableFollowUp("?"), true);
+    assert.equal(isShortDeliverableFollowUp("send it"), true);
+    assert.equal(
+      resolveDeliverableInboundText({
+        inboundText: "?",
+        priorInboundBodies: ["Where's my profile", "Thanks"],
+      }),
+      "Where's my profile",
+    );
+    assert.equal(
+      resolveDeliverableInboundText({
+        inboundText: "I have a headache",
+        priorInboundBodies: ["Where's my profile"],
+      }),
+      "I have a headache",
+    );
   });
 });
 

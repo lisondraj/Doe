@@ -206,6 +206,15 @@ test("sanitizeDoeDtcReplyText drops a leftover Do you fragment", () => {
   );
 });
 
+test("sanitizeDoeDtcReplyText drops dangling conjunction tails after closer strip", () => {
+  const cleaned = sanitizeDoeDtcReplyText(
+    "You can view your profile details here, but",
+    { keepCloserRate: 0 },
+  );
+  assert.equal(cleaned, "You can view your profile details here");
+  assert.ok(!/\bbut\b/i.test(cleaned));
+});
+
 test("sanitizeDoeDtcReplyText drops dangling family-offer fragments after closer strip", () => {
   const cleaned = sanitizeDoeDtcReplyText(
     "Logged Simon. If you want family invites sent, let me know.",

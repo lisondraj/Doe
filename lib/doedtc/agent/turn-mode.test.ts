@@ -7,9 +7,17 @@ import {
   CRISIS_REPLY,
   inboundLooksLikeCrisis,
   inboundLooksLikeDistress,
+  shouldSkipRefusalRetry,
   toolEnabledForTurnMode,
 } from "@/lib/doedtc/agent/turn-mode";
 import { sanitizeDoeDtcReplyText } from "@/lib/doedtc/doedtc-agent";
+
+test("shouldSkipRefusalRetry skips only crisis and distress", () => {
+  assert.equal(shouldSkipRefusalRetry("crisis"), true);
+  assert.equal(shouldSkipRefusalRetry("distress"), true);
+  assert.equal(shouldSkipRefusalRetry("conversation"), false);
+  assert.equal(shouldSkipRefusalRetry("action"), false);
+});
 
 test("Why am I so tired classifies as conversation with tools available", () => {
   const result = classifyTurnMode({ inboundText: "Why am I so tired", intent: "none" });

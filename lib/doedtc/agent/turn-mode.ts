@@ -63,7 +63,7 @@ export function shouldSkipReminderSafetyNet(mode: TurnMode): boolean {
 }
 
 export function shouldSkipRefusalRetry(mode: TurnMode): boolean {
-  return isNonActionTurnMode(mode);
+  return mode === "crisis" || mode === "distress";
 }
 
 export function toolEnabledForTurnMode(toolName: string, mode: TurnMode, intent: ActionIntent): boolean {

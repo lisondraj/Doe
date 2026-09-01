@@ -4,11 +4,13 @@ import { describe, it } from "node:test";
 import {
   buildRefusalRetrySystemMessage,
   looksLikeRefusal,
+  reconcileReplyClaims,
   replyClaimsAction,
   shouldRetryEmptyRefusal,
   SCHEDULED_TEXT_CLAIM,
   toolSucceeded,
 } from "@/lib/doedtc/agent/honesty";
+import { resolveDeliverableInboundText } from "@/lib/doedtc/agent/deliverable-policy";
 import {
   assertToolPromptCoverage,
   buildDoeDtcToolCapabilityPrompt,
@@ -37,6 +39,14 @@ describe("agent honesty invariants", () => {
         toolsExecuted: [],
         turnMode: "conversation",
       }),
+      true,
+    );
+    assert.equal(
+      shouldRetryEmptyRefusal({
+        replyText: "I can't edit PDFs directly.",
+        toolsExecuted: [],
+        turnMode: "distress",
+      }),
       false,
     );
     assert.equal(
@@ -46,6 +56,78 @@ describe("agent honesty invariants", () => {
       }),
       false,
     );
+  });
+
+  it("retries deliverable stalls even when the reply is not a classic refusal", () => {
+    assert.equal(
+      shouldRetryEmptyRefusal({
+        replyText: "You can view your profile details here, but",
+        toolsExecuted: [],
+        turnMode: "conversation",
+        inboundText: "Where's my profile",
+      }),
+      true,
+    );
+  });
+
+  it("auto-sends profile link when the ask matched and the model only described", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as import("@/lib/doedtc/doedtc-types").DoeDtcUserRow;
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText: "Where's my profile",
+      replyText: "You can view your profile details here, but",
+      state: { toolsExecuted: [] } as never,
+      toolsExecuted: [],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.ok(reconciled.profileUrl);
+    assert.match(reconciled.profileUrl!, /care-token/);
+  });
+
+  it("continues profile-link sends after a short follow-up", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const inboundText = resolveDeliverableInboundText({
+      inboundText: "?",
+      priorInboundBodies: ["Where's my profile"],
+    });
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText,
+      replyText: "Your profile is in the app.",
+      state: { toolsExecuted: [] } as never,
+      toolsExecuted: [],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.ok(reconciled.profileUrl);
+  });
+
+  it("does not auto-send profile link for unrelated health asks", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText: "I have a headache",
+      replyText: "That sounds rough. How long has it been going on?",
+      state: { toolsExecuted: [] } as never,
+      toolsExecuted: [],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.equal(reconciled.profileUrl, undefined);
   });
 
   it("builds a refusal retry nudge", () => {

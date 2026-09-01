@@ -265,7 +265,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   use_thread_reply:
     "use_thread_reply — occasionally reply in-thread for direct answers (~1 in 3 eligible turns).",
   send_profile_link:
-    "send_profile_link — private app/tracker link when they asked (send/show/where is/need + tracker or profile). Pass tab/artifact for a tracker. Never send after assessment, logging, or as a consolation prize.",
+    "send_profile_link — private app/tracker link when they asked (send/show/where is/need + tracker, profile, chart, or labs). Pass tab=results for labs. Act first — call this before narrating. Never use \"here\" as a URL placeholder. Never send after assessment, logging, or as a consolation prize.",
 };
 
 function tier2Enabled(signals: DoeAgentPromptSignals | undefined, key: keyof DoeAgentPromptSignals): boolean {
@@ -292,7 +292,7 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
 
   blocks.push(`How-to / tracker confusion (always):
 - "How do I take X" / don't know how → list_guides first; reuse + send_guide_link if a match exists, otherwise create_guide and send the link. Ask once if they want it saved.
-- "Where is my tracker" / need / show me a tracker → send_profile_link if a matching tracker exists; otherwise create_profile_artifact then send the link.
+- "Where is my tracker" / profile / chart / labs / need / show me → send_profile_link (tab=results when labs). Act first, then one finished reply. Do not say "here" — the link is a separate iMessage.
 - "Help me track X" / track my X with no matching tracker → create_profile_artifact, then send the link.
 - Primary action first, then at most one complete offer (save the guide, same for a sibling).`);
 

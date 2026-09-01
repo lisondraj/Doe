@@ -114,16 +114,24 @@ export function shouldRetryEmptyRefusal(params: {
   replyText: string;
   toolsExecuted: DoeDtcAgentToolExecutionRecord[];
   turnMode?: import("@/lib/doedtc/agent/turn-mode").TurnMode;
+  inboundText?: string;
 }): boolean {
-  if (
-    params.turnMode &&
-    (params.turnMode === "crisis" ||
-      params.turnMode === "distress" ||
-      params.turnMode === "conversation")
-  ) {
+  if (params.turnMode === "crisis" || params.turnMode === "distress") {
     return false;
   }
-  return looksLikeRefusal(params.replyText) && !meaningfulToolSucceeded(params.toolsExecuted);
+  if (meaningfulToolSucceeded(params.toolsExecuted)) return false;
+
+  const inbound = params.inboundText?.trim() ?? "";
+  if (
+    inbound &&
+    (askedForPrivateAppLink(inbound) ||
+      askedForDeliverable(inbound, "listen") ||
+      askedForDeliverable(inbound, "guide"))
+  ) {
+    return true;
+  }
+
+  return looksLikeRefusal(params.replyText);
 }
 
 export function buildRefusalRetrySystemMessage(inboundText: string): string {
@@ -233,8 +241,7 @@ export async function reconcileReplyClaims(params: {
   if (
     !profileUrl &&
     (askedForPrivateAppLink(params.inboundText) || build === "tracker") &&
-    !looksLikeRefusal(replyText) &&
-    /\b(i(?:'ll| will) send|sending|here'?s|on (?:its|the) way)\b/i.test(replyText)
+    !toolSucceeded(params.toolsExecuted, "send_profile_link")
   ) {
     profileUrl = buildPrivateAppLink({
       careToken: params.user.care_token,
@@ -246,9 +253,7 @@ export async function reconcileReplyClaims(params: {
   if (
     !listenUrl &&
     askedForDeliverable(params.inboundText, "listen") &&
-    !looksLikeRefusal(replyText) &&
-    !toolSucceeded(params.toolsExecuted, "start_listen") &&
-    /\b(i(?:'ll| will) send|sending|here'?s)\b/i.test(replyText)
+    !toolSucceeded(params.toolsExecuted, "start_listen")
   ) {
     const session = await createDoeDtcListenSession({ userId: params.user.id });
     listenUrl = doeDtcListenUrl(params.user.care_token, session.id);
@@ -257,8 +262,8 @@ export async function reconcileReplyClaims(params: {
   if (
     !guideUrl &&
     (askedForDeliverable(params.inboundText, "guide") || build === "guide") &&
-    !looksLikeRefusal(replyText) &&
-    /\b(i(?:'ll| will) send|sending|here'?s|on (?:its|the) way)\b/i.test(replyText)
+    !toolSucceeded(params.toolsExecuted, "create_guide") &&
+    !toolSucceeded(params.toolsExecuted, "send_guide_link")
   ) {
     const match = findMatchingGuide(params.inboundText, params.snapshot?.guides);
     if (match) {

@@ -11,7 +11,10 @@ import {
   assembleTurnResult,
   resolveDoeReplyDeliverables,
 } from "@/lib/doedtc/agent/deliverable-resolver";
-import { finalizeAgentReply } from "@/lib/doedtc/agent/finalize-agent-reply";
+import {
+  priorInboundBodiesFromMessages,
+  resolveDeliverableInboundText,
+} from "@/lib/doedtc/agent/deliverable-policy";
 import { CRISIS_REPLY } from "@/lib/doedtc/agent/turn-mode";
 import { createInitialToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 import { buildSpecialistInstructionMap, createDoeSpecialistAgents } from "@/lib/doedtc/agent/specialists";
@@ -176,8 +179,13 @@ async function loadRunContext(params: {
     pendingRow,
   });
 
-  const brief = buildSituationBrief({
+  const deliverableInboundText = resolveDeliverableInboundText({
     inboundText: params.inboundText,
+    priorInboundBodies: priorInboundBodiesFromMessages(messageHistory),
+  });
+
+  const brief = buildSituationBrief({
+    inboundText: deliverableInboundText,
     viewerUserId: params.user.id,
     viewerName: params.user.full_name,
     members: snapshot.household.members,
@@ -224,7 +232,7 @@ async function loadRunContext(params: {
 
   const promptSplit = buildSpecialistInstructionMap({
     user: params.user,
-    inboundText: params.inboundText,
+    inboundText: deliverableInboundText,
     inboundMessageId: params.inboundMessageId,
     snapshot,
     turnState: {
@@ -240,7 +248,7 @@ async function loadRunContext(params: {
 
   return {
     user: params.user,
-    inboundText: params.inboundText,
+    inboundText: deliverableInboundText,
     inboundMessageId: params.inboundMessageId,
     inboundFileIds: params.inboundFileIds,
     attachmentContext,
@@ -384,7 +392,6 @@ async function resumeRunStatePending(params: {
   return finalizeSdkRun({
     result,
     loaded,
-    inboundText: params.inboundText,
     inboundMessageId: params.inboundMessageId,
   });
 }
@@ -395,15 +402,15 @@ async function finalizeSdkRun(params: {
     interruptions?: Array<{ name?: string }>;
   };
   loaded: DoeDtcRunContext;
-  inboundText: string;
   inboundMessageId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   const finalOutput = params.result.finalOutput as DoeReply | undefined;
   let rawReply = finalOutput?.reply?.trim() || "";
+  const deliverableInboundText = params.loaded.inboundText;
 
   const finalized = await finalizeAgentReply({
     user: params.loaded.user,
-    inboundText: params.inboundText,
+    inboundText: deliverableInboundText,
     inboundMessageId: params.inboundMessageId,
     replyText: rawReply,
     turnState: params.loaded.turnState,
@@ -417,7 +424,7 @@ async function finalizeSdkRun(params: {
     },
     toolCtx: {
       user: params.loaded.user,
-      inboundText: params.inboundText,
+      inboundText: deliverableInboundText,
       inboundMessageId: params.inboundMessageId,
       snapshot: params.loaded.snapshot,
       attachmentContext: params.loaded.attachmentContext,
@@ -431,7 +438,7 @@ async function finalizeSdkRun(params: {
   const turnResult = assembleTurnResult({
     replyText: finalized.replyText,
     turnState: params.loaded.turnState,
-    inboundText: params.inboundText,
+    inboundText: deliverableInboundText,
   });
   return { ...turnResult, degenerate: finalized.degenerate };
 }
@@ -513,7 +520,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
     if (executed.ok) {
       const finalized = await finalizeAgentReply({
         user: loaded.user,
-        inboundText: params.inboundText,
+        inboundText: loaded.inboundText,
         inboundMessageId: params.inboundMessageId,
         replyText: executed.reply,
         turnState: loaded.turnState,
@@ -527,7 +534,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
         },
         toolCtx: {
           user: loaded.user,
-          inboundText: params.inboundText,
+          inboundText: loaded.inboundText,
           inboundMessageId: params.inboundMessageId,
           snapshot: loaded.snapshot,
           attachmentContext: loaded.attachmentContext,
@@ -538,7 +545,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
       const turnResult = assembleTurnResult({
         replyText: finalized.replyText,
         turnState: loaded.turnState,
-        inboundText: params.inboundText,
+        inboundText: loaded.inboundText,
       });
       return { ...turnResult, degenerate: finalized.degenerate };
     }

@@ -22,6 +22,7 @@ export const DOE_AGENT_INSTINCTS = `Instincts:
 - One-shot tonight → schedule_text. Daily nag with reply → start_habit_workflow. Not the other way around.
 - "Track water" / "log my shot" → find existing tracker or create_profile_artifact once, then log_artifact_entry, not remember_fact.
 - "How do I take X" → create_guide and send the link; ask once if they want it saved.
+- Where/show/need profile, chart, tracker, or labs → send_profile_link first (tab=results when obvious), then one finished sentence. Never say "here" or "view it here" — the link arrives as a separate iMessage.
 - "What did the doctor say" after a Listen visit → read_listen_session before guessing.
 - "What were my lab results" / labs on profile → read_profile results tab before answering.
 - Browser ask → start_browser_task before saying you cannot screenshot or look something up.`;
@@ -34,6 +35,7 @@ export const DOE_AGENT_FEW_SHOTS = `Examples (tone and routing only — wording 
 - Log water / shot with existing tracker → log_artifact_entry, then confirm what you logged.
 - New tracker ask → create_profile_artifact once, then log when they report a dose.
 - How-to ask → create_guide, send link, optional save offer.
+- Profile/tracker/labs location ask → send_profile_link, then confirm briefly. No "here" placeholder.
 - Screenshot or lookup → start_browser_task, then describe what you found.
 - Visit recording → start_listen.
 - Doctor recap after Listen → read_listen_session first.

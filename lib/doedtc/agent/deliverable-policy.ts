@@ -158,6 +158,50 @@ export function askedForDeliverable(inboundText: string, kind: DeliverableKind):
   return interpretDeliverableAsk(inboundText).has(kind);
 }
 
+const SHORT_DELIVERABLE_FOLLOWUP_RE =
+  /^(?:\?+|the link|send it|send that|that link|link please|please send(?: it)?)\.?$/i;
+
+export function isShortDeliverableFollowUp(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed || trimmed.length > 48) return false;
+  return SHORT_DELIVERABLE_FOLLOWUP_RE.test(trimmed);
+}
+
+function priorInboundHadDeliverableAsk(body: string): boolean {
+  return (
+    askedForPrivateAppLink(body) ||
+    askedForDeliverable(body, "listen") ||
+    askedForDeliverable(body, "guide")
+  );
+}
+
+/** Short follow-ups (? / send it) continue the last deliverable ask in the thread. */
+export function resolveDeliverableInboundText(params: {
+  inboundText: string;
+  priorInboundBodies?: string[];
+}): string {
+  const trimmed = params.inboundText.trim();
+  if (!isShortDeliverableFollowUp(trimmed)) return trimmed;
+
+  const prior = [...(params.priorInboundBodies ?? [])]
+    .map((body) => body.trim())
+    .filter(Boolean)
+    .reverse();
+
+  for (const body of prior) {
+    if (body === trimmed) continue;
+    if (priorInboundHadDeliverableAsk(body)) return body;
+  }
+
+  return trimmed;
+}
+
+export function priorInboundBodiesFromMessages(
+  messages: Array<{ direction: string; body: string }>,
+): string[] {
+  return messages.filter((row) => row.direction === "inbound").map((row) => row.body);
+}
+
 export function inferAppLinkOptions(params: {
   inboundText: string;
   snapshot?: Pick<DoeDtcProfileSnapshot, "artifacts"> | null;
@@ -171,6 +215,7 @@ export function inferAppLinkOptions(params: {
     };
   }
   if (GUIDE_NOUN_RE.test(params.inboundText)) return { tab: "guides" };
+  if (/\b(?:labs?|results?|bloodwork|blood\s+work)\b/i.test(params.inboundText)) return { tab: "results" };
   if (/\bappointments?\b/i.test(params.inboundText)) return { tab: "appointments" };
   if (/\bdashboard\b/i.test(params.inboundText)) return { tab: "dashboard" };
   return {};

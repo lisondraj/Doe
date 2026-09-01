@@ -91,5 +91,9 @@ Workflow presets:
 - one_shot_text — use schedule_text in immediate, not workflow.
 
 Graph nodes (closed grammar): recur_daily, send_message, wait_for_reply, wait_until, done.
-Do not invent node kinds. Max 12 nodes, max 2 wait_for_reply, max 1 owner escalation per cycle.`;
+Do not invent node kinds. Max 12 nodes, max 2 wait_for_reply, max 1 owner escalation per cycle.
+
+Location / show / where-is profile, chart, tracker, or labs:
+- immediate must include send_profile_link (tab=results when labs/results are obvious), then a finished reply.
+- Act first — do not describe a link you have not sent. Never use "here" as a URL placeholder.`;
 }
