@@ -180,14 +180,14 @@ describe("outbound pacing", () => {
     const remainingFast = pacingMs({
       startedAtMs: 1_000,
       nowMs: 1_050,
-      replyText: "Got it — I'll text you in a few seconds.",
+      replyText: "Got it. I'll text you in a few seconds.",
     });
     assert.ok(remainingFast >= 800);
 
     const remainingSlow = pacingMs({
       startedAtMs: 1_000,
       nowMs: 5_000,
-      replyText: "Got it — I'll text you in a few seconds.",
+      replyText: "Got it. I'll text you in a few seconds.",
     });
     assert.equal(remainingSlow, 0);
   });

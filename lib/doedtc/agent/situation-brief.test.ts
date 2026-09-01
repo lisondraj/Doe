@@ -49,10 +49,19 @@ describe("chart mentions", () => {
     });
     assert.deepEqual(unknown.unknownNames, ["Riley"]);
   });
+
+  it("matches lowercase fred for book fred an appointment", () => {
+    const unknown = extractChartMentions({
+      inboundText: "book fred an appointment",
+      members: [parent],
+      viewerUserId: "parent-1",
+    });
+    assert.deepEqual(unknown.unknownNames, ["Fred"]);
+  });
 });
 
 describe("situation brief gaps", () => {
-  it("offers log_family_member for an unconnected child plus appointment", () => {
+  it("lists blockers for unknown child plus appointment", () => {
     const brief = buildSituationBrief({
       inboundText: "Log Riley's dentist appointment next Tuesday",
       viewerUserId: "parent-1",
@@ -60,10 +69,22 @@ describe("situation brief gaps", () => {
       artifacts: [],
       guides: [],
     });
-    assert.equal(brief.opportunity?.kind, "add_family_member");
-    assert.equal(brief.opportunity?.tool, "log_family_member");
-    assert.equal(brief.opportunity?.memberName, "Riley");
+    assert.equal(brief.actionSlots.intent, "log_appointment");
+    assert.ok(brief.blockers.some((row) => row.slot === "on_chart"));
+    assert.equal(brief.blockers.find((row) => row.slot === "on_chart")?.tool, "log_family_member");
     assert.match(formatSituationBriefBlock(brief), /Situation \(do not recite\)/);
+    assert.match(formatSituationBriefBlock(brief), /Blockers/);
+  });
+
+  it("Book Fred appointment surfaces not-on-chart and no-phone blockers", () => {
+    const brief = buildSituationBrief({
+      inboundText: "Book Fred's appointment",
+      viewerUserId: "parent-1",
+      members: [parent],
+    });
+    assert.ok(brief.blockers.some((row) => row.slot === "on_chart"));
+    assert.ok(brief.blockers.some((row) => row.slot === "phone"));
+    assert.match(brief.promptBlock, /Fred isn't on the household/i);
   });
 
   it("offers the other sibling after a daughter habit when a son is on the chart", () => {
@@ -93,7 +114,6 @@ describe("situation brief gaps", () => {
     assert.equal(brief.opportunity?.kind, "sibling_offer");
     assert.equal(brief.opportunity?.siblingName, "Simon");
     assert.match(brief.opportunity?.promptLine ?? "", /same for them/);
-    assert.match(brief.opportunity?.promptLine ?? "", /Never auto-start a second workflow/);
   });
 
   it("does not auto-offer siblings when they already named the group", () => {
@@ -115,8 +135,7 @@ describe("situation brief gaps", () => {
       artifacts: [],
       guides: [],
     });
-    assert.equal(brief.opportunity?.kind, "build_guide");
-    assert.equal(brief.opportunity?.tool, "create_guide");
+    assert.ok(brief.blockers.some((row) => row.slot === "artifact" && row.tool === "create_guide"));
   });
 
   it("sends an existing tracker for where-is asks", () => {
@@ -158,7 +177,7 @@ describe("situation brief gaps", () => {
     assert.equal(brief.opportunity?.tool, "send_family_invite");
   });
 
-  it("caps at one opportunity", () => {
+  it("caps at one extra offer", () => {
     const maya = member({
       id: "m-maya",
       full_name: "Maya",
@@ -176,6 +195,6 @@ describe("situation brief gaps", () => {
       members: [parent, maya, simon],
     });
     assert.ok(brief.opportunity);
-    assert.equal(brief.promptBlock.includes("One opportunity"), true);
+    assert.equal(brief.promptBlock.includes("Extra offer"), true);
   });
 });

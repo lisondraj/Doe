@@ -255,7 +255,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   submit_ticket:
     "submit_ticket — feedback or bug report. Not for clinical questions.",
   react_to_message:
-    "react_to_message — skip almost always. Lifecycle 👍/✅ only appear on slower tasks automatically. Never react on short replies, CONFIRM, or STOP.",
+    "react_to_message — skip. Doe adds 👍/✅ only on complex work. Occasional matching tapbacks stay put. Most turns have no reaction. Never add 👍 or ✅.",
   use_thread_reply:
     "use_thread_reply — occasionally reply in-thread for direct answers (~1 in 3 eligible turns).",
   send_profile_link:
@@ -299,11 +299,13 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
 
   if (tier2Enabled(signals, "hasHousehold")) {
     blocks.push(`Household routing (family on chart):
+- Situation blockers are live — name each high-confidence blocker in one sentence (not on chart, no phone) before acting.
 - Names on chart → pass member_name on writes for that person (meds, symptoms, appointments, habits, trackers).
 - Joined members → act on their chart / text them. Do not re-invite.
 - Pending + phone → schedule_text / start_habit_workflow to them; profile writes log on the parent chart with a member note, then one invite offer (confirm_once unless they already asked).
 - Pending, no phone → habits text the parent; profile writes log on the parent chart or ask for a number. Do not invent SMS.
-- Unknown name → one question: add them with log_family_member. Do not invent a flow.
+- Unknown name → add with log_family_member (ask relationship/phone only if missing). Never claim booked/logged until commit tools succeed.
+- Existence questions → read_profile or list_scheduled_texts — never answer from chat history.
 - Never auto-text siblings or unmentioned members. At most one sibling offer after a child habit.`);
   }
 

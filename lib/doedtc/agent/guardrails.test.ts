@@ -17,6 +17,10 @@ describe("doe reply voice guardrail", () => {
       assertDoeReplyVoice({ reply: "This is **bold**.", send: [], reaction: null, threadReply: false }),
       "Reply contains markdown formatting.",
     );
+    assert.equal(
+      assertDoeReplyVoice({ reply: "Done — I'll text you.", send: [], reaction: null, threadReply: false }),
+      "Reply contains an em dash.",
+    );
   });
 
   it("never trips the output wire — a tripwire aborts the turn with 'Something broke on my side'", async () => {

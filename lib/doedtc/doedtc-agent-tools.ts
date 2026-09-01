@@ -1271,7 +1271,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "react_to_message",
       description:
-        "Skip almost always. Do not react on short or routine turns. Lifecycle 👍/✅ are added automatically only when a task is taking longer.",
+        "Skip. Doe adds 👍/✅ only on complex work (browse, screenshot, portal). Occasional matching tapbacks stay put. Most turns have no reaction. Never add 👍 or ✅.",
       parameters: {
         type: "object",
         properties: {

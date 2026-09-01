@@ -48,7 +48,7 @@ test("buildDoeAgentVoiceBlock does not instruct wait for yes before schedule_tex
 });
 
 test("hasConcretePlan accepts done timer replies", () => {
-  assert.equal(hasConcretePlan("Done — I'll text you in 5 seconds."), true);
+  assert.equal(hasConcretePlan("Done. I'll text you in 5 seconds."), true);
 });
 
 test("parseScheduledSendAt accepts in 5 seconds", async () => {

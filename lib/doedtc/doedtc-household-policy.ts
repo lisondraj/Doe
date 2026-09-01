@@ -28,8 +28,11 @@ export function inboundLooksLikeHabitOrReminder(text: string): boolean {
 }
 
 export function inboundLooksLikeProfileWrite(text: string): boolean {
-  return /\b(appointment|dentist|doctor(?:'s)?(?:\s+visit)?|checkup|check-up|meds?\b|medication|prescription|log (?:an? )?(?:appointment|visit)|add (?:her|his|their) (?:meds?|medication))\b/i.test(
-    text,
+  return (
+    /\b(appointment|dentist|doctor(?:'s)?(?:\s+visit)?|checkup|check-up|meds?\b|medication|prescription|log (?:an? )?(?:appointment|visit)|add (?:her|his|their) (?:meds?|medication))\b/i.test(
+      text,
+    ) ||
+    /\b(?:book|schedule)\b.{0,32}\b(?:appointment|dentist|doctor|visit)\b/i.test(text)
   );
 }
 

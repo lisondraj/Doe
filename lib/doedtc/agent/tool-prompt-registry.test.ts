@@ -177,7 +177,7 @@ describe("policy and voice upgrades", () => {
     assert.match(DOE_AGENT_INSTINCTS, /read_listen_session/i);
     const block = buildDoeAgentVoiceBlock();
     assert.match(block, /Instincts:/);
-    assert.match(DOE_AGENT_STYLE, /one finished offer/i);
+    assert.match(DOE_AGENT_STYLE, /extra offer/i);
     assert.match(DOE_AGENT_FEW_SHOTS, /take a bath/);
     assert.match(DOE_AGENT_FEW_SHOTS, /Maya and Leo/);
     assert.match(DOE_AGENT_FEW_SHOTS, /take my meds/);

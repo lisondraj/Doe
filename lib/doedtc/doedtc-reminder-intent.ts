@@ -193,8 +193,8 @@ export async function applyReminderSafetyNet(params: {
 
   const phrase = intent.sendAtPhrase ?? "";
   const replyHint = phrase.includes("second")
-    ? `Done — I'll text you in a few seconds.`
-    : `Done — I'll text you ${phrase.replace(/^in\s+/i, "in ")}.`;
+    ? `Done. I'll text you in a few seconds.`
+    : `Done. I'll text you ${phrase.replace(/^in\s+/i, "in ")}.`;
 
   return { applied: true, replyHint };
 }

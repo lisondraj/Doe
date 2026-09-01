@@ -294,6 +294,13 @@ function stripMarkdownFromReply(text: string): string {
     .replace(/_([^_\n]+)_/g, "$1");
 }
 
+function stripEmDashesFromReply(text: string): string {
+  return text
+    .replace(/\s*[—–]\s*/g, ". ")
+    .replace(/\.\s+\./g, ".")
+    .replace(/[ \t]{2,}/g, " ");
+}
+
 export function sanitizeDoeDtcReplyText(
   text: string,
   options?: {
@@ -305,7 +312,7 @@ export function sanitizeDoeDtcReplyText(
     preserveGuideSaveOffer?: boolean;
   },
 ): string {
-  const withoutMarkdown = stripMarkdownFromReply(text);
+  const withoutMarkdown = stripEmDashesFromReply(stripMarkdownFromReply(text));
   const withoutUrls = withoutMarkdown.replace(URL_IN_TEXT, "");
   const shouldPreserveOffer =
     (options?.preservePendingOffer && isPendingOfferText(withoutUrls)) ||
@@ -463,9 +470,9 @@ function buildReplyFromTurnState(params: {
   if (params.browserNeedsConfirm) return "Reply CONFIRM to proceed, or STOP to cancel.";
   if (params.browserExcerpt) {
     const snippet = params.browserExcerpt.replace(/\s+/g, " ").trim().slice(0, 280);
-    return snippet.length > 0 ? snippet : "Here's what I found — sending a preview.";
+    return snippet.length > 0 ? snippet : "Here's what I found. Sending a preview.";
   }
-  if (params.workUrl) return "Here's what I found — sending a preview.";
+  if (params.workUrl) return "Here's what I found. Sending a preview.";
   if (params.screenshotUrl) return "Here's a screenshot of the page.";
   if (params.vaultUrl) return "Sending a secure sign-in link.";
   if (params.liveViewUrl) return "Sending a Live View link so you can sign in.";
@@ -567,7 +574,7 @@ const DOE_AGENT_SAFETY_TAIL = `Parallel work:
 - Do not wait for browsing to finish before saving profile or appointment data.
 
 iMessage texture:
-- react_to_message: skip on routine turns. Lifecycle tapbacks (👍 while working, ✅ when done) are added automatically only on slower tasks — do not add your own.
+- react_to_message: skip. Doe adds 👍/✅ only on complex work (browse, screenshot, portal). Occasional matching tapbacks stay put. Most turns have no reaction. Never add 👍 or ✅ yourself.
 - use_thread_reply: occasionally when answering a direct question or correction (~1 in 3 eligible turns), never for link-only bubbles.
 
 Safety:

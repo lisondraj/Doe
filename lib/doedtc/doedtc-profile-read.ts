@@ -335,3 +335,9 @@ export async function readDoeDtcProfileTab(params: {
     content: formatDoeDtcProfileTab(snapshot, params.tab),
   };
 }
+
+export {
+  buildChartFile,
+  formatAppointmentsChartReply,
+  formatHouseholdChartReply,
+} from "@/lib/doedtc/agent/chart-file";

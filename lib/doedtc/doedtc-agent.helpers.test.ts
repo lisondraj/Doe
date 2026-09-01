@@ -133,6 +133,14 @@ test("sanitizeDoeDtcReplyText strips URLs from replies", () => {
   assert.ok(!cleaned.includes("https://"));
 });
 
+test("sanitizeDoeDtcReplyText strips em dashes", () => {
+  assert.equal(
+    sanitizeDoeDtcReplyText("Done — I'll text you in 5 seconds.", { keepCloserRate: 0 }),
+    "Done. I'll text you in 5 seconds.",
+  );
+  assert.ok(!sanitizeDoeDtcReplyText("Fred isn't on the household yet — add them first.").includes("—"));
+});
+
 test("sanitizeDoeDtcReplyText usually strips feel-free closers", () => {
   const cleaned = sanitizeDoeDtcReplyText(
     "Got it. Feel free to let me know if you have any questions.",
@@ -356,7 +364,7 @@ test("isDegenerateTurn flags empty filler replies without meaningful tools", () 
   );
   assert.equal(
     isDegenerateTurn({
-      replyText: "Done — I'll text you in 5 seconds.",
+      replyText: "Done. I'll text you in 5 seconds.",
       toolsExecuted: [{ name: "schedule_text", ok: true }],
     }),
     false,

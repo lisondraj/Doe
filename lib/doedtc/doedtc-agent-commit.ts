@@ -73,7 +73,7 @@ export async function executeAgentPendingCommit(params: {
           });
           return {
             ok: true,
-            replyHint: `Done — I'll text you in a few seconds.`,
+            replyHint: `Done. I'll text you in a few seconds.`,
           };
         }
 
@@ -91,8 +91,8 @@ export async function executeAgentPendingCommit(params: {
         return {
           ok: true,
           replyHint: rolled
-            ? `Got it — I'll text you ${label}.`
-            : `Got it — I'll text you at ${label}.`,
+            ? `Got it. I'll text you ${label}.`
+            : `Got it. I'll text you at ${label}.`,
           playbookNote: rolled
             ? "When scheduling reminders, roll past clock times forward one local day instead of treating them as already passed."
             : undefined,

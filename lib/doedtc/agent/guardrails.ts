@@ -21,6 +21,7 @@ export function assertDoeReplyVoice(reply: DoeReply): string | null {
   if (!text) return "Empty reply.";
   if (URL_IN_TEXT.test(text)) return "Reply contains a URL.";
   if (MARKDOWN_PATTERN.test(text)) return "Reply contains markdown formatting.";
+  if (/[—–]/.test(text)) return "Reply contains an em dash.";
   if (looksIncompleteFragment(text)) return "Reply ends with an incomplete sentence.";
   return null;
 }

@@ -1,6 +1,13 @@
 /** Per-turn situation object — gaps the model should notice, not a feature dump. */
 
 import {
+  extractChartMentions,
+  formatActionSlotsBlock,
+  resolveActionSlots,
+  type ActionBlocker,
+  type ActionSlotResult,
+} from "@/lib/doedtc/agent/action-slots";
+import {
   findMatchingArtifact,
   findMatchingGuide,
   interpretBuildIntent,
@@ -12,22 +19,16 @@ import {
   inboundLooksLikeHabitOrReminder,
   inboundLooksLikeInvite,
   inboundLooksLikeProfileWrite,
-  inferHouseholdActionKind,
   routeHouseholdSubject,
   type HouseholdMemberLike,
 } from "@/lib/doedtc/doedtc-household-policy";
-import { normalizeDoeDtcFamilyRelationship } from "@/lib/doedtc/doedtc-family-relationship";
-import type {
-  DoeDtcArtifactRow,
-  DoeDtcFamilyRelationship,
-  DoeDtcGender,
-  DoeDtcGuideRow,
-} from "@/lib/doedtc/doedtc-types";
+import type { DoeDtcArtifactRow, DoeDtcGuideRow } from "@/lib/doedtc/doedtc-types";
+
+export { extractChartMentions } from "@/lib/doedtc/agent/action-slots";
+export type { ActionBlocker, ActionSlotResult } from "@/lib/doedtc/agent/action-slots";
 
 export type SituationOpportunityKind =
-  | "add_family_member"
   | "invite_pending_member"
-  | "ask_phone"
   | "sibling_offer"
   | "build_guide"
   | "build_tracker"
@@ -45,183 +46,14 @@ export type SituationOpportunity = {
 export type SituationBrief = {
   mentionedMembers: HouseholdMemberLike[];
   unknownNames: string[];
+  actionSlots: ActionSlotResult;
+  blockers: ActionBlocker[];
   opportunity: SituationOpportunity | null;
   promptBlock: string;
 };
 
-const NAME_STOPWORDS = new Set(
-  [
-    "i",
-    "me",
-    "my",
-    "we",
-    "you",
-    "the",
-    "a",
-    "an",
-    "and",
-    "or",
-    "to",
-    "for",
-    "of",
-    "on",
-    "in",
-    "at",
-    "can",
-    "could",
-    "please",
-    "remind",
-    "text",
-    "send",
-    "log",
-    "track",
-    "how",
-    "where",
-    "need",
-    "show",
-    "make",
-    "sure",
-    "take",
-    "want",
-    "help",
-    "set",
-    "doe",
-    "today",
-    "tomorrow",
-    "tonight",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday",
-    "ozempic",
-    "metformin",
-    "wegovy",
-    "mounjaro",
-    "appointment",
-    "dentist",
-    "doctor",
-    "tracker",
-    "weight",
-    "guide",
-  ].map((row) => row.toLowerCase()),
-);
-
-const REL_WORD_RE =
-  /\b(?:my\s+)?(son|sons|daughter|daughters|kid|kids|child|children|wife|husband|partner|mom|dad|mother|father|brother|sister|grandma|grandpa)\b/gi;
-
-function execAll(re: RegExp, text: string): RegExpExecArray[] {
-  const flags = re.flags.includes("g") ? re.flags : `${re.flags}g`;
-  const copy = new RegExp(re.source, flags);
-  const out: RegExpExecArray[] = [];
-  let match: RegExpExecArray | null = copy.exec(text);
-  while (match) {
-    out.push(match);
-    if (match[0] === "") copy.lastIndex += 1;
-    match = copy.exec(text);
-  }
-  return out;
-}
-
 function firstName(fullName: string): string {
   return fullName.trim().split(/\s+/)[0] ?? fullName.trim();
-}
-
-function findMemberByName(
-  members: HouseholdMemberLike[],
-  name: string,
-): HouseholdMemberLike | null {
-  const trimmed = name.trim().toLowerCase();
-  if (!trimmed) return null;
-  return (
-    members.find((row) => row.full_name.trim().toLowerCase() === trimmed) ??
-    members.find((row) => row.full_name.trim().toLowerCase().includes(trimmed)) ??
-    null
-  );
-}
-
-function wordInText(text: string, word: string): boolean {
-  const trimmed = word.trim();
-  if (!trimmed || trimmed.length < 2) return false;
-  return new RegExp(`\\b${trimmed.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(text);
-}
-
-function genderForRelWord(word: string): DoeDtcGender | null {
-  const rel = word.toLowerCase();
-  if (/^(daughter|daughters|wife|mom|mother|grandma)$/.test(rel)) return "female";
-  if (/^(son|sons|husband|dad|father|grandpa)$/.test(rel)) return "male";
-  return null;
-}
-
-function isPluralRel(word: string): boolean {
-  return /^(kids|children|sons|daughters)$/i.test(word);
-}
-
-export function extractChartMentions(params: {
-  inboundText: string;
-  members: HouseholdMemberLike[];
-  viewerUserId?: string;
-}): { mentioned: HouseholdMemberLike[]; unknownNames: string[]; pluralGroup: boolean } {
-  const text = params.inboundText.trim();
-  const others = params.members.filter(
-    (row) => row.user_id !== params.viewerUserId && row.role !== "admin",
-  );
-  const mentioned: HouseholdMemberLike[] = [];
-  const seen = new Set<string>();
-
-  const add = (member: HouseholdMemberLike | null | undefined) => {
-    if (!member || seen.has(member.id)) return;
-    seen.add(member.id);
-    mentioned.push(member);
-  };
-
-  for (const member of others) {
-    if (wordInText(text, member.full_name) || wordInText(text, firstName(member.full_name))) {
-      add(member);
-    }
-  }
-
-  let pluralGroup = /\b(kids|children|both|all (?:the )?kids)\b/i.test(text);
-
-  for (const match of execAll(REL_WORD_RE, text)) {
-    const word = match[1] ?? "";
-    if (isPluralRel(word)) pluralGroup = true;
-    const relationship = normalizeDoeDtcFamilyRelationship(word);
-    if (!relationship) continue;
-    const gender = genderForRelWord(word);
-    const pool = others.filter((row) => row.relationship === relationship);
-    const gendered = gender ? pool.filter((row) => row.gender === gender) : pool;
-    const candidates = gendered.length > 0 ? gendered : pool;
-    if (candidates.length === 1) add(candidates[0]);
-  }
-
-  const unknownNames: string[] = [];
-  const namePatterns = [
-    /\b(?:for|to|with)\s+([A-Z][a-z]{1,20})\b/g,
-    /\b([A-Z][a-z]{1,20})'s\b/g,
-    /\b(?:remind|text|message|tell|ping|make sure)\s+([A-Z][a-z]{1,20})\b/g,
-    /\bmy\s+(?:son|daughter|kid|child|wife|husband|partner)\s+([A-Z][a-z]{1,20})\b/gi,
-  ];
-  for (const pattern of namePatterns) {
-    for (const match of execAll(pattern, text)) {
-      const raw = (match[1] ?? "").trim();
-      if (!raw || NAME_STOPWORDS.has(raw.toLowerCase())) continue;
-      const onChart =
-        findMemberByName(params.members, raw) ??
-        others.find((row) => firstName(row.full_name).toLowerCase() === raw.toLowerCase());
-      if (onChart) {
-        add(onChart);
-        continue;
-      }
-      if (!unknownNames.some((name) => name.toLowerCase() === raw.toLowerCase())) {
-        unknownNames.push(raw);
-      }
-    }
-  }
-
-  return { mentioned, unknownNames, pluralGroup };
 }
 
 function siblingOf(
@@ -229,7 +61,7 @@ function siblingOf(
   members: HouseholdMemberLike[],
   viewerUserId?: string,
 ): HouseholdMemberLike | null {
-  const relationship: DoeDtcFamilyRelationship = mentioned.relationship;
+  const relationship = mentioned.relationship;
   const others = members.filter(
     (row) =>
       row.id !== mentioned.id &&
@@ -239,7 +71,8 @@ function siblingOf(
   return others[0] ?? null;
 }
 
-function pickOpportunity(params: {
+/** Secondary offers only — primary blockers come from action slots. */
+function pickExtraOffer(params: {
   inboundText: string;
   viewerUserId: string;
   members: HouseholdMemberLike[];
@@ -248,73 +81,29 @@ function pickOpportunity(params: {
   mentioned: HouseholdMemberLike[];
   unknownNames: string[];
   pluralGroup: boolean;
+  primaryBlockers: ActionBlocker[];
 }): SituationOpportunity | null {
   const text = params.inboundText;
-  const action = inferHouseholdActionKind(text);
   const writeOrJoin =
     inboundLooksLikeProfileWrite(text) ||
     inboundLooksLikeInvite(text) ||
     /\b(profile|chart|join)\b/i.test(text);
 
-  if (params.unknownNames.length > 0 && (action || writeOrJoin || inboundLooksLikeHabitOrReminder(text))) {
-    const name = params.unknownNames[0]!;
-    return {
-      kind: "add_family_member",
-      confidence: "high",
-      tool: "log_family_member",
-      memberName: name,
-      promptLine: `${name} is not on the chart. One question: add them with log_family_member (ask relationship/phone only if missing). Then do the original ask.`,
-    };
-  }
-
   const focus = params.mentioned[0];
-  if (focus && action === "profile_write") {
-    const route = routeHouseholdSubject({
-      viewerUserId: params.viewerUserId,
-      inboundText: text,
-      action: "profile_write",
-      member: focus,
-    });
-    if (route.state === "pending_phone" && route.offer) {
+
+  if (focus && writeOrJoin && householdMemberState(focus) === "pending_phone") {
+    const hasInviteBlocker = params.primaryBlockers.some((row) => row.tool === "send_family_invite");
+    if (!hasInviteBlocker) {
+      const confirm =
+        inboundAlreadyAsked(text) && inboundLooksLikeInvite(text) ? "act_now" : "confirm_once";
       return {
         kind: "invite_pending_member",
         confidence: "high",
         tool: "send_family_invite",
         memberName: focus.full_name,
-        promptLine: route.offer.promptLine,
+        promptLine: `After the primary action, one complete offer to send ${focus.full_name} a join link (${confirm}).`,
       };
     }
-    if (route.state === "pending_no_phone" && route.offer) {
-      return {
-        kind: "ask_phone",
-        confidence: "high",
-        tool: "update_family_member",
-        memberName: focus.full_name,
-        promptLine: route.offer.promptLine,
-      };
-    }
-  }
-
-  if (focus && writeOrJoin && householdMemberState(focus) === "pending_phone") {
-    const confirm =
-      inboundAlreadyAsked(text) && inboundLooksLikeInvite(text) ? "act_now" : "confirm_once";
-    return {
-      kind: "invite_pending_member",
-      confidence: "high",
-      tool: "send_family_invite",
-      memberName: focus.full_name,
-      promptLine: `After the primary action, one complete offer to send ${focus.full_name} a join link (${confirm}).`,
-    };
-  }
-
-  if (focus && writeOrJoin && householdMemberState(focus) === "pending_no_phone") {
-    return {
-      kind: "ask_phone",
-      confidence: "high",
-      tool: "update_family_member",
-      memberName: focus.full_name,
-      promptLine: `${focus.full_name} has not joined and has no phone. Parent-proxied log is OK. Ask for a number — do not invent SMS.`,
-    };
   }
 
   if (
@@ -352,7 +141,7 @@ function pickOpportunity(params: {
     inboundText: text,
     snapshot: { artifacts: params.artifacts as DoeDtcArtifactRow[], guides: params.guides as DoeDtcGuideRow[] },
   });
-  if (build === "guide") {
+  if (build === "guide" && params.primaryBlockers.every((row) => row.slot !== "artifact")) {
     return {
       kind: "build_guide",
       confidence: "high",
@@ -361,7 +150,7 @@ function pickOpportunity(params: {
         "How-to with no matching guide. list_guides first; if none match, create_guide and send the link. Ask once if they want it saved.",
     };
   }
-  if (build === "tracker") {
+  if (build === "tracker" && params.primaryBlockers.every((row) => row.slot !== "artifact")) {
     return {
       kind: "build_tracker",
       confidence: "high",
@@ -397,6 +186,24 @@ function pickOpportunity(params: {
     };
   }
 
+  if (focus && writeOrJoin && householdMemberState(focus) === "pending_phone") {
+    const route = routeHouseholdSubject({
+      viewerUserId: params.viewerUserId,
+      inboundText: text,
+      action: "profile_write",
+      member: focus,
+    });
+    if (route.offer?.tool === "send_family_invite") {
+      return {
+        kind: "invite_pending_member",
+        confidence: "high",
+        tool: "send_family_invite",
+        memberName: focus.full_name,
+        promptLine: route.offer.promptLine,
+      };
+    }
+  }
+
   return null;
 }
 
@@ -408,12 +215,21 @@ export function buildSituationBrief(params: {
   artifacts?: Array<Pick<DoeDtcArtifactRow, "id" | "title" | "archived_at">>;
   guides?: Array<Pick<DoeDtcGuideRow, "id" | "title" | "topic">>;
 }): SituationBrief {
+  const actionSlots = resolveActionSlots({
+    inboundText: params.inboundText,
+    viewerUserId: params.viewerUserId,
+    members: params.members,
+    artifacts: params.artifacts,
+    guides: params.guides,
+  });
+
   const { mentioned, unknownNames, pluralGroup } = extractChartMentions({
     inboundText: params.inboundText,
     members: params.members,
     viewerUserId: params.viewerUserId,
   });
-  const opportunity = pickOpportunity({
+
+  const opportunity = pickExtraOffer({
     inboundText: params.inboundText,
     viewerUserId: params.viewerUserId,
     members: params.members,
@@ -422,33 +238,21 @@ export function buildSituationBrief(params: {
     mentioned,
     unknownNames,
     pluralGroup,
+    primaryBlockers: actionSlots.blockers,
   });
 
-  const lines: string[] = [];
-  if (mentioned.length > 0) {
-    lines.push(
-      `Named on chart: ${mentioned
-        .map((row) => {
-          const state = householdMemberState(row);
-          const phone = row.phone ? "phone on file" : "no phone";
-          return `${row.full_name} (${row.relationship}, ${state}, ${phone})`;
-        })
-        .join("; ")}.`,
-    );
-  }
-  if (unknownNames.length > 0) {
-    lines.push(`Named but not on chart: ${unknownNames.join(", ")}.`);
-  }
+  const lines: string[] = [formatActionSlotsBlock(actionSlots).replace(/^Action slots \(do not recite\):\n/, "")];
+
   if (opportunity) {
-    lines.push(`One opportunity (${opportunity.kind}): ${opportunity.promptLine}`);
-    lines.push("Cap: one complete offer after the primary action. Never auto-text unmentioned family.");
-  } else {
-    lines.push("No extra offer this turn.");
+    lines.push(`Extra offer (${opportunity.kind}): ${opportunity.promptLine}`);
+    lines.push("Cap: one complete extra offer after the primary action. Never auto-text unmentioned family.");
   }
 
   return {
     mentionedMembers: mentioned,
     unknownNames,
+    actionSlots,
+    blockers: actionSlots.blockers,
     opportunity,
     promptBlock: lines.join("\n"),
   };

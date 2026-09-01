@@ -380,8 +380,8 @@ export function formatScheduledTextFileReply(file: ScheduledTextFile): string {
   if (file.draft) {
     parts.push(
       file.draft.awaitingBody
-        ? `I have a draft for ${labelScheduledIntent(file.draft.intent)} — tell me what it should say and I'll set it.`
-        : `I drafted ${file.draft.summary} — it's not in your file until you confirm.`,
+        ? `I have a draft for ${labelScheduledIntent(file.draft.intent)}. Tell me what it should say and I'll set it.`
+        : `I drafted ${file.draft.summary}. It's not in your file until you confirm.`,
     );
   }
   return parts.join(" ");

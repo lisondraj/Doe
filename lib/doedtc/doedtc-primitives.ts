@@ -232,7 +232,7 @@ export const DOE_AGENT_PRIMITIVES_PROMPT = `Primitives (compose these — do not
 - browser.research → start_browser_task. browser.act → browser_act or browser_computer. browser.commit → request_commit then CONFIRM.
 - memory.remember / memory.recall → remember_fact / forget_fact; recall also from Mem0 memories in prompt.
 - feedback.submit → submit_ticket for bugs or product feedback.
-- imessage.texture → skip react_to_message on routine turns; use_thread_reply sparingly; send_profile_link only when they ask for a profile/tracker link.`;
+- imessage.texture → skip react_to_message; 👍/✅ only on complex work; occasional matching tapbacks stay; most turns have none; send_profile_link only when they ask for a profile/tracker link.`;
 
 export function toolsForPrimitive(verb: DoePrimitiveVerb): readonly string[] {
   return DOE_PRIMITIVES.find((row) => row.verb === verb)?.tools ?? [];

@@ -21,7 +21,7 @@ const SELF_HELP_PATTERN =
   /\b(you might try|try visiting|in your browser|yourself|on your (?:own|phone|device))\b/i;
 
 export const SCHEDULED_TEXT_CLAIM =
-  /\b(?:i(?:'ve| have) set.{0,40}reminder|(?:i(?:'ll| will)|done —)\s+(?:text|ping|remind)\s+you\b)/i;
+  /\b(?:i(?:'ve| have) set.{0,40}reminder|(?:i(?:'ll| will)|done[.—])\s+(?:text|ping|remind)\s+you\b)/i;
 
 const CLAIM_REGISTRY: Array<{
   id: string;
@@ -76,6 +76,22 @@ const CLAIM_REGISTRY: Array<{
     requiredTools: ["schedule_text"],
     repair: "schedule",
   },
+  {
+    id: "appointment_logged",
+    claim:
+      /\b(?:i(?:'ve| have) (?:booked|logged|saved)|booked|logged)\b.{0,40}\b(?:appointment|dentist|doctor|visit)\b/i,
+    requiredTools: ["log_appointment"],
+  },
+  {
+    id: "member_added",
+    claim: /\b(?:i(?:'ve| have) added|added)\b.{0,32}\b(?:to (?:the|your) (?:chart|household|family)|on (?:the|your) chart)\b/i,
+    requiredTools: ["log_family_member"],
+  },
+  {
+    id: "artifact_logged",
+    claim: /\b(?:i(?:'ve| have)? logged|logged)\b.{0,40}\b(?:glasses?|shot|dose|water|entry)\b/i,
+    requiredTools: ["log_artifact_entry"],
+  },
 ];
 
 export function looksLikeRefusal(text: string): boolean {
@@ -113,7 +129,7 @@ function buildInviteCorrectionReply(state: DoeDtcToolTurnState): string | null {
   const sent = state.familyInvitesSent ?? [];
   const errors = state.familyInviteErrors ?? [];
   if (sent.length === 0 && errors.length === 0) {
-    return "I haven't sent any invites yet — tell me who has a phone number and I'll text them a join link.";
+    return "I haven't sent any invites yet. Tell me who has a phone number and I'll text them a join link.";
   }
   const parts: string[] = [];
   if (sent.length > 0) {

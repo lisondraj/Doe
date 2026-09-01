@@ -31,7 +31,7 @@ export const FILLER_REPLIES = new Set([
   DOEDTC_LINQ.vaultIntro,
   DOEDTC_LINQ.liveViewIntro,
   "Sending your profile link.",
-  "Here's what I found — sending a preview.",
+  "Here's what I found. Sending a preview.",
   "Here's a screenshot of the page.",
   "Sending a secure sign-in link.",
   "Sending a Live View link so you can sign in.",
@@ -44,7 +44,7 @@ export const FILLER_REPLIES = new Set([
 ]);
 
 export const DEGENERATE_TURN_REPLY =
-  "I hit a snag on that one — try again in a moment.";
+  "I hit a snag on that one. Try again in a moment.";
 
 export const REPEAT_TOOL_ERROR =
   "Already called this turn with the same arguments. Use the previous result and answer the user.";

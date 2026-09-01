@@ -3,10 +3,12 @@ import test from "node:test";
 
 import {
   inboundAsksReminderStatus,
+  reconcileReplyWithLiveChart,
   reconcileReplyWithScheduledTextFile,
   replyClaimsReminderEmpty,
   replyClaimsReminderSet,
 } from "@/lib/doedtc/agent/committed-state";
+import { buildChartFile } from "@/lib/doedtc/agent/chart-file";
 import {
   buildScheduledTextFile,
   formatScheduledTextFileForAgent,
@@ -152,4 +154,25 @@ test("schedule_text success keeps a set claim when the file is still catching up
     scheduleTextSucceeded: true,
   });
   assert.match(reply, /I've set/);
+});
+
+test("reconcileReplyWithLiveChart rewrites unbacked Fred appointment claim", () => {
+  const file = buildChartFile({
+    snapshot: {
+      user: { id: "u1" },
+      household: { household: null, members: [], consents: [] },
+      appointments: [],
+      artifacts: [],
+      scheduledTexts: [],
+    } as never,
+  });
+  const reply = reconcileReplyWithLiveChart({
+    userId: "u1",
+    inboundText: "Book Fred's appointment",
+    replyText: "I've logged Fred's dentist appointment.",
+    file,
+    toolsExecuted: [],
+    viewerUserId: "u1",
+  });
+  assert.match(reply, /Fred isn't on the household/i);
 });

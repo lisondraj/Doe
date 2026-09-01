@@ -398,7 +398,7 @@ export async function handleConfirmInbound(params: {
       chatId: params.chatId,
       to: params.phone,
       text: result.ok
-        ? `Done — ${result.outcome}`
+        ? `Done. ${result.outcome}`
         : "That browser action could not be completed. Tell me if you want to try again.",
       idempotencyKey: `doedtc-browser-commit-${params.user.id}-${pendingBrowser.id}`,
     });

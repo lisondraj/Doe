@@ -1,6 +1,7 @@
 import { run } from "@openai/agents";
 
 import { executeDoeDtcTool } from "@/lib/doedtc/agent/tool-dispatch";
+import { resolveActionSlots } from "@/lib/doedtc/agent/action-slots";
 import { createDoePlannerAgent, createDoeSpecialistAgents } from "@/lib/doedtc/agent/specialists";
 import {
   DoePlanSchema,
@@ -53,10 +54,17 @@ export async function executeDoePlan(params: {
   ctx: DoeDtcRunContext;
 }): Promise<{ ok: boolean; reply: string; preservePending?: boolean }> {
   const { plan, ctx } = params;
+  const slots = resolveActionSlots({
+    inboundText: ctx.inboundText,
+    viewerUserId: ctx.user.id,
+    members: ctx.snapshot.household.members,
+    artifacts: ctx.snapshot.artifacts,
+    guides: ctx.snapshot.guides,
+  });
   const validation = validateDoePlan(plan, {
     inboundText: ctx.inboundText,
     textsThirdParty: planTextsThirdParty(plan),
-    missingSlot: plan.action === "confirm_once",
+    missingSlot: plan.action === "confirm_once" || slots.missingSlot,
     irreversible: plan.immediate.some((step) =>
       ["save_guide", "send_family_invite", "revoke_household_access", "request_commit"].includes(
         step.tool,
@@ -178,7 +186,17 @@ export async function runDoeSpecialistForPlan(params: {
   await run(specialist, params.ctx.inboundText, { context: params.ctx, maxTurns: 8 });
 }
 
-export function inferPlanActionFromInbound(inboundText: string): "act_now" | "confirm_once" {
+export function inferPlanActionFromInbound(
+  inboundText: string,
+  members: Parameters<typeof resolveActionSlots>[0]["members"] = [],
+  viewerUserId = "viewer",
+): "act_now" | "confirm_once" {
+  const slots = resolveActionSlots({
+    inboundText,
+    viewerUserId,
+    members,
+  });
+  if (slots.missingSlot || slots.actionClass === "confirm_once") return "confirm_once";
   if (inboundAlreadyAsked(inboundText)) return "act_now";
   return classifyAgentAction({ inboundText }) === "act_now" ? "act_now" : "confirm_once";
 }
