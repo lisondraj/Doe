@@ -112,6 +112,19 @@ const NAME_STOPWORDS = new Set(
 const REL_WORD_RE =
   /\b(?:my\s+)?(son|sons|daughter|daughters|kid|kids|child|children|wife|husband|partner|mom|dad|mother|father|brother|sister|grandma|grandpa)\b/gi;
 
+function execAll(re: RegExp, text: string): RegExpExecArray[] {
+  const flags = re.flags.includes("g") ? re.flags : `${re.flags}g`;
+  const copy = new RegExp(re.source, flags);
+  const out: RegExpExecArray[] = [];
+  let match: RegExpExecArray | null = copy.exec(text);
+  while (match) {
+    out.push(match);
+    if (match[0] === "") copy.lastIndex += 1;
+    match = copy.exec(text);
+  }
+  return out;
+}
+
 function firstName(fullName: string): string {
   return fullName.trim().split(/\s+/)[0] ?? fullName.trim();
 }
@@ -172,8 +185,7 @@ export function extractChartMentions(params: {
 
   let pluralGroup = /\b(kids|children|both|all (?:the )?kids)\b/i.test(text);
 
-  const relMatches = text.matchAll(REL_WORD_RE);
-  for (const match of relMatches) {
+  for (const match of execAll(REL_WORD_RE, text)) {
     const word = match[1] ?? "";
     if (isPluralRel(word)) pluralGroup = true;
     const relationship = normalizeDoeDtcFamilyRelationship(word);
@@ -193,7 +205,7 @@ export function extractChartMentions(params: {
     /\bmy\s+(?:son|daughter|kid|child|wife|husband|partner)\s+([A-Z][a-z]{1,20})\b/gi,
   ];
   for (const pattern of namePatterns) {
-    for (const match of text.matchAll(pattern)) {
+    for (const match of execAll(pattern, text)) {
       const raw = (match[1] ?? "").trim();
       if (!raw || NAME_STOPWORDS.has(raw.toLowerCase())) continue;
       const onChart =
