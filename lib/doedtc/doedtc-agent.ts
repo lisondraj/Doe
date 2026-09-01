@@ -1138,8 +1138,16 @@ export async function runDoeDtcAgentTurn(params: {
   turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   if (resolveDoeDtcAgentRuntime() === "sdk") {
-    const { runDoeDtcAgentTurnSdk } = await import("@/lib/doedtc/agent/run-sdk");
-    return runDoeDtcAgentTurnSdk(params);
+    try {
+      const { runDoeDtcAgentTurnSdk } = await import("@/lib/doedtc/agent/run-sdk");
+      return await runDoeDtcAgentTurnSdk(params);
+    } catch (error) {
+      console.warn(
+        "[doedtc:sdk] turn failed; falling back to legacy:",
+        error instanceof Error ? error.message : String(error),
+      );
+      return runDoeDtcAgentTurnLegacy(params);
+    }
   }
   return runDoeDtcAgentTurnLegacy(params);
 }

@@ -185,7 +185,7 @@ test("validateDoePlan accepts act_now plan with workflow graph", () => {
   const plan = DoePlanSchema.parse({
     intent: "Daily check-in for Alex",
     action: "act_now",
-    immediate: [{ tool: "start_workflow", args: { goal: "check-in", graph } }],
+    immediate: [{ tool: "start_workflow", args: { goal: "check-in" } }],
     workflow: { graph },
     reply: "I'll text Alex at 7 and ping you if they don't reply.",
     specialist: "scheduling",

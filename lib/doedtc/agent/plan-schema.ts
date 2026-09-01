@@ -2,9 +2,13 @@ import { z } from "zod";
 
 import type { DoeDtcWorkflowGraph } from "@/lib/doedtc/doedtc-types";
 
+/** Structured-output-safe JSON values. `z.unknown()` is rejected by OpenAI json schema. */
+const jsonScalar = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+const jsonArgs = z.record(z.string(), jsonScalar).default({});
+
 export const DoePlanImmediateSchema = z.object({
   tool: z.string().min(1),
-  args: z.record(z.string(), z.unknown()).default({}),
+  args: jsonArgs,
 });
 
 export const DoePlanWorkflowPresetSchema = z.enum(["habit_default", "one_shot_text"]);
@@ -26,7 +30,7 @@ export const DoePlanWorkflowGraphSchema = z.object({
     z.object({
       id: z.string().min(1),
       kind: z.enum(["recur_daily", "send_message", "wait_for_reply", "wait_until", "done"]),
-      params: z.record(z.string(), z.unknown()).default({}),
+      params: jsonArgs,
       out: workflowGraphEdgeSchema,
     }),
   ),

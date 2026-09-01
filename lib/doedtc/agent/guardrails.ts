@@ -1,7 +1,7 @@
 import type { OutputGuardrail } from "@openai/agents";
 import { DoeReplySchema, type DoeReply } from "@/lib/doedtc/agent/types";
 
-const URL_IN_TEXT = /https?:\/\/\S+/gi;
+const URL_IN_TEXT = /https?:\/\/\S+/i;
 const MARKDOWN_PATTERN = /(\*\*|__|`|\*[^*\n]+\*|_[^_\n]+_)/;
 
 function looksIncompleteFragment(text: string): boolean {
@@ -30,18 +30,15 @@ export const doeReplyOutputGuardrail: OutputGuardrail<typeof DoeReplySchema> = {
   execute: async ({ agentOutput }) => {
     const parsed = DoeReplySchema.safeParse(agentOutput);
     if (!parsed.success) {
-      return {
-        tripwireTriggered: true,
-        outputInfo: parsed.error.message,
-      };
+      console.warn("[doedtc:guardrail] reply schema:", parsed.error.message);
+      return { tripwireTriggered: false, outputInfo: parsed.error.message };
     }
     const violation = assertDoeReplyVoice(parsed.data);
     if (violation) {
-      return {
-        tripwireTriggered: true,
-        outputInfo: violation,
-      };
+      console.warn("[doedtc:guardrail] voice:", violation);
     }
-    return { tripwireTriggered: false, outputInfo: null };
+    // Voice issues are logged, not fatal. A tripwire aborts the whole SDK turn
+    // and the user only sees "Something broke on my side".
+    return { tripwireTriggered: false, outputInfo: violation };
   },
 };

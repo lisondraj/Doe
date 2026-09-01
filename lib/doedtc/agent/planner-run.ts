@@ -30,10 +30,22 @@ function planTextsThirdParty(plan: DoePlan): boolean {
 }
 
 export async function runDoePlannerTurn(ctx: DoeDtcRunContext): Promise<DoePlan | null> {
-  const planner = createDoePlannerAgent(ctx);
-  const result = await run(planner, ctx.inboundText, { context: ctx, maxTurns: 4 });
-  const parsed = DoePlanSchema.safeParse(result.finalOutput);
-  return parsed.success ? parsed.data : null;
+  try {
+    const planner = createDoePlannerAgent(ctx);
+    const result = await run(planner, ctx.inboundText, { context: ctx, maxTurns: 4 });
+    const parsed = DoePlanSchema.safeParse(result.finalOutput);
+    if (!parsed.success) {
+      console.warn("[doedtc:planner] output failed schema:", parsed.error.message);
+      return null;
+    }
+    return parsed.data;
+  } catch (error) {
+    console.warn(
+      "[doedtc:planner] run failed:",
+      error instanceof Error ? error.message : String(error),
+    );
+    return null;
+  }
 }
 
 export async function executeDoePlan(params: {
@@ -88,17 +100,26 @@ export async function executeDoePlan(params: {
   }
 
   for (const step of plan.immediate) {
-    await executeDoeDtcTool({
-      name: step.tool,
-      args: step.args,
-      ctx: {
-        user: ctx.user,
-        inboundText: ctx.inboundText,
-        inboundMessageId: ctx.inboundMessageId,
-        snapshot: ctx.snapshot,
-      },
-      state: ctx.turnState,
-    });
+    try {
+      await executeDoeDtcTool({
+        name: step.tool,
+        args: step.args,
+        ctx: {
+          user: ctx.user,
+          inboundText: ctx.inboundText,
+          inboundMessageId: ctx.inboundMessageId,
+          snapshot: ctx.snapshot,
+        },
+        state: ctx.turnState,
+      });
+    } catch (error) {
+      console.warn(
+        "[doedtc:planner] immediate tool failed:",
+        step.tool,
+        error instanceof Error ? error.message : String(error),
+      );
+      return { ok: false, reply: plan.reply };
+    }
   }
 
   if (plan.workflow) {
