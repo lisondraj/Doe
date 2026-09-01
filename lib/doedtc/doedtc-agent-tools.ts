@@ -865,17 +865,17 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "start_browser_task",
       description:
-        "Browse the web and screenshot the page. For 'go to Google and type mayo', call once with url google and intent type mayo — do not type into the box yourself. Selector is optional for later typing.",
+        "Open a real browser, go to the page or search they asked for, and send a screenshot back over iMessage. Pass their ask as intent. url is optional (google, a hostname, or a full URL). Any site. Do not refuse or ask for a more specific URL first.",
       parameters: {
         type: "object",
         properties: {
           intent: {
             type: "string",
-            description: "What to find or do, e.g. type mayo, search asthma.",
+            description: "What to find or do on the web. Use their wording.",
           },
           url: {
             type: "string",
-            description: "Site nickname (mayo, google), hostname, or full URL. Optional if intent has the site.",
+            description: "Optional hostname or full URL. Omit if intent already names the site or search.",
           },
           mode: { type: "string", enum: ["research", "login", "write"] },
         },
@@ -888,7 +888,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "browser_navigate",
       description:
-        "Navigate the active browser job to a URL or site nickname (google, mayo). Requires start_browser_task first — no active job means call start_browser_task instead.",
+        "Navigate the active browser job to any URL. Requires start_browser_task first — no active job means call start_browser_task instead.",
       parameters: {
         type: "object",
         properties: {
@@ -903,7 +903,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "browser_act",
       description:
-        "Click, type, or scroll in the active browser task. For type, selector is optional — Doe finds the search box. Prefer start_browser_task with the query instead of typing on Google.",
+        "Click, type, or scroll in the active browser task. Selector is optional. Use this to finish the ask on the open page.",
       parameters: {
         type: "object",
         properties: {
@@ -942,7 +942,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "browser_snapshot",
       description:
-        "Screenshot the current browser page and send the image to the patient in iMessage. Use when they ask for a screenshot, picture, or to see the page.",
+        "Screenshot the current browser page and send the image in iMessage. Research jobs already send a shot after start_browser_task; call this again if they want another view.",
       parameters: {
         type: "object",
         properties: {

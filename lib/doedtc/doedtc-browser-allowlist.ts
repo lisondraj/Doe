@@ -1,14 +1,3 @@
-const DENY_HOST_SUFFIXES = [
-  "chase.com",
-  "bankofamerica.com",
-  "wellsfargo.com",
-  "coinbase.com",
-  "binance.com",
-  "okta.com",
-  "login.microsoftonline.com",
-  "accounts.google.com",
-];
-
 const SITE_ALIASES: Record<string, string> = {
   mayo: "mayoclinic.org",
   "mayo clinic": "mayoclinic.org",
@@ -38,9 +27,8 @@ export function hostMatchesSuffix(host: string, suffix: string): boolean {
   return host === suffix || host.endsWith(`.${suffix}`);
 }
 
-export function isDeniedBrowserHost(host: string): boolean {
-  const normalized = normalizeBrowserHost(host);
-  return DENY_HOST_SUFFIXES.some((suffix) => hostMatchesSuffix(normalized, suffix));
+export function isDeniedBrowserHost(_host: string): boolean {
+  return false;
 }
 
 export function resolveSiteAlias(input: string): string | null {
@@ -49,24 +37,12 @@ export function resolveSiteAlias(input: string): string | null {
   return SITE_ALIASES[normalized] ?? null;
 }
 
-export function assertBrowserHostAllowed(params: {
+export function assertBrowserHostAllowed(_params: {
   host: string;
   mode: "research" | "login" | "write";
   declaredHost?: string | null;
 }): void {
-  const host = normalizeBrowserHost(params.host);
-  if (isDeniedBrowserHost(host)) {
-    throw new Error("That site is not allowed.");
-  }
-
-  if (params.mode === "research") {
-    return;
-  }
-
-  const declared = params.declaredHost ? normalizeBrowserHost(params.declaredHost) : null;
-  if (!declared || declared !== host) {
-    throw new Error("Login and write actions require a patient-declared site.");
-  }
+  return;
 }
 
 export function browserUrlForHost(host: string): string {
@@ -174,17 +150,43 @@ function stripScreenshotTail(text: string): string {
     .trim();
 }
 
+export function looksLikeBrowseAsk(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  if (
+    /\b(?:screenshot|browse|google(?:\.com)?|duckduckgo|go(?:\s+)?to|goto|look(?:ing)?\s*up|search\s+up|visit\s+(?:https?:\/\/|www\.)|open\s+(?:https?:\/\/|www\.|the\s+)?(?:page|site|browser)|first\s+(?:link|result)|web search)\b/i.test(
+      trimmed,
+    )
+  ) {
+    return true;
+  }
+  return (
+    /\bsearch (?:for|the)\b/i.test(trimmed) &&
+    !/\b(?:chart|profile|tracker|labs?|results?)\b/i.test(trimmed)
+  );
+}
+
 export function extractSearchQuery(text: string): string {
-  let q = stripScreenshotTail(text.trim());
+  let q = text.trim();
+  q = q.replace(/^(?:(?:can you|can u|could you|would you|please)\s+)+/i, "").trim();
+  q = stripScreenshotTail(q);
+  q = q.replace(/\s+and\s+(?:what|which)\s+(?:link|result|url|site).*$/i, "").trim();
+  q = q.replace(/\s+and\s+(?:tell me|show me|send(?:\s+it)?|text(?:\s+it)?).*$/i, "").trim();
   q = q.replace(/^(?:please\s+)?(?:open(?:\s+(?:the\s+)?)?(?:browser\s+)?)?/i, "").trim();
   q = q.replace(/^(?:go\s*to|goto|visit|open)\s+/i, "").trim();
 
   const googleThenType = q.match(
-    /^(?:google(?:\.com)?)(?:\s+and)?\s+(?:type|search(?:\s+for)?|look\s*up)\s+(.+)$/i,
+    /^(?:google(?:\.com)?)(?:\s+and)?\s+(?:type|search(?:\s+(?:for|up))?|look\s*up)\s+(.+)$/i,
   );
   if (googleThenType?.[1]) return googleThenType[1].trim();
 
-  q = q.replace(/^(?:search(?:\s+for)?|type|look\s*up|lookup)\s+/i, "").trim();
+  const googleMid = q.match(
+    /\bgoogle(?:\.com)?\b(?:\s+and)?\s+(?:type|search(?:\s+(?:for|up))?|look\s*up)\s+(.+)$/i,
+  );
+  if (googleMid?.[1]) return googleMid[1].trim();
+
+  q = q.replace(/^(?:search(?:\s+(?:for|up))?|type|look\s*up|lookup)\s+/i, "").trim();
+  q = q.replace(/^(?:google(?:\.com)?)\s+/i, "").trim();
   return q;
 }
 
@@ -271,10 +273,6 @@ export function resolveResearchBrowseTarget(params: {
     }
   } catch {
     return { ok: false, error: "Could not parse that URL." };
-  }
-
-  if (isDeniedBrowserHost(host)) {
-    return { ok: false, error: "That site is not allowed." };
   }
 
   return { host, targetUrl };

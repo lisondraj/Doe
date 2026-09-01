@@ -3,11 +3,15 @@
 import { inboundHasAttachments, parseInboundAttachmentIds } from "@/lib/doedtc/agent/attachments";
 import { classifyTurnMode, type TurnModeResult } from "@/lib/doedtc/agent/turn-mode";
 import {
+  askedForPrivateAppLink,
   findMatchingArtifact,
   findMatchingGuide,
   interpretBuildIntent,
   interpretDeliverableAsk,
+  looksLikeChartRead,
+  looksLikeChartWrite,
 } from "@/lib/doedtc/agent/deliverable-policy";
+import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { inboundAlreadyAsked } from "@/lib/doedtc/doedtc-agent-policy";
 import type { DoeAgentActionClass } from "@/lib/doedtc/doedtc-agent-policy";
 import { normalizeDoeDtcFamilyRelationship } from "@/lib/doedtc/doedtc-family-relationship";
@@ -37,6 +41,7 @@ export type ActionIntent =
   | "invite"
   | "send_or_build_tracker"
   | "send_or_build_guide"
+  | "browse"
   | "none";
 
 export type SlotName =
@@ -305,6 +310,15 @@ export function inferPrimaryIntent(params: {
   if (ask.has("guide")) return "send_or_build_guide";
 
   if (inboundLooksLikeProfileWrite(text)) return "profile_write";
+
+  if (
+    looksLikeBrowseAsk(text) &&
+    !askedForPrivateAppLink(text) &&
+    !looksLikeChartRead(text) &&
+    !looksLikeChartWrite(text)
+  ) {
+    return "browse";
+  }
 
   return "none";
 }

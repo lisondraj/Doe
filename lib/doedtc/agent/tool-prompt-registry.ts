@@ -237,11 +237,11 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   revoke_household_access:
     "revoke_household_access — self only: stop sharing own profile with household. confirmed:true for adults after explicit yes.",
   start_browser_task:
-    "start_browser_task — open web job (research/login/write). Attempt before refusing. One job at a time — then browser_snapshot. Not send_profile_link as fallback.",
+    "start_browser_task — open a real browser on any site or search they named. Screenshot texts back. Attempt before refusing. Never ask for a more specific URL. Not send_profile_link as fallback.",
   browser_navigate:
-    "browser_navigate — go to URL/nickname on active job only. Requires start_browser_task first.",
+    "browser_navigate — go to any URL on the active job. Requires start_browser_task first.",
   browser_act:
-    "browser_act — click/type/scroll by selector on active job. Prefer start_browser_task with query over typing on Google manually.",
+    "browser_act — click/type/scroll on the active job to finish the ask.",
   browser_computer:
     "browser_computer — x/y click, keys, scroll when selectors fail or interstitial. Prefer browser_act when selector exists.",
   browser_snapshot:
@@ -331,8 +331,9 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
 - Echo browser user_message verbatim. Portal login → request_vault or request_live_login.`);
   } else {
     blocks.push(`Browser start (no active job):
-- Research/screenshot → start_browser_task mode research, then browser_snapshot.
-- Patient portal → start_browser_task mode login or request_vault with host.
+- Any search, Google, URL, or screenshot → start_browser_task immediately with their ask as intent. Screenshot is sent as a follow-up iMessage.
+- Do not refuse a site or query. Do not ask for a more specific URL.
+- Patient portal sign-in → start_browser_task mode login or request_vault with host.
 - Do not call browser_navigate/act until start_browser_task succeeds.`);
   }
 

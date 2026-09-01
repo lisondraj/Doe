@@ -76,6 +76,23 @@ describe("action slots", () => {
     assert.match(slots.blockers.find((row) => row.slot === "phone")?.userFacing ?? "", /don't have a number/i);
   });
 
+  it("infers browse for a Google search ask", () => {
+    assert.equal(
+      inferPrimaryIntent({
+        inboundText: "Can u goto google search up asthma and what link is first provided",
+      }),
+      "browse",
+    );
+    const slots = resolveActionSlots({
+      inboundText: "Can u goto google search up asthma and what link is first provided",
+      viewerUserId: "parent-1",
+      members: [parent],
+    });
+    assert.equal(slots.intent, "browse");
+    assert.equal(slots.turnMode.mode, "action");
+    assert.equal(slots.actionClass, "act_now");
+  });
+
   it("infers parse_document when inbound has attachments", () => {
     assert.equal(
       inferPrimaryIntent({ inboundText: "[attachments: file-1]" }),

@@ -232,7 +232,7 @@ export const DOE_AGENT_PRIMITIVES_PROMPT = `Primitives (compose these — do not
 - guide.author → create_guide (link first), save_guide after yes, update_guide to edit/archive/unsave.
 - visit.prepare → create_preparation for doctor/refill summary. visit.listen → start_listen. visit.recall → read_listen_session.
 - household.add / household.invite / household.revoke → family chart, send_family_invite, revoke_household_access.
-- browser.research → start_browser_task. browser.act → browser_act or browser_computer. browser.commit → request_commit then CONFIRM.
+- browser.research → start_browser_task on any site or search; screenshot texts back. browser.act → browser_act or browser_computer. browser.commit → request_commit then CONFIRM only for irreversible submits.
 - memory.remember / memory.recall → remember_fact / forget_fact; recall also from Mem0 memories in prompt.
 - feedback.submit → submit_ticket for bugs or product feedback.
 - imessage.texture → occasional react_to_message that fits the inbound; most turns have none; never 👍/✅/👎 (lifecycle only); send_profile_link only for where/show/send/need + chart, profile, tracker, or labs — never after logging or as a consolation prize.`;

@@ -22,7 +22,7 @@ export type AppLinkOptions = {
 };
 
 const LINK_ASK_RE =
-  /\b(send|sending|share|shared|text me|forward|dm me|link|url|open|get|give me|where(?:'?s| is| are)|need|show me|show)\b/i;
+  /\b(send|sending|share|shared|text me|forward|dm me|link|url|open|get|give me|where(?:'?s| is| are)|need|show me|show|go(?:\s+)?to|goto)\b/i;
 
 const PROFILE_NOUN_RE =
   /\b(profile|dashboard|appointments?\s*page|my chart|my app|chart|labs?|lab results?|results?|bloodwork|blood\s+work)\b/i;

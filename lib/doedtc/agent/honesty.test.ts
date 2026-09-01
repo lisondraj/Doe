@@ -167,6 +167,26 @@ describe("agent honesty invariants", () => {
     assert.match(reconciled.profileUrl!, /tab=results/);
   });
 
+  it("retries empty-tool browser stalls including wasn't-able wording", () => {
+    assert.equal(
+      shouldRetryEmptyRefusal({
+        replyText:
+          "I wasn't able to complete that search right now. Could you let me know what specific information about asthma you're looking for?",
+        toolsExecuted: [],
+        inboundText: "Can u goto google search up asthma and what link is first provided",
+      }),
+      true,
+    );
+    assert.equal(
+      shouldRetryEmptyRefusal({
+        replyText: "I can help with that.",
+        toolsExecuted: [],
+        inboundText: "screenshot google.com",
+      }),
+      true,
+    );
+  });
+
   it("retries empty-tool I'll-send-later claims, but not status asks", () => {
     assert.equal(
       shouldRetryEmptyRefusal({

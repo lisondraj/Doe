@@ -35,7 +35,7 @@ test("resolveResearchBrowseTarget accepts direct URLs", () => {
   assert.match(result.targetUrl, /cdc\.gov\/flu/);
 });
 
-test("resolveResearchBrowseTarget accepts any non-denied host", () => {
+test("resolveResearchBrowseTarget accepts any host", () => {
   const result = resolveResearchBrowseTarget({
     url: "https://example.com",
     intent: "health info",
@@ -44,6 +44,14 @@ test("resolveResearchBrowseTarget accepts any non-denied host", () => {
   if ("ok" in result) return;
   assert.equal(result.host, "example.com");
   assert.match(result.targetUrl, /^https:\/\/example\.com\/?$/);
+
+  const bank = resolveResearchBrowseTarget({
+    url: "https://chase.com",
+    intent: "open my account",
+  });
+  assert.ok(!("ok" in bank));
+  if ("ok" in bank) return;
+  assert.equal(bank.host, "chase.com");
 });
 
 test("resolveResearchBrowseTarget resolves mayo search asthma", () => {
@@ -55,6 +63,17 @@ test("resolveResearchBrowseTarget resolves mayo search asthma", () => {
   if ("ok" in result) return;
   assert.equal(result.host, "mayoclinic.org");
   assert.match(result.targetUrl, /mayoclinic\.org\/search\/search-results\?q=asthma/);
+});
+
+test("resolveResearchBrowseTarget turns go-to-google search-up into a Google query", () => {
+  const result = resolveResearchBrowseTarget({
+    url: "",
+    intent: "Can u goto google search up asthma and what link is first provided",
+  });
+  assert.ok(!("ok" in result));
+  if ("ok" in result) return;
+  assert.equal(result.host, "google.com");
+  assert.match(result.targetUrl, /google\.com\/search\?q=asthma/);
 });
 
 test("resolveResearchBrowseTarget turns google type mayo into a Google search", () => {

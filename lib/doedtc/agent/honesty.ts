@@ -10,6 +10,7 @@ import {
   looksLikeChartRead,
   looksLikeChartWrite,
 } from "@/lib/doedtc/agent/deliverable-policy";
+import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { createDoeDtcListenSession } from "@/lib/doedtc/doedtc-db";
 import { doeDtcGuideUrl, doeDtcListenUrl, doeDtcSessionUrl } from "@/lib/doedtc/doedtc-copy";
 import { applyReminderSafetyNet } from "@/lib/doedtc/doedtc-reminder-intent";
@@ -19,7 +20,7 @@ import type { DoeDtcToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 import type { DoeDtcProfileSnapshot, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 const REFUSAL_PATTERN =
-  /\b(can'?t|cannot|unable to|not able to|don'?t have (?:the )?(?:ability|access)|won'?t be able to)\b/i;
+  /\b(can'?t|cannot|unable to|not able to|wasn'?t able to|couldn'?t complete|don'?t have (?:the )?(?:ability|access)|won'?t be able to|without specific (?:details|information)|need (?:a |the )?(?:specific )?(?:url|page|link))\b/i;
 const SELF_HELP_PATTERN =
   /\b(you might try|try visiting|in your browser|yourself|on your (?:own|phone|device))\b/i;
 
@@ -131,7 +132,8 @@ export function shouldRetryEmptyRefusal(params: {
       askedForDeliverable(inbound, "listen") ||
       askedForDeliverable(inbound, "guide") ||
       looksLikeChartWrite(inbound) ||
-      looksLikeChartRead(inbound))
+      looksLikeChartRead(inbound) ||
+      looksLikeBrowseAsk(inbound))
   ) {
     return true;
   }

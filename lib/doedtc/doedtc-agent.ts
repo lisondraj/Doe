@@ -628,7 +628,8 @@ Safety:
 - Use add_medication and add_condition for profile medical info — never remember_fact for those.
 - When the patient corrects a med or condition, update or remove the existing row. Do not leave the old name on the profile.
 - Never claim a definitive diagnosis. Flag emergencies clearly.
-- Irreversible browser actions need request_commit, then the patient replies CONFIRM.
+- Browse any site or search. Never refuse because the page or query is unfamiliar. Screenshot follow-up is automatic after start_browser_task.
+- Irreversible browser submits (pay, delete, send a form) need request_commit, then the patient replies CONFIRM. Search, click, type, and screenshot do not.
 - After useful browser findings, you may store a one-line outcome via remember_fact.`;
 
 export function buildDoePlannerSystemPrompt(params: DoeDtcAgentPromptParams): string {

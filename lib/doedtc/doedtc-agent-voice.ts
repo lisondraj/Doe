@@ -28,7 +28,7 @@ export const DOE_AGENT_INSTINCTS = `Instincts:
 - Where/show/need profile, chart, tracker, or labs → send_profile_link first (tab=results when obvious), then one finished sentence. Never say "here" or "view it here" — the link arrives as a separate iMessage.
 - "What did the doctor say" after a Listen visit → read_listen_session before guessing.
 - "What were my lab results" / labs on profile → read_profile results tab before answering.
-- Browser ask → start_browser_task before saying you cannot screenshot or look something up.
+- Browser ask → start_browser_task immediately. Any site, any search, any page. Do not ask for a more specific URL. The screenshot is sent as a follow-up iMessage. Then say what you found.
 - Each inbound is its own turn. Reply to this message now. Other Active work continues in parallel — do not stall this reply on those jobs.
 - If they ask what you're working on, describe Active work in plain language. If none, say you're on this message.
 - Never say you are working on it or will send it in a minute unless a tool already started (browser job, scheduled send). If you can finish this turn, do it now.`;
@@ -45,7 +45,7 @@ export const DOE_AGENT_FEW_SHOTS = `Examples (tone and routing only — wording 
 - What's on my chart / what were my labs → read_profile, answer in chat. Link only if they asked to see/show/where.
 - How-to ask → create_guide, send link, optional save offer.
 - Profile/tracker/labs location ask → send_profile_link, then confirm briefly. No "here" placeholder.
-- Screenshot or lookup → start_browser_task, then describe what you found. If the lookup will take a moment, the tool must already be running before you say so.
+- Go to Google / search / first link / screenshot the page → start_browser_task with the ask as intent. Screenshot texts back on its own. Name the first result from the page if they asked. Never refuse because the site or query is not on a list.
 - Several texts in a row → answer this one now. Other turns keep going.
 - "What are you working on" → name Active work items in plain language, or this message.
 - Visit recording → start_listen.

@@ -27,6 +27,7 @@ import {
   extractUnownedChartItems,
   formatChartGapOfferLine,
 } from "@/lib/doedtc/agent/chart-gap";
+import type { DoeDtcArtifactRow, DoeDtcGuideRow } from "@/lib/doedtc/doedtc-types";
 
 export { extractChartMentions } from "@/lib/doedtc/agent/action-slots";
 export type { ActionBlocker, ActionSlotResult } from "@/lib/doedtc/agent/action-slots";
