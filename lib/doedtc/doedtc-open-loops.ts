@@ -34,7 +34,7 @@ export function parseOpenLoopWakeAt(params: {
   if (!raw) return null;
   const timezone = normalizeScheduledTimezone(params.timezone ?? null);
   try {
-    return parseScheduledSendAt(raw, timezone, params.from ?? new Date());
+    return parseScheduledSendAt(raw, params.from ?? new Date(), timezone);
   } catch {
     const absolute = new Date(raw);
     return Number.isNaN(absolute.getTime()) ? null : absolute;
@@ -45,7 +45,7 @@ export function defaultCareFollowUpWake(from = new Date(), timezone?: string): D
   const tz = normalizeScheduledTimezone(timezone ?? null);
   const tomorrow = new Date(from.getTime() + 24 * 60 * 60 * 1000);
   try {
-    return parseScheduledSendAt(`${DEFAULT_WAKE_HOUR}am`, tz, tomorrow);
+    return parseScheduledSendAt(`${DEFAULT_WAKE_HOUR}am`, tomorrow, tz);
   } catch {
     const wake = new Date(from.getTime() + 24 * 60 * 60 * 1000);
     wake.setHours(DEFAULT_WAKE_HOUR, 0, 0, 0);
@@ -371,7 +371,7 @@ async function resumeBrowserForOpenLoop(loop: DoeDtcOpenLoopRow): Promise<boolea
   if (!loop.browser_job_id) return false;
   const job = await getDoeDtcBrowserJobById(loop.browser_job_id);
   if (!job) return false;
-  if (job.status === "done" || job.status === "failed" || job.status === "cancelled") {
+  if (job.status === "committed" || job.status === "failed" || job.status === "cancelled") {
     return false;
   }
   if (job.status === "open" || job.status === "needs_login" || job.status === "pending_confirm") {

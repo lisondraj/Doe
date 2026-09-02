@@ -86,10 +86,12 @@ export async function GET(request: Request) {
   }
 
   const dueLoops = await listDueOpenLoops();
-  const seedUserIds = new Set<string>([
-    ...dueLoops.map((loop) => loop.user_id),
-    ...(await listCareSeedCandidateUserIds().catch(() => [])),
-  ]);
+  const seedUserIds = Array.from(
+    new Set<string>([
+      ...dueLoops.map((loop) => loop.user_id),
+      ...(await listCareSeedCandidateUserIds().catch(() => [])),
+    ]),
+  );
   for (const userId of seedUserIds) {
     try {
       const snapshot = await getDoeDtcProfileSnapshot(userId);

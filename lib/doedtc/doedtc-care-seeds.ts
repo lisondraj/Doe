@@ -233,5 +233,5 @@ export async function listCareSeedCandidateUserIds(): Promise<string[]> {
   ]) {
     if (row.user_id) ids.add(row.user_id);
   }
-  return [...ids];
+  return Array.from(ids);
 }
