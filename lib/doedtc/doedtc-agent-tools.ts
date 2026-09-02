@@ -905,7 +905,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "send_profile_link",
       description:
-        "Send the user's Doe profile or tracker link. Call only when they asked for that link. For a named tracker pass tab=trackers and artifact id. For a family member, pass member_id or member_name.",
+        "Send the user's Doe profile or tracker link. Call when they asked for that link, or after a successful chart write so they can see the change. For labs pass tab=results. For meds or conditions pass tab=conditions. For a named tracker pass tab=trackers and artifact id. For a family member, pass member_id or member_name.",
       parameters: {
         type: "object",
         properties: {

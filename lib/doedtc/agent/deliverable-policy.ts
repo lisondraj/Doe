@@ -3,6 +3,24 @@ import { looksLikeIncidentalChartMention } from "@/lib/doedtc/agent/chart-gap";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
 import type { DoeDtcProfileSnapshot } from "@/lib/doedtc/doedtc-types";
 
+const CHART_WRITE_LINK_TOOLS = new Set([
+  "add_medication",
+  "add_condition",
+  "log_result",
+  "log_appointment",
+  "log_family_member",
+  "add_locker_item",
+  "create_profile_artifact",
+  "log_artifact_entry",
+  "update_profile",
+]);
+
+function chartWriteSucceeded(
+  toolsExecuted: DoeDtcAgentToolExecutionRecord[] | undefined,
+): boolean {
+  return (toolsExecuted ?? []).some((row) => row.ok && CHART_WRITE_LINK_TOOLS.has(row.name));
+}
+
 export type DeliverableKind =
   | "profile"
   | "tracker"
@@ -351,7 +369,8 @@ export function applyDeliverablePolicyToTurnState(params: {
     !ask.has("profile") &&
     !ask.has("tracker") &&
     !toolSucceeded(tools, "send_profile_link") &&
-    !toolSucceeded(tools, "create_profile_artifact")
+    !toolSucceeded(tools, "create_profile_artifact") &&
+    !chartWriteSucceeded(tools)
   ) {
     params.turnState.profileUrl = undefined;
   }
@@ -409,6 +428,7 @@ export function shouldHonorStructuredSend(
   if (kind === "share" && toolSucceeded(toolsExecuted, "share_artifact")) return true;
   if (kind === "profile" && toolSucceeded(toolsExecuted, "send_profile_link")) return true;
   if (kind === "tracker" && toolSucceeded(toolsExecuted, "send_profile_link")) return true;
+  if ((kind === "profile" || kind === "tracker") && chartWriteSucceeded(toolsExecuted)) return true;
   if (kind === "guide" && toolSucceeded(toolsExecuted, "create_guide")) return true;
   if (kind === "guide" && toolSucceeded(toolsExecuted, "send_guide_link")) return true;
   if (kind === "prepare" && toolSucceeded(toolsExecuted, "create_preparation")) return true;

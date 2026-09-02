@@ -18,6 +18,13 @@ import {
   addDoeDtcMem0PlaybookNote,
 } from "@/lib/doedtc/doedtc-memory";
 import { clearAgentPending, getAgentPending, setAgentPending } from "@/lib/doedtc/doedtc-pending";
+import { inboundHasAttachments } from "@/lib/doedtc/agent/attachments";
+import {
+  assessChartWrite,
+  attachChartSectionLink,
+  isChartWriteLinkTool,
+  isChartWriteProbeTool,
+} from "@/lib/doedtc/agent/chart-write";
 import {
   doeDtcArtifactShareUrl,
   doeDtcCareUrl,
@@ -193,6 +200,7 @@ export type DoeDtcToolTurnState = {
   preservePendingOffer: boolean;
   assessmentSummary?: string;
   documentParse?: Record<string, unknown>;
+  chartWriteProbe?: string;
 };
 
 export type DoeDtcToolExecutionContext = {
@@ -383,6 +391,55 @@ export async function executeDoeDtcTool(params: {
     }
   }
 
+  if (isChartWriteProbeTool(name)) {
+    const proposedWrites = state.documentParse?.proposed_writes;
+    const hasDocumentWrites =
+      Array.isArray(proposedWrites) && proposedWrites.length > 0;
+    let looksLikeDocumentSave = false;
+    if (name === "log_result" || name === "log_family_member") {
+      const { looksLikeSaveDocumentToOwnChart } = await import(
+        "@/lib/doedtc/agent/document-parse"
+      );
+      looksLikeDocumentSave = looksLikeSaveDocumentToOwnChart(ctx.inboundText);
+      if (name === "log_family_member") {
+        const pending = await getAgentPending(ctx.user.id);
+        if (
+          pending &&
+          (pending.kind === "parse_document" || pending.args.document_identity === true)
+        ) {
+          looksLikeDocumentSave = true;
+        }
+      }
+    }
+    const assessment = assessChartWrite({
+      tool: name,
+      args,
+      inboundText: ctx.inboundText,
+      hasDocumentWrites: hasDocumentWrites || looksLikeDocumentSave,
+      hasAttachments:
+        inboundHasAttachments(ctx.inboundText) ||
+        (ctx.attachmentContext?.thisTurnFileIds.length ?? 0) > 0,
+    });
+    if (!assessment.complete) {
+      await setAgentPending({
+        userId: ctx.user.id,
+        kind: "chart_write",
+        commitTool: name,
+        args: { ...args, chart_write: true },
+        summary: assessment.probe,
+      });
+      const output = {
+        ok: false,
+        needs_more: true,
+        user_message: assessment.probe,
+        missing: assessment.missing,
+      };
+      state.chartWriteProbe = assessment.probe;
+      recordToolExecution(state, { name, ok: false, error: assessment.probe });
+      return output;
+    }
+  }
+
   const started = Date.now();
   let output: Record<string, unknown>;
   try {
@@ -393,6 +450,33 @@ export async function executeDoeDtcTool(params: {
   }
 
   const ok = output.ok !== false;
+  if (ok && isChartWriteLinkTool(name) && !state.profileUrl) {
+    const artifact =
+      name === "log_artifact_entry"
+        ? String(output.artifact_id ?? args.artifact_id ?? "").trim() || undefined
+        : name === "create_profile_artifact"
+          ? String(output.id ?? "").trim() || undefined
+          : undefined;
+    const member =
+      typeof output.subject_user_id === "string"
+        ? output.subject_user_id
+        : typeof args.member_id === "string"
+          ? args.member_id
+          : undefined;
+    state.profileUrl = attachChartSectionLink({
+      careToken: ctx.user.care_token,
+      tool: name,
+      artifact,
+      member: member && member !== ctx.user.id ? member : undefined,
+    });
+    state.profileLinkCalls = (state.profileLinkCalls ?? 0) + 1;
+  }
+  if (ok && isChartWriteLinkTool(name)) {
+    const pending = await getAgentPending(ctx.user.id);
+    if (pending?.kind === "chart_write" || pending?.args.chart_write === true) {
+      await clearAgentPending(ctx.user.id);
+    }
+  }
   const errorText = typeof output.error === "string" ? output.error : undefined;
   recordToolExecution(state, { name, ok, error: errorText });
   void logDoeDtcAgentToolCall({

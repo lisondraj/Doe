@@ -1,9 +1,13 @@
 import {
   applyDeliverablePolicyToTurnState,
+  askedForPrivateAppLink,
   lastOutboundBodyFromMessages,
+  looksLikeChartRead,
   priorInboundBodiesFromMessages,
   resolveDeliverableInboundText,
 } from "@/lib/doedtc/agent/deliverable-policy";
+import { resumeChartWritePending } from "@/lib/doedtc/agent/chart-write-resume";
+import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
 import {
   buildLegacyVisionUserContent,
   enrichTranscriptBodiesForAgent,
@@ -93,6 +97,7 @@ import {
   clearAgentPending,
   formatAgentPendingForPrompt,
   getAgentPending,
+  isChartWritePending,
   isCommitPending,
   isDocumentIdentityPending,
   isRunStatePending,
@@ -903,6 +908,29 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       pending: pendingRow,
     });
     if (resolved) return resolved;
+  }
+
+  if (
+    pendingRow &&
+    isChartWritePending(pendingRow) &&
+    !parseDecline(params.inboundText)
+  ) {
+    if (
+      looksLikeChartRead(params.inboundText) ||
+      askedForPrivateAppLink(params.inboundText) ||
+      looksLikeBrowseAsk(params.inboundText)
+    ) {
+      await clearAgentPending(params.user.id);
+      pendingRow = null;
+    } else {
+      const resumed = await resumeChartWritePending({
+        user: params.user,
+        inboundText: params.inboundText,
+        pending: pendingRow,
+      });
+      if (resumed) return resumed;
+      pendingRow = await getAgentPending(params.user.id);
+    }
   }
 
   if (pendingRow && parseDecline(params.inboundText)) {

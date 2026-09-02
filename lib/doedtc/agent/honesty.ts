@@ -2,6 +2,11 @@ import { randomUUID } from "node:crypto";
 
 import { askedAboutActiveWork, looksLikeDeferredWorkClaim } from "@/lib/doedtc/agent/active-work";
 import {
+  attachChartSectionLink,
+  chartWriteSucceeded,
+  isChartWriteLinkTool,
+} from "@/lib/doedtc/agent/chart-write";
+import {
   askedForDeliverable,
   askedForPrivateAppLink,
   buildPrivateAppLink,
@@ -222,6 +227,15 @@ export async function reconcileReplyClaims(params: {
   let profileUrl = params.state.profileUrl;
   let sessionUrl = params.state.sessionUrl;
   let guideUrl = params.state.guideUrl;
+  if (params.state.chartWriteProbe) {
+    return {
+      replyText: params.state.chartWriteProbe,
+      listenUrl,
+      profileUrl: undefined,
+      sessionUrl,
+      guideUrl,
+    };
+  }
   const build = interpretBuildIntent({
     inboundText: params.inboundText,
     snapshot: params.snapshot,
@@ -299,6 +313,18 @@ export async function reconcileReplyClaims(params: {
       inboundText: params.inboundText,
       snapshot: params.snapshot,
     });
+  }
+
+  if (!profileUrl && chartWriteSucceeded(params.toolsExecuted)) {
+    const write = params.toolsExecuted.find(
+      (row) => row.ok && isChartWriteLinkTool(row.name),
+    );
+    if (write) {
+      profileUrl = attachChartSectionLink({
+        careToken: params.user.care_token,
+        tool: write.name,
+      });
+    }
   }
 
   if (

@@ -7,7 +7,8 @@ export type DoeDtcAgentPendingKind =
   | "start_habit_workflow"
   | "start_workflow"
   | "send_family_invite"
-  | "parse_document";
+  | "parse_document"
+  | "chart_write";
 
 export type DoeDtcAgentPendingRow = {
   user_id: string;
@@ -46,7 +47,14 @@ export function isRunStatePending(args: Record<string, unknown>): boolean {
 /** True when pending stores commit args (not just a serialized SDK RunState). */
 export function isCommitPending(args: Record<string, unknown>): boolean {
   if (isRunStatePending(args)) return false;
+  if (args.chart_write === true) return false;
   return Object.keys(args).length > 0;
+}
+
+export function isChartWritePending(
+  pending: Pick<DoeDtcAgentPendingRow, "kind" | "args">,
+): boolean {
+  return pending.kind === "chart_write" || pending.args.chart_write === true;
 }
 
 export function isDocumentIdentityPending(args: Record<string, unknown>): boolean {
@@ -97,6 +105,10 @@ export function formatAgentPendingForPrompt(pending: DoeDtcAgentPendingRow): str
         ? pending.args.patient_name.trim()
         : "someone";
     return `Pending document: the name on the page is ${name}, not the user and not on the household. If they say it is them, save to their chart. If they name who it is, add that person if needed, ask/send a household invite, then save. If they decline or will not say, tell them you cannot add this photo. Do not claim it is already saved.`;
+  }
+
+  if (isChartWritePending(pending)) {
+    return `Pending chart details: ${pending.summary}. They just answered. Call ${pending.commit_tool} with the stored args plus what they just said. Ask only for what is still missing. Never invent a name, date, or value. After the write succeeds, the matching chart tab link is sent automatically as a separate iMessage.`;
   }
 
   const argsForPrompt = sanitizePendingArgsForPrompt(pending.args);

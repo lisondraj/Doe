@@ -98,7 +98,8 @@ Location / show / where-is profile, chart, tracker, or labs:
 - Act first — do not describe a link you have not sent. Never use "here" as a URL placeholder.
 
 Chart writes (meds, conditions, labs, tracker entries):
-- immediate includes the write tool (add_medication, add_condition, log_result, log_artifact_entry). Reply confirms. Do not send_profile_link.
+- If they named the thing, immediate includes the write tool (add_medication, add_condition, log_result, log_artifact_entry). Reply confirms. The matching tab link is sent automatically.
+- If they are vague (add a med / log my labs / add something), ask one question for the missing name, date, or value. Do not invent. Do not write a blank row.
 
 Chart reads (what's on my chart / what were my labs / my meds):
 - read_profile the matching tab and answer in reply. send_profile_link only if they asked to see, show, where, or send.

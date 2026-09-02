@@ -12,10 +12,14 @@ import {
   resolveDoeReplyDeliverables,
 } from "@/lib/doedtc/agent/deliverable-resolver";
 import {
+  askedForPrivateAppLink,
   lastOutboundBodyFromMessages,
+  looksLikeChartRead,
   priorInboundBodiesFromMessages,
   resolveDeliverableInboundText,
 } from "@/lib/doedtc/agent/deliverable-policy";
+import { resumeChartWritePending } from "@/lib/doedtc/agent/chart-write-resume";
+import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { finalizeAgentReply } from "@/lib/doedtc/agent/finalize-agent-reply";
 import {
   buildRefusalRetrySystemMessage,
@@ -69,6 +73,7 @@ import {
   extractRunStateSerialized,
   formatAgentPendingForPrompt,
   getAgentPending,
+  isChartWritePending,
   isCommitPending,
   isDocumentIdentityPending,
   isRunStatePending,
@@ -526,6 +531,29 @@ export async function runDoeDtcAgentTurnSdk(params: {
       pending: pendingRow,
     });
     if (resolved) return resolved;
+  }
+
+  if (
+    pendingRow &&
+    isChartWritePending(pendingRow) &&
+    !parseDecline(params.inboundText)
+  ) {
+    if (
+      looksLikeChartRead(params.inboundText) ||
+      askedForPrivateAppLink(params.inboundText) ||
+      looksLikeBrowseAsk(params.inboundText)
+    ) {
+      await clearAgentPending(params.user.id);
+      pendingRow = null;
+    } else {
+      const resumed = await resumeChartWritePending({
+        user: params.user,
+        inboundText: params.inboundText,
+        pending: pendingRow,
+      });
+      if (resumed) return resumed;
+      pendingRow = await getAgentPending(params.user.id);
+    }
   }
 
   if (pendingRow && parseDecline(params.inboundText)) {

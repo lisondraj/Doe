@@ -229,6 +229,16 @@ describe("structured send and leftover URLs", () => {
     });
     assert.equal(turnState.profileUrl, "https://doe.care/app?t=x&tab=trackers");
   });
+
+  it("keeps a chart tab URL after a successful write", () => {
+    const turnState = { profileUrl: "https://doe.care/app?t=x&tab=conditions" };
+    applyDeliverablePolicyToTurnState({
+      inboundText: "add metformin to my chart",
+      turnState,
+      toolsExecuted: [{ name: "add_medication", ok: true }],
+    });
+    assert.equal(turnState.profileUrl, "https://doe.care/app?t=x&tab=conditions");
+  });
 });
 
 describe("honesty send claims", () => {

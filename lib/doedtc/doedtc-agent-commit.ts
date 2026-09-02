@@ -286,8 +286,19 @@ export async function executeAgentPendingCommit(params: {
         if (!resolved) throw new Error("Could not save that photo.");
         return { ok: true, replyHint: resolved.replyText };
       }
-      default:
+      default: {
+        if (params.pending.kind === "chart_write" || params.pending.args.chart_write === true) {
+          const { resumeChartWritePending } = await import("@/lib/doedtc/agent/chart-write-resume");
+          const resumed = await resumeChartWritePending({
+            user: params.user,
+            inboundText: "yes",
+            pending: params.pending,
+          });
+          if (!resumed) throw new Error("Still missing chart details.");
+          return { ok: true, replyHint: resumed.replyText, profileUrl: resumed.profileUrl };
+        }
         throw new Error(`Unknown pending commit tool: ${params.pending.commit_tool}`);
+      }
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not complete that action.";

@@ -150,17 +150,17 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   cancel_appointment:
     "cancel_appointment — remove an appointment they no longer have. appointment_id from Appointments log.",
   add_medication:
-    "add_medication — add a med they take or ask to put on the chart. Never remember_fact for meds. Confirm in the reply. Do not send_profile_link after adding unless they asked to see the chart. If correcting an existing med, use update_medication — not a second add.",
+    "add_medication — add a med they take or ask to put on the chart. Never remember_fact for meds. Need a real medication name. If they are vague, ask which one. Confirm in the reply. The conditions tab link is sent automatically after a successful add. If correcting an existing med, use update_medication — not a second add.",
   update_medication:
     "update_medication — rename/replace a med on profile (from → to). Do not add_medication a duplicate.",
   remove_medication: "remove_medication — remove a med they stopped. Name from profile or conditions tab read.",
   add_condition:
-    "add_condition — add a diagnosis/condition they have or ask to put on the chart. Never remember_fact for conditions. Confirm in the reply — no consolation profile link. Correct with update_condition, not a second add.",
+    "add_condition — add a diagnosis/condition they have or ask to put on the chart. Never remember_fact for conditions. Need a real condition name. If they are vague, ask which one. Confirm in the reply. The conditions tab link is sent automatically after a successful add. Correct with update_condition, not a second add.",
   update_condition:
     "update_condition — rename/replace a condition (from → to). Do not add_condition a duplicate.",
   remove_condition: "remove_condition — remove a condition that no longer applies.",
   log_result:
-    "log_result — log a lab/imaging result they report. title is the TEST name (A1C, Liver function test), never their name. Never ask them for a title. If they say \"title is James\" they mean they are James. Date from the report or what they said. Not for symptoms — use log_symptoms.",
+    "log_result — log a lab/imaging result they report. title is the TEST name (A1C, Liver function test), never their name. Never ask them for a title. If they say \"title is James\" they mean they are James. Need the test, a value, and a date unless a document is already parsed. If they are vague, ask one question. The results tab link is sent automatically after a successful add. Not for symptoms — use log_symptoms.",
   update_result:
     "update_result — edit title, date, source, or summary on a logged result. result_id from read_profile results tab.",
   remove_result:
@@ -280,7 +280,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   use_thread_reply:
     "use_thread_reply — occasionally reply in-thread for direct answers (~1 in 3 eligible turns).",
   send_profile_link:
-    "send_profile_link — private app/tracker link only when they asked to see it (send/show/where is/need + tracker, profile, chart, or labs). Pass tab=results for labs, tab=trackers + artifact for a tracker. Never send after add_medication, add_condition, log_result, log_artifact_entry, assessment, or as a consolation prize. Never use \"here\" as a URL placeholder.",
+    "send_profile_link — private app/tracker link when they asked to see it (send/show/where is/need + tracker, profile, chart, or labs), or after a successful chart write to that tab. Pass tab=results for labs, tab=conditions for meds, tab=trackers + artifact for a tracker. Never as a consolation prize. Never use \"here\" as a URL placeholder.",
 };
 
 function tier2Enabled(signals: DoeAgentPromptSignals | undefined, key: keyof DoeAgentPromptSignals): boolean {
@@ -295,7 +295,8 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
     blocks.push(`Pending confirm (active):
 - User yes/ok/confirm → call the commit tool with stored args — do not propose_* again.
 - User no/cancel → clear pending; do not re-ask the same confirmation.
-- save_guide pending: create_guide already sent link; yes runs save_guide.`);
+- save_guide pending: create_guide already sent link; yes runs save_guide.
+- Chart write pending (need more details): use what they just said to fill the stored args, then call the write tool. Ask only for what is still missing. Never invent a name, date, or value.`);
   }
 
   if (tier2Enabled(signals, "hasTrackers")) {
@@ -308,7 +309,7 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
   blocks.push(`How-to / tracker confusion (always):
 - "How do I take X" / don't know how → list_guides first; reuse + send_guide_link if a match exists, otherwise create_guide and send the link. Ask once if they want it saved.
 - "Where is my tracker" / profile / chart / labs / need / show me → send_profile_link (tab=results when labs). Act first, then one finished reply. Do not say "here" — the link is a separate iMessage.
-- Add/log a med, condition, lab, or tracker entry → write tool, confirm in chat. Do not send_profile_link.
+- Add/log a med, condition, lab, or tracker entry → if they named it, write tool and confirm. If they are vague, ask one question. After a successful write the matching tab link is sent automatically. If a write tool returns user_message, use that exact wording.
 - "What were my labs" / what's on my chart / my meds → read_profile that tab and answer. Link only if they also asked to see/show/where.
 - "Help me track X" / track my X with no matching tracker → create_profile_artifact, then send the link.
 - Primary action first, then at most one complete offer (save the guide, same for a sibling).`);

@@ -131,7 +131,26 @@ describe("agent honesty invariants", () => {
     assert.equal(reconciled.profileUrl, undefined);
   });
 
-  it("does not auto-send a link after a chart write", async () => {
+  it("uses the chart-write probe instead of a false saved claim", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText: "add a med",
+      replyText: "Added that to your chart.",
+      state: { chartWriteProbe: "Which medication should I add?" } as never,
+      toolsExecuted: [{ name: "add_medication", ok: false, error: "Which medication should I add?" }],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.equal(reconciled.replyText, "Which medication should I add?");
+    assert.equal(reconciled.profileUrl, undefined);
+  });
+
+  it("sends the matching chart tab after a successful write", async () => {
     const user = {
       id: "user-1",
       care_token: "care-token",
@@ -146,7 +165,8 @@ describe("agent honesty invariants", () => {
       snapshot: { artifacts: [], guides: [] } as never,
     });
 
-    assert.equal(reconciled.profileUrl, undefined);
+    assert.ok(reconciled.profileUrl);
+    assert.match(reconciled.profileUrl!, /tab=conditions/);
   });
 
   it("auto-sends results tab for a labs location ask", async () => {
