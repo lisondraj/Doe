@@ -1,4 +1,4 @@
-import { askedForPrivateAppLink, interpretBuildIntent, outboundLooksLikeDeliverableSend } from "@/lib/doedtc/agent/deliverable-policy";
+import { askedForPrivateAppLink, interpretBuildIntent, looksLikeSendFollowUp, outboundLooksLikeDeliverableSend } from "@/lib/doedtc/agent/deliverable-policy";
 import { looksLikeWorkingAck } from "@/lib/doedtc/agent/active-work";
 import { DOEDTC_LINQ } from "@/lib/doedtc/doedtc-copy";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
@@ -129,6 +129,7 @@ export function shouldAllowProfileLink(params: {
 }): boolean {
   if (params.profileLinkCalls >= 1) return false;
   if (askedForPrivateAppLink(params.inboundText)) return true;
+  if (looksLikeSendFollowUp(params.inboundText)) return true;
   return (
     interpretBuildIntent({ inboundText: params.inboundText }) === "tracker" &&
     Boolean(params.state.profileUrl)

@@ -76,7 +76,7 @@ const LINK_ASK_RE =
   /\b(send|sending|share|shared|text me|forward|dm me|link|url|open|get|give me|where(?:'?s| is| are)|need|show me|show|go(?:\s+)?to|goto)\b/i;
 
 const PROFILE_NOUN_RE =
-  /\b(profile|dashboard|appointments?\s*page|my chart|my app|chart|labs?|lab results?|results?|bloodwork|blood\s+work)\b/i;
+  /\b(profile|dashboard|appointments?\s*page|my chart|my app|chart|labs?|lab results?|results?|bloodwork|blood\s+work|lockers?|credentials?|family(?:\s+(?:tab|page|section|link))?|conditions?(?:\s+(?:tab|page|section|link))?|feedback)\b/i;
 const TRACKER_NOUN_RE =
   /\b(trackers?|weight(?:\s+log|\s+tracker)|artifact|log\s+link|(?:my\s+)?shots)\b/i;
 const TRACKER_SEND_NOUN_RE =
@@ -88,6 +88,102 @@ const PREPARE_NOUN_RE = /\b(prep(?:aration)?|visit summary)\b/i;
 const SESSION_NOUN_RE = /\b(live view|watch|sandbox|session link)\b/i;
 const SHARE_NOUN_RE = /\b(public(?:\s+link)?|share(?:d)?\s+link|read-?only link)\b/i;
 const VAULT_NOUN_RE = /\b(vault|sign-?in link)\b/i;
+
+/** Profile tabs and other in-app surfaces a user can ask to be sent. Specific before generic. */
+const SENDABLE_SURFACES: Array<{ re: RegExp; noun: string }> = [
+  { re: /\blockers?\b/i, noun: "lockers" },
+  { re: /\b(?:credentials?|saved passwords?)\b/i, noun: "lockers" },
+  { re: /\bfamily\b/i, noun: "family" },
+  { re: /\bconditions?\b/i, noun: "conditions" },
+  { re: /\bappointments?\b/i, noun: "appointments" },
+  { re: /\btrackers?\b/i, noun: "trackers" },
+  { re: /\bguides?\b/i, noun: "guides" },
+  { re: /\bdashboard\b/i, noun: "dashboard" },
+  { re: /\b(?:labs?|lab results?|results?|bloodwork|blood\s+work)\b/i, noun: "labs" },
+  { re: /\bfeedback\b/i, noun: "feedback" },
+  { re: /\blisten(?:\s+link)?\b/i, noun: "listen" },
+  { re: /\b(?:chart|profile)\b/i, noun: "profile" },
+];
+
+export function extractSendableSurface(text: string): { noun: string } | null {
+  const trimmed = text.trim();
+  if (!trimmed) return null;
+  for (const row of SENDABLE_SURFACES) {
+    if (row.re.test(trimmed)) return { noun: row.noun };
+  }
+  return null;
+}
+
+const SHORT_DELIVERABLE_FOLLOWUP_RE =
+  /^(?:\?+|the link|send it|send that|that link|link please|please send(?: it)?)\.?$/i;
+
+export function isShortDeliverableFollowUp(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed || trimmed.length > 48) return false;
+  return SHORT_DELIVERABLE_FOLLOWUP_RE.test(trimmed);
+}
+
+const SEND_FOLLOWUP_STOP = new Set([
+  "can",
+  "u",
+  "you",
+  "could",
+  "would",
+  "please",
+  "hey",
+  "ok",
+  "okay",
+  "send",
+  "text",
+  "share",
+  "forward",
+  "me",
+  "the",
+  "a",
+  "an",
+  "that",
+  "this",
+  "it",
+  "there",
+  "to",
+  "for",
+  "link",
+  "url",
+  "my",
+  "your",
+  "now",
+]);
+
+/**
+ * "Can u send me link to that" / "send me the link" — a send ask that
+ * points at something already in the thread, not a named new destination.
+ */
+export function looksLikeSendFollowUp(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed || trimmed.length > 90) return false;
+  if (isShortDeliverableFollowUp(trimmed)) return false;
+  if (looksLikeChartWrite(trimmed)) return false;
+  if (!/\b(?:send|text|share|forward)\b/i.test(trimmed)) return false;
+  const linkish = /\b(?:link|url)\b/i.test(trimmed);
+  const pronoun = /\b(?:that|it|this)\b/i.test(trimmed);
+  if (!linkish && !pronoun) return false;
+  const words = trimmed
+    .split(/\s+/)
+    .map((word) => word.toLowerCase().replace(/[?.!,]/g, ""))
+    .filter(Boolean);
+  if (words.length > 12) return false;
+  const extra = words.filter((word) => !SEND_FOLLOWUP_STOP.has(word));
+  const named = extractSendableSurface(trimmed);
+  if (extra.length > 0 && !named) return false;
+  if (extra.length > 0 && named && !pronoun) return false;
+  return true;
+}
+
+function outboundLooksLikeExternalBrowse(body: string): boolean {
+  return /\b(?:screenshot|from (?:the )?(?:site|page)|google search|search results?)\b/i.test(
+    body,
+  );
+}
 
 const HOW_TO_RE =
   /\b(?:how (?:do i|to|can i)|don'?t know how|show me how|instructions?|how-?to)\b/i;
@@ -270,15 +366,6 @@ export function askedForDeliverable(inboundText: string, kind: DeliverableKind):
   return interpretDeliverableAsk(inboundText).has(kind);
 }
 
-const SHORT_DELIVERABLE_FOLLOWUP_RE =
-  /^(?:\?+|the link|send it|send that|that link|link please|please send(?: it)?)\.?$/i;
-
-export function isShortDeliverableFollowUp(text: string): boolean {
-  const trimmed = text.trim();
-  if (!trimmed || trimmed.length > 48) return false;
-  return SHORT_DELIVERABLE_FOLLOWUP_RE.test(trimmed);
-}
-
 function priorInboundHadDeliverableAsk(body: string): boolean {
   return (
     askedForPrivateAppLink(body) ||
@@ -299,14 +386,23 @@ export function outboundLooksLikeDeliverableSend(body: string): boolean {
   );
 }
 
-/** Short follow-ups (? / send it) continue the last deliverable ask in the thread. */
+function bindSendFollowUpToSurface(body: string): string | null {
+  const surface = extractSendableSurface(body);
+  if (!surface) return null;
+  if (surface.noun === "listen") return "send me the listen link";
+  return `send me the ${surface.noun} link`;
+}
+
+/** Short follow-ups (? / send it / send me a link to that) continue the last sendable surface. */
 export function resolveDeliverableInboundText(params: {
   inboundText: string;
   priorInboundBodies?: string[];
   lastOutboundBody?: string | null;
 }): string {
   const trimmed = params.inboundText.trim();
-  if (!isShortDeliverableFollowUp(trimmed)) return trimmed;
+  const shortFollowUp = isShortDeliverableFollowUp(trimmed);
+  const sendFollowUp = looksLikeSendFollowUp(trimmed);
+  if (!shortFollowUp && !sendFollowUp) return trimmed;
 
   const lastOutbound = params.lastOutboundBody?.trim() ?? "";
   const questionPoke = /^\?+$/.test(trimmed);
@@ -323,9 +419,31 @@ export function resolveDeliverableInboundText(params: {
     .filter(Boolean)
     .reverse();
 
+  const bindFromOutbound =
+    lastOutbound && !outboundLooksLikeExternalBrowse(lastOutbound)
+      ? bindSendFollowUpToSurface(lastOutbound)
+      : null;
+
+  if (sendFollowUp) {
+    if (bindFromOutbound) return bindFromOutbound;
+    for (const body of prior) {
+      if (body === trimmed) continue;
+      const bound = bindSendFollowUpToSurface(body);
+      if (bound) return bound;
+      if (priorInboundHadDeliverableAsk(body)) return body;
+    }
+    return trimmed;
+  }
+
   for (const body of prior) {
     if (body === trimmed) continue;
     if (priorInboundHadDeliverableAsk(body)) return body;
+  }
+  if (bindFromOutbound) return bindFromOutbound;
+  for (const body of prior) {
+    if (body === trimmed) continue;
+    const bound = bindSendFollowUpToSurface(body);
+    if (bound) return bound;
   }
 
   return trimmed;
@@ -360,9 +478,15 @@ export function inferAppLinkOptions(params: {
     };
   }
   if (GUIDE_NOUN_RE.test(params.inboundText)) return { tab: "guides" };
+  if (/\blockers?|credentials?|saved passwords?\b/i.test(params.inboundText)) {
+    return { tab: "locker" };
+  }
+  if (/\bfamily\b/i.test(params.inboundText)) return { tab: "family" };
+  if (/\bconditions?\b/i.test(params.inboundText)) return { tab: "conditions" };
   if (/\b(?:labs?|results?|bloodwork|blood\s+work)\b/i.test(params.inboundText)) return { tab: "results" };
   if (/\bappointments?\b/i.test(params.inboundText)) return { tab: "appointments" };
   if (/\bdashboard\b/i.test(params.inboundText)) return { tab: "dashboard" };
+  if (/\bfeedback\b/i.test(params.inboundText)) return { tab: "feedback" };
   return {};
 }
 
@@ -418,6 +542,8 @@ export function applyDeliverablePolicyToTurnState(params: {
     params.turnState.profileUrl &&
     !ask.has("profile") &&
     !ask.has("tracker") &&
+    !askedForPrivateAppLink(params.inboundText) &&
+    !looksLikeSendFollowUp(params.inboundText) &&
     !toolSucceeded(tools, "send_profile_link") &&
     !toolSucceeded(tools, "create_profile_artifact") &&
     !shouldSendChartWriteLink({
@@ -471,6 +597,7 @@ export function shouldHonorStructuredSend(
   snapshot?: Pick<DoeDtcProfileSnapshot, "artifacts" | "guides"> | null,
 ): boolean {
   if (askedForDeliverable(inboundText, kind)) return true;
+  if ((kind === "profile" || kind === "tracker") && looksLikeSendFollowUp(inboundText)) return true;
   const build = interpretBuildIntent({ inboundText, snapshot });
   if (kind === "profile" && askedForDeliverable(inboundText, "tracker")) return true;
   if (kind === "tracker" && askedForDeliverable(inboundText, "profile")) return true;

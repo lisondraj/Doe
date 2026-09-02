@@ -10,6 +10,7 @@ import {
   isShortDeliverableFollowUp,
   looksLikeChartRead,
   looksLikeChartWrite,
+  looksLikeSendFollowUp,
   isExplicitChartWriteAsk,
   isIncidentalChartWrite,
   resolveDeliverableInboundText,
@@ -30,6 +31,8 @@ describe("deliverable ask detection", () => {
     assert.equal(askedForPrivateAppLink("Where are my labs"), true);
     assert.equal(askedForPrivateAppLink("show me my lab results"), true);
     assert.equal(askedForPrivateAppLink("Where's my chart"), true);
+    assert.equal(askedForPrivateAppLink("send me the lockers link"), true);
+    assert.equal(askedForPrivateAppLink("Can u send me link to that"), false);
   });
 
   it("does not treat routine health or logging turns as link asks", () => {
@@ -126,6 +129,21 @@ describe("deliverable ask detection", () => {
     assert.equal(options.tab, "results");
   });
 
+  it("infers locker and other profile tabs from inbound", () => {
+    assert.equal(
+      inferAppLinkOptions({ inboundText: "send me the lockers link", snapshot: { artifacts: [] } as never }).tab,
+      "locker",
+    );
+    assert.equal(
+      inferAppLinkOptions({ inboundText: "send me the family link", snapshot: { artifacts: [] } as never }).tab,
+      "family",
+    );
+    assert.equal(
+      inferAppLinkOptions({ inboundText: "send me the conditions link", snapshot: { artifacts: [] } as never }).tab,
+      "conditions",
+    );
+  });
+
   it("binds short follow-ups to the last deliverable ask", () => {
     assert.equal(isShortDeliverableFollowUp("?"), true);
     assert.equal(isShortDeliverableFollowUp("send it"), true);
@@ -166,6 +184,46 @@ describe("deliverable ask detection", () => {
         lastOutboundBody: "https://doe.care/app?t=x",
       }),
       "Where's my profile",
+    );
+  });
+
+  it("binds send-me-a-link-to-that to the last app surface in the thread", () => {
+    assert.equal(looksLikeSendFollowUp("Can u send me link to that"), true);
+    assert.equal(looksLikeSendFollowUp("send me the link"), true);
+    assert.equal(looksLikeSendFollowUp("send me a link to kaiser permanente"), false);
+    assert.equal(looksLikeSendFollowUp("I have a headache"), false);
+    assert.equal(
+      resolveDeliverableInboundText({
+        inboundText: "Can u send me link to that",
+        priorInboundBodies: ["I see lockers in my profile"],
+        lastOutboundBody:
+          "Lockers in your Doe profile refer to a secure place where sensitive information could be stored.",
+      }),
+      "send me the lockers link",
+    );
+    assert.equal(
+      resolveDeliverableInboundText({
+        inboundText: "send me the link",
+        priorInboundBodies: ["I see lockers in my profile"],
+      }),
+      "send me the lockers link",
+    );
+    assert.equal(
+      resolveDeliverableInboundText({
+        inboundText: "Can u send me link to that",
+        priorInboundBodies: ["screenshot google.com"],
+        lastOutboundBody: "I'm grabbing a screenshot of the search results now.",
+      }),
+      "Can u send me link to that",
+    );
+    assert.equal(shouldHonorStructuredSend("profile", "Can u send me link to that", []), true);
+    assert.equal(
+      shouldAllowProfileLink({
+        inboundText: "Can u send me link to that",
+        state: { assessmentRan: false, guideUrl: undefined, prepareUrl: undefined, artifactShareUrl: undefined },
+        profileLinkCalls: 0,
+      }),
+      true,
     );
   });
 });
@@ -318,6 +376,13 @@ describe("honesty send claims", () => {
       replyClaimsAction(
         "Sending your weight tracker link now.",
         /\b(send(?:ing)?|here'?s|share)\b.{0,48}\b(tracker|weight)\b|\b(tracker|weight)\b.{0,24}\b(link|url)\b/i,
+      ),
+      true,
+    );
+    assert.equal(
+      replyClaimsAction(
+        "I've sent the link to your profile now.",
+        /\b(?:send(?:ing)?|sent|here'?s|share|i(?:'ve| have) sent)\b.{0,80}\b(?:link|url|profile)\b/i,
       ),
       true,
     );

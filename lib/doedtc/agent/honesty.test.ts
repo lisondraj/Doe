@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   buildRefusalRetrySystemMessage,
   looksLikeRefusal,
+  looksLikeSentLinkClaim,
   reconcileReplyClaims,
   replyClaimsAction,
   shouldRetryEmptyRefusal,
@@ -105,6 +106,53 @@ describe("agent honesty invariants", () => {
       user,
       inboundText,
       replyText: "Your profile is in the app.",
+      state: { toolsExecuted: [] } as never,
+      toolsExecuted: [],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.ok(reconciled.profileUrl);
+  });
+
+  it("sends the locker tab when they ask for a link to that after lockers", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const inboundText = resolveDeliverableInboundText({
+      inboundText: "Can u send me link to that",
+      priorInboundBodies: ["I see lockers in my profile"],
+      lastOutboundBody:
+        "Lockers in your Doe profile refer to a secure place where sensitive information could be stored.",
+    });
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText,
+      replyText: "I've sent the link to your profile now.",
+      state: { toolsExecuted: [] } as never,
+      toolsExecuted: [],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.ok(reconciled.profileUrl);
+    assert.match(reconciled.profileUrl!, /tab=locker/);
+  });
+
+  it("attaches a profile URL when the reply claims the link was sent", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    assert.equal(looksLikeSentLinkClaim("I've sent the link to your profile now."), true);
+    assert.equal(looksLikeSentLinkClaim("I've sent the screenshot."), false);
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText: "Can u send me link to that",
+      replyText: "I've sent the link to your profile now.",
       state: { toolsExecuted: [] } as never,
       toolsExecuted: [],
       snapshot: { artifacts: [], guides: [] } as never,

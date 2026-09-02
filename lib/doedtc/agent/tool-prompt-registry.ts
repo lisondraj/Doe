@@ -280,7 +280,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   use_thread_reply:
     "use_thread_reply — occasionally reply in-thread for direct answers (~1 in 3 eligible turns).",
   send_profile_link:
-    "send_profile_link — private app/tracker link when they asked to see it (send/show/where is/need + tracker, profile, chart, or labs), or after a successful chart write to that tab. Pass tab=results for labs, tab=conditions for meds, tab=trackers + artifact for a tracker. Never as a consolation prize. Never use \"here\" as a URL placeholder.",
+    "send_profile_link — private app/tracker link when they asked to see it (send/show/where is/need + tracker, profile, chart, labs, locker, or another tab), including 'send me a link to that' after you named a tab. Pass tab=locker for lockers, tab=results for labs, tab=conditions for meds, tab=family for family, tab=trackers + artifact for a tracker. Never claim you sent a link unless you called this. Never as a consolation prize. Never use \"here\" as a URL placeholder.",
 };
 
 function tier2Enabled(signals: DoeAgentPromptSignals | undefined, key: keyof DoeAgentPromptSignals): boolean {
@@ -308,7 +308,7 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
 
   blocks.push(`How-to / tracker confusion (always):
 - "How do I take X" / don't know how → list_guides first; reuse + send_guide_link if a match exists, otherwise create_guide and send the link. Ask once if they want it saved.
-- "Where is my tracker" / profile / chart / labs / need / show me → send_profile_link (tab=results when labs). Act first, then one finished reply. Do not say "here" — the link is a separate iMessage.
+- "Where is my tracker" / profile / chart / labs / locker / need / show me / send me a link to that → send_profile_link (matching tab when obvious). Act first, then one finished reply. Do not say "here" — the link is a separate iMessage. Never say you sent it unless you called this.
 - Add/log a med, condition, lab, or tracker entry → if they named it, write tool and confirm. If they are vague, ask one question. After a successful write the matching tab link is sent automatically. If a write tool returns user_message, use that exact wording.
 - "What were my labs" / what's on my chart / my meds → read_profile that tab and answer. Link only if they also asked to see/show/where.
 - "Help me track X" / track my X with no matching tracker → create_profile_artifact, then send the link.

@@ -9,10 +9,13 @@ import {
   askedForDeliverable,
   askedForPrivateAppLink,
   buildPrivateAppLink,
+  extractSendableSurface,
   findMatchingGuide,
+  inferAppLinkOptions,
   interpretBuildIntent,
   looksLikeChartRead,
   looksLikeChartWrite,
+  looksLikeSendFollowUp,
   shouldSendChartWriteLink,
 } from "@/lib/doedtc/agent/deliverable-policy";
 import { inboundHasAttachments } from "@/lib/doedtc/agent/attachments";
@@ -52,7 +55,7 @@ const CLAIM_REGISTRY: Array<{
   {
     id: "profile_link",
     claim:
-      /\b(send(?:ing)?|here'?s|share)\b.{0,48}\b(profile|dashboard|appointments?\s*page)\b|\b(profile|dashboard|appointments?\s*page)\b.{0,24}\b(link|url)\b/i,
+      /\b(?:send(?:ing)?|sent|here'?s|share|i(?:'ve| have) sent)\b.{0,80}\b(?:link|url|profile|dashboard|appointments?\s*page|locker|chart|trackers?)\b|\b(?:profile|dashboard|appointments?\s*page|locker|chart)\b.{0,24}\b(?:link|url)\b|\b(?:the )?(?:link|url) (?:to|for) (?:your |the )?(?:profile|dashboard|locker|chart|trackers?|labs?|results?|family|conditions?)\b/i,
     requiredTools: ["send_profile_link"],
     repair: "profile",
   },
@@ -188,7 +191,26 @@ export function toolSucceeded(
 export function replyClaimsAction(text: string, claim: RegExp): boolean {
   return (
     claim.test(text) &&
-    /\b(link|send(?:ing)?|here'?s|on the way|in a moment|text you|remind you)\b/i.test(text)
+    /\b(link|url|send(?:ing)?|sent|here'?s|on the way|in a moment|text you|remind you)\b/i.test(text)
+  );
+}
+
+/** Model said the link already went out — the URL still has to be attached. */
+export function looksLikeSentLinkClaim(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  if (
+    /\b(?:screenshot|photo|picture|image)\b/i.test(trimmed) &&
+    !/\b(?:link|url|profile|tracker|guide|listen|locker|chart)\b/i.test(trimmed)
+  ) {
+    return false;
+  }
+  return (
+    /\b(?:i(?:'ve| have) sent|i sent|just sent|sent you)\b.{0,100}\b(?:link|url|profile|dashboard|tracker|guide|listen|locker|chart|tab)\b/i.test(
+      trimmed,
+    ) ||
+    /\bsending(?: you)?(?: the| that| this)?(?: link| url)\b/i.test(trimmed) ||
+    /\b(?:here'?s|here is)\b.{0,48}\b(?:the )?(?:link|url)\b/i.test(trimmed)
   );
 }
 
@@ -262,11 +284,27 @@ export async function reconcileReplyClaims(params: {
       const session = await createDoeDtcListenSession({ userId: params.user.id });
       listenUrl = doeDtcListenUrl(params.user.care_token, session.id);
     } else if ((entry.repair === "profile" || entry.repair === "tracker") && !profileUrl) {
-      if (!askedForPrivateAppLink(params.inboundText) && build !== "tracker") continue;
+      if (
+        !askedForPrivateAppLink(params.inboundText) &&
+        !looksLikeSendFollowUp(params.inboundText) &&
+        !extractSendableSurface(replyText) &&
+        build !== "tracker"
+      ) {
+        continue;
+      }
+      const inboundOpts = inferAppLinkOptions({
+        inboundText: params.inboundText,
+        snapshot: params.snapshot,
+      });
+      const replyOpts = inferAppLinkOptions({
+        inboundText: replyText,
+        snapshot: params.snapshot,
+      });
       profileUrl = buildPrivateAppLink({
         careToken: params.user.care_token,
         inboundText: params.inboundText,
         snapshot: params.snapshot,
+        tab: inboundOpts.tab || replyOpts.tab,
       });
     } else if (entry.repair === "guide" && !guideUrl) {
       if (!askedForDeliverable(params.inboundText, "guide") && build !== "guide") continue;
@@ -312,6 +350,29 @@ export async function reconcileReplyClaims(params: {
       careToken: params.user.care_token,
       inboundText: params.inboundText,
       snapshot: params.snapshot,
+    });
+  }
+
+  if (
+    !profileUrl &&
+    looksLikeSentLinkClaim(replyText) &&
+    (askedForPrivateAppLink(params.inboundText) ||
+      looksLikeSendFollowUp(params.inboundText) ||
+      Boolean(extractSendableSurface(replyText)))
+  ) {
+    const inboundOpts = inferAppLinkOptions({
+      inboundText: params.inboundText,
+      snapshot: params.snapshot,
+    });
+    const replyOpts = inferAppLinkOptions({
+      inboundText: replyText,
+      snapshot: params.snapshot,
+    });
+    profileUrl = buildPrivateAppLink({
+      careToken: params.user.care_token,
+      inboundText: params.inboundText,
+      snapshot: params.snapshot,
+      tab: inboundOpts.tab || replyOpts.tab,
     });
   }
 
