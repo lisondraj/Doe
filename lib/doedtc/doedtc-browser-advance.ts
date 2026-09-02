@@ -51,7 +51,6 @@ export function shouldRecoverBrowserJob(
 
 function attachBackgroundWork(work: Promise<unknown>): boolean {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const vercel = require("@vercel/functions") as { waitUntil?: (promise: Promise<unknown>) => void };
     if (typeof vercel.waitUntil === "function") {
       vercel.waitUntil(work);
@@ -62,12 +61,13 @@ function attachBackgroundWork(work: Promise<unknown>): boolean {
   }
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const nextServer = require("next/server") as {
       unstable_after?: (fn: () => void | Promise<void>) => void;
     };
     if (typeof nextServer.unstable_after === "function") {
-      nextServer.unstable_after(() => work);
+      nextServer.unstable_after(async () => {
+        await work;
+      });
       return true;
     }
   } catch {

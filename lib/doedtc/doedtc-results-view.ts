@@ -177,8 +177,8 @@ export function groupLabsByTitle(labs: DoeDtcResultView[]): DoeDtcLabSeries[] {
     buckets.set(key, list);
   }
   const series: DoeDtcLabSeries[] = [];
-  for (const [key, rows] of buckets) {
-    const history = [...rows].sort((a, b) => compareResultsByRecency(b, a));
+  for (const [key, rows] of Array.from(buckets.entries())) {
+    const history = rows.slice().sort((a, b) => compareResultsByRecency(b, a));
     const latest = history[0];
     if (!latest) continue;
     series.push({ key, latest, history });
@@ -196,7 +196,7 @@ export function groupLabsByDrawDate(
     list.push(lab);
     buckets.set(dateKey, list);
   }
-  return [...buckets.entries()]
+  return Array.from(buckets.entries())
     .sort((a, b) => b[0].localeCompare(a[0]))
     .map(([dateKey, rows]) => {
       const firstSource = rows[0]?.source?.trim() || "";
@@ -206,7 +206,7 @@ export function groupLabsByDrawDate(
           : null;
       return {
         dateKey,
-        labs: [...rows].sort((a, b) => labTitleKey(a.title).localeCompare(labTitleKey(b.title))),
+        labs: rows.slice().sort((a, b) => labTitleKey(a.title).localeCompare(labTitleKey(b.title))),
         source,
       };
     });
