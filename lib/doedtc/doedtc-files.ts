@@ -166,10 +166,7 @@ export async function ingestInboundDoeDtcMedia(params: {
         }
       }
 
-      const visionUrl =
-        persistedUrl ??
-        bufferToVisionDataUrl(buffer, mime) ??
-        (sniffVisionMime(buffer, mime) ? sourceUrl : null);
+      const visionUrl = sniffVisionMime(buffer, mime) ? bufferToVisionDataUrl(buffer, mime) : null;
       if (visionUrl) visionUrls.push(visionUrl);
     } catch (error) {
       console.error(

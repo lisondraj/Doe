@@ -1346,6 +1346,10 @@ export async function addDoeDtcResult(params: {
   resultedAt: string;
   source?: string | null;
   summary?: string | null;
+  value?: string | null;
+  unit?: string | null;
+  referenceRange?: string | null;
+  flag?: "high" | "low" | null;
 }): Promise<DoeDtcResultRow> {
   const supabase = createSupabaseAdmin();
   const { data, error } = await supabase
@@ -1356,6 +1360,10 @@ export async function addDoeDtcResult(params: {
       resulted_at: params.resultedAt,
       source: params.source?.trim() || null,
       summary: params.summary?.trim() || null,
+      value: params.value?.trim() || null,
+      unit: params.unit?.trim() || null,
+      reference_range: params.referenceRange?.trim() || null,
+      flag: params.flag ?? null,
     })
     .select("*")
     .single();
@@ -1383,6 +1391,10 @@ export async function updateDoeDtcResult(params: {
   resultedAt?: string;
   source?: string | null;
   summary?: string | null;
+  value?: string | null;
+  unit?: string | null;
+  referenceRange?: string | null;
+  flag?: "high" | "low" | null;
 }): Promise<DoeDtcResultRow> {
   const patch: Record<string, unknown> = {};
   if (params.title !== undefined) {
@@ -1397,6 +1409,10 @@ export async function updateDoeDtcResult(params: {
   }
   if (params.source !== undefined) patch.source = params.source?.trim() || null;
   if (params.summary !== undefined) patch.summary = params.summary?.trim() || null;
+  if (params.value !== undefined) patch.value = params.value?.trim() || null;
+  if (params.unit !== undefined) patch.unit = params.unit?.trim() || null;
+  if (params.referenceRange !== undefined) patch.reference_range = params.referenceRange?.trim() || null;
+  if (params.flag !== undefined) patch.flag = params.flag ?? null;
   if (Object.keys(patch).length === 0) throw new Error("Nothing to update.");
 
   const supabase = createSupabaseAdmin();

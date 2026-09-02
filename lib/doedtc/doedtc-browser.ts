@@ -180,18 +180,17 @@ function warnKernelFailure(action: string, error: unknown): void {
   console.warn(`[doedtc:kernel] ${action} failed: ${redactDoeDtcLogText(message)}`);
 }
 
-function kernelProfileName(userId: string, host: string): string {
-  const safeHost = host.replace(/[^a-z0-9.-]/gi, "-").slice(0, 40);
-  return `doe-${userId.slice(0, 8)}-${safeHost}`.slice(0, 64);
+function kernelProfileName(userId: string): string {
+  return `doe-${userId.slice(0, 12)}`.slice(0, 64);
 }
 
 function shouldSaveKernelProfile(job: DoeDtcBrowserJobRow): boolean {
-  return job.mode === "login" || job.mode === "write" || job.login_attempts > 0;
+  return job.mode === "login" || job.mode === "write" || job.mode === "research" || job.login_attempts > 0;
 }
 
-async function ensureDoeDtcKernelProfile(userId: string, host: string): Promise<string> {
+async function ensureDoeDtcKernelProfile(userId: string): Promise<string> {
   const kernel = getKernel();
-  const name = kernelProfileName(userId, host);
+  const name = kernelProfileName(userId);
 
   try {
     const existing = await kernel.profiles.retrieve(name);
@@ -208,12 +207,12 @@ async function ensureDoeDtcKernelProfile(userId: string, host: string): Promise<
 }
 
 async function attachKernelProfileToJob(job: DoeDtcBrowserJobRow): Promise<DoeDtcBrowserJobRow> {
-  if (job.kernel_profile_id || !job.allowed_host) {
+  if (job.kernel_profile_id) {
     return job;
   }
 
   try {
-    const profileId = await ensureDoeDtcKernelProfile(job.user_id, job.allowed_host);
+    const profileId = await ensureDoeDtcKernelProfile(job.user_id);
     return updateDoeDtcBrowserJob({
       jobId: job.id,
       userId: job.user_id,
@@ -795,6 +794,12 @@ export async function navigateDoeDtcBrowser(params: {
   if (host !== navigatedJob.allowed_host && !isDuckDuckGoBrowseHost(host)) {
     await attachKernelProfileToJob({ ...navigatedJob, allowed_host: host });
   }
+
+  await updateDoeDtcBrowserJob({
+    jobId: navigatedJob.id,
+    userId: params.user.id,
+    patch: { outcome: navigatedJob.outcome },
+  });
 
   return extract;
 }

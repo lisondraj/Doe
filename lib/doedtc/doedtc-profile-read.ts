@@ -2,6 +2,7 @@ import { formatDoeDtcAppointmentWhen } from "@/lib/doedtc/doedtc-appointment-tim
 import { formatArtifactEntryValues } from "@/lib/doedtc/doedtc-artifacts";
 import { getDoeDtcProfileSnapshot } from "@/lib/doedtc/doedtc-db";
 import { doeDtcFindPhoneCountry } from "@/lib/doedtc/doedtc-phone-countries";
+import { formatResultsTab } from "@/lib/doedtc/doedtc-results-read";
 import {
   doeDtcGenderLabel,
   type DoeDtcHealthConnectionStatus,
@@ -81,20 +82,6 @@ function formatAppointmentsTab(snapshot: DoeDtcProfileSnapshot): string {
       if (row.timing_note) parts.push("(approximate)");
       if (row.location) parts.push(`at ${row.location}`);
       if (row.notes) parts.push(`notes: ${row.notes}`);
-      parts.push(`id: ${row.id}`);
-      return `- ${parts.join(" | ")}`;
-    })
-    .join("\n");
-}
-
-function formatResultsTab(snapshot: DoeDtcProfileSnapshot): string {
-  if (snapshot.results.length === 0) return "No lab or imaging results logged.";
-  return snapshot.results
-    .slice(0, 12)
-    .map((row) => {
-      const parts = [row.title, `date: ${row.resulted_at.slice(0, 10)}`];
-      if (row.source) parts.push(`source: ${row.source}`);
-      if (row.summary) parts.push(row.summary);
       parts.push(`id: ${row.id}`);
       return `- ${parts.join(" | ")}`;
     })
@@ -248,6 +235,7 @@ function formatFeedbackTab(snapshot: DoeDtcProfileSnapshot): string {
 export function formatDoeDtcProfileTab(
   snapshot: DoeDtcProfileSnapshot,
   tab: DoeDtcProfileTab,
+  options?: { query?: string | null },
 ): string {
   switch (tab) {
     case "dashboard":
@@ -255,7 +243,7 @@ export function formatDoeDtcProfileTab(
     case "appointments":
       return formatAppointmentsTab(snapshot);
     case "results":
-      return formatResultsTab(snapshot);
+      return formatResultsTab(snapshot, options);
     case "conditions":
       return formatConditionsTab(snapshot);
     case "family":
@@ -330,16 +318,18 @@ export async function readDoeDtcProfileTab(params: {
   userId: string;
   tab: DoeDtcProfileTab;
   viewerUserId?: string;
+  query?: string | null;
 }): Promise<{ tab: DoeDtcProfileTab; content: string }> {
   const snapshot = await getDoeDtcProfileSnapshot(params.userId, {
     viewerUserId: params.viewerUserId ?? params.userId,
   });
   return {
     tab: params.tab,
-    content: formatDoeDtcProfileTab(snapshot, params.tab),
+    content: formatDoeDtcProfileTab(snapshot, params.tab, { query: params.query }),
   };
 }
 
+export { extractLabQueryFromText, formatResultsTab } from "@/lib/doedtc/doedtc-results-read";
 export {
   buildChartFile,
   formatAppointmentsChartReply,

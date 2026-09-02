@@ -137,11 +137,14 @@ export function extractInboundMedia(payload: unknown): InboundMediaAttachment[] 
           ? part.value.trim()
           : "";
     const mime = typeof part.mime_type === "string" ? part.mime_type : undefined;
+    const filename = typeof part.filename === "string" ? part.filename.toLowerCase() : "";
     const looksLikeMedia =
       type === "media" ||
       type === "image" ||
       type === "attachment" ||
       Boolean(mime?.startsWith("image/")) ||
+      mime === "application/pdf" ||
+      filename.endsWith(".pdf") ||
       Boolean(rawUrl && type === "");
     if (!looksLikeMedia) continue;
     const attachmentId = attachmentIdFromMediaPart(part);

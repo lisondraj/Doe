@@ -88,6 +88,10 @@ export type DoeDtcResultRow = {
   resulted_at: string;
   source: string | null;
   summary: string | null;
+  value?: string | null;
+  unit?: string | null;
+  reference_range?: string | null;
+  flag?: "high" | "low" | null;
   created_at: string;
   kind?: DoeDtcResultKind | null;
 };

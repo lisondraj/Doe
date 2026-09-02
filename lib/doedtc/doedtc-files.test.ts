@@ -44,6 +44,36 @@ describe("inbound media ingest helpers", () => {
     assert.equal(media[0]?.url, undefined);
   });
 
+  it("extracts PDF attachments by mime type and filename", () => {
+    const byMime = extractInboundMedia({
+      data: {
+        parts: [
+          {
+            type: "attachment",
+            mime_type: "application/pdf",
+            filename: "labs.pdf",
+            url: "https://cdn.linqapp.com/attachments/labs.pdf",
+          },
+        ],
+      },
+    });
+    assert.equal(byMime.length, 1);
+    assert.equal(byMime[0]?.mime, "application/pdf");
+
+    const byFilename = extractInboundMedia({
+      data: {
+        parts: [
+          {
+            type: "media",
+            filename: "panel.PDF",
+            url: "https://cdn.linqapp.com/attachments/panel.pdf",
+          },
+        ],
+      },
+    });
+    assert.equal(byFilename.length, 1);
+  });
+
   it("builds a jpeg data url for vision fallback", () => {
     const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10]);
     const url = bufferToVisionDataUrl(jpeg, "image/heic");

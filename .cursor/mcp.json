@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp"
+    },
     "mem0": {
       "type": "http",
       "url": "https://mcp.mem0.ai/mcp"

@@ -42,6 +42,7 @@ import {
 import { cancelScheduledText } from "@/lib/doedtc/doedtc-scheduled-db";
 import { cancelWorkflow } from "@/lib/doedtc/doedtc-workflows";
 import { normalizeDoeDtcFamilyRelationship, resolveDoeDtcFamilyMemberName } from "@/lib/doedtc/doedtc-family-relationship";
+import { normalizeLabResultFields } from "@/lib/doedtc/doedtc-lab-ranges";
 import { addDoeDtcMem0Fact } from "@/lib/doedtc/doedtc-memory";
 import { sendDoeDtcFamilyInviteMessage, sendDoeDtcHouseholdAccessRevokedNotice } from "@/lib/doedtc/doedtc-messaging";
 import { DOEDTC_PHONE_COUNTRIES } from "@/lib/doedtc/doedtc-phone-countries";
@@ -255,12 +256,24 @@ export async function handleDoeDtcProfileAction(params: {
       const title = String(params.payload.title ?? "").trim();
       const resultedAt = String(params.payload.resultedAt ?? "").trim();
       if (!title || !resultedAt) throw new Error("Title and date are required.");
+      const normalized = normalizeLabResultFields({
+        title,
+        value: params.payload.value,
+        unit: params.payload.unit,
+        range: params.payload.referenceRange ?? params.payload.reference_range,
+        flag: params.payload.flag,
+        summary: params.payload.summary,
+      });
       await addDoeDtcResult({
         userId: targetUserId,
         title,
         resultedAt: new Date(resultedAt).toISOString(),
         source: typeof params.payload.source === "string" ? params.payload.source : null,
-        summary: typeof params.payload.summary === "string" ? params.payload.summary : null,
+        summary: normalized.summary,
+        value: normalized.value,
+        unit: normalized.unit,
+        referenceRange: normalized.referenceRange,
+        flag: normalized.flag,
       });
       break;
     }

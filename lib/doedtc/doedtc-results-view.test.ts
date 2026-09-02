@@ -50,6 +50,24 @@ describe("lab latest vs sets", () => {
     );
   });
 
+  it("prefers structured columns over legacy summary parsing", () => {
+    const view = toResultView({
+      id: "alt",
+      user_id: "user-1",
+      title: "ALT",
+      resulted_at: "2026-08-08",
+      source: "LifeLabs",
+      summary: "legacy summary",
+      value: "78",
+      unit: "U/L",
+      reference_range: "7–56",
+      flag: "high",
+      created_at: "2026-08-08T12:00:00.000Z",
+    });
+    assert.deepEqual(view.reading, { value: "78", unit: "U/L", range: "7–56" });
+    assert.equal(view.flag, "high");
+  });
+
   it("groups labs that arrived on the same day into one set", () => {
     const groups = groupLabsByDrawDate([
       lab({ id: "aug-a1c", title: "HbA1c", resulted_at: "2026-08-08" }),

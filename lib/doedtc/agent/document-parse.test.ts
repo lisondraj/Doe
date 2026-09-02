@@ -25,14 +25,14 @@ describe("document parse", () => {
     const writes = mapLabPanelToLogResultWrites({
       resultedAt: "2026-08-15",
       analytes: [
-        { title: "A1C", summary: "7.8 % · <6.5" },
-        { title: "Glucose", summary: "102 mg/dL" },
+        { title: "A1C", value: "7.8", unit: "%", range: "<6.5" },
+        { title: "Glucose", value: "102", unit: "mg/dL" },
       ],
     });
     assert.equal(writes.length, 2);
     assert.equal(writes[0]?.tool, "log_result");
     assert.equal(writes[0]?.args.title, "A1C");
-    assert.equal(writes[0]?.args.summary, "7.8 % · <6.5");
+    assert.equal(writes[0]?.args.value, "7.8");
     assert.equal(writes[0]?.args.resulted_at, "2026-08-15");
   });
 
@@ -49,7 +49,7 @@ describe("document parse", () => {
       confidence: 0.91,
       summary: "Lab panel from August",
       patient_name: "  Simon  ",
-      writes: [{ tool: "log_result", args: { title: "A1C", resulted_at: "2026-08-15" } }],
+      writes: [{ tool: "log_result", args: { title: "A1C", value: "7.8", unit: "%", resulted_at: "2026-08-15" } }],
     });
     assert.equal(parsed.kind, "lab_panel");
     assert.equal(parsed.writes.length, 1);
@@ -65,7 +65,7 @@ describe("document parse", () => {
           confidence: 0.9,
           summary: "Lab panel",
           patient_name: null,
-          writes: [{ tool: "log_result", args: { title: "A1C", resulted_at: "2026-08-15" } }],
+          writes: [{ tool: "log_result", args: { title: "A1C", value: "7.8", unit: "%", resulted_at: "2026-08-15" } }],
         },
         inboundText: "[attachments: file-1]",
         attachmentTurn: true,
@@ -128,7 +128,7 @@ describe("document parse", () => {
       patient_name: "",
       results: [
         { analyte: "ALT", value: "32", unit: "U/L", date: "2026-09-01" },
-        { tool: "log_results", args: { title: "AST", resulted_at: "2026-09-01", summary: "28 U/L" } },
+        { tool: "log_results", args: { title: "AST", value: "28", unit: "U/L", resulted_at: "2026-09-01" } },
         { tool: "not_a_real_tool", name: "" },
       ],
     });
@@ -138,7 +138,7 @@ describe("document parse", () => {
     assert.equal(parsed.writes.length, 2);
     assert.equal(parsed.writes[0]?.tool, "log_result");
     assert.equal(parsed.writes[0]?.args.title, "ALT");
-    assert.equal(parsed.writes[0]?.args.summary, "32 · U/L");
+    assert.equal(parsed.writes[0]?.args.value, "32");
     assert.equal(parsed.writes[1]?.tool, "log_result");
     assert.equal(parsed.writes[1]?.args.title, "AST");
   });
@@ -209,7 +209,7 @@ describe("document parse", () => {
           confidence: 0.95,
           summary: "Liver panel",
           patient_name: "Ojewale Malik",
-          writes: [{ tool: "log_result", args: { title: "ALT", resulted_at: "2023-02-28" } }],
+          writes: [{ tool: "log_result", args: { title: "ALT", value: "78", unit: "U/L", resulted_at: "2023-02-28" } }],
         },
         inboundText: "[attachments: file-1]",
         attachmentTurn: true,
@@ -383,7 +383,7 @@ describe("document parse", () => {
     );
   });
 
-  it("synthesizes a lab write when vision returns a summary but no rows", () => {
+  it("does not invent a panel row when vision returns a summary but no values", () => {
     const parsed = normalizeDocumentParseResult({
       kind: "lab_panel",
       confidence: 0.9,
@@ -391,9 +391,17 @@ describe("document parse", () => {
       patient_name: "Ojewale Malik",
       writes: [],
     });
-    assert.equal(parsed.writes.length, 1);
-    assert.equal(parsed.writes[0]?.tool, "log_result");
-    assert.equal(parsed.writes[0]?.args.title, "Liver function test");
+    assert.equal(parsed.writes.length, 0);
+    assert.match(
+      formatDocumentParseForPrompt({
+        ok: true,
+        kind: "lab_panel",
+        summary: parsed.summary,
+        proposed_writes: [],
+        auto_committed: false,
+      }) ?? "",
+      /no lab values were readable/i,
+    );
   });
 
   it("treats these-are-mine and log-these as a save to the user's chart", () => {
@@ -444,7 +452,7 @@ describe("document parse", () => {
           confidence: 0.9,
           summary: "Liver panel",
           patient_name: "Ojewale Malik",
-          writes: [{ tool: "log_result", args: { title: "ALT", resulted_at: "2024-05-06" } }],
+          writes: [{ tool: "log_result", args: { title: "ALT", value: "32", unit: "U/L", resulted_at: "2024-05-06" } }],
         },
         inboundText: "These are mine",
         attachmentTurn: true,

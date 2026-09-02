@@ -6,6 +6,7 @@ import {
   enrichTranscriptBodiesForAgent,
   formatDoeDtcFileLogLine,
   inboundHasAttachments,
+  isPdfFile,
   parseInboundAttachmentIds,
   replaceInboundAttachmentMarkers,
   stripEmDash,
@@ -36,6 +37,12 @@ describe("attachments", () => {
     assert.equal(inboundHasAttachments("[attachments: abc]"), true);
     assert.equal(inboundHasAttachments("[attachment]"), true);
     assert.equal(inboundHasAttachments("hello"), false);
+  });
+
+  it("detects pdf files by mime and filename", () => {
+    assert.equal(isPdfFile({ mime: "application/pdf", filename: "labs.pdf" }), true);
+    assert.equal(isPdfFile({ mime: "image/jpeg", filename: "scan.PDF" }), true);
+    assert.equal(isPdfFile({ mime: "image/jpeg", filename: "photo.jpg" }), false);
   });
 
   it("formats file log lines without em dashes", () => {

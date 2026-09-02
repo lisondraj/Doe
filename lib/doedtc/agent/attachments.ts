@@ -121,29 +121,57 @@ function isPdfFile(file: Pick<DoeDtcFileRow, "mime" | "filename">): boolean {
   return mime === "application/pdf" || filename.endsWith(".pdf");
 }
 
-async function rasterizePdfFirstPage(blobUrl: string): Promise<string | null> {
+export { isPdfFile };
+
+async function rasterizePdfPages(blobUrl: string, maxPages = 4): Promise<string[]> {
   let dir: string | null = null;
   try {
     const response = await fetch(blobUrl);
-    if (!response.ok) return null;
+    if (!response.ok) return [];
     const pdfBuffer = Buffer.from(await response.arrayBuffer());
     dir = await mkdtemp(join(tmpdir(), "doedtc-pdf-"));
     const pdfPath = join(dir, "input.pdf");
     const outputPrefix = join(dir, "page");
     await writeFile(pdfPath, pdfBuffer);
-    await execFileAsync("pdftoppm", ["-f", "1", "-l", "1", "-png", pdfPath, outputPrefix], {
-      timeout: 20_000,
-    });
-    const pngPath = `${outputPrefix}-1.png`;
-    const pngBuffer = await readFile(pngPath);
-    return `data:image/png;base64,${pngBuffer.toString("base64")}`;
+    await execFileAsync(
+      "pdftoppm",
+      ["-f", "1", "-l", String(maxPages), "-png", pdfPath, outputPrefix],
+      { timeout: 30_000 },
+    );
+    const urls: string[] = [];
+    for (let page = 1; page <= maxPages; page += 1) {
+      const pngPath = `${outputPrefix}-${page}.png`;
+      try {
+        const pngBuffer = await readFile(pngPath);
+        urls.push(`data:image/png;base64,${pngBuffer.toString("base64")}`);
+      } catch {
+        break;
+      }
+    }
+    return urls;
   } catch {
-    return null;
+    return [];
   } finally {
     if (dir) {
       await rm(dir, { recursive: true, force: true }).catch(() => undefined);
     }
   }
+}
+
+async function rasterizePdfFirstPage(blobUrl: string): Promise<string | null> {
+  const pages = await rasterizePdfPages(blobUrl, 1);
+  return pages[0] ?? null;
+}
+
+export async function resolveVisionUrlsForFile(file: DoeDtcFileRow, limit = 4): Promise<string[]> {
+  if (isVisionReadyMime(file.mime, file.filename)) {
+    return [file.blob_url];
+  }
+  if (isPdfFile(file)) {
+    return rasterizePdfPages(file.blob_url, limit);
+  }
+  const single = await resolveVisionUrlForFile(file);
+  return single ? [single] : [];
 }
 
 export async function resolveVisionUrlForFile(file: DoeDtcFileRow): Promise<string | null> {
@@ -169,8 +197,12 @@ export async function resolveVisionUrlsForFiles(files: DoeDtcFileRow[], limit = 
   const urls: string[] = [];
   for (const file of files) {
     if (urls.length >= limit) break;
-    const url = await resolveVisionUrlForFile(file);
-    if (url) urls.push(url);
+    const remaining = limit - urls.length;
+    const fileUrls = await resolveVisionUrlsForFile(file, remaining);
+    for (const url of fileUrls) {
+      if (urls.length >= limit) break;
+      urls.push(url);
+    }
   }
   return urls;
 }

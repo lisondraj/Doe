@@ -159,17 +159,23 @@ async function failBrowserJob(params: {
   return { ok: false, error: params.error };
 }
 
-export async function claimDoeDtcBrowserJobAdvance(
-  job: DoeDtcBrowserJobRow,
+export function canClaimBrowserJobAdvance(
+  job: Pick<DoeDtcBrowserJobRow, "status" | "outcome" | "updated_at">,
   now = Date.now(),
-): Promise<boolean> {
+): boolean {
   if (job.status !== "open") return false;
   if (job.outcome === ADVANCING_OUTCOME) {
     const updated = Date.parse(job.updated_at);
     if (Number.isFinite(updated) && now - updated < STALE_ADVANCING_MS) return false;
-  } else if (job.outcome) {
-    return false;
   }
+  return true;
+}
+
+export async function claimDoeDtcBrowserJobAdvance(
+  job: DoeDtcBrowserJobRow,
+  now = Date.now(),
+): Promise<boolean> {
+  if (!canClaimBrowserJobAdvance(job, now)) return false;
   await updateDoeDtcBrowserJob({
     jobId: job.id,
     userId: job.user_id,
@@ -199,7 +205,7 @@ export async function advanceDoeDtcBrowserJob(params: {
   if (!resolvedJob) {
     return { ok: false, error: "Browser job not found." };
   }
-  if (resolvedJob.status === "committed" || resolvedJob.status === "failed") {
+  if (resolvedJob.status === "committed" || resolvedJob.status === "failed" || resolvedJob.status === "cancelled") {
     return { ok: true, skipped: true };
   }
 
@@ -272,7 +278,7 @@ export async function advanceDoeDtcBrowserJob(params: {
       jobId: resolvedJob.id,
       userId: user.id,
       patch: {
-        status: "committed",
+        status: "open",
         outcome: snapshot.excerpt?.slice(0, 500) ?? "Screenshot captured",
       },
     });

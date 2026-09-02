@@ -19,7 +19,7 @@ export type DoeDtcLabFlag = "high" | "low";
 export type DoeDtcResultView = DoeDtcResultRow & {
   kind: DoeDtcResultKind;
   category: DoeDtcLabCategory;
-  reading: { value: string; detail: string } | null;
+  reading: { value: string; unit: string | null; range: string | null } | null;
   flag: DoeDtcLabFlag | null;
 };
 
@@ -65,14 +65,31 @@ export function inferLabCategory(title: string): DoeDtcLabCategory {
   return "other";
 }
 
-export function parseResultReading(summary: string | null): { value: string; detail: string } | null {
+export function parseResultReading(
+  summary: string | null,
+): { value: string; unit: string | null; range: string | null } | null {
   if (!summary) return null;
   const trimmed = summary.trim();
-  const match = trimmed.match(/^([+-]?\d+(?:\.\d+)?)\s*([^\s·•,]+)?(?:\s*[·•,-]\s*(.*))?$/);
+  const match = trimmed.match(/^([+-]?\d+(?:\.\d+)?)\s*([^\s·•,]+)?(?:\s*[·•,-]\s*(?:ref\s*)?(.*))?$/);
   if (!match) return null;
-  if (trimmed.split(/\s+/).length > 10) return null;
-  const detail = [match[2], match[3]].filter(Boolean).join(" · ");
-  return { value: match[1], detail };
+  if (trimmed.split(/\s+/).length > 12) return null;
+  const unit = match[2]?.trim() || null;
+  const range = match[3]?.trim() || null;
+  return { value: match[1], unit, range };
+}
+
+function structuredResultReading(
+  row: Pick<DoeDtcResultRow, "value" | "unit" | "reference_range" | "summary">,
+): { value: string; unit: string | null; range: string | null } | null {
+  const value = row.value?.trim();
+  if (value) {
+    return {
+      value,
+      unit: row.unit?.trim() || null,
+      range: row.reference_range?.trim() || null,
+    };
+  }
+  return parseResultReading(row.summary);
 }
 
 function parseLabRange(text: string): { min?: number; max?: number; minInclusive?: boolean; maxInclusive?: boolean } | null {
@@ -85,7 +102,12 @@ function parseLabRange(text: string): { min?: number; max?: number; minInclusive
   return null;
 }
 
-export function inferLabFlag(summary: string | null, reading = parseResultReading(summary)): DoeDtcLabFlag | null {
+export function inferLabFlag(
+  summary: string | null,
+  reading = parseResultReading(summary),
+  storedFlag?: "high" | "low" | null,
+): DoeDtcLabFlag | null {
+  if (storedFlag === "high" || storedFlag === "low") return storedFlag;
   if (!summary) return null;
   if (/\b(high|elevated|↑)\b/i.test(summary)) return "high";
   if (/\b(low|decreased|↓)\b/i.test(summary)) return "low";
@@ -107,13 +129,13 @@ export function inferLabFlag(summary: string | null, reading = parseResultReadin
 
 export function toResultView(row: DoeDtcResultRow): DoeDtcResultView {
   const kind = inferResultKind(row);
-  const reading = kind === "lab" ? parseResultReading(row.summary) : null;
+  const reading = kind === "lab" ? structuredResultReading(row) : null;
   return {
     ...row,
     kind,
     category: kind === "lab" ? inferLabCategory(row.title) : "other",
     reading,
-    flag: kind === "lab" ? inferLabFlag(row.summary, reading) : null,
+    flag: kind === "lab" ? inferLabFlag(row.summary, reading, row.flag ?? null) : null,
   };
 }
 

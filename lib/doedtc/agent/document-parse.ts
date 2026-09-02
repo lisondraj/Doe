@@ -1,9 +1,11 @@
 import { z } from "zod";
 
+import { normalizeLabResultFields } from "@/lib/doedtc/doedtc-lab-ranges";
 import { extractChartMentions, isPlausiblePersonName } from "@/lib/doedtc/agent/action-slots";
 import {
   describeDoeDtcAttachment,
   inboundHasAttachments,
+  isPdfFile,
   resolveVisionUrlsForFiles,
   stripEmDash,
   type DoeDtcAttachmentContext,
@@ -197,17 +199,35 @@ function coerceWriteArgs(
   delete merged.args;
   if (tool === "log_result") {
     const title = String(merged.title ?? merged.analyte ?? merged.test ?? merged.name ?? "").trim();
+    const valueRaw = merged.value ?? merged.result;
+    const value =
+      valueRaw != null && String(valueRaw).trim() && String(valueRaw).trim().toLowerCase() !== "null"
+        ? String(valueRaw).trim()
+        : null;
+    const unit =
+      typeof merged.unit === "string" && merged.unit.trim() ? merged.unit.trim() : null;
+    const range =
+      (typeof merged.range === "string" && merged.range.trim() ? merged.range.trim() : null) ||
+      (typeof merged.reference_range === "string" && merged.reference_range.trim()
+        ? merged.reference_range.trim()
+        : null);
+    const normalized = normalizeLabResultFields({
+      title,
+      value,
+      unit,
+      range,
+      flag: merged.flag,
+      summary: merged.summary,
+    });
     return {
       title,
       resulted_at: coerceResultedAt(merged.resulted_at ?? merged.date ?? merged.collected_at, fallbackDate),
-      summary:
-        typeof merged.summary === "string" && merged.summary.trim()
-          ? merged.summary.trim()
-          : [merged.value, merged.flag, merged.range, merged.unit]
-              .filter((part) => part != null && String(part).trim())
-              .map((part) => String(part).trim())
-              .join(" · ") || null,
-      source: typeof merged.source === "string" ? merged.source : "document photo",
+      value: normalized.value,
+      unit: normalized.unit,
+      range: normalized.referenceRange,
+      flag: normalized.flag,
+      summary: normalized.summary,
+      source: typeof merged.source === "string" ? merged.source : undefined,
     };
   }
   if (tool === "add_medication") {
@@ -228,15 +248,15 @@ kind is one of: lab_panel, medication_list, appointment, vaccine, rx, insurance,
 confidence is 0 to 1.
 summary is one plain iMessage sentence with no em dash character.
 writes is an array of chart commits using only these tools:
-- log_result: { title, resulted_at, summary?, source? } — one row per analyte/value. summary like "7.8 % · <6.5".
+- log_result: { title, resulted_at, value, unit, range?, flag?, summary?, source? } — one row per analyte/value. Never one blob for a whole panel. summary like "7.8 % · ref <5.7".
 - add_medication: { name }
 - add_condition: { name }
 - log_appointment: { title, timing_precision, starts_at?, timing_note?, location?, notes? }
 - log_symptoms: { raw_text, summary?, severity?, onset?, tags? }
 - remember_fact: { fact, category? }
 
-Never invent values you cannot read. For unclear photos use kind other, low confidence, and writes [].
-Use ISO dates when visible. For vague appointment timing use timing_precision approximate with timing_note.`;
+Never invent values or reference ranges you cannot read on the page. For unclear photos use kind other, low confidence, and writes []. If the page looks like labs but no numeric values are readable, leave writes empty.
+Use ISO dates when visible. For vague appointment timing use timing_precision approximate with timing_note. Catalog reference ranges are filled after extraction — do not invent ranges during extraction.`;
 
 export function sanitizeDocumentParseSummary(summary: string): string {
   return stripEmDash(summary.replace(/\s+/g, " ").trim());
@@ -263,6 +283,7 @@ export function normalizeDocumentParseResult(raw: unknown): DocumentParseResult 
       if (!tool) return null;
       const args = coerceWriteArgs(tool, row, fallbackDate);
       if (tool === "log_result" && !String(args.title ?? "").trim()) return null;
+      if (tool === "log_result" && !String(args.value ?? "").trim()) return null;
       if ((tool === "add_medication" || tool === "add_condition") && !String(args.name ?? "").trim()) {
         return null;
       }
@@ -283,17 +304,6 @@ export function normalizeDocumentParseResult(raw: unknown): DocumentParseResult 
         ? record.patient.trim()
         : null;
   const summary = sanitizeDocumentParseSummary(String(record.summary ?? ""));
-  if (writes.length === 0 && (kind === "lab_panel" || /\b(?:labs?|lft|liver|panel|results?)\b/i.test(summary))) {
-    writes.push({
-      tool: "log_result",
-      args: {
-        title: /\b(?:liver|lft)\b/i.test(summary) ? "Liver function test" : "Lab panel",
-        resulted_at: fallbackDate,
-        summary: summary || null,
-        source: "document photo",
-      },
-    });
-  }
 
   return {
     kind,
@@ -644,15 +654,63 @@ export function buildDocumentSavingNotice(params: {
 
 export function mapLabPanelToLogResultWrites(params: {
   resultedAt: string;
-  analytes: Array<{ title: string; summary?: string }>;
+  source?: string;
+  analytes: Array<{ title: string; value?: string; unit?: string; range?: string; summary?: string }>;
 }): Array<{ tool: "log_result"; args: Record<string, unknown> }> {
-  return params.analytes.map((row) => ({
-    tool: "log_result" as const,
-    args: {
+  const source = params.source ?? "document photo";
+  return params.analytes.map((row) => {
+    const normalized = normalizeLabResultFields({
       title: row.title,
-      resulted_at: params.resultedAt,
-      summary: row.summary ?? null,
-      source: "document photo",
+      value: row.value,
+      unit: row.unit,
+      range: row.range,
+      summary: row.summary,
+    });
+    return {
+      tool: "log_result" as const,
+      args: {
+        title: row.title,
+        resulted_at: params.resultedAt,
+        value: normalized.value,
+        unit: normalized.unit,
+        range: normalized.referenceRange,
+        flag: normalized.flag,
+        summary: normalized.summary,
+        source,
+      },
+    };
+  });
+}
+
+export function labWriteHasReadableValue(args: Record<string, unknown>): boolean {
+  const value = args.value ?? args.result;
+  return value != null && String(value).trim().length > 0 && String(value).trim().toLowerCase() !== "null";
+}
+
+export function documentLooksLikeLabPanel(parse: Pick<DocumentParseResult, "kind" | "summary">): boolean {
+  if (parse.kind === "lab_panel") return true;
+  return /\b(?:labs?|lft|liver|panel|results?|analyte|blood work)\b/i.test(parse.summary);
+}
+
+export function documentParseHasPartialLabReads(
+  writes: Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }>,
+): boolean {
+  return writes.some((row) => row.tool === "log_result" && !labWriteHasReadableValue(row.args));
+}
+
+function documentSourceLabel(files: Array<{ mime?: string | null; filename?: string | null }>): string {
+  return files.some((file) => isPdfFile(file)) ? "document pdf" : "document photo";
+}
+
+function applyDocumentSourceToWrites(
+  writes: Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }>,
+  source: string,
+): Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }> {
+  return writes.map((row) => ({
+    ...row,
+    args: {
+      ...row.args,
+      source: typeof row.args.source === "string" && row.args.source.trim() ? row.args.source : source,
     },
   }));
 }
@@ -668,6 +726,13 @@ export function shouldAutoCommitDocumentParse(params: {
   if (params.parse.confidence < 0.82) return false;
   if (params.parse.kind === "other") return false;
   if (params.parse.writes.length === 0) return false;
+  if (
+    documentLooksLikeLabPanel(params.parse) &&
+    !params.parse.writes.some((row) => row.tool === "log_result" && labWriteHasReadableValue(row.args))
+  ) {
+    return false;
+  }
+  if (documentParseHasPartialLabReads(params.parse.writes)) return false;
 
   const caption = params.inboundText
     .replace(/\[attachments:[^\]]+\]/i, "")
@@ -792,6 +857,8 @@ export async function parseDoeDtcDocuments(params: {
     imageUrls: visionUrls,
     caption: params.caption,
   });
+  const source = documentSourceLabel(files);
+  parse.writes = applyDocumentSourceToWrites(parse.writes, source);
 
   return {
     parse,
@@ -991,6 +1058,33 @@ export function formatDocumentParseForPrompt(output: Record<string, unknown> | n
   }
   if (!summary) return null;
   const saved = output.auto_committed === true;
+  const proposedWrites = Array.isArray(output.proposed_writes) ? output.proposed_writes : [];
+  const labWrites = proposedWrites.filter(
+    (row) => row && typeof row === "object" && (row as { tool?: string }).tool === "log_result",
+  );
+  if (
+    !saved &&
+    documentLooksLikeLabPanel({
+      kind: typeof output.kind === "string" ? (output.kind as DocumentKind) : "other",
+      summary,
+    }) &&
+    labWrites.length === 0
+  ) {
+    return `Inbound document parsed (${summary}) but no lab values were readable. Tell them you could not read any numbers — ask for a clearer photo/PDF or to type the values. Do not invent a panel row. Do not call parse_document again.`;
+  }
+  if (!saved && labWrites.length > 0) {
+    const preview = labWrites
+      .slice(0, 6)
+      .map((row) => {
+        const args = (row as { args?: Record<string, unknown> }).args ?? {};
+        const title = String(args.title ?? "Test").trim();
+        const value = String(args.value ?? "").trim();
+        const unit = String(args.unit ?? "").trim();
+        return value ? `${title} ${value}${unit ? ` ${unit}` : ""}` : `${title} (hard to read)`;
+      })
+      .join("; ");
+    return `Inbound document parsed: ${summary}. Proposed: ${preview}. Do not auto-save — read back what you saw, note anything hard to read, and wait for confirm before log_result. Do not call parse_document again.`;
+  }
   if (!saved) {
     return `Inbound document already parsed: ${summary}. Writes are ready. If they said these are theirs or asked to log/save them, those rows should already be committed. Do not ask for a title or date. Title is the test name (Liver function test, ALT), never their name. If they say "title is James" they mean they are James. Do not claim they are on the chart unless write_results show ok. Do not call parse_document again.`;
   }

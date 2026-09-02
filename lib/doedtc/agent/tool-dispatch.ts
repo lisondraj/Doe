@@ -147,6 +147,7 @@ import {
 import { sendDoeDtcFamilyInviteMessage, sendDoeDtcHouseholdAccessRevokedNotice } from "@/lib/doedtc/doedtc-messaging";
 import {
   DOEDTC_PROFILE_READ_TABS,
+  extractLabQueryFromText,
   readDoeDtcProfileTab,
 } from "@/lib/doedtc/doedtc-profile-read";
 import {
@@ -1057,11 +1058,7 @@ async function executeDoeDtcToolInner(params: {
             if (!title) {
               title = preferredLabResultTitle({
                 title: typeof first.args.title === "string" ? first.args.title : null,
-                fallback:
-                  typeof state.documentParse?.summary === "string" &&
-                  /\b(?:liver|lft)\b/i.test(state.documentParse.summary)
-                    ? "Liver function test"
-                    : "Lab results",
+                fallback: "Lab results",
                 viewerName: ctx.user.full_name,
                 memberNames,
               });
@@ -1086,12 +1083,28 @@ async function executeDoeDtcToolInner(params: {
             "Use the test name from the document, never their name, and never ask them for a title.",
           );
         }
+        const { normalizeLabResultFields } = await import("@/lib/doedtc/doedtc-lab-ranges");
+        const normalized = normalizeLabResultFields({
+          title,
+          value: args.value,
+          unit: args.unit,
+          range: args.range ?? args.reference_range,
+          flag: args.flag,
+          summary,
+        });
+        if (!normalized.value) {
+          throw new Error("A numeric lab value is required before logging a result.");
+        }
         const row = await addDoeDtcResult({
           userId: subject.subjectUserId,
           title,
           resultedAt,
           source,
-          summary,
+          summary: normalized.summary,
+          value: normalized.value,
+          unit: normalized.unit,
+          referenceRange: normalized.referenceRange,
+          flag: normalized.flag,
         });
         output = {
           ok: true,
@@ -1132,6 +1145,22 @@ async function executeDoeDtcToolInner(params: {
         source: args.source === null ? null : typeof args.source === "string" ? args.source : undefined,
         summary:
           args.summary === null ? null : typeof args.summary === "string" ? args.summary : undefined,
+        value: args.value === null ? null : typeof args.value === "string" ? args.value : undefined,
+        unit: args.unit === null ? null : typeof args.unit === "string" ? args.unit : undefined,
+        referenceRange:
+          args.reference_range === null
+            ? null
+            : typeof args.reference_range === "string"
+              ? args.reference_range
+              : typeof args.range === "string"
+                ? args.range
+                : undefined,
+        flag:
+          args.flag === null
+            ? null
+            : args.flag === "high" || args.flag === "low"
+              ? args.flag
+              : undefined,
       });
       output = withHouseholdProxyMeta(
         {
@@ -2456,6 +2485,11 @@ async function executeDoeDtcToolInner(params: {
             userId: subject.subjectUserId,
             tab,
             viewerUserId: ctx.user.id,
+            query:
+              tab === "results"
+                ? (typeof args.query === "string" && args.query.trim()) ||
+                  extractLabQueryFromText(ctx.inboundText)
+                : null,
           });
           output = {
             ok: true,

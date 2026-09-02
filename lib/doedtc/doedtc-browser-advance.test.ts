@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  canClaimBrowserJobAdvance,
   doeDtcRuntimeOrigin,
   shouldRecoverBrowserJob,
 } from "@/lib/doedtc/doedtc-browser-advance";
@@ -91,6 +92,17 @@ describe("browser advance dispatch", () => {
         },
         now,
       ),
+      true,
+    );
+  });
+
+  it("allows re-advancing an open research job after a screenshot outcome", () => {
+    assert.equal(
+      canClaimBrowserJobAdvance({
+        status: "open",
+        outcome: "Screenshot captured",
+        updated_at: "2026-09-02T01:05:00.000Z",
+      }),
       true,
     );
   });

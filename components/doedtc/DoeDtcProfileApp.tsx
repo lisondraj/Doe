@@ -1742,7 +1742,12 @@ function ResultsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
         {tile.reading ? (
           <>
             <div className="doedtc-lab-tile__value">{tile.reading.value}</div>
-            {tile.reading.detail ? <div className="doedtc-lab-tile__detail">{tile.reading.detail}</div> : null}
+            {tile.reading.unit ? (
+              <div className="doedtc-lab-tile__detail">Unit: {tile.reading.unit}</div>
+            ) : null}
+            {tile.reading.range ? (
+              <div className="doedtc-lab-tile__detail">Ref: {tile.reading.range}</div>
+            ) : null}
             {tile.flag ? (
               <div className="doedtc-lab-tile__flag">{tile.flag === "high" ? "High" : "Low"}</div>
             ) : null}
@@ -1811,7 +1816,13 @@ function ResultsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
                     <div className="doedtc-row-item__body">
                       <strong>
                         {row.reading
-                          ? `${row.reading.value}${row.reading.detail ? ` ${row.reading.detail}` : ""}`
+                          ? [
+                              row.reading.value,
+                              row.reading.unit,
+                              row.reading.range ? `ref ${row.reading.range}` : null,
+                            ]
+                              .filter(Boolean)
+                              .join(" ")
                           : row.summary || row.title}
                       </strong>
                       <p className="doedtc-row-item__meta">
