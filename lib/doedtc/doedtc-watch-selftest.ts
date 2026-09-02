@@ -16,7 +16,7 @@ import {
 import { listGuidesForUser } from "@/lib/doedtc/doedtc-guides-db";
 import {
   formatMem0Block,
-  searchDoeDtcMem0Memories,
+  loadDoeDtcMemoriesForPrompt,
   searchDoeDtcMem0Playbook,
 } from "@/lib/doedtc/doedtc-memory";
 import { formatAccountabilityForAgent } from "@/lib/doedtc/doedtc-accountability";
@@ -50,7 +50,7 @@ export async function runDoeDtcAgentSelftest(): Promise<Record<string, unknown>>
       await Promise.all([
         getDoeDtcProfileSnapshot(user.id),
         listDoeDtcMessages(user.id, 10),
-        searchDoeDtcMem0Memories({ userId: user.id, query: "health check", topK: 1 }),
+        loadDoeDtcMemoriesForPrompt({ userId: user.id, query: "health check", topK: 1 }),
         listGuidesForUser(user.id),
         getAgentPending(user.id),
         searchDoeDtcMem0Playbook({ userId: user.id, query: "health check", topK: 1 }),

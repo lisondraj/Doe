@@ -1,5 +1,6 @@
 import { ensureDeferredWorkAck } from "@/lib/doedtc/agent/active-work";
 import { groundReplyInCommittedState } from "@/lib/doedtc/agent/committed-state";
+import { stripUnsolicitedEmptyCatalogReply } from "@/lib/doedtc/agent/problem-share";
 import { reconcileReplyClaims } from "@/lib/doedtc/agent/honesty";
 import {
   shouldSkipReminderSafetyNet,
@@ -61,6 +62,10 @@ export async function finalizeAgentReply(params: {
     turnMode: params.turnMode.mode,
   });
   rawReply = ensureDeferredWorkAck(grounded.replyText, Boolean(params.turnState.browserJobDispatched));
+  rawReply = stripUnsolicitedEmptyCatalogReply({
+    inboundText: params.inboundText,
+    replyText: rawReply,
+  });
 
   const degenerate = isDegenerateTurn({
     replyText: rawReply,

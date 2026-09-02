@@ -1,4 +1,5 @@
 import { addDoeDtcMem0Fact } from "@/lib/doedtc/doedtc-memory";
+import { insertDoeDtcMemory } from "@/lib/doedtc/doedtc-db";
 import { doeDtcFindPhoneCountry } from "@/lib/doedtc/doedtc-phone-countries";
 import { doeDtcGenderLabel, type DoeDtcFamilyRelationship, type DoeDtcGender } from "@/lib/doedtc/doedtc-types";
 
@@ -55,5 +56,10 @@ export async function rememberDoeDtcOnboarding(params: {
   userId: string;
 } & DoeDtcOnboardingMemoryInput): Promise<void> {
   const facts = buildDoeDtcOnboardingFacts(params);
-  await Promise.all(facts.map((fact) => addDoeDtcMem0Fact({ userId: params.userId, fact })));
+  await Promise.all(
+    facts.map(async (fact) => {
+      await insertDoeDtcMemory({ userId: params.userId, fact, category: "onboarding" });
+      await addDoeDtcMem0Fact({ userId: params.userId, fact });
+    }),
+  );
 }

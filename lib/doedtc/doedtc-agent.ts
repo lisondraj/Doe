@@ -113,7 +113,7 @@ import {
   addDoeDtcMem0Fact,
   addDoeDtcMem0PlaybookNote,
   formatMem0Block,
-  searchDoeDtcMem0Memories,
+  loadDoeDtcMemoriesForPrompt,
   searchDoeDtcMem0Playbook,
 } from "@/lib/doedtc/doedtc-memory";
 import {
@@ -623,7 +623,8 @@ Recent conversation:
 ${params.transcript || "No prior messages."}
 
 Thread:
-- This is one ongoing conversation. Read Recent conversation and Relevant memories. When they continue a thread, refer back to the person, problem, or ask they already named.
+- This is one ongoing conversation. Read Recent conversation${params.relevantMemories.trim() ? ", Relevant memories," : ""} and the chart. When they continue a thread, refer back to the person, problem, or ask they already named.
+- If they ask what you remember, answer from Relevant memories, the household chart, and Recent conversation. Never say you remember nothing unless all of those are empty.
 - Pull earlier context when it helps this turn. Do not restart as if you just met. Do not force a recap — a short callback is enough.
 - Continue from what they said and what you said. Do not repeat your last Doe line.
 - If they already answered who/when/what, use it. Do not re-ask.
@@ -655,10 +656,7 @@ ${params.workflowsLog}
 
 Guides (saved + recent):
 ${params.guidesLog}
-
-Relevant memories:
-${params.relevantMemories}
-
+${params.relevantMemories.trim() ? `\nRelevant memories:\n${params.relevantMemories}\n` : ""}
 Symptom log:
 ${params.symptomLog}
 
@@ -932,7 +930,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const [initialSnapshot, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, activeWorkItems] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
-      searchDoeDtcMem0Memories({ userId: params.user.id, query: memoryQuery, topK: 8 }),
+      loadDoeDtcMemoriesForPrompt({ userId: params.user.id, query: memoryQuery, topK: 8 }),
       listGuidesForUser(params.user.id),
       searchDoeDtcMem0Playbook({ userId: params.user.id, query: memoryQuery, topK: 3 }),
       getActiveDoeDtcBrowserJobId(params.user.id),

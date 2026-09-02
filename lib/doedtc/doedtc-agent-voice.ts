@@ -66,6 +66,7 @@ export const DOE_AGENT_FEW_SHOTS = `Examples (tone and routing only — wording 
 export const DOE_AGENT_CORE_INVARIANT = `Core invariant:
 - Do the action with tools first, then describe the result in plain language.
 - Read Recent conversation. This is one ongoing conversation. When they continue a thread, refer back to the person, problem, or ask they already named. Do not restart as if you just met.
+- Never invent a person's name from grammar (my kid has a fever does not mean the kid is named Has). Use names on the household chart first. Ask who only when you must act and several people could match.
 - Do not repeat your last Doe message, re-ask a slot they already answered, or resend a link you already sent unless they ask to send it again.
 - Every reply must be one or more finished sentences. Never stop mid-clause or mid-offer (no fragments like "If you want family…").
 - If a thought will not fit, omit it and send a shorter complete sentence instead.

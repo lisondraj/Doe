@@ -7,6 +7,7 @@ import {
   doeDtcMem0PlaybookFilters,
   doeDtcMem0SearchFilters,
 } from "@/lib/doedtc/doedtc-mem0-constants";
+import { listDoeDtcMemories } from "@/lib/doedtc/doedtc-db";
 import {
   redactDoeDtcLogText,
   sanitizeMem0Text,
@@ -162,7 +163,75 @@ export async function addDoeDtcMem0Fact(params: {
   }
 }
 
+export async function deleteDoeDtcMem0Fact(params: {
+  userId: string;
+  factHint: string;
+}): Promise<void> {
+  const mem0 = getMem0Client();
+  const hint = params.factHint.trim();
+  if (!mem0 || !hint) return;
+
+  try {
+    const results = await mem0.search(hint, {
+      filters: doeDtcMem0SearchFilters(params.userId),
+      topK: 8,
+    });
+    const rows = Array.isArray(results)
+      ? results
+      : Array.isArray((results as { results?: unknown[] }).results)
+        ? (results as { results: Array<{ id?: string; memory?: string }> }).results
+        : [];
+
+    const hintLower = hint.toLowerCase();
+    for (const row of rows) {
+      const memory = "memory" in row ? String(row.memory ?? "") : "";
+      const id = "id" in row ? String(row.id ?? "") : "";
+      if (!id || !memory) continue;
+      if (!memory.toLowerCase().includes(hintLower) && !hintLower.includes(memory.toLowerCase().slice(0, 24))) {
+        continue;
+      }
+      await mem0.delete(id);
+    }
+  } catch (error) {
+    warnMem0Failure("delete fact", error);
+  }
+}
+
+export async function loadDoeDtcMemoriesForPrompt(params: {
+  userId: string;
+  query: string;
+  topK?: number;
+  postgresLimit?: number;
+}): Promise<string[]> {
+  const limit = params.topK ?? 8;
+  const [postgresRows, mem0Rows] = await Promise.all([
+    listDoeDtcMemories(params.userId, params.postgresLimit ?? 20),
+    searchDoeDtcMem0Memories({ userId: params.userId, query: params.query, topK: limit }),
+  ]);
+
+  const seen = new Set<string>();
+  const merged: string[] = [];
+
+  const push = (fact: string) => {
+    const trimmed = fact.trim();
+    if (!trimmed) return;
+    const key = trimmed.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    merged.push(trimmed);
+  };
+
+  for (const row of postgresRows) {
+    push(row.fact);
+  }
+  for (const row of mem0Rows) {
+    push(row);
+  }
+
+  return merged.slice(0, limit);
+}
+
 export function formatMem0Block(memories: string[]): string {
-  if (memories.length === 0) return "No relevant long-term memories.";
+  if (memories.length === 0) return "";
   return memories.map((memory) => `- ${memory}`).join("\n");
 }

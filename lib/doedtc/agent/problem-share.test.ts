@@ -7,6 +7,7 @@ import {
   inboundLooksLikeProblemShare,
   looksLikeChartOrFileDump,
   shouldRetryChartOrFileDump,
+  stripUnsolicitedEmptyCatalogReply,
 } from "@/lib/doedtc/agent/problem-share";
 import { classifyTurnMode } from "@/lib/doedtc/agent/turn-mode";
 
@@ -36,4 +37,19 @@ test("unsolicited empty-file dumps retry even when the inbound is not a known pr
   );
   assert.equal(shouldRetryChartOrFileDump("any reminders set?", "There's nothing set right now."), false);
   assert.equal(inboundAskedForChartOrFileStatus("what's on my chart"), true);
+});
+
+test("stripUnsolicitedEmptyCatalogReply removes dump sentences on conversational turns", () => {
+  const stripped = stripUnsolicitedEmptyCatalogReply({
+    inboundText: "I always forget things after an appointment",
+    replyText: "That's rough. There's nothing set right now.",
+  });
+  assert.doesNotMatch(stripped, /nothing set/i);
+  assert.match(stripped, /That's rough/i);
+
+  const kept = stripUnsolicitedEmptyCatalogReply({
+    inboundText: "any reminders set?",
+    replyText: "There's nothing set right now.",
+  });
+  assert.match(kept, /nothing set/i);
 });

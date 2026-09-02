@@ -1,7 +1,7 @@
 /** Per-turn intent + slot fill + blockers — combinatorial anticipation without case lists. */
 
 import { inboundHasAttachments, parseInboundAttachmentIds } from "@/lib/doedtc/agent/attachments";
-import { classifyTurnMode, type TurnModeResult } from "@/lib/doedtc/agent/turn-mode";
+import { classifyTurnMode, isNonActionTurnMode, type TurnModeResult } from "@/lib/doedtc/agent/turn-mode";
 import {
   askedForPrivateAppLink,
   findMatchingArtifact,
@@ -11,6 +11,8 @@ import {
   looksLikeChartRead,
   looksLikeChartWrite,
 } from "@/lib/doedtc/agent/deliverable-policy";
+import { inboundLooksLikeProblemShare } from "@/lib/doedtc/agent/problem-share";
+import { looksLikeUnwellShare } from "@/lib/doedtc/agent/unwell-care";
 import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { inboundAlreadyAsked } from "@/lib/doedtc/doedtc-agent-policy";
 import type { DoeAgentActionClass } from "@/lib/doedtc/doedtc-agent-policy";
@@ -291,6 +293,31 @@ const NAME_STOPWORDS = new Set(
     "do",
     "be",
     "have",
+    "has",
+    "had",
+    "having",
+    "got",
+    "gets",
+    "getting",
+    "fever",
+    "cough",
+    "coughing",
+    "cold",
+    "flu",
+    "pain",
+    "ache",
+    "aches",
+    "aching",
+    "sick",
+    "ill",
+    "nauseous",
+    "nausea",
+    "vomit",
+    "vomiting",
+    "throwing",
+    "dizzy",
+    "headache",
+    "unwell",
     "lft",
     "alp",
     "ast",
@@ -312,6 +339,14 @@ export function isPlausiblePersonName(raw: string): boolean {
   if (NAME_STOPWORDS.has(token.toLowerCase())) return false;
   if (/^[A-Z]{2,6}$/.test(token)) return false;
   return true;
+}
+
+/** First token of a full name must look like a real person — blocks verb captures like Has. */
+export function isPlausibleFamilyMemberName(fullName: string): boolean {
+  const trimmed = fullName.trim();
+  if (!trimmed) return false;
+  const first = trimmed.split(/\s+/)[0] ?? trimmed;
+  return isPlausiblePersonName(first);
 }
 
 const REL_WORD_RE =
@@ -746,6 +781,7 @@ function deriveActionClass(params: {
 
 function formatBlockersPromptBlock(params: {
   intent: ActionIntent;
+  inboundText: string;
   subjectName: string | null;
   mentioned: HouseholdMemberLike[];
   unknownNames: string[];
@@ -769,7 +805,10 @@ function formatBlockersPromptBlock(params: {
         .join("; ")}.`,
     );
   }
-  if (params.unknownNames.length > 0) {
+  if (
+    params.unknownNames.length > 0 &&
+    intentNeedsSubject(params.intent, params.inboundText)
+  ) {
     lines.push(`Named but not on chart: ${params.unknownNames.join(", ")}.`);
   }
 
@@ -848,6 +887,19 @@ export function resolveActionSlots(params: {
   const whenBlocker = buildWhenBlocker(intent, params.inboundText);
   if (whenBlocker) blockers.push(whenBlocker);
 
+  if (
+    isNonActionTurnMode(turnMode.mode) ||
+    looksLikeUnwellShare(params.inboundText) ||
+    inboundLooksLikeProblemShare(params.inboundText)
+  ) {
+    for (let i = blockers.length - 1; i >= 0; i -= 1) {
+      const row = blockers[i]!;
+      if (row.slot === "on_chart" || row.tool === "log_family_member") {
+        blockers.splice(i, 1);
+      }
+    }
+  }
+
   blockers.push(
     ...buildArtifactBlockers({
       intent,
@@ -868,6 +920,7 @@ export function resolveActionSlots(params: {
 
   const promptBlock = formatBlockersPromptBlock({
     intent,
+    inboundText: params.inboundText,
     subjectName: subjectName ?? unknownNames[0] ?? subjectMember?.full_name ?? null,
     mentioned,
     unknownNames,

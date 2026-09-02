@@ -14,6 +14,11 @@ describe("unwell care", () => {
     assert.equal(looksLikeUnwellShare("what do you think this is"), true);
   });
 
+  it("matches third-person sickness shares", () => {
+    assert.equal(looksLikeUnwellShare("my kid has a fever"), true);
+    assert.equal(looksLikeUnwellShare("Emma has a fever of 101"), true);
+  });
+
   it("does not treat reminder or tracker asks as unwell shares", () => {
     assert.equal(looksLikeUnwellShare("remind me at 8"), false);
     assert.equal(looksLikeUnwellShare("log my water"), false);

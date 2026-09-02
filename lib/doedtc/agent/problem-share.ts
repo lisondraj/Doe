@@ -49,6 +49,34 @@ export function shouldRetryChartOrFileDump(inboundText: string, replyText: strin
   return !inboundAskedForChartOrFileStatus(inboundText);
 }
 
+const EMPTY_CATALOG_DUMP_RE =
+  /\b(?:there(?:'s| is) nothing set(?: right now)?|nothing (?:is )?set right now|no appointments? on (?:your|the|my) chart|no one else is on your household|nothing on (?:your|the|my) (?:chart|file))\b/i;
+
+/** Remove unsolicited empty-catalog sentences from conversation turns. */
+export function stripUnsolicitedEmptyCatalogReply(params: {
+  inboundText: string;
+  replyText: string;
+  asksReminderStatus?: boolean;
+}): string {
+  if (params.asksReminderStatus ?? inboundAskedForChartOrFileStatus(params.inboundText)) {
+    return params.replyText;
+  }
+  if (inboundAsksReminderStatus(params.inboundText)) {
+    return params.replyText;
+  }
+  if (!looksLikeChartOrFileDump(params.replyText)) {
+    return params.replyText;
+  }
+
+  const sentences = params.replyText
+    .split(/(?<=[.!?])\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const kept = sentences.filter((sentence) => !EMPTY_CATALOG_DUMP_RE.test(sentence));
+  if (kept.length === 0) return params.replyText;
+  return kept.join(" ");
+}
+
 export function formatProblemShareBlock(): string {
   return "They shared a problem, not a status question. Mentioning an appointment, a person, meds, or forgetting is not a request to check the chart or reminder file. Stay with what they said. Acknowledge it, then one useful next step. Never reply with 'there's nothing set.'";
 }

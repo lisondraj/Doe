@@ -72,6 +72,10 @@ export function reconcileReplyWithScheduledTextFile(params: {
     return formatScheduledTextFileReply(params.file);
   }
 
+  if (claimsEmpty && !anything && !asksStatus) {
+    return params.replyText;
+  }
+
   if (claimsEmpty && anything) {
     return formatScheduledTextFileReply(params.file);
   }

@@ -1,7 +1,7 @@
 import { formatDoeDtcAppointmentWhen } from "@/lib/doedtc/doedtc-appointment-timing";
 import { formatArtifactEntryValues } from "@/lib/doedtc/doedtc-artifacts";
 import { getDoeDtcProfileSnapshot } from "@/lib/doedtc/doedtc-db";
-import { formatMem0Block, searchDoeDtcMem0Memories } from "@/lib/doedtc/doedtc-memory";
+import { formatMem0Block, loadDoeDtcMemoriesForPrompt } from "@/lib/doedtc/doedtc-memory";
 import type {
   DoeDtcArtifactEntryRow,
   DoeDtcArtifactRow,
@@ -131,14 +131,14 @@ export async function buildDoeDtcPreparationPayload(params: {
   title?: string | null;
 }): Promise<DoeDtcPreparationPayload> {
   const snapshot = await getDoeDtcProfileSnapshot(params.userId);
-  const memoryRows = await searchDoeDtcMem0Memories({
+  const memoryRows = await loadDoeDtcMemoriesForPrompt({
     userId: params.userId,
     query: params.reason?.trim() || "health provider visit summary",
     topK: 4,
   });
   const memoryBlock = formatMem0Block(memoryRows);
   const memoryItems =
-    memoryBlock && memoryBlock !== "No relevant memories."
+    memoryBlock.trim().length > 0
       ? memoryBlock
           .split("\n")
           .map((line) => line.replace(/^-\s*/, "").trim())

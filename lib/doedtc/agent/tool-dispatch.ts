@@ -15,6 +15,7 @@ import { buildScheduledTextPendingArgs } from "@/lib/doedtc/doedtc-agent-commit"
 import {
   addDoeDtcMem0Fact,
   addDoeDtcMem0PlaybookNote,
+  deleteDoeDtcMem0Fact,
 } from "@/lib/doedtc/doedtc-memory";
 import { clearAgentPending, getAgentPending, setAgentPending } from "@/lib/doedtc/doedtc-pending";
 import { inboundHasAttachments } from "@/lib/doedtc/agent/attachments";
@@ -156,6 +157,7 @@ import {
   askedForPrivateAppLink,
   buildPrivateAppLink,
 } from "@/lib/doedtc/agent/deliverable-policy";
+import { isPlausibleFamilyMemberName } from "@/lib/doedtc/agent/action-slots";
 import { appointmentNotesForProxy } from "@/lib/doedtc/doedtc-household-policy";
 import {
   REPEAT_TOOL_ERROR,
@@ -608,6 +610,11 @@ async function executeDoeDtcToolInner(params: {
         });
       }
       if (!fullName) throw new Error("full_name is required.");
+      if (!isPlausibleFamilyMemberName(fullName)) {
+        throw new Error(
+          `"${fullName}" does not look like a person's name. Ask who they mean before adding someone to the chart.`,
+        );
+      }
       const row = await addDoeDtcHouseholdMember({
         adminUserId: ctx.user.id,
         fullName,
@@ -1553,6 +1560,7 @@ async function executeDoeDtcToolInner(params: {
         factHint: typeof args.fact === "string" ? args.fact : undefined,
       });
       if (!row) throw new Error("Memory not found.");
+      await deleteDoeDtcMem0Fact({ userId: ctx.user.id, factHint: row.fact });
       output = { ok: true, id: row.id, fact: row.fact, removed: true };
     } else if (name === "start_browser_task") {
       if (state.browserBusy) {

@@ -87,7 +87,6 @@ export function inboundAsksReminderStatus(text: string): boolean {
   ) {
     return true;
   }
-  if (/^what about this\??$/i.test(trimmed)) return true;
   return false;
 }
 

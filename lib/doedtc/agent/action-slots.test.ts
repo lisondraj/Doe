@@ -155,6 +155,44 @@ describe("action slots", () => {
     assert.equal(slots.blockers.some((row) => row.blocksPrimary), false);
   });
 
+  it("does not invent Has from my kid has a fever", () => {
+    assert.equal(isPlausiblePersonName("Has"), false);
+    assert.equal(isPlausiblePersonName("has"), false);
+    const found = extractChartMentions({
+      inboundText: "my kid has a fever",
+      members: [parent],
+      viewerUserId: "parent-1",
+    });
+    assert.deepEqual(found.unknownNames, []);
+    const slots = resolveActionSlots({
+      inboundText: "my kid has a fever",
+      viewerUserId: "parent-1",
+      members: [parent],
+    });
+    assert.equal(slots.blockers.some((row) => row.tool === "log_family_member"), false);
+    assert.doesNotMatch(slots.promptBlock, /Named but not on chart: Has/i);
+  });
+
+  it("resolves my kid to the one child on the chart", () => {
+    const simon = member({ id: "m-simon", full_name: "Simon", gender: "male" });
+    const found = extractChartMentions({
+      inboundText: "my kid has a fever",
+      members: [parent, simon],
+      viewerUserId: "parent-1",
+    });
+    assert.equal(found.mentioned.length, 1);
+    assert.equal(found.mentioned[0]?.full_name, "Simon");
+  });
+
+  it("extracts Simon from my son Simon has a fever", () => {
+    const found = extractChartMentions({
+      inboundText: "my son Simon has a fever",
+      members: [parent],
+      viewerUserId: "parent-1",
+    });
+    assert.deepEqual(found.unknownNames, ["Simon"]);
+  });
+
   it("does not treat remind-me-to-verb as a household person", () => {
     const selfAsks = [
       "Can you remind me to buy groceries?",

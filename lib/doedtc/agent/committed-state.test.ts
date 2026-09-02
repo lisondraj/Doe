@@ -40,7 +40,7 @@ const emptyFile: ScheduledTextFile = { committed: [], recentlySent: [], draft: n
 
 test("inboundAsksReminderStatus detects file questions", () => {
   assert.equal(inboundAsksReminderStatus("So are there any reminders in my file"), true);
-  assert.equal(inboundAsksReminderStatus("What about this"), true);
+  assert.equal(inboundAsksReminderStatus("What about this"), false);
   assert.equal(inboundAsksReminderStatus("set a timer for 5 seconds"), false);
 });
 

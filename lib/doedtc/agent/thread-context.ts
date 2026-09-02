@@ -10,7 +10,7 @@ const FRESH_ASK_RE =
   /\b(?:remind me|text me|screenshot|google|search|log |add |book |schedule |what(?:'s| is| are) (?:on|set|my)|any reminders?|where(?:'s| is)|send (?:me |the )?(?:link|profile|tracker))\b/i;
 
 const FOLLOW_UP_START_RE =
-  /^(?:yeah|yep|yes|yup|ok|okay|k|and|also|same|what about(?: that)?|about that|and then)\b/i;
+  /^(?:yeah|yep|yes|yup|ok|okay|k|and|also|same|what about(?: that| this)?|about that|and then)\b/i;
 
 const BARE_REPLY_RE = /^(?:yes|yep|yeah|yup|ok|okay|k|no|nope)\.?$/i;
 

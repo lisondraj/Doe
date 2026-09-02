@@ -81,7 +81,7 @@ import { executeAgentPendingCommit } from "@/lib/doedtc/doedtc-agent-commit";
 import {
   addDoeDtcMem0PlaybookNote,
   formatMem0Block,
-  searchDoeDtcMem0Memories,
+  loadDoeDtcMemoriesForPrompt,
   searchDoeDtcMem0Playbook,
 } from "@/lib/doedtc/doedtc-memory";
 import {
@@ -212,7 +212,7 @@ async function loadRunContext(params: {
   const [snapshot, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, attachmentContext, activeWorkItems] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
-      searchDoeDtcMem0Memories({
+      loadDoeDtcMemoriesForPrompt({
         userId: params.user.id,
         query: memoryQuery,
         topK: 8,

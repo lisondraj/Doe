@@ -1,5 +1,8 @@
 /** Feeling unwell is care first. Symptom writes stay quiet until the concern is addressed. */
 
+const UNWELL_SYMPTOM_RE =
+  /\b(?:sick|nauseous|nausea|ill|awful|terrible|dizzy|headache|sore|fever|throwing up|vomit|unwell|crappy|rough)\b/i;
+
 export function looksLikeUnwellShare(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return false;
@@ -10,9 +13,17 @@ export function looksLikeUnwellShare(text: string): boolean {
   ) {
     return true;
   }
-  return /\b(?:i (?:feel|felt|am|'m)|feeling|felt)\b.{0,48}\b(?:sick|nauseous|nausea|ill|awful|terrible|dizzy|headache|sore|fever|throwing up|vomit|unwell|crappy|rough)\b/i.test(
-    trimmed,
-  );
+  if (
+    /\b(?:i (?:feel|felt|am|'m)|feeling|felt)\b.{0,48}\b(?:sick|nauseous|nausea|ill|awful|terrible|dizzy|headache|sore|fever|throwing up|vomit|unwell|crappy|rough)\b/i.test(
+      trimmed,
+    )
+  ) {
+    return true;
+  }
+  if (/\b(?:my|our)\s+(?:kid|kids|child|children|son|sons|daughter|daughters)\b/i.test(trimmed)) {
+    return UNWELL_SYMPTOM_RE.test(trimmed);
+  }
+  return /\b(?:has|have|had)\s+(?:a\s+)?(?:fever|headache|cough|cold|flu|pain)\b/i.test(trimmed);
 }
 
 export function looksLikeLogNarration(text: string): boolean {
