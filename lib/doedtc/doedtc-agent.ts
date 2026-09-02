@@ -83,6 +83,12 @@ import {
   looksLikeLogNarration,
   looksLikeUnwellShare,
 } from "@/lib/doedtc/agent/unwell-care";
+import {
+  buildProblemShareRetrySystemMessage,
+  formatProblemShareBlock,
+  inboundLooksLikeProblemShare,
+  shouldRetryChartOrFileDump,
+} from "@/lib/doedtc/agent/problem-share";
 import { buildSituationBrief, formatSituationBriefBlock } from "@/lib/doedtc/agent/situation-brief";
 import { DOE_AGENT_PRIMITIVES_PROMPT } from "@/lib/doedtc/doedtc-primitives";
 import {
@@ -569,6 +575,7 @@ export type DoeDtcAgentPromptParams = {
   capabilityAskBlock?: string;
   unwellCareBlock?: string;
   incidentalChartWriteBlock?: string;
+  problemShareBlock?: string;
   turnMode?: TurnMode;
 };
 
@@ -579,6 +586,7 @@ ${params.activeWorkBlock ? `\n${params.activeWorkBlock}\n` : ""}
 ${params.capabilityAskBlock ? `\n${params.capabilityAskBlock}\n` : ""}
 ${params.unwellCareBlock ? `\n${params.unwellCareBlock}\n` : ""}
 ${params.incidentalChartWriteBlock ? `\n${params.incidentalChartWriteBlock}\n` : ""}
+${params.problemShareBlock ? `\n${params.problemShareBlock}\n` : ""}
 ${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
 Playbook (how you've corrected yourself before):
 ${params.playbookNotes}
@@ -1134,6 +1142,9 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     incidentalChartWriteBlock: incidentalChartWrite
       ? formatIncidentalChartWriteContinueBlock(incidentalChartWrite)
       : undefined,
+    problemShareBlock: inboundLooksLikeProblemShare(briefInboundText)
+      ? formatProblemShareBlock()
+      : undefined,
     turnMode: turnMode.mode,
   }) + (reminderDirective ? `\n\n${reminderDirective}` : "");
 
@@ -1247,6 +1258,10 @@ export async function runDoeDtcAgentTurnLegacy(params: {
             isIncidentalChartWrite(
               incidentalChartWrite?.originalInbound ?? deliverableInboundText,
             )));
+      const problemShareRetry = shouldRetryChartOrFileDump(
+        deliverableInboundText,
+        replyText ?? "",
+      );
       if (
         !refusalRetryInjected &&
         (shouldRetryEmptyRefusal({
@@ -1257,7 +1272,8 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         }) ||
           capabilityRetry ||
           unwellLogRetry ||
-          incidentalChartAckRetry)
+          incidentalChartAckRetry ||
+          problemShareRetry)
       ) {
         refusalRetryInjected = true;
         messages.push({
@@ -1266,18 +1282,20 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         });
         messages.push({
           role: "system",
-          content: incidentalChartAckRetry
-            ? buildIncidentalChartWriteRetrySystemMessage(
-                incidentalChartWrite ?? {
-                  label: "them",
-                  originalInbound: deliverableInboundText,
-                },
-              )
-            : unwellLogRetry
-              ? buildUnwellCareRetrySystemMessage()
-              : capabilityRetry
-                ? buildCapabilityRetrySystemMessage()
-                : buildRefusalRetrySystemMessage(deliverableInboundText),
+          content: problemShareRetry
+            ? buildProblemShareRetrySystemMessage(deliverableInboundText)
+            : incidentalChartAckRetry
+              ? buildIncidentalChartWriteRetrySystemMessage(
+                  incidentalChartWrite ?? {
+                    label: "them",
+                    originalInbound: deliverableInboundText,
+                  },
+                )
+              : unwellLogRetry
+                ? buildUnwellCareRetrySystemMessage()
+                : capabilityRetry
+                  ? buildCapabilityRetrySystemMessage()
+                  : buildRefusalRetrySystemMessage(deliverableInboundText),
         });
         continue;
       }

@@ -216,7 +216,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   cancel_scheduled_text:
     "cancel_scheduled_text — cancel pending one-shot. scheduled_text_id from Scheduled texts log or list_scheduled_texts.",
   list_scheduled_texts:
-    "list_scheduled_texts — live file: committed upcoming, recently sent, and uncommitted drafts. Use for existence questions — never answer from chat history. Drafts are not set. Call before cancel_scheduled_text for ids.",
+    "list_scheduled_texts — live file: committed upcoming, recently sent, and uncommitted drafts. Use ONLY when they ask what is set / any reminders / what's in the file. Never for a problem they shared (forgetting, someone not talking). Drafts are not set. Call before cancel_scheduled_text for ids.",
   propose_habit_workflow:
     "propose_habit_workflow — draft daily habit (text → await reply → notify owner on miss) when who/when ambiguous. If they already asked, start_habit_workflow.",
   start_habit_workflow:
@@ -329,7 +329,7 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
 - Pending + phone → schedule_text / start_habit_workflow to them; profile writes log on the parent chart with a member note, then one invite offer (confirm_once unless they already asked).
 - Pending, no phone → habits text the parent; profile writes log on the parent chart or ask for a number. Do not invent SMS.
 - Unknown name → add with log_family_member (ask relationship/phone only if missing). Never claim booked/logged until commit tools succeed.
-- Existence questions → read_profile or list_scheduled_texts — never answer from chat history.
+- Existence questions ("what's set", "any reminders", "what's on my chart") → read_profile or list_scheduled_texts — never answer from chat history. A problem they shared is not an existence question.
 - Never auto-text siblings or unmentioned members. At most one sibling offer after a child habit.`);
   }
 

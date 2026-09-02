@@ -55,6 +55,18 @@ test("I can't function classifies as distress without commit tools", () => {
   assert.equal(toolEnabledForTurnMode("read_profile", "distress", "none"), true);
 });
 
+test("I always forget things after an appointment stays conversation", () => {
+  const slots = resolveActionSlots({
+    inboundText: "I always forget things after an appointment",
+    viewerUserId: "user-1",
+    members: [],
+    artifacts: [],
+    guides: [],
+  });
+  assert.equal(slots.intent, "none");
+  assert.equal(slots.turnMode.mode, "conversation");
+});
+
 test("reminder ask stays action", () => {
   const slots = resolveActionSlots({
     inboundText: "any reminders set?",

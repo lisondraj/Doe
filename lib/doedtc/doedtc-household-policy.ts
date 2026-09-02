@@ -30,11 +30,17 @@ export function inboundLooksLikeHabitOrReminder(text: string): boolean {
 
 export function inboundLooksLikeProfileWrite(text: string): boolean {
   if (looksLikeChartWrite(text)) return true;
-  return (
-    /\b(appointment|dentist|doctor(?:'s)?(?:\s+visit)?|checkup|check-up|meds?\b|medication|prescription|log (?:an? )?(?:appointment|visit)|add (?:her|his|their) (?:meds?|medication))\b/i.test(
+  if (
+    /\b(?:book|schedule|log|add|save|put|record|update|cancel|reschedule)\b.{0,40}\b(?:appointment|dentist|doctor(?:'s)?(?:\s+visit)?|checkup|check-up|visit)\b/i.test(
       text,
-    ) ||
-    /\b(?:book|schedule)\b.{0,32}\b(?:appointment|dentist|doctor|visit)\b/i.test(text)
+    )
+  ) {
+    return true;
+  }
+  return (
+    /\b(?:add|log|save|put|record|update|remove)\b.{0,40}\b(?:meds?|medications?|prescriptions?|conditions?)\b/i.test(
+      text,
+    ) || /\b(?:add|log|save|put)\b.{0,24}\b(?:her|his|their)\s+(?:meds?|medication)\b/i.test(text)
   );
 }
 

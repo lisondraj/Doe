@@ -2,6 +2,7 @@ import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-a
 import { extractChartMentions } from "@/lib/doedtc/agent/action-slots";
 import {
   buildChartFile,
+  inboundAsksChartStatus,
   reconcileReplyWithChartFile,
   type ChartFile,
 } from "@/lib/doedtc/agent/chart-file";
@@ -167,7 +168,7 @@ export async function groundReplyInCommittedState(params: {
     asksReminder ||
     (!skipReminderClaims && claimsReminder) ||
     /\b(?:booked|logged|saved|added)\b/i.test(params.replyText) ||
-    /\b(?:on (?:the|my) chart|appointment)\b/i.test(params.inboundText);
+    inboundAsksChartStatus(params.inboundText);
 
   if (!needsGrounding) {
     return {

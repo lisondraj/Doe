@@ -219,6 +219,30 @@ test("fatigue conversation is not replaced by reminder file dump", () => {
   assert.doesNotMatch(grounded, /Already sent/i);
 });
 
+test("forgetting after an appointment is not rewritten to nothing set", () => {
+  const chartFile = buildChartFile({
+    snapshot: {
+      user: { id: "user-1" },
+      household: { household: null, members: [], consents: [] },
+      appointments: [],
+      artifacts: [],
+      scheduledTexts: [],
+    } as never,
+  });
+  const modelReply = "That's frustrating. Want me to text you a recap after visits so it doesn't slip?";
+  const grounded = reconcileReplyWithLiveChart({
+    userId: "user-1",
+    inboundText: "I always forget things after an appointment",
+    replyText: modelReply,
+    file: chartFile,
+    toolsExecuted: [],
+    viewerUserId: "user-1",
+    turnMode: "conversation",
+  });
+  assert.equal(grounded, modelReply);
+  assert.doesNotMatch(grounded, /nothing set/i);
+});
+
 test("reminder status ask still grounds to live file", () => {
   const sentRows = [
     row({ id: "s1", intent: "", status: "sent" }),

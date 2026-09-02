@@ -63,6 +63,12 @@ import {
   looksLikeLogNarration,
   looksLikeUnwellShare,
 } from "@/lib/doedtc/agent/unwell-care";
+import {
+  buildProblemShareRetrySystemMessage,
+  formatProblemShareBlock,
+  inboundLooksLikeProblemShare,
+  shouldRetryChartOrFileDump,
+} from "@/lib/doedtc/agent/problem-share";
 import { buildSituationBrief, formatSituationBriefBlock } from "@/lib/doedtc/agent/situation-brief";
 import { executeAgentPendingCommit } from "@/lib/doedtc/doedtc-agent-commit";
 import {
@@ -284,6 +290,9 @@ async function loadRunContext(params: {
     incidentalChartWriteBlock: params.incidentalChartWrite
       ? formatIncidentalChartWriteContinueBlock(params.incidentalChartWrite)
       : undefined,
+    problemShareBlock: inboundLooksLikeProblemShare(briefInboundText)
+      ? formatProblemShareBlock()
+      : undefined,
     turnMode: turnMode.mode,
   };
 
@@ -485,6 +494,9 @@ function shouldRetrySdkReply(loaded: DoeDtcRunContext, replyText: string): boole
     return true;
   }
   if (looksLikeUnwellShare(loaded.inboundText) && looksLikeLogNarration(replyText)) {
+    return true;
+  }
+  if (shouldRetryChartOrFileDump(loaded.inboundText, replyText)) {
     return true;
   }
   if (!looksLikeChartWriteAckOnly(replyText)) return false;
@@ -735,11 +747,13 @@ export async function runDoeDtcAgentTurnSdk(params: {
   const retryNudge =
     looksLikeChartWriteAckOnly(firstPass.replyText) && loaded.incidentalChartWrite
       ? buildIncidentalChartWriteRetrySystemMessage(loaded.incidentalChartWrite)
-      : looksLikeUnwellShare(loaded.inboundText) && looksLikeLogNarration(firstPass.replyText)
-        ? buildUnwellCareRetrySystemMessage()
-        : askedWhatYouCanDo(loaded.inboundText) && looksLikeCapabilityBrochure(firstPass.replyText)
-          ? buildCapabilityRetrySystemMessage()
-          : buildRefusalRetrySystemMessage(loaded.inboundText);
+      : shouldRetryChartOrFileDump(loaded.inboundText, firstPass.replyText)
+        ? buildProblemShareRetrySystemMessage(loaded.inboundText)
+        : looksLikeUnwellShare(loaded.inboundText) && looksLikeLogNarration(firstPass.replyText)
+          ? buildUnwellCareRetrySystemMessage()
+          : askedWhatYouCanDo(loaded.inboundText) && looksLikeCapabilityBrochure(firstPass.replyText)
+            ? buildCapabilityRetrySystemMessage()
+            : buildRefusalRetrySystemMessage(loaded.inboundText);
   loaded.instructions = `${loaded.instructions}\n\n${retryNudge}`;
   if (loaded.plannerInstructions) {
     loaded.plannerInstructions = `${loaded.plannerInstructions}\n\n${retryNudge}`;

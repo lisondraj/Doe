@@ -1173,7 +1173,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "list_scheduled_texts",
       description:
-        "Live file for reminders: committed upcoming texts, recently sent, and any uncommitted draft. Use this for existence questions — never answer from chat history. Drafts are not set. Call before cancel_scheduled_text for ids.",
+        "Live file for reminders: committed upcoming texts, recently sent, and any uncommitted draft. Use ONLY when they ask what is set / any reminders / what's in the file — not when they share a problem. Drafts are not set. Call before cancel_scheduled_text for ids.",
       parameters: { type: "object", properties: {} },
     },
   },
