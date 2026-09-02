@@ -111,15 +111,16 @@ export async function runDoeDtcAgentSelftest(): Promise<Record<string, unknown>>
   }
 
   const openJobs = await listOpenDoeDtcBrowserJobs(user.id);
-  checks.integrations = {
+  const integrations = {
     supabaseServiceRole: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()),
     mem0: Boolean(process.env.MEM0_API_KEY?.trim()),
     kernel: Boolean(process.env.KERNEL_API_KEY?.trim()),
   };
-  if (!checks.integrations.mem0) {
+  checks.integrations = integrations;
+  if (!integrations.mem0) {
     checks.mem0Warning = "MEM0_API_KEY missing — memory tools will fail silently in production.";
   }
-  if (!checks.integrations.kernel) {
+  if (!integrations.kernel) {
     checks.kernelWarning = "KERNEL_API_KEY missing — browser automation is disabled.";
   }
   checks.browserJobs = openJobs.map((job) => ({

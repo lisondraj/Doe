@@ -698,7 +698,7 @@ export function documentParseHasPartialLabReads(
   return writes.some((row) => row.tool === "log_result" && !labWriteHasReadableValue(row.args));
 }
 
-function documentSourceLabel(files: Array<{ mime?: string | null; filename?: string | null }>): string {
+function documentSourceLabel(files: Array<{ mime: string | null; filename: string | null }>): string {
   return files.some((file) => isPdfFile(file)) ? "document pdf" : "document photo";
 }
 

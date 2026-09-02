@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
+import { DoeDtc2FeatureCarousel } from "@/components/doedtc/DoeDtc2FeatureCarousel";
 import { DoeDtc2GlassNav } from "@/components/doedtc/DoeDtc2GlassNav";
 import { DoeDtcLandingForm } from "@/components/doedtc/DoeDtcLandingForm";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
@@ -59,10 +60,12 @@ export function DoeDtc2View() {
                 <span className="doedtc2-hero-title__line">Your 24/7</span>
                 <span className="doedtc2-hero-title__line">Health Assistant.</span>
               </h1>
-              <DoeDtcLandingForm hideLabel />
+              <div className="doedtc2-landing__form doedtc-profile-layout">
+                <DoeDtcLandingForm hideLabel />
+              </div>
             </div>
           </section>
-          <section className="doedtc2-section doedtc2-section--over-blue" aria-label="Section 1" />
+          <DoeDtc2FeatureCarousel />
           <section className="doedtc2-section doedtc2-section--over-blue" aria-label="Section 2" />
         </div>
         <section className="doedtc2-section doedtc2-section--white" aria-label="Section 3" />

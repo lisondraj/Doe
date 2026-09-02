@@ -112,16 +112,21 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
   display: block;
 }
 
-.doedtc2-landing__inner .doedtc-card {
+.doedtc2-landing__form {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Profile gloss + punch inputs/buttons; keep doedtc2 layout sizing only. */
+.doedtc2-landing__form .doedtc-card {
   width: 100%;
   margin: 0;
   padding: 1.15rem 1.15rem 1.25rem;
-  box-shadow: var(--doedtc-shadow);
 }
 
-.doedtc2-landing__inner .doedtc-phone-input,
-.doedtc2-landing__inner .doedtc-phone-input__control,
-.doedtc2-landing__inner .doedtc-button {
+.doedtc2-landing__form .doedtc-phone-input,
+.doedtc2-landing__form .doedtc-phone-input__control,
+.doedtc2-landing__form .doedtc-button {
   width: 100%;
   max-width: none;
   box-sizing: border-box;
@@ -221,4 +226,184 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
 
 .doedtc2-glass-nav__menu svg {
   display: block;
+}
+
+/* Second section — scroll-driven horizontal feature carousel */
+.doedtc2-features {
+  --doedtc2-features-x: 0px;
+  --doedtc2-features-card-width: calc(100vw - (var(--doedtc2-frame) + 1.75rem) * 2 - 2.35rem);
+  --doedtc2-features-gap: 0.85rem;
+  height: calc(100dvh + 270dvh);
+  height: calc(100svh + 270svh);
+  min-height: 0;
+}
+
+.doedtc2-features__sticky {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: max(5.5rem, calc(env(safe-area-inset-top, 0px) + 4.75rem)) 0
+    max(1.25rem, env(safe-area-inset-bottom, 0px));
+}
+
+.doedtc2-features__viewport {
+  width: 100%;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.doedtc2-features__row {
+  --doedtc2-features-x: 0px;
+  display: flex;
+  align-items: stretch;
+  gap: var(--doedtc2-features-gap);
+  padding-left: calc(var(--doedtc2-frame) + 1.75rem);
+  padding-right: calc(var(--doedtc2-frame) + 1.75rem);
+  transform: translate3d(var(--doedtc2-features-x), 0, 0);
+  will-change: transform;
+}
+
+.doedtc2-feature-card {
+  flex: 0 0 var(--doedtc2-features-card-width);
+  width: var(--doedtc2-features-card-width);
+  height: clamp(26rem, 76dvh, 34rem);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.doedtc2-feature-card__visual {
+  flex: 2 1 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 1.25rem 1.25rem 0 0;
+  background-color: #2563eb;
+  background-image: linear-gradient(
+    180deg,
+    #1d4ed8 0%,
+    #2563eb 28%,
+    #3b82f6 62%,
+    #60a5fa 100%
+  );
+}
+
+.doedtc2-feature-card__peek-inner {
+  height: 100%;
+  padding: 1rem 1rem 0.5rem;
+  box-sizing: border-box;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+}
+
+.doedtc2-feature-card__name-box {
+  width: 100%;
+  aspect-ratio: auto;
+  min-height: 9.5rem;
+  margin: 0;
+  padding: 1rem;
+  transform: scale(0.92);
+  transform-origin: left bottom;
+}
+
+.doedtc2-feature-card__name-box .doedtc-profile-name-box__title {
+  font-size: clamp(1.35rem, 5.5vw, 1.85rem);
+}
+
+.doedtc2-feature-card__medical-box {
+  width: 100%;
+  margin: 0;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.96);
+  transform: scale(0.94);
+  transform-origin: left bottom;
+}
+
+.doedtc2-feature-card__medical-box .doedtc-medical-box__title {
+  margin: 0 0 0.45rem;
+  font-size: 0.72rem;
+}
+
+.doedtc2-feature-card__medical-box .doedtc-medical-box__title:not(:first-child) {
+  margin-top: 0.75rem;
+}
+
+.doedtc2-feature-card__tracker-card {
+  width: 100%;
+  margin: 0;
+  padding: 1rem 1.05rem;
+  transform: scale(0.94);
+  transform-origin: left bottom;
+}
+
+.doedtc2-feature-card__tracker-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.doedtc2-feature-card__tracker-value {
+  margin: 0.35rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.doedtc2-feature-card__tracker-meta {
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+}
+
+.doedtc2-feature-card__family-card {
+  width: 100%;
+  margin: 0;
+  padding: 0.95rem 1rem;
+  list-style: none;
+  transform: scale(0.94);
+  transform-origin: left bottom;
+}
+
+.doedtc2-feature-card__copy {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.55rem;
+  padding: 1.05rem 1.15rem 1.15rem;
+  box-sizing: border-box;
+}
+
+.doedtc2-feature-card__title {
+  margin: 0;
+  font-size: clamp(1.05rem, 4.2vw, 1.22rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--doedtc-ink);
+}
+
+.doedtc2-feature-card__description {
+  margin: 0;
+  flex: 1 1 auto;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--doedtc-muted);
+}
+
+.doedtc2-feature-card__cta {
+  margin-top: 0.35rem;
+  width: 100%;
+  max-width: none;
 }
