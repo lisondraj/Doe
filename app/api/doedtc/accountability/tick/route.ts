@@ -1,3 +1,4 @@
+import { recoverStuckDoeDtcBrowserJobs } from "@/lib/doedtc/doedtc-browser-advance";
 import { NextResponse } from "next/server";
 
 import {
@@ -12,6 +13,7 @@ import { listDueWorkflows, processWorkflowTick } from "@/lib/doedtc/doedtc-workf
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 
 function authorizeCron(request: Request): boolean {
   const secret = process.env.CRON_SECRET?.trim();
@@ -70,11 +72,22 @@ export async function GET(request: Request) {
     }
   }
 
+  let browserRecovery: Array<{ jobId: string; dispatched: boolean }> = [];
+  try {
+    browserRecovery = await recoverStuckDoeDtcBrowserJobs();
+  } catch (error) {
+    console.warn(
+      "[doedtc] browser recovery failed:",
+      error instanceof Error ? error.message : String(error),
+    );
+  }
+
   return NextResponse.json({
     ok: true,
-    processed: pactResults.length + textResults.length + workflowResults.length,
+    processed: pactResults.length + textResults.length + workflowResults.length + browserRecovery.length,
     accountability: pactResults,
     scheduledTexts: textResults,
     workflows: workflowResults,
+    browserRecovery,
   });
 }

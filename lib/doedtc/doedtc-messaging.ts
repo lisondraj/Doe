@@ -303,14 +303,35 @@ export async function sendDoeDtcBrowserScreenshotOutbound(params: {
   screenshotUrl: string;
   idempotencyKey: string;
 }): Promise<void> {
-  await sendDoeDtcMediaOutbound({
-    user: params.user,
-    chatId: params.chatId,
-    to: params.user.phone,
-    url: params.screenshotUrl,
-    caption: DOEDTC_LINQ.screenshotIntro,
-    idempotencyKey: params.idempotencyKey,
-  });
+  try {
+    await sendDoeDtcMediaOutbound({
+      user: params.user,
+      chatId: params.chatId,
+      to: params.user.phone,
+      url: params.screenshotUrl,
+      caption: DOEDTC_LINQ.screenshotIntro,
+      idempotencyKey: params.idempotencyKey,
+    });
+  } catch (error) {
+    console.warn(
+      "[doedtc] screenshot media send failed, sending the blob link:",
+      error instanceof Error ? error.message : String(error),
+    );
+    await sendDoeDtcOutbound({
+      user: params.user,
+      chatId: params.chatId ?? params.user.linq_chat_id ?? undefined,
+      to: params.user.phone,
+      text: DOEDTC_LINQ.screenshotIntro,
+      idempotencyKey: `${params.idempotencyKey}-intro`,
+    });
+    await sendDoeDtcLinkOutbound({
+      user: params.user,
+      chatId: params.chatId,
+      to: params.user.phone,
+      url: params.screenshotUrl,
+      idempotencyKey: `${params.idempotencyKey}-link`,
+    });
+  }
 }
 
 export async function sendDoeDtcBrowserFailureOutbound(params: {
