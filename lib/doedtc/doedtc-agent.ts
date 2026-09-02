@@ -8,6 +8,14 @@ import {
   resolveDeliverableInboundText,
 } from "@/lib/doedtc/agent/deliverable-policy";
 import {
+  buildMemorySearchQuery,
+  formatThreadContinuityBlock,
+  resolveThreadInboundText,
+  THREAD_TRANSCRIPT_FETCH,
+  THREAD_TRANSCRIPT_KEEP,
+  THREAD_TRANSCRIPT_MAX_CHARS,
+} from "@/lib/doedtc/agent/thread-context";
+import {
   buildIncidentalChartWriteRetrySystemMessage,
   chartWriteSucceeded,
   formatIncidentalChartWriteContinueBlock,
@@ -400,9 +408,9 @@ function compactTranscript(
     filesById && recentInboundFiles
       ? enrichTranscriptBodiesForAgent(filtered, filesById, recentInboundFiles)
       : filtered;
-  const joined = compactTranscriptForAgent(enriched, 20);
-  if (joined.length <= 9000) return joined;
-  return joined.slice(joined.length - 9000);
+  const joined = compactTranscriptForAgent(enriched, THREAD_TRANSCRIPT_KEEP);
+  if (joined.length <= THREAD_TRANSCRIPT_MAX_CHARS) return joined;
+  return joined.slice(joined.length - THREAD_TRANSCRIPT_MAX_CHARS);
 }
 
 function formatSymptomLog(symptoms: DoeDtcSymptomRow[]): string {
@@ -576,6 +584,7 @@ export type DoeDtcAgentPromptParams = {
   unwellCareBlock?: string;
   incidentalChartWriteBlock?: string;
   problemShareBlock?: string;
+  threadContinuityBlock?: string;
   turnMode?: TurnMode;
 };
 
@@ -587,6 +596,7 @@ ${params.capabilityAskBlock ? `\n${params.capabilityAskBlock}\n` : ""}
 ${params.unwellCareBlock ? `\n${params.unwellCareBlock}\n` : ""}
 ${params.incidentalChartWriteBlock ? `\n${params.incidentalChartWriteBlock}\n` : ""}
 ${params.problemShareBlock ? `\n${params.problemShareBlock}\n` : ""}
+${params.threadContinuityBlock ? `\n${params.threadContinuityBlock}\n` : ""}
 ${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
 Playbook (how you've corrected yourself before):
 ${params.playbookNotes}
@@ -607,7 +617,9 @@ Recent conversation:
 ${params.transcript || "No prior messages."}
 
 Thread:
-- Continue from Recent conversation (what they said and what you said). Do not repeat your last Doe line.
+- This is one ongoing conversation. Read Recent conversation and Relevant memories. When they continue a thread, refer back to the person, problem, or ask they already named.
+- Pull earlier context when it helps this turn. Do not restart as if you just met. Do not force a recap — a short callback is enough.
+- Continue from what they said and what you said. Do not repeat your last Doe line.
 - If they already answered who/when/what, use it. Do not re-ask.
 - If you already sent a link ([sent a link] or a Sending… bubble), do not send it again unless they ask to resend.
 - If they ask what is set or what is in the file, call list_scheduled_texts. Do not use prior bubbles as proof it is in the file.
@@ -649,12 +661,12 @@ ${params.assessmentHistory}`;
 }
 
 const DOE_AGENT_SAFETY_TAIL = `Parallel work:
-- Only one browser task runs at a time. Browsing continues in the background — the screenshot arrives as a follow-up iMessage.
+- Browsing continues in the background — reply that you're on it, then the screenshot arrives as a follow-up iMessage.
 - You may run other tools in the same turn (log symptoms, family, meds, start_listen, etc.) while a browser job is open.
 - Do not wait for browsing to finish before saving profile or appointment data.
 - Each inbound is its own turn. Reply to this message now. Other Active work continues in parallel — do not stall this reply on those jobs.
 - If they ask what you're working on, describe Active work in plain language. If none, say you're on this message.
-- Never say you are working on it or will send it in a minute unless a tool already started (browser job, scheduled send). If you can finish this turn, do it now.
+- Never say you are working on it or will send it in a minute unless a tool already started (browser job, scheduled send). If you can finish this turn, do it now. If start_browser_task is still running, say you're on it and you'll text when it's done. Do not describe the page until the screenshot arrives.
 
 iMessage texture:
 - react_to_message: optional. Use a single emoji that fits what they said (😂 🙏 💙 💪 👀 ❓). Most turns have no reaction. Never use 👍, ✅, or 👎 — those are reserved for long-running work.
@@ -904,14 +916,19 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   const timezone = normalizeScheduledTimezone(null);
+  const messageHistory = await listDoeDtcMessages(params.user.id, THREAD_TRANSCRIPT_FETCH);
+  const priorInboundBodies = priorInboundBodiesFromMessages(messageHistory);
+  const memoryQuery = buildMemorySearchQuery({
+    inboundText: params.inboundText,
+    priorInboundBodies,
+  });
 
-  const [initialSnapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, activeWorkItems] =
+  const [initialSnapshot, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, activeWorkItems] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
-      listDoeDtcMessages(params.user.id, 40),
-      searchDoeDtcMem0Memories({ userId: params.user.id, query: params.inboundText, topK: 5 }),
+      searchDoeDtcMem0Memories({ userId: params.user.id, query: memoryQuery, topK: 8 }),
       listGuidesForUser(params.user.id),
-      searchDoeDtcMem0Playbook({ userId: params.user.id, query: params.inboundText, topK: 3 }),
+      searchDoeDtcMem0Playbook({ userId: params.user.id, query: memoryQuery, topK: 3 }),
       getActiveDoeDtcBrowserJobId(params.user.id),
       loadActiveWork({ userId: params.user.id, currentTurnId: params.turnId }),
     ]);
@@ -1064,11 +1081,20 @@ export async function runDoeDtcAgentTurnLegacy(params: {
 
   const deliverableInboundText = resolveDeliverableInboundText({
     inboundText: params.inboundText,
-    priorInboundBodies: priorInboundBodiesFromMessages(messageHistory),
+    priorInboundBodies,
     lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
   });
+  const threadInboundText = resolveThreadInboundText({
+    inboundText: params.inboundText,
+    priorInboundBodies,
+  });
   const briefInboundText =
-    incidentalChartWrite?.originalInbound?.trim() || deliverableInboundText;
+    incidentalChartWrite?.originalInbound?.trim() ||
+    (deliverableInboundText !== params.inboundText.trim() ? deliverableInboundText : threadInboundText);
+  const threadContinuityBlock = formatThreadContinuityBlock({
+    inboundText: params.inboundText,
+    priorInboundBodies,
+  });
 
   const brief = buildSituationBrief({
     inboundText: briefInboundText,
@@ -1145,6 +1171,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     problemShareBlock: inboundLooksLikeProblemShare(briefInboundText)
       ? formatProblemShareBlock()
       : undefined,
+    threadContinuityBlock,
     turnMode: turnMode.mode,
   }) + (reminderDirective ? `\n\n${reminderDirective}` : "");
 

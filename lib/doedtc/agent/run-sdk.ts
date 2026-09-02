@@ -19,6 +19,13 @@ import {
   resolveDeliverableInboundText,
 } from "@/lib/doedtc/agent/deliverable-policy";
 import {
+  buildMemorySearchQuery,
+  formatThreadContinuityBlock,
+  resolveThreadInboundText,
+  THREAD_TRANSCRIPT_FETCH,
+  THREAD_TRANSCRIPT_KEEP,
+} from "@/lib/doedtc/agent/thread-context";
+import {
   buildIncidentalChartWriteRetrySystemMessage,
   chartWriteSucceeded,
   formatIncidentalChartWriteContinueBlock,
@@ -130,7 +137,7 @@ function compactTranscript(
 ): string {
   const filtered = messages.filter((entry) => entry.body.trim());
   const enriched = enrichTranscriptBodiesForAgent(filtered, filesById, recentInboundFiles);
-  return compactTranscriptForAgent(enriched, 20);
+  return compactTranscriptForAgent(enriched, THREAD_TRANSCRIPT_KEEP);
 }
 
 function formatSymptomLog(
@@ -189,18 +196,23 @@ async function loadRunContext(params: {
   incidentalChartWrite?: { label: string; originalInbound: string } | null;
 }): Promise<DoeDtcRunContext> {
   const pendingRow = params.pendingRow ?? (await getAgentPending(params.user.id));
+  const messageHistory = await listDoeDtcMessages(params.user.id, THREAD_TRANSCRIPT_FETCH);
+  const priorInboundBodies = priorInboundBodiesFromMessages(messageHistory);
+  const memoryQuery = buildMemorySearchQuery({
+    inboundText: params.incidentalChartWrite?.originalInbound || params.inboundText,
+    priorInboundBodies,
+  });
 
-  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, attachmentContext, activeWorkItems] =
+  const [snapshot, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, attachmentContext, activeWorkItems] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
-      listDoeDtcMessages(params.user.id, 40),
       searchDoeDtcMem0Memories({
         userId: params.user.id,
-        query: params.incidentalChartWrite?.originalInbound || params.inboundText,
-        topK: 5,
+        query: memoryQuery,
+        topK: 8,
       }),
       listGuidesForUser(params.user.id),
-      searchDoeDtcMem0Playbook({ userId: params.user.id, query: params.inboundText, topK: 3 }),
+      searchDoeDtcMem0Playbook({ userId: params.user.id, query: memoryQuery, topK: 3 }),
       getActiveDoeDtcBrowserJobId(params.user.id),
       loadDoeDtcAttachmentContext({
         userId: params.user.id,
@@ -228,11 +240,20 @@ async function loadRunContext(params: {
 
   const deliverableInboundText = resolveDeliverableInboundText({
     inboundText: params.inboundText,
-    priorInboundBodies: priorInboundBodiesFromMessages(messageHistory),
+    priorInboundBodies,
     lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
   });
+  const threadInboundText = resolveThreadInboundText({
+    inboundText: params.inboundText,
+    priorInboundBodies,
+  });
   const briefInboundText =
-    params.incidentalChartWrite?.originalInbound?.trim() || deliverableInboundText;
+    params.incidentalChartWrite?.originalInbound?.trim() ||
+    (deliverableInboundText !== params.inboundText.trim() ? deliverableInboundText : threadInboundText);
+  const threadContinuityBlock = formatThreadContinuityBlock({
+    inboundText: params.inboundText,
+    priorInboundBodies,
+  });
 
   const brief = buildSituationBrief({
     inboundText: briefInboundText,
@@ -293,6 +314,7 @@ async function loadRunContext(params: {
     problemShareBlock: inboundLooksLikeProblemShare(briefInboundText)
       ? formatProblemShareBlock()
       : undefined,
+    threadContinuityBlock,
     turnMode: turnMode.mode,
   };
 

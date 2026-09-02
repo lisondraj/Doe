@@ -408,12 +408,16 @@ test("compactTranscriptForAgent drops filler outbound rows", () => {
   assert.match(transcript, /Ozempic weekly/);
 });
 
-test("compactTranscriptForAgent keeps the last outbound even when filler", () => {
+test("compactTranscriptForAgent drops working-on-it acks except the last outbound", () => {
   const transcript = compactTranscriptForAgent([
-    { direction: "inbound", body: "Hey" },
-    { direction: "outbound", body: "Got it." },
+    { direction: "inbound", body: "screenshot google.com" },
+    { direction: "outbound", body: "Working on that. I'll text you when I have it." },
+    { direction: "inbound", body: "and then send the first result" },
+    { direction: "outbound", body: "Here's the first result." },
   ]);
-  assert.match(transcript, /Doe: Got it/);
+  assert.doesNotMatch(transcript, /Working on that/);
+  assert.match(transcript, /screenshot google.com/);
+  assert.match(transcript, /first result/);
 });
 
 test("compactTranscriptForAgent keeps the last outbound and sent-link bubbles", () => {

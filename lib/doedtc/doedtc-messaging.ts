@@ -27,6 +27,12 @@ import {
 } from "@/lib/doedtc/doedtc-db";
 import { addDoeDtcMem0Turn } from "@/lib/doedtc/doedtc-memory";
 import { waitForOutboundThinkTime } from "@/lib/doedtc/doedtc-outbound-pacing";
+import {
+  DEFERRED_WORK_ACK,
+  isRedundantWorkingAck,
+  WORKING_TEXT_ACK_DELAY_MS,
+} from "@/lib/doedtc/agent/active-work";
+import { shouldSendWorkingTextAck } from "@/lib/doedtc/doedtc-reactions";
 import { settleInlineScheduledSends } from "@/lib/doedtc/doedtc-scheduled-db";
 import { tryHandleAccountabilityInbound } from "@/lib/doedtc/doedtc-accountability-db";
 import { tryHandleWorkflowInbound } from "@/lib/doedtc/doedtc-workflows";
@@ -303,6 +309,21 @@ export async function sendDoeDtcBrowserScreenshotOutbound(params: {
     to: params.user.phone,
     url: params.screenshotUrl,
     caption: DOEDTC_LINQ.screenshotIntro,
+    idempotencyKey: params.idempotencyKey,
+  });
+}
+
+export async function sendDoeDtcBrowserFailureOutbound(params: {
+  user: DoeDtcUserRow;
+  error: string;
+  idempotencyKey: string;
+}): Promise<void> {
+  const { toUserSafeBrowserError } = await import("@/lib/doedtc/doedtc-browser");
+  await sendDoeDtcOutbound({
+    user: params.user,
+    chatId: params.user.linq_chat_id ?? undefined,
+    to: params.user.phone,
+    text: toUserSafeBrowserError(params.error),
     idempotencyKey: params.idempotencyKey,
   });
 }
@@ -587,6 +608,49 @@ export async function handleOptOutInbound(phone: string): Promise<void> {
   await markDoeDtcUserOptedOut(phone);
 }
 
+function startWorkingTextAck(params: {
+  enabled: boolean;
+  send: () => Promise<void>;
+}): { sentText: () => string | null; settle: () => Promise<void> } {
+  const state: {
+    cancelled: boolean;
+    sentText: string | null;
+    applying?: Promise<void>;
+    timer?: ReturnType<typeof setTimeout>;
+  } = { cancelled: false, sentText: null };
+
+  if (!params.enabled) {
+    return {
+      sentText: () => null,
+      settle: async () => undefined,
+    };
+  }
+
+  state.timer = setTimeout(() => {
+    state.applying = (async () => {
+      if (state.cancelled) return;
+      try {
+        await params.send();
+        state.sentText = DEFERRED_WORK_ACK;
+      } catch (error) {
+        console.warn(
+          "[doedtc] working-on-it ack failed:",
+          error instanceof Error ? error.message : String(error),
+        );
+      }
+    })();
+  }, WORKING_TEXT_ACK_DELAY_MS);
+
+  return {
+    sentText: () => state.sentText,
+    settle: async () => {
+      state.cancelled = true;
+      if (state.timer) clearTimeout(state.timer);
+      if (state.applying) await state.applying;
+    },
+  };
+}
+
 export async function handleSymptomInbound(params: {
   user: DoeDtcUserRow;
   text: string;
@@ -625,6 +689,22 @@ export async function handleSymptomInbound(params: {
     chatId,
   });
 
+  const workingAck = startWorkingTextAck({
+    enabled: shouldSendWorkingTextAck({
+      inboundText: params.text,
+      hasFiles:
+        (params.inboundFileIds?.length ?? 0) > 0 || (params.extraVisionUrls?.length ?? 0) > 0,
+    }),
+    send: () =>
+      sendDoeDtcOutbound({
+        user: params.user,
+        chatId,
+        to: params.user.phone,
+        text: DEFERRED_WORK_ACK,
+        idempotencyKey: `doedtc-working-ack-${params.user.id}-${idSuffix}`,
+      }),
+  });
+
   let turn: DoeDtcAgentTurnResult;
   let agentFailed = false;
   let agentError: string | undefined;
@@ -652,6 +732,8 @@ export async function handleSymptomInbound(params: {
       assessmentRan: false,
       replyToInbound: false,
     };
+  } finally {
+    await workingAck.settle();
   }
 
   const replyText = turn.replyText;
@@ -693,14 +775,15 @@ export async function handleSymptomInbound(params: {
   });
 
   const firstOutbound = replyText || turn.careUrl || turn.listenUrl || turn.profileUrl || "";
-  if (firstOutbound) {
+  const ackAlreadySent = workingAck.sentText();
+  if (firstOutbound && !ackAlreadySent) {
     await waitForOutboundThinkTime({
       startedAtMs: turnStartedAtMs,
       replyText: replyText || firstOutbound,
     });
   }
 
-  if (replyText) {
+  if (replyText && !(ackAlreadySent && isRedundantWorkingAck(ackAlreadySent, replyText))) {
     await sendDoeDtcOutbound({
       user: params.user,
       chatId,

@@ -12,6 +12,7 @@ import {
   sanitizeMem0Text,
   shouldSkipMem0Memory,
 } from "@/lib/doedtc/doedtc-privacy";
+import { looksLikeWorkingAck } from "@/lib/doedtc/agent/active-work";
 
 let client: MemoryClient | null = null;
 
@@ -121,6 +122,7 @@ export async function addDoeDtcMem0Turn(params: {
   if (!userText || shouldSkipMem0Memory(userText) || shouldSkipMem0Memory(assistantText)) {
     return;
   }
+  if (looksLikeWorkingAck(assistantText)) return;
 
   try {
     await mem0.add(

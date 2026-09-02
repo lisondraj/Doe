@@ -252,7 +252,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   revoke_household_access:
     "revoke_household_access — self only: stop sharing own profile with household. confirmed:true for adults after explicit yes.",
   start_browser_task:
-    "start_browser_task — open a real browser on any site or search they named. Screenshot texts back. Attempt before refusing. Never ask for a more specific URL. Not send_profile_link as fallback.",
+    "start_browser_task — open a real browser on any site or search they named. Job runs in the background. Say you're on it; screenshot texts back when done. Attempt before refusing. Never ask for a more specific URL. Not send_profile_link as fallback.",
   browser_navigate:
     "browser_navigate — go to any URL on the active job. Requires start_browser_task first.",
   browser_act:
@@ -362,7 +362,7 @@ function buildTier2Blocks(signals?: DoeAgentPromptSignals): string[] {
   blocks.push(`Parallel turns (always):
 - This inbound is one turn. Reply to it now. Other Active work continues.
 - If they ask what you're doing, describe Active work in plain language.
-- Do not say you'll send later or that you're working on it unless start_browser_task or schedule_text already ran.`);
+- Do not say you'll send later or that you're working on it unless start_browser_task or schedule_text already ran. If the browser job is still running, say you're on it and you'll text when it's done.`);
 
   return blocks;
 }
@@ -458,7 +458,7 @@ export function buildDoeDtcToolCapabilityPrompt(signals?: DoeAgentPromptSignals)
     ...tier2.map((block) => block),
     "",
     "- You have real tools. Attempt the task before saying you cannot do it.",
-    "- Never say you are working on it or will send later unless a tool already started.",
+    "- Never say you are working on it or will send later unless a tool already started. If the browser job is still running, say you're on it and you'll text when it's done.",
     "- Never send a profile or tracker link unless they asked for that link this turn.",
     "- When correcting profile data, update or remove the existing row — never add a second copy.",
     "- Resolve ids from logs above (read_profile, Symptom log, Appointments, Household) — do not ask the user for ids.",

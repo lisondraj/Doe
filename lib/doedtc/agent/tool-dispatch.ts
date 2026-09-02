@@ -7,7 +7,6 @@ import {
   requestDoeDtcLiveLogin,
   requestDoeDtcVaultLink,
   snapshotDoeDtcBrowser,
-  startDoeDtcBrowserTask,
   startDoeDtcBrowserTaskAsync,
   toUserSafeBrowserError,
 } from "@/lib/doedtc/doedtc-browser";
@@ -1563,21 +1562,13 @@ async function executeDoeDtcToolInner(params: {
           args.mode === "login" || args.mode === "write" || args.mode === "research"
             ? args.mode
             : "research";
-        const started =
-          mode === "research"
-            ? await startDoeDtcBrowserTask({
-                user: ctx.user,
-                intent: String(args.intent ?? "").trim() || browserIntentFromInbound(ctx.inboundText),
-                url: String(args.url ?? ""),
-                mode,
-              })
-            : await startDoeDtcBrowserTaskAsync({
-                user: ctx.user,
-                intent: String(args.intent ?? "").trim() || browserIntentFromInbound(ctx.inboundText),
-                url: String(args.url ?? ""),
-                mode,
-                turnId: state.turnId,
-              });
+        const started = await startDoeDtcBrowserTaskAsync({
+          user: ctx.user,
+          intent: String(args.intent ?? "").trim() || browserIntentFromInbound(ctx.inboundText),
+          url: String(args.url ?? ""),
+          mode,
+          turnId: state.turnId,
+        });
         if (!started.ok) {
           state.browserUserMessage = started.user_message;
           state.browserBusy = false;

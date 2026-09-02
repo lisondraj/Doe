@@ -985,7 +985,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "start_browser_task",
       description:
-        "Open a real browser, go to the page or search they asked for, and send a screenshot back over iMessage. Pass their ask as intent. url is optional (google, a hostname, or a full URL). Any site. Do not refuse or ask for a more specific URL first.",
+        "Open a real browser, go to the page or search they asked for, and send a screenshot back over iMessage when it is ready. Pass their ask as intent. url is optional (google, a hostname, or a full URL). Any site. The job runs in the background — tell them you're on it. Do not refuse or ask for a more specific URL first.",
       parameters: {
         type: "object",
         properties: {

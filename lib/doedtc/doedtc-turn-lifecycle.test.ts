@@ -13,6 +13,7 @@ import {
   inferAmbientReaction,
   inferMatchingReaction,
   pickMatchingReaction,
+  shouldSendWorkingTextAck,
 } from "@/lib/doedtc/doedtc-reactions";
 
 test("fast turns skip lifecycle reactions", () => {
@@ -134,6 +135,13 @@ test("only complex inbound qualifies for lifecycle 👍/✅", () => {
   assert.equal(inboundLooksComplex("log 3 glasses of water"), false);
   assert.equal(inboundLooksComplex("screenshot google.com"), true);
   assert.equal(inboundLooksComplex("record my visit"), true);
+});
+
+test("slow work gets a working-on-it text, fast asks do not", () => {
+  assert.equal(shouldSendWorkingTextAck({ inboundText: "screenshot google.com" }), true);
+  assert.equal(shouldSendWorkingTextAck({ inboundText: "what is this", hasFiles: true }), true);
+  assert.equal(shouldSendWorkingTextAck({ inboundText: "remind me in 5 seconds" }), false);
+  assert.equal(shouldSendWorkingTextAck({ inboundText: "yes" }), false);
 });
 
 test("matching reactions are occasional and stay semantic", () => {

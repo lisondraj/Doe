@@ -388,6 +388,7 @@ describe("tool capability prompt", () => {
     assertToolPromptCoverage(prompt);
     assert.match(prompt, /Do not use prior bubbles/);
     assert.match(prompt, /do not repeat your last Doe message/i);
+    assert.match(prompt, /ongoing conversation/i);
     assert.match(prompt, /propose_scheduled_text is a draft/);
     assert.match(prompt, /never answer from chat history/);
     assert.match(prompt, /Reply to this message now/);

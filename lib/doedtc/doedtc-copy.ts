@@ -361,6 +361,7 @@ export const DOEDTC_LINQ = {
   sessionIntro: "Watch Doe work live — browser and tasks in one place.",
   browserConfirmPrompt: "Reply CONFIRM to proceed, or STOP to cancel.",
   familyInviteIntro: "You're invited to join a family on Doe. Tap the link to set up your profile.",
+  agentTurnFallback: "Something broke on my side. Give that another try in a moment.",
 } as const;
 
 export function doeDtcPublicOrigin(): string {

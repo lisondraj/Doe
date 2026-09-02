@@ -659,23 +659,26 @@ export async function startDoeDtcBrowserTaskAsync(params: {
   turnId?: string;
 }): Promise<StartDoeDtcBrowserTaskResult & { status?: "running" }> {
   const mode = params.mode ?? "research";
-  if (mode === "research") {
-    return startDoeDtcBrowserTask({
-      user: params.user,
-      intent: params.intent,
-      url: params.url,
-      mode,
-    });
-  }
-
   if (!isKernelConfigured()) {
     const error = "Browser automation is not configured.";
     return { ok: false, error, user_message: toUserSafeBrowserError(error) };
   }
 
   try {
-    const host = normalizeBrowserHost(params.url);
-    assertBrowserHostAllowed({ host, mode, declaredHost: host });
+    let host: string;
+    if (mode === "research") {
+      const resolved = resolveResearchBrowseTarget({
+        url: params.url,
+        intent: params.intent,
+      });
+      if ("ok" in resolved) {
+        return { ok: false, error: resolved.error, user_message: toUserSafeBrowserError(resolved.error) };
+      }
+      host = resolved.host;
+    } else {
+      host = normalizeBrowserHost(params.url);
+      assertBrowserHostAllowed({ host, mode, declaredHost: host });
+    }
 
     let job = await createDoeDtcBrowserJob({
       userId: params.user.id,

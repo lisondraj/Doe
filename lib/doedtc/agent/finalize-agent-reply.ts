@@ -1,3 +1,4 @@
+import { ensureDeferredWorkAck } from "@/lib/doedtc/agent/active-work";
 import { groundReplyInCommittedState } from "@/lib/doedtc/agent/committed-state";
 import { reconcileReplyClaims } from "@/lib/doedtc/agent/honesty";
 import {
@@ -59,7 +60,7 @@ export async function finalizeAgentReply(params: {
     toolsExecuted: params.turnState.toolsExecuted,
     turnMode: params.turnMode.mode,
   });
-  rawReply = grounded.replyText;
+  rawReply = ensureDeferredWorkAck(grounded.replyText, Boolean(params.turnState.browserJobDispatched));
 
   const degenerate = isDegenerateTurn({
     replyText: rawReply,

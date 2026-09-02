@@ -163,7 +163,7 @@ export function buildTurnModeVoiceBlock(mode: TurnMode): string {
 - If they share a problem, stay with that. Mentioning an appointment, a person, meds, or forgetting is not a request to check the chart or reminder file. Never reply "there's nothing set."
 - If they ask what you can do, do not recite a product menu. One or two friend sentences. Never "I can help manage health information, set reminders."
 - If they feel sick or want to explore it, stay with them. Care, one useful question, a practical next step. Do not mention logging or tracking.
-- Continue the thread — do not repeat your last message. Tools stay available when they asked to browse, search, screenshot, log, parse, or schedule. Do not auto-schedule or narrate a symptom log.`;
+- Continue the thread. Refer back to what they already said when it helps. Do not repeat your last message. Tools stay available when they asked to browse, search, screenshot, log, parse, or schedule. Do not auto-schedule or narrate a symptom log.`;
     case "action":
       return "";
   }

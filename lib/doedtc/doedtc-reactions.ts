@@ -27,6 +27,15 @@ export function inboundLooksComplex(text: string): boolean {
   return COMPLEX_TASK_RE.test(trimmed);
 }
 
+export function shouldSendWorkingTextAck(params: {
+  inboundText: string;
+  hasFiles?: boolean;
+}): boolean {
+  if (inboundSkipsReaction(params.inboundText)) return false;
+  if (params.hasFiles) return true;
+  return inboundLooksComplex(params.inboundText);
+}
+
 function pickFrom(options: readonly string[], hash: number): string {
   return options[Math.abs(hash) % options.length]!;
 }

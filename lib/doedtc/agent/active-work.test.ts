@@ -3,8 +3,12 @@ import { describe, it } from "node:test";
 
 import {
   askedAboutActiveWork,
+  DEFERRED_WORK_ACK,
+  ensureDeferredWorkAck,
   formatActiveWorkBlock,
+  isRedundantWorkingAck,
   looksLikeDeferredWorkClaim,
+  looksLikeWorkingAck,
 } from "@/lib/doedtc/agent/active-work";
 
 describe("active work status ask", () => {
@@ -36,6 +40,23 @@ describe("deferred work claims", () => {
     assert.equal(looksLikeDeferredWorkClaim("Sent. Screenshot coming as a follow-up."), false);
     assert.equal(looksLikeDeferredWorkClaim("Logged the water."), false);
     assert.equal(looksLikeDeferredWorkClaim("On this one now."), false);
+  });
+});
+
+describe("working-on-it acks for slow jobs", () => {
+  it("keeps the model's ack and fills in a missing one when work is deferred", () => {
+    assert.equal(looksLikeWorkingAck("On it. I'll text you when I have it."), true);
+    assert.equal(
+      ensureDeferredWorkAck("On it. I'll text you the screenshot.", true),
+      "On it. I'll text you the screenshot.",
+    );
+    assert.equal(ensureDeferredWorkAck("Kaiser is the first result.", true), DEFERRED_WORK_ACK);
+    assert.equal(ensureDeferredWorkAck("Logged the water.", false), "Logged the water.");
+    assert.equal(
+      isRedundantWorkingAck(DEFERRED_WORK_ACK, "Working on that. I'll text you when I have it."),
+      true,
+    );
+    assert.equal(isRedundantWorkingAck(DEFERRED_WORK_ACK, "Here's what I found on the page."), false);
   });
 });
 

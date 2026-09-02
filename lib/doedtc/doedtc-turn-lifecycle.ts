@@ -21,14 +21,14 @@ import {
   stableTextHash,
 } from "@/lib/doedtc/doedtc-reactions";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
+import { DOEDTC_LINQ } from "@/lib/doedtc/doedtc-copy";
 
 export const DOE_DTC_WORKING_REACTION = LIFECYCLE_WORKING_EMOJI;
 export const DOE_DTC_DONE_REACTION = LIFECYCLE_DONE_EMOJI;
 export const DOE_DTC_FAILED_REACTION = LIFECYCLE_FAILED_EMOJI;
 export const AGENT_TURN_TIMEOUT_MS = 240_000;
 export const WORKING_REACTION_DELAY_MS = 1_200;
-export const AGENT_TURN_FALLBACK_REPLY =
-  "Something broke on my side. Give that another try in a moment.";
+export const AGENT_TURN_FALLBACK_REPLY = DOEDTC_LINQ.agentTurnFallback;
 
 type PendingReactionKind = "lifecycle" | "matching";
 
@@ -388,25 +388,28 @@ export async function completeDoeDtcTurnLifecycle(params: {
 
 export async function finalizeDoeDtcTurnAfterBrowser(params: {
   turnId: string;
+  failed?: boolean;
 }): Promise<void> {
   const turn = await getDoeDtcAgentTurn(params.turnId);
   if (!turn?.inbound_message_id) return;
 
   const hadWorkingReaction = Boolean(turn.working_at);
+  const finalEmoji = params.failed ? DOE_DTC_FAILED_REACTION : DOE_DTC_DONE_REACTION;
   if (hadWorkingReaction) {
     await swapDoeDtcTurnReaction({
       inboundMessageId: turn.inbound_message_id,
       fromEmoji: DOE_DTC_WORKING_REACTION,
-      toEmoji: DOE_DTC_DONE_REACTION,
+      toEmoji: finalEmoji,
     });
   }
 
   await updateDoeDtcAgentTurnRecord({
     turnId: params.turnId,
     patch: {
-      status: "done",
+      status: params.failed ? "failed" : "done",
       done_at: new Date().toISOString(),
-      final_reaction: hadWorkingReaction ? DOE_DTC_DONE_REACTION : undefined,
+      final_reaction: hadWorkingReaction ? finalEmoji : undefined,
+      error: params.failed ? turn.error ?? "Browser job failed." : undefined,
     },
   });
 }

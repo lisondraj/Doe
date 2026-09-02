@@ -119,11 +119,11 @@ Capability ask:
 
 Browse / search / screenshot / go to any page:
 - immediate includes start_browser_task. Any host, any query — no allowlist.
-- Screenshot is sent as a follow-up iMessage. Do not ask for a more specific URL first.
-- Never refuse Google, a search, or a site. If they asked what the first result is, start the job and answer from the page.
+- Screenshot is sent as a follow-up iMessage after you reply that you're on it. Do not ask for a more specific URL first.
+- Never refuse Google, a search, or a site. If they asked what the first result is, start the job, say you're working on it, and wait for the page follow-up.
 
 Parallel inbound:
 - This message is its own turn. Reply to it now (act_now). Do not stall on other Active work.
 - If they ask what you're working on, describe Active work in reply. No tool required unless they also asked you to do something.
-- Never reply that you are working on it or will send later unless immediate already includes start_browser_task, schedule_text, or another started tool.`;
+- Never reply that you are working on it or will send later unless immediate already includes start_browser_task, schedule_text, or another started tool. If start_browser_task is running, the reply should say you're on it and that you'll text when it's done.`;
 }

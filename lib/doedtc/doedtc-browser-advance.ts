@@ -7,9 +7,11 @@ import {
 } from "@/lib/doedtc/doedtc-browser";
 import { getDoeDtcUserById } from "@/lib/doedtc/doedtc-db";
 import {
+  sendDoeDtcBrowserFailureOutbound,
   sendDoeDtcBrowserScreenshotOutbound,
 } from "@/lib/doedtc/doedtc-messaging";
 import { finalizeDoeDtcTurnAfterBrowser } from "@/lib/doedtc/doedtc-turn-lifecycle";
+import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 export async function dispatchDoeDtcBrowserAdvance(params: {
   jobId: string;
@@ -48,6 +50,36 @@ async function findTurnIdForBrowserJob(jobId: string): Promise<string | null> {
   return (data as { id?: string } | null)?.id ?? null;
 }
 
+async function failBrowserJob(params: {
+  user: DoeDtcUserRow;
+  jobId: string;
+  turnId: string | null;
+  error: string;
+}): Promise<{ ok: false; error: string }> {
+  await updateDoeDtcBrowserJob({
+    jobId: params.jobId,
+    userId: params.user.id,
+    patch: {
+      status: "failed",
+      outcome: params.error,
+    },
+  }).catch(() => undefined);
+  await sendDoeDtcBrowserFailureOutbound({
+    user: params.user,
+    error: params.error,
+    idempotencyKey: `doedtc-browser-advance-fail-${params.jobId}`,
+  }).catch((error) => {
+    console.warn(
+      "[doedtc] browser failure follow-up failed:",
+      error instanceof Error ? error.message : String(error),
+    );
+  });
+  if (params.turnId) {
+    await finalizeDoeDtcTurnAfterBrowser({ turnId: params.turnId, failed: true });
+  }
+  return { ok: false, error: params.error };
+}
+
 export async function advanceDoeDtcBrowserJob(params: {
   jobId: string;
   turnId?: string;
@@ -71,15 +103,12 @@ export async function advanceDoeDtcBrowserJob(params: {
         intent: resolvedJob.intent,
       });
       if ("ok" in resolved) {
-        await updateDoeDtcBrowserJob({
+        return failBrowserJob({
+          user,
           jobId: resolvedJob.id,
-          userId: user.id,
-          patch: {
-            status: "failed",
-            outcome: resolved.error,
-          },
+          turnId,
+          error: resolved.error,
         });
-        return { ok: false, error: resolved.error };
       }
 
       const navigated = await navigateDoeDtcBrowser({
@@ -89,15 +118,12 @@ export async function advanceDoeDtcBrowserJob(params: {
         searchQueryHint: resolvedJob.intent,
       });
       if (!navigated.ok) {
-        await updateDoeDtcBrowserJob({
+        return failBrowserJob({
+          user,
           jobId: resolvedJob.id,
-          userId: user.id,
-          patch: {
-            status: "failed",
-            outcome: navigated.error ?? "Navigation failed",
-          },
+          turnId,
+          error: navigated.error ?? "Navigation failed",
         });
-        return { ok: false, error: navigated.error ?? "Navigation failed" };
       }
     }
 
@@ -109,16 +135,12 @@ export async function advanceDoeDtcBrowserJob(params: {
     });
 
     if (!snapshot.ok || !snapshot.screenshotUrl) {
-      const error = snapshot.error ?? "Could not capture a screenshot.";
-      await updateDoeDtcBrowserJob({
+      return failBrowserJob({
+        user,
         jobId: resolvedJob.id,
-        userId: user.id,
-        patch: {
-          status: "failed",
-          outcome: error,
-        },
+        turnId,
+        error: snapshot.error ?? "Could not capture a screenshot.",
       });
-      return { ok: false, error };
     }
 
     await sendDoeDtcBrowserScreenshotOutbound({
@@ -144,11 +166,11 @@ export async function advanceDoeDtcBrowserJob(params: {
     return { ok: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Browser advance failed.";
-    await updateDoeDtcBrowserJob({
+    return failBrowserJob({
+      user,
       jobId: resolvedJob.id,
-      userId: user.id,
-      patch: { status: "failed", outcome: message },
-    }).catch(() => undefined);
-    return { ok: false, error: message };
+      turnId,
+      error: message,
+    });
   }
 }

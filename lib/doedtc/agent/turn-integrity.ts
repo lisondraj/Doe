@@ -1,10 +1,6 @@
-import {
-  askedForPrivateAppLink,
-  interpretBuildIntent,
-  outboundLooksLikeDeliverableSend,
-} from "@/lib/doedtc/agent/deliverable-policy";
+import { askedForPrivateAppLink, interpretBuildIntent, outboundLooksLikeDeliverableSend } from "@/lib/doedtc/agent/deliverable-policy";
+import { looksLikeWorkingAck } from "@/lib/doedtc/agent/active-work";
 import { DOEDTC_LINQ } from "@/lib/doedtc/doedtc-copy";
-import { AGENT_TURN_FALLBACK_REPLY } from "@/lib/doedtc/doedtc-turn-lifecycle";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
 import type { DoeDtcToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 
@@ -19,7 +15,7 @@ export const FILLER_REPLIES = new Set([
   "Got it",
   "All set.",
   "All set",
-  AGENT_TURN_FALLBACK_REPLY,
+  DOEDTC_LINQ.agentTurnFallback,
   DOEDTC_LINQ.profileLinkIntro,
   DOEDTC_LINQ.feedbackLinkIntro,
   DOEDTC_LINQ.prepareLinkIntro,
@@ -42,6 +38,7 @@ export const FILLER_REPLIES = new Set([
   "Sending your guide.",
   "Sending your shared tracker link.",
   "Reply CONFIRM to proceed, or STOP to cancel.",
+  "Working on that. I'll text you when I have it.",
 ]);
 
 export const DEGENERATE_TURN_REPLY =
@@ -146,6 +143,7 @@ export function isBareUrlReply(text: string): boolean {
 
 function isTranscriptFillerOutbound(body: string): boolean {
   if (isBareUrlReply(body) || outboundLooksLikeDeliverableSend(body)) return false;
+  if (looksLikeWorkingAck(body)) return true;
   return isFillerReply(body);
 }
 
@@ -153,7 +151,7 @@ export const TRANSCRIPT_LINK_SENT_MARKER = "[sent a link]";
 
 export function compactTranscriptForAgent(
   messages: Array<{ direction: string; body: string }>,
-  maxMessages = 20,
+  maxMessages = 40,
 ): string {
   const sliced = messages.slice(-maxMessages);
   let lastOutboundIndex = -1;
