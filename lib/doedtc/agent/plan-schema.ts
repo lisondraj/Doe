@@ -131,5 +131,11 @@ Browse / search / screenshot / go to any page:
 Parallel inbound:
 - This message is its own turn. Reply to it now (act_now). Do not stall on other Active work.
 - If they ask what you're working on, describe Active work in reply. No tool required unless they also asked you to do something.
-- Never reply that you are working on it or will send later unless immediate already includes start_browser_task, schedule_text, or another started tool. If start_browser_task is running, the reply should say you're on it and that you'll text when it's done.`;
+- Never reply that you are working on it or will send later unless immediate already includes start_browser_task, schedule_text, or another started tool. If start_browser_task is running, the reply should say you're on it and that you'll text when it's done.
+
+General advice / strategies / multi-week plans:
+- When they ask for strategies, tips, or a plan spelled out in words (not schedule_text), answer in reply with concrete steps. specialist: null, immediate: [], workflow: null.
+- Do not map "plan the next 3 weeks" onto habit workflows unless they asked for daily check-in texts.
+- Answer cognitive tasks in reply without calling a specialist. Tools-first applies to chart/reminders/browse, not to "give me a 3-week strategy."
+- If Thread continuity names the live topic, stay on that topic. Never invent alcohol, drugs, or stereotypes when "abstain" or "strategies" lacks an object.`;
 }

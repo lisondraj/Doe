@@ -27,6 +27,7 @@ export type DoeDtcRunContext = {
   instructions: string;
   incidentalChartWrite?: { label: string; originalInbound: string };
   plannerInstructions?: string;
+  threadReplyParentBody?: string | null;
   specialistInstructions?: Partial<
     Record<"healthRecord" | "guides" | "scheduling" | "browser", string>
   >;

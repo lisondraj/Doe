@@ -1,5 +1,4 @@
-import { run, RunState, user } from "@openai/agents";
-import type { Agent } from "@openai/agents";
+import { run, RunState, user, Agent } from "@openai/agents";
 
 import {
   buildSdkVisionUserInput,
@@ -47,11 +46,12 @@ import { createInitialToolTurnState } from "@/lib/doedtc/agent/tool-dispatch";
 import { buildSpecialistInstructionMap, createDoeSpecialistAgents } from "@/lib/doedtc/agent/specialists";
 import { executeDoePlan, runDoePlannerTurn } from "@/lib/doedtc/agent/planner-run";
 import {
+  buildForcedReplySystemMessage,
   compactTranscriptForAgent,
   DEGENERATE_TURN_REPLY,
   isDegenerateTurn,
 } from "@/lib/doedtc/agent/turn-integrity";
-import { DoeReplySchema, type DoeDtcRunContext, type DoeReply } from "@/lib/doedtc/agent/types";
+import { DoeReplySchema, resolveDoeDtcAgentModel, type DoeDtcRunContext, type DoeReply } from "@/lib/doedtc/agent/types";
 import {
   buildDoeDtcAgentSystemPrompt,
   type DoeDtcAgentTurnResult,
@@ -203,6 +203,7 @@ async function loadRunContext(params: {
   reminderDirective?: string | null;
   pendingRow?: DoeDtcAgentPendingRow | null;
   incidentalChartWrite?: { label: string; originalInbound: string } | null;
+  threadReplyParentBody?: string | null;
 }): Promise<DoeDtcRunContext> {
   const pendingRow = params.pendingRow ?? (await getAgentPending(params.user.id));
   const messageHistory = await listDoeDtcMessages(params.user.id, THREAD_TRANSCRIPT_FETCH);
@@ -210,6 +211,7 @@ async function loadRunContext(params: {
   const memoryQuery = buildMemorySearchQuery({
     inboundText: params.incidentalChartWrite?.originalInbound || params.inboundText,
     priorInboundBodies,
+    threadReplyParentBody: params.threadReplyParentBody,
   });
 
   const [snapshot, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, attachmentContext, activeWorkItems, openLoops] =
@@ -265,6 +267,7 @@ async function loadRunContext(params: {
   const threadInboundText = resolveThreadInboundText({
     inboundText: params.inboundText,
     priorInboundBodies,
+    threadReplyParentBody: params.threadReplyParentBody,
   });
   const briefInboundText =
     params.incidentalChartWrite?.originalInbound?.trim() ||
@@ -272,6 +275,7 @@ async function loadRunContext(params: {
   const threadContinuityBlock = formatThreadContinuityBlock({
     inboundText: params.inboundText,
     priorInboundBodies,
+    threadReplyParentBody: params.threadReplyParentBody,
   });
 
   const brief = buildSituationBrief({
@@ -392,6 +396,7 @@ async function loadRunContext(params: {
       (parseNote ? `\n\n${parseNote}` : ""),
     specialistInstructions: promptSplit.specialistInstructions,
     incidentalChartWrite: params.incidentalChartWrite ?? undefined,
+    threadReplyParentBody: params.threadReplyParentBody ?? undefined,
   };
 }
 
@@ -520,7 +525,7 @@ async function resumeRunStatePending(params: {
     await clearAgentPending(params.user.id);
   }
 
-  return finalizeSdkRun({
+  return finalizeSdkRunOrForce({
     result,
     loaded,
     inboundMessageId: params.inboundMessageId,
@@ -528,6 +533,15 @@ async function resumeRunStatePending(params: {
 }
 
 function shouldRetrySdkReply(loaded: DoeDtcRunContext, replyText: string): boolean {
+  if (
+    isDegenerateTurn({
+      replyText,
+      toolsExecuted: loaded.turnState.toolsExecuted,
+      state: loaded.turnState,
+    })
+  ) {
+    return true;
+  }
   if (
     shouldRetryEmptyRefusal({
       replyText,
@@ -553,6 +567,71 @@ function shouldRetrySdkReply(loaded: DoeDtcRunContext, replyText: string): boole
   return (
     chartWriteSucceeded(loaded.turnState.toolsExecuted) && isIncidentalChartWrite(original)
   );
+}
+
+async function forceSdkTextReply(loaded: DoeDtcRunContext): Promise<string | null> {
+  const forcedAgent = new Agent<DoeDtcRunContext, typeof DoeReplySchema>({
+    name: "DoeForcedReply",
+    instructions: `${loaded.instructions}\n\n${buildForcedReplySystemMessage(loaded.inboundText)}`,
+    model: resolveDoeDtcAgentModel(),
+    outputType: DoeReplySchema,
+  });
+  try {
+    const result = await run(forcedAgent, loaded.inboundText, { context: loaded, maxTurns: 1 });
+    const parsed = DoeReplySchema.safeParse(result.finalOutput);
+    return parsed.success ? parsed.data.reply.trim() || null : null;
+  } catch (error) {
+    console.warn(
+      "[doedtc:sdk] forced text reply failed:",
+      error instanceof Error ? error.message : String(error),
+    );
+    return null;
+  }
+}
+
+async function finalizeSdkRunOrForce(params: {
+  result: {
+    finalOutput?: unknown;
+    interruptions?: Array<{ name?: string }>;
+  };
+  loaded: DoeDtcRunContext;
+  inboundMessageId?: string;
+}): Promise<DoeDtcAgentTurnResult> {
+  const firstPass = await finalizeSdkRun(params);
+  if (!firstPass.degenerate) return firstPass;
+
+  const forced = await forceSdkTextReply(params.loaded);
+  if (!forced) return firstPass;
+
+  const finalized = await finalizeAgentReply({
+    user: params.loaded.user,
+    inboundText: params.loaded.inboundText,
+    inboundMessageId: params.inboundMessageId,
+    replyText: forced,
+    turnState: params.loaded.turnState,
+    snapshot: params.loaded.snapshot,
+    turnMode: params.loaded.turnMode ?? {
+      mode: "action",
+      intent: "none",
+      emergencyOrDiagnosis: false,
+      disableCommitTools: false,
+      promptBlock: "",
+    },
+    toolCtx: {
+      user: params.loaded.user,
+      inboundText: params.loaded.inboundText,
+      inboundMessageId: params.inboundMessageId,
+      snapshot: params.loaded.snapshot,
+      attachmentContext: params.loaded.attachmentContext,
+    },
+  });
+  if (finalized.degenerate) return firstPass;
+
+  return assembleTurnResult({
+    replyText: finalized.replyText,
+    turnState: params.loaded.turnState,
+    inboundText: params.loaded.inboundText,
+  });
 }
 
 async function finalizeSdkRun(params: {
@@ -609,6 +688,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
   inboundFileIds?: string[];
   extraVisionUrls?: string[];
   turnId?: string;
+  threadReplyParentBody?: string | null;
 }): Promise<DoeDtcAgentTurnResult> {
   let pendingRow = await getAgentPending(params.user.id);
   let incidentalChartWrite: { label: string; originalInbound: string } | null = null;
@@ -769,12 +849,14 @@ export async function runDoeDtcAgentTurnSdk(params: {
       });
       loaded.turnState.preservePendingOffer =
         loaded.turnState.preservePendingOffer || Boolean(executed.preservePending);
-      const turnResult = assembleTurnResult({
-        replyText: finalized.replyText,
-        turnState: loaded.turnState,
-        inboundText: loaded.inboundText,
-      });
-      return { ...turnResult, degenerate: finalized.degenerate };
+      if (!finalized.degenerate) {
+        const turnResult = assembleTurnResult({
+          replyText: finalized.replyText,
+          turnState: loaded.turnState,
+          inboundText: loaded.inboundText,
+        });
+        return { ...turnResult, degenerate: false };
+      }
     }
   }
 
@@ -806,7 +888,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
     loaded.turnState.preservePendingOffer = true;
   }
 
-  const firstPass = await finalizeSdkRun({
+  const firstPass = await finalizeSdkRunOrForce({
     result,
     loaded,
     inboundMessageId: params.inboundMessageId,
@@ -854,7 +936,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
     loaded.turnState.preservePendingOffer = true;
   }
 
-  return finalizeSdkRun({
+  return finalizeSdkRunOrForce({
     result,
     loaded,
     inboundMessageId: params.inboundMessageId,

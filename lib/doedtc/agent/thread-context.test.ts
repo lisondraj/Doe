@@ -5,6 +5,8 @@ import {
   buildMemorySearchQuery,
   formatThreadContinuityBlock,
   inboundLooksLikeThreadFollowUp,
+  inboundNeedsLiveTopicBinding,
+  resolveLiveTopic,
   resolveThreadInboundText,
 } from "@/lib/doedtc/agent/thread-context";
 
@@ -30,6 +32,43 @@ test("short continuers are thread follow-ups, fresh asks are not", () => {
   assert.equal(inboundLooksLikeThreadFollowUp("Remind me after my appointment"), false);
   assert.equal(inboundLooksLikeThreadFollowUp("what's on my chart"), false);
   assert.equal(inboundLooksLikeThreadFollowUp("screenshot google.com"), false);
+});
+
+test("object-less abstain and strategy asks bind to the live topic", () => {
+  assert.equal(inboundNeedsLiveTopicBinding("Can u help me abstain"), true);
+  assert.equal(inboundNeedsLiveTopicBinding("Strategies, plan the next 3 weeks"), true);
+  assert.equal(inboundNeedsLiveTopicBinding("Give me strategies"), true);
+
+  const orgasmTopic =
+    "I noticed after orgasming I get very lethargic. What's going on chemically?";
+  const lftTopic = "What were the numbers on my liver function test?";
+
+  assert.equal(
+    resolveLiveTopic({
+      inboundText: "Can u help me abstain",
+      priorInboundBodies: [orgasmTopic, lftTopic],
+      threadReplyParentBody: orgasmTopic,
+    }),
+    orgasmTopic,
+  );
+
+  const continuity =
+    formatThreadContinuityBlock({
+      inboundText: "Can u help me abstain",
+      priorInboundBodies: [orgasmTopic, lftTopic],
+      threadReplyParentBody: orgasmTopic,
+    }) ?? "";
+  assert.match(continuity, /orgasming I get very lethargic/);
+  assert.match(continuity, /Never default to alcohol/);
+
+  assert.match(
+    resolveThreadInboundText({
+      inboundText: "Give me strategies",
+      priorInboundBodies: [orgasmTopic, "Can u help me abstain"],
+      threadReplyParentBody: orgasmTopic,
+    }),
+    /continuing: I noticed after orgasming/,
+  );
 });
 
 test("follow-ups resolve to the earlier substantial inbound except bare yes", () => {
@@ -59,6 +98,17 @@ test("memory search includes earlier inbounds so short follow-ups still retrieve
   assert.match(query, /forget things after an appointment/);
   assert.match(query, /Sarah/);
   assert.match(query, /yeah/);
+});
+
+test("memory search prefers thread-reply parent over newer unrelated inbound", () => {
+  const orgasmTopic = "I noticed after orgasming I get very lethargic";
+  const query = buildMemorySearchQuery({
+    inboundText: "Can u help me abstain",
+    priorInboundBodies: [orgasmTopic, "What were the numbers on my liver function test?"],
+    threadReplyParentBody: orgasmTopic,
+  });
+  assert.match(query, /orgasming I get very lethargic/);
+  assert.match(query, /abstain/);
 });
 
 test("continuity block appears on follow-ups even when routing stays on yeah", () => {

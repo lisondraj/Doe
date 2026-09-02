@@ -68,7 +68,11 @@ export function createDoeSpecialistAgents(ctx: DoeDtcRunContext) {
 
   const manager = new Agent<DoeDtcRunContext, typeof DoeReplySchema>({
     name: "Doe",
-    instructions: ctx.plannerInstructions ?? ctx.instructions,
+    instructions: `${ctx.plannerInstructions ?? ctx.instructions}
+
+General cognitive tasks:
+- When no specialist tool matches (strategies, multi-week plans, explaining a prior topic), answer in reply without calling health_record, guides, scheduling, or browser.
+- Tools-first applies to chart writes, reminders, browse, and links — not to advice they asked in plain language.`,
     model: model(),
     outputType: DoeReplySchema,
     outputGuardrails: [doeReplyOutputGuardrail],

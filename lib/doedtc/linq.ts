@@ -216,6 +216,10 @@ export async function linqGetAttachment(attachmentId: string): Promise<LinqAttac
 export type LinqStoredMessage = {
   id?: string;
   chat_id?: string;
+  reply_to?: {
+    message_id?: string;
+    part_index?: number;
+  };
   parts?: Array<{
     type?: string;
     value?: string;

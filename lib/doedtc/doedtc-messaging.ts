@@ -64,6 +64,11 @@ type LinqWebhookMediaPart = {
   attachment_id?: string;
 };
 
+type LinqReplyToRef = {
+  message_id?: string;
+  part_index?: number;
+};
+
 type LinqWebhookPayload = {
   event_type?: string;
   type?: string;
@@ -71,11 +76,13 @@ type LinqWebhookPayload = {
   data?: {
     id?: string;
     parts?: LinqWebhookMediaPart[];
+    reply_to?: LinqReplyToRef;
     message?: {
       id?: string;
       parts?: LinqWebhookMediaPart[];
       chat_id?: string;
       from?: string;
+      reply_to?: LinqReplyToRef;
     };
     sender_handle?: { handle?: string };
     from?: string;
@@ -83,7 +90,7 @@ type LinqWebhookPayload = {
     chat?: { id?: string };
     chat_id?: string;
   };
-  message?: { id?: string; parts?: LinqWebhookMediaPart[] };
+  message?: { id?: string; parts?: LinqWebhookMediaPart[]; reply_to?: LinqReplyToRef };
   from?: string;
 };
 
@@ -179,6 +186,41 @@ export function extractInboundMessageId(payload: unknown): string | undefined {
   if (typeof id !== "string") return undefined;
   const trimmed = id.trim();
   return trimmed || undefined;
+}
+
+export function extractInboundReplyToMessageId(payload: unknown): string | undefined {
+  const body = payload as LinqWebhookPayload;
+  const id =
+    body.data?.reply_to?.message_id ??
+    body.data?.message?.reply_to?.message_id ??
+    body.message?.reply_to?.message_id;
+  if (typeof id !== "string") return undefined;
+  const trimmed = id.trim();
+  return trimmed || undefined;
+}
+
+export async function resolveInboundThreadReplyParent(params: {
+  userId: string;
+  replyToMessageId?: string;
+}): Promise<string | null> {
+  const replyToMessageId = params.replyToMessageId?.trim();
+  if (!replyToMessageId) return null;
+
+  const { getDoeDtcMessageBodyByLinqId } = await import("@/lib/doedtc/doedtc-db");
+  const fromDb = await getDoeDtcMessageBodyByLinqId(params.userId, replyToMessageId);
+  if (fromDb) return fromDb;
+
+  try {
+    const message = await linqGetMessage(replyToMessageId);
+    const text = extractInboundText({ data: { parts: message.parts ?? [] } });
+    return text.trim() || null;
+  } catch (error) {
+    console.warn(
+      "[doedtc] thread reply parent lookup failed:",
+      error instanceof Error ? error.message : String(error),
+    );
+    return null;
+  }
 }
 
 export function extractChatMetadata(payload: unknown): {
@@ -682,6 +724,7 @@ export async function handleSymptomInbound(params: {
   extraVisionUrls?: string[];
   webhookEventId?: string;
   inboundMessageId?: string;
+  threadReplyParentBody?: string | null;
 }): Promise<void> {
   const chatId = params.user.linq_chat_id ?? undefined;
   const idSuffix = params.webhookEventId ?? Date.now();
@@ -747,6 +790,7 @@ export async function handleSymptomInbound(params: {
         extraVisionUrls: params.extraVisionUrls,
         inboundMessageId: params.inboundMessageId,
         turnId,
+        threadReplyParentBody: params.threadReplyParentBody,
       }),
     );
     if (turn.degenerate) {
@@ -1210,6 +1254,25 @@ export async function processDoeDtcInboundWebhook(params: {
   if (accountabilityHandled) return;
 
   if (user.status === "active") {
+    let replyToMessageId = extractInboundReplyToMessageId(params.payload);
+    if (!replyToMessageId && inboundMessageId) {
+      try {
+        const message = await linqGetMessage(inboundMessageId);
+        replyToMessageId = extractInboundReplyToMessageId({ data: message });
+      } catch (error) {
+        console.warn(
+          "[doedtc] inbound reply_to hydrate failed:",
+          error instanceof Error ? error.message : String(error),
+        );
+      }
+    }
+    const threadReplyParentBody = replyToMessageId
+      ? await resolveInboundThreadReplyParent({
+          userId: user.id,
+          replyToMessageId,
+        })
+      : null;
+
     await handleSymptomInbound({
       user,
       text: agentInboundText,
@@ -1217,6 +1280,7 @@ export async function processDoeDtcInboundWebhook(params: {
       extraVisionUrls,
       webhookEventId: params.webhookEventId,
       inboundMessageId,
+      threadReplyParentBody,
     });
     return;
   }

@@ -529,6 +529,26 @@ export async function listDoeDtcMessages(
   return ((data as DoeDtcMessageRow[]) ?? []).reverse();
 }
 
+export async function getDoeDtcMessageBodyByLinqId(
+  userId: string,
+  linqMessageId: string,
+): Promise<string | null> {
+  const trimmed = linqMessageId.trim();
+  if (!trimmed) return null;
+  const supabase = createSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("doedtc_messages")
+    .select("body")
+    .eq("user_id", userId)
+    .eq("linq_message_id", trimmed)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  const body = (data as { body?: string } | null)?.body?.trim();
+  return body || null;
+}
+
 export async function listDoeDtcAssessments(
   userId: string,
   limit = 3,

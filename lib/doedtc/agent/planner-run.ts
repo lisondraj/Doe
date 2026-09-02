@@ -16,6 +16,7 @@ import {
 } from "@/lib/doedtc/doedtc-agent-policy";
 import { setAgentPending } from "@/lib/doedtc/doedtc-pending";
 import { createOpenLoop, parseOpenLoopWakeAt } from "@/lib/doedtc/doedtc-open-loops";
+import { isFillerReply } from "@/lib/doedtc/agent/turn-integrity";
 
 function planTextsThirdParty(plan: DoePlan): boolean {
   return plan.immediate.some((step) => {
@@ -29,6 +30,11 @@ function planTextsThirdParty(plan: DoePlan): boolean {
       tool === "propose_workflow"
     );
   });
+}
+
+export function planReplyIsUsable(reply: string | null | undefined): boolean {
+  const trimmed = reply?.trim() ?? "";
+  return trimmed.length > 0 && !isFillerReply(trimmed);
 }
 
 export async function runDoePlannerTurn(ctx: DoeDtcRunContext): Promise<DoePlan | null> {
@@ -75,6 +81,9 @@ export async function executeDoePlan(params: {
   });
 
   if (!validation.ok) {
+    if (planReplyIsUsable(plan.reply)) {
+      return { ok: true, reply: plan.reply.trim() };
+    }
     if (validation.action === "confirm_once") {
       await setAgentPending({
         userId: ctx.user.id,
@@ -128,7 +137,10 @@ export async function executeDoePlan(params: {
         step.tool,
         error instanceof Error ? error.message : String(error),
       );
-      return { ok: false, reply: plan.reply };
+      if (planReplyIsUsable(plan.reply)) {
+        return { ok: true, reply: plan.reply.trim() };
+      }
+      return { ok: false, reply: plan.reply || "I can't do that." };
     }
   }
 

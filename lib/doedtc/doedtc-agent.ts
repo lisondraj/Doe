@@ -925,6 +925,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   inboundFileIds?: string[];
   extraVisionUrls?: string[];
   turnId?: string;
+  threadReplyParentBody?: string | null;
 }): Promise<DoeDtcAgentTurnResult> {
   const timezone = normalizeScheduledTimezone(null);
   const messageHistory = await listDoeDtcMessages(params.user.id, THREAD_TRANSCRIPT_FETCH);
@@ -932,6 +933,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const memoryQuery = buildMemorySearchQuery({
     inboundText: params.inboundText,
     priorInboundBodies,
+    threadReplyParentBody: params.threadReplyParentBody,
   });
 
   const [initialSnapshot, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, activeWorkItems, openLoops] =
@@ -1149,6 +1151,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const threadInboundText = resolveThreadInboundText({
     inboundText: params.inboundText,
     priorInboundBodies,
+    threadReplyParentBody: params.threadReplyParentBody,
   });
   const briefInboundText =
     incidentalChartWrite?.originalInbound?.trim() ||
@@ -1156,6 +1159,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const threadContinuityBlock = formatThreadContinuityBlock({
     inboundText: params.inboundText,
     priorInboundBodies,
+    threadReplyParentBody: params.threadReplyParentBody,
   });
 
   const brief = buildSituationBrief({
@@ -1522,6 +1526,7 @@ export async function runDoeDtcAgentTurn(params: {
   inboundFileIds?: string[];
   extraVisionUrls?: string[];
   turnId?: string;
+  threadReplyParentBody?: string | null;
 }): Promise<DoeDtcAgentTurnResult> {
   if (resolveDoeDtcAgentRuntime() === "sdk") {
     try {
