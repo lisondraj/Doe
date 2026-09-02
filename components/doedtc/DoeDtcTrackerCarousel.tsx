@@ -4,7 +4,11 @@ import { useRef, useState } from "react";
 
 import { DoeDtcTrackerCarouselChart } from "@/components/doedtc/DoeDtcTrackerChart";
 import { DOEDTC_PROFILE } from "@/lib/doedtc/doedtc-copy";
-import type { ArtifactSeriesPoint } from "@/lib/doedtc/doedtc-artifacts";
+import {
+  inferArtifactLayout,
+  visualForArtifactLayout,
+  type ArtifactSeriesPoint,
+} from "@/lib/doedtc/doedtc-artifacts";
 import type { DoeDtcArtifactRow } from "@/lib/doedtc/doedtc-types";
 
 export type DoeDtcTrackerCarouselCard = {
@@ -102,7 +106,11 @@ export function DoeDtcTrackerCarousel({ cards, onOpen }: DoeDtcTrackerCarouselPr
           >
             <div className="doedtc-tracker-carousel__card-inner">
               <div className="doedtc-tracker-carousel__chart">
-                <DoeDtcTrackerCarouselChart points={card.points} />
+                <DoeDtcTrackerCarouselChart
+                  points={card.points}
+                  goal={card.artifact.goal}
+                  visual={visualForArtifactLayout(inferArtifactLayout(card.artifact))}
+                />
               </div>
               <div className="doedtc-tracker-carousel__caption">
                 <p className="doedtc-tracker-carousel__title">{card.artifact.title}</p>

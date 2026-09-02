@@ -537,7 +537,7 @@ export const DOEDTC_AGENT_TOOLS = [
           layout: {
             type: "string",
             enum: ["log", "series", "counter", "checklist", "score"],
-            description: "Visual layout. Calorie/weight → series; water → counter; mood → score.",
+            description: "Visual layout. Count/puff/water → counter (bars); weight/calories → series (line); mood → score (ring); shots/logs → week + history.",
           },
           blocks: {
             type: "array",

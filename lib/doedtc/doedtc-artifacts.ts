@@ -219,9 +219,21 @@ export function defaultArtifactFieldsForTitle(title: string): DoeDtcArtifactFiel
       { key: "notes", label: "Notes", type: "text", optional: true },
     ]);
   }
+  if (
+    /\b(?:puff|vape|times|count|how many|per day|glasses|water|hydration|step|reps)\b/i.test(lower)
+  ) {
+    const key = lower.includes("glass") || lower.includes("water") || lower.includes("hydration")
+      ? "glasses"
+      : "times";
+    const label = key === "glasses" ? "Glasses" : "Times";
+    return normalizeArtifactFields([
+      { key, label, type: "number" },
+      { key: "notes", label: "Notes", type: "text", optional: true },
+    ]);
+  }
 
   return normalizeArtifactFields([
-    { key: "value", label: "Value", type: "text" },
+    { key: "value", label: "Value", type: "number" },
     { key: "notes", label: "Notes", type: "text", optional: true },
   ]);
 }
@@ -336,26 +348,66 @@ export function normalizeArtifactBlocks(raw: unknown): DoeDtcArtifactBlock[] {
 
 export function defaultLayoutForTitle(title: string): DoeDtcArtifactLayout {
   const lower = title.toLowerCase();
-  if (lower.includes("calorie") || lower.includes("kcal") || lower.includes("weight") || lower.includes("food")) {
+  if (/\b(?:calorie|kcal|weight|scale|food|a1c|bmi)\b/.test(lower)) {
     return "series";
   }
-  if (lower.includes("water") || lower.includes("hydration") || lower.includes("step")) {
+  if (
+    /\b(?:water|hydration|step|puff|vape|times|count|how many|per day|glasses|reps)\b/.test(lower)
+  ) {
     return "counter";
   }
-  if (lower.includes("mood") || lower.includes("pain")) {
+  if (/\b(?:mood|pain|score|anxiety|energy)\b/.test(lower)) {
     return "score";
   }
-  if (lower.includes("habit") || lower.includes("checklist")) {
+  if (/\b(?:habit|checklist|did i)\b/.test(lower)) {
     return "checklist";
   }
-  if (lower.includes("ozempic") || lower.includes("injection") || lower.includes("shot")) {
+  if (/\b(?:ozempic|injection|shot|dose)\b/.test(lower)) {
     return "log";
   }
-  return "log";
+  return "series";
+}
+
+export type ArtifactVisualKind = "line" | "bars" | "ring" | "week";
+
+export function visualForArtifactLayout(layout: DoeDtcArtifactLayout): ArtifactVisualKind {
+  switch (layout) {
+    case "counter":
+      return "bars";
+    case "score":
+      return "ring";
+    case "checklist":
+    case "log":
+      return "week";
+    default:
+      return "line";
+  }
+}
+
+export function inferArtifactLayout(
+  artifact: Pick<DoeDtcArtifactRow, "title" | "layout">,
+): DoeDtcArtifactLayout {
+  const titled = defaultLayoutForTitle(artifact.title);
+  if (artifact.layout && artifact.layout !== "log") return artifact.layout;
+  if (titled !== "log") return titled;
+  return artifact.layout || titled;
+}
+
+const VISUAL_BLOCK_KINDS = new Set<DoeDtcArtifactBlockKind>([
+  "chart",
+  "counter",
+  "gauge",
+  "week_grid",
+  "stats",
+]);
+
+export function artifactBlocksNeedVisualUpgrade(blocks: DoeDtcArtifactBlock[]): boolean {
+  if (blocks.length === 0) return true;
+  return !blocks.some((block) => VISUAL_BLOCK_KINDS.has(block.kind));
 }
 
 export function pickPrimaryNumericField(fields: DoeDtcArtifactField[]): DoeDtcArtifactField | null {
-  const preferred = ["calories", "weight", "glasses", "score", "value"];
+  const preferred = ["calories", "weight", "glasses", "score", "times", "count", "puffs", "value"];
   for (const key of preferred) {
     const match = fields.find((field) => field.key === key && field.type === "number");
     if (match) return match;
@@ -436,14 +488,21 @@ export function defaultBlocksForLayout(params: {
         { id: "form-1", kind: "form", title: "Log" },
       ]);
     case "log":
-    default:
-      return normalizeArtifactBlocks([
+    default: {
+      const blocks: unknown[] = [
         { id: "hero-1", kind: "hero", title: params.title },
-        {
-          id: "illus-1",
-          kind: "illustration",
-          preset: params.title.toLowerCase().includes("shot") ? "shot" : "scale",
-        },
+        { id: "week-1", kind: "week_grid", title: "This week" },
+      ];
+      if (numeric) {
+        blocks.push({
+          id: "chart-1",
+          kind: "chart",
+          title: numeric.label,
+          fieldKey,
+          fieldLabel,
+        });
+      }
+      blocks.push(
         { id: "form-1", kind: "form", title: "Log" },
         { id: "log-1", kind: "log", title: "History" },
         {
@@ -452,17 +511,24 @@ export function defaultBlocksForLayout(params: {
           tone: "tip",
           body: "Log each entry close to when it happens so trends stay accurate.",
         },
-      ]);
+      );
+      return normalizeArtifactBlocks(blocks);
+    }
   }
 }
 
 export function resolveArtifactBlocks(artifact: Pick<DoeDtcArtifactRow, "layout" | "title" | "blocks" | "config">): DoeDtcArtifactBlock[] {
-  if (artifact.blocks.length > 0) return artifact.blocks;
-  return defaultBlocksForLayout({
-    layout: artifact.layout,
+  if (!artifactBlocksNeedVisualUpgrade(artifact.blocks)) return artifact.blocks;
+  const layout = inferArtifactLayout(artifact);
+  const generated = defaultBlocksForLayout({
+    layout,
     title: artifact.title,
     fields: artifact.config.fields,
   });
+  if (artifact.blocks.length === 0) return generated;
+  const callouts = artifact.blocks.filter((block) => block.kind === "callout");
+  if (callouts.length === 0) return generated;
+  return [...generated.filter((block) => block.kind !== "callout"), ...callouts];
 }
 
 export type ArtifactSeriesPoint = { at: string; value: number };
@@ -508,4 +574,55 @@ export function defaultGoalForTitle(title: string): number | null {
   if (lower.includes("calorie")) return 2000;
   if (lower.includes("water")) return 8;
   return null;
+}
+
+export type ArtifactBarPoint = { day: string; label: string; value: number };
+
+function localDayKey(value: string | Date): string {
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function buildDailyBarPoints(params: {
+  points: ArtifactSeriesPoint[];
+  days?: number;
+}): ArtifactBarPoint[] {
+  const days = params.days ?? 7;
+  const byDay = new Map<string, number>();
+  for (const point of params.points) {
+    const key = localDayKey(point.at);
+    if (!key) continue;
+    byDay.set(key, (byDay.get(key) ?? 0) + point.value);
+  }
+  const bars: ArtifactBarPoint[] = [];
+  const today = new Date();
+  today.setHours(12, 0, 0, 0);
+  for (let offset = days - 1; offset >= 0; offset -= 1) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - offset);
+    const day = localDayKey(date);
+    bars.push({
+      day,
+      label: new Intl.DateTimeFormat(undefined, { weekday: "narrow" }).format(date),
+      value: byDay.get(day) ?? 0,
+    });
+  }
+  return bars;
+}
+
+export function pickCountableField(
+  fields: DoeDtcArtifactField[],
+  entries: DoeDtcArtifactEntryRow[] = [],
+): DoeDtcArtifactField | null {
+  const numeric = pickPrimaryNumericField(fields);
+  if (numeric) return numeric;
+  const named = fields.find((field) =>
+    ["value", "times", "count", "glasses", "puffs", "score"].includes(field.key),
+  );
+  if (named) return named;
+  return pickPrimarySeriesField(fields, entries);
 }

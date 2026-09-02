@@ -21,7 +21,9 @@ import { applyDoeDtcPreviewAction } from "@/lib/doedtc/doedtc-preview-snapshot";
 import {
   buildArtifactSeriesPoints,
   formatPrimaryArtifactReading,
+  inferArtifactLayout,
   pickPrimarySeriesField,
+  visualForArtifactLayout,
 } from "@/lib/doedtc/doedtc-artifacts";
 import { formatPhoneForDisplay } from "@/lib/doedtc/doedtc-phone";
 import { doeDtcFindPhoneCountry, DOEDTC_PHONE_COUNTRIES } from "@/lib/doedtc/doedtc-phone-countries";
@@ -2528,6 +2530,7 @@ function TrackersTab({
         title="Trend"
         points={main.points}
         goal={main.artifact.goal}
+        visual={visualForArtifactLayout(inferArtifactLayout(main.artifact))}
         onOpen={() => onFocusArtifact(main.artifact.id)}
       />
       {rest.length > 0 ? (

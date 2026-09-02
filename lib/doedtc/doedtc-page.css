@@ -1393,13 +1393,30 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-tracker-strip,
 }
 
 .doedtc-artifact__illustration-wrap {
+  display: grid;
+  place-items: center;
   text-align: center;
+  padding: 1.35rem 1rem;
+  min-height: 8rem;
 }
 
+.doedtc-artifact__illus,
 .doedtc-artifact__illustration-svg {
-  width: 4rem;
-  height: 4rem;
-  margin: 0 auto 0.5rem;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: 0 auto;
+  display: block;
+  color: var(--doedtc-gold);
+}
+
+.doedtc-artifact__chart {
+  color: var(--doedtc-ink);
+}
+
+.doedtc-artifact__chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
   color: var(--doedtc-gold);
 }
 

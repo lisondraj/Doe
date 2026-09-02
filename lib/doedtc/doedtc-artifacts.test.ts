@@ -6,11 +6,15 @@ import {
   coerceArtifactSeriesValue,
   defaultBlocksForLayout,
   defaultLayoutForTitle,
+  defaultArtifactFieldsForTitle,
   formatPrimaryArtifactReading,
+  inferArtifactLayout,
   normalizeArtifactBlocks,
   normalizeArtifactLayout,
   pickPrimaryNumericField,
   pickPrimarySeriesField,
+  resolveArtifactBlocks,
+  visualForArtifactLayout,
 } from "@/lib/doedtc/doedtc-artifacts";
 import { doeDtcArtifactShareUrl } from "@/lib/doedtc/doedtc-copy";
 
@@ -44,6 +48,50 @@ test("calorie title maps to series layout with chart block", () => {
   assert.ok(blocks.some((block) => block.kind === "chart"));
   assert.ok(blocks.some((block) => block.kind === "stats"));
   assert.equal(pickPrimaryNumericField(fields)?.key, "calories");
+});
+
+test("count and puff titles use a working counter visual, not a placeholder log", () => {
+  assert.equal(defaultLayoutForTitle("HOW MANY TIMES I PUFF PER DAY"), "counter");
+  assert.equal(defaultLayoutForTitle("Daily water"), "counter");
+  assert.equal(defaultLayoutForTitle("Mood check"), "score");
+  assert.equal(defaultLayoutForTitle("Random tracker"), "series");
+  const puffBlocks = defaultBlocksForLayout({
+    layout: "counter",
+    title: "HOW MANY TIMES I PUFF PER DAY",
+    fields: [
+      { key: "times", label: "Times", type: "number" },
+      { key: "notes", label: "Notes", type: "text", optional: true },
+    ],
+  });
+  assert.ok(puffBlocks.some((block) => block.kind === "counter"));
+  assert.ok(puffBlocks.some((block) => block.kind === "chart"));
+  assert.ok(!puffBlocks.some((block) => block.kind === "illustration"));
+  assert.equal(defaultArtifactFieldsForTitle("HOW MANY TIMES I PUFF PER DAY")[0]?.type, "number");
+  assert.equal(defaultArtifactFieldsForTitle("HOW MANY TIMES I PUFF PER DAY")[0]?.key, "times");
+});
+
+test("stored illustration-only trackers upgrade to a real visual", () => {
+  const artifact = {
+    title: "HOW MANY TIMES I PUFF PER DAY",
+    layout: "log" as const,
+    config: {
+      fields: [
+        { key: "value", label: "Value", type: "text" as const },
+        { key: "notes", label: "Notes", type: "text" as const, optional: true },
+      ],
+    },
+    blocks: [
+      { id: "hero-1", kind: "hero" as const, title: "HOW MANY TIMES I PUFF PER DAY" },
+      { id: "illus-1", kind: "illustration" as const, preset: "scale" as const },
+      { id: "form-1", kind: "form" as const, title: "Log" },
+      { id: "log-1", kind: "log" as const, title: "History" },
+    ],
+  };
+  assert.equal(inferArtifactLayout(artifact), "counter");
+  assert.equal(visualForArtifactLayout("counter"), "bars");
+  const resolved = resolveArtifactBlocks(artifact);
+  assert.ok(resolved.some((block) => block.kind === "counter" || block.kind === "chart"));
+  assert.ok(!resolved.some((block) => block.kind === "illustration"));
 });
 
 test("formatPrimaryArtifactReading prefers numeric value with unit", () => {

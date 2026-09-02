@@ -9,8 +9,10 @@ import {
   buildArtifactSeriesPoints,
   computeArtifactStats,
   formatArtifactEntryValues,
-  pickPrimaryNumericField,
+  inferArtifactLayout,
+  pickCountableField,
   resolveArtifactBlocks,
+  visualForArtifactLayout,
 } from "@/lib/doedtc/doedtc-artifacts";
 import { DOEDTC_PROFILE } from "@/lib/doedtc/doedtc-copy";
 import type {
@@ -114,7 +116,7 @@ function ArtifactFieldInput({
 function ArtifactIllustration({ preset }: { preset: "plate" | "glass" | "scale" | "shot" }) {
   if (preset === "glass") {
     return (
-      <svg viewBox="0 0 80 80" className="doedtc-artifact__illus" aria-hidden>
+      <svg viewBox="0 0 80 80" className="doedtc-artifact__illustration-svg" aria-hidden>
         <path d="M28 12h24v8H28z" fill="currentColor" opacity="0.35" />
         <path d="M30 20h20v48H30z" fill="none" stroke="currentColor" strokeWidth="2" />
       </svg>
@@ -122,20 +124,20 @@ function ArtifactIllustration({ preset }: { preset: "plate" | "glass" | "scale" 
   }
   if (preset === "plate") {
     return (
-      <svg viewBox="0 0 80 80" className="doedtc-artifact__illus" aria-hidden>
+      <svg viewBox="0 0 80 80" className="doedtc-artifact__illustration-svg" aria-hidden>
         <ellipse cx="40" cy="44" rx="26" ry="10" fill="none" stroke="currentColor" strokeWidth="2" />
       </svg>
     );
   }
   if (preset === "shot") {
     return (
-      <svg viewBox="0 0 80 80" className="doedtc-artifact__illus" aria-hidden>
+      <svg viewBox="0 0 80 80" className="doedtc-artifact__illustration-svg" aria-hidden>
         <rect x="30" y="10" width="20" height="56" rx="10" fill="none" stroke="currentColor" strokeWidth="2" />
       </svg>
     );
   }
   return (
-    <svg viewBox="0 0 80 80" className="doedtc-artifact__illus" aria-hidden>
+    <svg viewBox="0 0 80 80" className="doedtc-artifact__illustration-svg" aria-hidden>
       <rect x="18" y="34" width="44" height="24" rx="4" fill="none" stroke="currentColor" strokeWidth="2" />
       <circle cx="40" cy="46" r="8" fill="currentColor" opacity="0.35" />
     </svg>
@@ -157,6 +159,7 @@ type ArtifactBlockContext = {
   numericField: DoeDtcArtifactField | null;
   seriesPoints: ReturnType<typeof buildArtifactSeriesPoints>;
   stats: ReturnType<typeof computeArtifactStats>;
+  visual: ReturnType<typeof visualForArtifactLayout>;
 };
 
 function resolveFieldKey(block: DoeDtcArtifactBlock, numericField: DoeDtcArtifactField | null): string | null {
@@ -275,6 +278,8 @@ function ArtifactBlock({ block, ctx }: { block: DoeDtcArtifactBlock; ctx: Artifa
           title={block.title ?? block.fieldLabel ?? "Trend"}
           points={blockPoints}
           goal={ctx.artifact.goal}
+          visual={ctx.visual === "week" ? "line" : ctx.visual}
+          max={block.max}
         />
       );
     case "counter": {
@@ -408,10 +413,11 @@ export function DoeDtcArtifactBlocks({
   const [editDraft, setEditDraft] = useState<Record<string, string | boolean>>({});
 
   const blocks = resolveArtifactBlocks(artifact);
-  const numericField = pickPrimaryNumericField(artifact.config.fields);
+  const numericField = pickCountableField(artifact.config.fields, entries);
   const fieldKey = numericField?.key ?? "value";
   const seriesPoints = buildArtifactSeriesPoints({ entries, fieldKey });
   const stats = computeArtifactStats(seriesPoints);
+  const visual = visualForArtifactLayout(inferArtifactLayout(artifact));
 
   const ctx: ArtifactBlockContext = {
     artifact,
@@ -428,6 +434,7 @@ export function DoeDtcArtifactBlocks({
     numericField,
     seriesPoints,
     stats,
+    visual,
   };
 
   return (

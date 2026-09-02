@@ -17,6 +17,7 @@ const CLARISSA_MEMBER_ID = "preview-member-clarissa";
 const MARK_MEMBER_ID = "preview-member-mark";
 const WEIGHT_ARTIFACT_ID = "preview-artifact-weight";
 const SHOTS_ARTIFACT_ID = "preview-artifact-shots";
+const PUFF_ARTIFACT_ID = "preview-artifact-puff";
 const APPOINTMENT_ID = "preview-appointment-pulm";
 const LISTEN_ID = "preview-listen-pulm";
 const GUIDE_ID = "preview-guide-ozempic";
@@ -131,6 +132,38 @@ const weightEntries: DoeDtcArtifactEntryRow[] = [21, 14, 10, 7, 3, 0].map((daysA
   values: { weight: 192 - index * 1.4, notes: index === 0 ? "Starting week" : "" },
   created_at: iso(daysAgo, 8),
   updated_at: iso(daysAgo, 8),
+}));
+
+const puffArtifact: DoeDtcArtifactRow = {
+  id: PUFF_ARTIFACT_ID,
+  user_id: USER_ID,
+  slug: "puff-count",
+  title: "HOW MANY TIMES I PUFF PER DAY",
+  kind: "counter",
+  layout: "counter",
+  blocks: [],
+  goal: 10,
+  share_token: null,
+  shared_at: null,
+  config: {
+    fields: [
+      { key: "times", label: "Times", type: "number" },
+      { key: "notes", label: "Notes", type: "text", optional: true },
+    ],
+  },
+  archived_at: null,
+  created_at: iso(4),
+  updated_at: iso(0),
+};
+
+const puffEntries: DoeDtcArtifactEntryRow[] = [6, 5, 4, 3, 1, 0].map((daysAgo, index) => ({
+  id: `preview-puff-entry-${index + 1}`,
+  artifact_id: PUFF_ARTIFACT_ID,
+  user_id: USER_ID,
+  occurred_at: iso(daysAgo, 19),
+  values: { times: [8, 11, 6, 9, 4, 7][index] ?? 0 },
+  created_at: iso(daysAgo, 19),
+  updated_at: iso(daysAgo, 19),
 }));
 
 const shotEntries: DoeDtcArtifactEntryRow[] = [21, 14, 7, 0].map((daysAgo, index) => ({
@@ -747,8 +780,8 @@ export function createDoeDtcPreviewSnapshot(): DoeDtcProfileSnapshot {
         created_at: iso(0, 16),
       },
     ],
-    artifacts: [weightArtifact, shotsArtifact],
-    artifactEntries: [...weightEntries, ...shotEntries],
+    artifacts: [weightArtifact, puffArtifact, shotsArtifact],
+    artifactEntries: [...weightEntries, ...puffEntries, ...shotEntries],
     tickets: [
       {
         id: "preview-ticket-nav",
