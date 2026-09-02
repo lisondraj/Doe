@@ -150,6 +150,49 @@ describe("agent honesty invariants", () => {
     assert.equal(reconciled.profileUrl, undefined);
   });
 
+  it("sends the labs tab after a successful log_result even without an explicit write ask", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText: "here are my labs [attachments: file-1]",
+      replyText: "Saved your liver panel.",
+      state: { toolsExecuted: [] } as never,
+      toolsExecuted: [{ name: "log_result", ok: true }],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.ok(reconciled.profileUrl);
+    assert.match(reconciled.profileUrl!, /tab=results/);
+  });
+
+  it("sends the labs tab after a parsed photo is auto-committed", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText: "[attachments: file-1]",
+      replyText: "Logged AST and ALT.",
+      state: {
+        documentParse: {
+          auto_committed: true,
+          write_results: [{ tool: "log_result", ok: true }],
+        },
+      } as never,
+      toolsExecuted: [{ name: "parse_document", ok: true }],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.ok(reconciled.profileUrl);
+    assert.match(reconciled.profileUrl!, /tab=results/);
+  });
+
   it("sends the matching chart tab after a successful write", async () => {
     const user = {
       id: "user-1",

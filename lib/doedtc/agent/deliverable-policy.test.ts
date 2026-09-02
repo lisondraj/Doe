@@ -218,6 +218,12 @@ describe("structured send and leftover URLs", () => {
       ]),
       false,
     );
+    assert.equal(
+      shouldHonorStructuredSend("profile", "here are my labs [attachments: file-1]", [
+        { name: "log_result", ok: true },
+      ]),
+      true,
+    );
   });
 
   it("honors structured guide send when they asked or built", () => {
@@ -267,6 +273,32 @@ describe("structured send and leftover URLs", () => {
       toolsExecuted: [{ name: "add_medication", ok: true }],
     });
     assert.equal(turnState.profileUrl, "https://doe.care/app?t=x&tab=conditions");
+  });
+
+  it("keeps the labs tab after results land even without an explicit write ask", () => {
+    const turnState = { profileUrl: "https://doe.care/app?t=x&tab=results" };
+    applyDeliverablePolicyToTurnState({
+      inboundText: "here are my labs [attachments: file-1]",
+      turnState,
+      toolsExecuted: [{ name: "log_result", ok: true }],
+    });
+    assert.equal(turnState.profileUrl, "https://doe.care/app?t=x&tab=results");
+  });
+
+  it("keeps the labs tab after a parsed photo is auto-committed", () => {
+    const turnState = {
+      profileUrl: "https://doe.care/app?t=x&tab=results",
+      documentParse: {
+        auto_committed: true,
+        write_results: [{ tool: "log_result", ok: true }],
+      },
+    };
+    applyDeliverablePolicyToTurnState({
+      inboundText: "[attachments: file-1]",
+      turnState,
+      toolsExecuted: [{ name: "parse_document", ok: true }],
+    });
+    assert.equal(turnState.profileUrl, "https://doe.care/app?t=x&tab=results");
   });
 });
 

@@ -21,6 +21,39 @@ function chartWriteSucceeded(
   return (toolsExecuted ?? []).some((row) => row.ok && CHART_WRITE_LINK_TOOLS.has(row.name));
 }
 
+function labsWriteSucceeded(
+  toolsExecuted: DoeDtcAgentToolExecutionRecord[] | undefined,
+): boolean {
+  return (toolsExecuted ?? []).some((row) => row.ok && row.name === "log_result");
+}
+
+function documentLabsWriteSucceeded(
+  documentParse?: Record<string, unknown> | null,
+): boolean {
+  if (!documentParse || documentParse.auto_committed !== true) return false;
+  const writes = documentParse.write_results;
+  if (!Array.isArray(writes)) return false;
+  return writes.some(
+    (row) =>
+      row &&
+      typeof row === "object" &&
+      (row as { tool?: string }).tool === "log_result" &&
+      (row as { ok?: boolean }).ok === true,
+  );
+}
+
+/** After labs land, always send the results tab. Other writes still need an explicit ask. */
+export function shouldSendChartWriteLink(params: {
+  inboundText: string;
+  toolsExecuted?: DoeDtcAgentToolExecutionRecord[];
+  documentParse?: Record<string, unknown> | null;
+}): boolean {
+  if (labsWriteSucceeded(params.toolsExecuted) || documentLabsWriteSucceeded(params.documentParse)) {
+    return true;
+  }
+  return chartWriteSucceeded(params.toolsExecuted) && isExplicitChartWriteAsk(params.inboundText);
+}
+
 export type DeliverableKind =
   | "profile"
   | "tracker"
@@ -373,6 +406,7 @@ export function applyDeliverablePolicyToTurnState(params: {
     guideUrl?: string;
     prepareUrl?: string;
     vaultUrl?: string;
+    documentParse?: Record<string, unknown>;
   };
   toolsExecuted?: DoeDtcAgentToolExecutionRecord[];
 }): void {
@@ -386,7 +420,11 @@ export function applyDeliverablePolicyToTurnState(params: {
     !ask.has("tracker") &&
     !toolSucceeded(tools, "send_profile_link") &&
     !toolSucceeded(tools, "create_profile_artifact") &&
-    !(chartWriteSucceeded(tools) && isExplicitChartWriteAsk(params.inboundText))
+    !shouldSendChartWriteLink({
+      inboundText: params.inboundText,
+      toolsExecuted: tools,
+      documentParse: params.turnState.documentParse,
+    })
   ) {
     params.turnState.profileUrl = undefined;
   }
@@ -446,8 +484,7 @@ export function shouldHonorStructuredSend(
   if (kind === "tracker" && toolSucceeded(toolsExecuted, "send_profile_link")) return true;
   if (
     (kind === "profile" || kind === "tracker") &&
-    chartWriteSucceeded(toolsExecuted) &&
-    isExplicitChartWriteAsk(inboundText)
+    shouldSendChartWriteLink({ inboundText, toolsExecuted })
   ) {
     return true;
   }

@@ -9,6 +9,7 @@ import {
   type DoeDtcAttachmentContext,
 } from "@/lib/doedtc/agent/attachments";
 import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
+import { attachChartSectionLink } from "@/lib/doedtc/agent/chart-write";
 import { looksLikeChartWrite } from "@/lib/doedtc/agent/deliverable-policy";
 import { fetchOpenAiWithRetry } from "@/lib/doedtc/agent/openai-retry";
 import { createInitialToolTurnState, executeDoeDtcTool } from "@/lib/doedtc/agent/tool-dispatch";
@@ -891,6 +892,12 @@ export async function runParseDocumentTool(params: {
       state: params.state,
       writes,
     });
+    const labsUrl = profileUrlForSavedDocumentWrites({
+      careToken: params.user.care_token,
+      results: writeResults,
+      existingProfileUrl: params.state.profileUrl,
+    });
+    if (labsUrl) params.state.profileUrl = labsUrl;
   }
 
   if (!autoCommit && (writes.length > 0 || fileIds.length > 0)) {
@@ -982,7 +989,19 @@ export function formatDocumentParseForPrompt(output: Record<string, unknown> | n
   if (!saved) {
     return `Inbound document already parsed: ${summary}. Writes are ready. If they said these are theirs or asked to log/save them, those rows should already be committed. Do not ask for a title or date. Title is the test name (Liver function test, ALT), never their name. If they say "title is James" they mean they are James. Do not claim they are on the chart unless write_results show ok. Do not call parse_document again.`;
   }
-  return `Inbound document already parsed and saved to the chart: ${summary}. Do not say you could not read it. Narrate what landed. Do not call parse_document again.`;
+  return `Inbound document already parsed and saved to the chart: ${summary}. The labs tab link is sent automatically as a separate iMessage. Narrate what landed. Do not say here. Do not call parse_document again.`;
+}
+
+export function profileUrlForSavedDocumentWrites(params: {
+  careToken: string;
+  results: Array<{ tool: string; ok: boolean }>;
+  existingProfileUrl?: string;
+}): string | undefined {
+  if (params.existingProfileUrl) return params.existingProfileUrl;
+  if (params.results.some((row) => row.ok && row.tool === "log_result")) {
+    return attachChartSectionLink({ careToken: params.careToken, tool: "log_result" });
+  }
+  return undefined;
 }
 
 function heldDocumentWrites(pending: DoeDtcAgentPendingRow): Array<{
@@ -1080,6 +1099,7 @@ export async function commitReadyDocumentWrites(params: {
     inboundText: params.inboundText,
     writes,
     memberName: params.memberName,
+    state: params.state,
   });
   await clearAgentPending(params.user.id);
   return { committed: results.some((row) => row.ok), results };
@@ -1091,13 +1111,14 @@ export async function commitHeldDocumentWrites(params: {
   inboundText: string;
   writes: Array<{ tool: ParseDocumentWriteTool; args: Record<string, unknown> }>;
   memberName?: string | null;
+  state?: DoeDtcToolTurnState;
 }): Promise<Array<{ tool: string; ok: boolean; output?: unknown; error?: string }>> {
   const writes = applyDocumentSubjectToWrites(params.writes, params.memberName ?? null);
   return executeDocumentParseWrites({
     user: params.user,
     inboundText: params.inboundText,
     snapshot: params.snapshot,
-    state: createInitialToolTurnState(null),
+    state: params.state ?? createInitialToolTurnState(null),
     writes,
   });
 }
@@ -1107,6 +1128,7 @@ export async function consumeHeldDocumentWritesForMember(params: {
   snapshot: DoeDtcProfileSnapshot;
   inboundText: string;
   memberName: string;
+  state?: DoeDtcToolTurnState;
 }): Promise<boolean> {
   const pending = await getAgentPending(params.user.id);
   if (!pending || !isDocumentIdentityPending(pending.args)) return false;
@@ -1115,13 +1137,21 @@ export async function consumeHeldDocumentWritesForMember(params: {
   if (printed && !namesLooselyMatch(printed, params.memberName)) return false;
   const writes = heldDocumentWrites(pending);
   if (writes.length === 0) return false;
-  await commitHeldDocumentWrites({
+  const state = params.state ?? createInitialToolTurnState(null);
+  const results = await commitHeldDocumentWrites({
     user: params.user,
     snapshot: params.snapshot,
     inboundText: params.inboundText,
     writes,
     memberName: params.memberName,
+    state,
   });
+  const labsUrl = profileUrlForSavedDocumentWrites({
+    careToken: params.user.care_token,
+    results,
+    existingProfileUrl: state.profileUrl,
+  });
+  if (labsUrl && params.state) params.state.profileUrl = labsUrl;
   await clearAgentPending(params.user.id);
   return true;
 }
@@ -1130,7 +1160,7 @@ export async function resolveHeldDocumentIdentity(params: {
   user: DoeDtcUserRow;
   inboundText: string;
   pending: DoeDtcAgentPendingRow;
-}): Promise<{ replyText: string; assessmentRan: false } | null> {
+}): Promise<{ replyText: string; assessmentRan: false; profileUrl?: string } | null> {
   if (!isDocumentIdentityPending(params.pending.args) && params.pending.kind !== "parse_document") {
     return null;
   }
@@ -1181,14 +1211,24 @@ export async function resolveHeldDocumentIdentity(params: {
   }
 
   if (decision.action === "save_self") {
-    await commitHeldDocumentWrites({
+    const state = createInitialToolTurnState(null);
+    const results = await commitHeldDocumentWrites({
       user: params.user,
       snapshot,
       inboundText: params.inboundText,
       writes,
+      state,
     });
     await clearAgentPending(params.user.id);
-    return { replyText: "Saved this to your chart.", assessmentRan: false };
+    return {
+      replyText: "Saved this to your chart.",
+      assessmentRan: false,
+      profileUrl: profileUrlForSavedDocumentWrites({
+        careToken: params.user.care_token,
+        results,
+        existingProfileUrl: state.profileUrl,
+      }),
+    };
   }
 
   const existing = (snapshot.household?.members ?? []).find((row) =>
@@ -1213,23 +1253,32 @@ export async function resolveHeldDocumentIdentity(params: {
     }
   }
 
-  await commitHeldDocumentWrites({
+  const state = createInitialToolTurnState(null);
+  const results = await commitHeldDocumentWrites({
     user: params.user,
     snapshot,
     inboundText: params.inboundText,
     writes,
     memberName,
+    state,
   });
   await clearAgentPending(params.user.id);
+  const profileUrl = profileUrlForSavedDocumentWrites({
+    careToken: params.user.care_token,
+    results,
+    existingProfileUrl: state.profileUrl,
+  });
   if (decision.invite) {
     return {
       replyText: `Saved this to ${memberName}'s chart. Share a number if you want me to invite them to the household.`,
       assessmentRan: false,
+      profileUrl,
     };
   }
   return {
     replyText: `Saved this to ${memberName}'s chart. Want me to invite them to the household?`,
     assessmentRan: false,
+    profileUrl,
   };
 }
 

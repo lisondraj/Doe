@@ -284,7 +284,7 @@ export async function executeAgentPendingCommit(params: {
           pending: params.pending,
         });
         if (!resolved) throw new Error("Could not save that photo.");
-        return { ok: true, replyHint: resolved.replyText };
+        return { ok: true, replyHint: resolved.replyText, profileUrl: resolved.profileUrl };
       }
       default: {
         if (params.pending.kind === "chart_write" || params.pending.args.chart_write === true) {

@@ -15,6 +15,7 @@ import {
   namesLooselyMatch,
   normalizeDocumentParseResult,
   resolveDocumentPatientName,
+  profileUrlForSavedDocumentWrites,
   sanitizeDocumentParseSummary,
   shouldAutoCommitDocumentParse,
 } from "@/lib/doedtc/agent/document-parse";
@@ -227,6 +228,44 @@ describe("document parse", () => {
         auto_committed: false,
       }) ?? "",
       /can't add this photo/i,
+    );
+  });
+
+  it("builds the labs tab after saved document writes", () => {
+    assert.match(
+      profileUrlForSavedDocumentWrites({
+        careToken: "tok",
+        results: [{ tool: "log_result", ok: true }],
+      }) ?? "",
+      /tab=results/,
+    );
+    assert.equal(
+      profileUrlForSavedDocumentWrites({
+        careToken: "tok",
+        results: [{ tool: "log_result", ok: false }],
+      }),
+      undefined,
+    );
+    assert.equal(
+      profileUrlForSavedDocumentWrites({
+        careToken: "tok",
+        results: [{ tool: "add_medication", ok: true }],
+        existingProfileUrl: "https://doe.care/app?t=tok&tab=conditions",
+      }),
+      "https://doe.care/app?t=tok&tab=conditions",
+    );
+  });
+
+  it("tells the model the labs link goes out separately after a save", () => {
+    assert.match(
+      formatDocumentParseForPrompt({
+        ok: true,
+        summary: "Liver panel",
+        patient_name: "James",
+        can_save: true,
+        auto_committed: true,
+      }) ?? "",
+      /labs tab link is sent automatically/i,
     );
   });
 

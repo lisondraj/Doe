@@ -3,7 +3,6 @@ import { randomUUID } from "node:crypto";
 import { askedAboutActiveWork, looksLikeDeferredWorkClaim } from "@/lib/doedtc/agent/active-work";
 import {
   attachChartSectionLink,
-  chartWriteSucceeded,
   isChartWriteLinkTool,
 } from "@/lib/doedtc/agent/chart-write";
 import {
@@ -12,9 +11,9 @@ import {
   buildPrivateAppLink,
   findMatchingGuide,
   interpretBuildIntent,
-  isExplicitChartWriteAsk,
   looksLikeChartRead,
   looksLikeChartWrite,
+  shouldSendChartWriteLink,
 } from "@/lib/doedtc/agent/deliverable-policy";
 import { inboundHasAttachments } from "@/lib/doedtc/agent/attachments";
 import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
@@ -318,18 +317,19 @@ export async function reconcileReplyClaims(params: {
 
   if (
     !profileUrl &&
-    chartWriteSucceeded(params.toolsExecuted) &&
-    isExplicitChartWriteAsk(params.inboundText)
+    shouldSendChartWriteLink({
+      inboundText: params.inboundText,
+      toolsExecuted: params.toolsExecuted,
+      documentParse: params.state.documentParse,
+    })
   ) {
     const write = params.toolsExecuted.find(
       (row) => row.ok && isChartWriteLinkTool(row.name),
     );
-    if (write) {
-      profileUrl = attachChartSectionLink({
-        careToken: params.user.care_token,
-        tool: write.name,
-      });
-    }
+    profileUrl = attachChartSectionLink({
+      careToken: params.user.care_token,
+      tool: write?.name ?? "log_result",
+    });
   }
 
   if (

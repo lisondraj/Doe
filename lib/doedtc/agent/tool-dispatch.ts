@@ -634,6 +634,7 @@ async function executeDoeDtcToolInner(params: {
         snapshot: ctx.snapshot,
         inboundText: ctx.inboundText,
         memberName: row.full_name,
+        state,
       });
     } else if (name === "send_family_invite") {
       const memberId = String(args.member_id ?? "").trim();
