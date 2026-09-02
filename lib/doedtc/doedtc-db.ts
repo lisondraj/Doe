@@ -387,6 +387,15 @@ export async function saveDoeDtcOnboarding(params: {
   }
 
   const household = await ensureDoeDtcHouseholdForAdmin(user.id);
+  await supabase
+    .from("doedtc_household_members")
+    .update({
+      full_name: params.fullName,
+      date_of_birth: params.dateOfBirth,
+      gender: params.gender,
+    })
+    .eq("household_id", household.id)
+    .eq("user_id", user.id);
   for (const member of (params.familyMembers ?? []).filter((row) => row.fullName.trim()).slice(0, 20)) {
     const members = await listDoeDtcHouseholdMembers(household.id);
     const duplicate = members.find(
@@ -2248,7 +2257,7 @@ export async function ensureDoeDtcHouseholdForAdmin(adminUserId: string): Promis
   const supabase = createSupabaseAdmin();
   const { data: user, error: userError } = await supabase
     .from("doedtc_users")
-    .select("id, full_name, phone")
+    .select("id, full_name, phone, date_of_birth, gender")
     .eq("id", adminUserId)
     .single();
   if (userError) throw new Error(userError.message);
@@ -2272,6 +2281,8 @@ export async function ensureDoeDtcHouseholdForAdmin(adminUserId: string): Promis
     full_name: (user.full_name as string | null)?.trim() || "Admin",
     relationship: "other" as const,
     phone: (user.phone as string | null) ?? null,
+    date_of_birth: (user.date_of_birth as string | null) ?? null,
+    gender: (user.gender as string | null) ?? null,
     role: "admin" as const,
     status: "active" as const,
   };

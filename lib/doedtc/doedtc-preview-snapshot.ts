@@ -368,6 +368,8 @@ export function createDoeDtcPreviewSnapshot(): DoeDtcProfileSnapshot {
       fullName: "James Lisondra",
       relationship: "other",
       phone: "+16473885064",
+      dateOfBirth: "1994-03-12",
+      gender: "male",
       role: "admin",
       status: "active",
       userId: USER_ID,
@@ -882,6 +884,47 @@ export function applyDoeDtcPreviewAction(
         : snapshot;
     case "remove_condition":
       return { ...snapshot, conditions: snapshot.conditions.filter((value) => value !== name) };
+    case "update_profile": {
+      const fullName = typeof payload.fullName === "string" ? payload.fullName.trim() : "";
+      const email = typeof payload.email === "string" ? payload.email.trim() : snapshot.user.email;
+      const dateOfBirth =
+        typeof payload.dateOfBirth === "string" ? payload.dateOfBirth.trim() : snapshot.user.date_of_birth;
+      const gender =
+        payload.gender === "female" ||
+        payload.gender === "male" ||
+        payload.gender === "nonbinary" ||
+        payload.gender === "prefer_not"
+          ? payload.gender
+          : snapshot.user.gender;
+      const country = typeof payload.country === "string" ? payload.country.trim().toUpperCase() : snapshot.user.country;
+      const whyDoe = typeof payload.whyDoe === "string" ? payload.whyDoe.trim() : snapshot.user.why_doe;
+      if (!fullName) return snapshot;
+      return {
+        ...snapshot,
+        user: {
+          ...snapshot.user,
+          full_name: fullName,
+          email: email || null,
+          date_of_birth: dateOfBirth || null,
+          gender,
+          country: country || null,
+          why_doe: whyDoe || null,
+        },
+        household: {
+          ...snapshot.household,
+          members: snapshot.household.members.map((member) =>
+            member.role === "admin"
+              ? {
+                  ...member,
+                  full_name: fullName,
+                  date_of_birth: dateOfBirth || null,
+                  gender,
+                }
+              : member,
+          ),
+        },
+      };
+    }
     case "add_appointment":
       return title
         ? {

@@ -1,5 +1,6 @@
 import { completeDoeDtcHouseholdJoin } from "@/lib/doedtc/doedtc-db";
 import { sendDoeDtcConsentMessage } from "@/lib/doedtc/doedtc-messaging";
+import { addDoeDtcMem0Fact } from "@/lib/doedtc/doedtc-memory";
 import type { DoeDtcHouseholdConsentLevel } from "@/lib/doedtc/doedtc-types";
 
 function cleanList(values: unknown): string[] {
@@ -39,6 +40,11 @@ export async function submitDoeDtcJoinFamily(payload: {
     allowEdits: cleanConsentLevel(payload.allowEdits),
     shareMemberIds: cleanList(payload.shareMemberIds),
     editMemberIds: cleanList(payload.editMemberIds),
+  });
+
+  void addDoeDtcMem0Fact({
+    userId: user.id,
+    fact: `Name is ${payload.fullName.trim()}. Email is ${payload.email.trim()}. Joined a family household on Doe.`,
   });
 
   await sendDoeDtcConsentMessage({

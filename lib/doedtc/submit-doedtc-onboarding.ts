@@ -6,6 +6,7 @@ import {
 import { doeDtcAppUrl } from "@/lib/doedtc/doedtc-copy";
 import { sendDoeDtcConsentMessage, sendDoeDtcFamilyInviteMessage } from "@/lib/doedtc/doedtc-messaging";
 import { DOEDTC_PHONE_COUNTRIES } from "@/lib/doedtc/doedtc-phone-countries";
+import { rememberDoeDtcOnboarding } from "@/lib/doedtc/doedtc-profile-facts";
 import {
   DOEDTC_GENDERS,
   type DoeDtcFamilyRelationship,
@@ -112,6 +113,19 @@ export async function submitDoeDtcOnboarding(payload: DoeDtcOnboardPayload) {
     gender,
     country,
     dateOfBirth,
+    medications,
+    conditions,
+    familyMembers,
+    medicalDeferred,
+  });
+
+  void rememberDoeDtcOnboarding({
+    userId: user.id,
+    fullName,
+    email,
+    dateOfBirth,
+    gender,
+    country,
     medications,
     conditions,
     familyMembers,

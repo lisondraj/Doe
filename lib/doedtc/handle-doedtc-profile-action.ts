@@ -27,6 +27,7 @@ import {
   unshareDoeDtcArtifact,
   updateDoeDtcArtifact,
   updateDoeDtcArtifactEntry,
+  updateDoeDtcUserProfile,
 } from "@/lib/doedtc/doedtc-db";
 import {
   archiveDoeDtcGuide,
@@ -41,13 +42,16 @@ import {
 import { cancelScheduledText } from "@/lib/doedtc/doedtc-scheduled-db";
 import { cancelWorkflow } from "@/lib/doedtc/doedtc-workflows";
 import { normalizeDoeDtcFamilyRelationship, resolveDoeDtcFamilyMemberName } from "@/lib/doedtc/doedtc-family-relationship";
+import { addDoeDtcMem0Fact } from "@/lib/doedtc/doedtc-memory";
 import { sendDoeDtcFamilyInviteMessage, sendDoeDtcHouseholdAccessRevokedNotice } from "@/lib/doedtc/doedtc-messaging";
+import { DOEDTC_PHONE_COUNTRIES } from "@/lib/doedtc/doedtc-phone-countries";
 import type {
   DoeDtcGender,
   DoeDtcHealthProvider,
   DoeDtcProfileSnapshot,
   DoeDtcUserRow,
 } from "@/lib/doedtc/doedtc-types";
+import { normalizeDoeDtcGender } from "@/lib/doedtc/doedtc-types";
 
 const PROVIDERS = new Set<DoeDtcHealthProvider>(["whoop", "apple_health"]);
 
@@ -126,6 +130,73 @@ export async function handleDoeDtcProfileAction(params: {
           // Person is saved; they can resend from the family card menu.
         }
       }
+      void addDoeDtcMem0Fact({
+        userId: user.id,
+        fact: `Family member ${fullName} (${relationship}).`,
+      });
+      break;
+    }
+    case "update_profile": {
+      const targetUserId = await resolveWriteTargetUser({
+        viewer: user,
+        subjectUserId: subjectUserIdRaw,
+      });
+      const fullName =
+        typeof params.payload.fullName === "string" ? params.payload.fullName.trim() : undefined;
+      const emailRaw = params.payload.email;
+      const email =
+        emailRaw === null ? null : typeof emailRaw === "string" ? emailRaw.trim() : undefined;
+      const dateOfBirthRaw = params.payload.dateOfBirth;
+      const dateOfBirth =
+        dateOfBirthRaw === null
+          ? null
+          : typeof dateOfBirthRaw === "string"
+            ? dateOfBirthRaw.trim()
+            : undefined;
+      const genderRaw = params.payload.gender;
+      const gender =
+        genderRaw === null
+          ? null
+          : typeof genderRaw === "string"
+            ? normalizeDoeDtcGender(genderRaw)
+            : undefined;
+      if (genderRaw !== undefined && genderRaw !== null && !gender) {
+        throw new Error("Select a gender.");
+      }
+      const countryRaw = params.payload.country;
+      const country =
+        countryRaw === null
+          ? null
+          : typeof countryRaw === "string"
+            ? countryRaw.trim().toUpperCase()
+            : undefined;
+      if (
+        country &&
+        !DOEDTC_PHONE_COUNTRIES.some((option) => option.iso === country)
+      ) {
+        throw new Error("Select a country.");
+      }
+      const whyDoeRaw = params.payload.whyDoe;
+      const whyDoe =
+        whyDoeRaw === null ? null : typeof whyDoeRaw === "string" ? whyDoeRaw : undefined;
+      const row = await updateDoeDtcUserProfile({
+        userId: targetUserId,
+        fullName,
+        email,
+        dateOfBirth,
+        gender,
+        country,
+        whyDoe,
+      });
+      const profileFacts = [
+        row.full_name ? `Name is ${row.full_name}.` : null,
+        row.email ? `Email is ${row.email}.` : null,
+        row.date_of_birth ? `Date of birth is ${row.date_of_birth}.` : null,
+        row.gender ? `Gender is ${row.gender}.` : null,
+        row.country ? `Country is ${row.country}.` : null,
+        row.why_doe ? `Why they use Doe: ${row.why_doe}.` : null,
+      ].filter((fact): fact is string => Boolean(fact));
+      void Promise.all(profileFacts.map((fact) => addDoeDtcMem0Fact({ userId: targetUserId, fact })));
       break;
     }
     case "remove_family": {
@@ -263,6 +334,7 @@ export async function handleDoeDtcProfileAction(params: {
       const name = String(params.payload.name ?? "").trim();
       if (!name) throw new Error("Medication name is required.");
       await appendDoeDtcMedication({ userId: targetUserId, name });
+      void addDoeDtcMem0Fact({ userId: targetUserId, fact: `Medication: ${name}.` });
       break;
     }
     case "remove_medication": {
@@ -283,6 +355,7 @@ export async function handleDoeDtcProfileAction(params: {
       const name = String(params.payload.name ?? "").trim();
       if (!name) throw new Error("Condition name is required.");
       await appendDoeDtcCondition({ userId: targetUserId, name });
+      void addDoeDtcMem0Fact({ userId: targetUserId, fact: `Condition: ${name}.` });
       break;
     }
     case "remove_condition": {

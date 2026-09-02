@@ -377,6 +377,23 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-medical-grid,
   color: var(--doedtc-ink);
 }
 
+.doedtc-profile-about-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.doedtc-profile-about-head .doedtc-medical-box__title {
+  margin: 0;
+}
+
+.doedtc-profile-about-form {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 0.75rem;
+}
+
 .doedtc-profile-about {
   margin: 0.75rem 0 0;
 }

@@ -24,7 +24,7 @@ import {
   pickPrimarySeriesField,
 } from "@/lib/doedtc/doedtc-artifacts";
 import { formatPhoneForDisplay } from "@/lib/doedtc/doedtc-phone";
-import { doeDtcFindPhoneCountry } from "@/lib/doedtc/doedtc-phone-countries";
+import { doeDtcFindPhoneCountry, DOEDTC_PHONE_COUNTRIES } from "@/lib/doedtc/doedtc-phone-countries";
 import { memberCurrentlySharesWithHousehold } from "@/lib/doedtc/doedtc-household";
 import type {
   DoeDtcAppointmentRow,
@@ -840,6 +840,20 @@ function MedicalListEditor({
   );
 }
 
+function EditPencilIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path
+        d="M11.2 2.6a1.15 1.15 0 0 1 1.63 1.62L6.1 10.95 3.5 11.5l.55-2.6 7.15-6.3z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path d="M10.35 3.45l2.2 2.2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function DashboardTab({
   snapshot,
   busy,
@@ -849,6 +863,30 @@ function DashboardTab({
 }: TabProps & {
   onOpenTrackers: (artifactId?: string | null) => void;
 }) {
+  const [editingAbout, setEditingAbout] = useState(false);
+  const [fullName, setFullName] = useState(snapshot.user.full_name ?? "");
+  const [email, setEmail] = useState(snapshot.user.email ?? "");
+  const [dateOfBirth, setDateOfBirth] = useState(snapshot.user.date_of_birth ?? "");
+  const [gender, setGender] = useState<DoeDtcGender | "">(snapshot.user.gender ?? "");
+  const [country, setCountry] = useState(snapshot.user.country ?? "");
+  const [whyDoe, setWhyDoe] = useState(snapshot.user.why_doe ?? "");
+
+  useEffect(() => {
+    setFullName(snapshot.user.full_name ?? "");
+    setEmail(snapshot.user.email ?? "");
+    setDateOfBirth(snapshot.user.date_of_birth ?? "");
+    setGender(snapshot.user.gender ?? "");
+    setCountry(snapshot.user.country ?? "");
+    setWhyDoe(snapshot.user.why_doe ?? "");
+  }, [
+    snapshot.user.country,
+    snapshot.user.date_of_birth,
+    snapshot.user.email,
+    snapshot.user.full_name,
+    snapshot.user.gender,
+    snapshot.user.why_doe,
+  ]);
+
   const trackerCards = snapshot.artifacts.map((artifact) => {
     const lastEntry = snapshot.artifactEntries
       .filter((entry) => entry.artifact_id === artifact.id)
@@ -859,7 +897,10 @@ function DashboardTab({
   const aboutRows = [
     { label: DOEDTC_PROFILE.dashboardNameLabel, value: snapshot.user.full_name?.trim() },
     { label: DOEDTC_PROFILE.dashboardEmailLabel, value: snapshot.user.email?.trim() },
-    { label: DOEDTC_PROFILE.dashboardDobLabel, value: snapshot.user.date_of_birth },
+    {
+      label: DOEDTC_PROFILE.dashboardDobLabel,
+      value: snapshot.user.date_of_birth ? formatDate(snapshot.user.date_of_birth) : null,
+    },
     { label: DOEDTC_PROFILE.dashboardGenderLabel, value: snapshot.user.gender ? doeDtcGenderLabel(snapshot.user.gender) : null },
     {
       label: DOEDTC_PROFILE.dashboardCountryLabel,
@@ -867,20 +908,141 @@ function DashboardTab({
     },
     { label: DOEDTC_PROFILE.dashboardWhyLabel, value: snapshot.user.why_doe?.trim() },
   ];
+  const medicalDeferred =
+    Boolean(snapshot.user.medical_deferred) &&
+    snapshot.medications.length === 0 &&
+    snapshot.conditions.length === 0;
+
+  async function saveAbout(event: React.FormEvent) {
+    event.preventDefault();
+    if (!fullName.trim() || !dateOfBirth || !gender || !country) return;
+    await onAction("update_profile", {
+      fullName: fullName.trim(),
+      email: email.trim(),
+      dateOfBirth,
+      gender,
+      country,
+      whyDoe: whyDoe.trim(),
+    });
+    setEditingAbout(false);
+  }
 
   return (
     <div>
       <section className="doedtc-card doedtc-card--flat">
-        <p className="doedtc-medical-box__title">{DOEDTC_PROFILE.dashboardAboutLabel}</p>
-        <dl className="doedtc-profile-about">
-          {aboutRows.map((row) => (
-            <div className="doedtc-profile-about__row" key={row.label}>
-              <dt>{row.label}</dt>
-              <dd>{row.value || DOEDTC_PROFILE.dashboardNotListed}</dd>
+        <div className="doedtc-profile-about-head">
+          <p className="doedtc-medical-box__title">{DOEDTC_PROFILE.dashboardAboutLabel}</p>
+          {!readOnly && !editingAbout ? (
+            <button
+              type="button"
+              className="doedtc-onboard-summary__edit"
+              aria-label={DOEDTC_PROFILE.dashboardEditAboutLabel}
+              disabled={busy}
+              onClick={() => setEditingAbout(true)}
+            >
+              <EditPencilIcon />
+            </button>
+          ) : null}
+        </div>
+        {editingAbout && !readOnly ? (
+          <form className="doedtc-profile-about-form" onSubmit={(event) => void saveAbout(event)}>
+            <div>
+              <label className="doedtc-label" htmlFor="profile-full-name">
+                {DOEDTC_GET_STARTED.fullNameLabel}
+              </label>
+              <input
+                id="profile-full-name"
+                className="doedtc-input"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                required
+                disabled={busy}
+              />
             </div>
-          ))}
-        </dl>
+            <div>
+              <label className="doedtc-label" htmlFor="profile-email">
+                {DOEDTC_GET_STARTED.emailLabel}
+              </label>
+              <input
+                id="profile-email"
+                className="doedtc-input"
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                disabled={busy}
+              />
+            </div>
+            <DoeDtcDobMenu
+              id="profile-dob"
+              label={DOEDTC_GET_STARTED.dobLabel}
+              value={dateOfBirth}
+              placeholder={DOEDTC_GET_STARTED.dobPlaceholder}
+              disabled={busy}
+              onChange={setDateOfBirth}
+            />
+            <div className="doedtc-field-row">
+              <DoeDtcDropdown<DoeDtcGender | "">
+                id="profile-gender"
+                variant="onboard"
+                label={DOEDTC_GET_STARTED.genderLabel}
+                value={gender}
+                options={DOEDTC_GENDERS}
+                disabled={busy}
+                onChange={setGender}
+              />
+              <DoeDtcDropdown
+                id="profile-country"
+                variant="onboard"
+                label={DOEDTC_GET_STARTED.countryLabel}
+                value={country}
+                options={DOEDTC_PHONE_COUNTRIES.map((item) => ({ value: item.iso, label: item.name }))}
+                disabled={busy}
+                onChange={setCountry}
+              />
+            </div>
+            <div>
+              <label className="doedtc-label" htmlFor="profile-why">
+                {DOEDTC_PROFILE.dashboardWhyLabel}
+              </label>
+              <textarea
+                id="profile-why"
+                className="doedtc-textarea"
+                value={whyDoe}
+                placeholder={DOEDTC_PROFILE.dashboardWhyPlaceholder}
+                onChange={(event) => setWhyDoe(event.target.value)}
+                disabled={busy}
+              />
+            </div>
+            <div className="doedtc-appointments__form-actions">
+              <button className="doedtc-button" type="submit" disabled={busy || !fullName.trim() || !dateOfBirth || !gender || !country}>
+                {busy ? DOEDTC_PROFILE.savingLabel : DOEDTC_PROFILE.saveLabel}
+              </button>
+              <button
+                className="doedtc-button doedtc-button--secondary"
+                type="button"
+                disabled={busy}
+                onClick={() => setEditingAbout(false)}
+              >
+                {DOEDTC_PROFILE.appointmentsAddCancel}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <dl className="doedtc-profile-about">
+            {aboutRows.map((row) => (
+              <div className="doedtc-profile-about__row" key={row.label}>
+                <dt>{row.label}</dt>
+                <dd>{row.value || DOEDTC_PROFILE.dashboardNotListed}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
       </section>
+      {medicalDeferred ? (
+        <p className="doedtc-muted" style={{ marginTop: "0.75rem" }}>
+          {DOEDTC_PROFILE.dashboardMedicalDeferred}
+        </p>
+      ) : null}
       <div className="doedtc-medical-grid">
         <div className="doedtc-card doedtc-card--flat">
           <MedicalListEditor
@@ -2015,7 +2177,7 @@ function FamilyTab({
                     {member.date_of_birth || member.gender ? (
                       <p className="doedtc-family-card__meta">
                         {[
-                          member.date_of_birth,
+                          member.date_of_birth ? formatDate(member.date_of_birth) : null,
                           member.gender ? doeDtcGenderLabel(member.gender) : null,
                         ]
                           .filter(Boolean)

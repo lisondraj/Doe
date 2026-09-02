@@ -104,6 +104,8 @@ export const DOEDTC_PROFILE = {
   dashboardGenderLabel: "Gender",
   dashboardCountryLabel: "Country",
   dashboardNotListed: "Not listed",
+  dashboardEditAboutLabel: "Edit",
+  dashboardWhyPlaceholder: "Why you use Doe",
   dashboardMedicalDeferred: "You chose to add medical info later.",
   dashboardAddMedical: "Add medical info",
   conditionsTitle: "Diagnoses",
