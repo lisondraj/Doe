@@ -26,6 +26,8 @@ export const DOEINSURE_PATH = "/doeinsure";
 export const DOEHOME_PATH = "/doehomepage";
 /** Consumer health AI companion — iMessage-first DTC product. */
 export const DOEDTC_PATH = "/doedtc";
+/** Alternate DTC landing — scroll-driven framed hero. */
+export const DOEDTC2_PATH = "/doedtc2";
 
 /** Former primary home — Voice Agents hero (preview at /legacymain). */
 export const LEGACY_MAIN_PATH = "/legacymain";

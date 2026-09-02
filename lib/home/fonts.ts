@@ -79,4 +79,12 @@ export const suisseIntlHairline = localFont({
   weight: "100",
   variable: "--font-suisse-hairline",
 });
+/** /doedtc2 hero title — Larken Light. */
+export const larkenLight = localFont({
+  src: [{ path: "../../fonts/larken/Larken-Light.ttf", weight: "300", style: "normal" }],
+  display: "swap",
+  weight: "300",
+  variable: "--font-larken-light",
+});
+
 export const WORKFLOW_CAROUSEL_UI_PANEL = `${suisseIntl.className} workflow-carousel-ui`;

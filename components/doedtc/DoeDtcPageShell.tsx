@@ -13,24 +13,32 @@ type DoeDtcPageShellProps = {
   children: ReactNode;
   landing?: boolean;
   profile?: boolean;
+  doedtc2?: boolean;
 };
 
-export function DoeDtcPageShell({ children, landing = false, profile = false }: DoeDtcPageShellProps) {
-  const useProfileChrome = !landing;
-  const showBrandFooter = landing || useProfileChrome;
-  const { variant, ready } = useDoeDtcPageVariant({ brandFooter: showBrandFooter });
-  const isPhone = !ready || variant === "phone";
+export function DoeDtcPageShell({
+  children,
+  landing = false,
+  profile = false,
+  doedtc2 = false,
+}: DoeDtcPageShellProps) {
+  const useProfileChrome = !landing && !doedtc2;
+  const showBrandFooter = landing || useProfileChrome || doedtc2;
+  const { variant, ready } = useDoeDtcPageVariant({ brandFooter: showBrandFooter, forcePhone: doedtc2 });
+  const isPhone = doedtc2 || !ready || variant === "phone";
 
   useDoePhoneLayoutViewport();
   useDoePhoneStableViewport(isPhone);
 
   return (
     <div
-      className={`doedtc-root ${landing ? "doedtc-root--landing " : ""}${useProfileChrome ? "doedtc-root--profile " : ""}${showBrandFooter ? "doedtc-root--has-footer " : ""}${lora.variable} ${dmSans.className} ${dmSans.variable}`}
-      data-doedtc-variant={ready ? variant : "phone"}
+      className={`doedtc-root ${landing ? "doedtc-root--landing " : ""}${doedtc2 ? "doedtc-root--doedtc2 " : ""}${useProfileChrome ? "doedtc-root--profile " : ""}${showBrandFooter ? "doedtc-root--has-footer " : ""}${lora.variable} ${dmSans.className} ${dmSans.variable}`}
+      data-doedtc-variant={doedtc2 ? "phone" : ready ? variant : "phone"}
       suppressHydrationWarning
     >
-      <div className={`doedtc-shell${showBrandFooter ? " doedtc-shell--brand-footer" : ""}`}>{children}</div>
+      <div className={`doedtc-shell${showBrandFooter ? " doedtc-shell--brand-footer" : ""}${doedtc2 ? " doedtc-shell--doedtc2" : ""}`}>
+        {children}
+      </div>
       {showBrandFooter ? (
         <footer className="doedtc-profile-footer">
           <span className={`doedtc-profile-footer__wordmark ${lora.className}`}>Doe</span>

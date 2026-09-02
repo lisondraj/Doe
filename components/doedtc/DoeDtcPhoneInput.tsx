@@ -107,6 +107,7 @@ export function DoeDtcPhoneInput({ id, label, value, disabled = false, onChange 
           id={inputId}
           className="doedtc-phone-input__field"
           type="tel"
+          aria-label={label ? undefined : "Your phone number"}
           autoComplete="tel-national"
           inputMode="tel"
           placeholder={country.placeholder}

@@ -14,19 +14,21 @@ import { applyPhoneLayoutViewportMeta } from "@/lib/doephone/phone-layout-viewpo
 type UseDoeDtcPageVariantOptions = {
   profile?: boolean;
   brandFooter?: boolean;
+  forcePhone?: boolean;
 };
 
-export function useDoeDtcPageVariant(_options: UseDoeDtcPageVariantOptions = {}) {
+export function useDoeDtcPageVariant(options: UseDoeDtcPageVariantOptions = {}) {
+  const { forcePhone = false } = options;
   const [variant, setVariant] = useState<DoeDtcPageVariant>("phone");
   const [ready, setReady] = useState(false);
 
   useLayoutEffect(() => {
-    setVariant(resolveDoeDtcPageVariant());
+    setVariant(forcePhone ? "phone" : resolveDoeDtcPageVariant());
     setReady(true);
-  }, []);
+  }, [forcePhone]);
 
   useEffect(() => {
-    if (!ready) return undefined;
+    if (!ready || forcePhone) return undefined;
 
     const sync = () => setVariant(resolveDoeDtcPageVariant());
     sync();
@@ -37,16 +39,17 @@ export function useDoeDtcPageVariant(_options: UseDoeDtcPageVariantOptions = {})
       mq.removeEventListener("change", sync);
       window.removeEventListener("resize", sync);
     };
-  }, [ready]);
+  }, [forcePhone, ready]);
 
   useEffect(() => {
     if (!ready) return;
+    const resolvedVariant = forcePhone ? "phone" : variant;
     const html = document.documentElement;
     const body = document.body;
     html.setAttribute("data-doedtc-page", "true");
-    html.setAttribute("data-doedtc-variant", variant);
+    html.setAttribute("data-doedtc-variant", resolvedVariant);
 
-    if (variant === "desktop") {
+    if (resolvedVariant === "desktop") {
       html.removeAttribute("data-doeforvc-always-phone");
       html.setAttribute("data-layout", "desktop");
       body.classList.add("desktop-route");
@@ -61,7 +64,7 @@ export function useDoeDtcPageVariant(_options: UseDoeDtcPageVariantOptions = {})
     body.classList.remove("desktop-route");
     applyPhoneLayoutViewportMeta();
     applyDoeDtcOverflowChrome(window.location.pathname);
-  }, [ready, variant]);
+  }, [forcePhone, ready, variant]);
 
-  return { variant, ready };
+  return { variant: forcePhone ? "phone" : variant, ready };
 }
