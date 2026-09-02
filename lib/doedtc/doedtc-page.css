@@ -2136,6 +2136,39 @@ html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-tracker-strip,
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.doedtc-results-slider--labs-view {
+  max-width: 17.5rem;
+}
+
+.doedtc-results-slider--labs-view .doedtc-results-slider__btn {
+  font-size: 0.84rem;
+  padding: 0.52rem 0.35rem;
+}
+
+.doedtc-lab-tile--history .doedtc-lab-tile__open {
+  cursor: pointer;
+}
+
+.doedtc-lab-tile__open {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  margin: 0.15rem -0.15rem -0.1rem;
+  padding: 0.15rem 0.15rem 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.doedtc-lab-history {
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .doedtc-tag--open {
   color: var(--doedtc-accent);
   border-color: color-mix(in srgb, var(--doedtc-accent) 35%, var(--doedtc-border));

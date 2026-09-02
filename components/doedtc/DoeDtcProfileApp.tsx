@@ -45,8 +45,12 @@ import { doeDtcVisibleProfileTab } from "@/lib/doedtc/doedtc-profile-tabs";
 import { interlockSpans, symptomsLinkedToName } from "@/lib/doedtc/doedtc-conditions-view";
 import {
   groupLabsByCategory,
+  groupLabsByDrawDate,
+  groupLabsByTitle,
+  layoutLabTiles,
   partitionResults,
   type DoeDtcLabCategory,
+  type DoeDtcLabSeries,
   type DoeDtcResultView,
 } from "@/lib/doedtc/doedtc-results-view";
 import { dmSans, plusJakartaSans } from "@/lib/home/fonts";
@@ -1648,6 +1652,8 @@ function ResultsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
     { id: "micro", label: DOEDTC_PROFILE.resultsSliceMicro },
   ];
   const [slice, setSlice] = useState<DoeDtcResultKind>("lab");
+  const [labView, setLabView] = useState<"latest" | "sets">("latest");
+  const [historyKey, setHistoryKey] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [resultedAt, setResultedAt] = useState("");
   const [source, setSource] = useState("");
@@ -1655,7 +1661,11 @@ function ResultsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
   const [adding, setAdding] = useState(false);
 
   const partitioned = partitionResults(snapshot.results);
-  const labGroups = groupLabsByCategory(partitioned.labs);
+  const labSeries = groupLabsByTitle(partitioned.labs);
+  const latestGroups = groupLabsByCategory(labSeries.map((row) => row.latest));
+  const drawGroups = groupLabsByDrawDate(partitioned.labs);
+  const seriesByLatestId = new Map(labSeries.map((row) => [row.latest.id, row]));
+  const openSeries = historyKey ? labSeries.find((row) => row.key === historyKey) ?? null : null;
   const featuredImaging = partitioned.imaging[0] ?? null;
   const olderImaging = partitioned.imaging.slice(1);
   const sliceIndex = slices.findIndex((row) => row.id === slice);
@@ -1667,6 +1677,7 @@ function ResultsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
       : slice === "imaging"
         ? DOEDTC_PROFILE.resultsImagingEmpty
         : DOEDTC_PROFILE.resultsMicroEmpty;
+  const labViewIndex = labView === "latest" ? 0 : 1;
 
   function resetAddForm() {
     setTitle("");
@@ -1682,41 +1693,142 @@ function ResultsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
         className="doedtc-icon-button"
         type="button"
         disabled={busy}
-        onClick={() => onAction("remove_result", { resultId })}
+        onClick={(event) => {
+          event.stopPropagation();
+          onAction("remove_result", { resultId });
+        }}
       >
         {DOEDTC_PROFILE.removeLabel}
       </button>
     );
   }
 
-  function renderLabTile(tile: DoeDtcResultView & { span: "single" | "wide" | "tall" }) {
+  function renderLabTile(
+    tile: DoeDtcResultView & { span: "single" | "wide" | "tall" },
+    series?: DoeDtcLabSeries,
+  ) {
+    const earlier = series ? Math.max(0, series.history.length - 1) : 0;
+    const canOpenHistory = Boolean(series && earlier > 0 && labView === "latest");
     return (
       <article
-        className={`doedtc-lab-tile doedtc-lab-tile--${tile.span}${tile.flag ? " doedtc-lab-tile--alert" : ""}`}
+        className={`doedtc-lab-tile doedtc-lab-tile--${tile.span}${tile.flag ? " doedtc-lab-tile--alert" : ""}${
+          canOpenHistory ? " doedtc-lab-tile--history" : ""
+        }`}
         key={tile.id}
       >
         <div className="doedtc-lab-tile__top">
           <h3 className={`doedtc-lab-tile__name ${plusJakartaSans.className}`}>{tile.title}</h3>
           {renderRemove(tile.id)}
         </div>
-        {tile.reading ? (
-          <>
-            <p className="doedtc-lab-tile__value">{tile.reading.value}</p>
-            {tile.reading.detail ? <p className="doedtc-lab-tile__detail">{tile.reading.detail}</p> : null}
-            {tile.flag ? (
-              <p className="doedtc-lab-tile__flag">{tile.flag === "high" ? "High" : "Low"}</p>
-            ) : null}
-          </>
-        ) : tile.summary ? (
-          <p className="doedtc-lab-tile__summary">{tile.summary}</p>
-        ) : null}
-        <p className="doedtc-lab-tile__meta">
-          {formatDate(tile.resulted_at)}
-          {tile.source ? ` · ${tile.source}` : ""}
-        </p>
+        {canOpenHistory ? (
+          <button
+            className="doedtc-lab-tile__open"
+            type="button"
+            onClick={() => setHistoryKey(series!.key)}
+            aria-label={`${tile.title}, ${earlier + 1} results`}
+          >
+            {renderLabTileBody(tile, earlier)}
+          </button>
+        ) : (
+          renderLabTileBody(tile, 0)
+        )}
       </article>
     );
   }
+
+  function renderLabTileBody(tile: DoeDtcResultView, earlier: number) {
+    return (
+      <>
+        {tile.reading ? (
+          <>
+            <div className="doedtc-lab-tile__value">{tile.reading.value}</div>
+            {tile.reading.detail ? <div className="doedtc-lab-tile__detail">{tile.reading.detail}</div> : null}
+            {tile.flag ? (
+              <div className="doedtc-lab-tile__flag">{tile.flag === "high" ? "High" : "Low"}</div>
+            ) : null}
+          </>
+        ) : tile.summary ? (
+          <div className="doedtc-lab-tile__summary">{tile.summary}</div>
+        ) : null}
+        <div className="doedtc-lab-tile__meta">
+          {formatDate(tile.resulted_at)}
+          {tile.source ? ` · ${tile.source}` : ""}
+          {earlier > 0 ? ` · ${earlier} ${DOEDTC_PROFILE.resultsLabsEarlier}` : ""}
+        </div>
+      </>
+    );
+  }
+
+  function renderLabGroups(
+    groups: ReturnType<typeof groupLabsByCategory>,
+    resolveSeries?: (tileId: string) => DoeDtcLabSeries | undefined,
+  ) {
+    return groups.map((group) => (
+      <section className="doedtc-lab-group" key={group.category}>
+        <h2 className="doedtc-section-title">{labCategoryLabel(group.category)}</h2>
+        <div className="doedtc-lab-grid">
+          {group.tiles.map((tile) => renderLabTile(tile, resolveSeries?.(tile.id)))}
+        </div>
+      </section>
+    ));
+  }
+
+  const historyModal =
+    openSeries && typeof document !== "undefined"
+      ? createPortal(
+          <div
+            className="doedtc-modal doedtc-profile-layout"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="lab-history-title"
+          >
+            <button
+              className="doedtc-modal__backdrop"
+              type="button"
+              aria-label={DOEDTC_PROFILE.resultsLabsHistoryClose}
+              onClick={() => setHistoryKey(null)}
+            />
+            <div className="doedtc-modal__sheet">
+              <div className="doedtc-modal__head">
+                <div>
+                  <h2 id="lab-history-title" className="doedtc-modal__title">
+                    {openSeries.latest.title}
+                  </h2>
+                  <p className="doedtc-modal__hint">{DOEDTC_PROFILE.resultsLabsHistoryHint}</p>
+                </div>
+                <button
+                  type="button"
+                  className="doedtc-icon-button"
+                  onClick={() => setHistoryKey(null)}
+                  aria-label={DOEDTC_PROFILE.resultsLabsHistoryClose}
+                >
+                  ×
+                </button>
+              </div>
+              <ul className="doedtc-row-list doedtc-lab-history">
+                {openSeries.history.map((row) => (
+                  <li className="doedtc-row-item" key={row.id}>
+                    <div className="doedtc-row-item__body">
+                      <strong>
+                        {row.reading
+                          ? `${row.reading.value}${row.reading.detail ? ` ${row.reading.detail}` : ""}`
+                          : row.summary || row.title}
+                      </strong>
+                      <p className="doedtc-row-item__meta">
+                        {formatDate(row.resulted_at)}
+                        {row.source ? ` · ${row.source}` : ""}
+                        {row.id === openSeries.latest.id ? ` · ${DOEDTC_PROFILE.resultsLabsViewLatest}` : ""}
+                      </p>
+                    </div>
+                    <div className="doedtc-row-item__actions">{renderRemove(row.id)}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>,
+          document.body,
+        )
+      : null;
 
   return (
     <div className="doedtc-results">
@@ -1733,22 +1845,71 @@ function ResultsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
             type="button"
             role="tab"
             aria-selected={slice === row.id}
-            onClick={() => setSlice(row.id)}
+            onClick={() => {
+              setSlice(row.id);
+              setHistoryKey(null);
+            }}
           >
             {row.label}
           </button>
         ))}
       </div>
 
+      {slice === "lab" && partitioned.labs.length > 0 ? (
+        <div
+          className="doedtc-results-slider doedtc-results-slider--2 doedtc-results-slider--labs-view"
+          role="tablist"
+          aria-label={DOEDTC_PROFILE.resultsLabsViewLabel}
+        >
+          <span
+            className="doedtc-results-slider__thumb"
+            style={{
+              width: "calc((100% - 0.44rem) / 2)",
+              left: `calc(0.22rem + ${labViewIndex} * ((100% - 0.44rem) / 2))`,
+            }}
+            aria-hidden="true"
+          />
+          {(
+            [
+              { id: "latest" as const, label: DOEDTC_PROFILE.resultsLabsViewLatest },
+              { id: "sets" as const, label: DOEDTC_PROFILE.resultsLabsViewSets },
+            ]
+          ).map((row) => (
+            <button
+              key={row.id}
+              className={`doedtc-results-slider__btn${labView === row.id ? " doedtc-results-slider__btn--active" : ""}`}
+              type="button"
+              role="tab"
+              aria-selected={labView === row.id}
+              onClick={() => {
+                setLabView(row.id);
+                setHistoryKey(null);
+              }}
+            >
+              {row.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
       {slice === "lab" ? (
         sliceRows.length === 0 ? (
           <p className="doedtc-empty">{sliceEmpty}</p>
+        ) : labView === "latest" ? (
+          <div className="doedtc-results__labs">
+            {renderLabGroups(latestGroups, (tileId) => seriesByLatestId.get(tileId))}
+          </div>
         ) : (
           <div className="doedtc-results__labs">
-            {labGroups.map((group) => (
-              <section className="doedtc-lab-group" key={group.category}>
-                <h2 className="doedtc-section-title">{labCategoryLabel(group.category)}</h2>
-                <div className="doedtc-lab-grid">{group.tiles.map((tile) => renderLabTile(tile))}</div>
+            {drawGroups.map((group) => (
+              <section className="doedtc-lab-group" key={group.dateKey}>
+                <h2 className="doedtc-section-title">
+                  {formatDate(group.dateKey)}
+                  {group.source ? ` · ${group.source}` : ""}
+                </h2>
+                <div className="doedtc-lab-grid">
+                  {layoutLabTiles(group.labs).map((tile) => renderLabTile(tile))}
+                </div>
               </section>
             ))}
           </div>
@@ -1902,6 +2063,7 @@ function ResultsTab({ snapshot, busy, readOnly = false, onAction }: TabProps) {
           {DOEDTC_PROFILE.resultsAddOpen}
         </button>
       )}
+      {historyModal}
     </div>
   );
 }

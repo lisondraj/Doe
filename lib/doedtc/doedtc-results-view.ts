@@ -123,13 +123,93 @@ export function partitionResults(rows: DoeDtcResultRow[]): {
   micro: DoeDtcResultView[];
 } {
   const views = rows.map(toResultView);
-  const byDate = (a: DoeDtcResultView, b: DoeDtcResultView) =>
-    String(b.resulted_at).localeCompare(String(a.resulted_at));
+  const byDate = (a: DoeDtcResultView, b: DoeDtcResultView) => compareResultsByRecency(b, a);
   return {
     labs: views.filter((row) => row.kind === "lab").sort(byDate),
     imaging: views.filter((row) => row.kind === "imaging").sort(byDate),
     micro: views.filter((row) => row.kind === "micro").sort(byDate),
   };
+}
+
+export function labTitleKey(title: string): string {
+  return title
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+export function resultedDateKey(value: string): string {
+  const trimmed = value.trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) return trimmed.slice(0, 10);
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) return trimmed.slice(0, 10) || trimmed;
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function compareResultsByRecency(
+  a: Pick<DoeDtcResultRow, "resulted_at" | "created_at" | "id">,
+  b: Pick<DoeDtcResultRow, "resulted_at" | "created_at" | "id">,
+): number {
+  const date = resultedDateKey(a.resulted_at).localeCompare(resultedDateKey(b.resulted_at));
+  if (date !== 0) return date;
+  const created = String(a.created_at).localeCompare(String(b.created_at));
+  if (created !== 0) return created;
+  return a.id.localeCompare(b.id);
+}
+
+export type DoeDtcLabSeries = {
+  key: string;
+  latest: DoeDtcResultView;
+  history: DoeDtcResultView[];
+};
+
+export function groupLabsByTitle(labs: DoeDtcResultView[]): DoeDtcLabSeries[] {
+  const buckets = new Map<string, DoeDtcResultView[]>();
+  for (const lab of labs) {
+    const key = labTitleKey(lab.title) || lab.id;
+    const list = buckets.get(key) ?? [];
+    list.push(lab);
+    buckets.set(key, list);
+  }
+  const series: DoeDtcLabSeries[] = [];
+  for (const [key, rows] of buckets) {
+    const history = [...rows].sort((a, b) => compareResultsByRecency(b, a));
+    const latest = history[0];
+    if (!latest) continue;
+    series.push({ key, latest, history });
+  }
+  return series.sort((a, b) => compareResultsByRecency(b.latest, a.latest));
+}
+
+export function groupLabsByDrawDate(
+  labs: DoeDtcResultView[],
+): Array<{ dateKey: string; labs: DoeDtcResultView[]; source: string | null }> {
+  const buckets = new Map<string, DoeDtcResultView[]>();
+  for (const lab of labs) {
+    const dateKey = resultedDateKey(lab.resulted_at);
+    const list = buckets.get(dateKey) ?? [];
+    list.push(lab);
+    buckets.set(dateKey, list);
+  }
+  return [...buckets.entries()]
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .map(([dateKey, rows]) => {
+      const firstSource = rows[0]?.source?.trim() || "";
+      const source =
+        firstSource && rows.every((row) => (row.source?.trim() || "") === firstSource)
+          ? firstSource
+          : null;
+      return {
+        dateKey,
+        labs: [...rows].sort((a, b) => labTitleKey(a.title).localeCompare(labTitleKey(b.title))),
+        source,
+      };
+    });
 }
 
 export function groupLabsByCategory(
