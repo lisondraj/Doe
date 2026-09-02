@@ -87,7 +87,7 @@ describe("situation brief gaps", () => {
     assert.match(brief.promptBlock, /Fred isn't on the household/i);
   });
 
-  it("offers the other sibling after a daughter habit when a son is on the chart", () => {
+  it("does not offer the other sibling after a named-person habit", () => {
     const maya = member({
       id: "m-maya",
       full_name: "Maya",
@@ -111,9 +111,7 @@ describe("situation brief gaps", () => {
       artifacts: [],
       guides: [],
     });
-    assert.equal(brief.opportunity?.kind, "sibling_offer");
-    assert.equal(brief.opportunity?.siblingName, "Simon");
-    assert.match(brief.opportunity?.promptLine ?? "", /same for them/);
+    assert.notEqual(brief.opportunity?.kind, "sibling_offer");
   });
 
   it("does not auto-offer siblings when they already named the group", () => {
@@ -198,18 +196,14 @@ describe("situation brief gaps", () => {
     assert.equal(brief.promptBlock.includes("Extra offer"), true);
   });
 
-  it("offers to add a mentioned item that is not on the chart", () => {
+  it("does not interrupt a conversation mention with a chart-add offer", () => {
     const brief = buildSituationBrief({
       inboundText: "im taking my viagra tomorrow",
       viewerUserId: "parent-1",
       members: [parent],
       medications: [],
     });
-    assert.equal(brief.opportunity?.kind, "chart_gap");
-    assert.equal(brief.opportunity?.tool, "add_medication");
-    assert.match(brief.opportunity?.promptLine ?? "", /not on medications/i);
-    assert.match(brief.opportunity?.promptLine ?? "", /confirm_once/);
-    assert.doesNotMatch(brief.opportunity?.promptLine ?? "", /would you like me to add it/i);
+    assert.notEqual(brief.opportunity?.kind, "chart_gap");
   });
 
   it("does not re-offer an item already on the chart", () => {

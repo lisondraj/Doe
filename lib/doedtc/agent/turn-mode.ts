@@ -81,7 +81,7 @@ function formatTurnModePromptBlock(mode: TurnMode): string {
     case "distress":
       return "Primary mode: distress. Stay with them. No schedule_text, log_symptoms, or parse_document unless they explicitly asked. One human question max.";
     case "conversation":
-      return "Primary mode: conversation. Answer from chart context when helpful. If they shared a problem, stay with that — do not dump the chart or reminder file. If they feel unwell, be caring and useful first — do not mention logging or tracking. Quiet log_symptoms only after you have helped. Tools stay available — use read_profile, log_result, parse_document when they asked. Do not auto-schedule or dump the reminder file unless they asked.";
+      return "Primary mode: conversation. Answer from chart context when helpful. If they shared a problem, stay with that — do not dump the chart or reminder file, and do not offer to add something or text someone unless they asked. If they feel unwell, be caring and useful first — do not mention logging or tracking. Quiet log_symptoms only after you have helped. Tools stay available — use read_profile, log_result, parse_document when they asked. Do not auto-schedule or dump the reminder file unless they asked.";
     case "action":
       return "Primary mode: action. Use commit tools for the primary intent.";
   }

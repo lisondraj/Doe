@@ -32,8 +32,11 @@ export function shouldSendWorkingTextAck(params: {
   hasFiles?: boolean;
 }): boolean {
   if (inboundSkipsReaction(params.inboundText)) return false;
-  if (params.hasFiles) return true;
-  return inboundLooksComplex(params.inboundText);
+  // Photos, labs, and reminders finish this turn. Typing is enough.
+  // Only promise a later text when the job actually continues after the reply
+  // (browser / screenshot / portal / listen).
+  if (params.hasFiles && !COMPLEX_TASK_RE.test(params.inboundText)) return false;
+  return COMPLEX_TASK_RE.test(params.inboundText);
 }
 
 function pickFrom(options: readonly string[], hash: number): string {

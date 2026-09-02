@@ -961,7 +961,7 @@ export const DOEDTC_AGENT_TOOLS = [
     function: {
       name: "parse_document",
       description:
-        "Vision-parse a photo or PDF into chart writes. Read the patient name first. Save only if it is the user or someone on the household. If the name is someone else, ask who and whether to invite them. If there is no name, say you can't add this photo. Never say you could not read the file until this tool failed.",
+        "Vision-parse a photo or PDF into chart writes. Read the patient name first. If it is someone else, ask who and whether to invite them. If there is no name, treat it as theirs and save. Never refuse because the page has no name. Never say you could not read the file until this tool failed.",
       parameters: {
         type: "object",
         properties: {

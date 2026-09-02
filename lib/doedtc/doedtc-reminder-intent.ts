@@ -74,7 +74,14 @@ export function inboundAsksReminderStatus(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return false;
   if (
-    /\b(?:in my file|any reminders?|reminders? (?:set|in)|what(?:'s| is) (?:set|on (?:the|my) file)|do i have (?:a |any )?(?:reminder|scheduled)|are there any reminders?)\b/i.test(
+    /\b(?:in my file|any reminders?|reminders? (?:set|in|active)|what(?:'s| is) (?:set|on (?:the|my) file)|do i have (?:a |any )?(?:reminder|scheduled)|are there any reminders?)\b/i.test(
+      trimmed,
+    )
+  ) {
+    return true;
+  }
+  if (
+    /\b(?:active reminders?|my reminders?|current reminders?|what(?:'s| is| are) .{0,24}reminders?)\b/i.test(
       trimmed,
     )
   ) {

@@ -184,8 +184,21 @@ describe("document parse", () => {
       viewerUserId: "user-1",
       viewerName: "James Lisondra",
     });
-    assert.equal(unnamed.disposition, "unnamed");
-    assert.equal(unnamed.canSave, false);
+    assert.equal(unnamed.disposition, "self");
+    assert.equal(unnamed.canSave, true);
+    assert.equal(unnamed.matchesUser, true);
+
+    assert.equal(looksLikeSaveDocumentToOwnChart("Are these in My chart"), true);
+    assert.equal(looksLikeSaveDocumentToOwnChart("what were my LFTs"), true);
+    const myChart = resolveDocumentPatientName({
+      parsedName: null,
+      caption: "Are these in My chart",
+      members: [],
+      viewerUserId: "user-1",
+      viewerName: "James Lisondra",
+    });
+    assert.equal(myChart.canSave, true);
+    assert.equal(myChart.disposition, "self");
   });
 
   it("does not auto-commit when the printed name is not the user or household", () => {
@@ -227,7 +240,7 @@ describe("document parse", () => {
         disposition: "unnamed",
         auto_committed: false,
       }) ?? "",
-      /can't add this photo/i,
+      /treat it as theirs/i,
     );
   });
 

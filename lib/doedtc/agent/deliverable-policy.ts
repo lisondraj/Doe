@@ -357,7 +357,16 @@ export function looksLikeChartRead(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return false;
   if (looksLikeChartWrite(trimmed) || askedForPrivateAppLink(trimmed)) return false;
-  return /\b(?:what(?:'s| is| are| were)|which|list|do i (?:still )?have)\b.{0,48}\b(?:meds?|medications?|conditions?|labs?|results?|trackers?|on (?:my |the )?chart|on (?:my )?profile)\b/i.test(
+  if (/\bare (?:these|they|this) (?:in|on) my (?:chart|profile|labs?|results?)\b/i.test(trimmed)) {
+    return true;
+  }
+  if (
+    /\b(?:lfts?|liver (?:function|panel)|a1c)\b/i.test(trimmed) &&
+    /\b(?:what|which|any|my|the|were|are)\b/i.test(trimmed)
+  ) {
+    return true;
+  }
+  return /\b(?:what(?:'s| is| are| were)|which|list|do i (?:still )?have)\b.{0,48}\b(?:meds?|medications?|conditions?|labs?|results?|trackers?|on (?:my |the )?chart|in (?:my |the )?chart|on (?:my )?profile)\b/i.test(
     trimmed,
   );
 }

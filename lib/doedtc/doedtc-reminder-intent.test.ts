@@ -10,6 +10,7 @@ import {
   resolveReminderInboundText,
   sanitizeScheduledTextBody,
   shouldDeferChartWriteForReminder,
+  inboundAsksReminderStatus,
 } from "@/lib/doedtc/doedtc-reminder-intent";
 
 test("parseReminderIntent extracts time and body from complete ask", () => {
@@ -166,4 +167,11 @@ test("shouldDeferChartWriteForReminder on time fills and new self-reminders, not
     shouldDeferChartWriteForReminder({ inboundText: "5:30 PM", tool: "log_appointment" }),
     false,
   );
+});
+
+test("inboundAsksReminderStatus matches active / my reminders", () => {
+  assert.equal(inboundAsksReminderStatus("what's active reminders"), true);
+  assert.equal(inboundAsksReminderStatus("what are my reminders"), true);
+  assert.equal(inboundAsksReminderStatus("any reminders set?"), true);
+  assert.equal(inboundAsksReminderStatus("remind me to buy groceries"), false);
 });

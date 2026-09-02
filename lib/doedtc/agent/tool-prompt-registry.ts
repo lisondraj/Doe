@@ -178,7 +178,7 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
   read_attachment:
     "read_attachment — fetch a stored inbound photo/PDF by file id from Recent attachments. Use when they refer to an earlier image.",
   parse_document:
-    "parse_document — vision-parse labs, Rx, appointments into chart writes. Read the patient name first. Save only when that name is the user (loose match) or someone on the household. If it is someone else, ask who and whether to invite them. If there is no name, say you can't add this photo. Never say you could not read the file until this tool failed.",
+    "parse_document — vision-parse labs, Rx, appointments into chart writes. Read the patient name first. If it is someone else, ask who and whether to invite them. If there is no name, treat it as theirs and save. Never refuse because the page has no name. Never say you could not read the file until this tool failed.",
   create_preparation:
     "create_preparation — one-off visit-prep summary with a 5-digit share code for their doctor. Not a guide — use create_guide for how-to visuals.",
   create_profile_artifact:

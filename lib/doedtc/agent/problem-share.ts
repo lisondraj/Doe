@@ -20,7 +20,7 @@ export function inboundAskedForChartOrFileStatus(text: string): boolean {
   if (!trimmed) return false;
   if (inboundAsksReminderStatus(trimmed) || looksLikeChartRead(trimmed)) return true;
   return (
-    /\b(?:on (?:the|my) chart|in (?:the|my) (?:household|family|file)|who(?:'s| is) on|anyone on|do i have .+ on)\b/i.test(
+    /\b(?:on (?:the|my) chart|in (?:the|my) (?:chart|household|family|file)|who(?:'s| is) on|anyone on|do i have .+ on)\b/i.test(
       trimmed,
     ) || /\b(?:what appointments?|any appointments?)\b/i.test(trimmed)
   );

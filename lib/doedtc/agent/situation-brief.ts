@@ -17,7 +17,6 @@ import {
 import { inboundAlreadyAsked } from "@/lib/doedtc/doedtc-agent-policy";
 import {
   householdMemberState,
-  inboundLooksLikeHabitOrReminder,
   inboundLooksLikeInvite,
   inboundLooksLikeProfileWrite,
   routeHouseholdSubject,
@@ -26,7 +25,9 @@ import {
 import {
   extractUnownedChartItems,
   formatChartGapOfferLine,
+  looksLikeIncidentalChartMention,
 } from "@/lib/doedtc/agent/chart-gap";
+import { isNonActionTurnMode, type TurnMode } from "@/lib/doedtc/agent/turn-mode";
 import type { DoeDtcArtifactRow, DoeDtcGuideRow } from "@/lib/doedtc/doedtc-types";
 
 export { extractChartMentions } from "@/lib/doedtc/agent/action-slots";
@@ -58,25 +59,6 @@ export type SituationBrief = {
   promptBlock: string;
 };
 
-function firstName(fullName: string): string {
-  return fullName.trim().split(/\s+/)[0] ?? fullName.trim();
-}
-
-function siblingOf(
-  mentioned: HouseholdMemberLike,
-  members: HouseholdMemberLike[],
-  viewerUserId?: string,
-): HouseholdMemberLike | null {
-  const relationship = mentioned.relationship;
-  const others = members.filter(
-    (row) =>
-      row.id !== mentioned.id &&
-      row.user_id !== viewerUserId &&
-      row.relationship === relationship,
-  );
-  return others[0] ?? null;
-}
-
 /** Secondary offers only — primary blockers come from action slots. */
 function pickExtraOffer(params: {
   inboundText: string;
@@ -91,8 +73,12 @@ function pickExtraOffer(params: {
   unknownNames: string[];
   pluralGroup: boolean;
   primaryBlockers: ActionBlocker[];
+  turnMode?: TurnMode;
 }): SituationOpportunity | null {
   const text = params.inboundText;
+  if (params.turnMode && isNonActionTurnMode(params.turnMode)) {
+    return null;
+  }
   const blocking = params.primaryBlockers.some((row) => row.blocksPrimary);
   const gaps = extractUnownedChartItems({
     inboundText: text,
@@ -106,7 +92,8 @@ function pickExtraOffer(params: {
     gaps.length > 0 &&
     params.unknownNames.length === 0 &&
     !blocking &&
-    !looksLikeChartWrite(text)
+    !looksLikeChartWrite(text) &&
+    !looksLikeIncidentalChartMention(text)
   ) {
     const gap = gaps[0]!;
     return {
@@ -134,25 +121,6 @@ function pickExtraOffer(params: {
         tool: "send_family_invite",
         memberName: focus.full_name,
         promptLine: `After the primary action, one complete offer to send ${focus.full_name} a join link (${confirm}).`,
-      };
-    }
-  }
-
-  if (
-    focus &&
-    !params.pluralGroup &&
-    params.mentioned.length === 1 &&
-    inboundLooksLikeHabitOrReminder(text)
-  ) {
-    const sibling = siblingOf(focus, params.members, params.viewerUserId);
-    if (sibling) {
-      return {
-        kind: "sibling_offer",
-        confidence: "high",
-        tool: "none",
-        memberName: focus.full_name,
-        siblingName: firstName(sibling.full_name),
-        promptLine: `After the ${focus.full_name} habit/reminder, at most one complete sentence: "I also have ${firstName(sibling.full_name)} on the chart — same for them?" Never auto-start a second workflow.`,
       };
     }
   }
@@ -277,6 +245,7 @@ export function buildSituationBrief(params: {
     unknownNames,
     pluralGroup,
     primaryBlockers: actionSlots.blockers,
+    turnMode: actionSlots.turnMode.mode,
   });
 
   const lines: string[] = [formatActionSlotsBlock(actionSlots).replace(/^Action slots \(do not recite\):\n/, "")];

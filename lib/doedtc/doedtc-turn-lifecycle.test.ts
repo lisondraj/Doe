@@ -137,9 +137,10 @@ test("only complex inbound qualifies for lifecycle 👍/✅", () => {
   assert.equal(inboundLooksComplex("record my visit"), true);
 });
 
-test("slow work gets a working-on-it text, fast asks do not", () => {
+test("slow work gets a working-on-it text, photos and reminders do not", () => {
   assert.equal(shouldSendWorkingTextAck({ inboundText: "screenshot google.com" }), true);
-  assert.equal(shouldSendWorkingTextAck({ inboundText: "what is this", hasFiles: true }), true);
+  assert.equal(shouldSendWorkingTextAck({ inboundText: "what is this", hasFiles: true }), false);
+  assert.equal(shouldSendWorkingTextAck({ inboundText: "Are these in My chart", hasFiles: true }), false);
   assert.equal(shouldSendWorkingTextAck({ inboundText: "remind me in 5 seconds" }), false);
   assert.equal(shouldSendWorkingTextAck({ inboundText: "yes" }), false);
 });

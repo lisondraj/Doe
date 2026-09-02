@@ -16,7 +16,10 @@ import {
   resolveDeliverableInboundText,
   shouldHonorStructuredSend,
 } from "@/lib/doedtc/agent/deliverable-policy";
-import { remainingOutboundThinkMs as pacingMs } from "@/lib/doedtc/doedtc-outbound-pacing";
+import {
+  remainingOutboundThinkMs as pacingMs,
+  splitOutboundBubbles,
+} from "@/lib/doedtc/doedtc-outbound-pacing";
 import { shouldAllowProfileLink } from "@/lib/doedtc/agent/turn-integrity";
 import { replyClaimsAction } from "@/lib/doedtc/agent/honesty";
 
@@ -59,6 +62,8 @@ describe("deliverable ask detection", () => {
     assert.equal(looksLikeChartWrite("I take metformin"), true);
     assert.equal(looksLikeChartRead("What were my lab results"), true);
     assert.equal(looksLikeChartRead("what's on my chart"), true);
+    assert.equal(looksLikeChartRead("Are these in My chart"), true);
+    assert.equal(looksLikeChartRead("what were my LFTs"), true);
     assert.equal(looksLikeChartRead("Where are my labs"), false);
     assert.equal(looksLikeChartRead("add metformin to my chart"), false);
     assert.equal(isExplicitChartWriteAsk("add metformin to my chart"), true);
@@ -396,13 +401,23 @@ describe("outbound pacing", () => {
       nowMs: 1_050,
       replyText: "Got it. I'll text you in a few seconds.",
     });
-    assert.ok(remainingFast >= 800);
+    assert.ok(remainingFast >= 1_600);
 
     const remainingSlow = pacingMs({
       startedAtMs: 1_000,
-      nowMs: 5_000,
+      nowMs: 8_000,
       replyText: "Got it. I'll text you in a few seconds.",
     });
     assert.equal(remainingSlow, 0);
+  });
+
+  it("splits two-beat replies into two bubbles and keeps short ones together", () => {
+    assert.deepEqual(splitOutboundBubbles("Got it."), ["Got it."]);
+    const split = splitOutboundBubbles(
+      "ALP is a bit high at 170. Total bilirubin is also a little over. Want me to walk through the rest?",
+    );
+    assert.equal(split.length, 2);
+    assert.match(split[0] ?? "", /ALP is a bit high/);
+    assert.match(split[1] ?? "", /walk through the rest/);
   });
 });

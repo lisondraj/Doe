@@ -53,7 +53,10 @@ const NAME_JUNK_TOKENS = new Set([
 ]);
 
 const SELF_CLAIM_RE =
-  /\b(?:it'?s|that'?s|this is)\s+me\b|\b(?:they'?re|these are|this is|it'?s)\s+mine\b|\bmy own\b|\b(?:those|these) are my (?:own )?(?:labs?|results?)\b/i;
+  /\b(?:it'?s|that'?s|this is)\s+me\b|\b(?:they'?re|these are|this is|it'?s)\s+mine\b|\bmy own\b|\b(?:those|these) are my (?:own )?(?:labs?|results?|lfts?)\b/i;
+
+const OWN_CHART_ASK_RE =
+  /\b(?:are (?:these|they|this)|is this)\s+(?:in|on)\s+my\s+(?:chart|profile|labs?|results?)\b|\b(?:in|on)\s+my\s+(?:chart|profile)\b|\bmy\s+(?:labs?|results?|lfts?|liver (?:function|panel))\b/i;
 
 const SAVE_OWN_RESULTS_RE =
   /\b(?:log|save|add|put|record)\b.{0,48}\b(?:these|this|them|it)\b.{0,40}\b(?:chart|profile|results?)\b/i;
@@ -219,7 +222,7 @@ function coerceWriteArgs(
 const DOCUMENT_PARSE_SYSTEM = `You extract structured health document data from photos or PDF page images.
 Return JSON only with keys: kind, confidence, summary, patient_name, writes.
 
-Read the patient / subject name printed on the document first (Patient, Name, Child, DOB block). Put that in patient_name. Then extract the results. A parent may send a child's labs with no caption — still name the child.
+Read the patient / subject name printed on the document first (Patient, Name, Child, DOB block). Put that in patient_name. If the page has no patient name, set patient_name to null and still extract the results. A parent may send a child's labs with no caption — still name the child when the name is printed.
 
 kind is one of: lab_panel, medication_list, appointment, vaccine, rx, insurance, id_card, other.
 confidence is 0 to 1.
@@ -317,7 +320,7 @@ export function extractResultedAtFromText(text: string): string | null {
 export function looksLikeSaveDocumentToOwnChart(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return false;
-  if (SELF_CLAIM_RE.test(trimmed)) return true;
+  if (SELF_CLAIM_RE.test(trimmed) || OWN_CHART_ASK_RE.test(trimmed)) return true;
   if (/\b(?:family(?: profile)?|household)\b/i.test(trimmed) && INVITE_ASK_RE.test(trimmed)) {
     return false;
   }
@@ -520,13 +523,15 @@ export function resolveDocumentPatientName(params: {
     return resolveKnown(params.viewerName!.trim());
   }
 
+  // Sample printouts and home reports often have no patient line. The person
+  // who texted the photo is the subject unless they named someone else.
   return {
-    name: null,
+    name: params.viewerName?.trim() || null,
     printedName: null,
-    onChart: false,
-    matchesUser: false,
-    canSave: false,
-    disposition: "unnamed",
+    onChart: true,
+    matchesUser: true,
+    canSave: true,
+    disposition: "self",
   };
 }
 
@@ -979,7 +984,7 @@ export function formatDocumentParseForPrompt(output: Record<string, unknown> | n
   const name = typeof output.patient_name === "string" ? output.patient_name.trim() : "";
   const disposition = typeof output.disposition === "string" ? output.disposition : "";
   if (disposition === "unnamed" || (output.can_save === false && !name)) {
-    return `Inbound document was read but has no patient name. Do not save it. Tell them you can't add this photo. Do not claim it is on the chart. Do not call parse_document again.`;
+    return `Inbound document was read (${summary || "health document"}) with no printed name. Treat it as theirs and save it. Do not refuse because a name is missing. Do not call parse_document again.`;
   }
   if (output.can_save === false && (disposition === "unknown_name" || name)) {
     return `Inbound document was read (${summary || "health document"}). The name on it is ${name || "someone else"}, not the user and not on the household. Do not save it. Ask who it is and if they want to invite them to the household. If they will not say, tell them you can't add this photo. Do not call parse_document again.`;

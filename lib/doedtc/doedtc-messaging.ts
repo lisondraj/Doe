@@ -26,7 +26,7 @@ import {
   upsertInvitedDoeDtcUser,
 } from "@/lib/doedtc/doedtc-db";
 import { addDoeDtcMem0Turn } from "@/lib/doedtc/doedtc-memory";
-import { waitForOutboundThinkTime } from "@/lib/doedtc/doedtc-outbound-pacing";
+import { splitOutboundBubbles, startTypingPulse, waitForBubbleGap, waitForOutboundThinkTime } from "@/lib/doedtc/doedtc-outbound-pacing";
 import {
   DEFERRED_WORK_ACK,
   isRedundantWorkingAck,
@@ -46,7 +46,7 @@ import {
   shouldSkipDuplicateInboundTurn,
   withAgentTurnTimeout,
 } from "@/lib/doedtc/doedtc-turn-lifecycle";
-import { linqGetMessage, linqSendLink, linqSendMedia, linqSendText, linqSendToPhone } from "@/lib/doedtc/linq";
+import { linqGetMessage, linqSendLink, linqSendMedia, linqSendText, linqSendToPhone, linqStartTyping } from "@/lib/doedtc/linq";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 const OPT_OUT_KEYWORDS = new Set(["STOP", "UNSUBSCRIBE", "OPTOUT", "CANCEL", "END", "QUIT"]);
@@ -710,6 +710,11 @@ export async function handleSymptomInbound(params: {
     chatId,
   });
 
+  const stopTyping = startTypingPulse({
+    chatId,
+    pulse: linqStartTyping,
+  });
+
   const workingAck = startWorkingTextAck({
     enabled: shouldSendWorkingTextAck({
       inboundText: params.text,
@@ -784,35 +789,55 @@ export async function handleSymptomInbound(params: {
   const replyToMessageId =
     params.inboundMessageId && threadReply ? params.inboundMessageId : undefined;
 
-  await completeDoeDtcTurnLifecycle({
-    turnId,
-    inboundMessageId: params.inboundMessageId,
-    replyText,
-    threadReply,
-    deferFinalReaction: Boolean(turn.browserJobDispatched) && !agentFailed,
-    failed: agentFailed,
-    error: agentError,
-    agentReaction: turn.reactionEmoji,
-  });
-
-  const firstOutbound = replyText || turn.careUrl || turn.listenUrl || turn.profileUrl || "";
-  const ackAlreadySent = workingAck.sentText();
-  if (firstOutbound && !ackAlreadySent) {
-    await waitForOutboundThinkTime({
-      startedAtMs: turnStartedAtMs,
-      replyText: replyText || firstOutbound,
+  try {
+    await completeDoeDtcTurnLifecycle({
+      turnId,
+      inboundMessageId: params.inboundMessageId,
+      replyText,
+      threadReply,
+      deferFinalReaction: Boolean(turn.browserJobDispatched) && !agentFailed,
+      failed: agentFailed,
+      error: agentError,
+      agentReaction: turn.reactionEmoji,
     });
+
+    const firstOutbound = replyText || turn.careUrl || turn.listenUrl || turn.profileUrl || "";
+    const ackAlreadySent = workingAck.sentText();
+    if (firstOutbound && !ackAlreadySent) {
+      await waitForOutboundThinkTime({
+        startedAtMs: turnStartedAtMs,
+        replyText: replyText || firstOutbound,
+      });
+    }
+  } finally {
+    stopTyping();
   }
 
+  const ackAlreadySent = workingAck.sentText();
+
   if (replyText && !(ackAlreadySent && isRedundantWorkingAck(ackAlreadySent, replyText))) {
-    await sendDoeDtcOutbound({
-      user: params.user,
-      chatId,
-      to: params.user.phone,
-      text: replyText,
-      idempotencyKey: `doedtc-agent-reply-${params.user.id}-${idSuffix}`,
-      replyToMessageId,
-    });
+    const bubbles = splitOutboundBubbles(replyText);
+    for (let i = 0; i < bubbles.length; i += 1) {
+      const bubble = bubbles[i]!;
+      if (i > 0) {
+        if (chatId) {
+          try {
+            await linqStartTyping(chatId);
+          } catch {
+            // Typing between bubbles is best-effort.
+          }
+        }
+        await waitForBubbleGap(bubble);
+      }
+      await sendDoeDtcOutbound({
+        user: params.user,
+        chatId,
+        to: params.user.phone,
+        text: bubble,
+        idempotencyKey: `doedtc-agent-reply-${params.user.id}-${idSuffix}${i > 0 ? `-${i}` : ""}`,
+        replyToMessageId: i === 0 ? replyToMessageId : undefined,
+      });
+    }
   }
 
   if (turn.assessmentRan && turn.careUrl) {
