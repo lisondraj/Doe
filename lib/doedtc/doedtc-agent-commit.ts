@@ -288,13 +288,18 @@ export async function executeAgentPendingCommit(params: {
       }
       default: {
         if (params.pending.kind === "chart_write" || params.pending.args.chart_write === true) {
-          const { resumeChartWritePending } = await import("@/lib/doedtc/agent/chart-write-resume");
+          const { isChartWriteResumeContinue, resumeChartWritePending } = await import(
+            "@/lib/doedtc/agent/chart-write-resume"
+          );
           const resumed = await resumeChartWritePending({
             user: params.user,
             inboundText: "yes",
             pending: params.pending,
           });
           if (!resumed) throw new Error("Still missing chart details.");
+          if (isChartWriteResumeContinue(resumed)) {
+            return { ok: true, replyHint: "" };
+          }
           return { ok: true, replyHint: resumed.replyText, profileUrl: resumed.profileUrl };
         }
         throw new Error(`Unknown pending commit tool: ${params.pending.commit_tool}`);

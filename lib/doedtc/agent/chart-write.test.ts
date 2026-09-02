@@ -4,9 +4,13 @@ import { describe, it } from "node:test";
 import {
   assessChartWrite,
   attachChartSectionLink,
+  formatIncidentalChartWriteContinueBlock,
   isVagueChartValue,
+  looksLikeChartWriteAckOnly,
   mergeChartWriteFollowUp,
+  selectChartWriteResumeKind,
   tabForChartWrite,
+  withChartWritePendingArgs,
 } from "@/lib/doedtc/agent/chart-write";
 
 describe("chart write completeness", () => {
@@ -102,5 +106,44 @@ describe("chart write completeness", () => {
     assert.equal(isVagueChartValue("labs"), true);
     assert.equal(isVagueChartValue("a med"), true);
     assert.equal(isVagueChartValue("Metformin"), false);
+  });
+
+  it("keeps going after incidental name fills, confirms explicit writes", () => {
+    assert.equal(
+      selectChartWriteResumeKind({
+        originalInbound: "Sarah is my child actually",
+        currentInbound: "Sarah Willcock",
+      }),
+      "continue",
+    );
+    assert.equal(
+      selectChartWriteResumeKind({
+        originalInbound: "add metformin to my chart",
+        currentInbound: "Metformin",
+      }),
+      "confirm",
+    );
+    assert.equal(
+      selectChartWriteResumeKind({
+        originalInbound: "add my daughter",
+        currentInbound: "Sarah Willcock",
+      }),
+      "confirm",
+    );
+    assert.equal(looksLikeChartWriteAckOnly("Added Sarah Willcock to your chart."), true);
+    assert.equal(
+      looksLikeChartWriteAckOnly("That's tough. I added Sarah so we can keep this going. Want a walk together later?"),
+      false,
+    );
+    assert.match(
+      formatIncidentalChartWriteContinueBlock({
+        label: "Sarah Willcock",
+        originalInbound: "Sarah is my child actually",
+      }),
+      /continue the original problem/i,
+    );
+    const pendingArgs = withChartWritePendingArgs({ relationship: "child" }, "Sarah is my child actually");
+    assert.equal(pendingArgs.original_inbound, "Sarah is my child actually");
+    assert.equal(pendingArgs.chart_write, true);
   });
 });

@@ -1,3 +1,4 @@
+import { isIncidentalChartWrite } from "@/lib/doedtc/agent/deliverable-policy";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 
 export type DoeDtcAgentPendingKind =
@@ -108,7 +109,12 @@ export function formatAgentPendingForPrompt(pending: DoeDtcAgentPendingRow): str
   }
 
   if (isChartWritePending(pending)) {
-    return `Pending chart details: ${pending.summary}. They just answered. Call ${pending.commit_tool} with the stored args plus what they just said. Ask only for what is still missing. Never invent a name, date, or value. After the write succeeds, the matching chart tab link is sent automatically as a separate iMessage.`;
+    const original =
+      typeof pending.args.original_inbound === "string" ? pending.args.original_inbound.trim() : "";
+    const continueLine = original && isIncidentalChartWrite(original)
+      ? " After the write succeeds, continue the original problem. Do not end on the add."
+      : " After the write succeeds, the matching chart tab link is sent automatically as a separate iMessage.";
+    return `Pending chart details: ${pending.summary}. They just answered. Call ${pending.commit_tool} with the stored args plus what they just said. Ask only for what is still missing. Never invent a name, date, or value.${continueLine}`;
   }
 
   const argsForPrompt = sanitizePendingArgsForPrompt(pending.args);

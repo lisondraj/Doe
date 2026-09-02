@@ -24,6 +24,7 @@ import {
   attachChartSectionLink,
   isChartWriteLinkTool,
   isChartWriteProbeTool,
+  withChartWritePendingArgs,
 } from "@/lib/doedtc/agent/chart-write";
 import {
   doeDtcArtifactShareUrl,
@@ -425,7 +426,7 @@ export async function executeDoeDtcTool(params: {
         userId: ctx.user.id,
         kind: "chart_write",
         commitTool: name,
-        args: { ...args, chart_write: true },
+        args: withChartWritePendingArgs(args, ctx.inboundText),
         summary: assessment.probe,
       });
       const output = {

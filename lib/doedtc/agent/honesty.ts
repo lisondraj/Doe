@@ -12,6 +12,7 @@ import {
   buildPrivateAppLink,
   findMatchingGuide,
   interpretBuildIntent,
+  isExplicitChartWriteAsk,
   looksLikeChartRead,
   looksLikeChartWrite,
 } from "@/lib/doedtc/agent/deliverable-policy";
@@ -315,7 +316,11 @@ export async function reconcileReplyClaims(params: {
     });
   }
 
-  if (!profileUrl && chartWriteSucceeded(params.toolsExecuted)) {
+  if (
+    !profileUrl &&
+    chartWriteSucceeded(params.toolsExecuted) &&
+    isExplicitChartWriteAsk(params.inboundText)
+  ) {
     const write = params.toolsExecuted.find(
       (row) => row.ok && isChartWriteLinkTool(row.name),
     );

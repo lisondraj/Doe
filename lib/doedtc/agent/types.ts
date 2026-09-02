@@ -25,6 +25,7 @@ export type DoeDtcRunContext = {
   snapshot: DoeDtcProfileSnapshot;
   turnState: DoeDtcToolTurnState;
   instructions: string;
+  incidentalChartWrite?: { label: string; originalInbound: string };
   plannerInstructions?: string;
   specialistInstructions?: Partial<
     Record<"healthRecord" | "guides" | "scheduling" | "browser", string>

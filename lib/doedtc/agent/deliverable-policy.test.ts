@@ -10,6 +10,8 @@ import {
   isShortDeliverableFollowUp,
   looksLikeChartRead,
   looksLikeChartWrite,
+  isExplicitChartWriteAsk,
+  isIncidentalChartWrite,
   resolveDeliverableInboundText,
   shouldHonorStructuredSend,
 } from "@/lib/doedtc/agent/deliverable-policy";
@@ -56,6 +58,11 @@ describe("deliverable ask detection", () => {
     assert.equal(looksLikeChartRead("what's on my chart"), true);
     assert.equal(looksLikeChartRead("Where are my labs"), false);
     assert.equal(looksLikeChartRead("add metformin to my chart"), false);
+    assert.equal(isExplicitChartWriteAsk("add metformin to my chart"), true);
+    assert.equal(isExplicitChartWriteAsk("add my daughter"), true);
+    assert.equal(isIncidentalChartWrite("Sarah is my child actually"), true);
+    assert.equal(isIncidentalChartWrite("She said she's been going thru it with her boyfriend"), true);
+    assert.equal(isIncidentalChartWrite("add metformin to my chart"), false);
   });
 
   it("classifies how-to as build-guide when no matching guide exists", () => {
@@ -199,6 +206,18 @@ describe("structured send and leftover URLs", () => {
   it("ignores unsolicited profile send[] entries", () => {
     assert.equal(shouldHonorStructuredSend("profile", "I have a headache", []), false);
     assert.equal(shouldHonorStructuredSend("profile", "send me my profile", []), true);
+    assert.equal(
+      shouldHonorStructuredSend("profile", "add metformin to my chart", [
+        { name: "add_medication", ok: true },
+      ]),
+      true,
+    );
+    assert.equal(
+      shouldHonorStructuredSend("profile", "Sarah is my child actually", [
+        { name: "log_family_member", ok: true },
+      ]),
+      false,
+    );
   });
 
   it("honors structured guide send when they asked or built", () => {
@@ -216,6 +235,16 @@ describe("structured send and leftover URLs", () => {
       inboundText: "I have a headache",
       turnState,
       toolsExecuted: [{ name: "run_assessment", ok: true }],
+    });
+    assert.equal(turnState.profileUrl, undefined);
+  });
+
+  it("strips a profile card after an incidental family add", () => {
+    const turnState = { profileUrl: "https://doe.care/app?t=x&tab=family" };
+    applyDeliverablePolicyToTurnState({
+      inboundText: "Sarah is my child actually",
+      turnState,
+      toolsExecuted: [{ name: "log_family_member", ok: true }],
     });
     assert.equal(turnState.profileUrl, undefined);
   });

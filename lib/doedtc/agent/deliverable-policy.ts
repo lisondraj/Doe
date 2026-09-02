@@ -91,6 +91,22 @@ export function looksLikeChartWrite(text: string): boolean {
   return false;
 }
 
+const EXPLICIT_FAMILY_ADD_RE =
+  /\b(?:add|log|save|put|record)\b.{0,48}\b(?:(?:my |the )?(?:daughter|son|kid|child|wife|husband|partner|mom|dad|mother|father|sister|brother|family|friend)|(?:them|her|him).{0,24}(?:chart|profile))\b/i;
+
+/** They asked to save something — not a name you noticed was missing mid-conversation. */
+export function isExplicitChartWriteAsk(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  if (looksLikeChartWrite(trimmed)) return true;
+  return EXPLICIT_FAMILY_ADD_RE.test(trimmed);
+}
+
+/** Chart write that was inferred so you could keep helping — not the ask itself. */
+export function isIncidentalChartWrite(text: string): boolean {
+  return Boolean(text.trim()) && !isExplicitChartWriteAsk(text);
+}
+
 export function findMatchingArtifact(
   inboundText: string,
   artifacts: Array<{ id: string; title: string; archived_at?: string | null }> | undefined,
@@ -370,7 +386,7 @@ export function applyDeliverablePolicyToTurnState(params: {
     !ask.has("tracker") &&
     !toolSucceeded(tools, "send_profile_link") &&
     !toolSucceeded(tools, "create_profile_artifact") &&
-    !chartWriteSucceeded(tools)
+    !(chartWriteSucceeded(tools) && isExplicitChartWriteAsk(params.inboundText))
   ) {
     params.turnState.profileUrl = undefined;
   }
@@ -428,7 +444,13 @@ export function shouldHonorStructuredSend(
   if (kind === "share" && toolSucceeded(toolsExecuted, "share_artifact")) return true;
   if (kind === "profile" && toolSucceeded(toolsExecuted, "send_profile_link")) return true;
   if (kind === "tracker" && toolSucceeded(toolsExecuted, "send_profile_link")) return true;
-  if ((kind === "profile" || kind === "tracker") && chartWriteSucceeded(toolsExecuted)) return true;
+  if (
+    (kind === "profile" || kind === "tracker") &&
+    chartWriteSucceeded(toolsExecuted) &&
+    isExplicitChartWriteAsk(inboundText)
+  ) {
+    return true;
+  }
   if (kind === "guide" && toolSucceeded(toolsExecuted, "create_guide")) return true;
   if (kind === "guide" && toolSucceeded(toolsExecuted, "send_guide_link")) return true;
   if (kind === "prepare" && toolSucceeded(toolsExecuted, "create_preparation")) return true;

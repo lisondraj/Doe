@@ -1,3 +1,4 @@
+import { isIncidentalChartWrite } from "@/lib/doedtc/agent/deliverable-policy";
 import { doeDtcAppUrl } from "@/lib/doedtc/doedtc-copy";
 import { parseAffirmation } from "@/lib/doedtc/doedtc-pending";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
@@ -164,6 +165,51 @@ export function firstString(...values: unknown[]): string {
     if (typeof value === "string" && value.trim()) return value.trim();
   }
   return "";
+}
+
+export function chartWriteOriginalInbound(args: Record<string, unknown>): string {
+  return firstString(args.original_inbound);
+}
+
+export function withChartWritePendingArgs(
+  args: Record<string, unknown>,
+  originalInbound: string,
+): Record<string, unknown> {
+  return {
+    ...args,
+    chart_write: true,
+    original_inbound: chartWriteOriginalInbound(args) || originalInbound.trim(),
+  };
+}
+
+export function looksLikeChartWriteAckOnly(text: string): boolean {
+  return /^added\b.+\bto your chart\.?$/i.test(text.trim());
+}
+
+export function selectChartWriteResumeKind(params: {
+  originalInbound?: string;
+  currentInbound: string;
+}): "confirm" | "continue" {
+  const source = (params.originalInbound ?? "").trim() || params.currentInbound;
+  return isIncidentalChartWrite(source) ? "continue" : "confirm";
+}
+
+export function formatIncidentalChartWriteContinueBlock(params: {
+  label: string;
+  originalInbound: string;
+}): string {
+  const original =
+    params.originalInbound.trim().slice(0, 280) || "the concern they were talking about";
+  return `You just added ${params.label} to the chart so you can keep helping. Do not ask for their name again. One short acknowledge is fine. Then continue the original problem — do not end on the add, and do not send a profile link. Original problem: ${original}`;
+}
+
+export function buildIncidentalChartWriteRetrySystemMessage(params: {
+  label: string;
+  originalInbound: string;
+}): string {
+  const original =
+    params.originalInbound.trim().slice(0, 280) || "the concern they were talking about";
+  return `You stopped at a chart confirmation. ${params.label} is already on the chart. Do not make "added to your chart" the whole reply. Address the original problem: "${original}". One short acknowledge, then care and a useful next step.`;
 }
 
 function hasResultDate(text: string, args: Record<string, unknown>): boolean {

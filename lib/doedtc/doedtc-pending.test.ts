@@ -44,6 +44,24 @@ test("document identity pending steers who / invite / refuse", () => {
   assert.match(formatted, /cannot add this photo/);
 });
 
+test("chart-write pending keeps incidental adds on the original problem", () => {
+  const formatted = formatAgentPendingForPrompt({
+    user_id: "user-1",
+    kind: "chart_write",
+    commit_tool: "log_family_member",
+    args: {
+      chart_write: true,
+      relationship: "child",
+      original_inbound: "Sarah is my child actually",
+    },
+    summary: "What's their name?",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+  assert.match(formatted, /continue the original problem/i);
+  assert.match(formatted, /log_family_member/);
+});
+
 test("formatAgentPendingForPrompt never embeds runState blob", () => {
   const blob = "x".repeat(50_000);
   const formatted = formatAgentPendingForPrompt({

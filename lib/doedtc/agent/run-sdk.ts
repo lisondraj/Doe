@@ -18,7 +18,17 @@ import {
   priorInboundBodiesFromMessages,
   resolveDeliverableInboundText,
 } from "@/lib/doedtc/agent/deliverable-policy";
-import { resumeChartWritePending } from "@/lib/doedtc/agent/chart-write-resume";
+import {
+  buildIncidentalChartWriteRetrySystemMessage,
+  chartWriteSucceeded,
+  formatIncidentalChartWriteContinueBlock,
+  looksLikeChartWriteAckOnly,
+} from "@/lib/doedtc/agent/chart-write";
+import { isIncidentalChartWrite } from "@/lib/doedtc/agent/deliverable-policy";
+import {
+  isChartWriteResumeContinue,
+  resumeChartWritePending,
+} from "@/lib/doedtc/agent/chart-write-resume";
 import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
 import { finalizeAgentReply } from "@/lib/doedtc/agent/finalize-agent-reply";
 import {
@@ -170,6 +180,7 @@ async function loadRunContext(params: {
   turnId?: string;
   reminderDirective?: string | null;
   pendingRow?: DoeDtcAgentPendingRow | null;
+  incidentalChartWrite?: { label: string; originalInbound: string } | null;
 }): Promise<DoeDtcRunContext> {
   const pendingRow = params.pendingRow ?? (await getAgentPending(params.user.id));
 
@@ -177,7 +188,11 @@ async function loadRunContext(params: {
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
       listDoeDtcMessages(params.user.id, 40),
-      searchDoeDtcMem0Memories({ userId: params.user.id, query: params.inboundText, topK: 5 }),
+      searchDoeDtcMem0Memories({
+        userId: params.user.id,
+        query: params.incidentalChartWrite?.originalInbound || params.inboundText,
+        topK: 5,
+      }),
       listGuidesForUser(params.user.id),
       searchDoeDtcMem0Playbook({ userId: params.user.id, query: params.inboundText, topK: 3 }),
       getActiveDoeDtcBrowserJobId(params.user.id),
@@ -210,9 +225,11 @@ async function loadRunContext(params: {
     priorInboundBodies: priorInboundBodiesFromMessages(messageHistory),
     lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
   });
+  const briefInboundText =
+    params.incidentalChartWrite?.originalInbound?.trim() || deliverableInboundText;
 
   const brief = buildSituationBrief({
-    inboundText: deliverableInboundText,
+    inboundText: briefInboundText,
     viewerUserId: params.user.id,
     viewerName: params.user.full_name,
     members: snapshot.household.members,
@@ -261,8 +278,11 @@ async function loadRunContext(params: {
     capabilityAskBlock: askedWhatYouCanDo(deliverableInboundText)
       ? formatCapabilityAskBlock()
       : undefined,
-    unwellCareBlock: looksLikeUnwellShare(deliverableInboundText)
+    unwellCareBlock: looksLikeUnwellShare(briefInboundText)
       ? formatUnwellCareBlock()
+      : undefined,
+    incidentalChartWriteBlock: params.incidentalChartWrite
+      ? formatIncidentalChartWriteContinueBlock(params.incidentalChartWrite)
       : undefined,
     turnMode: turnMode.mode,
   };
@@ -314,6 +334,7 @@ async function loadRunContext(params: {
       (params.reminderDirective ? `\n\n${params.reminderDirective}` : "") +
       (parseNote ? `\n\n${parseNote}` : ""),
     specialistInstructions: promptSplit.specialistInstructions,
+    incidentalChartWrite: params.incidentalChartWrite ?? undefined,
   };
 }
 
@@ -463,7 +484,15 @@ function shouldRetrySdkReply(loaded: DoeDtcRunContext, replyText: string): boole
   if (askedWhatYouCanDo(loaded.inboundText) && looksLikeCapabilityBrochure(replyText)) {
     return true;
   }
-  return looksLikeUnwellShare(loaded.inboundText) && looksLikeLogNarration(replyText);
+  if (looksLikeUnwellShare(loaded.inboundText) && looksLikeLogNarration(replyText)) {
+    return true;
+  }
+  if (!looksLikeChartWriteAckOnly(replyText)) return false;
+  const original = loaded.incidentalChartWrite?.originalInbound ?? loaded.inboundText;
+  if (loaded.incidentalChartWrite) return true;
+  return (
+    chartWriteSucceeded(loaded.turnState.toolsExecuted) && isIncidentalChartWrite(original)
+  );
 }
 
 async function finalizeSdkRun(params: {
@@ -522,6 +551,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
   turnId?: string;
 }): Promise<DoeDtcAgentTurnResult> {
   let pendingRow = await getAgentPending(params.user.id);
+  let incidentalChartWrite: { label: string; originalInbound: string } | null = null;
 
   if (pendingRow && (isDocumentIdentityPending(pendingRow.args) || pendingRow.kind === "parse_document")) {
     const { resolveHeldDocumentIdentity } = await import("@/lib/doedtc/agent/document-parse");
@@ -551,8 +581,17 @@ export async function runDoeDtcAgentTurnSdk(params: {
         inboundText: params.inboundText,
         pending: pendingRow,
       });
-      if (resumed) return resumed;
-      pendingRow = await getAgentPending(params.user.id);
+      if (resumed && isChartWriteResumeContinue(resumed)) {
+        incidentalChartWrite = {
+          label: resumed.label,
+          originalInbound: resumed.originalInbound,
+        };
+        pendingRow = null;
+      } else if (resumed) {
+        return resumed;
+      } else {
+        pendingRow = await getAgentPending(params.user.id);
+      }
     }
   }
 
@@ -608,6 +647,7 @@ export async function runDoeDtcAgentTurnSdk(params: {
     ...params,
     reminderDirective: buildReminderIntentDirective(reminderIntent),
     pendingRow,
+    incidentalChartWrite,
   });
 
   if (loaded.turnMode?.mode === "crisis") {
@@ -693,11 +733,13 @@ export async function runDoeDtcAgentTurnSdk(params: {
   }
 
   const retryNudge =
-    looksLikeUnwellShare(loaded.inboundText) && looksLikeLogNarration(firstPass.replyText)
-      ? buildUnwellCareRetrySystemMessage()
-      : askedWhatYouCanDo(loaded.inboundText) && looksLikeCapabilityBrochure(firstPass.replyText)
-        ? buildCapabilityRetrySystemMessage()
-        : buildRefusalRetrySystemMessage(loaded.inboundText);
+    looksLikeChartWriteAckOnly(firstPass.replyText) && loaded.incidentalChartWrite
+      ? buildIncidentalChartWriteRetrySystemMessage(loaded.incidentalChartWrite)
+      : looksLikeUnwellShare(loaded.inboundText) && looksLikeLogNarration(firstPass.replyText)
+        ? buildUnwellCareRetrySystemMessage()
+        : askedWhatYouCanDo(loaded.inboundText) && looksLikeCapabilityBrochure(firstPass.replyText)
+          ? buildCapabilityRetrySystemMessage()
+          : buildRefusalRetrySystemMessage(loaded.inboundText);
   loaded.instructions = `${loaded.instructions}\n\n${retryNudge}`;
   if (loaded.plannerInstructions) {
     loaded.plannerInstructions = `${loaded.plannerInstructions}\n\n${retryNudge}`;

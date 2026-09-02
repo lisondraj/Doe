@@ -1,12 +1,19 @@
 import {
   applyDeliverablePolicyToTurnState,
   askedForPrivateAppLink,
+  isIncidentalChartWrite,
   lastOutboundBodyFromMessages,
   looksLikeChartRead,
   priorInboundBodiesFromMessages,
   resolveDeliverableInboundText,
 } from "@/lib/doedtc/agent/deliverable-policy";
-import { resumeChartWritePending } from "@/lib/doedtc/agent/chart-write-resume";
+import {
+  buildIncidentalChartWriteRetrySystemMessage,
+  chartWriteSucceeded,
+  formatIncidentalChartWriteContinueBlock,
+  looksLikeChartWriteAckOnly,
+} from "@/lib/doedtc/agent/chart-write";
+import { isChartWriteResumeContinue, resumeChartWritePending } from "@/lib/doedtc/agent/chart-write-resume";
 import { looksLikeBrowseAsk } from "@/lib/doedtc/doedtc-browser-allowlist";
 import {
   buildLegacyVisionUserContent,
@@ -561,6 +568,7 @@ export type DoeDtcAgentPromptParams = {
   activeWorkBlock?: string;
   capabilityAskBlock?: string;
   unwellCareBlock?: string;
+  incidentalChartWriteBlock?: string;
   turnMode?: TurnMode;
 };
 
@@ -570,6 +578,7 @@ ${params.situationBrief ? `\n${params.situationBrief}\n` : ""}
 ${params.activeWorkBlock ? `\n${params.activeWorkBlock}\n` : ""}
 ${params.capabilityAskBlock ? `\n${params.capabilityAskBlock}\n` : ""}
 ${params.unwellCareBlock ? `\n${params.unwellCareBlock}\n` : ""}
+${params.incidentalChartWriteBlock ? `\n${params.incidentalChartWriteBlock}\n` : ""}
 ${params.pendingBlock ? `\n${params.pendingBlock}\n` : ""}
 Playbook (how you've corrected yourself before):
 ${params.playbookNotes}
@@ -888,7 +897,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
 }): Promise<DoeDtcAgentTurnResult> {
   const timezone = normalizeScheduledTimezone(null);
 
-  const [snapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, activeWorkItems] =
+  const [initialSnapshot, messageHistory, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, activeWorkItems] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
       listDoeDtcMessages(params.user.id, 40),
@@ -898,7 +907,9 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       getActiveDoeDtcBrowserJobId(params.user.id),
       loadActiveWork({ userId: params.user.id, currentTurnId: params.turnId }),
     ]);
+  let snapshot = initialSnapshot;
   let pendingRow = await getAgentPending(params.user.id);
+  let incidentalChartWrite: { label: string; originalInbound: string } | null = null;
 
   if (pendingRow && (isDocumentIdentityPending(pendingRow.args) || pendingRow.kind === "parse_document")) {
     const { resolveHeldDocumentIdentity } = await import("@/lib/doedtc/agent/document-parse");
@@ -928,8 +939,17 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         inboundText: params.inboundText,
         pending: pendingRow,
       });
-      if (resumed) return resumed;
-      pendingRow = await getAgentPending(params.user.id);
+      if (resumed && isChartWriteResumeContinue(resumed)) {
+        incidentalChartWrite = {
+          label: resumed.label,
+          originalInbound: resumed.originalInbound,
+        };
+        pendingRow = null;
+      } else if (resumed) {
+        return resumed;
+      } else {
+        pendingRow = await getAgentPending(params.user.id);
+      }
     }
   }
 
@@ -1020,6 +1040,9 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const pendingBlock = pendingRow
     ? `${formatAgentPendingForPrompt(pendingRow)}${affirmCommitFailedNote ? `\n${affirmCommitFailedNote}` : ""}`
     : "";
+  if (incidentalChartWrite) {
+    snapshot = await getDoeDtcProfileSnapshot(params.user.id);
+  }
   const playbookBlock =
     playbookNotes.length > 0 ? playbookNotes.map((note) => `- ${note}`).join("\n") : "None yet.";
   const activeWorkflows = await listActiveWorkflowsForUser(params.user.id);
@@ -1036,9 +1059,11 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     priorInboundBodies: priorInboundBodiesFromMessages(messageHistory),
     lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
   });
+  const briefInboundText =
+    incidentalChartWrite?.originalInbound?.trim() || deliverableInboundText;
 
   const brief = buildSituationBrief({
-    inboundText: deliverableInboundText,
+    inboundText: briefInboundText,
     viewerUserId: params.user.id,
     viewerName: params.user.full_name,
     members: snapshot.household.members,
@@ -1103,8 +1128,11 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     capabilityAskBlock: askedWhatYouCanDo(deliverableInboundText)
       ? formatCapabilityAskBlock()
       : undefined,
-    unwellCareBlock: looksLikeUnwellShare(deliverableInboundText)
+    unwellCareBlock: looksLikeUnwellShare(briefInboundText)
       ? formatUnwellCareBlock()
+      : undefined,
+    incidentalChartWriteBlock: incidentalChartWrite
+      ? formatIncidentalChartWriteContinueBlock(incidentalChartWrite)
       : undefined,
     turnMode: turnMode.mode,
   }) + (reminderDirective ? `\n\n${reminderDirective}` : "");
@@ -1212,6 +1240,13 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       const capabilityRetry =
         askedWhatYouCanDo(deliverableInboundText) &&
         looksLikeCapabilityBrochure(replyText ?? "");
+      const incidentalChartAckRetry =
+        looksLikeChartWriteAckOnly(replyText ?? "") &&
+        (Boolean(incidentalChartWrite) ||
+          (chartWriteSucceeded(turnState.toolsExecuted) &&
+            isIncidentalChartWrite(
+              incidentalChartWrite?.originalInbound ?? deliverableInboundText,
+            )));
       if (
         !refusalRetryInjected &&
         (shouldRetryEmptyRefusal({
@@ -1221,7 +1256,8 @@ export async function runDoeDtcAgentTurnLegacy(params: {
           inboundText: deliverableInboundText,
         }) ||
           capabilityRetry ||
-          unwellLogRetry)
+          unwellLogRetry ||
+          incidentalChartAckRetry)
       ) {
         refusalRetryInjected = true;
         messages.push({
@@ -1230,11 +1266,18 @@ export async function runDoeDtcAgentTurnLegacy(params: {
         });
         messages.push({
           role: "system",
-          content: unwellLogRetry
-            ? buildUnwellCareRetrySystemMessage()
-            : capabilityRetry
-              ? buildCapabilityRetrySystemMessage()
-              : buildRefusalRetrySystemMessage(deliverableInboundText),
+          content: incidentalChartAckRetry
+            ? buildIncidentalChartWriteRetrySystemMessage(
+                incidentalChartWrite ?? {
+                  label: "them",
+                  originalInbound: deliverableInboundText,
+                },
+              )
+            : unwellLogRetry
+              ? buildUnwellCareRetrySystemMessage()
+              : capabilityRetry
+                ? buildCapabilityRetrySystemMessage()
+                : buildRefusalRetrySystemMessage(deliverableInboundText),
         });
         continue;
       }

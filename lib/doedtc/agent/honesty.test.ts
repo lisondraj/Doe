@@ -169,6 +169,24 @@ describe("agent honesty invariants", () => {
     assert.match(reconciled.profileUrl!, /tab=conditions/);
   });
 
+  it("does not auto-send a profile card after an incidental family add", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText: "Sarah is my child actually",
+      replyText: "That's tough that she won't talk. A walk together can still help.",
+      state: { toolsExecuted: [] } as never,
+      toolsExecuted: [{ name: "log_family_member", ok: true }],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.equal(reconciled.profileUrl, undefined);
+  });
+
   it("auto-sends results tab for a labs location ask", async () => {
     const user = {
       id: "user-1",
