@@ -1,5 +1,7 @@
 /** Ongoing iMessage thread — later bubbles still see what was said earlier. */
 
+import { looksLikeTimeAnswer } from "@/lib/doedtc/doedtc-reminder-intent";
+
 export const THREAD_TRANSCRIPT_FETCH = 80;
 export const THREAD_TRANSCRIPT_KEEP = 40;
 export const THREAD_TRANSCRIPT_MAX_CHARS = 12_000;
@@ -16,6 +18,7 @@ export function inboundLooksLikeThreadFollowUp(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return false;
   if (FRESH_ASK_RE.test(trimmed)) return false;
+  if (looksLikeTimeAnswer(trimmed)) return true;
   if (trimmed.length <= 12) return true;
   if (FOLLOW_UP_START_RE.test(trimmed) && trimmed.split(/\s+/).filter(Boolean).length <= 8) {
     return true;
@@ -42,6 +45,7 @@ export function resolveThreadInboundText(params: {
   const trimmed = params.inboundText.trim();
   if (!inboundLooksLikeThreadFollowUp(trimmed)) return trimmed;
   if (BARE_REPLY_RE.test(trimmed)) return trimmed;
+  if (looksLikeTimeAnswer(trimmed)) return trimmed;
   return lastSubstantialInbound(params.priorInboundBodies, trimmed) ?? trimmed;
 }
 

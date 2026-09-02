@@ -48,7 +48,7 @@ export function toReminderPayload(text: string): string {
     body = body.replace(REMIND_WRAPPER_RE, "").trim();
     body = body.replace(/^to\s+/i, "").trim();
     body = body.replace(/\b(?:with\s+a\s+reminder|with\s+a\s+timer|a\s+reminder)\b/gi, "").trim();
-    body = body.replace(/^[,.\-–—:\s]+/, "").replace(/[,.\-–—:\s]+$/, "").trim();
+    body = body.replace(/^[,.\-–—:?!\s]+/, "").replace(/[,.\-–—:?!\s]+$/g, "").trim();
     if (body === before) break;
   }
   return body;

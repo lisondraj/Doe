@@ -236,6 +236,61 @@ const NAME_STOPWORDS = new Set(
     "someone",
     "anyone",
     "everyone",
+    "buy",
+    "get",
+    "take",
+    "make",
+    "go",
+    "eat",
+    "drink",
+    "pick",
+    "call",
+    "check",
+    "bring",
+    "order",
+    "pay",
+    "walk",
+    "run",
+    "start",
+    "stop",
+    "finish",
+    "leave",
+    "come",
+    "see",
+    "meet",
+    "visit",
+    "set",
+    "put",
+    "send",
+    "show",
+    "open",
+    "close",
+    "use",
+    "try",
+    "keep",
+    "ask",
+    "tell",
+    "give",
+    "find",
+    "wait",
+    "help",
+    "need",
+    "want",
+    "remember",
+    "forget",
+    "grab",
+    "pack",
+    "wash",
+    "clean",
+    "cook",
+    "shop",
+    "refill",
+    "charge",
+    "book",
+    "add",
+    "do",
+    "be",
+    "have",
     "lft",
     "alp",
     "ast",
@@ -372,6 +427,8 @@ export function extractChartMentions(params: {
     for (const match of execAll(pattern, text)) {
       const raw = (match[1] ?? "").trim();
       if (!isPlausiblePersonName(raw)) continue;
+      const before = text.slice(0, match.index ?? 0);
+      if (/\b(?:remind|text|ping)\s+me\s+(?:to|about|for)\s*$/i.test(before)) continue;
       const display = capitalizeName(raw);
       const onChart =
         findMemberByName(params.members, raw) ??
@@ -451,7 +508,14 @@ function householdActionForIntent(intent: ActionIntent): HouseholdActionKind | n
   return null;
 }
 
-function intentNeedsSubject(intent: ActionIntent): boolean {
+function looksLikeSelfReminder(text: string): boolean {
+  if (!/\b(?:remind|text|ping)\s+me\b/i.test(text)) return false;
+  if (/\bremind\s+(?!me\b)[A-Za-z][a-z]+\b/i.test(text)) return false;
+  return true;
+}
+
+function intentNeedsSubject(intent: ActionIntent, inboundText: string): boolean {
+  if (intent === "schedule_text" && looksLikeSelfReminder(inboundText)) return false;
   return (
     intent === "log_appointment" ||
     intent === "schedule_text" ||
@@ -752,14 +816,14 @@ export function resolveActionSlots(params: {
   const householdAction = householdActionForIntent(intent);
   const subjectMember = mentioned[0] ?? null;
   const subjectName =
-    subjectMember?.full_name ?? unknownNames[0] ?? (intentNeedsSubject(intent) ? null : null);
+    subjectMember?.full_name ?? unknownNames[0] ?? (intentNeedsSubject(intent, params.inboundText) ? null : null);
 
   const blockers: ActionBlocker[] = [];
 
   const bodyBlocker = buildBodyBlocker(params.inboundText);
   if (bodyBlocker) blockers.push(bodyBlocker);
 
-  if (intentNeedsSubject(intent) && householdAction) {
+  if (intentNeedsSubject(intent, params.inboundText) && householdAction) {
     if (unknownNames.length > 0 && !subjectMember) {
       blockers.push(
         ...buildUnknownSubjectBlockers({

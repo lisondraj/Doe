@@ -30,7 +30,7 @@ export type ReminderIntent = {
   matched: boolean;
   sendAtPhrase: string | null;
   body: string | null;
-  missingSlot: "body" | null;
+  missingSlot: "body" | "time" | null;
 };
 
 function normalizeRelativeTimePhrase(match: RegExpMatchArray): string {
@@ -84,18 +84,99 @@ export function inboundAsksReminderStatus(text: string): boolean {
   return false;
 }
 
+const CANCEL_REMINDER_RE =
+  /\b(?:don'?t|do not|stop|cancel|never)\s+(?:remind|text me|ping me)\b/i;
+
+/** Whole-message clock/relative answers to "what time?" — including 5:30 without am/pm. */
+export function looksLikeTimeAnswer(text: string): boolean {
+  const trimmed = text.trim().replace(/[?.!]+$/g, "");
+  if (!trimmed || trimmed.length > 48) return false;
+  if (extractSendAtPhrase(trimmed)) return true;
+  if (/^(?:noon|midnight|tonight|this (?:morning|afternoon|evening)|now)$/i.test(trimmed)) {
+    return true;
+  }
+  return /^(?:at\s+)?\d{1,2}:\d{2}$/i.test(trimmed);
+}
+
+export function looksLikeReminderTimeAsk(text: string): boolean {
+  return /\b(?:what time|when should i (?:remind|text|ping)|when do you want|what time should)\b/i.test(
+    text,
+  );
+}
+
+export function looksLikeReminderBodyAsk(text: string): boolean {
+  return /\b(?:about what|what should (?:the reminder|i) (?:say|remind)|remind you (?:about|of) what)\b/i.test(
+    text,
+  );
+}
+
+export function shouldDeferChartWriteForReminder(params: {
+  inboundText: string;
+  tool?: string;
+  lastOutboundBody?: string | null;
+  priorInboundBodies?: string[];
+}): boolean {
+  if (params.tool === "log_appointment" && looksLikeTimeAnswer(params.inboundText)) {
+    return false;
+  }
+  if (looksLikeTimeAnswer(params.inboundText)) return true;
+  const resolved = resolveReminderInboundText(params);
+  return parseReminderIntent(resolved).matched;
+}
+
+function lastReminderAsk(bodies: string[] | undefined): string | null {
+  for (const body of [...(bodies ?? [])].reverse()) {
+    const trimmed = body.trim();
+    if (!trimmed || !REMINDER_TRIGGER_RE.test(trimmed)) continue;
+    if (inboundAsksReminderStatus(trimmed) || CANCEL_REMINDER_RE.test(trimmed)) continue;
+    return trimmed;
+  }
+  return null;
+}
+
+/** Bind a time-only (or body-only) follow-up to the in-flight remind-me ask. */
+export function resolveReminderInboundText(params: {
+  inboundText: string;
+  priorInboundBodies?: string[];
+  lastOutboundBody?: string | null;
+}): string {
+  const trimmed = params.inboundText.trim();
+  const prior = lastReminderAsk(params.priorInboundBodies);
+  const outbound = params.lastOutboundBody?.trim() ?? "";
+  const askedTime = looksLikeReminderTimeAsk(outbound);
+  const askedBody = looksLikeReminderBodyAsk(outbound);
+
+  if (looksLikeTimeAnswer(trimmed) && (askedTime || prior)) {
+    return prior ? `${prior} ${trimmed}`.replace(/\s+/g, " ").trim() : trimmed;
+  }
+  if (
+    askedBody &&
+    prior &&
+    !looksLikeTimeAnswer(trimmed) &&
+    !REMINDER_TRIGGER_RE.test(trimmed)
+  ) {
+    return `${prior} ${trimmed}`.replace(/\s+/g, " ").trim();
+  }
+  return trimmed;
+}
+
 export function parseReminderIntent(text: string): ReminderIntent {
   const trimmed = text.trim();
-  if (!trimmed || !REMINDER_TRIGGER_RE.test(trimmed)) {
+  if (!trimmed || !REMINDER_TRIGGER_RE.test(trimmed) || CANCEL_REMINDER_RE.test(trimmed)) {
+    return { matched: false, sendAtPhrase: null, body: null, missingSlot: null };
+  }
+  if (inboundAsksReminderStatus(trimmed) && !extractSendAtPhrase(trimmed)) {
     return { matched: false, sendAtPhrase: null, body: null, missingSlot: null };
   }
 
   const sendAtPhrase = extractSendAtPhrase(trimmed);
-  if (!sendAtPhrase) {
+  const body = extractReminderBody(trimmed);
+  if (!sendAtPhrase && !body) {
     return { matched: false, sendAtPhrase: null, body: null, missingSlot: null };
   }
-
-  const body = extractReminderBody(trimmed);
+  if (!sendAtPhrase) {
+    return { matched: true, sendAtPhrase: null, body, missingSlot: "time" };
+  }
   return {
     matched: true,
     sendAtPhrase,
@@ -111,12 +192,22 @@ export function buildReminderIntentDirective(intent: ReminderIntent): string | n
     return `Reminder request detected with time "${intent.sendAtPhrase}" but no message body.
 - Ask exactly one short question: what should the reminder say?
 - Do NOT call schedule_text or propose_scheduled_text yet.
+- Do NOT call log_family_member or any chart write. This is a reminder for them.
+- Do NOT send a profile link.`;
+  }
+
+  if (intent.missingSlot === "time") {
+    return `Reminder request detected with body "${intent.body}" but no time.
+- Ask exactly one short question: what time should I remind you?
+- Do NOT call schedule_text or propose_scheduled_text yet.
+- Do NOT call log_family_member or any chart write. "Remind me to …" is a task, not a household member.
 - Do NOT send a profile link.`;
   }
 
   return `Reminder request detected — act now.
 - Call schedule_text this turn with send_at: "${intent.sendAtPhrase}", body: "${intent.body}", intent: "reminder".
 - Do NOT call propose_scheduled_text.
+- Do NOT call log_family_member. This reminder is for them.
 - Do NOT call send_profile_link.
 - Reply with a short confirmation that it is done.`;
 }
@@ -153,6 +244,31 @@ export function isAwaitingBodyPending(args: Record<string, unknown>): boolean {
   return args.awaiting_body === true;
 }
 
+export function isAwaitingTimePending(args: Record<string, unknown>): boolean {
+  return args.awaiting_time === true;
+}
+
+export async function storeAwaitingTimeReminderPending(params: {
+  user: DoeDtcUserRow;
+  intent: ReminderIntent;
+}): Promise<void> {
+  if (!params.intent.body) return;
+  const timezone = normalizeScheduledTimezone(null);
+  await setAgentPending({
+    userId: params.user.id,
+    kind: "schedule_text",
+    commitTool: "schedule_text",
+    args: {
+      intent: "reminder",
+      body: params.intent.body,
+      send_at: "",
+      timezone,
+      awaiting_time: true,
+    },
+    summary: `Reminder to ${params.intent.body} — waiting for a time.`,
+  });
+}
+
 export function buildAwaitingBodyCommitArgs(
   pendingArgs: Record<string, unknown>,
   body: string,
@@ -165,6 +281,23 @@ export function buildAwaitingBodyCommitArgs(
   };
 }
 
+export function buildAwaitingTimeCommitArgs(
+  pendingArgs: Record<string, unknown>,
+  inboundText: string,
+): Record<string, unknown> {
+  const { awaiting_time: _awaiting, ...rest } = pendingArgs;
+  const sendAt =
+    extractSendAtPhrase(inboundText) ||
+    (looksLikeTimeAnswer(inboundText)
+      ? `at ${inboundText.trim().replace(/[?.!]+$/g, "")}`
+      : "");
+  return {
+    ...rest,
+    send_at: sendAt,
+    intent: typeof rest.intent === "string" && rest.intent.trim() ? rest.intent : "reminder",
+  };
+}
+
 export async function applyReminderSafetyNet(params: {
   user: DoeDtcUserRow;
   inboundText: string;
@@ -173,7 +306,7 @@ export async function applyReminderSafetyNet(params: {
   toolsExecuted?: DoeDtcAgentToolExecutionRecord[];
 }): Promise<{ applied: boolean; replyHint?: string }> {
   const intent = parseReminderIntent(params.inboundText);
-  if (!intent.matched || intent.missingSlot === "body") {
+  if (!intent.matched || intent.missingSlot) {
     return { applied: false };
   }
 

@@ -37,10 +37,16 @@ import {
 } from "@/lib/doedtc/agent/honesty";
 import {
   buildAwaitingBodyCommitArgs,
+  buildAwaitingTimeCommitArgs,
   buildReminderIntentDirective,
   isAwaitingBodyPending,
+  isAwaitingTimePending,
+  looksLikeTimeAnswer,
   parseReminderIntent,
+  resolveReminderInboundText,
+  shouldDeferChartWriteForReminder,
   storeAwaitingBodyReminderPending,
+  storeAwaitingTimeReminderPending,
 } from "@/lib/doedtc/doedtc-reminder-intent";
 import {
   buildForcedReplySystemMessage,
@@ -954,7 +960,11 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     if (
       looksLikeChartRead(params.inboundText) ||
       askedForPrivateAppLink(params.inboundText) ||
-      looksLikeBrowseAsk(params.inboundText)
+      looksLikeBrowseAsk(params.inboundText) ||
+      shouldDeferChartWriteForReminder({
+        inboundText: params.inboundText,
+        tool: pendingRow.commit_tool,
+      })
     ) {
       await clearAgentPending(params.user.id);
       pendingRow = null;
@@ -1023,9 +1033,46 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     }
   }
 
+  if (
+    pendingRow &&
+    isAwaitingTimePending(pendingRow.args) &&
+    !parseDecline(params.inboundText) &&
+    looksLikeTimeAnswer(params.inboundText)
+  ) {
+    const timedArgs = buildAwaitingTimeCommitArgs(pendingRow.args, params.inboundText);
+    let commit = await executeAgentPendingCommit({
+      user: params.user,
+      pending: { ...pendingRow, args: timedArgs },
+    });
+    if (!commit.ok && commit.recoverable) {
+      commit = await executeAgentPendingCommit({
+        user: params.user,
+        pending: { ...pendingRow, args: timedArgs },
+        allowRollForward: true,
+      });
+    }
+    if (commit.ok) {
+      await clearAgentPending(params.user.id);
+      if (commit.playbookNote) {
+        await addDoeDtcMem0PlaybookNote({ userId: params.user.id, note: commit.playbookNote });
+      }
+      return {
+        replyText: sanitizeDoeDtcReplyText(commit.replyHint),
+        profileUrl: commit.profileUrl,
+        assessmentRan: false,
+      };
+    }
+    if (!commit.recoverable) {
+      await clearAgentPending(params.user.id);
+    }
+  }
+
   const reminderIntent = parseReminderIntent(params.inboundText);
   if (!pendingRow && reminderIntent.matched && reminderIntent.missingSlot === "body") {
     await storeAwaitingBodyReminderPending({ user: params.user, intent: reminderIntent });
+  }
+  if (!pendingRow && reminderIntent.matched && reminderIntent.missingSlot === "time") {
+    await storeAwaitingTimeReminderPending({ user: params.user, intent: reminderIntent });
   }
 
   let affirmCommitFailedNote: string | null = null;
@@ -1071,7 +1118,6 @@ export async function runDoeDtcAgentTurnLegacy(params: {
   const playbookBlock =
     playbookNotes.length > 0 ? playbookNotes.map((note) => `- ${note}`).join("\n") : "None yet.";
   const activeWorkflows = await listActiveWorkflowsForUser(params.user.id);
-  const reminderDirective = buildReminderIntentDirective(reminderIntent);
 
   const promptSignals = buildDoeAgentPromptSignals({
     snapshot,
@@ -1079,11 +1125,21 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     pendingRow,
   });
 
-  const deliverableInboundText = resolveDeliverableInboundText({
+  const resolvedDeliverableInboundText = resolveDeliverableInboundText({
     inboundText: params.inboundText,
     priorInboundBodies,
     lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
   });
+  const reminderInboundText = resolveReminderInboundText({
+    inboundText: params.inboundText,
+    priorInboundBodies,
+    lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
+  });
+  const deliverableInboundText =
+    resolvedDeliverableInboundText !== params.inboundText.trim()
+      ? resolvedDeliverableInboundText
+      : reminderInboundText;
+  const reminderDirective = buildReminderIntentDirective(parseReminderIntent(deliverableInboundText));
   const threadInboundText = resolveThreadInboundText({
     inboundText: params.inboundText,
     priorInboundBodies,

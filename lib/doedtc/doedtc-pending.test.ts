@@ -23,9 +23,17 @@ test("isRunStatePending detects serialized SDK state", () => {
   assert.equal(isRunStatePending({ body: "hello", send_at: "in 10 seconds" }), false);
 });
 
-test("isCommitPending excludes runState-only rows", () => {
+test("isCommitPending excludes awaiting reminder slots", () => {
   assert.equal(isCommitPending({ runState: "abc" }), false);
   assert.equal(isCommitPending({ body: "stretch", send_at: "in 10 seconds" }), true);
+  assert.equal(
+    isCommitPending({ intent: "reminder", body: "buy groceries", send_at: "", awaiting_time: true }),
+    false,
+  );
+  assert.equal(
+    isCommitPending({ intent: "reminder", body: "", send_at: "at 5:30pm", awaiting_body: true }),
+    false,
+  );
 });
 
 test("document identity pending steers who / invite / refuse", () => {

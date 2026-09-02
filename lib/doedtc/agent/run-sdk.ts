@@ -86,10 +86,16 @@ import {
 } from "@/lib/doedtc/doedtc-memory";
 import {
   buildAwaitingBodyCommitArgs,
+  buildAwaitingTimeCommitArgs,
   buildReminderIntentDirective,
   isAwaitingBodyPending,
+  isAwaitingTimePending,
+  looksLikeTimeAnswer,
   parseReminderIntent,
+  resolveReminderInboundText,
+  shouldDeferChartWriteForReminder,
   storeAwaitingBodyReminderPending,
+  storeAwaitingTimeReminderPending,
 } from "@/lib/doedtc/doedtc-reminder-intent";
 import {
   clearAgentPending,
@@ -243,13 +249,22 @@ async function loadRunContext(params: {
     priorInboundBodies,
     lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
   });
+  const reminderInboundText = resolveReminderInboundText({
+    inboundText: params.inboundText,
+    priorInboundBodies,
+    lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
+  });
+  const inboundForTurn =
+    deliverableInboundText !== params.inboundText.trim()
+      ? deliverableInboundText
+      : reminderInboundText;
   const threadInboundText = resolveThreadInboundText({
     inboundText: params.inboundText,
     priorInboundBodies,
   });
   const briefInboundText =
     params.incidentalChartWrite?.originalInbound?.trim() ||
-    (deliverableInboundText !== params.inboundText.trim() ? deliverableInboundText : threadInboundText);
+    (inboundForTurn !== params.inboundText.trim() ? inboundForTurn : threadInboundText);
   const threadContinuityBlock = formatThreadContinuityBlock({
     inboundText: params.inboundText,
     priorInboundBodies,
@@ -302,7 +317,7 @@ async function loadRunContext(params: {
     promptSignals,
     situationBrief,
     activeWorkBlock: formatActiveWorkBlock(activeWorkItems),
-    capabilityAskBlock: askedWhatYouCanDo(deliverableInboundText)
+    capabilityAskBlock: askedWhatYouCanDo(inboundForTurn)
       ? formatCapabilityAskBlock()
       : undefined,
     unwellCareBlock: looksLikeUnwellShare(briefInboundText)
@@ -328,7 +343,7 @@ async function loadRunContext(params: {
   const parseNote = formatDocumentParseForPrompt(
     await ensureInboundDocumentParsed({
       user: params.user,
-      inboundText: deliverableInboundText,
+      inboundText: inboundForTurn,
       snapshot,
       state: turnState,
       attachmentContext,
@@ -337,7 +352,7 @@ async function loadRunContext(params: {
 
   const promptSplit = buildSpecialistInstructionMap({
     user: params.user,
-    inboundText: deliverableInboundText,
+    inboundText: inboundForTurn,
     inboundMessageId: params.inboundMessageId,
     snapshot,
     turnState,
@@ -345,14 +360,17 @@ async function loadRunContext(params: {
     promptParams,
   });
 
+  const reminderDirective =
+    buildReminderIntentDirective(parseReminderIntent(inboundForTurn)) ?? params.reminderDirective;
+
   const instructions =
     buildDoeDtcAgentSystemPrompt(promptParams) +
-    (params.reminderDirective ? `\n\n${params.reminderDirective}` : "") +
+    (reminderDirective ? `\n\n${reminderDirective}` : "") +
     (parseNote ? `\n\n${parseNote}` : "");
 
   return {
     user: params.user,
-    inboundText: deliverableInboundText,
+    inboundText: inboundForTurn,
     inboundMessageId: params.inboundMessageId,
     inboundFileIds: params.inboundFileIds,
     attachmentContext,
@@ -362,7 +380,7 @@ async function loadRunContext(params: {
     instructions,
     plannerInstructions:
       promptSplit.plannerInstructions +
-      (params.reminderDirective ? `\n\n${params.reminderDirective}` : "") +
+      (reminderDirective ? `\n\n${reminderDirective}` : "") +
       (parseNote ? `\n\n${parseNote}` : ""),
     specialistInstructions: promptSplit.specialistInstructions,
     incidentalChartWrite: params.incidentalChartWrite ?? undefined,
@@ -605,7 +623,11 @@ export async function runDoeDtcAgentTurnSdk(params: {
     if (
       looksLikeChartRead(params.inboundText) ||
       askedForPrivateAppLink(params.inboundText) ||
-      looksLikeBrowseAsk(params.inboundText)
+      looksLikeBrowseAsk(params.inboundText) ||
+      shouldDeferChartWriteForReminder({
+        inboundText: params.inboundText,
+        tool: pendingRow.commit_tool,
+      })
     ) {
       await clearAgentPending(params.user.id);
       pendingRow = null;
@@ -653,9 +675,29 @@ export async function runDoeDtcAgentTurnSdk(params: {
     }
   }
 
+  if (
+    pendingRow &&
+    isAwaitingTimePending(pendingRow.args) &&
+    !parseDecline(params.inboundText) &&
+    looksLikeTimeAnswer(params.inboundText)
+  ) {
+    const committed = await commitAwaitingBodyPending({
+      user: params.user,
+      pendingRow: {
+        ...pendingRow,
+        args: buildAwaitingTimeCommitArgs(pendingRow.args, params.inboundText),
+      },
+      body: String(pendingRow.args.body ?? ""),
+    });
+    if (committed) return committed;
+  }
+
   const reminderIntent = parseReminderIntent(params.inboundText);
   if (!pendingRow && reminderIntent.matched && reminderIntent.missingSlot === "body") {
     await storeAwaitingBodyReminderPending({ user: params.user, intent: reminderIntent });
+  }
+  if (!pendingRow && reminderIntent.matched && reminderIntent.missingSlot === "time") {
+    await storeAwaitingTimeReminderPending({ user: params.user, intent: reminderIntent });
   }
 
   if (pendingRow && isRunStatePending(pendingRow.args) && parseAffirmation(params.inboundText)) {

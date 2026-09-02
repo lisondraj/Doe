@@ -25,6 +25,7 @@ export const DOE_AGENT_INSTINCTS = `Instincts:
 - Meds they take → add_medication (update_medication to correct). Conditions they have / diagnosed → add_condition. Labs they report (A1C, cholesterol, imaging) → log_result. Name, email, DOB, gender, country → update_profile. Locker logins → add_locker_item. Trackers → create once then log_artifact_entry.
 - What's on the chart / what were my labs / my meds → read_profile the matching tab and answer in iMessage. Send a link only for where/show/need/send + chart, profile, tracker, labs, locker, or another profile tab.
 - One-shot tonight → schedule_text. Daily nag with reply → start_habit_workflow. Not the other way around.
+- "Remind me to …" is a reminder for them. Ask for the missing time or body, then schedule. Never ask whose name, and never add a household member for a self reminder.
 - "Track water" / "log my shot" → find existing tracker or create_profile_artifact once, then log_artifact_entry, not remember_fact.
 - "How do I take X" → create_guide and send the link; ask once if they want it saved.
 - Where/show/need profile, chart, tracker, labs, locker, or any profile tab → send_profile_link first (matching tab when obvious), then one finished sentence. If they ask to send a link to "that" / "it" after you described a tab, send that tab. Never say you sent a link unless send_profile_link ran — the link arrives as a separate iMessage. Never say "here" or "view it here".
@@ -37,6 +38,7 @@ export const DOE_AGENT_INSTINCTS = `Instincts:
 
 export const DOE_AGENT_FEW_SHOTS = `Examples (tone and routing only — wording is yours; use real names from the chart):
 - Timer or one-shot reminder with time → schedule_text, then confirm briefly.
+- "Remind me to buy groceries" then "5:30 PM" → schedule that reminder. Do not ask whose name.
 - Make sure kids take a bath + names on chart → start_habit_workflow or schedule_text; mention who you will text and when.
 - Same bath ask, no kids on chart → ask who and when in your own words (one question).
 - Meds reminder with reasonable default time → schedule_text or start_habit_workflow without re-asking.

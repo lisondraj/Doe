@@ -155,6 +155,41 @@ describe("action slots", () => {
     assert.equal(slots.blockers.some((row) => row.blocksPrimary), false);
   });
 
+  it("does not treat remind-me-to-verb as a household person", () => {
+    const selfAsks = [
+      "Can you remind me to buy groceries?",
+      "remind me to take my meds",
+      "text me to pick up milk",
+      "ping me to call the dentist",
+      "remind me about the dry cleaning",
+      "can you remind me to get eggs",
+    ];
+    for (const inbound of selfAsks) {
+      const found = extractChartMentions({
+        inboundText: inbound,
+        members: [parent],
+        viewerUserId: "parent-1",
+      });
+      assert.deepEqual(found.unknownNames, [], inbound);
+
+      const slots = resolveActionSlots({
+        inboundText: inbound,
+        viewerUserId: "parent-1",
+        members: [parent],
+      });
+      assert.equal(slots.intent, "schedule_text", inbound);
+      assert.equal(slots.blockers.some((row) => row.slot === "on_chart"), false, inbound);
+      assert.equal(slots.blockers.some((row) => row.tool === "log_family_member"), false, inbound);
+    }
+
+    const other = extractChartMentions({
+      inboundText: "remind Sam to take his meds",
+      members: [parent],
+      viewerUserId: "parent-1",
+    });
+    assert.deepEqual(other.unknownNames, ["Sam"]);
+  });
+
   it("detects reminder body missing slot", () => {
     const slots = resolveActionSlots({
       inboundText: "remind me in 5 seconds",

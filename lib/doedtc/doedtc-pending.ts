@@ -49,6 +49,7 @@ export function isRunStatePending(args: Record<string, unknown>): boolean {
 export function isCommitPending(args: Record<string, unknown>): boolean {
   if (isRunStatePending(args)) return false;
   if (args.chart_write === true) return false;
+  if (args.awaiting_body === true || args.awaiting_time === true) return false;
   return Object.keys(args).length > 0;
 }
 

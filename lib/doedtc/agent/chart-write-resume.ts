@@ -14,6 +14,7 @@ import {
   setAgentPending,
   type DoeDtcAgentPendingRow,
 } from "@/lib/doedtc/doedtc-pending";
+import { shouldDeferChartWriteForReminder } from "@/lib/doedtc/doedtc-reminder-intent";
 import type { DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
 
 export type ChartWriteResumeConfirm = {
@@ -46,6 +47,14 @@ export async function resumeChartWritePending(params: {
   if (!isChartWritePending(params.pending)) return null;
   if (!params.inboundText.trim()) {
     await clearAgentPending(params.user.id);
+    return null;
+  }
+  if (
+    shouldDeferChartWriteForReminder({
+      inboundText: params.inboundText,
+      tool: params.pending.commit_tool,
+    })
+  ) {
     return null;
   }
 

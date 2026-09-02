@@ -8,6 +8,17 @@ import {
   resolveThreadInboundText,
 } from "@/lib/doedtc/agent/thread-context";
 
+test("time answers stay as the inbound instead of replacing the remind-me ask", () => {
+  assert.equal(inboundLooksLikeThreadFollowUp("5:30 PM"), true);
+  assert.equal(
+    resolveThreadInboundText({
+      inboundText: "5:30 PM",
+      priorInboundBodies: ["Can you remind me to buy groceries?"],
+    }),
+    "5:30 PM",
+  );
+});
+
 test("short continuers are thread follow-ups, fresh asks are not", () => {
   assert.equal(inboundLooksLikeThreadFollowUp("yeah"), true);
   assert.equal(inboundLooksLikeThreadFollowUp("and then after that"), true);

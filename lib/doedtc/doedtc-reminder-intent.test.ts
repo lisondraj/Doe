@@ -4,8 +4,12 @@ import test from "node:test";
 import {
   buildReminderClarifyingQuestion,
   buildReminderIntentDirective,
+  looksLikeReminderTimeAsk,
+  looksLikeTimeAnswer,
   parseReminderIntent,
+  resolveReminderInboundText,
   sanitizeScheduledTextBody,
+  shouldDeferChartWriteForReminder,
 } from "@/lib/doedtc/doedtc-reminder-intent";
 
 test("parseReminderIntent extracts time and body from complete ask", () => {
@@ -121,4 +125,45 @@ test("parseReminderIntent payload is the task not the remind-command", () => {
   const intent = parseReminderIntent("remind to take ozempic in 10 seconds");
   assert.equal(intent.matched, true);
   assert.equal(intent.body, "take ozempic");
+});
+
+test("parseReminderIntent asks for time when they named the task but not when", () => {
+  const intent = parseReminderIntent("Can you remind me to buy groceries?");
+  assert.equal(intent.matched, true);
+  assert.equal(intent.body, "buy groceries");
+  assert.equal(intent.missingSlot, "time");
+  assert.equal(intent.sendAtPhrase, null);
+});
+
+test("looksLikeTimeAnswer accepts clock replies including 5:30 PM", () => {
+  assert.equal(looksLikeTimeAnswer("5:30 PM"), true);
+  assert.equal(looksLikeTimeAnswer("5:30"), true);
+  assert.equal(looksLikeTimeAnswer("in 20 minutes"), true);
+  assert.equal(looksLikeTimeAnswer("Whose name"), false);
+  assert.equal(looksLikeReminderTimeAsk("Sure thing! What time should I remind you?"), true);
+
+  const merged = resolveReminderInboundText({
+    inboundText: "5:30 PM",
+    priorInboundBodies: ["Can you remind me to buy groceries?"],
+    lastOutboundBody: "Sure thing! What time should I remind you?",
+  });
+  const filled = parseReminderIntent(merged);
+  assert.equal(filled.matched, true);
+  assert.equal(filled.missingSlot, null);
+  assert.equal(filled.body, "buy groceries");
+  assert.match(filled.sendAtPhrase ?? "", /5:30/i);
+});
+
+test("shouldDeferChartWriteForReminder on time fills and new self-reminders, not appointment times", () => {
+  assert.equal(shouldDeferChartWriteForReminder({ inboundText: "5:30 PM" }), true);
+  assert.equal(shouldDeferChartWriteForReminder({ inboundText: "in 20 minutes" }), true);
+  assert.equal(
+    shouldDeferChartWriteForReminder({ inboundText: "Can you remind me to buy groceries?" }),
+    true,
+  );
+  assert.equal(shouldDeferChartWriteForReminder({ inboundText: "Whose name" }), false);
+  assert.equal(
+    shouldDeferChartWriteForReminder({ inboundText: "5:30 PM", tool: "log_appointment" }),
+    false,
+  );
 });
