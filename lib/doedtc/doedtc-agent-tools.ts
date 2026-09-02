@@ -836,6 +836,45 @@ export const DOEDTC_AGENT_TOOLS = [
   {
     type: "function" as const,
     function: {
+      name: "open_loop",
+      description:
+        "Create a durable open job that continues between messages. Use when work cannot finish this turn: multi-step browse, follow up tomorrow, living goals like bath reminders, or find-a-doctor research. Doe wakes itself and texts back.",
+      parameters: {
+        type: "object",
+        properties: {
+          goal: { type: "string", description: "Plain-language job to keep working on." },
+          wake_at: {
+            type: "string",
+            description: "When to check back — tomorrow at 10am, in 2 hours, or ISO datetime.",
+          },
+          member_name: HOUSEHOLD_MEMBER_PARAMS.member_name,
+          context: { type: "string", description: "Extra context for the loop (who, what, last ask)." },
+          open_loop_id: {
+            type: "string",
+            description: "Optional existing loop id to attach a browser job to.",
+          },
+        },
+        required: ["goal"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "close_loop",
+      description: "Mark an open loop done when the job is finished or no longer needed.",
+      parameters: {
+        type: "object",
+        properties: {
+          loop_id: { type: "string" },
+          goal_hint: { type: "string", description: "Partial goal text if id unknown." },
+        },
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
       name: "remember_fact",
       description:
         "Store a durable preference or context (doctor name, travel plans). Not for symptoms, family chart entries, medications, or conditions.",

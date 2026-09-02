@@ -1,5 +1,8 @@
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { runDoeDtcAgentTurn, type DoeDtcAgentTurnResult } from "@/lib/doedtc/doedtc-agent";
+import { looksLikeUnwellShare } from "@/lib/doedtc/agent/unwell-care";
+import { seedCareFollowUpLoops } from "@/lib/doedtc/doedtc-care-seeds";
+import { getDoeDtcProfileSnapshot } from "@/lib/doedtc/doedtc-db";
 import {
   createDoeDtcAgentTurnId,
   listDoeDtcAgentTurnsByInboundMessageId,
@@ -749,6 +752,21 @@ export async function handleSymptomInbound(params: {
     if (turn.degenerate) {
       agentFailed = true;
       agentError = "Degenerate agent turn — no meaningful reply or tool action.";
+    } else if (looksLikeUnwellShare(params.text)) {
+      void getDoeDtcProfileSnapshot(params.user.id)
+        .then((snapshot) =>
+          seedCareFollowUpLoops({
+            userId: params.user.id,
+            snapshot,
+            inboundText: params.text,
+          }),
+        )
+        .catch((error) => {
+          console.warn(
+            "[doedtc] care seed after unwell turn failed:",
+            error instanceof Error ? error.message : String(error),
+          );
+        });
     }
   } catch (error) {
     agentFailed = true;

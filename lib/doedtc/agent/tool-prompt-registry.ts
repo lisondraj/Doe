@@ -128,6 +128,8 @@ export const TOOL_DOMAINS: Record<(typeof DOE_DTC_TOOL_NAMES)[number], DoeToolDo
   request_commit: "web",
   remember_fact: "memory",
   forget_fact: "memory",
+  open_loop: "reminders_habits",
+  close_loop: "reminders_habits",
   submit_ticket: "memory",
   react_to_message: "texture",
   use_thread_reply: "texture",
@@ -273,6 +275,10 @@ const PROMPT_OVERRIDES: Record<(typeof DOE_DTC_TOOL_NAMES)[number], string> = {
     "remember_fact — durable preference/context (doctor name, travel). Not meds, conditions, symptoms, or family chart rows.",
   forget_fact:
     "forget_fact — remove stored preference when they ask to forget.",
+  open_loop:
+    "open_loop — durable job that continues between messages. Use for multi-step browse, tomorrow follow-ups, or living goals. Doe wakes itself and texts back.",
+  close_loop:
+    "close_loop — mark an open loop done when the job finished or they cancel.",
   submit_ticket:
     "submit_ticket — feedback or bug report. Not for clinical questions.",
   react_to_message:

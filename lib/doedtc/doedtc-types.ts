@@ -786,3 +786,48 @@ export type DoeDtcSessionPageData = {
 export type DoeDtcStartPayload = {
   phone: string;
 };
+
+export type DoeDtcOpenLoopStatus =
+  | "open"
+  | "waiting_user"
+  | "waiting_tool"
+  | "done"
+  | "cancelled";
+
+export type DoeDtcOpenLoopSource = "agent" | "care_seed" | "planner";
+
+export type DoeDtcOpenLoopContext = {
+  concern?: string;
+  member_name?: string;
+  member_id?: string;
+  symptom?: string;
+  appointment_id?: string;
+  result_id?: string;
+  kind?: "unwell_follow_up" | "appointment_reminder" | "lab_follow_up" | "browser_job" | "general";
+  requested_by_user?: boolean;
+  last_inbound?: string;
+  notes?: string;
+};
+
+export type DoeDtcOpenLoopRow = {
+  id: string;
+  user_id: string;
+  goal: string;
+  status: DoeDtcOpenLoopStatus;
+  last_action: string | null;
+  next_wake_at: string | null;
+  context_json: DoeDtcOpenLoopContext;
+  browser_job_id: string | null;
+  source: DoeDtcOpenLoopSource;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DoeDtcProactiveOutboundRow = {
+  id: string;
+  user_id: string;
+  kind: string;
+  body: string;
+  open_loop_id: string | null;
+  created_at: string;
+};

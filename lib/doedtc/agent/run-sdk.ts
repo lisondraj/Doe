@@ -58,6 +58,9 @@ import {
 } from "@/lib/doedtc/doedtc-agent";
 import { buildDoeAgentPromptSignals } from "@/lib/doedtc/agent/tool-prompt-registry";
 import { formatActiveWorkBlock, loadActiveWork } from "@/lib/doedtc/agent/active-work";
+import { formatIdentityCard, formatIdentityCardBlock } from "@/lib/doedtc/agent/identity-card";
+import { formatOpenLoopsBlock } from "@/lib/doedtc/agent/open-loops-prompt";
+import { listActiveOpenLoopsForUser } from "@/lib/doedtc/doedtc-open-loops";
 import {
   askedWhatYouCanDo,
   buildCapabilityRetrySystemMessage,
@@ -209,7 +212,7 @@ async function loadRunContext(params: {
     priorInboundBodies,
   });
 
-  const [snapshot, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, attachmentContext, activeWorkItems] =
+  const [snapshot, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, attachmentContext, activeWorkItems, openLoops] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
       loadDoeDtcMemoriesForPrompt({
@@ -227,6 +230,7 @@ async function loadRunContext(params: {
         extraVisionUrls: params.extraVisionUrls,
       }),
       loadActiveWork({ userId: params.user.id, currentTurnId: params.turnId }),
+      listActiveOpenLoopsForUser(params.user.id).catch(() => []),
     ]);
 
   const filesById = new Map(attachmentContext.recentFiles.map((file) => [file.id, file]));
@@ -316,7 +320,11 @@ async function loadRunContext(params: {
     nowLabel: agentNowLabel(timezone),
     promptSignals,
     situationBrief,
+    identityCardBlock: formatIdentityCardBlock(
+      formatIdentityCard({ snapshot, openLoops, durableMemories: relevantMemoryRows }),
+    ),
     activeWorkBlock: formatActiveWorkBlock(activeWorkItems),
+    openLoopsBlock: formatOpenLoopsBlock(openLoops),
     capabilityAskBlock: askedWhatYouCanDo(inboundForTurn)
       ? formatCapabilityAskBlock()
       : undefined,

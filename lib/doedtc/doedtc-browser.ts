@@ -20,7 +20,7 @@ import {
   getDoeDtcVaultCredentials,
   getOpenDoeDtcBrowserJob,
   insertDoeDtcBrowserShot,
-  KERNEL_SESSION_TIMEOUT_SECONDS,
+  kernelTimeoutSecondsForBrowserJob,
   updateDoeDtcBrowserJob,
 } from "@/lib/doedtc/doedtc-browser-db";
 import { doeDtcVaultUrl, doeDtcWorkUrl } from "@/lib/doedtc/doedtc-copy";
@@ -247,6 +247,7 @@ async function createKernelSession(
   const saveProfile = Boolean(job.kernel_profile_id) && shouldSaveKernelProfile(job);
   const proxyId = await ensureDoeDtcResearchProxy();
   const attempts = kernelBrowserCreateAttempts(proxyId);
+  const timeoutSeconds = await kernelTimeoutSecondsForBrowserJob(job);
 
   let lastError: unknown;
   for (const attempt of attempts) {
@@ -254,7 +255,7 @@ async function createKernelSession(
       const browser = await kernel.browsers.create({
         stealth: true,
         headless: attempt.headless,
-        timeout_seconds: KERNEL_SESSION_TIMEOUT_SECONDS,
+        timeout_seconds: timeoutSeconds,
         profile: job.kernel_profile_id ? { id: job.kernel_profile_id } : undefined,
         start_url: startUrl ?? undefined,
         ...(attempt.proxyId ? { proxy: { id: attempt.proxyId } } : {}),
@@ -657,6 +658,8 @@ export async function startDoeDtcBrowserTaskAsync(params: {
   url: string;
   mode?: "research" | "login" | "write";
   turnId?: string;
+  openLoopId?: string | null;
+  persistSession?: boolean;
 }): Promise<StartDoeDtcBrowserTaskResult & { status?: "running" }> {
   const mode = params.mode ?? "research";
   if (!isKernelConfigured()) {
@@ -688,6 +691,30 @@ export async function startDoeDtcBrowserTaskAsync(params: {
     });
 
     job = await attachKernelProfileToJob(job);
+
+    const persistSession = Boolean(params.persistSession || params.openLoopId || mode === "login" || mode === "write");
+    if (persistSession) {
+      const { attachBrowserJobToOpenLoop, createOpenLoop } = await import("@/lib/doedtc/doedtc-open-loops");
+      if (params.openLoopId) {
+        await attachBrowserJobToOpenLoop({
+          userId: params.user.id,
+          loopId: params.openLoopId,
+          browserJobId: job.id,
+        }).catch(() => undefined);
+      } else {
+        await createOpenLoop({
+          userId: params.user.id,
+          goal: params.intent.trim() || "Browser job",
+          browserJobId: job.id,
+          status: "waiting_tool",
+          source: "agent",
+          context: {
+            kind: "browser_job",
+            requested_by_user: true,
+          },
+        }).catch(() => undefined);
+      }
+    }
 
     const { dispatchDoeDtcBrowserAdvance } = await import("@/lib/doedtc/doedtc-browser-advance");
     dispatchDoeDtcBrowserAdvance({ jobId: job.id, turnId: params.turnId });

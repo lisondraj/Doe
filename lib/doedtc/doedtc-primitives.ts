@@ -27,6 +27,7 @@ export type DoePrimitiveVerb =
   | "browser.commit"
   | "memory.remember"
   | "memory.recall"
+  | "job.open_loop"
   | "feedback.submit"
   | "imessage.texture";
 
@@ -214,6 +215,11 @@ export const DOE_PRIMITIVES: readonly DoePrimitive[] = [
     tools: ["remember_fact", "forget_fact"],
   },
   {
+    verb: "job.open_loop",
+    backends: ["supabase"],
+    tools: ["open_loop", "close_loop"],
+  },
+  {
     verb: "memory.recall",
     backends: ["mem0"],
     tools: ["read_profile"],
@@ -243,6 +249,7 @@ export const DOE_AGENT_PRIMITIVES_PROMPT = `Primitives (compose these — do not
 - household.add / household.invite / household.revoke → family chart, send_family_invite, revoke_household_access.
 - browser.research → start_browser_task on any site or search; screenshot texts back. browser.act → browser_act or browser_computer. browser.commit → request_commit then CONFIRM only for irreversible submits.
 - memory.remember / memory.recall → remember_fact / forget_fact; recall also from Mem0 memories in prompt.
+- job.open_loop → open_loop for durable jobs between messages; close_loop when done. Use when browse, follow-ups, or living goals outlive this turn.
 - feedback.submit → submit_ticket for bugs or product feedback.
 - imessage.texture → occasional react_to_message that fits the inbound; most turns have none; never 👍/✅/👎 (lifecycle only); send_profile_link for where/show/send/need + chart, profile, tracker, or labs. After a successful chart write the matching tab link is sent automatically. Never as a consolation prize.`;
 

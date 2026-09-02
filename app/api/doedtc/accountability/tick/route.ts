@@ -1,4 +1,7 @@
 import { recoverStuckDoeDtcBrowserJobs } from "@/lib/doedtc/doedtc-browser-advance";
+import { listCareSeedCandidateUserIds, seedCareFollowUpLoopsForTick } from "@/lib/doedtc/doedtc-care-seeds";
+import { getDoeDtcProfileSnapshot } from "@/lib/doedtc/doedtc-db";
+import { listDueOpenLoops, processOpenLoopTick } from "@/lib/doedtc/doedtc-open-loops";
 import { NextResponse } from "next/server";
 
 import {
@@ -82,12 +85,51 @@ export async function GET(request: Request) {
     );
   }
 
+  const dueLoops = await listDueOpenLoops();
+  const seedUserIds = new Set<string>([
+    ...dueLoops.map((loop) => loop.user_id),
+    ...(await listCareSeedCandidateUserIds().catch(() => [])),
+  ]);
+  for (const userId of seedUserIds) {
+    try {
+      const snapshot = await getDoeDtcProfileSnapshot(userId);
+      await seedCareFollowUpLoopsForTick({ userId, snapshot });
+    } catch (error) {
+      console.warn(
+        "[doedtc] care seed failed:",
+        userId,
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }
+
+  const wakeLoops = await listDueOpenLoops();
+  const loopResults: Array<{ loopId: string; ok: boolean; error?: string }> = [];
+  for (const loop of wakeLoops) {
+    try {
+      const result = await processOpenLoopTick(loop.id);
+      loopResults.push({ loopId: loop.id, ok: result.ok, error: result.error });
+    } catch (error) {
+      loopResults.push({
+        loopId: loop.id,
+        ok: false,
+        error: error instanceof Error ? error.message : "Open loop tick failed",
+      });
+    }
+  }
+
   return NextResponse.json({
     ok: true,
-    processed: pactResults.length + textResults.length + workflowResults.length + browserRecovery.length,
+    processed:
+      pactResults.length +
+      textResults.length +
+      workflowResults.length +
+      browserRecovery.length +
+      loopResults.length,
     accountability: pactResults,
     scheduledTexts: textResults,
     workflows: workflowResults,
     browserRecovery,
+    openLoops: loopResults,
   });
 }

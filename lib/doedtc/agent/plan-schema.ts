@@ -45,10 +45,16 @@ export const DoePlanWorkflowSchema = z.union([
   }),
 ]);
 
+export const DoePlanFollowUpSchema = z.object({
+  goal: z.string().min(1),
+  wake_at: z.string().optional(),
+});
+
 export const DoePlanSchema = z.object({
   intent: z.string().min(1),
   action: z.enum(["act_now", "confirm_once", "refuse"]).default("act_now"),
   immediate: z.array(DoePlanImmediateSchema).default([]),
+  follow_up: z.array(DoePlanFollowUpSchema).default([]),
   workflow: DoePlanWorkflowSchema.nullable().default(null),
   reply: z.string().min(1),
   specialist: z
@@ -81,7 +87,8 @@ export function buildPlannerInstructionsBlock(): string {
 Plan rules:
 - intent: one line summary of what the user wants.
 - action: act_now | confirm_once | refuse — apply shared policy.
-- immediate: zero or more { tool, args } for this turn (schedule_text, log_symptoms, browse, etc.).
+- immediate: zero or more { tool, args } for this turn (schedule_text, log_symptoms, browse, open_loop, etc.).
+- follow_up: zero or more { goal, wake_at? } durable open loops when the job continues after this turn.
 - workflow: optional composed graph OR preset habit_default for simple daily check-ins.
 - specialist: which specialist to delegate immediate work to (healthRecord, guides, scheduling, browser), or null if reply-only.
 - reply: plain iMessage text for the user.

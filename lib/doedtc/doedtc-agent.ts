@@ -85,6 +85,9 @@ import {
 } from "@/lib/doedtc/agent/turn-mode";
 import { DOE_AGENT_ACTION_POLICY, DOE_AGENT_RESOLUTION_POLICY } from "@/lib/doedtc/doedtc-agent-policy";
 import { formatActiveWorkBlock, loadActiveWork } from "@/lib/doedtc/agent/active-work";
+import { formatIdentityCard, formatIdentityCardBlock } from "@/lib/doedtc/agent/identity-card";
+import { formatOpenLoopsBlock } from "@/lib/doedtc/agent/open-loops-prompt";
+import { listActiveOpenLoopsForUser } from "@/lib/doedtc/doedtc-open-loops";
 import {
   askedWhatYouCanDo,
   buildCapabilityRetrySystemMessage,
@@ -586,6 +589,8 @@ export type DoeDtcAgentPromptParams = {
   promptSignals?: DoeAgentPromptSignals;
   situationBrief?: string;
   activeWorkBlock?: string;
+  identityCardBlock?: string;
+  openLoopsBlock?: string;
   capabilityAskBlock?: string;
   unwellCareBlock?: string;
   incidentalChartWriteBlock?: string;
@@ -595,9 +600,10 @@ export type DoeDtcAgentPromptParams = {
 };
 
 function buildDoeAgentContextBlock(params: DoeDtcAgentPromptParams): string {
-  return `Now (user local time): ${params.nowLabel}.
+  return `${params.identityCardBlock ?? ""}Now (user local time): ${params.nowLabel}.
 ${params.situationBrief ? `\n${params.situationBrief}\n` : ""}
 ${params.activeWorkBlock ? `\n${params.activeWorkBlock}\n` : ""}
+${params.openLoopsBlock ? `\n${params.openLoopsBlock}\n` : ""}
 ${params.capabilityAskBlock ? `\n${params.capabilityAskBlock}\n` : ""}
 ${params.unwellCareBlock ? `\n${params.unwellCareBlock}\n` : ""}
 ${params.incidentalChartWriteBlock ? `\n${params.incidentalChartWriteBlock}\n` : ""}
@@ -668,7 +674,8 @@ const DOE_AGENT_SAFETY_TAIL = `Parallel work:
 - Browsing continues in the background — reply that you're on it, then the screenshot arrives as a follow-up iMessage.
 - You may run other tools in the same turn (log symptoms, family, meds, start_listen, etc.) while a browser job is open.
 - Do not wait for browsing to finish before saving profile or appointment data.
-- Each inbound is its own turn. Reply to this message now. Other Active work continues in parallel — do not stall this reply on those jobs.
+- Each inbound is its own turn. Reply to this message now. Other Active work and open loops continue in parallel — do not stall this reply on those jobs.
+- Open loops are durable jobs between messages. Continue them; use open_loop when work outlives this turn and close_loop when done.
 - If they ask what you're working on, describe Active work in plain language. If none, say you're on this message.
 - Never say you are working on it or will send it in a minute unless a tool already started (browser job, scheduled send). If you can finish this turn, do it now. If start_browser_task is still running, say you're on it and you'll text when it's done. Do not describe the page until the screenshot arrives.
 
@@ -927,7 +934,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     priorInboundBodies,
   });
 
-  const [initialSnapshot, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, activeWorkItems] =
+  const [initialSnapshot, relevantMemoryRows, recentGuides, playbookNotes, activeBrowserJobId, activeWorkItems, openLoops] =
     await Promise.all([
       getDoeDtcProfileSnapshot(params.user.id),
       loadDoeDtcMemoriesForPrompt({ userId: params.user.id, query: memoryQuery, topK: 8 }),
@@ -935,6 +942,7 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       searchDoeDtcMem0Playbook({ userId: params.user.id, query: memoryQuery, topK: 3 }),
       getActiveDoeDtcBrowserJobId(params.user.id),
       loadActiveWork({ userId: params.user.id, currentTurnId: params.turnId }),
+      listActiveOpenLoopsForUser(params.user.id).catch(() => []),
     ]);
   let snapshot = initialSnapshot;
   let pendingRow = await getAgentPending(params.user.id);
@@ -1212,7 +1220,11 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     nowLabel: agentNowLabel(timezone),
     promptSignals,
     situationBrief,
+    identityCardBlock: formatIdentityCardBlock(
+      formatIdentityCard({ snapshot, openLoops, durableMemories: relevantMemoryRows }),
+    ),
     activeWorkBlock: formatActiveWorkBlock(activeWorkItems),
+    openLoopsBlock: formatOpenLoopsBlock(openLoops),
     capabilityAskBlock: askedWhatYouCanDo(deliverableInboundText)
       ? formatCapabilityAskBlock()
       : undefined,

@@ -9,8 +9,8 @@ export type DoeAgentActionClass = "act_now" | "confirm_once" | "refuse";
 export type DoeDataWriteClass = "create" | "update" | "remove";
 
 export const DOE_AGENT_ACTION_POLICY = `Action policy:
-- act_now: They already asked with enough detail — call commit tools immediately (schedule_text, start_habit_workflow, log_symptoms, browse, log_artifact_entry). Self-reminders and timers to their own phone. Reply that it is done.
-- confirm_once: A slot is missing (who/when/body), the action texts someone else without a clear ask, or it is irreversible (family invite, public tracker share, revoke access, browser write, guide save after create). Use propose_* or ask one question, then commit on yes.
+- act_now: Default when they asked with enough detail — call commit tools immediately (schedule_text, start_habit_workflow, log_symptoms, browse, open_loop, log_artifact_entry). Self-reminders and timers to their own phone. Reply that it is done or that you are on it.
+- confirm_once: ONLY for irreversible or truly blocked actions: family invite, public tracker share, revoke access, request_commit (pay/delete/send form), texting someone else without a clear ask, or a missing slot that would invent a person or reminder body.
 - refuse: Emergency, definitive diagnosis, password or credential in chat, or asking you to store locker passwords — say no clearly. Never refuse a browse, search, screenshot, or page because of the site or query.
 
 Skip re-asking when inbound IS the request. propose_scheduled_text / propose_accountability / propose_habit_workflow only when confirm_once applies. Drafts are not on the file until the commit tool succeeds.`;

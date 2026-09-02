@@ -16,6 +16,20 @@ import type {
 const WORK_TOKEN_TTL_MS = 60 * 60 * 1000;
 const SHOT_TTL_MS = 24 * 60 * 60 * 1000;
 export const KERNEL_SESSION_TIMEOUT_SECONDS = 1800;
+export const OPEN_LOOP_KERNEL_SESSION_TIMEOUT_SECONDS = 4 * 60 * 60;
+
+export function openLoopBrowserSessionMaxAgeMs(): number {
+  return OPEN_LOOP_KERNEL_SESSION_TIMEOUT_SECONDS * 1000;
+}
+
+export async function kernelTimeoutSecondsForBrowserJob(
+  job: Pick<DoeDtcBrowserJobRow, "id" | "mode">,
+): Promise<number> {
+  if (job.mode === "login" || job.mode === "write") {
+    return OPEN_LOOP_KERNEL_SESSION_TIMEOUT_SECONDS;
+  }
+  return browserJobMaxAgeMs(job.id).then((ms) => Math.round(ms / 1000));
+}
 
 function workTokenExpiresAt(): string {
   return new Date(Date.now() + WORK_TOKEN_TTL_MS).toISOString();
@@ -25,10 +39,26 @@ function shotExpiresAt(): string {
   return new Date(Date.now() + SHOT_TTL_MS).toISOString();
 }
 
-function isStaleOpenBrowserJob(row: DoeDtcBrowserJobRow): boolean {
+function isStaleOpenBrowserJob(
+  row: DoeDtcBrowserJobRow,
+  maxAgeMs = KERNEL_SESSION_TIMEOUT_SECONDS * 1000,
+): boolean {
   const updatedAt = Date.parse(row.updated_at);
   if (!Number.isFinite(updatedAt)) return false;
-  return Date.now() - updatedAt > KERNEL_SESSION_TIMEOUT_SECONDS * 1000;
+  return Date.now() - updatedAt > maxAgeMs;
+}
+
+async function browserJobMaxAgeMs(jobId: string): Promise<number> {
+  const supabase = createSupabaseAdmin();
+  const { count, error } = await supabase
+    .from("doedtc_open_loops")
+    .select("*", { count: "exact", head: true })
+    .eq("browser_job_id", jobId)
+    .in("status", ["open", "waiting_tool", "waiting_user"]);
+  if (error) return KERNEL_SESSION_TIMEOUT_SECONDS * 1000;
+  return (count ?? 0) > 0
+    ? openLoopBrowserSessionMaxAgeMs()
+    : KERNEL_SESSION_TIMEOUT_SECONDS * 1000;
 }
 
 async function failStaleBrowserJob(row: DoeDtcBrowserJobRow): Promise<void> {
@@ -58,7 +88,8 @@ export async function getOpenDoeDtcBrowserJob(userId: string): Promise<DoeDtcBro
   if (error) throw new Error(error.message);
   const row = (data as DoeDtcBrowserJobRow | null) ?? null;
   if (!row) return null;
-  if (isStaleOpenBrowserJob(row)) {
+  const maxAgeMs = await browserJobMaxAgeMs(row.id);
+  if (isStaleOpenBrowserJob(row, maxAgeMs)) {
     await failStaleBrowserJob(row);
     return null;
   }
@@ -80,7 +111,8 @@ export async function listOpenDoeDtcBrowserJobs(userId?: string): Promise<DoeDtc
   const rows = (data ?? []) as DoeDtcBrowserJobRow[];
   const active: DoeDtcBrowserJobRow[] = [];
   for (const row of rows) {
-    if (isStaleOpenBrowserJob(row)) {
+    const maxAgeMs = await browserJobMaxAgeMs(row.id);
+    if (isStaleOpenBrowserJob(row, maxAgeMs)) {
       await failStaleBrowserJob(row);
       continue;
     }

@@ -15,6 +15,7 @@ import {
   validateDoePlan,
 } from "@/lib/doedtc/doedtc-agent-policy";
 import { setAgentPending } from "@/lib/doedtc/doedtc-pending";
+import { createOpenLoop, parseOpenLoopWakeAt } from "@/lib/doedtc/doedtc-open-loops";
 
 function planTextsThirdParty(plan: DoePlan): boolean {
   return plan.immediate.some((step) => {
@@ -128,6 +129,32 @@ export async function executeDoePlan(params: {
         error instanceof Error ? error.message : String(error),
       );
       return { ok: false, reply: plan.reply };
+    }
+  }
+
+  for (const followUp of plan.follow_up ?? []) {
+    const goal = followUp.goal.trim();
+    if (!goal) continue;
+    try {
+      await createOpenLoop({
+        userId: ctx.user.id,
+        goal,
+        nextWakeAt: parseOpenLoopWakeAt({
+          wakeAt: followUp.wake_at ?? null,
+        }),
+        source: "planner",
+        context: {
+          kind: "general",
+          requested_by_user: true,
+          concern: goal,
+          last_inbound: ctx.inboundText.trim(),
+        },
+      });
+    } catch (error) {
+      console.warn(
+        "[doedtc:planner] follow_up loop failed:",
+        error instanceof Error ? error.message : String(error),
+      );
     }
   }
 

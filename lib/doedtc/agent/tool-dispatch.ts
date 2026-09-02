@@ -89,6 +89,12 @@ import {
 } from "@/lib/doedtc/doedtc-db";
 import { findHouseholdMemberByName, isHouseholdMemberAdult } from "@/lib/doedtc/doedtc-household";
 import {
+  attachBrowserJobToOpenLoop,
+  closeOpenLoop,
+  createOpenLoop,
+  parseOpenLoopWakeAt,
+} from "@/lib/doedtc/doedtc-open-loops";
+import {
   findAccountabilityPactForUser,
   inviteAccountabilityPartner,
   logAccountabilityCheckIn,
@@ -195,6 +201,7 @@ export type DoeDtcToolTurnState = {
   replyToInbound: boolean;
   browserNeedsConfirm: boolean;
   activeBrowserJobId: string | null;
+  activeOpenLoopId?: string | null;
   browserJobDispatched?: boolean;
   browserBusy?: boolean;
   browserExcerpt?: string;
@@ -1543,6 +1550,45 @@ async function executeDoeDtcToolInner(params: {
         status: row.status,
         link_sent_separately: true,
       };
+    } else if (name === "open_loop") {
+      const goal = String(args.goal ?? "").trim();
+      if (!goal) throw new Error("Open loop goal is required.");
+      const memberName = typeof args.member_name === "string" ? args.member_name.trim() : "";
+      const member = memberName
+        ? findHouseholdMemberByName(ctx.snapshot.household.members, memberName)
+        : null;
+      const wakeAt = parseOpenLoopWakeAt({
+        wakeAt: typeof args.wake_at === "string" ? args.wake_at : null,
+      });
+      const loop = await createOpenLoop({
+        userId: ctx.user.id,
+        goal,
+        nextWakeAt: wakeAt,
+        source: "agent",
+        context: {
+          kind: "general",
+          requested_by_user: true,
+          member_id: member?.id,
+          member_name: member?.full_name ?? (memberName || undefined),
+          concern: goal,
+          last_inbound: ctx.inboundText.trim(),
+          notes: typeof args.context === "string" ? args.context.trim() : undefined,
+        },
+      });
+      state.activeOpenLoopId = loop.id;
+      if (typeof args.open_loop_id === "string" && args.open_loop_id.trim()) {
+        state.activeOpenLoopId = args.open_loop_id.trim();
+      }
+      output = { ok: true, id: loop.id, goal: loop.goal, next_wake_at: loop.next_wake_at };
+    } else if (name === "close_loop") {
+      const closed = await closeOpenLoop({
+        userId: ctx.user.id,
+        loopId: typeof args.loop_id === "string" ? args.loop_id : undefined,
+        goalHint: typeof args.goal_hint === "string" ? args.goal_hint : undefined,
+        lastAction: "closed by agent",
+      });
+      if (!closed) throw new Error("Open loop not found.");
+      output = { ok: true, id: closed.id, goal: closed.goal, status: closed.status };
     } else if (name === "remember_fact") {
       const fact = String(args.fact ?? "").trim();
       if (!fact) throw new Error("Fact is required.");
@@ -1571,12 +1617,18 @@ async function executeDoeDtcToolInner(params: {
           args.mode === "login" || args.mode === "write" || args.mode === "research"
             ? args.mode
             : "research";
+        const loopId =
+          (typeof args.open_loop_id === "string" && args.open_loop_id.trim()) ||
+          state.activeOpenLoopId ||
+          null;
         const started = await startDoeDtcBrowserTaskAsync({
           user: ctx.user,
           intent: String(args.intent ?? "").trim() || browserIntentFromInbound(ctx.inboundText),
           url: String(args.url ?? ""),
           mode,
           turnId: state.turnId,
+          openLoopId: loopId,
+          persistSession: Boolean(loopId || mode === "login" || mode === "write"),
         });
         if (!started.ok) {
           state.browserUserMessage = started.user_message;
@@ -1606,6 +1658,32 @@ async function executeDoeDtcToolInner(params: {
                 browserJobId: started.jobId,
               });
             }
+          }
+          const loopId =
+            (typeof args.open_loop_id === "string" && args.open_loop_id.trim()) ||
+            state.activeOpenLoopId ||
+            null;
+          if (loopId) {
+            await attachBrowserJobToOpenLoop({
+              userId: ctx.user.id,
+              loopId,
+              browserJobId: started.jobId,
+            }).catch(() => undefined);
+            state.activeOpenLoopId = loopId;
+          } else if (mode === "login" || mode === "write") {
+            const loop = await createOpenLoop({
+              userId: ctx.user.id,
+              goal: String(args.intent ?? "").trim() || browserIntentFromInbound(ctx.inboundText),
+              browserJobId: started.jobId,
+              status: "waiting_tool",
+              source: "agent",
+              context: {
+                kind: "browser_job",
+                requested_by_user: true,
+                last_inbound: ctx.inboundText.trim(),
+              },
+            });
+            state.activeOpenLoopId = loop.id;
           }
           output = started.screenshotUrl
             ? {
@@ -2458,6 +2536,8 @@ export const DOE_DTC_TOOL_NAMES = [
   "submit_ticket",
   "remember_fact",
   "forget_fact",
+  "open_loop",
+  "close_loop",
   "start_browser_task",
   "browser_navigate",
   "browser_act",

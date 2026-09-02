@@ -2,10 +2,11 @@
 
 import { listInFlightDoeDtcAgentTurns } from "@/lib/doedtc/doedtc-agent-audit";
 import { listOpenDoeDtcBrowserJobs } from "@/lib/doedtc/doedtc-browser-db";
+import { listActiveOpenLoopsForUser } from "@/lib/doedtc/doedtc-open-loops";
 import { redactDoeDtcLogText } from "@/lib/doedtc/doedtc-privacy";
 
 export type ActiveWorkItem = {
-  kind: "turn" | "browser";
+  kind: "turn" | "browser" | "open_loop";
   summary: string;
 };
 
@@ -62,17 +63,25 @@ export async function loadActiveWork(params: {
   userId: string;
   currentTurnId?: string;
 }): Promise<ActiveWorkItem[]> {
-  const [turns, jobs] = await Promise.all([
+  const [turns, jobs, openLoops] = await Promise.all([
     listInFlightDoeDtcAgentTurns({
       userId: params.userId,
       excludeTurnId: params.currentTurnId,
       limit: 8,
     }).catch(() => []),
     listOpenDoeDtcBrowserJobs(params.userId).catch(() => []),
+    listActiveOpenLoopsForUser(params.userId).catch(() => []),
   ]);
 
   const items: ActiveWorkItem[] = [];
   const seenJobIds = new Set<string>();
+
+  for (const loop of openLoops) {
+    items.push({
+      kind: "open_loop",
+      summary: `Open loop (${loop.status}): ${loop.goal.slice(0, 120)}`,
+    });
+  }
 
   for (const job of jobs) {
     seenJobIds.add(job.id);
