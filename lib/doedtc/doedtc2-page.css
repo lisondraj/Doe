@@ -161,8 +161,6 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
   right: calc(14px + 0.85rem);
   z-index: 100;
   pointer-events: none;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
 }
 
 .doedtc2-glass-nav__bar {
@@ -171,19 +169,37 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
   width: 100%;
   min-height: 4.25rem;
   border-radius: 30px;
-  overflow: hidden;
+  isolation: isolate;
   background: rgba(255, 255, 255, 0.12);
-  -webkit-backdrop-filter: blur(4px) saturate(1.45);
-  backdrop-filter: blur(4px) saturate(1.45);
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
   box-shadow:
     0 12px 32px rgba(15, 23, 42, 0.2),
     0 1px 0 rgba(255, 255, 255, 0.5) inset,
     0 0 0 1px rgba(255, 255, 255, 0.28);
 }
 
+.doedtc2-glass-nav__bar > div:first-child {
+  z-index: 1;
+}
+
+.doedtc2-glass-nav__refract {
+  width: 100%;
+  height: 100%;
+  min-height: 4.25rem;
+  background-color: #2563eb;
+  background-image: linear-gradient(
+    180deg,
+    #1d4ed8 0%,
+    #2563eb 28%,
+    #3b82f6 62%,
+    #60a5fa 100%
+  );
+  background-size: 100vw 100dvh;
+  background-position: top center;
+}
+
 .doedtc2-glass-nav__inner {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
