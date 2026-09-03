@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Glass } from "@samasante/liquid-glass";
 
@@ -38,76 +37,10 @@ function ChevronDownIcon() {
   );
 }
 
-function NavRefract() {
-  return <div className="doedtc2-glass-nav__refract" aria-hidden />;
-}
-
 export function DoeDtc2GlassNav() {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const barRef = useRef<HTMLDivElement>(null);
-  const [box, setBox] = useState({ w: 0, h: 0 });
-
-  useLayoutEffect(() => {
-    const el = barRef.current;
-    if (!el) return;
-
-    const measure = () => {
-      const rect = el.getBoundingClientRect();
-      setBox((prev) =>
-        prev.w === rect.width && prev.h === rect.height
-          ? prev
-          : { w: rect.width, h: rect.height },
-      );
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
-    window.addEventListener("resize", measure);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, []);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-
-    const syncWebkitFilter = () => {
-      root.querySelectorAll<HTMLElement>("*").forEach((el) => {
-        const filter = el.style.filter;
-        if (filter) el.style.setProperty("-webkit-filter", filter);
-      });
-    };
-
-    syncWebkitFilter();
-    const observer = new MutationObserver(syncWebkitFilter);
-    observer.observe(root, {
-      attributes: true,
-      subtree: true,
-      attributeFilter: ["style"],
-    });
-    return () => observer.disconnect();
-  }, [box.w, box.h]);
-
-  const ready = box.w > 0 && box.h > 0;
-
   return (
-    <div className="doedtc2-glass-nav" ref={rootRef}>
-      <div className="doedtc2-glass-nav__bar" ref={barRef}>
-        {ready ? (
-          <Glass
-            className="doedtc2-glass-nav__lens"
-            width={box.w}
-            height={box.h}
-            radius={30}
-            optics={BAR_OPTICS}
-            behind="#1d4ed8"
-            pixelUnits
-            refract={<NavRefract />}
-          />
-        ) : null}
+    <div className="doedtc2-glass-nav">
+      <Glass className="doedtc2-glass-nav__bar" radius={30} optics={BAR_OPTICS}>
         <nav className="doedtc2-glass-nav__inner" aria-label="Primary">
           <Link className="doedtc2-glass-nav__link" href={DOEDTC2_PATH}>
             <span className={`doedtc2-glass-nav__wordmark ${larkenLight.className}`}>Doe</span>
@@ -116,7 +49,7 @@ export function DoeDtc2GlassNav() {
             <ChevronDownIcon />
           </button>
         </nav>
-      </div>
+      </Glass>
     </div>
   );
 }
