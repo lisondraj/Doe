@@ -117,32 +117,45 @@ function ReminderPeek() {
   return (
     <div className="doedtc2-feature-card__peek-inner doedtc2-feature-card__peek-inner--reminder">
       <div className="doedtc2-feature-card__scene doedtc2-feature-card__scene--reminder">
-        <div className="doedtc2-feature-card__bubble-attachment doedtc2-feature-card__reminder-card">
-          <div className="doedtc2-feature-card__profile-widget-head">
-            <span
-              className="doedtc2-feature-card__profile-widget-avatar doedtc2-feature-card__profile-widget-avatar--grandmother"
-              aria-hidden
-            >
-              Su
-            </span>
-            <div className="doedtc2-feature-card__profile-widget-identity">
-              <span className={`doedtc2-feature-card__profile-widget-name ${plusJakartaSans.className}`}>
-                Susan
-              </span>
-              <span className="doedtc-tag">Grandmother</span>
-            </div>
+        <div className="doedtc2-feature-card__reminder-thread">
+          <div className="doedtc2-feature-card__reminder-schedule">
+            <span className="doedtc2-feature-card__reminder-schedule-time">8:00 PM</span>
+            <span className="doedtc2-feature-card__reminder-schedule-message">Take your evening meds</span>
           </div>
-          <p className="doedtc2-feature-card__reminder-meta">Take your evening meds · 8:00 PM</p>
-          <ul className="doedtc2-feature-card__vaccine-list">
-            <li className="doedtc2-feature-card__vaccine-item doedtc2-feature-card__reminder-status--sent">
-              <span className="doedtc2-feature-card__vaccine-name">Text sent to Susan</span>
-              <span className="doedtc2-feature-card__vaccine-date">8:00 PM</span>
+
+          <ol className="doedtc2-feature-card__reminder-flow">
+            <li className="doedtc2-feature-card__reminder-flow-step doedtc2-feature-card__reminder-flow-step--done">
+              <span className="doedtc2-feature-card__reminder-flow-marker" aria-hidden />
+              <div className="doedtc2-feature-card__reminder-flow-card">
+                <div className="doedtc2-feature-card__reminder-flow-head">
+                  <span
+                    className="doedtc2-feature-card__reminder-flow-avatar doedtc2-feature-card__reminder-flow-avatar--grandmother"
+                    aria-hidden
+                  >
+                    Su
+                  </span>
+                  <div className="doedtc2-feature-card__reminder-flow-copy">
+                    <span className={`doedtc2-feature-card__reminder-flow-name ${plusJakartaSans.className}`}>
+                      Susan
+                    </span>
+                    <span className="doedtc-tag">Grandmother</span>
+                  </div>
+                </div>
+                <p className="doedtc2-feature-card__reminder-flow-detail">Text sent · 8:00 PM</p>
+              </div>
             </li>
-            <li className="doedtc2-feature-card__vaccine-item doedtc2-feature-card__reminder-status--waiting">
-              <span className="doedtc2-feature-card__vaccine-name">Awaiting grandmother&apos;s reply</span>
-              <span className="doedtc-tag doedtc-tag--waiting">Doe is on it</span>
+            <li className="doedtc2-feature-card__reminder-flow-step doedtc2-feature-card__reminder-flow-step--active">
+              <span className="doedtc2-feature-card__reminder-flow-marker" aria-hidden>
+                <span className="doedtc2-feature-card__reminder-flow-pulse" />
+              </span>
+              <div className="doedtc2-feature-card__reminder-flow-card">
+                <p className="doedtc2-feature-card__reminder-flow-detail">
+                  Awaiting grandmother&apos;s reply
+                </p>
+                <span className="doedtc-tag doedtc-tag--waiting">Doe is on it</span>
+              </div>
             </li>
-          </ul>
+          </ol>
         </div>
       </div>
     </div>
