@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Glass } from "@samasante/liquid-glass";
 
@@ -24,16 +24,6 @@ const BAR_OPTICS = {
   glow: 0.18,
 };
 
-function needsSafariCopy() {
-  if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgent;
-  const isIOS =
-    /iPhone|iPad|iPod/.test(ua) || (navigator.maxTouchPoints > 1 && /Mac/.test(ua));
-  const isSafari = /^((?!chrome|chromium|android).)*safari/i.test(ua);
-  const isIosBrowser = /\b(?:CriOS|EdgiOS|FxiOS|OPiOS)\b/.test(ua);
-  return isIOS || isSafari || isIosBrowser;
-}
-
 function ChevronDownIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -54,14 +44,33 @@ function NavRefract() {
 
 export function DoeDtc2GlassNav() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const [useCopy, setUseCopy] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState({ w: 0, h: 0 });
 
-  useEffect(() => {
-    setUseCopy(needsSafariCopy());
+  useLayoutEffect(() => {
+    const el = barRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      setBox((prev) =>
+        prev.w === rect.width && prev.h === rect.height
+          ? prev
+          : { w: rect.width, h: rect.height },
+      );
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
   }, []);
 
   useEffect(() => {
-    if (!useCopy) return;
     const root = rootRef.current;
     if (!root) return;
 
@@ -74,42 +83,40 @@ export function DoeDtc2GlassNav() {
 
     syncWebkitFilter();
     const observer = new MutationObserver(syncWebkitFilter);
-    observer.observe(root, { attributes: true, subtree: true, attributeFilter: ["style"] });
+    observer.observe(root, {
+      attributes: true,
+      subtree: true,
+      attributeFilter: ["style"],
+    });
     return () => observer.disconnect();
-  }, [useCopy]);
+  }, [box.w, box.h]);
 
-  const nav = (
-    <nav className="doedtc2-glass-nav__inner" aria-label="Primary">
-      <Link className="doedtc2-glass-nav__link" href={DOEDTC2_PATH}>
-        <span className={`doedtc2-glass-nav__wordmark ${larkenLight.className}`}>Doe</span>
-      </Link>
-      <button type="button" className="doedtc2-glass-nav__menu" aria-label="Menu">
-        <ChevronDownIcon />
-      </button>
-    </nav>
-  );
+  const ready = box.w > 0 && box.h > 0;
 
   return (
-    <div
-      className={`doedtc2-glass-nav${useCopy ? " doedtc2-glass-nav--copy" : ""}`}
-      ref={rootRef}
-    >
-      {useCopy ? (
-        <Glass
-          className="doedtc2-glass-nav__bar"
-          radius={30}
-          optics={BAR_OPTICS}
-          behind="#1d4ed8"
-          pixelUnits
-          refract={<NavRefract />}
-        >
-          {nav}
-        </Glass>
-      ) : (
-        <Glass className="doedtc2-glass-nav__bar" radius={30} optics={BAR_OPTICS}>
-          {nav}
-        </Glass>
-      )}
+    <div className="doedtc2-glass-nav" ref={rootRef}>
+      <div className="doedtc2-glass-nav__bar" ref={barRef}>
+        {ready ? (
+          <Glass
+            className="doedtc2-glass-nav__lens"
+            width={box.w}
+            height={box.h}
+            radius={30}
+            optics={BAR_OPTICS}
+            behind="#1d4ed8"
+            pixelUnits
+            refract={<NavRefract />}
+          />
+        ) : null}
+        <nav className="doedtc2-glass-nav__inner" aria-label="Primary">
+          <Link className="doedtc2-glass-nav__link" href={DOEDTC2_PATH}>
+            <span className={`doedtc2-glass-nav__wordmark ${larkenLight.className}`}>Doe</span>
+          </Link>
+          <button type="button" className="doedtc2-glass-nav__menu" aria-label="Menu">
+            <ChevronDownIcon />
+          </button>
+        </nav>
+      </div>
     </div>
   );
 }
