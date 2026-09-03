@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Glass } from "@samasante/liquid-glass";
 
@@ -24,6 +24,17 @@ const BAR_OPTICS = {
   glow: 0.18,
 } as const;
 
+function needsSafariCopy() {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent;
+  const isIOS =
+    /iPhone|iPad|iPod/.test(ua) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isSafari = /^((?!chrome|chromium|android).)*safari/i.test(ua);
+  const isIosBrowser = /\b(?:CriOS|EdgiOS|FxiOS|OPiOS)\b/.test(ua);
+  return isIOS || isSafari || isIosBrowser;
+}
+
 function ChevronDownIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -44,8 +55,14 @@ function NavRefract() {
 
 export function DoeDtc2GlassNav() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const [useCopy, setUseCopy] = useState(false);
 
   useEffect(() => {
+    setUseCopy(needsSafariCopy());
+  }, []);
+
+  useEffect(() => {
+    if (!useCopy) return;
     const root = rootRef.current;
     if (!root) return;
 
@@ -60,17 +77,20 @@ export function DoeDtc2GlassNav() {
     const observer = new MutationObserver(syncWebkitFilter);
     observer.observe(root, { attributes: true, subtree: true, attributeFilter: ["style"] });
     return () => observer.disconnect();
-  }, []);
+  }, [useCopy]);
 
   return (
-    <div className="doedtc2-glass-nav" ref={rootRef}>
+    <div
+      className={`doedtc2-glass-nav${useCopy ? " doedtc2-glass-nav--copy" : ""}`}
+      ref={rootRef}
+    >
       <Glass
         className="doedtc2-glass-nav__bar"
         radius={30}
         optics={BAR_OPTICS}
-        behind="#1d4ed8"
-        pixelUnits
-        refract={<NavRefract />}
+        {...(useCopy
+          ? { behind: "#1d4ed8", pixelUnits: true as const, refract: <NavRefract /> }
+          : {})}
       >
         <nav className="doedtc2-glass-nav__inner" aria-label="Primary">
           <Link className="doedtc2-glass-nav__link" href={DOEDTC2_PATH}>
