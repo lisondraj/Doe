@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, type ReactNode } from "react";
 
 import { plusJakartaSans } from "@/lib/home/fonts";
 
-const SCROLL_RELEASE_AT = 0.85;
+const PIN_START_HOLD = 0.1;
+const PIN_END_HOLD = 0.1;
 
 const SUPPORTS_VIEW_TIMELINE =
   typeof CSS !== "undefined" &&
@@ -31,8 +32,9 @@ function clamp01(value: number): number {
 
 function applyCarouselScroll(row: HTMLDivElement, metrics: CarouselMetrics) {
   const trackTop = metrics.trackDocTop - window.scrollY;
-  const rawProgress = clamp01(-trackTop / metrics.scrollRange);
-  const horizontalProgress = clamp01(rawProgress / SCROLL_RELEASE_AT);
+  const pinProgress = clamp01(-trackTop / metrics.scrollRange);
+  const panSpan = 1 - PIN_START_HOLD - PIN_END_HOLD;
+  const horizontalProgress = clamp01((pinProgress - PIN_START_HOLD) / panSpan);
   const translateX = metrics.startX + horizontalProgress * metrics.deltaX;
 
   row.style.transform = `translate3d(${translateX}px, 0, 0)`;
@@ -252,6 +254,14 @@ export function DoeDtc2FeatureCarousel() {
 
     row.style.setProperty("--doedtc2-features-start-x", `${startX}px`);
     row.style.setProperty("--doedtc2-features-end-x", `${endX}px`);
+
+    const cover = trackHeight + viewport;
+    const pinStartCover = (viewport / cover) * 100;
+    const pinEndCover = (trackHeight / cover) * 100;
+    row.style.setProperty(
+      "animation-range",
+      `cover ${pinStartCover}% cover ${pinEndCover}%`,
+    );
 
     metricsRef.current = {
       trackDocTop,

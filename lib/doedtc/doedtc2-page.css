@@ -251,13 +251,14 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  padding: max(5.75rem, calc(env(safe-area-inset-top, 0px) + 5rem)) 0
+  padding: max(5.75rem, calc(env(safe-area-inset-top, 0px) + 5rem)) var(--doedtc2-frame)
     max(1.25rem, env(safe-area-inset-bottom, 0px));
   transform: translateZ(0);
 }
 
 .doedtc2-features__viewport {
   width: 100%;
+  overflow: hidden;
   overflow: clip;
   min-width: 0;
   contain: layout paint;
@@ -267,19 +268,21 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
   display: flex;
   align-items: stretch;
   gap: var(--doedtc2-features-gap);
-  padding-left: calc(var(--doedtc2-frame) + 1.75rem);
-  padding-right: calc(var(--doedtc2-frame) + 1.75rem);
+  padding-left: 1.75rem;
+  padding-right: 1.75rem;
   transform: translate3d(var(--doedtc2-features-start-x, 0px), 0, 0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
 
 @keyframes doedtc2-features-slide {
-  from {
+  0%,
+  10% {
     transform: translate3d(var(--doedtc2-features-start-x, 0px), 0, 0);
   }
 
-  to {
+  90%,
+  100% {
     transform: translate3d(var(--doedtc2-features-end-x, 0px), 0, 0);
   }
 }
@@ -288,7 +291,7 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
   .doedtc2-features__row--view-timeline {
     animation: doedtc2-features-slide linear both;
     animation-timeline: --doedtc2-features-pan;
-    animation-range: entry 0% exit 85%;
+    animation-range: cover 22% cover 79%;
   }
 }
 
