@@ -22,14 +22,13 @@ const BAR_OPTICS = {
   sheenFalloff: 1.8,
   specular: 1.25,
   glow: 0.18,
-} as const;
+};
 
 function needsSafariCopy() {
   if (typeof navigator === "undefined") return false;
   const ua = navigator.userAgent;
   const isIOS =
-    /iPhone|iPad|iPod/.test(ua) ||
-    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    /iPhone|iPad|iPod/.test(ua) || (navigator.maxTouchPoints > 1 && /Mac/.test(ua));
   const isSafari = /^((?!chrome|chromium|android).)*safari/i.test(ua);
   const isIosBrowser = /\b(?:CriOS|EdgiOS|FxiOS|OPiOS)\b/.test(ua);
   return isIOS || isSafari || isIosBrowser;
@@ -79,28 +78,38 @@ export function DoeDtc2GlassNav() {
     return () => observer.disconnect();
   }, [useCopy]);
 
+  const nav = (
+    <nav className="doedtc2-glass-nav__inner" aria-label="Primary">
+      <Link className="doedtc2-glass-nav__link" href={DOEDTC2_PATH}>
+        <span className={`doedtc2-glass-nav__wordmark ${larkenLight.className}`}>Doe</span>
+      </Link>
+      <button type="button" className="doedtc2-glass-nav__menu" aria-label="Menu">
+        <ChevronDownIcon />
+      </button>
+    </nav>
+  );
+
   return (
     <div
       className={`doedtc2-glass-nav${useCopy ? " doedtc2-glass-nav--copy" : ""}`}
       ref={rootRef}
     >
-      <Glass
-        className="doedtc2-glass-nav__bar"
-        radius={30}
-        optics={BAR_OPTICS}
-        {...(useCopy
-          ? { behind: "#1d4ed8", pixelUnits: true as const, refract: <NavRefract /> }
-          : {})}
-      >
-        <nav className="doedtc2-glass-nav__inner" aria-label="Primary">
-          <Link className="doedtc2-glass-nav__link" href={DOEDTC2_PATH}>
-            <span className={`doedtc2-glass-nav__wordmark ${larkenLight.className}`}>Doe</span>
-          </Link>
-          <button type="button" className="doedtc2-glass-nav__menu" aria-label="Menu">
-            <ChevronDownIcon />
-          </button>
-        </nav>
-      </Glass>
+      {useCopy ? (
+        <Glass
+          className="doedtc2-glass-nav__bar"
+          radius={30}
+          optics={BAR_OPTICS}
+          behind="#1d4ed8"
+          pixelUnits
+          refract={<NavRefract />}
+        >
+          {nav}
+        </Glass>
+      ) : (
+        <Glass className="doedtc2-glass-nav__bar" radius={30} optics={BAR_OPTICS}>
+          {nav}
+        </Glass>
+      )}
     </div>
   );
 }
