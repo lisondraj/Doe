@@ -4,8 +4,13 @@ import { useCallback, useEffect, useRef, type ReactNode } from "react";
 
 import { plusJakartaSans } from "@/lib/home/fonts";
 
+const DESKTOP_MEDIA = "(min-width: 1024px)";
 const PIN_START_HOLD = 0.1;
 const PIN_END_HOLD = 0.1;
+
+function isDesktopLayout() {
+  return typeof window !== "undefined" && window.matchMedia(DESKTOP_MEDIA).matches;
+}
 
 const SUPPORTS_VIEW_TIMELINE =
   typeof CSS !== "undefined" &&
@@ -231,6 +236,13 @@ export function DoeDtc2FeatureCarousel() {
     const card = cardRef.current;
     if (!track || !row || !card) return;
 
+    if (isDesktopLayout()) {
+      row.classList.remove("doedtc2-features__row--view-timeline");
+      row.style.removeProperty("transform");
+      row.style.removeProperty("animation-range");
+      return;
+    }
+
     const viewport = window.innerHeight || 1;
     const trackHeight = track.offsetHeight;
     const scrollRange = Math.max(trackHeight - viewport, 1);
@@ -286,18 +298,26 @@ export function DoeDtc2FeatureCarousel() {
     resizeObserver.observe(track);
     resizeObserver.observe(row);
 
-    if (SUPPORTS_VIEW_TIMELINE) {
-      row.classList.add("doedtc2-features__row--view-timeline");
-      return () => {
-        resizeObserver.disconnect();
+    const desktopQuery = window.matchMedia(DESKTOP_MEDIA);
+    const onBreakpoint = () => {
+      measureCarousel();
+      if (isDesktopLayout()) {
         row.classList.remove("doedtc2-features__row--view-timeline");
-      };
-    }
+        return;
+      }
+      if (SUPPORTS_VIEW_TIMELINE) {
+        row.classList.add("doedtc2-features__row--view-timeline");
+      }
+    };
+    desktopQuery.addEventListener("change", onBreakpoint);
+    onBreakpoint();
 
     const scheduleScroll = () => {
+      if (isDesktopLayout()) return;
       if (rafRef.current) return;
       rafRef.current = window.requestAnimationFrame(() => {
         rafRef.current = 0;
+        if (isDesktopLayout()) return;
         applyCarouselScroll(row, metricsRef.current);
       });
     };
@@ -308,6 +328,8 @@ export function DoeDtc2FeatureCarousel() {
 
     return () => {
       resizeObserver.disconnect();
+      desktopQuery.removeEventListener("change", onBreakpoint);
+      row.classList.remove("doedtc2-features__row--view-timeline");
       window.removeEventListener("scroll", scheduleScroll);
       window.visualViewport?.removeEventListener("scroll", scheduleScroll);
       window.removeEventListener("resize", measureCarousel);

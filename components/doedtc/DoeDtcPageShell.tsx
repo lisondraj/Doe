@@ -24,16 +24,16 @@ export function DoeDtcPageShell({
 }: DoeDtcPageShellProps) {
   const useProfileChrome = !landing && !doedtc2;
   const showBrandFooter = landing || useProfileChrome || doedtc2;
-  const { variant, ready } = useDoeDtcPageVariant({ brandFooter: showBrandFooter, forcePhone: doedtc2 });
-  const isPhone = doedtc2 || !ready || variant === "phone";
+  const { variant, ready } = useDoeDtcPageVariant({ brandFooter: showBrandFooter });
+  const isPhone = !ready || variant === "phone";
 
-  useDoePhoneLayoutViewport();
+  useDoePhoneLayoutViewport(isPhone);
   useDoePhoneStableViewport(isPhone);
 
   return (
     <div
       className={`doedtc-root ${landing ? "doedtc-root--landing " : ""}${doedtc2 ? "doedtc-root--doedtc2 " : ""}${useProfileChrome ? "doedtc-root--profile " : ""}${showBrandFooter ? "doedtc-root--has-footer " : ""}${lora.variable} ${dmSans.className} ${dmSans.variable}`}
-      data-doedtc-variant={doedtc2 ? "phone" : ready ? variant : "phone"}
+      data-doedtc-variant={ready ? variant : "phone"}
       suppressHydrationWarning
     >
       <div className={`doedtc-shell${showBrandFooter ? " doedtc-shell--brand-footer" : ""}${doedtc2 ? " doedtc-shell--doedtc2" : ""}`}>

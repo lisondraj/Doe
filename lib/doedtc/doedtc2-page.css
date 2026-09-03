@@ -1007,3 +1007,92 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
   max-width: none;
   align-self: flex-start;
 }
+
+@media (min-width: 1024px) {
+  html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc-root--doedtc2 .doedtc-shell--doedtc2,
+  .doedtc-root--doedtc2[data-doedtc-variant="desktop"] .doedtc-shell--doedtc2 {
+    max-width: none;
+    padding: 0;
+  }
+
+  .doedtc2-scroll {
+    --doedtc2-frame: 24px;
+    --doedtc2-radius: 2rem;
+  }
+
+  .doedtc2-glass-nav {
+    top: calc(var(--doedtc2-frame) + 1rem);
+    left: max(calc(var(--doedtc2-frame) + 1.25rem), calc(50% - 36rem));
+    right: max(calc(var(--doedtc2-frame) + 1.25rem), calc(50% - 36rem));
+  }
+
+  .doedtc2-landing__inner {
+    max-width: 44rem;
+    margin-inline: auto;
+    padding: 7.5rem 2rem 2.5rem;
+  }
+
+  .doedtc2-hero-title {
+    margin-bottom: 1.6rem;
+    font-size: clamp(3.4rem, 5.6vw, 4.6rem);
+  }
+
+  .doedtc2-landing__form {
+    max-width: 28rem;
+    margin-inline: auto;
+  }
+
+  html[data-doedtc-page][data-doedtc-variant="desktop"] .doedtc2-landing__form .doedtc-button,
+  .doedtc-root--doedtc2[data-doedtc-variant="desktop"] .doedtc2-landing__form .doedtc-button {
+    max-width: none;
+  }
+
+  .doedtc2-features {
+    height: auto;
+    min-height: 0;
+    view-timeline-name: none;
+  }
+
+  .doedtc2-features__sticky {
+    position: relative;
+    height: auto;
+    padding: 2.5rem var(--doedtc2-frame) 3rem;
+    transform: none;
+  }
+
+  .doedtc2-features__viewport {
+    overflow: visible;
+    contain: none;
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+
+  .doedtc2-features__row,
+  .doedtc2-features__row--view-timeline {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+    gap: 1.15rem;
+    padding: 0 1.75rem;
+    transform: none;
+    animation: none;
+    backface-visibility: visible;
+  }
+
+  .doedtc2-feature-card {
+    flex: none;
+    width: auto;
+    height: auto;
+    min-height: 32rem;
+  }
+
+  .doedtc2-feature-card__title {
+    font-size: 1.35rem;
+  }
+
+  .doedtc2-section.doedtc2-section--over-blue:not(.doedtc2-features) {
+    height: 4rem;
+    min-height: 0;
+  }
+}
+

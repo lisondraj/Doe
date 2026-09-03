@@ -4,13 +4,10 @@ import { DoeDtc2FeatureCarousel } from "@/components/doedtc/DoeDtc2FeatureCarous
 import { DoeDtc2GlassNav } from "@/components/doedtc/DoeDtc2GlassNav";
 import { DoeDtcLandingForm } from "@/components/doedtc/DoeDtcLandingForm";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
-import { useDoeDtcPhonePageChrome } from "@/lib/doedtc/use-doedtc-phone-page-chrome";
 import { larkenLight } from "@/lib/home/fonts";
 import "@/lib/doedtc/doedtc2-page.css";
 
 export function DoeDtc2View() {
-  useDoeDtcPhonePageChrome();
-
   return (
     <DoeDtcPageShell doedtc2>
       <DoeDtc2GlassNav />
