@@ -5,7 +5,17 @@ import { useCallback, useEffect, useRef, type ReactNode } from "react";
 import { plusJakartaSans } from "@/lib/home/fonts";
 
 const SCROLL_RELEASE_AT = 0.85;
-const HORIZONTAL_STEPS = 2.7;
+
+const SUPPORTS_VIEW_TIMELINE =
+  typeof CSS !== "undefined" &&
+  (CSS.supports("animation-timeline: view()") || CSS.supports("view-timeline-name: --x"));
+
+type CarouselMetrics = {
+  trackDocTop: number;
+  scrollRange: number;
+  startX: number;
+  deltaX: number;
+};
 
 type FeatureCard = {
   id: string;
@@ -19,6 +29,15 @@ function clamp01(value: number): number {
   return Math.min(1, Math.max(0, value));
 }
 
+function applyCarouselScroll(row: HTMLDivElement, metrics: CarouselMetrics) {
+  const trackTop = metrics.trackDocTop - window.scrollY;
+  const rawProgress = clamp01(-trackTop / metrics.scrollRange);
+  const horizontalProgress = clamp01(rawProgress / SCROLL_RELEASE_AT);
+  const translateX = metrics.startX + horizontalProgress * metrics.deltaX;
+
+  row.style.transform = `translate3d(${translateX}px, 0, 0)`;
+}
+
 function scrollToLandingForm() {
   document.querySelector(".doedtc2-landing")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -27,11 +46,22 @@ function IMessagePeek() {
   return (
     <div className="doedtc2-feature-card__peek-inner doedtc2-feature-card__peek-inner--imessage">
       <div className="doedtc2-feature-card__scene doedtc2-feature-card__scene--imessage">
-        <div className="doedtc2-feature-card__bubble doedtc2-feature-card__bubble--incoming">
-          I feel off today
-        </div>
-        <div className="doedtc2-feature-card__bubble doedtc2-feature-card__bubble--outgoing">
-          I&apos;m here. What changed?
+        <div className="doedtc2-feature-card__imessage-thread">
+          <div className="doedtc2-feature-card__bubble doedtc2-feature-card__bubble--outgoing">
+            Just started Ozempic. Nausea every night.
+          </div>
+          <div className="doedtc2-feature-card__bubble doedtc2-feature-card__bubble--incoming">
+            That&apos;s common the first few weeks. Is it worse after meals?
+          </div>
+          <div className="doedtc2-feature-card__bubble doedtc2-feature-card__bubble--outgoing">
+            Yeah, especially dinner.
+          </div>
+          <div className="doedtc2-feature-card__bubble doedtc2-feature-card__bubble--incoming">
+            I&apos;ll set up a side-effect tracker on your chart.
+          </div>
+          <div className="doedtc2-feature-card__bubble doedtc2-feature-card__bubble--incoming">
+            Sending a visual injection guide with pin rotation and site tracking.
+          </div>
         </div>
       </div>
     </div>
@@ -42,18 +72,40 @@ function ChartPeek() {
   return (
     <div className="doedtc2-feature-card__peek-inner doedtc2-feature-card__peek-inner--chart">
       <div className="doedtc2-feature-card__scene doedtc2-feature-card__scene--chart">
-        <div className="doedtc2-feature-card__chart-row">
-          <span className="doedtc2-feature-card__chart-label">Medications</span>
-          <div className="doedtc-tag-list doedtc-tag-list--compact">
-            <span className="doedtc-tag">Metformin XR</span>
-            <span className="doedtc-tag">Lisinopril</span>
+        <div className="doedtc2-feature-card__chart-thread">
+          <div className="doedtc2-feature-card__bubble doedtc2-feature-card__bubble--outgoing">
+            Which vaccines does Simon need?
           </div>
-        </div>
-        <div className="doedtc2-feature-card__chart-row">
-          <span className="doedtc2-feature-card__chart-label">Conditions</span>
-          <div className="doedtc-tag-list doedtc-tag-list--compact">
-            <span className="doedtc-tag">Type 2 diabetes</span>
-            <span className="doedtc-tag">Hypertension</span>
+          <div className="doedtc2-feature-card__bubble doedtc2-feature-card__bubble--incoming doedtc2-feature-card__bubble--with-attachment">
+            <p className="doedtc2-feature-card__bubble-text">
+              Your son, Simon is 8 years old and is due for flu and Tdap.
+            </p>
+            <div className="doedtc2-feature-card__bubble-attachment">
+              <div className="doedtc2-feature-card__profile-widget-head">
+                <span className="doedtc2-feature-card__profile-widget-avatar" aria-hidden>
+                  S
+                </span>
+                <div className="doedtc2-feature-card__profile-widget-identity">
+                  <span className={`doedtc2-feature-card__profile-widget-name ${plusJakartaSans.className}`}>
+                    Simon&apos;s chart
+                  </span>
+                </div>
+              </div>
+              <ul className="doedtc2-feature-card__vaccine-list">
+                <li className="doedtc2-feature-card__vaccine-item">
+                  <span className="doedtc2-feature-card__vaccine-name">MMR</span>
+                  <span className="doedtc2-feature-card__vaccine-date">Mar 2023</span>
+                </li>
+                <li className="doedtc2-feature-card__vaccine-item">
+                  <span className="doedtc2-feature-card__vaccine-name">DTaP</span>
+                  <span className="doedtc2-feature-card__vaccine-date">Aug 2024</span>
+                </li>
+                <li className="doedtc2-feature-card__vaccine-item">
+                  <span className="doedtc2-feature-card__vaccine-name">Polio</span>
+                  <span className="doedtc2-feature-card__vaccine-date">Jan 2022</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -65,42 +117,69 @@ function ReminderPeek() {
   return (
     <div className="doedtc2-feature-card__peek-inner doedtc2-feature-card__peek-inner--reminder">
       <div className="doedtc2-feature-card__scene doedtc2-feature-card__scene--reminder">
-        <span className="doedtc2-feature-card__reminder-icon" aria-hidden>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path
-              d="M12 6v6l3.5 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </span>
-        <div className="doedtc2-feature-card__reminder-copy">
-          <p className="doedtc2-feature-card__reminder-title">Ozempic reminder</p>
-          <p className="doedtc2-feature-card__reminder-time">Tonight at 8:00 PM</p>
+        <div className="doedtc2-feature-card__bubble-attachment doedtc2-feature-card__reminder-card">
+          <div className="doedtc2-feature-card__profile-widget-head">
+            <span
+              className="doedtc2-feature-card__profile-widget-avatar doedtc2-feature-card__profile-widget-avatar--grandmother"
+              aria-hidden
+            >
+              Su
+            </span>
+            <div className="doedtc2-feature-card__profile-widget-identity">
+              <span className={`doedtc2-feature-card__profile-widget-name ${plusJakartaSans.className}`}>
+                Susan
+              </span>
+              <span className="doedtc-tag">Grandmother</span>
+            </div>
+          </div>
+          <p className="doedtc2-feature-card__reminder-meta">Take your evening meds · 8:00 PM</p>
+          <ul className="doedtc2-feature-card__vaccine-list">
+            <li className="doedtc2-feature-card__vaccine-item doedtc2-feature-card__reminder-status--sent">
+              <span className="doedtc2-feature-card__vaccine-name">Text sent to Susan</span>
+              <span className="doedtc2-feature-card__vaccine-date">8:00 PM</span>
+            </li>
+            <li className="doedtc2-feature-card__vaccine-item doedtc2-feature-card__reminder-status--waiting">
+              <span className="doedtc2-feature-card__vaccine-name">Awaiting grandmother&apos;s reply</span>
+              <span className="doedtc-tag doedtc-tag--waiting">Doe is on it</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
   );
 }
 
+const FAMILY_PEEK_MEMBERS = [
+  { name: "Simon", label: "Son", initial: "S", tone: "son" },
+  { name: "Janice", label: "You", initial: "J", tone: "you" },
+  { name: "Fred", label: "Partner", initial: "F", tone: "partner" },
+  { name: "Susan", label: "Grandmother", initial: "Su", tone: "grandmother" },
+] as const;
+
 function FamilyPeek() {
   return (
     <div className="doedtc2-feature-card__peek-inner doedtc2-feature-card__peek-inner--family">
       <div className="doedtc2-feature-card__scene doedtc2-feature-card__scene--family">
-        <div className="doedtc2-feature-card__avatars" aria-hidden>
-          <span className="doedtc2-feature-card__avatar doedtc2-feature-card__avatar--first">S</span>
-          <span className="doedtc2-feature-card__avatar doedtc2-feature-card__avatar--second">M</span>
-        </div>
-        <div className="doedtc2-feature-card__family-list">
-          <div className="doedtc2-feature-card__family-member">
-            <span className={`doedtc2-feature-card__family-name ${plusJakartaSans.className}`}>Simon</span>
-            <span className="doedtc-tag">Son</span>
+        <div className="doedtc2-feature-card__family-panel">
+          <div className="doedtc2-feature-card__avatars" aria-hidden>
+            {FAMILY_PEEK_MEMBERS.map((member) => (
+              <span
+                key={member.name}
+                className={`doedtc2-feature-card__avatar doedtc2-feature-card__avatar--${member.tone}`}
+              >
+                {member.initial}
+              </span>
+            ))}
           </div>
-          <div className="doedtc2-feature-card__family-member">
-            <span className={`doedtc2-feature-card__family-name ${plusJakartaSans.className}`}>Mom</span>
-            <span className="doedtc-tag">Caregiver</span>
+          <div className="doedtc2-feature-card__family-list">
+            {FAMILY_PEEK_MEMBERS.map((member) => (
+              <div key={member.name} className="doedtc2-feature-card__family-member">
+                <span className={`doedtc2-feature-card__family-name ${plusJakartaSans.className}`}>
+                  {member.name}
+                </span>
+                <span className="doedtc-tag">{member.label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -113,7 +192,7 @@ const FEATURE_CARDS: FeatureCard[] = [
     id: "imessage",
     title: "Text Doe over iMessage",
     description:
-      "Reach your health companion the same way you text a friend. No app download. Just reply when something feels off.",
+      "Reach your health companion the same way you text a friend. Ask about Ozempic, side effects, or refills and get a tracker or guide in the thread.",
     ctaLabel: "Text Doe",
     peek: <IMessagePeek />,
   },
@@ -121,7 +200,7 @@ const FEATURE_CARDS: FeatureCard[] = [
     id: "chart",
     title: "Your chart, always ready",
     description:
-      "Meds, conditions, and labs stay organized so Doe can answer with your real history, not generic advice.",
+      "Meds, vaccines, and labs stay on the chart so Doe can answer about your family with real history, not generic advice.",
     ctaLabel: "Build Chart",
     peek: <ChartPeek />,
   },
@@ -129,7 +208,7 @@ const FEATURE_CARDS: FeatureCard[] = [
     id: "reminders",
     title: "Reminders that follow through",
     description:
-      "One-shot nudges or daily check-ins. Doe texts you on schedule and keeps the thread going until it is handled.",
+      "Doe texts your grandmother Susan on schedule, then stays on the thread until she replies.",
     ctaLabel: "Remind Me",
     peek: <ReminderPeek />,
   },
@@ -147,8 +226,15 @@ export function DoeDtc2FeatureCarousel() {
   const trackRef = useRef<HTMLElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const metricsRef = useRef<CarouselMetrics>({
+    trackDocTop: 0,
+    scrollRange: 1,
+    startX: 0,
+    deltaX: 0,
+  });
+  const rafRef = useRef<number>(0);
 
-  const syncCarousel = useCallback(() => {
+  const measureCarousel = useCallback(() => {
     const track = trackRef.current;
     const row = rowRef.current;
     const card = cardRef.current;
@@ -157,28 +243,80 @@ export function DoeDtc2FeatureCarousel() {
     const viewport = window.innerHeight || 1;
     const trackHeight = track.offsetHeight;
     const scrollRange = Math.max(trackHeight - viewport, 1);
-    const trackTop = track.getBoundingClientRect().top;
-    const rawProgress = clamp01(-trackTop / scrollRange);
-    const horizontalProgress = clamp01(rawProgress / SCROLL_RELEASE_AT);
+    const trackDocTop = track.getBoundingClientRect().top + window.scrollY;
 
     const cardWidth = card.offsetWidth;
-    const gap = Number.parseFloat(getComputedStyle(row).gap || "0") || 0;
+    const rowStyle = getComputedStyle(row);
+    const gap = Number.parseFloat(rowStyle.gap || "0") || 0;
+    const paddingLeft = Number.parseFloat(rowStyle.paddingLeft || "0") || 0;
+    const viewportWidth = row.parentElement?.clientWidth ?? window.innerWidth;
     const step = cardWidth + gap;
-    const translateX = -horizontalProgress * HORIZONTAL_STEPS * step;
+    const lastIndex = Math.max(row.children.length - 1, 0);
 
-    row.style.setProperty("--doedtc2-features-x", `${translateX}px`);
+    const centerOffsetForIndex = (index: number) => {
+      const cardCenter = paddingLeft + index * step + cardWidth / 2;
+      return viewportWidth / 2 - cardCenter;
+    };
+
+    const startX = centerOffsetForIndex(0);
+    const endX = centerOffsetForIndex(lastIndex);
+
+    row.style.setProperty("--doedtc2-features-start-x", `${startX}px`);
+    row.style.setProperty("--doedtc2-features-end-x", `${endX}px`);
+
+    metricsRef.current = {
+      trackDocTop,
+      scrollRange,
+      startX,
+      deltaX: endX - startX,
+    };
+
+    if (!SUPPORTS_VIEW_TIMELINE) {
+      applyCarouselScroll(row, metricsRef.current);
+    }
   }, []);
 
   useEffect(() => {
-    syncCarousel();
-    window.addEventListener("scroll", syncCarousel, { passive: true });
-    window.addEventListener("resize", syncCarousel);
+    const track = trackRef.current;
+    const row = rowRef.current;
+    if (!track || !row) return;
+
+    measureCarousel();
+
+    const resizeObserver = new ResizeObserver(measureCarousel);
+    resizeObserver.observe(track);
+    resizeObserver.observe(row);
+
+    if (SUPPORTS_VIEW_TIMELINE) {
+      row.classList.add("doedtc2-features__row--view-timeline");
+      return () => {
+        resizeObserver.disconnect();
+        row.classList.remove("doedtc2-features__row--view-timeline");
+      };
+    }
+
+    const scheduleScroll = () => {
+      if (rafRef.current) return;
+      rafRef.current = window.requestAnimationFrame(() => {
+        rafRef.current = 0;
+        applyCarouselScroll(row, metricsRef.current);
+      });
+    };
+
+    window.addEventListener("scroll", scheduleScroll, { passive: true });
+    window.visualViewport?.addEventListener("scroll", scheduleScroll, { passive: true });
+    window.addEventListener("resize", measureCarousel);
 
     return () => {
-      window.removeEventListener("scroll", syncCarousel);
-      window.removeEventListener("resize", syncCarousel);
+      resizeObserver.disconnect();
+      window.removeEventListener("scroll", scheduleScroll);
+      window.visualViewport?.removeEventListener("scroll", scheduleScroll);
+      window.removeEventListener("resize", measureCarousel);
+      if (rafRef.current) {
+        window.cancelAnimationFrame(rafRef.current);
+      }
     };
-  }, [syncCarousel]);
+  }, [measureCarousel]);
 
   return (
     <section
