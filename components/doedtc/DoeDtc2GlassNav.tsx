@@ -37,21 +37,10 @@ function ChevronDownIcon() {
   );
 }
 
-function NavRefract() {
-  return <div className="doedtc2-glass-nav__refract" aria-hidden />;
-}
-
 export function DoeDtc2GlassNav() {
   return (
     <div className="doedtc2-glass-nav">
-      <Glass
-        className="doedtc2-glass-nav__bar"
-        radius={30}
-        optics={BAR_OPTICS}
-        behind="#1d4ed8"
-        pixelUnits
-        refract={<NavRefract />}
-      >
+      <Glass className="doedtc2-glass-nav__bar" radius={30} optics={BAR_OPTICS}>
         <nav className="doedtc2-glass-nav__inner" aria-label="Primary">
           <Link className="doedtc2-glass-nav__link" href={DOEDTC2_PATH}>
             <span className={`doedtc2-glass-nav__wordmark ${larkenLight.className}`}>Doe</span>
