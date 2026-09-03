@@ -87,6 +87,7 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
   align-items: stretch;
   justify-content: center;
   width: 100%;
+  overflow: visible;
   padding: max(6.5rem, calc(env(safe-area-inset-top, 0px) + 5.75rem))
     calc(var(--doedtc2-frame) + 1.75rem)
     max(1.5rem, env(safe-area-inset-bottom, 0px));
@@ -101,6 +102,11 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
   font-size: clamp(2.35rem, 9.4vw, 3.15rem);
   line-height: 1.08;
   letter-spacing: -0.035em;
+  overflow: visible;
+}
+
+.doedtc2-hero-title__line {
+  display: block;
   background-image: linear-gradient(180deg, #ffffff 12%, #e8eaed 100%);
   background-clip: text;
   -webkit-background-clip: text;
@@ -108,13 +114,75 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
   -webkit-text-fill-color: transparent;
 }
 
-.doedtc2-hero-title__line {
+@keyframes doedtc2-unblur-up {
+  0% {
+    opacity: 0;
+    filter: blur(14px);
+    transform: translateY(1.35rem);
+  }
+
+  42% {
+    opacity: 0.92;
+    filter: blur(4px);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.doedtc2-reveal {
   display: block;
+  width: 100%;
+  opacity: 0;
+  filter: blur(14px);
+  transform: translateY(1.35rem);
+  will-change: opacity, filter, transform;
+}
+
+.doedtc2-reveal--title {
+  --doedtc2-reveal-delay: 0ms;
+}
+
+.doedtc2-reveal--line2 {
+  --doedtc2-reveal-delay: 460ms;
+}
+
+.doedtc2-reveal--form {
+  --doedtc2-reveal-delay: 920ms;
+}
+
+.doedtc2-reveal--in {
+  animation: doedtc2-unblur-up 2.15s cubic-bezier(0.16, 1, 0.3, 1)
+    var(--doedtc2-reveal-delay, 0ms) both;
+}
+
+.doedtc2-reveal-hover {
+  display: block;
+  width: 100%;
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doedtc2-reveal-hover:hover {
+  transform: translateY(-7px);
 }
 
 .doedtc2-landing__form {
   width: 100%;
   min-width: 0;
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doedtc2-reveal,
+  .doedtc2-reveal--in {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
 }
 
 /* Profile gloss + punch inputs/buttons; keep doedtc2 layout sizing only. */

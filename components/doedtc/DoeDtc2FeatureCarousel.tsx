@@ -14,6 +14,7 @@ function isDesktopLayout() {
 
 const SUPPORTS_VIEW_TIMELINE =
   typeof CSS !== "undefined" &&
+  typeof CSS.supports === "function" &&
   (CSS.supports("animation-timeline: view()") || CSS.supports("view-timeline-name: --x"));
 
 type CarouselMetrics = {
