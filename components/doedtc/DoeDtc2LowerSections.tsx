@@ -101,6 +101,9 @@ export function DoeDtc2MosaicSection() {
         </article>
 
         <article className="doedtc2-mosaic-card doedtc2-mosaic-card--family" aria-label="Family">
+          <div className="doedtc2-feature-card__bubble doedtc2-feature-card__bubble--outgoing">
+            Is there anything outstanding to do for my grandmother&apos;s checkups?
+          </div>
           <div className="doedtc2-feature-card__avatars" aria-hidden>
             {MOSAIC_FAMILY.map((member) => (
               <span

@@ -1311,11 +1311,25 @@ html[data-doedtc-page]:has(.doedtc-root--doedtc2) body {
 
 .doedtc2-mosaic-card--family {
   grid-column: 1;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   justify-content: center;
+  gap: 0.55rem;
   min-height: 5.4rem;
   padding: 0.85rem 0.9rem;
   transform: translate(-0.2rem, -0.15rem);
+}
+
+.doedtc2-mosaic-card--family .doedtc2-feature-card__bubble--outgoing {
+  align-self: flex-end;
+  max-width: 100%;
+  padding: 0.45rem 0.62rem;
+  font-size: 0.72rem;
+  line-height: 1.32;
+}
+
+.doedtc2-mosaic-card--family .doedtc2-feature-card__avatars {
+  align-self: center;
 }
 
 .doedtc2-mosaic-card--status {
