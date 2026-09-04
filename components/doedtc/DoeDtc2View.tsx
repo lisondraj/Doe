@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { DoeDtc2FeatureCarousel } from "@/components/doedtc/DoeDtc2FeatureCarousel";
 import { DoeDtc2GlassNav } from "@/components/doedtc/DoeDtc2GlassNav";
+import { DoeDtc2HowSection, DoeDtc2MosaicSection } from "@/components/doedtc/DoeDtc2LowerSections";
 import { DoeDtcLandingForm } from "@/components/doedtc/DoeDtcLandingForm";
 import { DoeDtcPageShell } from "@/components/doedtc/DoeDtcPageShell";
 import { larkenLight } from "@/lib/home/fonts";
@@ -68,9 +69,9 @@ export function DoeDtc2View() {
             <DoeDtc2LandingCopy />
           </section>
           <DoeDtc2FeatureCarousel />
-          <section className="doedtc2-section doedtc2-section--over-blue" aria-label="Section 2" />
+          <DoeDtc2HowSection />
+          <DoeDtc2MosaicSection />
         </div>
-        <section className="doedtc2-section doedtc2-section--white" aria-label="Section 3" />
       </div>
     </DoeDtcPageShell>
   );

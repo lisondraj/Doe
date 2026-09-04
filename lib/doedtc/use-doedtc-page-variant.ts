@@ -41,7 +41,7 @@ export function useDoeDtcPageVariant(options: UseDoeDtcPageVariantOptions = {}) 
     };
   }, [forcePhone, ready]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!ready) return;
     const resolvedVariant = forcePhone ? "phone" : variant;
     const html = document.documentElement;
