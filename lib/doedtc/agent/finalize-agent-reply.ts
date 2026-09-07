@@ -1,4 +1,5 @@
 import { ensureDeferredWorkAck } from "@/lib/doedtc/agent/active-work";
+import type { AgentInboundContext } from "@/lib/doedtc/agent/agent-inbound";
 import { groundReplyInCommittedState } from "@/lib/doedtc/agent/committed-state";
 import { stripUnsolicitedEmptyCatalogReply } from "@/lib/doedtc/agent/problem-share";
 import { reconcileReplyClaims } from "@/lib/doedtc/agent/honesty";
@@ -24,6 +25,9 @@ export async function finalizeAgentReply(params: {
   snapshot: DoeDtcProfileSnapshot;
   turnMode: TurnModeResult;
   toolCtx?: DoeDtcToolExecutionContext;
+  inboundContext?: AgentInboundContext & {
+    pendingCommitTool?: string | null;
+  };
 }): Promise<{ replyText: string; degenerate: boolean }> {
   let rawReply = params.replyText.trim();
 
@@ -47,6 +51,7 @@ export async function finalizeAgentReply(params: {
     state: params.turnState,
     toolsExecuted: params.turnState.toolsExecuted ?? [],
     snapshot: params.snapshot,
+    inboundContext: params.inboundContext,
   });
   params.turnState.listenUrl = reconciled.listenUrl ?? params.turnState.listenUrl;
   params.turnState.profileUrl = reconciled.profileUrl ?? params.turnState.profileUrl;

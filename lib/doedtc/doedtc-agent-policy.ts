@@ -58,6 +58,9 @@ export function classifyDataWrite(text: string): DoeDataWriteClass {
 export function inboundAlreadyAsked(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return false;
+  if (/\b(?:you decide|u decide|up to you|your call|whatever works|decide for me|pick (?:for me|something)|specific actions?\s+(?:u|you)\s+decide)\b/i.test(trimmed)) {
+    return true;
+  }
   return /\b(?:can you|can u|could you|please|set a timer|remind me|text me|text \w+|message \w+|make sure|help my|schedule|in \d+ seconds?|for \d+ seconds?|log my|track my|screenshot|go(?:\s+)?to|goto|search up|look(?:ing)? up|google)\b/i.test(
     trimmed,
   );

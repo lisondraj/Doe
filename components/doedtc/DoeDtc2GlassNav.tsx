@@ -37,12 +37,16 @@ function ChevronDownIcon() {
   );
 }
 
-export function DoeDtc2GlassNav() {
+type DoeDtc2GlassNavProps = {
+  wordmarkHref?: string;
+};
+
+export function DoeDtc2GlassNav({ wordmarkHref = DOEDTC2_PATH }: DoeDtc2GlassNavProps) {
   return (
     <div className="doedtc2-glass-nav">
       <Glass className="doedtc2-glass-nav__bar" radius={30} optics={BAR_OPTICS}>
         <nav className="doedtc2-glass-nav__inner" aria-label="Primary">
-          <Link className="doedtc2-glass-nav__link" href={DOEDTC2_PATH}>
+          <Link className="doedtc2-glass-nav__link" href={wordmarkHref}>
             <span className={`doedtc2-glass-nav__wordmark ${larkenLight.className}`}>Doe</span>
           </Link>
           <button type="button" className="doedtc2-glass-nav__menu" aria-label="Menu">

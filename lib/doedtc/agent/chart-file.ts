@@ -7,8 +7,12 @@ import {
 } from "@/lib/doedtc/doedtc-scheduled";
 import {
   inboundAsksReminderStatus,
+  replyClaimsAccountabilitySetup,
+  replyClaimsGuideSetup,
+  replyClaimsHabitSetup,
   replyClaimsReminderEmpty,
   replyClaimsReminderSet,
+  replyClaimsTrackerSetup,
   replyMentionsReminders,
 } from "@/lib/doedtc/agent/committed-state";
 import { shouldSkipReminderGrounding, type TurnMode } from "@/lib/doedtc/agent/turn-mode";
@@ -149,6 +153,13 @@ export function reconcileReplyWithChartFile(params: {
   logAppointmentSucceeded: boolean;
   logFamilyMemberSucceeded: boolean;
   logArtifactEntrySucceeded: boolean;
+  createProfileArtifactSucceeded?: boolean;
+  startHabitWorkflowSucceeded?: boolean;
+  createGuideSucceeded?: boolean;
+  startAccountabilitySucceeded?: boolean;
+  activeWorkflowCount?: number;
+  guideCount?: number;
+  accountabilityCount?: number;
   turnMode?: TurnMode;
 }): string {
   let reply = params.replyText;
@@ -190,6 +201,38 @@ export function reconcileReplyWithChartFile(params: {
   const claimsArtifact = replyClaimsArtifactLogged(reply);
   if (claimsArtifact && !params.logArtifactEntrySucceeded) {
     reply = "I haven't logged that on your tracker yet.";
+  }
+
+  const claimsTrackerSetup = replyClaimsTrackerSetup(reply);
+  if (
+    claimsTrackerSetup &&
+    !params.createProfileArtifactSucceeded &&
+    params.file.artifacts.length === 0
+  ) {
+    reply = "That tracker is not on your chart yet.";
+  }
+
+  const claimsHabitSetup = replyClaimsHabitSetup(reply);
+  if (
+    claimsHabitSetup &&
+    !params.startHabitWorkflowSucceeded &&
+    (params.activeWorkflowCount ?? 0) === 0
+  ) {
+    reply = "That habit is not on your chart yet.";
+  }
+
+  const claimsGuideSetup = replyClaimsGuideSetup(reply);
+  if (claimsGuideSetup && !params.createGuideSucceeded && (params.guideCount ?? 0) === 0) {
+    reply = "That guide is not saved yet.";
+  }
+
+  const claimsAccountabilitySetup = replyClaimsAccountabilitySetup(reply);
+  if (
+    claimsAccountabilitySetup &&
+    !params.startAccountabilitySucceeded &&
+    (params.accountabilityCount ?? 0) === 0
+  ) {
+    reply = "That accountability setup is not on your chart yet.";
   }
 
   const reminderReply = formatScheduledTextFileReply(params.file.reminders);

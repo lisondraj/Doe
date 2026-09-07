@@ -28,6 +28,8 @@ export const DOEHOME_PATH = "/doehomepage";
 export const DOEDTC_PATH = "/doedtc";
 /** Alternate DTC landing — scroll-driven framed hero. */
 export const DOEDTC2_PATH = "/doedtc2";
+/** EMR landing variant — doedtc2 layout with tighter white frame. */
+export const LANDING_EMR_PATH = "/landingEMR";
 
 /** Former primary home — Voice Agents hero (preview at /legacymain). */
 export const LEGACY_MAIN_PATH = "/legacymain";

@@ -44,6 +44,30 @@ export function replyClaimsReminderSet(text: string): boolean {
   );
 }
 
+export function replyClaimsTrackerSetup(text: string): boolean {
+  return /\b(?:i(?:'ve| have)? (?:set up|created|started)|set up|created)\b.{0,48}\b(?:tracker|tracking)\b/i.test(
+    text,
+  );
+}
+
+export function replyClaimsHabitSetup(text: string): boolean {
+  return /\b(?:i(?:'ve| have)? (?:set up|started)|started)\b.{0,48}\b(?:habit|daily check(?:-in)?|workflow)\b/i.test(
+    text,
+  );
+}
+
+export function replyClaimsGuideSetup(text: string): boolean {
+  return /\b(?:i(?:'ve| have)? (?:saved|created)|saved)\b.{0,40}\b(?:guide|how-?to|instructions)\b/i.test(
+    text,
+  );
+}
+
+export function replyClaimsAccountabilitySetup(text: string): boolean {
+  return /\b(?:i(?:'ve| have)? (?:set up|started)|started)\b.{0,48}\b(?:accountability|pact|check-?in partner)\b/i.test(
+    text,
+  );
+}
+
 export function hasOnFileReminders(file: ScheduledTextFile): boolean {
   return file.committed.length > 0 || file.recentlySent.length > 0;
 }
@@ -123,6 +147,9 @@ export function reconcileReplyWithLiveChart(params: {
   toolsExecuted?: DoeDtcAgentToolExecutionRecord[];
   viewerUserId: string;
   turnMode?: TurnMode;
+  activeWorkflowCount?: number;
+  guideCount?: number;
+  accountabilityCount?: number;
 }): string {
   const reminderFirst = reconcileReplyWithScheduledTextFile({
     inboundText: params.inboundText,
@@ -144,6 +171,15 @@ export function reconcileReplyWithLiveChart(params: {
     logAppointmentSucceeded: toolSucceeded(params.toolsExecuted, "log_appointment"),
     logFamilyMemberSucceeded: toolSucceeded(params.toolsExecuted, "log_family_member"),
     logArtifactEntrySucceeded: toolSucceeded(params.toolsExecuted, "log_artifact_entry"),
+    createProfileArtifactSucceeded: toolSucceeded(params.toolsExecuted, "create_profile_artifact"),
+    startHabitWorkflowSucceeded:
+      toolSucceeded(params.toolsExecuted, "start_habit_workflow") ||
+      toolSucceeded(params.toolsExecuted, "start_workflow"),
+    createGuideSucceeded: toolSucceeded(params.toolsExecuted, "create_guide"),
+    startAccountabilitySucceeded: toolSucceeded(params.toolsExecuted, "start_accountability"),
+    activeWorkflowCount: params.activeWorkflowCount ?? 0,
+    guideCount: params.guideCount ?? 0,
+    accountabilityCount: params.accountabilityCount ?? 0,
     turnMode: params.turnMode,
   });
 }
@@ -158,6 +194,11 @@ export async function groundReplyInCommittedState(params: {
   const asksReminder = inboundAsksReminderStatus(params.inboundText);
   const claimsReminder =
     replyClaimsReminderEmpty(params.replyText) || replyClaimsReminderSet(params.replyText);
+  const claimsSetup =
+    replyClaimsTrackerSetup(params.replyText) ||
+    replyClaimsHabitSetup(params.replyText) ||
+    replyClaimsGuideSetup(params.replyText) ||
+    replyClaimsAccountabilitySetup(params.replyText);
 
   const [snapshot, pending] = await Promise.all([
     getDoeDtcProfileSnapshot(params.userId),
@@ -171,6 +212,7 @@ export async function groundReplyInCommittedState(params: {
   const needsGrounding =
     asksReminder ||
     (!skipReminderClaims && claimsReminder) ||
+    claimsSetup ||
     /\b(?:booked|logged|saved|added)\b/i.test(params.replyText) ||
     inboundAsksChartStatus(params.inboundText);
 
@@ -190,6 +232,9 @@ export async function groundReplyInCommittedState(params: {
     toolsExecuted: params.toolsExecuted,
     viewerUserId: params.userId,
     turnMode: params.turnMode,
+    activeWorkflowCount: snapshot.workflows?.length ?? 0,
+    guideCount: snapshot.guides?.length ?? 0,
+    accountabilityCount: snapshot.accountabilityPacts?.length ?? 0,
   });
 
   return { replyText, file: chartFile.reminders, chartFile };

@@ -1,3 +1,4 @@
+import type { AgentInboundContext } from "@/lib/doedtc/agent/agent-inbound";
 import type { TurnModeResult } from "@/lib/doedtc/agent/turn-mode";
 import type { DoeDtcAttachmentContext } from "@/lib/doedtc/agent/attachments";
 import type { DoeDtcProfileSnapshot, DoeDtcUserRow } from "@/lib/doedtc/doedtc-types";
@@ -28,6 +29,7 @@ export type DoeDtcRunContext = {
   incidentalChartWrite?: { label: string; originalInbound: string };
   plannerInstructions?: string;
   threadReplyParentBody?: string | null;
+  inboundContext?: AgentInboundContext & { pendingCommitTool?: string | null };
   specialistInstructions?: Partial<
     Record<"healthRecord" | "guides" | "scheduling" | "browser", string>
   >;

@@ -1,4 +1,4 @@
-import { DOEDTC2_PATH, DOEDTC_PATH } from "@/lib/site-domains";
+import { DOEDTC2_PATH, DOEDTC_PATH, LANDING_EMR_PATH } from "@/lib/site-domains";
 
 /** iPhone Safari chrome / overscroll gutters — light Soar-like surface. */
 export const DOEDTC_OVERFLOW_SURFACE = "#F8F9FA";
@@ -17,7 +17,9 @@ export function isDoeDtcLandingPath(pathname: string): boolean {
     pathname === DOEDTC_PATH ||
     pathname === `${DOEDTC_PATH}/` ||
     pathname === DOEDTC2_PATH ||
-    pathname === `${DOEDTC2_PATH}/`
+    pathname === `${DOEDTC2_PATH}/` ||
+    pathname === LANDING_EMR_PATH ||
+    pathname === `${LANDING_EMR_PATH}/`
   );
 }
 

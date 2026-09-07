@@ -12,6 +12,9 @@ import {
   toolSucceeded,
 } from "@/lib/doedtc/agent/honesty";
 import { resolveDeliverableInboundText } from "@/lib/doedtc/agent/deliverable-policy";
+import { resolveAgentInboundText } from "@/lib/doedtc/agent/agent-inbound";
+import { reconcileReplyWithScheduledTextFile } from "@/lib/doedtc/agent/committed-state";
+import { buildScheduledTextFile } from "@/lib/doedtc/doedtc-scheduled";
 import {
   assertToolPromptCoverage,
   buildDoeDtcToolCapabilityPrompt,
@@ -428,6 +431,104 @@ describe("agent honesty invariants", () => {
       toolsExecuted: [{ name: "parse_document", ok: true }],
     });
     assert.match(reconciled.replyText, /don't need to give me a title/i);
+  });
+
+  it("does not wipe send-link follow-ups with the tracker title probe", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const abstainThread = {
+      priorInboundBodies: ["To help me abstain", "Specific actions u decide"],
+      lastOutboundBody: "Your abstinence tracker is ready.",
+    };
+    const inboundText = resolveAgentInboundText({
+      inboundText: "Send link",
+      ...abstainThread,
+    });
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText,
+      replyText: "Here is your tracker link.",
+      state: { chartWriteProbe: "What do you want to track?" } as never,
+      toolsExecuted: [],
+      snapshot: { artifacts: [], guides: [] } as never,
+      inboundContext: {
+        inboundText: "Send link",
+        ...abstainThread,
+      },
+    });
+
+    assert.notEqual(reconciled.replyText, "What do you want to track?");
+    assert.ok(reconciled.profileUrl);
+  });
+
+  it("repairs false tracker setup claims on send-link follow-ups", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const inboundText = resolveAgentInboundText({
+      inboundText: "Send link",
+      priorInboundBodies: ["To help me abstain", "Specific actions u decide"],
+      lastOutboundBody: "I set up your alcohol abstinence tracker.",
+    });
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText,
+      replyText: "I set up your alcohol abstinence tracker. Sending the link now.",
+      state: { toolsExecuted: [] } as never,
+      toolsExecuted: [],
+      snapshot: { artifacts: [], guides: [] } as never,
+      inboundContext: {
+        inboundText: "Send link",
+        priorInboundBodies: ["To help me abstain", "Specific actions u decide"],
+        lastOutboundBody: "I set up your alcohol abstinence tracker.",
+      },
+    });
+
+    assert.doesNotMatch(reconciled.replyText, /alcohol/i);
+    assert.ok(reconciled.profileUrl);
+  });
+
+  it("repairs false habit setup claims on send/do-that follow-ups", async () => {
+    const user = {
+      id: "user-1",
+      care_token: "care-token",
+    } as DoeDtcUserRow;
+
+    const inboundText = resolveDeliverableInboundText({
+      inboundText: "send it",
+      priorInboundBodies: ["Help me drink more water"],
+      lastOutboundBody: "I started a daily water habit for you.",
+    });
+
+    const reconciled = await reconcileReplyClaims({
+      user,
+      inboundText,
+      replyText: "I've started your daily water habit.",
+      state: { toolsExecuted: [] } as never,
+      toolsExecuted: [],
+      snapshot: { artifacts: [], guides: [] } as never,
+    });
+
+    assert.match(reconciled.replyText, /not saved yet|send your link/i);
+  });
+
+  it("grounds false reminder claims against the live scheduled-text file", () => {
+    const file = buildScheduledTextFile({ rows: [], pending: null });
+    const reply = reconcileReplyWithScheduledTextFile({
+      inboundText: "do that",
+      replyText: "I've set a reminder for 8am.",
+      file,
+      scheduleTextSucceeded: false,
+    });
+
+    assert.match(reply, /nothing set|no reminders/i);
   });
 });
 

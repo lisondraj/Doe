@@ -734,7 +734,8 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-tracker-carousel,
 .doedtc-root--profile:not(.doedtc-root--landing) .doedtc-page-header__box,
 .doedtc-profile-layout .doedtc-page-header__box,
 .doedtc-root--profile:not(.doedtc-root--landing) .doedtc-page-header__back,
-.doedtc-profile-layout .doedtc-page-header__back {
+.doedtc-profile-layout .doedtc-page-header__back,
+.doedtc-root--landing-emr .landing-emr-glass-nav__bar {
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -788,7 +789,8 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-tracker-carousel,
 .doedtc-root--profile:not(.doedtc-root--landing) .doedtc-page-header__box::before,
 .doedtc-profile-layout .doedtc-page-header__box::before,
 .doedtc-root--profile:not(.doedtc-root--landing) .doedtc-page-header__back::before,
-.doedtc-profile-layout .doedtc-page-header__back::before {
+.doedtc-profile-layout .doedtc-page-header__back::before,
+.doedtc-root--landing-emr .landing-emr-glass-nav__bar::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -835,7 +837,8 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-tracker-carousel,
 .doedtc-root--profile:not(.doedtc-root--landing) .doedtc-page-header__box::after,
 .doedtc-profile-layout .doedtc-page-header__box::after,
 .doedtc-root--profile:not(.doedtc-root--landing) .doedtc-page-header__back::after,
-.doedtc-profile-layout .doedtc-page-header__back::after {
+.doedtc-profile-layout .doedtc-page-header__back::after,
+.doedtc-root--landing-emr .landing-emr-glass-nav__bar::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -876,7 +879,8 @@ html[data-doedtc-page][data-doedtc-variant="phone"] .doedtc-tracker-carousel,
 .doedtc-profile-layout .doedtc-listen-nested > *,
 .doedtc-profile-layout .doedtc-settings__group > *,
 .doedtc-root--profile:not(.doedtc-root--landing) .doedtc-page-header__back > *,
-.doedtc-profile-layout .doedtc-page-header__back > * {
+.doedtc-profile-layout .doedtc-page-header__back > *,
+.doedtc-root--landing-emr .landing-emr-glass-nav__bar > * {
   position: relative;
   z-index: 1;
 }

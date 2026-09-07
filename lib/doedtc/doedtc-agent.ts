@@ -5,12 +5,11 @@ import {
   lastOutboundBodyFromMessages,
   looksLikeChartRead,
   priorInboundBodiesFromMessages,
-  resolveDeliverableInboundText,
 } from "@/lib/doedtc/agent/deliverable-policy";
+import { resolveAgentInboundText } from "@/lib/doedtc/agent/agent-inbound";
 import {
   buildMemorySearchQuery,
   formatThreadContinuityBlock,
-  resolveThreadInboundText,
   THREAD_TRANSCRIPT_FETCH,
   THREAD_TRANSCRIPT_KEEP,
   THREAD_TRANSCRIPT_MAX_CHARS,
@@ -43,7 +42,6 @@ import {
   isAwaitingTimePending,
   looksLikeTimeAnswer,
   parseReminderIntent,
-  resolveReminderInboundText,
   shouldDeferChartWriteForReminder,
   storeAwaitingBodyReminderPending,
   storeAwaitingTimeReminderPending,
@@ -1133,34 +1131,19 @@ export async function runDoeDtcAgentTurnLegacy(params: {
     pendingRow,
   });
 
-  const resolvedDeliverableInboundText = resolveDeliverableInboundText({
+  const deliverableInboundText = resolveAgentInboundText({
     inboundText: params.inboundText,
     priorInboundBodies,
     lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
-  });
-  const reminderInboundText = resolveReminderInboundText({
-    inboundText: params.inboundText,
-    priorInboundBodies,
-    lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
-  });
-  const deliverableInboundText =
-    resolvedDeliverableInboundText !== params.inboundText.trim()
-      ? resolvedDeliverableInboundText
-      : reminderInboundText;
-  const reminderDirective = buildReminderIntentDirective(parseReminderIntent(deliverableInboundText));
-  const threadInboundText = resolveThreadInboundText({
-    inboundText: params.inboundText,
-    priorInboundBodies,
     threadReplyParentBody: params.threadReplyParentBody,
   });
-  const briefInboundText =
-    incidentalChartWrite?.originalInbound?.trim() ||
-    (deliverableInboundText !== params.inboundText.trim() ? deliverableInboundText : threadInboundText);
+  const reminderDirective = buildReminderIntentDirective(parseReminderIntent(deliverableInboundText));
   const threadContinuityBlock = formatThreadContinuityBlock({
     inboundText: params.inboundText,
     priorInboundBodies,
     threadReplyParentBody: params.threadReplyParentBody,
   });
+  const briefInboundText = incidentalChartWrite?.originalInbound?.trim() || deliverableInboundText;
 
   const brief = buildSituationBrief({
     inboundText: briefInboundText,
@@ -1307,6 +1290,13 @@ export async function runDoeDtcAgentTurnLegacy(params: {
       snapshot,
       turnMode,
       toolCtx,
+      inboundContext: {
+        inboundText: params.inboundText,
+        priorInboundBodies,
+        lastOutboundBody: lastOutboundBodyFromMessages(messageHistory),
+        threadReplyParentBody: params.threadReplyParentBody,
+        pendingCommitTool: pendingRow?.commit_tool ?? null,
+      },
     });
     return assembleLegacyTurnResult({
       replyText: finalized.replyText,

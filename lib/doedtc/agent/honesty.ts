@@ -2,6 +2,12 @@ import { randomUUID } from "node:crypto";
 
 import { askedAboutActiveWork, looksLikeDeferredWorkClaim } from "@/lib/doedtc/agent/active-work";
 import {
+  replyInventsAbstainStereotype,
+  shouldSuppressChartWriteProbe,
+  stripInventedAbstainStereotype,
+  type AgentInboundContext,
+} from "@/lib/doedtc/agent/agent-inbound";
+import {
   attachChartSectionLink,
   isChartWriteLinkTool,
 } from "@/lib/doedtc/agent/chart-write";
@@ -49,7 +55,8 @@ const CLAIM_REGISTRY: Array<{
       | "invite_correction"
       | "schedule"
       | "false_write"
-      | "dont_ask_title";
+      | "dont_ask_title"
+      | "setup_without_tool";
     writeClaim?: boolean;
 }> = [
   {
@@ -135,6 +142,37 @@ const CLAIM_REGISTRY: Array<{
     id: "artifact_logged",
     claim: /\b(?:i(?:'ve| have)? logged|logged)\b.{0,40}\b(?:glasses?|shot|dose|water|entry)\b/i,
     requiredTools: ["log_artifact_entry"],
+  },
+  {
+    id: "tracker_created",
+    claim:
+      /\b(?:i(?:'ve| have)? (?:set up|created|started)|set up|created)\b.{0,48}\b(?:tracker|tracking)\b/i,
+    requiredTools: ["create_profile_artifact"],
+    repair: "setup_without_tool",
+    writeClaim: true,
+  },
+  {
+    id: "habit_started",
+    claim:
+      /\b(?:i(?:'ve| have)? (?:set up|started)|started)\b.{0,48}\b(?:habit|daily check(?:-in)?|workflow)\b/i,
+    requiredTools: ["start_habit_workflow", "start_workflow"],
+    repair: "setup_without_tool",
+    writeClaim: true,
+  },
+  {
+    id: "guide_saved",
+    claim: /\b(?:i(?:'ve| have)? (?:saved|created)|saved)\b.{0,40}\b(?:guide|how-?to|instructions)\b/i,
+    requiredTools: ["create_guide"],
+    repair: "setup_without_tool",
+    writeClaim: true,
+  },
+  {
+    id: "accountability_started",
+    claim:
+      /\b(?:i(?:'ve| have)? (?:set up|started)|started)\b.{0,48}\b(?:accountability|pact|check-?in partner)\b/i,
+    requiredTools: ["start_accountability"],
+    repair: "setup_without_tool",
+    writeClaim: true,
   },
 ];
 
@@ -237,6 +275,9 @@ export async function reconcileReplyClaims(params: {
   state: DoeDtcToolTurnState;
   toolsExecuted: DoeDtcAgentToolExecutionRecord[];
   snapshot?: DoeDtcProfileSnapshot;
+  inboundContext?: AgentInboundContext & {
+    pendingCommitTool?: string | null;
+  };
 }): Promise<{
   replyText: string;
   listenUrl?: string;
@@ -249,7 +290,32 @@ export async function reconcileReplyClaims(params: {
   let profileUrl = params.state.profileUrl;
   let sessionUrl = params.state.sessionUrl;
   let guideUrl = params.state.guideUrl;
-  if (params.state.chartWriteProbe) {
+
+  if (params.inboundContext) {
+    if (
+      replyInventsAbstainStereotype({
+        replyText,
+        inboundText: params.inboundContext.inboundText,
+        priorInboundBodies: params.inboundContext.priorInboundBodies ?? [],
+        threadReplyParentBody: params.inboundContext.threadReplyParentBody,
+      })
+    ) {
+      replyText = stripInventedAbstainStereotype(replyText);
+    }
+  }
+
+  if (
+    params.state.chartWriteProbe &&
+    !shouldSuppressChartWriteProbe({
+      inboundText: params.inboundText,
+      probe: params.state.chartWriteProbe,
+      priorInboundBodies: params.inboundContext?.priorInboundBodies,
+      lastOutboundBody: params.inboundContext?.lastOutboundBody,
+      threadReplyParentBody: params.inboundContext?.threadReplyParentBody,
+      pendingCommitTool: params.inboundContext?.pendingCommitTool,
+      rawInboundText: params.inboundContext?.inboundText,
+    })
+  ) {
     return {
       replyText: params.state.chartWriteProbe,
       listenUrl,
@@ -338,6 +404,29 @@ export async function reconcileReplyClaims(params: {
     } else if (entry.repair === "dont_ask_title") {
       replyText =
         "I already have the test from the photo. You don't need to give me a title. That's the test name, not your name.";
+    } else if (entry.repair === "setup_without_tool") {
+      if (
+        looksLikeSendFollowUp(params.inboundText) ||
+        askedForPrivateAppLink(params.inboundText) ||
+        interpretBuildIntent({ inboundText: params.inboundText, snapshot: params.snapshot }) === "tracker"
+      ) {
+        replyText = "I'll send your link in a moment.";
+      } else {
+        replyText = "That is not saved yet. Say the word and I will set it up for real.";
+      }
+      if (entry.id === "tracker_created") {
+        profileUrl = buildPrivateAppLink({
+          careToken: params.user.care_token,
+          inboundText: params.inboundText,
+          snapshot: params.snapshot,
+          tab: "trackers",
+        });
+      } else if (entry.id === "guide_saved") {
+        const match = findMatchingGuide(params.inboundText, params.snapshot?.guides);
+        if (match) {
+          guideUrl = doeDtcGuideUrl(params.user.care_token, { guide: match.id });
+        }
+      }
     }
   }
 

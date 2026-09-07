@@ -1,0 +1,33 @@
+.landing-emr-chat-scaler {
+  width: min(38vw, 420px);
+  max-width: none;
+  margin-inline: auto;
+}
+
+.landing-emr-chat-stage {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 24px;
+  box-shadow: 0 14px 34px -8px rgba(15, 23, 42, 0.38);
+}
+
+.landing-emr-chat-canvas {
+  width: 620px;
+  height: 1032px;
+  transform-origin: top left;
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+}
+
+.landing-emr-chat-canvas * {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (min-width: 1024px) {
+  .landing-emr-chat-scaler {
+    width: min(34vw, 480px);
+  }
+}

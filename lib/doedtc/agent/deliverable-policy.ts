@@ -115,7 +115,7 @@ export function extractSendableSurface(text: string): { noun: string } | null {
 }
 
 const SHORT_DELIVERABLE_FOLLOWUP_RE =
-  /^(?:\?+|the link|send it|send that|that link|link please|please send(?: it)?)\.?$/i;
+  /^(?:\?+|the link|send it|send that|send link|that link|link please|please send(?: it)?)\.?$/i;
 
 export function isShortDeliverableFollowUp(text: string): boolean {
   const trimmed = text.trim();

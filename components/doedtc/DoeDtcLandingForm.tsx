@@ -5,7 +5,13 @@ import { useState } from "react";
 import { DoeDtcPhoneInput } from "@/components/doedtc/DoeDtcPhoneInput";
 import { DOEDTC_LANDING } from "@/lib/doedtc/doedtc-copy";
 
-export function DoeDtcLandingForm({ hideLabel = false }: { hideLabel?: boolean } = {}) {
+export function DoeDtcLandingForm({
+  hideLabel = false,
+  phoneInputId = "doedtc-phone",
+}: {
+  hideLabel?: boolean;
+  phoneInputId?: string;
+} = {}) {
   const [phone, setPhone] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [error, setError] = useState("");
@@ -44,7 +50,7 @@ export function DoeDtcLandingForm({ hideLabel = false }: { hideLabel?: boolean }
   return (
     <form className="doedtc-card" onSubmit={onSubmit}>
       <DoeDtcPhoneInput
-        id="doedtc-phone"
+        id={phoneInputId}
         label={hideLabel ? undefined : DOEDTC_LANDING.phoneLabel}
         value={phone}
         onChange={setPhone}

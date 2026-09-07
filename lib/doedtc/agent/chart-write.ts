@@ -1,4 +1,5 @@
 import { isIncidentalChartWrite } from "@/lib/doedtc/agent/deliverable-policy";
+import { inferTrackerTitleFromContext } from "@/lib/doedtc/agent/agent-inbound";
 import { doeDtcAppUrl } from "@/lib/doedtc/doedtc-copy";
 import { parseAffirmation } from "@/lib/doedtc/doedtc-pending";
 import type { DoeDtcAgentToolExecutionRecord } from "@/lib/doedtc/doedtc-agent-audit";
@@ -368,7 +369,16 @@ export function assessChartWrite(params: {
       return { complete: false, missing, probe: "What's the password?" };
     }
     case "create_profile_artifact": {
-      const title = firstString(args.title);
+      let title = firstString(args.title);
+      if (isVagueChartValue(title)) {
+        const continuing = inbound.match(/\(continuing:\s*([^)]+)\)/i)?.[1]?.trim();
+        const inferred =
+          inferTrackerTitleFromContext({
+            inboundText: continuing ? `${continuing}\n${inbound}` : inbound,
+            priorInboundBodies: [],
+          }) ?? continuing;
+        if (inferred && !isVagueChartValue(inferred)) title = inferred;
+      }
       if (!isVagueChartValue(title)) return { complete: true, missing: [], probe: "" };
       return {
         complete: false,
@@ -503,7 +513,16 @@ export function mergeChartWriteFollowUp(params: {
       break;
     }
     case "create_profile_artifact": {
-      if (isVagueChartValue(firstString(merged.title))) merged.title = cleaned;
+      if (isVagueChartValue(firstString(merged.title))) {
+        const continuing = inbound.match(/\(continuing:\s*([^)]+)\)/i)?.[1]?.trim();
+        const inferred =
+          inferTrackerTitleFromContext({
+            inboundText: continuing ? `${continuing}\n${inbound}` : inbound,
+            priorInboundBodies: [],
+          }) ?? continuing;
+        if (inferred && !isVagueChartValue(inferred)) merged.title = inferred;
+        else if (!isVagueChartValue(cleaned)) merged.title = cleaned;
+      }
       break;
     }
     case "log_artifact_entry": {

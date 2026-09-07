@@ -14,6 +14,7 @@ type DoeDtcPageShellProps = {
   landing?: boolean;
   profile?: boolean;
   doedtc2?: boolean;
+  landingEmr?: boolean;
 };
 
 export function DoeDtcPageShell({
@@ -21,6 +22,7 @@ export function DoeDtcPageShell({
   landing = false,
   profile = false,
   doedtc2 = false,
+  landingEmr = false,
 }: DoeDtcPageShellProps) {
   const useProfileChrome = !landing && !doedtc2;
   const showBrandFooter = landing || useProfileChrome || doedtc2;
@@ -32,7 +34,7 @@ export function DoeDtcPageShell({
 
   return (
     <div
-      className={`doedtc-root ${landing ? "doedtc-root--landing " : ""}${doedtc2 ? "doedtc-root--doedtc2 " : ""}${useProfileChrome ? "doedtc-root--profile " : ""}${showBrandFooter ? "doedtc-root--has-footer " : ""}${lora.variable} ${dmSans.className} ${dmSans.variable}`}
+      className={`doedtc-root ${landing ? "doedtc-root--landing " : ""}${doedtc2 ? "doedtc-root--doedtc2 " : ""}${landingEmr ? "doedtc-root--landing-emr " : ""}${useProfileChrome ? "doedtc-root--profile " : ""}${showBrandFooter ? "doedtc-root--has-footer " : ""}${lora.variable} ${dmSans.className} ${dmSans.variable}`}
       data-doedtc-variant={ready ? variant : "phone"}
       suppressHydrationWarning
     >
