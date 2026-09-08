@@ -47,17 +47,24 @@ html[data-doedtc-page]:has(.doedtc-root--landing-emr) body {
   pointer-events: none;
 }
 
+.doedtc-root--landing-emr .doedtc2-build {
+  --landing-emr-soap-hero: 0;
+}
+
 .doedtc-root--landing-emr .doedtc2-blue-panel {
   background-color: #2563eb;
-  background-image: linear-gradient(
-    168deg,
-    #1e40af 0%,
-    #1d4ed8 14%,
-    #2563eb 34%,
-    #3b82f6 58%,
-    #5394f8 78%,
-    #6ba3f7 100%
-  );
+  background-image:
+    linear-gradient(
+      180deg,
+      rgb(255 255 255 / calc(0.12 * (1 - var(--landing-emr-soap-hero, 0)))) 0%,
+      rgb(255 255 255 / 0) 28%,
+      rgb(255 255 255 / 0) 100%
+    ),
+    linear-gradient(180deg, #1d4ed8 0%, #2563eb 28%, #3b82f6 62%, #60a5fa 100%);
+  border: 1px solid rgb(255 255 255 / calc(0.14 * (1 - var(--landing-emr-soap-hero, 0))));
+  box-shadow:
+    inset 0 1px 0 rgb(15 23 42 / calc(0.18 * (1 - var(--landing-emr-soap-hero, 0)))),
+    inset 0 -1px 0 rgb(255 255 255 / calc(0.42 * (1 - var(--landing-emr-soap-hero, 0))));
 }
 
 .doedtc-root--landing-emr .doedtc2-landing {
@@ -87,10 +94,21 @@ html[data-doedtc-page]:has(.doedtc-root--landing-emr) body {
   --landing-emr-a1c-box-press: 0;
   --landing-emr-a1c-sheet-reveal: 0;
   --landing-emr-a1c-sheet-dock: 0;
+  --landing-emr-notes-tab-press: 0;
+  --landing-emr-notes-reveal: 0;
+  --landing-emr-note-row-press: 0;
+  --landing-emr-note-open: 0;
+  --landing-emr-soap-hero: 0;
+  --landing-emr-soap-lift: 0;
+  --landing-emr-soap-title: 0;
+  --landing-emr-soap-center-x: 0px;
+  --landing-emr-soap-title-top: clamp(4.75rem, 12vh, 8rem);
+  --landing-emr-left-copy-reveal: 0;
   --landing-emr-fab-scale: 0.88;
   --landing-emr-a1c-slide-in: 100;
   --landing-emr-a1c-dock-offset: 0px;
   --landing-emr-scroll-progress: 0;
+  --landing-emr-chart-scroll-build: 0;
 }
 
 .doedtc-root--landing-emr .doedtc2-landing::-webkit-scrollbar {
@@ -109,10 +127,6 @@ html[data-doedtc-page]:has(.doedtc-root--landing-emr) body {
 .doedtc-root--landing-emr .doedtc2-reveal--in {
   animation: doedtc2-unblur-up 2.15s cubic-bezier(0.16, 1, 0.3, 1)
     var(--doedtc2-reveal-delay, 0ms) both;
-}
-
-.doedtc-root--landing-emr .doedtc2-reveal--emr {
-  --doedtc2-reveal-delay: 920ms;
 }
 
 .doedtc-root--landing-emr .doedtc2-hero-title__line--emr-lockup {
@@ -165,7 +179,10 @@ html[data-doedtc-page]:has(.doedtc-root--landing-emr) body {
   height: min(38vh, 280px);
   border-radius: 999px;
   background: rgba(241, 245, 249, 0.58);
-  opacity: var(--landing-emr-nav-reveal, 0);
+  opacity: calc(
+    var(--landing-emr-nav-reveal, 0) *
+    (1 - var(--landing-emr-soap-hero, 0))
+  );
   transform: translateY(-50%);
   pointer-events: none;
   overflow: visible;
@@ -199,7 +216,9 @@ html[data-doedtc-page]:has(.doedtc-root--landing-emr) body {
 .doedtc-root--landing-emr .doedtc2-hero-title,
 .doedtc-root--landing-emr .landing-emr-scroll-sticky,
 .doedtc-root--landing-emr .landing-emr-dual-stage__chart-wrap,
+.doedtc-root--landing-emr .landing-emr-chart-segment--scroll,
 .doedtc-root--landing-emr .landing-emr-stage-copy,
+.doedtc-root--landing-emr .landing-emr-notes-nested-note,
 .doedtc-root--landing-emr .landing-emr-chart-stage,
 .doedtc-root--landing-emr .landing-emr-chart-chat-slot,
 .doedtc-root--landing-emr .landing-emr-chart-a1c-slot,
@@ -209,7 +228,7 @@ html[data-doedtc-page]:has(.doedtc-root--landing-emr) body {
 }
 
 .landing-emr-scroll-track {
-  min-height: calc(100svh + 580vh);
+  min-height: calc(100svh + 1180vh);
   position: relative;
   width: 100%;
 }
@@ -265,7 +284,21 @@ html[data-doedtc-page]:has(.doedtc-root--landing-emr) body {
 
 .landing-emr-stage-copy--left {
   inset: 0 50% 0 0;
-  opacity: var(--landing-emr-a1c-sheet-dock, 0);
+  opacity: calc(
+    var(--landing-emr-left-copy-reveal, 0) *
+    (1 - var(--landing-emr-soap-hero, 0))
+  );
+}
+
+.landing-emr-stage-copy--soap {
+  display: flex;
+  inset: auto 0 auto 0;
+  top: var(--landing-emr-soap-title-top, 18vh);
+  z-index: 2;
+  height: auto;
+  justify-content: flex-start;
+  padding-top: 0;
+  opacity: var(--landing-emr-soap-title, 0);
 }
 
 .landing-emr-stage-copy__line {
@@ -324,7 +357,7 @@ html[data-doedtc-page]:has(.doedtc-root--landing-emr) body {
   align-self: center;
   display: inline-flex;
   align-items: center;
-  margin-left: 0.22rem;
+  margin-left: 0.65rem;
   font-size: clamp(1.75rem, 2.35vw, 2.05rem);
   font-weight: 400;
   line-height: 1;
@@ -370,7 +403,7 @@ html[data-doedtc-page]:has(.doedtc-root--landing-emr) body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-right: 0.22rem;
+  margin-right: 0.65rem;
   min-height: 2.75rem;
   padding: 0 1.15rem;
   border-radius: 10px;
@@ -414,7 +447,7 @@ html[data-doedtc-page]:has(.doedtc-root--landing-emr) body {
   }
 
   .landing-emr-scroll-track {
-    min-height: calc(100svh + 620vh);
+    min-height: calc(100svh + 1260vh);
   }
 
   .landing-emr-stage-copy {
@@ -436,12 +469,12 @@ html[data-doedtc-page]:has(.doedtc-root--landing-emr) body {
   }
 
   .landing-emr-top-nav__brand {
-    margin-left: 0.28rem;
+    margin-left: 0.85rem;
     font-size: 2.05rem;
   }
 
   .landing-emr-top-nav__cta {
-    margin-right: 0.28rem;
+    margin-right: 0.85rem;
     min-height: 2.85rem;
     padding: 0 1.25rem;
     font-size: 0.9375rem;

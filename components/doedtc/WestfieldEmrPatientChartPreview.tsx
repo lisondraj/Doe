@@ -1,37 +1,104 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { WestfieldEmrChartChatCanvas } from "@/components/doedtc/WestfieldEmrChartChatPreview";
 import { WestfieldEmrA1cSheet } from "@/components/doedtc/WestfieldEmrA1cSheet";
+import { WestfieldEmrNotesPanel } from "@/components/doedtc/WestfieldEmrNotesPanel";
 import { WestfieldEmrResultsPanel } from "@/components/doedtc/WestfieldEmrResultsPanel";
 import { lora } from "@/lib/home/fonts";
 import "@/lib/doedtc/westfield-emr-chart.css";
 
-const CHART_TABS = ["Summary", "Timeline", "Notes", "Orders", "Results", "Meds"] as const;
+export const CHART_TABS = ["Prep", "Snapshot", "Notes", "Results", "Billing"] as const;
 
-function ChartSidebarTabs() {
+const LOAD_SEGMENT_BASE_DELAY_MS = 920;
+const LOAD_SEGMENT_STAGGER_MS = 150;
+
+function chartSegmentProps({
+  segment,
+  phase,
+  order,
+  buildIn,
+}: {
+  segment: string;
+  phase: "load" | "scroll";
+  order?: number;
+  buildIn: boolean;
+}): { className: string; style?: CSSProperties } {
+  const className = [
+    "landing-emr-chart-segment",
+    `landing-emr-chart-segment--${segment}`,
+    phase === "load" ? "landing-emr-chart-segment--load" : "landing-emr-chart-segment--scroll",
+    phase === "load" && buildIn ? "landing-emr-chart-segment--in" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const style: CSSProperties | undefined =
+    phase === "load" && order != null
+      ? ({
+          ["--landing-emr-segment-delay" as string]: `${LOAD_SEGMENT_BASE_DELAY_MS + order * LOAD_SEGMENT_STAGGER_MS}ms`,
+        } as CSSProperties)
+      : undefined;
+
+  return { className, style };
+}
+
+export function ChartSidebarTabs({
+  onTabClick,
+}: {
+  onTabClick?: (tab: (typeof CHART_TABS)[number]) => void;
+}) {
   return (
-    <div className="flex flex-col w-full shrink-0 [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] p-[6px] rounded-2xl overflow-clip relative -mt-7 [box-shadow:#FFFFFF29_0px_1px_0px_inset] bg-[#FFFFFF1F] border border-solid border-[#FFFFFF38]">
-      {CHART_TABS.map((label) => {
+    <div className="landing-emr-chart-sidebar-tabs flex flex-col w-full shrink-0 [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] p-[6px] rounded-2xl overflow-clip relative -mt-7 [box-shadow:#FFFFFF29_0px_1px_0px_inset] bg-[#FFFFFF1F] border border-solid border-[#FFFFFF38]">
+      {CHART_TABS.map((label, index) => {
         const isResults = label === "Results";
-        const isSummary = label === "Summary";
+        const isPrep = label === "Prep";
+        const isNotes = label === "Notes";
+        const isSnapshot = label === "Snapshot";
+        const isBilling = label === "Billing";
         const tabClass = isResults
           ? "landing-emr-chart-tab landing-emr-chart-tab--results"
-          : isSummary
-            ? "landing-emr-chart-tab landing-emr-chart-tab--summary"
-            : "landing-emr-chart-tab";
-        const labelClass = isResults || isSummary
-          ? "landing-emr-chart-tab__label"
-          : "font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#FFFFFFB8] text-sm leading-[18px]";
+          : isPrep
+            ? "landing-emr-chart-tab landing-emr-chart-tab--prep"
+            : isNotes
+              ? "landing-emr-chart-tab landing-emr-chart-tab--notes"
+              : isSnapshot
+                ? "landing-emr-chart-tab landing-emr-chart-tab--snapshot"
+                : isBilling
+                  ? "landing-emr-chart-tab landing-emr-chart-tab--billing"
+                  : "landing-emr-chart-tab";
+        const labelClass =
+          isResults || isPrep || isNotes || isSnapshot || isBilling
+            ? "landing-emr-chart-tab__label"
+            : "font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#FFFFFFB8] text-sm leading-[18px]";
 
-        return (
-          <div
-            key={label}
-            className={`flex items-center h-[40px] shrink-0 pr-[14px] pl-[10px] rounded-[10px] gap-[10px] ${tabClass}`}
-          >
+        const className = `landing-emr-chart-sidebar-tab flex items-center h-[40px] shrink-0 pr-[14px] pl-[10px] rounded-[10px] gap-[10px] ${tabClass}${onTabClick ? " productemr-chart-tab-btn" : ""}`;
+        const style = { ["--landing-emr-tab-index" as string]: String(index) };
+        const inner = (
+          <>
             <div className="landing-emr-chart-tab__indicator w-[3px] h-[18px] shrink-0 rounded-[999px]" />
             <div className={labelClass}>{label}</div>
+          </>
+        );
+
+        if (onTabClick) {
+          return (
+            <button
+              key={label}
+              type="button"
+              className={className}
+              style={style}
+              onClick={() => onTabClick(label)}
+            >
+              {inner}
+            </button>
+          );
+        }
+
+        return (
+          <div key={label} className={className} style={style}>
+            {inner}
           </div>
         );
       })}
@@ -39,10 +106,79 @@ function ChartSidebarTabs() {
   );
 }
 
-function WestfieldEmrPatientChartCanvas() {
+export function WestfieldEmrPatientChartCanvas({
+  buildIn,
+  onTabClick,
+  coveragePanel,
+  onA1cClick,
+  embedded = false,
+}: {
+  buildIn: boolean;
+  onTabClick?: (tab: (typeof CHART_TABS)[number]) => void;
+  coveragePanel?: ReactNode;
+  onA1cClick?: () => void;
+  embedded?: boolean;
+}) {
+  const chromeSegment = chartSegmentProps({ segment: "chrome", phase: "load", order: 10, buildIn });
+  const railSegment = chartSegmentProps({ segment: "rail", phase: "load", order: 10, buildIn });
+  const workspaceSegment = chartSegmentProps({ segment: "workspace", phase: "load", order: 2, buildIn });
+  const sidebarSegment = chartSegmentProps({ segment: "sidebar", phase: "load", order: 3, buildIn });
+  const mosaicSurfaceSegment = chartSegmentProps({ segment: "mosaic-surface", phase: "load", order: 4, buildIn });
+  const mosaicRecommendationsLeadSegment = chartSegmentProps({
+    segment: "mosaic-recommendations-lead",
+    phase: "load",
+    order: 5,
+    buildIn,
+  });
+  const mosaicLabsLeadSegment = chartSegmentProps({ segment: "mosaic-labs-lead", phase: "load", order: 6, buildIn });
+  const mosaicRecommendationsMidSegment = chartSegmentProps({
+    segment: "mosaic-recommendations-mid",
+    phase: "load",
+    order: 7,
+    buildIn,
+  });
+  const mosaicLabsMidSegment = chartSegmentProps({
+    segment: "mosaic-labs-mid",
+    phase: "load",
+    order: 8,
+    buildIn,
+  });
+  const mosaicRightColumnSegment = chartSegmentProps({
+    segment: "mosaic-right-column",
+    phase: "load",
+    order: 9,
+    buildIn,
+  });
+  const sidebarTailSegment = chartSegmentProps({ segment: "sidebar-tail", phase: "scroll", buildIn });
+  const mosaicRecommendationsTailSegment = chartSegmentProps({
+    segment: "mosaic-recommendations-tail",
+    phase: "scroll",
+    buildIn,
+  });
+  const mosaicLabsTailSegment = chartSegmentProps({ segment: "mosaic-labs-tail", phase: "scroll", buildIn });
+  const mosaicBottomLeftSegment = chartSegmentProps({ segment: "mosaic-bottom-left", phase: "scroll", buildIn });
+  const mosaicBottomRightSegment = chartSegmentProps({ segment: "mosaic-bottom-right", phase: "scroll", buildIn });
+  const mosaicRightConditionsTailSegment = chartSegmentProps({
+    segment: "mosaic-right-conditions-tail",
+    phase: "scroll",
+    buildIn,
+  });
+
   return (
-    <div className="landing-emr-chart-base [font-synthesis:none] wrap-anywhere flex overflow-clip w-[1920px] h-[1080px] bg-[#2563EB] antialiased text-xs leading-[16px]" style={{ backgroundImage: 'linear-gradient(in oklab 180deg, oklab(48.8% -0.021 -0.216) 0%, oklab(54.6% -0.027 -0.214) 28%, oklab(62.3% -0.033 -0.185) 62%, oklab(71.4% -0.038 -0.138) 100%)' }}>
-      <div className="flex flex-col w-[72px] h-[1080px] justify-center items-center shrink-0 overflow-visible relative px-[12px]">
+    <div
+      className={`landing-emr-chart-base [font-synthesis:none] wrap-anywhere flex overflow-clip antialiased text-xs leading-[16px] relative ${
+        embedded ? "w-full h-full" : "w-[1920px] h-[1080px]"
+      }`}
+    >
+      {embedded ? null : (
+        <div
+          className={`landing-emr-chart-chrome landing-emr-glass-blue landing-emr-glass-blue--flat ${chromeSegment.className}`}
+          style={chromeSegment.style}
+          aria-hidden
+        />
+      )}
+      {embedded ? null : (
+      <div className={`landing-emr-chart-rail flex flex-col w-[72px] h-[1080px] justify-center items-center shrink-0 overflow-visible relative px-[12px] ${railSegment.className}`} style={railSegment.style}>
         <div className="flex flex-col items-center shrink-0 gap-[32px] overflow-visible">
           <div className="flex items-center justify-center shrink-0 size-[40px]">
             <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: '0' }}>
@@ -91,9 +227,10 @@ function WestfieldEmrPatientChartCanvas() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col h-[1080px] pr-[14px] pl-[4px] grow py-[14px]">
-        <div className="flex w-[1831px] rounded-[28px] overflow-clip gap-[16px] h-full grow pt-[16px] px-[16px] [box-shadow:#0F172A14_0px_12px_40px] bg-[#F8F9FA]">
-          <div className="flex flex-col w-[520px] h-[1020px] justify-between pt-[22px] pb-[18px] rounded-3xl relative shrink-0 px-[20px] [box-shadow:#0F172A2E_0px_1px_0px_inset,#FFFFFF6B_0px_-1px_0px_inset,#2563EB47_0px_6px_18px,#2563EB24_0px_2px_8px] bg-[#2563EB] bg-origin-border border border-solid border-[#FFFFFF24]" style={{ backgroundImage: 'linear-gradient(in oklab 180deg, oklab(48.8% -0.021 -0.216) 0%, oklab(54.6% -0.027 -0.214) 28%, oklab(62.3% -0.033 -0.185) 62%, oklab(71.4% -0.038 -0.138) 100%)' }}>
+      )}
+      <div className={`flex flex-col grow ${embedded ? "h-full p-0" : "h-[1080px] pr-[14px] pl-[4px] py-[14px]"}`}>
+        <div className={`landing-emr-raised flex rounded-[28px] overflow-clip gap-[16px] h-full grow p-[16px] ${embedded ? "w-full" : "w-[1831px]"} ${workspaceSegment.className}`} style={workspaceSegment.style}>
+          <div className={`landing-emr-chart-sidebar landing-emr-glass-blue flex flex-col w-[520px] h-full justify-between pt-[22px] pb-[18px] rounded-3xl relative shrink-0 px-[20px] bg-origin-border ${sidebarSegment.className}`} style={sidebarSegment.style}>
             <div className="flex items-center shrink-0 h-[22px] gap-[14px] absolute top-[22px] right-[20px] justify-end">
               <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: '0' }}>
                 <path d="M7.2 3.8H9.6L11 8.2L9.1 9.3C9.7 10.6 10.8 11.8 12.2 12.6L13.4 10.8L17.8 12.2V14.6C17.8 15.4 17.1 16.1 16.2 16.2C10.8 16.8 5.8 11.9 6.4 6.6C6.5 5.7 7.2 5 8 5" fill="none" stroke="#FFFFFF" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
@@ -149,60 +286,61 @@ function WestfieldEmrPatientChartCanvas() {
                     Dr. Roberts
                   </div>
                 </div>
-                <div className="flex flex-col w-full shrink-0 pt-[49px] gap-[12px] border-t border-t-solid border-t-[#FFFFFF38]">
-                  <div className="flex w-full">
-                    <div className="flex flex-col w-[239px] pr-[16px] gap-[4px] h-[82px] shrink-0">
-                      <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#FFFFFF9E] text-[11px] leading-[14px]">
-                        POTASSIUM
+                <div className={`flex flex-col w-full shrink-0 gap-[16px] ${sidebarTailSegment.className}`} style={sidebarTailSegment.style}>
+                  <div className="flex flex-col w-full shrink-0 pt-[49px] gap-[12px] border-t border-t-solid border-t-[#FFFFFF38]">
+                    <div className="flex w-full">
+                      <div className="flex flex-col w-[239px] pr-[16px] gap-[4px] h-[82px] shrink-0">
+                        <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#FFFFFF9E] text-[11px] leading-[14px]">
+                          POTASSIUM
+                        </div>
+                        <div className="flex items-baseline gap-[8px]">
+                          <div className="tracking-[-0.04em] font-['Inter-Regular','Inter',system-ui,sans-serif] text-white text-5xl leading-[44px]">
+                            5.8
+                          </div>
+                          <div className="font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#FFD0CC] text-[13px] leading-[16px]">
+                            High
+                          </div>
+                        </div>
+                        <div className="font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#FFFFFFBF] text-[13px] leading-[16px]">
+                          Consider holding lisinopril
+                        </div>
                       </div>
-                      <div className="flex items-baseline gap-[8px]">
+                      <div className="landing-emr-chart-a1c-box flex flex-col pl-[16px] gap-[4px] rounded-[12px]">
+                        <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#FFFFFF9E] text-[11px] leading-[14px]">
+                          A1C
+                        </div>
                         <div className="tracking-[-0.04em] font-['Inter-Regular','Inter',system-ui,sans-serif] text-white text-5xl leading-[44px]">
-                          5.8
+                          7.4
                         </div>
-                        <div className="font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#FFD0CC] text-[13px] leading-[16px]">
-                          High
+                        <div className="font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#FFFFFFBF] text-[13px] leading-[16px]">
+                          Above goal of 6.5
                         </div>
-                      </div>
-                      <div className="font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#FFFFFFBF] text-[13px] leading-[16px]">
-                        Consider holding lisinopril
-                      </div>
-                    </div>
-                    <div className="w-px self-stretch shrink-0 bg-[#FFFFFF38]" />
-                    <div
-                      className="landing-emr-chart-a1c-box flex flex-col pl-[16px] gap-[4px] rounded-[12px]"
-                    >
-                      <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#FFFFFF9E] text-[11px] leading-[14px]">
-                        A1C
-                      </div>
-                      <div className="tracking-[-0.04em] font-['Inter-Regular','Inter',system-ui,sans-serif] text-white text-5xl leading-[44px]">
-                        7.4
-                      </div>
-                      <div className="font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#FFFFFFBF] text-[13px] leading-[16px]">
-                        Above goal of 6.5
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex flex-col w-full shrink-0 pt-[16px] gap-[8px] border-t border-t-solid border-t-[#FFFFFF38]">
-                  <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-white text-[28px] leading-[32px]">
-                    Home sugars running high
-                  </div>
-                  <div className="font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#FFFFFFB3] text-sm leading-[18px]">
-                    Review the glucometer log today
+                  <div className="flex flex-col w-full shrink-0 pt-[16px] gap-[8px] border-t border-t-solid border-t-[#FFFFFF38]">
+                    <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-white text-[28px] leading-[32px]">
+                      Home sugars running high
+                    </div>
+                    <div className="font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#FFFFFFB3] text-sm leading-[18px]">
+                      Review the glucometer log today
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            <ChartSidebarTabs />
+            <div className="landing-emr-chart-segment--sidebar-tabs w-full shrink-0">
+              <ChartSidebarTabs onTabClick={onTabClick} />
+            </div>
           </div>
-          <div className="relative w-[1330px] h-[1036px] shrink-0">
+          <div className="relative w-0 min-w-0 min-h-0 grow h-full">
             <div className="landing-emr-chart-summary-layer absolute inset-0">
-              <div className="flex h-[1036px] gap-[20px] rounded-[20px] overflow-clip w-full bg-[#F8F9FA]">
+              <div className={`landing-emr-raised landing-emr-raised--tray flex h-[1036px] gap-[20px] rounded-[20px] overflow-clip w-full ${mosaicSurfaceSegment.className}`} style={mosaicSurfaceSegment.style}>
             <div className="flex pr-[36px] gap-[20px] h-[1020px] overflow-clip w-[1302px] shrink-0">
               <div className="flex flex-col gap-[20px] h-full w-[831px] grow min-h-[0px]">
                 <div className="flex w-full gap-[16px] grow min-h-[0px] h-[0px]">
-                  <div className="flex flex-col justify-between w-[0px] grow min-h-[0px] h-full [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] p-[24px] rounded-[20px] bg-[#2563EB] bg-origin-border border border-solid border-[#FFFFFF24]" style={{ backgroundImage: 'linear-gradient(in oklab 180deg, oklab(48.8% -0.021 -0.216) 0%, oklab(54.6% -0.027 -0.214) 28%, oklab(62.3% -0.033 -0.185) 62%, oklab(71.4% -0.038 -0.138) 100%)' }}>
-                    <div className="flex items-end w-[249px] flex-col gap-[4px]">
+                  <div className="landing-emr-glass-blue flex flex-col justify-between w-[0px] grow min-h-[0px] h-full [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] p-[24px] rounded-[20px] bg-origin-border">
+                    <div className={`flex items-end w-[249px] flex-col gap-[4px] ${mosaicRecommendationsLeadSegment.className}`} style={mosaicRecommendationsLeadSegment.style}>
                       <div className="tracking-[-0.03em] w-[248px] h-[64px] shrink-0 font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-white text-[28px] leading-[32px]">
                         Recommendations from last visit
                       </div>
@@ -211,25 +349,30 @@ function WestfieldEmrPatientChartCanvas() {
                       </div>
                     </div>
                     <div className="flex flex-col w-full gap-[14px]">
-                      <div className="tracking-[-0.02em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-white text-xl leading-[24px]">
-                        Continue metformin
+                      <div className={`flex flex-col w-full gap-[14px] ${mosaicRecommendationsMidSegment.className}`} style={mosaicRecommendationsMidSegment.style}>
+                        <div className="tracking-[-0.02em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-white text-xl leading-[24px]">
+                          Continue metformin
+                        </div>
+                        <div className="tracking-[-0.02em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-white text-xl leading-[24px]">
+                          Review home glucose log
+                        </div>
                       </div>
-                      <div className="tracking-[-0.02em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-white text-xl leading-[24px]">
-                        Review home glucose log
-                      </div>
-                      <div className="tracking-[-0.02em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-white text-xl leading-[24px]">
-                        Repeat A1c in 3 months
+                      <div className={`flex flex-col w-full gap-[14px] ${mosaicRecommendationsTailSegment.className}`} style={mosaicRecommendationsTailSegment.style}>
+                        <div className="tracking-[-0.02em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-white text-xl leading-[24px]">
+                          Repeat A1c in 3 months
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-between w-[0px] grow min-h-[0px] h-full [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] p-[24px] rounded-[20px] bg-white" style={{ backgroundImage: 'linear-gradient(in oklab 180deg, oklab(91.9% -0.009 -0.032) 0%, oklab(96.6% -0.002 -0.016) 46%, oklab(100% 0 0) 100%)' }}>
+                  <div className="landing-emr-raised landing-emr-raised--tile flex flex-col justify-between w-[0px] grow min-h-[0px] h-full [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] p-[24px] rounded-[20px]">
+                    <div className={`flex flex-col w-full shrink-0 ${mosaicLabsLeadSegment.className}`} style={mosaicLabsLeadSegment.style}>
                     <div className="flex items-baseline justify-between w-full shrink-0">
                       <div className="font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#8E8E93] text-[13px] leading-[16px]">
                         5 Sep
                       </div>
                     </div>
                     <div className="flex flex-col w-full shrink-0 h-[210px] pt-[6px] gap-[10px] -mt-66.5">
-                      <div className="flex w-full items-baseline justify-between px-[2px]">
+                      <div className="flex w-full flex-col items-end gap-[4px] px-[2px]">
                         <div className="flex items-baseline gap-[4px]">
                           <div className="text-[22px] leading-[100%] tracking-[-0.03em] inline-block font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#1C1C1E]">
                             7.4
@@ -301,74 +444,68 @@ function WestfieldEmrPatientChartCanvas() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-col w-full shrink-0 [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] overflow-visible -mt-66.5">
-                      <div className="flex w-full border-b border-b-solid border-b-[#E5E5EA]">
-                        <div className="flex flex-col w-[0px] grow pt-[14px] pr-[16px] pb-[12px] pl-[14px] gap-[4px]">
-                          <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
-                            K
-                          </div>
-                          <div className="flex items-baseline gap-[8px]">
-                            <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-[26px] leading-[30px]">
-                              5.8
-                            </div>
-                            <div className="font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#5A5A5A] text-[13px] leading-[16px]">
-                              High
-                            </div>
-                          </div>
+                    </div>
+                    <div className={`grid w-full shrink-0 grid-cols-2 gap-[8px] overflow-visible -mt-66.5 ${mosaicLabsMidSegment.className}`} style={mosaicLabsMidSegment.style}>
+                      <div className="landing-emr-inset-box landing-emr-inset-box--metric">
+                        <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
+                          K
                         </div>
-                        <div className="w-px self-stretch shrink-0 bg-[#E5E5EA]" />
-                        <div className="flex flex-col w-[0px] grow pt-[14px] pr-[14px] pb-[12px] pl-[16px] gap-[4px]">
-                          <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
-                            A1C
-                          </div>
+                        <div className="flex items-baseline gap-[8px]">
                           <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-[26px] leading-[30px]">
-                            7.4
+                            5.8
+                          </div>
+                          <div className="font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#5A5A5A] text-[13px] leading-[16px]">
+                            High
                           </div>
                         </div>
                       </div>
-                      <div className="flex w-full border-b border-b-solid border-b-[#E5E5EA]">
-                        <div className="flex flex-col w-[0px] grow pr-[16px] pl-[14px] gap-[4px] py-[12px]">
-                          <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
-                            EGFR
-                          </div>
-                          <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-[26px] leading-[30px]">
-                            52
-                          </div>
+                      <div className="landing-emr-inset-box landing-emr-inset-box--metric">
+                        <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
+                          A1C
                         </div>
-                        <div className="w-px self-stretch shrink-0 bg-[#E5E5EA]" />
-                        <div className="flex flex-col w-[0px] grow pr-[14px] pl-[16px] gap-[4px] py-[12px]">
-                          <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
-                            CR
-                          </div>
-                          <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-[26px] leading-[30px]">
-                            1.2
-                          </div>
+                        <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-[26px] leading-[30px]">
+                          7.4
                         </div>
                       </div>
-                      <div className="flex w-full">
-                        <div className="flex flex-col w-[0px] grow pt-[12px] pr-[16px] pb-[14px] pl-[14px] gap-[4px]">
-                          <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
-                            LDL
-                          </div>
-                          <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-[26px] leading-[30px]">
-                            98
-                          </div>
+                      <div className="landing-emr-inset-box landing-emr-inset-box--metric">
+                        <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
+                          EGFR
                         </div>
-                        <div className="w-px self-stretch shrink-0 bg-[#E5E5EA]" />
-                        <div className="flex flex-col w-[0px] grow pt-[12px] pr-[14px] pb-[14px] pl-[16px] gap-[4px]">
-                          <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
-                            GLUCOSE
-                          </div>
-                          <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-[26px] leading-[30px]">
-                            142
-                          </div>
+                        <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-[26px] leading-[30px]">
+                          52
+                        </div>
+                      </div>
+                      <div className="landing-emr-inset-box landing-emr-inset-box--metric">
+                        <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
+                          CR
+                        </div>
+                        <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-[26px] leading-[30px]">
+                          1.2
+                        </div>
+                      </div>
+                    </div>
+                    <div className={`grid w-full shrink-0 grid-cols-2 gap-[8px] overflow-visible -mt-66.5 ${mosaicLabsTailSegment.className}`} style={mosaicLabsTailSegment.style}>
+                      <div className="landing-emr-inset-box landing-emr-inset-box--metric">
+                        <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
+                          LDL
+                        </div>
+                        <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-[26px] leading-[30px]">
+                          98
+                        </div>
+                      </div>
+                      <div className="landing-emr-inset-box landing-emr-inset-box--metric">
+                        <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
+                          GLUCOSE
+                        </div>
+                        <div className="tracking-[-0.03em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-[26px] leading-[30px]">
+                          142
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex w-full gap-[16px] grow min-h-[0px] h-[0px]">
-                  <div className="flex flex-col justify-between w-[0px] grow min-h-[0px] h-full [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] p-[24px] rounded-[20px] bg-white" style={{ backgroundImage: 'linear-gradient(in oklab 90deg, oklab(93% -0.006 -0.029) 0%, oklab(97.5% -0.001 -0.011) 55%, oklab(100% 0 0) 100%)' }}>
+                  <div className={`landing-emr-raised landing-emr-raised--tile flex flex-col justify-between w-[0px] grow min-h-[0px] h-full [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] p-[24px] rounded-[20px] ${mosaicBottomLeftSegment.className}`} style={mosaicBottomLeftSegment.style}>
                     <div className="flex w-full justify-between">
                       <div className="flex flex-col gap-[2px]">
                         <div className="tracking-[0.06em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
@@ -396,7 +533,7 @@ function WestfieldEmrPatientChartCanvas() {
                       </div>
                     </div>
                     <div className="flex flex-col w-full grow min-h-[0px] justify-center pt-[8px] pb-[4px] gap-[10px]">
-                      <div className="flex w-full items-baseline justify-between px-[2px]">
+                      <div className="flex w-full flex-col items-end gap-[4px] px-[2px]">
                         <div className="flex items-baseline gap-[6px]">
                           <div className="text-[22px] leading-[100%] tracking-[-0.03em] inline-block font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#1C1C1E]">
                             182
@@ -470,14 +607,16 @@ function WestfieldEmrPatientChartCanvas() {
                         </div>
                       </div>
                     </div>
-                    <div className="[letter-spacing:-0.05em] mt-auto h-[83px] shrink-0 font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#1C1C1E] text-7xl leading-[64px]">
-                      138/84
-                    </div>
-                    <div className="tracking-[0.08em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
-                      BLOOD PRESSURE
+                    <div className="landing-emr-inset-box mt-auto shrink-0 flex flex-col gap-[6px] px-[14px] py-[10px]">
+                      <div className="[letter-spacing:-0.05em] h-[64px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#1C1C1E] text-7xl leading-[64px]">
+                        138/84
+                      </div>
+                      <div className="tracking-[0.08em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
+                        BLOOD PRESSURE
+                      </div>
                     </div>
                   </div>
-                  <div className="flex flex-col w-[0px] grow min-h-[0px] h-full [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] rounded-[20px] gap-[12px] overflow-clip p-[24px] bg-[#2563EB] bg-origin-border border border-solid border-[#FFFFFF24]" style={{ backgroundImage: 'linear-gradient(in oklab 180deg, oklab(48.8% -0.021 -0.216) 0%, oklab(54.6% -0.027 -0.214) 28%, oklab(62.3% -0.033 -0.185) 62%, oklab(71.4% -0.038 -0.138) 100%)' }}>
+                  <div className={`landing-emr-glass-blue flex flex-col w-[0px] grow min-h-[0px] h-full [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] rounded-[20px] gap-[12px] overflow-clip p-[24px] bg-origin-border ${mosaicBottomRightSegment.className}`} style={mosaicBottomRightSegment.style}>
                     <div className="flex items-start justify-between w-full shrink-0">
                       <div className="tracking-[0.08em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#FFFFFF9E] text-[11px] leading-[14px]">
                         PRIOR AUTH
@@ -564,12 +703,12 @@ function WestfieldEmrPatientChartCanvas() {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col w-[400px] shrink-0 gap-[16px] h-full min-h-[0px] grow">
-                <div className="flex flex-col w-full shrink-0 [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] py-[20px] px-[18px] rounded-[20px] gap-[14px] bg-white" style={{ backgroundImage: 'linear-gradient(in oklab 0deg, oklab(92.3% -0.008 -0.031) 0%, oklab(96.9% -0.001 -0.014) 50%, oklab(100% 0 0) 100%)' }}>
+              <div className={`flex flex-col w-[400px] shrink-0 gap-[16px] h-full min-h-[0px] ${mosaicRightColumnSegment.className}`} style={mosaicRightColumnSegment.style}>
+                <div className="landing-emr-raised landing-emr-raised--tile flex flex-col w-full shrink-0 [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] py-[20px] px-[18px] rounded-[20px] gap-[14px]">
                   <div className="tracking-[0.08em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#8E8E93] text-[11px] leading-[14px]">
                     APPOINTMENTS
                   </div>
-                  <div className="flex items-baseline justify-between w-full">
+                  <div className="landing-emr-inset-box landing-emr-inset-box--row">
                     <div className="font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#1C1C1E] text-lg leading-[22px]">
                       18 Aug
                     </div>
@@ -577,7 +716,7 @@ function WestfieldEmrPatientChartCanvas() {
                       Diabetes visit
                     </div>
                   </div>
-                  <div className="flex items-baseline justify-between w-full">
+                  <div className="landing-emr-inset-box landing-emr-inset-box--row">
                     <div className="font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#1C1C1E] text-lg leading-[22px]">
                       3 Jul
                     </div>
@@ -585,7 +724,7 @@ function WestfieldEmrPatientChartCanvas() {
                       CKD and BP
                     </div>
                   </div>
-                  <div className="flex items-baseline justify-between w-full">
+                  <div className="landing-emr-inset-box landing-emr-inset-box--row">
                     <div className="font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#1C1C1E] text-lg leading-[22px]">
                       12 May
                     </div>
@@ -594,7 +733,7 @@ function WestfieldEmrPatientChartCanvas() {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col w-full grow min-h-[0px] [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] rounded-[20px] gap-[22px] pt-[22px] pb-[18px] px-[20px] bg-[#2563EB] bg-origin-border border border-solid border-[#FFFFFF24]" style={{ backgroundImage: 'linear-gradient(in oklab 180deg, oklab(48.8% -0.021 -0.216) 0%, oklab(54.6% -0.027 -0.214) 28%, oklab(62.3% -0.033 -0.185) 62%, oklab(71.4% -0.038 -0.138) 100%)' }}>
+                <div className="landing-emr-glass-blue flex flex-col w-full grow min-h-[0px] [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] rounded-[20px] gap-[22px] pt-[22px] pb-[18px] px-[20px] bg-origin-border">
                   <div className="flex flex-col w-full shrink-0 gap-[8px]">
                     <div className="tracking-[-0.04em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-white text-4xl leading-[40px]">
                       Type 2 Diabetes
@@ -602,7 +741,9 @@ function WestfieldEmrPatientChartCanvas() {
                     <div className="w-full tracking-[-0.04em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-white text-4xl leading-[40px]">
                       Hypertension
                     </div>
-                    <div className="w-full tracking-[-0.04em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-white text-4xl leading-[40px]">
+                  </div>
+                  <div className={`flex flex-col w-full gap-[8px] grow min-h-[0px] ${mosaicRightConditionsTailSegment.className}`} style={mosaicRightConditionsTailSegment.style}>
+                    <div className="tracking-[-0.04em] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-white text-4xl leading-[40px]">
                       CKD Stage 3a
                     </div>
                     <div className="w-full pt-[10px]">
@@ -628,8 +769,6 @@ function WestfieldEmrPatientChartCanvas() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex flex-col w-full gap-[8px] grow min-h-[0px]">
                     <div className="tracking-[0.08em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#FFFFFF9E] text-[11px] leading-[14px]">
                       MEDICATIONS
                     </div>
@@ -685,28 +824,28 @@ function WestfieldEmrPatientChartCanvas() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex flex-col w-full min-h-[0px] gap-[8px] shrink-0">
-                    <div className="tracking-[0.08em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#FFFFFF9E] text-[11px] leading-[14px]">
-                      CARE
-                    </div>
-                    <div className="flex flex-col w-full min-h-[0px] [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] p-[6px] rounded-2xl overflow-clip [box-shadow:#FFFFFF29_0px_1px_0px_inset] bg-[#FFFFFF1F] border border-solid border-[#FFFFFF38]">
-                      <div className="flex items-center min-h-[44px] pr-[12px] pl-[10px] rounded-[10px] gap-[10px] h-[44px] shrink-0 bg-[#FFFFFF2E]">
-                        <div className="w-[3px] h-[18px] shrink-0 rounded-[999px] bg-white" />
-                        <div className="grow font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-white text-sm leading-[18px]">
-                          Eye exam
-                        </div>
+                    <div className="flex flex-col w-full min-h-[0px] gap-[8px] shrink-0">
+                      <div className="tracking-[0.08em] font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-[#FFFFFF9E] text-[11px] leading-[14px]">
+                        CARE
                       </div>
-                      <div className="flex items-center min-h-[44px] pr-[12px] pl-[10px] rounded-[10px] gap-[10px] h-[44px] shrink-0">
-                        <div className="w-[3px] h-[18px] shrink-0 opacity-[0] rounded-[999px]" />
-                        <div className="grow font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#FFFFFFC7] text-sm leading-[18px]">
-                          Pneumococcal
+                      <div className="flex flex-col w-full min-h-[0px] [border-image-source:none] [border-image-slice:100%] [border-image-width:1] [border-image-outset:0] [border-image-repeat:stretch] p-[6px] rounded-2xl overflow-clip [box-shadow:#FFFFFF29_0px_1px_0px_inset] bg-[#FFFFFF1F] border border-solid border-[#FFFFFF38]">
+                        <div className="flex items-center min-h-[44px] pr-[12px] pl-[10px] rounded-[10px] gap-[10px] h-[44px] shrink-0 bg-[#FFFFFF2E]">
+                          <div className="w-[3px] h-[18px] shrink-0 rounded-[999px] bg-white" />
+                          <div className="grow font-['Inter-Regular_SemiBold','Inter',system-ui,sans-serif] font-semibold text-white text-sm leading-[18px]">
+                            Eye exam
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center min-h-[44px] pr-[12px] pl-[10px] rounded-[10px] gap-[10px] h-[44px] shrink-0">
-                        <div className="w-[3px] h-[18px] shrink-0 opacity-[0] rounded-[999px]" />
-                        <div className="grow font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#FFFFFFC7] text-sm leading-[18px]">
-                          Foot exam
+                        <div className="flex items-center min-h-[44px] pr-[12px] pl-[10px] rounded-[10px] gap-[10px] h-[44px] shrink-0">
+                          <div className="w-[3px] h-[18px] shrink-0 opacity-[0] rounded-[999px]" />
+                          <div className="grow font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#FFFFFFC7] text-sm leading-[18px]">
+                            Pneumococcal
+                          </div>
+                        </div>
+                        <div className="flex items-center min-h-[44px] pr-[12px] pl-[10px] rounded-[10px] gap-[10px] h-[44px] shrink-0">
+                          <div className="w-[3px] h-[18px] shrink-0 opacity-[0] rounded-[999px]" />
+                          <div className="grow font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#FFFFFFC7] text-sm leading-[18px]">
+                            Foot exam
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -717,8 +856,16 @@ function WestfieldEmrPatientChartCanvas() {
             </div>
             </div>
             <div className="landing-emr-chart-results-layer absolute inset-0">
-              <WestfieldEmrResultsPanel />
+              <WestfieldEmrResultsPanel onA1cClick={onA1cClick} />
             </div>
+            <div className="landing-emr-chart-notes-layer absolute inset-0">
+              <WestfieldEmrNotesPanel />
+            </div>
+            {coveragePanel ? (
+              <div className="landing-emr-chart-coverage-layer productemr-coverage-layer absolute inset-0">
+                {coveragePanel}
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -746,6 +893,18 @@ function AiSparkIcon() {
 export function WestfieldEmrPatientChartPreview() {
   const scalerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [buildIn, setBuildIn] = useState(false);
+
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setBuildIn(true);
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => setBuildIn(true));
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   useEffect(() => {
     const node = scalerRef.current;
@@ -777,7 +936,7 @@ export function WestfieldEmrPatientChartPreview() {
         }}
       >
         <div className={`landing-emr-chart-canvas ${lora.variable}`} style={{ transform: `scale(${scale})` }}>
-          <WestfieldEmrPatientChartCanvas />
+          <WestfieldEmrPatientChartCanvas buildIn={buildIn} />
           <div className="landing-emr-chart-dim" aria-hidden />
           <div className="landing-emr-chart-chat-slot">
             <WestfieldEmrChartChatCanvas />
@@ -785,7 +944,7 @@ export function WestfieldEmrPatientChartPreview() {
           <div className="landing-emr-chart-a1c-slot">
             <WestfieldEmrA1cSheet />
           </div>
-          <div className="landing-emr-chart-ai-fab" aria-label="Chart assistant">
+          <div className="landing-emr-chart-ai-fab landing-emr-glass-blue" aria-label="Chart assistant">
             <AiSparkIcon />
             <span className="landing-emr-chart-ai-fab__ripple" aria-hidden />
           </div>

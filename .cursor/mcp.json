@@ -11,6 +11,14 @@
     "kernel": {
       "type": "http",
       "url": "https://mcp.onkernel.com/mcp"
+    },
+    "lunagraph": {
+      "type": "http",
+      "url": "http://127.0.0.1:21209/mcp"
+    },
+    "paper": {
+      "type": "http",
+      "url": "http://127.0.0.1:29979/mcp"
     }
   }
 }

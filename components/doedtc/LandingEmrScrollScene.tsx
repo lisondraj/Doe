@@ -1,19 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { WestfieldEmrPatientChartPreview } from "@/components/doedtc/WestfieldEmrPatientChartPreview";
 import { larkenLight } from "@/lib/home/fonts";
-
-function revealClass(segment: "emr", revealed: boolean) {
-  return [
-    "doedtc2-reveal",
-    `doedtc2-reveal--${segment}`,
-    revealed ? "doedtc2-reveal--in" : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
-}
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -27,6 +17,10 @@ function easeOutCubic(value: number) {
 const SCROLL_HOLD_RATIO = 0.34;
 /** Scroll distance before the nav settles into place. */
 const NAV_REVEAL_SCROLL = 72;
+/** Scroll distance before the chart begins building. */
+const CHART_SCROLL_BUILD_START = 56;
+/** Scroll distance where the chart finishes its staged build. */
+const CHART_SCROLL_BUILD_END = 440;
 /** Scroll distance before the AI button appears. */
 const AI_REVEAL_SCROLL = 96;
 /** Eased scroll progress where chart finishes sliding left. */
@@ -52,18 +46,43 @@ const RESULTS_REVEAL_START = 0.89;
 /** Scroll progress where Results panel is fully visible. */
 const RESULTS_REVEAL_END = 0.915;
 /** Hold on Results view before A1c interaction. */
-const A1C_HOLD_END = 0.952;
+const A1C_HOLD_END = 0.94;
 /** Scroll progress window for A1c box press in sidebar. */
-const A1C_PRESS_START = 0.952;
-const A1C_PRESS_END = 0.968;
+const A1C_PRESS_START = 0.94;
+const A1C_PRESS_END = 0.954;
 /** Scroll progress where A1c sheet begins opening. */
-const A1C_SHEET_START = 0.962;
+const A1C_SHEET_START = 0.948;
 /** Scroll progress where A1c sheet finishes opening. */
-const A1C_SHEET_END = 0.986;
+const A1C_SHEET_END = 0.962;
 /** Hold with A1c modal open before dock phase. */
-const A1C_SHEET_HOLD_END = 0.992;
+const A1C_SHEET_HOLD_END = 0.968;
 /** Scroll progress where EMR exits right and A1c sheet docks to sidebar. */
-const A1C_DOCK_START = 0.992;
+const A1C_DOCK_START = 0.968;
+const A1C_DOCK_END = 0.976;
+/** Hold with the 7.4 sheet beside Elena before Notes interaction. */
+const NOTES_HOLD_END = 0.988;
+/** Scroll progress window for Notes tab press animation. */
+const NOTES_PRESS_START = 0.988;
+const NOTES_PRESS_END = 0.992;
+/** Scroll progress where Notes panel begins revealing. */
+const NOTES_REVEAL_START = 0.989;
+/** Scroll progress where Notes panel is fully visible. */
+const NOTES_REVEAL_END = 0.993;
+/** Hold on closed progress notes before clicking a row. */
+const NOTES_LIST_HOLD_END = 0.991;
+/** Scroll progress window for the 5 Sep progress note press. */
+const NOTE_ROW_PRESS_START = 0.991;
+const NOTE_ROW_PRESS_END = 0.994;
+/** Scroll progress where the opened note begins sliding in. */
+const NOTE_OPEN_START = 0.992;
+/** Scroll progress where the opened note is fully visible and the chart is centered. */
+const NOTE_OPEN_END = 0.996;
+/** Linear scroll share reserved for SOAP fade + scale after the opened note. */
+const SOAP_SCROLL_START = 0.7;
+/** First share of the SOAP window used to fade the rest of the EMR. */
+const SOAP_FADE_END = 0.22;
+/** Where the SOAP note begins scaling after the fade. */
+const SOAP_LIFT_START = 0.18;
 /** EMR horizontal shift when docked — positive moves right (half off-screen). */
 const CHART_EXIT_SHIFT = 50;
 /** Paper coords: module panel right edge and default A1c sheet left. */
@@ -87,10 +106,44 @@ type ScrollMotion = {
   a1cBoxPress: number;
   a1cSheetReveal: number;
   a1cSheetDock: number;
+  notesTabPress: number;
+  notesReveal: number;
+  noteRowPress: number;
+  noteOpen: number;
+  soapHero: number;
+  soapLift: number;
 };
 
+function openedNoteMotion(soapHero: number, soapLift: number): ScrollMotion {
+  return {
+    chartShiftX: 0,
+    aiPress: 0,
+    chatReveal: 0,
+    sideCopyReveal: 0,
+    resultsTabPress: 0,
+    resultsReveal: 0,
+    a1cBoxPress: 1,
+    a1cSheetReveal: 0,
+    a1cSheetDock: 0,
+    notesTabPress: 1,
+    notesReveal: 1,
+    noteRowPress: 1,
+    noteOpen: 1,
+    soapHero,
+    soapLift,
+  };
+}
+
 function getScrollMotion(progress: number, aiReveal: number): ScrollMotion {
-  const eased = easeOutCubic(progress);
+  if (progress >= SOAP_SCROLL_START) {
+    const soapT = clamp((progress - SOAP_SCROLL_START) / (1 - SOAP_SCROLL_START), 0, 1);
+    return openedNoteMotion(
+      clamp(soapT / SOAP_FADE_END, 0, 1),
+      clamp((soapT - SOAP_LIFT_START) / (1 - SOAP_LIFT_START), 0, 1),
+    );
+  }
+
+  const eased = Math.min(easeOutCubic(progress / SOAP_SCROLL_START), NOTE_OPEN_END);
 
   if (eased <= PHASE1_END) {
     const chartShiftX = easeOutCubic(clamp(eased / CHART_SHIFT_END, 0, 1)) * -50;
@@ -110,6 +163,12 @@ function getScrollMotion(progress: number, aiReveal: number): ScrollMotion {
       a1cBoxPress: 0,
       a1cSheetReveal: 0,
       a1cSheetDock: 0,
+      notesTabPress: 0,
+      notesReveal: 0,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
     };
   }
 
@@ -124,6 +183,12 @@ function getScrollMotion(progress: number, aiReveal: number): ScrollMotion {
       a1cBoxPress: 0,
       a1cSheetReveal: 0,
       a1cSheetDock: 0,
+      notesTabPress: 0,
+      notesReveal: 0,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
     };
   }
 
@@ -139,6 +204,12 @@ function getScrollMotion(progress: number, aiReveal: number): ScrollMotion {
       a1cBoxPress: 0,
       a1cSheetReveal: 0,
       a1cSheetDock: 0,
+      notesTabPress: 0,
+      notesReveal: 0,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
     };
   }
 
@@ -153,6 +224,12 @@ function getScrollMotion(progress: number, aiReveal: number): ScrollMotion {
       a1cBoxPress: 0,
       a1cSheetReveal: 0,
       a1cSheetDock: 0,
+      notesTabPress: 0,
+      notesReveal: 0,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
     };
   }
 
@@ -173,6 +250,12 @@ function getScrollMotion(progress: number, aiReveal: number): ScrollMotion {
       a1cBoxPress: 0,
       a1cSheetReveal: 0,
       a1cSheetDock: 0,
+      notesTabPress: 0,
+      notesReveal: 0,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
     };
   }
 
@@ -187,6 +270,12 @@ function getScrollMotion(progress: number, aiReveal: number): ScrollMotion {
       a1cBoxPress: 0,
       a1cSheetReveal: 0,
       a1cSheetDock: 0,
+      notesTabPress: 0,
+      notesReveal: 0,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
     };
   }
 
@@ -207,6 +296,12 @@ function getScrollMotion(progress: number, aiReveal: number): ScrollMotion {
       a1cBoxPress,
       a1cSheetReveal,
       a1cSheetDock: 0,
+      notesTabPress: 0,
+      notesReveal: 0,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
     };
   }
 
@@ -221,22 +316,172 @@ function getScrollMotion(progress: number, aiReveal: number): ScrollMotion {
       a1cBoxPress: 1,
       a1cSheetReveal: 1,
       a1cSheetDock: 0,
+      notesTabPress: 0,
+      notesReveal: 0,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
     };
   }
 
-  const dockProgress = easeOutCubic(clamp((eased - A1C_DOCK_START) / (1 - A1C_DOCK_START), 0, 1));
+  if (eased <= A1C_DOCK_END) {
+    const dockProgress = easeOutCubic(
+      clamp((eased - A1C_DOCK_START) / (A1C_DOCK_END - A1C_DOCK_START), 0, 1),
+    );
 
-  return {
-    chartShiftX: dockProgress * CHART_EXIT_SHIFT,
-    aiPress: 0,
-    chatReveal: 0,
-    sideCopyReveal: 0,
-    resultsTabPress: 1,
-    resultsReveal: 1,
-    a1cBoxPress: 1,
-    a1cSheetReveal: 1,
-    a1cSheetDock: dockProgress,
-  };
+    return {
+      chartShiftX: dockProgress * CHART_EXIT_SHIFT,
+      aiPress: 0,
+      chatReveal: 0,
+      sideCopyReveal: 0,
+      resultsTabPress: 1,
+      resultsReveal: 1,
+      a1cBoxPress: 1,
+      a1cSheetReveal: 1,
+      a1cSheetDock: dockProgress,
+      notesTabPress: 0,
+      notesReveal: 0,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
+    };
+  }
+
+  if (eased <= NOTES_HOLD_END) {
+    return {
+      chartShiftX: CHART_EXIT_SHIFT,
+      aiPress: 0,
+      chatReveal: 0,
+      sideCopyReveal: 0,
+      resultsTabPress: 1,
+      resultsReveal: 1,
+      a1cBoxPress: 1,
+      a1cSheetReveal: 1,
+      a1cSheetDock: 1,
+      notesTabPress: 0,
+      notesReveal: 0,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
+    };
+  }
+
+  if (eased <= NOTES_REVEAL_END) {
+    const notesTabPress = easeOutCubic(
+      clamp((eased - NOTES_PRESS_START) / (NOTES_PRESS_END - NOTES_PRESS_START), 0, 1),
+    );
+    const notesReveal = easeOutCubic(
+      clamp((eased - NOTES_REVEAL_START) / (NOTES_REVEAL_END - NOTES_REVEAL_START), 0, 1),
+    );
+
+    return {
+      chartShiftX: CHART_EXIT_SHIFT,
+      aiPress: 0,
+      chatReveal: 0,
+      sideCopyReveal: 0,
+      resultsTabPress: Math.max(1 - notesTabPress, 0),
+      resultsReveal: 1 - notesReveal,
+      a1cBoxPress: 1,
+      a1cSheetReveal: 1 - notesReveal,
+      a1cSheetDock: 1,
+      notesTabPress,
+      notesReveal,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
+    };
+  }
+
+  if (eased <= NOTES_LIST_HOLD_END) {
+    return {
+      chartShiftX: CHART_EXIT_SHIFT,
+      aiPress: 0,
+      chatReveal: 0,
+      sideCopyReveal: 0,
+      resultsTabPress: 0,
+      resultsReveal: 0,
+      a1cBoxPress: 1,
+      a1cSheetReveal: 0,
+      a1cSheetDock: 1,
+      notesTabPress: 1,
+      notesReveal: 1,
+      noteRowPress: 0,
+      noteOpen: 0,
+      soapHero: 0,
+      soapLift: 0,
+    };
+  }
+
+  if (eased <= NOTE_OPEN_END) {
+    const noteRowPress = easeOutCubic(
+      clamp((eased - NOTE_ROW_PRESS_START) / (NOTE_ROW_PRESS_END - NOTE_ROW_PRESS_START), 0, 1),
+    );
+    const noteOpen = easeOutCubic(
+      clamp((eased - NOTE_OPEN_START) / (NOTE_OPEN_END - NOTE_OPEN_START), 0, 1),
+    );
+
+    return {
+      chartShiftX: CHART_EXIT_SHIFT * (1 - noteOpen),
+      aiPress: 0,
+      chatReveal: 0,
+      sideCopyReveal: 0,
+      resultsTabPress: 0,
+      resultsReveal: 0,
+      a1cBoxPress: 1,
+      a1cSheetReveal: 0,
+      a1cSheetDock: 1 - noteOpen,
+      notesTabPress: 1,
+      notesReveal: 1,
+      noteRowPress,
+      noteOpen,
+      soapHero: 0,
+      soapLift: 0,
+    };
+  }
+
+  return openedNoteMotion(0, 0);
+}
+
+function readCanvasScale(scroller: HTMLElement) {
+  const canvas = scroller.querySelector(".landing-emr-chart-canvas");
+  if (!(canvas instanceof HTMLElement)) return 1;
+  const transform = getComputedStyle(canvas).transform;
+  if (!transform || transform === "none") return 1;
+  const match = transform.match(/matrix\(([^)]+)\)/);
+  if (!match) return 1;
+  const a = Number.parseFloat(match[1].split(",")[0] ?? "");
+  return Number.isFinite(a) && a > 0.001 ? a : 1;
+}
+
+function syncSoapLiftGeometry(scroller: HTMLElement, soapLift: number) {
+  const note = scroller.querySelector(".landing-emr-notes-nested-note");
+  const title = scroller.querySelector(".landing-emr-stage-copy--soap");
+
+  if (!(note instanceof HTMLElement) || soapLift <= 0) {
+    scroller.style.setProperty("--landing-emr-soap-center-x", "0px");
+    return;
+  }
+
+  scroller.style.setProperty("--landing-emr-soap-center-x", "0px");
+  const noteRect = note.getBoundingClientRect();
+  const screenDelta = window.innerWidth / 2 - (noteRect.left + noteRect.width / 2);
+  const localDelta = screenDelta / readCanvasScale(scroller);
+  scroller.style.setProperty("--landing-emr-soap-center-x", `${localDelta}px`);
+
+  if (title instanceof HTMLElement) {
+    const stage = scroller.querySelector(".landing-emr-dual-stage");
+    const stageRect = stage instanceof HTMLElement ? stage.getBoundingClientRect() : noteRect;
+    const lineHeight = Array.from(title.querySelectorAll(".landing-emr-stage-copy__line")).reduce(
+      (sum, line) => sum + line.getBoundingClientRect().height,
+      0,
+    );
+    const top = Math.max(noteRect.top - stageRect.top - lineHeight - 24, 8);
+    scroller.style.setProperty("--landing-emr-soap-title-top", `${top}px`);
+  }
 }
 
 function syncMotionVars(
@@ -244,6 +489,7 @@ function syncMotionVars(
   motion: ScrollMotion,
   aiReveal: number,
   scrollProgress: number,
+  chartScrollBuild: number,
 ) {
   const fabScale = (0.88 + aiReveal * 0.12) * (1 - motion.aiPress * 0.08);
   const a1cDockOffset = motion.a1cSheetDock * (A1C_SHEET_DOCK_LEFT - A1C_SHEET_DEFAULT_LEFT);
@@ -263,14 +509,43 @@ function syncMotionVars(
   scroller.style.setProperty("--landing-emr-fab-scale", String(fabScale));
   scroller.style.setProperty("--landing-emr-a1c-slide-in", String(a1cSlideIn));
   scroller.style.setProperty("--landing-emr-a1c-dock-offset", `${a1cDockOffset}px`);
+  scroller.style.setProperty("--landing-emr-notes-tab-press", String(motion.notesTabPress));
+  scroller.style.setProperty("--landing-emr-notes-reveal", String(motion.notesReveal));
+  scroller.style.setProperty("--landing-emr-note-row-press", String(motion.noteRowPress));
+  scroller.style.setProperty("--landing-emr-note-open", String(motion.noteOpen));
+  scroller.style.setProperty("--landing-emr-soap-hero", String(motion.soapHero));
+  scroller.parentElement?.style.setProperty("--landing-emr-soap-hero", String(motion.soapHero));
+  scroller.style.setProperty("--landing-emr-soap-lift", String(motion.soapLift));
+  scroller.style.setProperty(
+    "--landing-emr-soap-title",
+    String(clamp((motion.soapLift - 0.06) / 0.72, 0, 1)),
+  );
+  scroller.style.setProperty(
+    "--landing-emr-left-copy-reveal",
+    String(Math.max(motion.sideCopyReveal, clamp(motion.chartShiftX / CHART_EXIT_SHIFT, 0, 1))),
+  );
   scroller.style.setProperty("--landing-emr-scroll-progress", String(scrollProgress));
+  scroller.style.setProperty("--landing-emr-chart-scroll-build", String(chartScrollBuild));
 
   const progressSide = motion.chartShiftX < -5 ? "right" : "left";
   scroller.dataset.progressSide = progressSide;
 
-  scroller.dataset.resultsActive = motion.resultsTabPress >= 1 ? "1" : "0";
+  const resultsActive = motion.resultsTabPress >= 1 && motion.notesTabPress < 1;
+  const notesActive = motion.notesTabPress >= 1;
+
+  scroller.dataset.resultsActive = resultsActive ? "1" : "0";
+  scroller.dataset.notesActive = notesActive ? "1" : "0";
   scroller.dataset.resultsPressing =
     motion.resultsTabPress > 0.05 && motion.resultsTabPress < 0.98 ? "1" : "0";
+  scroller.dataset.notesPressing =
+    motion.notesTabPress > 0.05 && motion.notesTabPress < 0.98 ? "1" : "0";
+  scroller.dataset.notePressing =
+    motion.noteRowPress > 0.05 && motion.noteRowPress < 0.98 ? "1" : "0";
+  scroller.dataset.noteOpen = motion.noteOpen >= 1 ? "1" : "0";
+  scroller.dataset.noteSelected = motion.noteRowPress > 0.45 || motion.noteOpen > 0.05 ? "1" : "0";
+  scroller.dataset.soapHero = motion.soapHero > 0.04 ? "1" : "0";
+  scroller.dataset.soapLift = motion.soapLift > 0.04 ? "1" : "0";
+  syncSoapLiftGeometry(scroller, motion.soapLift);
   scroller.dataset.a1cPressing =
     motion.a1cBoxPress > 0.05 && motion.a1cBoxPress < 0.98 ? "1" : "0";
   scroller.dataset.aiFabVisible = aiReveal > 0.05 ? "1" : "0";
@@ -419,17 +694,6 @@ function setupCappedScroll(scroller: HTMLElement, scheduleUpdate: () => void) {
 
 export function LandingEmrScrollScene() {
   const trackRef = useRef<HTMLDivElement>(null);
-  const [revealed, setRevealed] = useState(false);
-
-  useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      setRevealed(true);
-      return;
-    }
-    const frame = requestAnimationFrame(() => setRevealed(true));
-    return () => cancelAnimationFrame(frame);
-  }, []);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -477,10 +741,17 @@ export function LandingEmrScrollScene() {
       const scrollProgress = clamp(scrollTop / maxScroll, 0, 1);
 
       if (reduced) {
-        syncMotionVars(scroller, getScrollMotion(1, 1), 1, scrollProgress);
+        syncMotionVars(scroller, getScrollMotion(1, 1), 1, scrollProgress, 1);
         return;
       }
 
+      const chartScrollBuild = easeOutCubic(
+        clamp(
+          (scrollTop - CHART_SCROLL_BUILD_START) / (CHART_SCROLL_BUILD_END - CHART_SCROLL_BUILD_START),
+          0,
+          1,
+        ),
+      );
       const aiReveal = clamp((scrollTop - 24) / AI_REVEAL_SCROLL, 0, 1);
       const raw = clamp((scrollTop - cachedTrackTop) / cachedAnimDistance, 0, 1);
       const progress =
@@ -488,7 +759,7 @@ export function LandingEmrScrollScene() {
           ? 0
           : clamp((raw - SCROLL_HOLD_RATIO) / (1 - SCROLL_HOLD_RATIO), 0, 1);
 
-      syncMotionVars(scroller, getScrollMotion(progress, aiReveal), aiReveal, scrollProgress);
+      syncMotionVars(scroller, getScrollMotion(progress, aiReveal), aiReveal, scrollProgress, chartScrollBuild);
     };
 
     const scheduleUpdate = () => {
@@ -545,9 +816,14 @@ export function LandingEmrScrollScene() {
         <div className="landing-emr-scroll-sticky">
           <div className="landing-emr-dual-stage">
             <div className="landing-emr-dual-stage__chart-wrap">
-              <div className={revealClass("emr", revealed)}>
-                <WestfieldEmrPatientChartPreview />
-              </div>
+              <WestfieldEmrPatientChartPreview />
+            </div>
+            <div
+              className={`landing-emr-stage-copy landing-emr-stage-copy--soap ${larkenLight.className}`}
+              aria-hidden
+            >
+              <p className="landing-emr-stage-copy__line">Knows what</p>
+              <p className="landing-emr-stage-copy__line">to do next.</p>
             </div>
             <div
               className={`landing-emr-stage-copy landing-emr-stage-copy--left ${larkenLight.className}`}

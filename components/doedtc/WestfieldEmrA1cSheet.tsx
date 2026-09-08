@@ -3,13 +3,7 @@
 /** Paper artboard: Westfield EMR — A1c (38K-0), sheet node 3GN-0 */
 export function WestfieldEmrA1cSheet() {
   return (
-    <div
-      className="[font-synthesis:none] wrap-anywhere flex flex-col w-[620px] h-[1032px] rounded-3xl overflow-clip bg-white antialiased text-xs leading-[16px]"
-      style={{
-        backgroundImage:
-          "linear-gradient(in oklab 225deg, oklab(91.9% -0.009 -0.032) 0%, oklab(96.6% -0.002 -0.016) 52%, oklab(100% 0 0) 100%)",
-      }}
-    >
+    <div className="landing-emr-raised [font-synthesis:none] wrap-anywhere flex flex-col w-[620px] h-[1032px] rounded-3xl overflow-clip antialiased text-xs leading-[16px]">
       <div className="flex items-center w-full shrink-0 pr-[20px] pl-[28px] py-[14px] border-b border-b-solid border-b-[#E5E5EA]">
         <div className="flex flex-col w-0 grow gap-[3px]">
           <div className="font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-medium text-[#1C1C1E] text-lg leading-[22px]">
