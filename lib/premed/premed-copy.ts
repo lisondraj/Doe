@@ -47,7 +47,7 @@ export const PREMED_FOUNDERS: readonly PremedFounderBio[] = [
   {
     name: "Matthew Lisondra",
     linkedinUrl: "https://www.linkedin.com/in/mattlisondra",
-    bio: "is CTO. A doctoral candidate at the University of Toronto soon building Doe full-time, with backgrounds in physics, robotics, AI, and computer science, he leads Doe's intelligence engineering.",
+    bio: "provides technical support. A doctoral candidate at the University of Toronto soon building Doe full-time, with backgrounds in physics, robotics, AI, and computer science, he provides technical support for Doe's intelligence engineering.",
   },
 ] as const;
 

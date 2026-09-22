@@ -111,15 +111,15 @@ export const OUR_FOUNDER_STORY_ARTICLE = {
     },
     {
       type: "paragraph",
-      text: "Matthew leads Doe’s technical direction and engineering. He owns the systems, infrastructure, and execution that turn a product direction into software that can be trusted, improved, and sustained.",
+      text: "Matthew provides technical support for Doe. He helps with the systems, infrastructure, and execution that turn a product direction into software that can be trusted, improved, and sustained.",
     },
     {
       type: "bullets",
       id: "founder-story-matthew-scope",
       items: [
-        "**Technical direction:** Matthew leads the systems thinking behind Doe, from the architecture of our products to the technical decisions that make them dependable.",
-        "**Engineering execution:** He builds, tests, and refines the software that turns our ideas into real working tools.",
-        "**Internal infrastructure:** He develops the foundations that help a small team move quickly while preserving rigor, security, and maintainability.",
+        "**Technical support:** Matthew provides technical support for the systems thinking behind Doe, from the architecture of our products to the technical decisions that make them dependable.",
+        "**Engineering execution:** He helps build, test, and refine the software that turns our ideas into real working tools.",
+        "**Internal infrastructure:** He helps develop the foundations that help a small team move quickly while preserving rigor, security, and maintainability.",
       ],
     },
     {
