@@ -11,6 +11,17 @@ const AUDIENCE_COUNT = DOEHEALTH_DESK_AUDIENCES.length;
 /** iPhone: minimum time between one card starting its reveal and the next one starting. */
 const CARD_GAP_MS = 220;
 
+/**
+ * A card may only reveal / lock once it has really been scrolled to. On a slow device the mockup above it
+ * is often not laid out yet when observers first run, which puts the first card at the top of the screen
+ * at scrollY 0 — that first callback must not count as "seen" (it would lock the first card with no motion).
+ * So a card is eligible once it has been seen below the screen, or the page has been scrolled.
+ */
+function noteBelow(entry: IntersectionObserverEntry, seenBelow: boolean[], index: number) {
+  if (entry.rootBounds && entry.boundingClientRect.top >= entry.rootBounds.bottom) seenBelow[index] = true;
+  return seenBelow[index] || window.scrollY > 40;
+}
+
 function allRevealed() {
   return Array.from({ length: AUDIENCE_COUNT }, () => true);
 }
@@ -34,6 +45,7 @@ export function DoeHealthDeskAudienceSection() {
     }
 
     const observers: IntersectionObserver[] = [];
+    const seenBelow = Array.from({ length: AUDIENCE_COUNT }, () => false);
     DOEHEALTH_DESK_AUDIENCES.forEach((_, index) => {
       const el = cardRefs.current[index];
       if (!el) return;
@@ -41,6 +53,7 @@ export function DoeHealthDeskAudienceSection() {
       const observer = new IntersectionObserver(
         ([entry]) => {
           if (!entry) return;
+          if (!noteBelow(entry, seenBelow, index)) return;
           const fullyIn = entry.isIntersecting && entry.intersectionRatio >= 0.95;
           // Also lock cards that were scrolled past without ever being fully seen (jumps, flicks).
           const passed = !!entry.rootBounds && entry.boundingClientRect.bottom <= entry.rootBounds.top;
@@ -77,6 +90,7 @@ export function DoeHealthDeskAudienceSection() {
       const observers: IntersectionObserver[] = [];
       const timers: number[] = [];
       const reached = Array.from({ length: AUDIENCE_COUNT }, () => false);
+      const seenBelow = Array.from({ length: AUDIENCE_COUNT }, () => false);
       let revealed = 0;
       let lastRevealAt = 0;
       let flushTimer = 0;
@@ -113,6 +127,7 @@ export function DoeHealthDeskAudienceSection() {
         const observer = new IntersectionObserver(
           ([entry]) => {
             if (!entry) return;
+            if (!noteBelow(entry, seenBelow, index)) return;
             // Also count cards already scrolled past, so a jump never leaves the queue blocked.
             const passed = !!entry.rootBounds && entry.boundingClientRect.bottom <= entry.rootBounds.top;
             if (!entry.isIntersecting && !passed) return;
@@ -139,9 +154,11 @@ export function DoeHealthDeskAudienceSection() {
     const node = gridRef.current;
     if (!node) return;
 
+    const gridSeenBelow = [false];
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry?.isIntersecting) {
+        if (!entry || !noteBelow(entry, gridSeenBelow, 0)) return;
+        if (entry.isIntersecting) {
           setSectionIn(true);
           setCardIn(allRevealed());
           observer.disconnect();
