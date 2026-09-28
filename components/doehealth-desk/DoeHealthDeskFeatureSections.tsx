@@ -176,7 +176,7 @@ function VoiceSection() {
         <div>
           <Head
             eyebrow="Front desk"
-            title={["Voice Agents"]}
+            title={["Voice Agents."]}
             dek="Your model answers the clinic line, books the visit, and writes it to the chart."
           />
           <p className={`desk-feat__quote ${p22Mackinac.className}`}>I can move you to Thursday at 9:40.</p>
