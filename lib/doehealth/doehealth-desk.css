@@ -449,7 +449,7 @@
   position: relative;
   box-sizing: border-box;
   height: auto;
-  margin-top: 0.35rem;
+  margin-top: -0.15rem;
   padding-bottom: clamp(2rem, 5vh, 3.5rem);
   overflow: visible;
   pointer-events: none;
@@ -2271,23 +2271,17 @@
     overscroll-behavior-y: none;
   }
 
-  .doehealth-desk-page.is-scrolling nav.doephone-site-nav {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
   .doehealth-desk-main {
     overflow-x: clip;
   }
 
-  /* Stack ends ⅓ product-height below the fold, so the top ⅔ of the product is on screen.
-     Hero fills the space above the product and centers its copy in it. */
+  /* Stack ends ~¼ product-height below the fold; hero centers copy in the space above. */
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero-stack {
     display: flex;
     flex-direction: column;
     /* svh, not dvh — dvh resizes as Safari's toolbar collapses mid-scroll. */
     min-height: calc(
-      100svh - var(--desk-phone-nav-clearance) + var(--desk-phone-product-h) / 3
+      100svh - var(--desk-phone-nav-clearance) + var(--desk-phone-product-h) / 4
     );
   }
 
@@ -2298,7 +2292,7 @@
     justify-content: center;
     min-height: 0;
     padding-top: var(--desk-phone-email-product-gap);
-    padding-bottom: var(--desk-phone-email-product-gap);
+    padding-bottom: clamp(0.85rem, 2.75vh, 1.65rem);
   }
 
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero__row {
@@ -2308,7 +2302,7 @@
 
   .doehealth-desk-page:has(.doephone-mobile-root) .desk-workspace {
     flex: 0 0 auto;
-    margin-top: 0 !important;
+    margin-top: -0.85rem !important;
     margin-bottom: 0;
     padding-bottom: 0 !important;
     transform: none !important;
@@ -2564,59 +2558,6 @@
 
   .doehealth-desk-page:has(.doephone-mobile-root) .desk-workspace__fade {
     z-index: 45;
-    contain: paint;
-    transform: translateZ(0);
-    animation: none;
-    -webkit-mask-image:
-      radial-gradient(
-        ellipse 46% 78% at 50% 0%,
-        transparent 0%,
-        transparent 30%,
-        rgb(0 0 0 / 0.1) 42%,
-        rgb(0 0 0 / 0.28) 54%,
-        rgb(0 0 0 / 0.52) 66%,
-        rgb(0 0 0 / 0.76) 78%,
-        rgb(0 0 0 / 0.92) 89%,
-        #000 100%
-      ),
-      linear-gradient(
-        to top,
-        #000 0%,
-        #000 42%,
-        rgb(0 0 0 / 0.9) 52%,
-        rgb(0 0 0 / 0.72) 62%,
-        rgb(0 0 0 / 0.5) 72%,
-        rgb(0 0 0 / 0.28) 81%,
-        rgb(0 0 0 / 0.11) 90%,
-        transparent 100%
-      );
-    mask-image:
-      radial-gradient(
-        ellipse 46% 78% at 50% 0%,
-        transparent 0%,
-        transparent 30%,
-        rgb(0 0 0 / 0.1) 42%,
-        rgb(0 0 0 / 0.28) 54%,
-        rgb(0 0 0 / 0.52) 66%,
-        rgb(0 0 0 / 0.76) 78%,
-        rgb(0 0 0 / 0.92) 89%,
-        #000 100%
-      ),
-      linear-gradient(
-        to top,
-        #000 0%,
-        #000 42%,
-        rgb(0 0 0 / 0.9) 52%,
-        rgb(0 0 0 / 0.72) 62%,
-        rgb(0 0 0 / 0.5) 72%,
-        rgb(0 0 0 / 0.28) 81%,
-        rgb(0 0 0 / 0.11) 90%,
-        transparent 100%
-      );
-    -webkit-mask-size: 100% 100%, 100% 100%;
-    mask-size: 100% 100%, 100% 100%;
-    -webkit-mask-composite: source-in;
-    mask-composite: intersect;
   }
 
   .desk-front-desk-panel {

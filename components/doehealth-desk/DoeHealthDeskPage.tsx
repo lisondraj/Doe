@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { DoeHealthDeskAudienceSection } from "@/components/doehealth-desk/DoeHealthDeskAudienceSection";
 import { DoeHealthDeskFeatureSections } from "@/components/doehealth-desk/DoeHealthDeskFeatureSections";
@@ -29,7 +29,6 @@ type DoeHealthDeskPageProps = {
 /** /doehealthdesk — legacy /oldphone nav only on a blank canvas. */
 export function DoeHealthDeskPage({ initialVariant }: DoeHealthDeskPageProps) {
   const [variant, setVariant] = useState<Variant>(initialVariant);
-  const pageRef = useRef<HTMLDivElement>(null);
   useDoeHealthDeskPhoneOverflowChrome(variant === "phone");
 
   useEffect(() => {
@@ -63,31 +62,8 @@ export function DoeHealthDeskPage({ initialVariant }: DoeHealthDeskPageProps) {
     };
   }, [variant]);
 
-  useEffect(() => {
-    if (variant !== "phone") return;
-    const page = pageRef.current;
-    if (!page) return;
-
-    let scrollEndTimer = 0;
-    const onScroll = () => {
-      page.classList.add("is-scrolling");
-      window.clearTimeout(scrollEndTimer);
-      scrollEndTimer = window.setTimeout(() => {
-        page.classList.remove("is-scrolling");
-      }, 140);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.clearTimeout(scrollEndTimer);
-      window.removeEventListener("scroll", onScroll);
-      page.classList.remove("is-scrolling");
-    };
-  }, [variant]);
-
   return (
     <div
-      ref={pageRef}
       className={`doehealth-desk-page relative min-h-[100dvh] ${p22Mackinac.variable}`}
       style={{ backgroundColor: DOEHEALTH_DESK_PAGE_BACKGROUND }}
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}
