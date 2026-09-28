@@ -2924,9 +2924,12 @@
   /* Stacked audience cards — equal height on iPhone; solid brown for practices + patients only. */
   .doehealth-desk-page:has(.doephone-mobile-root) {
     --desk-audience-card-trim: clamp(1.85rem, 8.5vw, 2.85rem);
-    --desk-audience-reveal-x: clamp(2rem, 9vw, 2.75rem);
-    --desk-audience-headline-darken-duration: 2.75s;
-    --desk-audience-headline-darken-delay: 0.45s;
+    --desk-audience-reveal-x: clamp(4rem, 22vw, 6rem);
+    --desk-audience-reveal-y: 1.75rem;
+    --desk-audience-card-duration: 1400ms;
+    --desk-audience-headline-darken-duration: 3.2s;
+    --desk-audience-headline-darken-delay: 0s;
+    --desk-audience-dek-delay: 0s;
     --desk-hero-intro-duration: 760ms;
   }
 
@@ -2967,9 +2970,10 @@
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card.is-high,
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card.is-low {
     transition:
-      opacity 680ms cubic-bezier(0.33, 1, 0.68, 1),
-      transform 680ms cubic-bezier(0.33, 1, 0.68, 1);
+      opacity calc(var(--desk-audience-card-duration) * 0.7) cubic-bezier(0.33, 1, 0.68, 1),
+      transform var(--desk-audience-card-duration) cubic-bezier(0.16, 1, 0.3, 1);
     backface-visibility: hidden;
+    will-change: transform, opacity;
     align-self: auto;
   }
 
@@ -2979,11 +2983,31 @@
   }
 
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card.is-filled-phone:not(.is-in) {
-    transform: translate3d(calc(-1 * var(--desk-audience-reveal-x)), 0, 0);
+    transform: translate3d(calc(-1 * var(--desk-audience-reveal-x)), var(--desk-audience-reveal-y), 0);
   }
 
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card:not(.is-filled-phone):not(.is-in) {
-    transform: translate3d(var(--desk-audience-reveal-x), 0, 0);
+    transform: translate3d(var(--desk-audience-reveal-x), var(--desk-audience-reveal-y), 0);
+  }
+
+  /* Title sweep and supporting copy start together with the card appearing. */
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__dek {
+    opacity: 0;
+    transform: translate3d(0, 0.6rem, 0);
+    transition:
+      opacity 1000ms cubic-bezier(0.33, 1, 0.68, 1),
+      transform 1000ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card.is-in .doehealth-desk-audiences__dek {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition-delay: var(--desk-audience-dek-delay);
+  }
+
+  /* Slides start off the edge of the screen — never let them widen the page. */
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences {
+    overflow-x: clip;
   }
 
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__title.desk-headline-darken--cream.is-headline-in,

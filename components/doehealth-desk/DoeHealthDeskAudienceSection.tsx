@@ -31,30 +31,9 @@ export function DoeHealthDeskAudienceSection() {
     if (narrow) {
       const observers: IntersectionObserver[] = [];
 
-      const section = sectionRef.current;
-      if (section) {
-        const sectionObserver = new IntersectionObserver(
-          ([entry]) => {
-            if (!entry?.isIntersecting) return;
-            requestAnimationFrame(() => {
-              setCardIn((prev) => {
-                if (prev[0]) return prev;
-                const next = [...prev];
-                next[0] = true;
-                return next;
-              });
-            });
-            sectionObserver.disconnect();
-          },
-          { threshold: 0.22, rootMargin: "0px 0px -8% 0px" },
-        );
-        sectionObserver.observe(section);
-        observers.push(sectionObserver);
-      }
-
+      // Every card reveals on its own once it is clearly on screen (cards start shifted sideways,
+      // so the ratio is lower than the card's real visibility).
       DOEHEALTH_DESK_AUDIENCES.forEach((_, index) => {
-        if (index === 0) return;
-
         const el = cardRefs.current[index];
         if (!el) return;
 
@@ -71,7 +50,7 @@ export function DoeHealthDeskAudienceSection() {
             });
             observer.disconnect();
           },
-          { threshold: 0.28, rootMargin: "0px 0px -8% 0px" },
+          { threshold: 0.35, rootMargin: "0px 0px -14% 0px" },
         );
 
         observer.observe(el);
