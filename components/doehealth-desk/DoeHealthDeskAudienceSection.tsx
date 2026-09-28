@@ -8,6 +8,9 @@ import { inter, p22Mackinac } from "@/lib/home/fonts";
 
 const AUDIENCE_COUNT = DOEHEALTH_DESK_AUDIENCES.length;
 
+/** iPhone: minimum time between one card starting its reveal and the next one starting. */
+const CARD_GAP_MS = 380;
+
 function allRevealed() {
   return Array.from({ length: AUDIENCE_COUNT }, () => true);
 }
@@ -30,29 +33,54 @@ export function DoeHealthDeskAudienceSection() {
 
     if (narrow) {
       const observers: IntersectionObserver[] = [];
+      const timers: number[] = [];
+      const reached = Array.from({ length: AUDIENCE_COUNT }, () => false);
+      let revealed = 0;
+      let lastRevealAt = 0;
+      let flushTimer = 0;
 
-      // Every card reveals on its own once it is clearly on screen (cards start shifted sideways,
-      // so the ratio is lower than the card's real visibility).
+      // Cards reveal strictly one by one, in order: a card waits until the previous one has been
+      // revealed for at least CARD_GAP_MS, so a quick scroll never fires several at once.
+      const flush = () => {
+        flushTimer = 0;
+        if (revealed >= AUDIENCE_COUNT || !reached[revealed]) return;
+
+        const wait = lastRevealAt + CARD_GAP_MS - performance.now();
+        if (wait > 0) {
+          flushTimer = window.setTimeout(flush, wait);
+          timers.push(flushTimer);
+          return;
+        }
+
+        const index = revealed;
+        revealed += 1;
+        lastRevealAt = performance.now();
+        setCardIn((prev) => {
+          if (prev[index]) return prev;
+          const next = [...prev];
+          next[index] = true;
+          return next;
+        });
+        flush();
+      };
+
       DOEHEALTH_DESK_AUDIENCES.forEach((_, index) => {
         const el = cardRefs.current[index];
         if (!el) return;
 
         const observer = new IntersectionObserver(
           ([entry]) => {
-            if (!entry?.isIntersecting) return;
-            requestAnimationFrame(() => {
-              setCardIn((prev) => {
-                if (prev[index]) return prev;
-                const next = [...prev];
-                next[index] = true;
-                return next;
-              });
-            });
+            if (!entry) return;
+            // Also count cards already scrolled past, so a jump never leaves the queue blocked.
+            const passed = !!entry.rootBounds && entry.boundingClientRect.bottom <= entry.rootBounds.top;
+            if (!entry.isIntersecting && !passed) return;
             observer.disconnect();
+            reached[index] = true;
+            if (!flushTimer) requestAnimationFrame(flush);
           },
-          // Fire when the card's top edge crosses ~65% down the viewport. threshold 0 so the sideways
-          // start offset never lowers the intersection ratio (that made the first card unreliable).
-          { threshold: 0, rootMargin: "0px 0px -35% 0px" },
+          // Fire once the card's top edge is ~60% of the way down the viewport, so the whole slide
+          // is visible. threshold 0: the sideways start offset must not lower the ratio.
+          { threshold: 0, rootMargin: "0px 0px -40% 0px" },
         );
 
         observer.observe(el);
@@ -61,6 +89,7 @@ export function DoeHealthDeskAudienceSection() {
 
       return () => {
         for (const observer of observers) observer.disconnect();
+        for (const timer of timers) window.clearTimeout(timer);
       };
     }
 

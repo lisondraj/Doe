@@ -2925,7 +2925,7 @@
   .doehealth-desk-page:has(.doephone-mobile-root) {
     --desk-audience-card-trim: clamp(1.85rem, 8.5vw, 2.85rem);
     --desk-audience-reveal-x: clamp(4rem, 22vw, 6rem);
-    --desk-audience-reveal-y: 1.75rem;
+    --desk-audience-reveal-y: 0px;
     --desk-audience-card-duration: 1400ms;
     --desk-audience-headline-darken-duration: 3.2s;
     --desk-audience-headline-darken-delay: 0s;
@@ -2993,10 +2993,8 @@
   /* Title sweep and supporting copy start together with the card appearing. */
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__dek {
     opacity: 0;
-    transform: translate3d(0, 0.6rem, 0);
-    transition:
-      opacity 1000ms cubic-bezier(0.33, 1, 0.68, 1),
-      transform 1000ms cubic-bezier(0.33, 1, 0.68, 1);
+    transform: translate3d(0, 0, 0);
+    transition: opacity 1000ms cubic-bezier(0.33, 1, 0.68, 1);
   }
 
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card.is-in .doehealth-desk-audiences__dek {
