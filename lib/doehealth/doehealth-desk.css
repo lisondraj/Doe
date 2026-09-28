@@ -2056,54 +2056,34 @@
 }
 
 @keyframes desk-audience-slide-from-right {
-  0% {
+  from {
     opacity: 0;
     transform: translate3d(var(--desk-audience-reveal-x, 4rem), 0, 0);
   }
 
-  24% {
+  60% {
     opacity: 1;
   }
 
-  37%,
-  63% {
+  to {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-  }
-
-  76% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate3d(var(--desk-audience-reveal-x, 4rem), 0, 0);
   }
 }
 
 @keyframes desk-audience-slide-from-left {
-  0% {
+  from {
     opacity: 0;
     transform: translate3d(calc(-1 * var(--desk-audience-reveal-x, 4rem)), 0, 0);
   }
 
-  24% {
+  60% {
     opacity: 1;
   }
 
-  37%,
-  63% {
+  to {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-  }
-
-  76% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate3d(calc(-1 * var(--desk-audience-reveal-x, 4rem)), 0, 0);
   }
 }
 
@@ -3161,9 +3141,7 @@
   /*
    * Where the browser supports scroll-driven animations (Safari 26+, Chrome 115+), the sideways slide is
    * tied to the card's position on screen: it plays exactly as fast as you scroll, so it is always
-   * visible — even on a flick — and runs on the compositor. It is symmetric: cards slide in from the
-   * side at the bottom edge and back out at the top edge, so scrolling up replays it too.
-   * Other browsers keep the timed reveal (which now resets when a card is far off screen).
+   * visible — even on a flick — and runs on the compositor. Other browsers keep the timed reveal.
    */
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
@@ -3171,13 +3149,24 @@
         transition: none;
         animation: desk-audience-slide-from-right linear both;
         animation-timeline: view();
-        animation-range: cover 0% cover 100%;
+        animation-range: entry 0% entry 100%;
       }
 
       .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card.is-filled-phone {
         animation-name: desk-audience-slide-from-left;
       }
     }
+  }
+
+  /*
+   * Once a card has fully arrived it is locked in place: scrolling back up or down through the section
+   * never replays or reverses the slide, so the four cards stay put as one static stack.
+   */
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card.is-settled {
+    animation: none;
+    transition: none;
+    opacity: 1 !important;
+    transform: translate3d(0, 0, 0) !important;
   }
 
   /* Title sweep and supporting copy start together with the card appearing. */
