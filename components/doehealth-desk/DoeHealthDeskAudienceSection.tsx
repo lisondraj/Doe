@@ -36,16 +36,17 @@ export function DoeHealthDeskAudienceSection() {
         const sectionObserver = new IntersectionObserver(
           ([entry]) => {
             if (!entry?.isIntersecting) return;
-            setSectionIn(true);
-            setCardIn((prev) => {
-              if (prev[0]) return prev;
-              const next = [...prev];
-              next[0] = true;
-              return next;
+            requestAnimationFrame(() => {
+              setCardIn((prev) => {
+                if (prev[0]) return prev;
+                const next = [...prev];
+                next[0] = true;
+                return next;
+              });
             });
             sectionObserver.disconnect();
           },
-          { threshold: 0.18, rootMargin: "0px 0px -10% 0px" },
+          { threshold: 0.22, rootMargin: "0px 0px -8% 0px" },
         );
         sectionObserver.observe(section);
         observers.push(sectionObserver);
@@ -60,15 +61,17 @@ export function DoeHealthDeskAudienceSection() {
         const observer = new IntersectionObserver(
           ([entry]) => {
             if (!entry?.isIntersecting) return;
-            setCardIn((prev) => {
-              if (prev[index]) return prev;
-              const next = [...prev];
-              next[index] = true;
-              return next;
+            requestAnimationFrame(() => {
+              setCardIn((prev) => {
+                if (prev[index]) return prev;
+                const next = [...prev];
+                next[index] = true;
+                return next;
+              });
             });
             observer.disconnect();
           },
-          { threshold: 0.32, rootMargin: "0px 0px -10% 0px" },
+          { threshold: 0.28, rootMargin: "0px 0px -8% 0px" },
         );
 
         observer.observe(el);
@@ -108,7 +111,7 @@ export function DoeHealthDeskAudienceSection() {
           const low = index % 2 === 1;
           const filledDesk = audience.id === "practices" || audience.id === "patients";
           const filledPhone = audience.id === "practices" || audience.id === "patients";
-          const headlineDarken = filledDesk ? "cream" : "ink";
+          const headlineDarken = filledPhone ? "cream" : "ink";
           return (
             <article
               key={audience.id}
