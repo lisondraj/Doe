@@ -536,7 +536,7 @@
   left: 0;
   z-index: 40;
   width: 100%;
-  height: min(48vw, 36vh, 18.5rem);
+  height: min(38vw, 28vh, 14.5rem);
   background: #fffcf1;
   /* ∪ wash: a bowl carved from the top keeps the sides higher; the vertical
      layer guarantees every column reaches zero before the box's top edge. */
@@ -1419,7 +1419,8 @@
   display: flex;
   width: 100%;
   align-items: flex-end;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
   margin-bottom: clamp(2.75rem, 6vh, 4rem);
 }
 
@@ -1455,63 +1456,78 @@
   opacity: 0.9;
 }
 
-.doehealth-desk-footer__side {
+.doehealth-desk-footer__company {
   display: flex;
+  min-width: 0;
   flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 1.75rem;
-  width: max-content;
-  max-width: 14rem;
-  justify-self: end;
-  text-align: right;
+  align-items: flex-start;
+  gap: 0;
+  text-align: left;
+}
+
+.doehealth-desk-footer__company-name {
+  margin: 0;
+  color: #fffcf1;
+  font-size: clamp(1.08rem, 0.92rem + 0.62vmin, 1.32rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.16;
+}
+
+.doehealth-desk-footer__incorporation {
+  margin: 0.35rem 0 0;
+  color: rgb(255 252 241 / 0.78);
+  font-size: clamp(1rem, 0.88rem + 0.48vmin, 1.16rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.34;
+}
+
+.doehealth-desk-footer__incorporation-pending {
+  display: block;
+  margin-top: 0.2rem;
+  color: rgb(255 252 241 / 0.58);
+  font-size: clamp(0.78rem, 0.7rem + 0.32vmin, 0.88rem);
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.doehealth-desk-footer__email {
+  margin: 0.65rem 0 0;
+  color: rgb(255 252 241 / 0.88);
+  font-size: clamp(1.08rem, 0.92rem + 0.62vmin, 1.32rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.38;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.doehealth-desk-footer__email:hover {
+  color: #fffcf1;
 }
 
 .doehealth-desk-footer__links {
   display: flex;
+  flex-shrink: 0;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.55rem;
+  gap: clamp(0.45rem, 1.2vmin, 0.65rem);
+  text-align: right;
 }
 
 .doehealth-desk-footer__links a {
   color: #fffcf1;
-  font-size: 0.9375rem;
+  font-size: clamp(1.12rem, 4.05vmin, 1.52rem);
   font-weight: 500;
   letter-spacing: -0.02em;
-  line-height: 1.25;
+  line-height: 1.1;
   text-decoration: none;
   white-space: nowrap;
 }
 
 .doehealth-desk-footer__links a:hover {
-  opacity: 0.72;
-}
-
-.doehealth-desk-footer__company {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.35rem;
-}
-
-.doehealth-desk-footer__company p,
-.doehealth-desk-footer__company a {
-  margin: 0;
-  color: #fffcf1;
-  font-size: 0.875rem;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  line-height: 1.35;
-  text-decoration: none;
-}
-
-.doehealth-desk-footer__company a {
-  color: rgba(255, 252, 241, 0.72);
-}
-
-.doehealth-desk-footer__company a:hover {
-  color: #fffcf1;
+  opacity: 0.85;
 }
 
 .doehealth-desk-agents,
@@ -2693,15 +2709,21 @@
   }
 
   .doehealth-desk-footer__meta {
-    justify-content: flex-start;
+    align-items: flex-start;
     margin-bottom: 2.75rem;
   }
+}
 
-  .doehealth-desk-footer__side {
-    align-items: flex-start;
-    width: 100%;
-    max-width: none;
-  }
+.doehealth-desk-page[data-doeforvc-view="desktop"] .doehealth-desk-footer__links {
+  gap: clamp(0.65rem, 1vw, 0.85rem);
+}
+
+.doehealth-desk-page[data-doeforvc-view="desktop"] .doehealth-desk-footer__links a {
+  font-size: clamp(1.28rem, 1.85vw, 1.88rem);
+}
+
+.doehealth-desk-page[data-doeforvc-view="desktop"] .doehealth-desk-footer__company-name {
+  font-size: clamp(1.12rem, 1.15vw, 1.32rem);
 }
 
 .doehealth-desk-page[data-doeforvc-view="desktop"] .doehealth-desk-footer {
