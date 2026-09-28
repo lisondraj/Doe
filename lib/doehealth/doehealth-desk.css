@@ -2261,6 +2261,7 @@
 
   html:has(.doehealth-desk-page .doephone-mobile-root),
   html:has(.doehealth-desk-page .doephone-mobile-root) body {
+    /* Default cream — use-doehealth-desk-phone-overflow-chrome toggles brown at brown bands. */
     background-color: #fffcf1;
     overscroll-behavior-y: none;
   }

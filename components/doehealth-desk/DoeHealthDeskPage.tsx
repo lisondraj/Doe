@@ -16,6 +16,7 @@ import { DoeHealthDeskWorkspace } from "@/components/doehealth-desk/DoeHealthDes
 import { LegacyHomeDesktopNavBar } from "@/components/home/LegacyHomeDesktopNavBar";
 import { LegacyHomePhoneNavBar } from "@/components/home/LegacyHomePhoneNavBar";
 import { DOEHEALTH_DESK_PAGE_BACKGROUND } from "@/lib/doehealth/doehealth-desk-colors";
+import { useDoeHealthDeskPhoneOverflowChrome } from "@/lib/doehealth/use-doehealth-desk-phone-overflow-chrome";
 import { p22Mackinac } from "@/lib/home/fonts";
 
 type Variant = "phone" | "desktop";
@@ -29,6 +30,7 @@ type DoeHealthDeskPageProps = {
 export function DoeHealthDeskPage({ initialVariant }: DoeHealthDeskPageProps) {
   const [variant, setVariant] = useState<Variant>(initialVariant);
   const pageRef = useRef<HTMLDivElement>(null);
+  useDoeHealthDeskPhoneOverflowChrome(variant === "phone");
 
   useEffect(() => {
     const mq = window.matchMedia(QUERY);
