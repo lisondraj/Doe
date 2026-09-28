@@ -33,6 +33,11 @@ export function DoeHealthDeskNavWash() {
 
   useEffect(() => {
     const root = document.documentElement;
+    let brownNodes: Element[] = [];
+    const refreshBrownNodes = () => {
+      brownNodes = Array.from(document.querySelectorAll(BROWN_SURFACE_SELECTOR));
+    };
+    refreshBrownNodes();
 
     const paintWash = (value: number) => {
       washRef.current = value;
@@ -68,7 +73,7 @@ export function DoeHealthDeskNavWash() {
         return;
       }
 
-      const onBrown = Array.from(document.querySelectorAll(BROWN_SURFACE_SELECTOR)).some((node) =>
+      const onBrown = brownNodes.some((node) =>
         bandOverlapsRect(node.getBoundingClientRect(), band.top, band.bottom),
       );
 
@@ -77,18 +82,26 @@ export function DoeHealthDeskNavWash() {
 
     let scrollFrame = 0;
     const tick = () => {
-      cancelAnimationFrame(scrollFrame);
-      scrollFrame = requestAnimationFrame(update);
+      if (scrollFrame) return;
+      scrollFrame = requestAnimationFrame(() => {
+        scrollFrame = 0;
+        update();
+      });
+    };
+
+    const onResize = () => {
+      refreshBrownNodes();
+      tick();
     };
 
     tick();
     window.addEventListener("scroll", tick, { passive: true });
-    window.addEventListener("resize", tick);
+    window.addEventListener("resize", onResize);
     return () => {
-      cancelAnimationFrame(scrollFrame);
+      if (scrollFrame) cancelAnimationFrame(scrollFrame);
       if (animRef.current) cancelAnimationFrame(animRef.current);
       window.removeEventListener("scroll", tick);
-      window.removeEventListener("resize", tick);
+      window.removeEventListener("resize", onResize);
       root.style.removeProperty("--desk-nav-wash");
     };
   }, []);

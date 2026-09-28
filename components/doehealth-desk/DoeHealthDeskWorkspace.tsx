@@ -23,15 +23,26 @@ export function DoeHealthDeskWorkspace() {
 
   useEffect(() => {
     const root = document.documentElement;
+    let raf = 0;
+    let lastOpacity = -1;
     const update = () => {
+      raf = 0;
       const range = 200;
       const opacity = Math.max(0, 1 - window.scrollY / range);
-      root.style.setProperty("--desk-product-fade", opacity.toFixed(3));
+      const rounded = Math.round(opacity * 100) / 100;
+      if (rounded === lastOpacity) return;
+      lastOpacity = rounded;
+      root.style.setProperty("--desk-product-fade", rounded.toFixed(2));
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(update);
     };
     update();
-    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      window.removeEventListener("scroll", update);
+      if (raf) window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
       root.style.removeProperty("--desk-product-fade");
     };
   }, []);

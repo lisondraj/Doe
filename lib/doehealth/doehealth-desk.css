@@ -2262,6 +2262,17 @@
   html:has(.doehealth-desk-page .doephone-mobile-root),
   html:has(.doehealth-desk-page .doephone-mobile-root) body {
     background-color: #fffcf1;
+    overscroll-behavior-y: none;
+  }
+
+  html[data-doephone-pinching="true"]:has(.doehealth-desk-page .doephone-mobile-root),
+  html[data-doephone-pinching="true"]:has(.doehealth-desk-page .doephone-mobile-root) body {
+    overscroll-behavior-y: none;
+  }
+
+  .doehealth-desk-page.is-scrolling nav.doephone-site-nav {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   .doehealth-desk-main {
@@ -2551,6 +2562,59 @@
 
   .doehealth-desk-page:has(.doephone-mobile-root) .desk-workspace__fade {
     z-index: 45;
+    contain: paint;
+    transform: translateZ(0);
+    animation: none;
+    -webkit-mask-image:
+      radial-gradient(
+        ellipse 46% 78% at 50% 0%,
+        transparent 0%,
+        transparent 30%,
+        rgb(0 0 0 / 0.1) 42%,
+        rgb(0 0 0 / 0.28) 54%,
+        rgb(0 0 0 / 0.52) 66%,
+        rgb(0 0 0 / 0.76) 78%,
+        rgb(0 0 0 / 0.92) 89%,
+        #000 100%
+      ),
+      linear-gradient(
+        to top,
+        #000 0%,
+        #000 42%,
+        rgb(0 0 0 / 0.9) 52%,
+        rgb(0 0 0 / 0.72) 62%,
+        rgb(0 0 0 / 0.5) 72%,
+        rgb(0 0 0 / 0.28) 81%,
+        rgb(0 0 0 / 0.11) 90%,
+        transparent 100%
+      );
+    mask-image:
+      radial-gradient(
+        ellipse 46% 78% at 50% 0%,
+        transparent 0%,
+        transparent 30%,
+        rgb(0 0 0 / 0.1) 42%,
+        rgb(0 0 0 / 0.28) 54%,
+        rgb(0 0 0 / 0.52) 66%,
+        rgb(0 0 0 / 0.76) 78%,
+        rgb(0 0 0 / 0.92) 89%,
+        #000 100%
+      ),
+      linear-gradient(
+        to top,
+        #000 0%,
+        #000 42%,
+        rgb(0 0 0 / 0.9) 52%,
+        rgb(0 0 0 / 0.72) 62%,
+        rgb(0 0 0 / 0.5) 72%,
+        rgb(0 0 0 / 0.28) 81%,
+        rgb(0 0 0 / 0.11) 90%,
+        transparent 100%
+      );
+    -webkit-mask-size: 100% 100%, 100% 100%;
+    mask-size: 100% 100%, 100% 100%;
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
   }
 
   .desk-front-desk-panel {

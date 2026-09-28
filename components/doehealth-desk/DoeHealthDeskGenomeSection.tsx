@@ -11,10 +11,6 @@ const SURFACES = [
   { name: "Visit Reminder", tag: "SMS", detail: "Tomorrow · 9:40" },
 ] as const;
 
-function clamp01(value: number) {
-  return Math.min(1, Math.max(0, value));
-}
-
 /** Centered Genome 1.0 — solid brown block; nav inverts on overlap only. */
 export function DoeHealthDeskGenomeSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -24,25 +20,25 @@ export function DoeHealthDeskGenomeSection() {
     const node = sectionRef.current;
     if (!node) return;
 
-    const update = () => {
-      const rect = node.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const chromeBottom = 88;
-      const visible = Math.max(0, Math.min(rect.bottom, vh) - Math.max(rect.top, chromeBottom));
-      const narrow = window.matchMedia("(max-width: 1023px)").matches;
-      const progress = narrow
-        ? clamp01((visible - vh * 0.12) / (vh * 0.42))
-        : clamp01((visible - vh * 0.22) / (vh * 0.4));
-      if (progress > 0.28) setShown(true);
-    };
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setShown(true);
+      return;
+    }
 
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.12) {
+            setShown(true);
+            observer.disconnect();
+          }
+        }
+      },
+      { threshold: [0, 0.12, 0.28, 0.45] },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
   }, []);
 
   return (
