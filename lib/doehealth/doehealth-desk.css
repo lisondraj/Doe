@@ -1906,6 +1906,9 @@
 
 .doehealth-desk-agents {
   gap: clamp(1.35rem, 3vh, 2.25rem);
+  /* Switch row under the cards: its height + one flex gap, so the cards keep their original height. */
+  --agent-switch-extra: calc(2.6rem + 10px + clamp(1.35rem, 3vh, 2.25rem));
+  min-height: calc(100dvh + var(--agent-switch-extra));
   scroll-margin-top: calc(5.5rem + var(--desk-banner-h, 2.85rem));
   color: var(--doehealth-desk-ink);
 }
@@ -3250,7 +3253,8 @@
   /* Agents — full viewport, horizontal carousel (desk iPhone). */
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-agents {
     gap: clamp(1.15rem, 3.5vh, 1.75rem);
-    min-height: 100svh;
+    --agent-switch-extra: calc(2.6rem + 10px + clamp(1.15rem, 3.5vh, 1.75rem));
+    min-height: calc(100svh + var(--agent-switch-extra));
     padding: calc(var(--desk-phone-nav-clearance) + 1.25rem) 0
       max(1.5rem, env(safe-area-inset-bottom, 0px));
     scroll-margin-top: var(--desk-phone-nav-clearance);

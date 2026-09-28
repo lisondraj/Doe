@@ -116,6 +116,26 @@ export function DoeHealthDeskAgentsSection() {
         </div>
       </header>
 
+      <div
+        className="desk-agent-carousel"
+        id="agents-panel"
+        role="tabpanel"
+        aria-labelledby={`agents-tab-${audienceId}`}
+      >
+        <ul
+          key={audienceId}
+          className={`${inter.className}${switched ? " is-swapped" : ""}`}
+          style={{ "--agent-index": index } as CSSProperties}
+        >
+          {agents.map((agent, position) => (
+            <li key={agent.name} style={{ "--agent-order": position } as CSSProperties}>
+              <strong className={dmSans.className}>{agent.name}</strong>
+              <span>{agent.now}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <div className={`doehealth-desk-agents__switch ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
         <div
           className={`desk-agent-switch ${inter.className}`}
@@ -142,26 +162,6 @@ export function DoeHealthDeskAgentsSection() {
             </button>
           ))}
         </div>
-      </div>
-
-      <div
-        className="desk-agent-carousel"
-        id="agents-panel"
-        role="tabpanel"
-        aria-labelledby={`agents-tab-${audienceId}`}
-      >
-        <ul
-          key={audienceId}
-          className={`${inter.className}${switched ? " is-swapped" : ""}`}
-          style={{ "--agent-index": index } as CSSProperties}
-        >
-          {agents.map((agent, position) => (
-            <li key={agent.name} style={{ "--agent-order": position } as CSSProperties}>
-              <strong className={dmSans.className}>{agent.name}</strong>
-              <span>{agent.now}</span>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );
