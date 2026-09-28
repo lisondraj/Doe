@@ -3016,6 +3016,16 @@
     animation-delay: var(--desk-audience-headline-darken-delay);
   }
 
+  /*
+   * The sweep repaints text every frame. Give the title its own layer so only that small layer is
+   * re-rasterized — otherwise the whole moving card layer is repainted each frame (choppy on iOS).
+   */
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__title {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: background-position;
+  }
+
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__grid {
     gap: 0.85rem;
   }

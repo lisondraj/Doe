@@ -50,7 +50,9 @@ export function DoeHealthDeskAudienceSection() {
             });
             observer.disconnect();
           },
-          { threshold: 0.35, rootMargin: "0px 0px -14% 0px" },
+          // Fire when the card's top edge crosses ~65% down the viewport. threshold 0 so the sideways
+          // start offset never lowers the intersection ratio (that made the first card unreliable).
+          { threshold: 0, rootMargin: "0px 0px -35% 0px" },
         );
 
         observer.observe(el);
