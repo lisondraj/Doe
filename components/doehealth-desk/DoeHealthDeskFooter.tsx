@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { ABOUT_CONTACT_EMAIL, ABOUT_CONTACT_MAILTO } from "@/lib/about/about-contact";
 import { DOEHEALTH_DESK_NAV_CENTER_LINKS } from "@/lib/doehealth/doehealth-desk-nav-copy";
-import { DOEPHONE_FOOTER_CONTENT_INSET } from "@/lib/doephone/section-styles";
+import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
 
 /** Brown footer — /doehealth wordmark placement; desk nav + company copy. */
@@ -10,7 +10,7 @@ export function DoeHealthDeskFooter() {
   return (
     <footer className="doehealth-desk-footer doehealth-desk-nav-wash-surface" aria-label="Footer">
       <div className="doehealth-desk-footer__inner">
-        <div className={`doehealth-desk-footer__meta ${DOEPHONE_FOOTER_CONTENT_INSET} ${inter.className}`}>
+        <div className={`doehealth-desk-footer__meta ${DOEPHONE_DESKTOP_PAGE_INSET_X} ${inter.className}`}>
           <div className="doehealth-desk-footer__company">
             <p className="doehealth-desk-footer__company-name">Doe Intelligence Inc</p>
             <p className="doehealth-desk-footer__incorporation">
