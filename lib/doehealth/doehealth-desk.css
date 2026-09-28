@@ -2085,9 +2085,7 @@
   width: calc((100% - 2 * var(--switch-pad)) / 4);
   border: 1px solid #fffcf1eb;
   border-radius: var(--doehealth-desk-radius);
-  background-image:
-    linear-gradient(180deg, rgb(255 255 255 / 0.72) 0%, rgb(255 255 255 / 0.12) 42%, rgb(255 255 255 / 0) 100%),
-    linear-gradient(180deg, #fffdf6 0%, #ede6d6 100%);
+  background: #fffcf1;
   box-shadow: none;
   transform: translate3d(calc(var(--switch-index) * 100%), 0, 0);
   transition: transform 420ms cubic-bezier(0.33, 1, 0.68, 1);
