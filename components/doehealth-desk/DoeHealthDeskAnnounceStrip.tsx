@@ -8,14 +8,16 @@ import { inter } from "@/lib/home/fonts";
 
 type DoeHealthDeskAnnounceStripProps = {
   onDismiss: () => void;
+  /** iPhone — short label beside Learn more. */
+  compact?: boolean;
 };
 
 /** Pre-seed strip above desk nav — desktop and iPhone. */
-export function DoeHealthDeskAnnounceStrip({ onDismiss }: DoeHealthDeskAnnounceStripProps) {
+export function DoeHealthDeskAnnounceStrip({ onDismiss, compact = false }: DoeHealthDeskAnnounceStripProps) {
   return (
     <div className={`doehealth-desk-announce ${inter.className}`}>
       <p>
-        <span>{DOEHEALTH_DESK_ANNOUNCEMENT.message}</span>
+        <span>{compact ? "pre-seed!" : DOEHEALTH_DESK_ANNOUNCEMENT.message}</span>
         <Link href={DOEHEALTH_DESK_ANNOUNCEMENT.href} className="doehealth-desk-announce__link">
           {DOEHEALTH_DESK_ANNOUNCEMENT.linkLabel}
           <DoeLinkArrow className="doehealth-desk-announce__arrow" width={13} height={13} />

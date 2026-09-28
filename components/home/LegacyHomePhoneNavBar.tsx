@@ -39,7 +39,7 @@ export function LegacyHomePhoneNavBar() {
       style={{ backgroundColor: DOEHEALTH_DESK_PAGE_BACKGROUND }}
       data-doeforvc-view="iphone"
     >
-      <DoeHealthDeskAnnounceStrip onDismiss={() => setDismissed(true)} />
+      <DoeHealthDeskAnnounceStrip compact onDismiss={() => setDismissed(true)} />
       <DoeIphoneSiteNav
         pinchSafe
         homeHref="/doehealthdesk"

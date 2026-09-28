@@ -2110,7 +2110,6 @@
 /* Phone — single column, Harvey/Devin style: headline, product card, then stacked story. */
 @media (max-width: 1023px) {
   .doehealth-desk-page {
-    overflow-x: clip;
     --doe-page-surface: #fffcf1;
     --doe-page-surface-raised: #fffcf1;
     --doe-page-ink: var(--doehealth-desk-surface);
@@ -2126,23 +2125,42 @@
     background-color: #fffcf1;
   }
 
-  .doehealth-desk-page .doehealth-desk-chrome--phone {
+  .doehealth-desk-main {
+    overflow-x: clip;
+  }
+
+  .doehealth-desk-page .doehealth-desk-chrome--phone.doephone-mobile-root {
     position: fixed;
     top: 0;
     right: 0;
     left: 0;
     z-index: 50;
+    overflow: visible;
     padding-top: env(safe-area-inset-top, 0px);
-    background-color: #fffcf1;
+    background-color: transparent;
+  }
+
+  .doehealth-desk-page .doehealth-desk-chrome--phone::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: env(safe-area-inset-top, 0px);
+    background: var(--desk-announce-bg, var(--doehealth-desk-surface));
   }
 
   .doehealth-desk-page .doehealth-desk-chrome--phone .doehealth-desk-announce {
+    position: relative;
+    z-index: 1;
     flex-shrink: 0;
   }
 
   .doehealth-desk-page .doehealth-desk-chrome--phone .doehealth-desk-announce p {
+    flex-wrap: nowrap;
     padding-inline: 1rem;
-    font-size: clamp(0.78rem, 3.2vw, 0.92rem);
+    font-size: clamp(0.92rem, 3.6vw, 1.05rem);
+    white-space: nowrap;
     text-align: center;
   }
 
@@ -2203,8 +2221,8 @@
   .doehealth-desk-page nav.doephone-site-nav {
     padding-top: 0 !important;
     background-color: var(--desk-nav-bg, rgb(255 252 241 / 0.72)) !important;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
     border-bottom: none !important;
     box-shadow: none !important;
     transition: none !important;

@@ -6,12 +6,9 @@ const BROWN_SURFACE_SELECTOR = ".doehealth-desk-nav-wash-surface";
 const WASH_MS = 360;
 
 function navBand() {
-  const chrome = document.querySelector(".doehealth-desk-chrome");
-  if (chrome) {
-    const rect = chrome.getBoundingClientRect();
-    return { top: rect.top, bottom: rect.bottom };
-  }
-  const nav = document.querySelector(".doehealth-desk-page nav.doephone-site-nav");
+  const nav =
+    document.querySelector(".doehealth-desk-chrome nav.desktop-home-nav") ??
+    document.querySelector(".doehealth-desk-page nav.doephone-site-nav");
   if (!nav) return null;
   const rect = nav.getBoundingClientRect();
   return { top: rect.top, bottom: rect.bottom };
