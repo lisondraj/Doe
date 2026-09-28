@@ -7,44 +7,38 @@ import {
   DOEHEALTH_DESK_SURFACE,
 } from "@/lib/doehealth/doehealth-desk-colors";
 
-/** Brown blocks whose Safari rubber-band should read as desk brown (not cream). */
-const BROWN_OVERFLOW_HIT =
-  ".doehealth-desk-nav-wash-surface, .doehealth-desk-invite__panel";
+/** Full-bleed brown bands (Genome, Sunday, footer) — the bottom rubber-band reads as desk brown under these. */
+const BROWN_OVERFLOW_HIT = ".doehealth-desk-nav-wash-surface";
 
-function applyOverflowSurface(color: string) {
-  const html = document.documentElement;
-  html.style.backgroundColor = color;
-  if (document.body) document.body.style.backgroundColor = color;
-  const themeColor = document.querySelector('meta[name="theme-color"]');
-  if (themeColor) themeColor.setAttribute("content", color);
-}
+/** Same curve and duration as the nav wash (`DoeHealthDeskNavWash`). */
+const OVERFLOW_FADE = "background-color 360ms cubic-bezier(0.33, 1, 0.68, 1)";
 
-/** iPhone /doehealthdesk — cream overscroll on light bands, brown on brown sections + footer. */
+/**
+ * iPhone /doehealthdesk — Safari's bottom overscroll follows the band at the bottom edge of the
+ * viewport: brown over brown sections and the footer, cream elsewhere. `theme-color` is left alone
+ * so the top chrome is unaffected.
+ */
 export function useDoeHealthDeskPhoneOverflowChrome(enabled: boolean) {
   useEffect(() => {
     if (!enabled || typeof window === "undefined") return;
 
+    const html = document.documentElement;
+    const body = document.body;
     const cream = DOEHEALTH_DESK_PAGE_BACKGROUND.toLowerCase();
     const brown = DOEHEALTH_DESK_SURFACE.toLowerCase();
-    const themeMeta = document.querySelector('meta[name="theme-color"]');
-    const themeBefore = themeMeta?.getAttribute("content") ?? "";
 
     let raf = 0;
     let last = "";
 
+    const paint = (color: string) => {
+      html.style.backgroundColor = color;
+      body.style.backgroundColor = color;
+    };
+
     const pickSurface = () => {
-      const vh = window.innerHeight;
-      const scrollY = window.scrollY;
-      const maxScroll = Math.max(0, document.documentElement.scrollHeight - vh);
-      const cx = Math.min(window.innerWidth - 1, Math.max(1, Math.round(window.innerWidth * 0.5)));
-
-      let probeY = Math.round(vh * 0.5);
-      if (scrollY < 12) probeY = 4;
-      else if (scrollY > maxScroll - 12) probeY = Math.max(4, vh - 4);
-
-      const hit = document.elementFromPoint(cx, probeY);
-      const onBrown = hit?.closest(BROWN_OVERFLOW_HIT) != null;
-      return onBrown ? brown : cream;
+      const cx = Math.round(window.innerWidth / 2);
+      const hit = document.elementFromPoint(cx, Math.max(0, window.innerHeight - 2));
+      return hit?.closest(BROWN_OVERFLOW_HIT) != null ? brown : cream;
     };
 
     const update = () => {
@@ -52,7 +46,7 @@ export function useDoeHealthDeskPhoneOverflowChrome(enabled: boolean) {
       const next = pickSurface();
       if (next === last) return;
       last = next;
-      applyOverflowSurface(next);
+      paint(next);
     };
 
     const schedule = () => {
@@ -60,8 +54,10 @@ export function useDoeHealthDeskPhoneOverflowChrome(enabled: boolean) {
       raf = window.requestAnimationFrame(update);
     };
 
-    applyOverflowSurface(cream);
+    paint(cream);
     last = cream;
+    html.style.transition = OVERFLOW_FADE;
+    body.style.transition = OVERFLOW_FADE;
     schedule();
 
     window.addEventListener("scroll", schedule, { passive: true });
@@ -73,12 +69,10 @@ export function useDoeHealthDeskPhoneOverflowChrome(enabled: boolean) {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       window.visualViewport?.removeEventListener("resize", schedule);
-      document.documentElement.style.backgroundColor = "";
-      if (document.body) document.body.style.backgroundColor = "";
-      if (themeMeta) {
-        if (themeBefore) themeMeta.setAttribute("content", themeBefore);
-        else themeMeta.removeAttribute("content");
-      }
+      html.style.backgroundColor = "";
+      body.style.backgroundColor = "";
+      html.style.transition = "";
+      body.style.transition = "";
     };
   }, [enabled]);
 }
