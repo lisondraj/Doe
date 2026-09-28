@@ -205,13 +205,6 @@
   }
 }
 
-.doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero__line.desk-headline-darken--ink,
-.doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero__line--built-for {
-  opacity: 1;
-  transform: none;
-  transition: none;
-}
-
 .doehealth-desk-page .doehealth-desk-genome__stack > *:not(.doehealth-desk-genome__intro) {
   transform: translateY(1rem);
   transition-duration: 640ms;
@@ -295,6 +288,68 @@
   mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgb(0 0 0 / 0.16) 58%, rgb(0 0 0 / 0.16) 100%);
   -webkit-mask-size: 280% 100%;
   mask-size: 280% 100%;
+}
+
+/* Hero only — swipe starts immediately on load, and no dim inactive state under it (iPhone + desktop). */
+.doehealth-desk-page .doehealth-desk-hero__line.desk-headline-darken--ink.is-headline-in,
+.doehealth-desk-page .doehealth-desk-hero .desk-headline-mask.is-headline-in {
+  animation-delay: 0s;
+}
+
+.doehealth-desk-page .doehealth-desk-hero__line.desk-headline-darken--ink {
+  background-image: linear-gradient(
+    135deg,
+    var(--doehealth-desk-surface) 0%,
+    var(--doehealth-desk-surface) 42%,
+    rgb(var(--doehealth-desk-surface-rgb) / 0) 58%,
+    rgb(var(--doehealth-desk-surface-rgb) / 0) 100%
+  );
+}
+
+.doehealth-desk-page:not(:has(.doephone-mobile-root)) .doehealth-desk-hero__line.desk-headline-darken--ink {
+  background-image: linear-gradient(
+    90deg,
+    var(--doehealth-desk-surface) 0%,
+    var(--doehealth-desk-surface) 42%,
+    rgb(var(--doehealth-desk-surface-rgb) / 0) 58%,
+    rgb(var(--doehealth-desk-surface-rgb) / 0) 100%
+  );
+}
+
+.doehealth-desk-page .doehealth-desk-hero .desk-headline-mask {
+  -webkit-mask-image: linear-gradient(135deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  mask-image: linear-gradient(135deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+}
+
+.doehealth-desk-page:not(:has(.doephone-mobile-root)) .doehealth-desk-hero .desk-headline-mask {
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+}
+
+/* Desktop hero — fade the whole title in as one unit (lines stay opaque), same as iPhone. */
+.doehealth-desk-page:not(:has(.doephone-mobile-root)) {
+  --desk-hero-intro-duration: 1000ms;
+}
+
+.doehealth-desk-page:not(:has(.doephone-mobile-root)) .doehealth-desk-hero__headline {
+  opacity: 0;
+  transform: translate3d(0, 0.9rem, 0);
+  transition:
+    opacity var(--desk-hero-intro-duration) cubic-bezier(0.33, 1, 0.68, 1),
+    transform var(--desk-hero-intro-duration) cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.doehealth-desk-page:not(:has(.doephone-mobile-root)) .doehealth-desk-hero.is-in .doehealth-desk-hero__headline {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.doehealth-desk-page:not(:has(.doephone-mobile-root)) .doehealth-desk-hero__line,
+.doehealth-desk-page:not(:has(.doephone-mobile-root)) .doehealth-desk-hero.is-in .doehealth-desk-hero__line,
+.doehealth-desk-page:not(:has(.doephone-mobile-root)) .doehealth-desk-hero.is-in .doehealth-desk-hero__line:nth-child(2) {
+  opacity: 1;
+  transform: none;
+  transition: none;
 }
 
 .doehealth-desk-page:not(:has(.doephone-mobile-root)) .doehealth-desk-audiences__card {
@@ -2872,6 +2927,35 @@
     --desk-audience-reveal-x: clamp(2rem, 9vw, 2.75rem);
     --desk-audience-headline-darken-duration: 2.75s;
     --desk-audience-headline-darken-delay: 0.45s;
+    --desk-hero-intro-duration: 760ms;
+  }
+
+  /* iPhone hero — both headline lines fade up together, then diagonal swipe (no extra delay). */
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero__headline {
+    opacity: 0;
+    transform: translate3d(0, 0.9rem, 0);
+    transition:
+      opacity var(--desk-hero-intro-duration) cubic-bezier(0.33, 1, 0.68, 1),
+      transform var(--desk-hero-intro-duration) cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero.is-in .doehealth-desk-hero__headline {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Lines stay fully opaque; the whole title (dim inactive state included) fades in from nothing. */
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero__line,
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero.is-in .doehealth-desk-hero__line,
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero.is-in .doehealth-desk-hero__line:nth-child(2) {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero__line.desk-headline-darken--ink.is-headline-in,
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero .desk-headline-mask.is-headline-in {
+    animation-delay: 0s;
   }
 
   /* Phone: only the card that has scrolled in reveals — not the whole section at once. */
@@ -2879,11 +2963,14 @@
     opacity: 0;
   }
 
-  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card {
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card,
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card.is-high,
+  .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card.is-low {
     transition:
       opacity 680ms cubic-bezier(0.33, 1, 0.68, 1),
       transform 680ms cubic-bezier(0.33, 1, 0.68, 1);
     backface-visibility: hidden;
+    align-self: auto;
   }
 
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-audiences__card.is-in {

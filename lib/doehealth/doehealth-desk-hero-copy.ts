@@ -30,10 +30,18 @@ export const DOEHEALTH_DESK_HERO_HEADLINE_DARKEN_DELAY_MS = 800;
 
 /** Desktop hero: wait, fade the title in from nothing, then run the horizontal highlight. */
 export const DOEHEALTH_DESK_HERO_DESKTOP_TIMING = {
-  startDelayMs: 500,
-  /** Swipe starts as the 1s fade-up (desktop `.doehealth-desk-hero__line` transition) lands. */
-  introRevealMs: 800,
+  startDelayMs: 0,
+  /** Swipe starts immediately on page load. */
+  introRevealMs: 0,
   /** Keep in sync with desktop `--desk-headline-darken-*` in doehealth-desk.css */
   darkenMs: 5_500,
-  darkenDelayMs: 350,
+  darkenDelayMs: 0,
+} as const;
+
+/** iPhone hero: both title lines fade in together, then the diagonal swipe runs immediately. */
+export const DOEHEALTH_DESK_HERO_PHONE_TIMING = {
+  /** Keep in sync with `--desk-hero-intro-duration` on phone in doehealth-desk.css */
+  introRevealMs: 0,
+  darkenMs: DOEHEALTH_DESK_HERO_HEADLINE_DARKEN_MS,
+  darkenDelayMs: 0,
 } as const;

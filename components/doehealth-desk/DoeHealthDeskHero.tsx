@@ -8,8 +8,7 @@ import {
   DOEHEALTH_DESK_HERO_DEK,
   DOEHEALTH_DESK_HERO_DESKTOP_TIMING,
   DOEHEALTH_DESK_HERO_HEADLINE,
-  DOEHEALTH_DESK_HERO_HEADLINE_DARKEN_DELAY_MS,
-  DOEHEALTH_DESK_HERO_HEADLINE_DARKEN_MS,
+  DOEHEALTH_DESK_HERO_PHONE_TIMING,
   DOEHEALTH_DESK_HERO_SECURE,
 } from "@/lib/doehealth/doehealth-desk-hero-copy";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
@@ -35,42 +34,20 @@ export function DoeHealthDeskHero() {
 
     const desktop = !window.matchMedia("(max-width: 1023px)").matches;
     setDesktop(desktop);
-    const timers: number[] = [];
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting || entry.intersectionRatio < 0.35) return;
-        observer.disconnect();
-
-        if (desktop) {
-          const { startDelayMs, introRevealMs } = DOEHEALTH_DESK_HERO_DESKTOP_TIMING;
-          timers.push(window.setTimeout(() => setShown(true), startDelayMs));
-          timers.push(window.setTimeout(() => setHeadlineIn(true), startDelayMs + introRevealMs));
-          return;
-        }
-
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            setHeadlineIn(true);
-            setShown(true);
-          });
-        });
-      },
-      { threshold: [0, 0.15, 0.35, 0.55, 0.72] },
-    );
-    observer.observe(section);
-    return () => {
-      observer.disconnect();
-      for (const timer of timers) window.clearTimeout(timer);
-    };
+    // Hero is above the fold — start the reveal on page load, no scroll/IO gating or delay.
+    const frame = requestAnimationFrame(() => {
+      setShown(true);
+      setHeadlineIn(true);
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
     if (!headlineIn || headlineRevealDone) return undefined;
 
-    const totalMs = desktop
-      ? DOEHEALTH_DESK_HERO_DESKTOP_TIMING.darkenMs + DOEHEALTH_DESK_HERO_DESKTOP_TIMING.darkenDelayMs
-      : DOEHEALTH_DESK_HERO_HEADLINE_DARKEN_MS + DOEHEALTH_DESK_HERO_HEADLINE_DARKEN_DELAY_MS;
+    const timing = desktop ? DOEHEALTH_DESK_HERO_DESKTOP_TIMING : DOEHEALTH_DESK_HERO_PHONE_TIMING;
+    const totalMs = timing.darkenMs + timing.darkenDelayMs;
     const timer = window.setTimeout(() => setHeadlineRevealDone(true), totalMs);
     return () => window.clearTimeout(timer);
   }, [desktop, headlineIn, headlineRevealDone]);
