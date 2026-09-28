@@ -403,8 +403,7 @@ export default function DoeIphoneSiteNav({
     }
 
     setNavSheetVisualOpen(false);
-    const t = window.setTimeout(() => setNavSheetLive(false), NAV_SHEET_MS);
-    return () => window.clearTimeout(t);
+    setNavSheetLive(false);
   }, [mobileNavOpen]);
 
   useLayoutEffect(() => {
@@ -668,7 +667,8 @@ export default function DoeIphoneSiteNav({
       : frostedScrollNav && protoNavScrolled
         ? "var(--doe-page-surface-raised, #F2ECE4)"
         : "var(--doe-page-ink, #1E343A)";
-  const navSheetTransition = `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}, transform ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`;
+  const navSheetContentTransition = `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}, transform ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`;
+  const navSheetTransition = navSheetContentTransition;
   const navFooterCarouselZoom = pinchSafe ? 1 : mobileNavFooterZoom;
 
   const navChromeStrip = (
@@ -704,8 +704,8 @@ export default function DoeIphoneSiteNav({
         className={`fixed z-[90] cursor-pointer bg-black/25 ${menuScrimInsetTop ? "inset-x-0 bottom-0" : "inset-0"}`}
         style={{
           ...(menuScrimInsetTop ? { top: menuScrimInsetTop } : null),
-          opacity: navSheetVisualOpen ? 1 : 0,
-          transition: `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`,
+          opacity: navSheetLive ? 1 : 0,
+          transition: "none",
           pointerEvents: navSheetVisualOpen ? "auto" : "none",
         }}
         aria-label="Close navigation menu"
@@ -720,18 +720,27 @@ export default function DoeIphoneSiteNav({
           />
         ) : null}
         <div
-          className="absolute inset-x-0 bottom-0 bg-[var(--doe-page-surface,#EDE8DF)] flex flex-col pointer-events-auto overflow-hidden min-h-0"
+          className="absolute inset-x-0 bottom-0 flex flex-col overflow-hidden min-h-0"
           style={{
             top: iphoneMenuTopPx,
-            opacity: navSheetVisualOpen ? 1 : 0,
-            transform: navSheetVisualOpen ? "translateY(0)" : "translateY(-10px)",
-            transition: navSheetTransition,
             pointerEvents: navSheetVisualOpen ? "auto" : "none",
           }}
           role="dialog"
           aria-modal="true"
           aria-label="Site navigation"
         >
+          <div
+            className="absolute inset-0 bg-[var(--doe-page-surface,#EDE8DF)] pointer-events-none"
+            aria-hidden
+          />
+          <div
+            className="relative flex min-h-0 flex-1 flex-col"
+            style={{
+              opacity: navSheetVisualOpen ? 1 : 0,
+              transform: navSheetVisualOpen ? "translateY(0)" : "translateY(-10px)",
+              transition: navSheetVisualOpen ? navSheetContentTransition : "none",
+            }}
+          >
           <nav className="flex flex-col flex-1 min-h-0 overflow-y-auto overscroll-contain">
             {resolvedNavSheetItems.map((item) => (
               <div key={item.href} className="border-b border-[var(--doe-page-border,rgba(30,52,58,0.14))]">
@@ -833,6 +842,7 @@ export default function DoeIphoneSiteNav({
               ))}
             </div>
           </div>
+          </div>
         </div>
       </div>
     </>
@@ -856,7 +866,7 @@ export default function DoeIphoneSiteNav({
         className="fixed top-0 left-0 right-0 z-[200] iphone-page:pt-[env(safe-area-inset-top,0px)] border-b"
         style={{
           opacity: navSheetVisualOpen ? 1 : 0.98,
-          transition: navSheetTransition,
+          transition: navSheetVisualOpen ? navSheetTransition : "none",
           backgroundColor: navBackground,
           borderColor: navBorderColor,
         }}

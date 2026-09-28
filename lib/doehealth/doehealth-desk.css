@@ -36,6 +36,7 @@
     var(--doehealth-desk-surface) calc(var(--desk-wash) * 100%),
     #fccfb8
   );
+  --desk-nav-clearance: calc(5.5rem + var(--desk-banner-h, 2.85rem));
   background-color: #fffcf1;
   color: var(--doehealth-desk-ink);
 }
@@ -534,13 +535,59 @@
   bottom: 0;
   left: 0;
   z-index: 40;
-  height: min(34vh, 18rem);
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 252, 241, 0) 0%,
-    rgba(255, 252, 241, 0.55) 38%,
-    #fffcf1 78%
-  );
+  width: 100%;
+  height: min(48vw, 36vh, 18.5rem);
+  background: #fffcf1;
+  /* ∪ wash: a bowl carved from the top keeps the sides higher; the vertical
+     layer guarantees every column reaches zero before the box's top edge. */
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 46% 78% at 50% 0%,
+      transparent 0%,
+      transparent 30%,
+      rgb(0 0 0 / 0.1) 42%,
+      rgb(0 0 0 / 0.28) 54%,
+      rgb(0 0 0 / 0.52) 66%,
+      rgb(0 0 0 / 0.76) 78%,
+      rgb(0 0 0 / 0.92) 89%,
+      #000 100%
+    ),
+    linear-gradient(
+      to top,
+      #000 0%,
+      #000 42%,
+      rgb(0 0 0 / 0.9) 52%,
+      rgb(0 0 0 / 0.72) 62%,
+      rgb(0 0 0 / 0.5) 72%,
+      rgb(0 0 0 / 0.28) 81%,
+      rgb(0 0 0 / 0.11) 90%,
+      transparent 100%
+    );
+  -webkit-mask-composite: source-in;
+  mask-image:
+    radial-gradient(
+      ellipse 46% 78% at 50% 0%,
+      transparent 0%,
+      transparent 30%,
+      rgb(0 0 0 / 0.1) 42%,
+      rgb(0 0 0 / 0.28) 54%,
+      rgb(0 0 0 / 0.52) 66%,
+      rgb(0 0 0 / 0.76) 78%,
+      rgb(0 0 0 / 0.92) 89%,
+      #000 100%
+    ),
+    linear-gradient(
+      to top,
+      #000 0%,
+      #000 42%,
+      rgb(0 0 0 / 0.9) 52%,
+      rgb(0 0 0 / 0.72) 62%,
+      rgb(0 0 0 / 0.5) 72%,
+      rgb(0 0 0 / 0.28) 81%,
+      rgb(0 0 0 / 0.11) 90%,
+      transparent 100%
+    );
+  mask-composite: intersect;
   opacity: var(--desk-product-fade, 1);
   pointer-events: none;
 }
@@ -1150,9 +1197,11 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  min-height: 100vh;
-  padding: clamp(5rem, 12vh, 8rem) clamp(1.5rem, 6vw, 4rem);
-  scroll-margin-top: calc(5.5rem + var(--desk-banner-h, 2.85rem));
+  min-height: 100dvh;
+  min-height: 100svh;
+  padding: calc(var(--desk-nav-clearance) + clamp(2.25rem, 5vh, 3.5rem)) clamp(1.5rem, 6vw, 4rem)
+    clamp(2.25rem, 5vh, 3.5rem);
+  scroll-margin-top: var(--desk-nav-clearance);
   background: var(--doehealth-desk-surface);
   color: #fffcf1;
   text-align: center;
@@ -1347,31 +1396,63 @@
 
 .doehealth-desk-footer {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-end;
   box-sizing: border-box;
-  min-height: 72dvh;
-  overflow: hidden;
+  min-height: min(69vh, 42rem);
+  overflow-x: clip;
+  overflow-y: hidden;
   background: var(--doehealth-desk-surface);
   color: #fffcf1;
 }
 
-.doehealth-desk-footer__row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: clamp(2rem, 5vw, 4.5rem);
-  box-sizing: border-box;
+.doehealth-desk-footer__inner {
+  display: flex;
   width: 100%;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+.doehealth-desk-footer__meta {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-bottom: clamp(2.75rem, 6vh, 4rem);
+}
+
+.doehealth-desk-footer__wordmark-shell {
+  display: flex;
+  justify-content: center;
+  overflow-x: clip;
+  overflow-y: visible;
+  width: 100vw;
+  margin-right: calc(50% - 50vw);
+  margin-left: calc(50% - 50vw);
+  padding-top: 0.75rem;
+  padding-bottom: 0;
 }
 
 .doehealth-desk-footer__mark {
+  display: inline-block;
+  flex-shrink: 0;
   margin: 0;
   min-width: 0;
   font-weight: 400;
-  font-size: clamp(9rem, 26vw, 22rem);
-  line-height: 0.78;
-  letter-spacing: -0.055em;
+  font-size: clamp(11rem, min(76vw, 68vmin), 30rem);
+  line-height: 0.65;
+  letter-spacing: -0.04em;
   color: #fffcf1;
+  text-align: center;
+  text-decoration: none;
+  margin-bottom: calc(-0.06em - env(safe-area-inset-bottom, 0px));
+  transition: opacity 200ms ease;
+}
+
+.doehealth-desk-footer__mark:hover {
+  opacity: 0.9;
 }
 
 .doehealth-desk-footer__side {
@@ -2259,17 +2340,17 @@
     color: var(--doehealth-desk-surface);
   }
 
-  .doehealth-desk-chrome--phone [role="dialog"] > nav > div {
+  .doehealth-desk-chrome--phone [role="dialog"] nav > div {
     border-color: rgb(var(--doehealth-desk-ink-rgb) / 0.1) !important;
   }
 
-  .doehealth-desk-chrome--phone [role="dialog"] > nav a {
+  .doehealth-desk-chrome--phone [role="dialog"] nav a {
     color: var(--doehealth-desk-surface) !important;
     font-weight: 500;
     letter-spacing: -0.03em;
   }
 
-  .doehealth-desk-chrome--phone [role="dialog"] > nav > div:has(a[href="/waitlist"]) {
+  .doehealth-desk-chrome--phone [role="dialog"] nav > div:has(a[href="/waitlist"]) {
     border-bottom: 0 !important;
     padding: 1.15rem 1.25rem 0.25rem;
   }
@@ -2288,7 +2369,8 @@
     line-height: 1;
   }
 
-  .doehealth-desk-chrome--phone [role="dialog"] > div:last-child {
+  /* Footer carousel only — not the animated sheet content wrapper. */
+  .doehealth-desk-chrome--phone [role="dialog"] nav + div {
     display: none;
   }
 
@@ -2349,7 +2431,7 @@
   .doehealth-desk-page .doehealth-desk-agents__head,
   .doehealth-desk-page .desk-feat,
   .doehealth-desk-page .doehealth-desk-invite,
-  .doehealth-desk-page .doehealth-desk-footer__row,
+  .doehealth-desk-page .doehealth-desk-footer__meta,
   .doehealth-desk-page .doehealth-desk-genome {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
@@ -2429,8 +2511,8 @@
     overflow: hidden;
   }
 
-  .desk-workspace__fade {
-    display: none;
+  .doehealth-desk-page:has(.doephone-mobile-root) .desk-workspace__fade {
+    z-index: 45;
   }
 
   .desk-front-desk-panel {
@@ -2603,19 +2685,16 @@
   }
 
   .doehealth-desk-footer {
-    align-items: stretch;
+    min-height: 66vh;
+  }
+
+  .doehealth-desk-footer__inner {
     padding-top: 2.5rem;
-    padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
   }
 
-  .doehealth-desk-footer__row {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-    gap: 1.75rem;
-  }
-
-  .doehealth-desk-footer__mark {
-    font-size: clamp(4.5rem, 22vw, 6.5rem);
+  .doehealth-desk-footer__meta {
+    justify-content: flex-start;
+    margin-bottom: 2.75rem;
   }
 
   .doehealth-desk-footer__side {
@@ -2623,4 +2702,12 @@
     width: 100%;
     max-width: none;
   }
+}
+
+.doehealth-desk-page[data-doeforvc-view="desktop"] .doehealth-desk-footer {
+  min-height: min(74vh, 46rem);
+}
+
+.doehealth-desk-page[data-doeforvc-view="desktop"] .doehealth-desk-footer__mark {
+  font-size: clamp(9.75rem, min(68vw, 58vmin), 26rem);
 }
