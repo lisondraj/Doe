@@ -227,6 +227,20 @@
   background: var(--doehealth-desk-surface);
 }
 
+/*
+ * Filled cards use the product's Integrations panel surface: same brown (--doehealth-desk-surface,
+ * = SHELL in DoeHealthDeskPaperFrame), same border, and the same inset highlight + soft drop shadows.
+ */
+.doehealth-desk-page .doehealth-desk-audiences__card.is-filled-desk,
+.doehealth-desk-page .doehealth-desk-audiences__card.is-filled-phone {
+  border: 1px solid #fffcf11f;
+  background: var(--doehealth-desk-surface);
+  box-shadow:
+    #fffcf10f 0 1px 0 inset,
+    #00000029 0 4px 14px,
+    #00000014 0 1px 6px;
+}
+
 .doehealth-desk-page:not(:has(.doephone-mobile-root)) .doehealth-desk-audiences__card.is-filled-desk .doehealth-desk-audiences__dek,
 .doehealth-desk-page:not(:has(.doephone-mobile-root)) .doehealth-desk-audiences__card.is-filled-desk .doehealth-desk-audiences__dek span {
   color: rgb(255 252 241 / 0.78);
