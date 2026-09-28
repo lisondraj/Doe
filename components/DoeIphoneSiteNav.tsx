@@ -310,6 +310,7 @@ export default function DoeIphoneSiteNav({
   frostedScrollNav = false,
   frostedScrollPastHero = false,
   frostedNavAlwaysPunched = false,
+  menuScrimInsetTop,
 }: {
   pinchSafe?: boolean;
   homeHref?: string;
@@ -335,6 +336,8 @@ export default function DoeIphoneSiteNav({
   frostedScrollPastHero?: boolean;
   /** Home iPhone — keep the punched teal capsule at rest (no scroll morph). */
   frostedNavAlwaysPunched?: boolean;
+  /** Pinch-safe — dim scrim starts below fixed announce + nav (e.g. desk `--desk-phone-nav-clearance`). */
+  menuScrimInsetTop?: string;
 }) {
   const resolvedNavSheetItems: readonly NavSheetItem[] =
     navSheetItems ??
@@ -698,8 +701,9 @@ export default function DoeIphoneSiteNav({
     <>
       <button
         type="button"
-        className="fixed inset-0 z-[90] cursor-pointer bg-black/25"
+        className={`fixed z-[90] cursor-pointer bg-black/25 ${menuScrimInsetTop ? "inset-x-0 bottom-0" : "inset-0"}`}
         style={{
+          ...(menuScrimInsetTop ? { top: menuScrimInsetTop } : null),
           opacity: navSheetVisualOpen ? 1 : 0,
           transition: `opacity ${NAV_SHEET_MS}ms ${NAV_SHEET_EASE}`,
           pointerEvents: navSheetVisualOpen ? "auto" : "none",

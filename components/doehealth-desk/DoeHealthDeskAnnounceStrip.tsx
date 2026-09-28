@@ -17,7 +17,7 @@ export function DoeHealthDeskAnnounceStrip({ onDismiss, compact = false }: DoeHe
   return (
     <div className={`doehealth-desk-announce ${inter.className}`}>
       <p>
-        <span>{compact ? "pre-seed!" : DOEHEALTH_DESK_ANNOUNCEMENT.message}</span>
+        <span>{compact ? DOEHEALTH_DESK_ANNOUNCEMENT.phoneMessage : DOEHEALTH_DESK_ANNOUNCEMENT.message}</span>
         <Link href={DOEHEALTH_DESK_ANNOUNCEMENT.href} className="doehealth-desk-announce__link">
           {DOEHEALTH_DESK_ANNOUNCEMENT.linkLabel}
           <DoeLinkArrow className="doehealth-desk-announce__arrow" width={13} height={13} />

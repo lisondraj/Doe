@@ -78,8 +78,10 @@ export function DoeHealthDeskPage({ initialVariant }: DoeHealthDeskPageProps) {
         </>
       )}
       <main className="doehealth-desk-main min-h-[100dvh]" aria-label="Desk canvas">
-        <DoeHealthDeskHero />
-        <DoeHealthDeskWorkspace />
+        <div className="doehealth-desk-hero-stack">
+          <DoeHealthDeskHero />
+          <DoeHealthDeskWorkspace />
+        </div>
         <DoeHealthDeskAudienceSection />
         <DoeHealthDeskGenomeSection />
         <DoeHealthDeskAgentsSection />

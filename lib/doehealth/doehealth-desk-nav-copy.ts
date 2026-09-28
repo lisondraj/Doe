@@ -9,6 +9,8 @@ export const DOEHEALTH_DESK_NAV_PRIMARY_CTA = {
 /** Desk announcement strip above the nav. */
 export const DOEHEALTH_DESK_ANNOUNCEMENT = {
   message: "Doe raises $5.1M pre-seed to reinvent healthcare AI",
+  /** iPhone — raise line + pre-seed, inline with Learn more. */
+  phoneMessage: "Doe raises $5.1M pre-seed!",
   linkLabel: "Learn more",
   href: ABOUT_PATH,
 } as const;
