@@ -2285,8 +2285,9 @@
   .doehealth-desk-page:has(.doephone-mobile-root) .doehealth-desk-hero-stack {
     display: flex;
     flex-direction: column;
+    /* svh, not dvh — dvh resizes as Safari's toolbar collapses mid-scroll. */
     min-height: calc(
-      100dvh - var(--desk-phone-nav-clearance) + var(--desk-phone-product-h) / 3
+      100svh - var(--desk-phone-nav-clearance) + var(--desk-phone-product-h) / 3
     );
   }
 

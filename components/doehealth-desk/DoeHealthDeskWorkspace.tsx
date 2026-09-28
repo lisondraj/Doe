@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DoeHealthDeskFrontDeskPanel } from "@/components/doehealth-desk/DoeHealthDeskFrontDeskPanel";
 import { DoeHealthDeskPaperFrame } from "@/components/doehealth-desk/DoeHealthDeskPaperFrame";
@@ -9,6 +9,7 @@ import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 /** Paper Workflows frame, scaled to the column. The bottom veil lifts as you scroll. */
 export function DoeHealthDeskWorkspace() {
   const [shown, setShown] = useState(false);
+  const fadeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -22,7 +23,8 @@ export function DoeHealthDeskWorkspace() {
   }, []);
 
   useEffect(() => {
-    const root = document.documentElement;
+    const fade = fadeRef.current;
+    if (!fade) return;
     let raf = 0;
     let lastOpacity = -1;
     const update = () => {
@@ -32,7 +34,8 @@ export function DoeHealthDeskWorkspace() {
       const rounded = Math.round(opacity * 100) / 100;
       if (rounded === lastOpacity) return;
       lastOpacity = rounded;
-      root.style.setProperty("--desk-product-fade", rounded.toFixed(2));
+      fade.style.setProperty("--desk-product-fade", rounded.toFixed(2));
+      fade.style.visibility = rounded === 0 ? "hidden" : "";
     };
     const onScroll = () => {
       if (raf) return;
@@ -43,7 +46,6 @@ export function DoeHealthDeskWorkspace() {
     return () => {
       if (raf) window.cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
-      root.style.removeProperty("--desk-product-fade");
     };
   }, []);
 
@@ -57,7 +59,7 @@ export function DoeHealthDeskWorkspace() {
         </div>
         <DoeHealthDeskFrontDeskPanel />
       </div>
-      <div className="desk-workspace__fade" aria-hidden />
+      <div ref={fadeRef} className="desk-workspace__fade" aria-hidden />
     </section>
   );
 }
