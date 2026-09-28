@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import "@/lib/doedtc/westfield-emr-chart.css";
 import "@/lib/doedtc/westfield-emr-chat.css";
@@ -41,7 +41,7 @@ function AgentSteps({ labels }: { labels: string[] }) {
   );
 }
 
-function UserBubble({ children }: { children: string }) {
+function UserBubble({ children }: { children: ReactNode }) {
   return (
     <div className="flex w-full justify-end shrink-0">
       <div className="landing-emr-glass-blue w-[520px] shrink-0 py-4 px-5 rounded-[22px]">

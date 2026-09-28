@@ -25,7 +25,7 @@ export function ProductEmrPaperChat() {
             <div style={{ boxSizing: 'border-box', display: 'flex', flexShrink: '0', justifyContent: 'end', width: '100%' }}>
               <div style={{ backgroundColor: '#2563EB', borderRadius: '22px', boxSizing: 'border-box', flexShrink: '0', paddingBlock: '16px', paddingInline: '20px', width: '520px' }}>
                 <div style={{ boxSizing: 'border-box', color: '#FFFFFF', fontFamily: '"Inter-Regular_Medium", "Inter", system-ui, sans-serif', fontSize: '17px', fontWeight: 500, lineHeight: '24px', textShadow: '#0F172A57 0px 1px 2px, #FFFFFF3D 0px -1px 0px' }}>
-                  I have Elena Vasquez's diabetes follow-up at 8:20 this morning. I haven't seen her yet. Her labs are already back. Can you walk me through the chart and tell me what's changed since her visit in August?
+                  I have Elena Vasquez&apos;s diabetes follow-up at 8:20 this morning. I haven&apos;t seen her yet. Her labs are already back. Can you walk me through the chart and tell me what&apos;s changed since her visit in August?
                 </div>
               </div>
             </div>
@@ -92,7 +92,7 @@ export function ProductEmrPaperChat() {
             <div style={{ boxSizing: 'border-box', display: 'flex', flexShrink: '0', justifyContent: 'end', width: '100%' }}>
               <div style={{ backgroundColor: '#2563EB', borderRadius: '22px', boxSizing: 'border-box', flexShrink: '0', paddingBlock: '16px', paddingInline: '20px', width: '520px' }}>
                 <div style={{ boxSizing: 'border-box', color: '#FFFFFF', fontFamily: '"Inter-Regular_Medium", "Inter", system-ui, sans-serif', fontSize: '17px', fontWeight: 500, lineHeight: '24px', textShadow: '#0F172A57 0px 1px 2px, #FFFFFF3D 0px -1px 0px', whiteSpace: 'pre-wrap' }}>
-                  The August note shows they increased her to 20 mg. She's on metformin 1000 mg twice daily, and NoSalt is listed on her home med rec. I'll double-check both with her when she comes in.<br /><br />Is there anything else I should have ready before she walks in?
+                  The August note shows they increased her to 20 mg. She&apos;s on metformin 1000 mg twice daily, and NoSalt is listed on her home med rec. I&apos;ll double-check both with her when she comes in.<br /><br />Is there anything else I should have ready before she walks in?
                 </div>
               </div>
             </div>
@@ -133,7 +133,7 @@ export function ProductEmrPaperChat() {
             </div>
             <div style={{ boxSizing: 'border-box', display: 'flex', flexShrink: '0', paddingLeft: '39px', width: '100%' }}>
               <div style={{ boxSizing: 'border-box', color: '#1C1C1E', display: 'flex', fontFamily: '"Inter-Regular_Medium", "Inter", system-ui, sans-serif', fontSize: '17px', fontWeight: 500, lineHeight: '24px', textShadow: '#FFFFFF85 0px 1px 0px, #0F172A12 0px -1px 0px' }}>
-                One moment. I'm still pulling together a few last items for you.
+                One moment. I&apos;m still pulling together a few last items for you.
               </div>
             </div>
           </div>
@@ -149,7 +149,7 @@ export function ProductEmrPaperChat() {
                 </div>
                 <div style={{ alignItems: 'center', backgroundImage: 'linear-gradient(in oklab 180deg, oklab(62.3% -0.033 -0.185) 0%, oklab(54.6% -0.027 -0.214) 55%, oklab(48.8% -0.021 -0.216) 100%)', borderRadius: '14px', boxSizing: 'border-box', display: 'flex', flexShrink: '0', height: '48px', justifyContent: 'center', width: '48px' }}>
                   <div style={{ boxSizing: 'border-box', color: '#FFFFFF', display: 'flex', fontFamily: '"Inter-Regular_SemiBold", "Inter", system-ui, sans-serif', fontSize: '13px', fontWeight: 600, lineHeight: '16px', textShadow: '#0F172A57 0px 1px 2px, #FFFFFF3D 0px -1px 0px' }}>
-                    >
+                    {'>'}
                   </div>
                 </div>
               </div>

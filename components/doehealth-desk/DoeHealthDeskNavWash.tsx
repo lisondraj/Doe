@@ -66,13 +66,9 @@ export function DoeHealthDeskNavWash() {
         return;
       }
 
-      let onBrown = false;
-      for (const node of document.querySelectorAll(BROWN_SURFACE_SELECTOR)) {
-        if (bandOverlapsRect(node.getBoundingClientRect(), band.top, band.bottom)) {
-          onBrown = true;
-          break;
-        }
-      }
+      const onBrown = Array.from(document.querySelectorAll(BROWN_SURFACE_SELECTOR)).some((node) =>
+        bandOverlapsRect(node.getBoundingClientRect(), band.top, band.bottom),
+      );
 
       setTarget(onBrown ? 1 : 0);
     };

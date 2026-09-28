@@ -14,7 +14,7 @@ export function ProductEmrPaperPatients() {
               </div>
               <div style={{ alignItems: 'center', backgroundImage: 'linear-gradient(in oklab 180deg, oklab(62.3% -0.033 -0.185) 0%, oklab(54.6% -0.027 -0.214) 55%, oklab(48.8% -0.021 -0.216) 100%)', borderRadius: '14px', boxSizing: 'border-box', display: 'flex', flexShrink: '0', height: '48px', justifyContent: 'center', width: '48px' }}>
                 <div style={{ boxSizing: 'border-box', color: '#FFFFFF', display: 'flex', fontFamily: '"Inter-Regular_SemiBold", "Inter", system-ui, sans-serif', fontSize: '13px', fontWeight: 600, lineHeight: '16px', textShadow: '#0F172A57 0px 1px 2px, #FFFFFF3D 0px -1px 0px' }}>
-                  >
+                  {'>'}
                 </div>
               </div>
             </div>

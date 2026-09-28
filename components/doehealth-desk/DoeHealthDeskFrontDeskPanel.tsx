@@ -59,13 +59,16 @@ export function DoeHealthDeskFrontDeskPanel() {
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8, paddingTop: 16 }}>
-          {MORNING.map((slot) => (
+          {MORNING.map((slot) => {
+            const active = "on" in slot && slot.on;
+            return (
             <div key={slot.time} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 0 }}>
-              <div style={{ fontFamily: DM, fontSize: slot.on ? 15 : 13, letterSpacing: "-0.03em", color: slot.on ? "#F8F4EB" : "rgb(255 252 241 / 42%)" }}>{slot.time}</div>
-              <div style={{ width: "100%", height: 3, borderRadius: 2, background: slot.on ? "#F0CDB8" : "rgb(255 252 241 / 16%)" }} />
-              <div style={{ height: 16, fontFamily: INTER, fontSize: 11, color: slot.on ? "#F0CDB8" : "rgb(255 252 241 / 38%)" }}>{slot.who}</div>
+              <div style={{ fontFamily: DM, fontSize: active ? 15 : 13, letterSpacing: "-0.03em", color: active ? "#F8F4EB" : "rgb(255 252 241 / 42%)" }}>{slot.time}</div>
+              <div style={{ width: "100%", height: 3, borderRadius: 2, background: active ? "#F0CDB8" : "rgb(255 252 241 / 16%)" }} />
+              <div style={{ height: 16, fontFamily: INTER, fontSize: 11, color: active ? "#F0CDB8" : "rgb(255 252 241 / 38%)" }}>{slot.who}</div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </aside>

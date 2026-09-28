@@ -31,7 +31,7 @@ export function ProductEmrPaperNotes() {
                           </div>
                         </div>
                         <div style={{ boxSizing: 'border-box', color: '#FFFFFF', fontFamily: '"Inter-Regular", "Inter", system-ui, sans-serif', fontSize: '32px', letterSpacing: '-0.04em', lineHeight: '36px', textShadow: '#0F172A57 0px 1px 2px, #FFFFFF3D 0px -1px 0px', width: '287px' }}>
-                          Today's diabetes follow-up showed A1c at 7.4 and potassium at 5.8. Lisinopril was held and we reviewed the glucometer log in the room.
+                          Today&apos;s diabetes follow-up showed A1c at 7.4 and potassium at 5.8. Lisinopril was held and we reviewed the glucometer log in the room.
                         </div>
                         <div style={{ boxSizing: 'border-box', display: 'flex', flexShrink: '0', gap: '24px', paddingTop: '4px', width: '100%' }}>
                           <div style={{ boxSizing: 'border-box', display: 'flex', flexDirection: 'column', flexGrow: '1', gap: '2px', width: '0px' }}>
