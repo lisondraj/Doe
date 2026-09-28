@@ -538,8 +538,7 @@
   width: 100%;
   height: min(38vw, 28vh, 14.5rem);
   background: #fffcf1;
-  /* ∪ wash: a bowl carved from the top keeps the sides higher; the vertical
-     layer guarantees every column reaches zero before the box's top edge. */
+  /* ∪ wash (bowl + vertical fade) intersected with a soft wave that drifts sideways. */
   -webkit-mask-image:
     radial-gradient(
       ellipse 46% 78% at 50% 0%,
@@ -562,8 +561,12 @@
       rgb(0 0 0 / 0.28) 81%,
       rgb(0 0 0 / 0.11) 90%,
       transparent 100%
-    );
-  -webkit-mask-composite: source-in;
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='b' x='-20%25' y='-50%25' width='140%25' height='200%25'%3E%3CfeGaussianBlur stdDeviation='5'/%3E%3C/filter%3E%3C/defs%3E%3Cpath filter='url(%23b)' d='M-200 40 Q-150 18 -100 40 T0 40 T100 40 T200 40 T300 40 T400 40 V160 H-200 Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%, 100% 100%, var(--desk-fade-wave-w) 100%;
+  -webkit-mask-repeat: no-repeat, no-repeat, repeat-x;
+  -webkit-mask-position: 0 0, 0 0, 0 0;
+  -webkit-mask-composite: source-in, source-in;
   mask-image:
     radial-gradient(
       ellipse 46% 78% at 50% 0%,
@@ -586,10 +589,29 @@
       rgb(0 0 0 / 0.28) 81%,
       rgb(0 0 0 / 0.11) 90%,
       transparent 100%
-    );
-  mask-composite: intersect;
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='b' x='-20%25' y='-50%25' width='140%25' height='200%25'%3E%3CfeGaussianBlur stdDeviation='5'/%3E%3C/filter%3E%3C/defs%3E%3Cpath filter='url(%23b)' d='M-200 40 Q-150 18 -100 40 T0 40 T100 40 T200 40 T300 40 T400 40 V160 H-200 Z'/%3E%3C/svg%3E");
+  mask-size: 100% 100%, 100% 100%, var(--desk-fade-wave-w) 100%;
+  mask-repeat: no-repeat, no-repeat, repeat-x;
+  mask-position: 0 0, 0 0, 0 0;
+  mask-composite: intersect, intersect;
+  --desk-fade-wave-w: 36rem;
+  animation: desk-workspace-fade-wave 7s linear infinite;
   opacity: var(--desk-product-fade, 1);
   pointer-events: none;
+}
+
+@keyframes desk-workspace-fade-wave {
+  to {
+    -webkit-mask-position: 0 0, 0 0, var(--desk-fade-wave-w) 0;
+    mask-position: 0 0, 0 0, var(--desk-fade-wave-w) 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk-workspace__fade {
+    animation: none;
+  }
 }
 
 .desk-workspace__app {
