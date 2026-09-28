@@ -19,6 +19,8 @@ export function DesktopMainNavCta({
   linksEnabled = true,
   punched = false,
   dropdownEnabled = true,
+  primaryLabel,
+  primaryHref,
 }: {
   bg: string;
   fg: string;
@@ -27,10 +29,16 @@ export function DesktopMainNavCta({
   linksEnabled?: boolean;
   punched?: boolean;
   dropdownEnabled?: boolean;
+  primaryLabel?: string;
+  primaryHref?: string;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const primary = DESKTOP_MAIN_CTA_MENU_ITEMS[0];
+  const defaultPrimary = DESKTOP_MAIN_CTA_MENU_ITEMS[0];
+  const primary = {
+    label: primaryLabel ?? defaultPrimary.label,
+    href: primaryHref ?? defaultPrimary.href,
+  };
   const radius = punched ? "rounded-full" : "rounded-md";
 
   useEffect(() => {

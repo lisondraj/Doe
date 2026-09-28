@@ -1,0 +1,3172 @@
+@property --desk-nav-wash {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.doehealth-desk-page {
+  --desk-product-scale: 0.88;
+  --doe-page-surface: #fffcf1;
+  --doehealth-desk-ink: #140c04;
+  --doehealth-desk-ink-rgb: 20 12 4;
+  --doehealth-desk-surface: #281910;
+  --doehealth-desk-surface-rgb: 40 25 16;
+  --doehealth-desk-product-rail: #221714;
+  --doehealth-desk-product-muted: #38251d;
+  --doehealth-desk-product-card: #3a2920;
+  --doehealth-desk-radius: 11px;
+  --desk-wash: var(--desk-nav-wash, 0);
+  --desk-nav-bg: color-mix(
+    in srgb,
+    rgb(var(--doehealth-desk-surface-rgb) / 0.78) calc(var(--desk-wash) * 100%),
+    rgb(255 252 241 / 0.72)
+  );
+  --desk-nav-ink: color-mix(in srgb, #fffcf1 calc(var(--desk-wash) * 100%), var(--doehealth-desk-ink));
+  --desk-nav-button-bg: color-mix(in srgb, #fccfb8 calc(var(--desk-wash) * 100%), var(--doehealth-desk-surface));
+  --desk-nav-button-fg: color-mix(in srgb, var(--doehealth-desk-surface) calc(var(--desk-wash) * 100%), #fffcf1);
+  --desk-nav-button-line: color-mix(
+    in srgb,
+    rgb(var(--doehealth-desk-surface-rgb) / 0.22) calc(var(--desk-wash) * 100%),
+    rgb(255 252 241 / 0.22)
+  );
+  --desk-announce-bg: color-mix(in srgb, #fccfb8 calc(var(--desk-wash) * 100%), var(--doehealth-desk-surface));
+  --desk-announce-ink: color-mix(in srgb, var(--doehealth-desk-surface) calc(var(--desk-wash) * 100%), #fffcf1);
+  --desk-announce-link: color-mix(
+    in srgb,
+    var(--doehealth-desk-surface) calc(var(--desk-wash) * 100%),
+    #fccfb8
+  );
+  background-color: #fffcf1;
+  color: var(--doehealth-desk-ink);
+}
+
+.doehealth-desk-page nav.desktop-home-nav .rounded-md {
+  border-radius: var(--doehealth-desk-radius) !important;
+}
+
+.doehealth-desk-page nav.desktop-home-nav,
+.doehealth-desk-page nav.doephone-site-nav {
+  border-bottom: none !important;
+}
+
+.doehealth-desk-chrome {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 50;
+}
+
+.doehealth-desk-announce {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  position: relative;
+  height: var(--desk-banner-h, 2.85rem);
+  background: var(--desk-announce-bg, var(--doehealth-desk-surface));
+  color: var(--desk-announce-ink, #fffcf1);
+}
+
+.doehealth-desk-chrome.is-dismissed .doehealth-desk-announce {
+  display: none;
+}
+
+.doehealth-desk-announce p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  margin: 0;
+  font-size: clamp(0.9rem, 0.84rem + 0.12vw, 1rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.doehealth-desk-announce__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--desk-announce-link, #fccfb8);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.doehealth-desk-announce__link:hover {
+  opacity: 0.72;
+}
+
+.doehealth-desk-announce__arrow {
+  flex-shrink: 0;
+}
+
+.doehealth-desk-announce button {
+  position: absolute;
+  top: 0;
+  right: 0.85rem;
+  display: grid;
+  place-items: center;
+  width: 2.85rem;
+  height: 2.85rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--desk-announce-ink, #fffcf1);
+  cursor: pointer;
+}
+
+.doehealth-desk-page nav.desktop-home-nav {
+  position: relative;
+  top: auto !important;
+  background-color: var(--desk-nav-bg, rgb(255 252 241 / 0.72));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.doehealth-desk-main {
+  padding-top: calc(5.5rem + var(--desk-banner-h, 2.85rem));
+  padding-bottom: 0;
+}
+
+.doehealth-desk-nav__bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+}
+
+.doehealth-desk-nav__mark {
+  justify-self: start;
+  color: var(--desk-nav-ink);
+}
+
+.doehealth-desk-nav__links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 1.8vw, 1.75rem);
+}
+
+.doehealth-desk-nav__link {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--desk-nav-ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.doehealth-desk-nav__link:hover {
+  opacity: 0.72;
+}
+
+.doehealth-desk-nav__end {
+  justify-self: end;
+}
+
+.doehealth-desk-chrome .doehealth-desk-announce,
+.doehealth-desk-chrome .doehealth-desk-announce p,
+.doehealth-desk-chrome .doehealth-desk-announce__link,
+.doehealth-desk-chrome .doehealth-desk-announce button,
+.doehealth-desk-page nav.desktop-home-nav,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__mark,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__link,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__end a,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__end button,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__end .proto-nav-cta-label {
+  transition: none !important;
+}
+
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__end a,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__end button,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__end .proto-nav-cta-label {
+  background-color: var(--desk-nav-button-bg) !important;
+  color: var(--desk-nav-button-fg) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.doehealth-desk-chrome .doehealth-desk-announce__link:hover,
+.doehealth-desk-chrome .doehealth-desk-announce button:hover,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__mark:hover,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__link:hover,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__end a:hover,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__end button:hover {
+  opacity: 0.72;
+}
+
+.doehealth-desk-page nav.desktop-home-nav .doehealth-desk-nav__end button[class*="border-l"] {
+  border-color: var(--desk-nav-button-line) !important;
+}
+
+.doehealth-desk-page nav.desktop-home-nav .doehealth-nav-mail-shell > button svg,
+.doehealth-desk-page nav.desktop-home-nav .doehealth-nav-mail-shell > button svg path {
+  fill: currentColor !important;
+  stroke: none !important;
+  transition: none !important;
+}
+
+.doehealth-desk-hero {
+  box-sizing: border-box;
+  padding-top: clamp(1.25rem, 2.5vw, 2rem);
+  padding-bottom: clamp(1.25rem, 2.4vh, 2rem);
+}
+
+.doehealth-desk-hero__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16.5rem, 22rem);
+  align-items: end;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  width: 100%;
+}
+
+.doehealth-desk-hero__headline {
+  margin: 0;
+  max-width: 100%;
+  font-weight: 400;
+  font-size: clamp(2.65rem, 5.4vw, 4.85rem);
+  line-height: 0.98;
+  letter-spacing: -0.042em;
+  color: var(--doehealth-desk-surface);
+}
+
+.doehealth-desk-hero__dek {
+  margin: 0.9rem 0 0;
+  max-width: 34ch;
+  color: var(--doehealth-desk-ink);
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.38;
+  letter-spacing: -0.02em;
+}
+
+.doehealth-desk-hero__dek span {
+  display: block;
+}
+
+.doehealth-desk-hero__secure {
+  margin: 0;
+  justify-self: end;
+  width: 100%;
+  max-width: 22rem;
+}
+
+.doehealth-desk-hero__secure p {
+  margin: 0 0 0.55rem;
+  color: var(--doehealth-desk-ink);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.doehealth-desk-hero__email {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 3.15rem;
+  padding: 0.3rem 0.3rem 0.3rem 0.95rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--doehealth-desk-surface);
+}
+
+.doehealth-desk-hero__email input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: #fffcf1;
+  font: inherit;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+  outline: none;
+}
+
+.doehealth-desk-hero__email input::placeholder {
+  color: rgba(255, 252, 241, 0.55);
+}
+
+.doehealth-desk-hero__email button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: var(--doehealth-desk-radius);
+  background: #fffcf1;
+  color: var(--doehealth-desk-ink);
+  cursor: pointer;
+}
+
+.doehealth-desk-hero__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.doehealth-desk-hero__line,
+.doehealth-desk-hero__dek,
+.doehealth-desk-hero__secure {
+  opacity: 0;
+  transform: translateY(0.9rem);
+  transition:
+    opacity 760ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 760ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.doehealth-desk-hero.is-in .doehealth-desk-hero__line,
+.doehealth-desk-hero.is-in .doehealth-desk-hero__dek,
+.doehealth-desk-hero.is-in .doehealth-desk-hero__secure {
+  opacity: 1;
+  transform: none;
+}
+
+.doehealth-desk-hero.is-in .doehealth-desk-hero__line:nth-child(2) {
+  transition-delay: 90ms;
+}
+
+.doehealth-desk-hero.is-in .doehealth-desk-hero__dek {
+  transition-delay: 180ms;
+}
+
+.doehealth-desk-hero.is-in .doehealth-desk-hero__secure {
+  transition-delay: 270ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-desk-hero__line,
+  .doehealth-desk-hero__dek,
+  .doehealth-desk-hero__secure {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.doehealth-desk-hero__line {
+  display: block;
+}
+
+.doehealth-desk-hero__line--built-for {
+  display: block;
+}
+
+.doehealth-desk-hero__audience-carousel {
+  display: inline-grid;
+  position: relative;
+  vertical-align: baseline;
+  width: max-content;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.doehealth-desk-hero__audience-sizer,
+.doehealth-desk-hero__audience-word {
+  grid-area: 1 / 1;
+  min-width: 0;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.doehealth-desk-hero__audience-sizer {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.doehealth-desk-hero__audience-word--out.doehealth-desk-hero__audience-word--animate {
+  animation: doehealth-desk-audience-out 550ms cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+
+.doehealth-desk-hero__audience-word--in.doehealth-desk-hero__audience-word--animate {
+  animation: doehealth-desk-audience-in 550ms cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+
+@keyframes doehealth-desk-audience-out {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, -0.35em, 0);
+  }
+}
+
+@keyframes doehealth-desk-audience-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.45em, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-desk-hero__audience-word--out.doehealth-desk-hero__audience-word--animate,
+  .doehealth-desk-hero__audience-word--in.doehealth-desk-hero__audience-word--animate {
+    animation: none;
+  }
+}
+
+.doehealth-desk-page .doephone-mobile-root .bg-black {
+  background-color: var(--doehealth-desk-ink) !important;
+}
+
+/* Paper frame is 1920×1080 and scaled to the column. The veil is viewport-fixed. */
+.desk-workspace {
+  --desk-ink: var(--doehealth-desk-surface);
+  --desk-rail: var(--doehealth-desk-product-rail);
+  --desk-muted: var(--doehealth-desk-product-muted);
+  --desk-card: var(--doehealth-desk-product-card);
+  --desk-cream: #fffcf1;
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  margin-top: 0.35rem;
+  padding-bottom: clamp(2rem, 5vh, 3.5rem);
+  overflow: visible;
+  pointer-events: none;
+  user-select: none;
+}
+
+.desk-paper-scale,
+.desk-front-desk-panel {
+  --desk-ink: var(--doehealth-desk-surface);
+  --desk-rail: var(--doehealth-desk-product-rail);
+  --desk-muted: var(--doehealth-desk-product-muted);
+  --desk-card: var(--doehealth-desk-product-card);
+}
+
+.desk-workspace__stage {
+  position: relative;
+  width: 100%;
+  container-type: inline-size;
+  /* Publish row bottom in 1920×1080 artboard: 14 + 16 + 20 + 40 = 90px */
+  --desk-front-desk-artboard-top: 98;
+  opacity: 0;
+  transform: translateY(1.15rem);
+  transition:
+    opacity 860ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 860ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition-delay: 320ms;
+}
+
+.desk-workspace.is-in .desk-workspace__stage {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk-workspace__stage {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.desk-paper-slot {
+  container-type: inline-size;
+  width: 100%;
+  height: calc(1080 / 1920 * 100cqw * var(--desk-product-scale, 0.88));
+  position: relative;
+  overflow: visible;
+}
+
+.desk-front-desk-panel {
+  position: absolute;
+  top: calc(
+    var(--desk-front-desk-artboard-top) / 1920 * 100cqw * var(--desk-product-scale, 0.88)
+  );
+  right: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-sizing: border-box;
+  width: clamp(23rem, 30vw, 32.5rem);
+  max-width: 100%;
+  padding: 1.35rem 1.35rem 1.55rem;
+  border: 1px solid #fffcf11f;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--doehealth-desk-surface);
+  box-shadow: none;
+  pointer-events: none;
+  transform: scale(0.86);
+  transform-origin: top right;
+}
+
+.desk-paper-scale {
+  width: 1920px;
+  height: 1080px;
+  transform: scale(calc(100cqw / 1920px * var(--desk-product-scale, 0.88)));
+  transform-origin: top left;
+}
+
+.desk-workspace__fade {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  height: min(34vh, 18rem);
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 252, 241, 0) 0%,
+    rgba(255, 252, 241, 0.55) 38%,
+    #fffcf1 78%
+  );
+  opacity: var(--desk-product-fade, 1);
+  pointer-events: none;
+}
+
+.desk-workspace__app {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(16.5rem, 28%) minmax(0, 1fr);
+  aspect-ratio: 1920 / 1080;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  border-radius: var(--doehealth-desk-radius);
+  background-color: var(--desk-cream);
+  background-image: radial-gradient(rgb(var(--doehealth-desk-surface-rgb) / 0.16) 0.85px, transparent 0.9px);
+  background-size: 16px 16px;
+  box-shadow: 0 18px 40px rgb(var(--doehealth-desk-surface-rgb) / 0.16);
+}
+
+.desk-workspace__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.85rem 0 0.7rem;
+  background: var(--desk-rail);
+  color: rgba(242, 232, 218, 0.72);
+}
+
+.desk-workspace__rail-mark {
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  margin-bottom: 0.55rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--desk-cream);
+  color: var(--desk-ink);
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.desk-workspace__rail-icon {
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: var(--doehealth-desk-radius);
+}
+
+.desk-workspace__rail-icon svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.desk-workspace__rail-spacer {
+  flex: 1;
+}
+
+.desk-workspace__integrations {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0.7rem 0.35rem 0.7rem 0;
+  padding: 1.15rem 0.85rem 0.85rem;
+  border-radius: var(--doehealth-desk-radius);
+  border: 1px solid rgba(255, 252, 241, 0.12);
+  background: var(--desk-ink);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+  color: #f2e8da;
+}
+
+.desk-workspace__integrations h2,
+.desk-workspace__library h2,
+.desk-workspace__detail h3 {
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.desk-workspace__integrations h2 {
+  padding: 0 0.35rem 0.85rem;
+  font-size: 1.45rem;
+}
+
+.desk-workspace__search {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.15rem;
+  margin: 0 0.15rem 0.7rem;
+  padding: 0 0.35rem 0 0.7rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: rgba(255, 252, 241, 0.08);
+  color: rgba(242, 232, 218, 0.62);
+  font-size: 0.78rem;
+}
+
+.desk-workspace__search svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex-shrink: 0;
+}
+
+.desk-workspace__search span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.desk-workspace__search i {
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-left: auto;
+  border-radius: var(--doehealth-desk-radius);
+  background: rgba(255, 252, 241, 0.12);
+  color: #f2e8da;
+  font-style: normal;
+  font-size: 0.9rem;
+}
+
+.desk-workspace__filters {
+  display: flex;
+  gap: 0.2rem;
+  margin: 0 0.15rem 0.65rem;
+  padding: 0.2rem;
+  overflow: hidden;
+}
+
+.desk-workspace__filters span {
+  padding: 0.28rem 0.55rem;
+  border-radius: var(--doehealth-desk-radius);
+  color: rgba(242, 232, 218, 0.62);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.desk-workspace__filters .is-on {
+  background: var(--desk-cream);
+  color: var(--desk-ink);
+  font-weight: 600;
+}
+
+.desk-workspace__apps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.desk-workspace__apps li,
+.desk-workspace__step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.55rem;
+  padding: 0 0.35rem;
+  font-size: 0.84rem;
+}
+
+.desk-workspace__apps li span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.desk-workspace__step > span {
+  min-width: 0;
+}
+
+.desk-workspace__apps em,
+.desk-workspace__step em {
+  margin-left: auto;
+  color: rgba(242, 232, 218, 0.55);
+  font-style: normal;
+  font-size: 0.75rem;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.desk-workspace__mark {
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--desk-cream);
+  color: var(--desk-ink);
+  font-size: 0.72rem;
+  font-weight: 650;
+  flex-shrink: 0;
+}
+
+.desk-workspace__canvas {
+  position: relative;
+  min-width: 0;
+  margin: 0.55rem 0 0.55rem 0;
+  border-radius: var(--doehealth-desk-radius);
+  background: transparent;
+  overflow: hidden;
+}
+
+.desk-workspace__graph {
+  position: absolute;
+  inset: 0;
+}
+
+.desk-workspace__wires {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.desk-workspace__wires path {
+  fill: none;
+  stroke: rgb(var(--doehealth-desk-surface-rgb) / 0.22);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.desk-workspace__publish {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 1.85rem;
+  padding: 0 0.7rem 0 0.55rem;
+  border: 1px solid rgb(var(--doehealth-desk-surface-rgb) / 0.1);
+  border-radius: var(--doehealth-desk-radius);
+  background: #f6d3c4;
+  color: var(--desk-ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgb(var(--doehealth-desk-surface-rgb) / 0.06);
+}
+
+.desk-workspace__publish i {
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid var(--desk-ink);
+}
+
+.desk-workspace__publish b {
+  color: rgb(var(--doehealth-desk-surface-rgb) / 0.45);
+  font-weight: 500;
+  font-size: 0.65rem;
+}
+
+.desk-workspace__node {
+  position: absolute;
+  z-index: 1;
+  box-sizing: border-box;
+  width: 26%;
+  padding: 0.7rem 0.75rem 0.55rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--desk-paper);
+}
+
+.desk-workspace__node header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.desk-workspace__node svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex-shrink: 0;
+  color: var(--desk-ink);
+}
+
+.desk-workspace__node strong {
+  font-size: 0.86rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.desk-workspace__node header span {
+  margin-left: auto;
+  color: rgba(44, 26, 16, 0.35);
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+}
+
+.desk-workspace__node p {
+  margin: 0 0 0.55rem;
+  color: rgba(44, 26, 16, 0.72);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.desk-workspace__node em {
+  display: inline-flex;
+  padding: 0.12rem 0.4rem;
+  border-radius: var(--doehealth-desk-radius);
+  font-style: normal;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.desk-workspace__node .is-voice {
+  background: #f3d2c4;
+  color: #8a3d28;
+}
+
+.desk-workspace__node .is-emr,
+.desk-workspace__node .is-schedule {
+  background: #ead9c6;
+  color: #6a4a34;
+}
+
+.desk-workspace__node .is-fax {
+  background: #f0c9a8;
+  color: #7a4524;
+}
+
+.desk-workspace__node--desk { top: 3%; left: 36%; width: 26%; }
+.desk-workspace__node--athena { top: 26.5%; left: 10%; }
+.desk-workspace__node--referral { top: 26.5%; left: 42%; width: 24%; }
+.desk-workspace__node--nex { top: 48.5%; left: 4%; }
+.desk-workspace__node--prior { top: 48.5%; left: 34%; }
+
+.desk-workspace__detail {
+  position: absolute;
+  top: 6.6%;
+  right: 1.6%;
+  z-index: 3;
+  width: 34%;
+  padding: 0.85rem 0.85rem 0.65rem;
+  border-radius: var(--doehealth-desk-radius);
+  border: 1px solid rgba(255, 252, 241, 0.12);
+  background: var(--desk-ink);
+  overflow: hidden;
+  color: #f2e8da;
+  box-shadow: 0 18px 40px rgb(var(--doehealth-desk-surface-rgb) / 0.18);
+}
+
+.desk-workspace__detail header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.desk-workspace__detail h3 {
+  font-size: 1.35rem;
+}
+
+.desk-workspace__detail header span {
+  padding: 0.18rem 0.5rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--desk-cream);
+  color: var(--desk-ink);
+  font-size: 0.68rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.desk-workspace__detail > p {
+  margin: 0.45rem 0 0.7rem;
+  color: rgba(242, 232, 218, 0.78);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.desk-workspace__detail blockquote {
+  margin: 0 0 0.75rem;
+  padding: 0 0 0.7rem;
+  border-bottom: 1px solid rgba(242, 232, 218, 0.12);
+}
+
+.desk-workspace__detail blockquote strong {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 550;
+  line-height: 1.35;
+}
+
+.desk-workspace__detail blockquote em,
+.desk-workspace__facts span,
+.desk-workspace__detail time {
+  display: block;
+  margin-top: 0.28rem;
+  color: rgba(242, 232, 218, 0.48);
+  font-style: normal;
+  font-size: 0.68rem;
+}
+
+.desk-workspace__facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  margin-bottom: 0.7rem;
+}
+
+.desk-workspace__facts p {
+  margin: 0;
+}
+
+.desk-workspace__facts strong {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.desk-workspace__chips {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.desk-workspace__chips span {
+  padding: 0.18rem 0.45rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: rgba(255, 252, 241, 0.1);
+  font-size: 0.68rem;
+}
+
+.desk-workspace__step {
+  min-height: 2.35rem;
+  padding: 0.35rem 0;
+  color: #f2e8da;
+  font-size: 0.8rem;
+}
+
+.desk-workspace__step .desk-workspace__mark {
+  width: 1.45rem;
+  height: 1.45rem;
+  font-size: 0.68rem;
+}
+
+.desk-workspace__step em {
+  padding: 0.12rem 0.4rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: rgba(255, 252, 241, 0.1);
+  color: #f2e8da;
+}
+
+.desk-workspace__step small {
+  display: block;
+  margin-top: 0.12rem;
+  color: rgba(242, 232, 218, 0.5);
+  font-size: 0.68rem;
+}
+
+.desk-workspace__step--note {
+  align-items: flex-start;
+}
+
+.desk-workspace__detail time {
+  margin-top: 0.35rem;
+}
+
+.desk-workspace__library {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  height: 31%;
+  padding: 0.85rem 0.9rem 0.7rem;
+  border-radius: var(--doehealth-desk-radius);
+  border: 1px solid rgba(255, 252, 241, 0.12);
+  background: var(--desk-ink);
+  color: #f2e8da;
+  box-sizing: border-box;
+}
+
+.desk-workspace__library h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.35rem;
+}
+
+.desk-workspace__library > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.desk-workspace__library article {
+  min-width: 0;
+}
+
+.desk-workspace__library i {
+  display: block;
+  height: 8.5vh;
+  min-height: 4.5rem;
+  max-height: 7.5rem;
+  margin-bottom: 0.4rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--desk-muted);
+}
+
+.desk-workspace__library span {
+  color: rgba(242, 232, 218, 0.72);
+  font-size: 0.75rem;
+}
+
+.doehealth-desk-audiences {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin-top: 0;
+  padding-top: clamp(2.25rem, 5vh, 3.75rem);
+  padding-bottom: clamp(2.25rem, 5vh, 3.75rem);
+  scroll-margin-top: calc(5.5rem + var(--desk-banner-h, 2.85rem));
+  color: var(--doehealth-desk-ink);
+}
+
+.doehealth-desk-audiences__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  gap: 0.85rem 0.9rem;
+  width: 100%;
+  min-height: calc(clamp(22rem, 48vh, 31rem) + clamp(2.75rem, 6vh, 4.25rem));
+}
+
+.doehealth-desk-audiences__title {
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(1.85rem, 2.05vw, 2.35rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  color: var(--doehealth-desk-surface);
+  -webkit-text-stroke: 1px var(--doehealth-desk-surface);
+  paint-order: stroke fill;
+}
+
+.doehealth-desk-audiences__dek {
+  margin: 0;
+}
+
+.doehealth-desk-audiences__dek span {
+  display: block;
+}
+
+.doehealth-desk-audiences__card.is-low .doehealth-desk-audiences__dek span {
+  white-space: nowrap;
+}
+
+.doehealth-desk-audiences__card {
+  height: clamp(22rem, 48vh, 31rem);
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    opacity 780ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 780ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.doehealth-desk-audiences__card.is-high {
+  align-self: start;
+  transform: translateY(-2.75rem);
+}
+
+.doehealth-desk-audiences__card.is-low {
+  align-self: end;
+  transform: translateY(2.75rem);
+}
+
+.doehealth-desk-audiences.is-in .doehealth-desk-audiences__card {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-desk-audiences__card,
+  .doehealth-desk-audiences__card.is-high,
+  .doehealth-desk-audiences__card.is-low {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.doehealth-desk-audiences__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.doehealth-desk-audiences__card.is-high .doehealth-desk-audiences__copy {
+  margin-top: 0;
+}
+
+.doehealth-desk-audiences__card.is-low .doehealth-desk-audiences__copy {
+  margin-top: auto;
+}
+
+.doehealth-desk-genome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: clamp(5rem, 12vh, 8rem) clamp(1.5rem, 6vw, 4rem);
+  scroll-margin-top: calc(5.5rem + var(--desk-banner-h, 2.85rem));
+  background: var(--doehealth-desk-surface);
+  color: #fffcf1;
+  text-align: center;
+}
+
+.doehealth-desk-genome__stack {
+  width: min(100%, 64rem);
+}
+
+.doehealth-desk-genome__stack > * {
+  opacity: 0;
+  transform: translateY(1.1rem);
+  transition:
+    opacity 720ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 720ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.doehealth-desk-genome.is-in .doehealth-desk-genome__stack > *:nth-child(1) {
+  transition-delay: 0ms;
+}
+
+.doehealth-desk-genome.is-in .doehealth-desk-genome__stack > *:nth-child(2) {
+  transition-delay: 80ms;
+}
+
+.doehealth-desk-genome.is-in .doehealth-desk-genome__stack > *:nth-child(3) {
+  transition-delay: 160ms;
+}
+
+.doehealth-desk-genome.is-in .doehealth-desk-genome__stack > *:nth-child(4) {
+  transition-delay: 240ms;
+}
+
+.doehealth-desk-genome.is-in .doehealth-desk-genome__stack > *:nth-child(5) {
+  transition-delay: 320ms;
+}
+
+.doehealth-desk-genome.is-in .doehealth-desk-genome__stack > * {
+  opacity: 1;
+  transform: none;
+}
+
+.doehealth-desk-genome__eyebrow {
+  margin: 0;
+  font-size: clamp(1.65rem, 2.8vw, 2.45rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: #fffcf1;
+}
+
+.doehealth-desk-genome__title {
+  margin: 0.2rem 0 0;
+  font-size: clamp(4.6rem, 10.5vw, 8.75rem);
+  font-weight: 400;
+  letter-spacing: -0.048em;
+  line-height: 0.9;
+  color: #fccfb8;
+}
+
+.doehealth-desk-genome__dek-line {
+  margin: 0.35rem auto 0;
+  max-width: 38rem;
+  color: color-mix(in srgb, currentColor 74%, transparent);
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+}
+
+.doehealth-desk-genome__dek-line--first {
+  margin-top: 1.35rem;
+}
+
+.doehealth-desk-genome__board {
+  width: min(100%, 26.5rem);
+  margin: clamp(2.4rem, 5vh, 3.4rem) auto 0;
+  padding: 1.15rem;
+  border: 1px solid var(--doehealth-desk-ink);
+  border-radius: var(--doehealth-desk-radius);
+  background: #fffcf1;
+  color: var(--doehealth-desk-ink);
+  text-align: left;
+  box-shadow: 0 18px 40px rgb(var(--doehealth-desk-ink-rgb) / 0.16);
+}
+
+.doehealth-desk-genome__board-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.15rem 0.2rem 0.85rem;
+}
+
+.doehealth-desk-genome__board-head strong {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.doehealth-desk-genome__board-head small {
+  display: block;
+  margin-top: 0.28rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.doehealth-desk-genome__board-head em {
+  height: 1.7rem;
+  padding: 0 0.7rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--doehealth-desk-ink);
+  color: #fffcf1;
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.7rem;
+}
+
+.doehealth-desk-genome__board ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doehealth-desk-genome__board li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.15rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: rgb(var(--doehealth-desk-ink-rgb) / 0.05);
+}
+
+.doehealth-desk-genome__board li span {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.doehealth-desk-genome__board li b {
+  font-size: 0.98rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.doehealth-desk-genome__board li small {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  font-size: 0.78rem;
+  letter-spacing: -0.01em;
+}
+
+.doehealth-desk-genome__board li i {
+  height: 1.45rem;
+  padding: 0 0.55rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: #fed9c4;
+  color: var(--doehealth-desk-ink);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  line-height: 1.45rem;
+}
+
+.doehealth-desk-genome__board footer {
+  padding: 0.75rem 0.2rem 0.1rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  font-size: 0.78rem;
+  letter-spacing: -0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-desk-genome__stack > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.doehealth-desk-footer {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 72dvh;
+  overflow: hidden;
+  background: var(--doehealth-desk-surface);
+  color: #fffcf1;
+}
+
+.doehealth-desk-footer__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.doehealth-desk-footer__mark {
+  margin: 0;
+  min-width: 0;
+  font-weight: 400;
+  font-size: clamp(9rem, 26vw, 22rem);
+  line-height: 0.78;
+  letter-spacing: -0.055em;
+  color: #fffcf1;
+}
+
+.doehealth-desk-footer__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1.75rem;
+  width: max-content;
+  max-width: 14rem;
+  justify-self: end;
+  text-align: right;
+}
+
+.doehealth-desk-footer__links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+}
+
+.doehealth-desk-footer__links a {
+  color: #fffcf1;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.doehealth-desk-footer__links a:hover {
+  opacity: 0.72;
+}
+
+.doehealth-desk-footer__company {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.doehealth-desk-footer__company p,
+.doehealth-desk-footer__company a {
+  margin: 0;
+  color: #fffcf1;
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.doehealth-desk-footer__company a {
+  color: rgba(255, 252, 241, 0.72);
+}
+
+.doehealth-desk-footer__company a:hover {
+  color: #fffcf1;
+}
+
+.doehealth-desk-agents,
+.doehealth-desk-sunday,
+.doehealth-desk-close {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 100dvh;
+  padding-top: calc(5.5rem + var(--desk-banner-h, 2.85rem) + clamp(1.25rem, 3vh, 2.25rem));
+  padding-bottom: clamp(1.75rem, 4vh, 3rem);
+}
+
+.doehealth-desk-agents {
+  gap: clamp(1.35rem, 3vh, 2.25rem);
+  scroll-margin-top: calc(5.5rem + var(--desk-banner-h, 2.85rem));
+  color: var(--doehealth-desk-ink);
+}
+
+.doehealth-desk-agents__head,
+.doehealth-desk-close__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2.5rem;
+}
+
+.doehealth-desk-agents__head {
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.doehealth-desk-agents h2,
+.doehealth-desk-sunday h2,
+.doehealth-desk-close h2 {
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(2.85rem, 4.6vw, 4.25rem);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  color: var(--doehealth-desk-surface);
+}
+
+.doehealth-desk-sunday h2 {
+  color: #fffcf1;
+}
+
+.doehealth-desk-agents h2 span,
+.doehealth-desk-sunday h2 span,
+.doehealth-desk-close h2 span,
+.doehealth-desk-agents p span,
+.doehealth-desk-sunday__copy p span,
+.doehealth-desk-close p span {
+  display: block;
+}
+
+.doehealth-desk-agents__head p,
+.doehealth-desk-sunday__copy > p,
+.doehealth-desk-close__head p {
+  margin: 0;
+  max-width: 18rem;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+  text-align: right;
+}
+
+.doehealth-desk-agents__head p,
+.doehealth-desk-close__head p {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.62);
+}
+
+.desk-agent-carousel__nav {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.45rem;
+}
+
+.desk-agent-carousel__nav button {
+  display: grid;
+  place-items: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  border: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.18);
+  border-radius: var(--doehealth-desk-radius);
+  background: transparent;
+  color: var(--doehealth-desk-surface);
+  cursor: pointer;
+}
+
+.desk-agent-carousel__nav button:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+.desk-agent-carousel {
+  --agent-inset: 2.5rem;
+  --agent-gap: 0.9rem;
+  --agent-w: calc((100cqw - 2 * var(--agent-inset) - 2 * var(--agent-gap)) / 3);
+  container-type: inline-size;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .desk-agent-carousel {
+    --agent-inset: 5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .desk-agent-carousel {
+    --agent-inset: 7rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .desk-agent-carousel {
+    --agent-inset: 9rem;
+  }
+}
+
+.desk-agent-carousel ul {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  gap: var(--agent-gap);
+  min-height: 0;
+  margin: 0;
+  padding: 0 0 0 var(--agent-inset);
+  list-style: none;
+  transform: translateX(calc(var(--agent-index, 0) * -1 * (var(--agent-w) + var(--agent-gap))));
+  transition: transform 520ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.desk-agent-carousel li,
+.doehealth-desk-audiences__card {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 1.35rem 1.35rem 1.45rem;
+  border: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.16);
+  border-radius: var(--doehealth-desk-radius);
+  background: transparent;
+}
+
+.desk-agent-carousel li {
+  flex: 0 0 var(--agent-w);
+  justify-content: space-between;
+}
+
+.desk-agent-carousel strong {
+  font-size: clamp(1.65rem, 2vw, 2.05rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.desk-agent-carousel li > span,
+.doehealth-desk-audiences__dek {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.doehealth-desk-sunday {
+  background: var(--doehealth-desk-surface);
+  color: #fffcf1;
+}
+
+.doehealth-desk-sunday__layout {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(15rem, 22rem) minmax(0, 1fr);
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: stretch;
+  min-height: 0;
+}
+
+.doehealth-desk-sunday__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.doehealth-desk-sunday__copy > p {
+  margin-top: 1.1rem;
+  max-width: 18rem;
+  color: rgba(255, 252, 241, 0.68);
+  text-align: left;
+}
+
+.doehealth-desk-sunday__version {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 1.35rem 0 0;
+  color: #fffcf1;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+}
+
+.doehealth-desk-sunday__version span {
+  color: rgba(255, 252, 241, 0.45);
+}
+
+.doehealth-desk-sunday__sheet {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--doehealth-desk-radius);
+  background: #fffcf1;
+  color: var(--doehealth-desk-ink);
+}
+
+.doehealth-desk-sunday__sheet ol {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+}
+
+.doehealth-desk-sunday__sheet li {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 8.5rem minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0 1.25rem;
+}
+
+.doehealth-desk-sunday__sheet strong {
+  font-size: 0.98rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.doehealth-desk-sunday__sheet li span {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.62);
+  font-size: 0.92rem;
+  letter-spacing: -0.015em;
+}
+
+.doehealth-desk-sunday__sheet time {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.42);
+  font-size: 0.84rem;
+}
+
+.doehealth-desk-sunday__sheet footer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  padding: 1.15rem 1.25rem 1.25rem;
+  border-top: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.1);
+}
+
+.doehealth-desk-sunday__sheet footer em {
+  display: block;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.45);
+  font-size: 0.78rem;
+  font-style: normal;
+  letter-spacing: -0.01em;
+}
+
+.doehealth-desk-sunday__sheet footer span {
+  display: block;
+  margin-top: 0.28rem;
+  font-size: 0.92rem;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.doehealth-desk-close {
+  gap: clamp(1.25rem, 2.8vh, 2rem);
+  color: var(--doehealth-desk-ink);
+}
+
+.doehealth-desk-floor {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.14);
+  border-radius: var(--doehealth-desk-radius);
+  background: #fffcf1;
+}
+
+.doehealth-desk-floor__bar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 1.25rem;
+  border-bottom: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.1);
+}
+
+.doehealth-desk-floor__bar strong {
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.doehealth-desk-floor__bar span {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.48);
+  font-size: 0.88rem;
+}
+
+.doehealth-desk-floor__body {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(13rem, 0.7fr) minmax(0, 1.15fr) minmax(14rem, 0.85fr);
+  min-height: 0;
+}
+
+.doehealth-desk-floor__book {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0.4rem 0;
+  list-style: none;
+  border-right: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.1);
+}
+
+.doehealth-desk-floor__book li {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 3.4rem minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: center;
+  padding: 0 1.15rem;
+}
+
+.doehealth-desk-floor__book time {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.92rem;
+  letter-spacing: -0.02em;
+}
+
+.doehealth-desk-floor__book span {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.62);
+  font-size: 0.92rem;
+  letter-spacing: -0.02em;
+}
+
+.doehealth-desk-floor__book li.is-open {
+  background: var(--doehealth-desk-surface);
+  color: #fffcf1;
+}
+
+.doehealth-desk-floor__book li.is-open span {
+  color: rgba(255, 252, 241, 0.78);
+}
+
+.doehealth-desk-floor__note,
+.doehealth-desk-floor__call {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  min-width: 0;
+  padding: clamp(1.25rem, 2.5vh, 1.85rem) clamp(1.15rem, 2vw, 1.6rem);
+}
+
+.doehealth-desk-floor__note {
+  border-right: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.1);
+}
+
+.doehealth-desk-floor__note header,
+.doehealth-desk-floor__call header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.doehealth-desk-floor__note strong,
+.doehealth-desk-floor__call strong {
+  font-size: clamp(1.45rem, 1.8vw, 1.75rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.doehealth-desk-floor__note header span,
+.doehealth-desk-floor__call header span {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  font-size: 0.9rem;
+  letter-spacing: -0.015em;
+}
+
+.doehealth-desk-floor__note p,
+.doehealth-desk-floor__call p {
+  margin: 0;
+  max-width: 26rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.78);
+  font-size: 1.02rem;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+}
+
+.doehealth-desk-floor__note p + p,
+.doehealth-desk-floor__call > p {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+}
+
+.doehealth-desk-invite {
+  box-sizing: border-box;
+  padding-top: clamp(1.5rem, 4vh, 2.75rem);
+  padding-bottom: clamp(1.25rem, 3vh, 2rem);
+}
+
+.doehealth-desk-invite__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+  box-sizing: border-box;
+  height: 66.67dvh;
+  padding: 2.5rem 1.5rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--doehealth-desk-surface);
+  color: #fffcf1;
+  text-align: center;
+}
+
+.doehealth-desk-invite__panel h2 {
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(2.85rem, 4.6vw, 4.25rem);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+
+.doehealth-desk-invite__panel h2 span {
+  display: block;
+}
+
+.doehealth-desk-invite__form {
+  width: min(100%, 22rem);
+  margin: 0;
+}
+
+.doehealth-desk-invite__form label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 3.15rem;
+  padding: 0.3rem 0.3rem 0.3rem 0.95rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: #fccfb8;
+}
+
+.doehealth-desk-invite__form input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--doehealth-desk-surface);
+  font: inherit;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+  outline: none;
+}
+
+.doehealth-desk-invite__form input::placeholder {
+  color: rgb(var(--doehealth-desk-surface-rgb) / 0.55);
+}
+
+.doehealth-desk-invite__form button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: calc(var(--doehealth-desk-radius) - 2px);
+  background: var(--doehealth-desk-surface);
+  color: #fccfb8;
+  cursor: pointer;
+}
+
+.desk-feat {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 3.5vh, 2.5rem);
+  box-sizing: border-box;
+  min-height: 100dvh;
+  padding-top: calc(5.5rem + var(--desk-banner-h, 2.85rem) + clamp(1.25rem, 3vh, 2.25rem));
+  padding-bottom: clamp(1.75rem, 4vh, 3rem);
+  color: var(--doehealth-desk-ink);
+}
+
+.desk-feat--brown {
+  background: var(--doehealth-desk-surface);
+  color: #fffcf1;
+}
+
+.desk-feat__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2.5rem;
+}
+
+.desk-feat__eyebrow {
+  margin: 0 0 0.9rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.desk-feat--brown .desk-feat__eyebrow {
+  color: #fccfb8;
+}
+
+.desk-feat h2 {
+  margin: 0;
+  color: var(--doehealth-desk-surface);
+  font-size: clamp(2.85rem, 4.6vw, 4.25rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+}
+
+.desk-feat--brown h2 {
+  color: #fffcf1;
+}
+
+.desk-feat h2 span {
+  display: block;
+}
+
+.desk-feat__dek {
+  margin: 0;
+  max-width: 21.5rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.62);
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+  text-align: right;
+}
+
+.desk-feat--brown .desk-feat__dek {
+  color: rgb(255 252 241 / 0.66);
+}
+
+.desk-win {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: clamp(27rem, 56vh, 38rem);
+  padding: 0 0.5rem 0.5rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--doehealth-desk-surface);
+  color: #fffcf1;
+}
+
+.desk-feat--brown .desk-win {
+  background: var(--doehealth-desk-product-card);
+  box-shadow: inset 0 0 0 1px rgb(255 252 241 / 0.08);
+}
+
+.desk-win__bar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.75rem;
+  height: 3.1rem;
+  padding: 0 0.6rem;
+}
+
+.desk-win__bar strong {
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.desk-win__bar span {
+  color: rgb(255 252 241 / 0.5);
+  font-size: 0.9rem;
+}
+
+.desk-win__bar em {
+  margin-left: auto;
+  height: 1.9rem;
+  padding: 0 0.85rem;
+  border-radius: 8px;
+  background: #fccfb8;
+  color: var(--doehealth-desk-surface);
+  font-size: 0.85rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.9rem;
+}
+
+.desk-win__body {
+  display: grid;
+  flex: 1;
+  gap: 1rem;
+  box-sizing: border-box;
+  min-height: 0;
+  padding: 1rem;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #f8f4eb;
+  background-image: url(/doehealth/workflows-dots.svg);
+  background-size: 16px 16px;
+  color: var(--doehealth-desk-ink);
+}
+
+.desk-card {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--doehealth-desk-radius);
+  background: #fffcf1;
+  box-shadow:
+    0 0 0 1px rgb(var(--doehealth-desk-ink-rgb) / 0.07),
+    0 1px 2px rgb(var(--doehealth-desk-ink-rgb) / 0.05);
+}
+
+.desk-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem 0.75rem;
+}
+
+.desk-card__head strong {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.desk-card__head span {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  font-size: 0.82rem;
+}
+
+.desk-label {
+  display: block;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.45);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.desk-tile {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  background: #f0cdb8;
+  color: var(--doehealth-desk-surface);
+}
+
+.desk-tile--sm {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 7px;
+}
+
+.desk-avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: #fccfb8;
+  color: var(--doehealth-desk-surface);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.desk-avatar--sm {
+  width: 2.1rem;
+  height: 2.1rem;
+  font-size: 0.75rem;
+}
+
+.desk-stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
+  box-sizing: border-box;
+  min-height: 0;
+  padding: 1rem 1.1rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--doehealth-desk-surface);
+  color: #fffcf1;
+}
+
+.desk-stat b {
+  font-size: clamp(1.9rem, 2.6vw, 2.6rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.desk-stat span {
+  color: rgb(255 252 241 / 0.6);
+  font-size: 0.85rem;
+  letter-spacing: -0.01em;
+}
+
+.desk-stat.is-salmon {
+  background: #fccfb8;
+  color: var(--doehealth-desk-surface);
+}
+
+.desk-stat.is-salmon span {
+  color: rgb(var(--doehealth-desk-surface-rgb) / 0.62);
+}
+
+/* Voice Agents */
+.desk-voice {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 0.6fr);
+}
+
+.desk-voice__calls ol {
+  margin: 0;
+  padding: 0 0.45rem 0.45rem;
+  list-style: none;
+}
+
+.desk-voice__calls li {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.68rem 0.65rem;
+  border-radius: 8px;
+}
+
+.desk-voice__calls li + li {
+  box-shadow: inset 0 1px 0 rgb(var(--doehealth-desk-ink-rgb) / 0.06);
+}
+
+.desk-voice__calls li.is-on,
+.desk-voice__calls li.is-on + li {
+  box-shadow: none;
+}
+
+.desk-voice__calls li.is-on {
+  background: rgb(252 207 184 / 0.55);
+}
+
+.desk-voice__calls time {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.desk-voice__calls strong,
+.desk-person strong,
+.desk-node strong,
+.desk-action strong,
+.desk-claim strong {
+  display: block;
+  font-size: 0.98rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.desk-voice__calls small,
+.desk-person small,
+.desk-node small,
+.desk-action small,
+.desk-claim small,
+.desk-note header small {
+  display: block;
+  margin-top: 0.12rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  font-size: 0.82rem;
+  letter-spacing: -0.01em;
+}
+
+.desk-voice__calls .desk-tile {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 7px;
+  background: #f1eadf;
+}
+
+.desk-voice__calls li.is-on .desk-tile {
+  background: #fffcf1;
+}
+
+.desk-voice__detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.desk-person {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.07);
+}
+
+.desk-person strong {
+  font-size: 1.1rem;
+}
+
+.desk-voice__label {
+  padding: 1rem 1.1rem 0.25rem;
+}
+
+.desk-steps {
+  flex: 1;
+  margin: 0;
+  padding: 0 1.1rem;
+  list-style: none;
+}
+
+.desk-steps li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  font-size: 0.98rem;
+  letter-spacing: -0.015em;
+}
+
+.desk-steps li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: calc(50% + 0.875rem);
+  left: calc(0.875rem - 1px);
+  width: 2px;
+  height: calc(100% - 1.75rem);
+  background: rgb(var(--doehealth-desk-ink-rgb) / 0.12);
+}
+
+.desk-appt {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.75rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--doehealth-desk-surface);
+  color: #fffcf1;
+}
+
+.desk-appt span {
+  color: rgb(255 252 241 / 0.6);
+  font-size: 0.85rem;
+}
+
+.desk-appt b {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 2.6rem;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.9;
+}
+
+.desk-appt em {
+  color: #fccfb8;
+  font-size: 0.85rem;
+  font-style: normal;
+}
+
+.desk-voice__stats,
+.desk-learn__stats {
+  display: grid;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  min-height: 0;
+}
+
+/* Payments */
+.desk-pay {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr);
+}
+
+.desk-bill {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1.3rem;
+}
+
+.desk-bill header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+}
+
+.desk-bill header strong {
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.desk-bill header span,
+.desk-bill > small {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  font-size: 0.82rem;
+}
+
+.desk-bill__who {
+  display: flex;
+  gap: 2.5rem;
+  padding: 1rem 0;
+}
+
+.desk-bill__who span:not(.desk-label) {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.95rem;
+  letter-spacing: -0.015em;
+}
+
+.desk-bill dl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  row-gap: 0.7rem;
+  margin: 0;
+  padding: 1rem 0;
+  border-top: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+  font-size: 0.95rem;
+  letter-spacing: -0.015em;
+}
+
+.desk-bill dt {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.62);
+}
+
+.desk-bill dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.desk-bill__total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: auto;
+  padding: 1rem 0;
+  border-top: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+  font-size: 0.95rem;
+}
+
+.desk-bill__total b {
+  font-size: 2.4rem;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.desk-bill__pay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.85rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: #fccfb8;
+  color: var(--doehealth-desk-surface);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.desk-bill > small {
+  display: block;
+  margin-top: 0.65rem;
+  text-align: center;
+}
+
+.desk-claims {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+}
+
+.desk-claims__sum {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.desk-claims__sum .desk-stat {
+  min-height: 6.75rem;
+}
+
+.desk-claims__cols {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  min-height: 0;
+}
+
+.desk-claims__col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-height: 0;
+  padding: 0.75rem;
+  border-radius: var(--doehealth-desk-radius);
+  background: rgb(var(--doehealth-desk-ink-rgb) / 0.035);
+  box-shadow: inset 0 0 0 1px rgb(var(--doehealth-desk-ink-rgb) / 0.05);
+}
+
+.desk-claims__col header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.15rem 0.2rem 0.2rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.desk-claims__col header span {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.45);
+}
+
+.desk-claim {
+  padding: 0.8rem 0.85rem;
+}
+
+.desk-claim > div {
+  display: flex;
+  justify-content: space-between;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+.desk-claim strong {
+  margin-top: 0.5rem;
+}
+
+.desk-claim b {
+  display: block;
+  margin-top: 0.55rem;
+  font-size: 1.25rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.desk-claim.is-on {
+  box-shadow:
+    0 0 0 1.5px #f0b89c,
+    0 6px 16px rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+}
+
+/* Scribe */
+.desk-scribe {
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
+}
+
+.desk-note {
+  display: flex;
+  flex-direction: column;
+  padding: 1.3rem 1.5rem 1.1rem;
+}
+
+.desk-note > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+}
+
+.desk-note > header strong {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.desk-note section {
+  padding-top: 1.4rem;
+}
+
+.desk-note p,
+.desk-note li {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.82);
+  font-size: 0.98rem;
+  letter-spacing: -0.015em;
+  line-height: 1.5;
+}
+
+.desk-note p {
+  margin: 0.3rem 0 0;
+}
+
+.desk-note ul {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+  list-style: disc;
+}
+
+.desk-note li::marker {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.3);
+}
+
+.desk-note mark {
+  padding: 0 0.1em;
+  background: linear-gradient(transparent 58%, rgb(252 207 184 / 0.95) 58%);
+  color: inherit;
+}
+
+.desk-note footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  font-size: 0.85rem;
+}
+
+.desk-note footer span,
+.desk-action em {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.desk-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+}
+
+.desk-actions > .desk-label {
+  padding: 0 0.2rem 0.8rem;
+}
+
+.desk-actions ol {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.desk-actions li {
+  display: flex;
+  flex-direction: column;
+}
+
+.desk-actions li:not(:last-child)::after {
+  content: "";
+  width: 2px;
+  height: 1rem;
+  margin-left: calc(2rem - 1px);
+  background: rgb(var(--doehealth-desk-ink-rgb) / 0.14);
+}
+
+.desk-action {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.95rem 1rem;
+}
+
+.desk-action > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.desk-action em {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  font-size: 0.82rem;
+  font-style: normal;
+}
+
+/* Builder */
+.desk-build {
+  grid-template-columns: 14rem minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+}
+
+.desk-build__side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.1rem 1rem;
+  border-right: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+  background: #fffcf1;
+}
+
+.desk-build__side ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.desk-build__side li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.4rem 0.45rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  letter-spacing: -0.015em;
+}
+
+.desk-build__side .desk-tile {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 6px;
+}
+
+.desk-build__side li.is-lifted {
+  border-style: dashed;
+  border-color: rgb(var(--doehealth-desk-ink-rgb) / 0.25);
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.45);
+}
+
+.desk-build__side li.is-lifted .desk-tile {
+  opacity: 0.5;
+}
+
+.desk-build__canvas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 1.5rem;
+}
+
+.desk-node {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 17rem;
+  padding: 0.85rem 1rem;
+}
+
+.desk-wire {
+  width: 2px;
+  height: 1.6rem;
+  background: rgb(var(--doehealth-desk-ink-rgb) / 0.22);
+}
+
+.desk-branch {
+  position: relative;
+  width: 36rem;
+  height: 1.9rem;
+}
+
+.desk-branch i {
+  position: absolute;
+  background: rgb(var(--doehealth-desk-ink-rgb) / 0.22);
+}
+
+.desk-branch i:nth-child(1) {
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 50%;
+  transform: translateX(-50%);
+}
+
+.desk-branch i:nth-child(2) {
+  top: calc(50% - 1px);
+  right: calc((100% - 2rem) / 4);
+  left: calc((100% - 2rem) / 4);
+  height: 2px;
+}
+
+.desk-branch i:nth-child(3) {
+  top: 50%;
+  left: calc((100% - 2rem) / 4);
+  width: 2px;
+  height: 50%;
+  transform: translateX(-50%);
+}
+
+.desk-branch i:nth-child(4) {
+  top: 50%;
+  right: calc((100% - 2rem) / 4);
+  width: 2px;
+  height: 50%;
+  transform: translateX(50%);
+}
+
+.desk-build__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  width: 36rem;
+}
+
+.desk-build__row .desk-node {
+  width: 100%;
+}
+
+.desk-slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 3.7rem;
+  border: 1.5px dashed rgb(var(--doehealth-desk-ink-rgb) / 0.28);
+  border-radius: var(--doehealth-desk-radius);
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.4);
+  font-size: 0.85rem;
+}
+
+.desk-build__row .desk-drag {
+  position: absolute;
+  top: -1.2rem;
+  left: 1rem;
+  width: 100%;
+  box-shadow:
+    0 0 0 1px rgb(var(--doehealth-desk-ink-rgb) / 0.07),
+    0 18px 36px rgb(var(--doehealth-desk-ink-rgb) / 0.18);
+  transform: rotate(-2.5deg);
+}
+
+.desk-cursor {
+  position: absolute;
+  right: -1.6rem;
+  bottom: -1.9rem;
+  width: 1.9rem;
+  height: 1.9rem;
+}
+
+/* Continuous Learning */
+.desk-learn {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.desk-versions {
+  display: flex;
+  align-items: center;
+  padding: 1.1rem 1.3rem;
+}
+
+.desk-version {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.desk-version:last-child {
+  flex: 0 0 auto;
+}
+
+.desk-version:not(:last-child)::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  margin: 0 1.25rem 0 0.5rem;
+  background: rgb(var(--doehealth-desk-ink-rgb) / 0.12);
+}
+
+.desk-version > i {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid rgb(var(--doehealth-desk-ink-rgb) / 0.3);
+  border-radius: 999px;
+}
+
+.desk-version.is-now > i {
+  border-color: var(--doehealth-desk-surface);
+  background: #fccfb8;
+  box-shadow: 0 0 0 4px rgb(252 207 184 / 0.45);
+}
+
+.desk-version.is-next > i {
+  border-style: dashed;
+}
+
+.desk-version b {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.desk-version small {
+  display: block;
+  margin-top: 0.2rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.desk-version.is-next b,
+.desk-version.is-past b {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+}
+
+.desk-learn__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.6fr);
+  gap: 1rem;
+  min-height: 0;
+}
+
+.desk-diff__cols,
+.desk-diff li {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  padding: 0 1.1rem;
+}
+
+.desk-diff__cols {
+  padding-bottom: 0.6rem;
+}
+
+.desk-diff {
+  display: flex;
+  flex-direction: column;
+}
+
+.desk-diff ul {
+  display: grid;
+  flex: 1;
+  grid-auto-rows: minmax(0, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.desk-diff li {
+  align-items: center;
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
+  border-top: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.07);
+  font-size: 0.95rem;
+  letter-spacing: -0.015em;
+}
+
+.desk-diff li strong {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.desk-diff s {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.4);
+  text-decoration-color: rgb(var(--doehealth-desk-ink-rgb) / 0.3);
+}
+
+.desk-diff li > span {
+  padding-left: 0.7rem;
+  box-shadow: inset 2px 0 0 #f0b89c;
+}
+
+.doehealth-desk-floor__call blockquote {
+  margin: 0;
+  font-size: clamp(1.35rem, 1.8vw, 1.7rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+/* Phone — single column, Harvey/Devin style: headline, product card, then stacked story. */
+@media (max-width: 1023px) {
+  .doehealth-desk-page {
+    overflow-x: clip;
+  }
+
+  .doehealth-desk-main {
+    padding-top: 5.75rem;
+  }
+
+  .doehealth-desk-page nav.fixed {
+    background-color: #fffcf1 !important;
+    border-bottom: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08) !important;
+  }
+
+  .doehealth-desk-page .doehealth-desk-hero,
+  .doehealth-desk-page .desk-workspace,
+  .doehealth-desk-page .doehealth-desk-audiences,
+  .doehealth-desk-page .doehealth-desk-agents__head,
+  .doehealth-desk-page .desk-feat,
+  .doehealth-desk-page .doehealth-desk-invite,
+  .doehealth-desk-page .doehealth-desk-footer__row,
+  .doehealth-desk-page .doehealth-desk-genome {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .doehealth-desk-hero {
+    padding-top: 0.35rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .doehealth-desk-hero__row {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 1.35rem;
+  }
+
+  .doehealth-desk-hero__headline {
+    font-size: clamp(2.45rem, 11.5vw, 3.15rem);
+  }
+
+  .doehealth-desk-hero__dek span {
+    display: inline;
+  }
+
+  .doehealth-desk-hero__dek span + span::before {
+    content: " ";
+  }
+
+  .doehealth-desk-hero__secure {
+    justify-self: stretch;
+    max-width: none;
+  }
+
+  .desk-workspace {
+    margin-top: 0.25rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .desk-paper-slot,
+  .desk-workspace__fade {
+    display: none;
+  }
+
+  .desk-front-desk-panel {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    max-height: 34rem;
+    transform: none;
+  }
+
+  .doehealth-desk-audiences,
+  .doehealth-desk-genome,
+  .doehealth-desk-agents,
+  .desk-feat,
+  .doehealth-desk-invite,
+  .doehealth-desk-footer {
+    min-height: 0;
+  }
+
+  .doehealth-desk-audiences {
+    padding-top: 2.25rem;
+    padding-bottom: 2.25rem;
+  }
+
+  .doehealth-desk-audiences__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.7rem;
+    min-height: 0;
+  }
+
+  .doehealth-desk-audiences__card,
+  .doehealth-desk-audiences__card.is-high,
+  .doehealth-desk-audiences__card.is-low,
+  .doehealth-desk-audiences.is-in .doehealth-desk-audiences__card {
+    height: auto;
+    align-self: stretch;
+    transform: none;
+  }
+
+  .doehealth-desk-audiences__card.is-low .doehealth-desk-audiences__copy {
+    margin-top: 0;
+  }
+
+  .doehealth-desk-audiences__title {
+    white-space: normal;
+  }
+
+  .doehealth-desk-genome {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
+
+  .doehealth-desk-genome__title {
+    font-size: clamp(3.15rem, 16vw, 4.25rem);
+  }
+
+  .doehealth-desk-genome__board {
+    width: 100%;
+  }
+
+  .doehealth-desk-agents,
+  .desk-feat {
+    gap: 1.15rem;
+    padding-top: 2.75rem;
+    padding-bottom: 2.25rem;
+  }
+
+  .doehealth-desk-agents__head,
+  .desk-feat__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .doehealth-desk-agents h2,
+  .desk-feat h2,
+  .doehealth-desk-invite__panel h2 {
+    font-size: clamp(2.15rem, 9.2vw, 2.85rem);
+  }
+
+  .doehealth-desk-agents__head p,
+  .desk-feat__dek {
+    max-width: none;
+    text-align: left;
+  }
+
+  .desk-agent-carousel {
+    --agent-inset: 1.25rem;
+    --agent-w: min(18.5rem, calc(100cqw - var(--agent-inset) - 2.75rem));
+  }
+
+  .desk-win {
+    min-height: 0;
+  }
+
+  .desk-win__bar {
+    height: auto;
+    min-height: 3.1rem;
+    flex-wrap: wrap;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+  }
+
+  .desk-win__body {
+    overflow: visible;
+  }
+
+  .desk-voice,
+  .desk-pay,
+  .desk-scribe,
+  .desk-build,
+  .desk-learn__grid,
+  .desk-claims__sum,
+  .desk-voice__stats,
+  .desk-learn__stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .desk-claims__cols {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.15rem;
+  }
+
+  .desk-claims__col {
+    flex: 0 0 78%;
+    scroll-snap-align: start;
+  }
+
+  .desk-build__side {
+    border-right: 0;
+    border-bottom: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+  }
+
+  .desk-build__side ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .desk-node,
+  .desk-branch,
+  .desk-build__row {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .desk-build__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.85rem;
+  }
+
+  .desk-diff__cols,
+  .desk-diff li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.35rem;
+  }
+
+  .desk-versions {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .doehealth-desk-invite__panel {
+    height: auto;
+    min-height: 70dvh;
+    padding: 2.25rem 1.15rem;
+  }
+
+  .doehealth-desk-footer {
+    align-items: stretch;
+    padding-top: 2.5rem;
+    padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
+  }
+
+  .doehealth-desk-footer__row {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 1.75rem;
+  }
+
+  .doehealth-desk-footer__mark {
+    font-size: clamp(4.5rem, 22vw, 6.5rem);
+  }
+
+  .doehealth-desk-footer__side {
+    align-items: flex-start;
+    width: 100%;
+    max-width: none;
+  }
+}

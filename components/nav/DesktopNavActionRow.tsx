@@ -25,6 +25,8 @@ export function DesktopNavActionRow({
   dropdownEnabled = true,
   showMailIcon = true,
   showInvestorsCta = true,
+  primaryCtaLabel,
+  primaryCtaHref,
 }: {
   bg?: string;
   fg?: string;
@@ -36,6 +38,8 @@ export function DesktopNavActionRow({
   dropdownEnabled?: boolean;
   showMailIcon?: boolean;
   showInvestorsCta?: boolean;
+  primaryCtaLabel?: string;
+  primaryCtaHref?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -119,6 +123,8 @@ export function DesktopNavActionRow({
           punched={punched}
           linksEnabled={linksEnabled}
           dropdownEnabled={dropdownEnabled}
+          primaryLabel={primaryCtaLabel}
+          primaryHref={primaryCtaHref}
         />
       ) : null}
 

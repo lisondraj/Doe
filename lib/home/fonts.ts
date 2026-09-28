@@ -87,4 +87,15 @@ export const larkenLight = localFont({
   variable: "--font-larken-light",
 });
 
+/** doehealth hero headline carousel + blog featured card titles (not read-more / DM Sans subheads). */
+export const p22Mackinac = localFont({
+  src: [
+    { path: "../../fonts/p22-mackinac/P22Mackinac-Book.otf", weight: "400", style: "normal" },
+    { path: "../../fonts/p22-mackinac/P22Mackinac-BookItalic.otf", weight: "400", style: "italic" },
+    { path: "../../fonts/p22-mackinac/P22Mackinac-Medium.otf", weight: "500", style: "normal" },
+  ],
+  display: "swap",
+  variable: "--font-p22-mackinac",
+});
+
 export const WORKFLOW_CAROUSEL_UI_PANEL = `${suisseIntl.className} workflow-carousel-ui`;
