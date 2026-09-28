@@ -37,7 +37,7 @@ function AudienceWord({
 }
 
 /** Smooth vertical crossfade — practices → providers → patients → students. */
-export function DoeHealthDeskAudienceCarousel() {
+export function DoeHealthDeskAudienceCarousel({ paused = false }: { paused?: boolean }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [transition, setTransition] = useState<{ from: number; to: number } | null>(null);
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -66,7 +66,7 @@ export function DoeHealthDeskAudienceCarousel() {
   }, []);
 
   useEffect(() => {
-    if (AUDIENCE.length <= 1) return undefined;
+    if (AUDIENCE.length <= 1 || paused) return undefined;
 
     const interval = window.setInterval(() => {
       if (isTransitioningRef.current) return;
@@ -86,7 +86,7 @@ export function DoeHealthDeskAudienceCarousel() {
     }, DOEHEALTH_DESK_HERO_AUDIENCE_ROTATE_MS);
 
     return () => window.clearInterval(interval);
-  }, [reduceMotion]);
+  }, [paused, reduceMotion]);
 
   useEffect(() => {
     if (!transition || reduceMotion) return undefined;
@@ -106,12 +106,7 @@ export function DoeHealthDeskAudienceCarousel() {
       {transition ? (
         <>
           <AudienceWord word={AUDIENCE[transition.from]} phase="out" animate />
-          <AudienceWord
-            word={AUDIENCE[transition.to]}
-            phase="in"
-            animate
-            onAnimationEnd={completeTransition}
-          />
+          <AudienceWord word={AUDIENCE[transition.to]} phase="in" animate onAnimationEnd={completeTransition} />
         </>
       ) : (
         <AudienceWord word={AUDIENCE[activeIndex]} phase="current" />

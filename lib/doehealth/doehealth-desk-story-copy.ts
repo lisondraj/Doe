@@ -1,5 +1,5 @@
 export const DOEHEALTH_DESK_AGENTS = {
-  title: ["Agents for every task,", "on your model."],
+  title: ["Agents for every\u00A0task,", "on your model."],
 } as const;
 
 /** Ten agents. The first three sit in the page margins; the rest follow off the right edge. */

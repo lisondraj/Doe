@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, FormEvent } from "react";
 
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
@@ -27,15 +27,58 @@ function AgentArrow({ direction }: { direction: "left" | "right" }) {
 
 /** Three outline cards in the page margins. The rest clip off the screen edge. */
 export function DoeHealthDeskAgentsSection() {
+  const sectionRef = useRef<HTMLElement>(null);
   const [index, setIndex] = useState(0);
-  const last = Math.max(0, DOEHEALTH_DESK_AGENT_CAROUSEL.length - 3);
+  const [visibleCards, setVisibleCards] = useState(3);
+  const [titleIn, setTitleIn] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const sync = () => setVisibleCards(mq.matches ? 1 : 3);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const head = section?.querySelector(".doehealth-desk-agents__head");
+    if (!head) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setTitleIn(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting || entry.intersectionRatio < 0.55) return;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => setTitleIn(true));
+        });
+        observer.disconnect();
+      },
+      { threshold: [0, 0.25, 0.45, 0.55, 0.72] },
+    );
+    observer.observe(head);
+    return () => observer.disconnect();
+  }, []);
+
+  const last = Math.max(0, DOEHEALTH_DESK_AGENT_CAROUSEL.length - visibleCards);
 
   return (
-    <section id="agents" className="doehealth-desk-agents" aria-label="Agents for every task, on your model">
+    <section
+      ref={sectionRef}
+      id="agents"
+      className="doehealth-desk-agents"
+      aria-label="Agents for every task, on your model"
+    >
       <header className={`doehealth-desk-agents__head ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-        <h2 className={p22Mackinac.className}>
+        <h2 className={`doehealth-desk-agents__title ${p22Mackinac.className}${titleIn ? " is-title-in" : ""}`}>
           {DOEHEALTH_DESK_AGENTS.title.map((line) => (
-            <span key={line}>{line}</span>
+            <span key={line} className="desk-headline-darken--ink">
+              {line}
+            </span>
           ))}
         </h2>
         <div className="desk-agent-carousel__nav">
