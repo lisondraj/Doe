@@ -2052,6 +2052,113 @@
   line-height: 1.05;
 }
 
+/* Audience switch — the product's segmented control (Integrations EMR / Scheduling filter). */
+.doehealth-desk-agents__switch {
+  display: flex;
+}
+
+.desk-agent-switch {
+  --switch-pad: 4px;
+  --switch-index: 0;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  box-sizing: border-box;
+  width: min(100%, 27rem);
+  padding: var(--switch-pad);
+  border: 1px solid #fffcf11f;
+  border-radius: var(--doehealth-desk-radius);
+  background: var(--doehealth-desk-surface);
+  box-shadow:
+    #fffcf10f 0 1px 0 inset,
+    #00000029 0 4px 14px,
+    #00000014 0 1px 6px;
+}
+
+.desk-agent-switch__pill {
+  position: absolute;
+  z-index: 0;
+  top: var(--switch-pad);
+  bottom: var(--switch-pad);
+  left: var(--switch-pad);
+  width: calc((100% - 2 * var(--switch-pad)) / 4);
+  border: 1px solid #fffcf1eb;
+  border-radius: var(--doehealth-desk-radius);
+  background-image:
+    linear-gradient(180deg, rgb(255 255 255 / 0.72) 0%, rgb(255 255 255 / 0.12) 42%, rgb(255 255 255 / 0) 100%),
+    linear-gradient(180deg, #fffdf6 0%, #ede6d6 100%);
+  box-shadow:
+    #fffffffa 0 1px 0 inset,
+    rgb(var(--doehealth-desk-surface-rgb) / 0.07) 0 -8px 16px inset,
+    #0f172a0a 0 1px 2px,
+    #0f172a0d 0 8px 18px;
+  transform: translate3d(calc(var(--switch-index) * 100%), 0, 0);
+  transition: transform 420ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.desk-agent-switch button {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  height: 2.6rem;
+  padding: 0 0.4rem;
+  border: 0;
+  border-radius: var(--doehealth-desk-radius);
+  background: transparent;
+  color: rgb(255 252 241 / 0.55);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: color 320ms cubic-bezier(0.33, 1, 0.68, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.desk-agent-switch button:hover:not(.is-on) {
+  color: rgb(255 252 241 / 0.8);
+}
+
+.desk-agent-switch button.is-on {
+  color: var(--doehealth-desk-surface);
+  font-weight: 600;
+}
+
+.desk-agent-switch button:focus-visible {
+  outline: 2px solid #fccfb8;
+  outline-offset: 1px;
+}
+
+/* Flipping audiences: the new agents settle in one after another. */
+.desk-agent-carousel ul.is-swapped li {
+  animation: desk-agent-swap-in 560ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  animation-delay: calc(var(--agent-order, 0) * 55ms);
+}
+
+@keyframes desk-agent-swap-in {
+  from {
+    opacity: 0;
+    transform: translate3d(1.25rem, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk-agent-switch__pill,
+  .desk-agent-switch button {
+    transition: none;
+  }
+
+  .desk-agent-carousel ul.is-swapped li {
+    animation: none;
+  }
+}
+
 .desk-agent-carousel li > span,
 .doehealth-desk-audiences__dek {
   color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
@@ -2815,6 +2922,7 @@
   .doehealth-desk-page .desk-workspace,
   .doehealth-desk-page .doehealth-desk-audiences,
   .doehealth-desk-page .doehealth-desk-agents__head,
+  .doehealth-desk-page .doehealth-desk-agents__switch,
   .doehealth-desk-page .desk-feat,
   .doehealth-desk-page .doehealth-desk-invite,
   .doehealth-desk-page .doehealth-desk-footer__meta,

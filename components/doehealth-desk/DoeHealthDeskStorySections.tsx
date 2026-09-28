@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { CSSProperties, FormEvent } from "react";
+import type { CSSProperties, FormEvent, KeyboardEvent } from "react";
 
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import {
-  DOEHEALTH_DESK_AGENT_CAROUSEL,
+  DOEHEALTH_DESK_AGENT_AUDIENCES,
   DOEHEALTH_DESK_AGENTS,
+  type DoeHealthDeskAgentAudienceId,
   DOEHEALTH_DESK_CLOSE,
   DOEHEALTH_DESK_CLOSE_BOOK,
   DOEHEALTH_DESK_SUNDAY,
@@ -29,6 +30,8 @@ function AgentArrow({ direction }: { direction: "left" | "right" }) {
 export function DoeHealthDeskAgentsSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [index, setIndex] = useState(0);
+  const [audienceId, setAudienceId] = useState<DoeHealthDeskAgentAudienceId>("practice");
+  const [switched, setSwitched] = useState(false);
   const [visibleCards, setVisibleCards] = useState(3);
   const [titleIn, setTitleIn] = useState(false);
 
@@ -64,7 +67,29 @@ export function DoeHealthDeskAgentsSection() {
     return () => observer.disconnect();
   }, []);
 
-  const last = Math.max(0, DOEHEALTH_DESK_AGENT_CAROUSEL.length - visibleCards);
+  const audienceIndex = Math.max(
+    0,
+    DOEHEALTH_DESK_AGENT_AUDIENCES.findIndex((audience) => audience.id === audienceId),
+  );
+  const agents = DOEHEALTH_DESK_AGENT_AUDIENCES[audienceIndex].agents;
+  const last = Math.max(0, agents.length - visibleCards);
+
+  function selectAudience(id: DoeHealthDeskAgentAudienceId) {
+    if (id === audienceId) return;
+    setSwitched(true);
+    setAudienceId(id);
+    setIndex(0);
+  }
+
+  function onSwitchKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+    if (!step) return;
+    event.preventDefault();
+    const count = DOEHEALTH_DESK_AGENT_AUDIENCES.length;
+    const next = DOEHEALTH_DESK_AGENT_AUDIENCES[(audienceIndex + step + count) % count];
+    selectAudience(next.id);
+    event.currentTarget.querySelector<HTMLButtonElement>(`[data-audience="${next.id}"]`)?.focus();
+  }
 
   return (
     <section
@@ -91,10 +116,47 @@ export function DoeHealthDeskAgentsSection() {
         </div>
       </header>
 
-      <div className="desk-agent-carousel">
-        <ul className={inter.className} style={{ "--agent-index": index } as CSSProperties}>
-          {DOEHEALTH_DESK_AGENT_CAROUSEL.map((agent) => (
-            <li key={agent.name}>
+      <div className={`doehealth-desk-agents__switch ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
+        <div
+          className={`desk-agent-switch ${inter.className}`}
+          role="tablist"
+          aria-label="Agents by audience"
+          style={{ "--switch-index": audienceIndex } as CSSProperties}
+          onKeyDown={onSwitchKeyDown}
+        >
+          <span className="desk-agent-switch__pill" aria-hidden />
+          {DOEHEALTH_DESK_AGENT_AUDIENCES.map((audience) => (
+            <button
+              key={audience.id}
+              type="button"
+              role="tab"
+              id={`agents-tab-${audience.id}`}
+              data-audience={audience.id}
+              aria-selected={audience.id === audienceId}
+              aria-controls="agents-panel"
+              tabIndex={audience.id === audienceId ? 0 : -1}
+              className={audience.id === audienceId ? "is-on" : undefined}
+              onClick={() => selectAudience(audience.id)}
+            >
+              {audience.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div
+        className="desk-agent-carousel"
+        id="agents-panel"
+        role="tabpanel"
+        aria-labelledby={`agents-tab-${audienceId}`}
+      >
+        <ul
+          key={audienceId}
+          className={`${inter.className}${switched ? " is-swapped" : ""}`}
+          style={{ "--agent-index": index } as CSSProperties}
+        >
+          {agents.map((agent, position) => (
+            <li key={agent.name} style={{ "--agent-order": position } as CSSProperties}>
               <strong className={dmSans.className}>{agent.name}</strong>
               <span>{agent.now}</span>
             </li>
