@@ -9,7 +9,7 @@ import { inter, p22Mackinac } from "@/lib/home/fonts";
 const AUDIENCE_COUNT = DOEHEALTH_DESK_AUDIENCES.length;
 
 /** iPhone: minimum time between one card starting its reveal and the next one starting. */
-const CARD_GAP_MS = 380;
+const CARD_GAP_MS = 220;
 
 function allRevealed() {
   return Array.from({ length: AUDIENCE_COUNT }, () => true);
@@ -78,9 +78,10 @@ export function DoeHealthDeskAudienceSection() {
             reached[index] = true;
             if (!flushTimer) requestAnimationFrame(flush);
           },
-          // Fire once the card's top edge is ~60% of the way down the viewport, so the whole slide
-          // is visible. threshold 0: the sideways start offset must not lower the ratio.
-          { threshold: 0, rootMargin: "0px 0px -40% 0px" },
+          // Fire as soon as the card starts entering from the bottom, so the whole slide happens on
+          // screen even during a fast flick. threshold 0: the sideways start offset must not lower
+          // the ratio.
+          { threshold: 0, rootMargin: "0px 0px -8% 0px" },
         );
 
         observer.observe(el);
