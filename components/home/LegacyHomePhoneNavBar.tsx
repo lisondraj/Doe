@@ -1,14 +1,19 @@
 "use client";
 
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
+import { DoeHealthDeskAnnounceStrip } from "@/components/doehealth-desk/DoeHealthDeskAnnounceStrip";
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { DOEHEALTH_DESK_PAGE_BACKGROUND } from "@/lib/doehealth/doehealth-desk-colors";
+import { useDoeHealthDeskBannerHeight } from "@/lib/doehealth/use-doehealth-desk-banner-height";
+import { lora } from "@/lib/home/fonts";
 
 /** PhoneHome hero strip — Doe, Join Waitlist, menu (no page sections). */
 export function LegacyHomePhoneNavBar() {
+  const [dismissed, setDismissed] = useState(false);
   useDoePhoneLayoutViewport();
+  useDoeHealthDeskBannerHeight(dismissed);
 
   useLayoutEffect(() => {
     const html = document.documentElement;
@@ -26,11 +31,20 @@ export function LegacyHomePhoneNavBar() {
 
   return (
     <div
-      className="doephone-mobile-root relative z-0 min-h-0 overflow-x-hidden"
+      className={`doehealth-desk-chrome doehealth-desk-chrome--phone doephone-mobile-root relative z-0 min-h-0 overflow-x-hidden${dismissed ? " is-dismissed" : ""}`}
       style={{ backgroundColor: DOEHEALTH_DESK_PAGE_BACKGROUND }}
       data-doeforvc-view="iphone"
     >
-      <DoeIphoneSiteNav showJoinCta ctaLayout="single" navChromeTheme="light" logoLink />
+      <DoeHealthDeskAnnounceStrip onDismiss={() => setDismissed(true)} />
+      <DoeIphoneSiteNav
+        pinchSafe
+        homeHref="/doehealthdesk"
+        showJoinCta={false}
+        ctaLayout="single"
+        navChromeTheme="light"
+        logoLink
+        brandFontClass={lora.className}
+      />
     </div>
   );
 }

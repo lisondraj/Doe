@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
+import { DoeHealthDeskAnnounceStrip } from "@/components/doehealth-desk/DoeHealthDeskAnnounceStrip";
 import { DesktopNavActionRow } from "@/components/nav/DesktopNavActionRow";
-import { DoeLinkArrow } from "@/components/shared/DoeLinkArrow";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import {
-  DOEHEALTH_DESK_ANNOUNCEMENT,
   DOEHEALTH_DESK_NAV_CENTER_LINKS,
   DOEHEALTH_DESK_NAV_PRIMARY_CTA,
 } from "@/lib/doehealth/doehealth-desk-nav-copy";
+import { useDoeHealthDeskBannerHeight } from "@/lib/doehealth/use-doehealth-desk-banner-height";
 import { inter, lora } from "@/lib/home/fonts";
 
 /** DesktopHome top bar — cream chrome, no hero scroll coupling. */
@@ -26,30 +26,11 @@ export function LegacyHomeDesktopNavBar({
   const heroWaitlistShadow = "none";
   const heroCtaDivider = "var(--desk-nav-button-line, rgba(255, 252, 241, 0.22))";
   const [dismissed, setDismissed] = useState(false);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty("--desk-banner-h", dismissed ? "0px" : "2.85rem");
-    return () => {
-      document.documentElement.style.removeProperty("--desk-banner-h");
-    };
-  }, [dismissed]);
+  useDoeHealthDeskBannerHeight(dismissed);
 
   return (
     <div className={`doehealth-desk-chrome${dismissed ? " is-dismissed" : ""}`}>
-      <div className={`doehealth-desk-announce ${inter.className}`}>
-        <p>
-          <span>{DOEHEALTH_DESK_ANNOUNCEMENT.message}</span>
-          <Link href={DOEHEALTH_DESK_ANNOUNCEMENT.href} className="doehealth-desk-announce__link">
-            {DOEHEALTH_DESK_ANNOUNCEMENT.linkLabel}
-            <DoeLinkArrow className="doehealth-desk-announce__arrow" width={13} height={13} />
-          </Link>
-        </p>
-        <button type="button" aria-label="Dismiss announcement" onClick={() => setDismissed(true)}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        </button>
-      </div>
+      <DoeHealthDeskAnnounceStrip onDismiss={() => setDismissed(true)} />
     <nav className="desktop-home-nav" aria-label="Site">
       <div
         className={`doehealth-desk-nav__bar relative z-10 py-6 ${DOEPHONE_DESKTOP_PAGE_INSET_X} ${inter.className}`}

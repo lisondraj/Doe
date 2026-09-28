@@ -30,11 +30,9 @@ export function DoeHealthDeskGenomeSection() {
       const chromeBottom = 88;
       const visible = Math.max(0, Math.min(rect.bottom, vh) - Math.max(rect.top, chromeBottom));
       const narrow = window.matchMedia("(max-width: 1023px)").matches;
-      if (narrow) {
-        if (visible > 96) setShown(true);
-        return;
-      }
-      const progress = clamp01((visible - vh * 0.22) / (vh * 0.4));
+      const progress = narrow
+        ? clamp01((visible - vh * 0.12) / (vh * 0.42))
+        : clamp01((visible - vh * 0.22) / (vh * 0.4));
       if (progress > 0.28) setShown(true);
     };
 

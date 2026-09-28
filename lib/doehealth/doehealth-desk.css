@@ -227,7 +227,7 @@
   margin: 0;
   max-width: 100%;
   font-weight: 400;
-  font-size: clamp(2.65rem, 5.4vw, 4.85rem);
+  font-size: clamp(2.9rem, 5.85vw, 5.35rem);
   line-height: 0.98;
   letter-spacing: -0.042em;
   color: var(--doehealth-desk-surface);
@@ -235,11 +235,11 @@
 
 .doehealth-desk-hero__dek {
   margin: 0.9rem 0 0;
-  max-width: 34ch;
+  max-width: 36ch;
   color: var(--doehealth-desk-ink);
-  font-size: 1.0625rem;
+  font-size: clamp(1.125rem, 1.35vw, 1.3125rem);
   font-weight: 400;
-  line-height: 1.38;
+  line-height: 1.4;
   letter-spacing: -0.02em;
 }
 
@@ -2111,15 +2111,90 @@
 @media (max-width: 1023px) {
   .doehealth-desk-page {
     overflow-x: clip;
+    --doe-page-surface: #fffcf1;
+    --doe-page-surface-raised: #fffcf1;
+    --doe-page-ink: var(--doehealth-desk-surface);
+    --doe-page-border: rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+    --desk-phone-nav-clearance: calc(
+      var(--desk-banner-h, 2.85rem) +
+        max(4.85rem, calc(env(safe-area-inset-top, 0px) + 3.65rem))
+    );
+  }
+
+  html:has(.doehealth-desk-page .doephone-mobile-root),
+  html:has(.doehealth-desk-page .doephone-mobile-root) body {
+    background-color: #fffcf1;
+  }
+
+  .doehealth-desk-page .doehealth-desk-chrome--phone {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 50;
+    padding-top: env(safe-area-inset-top, 0px);
+    background-color: #fffcf1;
+  }
+
+  .doehealth-desk-page .doehealth-desk-chrome--phone .doehealth-desk-announce {
+    flex-shrink: 0;
+  }
+
+  .doehealth-desk-page .doehealth-desk-chrome--phone .doehealth-desk-announce p {
+    padding-inline: 2.75rem 2.25rem;
+    font-size: clamp(0.78rem, 3.2vw, 0.92rem);
+    text-align: center;
   }
 
   .doehealth-desk-main {
-    padding-top: 5.75rem;
+    padding-top: var(--desk-phone-nav-clearance);
   }
 
-  .doehealth-desk-page nav.fixed {
-    background-color: #fffcf1 !important;
-    border-bottom: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08) !important;
+  .doehealth-desk-page .doehealth-desk-chrome--phone nav.doephone-site-nav {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+  }
+
+  .doehealth-desk-page nav.doephone-site-nav {
+    padding-top: 0 !important;
+    background-color: var(--desk-nav-bg, rgb(255 252 241 / 0.72)) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: none !important;
+    box-shadow: none !important;
+    transition: none !important;
+  }
+
+  .doehealth-desk-page nav.doephone-site-nav > div > div {
+    padding-top: 0.8125rem !important;
+    padding-bottom: 0.8125rem !important;
+    padding-left: max(1.25rem, calc(env(safe-area-inset-left, 0px) + 3.8vmin)) !important;
+    padding-right: max(1.25rem, calc(env(safe-area-inset-right, 0px) + 3.8vmin)) !important;
+  }
+
+  .doehealth-desk-page nav.doephone-site-nav .absolute.top-1\/2 {
+    left: max(1.25rem, calc(env(safe-area-inset-left, 0px) + 3.8vmin)) !important;
+    color: var(--desk-nav-ink, var(--doehealth-desk-surface)) !important;
+    transition: none !important;
+  }
+
+  .doehealth-desk-page nav.doephone-site-nav .flex.shrink-0.items-center {
+    gap: 0.65rem !important;
+  }
+
+  .doehealth-desk-page nav.doephone-site-nav a.bg-black,
+  .doehealth-desk-page nav.doephone-site-nav .bg-black {
+    background-color: var(--doehealth-desk-surface) !important;
+    color: #fffcf1 !important;
+    border-radius: var(--doehealth-desk-radius) !important;
+  }
+
+  .doehealth-desk-page nav.doephone-site-nav button[aria-label*="navigation menu" i],
+  .doehealth-desk-page nav.doephone-site-nav button[aria-label*="Close navigation" i] {
+    color: var(--desk-nav-ink, var(--doehealth-desk-surface)) !important;
+    transition: none !important;
   }
 
   .doehealth-desk-page .doehealth-desk-hero,
@@ -2146,7 +2221,12 @@
   }
 
   .doehealth-desk-hero__headline {
-    font-size: clamp(2.15rem, 9.4vw, 2.65rem);
+    font-size: clamp(2.55rem, 10.8vw, 3.15rem);
+  }
+
+  .doehealth-desk-hero__dek {
+    font-size: clamp(1.125rem, 4.6vw, 1.28rem);
+    max-width: none;
   }
 
   .doehealth-desk-hero__line--built-for {
@@ -2169,28 +2249,33 @@
   }
 
   .desk-workspace {
+    --desk-product-scale: 1.5;
     margin-top: 0.25rem;
+    padding-right: 0;
     padding-bottom: 1.5rem;
+    overflow: hidden;
   }
 
-  .desk-paper-slot,
+  /* ~⅔ of artboard visible; left aligned to gutter, right bleeds off-screen. */
+  .desk-workspace__stage {
+    max-width: none;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .desk-paper-slot {
+    overflow: hidden;
+  }
+
   .desk-workspace__fade {
     display: none;
   }
 
   .desk-front-desk-panel {
-    position: relative;
-    top: auto;
-    right: auto;
-    width: 100%;
-    height: auto !important;
-    max-height: none;
-    overflow: visible;
-    transform: none;
+    display: none !important;
   }
 
   .doehealth-desk-audiences,
-  .doehealth-desk-genome,
   .doehealth-desk-agents,
   .desk-feat,
   .doehealth-desk-invite,
@@ -2227,29 +2312,41 @@
   }
 
   .doehealth-desk-genome {
-    align-items: stretch;
-    justify-content: flex-start;
-    padding-top: 2.75rem;
-    padding-bottom: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 100dvh;
+    min-height: 100svh;
+    padding: calc(var(--desk-phone-nav-clearance) + 1.25rem) 1.25rem
+      max(1.5rem, env(safe-area-inset-bottom, 0px));
+    scroll-margin-top: var(--desk-phone-nav-clearance);
     overflow: hidden;
   }
 
+  .doehealth-desk-genome__stack {
+    width: min(100%, 26rem);
+  }
+
   .doehealth-desk-genome__eyebrow {
-    font-size: 1.2rem;
+    font-size: clamp(1.35rem, 5vw, 1.85rem);
   }
 
   .doehealth-desk-genome__title {
-    font-size: 2.85rem;
-    line-height: 0.92;
+    font-size: clamp(3.25rem, 14vw, 4.5rem);
+    line-height: 0.9;
   }
 
   .doehealth-desk-genome__dek-line {
-    font-size: 0.98rem;
+    font-size: clamp(1rem, 3.8vw, 1.08rem);
+  }
+
+  .doehealth-desk-genome__dek-line--first {
+    margin-top: 1.1rem;
   }
 
   .doehealth-desk-genome__board {
     width: 100%;
-    margin-top: 1.35rem;
+    margin-top: clamp(1.75rem, 5vh, 2.5rem);
   }
 
   .doehealth-desk-agents,
@@ -2313,70 +2410,6 @@
   .desk-feat--voice .desk-feat__stage,
   .desk-feat--scribe .desk-feat__stage {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .desk-product__rail {
-    display: none !important;
-  }
-
-  .desk-product {
-    display: block;
-    height: auto;
-    overflow: visible;
-    background: transparent;
-  }
-
-  .desk-product__pad {
-    display: block;
-    padding: 0;
-  }
-
-  .desk-product__stage {
-    padding: 0;
-    overflow: visible;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .desk-feat--build .desk-product__stage {
-    padding: 0.9rem 0.85rem 1.1rem;
-    overflow: hidden;
-    border: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.1);
-    border-radius: var(--doehealth-desk-radius);
-    background-color: #fffcf1;
-    background-image: url(/doehealth/workflows-dots.svg);
-    background-size: 16px 16px;
-  }
-
-  .desk-product__split,
-  .desk-product__canvas {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    height: auto;
-    min-height: 0;
-  }
-
-  .desk-product__canvas {
-    position: static !important;
-    min-height: 0 !important;
-  }
-
-  .desk-publish {
-    position: static !important;
-    align-self: flex-end;
-    margin-bottom: 0.75rem;
-  }
-
-  .desk-flow-row {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .desk-brown-panel,
-  .desk-product__split .desk-brown-panel {
-    width: 100%;
-    height: auto;
   }
 
   .desk-claim-row {

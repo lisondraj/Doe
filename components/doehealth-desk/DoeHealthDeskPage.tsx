@@ -72,7 +72,10 @@ export function DoeHealthDeskPage({ initialVariant }: DoeHealthDeskPageProps) {
           <DoeHealthDeskNavWash />
         </>
       ) : (
-        <LegacyHomePhoneNavBar />
+        <>
+          <LegacyHomePhoneNavBar />
+          <DoeHealthDeskNavWash />
+        </>
       )}
       <main className="doehealth-desk-main min-h-[100dvh]" aria-label="Desk canvas">
         <DoeHealthDeskHero />
