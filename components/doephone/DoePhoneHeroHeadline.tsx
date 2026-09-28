@@ -114,10 +114,14 @@ export function DoePhoneHeroHeadline({
     };
   }, [fitToContainer, line1, line2]);
 
+  const displayWeightClass = className?.includes("doehealth-hero-headline")
+    ? "font-normal"
+    : DOEPHONE_DISPLAY_WEIGHT_TW;
+
   return (
     <h1
       ref={headlineRef}
-      className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${DOEPHONE_DISPLAY_WEIGHT_TW} leading-[1.02] tracking-[-0.03em] text-white ${fontClass ?? suisseIntl.className}${className ? ` ${className}` : ""}`}
+      className={`doephone-hero-headline flex w-full min-w-0 max-w-full flex-col items-start ${displayWeightClass} leading-[1.02] tracking-[-0.03em] text-white ${fontClass ?? suisseIntl.className}${className ? ` ${className}` : ""}`}
     >
       <span className="doephone-hero-headline-line block">{line1}</span>
       {line2 ? (

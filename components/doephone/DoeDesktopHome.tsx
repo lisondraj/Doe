@@ -11,6 +11,7 @@ import type { DoePhoneCommunicationSlide } from "@/lib/doephone/communication-ca
 import { DOEPHONE_BEIGE_SECTION } from "@/lib/doephone/section-styles";
 import type { DoeHomeHeroHeadline } from "@/components/doephone/DoePhoneMobileView";
 import { DOEHEALTH_HERO_DIAL_ORBS } from "@/lib/doehealth/doehealth-hero-dial-orbs";
+import { p22Mackinac } from "@/lib/home/fonts";
 
 /** Desktop home — light Doe layout mirroring /proto, driven by the iPhone home content. */
 export function DoeDesktopHome({
@@ -62,7 +63,7 @@ export function DoeDesktopHome({
 
   return (
     <div
-      className={`doe-desktop-root relative overflow-x-hidden bg-[#faf0d8]${isDoeHealthLanding ? " doe-desktop-root--doehealth" : ""}`}
+      className={`doe-desktop-root relative overflow-x-hidden bg-[#faf0d8]${isDoeHealthLanding ? ` doe-desktop-root--doehealth ${p22Mackinac.variable}` : ""}`}
     >
       <div className="relative z-[40] overflow-x-clip overflow-y-visible">
         <DoePhoneHeroSection

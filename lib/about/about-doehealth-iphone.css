@@ -1897,6 +1897,20 @@ html[data-home-page] .home-blog-featured-carousel--below-hero .blog-article-caro
   padding-bottom: clamp(2.75rem, 4vw, 3.75rem);
 }
 
+html[data-home-page] .home-blog-featured-carousel--page-bottom {
+  padding-top: 0;
+  padding-bottom: clamp(2.75rem, 4vw, 3.75rem);
+}
+
+html[data-home-page] .home-blog-featured-carousel--page-bottom .blog-article-footer-carousel-band {
+  padding-bottom: 0;
+}
+
+html[data-home-page] .home-blog-featured-carousel--page-bottom .blog-article-carousel-divider:last-child {
+  padding-top: clamp(2.75rem, 4vw, 3.75rem);
+  padding-bottom: clamp(2.75rem, 4vw, 3.75rem);
+}
+
 html[data-home-page][data-layout="desktop"] .home-blog-featured-carousel__shell {
   box-sizing: border-box;
   width: 55.556%;

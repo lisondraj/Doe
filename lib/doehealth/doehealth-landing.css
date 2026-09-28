@@ -498,6 +498,40 @@ html[data-home-page][data-layout="desktop"]
   }
 }
 
+/* Section display titles below hero — P22 (in-card UI mocks keep Suisse). */
+.doephone-mobile-root--doehealth :where(
+    .doehealth-intro-band__section-title,
+    .doehealth-intro-band__section-title-line,
+    .doehealth-intro-band__section-title-line-text,
+    .doehealth-routed-calls-bleed-right__title-text,
+    .doehealth-agents-anywhere-bleed__title-text,
+    .doehealth-prior-auth-bleed__title-text,
+    .doehealth-initiatives__section-title,
+    .doehealth-call-summary__title,
+    .home-feature-card-section__title,
+    .home-feature-shader-band__feature-title,
+    .home-feature-shader-band__workflow-title,
+    .home-closing-section__fundraise-headline,
+    .home-closing-section__fundraise-headline-text
+  ),
+.doe-desktop-root--doehealth :where(
+    .doehealth-intro-band__section-title,
+    .doehealth-intro-band__section-title-line,
+    .doehealth-intro-band__section-title-line-text,
+    .doehealth-routed-calls-bleed-right__title-text,
+    .doehealth-agents-anywhere-bleed__title-text,
+    .doehealth-prior-auth-bleed__title-text,
+    .doehealth-initiatives__section-title,
+    .doehealth-call-summary__title,
+    .home-feature-card-section__title,
+    .home-feature-shader-band__feature-title,
+    .home-feature-shader-band__workflow-title,
+    .home-closing-section__fundraise-headline,
+    .home-closing-section__fundraise-headline-text
+  ) {
+  font-family: var(--font-p22-mackinac), ui-serif, Georgia, "Times New Roman", serif !important;
+}
+
 .doephone-mobile-root--doehealth .doehealth-hero-headline,
 .doe-desktop-root--doehealth .doehealth-hero-headline,
 .doephone-mobile-root--doehealth .doehealth-hero-headline .doephone-hero-headline-line,
@@ -507,7 +541,7 @@ html[data-home-page][data-layout="desktop"]
   -webkit-background-clip: text;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
-  font-weight: 350 !important;
+  font-weight: 400 !important;
   letter-spacing: -0.035em;
 }
 
@@ -579,6 +613,75 @@ html[data-home-page][data-layout="desktop"]
 
 html[data-home-page] .doephone-hero-section .doephone-hero-copy:has(.doehealth-hero-copy-carousel-wrap) {
   overflow: visible;
+}
+
+/* Static Genome hero — centered Introducing / Genome 1.0 (no carousel chevrons). */
+html[data-home-page] .doephone-hero-section .doephone-hero-copy:has(.doehealth-hero-genome-copy) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.doehealth-hero-genome-copy {
+  gap: 0;
+  align-items: center;
+}
+
+.doehealth-hero-genome-copy__eyebrow {
+  flex: 0 0 auto;
+  align-self: center;
+  padding-bottom: clamp(0.14rem, 0.08rem + 0.28vmin, 0.22rem);
+  background: var(--doehealth-gold-text-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  font-size: clamp(1.05rem, 0.9rem + 1.05vmin, 1.32rem);
+  font-weight: 400;
+  letter-spacing: -0.028em;
+  line-height: 1.12;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.doehealth-hero-genome-copy__title {
+  margin-top: 0;
+  align-items: center !important;
+  text-align: center;
+}
+
+.doehealth-hero-genome-copy__title .doephone-hero-headline-line {
+  text-align: center;
+}
+
+.doehealth-hero-genome-copy__subheading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: clamp(0.62rem, 0.48rem + 0.55vmin, 0.92rem);
+  max-width: min(100%, 22rem);
+  text-align: center;
+  font-size: clamp(1.02rem, 0.92rem + 0.45vmin, 1.22rem);
+  font-weight: 500;
+  letter-spacing: -0.018em;
+  line-height: 1.28;
+  color: rgba(245, 230, 208, 0.78);
+}
+
+.doehealth-hero-genome-copy__subheading-line {
+  display: block;
+}
+
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-genome-copy__eyebrow {
+  font-size: clamp(1.12rem, 0.95vw, 1.42rem);
+  padding-bottom: clamp(0.16rem, 0.1vw, 0.24rem);
+}
+
+html[data-home-page][data-layout="desktop"] .doe-desktop-root--doehealth .doehealth-hero-genome-copy__subheading {
+  margin-top: clamp(0.72rem, 0.62vw, 1.05rem);
+  max-width: min(100%, 26rem);
+  font-size: clamp(1.12rem, 0.98vw, 1.38rem);
+  line-height: 1.3;
 }
 
 /* Hero read-more — gold link under headline (phone + desktop). */
@@ -1079,6 +1182,7 @@ html[data-layout="desktop"]
 
 /* Flat gold type — no glow under gradient text (hero, nav, titles, cards, convo UI). */
 .doephone-mobile-root--doehealth :where(
+    .doehealth-hero-genome-copy__eyebrow,
     .doehealth-hero-headline,
     .doehealth-hero-headline .doephone-hero-headline-line,
     .doehealth-initiatives__hero,
@@ -1100,6 +1204,7 @@ html[data-layout="desktop"]
     nav.doephone-site-nav .proto-nav-chrome-logo a
   ),
 .doe-desktop-root--doehealth :where(
+    .doehealth-hero-genome-copy__eyebrow,
     .doehealth-hero-headline,
     .doehealth-hero-headline .doephone-hero-headline-line,
     .doehealth-initiatives__hero,

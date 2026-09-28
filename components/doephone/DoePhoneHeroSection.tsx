@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { DoePhoneHeroGradientCircles } from "@/components/doephone/DoePhoneHeroGradientCircles";
 import { DoePhoneHeroHeadline } from "@/components/doephone/DoePhoneHeroHeadline";
+import { BlogShaderBackdropImage } from "@/components/blog/BlogShaderBackdropImage";
 import { DoePhoneHomeHeroGrainShader } from "@/components/doephone/DoePhoneHomeHeroGrainShader";
 import { ProtoHomeHeroGradient } from "@/components/proto/ProtoHomeHeroGradient";
 import { WorkflowCarouselDesignBackdrop } from "@/components/workflow-carousel-design-backdrop";
@@ -14,6 +15,7 @@ import {
 } from "@/lib/doephone/hero-intro-timing";
 import {
   DOEPHONE_DESKTOP_PAGE_INSET_LEFT,
+  DOEPHONE_DESKTOP_PAGE_INSET_X,
   DOEPHONE_HERO_COPY_INSET,
 } from "@/lib/doephone/section-styles";
 import { CARE_COORDINATION_BACKDROP } from "@/lib/workflow-carousel-design-backdrops";
@@ -30,8 +32,11 @@ import {
   DOEHEALTH_HERO_HEADLINE_CROSSFADE_MS,
   DOEHEALTH_HERO_HEADLINE_ROTATE_MS,
 } from "@/lib/doehealth/doehealth-hero-carousel";
+import { DoeHealthHeroGenomeCopy } from "@/components/doehealth/DoeHealthHeroGenomeCopy";
+import { DOEHEALTH_HERO_BACKDROP } from "@/lib/doehealth/doehealth-hero-backdrop";
+import { setHomeHeroBackgroundReady } from "@/lib/doephone/home-hero-shader-gate";
 import { DoeLinkArrow } from "@/components/shared/DoeLinkArrow";
-import { inter } from "@/lib/home/fonts";
+import { inter, p22Mackinac } from "@/lib/home/fonts";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 
 function HeroCarouselNavChevron({ direction }: { direction: "prev" | "next" }) {
@@ -496,16 +501,34 @@ export function DoePhoneHeroSection({
   const isProto = proto;
   /** iPhone-style hero (dusk shader + orb dial) — mobile always, desktop when opted in. */
   const renderIphoneHero = !isProto && (isMobile || iphoneBackdrop);
+  const isDoeHealthHero = heroOrbSchemes !== undefined;
+  const heroTitleFontClass = isProto
+    ? PROTO_FONT_CLASS
+    : isDoeHealthHero
+      ? p22Mackinac.className
+      : undefined;
   const homeHeroShader = doeHomeHeroDuskShaderSurface();
   const heroHeight = isDesktop
     ? DOEPHONE_HERO_DESKTOP_HEIGHT
     : isProto
       ? PROTO_HERO_HEIGHT
       : DOEPHONE_HERO_HEIGHT;
-  const copyInset = isDesktop ? DOEPHONE_DESKTOP_PAGE_INSET_LEFT : DOEPHONE_HERO_COPY_INSET;
+  const copyInset =
+    isDoeHealthHero && isDesktop
+      ? DOEPHONE_DESKTOP_PAGE_INSET_X
+      : isDesktop
+        ? DOEPHONE_DESKTOP_PAGE_INSET_LEFT
+        : DOEPHONE_HERO_COPY_INSET;
   const copyBottom = isDesktop
     ? "bottom-[clamp(5rem,16vh,10rem)]"
     : "bottom-[clamp(2.75rem,9vmin,4.25rem)]";
+  const useDoeHealthHeroBackdrop = isDoeHealthHero && renderIphoneHero;
+
+  useEffect(() => {
+    if (!useDoeHealthHeroBackdrop) return undefined;
+    setHomeHeroBackgroundReady(true);
+    return () => setHomeHeroBackgroundReady(false);
+  }, [useDoeHealthHeroBackdrop]);
 
   return (
     <section
@@ -528,6 +551,8 @@ export function DoePhoneHeroSection({
     >
       {isProto && isMobile ? (
         <ProtoHomeHeroGradient />
+      ) : useDoeHealthHeroBackdrop ? (
+        <BlogShaderBackdropImage src={DOEHEALTH_HERO_BACKDROP} />
       ) : renderIphoneHero ? (
         <DoePhoneHomeHeroGrainShader
           variant={homeHeroShader.variant}
@@ -555,10 +580,12 @@ export function DoePhoneHeroSection({
         className={`pointer-events-none absolute left-0 right-0 z-[3] ${copyInset} ${copyBottom}`}
       >
         <div className="doephone-hero-copy w-full min-w-0">
-          {heroEntries && heroEntries.length > 1 ? (
+          {isDoeHealthHero ? (
+            <DoeHealthHeroGenomeCopy titleFontClass={heroTitleFontClass} />
+          ) : heroEntries && heroEntries.length > 1 ? (
             <HeroCopyCarousel
               entries={heroEntries}
-              fontClass={isProto ? PROTO_FONT_CLASS : undefined}
+              fontClass={heroTitleFontClass}
               className={heroHeadlineClassName}
               fitToContainer={heroHeadlineFitToContainer}
               variant={variant}
@@ -568,7 +595,7 @@ export function DoePhoneHeroSection({
               <DoePhoneHeroHeadline
                 line1={isProto ? "Recruiting for the" : heroLine1 ?? "Voice Agents."}
                 line2={isProto ? "intelligence era." : heroLine2 ?? "for Healthcare..."}
-                fontClass={isProto ? PROTO_FONT_CLASS : undefined}
+                fontClass={heroTitleFontClass}
                 className={heroHeadlineClassName}
                 fitToContainer={heroHeadlineFitToContainer}
               />

@@ -1,10 +1,15 @@
-import { DOEHEALTH_PATH, DESIGNERS_PATH } from "@/lib/site-domains";
+import { DOEHEALTH_LEGACY_PATH, DOEHEALTH_PATH, DESIGNERS_PATH } from "@/lib/site-domains";
 
-export { DOEHEALTH_PATH, DESIGNERS_PATH };
+export { DOEHEALTH_LEGACY_PATH, DOEHEALTH_PATH, DESIGNERS_PATH };
 
 /** Editable doehealth landing route — also served at doehealth.care `/`. */
 export function isDoeHealthLandingPath(path: string): boolean {
-  return path === DOEHEALTH_PATH || path.startsWith(`${DOEHEALTH_PATH}/`);
+  return (
+    path === DOEHEALTH_PATH ||
+    path.startsWith(`${DOEHEALTH_PATH}/`) ||
+    path === DOEHEALTH_LEGACY_PATH ||
+    path.startsWith(`${DOEHEALTH_LEGACY_PATH}/`)
+  );
 }
 
 /** Legacy preview route — kept for doe.care/designers. */

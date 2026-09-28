@@ -20,6 +20,8 @@ export const PROTO_INVEST_PATH = "/proto-invest";
 export const DESIGNERS_PATH = "/designers";
 /** Editable landing served at doehealth.care root via middleware rewrite. */
 export const DOEHEALTH_PATH = "/doehealth";
+/** Internal snapshot of /doehealth — fork edits in DoeHealthLegacyHome. */
+export const DOEHEALTH_LEGACY_PATH = "/doehealth-legacy";
 /** Specialty insurance for healthcare AI companies. */
 export const DOEINSURE_PATH = "/doeinsure";
 /** Doe clinic AI platform landing — Insure-style marketing page. */

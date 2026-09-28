@@ -6,6 +6,7 @@ import { blogPreviewShaderSurface } from "@/lib/blog/blog-preview-shader-surface
 import {
   doeAboutHeroDuskShaderSurface,
   doeHomeDuskFooterShaderSurface,
+  doeHomeHeroDuskShaderSurface,
   doeJoinCampusHeroDuskShaderSurface,
 } from "@/lib/proto/proto-shader-backdrop-colors";
 
@@ -25,6 +26,12 @@ type CaptureSpec = {
 };
 
 const CAPTURE_SPECS: CaptureSpec[] = [
+  {
+    id: "doehealth-home-hero-capture",
+    surface: doeHomeHeroDuskShaderSurface(),
+    width: HERO_WIDTH,
+    height: HERO_HEIGHT,
+  },
   {
     id: "blog-about-hero-capture",
     surface: doeAboutHeroDuskShaderSurface(),

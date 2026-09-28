@@ -1,17 +1,14 @@
-import { INTRODUCING_FABRIC_PATH } from "@/lib/blog/introducing-fabric-article";
-import { INTRODUCING_PULSE_PATH } from "@/lib/blog/introducing-pulse-article";
-import { DOEHEALTH_HERO_HEADLINE_ENTRIES } from "@/lib/doehealth/doehealth-hero-carousel";
+/** Static /doehealth hero copy — Introducing / Genome 1.0 (see DoeHealthHeroGenomeCopy). */
+export const DOEHEALTH_HERO_GENOME_COPY = {
+  eyebrow: "Introducing",
+  title: "Genome 1.0",
+  subheadingLine1: "Health deserves",
+  subheadingLine2: "personalized intelligence.",
+} as const;
 
-/** Hero headline copy for the doehealth.care landing (/doehealth). */
+/** Hero headline props for /doehealth — no rotating carousel entries. */
 export const DOEHEALTH_HERO_HEADLINE = {
-  line1: "Design your own",
-  line2: "clinical intelligence.",
+  line1: DOEHEALTH_HERO_GENOME_COPY.title,
+  line2: "",
   className: "doehealth-hero-headline",
-  readMorePrefix: "Introducing",
-  readMoreLinks: [
-    { label: "Pulse", href: INTRODUCING_PULSE_PATH },
-    { label: "Fabric", href: INTRODUCING_FABRIC_PATH },
-  ],
-  /** Rotates through the founder's memo, Float, and safe-deployment titles alongside this one. */
-  entries: DOEHEALTH_HERO_HEADLINE_ENTRIES,
 } as const;

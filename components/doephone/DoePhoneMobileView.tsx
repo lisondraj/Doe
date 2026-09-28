@@ -23,6 +23,7 @@ import type { DoeHomeHeroHeadlineEntry } from "@/lib/doehealth/doehealth-hero-ca
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import { useDesignersStaticNav } from "@/lib/designers/use-designers-static-nav";
+import { p22Mackinac } from "@/lib/home/fonts";
 import { useDoeHealthLandingNavContext } from "@/lib/doehealth/doehealth-nav-chrome";
 import { DOEHEALTH_HERO_DIAL_ORBS } from "@/lib/doehealth/doehealth-hero-dial-orbs";
 import { PROTO_FONT_CLASS, PROTO_NAV_LOGO_FONT_CLASS } from "@/lib/proto/proto-font";
@@ -158,7 +159,7 @@ export function DoePhoneMobileView({
     <div
       className={`doephone-mobile-root relative z-0 min-h-[var(--doe-section-band-vh,var(--app-vh,100lvh))] overflow-x-hidden ${
         isProto ? `bg-[#121819] ${PROTO_FONT_CLASS}` : "bg-[var(--doe-page-surface,#EDE8DF)]"
-      }${isDoeHealthLanding ? " doephone-mobile-root--doehealth" : ""}`}
+      }${isDoeHealthLanding ? ` doephone-mobile-root--doehealth ${p22Mackinac.variable}` : ""}`}
       suppressHydrationWarning
       data-doeforvc-view="iphone"
     >

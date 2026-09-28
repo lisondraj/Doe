@@ -15,7 +15,8 @@
     "export:linkedin": "node scripts/export-linkedin-banner.mjs",
     "export:story-team-shaders": "STORY_SHADER_BASE_URL=http://127.0.0.1:3001 node scripts/export-story-team-shaders.mjs",
     "export:story-meet-doe-shaders": "STORY_SHADER_BASE_URL=http://127.0.0.1:3001 node scripts/export-story-meet-doe-shaders.mjs",
-    "export:blog-about-shaders": "STORY_SHADER_BASE_URL=http://127.0.0.1:3001 node scripts/export-blog-about-shaders.mjs"
+    "export:blog-about-shaders": "STORY_SHADER_BASE_URL=http://127.0.0.1:3001 node scripts/export-blog-about-shaders.mjs",
+    "export:doehealth-hero-shader": "node scripts/export-doehealth-hero-shader.mjs"
   },
   "dependencies": {
     "@onkernel/sdk": "^0.96.0",

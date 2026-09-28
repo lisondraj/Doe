@@ -1,6 +1,4 @@
-import { INTRODUCING_FABRIC_PATH } from "@/lib/blog/introducing-fabric-article";
 import { INTRODUCING_GENOME_PATH } from "@/lib/blog/introducing-genome-article";
-import { INTRODUCING_PULSE_PATH } from "@/lib/blog/introducing-pulse-article";
 
 export type DoeHealthTopBannerSlide = {
   message: string;
@@ -13,25 +11,11 @@ export const DOEHEALTH_TOP_BANNER_ROTATE_MS = 10_000;
 /** Crossfade duration — keep in sync with `.doehealth-top-banner--carousel` CSS. */
 export const DOEHEALTH_TOP_BANNER_CROSSFADE_MS = 480;
 
+/** /doehealth home — single static strip message (no rotation). */
 export const DOEHEALTH_TOP_BANNER_SLIDES = [
   {
-    message: "Learn More About Doe's Vision",
-    linkLabel: "Read More",
-    linkHref: "/about",
-  },
-  {
-    message: "Personal Intelligence For Every Clinic",
+    message: "Personalized Intelligence for Every Clinic",
     linkLabel: "Genome",
     linkHref: INTRODUCING_GENOME_PATH,
-  },
-  {
-    message: "Introducing Front-Desk Voice Agents",
-    linkLabel: "Learn More",
-    linkHref: INTRODUCING_PULSE_PATH,
-  },
-  {
-    message: "Meet our agentic design canvas",
-    linkLabel: "Learn More",
-    linkHref: INTRODUCING_FABRIC_PATH,
   },
 ] as const satisfies readonly DoeHealthTopBannerSlide[];

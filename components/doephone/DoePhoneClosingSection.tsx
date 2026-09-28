@@ -108,14 +108,14 @@ export function DoePhoneClosingSection({
         {isDesktop ? (
           <>
             {titleBlock}
-            {carouselBlock}
             {fundraiseBlock}
+            {carouselBlock}
           </>
         ) : (
           <div className="home-closing-section__stack flex w-full shrink-0 flex-col">
             {titleBlock}
-            {carouselBlock}
             {fundraiseBlock}
+            {carouselBlock}
           </div>
         )}
       </div>

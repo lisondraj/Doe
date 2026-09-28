@@ -197,7 +197,7 @@ export function DoeHealthTopBanner({
   );
 }
 
-/** /doehealth home — rotating vision + product intro slides. */
+/** /doehealth home — clinic intelligence strip above nav. */
 export function DoeHealthHomeTopBanner({ dismissPastHero = false }: { dismissPastHero?: boolean } = {}) {
   return <DoeHealthTopBanner dismissPastHero={dismissPastHero} slides={DOEHEALTH_TOP_BANNER_SLIDES} />;
 }

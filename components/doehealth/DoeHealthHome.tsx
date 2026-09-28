@@ -8,7 +8,7 @@ import "@/lib/doehealth/doehealth-landing.css";
 
 /**
  * doe.care and doehealth.care landing — fork of the primary home.
- * Edit this file (and app/doehealth/*) without changing /legacymain.
+ * Edit this file (and app/doehealth/*) without changing /doehealth-legacy or /legacymain.
  */
 export function DoeHealthHome() {
   return (

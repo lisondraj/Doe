@@ -1,5 +1,5 @@
 import { DOEPHONE_SECTION_CAROUSEL_RADIUS } from "@/lib/doephone/section-styles";
-import { dmSans, suisseIntl } from "@/lib/home/fonts";
+import { dmSans, p22Mackinac, suisseIntl } from "@/lib/home/fonts";
 
 import {
   BROADER_DOE_VISION_BYLINE_TW,
@@ -33,6 +33,9 @@ export const BLOG_ARTICLE_CATEGORY_TW = `blog-article-category mb-3 text-center 
 
 /** Post title on landing cards — gold gradient, smaller than page hero. */
 export const BLOG_LANDING_CARD_TITLE_TW = `blog-landing-card-title font-[375] leading-[1.06] tracking-[-0.03em] ${suisseIntl.className}`;
+
+/** Carousel card titles — P22 Mackinac (list cards keep Suisse). */
+export const BLOG_LANDING_CAROUSEL_CARD_TITLE_TW = `blog-landing-card-title font-normal leading-[1.06] tracking-[-0.03em] ${p22Mackinac.className}`;
 
 /** Post subheading on landing cards — matches article hero subheading. */
 export const BLOG_LANDING_CARD_SUBHEADING_TW = `${BROADER_DOE_VISION_SUBHEADING_TW} blog-landing-card-subheading mt-2`;

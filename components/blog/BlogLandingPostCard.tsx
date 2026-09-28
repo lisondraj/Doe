@@ -15,6 +15,7 @@ import {
   BLOG_LANDING_CARD_STACK,
   BLOG_LANDING_CARD_SUBHEADING_TW,
   BLOG_LANDING_CARD_TITLE_TW,
+  BLOG_LANDING_CAROUSEL_CARD_TITLE_TW,
   BLOG_LANDING_CARD_VISUAL_TW,
   BLOG_LANDING_READ_MORE_TW,
 } from "@/lib/blog/blog-landing-layout-styles";
@@ -60,6 +61,8 @@ export function BlogLandingPostCard({
   useBakedShaderBackdrops = false,
 }: BlogLandingPostCardProps) {
   const subheading = post.previewSubheading ?? post.subheading;
+  const titleClassName =
+    previewContext === "list" ? BLOG_LANDING_CARD_TITLE_TW : BLOG_LANDING_CAROUSEL_CARD_TITLE_TW;
   const shader =
     previewContext === "home-carousel"
       ? blogPreviewShaderSurface(blogHomeCarouselPreviewShader(post.slug))
@@ -92,7 +95,7 @@ export function BlogLandingPostCard({
 
       <div className="blog-landing-card-copy mt-5 iphone-page:mt-6">
         <BlogArticleCategory category={post.category} variant="preview" />
-        <h2 className={BLOG_LANDING_CARD_TITLE_TW}>{post.title}</h2>
+        <h2 className={titleClassName}>{post.title}</h2>
         <p className={BLOG_LANDING_CARD_SUBHEADING_TW}>{subheading}</p>
         <p className={BLOG_LANDING_CARD_BYLINE_TW}>
           {post.byline}

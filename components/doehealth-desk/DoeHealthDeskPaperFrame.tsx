@@ -13,15 +13,14 @@ const INK = DOEHEALTH_DESK_PRODUCT_INK;
 const CARD = DOEHEALTH_DESK_PRODUCT_CARD;
 const SHELL_RGB = DOEHEALTH_DESK_SURFACE_RGB;
 const SHELL_HEX = SHELL.replace("#", "");
-import { dmSans, inter, larkenLight, lora } from "@/lib/home/fonts";
+import { DoeHealthDeskProductRail } from "@/components/doehealth-desk/DoeHealthDeskProductRail";
+import { dmSans, inter, larkenLight } from "@/lib/home/fonts";
 
 const R = DOEHEALTH_DESK_RADIUS_PX;
 
 const DM = dmSans.style.fontFamily;
 const INTER = inter.style.fontFamily;
 const LARKEN = larkenLight.style.fontFamily;
-const LORA = lora.style.fontFamily;
-
 const GLASS =
   "linear-gradient(in oklab 180deg, oklab(100% 0 0 / 72%) 0%, oklab(100% 0 0 / 12%) 42%, oklab(100% 0 0 / 0%) 100%), linear-gradient(in oklab 180deg, oklab(99% -0.001 0.015) 0%, oklab(92.6% 0.001 0.023) 100%)";
 const GLASS_SHADOW = `#FFFFFFFA 0px 1px 0px inset, #${SHELL_HEX}12 0px -1px 0px inset, #FFFCF180 0px 0px 0px 1px inset, #${SHELL_HEX}0D 0px -8px 16px inset, #0F172A0A 0px 1px 2px, #FFFCF112 0px 4px 12px, #0F172A0D 0px 8px 18px`;
@@ -276,69 +275,7 @@ const APPS: { name: string; icon: ReactNode }[] = [
 export function DoeHealthDeskPaperFrame() {
   return (
     <div style={{ ...smooth, display: "flex", width: 1920, height: 1080, overflow: "visible", background: SHELL, borderRadius: R, position: "relative" }}>
-      <aside
-        style={{
-          ...smooth,
-          width: 72,
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          paddingTop: 28,
-          paddingBottom: 24,
-          paddingInline: 12,
-          position: "relative",
-          flexShrink: 0,
-        }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 32, alignItems: "center" }}>
-          <RailIcon>
-            <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10.5z" fill="none" stroke="rgb(255 252 241 / 60%)" strokeWidth="1.8" strokeLinejoin="round" />
-          </RailIcon>
-          <RailIcon>
-            <circle cx="9" cy="8" r="3" fill="none" stroke="rgb(255 252 241 / 60%)" strokeWidth="1.8" />
-            <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" fill="none" stroke="rgb(255 252 241 / 60%)" strokeWidth="1.8" strokeLinecap="round" />
-            <circle cx="17" cy="9" r="2.5" fill="none" stroke="rgb(255 252 241 / 60%)" strokeWidth="1.8" />
-            <path d="M14.5 20c.3-2.2 1.8-4 4-4" fill="none" stroke="rgb(255 252 241 / 60%)" strokeWidth="1.8" strokeLinecap="round" />
-          </RailIcon>
-          <RailIcon>
-            <rect x="4" y="5" width="16" height="15" rx="2" fill="none" stroke="rgb(255 252 241 / 60%)" strokeWidth="1.8" />
-            <path d="M8 3v4M16 3v4M4 10h16" fill="none" stroke="rgb(255 252 241 / 60%)" strokeWidth="1.8" strokeLinecap="round" />
-          </RailIcon>
-          <RailIcon>
-            <path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8l-4 4V6a1 1 0 0 1 1-1z" fill="none" stroke="rgb(255 252 241)" strokeWidth="1.8" strokeLinejoin="round" />
-          </RailIcon>
-        </div>
-        <div style={{ position: "absolute", top: 28, left: "50%", translate: "-50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ color: "#FFFCF1", fontFamily: LORA, fontSize: 22, fontWeight: 600, lineHeight: "28px" }}>D</div>
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            bottom: 24,
-            left: "50%",
-            translate: "-50%",
-            display: "flex",
-            flexDirection: "column",
-            gap: 18,
-            alignItems: "center",
-            paddingTop: 14,
-            borderTop: "1px solid #FFFCF11F",
-          }}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16">
-            <circle cx="5" cy="5" r="1.35" fill="#FFFCF1" />
-            <circle cx="11" cy="5" r="1.35" fill="#FFFCF1" />
-            <circle cx="5" cy="11" r="1.35" fill="#FFFCF1" />
-            <circle cx="11" cy="11" r="1.35" fill="#FFFCF1" />
-          </svg>
-          <svg width="16" height="16" viewBox="0 0 16 16">
-            <circle cx="8" cy="8" r="2.1" fill="none" stroke="#FFFCF1" strokeWidth="1.35" />
-            <path d="M8 1.8V3.4M8 12.6V14.2M1.8 8H3.4M12.6 8H14.2M3.3 3.3L4.4 4.4M11.6 11.6L12.7 12.7M12.7 3.3L11.6 4.4M4.4 11.6L3.3 12.7" fill="none" stroke="#FFFCF1" strokeWidth="1.35" strokeLinecap="round" />
-          </svg>
-        </div>
-      </aside>
+      <DoeHealthDeskProductRail />
 
       <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, height: 1080, padding: "14px 14px 14px 4px", minWidth: 0 }}>
         <div
@@ -361,16 +298,6 @@ export function DoeHealthDeskPaperFrame() {
           <Canvas />
         </div>
       </div>
-    </div>
-  );
-}
-
-function RailIcon({ children }: { children: ReactNode }) {
-  return (
-    <div style={{ width: 40, height: 40, borderRadius: R, display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <svg width="20" height="20" viewBox="0 0 24 24" style={{ filter: `drop-shadow(#${SHELL_HEX}4D 0px 1px 1px) drop-shadow(#FFFCF12E 0px -1px 0px)` }}>
-        {children}
-      </svg>
     </div>
   );
 }

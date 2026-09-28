@@ -27,7 +27,7 @@ export function doeHealthLandingTouchBootstrapScript(
   const ref = DESIGNERS_PHONE_VMIN_REF_PX;
   const wideMin = DESIGNERS_LAYOUT_WIDE_MIN_PX;
   const vminVar = DESIGNERS_PHONE_VMIN_VAR;
-  const landingPaths = ["/doehealth", "/designers"];
+  const landingPaths = ["/doehealth", "/doehealth-legacy", "/designers"];
 
   return `(function(){try{var d=${JSON.stringify(designersHost)};var h=location.hostname.replace(/^www\\./,"").split(":")[0].toLowerCase();var touch=navigator.maxTouchPoints>0;var path=location.pathname;var landingPath=${JSON.stringify(landingPaths)}.some(function(p){return path===p||path.indexOf(p+"/")===0;});var marketingRoot=path==="/"&&h===d;if(landingPath){var html=document.documentElement;html.setAttribute("data-designers-page","true");var w=Math.max(280,document.documentElement.clientWidth||window.innerWidth);var vh=window.innerHeight;var vmin=w>${wideMin}?Math.min(${ref},vh):Math.min(w,vh);html.style.setProperty(${JSON.stringify(vminVar)},vmin+"px");if(w>${wideMin})html.setAttribute("data-designers-layout-wide","true");}if((marketingRoot||landingPath)&&touch){var html=document.documentElement;html.setAttribute("data-doeforvc-always-phone","true");html.removeAttribute("data-layout");sessionStorage.removeItem("doephone-app-viewport-lock:"+location.hostname);${overflowChromeBootstrap}}${viewportBootstrap}}catch(e){}})();`;
 }
