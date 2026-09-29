@@ -1,147 +1,272 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
-import { DOEHEALTH_DESK_GENOME, doehealthDeskGenomeTiming } from "@/lib/doehealth/doehealth-desk-genome-copy";
-import { dmSans, inter, p22Mackinac } from "@/lib/home/fonts";
+import {
+  DOEHEALTH_DESK_GENOME_BEAT_TOTAL,
+  DOEHEALTH_DESK_GENOME_BELIEVE,
+  DOEHEALTH_DESK_GENOME_LOCKUP,
+  DOEHEALTH_DESK_GENOME_PROBLEM,
+  doehealthDeskGenomeBeat,
+  doehealthDeskGenomeProgressAt,
+} from "@/lib/doehealth/doehealth-desk-genome-copy";
+import { inter, p22Mackinac } from "@/lib/home/fonts";
 
-const SURFACES = [
-  { name: "Front Desk", tag: "Voice", detail: "(416) 555-0190" },
-  { name: "Chart", tag: "Note", detail: "Maya Chen · A1C 8.4" },
-  { name: "Visit Reminder", tag: "SMS", detail: "Tomorrow · 9:40" },
-] as const;
+function swipeClass(tone: "cream" | "salmon", dim: boolean) {
+  return `desk-genome-swipe desk-genome-swipe--${tone}${dim ? "-dim" : ""}`;
+}
 
-/** Centered Genome 1.0 — solid brown block; nav inverts on overlap only. */
+function GenomeSkipIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M7 5.5 13 12 7 18.5"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M16.35 5.5v13" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Pinned Genome band — scroll-locked scenes: problem roll, belief, then Introducing / Genome 1.0. */
 export function DoeHealthDeskGenomeSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [introIn, setIntroIn] = useState(false);
-  const [highlightIn, setHighlightIn] = useState(false);
-  const [bodySegmentsIn, setBodySegmentsIn] = useState<boolean[]>(() =>
-    Array.from({ length: 1 + DOEHEALTH_DESK_GENOME.lines.length }, () => false),
-  );
+  const pinRef = useRef<HTMLDivElement>(null);
+  const reelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const node = sectionRef.current;
-    if (!node) return;
+    const section = sectionRef.current;
+    const pin = pinRef.current;
+    const reel = reelRef.current;
+    if (!section || !pin || !reel) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setIntroIn(true);
-      setHighlightIn(true);
-      setBodySegmentsIn(Array.from({ length: 1 + DOEHEALTH_DESK_GENOME.lines.length }, () => true));
-      return;
-    }
+    const slides = Array.from(reel.children) as HTMLElement[];
+    const firstSwipe = Array.from(pin.querySelectorAll<HTMLElement>("[data-genome-swipe='first']"));
+    const genomeTitle = pin.querySelector<HTMLElement>("[data-genome-swipe='genome']");
+    let raf = 0;
 
-    const timers: number[] = [];
-    const timing = doehealthDeskGenomeTiming(!window.matchMedia("(max-width: 1023px)").matches);
-    const highlightStartMs = timing.startDelayMs + timing.introRevealMs;
-    const bodyStartMs =
-      highlightStartMs + timing.darkenDelayMs + Math.round(timing.darkenMs * timing.bodyAfterDarkenRatio);
+    const setSwipe = (nodes: HTMLElement[], on: boolean) => {
+      for (const node of nodes) node.classList.toggle("is-headline-in", on);
+    };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting || entry.intersectionRatio < 0.28) continue;
+    const update = () => {
+      raf = 0;
+      const rect = section.getBoundingClientRect();
+      const view = window.innerHeight;
+      const range = Math.max(1, rect.height - view);
+      const progress = Math.min(1, Math.max(0, -rect.top / range));
+      const beat = doehealthDeskGenomeBeat(progress);
 
-          timers.push(window.setTimeout(() => setIntroIn(true), timing.startDelayMs));
+      if (rect.top > 0) {
+        pin.classList.remove("is-locked", "is-released");
+      } else if (rect.bottom <= view) {
+        pin.classList.remove("is-locked");
+        pin.classList.add("is-released");
+      } else {
+        pin.classList.add("is-locked");
+        pin.classList.remove("is-released");
+      }
 
-          timers.push(
-            window.setTimeout(() => {
-              setHighlightIn(true);
-            }, highlightStartMs),
-          );
+      let index = 0;
+      let problem = 0;
+      let believe = 0;
+      let believeSwipe = 0;
+      let intro = 0;
+      let title = 0;
+      let dek = 0;
+      let firstOn = false;
+      let genomeOn = false;
 
-          timers.push(
-            window.setTimeout(() => {
-              const dekCount = DOEHEALTH_DESK_GENOME.lines.length;
-              for (let index = 0; index < dekCount; index += 1) {
-                timers.push(
-                  window.setTimeout(() => {
-                    setBodySegmentsIn((current) => {
-                      if (current[index]) return current;
-                      const updated = [...current];
-                      updated[index] = true;
-                      return updated;
-                    });
-                  }, index * timing.dekStaggerMs),
-                );
-              }
-              timers.push(
-                window.setTimeout(() => {
-                  setBodySegmentsIn((current) => {
-                    const boardIndex = dekCount;
-                    if (current[boardIndex]) return current;
-                    const updated = [...current];
-                    updated[boardIndex] = true;
-                    return updated;
-                  });
-                }, dekCount * timing.dekStaggerMs + timing.boardAfterDekMs),
-              );
-            }, bodyStartMs),
-          );
+      switch (beat.id) {
+        case "open":
+          problem = beat.t;
+          firstOn = beat.t > 0.08;
+          break;
+        case "hold0":
+          problem = 1;
+          firstOn = true;
+          break;
+        case "roll1":
+          problem = 1;
+          index = beat.t;
+          firstOn = true;
+          break;
+        case "hold1":
+          problem = 1;
+          index = 1;
+          firstOn = true;
+          break;
+        case "roll2":
+          problem = 1;
+          index = 1 + beat.t;
+          firstOn = true;
+          break;
+        case "hold2":
+          problem = 1;
+          index = 2;
+          firstOn = true;
+          break;
+        case "roll3":
+          problem = 1;
+          index = 2 + beat.t;
+          firstOn = true;
+          break;
+        case "holdTrust":
+          problem = 1;
+          index = 3;
+          firstOn = true;
+          break;
+        case "outTrust":
+          problem = 1 - beat.t;
+          index = 3;
+          firstOn = true;
+          break;
+        case "inBelieve":
+          believe = beat.t;
+          believeSwipe = 0;
+          break;
+        case "swipeBelieve":
+          believe = 1;
+          believeSwipe = beat.t;
+          break;
+        case "holdBelieve":
+          believe = 1;
+          believeSwipe = 1;
+          break;
+        case "outBelieve":
+          believe = 1 - beat.t;
+          believeSwipe = 1;
+          break;
+        case "inIntro":
+          intro = beat.t;
+          title = beat.t;
+          genomeOn = beat.t > 0.2;
+          break;
+        case "inGenome":
+          intro = 1;
+          title = 1;
+          dek = beat.t;
+          genomeOn = true;
+          break;
+        case "holdGenome":
+          intro = 1;
+          title = 1;
+          dek = 1;
+          genomeOn = true;
+          break;
+        default:
+          break;
+      }
 
-          observer.disconnect();
-        }
-      },
-      { threshold: [0, 0.12, 0.28, 0.45] },
-    );
+      const introAt = doehealthDeskGenomeProgressAt("inIntro");
+      pin.classList.toggle("is-at-end", progress >= introAt);
+      pin.style.setProperty("--desk-genome-believe", believe.toFixed(4));
+      pin.style.setProperty("--desk-genome-believe-swipe", believeSwipe.toFixed(4));
+      pin.style.setProperty("--desk-genome-intro", intro.toFixed(4));
+      pin.style.setProperty("--desk-genome-title", title.toFixed(4));
+      pin.style.setProperty("--desk-genome-dek", dek.toFixed(4));
+      reel.style.setProperty("--desk-genome-index", index.toFixed(4));
+      for (let i = 0; i < slides.length; i += 1) {
+        slides[i]?.style.setProperty("--desk-genome-dist", Math.abs(i - index).toFixed(4));
+      }
+      setSwipe(firstSwipe, firstOn);
+      genomeTitle?.classList.toggle("is-headline-in", genomeOn);
+    };
 
-    observer.observe(node);
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     return () => {
-      observer.disconnect();
-      for (const timer of timers) window.clearTimeout(timer);
+      if (raf) window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, []);
-
-  const bodySegmentClass = (bodyIndex: number) => (bodySegmentsIn[bodyIndex] ? " is-segment-in" : "");
-
-  const highlightClass = (delay: boolean) =>
-    highlightIn ? ` desk-genome-headline-highlight${delay ? " desk-genome-headline-highlight--delay" : ""} is-headline-in` : "";
 
   return (
     <section
       ref={sectionRef}
       id="genome"
       className="doehealth-desk-genome doehealth-desk-nav-wash-surface"
-      aria-label="Introducing Genome 1.0"
+      aria-label="Genome 1.0"
+      style={{ "--desk-genome-beats": DOEHEALTH_DESK_GENOME_BEAT_TOTAL } as CSSProperties}
     >
-      <div className="doehealth-desk-genome__stack">
-        <div className={`doehealth-desk-genome__intro${introIn ? " is-segment-in" : ""}${highlightIn ? " is-highlight-active" : ""}`}>
-          <p className={`doehealth-desk-genome__eyebrow ${p22Mackinac.className}${highlightClass(false)}`}>
-            {DOEHEALTH_DESK_GENOME.eyebrow}
-          </p>
-          <h2 className={`doehealth-desk-genome__title ${p22Mackinac.className}${highlightClass(true)}`}>
-            {DOEHEALTH_DESK_GENOME.title}
-          </h2>
-        </div>
-        {DOEHEALTH_DESK_GENOME.lines.map((line, index) => (
-          <p
-            key={line}
-            className={`doehealth-desk-genome__dek-line ${inter.className}${index === 0 ? " doehealth-desk-genome__dek-line--first" : ""}${bodySegmentClass(index)}`}
-          >
-            {line}
-          </p>
-        ))}
-        <div className={`doehealth-desk-genome__board ${inter.className}${bodySegmentClass(DOEHEALTH_DESK_GENOME.lines.length)}`}>
-          <header className="doehealth-desk-genome__board-head">
-            <div>
-              <strong className={dmSans.className}>Westfield</strong>
-              <small>Clinic genome</small>
+      <div ref={pinRef} className="doehealth-desk-genome__pin">
+        <div className="doehealth-desk-genome__stage">
+          <div className="doehealth-desk-genome__scene doehealth-desk-genome__scene--problem">
+            <div ref={reelRef} className={`doehealth-desk-genome__reel ${p22Mackinac.className}`}>
+              {DOEHEALTH_DESK_GENOME_PROBLEM.map((slide, slideIndex) => (
+                <p key={slide.parts.map((part) => part.text).join("")} className="doehealth-desk-genome__slide">
+                  {slide.parts.map((part) =>
+                    slideIndex === 0 ? (
+                      <span
+                        key={part.text}
+                        className={swipeClass(part.tone, false)}
+                        data-genome-swipe="first"
+                      >
+                        {part.text}
+                      </span>
+                    ) : (
+                      <span
+                        key={part.text}
+                        className={part.tone === "salmon" ? "doehealth-desk-genome__tone-salmon" : undefined}
+                      >
+                        {part.text}
+                      </span>
+                    ),
+                  )}
+                </p>
+              ))}
             </div>
-            <em>1.0</em>
-          </header>
-          <ul>
-            {SURFACES.map((surface) => (
-              <li key={surface.name}>
-                <span>
-                  <b className={dmSans.className}>{surface.name}</b>
-                  <small>{surface.detail}</small>
+          </div>
+
+          <div className="doehealth-desk-genome__scene doehealth-desk-genome__scene--believe">
+            <p className={`doehealth-desk-genome__believe ${p22Mackinac.className}`}>
+              {DOEHEALTH_DESK_GENOME_BELIEVE.parts.map((part) => (
+                <span
+                  key={part.text}
+                  className={part.tone === "salmon" ? "doehealth-desk-genome__tone-salmon" : undefined}
+                >
+                  {part.text}
                 </span>
-                <i>{surface.tag}</i>
-              </li>
-            ))}
-          </ul>
-          <footer>Trained on 1,284 finished tasks</footer>
+              ))}
+            </p>
+          </div>
+
+          <div className={`doehealth-desk-genome__scene doehealth-desk-genome__scene--lockup ${p22Mackinac.className}`}>
+            <p className="doehealth-desk-genome__eyebrow">{DOEHEALTH_DESK_GENOME_LOCKUP.eyebrow}</p>
+            <h2 className="doehealth-desk-genome__title desk-genome-headline-highlight" data-genome-swipe="genome">
+              {DOEHEALTH_DESK_GENOME_LOCKUP.title}
+            </h2>
+            <p className={`doehealth-desk-genome__dek ${inter.className}`}>{DOEHEALTH_DESK_GENOME_LOCKUP.dek}</p>
+          </div>
         </div>
+        <button
+          type="button"
+          className="doehealth-desk-genome__skip"
+          aria-label="Skip to Introducing Genome 1.0"
+          onClick={() => {
+            const section = sectionRef.current;
+            if (!section) return;
+            const view = window.innerHeight;
+            const top = window.scrollY + section.getBoundingClientRect().top;
+            const range = Math.max(1, section.offsetHeight - view);
+            window.scrollTo({
+              top: top + range * doehealthDeskGenomeProgressAt("holdGenome"),
+              behavior: "smooth",
+            });
+          }}
+        >
+          <GenomeSkipIcon />
+        </button>
       </div>
     </section>
   );

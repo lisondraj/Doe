@@ -5,7 +5,7 @@
 }
 
 .doehealth-desk-page {
-  --desk-product-scale: 0.88;
+  --desk-product-scale: 1;
   --doe-page-surface: #fffcf1;
   --doehealth-desk-ink: #140c04;
   --doehealth-desk-ink-rgb: 20 12 4;
@@ -40,7 +40,7 @@
   --desk-headline-darken-duration: 4s;
   --desk-headline-darken-delay: 0.8s;
   --desk-genome-headline-darken-duration: 4s;
-  --desk-genome-headline-darken-delay: 0.5s;
+  --desk-genome-headline-darken-delay: 0s;
   background-color: #fffcf1;
   color: var(--doehealth-desk-ink);
 }
@@ -104,7 +104,8 @@
 }
 
 .doehealth-desk-page .doehealth-desk-genome__eyebrow.desk-genome-headline-highlight.is-headline-in,
-.doehealth-desk-page .doehealth-desk-genome__title.desk-genome-headline-highlight.is-headline-in {
+.doehealth-desk-page .doehealth-desk-genome__title.desk-genome-headline-highlight.is-headline-in,
+.doehealth-desk-page .doehealth-desk-genome .desk-genome-swipe.is-headline-in {
   animation: desk-genome-headline-highlight var(--desk-genome-headline-darken-duration) cubic-bezier(0.22, 1, 0.36, 1)
     forwards;
 }
@@ -124,8 +125,8 @@
     90deg,
     #fffcf1 0%,
     #fffcf1 42%,
-    rgb(255 252 241 / 0.14) 58%,
-    rgb(255 252 241 / 0.14) 100%
+    rgb(255 252 241 / 0) 58%,
+    rgb(255 252 241 / 0) 100%
   );
   background-size: 280% 100%;
   background-position: 100% 50%;
@@ -139,8 +140,8 @@
     90deg,
     #fccfb8 0%,
     #fccfb8 42%,
-    rgb(252 207 184 / 0.18) 58%,
-    rgb(252 207 184 / 0.18) 100%
+    rgb(252 207 184 / 0) 58%,
+    rgb(252 207 184 / 0) 100%
   );
   background-size: 280% 100%;
   background-position: 100% 50%;
@@ -149,13 +150,57 @@
   color: transparent;
 }
 
-.doehealth-desk-page .doehealth-desk-genome__intro.is-segment-in:not(.is-highlight-active) .doehealth-desk-genome__eyebrow,
-.doehealth-desk-page .doehealth-desk-genome__intro.is-segment-in:not(.is-highlight-active) .doehealth-desk-genome__title {
-  color: rgb(255 252 241 / 0.36);
+.doehealth-desk-page .doehealth-desk-genome .desk-genome-swipe {
+  background-size: 280% 100%;
+  background-position: 100% 50%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
-.doehealth-desk-page .doehealth-desk-genome__intro.is-segment-in:not(.is-highlight-active) .doehealth-desk-genome__title {
-  color: rgb(252 207 184 / 0.36);
+.doehealth-desk-page .doehealth-desk-genome .desk-genome-swipe--cream {
+  background-image: linear-gradient(
+    90deg,
+    #fffcf1 0%,
+    #fffcf1 42%,
+    rgb(255 252 241 / 0) 58%,
+    rgb(255 252 241 / 0) 100%
+  );
+}
+
+.doehealth-desk-page .doehealth-desk-genome .desk-genome-swipe--salmon {
+  background-image: linear-gradient(
+    90deg,
+    #fccfb8 0%,
+    #fccfb8 42%,
+    rgb(252 207 184 / 0) 58%,
+    rgb(252 207 184 / 0) 100%
+  );
+}
+
+.doehealth-desk-page .doehealth-desk-genome .desk-genome-swipe--cream-dim {
+  background-image: linear-gradient(
+    90deg,
+    #fffcf1 0%,
+    #fffcf1 42%,
+    rgb(255 252 241 / 0.22) 58%,
+    rgb(255 252 241 / 0.22) 100%
+  );
+}
+
+.doehealth-desk-page .doehealth-desk-genome .desk-genome-swipe--salmon-dim {
+  background-image: linear-gradient(
+    90deg,
+    #fccfb8 0%,
+    #fccfb8 42%,
+    rgb(252 207 184 / 0.22) 58%,
+    rgb(252 207 184 / 0.22) 100%
+  );
+}
+
+.doehealth-desk-page .doehealth-desk-genome .desk-genome-swipe.is-scrub {
+  animation: none;
+  background-position: calc((1 - var(--desk-genome-believe-swipe, 0)) * 100%) 50%;
 }
 
 @keyframes desk-headline-darken {
@@ -264,7 +309,7 @@
   --desk-headline-darken-duration: 5.5s;
   --desk-headline-darken-delay: 0.35s;
   --desk-genome-headline-darken-duration: 5.5s;
-  --desk-genome-headline-darken-delay: 0.7s;
+  --desk-genome-headline-darken-delay: 0s;
 }
 
 /* Desktop hero title fades in from nothing first, then the highlight sweeps horizontally. */
@@ -698,6 +743,7 @@
   .doehealth-desk-page .doehealth-desk-agents__title.is-title-in .desk-headline-darken--ink,
   .doehealth-desk-page .doehealth-desk-genome__eyebrow.desk-genome-headline-highlight.is-headline-in,
   .doehealth-desk-page .doehealth-desk-genome__title.desk-genome-headline-highlight.is-headline-in,
+  .doehealth-desk-page .doehealth-desk-genome .desk-genome-swipe.is-headline-in,
   .doehealth-desk-page .desk-headline-mask,
   .doehealth-desk-page .desk-headline-mask.is-headline-in {
     animation: none;
@@ -707,7 +753,8 @@
   }
 
   .doehealth-desk-page .doehealth-desk-genome__eyebrow.desk-genome-headline-highlight,
-  .doehealth-desk-page .doehealth-desk-genome__title.desk-genome-headline-highlight {
+  .doehealth-desk-page .doehealth-desk-genome__title.desk-genome-headline-highlight,
+  .doehealth-desk-page .doehealth-desk-genome .desk-genome-swipe {
     background-position: 0% 50%;
   }
 
@@ -875,6 +922,8 @@
   pointer-events: none;
   transform: scale(0.86);
   transform-origin: top right;
+  /* Desktop: the product fills the column to the right margin, so the panel no longer overlaps it. */
+  display: none;
 }
 
 .desk-paper-scale {
@@ -1571,22 +1620,186 @@
 }
 
 .doehealth-desk-genome {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  --desk-genome-beats: 9.85;
+  --desk-genome-slot: clamp(10rem, 28vh, 15.5rem);
+  position: relative;
   box-sizing: border-box;
-  min-height: 100dvh;
-  min-height: 100svh;
-  padding: calc(var(--desk-nav-clearance) + clamp(2.25rem, 5vh, 3.5rem)) clamp(1.5rem, 6vw, 4rem)
-    clamp(2.25rem, 5vh, 3.5rem);
-  scroll-margin-top: var(--desk-nav-clearance);
+  height: calc(100svh + var(--desk-genome-beats) * 70svh);
+  min-height: calc(100svh + var(--desk-genome-beats) * 70svh);
+  padding: 0;
+  scroll-margin-top: 0;
   background: var(--doehealth-desk-surface);
   color: #fffcf1;
   text-align: center;
 }
 
+.doehealth-desk-genome__pin {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 100dvh;
+  height: 100svh;
+  padding: var(--desk-nav-clearance) clamp(1.5rem, 6vw, 4rem) 0;
+  overflow: hidden;
+  background: var(--doehealth-desk-surface);
+}
+
+.doehealth-desk-genome__pin.is-locked {
+  position: fixed;
+}
+
+.doehealth-desk-genome__pin.is-released {
+  top: auto;
+  bottom: 0;
+}
+
+.doehealth-desk-genome__stage {
+  position: relative;
+  width: min(100%, 46rem);
+  height: calc(var(--desk-genome-slot) * 3.15);
+  overflow: visible;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 6%, #000 22%, #000 78%, transparent 94%);
+  mask-image: linear-gradient(to bottom, transparent 6%, #000 22%, #000 78%, transparent 94%);
+}
+
+.doehealth-desk-genome__skip {
+  position: absolute;
+  right: clamp(1rem, 2.8vw, 1.6rem);
+  bottom: max(1.1rem, env(safe-area-inset-bottom, 0px));
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 2.7rem;
+  height: 2.7rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(255 252 241 / 0.08);
+  color: #fffcf1;
+  cursor: pointer;
+  opacity: 0.78;
+  pointer-events: auto;
+  transform: rotate(90deg);
+}
+
+.doehealth-desk-genome__skip:hover {
+  opacity: 1;
+  background: rgb(255 252 241 / 0.14);
+}
+
+.doehealth-desk-genome__pin.is-at-end .doehealth-desk-genome__skip {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.doehealth-desk-genome__scene {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.doehealth-desk-genome__scene--problem {
+  opacity: var(--desk-genome-problem, 0);
+}
+
+.doehealth-desk-genome__scene--believe {
+  opacity: var(--desk-genome-believe, 0);
+}
+
+.doehealth-desk-genome__believe {
+  margin: 0;
+  max-width: 14.5em;
+  color: #fffcf1;
+  font-size: clamp(2.1rem, 4.2vw, 3.65rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+  text-align: center;
+  text-wrap: balance;
+  -webkit-mask-image: linear-gradient(
+    135deg,
+    #000 0%,
+    #000 42%,
+    rgb(0 0 0 / 0.22) 58%,
+    rgb(0 0 0 / 0.22) 100%
+  );
+  mask-image: linear-gradient(
+    135deg,
+    #000 0%,
+    #000 42%,
+    rgb(0 0 0 / 0.22) 58%,
+    rgb(0 0 0 / 0.22) 100%
+  );
+  -webkit-mask-size: 280% 280%;
+  mask-size: 280% 280%;
+  -webkit-mask-position: calc((1 - var(--desk-genome-believe-swipe, 0)) * 100%)
+    calc((1 - var(--desk-genome-believe-swipe, 0)) * 100%);
+  mask-position: calc((1 - var(--desk-genome-believe-swipe, 0)) * 100%)
+    calc((1 - var(--desk-genome-believe-swipe, 0)) * 100%);
+}
+
+.doehealth-desk-genome__scene--lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.doehealth-desk-genome__reel {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  will-change: transform;
+  transform: translate3d(0, calc((var(--desk-genome-index, 0) + 0.5) * var(--desk-genome-slot) * -1), 0);
+}
+
+.doehealth-desk-genome__slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: var(--desk-genome-slot);
+  margin: 0 auto;
+  padding: 0 0.25rem;
+  max-width: 14.5em;
+  color: #fffcf1;
+  font-size: clamp(2.1rem, 4.2vw, 3.65rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+  text-wrap: balance;
+  opacity: calc(1 - min(0.78, var(--desk-genome-dist, 1) * 0.58));
+  transform: scale(calc(1 - min(0.06, var(--desk-genome-dist, 1) * 0.045)));
+}
+
+.doehealth-desk-genome__slide--lockup {
+  gap: 0.35rem;
+  max-width: none;
+}
+
+.doehealth-desk-genome__tone-salmon {
+  color: #fccfb8;
+}
+
 .doehealth-desk-genome__stack {
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: min(100%, 64rem);
+  min-height: 0;
+  margin-inline: auto;
 }
 
 .doehealth-desk-genome__stack > * {
@@ -1609,34 +1822,36 @@
 
 .doehealth-desk-genome__eyebrow {
   margin: 0;
+  color: #fffcf1;
   font-size: clamp(1.65rem, 2.8vw, 2.45rem);
   font-weight: 400;
   letter-spacing: -0.04em;
   line-height: 1;
-  color: #fffcf1;
+  opacity: var(--desk-genome-intro, 0);
 }
 
 .doehealth-desk-genome__title {
-  margin: 0.2rem 0 0;
-  font-size: clamp(4.6rem, 10.5vw, 8.75rem);
+  position: static;
+  margin: 0;
+  color: #fccfb8;
+  font-size: clamp(4.35rem, 10vw, 8.25rem);
   font-weight: 400;
   letter-spacing: -0.048em;
   line-height: 0.9;
-  color: #fccfb8;
+  opacity: var(--desk-genome-title, 0);
 }
 
-.doehealth-desk-genome__dek-line {
-  margin: 0.35rem auto 0;
-  max-width: 38rem;
-  color: color-mix(in srgb, currentColor 74%, transparent);
+.doehealth-desk-genome__dek {
+  width: min(100%, 22.5rem);
+  margin: 0.55rem 0 0;
+  color: rgb(255 252 241 / 0.74);
   font-size: 1.05rem;
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.4;
-}
-
-.doehealth-desk-genome__dek-line--first {
-  margin-top: 1.35rem;
+  text-align: center;
+  text-wrap: balance;
+  opacity: var(--desk-genome-dek, 0);
 }
 
 .doehealth-desk-genome__board {
@@ -2951,8 +3166,7 @@
   .doehealth-desk-page .doehealth-desk-agents__switch,
   .doehealth-desk-page .desk-feat,
   .doehealth-desk-page .doehealth-desk-invite,
-  .doehealth-desk-page .doehealth-desk-footer__meta,
-  .doehealth-desk-page .doehealth-desk-genome {
+  .doehealth-desk-page .doehealth-desk-footer__meta {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
   }
@@ -3251,20 +3465,40 @@
     white-space: normal;
   }
 
-  .doehealth-desk-genome {
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    min-height: 100dvh;
-    min-height: 100svh;
-    padding: calc(var(--desk-phone-nav-clearance) + 1.25rem) 1.25rem
-      max(1.5rem, env(safe-area-inset-bottom, 0px));
-    scroll-margin-top: var(--desk-phone-nav-clearance);
-    overflow: hidden;
+  .doehealth-desk-page .doehealth-desk-genome {
+    padding-left: 0;
+    padding-right: 0;
+    overflow: visible;
   }
 
-  .doehealth-desk-genome__stack {
+  .doehealth-desk-genome {
+    --desk-genome-slot: clamp(8.75rem, 32vh, 12.5rem);
+    height: calc(100svh + var(--desk-genome-beats) * 70svh);
+    min-height: calc(100svh + var(--desk-genome-beats) * 70svh);
+    padding: 0;
+    overflow: visible;
+  }
+
+  .doehealth-desk-genome__pin {
+    padding: var(--desk-phone-nav-clearance) 1.25rem 0;
+  }
+
+  .doehealth-desk-genome__stage {
     width: min(100%, 26rem);
+    height: calc(var(--desk-genome-slot) * 3.05);
+  }
+
+  .doehealth-desk-genome__slide {
+    font-size: clamp(1.7rem, 7.6vw, 2.35rem);
+    letter-spacing: -0.04em;
+    line-height: 1.12;
+  }
+
+  .doehealth-desk-genome__believe {
+    max-width: none;
+    font-size: clamp(1.7rem, 7.6vw, 2.35rem);
+    letter-spacing: -0.04em;
+    line-height: 1.12;
   }
 
   .doehealth-desk-genome__eyebrow {
@@ -3276,12 +3510,10 @@
     line-height: 0.9;
   }
 
-  .doehealth-desk-genome__dek-line {
-    font-size: clamp(1rem, 3.8vw, 1.08rem);
-  }
-
-  .doehealth-desk-genome__dek-line--first {
-    margin-top: 1.1rem;
+  .doehealth-desk-genome__dek {
+    width: min(100%, 20.5rem);
+    margin-top: 0.45rem;
+    font-size: clamp(0.92rem, 3.6vw, 1.02rem);
   }
 
   .doehealth-desk-genome__board {
