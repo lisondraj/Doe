@@ -5,7 +5,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import {
   DOEHEALTH_DESK_GENOME_BEAT_TOTAL,
   DOEHEALTH_DESK_GENOME_BELIEVE,
-  DOEHEALTH_DESK_GENOME_FINAL_PROGRESS,
+  DOEHEALTH_DESK_GENOME_INTRO_PROGRESS,
   DOEHEALTH_DESK_GENOME_LOCKUP,
   DOEHEALTH_DESK_GENOME_PROBLEM,
   doehealthDeskGenomeBeat,
@@ -47,24 +47,67 @@ export function DoeHealthDeskGenomeSection() {
     const firstSwipe = Array.from(pin.querySelectorAll<HTMLElement>("[data-genome-swipe='first']"));
     const genomeTitle = pin.querySelector<HTMLElement>("[data-genome-swipe='genome']");
     let raf = 0;
-    let settled = false;
-    let collapsed = false;
+    let latchedIntro = 0;
+    let latchedTitle = 0;
+    let latchedDek = 0;
+    let latchedGenomeOn = false;
+    let complete = false;
 
     const setSwipe = (nodes: HTMLElement[], on: boolean) => {
       for (const node of nodes) node.classList.toggle("is-headline-in", on);
     };
 
+    const paint = (
+      index: number,
+      problem: number,
+      believe: number,
+      believeSwipe: number,
+      intro: number,
+      title: number,
+      dek: number,
+      firstOn: boolean,
+      genomeOn: boolean,
+    ) => {
+      pin.style.setProperty("--desk-genome-problem", problem.toFixed(4));
+      pin.style.setProperty("--desk-genome-believe", believe.toFixed(4));
+      pin.style.setProperty("--desk-genome-believe-swipe", believeSwipe.toFixed(4));
+      pin.style.setProperty("--desk-genome-intro", intro.toFixed(4));
+      pin.style.setProperty("--desk-genome-title", title.toFixed(4));
+      pin.style.setProperty("--desk-genome-dek", dek.toFixed(4));
+      reel.style.setProperty("--desk-genome-index", index.toFixed(4));
+      for (let i = 0; i < slides.length; i += 1) {
+        slides[i]?.style.setProperty("--desk-genome-dist", Math.abs(i - index).toFixed(4));
+      }
+      pin.classList.toggle("is-at-intro", intro > 0.04);
+      setSwipe(firstSwipe, firstOn);
+      genomeTitle?.classList.toggle("is-headline-in", genomeOn);
+    };
+
+    const releaseToPageScroll = () => {
+      if (complete) return;
+      complete = true;
+      const top = section.getBoundingClientRect().top;
+      section.classList.add("is-complete");
+      pin.classList.remove("is-locked", "is-released");
+      window.scrollBy(0, top);
+    };
+
     const update = () => {
       raf = 0;
+
+      if (complete) {
+        pin.classList.remove("is-locked", "is-released");
+        paint(0, 0, 0, 1, 1, 1, 1, false, true);
+        return;
+      }
+
       const rect = section.getBoundingClientRect();
       const view = window.innerHeight;
       const range = Math.max(1, rect.height - view);
       const progress = Math.min(1, Math.max(0, -rect.top / range));
       const beat = doehealthDeskGenomeBeat(progress);
 
-      if (settled) {
-        pin.classList.remove("is-locked", "is-released");
-      } else if (rect.top > 0) {
+      if (rect.top > 0) {
         pin.classList.remove("is-locked", "is-released");
       } else if (rect.bottom <= view) {
         pin.classList.remove("is-locked");
@@ -154,54 +197,36 @@ export function DoeHealthDeskGenomeSection() {
           title = 1;
           dek = beat.t;
           genomeOn = true;
-          if (beat.t >= 0.98) settled = true;
           break;
         case "holdGenome":
           intro = 1;
           title = 1;
           dek = 1;
           genomeOn = true;
-          settled = true;
           break;
         default:
           break;
       }
 
-      if (settled) {
-        index = 0;
+      latchedIntro = Math.max(latchedIntro, intro);
+      latchedTitle = Math.max(latchedTitle, title);
+      latchedDek = Math.max(latchedDek, dek);
+      latchedGenomeOn = latchedGenomeOn || genomeOn;
+
+      if (latchedIntro > 0) {
         problem = 0;
         believe = 0;
-        believeSwipe = 1;
-        intro = 1;
-        title = 1;
-        dek = 1;
+        index = 0;
         firstOn = false;
-        genomeOn = true;
-        if (!collapsed) {
-          collapsed = true;
-          section.classList.add("is-settled");
-          pin.classList.add("is-settled");
-          pin.classList.remove("is-locked", "is-released");
-          window.scrollTo({
-            top: window.scrollY + section.getBoundingClientRect().top,
-            behavior: "auto",
-          });
-        }
+        intro = latchedIntro;
+        title = latchedTitle;
+        dek = latchedDek;
+        genomeOn = latchedGenomeOn;
       }
 
-      pin.style.setProperty("--desk-genome-problem", problem.toFixed(4));
-      pin.style.setProperty("--desk-genome-believe", believe.toFixed(4));
-      pin.style.setProperty("--desk-genome-believe-swipe", believeSwipe.toFixed(4));
-      pin.style.setProperty("--desk-genome-intro", intro.toFixed(4));
-      pin.style.setProperty("--desk-genome-title", title.toFixed(4));
-      pin.style.setProperty("--desk-genome-dek", dek.toFixed(4));
-      reel.style.setProperty("--desk-genome-index", index.toFixed(4));
-      for (let i = 0; i < slides.length; i += 1) {
-        slides[i]?.style.setProperty("--desk-genome-dist", Math.abs(i - index).toFixed(4));
-      }
-      pin.classList.toggle("is-at-intro", intro > 0.04);
-      setSwipe(firstSwipe, firstOn);
-      genomeTitle?.classList.toggle("is-headline-in", genomeOn);
+      paint(index, problem, believe, believeSwipe, intro, title, dek, firstOn, genomeOn);
+
+      if (latchedDek >= 0.98) releaseToPageScroll();
     };
 
     const onScroll = () => {
@@ -221,11 +246,21 @@ export function DoeHealthDeskGenomeSection() {
 
   const skipToIntro = () => {
     const section = sectionRef.current;
-    if (!section) return;
+    const pin = pinRef.current;
+    const reel = reelRef.current;
+    if (!section || !pin || !reel) return;
+    pin.style.setProperty("--desk-genome-problem", "0");
+    pin.style.setProperty("--desk-genome-believe", "0");
+    pin.style.setProperty("--desk-genome-believe-swipe", "1");
+    pin.style.setProperty("--desk-genome-intro", "1");
+    pin.style.setProperty("--desk-genome-title", "1");
+    pin.style.setProperty("--desk-genome-dek", "0");
+    pin.classList.add("is-at-intro");
+    pin.querySelector<HTMLElement>("[data-genome-swipe='genome']")?.classList.add("is-headline-in");
     const view = window.innerHeight;
     const range = Math.max(1, section.offsetHeight - view);
     const fromTop = window.scrollY + section.getBoundingClientRect().top;
-    window.scrollTo({ top: fromTop + DOEHEALTH_DESK_GENOME_FINAL_PROGRESS * range, behavior: "auto" });
+    window.scrollTo({ top: fromTop + DOEHEALTH_DESK_GENOME_INTRO_PROGRESS * range, behavior: "auto" });
   };
 
   return (
