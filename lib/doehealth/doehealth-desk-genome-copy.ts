@@ -56,18 +56,22 @@ export const DOEHEALTH_DESK_GENOME_BEAT_TOTAL = DOEHEALTH_DESK_GENOME_BEATS.redu
   0,
 );
 
-const DOEHEALTH_DESK_GENOME_INTRO_WEIGHT = DOEHEALTH_DESK_GENOME_BEATS.slice(
-  0,
-  DOEHEALTH_DESK_GENOME_BEATS.findIndex((beat) => beat.id === "inIntro"),
-).reduce((sum, beat) => sum + beat.weight, 0);
-
-/** Scroll progress where Introducing / Genome 1.0 is fully on. */
-export const DOEHEALTH_DESK_GENOME_INTRO_PROGRESS =
-  (DOEHEALTH_DESK_GENOME_INTRO_WEIGHT +
-    (DOEHEALTH_DESK_GENOME_BEATS.find((beat) => beat.id === "inIntro")?.weight ?? 0)) /
-  DOEHEALTH_DESK_GENOME_BEAT_TOTAL;
-
 export type DoeHealthDeskGenomeBeatId = (typeof DOEHEALTH_DESK_GENOME_BEATS)[number]["id"];
+
+export function doehealthDeskGenomeProgressAt(id: DoeHealthDeskGenomeBeatId) {
+  let walked = 0;
+  for (const beat of DOEHEALTH_DESK_GENOME_BEATS) {
+    if (beat.id === id) return walked / DOEHEALTH_DESK_GENOME_BEAT_TOTAL;
+    walked += beat.weight;
+  }
+  return 1;
+}
+
+/** Scroll progress where Introducing / Genome 1.0 has landed (dek still follows). */
+export const DOEHEALTH_DESK_GENOME_INTRO_PROGRESS = doehealthDeskGenomeProgressAt("inGenome");
+
+/** Scroll progress where the lockup is complete, including the flagship dek. */
+export const DOEHEALTH_DESK_GENOME_FINAL_PROGRESS = doehealthDeskGenomeProgressAt("holdGenome");
 
 export function doehealthDeskGenomeBeat(progress: number) {
   const x = Math.min(1, Math.max(0, progress)) * DOEHEALTH_DESK_GENOME_BEAT_TOTAL;

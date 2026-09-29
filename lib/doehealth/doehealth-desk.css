@@ -1650,8 +1650,16 @@
   background: var(--doehealth-desk-surface);
 }
 
-.doehealth-desk-genome__pin.is-locked {
-  position: fixed;
+.doehealth-desk-genome.is-settled {
+  height: 100svh;
+  min-height: 100svh;
+}
+
+.doehealth-desk-genome__pin.is-settled {
+  position: absolute;
+  top: 0;
+  bottom: auto;
+  height: 100%;
 }
 
 .doehealth-desk-genome__pin.is-released {
@@ -3483,6 +3491,11 @@
     min-height: calc(100svh + var(--desk-genome-beats) * 70svh);
     padding: 0;
     overflow: visible;
+  }
+
+  .doehealth-desk-genome.is-settled {
+    height: 100svh;
+    min-height: 100svh;
   }
 
   .doehealth-desk-genome__pin {
