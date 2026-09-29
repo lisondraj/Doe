@@ -47,6 +47,7 @@ export function DoeHealthDeskGenomeSection() {
     const firstSwipe = Array.from(pin.querySelectorAll<HTMLElement>("[data-genome-swipe='first']"));
     const genomeTitle = pin.querySelector<HTMLElement>("[data-genome-swipe='genome']");
     let raf = 0;
+    let settled = false;
 
     const setSwipe = (nodes: HTMLElement[], on: boolean) => {
       for (const node of nodes) node.classList.toggle("is-headline-in", on);
@@ -144,21 +145,36 @@ export function DoeHealthDeskGenomeSection() {
           intro = beat.t;
           title = beat.t;
           genomeOn = beat.t > 0.2;
+          if (beat.t >= 0.98) settled = true;
           break;
         case "inGenome":
           intro = 1;
           title = 1;
           dek = beat.t;
           genomeOn = true;
+          settled = true;
           break;
         case "holdGenome":
           intro = 1;
           title = 1;
           dek = 1;
           genomeOn = true;
+          settled = true;
           break;
         default:
           break;
+      }
+
+      if (settled) {
+        index = 0;
+        problem = 0;
+        believe = 0;
+        believeSwipe = 1;
+        intro = 1;
+        title = 1;
+        dek = 1;
+        firstOn = false;
+        genomeOn = true;
       }
 
       pin.style.setProperty("--desk-genome-problem", problem.toFixed(4));
