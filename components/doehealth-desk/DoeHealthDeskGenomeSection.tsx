@@ -5,10 +5,10 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import {
   DOEHEALTH_DESK_GENOME_BEAT_TOTAL,
   DOEHEALTH_DESK_GENOME_BELIEVE,
+  DOEHEALTH_DESK_GENOME_INTRO_PROGRESS,
   DOEHEALTH_DESK_GENOME_LOCKUP,
   DOEHEALTH_DESK_GENOME_PROBLEM,
   doehealthDeskGenomeBeat,
-  doehealthDeskGenomeProgressAt,
 } from "@/lib/doehealth/doehealth-desk-genome-copy";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
@@ -161,8 +161,7 @@ export function DoeHealthDeskGenomeSection() {
           break;
       }
 
-      const introAt = doehealthDeskGenomeProgressAt("inIntro");
-      pin.classList.toggle("is-at-end", progress >= introAt);
+      pin.style.setProperty("--desk-genome-problem", problem.toFixed(4));
       pin.style.setProperty("--desk-genome-believe", believe.toFixed(4));
       pin.style.setProperty("--desk-genome-believe-swipe", believeSwipe.toFixed(4));
       pin.style.setProperty("--desk-genome-intro", intro.toFixed(4));
@@ -172,6 +171,7 @@ export function DoeHealthDeskGenomeSection() {
       for (let i = 0; i < slides.length; i += 1) {
         slides[i]?.style.setProperty("--desk-genome-dist", Math.abs(i - index).toFixed(4));
       }
+      pin.classList.toggle("is-at-intro", intro > 0.04);
       setSwipe(firstSwipe, firstOn);
       genomeTitle?.classList.toggle("is-headline-in", genomeOn);
     };
@@ -190,6 +190,15 @@ export function DoeHealthDeskGenomeSection() {
       window.removeEventListener("resize", onScroll);
     };
   }, []);
+
+  const skipToIntro = () => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const view = window.innerHeight;
+    const range = Math.max(1, section.offsetHeight - view);
+    const fromTop = window.scrollY + section.getBoundingClientRect().top;
+    window.scrollTo({ top: fromTop + DOEHEALTH_DESK_GENOME_INTRO_PROGRESS * range, behavior: "auto" });
+  };
 
   return (
     <section
@@ -252,18 +261,8 @@ export function DoeHealthDeskGenomeSection() {
         <button
           type="button"
           className="doehealth-desk-genome__skip"
-          aria-label="Skip to Introducing Genome 1.0"
-          onClick={() => {
-            const section = sectionRef.current;
-            if (!section) return;
-            const view = window.innerHeight;
-            const top = window.scrollY + section.getBoundingClientRect().top;
-            const range = Math.max(1, section.offsetHeight - view);
-            window.scrollTo({
-              top: top + range * doehealthDeskGenomeProgressAt("holdGenome"),
-              behavior: "smooth",
-            });
-          }}
+          aria-label="Skip to Introducing"
+          onClick={skipToIntro}
         >
           <GenomeSkipIcon />
         </button>
