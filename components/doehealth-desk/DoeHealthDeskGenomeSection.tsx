@@ -52,6 +52,7 @@ export function DoeHealthDeskGenomeSection() {
     let latchedDek = 0;
     let latchedGenomeOn = false;
     let complete = false;
+    let unpin = false;
 
     const setSwipe = (nodes: HTMLElement[], on: boolean) => {
       for (const node of nodes) node.classList.toggle("is-headline-in", on);
@@ -75,6 +76,7 @@ export function DoeHealthDeskGenomeSection() {
       pin.style.setProperty("--desk-genome-title", title.toFixed(4));
       pin.style.setProperty("--desk-genome-dek", dek.toFixed(4));
       reel.style.setProperty("--desk-genome-index", index.toFixed(4));
+      reel.classList.toggle("is-first", index < 0.02);
       for (let i = 0; i < slides.length; i += 1) {
         slides[i]?.style.setProperty("--desk-genome-dist", Math.abs(i - index).toFixed(4));
       }
@@ -87,16 +89,20 @@ export function DoeHealthDeskGenomeSection() {
       if (complete) return;
       complete = true;
       const top = section.getBoundingClientRect().top;
+      const y = window.scrollY;
       section.classList.add("is-complete");
-      pin.classList.remove("is-locked", "is-released");
-      window.scrollBy(0, top);
+      window.scrollTo({ top: y + top, behavior: "auto" });
+      window.requestAnimationFrame(() => {
+        unpin = true;
+        pin.classList.remove("is-locked", "is-released");
+      });
     };
 
     const update = () => {
       raf = 0;
 
       if (complete) {
-        pin.classList.remove("is-locked", "is-released");
+        if (unpin) pin.classList.remove("is-locked", "is-released");
         paint(0, 0, 0, 1, 1, 1, 1, false, true);
         return;
       }

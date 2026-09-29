@@ -1764,6 +1764,10 @@
   transform: scale(calc(1 - min(0.06, var(--desk-genome-dist, 1) * 0.045)));
 }
 
+.doehealth-desk-genome__reel.is-first .doehealth-desk-genome__slide:not(:first-child) {
+  opacity: 0;
+}
+
 .doehealth-desk-genome__slide--lockup {
   gap: 0.35rem;
   max-width: none;
