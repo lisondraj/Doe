@@ -1,12 +1,7 @@
-import { PREMED_PATH, PRIMARY_SITE_HOST, normalizeHost } from "@/lib/site-domains";
+import { PREMED_PATH } from "@/lib/site-domains";
 
-/** Map doe.care `/` rewrite to the premed page for client-side path checks. */
-export function resolvePremedAwarePath(pathname: string, host?: string): string {
-  const resolvedHost =
-    host ?? (typeof window !== "undefined" ? window.location.hostname : "");
-  if (pathname === "/" && normalizeHost(resolvedHost) === normalizeHost(PRIMARY_SITE_HOST)) {
-    return PREMED_PATH;
-  }
+/** Path checks for /premed. doe.care `/` is the Fall 26 landing, not premed. */
+export function resolvePremedAwarePath(pathname: string, _host?: string): string {
   return pathname;
 }
 

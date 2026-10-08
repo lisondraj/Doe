@@ -2,53 +2,58 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { PremedRouter } from "@/components/premed/PremedRouter";
-import { BROADER_DOE_VISION_OPENING_LEDE } from "@/lib/blog/broader-doe-vision-article";
-import { PREMED_PAGE_TITLE } from "@/lib/premed/premed-copy";
+import { DoeCareFall26DeskPage } from "@/components/doe-carefall26-desk/DoeCareFall26DeskPage";
+import { DOECAREFALL26_DESK_HERO_DEK } from "@/lib/doecarefall26/doecarefall26-desk-hero-copy";
 import {
   DOEHEALTH_PATH,
   isPrimaryHost,
-  premedPageUrl,
+  primarySiteOrigin,
   requestHostFromHeaders,
   shouldEnforceDomainRouting,
 } from "@/lib/site-domains";
 
+import "@/lib/doecarefall26/doecarefall26-desk.css";
+
 export const dynamic = "force-dynamic";
+
+const MOBILE_UA =
+  /iPhone|iPod|Android.*Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i;
 
 function resolveHost() {
   return requestHostFromHeaders(headers());
 }
 
-function isPremedHomeRequest(host: string) {
+function isPrimaryHomeRequest(host: string) {
   return shouldEnforceDomainRouting(host) && isPrimaryHost(host);
 }
 
 export async function generateMetadata(): Promise<Metadata> {
   const host = resolveHost();
-  if (!isPremedHomeRequest(host)) {
+  if (!isPrimaryHomeRequest(host)) {
     return {};
   }
 
   return {
-    title: `${PREMED_PAGE_TITLE} · Doe`,
-    description: BROADER_DOE_VISION_OPENING_LEDE,
+    title: "Doe",
+    description: DOECAREFALL26_DESK_HERO_DEK[0],
     alternates: {
-      canonical: premedPageUrl(),
+      canonical: primarySiteOrigin(),
     },
   };
 }
 
 /**
- * Production doe.care `/` — PremedRouter rendered here natively (URL stays `/`).
- * Middleware must NOT rewrite `/` → /premed: that made the server render app/premed
- * while the client router hydrated app/page at `/`, which broke hero WebGL on iPhone
- * initial load. doehealth.care/premed keeps using app/premed/page.tsx directly.
+ * Production doe.care `/` — Fall 26 landing rendered here natively (URL stays `/`).
+ * Middleware must NOT rewrite `/` to /doecarefall26: that would render one route
+ * tree on the server while the client hydrates app/page at `/`.
  * Localhost and preview hosts fall through to the doehealth landing redirect.
  */
 export default function HomePage() {
   const host = resolveHost();
-  if (isPremedHomeRequest(host)) {
-    return <PremedRouter />;
+  if (isPrimaryHomeRequest(host)) {
+    const ua = headers().get("user-agent") ?? "";
+    const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
+    return <DoeCareFall26DeskPage initialVariant={initialVariant} />;
   }
 
   redirect(DOEHEALTH_PATH);

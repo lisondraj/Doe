@@ -1,4 +1,4 @@
-/** Primary marketing site — `/` serves PremedRouter natively via app/page.tsx (default: doe.care). */
+/** Primary marketing site — `/` serves the Fall 26 landing natively via app/page.tsx (default: doe.care). */
 export const PRIMARY_SITE_HOST =
   process.env.PRIMARY_SITE_HOST ?? "doe.care";
 
@@ -93,7 +93,7 @@ export function isMarketingLandingRoot(
   return pathname === "/" && (isPrimaryHost(host) || isDesignersHost(host));
 }
 
-/** doe.care `/` — URL stays `/`, PremedRouter from app/page.tsx. */
+/** doe.care `/` — URL stays `/`, Fall 26 landing from app/page.tsx. */
 export function isPremedMarketingRoot(
   host: string | null | undefined,
   pathname: string,
@@ -111,7 +111,7 @@ export function isDoeHealthMarketingRoot(
 
 /** Middleware rewrite target for doehealth.care `/` (doe.care `/` uses app/page.tsx). */
 export function marketingLandingRewritePath(host: string | null | undefined): string {
-  return isPrimaryHost(host) ? PREMED_PATH : DOEHEALTH_PATH;
+  return isPrimaryHost(host) ? "/doecarefall26" : DOEHEALTH_PATH;
 }
 
 /** Skip cross-domain redirects on localhost and Vercel preview URLs. */

@@ -112,9 +112,9 @@ export async function middleware(request: NextRequest) {
 
   if (isMarketingLandingRoot(host, pathname)) {
     /**
-     * doe.care `/` is served natively by app/page.tsx (PremedRouter). Rewriting to
-     * /premed made the server render app/premed while the client router still hydrated
-     * app/page at `/` — a route-tree mismatch that broke hero WebGL on iPhone load.
+     * doe.care `/` is served natively by app/page.tsx (DoeCareFall26DeskPage).
+     * Rewriting `/` to another route made the server render that tree while the
+     * client hydrated app/page — keep the URL at `/` and render the landing there.
      */
     if (isPrimaryHost(host)) {
       return applyLandingSiteHeaders(NextResponse.next());
@@ -179,7 +179,7 @@ export async function middleware(request: NextRequest) {
     return applyLandingSiteHeaders(NextResponse.next());
   }
 
-  /** doe.care serves /premed at `/` only — bounce any other path back to root. */
+  /** doe.care serves the Fall 26 landing at `/` only — bounce any other path back to root. */
   if (isPrimaryHost(host)) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/";
