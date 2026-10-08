@@ -612,12 +612,12 @@
 .doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero {
   align-self: center;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
 }
 
 .doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero__row {
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
   max-width: 100%;
 }
@@ -625,19 +625,28 @@
 .doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero__copy {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: max-content;
+  align-items: flex-start;
+  width: 100%;
   max-width: 100%;
 }
 
 .doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero__headline {
-  width: max-content;
+  width: 100%;
   max-width: 100%;
+  text-align: left;
 }
 
 .doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero__dek {
-  max-width: none;
+  width: 100%;
+  max-width: 100%;
+  text-align: left;
   font-size: clamp(1.16rem, 1.35vw, 1.34rem);
+}
+
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero__secure {
+  align-self: flex-start;
+  width: 100%;
+  max-width: 22rem;
 }
 
 .doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero__dek span {
