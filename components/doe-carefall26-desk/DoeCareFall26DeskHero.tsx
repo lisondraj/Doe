@@ -95,8 +95,8 @@ export function DoeCareFall26DeskHero() {
         <form className={`doecarefall26-desk-hero__secure ${inter.className}`} onSubmit={onSubmit}>
           <p>{DOECAREFALL26_DESK_HERO_SECURE}</p>
           <label className="doecarefall26-desk-hero__email">
-            <span className="doecarefall26-desk-hero__sr">Work email</span>
-            <input type="email" name="email" placeholder="Work email" autoComplete="email" required />
+            <span className="doecarefall26-desk-hero__sr">Your email address</span>
+            <input type="email" name="email" placeholder="Your email address" autoComplete="email" required />
             <button type="submit" aria-label={DOECAREFALL26_DESK_HERO_SECURE}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
