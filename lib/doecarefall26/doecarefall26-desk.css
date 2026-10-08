@@ -611,6 +611,15 @@
 
 .doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero {
   align-self: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero__row {
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
 }
 
 .doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero__dek {
