@@ -5,6 +5,8 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { DoeCareFall26DeskAudienceCarousel } from "@/components/doe-carefall26-desk/DoeCareFall26DeskAudienceCarousel";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import {
+  DOECAREFALL26_DESK_HERO_AUDIENCE,
+  DOECAREFALL26_DESK_HERO_AUDIENCE_DESKTOP,
   DOECAREFALL26_DESK_HERO_DEK,
   DOECAREFALL26_DESK_HERO_DESKTOP_TIMING,
   DOECAREFALL26_DESK_HERO_HEADLINE,
@@ -13,7 +15,7 @@ import {
 } from "@/lib/doecarefall26/doecarefall26-desk-hero-copy";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
-/** /doecarefall26 desktop hero — title and email share one row. */
+/** /doecarefall26 hero — headline, dek, then email (desktop stacks under dek). */
 export function DoeCareFall26DeskHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const [desktop, setDesktop] = useState(false);
@@ -81,7 +83,10 @@ export function DoeCareFall26DeskHero() {
                 }`}
               >
                 {DOECAREFALL26_DESK_HERO_HEADLINE.builtForPrefix}{" "}
-                <DoeCareFall26DeskAudienceCarousel paused={desktop && !headlineRevealDone} />
+                <DoeCareFall26DeskAudienceCarousel
+                  paused={desktop && !headlineRevealDone}
+                  audience={desktop ? DOECAREFALL26_DESK_HERO_AUDIENCE_DESKTOP : DOECAREFALL26_DESK_HERO_AUDIENCE}
+                />
               </span>
             </span>
           </h1>

@@ -8,7 +8,6 @@ import {
   DOECAREFALL26_DESK_HERO_AUDIENCE_ROTATE_MS,
 } from "@/lib/doecarefall26/doecarefall26-desk-hero-copy";
 
-const AUDIENCE = DOECAREFALL26_DESK_HERO_AUDIENCE;
 const SIZER_WORD = "providers";
 
 type AudiencePhase = "current" | "in" | "out";
@@ -36,8 +35,14 @@ function AudienceWord({
   );
 }
 
-/** Smooth vertical crossfade — practices → providers → patients → students. */
-export function DoeCareFall26DeskAudienceCarousel({ paused = false }: { paused?: boolean }) {
+/** Smooth vertical crossfade through the audience list. */
+export function DoeCareFall26DeskAudienceCarousel({
+  paused = false,
+  audience = DOECAREFALL26_DESK_HERO_AUDIENCE,
+}: {
+  paused?: boolean;
+  audience?: readonly string[];
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [transition, setTransition] = useState<{ from: number; to: number } | null>(null);
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -54,6 +59,15 @@ export function DoeCareFall26DeskAudienceCarousel({ paused = false }: { paused?:
     return () => mq.removeEventListener("change", sync);
   }, []);
 
+  useEffect(() => {
+    if (activeIndexRef.current < audience.length) return;
+    activeIndexRef.current = 0;
+    transitionRef.current = null;
+    isTransitioningRef.current = false;
+    setActiveIndex(0);
+    setTransition(null);
+  }, [audience]);
+
   const completeTransition = useCallback(() => {
     const current = transitionRef.current;
     if (!current) return;
@@ -66,12 +80,12 @@ export function DoeCareFall26DeskAudienceCarousel({ paused = false }: { paused?:
   }, []);
 
   useEffect(() => {
-    if (AUDIENCE.length <= 1 || paused) return undefined;
+    if (audience.length <= 1 || paused) return undefined;
 
     const interval = window.setInterval(() => {
       if (isTransitioningRef.current) return;
 
-      const nextIndex = (activeIndexRef.current + 1) % AUDIENCE.length;
+      const nextIndex = (activeIndexRef.current + 1) % audience.length;
 
       if (reduceMotion) {
         activeIndexRef.current = nextIndex;
@@ -86,7 +100,7 @@ export function DoeCareFall26DeskAudienceCarousel({ paused = false }: { paused?:
     }, DOECAREFALL26_DESK_HERO_AUDIENCE_ROTATE_MS);
 
     return () => window.clearInterval(interval);
-  }, [paused, reduceMotion]);
+  }, [audience, paused, reduceMotion]);
 
   useEffect(() => {
     if (!transition || reduceMotion) return undefined;
@@ -105,11 +119,11 @@ export function DoeCareFall26DeskAudienceCarousel({ paused = false }: { paused?:
       </span>
       {transition ? (
         <>
-          <AudienceWord word={AUDIENCE[transition.from]} phase="out" animate />
-          <AudienceWord word={AUDIENCE[transition.to]} phase="in" animate onAnimationEnd={completeTransition} />
+          <AudienceWord word={audience[transition.from]} phase="out" animate />
+          <AudienceWord word={audience[transition.to]} phase="in" animate onAnimationEnd={completeTransition} />
         </>
       ) : (
-        <AudienceWord word={AUDIENCE[activeIndex]} phase="current" />
+        <AudienceWord word={audience[activeIndex]} phase="current" />
       )}
     </span>
   );

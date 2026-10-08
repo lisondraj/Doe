@@ -599,6 +599,91 @@
   display: contents;
 }
 
+/* Desktop landing — copy left, large iPhone appointment product on the right. */
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(18rem, 1.08fr);
+  align-items: stretch;
+  gap: clamp(1rem, 2.5vw, 2.25rem);
+  height: calc(100dvh - var(--carefall26-banner-h, 2.85rem) - 5.5rem);
+  overflow: hidden;
+}
+
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero {
+  align-self: center;
+}
+
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero__dek {
+  max-width: none;
+  font-size: clamp(1.16rem, 1.35vw, 1.34rem);
+}
+
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .doecarefall26-desk-hero__dek span {
+  white-space: nowrap;
+}
+
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .carefall26-workspace {
+  margin-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  overflow: visible;
+}
+
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .carefall26-workspace__stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  overflow: visible;
+}
+
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .carefall26-paper-slot {
+  flex: 1;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: clamp(2.75rem, 7vh, 4.75rem);
+  padding-inline: 0.85rem;
+  overflow: visible;
+}
+
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .carefall26-phone-product {
+  position: relative;
+  z-index: 47;
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  align-items: flex-start;
+  justify-content: center;
+  padding-inline: 0.85rem;
+  overflow: visible;
+  isolation: isolate;
+  pointer-events: none;
+}
+
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .carefall26-phone-product__device {
+  width: 100%;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  isolation: isolate;
+}
+
+.doecarefall26-desk-page[data-doeforvc-view="desktop"] .carefall26-workspace__fade {
+  display: none;
+}
+
 .doecarefall26-desk-hero {
   box-sizing: border-box;
   padding-top: clamp(1.25rem, 2.5vw, 2rem);
@@ -606,10 +691,10 @@
 }
 
 .doecarefall26-desk-hero__row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(16.5rem, 22rem);
-  align-items: end;
-  gap: clamp(1.5rem, 3vw, 3.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(1.15rem, 2.2vw, 1.65rem);
   width: 100%;
 }
 
@@ -639,7 +724,6 @@
 
 .doecarefall26-desk-hero__secure {
   margin: 0;
-  justify-self: end;
   width: 100%;
   max-width: 22rem;
 }
@@ -933,9 +1017,93 @@
   transform-origin: top left;
 }
 
-/* Paper 03 Appointment inside an iPhone chassis — phone landing only. */
+/* Paper 03 Appointment inside an iPhone chassis — phone landing + desktop column. */
 .carefall26-phone-product {
   display: none;
+  /* Chassis chrome tracks device width so desktop zoom keeps the iPhone silhouette. */
+  --carefall26-phone-radius-x: 11.7%;
+  --carefall26-phone-radius-y: 5.41%;
+  --carefall26-phone-bezel: 1.81cqw;
+  --carefall26-phone-bezel-inset: 1.53cqw;
+  --carefall26-phone-btn: 0.67cqw;
+}
+
+.carefall26-phone-product__device {
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 390 / 844;
+  width: auto;
+  height: auto;
+  flex: 0 0 auto;
+  border-radius: var(--carefall26-phone-radius-x) / var(--carefall26-phone-radius-y);
+  background: var(--doecarefall26-desk-surface);
+  box-shadow:
+    0 0 0 1px var(--doecarefall26-desk-surface),
+    0 16px 28px rgb(var(--doecarefall26-desk-surface-rgb) / 22%);
+}
+
+.carefall26-phone-product__bezel {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--doecarefall26-desk-surface);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 245 230 / 0.06),
+    inset 0 0 0 var(--carefall26-phone-bezel-inset) var(--doecarefall26-desk-surface);
+  overflow: hidden;
+}
+
+.carefall26-phone-product__screen {
+  position: absolute;
+  inset: var(--carefall26-phone-bezel);
+  border-radius: calc(11.7cqw - var(--carefall26-phone-bezel));
+  overflow: hidden;
+  background: #fffcf1;
+  display: flex;
+  justify-content: center;
+}
+
+.carefall26-phone-product__scale {
+  position: relative;
+  flex-shrink: 0;
+  transform-origin: top center;
+  pointer-events: none;
+}
+
+.carefall26-phone-product__btn {
+  position: absolute;
+  z-index: 2;
+  background: var(--doecarefall26-desk-surface);
+  border-radius: 0.57cqw;
+  box-shadow: inset 0 0 0 1px rgb(232 192 142 / 0.08);
+}
+
+.carefall26-phone-product__btn--silent {
+  left: calc(-1 * var(--carefall26-phone-btn));
+  top: 14%;
+  width: var(--carefall26-phone-btn);
+  height: 5.5%;
+}
+
+.carefall26-phone-product__btn--vol-up {
+  left: calc(-1 * var(--carefall26-phone-btn));
+  top: 24%;
+  width: var(--carefall26-phone-btn);
+  height: 8%;
+}
+
+.carefall26-phone-product__btn--vol-down {
+  left: calc(-1 * var(--carefall26-phone-btn));
+  top: 35%;
+  width: var(--carefall26-phone-btn);
+  height: 8%;
+}
+
+.carefall26-phone-product__btn--power {
+  right: calc(-1 * var(--carefall26-phone-btn));
+  top: 28%;
+  width: var(--carefall26-phone-btn);
+  height: 11%;
 }
 
 .carefall26-appointment-paper-root {
@@ -954,6 +1122,7 @@
 }
 
 .carefall26-workspace__fade {
+  display: none;
   position: fixed;
   right: 0;
   bottom: 0;
@@ -3312,7 +3481,6 @@
   }
 
   .doecarefall26-desk-page:has(.doephone-mobile-root) .carefall26-phone-product {
-    --carefall26-phone-bezel: 0.38rem;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -3321,83 +3489,12 @@
     pointer-events: none;
   }
 
-  .carefall26-phone-product__device {
-    position: relative;
+  .doecarefall26-desk-page:has(.doephone-mobile-root) .carefall26-phone-product__device {
     width: 86%;
     height: auto;
     max-width: none;
     max-height: none;
-    aspect-ratio: 390 / 844;
-    flex-shrink: 0;
-    border-radius: 2.45rem;
-    background: var(--doecarefall26-desk-surface);
-    box-shadow:
-      0 0 0 1px var(--doecarefall26-desk-surface),
-      0 16px 28px rgb(var(--doecarefall26-desk-surface-rgb) / 22%);
-  }
-
-  .carefall26-phone-product__bezel {
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: var(--doecarefall26-desk-surface);
-    box-shadow:
-      inset 0 0 0 1px rgb(255 245 230 / 0.06),
-      inset 0 0 0 0.32rem var(--doecarefall26-desk-surface);
-    overflow: hidden;
-  }
-
-  .carefall26-phone-product__screen {
-    position: absolute;
-    inset: var(--carefall26-phone-bezel);
-    border-radius: calc(2.45rem - var(--carefall26-phone-bezel));
-    overflow: hidden;
-    background: #fffcf1;
-    display: flex;
-    justify-content: center;
-  }
-
-  .carefall26-phone-product__scale {
-    position: relative;
-    flex-shrink: 0;
-    transform-origin: top center;
-    pointer-events: none;
-  }
-
-  .carefall26-phone-product__btn {
-    position: absolute;
-    z-index: 2;
-    background: var(--doecarefall26-desk-surface);
-    border-radius: 0.12rem;
-    box-shadow: inset 0 0 0 1px rgb(232 192 142 / 0.08);
-  }
-
-  .carefall26-phone-product__btn--silent {
-    left: -0.14rem;
-    top: 14%;
-    width: 0.14rem;
-    height: 5.5%;
-  }
-
-  .carefall26-phone-product__btn--vol-up {
-    left: -0.14rem;
-    top: 24%;
-    width: 0.14rem;
-    height: 8%;
-  }
-
-  .carefall26-phone-product__btn--vol-down {
-    left: -0.14rem;
-    top: 35%;
-    width: 0.14rem;
-    height: 8%;
-  }
-
-  .carefall26-phone-product__btn--power {
-    right: -0.14rem;
-    top: 28%;
-    width: 0.14rem;
-    height: 11%;
+    transform: translateX(-0.7rem);
   }
 
   .carefall26-front-desk-panel {

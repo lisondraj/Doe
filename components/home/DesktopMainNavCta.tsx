@@ -64,35 +64,6 @@ export function DesktopMainNavCta({
     };
   }, [dropdownEnabled, open]);
 
-  if (!dropdownEnabled) {
-    return (
-      <div className="relative flex shrink-0 items-center">
-        <div
-          className={`relative flex items-stretch overflow-visible ${radius}${punched ? " proto-nav-cta-shell" : ""}`}
-          style={{ boxShadow: shadow }}
-        >
-          {linksEnabled ? (
-            <Link
-              href={primary.href}
-              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center px-7 text-[0.9375rem] font-medium proto-nav-cta-label no-underline transition-opacity hover:opacity-90 ${radius}`}
-              style={{ backgroundColor: bg, color: fg }}
-            >
-              {primary.label}
-            </Link>
-          ) : (
-            <span
-              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center px-7 text-[0.9375rem] font-medium proto-nav-cta-label ${radius}`}
-              style={{ backgroundColor: bg, color: fg }}
-              aria-disabled="true"
-            >
-              {primary.label}
-            </span>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   const dropdownHoverClass =
     fg.toLowerCase() === "#fff" || fg.toLowerCase() === "#ffffff"
       ? "hover:bg-white/10"
@@ -122,35 +93,59 @@ export function DesktopMainNavCta({
               {primary.label}
             </span>
           )}
-          <button
-            type="button"
-            className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center border-l proto-nav-cta-label transition-opacity hover:opacity-90`}
-            style={{
-              backgroundColor: bg,
-              color: fg,
-              borderColor: divider,
-              width: DESKTOP_NAV_ACTION_SIZE,
-            }}
-            aria-expanded={open}
-            aria-haspopup="menu"
-            aria-label="Open navigation menu"
-            onClick={() => setOpen((value) => !value)}
-          >
-            <svg
-              className="h-[1.125rem] w-[1.125rem] shrink-0 transition-transform duration-200"
-              style={{ transform: open ? "rotate(180deg)" : undefined }}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
+          {dropdownEnabled ? (
+            <button
+              type="button"
+              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center border-l proto-nav-cta-label transition-opacity hover:opacity-90`}
+              style={{
+                backgroundColor: bg,
+                color: fg,
+                borderColor: divider,
+                width: DESKTOP_NAV_ACTION_SIZE,
+              }}
+              aria-expanded={open}
+              aria-haspopup="menu"
+              aria-label="Open navigation menu"
+              onClick={() => setOpen((value) => !value)}
+            >
+              <svg
+                className="h-[1.125rem] w-[1.125rem] shrink-0 transition-transform duration-200"
+                style={{ transform: open ? "rotate(180deg)" : undefined }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                aria-hidden
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          ) : (
+            <span
+              className={`flex ${DESKTOP_NAV_ACTION_HEIGHT_TW} items-center justify-center border-l proto-nav-cta-label`}
+              style={{
+                backgroundColor: bg,
+                color: fg,
+                borderColor: divider,
+                width: DESKTOP_NAV_ACTION_SIZE,
+              }}
               aria-hidden
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
+              <svg
+                className="h-[1.125rem] w-[1.125rem] shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                aria-hidden
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          )}
         </div>
 
-        {open ? (
+        {dropdownEnabled && open ? (
           <div
             role="menu"
             className={`absolute left-0 right-0 top-[calc(100%+0.5rem)] z-[60] overflow-hidden py-1 ${radius}`}

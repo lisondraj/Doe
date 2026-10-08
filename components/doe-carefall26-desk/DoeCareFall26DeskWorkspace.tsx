@@ -3,11 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 
 import { DoeCareFall26DeskFrontDeskPanel } from "@/components/doe-carefall26-desk/DoeCareFall26DeskFrontDeskPanel";
-import { DoeCareFall26DeskPaperFrame } from "@/components/doe-carefall26-desk/DoeCareFall26DeskPaperFrame";
 import { DoeCareFall26DeskPhoneProductPreview } from "@/components/doe-carefall26-desk/DoeCareFall26DeskPhoneProductPreview";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 
-/** Paper Workflows frame, scaled to the column. The bottom veil lifts as you scroll. */
+/** iPhone appointment product; phone view scroll-fades the bottom veil. */
 export function DoeCareFall26DeskWorkspace() {
   const [shown, setShown] = useState(false);
   const fadeRef = useRef<HTMLDivElement>(null);
@@ -56,9 +55,6 @@ export function DoeCareFall26DeskWorkspace() {
     <section className={`carefall26-workspace ${DOEPHONE_DESKTOP_PAGE_INSET_X}${shown ? " is-in" : ""}`} aria-label="Doe clinic workflows">
       <div className="carefall26-workspace__stage">
         <div className="carefall26-paper-slot">
-          <div className="carefall26-paper-scale carefall26-paper-scale--workflows">
-            <DoeCareFall26DeskPaperFrame />
-          </div>
           <DoeCareFall26DeskPhoneProductPreview />
         </div>
         <DoeCareFall26DeskFrontDeskPanel />

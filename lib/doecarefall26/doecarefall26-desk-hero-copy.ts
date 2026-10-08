@@ -5,7 +5,8 @@ export const DOECAREFALL26_DESK_HERO_HEADLINE = {
 
 /** Body copy under the rotating title. */
 export const DOECAREFALL26_DESK_HERO_DEK = [
-  "We're reimagining how providers and patients incorporate AI into their lives.",
+  "We're reimagining how providers and patients",
+  "incorporate AI into their lives.",
 ] as const;
 
 export const DOECAREFALL26_DESK_HERO_SECURE = "Be the first to find out";
@@ -16,6 +17,13 @@ export const DOECAREFALL26_DESK_HERO_AUDIENCE = [
   "providers",
   "patients",
   "students",
+] as const;
+
+/** Desktop hero carousel — same order, no students. */
+export const DOECAREFALL26_DESK_HERO_AUDIENCE_DESKTOP = [
+  "practices",
+  "providers",
+  "patients",
 ] as const;
 
 export const DOECAREFALL26_DESK_HERO_AUDIENCE_ROTATE_MS = 3_200;

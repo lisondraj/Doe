@@ -63,8 +63,9 @@ export function DoeCareFall26DeskDesktopNavBar({
             shadow={heroWaitlistShadow}
             divider={heroCtaDivider}
             linksEnabled={navActionLinksEnabled}
+            dropdownEnabled={false}
             showMailIcon={false}
-            primaryCtaLabel={DOECAREFALL26_DESK_NAV_PRIMARY_CTA.label}
+            primaryCtaLabel={DOECAREFALL26_DESK_NAV_PRIMARY_CTA.desktopLabel}
             primaryCtaHref={DOECAREFALL26_DESK_NAV_PRIMARY_CTA.href}
           />
         </div>

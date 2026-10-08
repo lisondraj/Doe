@@ -3,6 +3,7 @@ import { ABOUT_PATH, WAITLIST_PATH } from "@/lib/site-domains";
 /** Desktop nav split-button primary CTA on /doecarefall26. */
 export const DOECAREFALL26_DESK_NAV_PRIMARY_CTA = {
   label: "Get Your Model",
+  desktopLabel: "Waitlist",
   href: WAITLIST_PATH,
 } as const;
 
