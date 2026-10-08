@@ -3353,13 +3353,14 @@
     border-radius: calc(2.45rem - var(--carefall26-phone-bezel));
     overflow: hidden;
     background: #fffcf1;
+    display: flex;
+    justify-content: center;
   }
 
   .carefall26-phone-product__scale {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform-origin: top left;
+    position: relative;
+    flex-shrink: 0;
+    transform-origin: top center;
     pointer-events: none;
   }
 
