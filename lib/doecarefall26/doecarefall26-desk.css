@@ -2972,14 +2972,14 @@
 @media (max-width: 1023px) {
   .doecarefall26-desk-page {
     --carefall26-banner-h: 2.45rem;
-    --carefall26-phone-email-product-gap: clamp(1.1rem, 3.2vh, 1.85rem);
+    --carefall26-phone-email-product-gap: clamp(1.5rem, 4.5vh, 2.5rem);
     --doe-page-surface: #fffcf1;
     --doe-page-surface-raised: #fffcf1;
     --doe-page-ink: var(--doecarefall26-desk-surface);
     --doe-page-border: rgb(var(--doecarefall26-desk-ink-rgb) / 0.08);
     --carefall26-phone-nav-clearance: calc(
       var(--carefall26-banner-h, 2.45rem) +
-        max(5.15rem, calc(env(safe-area-inset-top, 0px) + 3.95rem))
+        max(4.85rem, calc(env(safe-area-inset-top, 0px) + 3.65rem))
     );
   }
 
@@ -3010,8 +3010,8 @@
     flex-direction: column;
     justify-content: flex-start;
     min-height: 0;
-    padding-top: 0.55rem;
-    padding-bottom: 0.35rem;
+    padding-top: var(--carefall26-phone-email-product-gap);
+    padding-bottom: var(--carefall26-phone-email-product-gap);
   }
 
   .doecarefall26-desk-page:has(.doephone-mobile-root) .doecarefall26-desk-hero__row {
@@ -3023,10 +3023,9 @@
     flex: 0 0 auto;
     height: auto;
     min-height: 0;
-    margin-top: 0.15rem !important;
+    margin-top: 0 !important;
     margin-bottom: 0;
-    padding-top: 0.85rem;
-    padding-right: 1.25rem !important;
+    padding-top: 0;
     padding-bottom: clamp(3.75rem, 9vh, 6rem) !important;
     transform: none !important;
     justify-content: flex-start;
@@ -3232,13 +3231,6 @@
 
   .doecarefall26-desk-hero__headline {
     font-size: clamp(2.55rem, 10.8vw, 3.15rem);
-    line-height: 1.14;
-    padding-top: 0.12em;
-    overflow: visible;
-  }
-
-  .doecarefall26-desk-hero__line {
-    overflow: visible;
   }
 
   .doecarefall26-desk-hero__dek {
