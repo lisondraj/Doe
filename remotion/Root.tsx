@@ -21,6 +21,7 @@ import {
   MOTION_TEST_HEIGHT,
   MOTION_TEST_WIDTH,
 } from "./motion-test/MotionTestComposition";
+import { VIDEO1_FPS, VIDEO1_HEIGHT, VIDEO1_LIST, VIDEO1_WIDTH } from "./video1";
 
 export const RemotionRoot = () => (
   <>
@@ -48,5 +49,16 @@ export const RemotionRoot = () => (
       width={MOTION_TEST_WIDTH}
       height={MOTION_TEST_HEIGHT}
     />
+    {VIDEO1_LIST.map((video) => (
+      <Composition
+        key={video.id}
+        id={video.id}
+        component={video.component}
+        durationInFrames={video.durationInFrames}
+        fps={VIDEO1_FPS}
+        width={VIDEO1_WIDTH}
+        height={VIDEO1_HEIGHT}
+      />
+    ))}
   </>
 );
