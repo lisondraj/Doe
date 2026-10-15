@@ -26,10 +26,22 @@ const DESK2_PATH = "/doehealthdesk2";
 /** The footer still uses the legacy desk section anchors. */
 const DESK_PATH = "/doehealthdesk";
 
+/** This article takes a full-width row directly under the first pair of cards. */
+const WIDE_ROW_SLUG = "health-intelligence-for-one-price";
+
 /** The whole card is one link to the post: image, info, title, and excerpt. */
-function NewsCard({ article, featured = false }: { article: Article; featured?: boolean }) {
+function NewsCard({
+  article,
+  featured = false,
+  wide = false,
+}: {
+  article: Article;
+  featured?: boolean;
+  wide?: boolean;
+}) {
+  const modifier = featured ? " doehealth-news__item--featured" : wide ? " doehealth-news__item--wide" : "";
   return (
-    <li className={`doehealth-news__item${featured ? " doehealth-news__item--featured" : ""}`}>
+    <li className={`doehealth-news__item${modifier}`}>
       <Link href={doehealthBlogArticlePath(article.slug)} className="doehealth-blog-card doehealth-news-card">
         <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-card__art" pattern />
         <p className="doehealth-blog-card__meta">
@@ -59,6 +71,9 @@ export function DoeHealthNewsPage({
   const variant = useDoeHealthDesk2Variant(initialVariant);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
   const [featured, ...rest] = articles;
+  const wideArticle = rest.find((article) => article.slug === WIDE_ROW_SLUG);
+  const pairs = rest.filter((article) => article !== wideArticle);
+  const cards = wideArticle ? [...pairs.slice(0, 2), wideArticle, ...pairs.slice(2)] : pairs;
 
   return (
     <div
@@ -80,8 +95,8 @@ export function DoeHealthNewsPage({
 
           <ul className="doehealth-news__grid">
             {featured ? <NewsCard article={featured} featured /> : null}
-            {rest.map((article) => (
-              <NewsCard key={article.slug} article={article} />
+            {cards.map((article) => (
+              <NewsCard key={article.slug} article={article} wide={article.slug === WIDE_ROW_SLUG} />
             ))}
           </ul>
         </section>

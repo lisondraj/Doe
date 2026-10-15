@@ -571,12 +571,12 @@
   font-size: clamp(2.4rem, 4.2vw, 3.75rem);
 }
 
-/* With an even number of articles, the last one has no partner, so it takes the full width like the featured one. */
-.doehealth-news__item:last-child:nth-child(even) {
+/* A full-width row between two pairs of cards. */
+.doehealth-news__item--wide {
   grid-column: 1 / -1;
 }
 
-.doehealth-news__item:last-child:nth-child(even) .doehealth-blog-card__art {
+.doehealth-news__item--wide .doehealth-blog-card__art {
   aspect-ratio: 16 / 7;
 }
 
@@ -590,7 +590,7 @@
   }
 
   .doehealth-news__item--featured .doehealth-blog-card__art,
-  .doehealth-news__item:last-child:nth-child(even) .doehealth-blog-card__art {
+  .doehealth-news__item--wide .doehealth-blog-card__art {
     aspect-ratio: 4 / 3;
   }
 }
