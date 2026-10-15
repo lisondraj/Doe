@@ -4075,7 +4075,6 @@
 
   .doehealth-desk2-page .desk2-workspace {
     --desk2-product-scale: var(--desk2-phone-product-scale);
-    padding-right: 0;
     padding-bottom: 0;
     overflow: visible;
   }
