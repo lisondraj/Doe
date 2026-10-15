@@ -703,6 +703,8 @@
   scroll-snap-type: x mandatory;
   /* The first card lines up with the featured box, so the snap starts at the grid edge. */
   scroll-padding-inline: 0;
+  /* Run the swipe area out to the screen's right edge, so the next card is cut off by the page side, not the margin. */
+  margin-right: -2.5rem;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
