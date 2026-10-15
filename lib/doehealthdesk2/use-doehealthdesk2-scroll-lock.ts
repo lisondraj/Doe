@@ -6,6 +6,12 @@ import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 
 const STEP_PX = 320;
 /** Ignore input right after the lock engages, so the momentum that carried us in doesn't skip scenes. */
 const LOCK_SETTLE_MS = 320;
+/**
+ * iPhone: Safari's toolbar animates the viewport as it shows or hides, and scroll events fire mid-animation.
+ * Re-pinning the page on each of those events fights the animation and reads as a jump, so the lock waits
+ * for the viewport to settle and re-aligns once.
+ */
+const VIEWPORT_SETTLE_MS = 450;
 /** Desktop only (same breakpoint as the desk variant): the phone layout is not paced. */
 const DESKTOP_QUERY = "(min-width: 1024px)";
 /** Desktop only: the most progress per second that wheel or key input can add, so a rapid flick moves no faster than a steady scroll. */
@@ -52,6 +58,9 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     // Desktop pacing: input spends progress from a small bucket that refills at a steady rate.
     let tokens = DESKTOP_PACE_BURST;
     let tokensAt = performance.now();
+    // iPhone toolbar: true while the viewport is changing size, so the lock doesn't re-pin mid-animation.
+    let settling = false;
+    let settleTimer = 0;
 
     const desktopPaced = () => window.matchMedia(DESKTOP_QUERY).matches;
     const paceDelta = (delta: number) => {
@@ -128,6 +137,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
           publish();
           return;
         }
+        if (settling) return;
         if (Math.abs(top) > 1) jumpTo(sectionTop());
         return;
       }
@@ -174,6 +184,17 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       if (advance((forward ? 1 : -1) * STEP_PX * 0.6)) event.preventDefault();
     };
 
+    /** Viewport resize (Safari's toolbar): hold corrections while it animates, then re-align once it settles. */
+    const onViewportResize = () => {
+      if (!locked) return;
+      settling = true;
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(() => {
+        settling = false;
+        if (locked && Math.abs(section.getBoundingClientRect().top) > 1) jumpTo(sectionTop());
+      }, VIEWPORT_SETTLE_MS);
+    };
+
     skipRef.current = () => {
       progress = end;
       finish();
@@ -189,13 +210,18 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("resize", onViewportResize);
+    window.visualViewport?.addEventListener("resize", onViewportResize);
     return () => {
       section.style.touchAction = "";
+      window.clearTimeout(settleTimer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("resize", onViewportResize);
+      window.visualViewport?.removeEventListener("resize", onViewportResize);
     };
   }, [sectionRef, end]);
 
