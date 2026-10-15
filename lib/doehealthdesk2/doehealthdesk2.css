@@ -355,8 +355,8 @@
   transition-delay: 210ms;
 }
 
-/* Desktop: the text-selection highlight is light peach (the headline peach), with dark text so it reads on the brown sections. */
-.doehealth-desk2-page:not(:has(.doephone-mobile-root)) ::selection {
+/* Desktop and iPhone: the text-selection highlight is light peach (the headline peach), with dark text so it reads on the brown sections. */
+.doehealth-desk2-page ::selection {
   background: #fccfb8;
   color: #281910;
 }
