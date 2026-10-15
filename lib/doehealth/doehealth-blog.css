@@ -609,3 +609,61 @@
     aspect-ratio: 4 / 3;
   }
 }
+
+/* ─── Featured /news card: info centred inside the sand box ───────────── */
+
+.doehealth-news__item--featured .doehealth-news-feature__art {
+  aspect-ratio: 16 / 7;
+}
+
+.doehealth-blog-placeholder__content {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 6vw, 6rem);
+  text-align: center;
+}
+
+.doehealth-news-feature__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #8a6a3f;
+}
+
+.doehealth-news-feature__copy .doehealth-blog-card__title {
+  color: #8a6a3f;
+}
+
+.doehealth-news-feature__copy .doehealth-blog-card__title span {
+  display: block;
+}
+
+.doehealth-news-feature__copy .doehealth-blog-card__meta {
+  justify-content: center;
+  margin: 0.85rem 0 0;
+  color: rgb(138 106 63 / 0.85);
+  text-align: center;
+}
+
+.doehealth-news-feature__copy .doehealth-blog-card__excerpt {
+  max-width: 34rem;
+  margin: 0.85rem auto 0;
+  color: rgb(138 106 63 / 0.9);
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .doehealth-news__item--featured .doehealth-news-feature__art {
+    aspect-ratio: auto;
+    min-height: 36rem;
+  }
+
+  .doehealth-news-feature__copy .doehealth-blog-card__excerpt {
+    font-size: 0.975rem;
+  }
+}

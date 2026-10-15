@@ -29,6 +29,9 @@ const DESK_PATH = "/doehealthdesk";
 /** This article takes a full-width row directly under the first pair of cards. */
 const WIDE_ROW_SLUG = "health-intelligence-for-one-price";
 
+/** The featured card keeps its info inside the box, lower dot wave to leave room for it. */
+const FEATURED_WAVE_TOP = 0.7;
+
 /** The whole card is one link to the post: image, info, title, and excerpt. */
 function NewsCard({
   article,
@@ -40,6 +43,34 @@ function NewsCard({
   wide?: boolean;
 }) {
   const modifier = featured ? " doehealth-news__item--featured" : wide ? " doehealth-news__item--wide" : "";
+  if (featured) {
+    return (
+      <li className={`doehealth-news__item${modifier}`}>
+        <Link href={doehealthBlogArticlePath(article.slug)} className="doehealth-blog-card doehealth-news-card doehealth-news-card--feature">
+          <DoeHealthBlogPlaceholder
+            tone={article.heroTone}
+            className="doehealth-blog-card__art doehealth-news-feature__art"
+            pattern
+            wave={{ ...article.wave, top: FEATURED_WAVE_TOP }}
+          >
+            <div className="doehealth-news-feature__copy">
+              <h2 className={`doehealth-blog-card__title ${p22Mackinac.className}`}>
+                {article.title.map((line) => (
+                  <span key={line}>{line}</span>
+                ))}
+              </h2>
+              <p className="doehealth-blog-card__meta">
+                <span>{article.date}</span>
+                <span aria-hidden>·</span>
+                <span>{article.author}</span>
+              </p>
+              <p className="doehealth-blog-card__excerpt">{article.excerpt}</p>
+            </div>
+          </DoeHealthBlogPlaceholder>
+        </Link>
+      </li>
+    );
+  }
   return (
     <li className={`doehealth-news__item${modifier}`}>
       <Link href={doehealthBlogArticlePath(article.slug)} className="doehealth-blog-card doehealth-news-card">

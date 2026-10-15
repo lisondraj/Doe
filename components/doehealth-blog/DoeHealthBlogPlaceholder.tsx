@@ -10,6 +10,8 @@ type DoeHealthBlogPlaceholderProps = {
   wave?: DoeHealthBlogWave;
   /** Animates the dot wave; omitted (or false) holds it on one still frame — every box but the article hero. */
   motion?: boolean;
+  /** Content laid over the dot wave (pattern boxes only). */
+  children?: React.ReactNode;
 };
 
 /**
@@ -32,6 +34,7 @@ export function DoeHealthBlogPlaceholder({
   pattern = false,
   wave,
   motion = false,
+  children,
 }: DoeHealthBlogPlaceholderProps) {
   if (!pattern) {
     return <div className={`doehealth-blog-placeholder doehealth-blog-placeholder--${tone} ${className}`} aria-hidden />;
@@ -40,6 +43,7 @@ export function DoeHealthBlogPlaceholder({
   return (
     <div className={`doehealth-blog-placeholder doehealth-blog-placeholder--pattern ${className}`} style={{ background: bg }} aria-hidden>
       <DoeHealthBlogDotWave color={dot} motion={motion} {...wave} />
+      {children ? <div className="doehealth-blog-placeholder__content">{children}</div> : null}
     </div>
   );
 }
