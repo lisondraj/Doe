@@ -4288,10 +4288,10 @@
   }
 
   /* Agents — full viewport, horizontal carousel (desk iPhone). */
-  /* var(--app-vh), not svh — see the full-bleed note near the end of this file: svh/lvh alone left this short on-device. */
+  /* Screen height, not a viewport unit — see the full-bleed note near the end of this file. */
   .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents {
     gap: clamp(1.15rem, 3.5vh, 1.75rem);
-    min-height: var(--app-vh, 100lvh);
+    min-height: var(--desk2-phone-screen-h, 100lvh);
     padding: calc(var(--desk2-phone-nav-clearance) + 1.25rem) 0
       max(1.5rem, env(safe-area-inset-bottom, 0px));
     scroll-margin-top: var(--desk2-phone-nav-clearance);
@@ -4464,32 +4464,52 @@
 }
 
 /*
- * iPhone: full-bleed brown sections reach the tallest viewport, not the smallest. CSS `lvh` alone still
- * read short of the real browser height on-device, so `--app-vh` is a JS-measured lock (see
- * useDoePhoneStableViewport) committed to the document root in px — `lvh` is only the fallback for the
- * instant before that effect runs. Content stays anchored to the top, so the extra height only fills
- * the bottom edge.
+ * iPhone: full-bleed sections reach the bottom of the glass. Safari draws the page under its floating
+ * toolbar, and every viewport unit (and innerHeight) stops above it, so sections size to the screen
+ * (--desk2-phone-screen-h, see useDoeHealthDesk2PhoneScreenHeight) and run slightly past the visible area.
  */
-.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible {
-  height: var(--app-vh, 100lvh);
-}
-
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-genome,
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-genome.is-complete {
-  height: var(--app-vh, 100lvh);
-  min-height: var(--app-vh, 100lvh);
+  height: var(--desk2-phone-screen-h, 100lvh);
+  min-height: var(--desk2-phone-screen-h, 100lvh);
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences {
-  min-height: var(--app-vh, 100lvh);
+  min-height: var(--desk2-phone-screen-h, 100lvh);
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-blank {
-  min-height: var(--app-vh, 100lvh);
+  min-height: var(--desk2-phone-screen-h, 100lvh);
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents {
-  min-height: var(--app-vh, 100lvh);
+  min-height: var(--desk2-phone-screen-h, 100lvh);
+}
+
+/*
+ * iPhone: the brown story section is never scroll-locked. It sticks to the top of a track one screen
+ * plus --desk2-visible-run tall, the page scrolls natively through the track, and its scenes follow.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible-track {
+  height: calc(var(--desk2-phone-screen-h, 100lvh) + var(--desk2-visible-run, 0) * 1px);
+  background: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible {
+  position: sticky;
+  top: 0;
+  height: var(--desk2-phone-screen-h, 100lvh);
+}
+
+/* Scenes centre in the visible screen, not the strip under Safari's toolbar. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible__scene {
+  bottom: auto;
+  height: var(--app-vh, 100svh);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible__skip {
+  top: calc(var(--app-vh, 100svh) - 2.65rem - max(1.15rem, env(safe-area-inset-bottom, 0px)));
+  bottom: auto;
 }
 
 /* iPhone: the closing "We made 1000+ clinics visible" title sits at the intro line's size, not the larger desktop clamp. */
