@@ -10,16 +10,25 @@ export type CareersTeamSection = {
   wave?: DoeHealthBlogWave;
 };
 
+export const CAREERS_TEAMS = ["Engineering", "Product", "GTM & Sales"] as const;
+export type CareersTeam = (typeof CAREERS_TEAMS)[number];
+
+/** Remote roles name the country; on-site roles name the office. */
+export const CAREERS_REMOTE_LOCATIONS = ["Remote (Canada)", "Remote (US)"] as const;
+export const CAREERS_OFFICES = ["Toronto", "New York", "San Francisco"] as const;
+export type CareersLocation = (typeof CAREERS_REMOTE_LOCATIONS)[number] | (typeof CAREERS_OFFICES)[number];
+
 export type CareersRole = {
   title: string;
-  location: string;
-  type: string;
+  team: CareersTeam;
+  location: CareersLocation;
+  pay: string;
+  equity: boolean;
 };
 
-export type CareersRoleGroup = {
-  team: string;
-  roles: readonly CareersRole[];
-};
+export function careersRoleIsRemote(role: CareersRole) {
+  return (CAREERS_REMOTE_LOCATIONS as readonly string[]).includes(role.location);
+}
 
 export const CAREERS_TEAM_SECTIONS: readonly CareersTeamSection[] = [
   {
@@ -42,28 +51,14 @@ export const CAREERS_TEAM_SECTIONS: readonly CareersTeamSection[] = [
   },
 ];
 
-export const CAREERS_ROLE_GROUPS: readonly CareersRoleGroup[] = [
-  {
-    team: "Engineering",
-    roles: [
-      { title: "Founding Full-Stack Engineer", location: "San Francisco", type: "Full-time" },
-      { title: "Agent Infrastructure Engineer", location: "San Francisco", type: "Full-time" },
-      { title: "Health Data Integrations Engineer", location: "Remote, US", type: "Full-time" },
-    ],
-  },
-  {
-    team: "Product",
-    roles: [
-      { title: "Product Designer", location: "San Francisco", type: "Full-time" },
-      { title: "Product Manager, Clinic Workflows", location: "San Francisco", type: "Full-time" },
-    ],
-  },
-  {
-    team: "GTM & Sales",
-    roles: [
-      { title: "Founding Account Executive", location: "San Francisco", type: "Full-time" },
-      { title: "Clinic Partnerships Lead", location: "Remote, US", type: "Full-time" },
-      { title: "Customer Success Manager", location: "Remote, US", type: "Full-time" },
-    ],
-  },
+export const CAREERS_ROLES: readonly CareersRole[] = [
+  { title: "Founding Full-Stack Engineer", team: "Engineering", location: "San Francisco", pay: "$170K – $230K", equity: true },
+  { title: "Agent Infrastructure Engineer", team: "Engineering", location: "New York", pay: "$165K – $220K", equity: true },
+  { title: "Health Data Integrations Engineer", team: "Engineering", location: "Remote (US)", pay: "$150K – $200K", equity: true },
+  { title: "Software Engineer, Clinic Tools", team: "Engineering", location: "Toronto", pay: "CA$140K – CA$185K", equity: true },
+  { title: "Product Designer", team: "Product", location: "San Francisco", pay: "$140K – $190K", equity: true },
+  { title: "Product Manager, Clinic Workflows", team: "Product", location: "New York", pay: "$150K – $195K", equity: true },
+  { title: "Founding Account Executive", team: "GTM & Sales", location: "San Francisco", pay: "$120K – $160K + commission", equity: true },
+  { title: "Clinic Partnerships Lead", team: "GTM & Sales", location: "Remote (Canada)", pay: "CA$110K – CA$145K", equity: true },
+  { title: "Customer Success Manager", team: "GTM & Sales", location: "Remote (US)", pay: "$90K – $125K", equity: true },
 ];

@@ -1,5 +1,7 @@
 "use client";
 
+import { type ReactNode, useState } from "react";
+
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
@@ -8,9 +10,13 @@ import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDes
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import {
   CAREERS_APPLY_EMAIL,
-  CAREERS_ROLE_GROUPS,
+  CAREERS_OFFICES,
+  CAREERS_REMOTE_LOCATIONS,
+  CAREERS_ROLES,
   CAREERS_TEAM_SECTIONS,
+  CAREERS_TEAMS,
   type CareersRole,
+  careersRoleIsRemote,
 } from "@/lib/doehealth/doehealth-careers";
 import { DOEHEALTH_DESK2_PAGE_BACKGROUND } from "@/lib/doehealthdesk2/doehealthdesk2-colors";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
@@ -29,21 +35,132 @@ function applyHref(role: CareersRole) {
   return `mailto:${CAREERS_APPLY_EMAIL}?subject=${encodeURIComponent(role.title)}`;
 }
 
+const ALL = "all";
+
+/** A dot and the item after it wrap together, so a line never ends on a dot. */
+function MetaItem({ children }: { children: ReactNode }) {
+  return (
+    <span className="doehealth-careers__meta-item">
+      <span className="doehealth-careers__dot" aria-hidden>
+        •
+      </span>
+      {children}
+    </span>
+  );
+}
+
 function RoleRow({ role }: { role: CareersRole }) {
+  const remote = careersRoleIsRemote(role);
   return (
     <li>
       <a href={applyHref(role)} className="doehealth-careers__role">
-        <span className={`doehealth-careers__role-title ${p22Mackinac.className}`}>{role.title}</span>
-        <span className="doehealth-careers__role-meta">
-          <span>{role.location}</span>
-          <span aria-hidden>·</span>
-          <span>{role.type}</span>
+        <span className="doehealth-careers__role-copy">
+          <span className={`doehealth-careers__role-title ${p22Mackinac.className}`}>{role.title}</span>
+          <span className="doehealth-careers__role-meta">
+            <span>{role.location}</span>
+            <MetaItem>Full time</MetaItem>
+            {remote ? null : <MetaItem>On-site</MetaItem>}
+          </span>
+          <span className="doehealth-careers__role-pay">
+            <span>{role.pay}</span>
+            {role.equity ? <MetaItem>Offers equity</MetaItem> : null}
+          </span>
         </span>
         <svg className="doehealth-careers__role-arrow" viewBox="0 0 16 16" fill="none" aria-hidden>
           <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </a>
     </li>
+  );
+}
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  children,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  children: ReactNode;
+}) {
+  return (
+    <label className="doehealth-careers__filter">
+      <span className="sr-only">{label}</span>
+      <select value={value} onChange={(event) => onChange(event.target.value)} className="doehealth-careers__select">
+        {children}
+      </select>
+      <svg className="doehealth-careers__chevron" viewBox="0 0 16 16" fill="none" aria-hidden>
+        <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </label>
+  );
+}
+
+function OpenRoles() {
+  const [team, setTeam] = useState<string>(ALL);
+  const [location, setLocation] = useState<string>(ALL);
+  const roles = CAREERS_ROLES.filter(
+    (role) => (team === ALL || role.team === team) && (location === ALL || role.location === location),
+  );
+  const groups = CAREERS_TEAMS.map((name) => ({ name, roles: roles.filter((role) => role.team === name) })).filter(
+    (group) => group.roles.length > 0,
+  );
+
+  return (
+    <div className="doehealth-careers__roles" id="roles">
+      <h2 className={`doehealth-careers__roles-title ${p22Mackinac.className}`}>Open roles</h2>
+
+      <div className="doehealth-careers__bar">
+        <FilterSelect label="Team" value={team} onChange={setTeam}>
+          <option value={ALL}>All teams</option>
+          {CAREERS_TEAMS.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </FilterSelect>
+        <FilterSelect label="Location" value={location} onChange={setLocation}>
+          <option value={ALL}>All locations</option>
+          <optgroup label="Remote">
+            {CAREERS_REMOTE_LOCATIONS.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label="On site">
+            {CAREERS_OFFICES.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </optgroup>
+        </FilterSelect>
+        <span className="doehealth-careers__count">
+          {roles.length} {roles.length === 1 ? "role" : "roles"}
+        </span>
+      </div>
+
+      {groups.length > 0 ? (
+        groups.map((group) => (
+          <div key={group.name} className="doehealth-careers__group">
+            <h3 className="doehealth-careers__group-title">{group.name}</h3>
+            <ul className="doehealth-careers__list">
+              {group.roles.map((role) => (
+                <RoleRow key={role.title} role={role} />
+              ))}
+            </ul>
+          </div>
+        ))
+      ) : (
+        <p className="doehealth-careers__empty">
+          Nothing open here yet. Write to{" "}
+          <a href={`mailto:${CAREERS_APPLY_EMAIL}`}>{CAREERS_APPLY_EMAIL}</a> and tell us what you would build.
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -92,19 +209,7 @@ export function DoeHealthCareersPage({ initialVariant }: { initialVariant: DoeHe
             ))}
           </div>
 
-          <div className="doehealth-careers__roles" id="roles">
-            <h2 className={`doehealth-careers__roles-title ${p22Mackinac.className}`}>Open roles</h2>
-            {CAREERS_ROLE_GROUPS.map((group) => (
-              <div key={group.team} className="doehealth-careers__group">
-                <h3 className="doehealth-careers__group-title">{group.team}</h3>
-                <ul className="doehealth-careers__list">
-                  {group.roles.map((role) => (
-                    <RoleRow key={role.title} role={role} />
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          <OpenRoles />
         </section>
 
         <DoeHealthDesk2InviteSection />
