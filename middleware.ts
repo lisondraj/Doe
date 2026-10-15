@@ -7,6 +7,8 @@ import {
 } from "@/lib/admin/admin-auth";
 import {
   DOEDTC_PATH,
+  DOEHEALTH_BLOG_PATH,
+  DOEHEALTH_DESK2_PATH,
   JOIN_PATH,
   PARTNERS_PATH,
   isDesignersHost,
@@ -108,6 +110,25 @@ export async function middleware(request: NextRequest) {
 
   if (pathname.startsWith("/api/")) {
     return NextResponse.next();
+  }
+
+  /** doehealth.care serves Desk 2 at `/` and the blog; any other page bounces back to root. */
+  if (isDesignersHost(host)) {
+    if (pathname === "/") {
+      const rewriteUrl = request.nextUrl.clone();
+      rewriteUrl.pathname = DOEHEALTH_DESK2_PATH;
+      return applyLandingSiteHeaders(NextResponse.rewrite(rewriteUrl));
+    }
+    const isBlog = pathname === DOEHEALTH_BLOG_PATH || pathname.startsWith(`${DOEHEALTH_BLOG_PATH}/`);
+    // Files from public/ (videos, models, fonts) that the matcher doesn't already skip.
+    const isFile = /\/[^/]+\.[a-z0-9]+$/i.test(pathname);
+    if (isBlog || isFile || isAdminAppPath(pathname) || pathname === ADMIN_AUTH_CALLBACK_PATH) {
+      return applyLandingSiteHeaders(NextResponse.next());
+    }
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/";
+    redirectUrl.search = "";
+    return applyLandingSiteHeaders(NextResponse.redirect(redirectUrl));
   }
 
   if (isMarketingLandingRoot(host, pathname)) {

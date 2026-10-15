@@ -2,7 +2,7 @@
 export const PRIMARY_SITE_HOST =
   process.env.PRIMARY_SITE_HOST ?? "doe.care";
 
-/** Full doehealth site — `/` rewrites to /doehealth; all other routes allowed (default: doehealth.care). */
+/** doehealth site — `/` rewrites to /doehealthdesk2, the blog is allowed, other pages redirect to `/` (default: doehealth.care). */
 export const DESIGNERS_SITE_HOST =
   process.env.DESIGNERS_SITE_HOST ?? process.env.JOIN_SITE_HOST ?? "doehealth.care";
 
@@ -20,6 +20,10 @@ export const PROTO_INVEST_PATH = "/proto-invest";
 export const DESIGNERS_PATH = "/designers";
 /** Editable landing served at doehealth.care root via middleware rewrite. */
 export const DOEHEALTH_PATH = "/doehealth";
+/** Landing served at doehealth.care root via middleware rewrite. */
+export const DOEHEALTH_DESK2_PATH = "/doehealthdesk2";
+/** The doehealth blog; the only pages besides `/` that doehealth.care serves. */
+export const DOEHEALTH_BLOG_PATH = "/doehealthblog";
 /** Internal snapshot of /doehealth — fork edits in DoeHealthLegacyHome. */
 export const DOEHEALTH_LEGACY_PATH = "/doehealth-legacy";
 /** Specialty insurance for healthcare AI companies. */
