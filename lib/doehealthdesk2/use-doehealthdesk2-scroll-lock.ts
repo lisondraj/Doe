@@ -68,8 +68,14 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     const sectionTop = () => window.scrollY + section.getBoundingClientRect().top;
     const jumpTo = (top: number) => window.scrollTo({ top, behavior: "instant" as ScrollBehavior });
 
+    /** While the page is held, the section takes every touch (touch-action: none), so iOS can't pan the page under the lock. */
+    const setLocked = (value: boolean) => {
+      locked = value;
+      section.style.touchAction = value ? "none" : "";
+    };
+
     const lock = () => {
-      locked = true;
+      setLocked(true);
       lockedAt = performance.now();
       jumpTo(sectionTop());
     };
@@ -86,7 +92,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       if (done) {
         // Hold the last scene through the momentum that arrived with it, then let the page go either way.
         if (performance.now() - doneAt < LOCK_SETTLE_MS) return true;
-        locked = false;
+        setLocked(false);
         return false;
       }
       const next = progress + (desktopPaced() ? paceDelta(delta) : delta) / STEP_PX;
@@ -98,7 +104,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       }
       if (next < 0) {
         progress = 0;
-        locked = false;
+        setLocked(false);
         publish();
         return false;
       }
@@ -117,7 +123,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       if (locked) {
         // A big jump (nav link, keyboard End) leaves the lock instead of being pulled back.
         if (Math.abs(top) > vh * 0.9) {
-          locked = false;
+          setLocked(false);
           progress = done || top < 0 ? end : 0;
           publish();
           return;
@@ -173,7 +179,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       finish();
       publish();
       // Bring the section fully into view; with `done` set it won't lock, so the next scroll moves on.
-      locked = false;
+      setLocked(false);
       jumpTo(sectionTop());
     };
 
@@ -184,6 +190,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("keydown", onKeyDown);
     return () => {
+      section.style.touchAction = "";
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
