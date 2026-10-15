@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 
+import { DOEHEALTH_DESK2_NAV_WASH_EVENT } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 import {
   DOEHEALTH_DESK2_PAGE_BACKGROUND,
   DOEHEALTH_DESK2_SURFACE,
@@ -10,12 +11,18 @@ import {
 /** Full-bleed brown bands (Genome, Sunday, footer) — the bottom rubber-band reads as desk brown under these. */
 const BROWN_OVERFLOW_HIT = ".doehealth-desk2-nav-wash-surface";
 
+/** The beige stretch inside the brown story section; its `data-nav-beige` runs 0 to 1 as it fades in. */
+/** Fired after the story section re-renders with new beige progress (scroll events fire before it). */
+const NAV_WASH_EVENT = DOEHEALTH_DESK2_NAV_WASH_EVENT;
+const BEIGE_SECTION = ".doehealth-desk2-visible";
+const BEIGE_SURFACE = "#f4eedf";
+
 /** Same curve and duration as the nav wash (`DoeHealthDesk2NavWash`). */
 const OVERFLOW_FADE = "background-color 360ms cubic-bezier(0.33, 1, 0.68, 1)";
 
 /**
  * iPhone /doehealthdesk — Safari's bottom overscroll follows the band at the bottom edge of the
- * viewport: brown over brown sections and the footer, cream elsewhere. `theme-color` is left alone
+ * viewport: brown over brown sections and the footer, beige over the story section's beige stretch, cream elsewhere. `theme-color` is left alone
  * so the top chrome is unaffected.
  */
 export function useDoeHealthDesk2PhoneOverflowChrome(enabled: boolean) {
@@ -38,6 +45,8 @@ export function useDoeHealthDesk2PhoneOverflowChrome(enabled: boolean) {
     const pickSurface = () => {
       const cx = Math.round(window.innerWidth / 2);
       const hit = document.elementFromPoint(cx, Math.max(0, window.innerHeight - 2));
+      const story = hit?.closest<HTMLElement>(BEIGE_SECTION);
+      if (story && Number(story.dataset.navBeige) > 0.5) return BEIGE_SURFACE;
       return hit?.closest(BROWN_OVERFLOW_HIT) != null ? brown : cream;
     };
 
@@ -61,12 +70,14 @@ export function useDoeHealthDesk2PhoneOverflowChrome(enabled: boolean) {
     schedule();
 
     window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener(NAV_WASH_EVENT, schedule);
     window.addEventListener("resize", schedule);
     window.visualViewport?.addEventListener("resize", schedule);
 
     return () => {
       if (raf) window.cancelAnimationFrame(raf);
       window.removeEventListener("scroll", schedule);
+      window.removeEventListener(NAV_WASH_EVENT, schedule);
       window.removeEventListener("resize", schedule);
       window.visualViewport?.removeEventListener("resize", schedule);
       html.style.backgroundColor = "";
