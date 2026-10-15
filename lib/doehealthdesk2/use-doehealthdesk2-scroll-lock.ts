@@ -76,7 +76,10 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     const followTrack = () => {
       const run = track ? track.offsetHeight - section.offsetHeight : 0;
       const into = track ? -track.getBoundingClientRect().top : 0;
-      const next = run > 0 ? Math.min(end, Math.max(0, (into / run) * end)) : into > 0 ? end : 0;
+      const scrubbed = run > 0 ? Math.min(end, Math.max(0, (into / run) * end)) : into > 0 ? end : 0;
+      // As on desktop: once the closing scene has shown, the section stays on it, scrolling either way.
+      if (scrubbed >= end) done = true;
+      const next = done ? end : scrubbed;
       if (next === progress) return;
       progress = next;
       publish();
