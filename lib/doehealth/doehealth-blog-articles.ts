@@ -361,7 +361,7 @@ const ONE_PRICE: DoeHealthBlogArticle = {
 const PERSONAL_AGENTS_FOR_PRACTICE: DoeHealthBlogArticle = {
   slug: "personal-agents-for-practice",
   eyebrow: "For Practices",
-  title: ["Personal Agents", "for Practice"],
+  title: ["Personal Agents", "for Every Practice"],
   author: "James Lisondra",
   date: "October 15, 2026",
   excerpt:
