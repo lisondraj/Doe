@@ -12,7 +12,7 @@ function ArticleBlock({ block }: { block: DoeHealthBlogBlock }) {
     case "figure":
       return (
         <figure className="doehealth-blog-article__figure">
-          <DoeHealthBlogPlaceholder tone={block.tone} className="doehealth-blog-article__figure-art" />
+          <DoeHealthBlogPlaceholder tone="sand" className="doehealth-blog-article__figure-art" />
           <figcaption>{block.caption}</figcaption>
         </figure>
       );
@@ -53,7 +53,7 @@ export function DoeHealthBlogArticle({ article }: { article: Article }) {
         </p>
       </header>
 
-      <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-article__hero" />
+      <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-article__hero" pattern />
 
       <div className="doehealth-blog-article__body">
         <p className="doehealth-blog-article__lede">{article.lede}</p>

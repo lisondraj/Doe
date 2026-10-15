@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 
 import { DOEHEALTH_DESK2_FIND } from "@/lib/doehealthdesk2/doehealthdesk2-story-copy";
+import { DoeHealthDesk2RippleGrid } from "@/components/doehealth-desk2/DoeHealthDesk2RippleGrid";
 import { cssVars as vars, scrollRamp as ramp } from "@/lib/doehealthdesk2/use-doehealthdesk2-scroll-lock";
 
 /**
@@ -327,6 +328,11 @@ export function DoeHealthDesk2FindScenes({ p }: { p: number }) {
 
   return (
     <>
+      {/* The ripple grid along the bottom width of the beige, under the drawings and titles. */}
+      <div className="doehealth-desk2-find__ripple">
+        <DoeHealthDesk2RippleGrid color="rgba(110, 92, 64, 0.8)" wheel={wheel} />
+      </div>
+
       <div className="doehealth-desk2-find__art" aria-hidden="true">
         <svg className="doehealth-desk2-find__art-svg" viewBox="0 0 400 320" fill="none">
           <rect x="20" y="30" width="360" height="260" rx="16" pathLength={1} style={draw(p >= 0 ? 1 : 0)} />

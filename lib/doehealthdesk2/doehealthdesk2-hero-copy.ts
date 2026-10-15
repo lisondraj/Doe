@@ -1,7 +1,7 @@
 /** Single brown colour throughout. */
 export const DOEHEALTH_DESK2_HERO_HEADLINE = {
-  line1: "Get your clinic ready",
-  line2: "for personal agents.",
+  line1: "We help personal agents",
+  line2: "find your clinic.",
 } as const;
 
 /** Two lines under the title. */

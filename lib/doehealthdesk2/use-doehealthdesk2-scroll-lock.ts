@@ -6,6 +6,12 @@ import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 
 const STEP_PX = 320;
 /** Ignore input right after the lock engages, so the momentum that carried us in doesn't skip scenes. */
 const LOCK_SETTLE_MS = 320;
+/** Desktop only (same breakpoint as the desk variant): the phone layout is not paced. */
+const DESKTOP_QUERY = "(min-width: 1024px)";
+/** Desktop only: the most progress per second that wheel or key input can add, so a rapid flick moves no faster than a steady scroll. */
+const DESKTOP_PACE_PER_S = 0.6;
+/** Desktop only: the most progress that can build up and be spent at once. A single notch always moves right away. */
+const DESKTOP_PACE_BURST = 0.5;
 
 /** 0 → 1 as `p` moves through [from, to]. Every motion in a locked section is one of these. */
 export function scrollRamp(p: number, [from, to]: readonly [number, number]) {
@@ -43,6 +49,20 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     let touchY: number | null = null;
     let done = false;
     let doneAt = 0;
+    // Desktop pacing: input spends progress from a small bucket that refills at a steady rate.
+    let tokens = DESKTOP_PACE_BURST;
+    let tokensAt = performance.now();
+
+    const desktopPaced = () => window.matchMedia(DESKTOP_QUERY).matches;
+    const paceDelta = (delta: number) => {
+      const now = performance.now();
+      tokens = Math.min(DESKTOP_PACE_BURST, tokens + ((now - tokensAt) / 1000) * DESKTOP_PACE_PER_S);
+      tokensAt = now;
+      const want = delta / STEP_PX;
+      const used = Math.sign(want) * Math.min(Math.abs(want), tokens);
+      tokens -= Math.abs(used);
+      return used * STEP_PX;
+    };
 
     const publish = () => setP(progress);
     const sectionTop = () => window.scrollY + section.getBoundingClientRect().top;
@@ -69,7 +89,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
         locked = false;
         return false;
       }
-      const next = progress + delta / STEP_PX;
+      const next = progress + (desktopPaced() ? paceDelta(delta) : delta) / STEP_PX;
       if (next >= end) {
         progress = end;
         finish();

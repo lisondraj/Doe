@@ -1,7 +1,7 @@
 /* /doehealthblog — long-form article on the /doehealthdesk surface (tokens from doehealth-desk.css). */
 
 .doehealth-blog-page {
-  --blog-read-w: 40rem;
+  --blog-read-w: 56rem;
   --blog-wide-w: 60rem;
   --blog-salmon: #fccfb8;
 }
@@ -16,8 +16,19 @@
   border: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.06);
 }
 
-.doehealth-blog-placeholder svg {
-  opacity: 0.32;
+/* The dot wave fills the box, drawn over its background colour. */
+.doehealth-blog-placeholder--pattern {
+  position: relative;
+  overflow: hidden;
+  border-color: transparent;
+}
+
+.doehealth-blog-dotwave {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .doehealth-blog-placeholder--sand {
@@ -215,8 +226,10 @@
   transform: translateX(-50%);
 }
 
+/* Body images are plain beige, with no line. */
 .doehealth-blog-article__figure-art {
   aspect-ratio: 16 / 9;
+  border: 0;
 }
 
 .doehealth-blog-article__figure figcaption {

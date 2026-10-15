@@ -26,7 +26,7 @@ export const DOEHEALTH_DESK2_VISIBLE = {
 } as const;
 
 export const DOEHEALTH_DESK2_AGENTS = {
-  title: ["Agents for every\u00A0task,", "for one price."],
+  title: ["Let personal agents do", "more with your clinic."],
 } as const;
 
 /** Five agents. The first three sit in the page margins; the rest follow off the right edge. */

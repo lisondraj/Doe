@@ -2,6 +2,8 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
 
+import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
+import { DoeHealthDesk2DotTide } from "@/components/doehealth-desk2/DoeHealthDesk2DotTide";
 import { DoeHealthDesk2FindScenes, DOEHEALTH_DESK2_FIND_SPAN } from "@/components/doehealth-desk2/DoeHealthDesk2FindScenes";
 import { DOEHEALTH_DESK2_NAV_WASH_EVENT } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 
@@ -226,6 +228,13 @@ export function DoeHealthDesk2AudienceSection() {
       aria-label="Personal agents and your clinic"
     >
       <div className="doehealth-desk2-visible__scene" style={vars({ "--o": introOpacity })} aria-hidden={introOpacity < 0.5}>
+        {/* The dot wave along the bottom; it fades with this scene, so it's gone once the iPhone comes in. */}
+        {/* Revealed by the same swipe as this intro's title (--s), so the two start together. */}
+        <div className="doehealth-desk2-visible__dots" style={vars({ "--s": ramp(p, RAMP.introSwipe) })}>
+          <div className="doehealth-desk2-visible__dots-fade">
+            <DoeHealthBlogDotWave color="rgba(252, 207, 184, 0.6)" top={0.3} amp={60} fade={0.5} />
+          </div>
+        </div>
         <SwipeTitle parts={DOEHEALTH_DESK2_VISIBLE_INTRO} s={ramp(p, RAMP.introSwipe)} lines wide />
       </div>
 
@@ -265,6 +274,11 @@ export function DoeHealthDesk2AudienceSection() {
       {morphing ? <MorphOutline m={ramp(p, RAMP.morph)} section={sectionRef} /> : null}
 
       <div className="doehealth-desk2-visible__scene" style={vars({ "--o": titleOpacity })} aria-hidden={titleOpacity < 0.5}>
+        {/* Halftone tides along both side edges, rolling in motion behind the closing title. */}
+        {/* Revealed by the same swipe as the title (--s), so the two start together. */}
+        <div className="doehealth-desk2-visible__tide" style={vars({ "--s": ramp(p, FINAL.titleSwipe) })}>
+          <DoeHealthDesk2DotTide color="rgba(252, 207, 184, 0.6)" />
+        </div>
         <SwipeTitle parts={DOEHEALTH_DESK2_VISIBLE.title} s={ramp(p, FINAL.titleSwipe)} />
         <p className="doehealth-desk2-visible__sub" style={vars({ "--e": ramp(p, FINAL.prompt) })}>
           <span className="desk2-genome-swipe desk2-genome-swipe--salmon" style={vars({ "--s": ramp(p, FINAL.promptSwipe) })}>

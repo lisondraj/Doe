@@ -72,7 +72,7 @@ export function DoeHealthDesk2AgentsSection() {
       ref={sectionRef}
       id="agents"
       className="doehealth-desk2-agents"
-      aria-label="Agents for every task, for one price"
+      aria-label="Let personal agents do more with your clinic"
     >
       <header className={`doehealth-desk2-agents__head ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
         <h2 className={`doehealth-desk2-agents__title ${p22Mackinac.className}${titleIn ? " is-title-in" : ""}`}>

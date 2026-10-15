@@ -1642,6 +1642,66 @@
   color: #fffcf1;
 }
 
+/* Moving halftone tides along both side edges of the closing brown scene. */
+/* Same sweep as the title: a 280% gradient mask moved by --s, with the title's stops. */
+.doehealth-desk2-visible__tide {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  -webkit-mask-size: 280% 100%;
+  mask-size: 280% 100%;
+  -webkit-mask-position: calc((1 - var(--s, 0)) * 100%) 50%;
+  mask-position: calc((1 - var(--s, 0)) * 100%) 50%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.doehealth-desk2-visible__tide .doehealth-desk2-tide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/*
+ * The moving dot wave at the bottom of the brown intro. It is revealed by the same sweep as the intro
+ * title (a 280% gradient mask moved by --s, with the title's stops), and faded toward its top edge.
+ */
+.doehealth-desk2-visible__dots {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 46%;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  -webkit-mask-size: 280% 100%;
+  mask-size: 280% 100%;
+  -webkit-mask-position: calc((1 - var(--s, 0)) * 100%) 50%;
+  mask-position: calc((1 - var(--s, 0)) * 100%) 50%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.doehealth-desk2-visible__dots-fade {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
+}
+
+.doehealth-desk2-visible__dots .doehealth-blog-dotwave {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .doehealth-desk2-visible__scene {
   position: absolute;
   inset: 0;
@@ -2107,6 +2167,26 @@
   opacity: var(--op, 0);
   transform-origin: left center;
   transform: translate3d(0, calc(-50% + var(--d, 0) * 2.9em), 0) rotateX(calc(var(--d, 0) * -24deg)) scale(calc(1 - 0.06 * var(--ad, 0)));
+}
+
+/* The ripple grid across the bottom width of the beige stretch, fading in toward its top edge. */
+.doehealth-desk2-find__ripple {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: clamp(6rem, 22vh, 11rem);
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 35%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 0%, #000 35%, transparent 100%);
+}
+
+.doehealth-desk2-find__ripple .doehealth-desk2-ripple {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /* Line drawings: deep beige strokes, no fill, stacked in one place and built (and unbuilt) by scroll. */
@@ -3834,6 +3914,11 @@
 
   .doehealth-desk2-hero__headline {
     font-size: clamp(2.55rem, 10.8vw, 3.15rem);
+  }
+
+  /* Split the first title line evenly on a phone, so "agents" doesn't sit alone. */
+  .doehealth-desk2-hero__headline > span:first-child {
+    text-wrap: balance;
   }
 
   .doehealth-desk2-hero__dek {
