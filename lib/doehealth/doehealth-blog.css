@@ -723,10 +723,10 @@
   list-style: none;
 }
 
-/* The article carousel's card size: the viewport minus two 1.25rem insets and 1.5rem for the peek. */
+/* Each card is the same width as the single box above it: the viewport minus the page's 2.5rem margin on each side. */
 .doehealth-news-carousel__track > .doehealth-news__item {
-  flex: 0 0 calc(100vw - 2 * 1.25rem - 1.5rem);
-  width: calc(100vw - 2 * 1.25rem - 1.5rem);
+  flex: 0 0 calc(100vw - 2 * 2.5rem);
+  width: calc(100vw - 2 * 2.5rem);
   scroll-snap-align: start;
 }
 
