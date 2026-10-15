@@ -43,18 +43,18 @@ function NewsCard({
   return (
     <li className={`doehealth-news__item${modifier}`}>
       <Link href={doehealthBlogArticlePath(article.slug)} className="doehealth-blog-card doehealth-news-card">
-        <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-card__art" pattern />
-        <p className="doehealth-blog-card__meta">
-          <span>{article.date}</span>
-          <span aria-hidden>·</span>
-          <span>{article.author}</span>
-        </p>
         <h2 className={`doehealth-blog-card__title ${p22Mackinac.className}`}>
           {article.title.map((line) => (
             <span key={line}>{line}</span>
           ))}
         </h2>
+        <p className="doehealth-blog-card__meta">
+          <span>{article.date}</span>
+          <span aria-hidden>·</span>
+          <span>{article.author}</span>
+        </p>
         <p className="doehealth-blog-card__excerpt">{article.excerpt}</p>
+        <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-card__art" pattern />
       </Link>
     </li>
   );

@@ -557,10 +557,24 @@
   min-width: 0;
 }
 
+/* News cards read top to bottom: centred title, centred date and author, centred description, then the image. */
+.doehealth-news-card .doehealth-blog-card__title {
+  text-align: center;
+}
+
 .doehealth-news-card .doehealth-blog-card__meta {
   justify-content: center;
-  margin: 1.35rem 0 0.75rem;
+  margin: 0.85rem 0 0;
   text-align: center;
+}
+
+.doehealth-news-card .doehealth-blog-card__excerpt {
+  margin: 0.85rem auto 0;
+  text-align: center;
+}
+
+.doehealth-news-card .doehealth-blog-card__art {
+  margin-top: 1.75rem;
 }
 
 .doehealth-news__item--featured .doehealth-blog-card__art {
