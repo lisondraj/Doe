@@ -14,6 +14,7 @@ import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHea
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import { DOEHEALTH_DESK2_PAGE_BACKGROUND } from "@/lib/doehealthdesk2/doehealthdesk2-colors";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
+import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import {
   type DoeHealthDesk2Variant,
   useDoeHealthDesk2Variant,
@@ -28,6 +29,12 @@ type DoeHealthDesk2PageProps = {
 export function DoeHealthDesk2Page({ initialVariant }: DoeHealthDesk2PageProps) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
+  /*
+   * iPhone: CSS `lvh` alone still read short of the real browser height on-device (Safari's dynamic
+   * viewport units don't always settle the way spec suggests). Lock a JS-measured `--app-vh` instead —
+   * the same proven pattern used across /doephone, /doehome, /about, etc.
+   */
+  useDoePhoneStableViewport(variant === "phone");
 
   return (
     <div
