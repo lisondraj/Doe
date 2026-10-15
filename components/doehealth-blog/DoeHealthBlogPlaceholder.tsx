@@ -1,11 +1,13 @@
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
-import type { DoeHealthBlogPlaceholderTone } from "@/lib/doehealth/doehealth-blog-articles";
+import type { DoeHealthBlogPlaceholderTone, DoeHealthBlogWave } from "@/lib/doehealth/doehealth-blog-articles";
 
 type DoeHealthBlogPlaceholderProps = {
   tone: DoeHealthBlogPlaceholderTone;
   className?: string;
   /** Draws the video1 dot wave on the box, in dots matched to its tone. */
   pattern?: boolean;
+  /** Wave shape for this article; omitted keeps the default wave. */
+  wave?: DoeHealthBlogWave;
   /** Animates the dot wave; omitted (or false) holds it on one still frame — every box but the article hero. */
   motion?: boolean;
 };
@@ -24,14 +26,20 @@ const PATTERN_COLORS: Record<DoeHealthBlogPlaceholderTone, { bg: string; dot: st
 };
 
 /** Flat tinted image slot that stands in for article art. */
-export function DoeHealthBlogPlaceholder({ tone, className = "", pattern = false, motion = false }: DoeHealthBlogPlaceholderProps) {
+export function DoeHealthBlogPlaceholder({
+  tone,
+  className = "",
+  pattern = false,
+  wave,
+  motion = false,
+}: DoeHealthBlogPlaceholderProps) {
   if (!pattern) {
     return <div className={`doehealth-blog-placeholder doehealth-blog-placeholder--${tone} ${className}`} aria-hidden />;
   }
   const { bg, dot } = PATTERN_COLORS[tone];
   return (
     <div className={`doehealth-blog-placeholder doehealth-blog-placeholder--pattern ${className}`} style={{ background: bg }} aria-hidden>
-      <DoeHealthBlogDotWave color={dot} motion={motion} />
+      <DoeHealthBlogDotWave color={dot} motion={motion} {...wave} />
     </div>
   );
 }

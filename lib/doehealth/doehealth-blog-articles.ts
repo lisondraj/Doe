@@ -10,6 +10,16 @@ export type DoeHealthBlogBlock =
   | { type: "quote"; text: string }
   | { type: "list"; items: readonly { lead: string; text: string }[] };
 
+/** Shape of an article's dot wave. Omitted fields keep the default wave. Every wave fills the bottom edge. */
+export type DoeHealthBlogWave = {
+  /** Where the wave starts, as a fraction of the box height (0.40 and up fills the bottom edge). */
+  top?: number;
+  amp?: number;
+  phase?: number;
+  /** Horizontal wavelength multiplier. */
+  scale?: number;
+};
+
 export type DoeHealthBlogArticle = {
   slug: string;
   eyebrow: string;
@@ -19,6 +29,7 @@ export type DoeHealthBlogArticle = {
   date: string;
   excerpt: string;
   heroTone: DoeHealthBlogPlaceholderTone;
+  wave?: DoeHealthBlogWave;
   lede: string;
   blocks: readonly DoeHealthBlogBlock[];
 };
@@ -156,6 +167,7 @@ const PERSONAL_AGENTS: DoeHealthBlogArticle = {
 
 const DOCTOR_LED_DESIGN: DoeHealthBlogArticle = {
   slug: "product-design-led-by-doctors",
+  wave: { top: 0.47, amp: 55, phase: 2.2, scale: 0.95 },
   eyebrow: "Design",
   title: ["Providers at Every Stage", "of Product Design"],
   author: "James Lisondra",
@@ -262,6 +274,7 @@ const DOCTOR_LED_DESIGN: DoeHealthBlogArticle = {
 
 const ONE_PRICE: DoeHealthBlogArticle = {
   slug: "health-intelligence-for-one-price",
+  wave: { top: 0.42, amp: 90, phase: 0.9, scale: 1.05 },
   eyebrow: "Pricing",
   title: ["Health intelligence", "for One Price"],
   author: "Matthew Lisondra",
@@ -360,6 +373,7 @@ const ONE_PRICE: DoeHealthBlogArticle = {
 
 const PERSONAL_AGENTS_FOR_PRACTICE: DoeHealthBlogArticle = {
   slug: "personal-agents-for-practice",
+  wave: { top: 0.4, amp: 60, phase: 1.7, scale: 1.15 },
   eyebrow: "For Practices",
   title: ["Personal Agents", "for Every Practice"],
   author: "James Lisondra",
@@ -419,6 +433,7 @@ const PERSONAL_AGENTS_FOR_PRACTICE: DoeHealthBlogArticle = {
 
 const HOSPITALS_SPEAK_AGENT: DoeHealthBlogArticle = {
   slug: "hospitals-learn-to-speak-agent",
+  wave: { top: 0.44, amp: 85, phase: 3.1, scale: 0.85 },
   eyebrow: "For Hospitals",
   title: ["Hospitals Learn", "to Speak Agent"],
   author: "Matthew Lisondra",
@@ -486,6 +501,7 @@ const HOSPITALS_SPEAK_AGENT: DoeHealthBlogArticle = {
 
 const CLAIMS_WITHOUT_HOLD_MUSIC: DoeHealthBlogArticle = {
   slug: "claims-without-the-hold-music",
+  wave: { top: 0.41, amp: 75, phase: 4.4, scale: 1.3 },
   eyebrow: "For Insurance",
   title: ["Claims Without", "the Hold Music"],
   author: "Matthew Lisondra",

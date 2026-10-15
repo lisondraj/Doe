@@ -54,7 +54,7 @@ function NewsCard({
           <span>{article.author}</span>
         </p>
         <p className="doehealth-blog-card__excerpt">{article.excerpt}</p>
-        <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-card__art" pattern />
+        <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-card__art" pattern wave={article.wave} />
       </Link>
     </li>
   );
