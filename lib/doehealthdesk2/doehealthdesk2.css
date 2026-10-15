@@ -4521,3 +4521,9 @@
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-invite__panel h2 {
   font-size: 2.25rem;
 }
+
+/* iPhone: the side tides in the closing "1000+ clinics" scene fade out toward the top and bottom edges. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible__tide .doehealth-desk2-tide {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 80%, transparent 100%);
+}
