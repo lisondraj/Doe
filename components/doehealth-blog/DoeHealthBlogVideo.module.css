@@ -1,0 +1,79 @@
+/* The desktop video screen in the article hero: the box size comes from the page (doehealth-blog-article__hero). */
+
+.video {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  container-type: inline-size;
+  border-radius: var(--doehealth-desk-radius);
+}
+
+.video img {
+  object-fit: cover;
+}
+
+/* A soft darkening toward the bottom, so the cream names read on the bright floor. */
+.video::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgb(20 12 4 / 0.55) 0%, rgb(20 12 4 / 0.36) 16%, rgb(20 12 4 / 0.08) 40%, transparent 60%);
+}
+
+/* Founder names on the photo: plain cream text, no shadow or box. */
+.person {
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  color: #fffcf1;
+  pointer-events: none;
+}
+
+.james {
+  left: 3.2%;
+  bottom: 5%;
+  text-align: left;
+}
+
+.matthew {
+  right: 4%;
+  top: 80%;
+  text-align: right;
+}
+
+.name {
+  margin: 0;
+  font-size: clamp(0.85rem, 1.7cqw, 1.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.role {
+  margin: 0.25em 0 0;
+  font-size: clamp(0.7rem, 1.15cqw, 0.98rem);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+/* Play button at the centre of the box, sized to the box. */
+.play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: clamp(4.6rem, 13cqw, 8.5rem);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: rgb(255 252 241 / 0.96);
+  color: #281910;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.play svg {
+  width: 40%;
+  height: 40%;
+}

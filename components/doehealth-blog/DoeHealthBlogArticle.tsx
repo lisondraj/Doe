@@ -1,4 +1,5 @@
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
+import { DoeHealthBlogVideo } from "@/components/doehealth-blog/DoeHealthBlogVideo";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import type { DoeHealthBlogArticle as Article, DoeHealthBlogBlock } from "@/lib/doehealth/doehealth-blog-articles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
@@ -54,8 +55,8 @@ export function DoeHealthBlogArticle({ article }: { article: Article }) {
         </p>
       </header>
 
-      {/* The one box on the page that keeps motion — every other dot pattern on the article holds still. */}
-      <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-article__hero" pattern motion />
+      {/* The hero box is the desktop video screen (the lounge photo with the founders and the play button). */}
+      <DoeHealthBlogVideo className="doehealth-blog-article__hero" />
 
       <div className="doehealth-blog-article__body">
         <p className="doehealth-blog-article__lede">{article.lede}</p>
