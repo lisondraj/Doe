@@ -19,6 +19,12 @@ const OTHER_HERO_IMAGE: DoeHealthBlogHeroImage = {
   alt: "A bright living room with a cream curved armchair, a tall olive tree and a wall of sunlit windows",
 };
 
+/** A second hero photo, so the non-Era articles don't all share one. */
+const GOLDEN_LOFT_HERO_IMAGE: DoeHealthBlogHeroImage = {
+  src: "/doehealthdesk2/golden-loft.png",
+  alt: "A sunlit loft at golden hour with cream sculptural seating, a round dining table and tall factory windows",
+};
+
 /** Shape of an article's dot wave. Omitted fields keep the default wave. Every wave fills the bottom edge. */
 export type DoeHealthBlogWave = {
   /** Where the wave starts, as a fraction of the box height (0.40 and up fills the bottom edge). */
@@ -450,7 +456,7 @@ const PERSONAL_AGENTS_FOR_PRACTICE: DoeHealthBlogArticle = {
 
 const HOSPITALS_SPEAK_AGENT: DoeHealthBlogArticle = {
   slug: "hospitals-learn-to-speak-agent",
-  heroImage: OTHER_HERO_IMAGE,
+  heroImage: GOLDEN_LOFT_HERO_IMAGE,
   wave: { top: 0.44, amp: 85, phase: 3.1, scale: 0.85, slant: -0.5, flip: true },
   eyebrow: "For Hospitals",
   title: ["Hospitals Learn", "to Speak Agent"],
@@ -519,7 +525,7 @@ const HOSPITALS_SPEAK_AGENT: DoeHealthBlogArticle = {
 
 const CLAIMS_WITHOUT_HOLD_MUSIC: DoeHealthBlogArticle = {
   slug: "claims-without-the-hold-music",
-  heroImage: OTHER_HERO_IMAGE,
+  heroImage: GOLDEN_LOFT_HERO_IMAGE,
   wave: { top: 0.41, amp: 75, phase: 4.4, scale: 1.3, slant: 0.25 },
   eyebrow: "For Insurance",
   title: ["Claims Without", "the Hold Music"],
