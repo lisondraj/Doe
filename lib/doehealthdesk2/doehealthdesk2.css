@@ -4487,3 +4487,8 @@
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents {
   min-height: 100lvh;
 }
+
+/* iPhone: the closing "We made 1000+ clinics visible" title sits at the intro line's size, not the larger desktop clamp. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible__title-wrap:not(.doehealth-desk2-visible__title-wrap--wide) {
+  font-size: 2.2rem;
+}
