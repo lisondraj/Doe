@@ -356,7 +356,8 @@
 }
 
 /* Desktop and iPhone: the text-selection highlight is light peach (the headline peach), with dark text so it reads on the brown sections. */
-.doehealth-desk2-page ::selection {
+.doehealth-desk2-page ::selection,
+.doehealth-desk2-page ::-webkit-selection {
   background: #fccfb8;
   color: #281910;
 }
@@ -4097,6 +4098,11 @@
     overflow: hidden;
   }
 
+  /* iPhone: no white wave over the hero's bottom edge. */
+  .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace__fade {
+    display: none;
+  }
+
   .desk2-front-desk2-panel {
     display: none !important;
   }
@@ -4650,12 +4656,12 @@
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero {
   flex: 0 0 auto;
   justify-content: flex-start;
-  padding-top: 2.2rem;
+  padding-top: 2.5rem;
 }
 
-/* iPhone: the photo sits a set distance under the waitlist box, and ends just above the bottom of the screen. */
+/* iPhone: the photo sits a set distance under the waitlist box, and ends at the bottom of the screen. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace {
-  margin-top: 1.5rem !important;
+  margin-top: 2.1rem !important;
 }
 
 /* Play button at the centre of the hero photo. Sized to the photo, so it reads big on desktop and iPhone. */
