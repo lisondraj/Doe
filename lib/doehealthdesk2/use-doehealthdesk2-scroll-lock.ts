@@ -211,6 +211,13 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       lastY = y;
       if (phone()) {
         if (locked) setLocked(false);
+        // Scrolling back up before the track has collapsed: scrub the scenes back, as they came in. Holding the
+        // closing scene here would pin the page for the whole track, with nothing moving, until the finger rests.
+        if (dir < 0 && releasePending) {
+          done = false;
+          releasePending = false;
+          window.clearTimeout(releaseTimer);
+        }
         followTrack();
         return;
       }
