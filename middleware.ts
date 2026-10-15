@@ -112,7 +112,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  /** doehealth.care serves Desk 2 at `/` and the blog; any other page bounces back to root. */
+  /** doehealth.care serves Desk 2 at `/`, the blog and /careers; any other page bounces back to root. */
   if (isDesignersHost(host)) {
     if (pathname === "/") {
       const rewriteUrl = request.nextUrl.clone();
@@ -120,9 +120,10 @@ export async function middleware(request: NextRequest) {
       return applyLandingSiteHeaders(NextResponse.rewrite(rewriteUrl));
     }
     const isBlog = pathname === DOEHEALTH_BLOG_PATH || pathname.startsWith(`${DOEHEALTH_BLOG_PATH}/`);
+    const isCareers = pathname === "/careers" || pathname.startsWith("/careers/");
     // Files from public/ (videos, models, fonts) that the matcher doesn't already skip.
     const isFile = /\/[^/]+\.[a-z0-9]+$/i.test(pathname);
-    if (isBlog || isFile || isAdminAppPath(pathname) || pathname === ADMIN_AUTH_CALLBACK_PATH) {
+    if (isBlog || isCareers || isFile || isAdminAppPath(pathname) || pathname === ADMIN_AUTH_CALLBACK_PATH) {
       return applyLandingSiteHeaders(NextResponse.next());
     }
     const redirectUrl = request.nextUrl.clone();
