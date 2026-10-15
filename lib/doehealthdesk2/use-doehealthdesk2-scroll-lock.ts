@@ -83,10 +83,26 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       section.style.touchAction = value ? "none" : "";
     };
 
+    /**
+     * iPhone: a fling that carries the page into the lock keeps scrolling under Safari's own momentum
+     * after jumpTo snaps it back, and the lock re-pins against that momentum on every frame it fires —
+     * a visible tug-of-war that reads as a bounce. Toggling overflow on the scrolling root is the
+     * standard way to kill Safari's inertial scroll outright, so there's nothing left to fight.
+     */
+    const stopMomentum = () => {
+      const { style } = document.documentElement;
+      const prev = style.overflowY;
+      style.overflowY = "hidden";
+      window.requestAnimationFrame(() => {
+        style.overflowY = prev;
+      });
+    };
+
     const lock = () => {
       setLocked(true);
       lockedAt = performance.now();
       jumpTo(sectionTop());
+      stopMomentum();
     };
 
     const finish = () => {
@@ -138,7 +154,10 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
           return;
         }
         if (settling) return;
-        if (Math.abs(top) > 1) jumpTo(sectionTop());
+        if (Math.abs(top) > 1) {
+          jumpTo(sectionTop());
+          stopMomentum();
+        }
         return;
       }
 

@@ -4288,9 +4288,10 @@
   }
 
   /* Agents — full viewport, horizontal carousel (desk iPhone). */
+  /* lvh, not svh — see the full-bleed note near the end of this file: svh left a cream strip under Safari's toolbar. */
   .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents {
     gap: clamp(1.15rem, 3.5vh, 1.75rem);
-    min-height: 100svh;
+    min-height: 100lvh;
     padding: calc(var(--desk2-phone-nav-clearance) + 1.25rem) 0
       max(1.5rem, env(safe-area-inset-bottom, 0px));
     scroll-margin-top: var(--desk2-phone-nav-clearance);
@@ -4428,7 +4429,8 @@
   }
 
   .doehealth-desk2-footer {
-    min-height: 66vh;
+    /* lvh, not vh — the footer is the page's last section, so it must reach the tallest viewport too. */
+    min-height: 66lvh;
   }
 
   .doehealth-desk2-footer__inner {
