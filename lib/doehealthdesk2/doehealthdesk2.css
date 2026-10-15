@@ -4649,12 +4649,12 @@
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero {
   flex: 0 0 auto;
   justify-content: flex-start;
-  padding-top: 1.4rem;
+  padding-top: 2.2rem;
 }
 
-/* iPhone: the photo sits a set distance under the waitlist box. */
+/* iPhone: the photo sits a set distance under the waitlist box, and ends just above the bottom of the screen. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace {
-  margin-top: 0.9rem !important;
+  margin-top: 1.5rem !important;
 }
 
 /* Play button at the centre of the hero photo. Sized to the photo, so it reads big on desktop and iPhone. */
