@@ -964,11 +964,21 @@
   object-fit: cover;
 }
 
-/* Founder names on the photo: plain text, no shadow or box. Sized to the photo, so they scale with it. */
+/* A soft darkening toward the bottom of the photo itself, so the cream names read on the bright floor. */
+.desk2-workspace__photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgb(20 12 4 / 0.55) 0%, rgb(20 12 4 / 0.22) 38%, transparent 62%);
+}
+
+/* Founder names on the photo: plain cream text, no shadow or box. Sized to the photo, so they scale with it. */
 .desk2-workspace__person {
   position: absolute;
+  z-index: 1;
   margin: 0;
-  color: var(--doehealth-desk2-surface);
+  color: #fffcf1;
   pointer-events: none;
 }
 
