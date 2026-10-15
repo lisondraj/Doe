@@ -22,7 +22,7 @@ const fromAnchor = (k: Cell, ax: number, ay: number) => 1 - Math.min(1, Math.hyp
 
 /**
  * The four titles' patterns, in order. The first is the original ripple, rising from just below the
- * strip's centre. The second is spiral arms, the third equaliser bars, the fourth a live waveform.
+ * strip's centre. The second is a half circle, the third equaliser bars, the fourth a live waveform.
  * The carousel's `wheel` morphs between them.
  */
 const PATTERNS: readonly Pattern[] = [
@@ -36,15 +36,14 @@ const PATTERNS: readonly Pattern[] = [
     },
   },
   {
-    // Two spiral arms winding out from a point below the strip, turning slowly.
+    // A convex-up half circle on the strip's bottom edge: a ring of swollen dots, with a soft ripple rising inside.
     scale: 1,
     paint: (k) => {
-      const dx = k.x - k.w * 0.5;
-      const dy = k.y - k.h * 1.6;
-      const angle = Math.atan2(dy, dx);
-      const r = Math.hypot(dx, dy);
-      const wave = 0.5 + 0.5 * Math.cos(2 * angle + r / 38 - k.t * 0.5);
-      return { level: wave ** 3, falloff: fromAnchor(k, k.w * 0.5, k.h * 1.35) };
+      const radius = k.h * 0.72;
+      const d = Math.hypot(k.x - k.w * 0.5, k.y - k.h);
+      const ring = clamp01(1 - Math.abs(d - radius) / 16);
+      const inside = d < radius ? 0.22 + 0.18 * (0.5 + 0.5 * Math.cos(d / 16 - k.t * 0.9)) : 0;
+      return { level: Math.max(ring ** 1.5, inside), falloff: 1 - ((k.h - k.y) / k.h) * 0.5 };
     },
   },
   {
