@@ -163,7 +163,7 @@ export function DoeHealthCareersPage({ initialVariant }: { initialVariant: DoeHe
             <h1 className={`doehealth-careers__title ${p22Mackinac.className}`}>Careers</h1>
           </header>
 
-          <DoeHealthBlogPlaceholder tone="sand" className="doehealth-careers__hero" pattern />
+          <DoeHealthBlogPlaceholder tone="clay" className="doehealth-careers__hero" pattern />
 
           <div className="doehealth-careers__sections">
             {CAREERS_TEAM_SECTIONS.map((section, index) => (
