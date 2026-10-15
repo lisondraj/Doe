@@ -4097,11 +4097,6 @@
     overflow: hidden;
   }
 
-  /* iPhone: no white wave over the hero's bottom edge. */
-  .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace__fade {
-    display: none;
-  }
-
   .desk2-front-desk2-panel {
     display: none !important;
   }
