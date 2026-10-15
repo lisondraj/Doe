@@ -4288,10 +4288,10 @@
   }
 
   /* Agents — full viewport, horizontal carousel (desk iPhone). */
-  /* lvh, not svh — see the full-bleed note near the end of this file: svh left a cream strip under Safari's toolbar. */
+  /* var(--app-vh), not svh — see the full-bleed note near the end of this file: svh/lvh alone left this short on-device. */
   .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents {
     gap: clamp(1.15rem, 3.5vh, 1.75rem);
-    min-height: 100lvh;
+    min-height: var(--app-vh, 100lvh);
     padding: calc(var(--desk2-phone-nav-clearance) + 1.25rem) 0
       max(1.5rem, env(safe-area-inset-bottom, 0px));
     scroll-margin-top: var(--desk2-phone-nav-clearance);
@@ -4429,8 +4429,8 @@
   }
 
   .doehealth-desk2-footer {
-    /* lvh, not vh — the footer is the page's last section, so it must reach the tallest viewport too. */
-    min-height: 66lvh;
+    /* var(--app-vh), not vh — the footer is the page's last section, so it must reach the tallest viewport too. */
+    min-height: calc(var(--app-vh, 100lvh) * 0.66);
   }
 
   .doehealth-desk2-footer__inner {
@@ -4464,30 +4464,32 @@
 }
 
 /*
- * iPhone: full-bleed brown sections reach the tallest viewport (lvh), not the smallest (svh). When Safari's
- * bottom toolbar collapses the viewport grows, and an svh-sized band left a cream strip under the URL box.
- * Content stays anchored to the top, so the extra height only fills the bottom edge.
+ * iPhone: full-bleed brown sections reach the tallest viewport, not the smallest. CSS `lvh` alone still
+ * read short of the real browser height on-device, so `--app-vh` is a JS-measured lock (see
+ * useDoePhoneStableViewport) committed to the document root in px — `lvh` is only the fallback for the
+ * instant before that effect runs. Content stays anchored to the top, so the extra height only fills
+ * the bottom edge.
  */
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible {
-  height: 100lvh;
+  height: var(--app-vh, 100lvh);
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-genome,
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-genome.is-complete {
-  height: 100lvh;
-  min-height: 100lvh;
+  height: var(--app-vh, 100lvh);
+  min-height: var(--app-vh, 100lvh);
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences {
-  min-height: 100lvh;
+  min-height: var(--app-vh, 100lvh);
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-blank {
-  min-height: 100lvh;
+  min-height: var(--app-vh, 100lvh);
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents {
-  min-height: 100lvh;
+  min-height: var(--app-vh, 100lvh);
 }
 
 /* iPhone: the closing "We made 1000+ clinics visible" title sits at the intro line's size, not the larger desktop clamp. */
