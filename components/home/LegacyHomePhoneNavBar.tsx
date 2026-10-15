@@ -14,8 +14,11 @@ import { lora } from "@/lib/home/fonts";
 
 /** PhoneHome hero strip — Doe, Join Waitlist, menu (no page sections). */
 export function LegacyHomePhoneNavBar({
+  homeHref = "/doehealthdesk",
   sectionHrefBase = "",
 }: {
+  /** Where the "Doe" mark goes. */
+  homeHref?: string;
   /** Prefix for `#section` links when the sections live on another page. */
   sectionHrefBase?: string;
 } = {}) {
@@ -46,7 +49,7 @@ export function LegacyHomePhoneNavBar({
       <DoeIphoneSiteNav
         pinchSafe
         menuScrimInsetTop="var(--desk-phone-nav-clearance)"
-        homeHref="/doehealthdesk"
+        homeHref={homeHref}
         showJoinCta={false}
         ctaLayout="single"
         navChromeTheme="light"

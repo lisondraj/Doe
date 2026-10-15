@@ -16,10 +16,13 @@ import { inter, lora } from "@/lib/home/fonts";
 /** DesktopHome top bar — cream chrome, no hero scroll coupling. */
 export function LegacyHomeDesktopNavBar({
   logoLink = true,
+  homeHref = "/",
   navActionLinksEnabled = true,
   sectionHrefBase = "",
 }: {
   logoLink?: boolean;
+  /** Where the "Doe" mark goes. */
+  homeHref?: string;
   navActionLinksEnabled?: boolean;
   /** Prefix for `#section` links when the sections live on another page. */
   sectionHrefBase?: string;
@@ -40,7 +43,7 @@ export function LegacyHomeDesktopNavBar({
       >
         {logoLink ? (
           <Link
-            href="/"
+            href={homeHref}
             className={`doehealth-desk-nav__mark text-4xl font-normal no-underline ${lora.className}`}
           >
             Doe

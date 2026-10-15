@@ -17,6 +17,8 @@ import {
 import { p22Mackinac } from "@/lib/home/fonts";
 
 const DESK_PATH = "/doehealthdesk";
+/** The "Doe" logo in the nav goes to the desk2 landing page. */
+const LOGO_HREF = "/doehealthdesk2";
 
 type DoeHealthBlogPageProps = {
   article: Article;
@@ -35,9 +37,9 @@ export function DoeHealthBlogPage({ article, initialVariant }: DoeHealthBlogPage
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}
     >
       {variant === "desktop" ? (
-        <LegacyHomeDesktopNavBar sectionHrefBase={DESK_PATH} />
+        <LegacyHomeDesktopNavBar homeHref={LOGO_HREF} sectionHrefBase={DESK_PATH} />
       ) : (
-        <LegacyHomePhoneNavBar sectionHrefBase={DESK_PATH} />
+        <LegacyHomePhoneNavBar homeHref={LOGO_HREF} sectionHrefBase={DESK_PATH} />
       )}
       <DoeHealthDeskNavWash />
       <main className="doehealth-desk-main min-h-[100dvh]" aria-label="Blog">
