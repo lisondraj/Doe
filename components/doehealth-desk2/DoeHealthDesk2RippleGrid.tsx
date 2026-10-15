@@ -32,17 +32,12 @@ function onCurve(k: Cell, curve: (x: number) => number, spread: number) {
   return clamp01(1 - gap / spread);
 }
 
-/** A heartbeat (ECG) beat over one period, `u` 0 to 1: flat, a small bump, the spike, then a slow bump. */
-function beat(u: number) {
-  const bump = (centre: number, width: number, height: number) => height * Math.exp(-(((u - centre) / width) ** 2));
-  return bump(0.3, 0.035, 0.12) - bump(0.45, 0.012, 0.18) + bump(0.48, 0.014, 1) - bump(0.515, 0.014, 0.42) + bump(0.68, 0.05, 0.22);
-}
-
 /**
  * The four titles' patterns, in order, each across the full width. The first is the original ripple,
  * rising from just below the strip's centre. The second is the sea: one simple wave rolling along,
- * filled below its crest. The third is rolling hills, a far ridge behind a near one. The fourth is a
- * heartbeat line running across like a monitor. The carousel's `wheel` morphs between them.
+ * filled below its crest. The third is rolling hills, a far ridge behind a near one, mirrored about the
+ * centre. The fourth is stacked waves spreading out from the centre. The carousel's `wheel` morphs
+ * between them.
  */
 const PATTERNS: readonly Pattern[] = [
   {
@@ -67,12 +62,15 @@ const PATTERNS: readonly Pattern[] = [
     },
   },
   {
-    // Rolling hills drifting slowly past: a far ridge drawn as a soft line, behind a near hill with a bright crest and a filled slope.
+    // Rolling hills, mirrored about the centre and rolling outward on both sides: a far ridge drawn as a
+    // soft line, behind a near hill with a bright crest and a filled slope.
     scale: 1,
     paint: (k) => {
-      const ridge = (x: number, base: number, height: number, speed: number, offset: number) =>
-        k.h * base - k.h * height * (0.75 * Math.sin((x / k.w) * Math.PI * 2.4 + offset - k.t * speed) + 0.25 * Math.sin((x / k.w) * Math.PI * 4.6 + offset * 2 - k.t * speed * 1.3));
-      const far = (x: number) => ridge(x, 0.38, 0.14, 0.12, 2.1);
+      const ridge = (x: number, base: number, height: number, speed: number, offset: number) => {
+        const dx = Math.abs(x - k.w * 0.5) / k.w;
+        return k.h * base - k.h * height * (0.75 * Math.cos(dx * Math.PI * 4.8 + offset - k.t * speed) + 0.25 * Math.cos(dx * Math.PI * 9.2 + offset * 2 - k.t * speed * 1.3));
+      };
+      const far = (x: number) => ridge(x, 0.38, 0.14, 0.12, Math.PI);
       const near = (x: number) => ridge(x, 0.68, 0.18, 0.22, 0);
       const inNear = clamp01((k.y - near(k.x)) / 8);
       const level = Math.max(onCurve(k, near, 8), inNear * 0.42, onCurve(k, far, 8) * 0.5 * (1 - inNear));
@@ -80,15 +78,18 @@ const PATTERNS: readonly Pattern[] = [
     },
   },
   {
-    // A heartbeat line across the full width, running like a monitor: a few beats on screen at once.
+    // Stacked waves spreading out from the centre to both edges, one behind another like swells coming in,
+    // the water under the front wave filled.
     scale: 1,
     paint: (k) => {
-      const period = Math.max(240, k.w / 3.5);
-      const trace = (x: number) => {
-        const u = (((x + k.t * 70) / period) % 1 + 1) % 1;
-        return k.h * 0.62 - k.h * 0.42 * beat(u);
+      const swell = (i: number) => (x: number) => {
+        const dx = Math.abs(x - k.w * 0.5) / k.w;
+        return k.h * (0.34 + i * 0.17) - k.h * 0.07 * Math.cos(dx * Math.PI * 6 - k.t * 0.5 + i * 1.1);
       };
-      return { level: onCurve(k, trace, 9) ** 1.2, falloff: 0.5 + 0.5 * fromTop(k) };
+      const front = swell(2);
+      const water = clamp01((k.y - front(k.x)) / 8);
+      const level = Math.max(onCurve(k, swell(0), 8) * 0.5, onCurve(k, swell(1), 8) * 0.75, onCurve(k, front, 8), water * 0.32);
+      return { level, falloff: 0.5 + 0.5 * fromTop(k) };
     },
   },
 ];
