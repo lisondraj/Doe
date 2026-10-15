@@ -17,13 +17,32 @@ type Pattern = { scale: number; paint: (k: Cell) => { level: number; falloff: nu
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const smooth = (t: number) => t * t * (3 - 2 * t);
 
-/** Falloff from a point, so a pattern fades toward the top of the strip. */
-const fromAnchor = (k: Cell, ax: number, ay: number) => 1 - Math.min(1, Math.hypot(k.x - ax, k.y - ay) / k.maxR);
+/** Height fraction from the strip's top down to `y`, so 0 is the top edge and 1 the bottom. */
+const fromTop = (k: Cell) => k.y / k.h;
 
 /**
- * The four titles' patterns, in order. The first is the original ripple, rising from just below the
- * strip's centre. The second is a half circle, the third the intro's rolling wave, the fourth a live waveform.
- * The carousel's `wheel` morphs between them.
+ * The line `curve(x)` drawn in dots: lit within a few pixels of the curve, measured over the dot's own
+ * cell width so steep strokes stay joined.
+ */
+function onCurve(k: Cell, curve: (x: number) => number, spread: number) {
+  const ys = [curve(k.x - PITCH / 2), curve(k.x), curve(k.x + PITCH / 2)];
+  const top = Math.min(...ys);
+  const bottom = Math.max(...ys);
+  const gap = k.y < top ? top - k.y : k.y > bottom ? k.y - bottom : 0;
+  return clamp01(1 - gap / spread);
+}
+
+/** A heartbeat (ECG) beat over one period, `u` 0 to 1: flat, a small bump, the spike, then a slow bump. */
+function beat(u: number) {
+  const bump = (centre: number, width: number, height: number) => height * Math.exp(-(((u - centre) / width) ** 2));
+  return bump(0.3, 0.035, 0.12) - bump(0.45, 0.012, 0.18) + bump(0.48, 0.014, 1) - bump(0.515, 0.014, 0.42) + bump(0.68, 0.05, 0.22);
+}
+
+/**
+ * The four titles' patterns, in order, each across the full width. The first is the original ripple,
+ * rising from just below the strip's centre. The second is the sea: one simple wave rolling along,
+ * filled below its crest. The third is rolling hills, a far ridge behind a near one. The fourth is a
+ * heartbeat line running across like a monitor. The carousel's `wheel` morphs between them.
  */
 const PATTERNS: readonly Pattern[] = [
   {
@@ -36,40 +55,40 @@ const PATTERNS: readonly Pattern[] = [
     },
   },
   {
-    // A convex-up half circle on the strip's bottom edge: a ring of swollen dots, with a soft ripple rising inside.
+    // The sea: a simple wave two crests wide rolling along, its crest line bright and the water below it filled.
     scale: 1,
     paint: (k) => {
-      const radius = k.h * 0.72;
-      const d = Math.hypot(k.x - k.w * 0.5, k.y - k.h);
-      const ring = clamp01(1 - Math.abs(d - radius) / 16);
-      const inside = d < radius ? 0.22 + 0.18 * (0.5 + 0.5 * Math.cos(d / 16 - k.t * 0.9)) : 0;
-      return { level: Math.max(ring ** 1.5, inside), falloff: 1 - ((k.h - k.y) / k.h) * 0.5 };
+      const wave = (x: number) => k.h * 0.5 - k.h * 0.2 * Math.sin((x / k.w) * Math.PI * 4 - k.t * 0.6);
+      const surface = wave(k.x);
+      const crest = onCurve(k, wave, 9);
+      const water = clamp01((k.y - surface) / 8);
+      const swell = 0.5 + 0.5 * Math.sin((k.x / k.w) * Math.PI * 4 - k.t * 0.6);
+      return { level: Math.max(crest, water * (0.28 + 0.22 * swell)), falloff: 0.5 + 0.5 * fromTop(k) };
     },
   },
   {
-    // The rolling wave from "Personal agents are here" (the intro's dot wave): a swell whose crest rolls
-    // across the strip, its dots growing on the high ground and toward the bottom.
+    // Rolling hills drifting slowly past: a far ridge drawn as a soft line, behind a near hill with a bright crest and a filled slope.
     scale: 1,
     paint: (k) => {
-      const s = k.w / 1920;
-      const crest = 0.6 * Math.sin(k.x / (210 * s) + 0.6 + k.t * 0.8) + 0.3 * Math.sin(k.x / (330 * s) + k.t * 0.45);
-      const surface = k.h * 0.45 - crest * k.h * 0.28;
-      const below = clamp01((k.y - surface) / 10);
-      const z = crest + 0.4 * Math.sin(k.x / (120 * s) - k.y / (80 * s) + 1.2 + k.t * 1.3);
-      const high = clamp01((z + 1.3) / 2.6);
-      const depth = clamp01((k.y - surface) / Math.max(1, k.h - surface));
-      return { level: below * (0.2 + 0.8 * high ** 1.5) * (0.55 + 0.45 * depth), falloff: 1 - ((k.h - k.y) / k.h) * 0.5 };
+      const ridge = (x: number, base: number, height: number, speed: number, offset: number) =>
+        k.h * base - k.h * height * (0.75 * Math.sin((x / k.w) * Math.PI * 2.4 + offset - k.t * speed) + 0.25 * Math.sin((x / k.w) * Math.PI * 4.6 + offset * 2 - k.t * speed * 1.3));
+      const far = (x: number) => ridge(x, 0.38, 0.14, 0.12, 2.1);
+      const near = (x: number) => ridge(x, 0.68, 0.18, 0.22, 0);
+      const inNear = clamp01((k.y - near(k.x)) / 8);
+      const level = Math.max(onCurve(k, near, 8), inNear * 0.42, onCurve(k, far, 8) * 0.5 * (1 - inNear));
+      return { level, falloff: 0.5 + 0.5 * fromTop(k) };
     },
   },
   {
-    // A live waveform: a travelling sine line of swelling dots across the strip, its height breathing.
-    scale: 1.1,
+    // A heartbeat line across the full width, running like a monitor: a few beats on screen at once.
+    scale: 1,
     paint: (k) => {
-      const envelope = 0.55 + 0.45 * Math.sin(k.x / 170 + k.t * 0.3);
-      const curveY = k.h * 0.5 + k.h * 0.3 * envelope * Math.sin(k.x / 45 - k.t * 1.1);
-      const dist = Math.abs(k.y - curveY);
-      const lit = clamp01(1 - dist / 22);
-      return { level: lit ** 1.5, falloff: fromAnchor(k, k.w * 0.5, k.h * 1.35) };
+      const period = Math.max(240, k.w / 3.5);
+      const trace = (x: number) => {
+        const u = (((x + k.t * 70) / period) % 1 + 1) % 1;
+        return k.h * 0.62 - k.h * 0.42 * beat(u);
+      };
+      return { level: onCurve(k, trace, 9) ** 1.2, falloff: 0.5 + 0.5 * fromTop(k) };
     },
   },
 ];
