@@ -105,7 +105,7 @@ function OpenRoles() {
 
   return (
     <div className="doehealth-careers__roles" id="roles">
-      <h2 className={`doehealth-careers__roles-title ${p22Mackinac.className}`}>Open roles</h2>
+      <h2 className={`doehealth-careers__roles-title ${p22Mackinac.className}`}>Open Roles</h2>
 
       <div className="doehealth-careers__bar">
         <div className="doehealth-careers__filter">
