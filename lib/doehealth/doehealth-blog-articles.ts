@@ -298,7 +298,7 @@ const ONE_PRICE: DoeHealthBlogArticle = {
   heroImage: OTHER_HERO_IMAGE,
   wave: { top: 0.42, amp: 90, phase: 0.9, scale: 1.05, slant: 0.7 },
   eyebrow: "Pricing",
-  title: ["Health intelligence", "for One Price"],
+  title: ["Health Intelligence", "for One Price"],
   author: "Matthew Lisondra",
   date: "September 30, 2026",
   excerpt:
