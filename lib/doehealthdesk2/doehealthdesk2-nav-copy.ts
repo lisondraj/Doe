@@ -1,3 +1,4 @@
+import { CAREERS_PATH } from "@/lib/doehealth/doehealth-careers";
 import { ABOUT_PATH, WAITLIST_PATH } from "@/lib/site-domains";
 
 /** Desktop nav split-button primary CTA on /doehealthdesk. */
@@ -18,6 +19,7 @@ export const DOEHEALTH_DESK2_ANNOUNCEMENT = {
 /** Chevron menu on the desk2 primary CTA — single option. */
 export const DOEHEALTH_DESK2_NAV_PRIMARY_CTA_DROPDOWN_ITEMS = [
   { label: "For Investors", href: ABOUT_PATH },
+  { label: "Careers", href: CAREERS_PATH },
 ] as const;
 
 /** Center column on /doehealthdesk desktop nav. */

@@ -2,6 +2,7 @@
 
 import { type ReactNode, useState } from "react";
 
+import { CareersFilterDropdown, type CareersDropdownSection } from "@/components/doehealth-careers/CareersFilterDropdown";
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
@@ -74,29 +75,23 @@ function RoleRow({ role }: { role: CareersRole }) {
   );
 }
 
-function FilterSelect({
-  label,
-  value,
-  onChange,
-  children,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  children: ReactNode;
-}) {
-  return (
-    <label className="doehealth-careers__filter">
-      <span className="sr-only">{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)} className="doehealth-careers__select">
-        {children}
-      </select>
-      <svg className="doehealth-careers__chevron" viewBox="0 0 16 16" fill="none" aria-hidden>
-        <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </label>
-  );
-}
+const TEAM_SECTIONS: readonly CareersDropdownSection[] = [
+  {
+    options: [{ value: ALL, label: "All Teams" }, ...CAREERS_TEAMS.map((name) => ({ value: name, label: name }))],
+  },
+];
+
+const LOCATION_SECTIONS: readonly CareersDropdownSection[] = [
+  { options: [{ value: ALL, label: "All Locations" }] },
+  {
+    heading: "Remote",
+    options: CAREERS_REMOTE_LOCATIONS.map((name) => ({ value: name, label: name })),
+  },
+  {
+    heading: "On site",
+    options: CAREERS_OFFICES.map((name) => ({ value: name, label: name })),
+  },
+];
 
 function OpenRoles() {
   const [team, setTeam] = useState<string>(ALL);
@@ -113,31 +108,12 @@ function OpenRoles() {
       <h2 className={`doehealth-careers__roles-title ${p22Mackinac.className}`}>Open roles</h2>
 
       <div className="doehealth-careers__bar">
-        <FilterSelect label="Team" value={team} onChange={setTeam}>
-          <option value={ALL}>All teams</option>
-          {CAREERS_TEAMS.map((name) => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
-        </FilterSelect>
-        <FilterSelect label="Location" value={location} onChange={setLocation}>
-          <option value={ALL}>All locations</option>
-          <optgroup label="Remote">
-            {CAREERS_REMOTE_LOCATIONS.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </optgroup>
-          <optgroup label="On site">
-            {CAREERS_OFFICES.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </optgroup>
-        </FilterSelect>
+        <div className="doehealth-careers__filter">
+          <CareersFilterDropdown label="Team" value={team} sections={TEAM_SECTIONS} onChange={setTeam} />
+        </div>
+        <div className="doehealth-careers__filter">
+          <CareersFilterDropdown label="Location" value={location} sections={LOCATION_SECTIONS} onChange={setLocation} />
+        </div>
         <span className="doehealth-careers__count">
           {roles.length} {roles.length === 1 ? "role" : "roles"}
         </span>
