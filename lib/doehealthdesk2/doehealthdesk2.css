@@ -4492,3 +4492,8 @@
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible__title-wrap:not(.doehealth-desk2-visible__title-wrap--wide) {
   font-size: 2.2rem;
 }
+
+/* iPhone: "Teach personal agents / about your clinic." sits on two lines, each on one line, at a slightly smaller size. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-invite__panel h2 {
+  font-size: 2.25rem;
+}
