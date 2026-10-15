@@ -3947,12 +3947,9 @@
     display: block;
   }
 
+  /* Each tagline line sits on its own line: "connecting" ends line one, "clinics & personal AI agents." starts line two. */
   .doehealth-desk2-hero__dek span {
-    display: inline;
-  }
-
-  .doehealth-desk2-hero__dek span + span::before {
-    content: " ";
+    display: block;
   }
 
   .doehealth-desk2-hero__secure {

@@ -6,8 +6,8 @@ export const DOEHEALTH_DESK2_HERO_HEADLINE = {
 
 /** Two lines under the title. */
 export const DOEHEALTH_DESK2_HERO_DEK = [
-  "Help personal agents find your clinic",
-  "faster and more frequently.",
+  "Doe is an intelligent platform connecting",
+  "clinics & personal AI agents.",
 ] as const;
 
 export const DOEHEALTH_DESK2_HERO_SECURE = "Join our waitlist & secure founding prices";
