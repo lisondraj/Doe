@@ -190,8 +190,8 @@ export function DoeHealthDesk2InviteSection() {
         </h2>
         <form className={`doehealth-desk2-invite__form ${inter.className}`} onSubmit={onSubmit}>
           <label>
-            <span className="doehealth-desk2-hero__sr">Work email</span>
-            <input type="email" name="email" placeholder="Work email" autoComplete="email" required />
+            <span className="doehealth-desk2-hero__sr">Your email</span>
+            <input type="email" name="email" placeholder="Your email" autoComplete="email" required />
             <button type="submit" aria-label="Teach personal agents about your clinic">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
