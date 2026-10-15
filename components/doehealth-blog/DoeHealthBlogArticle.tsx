@@ -4,7 +4,7 @@ import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import type { DoeHealthBlogArticle as Article, DoeHealthBlogBlock } from "@/lib/doehealth/doehealth-blog-articles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
-function ArticleBlock({ block }: { block: DoeHealthBlogBlock }) {
+function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: Article }) {
   switch (block.type) {
     case "paragraph":
       return <p className="doehealth-blog-article__p">{block.text}</p>;
@@ -13,8 +13,13 @@ function ArticleBlock({ block }: { block: DoeHealthBlogBlock }) {
     case "figure":
       return (
         <figure className="doehealth-blog-article__figure">
-          {/* Static — motion stays reserved for the hero above. */}
-          <DoeHealthBlogPlaceholder tone={block.tone} className="doehealth-blog-article__figure-art" pattern />
+          {/* Static — motion stays reserved for the hero above. Same dot design as this article's card art. */}
+          <DoeHealthBlogPlaceholder
+            tone={article.heroTone}
+            wave={article.wave}
+            className="doehealth-blog-article__figure-art"
+            pattern
+          />
           <figcaption>{block.caption}</figcaption>
         </figure>
       );
@@ -61,7 +66,7 @@ export function DoeHealthBlogArticle({ article }: { article: Article }) {
       <div className="doehealth-blog-article__body">
         <p className="doehealth-blog-article__lede">{article.lede}</p>
         {article.blocks.map((block, index) => (
-          <ArticleBlock key={`${block.type}-${index}`} block={block} />
+          <ArticleBlock key={`${block.type}-${index}`} block={block} article={article} />
         ))}
       </div>
     </article>

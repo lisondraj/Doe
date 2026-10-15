@@ -19,6 +19,8 @@ export function DoeHealthBlogDotWave({
   fade = 0,
   phase = 0,
   scale = 1,
+  slant = 0,
+  flip = false,
   motion = true,
 }: {
   color: string;
@@ -29,6 +31,10 @@ export function DoeHealthBlogDotWave({
   phase?: number;
   /** Horizontal wavelength multiplier. 1 is the default wave. */
   scale?: number;
+  /** Leans the wave into diagonals: positive leans one way, negative the other. 0 is the default wave. */
+  slant?: number;
+  /** Turns crests into troughs. false is the default wave. */
+  flip?: boolean;
   /** false holds the wave on one still frame — same path reduced-motion already takes. */
   motion?: boolean;
 }) {
@@ -67,9 +73,10 @@ export function DoeHealthBlogDotWave({
         for (let i = 0; i < COLS; i++) {
           const x0 = -240 * k + (i / (COLS - 1)) * (w + 480 * k);
           const x = w / 2 + (x0 - w / 2) * (0.92 + 0.16 * v);
-          const z = 0.6 * Math.sin(x0 / (210 * k * scale) + 0.6 + phase + t * 0.8) + 0.4 * Math.sin(x0 / (120 * k * scale) - baseY / (80 * k) + 1.2 + phase * 0.7 + t * 1.3) + 0.3 * Math.sin(x0 / (330 * k * scale) + baseY / (150 * k) + phase * 1.3 + t * 0.45);
+          const xs = x0 + slant * baseY;
+          const z = 0.6 * Math.sin(xs / (210 * k * scale) + 0.6 + phase + t * 0.8) + 0.4 * Math.sin(xs / (120 * k * scale) - baseY / (80 * k) + 1.2 + phase * 0.7 + t * 1.3) + 0.3 * Math.sin(xs / (330 * k * scale) + baseY / (150 * k) + phase * 1.3 + t * 0.45);
           const hh = Math.min(1, Math.max(0, (z + 1.3) / 2.6));
-          const y = baseY - z * amp * k * s;
+          const y = baseY - (flip ? -1 : 1) * z * amp * k * s;
           const edgeFade = fade > 0 ? Math.min(1, Math.max(0, y / (h * fade))) : 1;
           ctx.globalAlpha = Math.min(0.85, (0.28 + 0.6 * hh) * (0.5 + 0.5 * s)) * rowFade * edgeFade;
           ctx.beginPath();
@@ -98,7 +105,7 @@ export function DoeHealthBlogDotWave({
       cancelAnimationFrame(raf);
       observer.disconnect();
     };
-  }, [color, top, amp, fade, phase, scale, motion]);
+  }, [color, top, amp, fade, phase, scale, slant, flip, motion]);
 
   return <canvas ref={ref} className="doehealth-blog-dotwave" aria-hidden />;
 }
