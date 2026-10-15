@@ -29,7 +29,7 @@ const DESK_PATH = "/doehealthdesk";
 /** This article takes a full-width row directly under the first pair of cards. */
 const WIDE_ROW_SLUG = "health-intelligence-for-one-price";
 
-/** The featured card keeps its info inside the box, lower dot wave to leave room for it. */
+/** The featured and wide cards keep their info inside the box, with a lower dot wave to leave room for it. */
 const FEATURED_WAVE_TOP = 0.7;
 
 /** The whole card is one link to the post: image, info, title, and excerpt. */
@@ -43,7 +43,7 @@ function NewsCard({
   wide?: boolean;
 }) {
   const modifier = featured ? " doehealth-news__item--featured" : wide ? " doehealth-news__item--wide" : "";
-  if (featured) {
+  if (featured || wide) {
     return (
       <li className={`doehealth-news__item${modifier}`}>
         <Link href={doehealthBlogArticlePath(article.slug)} className="doehealth-blog-card doehealth-news-card doehealth-news-card--feature">

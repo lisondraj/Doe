@@ -651,7 +651,7 @@
 }
 
 .doehealth-news-feature__copy .doehealth-blog-card__excerpt {
-  max-width: 34rem;
+  max-width: 44rem;
   margin: 0.85rem auto 0;
   color: rgb(138 106 63 / 0.9);
   text-align: center;
@@ -665,5 +665,17 @@
 
   .doehealth-news-feature__copy .doehealth-blog-card__excerpt {
     font-size: 0.975rem;
+  }
+}
+
+/* The wide row card uses the same centred box as the featured card. */
+.doehealth-news__item--wide .doehealth-news-feature__art {
+  aspect-ratio: 16 / 7;
+}
+
+@media (max-width: 767px) {
+  .doehealth-news__item--wide .doehealth-news-feature__art {
+    aspect-ratio: auto;
+    min-height: 36rem;
   }
 }
