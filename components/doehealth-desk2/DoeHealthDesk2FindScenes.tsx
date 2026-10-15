@@ -295,6 +295,8 @@ const toneWidth = (tone?: Tone) => (tone === "is-strong" ? 2 : 1.4);
 export const DOEHEALTH_DESK2_FIND_FRAME = { x: 20, y: 30, w: 360, h: 260, r: 16, opacity: 1, width: 1.4 } as const;
 /** The first drawing's shapes that arrive from the iPhone's parts, in the drawing space, with their stroke. */
 export const DOEHEALTH_DESK2_FIND_ARRIVALS = keys(FOUND).map((s) => ({ x: s.x, y: s.y, w: s.w, h: s.h, r: s.r, opacity: toneOpacity(s.tone), width: toneWidth(s.tone) }));
+/** The last drawing's shapes, in the drawing space, with their stroke; they gather into the closing search box. */
+export const DOEHEALTH_DESK2_FIND_LAST = UPDATES.shapes.map((s) => ({ x: s.x, y: s.y, w: s.w, h: s.h, r: s.r, opacity: toneOpacity(s.tone), width: toneWidth(s.tone) }));
 
 /** One morph: every pair eased from its shape in this drawing to its shape in the next. */
 function Morph({ pairs, m }: { pairs: readonly Pair[]; m: number }) {

@@ -8,6 +8,7 @@ import {
   DoeHealthDesk2FindScenes,
   DOEHEALTH_DESK2_FIND_ARRIVALS,
   DOEHEALTH_DESK2_FIND_FRAME,
+  DOEHEALTH_DESK2_FIND_LAST,
   DOEHEALTH_DESK2_FIND_SPAN,
   pairUp,
 } from "@/components/doehealth-desk2/DoeHealthDesk2FindScenes";
@@ -61,8 +62,8 @@ const FINAL = {
   titleSwipe: [FIND_FROM + DOEHEALTH_DESK2_FIND_SPAN + 0.4, FIND_FROM + DOEHEALTH_DESK2_FIND_SPAN + 1.2],
   prompt: [FIND_FROM + DOEHEALTH_DESK2_FIND_SPAN + 1.4, FIND_FROM + DOEHEALTH_DESK2_FIND_SPAN + 1.8],
   promptSwipe: [FIND_FROM + DOEHEALTH_DESK2_FIND_SPAN + 1.4, FIND_FROM + DOEHEALTH_DESK2_FIND_SPAN + 2.0],
-  /** The search box's pink outline draws in as the prompt lands. */
-  search: [FIND_FROM + DOEHEALTH_DESK2_FIND_SPAN + 1.4, FIND_FROM + DOEHEALTH_DESK2_FIND_SPAN + 1.95],
+  /** The last beige drawing morphs into the search box's peach outline as the beige goes; its field and arrow come with the prompt. */
+  toBox: [FIND_FROM + DOEHEALTH_DESK2_FIND_SPAN, FIND_FROM + DOEHEALTH_DESK2_FIND_SPAN + 0.7],
 } as const;
 /** Progress at which the lock releases going down (going up releases below 0). */
 const END = FINAL.promptSwipe[1];
@@ -226,27 +227,68 @@ function PhoneMorph({ m, section }: { m: number; section: RefObject<HTMLElement>
     return () => window.removeEventListener("resize", measure);
   }, [section]);
 
-  if (!ends) return null;
+  return ends ? <MorphLayer {...ends} m={m} from={PEACH} to={DEEP_BEIGE} /> : null;
+}
+
+/** Draws a morph's pairs eased from their first shape to their second, the stroke colour going `from` to `to`. */
+function MorphLayer({ w, h, pairs, m, from, to }: { w: number; h: number; pairs: readonly PartPair[]; m: number; from: readonly number[]; to: readonly number[] }) {
   const k = smooth(m);
   const mix = (a: number, b: number) => a + (b - a) * k;
-  const [r, g, b] = PEACH.map((c, i) => Math.round(mix(c, DEEP_BEIGE[i])));
+  const [r, g, b] = from.map((c, i) => Math.round(mix(c, to[i])));
   return (
-    <svg className="doehealth-desk2-visible__morph" viewBox={`0 0 ${ends.w} ${ends.h}`} fill="none" aria-hidden="true" stroke={`rgb(${r} ${g} ${b})`} style={vars({ "--m": k })}>
-      {ends.pairs.map(({ a, b: to, fade }, i) => (
+    <svg className="doehealth-desk2-visible__morph" viewBox={`0 0 ${w} ${h}`} fill="none" aria-hidden="true" stroke={`rgb(${r} ${g} ${b})`} style={vars({ "--m": k })}>
+      {pairs.map(({ a, b: end, fade }, i) => (
         <rect
           key={i}
-          x={mix(a.x, to.x)}
-          y={mix(a.y, to.y)}
-          width={mix(a.w, to.w)}
-          height={mix(a.h, to.h)}
-          rx={mix(a.r, to.r)}
-          strokeWidth={mix(a.width, to.width)}
-          strokeOpacity={mix(a.opacity, to.opacity)}
+          x={mix(a.x, end.x)}
+          y={mix(a.y, end.y)}
+          width={mix(a.w, end.w)}
+          height={mix(a.h, end.h)}
+          rx={mix(a.r, end.r)}
+          strokeWidth={mix(a.width, end.width)}
+          strokeOpacity={mix(a.opacity, end.opacity)}
           opacity={fade === "in" ? k : fade === "out" ? 1 - k : 1}
         />
       ))}
     </svg>
   );
+}
+
+/**
+ * The last beige drawing turning into the closing search box, the way the iPhone turned into the first:
+ * its frame travels into the box's outline (deep beige to peach) and its other shapes gather into the
+ * box as they fade. Both ends are measured in the section, so the outline lands where the box keeps it.
+ * `m` (0 to 1) is the morph.
+ */
+function SearchMorph({ m, section }: { m: number; section: RefObject<HTMLElement> }) {
+  const [ends, setEnds] = useState<{ w: number; h: number; pairs: PartPair[] } | null>(null);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const root = section.current;
+      const art = root?.querySelector(".doehealth-desk2-find__art");
+      const search = root?.querySelector<HTMLElement>(".doehealth-desk2-visible__search");
+      if (!root || !art || !search) return;
+      const o = root.getBoundingClientRect();
+      const b = art.getBoundingClientRect();
+      const s = search.getBoundingClientRect();
+      const sx = b.width / 400;
+      const sy = b.height / 320;
+      const onArt = (part: Part): Part => ({ x: b.left - o.left + part.x * sx, y: b.top - o.top + part.y * sy, w: part.w * sx, h: part.h * sy, r: part.r * sx, opacity: part.opacity, width: part.width * sx });
+      const radius = parseFloat(getComputedStyle(search).borderTopLeftRadius) || 0;
+      const box: Part = { x: s.left - o.left + 0.75, y: s.top - o.top + 0.75, w: s.width - 1.5, h: s.height - 1.5, r: Math.max(0, radius - 0.75), opacity: 1, width: 1.5 };
+      setEnds({
+        w: o.width,
+        h: o.height,
+        pairs: [{ a: onArt(DOEHEALTH_DESK2_FIND_FRAME), b: box }, ...DOEHEALTH_DESK2_FIND_LAST.map((part) => ({ a: onArt(part), b: box, fade: "out" as const }))],
+      });
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [section]);
+
+  return ends ? <MorphLayer {...ends} m={m} from={DEEP_BEIGE} to={PEACH} /> : null;
 }
 
 type SwipePart = { readonly text: string; readonly tone: "cream" | "salmon" };
@@ -377,6 +419,7 @@ export function DoeHealthDesk2AudienceSection() {
         </div>
 
         {morphing ? <PhoneMorph m={ramp(p, RAMP.morph)} section={sectionRef} /> : null}
+        {p >= FINAL.toBox[0] && p < FINAL.toBox[1] ? <SearchMorph m={ramp(p, FINAL.toBox)} section={sectionRef} /> : null}
 
         <div className="doehealth-desk2-visible__scene" style={vars({ "--o": titleOpacity })} aria-hidden={titleOpacity < 0.5}>
           {/* Halftone tides along both side edges, rolling in motion behind the closing title. */}
@@ -394,7 +437,7 @@ export function DoeHealthDesk2AudienceSection() {
             </span>
           </p>
           <form ref={searchRef} className={`doehealth-desk2-visible__search ${inter.className}`} action={WAITLIST_PATH} method="get" style={vars({ "--e": searchShown })}>
-            <TracedOutline draw={ramp(p, FINAL.search)} box={searchRef} className="doehealth-desk2-visible__search-line" />
+            <TracedOutline draw={p >= FINAL.toBox[1] ? 1 : 0} box={searchRef} className="doehealth-desk2-visible__search-line" />
             <input
               type="text"
               name="website"

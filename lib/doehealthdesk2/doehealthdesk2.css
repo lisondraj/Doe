@@ -2031,8 +2031,12 @@
   border-radius: var(--doehealth-desk2-radius);
   background: transparent;
   color: #fccfb8;
+}
+
+/* The outline arrives by the morph from the last beige drawing; the field and arrow fade in with the prompt (--e). */
+.doehealth-desk2-visible__search > input,
+.doehealth-desk2-visible__search > button {
   opacity: var(--e, 0);
-  transform: translate3d(0, calc((1 - var(--e, 0)) * 1rem), 0);
 }
 
 .doehealth-desk2-visible__search-line {
