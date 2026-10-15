@@ -38,8 +38,14 @@ export function doehealthDesk2NavCenterLinks(base = "") {
   }));
 }
 
-/** Nav bar pages on desktop and iPhone: the center links, then the blog. */
-export const DOEHEALTH_DESK2_NAV_PAGES = [...DOEHEALTH_DESK2_NAV_CENTER_LINKS, { label: "News", href: "/news" }] as const;
+/** Nav bar pages on desktop and iPhone: Product, Agents, Security, News, then Careers. The footer keeps the center links. */
+export const DOEHEALTH_DESK2_NAV_PAGES = [
+  { label: "Product", href: "#solution" },
+  { label: "Agents", href: "#agents" },
+  { label: "Security", href: ABOUT_PATH },
+  { label: "News", href: "/news" },
+  { label: "Careers", href: CAREERS_PATH },
+] as const;
 
 /** The nav bar's pages with section anchors pointed at `base`. The footer keeps the center links only. */
 export function doehealthDesk2NavPages(base = "") {
