@@ -31,36 +31,36 @@
   display: block;
 }
 
-/* Doe brand colours only (see DESIGNERS_BRAND_COLORS) — sand/panel/cream are the hero's beige shades. */
+/* /doehealthdesk2 palette only — cream, beige, and peach (see DoeHealthBlogPlaceholder PATTERN_COLORS). */
 .doehealth-blog-placeholder--sand {
-  background: #f2d8a8;
-  color: #3d2e1f;
+  background: #f4eedf;
+  color: #140c04;
 }
 
 .doehealth-blog-placeholder--panel {
-  background: #ede8df;
-  color: #3d2e1f;
+  background: #f2e8da;
+  color: #140c04;
 }
 
 .doehealth-blog-placeholder--cream {
-  background: #faf0d8;
-  color: #3d2e1f;
+  background: #f8f4eb;
+  color: #140c04;
 }
 
 .doehealth-blog-placeholder--gold {
-  background: #e8a060;
-  color: #3d2e1f;
+  background: #fccfb8;
+  color: #140c04;
 }
 
 .doehealth-blog-placeholder--clay {
-  background: #c45c42;
-  color: #f5e6d0;
+  background: #f6d3c4;
+  color: #140c04;
 }
 
 .doehealth-blog-placeholder--umber {
   border-color: transparent;
-  background: #1a1208;
-  color: #f5e6d0;
+  background: #e6dac2;
+  color: #140c04;
 }
 
 /* ─── Article ───────────────────────────────────────────────────────────── */

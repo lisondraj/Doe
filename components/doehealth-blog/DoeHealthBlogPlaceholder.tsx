@@ -10,14 +10,17 @@ type DoeHealthBlogPlaceholderProps = {
   motion?: boolean;
 };
 
-/** Background and dot colour for each tone — Doe brand colours only (see DESIGNERS_BRAND_COLORS). */
+/**
+ * Background and dot colour for each tone — the /doehealthdesk2 site palette only: cream, beige, and peach,
+ * with its muted brown for dots. The tone names are legacy; they no longer mean the old deep colours.
+ */
 const PATTERN_COLORS: Record<DoeHealthBlogPlaceholderTone, { bg: string; dot: string }> = {
-  sand: { bg: "#F2D8A8", dot: "#B9814A" },
-  panel: { bg: "#EDE8DF", dot: "#B3A68C" },
-  cream: { bg: "#FAF0D8", dot: "#D9BE8E" },
-  gold: { bg: "#E8A060", dot: "#A85A2E" },
-  clay: { bg: "#C45C42", dot: "#F2D8A8" },
-  umber: { bg: "#1A1208", dot: "#6E5540" },
+  sand: { bg: "#F4EEDF", dot: "#6E5C40" },
+  panel: { bg: "#F2E8DA", dot: "rgba(110, 92, 64, 0.6)" },
+  cream: { bg: "#F8F4EB", dot: "rgba(110, 92, 64, 0.45)" },
+  gold: { bg: "#FCCFB8", dot: "#6E5C40" },
+  clay: { bg: "#F6D3C4", dot: "rgba(110, 92, 64, 0.8)" },
+  umber: { bg: "#E6DAC2", dot: "#6E5C40" },
 };
 
 /** Flat tinted image slot that stands in for article art. */
