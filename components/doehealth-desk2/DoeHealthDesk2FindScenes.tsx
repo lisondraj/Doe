@@ -48,8 +48,8 @@ const draw = (value: number) => vars({ "--draw": value });
  * Each drawing is a list of rounded shapes plus its details (lines, glyphs, motion). Between drawings
  * the details undraw while every shape slides, resizes and re-rounds into its nearest shape in the
  * next drawing, so one drawing becomes the next. A shape with `at` draws in during its drawing's build
- * ([start, width] on that drawing's clock); one without arrives by the morph (the first drawing's all
- * draw in, after the iPhone).
+ * ([start, width] on that drawing's clock); one without arrives by the morph (the first drawing's
+ * arrive from the iPhone's parts, morphed by the brown section).
  */
 type Tone = "is-soft" | "is-faint" | "is-strong";
 type Shape = { x: number; y: number; w: number; h: number; r: number; tone?: Tone; at?: readonly [number, number] };
@@ -66,13 +66,13 @@ type Art = {
   Detail: (props: { p: number }) => ReactNode;
 };
 
-/** Found: a search window whose results draw in, then one is picked. */
+/** Found: a search window whose results arrive from the iPhone and fill in, then one is picked. */
 const ROWS = [112, 164, 216];
 const FOUND: Art = {
   shapes: [
-    box(44, 54, 312, 36, 18, undefined, [0.1, 0.25]),
-    dot(66, 71, 7, undefined, [0.2, 0.12]),
-    ...ROWS.flatMap((y, i) => [box(44, y, 312, 40, 10, "is-soft", [0.35 + i * 0.1, 0.25]), dot(70, y + 20, 11, undefined, [0.42 + i * 0.1, 0.12])]),
+    box(44, 54, 312, 36, 18),
+    dot(66, 71, 7),
+    ...ROWS.flatMap((y) => [box(44, y, 312, 40, 10, "is-soft"), dot(70, y + 20, 11)]),
     box(40, 160, 320, 48, 13, "is-strong", [0.75, 0.15]),
     dot(330, 184, 10, undefined, [0.85, 0.08]),
   ],
@@ -258,21 +258,22 @@ const MORPHS = [RAMP.morph1, RAMP.morph2, RAMP.morph3] as const;
 /** Shapes a morph lands on: the ones the next drawing doesn't draw in itself. */
 const keys = (art: Art) => art.shapes.filter((s) => !s.at);
 
-type Pair = { a: Shape; b: Shape; fade?: "in" | "out" };
-const centreGap = (a: Shape, b: Shape) =>
+type Rect = { x: number; y: number; w: number; h: number; r: number };
+type Pair<T extends Rect = Shape> = { a: T; b: T; fade?: "in" | "out" };
+const centreGap = (a: Rect, b: Rect) =>
   Math.hypot(a.x + a.w / 2 - (b.x + b.w / 2), a.y + a.h / 2 - (b.y + b.h / 2)) + 0.5 * (Math.abs(a.w - b.w) + Math.abs(a.h - b.h));
 /** A shape shrunk to a point at its own centre. */
-const point = (s: Shape): Shape => ({ ...s, x: s.x + s.w / 2, y: s.y + s.h / 2, w: 0, h: 0, r: 0 });
+const point = <T extends Rect>(s: T): T => ({ ...s, x: s.x + s.w / 2, y: s.y + s.h / 2, w: 0, h: 0, r: 0 });
 
 /**
  * Pairs every shape of one drawing with one of the next, closest pairs first; paired shapes travel.
  * Leftover shapes of the next grow out of their own centre; leftovers of this one shrink into theirs.
  */
-function pairUp(from: readonly Shape[], to: readonly Shape[]): Pair[] {
+export function pairUp<T extends Rect>(from: readonly T[], to: readonly T[]): Pair<T>[] {
   const options = from.flatMap((a, i) => to.map((b, j) => ({ gap: centreGap(a, b), i, j }))).sort((x, y) => x.gap - y.gap);
   const usedA = new Set<number>();
   const usedB = new Set<number>();
-  const pairs: Pair[] = [];
+  const pairs: Pair<T>[] = [];
   for (const { i, j } of options) {
     if (usedA.has(i) || usedB.has(j)) continue;
     usedA.add(i);
@@ -289,6 +290,11 @@ const PAIRS = MORPHS.map((_, i) => pairUp(ARTS[i].shapes, keys(ARTS[i + 1])));
 const TONE_OPACITY = { "is-soft": 0.6, "is-faint": 0.32, "is-strong": 1 } as const;
 const toneOpacity = (tone?: Tone) => (tone ? TONE_OPACITY[tone] : 1);
 const toneWidth = (tone?: Tone) => (tone === "is-strong" ? 2 : 1.4);
+
+/** The drawings' shared window frame, in the 400 x 320 drawing space. */
+export const DOEHEALTH_DESK2_FIND_FRAME = { x: 20, y: 30, w: 360, h: 260, r: 16, opacity: 1, width: 1.4 } as const;
+/** The first drawing's shapes that arrive from the iPhone's parts, in the drawing space, with their stroke. */
+export const DOEHEALTH_DESK2_FIND_ARRIVALS = keys(FOUND).map((s) => ({ x: s.x, y: s.y, w: s.w, h: s.h, r: s.r, opacity: toneOpacity(s.tone), width: toneWidth(s.tone) }));
 
 /** One morph: every pair eased from its shape in this drawing to its shape in the next. */
 function Morph({ pairs, m }: { pairs: readonly Pair[]; m: number }) {
@@ -335,7 +341,15 @@ export function DoeHealthDesk2FindScenes({ p }: { p: number }) {
 
       <div className="doehealth-desk2-find__art" aria-hidden="true">
         <svg className="doehealth-desk2-find__art-svg" viewBox="0 0 400 320" fill="none">
-          <rect x="20" y="30" width="360" height="260" rx="16" pathLength={1} style={draw(p >= 0 ? 1 : 0)} />
+          <rect
+            x={DOEHEALTH_DESK2_FIND_FRAME.x}
+            y={DOEHEALTH_DESK2_FIND_FRAME.y}
+            width={DOEHEALTH_DESK2_FIND_FRAME.w}
+            height={DOEHEALTH_DESK2_FIND_FRAME.h}
+            rx={DOEHEALTH_DESK2_FIND_FRAME.r}
+            pathLength={1}
+            style={draw(p >= 0 ? 1 : 0)}
+          />
         </svg>
         {ARTS.map((art, i) => {
           const into = i > 0 ? MORPHS[i - 1] : null;
@@ -351,7 +365,7 @@ export function DoeHealthDesk2FindScenes({ p }: { p: number }) {
               {leaving
                 ? null
                 : art.shapes.map((s, j) => (
-                    <rect key={j} x={s.x} y={s.y} width={s.w} height={s.h} rx={s.r} pathLength={1} className={s.tone} style={draw(s.at ? seg(t, s.at[0], s.at[1]) : 1)} />
+                    <rect key={j} x={s.x} y={s.y} width={s.w} height={s.h} rx={s.r} pathLength={1} className={s.tone} style={draw(s.at ? seg(t, s.at[0], s.at[1]) : p >= 0 ? 1 : 0)} />
                   ))}
               <Detail p={detailP} />
             </svg>

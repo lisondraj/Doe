@@ -22,7 +22,7 @@ const fromAnchor = (k: Cell, ax: number, ay: number) => 1 - Math.min(1, Math.hyp
 
 /**
  * The four titles' patterns, in order. The first is the original ripple, rising from just below the
- * strip's centre. The second is a half circle, the third equaliser bars, the fourth a live waveform.
+ * strip's centre. The second is a half circle, the third the intro's rolling wave, the fourth a live waveform.
  * The carousel's `wheel` morphs between them.
  */
 const PATTERNS: readonly Pattern[] = [
@@ -47,13 +47,18 @@ const PATTERNS: readonly Pattern[] = [
     },
   },
   {
-    // Columns of dots rising from the bottom like equaliser bars, each at its own height.
-    scale: 0.95,
+    // The rolling wave from "Personal agents are here" (the intro's dot wave): a swell whose crest rolls
+    // across the strip, its dots growing on the high ground and toward the bottom.
+    scale: 1,
     paint: (k) => {
-      const u = (k.h - k.y) / k.h;
-      const bar = 0.3 + 0.6 * (0.5 + 0.5 * Math.sin(k.c * 0.55 + k.t * 0.5 + Math.sin(k.c * 0.23) * 2));
-      const lit = clamp01((bar - u) / 0.08);
-      return { level: 0.1 + 0.9 * lit, falloff: 1 - u * 0.5 };
+      const s = k.w / 1920;
+      const crest = 0.6 * Math.sin(k.x / (210 * s) + 0.6 + k.t * 0.8) + 0.3 * Math.sin(k.x / (330 * s) + k.t * 0.45);
+      const surface = k.h * 0.45 - crest * k.h * 0.28;
+      const below = clamp01((k.y - surface) / 10);
+      const z = crest + 0.4 * Math.sin(k.x / (120 * s) - k.y / (80 * s) + 1.2 + k.t * 1.3);
+      const high = clamp01((z + 1.3) / 2.6);
+      const depth = clamp01((k.y - surface) / Math.max(1, k.h - surface));
+      return { level: below * (0.2 + 0.8 * high ** 1.5) * (0.55 + 0.45 * depth), falloff: 1 - ((k.h - k.y) / k.h) * 0.5 };
     },
   },
   {

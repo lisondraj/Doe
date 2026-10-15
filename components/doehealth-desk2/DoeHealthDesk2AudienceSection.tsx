@@ -4,7 +4,13 @@ import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "re
 
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
 import { DoeHealthDesk2DotTide } from "@/components/doehealth-desk2/DoeHealthDesk2DotTide";
-import { DoeHealthDesk2FindScenes, DOEHEALTH_DESK2_FIND_SPAN } from "@/components/doehealth-desk2/DoeHealthDesk2FindScenes";
+import {
+  DoeHealthDesk2FindScenes,
+  DOEHEALTH_DESK2_FIND_ARRIVALS,
+  DOEHEALTH_DESK2_FIND_FRAME,
+  DOEHEALTH_DESK2_FIND_SPAN,
+  pairUp,
+} from "@/components/doehealth-desk2/DoeHealthDesk2FindScenes";
 import { DOEHEALTH_DESK2_NAV_WASH_EVENT } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 
 import {
@@ -36,14 +42,14 @@ const RAMP = {
   ask: [2.35, 2.7],
   reply: [2.7, 3.1],
   caption: [3.2, 3.6],
-  /** The caption fades while the phone's details undraw in reverse, leaving its body. */
+  /** The caption fades while the thread's text undraws; the phone and the bubbles keep their outlines. */
   chatOut: [4.0, 4.15],
-  /** The thread undraws in reverse with the phone: the reply, the question, then "Today". */
+  /** The thread's text undraws in reverse: the reply, the question, then "Today". */
   replyOut: [4.0, 4.12],
   askOut: [4.05, 4.2],
   stampOut: [4.1, 4.25],
   unbuild: [4.0, 4.3],
-  /** The body's outline morphs into the first drawing's frame as the beige comes in under it. */
+  /** Every outline of the phone and the bubbles morphs into the first drawing as the beige comes in under it. */
   morph: [4.3, 4.9],
   beigeIn: [4.35, 4.75],
 } as const;
@@ -107,15 +113,15 @@ function TracedOutline({ draw, box, className }: { draw: number; box: RefObject<
 }
 
 /**
- * A chat bubble that draws in as `d` goes 0 to 1: its outline traces first, then its text sweeps in.
- * Running `d` back to 0 undraws it in reverse, text first.
+ * A chat bubble: `line` (0 to 1) traces its outline, `text` (0 to 1) sweeps its text in. The outline is
+ * handed to the morph when the phone turns into the first beige drawing.
  */
-function DrawnBubble({ text, d, out = false }: { text: string; d: number; out?: boolean }) {
+function DrawnBubble({ text, line, sweep, out = false }: { text: string; line: number; sweep: number; out?: boolean }) {
   const ref = useRef<HTMLParagraphElement>(null);
   return (
     <p ref={ref} className={`doehealth-desk2-visible__bubble${out ? " doehealth-desk2-visible__bubble--out" : ""}`}>
-      <TracedOutline draw={seg(d, 0, 0.6)} box={ref} className="doehealth-desk2-visible__bubble-line" />
-      <span className="desk2-genome-swipe desk2-genome-swipe--salmon" style={vars({ "--s": seg(d, 0.35, 0.65) })}>
+      <TracedOutline draw={line} box={ref} className="doehealth-desk2-visible__bubble-line" />
+      <span className="desk2-genome-swipe desk2-genome-swipe--salmon" style={vars({ "--s": sweep })}>
         {text}
       </span>
     </p>
@@ -123,11 +129,11 @@ function DrawnBubble({ text, d, out = false }: { text: string; d: number; out?: 
 }
 
 /** Full iPhone (390 x 844, as in video1) in peach outline, traced in as `t` goes 0 to 1. */
-function PhoneOutline({ t, body }: { t: number; body: boolean }) {
+function PhoneOutline({ t }: { t: number }) {
   const draw = (k: number, w: number) => vars({ "--draw": seg(t, k, w) });
   return (
     <svg className="doehealth-desk2-visible__iphone-svg" viewBox="0 0 390 844" fill="none" aria-hidden="true">
-      {body ? <rect x="2" y="2" width="386" height="840" rx="62" pathLength={1} style={draw(0, 0.55)} /> : null}
+      <rect x="2" y="2" width="386" height="840" rx="62" pathLength={1} style={draw(0, 0.55)} />
       <rect x="16" y="16" width="358" height="812" rx="50" pathLength={1} className="is-soft" style={draw(0.15, 0.55)} />
       <rect x="146" y="34" width="98" height="28" rx="14" pathLength={1} style={draw(0.45, 0.2)} />
       <path d="M-2 168v34M-2 232v62M-2 312v62M392 256v104" pathLength={1} className="is-soft" style={draw(0.5, 0.25)} />
@@ -138,17 +144,38 @@ function PhoneOutline({ t, body }: { t: number; body: boolean }) {
   );
 }
 
-type Outline = { x: number; y: number; w: number; h: number; r: number; s: number };
+/** A rounded outline with its stroke's opacity and width, in whatever space it is given in. */
+type Part = { x: number; y: number; w: number; h: number; r: number; opacity: number; width: number };
+type PartPair = { a: Part; b: Part; fade?: "in" | "out" };
+
+/** The phone's parts as drawn by PhoneOutline, in its 390 x 844 space. Side buttons and the home bar are hairline boxes. */
+const PHONE_BODY: Part = { x: 2, y: 2, w: 386, h: 840, r: 62, opacity: 1, width: 1.6 };
+const PHONE_SCREEN: Part = { x: 16, y: 16, w: 358, h: 812, r: 50, opacity: 0.55, width: 1.6 };
+const PHONE_PARTS: readonly Part[] = [
+  { x: 146, y: 34, w: 98, h: 28, r: 14, opacity: 1, width: 1.6 },
+  ...[
+    [168, 34],
+    [232, 62],
+    [312, 62],
+  ].map(([y, h]) => ({ x: -2.25, y, w: 0.5, h, r: 0, opacity: 0.55, width: 1.6 })),
+  { x: 391.75, y: 256, w: 0.5, h: 104, r: 0, opacity: 0.55, width: 1.6 },
+  { x: 26, y: 754, w: 36, h: 36, r: 18, opacity: 0.55, width: 1.6 },
+  { x: 74, y: 750, w: 286, h: 44, r: 22, opacity: 0.55, width: 1.6 },
+  { x: 136, y: 815.75, w: 118, h: 0.5, r: 0, opacity: 1, width: 1.6 },
+];
+
 const PEACH = [252, 207, 184];
 const DEEP_BEIGE = [110, 92, 64];
 
 /**
- * The phone's body outline taking over from the phone, then morphing (place, size, corners, stroke,
- * peach to deep beige) into the first beige drawing's frame. Both ends are measured in the section, so
- * it lands exactly on the frame the beige layer then keeps. `m` (0 to 1) is the morph.
+ * The whole phone turning into the first beige drawing, the way the beige drawings turn into each other.
+ * Its body and screen become the drawing's frame; its island, buttons, composer, home bar and the chat
+ * bubbles' outlines each travel into the nearest shape of the drawing (place, size, corners, stroke,
+ * peach to deep beige), and any left over shrink away. Both ends are measured in the section, so every
+ * shape lands exactly where the beige layer then keeps it. `m` (0 to 1) is the morph.
  */
-function MorphOutline({ m, section }: { m: number; section: RefObject<HTMLElement> }) {
-  const [ends, setEnds] = useState<{ w: number; h: number; from: Outline; to: Outline } | null>(null);
+function PhoneMorph({ m, section }: { m: number; section: RefObject<HTMLElement> }) {
+  const [ends, setEnds] = useState<{ w: number; h: number; pairs: PartPair[] } | null>(null);
 
   useLayoutEffect(() => {
     const measure = () => {
@@ -159,11 +186,39 @@ function MorphOutline({ m, section }: { m: number; section: RefObject<HTMLElemen
       const o = root.getBoundingClientRect();
       const a = phone.getBoundingClientRect();
       const b = art.getBoundingClientRect();
+      const place = (part: Part, box: DOMRect, sx: number, sy: number): Part => ({
+        x: box.left - o.left + part.x * sx,
+        y: box.top - o.top + part.y * sy,
+        w: part.w * sx,
+        h: part.h * sy,
+        r: part.r * sx,
+        opacity: part.opacity,
+        width: part.width * sx,
+      });
+      const onPhone = (part: Part) => place(part, a, a.width / 390, a.height / 844);
+      const onArt = (part: Part) => place(part, b, b.width / 400, b.height / 320);
+      const bubbles = Array.from(root.querySelectorAll<HTMLElement>(".doehealth-desk2-visible__bubble")).map((el): Part => {
+        const box = el.getBoundingClientRect();
+        const scale = el.offsetWidth ? box.width / el.offsetWidth : 1;
+        return {
+          x: box.left - o.left,
+          y: box.top - o.top,
+          w: box.width,
+          h: box.height,
+          r: (parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0) * scale,
+          opacity: el.classList.contains("doehealth-desk2-visible__bubble--out") ? 1 : 0.55,
+          width: 1.5 * scale,
+        };
+      });
+      const frame = onArt(DOEHEALTH_DESK2_FIND_FRAME);
       setEnds({
         w: o.width,
         h: o.height,
-        from: { x: a.left - o.left + (a.width * 2) / 390, y: a.top - o.top + (a.height * 2) / 844, w: (a.width * 386) / 390, h: (a.height * 840) / 844, r: (a.width * 62) / 390, s: (a.width * 1.6) / 390 },
-        to: { x: b.left - o.left + (b.width * 20) / 400, y: b.top - o.top + (b.height * 30) / 320, w: (b.width * 360) / 400, h: (b.height * 260) / 320, r: (b.width * 16) / 400, s: (b.width * 1.4) / 400 },
+        pairs: [
+          { a: onPhone(PHONE_BODY), b: frame },
+          { a: onPhone(PHONE_SCREEN), b: frame },
+          ...pairUp([...PHONE_PARTS.map(onPhone), ...bubbles], DOEHEALTH_DESK2_FIND_ARRIVALS.map(onArt)),
+        ],
       });
     };
     measure();
@@ -174,11 +229,22 @@ function MorphOutline({ m, section }: { m: number; section: RefObject<HTMLElemen
   if (!ends) return null;
   const k = smooth(m);
   const mix = (a: number, b: number) => a + (b - a) * k;
-  const { from: f, to: t } = ends;
   const [r, g, b] = PEACH.map((c, i) => Math.round(mix(c, DEEP_BEIGE[i])));
   return (
-    <svg className="doehealth-desk2-visible__morph" viewBox={`0 0 ${ends.w} ${ends.h}`} fill="none" aria-hidden="true" style={vars({ "--m": k })}>
-      <rect x={mix(f.x, t.x)} y={mix(f.y, t.y)} width={mix(f.w, t.w)} height={mix(f.h, t.h)} rx={mix(f.r, t.r)} stroke={`rgb(${r} ${g} ${b})`} strokeWidth={mix(f.s, t.s)} />
+    <svg className="doehealth-desk2-visible__morph" viewBox={`0 0 ${ends.w} ${ends.h}`} fill="none" aria-hidden="true" stroke={`rgb(${r} ${g} ${b})`} style={vars({ "--m": k })}>
+      {ends.pairs.map(({ a, b: to, fade }, i) => (
+        <rect
+          key={i}
+          x={mix(a.x, to.x)}
+          y={mix(a.y, to.y)}
+          width={mix(a.w, to.w)}
+          height={mix(a.h, to.h)}
+          rx={mix(a.r, to.r)}
+          strokeWidth={mix(a.width, to.width)}
+          strokeOpacity={mix(a.opacity, to.opacity)}
+          opacity={fade === "in" ? k : fade === "out" ? 1 - k : 1}
+        />
+      ))}
     </svg>
   );
 }
@@ -233,11 +299,11 @@ export function DoeHealthDesk2AudienceSection() {
   const introOpacity = 1 - ramp(p, RAMP.introFade);
   const threadOpacity = ramp(p, RAMP.threadIn) * (1 - ramp(p, [RAMP.unbuild[1], RAMP.unbuild[1] + 0.05]));
   const chatOpacity = 1 - ramp(p, RAMP.chatOut);
-  const stampDraw = ramp(p, RAMP.stamp) - ramp(p, RAMP.stampOut);
-  const askDraw = ramp(p, RAMP.ask) - ramp(p, RAMP.askOut);
-  const replyDraw = ramp(p, RAMP.reply) - ramp(p, RAMP.replyOut);
-  /** From here to FIND_FROM the morph outline stands in for the phone's body. */
-  const morphing = p >= RAMP.unbuild[0] && p < FIND_FROM;
+  const stampIn = ramp(p, RAMP.stamp);
+  const askIn = ramp(p, RAMP.ask);
+  const replyIn = ramp(p, RAMP.reply);
+  /** From here to FIND_FROM the morph stands in for the phone and the bubbles' outlines. */
+  const morphing = p >= RAMP.morph[0] && p < FIND_FROM;
   const beige = ramp(p, RAMP.beigeIn) * (1 - ramp(p, FINAL.beigeOut));
   const titleOpacity = ramp(p, FINAL.titleIn);
   const searchShown = ramp(p, FINAL.prompt);
@@ -276,19 +342,24 @@ export function DoeHealthDesk2AudienceSection() {
           {/* The phone draws in whole, then grows toward the left until only its lower part shows. */}
           <div className="doehealth-desk2-visible__stage" style={vars({ "--z": smooth(ramp(p, RAMP.zoom)) })}>
             <div className="doehealth-desk2-visible__iphone">
-              <PhoneOutline t={ramp(p, RAMP.phone) - ramp(p, RAMP.unbuild)} body={p < RAMP.unbuild[0]} />
+              {morphing || p >= FIND_FROM ? null : <PhoneOutline t={ramp(p, RAMP.phone)} />}
               <div className="doehealth-desk2-visible__chat">
                 <div className="doehealth-desk2-visible__thread">
-                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--center" style={vars({ "--e": stampDraw })}>
-                    <p className="doehealth-desk2-visible__stamp desk2-genome-swipe desk2-genome-swipe--salmon" style={vars({ "--s": stampDraw })}>
+                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--center" style={vars({ "--e": stampIn })}>
+                    <p className="doehealth-desk2-visible__stamp desk2-genome-swipe desk2-genome-swipe--salmon" style={vars({ "--s": stampIn - ramp(p, RAMP.stampOut) })}>
                       <strong>{thread.day}</strong> {thread.time}
                     </p>
                   </div>
-                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--out" style={vars({ "--e": askDraw })}>
-                    <DrawnBubble text={thread.ask} d={askDraw} out />
+                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--out" style={vars({ "--e": askIn })}>
+                    <DrawnBubble
+                      text={thread.ask}
+                      line={p < RAMP.morph[0] ? seg(askIn, 0, 0.6) : 0}
+                      sweep={seg(askIn, 0.35, 0.65) - ramp(p, RAMP.askOut)}
+                      out
+                    />
                   </div>
-                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--in" style={vars({ "--e": replyDraw })}>
-                    <DrawnBubble text={thread.reply} d={replyDraw} />
+                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--in" style={vars({ "--e": replyIn })}>
+                    <DrawnBubble text={thread.reply} line={p < RAMP.morph[0] ? seg(replyIn, 0, 0.6) : 0} sweep={seg(replyIn, 0.35, 0.65) - ramp(p, RAMP.replyOut)} />
                   </div>
                 </div>
               </div>
@@ -305,7 +376,7 @@ export function DoeHealthDesk2AudienceSection() {
           {p >= RAMP.unbuild[0] && p < FINAL.beigeOut[1] ? <DoeHealthDesk2FindScenes p={p - FIND_FROM} /> : null}
         </div>
 
-        {morphing ? <MorphOutline m={ramp(p, RAMP.morph)} section={sectionRef} /> : null}
+        {morphing ? <PhoneMorph m={ramp(p, RAMP.morph)} section={sectionRef} /> : null}
 
         <div className="doehealth-desk2-visible__scene" style={vars({ "--o": titleOpacity })} aria-hidden={titleOpacity < 0.5}>
           {/* Halftone tides along both side edges, rolling in motion behind the closing title. */}
