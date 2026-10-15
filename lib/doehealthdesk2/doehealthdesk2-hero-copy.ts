@@ -10,7 +10,7 @@ export const DOEHEALTH_DESK2_HERO_DEK = [
   "clinics & personal AI agents.",
 ] as const;
 
-export const DOEHEALTH_DESK2_HERO_SECURE = "Join our waitlist & secure founding prices";
+export const DOEHEALTH_DESK2_HERO_SECURE = "Join our waitlist";
 
 /** Rotating audience on line 2 — order is intentional. */
 export const DOEHEALTH_DESK2_HERO_AUDIENCE = [

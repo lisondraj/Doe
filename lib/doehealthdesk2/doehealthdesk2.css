@@ -700,8 +700,9 @@
   color: var(--doehealth-desk2-ink);
   font-size: 0.95rem;
   font-weight: 500;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.06em;
   line-height: 1.3;
+  text-transform: uppercase;
 }
 
 .doehealth-desk2-hero__email {
