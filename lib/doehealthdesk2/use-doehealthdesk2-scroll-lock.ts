@@ -14,6 +14,8 @@ const LOCK_SETTLE_MS = 320;
 const VIEWPORT_SETTLE_MS = 450;
 /** Desktop only (same breakpoint as the desk variant): the phone layout is not paced. */
 const DESKTOP_QUERY = "(min-width: 1024px)";
+/** iPhone: page scroll (px) through the sticky track that moves the section one progress unit. */
+export const DOEHEALTH_DESK2_PHONE_STEP_PX = 200;
 /** Desktop only: the most progress per second that wheel or key input can add, so a rapid flick moves no faster than a steady scroll. */
 const DESKTOP_PACE_PER_S = 0.75;
 /** Desktop only: the most progress that can build up and be spent at once. A single notch always moves right away. */
@@ -39,6 +41,10 @@ const isTyping = (target: EventTarget | null) =>
  * the page scrolls on. Once progress has reached `end` the section is done: it stays on its last scene
  * and never locks again. Returns the progress (the only clock the section's motion uses) and `skip`,
  * which jumps straight to the end.
+ *
+ * iPhone: the page is never held. Safari scrolls on its compositor, so every scrollTo correction lands
+ * a frame late and reads as a judder. Instead the section is `position: sticky` inside a taller track
+ * (its parent), the page scrolls natively, and progress follows how far the track has scrolled by.
  */
 export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, end: number) {
   const [p, setP] = useState(0);
@@ -63,6 +69,18 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     let settleTimer = 0;
 
     const desktopPaced = () => window.matchMedia(DESKTOP_QUERY).matches;
+    const phone = () => !desktopPaced();
+    const track = section.parentElement;
+
+    /** iPhone: progress is how far the sticky track has scrolled, scrubbing both ways. */
+    const followTrack = () => {
+      const run = track ? track.offsetHeight - section.offsetHeight : 0;
+      const into = track ? -track.getBoundingClientRect().top : 0;
+      const next = run > 0 ? Math.min(end, Math.max(0, (into / run) * end)) : into > 0 ? end : 0;
+      if (next === progress) return;
+      progress = next;
+      publish();
+    };
     const paceDelta = (delta: number) => {
       const now = performance.now();
       tokens = Math.min(DESKTOP_PACE_BURST, tokens + ((now - tokensAt) / 1000) * DESKTOP_PACE_PER_S);
@@ -142,6 +160,11 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       const y = window.scrollY;
       const dir = y - lastY;
       lastY = y;
+      if (phone()) {
+        if (locked) setLocked(false);
+        followTrack();
+        return;
+      }
       const top = section.getBoundingClientRect().top;
       const vh = window.innerHeight;
 
@@ -205,6 +228,10 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
 
     /** Viewport resize (Safari's toolbar): hold corrections while it animates, then re-align once it settles. */
     const onViewportResize = () => {
+      if (phone()) {
+        followTrack();
+        return;
+      }
       if (!locked) return;
       settling = true;
       window.clearTimeout(settleTimer);
@@ -215,6 +242,11 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     };
 
     skipRef.current = () => {
+      if (phone() && track) {
+        const run = track.offsetHeight - section.offsetHeight;
+        jumpTo(window.scrollY + track.getBoundingClientRect().top + Math.max(0, run));
+        return;
+      }
       progress = end;
       finish();
       publish();

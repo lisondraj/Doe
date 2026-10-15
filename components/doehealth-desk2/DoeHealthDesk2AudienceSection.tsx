@@ -14,7 +14,12 @@ import {
 } from "@/lib/doehealthdesk2/doehealthdesk2-story-copy";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 import { WAITLIST_PATH } from "@/lib/site-domains";
-import { cssVars as vars, scrollRamp as ramp, useDoeHealthDesk2ScrollLock } from "@/lib/doehealthdesk2/use-doehealthdesk2-scroll-lock";
+import {
+  cssVars as vars,
+  DOEHEALTH_DESK2_PHONE_STEP_PX,
+  scrollRamp as ramp,
+  useDoeHealthDesk2ScrollLock,
+} from "@/lib/doehealthdesk2/use-doehealthdesk2-scroll-lock";
 
 /**
  * Every motion is a ramp over scroll progress: [start, end] in progress units. Nothing runs on a
@@ -220,102 +225,104 @@ export function DoeHealthDesk2AudienceSection() {
   }, [navWash]);
 
   return (
-    <section
-      ref={sectionRef}
-      className={`doehealth-desk2-visible doehealth-desk2-nav-wash-surface ${p22Mackinac.className}`}
-      data-nav-wash={navWash}
-      data-nav-beige={beige.toFixed(4)}
-      aria-label="Personal agents and your clinic"
-    >
-      <div className="doehealth-desk2-visible__scene" style={vars({ "--o": introOpacity })} aria-hidden={introOpacity < 0.5}>
-        {/* The dot wave along the bottom; it fades with this scene, so it's gone once the iPhone comes in. */}
-        {/* Revealed by the same swipe as this intro's title (--s), so the two start together. */}
-        {/* Mounted only while the intro shows: its canvas redraws every frame, which is heavy on an iPhone. */}
-        {introOpacity > 0.01 ? (
-          <div className="doehealth-desk2-visible__dots" style={vars({ "--s": ramp(p, RAMP.introSwipe) })}>
-            <div className="doehealth-desk2-visible__dots-fade">
-              <DoeHealthBlogDotWave color="rgba(252, 207, 184, 0.6)" top={0.3} amp={60} fade={0.5} />
+    <div className="doehealth-desk2-visible-track" style={vars({ "--desk2-visible-run": END * DOEHEALTH_DESK2_PHONE_STEP_PX })}>
+      <section
+        ref={sectionRef}
+        className={`doehealth-desk2-visible doehealth-desk2-nav-wash-surface ${p22Mackinac.className}`}
+        data-nav-wash={navWash}
+        data-nav-beige={beige.toFixed(4)}
+        aria-label="Personal agents and your clinic"
+      >
+        <div className="doehealth-desk2-visible__scene" style={vars({ "--o": introOpacity })} aria-hidden={introOpacity < 0.5}>
+          {/* The dot wave along the bottom; it fades with this scene, so it's gone once the iPhone comes in. */}
+          {/* Revealed by the same swipe as this intro's title (--s), so the two start together. */}
+          {/* Mounted only while the intro shows: its canvas redraws every frame, which is heavy on an iPhone. */}
+          {introOpacity > 0.01 ? (
+            <div className="doehealth-desk2-visible__dots" style={vars({ "--s": ramp(p, RAMP.introSwipe) })}>
+              <div className="doehealth-desk2-visible__dots-fade">
+                <DoeHealthBlogDotWave color="rgba(252, 207, 184, 0.6)" top={0.3} amp={60} fade={0.5} />
+              </div>
             </div>
-          </div>
-        ) : null}
-        <SwipeTitle parts={DOEHEALTH_DESK2_VISIBLE_INTRO} s={ramp(p, RAMP.introSwipe)} lines wide />
-      </div>
+          ) : null}
+          <SwipeTitle parts={DOEHEALTH_DESK2_VISIBLE_INTRO} s={ramp(p, RAMP.introSwipe)} lines wide />
+        </div>
 
-      <div className="doehealth-desk2-visible__scene" style={vars({ "--o": threadOpacity })} aria-hidden={threadOpacity < 0.5}>
-        {/* The phone draws in whole, then grows toward the left until only its lower part shows. */}
-        <div className="doehealth-desk2-visible__stage" style={vars({ "--z": smooth(ramp(p, RAMP.zoom)) })}>
-          <div className="doehealth-desk2-visible__iphone">
-            <PhoneOutline t={ramp(p, RAMP.phone) - ramp(p, RAMP.unbuild)} body={p < RAMP.unbuild[0]} />
-            <div className="doehealth-desk2-visible__chat" style={{ opacity: chatOpacity }}>
-              <div className="doehealth-desk2-visible__thread">
-                <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--center" style={vars({ "--e": ramp(p, RAMP.ask) })}>
-                  <p className="doehealth-desk2-visible__stamp">
-                    <strong>{thread.day}</strong> {thread.time}
-                  </p>
-                </div>
-                <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--out" style={vars({ "--e": ramp(p, RAMP.ask) })}>
-                  <p className="doehealth-desk2-visible__bubble doehealth-desk2-visible__bubble--out">{thread.ask}</p>
-                </div>
-                <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--in" style={vars({ "--e": ramp(p, RAMP.reply) })}>
-                  <p className="doehealth-desk2-visible__bubble">{thread.reply}</p>
+        <div className="doehealth-desk2-visible__scene" style={vars({ "--o": threadOpacity })} aria-hidden={threadOpacity < 0.5}>
+          {/* The phone draws in whole, then grows toward the left until only its lower part shows. */}
+          <div className="doehealth-desk2-visible__stage" style={vars({ "--z": smooth(ramp(p, RAMP.zoom)) })}>
+            <div className="doehealth-desk2-visible__iphone">
+              <PhoneOutline t={ramp(p, RAMP.phone) - ramp(p, RAMP.unbuild)} body={p < RAMP.unbuild[0]} />
+              <div className="doehealth-desk2-visible__chat" style={{ opacity: chatOpacity }}>
+                <div className="doehealth-desk2-visible__thread">
+                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--center" style={vars({ "--e": ramp(p, RAMP.ask) })}>
+                    <p className="doehealth-desk2-visible__stamp">
+                      <strong>{thread.day}</strong> {thread.time}
+                    </p>
+                  </div>
+                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--out" style={vars({ "--e": ramp(p, RAMP.ask) })}>
+                    <p className="doehealth-desk2-visible__bubble doehealth-desk2-visible__bubble--out">{thread.ask}</p>
+                  </div>
+                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--in" style={vars({ "--e": ramp(p, RAMP.reply) })}>
+                    <p className="doehealth-desk2-visible__bubble">{thread.reply}</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <p className="doehealth-desk2-visible__caption" style={vars({ "--e": ramp(p, RAMP.caption) * chatOpacity })}>
+            {thread.caption.map((line) => (
+              <span key={line}>{line}</span>
+            ))}
+          </p>
         </div>
-        <p className="doehealth-desk2-visible__caption" style={vars({ "--e": ramp(p, RAMP.caption) * chatOpacity })}>
-          {thread.caption.map((line) => (
-            <span key={line}>{line}</span>
-          ))}
-        </p>
-      </div>
 
-      <div className="doehealth-desk2-find" style={vars({ "--o": beige })} aria-hidden={beige < 0.5}>
-        {p >= RAMP.unbuild[0] && p < FINAL.beigeOut[1] ? <DoeHealthDesk2FindScenes p={p - FIND_FROM} /> : null}
-      </div>
+        <div className="doehealth-desk2-find" style={vars({ "--o": beige })} aria-hidden={beige < 0.5}>
+          {p >= RAMP.unbuild[0] && p < FINAL.beigeOut[1] ? <DoeHealthDesk2FindScenes p={p - FIND_FROM} /> : null}
+        </div>
 
-      {morphing ? <MorphOutline m={ramp(p, RAMP.morph)} section={sectionRef} /> : null}
+        {morphing ? <MorphOutline m={ramp(p, RAMP.morph)} section={sectionRef} /> : null}
 
-      <div className="doehealth-desk2-visible__scene" style={vars({ "--o": titleOpacity })} aria-hidden={titleOpacity < 0.5}>
-        {/* Halftone tides along both side edges, rolling in motion behind the closing title. */}
-        {/* Revealed by the same swipe as the title (--s), so the two start together. */}
-        {/* Mounted only while the closing title shows, for the same reason as the intro dots. */}
-        {titleOpacity > 0.01 ? (
-          <div className="doehealth-desk2-visible__tide" style={vars({ "--s": ramp(p, FINAL.titleSwipe) })}>
-            <DoeHealthDesk2DotTide color="rgba(252, 207, 184, 0.6)" />
-          </div>
-        ) : null}
-        <SwipeTitle parts={DOEHEALTH_DESK2_VISIBLE.title} s={ramp(p, FINAL.titleSwipe)} />
-        <p className="doehealth-desk2-visible__sub" style={vars({ "--e": ramp(p, FINAL.prompt) })}>
-          <span className="desk2-genome-swipe desk2-genome-swipe--salmon" style={vars({ "--s": ramp(p, FINAL.promptSwipe) })}>
-            {DOEHEALTH_DESK2_VISIBLE.prompt}
-          </span>
-        </p>
-        <form ref={searchRef} className={`doehealth-desk2-visible__search ${inter.className}`} action={WAITLIST_PATH} method="get" style={vars({ "--e": searchShown })}>
-          <SearchOutline draw={ramp(p, FINAL.search)} box={searchRef} />
-          <input
-            type="text"
-            name="website"
-            inputMode="url"
-            autoComplete="url"
-            spellCheck={false}
-            aria-label={search.label}
-            placeholder={search.placeholder}
-            tabIndex={searchShown < 0.5 ? -1 : undefined}
-          />
-          <button type="submit" aria-label={search.submit} tabIndex={searchShown < 0.5 ? -1 : undefined}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+        <div className="doehealth-desk2-visible__scene" style={vars({ "--o": titleOpacity })} aria-hidden={titleOpacity < 0.5}>
+          {/* Halftone tides along both side edges, rolling in motion behind the closing title. */}
+          {/* Revealed by the same swipe as the title (--s), so the two start together. */}
+          {/* Mounted only while the closing title shows, for the same reason as the intro dots. */}
+          {titleOpacity > 0.01 ? (
+            <div className="doehealth-desk2-visible__tide" style={vars({ "--s": ramp(p, FINAL.titleSwipe) })}>
+              <DoeHealthDesk2DotTide color="rgba(252, 207, 184, 0.6)" />
+            </div>
+          ) : null}
+          <SwipeTitle parts={DOEHEALTH_DESK2_VISIBLE.title} s={ramp(p, FINAL.titleSwipe)} />
+          <p className="doehealth-desk2-visible__sub" style={vars({ "--e": ramp(p, FINAL.prompt) })}>
+            <span className="desk2-genome-swipe desk2-genome-swipe--salmon" style={vars({ "--s": ramp(p, FINAL.promptSwipe) })}>
+              {DOEHEALTH_DESK2_VISIBLE.prompt}
+            </span>
+          </p>
+          <form ref={searchRef} className={`doehealth-desk2-visible__search ${inter.className}`} action={WAITLIST_PATH} method="get" style={vars({ "--e": searchShown })}>
+            <SearchOutline draw={ramp(p, FINAL.search)} box={searchRef} />
+            <input
+              type="text"
+              name="website"
+              inputMode="url"
+              autoComplete="url"
+              spellCheck={false}
+              aria-label={search.label}
+              placeholder={search.placeholder}
+              tabIndex={searchShown < 0.5 ? -1 : undefined}
+            />
+            <button type="submit" aria-label={search.submit} tabIndex={searchShown < 0.5 ? -1 : undefined}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </form>
+        </div>
+
+        {p > 0 && p < END ? (
+          <button type="button" className="doehealth-desk2-visible__skip" style={vars({ "--b": beige })} aria-label="Skip to see if your clinic was included" onClick={skip}>
+            <SkipIcon />
           </button>
-        </form>
-      </div>
-
-      {p > 0 && p < END ? (
-        <button type="button" className="doehealth-desk2-visible__skip" style={vars({ "--b": beige })} aria-label="Skip to see if your clinic was included" onClick={skip}>
-          <SkipIcon />
-        </button>
-      ) : null}
-    </section>
+        ) : null}
+      </section>
+    </div>
   );
 }
