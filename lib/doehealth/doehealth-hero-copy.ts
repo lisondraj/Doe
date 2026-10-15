@@ -2,7 +2,7 @@
 export const DOEHEALTH_HERO_GENOME_COPY = {
   eyebrow: "Introducing",
   title: "Genome 1.0",
-  subheadingLine1: "Health deserves",
+  subheadingLine1: "Health deserves.",
   subheadingLine2: "personalized intelligence.",
 } as const;
 
