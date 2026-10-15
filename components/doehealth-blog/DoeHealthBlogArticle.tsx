@@ -12,7 +12,8 @@ function ArticleBlock({ block }: { block: DoeHealthBlogBlock }) {
     case "figure":
       return (
         <figure className="doehealth-blog-article__figure">
-          <DoeHealthBlogPlaceholder tone="sand" className="doehealth-blog-article__figure-art" />
+          {/* Static — motion stays reserved for the hero above. */}
+          <DoeHealthBlogPlaceholder tone={block.tone} className="doehealth-blog-article__figure-art" pattern />
           <figcaption>{block.caption}</figcaption>
         </figure>
       );
@@ -53,7 +54,8 @@ export function DoeHealthBlogArticle({ article }: { article: Article }) {
         </p>
       </header>
 
-      <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-article__hero" pattern />
+      {/* The one box on the page that keeps motion — every other dot pattern on the article holds still. */}
+      <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-article__hero" pattern motion />
 
       <div className="doehealth-blog-article__body">
         <p className="doehealth-blog-article__lede">{article.lede}</p>

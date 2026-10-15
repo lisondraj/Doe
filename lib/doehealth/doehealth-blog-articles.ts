@@ -1,6 +1,7 @@
 export const DOEHEALTH_BLOG_PATH = "/doehealthblog";
 
-export type DoeHealthBlogPlaceholderTone = "sand" | "salmon" | "sage" | "brown";
+/** Doe brand colours only — three beige shades for hero art, three accent tones for body figures. */
+export type DoeHealthBlogPlaceholderTone = "sand" | "panel" | "cream" | "gold" | "clay" | "umber";
 
 export type DoeHealthBlogBlock =
   | { type: "paragraph"; text: string }
@@ -56,7 +57,7 @@ const PERSONAL_AGENTS: DoeHealthBlogArticle = {
     },
     {
       type: "figure",
-      tone: "salmon",
+      tone: "gold",
       caption: "A personal agent asks the same questions a patient would, but it needs the answers in a form it can read.",
     },
     {
@@ -112,7 +113,7 @@ const PERSONAL_AGENTS: DoeHealthBlogArticle = {
     },
     {
       type: "figure",
-      tone: "sage",
+      tone: "clay",
       caption: "The index turns a practice's tacit knowledge into answers an agent can act on.",
     },
     { type: "heading", text: "From search to the whole visit." },
@@ -161,7 +162,7 @@ const DOCTOR_LED_DESIGN: DoeHealthBlogArticle = {
   date: "October 7, 2026",
   excerpt:
     "Clinical software is usually designed for the people who buy it. We design Doe with the people who use it, in the rooms where care happens.",
-  heroTone: "salmon",
+  heroTone: "panel",
   lede: "The best design decisions in healthcare software are made by people who have stood in the room when it fails.",
   blocks: [
     {
@@ -183,7 +184,7 @@ const DOCTOR_LED_DESIGN: DoeHealthBlogArticle = {
     },
     {
       type: "figure",
-      tone: "sand",
+      tone: "clay",
       caption: "Every workflow begins as an observation in a real clinic, not a requirement in a document.",
     },
     { type: "heading", text: "Clinical judgment is a design material." },
@@ -231,7 +232,7 @@ const DOCTOR_LED_DESIGN: DoeHealthBlogArticle = {
     },
     {
       type: "figure",
-      tone: "sage",
+      tone: "umber",
       caption: "Review sits where clinicians already work, with the reasoning behind each draft one glance away.",
     },
     { type: "heading", text: "Built for the 9:40 slot." },
@@ -267,7 +268,7 @@ const ONE_PRICE: DoeHealthBlogArticle = {
   date: "September 30, 2026",
   excerpt:
     "Seats, modules, minutes, and tokens make healthcare AI hard to buy and harder to trust. We think a practice's intelligence should come at one clear price.",
-  heroTone: "brown",
+  heroTone: "cream",
   lede: "If a practice has to do math before every call its agents take, the pricing is working against the care.",
   blocks: [
     {
@@ -289,7 +290,7 @@ const ONE_PRICE: DoeHealthBlogArticle = {
     },
     {
       type: "figure",
-      tone: "sand",
+      tone: "umber",
       caption: "Line-item pricing makes the most useful work the most expensive to run.",
     },
     {
@@ -333,7 +334,7 @@ const ONE_PRICE: DoeHealthBlogArticle = {
     },
     {
       type: "figure",
-      tone: "salmon",
+      tone: "gold",
       caption: "Every agent runs on the same model, so the next workflow is a switch, not a purchase.",
     },
     { type: "heading", text: "Why it matters for independent practices." },

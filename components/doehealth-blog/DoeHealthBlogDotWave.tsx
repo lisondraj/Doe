@@ -12,14 +12,27 @@ const REF_W = 1920;
  * Halftone dot wave from video1 Video 2, drawn live on a canvas that fills its box. It rolls over time
  * and holds still for reduced motion.
  */
-export function DoeHealthBlogDotWave({ color, top = 0.44, amp = 70, fade = 0 }: { color: string; top?: number; amp?: number; fade?: number }) {
+export function DoeHealthBlogDotWave({
+  color,
+  top = 0.44,
+  amp = 70,
+  fade = 0,
+  motion = true,
+}: {
+  color: string;
+  top?: number;
+  amp?: number;
+  fade?: number;
+  /** false holds the wave on one still frame — same path reduced-motion already takes. */
+  motion?: boolean;
+}) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = ref.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = !motion || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const start = performance.now();
     let w = 0;
     let h = 0;
@@ -79,7 +92,7 @@ export function DoeHealthBlogDotWave({ color, top = 0.44, amp = 70, fade = 0 }: 
       cancelAnimationFrame(raf);
       observer.disconnect();
     };
-  }, [color, top, amp, fade]);
+  }, [color, top, amp, fade, motion]);
 
   return <canvas ref={ref} className="doehealth-blog-dotwave" aria-hidden />;
 }

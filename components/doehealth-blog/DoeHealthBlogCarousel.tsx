@@ -76,7 +76,8 @@ export function DoeHealthBlogCarousel({ currentSlug }: { currentSlug: string }) 
           {posts.map((post) => (
             <li key={post.slug} className="doehealth-blog-carousel__slide">
               <Link href={doehealthBlogArticlePath(post.slug)} className="doehealth-blog-card">
-                <DoeHealthBlogPlaceholder tone={post.heroTone} className="doehealth-blog-card__art" />
+                {/* Static — the preview carousel never animates, even for a hero that does on its own page. */}
+                <DoeHealthBlogPlaceholder tone={post.heroTone} className="doehealth-blog-card__art" pattern />
                 <p className="doehealth-blog-card__eyebrow">{post.eyebrow}</p>
                 <h3 className={`doehealth-blog-card__title ${p22Mackinac.className}`}>
                   {post.title.map((line) => (
