@@ -1,0 +1,15 @@
+import type { Metadata } from "next";
+
+import { DoeHealthCareersPage } from "@/components/doehealth-careers/DoeHealthCareersPage";
+import { doehealthDesk2InitialVariant } from "@/lib/doehealthdesk2/doehealthdesk2-initial-variant";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Careers · Doe",
+  description: "Open roles at Doe across engineering, product, and sales.",
+};
+
+export default function CareersRoute() {
+  return <DoeHealthCareersPage initialVariant={doehealthDesk2InitialVariant()} />;
+}
