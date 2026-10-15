@@ -68,6 +68,7 @@ export function DoeHealthDesk2DesktopNavBar({
             divider={heroCtaDivider}
             linksEnabled={navActionLinksEnabled}
             showMailIcon={false}
+            showWaitlistButton={false}
             primaryCtaLabel="Waitlist"
             primaryCtaHref={DOEHEALTH_DESK2_NAV_PRIMARY_CTA.href}
             primaryCtaDropdownItems={DOEHEALTH_DESK2_NAV_PRIMARY_CTA_DROPDOWN_ITEMS}

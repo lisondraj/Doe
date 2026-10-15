@@ -24,6 +24,7 @@ export function DesktopNavActionRow({
   punched = false,
   dropdownEnabled = true,
   showMailIcon = true,
+  showWaitlistButton = true,
   showInvestorsCta = true,
   primaryCtaLabel,
   primaryCtaHref,
@@ -38,6 +39,8 @@ export function DesktopNavActionRow({
   punched?: boolean;
   dropdownEnabled?: boolean;
   showMailIcon?: boolean;
+  /** The pill Waitlist button beside the CTA. Only shown on doehealth landing-nav contexts. */
+  showWaitlistButton?: boolean;
   showInvestorsCta?: boolean;
   primaryCtaLabel?: string;
   primaryCtaHref?: string;
@@ -115,7 +118,7 @@ export function DesktopNavActionRow({
         />
       ) : null}
 
-      <DesktopNavWaitlistButton shadow={shadow} punched={punched} />
+      {showWaitlistButton ? <DesktopNavWaitlistButton shadow={shadow} punched={punched} /> : null}
 
       {showInvestorsCta ? (
         <DesktopMainNavCta
