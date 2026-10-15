@@ -948,6 +948,8 @@
 
 /* The hero photo: the full column width, at the photo's own proportions, with the page's corner radius. */
 .desk2-workspace__photo {
+  position: relative;
+  container-type: inline-size;
   margin: 0;
   width: 100%;
   aspect-ratio: 1672 / 941;
@@ -960,6 +962,61 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Founder names on the photo: plain text, no shadow or box. Sized to the photo, so they scale with it. */
+.desk2-workspace__person {
+  position: absolute;
+  margin: 0;
+  color: var(--doehealth-desk2-surface);
+  pointer-events: none;
+}
+
+.desk2-workspace__person--james {
+  left: 3.2%;
+  bottom: 5%;
+  text-align: left;
+}
+
+/* Right side, a little in from the edge, level with the stools' seats. */
+.desk2-workspace__person--matthew {
+  right: 4%;
+  top: 68%;
+  text-align: right;
+}
+
+.desk2-workspace__name {
+  margin: 0;
+  font-size: clamp(0.85rem, 1.7cqw, 1.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.desk2-workspace__role {
+  margin: 0.25em 0 0;
+  font-size: clamp(0.7rem, 1.15cqw, 0.98rem);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+/* iPhone: the photo is only ~370px wide, so the names are set smaller to keep clear of the stools' legs. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace__person--james {
+  left: 3%;
+  bottom: 4%;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace__person--matthew {
+  right: 3%;
+  top: 55%;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace__name {
+  font-size: 0.8rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace__role {
+  margin-top: 0.15em;
+  font-size: 0.64rem;
 }
 
 .desk2-paper-slot {

@@ -4,8 +4,9 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
+import { inter, p22Mackinac } from "@/lib/home/fonts";
 
-/** Sunlit lounge photo (1672 × 941), rounded to the page's corner radius. The bottom veil lifts as you scroll. */
+/** Sunlit lounge photo (1672 × 941), rounded to the page's corner radius, with the two founder names on it. The bottom veil lifts as you scroll. */
 export function DoeHealthDesk2Workspace() {
   const [shown, setShown] = useState(false);
   const fadeRef = useRef<HTMLDivElement>(null);
@@ -64,6 +65,14 @@ export function DoeHealthDesk2Workspace() {
             sizes="(min-width: 1024px) 80vw, 100vw"
             priority
           />
+          <div className={`desk2-workspace__person desk2-workspace__person--james ${p22Mackinac.className}`}>
+            <p className="desk2-workspace__name">James Lisondra</p>
+            <p className={`desk2-workspace__role ${inter.className}`}>Founder, Medicine</p>
+          </div>
+          <div className={`desk2-workspace__person desk2-workspace__person--matthew ${p22Mackinac.className}`}>
+            <p className="desk2-workspace__name">Matthew Lisondra</p>
+            <p className={`desk2-workspace__role ${inter.className}`}>Founder, Engineering</p>
+          </div>
         </figure>
       </div>
       <div ref={fadeRef} className="desk2-workspace__fade" aria-hidden />
