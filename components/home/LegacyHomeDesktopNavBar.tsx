@@ -7,8 +7,8 @@ import { DoeHealthDeskAnnounceStrip } from "@/components/doehealth-desk/DoeHealt
 import { DesktopNavActionRow } from "@/components/nav/DesktopNavActionRow";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import {
-  DOEHEALTH_DESK_NAV_CENTER_LINKS,
   DOEHEALTH_DESK_NAV_PRIMARY_CTA,
+  doehealthDeskNavCenterLinks,
 } from "@/lib/doehealth/doehealth-desk-nav-copy";
 import { useDoeHealthDeskBannerHeight } from "@/lib/doehealth/use-doehealth-desk-banner-height";
 import { inter, lora } from "@/lib/home/fonts";
@@ -17,9 +17,12 @@ import { inter, lora } from "@/lib/home/fonts";
 export function LegacyHomeDesktopNavBar({
   logoLink = true,
   navActionLinksEnabled = true,
+  sectionHrefBase = "",
 }: {
   logoLink?: boolean;
   navActionLinksEnabled?: boolean;
+  /** Prefix for `#section` links when the sections live on another page. */
+  sectionHrefBase?: string;
 } = {}) {
   const heroWaitlistBg = "var(--desk-nav-button-bg, #281910)";
   const heroWaitlistFg = "var(--desk-nav-button-fg, #fffcf1)";
@@ -49,7 +52,7 @@ export function LegacyHomeDesktopNavBar({
         )}
 
         <nav className="doehealth-desk-nav__links" aria-label="Page sections">
-          {DOEHEALTH_DESK_NAV_CENTER_LINKS.map((item) => (
+          {doehealthDeskNavCenterLinks(sectionHrefBase).map((item) => (
             <Link key={item.href + item.label} href={item.href} className="doehealth-desk-nav__link">
               {item.label}
             </Link>

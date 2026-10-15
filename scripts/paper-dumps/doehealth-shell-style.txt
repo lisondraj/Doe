@@ -1,0 +1,1 @@
+box-sizing:border-box;display:flex;flex-direction:column;width:390px;height:844px;overflow:hidden;position:relative;background-color:#FAF0D8;

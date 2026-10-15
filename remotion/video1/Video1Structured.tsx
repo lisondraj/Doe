@@ -631,13 +631,16 @@ function ServicesMain({ selected }: { selected: number[] }) {
         </div>
       </div>
       {SERVICES.map((service, i) => (
-        <ServiceCard key={service.name} service={service} selected={selected.includes(i)} style={{ left: GRID.x + (i % 3) * (GRID.colW + GRID.gap), top: GRID.y + Math.floor(i / 3) * (GRID.rowH + GRID.gap) }} />
+        <ServiceCard key={service.name} service={service} hue={SERVICE_HUES[i]} selected={selected.includes(i)} style={{ left: GRID.x + (i % 3) * (GRID.colW + GRID.gap), top: GRID.y + Math.floor(i / 3) * (GRID.rowH + GRID.gap) }} />
       ))}
     </>
   );
 }
 
-function ServiceCard({ service, selected, style }: { service: Service; selected: boolean; style: CSSProperties }) {
+/** Doe's secondary hues (peach, sage, sand), scattered across the services so no pattern repeats. */
+const SERVICE_HUES = [C.salmon, "#D6DEC6", C.sand2, C.sand2, C.salmon, "#D6DEC6", "#D6DEC6", C.salmon, C.sand2];
+
+function ServiceCard({ service, hue, selected, style }: { service: Service; hue: string; selected: boolean; style: CSSProperties }) {
   return (
     <div
       style={{
@@ -655,9 +658,7 @@ function ServiceCard({ service, selected, style }: { service: Service; selected:
       }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ width: 34, height: 34, borderRadius: 10, background: service.off ? C.paper : C.beige, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <Icon name={service.icon} size={16} color={service.off ? C.faint : C.walnut} />
-        </div>
+        <div style={{ width: 34, height: 34, borderRadius: 999, background: hue }} />
         <Toggle on={!service.off} />
       </div>
       <div style={{ marginTop: "auto", fontFamily: F.ui, fontWeight: 600, fontSize: 16, color: service.off ? C.muted : C.walnut }}>{service.name}</div>
@@ -728,7 +729,10 @@ function EditCard({ frame }: { frame: number }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: 18, borderRadius: 18, background: C.paper }}>
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-        <div style={{ fontFamily: F.display, fontWeight: 500, fontSize: 26, lineHeight: "32px", letterSpacing: "-0.02em", color: C.walnut }}>Ear Tube Consult</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ width: 34, height: 34, borderRadius: 999, background: SERVICE_HUES[1], flexShrink: 0 }} />
+          <div style={{ fontFamily: F.display, fontWeight: 500, fontSize: 26, lineHeight: "32px", letterSpacing: "-0.02em", color: C.walnut }}>Ear Tube Consult</div>
+        </div>
         <div style={{ marginTop: 8 }}>
           <Icon name="x" size={14} color="rgba(40, 25, 16, 0.4)" />
         </div>
@@ -785,7 +789,10 @@ function SurgeryEditCard() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: 18, borderRadius: 18, background: C.paper }}>
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-        <div style={{ fontFamily: F.display, fontWeight: 500, fontSize: 26, lineHeight: "32px", letterSpacing: "-0.02em", color: C.walnut }}>Ear Tube Surgery</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ width: 34, height: 34, borderRadius: 999, background: SERVICE_HUES[4], flexShrink: 0 }} />
+          <div style={{ fontFamily: F.display, fontWeight: 500, fontSize: 26, lineHeight: "32px", letterSpacing: "-0.02em", color: C.walnut }}>Ear Tube Surgery</div>
+        </div>
         <div style={{ marginTop: 8 }}>
           <Icon name="x" size={14} color="rgba(40, 25, 16, 0.4)" />
         </div>

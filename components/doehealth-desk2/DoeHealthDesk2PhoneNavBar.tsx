@@ -7,7 +7,7 @@ import { DoeHealthDesk2AnnounceStrip } from "@/components/doehealth-desk2/DoeHea
 import { useDoePhoneLayoutViewport } from "@/lib/doephone/use-doe-phone-layout-viewport";
 import {
   DOEHEALTH_DESK2_NAV_PRIMARY_CTA,
-  doehealthDesk2NavCenterLinks,
+  doehealthDesk2NavPages,
 } from "@/lib/doehealthdesk2/doehealthdesk2-nav-copy";
 import { useDoeHealthDesk2BannerHeight } from "@/lib/doehealthdesk2/use-doehealthdesk2-banner-height";
 import { lora } from "@/lib/home/fonts";
@@ -52,7 +52,7 @@ export function DoeHealthDesk2PhoneNavBar({
         navChromeTheme="light"
         logoLink
         brandFontClass={lora.className}
-        navSheetItems={[...doehealthDesk2NavCenterLinks(sectionHrefBase), DOEHEALTH_DESK2_NAV_PRIMARY_CTA]}
+        navSheetItems={[...doehealthDesk2NavPages(sectionHrefBase), DOEHEALTH_DESK2_NAV_PRIMARY_CTA]}
       />
     </div>
   );

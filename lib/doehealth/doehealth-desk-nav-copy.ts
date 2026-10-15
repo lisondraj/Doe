@@ -23,3 +23,11 @@ export const DOEHEALTH_DESK_NAV_CENTER_LINKS = [
   { label: "Agents", href: "#agents" },
   { label: "Investors", href: ABOUT_PATH },
 ] as const;
+
+/** Center links with section anchors pointed at `base` — for desk-chrome pages other than /doehealthdesk. */
+export function doehealthDeskNavCenterLinks(base = "") {
+  return DOEHEALTH_DESK_NAV_CENTER_LINKS.map((item) => ({
+    label: item.label,
+    href: item.href.startsWith("#") ? `${base}${item.href}` : item.href,
+  }));
+}

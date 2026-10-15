@@ -9,7 +9,7 @@ import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import {
   DOEHEALTH_DESK2_NAV_PRIMARY_CTA,
   DOEHEALTH_DESK2_NAV_PRIMARY_CTA_DROPDOWN_ITEMS,
-  doehealthDesk2NavCenterLinks,
+  doehealthDesk2NavPages,
 } from "@/lib/doehealthdesk2/doehealthdesk2-nav-copy";
 import { useDoeHealthDesk2BannerHeight } from "@/lib/doehealthdesk2/use-doehealthdesk2-banner-height";
 import { inter, lora } from "@/lib/home/fonts";
@@ -53,7 +53,7 @@ export function DoeHealthDesk2DesktopNavBar({
         )}
 
         <nav className="doehealth-desk2-nav__links" aria-label="Page sections">
-          {doehealthDesk2NavCenterLinks(sectionHrefBase).map((item) => (
+          {doehealthDesk2NavPages(sectionHrefBase).map((item) => (
             <Link key={item.href + item.label} href={item.href} className="doehealth-desk2-nav__link">
               {item.label}
             </Link>

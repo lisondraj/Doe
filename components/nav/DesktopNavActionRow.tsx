@@ -27,6 +27,7 @@ export function DesktopNavActionRow({
   showInvestorsCta = true,
   primaryCtaLabel,
   primaryCtaHref,
+  primaryCtaDropdownItems,
 }: {
   bg?: string;
   fg?: string;
@@ -40,6 +41,8 @@ export function DesktopNavActionRow({
   showInvestorsCta?: boolean;
   primaryCtaLabel?: string;
   primaryCtaHref?: string;
+  /** Chevron menu options for the primary CTA. Defaults to the site-wide list. */
+  primaryCtaDropdownItems?: readonly { readonly label: string; readonly href: string }[];
 }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -125,6 +128,7 @@ export function DesktopNavActionRow({
           dropdownEnabled={dropdownEnabled}
           primaryLabel={primaryCtaLabel}
           primaryHref={primaryCtaHref}
+          dropdownItems={primaryCtaDropdownItems}
         />
       ) : null}
 

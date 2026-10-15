@@ -3221,7 +3221,7 @@
 
   .doehealth-desk-hero__dek {
     margin-top: 0;
-    font-size: clamp(1.125rem, 4.6vw, 1.28rem);
+    font-size: clamp(1.05rem, 4.15vw, 1.18rem);
     max-width: none;
   }
 

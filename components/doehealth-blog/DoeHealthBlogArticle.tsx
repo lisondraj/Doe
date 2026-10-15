@@ -1,0 +1,66 @@
+import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
+import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
+import type { DoeHealthBlogArticle as Article, DoeHealthBlogBlock } from "@/lib/doehealth/doehealth-blog-articles";
+import { inter, p22Mackinac } from "@/lib/home/fonts";
+
+function ArticleBlock({ block }: { block: DoeHealthBlogBlock }) {
+  switch (block.type) {
+    case "paragraph":
+      return <p className="doehealth-blog-article__p">{block.text}</p>;
+    case "heading":
+      return <h2 className={`doehealth-blog-article__h2 ${p22Mackinac.className}`}>{block.text}</h2>;
+    case "figure":
+      return (
+        <figure className="doehealth-blog-article__figure">
+          <DoeHealthBlogPlaceholder tone={block.tone} className="doehealth-blog-article__figure-art" />
+          <figcaption>{block.caption}</figcaption>
+        </figure>
+      );
+    case "quote":
+      return (
+        <blockquote className={`doehealth-blog-article__quote ${p22Mackinac.className}`}>
+          <p>{block.text}</p>
+        </blockquote>
+      );
+    case "list":
+      return (
+        <ul className="doehealth-blog-article__list">
+          {block.items.map((item) => (
+            <li key={item.lead}>
+              <strong>{item.lead}:</strong> {item.text}
+            </li>
+          ))}
+        </ul>
+      );
+  }
+}
+
+/** Eyebrow, two-line P22 title, byline, hero art, and long-form body. */
+export function DoeHealthBlogArticle({ article }: { article: Article }) {
+  return (
+    <article className={`doehealth-blog-article ${DOEPHONE_DESKTOP_PAGE_INSET_X} ${inter.className}`}>
+      <header className="doehealth-blog-article__head">
+        <p className="doehealth-blog-article__eyebrow">{article.eyebrow}</p>
+        <h1 className={`doehealth-blog-article__title ${p22Mackinac.className}`}>
+          {article.title.map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </h1>
+        <p className="doehealth-blog-article__meta">
+          <span>{article.date}</span>
+          <span aria-hidden>·</span>
+          <span>{article.author}</span>
+        </p>
+      </header>
+
+      <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-article__hero" />
+
+      <div className="doehealth-blog-article__body">
+        <p className="doehealth-blog-article__lede">{article.lede}</p>
+        {article.blocks.map((block, index) => (
+          <ArticleBlock key={`${block.type}-${index}`} block={block} />
+        ))}
+      </div>
+    </article>
+  );
+}

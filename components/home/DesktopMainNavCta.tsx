@@ -21,6 +21,7 @@ export function DesktopMainNavCta({
   dropdownEnabled = true,
   primaryLabel,
   primaryHref,
+  dropdownItems = DESKTOP_MAIN_CTA_DROPDOWN_ITEMS,
 }: {
   bg: string;
   fg: string;
@@ -31,6 +32,8 @@ export function DesktopMainNavCta({
   dropdownEnabled?: boolean;
   primaryLabel?: string;
   primaryHref?: string;
+  /** Chevron menu options. Defaults to the site-wide list. */
+  dropdownItems?: readonly { readonly label: string; readonly href: string }[];
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -156,7 +159,7 @@ export function DesktopMainNavCta({
               boxShadow: shadow === "none" ? "0 8px 24px rgba(0, 0, 0, 0.12)" : shadow,
             }}
           >
-            {DESKTOP_MAIN_CTA_DROPDOWN_ITEMS.map((item) =>
+            {dropdownItems.map((item) =>
               linksEnabled ? (
                 <Link
                   key={item.href}

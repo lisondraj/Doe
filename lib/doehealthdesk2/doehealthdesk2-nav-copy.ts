@@ -35,3 +35,14 @@ export function doehealthDesk2NavCenterLinks(base = "") {
     href: item.href.startsWith("#") ? `${base}${item.href}` : item.href,
   }));
 }
+
+/** Nav bar pages on desktop and iPhone: the center links, then the blog. */
+export const DOEHEALTH_DESK2_NAV_PAGES = [...DOEHEALTH_DESK2_NAV_CENTER_LINKS, { label: "News", href: "/doehealthblog" }] as const;
+
+/** The nav bar's pages with section anchors pointed at `base`. The footer keeps the center links only. */
+export function doehealthDesk2NavPages(base = "") {
+  return DOEHEALTH_DESK2_NAV_PAGES.map((item) => ({
+    label: item.label,
+    href: item.href.startsWith("#") ? `${base}${item.href}` : item.href,
+  }));
+}

@@ -5,8 +5,8 @@ export const DOEHEALTH_DESK_HERO_HEADLINE = {
 
 /** Two lines under the rotating title. */
 export const DOEHEALTH_DESK_HERO_DEK = [
-  "We're giving every health provider their own",
-  "secure, powerful, and editable intelligence model.",
+  "We're giving every aspect of healthcare their own",
+  "secure, powerful, and designable intelligence.",
 ] as const;
 
 export const DOEHEALTH_DESK_HERO_SECURE = "Secure your intelligence model";
