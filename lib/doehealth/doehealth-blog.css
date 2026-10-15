@@ -610,7 +610,7 @@
   }
 }
 
-/* ─── Featured /news card: info centred inside the sand box ───────────── */
+/* ─── Featured and wide /news cards: info centred inside the box ─────── */
 
 .doehealth-news__item--featured .doehealth-news-feature__art {
   aspect-ratio: 16 / 7;
@@ -628,15 +628,21 @@
   text-align: center;
 }
 
+/* Ink for the centred copy: a tan offset of each box. Era (featured) is lighter than the wide card. */
 .doehealth-news-feature__copy {
+  --feature-ink-rgb: 138 106 63;
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #8a6a3f;
+  color: rgb(var(--feature-ink-rgb));
+}
+
+.doehealth-news__item--featured .doehealth-news-feature__copy {
+  --feature-ink-rgb: 160 126 80;
 }
 
 .doehealth-news-feature__copy .doehealth-blog-card__title {
-  color: #8a6a3f;
+  color: rgb(var(--feature-ink-rgb));
 }
 
 .doehealth-news-feature__copy .doehealth-blog-card__title span {
@@ -646,36 +652,38 @@
 .doehealth-news-feature__copy .doehealth-blog-card__meta {
   justify-content: center;
   margin: 0.85rem 0 0;
-  color: rgb(138 106 63 / 0.85);
+  color: rgb(var(--feature-ink-rgb) / 0.85);
   text-align: center;
 }
 
+/* Both descriptions stay on two lines. */
 .doehealth-news-feature__copy .doehealth-blog-card__excerpt {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   max-width: 44rem;
   margin: 0.85rem auto 0;
-  color: rgb(138 106 63 / 0.9);
+  color: rgb(var(--feature-ink-rgb) / 0.9);
+  font-size: 0.98rem;
+  line-height: 1.5;
   text-align: center;
 }
 
-@media (max-width: 767px) {
-  .doehealth-news__item--featured .doehealth-news-feature__art {
-    aspect-ratio: auto;
-    min-height: 36rem;
-  }
-
-  .doehealth-news-feature__copy .doehealth-blog-card__excerpt {
-    font-size: 0.975rem;
-  }
-}
-
-/* The wide row card uses the same centred box as the featured card. */
+/* The wide card uses the same centred box as the featured card. */
 .doehealth-news__item--wide .doehealth-news-feature__art {
   aspect-ratio: 16 / 7;
 }
 
 @media (max-width: 767px) {
+  .doehealth-news__item--featured .doehealth-news-feature__art,
   .doehealth-news__item--wide .doehealth-news-feature__art {
     aspect-ratio: auto;
     min-height: 36rem;
+  }
+
+  .doehealth-news-feature__copy .doehealth-blog-card__excerpt {
+    max-width: none;
+    font-size: 0.9rem;
   }
 }
