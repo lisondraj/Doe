@@ -46,20 +46,29 @@ export function DoeHealthDesk2AgentsSection() {
     if (!section || !head) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    let frame = 0;
+    let last = -1;
     const update = () => {
+      frame = 0;
       const vh = window.innerHeight;
       const frac = reduce ? 1 : Math.min(1, Math.max(0, (vh * 0.95 - head.getBoundingClientRect().top) / (vh * 0.45)));
+      if (frac === last) return;
+      last = frac;
       section.style.setProperty("--agents-a1", String(Math.min(1, frac / 0.8)));
       section.style.setProperty("--agents-a2", String(Math.min(1, Math.max(0, (frac - 0.2) / 0.8))));
       section.style.setProperty("--agents-a3", String(Math.min(1, Math.max(0, (frac - 0.4) / 0.6))));
     };
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
 
     update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
     };
   }, []);
 

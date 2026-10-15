@@ -36,10 +36,11 @@ export function DoeHealthDesk2DotTide({ color, step = 12, reach = 420 }: { color
       const t = (now - start) / 1000;
       // Scale with the box, but never so small that the dots pile up on a phone.
       const k = Math.min(1.3, Math.max(0.3, w / REF_W));
-      // On a phone the tides sit behind the form, so they're smaller and reach less far.
+      // On a phone the tides sit behind the form, so they're smaller and reach less far (plus 10px, so
+      // they still come in toward the middle while starting right at the screen edges).
       const narrow = w < 600;
       const st = Math.max(9, step * k);
-      const rc = reach * k * (narrow ? 0.6 : 1);
+      const rc = narrow ? reach * k * 0.6 + 10 : reach * k;
       const f = narrow ? 0.7 : (st / 12) * 1.8;
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = color;

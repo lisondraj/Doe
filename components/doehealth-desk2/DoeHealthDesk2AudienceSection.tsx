@@ -256,8 +256,8 @@ function MorphLayer({ w, h, pairs, m, from, to }: { w: number; h: number; pairs:
 
 /**
  * The last beige drawing turning into the closing search box, the way the iPhone turned into the first:
- * its frame travels into the box's outline (deep beige to peach) and its other shapes gather into the
- * box as they fade. Both ends are measured in the section, so the outline lands where the box keeps it.
+ * its frame travels into the box's outline (deep beige to peach) and its other shapes shrink away where
+ * they are. Both ends are measured in the section, so the outline lands where the box keeps it.
  * `m` (0 to 1) is the morph.
  */
 function SearchMorph({ m, section }: { m: number; section: RefObject<HTMLElement> }) {
@@ -280,7 +280,13 @@ function SearchMorph({ m, section }: { m: number; section: RefObject<HTMLElement
       setEnds({
         w: o.width,
         h: o.height,
-        pairs: [{ a: onArt(DOEHEALTH_DESK2_FIND_FRAME), b: box }, ...DOEHEALTH_DESK2_FIND_LAST.map((part) => ({ a: onArt(part), b: box, fade: "out" as const }))],
+        pairs: [
+          { a: onArt(DOEHEALTH_DESK2_FIND_FRAME), b: box },
+          ...DOEHEALTH_DESK2_FIND_LAST.map((part) => {
+            const a = onArt(part);
+            return { a, b: { ...a, x: a.x + a.w / 2, y: a.y + a.h / 2, w: 0, h: 0, r: 0 }, fade: "out" as const };
+          }),
+        ],
       });
     };
     measure();
@@ -337,6 +343,16 @@ export function DoeHealthDesk2AudienceSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const { p, skip } = useDoeHealthDesk2ScrollLock(sectionRef, END);
 
+  /** In or just about to enter the viewport. The dot canvases redraw every frame, so they only run while the section is near. */
+  const [near, setNear] = useState(false);
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(([entry]) => setNear(entry.isIntersecting), { rootMargin: "40px 0px" });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   const thread = DOEHEALTH_DESK2_VISIBLE_THREAD;
   const introOpacity = 1 - ramp(p, RAMP.introFade);
   const threadOpacity = ramp(p, RAMP.threadIn) * (1 - ramp(p, [RAMP.unbuild[1], RAMP.unbuild[1] + 0.05]));
@@ -370,7 +386,7 @@ export function DoeHealthDesk2AudienceSection() {
           {/* The dot wave along the bottom; it fades with this scene, so it's gone once the iPhone comes in. */}
           {/* Revealed by the same swipe as this intro's title (--s), so the two start together. */}
           {/* Mounted only while the intro shows: its canvas redraws every frame, which is heavy on an iPhone. */}
-          {introOpacity > 0.01 ? (
+          {near && introOpacity > 0.01 ? (
             <div className="doehealth-desk2-visible__dots" style={vars({ "--s": ramp(p, RAMP.introSwipe) })}>
               <div className="doehealth-desk2-visible__dots-fade">
                 <DoeHealthBlogDotWave color="rgba(252, 207, 184, 0.6)" top={0.3} amp={60} fade={0.5} />
@@ -425,7 +441,7 @@ export function DoeHealthDesk2AudienceSection() {
           {/* Halftone tides along both side edges, rolling in motion behind the closing title. */}
           {/* Revealed by the same swipe as the title (--s), so the two start together. */}
           {/* Mounted only while the closing title shows, for the same reason as the intro dots. */}
-          {titleOpacity > 0.01 ? (
+          {near && titleOpacity > 0.01 ? (
             <div className="doehealth-desk2-visible__tide" style={vars({ "--s": ramp(p, FINAL.titleSwipe) })}>
               <DoeHealthDesk2DotTide color="rgba(252, 207, 184, 0.6)" />
             </div>

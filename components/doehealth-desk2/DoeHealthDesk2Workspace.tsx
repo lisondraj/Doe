@@ -35,14 +35,18 @@ export function DoeHealthDesk2Workspace() {
       if (rounded === lastOpacity) return;
       lastOpacity = rounded;
       fade.style.setProperty("--desk2-product-fade", rounded.toFixed(2));
-      fade.style.visibility = rounded === 0 ? "hidden" : "";
+      // Once it has lifted it stays gone, and display: none also stops its drifting mask animation.
+      if (rounded === 0) {
+        fade.style.display = "none";
+        window.removeEventListener("scroll", onScroll);
+      }
     };
     const onScroll = () => {
       if (raf) return;
       raf = window.requestAnimationFrame(update);
     };
     update();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    if (lastOpacity > 0) window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       if (raf) window.cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);

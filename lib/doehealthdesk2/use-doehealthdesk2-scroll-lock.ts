@@ -109,7 +109,16 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       return used * STEP_PX;
     };
 
-    const publish = () => setP(progress);
+    // At most one render per frame: wheel and touch events can arrive several times a frame, and each
+    // render redraws the whole section. The frame shows the latest progress either way.
+    let publishFrame = 0;
+    const publish = () => {
+      if (publishFrame) return;
+      publishFrame = window.requestAnimationFrame(() => {
+        publishFrame = 0;
+        setP(progress);
+      });
+    };
     const sectionTop = () => window.scrollY + section.getBoundingClientRect().top;
     const jumpTo = (top: number) => window.scrollTo({ top, behavior: "instant" as ScrollBehavior });
 
@@ -282,6 +291,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     window.addEventListener("resize", onViewportResize);
     window.visualViewport?.addEventListener("resize", onViewportResize);
     return () => {
+      window.cancelAnimationFrame(publishFrame);
       section.style.touchAction = "";
       section.style.position = "";
       if (track) track.style.height = "";
