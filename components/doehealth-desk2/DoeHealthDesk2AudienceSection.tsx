@@ -437,7 +437,7 @@ export function DoeHealthDesk2AudienceSection() {
         {morphing ? <PhoneMorph m={ramp(p, RAMP.morph)} section={sectionRef} /> : null}
         {p >= FINAL.toBox[0] && p < FINAL.toBox[1] ? <SearchMorph m={ramp(p, FINAL.toBox)} section={sectionRef} /> : null}
 
-        <div className="doehealth-desk2-visible__scene" style={vars({ "--o": titleOpacity })} aria-hidden={titleOpacity < 0.5}>
+        <div className="doehealth-desk2-visible__scene doehealth-desk2-visible__scene--closing" style={vars({ "--o": titleOpacity })} aria-hidden={titleOpacity < 0.5}>
           {/* Halftone tides along both side edges, rolling in motion behind the closing title. */}
           {/* Revealed by the same swipe as the title (--s), so the two start together. */}
           {/* Mounted only while the closing title shows, for the same reason as the intro dots. */}

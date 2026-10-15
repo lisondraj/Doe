@@ -4533,6 +4533,14 @@
   height: var(--app-vh, 100svh);
 }
 
+/*
+ * Except the closing scene: it is what stays once the section scrolls on, so it fills the whole section
+ * (down under Safari's toolbar), its title, line and search box centre in it, and its tides run to the bottom.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible__scene--closing {
+  height: 100%;
+}
+
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible__skip {
   top: calc(var(--app-vh, 100svh) - 2.65rem - max(1.15rem, env(safe-area-inset-bottom, 0px)));
   bottom: auto;

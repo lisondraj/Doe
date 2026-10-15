@@ -2,7 +2,9 @@
 
 import { useEffect } from "react";
 
+import { DOEHEALTH_DESK2_NAV_WASH_EVENT } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 import {
+  DOEHEALTH_DESK2_FIND_BACKGROUND,
   DOEHEALTH_DESK2_PAGE_BACKGROUND,
   DOEHEALTH_DESK2_SURFACE,
 } from "@/lib/doehealthdesk2/doehealthdesk2-colors";
@@ -15,8 +17,8 @@ const OVERFLOW_FADE = "background-color 360ms cubic-bezier(0.33, 1, 0.68, 1)";
 
 /**
  * iPhone /doehealthdesk — Safari's bottom overscroll follows the band at the bottom edge of the
- * viewport: brown over brown sections and the footer, cream elsewhere. `theme-color` is left alone
- * so the top chrome is unaffected.
+ * viewport: brown over brown sections and the footer, the light beige while the brown story section
+ * shows its beige drawings, cream elsewhere. `theme-color` is left alone so the top chrome is unaffected.
  */
 export function useDoeHealthDesk2PhoneOverflowChrome(enabled: boolean) {
   useEffect(() => {
@@ -26,6 +28,7 @@ export function useDoeHealthDesk2PhoneOverflowChrome(enabled: boolean) {
     const body = document.body;
     const cream = DOEHEALTH_DESK2_PAGE_BACKGROUND.toLowerCase();
     const brown = DOEHEALTH_DESK2_SURFACE.toLowerCase();
+    const beige = DOEHEALTH_DESK2_FIND_BACKGROUND.toLowerCase();
 
     let raf = 0;
     let last = "";
@@ -38,7 +41,9 @@ export function useDoeHealthDesk2PhoneOverflowChrome(enabled: boolean) {
     const pickSurface = () => {
       const cx = Math.round(window.innerWidth / 2);
       const hit = document.elementFromPoint(cx, Math.max(0, window.innerHeight - 2));
-      return hit?.closest(BROWN_OVERFLOW_HIT) != null ? brown : cream;
+      const surface = hit?.closest<HTMLElement>(BROWN_OVERFLOW_HIT);
+      if (!surface) return cream;
+      return Number(surface.dataset.navBeige ?? 0) >= 0.5 ? beige : brown;
     };
 
     const update = () => {
@@ -62,12 +67,14 @@ export function useDoeHealthDesk2PhoneOverflowChrome(enabled: boolean) {
 
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
+    window.addEventListener(DOEHEALTH_DESK2_NAV_WASH_EVENT, schedule);
     window.visualViewport?.addEventListener("resize", schedule);
 
     return () => {
       if (raf) window.cancelAnimationFrame(raf);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
+      window.removeEventListener(DOEHEALTH_DESK2_NAV_WASH_EVENT, schedule);
       window.visualViewport?.removeEventListener("resize", schedule);
       html.style.backgroundColor = "";
       body.style.backgroundColor = "";

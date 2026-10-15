@@ -7,6 +7,9 @@ export const DOEHEALTH_DESK2_INK = "#140C04";
 /** Primary brown — page sections and product shell. */
 export const DOEHEALTH_DESK2_SURFACE = "#281910";
 
+/** Light beige behind the four beige drawings in the brown story section (`.doehealth-desk2-find`). */
+export const DOEHEALTH_DESK2_FIND_BACKGROUND = "#F4EEDF";
+
 /** `rgb()` components for gradients tied to {@link DOEHEALTH_DESK2_SURFACE}. */
 export const DOEHEALTH_DESK2_SURFACE_RGB = "40 25 16";
 

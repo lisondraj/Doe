@@ -12,6 +12,8 @@ const LOCK_SETTLE_MS = 320;
  * for the viewport to settle and re-aligns once.
  */
 const VIEWPORT_SETTLE_MS = 450;
+/** iPhone: how long the page must sit still (no scroll events, finger up) before the finished track collapses. */
+const RELEASE_IDLE_MS = 220;
 /** Desktop only (same breakpoint as the desk variant): the phone layout is not paced. */
 const DESKTOP_QUERY = "(min-width: 1024px)";
 /** iPhone: page scroll (px) through the sticky track that moves the section one progress unit. */
@@ -76,12 +78,31 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
      * iPhone: once the closing scene has shown, nothing pins it any more. The track collapses to one screen
      * and the section stops sticking; the scroll position drops by the same amount, so nothing moves on screen.
      */
-    const releaseTrack = (run: number) => {
-      if (!track || run <= 0) return;
+    const releaseTrack = () => {
+      if (!track) return;
+      const run = track.offsetHeight - section.offsetHeight;
+      if (run <= 0) return;
+      const into = Math.min(run, Math.max(0, -track.getBoundingClientRect().top));
       section.style.position = "relative";
       track.style.height = `${section.offsetHeight}px`;
-      window.scrollBy({ top: -run, behavior: "instant" as ScrollBehavior });
+      if (into > 0) window.scrollBy({ top: -into, behavior: "instant" as ScrollBehavior });
       lastY = window.scrollY;
+    };
+
+    /**
+     * The collapse moves the scroll position, and Safari applies that a frame late against a moving
+     * finger or momentum, which shows as a little shake. So it waits until the page is at rest.
+     */
+    let releasePending = false;
+    let releaseTimer = 0;
+    let touching = false;
+    const armRelease = () => {
+      window.clearTimeout(releaseTimer);
+      releaseTimer = window.setTimeout(() => {
+        if (touching) return;
+        releasePending = false;
+        releaseTrack();
+      }, RELEASE_IDLE_MS);
     };
 
     /** iPhone: progress is how far the sticky track has scrolled, scrubbing both ways until the end is reached. */
@@ -92,8 +113,9 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       // As on desktop: once the closing scene has shown, the section stays on it, scrolling either way.
       if (scrubbed >= end && !done) {
         done = true;
-        releaseTrack(run);
+        releasePending = true;
       }
+      if (releasePending) armRelease();
       const next = done ? end : scrubbed;
       if (next === progress) return;
       progress = next;
@@ -235,7 +257,12 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     };
 
     const onTouchStart = (event: TouchEvent) => {
+      touching = true;
       touchY = event.touches[0]?.clientY ?? null;
+    };
+    const onTouchEnd = (event: TouchEvent) => {
+      touching = event.touches.length > 0;
+      if (!touching && releasePending) armRelease();
     };
     const onTouchMove = (event: TouchEvent) => {
       const y = event.touches[0]?.clientY;
@@ -287,6 +314,8 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("resize", onViewportResize);
     window.visualViewport?.addEventListener("resize", onViewportResize);
@@ -296,10 +325,13 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       section.style.position = "";
       if (track) track.style.height = "";
       window.clearTimeout(settleTimer);
+      window.clearTimeout(releaseTimer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchcancel", onTouchEnd);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("resize", onViewportResize);
       window.visualViewport?.removeEventListener("resize", onViewportResize);
