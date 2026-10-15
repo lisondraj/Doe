@@ -355,6 +355,12 @@
   transition-delay: 210ms;
 }
 
+/* Desktop: the text-selection highlight is light peach (the headline peach), with dark text so it reads on the brown sections. */
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) ::selection {
+  background: #fccfb8;
+  color: #281910;
+}
+
 /* Desktop — slower reveals; timings mirrored in the hero and genome copy files. */
 .doehealth-desk2-page:not(:has(.doephone-mobile-root)) {
   --desk2-headline-darken-duration: 5.5s;
