@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
-/** Sunlit lounge photo (1672 × 941), rounded to the page's corner radius, with the two founder names on it. The bottom veil lifts as you scroll. */
+/** Lounge photo (2500 × 1667), rounded to the page's corner radius, with the two founder names on it. The bottom veil lifts as you scroll. */
 export function DoeHealthDesk2Workspace() {
   const [shown, setShown] = useState(false);
   const fadeRef = useRef<HTMLDivElement>(null);
@@ -58,10 +58,10 @@ export function DoeHealthDesk2Workspace() {
       <div className="desk2-workspace__stage">
         <figure className="desk2-workspace__photo">
           <Image
-            src="/doehealthdesk2/sunlit-minimalist-wooden-stools.jpg"
-            alt="A sunlit lounge with two wooden stools on a polished floor"
-            width={1672}
-            height={941}
+            src="/doehealthdesk2/newhero.webp"
+            alt="A bright, minimal lounge with a cream curved sofa, a sculpted coffee table and a grey lounge chair by a sunlit window"
+            width={2500}
+            height={1667}
             sizes="(min-width: 1024px) 80vw, 100vw"
             priority
           />

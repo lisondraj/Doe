@@ -952,7 +952,7 @@
   container-type: inline-size;
   margin: 0;
   width: 100%;
-  aspect-ratio: 1672 / 941;
+  aspect-ratio: 2500 / 1667;
   overflow: hidden;
   border-radius: var(--doehealth-desk2-radius);
 }
@@ -988,10 +988,10 @@
   text-align: left;
 }
 
-/* Right side, a little in from the edge, level with the stools' seats. */
+/* Right side, a little in from the edge, just below the grey lounge chair. */
 .desk2-workspace__person--matthew {
   right: 4%;
-  top: 68%;
+  top: 80%;
   text-align: right;
 }
 
@@ -1009,7 +1009,7 @@
   letter-spacing: 0.01em;
 }
 
-/* iPhone: the photo is only ~370px wide, so the names are set smaller to keep clear of the stools' legs. */
+/* iPhone: the photo is only ~370px wide, so the names are set smaller. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace__person--james {
   left: 3%;
   bottom: 4%;
@@ -1017,7 +1017,7 @@
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace__person--matthew {
   right: 3%;
-  top: 55%;
+  top: 80%;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace__name {
