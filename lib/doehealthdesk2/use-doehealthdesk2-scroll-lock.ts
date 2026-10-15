@@ -9,7 +9,7 @@ const LOCK_SETTLE_MS = 320;
 /** Desktop only (same breakpoint as the desk variant): the phone layout is not paced. */
 const DESKTOP_QUERY = "(min-width: 1024px)";
 /** Desktop only: the most progress per second that wheel or key input can add, so a rapid flick moves no faster than a steady scroll. */
-const DESKTOP_PACE_PER_S = 0.6;
+const DESKTOP_PACE_PER_S = 0.75;
 /** Desktop only: the most progress that can build up and be spent at once. A single notch always moves right away. */
 const DESKTOP_PACE_BURST = 0.5;
 

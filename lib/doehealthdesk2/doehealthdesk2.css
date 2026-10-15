@@ -123,14 +123,21 @@
 
 .doehealth-desk2-page .desk2-headline-darken--ink.is-headline-in,
 .doehealth-desk2-page .desk2-headline-darken--cream.is-headline-in,
-.doehealth-desk2-page .desk2-headline-darken--salmon.is-headline-in,
-.doehealth-desk2-page .doehealth-desk2-agents__title.is-title-in .desk2-headline-darken--ink {
+.doehealth-desk2-page .desk2-headline-darken--salmon.is-headline-in {
   animation: desk2-headline-darken var(--desk2-headline-darken-duration) cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.doehealth-desk2-page .desk2-headline-darken--delay.is-headline-in,
-.doehealth-desk2-page .doehealth-desk2-agents__title.is-title-in .desk2-headline-darken--ink:nth-child(2) {
+.doehealth-desk2-page .desk2-headline-darken--delay.is-headline-in {
   animation-delay: var(--desk2-headline-darken-delay);
+}
+
+/* The agents title sweeps with the scroll: the section sets --agents-a1 and --agents-a2 (0 to 1). */
+.doehealth-desk2-page .doehealth-desk2-agents__title .desk2-headline-darken--ink {
+  background-position: calc((1 - var(--agents-a1, 0)) * 100%) calc((1 - var(--agents-a1, 0)) * 100%);
+}
+
+.doehealth-desk2-page .doehealth-desk2-agents__title .desk2-headline-darken--ink:nth-child(2) {
+  background-position: calc((1 - var(--agents-a2, 0)) * 100%) calc((1 - var(--agents-a2, 0)) * 100%);
 }
 
 .doehealth-desk2-page .doehealth-desk2-genome__eyebrow.desk2-genome-headline-highlight.is-headline-in,
@@ -774,7 +781,6 @@
   .doehealth-desk2-page .desk2-headline-darken--cream,
   .doehealth-desk2-page .desk2-headline-darken--salmon.is-headline-in,
   .doehealth-desk2-page .desk2-headline-darken--salmon,
-  .doehealth-desk2-page .doehealth-desk2-agents__title.is-title-in .desk2-headline-darken--ink,
   .doehealth-desk2-page .doehealth-desk2-genome__eyebrow.desk2-genome-headline-highlight.is-headline-in,
   .doehealth-desk2-page .doehealth-desk2-genome__title.desk2-genome-headline-highlight.is-headline-in,
   .doehealth-desk2-page .doehealth-desk2-genome .desk2-genome-swipe.is-headline-in,
@@ -2177,8 +2183,8 @@
   left: 0;
   height: clamp(6rem, 22vh, 11rem);
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 35%, transparent 100%);
-  mask-image: linear-gradient(to top, #000 0%, #000 35%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 75%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 0%, #000 75%, transparent 100%);
 }
 
 .doehealth-desk2-find__ripple .doehealth-desk2-ripple {

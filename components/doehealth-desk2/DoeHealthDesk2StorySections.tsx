@@ -30,8 +30,6 @@ export function DoeHealthDesk2AgentsSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [index, setIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(3);
-  const [titleIn, setTitleIn] = useState(false);
-
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 1023px)");
     const sync = () => setVisibleCards(mq.matches ? 1 : 3);
@@ -40,28 +38,28 @@ export function DoeHealthDesk2AgentsSection() {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
+  // The title's sweep follows the scroll, not the clock: it starts as the head rises into view and
+  // finishes as it reaches the middle of the screen. The second line trails the first.
   useEffect(() => {
     const section = sectionRef.current;
-    const head = section?.querySelector(".doehealth-desk2-agents__head");
-    if (!head) return;
+    const head = section?.querySelector<HTMLElement>(".doehealth-desk2-agents__head");
+    if (!section || !head) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setTitleIn(true);
-      return;
-    }
+    const update = () => {
+      const vh = window.innerHeight;
+      const frac = reduce ? 1 : Math.min(1, Math.max(0, (vh * 0.95 - head.getBoundingClientRect().top) / (vh * 0.45)));
+      section.style.setProperty("--agents-a1", String(Math.min(1, frac / 0.8)));
+      section.style.setProperty("--agents-a2", String(Math.min(1, Math.max(0, (frac - 0.2) / 0.8))));
+    };
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting || entry.intersectionRatio < 0.55) return;
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => setTitleIn(true));
-        });
-        observer.disconnect();
-      },
-      { threshold: [0, 0.25, 0.45, 0.55, 0.72] },
-    );
-    observer.observe(head);
-    return () => observer.disconnect();
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
   }, []);
 
   const agents = DOEHEALTH_DESK2_AGENT_CAROUSEL;
@@ -75,7 +73,7 @@ export function DoeHealthDesk2AgentsSection() {
       aria-label="Let personal agents do more with your clinic"
     >
       <header className={`doehealth-desk2-agents__head ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-        <h2 className={`doehealth-desk2-agents__title ${p22Mackinac.className}${titleIn ? " is-title-in" : ""}`}>
+        <h2 className={`doehealth-desk2-agents__title ${p22Mackinac.className}`}>
           {DOEHEALTH_DESK2_AGENTS.title.map((line) => (
             <span key={line} className="desk2-headline-darken--ink">
               {line}

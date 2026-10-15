@@ -3,75 +3,150 @@
 import { useEffect, useRef } from "react";
 
 /** Target pitch between dots, in CSS pixels. The grid is drawn so it fills the box at this pitch. */
-const PITCH = 13;
+const PITCH = 8;
 
-/** Everything a pattern needs to light one dot: its position, its column and row, and the frame's time and box. */
-type Cell = { x: number; y: number; c: number; t: number; w: number; h: number; maxR: number };
+/** One dot's place in the grid, with the frame's clock and the box's size. */
+type Cell = { x: number; y: number; t: number; w: number; h: number };
 
-/**
- * One dot pattern. `level` (0 to 1) is how much the dot swells; `falloff` (0 to 1) is how strongly it
- * is faded away from the pattern's anchor. `scale` sizes the whole pattern's dots.
- */
-type Pattern = { scale: number; paint: (k: Cell) => { level: number; falloff: number } };
+/** One drawing made of dots. Returns how lit a dot is (0 to 1). */
+type Pattern = (k: Cell) => number;
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const smooth = (t: number) => t * t * (3 - 2 * t);
+const mod = (a: number, n: number) => ((a % n) + n) % n;
+/** A steady 0-to-1 value per whole number, so repeated blocks differ without changing frame to frame. */
+const hash = (n: number) => {
+  const s = Math.sin(n * 127.1) * 43758.5453;
+  return s - Math.floor(s);
+};
 
-/** Falloff from a point, so a pattern fades toward the top of the strip. */
-const fromAnchor = (k: Cell, ax: number, ay: number) => 1 - Math.min(1, Math.hypot(k.x - ax, k.y - ay) / k.maxR);
+/** Line half-width, in strip heights. About one dot pitch, so a line always lands on a row of dots. */
+const STROKE = 0.04;
+
+/** 1 on a line (distance 0), fading to 0 at `width` away. */
+const line = (dist: number, width = STROKE) => clamp01(1 - Math.abs(dist) / width);
+
+/** 1 at the centre of a dot of `radius`, softening at its edge. */
+const dot = (dist: number, radius: number) => clamp01((radius - dist) / 0.03);
+
+/** Distance from a point to a segment. */
+function segment(X: number, Y: number, ax: number, ay: number, bx: number, by: number) {
+  const dx = bx - ax;
+  const dy = by - ay;
+  const len2 = dx * dx + dy * dy || 1;
+  const u = clamp01(((X - ax) * dx + (Y - ay) * dy) / len2);
+  return Math.hypot(X - (ax + u * dx), Y - (ay + u * dy));
+}
 
 /**
- * The four titles' patterns, in order. The first is the original ripple, rising from just below the
- * strip's centre. The second is spiral arms, the third equaliser bars, the fourth a live waveform.
+ * The drawings' space, in strip heights: Y runs 0 (top) to 1 (bottom), X runs 0 to W across the whole
+ * width. Every drawing repeats along X, so it fills the strip edge to edge on any screen.
+ */
+const local = (k: Cell) => ({ X: k.x / k.h, Y: k.y / k.h, W: k.w / k.h });
+
+/**
+ * The four titles, in order, each drawn in dots across the full width:
+ * find you: a row of map pins; a search beam sweeps along and lights each one, and your clinic pings.
+ * website: a page laid out in the strip, its blocks of text moving past as if read.
+ * tools: a line of tools joined to one line; data travels along it and lights each tool it reaches.
+ * updated: a progress bar fills across, and each agent above it gets a check as the bar passes.
  * The carousel's `wheel` morphs between them.
  */
 const PATTERNS: readonly Pattern[] = [
-  {
-    // Concentric rings from a source below the strip.
-    scale: 1,
-    paint: (k) => {
-      const d = Math.hypot(k.x - k.w * 0.5, k.y - k.h * 1.35);
-      const wave = 0.5 + 0.5 * Math.cos((d / 110 - k.t * 0.22) * Math.PI * 2);
-      return { level: wave ** 3, falloff: 1 - Math.min(1, d / k.maxR) };
-    },
+  (k) => {
+    const { X, Y, W } = local(k);
+    const gap = 0.9;
+    const pinAt = (n: number) => ({ x: (n + 0.5) * gap, y: n % 2 === 0 ? 0.3 : 0.4 });
+    const pin = (px: number, py: number) =>
+      Math.max(
+        line(Math.hypot(X - px, Y - py) - 0.14),
+        line(segment(X, Y, px - 0.12, py + 0.07, px, py + 0.36)),
+        line(segment(X, Y, px + 0.12, py + 0.07, px, py + 0.36)),
+        dot(Math.hypot(X - px, Y - py), 0.045),
+      );
+    const n = Math.floor(X / gap);
+    const here = pinAt(n);
+    const beamX = mod(k.t * 0.12, 1) * (W + 1) - 0.5;
+    const lit = clamp01(1 - Math.abs(here.x - beamX) / 0.7);
+    const beam = line(X - beamX, 0.05) * 0.35;
+    // Your clinic: the pin nearest the middle stays lit and sends out a ping.
+    const homeN = Math.floor(W / 2 / gap);
+    const home = pinAt(homeN);
+    const ping = mod(k.t * 0.4, 1);
+    const ring = line(Math.hypot(X - home.x, Y - home.y) - 0.14 - ping * 0.5) * (1 - ping);
+    return Math.max(pin(here.x, here.y) * (n === homeN ? 1 : 0.3 + 0.7 * lit), beam, ring);
   },
-  {
-    // Two spiral arms winding out from a point below the strip, turning slowly.
-    scale: 1,
-    paint: (k) => {
-      const dx = k.x - k.w * 0.5;
-      const dy = k.y - k.h * 1.6;
-      const angle = Math.atan2(dy, dx);
-      const r = Math.hypot(dx, dy);
-      const wave = 0.5 + 0.5 * Math.cos(2 * angle + r / 38 - k.t * 0.5);
-      return { level: wave ** 3, falloff: fromAnchor(k, k.w * 0.5, k.h * 1.35) };
-    },
+  (k) => {
+    const { X, Y, W } = local(k);
+    const bar = line(Y - 0.2) * 0.7;
+    const tabs = Math.max(
+      dot(Math.hypot(X - 0.18, Y - 0.1), 0.04),
+      dot(Math.hypot(X - 0.3, Y - 0.1), 0.04),
+      dot(Math.hypot(X - 0.42, Y - 0.1), 0.04),
+    );
+    const address = X > 0.6 && X < Math.min(W - 0.2, 0.6 + W * 0.35) ? line(Y - 0.1) * 0.5 : 0;
+    // Blocks of page content, each a heading and three lines, move slowly left.
+    const period = 1.3;
+    const sx = X + k.t * 0.08;
+    const n = Math.floor(sx / period);
+    const bx = sx - n * period;
+    const rows: readonly (readonly [number, number, number])[] = [
+      [0.36, 0.75, 0.85],
+      [0.52, 0.5 + 0.4 * hash(n), 0.55],
+      [0.66, 0.4 + 0.5 * hash(n + 7), 0.55],
+      [0.8, 0.3 + 0.5 * hash(n + 13), 0.55],
+    ];
+    let text = 0;
+    for (const [ry, len, level] of rows) {
+      if (bx >= 0.1 && bx <= 0.1 + len) text = Math.max(text, line(Y - ry) * level);
+    }
+    // A reading line sweeps across the content.
+    const readX = mod(k.t * 0.15, 1) * (W + 0.6) - 0.3;
+    const read = Y > 0.28 ? line(X - readX) * 0.6 : 0;
+    return Math.max(bar, tabs, address, text, read);
   },
-  {
-    // Columns of dots rising from the bottom like equaliser bars, each at its own height.
-    scale: 0.95,
-    paint: (k) => {
-      const u = (k.h - k.y) / k.h;
-      const bar = 0.3 + 0.6 * (0.5 + 0.5 * Math.sin(k.c * 0.55 + k.t * 0.5 + Math.sin(k.c * 0.23) * 2));
-      const lit = clamp01((bar - u) / 0.08);
-      return { level: 0.1 + 0.9 * lit, falloff: 1 - u * 0.5 };
-    },
+  (k) => {
+    const { X, Y } = local(k);
+    const bus = line(Y - 0.5) * 0.45;
+    const spacing = 1.8;
+    const speed = 0.35;
+    const packetGap = (x: number) => {
+      const phase = mod(x - k.t * speed, spacing);
+      return Math.min(phase, spacing - phase);
+    };
+    const packet = dot(Math.hypot(packetGap(X), Y - 0.5), 0.08);
+    // Tools sit above and below the line in turn, each joined to it, and light as data passes.
+    const gap = 0.9;
+    const n = Math.floor(X / gap);
+    const nx = (n + 0.5) * gap;
+    const up = n % 2 === 0;
+    const ny = up ? 0.22 : 0.78;
+    const glow = clamp01(1 - packetGap(nx) / 0.45);
+    const tool = line(Math.hypot(X - nx, Y - ny) - 0.13) * (0.4 + 0.6 * glow);
+    const stub = line(segment(X, Y, nx, 0.5, nx, up ? 0.35 : 0.65)) * (0.35 + 0.5 * glow);
+    const core = dot(Math.hypot(X - nx, Y - ny), 0.05) * glow;
+    return Math.max(bus, packet, tool, stub, core);
   },
-  {
-    // A live waveform: a travelling sine line of swelling dots across the strip, its height breathing.
-    scale: 1.1,
-    paint: (k) => {
-      const envelope = 0.55 + 0.45 * Math.sin(k.x / 170 + k.t * 0.3);
-      const curveY = k.h * 0.5 + k.h * 0.3 * envelope * Math.sin(k.x / 45 - k.t * 1.1);
-      const dist = Math.abs(k.y - curveY);
-      const lit = clamp01(1 - dist / 22);
-      return { level: lit ** 1.5, falloff: fromAnchor(k, k.w * 0.5, k.h * 1.35) };
-    },
+  (k) => {
+    const { X, Y, W } = local(k);
+    // The bar fills across, holds full for a moment, then starts again.
+    const front = Math.min(1, mod(k.t * 0.09, 1.25)) * W;
+    const track = line(Y - 0.7) * 0.25;
+    const fill = X <= front ? clamp01(1 - Math.abs(Y - 0.7) / 0.08) * 0.9 : 0;
+    const head = dot(Math.hypot(X - front, Y - 0.7), 0.1);
+    const gap = 1.1;
+    const cx = (Math.floor(X / gap) + 0.5) * gap;
+    const done = cx <= front;
+    const ring = line(Math.hypot(X - cx, Y - 0.28) - 0.18) * (done ? 0.85 : 0.3);
+    const check = done
+      ? Math.max(line(segment(X, Y, cx - 0.09, 0.28, cx - 0.025, 0.35)), line(segment(X, Y, cx - 0.025, 0.35, cx + 0.1, 0.2)))
+      : 0;
+    return Math.max(track, fill, head, ring, check);
   },
 ];
 
 /**
- * How much each pattern counts at a wheel position: 1 for the pattern at a whole number, blended
+ * How much each drawing counts at a wheel position: 1 for the drawing at a whole number, blended
  * smoothly between neighbours. The weights always sum to 1.
  */
 function weightsAt(wheel: number): number[] {
@@ -82,9 +157,9 @@ function weightsAt(wheel: number): number[] {
 }
 
 /**
- * A uniform grid of dots that swell as each pattern moves through them. As the carousel's `wheel`
- * moves from title to title, the grid morphs between the four patterns. Drawn live on a canvas that
- * fills its box; holds still for reduced motion.
+ * A uniform grid of dots, each lit by the drawing that is showing. As the carousel's `wheel` moves
+ * from title to title, the grid morphs between the four drawings. Drawn live on a canvas that fills
+ * its box; holds still for reduced motion.
  */
 export function DoeHealthDesk2RippleGrid({ color, wheel = 0 }: { color: string; wheel?: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -121,25 +196,21 @@ export function DoeHealthDesk2RippleGrid({ color, wheel = 0 }: { color: string; 
       const rows = Math.max(1, Math.floor(h / PITCH));
       const px = w / cols;
       const py = h / rows;
-      const maxR = Math.hypot(w, h);
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = color;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          const cell: Cell = { x: (c + 0.5) * px, y: (r + 0.5) * py, c, t, w, h, maxR };
-          // Blend each pattern's alpha and radius by how much it counts at this wheel position.
-          let alpha = 0;
-          let radius = 0;
+          const cell: Cell = { x: (c + 0.5) * px, y: (r + 0.5) * py, t, w, h };
+          // Blend the drawings' light by how much each counts at this wheel position.
+          let level = 0;
           for (let k = 0; k < PATTERNS.length; k++) {
             const wgt = weights[k];
             if (wgt === 0) continue;
-            const { level, falloff } = PATTERNS[k].paint(cell);
-            alpha += wgt * (0.14 + 0.86 * level) * (0.45 + 0.55 * falloff);
-            radius += wgt * (0.8 + 2.6 * level) * PATTERNS[k].scale;
+            level += wgt * PATTERNS[k](cell);
           }
-          ctx.globalAlpha = alpha;
+          ctx.globalAlpha = 0.12 + 0.88 * level;
           ctx.beginPath();
-          ctx.arc(cell.x, cell.y, radius, 0, Math.PI * 2);
+          ctx.arc(cell.x, cell.y, 0.6 + 2 * level, 0, Math.PI * 2);
           ctx.fill();
         }
       }
