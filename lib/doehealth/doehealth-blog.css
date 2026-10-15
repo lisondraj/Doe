@@ -520,18 +520,8 @@
 }
 
 .doehealth-news__head {
-  max-width: 48rem;
   margin-bottom: clamp(2.5rem, 6vh, 3.75rem);
-}
-
-.doehealth-news__eyebrow {
-  margin: 0 0 1.1rem;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  line-height: 1;
-  text-transform: uppercase;
+  text-align: center;
 }
 
 .doehealth-news__title {
@@ -541,15 +531,6 @@
   font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 1;
-}
-
-.doehealth-news__dek {
-  max-width: 34rem;
-  margin: 1.25rem 0 0;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.72);
-  font-size: 1.125rem;
-  letter-spacing: -0.015em;
-  line-height: 1.5;
 }
 
 /* The featured article spans the full width; the other two sit side by side below it. */

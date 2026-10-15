@@ -6,7 +6,7 @@ import {
   doehealthBlogArticle,
   doehealthBlogTitle,
 } from "@/lib/doehealth/doehealth-blog-articles";
-import { doehealthDeskInitialVariant } from "@/lib/doehealth/doehealth-desk-initial-variant";
+import { doehealthDesk2InitialVariant } from "@/lib/doehealthdesk2/doehealthdesk2-initial-variant";
 
 export const dynamic = "force-dynamic";
 
@@ -24,5 +24,5 @@ export function generateMetadata({ params }: RouteProps): Metadata {
 export default function DoeHealthBlogArticleRoute({ params }: RouteProps) {
   const article = doehealthBlogArticle(params.slug);
   if (!article) notFound();
-  return <DoeHealthBlogPage article={article} initialVariant={doehealthDeskInitialVariant()} />;
+  return <DoeHealthBlogPage article={article} initialVariant={doehealthDesk2InitialVariant()} />;
 }

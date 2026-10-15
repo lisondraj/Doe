@@ -17,10 +17,13 @@ import { inter, lora } from "@/lib/home/fonts";
 /** DesktopHome top bar — cream chrome, no hero scroll coupling. */
 export function DoeHealthDesk2DesktopNavBar({
   logoLink = true,
+  logoHref = "/",
   navActionLinksEnabled = true,
   sectionHrefBase = "",
 }: {
   logoLink?: boolean;
+  /** Where the "Doe" mark goes. Defaults to the site root. */
+  logoHref?: string;
   navActionLinksEnabled?: boolean;
   /** Prefix for `#section` links when the sections live on another page. */
   sectionHrefBase?: string;
@@ -41,7 +44,7 @@ export function DoeHealthDesk2DesktopNavBar({
       >
         {logoLink ? (
           <Link
-            href="/"
+            href={logoHref}
             className={`doehealth-desk2-nav__mark text-4xl font-normal no-underline ${lora.className}`}
           >
             Doe

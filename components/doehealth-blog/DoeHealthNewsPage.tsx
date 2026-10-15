@@ -4,25 +4,27 @@ import Link from "next/link";
 
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
-import { DoeHealthDeskNavWash } from "@/components/doehealth-desk/DoeHealthDeskNavWash";
 import { DoeHealthDeskInviteSection } from "@/components/doehealth-desk/DoeHealthDeskStorySections";
-import { LegacyHomeDesktopNavBar } from "@/components/home/LegacyHomeDesktopNavBar";
-import { LegacyHomePhoneNavBar } from "@/components/home/LegacyHomePhoneNavBar";
-import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
+import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
+import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
+import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import {
-  doehealthBlogArticlePath,
   type DoeHealthBlogArticle as Article,
+  doehealthBlogArticlePath,
 } from "@/lib/doehealth/doehealth-blog-articles";
-import { DOEHEALTH_DESK_PAGE_BACKGROUND } from "@/lib/doehealth/doehealth-desk-colors";
-import { useDoeHealthDeskPhoneOverflowChrome } from "@/lib/doehealth/use-doehealth-desk-phone-overflow-chrome";
+import { DOEHEALTH_DESK2_PAGE_BACKGROUND } from "@/lib/doehealthdesk2/doehealthdesk2-colors";
+import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
 import {
-  type DoeHealthDeskVariant,
-  useDoeHealthDeskVariant,
-} from "@/lib/doehealth/use-doehealth-desk-variant";
+  type DoeHealthDesk2Variant,
+  useDoeHealthDesk2Variant,
+} from "@/lib/doehealthdesk2/use-doehealthdesk2-variant";
+import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
+/** The desk2 site: its nav links, logo, and section anchors all live here. */
+const DESK2_PATH = "/doehealthdesk2";
+/** The footer still uses the legacy desk section anchors. */
 const DESK_PATH = "/doehealthdesk";
-const LOGO_HREF = "/doehealthdesk2";
 
 function Arrow() {
   return (
@@ -58,36 +60,34 @@ function NewsCard({ article, featured = false }: { article: Article; featured?: 
   );
 }
 
-/** /news — the index of every article: the featured one large, the rest side by side, on the desk chrome. */
+/** /news — the index of every article: the featured one large, the rest side by side, on the desk2 chrome. */
 export function DoeHealthNewsPage({
   articles,
   initialVariant,
 }: {
   articles: readonly Article[];
-  initialVariant: DoeHealthDeskVariant;
+  initialVariant: DoeHealthDesk2Variant;
 }) {
-  const variant = useDoeHealthDeskVariant(initialVariant);
-  useDoeHealthDeskPhoneOverflowChrome(variant === "phone");
+  const variant = useDoeHealthDesk2Variant(initialVariant);
+  useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
   const [featured, ...rest] = articles;
 
   return (
     <div
-      className={`doehealth-desk-page doehealth-blog-page doehealth-news-page relative min-h-[100dvh] ${inter.className} ${p22Mackinac.variable}`}
-      style={{ backgroundColor: DOEHEALTH_DESK_PAGE_BACKGROUND }}
+      className={`doehealth-desk2-page doehealth-desk-page doehealth-blog-page doehealth-news-page relative min-h-[100dvh] ${inter.className} ${p22Mackinac.variable}`}
+      style={{ backgroundColor: DOEHEALTH_DESK2_PAGE_BACKGROUND }}
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}
     >
       {variant === "desktop" ? (
-        <LegacyHomeDesktopNavBar homeHref={LOGO_HREF} sectionHrefBase={DESK_PATH} />
+        <DoeHealthDesk2DesktopNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
       ) : (
-        <LegacyHomePhoneNavBar homeHref={LOGO_HREF} sectionHrefBase={DESK_PATH} />
+        <DoeHealthDesk2PhoneNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
       )}
-      <DoeHealthDeskNavWash />
+      <DoeHealthDesk2NavWash />
       <main className="doehealth-desk-main min-h-[100dvh]" aria-label="News">
         <section className={`doehealth-news ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
           <header className="doehealth-news__head">
-            <p className="doehealth-news__eyebrow">News</p>
-            <h1 className={`doehealth-news__title ${p22Mackinac.className}`}>Notes from Doe</h1>
-            <p className="doehealth-news__dek">Writing from the founders on healthcare, personal agents, and building Doe.</p>
+            <h1 className={`doehealth-news__title ${p22Mackinac.className}`}>News</h1>
           </header>
 
           <ul className="doehealth-news__grid">
