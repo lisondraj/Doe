@@ -31,35 +31,35 @@
   display: block;
 }
 
-/* /doehealthdesk2 palette only — cream, beige, and peach (see DoeHealthBlogPlaceholder PATTERN_COLORS). */
+/* Original tone families, lightened (see DoeHealthBlogPlaceholder PATTERN_COLORS). */
 .doehealth-blog-placeholder--sand {
-  background: #f4eedf;
+  background: #f7e6c4;
   color: #140c04;
 }
 
 .doehealth-blog-placeholder--panel {
-  background: #f2e8da;
+  background: #f5f2ec;
   color: #140c04;
 }
 
 .doehealth-blog-placeholder--cream {
-  background: #f8f4eb;
+  background: #fbf5e6;
   color: #140c04;
 }
 
 .doehealth-blog-placeholder--gold {
-  background: #fccfb8;
+  background: #f8d9a8;
   color: #140c04;
 }
 
 .doehealth-blog-placeholder--clay {
-  background: #f6d3c4;
+  background: #f4cdb0;
   color: #140c04;
 }
 
 .doehealth-blog-placeholder--umber {
   border-color: transparent;
-  background: #e6dac2;
+  background: #e4d5c0;
   color: #140c04;
 }
 

@@ -11,16 +11,16 @@ type DoeHealthBlogPlaceholderProps = {
 };
 
 /**
- * Background and dot colour for each tone — the /doehealthdesk2 site palette only: cream, beige, and peach,
- * with its muted brown for dots. The tone names are legacy; they no longer mean the old deep colours.
+ * Background and dot colour for each tone: the original Doe tone families, lightened well away from the deep
+ * originals (no pink; the Doe salmon is fine). The tone names are the original ones.
  */
 const PATTERN_COLORS: Record<DoeHealthBlogPlaceholderTone, { bg: string; dot: string }> = {
-  sand: { bg: "#F4EEDF", dot: "#6E5C40" },
-  panel: { bg: "#F2E8DA", dot: "rgba(110, 92, 64, 0.6)" },
-  cream: { bg: "#F8F4EB", dot: "rgba(110, 92, 64, 0.45)" },
-  gold: { bg: "#FCCFB8", dot: "#6E5C40" },
-  clay: { bg: "#F6D3C4", dot: "rgba(110, 92, 64, 0.8)" },
-  umber: { bg: "#E6DAC2", dot: "#6E5C40" },
+  sand: { bg: "#F7E6C4", dot: "#D4AE7A" },
+  panel: { bg: "#F5F2EC", dot: "#C9BDA8" },
+  cream: { bg: "#FBF5E6", dot: "#E2CB9F" },
+  gold: { bg: "#F8D9A8", dot: "#E8B679" },
+  clay: { bg: "#F4CDB0", dot: "#E0A67F" },
+  umber: { bg: "#E4D5C0", dot: "#A8917A" },
 };
 
 /** Flat tinted image slot that stands in for article art. */
