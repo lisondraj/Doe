@@ -31,11 +31,17 @@ const RAMP = {
   threadIn: [1.3, 1.4],
   phone: [1.3, 2.1],
   zoom: [2.2, 3.0],
-  ask: [2.3, 2.7],
+  /** The thread draws in: "Today", the question, then the reply. */
+  stamp: [2.3, 2.5],
+  ask: [2.35, 2.7],
   reply: [2.7, 3.1],
   caption: [3.2, 3.6],
-  /** The bubbles and caption fade while the phone's details undraw in reverse, leaving its body. */
+  /** The caption fades while the phone's details undraw in reverse, leaving its body. */
   chatOut: [4.0, 4.15],
+  /** The thread undraws in reverse with the phone: the reply, the question, then "Today". */
+  replyOut: [4.0, 4.12],
+  askOut: [4.05, 4.2],
+  stampOut: [4.1, 4.25],
   unbuild: [4.0, 4.3],
   /** The body's outline morphs into the first drawing's frame as the beige comes in under it. */
   morph: [4.3, 4.9],
@@ -71,10 +77,10 @@ const seg = (t: number, k: number, w: number) => Math.min(1, Math.max(0, (t - k)
 const smooth = (t: number) => t * t * (3 - 2 * t);
 
 /**
- * The search box's outline, in peach. It measures its box so the stroke fits any size; `draw` (0 to 1)
- * traces it in, like the iPhone and the carousel drawings.
+ * A peach outline around `box` (the search box, a chat bubble). It measures its box so the stroke fits
+ * any size; `draw` (0 to 1) traces it in, like the iPhone and the carousel drawings.
  */
-function SearchOutline({ draw, box }: { draw: number; box: RefObject<HTMLElement> }) {
+function TracedOutline({ draw, box, className }: { draw: number; box: RefObject<HTMLElement>; className: string }) {
   const [size, setSize] = useState({ w: 0, h: 0, r: 0 });
 
   useEffect(() => {
@@ -92,11 +98,27 @@ function SearchOutline({ draw, box }: { draw: number; box: RefObject<HTMLElement
 
   const { w, h, r } = size;
   return (
-    <svg className="doehealth-desk2-visible__search-line" viewBox={`0 0 ${w} ${h}`} aria-hidden="true" style={vars({ "--draw": draw })}>
+    <svg className={className} viewBox={`0 0 ${w} ${h}`} aria-hidden="true" style={vars({ "--draw": draw })}>
       {w > 0 ? (
         <rect x={0.75} y={0.75} width={Math.max(0, w - 1.5)} height={Math.max(0, h - 1.5)} rx={Math.max(0, r - 0.75)} pathLength={1} />
       ) : null}
     </svg>
+  );
+}
+
+/**
+ * A chat bubble that draws in as `d` goes 0 to 1: its outline traces first, then its text sweeps in.
+ * Running `d` back to 0 undraws it in reverse, text first.
+ */
+function DrawnBubble({ text, d, out = false }: { text: string; d: number; out?: boolean }) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  return (
+    <p ref={ref} className={`doehealth-desk2-visible__bubble${out ? " doehealth-desk2-visible__bubble--out" : ""}`}>
+      <TracedOutline draw={seg(d, 0, 0.6)} box={ref} className="doehealth-desk2-visible__bubble-line" />
+      <span className="desk2-genome-swipe desk2-genome-swipe--salmon" style={vars({ "--s": seg(d, 0.35, 0.65) })}>
+        {text}
+      </span>
+    </p>
   );
 }
 
@@ -211,6 +233,9 @@ export function DoeHealthDesk2AudienceSection() {
   const introOpacity = 1 - ramp(p, RAMP.introFade);
   const threadOpacity = ramp(p, RAMP.threadIn) * (1 - ramp(p, [RAMP.unbuild[1], RAMP.unbuild[1] + 0.05]));
   const chatOpacity = 1 - ramp(p, RAMP.chatOut);
+  const stampDraw = ramp(p, RAMP.stamp) - ramp(p, RAMP.stampOut);
+  const askDraw = ramp(p, RAMP.ask) - ramp(p, RAMP.askOut);
+  const replyDraw = ramp(p, RAMP.reply) - ramp(p, RAMP.replyOut);
   /** From here to FIND_FROM the morph outline stands in for the phone's body. */
   const morphing = p >= RAMP.unbuild[0] && p < FIND_FROM;
   const beige = ramp(p, RAMP.beigeIn) * (1 - ramp(p, FINAL.beigeOut));
@@ -252,18 +277,18 @@ export function DoeHealthDesk2AudienceSection() {
           <div className="doehealth-desk2-visible__stage" style={vars({ "--z": smooth(ramp(p, RAMP.zoom)) })}>
             <div className="doehealth-desk2-visible__iphone">
               <PhoneOutline t={ramp(p, RAMP.phone) - ramp(p, RAMP.unbuild)} body={p < RAMP.unbuild[0]} />
-              <div className="doehealth-desk2-visible__chat" style={{ opacity: chatOpacity }}>
+              <div className="doehealth-desk2-visible__chat">
                 <div className="doehealth-desk2-visible__thread">
-                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--center" style={vars({ "--e": ramp(p, RAMP.ask) })}>
-                    <p className="doehealth-desk2-visible__stamp">
+                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--center" style={vars({ "--e": stampDraw })}>
+                    <p className="doehealth-desk2-visible__stamp desk2-genome-swipe desk2-genome-swipe--salmon" style={vars({ "--s": stampDraw })}>
                       <strong>{thread.day}</strong> {thread.time}
                     </p>
                   </div>
-                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--out" style={vars({ "--e": ramp(p, RAMP.ask) })}>
-                    <p className="doehealth-desk2-visible__bubble doehealth-desk2-visible__bubble--out">{thread.ask}</p>
+                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--out" style={vars({ "--e": askDraw })}>
+                    <DrawnBubble text={thread.ask} d={askDraw} out />
                   </div>
-                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--in" style={vars({ "--e": ramp(p, RAMP.reply) })}>
-                    <p className="doehealth-desk2-visible__bubble">{thread.reply}</p>
+                  <div className="doehealth-desk2-visible__row doehealth-desk2-visible__row--in" style={vars({ "--e": replyDraw })}>
+                    <DrawnBubble text={thread.reply} d={replyDraw} />
                   </div>
                 </div>
               </div>
@@ -298,7 +323,7 @@ export function DoeHealthDesk2AudienceSection() {
             </span>
           </p>
           <form ref={searchRef} className={`doehealth-desk2-visible__search ${inter.className}`} action={WAITLIST_PATH} method="get" style={vars({ "--e": searchShown })}>
-            <SearchOutline draw={ramp(p, FINAL.search)} box={searchRef} />
+            <TracedOutline draw={ramp(p, FINAL.search)} box={searchRef} className="doehealth-desk2-visible__search-line" />
             <input
               type="text"
               name="website"

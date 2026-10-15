@@ -1874,10 +1874,9 @@
   text-align: left;
 }
 
-/* --e (0 to 1) is set by scroll progress: rise and grow in as it goes up. */
+/* --e (0 to 1) is set by scroll progress: rise and grow in as it draws. Its outline and text draw it in, so it doesn't fade. */
 .doehealth-desk2-visible__row {
   display: flex;
-  opacity: var(--e, 0);
   transform: translate3d(0, calc((1 - var(--e, 0)) * 0.9rem), 0) scale(calc(0.92 + 0.08 * var(--e, 0)));
 }
 
@@ -1906,20 +1905,45 @@
   font-weight: 600;
 }
 
-/* Bubbles are outlines only, peach on the brown. The incoming reply's outline is softer. */
+/*
+ * Bubbles are outlines only, peach on the brown, traced in by an SVG stroke (the outline's 1.5px is in
+ * the padding). The incoming reply's outline is softer.
+ */
 .doehealth-desk2-visible__bubble {
+  position: relative;
   max-width: 86%;
   margin: 0;
   font-family: -apple-system, "SF Pro Text", system-ui, sans-serif;
-  padding: 0.5em 0.8em;
-  border: 1.5px solid rgb(252 207 184 / 0.55);
+  padding: calc(0.5em + 1.5px) calc(0.8em + 1.5px);
   border-radius: 1.2em;
   background: transparent;
   color: #fccfb8;
 }
 
-.doehealth-desk2-visible__bubble--out {
-  border-color: #fccfb8;
+.doehealth-desk2-visible__bubble > span {
+  display: block;
+}
+
+.doehealth-desk2-visible__bubble-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.doehealth-desk2-visible__bubble-line rect {
+  fill: none;
+  stroke: rgb(252 207 184 / 0.55);
+  stroke-width: 1.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw, 0));
+  opacity: min(1, calc(var(--draw, 0) * 40));
+}
+
+.doehealth-desk2-visible__bubble--out .doehealth-desk2-visible__bubble-line rect {
+  stroke: #fccfb8;
 }
 
 /* Caption to the right of the grown phone (above it on a phone). */
