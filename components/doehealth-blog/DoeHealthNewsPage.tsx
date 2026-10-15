@@ -91,6 +91,35 @@ function NewsCard({
   );
 }
 
+/** Phone: each run of side-by-side cards becomes one swipe row; the wide card stays full width on its own. */
+function groupForPhone(cards: readonly Article[]): Article[][] {
+  const groups: Article[][] = [];
+  for (const article of cards) {
+    const last = groups[groups.length - 1];
+    if (article.slug === WIDE_ROW_SLUG || !last || last[0].slug === WIDE_ROW_SLUG) {
+      groups.push([article]);
+    } else {
+      last.push(article);
+    }
+  }
+  return groups;
+}
+
+/** Phone: two cards in a horizontal swipe row, styled like the carousel at the bottom of an article. */
+function NewsRow({ articles }: { articles: readonly Article[] }) {
+  return (
+    <li className="doehealth-news__row">
+      <div className="doehealth-news-carousel__scroll">
+        <ul className="doehealth-news-carousel__track">
+          {articles.map((article) => (
+            <NewsCard key={article.slug} article={article} />
+          ))}
+        </ul>
+      </div>
+    </li>
+  );
+}
+
 /** /news — the index of every article: the featured one large, the rest side by side, on the desk2 chrome. */
 export function DoeHealthNewsPage({
   articles,
@@ -126,9 +155,17 @@ export function DoeHealthNewsPage({
 
           <ul className="doehealth-news__grid">
             {featured ? <NewsCard article={featured} featured /> : null}
-            {cards.map((article) => (
-              <NewsCard key={article.slug} article={article} wide={article.slug === WIDE_ROW_SLUG} />
-            ))}
+            {variant === "phone"
+              ? groupForPhone(cards).map((group) =>
+                  group[0].slug === WIDE_ROW_SLUG ? (
+                    <NewsCard key={group[0].slug} article={group[0]} wide />
+                  ) : (
+                    <NewsRow key={group[0].slug} articles={group} />
+                  ),
+                )
+              : cards.map((article) => (
+                  <NewsCard key={article.slug} article={article} wide={article.slug === WIDE_ROW_SLUG} />
+                ))}
           </ul>
         </section>
 
