@@ -970,7 +970,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(to top, rgb(20 12 4 / 0.55) 0%, rgb(20 12 4 / 0.22) 38%, transparent 62%);
+  background: linear-gradient(to top, rgb(20 12 4 / 0.55) 0%, rgb(20 12 4 / 0.36) 16%, rgb(20 12 4 / 0.08) 40%, transparent 60%);
 }
 
 /* Founder names on the photo: plain cream text, no shadow or box. Sized to the photo, so they scale with it. */
@@ -4668,7 +4668,7 @@
   width: clamp(4.6rem, 13cqw, 8.5rem);
   aspect-ratio: 1;
   border-radius: 999px;
-  background: rgb(255 252 241 / 0.92);
+  background: rgb(255 252 241 / 0.96);
   color: var(--doehealth-desk2-surface);
   transform: translate(-50%, -50%);
   pointer-events: none;
