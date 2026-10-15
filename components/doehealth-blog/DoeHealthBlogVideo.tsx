@@ -7,12 +7,21 @@ import { p22Mackinac, inter } from "@/lib/home/fonts";
  * The desktop video screen (the lounge photo with the founders' names and the play button), set in the
  * article's hero box. The box keeps its own size and aspect ratio from `className`.
  */
-export function DoeHealthBlogVideo({ className = "" }: { className?: string }) {
+export function DoeHealthBlogVideo({
+  className = "",
+  src = "/doehealthdesk2/newhero.jpg",
+  alt = "A bright, minimal lounge with a cream curved sofa, a sculpted coffee table and a grey lounge chair by a sunlit window",
+}: {
+  className?: string;
+  /** The photo behind the names and play button. Defaults to the lounge photo. */
+  src?: string;
+  alt?: string;
+}) {
   return (
     <div className={`${styles.video} ${className}`}>
       <Image
-        src="/doehealthdesk2/newhero.jpg"
-        alt="A bright, minimal lounge with a cream curved sofa, a sculpted coffee table and a grey lounge chair by a sunlit window"
+        src={src}
+        alt={alt}
         fill
         sizes="(min-width: 1024px) 1210px, 100vw"
         priority

@@ -61,7 +61,11 @@ export function DoeHealthBlogArticle({ article }: { article: Article }) {
       </header>
 
       {/* The hero box is the desktop video screen (the lounge photo with the founders and the play button). */}
-      <DoeHealthBlogVideo className="doehealth-blog-article__hero" />
+      <DoeHealthBlogVideo
+        className="doehealth-blog-article__hero"
+        src={article.heroImage?.src}
+        alt={article.heroImage?.alt}
+      />
 
       <div className="doehealth-blog-article__body">
         <p className="doehealth-blog-article__lede">{article.lede}</p>
