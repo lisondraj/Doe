@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
-import { DoeHealthDeskInviteSection } from "@/components/doehealth-desk/DoeHealthDeskStorySections";
+import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
 import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
@@ -101,7 +101,7 @@ export function DoeHealthNewsPage({
           </ul>
         </section>
 
-        <DoeHealthDeskInviteSection />
+        <DoeHealthDesk2InviteSection />
         <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} />
       </main>
     </div>

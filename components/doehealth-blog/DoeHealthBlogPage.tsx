@@ -3,7 +3,7 @@
 import { DoeHealthBlogArticle } from "@/components/doehealth-blog/DoeHealthBlogArticle";
 import { DoeHealthBlogCarousel } from "@/components/doehealth-blog/DoeHealthBlogCarousel";
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
-import { DoeHealthDeskInviteSection } from "@/components/doehealth-desk/DoeHealthDeskStorySections";
+import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
 import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
@@ -46,7 +46,7 @@ export function DoeHealthBlogPage({ article, initialVariant }: DoeHealthBlogPage
       <main className="doehealth-desk-main min-h-[100dvh]" aria-label="Blog">
         <DoeHealthBlogArticle article={article} />
         <DoeHealthBlogCarousel currentSlug={article.slug} />
-        <DoeHealthDeskInviteSection />
+        <DoeHealthDesk2InviteSection />
         <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} />
       </main>
     </div>
