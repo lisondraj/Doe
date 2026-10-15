@@ -26,35 +26,23 @@ const DESK2_PATH = "/doehealthdesk2";
 /** The footer still uses the legacy desk section anchors. */
 const DESK_PATH = "/doehealthdesk";
 
-function Arrow() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
+/** The whole card is one link to the post: image, info, title, and excerpt. */
 function NewsCard({ article, featured = false }: { article: Article; featured?: boolean }) {
   return (
     <li className={`doehealth-news__item${featured ? " doehealth-news__item--featured" : ""}`}>
       <Link href={doehealthBlogArticlePath(article.slug)} className="doehealth-blog-card doehealth-news-card">
         <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-card__art" pattern />
-        <p className="doehealth-blog-card__eyebrow">{article.eyebrow}</p>
-        <h2 className={`doehealth-blog-card__title ${p22Mackinac.className}`}>
-          {article.title.map((line) => (
-            <span key={line}>{line}</span>
-          ))}
-        </h2>
         <p className="doehealth-blog-card__meta">
           <span>{article.date}</span>
           <span aria-hidden>·</span>
           <span>{article.author}</span>
         </p>
+        <h2 className={`doehealth-blog-card__title ${p22Mackinac.className}`}>
+          {article.title.map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </h2>
         <p className="doehealth-blog-card__excerpt">{article.excerpt}</p>
-        <span className="doehealth-blog-card__more">
-          Read more
-          <Arrow />
-        </span>
       </Link>
     </li>
   );

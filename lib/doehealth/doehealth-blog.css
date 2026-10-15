@@ -547,6 +547,22 @@
   grid-column: 1 / -1;
 }
 
+/* The whole card is the link: it fills its grid cell, and the date and author sit centred above the title. */
+.doehealth-news__item {
+  display: flex;
+}
+
+.doehealth-news-card {
+  flex: 1;
+  min-width: 0;
+}
+
+.doehealth-news-card .doehealth-blog-card__meta {
+  justify-content: center;
+  margin: 1.35rem 0 0.75rem;
+  text-align: center;
+}
+
 .doehealth-news__item--featured .doehealth-blog-card__art {
   aspect-ratio: 16 / 7;
 }
