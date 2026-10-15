@@ -23,7 +23,7 @@ export const DOEHEALTH_PATH = "/doehealth";
 /** Landing served at doehealth.care root via middleware rewrite. */
 export const DOEHEALTH_DESK2_PATH = "/doehealthdesk2";
 /** The doehealth blog; the only pages besides `/` that doehealth.care serves. */
-export const DOEHEALTH_BLOG_PATH = "/doehealthblog";
+export const DOEHEALTH_BLOG_PATH = "/news";
 /** Internal snapshot of /doehealth — fork edits in DoeHealthLegacyHome. */
 export const DOEHEALTH_LEGACY_PATH = "/doehealth-legacy";
 /** Specialty insurance for healthcare AI companies. */

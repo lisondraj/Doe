@@ -5,7 +5,7 @@ import "@/lib/doehealth/doehealth-desk.css";
 import "@/lib/doehealth/doehealth-blog.css";
 
 export const metadata: Metadata = {
-  title: "Blog · Doe",
+  title: "News · Doe",
 };
 
 export default function DoeHealthBlogLayout({ children }: { children: ReactNode }) {

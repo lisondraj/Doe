@@ -1,4 +1,4 @@
-export const DOEHEALTH_BLOG_PATH = "/doehealthblog";
+export const DOEHEALTH_BLOG_PATH = "/news";
 
 /** Doe brand colours only — three beige shades for hero art, three accent tones for body figures. */
 export type DoeHealthBlogPlaceholderTone = "sand" | "panel" | "cream" | "gold" | "clay" | "umber";
@@ -360,7 +360,7 @@ const ONE_PRICE: DoeHealthBlogArticle = {
 
 export const DOEHEALTH_BLOG_ARTICLES = [PERSONAL_AGENTS, DOCTOR_LED_DESIGN, ONE_PRICE] as const;
 
-/** /doehealthblog renders this article directly. */
+/** /news/[slug] renders this article directly. */
 export const DOEHEALTH_BLOG_FEATURED = PERSONAL_AGENTS;
 
 export function doehealthBlogArticlePath(slug: string) {

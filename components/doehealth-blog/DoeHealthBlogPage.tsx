@@ -25,7 +25,7 @@ type DoeHealthBlogPageProps = {
   initialVariant: DoeHealthDeskVariant;
 };
 
-/** /doehealthblog — desk nav and footer around a long-form article and the related-post carousel. */
+/** /news/[slug] — desk nav and footer around a long-form article and the related-post carousel. */
 export function DoeHealthBlogPage({ article, initialVariant }: DoeHealthBlogPageProps) {
   const variant = useDoeHealthDeskVariant(initialVariant);
   useDoeHealthDeskPhoneOverflowChrome(variant === "phone");
