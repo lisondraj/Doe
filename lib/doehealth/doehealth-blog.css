@@ -581,7 +581,8 @@
   aspect-ratio: 16 / 7;
 }
 
-.doehealth-news__item--featured .doehealth-blog-card__title {
+.doehealth-news__item--featured .doehealth-blog-card__title,
+.doehealth-news__item--wide .doehealth-blog-card__title {
   font-size: clamp(2.4rem, 4.2vw, 3.75rem);
 }
 

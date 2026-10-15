@@ -280,7 +280,7 @@ const ONE_PRICE: DoeHealthBlogArticle = {
   author: "Matthew Lisondra",
   date: "September 30, 2026",
   excerpt:
-    "Seats, modules, minutes, and tokens make healthcare AI hard to buy and harder to trust. We think a practice's intelligence should come at one clear price.",
+    "Seats, modules, minutes, and tokens make healthcare AI hard to buy and harder to trust. A practice's intelligence should have one clear price.",
   heroTone: "cream",
   lede: "If a practice has to do math before every call its agents take, the pricing is working against the care.",
   blocks: [
@@ -507,7 +507,7 @@ const CLAIMS_WITHOUT_HOLD_MUSIC: DoeHealthBlogArticle = {
   author: "Matthew Lisondra",
   date: "October 15, 2026",
   excerpt:
-    "Most of the hours patients lose to insurance are spent waiting. An agent that can read the plan and the practice can do most of that work in seconds.",
+    "Most of the hours patients lose to insurance are spent waiting. An agent that reads the plan and the practice can do most of that in seconds.",
   heroTone: "gold",
   lede: "The premium is not what patients dread most. It is the call that goes nowhere, the claim denied for a missing code, and the bill that arrives after the visit.",
   blocks: [
