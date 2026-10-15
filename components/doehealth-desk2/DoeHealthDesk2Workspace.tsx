@@ -61,7 +61,7 @@ export function DoeHealthDesk2Workspace() {
             src="/doehealthdesk2/newhero.jpg"
             alt="A bright, minimal lounge with a cream curved sofa, a sculpted coffee table and a grey lounge chair by a sunlit window"
             width={2500}
-            height={1434}
+            height={1445}
             sizes="(min-width: 1024px) 80vw, 100vw"
             priority
           />
