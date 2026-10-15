@@ -1,0 +1,4361 @@
+@property --desk2-nav-wash {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.doehealth-desk2-page {
+  --desk2-product-scale: 1;
+  --doe-page-surface: #fffcf1;
+  --doehealth-desk2-ink: #140c04;
+  --doehealth-desk2-ink-rgb: 20 12 4;
+  --doehealth-desk2-surface: #281910;
+  --doehealth-desk2-surface-rgb: 40 25 16;
+  --doehealth-desk2-product-rail: #221714;
+  --doehealth-desk2-product-muted: #38251d;
+  --doehealth-desk2-product-card: #3a2920;
+  --doehealth-desk2-radius: 11px;
+  --desk2-wash: var(--desk2-nav-wash, 0);
+  /* 0 to 1 while a beige stretch of the brown section is on screen; set by NavWash. */
+  --desk2-beige: var(--desk2-nav-beige, 0);
+  --desk2-nav-bg: color-mix(
+    in srgb,
+    #f4eedf calc(var(--desk2-beige) * 100%),
+    color-mix(
+      in srgb,
+      rgb(var(--doehealth-desk2-surface-rgb) / 0.78) calc(var(--desk2-wash) * 100%),
+      rgb(255 252 241 / 0.72)
+    )
+  );
+  --desk2-nav-ink: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #fffcf1 calc(var(--desk2-wash) * 100%), var(--doehealth-desk2-ink))
+  );
+  --desk2-nav-button-bg: color-mix(
+    in srgb,
+    #e6dac2 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #fccfb8 calc(var(--desk2-wash) * 100%), var(--doehealth-desk2-surface))
+  );
+  --desk2-nav-button-fg: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, var(--doehealth-desk2-surface) calc(var(--desk2-wash) * 100%), #fffcf1)
+  );
+  --desk2-nav-button-line: color-mix(
+    in srgb,
+    rgb(110 92 64 / 0.25) calc(var(--desk2-beige) * 100%),
+    color-mix(
+      in srgb,
+      rgb(var(--doehealth-desk2-surface-rgb) / 0.22) calc(var(--desk2-wash) * 100%),
+      rgb(255 252 241 / 0.22)
+    )
+  );
+  --desk2-announce-bg: color-mix(
+    in srgb,
+    #e6dac2 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #fccfb8 calc(var(--desk2-wash) * 100%), var(--doehealth-desk2-surface))
+  );
+  --desk2-announce-ink: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, var(--doehealth-desk2-surface) calc(var(--desk2-wash) * 100%), #fffcf1)
+  );
+  --desk2-announce-link: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, var(--doehealth-desk2-surface) calc(var(--desk2-wash) * 100%), #fccfb8)
+  );
+  --desk2-nav-clearance: calc(5.5rem + var(--desk2-banner-h, 2.85rem));
+  --desk2-headline-darken-duration: 4s;
+  --desk2-headline-darken-delay: 0.8s;
+  --desk2-genome-headline-darken-duration: 4s;
+  --desk2-genome-headline-darken-delay: 0s;
+  background-color: #fffcf1;
+  color: var(--doehealth-desk2-ink);
+}
+
+/* Diagonal headline text motion — desk page (desktop + phone). */
+.doehealth-desk2-page .desk2-headline-darken--ink {
+  background: linear-gradient(
+    135deg,
+    var(--doehealth-desk2-surface) 0%,
+    var(--doehealth-desk2-surface) 42%,
+    rgb(var(--doehealth-desk2-surface-rgb) / 0.16) 58%,
+    rgb(var(--doehealth-desk2-surface-rgb) / 0.16) 100%
+  );
+  background-size: 280% 280%;
+  background-position: 100% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.doehealth-desk2-page .desk2-headline-darken--cream {
+  background: linear-gradient(
+    135deg,
+    #fffcf1 0%,
+    #fffcf1 42%,
+    rgb(255 252 241 / 0.14) 58%,
+    rgb(255 252 241 / 0.14) 100%
+  );
+  background-size: 280% 280%;
+  background-position: 100% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.doehealth-desk2-page .desk2-headline-darken--salmon {
+  background: linear-gradient(
+    135deg,
+    #fccfb8 0%,
+    #fccfb8 42%,
+    rgb(252 207 184 / 0.18) 58%,
+    rgb(252 207 184 / 0.18) 100%
+  );
+  background-size: 280% 280%;
+  background-position: 100% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.doehealth-desk2-page .desk2-headline-darken--ink.is-headline-in,
+.doehealth-desk2-page .desk2-headline-darken--cream.is-headline-in,
+.doehealth-desk2-page .desk2-headline-darken--salmon.is-headline-in,
+.doehealth-desk2-page .doehealth-desk2-agents__title.is-title-in .desk2-headline-darken--ink {
+  animation: desk2-headline-darken var(--desk2-headline-darken-duration) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.doehealth-desk2-page .desk2-headline-darken--delay.is-headline-in,
+.doehealth-desk2-page .doehealth-desk2-agents__title.is-title-in .desk2-headline-darken--ink:nth-child(2) {
+  animation-delay: var(--desk2-headline-darken-delay);
+}
+
+.doehealth-desk2-page .doehealth-desk2-genome__eyebrow.desk2-genome-headline-highlight.is-headline-in,
+.doehealth-desk2-page .doehealth-desk2-genome__title.desk2-genome-headline-highlight.is-headline-in,
+.doehealth-desk2-page .doehealth-desk2-genome .desk2-genome-swipe.is-headline-in,
+.doehealth-desk2-page .doehealth-desk2-visible .desk2-genome-swipe.is-headline-in {
+  animation: desk2-genome-headline-highlight var(--desk2-genome-headline-darken-duration) cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
+}
+
+.doehealth-desk2-page .doehealth-desk2-genome__title.desk2-genome-headline-highlight--delay.is-headline-in {
+  animation-delay: var(--desk2-genome-headline-darken-delay);
+}
+
+@keyframes desk2-genome-headline-highlight {
+  to {
+    background-position: 0% 50%;
+  }
+}
+
+.doehealth-desk2-page .doehealth-desk2-genome__eyebrow.desk2-genome-headline-highlight {
+  background: linear-gradient(
+    90deg,
+    #fffcf1 0%,
+    #fffcf1 42%,
+    rgb(255 252 241 / 0) 58%,
+    rgb(255 252 241 / 0) 100%
+  );
+  background-size: 280% 100%;
+  background-position: 100% 50%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.doehealth-desk2-page .doehealth-desk2-genome__title.desk2-genome-headline-highlight {
+  background: linear-gradient(
+    90deg,
+    #fccfb8 0%,
+    #fccfb8 42%,
+    rgb(252 207 184 / 0) 58%,
+    rgb(252 207 184 / 0) 100%
+  );
+  background-size: 280% 100%;
+  background-position: 100% 50%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.doehealth-desk2-page .doehealth-desk2-genome .desk2-genome-swipe,
+.doehealth-desk2-page .doehealth-desk2-visible .desk2-genome-swipe {
+  background-size: 280% 100%;
+  background-position: 100% 50%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.doehealth-desk2-page .doehealth-desk2-genome .desk2-genome-swipe--cream,
+.doehealth-desk2-page .doehealth-desk2-visible .desk2-genome-swipe--cream {
+  background-image: linear-gradient(
+    90deg,
+    #fffcf1 0%,
+    #fffcf1 42%,
+    rgb(255 252 241 / 0) 58%,
+    rgb(255 252 241 / 0) 100%
+  );
+}
+
+.doehealth-desk2-page .doehealth-desk2-genome .desk2-genome-swipe--salmon,
+.doehealth-desk2-page .doehealth-desk2-visible .desk2-genome-swipe--salmon {
+  background-image: linear-gradient(
+    90deg,
+    #fccfb8 0%,
+    #fccfb8 42%,
+    rgb(252 207 184 / 0) 58%,
+    rgb(252 207 184 / 0) 100%
+  );
+}
+
+.doehealth-desk2-page .doehealth-desk2-genome .desk2-genome-swipe--cream-dim {
+  background-image: linear-gradient(
+    90deg,
+    #fffcf1 0%,
+    #fffcf1 42%,
+    rgb(255 252 241 / 0.22) 58%,
+    rgb(255 252 241 / 0.22) 100%
+  );
+}
+
+.doehealth-desk2-page .doehealth-desk2-genome .desk2-genome-swipe--salmon-dim {
+  background-image: linear-gradient(
+    90deg,
+    #fccfb8 0%,
+    #fccfb8 42%,
+    rgb(252 207 184 / 0.22) 58%,
+    rgb(252 207 184 / 0.22) 100%
+  );
+}
+
+.doehealth-desk2-page .doehealth-desk2-genome .desk2-genome-swipe.is-scrub {
+  animation: none;
+  background-position: calc((1 - var(--desk2-genome-believe-swipe, 0)) * 100%) 50%;
+}
+
+@keyframes desk2-headline-darken {
+  to {
+    background-position: 0% 0%;
+  }
+}
+
+.doehealth-desk2-page .doehealth-desk2-hero__line.desk2-headline-darken--ink.is-headline-in {
+  animation-duration: var(--desk2-headline-darken-duration);
+}
+
+.doehealth-desk2-page .doehealth-desk2-hero__headline-settled,
+.doehealth-desk2-page .doehealth-desk2-hero__built-for-tone:not(.desk2-headline-mask) {
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page .doehealth-desk2-hero__built-for-tone {
+  display: inline-block;
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page .desk2-headline-mask {
+  -webkit-mask-image: linear-gradient(
+    135deg,
+    #000 0%,
+    #000 42%,
+    rgb(0 0 0 / 0.16) 58%,
+    rgb(0 0 0 / 0.16) 100%
+  );
+  mask-image: linear-gradient(135deg, #000 0%, #000 42%, rgb(0 0 0 / 0.16) 58%, rgb(0 0 0 / 0.16) 100%);
+  -webkit-mask-size: 280% 280%;
+  mask-size: 280% 280%;
+  -webkit-mask-position: 100% 100%;
+  mask-position: 100% 100%;
+}
+
+.doehealth-desk2-page .desk2-headline-mask.is-headline-in {
+  animation: desk2-headline-mask-darken var(--desk2-headline-darken-duration) cubic-bezier(0.22, 1, 0.36, 1)
+    var(--desk2-headline-darken-delay) forwards;
+}
+
+@keyframes desk2-headline-mask-darken {
+  to {
+    -webkit-mask-position: 0% 0%;
+    mask-position: 0% 0%;
+  }
+}
+
+.doehealth-desk2-page .doehealth-desk2-genome__stack > *:not(.doehealth-desk2-genome__intro) {
+  transform: translateY(1rem);
+  transition-duration: 640ms;
+}
+
+.doehealth-desk2-page .doehealth-desk2-audiences__title.desk2-headline-darken--ink {
+  -webkit-text-stroke: 0 transparent;
+  paint-order: normal;
+}
+
+.doehealth-desk2-page .doehealth-desk2-audiences__card.is-filled-desk .doehealth-desk2-audiences__title.desk2-headline-darken--cream,
+.doehealth-desk2-page .doehealth-desk2-audiences__card.is-filled-phone .doehealth-desk2-audiences__title.desk2-headline-darken--cream {
+  -webkit-text-stroke: 0 transparent;
+  paint-order: normal;
+}
+
+/* Desktop — solid brown cards 1 & 3 (practices, patients). */
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-audiences__card.is-filled-desk {
+  border-color: rgb(255 252 241 / 0.12);
+  background: var(--doehealth-desk2-surface);
+}
+
+/*
+ * Filled cards use the product's Integrations panel surface: same brown (--doehealth-desk2-surface,
+ * = SHELL in DoeHealthDesk2PaperFrame), same border, and the same inset highlight + soft drop shadows.
+ */
+.doehealth-desk2-page .doehealth-desk2-audiences__card.is-filled-desk,
+.doehealth-desk2-page .doehealth-desk2-audiences__card.is-filled-phone {
+  border: 1px solid #fffcf11f;
+  background: var(--doehealth-desk2-surface);
+  box-shadow:
+    #fffcf10f 0 1px 0 inset,
+    #00000029 0 4px 14px,
+    #00000014 0 1px 6px;
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-audiences__card.is-filled-desk .doehealth-desk2-audiences__dek,
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-audiences__card.is-filled-desk .doehealth-desk2-audiences__dek span {
+  color: rgb(255 252 241 / 0.78);
+}
+
+.doehealth-desk2-page .doehealth-desk2-hero__dek,
+.doehealth-desk2-page .doehealth-desk2-hero__secure {
+  transition-duration: 580ms;
+}
+
+.doehealth-desk2-page .doehealth-desk2-hero.is-in .doehealth-desk2-hero__dek {
+  transition-delay: 140ms;
+}
+
+.doehealth-desk2-page .doehealth-desk2-hero.is-in .doehealth-desk2-hero__secure {
+  transition-delay: 210ms;
+}
+
+/* Desktop — slower reveals; timings mirrored in the hero and genome copy files. */
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) {
+  --desk2-headline-darken-duration: 5.5s;
+  --desk2-headline-darken-delay: 0.35s;
+  --desk2-genome-headline-darken-duration: 5.5s;
+  --desk2-genome-headline-darken-delay: 0s;
+}
+
+/* Desktop hero title fades in from nothing first, then the highlight sweeps horizontally. */
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero__line,
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero__dek,
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero__secure {
+  transition-duration: 1000ms;
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero.is-in .doehealth-desk2-hero__line:nth-child(2) {
+  transition-delay: 0ms;
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero.is-in .doehealth-desk2-hero__dek {
+  transition-delay: 280ms;
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero.is-in .doehealth-desk2-hero__secure {
+  transition-delay: 400ms;
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero__line.desk2-headline-darken--ink {
+  background-image: linear-gradient(
+    90deg,
+    var(--doehealth-desk2-surface) 0%,
+    var(--doehealth-desk2-surface) 42%,
+    rgb(var(--doehealth-desk2-surface-rgb) / 0.16) 58%,
+    rgb(var(--doehealth-desk2-surface-rgb) / 0.16) 100%
+  );
+  background-size: 280% 100%;
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero .desk2-headline-mask {
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgb(0 0 0 / 0.16) 58%, rgb(0 0 0 / 0.16) 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgb(0 0 0 / 0.16) 58%, rgb(0 0 0 / 0.16) 100%);
+  -webkit-mask-size: 280% 100%;
+  mask-size: 280% 100%;
+}
+
+/* Hero only — swipe starts immediately on load, and no dim inactive state under it (iPhone + desktop). */
+.doehealth-desk2-page .doehealth-desk2-hero__line.desk2-headline-darken--ink.is-headline-in,
+.doehealth-desk2-page .doehealth-desk2-hero .desk2-headline-mask.is-headline-in {
+  animation-delay: 0s;
+}
+
+.doehealth-desk2-page .doehealth-desk2-hero__line.desk2-headline-darken--ink {
+  background-image: linear-gradient(
+    135deg,
+    var(--doehealth-desk2-surface) 0%,
+    var(--doehealth-desk2-surface) 42%,
+    rgb(var(--doehealth-desk2-surface-rgb) / 0) 58%,
+    rgb(var(--doehealth-desk2-surface-rgb) / 0) 100%
+  );
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero__line.desk2-headline-darken--ink {
+  background-image: linear-gradient(
+    90deg,
+    var(--doehealth-desk2-surface) 0%,
+    var(--doehealth-desk2-surface) 42%,
+    rgb(var(--doehealth-desk2-surface-rgb) / 0) 58%,
+    rgb(var(--doehealth-desk2-surface-rgb) / 0) 100%
+  );
+}
+
+.doehealth-desk2-page .doehealth-desk2-hero .desk2-headline-mask {
+  -webkit-mask-image: linear-gradient(135deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  mask-image: linear-gradient(135deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero .desk2-headline-mask {
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 42%, transparent 58%, transparent 100%);
+}
+
+/* Desktop hero — fade the whole title in as one unit (lines stay opaque), same as iPhone. */
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) {
+  --desk2-hero-intro-duration: 1000ms;
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero__headline {
+  opacity: 0;
+  transform: translate3d(0, 0.9rem, 0);
+  transition:
+    opacity var(--desk2-hero-intro-duration) cubic-bezier(0.33, 1, 0.68, 1),
+    transform var(--desk2-hero-intro-duration) cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero.is-in .doehealth-desk2-hero__headline {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero__line,
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero.is-in .doehealth-desk2-hero__line,
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-hero.is-in .doehealth-desk2-hero__line:nth-child(2) {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-audiences__card {
+  transition-duration: 1100ms;
+}
+
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-genome__stack > * {
+  transition-duration: 950ms;
+}
+
+.doehealth-desk2-page nav.desktop-home-nav .rounded-md {
+  border-radius: var(--doehealth-desk2-radius) !important;
+}
+
+.doehealth-desk2-page nav.desktop-home-nav,
+.doehealth-desk2-page nav.doephone-site-nav {
+  border-bottom: none !important;
+}
+
+.doehealth-desk2-page nav.doephone-site-nav {
+  background-color: var(--desk2-nav-bg, rgb(255 252 241 / 0.72)) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  box-shadow: none !important;
+}
+
+.doehealth-desk2-chrome {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 50;
+}
+
+.doehealth-desk2-announce {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  position: relative;
+  height: var(--desk2-banner-h, 2.85rem);
+  background: var(--desk2-announce-bg, var(--doehealth-desk2-surface));
+  color: var(--desk2-announce-ink, #fffcf1);
+}
+
+.doehealth-desk2-chrome.is-dismissed .doehealth-desk2-announce {
+  display: none;
+}
+
+.doehealth-desk2-announce p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  margin: 0;
+  font-size: clamp(0.9rem, 0.84rem + 0.12vw, 1rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.doehealth-desk2-announce__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--desk2-announce-link, #fccfb8);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.doehealth-desk2-announce__link:hover {
+  opacity: 0.72;
+}
+
+.doehealth-desk2-announce__arrow {
+  flex-shrink: 0;
+}
+
+.doehealth-desk2-announce button {
+  position: absolute;
+  top: 0;
+  right: 0.85rem;
+  display: grid;
+  place-items: center;
+  width: 2.85rem;
+  height: 2.85rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--desk2-announce-ink, #fffcf1);
+  cursor: pointer;
+}
+
+.doehealth-desk2-page nav.desktop-home-nav {
+  position: relative;
+  top: auto !important;
+  background-color: var(--desk2-nav-bg, rgb(255 252 241 / 0.72));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.doehealth-desk2-main {
+  padding-top: calc(5.5rem + var(--desk2-banner-h, 2.85rem));
+  padding-bottom: 0;
+}
+
+.doehealth-desk2-nav__bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+}
+
+.doehealth-desk2-nav__mark {
+  justify-self: start;
+  color: var(--desk2-nav-ink);
+}
+
+.doehealth-desk2-nav__links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 1.8vw, 1.75rem);
+}
+
+.doehealth-desk2-nav__link {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--desk2-nav-ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.doehealth-desk2-nav__link:hover {
+  opacity: 0.72;
+}
+
+.doehealth-desk2-nav__end {
+  justify-self: end;
+}
+
+.doehealth-desk2-chrome .doehealth-desk2-announce,
+.doehealth-desk2-chrome .doehealth-desk2-announce p,
+.doehealth-desk2-chrome .doehealth-desk2-announce__link,
+.doehealth-desk2-chrome .doehealth-desk2-announce button,
+.doehealth-desk2-page nav.desktop-home-nav,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__mark,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__link,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__end a,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__end button,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__end .proto-nav-cta-label {
+  transition: none !important;
+}
+
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__end a,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__end button,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__end .proto-nav-cta-label {
+  background-color: var(--desk2-nav-button-bg) !important;
+  color: var(--desk2-nav-button-fg) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.doehealth-desk2-chrome .doehealth-desk2-announce__link:hover,
+.doehealth-desk2-chrome .doehealth-desk2-announce button:hover,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__mark:hover,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__link:hover,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__end a:hover,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__end button:hover {
+  opacity: 0.72;
+}
+
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-desk2-nav__end button[class*="border-l"] {
+  border-color: var(--desk2-nav-button-line) !important;
+}
+
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-nav-mail-shell > button svg,
+.doehealth-desk2-page nav.desktop-home-nav .doehealth-nav-mail-shell > button svg path {
+  fill: currentColor !important;
+  stroke: none !important;
+  transition: none !important;
+}
+
+.doehealth-desk2-hero-stack {
+  display: contents;
+}
+
+.doehealth-desk2-hero {
+  box-sizing: border-box;
+  padding-top: clamp(1.25rem, 2.5vw, 2rem);
+  padding-bottom: clamp(1.25rem, 2.4vh, 2rem);
+}
+
+.doehealth-desk2-hero__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16.5rem, 22rem);
+  align-items: end;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  width: 100%;
+}
+
+.doehealth-desk2-hero__headline {
+  margin: 0;
+  max-width: 100%;
+  font-weight: 400;
+  font-size: clamp(2.9rem, 5.85vw, 5.35rem);
+  line-height: 0.98;
+  letter-spacing: -0.042em;
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-hero__dek {
+  margin: 0.9rem 0 0;
+  max-width: 36ch;
+  color: var(--doehealth-desk2-ink);
+  font-size: clamp(1.125rem, 1.35vw, 1.3125rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+.doehealth-desk2-hero__dek span {
+  display: block;
+}
+
+.doehealth-desk2-hero__secure {
+  margin: 0;
+  justify-self: end;
+  width: 100%;
+  max-width: 22rem;
+}
+
+.doehealth-desk2-hero__secure p {
+  margin: 0 0 0.55rem;
+  color: var(--doehealth-desk2-ink);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.doehealth-desk2-hero__email {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 3.15rem;
+  padding: 0.3rem 0.3rem 0.3rem 0.95rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-hero__email input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: #fffcf1;
+  font: inherit;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+  outline: none;
+}
+
+.doehealth-desk2-hero__email input::placeholder {
+  color: rgba(255, 252, 241, 0.55);
+}
+
+.doehealth-desk2-hero__email button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: var(--doehealth-desk2-radius);
+  background: #fffcf1;
+  color: var(--doehealth-desk2-ink);
+  cursor: pointer;
+}
+
+.doehealth-desk2-hero__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.doehealth-desk2-hero__line,
+.doehealth-desk2-hero__dek,
+.doehealth-desk2-hero__secure {
+  opacity: 0;
+  transform: translateY(0.9rem);
+  transition:
+    opacity 760ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 760ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.doehealth-desk2-hero.is-in .doehealth-desk2-hero__line,
+.doehealth-desk2-hero.is-in .doehealth-desk2-hero__dek,
+.doehealth-desk2-hero.is-in .doehealth-desk2-hero__secure {
+  opacity: 1;
+  transform: none;
+}
+
+.doehealth-desk2-hero.is-in .doehealth-desk2-hero__line:nth-child(2) {
+  transition-delay: 90ms;
+}
+
+.doehealth-desk2-hero.is-in .doehealth-desk2-hero__dek {
+  transition-delay: 180ms;
+}
+
+.doehealth-desk2-hero.is-in .doehealth-desk2-hero__secure {
+  transition-delay: 270ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-desk2-page .desk2-headline-darken--ink.is-headline-in,
+  .doehealth-desk2-page .desk2-headline-darken--ink,
+  .doehealth-desk2-page .desk2-headline-darken--cream.is-headline-in,
+  .doehealth-desk2-page .desk2-headline-darken--cream,
+  .doehealth-desk2-page .desk2-headline-darken--salmon.is-headline-in,
+  .doehealth-desk2-page .desk2-headline-darken--salmon,
+  .doehealth-desk2-page .doehealth-desk2-agents__title.is-title-in .desk2-headline-darken--ink,
+  .doehealth-desk2-page .doehealth-desk2-genome__eyebrow.desk2-genome-headline-highlight.is-headline-in,
+  .doehealth-desk2-page .doehealth-desk2-genome__title.desk2-genome-headline-highlight.is-headline-in,
+  .doehealth-desk2-page .doehealth-desk2-genome .desk2-genome-swipe.is-headline-in,
+  .doehealth-desk2-page .doehealth-desk2-visible .desk2-genome-swipe.is-headline-in,
+  .doehealth-desk2-page .desk2-headline-mask,
+  .doehealth-desk2-page .desk2-headline-mask.is-headline-in {
+    animation: none;
+    background-position: 0% 0%;
+    -webkit-mask-position: 0% 0%;
+    mask-position: 0% 0%;
+  }
+
+  .doehealth-desk2-page .doehealth-desk2-genome__eyebrow.desk2-genome-headline-highlight,
+  .doehealth-desk2-page .doehealth-desk2-genome__title.desk2-genome-headline-highlight,
+  .doehealth-desk2-page .doehealth-desk2-genome .desk2-genome-swipe,
+  .doehealth-desk2-page .doehealth-desk2-visible .desk2-genome-swipe {
+    background-position: 0% 50%;
+  }
+
+  .doehealth-desk2-hero__line,
+  .doehealth-desk2-hero__dek,
+  .doehealth-desk2-hero__secure {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.doehealth-desk2-hero__line {
+  display: block;
+}
+
+.doehealth-desk2-hero__line--built-for {
+  display: block;
+}
+
+.doehealth-desk2-hero__audience-carousel {
+  display: inline-grid;
+  position: relative;
+  vertical-align: baseline;
+  width: max-content;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.doehealth-desk2-hero__audience-sizer,
+.doehealth-desk2-hero__audience-word {
+  grid-area: 1 / 1;
+  min-width: 0;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.doehealth-desk2-hero__audience-sizer {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.doehealth-desk2-hero__audience-word--out.doehealth-desk2-hero__audience-word--animate {
+  animation: doehealth-desk2-audience-out 550ms cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+
+.doehealth-desk2-hero__audience-word--in.doehealth-desk2-hero__audience-word--animate {
+  animation: doehealth-desk2-audience-in 550ms cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+
+@keyframes doehealth-desk2-audience-out {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, -0.35em, 0);
+  }
+}
+
+@keyframes doehealth-desk2-audience-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.45em, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-desk2-hero__audience-word--out.doehealth-desk2-hero__audience-word--animate,
+  .doehealth-desk2-hero__audience-word--in.doehealth-desk2-hero__audience-word--animate {
+    animation: none;
+  }
+}
+
+.doehealth-desk2-page .doephone-mobile-root .bg-black {
+  background-color: var(--doehealth-desk2-ink) !important;
+}
+
+/* Paper frame is 1920×1080 and scaled to the column. The veil is viewport-fixed. */
+.desk2-workspace {
+  --desk2-ink: var(--doehealth-desk2-surface);
+  --desk2-rail: var(--doehealth-desk2-product-rail);
+  --desk2-muted: var(--doehealth-desk2-product-muted);
+  --desk2-card: var(--doehealth-desk2-product-card);
+  --desk2-cream: #fffcf1;
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  margin-top: -0.15rem;
+  padding-bottom: clamp(2rem, 5vh, 3.5rem);
+  overflow: visible;
+  pointer-events: none;
+  user-select: none;
+}
+
+.desk2-paper-scale,
+.desk2-front-desk2-panel {
+  --desk2-ink: var(--doehealth-desk2-surface);
+  --desk2-rail: var(--doehealth-desk2-product-rail);
+  --desk2-muted: var(--doehealth-desk2-product-muted);
+  --desk2-card: var(--doehealth-desk2-product-card);
+}
+
+.desk2-workspace__stage {
+  position: relative;
+  width: 100%;
+  container-type: inline-size;
+  /* Publish row bottom in 1920×1080 artboard: 14 + 16 + 20 + 40 = 90px */
+  --desk2-front-desk2-artboard-top: 98;
+  opacity: 0;
+  transform: translateY(1.15rem);
+  transition:
+    opacity 860ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 860ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition-delay: 320ms;
+}
+
+.desk2-workspace.is-in .desk2-workspace__stage {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk2-workspace__stage {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.desk2-paper-slot {
+  container-type: inline-size;
+  width: 100%;
+  height: calc(1080 / 1920 * 100cqw * var(--desk2-product-scale, 0.88));
+  position: relative;
+  overflow: visible;
+}
+
+.desk2-front-desk2-panel {
+  position: absolute;
+  top: calc(
+    var(--desk2-front-desk2-artboard-top) / 1920 * 100cqw * var(--desk2-product-scale, 0.88)
+  );
+  right: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-sizing: border-box;
+  width: clamp(23rem, 30vw, 32.5rem);
+  max-width: 100%;
+  padding: 1.35rem 1.35rem 1.55rem;
+  border: 1px solid #fffcf11f;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--doehealth-desk2-surface);
+  box-shadow: none;
+  pointer-events: none;
+  transform: scale(0.86);
+  transform-origin: top right;
+  /* Desktop: the product fills the column to the right margin, so the panel no longer overlaps it. */
+  display: none;
+}
+
+.desk2-paper-scale {
+  width: 1920px;
+  height: 1080px;
+  transform: scale(calc(100cqw / 1920px * var(--desk2-product-scale, 0.88)));
+  transform-origin: top left;
+}
+
+.desk2-workspace__fade {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  width: 100%;
+  height: min(38vw, 28vh, 14.5rem);
+  background: #fffcf1;
+  /* ∪ wash (bowl + vertical fade) intersected with a soft wave that drifts sideways. */
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 46% 78% at 50% 0%,
+      transparent 0%,
+      transparent 30%,
+      rgb(0 0 0 / 0.1) 42%,
+      rgb(0 0 0 / 0.28) 54%,
+      rgb(0 0 0 / 0.52) 66%,
+      rgb(0 0 0 / 0.76) 78%,
+      rgb(0 0 0 / 0.92) 89%,
+      #000 100%
+    ),
+    linear-gradient(
+      to top,
+      #000 0%,
+      #000 42%,
+      rgb(0 0 0 / 0.9) 52%,
+      rgb(0 0 0 / 0.72) 62%,
+      rgb(0 0 0 / 0.5) 72%,
+      rgb(0 0 0 / 0.28) 81%,
+      rgb(0 0 0 / 0.11) 90%,
+      transparent 100%
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='b' x='-20%25' y='-50%25' width='140%25' height='200%25'%3E%3CfeGaussianBlur stdDeviation='5'/%3E%3C/filter%3E%3C/defs%3E%3Cpath filter='url(%23b)' d='M-200 40 Q-150 18 -100 40 T0 40 T100 40 T200 40 T300 40 T400 40 V160 H-200 Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%, 100% 100%, var(--desk2-fade-wave-w) 100%;
+  -webkit-mask-repeat: no-repeat, no-repeat, repeat-x;
+  -webkit-mask-position: 0 0, 0 0, 0 0;
+  -webkit-mask-composite: source-in, source-in;
+  mask-image:
+    radial-gradient(
+      ellipse 46% 78% at 50% 0%,
+      transparent 0%,
+      transparent 30%,
+      rgb(0 0 0 / 0.1) 42%,
+      rgb(0 0 0 / 0.28) 54%,
+      rgb(0 0 0 / 0.52) 66%,
+      rgb(0 0 0 / 0.76) 78%,
+      rgb(0 0 0 / 0.92) 89%,
+      #000 100%
+    ),
+    linear-gradient(
+      to top,
+      #000 0%,
+      #000 42%,
+      rgb(0 0 0 / 0.9) 52%,
+      rgb(0 0 0 / 0.72) 62%,
+      rgb(0 0 0 / 0.5) 72%,
+      rgb(0 0 0 / 0.28) 81%,
+      rgb(0 0 0 / 0.11) 90%,
+      transparent 100%
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='b' x='-20%25' y='-50%25' width='140%25' height='200%25'%3E%3CfeGaussianBlur stdDeviation='5'/%3E%3C/filter%3E%3C/defs%3E%3Cpath filter='url(%23b)' d='M-200 40 Q-150 18 -100 40 T0 40 T100 40 T200 40 T300 40 T400 40 V160 H-200 Z'/%3E%3C/svg%3E");
+  mask-size: 100% 100%, 100% 100%, var(--desk2-fade-wave-w) 100%;
+  mask-repeat: no-repeat, no-repeat, repeat-x;
+  mask-position: 0 0, 0 0, 0 0;
+  mask-composite: intersect, intersect;
+  --desk2-fade-wave-w: 36rem;
+  animation: desk2-workspace-fade-wave 7s linear infinite;
+  opacity: var(--desk2-product-fade, 1);
+  pointer-events: none;
+}
+
+@keyframes desk2-workspace-fade-wave {
+  to {
+    -webkit-mask-position: 0 0, 0 0, var(--desk2-fade-wave-w) 0;
+    mask-position: 0 0, 0 0, var(--desk2-fade-wave-w) 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk2-workspace__fade {
+    animation: none;
+  }
+}
+
+.desk2-workspace__app {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(16.5rem, 28%) minmax(0, 1fr);
+  aspect-ratio: 1920 / 1080;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  border-radius: var(--doehealth-desk2-radius);
+  background-color: var(--desk2-cream);
+  background-image: radial-gradient(rgb(var(--doehealth-desk2-surface-rgb) / 0.16) 0.85px, transparent 0.9px);
+  background-size: 16px 16px;
+  box-shadow: 0 18px 40px rgb(var(--doehealth-desk2-surface-rgb) / 0.16);
+}
+
+.desk2-workspace__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.85rem 0 0.7rem;
+  background: var(--desk2-rail);
+  color: rgba(242, 232, 218, 0.72);
+}
+
+.desk2-workspace__rail-mark {
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  margin-bottom: 0.55rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--desk2-cream);
+  color: var(--desk2-ink);
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.desk2-workspace__rail-icon {
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: var(--doehealth-desk2-radius);
+}
+
+.desk2-workspace__rail-icon svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.desk2-workspace__rail-spacer {
+  flex: 1;
+}
+
+.desk2-workspace__integrations {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0.7rem 0.35rem 0.7rem 0;
+  padding: 1.15rem 0.85rem 0.85rem;
+  border-radius: var(--doehealth-desk2-radius);
+  border: 1px solid rgba(255, 252, 241, 0.12);
+  background: var(--desk2-ink);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+  color: #f2e8da;
+}
+
+.desk2-workspace__integrations h2,
+.desk2-workspace__library h2,
+.desk2-workspace__detail h3 {
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.desk2-workspace__integrations h2 {
+  padding: 0 0.35rem 0.85rem;
+  font-size: 1.45rem;
+}
+
+.desk2-workspace__search {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.15rem;
+  margin: 0 0.15rem 0.7rem;
+  padding: 0 0.35rem 0 0.7rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: rgba(255, 252, 241, 0.08);
+  color: rgba(242, 232, 218, 0.62);
+  font-size: 0.78rem;
+}
+
+.desk2-workspace__search svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex-shrink: 0;
+}
+
+.desk2-workspace__search span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.desk2-workspace__search i {
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-left: auto;
+  border-radius: var(--doehealth-desk2-radius);
+  background: rgba(255, 252, 241, 0.12);
+  color: #f2e8da;
+  font-style: normal;
+  font-size: 0.9rem;
+}
+
+.desk2-workspace__filters {
+  display: flex;
+  gap: 0.2rem;
+  margin: 0 0.15rem 0.65rem;
+  padding: 0.2rem;
+  overflow: hidden;
+}
+
+.desk2-workspace__filters span {
+  padding: 0.28rem 0.55rem;
+  border-radius: var(--doehealth-desk2-radius);
+  color: rgba(242, 232, 218, 0.62);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.desk2-workspace__filters .is-on {
+  background: var(--desk2-cream);
+  color: var(--desk2-ink);
+  font-weight: 600;
+}
+
+.desk2-workspace__apps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.desk2-workspace__apps li,
+.desk2-workspace__step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.55rem;
+  padding: 0 0.35rem;
+  font-size: 0.84rem;
+}
+
+.desk2-workspace__apps li span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.desk2-workspace__step > span {
+  min-width: 0;
+}
+
+.desk2-workspace__apps em,
+.desk2-workspace__step em {
+  margin-left: auto;
+  color: rgba(242, 232, 218, 0.55);
+  font-style: normal;
+  font-size: 0.75rem;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.desk2-workspace__mark {
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--desk2-cream);
+  color: var(--desk2-ink);
+  font-size: 0.72rem;
+  font-weight: 650;
+  flex-shrink: 0;
+}
+
+.desk2-workspace__canvas {
+  position: relative;
+  min-width: 0;
+  margin: 0.55rem 0 0.55rem 0;
+  border-radius: var(--doehealth-desk2-radius);
+  background: transparent;
+  overflow: hidden;
+}
+
+.desk2-workspace__graph {
+  position: absolute;
+  inset: 0;
+}
+
+.desk2-workspace__wires {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.desk2-workspace__wires path {
+  fill: none;
+  stroke: rgb(var(--doehealth-desk2-surface-rgb) / 0.22);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.desk2-workspace__publish {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 1.85rem;
+  padding: 0 0.7rem 0 0.55rem;
+  border: 1px solid rgb(var(--doehealth-desk2-surface-rgb) / 0.1);
+  border-radius: var(--doehealth-desk2-radius);
+  background: #f6d3c4;
+  color: var(--desk2-ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgb(var(--doehealth-desk2-surface-rgb) / 0.06);
+}
+
+.desk2-workspace__publish i {
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid var(--desk2-ink);
+}
+
+.desk2-workspace__publish b {
+  color: rgb(var(--doehealth-desk2-surface-rgb) / 0.45);
+  font-weight: 500;
+  font-size: 0.65rem;
+}
+
+.desk2-workspace__node {
+  position: absolute;
+  z-index: 1;
+  box-sizing: border-box;
+  width: 26%;
+  padding: 0.7rem 0.75rem 0.55rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--desk2-paper);
+}
+
+.desk2-workspace__node header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.desk2-workspace__node svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex-shrink: 0;
+  color: var(--desk2-ink);
+}
+
+.desk2-workspace__node strong {
+  font-size: 0.86rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.desk2-workspace__node header span {
+  margin-left: auto;
+  color: rgba(44, 26, 16, 0.35);
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+}
+
+.desk2-workspace__node p {
+  margin: 0 0 0.55rem;
+  color: rgba(44, 26, 16, 0.72);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.desk2-workspace__node em {
+  display: inline-flex;
+  padding: 0.12rem 0.4rem;
+  border-radius: var(--doehealth-desk2-radius);
+  font-style: normal;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.desk2-workspace__node .is-voice {
+  background: #f3d2c4;
+  color: #8a3d28;
+}
+
+.desk2-workspace__node .is-emr,
+.desk2-workspace__node .is-schedule {
+  background: #ead9c6;
+  color: #6a4a34;
+}
+
+.desk2-workspace__node .is-fax {
+  background: #f0c9a8;
+  color: #7a4524;
+}
+
+.desk2-workspace__node--desk { top: 3%; left: 36%; width: 26%; }
+.desk2-workspace__node--athena { top: 26.5%; left: 10%; }
+.desk2-workspace__node--referral { top: 26.5%; left: 42%; width: 24%; }
+.desk2-workspace__node--nex { top: 48.5%; left: 4%; }
+.desk2-workspace__node--prior { top: 48.5%; left: 34%; }
+
+.desk2-workspace__detail {
+  position: absolute;
+  top: 6.6%;
+  right: 1.6%;
+  z-index: 3;
+  width: 34%;
+  padding: 0.85rem 0.85rem 0.65rem;
+  border-radius: var(--doehealth-desk2-radius);
+  border: 1px solid rgba(255, 252, 241, 0.12);
+  background: var(--desk2-ink);
+  overflow: hidden;
+  color: #f2e8da;
+  box-shadow: 0 18px 40px rgb(var(--doehealth-desk2-surface-rgb) / 0.18);
+}
+
+.desk2-workspace__detail header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.desk2-workspace__detail h3 {
+  font-size: 1.35rem;
+}
+
+.desk2-workspace__detail header span {
+  padding: 0.18rem 0.5rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--desk2-cream);
+  color: var(--desk2-ink);
+  font-size: 0.68rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.desk2-workspace__detail > p {
+  margin: 0.45rem 0 0.7rem;
+  color: rgba(242, 232, 218, 0.78);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.desk2-workspace__detail blockquote {
+  margin: 0 0 0.75rem;
+  padding: 0 0 0.7rem;
+  border-bottom: 1px solid rgba(242, 232, 218, 0.12);
+}
+
+.desk2-workspace__detail blockquote strong {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 550;
+  line-height: 1.35;
+}
+
+.desk2-workspace__detail blockquote em,
+.desk2-workspace__facts span,
+.desk2-workspace__detail time {
+  display: block;
+  margin-top: 0.28rem;
+  color: rgba(242, 232, 218, 0.48);
+  font-style: normal;
+  font-size: 0.68rem;
+}
+
+.desk2-workspace__facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  margin-bottom: 0.7rem;
+}
+
+.desk2-workspace__facts p {
+  margin: 0;
+}
+
+.desk2-workspace__facts strong {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.desk2-workspace__chips {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.desk2-workspace__chips span {
+  padding: 0.18rem 0.45rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: rgba(255, 252, 241, 0.1);
+  font-size: 0.68rem;
+}
+
+.desk2-workspace__step {
+  min-height: 2.35rem;
+  padding: 0.35rem 0;
+  color: #f2e8da;
+  font-size: 0.8rem;
+}
+
+.desk2-workspace__step .desk2-workspace__mark {
+  width: 1.45rem;
+  height: 1.45rem;
+  font-size: 0.68rem;
+}
+
+.desk2-workspace__step em {
+  padding: 0.12rem 0.4rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: rgba(255, 252, 241, 0.1);
+  color: #f2e8da;
+}
+
+.desk2-workspace__step small {
+  display: block;
+  margin-top: 0.12rem;
+  color: rgba(242, 232, 218, 0.5);
+  font-size: 0.68rem;
+}
+
+.desk2-workspace__step--note {
+  align-items: flex-start;
+}
+
+.desk2-workspace__detail time {
+  margin-top: 0.35rem;
+}
+
+.desk2-workspace__library {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  height: 31%;
+  padding: 0.85rem 0.9rem 0.7rem;
+  border-radius: var(--doehealth-desk2-radius);
+  border: 1px solid rgba(255, 252, 241, 0.12);
+  background: var(--desk2-ink);
+  color: #f2e8da;
+  box-sizing: border-box;
+}
+
+.desk2-workspace__library h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.35rem;
+}
+
+.desk2-workspace__library > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.desk2-workspace__library article {
+  min-width: 0;
+}
+
+.desk2-workspace__library i {
+  display: block;
+  height: 8.5vh;
+  min-height: 4.5rem;
+  max-height: 7.5rem;
+  margin-bottom: 0.4rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--desk2-muted);
+}
+
+.desk2-workspace__library span {
+  color: rgba(242, 232, 218, 0.72);
+  font-size: 0.75rem;
+}
+
+.doehealth-desk2-audiences {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin-top: 0;
+  padding-top: clamp(2.25rem, 5vh, 3.75rem);
+  padding-bottom: clamp(2.25rem, 5vh, 3.75rem);
+  scroll-margin-top: calc(5.5rem + var(--desk2-banner-h, 2.85rem));
+  background: var(--doehealth-desk2-surface);
+  color: var(--doehealth-desk2-ink);
+}
+
+.doehealth-desk2-audiences__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 0.85rem 0.9rem;
+  width: 100%;
+  min-height: calc(clamp(22rem, 48vh, 31rem) + clamp(2.75rem, 6vh, 4.25rem));
+}
+
+.doehealth-desk2-audiences__title {
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(1.85rem, 2.05vw, 2.35rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  color: var(--doehealth-desk2-surface);
+  -webkit-text-stroke: 1px var(--doehealth-desk2-surface);
+  paint-order: stroke fill;
+}
+
+.doehealth-desk2-audiences__dek {
+  margin: 0;
+}
+
+.doehealth-desk2-audiences__dek span {
+  display: block;
+}
+
+.doehealth-desk2-audiences__card.is-low .doehealth-desk2-audiences__dek span {
+  white-space: nowrap;
+}
+
+.doehealth-desk2-audiences__card {
+  height: clamp(22rem, 48vh, 31rem);
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    opacity 780ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 780ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.doehealth-desk2-audiences__card.is-high {
+  align-self: start;
+  transform: translateY(-2.75rem);
+}
+
+.doehealth-desk2-audiences__card.is-low {
+  align-self: end;
+  transform: translateY(2.75rem);
+}
+
+.doehealth-desk2-audiences.is-in .doehealth-desk2-audiences__card,
+.doehealth-desk2-audiences__card.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Scroll-locked brown section: one screen tall; scrolling steps through stacked scenes while locked. */
+.doehealth-desk2-visible {
+  position: relative;
+  box-sizing: border-box;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--doehealth-desk2-surface);
+  color: #fffcf1;
+}
+
+.doehealth-desk2-visible__scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0 clamp(1.25rem, 6vw, 4rem);
+  text-align: center;
+  /* --o is set by scroll progress. No transition: the fade follows the wheel exactly. */
+  opacity: var(--o, 0);
+}
+
+/* The swipe is scrubbed by scroll too: --s runs 0 (hidden) to 1 (revealed). Overrides the keyframe. */
+.doehealth-desk2-page .doehealth-desk2-visible .desk2-genome-swipe {
+  animation: none;
+  background-position: calc((1 - var(--s, 0)) * 100%) 50%;
+}
+
+.doehealth-desk2-visible__title-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 17ch;
+  /* ch is measured in this font size, so the wrapper carries the title's size. */
+  font-size: clamp(2.6rem, 6vw, 5.5rem);
+}
+
+.doehealth-desk2-visible__title-wrap--wide {
+  max-width: 24ch;
+  /* The intro line is smaller than the closing title, on phone and desktop. */
+  font-size: clamp(2.2rem, 5vw, 4.6rem);
+}
+
+/* Balance each line's wrap so a short last word doesn't sit alone. */
+.doehealth-desk2-visible__title-wrap--wide .doehealth-desk2-visible__title > span {
+  text-wrap: balance;
+}
+
+.doehealth-desk2-visible__title.is-lines > span {
+  display: block;
+}
+
+/*
+ * The phone's stage: everything under the nav. At --z 0 the whole phone fits, centred; as --z goes to 1
+ * it grows toward the left with its bottom edge fixed, so its top runs off and fades out under the nav.
+ */
+.doehealth-desk2-visible__stage {
+  --phone-m: clamp(1.5rem, 5svh, 3rem);
+  --stage-h: calc(100svh - var(--desk2-nav-clearance));
+  --phone-ws: calc((var(--stage-h) - var(--phone-m) - 0.75rem) * 390 / 844);
+  /* Grown: about the lower 62% of the phone shows. */
+  --phone-wb: min(44vw, calc((var(--stage-h) - var(--phone-m)) / 0.62 * 390 / 844));
+  --phone-x: 28%;
+  --mask-top: 0rem;
+  position: absolute;
+  top: var(--desk2-nav-clearance);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  -webkit-mask-image: linear-gradient(to bottom, transparent var(--mask-top), #000 calc(var(--mask-top) + var(--z, 0) * 3.5rem));
+  mask-image: linear-gradient(to bottom, transparent var(--mask-top), #000 calc(var(--mask-top) + var(--z, 0) * 3.5rem));
+}
+
+/* Full iPhone (390 x 844) in peach outline. Container units inside are relative to its width. */
+.doehealth-desk2-visible__iphone {
+  position: absolute;
+  bottom: var(--phone-m);
+  left: calc(50% + (var(--phone-x) - 50%) * var(--z, 0));
+  width: calc(var(--phone-ws) + (var(--phone-wb) - var(--phone-ws)) * var(--z, 0));
+  aspect-ratio: 390 / 844;
+  transform: translateX(-50%);
+  container-type: inline-size;
+}
+
+/*
+ * Phone: the whole phone draws dead centre under the nav. Zoomed, it grows with the caption below it,
+ * the pair lifted off the section's bottom, and its top fades out just under the nav. The thread spans
+ * the lower ~47% of the phone, so the grown size keeps the whole thread below that fade.
+ */
+@media (max-width: 760px) {
+  .doehealth-desk2-visible__stage {
+    --phone-m: clamp(1.25rem, 4svh, 2.5rem);
+    --phone-ws: min(84vw, calc((var(--stage-h) - var(--phone-m) * 2) * 390 / 844));
+    --phone-mb: clamp(3rem, 12svh, 6rem);
+    --phone-cap: 4.25rem;
+    --phone-b0: calc((var(--stage-h) - var(--phone-ws) * 844 / 390) / 2);
+    --phone-b1: calc(var(--phone-mb) + var(--phone-cap) + 1.75rem);
+    --phone-wb: min(92vw, calc((var(--stage-h) - var(--phone-b1) - 3.5rem - 0.5rem) / 0.48 * 390 / 844));
+    --phone-x: 50%;
+  }
+
+  .doehealth-desk2-visible__iphone {
+    bottom: calc(var(--phone-b0) + (var(--phone-b1) - var(--phone-b0)) * var(--z, 0));
+  }
+}
+
+/* The phone's body morphing into the first drawing's frame; its top fades under the nav like the stage. */
+.doehealth-desk2-visible__morph {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent var(--desk2-nav-clearance), #000 calc(var(--desk2-nav-clearance) + (1 - var(--m, 0)) * 3.5rem));
+  mask-image: linear-gradient(to bottom, transparent var(--desk2-nav-clearance), #000 calc(var(--desk2-nav-clearance) + (1 - var(--m, 0)) * 3.5rem));
+}
+
+/* Each stroke is traced in by its own --draw (0 to 1), like the beige carousel drawings. */
+.doehealth-desk2-visible__iphone-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  stroke: #fccfb8;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.doehealth-desk2-visible__iphone-svg > * {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw, 0));
+  /* Hidden until it starts drawing, so round caps don't leave a dot. */
+  opacity: min(1, calc(var(--draw, 0) * 40));
+}
+
+.doehealth-desk2-visible__iphone-svg .is-soft {
+  stroke-opacity: 0.55;
+}
+
+/* iMessage thread from video1 on the phone's screen, bottom-anchored above the composer. */
+.doehealth-desk2-visible__chat {
+  position: absolute;
+  top: 10%;
+  right: 8%;
+  bottom: 12.5%;
+  left: 8%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.doehealth-desk2-visible__thread {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4cqw;
+  font-size: 4.6cqw;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+/* --e (0 to 1) is set by scroll progress: rise and grow in as it goes up. */
+.doehealth-desk2-visible__row {
+  display: flex;
+  opacity: var(--e, 0);
+  transform: translate3d(0, calc((1 - var(--e, 0)) * 0.9rem), 0) scale(calc(0.92 + 0.08 * var(--e, 0)));
+}
+
+.doehealth-desk2-visible__row--center {
+  justify-content: center;
+}
+
+.doehealth-desk2-visible__row--out {
+  justify-content: flex-end;
+  transform-origin: 100% 100%;
+}
+
+.doehealth-desk2-visible__row--in {
+  justify-content: flex-start;
+  transform-origin: 0% 100%;
+}
+
+.doehealth-desk2-visible__stamp {
+  margin: 0 0 0.25em;
+  font-family: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  font-size: 0.72em;
+  color: #fccfb8;
+}
+
+.doehealth-desk2-visible__stamp strong {
+  font-weight: 600;
+}
+
+/* Bubbles are outlines only, peach on the brown. The incoming reply's outline is softer. */
+.doehealth-desk2-visible__bubble {
+  max-width: 86%;
+  margin: 0;
+  font-family: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  padding: 0.5em 0.8em;
+  border: 1.5px solid rgb(252 207 184 / 0.55);
+  border-radius: 1.2em;
+  background: transparent;
+  color: #fccfb8;
+}
+
+.doehealth-desk2-visible__bubble--out {
+  border-color: #fccfb8;
+}
+
+/* Caption to the right of the grown phone (above it on a phone). */
+.doehealth-desk2-visible__caption {
+  position: absolute;
+  top: calc(50% + var(--desk2-nav-clearance) / 2);
+  right: clamp(1.25rem, 6vw, 4rem);
+  left: 54%;
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(2.4rem, 4.6vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  text-align: left;
+  color: #fccfb8;
+  opacity: var(--e, 0);
+  transform: translate3d(0, calc(-50% + (1 - var(--e, 0)) * 1rem), 0);
+}
+
+@media (max-width: 760px) {
+  .doehealth-desk2-visible__caption {
+    top: auto;
+    right: clamp(1.25rem, 6vw, 4rem);
+    bottom: clamp(3rem, 12svh, 6rem);
+    left: clamp(1.25rem, 6vw, 4rem);
+    font-size: clamp(1.8rem, 7.6vw, 2.4rem);
+    text-align: center;
+    transform: translate3d(0, calc((1 - var(--e, 0)) * 0.6rem), 0);
+  }
+
+  /* The closing prompt, a size up on a phone. */
+  .doehealth-desk2-visible__sub {
+    font-size: clamp(1.8rem, 6.2vw, 2.4rem);
+  }
+}
+
+.doehealth-desk2-visible__caption span {
+  display: block;
+}
+
+.doehealth-desk2-visible__title {
+  margin: 0;
+  width: 100%;
+  font-weight: 400;
+  font-size: inherit;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  color: transparent;
+}
+
+.doehealth-desk2-visible__title--overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.doehealth-desk2-visible .is-off {
+  visibility: hidden;
+}
+
+/* Same type as the title, smaller, dead centre, peach. */
+.doehealth-desk2-visible__sub {
+  margin: clamp(1.25rem, 3.5vh, 2.25rem) 0 0;
+  font-weight: 400;
+  font-size: clamp(1.6rem, 2.6vw, 2.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  text-align: center;
+  opacity: var(--e, 0);
+}
+
+/* Website search under the prompt: the invite box above the footer (peach, brown arrow), at this size. */
+/* Linear search box: a peach outline drawn on scroll (the SVG), with peach type and a peach arrow. */
+.doehealth-desk2-visible__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  width: min(100%, 42rem);
+  height: clamp(3.75rem, 8.5vh, 4.75rem);
+  margin-top: clamp(1.75rem, 5vh, 3rem);
+  padding: 0.45rem 0.45rem 0.45rem clamp(1.25rem, 2vw, 1.75rem);
+  border-radius: var(--doehealth-desk2-radius);
+  background: transparent;
+  color: #fccfb8;
+  opacity: var(--e, 0);
+  transform: translate3d(0, calc((1 - var(--e, 0)) * 1rem), 0);
+}
+
+.doehealth-desk2-visible__search-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.doehealth-desk2-visible__search-line rect {
+  fill: none;
+  stroke: #fccfb8;
+  stroke-width: 1.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw, 0));
+  opacity: min(1, calc(var(--draw, 0) * 40));
+}
+
+.doehealth-desk2-visible__search input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #fccfb8;
+  font: inherit;
+  font-size: clamp(1.1rem, 1.6vw, 1.45rem);
+  letter-spacing: -0.02em;
+}
+
+.doehealth-desk2-visible__search input::placeholder {
+  color: rgb(252 207 184 / 0.5);
+}
+
+.doehealth-desk2-visible__search button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  height: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1.5px solid #fccfb8;
+  border-radius: calc(var(--doehealth-desk2-radius) - 2px);
+  background: transparent;
+  color: #fccfb8;
+  cursor: pointer;
+}
+
+/* iPhone: the same size as the footer invite box (width, height, padding, arrow button). */
+@media (max-width: 760px) {
+  .doehealth-desk2-visible__search {
+    gap: 0.35rem;
+    width: min(100%, 22rem);
+    height: auto;
+    min-height: 3.15rem;
+    margin-top: clamp(1.25rem, 3.5vh, 2rem);
+    padding: 0.3rem 0.3rem 0.3rem 0.95rem;
+  }
+
+  .doehealth-desk2-visible__search input {
+    font-size: 0.95rem;
+    letter-spacing: -0.02em;
+  }
+
+  .doehealth-desk2-visible__search button {
+    width: 2.5rem;
+    height: 2.5rem;
+    aspect-ratio: auto;
+    border-radius: calc(var(--doehealth-desk2-radius) - 2px);
+  }
+}
+
+/* Skip to the last scene, as on /doehealthdesk. Cream on brown, deep beige over the beige (--b). */
+.doehealth-desk2-visible__skip {
+  position: absolute;
+  right: max(1.15rem, env(safe-area-inset-right, 0px));
+  bottom: max(1.15rem, env(safe-area-inset-bottom, 0px));
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: color-mix(in srgb, rgb(110 92 64 / 0.55) calc(var(--b, 0) * 100%), rgb(255 252 241 / 0.42));
+  cursor: pointer;
+  transform: rotate(90deg);
+  transition: color 180ms ease;
+}
+
+.doehealth-desk2-visible__skip:hover,
+.doehealth-desk2-visible__skip:focus-visible {
+  color: color-mix(in srgb, #6e5c40 calc(var(--b, 0) * 100%), #fffcf1);
+}
+
+.doehealth-desk2-visible__skip:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 3px;
+}
+
+/*
+ * Beige stretch inside the brown section, cross-faded in by scroll (--o). Brown titles, video1
+ * product art. The section lowers its data-nav-wash with it, so the nav takes its light look here.
+ */
+.doehealth-desk2-find {
+  /* Titles start right of centre; the line drawing sits in the space to their left. */
+  --find-text-x: 48%;
+  --find-art-x: 26%;
+  --find-art-y: 50%;
+  --find-wheel-y: 50%;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #f4eedf;
+  color: #281910;
+  opacity: var(--o, 0);
+}
+
+/* One sweep across the whole title (all lines at once), scrubbed by --s. */
+.doehealth-desk2-find__title {
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(2rem, 4.2vw, 3.9rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  background-image: linear-gradient(90deg, #281910 0%, #281910 42%, rgb(40 25 16 / 0) 58%, rgb(40 25 16 / 0) 100%);
+  background-size: 280% 100%;
+  background-position: calc((1 - var(--s, 0)) * 100%) 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Deep beige, the same ink as the nav words. */
+.doehealth-desk2-find__title.is-deep {
+  background-image: linear-gradient(90deg, #6e5c40 0%, #6e5c40 42%, rgb(110 92 64 / 0) 58%, rgb(110 92 64 / 0) 100%);
+}
+
+.doehealth-desk2-find__title--big {
+  font-size: clamp(2.6rem, 6vw, 5.5rem);
+  line-height: 0.98;
+}
+
+.doehealth-desk2-find__title > span {
+  display: block;
+}
+
+/*
+ * Title wheel. Each title is placed by its distance from the middle (--d, set by scroll): the lit one
+ * in the middle, the next below, the last one rolling up and out.
+ */
+.doehealth-desk2-find__wheel {
+  position: absolute;
+  inset: 0;
+  font-size: clamp(2.6rem, 6vw, 5.5rem);
+  perspective: 1400px;
+  pointer-events: none;
+}
+
+.doehealth-desk2-find__wheel-item {
+  position: absolute;
+  top: var(--find-wheel-y);
+  right: 0;
+  left: var(--find-text-x);
+  padding-right: clamp(1.25rem, 6vw, 4rem);
+  text-align: left;
+  opacity: var(--op, 0);
+  transform-origin: left center;
+  transform: translate3d(0, calc(-50% + var(--d, 0) * 2.9em), 0) rotateX(calc(var(--d, 0) * -24deg)) scale(calc(1 - 0.06 * var(--ad, 0)));
+}
+
+/* Line drawings: deep beige strokes, no fill, stacked in one place and built (and unbuilt) by scroll. */
+.doehealth-desk2-find__art {
+  position: absolute;
+  top: var(--find-art-y);
+  left: var(--find-art-x);
+  width: min(34vw, 60svh);
+  aspect-ratio: 400 / 320;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.doehealth-desk2-find__art-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  stroke: #6e5c40;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Each stroke is traced in by its own --draw (0 to 1); is-solid strokes fade in instead. */
+.doehealth-desk2-find__art-svg :not(g, .is-solid, .is-solid *, .is-pulse) {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw, 0));
+  /* Hidden until it starts drawing, so round caps don't leave a dot. */
+  opacity: min(1, calc(var(--draw, 0) * 40));
+}
+
+.doehealth-desk2-find__art-svg .is-soft {
+  stroke-opacity: 0.6;
+}
+
+.doehealth-desk2-find__art-svg .is-faint {
+  stroke-opacity: 0.32;
+}
+
+.doehealth-desk2-find__art-svg .is-strong {
+  stroke-width: 2;
+}
+
+/* Typed address characters: short thick dashes. */
+.doehealth-desk2-find__art-svg .is-char {
+  stroke-width: 3;
+}
+
+/* A short bright dash running the length of its path as --pulse goes 0 to 1. */
+.doehealth-desk2-find__art-svg .is-pulse {
+  stroke-width: 2.4;
+  stroke-dasharray: 0.12 1;
+  stroke-dashoffset: calc(0.12 - var(--pulse, 0) * 1.12);
+}
+
+/*
+ * Phone: the drawing and the title are one centred group in the space under the nav. The group's
+ * height is the drawing, a gap, then a two-line title; each element is placed from the group's centre.
+ */
+@media (max-width: 760px) {
+  .doehealth-desk2-find {
+    --find-art-w: min(90vw, 58svh);
+    --find-art-h: calc(var(--find-art-w) * 0.8);
+    --find-gap: 1.25rem;
+    --find-title-h: 5.6rem;
+    --find-group-c: calc((var(--desk2-nav-clearance) + 100svh) / 2);
+    --find-text-x: 0%;
+    --find-art-x: 50%;
+    --find-art-y: calc(var(--find-group-c) - (var(--find-gap) + var(--find-title-h)) / 2);
+    --find-wheel-y: calc(var(--find-group-c) + (var(--find-art-h) + var(--find-gap)) / 2);
+  }
+
+  .doehealth-desk2-find__wheel-item {
+    right: 0;
+    left: 0;
+    padding: 0 clamp(1.25rem, 6vw, 4rem);
+    text-align: center;
+    transform-origin: center;
+  }
+
+  .doehealth-desk2-find__art {
+    width: var(--find-art-w);
+  }
+}
+
+/* Static brown block — no motion at all. */
+.doehealth-desk2-audiences__card.is-static {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-desk2-audiences__card,
+  .doehealth-desk2-audiences__card.is-high,
+  .doehealth-desk2-audiences__card.is-low {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.doehealth-desk2-audiences__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.doehealth-desk2-audiences__card.is-high .doehealth-desk2-audiences__copy {
+  margin-top: 0;
+}
+
+.doehealth-desk2-audiences__card.is-low .doehealth-desk2-audiences__copy {
+  margin-top: auto;
+}
+
+.doehealth-desk2-genome {
+  --desk2-genome-beats: 9.85;
+  --desk2-genome-slot: clamp(10rem, 28vh, 15.5rem);
+  position: relative;
+  box-sizing: border-box;
+  height: 100svh;
+  min-height: 100svh;
+  padding: 0;
+  scroll-margin-top: 0;
+  background: var(--doehealth-desk2-surface);
+  color: #fffcf1;
+  text-align: center;
+}
+
+.doehealth-desk2-genome__pin {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 100dvh;
+  height: 100svh;
+  padding: var(--desk2-nav-clearance) clamp(1.5rem, 6vw, 4rem) 0;
+  overflow: hidden;
+  background: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-genome.is-complete {
+  height: 100svh;
+  min-height: 100svh;
+}
+
+.doehealth-desk2-genome__pin.is-locked {
+  position: fixed;
+}
+
+.doehealth-desk2-genome.is-complete .doehealth-desk2-genome__pin {
+  position: absolute;
+  top: 0;
+  bottom: auto;
+}
+
+.doehealth-desk2-genome__pin.is-released {
+  top: auto;
+  bottom: 0;
+}
+
+.doehealth-desk2-genome__stage {
+  position: relative;
+  width: min(100%, 46rem);
+  height: calc(var(--desk2-genome-slot) * 3.15);
+  overflow: visible;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 6%, #000 18%, #000 82%, transparent 94%);
+  mask-image: linear-gradient(to bottom, transparent 6%, #000 18%, #000 82%, transparent 94%);
+}
+
+.doehealth-desk2-genome__scene {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.doehealth-desk2-genome__scene--problem {
+  opacity: var(--desk2-genome-problem, 0);
+}
+
+.doehealth-desk2-genome__scene--believe {
+  opacity: var(--desk2-genome-believe, 0);
+}
+
+.doehealth-desk2-genome__believe {
+  margin: 0;
+  max-width: 14.5em;
+  color: #fffcf1;
+  font-size: clamp(2.1rem, 4.2vw, 3.65rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+  text-align: center;
+  text-wrap: balance;
+  -webkit-mask-image: linear-gradient(
+    135deg,
+    #000 0%,
+    #000 42%,
+    rgb(0 0 0 / 0.22) 58%,
+    rgb(0 0 0 / 0.22) 100%
+  );
+  mask-image: linear-gradient(
+    135deg,
+    #000 0%,
+    #000 42%,
+    rgb(0 0 0 / 0.22) 58%,
+    rgb(0 0 0 / 0.22) 100%
+  );
+  -webkit-mask-size: 280% 280%;
+  mask-size: 280% 280%;
+  -webkit-mask-position: calc((1 - var(--desk2-genome-believe-swipe, 0)) * 100%)
+    calc((1 - var(--desk2-genome-believe-swipe, 0)) * 100%);
+  mask-position: calc((1 - var(--desk2-genome-believe-swipe, 0)) * 100%)
+    calc((1 - var(--desk2-genome-believe-swipe, 0)) * 100%);
+}
+
+.doehealth-desk2-genome__scene--lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.doehealth-desk2-genome__reel {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  will-change: transform;
+  transform: translate3d(0, calc((var(--desk2-genome-index, 0) + 0.5) * var(--desk2-genome-slot) * -1), 0);
+}
+
+.doehealth-desk2-genome__slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: var(--desk2-genome-slot);
+  margin: 0 auto;
+  padding: 0 0.25rem;
+  max-width: 14.5em;
+  color: #fffcf1;
+  font-size: clamp(2.1rem, 4.2vw, 3.65rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+  text-wrap: balance;
+  opacity: calc(1 - min(0.78, var(--desk2-genome-dist, 1) * 0.58));
+  transform: scale(calc(1 - min(0.06, var(--desk2-genome-dist, 1) * 0.045)));
+}
+
+.doehealth-desk2-genome__reel.is-first .doehealth-desk2-genome__slide:not(:first-child) {
+  opacity: 0;
+}
+
+.doehealth-desk2-genome__slide--lockup {
+  gap: 0.35rem;
+  max-width: none;
+}
+
+.doehealth-desk2-genome__tone-salmon {
+  color: #fccfb8;
+}
+
+.doehealth-desk2-genome__stack {
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: min(100%, 64rem);
+  min-height: 0;
+  margin-inline: auto;
+}
+
+.doehealth-desk2-genome__stack > * {
+  opacity: 0;
+  transform: translateY(1.1rem);
+  transition:
+    opacity 720ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 720ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.doehealth-desk2-genome__stack > *.is-segment-in {
+  opacity: 1;
+  transform: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-genome__stack > * {
+  transform: translateY(1.65rem);
+  transition-duration: 820ms;
+}
+
+.doehealth-desk2-genome__eyebrow {
+  margin: 0;
+  color: #fffcf1;
+  font-size: clamp(1.65rem, 2.8vw, 2.45rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  opacity: var(--desk2-genome-intro, 0);
+}
+
+.doehealth-desk2-genome__title {
+  position: static;
+  margin: 0;
+  color: #fccfb8;
+  font-size: clamp(4.35rem, 10vw, 8.25rem);
+  font-weight: 400;
+  letter-spacing: -0.048em;
+  line-height: 0.9;
+  opacity: var(--desk2-genome-title, 0);
+}
+
+.doehealth-desk2-genome__dek {
+  width: min(100%, 22.5rem);
+  margin: 0.55rem 0 0;
+  color: rgb(255 252 241 / 0.74);
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  text-align: center;
+  text-wrap: balance;
+  opacity: var(--desk2-genome-dek, 0);
+}
+
+.doehealth-desk2-genome__skip {
+  position: absolute;
+  right: max(1.15rem, env(safe-area-inset-right, 0px));
+  bottom: max(1.15rem, env(safe-area-inset-bottom, 0px));
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgb(255 252 241 / 0.42);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: rotate(90deg);
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+.doehealth-desk2-genome__pin.is-locked:not(.is-at-intro) .doehealth-desk2-genome__skip {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.doehealth-desk2-genome__skip:hover,
+.doehealth-desk2-genome__skip:focus-visible {
+  color: #fffcf1;
+}
+
+.doehealth-desk2-genome__skip:focus-visible {
+  outline: 1px solid rgb(255 252 241 / 0.45);
+  outline-offset: 3px;
+}
+
+.doehealth-desk2-genome__board {
+  width: min(100%, 26.5rem);
+  margin: clamp(2.4rem, 5vh, 3.4rem) auto 0;
+  padding: 1.15rem;
+  border: 1px solid var(--doehealth-desk2-ink);
+  border-radius: var(--doehealth-desk2-radius);
+  background: #fffcf1;
+  color: var(--doehealth-desk2-ink);
+  text-align: left;
+  box-shadow: 0 18px 40px rgb(var(--doehealth-desk2-ink-rgb) / 0.16);
+}
+
+.doehealth-desk2-genome__board-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.15rem 0.2rem 0.85rem;
+}
+
+.doehealth-desk2-genome__board-head strong {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.doehealth-desk2-genome__board-head small {
+  display: block;
+  margin-top: 0.28rem;
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.55);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.doehealth-desk2-genome__board-head em {
+  height: 1.7rem;
+  padding: 0 0.7rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--doehealth-desk2-ink);
+  color: #fffcf1;
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.7rem;
+}
+
+.doehealth-desk2-genome__board ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doehealth-desk2-genome__board li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.15rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: rgb(var(--doehealth-desk2-ink-rgb) / 0.05);
+}
+
+.doehealth-desk2-genome__board li span {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.doehealth-desk2-genome__board li b {
+  font-size: 0.98rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.doehealth-desk2-genome__board li small {
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.55);
+  font-size: 0.78rem;
+  letter-spacing: -0.01em;
+}
+
+.doehealth-desk2-genome__board li i {
+  height: 1.45rem;
+  padding: 0 0.55rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: #fed9c4;
+  color: var(--doehealth-desk2-ink);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  line-height: 1.45rem;
+}
+
+.doehealth-desk2-genome__board footer {
+  padding: 0.75rem 0.2rem 0.1rem;
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.55);
+  font-size: 0.78rem;
+  letter-spacing: -0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-desk2-genome__stack > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.doehealth-desk2-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  min-height: min(69vh, 42rem);
+  overflow-x: clip;
+  overflow-y: hidden;
+  background: var(--doehealth-desk2-surface);
+  color: #fffcf1;
+}
+
+.doehealth-desk2-footer__inner {
+  display: flex;
+  width: 100%;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+.doehealth-desk2-footer__meta {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: clamp(2.75rem, 6vh, 4rem);
+}
+
+.doehealth-desk2-footer__wordmark-shell {
+  display: flex;
+  justify-content: center;
+  overflow-x: clip;
+  overflow-y: visible;
+  width: 100vw;
+  margin-right: calc(50% - 50vw);
+  margin-left: calc(50% - 50vw);
+  padding-top: 0.75rem;
+  padding-bottom: 0;
+}
+
+.doehealth-desk2-footer__mark {
+  display: inline-block;
+  flex-shrink: 0;
+  margin: 0;
+  min-width: 0;
+  font-weight: 400;
+  font-size: clamp(11rem, min(76vw, 68vmin), 30rem);
+  line-height: 0.65;
+  letter-spacing: -0.04em;
+  color: #fffcf1;
+  text-align: center;
+  text-decoration: none;
+  margin-bottom: calc(-0.06em - env(safe-area-inset-bottom, 0px));
+  transition: opacity 200ms ease;
+}
+
+.doehealth-desk2-footer__mark:hover {
+  opacity: 0.9;
+}
+
+.doehealth-desk2-footer__company {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  text-align: left;
+}
+
+.doehealth-desk2-footer__company-name {
+  margin: 0;
+  color: #fffcf1;
+  font-size: clamp(1.08rem, 0.92rem + 0.62vmin, 1.32rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.16;
+}
+
+.doehealth-desk2-footer__incorporation {
+  margin: 0.35rem 0 0;
+  color: rgb(255 252 241 / 0.78);
+  font-size: clamp(1rem, 0.88rem + 0.48vmin, 1.16rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.34;
+}
+
+.doehealth-desk2-footer__incorporation-pending {
+  display: block;
+  margin-top: 0.2rem;
+  color: rgb(255 252 241 / 0.58);
+  font-size: clamp(0.78rem, 0.7rem + 0.32vmin, 0.88rem);
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.doehealth-desk2-footer__email {
+  margin: 0.65rem 0 0;
+  color: rgb(255 252 241 / 0.88);
+  font-size: clamp(1.08rem, 0.92rem + 0.62vmin, 1.32rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.38;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.doehealth-desk2-footer__email:hover {
+  color: #fffcf1;
+}
+
+.doehealth-desk2-footer__links {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: clamp(0.45rem, 1.2vmin, 0.65rem);
+  text-align: right;
+}
+
+.doehealth-desk2-footer__links a {
+  color: #fffcf1;
+  font-size: clamp(1.12rem, 4.05vmin, 1.52rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.doehealth-desk2-footer__links a:hover {
+  opacity: 0.85;
+}
+
+.doehealth-desk2-agents,
+.doehealth-desk2-sunday,
+.doehealth-desk2-close {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 100dvh;
+  padding-top: calc(5.5rem + var(--desk2-banner-h, 2.85rem) + clamp(1.25rem, 3vh, 2.25rem));
+  padding-bottom: clamp(1.75rem, 4vh, 3rem);
+}
+
+.doehealth-desk2-agents {
+  gap: clamp(1.35rem, 3vh, 2.25rem);
+  min-height: 100dvh;
+  scroll-margin-top: calc(5.5rem + var(--desk2-banner-h, 2.85rem));
+  color: var(--doehealth-desk2-ink);
+}
+
+.doehealth-desk2-agents__head,
+.doehealth-desk2-close__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2.5rem;
+}
+
+.doehealth-desk2-agents__head {
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.doehealth-desk2-agents h2,
+.doehealth-desk2-sunday h2,
+.doehealth-desk2-close h2 {
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(2.85rem, 4.6vw, 4.25rem);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-sunday h2 {
+  color: #fffcf1;
+}
+
+.doehealth-desk2-agents h2 span,
+.doehealth-desk2-sunday h2 span,
+.doehealth-desk2-close h2 span,
+.doehealth-desk2-agents p span,
+.doehealth-desk2-sunday__copy p span,
+.doehealth-desk2-close p span {
+  display: block;
+}
+
+.doehealth-desk2-agents__head p,
+.doehealth-desk2-sunday__copy > p,
+.doehealth-desk2-close__head p {
+  margin: 0;
+  max-width: 18rem;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+  text-align: right;
+}
+
+.doehealth-desk2-agents__head p,
+.doehealth-desk2-close__head p {
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.62);
+}
+
+.desk2-agent-carousel__nav {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.45rem;
+}
+
+.desk2-agent-carousel__nav button {
+  display: grid;
+  place-items: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  border: 1px solid rgb(var(--doehealth-desk2-ink-rgb) / 0.18);
+  border-radius: var(--doehealth-desk2-radius);
+  background: transparent;
+  color: var(--doehealth-desk2-surface);
+  cursor: pointer;
+}
+
+.desk2-agent-carousel__nav button:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+.desk2-agent-carousel {
+  --agent-inset: 2.5rem;
+  --agent-gap: 0.9rem;
+  --agent-w: calc((100cqw - 2 * var(--agent-inset) - 2 * var(--agent-gap)) / 3);
+  container-type: inline-size;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .desk2-agent-carousel {
+    --agent-inset: 5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .desk2-agent-carousel {
+    --agent-inset: 7rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .desk2-agent-carousel {
+    --agent-inset: 9rem;
+  }
+}
+
+.desk2-agent-carousel ul {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  gap: var(--agent-gap);
+  min-height: 0;
+  margin: 0;
+  padding: 0 0 0 var(--agent-inset);
+  list-style: none;
+  transform: translateX(calc(var(--agent-index, 0) * -1 * (var(--agent-w) + var(--agent-gap))));
+  transition: transform 520ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.desk2-agent-carousel li,
+.doehealth-desk2-audiences__card {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 1.35rem 1.35rem 1.45rem;
+  border: 1px solid rgb(var(--doehealth-desk2-ink-rgb) / 0.16);
+  border-radius: var(--doehealth-desk2-radius);
+  background: transparent;
+}
+
+.desk2-agent-carousel li {
+  flex: 0 0 var(--agent-w);
+  justify-content: space-between;
+}
+
+.desk2-agent-carousel strong {
+  font-size: clamp(1.65rem, 2vw, 2.05rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+@keyframes desk2-audience-slide-from-right {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--desk2-audience-reveal-x, 4rem), 0, 0);
+  }
+
+  60% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes desk2-audience-slide-from-left {
+  from {
+    opacity: 0;
+    transform: translate3d(calc(-1 * var(--desk2-audience-reveal-x, 4rem)), 0, 0);
+  }
+
+  60% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Audience switch — the product's segmented control (Integrations EMR / Scheduling filter). */
+.doehealth-desk2-agents__switch {
+  display: flex;
+}
+
+.desk2-agent-switch {
+  --switch-pad: 4px;
+  --switch-index: 0;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  box-sizing: border-box;
+  width: min(100%, 27rem);
+  padding: var(--switch-pad);
+  border: 1px solid #fffcf11f;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--doehealth-desk2-surface);
+  box-shadow: none;
+}
+
+.desk2-agent-switch__pill {
+  position: absolute;
+  z-index: 0;
+  top: var(--switch-pad);
+  bottom: var(--switch-pad);
+  left: var(--switch-pad);
+  width: calc((100% - 2 * var(--switch-pad)) / 4);
+  border: 1px solid #fffcf1eb;
+  border-radius: var(--doehealth-desk2-radius);
+  background: #fffcf1;
+  box-shadow: none;
+  transform: translate3d(calc(var(--switch-index) * 100%), 0, 0);
+  transition: transform 420ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.desk2-agent-switch button {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  height: 2.6rem;
+  padding: 0 0.4rem;
+  border: 0;
+  border-radius: var(--doehealth-desk2-radius);
+  background: transparent;
+  color: rgb(255 252 241 / 0.55);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: color 320ms cubic-bezier(0.33, 1, 0.68, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.desk2-agent-switch button:hover:not(.is-on) {
+  color: rgb(255 252 241 / 0.8);
+}
+
+.desk2-agent-switch button.is-on {
+  color: var(--doehealth-desk2-surface);
+  font-weight: 600;
+}
+
+.desk2-agent-switch button:focus-visible {
+  outline: 2px solid #fccfb8;
+  outline-offset: 1px;
+}
+
+/* Flipping audiences: the new agents settle in one after another. */
+.desk2-agent-carousel ul.is-swapped li {
+  animation: desk2-agent-swap-in 560ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  animation-delay: calc(var(--agent-order, 0) * 55ms);
+}
+
+@keyframes desk2-agent-swap-in {
+  from {
+    opacity: 0;
+    transform: translate3d(1.25rem, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk2-agent-switch__pill,
+  .desk2-agent-switch button {
+    transition: none;
+  }
+
+  .desk2-agent-carousel ul.is-swapped li {
+    animation: none;
+  }
+}
+
+.desk2-agent-carousel li > span,
+.doehealth-desk2-audiences__dek {
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.55);
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.doehealth-desk2-sunday {
+  background: var(--doehealth-desk2-surface);
+  color: #fffcf1;
+}
+
+.doehealth-desk2-sunday__layout {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(15rem, 22rem) minmax(0, 1fr);
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: stretch;
+  min-height: 0;
+}
+
+.doehealth-desk2-sunday__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.doehealth-desk2-sunday__copy > p {
+  margin-top: 1.1rem;
+  max-width: 18rem;
+  color: rgba(255, 252, 241, 0.68);
+  text-align: left;
+}
+
+.doehealth-desk2-sunday__version {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 1.35rem 0 0;
+  color: #fffcf1;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+}
+
+.doehealth-desk2-sunday__version span {
+  color: rgba(255, 252, 241, 0.45);
+}
+
+.doehealth-desk2-sunday__sheet {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--doehealth-desk2-radius);
+  background: #fffcf1;
+  color: var(--doehealth-desk2-ink);
+}
+
+.doehealth-desk2-sunday__sheet ol {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+}
+
+.doehealth-desk2-sunday__sheet li {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 8.5rem minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0 1.25rem;
+}
+
+.doehealth-desk2-sunday__sheet strong {
+  font-size: 0.98rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.doehealth-desk2-sunday__sheet li span {
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.62);
+  font-size: 0.92rem;
+  letter-spacing: -0.015em;
+}
+
+.doehealth-desk2-sunday__sheet time {
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.42);
+  font-size: 0.84rem;
+}
+
+.doehealth-desk2-sunday__sheet footer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  padding: 1.15rem 1.25rem 1.25rem;
+  border-top: 1px solid rgb(var(--doehealth-desk2-ink-rgb) / 0.1);
+}
+
+.doehealth-desk2-sunday__sheet footer em {
+  display: block;
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.45);
+  font-size: 0.78rem;
+  font-style: normal;
+  letter-spacing: -0.01em;
+}
+
+.doehealth-desk2-sunday__sheet footer span {
+  display: block;
+  margin-top: 0.28rem;
+  font-size: 0.92rem;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.doehealth-desk2-close {
+  gap: clamp(1.25rem, 2.8vh, 2rem);
+  color: var(--doehealth-desk2-ink);
+}
+
+.doehealth-desk2-floor {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid rgb(var(--doehealth-desk2-ink-rgb) / 0.14);
+  border-radius: var(--doehealth-desk2-radius);
+  background: #fffcf1;
+}
+
+.doehealth-desk2-floor__bar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 1.25rem;
+  border-bottom: 1px solid rgb(var(--doehealth-desk2-ink-rgb) / 0.1);
+}
+
+.doehealth-desk2-floor__bar strong {
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.doehealth-desk2-floor__bar span {
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.48);
+  font-size: 0.88rem;
+}
+
+.doehealth-desk2-floor__body {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(13rem, 0.7fr) minmax(0, 1.15fr) minmax(14rem, 0.85fr);
+  min-height: 0;
+}
+
+.doehealth-desk2-floor__book {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0.4rem 0;
+  list-style: none;
+  border-right: 1px solid rgb(var(--doehealth-desk2-ink-rgb) / 0.1);
+}
+
+.doehealth-desk2-floor__book li {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 3.4rem minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: center;
+  padding: 0 1.15rem;
+}
+
+.doehealth-desk2-floor__book time {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.92rem;
+  letter-spacing: -0.02em;
+}
+
+.doehealth-desk2-floor__book span {
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.62);
+  font-size: 0.92rem;
+  letter-spacing: -0.02em;
+}
+
+.doehealth-desk2-floor__book li.is-open {
+  background: var(--doehealth-desk2-surface);
+  color: #fffcf1;
+}
+
+.doehealth-desk2-floor__book li.is-open span {
+  color: rgba(255, 252, 241, 0.78);
+}
+
+.doehealth-desk2-floor__note,
+.doehealth-desk2-floor__call {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  min-width: 0;
+  padding: clamp(1.25rem, 2.5vh, 1.85rem) clamp(1.15rem, 2vw, 1.6rem);
+}
+
+.doehealth-desk2-floor__note {
+  border-right: 1px solid rgb(var(--doehealth-desk2-ink-rgb) / 0.1);
+}
+
+.doehealth-desk2-floor__note header,
+.doehealth-desk2-floor__call header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.doehealth-desk2-floor__note strong,
+.doehealth-desk2-floor__call strong {
+  font-size: clamp(1.45rem, 1.8vw, 1.75rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.doehealth-desk2-floor__note header span,
+.doehealth-desk2-floor__call header span {
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.5);
+  font-size: 0.9rem;
+  letter-spacing: -0.015em;
+}
+
+.doehealth-desk2-floor__note p,
+.doehealth-desk2-floor__call p {
+  margin: 0;
+  max-width: 26rem;
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.78);
+  font-size: 1.02rem;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+}
+
+.doehealth-desk2-floor__note p + p,
+.doehealth-desk2-floor__call > p {
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.5);
+}
+
+.doehealth-desk2-blank {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100dvh;
+}
+
+.doehealth-desk2-blank--brown {
+  background: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-blank--white {
+  background: #fffcf1;
+}
+
+.doehealth-desk2-invite {
+  box-sizing: border-box;
+  padding-top: clamp(1.5rem, 4vh, 2.75rem);
+  padding-bottom: clamp(1.25rem, 3vh, 2rem);
+}
+
+.doehealth-desk2-invite__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+  box-sizing: border-box;
+  height: 66.67dvh;
+  padding: 2.5rem 1.5rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--doehealth-desk2-surface);
+  color: #fffcf1;
+  text-align: center;
+}
+
+.doehealth-desk2-invite__panel h2 {
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(2.85rem, 4.6vw, 4.25rem);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+
+.doehealth-desk2-invite__panel h2 span {
+  display: block;
+}
+
+.doehealth-desk2-invite__form {
+  width: min(100%, 22rem);
+  margin: 0;
+}
+
+.doehealth-desk2-invite__form label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 3.15rem;
+  padding: 0.3rem 0.3rem 0.3rem 0.95rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: #fccfb8;
+}
+
+.doehealth-desk2-invite__form input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--doehealth-desk2-surface);
+  font: inherit;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+  outline: none;
+}
+
+.doehealth-desk2-invite__form input::placeholder {
+  color: rgb(var(--doehealth-desk2-surface-rgb) / 0.55);
+}
+
+.doehealth-desk2-invite__form button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: calc(var(--doehealth-desk2-radius) - 2px);
+  background: var(--doehealth-desk2-surface);
+  color: #fccfb8;
+  cursor: pointer;
+}
+
+.desk2-feat {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.35rem, 3vh, 2.25rem);
+  box-sizing: border-box;
+  padding-top: calc(5.5rem + var(--desk2-banner-h, 2.85rem) + clamp(1rem, 2.5vh, 2rem));
+  padding-bottom: clamp(2.25rem, 6vh, 4rem);
+  color: var(--doehealth-desk2-ink);
+}
+
+.desk2-feat__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2.5rem;
+}
+
+.desk2-feat__head.is-stack {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.desk2-feat__eyebrow {
+  margin: 0 0 0.7rem;
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.5);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.desk2-feat h2 {
+  margin: 0;
+  color: var(--doehealth-desk2-surface);
+  font-size: clamp(2.85rem, 4.6vw, 4.25rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+}
+
+.desk2-feat h2 span {
+  display: block;
+}
+
+.desk2-feat__dek {
+  margin: 0;
+  max-width: 22rem;
+  color: rgb(var(--doehealth-desk2-ink-rgb) / 0.62);
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+  text-align: right;
+}
+
+.desk2-feat__head.is-stack .desk2-feat__dek {
+  text-align: left;
+}
+
+.desk2-feat__quote {
+  margin: 1.35rem 0 0;
+  max-width: 12ch;
+  color: var(--doehealth-desk2-surface);
+  font-size: clamp(1.85rem, 2.6vw, 2.55rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+}
+
+.desk2-feat--voice .desk2-feat__stage,
+.desk2-feat--scribe .desk2-feat__stage {
+  display: grid;
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 3rem);
+}
+
+.desk2-feat--voice .desk2-feat__stage {
+  grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 24rem);
+}
+
+.desk2-feat--scribe .desk2-feat__stage {
+  grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.9fr);
+  align-items: stretch;
+}
+
+.desk2-fragment,
+.desk2-brown-panel,
+.desk2-genome-bar {
+  box-sizing: border-box;
+  border: 1px solid #fffcf11f;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--doehealth-desk2-surface);
+  box-shadow: #fffcf10f 0 1px 0 inset, #00000029 0 4px 14px;
+}
+
+.desk2-fragment {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 28rem;
+  padding: 1.35rem 1.35rem 1.5rem;
+}
+
+.desk2-brown-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: min(100%, 24rem);
+  padding: 1.6rem 1.35rem 1.35rem;
+}
+
+.desk2-brown-panel--list {
+  width: 100%;
+}
+
+.desk2-note-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  box-sizing: border-box;
+  padding: 1.4rem 1.35rem 1.3rem;
+  border-radius: var(--doehealth-desk2-radius);
+  background: #f8f4eb;
+}
+
+.desk2-product {
+  display: flex;
+  height: 40rem;
+  overflow: hidden;
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--doehealth-desk2-surface);
+}
+
+.desk2-product__pad {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  padding: 14px 14px 14px 4px;
+}
+
+.desk2-product__stage {
+  flex: 1;
+  min-width: 0;
+  padding: 16px;
+  overflow: hidden;
+  border-radius: var(--doehealth-desk2-radius);
+  background-color: #fffcf1;
+  background-image: url(/doehealth/workflows-dots.svg);
+  background-size: 16px 16px;
+  box-shadow: #0000002e 0 12px 40px;
+}
+
+.desk2-product__split {
+  display: flex;
+  gap: 16px;
+  height: 100%;
+  min-height: 0;
+}
+
+.desk2-product__split .desk2-brown-panel {
+  height: 100%;
+  box-shadow: none;
+}
+
+.desk2-product__canvas {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.desk2-flow-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.desk2-genome-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.4rem 1.25rem 1.25rem;
+}
+
+.desk2-genome-bar__versions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.doehealth-desk2-floor__call blockquote {
+  margin: 0;
+  font-size: clamp(1.35rem, 1.8vw, 1.7rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+/* Phone — single column, Harvey/Devin style: headline, product card, then stacked story. */
+@media (max-width: 1023px) {
+  .doehealth-desk2-page {
+    --desk2-banner-h: 2.45rem;
+    --desk2-phone-product-scale: 1.5;
+    --desk2-phone-product-half: calc(
+      (1080 / 1920) * (100vw - 1.25rem) * var(--desk2-phone-product-scale) * 0.5
+    );
+    --desk2-phone-product-h: calc(
+      (1080 / 1920) * (100vw - 1.25rem) * var(--desk2-phone-product-scale)
+    );
+    --desk2-phone-email-product-gap: clamp(1.5rem, 4.5vh, 2.5rem);
+    --doe-page-surface: #fffcf1;
+    --doe-page-surface-raised: #fffcf1;
+    --doe-page-ink: var(--doehealth-desk2-surface);
+    --doe-page-border: rgb(var(--doehealth-desk2-ink-rgb) / 0.08);
+    --desk2-phone-nav-clearance: calc(
+      var(--desk2-banner-h, 2.45rem) +
+        max(4.85rem, calc(env(safe-area-inset-top, 0px) + 3.65rem))
+    );
+  }
+
+  html:has(.doehealth-desk2-page .doephone-mobile-root),
+  html:has(.doehealth-desk2-page .doephone-mobile-root) body {
+    /* Default cream — use-doehealth-desk2-phone-overflow-chrome toggles brown at brown bands. */
+    background-color: #fffcf1;
+    overscroll-behavior-y: none;
+  }
+
+  html[data-doephone-pinching="true"]:has(.doehealth-desk2-page .doephone-mobile-root),
+  html[data-doephone-pinching="true"]:has(.doehealth-desk2-page .doephone-mobile-root) body {
+    overscroll-behavior-y: none;
+  }
+
+  .doehealth-desk2-main {
+    overflow-x: clip;
+  }
+
+  /* Stack ends ~¼ product-height below the fold; hero centers copy in the space above. */
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero-stack {
+    display: flex;
+    flex-direction: column;
+    /* svh, not dvh — dvh resizes as Safari's toolbar collapses mid-scroll. */
+    min-height: calc(
+      100svh - var(--desk2-phone-nav-clearance) + var(--desk2-phone-product-h) / 4
+    );
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+    padding-top: var(--desk2-phone-email-product-gap);
+    padding-bottom: clamp(0.85rem, 2.75vh, 1.65rem);
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero__row {
+    flex: 0 0 auto;
+    justify-content: flex-start;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace {
+    flex: 0 0 auto;
+    margin-top: -0.85rem !important;
+    margin-bottom: 0;
+    /* Space between the product and the brown section below it. */
+    padding-bottom: clamp(2.5rem, 7svh, 4rem) !important;
+    transform: none !important;
+  }
+
+  .doehealth-desk2-page .doehealth-desk2-chrome--phone.doephone-mobile-root {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 50;
+    overflow: visible;
+    padding-top: env(safe-area-inset-top, 0px);
+    background-color: transparent !important;
+  }
+
+  .doehealth-desk2-page .doehealth-desk2-chrome--phone::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: env(safe-area-inset-top, 0px);
+    background: var(--desk2-announce-bg, var(--doehealth-desk2-surface));
+  }
+
+  .doehealth-desk2-page .doehealth-desk2-chrome--phone .doehealth-desk2-announce {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .doehealth-desk2-page
+    .doehealth-desk2-chrome--phone:has([role="dialog"][aria-modal="true"])::before,
+  .doehealth-desk2-page .doehealth-desk2-chrome--phone:has([role="dialog"][aria-modal="true"]) .doehealth-desk2-announce {
+    position: relative;
+    z-index: 220;
+    isolation: isolate;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none;
+    background: var(--desk2-announce-bg, var(--doehealth-desk2-surface)) !important;
+  }
+
+  .doehealth-desk2-page
+    .doehealth-desk2-chrome--phone:has([role="dialog"][aria-modal="true"])
+    .doehealth-desk2-announce
+    p,
+  .doehealth-desk2-page
+    .doehealth-desk2-chrome--phone:has([role="dialog"][aria-modal="true"])
+    .doehealth-desk2-announce__link {
+    filter: none;
+  }
+
+  .doehealth-desk2-page
+    .doehealth-desk2-chrome--phone:has([role="dialog"][aria-modal="true"])
+    nav.doephone-site-nav {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: #fffcf1 !important;
+    box-shadow: none !important;
+  }
+
+  .doehealth-desk2-page .doehealth-desk2-chrome--phone .doehealth-desk2-announce p {
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+    padding-inline: 0.85rem;
+    font-size: clamp(0.82rem, 3.2vw, 0.94rem);
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .doehealth-desk2-page .doehealth-desk2-chrome--phone .doehealth-desk2-announce button {
+    display: none;
+  }
+
+  /* Expanded menu — desktop desk links, iPhone stacked sheet. */
+  .doehealth-desk2-chrome--phone [role="dialog"] {
+    background: #fffcf1 !important;
+    color: var(--doehealth-desk2-surface);
+  }
+
+  .doehealth-desk2-chrome--phone [role="dialog"] nav > div {
+    border-color: rgb(var(--doehealth-desk2-ink-rgb) / 0.1) !important;
+  }
+
+  .doehealth-desk2-chrome--phone [role="dialog"] nav a {
+    color: var(--doehealth-desk2-surface) !important;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+  }
+
+  .doehealth-desk2-chrome--phone [role="dialog"] nav > div:has(a[href="/waitlist"]) {
+    border-bottom: 0 !important;
+    padding: 1.15rem 1.25rem 0.25rem;
+  }
+
+  .doehealth-desk2-chrome--phone [role="dialog"] a[href="/waitlist"] {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.75rem 1.2rem !important;
+    border-radius: var(--doehealth-desk2-radius);
+    background: var(--doehealth-desk2-surface);
+    color: #fffcf1 !important;
+    font-size: 1.05rem !important;
+    line-height: 1;
+  }
+
+  /* Footer carousel only — not the animated sheet content wrapper. */
+  .doehealth-desk2-chrome--phone [role="dialog"] nav + div {
+    display: none;
+  }
+
+  .doehealth-desk2-main {
+    padding-top: var(--desk2-phone-nav-clearance);
+  }
+
+  .doehealth-desk2-page .doehealth-desk2-chrome--phone nav.doephone-site-nav {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+  }
+
+  .doehealth-desk2-page nav.doephone-site-nav {
+    padding-top: 0 !important;
+    background-color: var(--desk2-nav-bg, rgb(255 252 241 / 0.72)) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    transition: none !important;
+  }
+
+  .doehealth-desk2-page nav.doephone-site-nav > div > div {
+    padding-top: 0.8125rem !important;
+    padding-bottom: 0.8125rem !important;
+    padding-left: max(1.25rem, calc(env(safe-area-inset-left, 0px) + 3.8vmin)) !important;
+    padding-right: max(1.25rem, calc(env(safe-area-inset-right, 0px) + 3.8vmin)) !important;
+  }
+
+  .doehealth-desk2-page nav.doephone-site-nav .absolute.top-1\/2 {
+    left: max(1.25rem, calc(env(safe-area-inset-left, 0px) + 3.8vmin)) !important;
+    color: var(--desk2-nav-ink, var(--doehealth-desk2-surface)) !important;
+    transition: none !important;
+  }
+
+  .doehealth-desk2-page nav.doephone-site-nav .flex.shrink-0.items-center {
+    gap: 0.65rem !important;
+  }
+
+  .doehealth-desk2-page nav.doephone-site-nav a.bg-black,
+  .doehealth-desk2-page nav.doephone-site-nav .bg-black {
+    background-color: color-mix(in srgb, #e6dac2 calc(var(--desk2-beige) * 100%), var(--doehealth-desk2-surface)) !important;
+    color: color-mix(in srgb, #6e5c40 calc(var(--desk2-beige) * 100%), #fffcf1) !important;
+    border-radius: var(--doehealth-desk2-radius) !important;
+  }
+
+  .doehealth-desk2-page nav.doephone-site-nav button[aria-label*="navigation menu" i],
+  .doehealth-desk2-page nav.doephone-site-nav button[aria-label*="Close navigation" i] {
+    color: var(--desk2-nav-ink, var(--doehealth-desk2-surface)) !important;
+    transition: none !important;
+  }
+
+  .doehealth-desk2-page .doehealth-desk2-hero,
+  .doehealth-desk2-page .desk2-workspace,
+  .doehealth-desk2-page .doehealth-desk2-audiences,
+  .doehealth-desk2-page .doehealth-desk2-agents__head,
+  .doehealth-desk2-page .doehealth-desk2-agents__switch,
+  .doehealth-desk2-page .desk2-feat,
+  .doehealth-desk2-page .doehealth-desk2-invite,
+  .doehealth-desk2-page .doehealth-desk2-footer__meta {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .doehealth-desk2-hero {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .doehealth-desk2-hero__row {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: clamp(0.9rem, 2.6vh, 1.15rem);
+  }
+
+  .doehealth-desk2-hero__copy {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.75rem, 2.2vh, 0.95rem);
+  }
+
+  .doehealth-desk2-hero__headline {
+    font-size: clamp(2.55rem, 10.8vw, 3.15rem);
+  }
+
+  .doehealth-desk2-hero__dek {
+    margin-top: 0;
+    font-size: clamp(1.05rem, 4.15vw, 1.18rem);
+    max-width: none;
+  }
+
+  .doehealth-desk2-hero__line--built-for {
+    display: block;
+  }
+
+  .doehealth-desk2-hero__dek span {
+    display: inline;
+  }
+
+  .doehealth-desk2-hero__dek span + span::before {
+    content: " ";
+  }
+
+  .doehealth-desk2-hero__secure {
+    justify-self: stretch;
+    max-width: none;
+  }
+
+  .doehealth-desk2-hero__secure p {
+    margin: 0 0 0.45rem;
+  }
+
+  .doehealth-desk2-page .desk2-workspace {
+    --desk2-product-scale: var(--desk2-phone-product-scale);
+    padding-right: 0;
+    padding-bottom: 0;
+    overflow: visible;
+  }
+
+  /* ~⅔ of artboard visible; left aligned to gutter, right bleeds off-screen. */
+  .doehealth-desk2-page .desk2-workspace__stage {
+    max-width: none;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .desk2-paper-slot {
+    overflow: hidden;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace__fade {
+    z-index: 45;
+  }
+
+  .desk2-front-desk2-panel {
+    display: none !important;
+  }
+
+  .doehealth-desk2-audiences,
+  .doehealth-desk2-agents,
+  .desk2-feat,
+  .doehealth-desk2-invite,
+  .doehealth-desk2-footer {
+    min-height: 0;
+  }
+
+  .doehealth-desk2-audiences {
+    padding-top: 2.25rem;
+    padding-bottom: 2.25rem;
+  }
+
+  .doehealth-desk2-audiences__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.7rem;
+    min-height: 0;
+  }
+
+  .doehealth-desk2-audiences__card.is-high,
+  .doehealth-desk2-audiences__card.is-low {
+    height: auto;
+  }
+
+  .doehealth-desk2-audiences__card.is-low .doehealth-desk2-audiences__copy {
+    margin-top: 0;
+  }
+
+  .doehealth-desk2-audiences__title {
+    white-space: normal;
+  }
+
+  /* Stacked audience cards — equal height on iPhone; solid brown for practices + patients only. */
+  .doehealth-desk2-page:has(.doephone-mobile-root) {
+    --desk2-audience-card-trim: clamp(1.85rem, 8.5vw, 2.85rem);
+    --desk2-audience-reveal-x: clamp(4rem, 22vw, 6rem);
+    --desk2-audience-reveal-y: 0px;
+    --desk2-audience-card-duration: 1000ms;
+    --desk2-audience-headline-darken-duration: 3.2s;
+    --desk2-audience-headline-darken-delay: 0s;
+    --desk2-audience-dek-delay: 0s;
+    --desk2-hero-intro-duration: 760ms;
+  }
+
+  /* iPhone hero — both headline lines fade up together, then diagonal swipe (no extra delay). */
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero__headline {
+    opacity: 0;
+    transform: translate3d(0, 0.9rem, 0);
+    transition:
+      opacity var(--desk2-hero-intro-duration) cubic-bezier(0.33, 1, 0.68, 1),
+      transform var(--desk2-hero-intro-duration) cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero.is-in .doehealth-desk2-hero__headline {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Lines stay fully opaque; the whole title (dim inactive state included) fades in from nothing. */
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero__line,
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero.is-in .doehealth-desk2-hero__line,
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero.is-in .doehealth-desk2-hero__line:nth-child(2) {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero__line.desk2-headline-darken--ink.is-headline-in,
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero .desk2-headline-mask.is-headline-in {
+    animation-delay: 0s;
+  }
+
+  /* Phone: only the card that has scrolled in reveals — not the whole section at once. */
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences.is-in .doehealth-desk2-audiences__card:not(.is-in) {
+    opacity: 0;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card,
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card.is-high,
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card.is-low {
+    transition:
+      opacity calc(var(--desk2-audience-card-duration) * 0.7) cubic-bezier(0.33, 1, 0.68, 1),
+      transform var(--desk2-audience-card-duration) cubic-bezier(0.16, 1, 0.3, 1);
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+    align-self: auto;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card.is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card.is-filled-phone:not(.is-in) {
+    transform: translate3d(calc(-1 * var(--desk2-audience-reveal-x)), var(--desk2-audience-reveal-y), 0);
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card:not(.is-filled-phone):not(.is-in) {
+    transform: translate3d(var(--desk2-audience-reveal-x), var(--desk2-audience-reveal-y), 0);
+  }
+
+  /*
+   * Where the browser supports scroll-driven animations (Safari 26+, Chrome 115+), the sideways slide is
+   * tied to the card's position on screen: it plays exactly as fast as you scroll, so it is always
+   * visible — even on a flick — and runs on the compositor. Other browsers keep the timed reveal.
+   */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card {
+        transition: none;
+        animation: desk2-audience-slide-from-right linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 100%;
+      }
+
+      .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card.is-filled-phone {
+        animation-name: desk2-audience-slide-from-left;
+      }
+    }
+  }
+
+  /*
+   * Once a card has fully arrived it is locked in place: scrolling back up or down through the section
+   * never replays or reverses the slide, so the four cards stay put as one static stack.
+   */
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card.is-settled {
+    animation: none;
+    transition: none;
+    opacity: 1 !important;
+    transform: translate3d(0, 0, 0) !important;
+  }
+
+  /* Title sweep and supporting copy start together with the card appearing. */
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__dek {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+    transition: opacity 1000ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card.is-in .doehealth-desk2-audiences__dek {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition-delay: var(--desk2-audience-dek-delay);
+  }
+
+  /* Slides start off the edge of the screen — never let them widen the page. */
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences {
+    overflow-x: clip;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__title.desk2-headline-darken--cream.is-headline-in,
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__title.desk2-headline-darken--ink.is-headline-in {
+    animation-duration: var(--desk2-audience-headline-darken-duration);
+    animation-delay: var(--desk2-audience-headline-darken-delay);
+  }
+
+  /*
+   * The sweep repaints text every frame. Give the title its own layer so only that small layer is
+   * re-rasterized — otherwise the whole moving card layer is repainted each frame (choppy on iOS).
+   */
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__title {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: background-position;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__grid {
+    gap: 0.85rem;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card {
+    box-sizing: border-box;
+    width: calc(100% - var(--desk2-audience-card-trim));
+    min-height: calc(100svh * 7 / 12);
+    height: calc(100svh * 7 / 12);
+    justify-content: flex-start;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card.is-filled-phone {
+    align-self: start;
+    margin-right: 0;
+    margin-left: 0;
+    border-color: rgb(255 252 241 / 0.12);
+    background: var(--doehealth-desk2-surface);
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card:not(.is-filled-phone) {
+    align-self: end;
+    margin-right: 0;
+    margin-left: auto;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__copy {
+    justify-content: flex-start;
+    height: 100%;
+    gap: 0.85rem;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__title {
+    font-size: clamp(2rem, 8.2vw, 2.45rem);
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card.is-filled-phone .doehealth-desk2-audiences__dek,
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card.is-filled-phone .doehealth-desk2-audiences__dek span {
+    color: rgb(255 252 241 / 0.78);
+    font-size: clamp(1.02rem, 4.1vw, 1.12rem);
+    line-height: 1.38;
+    white-space: normal;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences__card:not(.is-filled-phone) .doehealth-desk2-audiences__dek span {
+    white-space: normal;
+  }
+
+  .doehealth-desk2-page .doehealth-desk2-genome {
+    padding-left: 0;
+    padding-right: 0;
+    overflow: visible;
+  }
+
+  .doehealth-desk2-genome {
+    --desk2-genome-slot: clamp(8.75rem, 32vh, 12.5rem);
+    height: 100svh;
+    min-height: 100svh;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .doehealth-desk2-genome.is-complete {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
+  .doehealth-desk2-genome__pin {
+    padding: var(--desk2-phone-nav-clearance) 1.25rem 0;
+  }
+
+  .doehealth-desk2-genome__stage {
+    width: min(100%, 26rem);
+    height: calc(var(--desk2-genome-slot) * 3.05);
+  }
+
+  .doehealth-desk2-genome__slide {
+    font-size: clamp(1.7rem, 7.6vw, 2.35rem);
+    letter-spacing: -0.04em;
+    line-height: 1.12;
+  }
+
+  .doehealth-desk2-genome__believe {
+    max-width: none;
+    font-size: clamp(1.7rem, 7.6vw, 2.35rem);
+    letter-spacing: -0.04em;
+    line-height: 1.12;
+  }
+
+  .doehealth-desk2-genome__eyebrow {
+    font-size: clamp(1.35rem, 5vw, 1.85rem);
+  }
+
+  .doehealth-desk2-genome__title {
+    font-size: clamp(3.25rem, 14vw, 4.5rem);
+    line-height: 0.9;
+  }
+
+  .doehealth-desk2-genome__dek {
+    width: min(100%, 20.5rem);
+    margin-top: 0.45rem;
+    font-size: clamp(0.92rem, 3.6vw, 1.02rem);
+  }
+
+  .doehealth-desk2-genome__board {
+    width: 100%;
+    margin-top: clamp(1.75rem, 5vh, 2.5rem);
+  }
+
+  .desk2-feat {
+    gap: 1.15rem;
+    padding-top: 2.75rem;
+    padding-bottom: 2.25rem;
+  }
+
+  .desk2-feat__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .desk2-feat h2,
+  .doehealth-desk2-invite__panel h2 {
+    font-size: clamp(2.15rem, 9.2vw, 2.85rem);
+  }
+
+  .desk2-feat__dek {
+    max-width: none;
+    text-align: left;
+  }
+
+  /* Agents — full viewport, horizontal carousel (desk iPhone). */
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents {
+    gap: clamp(1.15rem, 3.5vh, 1.75rem);
+    min-height: 100svh;
+    padding: calc(var(--desk2-phone-nav-clearance) + 1.25rem) 0
+      max(1.5rem, env(safe-area-inset-bottom, 0px));
+    scroll-margin-top: var(--desk2-phone-nav-clearance);
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents__head {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents h2 {
+    font-size: clamp(2.15rem, 9.2vw, 2.85rem);
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-agent-carousel__nav {
+    display: flex;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-agent-carousel {
+    --agent-inset: 1.25rem;
+    --agent-gap: 0.75rem;
+    --agent-w: calc(100cqw - 2 * var(--agent-inset) - 0.65rem);
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-agent-carousel ul {
+    flex-direction: row;
+    align-items: stretch;
+    width: auto;
+    min-height: 100%;
+    margin: 0;
+    padding: 0 0 0 var(--agent-inset);
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-agent-carousel li {
+    flex: 0 0 var(--agent-w);
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 0;
+    width: auto;
+    min-height: 100%;
+    padding: 1.35rem 1.35rem 1.45rem;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-agent-carousel strong {
+    font-size: clamp(1.55rem, 6.2vw, 1.85rem);
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-agents {
+    gap: 1.15rem;
+    padding-top: 2.75rem;
+    padding-bottom: 2.25rem;
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-agents__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-agents h2 {
+    font-size: clamp(2.15rem, 9.2vw, 2.85rem);
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .desk2-agent-carousel__nav {
+    display: none;
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .desk2-agent-carousel {
+    flex: none;
+    overflow: visible;
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .desk2-agent-carousel ul {
+    flex-direction: column;
+    gap: 0.6rem;
+    width: auto;
+    margin: 0 1.25rem;
+    padding: 0;
+    transform: none;
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .desk2-agent-carousel li {
+    flex: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem 1.05rem;
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .desk2-agent-carousel strong {
+    font-size: 1.35rem;
+  }
+
+  .desk2-feat--voice .desk2-feat__stage,
+  .desk2-feat--scribe .desk2-feat__stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .desk2-claim-row {
+    align-items: center;
+  }
+
+  .desk2-feat__quote {
+    max-width: none;
+  }
+
+  .desk2-change-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.3rem !important;
+  }
+
+  .desk2-change-row span:last-child {
+    text-align: left !important;
+  }
+
+  .desk2-genome-bar__versions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .doehealth-desk2-invite__panel {
+    height: auto;
+    min-height: 0;
+    padding: 2.5rem 1.15rem;
+  }
+
+  .doehealth-desk2-footer {
+    min-height: 66vh;
+  }
+
+  .doehealth-desk2-footer__inner {
+    padding-top: 2.5rem;
+  }
+
+  .doehealth-desk2-footer__meta {
+    align-items: flex-start;
+    margin-bottom: 2.75rem;
+  }
+}
+
+.doehealth-desk2-page[data-doeforvc-view="desktop"] .doehealth-desk2-footer__links {
+  gap: clamp(0.65rem, 1vw, 0.85rem);
+}
+
+.doehealth-desk2-page[data-doeforvc-view="desktop"] .doehealth-desk2-footer__links a {
+  font-size: clamp(1.28rem, 1.85vw, 1.88rem);
+}
+
+.doehealth-desk2-page[data-doeforvc-view="desktop"] .doehealth-desk2-footer__company-name {
+  font-size: clamp(1.12rem, 1.15vw, 1.32rem);
+}
+
+.doehealth-desk2-page[data-doeforvc-view="desktop"] .doehealth-desk2-footer {
+  min-height: min(74vh, 46rem);
+}
+
+.doehealth-desk2-page[data-doeforvc-view="desktop"] .doehealth-desk2-footer__mark {
+  font-size: clamp(9.75rem, min(68vw, 58vmin), 26rem);
+}
