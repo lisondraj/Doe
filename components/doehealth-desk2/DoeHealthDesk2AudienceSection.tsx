@@ -382,6 +382,8 @@ export function DoeHealthDesk2AudienceSection() {
         data-nav-beige={beige.toFixed(4)}
         aria-label="Personal agents and your clinic"
       >
+        {/* iPhone: the bottom of the section, under Safari's bottom bar, takes the beige while the beige drawings show. */}
+        <div className="doehealth-desk2-visible__edge" style={vars({ "--b": beige })} aria-hidden />
         <div className="doehealth-desk2-visible__scene" style={vars({ "--o": introOpacity })} aria-hidden={introOpacity < 0.5}>
           {/* The dot wave along the bottom; it fades with this scene, so it's gone once the iPhone comes in. */}
           {/* Revealed by the same swipe as this intro's title (--s), so the two start together. */}

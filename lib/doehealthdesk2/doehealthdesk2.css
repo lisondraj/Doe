@@ -4618,6 +4618,23 @@
   height: var(--desk2-phone-screen-h, 100lvh);
 }
 
+/* iPhone: the bottom 200px of the section (under Safari's bottom bar) is beige while the beige drawings show. Desktop: not used. */
+.doehealth-desk2-visible__edge {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible__edge {
+  display: block;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 200px;
+  background: #f4eedf;
+  opacity: var(--b, 0);
+  pointer-events: none;
+}
+
 /* Scenes centre in the visible screen, not the strip under Safari's toolbar. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible__scene {
   bottom: auto;
