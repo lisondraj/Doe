@@ -4651,3 +4651,8 @@
   justify-content: flex-start;
   padding-top: 1.4rem;
 }
+
+/* iPhone: the photo sits a set distance under the waitlist box. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace {
+  margin-top: 0.9rem !important;
+}
