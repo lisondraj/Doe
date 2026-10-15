@@ -74,7 +74,7 @@ export function DoeHealthDesk2Workspace() {
             <p className={`desk2-workspace__role ${inter.className}`}>Founder, Engineering</p>
           </div>
           <span className="desk2-workspace__play" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor">
+            <svg viewBox="1.35 0 24 24" fill="currentColor">
               <path d="M7.5 4.8v14.4a.9.9 0 0 0 1.37.77l11.3-7.2a.9.9 0 0 0 0-1.54L8.87 4.03A.9.9 0 0 0 7.5 4.8Z" />
             </svg>
           </span>
