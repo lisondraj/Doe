@@ -72,13 +72,28 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     const phone = () => !desktopPaced();
     const track = section.parentElement;
 
-    /** iPhone: progress is how far the sticky track has scrolled, scrubbing both ways. */
+    /**
+     * iPhone: once the closing scene has shown, nothing pins it any more. The track collapses to one screen
+     * and the section stops sticking; the scroll position drops by the same amount, so nothing moves on screen.
+     */
+    const releaseTrack = (run: number) => {
+      if (!track || run <= 0) return;
+      section.style.position = "relative";
+      track.style.height = `${section.offsetHeight}px`;
+      window.scrollBy({ top: -run, behavior: "instant" as ScrollBehavior });
+      lastY = window.scrollY;
+    };
+
+    /** iPhone: progress is how far the sticky track has scrolled, scrubbing both ways until the end is reached. */
     const followTrack = () => {
       const run = track ? track.offsetHeight - section.offsetHeight : 0;
       const into = track ? -track.getBoundingClientRect().top : 0;
       const scrubbed = run > 0 ? Math.min(end, Math.max(0, (into / run) * end)) : into > 0 ? end : 0;
       // As on desktop: once the closing scene has shown, the section stays on it, scrolling either way.
-      if (scrubbed >= end) done = true;
+      if (scrubbed >= end && !done) {
+        done = true;
+        releaseTrack(run);
+      }
       const next = done ? end : scrubbed;
       if (next === progress) return;
       progress = next;
@@ -268,6 +283,8 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     window.visualViewport?.addEventListener("resize", onViewportResize);
     return () => {
       section.style.touchAction = "";
+      section.style.position = "";
+      if (track) track.style.height = "";
       window.clearTimeout(settleTimer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("wheel", onWheel);
