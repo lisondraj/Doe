@@ -157,7 +157,7 @@ const PERSONAL_AGENTS: DoeHealthBlogArticle = {
 const DOCTOR_LED_DESIGN: DoeHealthBlogArticle = {
   slug: "product-design-led-by-doctors",
   eyebrow: "Design",
-  title: ["Product Design", "Led By Doctors"],
+  title: ["Providers at Every Stage", "of Product Design"],
   author: "James Lisondra",
   date: "October 7, 2026",
   excerpt:
@@ -358,7 +358,206 @@ const ONE_PRICE: DoeHealthBlogArticle = {
   ],
 };
 
-export const DOEHEALTH_BLOG_ARTICLES = [PERSONAL_AGENTS, DOCTOR_LED_DESIGN, ONE_PRICE] as const;
+const PERSONAL_AGENTS_FOR_PRACTICE: DoeHealthBlogArticle = {
+  slug: "personal-agents-for-practice",
+  eyebrow: "For Practices",
+  title: ["Personal Agents", "for Practice"],
+  author: "James Lisondra",
+  date: "October 15, 2026",
+  excerpt:
+    "A personal agent should fit the practice in front of it, whether that is one clinician, a mobile team, or a network of sites.",
+  heroTone: "clay",
+  lede: "Every practice can run its own personal agent. What changes is the shape of the practice it has to read.",
+  blocks: [
+    { type: "heading", text: "Practices, in every shape." },
+    {
+      type: "list",
+      items: [
+        {
+          lead: "Independent",
+          text: "One clinician and one front desk. The agent knows the practice well enough to answer the phone and book the visit before the call ends.",
+        },
+        {
+          lead: "Mobile",
+          text: "Care that travels to the patient. The agent knows which team is on the road, what each visit can take, and when the next opening is, so a home visit books as easily as a clinic slot.",
+        },
+        {
+          lead: "Enterprise",
+          text: "Many sites with one set of clinical rules. Each location keeps its services, providers, and availability current, and every patient gets the same clear answer.",
+        },
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "The model is the same in each case. The practice writes down what it does, the agent reads it, and the practice decides what gets offered and when.",
+    },
+    { type: "heading", text: "Personal Agents for every discipline." },
+    {
+      type: "paragraph",
+      text: "The same approach works across the whole care team, not only physicians. A patient's agent should find the right clinician for the need in front of it.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "Medical", text: "Primary care, specialists, and the referrals between them." },
+        { lead: "Dental", text: "Cleanings, urgent visits, and the coverage rules that come with them." },
+        { lead: "PT", text: "Evaluations, follow-up sessions, and the authorizations that often sit in front of them." },
+        { lead: "Home Care", text: "Visits planned around the patient's home, with the caregiver's availability in view." },
+      ],
+    },
+    {
+      type: "figure",
+      tone: "clay",
+      caption: "Medical → Dental → PT → Home Care. Each one publishes the same clear index, so the next can pick up the care without starting over.",
+    },
+    {
+      type: "quote",
+      text: "One way for a practice to be read, whatever its size or shape.",
+    },
+  ],
+};
+
+const HOSPITALS_SPEAK_AGENT: DoeHealthBlogArticle = {
+  slug: "hospitals-learn-to-speak-agent",
+  eyebrow: "For Hospitals",
+  title: ["Hospitals Learn", "to Speak Agent"],
+  author: "Matthew Lisondra",
+  date: "October 15, 2026",
+  excerpt:
+    "A hospital is a dozen front doors in one building. If it writes them down clearly, a personal agent can find the right one for every patient.",
+  heroTone: "umber",
+  lede: "A patient sees one hospital. An agent sees the emergency department, the surgical schedule, the lab, and discharge, each with its own rules and its own phone number.",
+  blocks: [
+    {
+      type: "paragraph",
+      text: "Walk into a hospital and you see one building. Patients experience many doors: the emergency department, the referral line, the surgical schedule, the imaging desk, the discharge lounge. Each has its own rules, its own number, and its own staff trying to keep up.",
+    },
+    { type: "heading", text: "The hospital is a network of rules." },
+    {
+      type: "paragraph",
+      text: "A personal agent helping a patient through that network has to know which door to use. Which surgeon operates on which campus. Which steps must happen before a date can be held. Which imaging is in network under a given plan. Today that knowledge lives in the heads of schedulers and in binders behind the desk.",
+    },
+    { type: "heading", text: "Write it once, for every door." },
+    {
+      type: "paragraph",
+      text: "Doe gives a hospital the same machine-readable index it gives a clinic: services, providers, coverage, availability, and rules, organized by campus and department. The agent reads it and sends each request to the right place.",
+    },
+    {
+      type: "list",
+      items: [
+        {
+          lead: "Campuses",
+          text: "where each service happens and how to reach the team that runs it.",
+        },
+        {
+          lead: "Surgical scheduling",
+          text: "which procedures book directly, which need a consult first, and what has to happen before a date is held.",
+        },
+        {
+          lead: "Discharge",
+          text: "follow-up visits, medication pickup, and home care handoffs, arranged before the patient leaves.",
+        },
+        {
+          lead: "Coverage",
+          text: "in-network status by plan, referral and authorization rules, and estimates the patient can see before they arrive.",
+        },
+      ],
+    },
+    {
+      type: "figure",
+      tone: "sand",
+      caption: "A hospital's index routes a request to the right campus, team, and step, instead of the right phone extension.",
+    },
+    {
+      type: "paragraph",
+      text: "The result is fewer handoffs that disappear. A patient's agent can see that a knee replacement needs a pre-op visit, book it at the right campus, confirm the authorization, and hold the surgery date, while the hospital's own agent keeps the schedule honest.",
+    },
+    {
+      type: "quote",
+      text: "A hospital should be as easy to find as a restaurant, and as clear about what it can do for you.",
+    },
+    { type: "heading", text: "The hospital keeps the keys." },
+    {
+      type: "paragraph",
+      text: "Hospitals set the rules. They decide what an agent can book, what needs a person to approve, and what is never offered automatically. Clinical leaders review the index, change it when a service moves, and see every action an agent took on a patient's behalf.",
+    },
+  ],
+};
+
+const CLAIMS_WITHOUT_HOLD_MUSIC: DoeHealthBlogArticle = {
+  slug: "claims-without-the-hold-music",
+  eyebrow: "For Insurance",
+  title: ["Claims Without", "the Hold Music"],
+  author: "Matthew Lisondra",
+  date: "October 15, 2026",
+  excerpt:
+    "Most of the hours patients lose to insurance are spent waiting. An agent that can read the plan and the practice can do most of that work in seconds.",
+  heroTone: "gold",
+  lede: "The premium is not what patients dread most. It is the call that goes nowhere, the claim denied for a missing code, and the bill that arrives after the visit.",
+  blocks: [
+    {
+      type: "paragraph",
+      text: "Ask a patient what frustrates them most about their insurance, and the answer is rarely the premium. It is the wait. The call that loops back to the start, the prior authorization that took three weeks, the claim that was denied for a reason nobody can explain.",
+    },
+    { type: "heading", text: "Coverage should be a question, not a phone call." },
+    {
+      type: "paragraph",
+      text: "A personal agent can ask coverage questions the way patients do: will this plan pay for this visit, with this provider, at this location, and what will I owe? To answer accurately, it needs the plan's rules and the practice's coverage index, both written in a form it can read.",
+    },
+    {
+      type: "list",
+      items: [
+        {
+          lead: "Eligibility",
+          text: "whether the plan is active and which benefits apply, checked before a visit is booked.",
+        },
+        {
+          lead: "Authorization",
+          text: "which services need approval, what the request has to include, and when it can be sent.",
+        },
+        {
+          lead: "Claims",
+          text: "checked against the estimate and the plan's rules before a bill is paid, so errors show up early.",
+        },
+        {
+          lead: "Appeals",
+          text: "the denial reason, the records that answer it, and the next step, drafted for a person to review.",
+        },
+      ],
+    },
+    {
+      type: "figure",
+      tone: "gold",
+      caption: "The denial reason, the notes that answer it, and a draft appeal, ready for a family to approve before anything is sent.",
+    },
+    {
+      type: "paragraph",
+      text: "When a claim is denied, the agent does not sit on hold. It reads the reason, finds the notes that answer it, drafts the appeal, and asks the family before anything goes out.",
+    },
+    {
+      type: "quote",
+      text: "The best claim is the one that never needed an appeal.",
+    },
+    { type: "heading", text: "Insurers and practices get a clear record." },
+    {
+      type: "paragraph",
+      text: "Insurers benefit too. When a practice's agent and a patient's agent exchange structured answers, fewer requests bounce back for missing details, and fewer disputes start from a misunderstanding. Every exchange leaves a record both sides can read.",
+    },
+    {
+      type: "paragraph",
+      text: "Doe's job is to make those answers readable. Then the phone call becomes the exception, and the hold music can finally stop.",
+    },
+  ],
+};
+
+export const DOEHEALTH_BLOG_ARTICLES = [
+  PERSONAL_AGENTS,
+  PERSONAL_AGENTS_FOR_PRACTICE,
+  HOSPITALS_SPEAK_AGENT,
+  CLAIMS_WITHOUT_HOLD_MUSIC,
+  DOCTOR_LED_DESIGN,
+  ONE_PRICE,
+] as const;
 
 /** /news/[slug] renders this article directly. */
 export const DOEHEALTH_BLOG_FEATURED = PERSONAL_AGENTS;
