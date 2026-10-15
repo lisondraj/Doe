@@ -4460,3 +4460,30 @@
 .doehealth-desk2-page[data-doeforvc-view="desktop"] .doehealth-desk2-footer__mark {
   font-size: clamp(9.75rem, min(68vw, 58vmin), 26rem);
 }
+
+/*
+ * iPhone: full-bleed brown sections reach the tallest viewport (lvh), not the smallest (svh). When Safari's
+ * bottom toolbar collapses the viewport grows, and an svh-sized band left a cream strip under the URL box.
+ * Content stays anchored to the top, so the extra height only fills the bottom edge.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-visible {
+  height: 100lvh;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-genome,
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-genome.is-complete {
+  height: 100lvh;
+  min-height: 100lvh;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-audiences {
+  min-height: 100lvh;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-blank {
+  min-height: 100lvh;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents {
+  min-height: 100lvh;
+}
