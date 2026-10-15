@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
@@ -105,11 +106,63 @@ function groupForPhone(cards: readonly Article[]): Article[][] {
   return groups;
 }
 
-/** Phone: two cards in a horizontal swipe row, styled like the carousel at the bottom of an article. */
+function CarouselArrow({ flip = false }: { flip?: boolean }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden style={flip ? { transform: "scaleX(-1)" } : undefined}>
+      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** Phone: two cards in a horizontal swipe row with < > buttons, styled like the carousel at the bottom of an article. */
 function NewsRow({ articles }: { articles: readonly Article[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+
+  const sync = useCallback(() => {
+    const scroll = scrollRef.current;
+    if (!scroll) return;
+    const max = scroll.scrollWidth - scroll.clientWidth;
+    setCanPrev(scroll.scrollLeft > 2);
+    // Within the trailing padding of the last card counts as the end.
+    setCanNext(scroll.scrollLeft < max - 24);
+  }, []);
+
+  useEffect(() => {
+    const scroll = scrollRef.current;
+    if (!scroll) return undefined;
+    sync();
+    scroll.addEventListener("scroll", sync, { passive: true });
+    const ro = new ResizeObserver(sync);
+    ro.observe(scroll);
+    return () => {
+      scroll.removeEventListener("scroll", sync);
+      ro.disconnect();
+    };
+  }, [sync]);
+
+  const step = (direction: 1 | -1) => {
+    const scroll = scrollRef.current;
+    const slide = scroll?.querySelector<HTMLElement>(".doehealth-news-carousel__track > .doehealth-news__item");
+    if (!scroll || !slide) return;
+    const gap = Number.parseFloat(getComputedStyle(slide.parentElement!).columnGap) || 0;
+    scroll.scrollBy({ left: direction * (slide.offsetWidth + gap), behavior: "smooth" });
+  };
+
   return (
     <li className="doehealth-news__row">
-      <div className="doehealth-news-carousel__scroll">
+      <div className="doehealth-news-carousel__head">
+        <div className="desk-agent-carousel__nav">
+          <button type="button" aria-label="Previous article" disabled={!canPrev} onClick={() => step(-1)}>
+            <CarouselArrow flip />
+          </button>
+          <button type="button" aria-label="Next article" disabled={!canNext} onClick={() => step(1)}>
+            <CarouselArrow />
+          </button>
+        </div>
+      </div>
+      <div ref={scrollRef} className="doehealth-news-carousel__scroll">
         <ul className="doehealth-news-carousel__track">
           {articles.map((article) => (
             <NewsCard key={article.slug} article={article} />

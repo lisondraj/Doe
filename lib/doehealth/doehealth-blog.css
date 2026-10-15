@@ -723,3 +723,41 @@
   flex: 0 0 min(78vw, 22rem);
   scroll-snap-align: start;
 }
+
+/* Phone row header: the < > buttons sit on the right, as in the article's bottom carousel. */
+.doehealth-news-carousel__head {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Cards in the row read left-aligned, like the article carousel, with no eyebrow above the title. */
+.doehealth-news-carousel__track .doehealth-news-card {
+  text-align: left;
+}
+
+.doehealth-news-carousel__track .doehealth-news-card .doehealth-blog-card__art {
+  margin-top: 0;
+}
+
+.doehealth-news-carousel__track .doehealth-news-card .doehealth-blog-card__title {
+  margin-top: 1.35rem;
+  text-align: left;
+}
+
+.doehealth-news-carousel__track .doehealth-news-card .doehealth-blog-card__meta {
+  justify-content: flex-start;
+  margin: 0.85rem 0 0;
+  text-align: left;
+}
+
+.doehealth-news-carousel__track .doehealth-news-card .doehealth-blog-card__excerpt {
+  margin: 0.85rem 0 0;
+  text-align: left;
+}
+
+/* In the phone row the image leads, as in the article's bottom carousel; the grid keeps image-last. */
+.doehealth-news-carousel__track .doehealth-news-card .doehealth-blog-card__art {
+  order: -1;
+}
