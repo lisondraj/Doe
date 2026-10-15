@@ -946,6 +946,22 @@
   }
 }
 
+/* The hero photo: the full column width, at the photo's own proportions, with the page's corner radius. */
+.desk2-workspace__photo {
+  margin: 0;
+  width: 100%;
+  aspect-ratio: 1672 / 941;
+  overflow: hidden;
+  border-radius: var(--doehealth-desk2-radius);
+}
+
+.desk2-workspace__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .desk2-paper-slot {
   container-type: inline-size;
   width: 100%;

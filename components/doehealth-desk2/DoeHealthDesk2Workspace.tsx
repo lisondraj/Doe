@@ -1,12 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-import { DoeHealthDesk2FrontDeskPanel } from "@/components/doehealth-desk2/DoeHealthDesk2FrontDeskPanel";
-import { DoeHealthDesk2PaperFrame } from "@/components/doehealth-desk2/DoeHealthDesk2PaperFrame";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 
-/** Paper Workflows frame, scaled to the column. The bottom veil lifts as you scroll. */
+/** Sunlit lounge photo (1672 × 941), rounded to the page's corner radius. The bottom veil lifts as you scroll. */
 export function DoeHealthDesk2Workspace() {
   const [shown, setShown] = useState(false);
   const fadeRef = useRef<HTMLDivElement>(null);
@@ -54,14 +53,18 @@ export function DoeHealthDesk2Workspace() {
   }, []);
 
   return (
-    <section className={`desk2-workspace ${DOEPHONE_DESKTOP_PAGE_INSET_X}${shown ? " is-in" : ""}`} aria-label="Doe clinic workflows">
+    <section className={`desk2-workspace ${DOEPHONE_DESKTOP_PAGE_INSET_X}${shown ? " is-in" : ""}`} aria-label="Doe clinic">
       <div className="desk2-workspace__stage">
-        <div className="desk2-paper-slot">
-          <div className="desk2-paper-scale">
-            <DoeHealthDesk2PaperFrame />
-          </div>
-        </div>
-        <DoeHealthDesk2FrontDeskPanel />
+        <figure className="desk2-workspace__photo">
+          <Image
+            src="/doehealthdesk2/sunlit-minimalist-wooden-stools.jpg"
+            alt="A sunlit lounge with two wooden stools on a polished floor"
+            width={1672}
+            height={941}
+            sizes="(min-width: 1024px) 80vw, 100vw"
+            priority
+          />
+        </figure>
       </div>
       <div ref={fadeRef} className="desk2-workspace__fade" aria-hidden />
     </section>
