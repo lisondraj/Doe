@@ -4656,3 +4656,26 @@
 .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace {
   margin-top: 0.9rem !important;
 }
+
+/* Play button at the centre of the hero photo. Sized to the photo, so it reads big on desktop and iPhone. */
+.desk2-workspace__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: clamp(4.6rem, 13cqw, 8.5rem);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: rgb(255 252 241 / 0.92);
+  color: var(--doehealth-desk2-surface);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.desk2-workspace__play svg {
+  width: 40%;
+  height: 40%;
+  margin-left: 8%;
+}
