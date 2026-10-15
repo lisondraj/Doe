@@ -131,13 +131,23 @@
   animation-delay: var(--desk2-headline-darken-delay);
 }
 
-/* The agents title sweeps with the scroll: the section sets --agents-a1 and --agents-a2 (0 to 1). */
-.doehealth-desk2-page .doehealth-desk2-agents__title .desk2-headline-darken--ink {
+/* The agents title sweeps with the scroll: the section sets --agents-a1 to --agents-a3 (0 to 1), one per line. */
+.doehealth-desk2-page .doehealth-desk2-agents__title .agents-l1 {
   background-position: calc((1 - var(--agents-a1, 0)) * 100%) calc((1 - var(--agents-a1, 0)) * 100%);
 }
 
-.doehealth-desk2-page .doehealth-desk2-agents__title .desk2-headline-darken--ink:nth-child(2) {
+.doehealth-desk2-page .doehealth-desk2-agents__title .agents-l2 {
   background-position: calc((1 - var(--agents-a2, 0)) * 100%) calc((1 - var(--agents-a2, 0)) * 100%);
+}
+
+.doehealth-desk2-page .doehealth-desk2-agents__title .agents-l3 {
+  background-position: calc((1 - var(--agents-a3, 0)) * 100%) calc((1 - var(--agents-a3, 0)) * 100%);
+}
+
+/* Desktop breaks the title over two lines, the iPhone over three. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents__line--desk,
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-agents__line--phone {
+  display: none;
 }
 
 .doehealth-desk2-page .doehealth-desk2-genome__eyebrow.desk2-genome-headline-highlight.is-headline-in,

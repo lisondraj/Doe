@@ -39,7 +39,7 @@ export function DoeHealthDesk2AgentsSection() {
   }, []);
 
   // The title's sweep follows the scroll, not the clock: it starts as the head rises into view and
-  // finishes as it reaches the middle of the screen. The second line trails the first.
+  // finishes as it reaches the middle of the screen. Each line trails the one above it.
   useEffect(() => {
     const section = sectionRef.current;
     const head = section?.querySelector<HTMLElement>(".doehealth-desk2-agents__head");
@@ -51,6 +51,7 @@ export function DoeHealthDesk2AgentsSection() {
       const frac = reduce ? 1 : Math.min(1, Math.max(0, (vh * 0.95 - head.getBoundingClientRect().top) / (vh * 0.45)));
       section.style.setProperty("--agents-a1", String(Math.min(1, frac / 0.8)));
       section.style.setProperty("--agents-a2", String(Math.min(1, Math.max(0, (frac - 0.2) / 0.8))));
+      section.style.setProperty("--agents-a3", String(Math.min(1, Math.max(0, (frac - 0.4) / 0.6))));
     };
 
     update();
@@ -74,8 +75,13 @@ export function DoeHealthDesk2AgentsSection() {
     >
       <header className={`doehealth-desk2-agents__head ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
         <h2 className={`doehealth-desk2-agents__title ${p22Mackinac.className}`}>
-          {DOEHEALTH_DESK2_AGENTS.title.map((line) => (
-            <span key={line} className="desk2-headline-darken--ink">
+          {DOEHEALTH_DESK2_AGENTS.title.map((line, i) => (
+            <span key={line} className={`desk2-headline-darken--ink doehealth-desk2-agents__line--desk agents-l${i + 1}`}>
+              {line}
+            </span>
+          ))}
+          {DOEHEALTH_DESK2_AGENTS.phoneTitle.map((line, i) => (
+            <span key={line} className={`desk2-headline-darken--ink doehealth-desk2-agents__line--phone agents-l${i + 1}`}>
               {line}
             </span>
           ))}

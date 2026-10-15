@@ -27,6 +27,8 @@ export const DOEHEALTH_DESK2_VISIBLE = {
 
 export const DOEHEALTH_DESK2_AGENTS = {
   title: ["Let personal agents do", "more with your clinic."],
+  /** The iPhone breaks the same heading over three lines. */
+  phoneTitle: ["Let personal", "agents do more", "with your clinic."],
 } as const;
 
 /** Five agents. The first three sit in the page margins; the rest follow off the right edge. */
