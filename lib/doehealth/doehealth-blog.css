@@ -664,6 +664,8 @@
   overflow: hidden;
   max-width: 44rem;
   margin: 0.85rem auto 0;
+  /* Balance the two lines so the cut falls near the middle, not at the edge of the box. */
+  text-wrap: balance;
   color: rgb(var(--feature-ink-rgb) / 0.9);
   font-size: 0.98rem;
   line-height: 1.5;
