@@ -43,7 +43,9 @@ export function DoeHealthSecurityPage({ initialVariant }: { initialVariant: DoeH
       )}
       <main className="doehealth-desk2-main min-h-[100dvh]" aria-label="Security">
         <DoeHealthSecurityHero />
-        <DoeHealthDesk2InviteSection />
+        <div className="doehealth-security-invite-band">
+          <DoeHealthDesk2InviteSection />
+        </div>
         <DoeHealthDesk2Footer sectionHrefBase={DESK2_PATH} />
       </main>
     </div>

@@ -155,6 +155,12 @@
   text-wrap: balance;
 }
 
+/* The teach box sits on a cream band, as it does on /doehealthdesk2; the rest of the page stays brown. */
+.doehealth-desk2-page.doehealth-security-page .doehealth-security-invite-band {
+  background-color: #fffcf1;
+  color: var(--doehealth-desk2-ink);
+}
+
 @keyframes doe-security-fade-in {
   to {
     opacity: 1;
