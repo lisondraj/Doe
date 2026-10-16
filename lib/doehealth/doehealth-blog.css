@@ -719,6 +719,13 @@
   grid-column: 1 / -1;
 }
 
+/* Desktop: the gap under the featured card and under the wide card matches the gap between the two cards side by side.
+   The grid's row gap is larger, so each of these two rows takes the difference back. Other rows are unchanged. */
+.doehealth-news-page[data-doeforvc-view="desktop"] .doehealth-news__item--featured,
+.doehealth-news-page[data-doeforvc-view="desktop"] .doehealth-news__item--wide {
+  margin-bottom: calc(clamp(1.5rem, 3vw, 2.75rem) - clamp(3rem, 6vh, 4.5rem));
+}
+
 .doehealth-news__item--wide .doehealth-blog-card__art {
   aspect-ratio: 16 / 7;
 }
