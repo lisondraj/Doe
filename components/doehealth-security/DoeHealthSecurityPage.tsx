@@ -32,7 +32,7 @@ const PRINCIPLES = [
   },
 ];
 
-/** /security — a dark Doe brown page with a salmon strip, on the desk2 chrome. Linked from the nav's Security item. */
+/** /security — a cream page with a full-height brown hero and a salmon strip, on the desk2 chrome. Linked from the nav's Security item. */
 export function DoeHealthSecurityPage({ initialVariant }: { initialVariant: DoeHealthDesk2Variant }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
@@ -48,11 +48,13 @@ export function DoeHealthSecurityPage({ initialVariant }: { initialVariant: DoeH
         <DoeHealthDesk2PhoneNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
       )}
       <main className="doehealth-desk-main min-h-[100dvh]" aria-label="Security">
-        <section className={`doehealth-security ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-          <h1 className={`doehealth-security__title ${p22Mackinac.className}`}>Security</h1>
-          <p className="doehealth-security__lede">
-            How Doe protects the calls, records, and access your clinic depends on.
-          </p>
+        <section className="doehealth-security__hero doehealth-desk2-blank doehealth-desk2-blank--brown">
+          <div className={`doehealth-security__hero-inner ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
+            <h1 className={`doehealth-security__title ${p22Mackinac.className}`}>Security</h1>
+            <p className="doehealth-security__lede">
+              How Doe protects the calls, records, and access your clinic depends on.
+            </p>
+          </div>
         </section>
 
         <div className="doehealth-security-strip" role="presentation">

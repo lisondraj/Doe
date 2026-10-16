@@ -1,17 +1,32 @@
-/* /security: a dark Doe brown page with a salmon strip. Every rule is prefixed with the page class so the desk2 styles
-   cannot override the dark theme. */
+/* /security: a cream page with a full-height brown hero (the desk2 brown section), a salmon strip, and the principles.
+   Every rule is prefixed with the page class so the desk2 styles cannot override it. */
 
-/* Doubled class so this beats the desk2 page root rule, which sets the cream background and ink. */
-.doehealth-desk2-page.doehealth-security-page {
-  --sec-bg: #140c04;
-  --sec-ink: #fffcf1;
-  --sec-dim: rgb(255 252 241 / 0.66);
-  --sec-line: rgb(255 252 241 / 0.14);
+.doehealth-security-page {
+  --sec-brown: #281910;
+  --sec-cream: #fffcf1;
+  --sec-ink: #140c04;
+  --sec-dim: rgb(20 12 4 / 0.66);
+  --sec-line: rgb(20 12 4 / 0.14);
   --sec-salmon: #e8a585;
-  background-color: var(--sec-bg);
-  color: var(--sec-ink);
-  /* The dark brown shade fades in on arrival, over whatever page came before. */
+}
+
+/* Full-height brown hero: the desk2 brown blank section, holding the title and lede.
+   The brown shade fades in on arrival. */
+.doehealth-security-page .doehealth-security__hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 100dvh;
+  text-align: center;
+  color: var(--sec-cream);
   animation: doe-security-shade-in 900ms ease both;
+}
+
+.doehealth-security-page .doehealth-security__hero-inner {
+  width: 100%;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 }
 
 @keyframes doe-security-shade-in {
@@ -23,10 +38,28 @@
   }
 }
 
+.doehealth-security-page .doehealth-security__title {
+  margin: 0;
+  color: var(--sec-cream);
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.doehealth-security-page .doehealth-security__lede {
+  max-width: 40rem;
+  margin: 1.5rem auto 0;
+  color: rgb(255 252 241 / 0.66);
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  letter-spacing: -0.015em;
+  line-height: 1.55;
+}
+
 /* Salmon strip: a full-width band between the hero and the principles. */
 .doehealth-security-page .doehealth-security-strip {
   background: var(--sec-salmon);
-  color: var(--sec-bg);
+  color: var(--sec-ink);
 }
 
 .doehealth-security-page .doehealth-security-strip__inner {
@@ -39,43 +72,19 @@
   padding-top: 1.15rem;
   padding-bottom: 1.15rem;
   list-style: none;
-  color: var(--sec-bg);
+  color: var(--sec-ink);
   font-size: 0.975rem;
   letter-spacing: -0.015em;
 }
 
 .doehealth-security-page .doehealth-security-strip__item {
-  color: var(--sec-bg);
+  color: var(--sec-ink);
 }
 
 .doehealth-security-page .doehealth-security-strip__item + .doehealth-security-strip__item::before {
   content: "•";
   margin-right: 2.5rem;
   opacity: 0.55;
-}
-
-.doehealth-security-page .doehealth-security {
-  padding-top: clamp(6rem, 14vh, 9rem);
-  padding-bottom: clamp(3.5rem, 9vh, 5.5rem);
-  text-align: center;
-}
-
-.doehealth-security-page .doehealth-security__title {
-  margin: 0;
-  color: var(--sec-ink);
-  font-size: clamp(3rem, 6vw, 5.5rem);
-  font-weight: 400;
-  letter-spacing: -0.045em;
-  line-height: 1;
-}
-
-.doehealth-security-page .doehealth-security__lede {
-  max-width: 40rem;
-  margin: 1.5rem auto 0;
-  color: var(--sec-dim);
-  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
-  letter-spacing: -0.015em;
-  line-height: 1.55;
 }
 
 .doehealth-security-page .doehealth-security__principles {
@@ -126,7 +135,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .doehealth-security-page {
+  .doehealth-security-page .doehealth-security__hero {
     animation: none;
   }
 }
