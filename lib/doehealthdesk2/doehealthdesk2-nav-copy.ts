@@ -27,7 +27,7 @@ export const DOEHEALTH_DESK2_NAV_CENTER_LINKS = [
   { label: "Problem", href: "#problem" },
   { label: "Solution", href: "#solution" },
   { label: "Agents", href: "#agents" },
-  { label: "Security", href: ABOUT_PATH },
+  { label: "Security", href: "/security" },
 ] as const;
 
 /** Center links with section anchors pointed at `base` — for desk2-chrome pages other than /doehealthdesk. */
@@ -42,7 +42,7 @@ export function doehealthDesk2NavCenterLinks(base = "") {
 export const DOEHEALTH_DESK2_NAV_PAGES = [
   { label: "Product", href: "#solution" },
   { label: "Agents", href: "#agents" },
-  { label: "Security", href: ABOUT_PATH },
+  { label: "Security", href: "/security" },
   { label: "News", href: "/news" },
   { label: "Careers", href: CAREERS_PATH },
 ] as const;
