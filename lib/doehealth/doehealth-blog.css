@@ -121,69 +121,54 @@
   margin-top: clamp(2.5rem, 6vh, 4rem);
 }
 
-/* The listen box under the hero: audio play on the left, language on the right, centred in the reading column. */
+/* The listen bar: the same pill bar and pills as the news picker, with a play button, audio lines, and the language. */
 .doehealth-blog-listen {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
-  max-width: var(--blog-read-w);
+  gap: 0.75rem;
+  width: max-content;
+  max-width: 100%;
   margin: clamp(2rem, 5vh, 2.75rem) auto 0;
-  padding: 0.9rem;
-  border: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08);
-  border-radius: 22px;
-  background: #fffcf1;
-}
-
-.doehealth-blog-listen__audio {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  min-width: 0;
+  padding: 0.4rem;
+  border-radius: 999px;
+  background: #f4eedf;
 }
 
 .doehealth-blog-listen__play {
   flex: none;
   display: grid;
   place-items: center;
-  width: 3rem;
-  height: 3rem;
+  width: 2.75rem;
+  height: 2.75rem;
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: rgb(var(--doehealth-desk-ink-rgb));
-  color: #fffcf1;
+  background: #fffcf1;
+  color: var(--doehealth-desk-surface);
   cursor: pointer;
 }
 
 .doehealth-blog-listen__play svg {
-  width: 1rem;
-  height: 1rem;
-  margin-left: 0.15rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-left: 0.1rem;
 }
 
-.doehealth-blog-listen__copy {
+/* Static audio lines: a row of thin bars of varying height. Decorative until audio is wired up. */
+.doehealth-blog-listen__lines {
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 0;
-  text-align: left;
+  align-items: center;
+  justify-content: space-between;
+  width: 12rem;
+  height: 1.75rem;
+  padding: 0 0.5rem;
 }
 
-.doehealth-blog-listen__label {
-  color: var(--doehealth-desk-surface);
-  font-size: 1rem;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-.doehealth-blog-listen__sub {
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
-  font-size: 0.875rem;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
+.doehealth-blog-listen__lines span {
+  width: 2px;
+  border-radius: 999px;
+  background: rgb(var(--doehealth-desk-ink-rgb) / 0.3);
 }
 
 .doehealth-blog-listen__lang {
@@ -191,13 +176,13 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.65rem 1rem;
+  padding: 0.75rem 1.15rem;
   border: 0;
   border-radius: 999px;
-  background: #f4eedf;
+  background: #fffcf1;
   color: var(--doehealth-desk-surface);
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.975rem;
   letter-spacing: -0.015em;
   cursor: pointer;
 }
@@ -209,15 +194,20 @@
 }
 
 @media (max-width: 767px) {
-  /* Phone: audio on its own row, language full width underneath, so the box never overflows. */
+  /* Phone: the bar spans the column; the audio lines take the spare width. */
   .doehealth-blog-listen {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
+    width: 100%;
+    border-radius: 22px;
+  }
+
+  .doehealth-blog-listen__lines {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
   }
 
   .doehealth-blog-listen__lang {
-    justify-content: space-between;
+    padding: 0.75rem 0.95rem;
   }
 }
 
