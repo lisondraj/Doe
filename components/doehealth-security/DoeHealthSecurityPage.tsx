@@ -2,10 +2,8 @@
 
 import { DoeHealthDesk2Footer } from "@/components/doehealth-desk2/DoeHealthDesk2Footer";
 import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
-import {
-  DoeHealthDesk2BlankSection,
-  DoeHealthDesk2InviteSection,
-} from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
+import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
+import { DoeHealthSecurityHero } from "@/components/doehealth-security/DoeHealthSecurityHero";
 import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
@@ -20,8 +18,8 @@ const DESK2_PATH = "/doehealthdesk2";
 
 /**
  * /security — the desk2 brown theme as the default: the whole page is the brown section colour, the nav runs its
- * salmon-over-brown state through the shared nav wash, and a blank full-height brown hero leads into the teach box
- * and footer. Linked from the nav's Security item.
+ * salmon-over-brown state through the shared nav wash, and a full-height brown hero with the salmon grid visual
+ * leads into the teach box and footer. Linked from the nav's Security item.
  */
 export function DoeHealthSecurityPage({ initialVariant }: { initialVariant: DoeHealthDesk2Variant }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
@@ -44,8 +42,7 @@ export function DoeHealthSecurityPage({ initialVariant }: { initialVariant: DoeH
         </>
       )}
       <main className="doehealth-desk2-main min-h-[100dvh]" aria-label="Security">
-        <h1 className="sr-only">Security</h1>
-        <DoeHealthDesk2BlankSection tone="brown" />
+        <DoeHealthSecurityHero />
         <DoeHealthDesk2InviteSection />
         <DoeHealthDesk2Footer sectionHrefBase={DESK2_PATH} />
       </main>
