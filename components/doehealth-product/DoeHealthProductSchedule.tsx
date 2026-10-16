@@ -402,7 +402,7 @@ export function DoeHealthProductSchedulePage() {
             </div>
             <div className="flex items-center grow basis-[0px] min-h-[44px] px-[14px] gap-[12px]">
               <div className="w-[92px] shrink-0 text-label leading-[18px] inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#FFFCF180]">
-                Mia's note
+                Mia&apos;s note
               </div>
               <div className="grow basis-[0px] min-w-[0px] text-[14px] leading-[18px] inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#FFFCF1E6]">
                 Feels full, worse lying down
