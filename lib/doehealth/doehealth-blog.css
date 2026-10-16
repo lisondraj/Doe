@@ -643,6 +643,11 @@
   font-size: 0.9rem;
 }
 
+/* The open menu uses the same text size as the closed box. */
+.doehealth-news__bar .doehealth-careers__option {
+  font-size: 0.9rem;
+}
+
 @media (min-width: 768px) {
   .doehealth-news__bar .doehealth-careers__filter {
     flex: 0 0 10.5rem;
