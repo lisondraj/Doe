@@ -91,6 +91,9 @@ async function handleAdminAccess(request: NextRequest): Promise<NextResponse | n
   return applyLandingSiteHeaders(response);
 }
 
+/** Pages linked from Desk 2's nav, banner, CTA and footer — they stay on doehealth.care instead of bouncing to `/`. */
+const DOEHEALTH_CARE_SUBPAGES = ["/about", "/careers", "/news", "/security", "/waitlist", "/doehealthdesk"] as const;
+
 export async function middleware(request: NextRequest) {
   const host = requestHostFromHeaders(request.headers);
   const { pathname } = request.nextUrl;
@@ -112,7 +115,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  /** doehealth.care serves Desk 2 at `/`, the blog and /careers; any other page bounces back to root. */
+  /** doehealth.care serves Desk 2 at `/`, the blog and the pages Desk 2 links to; any other page bounces back to root. */
   if (isDesignersHost(host)) {
     if (pathname === "/") {
       const rewriteUrl = request.nextUrl.clone();
@@ -120,10 +123,10 @@ export async function middleware(request: NextRequest) {
       return applyLandingSiteHeaders(NextResponse.rewrite(rewriteUrl));
     }
     const isBlog = pathname === DOEHEALTH_BLOG_PATH || pathname.startsWith(`${DOEHEALTH_BLOG_PATH}/`);
-    const isCareers = pathname === "/careers" || pathname.startsWith("/careers/");
+    const isDesk2Subpage = DOEHEALTH_CARE_SUBPAGES.some((path) => pathname === path || pathname.startsWith(`${path}/`));
     // Files from public/ (videos, models, fonts) that the matcher doesn't already skip.
     const isFile = /\/[^/]+\.[a-z0-9]+$/i.test(pathname);
-    if (isBlog || isCareers || isFile || isAdminAppPath(pathname) || pathname === ADMIN_AUTH_CALLBACK_PATH) {
+    if (isBlog || isDesk2Subpage || isFile || isAdminAppPath(pathname) || pathname === ADMIN_AUTH_CALLBACK_PATH) {
       return applyLandingSiteHeaders(NextResponse.next());
     }
     const redirectUrl = request.nextUrl.clone();
