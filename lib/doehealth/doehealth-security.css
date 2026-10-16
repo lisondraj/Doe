@@ -219,3 +219,31 @@
     opacity: 1;
   }
 }
+
+/* The footer is salmon, with its content in the brown of the page. */
+.doehealth-desk2-page.doehealth-security-page .doehealth-desk2-footer {
+  background: #fccfb8;
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page.doehealth-security-page .doehealth-desk2-footer__mark,
+.doehealth-desk2-page.doehealth-security-page .doehealth-desk2-footer__company-name,
+.doehealth-desk2-page.doehealth-security-page .doehealth-desk2-footer__links a {
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page.doehealth-security-page .doehealth-desk2-footer__incorporation {
+  color: rgb(40 25 16 / 0.78);
+}
+
+.doehealth-desk2-page.doehealth-security-page .doehealth-desk2-footer__incorporation-pending {
+  color: rgb(40 25 16 / 0.58);
+}
+
+.doehealth-desk2-page.doehealth-security-page .doehealth-desk2-footer__email {
+  color: rgb(40 25 16 / 0.88);
+}
+
+.doehealth-desk2-page.doehealth-security-page .doehealth-desk2-footer__email:hover {
+  color: var(--doehealth-desk2-surface);
+}
