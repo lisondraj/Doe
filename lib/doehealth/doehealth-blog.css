@@ -171,26 +171,10 @@
   background: rgb(var(--doehealth-desk-ink-rgb) / 0.3);
 }
 
+/* The language picker is the shared picker; this sets its width so it sits at the end of the bar. */
 .doehealth-blog-listen__lang {
   flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.75rem 1.15rem;
-  border: 0;
-  border-radius: 999px;
-  background: #fffcf1;
-  color: var(--doehealth-desk-surface);
-  font: inherit;
-  font-size: 0.975rem;
-  letter-spacing: -0.015em;
-  cursor: pointer;
-}
-
-.doehealth-blog-listen__lang svg {
-  width: 14px;
-  height: 14px;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  width: 9.5rem;
 }
 
 @media (max-width: 767px) {
@@ -207,7 +191,7 @@
   }
 
   .doehealth-blog-listen__lang {
-    padding: 0.75rem 0.95rem;
+    width: 8.75rem;
   }
 }
 
