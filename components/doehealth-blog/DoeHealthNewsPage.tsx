@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { CareersFilterDropdown, type CareersDropdownSection } from "@/components/doehealth-careers/CareersFilterDropdown";
-import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
+import { DoeHealthBlogPlaceholder, type PatternPalette } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
@@ -34,6 +34,19 @@ const WIDE_ROW_SLUG = "health-intelligence-for-one-price";
 /** The featured and wide cards keep their info inside the box, with a lower dot wave to leave room for it. */
 const FEATURED_WAVE_TOP = 0.7;
 
+/**
+ * Box colours on /news only: warmer and a little richer than the shared palette, so each box reads against the cream page.
+ * The tone keys are the article tones; the article page keeps the shared palette.
+ */
+const NEWS_CARD_PALETTE: PatternPalette = {
+  sand: { bg: "#EAD09A", dot: "#B98A4E" },
+  panel: { bg: "#D9DDCF", dot: "#959A84" },
+  cream: { bg: "#EDC9B5", dot: "#C98B6E" },
+  gold: { bg: "#EFC872", dot: "#C08A2F" },
+  clay: { bg: "#EDB095", dot: "#C4694A" },
+  umber: { bg: "#D9C1A4", dot: "#8A6A4E" },
+};
+
 /** Desktop small boxes: the wave starts below the description so the dots never sit behind the copy. */
 const BOXED_WAVE_TOP = 0.8;
 
@@ -60,6 +73,7 @@ function NewsCard({
             className="doehealth-blog-card__art doehealth-news-card__art"
             pattern
             wave={{ ...article.wave, top: BOXED_WAVE_TOP }}
+            palette={NEWS_CARD_PALETTE}
           >
             <div className="doehealth-news-feature__copy doehealth-news-card__copy">
               <h2 className={`doehealth-blog-card__title ${p22Mackinac.className}`}>
@@ -88,6 +102,7 @@ function NewsCard({
             className="doehealth-blog-card__art doehealth-news-feature__art"
             pattern
             wave={{ ...article.wave, top: FEATURED_WAVE_TOP }}
+            palette={NEWS_CARD_PALETTE}
           >
             <div className="doehealth-news-feature__copy">
               <h2 className={`doehealth-blog-card__title ${p22Mackinac.className}`}>
@@ -121,7 +136,13 @@ function NewsCard({
           <span>{article.author}</span>
         </p>
         <p className="doehealth-blog-card__excerpt">{article.excerpt}</p>
-        <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-card__art" pattern wave={article.wave} />
+        <DoeHealthBlogPlaceholder
+          tone={article.heroTone}
+          className="doehealth-blog-card__art"
+          pattern
+          wave={article.wave}
+          palette={NEWS_CARD_PALETTE}
+        />
       </Link>
     </li>
   );
