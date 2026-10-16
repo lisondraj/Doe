@@ -637,8 +637,9 @@ export function DoeHealthSecurityHero() {
             <span>Protocol for AI Agents</span>
           </h1>
           <p ref={subRef} className="doehealth-security-hero__sub doehealth-security-swipe doehealth-security-swipe--dim">
-            We&rsquo;re reimagining security for the next era of AI in healthcare, protecting every call, record, and
-            agent your clinic relies on.
+            We&rsquo;re reimagining security for the
+            <br />
+            next era of AI in healthcare.
           </p>
         </div>
       </div>
