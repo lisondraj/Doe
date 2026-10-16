@@ -1,0 +1,49 @@
+/* /product-nav: the whole page takes the beige of the /doehealthdesk2 title carousel, with its deep brown ink. The
+   doubled class beats the desk2 page root rule, which sets the cream background. The shade fades in on arrival. */
+.doehealth-desk2-page.doehealth-product-nav-page {
+  --doehealth-product-nav-beige: #f4eedf;
+  --doehealth-product-nav-ink-rgb: 40 25 16;
+  background-color: var(--doehealth-product-nav-beige);
+  color: rgb(var(--doehealth-product-nav-ink-rgb));
+  animation: doe-product-nav-shade-in 900ms ease both;
+}
+
+@keyframes doe-product-nav-shade-in {
+  from {
+    background-color: #fffcf1;
+  }
+  to {
+    background-color: #f4eedf;
+  }
+}
+
+/* The footer, brown elsewhere, takes the beige with deep brown type. */
+.doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-footer {
+  background: var(--doehealth-product-nav-beige);
+  color: rgb(var(--doehealth-product-nav-ink-rgb));
+}
+
+.doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-footer__mark,
+.doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-footer__company-name,
+.doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-footer__links a,
+.doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-footer__email:hover {
+  color: rgb(var(--doehealth-product-nav-ink-rgb));
+}
+
+.doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-footer__incorporation {
+  color: rgb(var(--doehealth-product-nav-ink-rgb) / 0.78);
+}
+
+.doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-footer__incorporation-pending {
+  color: rgb(var(--doehealth-product-nav-ink-rgb) / 0.58);
+}
+
+.doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-footer__email {
+  color: rgb(var(--doehealth-product-nav-ink-rgb) / 0.88);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-desk2-page.doehealth-product-nav-page {
+    animation: none;
+  }
+}

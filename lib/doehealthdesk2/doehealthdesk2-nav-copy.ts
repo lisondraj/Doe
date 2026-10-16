@@ -40,7 +40,7 @@ export function doehealthDesk2NavCenterLinks(base = "") {
 
 /** Nav bar pages on desktop and iPhone: Product, Agents, Security, News, then Careers. The footer keeps the center links. */
 export const DOEHEALTH_DESK2_NAV_PAGES = [
-  { label: "Product", href: "#solution" },
+  { label: "Product", href: "/product-nav" },
   { label: "Agents", href: "#agents" },
   { label: "Security", href: "/security" },
   { label: "News", href: "/news" },
