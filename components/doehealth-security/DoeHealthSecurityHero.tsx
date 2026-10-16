@@ -634,7 +634,7 @@ export function DoeHealthSecurityHero() {
             className={`doehealth-security-hero__title doehealth-security-swipe doehealth-security-swipe--cream ${p22Mackinac.className}`}
           >
             <span>Health Intelligence</span>
-            <span>Protocol</span>
+            <span>Protocol for AI Agents</span>
           </h1>
           <p ref={subRef} className="doehealth-security-hero__sub doehealth-security-swipe doehealth-security-swipe--dim">
             We&rsquo;re reimagining security for the next era of AI in healthcare, protecting every call, record, and
