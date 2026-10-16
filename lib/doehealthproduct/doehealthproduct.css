@@ -1,0 +1,226 @@
+/*
+ * /doehealthproduct — Paper "Pulse 04 Integrations — Selected" export.
+ * Paper tokens (from the "Tender mountain" file) are scoped to this page so the
+ * exported class names (bg-ink, text-walnut, rounded-doe, ...) resolve under Tailwind v3.
+ */
+
+@font-face {
+  font-family: "P22MackinacPro-Medium";
+  src: url("/doehealthproduct/P22Mackinac-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "P22_Mackinac_Pro";
+  src: url("/doehealthproduct/P22Mackinac-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+.doehealth-product-page {
+  --color-paper: #fffcf1;
+  --color-ink: #140c04;
+  --color-walnut: #281910;
+  --color-rail: #221714;
+  --color-muted: #38251d;
+  --color-card: #3a2920;
+  --color-salmon: #fccfb8;
+  --color-cream: #fffcf1;
+  --color-line: rgb(40 25 16 / 10%);
+  --color-sub: rgb(40 25 16 / 62%);
+  --color-sand: #f4eedf;
+  --text-label: 13px;
+  --text-msg: 16px;
+  --radius-doe: 11px;
+  --spacing-gutter: 20px;
+}
+
+.doehealth-product-page .pl-gutter {
+  padding-left: var(--spacing-gutter);
+}
+
+.doehealth-product-page .py-gutter {
+  padding-top: var(--spacing-gutter);
+  padding-bottom: var(--spacing-gutter);
+}
+
+.doehealth-product-page .leading-gutter {
+  line-height: var(--spacing-gutter);
+}
+
+.doehealth-product-page .gap-gutter {
+  gap: var(--spacing-gutter);
+}
+
+.doehealth-product-page .h-gutter {
+  height: var(--spacing-gutter);
+}
+
+.doehealth-product-page .size-gutter {
+  width: var(--spacing-gutter);
+  height: var(--spacing-gutter);
+}
+
+.doehealth-product-page .grow-2 {
+  flex-grow: 2;
+}
+
+.doehealth-product-page .text-msg {
+  font-size: var(--text-msg);
+}
+
+.doehealth-product-page .border-walnut {
+  border-color: var(--color-walnut);
+}
+
+.doehealth-product-page .text-sub {
+  color: var(--color-sub);
+}
+
+.doehealth-product-page .bg-ink {
+  background-color: var(--color-ink);
+}
+
+.doehealth-product-page .bg-walnut {
+  background-color: var(--color-walnut);
+}
+
+.doehealth-product-page .bg-salmon {
+  background-color: var(--color-salmon);
+}
+
+.doehealth-product-page .bg-sand {
+  background-color: var(--color-sand);
+}
+
+.doehealth-product-page .bg-paper {
+  background-color: var(--color-paper);
+}
+
+.doehealth-product-page .text-ink {
+  color: var(--color-ink);
+}
+
+.doehealth-product-page .text-walnut {
+  color: var(--color-walnut);
+}
+
+.doehealth-product-page .text-salmon {
+  color: var(--color-salmon);
+}
+
+.doehealth-product-page .border-line {
+  border-color: var(--color-line);
+}
+
+.doehealth-product-page .text-label {
+  font-size: var(--text-label);
+}
+
+.doehealth-product-page .rounded-doe {
+  border-radius: var(--radius-doe);
+}
+
+.doehealth-product-page .wrap-anywhere {
+  overflow-wrap: anywhere;
+}
+
+/* Rail nav: icons inherit currentColor; the active tab (aria-current) gets the bright tint + chip. */
+.doehealth-product-page .doe-nav-item {
+  color: #fffcf1b3;
+  background-color: transparent;
+  cursor: pointer;
+  transition: color 200ms ease, background-color 200ms ease;
+}
+
+.doehealth-product-page .doe-nav-item:hover {
+  color: #fffcf1;
+}
+
+.doehealth-product-page .doe-nav-item[aria-current="page"] {
+  color: #fffcf1;
+  background-color: #fffcf11a;
+}
+
+.doehealth-product-page .doe-nav-item:focus-visible {
+  outline: 1px solid #fffcf1b3;
+  outline-offset: 2px;
+}
+
+/* Nav labels are hidden in the collapsed rail and fade in when the rail expands. */
+.doehealth-product-page .doe-nav-label {
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.doehealth-product-page .doe-rail[data-expanded="true"] .doe-nav-label {
+  opacity: 1;
+  transition-delay: 80ms;
+}
+
+/* A menu trigger shows the same highlight as the current page while its menu is open. */
+.doehealth-product-page .doe-nav-item[data-open="true"] {
+  color: #fffcf1;
+  background-color: #fffcf11a;
+}
+
+.doehealth-product-page .doe-menu-in {
+  animation: doe-menu-in 160ms ease-out;
+}
+
+@keyframes doe-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Halftone motion: rings pulse outward in turn; dotted connectors drift toward their system. */
+.doehealth-product-page .doe-ripple {
+  animation: doe-ripple 2.4s ease-in-out infinite;
+}
+
+@keyframes doe-ripple {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+.doehealth-product-page .doe-flow {
+  animation: doe-flow 1.1s linear infinite;
+}
+
+@keyframes doe-flow {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+
+.doehealth-product-page .doe-spin {
+  animation: doe-spin 120s linear infinite;
+}
+
+@keyframes doe-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-product-page .doe-ripple,
+  .doehealth-product-page .doe-flow,
+  .doehealth-product-page .doe-spin {
+    animation: none;
+  }
+}
