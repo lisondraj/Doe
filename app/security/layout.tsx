@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-import "@/lib/doehealth/doehealth-desk.css";
 import "@/lib/doehealth/doehealth-security.css";
 import "@/lib/doehealthdesk2/doehealthdesk2.css";
 

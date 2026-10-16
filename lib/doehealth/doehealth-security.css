@@ -1,31 +1,19 @@
-/* /security: the /doehealthdesk2 brown theme as the default. The page takes the brown section colour and the nav takes
-   its salmon state, the same look /doehealthdesk2 has while the nav is over a brown section.
-   The doubled class beats the desk2 page root rule, which sets the cream background and declares the wash. */
+/* /security: the whole page is the desk2 brown section colour. The shared nav wash turns the nav salmon over the brown
+   hero, the same as /doehealthdesk2. The doubled class beats the desk2 page root rule, which sets the cream background.
+   The page shade fades in on arrival. */
 .doehealth-desk2-page.doehealth-security-page {
-  /* Drives the desk2 nav colours (bar, links, button, announcement) and the page shade below. */
-  --desk2-nav-wash: 1;
-  --desk2-wash: var(--desk2-nav-wash);
-  --desk2-beige: 0;
-  background-color: color-mix(in srgb, var(--doehealth-desk2-surface) calc(var(--desk2-nav-wash) * 100%), #fffcf1);
+  background-color: var(--doehealth-desk2-surface);
   color: #fffcf1;
-  /* On arrival the page and nav wash from cream to brown together, like the scroll into a brown section. */
-  animation: doe-security-wash-in 900ms cubic-bezier(0.33, 1, 0.68, 1) 120ms both;
+  animation: doe-security-shade-in 900ms ease both;
 }
 
-@keyframes doe-security-wash-in {
+@keyframes doe-security-shade-in {
   from {
-    --desk2-nav-wash: 0;
+    background-color: #fffcf1;
   }
   to {
-    --desk2-nav-wash: 1;
+    background-color: var(--doehealth-desk2-surface);
   }
-}
-
-/* Blank full-height hero. */
-.doehealth-security-page .doehealth-security-hero {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
 }
 
 @media (prefers-reduced-motion: reduce) {

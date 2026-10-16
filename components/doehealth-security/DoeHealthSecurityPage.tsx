@@ -1,6 +1,11 @@
 "use client";
 
-import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
+import { DoeHealthDesk2Footer } from "@/components/doehealth-desk2/DoeHealthDesk2Footer";
+import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
+import {
+  DoeHealthDesk2BlankSection,
+  DoeHealthDesk2InviteSection,
+} from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
@@ -12,12 +17,11 @@ import { inter, p22Mackinac } from "@/lib/home/fonts";
 
 /** The desk2 site: its nav links, logo, and section anchors all live here. */
 const DESK2_PATH = "/doehealthdesk2";
-/** The footer still uses the legacy desk section anchors. */
-const DESK_PATH = "/doehealthdesk";
 
 /**
- * /security — the desk2 brown theme by default: the page in the brown section colour and the nav in its salmon state,
- * with a blank full-height hero. Linked from the nav's Security item.
+ * /security — the desk2 brown theme as the default: the whole page is the brown section colour, the nav runs its
+ * salmon-over-brown state through the shared nav wash, and a blank full-height brown hero leads into the teach box
+ * and footer. Linked from the nav's Security item.
  */
 export function DoeHealthSecurityPage({ initialVariant }: { initialVariant: DoeHealthDesk2Variant }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
@@ -25,18 +29,25 @@ export function DoeHealthSecurityPage({ initialVariant }: { initialVariant: DoeH
 
   return (
     <div
-      className={`doehealth-desk2-page doehealth-desk-page doehealth-security-page relative min-h-[100dvh] ${inter.className} ${p22Mackinac.variable}`}
+      className={`doehealth-desk2-page doehealth-security-page relative min-h-[100dvh] ${inter.className} ${p22Mackinac.variable}`}
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}
     >
       {variant === "desktop" ? (
-        <DoeHealthDesk2DesktopNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
+        <>
+          <DoeHealthDesk2DesktopNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
+          <DoeHealthDesk2NavWash />
+        </>
       ) : (
-        <DoeHealthDesk2PhoneNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
+        <>
+          <DoeHealthDesk2PhoneNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
+          <DoeHealthDesk2NavWash />
+        </>
       )}
-      <main className="doehealth-desk-main" aria-label="Security">
+      <main className="doehealth-desk2-main min-h-[100dvh]" aria-label="Security">
         <h1 className="sr-only">Security</h1>
-        <section className="doehealth-security-hero doehealth-desk2-nav-wash-surface" aria-hidden />
-        <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} />
+        <DoeHealthDesk2BlankSection tone="brown" />
+        <DoeHealthDesk2InviteSection />
+        <DoeHealthDesk2Footer sectionHrefBase={DESK2_PATH} />
       </main>
     </div>
   );
