@@ -703,10 +703,12 @@
   grid-column: 1 / -1;
 }
 
-/* Desktop: the gap under the featured card and under the wide card matches the gap between the two cards side by side.
-   The grid's row gap is larger, so each of these two rows takes the difference back. Other rows are unchanged. */
+/* Desktop: the gaps directly above and below the featured card and the wide card match the gap between the two cards
+   side by side. The grid's row gap is larger, so each of these rows takes the difference back. Other rows are unchanged. */
 .doehealth-news-page[data-doeforvc-view="desktop"] .doehealth-news__item--featured,
-.doehealth-news-page[data-doeforvc-view="desktop"] .doehealth-news__item--wide {
+.doehealth-news-page[data-doeforvc-view="desktop"] .doehealth-news__item--wide,
+.doehealth-news-page[data-doeforvc-view="desktop"] .doehealth-news__item:has(+ .doehealth-news__item--wide),
+.doehealth-news-page[data-doeforvc-view="desktop"] .doehealth-news__item:has(+ * + .doehealth-news__item--wide) {
   margin-bottom: calc(clamp(1.5rem, 3vw, 2.75rem) - clamp(3rem, 6vh, 4.5rem));
 }
 
