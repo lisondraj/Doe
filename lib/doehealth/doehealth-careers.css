@@ -165,7 +165,7 @@
   padding: 0.4rem;
   border-radius: 18px;
   background: #fffcf1;
-  box-shadow: none;
+  box-shadow: 0 10px 28px rgb(40 25 16 / 0.08);
   list-style: none;
 }
 
