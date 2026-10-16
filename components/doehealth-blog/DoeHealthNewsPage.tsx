@@ -38,12 +38,38 @@ function NewsCard({
   article,
   featured = false,
   wide = false,
+  boxed = false,
 }: {
   article: Article;
   featured?: boolean;
   wide?: boolean;
+  /** Desktop small cards: the info sits centred inside the box, like the featured card. */
+  boxed?: boolean;
 }) {
   const modifier = featured ? " doehealth-news__item--featured" : wide ? " doehealth-news__item--wide" : "";
+  if (boxed && !featured && !wide) {
+    return (
+      <li className={`doehealth-news__item${modifier}`}>
+        <Link href={doehealthBlogArticlePath(article.slug)} className="doehealth-blog-card doehealth-news-card doehealth-news-card--boxed">
+          <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-card__art doehealth-news-card__art" pattern wave={article.wave}>
+            <div className="doehealth-news-feature__copy doehealth-news-card__copy">
+              <h2 className={`doehealth-blog-card__title ${p22Mackinac.className}`}>
+                {article.title.map((line) => (
+                  <span key={line}>{line}</span>
+                ))}
+              </h2>
+              <p className="doehealth-blog-card__meta">
+                <span>{article.date}</span>
+                <span aria-hidden>·</span>
+                <span>{article.author}</span>
+              </p>
+              <p className="doehealth-blog-card__excerpt">{article.excerpt}</p>
+            </div>
+          </DoeHealthBlogPlaceholder>
+        </Link>
+      </li>
+    );
+  }
   if (featured || wide) {
     return (
       <li className={`doehealth-news__item${modifier}`}>
@@ -217,7 +243,7 @@ export function DoeHealthNewsPage({
                   ),
                 )
               : cards.map((article) => (
-                  <NewsCard key={article.slug} article={article} wide={article.slug === WIDE_ROW_SLUG} />
+                  <NewsCard key={article.slug} article={article} wide={article.slug === WIDE_ROW_SLUG} boxed />
                 ))}
           </ul>
         </section>
