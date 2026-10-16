@@ -11,12 +11,15 @@ export function CareersFilterDropdown({
   value,
   sections,
   onChange,
+  hideSelected = false,
 }: {
   /** Names the control for assistive tech, e.g. "Team". */
   label: string;
   value: string;
   sections: readonly CareersDropdownSection[];
   onChange: (value: string) => void;
+  /** The trigger still shows the current choice, but the open menu leaves it out. */
+  hideSelected?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -42,7 +45,8 @@ export function CareersFilterDropdown({
   useEffect(() => {
     if (!open) return;
     const items = optionElements();
-    const index = flat.findIndex((option) => option.value === value);
+    // With the selected choice hidden, the first listed option is the one to focus.
+    const index = hideSelected ? 0 : flat.findIndex((option) => option.value === value);
     items[Math.max(index, 0)]?.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- runs only when the menu opens
   }, [open]);
@@ -132,7 +136,13 @@ export function CareersFilterDropdown({
           className="doehealth-careers__menu"
           onKeyDown={onListKeyDown}
         >
-          {sections.map((section, sectionIndex) => (
+          {sections
+            .map((section) => ({
+              ...section,
+              options: hideSelected ? section.options.filter((option) => option.value !== value) : section.options,
+            }))
+            .filter((section) => section.options.length > 0)
+            .map((section, sectionIndex) => (
             <li key={section.heading ?? `section-${sectionIndex}`} role="presentation" className="doehealth-careers__menu-section">
               {section.heading ? (
                 <span className="doehealth-careers__menu-heading" role="presentation">

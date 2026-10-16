@@ -297,10 +297,16 @@ export function DoeHealthNewsPage({
           <div className="doehealth-news__filters">
             <div className="doehealth-careers__bar doehealth-news__bar">
               <div className="doehealth-careers__filter">
-                <CareersFilterDropdown label="Category" value={category} sections={categorySections} onChange={setCategory} />
+                <CareersFilterDropdown
+                  label="Category"
+                  value={category}
+                  sections={categorySections}
+                  onChange={setCategory}
+                  hideSelected
+                />
               </div>
               <div className="doehealth-careers__filter">
-                <CareersFilterDropdown label="Author" value={author} sections={authorSections} onChange={setAuthor} />
+                <CareersFilterDropdown label="Author" value={author} sections={authorSections} onChange={setAuthor} hideSelected />
               </div>
               <div className="doehealth-careers__filter">
                 <CareersFilterDropdown
@@ -308,6 +314,7 @@ export function DoeHealthNewsPage({
                   value={sort}
                   sections={SORT_SECTIONS}
                   onChange={(next) => setSort(next as SortOrder)}
+                  hideSelected
                 />
               </div>
             </div>
