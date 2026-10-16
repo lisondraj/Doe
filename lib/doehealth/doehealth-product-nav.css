@@ -17,9 +17,28 @@
   }
 }
 
-/* The footer, brown elsewhere, takes the beige with deep brown type. */
+/* The teach box and footer take the top strip's beige (#e6dac2); the teach box's secondary field takes the light beige. */
+.doehealth-desk2-page.doehealth-product-nav-page {
+  --doehealth-product-nav-strip: #e6dac2;
+  --doehealth-product-nav-field: #f4eedf;
+}
+
+.doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-invite__panel {
+  background: var(--doehealth-product-nav-strip);
+  color: rgb(var(--doehealth-product-nav-ink-rgb));
+}
+
+.doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-invite__form label {
+  background: var(--doehealth-product-nav-field);
+}
+
+.doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-invite__form button {
+  color: var(--doehealth-product-nav-field);
+}
+
+/* The footer, brown elsewhere, takes the top strip's beige with deep brown type. */
 .doehealth-desk2-page.doehealth-product-nav-page .doehealth-desk2-footer {
-  background: var(--doehealth-product-nav-beige);
+  background: var(--doehealth-product-nav-strip);
   color: rgb(var(--doehealth-product-nav-ink-rgb));
 }
 
