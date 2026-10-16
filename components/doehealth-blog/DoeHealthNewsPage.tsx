@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { CareersFilterDropdown, type CareersDropdownSection } from "@/components/doehealth-careers/CareersFilterDropdown";
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
@@ -12,7 +12,6 @@ import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDes
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import {
   type DoeHealthBlogArticle as Article,
-  type DoeHealthBlogPlaceholderTone,
   doehealthBlogArticlePath,
 } from "@/lib/doehealth/doehealth-blog-articles";
 import { DOEHEALTH_DESK2_PAGE_BACKGROUND } from "@/lib/doehealthdesk2/doehealthdesk2-colors";
@@ -34,27 +33,6 @@ const WIDE_ROW_SLUG = "health-intelligence-for-one-price";
 
 /** The featured and wide cards keep their info inside the box, with a lower dot wave to leave room for it. */
 const FEATURED_WAVE_TOP = 0.7;
-
-/** One box's colours: the box fill, its dot wave, and the copy ink (a dark shade of the same hue, as R G B). */
-type NewsBoxColors = { bg: string; dot: string; ink: string };
-
-/**
- * Box colours on /news only. Each fill is a light hue that sits clearly off the cream page, and each ink is a dark
- * shade of that same hue, so the copy reads on the box. The article page keeps the shared palette.
- */
-const NEWS_CARD_PALETTE: Record<DoeHealthBlogPlaceholderTone, NewsBoxColors> = {
-  sand: { bg: "#EDD59C", dot: "#BE9552", ink: "92 69 32" },
-  panel: { bg: "#DCE3D0", dot: "#8E9A7E", ink: "63 74 54" },
-  cream: { bg: "#F0D2CA", dot: "#CC8E88", ink: "107 58 63" },
-  gold: { bg: "#F3E08E", dot: "#B8922A", ink: "94 74 14" },
-  clay: { bg: "#F2BEA3", dot: "#D27E5C", ink: "107 52 24" },
-  umber: { bg: "#E0CDB4", dot: "#94785C", ink: "75 56 38" },
-};
-
-/** The copy inside a box takes the box's ink, through the same variable the card copy already reads. */
-function boxInkStyle(tone: DoeHealthBlogPlaceholderTone): CSSProperties {
-  return { "--feature-ink-rgb": NEWS_CARD_PALETTE[tone].ink } as CSSProperties;
-}
 
 /** Desktop small boxes: the wave starts below the description so the dots never sit behind the copy. */
 const BOXED_WAVE_TOP = 0.8;
@@ -82,9 +60,8 @@ function NewsCard({
             className="doehealth-blog-card__art doehealth-news-card__art"
             pattern
             wave={{ ...article.wave, top: BOXED_WAVE_TOP }}
-            palette={NEWS_CARD_PALETTE}
           >
-            <div className="doehealth-news-feature__copy doehealth-news-card__copy" style={boxInkStyle(article.heroTone)}>
+            <div className="doehealth-news-feature__copy doehealth-news-card__copy">
               <h2 className={`doehealth-blog-card__title ${p22Mackinac.className}`}>
                 {article.title.map((line) => (
                   <span key={line}>{line}</span>
@@ -111,9 +88,8 @@ function NewsCard({
             className="doehealth-blog-card__art doehealth-news-feature__art"
             pattern
             wave={{ ...article.wave, top: FEATURED_WAVE_TOP }}
-            palette={NEWS_CARD_PALETTE}
           >
-            <div className="doehealth-news-feature__copy" style={boxInkStyle(article.heroTone)}>
+            <div className="doehealth-news-feature__copy">
               <h2 className={`doehealth-blog-card__title ${p22Mackinac.className}`}>
                 {article.title.map((line) => (
                   <span key={line}>{line}</span>
@@ -150,7 +126,6 @@ function NewsCard({
           className="doehealth-blog-card__art"
           pattern
           wave={article.wave}
-          palette={NEWS_CARD_PALETTE}
         />
       </Link>
     </li>

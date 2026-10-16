@@ -12,17 +12,13 @@ type DoeHealthBlogPlaceholderProps = {
   motion?: boolean;
   /** Content laid over the dot wave (pattern boxes only). */
   children?: React.ReactNode;
-  /** Background and dot colours per tone; omitted uses the shared palette. */
-  palette?: PatternPalette;
 };
-
-export type PatternPalette = Record<DoeHealthBlogPlaceholderTone, { bg: string; dot: string }>;
 
 /**
  * Background and dot colour for each tone: the original Doe tone families, lightened well away from the deep
  * originals (no pink; the Doe salmon is fine). The tone names are the original ones.
  */
-const PATTERN_COLORS: PatternPalette = {
+const PATTERN_COLORS: Record<DoeHealthBlogPlaceholderTone, { bg: string; dot: string }> = {
   sand: { bg: "#F7E6C4", dot: "#D4AE7A" },
   panel: { bg: "#F5F2EC", dot: "#C9BDA8" },
   cream: { bg: "#FBF5E6", dot: "#E2CB9F" },
@@ -39,12 +35,11 @@ export function DoeHealthBlogPlaceholder({
   wave,
   motion = false,
   children,
-  palette = PATTERN_COLORS,
 }: DoeHealthBlogPlaceholderProps) {
   if (!pattern) {
     return <div className={`doehealth-blog-placeholder doehealth-blog-placeholder--${tone} ${className}`} aria-hidden />;
   }
-  const { bg, dot } = palette[tone];
+  const { bg, dot } = PATTERN_COLORS[tone];
   return (
     <div className={`doehealth-blog-placeholder doehealth-blog-placeholder--pattern ${className}`} style={{ background: bg }} aria-hidden>
       <DoeHealthBlogDotWave color={dot} motion={motion} {...wave} />
