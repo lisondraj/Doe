@@ -1,7 +1,6 @@
 "use client";
 
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
-import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
@@ -9,7 +8,6 @@ import {
   type DoeHealthDesk2Variant,
   useDoeHealthDesk2Variant,
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-variant";
-import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
 /** The desk2 site: its nav links, logo, and section anchors all live here. */
@@ -17,22 +15,10 @@ const DESK2_PATH = "/doehealthdesk2";
 /** The footer still uses the legacy desk section anchors. */
 const DESK_PATH = "/doehealthdesk";
 
-/** The salmon strip across the middle of the page. */
-const STRIP_ITEMS = ["Encrypted calls", "Clinic-controlled access", "Your clinic, your rules"];
-
-/** The two principles, as stated on the product. */
-const PRINCIPLES = [
-  {
-    title: "Encrypted calls",
-    body: "Doe encrypts calls, so the conversations your patients have with it stay protected.",
-  },
-  {
-    title: "Clinic-controlled access",
-    body: "Your clinic decides who on its team can see patient information, and changes that access whenever it needs to.",
-  },
-];
-
-/** /security — a cream page with a full-height brown hero and a salmon strip, on the desk2 chrome. Linked from the nav's Security item. */
+/**
+ * /security — the desk2 brown theme by default: the page in the brown section colour and the nav in its salmon state,
+ * with a blank full-height hero. Linked from the nav's Security item.
+ */
 export function DoeHealthSecurityPage({ initialVariant }: { initialVariant: DoeHealthDesk2Variant }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
@@ -47,36 +33,9 @@ export function DoeHealthSecurityPage({ initialVariant }: { initialVariant: DoeH
       ) : (
         <DoeHealthDesk2PhoneNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
       )}
-      <main className="doehealth-desk-main min-h-[100dvh]" aria-label="Security">
-        <section className="doehealth-security__hero doehealth-desk2-blank doehealth-desk2-blank--brown">
-          <div className={`doehealth-security__hero-inner ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-            <h1 className={`doehealth-security__title ${p22Mackinac.className}`}>Security</h1>
-            <p className="doehealth-security__lede">
-              How Doe protects the calls, records, and access your clinic depends on.
-            </p>
-          </div>
-        </section>
-
-        <div className="doehealth-security-strip" role="presentation">
-          <ul className={`doehealth-security-strip__inner ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-            {STRIP_ITEMS.map((item) => (
-              <li key={item} className="doehealth-security-strip__item">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <section className={`doehealth-security__principles ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-          {PRINCIPLES.map((principle) => (
-            <article key={principle.title} className="doehealth-security__card">
-              <h2 className={`doehealth-security__card-title ${p22Mackinac.className}`}>{principle.title}</h2>
-              <p className="doehealth-security__card-body">{principle.body}</p>
-            </article>
-          ))}
-        </section>
-
-        <DoeHealthDesk2InviteSection />
+      <main className="doehealth-desk-main" aria-label="Security">
+        <h1 className="sr-only">Security</h1>
+        <section className="doehealth-security-hero doehealth-desk2-nav-wash-surface" aria-hidden />
         <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} />
       </main>
     </div>
