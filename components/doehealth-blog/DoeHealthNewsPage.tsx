@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { CareersFilterDropdown, type CareersDropdownSection } from "@/components/doehealth-careers/CareersFilterDropdown";
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
@@ -199,6 +200,23 @@ function NewsRow({ articles }: { articles: readonly Article[] }) {
   );
 }
 
+const ALL = "all";
+type SortOrder = "newest" | "oldest";
+
+const SORT_SECTIONS: readonly CareersDropdownSection[] = [
+  {
+    options: [
+      { value: "newest", label: "Newest first" },
+      { value: "oldest", label: "Oldest first" },
+    ],
+  },
+];
+
+/** The distinct values of one article field, in first-seen order, for the filter menus. */
+function uniqueValues(articles: readonly Article[], pick: (article: Article) => string): string[] {
+  return Array.from(new Set(articles.map(pick)));
+}
+
 /** /news — the index of every article: the featured one large, the rest side by side, on the desk2 chrome. */
 export function DoeHealthNewsPage({
   articles,
@@ -209,7 +227,43 @@ export function DoeHealthNewsPage({
 }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
-  const [featured, ...rest] = articles;
+  const [category, setCategory] = useState<string>(ALL);
+  const [author, setAuthor] = useState<string>(ALL);
+  const [sort, setSort] = useState<SortOrder>("newest");
+
+  const categorySections = useMemo<readonly CareersDropdownSection[]>(
+    () => [
+      {
+        options: [
+          { value: ALL, label: "All categories" },
+          ...uniqueValues(articles, (article) => article.eyebrow).map((name) => ({ value: name, label: name })),
+        ],
+      },
+    ],
+    [articles],
+  );
+  const authorSections = useMemo<readonly CareersDropdownSection[]>(
+    () => [
+      {
+        options: [
+          { value: ALL, label: "All authors" },
+          ...uniqueValues(articles, (article) => article.author).map((name) => ({ value: name, label: name })),
+        ],
+      },
+    ],
+    [articles],
+  );
+
+  /** The filtered, sorted list. The first article is always the featured one. */
+  const visible = useMemo(() => {
+    const matching = articles.filter(
+      (article) => (category === ALL || article.eyebrow === category) && (author === ALL || article.author === author),
+    );
+    const time = (article: Article) => Date.parse(article.date);
+    return [...matching].sort((a, b) => (sort === "newest" ? time(b) - time(a) : time(a) - time(b)));
+  }, [articles, category, author, sort]);
+
+  const [featured, ...rest] = visible;
   const wideArticle = rest.find((article) => article.slug === WIDE_ROW_SLUG);
   const pairs = rest.filter((article) => article !== wideArticle);
   const cards = wideArticle ? [...pairs.slice(0, 2), wideArticle, ...pairs.slice(2)] : pairs;
@@ -231,6 +285,30 @@ export function DoeHealthNewsPage({
           <header className="doehealth-news__head">
             <h1 className={`doehealth-news__title ${p22Mackinac.className}`}>News</h1>
           </header>
+
+          <div className="doehealth-news__filters">
+            <div className="doehealth-careers__bar doehealth-news__bar">
+              <div className="doehealth-careers__filter">
+                <CareersFilterDropdown label="Category" value={category} sections={categorySections} onChange={setCategory} />
+              </div>
+              <div className="doehealth-careers__filter">
+                <CareersFilterDropdown label="Author" value={author} sections={authorSections} onChange={setAuthor} />
+              </div>
+              <div className="doehealth-careers__filter">
+                <CareersFilterDropdown
+                  label="Sort"
+                  value={sort}
+                  sections={SORT_SECTIONS}
+                  onChange={(next) => setSort(next as SortOrder)}
+                />
+              </div>
+              <span className="doehealth-careers__count">
+                {visible.length} {visible.length === 1 ? "article" : "articles"}
+              </span>
+            </div>
+          </div>
+
+          {featured ? null : <p className="doehealth-news__empty">No articles match these filters.</p>}
 
           <ul className="doehealth-news__grid">
             {featured ? <NewsCard article={featured} featured /> : null}

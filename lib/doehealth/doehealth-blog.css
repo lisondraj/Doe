@@ -533,6 +533,29 @@
   line-height: 1;
 }
 
+/* The careers open-roles bar, sitting top-left above the featured article. */
+.doehealth-news__filters {
+  margin: 0 0 clamp(1.5rem, 3.5vh, 2.25rem);
+}
+
+.doehealth-news__bar {
+  width: max-content;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .doehealth-news__bar .doehealth-careers__filter {
+    flex: 0 0 15rem;
+  }
+}
+
+.doehealth-news__empty {
+  margin: 0 0 3rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.6);
+  font-size: 1rem;
+  letter-spacing: -0.015em;
+}
+
 /* The featured article spans the full width; the other two sit side by side below it. */
 .doehealth-news__grid {
   display: grid;
@@ -598,6 +621,10 @@
 @media (max-width: 767px) {
   .doehealth-news__title {
     font-size: 2.85rem;
+  }
+
+  .doehealth-news__bar {
+    width: 100%;
   }
 
   .doehealth-news__grid {
