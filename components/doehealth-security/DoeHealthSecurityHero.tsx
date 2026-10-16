@@ -199,7 +199,7 @@ function SecurityScene({ copyRef }: { copyRef: RefObject<HTMLDivElement | null> 
 
     const rand = mulberry32(5);
     const { boxes, channels } = buildTiling();
-    const channelKeys = [...channels.keys()];
+    const channelKeys = Array.from(channels.keys());
 
     let width = 0;
     let height = 0;
