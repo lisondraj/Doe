@@ -156,10 +156,32 @@
   text-wrap: balance;
 }
 
-/* The teach box sits on a cream band, as it does on /doehealthdesk2; the rest of the page stays brown. */
+/* The page is brown throughout. The teach box is reversed: a cream panel with brown type and a brown field, on the brown band. */
 .doehealth-desk2-page.doehealth-security-page .doehealth-security-invite-band {
-  background-color: #fffcf1;
-  color: var(--doehealth-desk2-ink);
+  background-color: var(--doehealth-desk2-surface);
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page.doehealth-security-page .doehealth-security-invite-band .doehealth-desk2-invite__panel {
+  background: #fffcf1;
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page.doehealth-security-page .doehealth-security-invite-band .doehealth-desk2-invite__form label {
+  background: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page.doehealth-security-page .doehealth-security-invite-band .doehealth-desk2-invite__form input {
+  color: #fffcf1;
+}
+
+.doehealth-desk2-page.doehealth-security-page .doehealth-security-invite-band .doehealth-desk2-invite__form input::placeholder {
+  color: rgb(255 252 241 / 0.55);
+}
+
+.doehealth-desk2-page.doehealth-security-page .doehealth-security-invite-band .doehealth-desk2-invite__form button {
+  background: #fffcf1;
+  color: var(--doehealth-desk2-surface);
 }
 
 @keyframes doe-security-fade-in {
