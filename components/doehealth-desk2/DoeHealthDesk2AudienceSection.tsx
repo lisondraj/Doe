@@ -375,8 +375,8 @@ export function DoeHealthDesk2AudienceSection() {
 
   return (
     <div className="doehealth-desk2-visible-track" style={vars({ "--desk2-visible-run": END * DOEHEALTH_DESK2_PHONE_STEP_PX })}>
-      <section
-        ref={sectionRef}
+    <section
+      ref={sectionRef}
         className={`doehealth-desk2-visible doehealth-desk2-nav-wash-surface ${p22Mackinac.className}`}
         data-nav-wash={navWash}
         data-nav-beige={beige.toFixed(4)}
@@ -427,10 +427,10 @@ export function DoeHealthDesk2AudienceSection() {
           </div>
           <p className="doehealth-desk2-visible__caption" style={vars({ "--e": ramp(p, RAMP.caption) * chatOpacity })}>
             {thread.caption.map((line) => (
-              <span key={line}>{line}</span>
-            ))}
-          </p>
-        </div>
+                    <span key={line}>{line}</span>
+                  ))}
+                </p>
+              </div>
 
         <div className="doehealth-desk2-find" style={vars({ "--o": beige })} aria-hidden={beige < 0.5}>
           {p >= RAMP.unbuild[0] && p < FINAL.beigeOut[1] ? <DoeHealthDesk2FindScenes p={p - FIND_FROM} /> : null}
@@ -472,14 +472,14 @@ export function DoeHealthDesk2AudienceSection() {
               </svg>
             </button>
           </form>
-        </div>
+      </div>
 
         {p > 0 && p < END ? (
           <button type="button" className="doehealth-desk2-visible__skip" style={vars({ "--b": beige })} aria-label="Skip to see if your clinic was included" onClick={skip}>
             <SkipIcon />
           </button>
         ) : null}
-      </section>
+    </section>
     </div>
   );
 }
