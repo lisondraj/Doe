@@ -59,20 +59,6 @@
   max-width: 52rem;
 }
 
-/* A soft brown pool behind the copy keeps the lines from crossing the text. */
-.doehealth-security-page .doehealth-security-hero__copy-inner::before {
-  content: "";
-  position: absolute;
-  inset: -7rem -12rem;
-  z-index: -1;
-  background: radial-gradient(
-    closest-side,
-    rgb(40 25 16 / 0.92),
-    rgb(40 25 16 / 0.62) 55%,
-    rgb(40 25 16 / 0)
-  );
-}
-
 .doehealth-security-page .doehealth-security-hero__eyebrow {
   margin: 0;
   color: #fccfb8;
@@ -120,10 +106,6 @@
 }
 
 @media (max-width: 767px) {
-  .doehealth-security-page .doehealth-security-hero__copy-inner::before {
-    inset: -5rem -3rem;
-  }
-
   .doehealth-security-page .doehealth-security-hero__eyebrow {
     font-size: 0.9375rem;
   }

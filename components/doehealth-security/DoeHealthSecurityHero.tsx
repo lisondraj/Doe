@@ -1,75 +1,69 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { type RefObject, useEffect, useRef } from "react";
 
 import { p22Mackinac } from "@/lib/home/fonts";
 
-/** Grid lines (Doe salmon) and the brighter salmon of the packets and checkpoints, as R G B. */
+/** Box lines (Doe salmon), the lighter salmon of the packets, and the dots, as R G B. */
 const LINE_RGB = "232 165 133";
-const GLOW_RGB = "252 207 184";
+const PACKET_RGB = "252 207 184";
 
-/** World units: grid cell size and the step lines are sampled at along their length. */
-const CELL = 0.7;
-const SAMPLE = 0.2;
+const DEG = Math.PI / 180;
 
-/** Camera: high above the ground plane, tilted down steeply so the grid reads as seen from above. */
-const CAM_HEIGHT = 9;
-const PITCH = (62 * Math.PI) / 180;
-const SIN_P = Math.sin(PITCH);
-const COS_P = Math.cos(PITCH);
-
-/** The cloud bank: overlapping round puffs on the ground plane. The grid only exists inside them, raised in the middle. */
-const PUFFS = [
-  ...[-10.5, -7, -3.5, 0, 3.5, 7, 10.5].map((x, k) => ({ x, z: -8 - (k % 2) * 1.2, r: 1.7 })),
-  ...[-8.75, -5.25, -1.75, 1.75, 5.25, 8.75].map((x) => ({ x, z: -6, r: 2.2 })),
-  ...[-10.5, -7, -3.5, 0, 3.5, 7, 10.5].map((x, k) => ({ x, z: -3.6 - (k % 2) * 0.5, r: 1.9 })),
+/** World units: the tiling cell, the channel between boxes, and the box corner radius. */
+const CELL = 1.2;
+const GAP = 0.26;
+const RADIUS = 0.3;
+/** Region of the ground the tiling covers; it holds every view the camera passes through. */
+const REGION = { kMin: -11, kMax: 11, mMin: -10, mMax: 3 };
+const SIZES: [number, number][] = [
+  [1, 1],
+  [2, 1],
+  [1, 2],
+  [2, 2],
+  [3, 2],
+  [2, 3],
+  [3, 1],
+  [1, 1],
+  [2, 1],
 ];
+const HEIGHTS = [0.12, 0.3, 0.5];
 
-/** The rim is traced where the density crosses the middle of the cloud mask. */
-const RIM_LEVEL = 0.49;
+/** Scene timeline, in seconds of scene time. */
+const PACKETS_IN = 2.5;
+const PACKETS_OUT = 10.4;
+const CONVERT_AT = 10;
+const CONVERT_SWEEP = 1.4;
+const FLIGHT = 1.7;
+const CAMERA_SETTLED = 11;
+/** Screen fraction where the finished dot pattern begins. */
+const DOT_BAND_TOP = 0.68;
+const DOT_SPACING_PX = 20;
+const PACKET_SPEED = 2.4;
+const PACKET_TRAIL = 0.22;
 
-/** The dot field uses a finer step on the same lattice, so every grid line passes through a row of dots. */
-const DOT_STEP = CELL / 3;
-
-const PACKET_COUNT = 9;
-const PACKET_SPEED = 1.9;
-const TRAIL_SECONDS = 1.1;
-const CHECKPOINT_COUNT = 14;
-const PULSE_SECONDS = 1.6;
-/** Segments and dots are batched into this many alpha levels, so each frame strokes a handful of paths. */
-const ALPHA_BUCKETS = 12;
-
-type Sample = { x: number; z: number; h: number; m: number };
-type TrailPoint = { x: number; z: number; h: number; t: number };
-type Packet = {
-  i: number;
-  j: number;
-  di: number;
-  dj: number;
-  p: number;
-  age: number;
-  life: number;
-  trail: TrailPoint[];
+type Outline = { pts: Float32Array; cum: Float32Array; len: number; y: number };
+type Box = {
+  top: Outline;
+  base: Outline | null;
+  inner: Outline | null;
+  cx: number;
+  cz: number;
+  reveal: number;
+  fade: number;
 };
-type Checkpoint = { i: number; j: number; m: number; h: number; pulse: number };
+type Pose = { tx: number; tz: number; h: number; pitch: number; yaw: number };
+type Packet = { k: number; m: number; dk: number; dm: number; p: number; trail: { x: number; z: number; t: number }[] };
+type Dot = { x0: number; y0: number; z0: number; x1: number; z1: number; start: number };
 
-function smoothstep(a: number, b: number, v: number) {
-  const t = Math.min(1, Math.max(0, (v - a) / (b - a)));
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+const ease = (t: number, a: number, b: number) => easeInOut(clamp01((t - a) / (b - a)));
+const smoothstep = (a: number, b: number, v: number) => {
+  const t = clamp01((v - a) / (b - a));
   return t * t * (3 - 2 * t);
-}
-
-function density(x: number, z: number) {
-  let d = 0;
-  for (const puff of PUFFS) {
-    const dx = x - puff.x;
-    const dz = z - puff.z;
-    d += Math.exp(-(dx * dx + dz * dz) / (puff.r * puff.r));
-  }
-  return d;
-}
-
-const cloudMask = (d: number) => smoothstep(0.42, 0.56, d);
-const cloudHeight = (d: number) => 1.6 * smoothstep(0.3, 1.6, d);
+};
 
 function mulberry32(seed: number) {
   let a = seed;
@@ -82,83 +76,120 @@ function mulberry32(seed: number) {
   };
 }
 
-/** Grid lines inside the cloud, split into runs wherever a line leaves the cloud. */
-function buildLines() {
-  const lines: Sample[][] = [];
-  const xMin = -15;
-  const xMax = 15;
-  const zMin = -14;
-  const zMax = -0.5;
-  const pushRuns = (points: { x: number; z: number }[]) => {
-    let run: Sample[] = [];
-    for (const { x, z } of points) {
-      const d = density(x, z);
-      const m = cloudMask(d);
-      if (m > 0.005) {
-        run.push({ x, z, h: cloudHeight(d), m });
-      } else {
-        if (run.length > 1) lines.push(run);
-        run = [];
-      }
-    }
-    if (run.length > 1) lines.push(run);
+/** The camera over the scene: it starts close and angled, then pulls back, pans, and turns to a slight angle. */
+function poseAt(t: number): Pose {
+  const pull = ease(t, 0, 9);
+  const drift = ease(t, 0, CAMERA_SETTLED);
+  return {
+    tx: lerp(-3, 0.5, drift),
+    tz: lerp(-4.5, -3, drift),
+    h: lerp(5, 10, pull),
+    pitch: lerp(58, 74, pull) * DEG,
+    yaw: lerp(-12, 4, drift) * DEG,
   };
-  for (let i = Math.ceil(xMin / CELL); i <= Math.floor(xMax / CELL); i++) {
-    const points = [];
-    for (let z = zMin; z <= zMax; z += SAMPLE) points.push({ x: i * CELL, z });
-    pushRuns(points);
-  }
-  for (let j = Math.ceil(zMin / CELL); j <= Math.floor(zMax / CELL); j++) {
-    const points = [];
-    for (let x = xMin; x <= xMax; x += SAMPLE) points.push({ x, z: j * CELL });
-    pushRuns(points);
-  }
-  return lines;
 }
 
-/** The cloud outline as world-space segments [x0, z0, x1, z1, ...], traced once with marching squares. */
-function buildRim() {
-  const step = 0.1;
-  const xMin = -15;
-  const zMin = -14;
-  const cols = Math.round(30 / step);
-  const rows = Math.round(14 / step);
-  const field = new Float32Array((cols + 1) * (rows + 1));
-  for (let r = 0; r <= rows; r++) {
-    for (let c = 0; c <= cols; c++) {
-      field[r * (cols + 1) + c] = density(xMin + c * step, zMin + r * step) - RIM_LEVEL;
+/** A rounded rectangle on the ground (or at height y), as a closed polyline with cumulative lengths. */
+function roundedRect(x0: number, z0: number, x1: number, z1: number, r: number, y: number): Outline {
+  const pts: number[] = [];
+  const arc = (cx: number, cz: number, a0: number) => {
+    for (let s = 0; s <= 6; s++) {
+      const a = a0 + (s / 6) * (Math.PI / 2);
+      pts.push(cx + Math.cos(a) * r, cz + Math.sin(a) * r);
     }
+  };
+  arc(x1 - r, z0 + r, -Math.PI / 2);
+  arc(x1 - r, z1 - r, 0);
+  arc(x0 + r, z1 - r, Math.PI / 2);
+  arc(x0 + r, z0 + r, Math.PI);
+  pts.push(pts[0], pts[1]);
+  const cum = new Float32Array(pts.length / 2);
+  for (let i = 1; i < cum.length; i++) {
+    cum[i] = cum[i - 1] + Math.hypot(pts[i * 2] - pts[i * 2 - 2], pts[i * 2 + 1] - pts[i * 2 - 1]);
   }
-  const segments: number[] = [];
-  const at = (c: number, r: number) => field[r * (cols + 1) + c];
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const corners = [
-        { x: c, z: r, v: at(c, r) },
-        { x: c + 1, z: r, v: at(c + 1, r) },
-        { x: c + 1, z: r + 1, v: at(c + 1, r + 1) },
-        { x: c, z: r + 1, v: at(c, r + 1) },
-      ];
-      const hits: number[] = [];
-      for (let e = 0; e < 4; e++) {
-        const a = corners[e];
-        const b = corners[(e + 1) % 4];
-        if (a.v > 0 === b.v > 0) continue;
-        const t = a.v / (a.v - b.v);
-        hits.push(xMin + (a.x + (b.x - a.x) * t) * step, zMin + (a.z + (b.z - a.z) * t) * step);
+  return { pts: Float32Array.from(pts), cum, len: cum[cum.length - 1], y };
+}
+
+/** Evenly spaced points along an outline, for the dots the boxes break into. */
+function resample(outline: Outline, spacing: number) {
+  const out: number[] = [];
+  const { pts, cum, len } = outline;
+  let seg = 1;
+  for (let d = 0; d < len; d += spacing) {
+    while (seg < cum.length - 1 && cum[seg] < d) seg++;
+    const t = (d - cum[seg - 1]) / (cum[seg] - cum[seg - 1] || 1);
+    out.push(lerp(pts[seg * 2 - 2], pts[seg * 2], t), lerp(pts[seg * 2 - 1], pts[seg * 2 + 1], t));
+  }
+  return out;
+}
+
+/** Packs the region with rounded boxes of mixed sizes; the cells they leave between them are the channels. */
+function buildTiling() {
+  const rand = mulberry32(11);
+  const cols = REGION.kMax - REGION.kMin;
+  const rows = REGION.mMax - REGION.mMin;
+  const owner = new Int32Array(cols * rows).fill(-1);
+  const cell = (k: number, m: number) =>
+    k < REGION.kMin || k >= REGION.kMax || m < REGION.mMin || m >= REGION.mMax
+      ? -2
+      : owner[(m - REGION.mMin) * cols + (k - REGION.kMin)];
+  const boxes: Box[] = [];
+  for (let m = REGION.mMin; m < REGION.mMax; m++) {
+    for (let k = REGION.kMin; k < REGION.kMax; k++) {
+      if (cell(k, m) !== -1) continue;
+      let [w, d] = SIZES[Math.floor(rand() * SIZES.length)];
+      const fits = (ww: number, dd: number) => {
+        for (let a = 0; a < dd; a++) for (let b = 0; b < ww; b++) if (cell(k + b, m + a) !== -1) return false;
+        return true;
+      };
+      while (!fits(w, d)) {
+        if (w >= d && w > 1) w--;
+        else if (d > 1) d--;
+        else break;
       }
-      for (let k = 0; k + 3 < hits.length; k += 4) segments.push(hits[k], hits[k + 1], hits[k + 2], hits[k + 3]);
+      const id = boxes.length;
+      for (let a = 0; a < d; a++) for (let b = 0; b < w; b++) owner[(m + a - REGION.mMin) * cols + (k + b - REGION.kMin)] = id;
+      const x0 = k * CELL + GAP / 2;
+      const x1 = (k + w) * CELL - GAP / 2;
+      const z0 = m * CELL + GAP / 2;
+      const z1 = (m + d) * CELL - GAP / 2;
+      const h = HEIGHTS[Math.floor(rand() * HEIGHTS.length)];
+      const cx = (x0 + x1) / 2;
+      const cz = (z0 + z1) / 2;
+      const nested = w >= 2 && d >= 2 ? rand() < 0.6 : w + d >= 3 && rand() < 0.25;
+      boxes.push({
+        top: roundedRect(x0, z0, x1, z1, RADIUS, h),
+        base: roundedRect(x0, z0, x1, z1, RADIUS, 0),
+        inner: nested ? roundedRect(x0 + 0.3, z0 + 0.3, x1 - 0.3, z1 - 0.3, RADIUS * 0.7, h) : null,
+        cx,
+        cz,
+        reveal: 0.35 + Math.min(4.2, Math.hypot(cx + 3, cz + 4.5) * 0.32),
+        fade: CONVERT_AT,
+      });
     }
   }
-  return segments;
+
+  /** Channel directions from each grid node: an edge is a channel when the cells on its two sides differ. */
+  const channels = new Map<string, [number, number][]>();
+  for (let m = REGION.mMin; m <= REGION.mMax; m++) {
+    for (let k = REGION.kMin; k <= REGION.kMax; k++) {
+      const dirs: [number, number][] = [];
+      if (k < REGION.kMax && m > REGION.mMin && m < REGION.mMax && cell(k, m - 1) !== cell(k, m)) dirs.push([1, 0]);
+      if (k > REGION.kMin && m > REGION.mMin && m < REGION.mMax && cell(k - 1, m - 1) !== cell(k - 1, m)) dirs.push([-1, 0]);
+      if (m < REGION.mMax && k > REGION.kMin && k < REGION.kMax && cell(k - 1, m) !== cell(k, m)) dirs.push([0, 1]);
+      if (m > REGION.mMin && k > REGION.kMin && k < REGION.kMax && cell(k - 1, m - 1) !== cell(k, m - 1)) dirs.push([0, -1]);
+      if (dirs.length) channels.set(`${k},${m}`, dirs);
+    }
+  }
+  return { boxes, channels };
 }
 
 /**
- * The /security hero visual: a camera high above a salmon line grid shaped like a cloud bank, panning slowly.
- * Packets run along the grid lines and pulse the checkpoints they pass; toward the bottom of the hero the grid
- * dissolves into the same lattice as a field of dots that rides a slow wave across the full width.
+ * The /security hero scene, played once: interlocked rounded boxes draw in under a camera that pulls back, pans, and
+ * turns; packets run cleanly through the channels between them; then the boxes break into dots that sweep down into
+ * a dot pattern along the bottom of the hero, which keeps moving.
  */
-function SecurityGridCanvas() {
+function SecurityScene({ copyRef }: { copyRef: RefObject<HTMLDivElement | null> }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -166,293 +197,266 @@ function SecurityGridCanvas() {
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
-    const rand = mulberry32(7);
-    const lines = buildLines();
-    const rim = buildRim();
-
-    const nodeOk = new Map<string, boolean>();
-    const isOk = (i: number, j: number) => {
-      const key = `${i},${j}`;
-      let ok = nodeOk.get(key);
-      if (ok === undefined) {
-        ok = cloudMask(density(i * CELL, j * CELL)) > 0.6;
-        nodeOk.set(key, ok);
-      }
-      return ok;
-    };
-
-    const innerNodes: { i: number; j: number; m: number; h: number }[] = [];
-    for (let i = -22; i <= 22; i++) {
-      for (let j = -20; j <= 0; j++) {
-        const d = density(i * CELL, j * CELL);
-        const m = cloudMask(d);
-        if (m > 0.85) innerNodes.push({ i, j, m, h: cloudHeight(d) });
-      }
-    }
-
-    const checkpoints: Checkpoint[] = [];
-    const shuffled = [...innerNodes].sort(() => rand() - 0.5);
-    for (const node of shuffled) {
-      if (checkpoints.length >= CHECKPOINT_COUNT) break;
-      if (checkpoints.some((c) => Math.abs(c.i - node.i) + Math.abs(c.j - node.j) < 4)) continue;
-      checkpoints.push({ ...node, pulse: -10 });
-    }
-    const checkpointAt = new Map(checkpoints.map((c) => [`${c.i},${c.j}`, c]));
-
-    const DIRS: [number, number][] = [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-    ];
-
-    const spawn = (packet: Packet) => {
-      for (let tries = 0; tries < 200; tries++) {
-        const node = innerNodes[Math.floor(rand() * innerNodes.length)];
-        const dirs = DIRS.filter(([di, dj]) => isOk(node.i + di, node.j + dj));
-        if (!dirs.length) continue;
-        const [di, dj] = dirs[Math.floor(rand() * dirs.length)];
-        packet.i = node.i;
-        packet.j = node.j;
-        packet.di = di;
-        packet.dj = dj;
-        packet.p = 0;
-        packet.age = 0;
-        packet.life = 6 + rand() * 7;
-        packet.trail.length = 0;
-        return;
-      }
-    };
-
-    const packets: Packet[] = Array.from({ length: PACKET_COUNT }, () => {
-      const packet: Packet = { i: 0, j: 0, di: 1, dj: 0, p: 0, age: 0, life: 1, trail: [] };
-      spawn(packet);
-      packet.age = rand() * packet.life * 0.6;
-      return packet;
-    });
-
-    let simTime = 0;
-
-    const turn = (packet: Packet) => {
-      const straight: [number, number] = [packet.di, packet.dj];
-      const left: [number, number] = [-packet.dj, packet.di];
-      const right: [number, number] = [packet.dj, -packet.di];
-      const roll = rand();
-      const order = roll < 0.6 ? [straight, left, right] : roll < 0.8 ? [left, right, straight] : [right, left, straight];
-      const next = order.find(([di, dj]) => isOk(packet.i + di, packet.j + dj));
-      if (!next) {
-        spawn(packet);
-        return;
-      }
-      packet.di = next[0];
-      packet.dj = next[1];
-    };
-
-    const step = (dt: number) => {
-      simTime += dt;
-      for (const packet of packets) {
-        packet.age += dt;
-        if (packet.age > packet.life) {
-          spawn(packet);
-          continue;
-        }
-        packet.p += PACKET_SPEED * dt;
-        while (packet.p >= 1) {
-          packet.p -= 1;
-          packet.i += packet.di;
-          packet.j += packet.dj;
-          const checkpoint = checkpointAt.get(`${packet.i},${packet.j}`);
-          if (checkpoint && simTime - checkpoint.pulse > PULSE_SECONDS * 0.6) checkpoint.pulse = simTime;
-          turn(packet);
-        }
-        const x = (packet.i + packet.di * packet.p) * CELL;
-        const z = (packet.j + packet.dj * packet.p) * CELL;
-        packet.trail.push({ x, z, h: cloudHeight(density(x, z)), t: simTime });
-        while (packet.trail.length && simTime - packet.trail[0].t > TRAIL_SECONDS) packet.trail.shift();
-      }
-    };
+    const rand = mulberry32(5);
+    const { boxes, channels } = buildTiling();
+    const channelKeys = [...channels.keys()];
 
     let width = 0;
     let height = 0;
     let focal = 1;
     let centerY = 0;
-    const cam = { x: 0, z: 0 };
-    const out = { sx: 0, sy: 0, depth: 0 };
+    let quiet = { x: 0, y: 0, rx: 0, ry: 0 };
+    let scene = 0;
 
+    const cam = { x: 0, y: 0, z: 0, rx: 1, rz: 0, ux: 0, uy: 1, uz: 0, fx: 0, fy: -1, fz: 0 };
+    const setCamera = (pose: Pose) => {
+      const sp = Math.sin(pose.pitch);
+      const cp = Math.cos(pose.pitch);
+      const sy = Math.sin(pose.yaw);
+      const cy = Math.cos(pose.yaw);
+      cam.rx = cy;
+      cam.rz = -sy;
+      cam.ux = -sp * sy;
+      cam.uy = cp;
+      cam.uz = -sp * cy;
+      cam.fx = -cp * sy;
+      cam.fy = -sp;
+      cam.fz = -cp * cy;
+      const dist = pose.h / sp;
+      cam.x = pose.tx - cam.fx * dist;
+      cam.y = pose.h;
+      cam.z = pose.tz - cam.fz * dist;
+    };
+
+    const out = { sx: 0, sy: 0, depth: 0 };
     const project = (x: number, y: number, z: number) => {
       const dx = x - cam.x;
-      const dy = y - CAM_HEIGHT;
+      const dy = y - cam.y;
       const dz = z - cam.z;
-      const camY = dy * COS_P - dz * SIN_P;
-      const depth = -dy * SIN_P - dz * COS_P;
-      if (depth < 0.5) return false;
+      const depth = dx * cam.fx + dy * cam.fy + dz * cam.fz;
+      if (depth < 0.4) return false;
       const k = focal / depth;
-      out.sx = width / 2 + dx * k;
-      out.sy = centerY - camY * k;
+      out.sx = width / 2 + (dx * cam.rx + dz * cam.rz) * k;
+      out.sy = centerY - (dx * cam.ux + dy * cam.uy + dz * cam.uz) * k;
       out.depth = depth;
       return true;
     };
+    const ground = (sx: number, sy: number) => {
+      const X = (sx - width / 2) / focal;
+      const Y = (centerY - sy) / focal;
+      const dx = cam.rx * X + cam.ux * Y + cam.fx;
+      const dy = cam.uy * Y + cam.fy;
+      const dz = cam.rz * X + cam.uz * Y + cam.fz;
+      const t = -cam.y / dy;
+      return { x: cam.x + dx * t, z: cam.z + dz * t };
+    };
 
-    const breathe = (h: number, x: number, z: number) => h * (1 + 0.08 * Math.sin(simTime * 0.5 + x * 0.35 + z * 0.25));
-    const lineFade = (sy: number) => 1 - smoothstep(height * 0.58, height * 0.76, sy);
-    const dotFade = (sy: number) => smoothstep(height * 0.56, height * 0.78, sy);
+    /** Strokes the first `fraction` of an outline, so boxes draw themselves in. */
+    const traceOutline = (outline: Outline, fraction: number) => {
+      const { pts, cum, len, y } = outline;
+      const target = len * fraction;
+      let started = false;
+      for (let i = 0; i < cum.length; i++) {
+        let x = pts[i * 2];
+        let z = pts[i * 2 + 1];
+        if (cum[i] > target && i > 0) {
+          const t = (target - cum[i - 1]) / (cum[i] - cum[i - 1] || 1);
+          x = lerp(pts[i * 2 - 2], x, t);
+          z = lerp(pts[i * 2 - 1], z, t);
+        }
+        if (!project(x, y, z)) {
+          started = false;
+        } else if (started) {
+          ctx.lineTo(out.sx, out.sy);
+        } else {
+          ctx.moveTo(out.sx, out.sy);
+          started = true;
+        }
+        if (cum[i] > target) break;
+      }
+    };
 
-    const buckets: number[][] = Array.from({ length: ALPHA_BUCKETS }, () => []);
-    const bucketOf = (a: number) => Math.min(ALPHA_BUCKETS - 1, Math.floor(a * ALPHA_BUCKETS));
+    const packets: Packet[] = [];
+    const spawn = (packet: Packet) => {
+      for (let tries = 0; tries < 80; tries++) {
+        const key = channelKeys[Math.floor(rand() * channelKeys.length)];
+        const [k, m] = key.split(",").map(Number);
+        if (!project(k * CELL, 0, m * CELL)) continue;
+        if (out.sx < 0 || out.sx > width || out.sy < 0 || out.sy > height * DOT_BAND_TOP) continue;
+        const dirs = channels.get(key) ?? [];
+        const [dk, dm] = dirs[Math.floor(rand() * dirs.length)];
+        Object.assign(packet, { k, m, dk, dm, p: rand() });
+        packet.trail.length = 0;
+        return;
+      }
+    };
+    const advance = (packet: Packet, dt: number) => {
+      packet.p += PACKET_SPEED * dt;
+      while (packet.p >= 1) {
+        packet.p -= 1;
+        packet.k += packet.dk;
+        packet.m += packet.dm;
+        if (!project(packet.k * CELL, 0, packet.m * CELL) || out.sx < -80 || out.sx > width + 80 || out.sy < -80 || out.sy > height + 80) {
+          spawn(packet);
+          return;
+        }
+        const dirs = (channels.get(`${packet.k},${packet.m}`) ?? []).filter(([dk, dm]) => dk !== -packet.dk || dm !== -packet.dm);
+        if (!dirs.length) {
+          packet.dk = -packet.dk;
+          packet.dm = -packet.dm;
+          continue;
+        }
+        const straight = dirs.find(([dk, dm]) => dk === packet.dk && dm === packet.dm);
+        const [dk, dm] = straight && rand() < 0.55 ? straight : dirs[Math.floor(rand() * dirs.length)];
+        packet.dk = dk;
+        packet.dm = dm;
+      }
+      const x = (packet.k + packet.dk * packet.p) * CELL;
+      const z = (packet.m + packet.dm * packet.p) * CELL;
+      packet.trail.push({ x, z, t: scene });
+      while (packet.trail.length > 2 && scene - packet.trail[0].t > PACKET_TRAIL) packet.trail.shift();
+    };
 
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-      cam.x = 1.8 * Math.sin(simTime * 0.06);
-      cam.z = 0.7 * Math.sin(simTime * 0.045 + 1);
-
-      for (const bucket of buckets) bucket.length = 0;
-      for (const run of lines) {
-        let prevOk = false;
-        let px = 0;
-        let py = 0;
-        let pm = 0;
-        for (const s of run) {
-          const ok = project(s.x, breathe(s.h, s.x, s.z), s.z);
-          if (ok && prevOk) {
-            const a = Math.min(pm, s.m) * lineFade((py + out.sy) / 2);
-            if (a > 0.02) buckets[bucketOf(a)].push(px, py, out.sx, out.sy);
+    let dots: Dot[] = [];
+    let dotsReady = false;
+    /** Pairs points along the boxes on screen at the conversion with a dot lattice along the bottom of the final view. */
+    const buildDots = () => {
+      setCamera(poseAt(CONVERT_AT));
+      const sources: { x: number; y: number; z: number; sx: number }[] = [];
+      for (const box of boxes) {
+        box.fade = project(box.cx, box.top.y, box.cz)
+          ? CONVERT_AT + clamp01(out.sx / width) * CONVERT_SWEEP
+          : CONVERT_AT;
+        for (const outline of [box.top, box.inner]) {
+          if (!outline) continue;
+          const pts = resample(outline, 0.1);
+          for (let i = 0; i < pts.length; i += 2) {
+            if (!project(pts[i], outline.y, pts[i + 1])) continue;
+            if (out.sx < 0 || out.sx > width || out.sy < 0 || out.sy > height) continue;
+            sources.push({ x: pts[i], y: outline.y, z: pts[i + 1], sx: out.sx });
           }
-          prevOk = ok;
-          px = out.sx;
-          py = out.sy;
-          pm = s.m;
         }
       }
-      ctx.lineWidth = 1;
-      buckets.forEach((coords, b) => {
-        if (!coords.length) return;
-        ctx.strokeStyle = `rgb(${LINE_RGB} / ${((b + 0.5) / ALPHA_BUCKETS) * 0.5})`;
-        ctx.beginPath();
-        for (let k = 0; k < coords.length; k += 4) {
-          ctx.moveTo(coords[k], coords[k + 1]);
-          ctx.lineTo(coords[k + 2], coords[k + 3]);
-        }
-        ctx.stroke();
-      });
 
-      for (const bucket of buckets) bucket.length = 0;
-      for (let k = 0; k < rim.length; k += 4) {
-        if (!project(rim[k], 0, rim[k + 1])) continue;
-        const x0 = out.sx;
-        const y0 = out.sy;
-        if (!project(rim[k + 2], 0, rim[k + 3])) continue;
-        const a = lineFade((y0 + out.sy) / 2);
-        if (a > 0.02) buckets[bucketOf(a)].push(x0, y0, out.sx, out.sy);
-      }
-      ctx.lineWidth = 1.2;
-      buckets.forEach((coords, b) => {
-        if (!coords.length) return;
-        ctx.strokeStyle = `rgb(${GLOW_RGB} / ${((b + 0.5) / ALPHA_BUCKETS) * 0.6})`;
-        ctx.beginPath();
-        for (let k = 0; k < coords.length; k += 4) {
-          ctx.moveTo(coords[k], coords[k + 1]);
-          ctx.lineTo(coords[k + 2], coords[k + 3]);
-        }
-        ctx.stroke();
-      });
-
-      for (const bucket of buckets) bucket.length = 0;
-      const iMin = Math.floor((cam.x - 11) / DOT_STEP);
-      const iMax = Math.ceil((cam.x + 11) / DOT_STEP);
-      const jMin = Math.floor((cam.z - 5.6) / DOT_STEP);
-      const jMax = Math.ceil((cam.z + 3) / DOT_STEP);
-      for (let j = jMin; j <= jMax; j++) {
-        for (let i = iMin; i <= iMax; i++) {
-          const x = i * DOT_STEP;
-          const z = j * DOT_STEP;
-          const y = 0.32 * Math.sin(x * 0.7 - simTime * 1.2) * Math.cos(z * 0.45 + simTime * 0.45) + 0.05;
-          if (!project(x, y, z)) continue;
-          const a = dotFade(out.sy);
-          if (a < 0.02) continue;
-          if (out.sx < -4 || out.sx > width + 4 || out.sy > height + 4) continue;
-          const r = Math.min(2.6, Math.max(0.6, (1.2 * 8) / out.depth));
-          buckets[bucketOf(a)].push(out.sx, out.sy, r);
+      setCamera(poseAt(CAMERA_SETTLED));
+      const corners = [
+        ground(0, height * DOT_BAND_TOP),
+        ground(width, height * DOT_BAND_TOP),
+        ground(0, height),
+        ground(width, height),
+      ];
+      const mid = ground(width / 2, height * ((1 + DOT_BAND_TOP) / 2));
+      project(mid.x, 0, mid.z);
+      const step = (DOT_SPACING_PX * out.depth) / focal;
+      const xs = corners.map((c) => c.x);
+      const zs = corners.map((c) => c.z);
+      const targets: { x: number; z: number; sx: number }[] = [];
+      for (let z = Math.floor(Math.min(...zs) / step) * step; z <= Math.max(...zs) + step; z += step) {
+        for (let x = Math.floor(Math.min(...xs) / step) * step; x <= Math.max(...xs) + step; x += step) {
+          if (!project(x, 0, z)) continue;
+          if (out.sx < 0 || out.sx > width || out.sy < height * DOT_BAND_TOP || out.sy > height) continue;
+          targets.push({ x, z, sx: out.sx });
         }
       }
-      buckets.forEach((dots, b) => {
-        if (!dots.length) return;
-        ctx.fillStyle = `rgb(${LINE_RGB} / ${((b + 0.5) / ALPHA_BUCKETS) * 0.8})`;
-        ctx.beginPath();
-        for (let k = 0; k < dots.length; k += 3) {
-          ctx.moveTo(dots[k] + dots[k + 2], dots[k + 1]);
-          ctx.arc(dots[k], dots[k + 1], dots[k + 2], 0, Math.PI * 2);
-        }
-        ctx.fill();
-      });
 
-      for (const c of checkpoints) {
-        const x = c.i * CELL;
-        const z = c.j * CELL;
-        if (!project(x, breathe(c.h, x, z), z)) continue;
-        const a = lineFade(out.sy) * c.m;
-        if (a < 0.02) continue;
-        const r = Math.min(5, Math.max(1.5, 34 / out.depth));
-        ctx.strokeStyle = `rgb(${GLOW_RGB} / ${0.55 * a})`;
+      sources.sort((a, b) => a.sx - b.sx);
+      targets.sort((a, b) => a.sx - b.sx);
+      dots = targets.map((target, i) => {
+        const source = sources[Math.floor((i / targets.length) * sources.length)] ?? { x: target.x, y: 0, z: target.z, sx: target.sx };
+        return {
+          x0: source.x,
+          y0: source.y,
+          z0: source.z,
+          x1: target.x,
+          z1: target.z,
+          start: CONVERT_AT + clamp01(source.sx / width) * CONVERT_SWEEP,
+        };
+      });
+      dotsReady = true;
+    };
+
+    const dotWave = (x: number, z: number) => 0.5 * Math.sin(x * 1.6 - scene * 1.4) * Math.cos(z * 1.2 + scene * 0.6);
+
+    const draw = (showPackets: boolean) => {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.clearRect(0, 0, width, height);
+      setCamera(poseAt(scene));
+
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      for (const box of boxes) {
+        const reveal = clamp01((scene - box.reveal) / 0.9);
+        const alpha = reveal > 0 ? 1 - smoothstep(box.fade, box.fade + 0.5, scene) : 0;
+        if (alpha < 0.01) continue;
+        const fraction = easeInOut(reveal);
         ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.arc(out.sx, out.sy, r, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.fillStyle = `rgb(${GLOW_RGB} / ${0.8 * a})`;
-        ctx.beginPath();
-        ctx.arc(out.sx, out.sy, r * 0.35, 0, Math.PI * 2);
-        ctx.fill();
-        const age = simTime - c.pulse;
-        if (age >= 0 && age < PULSE_SECONDS) {
-          const k = age / PULSE_SECONDS;
-          const grow = 1 - (1 - k) ** 3;
-          ctx.strokeStyle = `rgb(${GLOW_RGB} / ${(1 - k) * 0.75 * a})`;
+        if (box.base && box.top.y > 0.05) {
+          ctx.strokeStyle = `rgb(${LINE_RGB} / ${0.28 * alpha})`;
           ctx.beginPath();
-          ctx.arc(out.sx, out.sy, r * (1 + 3.5 * grow), 0, Math.PI * 2);
+          traceOutline(box.base, fraction);
+          ctx.stroke();
+        }
+        ctx.strokeStyle = `rgb(${LINE_RGB} / ${0.8 * alpha})`;
+        ctx.beginPath();
+        traceOutline(box.top, fraction);
+        ctx.stroke();
+        if (box.inner) {
+          ctx.strokeStyle = `rgb(${LINE_RGB} / ${0.5 * alpha})`;
+          ctx.beginPath();
+          traceOutline(box.inner, clamp01((scene - box.reveal - 0.4) / 0.9));
           ctx.stroke();
         }
       }
 
-      ctx.lineWidth = 1.6;
-      ctx.lineCap = "round";
-      for (const packet of packets) {
-        const life = smoothstep(0, 0.6, packet.age) * (1 - smoothstep(packet.life - 0.8, packet.life, packet.age));
-        const trail = packet.trail;
-        if (trail.length < 2 || life < 0.01) continue;
-        let prevOk = false;
-        let px = 0;
-        let py = 0;
-        for (let k = 0; k < trail.length; k++) {
-          const point = trail[k];
-          const ok = project(point.x, breathe(point.h, point.x, point.z) + 0.02, point.z);
-          if (ok && prevOk) {
-            const a = (k / trail.length) ** 1.5 * 0.9 * life * lineFade(out.sy);
-            if (a > 0.01) {
-              ctx.strokeStyle = `rgb(${GLOW_RGB} / ${a})`;
-              ctx.beginPath();
-              ctx.moveTo(px, py);
-              ctx.lineTo(out.sx, out.sy);
-              ctx.stroke();
+      const packetAlpha = showPackets ? smoothstep(PACKETS_IN, PACKETS_IN + 0.7, scene) * (1 - smoothstep(PACKETS_OUT - 0.8, PACKETS_OUT, scene)) : 0;
+      if (packetAlpha > 0.01) {
+        ctx.strokeStyle = `rgb(${PACKET_RGB} / ${0.95 * packetAlpha})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (const packet of packets) {
+          let started = false;
+          for (const point of packet.trail) {
+            if (!project(point.x, 0, point.z)) continue;
+            if (started) ctx.lineTo(out.sx, out.sy);
+            else {
+              ctx.moveTo(out.sx, out.sy);
+              started = true;
             }
           }
-          prevOk = ok;
-          px = out.sx;
-          py = out.sy;
         }
-        const head = trail[trail.length - 1];
-        if (!project(head.x, breathe(head.h, head.x, head.z) + 0.02, head.z)) continue;
-        const a = life * lineFade(out.sy);
-        if (a < 0.02) continue;
-        const glow = ctx.createRadialGradient(out.sx, out.sy, 0, out.sx, out.sy, 11);
-        glow.addColorStop(0, `rgb(${GLOW_RGB} / ${0.55 * a})`);
-        glow.addColorStop(1, `rgb(${GLOW_RGB} / 0)`);
-        ctx.fillStyle = glow;
+        ctx.stroke();
+      }
+
+      if (dotsReady && scene >= CONVERT_AT) {
+        ctx.fillStyle = `rgb(${LINE_RGB} / 0.85)`;
         ctx.beginPath();
-        ctx.arc(out.sx, out.sy, 11, 0, Math.PI * 2);
+        for (const dot of dots) {
+          if (scene < dot.start) continue;
+          const p = easeInOut(clamp01((scene - dot.start) / FLIGHT));
+          const x = lerp(dot.x0, dot.x1, p);
+          const z = lerp(dot.z0, dot.z1, p);
+          const y = lerp(dot.y0, dotWave(dot.x1, dot.z1), p) + Math.sin(Math.PI * p) * 0.8;
+          if (!project(x, y, z)) continue;
+          const r = Math.min(2.4, Math.max(0.8, (1.5 * 9.5) / out.depth));
+          ctx.moveTo(out.sx + r, out.sy);
+          ctx.arc(out.sx, out.sy, r, 0, Math.PI * 2);
+        }
         ctx.fill();
-        ctx.fillStyle = `rgb(255 252 241 / ${0.95 * a})`;
-        ctx.beginPath();
-        ctx.arc(out.sx, out.sy, 1.8, 0, Math.PI * 2);
-        ctx.fill();
+      }
+
+      if (quiet.rx > 0) {
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.save();
+        ctx.translate(quiet.x, quiet.y);
+        ctx.scale(quiet.rx, quiet.ry);
+        const mask = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        mask.addColorStop(0, "rgb(0 0 0 / 1)");
+        mask.addColorStop(0.6, "rgb(0 0 0 / 0.92)");
+        mask.addColorStop(1, "rgb(0 0 0 / 0)");
+        ctx.fillStyle = mask;
+        ctx.fillRect(-1, -1, 2, 2);
+        ctx.restore();
+        ctx.globalCompositeOperation = "source-over";
       }
     };
 
@@ -467,8 +471,18 @@ function SecurityGridCanvas() {
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       focal = Math.min(height * 0.95, Math.max(width * 0.62, height * 0.7));
-      centerY = height * (width < 768 ? 0.46 : 0.56);
-      if (reduceMotion) draw();
+      centerY = height * 0.5;
+      const copy = copyRef.current?.getBoundingClientRect();
+      quiet = copy
+        ? {
+            x: copy.left - rect.left + copy.width / 2,
+            y: copy.top - rect.top + copy.height / 2,
+            rx: copy.width * 0.72 + 24,
+            ry: copy.height * 0.95 + 24,
+          }
+        : { x: 0, y: 0, rx: 0, ry: 0 };
+      buildDots();
+      if (reduceMotion) draw(false);
     };
 
     const observer = new ResizeObserver(resize);
@@ -476,9 +490,17 @@ function SecurityGridCanvas() {
     resize();
 
     if (reduceMotion) {
-      for (let k = 0; k < 120; k++) step(1 / 30);
-      draw();
+      scene = 7;
+      draw(false);
       return () => observer.disconnect();
+    }
+
+    setCamera(poseAt(PACKETS_IN));
+    const packetCount = width < 768 ? 9 : 16;
+    for (let i = 0; i < packetCount; i++) {
+      const packet: Packet = { k: 0, m: 0, dk: 1, dm: 0, p: 0, trail: [] };
+      spawn(packet);
+      packets.push(packet);
     }
 
     let raf = 0;
@@ -487,8 +509,12 @@ function SecurityGridCanvas() {
     const frame = (now: number) => {
       const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
       last = now;
-      step(dt);
-      draw();
+      scene += dt;
+      if (scene > PACKETS_IN - 0.5 && scene < PACKETS_OUT) {
+        setCamera(poseAt(scene));
+        for (const packet of packets) advance(packet, dt);
+      }
+      draw(true);
       raf = requestAnimationFrame(frame);
     };
     const start = () => {
@@ -500,7 +526,6 @@ function SecurityGridCanvas() {
       cancelAnimationFrame(raf);
       raf = 0;
     };
-
     const visibility = new IntersectionObserver(([entry]) => {
       onScreen = entry.isIntersecting;
       if (onScreen) start();
@@ -517,18 +542,20 @@ function SecurityGridCanvas() {
       visibility.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, []);
+  }, [copyRef]);
 
   return <canvas ref={canvasRef} className="doehealth-security-hero__canvas" aria-hidden />;
 }
 
-/** Full-height brown hero for /security: the grid visual behind the protocol introduction. */
+/** Full-height brown hero for /security: the box scene behind the protocol introduction. */
 export function DoeHealthSecurityHero() {
+  const copyRef = useRef<HTMLDivElement>(null);
+
   return (
     <section className="doehealth-desk2-blank doehealth-desk2-blank--brown doehealth-desk2-nav-wash-surface doehealth-security-hero">
-      <SecurityGridCanvas />
+      <SecurityScene copyRef={copyRef} />
       <div className="doehealth-security-hero__copy">
-        <div className="doehealth-security-hero__copy-inner">
+        <div ref={copyRef} className="doehealth-security-hero__copy-inner">
           <p className="doehealth-security-hero__eyebrow">Introducing</p>
           <h1 className={`doehealth-security-hero__title ${p22Mackinac.className}`}>The Health Intelligence Protocol</h1>
           <p className="doehealth-security-hero__sub">
