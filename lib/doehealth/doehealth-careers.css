@@ -125,8 +125,9 @@
   transition: background-color 160ms ease;
 }
 
+/* The trigger and its open menu share one colour, so the open menu reads as part of the box. */
 .doehealth-careers__trigger:hover {
-  background: #fffaea;
+  background: #fffcf1;
 }
 
 .doehealth-careers__trigger:focus-visible {
@@ -164,7 +165,7 @@
   padding: 0.4rem;
   border-radius: 18px;
   background: #fffcf1;
-  box-shadow: 0 16px 40px rgb(40 25 16 / 0.14);
+  box-shadow: none;
   list-style: none;
 }
 
