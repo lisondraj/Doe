@@ -171,18 +171,26 @@
   background: rgb(var(--doehealth-desk-ink-rgb) / 0.3);
 }
 
-/* The language picker keeps the original pill: it sizes to the text, with the chevron beside it. */
 .doehealth-blog-listen__lang {
   flex: none;
-}
-
-.doehealth-blog-listen__lang .doehealth-careers__dropdown {
-  width: auto;
-}
-
-.doehealth-blog-listen__lang .doehealth-careers__trigger {
-  width: auto;
+  display: inline-flex;
+  align-items: center;
   gap: 0.6rem;
+  padding: 0.75rem 1.15rem;
+  border: 0;
+  border-radius: 999px;
+  background: #fffcf1;
+  color: var(--doehealth-desk-surface);
+  font: inherit;
+  font-size: 0.975rem;
+  letter-spacing: -0.015em;
+  cursor: pointer;
+}
+
+.doehealth-blog-listen__lang svg {
+  width: 14px;
+  height: 14px;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
 }
 
 @media (max-width: 767px) {
@@ -198,7 +206,7 @@
     min-width: 0;
   }
 
-  .doehealth-blog-listen__lang .doehealth-careers__trigger {
+  .doehealth-blog-listen__lang {
     padding: 0.75rem 0.95rem;
   }
 }
