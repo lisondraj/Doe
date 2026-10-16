@@ -343,6 +343,8 @@ function SecurityScene({
 
     let dots: Dot[] = [];
     let dotsReady = false;
+    /** Set on resize; the dot pairing is rebuilt once, just before the breakup needs it. */
+    let dotsDirty = true;
     /** Pairs points along the boxes on screen at the conversion with a dot lattice along the bottom of the final view. */
     const buildDots = () => {
       setCamera(poseAt(CONVERT_AT));
@@ -401,7 +403,17 @@ function SecurityScene({
 
     const dotBuckets: number[][] = Array.from({ length: 8 }, () => []);
 
+    /** Unit radial gradient for clearing the lines around the copy; scaled to the copy and faded with globalAlpha. */
+    const quietMask = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+    quietMask.addColorStop(0, "rgb(0 0 0 / 1)");
+    quietMask.addColorStop(0.6, "rgb(0 0 0 / 0.92)");
+    quietMask.addColorStop(1, "rgb(0 0 0 / 0)");
+
     const draw = (showPackets: boolean) => {
+      if (dotsDirty && scene >= CONVERT_AT - 0.5) {
+        buildDots();
+        dotsDirty = false;
+      }
       ctx.globalCompositeOperation = "source-over";
       ctx.clearRect(0, 0, width, height);
       setCamera(poseAt(scene));
@@ -484,11 +496,8 @@ function SecurityScene({
         ctx.save();
         ctx.translate(quiet.x, quiet.y);
         ctx.scale(quiet.rx, quiet.ry);
-        const mask = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
-        mask.addColorStop(0, `rgb(0 0 0 / ${clearing})`);
-        mask.addColorStop(0.6, `rgb(0 0 0 / ${0.92 * clearing})`);
-        mask.addColorStop(1, "rgb(0 0 0 / 0)");
-        ctx.fillStyle = mask;
+        ctx.globalAlpha = clearing;
+        ctx.fillStyle = quietMask;
         ctx.fillRect(-1, -1, 2, 2);
         ctx.restore();
         ctx.globalCompositeOperation = "source-over";
@@ -499,6 +508,7 @@ function SecurityScene({
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
+      if (rect.width === width && rect.height === height) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = rect.width;
       height = rect.height;
@@ -516,7 +526,7 @@ function SecurityScene({
             ry: copy.height * 0.95 + 24,
           }
         : { x: 0, y: 0, rx: 0, ry: 0 };
-      buildDots();
+      dotsDirty = true;
       if (reduceMotion) draw(false);
     };
 
@@ -525,24 +535,33 @@ function SecurityScene({
     resize();
 
     let waveMounted = false;
+    const shown = new Map<RefObject<HTMLElement | null>, string>();
+    /** Writes a swipe position only when it changes, so finished swipes cost nothing per frame. */
+    const set = (ref: RefObject<HTMLElement | null>, [a, b]: [number, number]) => {
+      const value = easeInOut(clamp01((scene - a) / (b - a))).toFixed(3);
+      if (shown.get(ref) === value) return;
+      shown.set(ref, value);
+      ref.current?.style.setProperty("--s", value);
+    };
     /** Moves the copy and dot wave swipes with the scene clock, and mounts the wave just before it is needed. */
     const syncReveal = () => {
       if (!waveMounted && scene >= WAVE_MOUNT) {
         waveMounted = true;
         onWave();
       }
-      const set = (ref: RefObject<HTMLElement | null>, [a, b]: [number, number]) =>
-        ref.current?.style.setProperty("--s", easeInOut(clamp01((scene - a) / (b - a))).toFixed(4));
       set(reveal.eyebrow, EYEBROW_SWIPE);
       set(reveal.title, TITLE_SWIPE);
       set(reveal.sub, SUB_SWIPE);
       set(reveal.wave, WAVE_SWIPE);
+      // Fully revealed, the wave's sweep mask covers everything, so it is dropped to save the per-frame mask.
+      if (shown.get(reveal.wave) === "1.000" && reveal.wave.current) reveal.wave.current.dataset.revealed = "";
     };
 
     if (reduceMotion) {
       scene = SCENE_END;
       draw(false);
       syncReveal();
+      canvas.style.visibility = "hidden";
       return () => observer.disconnect();
     }
 
@@ -571,6 +590,8 @@ function SecurityScene({
       if (scene >= SCENE_END) {
         finished = true;
         raf = 0;
+        // The finished scene draws nothing, so the canvas and its edge mask leave the compositor.
+        canvas.style.visibility = "hidden";
         return;
       }
       raf = requestAnimationFrame(frame);
@@ -616,11 +637,25 @@ export function DoeHealthSecurityHero() {
   const [waveOn, setWaveOn] = useState(false);
   const showWave = useCallback(() => setWaveOn(true), []);
 
+  /** The dot wave redraws every frame, so it only runs while the hero is in or near view. */
+  const sectionRef = useRef<HTMLElement>(null);
+  const [near, setNear] = useState(true);
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(([entry]) => setNear(entry.isIntersecting), { rootMargin: "40px 0px" });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="doehealth-desk2-blank doehealth-desk2-blank--brown doehealth-desk2-nav-wash-surface doehealth-security-hero">
+    <section
+      ref={sectionRef}
+      className="doehealth-desk2-blank doehealth-desk2-blank--brown doehealth-desk2-nav-wash-surface doehealth-security-hero"
+    >
       <div ref={waveRef} className="doehealth-security-hero__wave" aria-hidden>
         <div className="doehealth-security-hero__wave-fade">
-          {waveOn ? <DoeHealthBlogDotWave color="rgb(232, 165, 133)" top={0.3} amp={60} fade={0.5} /> : null}
+          {waveOn && near ? <DoeHealthBlogDotWave color="rgb(232, 165, 133)" top={0.3} amp={60} fade={0.5} /> : null}
         </div>
       </div>
       <SecurityScene copyRef={copyRef} reveal={reveal} onWave={showWave} />

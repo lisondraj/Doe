@@ -61,6 +61,11 @@
   mask-repeat: no-repeat;
 }
 
+.doehealth-security-page .doehealth-security-hero__wave[data-revealed] {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
 .doehealth-security-page .doehealth-security-hero__wave-fade {
   position: absolute;
   inset: 0;
