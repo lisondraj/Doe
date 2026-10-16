@@ -89,7 +89,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 1.5rem 12vh;
+  /* The nav and banner sit over the top of the hero, so the copy centres on the visible section, not the box. */
+  padding: 0 1.5rem 21vh;
   text-align: center;
   pointer-events: none;
 }
