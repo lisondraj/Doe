@@ -1,3 +1,4 @@
+import { DoeHealthBlogListen } from "@/components/doehealth-blog/DoeHealthBlogListen";
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthBlogVideo } from "@/components/doehealth-blog/DoeHealthBlogVideo";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
@@ -66,6 +67,8 @@ export function DoeHealthBlogArticle({ article }: { article: Article }) {
         src={article.heroImage?.src}
         alt={article.heroImage?.alt}
       />
+
+      <DoeHealthBlogListen />
 
       <div className="doehealth-blog-article__body">
         <p className="doehealth-blog-article__lede">{article.lede}</p>

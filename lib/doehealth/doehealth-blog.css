@@ -121,6 +121,106 @@
   margin-top: clamp(2.5rem, 6vh, 4rem);
 }
 
+/* The listen box under the hero: audio play on the left, language on the right, centred in the reading column. */
+.doehealth-blog-listen {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  max-width: var(--blog-read-w);
+  margin: clamp(2rem, 5vh, 2.75rem) auto 0;
+  padding: 0.9rem;
+  border: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+  border-radius: 22px;
+  background: #fffcf1;
+}
+
+.doehealth-blog-listen__audio {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.doehealth-blog-listen__play {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(var(--doehealth-desk-ink-rgb));
+  color: #fffcf1;
+  cursor: pointer;
+}
+
+.doehealth-blog-listen__play svg {
+  width: 1rem;
+  height: 1rem;
+  margin-left: 0.15rem;
+}
+
+.doehealth-blog-listen__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  text-align: left;
+}
+
+.doehealth-blog-listen__label {
+  color: var(--doehealth-desk-surface);
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.doehealth-blog-listen__sub {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.doehealth-blog-listen__lang {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: #f4eedf;
+  color: var(--doehealth-desk-surface);
+  font: inherit;
+  font-size: 0.9rem;
+  letter-spacing: -0.015em;
+  cursor: pointer;
+}
+
+.doehealth-blog-listen__lang svg {
+  width: 14px;
+  height: 14px;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+}
+
+@media (max-width: 767px) {
+  /* Phone: audio on its own row, language full width underneath, so the box never overflows. */
+  .doehealth-blog-listen {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .doehealth-blog-listen__lang {
+    justify-content: space-between;
+  }
+}
+
 .doehealth-blog-article__body {
   max-width: var(--blog-read-w);
   margin: clamp(3rem, 7vh, 4.5rem) auto 0;
@@ -535,6 +635,8 @@
 
 /* The careers open-roles bar, sitting top-left above the featured article. */
 .doehealth-news__filters {
+  display: flex;
+  justify-content: center;
   margin: 0 0 clamp(1.5rem, 3.5vh, 2.25rem);
 }
 
