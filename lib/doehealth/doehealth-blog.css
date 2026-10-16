@@ -171,10 +171,18 @@
   background: rgb(var(--doehealth-desk-ink-rgb) / 0.3);
 }
 
-/* The language picker is the shared picker; this sets its width so it sits at the end of the bar. */
+/* The language picker keeps the original pill: it sizes to the text, with the chevron beside it. */
 .doehealth-blog-listen__lang {
   flex: none;
-  width: 9.5rem;
+}
+
+.doehealth-blog-listen__lang .doehealth-careers__dropdown {
+  width: auto;
+}
+
+.doehealth-blog-listen__lang .doehealth-careers__trigger {
+  width: auto;
+  gap: 0.6rem;
 }
 
 @media (max-width: 767px) {
@@ -190,8 +198,8 @@
     min-width: 0;
   }
 
-  .doehealth-blog-listen__lang {
-    width: 8.75rem;
+  .doehealth-blog-listen__lang .doehealth-careers__trigger {
+    padding: 0.75rem 0.95rem;
   }
 }
 
