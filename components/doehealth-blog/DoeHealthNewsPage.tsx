@@ -310,9 +310,6 @@ export function DoeHealthNewsPage({
                   onChange={(next) => setSort(next as SortOrder)}
                 />
               </div>
-              <span className="doehealth-careers__count">
-                {visible.length} {visible.length === 1 ? "article" : "articles"}
-              </span>
             </div>
           </div>
 

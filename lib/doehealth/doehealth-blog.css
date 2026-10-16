@@ -551,11 +551,6 @@
   font-size: 0.9rem;
 }
 
-.doehealth-news__bar .doehealth-careers__count {
-  padding-right: 0.9rem;
-  font-size: 0.875rem;
-}
-
 @media (min-width: 768px) {
   .doehealth-news__bar .doehealth-careers__filter {
     flex: 0 0 10.5rem;
@@ -637,7 +632,7 @@
   }
 
   /* Phone: category and author share the top row; sort and the count share the bottom row. */
-  .doehealth-news__bar {
+  .doehealth-careers__bar.doehealth-news__bar {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
@@ -654,11 +649,8 @@
     padding: 0.65rem 0.8rem;
   }
 
-  .doehealth-news__bar .doehealth-careers__count {
-    justify-self: end;
-    align-self: center;
-    margin: 0;
-    padding: 0 0.6rem;
+  .doehealth-news__bar .doehealth-careers__filter:nth-child(3) {
+    grid-column: 1 / -1;
   }
 
   .doehealth-news__grid {
