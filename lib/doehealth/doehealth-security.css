@@ -90,14 +90,14 @@
   align-items: center;
   justify-content: center;
   /* The nav and banner sit over the top of the hero, so the copy centres on the visible section, not the box. */
-  padding: 0 1.5rem 21vh;
+  padding: 0 1.5rem 28vh;
   text-align: center;
   pointer-events: none;
 }
 
 .doehealth-security-page .doehealth-security-hero__copy-inner {
   position: relative;
-  max-width: 52rem;
+  max-width: 62rem;
 }
 
 /* The desk2 intro swipe: a 280% gradient clipped to the text, moved across by --s (0 hidden, 1 shown). */
@@ -124,13 +124,13 @@
 
 .doehealth-security-page .doehealth-security-hero__eyebrow {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.125rem;
   letter-spacing: -0.01em;
 }
 
 .doehealth-security-page .doehealth-security-hero__title {
   margin: 0.9rem 0 0;
-  font-size: clamp(2rem, 3.6vw, 3.4rem);
+  font-size: clamp(2.4rem, 4.4vw, 4.1rem);
   font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 1.04;
@@ -142,9 +142,9 @@
 
 /* Two lines on desktop: wide enough for the sentence to split once, narrow enough to stay a reading measure. */
 .doehealth-security-page .doehealth-security-hero__sub {
-  max-width: 40rem;
+  max-width: 50rem;
   margin: 1.4rem auto 0;
-  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
   letter-spacing: -0.015em;
   line-height: 1.5;
   text-wrap: balance;
@@ -164,7 +164,7 @@
 
 @media (max-width: 767px) {
   .doehealth-security-page .doehealth-security-hero__eyebrow {
-    font-size: 0.9375rem;
+    font-size: 1rem;
   }
 }
 
