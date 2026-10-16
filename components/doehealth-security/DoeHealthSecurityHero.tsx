@@ -1,7 +1,8 @@
 "use client";
 
-import { type RefObject, useEffect, useRef } from "react";
+import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 
+import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
 import { p22Mackinac } from "@/lib/home/fonts";
 
 /** Box lines (Doe salmon), the lighter salmon of the packets, and the dots, as R G B. */
@@ -41,6 +42,14 @@ const DOT_BAND_TOP = 0.68;
 const DOT_SPACING_PX = 20;
 const PACKET_SPEED = 2.4;
 const PACKET_TRAIL = 0.22;
+/** The dot wave and the copy swipe in while the boxes break apart; [start, end] in scene time. */
+const WAVE_MOUNT = 9.6;
+const WAVE_SWIPE: [number, number] = [10.3, 12.6];
+const EYEBROW_SWIPE: [number, number] = [10.4, 11.8];
+const TITLE_SWIPE: [number, number] = [10.6, 12.3];
+const SUB_SWIPE: [number, number] = [10.9, 12.6];
+/** Past this the scene is finished: only the dot wave moves, so the canvas stops redrawing. */
+const SCENE_END = 13.6;
 
 type Outline = { pts: Float32Array; cum: Float32Array; len: number; y: number };
 type Box = {
@@ -184,12 +193,27 @@ function buildTiling() {
   return { boxes, channels };
 }
 
+type RevealRefs = {
+  eyebrow: RefObject<HTMLElement | null>;
+  title: RefObject<HTMLElement | null>;
+  sub: RefObject<HTMLElement | null>;
+  wave: RefObject<HTMLElement | null>;
+};
+
 /**
  * The /security hero scene, played once: interlocked rounded boxes draw in under a camera that pulls back, pans, and
  * turns; packets run cleanly through the channels between them; then the boxes break into dots that sweep down into
- * a dot pattern along the bottom of the hero, which keeps moving.
+ * the dot wave along the bottom of the hero, while the copy swipes in.
  */
-function SecurityScene({ copyRef }: { copyRef: RefObject<HTMLDivElement | null> }) {
+function SecurityScene({
+  copyRef,
+  reveal,
+  onWave,
+}: {
+  copyRef: RefObject<HTMLDivElement | null>;
+  reveal: RevealRefs;
+  onWave: () => void;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -375,7 +399,7 @@ function SecurityScene({ copyRef }: { copyRef: RefObject<HTMLDivElement | null> 
       dotsReady = true;
     };
 
-    const dotWave = (x: number, z: number) => 0.5 * Math.sin(x * 1.6 - scene * 1.4) * Math.cos(z * 1.2 + scene * 0.6);
+    const dotBuckets: number[][] = Array.from({ length: 8 }, () => []);
 
     const draw = (showPackets: boolean) => {
       ctx.globalCompositeOperation = "source-over";
@@ -428,30 +452,41 @@ function SecurityScene({ copyRef }: { copyRef: RefObject<HTMLDivElement | null> 
       }
 
       if (dotsReady && scene >= CONVERT_AT) {
-        ctx.fillStyle = `rgb(${LINE_RGB} / 0.85)`;
-        ctx.beginPath();
+        for (const bucket of dotBuckets) bucket.length = 0;
         for (const dot of dots) {
           if (scene < dot.start) continue;
-          const p = easeInOut(clamp01((scene - dot.start) / FLIGHT));
+          const raw = clamp01((scene - dot.start) / FLIGHT);
+          if (raw >= 1) continue;
+          const p = easeInOut(raw);
           const x = lerp(dot.x0, dot.x1, p);
           const z = lerp(dot.z0, dot.z1, p);
-          const y = lerp(dot.y0, dotWave(dot.x1, dot.z1), p) + Math.sin(Math.PI * p) * 0.8;
+          const y = lerp(dot.y0, 0, p) + Math.sin(Math.PI * p) * 0.8;
           if (!project(x, y, z)) continue;
+          const a = 1 - smoothstep(0.6, 1, raw);
           const r = Math.min(2.4, Math.max(0.8, (1.5 * 9.5) / out.depth));
-          ctx.moveTo(out.sx + r, out.sy);
-          ctx.arc(out.sx, out.sy, r, 0, Math.PI * 2);
+          dotBuckets[Math.min(7, Math.floor(a * 8))].push(out.sx, out.sy, r);
         }
-        ctx.fill();
+        dotBuckets.forEach((points, b) => {
+          if (!points.length) return;
+          ctx.fillStyle = `rgb(${LINE_RGB} / ${((b + 0.5) / 8) * 0.85})`;
+          ctx.beginPath();
+          for (let k = 0; k < points.length; k += 3) {
+            ctx.moveTo(points[k] + points[k + 2], points[k + 1]);
+            ctx.arc(points[k], points[k + 1], points[k + 2], 0, Math.PI * 2);
+          }
+          ctx.fill();
+        });
       }
 
-      if (quiet.rx > 0) {
+      const clearing = clamp01((scene - EYEBROW_SWIPE[0] + 0.4) / 1.2);
+      if (quiet.rx > 0 && clearing > 0.01) {
         ctx.globalCompositeOperation = "destination-out";
         ctx.save();
         ctx.translate(quiet.x, quiet.y);
         ctx.scale(quiet.rx, quiet.ry);
         const mask = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
-        mask.addColorStop(0, "rgb(0 0 0 / 1)");
-        mask.addColorStop(0.6, "rgb(0 0 0 / 0.92)");
+        mask.addColorStop(0, `rgb(0 0 0 / ${clearing})`);
+        mask.addColorStop(0.6, `rgb(0 0 0 / ${0.92 * clearing})`);
         mask.addColorStop(1, "rgb(0 0 0 / 0)");
         ctx.fillStyle = mask;
         ctx.fillRect(-1, -1, 2, 2);
@@ -489,9 +524,25 @@ function SecurityScene({ copyRef }: { copyRef: RefObject<HTMLDivElement | null> 
     observer.observe(canvas);
     resize();
 
+    let waveMounted = false;
+    /** Moves the copy and dot wave swipes with the scene clock, and mounts the wave just before it is needed. */
+    const syncReveal = () => {
+      if (!waveMounted && scene >= WAVE_MOUNT) {
+        waveMounted = true;
+        onWave();
+      }
+      const set = (ref: RefObject<HTMLElement | null>, [a, b]: [number, number]) =>
+        ref.current?.style.setProperty("--s", easeInOut(clamp01((scene - a) / (b - a))).toFixed(4));
+      set(reveal.eyebrow, EYEBROW_SWIPE);
+      set(reveal.title, TITLE_SWIPE);
+      set(reveal.sub, SUB_SWIPE);
+      set(reveal.wave, WAVE_SWIPE);
+    };
+
     if (reduceMotion) {
-      scene = 7;
+      scene = SCENE_END;
       draw(false);
+      syncReveal();
       return () => observer.disconnect();
     }
 
@@ -506,19 +557,26 @@ function SecurityScene({ copyRef }: { copyRef: RefObject<HTMLDivElement | null> 
     let raf = 0;
     let last = 0;
     let onScreen = true;
+    let finished = false;
     const frame = (now: number) => {
       const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
       last = now;
-      scene += dt;
+      scene = Math.min(SCENE_END, scene + dt);
       if (scene > PACKETS_IN - 0.5 && scene < PACKETS_OUT) {
         setCamera(poseAt(scene));
         for (const packet of packets) advance(packet, dt);
       }
       draw(true);
+      syncReveal();
+      if (scene >= SCENE_END) {
+        finished = true;
+        raf = 0;
+        return;
+      }
       raf = requestAnimationFrame(frame);
     };
     const start = () => {
-      if (raf || !onScreen || document.hidden) return;
+      if (finished || raf || !onScreen || document.hidden) return;
       last = 0;
       raf = requestAnimationFrame(frame);
     };
@@ -542,24 +600,45 @@ function SecurityScene({ copyRef }: { copyRef: RefObject<HTMLDivElement | null> 
       visibility.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [copyRef]);
+  }, [copyRef, reveal, onWave]);
 
   return <canvas ref={canvasRef} className="doehealth-security-hero__canvas" aria-hidden />;
 }
 
-/** Full-height brown hero for /security: the box scene behind the protocol introduction. */
+/** Full-height brown hero for /security: the box scene, then the dot wave and the protocol introduction. */
 export function DoeHealthSecurityHero() {
   const copyRef = useRef<HTMLDivElement>(null);
+  const eyebrowRef = useRef<HTMLParagraphElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subRef = useRef<HTMLParagraphElement>(null);
+  const waveRef = useRef<HTMLDivElement>(null);
+  const [reveal] = useState<RevealRefs>(() => ({ eyebrow: eyebrowRef, title: titleRef, sub: subRef, wave: waveRef }));
+  const [waveOn, setWaveOn] = useState(false);
+  const showWave = useCallback(() => setWaveOn(true), []);
 
   return (
     <section className="doehealth-desk2-blank doehealth-desk2-blank--brown doehealth-desk2-nav-wash-surface doehealth-security-hero">
-      <SecurityScene copyRef={copyRef} />
+      <div ref={waveRef} className="doehealth-security-hero__wave" aria-hidden>
+        <div className="doehealth-security-hero__wave-fade">
+          {waveOn ? <DoeHealthBlogDotWave color="rgb(232, 165, 133)" top={0.3} amp={60} fade={0.5} /> : null}
+        </div>
+      </div>
+      <SecurityScene copyRef={copyRef} reveal={reveal} onWave={showWave} />
       <div className="doehealth-security-hero__copy">
         <div ref={copyRef} className="doehealth-security-hero__copy-inner">
-          <p className="doehealth-security-hero__eyebrow">Introducing</p>
-          <h1 className={`doehealth-security-hero__title ${p22Mackinac.className}`}>The Health Intelligence Protocol</h1>
-          <p className="doehealth-security-hero__sub">
-            We&rsquo;re reimagining security for the next era of AI in healthcare.
+          <p ref={eyebrowRef} className="doehealth-security-hero__eyebrow doehealth-security-swipe doehealth-security-swipe--salmon">
+            Introducing
+          </p>
+          <h1
+            ref={titleRef}
+            className={`doehealth-security-hero__title doehealth-security-swipe doehealth-security-swipe--cream ${p22Mackinac.className}`}
+          >
+            <span>Health Intelligence</span>
+            <span>Protocol</span>
+          </h1>
+          <p ref={subRef} className="doehealth-security-hero__sub doehealth-security-swipe doehealth-security-swipe--dim">
+            We&rsquo;re reimagining security for the next era of AI in healthcare, protecting every call, record, and
+            agent your clinic relies on.
           </p>
         </div>
       </div>
