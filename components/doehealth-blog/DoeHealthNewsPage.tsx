@@ -34,6 +34,9 @@ const WIDE_ROW_SLUG = "health-intelligence-for-one-price";
 /** The featured and wide cards keep their info inside the box, with a lower dot wave to leave room for it. */
 const FEATURED_WAVE_TOP = 0.7;
 
+/** Desktop small boxes: the wave starts below the description so the dots never sit behind the copy. */
+const BOXED_WAVE_TOP = 0.8;
+
 /** The whole card is one link to the post: image, info, title, and excerpt. */
 function NewsCard({
   article,
@@ -52,7 +55,12 @@ function NewsCard({
     return (
       <li className={`doehealth-news__item${modifier}`}>
         <Link href={doehealthBlogArticlePath(article.slug)} className="doehealth-blog-card doehealth-news-card doehealth-news-card--boxed">
-          <DoeHealthBlogPlaceholder tone={article.heroTone} className="doehealth-blog-card__art doehealth-news-card__art" pattern wave={article.wave}>
+          <DoeHealthBlogPlaceholder
+            tone={article.heroTone}
+            className="doehealth-blog-card__art doehealth-news-card__art"
+            pattern
+            wave={{ ...article.wave, top: BOXED_WAVE_TOP }}
+          >
             <div className="doehealth-news-feature__copy doehealth-news-card__copy">
               <h2 className={`doehealth-blog-card__title ${p22Mackinac.className}`}>
                 {article.title.map((line) => (
