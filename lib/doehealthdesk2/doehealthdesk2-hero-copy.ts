@@ -4,7 +4,6 @@
  */
 export const DOEHEALTH_DESK2_HERO_HEADLINES = [
   { line1: "Increase revenue", line2: "with personal agents." },
-  { line1: "We help you increase revenue", line2: "with personal agents." },
   { line1: "Personal agents are here.", line2: "Is your clinic ready to earn?" },
   { line1: "Let personal agents", line2: "bring you more patients." },
 ] as const;
