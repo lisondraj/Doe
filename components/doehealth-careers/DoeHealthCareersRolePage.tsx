@@ -12,8 +12,8 @@ import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealt
 import {
   CAREERS_ABOUT_DOE,
   CAREERS_APPLY_EMAIL,
-  CAREERS_BENEFITS,
-  CAREERS_BENEFITS_LEDE,
+  CAREERS_BENEFIT_GROUPS,
+  CAREERS_BENEFITS_CLAIM,
   CAREERS_BENEFITS_NAME,
   CAREERS_PATH,
   type CareersRole,
@@ -53,23 +53,49 @@ function RoleList({ items }: { items: readonly string[] }) {
   );
 }
 
-/** Doe One: the benefits package, as a grid of tiles in a beige box. */
+const BENEFITS_WAVE = { top: 0.72, amp: 46, phase: 2.0, scale: 1.1, slant: 0.2 };
+const BENEFITS_COUNT = CAREERS_BENEFIT_GROUPS.reduce((total, group) => total + group.items.length, 0);
+
+/**
+ * Doe One: a dot-wave band carrying the claim, then the package in four groups. Each row runs from the benefit across a
+ * dotted leader to its figure; benefits without a figure end on a quiet status instead.
+ */
 function Benefits() {
   return (
     <section className="doehealth-role__section doehealth-role__benefits" aria-labelledby="doehealth-role-benefits-title">
-      <h2 id="doehealth-role-benefits-title" className={`doehealth-role__benefits-title ${p22Mackinac.className}`}>
-        {CAREERS_BENEFITS_NAME}
-      </h2>
-      <p className="doehealth-role__benefits-lede">{CAREERS_BENEFITS_LEDE}</p>
-      <ul className="doehealth-role__benefits-grid">
-        {CAREERS_BENEFITS.map((item) => (
-          <li key={item.benefit} className="doehealth-role__benefit">
-            <span className="doehealth-role__benefit-name">{item.benefit}</span>
-            <strong className={`doehealth-role__benefit-value ${p22Mackinac.className}`}>{item.value}</strong>
-            {item.note ? <span className="doehealth-role__benefit-note">{item.note}</span> : null}
-          </li>
+      <div className="doehealth-role__benefits-hero">
+        <DoeHealthBlogPlaceholder tone="gold" wave={BENEFITS_WAVE} className="doehealth-role__benefits-art" pattern />
+        <div className="doehealth-role__benefits-hero-copy">
+          <p className="doehealth-role__benefits-eyebrow">{CAREERS_BENEFITS_NAME}</p>
+          <h2 id="doehealth-role-benefits-title" className={`doehealth-role__benefits-claim ${p22Mackinac.className}`}>
+            {CAREERS_BENEFITS_CLAIM}
+          </h2>
+          <p className="doehealth-role__benefits-count">{BENEFITS_COUNT} benefits, for every full-time hire.</p>
+        </div>
+      </div>
+      <div className="doehealth-role__benefits-groups">
+        {CAREERS_BENEFIT_GROUPS.map((group) => (
+          <div key={group.title}>
+            <h3 className="doehealth-role__benefits-group-title">{group.title}</h3>
+            <ul className="doehealth-role__benefits-list">
+              {group.items.map((item) => (
+                <li key={item.name} className="doehealth-role__benefit">
+                  <span className="doehealth-role__benefit-name">{item.name}</span>
+                  <span className="doehealth-role__benefit-leader" aria-hidden />
+                  {item.figure ? (
+                    <span className="doehealth-role__benefit-figure">
+                      <strong>{item.figure}</strong>
+                      {item.unit ? <span>{item.unit}</span> : null}
+                    </span>
+                  ) : (
+                    <span className="doehealth-role__benefit-status">{item.status}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
-      </ul>
+      </div>
     </section>
   );
 }
