@@ -156,7 +156,7 @@ export function DoeHealthCareersRolePage({
             <p className="doehealth-role__meta">
               <span>{CAREERS_LOCATION}</span>
               <CareersMetaItem>Full Time</CareersMetaItem>
-              <CareersMetaItem>{role.pay}</CareersMetaItem>
+              {role.pay ? <CareersMetaItem>{role.pay}</CareersMetaItem> : null}
             </p>
             <a href={`#${APPLY_ID}`} className="doehealth-role__cta">
               Start Your Application
@@ -182,10 +182,12 @@ export function DoeHealthCareersRolePage({
                   <dt>Type</dt>
                   <dd>Full Time</dd>
                 </div>
-                <div>
-                  <dt>Pay</dt>
-                  <dd>{role.pay}</dd>
-                </div>
+                {role.pay ? (
+                  <div>
+                    <dt>Pay</dt>
+                    <dd>{role.pay}</dd>
+                  </div>
+                ) : null}
                 {role.equity ? (
                   <div>
                     <dt>Equity</dt>

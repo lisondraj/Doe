@@ -28,7 +28,7 @@ export function CareersRoleRow({ role }: { role: CareersRole }) {
             <CareersMetaItem>Full Time</CareersMetaItem>
           </span>
           <span className="doehealth-careers__role-pay">
-            <span>{role.pay}</span>
+            {role.pay ? <span>{role.pay}</span> : null}
             {role.equity ? <CareersMetaItem>Offers Equity</CareersMetaItem> : null}
           </span>
         </span>

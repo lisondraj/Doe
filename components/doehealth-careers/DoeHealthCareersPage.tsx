@@ -87,7 +87,6 @@ function OpenRoles() {
           ))}
           {additional.length > 0 ? (
             <div className="doehealth-careers__additional">
-              <h3 className="doehealth-careers__group-title">Additional Roles</h3>
               {additional.map((group) => (
                 <RoleGroup key={group.name} name={group.name} roles={group.roles} />
               ))}

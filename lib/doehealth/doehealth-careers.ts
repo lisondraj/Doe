@@ -10,7 +10,7 @@ export type CareersTeamSection = {
   wave?: DoeHealthBlogWave;
 };
 
-export const CAREERS_TEAMS = ["Engineering", "Product", "Growth", "GTM & Sales"] as const;
+export const CAREERS_TEAMS = ["Engineering", "Product", "Growth", "GTM & Sales", "Open Application"] as const;
 export type CareersTeam = (typeof CAREERS_TEAMS)[number];
 
 /** Founding roles list first on /careers; additional roles follow them, in the same style. */
@@ -26,7 +26,8 @@ export type CareersRole = {
   title: string;
   section: CareersSection;
   team: CareersTeam;
-  pay: string;
+  /** The pay range in CAD. Null when the role has no set range, and then no pay is shown. */
+  pay: string | null;
   equity: boolean;
   /** The wave shape of the dot-wave box at the top of the role page. */
   wave: DoeHealthBlogWave;
@@ -477,6 +478,34 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
       "Experience working in or with medical practices.",
       "Experience supporting AI or automation products.",
       "Spanish language skills.",
+    ],
+  },
+  {
+    slug: "expression-of-interest",
+    title: "Expression of Interest",
+    section: "additional",
+    team: "Open Application",
+    pay: null,
+    equity: true,
+    wave: { top: 0.5, amp: 56, phase: 4.2, scale: 1.0, slant: 0.15, flip: true },
+    summary: "Not sure where you fit? Tell us what you would build, and we will find the role.",
+    about: [
+      "This is an open application. Tell us the work you do best and the clinics you want to help, and we will look for a fit as Doe grows.",
+      "Roles change quickly at a company this early. A strong profile can turn into a role we had not planned for, so send it even if no listing matches you today.",
+    ],
+    responsibilities: [
+      "Work on the part of Doe that matches your strengths, as the team's needs take shape.",
+      "Take on work across the product, clinic onboarding, or go-to-market, wherever we need you most.",
+      "Help shape the roles we hire for next, from the inside.",
+    ],
+    qualifications: [
+      "Experience doing hard work well, in software, clinical operations, sales, design, or a field close to Doe.",
+      "Clear writing, and a short note on what you would build or improve at Doe.",
+      "Interest in patients, clinics, and how AI agents can help them.",
+    ],
+    bonus: [
+      "Experience working in or with medical practices.",
+      "Experience with AI or automation products.",
     ],
   },
 ];
