@@ -1,7 +1,8 @@
 /** Scroll-locked brown section under the hero — scene 1. */
+/** Each inner array is one line of the title. */
 export const DOEHEALTH_DESK2_VISIBLE_INTRO = [
-  { text: "Personal agents are here.", tone: "cream" },
-  { text: "But most won't find your clinic.", tone: "salmon" },
+  [{ text: "Personal agents are here.", tone: "cream" }],
+  [{ text: "But most won't find your clinic.", tone: "salmon" }],
 ] as const;
 
 /** Scene 2 — the iMessage thread from video1, where the agent can't find the clinic. */
@@ -16,10 +17,13 @@ export const DOEHEALTH_DESK2_VISIBLE_THREAD = {
 
 /** Scene 3. */
 export const DOEHEALTH_DESK2_VISIBLE = {
+  /** Two lines, each one line at every size. */
   title: [
-    { text: "We made ", tone: "cream" },
-    { text: "1000+ clinics", tone: "salmon" },
-    { text: " visible to personal agents.", tone: "cream" },
+    [
+      { text: "We made ", tone: "cream" },
+      { text: "1000+ clinics", tone: "salmon" },
+    ],
+    [{ text: "visible to personal agents.", tone: "cream" }],
   ],
   prompt: "See if your clinic was included.",
   search: { label: "Your clinic website", placeholder: "yourclinic.com", submit: "Check" },
@@ -27,8 +31,6 @@ export const DOEHEALTH_DESK2_VISIBLE = {
 
 export const DOEHEALTH_DESK2_AGENTS = {
   title: ["Let personal agents do", "more with your clinic."],
-  /** The iPhone breaks the same heading over three lines. */
-  phoneTitle: ["Let personal", "agents do more", "with your clinic."],
 } as const;
 
 /** Five agents. The first three sit in the page margins; the rest follow off the right edge. */

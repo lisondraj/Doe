@@ -390,7 +390,7 @@ export function DoeHealthDesk2FindScenes({ p }: { p: number }) {
           const opacity = clamp01(1 - ad * 1.4);
           return (
             <div key={lines.join(" ")} className="doehealth-desk2-find__wheel-item" style={vars({ "--d": d, "--ad": ad, "--op": opacity })} aria-hidden={ad >= 0.5}>
-              <h2 className="doehealth-desk2-find__title doehealth-desk2-find__title--big is-deep" style={vars({ "--s": i === 0 ? sweep : 1 })}>
+              <h2 data-fit-two-lines className="doehealth-desk2-find__title doehealth-desk2-find__title--big is-deep" style={vars({ "--s": i === 0 ? sweep : 1 })}>
                 {lines.map((line) => (
                   <span key={line}>{line}</span>
                 ))}

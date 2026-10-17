@@ -63,7 +63,7 @@ export function DoeHealthDesk2Hero() {
     >
       <div className="doehealth-desk2-hero__row">
         <div className="doehealth-desk2-hero__copy">
-          <h1 className={`doehealth-desk2-hero__headline ${p22Mackinac.className}`}>
+          <h1 data-fit-two-lines className={`doehealth-desk2-hero__headline ${p22Mackinac.className}`}>
             <span
               className={`doehealth-desk2-hero__line${
                 headlineRevealDone

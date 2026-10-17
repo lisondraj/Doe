@@ -51,6 +51,28 @@
       rgb(255 252 241 / 0.22)
     )
   );
+  /* iPhone wordmark + menu chevron: salmon on brown, ink on cream, brown on beige. */
+  --desk2-nav-accent: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #fccfb8 calc(var(--desk2-wash) * 100%), var(--doehealth-desk2-ink))
+  );
+  /* Expanded iPhone menu: the same surface and ink as the nav bar in each state (cream, brown, or beige). */
+  --desk2-sheet-bg: color-mix(
+    in srgb,
+    #f4eedf calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #281910 calc(var(--desk2-wash) * 100%), #fffcf1)
+  );
+  --desk2-sheet-ink: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #fffcf1 calc(var(--desk2-wash) * 100%), #281910)
+  );
+  --desk2-sheet-line: color-mix(
+    in srgb,
+    rgb(110 92 64 / 0.25) calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, rgb(255 252 241 / 0.18) calc(var(--desk2-wash) * 100%), rgb(20 12 4 / 0.1))
+  );
   --desk2-announce-bg: color-mix(
     in srgb,
     #e6dac2 calc(var(--desk2-beige) * 100%),
@@ -144,10 +166,21 @@
   background-position: calc((1 - var(--agents-a3, 0)) * 100%) calc((1 - var(--agents-a3, 0)) * 100%);
 }
 
-/* Desktop breaks the title over two lines, the iPhone over three. */
-.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents__line--desk,
-.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-agents__line--phone {
-  display: none;
+/*
+ * Two-line titles on every size: each title is `data-fit-two-lines`, every child is one line that never
+ * wraps, and the title spans its container's full width. The font size comes from
+ * use-doehealthdesk2-fit-titles, which fits the widest line to that width.
+ */
+.doehealth-desk2-page [data-fit-two-lines] {
+  width: 100%;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.doehealth-desk2-page [data-fit-two-lines] > * {
+  display: block;
+  /* Set on the line itself: `text-wrap` shorthands would otherwise reset white-space. */
+  white-space: nowrap;
 }
 
 .doehealth-desk2-page .doehealth-desk2-genome__eyebrow.desk2-genome-headline-highlight.is-headline-in,
@@ -1832,20 +1865,15 @@
 .doehealth-desk2-visible__title-wrap {
   position: relative;
   width: 100%;
-  max-width: 17ch;
-  /* ch is measured in this font size, so the wrapper carries the title's size. */
+  /* The title fits the full width (see the fit hook), so no ch cap. */
+  max-width: none;
   font-size: clamp(2.6rem, 6vw, 5.5rem);
 }
 
 .doehealth-desk2-visible__title-wrap--wide {
-  max-width: 24ch;
+  max-width: none;
   /* The intro line is smaller than the closing title, on phone and desktop. */
   font-size: clamp(2.2rem, 5vw, 4.6rem);
-}
-
-/* Balance each line's wrap so a short last word doesn't sit alone. */
-.doehealth-desk2-visible__title-wrap--wide .doehealth-desk2-visible__title > span {
-  text-wrap: balance;
 }
 
 .doehealth-desk2-visible__title.is-lines > span {
@@ -2948,6 +2976,34 @@
   opacity: 0.85;
 }
 
+/* /doehealthdesk2 footer: salmon ground with the brown ink. Other desk2 pages keep the brown footer. */
+.doehealth-desk2-footer--salmon {
+  background: #fccfb8;
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-footer--salmon .doehealth-desk2-footer__mark,
+.doehealth-desk2-footer--salmon .doehealth-desk2-footer__company-name,
+.doehealth-desk2-footer--salmon .doehealth-desk2-footer__links a {
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-footer--salmon .doehealth-desk2-footer__incorporation {
+  color: rgb(40 25 16 / 0.78);
+}
+
+.doehealth-desk2-footer--salmon .doehealth-desk2-footer__incorporation-pending {
+  color: rgb(40 25 16 / 0.58);
+}
+
+.doehealth-desk2-footer--salmon .doehealth-desk2-footer__email {
+  color: rgb(40 25 16 / 0.88);
+}
+
+.doehealth-desk2-footer--salmon .doehealth-desk2-footer__email:hover {
+  color: var(--doehealth-desk2-surface);
+}
+
 .doehealth-desk2-agents,
 .doehealth-desk2-sunday,
 .doehealth-desk2-close {
@@ -3904,7 +3960,7 @@
     nav.doephone-site-nav {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    background-color: #fffcf1 !important;
+    background-color: var(--desk2-sheet-bg) !important;
     box-shadow: none !important;
   }
 
@@ -3923,26 +3979,32 @@
 
   /* Expanded menu — desktop desk links, iPhone stacked sheet. */
   .doehealth-desk2-chrome--phone [role="dialog"] {
-    background: #fffcf1 !important;
-    color: var(--doehealth-desk2-surface);
+    background: var(--desk2-sheet-bg) !important;
+    color: var(--desk2-sheet-ink);
+  }
+
+  .doehealth-desk2-chrome--phone [role="dialog"] > .absolute.inset-0 {
+    background-color: var(--desk2-sheet-bg) !important;
   }
 
   .doehealth-desk2-chrome--phone [role="dialog"] nav > div {
-    border-color: rgb(var(--doehealth-desk2-ink-rgb) / 0.1) !important;
+    border-color: var(--desk2-sheet-line) !important;
   }
 
   .doehealth-desk2-chrome--phone [role="dialog"] nav a {
-    color: var(--doehealth-desk2-surface) !important;
+    color: var(--desk2-nav-accent) !important;
     font-weight: 500;
     letter-spacing: -0.03em;
   }
 
-  .doehealth-desk2-chrome--phone [role="dialog"] nav > div:has(a[href="/waitlist"]) {
+  .doehealth-desk2-chrome--phone [role="dialog"] nav > div:has(a[href="/waitlist"]),
+  .doehealth-desk2-chrome--phone [role="dialog"] nav > div:has(a[href^="mailto:"]) {
     border-bottom: 0 !important;
     padding: 1.15rem 1.25rem 0.25rem;
   }
 
-  .doehealth-desk2-chrome--phone [role="dialog"] a[href="/waitlist"] {
+  .doehealth-desk2-chrome--phone [role="dialog"] a[href="/waitlist"],
+  .doehealth-desk2-chrome--phone [role="dialog"] a[href^="mailto:"] {
     display: inline-flex;
     width: fit-content;
     align-items: center;
@@ -3950,8 +4012,8 @@
     min-height: 3rem;
     padding: 0.75rem 1.2rem !important;
     border-radius: var(--doehealth-desk2-radius);
-    background: var(--doehealth-desk2-surface);
-    color: #fffcf1 !important;
+    background: var(--desk2-nav-accent);
+    color: var(--desk2-sheet-bg) !important;
     font-size: 1.05rem !important;
     line-height: 1;
   }
@@ -3991,7 +4053,7 @@
 
   .doehealth-desk2-page nav.doephone-site-nav .absolute.top-1\/2 {
     left: max(1.25rem, calc(env(safe-area-inset-left, 0px) + 3.8vmin)) !important;
-    color: var(--desk2-nav-ink, var(--doehealth-desk2-surface)) !important;
+    color: var(--desk2-nav-accent, var(--doehealth-desk2-surface)) !important;
     transition: none !important;
   }
 
@@ -4008,7 +4070,7 @@
 
   .doehealth-desk2-page nav.doephone-site-nav button[aria-label*="navigation menu" i],
   .doehealth-desk2-page nav.doephone-site-nav button[aria-label*="Close navigation" i] {
-    color: var(--desk2-nav-ink, var(--doehealth-desk2-surface)) !important;
+    color: var(--desk2-nav-accent, var(--doehealth-desk2-surface)) !important;
     transition: none !important;
   }
 
@@ -4049,11 +4111,6 @@
 
   .doehealth-desk2-hero__headline {
     font-size: clamp(2.55rem, 10.8vw, 3.15rem);
-  }
-
-  /* Split the first title line evenly on a phone, so "agents" doesn't sit alone. */
-  .doehealth-desk2-hero__headline > span:first-child {
-    text-wrap: balance;
   }
 
   .doehealth-desk2-hero__dek {

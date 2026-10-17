@@ -298,34 +298,45 @@ function SearchMorph({ m, section }: { m: number; section: RefObject<HTMLElement
 }
 
 type SwipePart = { readonly text: string; readonly tone: "cream" | "salmon" };
+type SwipeLine = readonly SwipePart[];
 
 /**
  * Two layers with identical geometry, each with one swipe gradient across the WHOLE title, so the
  * sweep runs as one piece. The cream layer shows the cream words, the peach layer the peach.
- * `s` (0 to 1) is the sweep position, set by scroll.
+ * `s` (0 to 1) is the sweep position, set by scroll. Each line is one block; the fit hook sizes the
+ * title so it stays on two lines. Hidden words keep their space (`.is-off` is visibility hidden).
  */
-function SwipeTitle({ parts, s, lines = false, wide = false }: { parts: readonly SwipePart[]; s: number; lines?: boolean; wide?: boolean }) {
-  const linesClass = lines ? " is-lines" : "";
+function SwipeTitle({ lines, s, wide = false }: { lines: readonly SwipeLine[]; s: number; wide?: boolean }) {
   return (
     <div className={`doehealth-desk2-visible__title-wrap${wide ? " doehealth-desk2-visible__title-wrap--wide" : ""}`}>
       <h2
-        className={`doehealth-desk2-visible__title${linesClass} desk2-genome-swipe desk2-genome-swipe--cream`}
+        data-fit-two-lines
+        className="doehealth-desk2-visible__title is-lines desk2-genome-swipe desk2-genome-swipe--cream"
         style={vars({ "--s": s })}
       >
-        {parts.map((part) => (
-          <span key={part.text} className={part.tone === "salmon" ? "is-off" : undefined}>
-            {part.text}
+        {lines.map((parts, i) => (
+          <span key={i}>
+            {parts.map((part) => (
+              <span key={part.text} className={part.tone === "salmon" ? "is-off" : undefined}>
+                {part.text}
+              </span>
+            ))}
           </span>
         ))}
       </h2>
       <h2
         aria-hidden="true"
-        className={`doehealth-desk2-visible__title doehealth-desk2-visible__title--overlay${linesClass} desk2-genome-swipe desk2-genome-swipe--salmon`}
+        data-fit-two-lines
+        className="doehealth-desk2-visible__title doehealth-desk2-visible__title--overlay is-lines desk2-genome-swipe desk2-genome-swipe--salmon"
         style={vars({ "--s": s })}
       >
-        {parts.map((part) => (
-          <span key={part.text} className={part.tone === "cream" ? "is-off" : undefined}>
-            {part.text}
+        {lines.map((parts, i) => (
+          <span key={i}>
+            {parts.map((part) => (
+              <span key={part.text} className={part.tone === "cream" ? "is-off" : undefined}>
+                {part.text}
+              </span>
+            ))}
           </span>
         ))}
       </h2>
@@ -395,7 +406,7 @@ export function DoeHealthDesk2AudienceSection() {
               </div>
             </div>
           ) : null}
-          <SwipeTitle parts={DOEHEALTH_DESK2_VISIBLE_INTRO} s={ramp(p, RAMP.introSwipe)} lines wide />
+          <SwipeTitle lines={DOEHEALTH_DESK2_VISIBLE_INTRO} s={ramp(p, RAMP.introSwipe)} wide />
         </div>
 
         <div className="doehealth-desk2-visible__scene" style={vars({ "--o": threadOpacity })} aria-hidden={threadOpacity < 0.5}>
@@ -448,7 +459,7 @@ export function DoeHealthDesk2AudienceSection() {
               <DoeHealthDesk2DotTide color="rgba(252, 207, 184, 0.6)" />
             </div>
           ) : null}
-          <SwipeTitle parts={DOEHEALTH_DESK2_VISIBLE.title} s={ramp(p, FINAL.titleSwipe)} />
+          <SwipeTitle lines={DOEHEALTH_DESK2_VISIBLE.title} s={ramp(p, FINAL.titleSwipe)} />
           <p className="doehealth-desk2-visible__sub" style={vars({ "--e": ramp(p, FINAL.prompt) })}>
             <span className="desk2-genome-swipe desk2-genome-swipe--salmon" style={vars({ "--s": ramp(p, FINAL.promptSwipe) })}>
               {DOEHEALTH_DESK2_VISIBLE.prompt}

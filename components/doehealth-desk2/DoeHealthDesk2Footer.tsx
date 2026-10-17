@@ -5,15 +5,20 @@ import { doehealthDesk2NavCenterLinks } from "@/lib/doehealthdesk2/doehealthdesk
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, lora } from "@/lib/home/fonts";
 
-/** Brown footer — /doehealth wordmark placement; desk nav + company copy. */
+/** Footer — /doehealth wordmark placement; desk nav + company copy. Brown by default, salmon on /doehealthdesk2. */
 export function DoeHealthDesk2Footer({
   sectionHrefBase = "",
+  tone = "brown",
 }: {
   /** Prefix for `#section` links when the sections live on another page. */
   sectionHrefBase?: string;
+  tone?: "brown" | "salmon";
 } = {}) {
+  // A salmon footer is a light surface, so it skips the nav wash: the nav stays cream-state over it.
+  const toneClass =
+    tone === "salmon" ? " doehealth-desk2-footer--salmon" : " doehealth-desk2-nav-wash-surface";
   return (
-    <footer className="doehealth-desk2-footer doehealth-desk2-nav-wash-surface" aria-label="Footer">
+    <footer className={`doehealth-desk2-footer${toneClass}`} aria-label="Footer">
       <div className="doehealth-desk2-footer__inner">
         <div className={`doehealth-desk2-footer__meta ${DOEPHONE_DESKTOP_PAGE_INSET_X} ${inter.className}`}>
           <div className="doehealth-desk2-footer__company">

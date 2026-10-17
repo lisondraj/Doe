@@ -83,14 +83,9 @@ export function DoeHealthDesk2AgentsSection() {
       aria-label="Let personal agents do more with your clinic"
     >
       <header className={`doehealth-desk2-agents__head ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-        <h2 className={`doehealth-desk2-agents__title ${p22Mackinac.className}`}>
+        <h2 data-fit-two-lines className={`doehealth-desk2-agents__title ${p22Mackinac.className}`}>
           {DOEHEALTH_DESK2_AGENTS.title.map((line, i) => (
-            <span key={line} className={`desk2-headline-darken--ink doehealth-desk2-agents__line--desk agents-l${i + 1}`}>
-              {line}
-            </span>
-          ))}
-          {DOEHEALTH_DESK2_AGENTS.phoneTitle.map((line, i) => (
-            <span key={line} className={`desk2-headline-darken--ink doehealth-desk2-agents__line--phone agents-l${i + 1}`}>
+            <span key={line} className={`desk2-headline-darken--ink agents-l${i + 1}`}>
               {line}
             </span>
           ))}
@@ -184,7 +179,7 @@ export function DoeHealthDesk2InviteSection() {
   return (
     <section className={`doehealth-desk2-invite ${DOEPHONE_DESKTOP_PAGE_INSET_X}`} aria-label="Teach personal agents about your clinic">
       <div className="doehealth-desk2-invite__panel doehealth-desk2-nav-wash-surface">
-        <h2 className={p22Mackinac.className}>
+        <h2 data-fit-two-lines className={p22Mackinac.className}>
           <span>Teach personal agents</span>
           <span>about your clinic.</span>
         </h2>

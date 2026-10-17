@@ -16,11 +16,14 @@ import { lora } from "@/lib/home/fonts";
 export function DoeHealthDesk2PhoneNavBar({
   logoHref = "/doehealthdesk",
   sectionHrefBase = "",
+  primaryCta = DOEHEALTH_DESK2_NAV_PRIMARY_CTA,
 }: {
   /** Where the "Doe" mark goes. Defaults to the legacy desk home. */
   logoHref?: string;
   /** Prefix for `#section` links when the sections live on another page. */
   sectionHrefBase?: string;
+  /** The last row of the expanded menu: a button-styled link. */
+  primaryCta?: { readonly label: string; readonly href: string };
 } = {}) {
   const [dismissed, setDismissed] = useState(false);
   useDoePhoneLayoutViewport();
@@ -55,7 +58,7 @@ export function DoeHealthDesk2PhoneNavBar({
         navChromeTheme="light"
         logoLink
         brandFontClass={lora.className}
-        navSheetItems={[...doehealthDesk2NavPages(sectionHrefBase), DOEHEALTH_DESK2_NAV_PRIMARY_CTA]}
+        navSheetItems={[...doehealthDesk2NavPages(sectionHrefBase), primaryCta]}
       />
     </div>
   );
