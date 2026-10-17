@@ -709,6 +709,8 @@
   max-width: 100%;
   font-weight: 400;
   font-size: clamp(2.9rem, 5.85vw, 5.35rem);
+  /* The largest size the fit may grow this title to (see use-doehealthdesk2-fit-titles). */
+  --desk2-title-max: 5.35rem;
   line-height: 0.98;
   letter-spacing: -0.042em;
   color: var(--doehealth-desk2-surface);
@@ -1868,12 +1870,14 @@
   /* The title fits the full width (see the fit hook), so no ch cap. */
   max-width: none;
   font-size: clamp(2.6rem, 6vw, 5.5rem);
+  --desk2-title-max: 5.5rem;
 }
 
 .doehealth-desk2-visible__title-wrap--wide {
   max-width: none;
   /* The intro line is smaller than the closing title, on phone and desktop. */
   font-size: clamp(2.2rem, 5vw, 4.6rem);
+  --desk2-title-max: 4.6rem;
 }
 
 .doehealth-desk2-visible__title.is-lines > span {
@@ -2301,6 +2305,7 @@
 
 .doehealth-desk2-find__title--big {
   font-size: clamp(2.6rem, 6vw, 5.5rem);
+  --desk2-title-max: 5.5rem;
   line-height: 0.98;
 }
 
@@ -3041,6 +3046,7 @@
   margin: 0;
   font-weight: 400;
   font-size: clamp(2.85rem, 4.6vw, 4.25rem);
+  --desk2-title-max: 4.25rem;
   line-height: 0.96;
   letter-spacing: -0.045em;
   color: var(--doehealth-desk2-surface);
@@ -3583,6 +3589,7 @@
   margin: 0;
   font-weight: 400;
   font-size: clamp(2.85rem, 4.6vw, 4.25rem);
+  --desk2-title-max: 4.25rem;
   line-height: 0.96;
   letter-spacing: -0.045em;
 }
@@ -4111,6 +4118,7 @@
 
   .doehealth-desk2-hero__headline {
     font-size: clamp(2.55rem, 10.8vw, 3.15rem);
+  --desk2-title-max: 3.15rem;
   }
 
   .doehealth-desk2-hero__dek {
@@ -4454,6 +4462,7 @@
   .desk2-feat h2,
   .doehealth-desk2-invite__panel h2 {
     font-size: clamp(2.15rem, 9.2vw, 2.85rem);
+    --desk2-title-max: 2.85rem;
   }
 
   .desk2-feat__dek {
@@ -4482,6 +4491,7 @@
 
   .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-agents h2 {
     font-size: clamp(2.15rem, 9.2vw, 2.85rem);
+    --desk2-title-max: 2.85rem;
   }
 
   .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-agent-carousel__nav {
@@ -4535,6 +4545,7 @@
 
   .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .doehealth-desk2-agents h2 {
     font-size: clamp(2.15rem, 9.2vw, 2.85rem);
+    --desk2-title-max: 2.85rem;
   }
 
   .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .desk2-agent-carousel__nav {

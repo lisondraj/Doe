@@ -21,6 +21,18 @@ function widestLine(title: HTMLElement): number {
   return widest;
 }
 
+/**
+ * The largest size the fit may set, from `--desk2-title-max` (rem, set by the title's CSS next to its clamp()).
+ * Undefined when the title has no cap, so it fits to its width with no upper limit.
+ */
+function maxSizePx(title: HTMLElement): number | undefined {
+  const raw = getComputedStyle(title).getPropertyValue("--desk2-title-max").trim();
+  const rem = Number.parseFloat(raw);
+  if (!raw.endsWith("rem") || !Number.isFinite(rem)) return undefined;
+  const rootPx = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  return rem * rootPx;
+}
+
 function fitTitle(title: HTMLElement) {
   if (title.clientWidth === 0 || title.children.length === 0) return;
 
@@ -31,7 +43,9 @@ function fitTitle(title: HTMLElement) {
   if (available <= 0 || widest <= 0 || size <= 0) return;
 
   // A hair under the exact fit so rounding never pushes a line onto a second row.
-  const next = size * (available / widest) * 0.995;
+  let next = size * (available / widest) * 0.995;
+  const max = maxSizePx(title);
+  if (max !== undefined) next = Math.min(next, max);
   if (Math.abs(next - size) < 0.25) return;
   title.style.fontSize = `${next}px`;
 }
