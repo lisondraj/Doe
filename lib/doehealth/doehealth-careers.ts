@@ -10,8 +10,11 @@ export type CareersTeamSection = {
   wave?: DoeHealthBlogWave;
 };
 
-export const CAREERS_TEAMS = ["Engineering", "Product", "GTM & Sales"] as const;
+export const CAREERS_TEAMS = ["Engineering", "Product", "Growth", "GTM & Sales"] as const;
 export type CareersTeam = (typeof CAREERS_TEAMS)[number];
+
+/** Founding roles list first on /careers; additional roles follow them, in the same style. */
+export type CareersSection = "founding" | "additional";
 
 /** Every role is remote, in the US or in Canada. */
 export const CAREERS_LOCATIONS = ["Remote (US)", "Remote (Canada)"] as const;
@@ -21,6 +24,7 @@ export type CareersRole = {
   /** The role page lives at /careers/{slug}. */
   slug: string;
   title: string;
+  section: CareersSection;
   team: CareersTeam;
   location: CareersLocation;
   pay: string;
@@ -74,7 +78,8 @@ export const CAREERS_OFFER: readonly { lead: string; text: string }[] = [
 export const CAREERS_ROLES: readonly CareersRole[] = [
   {
     slug: "founding-full-stack-engineer",
-    title: "Founding Full-Stack Engineer",
+    title: "Founding Product Engineer (Full-Stack)",
+    section: "founding",
     team: "Engineering",
     location: "Remote (US)",
     pay: "$170K – $230K",
@@ -106,7 +111,8 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
   },
   {
     slug: "agent-infrastructure-engineer",
-    title: "Agent Infrastructure Engineer",
+    title: "Founding AI & Infrastructure Engineer (Full-Stack)",
+    section: "founding",
     team: "Engineering",
     location: "Remote (US)",
     pay: "$165K – $220K",
@@ -137,8 +143,108 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     ],
   },
   {
+    slug: "frontend-engineer-clinic-workspace",
+    title: "Frontend Engineer, Clinic Workspace",
+    section: "founding",
+    team: "Engineering",
+    location: "Remote (US)",
+    pay: "$150K – $200K",
+    equity: true,
+    wave: { top: 0.43, amp: 60, phase: 1.5, scale: 1.0, slant: 0.3, flip: true },
+    summary: "Build the screens clinic teams work in all day, fast and calm under pressure.",
+    about: [
+      "The clinic workspace is where front desks, providers, and billing teams see what their agents did and decide what happens next. You will build the interface they rely on, and make it feel clear on a busy morning.",
+      "You will work from real clinic visits and real feedback, and ship changes often.",
+    ],
+    responsibilities: [
+      "Build the clinic workspace in React and TypeScript, from design to production.",
+      "Make dense, complex information easy to scan and act on.",
+      "Work with designers on flows, and push back when a flow is too clever.",
+      "Measure how staff use each screen, and improve what they struggle with.",
+      "Keep the app accessible, quick on older hardware, and private by default.",
+    ],
+    qualifications: [
+      "Three or more years building production web applications with React.",
+      "Strong TypeScript and a clear eye for interface detail.",
+      "Experience with data-heavy products, such as dashboards, inboxes, or schedules.",
+      "Care for the people who use what you build all day.",
+    ],
+    bonus: [
+      "Experience with healthcare or scheduling software.",
+      "Experience building accessible interfaces to a high standard.",
+      "Design systems experience.",
+    ],
+  },
+  {
+    slug: "backend-engineer-agent-platform",
+    title: "Backend Engineer, Agent Platform",
+    section: "founding",
+    team: "Engineering",
+    location: "Remote (Canada)",
+    pay: "CA$150K – CA$200K",
+    equity: true,
+    wave: { top: 0.42, amp: 66, phase: 2.7, scale: 1.1, slant: -0.25 },
+    summary: "Build the services that connect every clinic's agents to the patients who reach them.",
+    about: [
+      "Every call, message, and booking that an agent handles passes through services you will design and run. You will build the platform that routes those requests, keeps them consistent, and records what happened.",
+      "You will own services from design through on-call, and work closely with the infrastructure and product teams.",
+    ],
+    responsibilities: [
+      "Design and build the backend services behind agent conversations, bookings, and follow-ups.",
+      "Model clinic data so every agent works from the same, correct picture.",
+      "Build the queues, retries, and audit trails that keep requests reliable.",
+      "Write the APIs the clinic workspace and integrations depend on.",
+      "Carry your share of on-call, and make the next incident less likely.",
+    ],
+    qualifications: [
+      "Three or more years building backend services in production.",
+      "Strong skills in TypeScript, Python, or Go, and solid SQL and Postgres.",
+      "Experience designing APIs, queues, and data models that others depend on.",
+      "Comfort with ambiguity, and the habit of writing things down.",
+    ],
+    bonus: [
+      "Experience with event-driven systems.",
+      "Experience with healthcare data or audit-heavy products.",
+      "Experience supporting LLM-based products in production.",
+    ],
+  },
+  {
+    slug: "founding-gtm-lead",
+    title: "Founding GTM Lead",
+    section: "founding",
+    team: "Growth",
+    location: "Remote (US)",
+    pay: "$130K – $170K + commission",
+    equity: true,
+    wave: { top: 0.44, amp: 70, phase: 0.4, scale: 1.0, slant: 0.35, flip: true },
+    summary: "Own how Doe reaches clinics, from the first conversation to the first live agent.",
+    about: [
+      "You will be Doe's first go-to-market leader. You will decide which clinics to reach first, what we say to them, and how we measure whether it works.",
+      "You will work across sales, marketing, and partnerships, and bring what clinics tell you straight into the product.",
+    ],
+    responsibilities: [
+      "Build Doe's go-to-market plan: who we target, how we reach them, and what it costs.",
+      "Run early outbound, events, and referral programs, and learn what converts.",
+      "Hire and shape the sales and growth team as it forms.",
+      "Set the messaging, pricing conversations, and proof points clinics need to say yes.",
+      "Report on the funnel honestly, and change course when the numbers say to.",
+    ],
+    qualifications: [
+      "Five or more years in go-to-market roles at B2B software companies.",
+      "A record of building a pipeline from nothing, ideally at an early-stage company.",
+      "Comfort with data, and the discipline to test before you scale.",
+      "Clear writing and the ability to explain a complex product plainly.",
+    ],
+    bonus: [
+      "Experience selling into healthcare practices or health systems.",
+      "Experience building growth programs for AI products.",
+      "Experience hiring and leading a first sales team.",
+    ],
+  },
+  {
     slug: "health-data-integrations-engineer",
     title: "Health Data Integrations Engineer",
+    section: "additional",
     team: "Engineering",
     location: "Remote (US)",
     pay: "$150K – $200K",
@@ -171,6 +277,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
   {
     slug: "security-engineer-health-data",
     title: "Security Engineer, Health Data",
+    section: "additional",
     team: "Engineering",
     location: "Remote (US)",
     pay: "$170K – $225K",
@@ -203,6 +310,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
   {
     slug: "software-engineer-clinic-tools",
     title: "Software Engineer, Clinic Tools",
+    section: "additional",
     team: "Engineering",
     location: "Remote (Canada)",
     pay: "CA$140K – CA$185K",
@@ -233,6 +341,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
   {
     slug: "product-designer",
     title: "Product Designer",
+    section: "additional",
     team: "Product",
     location: "Remote (US)",
     pay: "$140K – $190K",
@@ -263,6 +372,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
   {
     slug: "product-manager-clinic-workflows",
     title: "Product Manager, Clinic Workflows",
+    section: "additional",
     team: "Product",
     location: "Remote (US)",
     pay: "$150K – $195K",
@@ -293,6 +403,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
   {
     slug: "founding-account-executive",
     title: "Founding Account Executive",
+    section: "additional",
     team: "GTM & Sales",
     location: "Remote (US)",
     pay: "$120K – $160K + commission",
@@ -323,6 +434,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
   {
     slug: "clinic-partnerships-lead",
     title: "Clinic Partnerships Lead",
+    section: "additional",
     team: "GTM & Sales",
     location: "Remote (Canada)",
     pay: "CA$110K – CA$145K",
@@ -353,6 +465,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
   {
     slug: "customer-success-manager",
     title: "Customer Success Manager",
+    section: "additional",
     team: "GTM & Sales",
     location: "Remote (US)",
     pay: "$90K – $125K",

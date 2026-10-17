@@ -224,6 +224,11 @@
   margin-top: 2.75rem;
 }
 
+/* The additional roles start a new block, below the founding roles. */
+.doehealth-careers__additional {
+  margin-top: 3.5rem;
+}
+
 .doehealth-careers__group-title {
   margin: 0 0 0.6rem 1.35rem;
   color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);

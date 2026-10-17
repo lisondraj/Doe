@@ -16,6 +16,7 @@ import {
   CAREERS_ROLES,
   CAREERS_TEAM_SECTIONS,
   CAREERS_TEAMS,
+  type CareersRole,
 } from "@/lib/doehealth/doehealth-careers";
 import { DOEHEALTH_DESK2_PAGE_BACKGROUND } from "@/lib/doehealthdesk2/doehealthdesk2-colors";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
@@ -46,15 +47,35 @@ const LOCATION_SECTIONS: readonly CareersDropdownSection[] = [
   },
 ];
 
+/** The teams that have roles in this list, in team order, each with its roles. */
+function teamGroups(roles: readonly CareersRole[]) {
+  return CAREERS_TEAMS.map((name) => ({ name, roles: roles.filter((role) => role.team === name) })).filter(
+    (group) => group.roles.length > 0,
+  );
+}
+
+/** One team's heading and its rows. */
+function RoleGroup({ name, roles }: { name: string; roles: readonly CareersRole[] }) {
+  return (
+    <div className="doehealth-careers__group">
+      <h3 className="doehealth-careers__group-title">{name}</h3>
+      <ul className="doehealth-careers__list">
+        {roles.map((role) => (
+          <CareersRoleRow key={role.slug} role={role} />
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function OpenRoles() {
   const [team, setTeam] = useState<string>(ALL);
   const [location, setLocation] = useState<string>(ALL);
   const roles = CAREERS_ROLES.filter(
     (role) => (team === ALL || role.team === team) && (location === ALL || role.location === location),
   );
-  const groups = CAREERS_TEAMS.map((name) => ({ name, roles: roles.filter((role) => role.team === name) })).filter(
-    (group) => group.roles.length > 0,
-  );
+  const founding = teamGroups(roles.filter((role) => role.section === "founding"));
+  const additional = teamGroups(roles.filter((role) => role.section === "additional"));
 
   return (
     <div className="doehealth-careers__roles" id="roles">
@@ -72,17 +93,20 @@ function OpenRoles() {
         </span>
       </div>
 
-      {groups.length > 0 ? (
-        groups.map((group) => (
-          <div key={group.name} className="doehealth-careers__group">
-            <h3 className="doehealth-careers__group-title">{group.name}</h3>
-            <ul className="doehealth-careers__list">
-              {group.roles.map((role) => (
-                <CareersRoleRow key={role.slug} role={role} />
+      {founding.length + additional.length > 0 ? (
+        <>
+          {founding.map((group) => (
+            <RoleGroup key={group.name} name={group.name} roles={group.roles} />
+          ))}
+          {additional.length > 0 ? (
+            <div className="doehealth-careers__additional">
+              <h3 className="doehealth-careers__group-title">Additional Roles</h3>
+              {additional.map((group) => (
+                <RoleGroup key={group.name} name={group.name} roles={group.roles} />
               ))}
-            </ul>
-          </div>
-        ))
+            </div>
+          ) : null}
+        </>
       ) : (
         <p className="doehealth-careers__empty">
           Nothing open here yet. Write to{" "}
