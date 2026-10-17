@@ -18,6 +18,7 @@ export function CareersMetaItem({ children }: { children: ReactNode }) {
 
 /** One open role: title, location, pay. The whole row links to the role's page. */
 export function CareersRoleRow({ role }: { role: CareersRole }) {
+  const equity = careersEquityLabel(role);
   return (
     <li>
       <Link href={careersRolePath(role)} className="doehealth-careers__role">
@@ -29,7 +30,7 @@ export function CareersRoleRow({ role }: { role: CareersRole }) {
           </span>
           <span className="doehealth-careers__role-pay">
             {role.pay ? <span>{role.pay}</span> : null}
-            <CareersMetaItem>{careersEquityLabel(role)}</CareersMetaItem>
+            {equity ? <CareersMetaItem>{equity}</CareersMetaItem> : null}
           </span>
         </span>
         <svg className="doehealth-careers__role-arrow" viewBox="0 0 16 16" fill="none" aria-hidden>

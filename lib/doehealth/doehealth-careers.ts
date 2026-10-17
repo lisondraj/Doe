@@ -33,7 +33,7 @@ export type CareersRole = {
   countries: readonly CareersCountry[];
   /** The pay range in CAD. Null when the role has no set range, and then no pay is shown. */
   pay: string | null;
-  /** The equity range as a share of Doe, e.g. "0.5–1.0%". Null when offered without a set range. */
+  /** The equity range as a share of Doe, e.g. "0.5–1.0%". Null when the role offers no equity. */
   equity: string | null;
   /** The wave shape of the dot-wave box at the top of the role page. */
   wave: DoeHealthBlogWave;
@@ -377,9 +377,9 @@ export function careersLocation(role: CareersRole) {
   return `Remote (${role.countries.join(" or ")})`;
 }
 
-/** The equity line for a role: its range, or "Offers Equity" when no range is set. */
+/** The equity line for a role, or null when the role offers no equity. */
 export function careersEquityLabel(role: CareersRole) {
-  return role.equity ? `${role.equity} Equity` : "Offers Equity";
+  return role.equity ? `${role.equity} Equity` : null;
 }
 
 export function careersRole(slug: string) {
