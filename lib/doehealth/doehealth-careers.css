@@ -86,14 +86,6 @@
 }
 
 /* One soft bar holding the two dropdowns and the live count. */
-/* Eligibility sits under the heading, so every role's location is stated once up front. */
-.doehealth-careers__eligibility {
-  margin: -1.25rem 0 1.75rem;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.62);
-  font-size: 1.0625rem;
-  letter-spacing: -0.015em;
-}
-
 .doehealth-careers__bar {
   display: flex;
   align-items: center;

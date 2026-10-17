@@ -12,10 +12,10 @@ import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealt
 import {
   CAREERS_ABOUT_DOE,
   CAREERS_APPLY_EMAIL,
-  CAREERS_LOCATION,
   CAREERS_OFFER,
   CAREERS_PATH,
   type CareersRole,
+  careersLocation,
   careersOtherRoles,
 } from "@/lib/doehealth/doehealth-careers";
 import { DOEHEALTH_DESK2_PAGE_BACKGROUND } from "@/lib/doehealthdesk2/doehealthdesk2-colors";
@@ -58,7 +58,7 @@ function RoleList({ items }: { items: readonly string[] }) {
 function ApplyInvite({ role }: { role: CareersRole }) {
   const subject = `Application: ${role.title}`;
   const body = [
-    `Role: ${role.title} (${CAREERS_LOCATION})`,
+    `Role: ${role.title} (${careersLocation(role)})`,
     "",
     "Hi, I'd like to apply. A little about me, and what I would build at Doe:",
     "",
@@ -122,7 +122,7 @@ export function DoeHealthCareersRolePage({
             <p className="doehealth-role__team">{role.team}</p>
             <h1 className={`doehealth-role__title ${p22Mackinac.className}`}>{role.title}</h1>
             <p className="doehealth-role__meta">
-              <span>{CAREERS_LOCATION}</span>
+              <span>{careersLocation(role)}</span>
               <CareersMetaItem>Full Time</CareersMetaItem>
               {role.pay ? <CareersMetaItem>{role.pay}</CareersMetaItem> : null}
             </p>
@@ -144,7 +144,7 @@ export function DoeHealthCareersRolePage({
                 </div>
                 <div>
                   <dt>Location</dt>
-                  <dd>{CAREERS_LOCATION}</dd>
+                  <dd>{careersLocation(role)}</dd>
                 </div>
                 <div>
                   <dt>Type</dt>
