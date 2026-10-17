@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { type FormEvent, type ReactNode, useState } from "react";
+import type { ReactNode } from "react";
 
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { CareersMetaItem, CareersRoleRow } from "@/components/doehealth-careers/CareersRoleRow";
@@ -52,69 +52,37 @@ function RoleList({ items }: { items: readonly string[] }) {
 }
 
 /**
- * The application: name, email, a link, and a note. Sending opens the applicant's email app with everything written
- * out and addressed to the founders, so they can attach a resume before it goes.
+ * The invite at the foot of the article: one panel and one way in. The button opens the applicant's email app with the
+ * role written out and addressed to the founders, so they can attach a resume before it goes.
  */
-function ApplyForm({ role }: { role: CareersRole }) {
-  const [opened, setOpened] = useState(false);
-
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const field = (name: string) => String(data.get(name) ?? "").trim();
-    const body = [
-      `Role: ${role.title} (${CAREERS_LOCATION})`,
-      `Name: ${field("name")}`,
-      `Email: ${field("email")}`,
-      field("link") ? `Link: ${field("link")}` : null,
-      "",
-      field("note"),
-      "",
-      "(Resume attached)",
-    ]
-      .filter((line) => line !== null)
-      .join("\n");
-    const subject = `Application: ${role.title}`;
-    window.location.href = `mailto:${CAREERS_APPLY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setOpened(true);
-  };
+function ApplyInvite({ role }: { role: CareersRole }) {
+  const subject = `Application: ${role.title}`;
+  const body = [
+    `Role: ${role.title} (${CAREERS_LOCATION})`,
+    "",
+    "Hi, I'd like to apply. A little about me, and what I would build at Doe:",
+    "",
+    "(Attach your resume before you send.)",
+  ].join("\n");
+  const href = `mailto:${CAREERS_APPLY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
   return (
-    <form className="doehealth-role__form" onSubmit={submit}>
-      <div className="doehealth-role__form-row">
-        <label className="doehealth-role__field">
-          <span>Full Name</span>
-          <input name="name" type="text" autoComplete="name" required />
-        </label>
-        <label className="doehealth-role__field">
-          <span>Email</span>
-          <input name="email" type="email" autoComplete="email" required />
-        </label>
-      </div>
-      <label className="doehealth-role__field">
-        <span>LinkedIn, GitHub, or portfolio</span>
-        <input name="link" type="text" inputMode="url" placeholder="Optional" />
-      </label>
-      <label className="doehealth-role__field">
-        <span>What would you build at Doe?</span>
-        <textarea name="note" rows={5} placeholder="A few lines is plenty." />
-      </label>
-      <div className="doehealth-role__form-foot">
-        <button type="submit" className="doehealth-role__cta">
-          Send Application
-        </button>
-        <p className="doehealth-role__form-note" aria-live="polite">
-          {opened ? (
-            <>
-              Your email app should now be open with your application. If it isn&apos;t, write to{" "}
-              <a href={`mailto:${CAREERS_APPLY_EMAIL}`}>{CAREERS_APPLY_EMAIL}</a>.
-            </>
-          ) : (
-            <>This opens your email app with your application written out. Attach your resume, then send.</>
-          )}
-        </p>
-      </div>
-    </form>
+    <section id={APPLY_ID} className="doehealth-role__invite" aria-labelledby="doehealth-role-invite-title">
+      <h2 id="doehealth-role-invite-title" className={`doehealth-role__invite-title ${p22Mackinac.className}`}>
+        <span>Start your</span>
+        <span>application.</span>
+      </h2>
+      <p className="doehealth-role__invite-lede">
+        Tell us who you are and what you would build. Your application goes straight to the founders.
+      </p>
+      <a href={href} className="doehealth-role__invite-button">
+        Email Your Application
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </a>
+      <p className="doehealth-role__invite-note">Opens your email app, addressed to the founders.</p>
+    </section>
   );
 }
 
@@ -234,19 +202,6 @@ export function DoeHealthCareersRolePage({
             </div>
           </div>
 
-          <section id={APPLY_ID} className="doehealth-role__apply" aria-labelledby="doehealth-role-apply-title">
-            <div className="doehealth-role__apply-head">
-              <p className="doehealth-role__team">{role.title}</p>
-              <h2 id="doehealth-role-apply-title" className={`doehealth-role__apply-title ${p22Mackinac.className}`}>
-                Start Your Application
-              </h2>
-              <p className="doehealth-role__apply-lede">
-                Tell us who you are and what you would build. Your application goes straight to the founders.
-              </p>
-            </div>
-            <ApplyForm role={role} />
-          </section>
-
           {others.length > 0 ? (
             <section className="doehealth-role__more" aria-labelledby="doehealth-role-more-title">
               <h2 id="doehealth-role-more-title" className={`doehealth-role__more-title ${p22Mackinac.className}`}>
@@ -262,6 +217,8 @@ export function DoeHealthCareersRolePage({
               </Link>
             </section>
           ) : null}
+
+          <ApplyInvite role={role} />
         </article>
 
         <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} />

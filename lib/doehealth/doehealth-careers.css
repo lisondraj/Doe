@@ -423,11 +423,14 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 .doehealth-role {
   --doehealth-role-beige: #f4eedf;
   --doehealth-role-cream: #fffcf1;
+  /* A little wider than the blog's 60rem header and 56rem column, so the body and the card have room. */
+  --doehealth-role-w: 72rem;
   /* Clears the fixed nav and banner when jumping to the application or holding the side card. */
   --doehealth-role-nav-clear: calc(5.5rem + var(--desk-banner-h, 2.85rem) + 1.5rem);
   box-sizing: border-box;
-  padding-top: clamp(2.5rem, 6vh, 4rem);
-  padding-bottom: clamp(4rem, 9vh, 6rem);
+  /* The same vertical rhythm as the blog article. */
+  padding-top: clamp(2.5rem, 6vh, 4.5rem);
+  padding-bottom: clamp(3.5rem, 9vh, 6rem);
   color: var(--doehealth-desk-ink);
 }
 
@@ -436,6 +439,8 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: var(--doehealth-role-w);
+  margin: 0 auto;
   text-align: center;
 }
 
@@ -527,9 +532,10 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 }
 
 /* The hero box is the cream dot-wave of the Clinic Tools page, left empty. */
+/* Full width, like the blog's hero. */
 .doehealth-role__hero {
   aspect-ratio: 16 / 6;
-  margin-top: clamp(3rem, 7vh, 4.5rem);
+  margin-top: clamp(2.5rem, 6vh, 4rem);
 }
 
 /* Body on the left, the "At a glance" card holding its place on the right. */
@@ -537,8 +543,9 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(17rem, 21rem);
   align-items: start;
-  gap: clamp(2.5rem, 6vw, 6rem);
-  margin-top: clamp(3.5rem, 8vh, 5.5rem);
+  gap: clamp(2.5rem, 6vw, 5rem);
+  max-width: var(--doehealth-role-w);
+  margin: clamp(3rem, 7vh, 4.5rem) auto 0;
 }
 
 .doehealth-role__glance {
@@ -592,8 +599,7 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
   text-align: center;
 }
 
-.doehealth-role__glance-note a,
-.doehealth-role__form-note a {
+.doehealth-role__glance-note a {
   color: var(--doehealth-desk-surface);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -602,7 +608,7 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 .doehealth-role__body {
   grid-column: 1;
   grid-row: 1;
-  max-width: 42rem;
+  min-width: 0;
 }
 
 .doehealth-role__section + .doehealth-role__section {
@@ -694,115 +700,86 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 }
 
 /* Start your application: a beige panel with the form on cream fields. */
-.doehealth-role__apply {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  gap: clamp(2rem, 5vw, 4.5rem);
-  margin-top: clamp(5rem, 12vh, 7.5rem);
-  padding: clamp(2rem, 5vw, 4rem);
-  border-radius: 28px;
-  background: var(--doehealth-role-beige);
+/* The invite at the foot of the article: the desk's dark panel and corner, one way in. */
+.doehealth-role__invite {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: var(--doehealth-role-w);
+  margin: clamp(4rem, 10vh, 6rem) auto 0;
+  padding: clamp(3rem, 8vh, 4.5rem) clamp(1.5rem, 5vw, 4rem);
+  border-radius: var(--doehealth-desk2-radius);
+  background: var(--doehealth-desk2-surface);
+  color: #fffcf1;
+  text-align: center;
   scroll-margin-top: var(--doehealth-role-nav-clear);
 }
 
-.doehealth-role__apply-title {
-  margin: 0.75rem 0 0;
-  color: var(--doehealth-desk-surface);
-  font-size: clamp(2.4rem, 4.2vw, 3.6rem);
+.doehealth-role__invite-title {
+  margin: 0;
+  color: #fffcf1;
+  font-size: clamp(2.6rem, 4.6vw, 4rem);
   font-weight: 400;
   letter-spacing: -0.045em;
-  line-height: 1.02;
+  line-height: 0.98;
 }
 
-.doehealth-role__apply-lede {
-  max-width: 24rem;
-  margin: 1.1rem 0 0;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.7);
+.doehealth-role__invite-title span {
+  display: block;
+}
+
+.doehealth-role__invite-lede {
+  max-width: 30rem;
+  margin: 0;
+  color: rgb(255 252 241 / 0.78);
   font-size: 1.0625rem;
   letter-spacing: -0.015em;
   line-height: 1.55;
 }
 
-.doehealth-role__form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.doehealth-role__form-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.doehealth-role__field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-}
-
-.doehealth-role__field > span {
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.62);
-  font-size: 0.9rem;
-  letter-spacing: -0.01em;
-}
-
-.doehealth-role__field input,
-.doehealth-role__field textarea {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 0.85rem 1rem;
-  border: 1px solid transparent;
-  border-radius: 14px;
-  background: var(--doehealth-role-cream);
-  color: var(--doehealth-desk-surface);
-  font: inherit;
+.doehealth-role__invite-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  padding: 0.95rem 1.5rem;
+  border-radius: 999px;
+  background: #fffcf1;
+  color: var(--doehealth-desk2-surface);
   font-size: 1rem;
   letter-spacing: -0.015em;
-  outline: none;
-  transition: border-color 160ms ease;
+  text-decoration: none;
+  transition: transform 160ms ease;
 }
 
-.doehealth-role__field textarea {
-  min-height: 8rem;
-  resize: vertical;
-  line-height: 1.5;
-}
-
-.doehealth-role__field input::placeholder,
-.doehealth-role__field textarea::placeholder {
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.38);
-}
-
-.doehealth-role__field input:focus,
-.doehealth-role__field textarea:focus {
-  border-color: rgb(var(--doehealth-desk-ink-rgb) / 0.28);
-}
-
-.doehealth-role__form-foot {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  margin-top: 0.35rem;
-}
-
-.doehealth-role__form-foot .doehealth-role__cta {
+.doehealth-role__invite-button svg {
   flex: none;
-  margin-top: 0;
+  width: 18px;
+  height: 18px;
 }
 
-.doehealth-role__form-note {
+.doehealth-role__invite-button:hover {
+  transform: translateX(3px);
+}
+
+.doehealth-role__invite-button:focus-visible {
+  outline: 2px solid #fffcf1;
+  outline-offset: 3px;
+}
+
+.doehealth-role__invite-note {
   margin: 0;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  color: rgb(255 252 241 / 0.6);
   font-size: 0.9rem;
   letter-spacing: -0.01em;
-  line-height: 1.45;
 }
 
 /* More open roles: the same rows as /careers. */
 .doehealth-role__more {
-  max-width: 58rem;
-  margin: clamp(5rem, 12vh, 7.5rem) auto 0;
+  max-width: var(--doehealth-role-w);
+  margin: clamp(4.5rem, 10vh, 6.5rem) auto 0;
 }
 
 .doehealth-role__more-title {
@@ -826,8 +803,13 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 }
 
 @media (max-width: 1023px) {
-  .doehealth-role__layout,
-  .doehealth-role__apply {
+  /* The same phone inset as the blog article. */
+  .doehealth-role-page .doehealth-role {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .doehealth-role__layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -861,19 +843,16 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
     padding: 1.4rem;
   }
 
-  .doehealth-role__offer,
-  .doehealth-role__form-row {
+  .doehealth-role__offer {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .doehealth-role__apply {
-    padding: 1.6rem 1.25rem;
-    border-radius: 22px;
+  .doehealth-role__invite {
+    padding: 2.5rem 1.5rem;
   }
 
-  .doehealth-role__form-foot {
-    flex-direction: column;
-    align-items: stretch;
+  .doehealth-role__invite-title {
+    font-size: clamp(2.3rem, 10vw, 2.9rem);
   }
 
   .doehealth-role__section p,
