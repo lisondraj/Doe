@@ -4,13 +4,13 @@
  */
 export const DOEHEALTH_DESK2_HERO_HEADLINES = [
   { line1: "Increase revenue", line2: "with personal agents." },
-  { line1: "Personal agents are here.", line2: "Is your clinic ready to earn?" },
+  { line1: "Personal agents are here.", line2: "Is your clinic ready?" },
   { line1: "Let personal agents", line2: "bring you more patients." },
-  { line1: "Turn every call into", line2: "a booked visit." },
-  { line1: "Never miss a patient", line2: "again." },
-  { line1: "Fill your schedule", line2: "while you sleep." },
-  { line1: "More patients,", line2: "without more staff." },
-  { line1: "Your clinic, open", line2: "around the clock." },
+  { line1: "Patients now book", line2: "through their agents." },
+  { line1: "Be the first clinic", line2: "their agents choose." },
+  { line1: "Every patient's agent,", line2: "answered in seconds." },
+  { line1: "Agents are booking care.", line2: "Make sure it's with you." },
+  { line1: "When agents search,", line2: "your clinic shows up." },
 ] as const;
 
 /** Two lines under the title. */
