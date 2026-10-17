@@ -777,11 +777,16 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 
 
 /* After the hero CTA scrolls past: the row opens inside the nav bar, so the bar and the row share one surface and blur. */
+/* Opens by sliding down out of the nav and closes by sliding back up, with the height and fade on the same curve. */
 .doehealth-role__dock {
   display: grid;
   grid-template-rows: 0fr;
   opacity: 0;
-  transition: grid-template-rows 280ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
+  transform: translateY(-18px);
+  transition:
+    grid-template-rows 480ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 380ms ease,
+    transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .doehealth-role__dock-inner {
@@ -792,6 +797,13 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 .doehealth-role__dock.is-visible {
   grid-template-rows: 1fr;
   opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-role__dock {
+    transition: none;
+  }
 }
 
 .doehealth-role__dock-box {
