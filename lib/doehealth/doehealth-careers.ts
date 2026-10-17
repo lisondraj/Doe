@@ -10,7 +10,7 @@ export type CareersTeamSection = {
   wave?: DoeHealthBlogWave;
 };
 
-export const CAREERS_TEAMS = ["Engineering", "Product", "Growth", "GTM & Sales", "Open Application"] as const;
+export const CAREERS_TEAMS = ["Engineering", "Product", "Growth & Sales", "Open Application"] as const;
 export type CareersTeam = (typeof CAREERS_TEAMS)[number];
 
 /** Founding roles list first on /careers; additional roles follow them, in the same style. */
@@ -77,23 +77,23 @@ export const CAREERS_ABOUT_DOE: readonly string[] = [
 export const CAREERS_BENEFITS_NAME = "Doe One";
 export const CAREERS_BENEFITS_LEDE = "The most competitive benefits package among Toronto startups.";
 
-/** In `detail`, text wrapped in ** is set in bold. */
-export const CAREERS_BENEFITS: readonly { benefit: string; detail: string }[] = [
-  { benefit: "Extended health, dental & vision", detail: "100% employer-paid premium plan" },
-  { benefit: "Mental health", detail: "**C$2,000/year**" },
-  { benefit: "Gym / fitness", detail: "**C$100/month** fitness membership allowance" },
-  { benefit: "WHOOP", detail: "Device + membership covered" },
-  { benefit: "Superpower", detail: "Membership covered" },
-  { benefit: "Dialogue Health", detail: "Virtual healthcare access" },
-  { benefit: "Preventive health / labs", detail: "**C$500–1,000/year**" },
-  { benefit: "Home-office setup", detail: "**C$2,000** initial allowance" },
-  { benefit: "Internet + phone", detail: "**C$150/month**" },
-  { benefit: "Conference, travel & learning", detail: "**C$1,500/year**" },
-  { benefit: "Team retreats / offsites", detail: "**2× annually**, company-paid" },
-  { benefit: "Vacation", detail: "**4 weeks**" },
-  { benefit: "Sick / personal days", detail: "Flexible" },
-  { benefit: "Parental leave", detail: "Top-up policy" },
-  { benefit: "Equipment", detail: "Top-Spec MacBook Pro" },
+/** Each benefit is a tile: its name, the headline value, and an optional note under it. */
+export const CAREERS_BENEFITS: readonly { benefit: string; value: string; note?: string }[] = [
+  { benefit: "Extended health, dental & vision", value: "100%", note: "Employer-paid premium plan" },
+  { benefit: "Mental health", value: "C$2,000", note: "Per year" },
+  { benefit: "Gym / fitness", value: "C$100", note: "Per month, fitness membership" },
+  { benefit: "WHOOP", value: "Covered", note: "Device + membership" },
+  { benefit: "Superpower", value: "Covered", note: "Membership" },
+  { benefit: "Dialogue Health", value: "Included", note: "Virtual healthcare access" },
+  { benefit: "Preventive health / labs", value: "C$500–1,000", note: "Per year" },
+  { benefit: "Home-office setup", value: "C$2,000", note: "Initial allowance" },
+  { benefit: "Internet + phone", value: "C$150", note: "Per month" },
+  { benefit: "Conference, travel & learning", value: "C$1,500", note: "Per year" },
+  { benefit: "Team retreats / offsites", value: "2× a year", note: "Company-paid" },
+  { benefit: "Vacation", value: "4 weeks" },
+  { benefit: "Sick / personal days", value: "Flexible" },
+  { benefit: "Parental leave", value: "Top-up" },
+  { benefit: "Equipment", value: "MacBook Pro", note: "Top spec" },
 ];
 
 export const CAREERS_ROLES: readonly CareersRole[] = [
@@ -167,7 +167,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     slug: "founding-gtm-lead",
     title: "Founding GTM Lead",
     section: "founding",
-    team: "Growth",
+    team: "Growth & Sales",
     countries: ["US", "Canada"],
     pay: "CA$100K – CA$120K",
     equity: "0.5–1.0%",
@@ -231,7 +231,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     slug: "founding-account-executive",
     title: "Founding Account Executive",
     section: "founding",
-    team: "GTM & Sales",
+    team: "Growth & Sales",
     countries: ["US", "Canada"],
     pay: "CA$90K – CA$110K + commission",
     equity: "0.25–0.5%",
@@ -256,99 +256,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
       "Experience selling to healthcare practices.",
       "Experience selling AI products.",
       "A network among clinic owners and practice managers.",
-    ],
-  },
-  {
-    slug: "founding-account-executive-multi-clinic",
-    title: "Founding Account Executive, Multi-Clinic",
-    section: "founding",
-    team: "GTM & Sales",
-    countries: ["US", "Canada"],
-    pay: "CA$90K – CA$110K + commission",
-    equity: "0.25–0.5%",
-    wave: { top: 0.46, amp: 66, phase: 1.6, scale: 1.05, slant: 0.25, flip: true },
-    summary: "Win the clinic groups and multi-site practices that bring Doe to every location.",
-    about: [
-      "You will own deals with clinic groups and multi-site practices, where one decision can bring Doe to dozens of locations. You will map how each group buys, bring in the right people, and close.",
-      "You will work with the founders and the GTM lead to shape how we sell to groups, and bring what you learn back to product.",
-    ],
-    responsibilities: [
-      "Run the full sales cycle for multi-site groups, from first meeting to rollout across locations.",
-      "Map each group's decision makers, from owners and operators to IT and compliance.",
-      "Build the proposals, pilots, and rollout plans that move groups to yes.",
-      "Feed what groups ask for back to product and the GTM lead.",
-    ],
-    qualifications: [
-      "Three or more years closing enterprise or multi-site B2B software deals.",
-      "A record of working long sales cycles with several buyers at once.",
-      "Comfort explaining technical products to operators and executives.",
-    ],
-    bonus: [
-      "Experience selling to healthcare groups or health systems.",
-      "Experience selling AI products.",
-      "A network among clinic group leaders.",
-    ],
-  },
-  {
-    slug: "clinic-partnerships-lead",
-    title: "Clinic Partnerships Lead",
-    section: "additional",
-    team: "GTM & Sales",
-    countries: ["US", "Canada"],
-    pay: "CA$95K – CA$120K",
-    equity: "0.25–0.5%",
-    wave: { top: 0.45, amp: 62, phase: 2.4, scale: 0.95, slant: 0.3, flip: true },
-    summary: "Build Doe's relationships with clinics and clinic groups across Canada.",
-    about: [
-      "You will lead our partnerships with clinics, clinic networks, and health organizations in Canada, and open the doors that bring Doe to more practices.",
-      "You will work with the founders and product team to make every partnership a good fit for the clinics and their patients.",
-    ],
-    responsibilities: [
-      "Find, build, and grow partnerships with clinic groups, associations, and health organizations.",
-      "Lead pilots with partner clinics from kickoff to results.",
-      "Represent Doe at events and in the communities where clinics gather.",
-      "Bring what partners need back to the team, and make sure we deliver it.",
-    ],
-    qualifications: [
-      "Four or more years in partnerships, business development, or sales.",
-      "Relationships in Canadian healthcare.",
-      "Clear communication with clinicians, operators, and executives alike.",
-    ],
-    bonus: [
-      "Experience with provincial health systems.",
-      "French language skills.",
-      "Experience launching a new product category.",
-    ],
-  },
-  {
-    slug: "customer-success-manager",
-    title: "Customer Success Manager",
-    section: "additional",
-    team: "GTM & Sales",
-    countries: ["US", "Canada"],
-    pay: "CA$80K – CA$100K",
-    equity: "0.15–0.3%",
-    wave: { top: 0.42, amp: 70, phase: 3.3, scale: 1.05, slant: -0.3 },
-    summary: "Make sure every clinic gets real results from its agents.",
-    about: [
-      "You will onboard new clinics, set up their agents with them, and stay with them as they grow. You will be the person they call, and the voice of clinics inside Doe.",
-      "You will work with engineering and product to turn what clinics need into a better Doe.",
-    ],
-    responsibilities: [
-      "Onboard clinics: connect their systems, set up their agents, and train their teams.",
-      "Track how each clinic's agents perform, and help them get more from Doe.",
-      "Answer questions and solve problems quickly, and escalate what needs engineering.",
-      "Turn patterns across clinics into feedback product can act on.",
-    ],
-    qualifications: [
-      "Two or more years in customer success, account management, or clinic operations.",
-      "Comfort with software, and patience teaching it to others.",
-      "Organized, responsive, and calm when things go wrong.",
-    ],
-    bonus: [
-      "Experience working in or with medical practices.",
-      "Experience supporting AI or automation products.",
-      "Spanish language skills.",
     ],
   },
   {
