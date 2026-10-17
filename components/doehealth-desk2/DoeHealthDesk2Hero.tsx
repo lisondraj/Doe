@@ -6,7 +6,7 @@ import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import {
   DOEHEALTH_DESK2_HERO_DEK,
   DOEHEALTH_DESK2_HERO_DESKTOP_TIMING,
-  DOEHEALTH_DESK2_HERO_HEADLINE,
+  DOEHEALTH_DESK2_HERO_HEADLINES,
   DOEHEALTH_DESK2_HERO_PHONE_TIMING,
   DOEHEALTH_DESK2_HERO_SECURE,
 } from "@/lib/doehealthdesk2/doehealthdesk2-hero-copy";
@@ -19,8 +19,13 @@ export function DoeHealthDesk2Hero() {
   const [shown, setShown] = useState(false);
   const [headlineIn, setHeadlineIn] = useState(false);
   const [headlineRevealDone, setHeadlineRevealDone] = useState(false);
+  // Server and first client render use the first headline; the random pick lands before the reveal (the section is hidden until `is-in`).
+  const [headlineIndex, setHeadlineIndex] = useState(0);
+  const headline = DOEHEALTH_DESK2_HERO_HEADLINES[headlineIndex];
 
   useEffect(() => {
+    setHeadlineIndex(Math.floor(Math.random() * DOEHEALTH_DESK2_HERO_HEADLINES.length));
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setShown(true);
       setHeadlineIn(true);
@@ -71,7 +76,7 @@ export function DoeHealthDesk2Hero() {
                   : ` desk2-headline-darken--ink${headlineIn ? " is-headline-in" : ""}`
               }`}
             >
-              {DOEHEALTH_DESK2_HERO_HEADLINE.line1}
+              {headline.line1}
             </span>
             <span className="doehealth-desk2-hero__line doehealth-desk2-hero__line--built-for">
               <span
@@ -79,7 +84,7 @@ export function DoeHealthDesk2Hero() {
                   headlineRevealDone ? "" : ` desk2-headline-mask${headlineIn ? " is-headline-in" : ""}`
                 }`}
               >
-                {DOEHEALTH_DESK2_HERO_HEADLINE.line2}
+                {headline.line2}
               </span>
             </span>
           </h1>

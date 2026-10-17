@@ -1,8 +1,13 @@
-/** Single brown colour throughout. Two lines, each one line at every size. */
-export const DOEHEALTH_DESK2_HERO_HEADLINE = {
-  line1: "Increase revenue",
-  line2: "with personal agents.",
-} as const;
+/**
+ * Single brown colour throughout. Each headline is two lines, each one line at every size. One is picked at random on
+ * every page load; the first is the default before that pick (server render and first client render).
+ */
+export const DOEHEALTH_DESK2_HERO_HEADLINES = [
+  { line1: "Increase revenue", line2: "with personal agents." },
+  { line1: "We help you increase revenue", line2: "with personal agents." },
+  { line1: "Personal agents are here.", line2: "Is your clinic ready to earn?" },
+  { line1: "Let personal agents", line2: "bring you more patients." },
+] as const;
 
 /** Two lines under the title. */
 export const DOEHEALTH_DESK2_HERO_DEK = [
