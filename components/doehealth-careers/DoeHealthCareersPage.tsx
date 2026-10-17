@@ -1,8 +1,9 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { useState } from "react";
 
 import { CareersFilterDropdown, type CareersDropdownSection } from "@/components/doehealth-careers/CareersFilterDropdown";
+import { CareersRoleRow } from "@/components/doehealth-careers/CareersRoleRow";
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
@@ -11,13 +12,10 @@ import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDes
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import {
   CAREERS_APPLY_EMAIL,
-  CAREERS_OFFICES,
-  CAREERS_REMOTE_LOCATIONS,
+  CAREERS_LOCATIONS,
   CAREERS_ROLES,
   CAREERS_TEAM_SECTIONS,
   CAREERS_TEAMS,
-  type CareersRole,
-  careersRoleIsRemote,
 } from "@/lib/doehealth/doehealth-careers";
 import { DOEHEALTH_DESK2_PAGE_BACKGROUND } from "@/lib/doehealthdesk2/doehealthdesk2-colors";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
@@ -32,48 +30,7 @@ const DESK2_PATH = "/doehealthdesk2";
 /** The footer still uses the legacy desk section anchors. */
 const DESK_PATH = "/doehealthdesk";
 
-function applyHref(role: CareersRole) {
-  return `mailto:${CAREERS_APPLY_EMAIL}?subject=${encodeURIComponent(role.title)}`;
-}
-
 const ALL = "all";
-
-/** A dot and the item after it wrap together, so a line never ends on a dot. */
-function MetaItem({ children }: { children: ReactNode }) {
-  return (
-    <span className="doehealth-careers__meta-item">
-      <span className="doehealth-careers__dot" aria-hidden>
-        •
-      </span>
-      {children}
-    </span>
-  );
-}
-
-function RoleRow({ role }: { role: CareersRole }) {
-  const remote = careersRoleIsRemote(role);
-  return (
-    <li>
-      <a href={applyHref(role)} className="doehealth-careers__role">
-        <span className="doehealth-careers__role-copy">
-          <span className={`doehealth-careers__role-title ${p22Mackinac.className}`}>{role.title}</span>
-          <span className="doehealth-careers__role-meta">
-            <span>{role.location}</span>
-            <MetaItem>Full time</MetaItem>
-            {remote ? null : <MetaItem>On-site</MetaItem>}
-          </span>
-          <span className="doehealth-careers__role-pay">
-            <span>{role.pay}</span>
-            {role.equity ? <MetaItem>Offers equity</MetaItem> : null}
-          </span>
-        </span>
-        <svg className="doehealth-careers__role-arrow" viewBox="0 0 16 16" fill="none" aria-hidden>
-          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </a>
-    </li>
-  );
-}
 
 const TEAM_SECTIONS: readonly CareersDropdownSection[] = [
   {
@@ -85,11 +42,7 @@ const LOCATION_SECTIONS: readonly CareersDropdownSection[] = [
   { options: [{ value: ALL, label: "All Locations" }] },
   {
     heading: "Remote",
-    options: CAREERS_REMOTE_LOCATIONS.map((name) => ({ value: name, label: name })),
-  },
-  {
-    heading: "On site",
-    options: CAREERS_OFFICES.map((name) => ({ value: name, label: name })),
+    options: CAREERS_LOCATIONS.map((name) => ({ value: name, label: name })),
   },
 ];
 
@@ -125,7 +78,7 @@ function OpenRoles() {
             <h3 className="doehealth-careers__group-title">{group.name}</h3>
             <ul className="doehealth-careers__list">
               {group.roles.map((role) => (
-                <RoleRow key={role.title} role={role} />
+                <CareersRoleRow key={role.slug} role={role} />
               ))}
             </ul>
           </div>

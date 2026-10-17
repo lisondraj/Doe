@@ -398,3 +398,492 @@
     font-size: 0.875rem;
   }
 }
+
+/* ─── Role pages (/careers/[slug]) ─────────────────────────────────────── */
+
+/* The global body overflow makes the body the sticky container, and the body never scrolls; the viewport does.
+   With it visible, the "At a glance" card sticks to the viewport. */
+html body:has(.doehealth-careers-page.doehealth-role-page) {
+  overflow: visible;
+}
+
+.doehealth-role {
+  --doehealth-role-beige: #f4eedf;
+  --doehealth-role-cream: #fffcf1;
+  /* Clears the fixed nav and banner when jumping to the application or holding the side card. */
+  --doehealth-role-nav-clear: calc(5.5rem + var(--desk-banner-h, 2.85rem) + 1.5rem);
+  box-sizing: border-box;
+  padding-top: clamp(2.5rem, 6vh, 4rem);
+  padding-bottom: clamp(4rem, 9vh, 6rem);
+  color: var(--doehealth-desk-ink);
+}
+
+/* Centred header: the way back, the team, the title, its terms, and the first way in. */
+.doehealth-role__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.doehealth-role__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: clamp(2rem, 5vh, 3rem);
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: var(--doehealth-role-beige);
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.72);
+  font-size: 0.9375rem;
+  letter-spacing: -0.015em;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.doehealth-role__back:hover {
+  color: var(--doehealth-desk-surface);
+}
+
+.doehealth-role__back svg {
+  width: 14px;
+  height: 14px;
+}
+
+.doehealth-role__team {
+  margin: 0;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.doehealth-role__title {
+  max-width: 18ch;
+  margin: 0.85rem 0 0;
+  color: var(--doehealth-desk-surface);
+  font-size: clamp(2.9rem, 5.4vw, 4.75rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.doehealth-role__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.2rem 0.5rem;
+  margin: 1.25rem 0 0;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.72);
+  font-size: 1.0625rem;
+  letter-spacing: -0.015em;
+}
+
+.doehealth-role__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.9rem;
+  padding: 0.95rem 1.6rem;
+  border: 0;
+  border-radius: var(--doehealth-desk2-radius, 11px);
+  background: var(--doehealth-desk-surface);
+  color: var(--doehealth-role-cream);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+
+.doehealth-role__cta:hover {
+  opacity: 0.88;
+}
+
+.doehealth-role__cta:focus-visible {
+  outline: 2px solid rgb(var(--doehealth-desk-ink-rgb) / 0.3);
+  outline-offset: 3px;
+}
+
+.doehealth-role__cta--block {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+/* The dot-wave box carries the role in one line, like the cards on /news. */
+.doehealth-role__hero {
+  aspect-ratio: 16 / 6;
+  margin-top: clamp(3rem, 7vh, 4.5rem);
+}
+
+.doehealth-role__summary {
+  max-width: 24ch;
+  margin: 0;
+  margin-bottom: 12%;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.78);
+  font-size: clamp(1.6rem, 2.9vw, 2.6rem);
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+/* Body on the left, the "At a glance" card holding its place on the right. */
+.doehealth-role__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 21rem);
+  align-items: start;
+  gap: clamp(2.5rem, 6vw, 6rem);
+  margin-top: clamp(3.5rem, 8vh, 5.5rem);
+}
+
+.doehealth-role__glance {
+  position: sticky;
+  top: var(--doehealth-role-nav-clear);
+  grid-column: 2;
+  grid-row: 1;
+  padding: 1.75rem;
+  border-radius: 22px;
+  background: var(--doehealth-role-beige);
+}
+
+.doehealth-role__glance-title {
+  margin: 0;
+  color: var(--doehealth-desk-surface);
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.doehealth-role__facts {
+  margin: 1.25rem 0 0;
+}
+
+.doehealth-role__facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-top: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+  font-size: 0.975rem;
+  letter-spacing: -0.015em;
+}
+
+.doehealth-role__facts dt {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+}
+
+.doehealth-role__facts dd {
+  margin: 0;
+  color: var(--doehealth-desk-surface);
+  text-align: right;
+}
+
+.doehealth-role__glance-note {
+  margin: 1rem 0 0;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+.doehealth-role__glance-note a,
+.doehealth-role__form-note a {
+  color: var(--doehealth-desk-surface);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.doehealth-role__body {
+  grid-column: 1;
+  grid-row: 1;
+  max-width: 42rem;
+}
+
+.doehealth-role__section + .doehealth-role__section {
+  margin-top: clamp(2.75rem, 6vh, 3.5rem);
+}
+
+.doehealth-role__section-title {
+  margin: 0 0 1.1rem;
+  color: var(--doehealth-desk-surface);
+  font-size: clamp(1.75rem, 2.6vw, 2.3rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+.doehealth-role__section p {
+  margin: 0;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.78);
+  font-size: 1.0625rem;
+  letter-spacing: -0.015em;
+  line-height: 1.6;
+}
+
+.doehealth-role__section p + p {
+  margin-top: 1rem;
+}
+
+/* Lists marked with a small tan dot instead of a bullet. */
+.doehealth-role__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doehealth-role__list li {
+  position: relative;
+  padding-left: 1.4rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.78);
+  font-size: 1.0625rem;
+  letter-spacing: -0.015em;
+  line-height: 1.55;
+}
+
+.doehealth-role__list li::before {
+  content: "";
+  position: absolute;
+  top: 0.62em;
+  left: 0.2rem;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: #d4ae7a;
+}
+
+/* What we offer: soft beige tiles, two across. */
+.doehealth-role__offer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doehealth-role__offer li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: 18px;
+  background: var(--doehealth-role-beige);
+}
+
+.doehealth-role__offer strong {
+  color: var(--doehealth-desk-surface);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.doehealth-role__offer span {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.68);
+  font-size: 0.95rem;
+  letter-spacing: -0.015em;
+  line-height: 1.5;
+}
+
+/* Start your application: a beige panel with the form on cream fields. */
+.doehealth-role__apply {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  margin-top: clamp(5rem, 12vh, 7.5rem);
+  padding: clamp(2rem, 5vw, 4rem);
+  border-radius: 28px;
+  background: var(--doehealth-role-beige);
+  scroll-margin-top: var(--doehealth-role-nav-clear);
+}
+
+.doehealth-role__apply-title {
+  margin: 0.75rem 0 0;
+  color: var(--doehealth-desk-surface);
+  font-size: clamp(2.4rem, 4.2vw, 3.6rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+}
+
+.doehealth-role__apply-lede {
+  max-width: 24rem;
+  margin: 1.1rem 0 0;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.7);
+  font-size: 1.0625rem;
+  letter-spacing: -0.015em;
+  line-height: 1.55;
+}
+
+.doehealth-role__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.doehealth-role__form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.doehealth-role__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.doehealth-role__field > span {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.62);
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+}
+
+.doehealth-role__field input,
+.doehealth-role__field textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: var(--doehealth-role-cream);
+  color: var(--doehealth-desk-surface);
+  font: inherit;
+  font-size: 1rem;
+  letter-spacing: -0.015em;
+  outline: none;
+  transition: border-color 160ms ease;
+}
+
+.doehealth-role__field textarea {
+  min-height: 8rem;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.doehealth-role__field input::placeholder,
+.doehealth-role__field textarea::placeholder {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.38);
+}
+
+.doehealth-role__field input:focus,
+.doehealth-role__field textarea:focus {
+  border-color: rgb(var(--doehealth-desk-ink-rgb) / 0.28);
+}
+
+.doehealth-role__form-foot {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 0.35rem;
+}
+
+.doehealth-role__form-foot .doehealth-role__cta {
+  flex: none;
+  margin-top: 0;
+}
+
+.doehealth-role__form-note {
+  margin: 0;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+}
+
+/* More open roles: the same rows as /careers. */
+.doehealth-role__more {
+  max-width: 58rem;
+  margin: clamp(5rem, 12vh, 7.5rem) auto 0;
+}
+
+.doehealth-role__more-title {
+  margin: 0 0 clamp(1.5rem, 4vh, 2.25rem);
+  color: var(--doehealth-desk-surface);
+  font-size: clamp(2.2rem, 3.6vw, 3.1rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  text-align: center;
+}
+
+.doehealth-role__more-link {
+  display: table;
+  margin: 1.75rem auto 0;
+  color: var(--doehealth-desk-surface);
+  font-size: 1rem;
+  letter-spacing: -0.015em;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 1023px) {
+  .doehealth-role__layout,
+  .doehealth-role__apply {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The card comes first, under the box, and scrolls with the page. */
+  .doehealth-role__glance {
+    position: static;
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .doehealth-role__body {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .doehealth-role__title {
+    font-size: clamp(2.3rem, 10vw, 2.9rem);
+  }
+
+  .doehealth-role__meta {
+    font-size: 0.975rem;
+  }
+
+  .doehealth-role__hero {
+    aspect-ratio: 4 / 3;
+  }
+
+  .doehealth-blog-placeholder.doehealth-role__hero .doehealth-blog-placeholder__content {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .doehealth-role__summary {
+    font-size: clamp(1.45rem, 6.6vw, 1.8rem);
+  }
+
+  .doehealth-role__glance {
+    padding: 1.4rem;
+  }
+
+  .doehealth-role__offer,
+  .doehealth-role__form-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .doehealth-role__apply {
+    padding: 1.6rem 1.25rem;
+    border-radius: 22px;
+  }
+
+  .doehealth-role__form-foot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .doehealth-role__section p,
+  .doehealth-role__list li {
+    font-size: 1rem;
+  }
+}
