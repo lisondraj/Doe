@@ -163,9 +163,7 @@ export function DoeHealthCareersRolePage({
           </header>
 
           <p className="sr-only">{role.summary}</p>
-          <DoeHealthBlogPlaceholder tone={role.tone} wave={role.wave} className="doehealth-role__hero" pattern>
-            <p className={`doehealth-role__summary ${p22Mackinac.className}`}>{role.summary}</p>
-          </DoeHealthBlogPlaceholder>
+          <DoeHealthBlogPlaceholder tone="cream" wave={role.wave} className="doehealth-role__hero" pattern />
 
           <div className="doehealth-role__layout">
             <aside className="doehealth-role__glance" aria-label="At a Glance">

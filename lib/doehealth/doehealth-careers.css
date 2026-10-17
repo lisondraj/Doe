@@ -513,21 +513,10 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
   margin-top: 1.5rem;
 }
 
-/* The dot-wave box carries the role in one line, like the cards on /news. */
+/* The hero box is the cream dot-wave of the Clinic Tools page, left empty. */
 .doehealth-role__hero {
   aspect-ratio: 16 / 6;
   margin-top: clamp(3rem, 7vh, 4.5rem);
-}
-
-.doehealth-role__summary {
-  max-width: 24ch;
-  margin: 0;
-  margin-bottom: 12%;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.78);
-  font-size: clamp(1.6rem, 2.9vw, 2.6rem);
-  letter-spacing: -0.035em;
-  line-height: 1.12;
-  text-wrap: balance;
 }
 
 /* Body on the left, the "At a glance" card holding its place on the right. */
@@ -853,14 +842,6 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 
   .doehealth-role__hero {
     aspect-ratio: 4 / 3;
-  }
-
-  .doehealth-blog-placeholder.doehealth-role__hero .doehealth-blog-placeholder__content {
-    padding: 1.5rem 1.25rem;
-  }
-
-  .doehealth-role__summary {
-    font-size: clamp(1.45rem, 6.6vw, 1.8rem);
   }
 
   .doehealth-role__glance {

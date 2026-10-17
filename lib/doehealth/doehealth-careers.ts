@@ -25,8 +25,7 @@ export type CareersRole = {
   location: CareersLocation;
   pay: string;
   equity: boolean;
-  /** The dot-wave box at the top of the role page. */
-  tone: DoeHealthBlogPlaceholderTone;
+  /** The wave shape of the dot-wave box at the top of the role page. */
   wave: DoeHealthBlogWave;
   /** One line, set inside the dot-wave box. */
   summary: string;
@@ -80,7 +79,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     location: "Remote (US)",
     pay: "$170K – $230K",
     equity: true,
-    tone: "clay",
     wave: { top: 0.44, amp: 76, phase: 1.1, scale: 1.05, slant: 0.35 },
     summary: "Build the product clinics use every day, from the first screen to the database.",
     about: [
@@ -113,7 +111,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     location: "Remote (US)",
     pay: "$165K – $220K",
     equity: true,
-    tone: "gold",
     wave: { top: 0.42, amp: 64, phase: 2.2, scale: 0.95, slant: -0.3, flip: true },
     summary: "Run the agents that answer every clinic's calls, around the clock.",
     about: [
@@ -146,7 +143,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     location: "Remote (US)",
     pay: "$150K – $200K",
     equity: true,
-    tone: "sand",
     wave: { top: 0.46, amp: 70, phase: 3.1, scale: 1.15, slant: 0.2 },
     summary: "Connect Doe to the records, schedules, and payers clinics already rely on.",
     about: [
@@ -179,7 +175,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     location: "Remote (US)",
     pay: "$170K – $225K",
     equity: true,
-    tone: "umber",
     wave: { top: 0.43, amp: 68, phase: 0.6, scale: 1.0, slant: -0.25 },
     summary: "Keep every patient's health data safe, as agents everywhere start to ask for it.",
     about: [
@@ -212,7 +207,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     location: "Remote (Canada)",
     pay: "CA$140K – CA$185K",
     equity: true,
-    tone: "cream",
     wave: { top: 0.45, amp: 58, phase: 1.8, scale: 0.9, slant: 0.3, flip: true },
     summary: "Build the tools front desks open every morning, for clinics across Canada.",
     about: [
@@ -243,7 +237,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     location: "Remote (US)",
     pay: "$140K – $190K",
     equity: true,
-    tone: "panel",
     wave: { top: 0.44, amp: 72, phase: 2.9, scale: 1.2, slant: -0.35 },
     summary: "Design how clinics see, trust, and steer the agents working for them.",
     about: [
@@ -274,7 +267,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     location: "Remote (US)",
     pay: "$150K – $195K",
     equity: true,
-    tone: "gold",
     wave: { top: 0.41, amp: 66, phase: 3.6, scale: 1.0, slant: 0.25, flip: true },
     summary: "Decide what Doe's agents should do for a clinic, and in what order.",
     about: [
@@ -305,7 +297,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     location: "Remote (US)",
     pay: "$120K – $160K + commission",
     equity: true,
-    tone: "clay",
     wave: { top: 0.43, amp: 74, phase: 0.9, scale: 1.1, slant: -0.2 },
     summary: "Bring Doe to clinics, and help write how we sell it.",
     about: [
@@ -336,7 +327,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     location: "Remote (Canada)",
     pay: "CA$110K – CA$145K",
     equity: true,
-    tone: "sand",
     wave: { top: 0.45, amp: 62, phase: 2.4, scale: 0.95, slant: 0.3, flip: true },
     summary: "Build Doe's relationships with clinics and clinic groups across Canada.",
     about: [
@@ -367,7 +357,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     location: "Remote (US)",
     pay: "$90K – $125K",
     equity: true,
-    tone: "cream",
     wave: { top: 0.42, amp: 70, phase: 3.3, scale: 1.05, slant: -0.3 },
     summary: "Make sure every clinic gets real results from its agents.",
     about: [
