@@ -16,9 +16,9 @@ export type CareersTeam = (typeof CAREERS_TEAMS)[number];
 /** Founding roles list first on /careers; additional roles follow them, in the same style. */
 export type CareersSection = "founding" | "additional";
 
-/** Every role is remote, in the US or in Canada. */
-export const CAREERS_LOCATIONS = ["Remote (US)", "Remote (Canada)"] as const;
-export type CareersLocation = (typeof CAREERS_LOCATIONS)[number];
+/** Every role is remote and open to candidates in the US and Canada. */
+export const CAREERS_LOCATION = "Remote (US or Canada)";
+export const CAREERS_ELIGIBILITY = "Every role is fully remote and open to candidates in the US and Canada.";
 
 export type CareersRole = {
   /** The role page lives at /careers/{slug}. */
@@ -26,7 +26,6 @@ export type CareersRole = {
   title: string;
   section: CareersSection;
   team: CareersTeam;
-  location: CareersLocation;
   pay: string;
   equity: boolean;
   /** The wave shape of the dot-wave box at the top of the role page. */
@@ -69,7 +68,7 @@ export const CAREERS_ABOUT_DOE: readonly string[] = [
 
 /** "What we offer" on every role page. */
 export const CAREERS_OFFER: readonly { lead: string; text: string }[] = [
-  { lead: "Remote", text: "Work from anywhere in the US or Canada, depending on the role." },
+  { lead: "Remote", text: "Every role is fully remote. Work from anywhere in the US or Canada." },
   { lead: "Equity", text: "Every role comes with ownership in Doe." },
   { lead: "Time in Clinics", text: "Regular time in practices with the people who use what we build." },
   { lead: "Real Ownership", text: "Something of your own to run in your first month, on a team small enough to change the whole product." },
@@ -81,7 +80,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Founding Product Engineer (Full-Stack)",
     section: "founding",
     team: "Engineering",
-    location: "Remote (US)",
     pay: "CA$150K – CA$180K",
     equity: true,
     wave: { top: 0.44, amp: 76, phase: 1.1, scale: 1.05, slant: 0.35 },
@@ -114,7 +112,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Founding AI & Infrastructure Engineer (Full-Stack)",
     section: "founding",
     team: "Engineering",
-    location: "Remote (US)",
     pay: "CA$160K – CA$190K",
     equity: true,
     wave: { top: 0.42, amp: 64, phase: 2.2, scale: 0.95, slant: -0.3, flip: true },
@@ -147,7 +144,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Frontend Engineer, Clinic Workspace",
     section: "founding",
     team: "Engineering",
-    location: "Remote (US)",
     pay: "CA$140K – CA$170K",
     equity: true,
     wave: { top: 0.43, amp: 60, phase: 1.5, scale: 1.0, slant: 0.3, flip: true },
@@ -180,7 +176,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Backend Engineer, Agent Platform",
     section: "founding",
     team: "Engineering",
-    location: "Remote (Canada)",
     pay: "CA$150K – CA$180K",
     equity: true,
     wave: { top: 0.42, amp: 66, phase: 2.7, scale: 1.1, slant: -0.25 },
@@ -213,7 +208,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Founding GTM Lead",
     section: "founding",
     team: "Growth",
-    location: "Remote (US)",
     pay: "CA$100K – CA$120K",
     equity: true,
     wave: { top: 0.44, amp: 70, phase: 0.4, scale: 1.0, slant: 0.35, flip: true },
@@ -246,7 +240,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Health Data Integrations Engineer",
     section: "additional",
     team: "Engineering",
-    location: "Remote (US)",
     pay: "CA$140K – CA$170K",
     equity: true,
     wave: { top: 0.46, amp: 70, phase: 3.1, scale: 1.15, slant: 0.2 },
@@ -279,7 +272,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Security Engineer, Health Data",
     section: "additional",
     team: "Engineering",
-    location: "Remote (US)",
     pay: "CA$160K – CA$190K",
     equity: true,
     wave: { top: 0.43, amp: 68, phase: 0.6, scale: 1.0, slant: -0.25 },
@@ -312,7 +304,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Software Engineer, Clinic Tools",
     section: "additional",
     team: "Engineering",
-    location: "Remote (Canada)",
     pay: "CA$130K – CA$165K",
     equity: true,
     wave: { top: 0.45, amp: 58, phase: 1.8, scale: 0.9, slant: 0.3, flip: true },
@@ -343,7 +334,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Product Designer",
     section: "additional",
     team: "Product",
-    location: "Remote (US)",
     pay: "CA$120K – CA$150K",
     equity: true,
     wave: { top: 0.44, amp: 72, phase: 2.9, scale: 1.2, slant: -0.35 },
@@ -374,7 +364,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Product Manager, Clinic Workflows",
     section: "additional",
     team: "Product",
-    location: "Remote (US)",
     pay: "CA$140K – CA$170K",
     equity: true,
     wave: { top: 0.41, amp: 66, phase: 3.6, scale: 1.0, slant: 0.25, flip: true },
@@ -405,7 +394,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Founding Account Executive",
     section: "additional",
     team: "GTM & Sales",
-    location: "Remote (US)",
     pay: "CA$90K – CA$110K + commission",
     equity: true,
     wave: { top: 0.43, amp: 74, phase: 0.9, scale: 1.1, slant: -0.2 },
@@ -436,7 +424,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Clinic Partnerships Lead",
     section: "additional",
     team: "GTM & Sales",
-    location: "Remote (Canada)",
     pay: "CA$95K – CA$120K",
     equity: true,
     wave: { top: 0.45, amp: 62, phase: 2.4, scale: 0.95, slant: 0.3, flip: true },
@@ -467,7 +454,6 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     title: "Customer Success Manager",
     section: "additional",
     team: "GTM & Sales",
-    location: "Remote (US)",
     pay: "CA$80K – CA$100K",
     equity: true,
     wave: { top: 0.42, amp: 70, phase: 3.3, scale: 1.05, slant: -0.3 },

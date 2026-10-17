@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { type CareersRole, careersRolePath } from "@/lib/doehealth/doehealth-careers";
+import { CAREERS_LOCATION, type CareersRole, careersRolePath } from "@/lib/doehealth/doehealth-careers";
 import { p22Mackinac } from "@/lib/home/fonts";
 
 /** A dot and the item after it wrap together, so a line never ends on a dot. */
@@ -24,7 +24,7 @@ export function CareersRoleRow({ role }: { role: CareersRole }) {
         <span className="doehealth-careers__role-copy">
           <span className={`doehealth-careers__role-title ${p22Mackinac.className}`}>{role.title}</span>
           <span className="doehealth-careers__role-meta">
-            <span>{role.location}</span>
+            <span>{CAREERS_LOCATION}</span>
             <CareersMetaItem>Full Time</CareersMetaItem>
           </span>
           <span className="doehealth-careers__role-pay">

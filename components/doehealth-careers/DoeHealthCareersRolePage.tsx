@@ -12,6 +12,7 @@ import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealt
 import {
   CAREERS_ABOUT_DOE,
   CAREERS_APPLY_EMAIL,
+  CAREERS_LOCATION,
   CAREERS_OFFER,
   CAREERS_PATH,
   type CareersRole,
@@ -62,7 +63,7 @@ function ApplyForm({ role }: { role: CareersRole }) {
     const data = new FormData(event.currentTarget);
     const field = (name: string) => String(data.get(name) ?? "").trim();
     const body = [
-      `Role: ${role.title} (${role.location})`,
+      `Role: ${role.title} (${CAREERS_LOCATION})`,
       `Name: ${field("name")}`,
       `Email: ${field("email")}`,
       field("link") ? `Link: ${field("link")}` : null,
@@ -153,7 +154,7 @@ export function DoeHealthCareersRolePage({
             <p className="doehealth-role__team">{role.team}</p>
             <h1 className={`doehealth-role__title ${p22Mackinac.className}`}>{role.title}</h1>
             <p className="doehealth-role__meta">
-              <span>{role.location}</span>
+              <span>{CAREERS_LOCATION}</span>
               <CareersMetaItem>Full Time</CareersMetaItem>
               <CareersMetaItem>{role.pay}</CareersMetaItem>
             </p>
@@ -175,7 +176,7 @@ export function DoeHealthCareersRolePage({
                 </div>
                 <div>
                   <dt>Location</dt>
-                  <dd>{role.location}</dd>
+                  <dd>{CAREERS_LOCATION}</dd>
                 </div>
                 <div>
                   <dt>Type</dt>

@@ -12,7 +12,7 @@ import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDes
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import {
   CAREERS_APPLY_EMAIL,
-  CAREERS_LOCATIONS,
+  CAREERS_ELIGIBILITY,
   CAREERS_ROLES,
   CAREERS_TEAM_SECTIONS,
   CAREERS_TEAMS,
@@ -39,14 +39,6 @@ const TEAM_SECTIONS: readonly CareersDropdownSection[] = [
   },
 ];
 
-const LOCATION_SECTIONS: readonly CareersDropdownSection[] = [
-  { options: [{ value: ALL, label: "All Locations" }] },
-  {
-    heading: "Remote",
-    options: CAREERS_LOCATIONS.map((name) => ({ value: name, label: name })),
-  },
-];
-
 /** The teams that have roles in this list, in team order, each with its roles. */
 function teamGroups(roles: readonly CareersRole[]) {
   return CAREERS_TEAMS.map((name) => ({ name, roles: roles.filter((role) => role.team === name) })).filter(
@@ -70,23 +62,18 @@ function RoleGroup({ name, roles }: { name: string; roles: readonly CareersRole[
 
 function OpenRoles() {
   const [team, setTeam] = useState<string>(ALL);
-  const [location, setLocation] = useState<string>(ALL);
-  const roles = CAREERS_ROLES.filter(
-    (role) => (team === ALL || role.team === team) && (location === ALL || role.location === location),
-  );
+  const roles = CAREERS_ROLES.filter((role) => team === ALL || role.team === team);
   const founding = teamGroups(roles.filter((role) => role.section === "founding"));
   const additional = teamGroups(roles.filter((role) => role.section === "additional"));
 
   return (
     <div className="doehealth-careers__roles" id="roles">
       <h2 className={`doehealth-careers__roles-title ${p22Mackinac.className}`}>Open Roles</h2>
+      <p className="doehealth-careers__eligibility">{CAREERS_ELIGIBILITY}</p>
 
       <div className="doehealth-careers__bar">
         <div className="doehealth-careers__filter">
           <CareersFilterDropdown label="Team" value={team} sections={TEAM_SECTIONS} onChange={setTeam} />
-        </div>
-        <div className="doehealth-careers__filter">
-          <CareersFilterDropdown label="Location" value={location} sections={LOCATION_SECTIONS} onChange={setLocation} />
         </div>
         <span className="doehealth-careers__count">
           {roles.length} {roles.length === 1 ? "role" : "roles"}
