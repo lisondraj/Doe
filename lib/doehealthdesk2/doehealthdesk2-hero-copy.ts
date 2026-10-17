@@ -11,6 +11,11 @@ export const DOEHEALTH_DESK2_HERO_HEADLINES = [
   { line1: "Every patient's agent,", line2: "answered in seconds." },
   { line1: "Agents are booking care.", line2: "Make sure it's with you." },
   { line1: "When agents search,", line2: "your clinic shows up." },
+  { line1: "Patients ask their agents first.", line2: "Be the answer." },
+  { line1: "Care is moving to agents.", line2: "Be where they look." },
+  { line1: "Your next patient", line2: "starts with an agent." },
+  { line1: "Agents find the right clinic.", line2: "Make it yours." },
+  { line1: "Agents are choosing clinics.", line2: "Be the one they pick." },
 ] as const;
 
 /** Two lines under the title. */
