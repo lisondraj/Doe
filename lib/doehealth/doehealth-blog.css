@@ -729,6 +729,12 @@
   margin-bottom: calc(clamp(1.5rem, 3vw, 2.75rem) - clamp(3rem, 6vh, 4.5rem));
 }
 
+/* Desktop: the wide card's box starts at its row's top edge. The news card's top margin on the art would add to the
+   gap above it, so the box sits the same distance below the cards above as the cards sit from each other. */
+.doehealth-news-page[data-doeforvc-view="desktop"] .doehealth-news__item--wide .doehealth-blog-card__art {
+  margin-top: 0;
+}
+
 .doehealth-news__item--wide .doehealth-blog-card__art {
   aspect-ratio: 16 / 7;
 }
