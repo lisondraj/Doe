@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { CAREERS_LOCATION, type CareersRole, careersRolePath } from "@/lib/doehealth/doehealth-careers";
+import { CAREERS_LOCATION, type CareersRole, careersEquityLabel, careersRolePath } from "@/lib/doehealth/doehealth-careers";
 import { p22Mackinac } from "@/lib/home/fonts";
 
 /** A dot and the item after it wrap together, so a line never ends on a dot. */
@@ -29,7 +29,7 @@ export function CareersRoleRow({ role }: { role: CareersRole }) {
           </span>
           <span className="doehealth-careers__role-pay">
             {role.pay ? <span>{role.pay}</span> : null}
-            {role.equity ? <CareersMetaItem>Offers Equity</CareersMetaItem> : null}
+            <CareersMetaItem>{careersEquityLabel(role)}</CareersMetaItem>
           </span>
         </span>
         <svg className="doehealth-careers__role-arrow" viewBox="0 0 16 16" fill="none" aria-hidden>

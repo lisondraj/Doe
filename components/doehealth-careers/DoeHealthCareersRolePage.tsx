@@ -188,12 +188,10 @@ export function DoeHealthCareersRolePage({
                     <dd>{role.pay}</dd>
                   </div>
                 ) : null}
-                {role.equity ? (
-                  <div>
-                    <dt>Equity</dt>
-                    <dd>Offered</dd>
-                  </div>
-                ) : null}
+                <div>
+                  <dt>Equity</dt>
+                  <dd>{role.equity ?? "Offered"}</dd>
+                </div>
               </dl>
               <a href={`#${APPLY_ID}`} className="doehealth-role__cta doehealth-role__cta--block">
                 Start Your Application

@@ -28,7 +28,8 @@ export type CareersRole = {
   team: CareersTeam;
   /** The pay range in CAD. Null when the role has no set range, and then no pay is shown. */
   pay: string | null;
-  equity: boolean;
+  /** The equity range as a share of Doe, e.g. "0.5–1.0%". Null when offered without a set range. */
+  equity: string | null;
   /** The wave shape of the dot-wave box at the top of the role page. */
   wave: DoeHealthBlogWave;
   /** One line, set inside the dot-wave box. */
@@ -82,7 +83,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "founding",
     team: "Engineering",
     pay: "CA$150K – CA$180K",
-    equity: true,
+    equity: "0.5–1.0%",
     wave: { top: 0.44, amp: 76, phase: 1.1, scale: 1.05, slant: 0.35 },
     summary: "Build the product clinics use every day, from the first screen to the database.",
     about: [
@@ -114,7 +115,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "founding",
     team: "Engineering",
     pay: "CA$160K – CA$190K",
-    equity: true,
+    equity: "0.75–1.25%",
     wave: { top: 0.42, amp: 64, phase: 2.2, scale: 0.95, slant: -0.3, flip: true },
     summary: "Run the agents that answer every clinic's calls, around the clock.",
     about: [
@@ -146,7 +147,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "founding",
     team: "Engineering",
     pay: "CA$140K – CA$170K",
-    equity: true,
+    equity: "0.4–0.75%",
     wave: { top: 0.43, amp: 60, phase: 1.5, scale: 1.0, slant: 0.3, flip: true },
     summary: "Build the screens clinic teams work in all day, fast and calm under pressure.",
     about: [
@@ -178,7 +179,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "founding",
     team: "Engineering",
     pay: "CA$150K – CA$180K",
-    equity: true,
+    equity: "0.6–1.0%",
     wave: { top: 0.42, amp: 66, phase: 2.7, scale: 1.1, slant: -0.25 },
     summary: "Build the services that connect every clinic's agents to the patients who reach them.",
     about: [
@@ -210,7 +211,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "founding",
     team: "Growth",
     pay: "CA$100K – CA$120K",
-    equity: true,
+    equity: "0.5–1.0%",
     wave: { top: 0.44, amp: 70, phase: 0.4, scale: 1.0, slant: 0.35, flip: true },
     summary: "Own how Doe reaches clinics, from the first conversation to the first live agent.",
     about: [
@@ -242,7 +243,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "additional",
     team: "Engineering",
     pay: "CA$140K – CA$170K",
-    equity: true,
+    equity: "0.3–0.6%",
     wave: { top: 0.46, amp: 70, phase: 3.1, scale: 1.15, slant: 0.2 },
     summary: "Connect Doe to the records, schedules, and payers clinics already rely on.",
     about: [
@@ -274,7 +275,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "additional",
     team: "Engineering",
     pay: "CA$160K – CA$190K",
-    equity: true,
+    equity: "0.4–0.75%",
     wave: { top: 0.43, amp: 68, phase: 0.6, scale: 1.0, slant: -0.25 },
     summary: "Keep every patient's health data safe, as agents everywhere start to ask for it.",
     about: [
@@ -306,7 +307,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "additional",
     team: "Engineering",
     pay: "CA$130K – CA$165K",
-    equity: true,
+    equity: "0.25–0.5%",
     wave: { top: 0.45, amp: 58, phase: 1.8, scale: 0.9, slant: 0.3, flip: true },
     summary: "Build the tools front desks open every morning, for clinics across Canada.",
     about: [
@@ -336,7 +337,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "additional",
     team: "Product",
     pay: "CA$120K – CA$150K",
-    equity: true,
+    equity: "0.25–0.5%",
     wave: { top: 0.44, amp: 72, phase: 2.9, scale: 1.2, slant: -0.35 },
     summary: "Design how clinics see, trust, and steer the agents working for them.",
     about: [
@@ -366,7 +367,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "additional",
     team: "Product",
     pay: "CA$140K – CA$170K",
-    equity: true,
+    equity: "0.3–0.6%",
     wave: { top: 0.41, amp: 66, phase: 3.6, scale: 1.0, slant: 0.25, flip: true },
     summary: "Decide what Doe's agents should do for a clinic, and in what order.",
     about: [
@@ -396,7 +397,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "additional",
     team: "GTM & Sales",
     pay: "CA$90K – CA$110K + commission",
-    equity: true,
+    equity: "0.25–0.5%",
     wave: { top: 0.43, amp: 74, phase: 0.9, scale: 1.1, slant: -0.2 },
     summary: "Bring Doe to clinics, and help write how we sell it.",
     about: [
@@ -426,7 +427,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "additional",
     team: "GTM & Sales",
     pay: "CA$95K – CA$120K",
-    equity: true,
+    equity: "0.25–0.5%",
     wave: { top: 0.45, amp: 62, phase: 2.4, scale: 0.95, slant: 0.3, flip: true },
     summary: "Build Doe's relationships with clinics and clinic groups across Canada.",
     about: [
@@ -456,7 +457,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "additional",
     team: "GTM & Sales",
     pay: "CA$80K – CA$100K",
-    equity: true,
+    equity: "0.15–0.3%",
     wave: { top: 0.42, amp: 70, phase: 3.3, scale: 1.05, slant: -0.3 },
     summary: "Make sure every clinic gets real results from its agents.",
     about: [
@@ -486,7 +487,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     section: "additional",
     team: "Open Application",
     pay: null,
-    equity: true,
+    equity: null,
     wave: { top: 0.5, amp: 56, phase: 4.2, scale: 1.0, slant: 0.15, flip: true },
     summary: "Not sure where you fit? Tell us what you would build, and we will find the role.",
     about: [
@@ -512,6 +513,11 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
 
 export function careersRolePath(role: CareersRole) {
   return `${CAREERS_PATH}/${role.slug}`;
+}
+
+/** The equity line for a role: its range, or "Offers Equity" when no range is set. */
+export function careersEquityLabel(role: CareersRole) {
+  return role.equity ? `${role.equity} Equity` : "Offers Equity";
 }
 
 export function careersRole(slug: string) {
