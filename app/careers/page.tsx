@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Careers · Doe",
-  description: "Open roles at Doe across engineering, product, and sales.",
+  description:
+    "Open roles at Doe, the infrastructure for personal agents and healthcare organizations, with AI tools built for providers in every discipline.",
 };
 
 export default function CareersRoute() {
