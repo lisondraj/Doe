@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import Link from "next/link";
 
 import { DoeHealthDesk2AnnounceStrip } from "@/components/doehealth-desk2/DoeHealthDesk2AnnounceStrip";
@@ -35,6 +35,7 @@ export function DoeHealthDesk2DesktopNavBar({
   sectionHrefBase = "",
   centerLinks = true,
   primaryCta = DEFAULT_PRIMARY_CTA,
+  belowBar,
 }: {
   logoLink?: boolean;
   /** Where the "Doe" mark goes. Defaults to the site root. */
@@ -45,6 +46,8 @@ export function DoeHealthDesk2DesktopNavBar({
   /** The page links in the middle of the bar. Off for pages that only need the mark and the CTA. */
   centerLinks?: boolean;
   primaryCta?: DoeHealthDesk2NavCta;
+  /** Content under the bar that shares its surface and blur, so the two read as one bar. */
+  belowBar?: ReactNode;
 } = {}) {
   const heroWaitlistBg = "var(--desk2-nav-button-bg, #281910)";
   const heroWaitlistFg = "var(--desk2-nav-button-fg, #fffcf1)";
@@ -100,6 +103,7 @@ export function DoeHealthDesk2DesktopNavBar({
             />
           </div>
         </div>
+        {belowBar}
       </nav>
     </div>
   );

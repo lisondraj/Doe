@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
+import { type ReactNode, useLayoutEffect, useState } from "react";
 
 import DoeIphoneSiteNav from "@/components/DoeIphoneSiteNav";
 import { DoeHealthDesk2AnnounceStrip } from "@/components/doehealth-desk2/DoeHealthDesk2AnnounceStrip";
@@ -17,6 +17,7 @@ export function DoeHealthDesk2PhoneNavBar({
   logoHref = "/doehealthdesk",
   sectionHrefBase = "",
   primaryCta = DOEHEALTH_DESK2_NAV_PRIMARY_CTA,
+  belowBar,
 }: {
   /** Where the "Doe" mark goes. Defaults to the legacy desk home. */
   logoHref?: string;
@@ -24,6 +25,8 @@ export function DoeHealthDesk2PhoneNavBar({
   sectionHrefBase?: string;
   /** The last row of the expanded menu: a button-styled link. */
   primaryCta?: { readonly label: string; readonly href: string };
+  /** Content under the bar that shares its surface and blur, so the two read as one bar. */
+  belowBar?: ReactNode;
 } = {}) {
   const [dismissed, setDismissed] = useState(false);
   useDoePhoneLayoutViewport();
@@ -59,6 +62,7 @@ export function DoeHealthDesk2PhoneNavBar({
         logoLink
         brandFontClass={lora.className}
         navSheetItems={[...doehealthDesk2NavPages(sectionHrefBase), primaryCta]}
+        navExtra={belowBar}
       />
     </div>
   );

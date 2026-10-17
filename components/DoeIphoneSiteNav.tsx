@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Inter, Lora } from "next/font/google";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   MOBILE_NAV_FOOTER_SLIDES,
@@ -311,6 +311,7 @@ export default function DoeIphoneSiteNav({
   frostedScrollPastHero = false,
   frostedNavAlwaysPunched = false,
   menuScrimInsetTop,
+  navExtra,
 }: {
   pinchSafe?: boolean;
   homeHref?: string;
@@ -338,6 +339,8 @@ export default function DoeIphoneSiteNav({
   frostedNavAlwaysPunched?: boolean;
   /** Pinch-safe — dim scrim starts below fixed announce + nav (e.g. desk `--desk-phone-nav-clearance`). */
   menuScrimInsetTop?: string;
+  /** Content that sits inside the bar's own surface, under the chrome row (one blur, one background). */
+  navExtra?: ReactNode;
 }) {
   const resolvedNavSheetItems: readonly NavSheetItem[] =
     navSheetItems ??
@@ -927,7 +930,10 @@ export default function DoeIphoneSiteNav({
         }
       >
         {frostedScrollNav ? (
-          <div className="proto-nav-frost-shell">{navChromeStrip}</div>
+          <div className="proto-nav-frost-shell">
+            {navChromeStrip}
+            {navExtra}
+          </div>
         ) : (
           <div
             className={pinchSafe ? undefined : "transition-opacity duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)]"}
@@ -942,6 +948,7 @@ export default function DoeIphoneSiteNav({
             aria-hidden={pinchSafe ? undefined : navSheetLive ? true : undefined}
           >
             {navChromeStrip}
+            {navExtra}
           </div>
         )}
       </nav>

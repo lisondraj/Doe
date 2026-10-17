@@ -3,6 +3,8 @@ import type { DoeHealthBlogPlaceholderTone, DoeHealthBlogWave } from "@/lib/doeh
 
 type DoeHealthBlogPlaceholderProps = {
   tone: DoeHealthBlogPlaceholderTone;
+  /** A one-off background and dot colour, for a band that needs its own brightness. Overrides the tone's colours. */
+  colors?: { bg: string; dot: string };
   className?: string;
   /** Draws the video1 dot wave on the box, in dots matched to its tone. */
   pattern?: boolean;
@@ -30,6 +32,7 @@ const PATTERN_COLORS: Record<DoeHealthBlogPlaceholderTone, { bg: string; dot: st
 /** Flat tinted image slot that stands in for article art. */
 export function DoeHealthBlogPlaceholder({
   tone,
+  colors,
   className = "",
   pattern = false,
   wave,
@@ -39,7 +42,7 @@ export function DoeHealthBlogPlaceholder({
   if (!pattern) {
     return <div className={`doehealth-blog-placeholder doehealth-blog-placeholder--${tone} ${className}`} aria-hidden />;
   }
-  const { bg, dot } = PATTERN_COLORS[tone];
+  const { bg, dot } = colors ?? PATTERN_COLORS[tone];
   return (
     <div className={`doehealth-blog-placeholder doehealth-blog-placeholder--pattern ${className}`} style={{ background: bg }} aria-hidden>
       <DoeHealthBlogDotWave color={dot} motion={motion} {...wave} />
