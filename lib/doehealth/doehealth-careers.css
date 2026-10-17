@@ -417,8 +417,10 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
   --doehealth-role-cream: #fffcf1;
   /* A little wider than the blog's 60rem header and 56rem column, so the body and the card have room. */
   --doehealth-role-w: 72rem;
-  /* Clears the fixed nav and banner when jumping to the application or holding the side card. */
-  --doehealth-role-nav-clear: calc(5.5rem + var(--desk-banner-h, 2.85rem) + 1.5rem);
+  /* Clears the fixed nav, banner, and the dock when it is showing. */
+  --doehealth-role-nav-clear: calc(
+    var(--desk2-nav-clearance, 5.5rem + var(--desk2-banner-h, 2.85rem)) + var(--doehealth-role-dock-h, 0px) + 1.5rem
+  );
   box-sizing: border-box;
   /* The same vertical rhythm as the blog article. */
   padding-top: clamp(2.5rem, 6vh, 4.5rem);
@@ -658,8 +660,7 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
   background: #d4ae7a;
 }
 
-/* What we offer: soft beige tiles, two across. */
-/* Doe One: a gold dot-wave band carrying the claim, then the package in four groups on beige. */
+/* Doe One: Lora name first, then the claim on a gold band. Categories pair in two columns so their rows line up. */
 .doehealth-role__benefits {
   overflow: hidden;
   border-radius: 20px;
@@ -671,7 +672,6 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
   overflow: hidden;
 }
 
-/* The dot wave fills the band behind the copy; its dots sit low so the claim reads on clear ground. */
 .doehealth-role__benefits-hero .doehealth-role__benefits-art {
   position: absolute;
   inset: 0;
@@ -682,44 +682,52 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 .doehealth-role__benefits-hero-copy {
   position: relative;
   z-index: 1;
-  padding: clamp(1.75rem, 4vw, 2.5rem) clamp(1.5rem, 4vw, 2.5rem) clamp(4.5rem, 9vw, 6rem);
+  padding: clamp(1.75rem, 4vw, 2.5rem) clamp(1.5rem, 4vw, 2.5rem) clamp(4.25rem, 8vw, 5.75rem);
 }
 
-.doehealth-role__section .doehealth-role__benefits-eyebrow {
-  margin: 0 0 0.85rem;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.6);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  line-height: 1;
-  text-transform: uppercase;
+.doehealth-role__benefits-name {
+  margin: 0;
+  color: var(--doehealth-desk-surface);
+  font-size: clamp(3.1rem, 6vw, 4.6rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
 }
 
 .doehealth-role__benefits-claim {
-  max-width: 26rem;
-  margin: 0;
-  color: var(--doehealth-desk-surface);
-  font-size: clamp(1.9rem, 3vw, 2.5rem);
+  max-width: 22rem;
+  margin: 0.85rem 0 0;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.78);
+  font-size: clamp(1.35rem, 2.2vw, 1.7rem);
   font-weight: 400;
-  letter-spacing: -0.04em;
-  line-height: 1.04;
-}
-
-.doehealth-role__section .doehealth-role__benefits-count {
-  margin: 0.9rem 0 0;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.68);
-  font-size: 0.95rem;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
 }
 
 .doehealth-role__benefits-groups {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.75rem 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
   padding: clamp(1.5rem, 3vw, 2.25rem);
 }
 
+/* Subgrid keeps a wrapping name in one category from knocking the other category's row off. */
+.doehealth-role__benefits-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto repeat(4, minmax(2.55rem, auto));
+  column-gap: 3.25rem;
+}
+
+.doehealth-role__benefits-group {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: 1 / -1;
+  min-width: 0;
+}
+
 .doehealth-role__benefits-group-title {
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.15rem;
   color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
   font-size: 0.75rem;
   font-weight: 500;
@@ -728,39 +736,32 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 }
 
 .doehealth-role__benefits-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  display: contents;
 }
 
-/* The benefit, a dotted leader, then its figure; the leader sits on the last line when a name wraps. */
 .doehealth-role__benefit {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.5rem;
-  padding: 0.45rem 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: baseline;
+  gap: 1.15rem;
+  min-width: 0;
+  padding: 0.55rem 0;
+  border-top: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.1);
   font-size: 0.9375rem;
   letter-spacing: -0.015em;
   line-height: 1.35;
 }
 
 .doehealth-role__benefit-name {
-  flex: 0 1 auto;
+  min-width: 0;
   color: var(--doehealth-desk-surface);
-}
-
-.doehealth-role__benefit-leader {
-  flex: 1 1 1rem;
-  min-width: 1rem;
-  margin-bottom: 0.32em;
-  border-bottom: 2px dotted rgb(var(--doehealth-desk-ink-rgb) / 0.25);
 }
 
 .doehealth-role__benefit-figure {
   display: inline-flex;
-  flex: none;
   align-items: baseline;
-  gap: 0.15rem;
+  justify-content: flex-end;
+  gap: 0.2rem;
   white-space: nowrap;
 }
 
@@ -770,17 +771,112 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 }
 
 .doehealth-role__benefit-figure span {
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
   font-size: 0.8125rem;
 }
 
 .doehealth-role__benefit-status {
-  flex: none;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.48);
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+/* After the hero CTA scrolls past: a cream box under the nav, same facts, left-aligned. */
+.doehealth-role__dock {
+  position: fixed;
+  top: var(--desk2-nav-clearance, 8.35rem);
+  right: 0;
+  left: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-0.4rem);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.doehealth-role-page[data-role-dock="on"] {
+  --doehealth-role-dock-h: 5.85rem;
+}
+
+.doehealth-role__dock.is-visible {
+  pointer-events: auto;
+  opacity: 1;
+  transform: none;
+}
+
+.doehealth-role__dock-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  box-sizing: border-box;
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.08);
+  background: rgb(255 252 241 / 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.doehealth-role__dock-copy {
+  min-width: 0;
+  text-align: left;
+}
+
+.doehealth-role__dock-team {
+  margin: 0;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.doehealth-role__dock-title {
+  margin: 0.15rem 0 0;
+  overflow: hidden;
+  color: var(--doehealth-desk-surface);
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.doehealth-role__dock-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.45rem;
+  margin: 0.3rem 0 0;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.62);
+  font-size: 0.875rem;
+  letter-spacing: -0.015em;
+}
+
+.doehealth-role__dock-cta {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.15rem;
+  border-radius: var(--doehealth-desk2-radius, 11px);
+  background: var(--doehealth-desk-surface);
+  color: var(--doehealth-role-cream);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  text-decoration: none;
+}
+
+.doehealth-role__dock-cta:hover {
+  opacity: 0.88;
+}
+
+.doehealth-role__dock-cta:focus-visible {
+  outline: 2px solid rgb(var(--doehealth-desk-ink-rgb) / 0.3);
+  outline-offset: 3px;
 }
 
 /* The invite at the foot of the article: the desk's dark panel and corner, one way in. */
@@ -892,6 +988,20 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
     padding-right: 1.25rem;
   }
 
+  .doehealth-role {
+    --doehealth-role-nav-clear: calc(
+      var(--desk2-phone-nav-clearance, 7.3rem) + var(--doehealth-role-dock-h, 0px) + 1rem
+    );
+  }
+
+  .doehealth-role__dock {
+    top: var(--desk2-phone-nav-clearance, 7.3rem);
+  }
+
+  .doehealth-role-page[data-role-dock="on"] {
+    --doehealth-role-dock-h: 7.1rem;
+  }
+
   .doehealth-role__layout {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -930,10 +1040,49 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
     padding: 1.6rem 1.4rem 4.25rem;
   }
 
+  .doehealth-role__benefits-name {
+    font-size: clamp(2.6rem, 12vw, 3.4rem);
+  }
+
   .doehealth-role__benefits-groups {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1.5rem;
+    gap: 1.75rem;
     padding: 1.4rem 1.25rem 1.6rem;
+  }
+
+  .doehealth-role__benefits-row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    row-gap: 1.75rem;
+  }
+
+  .doehealth-role__benefits-group {
+    display: block;
+    grid-row: auto;
+  }
+
+  .doehealth-role__benefits-list {
+    display: block;
+  }
+
+  .doehealth-role__dock-box {
+    align-items: flex-end;
+    gap: 0.85rem;
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+  }
+
+  .doehealth-role__dock-title {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: 1.15rem;
+  }
+
+  .doehealth-role__dock-cta {
+    padding: 0.65rem 0.9rem;
+    font-size: 0.8125rem;
   }
 
   .doehealth-role__invite {

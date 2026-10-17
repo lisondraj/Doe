@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { CareersMetaItem, CareersRoleRow } from "@/components/doehealth-careers/CareersRoleRow";
@@ -27,12 +27,24 @@ import {
   useDoeHealthDesk2Variant,
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-variant";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
-import { inter, p22Mackinac } from "@/lib/home/fonts";
+import { inter, lora, p22Mackinac } from "@/lib/home/fonts";
 
 const DESK2_PATH = "/doehealthdesk2";
 /** The footer still uses the legacy desk section anchors. */
 const DESK_PATH = "/doehealthdesk";
 const APPLY_ID = "apply";
+
+function careersApplyHref(role: CareersRole) {
+  const subject = `Application: ${role.title}`;
+  const body = [
+    `Role: ${role.title} (${careersLocation(role)})`,
+    "",
+    "Hi, I'd like to apply. A little about me, and what I would build at Doe:",
+    "",
+    "(Attach your resume before you send.)",
+  ].join("\n");
+  return `mailto:${CAREERS_APPLY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
 function RoleSection({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -54,45 +66,51 @@ function RoleList({ items }: { items: readonly string[] }) {
 }
 
 const BENEFITS_WAVE = { top: 0.72, amp: 46, phase: 2.0, scale: 1.1, slant: 0.2 };
-const BENEFITS_COUNT = CAREERS_BENEFIT_GROUPS.reduce((total, group) => total + group.items.length, 0);
 
 /**
- * Doe One: a dot-wave band carrying the claim, then the package in four groups. Each row runs from the benefit across a
- * dotted leader to its figure; benefits without a figure end on a quiet status instead.
+ * Doe One: a gold band with the name first, then the claim. The package sits in two paired columns so the category
+ * rows line up; figures sit in a right column, statuses stay quiet.
  */
 function Benefits() {
+  const rows = [
+    CAREERS_BENEFIT_GROUPS.slice(0, 2),
+    CAREERS_BENEFIT_GROUPS.slice(2),
+  ];
+
   return (
     <section className="doehealth-role__section doehealth-role__benefits" aria-labelledby="doehealth-role-benefits-title">
       <div className="doehealth-role__benefits-hero">
         <DoeHealthBlogPlaceholder tone="gold" wave={BENEFITS_WAVE} className="doehealth-role__benefits-art" pattern />
         <div className="doehealth-role__benefits-hero-copy">
-          <p className="doehealth-role__benefits-eyebrow">{CAREERS_BENEFITS_NAME}</p>
-          <h2 id="doehealth-role-benefits-title" className={`doehealth-role__benefits-claim ${p22Mackinac.className}`}>
-            {CAREERS_BENEFITS_CLAIM}
+          <h2 id="doehealth-role-benefits-title" className={`doehealth-role__benefits-name ${lora.className}`}>
+            {CAREERS_BENEFITS_NAME}
           </h2>
-          <p className="doehealth-role__benefits-count">{BENEFITS_COUNT} benefits, for every full-time hire.</p>
+          <p className={`doehealth-role__benefits-claim ${p22Mackinac.className}`}>{CAREERS_BENEFITS_CLAIM}</p>
         </div>
       </div>
       <div className="doehealth-role__benefits-groups">
-        {CAREERS_BENEFIT_GROUPS.map((group) => (
-          <div key={group.title}>
-            <h3 className="doehealth-role__benefits-group-title">{group.title}</h3>
-            <ul className="doehealth-role__benefits-list">
-              {group.items.map((item) => (
-                <li key={item.name} className="doehealth-role__benefit">
-                  <span className="doehealth-role__benefit-name">{item.name}</span>
-                  <span className="doehealth-role__benefit-leader" aria-hidden />
-                  {item.figure ? (
-                    <span className="doehealth-role__benefit-figure">
-                      <strong>{item.figure}</strong>
-                      {item.unit ? <span>{item.unit}</span> : null}
-                    </span>
-                  ) : (
-                    <span className="doehealth-role__benefit-status">{item.status}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
+        {rows.map((pair) => (
+          <div key={pair.map((group) => group.title).join("-")} className="doehealth-role__benefits-row">
+            {pair.map((group) => (
+              <div key={group.title} className="doehealth-role__benefits-group">
+                <h3 className="doehealth-role__benefits-group-title">{group.title}</h3>
+                <ul className="doehealth-role__benefits-list">
+                  {group.items.map((item) => (
+                    <li key={item.name} className="doehealth-role__benefit">
+                      <span className="doehealth-role__benefit-name">{item.name}</span>
+                      {item.figure ? (
+                        <span className="doehealth-role__benefit-figure">
+                          <strong>{item.figure}</strong>
+                          {item.unit ? <span>{item.unit}</span> : null}
+                        </span>
+                      ) : (
+                        <span className="doehealth-role__benefit-status">{item.status}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         ))}
       </div>
@@ -105,15 +123,7 @@ function Benefits() {
  * role written out and addressed to the founders, so they can attach a resume before it goes.
  */
 function ApplyInvite({ role }: { role: CareersRole }) {
-  const subject = `Application: ${role.title}`;
-  const body = [
-    `Role: ${role.title} (${careersLocation(role)})`,
-    "",
-    "Hi, I'd like to apply. A little about me, and what I would build at Doe:",
-    "",
-    "(Attach your resume before you send.)",
-  ].join("\n");
-  const href = `mailto:${CAREERS_APPLY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const href = careersApplyHref(role);
 
   return (
     <section id={APPLY_ID} className="doehealth-role__invite" aria-labelledby="doehealth-role-invite-title">
@@ -135,6 +145,37 @@ function ApplyInvite({ role }: { role: CareersRole }) {
   );
 }
 
+/**
+ * After the hero "Start Your Application" scrolls past, a left-aligned box sits under the nav with the same facts and
+ * a way back to apply. It hides again when the invite at the foot of the article comes into view.
+ */
+function RoleDock({
+  role,
+  visible,
+}: {
+  role: CareersRole;
+  visible: boolean;
+}) {
+  return (
+    <div className={`doehealth-role__dock${visible ? " is-visible" : ""}`} aria-hidden={!visible}>
+      <div className={`doehealth-role__dock-box ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
+        <div className="doehealth-role__dock-copy">
+          <p className="doehealth-role__dock-team">{role.team}</p>
+          <p className={`doehealth-role__dock-title ${p22Mackinac.className}`}>{role.title}</p>
+          <p className="doehealth-role__dock-meta">
+            <span>{careersLocation(role)}</span>
+            <CareersMetaItem>Full Time</CareersMetaItem>
+            {role.pay ? <CareersMetaItem>{role.pay}</CareersMetaItem> : null}
+          </p>
+        </div>
+        <a href={`#${APPLY_ID}`} className="doehealth-role__dock-cta">
+          Start Your Application
+        </a>
+      </div>
+    </div>
+  );
+}
+
 /** /careers/[slug]: one open role, its details, and the application. */
 export function DoeHealthCareersRolePage({
   role,
@@ -146,12 +187,47 @@ export function DoeHealthCareersRolePage({
   const variant = useDoeHealthDesk2Variant(initialVariant);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
   const others = careersOtherRoles(role);
+  const ctaRef = useRef<HTMLAnchorElement>(null);
+  const inviteRef = useRef<HTMLDivElement>(null);
+  const [docked, setDocked] = useState(false);
+
+  useEffect(() => {
+    const cta = ctaRef.current;
+    const invite = inviteRef.current;
+    if (!cta || !invite) return;
+
+    let pastCta = false;
+    let inviteInView = false;
+    const sync = () => setDocked(pastCta && !inviteInView);
+
+    const ctaObserver = new IntersectionObserver(
+      ([entry]) => {
+        pastCta = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+        sync();
+      },
+      { threshold: 0 },
+    );
+    const inviteObserver = new IntersectionObserver(
+      ([entry]) => {
+        inviteInView = entry.isIntersecting;
+        sync();
+      },
+      { threshold: 0.12 },
+    );
+    ctaObserver.observe(cta);
+    inviteObserver.observe(invite);
+    return () => {
+      ctaObserver.disconnect();
+      inviteObserver.disconnect();
+    };
+  }, []);
 
   return (
     <div
       className={`doehealth-desk2-page doehealth-desk-page doehealth-blog-page doehealth-careers-page doehealth-role-page relative min-h-[100dvh] ${inter.className} ${p22Mackinac.variable}`}
       style={{ backgroundColor: DOEHEALTH_DESK2_PAGE_BACKGROUND }}
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}
+      data-role-dock={docked ? "on" : "off"}
     >
       {variant === "desktop" ? (
         <DoeHealthDesk2DesktopNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
@@ -159,6 +235,7 @@ export function DoeHealthCareersRolePage({
         <DoeHealthDesk2PhoneNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
       )}
       <DoeHealthDesk2NavWash />
+      <RoleDock role={role} visible={docked} />
       <main className="doehealth-desk-main min-h-[100dvh]" aria-label={role.title}>
         <article className={`doehealth-role ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
           <header className="doehealth-role__head">
@@ -175,7 +252,7 @@ export function DoeHealthCareersRolePage({
               <CareersMetaItem>Full Time</CareersMetaItem>
               {role.pay ? <CareersMetaItem>{role.pay}</CareersMetaItem> : null}
             </p>
-            <a href={`#${APPLY_ID}`} className="doehealth-role__cta">
+            <a ref={ctaRef} href={`#${APPLY_ID}`} className="doehealth-role__cta">
               Start Your Application
             </a>
           </header>
@@ -260,7 +337,9 @@ export function DoeHealthCareersRolePage({
             </section>
           ) : null}
 
-          <ApplyInvite role={role} />
+          <div ref={inviteRef}>
+            <ApplyInvite role={role} />
+          </div>
         </article>
 
         <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} />
