@@ -659,7 +659,7 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 }
 
 /* What we offer: soft beige tiles, two across. */
-/* Doe One: the benefits package, a clean two-column table in a beige box. */
+/* Doe One: the benefits package, a grid of cream tiles in a beige box. */
 .doehealth-role__benefits {
   padding: clamp(1.5rem, 3vw, 2.25rem);
   border-radius: 20px;
@@ -681,50 +681,47 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
   font-size: 1rem;
 }
 
-.doehealth-role__benefits-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.975rem;
-  letter-spacing: -0.015em;
+.doehealth-role__benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.doehealth-role__benefits-table thead th {
-  padding: 0 0 0.75rem;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+/* The name sits at the top; the value and its note settle to the bottom, so values line up across a row. */
+.doehealth-role__benefit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-height: 7.5rem;
+  padding: 1rem 1.05rem;
+  border-radius: 14px;
+  background: var(--doehealth-role-cream);
+}
+
+.doehealth-role__benefit-name {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.6);
   font-size: 0.8125rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-align: left;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
 }
 
-.doehealth-role__benefits-table thead th:last-child,
-.doehealth-role__benefits-table td {
-  text-align: right;
-}
-
-.doehealth-role__benefits-table tbody th,
-.doehealth-role__benefits-table td {
-  padding: 0.85rem 0;
-  border-top: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.1);
-  line-height: 1.45;
-  vertical-align: top;
-}
-
-.doehealth-role__benefits-table tbody th {
-  padding-right: 1.5rem;
+.doehealth-role__benefit-value {
+  margin-top: auto;
   color: var(--doehealth-desk-surface);
-  font-weight: 500;
-  text-align: left;
+  font-size: 1.55rem;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
 }
 
-.doehealth-role__benefits-table td {
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.68);
-}
-
-.doehealth-role__benefits-table td strong {
-  color: var(--doehealth-desk-surface);
-  font-weight: 600;
+.doehealth-role__benefit-note {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.55);
+  font-size: 0.8125rem;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
 }
 
 /* The invite at the foot of the article: the desk's dark panel and corner, one way in. */
@@ -874,27 +871,21 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
     padding: 1.4rem 1.25rem;
   }
 
-  /* Each benefit stacks: the name, then its package under it. */
-  .doehealth-role__benefits-table thead {
-    display: none;
+  .doehealth-role__benefits-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .doehealth-role__benefits-table tbody tr {
-    display: block;
-    padding: 0.8rem 0;
-    border-top: 1px solid rgb(var(--doehealth-desk-ink-rgb) / 0.1);
+  /* An odd last tile spans the row instead of sitting alone. */
+  .doehealth-role__benefit:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 
-  .doehealth-role__benefits-table tbody th,
-  .doehealth-role__benefits-table td {
-    display: block;
-    padding: 0;
-    border-top: 0;
-    text-align: left;
+  .doehealth-role__benefit {
+    min-height: 6.5rem;
   }
 
-  .doehealth-role__benefits-table td {
-    margin-top: 0.2rem;
+  .doehealth-role__benefit-value {
+    font-size: 1.35rem;
   }
 
   .doehealth-role__invite {

@@ -53,11 +53,7 @@ function RoleList({ items }: { items: readonly string[] }) {
   );
 }
 
-function BenefitDetail({ text }: { text: string }) {
-  return <>{text.split("**").map((part, index) => (index % 2 === 1 ? <strong key={index}>{part}</strong> : part))}</>;
-}
-
-/** Doe One: the benefits package, as a two-column table in a beige box. */
+/** Doe One: the benefits package, as a grid of tiles in a beige box. */
 function Benefits() {
   return (
     <section className="doehealth-role__section doehealth-role__benefits" aria-labelledby="doehealth-role-benefits-title">
@@ -65,24 +61,15 @@ function Benefits() {
         {CAREERS_BENEFITS_NAME}
       </h2>
       <p className="doehealth-role__benefits-lede">{CAREERS_BENEFITS_LEDE}</p>
-      <table className="doehealth-role__benefits-table">
-        <thead>
-          <tr>
-            <th scope="col">Benefit</th>
-            <th scope="col">Package</th>
-          </tr>
-        </thead>
-        <tbody>
-          {CAREERS_BENEFITS.map((item) => (
-            <tr key={item.benefit}>
-              <th scope="row">{item.benefit}</th>
-              <td>
-                <BenefitDetail text={item.detail} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ul className="doehealth-role__benefits-grid">
+        {CAREERS_BENEFITS.map((item) => (
+          <li key={item.benefit} className="doehealth-role__benefit">
+            <span className="doehealth-role__benefit-name">{item.benefit}</span>
+            <strong className={`doehealth-role__benefit-value ${p22Mackinac.className}`}>{item.value}</strong>
+            {item.note ? <span className="doehealth-role__benefit-note">{item.note}</span> : null}
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
