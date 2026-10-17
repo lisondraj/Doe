@@ -39,19 +39,19 @@ export type CareersRole = {
 
 export const CAREERS_TEAM_SECTIONS: readonly CareersTeamSection[] = [
   {
-    title: "A small team close to clinics",
+    title: "A Small Team Close to Clinics",
     body: "We spend time in practices every week. The people building Doe sit with front desks, providers, and billing teams, and the work starts from what we see there.",
     tone: "cream",
     wave: { top: 0.42, amp: 80, phase: 1.4, scale: 1.1, slant: 0.4 },
   },
   {
-    title: "Providers in the room",
+    title: "Providers in the Room",
     body: "Doctors review what we design before it ships. Engineers, designers, and clinicians work on the same problems at the same table, not in a handoff.",
     tone: "clay",
     wave: { top: 0.46, amp: 60, phase: 2.6, scale: 0.9, slant: -0.4, flip: true },
   },
   {
-    title: "Ownership from day one",
+    title: "Ownership from Day One",
     body: "Everyone owns something real in their first month. We keep the team small so each person can see the whole product and change it.",
     tone: "gold",
     wave: { top: 0.4, amp: 70, phase: 3.8, scale: 1.25, slant: 0.2 },
@@ -68,8 +68,8 @@ export const CAREERS_ABOUT_DOE: readonly string[] = [
 export const CAREERS_OFFER: readonly { lead: string; text: string }[] = [
   { lead: "Remote", text: "Work from anywhere in the US or Canada, depending on the role." },
   { lead: "Equity", text: "Every role comes with ownership in Doe." },
-  { lead: "Time in clinics", text: "Regular time in practices with the people who use what we build." },
-  { lead: "Real ownership", text: "Something of your own to run in your first month, on a team small enough to change the whole product." },
+  { lead: "Time in Clinics", text: "Regular time in practices with the people who use what we build." },
+  { lead: "Real Ownership", text: "Something of your own to run in your first month, on a team small enough to change the whole product." },
 ];
 
 export const CAREERS_ROLES: readonly CareersRole[] = [

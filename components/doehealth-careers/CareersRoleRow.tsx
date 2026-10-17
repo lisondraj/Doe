@@ -25,11 +25,11 @@ export function CareersRoleRow({ role }: { role: CareersRole }) {
           <span className={`doehealth-careers__role-title ${p22Mackinac.className}`}>{role.title}</span>
           <span className="doehealth-careers__role-meta">
             <span>{role.location}</span>
-            <CareersMetaItem>Full time</CareersMetaItem>
+            <CareersMetaItem>Full Time</CareersMetaItem>
           </span>
           <span className="doehealth-careers__role-pay">
             <span>{role.pay}</span>
-            {role.equity ? <CareersMetaItem>Offers equity</CareersMetaItem> : null}
+            {role.equity ? <CareersMetaItem>Offers Equity</CareersMetaItem> : null}
           </span>
         </span>
         <svg className="doehealth-careers__role-arrow" viewBox="0 0 16 16" fill="none" aria-hidden>

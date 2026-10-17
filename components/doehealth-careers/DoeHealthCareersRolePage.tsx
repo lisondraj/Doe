@@ -82,7 +82,7 @@ function ApplyForm({ role }: { role: CareersRole }) {
     <form className="doehealth-role__form" onSubmit={submit}>
       <div className="doehealth-role__form-row">
         <label className="doehealth-role__field">
-          <span>Full name</span>
+          <span>Full Name</span>
           <input name="name" type="text" autoComplete="name" required />
         </label>
         <label className="doehealth-role__field">
@@ -100,7 +100,7 @@ function ApplyForm({ role }: { role: CareersRole }) {
       </label>
       <div className="doehealth-role__form-foot">
         <button type="submit" className="doehealth-role__cta">
-          Send application
+          Send Application
         </button>
         <p className="doehealth-role__form-note" aria-live="polite">
           {opened ? (
@@ -148,17 +148,17 @@ export function DoeHealthCareersRolePage({
               <svg viewBox="0 0 16 16" fill="none" aria-hidden>
                 <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              All open roles
+              All Open Roles
             </Link>
             <p className="doehealth-role__team">{role.team}</p>
             <h1 className={`doehealth-role__title ${p22Mackinac.className}`}>{role.title}</h1>
             <p className="doehealth-role__meta">
               <span>{role.location}</span>
-              <CareersMetaItem>Full time</CareersMetaItem>
+              <CareersMetaItem>Full Time</CareersMetaItem>
               <CareersMetaItem>{role.pay}</CareersMetaItem>
             </p>
             <a href={`#${APPLY_ID}`} className="doehealth-role__cta">
-              Start your application
+              Start Your Application
             </a>
           </header>
 
@@ -168,8 +168,8 @@ export function DoeHealthCareersRolePage({
           </DoeHealthBlogPlaceholder>
 
           <div className="doehealth-role__layout">
-            <aside className="doehealth-role__glance" aria-label="At a glance">
-              <h2 className={`doehealth-role__glance-title ${p22Mackinac.className}`}>At a glance</h2>
+            <aside className="doehealth-role__glance" aria-label="At a Glance">
+              <h2 className={`doehealth-role__glance-title ${p22Mackinac.className}`}>At a Glance</h2>
               <dl className="doehealth-role__facts">
                 <div>
                   <dt>Team</dt>
@@ -181,7 +181,7 @@ export function DoeHealthCareersRolePage({
                 </div>
                 <div>
                   <dt>Type</dt>
-                  <dd>Full time</dd>
+                  <dd>Full Time</dd>
                 </div>
                 <div>
                   <dt>Pay</dt>
@@ -195,7 +195,7 @@ export function DoeHealthCareersRolePage({
                 ) : null}
               </dl>
               <a href={`#${APPLY_ID}`} className="doehealth-role__cta doehealth-role__cta--block">
-                Start your application
+                Start Your Application
               </a>
               <p className="doehealth-role__glance-note">
                 Questions? <a href={`mailto:${CAREERS_APPLY_EMAIL}`}>{CAREERS_APPLY_EMAIL}</a>
@@ -208,21 +208,21 @@ export function DoeHealthCareersRolePage({
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </RoleSection>
-              <RoleSection title="The role">
+              <RoleSection title="The Role">
                 {role.about.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </RoleSection>
-              <RoleSection title="What you'll do">
+              <RoleSection title="What You'll Do">
                 <RoleList items={role.responsibilities} />
               </RoleSection>
-              <RoleSection title="What you'll bring">
+              <RoleSection title="What You'll Bring">
                 <RoleList items={role.qualifications} />
               </RoleSection>
-              <RoleSection title="Nice to have">
+              <RoleSection title="Nice to Have">
                 <RoleList items={role.bonus} />
               </RoleSection>
-              <RoleSection title="What we offer">
+              <RoleSection title="What We Offer">
                 <ul className="doehealth-role__offer">
                   {CAREERS_OFFER.map((item) => (
                     <li key={item.lead}>
@@ -239,7 +239,7 @@ export function DoeHealthCareersRolePage({
             <div className="doehealth-role__apply-head">
               <p className="doehealth-role__team">{role.title}</p>
               <h2 id="doehealth-role-apply-title" className={`doehealth-role__apply-title ${p22Mackinac.className}`}>
-                Start your application
+                Start Your Application
               </h2>
               <p className="doehealth-role__apply-lede">
                 Tell us who you are and what you would build. Your application goes straight to the founders.
@@ -251,7 +251,7 @@ export function DoeHealthCareersRolePage({
           {others.length > 0 ? (
             <section className="doehealth-role__more" aria-labelledby="doehealth-role-more-title">
               <h2 id="doehealth-role-more-title" className={`doehealth-role__more-title ${p22Mackinac.className}`}>
-                More open roles
+                More Open Roles
               </h2>
               <ul className="doehealth-careers__list">
                 {others.map((other) => (
@@ -259,7 +259,7 @@ export function DoeHealthCareersRolePage({
                 ))}
               </ul>
               <Link href={`${CAREERS_PATH}#roles`} className="doehealth-role__more-link">
-                See all open roles
+                See All Open Roles
               </Link>
             </section>
           ) : null}
