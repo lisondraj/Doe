@@ -73,12 +73,27 @@ export const CAREERS_ABOUT_DOE: readonly string[] = [
   "Each practice gets its own intelligence model, trained on how that clinic actually runs, and agents that answer, schedule, and follow up on its behalf. We are a small team of engineers, designers, and clinicians building it together.",
 ];
 
-/** "What we offer" on every role page. */
-export const CAREERS_OFFER: readonly { lead: string; text: string }[] = [
-  { lead: "Remote", text: "Work from anywhere in the US or Canada." },
-  { lead: "Equity", text: "Every role comes with ownership in Doe." },
-  { lead: "Time in Clinics", text: "Regular time in practices with the people who use what we build." },
-  { lead: "Real Ownership", text: "Something of your own to run in your first month, on a team small enough to change the whole product." },
+/** Doe One, the benefits package on every role page. */
+export const CAREERS_BENEFITS_NAME = "Doe One";
+export const CAREERS_BENEFITS_LEDE = "The most competitive benefits package among Toronto startups.";
+
+/** In `detail`, text wrapped in ** is set in bold. */
+export const CAREERS_BENEFITS: readonly { benefit: string; detail: string }[] = [
+  { benefit: "Extended health, dental & vision", detail: "100% employer-paid premium plan" },
+  { benefit: "Mental health", detail: "**C$2,000/year**" },
+  { benefit: "Gym / fitness", detail: "**C$100/month** fitness membership allowance" },
+  { benefit: "WHOOP", detail: "Device + membership covered" },
+  { benefit: "Superpower", detail: "Membership covered" },
+  { benefit: "Dialogue Health", detail: "Virtual healthcare access" },
+  { benefit: "Preventive health / labs", detail: "**C$500–1,000/year**" },
+  { benefit: "Home-office setup", detail: "**C$2,000** initial allowance" },
+  { benefit: "Internet + phone", detail: "**C$150/month**" },
+  { benefit: "Conference, travel & learning", detail: "**C$1,500/year**" },
+  { benefit: "Team retreats / offsites", detail: "**2× annually**, company-paid" },
+  { benefit: "Vacation", detail: "**4 weeks**" },
+  { benefit: "Sick / personal days", detail: "Flexible" },
+  { benefit: "Parental leave", detail: "Top-up policy" },
+  { benefit: "Equipment", detail: "Top-Spec MacBook Pro" },
 ];
 
 export const CAREERS_ROLES: readonly CareersRole[] = [

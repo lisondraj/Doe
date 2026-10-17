@@ -12,7 +12,9 @@ import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealt
 import {
   CAREERS_ABOUT_DOE,
   CAREERS_APPLY_EMAIL,
-  CAREERS_OFFER,
+  CAREERS_BENEFITS,
+  CAREERS_BENEFITS_LEDE,
+  CAREERS_BENEFITS_NAME,
   CAREERS_PATH,
   type CareersRole,
   careersLocation,
@@ -48,6 +50,40 @@ function RoleList({ items }: { items: readonly string[] }) {
         <li key={item}>{item}</li>
       ))}
     </ul>
+  );
+}
+
+function BenefitDetail({ text }: { text: string }) {
+  return <>{text.split("**").map((part, index) => (index % 2 === 1 ? <strong key={index}>{part}</strong> : part))}</>;
+}
+
+/** Doe One: the benefits package, as a two-column table in a beige box. */
+function Benefits() {
+  return (
+    <section className="doehealth-role__section doehealth-role__benefits" aria-labelledby="doehealth-role-benefits-title">
+      <h2 id="doehealth-role-benefits-title" className={`doehealth-role__benefits-title ${p22Mackinac.className}`}>
+        {CAREERS_BENEFITS_NAME}
+      </h2>
+      <p className="doehealth-role__benefits-lede">{CAREERS_BENEFITS_LEDE}</p>
+      <table className="doehealth-role__benefits-table">
+        <thead>
+          <tr>
+            <th scope="col">Benefit</th>
+            <th scope="col">Package</th>
+          </tr>
+        </thead>
+        <tbody>
+          {CAREERS_BENEFITS.map((item) => (
+            <tr key={item.benefit}>
+              <th scope="row">{item.benefit}</th>
+              <td>
+                <BenefitDetail text={item.detail} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
   );
 }
 
@@ -191,16 +227,7 @@ export function DoeHealthCareersRolePage({
               <RoleSection title="Nice to Have">
                 <RoleList items={role.bonus} />
               </RoleSection>
-              <RoleSection title="What We Offer">
-                <ul className="doehealth-role__offer">
-                  {CAREERS_OFFER.map((item) => (
-                    <li key={item.lead}>
-                      <strong>{item.lead}</strong>
-                      <span>{item.text}</span>
-                    </li>
-                  ))}
-                </ul>
-              </RoleSection>
+              <Benefits />
             </div>
           </div>
 
