@@ -77,51 +77,47 @@ export const CAREERS_ABOUT_DOE: readonly string[] = [
 export const CAREERS_BENEFITS_NAME = "Doe One";
 export const CAREERS_BENEFITS_CLAIM = "The most competitive benefits package among Toronto startups.";
 
-/**
- * One Doe One tile. `highlight` is the standout figure or word, set large, with its unit ($100/mo).
- * `detail` is the line under it, set like a title. `size` places the tile: hero (2×2), wide (two across), std (one across).
- */
+/** One Doe One row: the benefit written out, then its figure or word, set in Lora at the end of the row. */
 export type CareersBenefit = {
-  highlight: string;
-  detail: string;
-  size: "hero" | "wide" | "std";
+  name: string;
+  figure: string;
 };
 
-/** Doe One by category. Each category is its own bento, ordered so its tiles pack with no gaps. */
+/** Doe One by category, set two across: Health beside Fitness & Recovery, Work Setup beside Time & Team. */
 export const CAREERS_BENEFIT_GROUPS: readonly { title: string; items: readonly CareersBenefit[] }[] = [
   {
     title: "Health",
     items: [
-      { highlight: "100%", detail: "Extended Health, Dental & Vision", size: "hero" },
-      { highlight: "$2,000", detail: "Psychotherapy", size: "wide" },
-      { highlight: "$500–1,000/yr", detail: "Preventive Health & Labs", size: "std" },
-      { highlight: "Dialogue", detail: "Virtual\nHealthcare", size: "std" },
+      { name: "Extended Health, Dental & Vision", figure: "100%" },
+      { name: "Psychotherapy", figure: "$2,000" },
+      { name: "Preventive Health & Labs", figure: "$500–1,000/yr" },
+      { name: "Virtual Healthcare", figure: "Dialogue" },
     ],
   },
   {
     title: "Fitness & Recovery",
     items: [
-      { highlight: "WHOOP", detail: "Device & Membership", size: "hero" },
-      { highlight: "$100/mo", detail: "Gym & Fitness", size: "wide" },
-      { highlight: "Superpower", detail: "150+ Biomarker Testing 2x yearly", size: "wide" },
+      { name: "WHOOP Device & Membership", figure: "Covered" },
+      { name: "Gym & Fitness", figure: "$100/mo" },
+      { name: "Superpower 150+ Biomarker Testing", figure: "2×/yr" },
     ],
   },
   {
     title: "Work Setup",
     items: [
-      { highlight: "MacBook Pro", detail: "Top-Spec", size: "hero" },
-      { highlight: "$1,500/yr", detail: "Conference, Travel & Learning", size: "wide" },
-      { highlight: "$2,000", detail: "Home-Office Setup", size: "std" },
-      { highlight: "$150/mo", detail: "Internet + Phone", size: "std" },
+      { name: "Top-Spec MacBook Pro", figure: "Included" },
+      { name: "Home-Office Setup", figure: "$2,000" },
+      { name: "Internet + Phone", figure: "$150/mo" },
+      { name: "Conference, Travel & Learning", figure: "$1,500/yr" },
     ],
   },
   {
     title: "Time & Team",
     items: [
-      { highlight: "4 weeks", detail: "Vacation", size: "hero" },
-      { highlight: "2×/yr", detail: "Company-Paid Team Retreats", size: "wide" },
-      { highlight: "Flexible", detail: "Sick & Personal Days", size: "std" },
-      { highlight: "Top-up", detail: "Parental Leave", size: "std" },
+      { name: "Vacation", figure: "4 weeks" },
+      { name: "Sick & Personal Days", figure: "Flexible" },
+      { name: "Parental Leave", figure: "Top-up" },
+      { name: "Company-Paid Team Retreats", figure: "2×/yr" },
     ],
   },
 ];

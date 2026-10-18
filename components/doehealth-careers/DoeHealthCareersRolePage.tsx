@@ -70,8 +70,8 @@ const BENEFITS_WAVE = { top: 0.72, amp: 46, phase: 2.0, scale: 1.1, slant: 0.2 }
 const BENEFITS_COLORS = { bg: "#FCE8C8", dot: "#F2CD92" };
 
 /**
- * Doe One: a bright gold band with the name in Lora and the claim, then the package as stat tiles in four groups.
- * No rules: each tile is its own soft panel, and figures lead.
+ * Doe One: a bright gold band with the name in Lora and the claim, then the package as four category cards, two across.
+ * Each card writes its benefits out as rows, with the figure in Lora at the end.
  */
 function Benefits() {
   return (
@@ -95,17 +95,14 @@ function Benefits() {
         {CAREERS_BENEFIT_GROUPS.map((group) => (
           <div key={group.title} className="doehealth-role__benefits-group">
             <h3 className={`doehealth-role__benefits-group-title ${p22Mackinac.className}`}>{group.title}</h3>
-            <div className="doehealth-role__bento">
+            <ul className="doehealth-role__benefits-list">
               {group.items.map((benefit) => (
-                <div
-                  key={benefit.detail}
-                  className={`doehealth-role__bento-tile doehealth-role__bento-tile--${benefit.size}`}
-                >
-                  <div className={`doehealth-role__bento-highlight ${lora.className}`}>{benefit.highlight}</div>
-                  <div className={`doehealth-role__bento-detail ${p22Mackinac.className}`}>{benefit.detail}</div>
-                </div>
+                <li key={benefit.name} className="doehealth-role__benefit">
+                  <span className="doehealth-role__benefit-name">{benefit.name}</span>
+                  <span className={`doehealth-role__benefit-figure ${lora.className}`}>{benefit.figure}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         ))}
       </div>
