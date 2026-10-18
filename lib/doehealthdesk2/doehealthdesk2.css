@@ -4121,9 +4121,12 @@
   --desk2-title-max: 3.15rem;
   }
 
-  /* iPhone: the headline wraps on its own, so a line can take a third row when that arranges better. */
+  /* iPhone: the headline wraps on its own, so a line can take a third row when that arranges better.
+     Balanced wrapping keeps a lone word or two from being left alone on the last row. */
   .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero__headline,
-  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero__headline > * {
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero__headline > *,
+  .doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero__built-for-tone {
+    text-wrap: balance;
     white-space: normal;
   }
 
