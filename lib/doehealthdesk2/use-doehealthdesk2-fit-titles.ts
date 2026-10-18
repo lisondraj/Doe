@@ -37,6 +37,11 @@ function fitTitle(title: HTMLElement) {
   if (title.clientWidth === 0 || title.children.length === 0) return;
 
   const style = getComputedStyle(title);
+  // A title that wraps on its own (no nowrap, e.g. the iPhone hero) keeps its CSS size and may take more lines.
+  if (style.whiteSpace !== "nowrap") {
+    title.style.fontSize = "";
+    return;
+  }
   const available = title.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
   const size = parseFloat(style.fontSize);
   const widest = widestLine(title);
