@@ -97,8 +97,8 @@ function TermLadder({ term }: { term: CareersStudentTerm }) {
 }
 
 const BENEFITS_WAVE = { top: 0.72, amp: 46, phase: 2.0, scale: 1.1, slant: 0.2 };
-/** Doe One's band: the gold family, lifted so it reads bright without going loud. */
-const BENEFITS_COLORS = { bg: "#FCE8C8", dot: "#F2CD92" };
+/** Doe One's band: the lighter gold from the /news boxes, so it matches the blog. */
+const BENEFITS_COLORS = { bg: "#FBF0D9", dot: "#E0AB62" };
 
 /**
  * Doe One: a bright gold band with the name in Lora and the claim, then the package as four category cards, two across.
