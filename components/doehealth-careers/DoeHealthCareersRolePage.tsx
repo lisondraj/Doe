@@ -71,26 +71,8 @@ function RoleList({ items }: { items: readonly string[] }) {
   );
 }
 
-/** A student role's hero: the gold dot-wave with the term set over it, in place of the empty cream box. */
+/** A student role's hero: the gold dot-wave, in place of the empty cream box. */
 const STUDENT_HERO_COLORS = { bg: "#FCE8C8", dot: "#EBC285" };
-
-function StudentHero({ role, term }: { role: CareersRole; term: CareersStudentTerm }) {
-  return (
-    <DoeHealthBlogPlaceholder
-      tone="gold"
-      colors={STUDENT_HERO_COLORS}
-      wave={role.wave}
-      className="doehealth-role__hero doehealth-role__hero--student"
-      pattern
-    >
-      <span className="doehealth-role__term-kicker">Co-op &amp; Internship Term</span>
-      <span className={`doehealth-role__term-season ${lora.className}`}>{term.season}</span>
-      <span className="doehealth-role__term-dates">
-        {term.dates} <span aria-hidden>·</span> {term.length} <span aria-hidden>·</span> Remote
-      </span>
-    </DoeHealthBlogPlaceholder>
-  );
-}
 
 /** Pay by work term: one step per band, each a little taller than the last, with the hourly rate in Lora. */
 function TermLadder({ term }: { term: CareersStudentTerm }) {
@@ -360,7 +342,13 @@ export function DoeHealthCareersRolePage({
 
           <p className="sr-only">{role.summary}</p>
           {role.student ? (
-            <StudentHero role={role} term={role.student} />
+            <DoeHealthBlogPlaceholder
+              tone="gold"
+              colors={STUDENT_HERO_COLORS}
+              wave={role.wave}
+              className="doehealth-role__hero"
+              pattern
+            />
           ) : (
             <DoeHealthBlogPlaceholder tone="cream" wave={role.wave} className="doehealth-role__hero" pattern />
           )}

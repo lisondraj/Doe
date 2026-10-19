@@ -532,35 +532,6 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
   margin-top: clamp(2.5rem, 6vh, 4rem);
 }
 
-/* Student roles: the term set large in Lora over a gold dot-wave, so the page reads as a term, not a full-time job. */
-.doehealth-role__hero--student .doehealth-blog-placeholder__content {
-  gap: 0.6rem;
-  color: var(--doehealth-desk-surface);
-}
-
-.doehealth-role__term-kicker {
-  padding: 0.4rem 0.9rem;
-  border-radius: 999px;
-  background: rgb(255 252 241 / 0.72);
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.68);
-  font-size: 0.875rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-.doehealth-role__term-season {
-  font-size: clamp(3.25rem, 8vw, 6.5rem);
-  font-weight: 400;
-  letter-spacing: -0.045em;
-  line-height: 1;
-}
-
-.doehealth-role__term-dates {
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.68);
-  font-size: 1.0625rem;
-  letter-spacing: -0.015em;
-}
-
 /* Pay by work term: three steps that climb left to right, the rate in Lora at the foot of each. */
 .doehealth-role__ladder {
   display: grid;
@@ -1178,10 +1149,6 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
 
   .doehealth-role__hero {
     aspect-ratio: 4 / 3;
-  }
-
-  .doehealth-role__term-dates {
-    font-size: 0.9375rem;
   }
 
   /* The steps stack and stop climbing; each keeps its rate on the right of the row. */
