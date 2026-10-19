@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { CareersFilterDropdown, type CareersDropdownSection } from "@/components/doehealth-careers/CareersFilterDropdown";
-import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
+import { DoeHealthBlogPlaceholder, articleBoxColors } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
@@ -57,6 +57,7 @@ function NewsCard({
         <Link href={doehealthBlogArticlePath(article.slug)} className="doehealth-blog-card doehealth-news-card doehealth-news-card--boxed">
           <DoeHealthBlogPlaceholder
             tone={article.heroTone}
+            colors={articleBoxColors(article.heroTone)}
             className="doehealth-blog-card__art doehealth-news-card__art"
             pattern
             wave={{ ...article.wave, top: BOXED_WAVE_TOP }}
@@ -85,6 +86,7 @@ function NewsCard({
         <Link href={doehealthBlogArticlePath(article.slug)} className="doehealth-blog-card doehealth-news-card doehealth-news-card--feature">
           <DoeHealthBlogPlaceholder
             tone={article.heroTone}
+            colors={articleBoxColors(article.heroTone)}
             className="doehealth-blog-card__art doehealth-news-feature__art"
             pattern
             wave={{ ...article.wave, top: FEATURED_WAVE_TOP }}
@@ -123,6 +125,7 @@ function NewsCard({
         <p className="doehealth-blog-card__excerpt">{article.excerpt}</p>
         <DoeHealthBlogPlaceholder
           tone={article.heroTone}
+          colors={articleBoxColors(article.heroTone)}
           className="doehealth-blog-card__art"
           pattern
           wave={article.wave}

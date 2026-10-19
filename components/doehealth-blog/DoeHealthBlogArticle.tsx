@@ -1,5 +1,5 @@
 import { DoeHealthBlogListen } from "@/components/doehealth-blog/DoeHealthBlogListen";
-import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
+import { DoeHealthBlogPlaceholder, articleBoxColors } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthBlogUiFigure } from "@/components/doehealth-blog/DoeHealthBlogUiFigure";
 import { DoeHealthBlogVideo } from "@/components/doehealth-blog/DoeHealthBlogVideo";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
@@ -18,6 +18,7 @@ function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: 
           {/* Static — motion stays reserved for the hero above. Same dot design as this article's card art. */}
           <DoeHealthBlogPlaceholder
             tone={article.heroTone}
+            colors={articleBoxColors(article.heroTone)}
             wave={article.wave}
             className="doehealth-blog-article__figure-art"
             pattern
