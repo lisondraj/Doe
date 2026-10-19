@@ -20,7 +20,7 @@ type DoeHealthBlogPlaceholderProps = {
  * Background and dot colour for each tone: the original Doe tone families, lightened well away from the deep
  * originals (no pink; the Doe salmon is fine). The tone names are the original ones.
  */
-const PATTERN_COLORS: Record<DoeHealthBlogPlaceholderTone, { bg: string; dot: string }> = {
+export const PATTERN_COLORS: Record<DoeHealthBlogPlaceholderTone, { bg: string; dot: string }> = {
   sand: { bg: "#F7E6C4", dot: "#D4AE7A" },
   panel: { bg: "#F5F2EC", dot: "#C9BDA8" },
   cream: { bg: "#FBF5E6", dot: "#E2CB9F" },

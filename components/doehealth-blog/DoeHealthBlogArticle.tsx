@@ -1,5 +1,6 @@
 import { DoeHealthBlogListen } from "@/components/doehealth-blog/DoeHealthBlogListen";
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
+import { DoeHealthBlogUiFigure } from "@/components/doehealth-blog/DoeHealthBlogUiFigure";
 import { DoeHealthBlogVideo } from "@/components/doehealth-blog/DoeHealthBlogVideo";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import type { DoeHealthBlogArticle as Article, DoeHealthBlogBlock } from "@/lib/doehealth/doehealth-blog-articles";
@@ -21,6 +22,13 @@ function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: 
             className="doehealth-blog-article__figure-art"
             pattern
           />
+          <figcaption>{block.caption}</figcaption>
+        </figure>
+      );
+    case "ui":
+      return (
+        <figure className="doehealth-blog-article__figure">
+          <DoeHealthBlogUiFigure scene={block.scene} dots={block.dots} tone={block.tone} />
           <figcaption>{block.caption}</figcaption>
         </figure>
       );

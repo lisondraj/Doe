@@ -31,6 +31,22 @@
   display: block;
 }
 
+/* Product scenes in body figures: drawn at 1280×720, then scaled into the box by SceneStage. */
+.doehealth-blog-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.doehealth-blog-scene__stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  -webkit-font-smoothing: antialiased;
+}
+
 /* Original tone families, lightened (see DoeHealthBlogPlaceholder PATTERN_COLORS). */
 .doehealth-blog-placeholder--sand {
   background: #f7e6c4;
