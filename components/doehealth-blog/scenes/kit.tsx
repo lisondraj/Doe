@@ -107,23 +107,27 @@ export function SceneStage({ spec }: { spec: SceneSpec }) {
   useEffect(() => {
     const box = boxRef.current;
     if (!box || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+    // The clock keeps its place while the box is off screen, so scrolling back resumes the scene instead of restarting it.
     let raf = 0;
-    let start = 0;
+    let played = 0; // seconds banked from earlier visits
+    let since = 0; // performance time the current visit started, 0 while off screen
     let last = 0;
     const loop = (now: number) => {
-      if (!start) start = now;
       if (now - last > 32) {
         last = now;
-        setT(((now - start) / 1000) % spec.loop);
+        setT((played + (now - since) / 1000) % spec.loop);
       }
       raf = requestAnimationFrame(loop);
     };
     const seen = new IntersectionObserver(
       ([entry]) => {
-        cancelAnimationFrame(raf);
-        if (entry.isIntersecting) {
-          start = 0;
+        if (entry.isIntersecting && !since) {
+          since = performance.now();
           raf = requestAnimationFrame(loop);
+        } else if (!entry.isIntersecting && since) {
+          played += (performance.now() - since) / 1000;
+          since = 0;
+          cancelAnimationFrame(raf);
         }
       },
       { threshold: 0.25 },
