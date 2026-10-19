@@ -141,6 +141,28 @@ export const CAREERS_BENEFIT_GROUPS: readonly { title: string; items: readonly C
   },
 ];
 
+/** The first two lines of "What You'll Bring" on every Spring 2027 co-op. */
+const SPRING_2027_ELIGIBILITY = [
+  "Enrolled in a university or college program in Canada or the US, and returning to school after the term.",
+  "Available to work full time, remotely, for the Spring 2027 term, May through August.",
+] as const;
+
+/** The Spring 2027 term, with the hourly CAD rate for the early, intermediate, and senior work-term bands. */
+function spring2027Term(early: string, intermediate: string, senior: string): CareersStudentTerm {
+  return {
+    season: "Spring 2027",
+    dates: "May – August 2027",
+    length: "4 months",
+    bands: [
+      { level: "Early", terms: "1st – 2nd work term", rate: early },
+      { level: "Intermediate", terms: "3rd – 4th work term", rate: intermediate },
+      { level: "Senior", terms: "5th work term and up", rate: senior },
+    ],
+    bandsNote:
+      "Your band follows the work term you will be on in Spring 2027. Not in a co-op program? We place you by year of study and past internships.",
+  };
+}
+
 export const CAREERS_ROLES: readonly CareersRole[] = [
   {
     slug: "agent-infrastructure-engineer",
@@ -326,8 +348,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
       "Write, review, and test code alongside full-time engineers, the same way they do.",
     ],
     qualifications: [
-      "Enrolled in a university or college program in Canada or the US, and returning to school after the term.",
-      "Available to work full time, remotely, for the Spring 2027 term, May through August.",
+      ...SPRING_2027_ELIGIBILITY,
       "Comfort writing code in TypeScript, Python, or a similar language, shown through projects, past terms, or coursework.",
       "Curiosity, clear writing, and the habit of finishing what you start.",
     ],
@@ -336,18 +357,109 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
       "Projects built on LLMs or agents.",
       "Interest in healthcare, or time spent working in a clinic or practice.",
     ],
-    student: {
-      season: "Spring 2027",
-      dates: "May – August 2027",
-      length: "4 months",
-      bands: [
-        { level: "Early", terms: "1st – 2nd work term", rate: "CA$30 – 38/hr" },
-        { level: "Intermediate", terms: "3rd – 4th work term", rate: "CA$38 – 48/hr" },
-        { level: "Senior", terms: "5th work term and up", rate: "CA$48 – 60/hr" },
-      ],
-      bandsNote:
-        "Your band follows the work term you will be on in Spring 2027. Not in a co-op program? We place you by year of study and past internships.",
-    },
+    student: spring2027Term("CA$30 – 38/hr", "CA$38 – 48/hr", "CA$48 – 60/hr"),
+  },
+  {
+    slug: "founding-product-co-op-spring-2027",
+    title: "Founding Product Co-op (Spring 2027)",
+    section: "additional",
+    team: "Co-op & Internships",
+    countries: ["US", "Canada"],
+    pay: "CA$26 – CA$50/hr",
+    equity: null,
+    wave: { top: 0.48, amp: 66, phase: 3.1, scale: 1.0, slant: 0.3, flip: true },
+    summary: "Spend Spring 2027 shaping what Doe builds for providers, alongside the founders.",
+    about: [
+      "This is a co-op or internship for students who want to work in product. You will own a real provider workflow for the term, from what providers need to what ships, working with the founders, engineers, and our clinician advisors.",
+      "You will spend time with providers across disciplines, write the specs, and see your work go live before the term ends.",
+    ],
+    responsibilities: [
+      "Own one provider workflow for the term, from research to launch, scoped with the founders in your first week.",
+      "Join provider calls and practice visits, and map how their work really happens.",
+      "Write clear specs, and work with engineering and design to ship them.",
+      "Define how we measure each workflow, and report on what the numbers say.",
+      "Bring what you hear from providers back to the team, and help set the roadmap with the founders.",
+    ],
+    qualifications: [
+      ...SPRING_2027_ELIGIBILITY,
+      "Clear, structured writing, shown through projects, past terms, or coursework.",
+      "Comfort with technical detail, and with working closely with engineers.",
+      "Curiosity about how healthcare organizations really run.",
+    ],
+    bonus: [
+      "Past co-op or internship terms in product, design, or engineering.",
+      "Something you built or launched on your own.",
+      "Interest in healthcare, or time spent working in a clinic or practice.",
+    ],
+    student: spring2027Term("CA$26 – 32/hr", "CA$32 – 40/hr", "CA$40 – 50/hr"),
+  },
+  {
+    slug: "founding-growth-co-op-spring-2027",
+    title: "Founding Growth Co-op (Spring 2027)",
+    section: "additional",
+    team: "Co-op & Internships",
+    countries: ["US", "Canada"],
+    pay: "CA$22 – CA$42/hr",
+    equity: null,
+    wave: { top: 0.46, amp: 78, phase: 0.6, scale: 1.1, slant: 0.15 },
+    summary: "Spend Spring 2027 helping Doe reach healthcare organizations, alongside the founders.",
+    about: [
+      "This is a co-op or internship for students who want to work in growth, marketing, or sales. You will work with the founders on how Doe reaches practices and healthcare organizations, and run real programs with real numbers behind them.",
+      "You will test ideas quickly, learn what providers respond to, and finish the term with results you can point to.",
+    ],
+    responsibilities: [
+      "Research the practices and healthcare organizations we reach, and build the target lists for outbound.",
+      "Run outbound, email, and social campaigns, and report honestly on what converts.",
+      "Write for Doe: landing pages, emails, posts, and the case studies providers read before they say yes.",
+      "Help plan events and referral programs, and support the team on sales calls.",
+      "Keep the funnel data clean, so every decision rests on real numbers.",
+    ],
+    qualifications: [
+      ...SPRING_2027_ELIGIBILITY,
+      "Clear, persuasive writing, and comfort talking with people you have never met.",
+      "Comfort with spreadsheets and data, and the discipline to test before you scale.",
+      "The habit of starting things without being asked, and finishing them.",
+    ],
+    bonus: [
+      "Past co-op or internship terms in marketing, sales, or growth.",
+      "An audience or community you have grown yourself.",
+      "Interest in healthcare or AI products.",
+    ],
+    student: spring2027Term("CA$22 – 28/hr", "CA$28 – 35/hr", "CA$35 – 42/hr"),
+  },
+  {
+    slug: "founding-brand-design-co-op-spring-2027",
+    title: "Founding Brand Design Co-op (Spring 2027)",
+    section: "additional",
+    team: "Co-op & Internships",
+    countries: ["US", "Canada"],
+    pay: "CA$24 – CA$46/hr",
+    equity: null,
+    wave: { top: 0.44, amp: 70, phase: 4.6, scale: 0.9, slant: -0.35, flip: true },
+    summary: "Spend Spring 2027 designing how Doe looks and moves, across the web, graphics, and video.",
+    about: [
+      "This is a co-op or internship for students in design. You will work across Doe's visual identity, from the website and graphics to launch videos and motion, with the founders as your closest collaborators.",
+      "Doe's brand is still being written, so your work goes live, not into a folder. You will finish the term with shipped pages, videos, and assets that people actually see.",
+    ],
+    responsibilities: [
+      "Design pages for Doe's website, from layout to the final details, working closely with engineers or in code yourself.",
+      "Make the graphics for launches, social posts, the blog, and decks.",
+      "Edit and animate video: launch films, product walkthroughs, and short motion pieces.",
+      "Extend Doe's visual system: type, colour, illustration, and the dot-wave patterns across the site.",
+      "Help with product screens and the visuals inside the provider tools, when the work calls for it.",
+    ],
+    qualifications: [
+      ...SPRING_2027_ELIGIBILITY,
+      "A portfolio that shows strong visual craft in typography, layout, and colour. Include a link when you apply.",
+      "Fluency in Figma, and in at least one motion, video, or web tool, such as After Effects, Premiere, or Framer.",
+      "Taste, and the ability to take feedback and turn it around quickly.",
+    ],
+    bonus: [
+      "Experience with HTML, CSS, or front-end code.",
+      "3D, illustration, or generative design work.",
+      "Past co-op or internship terms at a startup or studio.",
+    ],
+    student: spring2027Term("CA$24 – 30/hr", "CA$30 – 38/hr", "CA$38 – 46/hr"),
   },
   {
     slug: "expression-of-interest",
