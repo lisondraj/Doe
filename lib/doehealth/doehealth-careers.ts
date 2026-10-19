@@ -233,17 +233,17 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
   },
   {
     slug: "founding-integrations-engineer",
-    title: "Founding Integrations Engineer (Health Data)",
+    title: "Founding Healthcare Integration & Security Engineer",
     section: "founding",
     team: "Engineering",
     countries: ["US", "Canada"],
     pay: "CA$150K – CA$180K",
     equity: "0.5–1.0%",
     wave: { top: 0.45, amp: 68, phase: 5.2, scale: 1.0, slant: 0.25 },
-    summary: "Connect Doe to the systems healthcare organizations already run on, and keep their data right.",
+    summary: "Connect Doe to the systems healthcare organizations already run on, and keep their data secure and compliant.",
     about: [
       "Every healthcare organization runs on systems it already trusts: an EHR, a practice management system, a scheduling book, a payer portal. You will build the integrations that let Doe's agents read from and write to them, so a booking, an intake form, or a coverage check lands exactly where the provider expects it.",
-      "You will own how health data moves through Doe, from the first connection to a new system to the records our agents act on every day, and keep it correct, private, and auditable.",
+      "You will own how health data moves through Doe, from the first connection to a new system to the records our agents act on every day. You will also own the security and compliance of those flows, so each one is correct, private, and auditable before it goes live.",
     ],
     responsibilities: [
       "Build and maintain integrations with EHRs, practice management systems, and scheduling tools across disciplines, from primary care and dental to mental health and physiotherapy.",
@@ -251,18 +251,20 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
       "Design the data model that maps every organization's records into one shape Doe's agents can use.",
       "Build eligibility and coverage checks with payers, and the flows that keep them current.",
       "Make every read and write auditable, and keep patient data private by default under HIPAA, PHIPA, and PIPEDA.",
+      "Secure every integration: encryption in transit and at rest, OAuth2 and mTLS between systems, and least-privilege access to PHI.",
+      "Convert HIPAA, SOC 2, and HITRUST controls into the code and configuration of each integration, and run the security reviews that EHR vendors and health systems require.",
       "Build the tooling that brings a new organization live in days, not months.",
     ],
     qualifications: [
       "Four or more years building integrations, data pipelines, or backend systems in production.",
       "Strong fundamentals in TypeScript or Python, SQL, and API design.",
       "Experience with healthcare data standards, such as FHIR, HL7 v2, or X12.",
-      "Patience with messy systems, and the judgment to know when a workaround becomes a liability.",
+      "Working knowledge of HIPAA and application security, and the judgment to know when a workaround becomes a liability.",
     ],
     bonus: [
       "Experience integrating with EHRs or practice management systems, such as Epic, athenahealth, Oscar, Accuro, Jane, or Dentrix.",
       "Work on payer connectivity, eligibility, or claims.",
-      "Experience with security reviews, audits, or compliance programs such as SOC 2.",
+      "Experience with SOC 2 or HITRUST audits, or with threat modeling and secure SDLC.",
     ],
   },
   {
