@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 const LINKEDIN3_PATH = "/linkedin3";
 
 export const metadata: Metadata = {
-  title: "LinkedIn 3 · Doe",
+  title: "Doe | LinkedIn 3",
   description: "Doe LinkedIn banner — Doe Intelligence Inc.",
   alternates: {
     canonical: `${primarySiteOrigin()}${LINKEDIN3_PATH}`,

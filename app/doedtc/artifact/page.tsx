@@ -19,7 +19,7 @@ export const fetchCache = "force-no-store";
 const ogImage = doeDtcLinkPreviewImageUrl();
 
 export const metadata: Metadata = {
-  title: `${DOEDTC_ARTIFACT.pageTitle} · Doe`,
+  title: `Doe | ${DOEDTC_ARTIFACT.pageTitle}`,
   description: DOEDTC_PAGE_DESCRIPTION,
   openGraph: {
     title: DOEDTC_ARTIFACT.pageTitle,

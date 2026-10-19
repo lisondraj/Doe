@@ -16,7 +16,7 @@ export function generateMetadata({ params }: RouteProps): Metadata {
   const article = doehealthBlogArticle(params.slug);
   if (!article) return {};
   return {
-    title: `${doehealthBlogTitle(article)} · Doe`,
+    title: `Doe News | ${doehealthBlogTitle(article)}`,
     description: article.excerpt,
   };
 }

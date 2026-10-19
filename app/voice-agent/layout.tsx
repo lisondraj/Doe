@@ -5,7 +5,7 @@ import { primarySiteOrigin } from "@/lib/site-domains";
 const VOICE_AGENT_PATH = "/voice-agent";
 
 export const metadata: Metadata = {
-  title: "OSCE Voice Coach · Doe",
+  title: "Doe | OSCE Voice Coach",
   description:
     "A voice-only OSCE exam prep coach — practice a timed station, or start a learning session on history, DDX, investigations, management, and examiner questions.",
   alternates: {

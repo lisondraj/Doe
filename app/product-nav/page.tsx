@@ -6,7 +6,7 @@ import { doehealthDesk2InitialVariant } from "@/lib/doehealthdesk2/doehealthdesk
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Product · Doe",
+  title: "Doe Product",
   description: "The Doe product for clinics and their patients' personal agents.",
 };
 

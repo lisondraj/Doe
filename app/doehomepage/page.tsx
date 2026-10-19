@@ -12,7 +12,7 @@ import { DOEHOME_PATH, primarySiteOrigin } from "@/lib/site-domains";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: DOEHOME_PAGE_TITLE,
+  title: `Doe | ${DOEHOME_PAGE_TITLE}`,
   description: DOEHOME_PAGE_DESCRIPTION,
   alternates: {
     canonical: `${primarySiteOrigin()}${DOEHOME_PATH}`,

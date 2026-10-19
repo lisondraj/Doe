@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import "@/lib/doecarefall26/doecarefall26-desk.css";
 
 export const metadata: Metadata = {
-  title: "Doe Care Fall 26 · Doe",
+  title: "Doe | Care Fall 26",
 };
 
 export default function DoeCareFall26DeskLayout({ children }: { children: ReactNode }) {

@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 const ogImage = doeDtcLinkPreviewImageUrl();
 
 export const metadata: Metadata = {
-  title: `${DOEDTC_GET_STARTED.title} · Doe`,
+  title: `Doe | ${DOEDTC_GET_STARTED.title}`,
   description: DOEDTC_PAGE_DESCRIPTION,
   openGraph: {
     title: DOEDTC_GET_STARTED.title,

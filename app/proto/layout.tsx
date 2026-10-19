@@ -6,7 +6,7 @@ import { protoPageBootstrapScript } from "@/lib/proto/proto-layout";
 import "./proto.css";
 
 export const metadata: Metadata = {
-  title: "Proto",
+  title: "Doe | Proto",
   description: "Proto — startup draft landing page",
 };
 

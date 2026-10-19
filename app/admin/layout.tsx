@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin · Doe",
+  title: "Doe | Admin",
   description: "Doe admin workspace",
 };
 

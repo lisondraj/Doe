@@ -7,7 +7,7 @@ import "@/lib/doehealth/doehealth-careers.css";
 import "@/lib/doehealthdesk2/doehealthdesk2.css";
 
 export const metadata: Metadata = {
-  title: "News · Doe",
+  title: "Doe News",
 };
 
 export default function DoeHealthBlogLayout({ children }: { children: ReactNode }) {

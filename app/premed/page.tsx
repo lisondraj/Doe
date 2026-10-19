@@ -11,7 +11,7 @@ import { premedPageUrl } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
-const pageTitle = `${PREMED_PAGE_TITLE} · Doe`;
+const pageTitle = `Doe | ${PREMED_PAGE_TITLE}`;
 
 export const metadata: Metadata = {
   title: pageTitle,

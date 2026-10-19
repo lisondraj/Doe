@@ -6,7 +6,7 @@ import { HIRING_PATH, primarySiteOrigin } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
-const pageTitle = `${ABOUT_STYLE_BLANK_PAGE_LABELS[HIRING_PATH]} · Doe`;
+const pageTitle = `Doe | ${ABOUT_STYLE_BLANK_PAGE_LABELS[HIRING_PATH]}`;
 
 export const metadata: Metadata = {
   title: pageTitle,

@@ -5,7 +5,7 @@ import { DoePhoneRouter } from "@/components/doephone/DoePhoneRouter";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Voice Agents for Healthcare.",
+  title: "Doe | Voice Agents for Healthcare",
 };
 
 const LEGACY_HOME_HERO_HEADLINE = {

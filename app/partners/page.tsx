@@ -14,7 +14,7 @@ import { partnersPageUrl, requestHostFromHeaders } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
-const pageTitle = `${CLINICAL_PARTNERS_PAGE_TITLE} · Doe`;
+const pageTitle = `Doe | ${CLINICAL_PARTNERS_PAGE_TITLE}`;
 
 export const metadata: Metadata = {
   title: pageTitle,

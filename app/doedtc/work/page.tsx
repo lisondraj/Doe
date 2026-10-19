@@ -24,7 +24,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const ogImage = preview?.imageUrl || doeDtcLinkPreviewImageUrl();
 
   return {
-    title: `${DOEDTC_WORK.pageTitle} · Doe`,
+    title: `Doe | ${DOEDTC_WORK.pageTitle}`,
     description: DOEDTC_PAGE_DESCRIPTION,
     openGraph: {
       title: DOEDTC_WORK.pageTitle,

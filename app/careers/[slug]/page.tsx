@@ -13,7 +13,7 @@ export function generateMetadata({ params }: RouteProps): Metadata {
   const role = careersRole(params.slug);
   if (!role) return {};
   return {
-    title: `${role.title} · Careers · Doe`,
+    title: `Doe Careers | ${role.title}`,
     description: `${role.summary} ${careersLocation(role)}, ${careersType(role).toLowerCase()}.`,
   };
 }

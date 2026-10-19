@@ -6,7 +6,7 @@ import { PITCHDECK_PATH, primarySiteOrigin } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
-const pageTitle = `${ABOUT_STYLE_BLANK_PAGE_LABELS[PITCHDECK_PATH]} · Doe`;
+const pageTitle = `Doe | ${ABOUT_STYLE_BLANK_PAGE_LABELS[PITCHDECK_PATH]}`;
 
 export const metadata: Metadata = {
   title: pageTitle,

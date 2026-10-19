@@ -36,7 +36,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   }
 
   return {
-    title: `${DOEDTC_SESSION.pageTitle} · Doe`,
+    title: `Doe | ${DOEDTC_SESSION.pageTitle}`,
     description,
     openGraph: {
       title: DOEDTC_SESSION.pageTitle,

@@ -10,7 +10,7 @@ import { primarySiteOrigin } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
-const pageTitle = `${DOE_MISSION_TITLE} · Doe`;
+const pageTitle = `Doe Blog | ${DOE_MISSION_TITLE}`;
 
 export const metadata: Metadata = {
   title: pageTitle,

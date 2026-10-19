@@ -6,7 +6,7 @@ import { primarySiteOrigin, WAITLIST_PATH } from "@/lib/site-domains";
 
 export const dynamic = "force-dynamic";
 
-const pageTitle = `${ABOUT_STYLE_BLANK_PAGE_LABELS[WAITLIST_PATH]} · Doe`;
+const pageTitle = `Doe | ${ABOUT_STYLE_BLANK_PAGE_LABELS[WAITLIST_PATH]}`;
 
 export const metadata: Metadata = {
   title: pageTitle,

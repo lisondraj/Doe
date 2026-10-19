@@ -13,7 +13,7 @@ import { joinPageUrl, requestHostFromHeaders } from "@/lib/site-domains";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: CAMPUS_AMBASSADOR_PAGE_TITLE,
+  title: `Doe | ${CAMPUS_AMBASSADOR_PAGE_TITLE}`,
   description: CAMPUS_AMBASSADOR_OPENING_DESCRIPTION,
   alternates: {
     canonical: joinPageUrl(),

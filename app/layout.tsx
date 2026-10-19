@@ -21,7 +21,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Doe AI",
+  title: "Doe",
   description: "Doe marketing and app prototypes",
   icons: {
     icon: "/images/Favicon.png",

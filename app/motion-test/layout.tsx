@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "@/lib/motion-test/motion-test.css";
 
 export const metadata: Metadata = {
-  title: "Motion Test — Remotion",
+  title: "Doe | Motion Test (Remotion)",
   description: "Remotion motion test — Doe title card",
 };
 

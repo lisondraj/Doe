@@ -6,7 +6,7 @@ import { doeHealthLandingPageBootstrapScript } from "@/lib/doehealth/doehealth-l
 import "@/lib/designers/designers-phone-canvas.css";
 
 export const doeHealthLandingMetadata: Metadata = {
-  title: "Doe AI",
+  title: "Doe | Health",
 };
 
 const landingBootstrap = doeHealthLandingPageBootstrapScript();

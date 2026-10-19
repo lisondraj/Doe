@@ -7,7 +7,7 @@ import "../proto/proto.css";
 import "./proto-invest.css";
 
 export const metadata: Metadata = {
-  title: "Proto — For Investors",
+  title: "Doe | Proto for Investors",
   description: "Proto investor mission, market, and founding team.",
 };
 

@@ -5,7 +5,7 @@ import { STORY_BAKED_SHADER_BACKDROP_PATHS } from "@/lib/story/story-baked-shade
 import { STORY_ALL_POSTER_URLS } from "@/lib/story/story-shader-posters";
 
 export const metadata: Metadata = {
-  title: "Doe Story",
+  title: "Doe | Story",
 };
 
 export default function StoryLayout({

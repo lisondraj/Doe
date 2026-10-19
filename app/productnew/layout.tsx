@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Product New · Doe",
+  title: "Doe Product | New",
 };
 
 export default function ProductNewLayout({

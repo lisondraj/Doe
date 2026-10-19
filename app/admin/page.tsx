@@ -17,7 +17,7 @@ const MOBILE_UA =
   /iPhone|iPod|Android.*Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i;
 
 export const metadata: Metadata = {
-  title: "Admin · Doe",
+  title: "Doe | Admin",
   description: "Doe admin workspace",
 };
 

@@ -7,7 +7,7 @@ import "@/lib/product2/product2-brown-mock.css";
 import "@/lib/product2/product2-landing.css";
 
 export const metadata: Metadata = {
-  title: "Doe Launch",
+  title: "Doe | Launch",
 };
 
 export default function Motion2Layout({

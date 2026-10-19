@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 const LINKEDIN4_PATH = "/linkedin4";
 
 export const metadata: Metadata = {
-  title: "LinkedIn 4 · Doe",
+  title: "Doe | LinkedIn 4",
   description:
     "Doe LinkedIn banner — Plastic Surgery, Dermatology & Aesthetic Clinics, with Diagnostic Imaging and Endocrine & Weight Management.",
   alternates: {

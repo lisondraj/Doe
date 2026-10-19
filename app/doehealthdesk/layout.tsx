@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import "@/lib/doehealth/doehealth-desk.css";
 
 export const metadata: Metadata = {
-  title: "Doe Health Desk · Doe",
+  title: "Doe | Health Desk",
 };
 
 export default function DoeHealthDeskLayout({ children }: { children: ReactNode }) {

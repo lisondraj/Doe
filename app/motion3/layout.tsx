@@ -7,7 +7,7 @@ import "@/lib/product2/product2-brown-mock.css";
 import "@/lib/product2/product2-landing.css";
 
 export const metadata: Metadata = {
-  title: "Doe Launch — Remotion",
+  title: "Doe | Launch (Remotion)",
   description: "20s Doe launch video composed with Remotion",
 };
 

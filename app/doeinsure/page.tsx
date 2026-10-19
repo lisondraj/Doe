@@ -10,7 +10,7 @@ import { DOEINSURE_PATH, primarySiteOrigin } from "@/lib/site-domains";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: `${DOEINSURE_PAGE_TITLE} · Doe`,
+  title: `Doe | ${DOEINSURE_PAGE_TITLE}`,
   description: DOEINSURE_PAGE_DESCRIPTION,
   alternates: {
     canonical: `${primarySiteOrigin()}${DOEINSURE_PATH}`,
