@@ -393,7 +393,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
       "Projects built on LLMs or agents.",
       "Interest in healthcare, or time spent working in a clinic or practice.",
     ],
-    student: spring2027Term("CA$30 – 38/hr", "CA$38 – 48/hr", "CA$48 – 60/hr"),
+    student: spring2027Term("CA$30 – 38/hr", "Up to CA$48/hr", "Up to CA$60/hr"),
   },
   {
     slug: "founding-product-co-op-spring-2027",
@@ -427,7 +427,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
       "Something you built or launched on your own.",
       "Interest in healthcare, or time spent working in a clinic or practice.",
     ],
-    student: spring2027Term("CA$26 – 32/hr", "CA$32 – 40/hr", "CA$40 – 50/hr"),
+    student: spring2027Term("CA$26 – 32/hr", "Up to CA$40/hr", "Up to CA$50/hr"),
   },
   {
     slug: "founding-growth-co-op-spring-2027",
@@ -461,7 +461,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
       "An audience or community you have grown yourself.",
       "Interest in healthcare or AI products.",
     ],
-    student: spring2027Term("CA$22 – 28/hr", "CA$28 – 35/hr", "CA$35 – 42/hr"),
+    student: spring2027Term("CA$22 – 28/hr", "Up to CA$35/hr", "Up to CA$42/hr"),
   },
   {
     slug: "founding-brand-design-co-op-spring-2027",
@@ -495,7 +495,7 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
       "3D, illustration, or generative design work.",
       "Past co-op or internship terms at a startup or studio.",
     ],
-    student: spring2027Term("CA$24 – 30/hr", "CA$30 – 38/hr", "CA$38 – 46/hr"),
+    student: spring2027Term("CA$24 – 30/hr", "Up to CA$38/hr", "Up to CA$46/hr"),
   },
   {
     slug: "expression-of-interest",
