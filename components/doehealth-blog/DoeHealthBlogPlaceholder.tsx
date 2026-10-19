@@ -30,16 +30,16 @@ export const PATTERN_COLORS: Record<DoeHealthBlogPlaceholderTone, { bg: string; 
 };
 
 /**
- * Article and news boxes use mid-light warm beige: no white, no pink, and nothing deep. Each tone keeps its own
+ * Article and news boxes use light warm beige: not pure white, no pink, and nothing deep. Each tone keeps its own
  * shade so the boxes differ slightly, and the dot colours sit a step darker so the pattern still reads.
  */
 const ARTICLE_BOX_COLORS: Record<DoeHealthBlogPlaceholderTone, { bg: string; dot: string }> = {
-  sand: { bg: "#F5E6C8", dot: "#D4AE7A" },
-  panel: { bg: "#F1E6D3", dot: "#C9BDA8" },
-  cream: { bg: "#F5E8CF", dot: "#D9BC8A" },
-  gold: { bg: "#F6DDB0", dot: "#E0AB62" },
-  clay: { bg: "#EFE0C4", dot: "#CDAE84" },
-  umber: { bg: "#EEDCBE", dot: "#A8917A" },
+  sand: { bg: "#FAF1DD", dot: "#D4AE7A" },
+  panel: { bg: "#F8F2E4", dot: "#C9BDA8" },
+  cream: { bg: "#FBF4E2", dot: "#D9BC8A" },
+  gold: { bg: "#FBF0D9", dot: "#E0AB62" },
+  clay: { bg: "#FAF0E0", dot: "#CDAE84" },
+  umber: { bg: "#F9F1E0", dot: "#A8917A" },
 };
 
 /** Background and dot colour for a box on /news or inside an article. */
