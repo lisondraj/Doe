@@ -550,15 +550,15 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
   min-height: calc(9.5rem + var(--doehealth-role-step) * 2.5rem);
   padding: 1.25rem 1.3rem 1.3rem;
   border-radius: 16px;
-  background: #f6e7cb;
+  background: #fbf4e2;
 }
 
 .doehealth-role__ladder-step:nth-child(2) {
-  background: #f8dfb6;
+  background: #faf1dd;
 }
 
 .doehealth-role__ladder-step:nth-child(3) {
-  background: #f8d9a8;
+  background: #fbf0d9;
 }
 
 .doehealth-role__ladder-level {
@@ -569,15 +569,6 @@ html body:has(.doehealth-careers-page.doehealth-role-page) {
   font-size: 1rem;
   font-weight: 500;
   letter-spacing: -0.015em;
-}
-
-.doehealth-role__ladder-level::before {
-  content: "";
-  flex: none;
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  background: #d4ae7a;
 }
 
 .doehealth-role__ladder-terms {
