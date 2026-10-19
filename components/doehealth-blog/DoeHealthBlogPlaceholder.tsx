@@ -30,21 +30,21 @@ export const PATTERN_COLORS: Record<DoeHealthBlogPlaceholderTone, { bg: string; 
 };
 
 /**
- * Article and news boxes use shades close to the cream of the "Front Door" and "Health Intelligence" boxes, so every
- * box reads as one family. Only the background changes; each tone keeps its dot colour from PATTERN_COLORS.
+ * Article and news boxes use mid-light warm beige: no white, no pink, and nothing deep. Each tone keeps its own
+ * shade so the boxes differ slightly, and the dot colours sit a step darker so the pattern still reads.
  */
-const ARTICLE_BOX_BG: Record<DoeHealthBlogPlaceholderTone, string> = {
-  sand: "#FAF1DD",
-  panel: "#FAF6EE",
-  cream: "#FBF5E6",
-  gold: "#FBF0D9",
-  clay: "#FBF0E5",
-  umber: "#F9F2E3",
+const ARTICLE_BOX_COLORS: Record<DoeHealthBlogPlaceholderTone, { bg: string; dot: string }> = {
+  sand: { bg: "#F5E6C8", dot: "#D4AE7A" },
+  panel: { bg: "#F1E6D3", dot: "#C9BDA8" },
+  cream: { bg: "#F5E8CF", dot: "#D9BC8A" },
+  gold: { bg: "#F6DDB0", dot: "#E0AB62" },
+  clay: { bg: "#EFE0C4", dot: "#CDAE84" },
+  umber: { bg: "#EEDCBE", dot: "#A8917A" },
 };
 
 /** Background and dot colour for a box on /news or inside an article. */
 export function articleBoxColors(tone: DoeHealthBlogPlaceholderTone): { bg: string; dot: string } {
-  return { bg: ARTICLE_BOX_BG[tone], dot: PATTERN_COLORS[tone].dot };
+  return ARTICLE_BOX_COLORS[tone];
 }
 
 /** Flat tinted image slot that stands in for article art. */
