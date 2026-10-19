@@ -10,7 +10,7 @@ export type CareersTeamSection = {
   wave?: DoeHealthBlogWave;
 };
 
-export const CAREERS_TEAMS = ["Engineering", "Product", "Growth & Sales", "Open Application"] as const;
+export const CAREERS_TEAMS = ["Engineering", "Product", "Growth & Sales", "Co-op & Internships", "Open Application"] as const;
 export type CareersTeam = (typeof CAREERS_TEAMS)[number];
 
 /** Founding roles list first on /careers; additional roles follow them, in the same style. */
@@ -22,6 +22,23 @@ export type CareersCountry = (typeof CAREERS_COUNTRIES)[number];
 
 /** The label when a role is open to both countries. */
 export const CAREERS_LOCATION = "Remote (US or Canada)";
+
+/** One pay band of a student role: the work terms it covers and the hourly rate in CAD. */
+export type CareersTermBand = {
+  level: string;
+  terms: string;
+  rate: string;
+};
+
+/** The term a student role runs for, and its pay by work term, set as a ladder on the role page. */
+export type CareersStudentTerm = {
+  season: string;
+  dates: string;
+  length: string;
+  bands: readonly CareersTermBand[];
+  /** One line under the ladder on how a student is placed in a band. */
+  bandsNote: string;
+};
 
 export type CareersRole = {
   /** The role page lives at /careers/{slug}. */
@@ -44,6 +61,8 @@ export type CareersRole = {
   responsibilities: readonly string[];
   qualifications: readonly string[];
   bonus: readonly string[];
+  /** Set for co-op and internship roles: the term, its dates, and pay by work term. Unset is a full-time role. */
+  student?: CareersStudentTerm;
 };
 
 export const CAREERS_TEAM_SECTIONS: readonly CareersTeamSection[] = [
@@ -286,6 +305,51 @@ export const CAREERS_ROLES: readonly CareersRole[] = [
     ],
   },
   {
+    slug: "founding-engineering-co-op-spring-2027",
+    title: "Founding Engineering Co-op (Spring 2027)",
+    section: "additional",
+    team: "Co-op & Internships",
+    countries: ["US", "Canada"],
+    pay: "CA$30 – CA$60/hr",
+    equity: null,
+    wave: { top: 0.5, amp: 72, phase: 1.8, scale: 1.15, slant: -0.25 },
+    summary: "Spend Spring 2027 shipping real parts of Doe, alongside the founding team.",
+    about: [
+      "This is a co-op or internship for students, on the founding engineering team. You will own a real piece of Doe for the term, in the agent infrastructure or the tools providers use every day, and ship it to production with the founders reviewing your work.",
+      "Every co-op works on the product, not a side project. You will sit in on provider visits, take part in planning, and finish the term with work you can point to in production.",
+    ],
+    responsibilities: [
+      "Own a project for the term, scoped with the founders in your first week and shipped by your last.",
+      "Build features across our Next.js front end, TypeScript and Python services, and Postgres.",
+      "Work on the agent layer: tool calls, evaluations, and the data behind each organization's intelligence model.",
+      "Join provider calls and practice visits, and turn what you see into product.",
+      "Write, review, and test code alongside full-time engineers, the same way they do.",
+    ],
+    qualifications: [
+      "Enrolled in a university or college program in Canada or the US, and returning to school after the term.",
+      "Available to work full time, remotely, for the Spring 2027 term, May through August.",
+      "Comfort writing code in TypeScript, Python, or a similar language, shown through projects, past terms, or coursework.",
+      "Curiosity, clear writing, and the habit of finishing what you start.",
+    ],
+    bonus: [
+      "Past co-op or internship terms shipping software to real users.",
+      "Projects built on LLMs or agents.",
+      "Interest in healthcare, or time spent working in a clinic or practice.",
+    ],
+    student: {
+      season: "Spring 2027",
+      dates: "May – August 2027",
+      length: "4 months",
+      bands: [
+        { level: "Early", terms: "1st – 2nd work term", rate: "CA$30 – 38/hr" },
+        { level: "Intermediate", terms: "3rd – 4th work term", rate: "CA$38 – 48/hr" },
+        { level: "Senior", terms: "5th work term and up", rate: "CA$48 – 60/hr" },
+      ],
+      bandsNote:
+        "Your band follows the work term you will be on in Spring 2027. Not in a co-op program? We place you by year of study and past internships.",
+    },
+  },
+  {
     slug: "expression-of-interest",
     title: "Expression of Interest",
     section: "additional",
@@ -324,6 +388,11 @@ export function careersRolePath(role: CareersRole) {
 export function careersLocation(role: CareersRole) {
   if (role.countries.length === CAREERS_COUNTRIES.length) return CAREERS_LOCATION;
   return `Remote (${role.countries.join(" or ")})`;
+}
+
+/** The employment type for a role's meta line and facts. */
+export function careersType(role: CareersRole) {
+  return role.student ? "Co-op / Internship" : "Full Time";
 }
 
 /** The equity line for a role, or null when the role offers no equity. */

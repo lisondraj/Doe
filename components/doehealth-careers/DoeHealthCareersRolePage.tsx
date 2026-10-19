@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
 
 import { DoeHealthBlogPlaceholder } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { CareersMetaItem, CareersRoleRow } from "@/components/doehealth-careers/CareersRoleRow";
@@ -17,8 +17,10 @@ import {
   CAREERS_BENEFITS_NAME,
   CAREERS_PATH,
   type CareersRole,
+  type CareersStudentTerm,
   careersLocation,
   careersOtherRoles,
+  careersType,
 } from "@/lib/doehealth/doehealth-careers";
 import { DOEHEALTH_DESK2_PAGE_BACKGROUND } from "@/lib/doehealthdesk2/doehealthdesk2-colors";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
@@ -36,9 +38,13 @@ const APPLY_ID = "apply";
 
 function careersApplyHref(role: CareersRole) {
   const subject = `Application: ${role.title}`;
+  const student = role.student
+    ? ["School and program:", `Work term I'll be on in ${role.student.season} (e.g. 3rd co-op):`, ""]
+    : [];
   const body = [
     `Role: ${role.title} (${careersLocation(role)})`,
     "",
+    ...student,
     "Hi, I'd like to apply. A little about me, and what I would build at Doe:",
     "",
     "(Attach your resume before you send.)",
@@ -62,6 +68,49 @@ function RoleList({ items }: { items: readonly string[] }) {
         <li key={item}>{item}</li>
       ))}
     </ul>
+  );
+}
+
+/** A student role's hero: the gold dot-wave with the term set over it, in place of the empty cream box. */
+const STUDENT_HERO_COLORS = { bg: "#FCE8C8", dot: "#EBC285" };
+
+function StudentHero({ role, term }: { role: CareersRole; term: CareersStudentTerm }) {
+  return (
+    <DoeHealthBlogPlaceholder
+      tone="gold"
+      colors={STUDENT_HERO_COLORS}
+      wave={role.wave}
+      className="doehealth-role__hero doehealth-role__hero--student"
+      pattern
+    >
+      <span className="doehealth-role__term-kicker">Co-op &amp; Internship Term</span>
+      <span className={`doehealth-role__term-season ${lora.className}`}>{term.season}</span>
+      <span className="doehealth-role__term-dates">
+        {term.dates} <span aria-hidden>·</span> {term.length} <span aria-hidden>·</span> Remote
+      </span>
+    </DoeHealthBlogPlaceholder>
+  );
+}
+
+/** Pay by work term: one step per band, each a little taller than the last, with the hourly rate in Lora. */
+function TermLadder({ term }: { term: CareersStudentTerm }) {
+  return (
+    <RoleSection title="Pay by Work Term">
+      <ol className="doehealth-role__ladder">
+        {term.bands.map((band, index) => (
+          <li
+            key={band.level}
+            className="doehealth-role__ladder-step"
+            style={{ "--doehealth-role-step": index } as CSSProperties}
+          >
+            <span className="doehealth-role__ladder-level">{band.level}</span>
+            <span className="doehealth-role__ladder-terms">{band.terms}</span>
+            <span className={`doehealth-role__ladder-rate ${lora.className}`}>{band.rate}</span>
+          </li>
+        ))}
+      </ol>
+      <p className="doehealth-role__ladder-note">{term.bandsNote}</p>
+    </RoleSection>
   );
 }
 
@@ -206,7 +255,7 @@ function RoleDock({
             </p>
             <p className="doehealth-role__dock-meta">
               <span>{careersLocation(role)}</span>
-              <CareersMetaItem>Full Time</CareersMetaItem>
+              <CareersMetaItem>{careersType(role)}</CareersMetaItem>
               {role.pay ? <CareersMetaItem>{role.pay}</CareersMetaItem> : null}
             </p>
           </div>
@@ -301,7 +350,7 @@ export function DoeHealthCareersRolePage({
             <h1 className={`doehealth-role__title ${p22Mackinac.className}`}>{role.title}</h1>
             <p className="doehealth-role__meta">
               <span>{careersLocation(role)}</span>
-              <CareersMetaItem>Full Time</CareersMetaItem>
+              <CareersMetaItem>{careersType(role)}</CareersMetaItem>
               {role.pay ? <CareersMetaItem>{role.pay}</CareersMetaItem> : null}
             </p>
             <a ref={ctaRef} href={careersApplyHref(role)} className="doehealth-role__cta">
@@ -310,7 +359,11 @@ export function DoeHealthCareersRolePage({
           </header>
 
           <p className="sr-only">{role.summary}</p>
-          <DoeHealthBlogPlaceholder tone="cream" wave={role.wave} className="doehealth-role__hero" pattern />
+          {role.student ? (
+            <StudentHero role={role} term={role.student} />
+          ) : (
+            <DoeHealthBlogPlaceholder tone="cream" wave={role.wave} className="doehealth-role__hero" pattern />
+          )}
 
           <div className="doehealth-role__layout">
             <aside className="doehealth-role__glance" aria-label="At a Glance">
@@ -326,8 +379,20 @@ export function DoeHealthCareersRolePage({
                 </div>
                 <div>
                   <dt>Type</dt>
-                  <dd>Full Time</dd>
+                  <dd>{careersType(role)}</dd>
                 </div>
+                {role.student ? (
+                  <>
+                    <div>
+                      <dt>Term</dt>
+                      <dd>{role.student.season}</dd>
+                    </div>
+                    <div>
+                      <dt>Dates</dt>
+                      <dd>{role.student.dates}</dd>
+                    </div>
+                  </>
+                ) : null}
                 {role.pay ? (
                   <div>
                     <dt>Pay</dt>
@@ -360,6 +425,7 @@ export function DoeHealthCareersRolePage({
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </RoleSection>
+              {role.student ? <TermLadder term={role.student} /> : null}
               <RoleSection title="What You'll Do">
                 <RoleList items={role.responsibilities} />
               </RoleSection>
@@ -369,7 +435,7 @@ export function DoeHealthCareersRolePage({
               <RoleSection title="Nice to Have">
                 <RoleList items={role.bonus} />
               </RoleSection>
-              <Benefits />
+              {role.student ? null : <Benefits />}
             </div>
           </div>
 

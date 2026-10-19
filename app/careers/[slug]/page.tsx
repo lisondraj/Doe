@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { DoeHealthCareersRolePage } from "@/components/doehealth-careers/DoeHealthCareersRolePage";
-import { careersLocation, careersRole } from "@/lib/doehealth/doehealth-careers";
+import { careersLocation, careersRole, careersType } from "@/lib/doehealth/doehealth-careers";
 import { doehealthDesk2InitialVariant } from "@/lib/doehealthdesk2/doehealthdesk2-initial-variant";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +14,7 @@ export function generateMetadata({ params }: RouteProps): Metadata {
   if (!role) return {};
   return {
     title: `${role.title} · Careers · Doe`,
-    description: `${role.summary} ${careersLocation(role)}, full time.`,
+    description: `${role.summary} ${careersLocation(role)}, ${careersType(role).toLowerCase()}.`,
   };
 }
 
