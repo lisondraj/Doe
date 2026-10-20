@@ -25,6 +25,7 @@ function todayHeading() {
  */
 export function DoeHealthProductSchedulePage() {
   const [selected, setSelected] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
   return (
     <div className="[font-synthesis:none] wrap-anywhere text-[12px] leading-[16px] flex grow h-full p-[12px] rounded-[24px] overflow-clip gap-[12px] [background:radial-gradient(rgba(40,25,16,0.13)_0.9px,transparent_1.1px)_0%_0%/16px_16px,none_0%_0%_rgb(255,252,241)] antialiased">
       <div className="flex flex-col h-full min-w-[0px] gap-[28px] grow pt-[28px] pl-[28px] pr-[28px] pb-[0px]">
@@ -79,8 +80,8 @@ export function DoeHealthProductSchedulePage() {
               Last Sync 2 mins ago
             </div>
           </div>
-          <div className="flex flex-col [width:100%] grow min-h-[0px] pt-[8px] overflow-y-auto [scrollbar-width:none] rounded-[18px] relative px-[8px] bg-sand">
-            <div className="sticky top-[0px] z-10 flex items-center [width:100%] pt-[12px] pb-[10px] gap-[16px] shrink-0 px-[16px] bg-sand">
+          <div onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 4)} className="flex flex-col [width:100%] grow min-h-[0px] overflow-y-auto [scrollbar-width:none] rounded-[18px] relative px-[8px] bg-sand">
+            <div className="sticky top-[0px] z-10 flex items-center [width:100%] pt-[20px] pb-[10px] gap-[16px] shrink-0 px-[16px] bg-sand">
               <div className="w-[64px] shrink-0 text-label leading-[18px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-sub">
                 Time
               </div>
@@ -97,8 +98,11 @@ export function DoeHealthProductSchedulePage() {
                 Intake
               </div>
             </div>
+            {scrolled && (
+              <div aria-hidden className="sticky top-[48px] z-[5] h-[36px] -mb-[36px] shrink-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(180deg, var(--color-sand) 0%, transparent 100%)' }} />
+            )}
             <div
-                className="flex flex-col [width:100%] gap-[4px] shrink-0"
+                className="flex flex-col [width:100%] gap-[4px] shrink-0 pb-[100px]"
                 onClick={(e) => {
                   const id = (e.target as HTMLElement).closest<HTMLElement>("[data-appt]")?.dataset.appt;
                   if (id) setSelected((cur) => (cur === id ? null : id));
@@ -309,6 +313,130 @@ export function DoeHealthProductSchedulePage() {
                   <div className="flex items-center h-[28px] px-[12px] rounded-[999px] bg-[#28191014]">
                     <div className="text-label leading-[18px] inline-block font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">
                       Link queued
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center [width:100%] h-[62px] shrink-0 px-[16px] rounded-[12px] gap-[16px] [background-color:var(--color-paper)]">
+                <div className="w-[64px] shrink-0 text-msg leading-gutter inline-block font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
+                  3:00
+                </div>
+                <div className="w-[190px] shrink-0 text-[17px] leading-[22px] tracking-[-0.02em] inline-block font-['DM_Sans',system-ui,sans-serif] text-ink">
+                  Hannah Brooks
+                </div>
+                <div className="grow min-w-[0px] text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Post-op check, day 7
+                </div>
+                <div className="w-[96px] shrink-0 text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Dr. Patel
+                </div>
+                <div className="w-[168px] shrink-0 flex items-center">
+                  <div className="flex items-center h-[28px] px-[12px] rounded-[999px] bg-[#D6DEC6]">
+                    <div className="flex text-label leading-[18px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-[#2F3B2A]">
+                      Ready for review
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center [width:100%] h-[62px] shrink-0 px-[16px] rounded-[12px] gap-[16px] [background-color:var(--color-paper)]">
+                <div className="w-[64px] shrink-0 text-msg leading-gutter inline-block font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
+                  3:15
+                </div>
+                <div className="w-[190px] shrink-0 text-[17px] leading-[22px] tracking-[-0.02em] inline-block font-['DM_Sans',system-ui,sans-serif] text-ink">
+                  Kenji Mori
+                </div>
+                <div className="grow min-w-[0px] text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Migraine follow-up
+                </div>
+                <div className="w-[96px] shrink-0 text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Dr. Lin
+                </div>
+                <div className="w-[168px] shrink-0 flex items-center">
+                  <div className="flex items-center h-[28px] px-[12px] rounded-[999px] bg-[#28191014]">
+                    <div className="text-label leading-[18px] inline-block font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">
+                      Link queued
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center [width:100%] h-[62px] shrink-0 px-[16px] rounded-[12px] gap-[16px] [background-color:var(--color-paper)]">
+                <div className="w-[64px] shrink-0 text-msg leading-gutter inline-block font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
+                  3:30
+                </div>
+                <div className="w-[190px] shrink-0 text-[17px] leading-[22px] tracking-[-0.02em] inline-block font-['DM_Sans',system-ui,sans-serif] text-ink">
+                  Rosa Delgado
+                </div>
+                <div className="grow min-w-[0px] text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Medication refill review
+                </div>
+                <div className="w-[96px] shrink-0 text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Dr. Roberts
+                </div>
+                <div className="w-[168px] shrink-0 flex items-center">
+                  <div className="flex items-center h-[28px] px-[12px] rounded-[999px] bg-[#D6DEC6]">
+                    <div className="flex text-label leading-[18px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-[#2F3B2A]">
+                      Ready for review
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center [width:100%] h-[62px] shrink-0 px-[16px] rounded-[12px] gap-[16px] [background-color:var(--color-paper)]">
+                <div className="w-[64px] shrink-0 text-msg leading-gutter inline-block font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
+                  3:45
+                </div>
+                <div className="w-[190px] shrink-0 text-[17px] leading-[22px] tracking-[-0.02em] inline-block font-['DM_Sans',system-ui,sans-serif] text-ink">
+                  Owen Park
+                </div>
+                <div className="grow min-w-[0px] text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Lab results, thyroid
+                </div>
+                <div className="w-[96px] shrink-0 text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Dr. Patel
+                </div>
+                <div className="w-[168px] shrink-0 flex items-center">
+                  <div className="h-[28px] text-label leading-[18px] content-center font-['Inter-Regular','Inter',system-ui,sans-serif] text-sub">
+                    Sends today at 1:00 PM
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center [width:100%] h-[62px] shrink-0 px-[16px] rounded-[12px] gap-[16px] [background-color:var(--color-paper)]">
+                <div className="w-[64px] shrink-0 text-msg leading-gutter inline-block font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
+                  4:00
+                </div>
+                <div className="w-[190px] shrink-0 text-[17px] leading-[22px] tracking-[-0.02em] inline-block font-['DM_Sans',system-ui,sans-serif] text-ink">
+                  Nadia Haddad
+                </div>
+                <div className="grow min-w-[0px] text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Allergy consult
+                </div>
+                <div className="w-[96px] shrink-0 text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Dr. Lin
+                </div>
+                <div className="w-[168px] shrink-0 flex items-center">
+                  <div className="flex items-center h-[28px] px-[12px] rounded-[999px] bg-[#28191014]">
+                    <div className="text-label leading-[18px] inline-block font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">
+                      Link queued
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center [width:100%] h-[62px] shrink-0 px-[16px] rounded-[12px] gap-[16px] [background-color:var(--color-paper)]">
+                <div className="w-[64px] shrink-0 text-msg leading-gutter inline-block font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
+                  4:30
+                </div>
+                <div className="w-[190px] shrink-0 text-[17px] leading-[22px] tracking-[-0.02em] inline-block font-['DM_Sans',system-ui,sans-serif] text-ink">
+                  Theo Lindqvist
+                </div>
+                <div className="grow min-w-[0px] text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Well-child visit
+                </div>
+                <div className="w-[96px] shrink-0 text-[15px] leading-gutter inline-block font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910C7]">
+                  Dr. Roberts
+                </div>
+                <div className="w-[168px] shrink-0 flex items-center">
+                  <div className="flex items-center h-[28px] px-[12px] rounded-[999px] bg-[#D6DEC6]">
+                    <div className="flex text-label leading-[18px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-[#2F3B2A]">
+                      Ready for review
                     </div>
                   </div>
                 </div>
