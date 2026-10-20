@@ -22,7 +22,7 @@ function todayHeading() {
 export function DoeHealthProductSchedulePage() {
   return (
     <div className="[font-synthesis:none] wrap-anywhere text-[12px] leading-[16px] flex grow h-full p-[12px] rounded-[24px] overflow-clip gap-[12px] [background:radial-gradient(rgba(40,25,16,0.13)_0.9px,transparent_1.1px)_0%_0%/16px_16px,none_0%_0%_rgb(255,252,241)] antialiased">
-      <div className="flex flex-col h-full min-w-[0px] gap-[28px] w-[908px] shrink-0 pt-[28px] pl-[28px] pr-[0px] pb-[0px]">
+      <div className="flex flex-col h-full min-w-[0px] gap-[28px] grow pt-[28px] pl-[28px] pr-[0px] pb-[0px]">
         <div className="flex items-start [width:100%] gap-[24px]">
           <div className="flex flex-col gap-[12px] [width:100%]">
             <div className="text-[46px] leading-[50px] tracking-[-0.025em] font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500] text-walnut">
