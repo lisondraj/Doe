@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 function ordinal(n: number) {
   const suffix = ["th", "st", "nd", "rd"];
   const v = n % 100;
@@ -20,6 +24,7 @@ function todayHeading() {
  * integrations content panel while the Schedule tab is active.
  */
 export function DoeHealthProductSchedulePage() {
+  const [selected, setSelected] = useState<string | null>(null);
   return (
     <div className="[font-synthesis:none] wrap-anywhere text-[12px] leading-[16px] flex grow h-full p-[12px] rounded-[24px] overflow-clip gap-[12px] [background:radial-gradient(rgba(40,25,16,0.13)_0.9px,transparent_1.1px)_0%_0%/16px_16px,none_0%_0%_rgb(255,252,241)] antialiased">
       <div className="flex flex-col h-full min-w-[0px] gap-[28px] grow pt-[28px] pl-[28px] pr-[28px] pb-[0px]">
@@ -92,7 +97,13 @@ export function DoeHealthProductSchedulePage() {
                 Intake
               </div>
             </div>
-            <div className="flex flex-col [width:100%] gap-[4px] shrink-0">
+            <div
+                className="flex flex-col [width:100%] gap-[4px] shrink-0"
+                onClick={(e) => {
+                  const id = (e.target as HTMLElement).closest<HTMLElement>("[data-appt]")?.dataset.appt;
+                  if (id) setSelected((cur) => (cur === id ? null : id));
+                }}
+              >
               <div className="flex items-center [width:100%] h-[62px] px-[16px] rounded-[12px] gap-[16px] shrink-0 [background-color:var(--color-paper)]">
                 <div className="w-[64px] shrink-0 text-msg leading-gutter font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
                   8:30
@@ -157,7 +168,7 @@ export function DoeHealthProductSchedulePage() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center [width:100%] h-[62px] px-[16px] rounded-[12px] gap-[16px] shrink-0 bg-[#F7F2E8]">
+              <div data-appt="leo" data-selected={selected === "leo" ? "" : undefined} className="flex items-center cursor-pointer [width:100%] h-[62px] px-[16px] rounded-[12px] gap-[16px] shrink-0 [background-color:var(--color-paper)] [&[data-selected]]:[background-color:#F7F2E8]">
                 <div className="w-[64px] shrink-0 text-msg leading-gutter font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
                   9:45
                 </div>
@@ -307,6 +318,7 @@ export function DoeHealthProductSchedulePage() {
           </div>
         </div>
       </div>
+      {selected ? (
       <div className="flex flex-col w-[420px] h-full pt-[24px] pb-[22px] rounded-[20px] gap-[14px] shrink-0 px-[22px] [box-shadow:#FFFCF10F_0px_1px_0px_inset,#00000029_0px_4px_14px] bg-ink border border-solid border-[#FFFCF11F]">
         <div className="flex items-center justify-between shrink-0 gap-[12px]">
           <div className="flex items-center min-w-[0px] gap-[12px]">
@@ -442,6 +454,32 @@ export function DoeHealthProductSchedulePage() {
             </div>
           </div>
         </div>
+      </div>
+      ) : (
+        <UnopenedPanel />
+      )}
+    </div>
+  );
+}
+
+/** The state with no appointment open: a plain paper card in place of the dark visit panel. */
+function UnopenedPanel() {
+  return (
+    <div className="flex flex-col items-center justify-center w-[420px] h-full shrink-0 gap-[12px] px-[32px] text-center rounded-[20px] bg-[#FFFCF1] border border-solid border-[#28191024] [box-shadow:0px_1px_2px_#2819100F]">
+      <div className="flex items-center justify-center w-[44px] h-[44px] rounded-[999px] bg-[#EEEADF]">
+        <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ display: "inline-block", flexShrink: "0" }}>
+          <path d="M4.5 6.5h15v13h-15zM4.5 10.5h15M8.5 4v4M15.5 4v4" fill="none" stroke="#281910" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+      <div className="text-[26px] leading-[30px] tracking-[-0.02em] font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500] text-walnut">
+        No appointment open
+      </div>
+      <div className="max-w-[280px] text-[14px] leading-[20px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#281910A8]">
+        Select a visit to see its intake call, answers, and what still needs review.
+      </div>
+      <div className="flex flex-wrap justify-center gap-[8px] mt-[8px]">
+        <div className="flex items-center h-[28px] px-[12px] rounded-[999px] bg-[#EEEADF] text-label font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">8 ready for review</div>
+        <div className="flex items-center h-[28px] px-[12px] rounded-[999px] bg-[#EEEADF] text-label font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">2 not opened yet</div>
       </div>
     </div>
   );
