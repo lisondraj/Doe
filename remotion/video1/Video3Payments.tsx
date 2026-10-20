@@ -13,7 +13,7 @@ export function Video3Payments() {
   return (
     <ShadowsContext.Provider value={false}>
       <Audio src={staticFile("video1/THREE.mp3")} />
-      <Audio src={staticFile("video1/BED.m4a")} startFrom={1230} />
+      <Audio src={staticFile("video1/BED.m4a")} startFrom={1230} volume={0.3} />
       <Stage backdrop={<DotTide />}>
         <PaymentsFilm />
       </Stage>

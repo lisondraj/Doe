@@ -13,7 +13,7 @@ export function Video2Communication() {
   return (
     <ShadowsContext.Provider value={false}>
       <Audio src={staticFile("video1/TWO.mp3")} />
-      <Audio src={staticFile("video1/BED.m4a")} startFrom={1230} />
+      <Audio src={staticFile("video1/BED.m4a")} startFrom={1230} volume={0.3} />
       <Stage backdrop={<DotWave />}>
         <Sequence from={0} durationInFrames={CALL_FRAMES} name="Agent text to call">
           <CallScene />
