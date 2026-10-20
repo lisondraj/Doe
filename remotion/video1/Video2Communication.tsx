@@ -12,7 +12,7 @@ export const VIDEO2_COMMUNICATION_FRAMES = 746;
 export function Video2Communication() {
   return (
     <ShadowsContext.Provider value={false}>
-      <Audio src={staticFile("video1/TWO.m4a")} />
+      <Audio src={staticFile("video1/TWO.m4a")} volume={0.7} />
       <Audio src={staticFile("video1/BED.m4a")} startFrom={1230} volume={0.2} />
       <Stage backdrop={<DotWave />}>
         <Sequence from={0} durationInFrames={CALL_FRAMES} name="Agent text to call">

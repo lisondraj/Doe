@@ -12,7 +12,7 @@ export const VIDEO3_PAYMENTS_FRAMES = 558;
 export function Video3Payments() {
   return (
     <ShadowsContext.Provider value={false}>
-      <Audio src={staticFile("video1/THREE.m4a")} />
+      <Audio src={staticFile("video1/THREE.m4a")} volume={0.7} />
       <Audio src={staticFile("video1/BED.m4a")} startFrom={1230} volume={0.2} />
       <Stage backdrop={<DotTide />}>
         <PaymentsFilm />
