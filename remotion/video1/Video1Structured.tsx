@@ -40,9 +40,7 @@ export const VIDEO1_STRUCTURED_FRAMES = paced(SCENES.search.from + SCENES.search
 export function Video1Structured() {
   return (
     <ShadowsContext.Provider value={false}>
-      <Sequence from={paced(ASK_AT)} layout="none" name="ONE audio">
-        <Audio src={staticFile("video1/ONE.mp3")} />
-      </Sequence>
+      <Audio src={staticFile("video1/ONE.m4a")} />
       <Video1StructuredStage />
     </ShadowsContext.Provider>
   );
