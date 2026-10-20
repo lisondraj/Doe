@@ -41,7 +41,7 @@ export function Video1Structured() {
   return (
     <ShadowsContext.Provider value={false}>
       <Audio src={staticFile("video1/ONE.m4a")} />
-      <Audio src={staticFile("video1/BED.m4a")} startFrom={1230} volume={0.3} />
+      <Audio src={staticFile("video1/BED.m4a")} startFrom={1230} volume={0.2} />
       <Video1StructuredStage />
     </ShadowsContext.Provider>
   );
