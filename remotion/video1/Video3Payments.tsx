@@ -1,5 +1,5 @@
 import { type CSSProperties, type ReactNode } from "react";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Audio, staticFile, useCurrentFrame } from "remotion";
 
 import { DotTide, Stage } from "./backdrops";
 import { Bubble, IPhone, Slot, TimeStamp, TypingBubble } from "./imessage";
@@ -12,6 +12,7 @@ export const VIDEO3_PAYMENTS_FRAMES = 558;
 export function Video3Payments() {
   return (
     <ShadowsContext.Provider value={false}>
+      <Audio src={staticFile("video1/THREE.mp3")} />
       <Stage backdrop={<DotTide />}>
         <PaymentsFilm />
       </Stage>

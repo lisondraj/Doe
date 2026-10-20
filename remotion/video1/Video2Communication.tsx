@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { AbsoluteFill, Easing, Sequence, interpolateColors, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Audio, Easing, Sequence, interpolateColors, staticFile, useCurrentFrame } from "remotion";
 
 import { DotWave, Stage } from "./backdrops";
 import { Bubble, IPHONE_BEZEL, IPhone, Slot, TimeStamp, TypingBubble } from "./imessage";
@@ -12,6 +12,7 @@ export const VIDEO2_COMMUNICATION_FRAMES = 746;
 export function Video2Communication() {
   return (
     <ShadowsContext.Provider value={false}>
+      <Audio src={staticFile("video1/TWO.mp3")} />
       <Stage backdrop={<DotWave />}>
         <Sequence from={0} durationInFrames={CALL_FRAMES} name="Agent text to call">
           <CallScene />

@@ -1,5 +1,5 @@
 import { createContext, useContext, type CSSProperties, type ReactNode } from "react";
-import { AbsoluteFill, Easing, Sequence, interpolate, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Audio, Easing, Sequence, interpolate, staticFile, useCurrentFrame } from "remotion";
 
 import { DotSphere, DotWave, FlowLines, Stage } from "./backdrops";
 import { EASE_IN, EASE_IN_OUT, EASE_OUT, blink, camera, fly, keys, lerp, pulse, ramp, typed } from "./motion";
@@ -40,6 +40,7 @@ export const VIDEO1_STRUCTURED_FRAMES = paced(SCENES.search.from + SCENES.search
 export function Video1Structured() {
   return (
     <ShadowsContext.Provider value={false}>
+      <Audio src={staticFile("video1/ONE.mp3")} />
       <Video1StructuredStage />
     </ShadowsContext.Provider>
   );
