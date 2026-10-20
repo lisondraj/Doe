@@ -21,7 +21,16 @@ export function Video1Stage() {
   const [index, setIndex] = useState(0);
   const [uiHidden, setUiHidden] = useState(false);
   const [playing, setPlaying] = useState(true);
+  const [muted, setMuted] = useState(true);
   const [frame, setFrame] = useState(0);
+
+  /** Applies the sound choice to whichever section is mounted, so it carries across sections. */
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    if (muted) player.mute();
+    else player.unmute();
+  }, [index, muted]);
 
   const count = VIDEO1_LIST.length;
   const video = VIDEO1_LIST[index];
@@ -66,6 +75,7 @@ export function Video1Stage() {
         e.preventDefault();
         playerRef.current?.toggle();
       } else if (e.key.toLowerCase() === "r") restart();
+      else if (e.key.toLowerCase() === "m") setMuted((v) => !v);
       else if (e.key.toLowerCase() === "h") setUiHidden((v) => !v);
       else if (Number.isInteger(n) && n >= 1 && n <= count) select(n - 1);
     };
@@ -150,6 +160,16 @@ export function Video1Stage() {
             <PanelButton label="Restart" onClick={restart}>
               <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
                 <path d="M2.5 7a4.5 4.5 0 1 0 1.4-3.3M2.5 1.8v2.4h2.4" fill="none" stroke={INK} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </PanelButton>
+            <PanelButton label={muted ? "Turn sound on" : "Turn sound off"} onClick={() => setMuted((v) => !v)}>
+              <svg width="15" height="15" viewBox="0 0 15 15" aria-hidden>
+                <path d="M2 5.5h2.5L7.5 3v9L4.5 9.5H2z" fill={INK} />
+                {muted ? (
+                  <path d="M10 5.5l3.5 4M13.5 5.5l-3.5 4" fill="none" stroke={INK} strokeWidth="1.4" strokeLinecap="round" />
+                ) : (
+                  <path d="M10 5a3 3 0 0 1 0 5M11.8 3.4a5.5 5.5 0 0 1 0 8.2" fill="none" stroke={INK} strokeWidth="1.4" strokeLinecap="round" />
+                )}
               </svg>
             </PanelButton>
             <span className="mx-1 h-5 w-px" style={{ background: HAIRLINE }} />
