@@ -1,3 +1,17 @@
+function ordinal(n: number) {
+  const suffix = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return `${n}${suffix[(v - 20) % 10] ?? suffix[v] ?? suffix[0]}`;
+}
+
+/** Today's weekday and date, e.g. "Monday, October 19th". */
+function todayHeading() {
+  const d = new Date();
+  const weekday = d.toLocaleDateString("en-US", { weekday: "long" });
+  const month = d.toLocaleDateString("en-US", { month: "long" });
+  return `${weekday}, ${month} ${ordinal(d.getDate())}`;
+}
+
 /**
  * Schedule tab — exported from Paper artboard "Triage 01 Clinic schedule"
  * (file "Tender mountain", page "Doe App v2"). Markup is kept as exported.
@@ -12,7 +26,7 @@ export function DoeHealthProductSchedulePage() {
         <div className="flex items-start [width:100%] gap-[24px]">
           <div className="flex flex-col gap-[12px] [width:100%]">
             <div className="text-[46px] leading-[50px] tracking-[-0.025em] font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500] text-walnut">
-              Thursday, October 9th
+              {todayHeading()}
             </div>
             <div className="flex flex-wrap items-center gap-[10px]">
               <div className="flex items-center shrink-0 gap-[8px]">
