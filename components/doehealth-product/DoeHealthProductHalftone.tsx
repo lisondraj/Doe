@@ -99,6 +99,8 @@ export function SlowDotWave({
   color = DOT,
   speed = 0.35,
   angle = 0,
+  vertical = false,
+  fade = 0,
   className,
   style,
 }: {
@@ -110,6 +112,10 @@ export function SlowDotWave({
   speed?: number;
   /** Degrees to tilt the wave; negative tilts counter-clockwise (bottom-left to top-right at -45). */
   angle?: number;
+  /** video1 Providers: wave runs top-to-bottom, building toward the right edge. */
+  vertical?: boolean;
+  /** Fraction of the cross axis (from the sparse side) over which dots fade in. */
+  fade?: number;
   className?: string;
   style?: CSSProperties;
 }) {
@@ -132,6 +138,8 @@ export function SlowDotWave({
     const start = performance.now();
     const rad = (angle * Math.PI) / 180;
     let raf = 0;
+    const fieldW = vertical ? height : width;
+    const fieldH = vertical ? width : height;
 
     const draw = (now: number) => {
       const t = reduce ? 0 : ((now - start) / 1000) * speed;
@@ -147,20 +155,21 @@ export function SlowDotWave({
       for (let j = 0; j < rows; j++) {
         const v = j / (rows - 1);
         const s = 0.35 + 0.65 * Math.pow(v, 1.2);
-        const baseY = height * top + Math.pow(v, 1.3) * height * 0.64;
+        const baseY = fieldH * top + Math.pow(v, 1.3) * fieldH * 0.64;
         const rowFade = Math.min(1, Math.pow(v / 0.4, 1.2));
         for (let i = 0; i < cols; i++) {
-          const x0 = -240 + (i / (cols - 1)) * (width + 480);
-          const x = width / 2 + (x0 - width / 2) * (0.92 + 0.16 * v);
+          const x0 = -240 + (i / (cols - 1)) * (fieldW + 480);
+          const x = fieldW / 2 + (x0 - fieldW / 2) * (0.92 + 0.16 * v);
           const z =
             0.6 * Math.sin(x0 / 210 + 0.6 + t * 0.8) +
             0.4 * Math.sin(x0 / 120 - baseY / 80 + 1.2 + t * 1.3) +
             0.3 * Math.sin(x0 / 330 + baseY / 150 + t * 0.45);
           const h = Math.min(1, Math.max(0, (z + 1.3) / 2.6));
           const y = baseY - z * amp * s;
-          ctx.globalAlpha = Math.min(0.85, (0.28 + 0.6 * h) * (0.5 + 0.5 * s)) * rowFade;
+          const edgeFade = fade > 0 ? Math.min(1, Math.max(0, y / (fieldH * fade))) : 1;
+          ctx.globalAlpha = Math.min(0.85, (0.28 + 0.6 * h) * (0.5 + 0.5 * s)) * rowFade * edgeFade;
           ctx.beginPath();
-          ctx.arc(x, y, (0.9 + 2.2 * s) * (0.7 + 0.5 * h), 0, Math.PI * 2);
+          ctx.arc(vertical ? y : x, vertical ? x : y, (0.9 + 2.2 * s) * (0.7 + 0.5 * h), 0, Math.PI * 2);
           ctx.fill();
         }
       }
@@ -171,7 +180,7 @@ export function SlowDotWave({
 
     raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);
-  }, [cw, ch, width, height, top, amp, color, speed, angle]);
+  }, [cw, ch, width, height, top, amp, color, speed, angle, vertical, fade]);
 
   return (
     <canvas

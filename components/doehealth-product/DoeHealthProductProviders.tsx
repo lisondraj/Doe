@@ -40,7 +40,17 @@ export function DoeHealthProductProvidersHeader() {
 export function DoeHealthProductProvidersLayers() {
   return (
     <>
-      <SlowDotWave className="absolute left-[599px] top-[-92px] pointer-events-none" width={870} height={1060} angle={-45} />
+      <SlowDotWave
+        className="absolute left-[720px] top-[-240px] pointer-events-none"
+        width={644}
+        height={1116}
+        top={0.05}
+        amp={50}
+        vertical
+        fade={0.45}
+        color="#C2A987"
+        style={{ opacity: 0.55 }}
+      />
       <div className="absolute left-[40px] top-[0px] w-[840px] h-[876px]">
         <div className="absolute left-[0px] top-[186px] w-[840px] h-[64px] flex items-center px-[22px] rounded-[20px] opacity-70 bg-[#FAF6EC]">
           <div className="grow basis-[0%] flex items-center gap-[14px]">

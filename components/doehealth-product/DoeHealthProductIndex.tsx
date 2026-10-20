@@ -4,12 +4,11 @@
  * Index tab — a literal index of the practice: one serif row per part of Doe, each with its live
  * status. Rows open in place (Providers-style) to show detail, and jump to their tab.
  */
-import { type CSSProperties, Fragment, type ReactNode, useState } from "react";
-import { DoeHealthProductSphere } from "@/components/doehealth-product/DoeHealthProductSphere";
-import { DotWave, HalftoneDisc, RippleRings, waveCrest } from "@/components/doehealth-product/DoeHealthProductHalftone";
+import { Fragment, type ReactNode, useEffect, useRef, useState } from "react";
+import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
 
-type IndexTab = "schedule" | "voice" | "services" | "providers";
-type SectionId = "needs" | IndexTab | "systems";
+type IndexTab = "schedule" | "voice" | "services" | "providers" | "referrals" | "payments" | "permissions";
+type SectionId = "needs" | Exclude<IndexTab, "permissions"> | "agents" | "messages" | "systems";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 const SANS = "font-['DM_Sans',system-ui,sans-serif]";
@@ -31,7 +30,7 @@ type Section = {
   id: SectionId;
   title: string;
   tile: string;
-  icon: ReactNode;
+  icon?: ReactNode;
   summary?: ReactNode;
   tab?: IndexTab;
 };
@@ -85,6 +84,29 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "agents",
+    title: "Agents",
+    tab: "permissions",
+    tile: "#DCE5D0",
+    summary: (
+      <>
+        <span className={`${CHIP} bg-sand`}>12 booked by agents</span>
+        <span className={`${CHIP} bg-sand`}>31 visits</span>
+      </>
+    ),
+  },
+  {
+    id: "messages",
+    title: "Messages",
+    tile: "#FCCFB8",
+    summary: (
+      <>
+        <span className={`${CHIP} bg-sand`}>6 unread</span>
+        <span className={`${CHIP} bg-salmon`}>1 draft ready</span>
+      </>
+    ),
+  },
+  {
     id: "services",
     title: "Services",
     tab: "services",
@@ -127,6 +149,30 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: "referrals",
+    title: "Referrals",
+    tab: "referrals",
+    tile: "#EEEADF",
+    summary: (
+      <>
+        <span className={`${CHIP} bg-sand`}>37 open</span>
+        <span className={`${CHIP} bg-sand`}>11 scheduled</span>
+      </>
+    ),
+  },
+  {
+    id: "payments",
+    title: "Payments",
+    tab: "payments",
+    tile: "#E9DCC7",
+    summary: (
+      <>
+        <span className={`${CHIP} bg-sand`}>$4,210 today</span>
+        <span className={`${CHIP} bg-sand`}>$287 due</span>
+      </>
+    ),
+  },
+  {
     id: "systems",
     title: "Systems",
     tile: "#E9DCC7",
@@ -146,95 +192,101 @@ const SECTIONS: Section[] = [
   },
 ];
 
+const ACCENT = "#C2603A";
+const GREEN = "#6E9A5B";
+/** Soft inner surface on a paper card: a half-step between paper and the beige row. */
+const WELL = "#F7F2E6";
+
 const NEEDS = [
-  { id: "leo", who: "Leo Jacobs", time: "11:08 AM", chip: "Third ear infection", tone: "#F7DCCB", pin: "#E8A585", note: "From his mom’s call", action: "Review", primary: true },
-  { id: "grace", who: "Grace Kim", time: "10:42 AM", chip: "Lisinopril refill", tone: "#EEEADF", pin: "#C2A987", note: "10 mg · CVS Beacon St", action: "Approve" },
-  { id: "lily", who: "Lily’s mom", time: "1:48 PM", chip: "Wants Dr. Patel", tone: "#E3E9D9", pin: "#8DAA7C", note: "About Lily’s rash", action: "Call back" },
-  { id: "henry", who: "Henry Walsh", time: "9:30 AM", chip: "LDL up to 162", tone: "#E9DCC7", pin: "#B5A79C", note: "Lipid panel is back", action: "Sign" },
-];
+  { id: "leo", who: "Leo Jacobs", time: "11:08", what: "Third ear infection this year", from: "From his mom’s call", kind: "call", action: "Review" },
+  { id: "grace", who: "Grace Kim", time: "10:42", what: "Lisinopril 10 mg refill", from: "CVS Beacon St", kind: "refill", action: "Approve" },
+  { id: "lily", who: "Lily’s mom", time: "1:48", what: "Wants to see Dr. Patel", from: "About Lily’s rash", kind: "call", action: "Call back" },
+  { id: "henry", who: "Henry Walsh", time: "9:30", what: "LDL came back at 162", from: "Lipid panel", kind: "lab", action: "Sign" },
+] as const;
 
 const DAY_FROM = 12;
 const DAY_TO = 18;
 const NOW = 15 + 20 / 60;
-
-/** Afternoon appointments per provider as [start hour, length in hours]. */
 const LANES = [
-  { who: "Dr. Roberts", blocks: [[12.25, 0.5], [13, 0.5], [13.75, 0.75], [14.75, 0.5], [15.5, 0.5, "Maya Chen"], [16, 0.5], [16.75, 0.5]] },
-  { who: "Dr. Patel", blocks: [[12, 0.75], [13.25, 0.5], [14, 0.5], [15, 0.5], [15.75, 0.5], [16.5, 0.75]] },
-  { who: "Dr. Shah", blocks: [[12.5, 0.5], [13.5, 0.75], [14.5, 0.5], [16.25, 0.5], [17, 0.5]] },
-] as { who: string; blocks: [number, number, string?][] }[];
+  { who: "Roberts", blocks: [[12.25, 0.5], [13, 0.5], [13.75, 0.75], [14.75, 0.5], [15.5, 0.5], [16, 0.5], [16.75, 0.5]] },
+  { who: "Patel", blocks: [[12, 0.75], [13.25, 0.5], [14, 0.5], [15, 0.5], [15.75, 0.5], [16.5, 0.75]] },
+  { who: "Shah", blocks: [[12.5, 0.5], [13.5, 0.75], [14.5, 0.5], [16.25, 0.5], [17, 0.5]] },
+] as { who: string; blocks: [number, number][] }[];
 
 const LIVE_CALLS = [
-  { name: "Hannah Lee", about: "Moving Friday’s visit", time: "2:14", seed: 1 },
-  { name: "Marcus Webb", about: "Lab results question", time: "0:48", seed: 4 },
+  { initials: "HL", name: "Hannah Lee", about: "Moving Friday’s visit", start: 134 },
+  { initials: "MW", name: "Marcus Webb", about: "Lab results question", start: 48 },
 ];
 
 const CALL_MIX = [
-  { label: "Scheduling", value: 16, color: "#F2BFA6" },
-  { label: "Intake", value: 9, color: "#B9CDA8" },
-  { label: "Billing", value: 8, color: "#D9C49F" },
-  { label: "Records", value: 7, color: "#CDC2BA" },
-  { label: "Office", value: 7, color: "#E7DCC6" },
+  { label: "Scheduling", value: 16 },
+  { label: "Intake", value: 9 },
+  { label: "Billing", value: 8 },
+  { label: "Records", value: 7 },
+  { label: "Office", value: 7 },
 ];
 
-const DEMAND = [
-  { label: "Ear check", value: 18, color: "#E8A585", x: 118, y: 112 },
-  { label: "Flu shot", value: 14, color: "#8DAA7C", x: 288, y: 104 },
-  { label: "Annual physical", value: 9, color: "#C2A987", x: 428, y: 120 },
-  { label: "Hearing test", value: 6, color: "#B5A79C", x: 546, y: 98 },
-  { label: "Sick visit", value: 5, color: "#EDB59C", x: 650, y: 130 },
-  { label: "Lab work", value: 4, color: "#C9B79A", x: 750, y: 108 },
+const AGENT_COUNTS = [
+  { name: "ChatGPT", value: 6 },
+  { name: "Gemini", value: 4 },
+  { name: "Claude", value: 2 },
+];
+
+const THREADS = [
+  { id: "grace", initials: "GK", who: "Grace Kim", time: "2:58", text: "Can I pick up the refill at the Beacon St CVS instead?", draft: "Yes, I’ve moved it to CVS on Beacon St. It’ll be ready after 5 today." },
+  { id: "marcus", initials: "MW", who: "Marcus Webb", time: "1:17", text: "Should I be worried about the A1C number?", draft: "Dr. Roberts will call you tomorrow to go over it. Nothing urgent in the meantime." },
+  { id: "ava", initials: "AB", who: "Ava Brooks", time: "12:05", text: "Uploaded my insurance card, front and back.", draft: "Thanks, Ava. We’ve got it and your visit is all set." },
+];
+
+const SERVICES = [
+  { id: "ear", name: "Ear check", price: "$25 copay", week: 18, trend: [4, 6, 5, 9, 8, 12, 18] },
+  { id: "flu", name: "Flu shot", price: "Covered", week: 14, trend: [2, 3, 6, 5, 9, 11, 14] },
+  { id: "physical", name: "Annual physical", price: "$0 with most plans", week: 9, trend: [7, 8, 6, 9, 7, 8, 9] },
 ];
 
 const PROVIDERS = [
-  { initials: "RR", name: "Dr. Roberts", status: "Room 2", seen: 5, booked: 9, tile: "#FCCFB8", here: true },
-  { initials: "AP", name: "Dr. Patel", status: "Room 4", seen: 6, booked: 8, tile: "#DCE5D0", here: true },
-  { initials: "NS", name: "Dr. Shah", status: "Room 1", seen: 3, booked: 6, tile: "#E9DCC7", here: true },
-  { initials: "JL", name: "Dr. Lin", status: "Left at 1 PM", seen: 7, booked: 7, tile: "#EEEADF", here: true },
-  { initials: "DL", name: "Dr. Lee", status: "Back Monday", seen: 0, booked: 0, tile: "#EEEADF", here: false },
+  { initials: "RR", name: "Dr. Roberts", status: "Room 2", seen: 5, booked: 9, here: true },
+  { initials: "AP", name: "Dr. Patel", status: "Room 4", seen: 6, booked: 8, here: true },
+  { initials: "NS", name: "Dr. Shah", status: "Room 1", seen: 3, booked: 6, here: true },
+  { initials: "JL", name: "Dr. Lin", status: "Left at 1", seen: 7, booked: 7, here: true },
+  { initials: "DL", name: "Dr. Lee", status: "Back Monday", seen: 0, booked: 0, here: false },
+];
+
+const STEPS = ["Sent", "Accepted", "Scheduled", "Seen"];
+const REFERRAL_ROWS = [
+  { id: "leo", initials: "LJ", who: "Leo Jacobs", to: "ENT · Boston Children’s", step: 0, stalled: "No reply in 4 days" },
+  { id: "henry", initials: "HW", who: "Henry Walsh", to: "Cardiology · Beth Israel", step: 1 },
+  { id: "grace", initials: "GK", who: "Grace Kim", to: "Orthopedics · Tue, Oct 27", step: 2 },
+];
+
+const OWED = [
+  { id: "priya", initials: "PR", who: "Priya Raman", what: "New patient visit", amount: "$185" },
+  { id: "daniel", initials: "DO", who: "Daniel Okafor", what: "Physical, after insurance", amount: "$62" },
+  { id: "henry", initials: "HW", who: "Henry Walsh", what: "Lipid panel copay", amount: "$40" },
 ];
 
 const SYSTEMS = [
-  { mark: "M", name: "ModMed", role: "Schedule", stat: "1,284 upcoming", live: true },
-  { mark: "P", name: "Phreesia", role: "Intake", stat: "128 forms today", live: true },
-  { mark: "I", name: "InstaMed", role: "Payments", stat: "$4.2k collected", live: true },
-  { mark: "K", name: "Kno2", role: "Referrals", stat: "37 open", live: true },
-  { mark: "W", name: "Waystar", role: "Insurance", stat: "Since 9:12 AM", live: false },
+  { mark: "M", name: "ModMed", role: "Schedule", synced: "1 min ago", live: true },
+  { mark: "P", name: "Phreesia", role: "Intake", synced: "2 min ago", live: true },
+  { mark: "I", name: "InstaMed", role: "Payments", synced: "Just now", live: true },
+  { mark: "K", name: "Kno2", role: "Referrals", synced: "4 min ago", live: true },
+  { mark: "W", name: "Waystar", role: "Insurance", synced: "Since 9:12", live: false },
 ];
 
-function Tile({ color, children }: { color: string; children: ReactNode }) {
-  return (
-    <span className="w-[48px] h-[48px] shrink-0 flex items-center justify-center rounded-[12px] text-walnut" style={{ backgroundColor: color }}>
-      {children}
-    </span>
-  );
+/** Coloured row tile for each index section; the icon glyph is left out. */
+function Tile({ color }: { color: string }) {
+  return <span className="w-[48px] h-[48px] shrink-0 rounded-[12px]" style={{ backgroundColor: color }} />;
 }
 
-function Pill({ children, primary, onClick }: { children: ReactNode; primary?: boolean; onClick?: () => void }) {
+function Pill({ children, primary, onClick, className = "" }: { children: ReactNode; primary?: boolean; onClick?: () => void; className?: string }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center h-[32px] shrink-0 px-[14px] gap-[6px] rounded-[999px] text-[13px] leading-[16px] ${SANS} font-[500] transition-colors duration-150 ${primary ? "bg-ink [color:#FFFCF1] hover:bg-[#2B1D12]" : "bg-[#EEEADF] text-walnut hover:bg-[#E6E0D2]"}`}
+      className={`flex items-center justify-center h-[32px] shrink-0 px-[14px] gap-[6px] rounded-[999px] text-[13px] leading-[16px] ${SANS} font-[500] transition-colors duration-150 ${primary ? "bg-ink [color:#FFFCF1] hover:bg-[#2B1D12]" : "bg-[#F1EBDD] text-walnut hover:bg-[#EAE2D1]"} ${className}`}
     >
       {children}
     </button>
-  );
-}
-
-function Label({ children }: { children: ReactNode }) {
-  return <span className={`text-[12px] leading-[16px] ${BODY} text-sub`}>{children}</span>;
-}
-
-function Value({ children }: { children: ReactNode }) {
-  return <span className={`text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>{children}</span>;
-}
-
-function Card({ children, className = "", style }: { children: ReactNode; className?: string; style?: CSSProperties }) {
-  return (
-    <div className={`flex flex-col rounded-[14px] bg-paper ${className}`} style={style}>
-      {children}
-    </div>
   );
 }
 
@@ -246,289 +298,558 @@ function Check({ size = 14 }: { size?: number }) {
   );
 }
 
-const FIELD_W = 812;
-const FIELD_H = 210;
-const WAVE_TOP = 150;
+function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`flex flex-col min-w-[0px] rounded-[22px] bg-paper p-[16px] ${className}`}>{children}</div>;
+}
 
-function Field({ children, className = "" }: { children: ReactNode; className?: string }) {
+function Avatar({ initials, size = 36, tone = WELL }: { initials: string; size?: number; tone?: string }) {
   return (
-    <div className={`relative overflow-hidden rounded-[16px] bg-paper ${className}`} style={{ height: FIELD_H }}>
+    <span
+      className={`shrink-0 flex items-center justify-center rounded-[999px] ${SANS} font-[600] text-walnut`}
+      style={{ width: size, height: size, fontSize: size * 0.34, backgroundColor: tone }}
+    >
+      {initials}
+    </span>
+  );
+}
+
+function Chip({ children, dot, tone = WELL }: { children: ReactNode; dot?: string; tone?: string }) {
+  return (
+    <span className={`flex items-center gap-[6px] h-[24px] shrink-0 px-[9px] rounded-[999px] text-[12px] leading-[16px] ${SANS} font-[500] text-walnut`} style={{ backgroundColor: tone }}>
+      {dot && <span className="w-[6px] h-[6px] rounded-[99px]" style={{ backgroundColor: dot }} />}
       {children}
-    </div>
+    </span>
+  );
+}
+
+function Toggle({ on, onChange, label }: { on: boolean; onChange: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      onClick={onChange}
+      className={`relative w-[38px] h-[22px] shrink-0 rounded-[999px] transition-colors duration-200 ${on ? "bg-ink" : "bg-[#E4DCCB]"}`}
+    >
+      <span className="absolute top-[3px] left-[3px] w-[16px] h-[16px] rounded-[999px] bg-paper" style={{ transform: `translateX(${on ? 16 : 0}px)`, transition: `transform 240ms ${EASE}` }} />
+    </button>
+  );
+}
+
+function Ring({ value, size = 64, stroke = 7, children }: { value: number; size?: number; stroke?: number; children?: ReactNode }) {
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  return (
+    <span className="relative shrink-0 flex items-center justify-center" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" style={{ position: "absolute", inset: 0 }}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={WELL} strokeWidth={stroke} />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke="#E8A585"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${c * Math.max(0.001, value)} ${c}`}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+      </svg>
+      <span className="relative">{children}</span>
+    </span>
+  );
+}
+
+const TITLE = `text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`;
+const MUTED = `text-[12px] leading-[16px] ${SANS} font-[500] text-sub`;
+
+function KindIcon({ kind }: { kind: "call" | "refill" | "lab" }) {
+  return (
+    <span className="w-[32px] h-[32px] shrink-0 flex items-center justify-center rounded-[11px] text-walnut" style={{ backgroundColor: WELL }}>
+      <Glyph size={16}>
+        {kind === "call" && <path d="M5 4.5h3.2l1.6 4-2 1.3a10.5 10.5 0 0 0 6.4 6.4l1.3-2 4 1.6V19a1.5 1.5 0 0 1-1.6 1.5C10.6 20 4 13.4 3.5 6.1A1.5 1.5 0 0 1 5 4.5z" />}
+        {kind === "refill" && <path d="M8.5 15.5l7-7a3.5 3.5 0 0 0-5-5l-7 7a3.5 3.5 0 0 0 5 5zM7 7l5 5" />}
+        {kind === "lab" && <path d="M9.5 3.5h5M10.5 3.5v6l-5 8.5a1.5 1.5 0 0 0 1.3 2.2h10.4a1.5 1.5 0 0 0 1.3-2.2l-5-8.5v-6" />}
+      </Glyph>
+    </span>
   );
 }
 
 function NeedsDetail({ done, onDone }: { done: Set<string>; onDone: (id: string) => void }) {
-  if (done.size === NEEDS.length) {
-    return (
-      <Field>
-        <DotWave width={FIELD_W} height={FIELD_H} top={WAVE_TOP - 40} color="#B9CDA8" />
-        <span className={`absolute left-1/2 top-[56px] -translate-x-1/2 flex items-center gap-[10px] h-[40px] px-[16px] rounded-[999px] bg-paper border border-solid border-[#2819101F] text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>
-          <span className="text-[#4F6B42]">
-            <Check />
-          </span>
-          All clear. Doe will bring anything new here.
-        </span>
-      </Field>
-    );
-  }
   return (
-    <Field>
-      <DotWave width={FIELD_W} height={FIELD_H} top={WAVE_TOP} />
+    <div className="grid grid-cols-4 gap-[8px]">
       {NEEDS.map((n, i) => {
         const isDone = done.has(n.id);
-        const cx = FIELD_W * (0.125 + i * 0.25);
-        const pinY = Math.round(waveCrest(cx, WAVE_TOP) - 2);
         return (
-          <Fragment key={n.id}>
-            <span className="absolute w-[1px] bg-[#28191033]" style={{ left: cx, top: 128, height: pinY - 128 }} />
-            <span
-              className="absolute w-[12px] h-[12px] -translate-x-1/2 -translate-y-1/2 rounded-[999px] border-2 border-solid [border-color:#FFFCF1] transition-colors duration-300"
-              style={{ left: cx, top: pinY, backgroundColor: isDone ? "#6E9A5B" : n.pin }}
-            />
-            <div
-              className={`absolute top-[14px] -translate-x-1/2 w-[180px] flex flex-col gap-[8px] p-[12px] rounded-[14px] bg-paper border border-solid border-[#2819101F] transition-opacity duration-300 ${isDone ? "opacity-60" : ""}`}
-              style={{ left: cx }}
-            >
-              <div className="flex items-baseline justify-between gap-[8px]">
-                <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[600] text-walnut ${isDone ? "line-through" : ""}`}>{n.who}</span>
-                <span className={`shrink-0 text-[11px] leading-[14px] ${BODY} text-sub`}>{n.time}</span>
-              </div>
-              <span className={`self-start ${CHIP}`} style={{ backgroundColor: n.tone }}>
-                {n.chip}
+          <Card key={n.id} className={`gap-[12px] transition-opacity duration-300 ${isDone ? "opacity-60" : ""}`}>
+            <span className="flex items-center justify-between">
+              <KindIcon kind={n.kind} />
+              <span className={MUTED}>{n.time}</span>
+            </span>
+            <span className="flex flex-col gap-[2px] min-h-[72px]">
+              <span className={TITLE}>{n.who}</span>
+              <span className={`text-[13px] leading-[18px] ${SANS} font-[500] text-walnut`}>{n.what}</span>
+              <span className={MUTED}>{n.from}</span>
+            </span>
+            {isDone ? (
+              <span className={`flex items-center justify-center gap-[6px] h-[32px] rounded-[999px] text-[13px] leading-[16px] ${SANS} font-[500] text-walnut`} style={{ backgroundColor: WELL }}>
+                <Check />
+                Done
               </span>
-              <div className="flex h-[32px] items-center">
-                {isDone ? (
-                  <span className={`flex items-center gap-[6px] text-[13px] leading-[16px] ${SANS} font-[500] text-[#4F6B42]`}>
-                    <Check />
-                    Done
-                  </span>
-                ) : (
-                  <Pill primary={n.primary} onClick={() => onDone(n.id)}>
-                    {n.action}
-                  </Pill>
-                )}
-              </div>
-            </div>
-          </Fragment>
+            ) : (
+              <Pill primary={i === 0} onClick={() => onDone(n.id)}>
+                {n.action}
+              </Pill>
+            )}
+          </Card>
         );
       })}
-    </Field>
+    </div>
   );
 }
 
 const at = (hour: number) => `${((hour - DAY_FROM) / (DAY_TO - DAY_FROM)) * 100}%`;
 
 function ScheduleDetail() {
+  const [checkedIn, setCheckedIn] = useState(false);
   return (
-    <div className="flex gap-[8px]">
-      <Card className="relative grow min-w-[0px] gap-[8px] pt-[16px] pb-[12px] px-[16px]">
-        {LANES.map((lane) => (
-          <div key={lane.who} className="flex items-center gap-[12px] h-[30px]">
-            <span className={`w-[78px] shrink-0 text-[12px] leading-[16px] ${SANS} font-[500] text-walnut`}>{lane.who}</span>
-            <div className="relative grow h-[24px] rounded-[7px] bg-sand">
-              {lane.blocks.map(([start, length, label]) => {
-                const past = start + length <= NOW;
-                return (
-                  <span
-                    key={start}
-                    className={`absolute top-[3px] bottom-[3px] flex items-center overflow-hidden rounded-[5px] px-[6px] whitespace-nowrap text-[11px] leading-[14px] ${SANS} font-[600] text-walnut`}
-                    style={{
-                      left: `calc(${at(start)} + 1px)`,
-                      width: `calc(${(length / (DAY_TO - DAY_FROM)) * 100}% - 2px)`,
-                      backgroundColor: label ? "#E8A585" : past ? "#E6DCC8" : "#F6D9C8",
-                    }}
-                  >
-                    {label}
-                  </span>
-                );
-              })}
+    <div className="grid grid-cols-[1fr_250px] gap-[8px]">
+      <Card className="gap-[10px]">
+        <span className="flex items-center justify-between">
+          <span className={TITLE}>This afternoon</span>
+          <Chip dot={ACCENT}>Now 3:20</Chip>
+        </span>
+        <div className="relative flex flex-col gap-[6px]">
+          {LANES.map((lane) => (
+            <div key={lane.who} className="flex items-center gap-[10px]">
+              <span className={`w-[56px] shrink-0 ${MUTED}`}>{lane.who}</span>
+              <div className="relative grow h-[26px] rounded-[10px]" style={{ backgroundColor: WELL }}>
+                {lane.blocks.map(([start, len]) => {
+                  const past = start + len <= NOW;
+                  const current = start <= NOW && start + len > NOW;
+                  const next = start === 15.5 && lane.who === "Roberts";
+                  return (
+                    <span
+                      key={start}
+                      className="absolute top-[4px] bottom-[4px] rounded-[7px]"
+                      style={{
+                        left: `calc(${at(start)} + 2px)`,
+                        width: `calc(${(len / (DAY_TO - DAY_FROM)) * 100}% - 4px)`,
+                        backgroundColor: next ? "#E8A585" : current ? "#281910" : past ? "#E6DCC8" : "#EFE3CF",
+                      }}
+                    />
+                  );
+                })}
+              </div>
             </div>
+          ))}
+          <div className="pointer-events-none absolute top-[-4px] bottom-[-4px] left-[66px] right-0">
+            <span className="absolute top-0 bottom-0 w-[1.5px] -translate-x-1/2" style={{ left: at(NOW), backgroundColor: ACCENT }} />
           </div>
-        ))}
-        <div className="relative flex h-[16px] ml-[90px]">
+        </div>
+        <div className="relative h-[14px] ml-[66px]">
           {[12, 13, 14, 15, 16, 17, 18].map((h) => (
-            <span key={h} className={`absolute -translate-x-1/2 text-[11px] leading-[14px] ${BODY} text-sub`} style={{ left: at(h) }}>
+            <span key={h} className={`absolute -translate-x-1/2 text-[11px] leading-[14px] ${SANS} text-sub`} style={{ left: at(h) }}>
               {h === 12 ? "12" : h - 12}
             </span>
           ))}
         </div>
-        <div className="pointer-events-none absolute top-[10px] bottom-[30px] left-[106px] right-[16px]">
-          <span className="absolute top-0 bottom-0 w-[1.5px] -translate-x-1/2 bg-ink" style={{ left: at(NOW) }} />
-        </div>
       </Card>
-      <Card className="relative w-[200px] shrink-0 gap-[2px] p-[16px] bg-[#FCCFB8]">
-        <span className={`text-[12px] leading-[16px] ${BODY} text-walnut opacity-70`}>Next in 10 min</span>
-        <span className={`text-[34px] leading-[40px] tracking-[-0.02em] ${DISPLAY} text-ink`}>3:30</span>
-        <span className="mt-auto flex flex-col gap-[2px]">
-          <span className={`text-[14px] leading-[18px] ${SANS} font-[600] text-ink`}>Maya Chen</span>
-          <span className={`text-[12px] leading-[16px] ${BODY} text-walnut opacity-70`}>Annual physical · Dr. Roberts</span>
+      <Card className="gap-[12px]">
+        <span className="flex items-center justify-between">
+          <span className={MUTED}>Up next · 10 min</span>
+          <span className={`text-[13px] leading-[16px] ${SANS} font-[600] text-walnut`}>3:30</span>
+        </span>
+        <span className="flex items-center gap-[10px]">
+          <Avatar initials="MC" tone="#FCCFB8" />
+          <span className="flex flex-col min-w-[0px]">
+            <span className={TITLE}>Maya Chen</span>
+            <span className={MUTED}>Annual physical · Room 2</span>
+          </span>
+        </span>
+        <span className="flex gap-[6px]">
+          <Chip dot={GREEN}>Intake ready</Chip>
+          <Chip>$25 copay</Chip>
+        </span>
+        <Pill primary={!checkedIn} onClick={() => setCheckedIn(true)} className="mt-auto">
+          {checkedIn ? (
+            <>
+              <Check />
+              Checked in
+            </>
+          ) : (
+            "Check in"
+          )}
+        </Pill>
+      </Card>
+    </div>
+  );
+}
+
+function useTicker() {
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => setSeconds((s) => s + 1), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  return seconds;
+}
+
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
+function Waveform({ bars = 28, seed = 0 }: { bars?: number; seed?: number }) {
+  return (
+    <span className="flex items-center gap-[3px] h-[28px]">
+      {Array.from({ length: bars }, (_, i) => (
+        <span
+          key={i}
+          className="doe-ripple w-[3px] rounded-[99px]"
+          style={{ height: `${22 + 78 * Math.abs(Math.sin(i * 0.8 + seed))}%`, backgroundColor: "#E8A585", animationDelay: `${((i + seed) % 7) * 0.14}s` }}
+        />
+      ))}
+    </span>
+  );
+}
+
+function VoiceDetail() {
+  const tick = useTicker();
+  const most = Math.max(...CALL_MIX.map((c) => c.value));
+  return (
+    <div className="grid grid-cols-[1fr_1fr_230px] gap-[8px]">
+      {LIVE_CALLS.map((c, i) => (
+        <Card key={c.name} className="gap-[12px]">
+          <span className="flex items-center gap-[10px]">
+            <Avatar initials={c.initials} />
+            <span className="flex flex-col grow min-w-[0px]">
+              <span className={TITLE}>{c.name}</span>
+              <span className={`truncate ${MUTED}`}>{c.about}</span>
+            </span>
+            <span className={`text-[13px] leading-[16px] ${SANS} font-[600] [font-variant-numeric:tabular-nums]`} style={{ color: ACCENT }}>
+              {mmss(c.start + tick)}
+            </span>
+          </span>
+          <span className="flex items-center h-[44px] px-[12px] rounded-[14px]" style={{ backgroundColor: WELL }}>
+            <Waveform seed={i * 3} />
+          </span>
+          <span className="flex gap-[6px]">
+            <Pill className="grow">Listen</Pill>
+            <Pill primary className="grow">
+              Take over
+            </Pill>
+          </span>
+        </Card>
+      ))}
+      <Card className="gap-[8px]">
+        <span className="flex items-baseline justify-between">
+          <span className={TITLE}>47 calls</span>
+          <span className={MUTED}>today</span>
+        </span>
+        {CALL_MIX.map((c) => (
+          <span key={c.label} className="grid grid-cols-[72px_1fr_18px] items-center gap-[8px]">
+            <span className={MUTED}>{c.label}</span>
+            <span className="h-[6px] rounded-[99px]" style={{ backgroundColor: WELL }}>
+              <span className="block h-full rounded-[99px] bg-walnut" style={{ width: `${(c.value / most) * 100}%` }} />
+            </span>
+            <span className={`text-right ${MUTED}`}>{c.value}</span>
+          </span>
+        ))}
+      </Card>
+    </div>
+  );
+}
+
+function AgentsDetail() {
+  const [accepting, setAccepting] = useState(true);
+  return (
+    <div className="grid grid-cols-[1fr_250px] gap-[8px]">
+      <Card className="gap-[10px]">
+        <span className="flex items-center gap-[8px]">
+          <Chip tone="#281910">
+            <span className="[color:#FFFCF1]">ChatGPT</span>
+          </Chip>
+          <span className={MUTED}>for Maya Chen · 9:12</span>
+        </span>
+        <span className={`self-start max-w-[80%] px-[14px] py-[10px] rounded-[18px] rounded-tl-[6px] text-[14px] leading-[20px] ${SANS} font-[500] text-walnut`} style={{ backgroundColor: WELL }}>
+          Is there an annual physical before work this week? She has Aetna.
+        </span>
+        <span className="self-end flex items-center gap-[12px] w-[78%] p-[12px] rounded-[18px] rounded-tr-[6px] border border-solid border-[#2819101F]">
+          <span className="w-[44px] h-[44px] shrink-0 flex flex-col items-center justify-center rounded-[12px] bg-ink [color:#FFFCF1]">
+            <span className={`text-[10px] leading-[12px] ${SANS} font-[600] uppercase`}>Thu</span>
+            <span className={`text-[17px] leading-[20px] ${DISPLAY}`}>22</span>
+          </span>
+          <span className="flex flex-col grow min-w-[0px]">
+            <span className={TITLE}>8:30 AM · Dr. Roberts</span>
+            <span className={MUTED}>Annual physical · $0 with Aetna</span>
+          </span>
+          <Chip dot={GREEN}>Booked</Chip>
+        </span>
+      </Card>
+      <Card className="gap-[12px]">
+        <span className="flex items-center justify-between">
+          <span className={TITLE}>{accepting ? "Accepting agents" : "Agents paused"}</span>
+          <Toggle on={accepting} onChange={() => setAccepting((v) => !v)} label="Accept agents" />
+        </span>
+        <span className="flex items-center gap-[12px]">
+          <Ring value={accepting ? 12 / 16 : 0}>
+            <span className={`text-[18px] leading-[20px] ${DISPLAY} text-ink`}>12</span>
+          </Ring>
+          <span className={MUTED}>booked by agents today, of 16 asks</span>
+        </span>
+        <span className="flex flex-col gap-[6px] mt-auto">
+          {AGENT_COUNTS.map((a) => (
+            <span key={a.name} className="flex items-center justify-between">
+              <span className={MUTED}>{a.name}</span>
+              <span className={`text-[12px] leading-[16px] ${SANS} font-[600] text-walnut`}>{a.value}</span>
+            </span>
+          ))}
         </span>
       </Card>
     </div>
   );
 }
 
-function VoiceDetail() {
-  const total = CALL_MIX.reduce((sum, c) => sum + c.value, 0);
-  const dots = CALL_MIX.flatMap((c) => Array.from({ length: c.value }, () => c.color));
+function MessagesDetail() {
+  const [picked, setPicked] = useState(THREADS[0]!.id);
+  const [sent, setSent] = useState<Set<string>>(() => new Set());
+  const thread = THREADS.find((t) => t.id === picked)!;
+  const isSent = sent.has(thread.id);
   return (
-    <Field className="flex">
-      {LIVE_CALLS.map((call, i) => (
-        <div key={call.name} className="flex items-center gap-[16px] w-[272px] shrink-0 px-[20px] border-r border-solid border-line">
-          <RippleRings size={112} color={i === 0 ? "#E8A585" : "#C2A987"} />
-          <div className="flex flex-col gap-[6px] min-w-[0px]">
-            <span className={`flex items-center gap-[5px] text-[12px] leading-[16px] ${SANS} font-[500] text-[#C2603A] [font-variant-numeric:tabular-nums]`}>
-              <span className="w-[6px] h-[6px] rounded-[99px] bg-[#D9774F]" />
-              {call.time}
+    <Card className="grid grid-cols-[270px_1fr] gap-[12px] p-[8px]">
+      <span className="flex flex-col gap-[2px]">
+        {THREADS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setPicked(t.id)}
+            className={`flex items-center gap-[10px] p-[10px] rounded-[16px] text-left transition-colors duration-150 ${picked === t.id ? "" : "hover:bg-[#FAF6EC]"}`}
+            style={picked === t.id ? { backgroundColor: WELL } : undefined}
+          >
+            <Avatar initials={t.initials} size={32} tone={picked === t.id ? "#FFFCF1" : WELL} />
+            <span className="flex flex-col grow min-w-[0px]">
+              <span className="flex items-center justify-between gap-[6px]">
+                <span className={`text-[13px] leading-[18px] ${SANS} font-[600] text-walnut`}>{t.who}</span>
+                <span className={MUTED}>{t.time}</span>
+              </span>
+              <span className={`truncate ${MUTED}`}>{t.text}</span>
             </span>
-            <span className={`text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`}>{call.name}</span>
-            <span className={`text-[12px] leading-[16px] ${BODY} text-sub`}>{call.about}</span>
-            <button
-              type="button"
-              className={`mt-[4px] self-start flex items-center h-[28px] px-[10px] gap-[5px] rounded-[999px] border border-solid border-[#28191033] hover:bg-[#F4EEDF] transition-colors duration-150 text-[12px] leading-[16px] ${SANS} font-[500] text-walnut`}
-            >
-              <Glyph size={13}>
-                <path d="M4 14v-2a8 8 0 0 1 16 0v2M4 14h3v5H5a1 1 0 0 1-1-1zM20 14h-3v5h2a1 1 0 0 0 1-1z" />
-              </Glyph>
-              Listen
-            </button>
-          </div>
-        </div>
-      ))}
-      <div className="flex flex-col grow min-w-[0px] justify-center gap-[14px] px-[22px]">
-        <div className="flex items-baseline gap-[8px]">
-          <span className={`text-[28px] leading-[30px] ${DISPLAY} text-ink`}>{total}</span>
-          <span className={`text-[13px] leading-[16px] ${BODY} text-sub`}>calls today, one dot each</span>
-        </div>
-        <div className="flex flex-wrap gap-[5px]">
-          {dots.map((color, i) => (
-            <span key={i} className="w-[9px] h-[9px] rounded-[99px]" style={{ backgroundColor: color }} />
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-x-[12px] gap-y-[4px]">
-          {CALL_MIX.map((c) => (
-            <span key={c.label} className="flex items-center gap-[5px]">
-              <span className="w-[7px] h-[7px] rounded-[99px]" style={{ backgroundColor: c.color }} />
-              <span className={`text-[11px] leading-[14px] ${BODY} text-sub`}>{c.label}</span>
-            </span>
-          ))}
-        </div>
-      </div>
-    </Field>
+            {!sent.has(t.id) && <span className="w-[7px] h-[7px] shrink-0 rounded-[99px]" style={{ backgroundColor: ACCENT }} />}
+          </button>
+        ))}
+      </span>
+      <span key={thread.id} className="doe-menu-in flex flex-col gap-[10px] p-[8px]">
+        <span className={`self-start max-w-[90%] px-[14px] py-[10px] rounded-[18px] rounded-tl-[6px] text-[14px] leading-[20px] ${SANS} font-[500] text-walnut`} style={{ backgroundColor: WELL }}>
+          {thread.text}
+        </span>
+        <span className="flex flex-col gap-[10px] p-[12px] rounded-[18px] border border-solid border-[#2819101F]">
+          <span className={`flex items-center gap-[6px] ${MUTED}`}>
+            <span className="w-[6px] h-[6px] rounded-[99px]" style={{ backgroundColor: isSent ? GREEN : "#E8A585" }} />
+            {isSent ? "Sent" : "Drafted by Doe"}
+          </span>
+          <span className={`text-[14px] leading-[20px] ${SANS} font-[500] text-walnut`}>{thread.draft}</span>
+          <span className="flex justify-end gap-[6px]">
+            {!isSent && <Pill>Edit</Pill>}
+            <Pill primary={!isSent} onClick={() => setSent((prev) => new Set(prev).add(thread.id))}>
+              {isSent ? (
+                <>
+                  <Check />
+                  Sent
+                </>
+              ) : (
+                "Send"
+              )}
+            </Pill>
+          </span>
+        </span>
+      </span>
+    </Card>
+  );
+}
+
+function Sparkline({ values }: { values: number[] }) {
+  const w = 200;
+  const h = 40;
+  const max = Math.max(...values);
+  const pts = values.map((v, i) => [(i / (values.length - 1)) * w, h - 4 - (v / max) * (h - 8)] as const);
+  const d = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
+  const last = pts[pts.length - 1]!;
+  return (
+    <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true" style={{ display: "block", overflow: "visible" }}>
+      <path d={`${d} L${w} ${h} L0 ${h} Z`} fill="#FCCFB84D" />
+      <path d={d} fill="none" stroke="#E8A585" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      <circle cx={last[0]} cy={last[1]} r="3" fill="#C2603A" />
+    </svg>
   );
 }
 
 function ServicesDetail() {
+  const [bookable, setBookable] = useState<Record<string, boolean>>({ ear: true, flu: true, physical: true });
   return (
-    <Field>
-      {DEMAND.map((d) => {
-        const size = Math.round((34 + d.value * 3) * 2);
-        return (
-          <HalftoneDisc
-            key={d.label}
-            size={size}
-            color={d.color}
-            step={7}
-            className="absolute -translate-x-1/2 -translate-y-1/2"
-            style={{ left: d.x, top: d.y }}
-          >
-            <span className="flex flex-col items-center px-[9px] py-[4px] rounded-[10px] bg-paper">
-              <span className={`whitespace-nowrap text-[12px] leading-[15px] ${SANS} font-[600] text-walnut`}>{d.label}</span>
-              <span className={`text-[16px] leading-[18px] ${DISPLAY} text-ink`}>{d.value}</span>
+    <div className="grid grid-cols-3 gap-[8px]">
+      {SERVICES.map((s) => (
+        <Card key={s.id} className="gap-[12px]">
+          <span className="flex items-start justify-between gap-[8px]">
+            <span className="flex flex-col">
+              <span className={TITLE}>{s.name}</span>
+              <span className={MUTED}>{s.price}</span>
             </span>
-          </HalftoneDisc>
-        );
-      })}
-      <span className={`absolute right-[16px] top-[14px] ${CHIP} gap-[6px] bg-[#DCE5D0]`}>
-        <span className="w-[6px] h-[6px] rounded-[99px] bg-[#6E9A5B]" />
-        Flu shot promotion · 41 booked
-      </span>
-    </Field>
+            <span className={`text-[22px] leading-[26px] ${DISPLAY} text-ink`}>{s.week}</span>
+          </span>
+          <Sparkline values={s.trend} />
+          <span className="flex items-center justify-between pt-[10px] border-t border-solid border-line">
+            <span className={MUTED}>Agents can book</span>
+            <Toggle on={!!bookable[s.id]} onChange={() => setBookable((prev) => ({ ...prev, [s.id]: !prev[s.id] }))} label={`Agents can book ${s.name}`} />
+          </span>
+        </Card>
+      ))}
+    </div>
   );
 }
 
 function ProvidersDetail() {
   return (
-    <Field className="grid grid-cols-5 items-center px-[8px]">
+    <div className="grid grid-cols-5 gap-[8px]">
       {PROVIDERS.map((p) => (
-        <div key={p.initials} className={`flex flex-col items-center gap-[12px] ${p.here ? "" : "opacity-55"}`}>
-          <HalftoneDisc
-            size={112}
-            step={6.5}
-            color={p.here ? "#F0C9B4" : "#E3D9C6"}
-            split={p.here ? { fraction: p.seen / p.booked, color: "#281910" } : undefined}
-          >
-            <span className={`w-[46px] h-[46px] flex items-center justify-center rounded-[999px] bg-paper text-[18px] leading-[20px] ${DISPLAY} text-walnut`}>
-              {p.initials}
-            </span>
-          </HalftoneDisc>
-          <span className="flex flex-col items-center gap-[2px]">
-            <Value>{p.name}</Value>
-            <Label>{p.here ? `${p.seen} of ${p.booked} seen · ${p.status}` : p.status}</Label>
+        <Card key={p.initials} className={`items-center gap-[10px] text-center ${p.here ? "" : "opacity-55"}`}>
+          <Ring value={p.booked ? p.seen / p.booked : 0} size={72} stroke={6}>
+            <Avatar initials={p.initials} size={52} tone={p.here ? "#FCCFB8" : WELL} />
+          </Ring>
+          <span className="flex flex-col items-center">
+            <span className={TITLE}>{p.name}</span>
+            <span className={MUTED}>{p.here && p.booked ? `${p.seen} of ${p.booked} seen` : "Off today"}</span>
           </span>
-        </div>
+          <Chip dot={p.here && p.status.startsWith("Room") ? GREEN : undefined}>{p.status}</Chip>
+        </Card>
       ))}
-    </Field>
+    </div>
   );
 }
 
-const HUB = { x: FIELD_W / 2, y: FIELD_H / 2, r: 62 };
-const NODE_W = 212;
-
-function SystemsDetail() {
-  const nodes = SYSTEMS.map((s, i) => {
-    const left = i < 2;
-    const y = left ? [62, 148][i] : [40, 105, 170][i - 2];
-    return { ...s, left, y };
-  });
+function ReferralsDetail() {
+  const [nudged, setNudged] = useState(false);
   return (
-    <Field>
-      <svg width={FIELD_W} height={FIELD_H} className="absolute left-0 top-0" aria-hidden="true">
-        {nodes.map((n) => {
-          const sx = HUB.x + (n.left ? -HUB.r : HUB.r);
-          const ex = n.left ? 16 + NODE_W : FIELD_W - 16 - NODE_W;
-          const mx = (sx + ex) / 2;
-          return (
-            <path
-              key={n.name}
-              d={`M${sx} ${HUB.y} C${mx} ${HUB.y} ${mx} ${n.y} ${ex} ${n.y}`}
-              fill="none"
-              stroke={n.live ? "#C2A987" : "#E8A585"}
-              strokeWidth={n.live ? 3 : 2}
-              strokeLinecap="round"
-              strokeDasharray={n.live ? "0 7" : "5 6"}
-              className={n.live ? "doe-flow" : undefined}
-              style={n.live && n.left ? { animationDirection: "reverse" } : undefined}
-            />
-          );
-        })}
-      </svg>
-      <DoeHealthProductSphere className="absolute" style={{ left: HUB.x - 76, top: HUB.y - 76, width: 152, height: 152 }} />
-      <span className={`absolute -translate-x-1/2 -translate-y-1/2 flex items-center h-[26px] px-[10px] rounded-[999px] bg-ink text-[12px] leading-[16px] ${SANS} font-[600] [color:#FFFCF1]`} style={{ left: HUB.x, top: HUB.y }}>
-        Doe
-      </span>
-      {nodes.map((n) => (
-        <div
-          key={n.name}
-          className={`absolute -translate-y-1/2 flex items-center gap-[10px] h-[52px] px-[10px] rounded-[14px] border border-solid ${n.live ? "bg-paper border-[#2819101F]" : "bg-[#FBE4D8] border-[#E8A58566]"}`}
-          style={{ width: NODE_W, top: n.y, ...(n.left ? { left: 16 } : { right: 16 }) }}
-        >
-          <span className={`w-[32px] h-[32px] shrink-0 flex items-center justify-center rounded-[10px] text-[14px] leading-[16px] ${DISPLAY} text-walnut ${n.live ? "bg-sand" : "bg-[#FFFCF1B3]"}`}>
-            {n.mark}
+    <Card className="gap-[4px] p-[8px]">
+      {REFERRAL_ROWS.map((r) => (
+        <div key={r.id} className="grid grid-cols-[220px_1fr_120px] items-center gap-[16px] p-[10px] rounded-[16px] hover:bg-[#FAF6EC] transition-colors duration-150">
+          <span className="flex items-center gap-[10px] min-w-[0px]">
+            <Avatar initials={r.initials} size={32} />
+            <span className="flex flex-col min-w-[0px]">
+              <span className={`text-[13px] leading-[18px] ${SANS} font-[600] text-walnut`}>{r.who}</span>
+              <span className={`truncate ${MUTED}`}>{r.to}</span>
+            </span>
           </span>
-          <span className="flex flex-col grow min-w-[0px]">
-            <Value>{n.name}</Value>
-            <Label>{n.live ? n.stat : "Offline since 9:12"}</Label>
+          <span className="flex items-center">
+            {STEPS.map((s, i) => (
+              <Fragment key={s}>
+                {i > 0 && <span className="grow h-[2px] rounded-[2px]" style={{ backgroundColor: i <= r.step ? "#E8A585" : WELL }} />}
+                <span className="relative flex flex-col items-center">
+                  <span
+                    className="w-[14px] h-[14px] rounded-[999px] border-2 border-solid"
+                    style={{ borderColor: i <= r.step ? "#E8A585" : "#E4DCCB", backgroundColor: i < r.step ? "#E8A585" : "#FFFCF1" }}
+                  />
+                  <span className={`absolute top-[18px] whitespace-nowrap text-[10px] leading-[12px] ${SANS} font-[500] ${i === r.step ? "text-walnut" : "text-sub"}`}>{s}</span>
+                </span>
+              </Fragment>
+            ))}
           </span>
-          {!n.live && (
-            <button type="button" className={`shrink-0 flex items-center h-[26px] px-[9px] rounded-[999px] bg-ink text-[11px] leading-[14px] ${SANS} font-[500] [color:#FFFCF1]`}>
-              Reconnect
-            </button>
-          )}
+          <span className="flex justify-end">
+            {r.stalled ? (
+              <Pill primary={!nudged} onClick={() => setNudged(true)}>
+                {nudged ? (
+                  <>
+                    <Check />
+                    Nudged
+                  </>
+                ) : (
+                  "Nudge"
+                )}
+              </Pill>
+            ) : (
+              <span className={MUTED}>On track</span>
+            )}
+          </span>
         </div>
       ))}
-    </Field>
+    </Card>
+  );
+}
+
+function PaymentsDetail() {
+  const [sent, setSent] = useState<Set<string>>(() => new Set());
+  return (
+    <div className="grid grid-cols-[230px_1fr] gap-[8px]">
+      <Card className="items-center justify-center gap-[10px]">
+        <Ring value={4210 / 6000} size={104} stroke={10}>
+          <span className="flex flex-col items-center">
+            <span className={`text-[20px] leading-[24px] ${DISPLAY} text-ink`}>$4,210</span>
+            <span className={MUTED}>of $6,000</span>
+          </span>
+        </Ring>
+        <Chip dot={GREEN}>$860 paid by agents</Chip>
+      </Card>
+      <Card className="gap-[4px] p-[8px]">
+        <span className={`px-[10px] pt-[6px] pb-[4px] ${TITLE}`}>Still owed</span>
+        {OWED.map((o) => {
+          const isSent = sent.has(o.id);
+          return (
+            <span key={o.id} className="flex items-center gap-[10px] p-[10px] rounded-[16px] hover:bg-[#FAF6EC] transition-colors duration-150">
+              <Avatar initials={o.initials} size={32} />
+              <span className="flex flex-col grow min-w-[0px]">
+                <span className={`text-[13px] leading-[18px] ${SANS} font-[600] text-walnut`}>{o.who}</span>
+                <span className={MUTED}>{o.what}</span>
+              </span>
+              <span className={`w-[52px] text-right text-[16px] leading-[20px] ${DISPLAY} text-ink`}>{o.amount}</span>
+              <Pill primary={!isSent} onClick={() => setSent((prev) => new Set(prev).add(o.id))} className="w-[104px]">
+                {isSent ? (
+                  <>
+                    <Check />
+                    Sent
+                  </>
+                ) : (
+                  "Send link"
+                )}
+              </Pill>
+            </span>
+          );
+        })}
+      </Card>
+    </div>
+  );
+}
+
+function SystemsDetail() {
+  const [state, setState] = useState<"offline" | "connecting" | "live">("offline");
+  const reconnect = () => {
+    setState("connecting");
+    window.setTimeout(() => setState("live"), 1400);
+  };
+  return (
+    <div className="grid grid-cols-5 gap-[8px]">
+      {SYSTEMS.map((s) => {
+        const live = s.live || state === "live";
+        return (
+          <Card key={s.name} className="gap-[12px]">
+            <span className="flex items-center justify-between">
+              <span className={`w-[38px] h-[38px] flex items-center justify-center rounded-[12px] text-[16px] leading-[20px] ${DISPLAY} text-walnut`} style={{ backgroundColor: WELL }}>
+                {s.mark}
+              </span>
+              <Chip dot={live ? GREEN : ACCENT}>{live ? "Live" : "Offline"}</Chip>
+            </span>
+            <span className="flex flex-col">
+              <span className={TITLE}>{s.name}</span>
+              <span className={MUTED}>{s.role}</span>
+            </span>
+            {s.live || state === "live" ? (
+              <span className={`mt-auto ${MUTED}`}>Synced {s.live ? s.synced : "just now"}</span>
+            ) : (
+              <Pill primary onClick={reconnect} className="mt-auto">
+                {state === "connecting" ? <span className="animate-spin w-[12px] h-[12px] rounded-[999px] border-2 border-solid border-[#FFFCF166] [border-top-color:#FFFCF1]" /> : "Reconnect"}
+              </Pill>
+            )}
+          </Card>
+        );
+      })}
+    </div>
   );
 }
 
@@ -536,13 +857,19 @@ function SectionDetail({ id, done, onDone }: { id: SectionId; done: Set<string>;
   if (id === "needs") return <NeedsDetail done={done} onDone={onDone} />;
   if (id === "schedule") return <ScheduleDetail />;
   if (id === "voice") return <VoiceDetail />;
+  if (id === "agents") return <AgentsDetail />;
+  if (id === "messages") return <MessagesDetail />;
   if (id === "services") return <ServicesDetail />;
   if (id === "providers") return <ProvidersDetail />;
+  if (id === "referrals") return <ReferralsDetail />;
+  if (id === "payments") return <PaymentsDetail />;
   return <SystemsDetail />;
 }
 
+const TOP_FADE = 48;
+const BOTTOM_FADE = 96;
+
 export function DoeHealthProductIndex({
-  clinic,
   onNavigate,
 }: {
   clinic: { name: string; location: string };
@@ -552,6 +879,40 @@ export function DoeHealthProductIndex({
   const [done, setDone] = useState<Set<string>>(() => new Set());
   const remaining = NEEDS.length - done.size;
   const markDone = (id: string) => setDone((prev) => new Set(prev).add(id));
+  const listRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [fade, setFade] = useState({ top: 0, bottom: BOTTOM_FADE });
+
+  const measure = () => {
+    const el = listRef.current;
+    if (!el) return;
+    const below = el.scrollHeight - el.clientHeight - el.scrollTop;
+    const top = Math.round(Math.min(TOP_FADE, Math.max(0, el.scrollTop)));
+    const bottom = Math.round(Math.min(BOTTOM_FADE, Math.max(0, below)));
+    setFade((prev) => (prev.top === top && prev.bottom === bottom ? prev : { top, bottom }));
+  };
+
+  useEffect(() => {
+    measure();
+    const observer = new ResizeObserver(measure);
+    if (listRef.current) observer.observe(listRef.current);
+    if (innerRef.current) observer.observe(innerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  /** Opens a row, then scrolls just enough to bring the whole opened row into view once it has grown. */
+  const openSection = (id: SectionId) => {
+    setOpen(id);
+    window.setTimeout(() => {
+      const el = listRef.current;
+      const row = el?.querySelector<HTMLElement>(`[data-section="${id}"]`);
+      if (!el || !row) return;
+      const top = row.offsetTop - TOP_FADE;
+      const bottom = row.offsetTop + row.offsetHeight + BOTTOM_FADE / 2 - el.clientHeight;
+      if (top < el.scrollTop) el.scrollTo({ top, behavior: "smooth" });
+      else if (bottom > el.scrollTop) el.scrollTo({ top: Math.min(top, bottom), behavior: "smooth" });
+    }, 320);
+  };
 
   const needsSummary =
     remaining > 0 ? (
@@ -562,26 +923,39 @@ export function DoeHealthProductIndex({
 
   return (
     <>
-      <DoeHealthProductSphere
-        className="absolute pointer-events-none"
-        style={{ left: 880, top: 0, width: 900, height: 900 }}
-        color="#E8A585"
-      />
-      <div className="relative flex items-center justify-between w-[840px] shrink-0">
-        <div className={`text-[46px] leading-[50px] tracking-[-0.025em] ${DISPLAY} text-walnut`}>Dr. Robert’s Index</div>
-        <div className="flex items-center h-[38px] px-[14px] rounded-[999px] gap-[8px] bg-[#EEEADF]">
-          <span className="w-[7px] h-[7px] rounded-[99px] bg-[#6E9A5B]" />
-          <span className={`text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>{clinic.name}</span>
-          <span className={`text-[14px] leading-[18px] ${BODY} text-sub`}>Open until 6 PM</span>
-        </div>
+      <div className="absolute top-[-28px] right-[-28px] bottom-[-28px] w-[420px] z-0 pointer-events-none [&_canvas]:absolute [&_canvas]:inset-0 [&_canvas]:h-full [&_canvas]:w-full">
+        <DoeHealthBlogDotWave color="rgba(196, 172, 128, 0.32)" top={0.08} amp={46} fade={0.12} scale={1.08} slant={0.22} />
+        <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(90deg, var(--color-paper) 0%, transparent 42%)" }} />
       </div>
-      <div className="relative flex flex-col w-[840px] gap-[8px]">
+      <div className="relative z-[1] flex items-center justify-between w-[840px] shrink-0">
+        <div className={`text-[46px] leading-[50px] tracking-[-0.025em] ${DISPLAY} text-walnut`}>Dr. Robert’s Index</div>
+        <button
+          type="button"
+          className={`flex items-center h-[30px] px-[12px] gap-[6px] rounded-[999px] bg-[#EEEADF] hover:bg-[#E6E0D2] transition-colors duration-150 text-[13px] leading-[16px] ${SANS} font-[500] text-walnut`}
+        >
+          <Glyph size={13}>
+            <path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 4.5v4h-4" />
+          </Glyph>
+          Sync Now
+        </button>
+      </div>
+      <div
+        ref={listRef}
+        onScroll={measure}
+        className="relative z-[1] w-[840px] grow min-h-[0px] -mb-[28px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{
+          maskImage: `linear-gradient(180deg, transparent 0px, #000 ${fade.top}px, #000 calc(100% - ${fade.bottom}px), transparent 100%)`,
+          WebkitMaskImage: `linear-gradient(180deg, transparent 0px, #000 ${fade.top}px, #000 calc(100% - ${fade.bottom}px), transparent 100%)`,
+        }}
+      >
+        <div ref={innerRef} className="flex flex-col gap-[8px] pb-[40px]">
         {SECTIONS.map((section) => {
           const expanded = open === section.id;
           const summary = section.id === "needs" ? needsSummary : section.summary;
           return (
             <div
               key={section.id}
+              data-section={section.id}
               className={`group flex flex-col pl-[8px] pr-[14px] transition-[background-color,border-radius,padding] duration-300 ${expanded ? "py-[14px] rounded-[24px] bg-sand" : "py-[8px] rounded-[20px] bg-[#FAF6EC] hover:bg-[#F4EEDF]"}`}
               style={{ transitionTimingFunction: EASE }}
             >
@@ -589,16 +963,16 @@ export function DoeHealthProductIndex({
                 role="button"
                 tabIndex={0}
                 aria-expanded={expanded}
-                onClick={() => setOpen(section.id)}
+                onClick={() => openSection(section.id)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    setOpen(section.id);
+                    openSection(section.id);
                   }
                 }}
                 className={`flex items-center gap-[14px] outline-none ${expanded ? "cursor-default" : "cursor-pointer"}`}
               >
-                <Tile color={section.tile}>{section.icon}</Tile>
+                <Tile color={section.tile} />
                 <span
                   className={`grow tracking-[-0.015em] ${DISPLAY} text-walnut`}
                   style={{
@@ -613,7 +987,7 @@ export function DoeHealthProductIndex({
                 {section.tab && expanded && (
                   <span onClick={(e) => e.stopPropagation()} className="doe-menu-in flex">
                     <Pill primary onClick={() => section.tab && onNavigate?.(section.tab)}>
-                      Open {section.title}
+                      Open {section.tab === "permissions" ? "permissions" : section.title}
                       <Glyph size={14}>
                         <path d="M9 6l6 6-6 6" />
                       </Glyph>
@@ -637,19 +1011,7 @@ export function DoeHealthProductIndex({
             </div>
           );
         })}
-      </div>
-      <div className="relative mt-auto flex items-center gap-[12px] w-[840px] shrink-0">
-        <span className="w-[7px] h-[7px] rounded-[99px] bg-[#6E9A5B]" />
-        <span className={`text-[13px] leading-[18px] ${BODY} text-sub`}>Everything synced a minute ago</span>
-        <button
-          type="button"
-          className={`flex items-center h-[30px] px-[12px] gap-[6px] rounded-[999px] bg-[#EEEADF] hover:bg-[#E6E0D2] transition-colors duration-150 text-[13px] leading-[16px] ${SANS} font-[500] text-walnut`}
-        >
-          <Glyph size={13}>
-            <path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 4.5v4h-4" />
-          </Glyph>
-          Sync now
-        </button>
+        </div>
       </div>
     </>
   );

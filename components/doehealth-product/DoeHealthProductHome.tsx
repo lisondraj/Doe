@@ -15,12 +15,21 @@ import {
 import { DoeHealthProductServicesPage } from "@/components/doehealth-product/DoeHealthProductServices";
 import { DoeHealthProductVoicePage } from "@/components/doehealth-product/DoeHealthProductVoice";
 import { DoeHealthProductSchedulePage } from "@/components/doehealth-product/DoeHealthProductSchedule";
+import { DoeHealthProductCalendarPage } from "@/components/doehealth-product/DoeHealthProductCalendar";
+import { DoeHealthProductPaymentsPage } from "@/components/doehealth-product/DoeHealthProductPayments";
+import { DoeHealthProductPermissionsPage } from "@/components/doehealth-product/DoeHealthProductPermissions";
+import { DoeHealthProductReferralsPage } from "@/components/doehealth-product/DoeHealthProductReferrals";
+import { DoeHealthProductFormsPage } from "@/components/doehealth-product/DoeHealthProductForms";
+import { DoeHealthProductSearchPage } from "@/components/doehealth-product/DoeHealthProductSearch";
 import { DoeHealthProductCallPage } from "@/components/doehealth-product/DoeHealthProductCall";
 import { DoeHealthProductIndex } from "@/components/doehealth-product/DoeHealthProductIndex";
 import { HalftoneDisc } from "@/components/doehealth-product/DoeHealthProductHalftone";
 
 /** "call" is opened from the Voice tab's Handled list and has no rail icon of its own. */
-type TabId = "schedule" | "voice" | "call" | "services" | "providers" | "integrations";
+type TabId = "schedule" | "calendar" | "voice" | "call" | "services" | "providers" | "referrals" | "payments" | "permissions" | "search" | "forms" | "integrations";
+
+/** Pages that live in the Index dropdown in the rail. */
+const INDEX_CHILDREN: TabId[] = ["services", "providers", "permissions", "search", "forms"];
 
 /** Cross-fade duration for the inner shell when switching nav tabs. */
 const FADE_MS = 200;
@@ -31,6 +40,7 @@ function NavButton({
   onSelect,
   children,
   open,
+  expanded,
 }: {
   label: string;
   active: boolean;
@@ -38,13 +48,15 @@ function NavButton({
   children: ReactNode;
   /** Set on menu triggers; drives aria-expanded and the open highlight. */
   open?: boolean;
+  /** Set on dropdown parents; drives aria-expanded and the chevron, without the open highlight. */
+  expanded?: boolean;
 }) {
   return (
     <button
       type="button"
       aria-label={label}
       aria-current={active ? "page" : undefined}
-      aria-expanded={open}
+      aria-expanded={open ?? expanded}
       data-open={open ? "true" : undefined}
       onClick={onSelect}
       className="doe-nav-item w-full h-[40px] shrink-0 flex items-center rounded-[10px] whitespace-nowrap"
@@ -57,6 +69,19 @@ function NavButton({
       <span className="doe-nav-label pr-[12px] text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500]">
         {label}
       </span>
+      {expanded !== undefined && (
+        <span className="doe-nav-label ml-auto mr-[12px] flex">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            style={{ display: "block", transform: expanded ? "rotate(180deg)" : "none", transition: "transform 200ms ease" }}
+          >
+            <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      )}
     </button>
   );
 }
@@ -240,6 +265,7 @@ export function DoeHealthProductHome() {
   const [activeTab, setActiveTab] = useState<TabId>("integrations");
   const [shownTab, setShownTab] = useState<TabId>("integrations");
   const [contentVisible, setContentVisible] = useState(true);
+  const [indexOpen, setIndexOpen] = useState(false);
   const switchTimer = useRef<number | null>(null);
 
   useEffect(() => {
@@ -260,6 +286,7 @@ export function DoeHealthProductHome() {
 
   /** Fade the inner shell out, swap the tab's content, then fade back in. */
   const switchTab = (tab: TabId) => {
+    if (INDEX_CHILDREN.includes(tab)) setIndexOpen(true);
     if (tab === activeTab) return;
     setActiveTab(tab);
     setContentVisible(false);
@@ -288,37 +315,94 @@ export function DoeHealthProductHome() {
     <div className="[font-synthesis:none] wrap-anywhere text-[12px] leading-[16px] flex relative overflow-clip w-full h-[900px] bg-ink antialiased">
       {/* Expanding the rail slides the shell right instead of resizing it, so Paper layouts keep their widths. */}
       <div
-        className="doe-rail absolute left-0 top-0 h-full z-20 flex flex-col overflow-hidden bg-ink pt-[26px] pb-[24px] px-[12px]"
+        className="doe-rail group/rail absolute left-0 top-0 h-full z-20 flex flex-col overflow-hidden bg-ink pt-[26px] pb-[24px] px-[12px]"
         data-expanded={navExpanded}
         style={{ width: navExpanded ? RAIL_EXPANDED_WIDTH : RAIL_COLLAPSED_WIDTH, transition: "width 200ms ease" }}
       >
         <div className="w-[40px] flex justify-center text-[28px] leading-[28px] font-['Lora-Regular_SemiBold','Lora',system-ui,sans-serif] font-[600] [color:var(--color-paper)]">
           D
         </div>
-        <div className="flex flex-col gap-[10px] mt-[275px]">
-          {/* Index is the default page, so its globe sits at the top of the rail. */}
-          <NavButton label="Index" active={activeTab === "integrations"} onSelect={() => switchTab("integrations")}>
-            <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
-            <ellipse cx="12" cy="12" rx="3.6" ry="8.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
-            <path d="M3.5 12h17" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-          </NavButton>
+        <div className="flex flex-col gap-[10px] mt-[110px]">
+          {/* Index is the default page; its sub-pages open in a dropdown beneath it. */}
+          <div className="flex flex-col">
+            <NavButton
+              label="Index"
+              active={activeTab === "integrations"}
+              expanded={indexOpen}
+              onSelect={() => {
+                if (activeTab === "integrations") setIndexOpen((v) => !v);
+                else {
+                  setIndexOpen(true);
+                  switchTab("integrations");
+                }
+              }}
+            >
+              <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
+              <ellipse cx="12" cy="12" rx="3.6" ry="8.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
+              <path d="M3.5 12h17" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+            </NavButton>
+            <div className="grid" style={{ gridTemplateRows: indexOpen ? "1fr" : "0fr", transition: "grid-template-rows 220ms ease" }}>
+              <div className="min-h-0 overflow-hidden" aria-hidden={!indexOpen}>
+                <div
+                  className="flex flex-col gap-[6px] mt-[8px] rounded-[12px] bg-[#FFFCF10A] group-data-[expanded=true]/rail:pl-[10px]"
+                  style={{
+                    opacity: indexOpen ? 1 : 0,
+                    visibility: indexOpen ? "visible" : "hidden",
+                    transition: `opacity 180ms ease, padding 200ms ease, visibility 0ms linear ${indexOpen ? "0ms" : "220ms"}`,
+                  }}
+                >
+                <NavButton label="Services" active={activeTab === "services"} onSelect={() => switchTab("services")}>
+                  <path d="M9 7h10M9 12h10M9 17h10" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                  <circle cx="5" cy="7" r="1.2" fill="currentColor" />
+                  <circle cx="5" cy="12" r="1.2" fill="currentColor" />
+                  <circle cx="5" cy="17" r="1.2" fill="currentColor" />
+                </NavButton>
+                <NavButton label="Providers" active={activeTab === "providers"} onSelect={() => switchTab("providers")}>
+                  <circle cx="9" cy="8.5" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
+                  <path d="M3.5 19.5c.8-3.2 3-5 5.5-5s4.7 1.8 5.5 5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                  <path d="M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.6 14.8c1.4.7 2.4 2.3 2.9 4.7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                </NavButton>
+                <NavButton label="Agent permissions" active={activeTab === "permissions"} onSelect={() => switchTab("permissions")}>
+                  <path d="M12 3.8l6.8 2.6v5.1c0 4.2-2.8 7.4-6.8 8.8-4-1.4-6.8-4.6-6.8-8.8V6.4z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+                  <path d="M9.2 12.2l2 2 3.8-4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                </NavButton>
+                <NavButton label="Integrations" active={activeTab === "search"} onSelect={() => switchTab("search")}>
+                  <path d="M9 3.5v4M15 3.5v4M6.5 7.5h11v3.5a5.5 5.5 0 0 1-11 0z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M12 16.5v4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                </NavButton>
+                <NavButton label="Forms" active={activeTab === "forms"} onSelect={() => switchTab("forms")}>
+                  <rect x="5" y="3.5" width="14" height="17" rx="3" fill="none" stroke="currentColor" strokeWidth="1.7" />
+                  <path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                </NavButton>
+                </div>
+              </div>
+            </div>
+          </div>
           <NavButton label="Schedule" active={activeTab === "schedule"} onSelect={() => switchTab("schedule")}>
-            <rect x="3.5" y="5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
-            <path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+            <rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
+            <rect x="13" y="3.5" width="7.5" height="7.5" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
+            <rect x="3.5" y="13" width="17" height="7.5" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
+          </NavButton>
+          <NavButton label="Calendar" active={activeTab === "calendar"} onSelect={() => switchTab("calendar")}>
+            <rect x="3.5" y="4.5" width="17" height="16" rx="4.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
+            <circle cx="8.5" cy="11" r="1.1" fill="currentColor" />
+            <circle cx="12" cy="11" r="1.1" fill="currentColor" />
+            <circle cx="15.5" cy="11" r="1.1" fill="currentColor" />
+            <circle cx="8.5" cy="15.2" r="1.1" fill="currentColor" />
+            <circle cx="12" cy="15.2" r="1.1" fill="currentColor" />
           </NavButton>
           <NavButton label="Voice" active={activeTab === "voice" || activeTab === "call"} onSelect={() => switchTab("voice")}>
             <path d="M5 4.5h3.2l1.6 4-2 1.3a10.5 10.5 0 0 0 6.4 6.4l1.3-2 4 1.6V19a1.5 1.5 0 0 1-1.6 1.5C10.6 20 4 13.4 3.5 6.1A1.5 1.5 0 0 1 5 4.5z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
           </NavButton>
-          <NavButton label="Services" active={activeTab === "services"} onSelect={() => switchTab("services")}>
-            <path d="M9 7h10M9 12h10M9 17h10" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-            <circle cx="5" cy="7" r="1.2" fill="currentColor" />
-            <circle cx="5" cy="12" r="1.2" fill="currentColor" />
-            <circle cx="5" cy="17" r="1.2" fill="currentColor" />
+          <NavButton label="Referrals" active={activeTab === "referrals"} onSelect={() => switchTab("referrals")}>
+            <circle cx="6.5" cy="12" r="2.6" fill="none" stroke="currentColor" strokeWidth="1.7" />
+            <circle cx="17.5" cy="6.5" r="2.6" fill="none" stroke="currentColor" strokeWidth="1.7" />
+            <circle cx="17.5" cy="17.5" r="2.6" fill="none" stroke="currentColor" strokeWidth="1.7" />
+            <path d="M9 10.8l6-3.2M9 13.2l6 3.2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
           </NavButton>
-          <NavButton label="Providers" active={activeTab === "providers"} onSelect={() => switchTab("providers")}>
-            <circle cx="9" cy="8.5" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
-            <path d="M3.5 19.5c.8-3.2 3-5 5.5-5s4.7 1.8 5.5 5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-            <path d="M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.6 14.8c1.4.7 2.4 2.3 2.9 4.7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+          <NavButton label="Payments" active={activeTab === "payments"} onSelect={() => switchTab("payments")}>
+            <rect x="3.5" y="6" width="17" height="12.5" rx="3.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
+            <path d="M3.5 10.5h17M7.5 14.8h3" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
           </NavButton>
         </div>
         <div className="flex flex-col gap-[10px] mt-auto">
@@ -426,6 +510,9 @@ export function DoeHealthProductHome() {
           <div className="absolute inset-0" style={tabLayerStyle("schedule")}>
             <DoeHealthProductSchedulePage />
           </div>
+          <div className="absolute inset-0" style={tabLayerStyle("calendar")}>
+            <DoeHealthProductCalendarPage />
+          </div>
           <div className="absolute inset-0" style={tabLayerStyle("voice")}>
             <DoeHealthProductVoicePage onOpenCall={() => switchTab("call")} />
           </div>
@@ -437,6 +524,21 @@ export function DoeHealthProductHome() {
           </div>
           <div className="absolute inset-0" style={tabLayerStyle("providers")}>
             <DoeHealthProductProvidersLayers />
+          </div>
+          <div className="absolute inset-0" style={tabLayerStyle("referrals")}>
+            <DoeHealthProductReferralsPage />
+          </div>
+          <div className="absolute inset-0" style={tabLayerStyle("forms")}>
+            <DoeHealthProductFormsPage />
+          </div>
+          <div className="absolute inset-0" style={tabLayerStyle("search")}>
+            <DoeHealthProductSearchPage />
+          </div>
+          <div className="absolute inset-0" style={tabLayerStyle("payments")}>
+            <DoeHealthProductPaymentsPage />
+          </div>
+          <div className="absolute inset-0" style={tabLayerStyle("permissions")}>
+            <DoeHealthProductPermissionsPage />
           </div>
           <div
             className="grow min-w-[0px] h-full flex flex-col p-[28px] gap-[24px] relative"
