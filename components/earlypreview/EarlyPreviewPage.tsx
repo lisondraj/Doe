@@ -67,6 +67,7 @@ function EarlyPreviewBeigeBand({
       ref={sectionRef}
       className="doehealth-desk2-blank earlypreview-beige-blank doehealth-desk2-nav-wash-surface"
       data-nav-beige="1"
+      data-headline-rows={headline === EARLYPREVIEW_BAND_HEADLINE ? undefined : "2"}
       style={{ minHeight, paddingTop: pad?.top, paddingBottom: 0 }}
     >
       {/* The side dot tides from the closing "1000+ clinics" scene, in the dark beige. Fully revealed (--s 1). */}

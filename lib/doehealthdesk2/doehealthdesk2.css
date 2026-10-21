@@ -5362,6 +5362,46 @@ html:has(.earlypreview-page) {
   }
 }
 
+/* iPhone view: the band copy keeps to the screen. A little less side room than the sections around it, a title sized so
+   its longest line ("since we were young.") fits, and a description whose two lines each stay on one row, sized to the
+   width instead of wrapping and leaving a word on its own. Any other description here wraps evenly. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__copy {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__headline {
+  /* The page sets this one inline (measured from the hero), so it needs the override. */
+  font-size: clamp(1.9rem, calc((100vw - 3rem) / 10.5), 3.15rem) !important;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__line {
+  text-wrap: balance;
+}
+
+/* The second band's title ("We're accelerating growth / through private practices.") is sized so each of its two lines
+   fits on one row, instead of leaving "growth" or "practices." alone. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-beige-blank[data-headline-rows="2"] .earlypreview-band__headline {
+  font-size: clamp(1.7rem, calc((100vw - 3rem) / 11.4), 3.15rem) !important;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-beige-blank[data-headline-rows="2"] .earlypreview-band__line {
+  white-space: nowrap;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__dek span {
+  text-wrap: balance;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__copy .earlypreview-band__dek {
+  max-width: none;
+  font-size: clamp(0.8rem, calc((100vw - 3rem) / 23.8), 1.125rem);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__copy .earlypreview-band__dek span {
+  white-space: nowrap;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .earlypreview-page .earlypreview-beige-blank,
   .earlypreview-page .earlypreview-hospital {
