@@ -106,8 +106,16 @@ export function EarlyPreviewHospitalSection({
     >
       {/* Its own headline, matching the hero's type. The hero's reveal classes are not used, since they stay hidden outside the hero. */}
       <h2 className={`earlypreview-hospital__headline ${p22Mackinac.className}`} style={titleStyle}>
-        <span className="earlypreview-hospital__line">Expand through clinics and</span>
-        <span className="earlypreview-hospital__line earlypreview-hospital__line--salmon">finish with enterprise.</span>
+        <span className="earlypreview-hospital__line earlypreview-hospital__line--desk">Expand through clinics and</span>
+        <span className="earlypreview-hospital__line earlypreview-hospital__line--salmon earlypreview-hospital__line--desk">
+          finish with enterprise.
+        </span>
+        {/* The iPhone view breaks the title in three, keeping the salmon clause together on the last line. */}
+        <span className="earlypreview-hospital__line earlypreview-hospital__line--phone">Expand through</span>
+        <span className="earlypreview-hospital__line earlypreview-hospital__line--phone">clinics and</span>
+        <span className="earlypreview-hospital__line earlypreview-hospital__line--salmon earlypreview-hospital__line--phone">
+          finish with enterprise.
+        </span>
       </h2>
       {/* The description under the title, in the same type as the two above it. It also keeps the wave and the video at the same height as there. */}
       <p className={`earlypreview-band__dek earlypreview-hospital__dek ${inter.className}`}>

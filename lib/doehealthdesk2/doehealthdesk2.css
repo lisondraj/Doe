@@ -5764,3 +5764,33 @@ html:has(.earlypreview-page) {
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hospital__dek span {
   white-space: nowrap;
 }
+
+/*
+ * iPhone view titles in three even lines: the enterprise one ("Expand through / clinics and / finish with enterprise.",
+ * the salmon clause kept together) and the private practices one ("We're accelerating / growth through / private
+ * practices."). Both are sized so the longest line fits, with each line on one row. The other widths keep the two-line
+ * titles, so the extra lines stay hidden there.
+ */
+.earlypreview-hospital__line.earlypreview-hospital__line--phone,
+.earlypreview-band__line.earlypreview-band__line--phone {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hospital__line.earlypreview-hospital__line--desk,
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__headline:has(.earlypreview-band__line--phone) .earlypreview-band__line--desk {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hospital__line.earlypreview-hospital__line--phone,
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__line.earlypreview-band__line--phone {
+  display: block;
+  white-space: nowrap;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hospital__headline {
+  font-size: clamp(1.7rem, calc((100vw - 3rem) / 9.8), 3.15rem) !important;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-beige-blank[data-headline-rows="2"] .earlypreview-band__headline {
+  font-size: clamp(1.7rem, calc((100vw - 3rem) / 8.3), 3.15rem) !important;
+}

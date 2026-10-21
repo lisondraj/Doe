@@ -14,6 +14,8 @@ export const EARLYPREVIEW_BAND_HEADLINE = {
 export const EARLYPREVIEW_PRACTICES_HEADLINE = {
   line1: "We're accelerating growth",
   line2: "through private practices.",
+  /** The same title in three even lines for the iPhone view, so no line is left with a single word. */
+  phoneLines: ["We're accelerating", "growth through", "private practices."],
 } as const;
 
 /** /earlypreview enterprise section: its small text, one entry per line (two lines, like the others). */

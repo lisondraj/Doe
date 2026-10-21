@@ -60,7 +60,7 @@ function EarlyPreviewBeigeBand({
   /** Videos to show under the copy in place of the main video; the band grows to fit them. */
   videos?: ReactNode;
   /** The two title lines. The band under the hero keeps the default; the one under the enterprise section has its own. */
-  headline?: { readonly line1: string; readonly line2: string };
+  headline?: { readonly line1: string; readonly line2: string; readonly phoneLines?: readonly string[] };
 }) {
   return (
     <section
@@ -79,8 +79,18 @@ function EarlyPreviewBeigeBand({
       {/* The title and description copied from the hero. They are not the hero's reveal-animated elements, so they show here. */}
       <div className={`earlypreview-band__copy ${DOEPHONE_DESKTOP_PAGE_INSET_X}`} style={{ paddingBottom: pad?.bottom }}>
         <h2 className={`earlypreview-band__headline ${p22Mackinac.className}`} style={{ fontSize: titleSize }}>
-          <span className="earlypreview-band__line">{headline.line1}</span>
-          <span className="earlypreview-band__line">{headline.line2}</span>
+          <span className="earlypreview-band__line earlypreview-band__line--desk">{headline.line1}</span>
+          <span className="earlypreview-band__line earlypreview-band__line--desk">{headline.line2}</span>
+          {/* The iPhone view breaks the title in its own, even lines; the other widths show the two lines above. */}
+          {headline.phoneLines?.map((line, index) => (
+            <span
+              key={line}
+              className="earlypreview-band__line earlypreview-band__line--phone"
+              style={{ transitionDelay: `${index * 90}ms` }}
+            >
+              {line}
+            </span>
+          ))}
         </h2>
         <p className={`earlypreview-band__dek ${inter.className}`}>
           {EARLYPREVIEW_BAND_DEK.map((line) => (
