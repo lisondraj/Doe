@@ -110,9 +110,9 @@ export function EarlyPreviewHospitalSection({
         <span className="earlypreview-hospital__line earlypreview-hospital__line--salmon earlypreview-hospital__line--desk">
           finish with enterprise.
         </span>
-        {/* The iPhone view breaks the title in three, keeping the salmon clause together on the last line. */}
+        {/* The iPhone view breaks the title in three (and says "small clinics"), keeping the salmon clause together on the last line. */}
         <span className="earlypreview-hospital__line earlypreview-hospital__line--phone">Expand through</span>
-        <span className="earlypreview-hospital__line earlypreview-hospital__line--phone">clinics and</span>
+        <span className="earlypreview-hospital__line earlypreview-hospital__line--phone">small clinics and</span>
         <span className="earlypreview-hospital__line earlypreview-hospital__line--salmon earlypreview-hospital__line--phone">
           finish with enterprise.
         </span>

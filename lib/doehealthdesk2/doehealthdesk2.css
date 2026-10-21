@@ -5788,9 +5788,25 @@ html:has(.earlypreview-page) {
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hospital__headline {
-  font-size: clamp(1.7rem, calc((100vw - 3rem) / 9.8), 3.15rem) !important;
+  /* A little smaller than the longest line alone would allow, so the three lines read as one block. */
+  font-size: clamp(1.6rem, calc((100vw - 3rem) / 10.6), 2.9rem) !important;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-beige-blank[data-headline-rows="2"] .earlypreview-band__headline {
   font-size: clamp(1.7rem, calc((100vw - 3rem) / 8.3), 3.15rem) !important;
+}
+
+/*
+ * iPhone view of /earlypreview: the hero (title, description, dot wave and video) moves as one block to the vertical
+ * centre of the screen. The stack runs from just under the banner to the bottom of the screen and is padded below by
+ * the same amount it is offset from the top, so the middle of its content is the middle of the viewport. The block's
+ * own top padding (the room under the nav) and the video's bottom padding match, so the visible title-to-video group is
+ * what ends up centred.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .doehealth-desk2-hero-stack {
+  --earlypreview-stack-top: calc(var(--desk2-banner-h, 2.45rem) + max(1.5rem, calc(env(safe-area-inset-top, 0px) + 1rem)));
+  box-sizing: border-box;
+  justify-content: center;
+  min-height: calc(100svh - var(--earlypreview-stack-top));
+  padding-bottom: var(--earlypreview-stack-top);
 }
