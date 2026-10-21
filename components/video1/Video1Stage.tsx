@@ -4,7 +4,7 @@ import { Player, type PlayerRef } from "@remotion/player";
 import { useCallback, useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 
 import { dmSans, p22Mackinac } from "@/lib/home/fonts";
-import { VIDEO1_FPS, VIDEO1_HEIGHT, VIDEO1_LIST, VIDEO1_WIDTH } from "@/remotion/video1";
+import { VIDEO1_FPS, VIDEO1_HEIGHT, VIDEO1_LIST, VIDEO1_WIDTH, type Video1Entry } from "@/remotion/video1";
 
 const BEIGE = "#F4EEDF";
 const PAPER = "#FFFCF1";
@@ -16,7 +16,7 @@ const timecode = (frame: number) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 };
 
-export function Video1Stage() {
+export function Video1Stage({ videos = VIDEO1_LIST }: { videos?: Video1Entry[] }) {
   const playerRef = useRef<PlayerRef>(null);
   const [index, setIndex] = useState(0);
   const [uiHidden, setUiHidden] = useState(false);
@@ -32,8 +32,8 @@ export function Video1Stage() {
     else player.unmute();
   }, [index, muted]);
 
-  const count = VIDEO1_LIST.length;
-  const video = VIDEO1_LIST[index];
+  const count = videos.length;
+  const video = videos[index];
 
   const select = useCallback(
     (i: number) => {
@@ -125,7 +125,7 @@ export function Video1Stage() {
             <PanelButton label="Previous video" onClick={() => select(index - 1)}>
               ‹
             </PanelButton>
-            {VIDEO1_LIST.map((item, i) => {
+            {videos.map((item, i) => {
               const active = i === index;
               return (
                 <button

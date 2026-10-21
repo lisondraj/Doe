@@ -22,6 +22,11 @@ import {
   MOTION_TEST_WIDTH,
 } from "./motion-test/MotionTestComposition";
 import { VIDEO1_FPS, VIDEO1_HEIGHT, VIDEO1_LIST, VIDEO1_WIDTH } from "./video1";
+import { VIDEO5_FPS, VIDEO5_HEIGHT, VIDEO5_LIST, VIDEO5_WIDTH } from "./video5";
+import { VIDEO2_LIST } from "./video2";
+import { VIDEO3_LIST } from "./video3";
+import { VIDEO4_LIST } from "./video4";
+import { VIDEO6_LIST } from "./video6";
 
 export const RemotionRoot = () => (
   <>
@@ -49,7 +54,7 @@ export const RemotionRoot = () => (
       width={MOTION_TEST_WIDTH}
       height={MOTION_TEST_HEIGHT}
     />
-    {VIDEO1_LIST.map((video) => (
+    {[...VIDEO1_LIST, ...VIDEO2_LIST, ...VIDEO3_LIST, ...VIDEO4_LIST, ...VIDEO6_LIST].map((video) => (
       <Composition
         key={video.id}
         id={video.id}
@@ -58,6 +63,17 @@ export const RemotionRoot = () => (
         fps={VIDEO1_FPS}
         width={VIDEO1_WIDTH}
         height={VIDEO1_HEIGHT}
+      />
+    ))}
+    {VIDEO5_LIST.map((video) => (
+      <Composition
+        key={video.id}
+        id={video.id}
+        component={video.component}
+        durationInFrames={video.durationInFrames}
+        fps={VIDEO5_FPS}
+        width={VIDEO5_WIDTH}
+        height={VIDEO5_HEIGHT}
       />
     ))}
   </>

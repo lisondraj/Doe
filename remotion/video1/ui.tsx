@@ -34,7 +34,17 @@ export type IconName =
   | "play"
   | "paperclip"
   | "lock"
-  | "eye";
+  | "eye"
+  | "heart"
+  | "activity"
+  | "brain"
+  | "scan"
+  | "home"
+  | "sliders"
+  | "chevronRight"
+  | "alert"
+  | "chat"
+  | "scale";
 
 const PATHS: Record<IconName, string> = {
   phone: "M5 4.5h3.2l1.6 4-2 1.3a10.5 10.5 0 0 0 6.4 6.4l1.3-2 4 1.6V19a1.5 1.5 0 0 1-1.6 1.5C10.6 20 4 13.4 3.5 6.1A1.5 1.5 0 0 1 5 4.5z",
@@ -66,6 +76,16 @@ const PATHS: Record<IconName, string> = {
   paperclip: "M19 11.5l-7.6 7.6a4.5 4.5 0 0 1-6.4-6.4l8-8a3 3 0 0 1 4.3 4.3l-7.7 7.7a1.5 1.5 0 0 1-2.1-2.1l7-7",
   lock: "M6.5 10.5h11v9h-11zM8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5",
   eye: "M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12zM12 9.25a2.75 2.75 0 1 0 0 5.5 2.75 2.75 0 1 0 0-5.5z",
+  heart: "M12 19.5s-7.5-4.4-7.5-10a4.2 4.2 0 0 1 7.5-2.6 4.2 4.2 0 0 1 7.5 2.6c0 5.6-7.5 10-7.5 10z",
+  activity: "M3.5 12h4l2.5-6.5 4 13 2.5-6.5h4",
+  brain: "M9.5 4.5A3 3 0 0 0 6.5 7.3 3 3 0 0 0 4.8 12a3 3 0 0 0 2 5.1 2.8 2.8 0 0 0 5.2 1V6.6a2.3 2.3 0 0 0-2.5-2.1zM14.5 4.5a3 3 0 0 1 3 2.8 3 3 0 0 1 1.7 4.7 3 3 0 0 1-2 5.1 2.8 2.8 0 0 1-5.2 1",
+  scan: "M4.5 8.5v-4h4M15.5 4.5h4v4M19.5 15.5v4h-4M8.5 19.5h-4v-4M8 12h8",
+  home: "M4.5 11L12 4.5l7.5 6.5v9h-15zM10 20v-5h4v5",
+  sliders: "M5 6.5h9M18 6.5h1M15.5 4.5v4M5 12h2M10 12h9M8.5 10v4M5 17.5h9M18 17.5h1M15.5 15.5v4",
+  chevronRight: "M9 5l7 7-7 7",
+  alert: "M12 4.5l8.5 15h-17zM12 10v4M12 17h.01",
+  chat: "M4.5 6h15v10.5h-8l-4.5 3.5v-3.5h-2.5z",
+  scale: "M4.5 5.5h15v14h-15zM8.5 10.5a5 5 0 0 1 7 0M12 11l1.8-2",
 };
 
 export function Icon({ name, size = 18, color = C.walnut, stroke = 1.9, filled = false }: { name: IconName; size?: number; color?: string; stroke?: number; filled?: boolean }) {

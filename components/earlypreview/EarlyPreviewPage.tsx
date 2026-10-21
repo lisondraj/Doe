@@ -1,16 +1,31 @@
 "use client";
 
-import { useRef } from "react";
+import { type CSSProperties, type ReactNode, type RefObject, useEffect, useRef, useState } from "react";
 
 import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
 import { DoeHealthDesk2Footer } from "@/components/doehealth-desk2/DoeHealthDesk2Footer";
+import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
 import { DoeHealthDesk2Hero } from "@/components/doehealth-desk2/DoeHealthDesk2Hero";
+import { DoeHealthDesk2DotTide } from "@/components/doehealth-desk2/DoeHealthDesk2DotTide";
 import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { DoeHealthDesk2Workspace } from "@/components/doehealth-desk2/DoeHealthDesk2Workspace";
+import { EarlyPreviewHospitalSection, EarlyPreviewVideoGrid } from "@/components/earlypreview/EarlyPreviewGallery";
+import { EarlyPreviewVideoOverlay } from "@/components/earlypreview/EarlyPreviewVideoOverlay";
+import {
+  EARLYPREVIEW_BAND_DEK,
+  EARLYPREVIEW_BAND_HEADLINE,
+  EARLYPREVIEW_HERO_DEK,
+  EARLYPREVIEW_HERO_HEADLINE,
+  EARLYPREVIEW_PRACTICES_HEADLINE,
+} from "@/lib/earlypreview/earlypreview-hero-copy";
+import { EARLYPREVIEW_MAIN_VIDEO } from "@/lib/earlypreview/earlypreview-videos";
 import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
 import { useDoeHealthDesk2FitTitles } from "@/lib/doehealthdesk2/use-doehealthdesk2-fit-titles";
+import { useNavReveal } from "@/lib/earlypreview/use-nav-reveal";
+import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
+import { inter, p22Mackinac } from "@/lib/home/fonts";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
 import { useDoeHealthDesk2PhoneScreenHeight } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-screen-height";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
@@ -18,19 +33,154 @@ import {
   type DoeHealthDesk2Variant,
   useDoeHealthDesk2Variant,
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-variant";
-import { inter, p22Mackinac } from "@/lib/home/fonts";
 
 /** The desk2 site: its logo and section anchors live here. */
 const DESK2_PATH = "/doehealthdesk2";
 
 /**
- * /earlypreview: the /product-nav beige page. The nav keeps only the mark and the CTA (no page links), and the first
- * section is the /doehealthdesk2 hero with its video card, restyled to the beige. The teach box and footer follow
- * /product-nav.
+ * The beige band: the /product-nav beige with the nav in its beige state over it. It starts brown and fades to beige
+ * when the nav reaches it, and its side dots, title, description and video come up in the reveal (see the
+ * `earlypreview-beige-blank` rules). Used under the hero, and again under the enterprise section.
+ */
+function EarlyPreviewBeigeBand({
+  sectionRef,
+  minHeight,
+  pad,
+  titleSize,
+  videos,
+  headline = EARLYPREVIEW_BAND_HEADLINE,
+}: {
+  sectionRef?: RefObject<HTMLElement>;
+  /** The hero block's height. Left out, the band is as tall as its content. */
+  minHeight?: number;
+  /** The hero's padding above and below its title. */
+  pad?: { top: number; bottom: number };
+  /** The hero title's font size. */
+  titleSize?: string;
+  /** Videos to show under the copy in place of the main video; the band grows to fit them. */
+  videos?: ReactNode;
+  /** The two title lines. The band under the hero keeps the default; the one under the enterprise section has its own. */
+  headline?: { readonly line1: string; readonly line2: string };
+}) {
+  return (
+    <section
+      ref={sectionRef}
+      className="doehealth-desk2-blank earlypreview-beige-blank doehealth-desk2-nav-wash-surface"
+      data-nav-beige="1"
+      style={{ minHeight, paddingTop: pad?.top, paddingBottom: 0 }}
+    >
+      {/* The side dot tides from the closing "1000+ clinics" scene, in the dark beige. Fully revealed (--s 1). */}
+      <div className="doehealth-desk2-visible__tide" style={{ "--s": 1 } as CSSProperties}>
+        <DoeHealthDesk2DotTide color="rgba(110, 92, 64, 0.45)" />
+      </div>
+      {/* The fixed nav bar's height, so the title is not hidden under the nav when this section is scrolled to the top. */}
+      <div aria-hidden style={{ height: "calc(5.5rem + var(--desk2-banner-h, 2.85rem))", flexShrink: 0 }} />
+      {/* The title and description copied from the hero. They are not the hero's reveal-animated elements, so they show here. */}
+      <div className={`earlypreview-band__copy ${DOEPHONE_DESKTOP_PAGE_INSET_X}`} style={{ paddingBottom: pad?.bottom }}>
+        <h2 className={`earlypreview-band__headline ${p22Mackinac.className}`} style={{ fontSize: titleSize }}>
+          <span className="earlypreview-band__line">{headline.line1}</span>
+          <span className="earlypreview-band__line">{headline.line2}</span>
+        </h2>
+        <p className={`earlypreview-band__dek ${inter.className}`}>
+          {EARLYPREVIEW_BAND_DEK.map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </p>
+      </div>
+      {/* The same empty space as the hero's dot-wave box, so the video sits at the same height as in the hero. */}
+      <div className="earlypreview-hero-wave" aria-hidden />
+      {videos ? (
+        <div className={`earlypreview-band__videos ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>{videos}</div>
+      ) : (
+        /* The same video as the hero, under the copy. */
+        <DoeHealthDesk2Workspace overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />} />
+      )}
+    </section>
+  );
+}
+
+/**
+ * /earlypreview: the regular /doehealthdesk look, brown sections on the light beige page. The nav keeps only the mark
+ * and the CTA (no page links), and the sections are the /doehealthdesk2 ones with their regular theme.
  */
 export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealthDesk2Variant }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
   const rootRef = useRef<HTMLDivElement>(null);
+  const beigeBandRef = useRef<HTMLElement>(null);
+  const beigeBandRepeatRef = useRef<HTMLElement>(null);
+  // The band under the hero matches the whole hero block: its height, and the hero's top and bottom padding, so the
+  // title and the video sit at the same offsets as in the hero. Measured from the hero's computed styles.
+  const [bandHeight, setBandHeight] = useState<number | undefined>(undefined);
+  const [bandPad, setBandPad] = useState<{ top: number; bottom: number } | undefined>(undefined);
+  // The band's title takes the hero title's font size, which the hero's own fit sets.
+  const [bandTitleSize, setBandTitleSize] = useState<string | undefined>(undefined);
+  // The band's title-to-video gap and full box height. The hospital section below copies them, so its title and video
+  // sit at the same offsets and it is the same height as the band.
+  const [bandGap, setBandGap] = useState<number | undefined>(undefined);
+  const [bandBoxHeight, setBandBoxHeight] = useState<number | undefined>(undefined);
+
+  // Measured after every commit, so it reads the band's final layout (its padding and title size change after mount).
+  useEffect(() => {
+    const band = beigeBandRef.current;
+    if (!band) return;
+    const title = band.querySelector<HTMLElement>(".earlypreview-band__headline");
+    const video = band.querySelector<HTMLElement>(":scope > .desk2-workspace");
+    if (title && video) {
+      const gap = video.getBoundingClientRect().top - title.getBoundingClientRect().bottom;
+      setBandGap((prev) => (prev === gap ? prev : gap));
+    }
+    const height = band.getBoundingClientRect().height;
+    setBandBoxHeight((prev) => (prev === height ? prev : height));
+  });
+
+  // Anything that can change the band's size after mount asks for a fresh measurement: the band or the nav resizing,
+  // and fonts or the page load finishing (the hero's title fit settles then).
+  const [, setMeasureTick] = useState(0);
+  useEffect(() => {
+    const band = beigeBandRef.current;
+    if (!band) return undefined;
+    const request = () => setMeasureTick((t) => t + 1);
+    const observer = new ResizeObserver(request);
+    observer.observe(band);
+    const chrome = document.querySelector<HTMLElement>(".doehealth-desk2-chrome");
+    if (chrome) observer.observe(chrome);
+    window.addEventListener("load", request);
+    void document.fonts?.ready.then(request);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("load", request);
+    };
+  }, []);
+
+  useEffect(() => {
+    const hero = document.querySelector<HTMLElement>(".earlypreview-page .doehealth-desk2-hero");
+    const heroTitle = hero?.querySelector<HTMLElement>(".doehealth-desk2-hero__headline");
+    const wave = document.querySelector<HTMLElement>(".earlypreview-page .earlypreview-hero-wave");
+    const video = document.querySelector<HTMLElement>(".earlypreview-page .doehealth-desk2-hero-stack > .desk2-workspace");
+    if (!hero || !video) return undefined;
+    const update = () => {
+      setBandHeight(video.getBoundingClientRect().bottom - hero.getBoundingClientRect().top);
+      const style = getComputedStyle(hero);
+      const top = parseFloat(style.paddingTop);
+      const bottom = parseFloat(style.paddingBottom);
+      setBandPad((prev) => (prev && prev.top === top && prev.bottom === bottom ? prev : { top, bottom }));
+      if (heroTitle) {
+        const size = getComputedStyle(heroTitle).fontSize;
+        setBandTitleSize((prev) => (prev === size ? prev : size));
+      }
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(hero);
+    observer.observe(video);
+    if (wave) observer.observe(wave);
+    return () => observer.disconnect();
+  }, []);
+
+  // The band under the hero fades from brown to beige the first time it reaches the nav bar.
+  useNavReveal(beigeBandRef);
+  // The same for the beige band under the enterprise section.
+  useNavReveal(beigeBandRepeatRef);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
   useDoePhoneStableViewport(variant === "phone");
   useDoeHealthDesk2PhoneScreenHeight(variant === "phone");
@@ -39,7 +189,7 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
   return (
     <div
       ref={rootRef}
-      className={`doehealth-desk2-page doehealth-earlypreview-page relative min-h-[100dvh] ${inter.className} ${p22Mackinac.variable}`}
+      className={`doehealth-desk2-page earlypreview-page relative min-h-[100dvh] ${inter.className} ${p22Mackinac.variable}`}
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}
     >
       {variant === "desktop" ? (
@@ -54,19 +204,46 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
           logoHref={DESK2_PATH}
           sectionHrefBase={DESK2_PATH}
           primaryCta={EARLYPREVIEW_NAV_CTA}
+          menuMailTo="james@doe.care"
         />
       )}
       <DoeHealthDesk2NavWash />
-      <main
-        className="doehealth-desk2-main doehealth-desk2-nav-wash-surface min-h-[100dvh]"
-        data-nav-beige="1"
-        aria-label="Early preview"
-      >
-        <div className="doehealth-desk2-hero-stack">
-          <DoeHealthDesk2Hero />
-          <DoeHealthDesk2Workspace />
+      <main className="doehealth-desk2-main min-h-[100dvh]" aria-label="Early preview">
+        {/* A brown surface for the nav over its whole height, including the empty space under the video on the phone. */}
+        <div className="doehealth-desk2-hero-stack doehealth-desk2-nav-wash-surface">
+          <DoeHealthDesk2Hero centered headline={EARLYPREVIEW_HERO_HEADLINE} dek={EARLYPREVIEW_HERO_DEK} className="doehealth-desk2-nav-wash-surface" />
+          {/* The dot wave in the space between the small description and the video. */}
+          {/* Also a brown surface for the nav, so the nav stays brown while the page scrolls past the space between the hero text and the video. */}
+          <div className="earlypreview-hero-wave doehealth-desk2-nav-wash-surface" aria-hidden>
+            <div className="earlypreview-hero-wave__fade">
+              <DoeHealthBlogDotWave color="rgba(252, 207, 184, 0.6)" top={0.42} amp={60} fade={0.5} />
+            </div>
+          </div>
+          <DoeHealthDesk2Workspace overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />} className="doehealth-desk2-nav-wash-surface" />
         </div>
-        <DoeHealthDesk2InviteSection />
+        {/* The blank band under the hero: the /product-nav beige, with the nav in its beige state over it. */}
+        <EarlyPreviewBeigeBand sectionRef={beigeBandRef} minHeight={bandHeight} pad={bandPad} titleSize={bandTitleSize} />
+        <EarlyPreviewHospitalSection
+          sectionStyle={{
+            minHeight: bandBoxHeight,
+            paddingTop: bandPad ? `calc(5.5rem + var(--desk2-banner-h, 2.85rem) + ${bandPad.top}px)` : undefined,
+            paddingBottom: 0,
+            justifyContent: "flex-start",
+          }}
+          titleStyle={{ fontSize: bandTitleSize, marginBottom: 0 }}
+        />
+        {/* The blank section under the enterprise one: the beige band again, with all the same behaviour. The big video
+            stays in the first band; this one holds the three other videos, and is as tall as they need. */}
+        <EarlyPreviewBeigeBand
+          sectionRef={beigeBandRepeatRef}
+          pad={bandPad}
+          titleSize={bandTitleSize}
+          headline={EARLYPREVIEW_PRACTICES_HEADLINE}
+          videos={<EarlyPreviewVideoGrid />}
+        />
+        <div className="earlypreview-invite-band">
+          <DoeHealthDesk2InviteSection />
+        </div>
         <DoeHealthDesk2Footer sectionHrefBase={DESK2_PATH} />
       </main>
     </div>

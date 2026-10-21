@@ -12,8 +12,24 @@ import {
 } from "@/lib/doehealthdesk2/doehealthdesk2-hero-copy";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
-/** /doehealthdesk desktop hero — title and email share one row. */
-export function DoeHealthDesk2Hero() {
+/**
+ * /doehealthdesk desktop hero — title and email share one row. `centered` drops the waitlist email form and centers
+ * the title and description (used on /earlypreview).
+ */
+export function DoeHealthDesk2Hero({
+  centered = false,
+  headline: fixedHeadline,
+  dek = DOEHEALTH_DESK2_HERO_DEK,
+  className = "",
+}: {
+  centered?: boolean;
+  /** A fixed title in place of the random pick. */
+  headline?: { readonly line1: string; readonly line2: string };
+  /** Small text under the title, one entry per line. */
+  dek?: readonly string[];
+  /** Extra classes on the section, e.g. the nav-wash marker. */
+  className?: string;
+} = {}) {
   const sectionRef = useRef<HTMLElement>(null);
   const [desktop, setDesktop] = useState(false);
   const [shown, setShown] = useState(false);
@@ -21,7 +37,7 @@ export function DoeHealthDesk2Hero() {
   const [headlineRevealDone, setHeadlineRevealDone] = useState(false);
   // Server and first client render use the first headline; the random pick lands before the reveal (the section is hidden until `is-in`).
   const [headlineIndex, setHeadlineIndex] = useState(0);
-  const headline = DOEHEALTH_DESK2_HERO_HEADLINES[headlineIndex];
+  const headline = fixedHeadline ?? DOEHEALTH_DESK2_HERO_HEADLINES[headlineIndex];
 
   useEffect(() => {
     setHeadlineIndex(Math.floor(Math.random() * DOEHEALTH_DESK2_HERO_HEADLINES.length));
@@ -63,7 +79,7 @@ export function DoeHealthDesk2Hero() {
   return (
     <section
       ref={sectionRef}
-      className={`doehealth-desk2-hero ${DOEPHONE_DESKTOP_PAGE_INSET_X}${shown ? " is-in" : ""}`}
+      className={`doehealth-desk2-hero ${DOEPHONE_DESKTOP_PAGE_INSET_X}${shown ? " is-in" : ""}${centered ? " doehealth-desk2-hero--centered" : ""}${className ? ` ${className}` : ""}`}
       aria-label="Hero"
     >
       <div className="doehealth-desk2-hero__row">
@@ -89,12 +105,13 @@ export function DoeHealthDesk2Hero() {
             </span>
           </h1>
           <p className={`doehealth-desk2-hero__dek ${inter.className}`}>
-            {DOEHEALTH_DESK2_HERO_DEK.map((line) => (
+            {dek.map((line) => (
               <span key={line}>{line}</span>
             ))}
           </p>
         </div>
 
+        {centered ? null : (
         <form className={`doehealth-desk2-hero__secure ${inter.className}`} onSubmit={onSubmit}>
           <p>{DOEHEALTH_DESK2_HERO_SECURE}</p>
           <label className="doehealth-desk2-hero__email">
@@ -107,6 +124,7 @@ export function DoeHealthDesk2Hero() {
             </button>
           </label>
         </form>
+        )}
       </div>
     </section>
   );

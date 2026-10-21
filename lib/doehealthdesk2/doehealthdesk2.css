@@ -786,6 +786,17 @@
   cursor: pointer;
 }
 
+/* /earlypreview: the title and description centered, with no email form beside them. */
+.doehealth-desk2-hero--centered .doehealth-desk2-hero__row {
+  grid-template-columns: minmax(0, 1fr);
+  text-align: center;
+}
+
+.doehealth-desk2-hero--centered .doehealth-desk2-hero__dek {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .doehealth-desk2-hero__sr {
   position: absolute;
   width: 1px;
@@ -4753,6 +4764,107 @@
   padding-top: 2.5rem;
 }
 
+/* /earlypreview: the whole hero (title and small text) sits lower on the page. */
+.doehealth-desk2-page .doehealth-desk2-hero.doehealth-desk2-hero--centered {
+  padding-top: clamp(3.5rem, 7vw, 6rem);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .doehealth-desk2-hero.doehealth-desk2-hero--centered {
+  padding-top: 5rem;
+}
+
+/*
+ * /earlypreview: the dot wave sits in the gap between the small description and the video. The box is the same
+ * height as the /doehealthdesk2 "Personal agents are here." dots (46% of that section's 100svh), so the wave has
+ * the same scale and motion. The wave box is the gap itself, so the video follows it.
+ */
+.earlypreview-hero-wave {
+  position: relative;
+  z-index: 0;
+  height: 36svh;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/*
+ * The same top fade as the /doehealthdesk2 dots, plus a soft bottom fade, so the wave's lower edge never ends in
+ * a straight line where the box stops.
+ */
+.earlypreview-hero-wave__fade {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 45%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 45%, #000 88%, transparent 100%);
+}
+
+.earlypreview-hero-wave .doehealth-blog-dotwave {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* The title and small text sit over the wave. */
+.earlypreview-page .doehealth-desk2-hero {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * First paint on /earlypreview: the nav starts in its brown state, because the hero is brown. Without this the nav
+ * flashes cream until the nav-wash script runs. The script sets the live values inline on the root, which override
+ * these, so the nav still switches as the sections change.
+ */
+html:has(.earlypreview-page) {
+  --desk2-nav-wash: 1;
+  --desk2-nav-beige: 0;
+}
+
+/* No cream wave pinned to the bottom of the screen on /earlypreview (the workspace's fade overlay). */
+.earlypreview-page .desk2-workspace__fade {
+  display: none;
+}
+
+/* /earlypreview desktop: the gap above the video is the dot wave's box, so the video has no extra top margin. */
+.earlypreview-page .desk2-workspace {
+  margin-top: 0;
+}
+
+/* The second title line, "But healthcare is not ready.", is salmon. */
+.earlypreview-page .doehealth-desk2-hero .doehealth-desk2-hero__built-for-tone,
+.earlypreview-page .doehealth-desk2-hero .doehealth-desk2-hero__built-for-tone:not(.desk2-headline-mask) {
+  color: #fccfb8;
+}
+
+/*
+ * /earlypreview: the page is the same brown as /security (the desk2 brown section colour) with cream type. The nav
+ * is set to its brown state for the whole page, the same as /security's nav over its brown hero. The hero's title
+ * and small text are re-coloured for the brown ground. The beige is NOT pinned here: NavWash sets it while the nav
+ * is over the hospital section, so the nav can turn beige there.
+ */
+/* The wordmark: cream in the brown nav state, dark brown in the cream state (the page's ink is cream, so it is set
+   here), and deep brown in the beige state. It fades with the nav like the rest of the nav's colours. */
+.earlypreview-page nav.desktop-home-nav .doehealth-desk2-nav__mark {
+  color: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #fffcf1 calc(var(--desk2-wash) * 100%), #281910)
+  );
+}
+
+.earlypreview-page {
+  --doehealth-desk2-ink: #fffcf1;
+  background-color: var(--doehealth-desk2-surface);
+  color: #fffcf1;
+}
+
+.earlypreview-page .doehealth-desk2-hero {
+  --doehealth-desk2-surface: #fffcf1;
+  --doehealth-desk2-surface-rgb: 255 252 241;
+  --doehealth-desk2-ink: #fffcf1;
+}
+
 /* iPhone: the photo sits a set distance under the waitlist box, and ends at the bottom of the screen. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .desk2-workspace {
   margin-top: 2.1rem !important;
@@ -4778,4 +4890,766 @@
 .desk2-workspace__play svg {
   width: 40%;
   height: 40%;
+}
+
+/*
+ * /earlypreview: rows of videos under the main one. Two side by side, one big, then two more. The grid is a size
+ * container as wide as the main video, so the shared play button (13cqw) is the same size on every tile.
+ */
+.earlypreview-page {
+  --earlypreview-gallery-gap: clamp(0.5rem, 1.2vw, 1rem);
+}
+
+.earlypreview-page .desk2-workspace,
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .desk2-workspace {
+  margin-top: 0 !important;
+  /* Room under the hero video, before the beige band below it. Grows by the pull, so the band does not move. */
+  padding-bottom: calc(clamp(2.5rem, 6vh, 4.5rem) + var(--earlypreview-hero-pull)) !important;
+}
+
+/* iPhone: the hero video uses the same side margins as the gallery videos below (the px-10 inset, 2.5rem). */
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .desk2-workspace {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+/*
+ * The enterprise and gallery sections use the same side margins as the hero video in the phone layout. Without this,
+ * the tablet widths (768px up) take the desktop md:px-20 inset, so their videos stop short of the hero video's edges.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page :is(.earlypreview-gallery, .earlypreview-band__videos) {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+.earlypreview-gallery {
+  box-sizing: border-box;
+  padding-bottom: clamp(2rem, 5vh, 3.5rem);
+}
+
+.earlypreview-gallery__grid {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--earlypreview-gallery-gap);
+}
+
+.earlypreview-gallery__tile {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 2500 / 1445;
+  overflow: hidden;
+  border-radius: var(--doehealth-desk2-radius);
+}
+
+.earlypreview-gallery__tile--wide {
+  grid-column: 1 / -1;
+}
+
+.earlypreview-gallery__tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+ * /earlypreview hover card: on a pointer device, hovering a video fades in a brown veil with the film's title and
+ * summary bottom-left, and swaps the big centred play button for a small one bottom-right. Touch screens keep the
+ * plain still with the centred button.
+ */
+.earlypreview-overlay {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .earlypreview-page .desk2-workspace__photo {
+    pointer-events: auto;
+  }
+
+  .earlypreview-page :is(.desk2-workspace__photo, .earlypreview-gallery__tile) {
+    cursor: pointer;
+  }
+
+  .earlypreview-page :is(.desk2-workspace__photo, .earlypreview-gallery__tile) img {
+    transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .earlypreview-page :is(.desk2-workspace__photo, .earlypreview-gallery__tile) :is(.desk2-workspace__play, .desk2-workspace__person) {
+    transition:
+      opacity 260ms cubic-bezier(0.33, 1, 0.68, 1),
+      transform 260ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .earlypreview-page :is(.desk2-workspace__photo, .earlypreview-gallery__tile):is(:hover, :focus-within) img {
+    transform: scale(1.025);
+  }
+
+  .earlypreview-page :is(.desk2-workspace__photo, .earlypreview-gallery__tile):is(:hover, :focus-within) .desk2-workspace__play {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+
+  .earlypreview-page .desk2-workspace__photo:is(:hover, :focus-within) .desk2-workspace__person {
+    opacity: 0;
+  }
+
+  .earlypreview-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: clamp(1.25rem, 2.6vw, 2.25rem);
+    color: #fffcf1;
+    background:
+      linear-gradient(to top, rgb(var(--doehealth-desk2-surface-rgb) / 0.88) 0%, rgb(var(--doehealth-desk2-surface-rgb) / 0.55) 38%, rgb(var(--doehealth-desk2-surface-rgb) / 0.12) 72%, transparent 100%),
+      rgb(var(--doehealth-desk2-surface-rgb) / 0.14);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 320ms cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .earlypreview-page :is(.desk2-workspace__photo, .earlypreview-gallery__tile):is(:hover, :focus-within) .earlypreview-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .earlypreview-overlay__copy,
+  .earlypreview-overlay__play {
+    transform: translateY(0.6rem);
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .earlypreview-page :is(.desk2-workspace__photo, .earlypreview-gallery__tile):is(:hover, :focus-within) :is(.earlypreview-overlay__copy, .earlypreview-overlay__play) {
+    transform: translateY(0);
+  }
+}
+
+.earlypreview-overlay__copy {
+  max-width: 44rem;
+  min-width: 0;
+}
+
+.earlypreview-overlay__title {
+  margin: 0;
+  font-size: clamp(2.3rem, 3.9vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+
+.earlypreview-overlay__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1rem;
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+  font-weight: 500;
+  color: #fccfb8;
+  text-decoration: none;
+}
+
+/* The underline is on the label only, so the arrow after it stays plain. */
+.earlypreview-overlay__label {
+  text-decoration: underline;
+  text-decoration-color: rgb(252 207 184 / 0.4);
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 200ms ease;
+}
+
+/* The arrow is a plain glyph: no underline under it. */
+.earlypreview-overlay__arrow {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.earlypreview-overlay__link:hover .earlypreview-overlay__label,
+.earlypreview-overlay__link:focus-visible .earlypreview-overlay__label {
+  text-decoration-color: #fccfb8;
+}
+
+.earlypreview-overlay__play {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(2.75rem, 3.6vw, 3.4rem);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: #fffcf1;
+  color: var(--doehealth-desk2-surface);
+  box-shadow: 0 6px 24px rgb(20 12 4 / 0.25);
+}
+
+.earlypreview-overlay__play svg {
+  width: 38%;
+  height: 38%;
+}
+
+/* The half-width tiles: a tighter card. */
+.earlypreview-overlay--compact {
+  gap: 1rem;
+  padding: clamp(1rem, 1.8vw, 1.5rem);
+}
+
+.earlypreview-overlay--compact .earlypreview-overlay__title {
+  font-size: clamp(1.75rem, 2.7vw, 2.5rem);
+}
+
+.earlypreview-overlay__line {
+  display: block;
+}
+
+.earlypreview-overlay--compact .earlypreview-overlay__play {
+  width: clamp(2rem, 2.4vw, 2.4rem);
+}
+
+/* The half-width tiles' centred play button, smaller than the main video's. Sized from the grid, like the rest.
+   The wide tiles are the main video's width, so they keep the shared size (13cqw) and match it. */
+.earlypreview-gallery__tile:not(.earlypreview-gallery__tile--wide) .desk2-workspace__play {
+  width: clamp(3.2rem, 8cqw, 5.2rem);
+}
+
+/*
+ * The beige section under the enterprise one shows each video's card all the time, the hover state as the default:
+ * the brown veil, the title and "See Article" bottom-left, and the small play button bottom-right, in place of the big
+ * centred one. There is no hover effect on these videos (no fade, no zoom, no pointer cursor), and it is the same on
+ * touch screens. Sizes follow the grid width (cqw), with a floor, so the card fits the small tiles on a phone.
+ */
+.earlypreview-page .earlypreview-band__videos .earlypreview-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(0.5rem, 3cqw, 1.5rem);
+  padding: clamp(0.9rem, 3cqw, 2.25rem);
+  color: #fffcf1;
+  background:
+    linear-gradient(to top, rgb(var(--doehealth-desk2-surface-rgb) / 0.88) 0%, rgb(var(--doehealth-desk2-surface-rgb) / 0.55) 38%, rgb(var(--doehealth-desk2-surface-rgb) / 0.12) 72%, transparent 100%),
+    rgb(var(--doehealth-desk2-surface-rgb) / 0.14);
+  opacity: 1;
+  pointer-events: auto;
+  transition: none;
+}
+
+.earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact {
+  gap: clamp(0.4rem, 1.6cqw, 1rem);
+  padding: clamp(0.6rem, 2cqw, 1.5rem);
+}
+
+.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__copy,
+.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__play {
+  transform: none;
+  transition: none;
+}
+
+.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__title {
+  font-size: clamp(1.3rem, 3.9cqw, 3.6rem);
+}
+
+.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__link {
+  margin-top: clamp(0.3rem, 1.2cqw, 1rem);
+  font-size: clamp(0.8rem, 1.4cqw, 1.15rem);
+}
+
+.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__play {
+  width: clamp(1.9rem, 3.6cqw, 3.4rem);
+}
+
+.earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact .earlypreview-overlay__title {
+  font-size: clamp(0.72rem, 2.7cqw, 2.5rem);
+}
+
+.earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact .earlypreview-overlay__link {
+  font-size: clamp(0.62rem, 1.4cqw, 1.15rem);
+}
+
+.earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact .earlypreview-overlay__play {
+  width: clamp(1.25rem, 3.2cqw, 2.4rem);
+}
+
+/* The card's small play button replaces the big centred one. */
+.earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile .desk2-workspace__play {
+  display: none;
+}
+
+/* No hover effect: no zoom on the picture, and no pointer cursor on the tile (the link keeps its own). */
+.earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile {
+  cursor: auto;
+}
+
+.earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile img,
+.earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile:is(:hover, :focus-within) img {
+  transform: none;
+  transition: none;
+}
+
+/*
+ * The hospital section uses the /doehealthdesk theme: a white (cream) background, with the dark brown
+ * (#281910) for the accents: the play buttons, the overlay title, and the link.
+ */
+/* Full height, like the other sections: the video sits centred in the screen. */
+.earlypreview-hospital {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100dvh;
+  /* Start below the fixed nav bar, so the video centres in the space under it. */
+  padding-top: calc(var(--desk2-nav-clearance, 5.5rem) + clamp(1rem, 3vh, 2rem));
+  padding-bottom: clamp(2rem, 5vh, 3.5rem);
+  background: #281910;
+  color: #fffcf1;
+}
+
+/* Starts beige, like the band above it, and fades to brown when the nav reaches it (the component adds `is-in`). */
+.earlypreview-page .earlypreview-hospital {
+  background-color: #f4eedf;
+  transition: background-color 900ms ease;
+}
+
+.earlypreview-page .earlypreview-hospital.is-in {
+  background-color: #281910;
+}
+
+/*
+ * The dot wave runs edge to edge, like the hero's. The section's side padding would inset it, so it pulls out to the
+ * full viewport width.
+ */
+.earlypreview-page .earlypreview-hospital > .earlypreview-hero-wave {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+
+/* The headline above the hospital video: the hero's type, centred, in dark brown. */
+.earlypreview-hospital__headline {
+  /* Above the wave box, which is pulled up under the title as in the hero. */
+  position: relative;
+  z-index: 1;
+  margin: 0 0 clamp(1.5rem, 4vh, 2.75rem);
+  font-weight: 400;
+  font-size: clamp(2.9rem, 5.85vw, 5.35rem);
+  line-height: 0.98;
+  letter-spacing: -0.042em;
+  text-align: center;
+  /* Starts in the section's brown, so the title is hidden until it fades in. */
+  color: #281910;
+  transition: color 900ms ease;
+  opacity: 1;
+}
+
+.earlypreview-hospital.is-in .earlypreview-hospital__headline {
+  color: #fffcf1;
+}
+
+.earlypreview-hospital__line {
+  display: block;
+  opacity: 1;
+  transform: none;
+}
+
+/* The second line is salmon, like the hero's "But healthcare is not ready." It starts brown with the rest of the title. */
+.earlypreview-hospital__line--salmon {
+  color: #281910;
+  transition: color 900ms ease;
+}
+
+.earlypreview-hospital.is-in .earlypreview-hospital__line--salmon {
+  color: #fccfb8;
+}
+
+@media (max-width: 767px) {
+  .earlypreview-hospital__headline {
+    font-size: clamp(2.55rem, 10.8vw, 3.15rem);
+  }
+}
+
+/* The blank band under the hero takes the /product-nav beige, with its deep brown ink. */
+/* The band starts brown, like the hero above it, and fades to beige once it comes into the screen (EarlyPreviewPage adds
+   `is-in`). */
+.earlypreview-page .earlypreview-beige-blank {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: clamp(1.25rem, 2.5vw, 2rem);
+  padding-bottom: 0;
+  overflow: hidden;
+  background-color: #281910;
+  color: rgb(40 25 16);
+  transition: background-color 900ms ease;
+}
+
+.earlypreview-page .earlypreview-beige-blank.is-in {
+  background-color: #f4eedf;
+}
+
+/* The video sits over the side tides in the band. */
+.earlypreview-beige-blank > .desk2-workspace {
+  position: relative;
+  z-index: 1;
+}
+
+/* The beige section under the enterprise one holds three videos in place of the main video; the section grows to fit. */
+.earlypreview-band__videos {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  /* The same room under the last video as under the main video. */
+  padding-bottom: calc(clamp(2.5rem, 6vh, 4.5rem) + var(--earlypreview-hero-pull, 1.5rem));
+}
+
+/* The title and description copied from the hero. Cream on the brown band, dark brown once it fades to beige. */
+.earlypreview-band__copy {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fffcf1;
+  transition: color 900ms ease;
+}
+
+/* Dark beige, the same ink as the nav's beige state. */
+.earlypreview-beige-blank.is-in .earlypreview-band__copy {
+  color: #6e5c40;
+}
+
+.earlypreview-band__headline {
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(2.9rem, 5.85vw, 5.35rem);
+  line-height: 0.98;
+  letter-spacing: -0.042em;
+  color: inherit;
+}
+
+.earlypreview-band__line {
+  display: block;
+}
+
+.earlypreview-band__dek {
+  margin: 0.9rem auto 0;
+  max-width: 36ch;
+  color: inherit;
+  font-size: clamp(1.125rem, 1.35vw, 1.3125rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+.earlypreview-band__dek span {
+  display: block;
+}
+
+/* Desktop: each line stays on one row, like the hero's two lines. */
+@media (min-width: 768px) {
+  .earlypreview-band__dek {
+    max-width: none;
+  }
+
+  .earlypreview-band__dek span {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 767px) {
+  .earlypreview-band__headline {
+    font-size: clamp(2.55rem, 10.8vw, 3.15rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earlypreview-page .earlypreview-beige-blank,
+  .earlypreview-page .earlypreview-hospital {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earlypreview-page :is(.desk2-workspace__photo, .earlypreview-gallery__tile) img,
+  .earlypreview-overlay,
+  .earlypreview-overlay__copy,
+  .earlypreview-overlay__play {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* /earlypreview: the teach box is a salmon panel on the brown page, the same as /security. */
+.doehealth-desk2-page.earlypreview-page .earlypreview-invite-band {
+  background-color: var(--doehealth-desk2-surface);
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page.earlypreview-page .earlypreview-invite-band .doehealth-desk2-invite__panel {
+  background: #fccfb8;
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page.earlypreview-page .earlypreview-invite-band .doehealth-desk2-invite__form label {
+  background: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page.earlypreview-page .earlypreview-invite-band .doehealth-desk2-invite__form input {
+  color: #fffcf1;
+}
+
+.doehealth-desk2-page.earlypreview-page .earlypreview-invite-band .doehealth-desk2-invite__form input::placeholder {
+  color: rgb(255 252 241 / 0.55);
+}
+
+.doehealth-desk2-page.earlypreview-page .earlypreview-invite-band .doehealth-desk2-invite__form button {
+  background: #fffcf1;
+  color: var(--doehealth-desk2-surface);
+}
+
+/* The footer is salmon, with its content in the brown of the page, the same as /security. */
+.doehealth-desk2-page.earlypreview-page .doehealth-desk2-footer {
+  background: #fccfb8;
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page.earlypreview-page .doehealth-desk2-footer__mark,
+.doehealth-desk2-page.earlypreview-page .doehealth-desk2-footer__company-name,
+.doehealth-desk2-page.earlypreview-page .doehealth-desk2-footer__links a {
+  color: var(--doehealth-desk2-surface);
+}
+
+.doehealth-desk2-page.earlypreview-page .doehealth-desk2-footer__incorporation {
+  color: rgb(40 25 16 / 0.78);
+}
+
+.doehealth-desk2-page.earlypreview-page .doehealth-desk2-footer__incorporation-pending {
+  color: rgb(40 25 16 / 0.58);
+}
+
+.doehealth-desk2-page.earlypreview-page .doehealth-desk2-footer__email {
+  color: rgb(40 25 16 / 0.88);
+}
+
+.doehealth-desk2-page.earlypreview-page .doehealth-desk2-footer__email:hover {
+  color: var(--doehealth-desk2-surface);
+}
+
+/*
+ * /earlypreview: at the very top the nav bar is hidden, and only the announcement strip shows. A big Lora "Doe"
+ * (bigger than the nav's mark) sits centred above the headline. The bar fades in once the wordmark has scrolled up
+ * under it, and fades out again when you scroll back to the top.
+ */
+.earlypreview-wordmark {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 1rem;
+  text-align: center;
+  font-size: clamp(3.75rem, 6.5vw, 6rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: #fffcf1;
+  user-select: none;
+}
+
+.earlypreview-page .doehealth-desk2-main {
+  padding-top: calc(var(--desk2-banner-h, 2.85rem) + clamp(2rem, 4vw, 3.25rem));
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .doehealth-desk2-main {
+  padding-top: calc(var(--desk2-banner-h, 2.45rem) + max(1.5rem, calc(env(safe-area-inset-top, 0px) + 1rem)));
+}
+
+.earlypreview-page nav.desktop-home-nav,
+.earlypreview-page nav.doephone-site-nav {
+  transition:
+    opacity 280ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 280ms cubic-bezier(0.33, 1, 0.68, 1),
+    visibility 0s linear 0s !important;
+}
+
+.earlypreview-page--nav-hidden nav.desktop-home-nav,
+.earlypreview-page--nav-hidden nav.doephone-site-nav {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 280ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 280ms cubic-bezier(0.33, 1, 0.68, 1),
+    visibility 0s linear 280ms !important;
+}
+
+/* The headline sits right under the wordmark, and the dot wave comes up close under the description. */
+/* The fixed nav ends at 112px, so the headline starts just below it rather than under it. */
+.doehealth-desk2-page.earlypreview-page .doehealth-desk2-hero.doehealth-desk2-hero--centered {
+  padding-top: 4.5rem;
+  padding-bottom: 0;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .doehealth-desk2-hero.doehealth-desk2-hero--centered {
+  padding-top: 5rem;
+}
+
+/* How far the hero video is pulled up under the dot wave. The space under the video grows by the same amount, so the
+   sections below stay where they are. The band and the hospital section share the wave box, so they follow too. */
+.earlypreview-page {
+  --earlypreview-hero-pull: 1.5rem;
+}
+
+/* Pulls the whole wave box up under the description. The video follows the box, shortened by the pull. */
+.earlypreview-page .earlypreview-hero-wave {
+  margin-top: -10rem;
+  height: calc(36svh - var(--earlypreview-hero-pull));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earlypreview-page nav.desktop-home-nav,
+  .earlypreview-page nav.doephone-site-nav,
+  .earlypreview-page--nav-hidden nav.desktop-home-nav,
+  .earlypreview-page--nav-hidden nav.doephone-site-nav {
+    transition: none !important;
+  }
+}
+
+/*
+ * The hero's "come up" reveal (fade in while rising a little) on the dot waves, the band's title, description and side
+ * dots, and the enterprise title. Each runs when its section gets `is-in`: the hero on load, the band and the
+ * enterprise section when they reach the nav.
+ */
+.earlypreview-page .doehealth-desk2-hero + .earlypreview-hero-wave .earlypreview-hero-wave__fade,
+.earlypreview-page .earlypreview-hospital > .earlypreview-hero-wave .earlypreview-hero-wave__fade,
+.earlypreview-page .earlypreview-beige-blank > .doehealth-desk2-visible__tide {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity 1100ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 1100ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.earlypreview-page .doehealth-desk2-hero.is-in + .earlypreview-hero-wave .earlypreview-hero-wave__fade,
+.earlypreview-page .earlypreview-hospital.is-in > .earlypreview-hero-wave .earlypreview-hero-wave__fade,
+.earlypreview-page .earlypreview-beige-blank.is-in > .doehealth-desk2-visible__tide {
+  opacity: 1;
+  transform: none;
+}
+
+/* The hero wave follows the hero's description; the others follow their section's title. */
+.earlypreview-page .doehealth-desk2-hero.is-in + .earlypreview-hero-wave .earlypreview-hero-wave__fade {
+  transition-delay: 420ms;
+}
+
+.earlypreview-page .earlypreview-hospital.is-in > .earlypreview-hero-wave .earlypreview-hero-wave__fade,
+.earlypreview-page .earlypreview-beige-blank.is-in > .doehealth-desk2-visible__tide {
+  transition-delay: 260ms;
+}
+
+.earlypreview-page .earlypreview-band__line,
+.earlypreview-page .earlypreview-band__dek,
+.earlypreview-page .earlypreview-hospital__line {
+  opacity: 0;
+  transform: translateY(0.9rem);
+  transition:
+    opacity 760ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 760ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* The salmon line keeps its own colour fade alongside the reveal. */
+.earlypreview-page .earlypreview-hospital__line--salmon {
+  transition:
+    color 900ms ease,
+    opacity 760ms cubic-bezier(0.33, 1, 0.68, 1) 90ms,
+    transform 760ms cubic-bezier(0.33, 1, 0.68, 1) 90ms;
+}
+
+/* The enterprise description starts in the brown with the title, fades to cream with it, and comes up just after it. */
+.earlypreview-page .earlypreview-hospital__dek {
+  color: #281910;
+  transition:
+    color 900ms ease,
+    opacity 760ms cubic-bezier(0.33, 1, 0.68, 1) 180ms,
+    transform 760ms cubic-bezier(0.33, 1, 0.68, 1) 180ms;
+}
+
+.earlypreview-page .earlypreview-hospital.is-in .earlypreview-hospital__dek {
+  color: #fffcf1;
+  opacity: 1;
+  transform: none;
+}
+
+.earlypreview-page .earlypreview-beige-blank.is-in :is(.earlypreview-band__line, .earlypreview-band__dek),
+.earlypreview-page .earlypreview-hospital.is-in .earlypreview-hospital__line {
+  opacity: 1;
+  transform: none;
+}
+
+.earlypreview-page .earlypreview-beige-blank.is-in .earlypreview-band__line:nth-child(2) {
+  transition-delay: 90ms;
+}
+
+.earlypreview-page .earlypreview-beige-blank.is-in .earlypreview-band__dek {
+  transition-delay: 180ms;
+}
+
+/*
+ * The videos come up in the same reveal, a little after the text and the dots: the hero's, the band's and the
+ * enterprise one. Each follows its section's `is-in`.
+ */
+.earlypreview-page .doehealth-desk2-hero ~ .desk2-workspace .desk2-workspace__photo,
+.earlypreview-page .earlypreview-beige-blank > .desk2-workspace .desk2-workspace__photo,
+.earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile,
+.earlypreview-page .earlypreview-hospital .earlypreview-gallery__tile {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity 1100ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 1100ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.earlypreview-page .doehealth-desk2-hero.is-in ~ .desk2-workspace .desk2-workspace__photo,
+.earlypreview-page .earlypreview-beige-blank.is-in > .desk2-workspace .desk2-workspace__photo,
+.earlypreview-page .earlypreview-beige-blank.is-in .earlypreview-band__videos .earlypreview-gallery__tile,
+.earlypreview-page .earlypreview-hospital.is-in .earlypreview-gallery__tile {
+  opacity: 1;
+  transform: none;
+}
+
+/* The hero's video follows its dot wave (420ms); the band's and the enterprise video follow their dots (260ms). */
+.earlypreview-page .doehealth-desk2-hero.is-in ~ .desk2-workspace .desk2-workspace__photo {
+  transition-delay: 600ms;
+}
+
+.earlypreview-page .earlypreview-beige-blank.is-in > .desk2-workspace .desk2-workspace__photo,
+.earlypreview-page .earlypreview-beige-blank.is-in .earlypreview-band__videos .earlypreview-gallery__tile,
+.earlypreview-page .earlypreview-hospital.is-in .earlypreview-gallery__tile {
+  transition-delay: 420ms;
+}
+
+/* The three videos follow one another: the two in the first row, then the wide one under them. */
+.earlypreview-page .earlypreview-beige-blank.is-in .earlypreview-band__videos .earlypreview-gallery__tile:nth-child(2) {
+  transition-delay: 540ms;
+}
+
+.earlypreview-page .earlypreview-beige-blank.is-in .earlypreview-band__videos .earlypreview-gallery__tile:nth-child(3) {
+  transition-delay: 660ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earlypreview-page .doehealth-desk2-hero + .earlypreview-hero-wave .earlypreview-hero-wave__fade,
+  .earlypreview-page .earlypreview-hospital > .earlypreview-hero-wave .earlypreview-hero-wave__fade,
+  .earlypreview-page .earlypreview-beige-blank > .doehealth-desk2-visible__tide,
+  .earlypreview-page .earlypreview-band__line,
+  .earlypreview-page .earlypreview-band__dek,
+  .earlypreview-page .earlypreview-hospital__line,
+  .earlypreview-page .doehealth-desk2-hero ~ .desk2-workspace .desk2-workspace__photo,
+  .earlypreview-page .earlypreview-beige-blank > .desk2-workspace .desk2-workspace__photo,
+  .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile,
+  .earlypreview-page .earlypreview-hospital .earlypreview-gallery__tile,
+  .earlypreview-page .earlypreview-hospital__dek,
+  .earlypreview-page .earlypreview-hospital__line--salmon {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

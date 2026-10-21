@@ -6,7 +6,6 @@
  */
 import { Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
-
 type IndexTab = "schedule" | "voice" | "services" | "providers" | "referrals" | "payments" | "permissions";
 type SectionId = "needs" | Exclude<IndexTab, "permissions"> | "agents" | "messages" | "systems";
 
@@ -25,6 +24,15 @@ function Glyph({ children, size = 20 }: { children: ReactNode; size?: number }) 
     </svg>
   );
 }
+
+/** Each provider gets its own disc tone and meter colour, all drawn from the Index palette. */
+const PROVIDERS = [
+  { name: "Dr. Roberts", status: "Room 2", seen: 5, booked: 9, here: true, tone: "#F7DCCB", meter: "#E07B53" },
+  { name: "Dr. Patel", status: "Room 4", seen: 6, booked: 8, here: true, tone: "#DCE5D0", meter: "#6E9A5B" },
+  { name: "Dr. Shah", status: "Room 1", seen: 3, booked: 6, here: true, tone: "#E9DCC7", meter: "#B98A55" },
+  { name: "Dr. Lin", status: "Left at 1", seen: 7, booked: 7, here: true, tone: "#FCCFB8", meter: "#6F8FA3" },
+  { name: "Dr. Lee", status: "Back Monday", seen: 0, booked: 0, here: false, tone: "#EEEADF", meter: "#A8A192" },
+];
 
 type Section = {
   id: SectionId;
@@ -60,7 +68,6 @@ const SECTIONS: Section[] = [
     summary: (
       <>
         <span className={`${CHIP} bg-sand`}>38 booked</span>
-        <span className={`${CHIP} bg-sand`}>Next 3:30</span>
       </>
     ),
   },
@@ -76,9 +83,6 @@ const SECTIONS: Section[] = [
     ),
     summary: (
       <>
-        <span className={`${CHIP} bg-sand gap-[6px]`}>
-          <span className="w-[6px] h-[6px] rounded-[99px] bg-[#6E9A5B]" />2 on the line
-        </span>
         <span className={`${CHIP} bg-sand`}>47 calls</span>
       </>
     ),
@@ -90,7 +94,7 @@ const SECTIONS: Section[] = [
     tile: "#DCE5D0",
     summary: (
       <>
-        <span className={`${CHIP} bg-sand`}>12 booked by agents</span>
+        <span className={`${CHIP} bg-sand`}>12 Booked by Agents</span>
         <span className={`${CHIP} bg-sand`}>31 visits</span>
       </>
     ),
@@ -135,13 +139,12 @@ const SECTIONS: Section[] = [
     summary: (
       <span className="flex items-center gap-[8px]">
         <span className="flex items-center">
-          {["RR", "AP", "JL", "NS"].map((initials, i) => (
+          {PROVIDERS.filter((p) => p.here).map((p, i) => (
             <span
-              key={initials}
-              className={`w-[24px] h-[24px] flex items-center justify-center rounded-[999px] border-2 border-solid [border-color:#FAF6EC] bg-[#E9DCC7] text-[9px] leading-[10px] ${SANS} font-[600] text-walnut ${i > 0 ? "-ml-[6px]" : ""}`}
-            >
-              {initials}
-            </span>
+              key={p.name}
+              className={`w-[24px] h-[24px] rounded-[999px] border-2 border-solid [border-color:#FAF6EC] ${i > 0 ? "-ml-[6px]" : ""}`}
+              style={{ backgroundColor: p.tone }}
+            />
           ))}
         </span>
         <span className={`${CHIP} bg-sand`}>4 in today</span>
@@ -197,11 +200,12 @@ const GREEN = "#6E9A5B";
 /** Soft inner surface on a paper card: a half-step between paper and the beige row. */
 const WELL = "#F7F2E6";
 
+/** Agent hand-offs waiting on Dr. Roberts. Each one is something an agent could not finish on its own. */
 const NEEDS = [
-  { id: "leo", who: "Leo Jacobs", time: "11:08", what: "Third ear infection this year", from: "From his mom’s call", kind: "call", action: "Review" },
-  { id: "grace", who: "Grace Kim", time: "10:42", what: "Lisinopril 10 mg refill", from: "CVS Beacon St", kind: "refill", action: "Approve" },
-  { id: "lily", who: "Lily’s mom", time: "1:48", what: "Wants to see Dr. Patel", from: "About Lily’s rash", kind: "call", action: "Call back" },
-  { id: "henry", who: "Henry Walsh", time: "9:30", what: "LDL came back at 162", from: "Lipid panel", kind: "lab", action: "Sign" },
+  { id: "leo", who: "Leo Jacobs", time: "11:08", what: "Third ear infection this year. ENT referral drafted", from: "Mom’s Call", action: "Review", tone: "#F7DCCB" },
+  { id: "grace", who: "Grace Kim", time: "10:42", what: "Pickup moves to CVS Beacon St", from: "Pharmacy Change Request", action: "Approve", tone: "#DCE5D0" },
+  { id: "lily", who: "Lily’s mom", time: "1:48", what: "Wants Dr. Patel. Nothing open before Thu", from: "About Rash Visit", action: "Pick slot", tone: "#FCCFB8" },
+  { id: "henry", who: "Henry Walsh", time: "9:30", what: "Results held until the $40 lipid copay is paid", from: "Billing", action: "Release", tone: "#E9DCC7" },
 ] as const;
 
 const DAY_FROM = 12;
@@ -211,19 +215,15 @@ const LANES = [
   { who: "Roberts", blocks: [[12.25, 0.5], [13, 0.5], [13.75, 0.75], [14.75, 0.5], [15.5, 0.5], [16, 0.5], [16.75, 0.5]] },
   { who: "Patel", blocks: [[12, 0.75], [13.25, 0.5], [14, 0.5], [15, 0.5], [15.75, 0.5], [16.5, 0.75]] },
   { who: "Shah", blocks: [[12.5, 0.5], [13.5, 0.75], [14.5, 0.5], [16.25, 0.5], [17, 0.5]] },
+  { who: "Lin", blocks: [[12, 0.75], [13.25, 0.5], [14, 0.5], [15, 0.5], [15.75, 0.5], [16.5, 0.75]] },
 ] as { who: string; blocks: [number, number][] }[];
 
-const LIVE_CALLS = [
-  { initials: "HL", name: "Hannah Lee", about: "Moving Friday’s visit", start: 134 },
-  { initials: "MW", name: "Marcus Webb", about: "Lab results question", start: 48 },
-];
-
 const CALL_MIX = [
-  { label: "Scheduling", value: 16 },
-  { label: "Intake", value: 9 },
-  { label: "Billing", value: 8 },
-  { label: "Records", value: 7 },
-  { label: "Office", value: 7 },
+  { label: "Scheduling", value: 16, color: "#F2BFA6" },
+  { label: "Intake", value: 9, color: "#B9CDA8" },
+  { label: "Billing", value: 8, color: "#D9C49F" },
+  { label: "Records", value: 7, color: "#CDC2BA" },
+  { label: "Office", value: 7, color: "#E7DCC6" },
 ];
 
 const AGENT_COUNTS = [
@@ -244,19 +244,11 @@ const SERVICES = [
   { id: "physical", name: "Annual physical", price: "$0 with most plans", week: 9, trend: [7, 8, 6, 9, 7, 8, 9] },
 ];
 
-const PROVIDERS = [
-  { initials: "RR", name: "Dr. Roberts", status: "Room 2", seen: 5, booked: 9, here: true },
-  { initials: "AP", name: "Dr. Patel", status: "Room 4", seen: 6, booked: 8, here: true },
-  { initials: "NS", name: "Dr. Shah", status: "Room 1", seen: 3, booked: 6, here: true },
-  { initials: "JL", name: "Dr. Lin", status: "Left at 1", seen: 7, booked: 7, here: true },
-  { initials: "DL", name: "Dr. Lee", status: "Back Monday", seen: 0, booked: 0, here: false },
-];
-
 const STEPS = ["Sent", "Accepted", "Scheduled", "Seen"];
 const REFERRAL_ROWS = [
-  { id: "leo", initials: "LJ", who: "Leo Jacobs", to: "ENT · Boston Children’s", step: 0, stalled: "No reply in 4 days" },
-  { id: "henry", initials: "HW", who: "Henry Walsh", to: "Cardiology · Beth Israel", step: 1 },
-  { id: "grace", initials: "GK", who: "Grace Kim", to: "Orthopedics · Tue, Oct 27", step: 2 },
+  { id: "leo", who: "Leo Jacobs", specialty: "ENT", tone: PROVIDERS[0].tone, step: 0, stalled: "No reply in 4 days" },
+  { id: "henry", who: "Henry Walsh", specialty: "Cardiology", tone: PROVIDERS[1].tone, step: 1 },
+  { id: "grace", who: "Grace Kim", specialty: "Orthopedics", tone: PROVIDERS[2].tone, step: 2 },
 ];
 
 const OWED = [
@@ -337,7 +329,7 @@ function Toggle({ on, onChange, label }: { on: boolean; onChange: () => void; la
   );
 }
 
-function Ring({ value, size = 64, stroke = 7, children }: { value: number; size?: number; stroke?: number; children?: ReactNode }) {
+function Ring({ value, size = 64, stroke = 7, color = "#E8A585", children }: { value: number; size?: number; stroke?: number; color?: string; children?: ReactNode }) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   return (
@@ -349,7 +341,7 @@ function Ring({ value, size = 64, stroke = 7, children }: { value: number; size?
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="#E8A585"
+          stroke={color}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${c * Math.max(0.001, value)} ${c}`}
@@ -364,27 +356,53 @@ function Ring({ value, size = 64, stroke = 7, children }: { value: number; size?
 const TITLE = `text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`;
 const MUTED = `text-[12px] leading-[16px] ${SANS} font-[500] text-sub`;
 
-function KindIcon({ kind }: { kind: "call" | "refill" | "lab" }) {
-  return (
-    <span className="w-[32px] h-[32px] shrink-0 flex items-center justify-center rounded-[11px] text-walnut" style={{ backgroundColor: WELL }}>
-      <Glyph size={16}>
-        {kind === "call" && <path d="M5 4.5h3.2l1.6 4-2 1.3a10.5 10.5 0 0 0 6.4 6.4l1.3-2 4 1.6V19a1.5 1.5 0 0 1-1.6 1.5C10.6 20 4 13.4 3.5 6.1A1.5 1.5 0 0 1 5 4.5z" />}
-        {kind === "refill" && <path d="M8.5 15.5l7-7a3.5 3.5 0 0 0-5-5l-7 7a3.5 3.5 0 0 0 5 5zM7 7l5 5" />}
-        {kind === "lab" && <path d="M9.5 3.5h5M10.5 3.5v6l-5 8.5a1.5 1.5 0 0 0 1.3 2.2h10.4a1.5 1.5 0 0 0 1.3-2.2l-5-8.5v-6" />}
-      </Glyph>
-    </span>
-  );
+/** Plain round badge in the card's top-left, filled with the card's tone. */
+function KindIcon({ tone }: { tone: string }) {
+  return <span className="w-[32px] h-[32px] shrink-0 rounded-full" style={{ backgroundColor: tone }} />;
 }
 
+/** Width of the soft fade on a carousel edge that still has cards hidden past it. */
+const CAROUSEL_FADE = 48;
+
 function NeedsDetail({ done, onDone }: { done: Set<string>; onDone: (id: string) => void }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = useState({ left: false, right: false });
+
+  /** Fades a side only while there are cards scrolled out of view beyond it. */
+  const measure = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    const left = el.scrollLeft > 1;
+    const right = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+    setEdges((prev) => (prev.left === left && prev.right === right ? prev : { left, right }));
+  };
+
+  useEffect(() => {
+    measure();
+    const el = trackRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const l = edges.left ? CAROUSEL_FADE : 0;
+  const r = edges.right ? CAROUSEL_FADE : 0;
+  const mask = `linear-gradient(90deg, transparent 0px, #000 ${l}px, #000 calc(100% - ${r}px), transparent 100%)`;
+
   return (
-    <div className="grid grid-cols-4 gap-[8px]">
+    <div
+      ref={trackRef}
+      onScroll={measure}
+      className="flex gap-[8px] overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      style={{ maskImage: mask, WebkitMaskImage: mask }}
+    >
       {NEEDS.map((n, i) => {
         const isDone = done.has(n.id);
         return (
-          <Card key={n.id} className={`gap-[12px] transition-opacity duration-300 ${isDone ? "opacity-60" : ""}`}>
+          <Card key={n.id} className={`w-[232px] shrink-0 snap-start gap-[12px] transition-opacity duration-300 ${isDone ? "opacity-60" : ""}`}>
             <span className="flex items-center justify-between">
-              <KindIcon kind={n.kind} />
+              <KindIcon tone={n.tone} />
               <span className={MUTED}>{n.time}</span>
             </span>
             <span className="flex flex-col gap-[2px] min-h-[72px]">
@@ -417,8 +435,7 @@ function ScheduleDetail() {
     <div className="grid grid-cols-[1fr_250px] gap-[8px]">
       <Card className="gap-[10px]">
         <span className="flex items-center justify-between">
-          <span className={TITLE}>This afternoon</span>
-          <Chip dot={ACCENT}>Now 3:20</Chip>
+          <span className={TITLE}>Afternoon</span>
         </span>
         <div className="relative flex flex-col gap-[6px]">
           {LANES.map((lane) => (
@@ -457,20 +474,19 @@ function ScheduleDetail() {
         </div>
       </Card>
       <Card className="gap-[12px]">
-        <span className="flex items-center justify-between">
-          <span className={MUTED}>Up next · 10 min</span>
-          <span className={`text-[13px] leading-[16px] ${SANS} font-[600] text-walnut`}>3:30</span>
-        </span>
+        <span className={TITLE}>Recent</span>
         <span className="flex items-center gap-[10px]">
-          <Avatar initials="MC" tone="#FCCFB8" />
+          <span className="w-[36px] h-[36px] shrink-0 rounded-full" style={{ backgroundColor: "#FCCFB8" }} />
           <span className="flex flex-col min-w-[0px]">
-            <span className={TITLE}>Maya Chen</span>
-            <span className={MUTED}>Annual physical · Room 2</span>
+            <span className={`text-[20px] leading-[24px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>Maya Chen</span>
+            <span className={MUTED}>Annual Physical</span>
           </span>
         </span>
-        <span className="flex gap-[6px]">
-          <Chip dot={GREEN}>Intake ready</Chip>
-          <Chip>$25 copay</Chip>
+        <span className="grid grid-cols-2 gap-[6px]">
+          <Chip><span className="text-[#4F6B42]"><Check size={12} /></span>Intake</Chip>
+          <Chip><span className="text-[#4F6B42]"><Check size={12} /></span>Co-Pay</Chip>
+          <Chip><span className="text-[#4F6B42]"><Check size={12} /></span>Harbor</Chip>
+          <Chip><span className="text-[#4F6B42]"><Check size={12} /></span>Exam B</Chip>
         </span>
         <Pill primary={!checkedIn} onClick={() => setCheckedIn(true)} className="mt-auto">
           {checkedIn ? (
@@ -479,7 +495,7 @@ function ScheduleDetail() {
               Checked in
             </>
           ) : (
-            "Check in"
+            "See details"
           )}
         </Pill>
       </Card>
@@ -487,74 +503,101 @@ function ScheduleDetail() {
   );
 }
 
-function useTicker() {
-  const [seconds, setSeconds] = useState(0);
+/** Calls on the line first, then recent ones. */
+const CALLS = [
+  { name: "Hannah Lee", about: "Moving Friday’s visit", time: "2:14", live: true },
+  { name: "Marcus Webb", about: "Lab results question", time: "0:48", live: true },
+  { name: "Mia Jacobs", about: "Leo’s ear pain, third time", time: "11:08", live: false },
+  { name: "Lily’s mom", about: "Asked for Dr. Patel", time: "1:48", live: false },
+  { name: "Grace Kim", about: "Pickup moved to Beacon St", time: "10:42", live: false },
+  { name: "Ava Brooks", about: "Uploaded insurance card", time: "12:05", live: false },
+  { name: "Henry Walsh", about: "Lipid results question", time: "9:30", live: false },
+];
+
+/** Width of the soft fade on a carousel edge that still has cards hidden past it. */
+const CALL_FADE = 40;
+
+/** Horizontal carousel of call cards; fades only on the side that has hidden cards. */
+function CallCarousel() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = useState({ left: false, right: false });
+
+  const measure = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    const left = el.scrollLeft > 1;
+    const right = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+    setEdges((prev) => (prev.left === left && prev.right === right ? prev : { left, right }));
+  };
+
   useEffect(() => {
-    const id = window.setInterval(() => setSeconds((s) => s + 1), 1000);
-    return () => window.clearInterval(id);
+    measure();
+    const el = trackRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
-  return seconds;
-}
 
-const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  const l = edges.left ? CALL_FADE : 0;
+  const r = edges.right ? CALL_FADE : 0;
+  const mask = `linear-gradient(90deg, transparent 0px, #000 ${l}px, #000 calc(100% - ${r}px), transparent 100%)`;
 
-function Waveform({ bars = 28, seed = 0 }: { bars?: number; seed?: number }) {
   return (
-    <span className="flex items-center gap-[3px] h-[28px]">
-      {Array.from({ length: bars }, (_, i) => (
-        <span
-          key={i}
-          className="doe-ripple w-[3px] rounded-[99px]"
-          style={{ height: `${22 + 78 * Math.abs(Math.sin(i * 0.8 + seed))}%`, backgroundColor: "#E8A585", animationDelay: `${((i + seed) % 7) * 0.14}s` }}
-        />
+    <div
+      ref={trackRef}
+      onScroll={measure}
+      className="flex gap-[8px] overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      style={{ maskImage: mask, WebkitMaskImage: mask }}
+    >
+      {CALLS.map((c) => (
+        <Card key={c.name} className="w-[180px] h-[170px] shrink-0 snap-start justify-between">
+          <span className="flex items-center justify-between gap-[8px]">
+            <Chip dot={c.live ? GREEN : undefined}>
+              {c.live ? "On the line" : "Recent"}
+            </Chip>
+            <span className={MUTED}>{c.time}</span>
+          </span>
+          <span className="flex flex-col min-w-[0px]">
+            <span className={TITLE}>{c.name}</span>
+            <span className={`truncate ${MUTED}`}>{c.about}</span>
+          </span>
+          <Pill primary={c.live} className="w-full">
+            {c.live ? "Take over" : "Listen"}
+          </Pill>
+        </Card>
       ))}
-    </span>
+    </div>
   );
 }
 
 function VoiceDetail() {
-  const tick = useTicker();
-  const most = Math.max(...CALL_MIX.map((c) => c.value));
+  const total = CALL_MIX.reduce((sum, c) => sum + c.value, 0);
+  const dots = CALL_MIX.flatMap((c) => Array.from({ length: c.value }, () => c.color));
   return (
-    <div className="grid grid-cols-[1fr_1fr_230px] gap-[8px]">
-      {LIVE_CALLS.map((c, i) => (
-        <Card key={c.name} className="gap-[12px]">
-          <span className="flex items-center gap-[10px]">
-            <Avatar initials={c.initials} />
-            <span className="flex flex-col grow min-w-[0px]">
-              <span className={TITLE}>{c.name}</span>
-              <span className={`truncate ${MUTED}`}>{c.about}</span>
+    <div className="grid grid-cols-[260px_1fr] gap-[8px]">
+    <Card className="h-[170px] justify-center">
+      <div className="flex flex-col grow min-w-[0px] justify-center gap-[14px]">
+        <div className="flex items-baseline gap-[8px]">
+          <span className={`text-[28px] leading-[30px] ${DISPLAY} text-ink`}>{total}</span>
+          <span className={MUTED}>calls today</span>
+        </div>
+        <div className="flex flex-wrap gap-[5px]">
+          {dots.map((color, i) => (
+            <span key={i} className="w-[9px] h-[9px] rounded-[99px]" style={{ backgroundColor: color }} />
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-x-[12px] gap-y-[4px]">
+          {CALL_MIX.map((c) => (
+            <span key={c.label} className="flex items-center gap-[5px]">
+              <span className="w-[7px] h-[7px] rounded-[99px]" style={{ backgroundColor: c.color }} />
+              <span className={MUTED}>{c.label}</span>
             </span>
-            <span className={`text-[13px] leading-[16px] ${SANS} font-[600] [font-variant-numeric:tabular-nums]`} style={{ color: ACCENT }}>
-              {mmss(c.start + tick)}
-            </span>
-          </span>
-          <span className="flex items-center h-[44px] px-[12px] rounded-[14px]" style={{ backgroundColor: WELL }}>
-            <Waveform seed={i * 3} />
-          </span>
-          <span className="flex gap-[6px]">
-            <Pill className="grow">Listen</Pill>
-            <Pill primary className="grow">
-              Take over
-            </Pill>
-          </span>
-        </Card>
-      ))}
-      <Card className="gap-[8px]">
-        <span className="flex items-baseline justify-between">
-          <span className={TITLE}>47 calls</span>
-          <span className={MUTED}>today</span>
-        </span>
-        {CALL_MIX.map((c) => (
-          <span key={c.label} className="grid grid-cols-[72px_1fr_18px] items-center gap-[8px]">
-            <span className={MUTED}>{c.label}</span>
-            <span className="h-[6px] rounded-[99px]" style={{ backgroundColor: WELL }}>
-              <span className="block h-full rounded-[99px] bg-walnut" style={{ width: `${(c.value / most) * 100}%` }} />
-            </span>
-            <span className={`text-right ${MUTED}`}>{c.value}</span>
-          </span>
-        ))}
-      </Card>
+          ))}
+        </div>
+      </div>
+    </Card>
+    <CallCarousel />
     </div>
   );
 }
@@ -571,7 +614,7 @@ function AgentsDetail() {
           <span className={MUTED}>for Maya Chen · 9:12</span>
         </span>
         <span className={`self-start max-w-[80%] px-[14px] py-[10px] rounded-[18px] rounded-tl-[6px] text-[14px] leading-[20px] ${SANS} font-[500] text-walnut`} style={{ backgroundColor: WELL }}>
-          Is there an annual physical before work this week? She has Aetna.
+          Is there an annual physical before work this week? She has Harbor.
         </span>
         <span className="self-end flex items-center gap-[12px] w-[78%] p-[12px] rounded-[18px] rounded-tr-[6px] border border-solid border-[#2819101F]">
           <span className="w-[44px] h-[44px] shrink-0 flex flex-col items-center justify-center rounded-[12px] bg-ink [color:#FFFCF1]">
@@ -580,7 +623,7 @@ function AgentsDetail() {
           </span>
           <span className="flex flex-col grow min-w-[0px]">
             <span className={TITLE}>8:30 AM · Dr. Roberts</span>
-            <span className={MUTED}>Annual physical · $0 with Aetna</span>
+            <span className={MUTED}>Annual physical · $0 with Harbor</span>
           </span>
           <Chip dot={GREEN}>Booked</Chip>
         </span>
@@ -710,15 +753,27 @@ function ProvidersDetail() {
   return (
     <div className="grid grid-cols-5 gap-[8px]">
       {PROVIDERS.map((p) => (
-        <Card key={p.initials} className={`items-center gap-[10px] text-center ${p.here ? "" : "opacity-55"}`}>
-          <Ring value={p.booked ? p.seen / p.booked : 0} size={72} stroke={6}>
-            <Avatar initials={p.initials} size={52} tone={p.here ? "#FCCFB8" : WELL} />
+        <Card key={p.name} className={`items-center gap-[10px] text-center ${p.here ? "" : "opacity-55"}`}>
+          <Ring value={p.booked ? p.seen / p.booked : 0} size={72} stroke={6} color={p.meter}>
+            <span className="block rounded-[999px]" style={{ width: 52, height: 52, backgroundColor: p.tone }} />
           </Ring>
           <span className="flex flex-col items-center">
             <span className={TITLE}>{p.name}</span>
-            <span className={MUTED}>{p.here && p.booked ? `${p.seen} of ${p.booked} seen` : "Off today"}</span>
+            <span className={MUTED}>{p.here && p.booked ? `${p.booked} Booked` : "Off today"}</span>
           </span>
-          <Chip dot={p.here && p.status.startsWith("Room") ? GREEN : undefined}>{p.status}</Chip>
+          {p.here && p.status.startsWith("Room") ? (
+            <button
+              type="button"
+              className={`flex items-center gap-[4px] h-[24px] shrink-0 pl-[9px] pr-[6px] rounded-[999px] bg-[#F1EBDD] hover:bg-[#EAE2D1] transition-colors duration-150 text-[12px] leading-[16px] ${SANS} font-[500] text-walnut`}
+            >
+              See Details
+              <Glyph size={14}>
+                <path d="M9 6l6 6-6 6" />
+              </Glyph>
+            </button>
+          ) : (
+            <Chip>{p.status}</Chip>
+          )}
         </Card>
       ))}
     </div>
@@ -732,10 +787,10 @@ function ReferralsDetail() {
       {REFERRAL_ROWS.map((r) => (
         <div key={r.id} className="grid grid-cols-[220px_1fr_120px] items-center gap-[16px] p-[10px] rounded-[16px] hover:bg-[#FAF6EC] transition-colors duration-150">
           <span className="flex items-center gap-[10px] min-w-[0px]">
-            <Avatar initials={r.initials} size={32} />
-            <span className="flex flex-col min-w-[0px]">
-              <span className={`text-[13px] leading-[18px] ${SANS} font-[600] text-walnut`}>{r.who}</span>
-              <span className={`truncate ${MUTED}`}>{r.to}</span>
+            <span className="shrink-0 w-[32px] h-[32px] rounded-[999px]" style={{ backgroundColor: r.tone }} />
+            <span className="flex items-center gap-[8px] min-w-[0px]">
+              <span className={`truncate text-[13px] leading-[18px] ${SANS} font-[600] text-walnut`}>{r.who}</span>
+              <Chip>{r.specialty}</Chip>
             </span>
           </span>
           <span className="flex items-center">

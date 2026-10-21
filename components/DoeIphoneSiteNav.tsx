@@ -15,6 +15,7 @@ import {
   subpageVariantFromCtaLayout,
 } from "@/components/subpage/SubpageMobileNavRow";
 import { MobileNavActionRow, type MobileNavActionChrome } from "@/components/nav/MobileNavActionRow";
+import { NavMailIcon } from "@/components/nav/NavMailIcon";
 import {
   DOEPHONE_NAV_TRIPLE_CTA_CLASS,
   DOEPHONE_NAV_WAITLIST_CLASS,
@@ -108,11 +109,14 @@ function NavChromeStrip({
   brandFontClass,
   investorsHref,
   frostedScrollChrome = false,
+  menuMailTo,
 }: {
   navTextColor: string;
   navLogoColor: string;
   mobileNavOpen: boolean;
   toggleMenu: () => void;
+  /** When set, the menu button becomes a mail icon that opens this address instead of the menu. */
+  menuMailTo?: string;
   pinchSafe?: boolean;
   homeHref?: string;
   joinHref?: string;
@@ -218,7 +222,17 @@ function NavChromeStrip({
           </span>
         )}
 
-        {showMenu ? (
+        {menuMailTo ? (
+          <a
+            href={`mailto:${menuMailTo}`}
+            className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-black/[0.04]"
+            // The salmon accent, like the hero's second title line and the enterprise title's second line.
+            style={{ color: "#fccfb8" }}
+            aria-label={`Email ${menuMailTo}`}
+          >
+            <NavMailIcon className="w-9 h-9 iphone-page:w-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)] iphone-page:h-[clamp(1.8rem,1.2rem+2.65vmin,2.55rem)]" />
+          </a>
+        ) : showMenu ? (
           <button
             type="button"
             className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-black/[0.04]"
@@ -312,8 +326,11 @@ export default function DoeIphoneSiteNav({
   frostedNavAlwaysPunched = false,
   menuScrimInsetTop,
   navExtra,
+  menuMailTo,
 }: {
   pinchSafe?: boolean;
+  /** Replace the menu button with a mail icon that opens this address. */
+  menuMailTo?: string;
   homeHref?: string;
   joinHref?: string;
   showJoinCta?: boolean;
@@ -697,6 +714,7 @@ export default function DoeIphoneSiteNav({
       brandFontClass={brandFontClass}
       investorsHref={investorsHref}
       frostedScrollChrome={frostedScrollNav}
+      menuMailTo={menuMailTo}
     />
   );
 
@@ -896,6 +914,7 @@ export default function DoeIphoneSiteNav({
           brandFontClass={brandFontClass}
           investorsHref={investorsHref}
           frostedScrollChrome={frostedScrollNav}
+          menuMailTo={menuMailTo}
         />
       </header>,
       document.body

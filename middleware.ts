@@ -91,8 +91,19 @@ async function handleAdminAccess(request: NextRequest): Promise<NextResponse | n
   return applyLandingSiteHeaders(response);
 }
 
-/** Pages linked from Desk 2's nav, banner, CTA and footer — they stay on doehealth.care instead of bouncing to `/`. */
-const DOEHEALTH_CARE_SUBPAGES = ["/about", "/careers", "/news", "/security", "/waitlist", "/doehealthdesk"] as const;
+/**
+ * Pages linked from Desk 2's nav, banner, CTA and footer — they stay on doehealth.care instead of bouncing to `/`.
+ * `/earlypreview` is also served here, so doehealth.care/earlypreview opens the early preview.
+ */
+const DOEHEALTH_CARE_SUBPAGES = [
+  "/about",
+  "/careers",
+  "/news",
+  "/security",
+  "/waitlist",
+  "/doehealthdesk",
+  "/earlypreview",
+] as const;
 
 export async function middleware(request: NextRequest) {
   const host = requestHostFromHeaders(request.headers);
