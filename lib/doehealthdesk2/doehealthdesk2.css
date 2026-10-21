@@ -5141,9 +5141,21 @@ html:has(.earlypreview-page) {
   padding: clamp(0.6rem, 2cqw, 1.5rem);
 }
 
-.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__copy,
+/* The contents of each private-practice card are scaled up, the play button more than the title (see the variables). */
+.earlypreview-page .earlypreview-band__videos {
+  --earlypreview-card-copy-scale: 1.4;
+  --earlypreview-card-play-scale: 1.7;
+}
+
+.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__copy {
+  transform: scale(var(--earlypreview-card-copy-scale));
+  transform-origin: left bottom;
+  transition: none;
+}
+
 .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__play {
-  transform: none;
+  transform: scale(var(--earlypreview-card-play-scale));
+  transform-origin: right bottom;
   transition: none;
 }
 
@@ -5177,15 +5189,14 @@ html:has(.earlypreview-page) {
   display: none;
 }
 
-/* No hover effect: no zoom on the picture, and no pointer cursor on the tile (the link keeps its own). */
+/* No pointer cursor on the tile (the link keeps its own). */
 .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile {
   cursor: auto;
 }
 
-.earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile img,
-.earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile:is(:hover, :focus-within) img {
+/* The picture stays put at rest. Its hover zoom is set in the pointer-device block at the end of this file. */
+.earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile img {
   transform: none;
-  transition: none;
 }
 
 /*
@@ -5809,4 +5820,60 @@ html:has(.earlypreview-page) {
   justify-content: center;
   min-height: calc(100svh - var(--earlypreview-stack-top));
   padding-bottom: var(--earlypreview-stack-top);
+}
+
+
+/*
+ * The private-practice cards (the beige band under the enterprise section) move on hover the way the hero scenes do:
+ * the picture zooms in slowly, and the title and play button rise into place from a little lower down. At rest the
+ * card reads as before. Pointer devices only.
+ */
+@media (hover: hover) and (pointer: fine) {
+  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__copy {
+    transform: translateY(0.6rem) scale(var(--earlypreview-card-copy-scale));
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__play {
+    transform: translateY(0.6rem) scale(var(--earlypreview-card-play-scale));
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile:is(:hover, :focus-within) .earlypreview-overlay__copy {
+    transform: translateY(0) scale(var(--earlypreview-card-copy-scale));
+  }
+
+  .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile:is(:hover, :focus-within) .earlypreview-overlay__play {
+    transform: translateY(0) scale(var(--earlypreview-card-play-scale));
+  }
+
+  /* The same slow, eased zoom as the hero scenes: the picture eases in over 900ms and eases back out when the pointer leaves. */
+  .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile img {
+    transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile:is(:hover, :focus-within) img {
+    transform: scale(1.025);
+    transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__copy,
+  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__play {
+    transition: none;
+  }
+
+  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__copy {
+    transform: scale(var(--earlypreview-card-copy-scale));
+  }
+
+  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__play {
+    transform: scale(var(--earlypreview-card-play-scale));
+  }
+
+  .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile img {
+    transform: none;
+    transition: none;
+  }
 }
