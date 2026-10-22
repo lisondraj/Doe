@@ -415,9 +415,8 @@ export const EARLYPREVIEW_MARKET_PLANS = {
       note: "Per provider, every clinic",
       features: [
         "Everything in Advanced",
-        "A receptionist that answers every call",
-        "Visit notes written for you",
-        "Pre-visit videos, so patients arrive ready",
+        "Voice agents that answer every call",
+        "Visits+: smart appointments, visit notes and pre-visit videos",
       ],
     },
   ],
@@ -476,26 +475,21 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
     },
     {
       id: "voice",
-      label: "Phone",
+      label: "Voice Agents",
       cells: [
         null,
         "Add-on: $149/mo per phone line",
-        "A receptionist that answers and books calls",
+        "Voice agents that answer and book calls",
       ],
     },
     {
-      id: "appointments",
-      label: "Visits",
+      id: "visits",
+      label: "Visits+",
       cells: [
         null,
         "Add-on: $199/mo per provider",
-        "Visit notes written for you, with evidence at hand",
+        "Smart appointments, visit notes and pre-visit videos",
       ],
-    },
-    {
-      id: "prepare",
-      label: "Prepare",
-      cells: [null, null, "Pre-visit videos, so patients arrive ready"],
     },
   ] satisfies readonly {
     id: string;
