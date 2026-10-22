@@ -1,0 +1,584 @@
+/*
+ * /earlypreview product section (EarlyPreviewProductSection): four screens in the go-to-market section's form, each
+ * one piece of the app drawn with the kit in earlypreview-kit.css. Shells and phones run off the screen's edges, the
+ * way a corner of the product would be framed.
+ */
+
+/* 1 · The clinic's inbox: the shell from the title's left edge, cropped by the right and bottom of the screen. */
+.earlypreview-product__shell {
+  top: 0;
+  right: calc(-1 * var(--lock-inset) - 3em);
+  bottom: calc(-1 * var(--lock-pad-b) - 3em);
+  left: 0;
+}
+
+.earlypreview-product__panel-head {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  padding: 1.5em 1.8em 1.2em;
+}
+
+.earlypreview-product__panel-head .ep-heading {
+  font-size: 2.3em;
+}
+
+.earlypreview-product__inbox-cols {
+  display: grid;
+  grid-template-columns: 23em minmax(0, 1fr);
+  align-items: start;
+  gap: 1.1em;
+  padding: 0 1.1em;
+}
+
+.earlypreview-product__threads {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  padding: 0.45em;
+  border-radius: 1.2em;
+  background: #f4eedf;
+}
+
+.earlypreview-product__threads > li {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  padding: 0.7em 0.8em;
+  border-radius: 0.9em;
+}
+
+.earlypreview-product__threads > li.is-open {
+  background: #fffcf1;
+  box-shadow: 0 1px 2px rgb(40 25 16 / 0.08);
+}
+
+.earlypreview-product__threads > li > span:nth-child(2),
+.earlypreview-product__thread-head > span,
+.earlypreview-product__result > span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+  min-width: 0;
+}
+
+.earlypreview-product__threads strong,
+.earlypreview-product__thread-head strong,
+.earlypreview-product__result strong {
+  font-size: 0.95em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.earlypreview-product__threads > li > span:nth-child(2) > span,
+.earlypreview-product__thread-head > span > span,
+.earlypreview-product__result > span > span {
+  font-size: 0.85em;
+  color: rgb(40 25 16 / 0.6);
+  white-space: nowrap;
+}
+
+.earlypreview-product__threads time {
+  margin-left: auto;
+  font-size: 0.8em;
+  color: rgb(40 25 16 / 0.5);
+}
+
+.earlypreview-product__thread {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1em;
+  padding: 1.1em 1.3em 1.3em;
+  border-radius: 1.2em;
+  background: rgb(255 255 255 / 0.55);
+  box-shadow: 0 1px 2px rgb(40 25 16 / 0.08);
+}
+
+.earlypreview-product__thread-head {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+}
+
+.earlypreview-product__bubbles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+}
+
+.earlypreview-product__bubble {
+  max-width: min(68%, 30em);
+  padding: 0.8em 1.05em;
+  border-radius: 1.2em;
+  font-size: 1em;
+  line-height: 1.38;
+}
+
+.earlypreview-product__bubble.is-agent {
+  align-self: flex-start;
+  background: #f4eedf;
+}
+
+.earlypreview-product__bubble.is-desk {
+  align-self: flex-end;
+  background: #281910;
+  color: #fffcf1;
+}
+
+.earlypreview-product__done {
+  align-self: flex-start;
+}
+
+.earlypreview-product__composer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3em;
+  padding: 0 0.4em 0 1.1em;
+  border-radius: 999px;
+  background: #f4eedf;
+  font-size: 0.9em;
+  color: rgb(40 25 16 / 0.5);
+}
+
+.earlypreview-product__send {
+  display: grid;
+  place-items: center;
+  width: 2.3em;
+  height: 2.3em;
+  border-radius: 999px;
+  background: #281910;
+  color: #fffcf1;
+}
+
+/* 2 · Ready: Leo's visit on the left, the three products that got it there large on the right. */
+.earlypreview-product__ready {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2.5rem, 7vw, 7rem);
+}
+
+.earlypreview-product__chart-box {
+  display: flex;
+  align-items: center;
+}
+
+.earlypreview-product__chart {
+  width: 32em;
+  max-width: 100%;
+  padding: 1.6em;
+}
+
+.earlypreview-product__chart > header {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+}
+
+.earlypreview-product__chart > header .ep-avatar {
+  width: 3.4em;
+  height: 3.4em;
+  border-radius: 0.9em;
+  font-size: 1em;
+}
+
+.earlypreview-product__chart > header > span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+}
+
+.earlypreview-product__chart > header .ep-heading {
+  font-size: 1.9em;
+}
+
+.earlypreview-product__chart > header > span > span:last-child {
+  font-size: 0.9em;
+  color: rgb(40 25 16 / 0.6);
+}
+
+.earlypreview-product__chart dl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+  margin-top: 1.2em;
+}
+
+.earlypreview-product__chart dl > div {
+  display: grid;
+  grid-template-columns: 6.5em minmax(0, 1fr);
+  align-items: center;
+  min-height: 2.5em;
+}
+
+.earlypreview-product__chart dt {
+  font-size: 0.9em;
+  color: rgb(40 25 16 / 0.6);
+}
+
+.earlypreview-product__chart dd {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font-weight: 500;
+}
+
+.earlypreview-product__forms {
+  margin-top: 1.1em;
+  padding: 1em 1.1em;
+  border-radius: 1.1em;
+  background: #f4eedf;
+}
+
+.earlypreview-product__forms > p {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.earlypreview-product__forms > p strong {
+  font-weight: 600;
+}
+
+.earlypreview-product__forms > p span {
+  font-size: 0.85em;
+  color: rgb(40 25 16 / 0.6);
+}
+
+.earlypreview-product__forms ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55em;
+  margin-top: 0.8em;
+}
+
+.earlypreview-product__forms li {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+}
+
+.earlypreview-product__box {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 1.45em;
+  height: 1.45em;
+  border: 1.5px solid rgb(40 25 16 / calc(0.25 * (1 - var(--k, 0))));
+  border-radius: 0.42em;
+  background: rgb(40 25 16 / var(--k, 0));
+  color: #fffcf1;
+}
+
+.earlypreview-product__box .ep-icon {
+  width: 1em;
+  height: 1em;
+  stroke-width: 3;
+  opacity: var(--k, 0);
+}
+
+.earlypreview-product__chart > footer {
+  margin-top: 1.2em;
+}
+
+/* 3 · Booked: the clinic's Friday on the left, the patient's phone on the right running off the bottom. */
+.earlypreview-product__day {
+  position: absolute;
+  top: 1.5em;
+  left: 0;
+  width: 30em;
+  padding: 1.5em 1.6em 1.8em;
+}
+
+.earlypreview-product__day > header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  margin-bottom: 1.4em;
+}
+
+.earlypreview-product__day > header .ep-heading {
+  font-size: 2em;
+}
+
+.earlypreview-product__day > header > span:last-child {
+  color: rgb(40 25 16 / 0.55);
+}
+
+.earlypreview-product__hours {
+  position: relative;
+  height: 18em;
+  margin-left: 4em;
+}
+
+.earlypreview-product__hour {
+  position: absolute;
+  left: -4em;
+  font-size: 0.8em;
+  line-height: 1;
+  color: rgb(40 25 16 / 0.5);
+}
+
+.earlypreview-product__visit {
+  position: absolute;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  box-sizing: border-box;
+  margin-top: 0.12em;
+  padding: 0 0.85em;
+  border-radius: 0.8em;
+  background: #f4eedf;
+  white-space: nowrap;
+  transform: translateY(-0.12em);
+}
+
+.earlypreview-product__visit strong {
+  font-size: 0.92em;
+  font-weight: 600;
+}
+
+.earlypreview-product__visit span {
+  font-size: 0.85em;
+  color: rgb(40 25 16 / 0.6);
+}
+
+.earlypreview-product__visit.is-booked {
+  z-index: 1;
+  background: #fccfb8;
+  color: #7a3e26;
+  box-shadow: 0 0.8em 2em rgb(122 62 38 / 0.25);
+}
+
+.earlypreview-product__visit.is-booked span {
+  color: rgb(122 62 38 / 0.8);
+}
+
+.earlypreview-product__visit.is-booked .ep-chip {
+  margin-left: auto;
+  font-size: 0.72em;
+  color: #7a3e26;
+}
+
+.earlypreview-product__phone {
+  top: 0;
+  left: max(34em, 52%);
+}
+
+/* 4 · The API: an editor running off the right and bottom, the openings it returns over its left edge. */
+.earlypreview-product__editor {
+  position: absolute;
+  top: 0;
+  right: calc(-1 * var(--lock-inset) - 3em);
+  bottom: calc(-1 * var(--lock-pad-b) - 3em);
+  left: 30%;
+  border-radius: 1.6em;
+  background: #140c04;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 252 241 / 0.07),
+    0 3em 8em rgb(8 4 1 / 0.45);
+  color: #fffcf1;
+}
+
+.earlypreview-product__editor > header {
+  display: flex;
+  align-items: center;
+  gap: 1.3em;
+  padding: 1em 1.3em;
+}
+
+.earlypreview-product__lights {
+  display: flex;
+  gap: 0.45em;
+}
+
+.earlypreview-product__lights i {
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 999px;
+  background: rgb(255 252 241 / 0.18);
+}
+
+.earlypreview-product__file {
+  font-size: 0.9em;
+  color: rgb(255 252 241 / 0.55);
+}
+
+.earlypreview-product__tabs {
+  display: inline-flex;
+  gap: 0.2em;
+  padding: 0.25em;
+  border-radius: 999px;
+  background: rgb(255 252 241 / 0.07);
+}
+
+.earlypreview-product__tabs > span {
+  padding: 0.35em 0.95em;
+  border-radius: 999px;
+  font-size: 0.85em;
+  color: rgb(255 252 241 / 0.6);
+}
+
+.earlypreview-product__tabs > span.is-active {
+  background: #fffcf1;
+  color: #140c04;
+}
+
+.earlypreview-product__editor pre {
+  padding: 1em 2em 2em 1em;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 1.5em;
+  line-height: 1.75;
+  letter-spacing: 0;
+}
+
+.earlypreview-product__line {
+  display: block;
+  white-space: pre;
+}
+
+.earlypreview-product__gutter {
+  display: inline-block;
+  width: 1.6em;
+  margin-right: 1.1em;
+  text-align: right;
+  color: rgb(255 252 241 / 0.22);
+}
+
+.earlypreview-product__editor .is-key {
+  color: #e9a98a;
+}
+
+.earlypreview-product__editor .is-fn {
+  color: #fccfb8;
+}
+
+.earlypreview-product__editor .is-str {
+  color: #b9d3a8;
+}
+
+.earlypreview-product__editor .is-punct {
+  color: rgb(255 252 241 / 0.5);
+}
+
+.earlypreview-product__caret {
+  display: inline-block;
+  width: 0.1em;
+  height: 1.1em;
+  margin-left: 0.05em;
+  background: #fffcf1;
+  vertical-align: -0.2em;
+}
+
+.earlypreview-product__results {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+  width: 27em;
+}
+
+.earlypreview-product__results > p {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 0.2em;
+  color: rgb(255 252 241 / 0.7);
+}
+
+.earlypreview-product__result {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  padding: 0.9em 1em;
+  border-radius: 1.2em;
+}
+
+.earlypreview-product__result .ep-chip {
+  margin-left: auto;
+}
+
+/* iPhone: each screen's UI stacks under the title, full width, still running off the right and bottom edges. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__inbox-cols {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__threads {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__bubble {
+  max-width: 82%;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__ready {
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  align-items: start;
+  gap: 1.75rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__chart {
+  width: 100%;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__day {
+  top: 0;
+  right: 0;
+  width: auto;
+  padding: 1.2em 1.3em 1.4em;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__day > header {
+  margin-bottom: 1em;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__hours {
+  height: 11em;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__phone {
+  top: 17em;
+  left: calc(50% - 11.5em);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__editor {
+  bottom: auto;
+  left: 0;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__editor pre {
+  padding: 0.6em 1.5em 1.4em 0.4em;
+  font-size: 1.12em;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__results {
+  right: 0;
+  width: auto;
+}
+
+@media (max-height: 720px) {
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__names {
+    flex-direction: row;
+    gap: 1.1rem;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__names > li > span:last-child {
+    display: none;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__hours {
+    height: 9em;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__phone {
+    top: 14.5em;
+  }
+}

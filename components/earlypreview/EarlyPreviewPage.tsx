@@ -9,9 +9,13 @@ import { DoeHealthDesk2Hero } from "@/components/doehealth-desk2/DoeHealthDesk2H
 import { DoeHealthDesk2DotTide } from "@/components/doehealth-desk2/DoeHealthDesk2DotTide";
 import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
-import { DoeHealthDesk2BlankSection, DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
+import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { DoeHealthDesk2Workspace } from "@/components/doehealth-desk2/DoeHealthDesk2Workspace";
 import { EarlyPreviewHospitalSection, EarlyPreviewVideoGrid } from "@/components/earlypreview/EarlyPreviewGallery";
+import { EarlyPreviewGtmSection } from "@/components/earlypreview/EarlyPreviewGtmSection";
+import { EarlyPreviewMarketSection } from "@/components/earlypreview/EarlyPreviewMarketSection";
+import { EarlyPreviewProductSection } from "@/components/earlypreview/EarlyPreviewProductSection";
+import { EarlyPreviewTrustSection } from "@/components/earlypreview/EarlyPreviewTrustSection";
 import { EarlyPreviewVideoOverlay } from "@/components/earlypreview/EarlyPreviewVideoOverlay";
 import {
   EARLYPREVIEW_BAND_DEK,
@@ -252,8 +256,14 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
           headline={EARLYPREVIEW_PRACTICES_HEADLINE}
           videos={<EarlyPreviewVideoGrid />}
         />
-        {/* A final blank brown section under the beige one with the concierge video. */}
-        <DoeHealthDesk2BlankSection tone="brown" />
+        {/* The market, under the beige band with the concierge video: scroll-locked, it releases on the expansion path. */}
+        <EarlyPreviewMarketSection />
+        {/* Doe's products for each audience, scroll-locked like the brown section above. */}
+        <EarlyPreviewProductSection />
+        {/* Doe's go-to-market, the third scroll-locked brown section. */}
+        <EarlyPreviewGtmSection />
+        {/* Security and compliance, the last scroll-locked brown section: it releases on the architecture scene. */}
+        <EarlyPreviewTrustSection />
         <div className="earlypreview-invite-band">
           <DoeHealthDesk2InviteSection />
         </div>

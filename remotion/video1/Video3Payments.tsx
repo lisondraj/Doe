@@ -1,9 +1,9 @@
 import { type CSSProperties, type ReactNode } from "react";
-import { AbsoluteFill, Audio, staticFile, useCurrentFrame } from "remotion";
+import { AbsoluteFill, useCurrentFrame } from "remotion";
 
 import { DotTide, Stage } from "./backdrops";
 import { Bubble, IPhone, Slot, TimeStamp, TypingBubble } from "./imessage";
-import { CAMERA_EASE, EASE_IN_OUT, EASE_OUT, camera, keys, lerp, pulse, ramp, typed, type CameraKey } from "./motion";
+import { CAMERA_EASE, EASE_IN_OUT, EASE_OUT, camera, keys, lerp, pulse, ramp, snapPx, snapScale, typed, type CameraKey } from "./motion";
 import { C, F } from "./theme";
 import { AppShell, ClickRing, Cursor, Icon, ShadowsContext, type IconName } from "./ui";
 
@@ -12,8 +12,6 @@ export const VIDEO3_PAYMENTS_FRAMES = 558;
 export function Video3Payments() {
   return (
     <ShadowsContext.Provider value={false}>
-      <Audio src={staticFile("video1/THREE.m4a")} volume={0.7} />
-      <Audio src={staticFile("video1/BED.m4a")} startFrom={1230} volume={0.2} />
       <Stage backdrop={<DotTide />}>
         <PaymentsFilm />
       </Stage>
@@ -114,7 +112,10 @@ function payCamera(frame: number): CSSProperties {
   const x = lerp(a.x, b.x, u);
   const y = lerp(a.y, b.y, u);
   const sc = Math.exp(lerp(Math.log(a.s), Math.log(b.s), u)) * (1 - ARC.dip * Math.sin(Math.PI * u));
-  return { position: "absolute", left: 0, top: 0, width: 1920, height: 1080, transformOrigin: "0 0", transform: `translate(${(960 - x * sc).toFixed(3)}px, ${(540 - y * sc).toFixed(3)}px) scale(${sc.toFixed(5)})` };
+  const px = snapPx(960 - x * sc);
+  const py = snapPx(540 - y * sc);
+  const ps = snapScale(sc, 1920);
+  return { position: "absolute", left: 0, top: 0, width: 1920, height: 1080, transformOrigin: "0 0", transform: `translate(${px}px, ${py}px) scale(${ps})` };
 }
 
 const SOFT = "rgba(40, 25, 16, 0.08)";

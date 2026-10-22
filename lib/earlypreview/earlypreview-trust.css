@@ -1,0 +1,653 @@
+/*
+ * /earlypreview security and compliance section (EarlyPreviewTrustSection): four screens in the go-to-market
+ * section's form, drawn with the kit in earlypreview-kit.css.
+ */
+
+/* 1 · The protocol: its four parts large on the left, the credential an agent carries on the right. */
+.earlypreview-trust__protocol {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: center;
+  gap: clamp(2.5rem, 6vw, 6rem);
+}
+
+.earlypreview-trust__copy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 4vh, 2.25rem);
+  max-width: 30rem;
+}
+
+.earlypreview-trust__credential {
+  position: relative;
+  justify-self: end;
+  width: 38em;
+  max-width: 100%;
+  height: 28.5em;
+}
+
+.earlypreview-trust__identity {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55em;
+  box-sizing: border-box;
+  width: 21em;
+  padding: 1.3em 1.4em 1.5em;
+  border-radius: 1.4em;
+  background: #140c04;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 252 241 / 0.07),
+    0 2.2em 5em rgb(8 4 1 / 0.4);
+  color: #fffcf1;
+}
+
+.earlypreview-trust__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-size: 0.85em;
+  color: rgb(255 252 241 / 0.6);
+}
+
+.earlypreview-trust__identity .ep-heading {
+  font-size: 1.9em;
+}
+
+.earlypreview-trust__verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.9em;
+  color: #b9d3a8;
+}
+
+.earlypreview-trust__verified .ep-icon {
+  stroke-width: 2.4;
+}
+
+/* A fingerprint of peach dots, fading out from its centre. */
+.earlypreview-trust__print {
+  position: absolute;
+  top: 1.1em;
+  right: 1.2em;
+  width: 4.4em;
+  height: 4.4em;
+  background-image: radial-gradient(circle, rgb(252 207 184 / 0.75) 0.09em, transparent 0.1em);
+  background-size: 0.55em 0.55em;
+  -webkit-mask-image: radial-gradient(circle, #000 35%, transparent 70%);
+  mask-image: radial-gradient(circle, #000 35%, transparent 70%);
+}
+
+.earlypreview-trust__grant {
+  position: absolute;
+  top: 8.4em;
+  right: 0;
+  width: 29em;
+  padding: 1.4em 1.5em 1.5em;
+}
+
+.earlypreview-trust__grant > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.earlypreview-trust__grant > header .ep-heading {
+  font-size: 1.75em;
+}
+
+.earlypreview-trust__id,
+.earlypreview-trust__hash {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.82em;
+  letter-spacing: 0;
+  color: rgb(40 25 16 / 0.55);
+}
+
+.earlypreview-trust__grant dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5em;
+  margin-top: 1em;
+}
+
+.earlypreview-trust__grant dl > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+  padding: 0.7em 0.85em;
+  border-radius: 0.9em;
+  background: #f4eedf;
+}
+
+.earlypreview-trust__grant dt {
+  font-size: 0.78em;
+  color: rgb(40 25 16 / 0.58);
+}
+
+.earlypreview-trust__grant dd {
+  font-size: 0.95em;
+  font-weight: 500;
+}
+
+.earlypreview-trust__scopes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45em;
+  margin-top: 1em;
+}
+
+.earlypreview-trust__never {
+  text-decoration: line-through;
+  text-decoration-color: rgb(40 25 16 / 0.45);
+  color: rgb(40 25 16 / 0.6);
+}
+
+.earlypreview-trust__grant > footer {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  margin-top: 1.1em;
+  font-size: 0.85em;
+  color: rgb(40 25 16 / 0.58);
+}
+
+.earlypreview-trust__grant > footer .ep-chip {
+  font-size: 0.94em;
+}
+
+/* 2 · Consent: the three tiers large on the left, the patient's lock screen on the right running off the bottom. */
+.earlypreview-trust__consent {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+}
+
+.earlypreview-trust__tiers > li:last-child > span:first-child {
+  color: var(--lock-peach);
+}
+
+.earlypreview-trust__phone {
+  top: 0;
+  left: max(52%, 34em);
+}
+
+.earlypreview-trust__lock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6em;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 4.3em 0.9em 1em;
+  background: linear-gradient(180deg, #ebdfc6 0%, #d9c4a1 100%);
+}
+
+.earlypreview-trust__date {
+  font-size: 0.95em;
+  font-weight: 500;
+  color: rgb(40 25 16 / 0.7);
+}
+
+.earlypreview-trust__time {
+  margin-bottom: 0.35em;
+  font-size: 4.6em;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.earlypreview-trust__notice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45em;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.85em 1em 1em;
+  border-radius: 1.35em;
+  background: rgb(255 252 241 / 0.85);
+  box-shadow: 0 0.3em 1em rgb(40 25 16 / 0.08);
+}
+
+.earlypreview-trust__notice p {
+  font-size: 0.95em;
+  line-height: 1.35;
+}
+
+.earlypreview-trust__notice strong {
+  font-weight: 600;
+}
+
+.earlypreview-trust__notice-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  width: 100%;
+  font-size: 0.78em;
+  font-weight: 600;
+  color: rgb(40 25 16 / 0.65);
+}
+
+.earlypreview-trust__notice-head time {
+  margin-left: auto;
+  font-weight: 400;
+}
+
+.earlypreview-trust__app-icon {
+  display: grid;
+  place-items: center;
+  width: 1.75em;
+  height: 1.75em;
+  border-radius: 0.45em;
+  background: #281910;
+  font-size: 1.05em;
+  font-weight: 400;
+  line-height: 1;
+  color: #fffcf1;
+}
+
+.earlypreview-trust__buttons {
+  display: flex;
+  gap: 0.5em;
+  width: 100%;
+  margin-top: 0.2em;
+}
+
+.earlypreview-trust__buttons .ep-btn {
+  flex: 1;
+}
+
+.earlypreview-trust__deny {
+  background: rgb(40 25 16 / 0.08);
+  color: #281910;
+}
+
+.earlypreview-trust__confirmed {
+  margin-top: 0.2em;
+}
+
+/* 3 · The sandbox: a console cropped by the right and bottom of the screen, attacks on the left, a model update on the right. */
+.earlypreview-trust__console {
+  position: absolute;
+  top: 0;
+  right: calc(-1 * var(--lock-inset) - 3em);
+  bottom: calc(-1 * var(--lock-pad-b) - 3em);
+  left: 0;
+  border-radius: 1.6em;
+  background: #140c04;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 252 241 / 0.07),
+    0 3em 8em rgb(8 4 1 / 0.45);
+  color: #fffcf1;
+}
+
+.earlypreview-trust__console > header {
+  display: flex;
+  align-items: center;
+  gap: 1.2em;
+  padding: 1em 1.3em;
+}
+
+.earlypreview-trust__lights {
+  display: flex;
+  gap: 0.45em;
+}
+
+.earlypreview-trust__lights i {
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 999px;
+  background: rgb(255 252 241 / 0.18);
+}
+
+.earlypreview-trust__window {
+  font-size: 0.9em;
+  color: rgb(255 252 241 / 0.6);
+  white-space: nowrap;
+}
+
+.earlypreview-trust__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  height: 2em;
+  padding: 0 0.85em;
+  border-radius: 999px;
+  background: rgb(110 154 91 / 0.2);
+  font-size: 0.8em;
+  font-weight: 500;
+  color: #c4dcb4;
+  white-space: nowrap;
+}
+
+.earlypreview-trust__live i {
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 999px;
+  background: #8fbf78;
+}
+
+.earlypreview-trust__console-body {
+  display: grid;
+  grid-template-columns: minmax(0, 34em) 26em;
+  align-items: start;
+  gap: 1.6em;
+  padding: 0.4em 1.6em 1.6em;
+}
+
+.earlypreview-trust__attacks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.earlypreview-trust__attacks > li {
+  display: flex;
+  align-items: center;
+  gap: 0.85em;
+  padding: 0.7em 0.9em;
+  border-radius: 1em;
+  background: rgb(255 252 241 / 0.05);
+}
+
+.earlypreview-trust__attack-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.2em;
+  height: 2.2em;
+  border-radius: 0.7em;
+  background: rgb(255 252 241 / 0.07);
+  color: var(--lock-peach);
+}
+
+.earlypreview-trust__attacks > li > span:nth-child(2) {
+  font-size: 1.05em;
+  white-space: nowrap;
+}
+
+.earlypreview-trust__result {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.35em;
+  height: 2.1em;
+  margin-left: auto;
+  padding: 0 0.85em;
+  border-radius: 999px;
+  background: rgb(255 252 241 / 0.07);
+  font-size: 0.8em;
+  font-weight: 500;
+  color: rgb(255 252 241 / 0.55);
+  white-space: nowrap;
+}
+
+.earlypreview-trust__result.is-done {
+  background: rgb(110 154 91 / 0.22);
+  color: #c4dcb4;
+}
+
+.earlypreview-trust__result .ep-icon {
+  stroke-width: 2.4;
+}
+
+.earlypreview-trust__update {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5em;
+  padding: 1.4em 1.5em 1.5em;
+  color: #281910;
+}
+
+.earlypreview-trust__update-label {
+  font-size: 0.85em;
+  color: rgb(40 25 16 / 0.58);
+}
+
+.earlypreview-trust__update .ep-heading {
+  font-size: 1.7em;
+}
+
+.earlypreview-trust__update ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85em;
+  width: 100%;
+  margin: 0.8em 0 1em;
+}
+
+.earlypreview-trust__update li {
+  display: grid;
+  grid-template-columns: 7.2em minmax(0, 1fr) 1.6em;
+  align-items: center;
+  gap: 0.8em;
+  font-size: 0.92em;
+}
+
+.earlypreview-trust__bar {
+  position: relative;
+  height: 0.45em;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(40 25 16 / 0.1);
+}
+
+.earlypreview-trust__bar::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--k, 0) * 100%);
+  border-radius: inherit;
+  background: #6e9a5b;
+}
+
+.earlypreview-trust__pass {
+  display: grid;
+  place-items: center;
+  width: 1.6em;
+  height: 1.6em;
+  border-radius: 999px;
+  background: rgb(110 154 91 / 0.18);
+  color: #3f6431;
+  opacity: var(--k, 0);
+  transform: scale(calc(0.6 + var(--k, 0) * 0.4));
+}
+
+.earlypreview-trust__pass .ep-icon {
+  width: 0.95em;
+  height: 0.95em;
+  stroke-width: 3;
+}
+
+/* 4 · The record: a ledger receipt on the left, the laws on both sides of the border large on the right. */
+.earlypreview-trust__audit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(2.5rem, 7vw, 7rem);
+}
+
+.earlypreview-trust__receipt-box {
+  display: flex;
+  align-items: center;
+  filter: drop-shadow(0 2em 2.5em rgb(8 4 1 / 0.4));
+}
+
+/* The paper's torn bottom edge is a zigzag mask. */
+.earlypreview-trust__receipt {
+  position: relative;
+  box-sizing: border-box;
+  width: 25em;
+  max-width: 100%;
+  padding: 1.6em 1.7em 2.5em;
+  background: #fffcf1;
+  border-radius: 1.2em 1.2em 0 0;
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 1.1em 100%;
+  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 1.1em 100%;
+}
+
+.earlypreview-trust__receipt > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.earlypreview-trust__receipt > header .ep-heading {
+  font-size: 1.65em;
+}
+
+.earlypreview-trust__receipt > header > span:last-child {
+  font-size: 0.9em;
+  color: rgb(40 25 16 / 0.55);
+}
+
+.earlypreview-trust__receipt dl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  margin-top: 1.3em;
+}
+
+.earlypreview-trust__receipt dl > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.earlypreview-trust__receipt dt {
+  font-size: 0.88em;
+  color: rgb(40 25 16 / 0.58);
+}
+
+.earlypreview-trust__receipt dd {
+  font-size: 0.95em;
+  font-weight: 500;
+  text-align: right;
+}
+
+.earlypreview-trust__receipt > footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  margin-top: 1.3em;
+  padding-top: 1.1em;
+  border-top: 1.5px dashed rgb(40 25 16 / 0.2);
+  font-size: 0.82em;
+  color: rgb(40 25 16 / 0.58);
+}
+
+.earlypreview-trust__stamp {
+  position: absolute;
+  right: 1.4em;
+  bottom: 3.4em;
+  padding: 0.3em 0.75em;
+  border: 2px solid #3f6431;
+  border-radius: 0.5em;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #3f6431;
+  opacity: var(--k, 0);
+  transform: rotate(-8deg) scale(calc(1.5 - var(--k, 0) * 0.5));
+}
+
+.earlypreview-trust__laws {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 4.5vh, 2.75rem);
+  max-width: 34rem;
+}
+
+.earlypreview-trust__regions > li > span:first-child {
+  font-size: clamp(1.9rem, min(3.1vw, 5.6vh), 3.3rem);
+}
+
+.earlypreview-trust__regions > li > span:last-child {
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+  color: var(--lock-peach);
+}
+
+/* iPhone: each screen stacks under the title, its UI first, the large type compact under it. */
+.doehealth-desk2-page:has(.doephone-mobile-root) :is(.earlypreview-trust__protocol, .earlypreview-trust__consent, .earlypreview-trust__audit) {
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  align-items: start;
+  gap: 1.5rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__credential {
+  order: -1;
+  justify-self: stretch;
+  width: auto;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__grant {
+  width: auto;
+  left: 2.5em;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__parts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 1rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__parts > li > span:last-child {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__copy {
+  gap: 1rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__phone {
+  position: relative;
+  top: auto;
+  left: auto;
+  justify-self: center;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__console-body {
+  grid-template-columns: minmax(0, 30em);
+  gap: 1em;
+  padding: 0.2em 1em 1em;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__attacks > li {
+  padding: 0.55em 0.75em;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__receipt {
+  width: 100%;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__laws {
+  gap: 1rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__regions > li > span:first-child {
+  font-size: 1.45rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__regions > li > span:last-child {
+  font-size: 0.85rem;
+}
+
+@media (max-height: 720px) {
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__parts,
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__tiers {
+    display: none;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-trust__receipt dl > div:nth-child(n + 4):not(:last-child) {
+    display: none;
+  }
+}

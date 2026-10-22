@@ -1,0 +1,616 @@
+/*
+ * /earlypreview go-to-market: a scroll-locked brown section on the story section's lock and type. Four screens, each
+ * a two-line title top left and one large visual under it. Every motion is set by scroll progress through --o, --s,
+ * --e and --draw; nothing here runs on a timer or a transition.
+ */
+.earlypreview-gtm {
+  --gtm-cream: #fffcf1;
+  --gtm-peach: #fccfb8;
+  --gtm-muted: rgb(255 252 241 / 0.6);
+}
+
+.earlypreview-gtm__scene {
+  position: absolute;
+  inset: 0;
+  opacity: var(--o, 0);
+}
+
+.earlypreview-gtm__frame {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-top: calc(var(--desk2-nav-clearance) + clamp(1rem, 4vh, 2.75rem));
+  padding-bottom: clamp(4rem, 9vh, 5.5rem);
+  text-align: left;
+}
+
+.earlypreview-gtm__title {
+  flex: none;
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(2.5rem, min(4.7vw, 8vh), 5.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.earlypreview-gtm__title > span {
+  display: block;
+  width: fit-content;
+  padding-bottom: 0.08em;
+}
+
+.earlypreview-gtm__body {
+  flex: 1;
+  min-height: 0;
+  padding-top: clamp(1.5rem, 5vh, 3.5rem);
+}
+
+/* Fades in and rises a little as --e goes 0 to 1. */
+.earlypreview-gtm :is(
+    .earlypreview-gtm__note,
+    .earlypreview-gtm__key,
+    .earlypreview-gtm__verticals li,
+    .earlypreview-gtm__facts > div,
+    .earlypreview-gtm__prices li,
+    .earlypreview-gtm__quarters li
+  ) {
+  opacity: var(--e, 0);
+  transform: translate3d(0, calc((1 - var(--e, 0)) * 0.7rem), 0);
+}
+
+.earlypreview-gtm__note {
+  margin: 0;
+  font-size: clamp(0.92rem, 1vw, 1rem);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--gtm-muted);
+  text-wrap: pretty;
+}
+
+/* Strokes traced in by --draw (0 to 1), like the story section's drawings. */
+.earlypreview-gtm .is-draw {
+  fill: none;
+  stroke: var(--gtm-peach);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw, 0));
+  /* Hidden until it starts drawing, so round caps don't leave a dot. */
+  opacity: min(1, calc(var(--draw, 0) * 40));
+}
+
+/* 1 · The first city: the dot grid on the left, the five verticals large on the right. */
+.earlypreview-gtm__city {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2.5rem, 7vw, 7rem);
+}
+
+.earlypreview-gtm__grid {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 3vh, 1.75rem);
+  min-width: 0;
+  margin: 0;
+}
+
+.earlypreview-gtm__grid svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 46svh;
+  overflow: visible;
+}
+
+.earlypreview-gtm__grid :is(.is-indexed, .is-claimed) {
+  fill: var(--gtm-cream);
+}
+
+.earlypreview-gtm__grid .is-bookable {
+  fill: var(--gtm-peach);
+}
+
+.earlypreview-gtm__grid figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem clamp(1.25rem, 2.6vw, 2.5rem);
+}
+
+.earlypreview-gtm__key {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  font-size: clamp(0.92rem, 1vw, 1rem);
+  color: var(--gtm-muted);
+}
+
+.earlypreview-gtm__key i {
+  align-self: center;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: rgb(255 252 241 / 0.3);
+}
+
+.earlypreview-gtm__key--claimed i {
+  background: var(--gtm-cream);
+}
+
+.earlypreview-gtm__key--bookable i {
+  background: var(--gtm-peach);
+}
+
+.earlypreview-gtm__key strong {
+  font-weight: 400;
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--gtm-cream);
+}
+
+.earlypreview-gtm__verticals-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 3vh, 1.75rem);
+}
+
+.earlypreview-gtm__verticals {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.35rem, 1.4vh, 0.9rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.earlypreview-gtm__verticals li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.earlypreview-gtm__verticals li > span:first-child {
+  font-size: clamp(1.7rem, min(2.7vw, 5vh), 2.9rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: var(--gtm-cream);
+}
+
+.earlypreview-gtm__verticals li > span:last-child {
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+  font-variant-numeric: tabular-nums;
+  color: var(--gtm-peach);
+}
+
+/* 2 · Agents: agent products into Doe Connect, out to the systems clinics run. */
+.earlypreview-gtm__agents {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 4vh, 2.5rem);
+}
+
+.earlypreview-gtm__flow-box {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.earlypreview-gtm__flow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.earlypreview-gtm__flow--tall {
+  display: none;
+}
+
+.earlypreview-gtm__flow .is-draw {
+  stroke-width: 1.4;
+}
+
+.earlypreview-gtm__flow .is-soft {
+  stroke-opacity: 0.5;
+}
+
+.earlypreview-gtm__flow .is-hub {
+  stroke-width: 1.6;
+}
+
+.earlypreview-gtm__flow text {
+  fill: var(--gtm-cream);
+}
+
+.earlypreview-gtm__flow .is-label {
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+
+.earlypreview-gtm__flow .is-hub-name {
+  font-size: 30px;
+  letter-spacing: -0.035em;
+}
+
+.earlypreview-gtm__flow .is-hub-detail {
+  font-size: 13.5px;
+  fill: var(--gtm-peach);
+}
+
+.earlypreview-gtm__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: clamp(1.5rem, 4vw, 4rem);
+  margin: 0;
+}
+
+.earlypreview-gtm__facts dt {
+  font-size: clamp(1.8rem, 2.7vw, 2.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  color: var(--gtm-cream);
+}
+
+.earlypreview-gtm__facts dd {
+  margin: 0.4rem 0 0;
+  font-size: clamp(0.92rem, 1vw, 1rem);
+  color: var(--gtm-muted);
+}
+
+/* 3 · Pricing: the demand report traced in on the left, the three prices large on the right. */
+.earlypreview-gtm__pricing {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2.5rem, 7vw, 7rem);
+}
+
+.earlypreview-gtm__report {
+  position: relative;
+  padding: clamp(1.5rem, 2.8vw, 2.5rem);
+  border-radius: var(--doehealth-desk2-radius);
+}
+
+.earlypreview-gtm__report-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.earlypreview-gtm__report-line rect {
+  fill: none;
+  stroke: var(--gtm-peach);
+  stroke-width: 1.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw, 0));
+  opacity: min(1, calc(var(--draw, 0) * 40));
+}
+
+.earlypreview-gtm__report-from {
+  margin: 0 0 clamp(0.75rem, 2vh, 1.25rem);
+  font-size: clamp(0.92rem, 1vw, 1rem);
+  color: var(--gtm-peach);
+  opacity: var(--e, 0);
+}
+
+.earlypreview-gtm__report-text {
+  margin: 0;
+  font-size: clamp(1.6rem, min(2.4vw, 4.4vh), 2.5rem);
+  line-height: 1.16;
+  letter-spacing: -0.035em;
+  text-wrap: pretty;
+}
+
+.earlypreview-gtm__prices {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 3.5vh, 2.25rem);
+}
+
+.earlypreview-gtm__prices ul {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.9rem, 2.8vh, 1.85rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.earlypreview-gtm__prices li {
+  display: grid;
+  grid-template-columns: clamp(7rem, 12.5vw, 12.5rem) minmax(0, 1fr);
+  align-items: center;
+  column-gap: clamp(1rem, 2vw, 2rem);
+}
+
+.earlypreview-gtm__price {
+  grid-row: span 2;
+  font-size: clamp(3rem, min(5vw, 9vh), 5.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: var(--gtm-cream);
+}
+
+.earlypreview-gtm__price-name {
+  align-self: end;
+  font-size: clamp(0.92rem, 1vw, 1rem);
+  color: var(--gtm-peach);
+}
+
+.earlypreview-gtm__price-detail {
+  align-self: start;
+  font-size: clamp(1.05rem, 1.25vw, 1.25rem);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--gtm-cream);
+}
+
+/* 4 · The next twelve months: four figures that count up as they come in. */
+.earlypreview-gtm__milestones {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.earlypreview-gtm__quarters {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  justify-content: space-between;
+  column-gap: clamp(1.5rem, 3vw, 3rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.earlypreview-gtm__quarters li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.earlypreview-gtm__figure {
+  font-size: clamp(3.5rem, min(7vw, 14vh), 8.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+  color: var(--gtm-cream);
+  font-variant-numeric: lining-nums;
+  display: grid;
+}
+
+.earlypreview-gtm__figure > span {
+  grid-area: 1 / 1;
+}
+
+.earlypreview-gtm__figure > .is-final {
+  visibility: hidden;
+}
+
+.earlypreview-gtm__quarter-label {
+  margin-top: 0.35rem;
+  font-size: clamp(1.05rem, 1.3vw, 1.3rem);
+  letter-spacing: -0.01em;
+  color: var(--gtm-cream);
+}
+
+.earlypreview-gtm__when {
+  font-size: clamp(0.88rem, 0.95vw, 0.95rem);
+  color: var(--gtm-peach);
+}
+
+/* The screen counter, bottom left, level with the skip button bottom right. */
+.earlypreview-gtm__counter {
+  position: absolute;
+  bottom: calc(max(1.15rem, env(safe-area-inset-bottom, 0px)) + 0.8rem);
+  left: max(1.4rem, env(safe-area-inset-left, 0px));
+  z-index: 3;
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: rgb(255 252 241 / 0.42);
+  opacity: var(--o, 0);
+  pointer-events: none;
+}
+
+/*
+ * iPhone: the section sticks inside its track (see the story section's rules, which the shared classes pick up).
+ * Each screen fits the visible screen above Safari's toolbar; the closing one fills the whole section, since it is
+ * what stays once the page scrolls on.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__scene {
+  bottom: auto;
+  height: var(--app-vh, 100svh);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__scene--closing {
+  height: 100%;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__frame {
+  padding-top: calc(var(--desk2-nav-clearance) + 0.75rem);
+  padding-right: 1.5rem;
+  padding-bottom: 4.25rem;
+  padding-left: 1.5rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__title {
+  font-size: clamp(1.75rem, 7.6vw, 2.35rem);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__title > span {
+  width: auto;
+  text-wrap: balance;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__body {
+  padding-top: 1.5rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__note {
+  font-size: 0.8rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__city {
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 1.5rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__grid {
+  gap: 0.85rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__grid svg {
+  max-height: 22svh;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__grid figcaption {
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__key {
+  gap: 0.3rem;
+  font-size: 0.78rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__key i {
+  width: 0.45rem;
+  height: 0.45rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__key strong {
+  font-size: 1.3rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__verticals-wrap {
+  gap: 0.75rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__verticals {
+  gap: 0.3rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__verticals li > span:first-child {
+  font-size: 1.4rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__verticals li > span:last-child {
+  font-size: 0.9rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__flow--wide {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__flow--tall {
+  display: block;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__flow--tall .is-label {
+  font-size: 13.5px;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__flow--tall .is-hub-name {
+  font-size: 17px;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__facts {
+  column-gap: 0.85rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__facts dt {
+  font-size: 1.15rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__facts dd {
+  font-size: 0.72rem;
+}
+
+/* iPhone: the report over the prices, the three prices side by side. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__pricing {
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 2rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__report {
+  padding: 1.1rem 1.25rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__report-from {
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__report-text {
+  font-size: 1.2rem;
+  line-height: 1.22;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__prices {
+  gap: 1rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__prices ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__prices li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__price {
+  font-size: 2.4rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__price-name {
+  align-self: auto;
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__price-detail {
+  align-self: auto;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+/* iPhone: the four figures two by two. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__milestones {
+  justify-content: flex-start;
+  padding-top: clamp(2.5rem, 9svh, 5rem);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__quarters {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: stretch;
+  gap: 2.25rem 1rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__quarters li {
+  gap: 0.3rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__figure {
+  font-size: 3.4rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__quarter-label {
+  font-size: 0.92rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-gtm__when {
+  font-size: 0.78rem;
+}

@@ -11,6 +11,20 @@ export const EASE_IN_OUT: Ease = Easing.bezier(0.65, 0, 0.35, 1);
 
 const CLAMP = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 
+/** Output pixels. 4K renders report 2, so snaps land on real pixels instead of between them. */
+export const pixelRatio = () => (typeof window !== "undefined" && window.devicePixelRatio > 0 ? window.devicePixelRatio : 1);
+
+export const snapPx = (n: number) => {
+  const dpr = pixelRatio();
+  return Math.round(n * dpr) / dpr;
+};
+
+/** Scale step of one device pixel across `cssSize`, so edges and glyphs stop crawling. */
+export const snapScale = (s: number, cssSize: number) => {
+  const denom = Math.max(1, cssSize * pixelRatio());
+  return Math.round(s * denom) / denom;
+};
+
 export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export function ramp(frame: number, start: number, duration: number, easing: Ease = EASE_OUT) {
@@ -50,9 +64,9 @@ export type Fly = {
 export function fly(frame: number, o: Fly): CSSProperties {
   const enter = ramp(frame, o.at, o.dur ?? 22);
   const leave = o.out === undefined ? 0 : ramp(frame, o.out, o.outDur ?? 16, EASE_IN);
-  const x = lerp(o.x ?? 0, 0, enter) + (o.outX ?? 0) * leave;
-  const y = lerp(o.y ?? 48, 0, enter) + (o.outY ?? -48) * leave;
-  const scale = lerp(o.scale ?? 0.96, 1, enter) * lerp(1, o.outScale ?? 1, leave);
+  const x = snapPx(lerp(o.x ?? 0, 0, enter) + (o.outX ?? 0) * leave);
+  const y = snapPx(lerp(o.y ?? 48, 0, enter) + (o.outY ?? -48) * leave);
+  const scale = snapScale(lerp(o.scale ?? 0.96, 1, enter) * lerp(1, o.outScale ?? 1, leave), 480);
   const blur = (o.blur ?? 10) * Math.max(1 - enter, leave);
   return {
     opacity: enter * (1 - leave),
@@ -101,6 +115,11 @@ export function camera(frame: number, cameraKeys: CameraKey[], easing: Ease = CA
     ty = ay * k + (by - r * ay) * w;
   }
 
+  // Whole device pixels. A quarter-CSS-pixel step sits between 4K pixels and
+  // makes every glyph and border re-antialias, which reads as shake.
+  const px = snapPx(tx);
+  const py = snapPx(ty);
+  const ps = snapScale(s, VIDEO1_WIDTH);
   return {
     position: "absolute",
     left: 0,
@@ -108,7 +127,7 @@ export function camera(frame: number, cameraKeys: CameraKey[], easing: Ease = CA
     width: VIDEO1_WIDTH,
     height: VIDEO1_HEIGHT,
     transformOrigin: "0 0",
-    transform: `translate(${tx.toFixed(3)}px, ${ty.toFixed(3)}px) scale(${s.toFixed(5)})`,
+    transform: `translate(${px}px, ${py}px) scale(${ps})`,
   };
 }
 

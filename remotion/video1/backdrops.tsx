@@ -18,6 +18,19 @@ export function Stage({ backdrop, children }: { backdrop: ReactNode; children: R
 
 const canvasStyle = { position: "absolute", left: 0, top: 0, width: W, height: H } as const;
 
+/** Bitmap at device pixels so a 4K export stays sharp instead of upscaling a 1080 canvas. */
+function prepareCanvas(canvas: HTMLCanvasElement, cssW: number, cssH: number) {
+  const dpr = window.devicePixelRatio || 1;
+  const w = Math.round(cssW * dpr);
+  const h = Math.round(cssH * dpr);
+  if (canvas.width !== w) canvas.width = w;
+  if (canvas.height !== h) canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return ctx;
+}
+
 const sphereCache = new Map<number, Float32Array>();
 
 function spherePoints(count: number) {
@@ -65,7 +78,9 @@ export function DotSphere({
   const ref = useRef<HTMLCanvasElement>(null);
 
   useLayoutEffect(() => {
-    const ctx = ref.current?.getContext("2d");
+    const canvas = ref.current;
+    if (!canvas) return;
+    const ctx = prepareCanvas(canvas, W, H);
     if (!ctx) return;
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = color;
@@ -95,7 +110,7 @@ export function DotSphere({
     ctx.globalAlpha = 1;
   }, [frame, cx, cy, radius, count, speed, tilt, dotScale, color, burst, spin]);
 
-  return <canvas ref={ref} width={W} height={H} style={canvasStyle} />;
+  return <canvas ref={ref} style={canvasStyle} />;
 }
 
 /** Halftone dot wave across the lower half, rolling over time. */
@@ -122,7 +137,9 @@ export function DotWave({
   const ref = useRef<HTMLCanvasElement>(null);
 
   useLayoutEffect(() => {
-    const ctx = ref.current?.getContext("2d");
+    const canvas = ref.current;
+    if (!canvas) return;
+    const ctx = prepareCanvas(canvas, width, height);
     if (!ctx) return;
     const W = vertical ? height : width;
     const H = vertical ? width : height;
@@ -152,7 +169,7 @@ export function DotWave({
     ctx.globalAlpha = 1;
   }, [frame, top, amp, color, width, height, vertical, fade]);
 
-  return <canvas ref={ref} width={width} height={height} style={{ ...canvasStyle, width, height }} />;
+  return <canvas ref={ref} style={{ ...canvasStyle, width, height }} />;
 }
 
 /** Dense halftone tides banked against both side edges; their wavy inner edges roll slowly down the frame. Dot sizes follow DotWave. */
@@ -161,7 +178,9 @@ export function DotTide({ step = 12, reach = 540, opacity = 1 }: { step?: number
   const ref = useRef<HTMLCanvasElement>(null);
 
   useLayoutEffect(() => {
-    const ctx = ref.current?.getContext("2d");
+    const canvas = ref.current;
+    if (!canvas) return;
+    const ctx = prepareCanvas(canvas, W, H);
     if (!ctx) return;
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = C.dot;
@@ -185,7 +204,7 @@ export function DotTide({ step = 12, reach = 540, opacity = 1 }: { step?: number
     ctx.globalAlpha = 1;
   }, [frame, step, reach, opacity]);
 
-  return <canvas ref={ref} width={W} height={H} style={canvasStyle} />;
+  return <canvas ref={ref} style={canvasStyle} />;
 }
 
 /** Stacked sine lines drifting sideways. */

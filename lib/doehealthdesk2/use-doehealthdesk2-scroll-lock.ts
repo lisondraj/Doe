@@ -83,9 +83,12 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       const run = track.offsetHeight - section.offsetHeight;
       if (run <= 0) return;
       const into = Math.min(run, Math.max(0, -track.getBoundingClientRect().top));
+      // Taken before the collapse: a shorter page near its bottom clamps the scroll position, and Chrome's scroll
+      // anchoring moves it too, so a relative scroll afterwards would overshoot.
+      const target = window.scrollY - into;
       section.style.position = "relative";
       track.style.height = `${section.offsetHeight}px`;
-      if (into > 0) window.scrollBy({ top: -into, behavior: "instant" as ScrollBehavior });
+      if (into > 0) window.scrollTo({ top: target, behavior: "instant" as ScrollBehavior });
       lastY = window.scrollY;
     };
 

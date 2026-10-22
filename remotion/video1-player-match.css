@@ -1,0 +1,58 @@
+/*
+ * /video1 plays inside the Next.js page, which sets Tailwind preflight,
+ * antialiased type, DM Sans on the stage, and the next/font variables.
+ * Headless render does not load that page, so this recreates the rules
+ * that change layout, type, and color. Family names match remotion/load-fonts.ts,
+ * which registers the same P22 Mackinac, DM Sans, and Inter files the page uses.
+ */
+:root {
+  --font-p22-mackinac: "P22 Mackinac Pro", Georgia, serif;
+  --font-dm-sans: "DM Sans", system-ui, sans-serif;
+  --font-inter: "Inter", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: currentcolor;
+}
+
+html,
+body {
+  margin: 0;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  vertical-align: middle;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+}

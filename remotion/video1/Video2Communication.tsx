@@ -1,9 +1,9 @@
 import type { CSSProperties, ReactNode } from "react";
-import { AbsoluteFill, Audio, Easing, Sequence, interpolateColors, staticFile, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Easing, Sequence, interpolateColors, useCurrentFrame } from "remotion";
 
 import { DotWave, Stage } from "./backdrops";
 import { Bubble, IPHONE_BEZEL, IPhone, Slot, TimeStamp, TypingBubble } from "./imessage";
-import { CAMERA_EASE, EASE_IN, EASE_IN_OUT, EASE_OUT, camera, clock, fly, keys, lerp, pulse, ramp, sceneFade, typed } from "./motion";
+import { CAMERA_EASE, EASE_IN, EASE_IN_OUT, EASE_OUT, camera, clock, fly, keys, lerp, pulse, ramp, sceneFade, snapPx, snapScale, typed } from "./motion";
 import { C, F } from "./theme";
 import { AppShell, Chip, ClickRing, Cursor, Icon, ShadowsContext, StatusDot, type IconName } from "./ui";
 
@@ -12,8 +12,6 @@ export const VIDEO2_COMMUNICATION_FRAMES = 746;
 export function Video2Communication() {
   return (
     <ShadowsContext.Provider value={false}>
-      <Audio src={staticFile("video1/TWO.m4a")} volume={0.7} />
-      <Audio src={staticFile("video1/BED.m4a")} startFrom={1230} volume={0.2} />
       <Stage backdrop={<DotWave />}>
         <Sequence from={0} durationInFrames={CALL_FRAMES} name="Agent text to call">
           <CallScene />
@@ -145,7 +143,7 @@ function CallPage({ frame, played }: { frame: number; played: number }) {
   const at = (offset: number) => CONTENT_AT + offset;
   const rise = (offset: number, { x = 0, y = 10, scale = 1, blur = 0, dur = 22 }: { x?: number; y?: number; scale?: number; blur?: number; dur?: number } = {}): CSSProperties => {
     const p = ramp(frame, at(offset), dur, CALL_BUILD_EASE);
-    return { opacity: p, transform: `translate(${(1 - p) * x}px, ${(1 - p) * y}px) scale(${lerp(scale, 1, p)})`, filter: blur > 0 && p < 1 ? `blur(${(1 - p) * blur}px)` : undefined };
+    return { opacity: p, transform: `translate(${snapPx((1 - p) * x)}px, ${snapPx((1 - p) * y)}px) scale(${snapScale(lerp(scale, 1, p), 480)})`, filter: blur > 0 && p < 1 ? `blur(${(1 - p) * blur}px)` : undefined };
   };
   const settle = (offset: number, y = 10) => rise(offset, { y });
   const step = (offset: number) => rise(offset, { x: 8, y: 0, dur: 18 });
@@ -502,7 +500,7 @@ function HandledScene() {
               <span style={{ fontFamily: F.body, fontSize: 13, color: SUBTLE, fontVariantNumeric: "tabular-nums" }}>{HANDLED_BASE + done}</span>
             </div>
             <div style={{ height: LIST_H, overflow: "hidden", opacity: fadeOut }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: ROW_GAP, transform: `translateY(${-scroll}px)` }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: ROW_GAP, transform: `translateY(${snapPx(-scroll)}px)` }}>
                 <div style={{ height: GROUP_H, padding: "0 8px", display: "flex", alignItems: "center", justifyContent: "space-between", opacity: underHeader(0, scroll, GROUP_H) }}>
                   <span style={{ fontFamily: F.ui, fontWeight: 600, fontSize: 13, color: C.walnut }}>Today</span>
                   <span style={{ fontFamily: F.body, fontSize: 12, color: SUBTLE }}>Mon, Oct 12</span>
@@ -1030,7 +1028,8 @@ function ScheduleScene() {
     { f: ZOOM_AT + ZOOM_DUR, x: ZOOM_FOCUS.x, y: ZOOM_FOCUS.y, s: 2.4 },
     { f: SCHEDULE_FRAMES, x: ZOOM_FOCUS.x, y: ZOOM_FOCUS.y, s: 2.5 },
   ]);
-  const reveal = ramp(frame, 0, 16, EASE_OUT);
+  // Ease in and out. The old ease-out dumped the cover in the first frames, so the week grid flashed on.
+  const reveal = ramp(frame, 0, 22, EASE_IN_OUT);
   const toSlot = ramp(frame, ZOOM_AT + 14, SLOT_CLICK_AT - ZOOM_AT - 14, EASE_IN_OUT);
   const press = pulse(frame, SLOT_CLICK_AT, 3, 6);
   const land = ramp(frame, SLOT_CLICK_AT + 1, 14, EASE_OUT);

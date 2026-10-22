@@ -1,6 +1,6 @@
 import { useContext, type ReactNode } from "react";
 
-import { EASE_OUT, blink, lerp, ramp } from "./motion";
+import { EASE_OUT, blink, lerp, ramp, snapPx, snapScale } from "./motion";
 import { F } from "./theme";
 import { Caret, Icon, ShadowsContext } from "./ui";
 
@@ -104,7 +104,7 @@ export function Slot({ frame, at, until, side, dur = 10, children }: { frame: nu
     <div style={{ display: "grid", gridTemplateRows: `${grow}fr`, flexShrink: 0 }}>
       <div style={{ minHeight: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
         <div style={{ flexShrink: 0, display: "flex", justifyContent: justify, paddingTop: 6 }}>
-          <div style={{ opacity: pop, transform: `translateY(${(1 - pop) * 14}px) scale(${lerp(0.9, 1, pop)})`, transformOrigin: side === "out" ? "100% 100%" : "0% 100%" }}>{children}</div>
+          <div style={{ opacity: pop, transform: `translateY(${snapPx((1 - pop) * 14)}px) scale(${snapScale(lerp(0.9, 1, pop), 268)})`, transformOrigin: side === "out" ? "100% 100%" : "0% 100%" }}>{children}</div>
         </div>
       </div>
     </div>

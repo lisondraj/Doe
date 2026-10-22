@@ -1,8 +1,8 @@
-import { createContext, useContext, type CSSProperties, type ReactNode } from "react";
-import { AbsoluteFill, Audio, Easing, Sequence, interpolate, staticFile, useCurrentFrame } from "remotion";
+import { createContext, useContext, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { AbsoluteFill, Easing, Sequence, continueRender, delayRender, interpolate, useCurrentFrame } from "remotion";
 
 import { DotSphere, DotWave, FlowLines, Stage } from "./backdrops";
-import { EASE_IN, EASE_IN_OUT, EASE_OUT, blink, camera, fly, keys, lerp, pulse, ramp, typed } from "./motion";
+import { EASE_IN, EASE_IN_OUT, EASE_OUT, blink, camera, fly, keys, lerp, pulse, ramp, snapPx, snapScale, typed } from "./motion";
 import { C, F } from "./theme";
 import { Bubble, Slot, TimeStamp, TypingBubble } from "./imessage";
 import { AppShell, Button, Caret, Chip, ClickRing, Cursor, Icon, Label, ShadowsContext, StatusDot, Toggle, type ChipTone, type IconName } from "./ui";
@@ -40,8 +40,6 @@ export const VIDEO1_STRUCTURED_FRAMES = paced(SCENES.search.from + SCENES.search
 export function Video1Structured() {
   return (
     <ShadowsContext.Provider value={false}>
-      <Audio src={staticFile("video1/ONE.m4a")} volume={0.7} />
-      <Audio src={staticFile("video1/BED.m4a")} startFrom={1230} volume={0.2} />
       <Video1StructuredStage />
     </ShadowsContext.Provider>
   );
@@ -138,7 +136,7 @@ function IndexScene() {
       {white > 0 ? (
         <>
           <AbsoluteFill style={{ background: C.paper, opacity: white * (1 - paperOut) }} />
-          <AbsoluteFill style={{ opacity: white, transform: `translateY(${-panY(frame - PAN_FROM)}px)` }}>
+          <AbsoluteFill style={{ opacity: white, transform: `translateY(${snapPx(-panY(frame - PAN_FROM))}px)` }}>
             <AgentThread frame={frame} />
           </AbsoluteFill>
         </>
@@ -164,7 +162,7 @@ function AgentThread({ frame }: { frame: number }) {
         left: 960 - THREAD.w / 2,
         top: THREAD.top,
         width: THREAD.w,
-        transform: `translateY(${-follow * THREAD.scale}px) scale(${THREAD.scale * drift})`,
+        transform: `translateY(${snapPx(-follow * THREAD.scale)}px) scale(${snapScale(THREAD.scale * drift, THREAD.w)})`,
         transformOrigin: "50% 0",
         display: "flex",
         flexDirection: "column",
@@ -1525,22 +1523,93 @@ const ANGLE_DEG = (MAP.angle * 180) / Math.PI;
 /** Leaves home quickly and settles into the clinic. */
 const ROUTE_EASE = Easing.bezier(0.3, 0.55, 0.35, 1);
 
+const paintedText = new Map<string, { src: string; w: number; h: number }>();
+
+/**
+ * Glyphs redraw on every camera scale change and crawl. A bitmap drawn once
+ * only gets scaled, so the letters stay put while the map zooms.
+ */
+function paintStableText(text: string, fontFamily: string, fontWeight: number, fontSize: number, color: string, letterSpacing: number) {
+  const dpr = Math.max(2, window.devicePixelRatio || 1) * 2;
+  const key = [text, fontFamily, fontWeight, fontSize, color, letterSpacing, dpr].join("|");
+  const cached = paintedText.get(key);
+  if (cached) return cached;
+  const font = `${fontWeight} ${fontSize}px "${fontFamily}"`;
+  const probe = document.createElement("canvas").getContext("2d");
+  if (!probe) return null;
+  probe.font = font;
+  probe.letterSpacing = `${letterSpacing}px`;
+  const padX = 2;
+  const w = Math.ceil(probe.measureText(text).width) + padX * 2;
+  const h = Math.ceil(fontSize);
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, w * dpr);
+  canvas.height = Math.max(1, h * dpr);
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.font = font;
+  ctx.letterSpacing = `${letterSpacing}px`;
+  ctx.fillStyle = color;
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, padX, h / 2);
+  const painted = { src: canvas.toDataURL("image/png"), w, h };
+  paintedText.set(key, painted);
+  return painted;
+}
+
+function StableText({ text, fontFamily, fontWeight, fontSize, color, letterSpacing = 0 }: { text: string; fontFamily: string; fontWeight: number; fontSize: number; color: string; letterSpacing?: number }) {
+  const [painted, setPainted] = useState<{ src: string; w: number; h: number } | null>(null);
+  const hold = useRef<number | null>(null);
+
+  useLayoutEffect(() => {
+    const handle = delayRender(`Map text ${text}`);
+    hold.current = handle;
+    let cancel = false;
+    const paint = () => {
+      if (cancel) return;
+      setPainted(paintStableText(text, fontFamily, fontWeight, fontSize, color, letterSpacing));
+    };
+    const spec = `${fontWeight} ${fontSize}px "${fontFamily}"`;
+    if (document.fonts.check(spec)) paint();
+    else void document.fonts.ready.then(paint);
+    return () => {
+      cancel = true;
+      if (hold.current !== null) {
+        continueRender(hold.current);
+        hold.current = null;
+      }
+    };
+  }, [color, fontFamily, fontSize, fontWeight, letterSpacing, text]);
+
+  useLayoutEffect(() => {
+    if (!painted || hold.current === null) return;
+    const handle = hold.current;
+    const img = new Image();
+    img.onload = () => {
+      if (hold.current !== handle) return;
+      hold.current = null;
+      continueRender(handle);
+    };
+    img.src = painted.src;
+  }, [painted]);
+
+  if (!painted) return <span style={{ display: "inline-block", height: fontSize, width: fontSize }} />;
+  return <img src={painted.src} alt="" draggable={false} style={{ display: "block", width: painted.w, height: painted.h, flexShrink: 0 }} />;
+}
+
+function uiFontFamily() {
+  if (typeof document === "undefined") return "DM Sans";
+  const raw = getComputedStyle(document.documentElement).getPropertyValue("--font-dm-sans");
+  const name = raw.split(",")[0]?.replace(/["']/g, "").trim();
+  return name || "DM Sans";
+}
+
 function StreetLabel({ at, rotate, children }: { at: { x: number; y: number }; rotate: number; children: string }) {
   return (
-    <text
-      x={at.x}
-      y={at.y}
-      transform={`rotate(${rotate.toFixed(2)} ${at.x.toFixed(1)} ${at.y.toFixed(1)})`}
-      textAnchor="middle"
-      dominantBaseline="central"
-      fontFamily="Inter, system-ui, sans-serif"
-      fontWeight={500}
-      fontSize={11}
-      letterSpacing="0.03em"
-      fill="rgba(40, 25, 16, 0.5)"
-    >
-      {children}
-    </text>
+    <div style={{ position: "absolute", left: snapPx(at.x), top: snapPx(at.y), transform: `translate(-50%, -50%) rotate(${rotate}deg)` }}>
+      <StableText text={children} fontFamily="Inter" fontWeight={500} fontSize={11} color="rgba(40, 25, 16, 0.5)" letterSpacing={0.33} />
+    </div>
   );
 }
 
@@ -1565,22 +1634,22 @@ function ClinicMap({ frame }: { frame: number }) {
           const b = toMap(8, k);
           return <line key={`h${k}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={C.paper} strokeWidth={k === MAJOR.horizontal ? 16 : 8} />;
         })}
-        <StreetLabel at={toMap(MAJOR.vertical, 1.45)} rotate={ANGLE_DEG + 90}>
-          Mission St
-        </StreetLabel>
-        <StreetLabel at={toMap(2.5, MAJOR.horizontal)} rotate={ANGLE_DEG}>
-          24th St
-        </StreetLabel>
-        <StreetLabel at={toMap(-1.5, 1.5)} rotate={ANGLE_DEG}>
-          Garfield Sq
-        </StreetLabel>
         <path d={ROUTE_D} fill="none" stroke={C.ink} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={`${ROUTE_LEN} ${ROUTE_LEN}`} strokeDashoffset={ROUTE_LEN * (1 - draw)} />
       </svg>
+      <StreetLabel at={toMap(MAJOR.vertical, 1.45)} rotate={ANGLE_DEG + 90}>
+        Mission St
+      </StreetLabel>
+      <StreetLabel at={toMap(2.5, MAJOR.horizontal)} rotate={ANGLE_DEG}>
+        24th St
+      </StreetLabel>
+      <StreetLabel at={toMap(-1.5, 1.5)} rotate={ANGLE_DEG}>
+        Garfield Sq
+      </StreetLabel>
 
       <div style={{ position: "absolute", left: HOME.x - 11, top: HOME.y - 11, width: 22, height: 22, boxSizing: "border-box", borderRadius: 999, background: C.ink, border: `4px solid ${C.paper}`, transform: `scale(${homeIn})` }} />
-      <div style={{ position: "absolute", left: HOME.x + 18, top: HOME.y - 15, ...fly(frame, { at: 166, x: -8, y: 0, dur: 14, blur: 0 }) }}>
+      <div style={{ position: "absolute", left: snapPx(HOME.x + 18), top: snapPx(HOME.y - 15), ...fly(frame, { at: 166, x: -8, y: 0, dur: 14, blur: 0 }) }}>
         <Chip tone="paper" size={1.15}>
-          Home
+          <StableText text="Home" fontFamily={uiFontFamily()} fontWeight={500} fontSize={13 * 1.15} color={C.walnut} />
         </Chip>
       </div>
 
@@ -1613,15 +1682,15 @@ function ClinicMap({ frame }: { frame: number }) {
           transform: `scale(${lerp(0.5, 1, pinIn)})`,
         }}
       />
-      <div style={{ position: "absolute", left: CLINIC.x + 18, top: CLINIC.y - 15, ...fly(frame, { at: 220, x: -10, y: 0, dur: 14, blur: 0 }) }}>
+      <div style={{ position: "absolute", left: snapPx(CLINIC.x + 18), top: snapPx(CLINIC.y - 15), ...fly(frame, { at: 220, x: -10, y: 0, dur: 14, blur: 0 }) }}>
         <Chip tone="paper" size={1.15}>
-          {CLINIC_NAME}
+          <StableText text={CLINIC_NAME} fontFamily={uiFontFamily()} fontWeight={500} fontSize={13 * 1.15} color={C.walnut} />
         </Chip>
       </div>
 
-      <div style={{ position: "absolute", left: 16, top: 16, opacity: eta, transform: `translateY(${(1 - eta) * -8}px)` }}>
+      <div style={{ position: "absolute", left: 16, top: 16, opacity: eta, transform: `translateY(${snapPx((1 - eta) * -8)}px)` }}>
         <Chip tone="paper" size={1.25} icon={<Icon name="clock" size={16} />}>
-          9 min drive · 2.1 mi
+          <StableText text="9 min drive · 2.1 mi" fontFamily={uiFontFamily()} fontWeight={500} fontSize={13 * 1.25} color={C.walnut} />
         </Chip>
       </div>
     </div>

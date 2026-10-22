@@ -69,7 +69,7 @@ const FINAL = {
 const END = FINAL.promptSwipe[1];
 
 /** Same icon as the /doehealthdesk skip button; CSS turns it to point down. */
-function SkipIcon() {
+export function SkipIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M7 5.5 13 12 7 18.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
@@ -87,7 +87,7 @@ const smooth = (t: number) => t * t * (3 - 2 * t);
  * A peach outline around `box` (the search box, a chat bubble). It measures its box so the stroke fits
  * any size; `draw` (0 to 1) traces it in, like the iPhone and the carousel drawings.
  */
-function TracedOutline({ draw, box, className }: { draw: number; box: RefObject<HTMLElement>; className: string }) {
+export function TracedOutline({ draw, box, className }: { draw: number; box: RefObject<HTMLElement>; className: string }) {
   const [size, setSize] = useState({ w: 0, h: 0, r: 0 });
 
   useEffect(() => {
