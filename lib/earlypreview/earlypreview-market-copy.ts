@@ -97,50 +97,34 @@ const FOUNDING_MO = {
 } as const;
 
 /**
- * The target at Seed, Q2 2028, 18 months out: the one model the Seed, cities and breakdown screens all add up from.
- * Toronto proves the model first, with U.S. test sites in parallel: about 70% of it in Canada, 30% in the U.S. ARR is
- * the founding MRR × 12: independent locations at their plan's price; multi-site groups (on Advanced) and Doe One
- * clinics per provider seat. Free clinics are the claimed ones that don't pay.
+ * The base-case target at Seed, Q2 2028, about 20 months out: the one model the Seed, cities and targets screens all
+ * add up from. Toronto proves the model first, with U.S. test sites in parallel: 70% of it in Canada, 30% in the U.S.
+ * ARR is the founding MRR × 12: independent locations at their plan's price, multi-site groups (on Advanced) per
+ * provider seat. Doe One is in beta until Seed, so it adds nothing to the base case; it is the upside instead.
+ * Free clinics are the claimed ones that don't pay.
  */
 const SEED_INDEXED = { canada: 10_500, us: 4_500 } as const;
-const SEED_CLAIMED = { canada: 700, us: 300 } as const;
-/**
- * Independent clinics are one location each. Multi-site groups average 4 locations and 10 provider seats; Doe One
- * clinics average 3 providers.
- */
+const SEED_CLAIMED = { canada: 560, us: 240 } as const;
+/** Independent clinics are one location each. Multi-site groups average 4 locations and 12 provider seats. */
 const SEED_PLANS = {
-  canada: {
-    basic: 43,
-    advanced: 21,
-    one: 7,
-    oneSeats: 21,
-    groups: 7,
-    groupSites: 28,
-    groupSeats: 70,
-  },
-  us: {
-    basic: 19,
-    advanced: 9,
-    one: 3,
-    oneSeats: 9,
-    groups: 3,
-    groupSites: 12,
-    groupSeats: 30,
-  },
+  canada: { basic: 35, advanced: 21, groups: 7, groupSites: 28, groupSeats: 84 },
+  us: { basic: 15, advanced: 9, groups: 3, groupSites: 12, groupSeats: 36 },
 } as const;
 const SEED_LOIS = "1–2";
+/** Doe One's beta: 5–10 clinics. The upside has 9 of them convert at founding price, 3 providers each. */
+const DOE_ONE_BETA = "5–10";
+const DOE_ONE_UPSIDE_SEATS = 9 * 3;
 
 type PlanCounts = (typeof SEED_PLANS)[keyof typeof SEED_PLANS];
 const yearly = (plans: PlanCounts) =>
   (plans.basic * FOUNDING_MO.basic +
     plans.advanced * FOUNDING_MO.advanced +
-    plans.oneSeats * FOUNDING_MO.one +
     plans.groupSeats * FOUNDING_MO.group) *
   12;
 const paying = (plans: PlanCounts) =>
-  plans.basic + plans.advanced + plans.one + plans.groupSites;
+  plans.basic + plans.advanced + plans.groupSites;
 const accounts = (plans: PlanCounts) =>
-  plans.basic + plans.advanced + plans.one + plans.groups;
+  plans.basic + plans.advanced + plans.groups;
 const both = (key: keyof PlanCounts) =>
   SEED_PLANS.canada[key] + SEED_PLANS.us[key];
 
@@ -150,17 +134,9 @@ const SEED_PAID = {
 };
 const SEED_ARR = yearly(SEED_PLANS.canada) + yearly(SEED_PLANS.us);
 const SEED_ACCOUNTS = accounts(SEED_PLANS.canada) + accounts(SEED_PLANS.us);
-const SEED_SEATS = both("groupSeats") + both("oneSeats");
-
-/**
- * The targets table, which leaves Doe One out (its beta testers are a line under the table instead). Its paid
- * locations and ARR are the Seed model's without Doe One; the Free row is the claimed clinics that don't pay.
- */
-const TABLE_PAID = {
-  canada: SEED_PAID.canada - SEED_PLANS.canada.one,
-  us: SEED_PAID.us - SEED_PLANS.us.one,
-};
-const TABLE_ARR = SEED_ARR - both("oneSeats") * FOUNDING_MO.one * 12;
+/** The base case plus Doe One's beta converting, to the nearest $10K. */
+const UPSIDE_ARR_K =
+  Math.round((SEED_ARR + DOE_ONE_UPSIDE_SEATS * FOUNDING_MO.one * 12) / 10_000) * 10;
 
 const total = (split: { canada: number; us: number }) =>
   split.canada + split.us;
@@ -248,20 +224,20 @@ export const EARLYPREVIEW_MARKET_CITIES = {
         id: "free",
         name: "Free",
         price: "$0",
-        canada: SEED_CLAIMED.canada - TABLE_PAID.canada,
-        us: SEED_CLAIMED.us - TABLE_PAID.us,
+        canada: SEED_CLAIMED.canada - SEED_PAID.canada,
+        us: SEED_CLAIMED.us - SEED_PAID.us,
         arr: "$0",
       },
       planRow("basic", "Basic", FOUNDING_MO.basic, "basic"),
       planRow("advanced", "Advanced", FOUNDING_MO.advanced, "advanced"),
       planRow("groups", "Multi-site", FOUNDING_MO.group, "groupSites", "groupSeats"),
     ],
-    total: { canada: TABLE_PAID.canada, us: TABLE_PAID.us, arr: kUsd(TABLE_ARR) },
+    total: { canada: SEED_PAID.canada, us: SEED_PAID.us, arr: kUsd(SEED_ARR) },
     facts: [
-      [fig(n(both("groupSeats"))), { text: " Provider Seats" }],
       [fig("65%"), { text: " Private-Pay Services" }],
       [fig(SEED_LOIS), { text: " Enterprise LOIs" }],
-      [fig("5–10"), { text: " Doe One Beta Testers" }],
+      [fig(DOE_ONE_BETA), { text: " Doe One Beta Testers" }],
+      [fig(`$${UPSIDE_ARR_K}K`), { text: " Upside with Doe One" }],
     ] satisfies readonly EarlyPreviewMarketLine[],
   },
 } as const;
