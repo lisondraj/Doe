@@ -1,13 +1,12 @@
 /*
  * /earlypreview product section (EarlyPreviewProductSection). One scroll-locked beige screen, the beige of the band
- * above it with the nav in its beige state. --y, --d, --r and --k are set from scroll progress; nothing transitions
- * except the title's first reveal.
+ * above it with the nav in its beige state. --y, --d and --k are set from scroll progress; nothing transitions except
+ * the first reveal of the title and the dots.
  */
 
 .earlypreview-product {
   --p-ink: #6e5c40;
-  --p-walnut: #281910;
-  --p-rect: #ebe3d1;
+  --p-box: #ede6d4;
   /* The skip button in its beige colours. */
   --b: 1;
   position: relative;
@@ -15,8 +14,8 @@
   height: 100svh;
   display: flex;
   flex-direction: column;
-  padding-top: calc(var(--desk2-nav-clearance, 8.35rem) + clamp(0.5rem, 2vh, 1.5rem));
-  padding-bottom: clamp(1.75rem, 5vh, 3.25rem);
+  padding-top: calc(var(--desk2-nav-clearance, 8.35rem) + clamp(0.25rem, 1.5vh, 1.25rem));
+  padding-bottom: clamp(1.5rem, 4.5vh, 3rem);
   overflow: clip;
   background: #f4eedf;
   color: var(--p-ink);
@@ -56,7 +55,7 @@
 .earlypreview-product__title {
   margin: 0;
   font-weight: 400;
-  font-size: clamp(2.6rem, min(5.2vw, 8.4vh), 5.35rem);
+  font-size: clamp(2.6rem, min(5vw, 7.6vh), 5rem);
   line-height: 0.98;
   letter-spacing: -0.042em;
   color: var(--p-ink);
@@ -80,78 +79,109 @@
   transition-delay: 90ms;
 }
 
-/* The big rounded rectangle fills the rest of the screen under the title. */
+/* The row of boxes takes the rest of the screen under the title and runs off the page's right edge. */
 .earlypreview-product__frame {
   position: relative;
   z-index: 1;
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
-  margin-top: clamp(1.25rem, 3.5vh, 2.25rem);
+  margin-top: clamp(1rem, 3vh, 2rem);
 }
 
-/* It opens out from its middle as it fades in. */
 .earlypreview-product__stage {
-  --p-pad: clamp(1.5rem, 2.4vw, 2.25rem);
-  --p-title: clamp(1.35rem, 1.75vw, 1.65rem);
-  --p-title-gap: clamp(0.7rem, 1.4vh, 1rem);
+  --p-cap: clamp(1.6rem, min(2.3vw, 3.6vh), 2.4rem);
+  --p-cap-gap: clamp(0.55rem, 1.2vh, 0.9rem);
   position: relative;
   flex: 1 1 auto;
   min-width: 0;
   container-type: size;
-  border-radius: clamp(1.5rem, 2.4vw, 2.25rem);
-  background: var(--p-rect);
-  overflow: hidden;
-  opacity: var(--r, 0);
-  clip-path: inset(
-    calc((1 - var(--r, 0)) * 18%) calc((1 - var(--r, 0)) * 12%)
-      round clamp(1.5rem, 2.4vw, 2.25rem)
-  );
 }
 
-/* One row of boxes, panned right to left by the scroll. */
+/* One row, panned right to left by the scroll. */
 .earlypreview-product__track {
   display: flex;
-  gap: clamp(1.25rem, 2vw, 2rem);
+  align-items: flex-start;
+  gap: clamp(1.5rem, 2.4vw, 2.5rem);
   width: max-content;
   height: 100%;
   margin: 0;
-  padding: var(--p-pad);
-  box-sizing: border-box;
+  padding: 0;
   list-style: none;
-  opacity: var(--k, 0);
   will-change: transform;
 }
 
+/* Every box is the same size; the first few rise in one after another. */
 .earlypreview-product__slide {
-  --p-box-h: calc(100cqh - var(--p-pad) * 2 - var(--p-title) * 1.15 - var(--p-title-gap));
+  --p-box-h: calc(100cqh - var(--p-cap) * 1.1 - var(--p-cap-gap));
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  width: min(calc(var(--p-box-h) * var(--a, 1.3)), calc(100cqw - var(--p-pad) * 2));
-  /* A box is never narrower than its title, which stays on one line. */
-  min-width: min-content;
-  transform: translateX(calc((1 - var(--k, 0)) * 3rem));
+  width: min(calc(var(--p-box-h) * 1.45), 80cqw);
+  container-type: inline-size;
+  opacity: clamp(0, calc(var(--k, 0) * 1.75 - var(--i, 0) * 0.25), 1);
+  transform: translateY(calc((1 - var(--k, 0)) * (2.5rem + var(--i, 0) * 1.25rem)));
 }
 
-.earlypreview-product__slide-title {
-  margin: 0 0 var(--p-title-gap);
-  font-weight: 400;
-  font-size: var(--p-title);
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  color: var(--p-walnut);
-  white-space: nowrap;
-}
-
-/* Each box is filled to its edges by the product; no shadows, no glows. */
+/* A rounded box the product sits in; no borders, no shadows, no glows. */
 .earlypreview-product__box {
   position: relative;
   height: var(--p-box-h);
-  border-radius: clamp(1rem, 1.5vw, 1.4rem);
+  border-radius: clamp(1.25rem, 2vw, 2rem);
+  background: var(--p-box);
+  overflow: hidden;
+  container-type: size;
+  transform: translateZ(0);
+}
+
+/* The product's own rounded corner shows where it sits inside the box; where it runs off the box, the box clips it. */
+.earlypreview-product__ui {
+  --p-in: 7cqw;
+  --p-ui-r: clamp(0.85rem, 2.4cqw, 1.4rem);
+  position: absolute;
   overflow: hidden;
   background: #fffcf1;
-  transform: translateZ(0);
+}
+
+.earlypreview-product__ui[data-sit="br"] {
+  inset: var(--p-in) 0 0 var(--p-in);
+  border-top-left-radius: var(--p-ui-r);
+}
+
+.earlypreview-product__ui[data-sit="bl"] {
+  inset: var(--p-in) var(--p-in) 0 0;
+  border-top-right-radius: var(--p-ui-r);
+}
+
+.earlypreview-product__ui[data-sit="tr"] {
+  inset: 0 0 var(--p-in) var(--p-in);
+  border-bottom-left-radius: var(--p-ui-r);
+}
+
+.earlypreview-product__ui[data-sit="tl"] {
+  inset: 0 var(--p-in) var(--p-in) 0;
+  border-bottom-right-radius: var(--p-ui-r);
+}
+
+.earlypreview-product__ui[data-sit="b"] {
+  inset: var(--p-in) var(--p-in) 0;
+  border-radius: var(--p-ui-r) var(--p-ui-r) 0 0;
+}
+
+.earlypreview-product__ui[data-sit="t"] {
+  inset: 0 var(--p-in) var(--p-in);
+  border-radius: 0 0 var(--p-ui-r) var(--p-ui-r);
+}
+
+/* Each box's name sits under its bottom left corner, big, in the title's deep beige; a long name comes down to its box's width. */
+.earlypreview-product__slide-title {
+  margin: var(--p-cap-gap) 0 0;
+  font-weight: 400;
+  font-size: min(var(--p-cap), calc(100cqw / (var(--len, 20) * 0.5)));
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  color: var(--p-ink);
+  white-space: nowrap;
 }
 
 .earlypreview-product__crop {
@@ -173,6 +203,11 @@
 .earlypreview-product__source *::after {
   box-shadow: none !important;
   text-shadow: none !important;
+}
+
+/* The clinic menu shows over the product as it is, not over a dimmed shell. */
+.earlypreview-product__source [data-shell-dim] {
+  opacity: 0 !important;
 }
 
 /* ------------------------------------------------------------ iPhone */
@@ -201,35 +236,37 @@
   font-size: clamp(2rem, calc((100vw - 3rem) / 9.4), 2.75rem);
 }
 
-/* The phone's rectangle is as tall as its boxes, which are sized from its width, so it never holds empty space. */
+/* The phone's boxes are sized from its width, one at a time with the next one peeking in, in the middle of the space under the title. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__frame {
-  flex: 0 0 auto;
+  align-items: center;
+  margin-top: 1rem;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__stage {
-  --p-pad: 1rem;
-  --p-title: 1.1rem;
-  --p-title-gap: 0.55rem;
+  --p-cap: 1.5rem;
+  --p-cap-gap: 0.6rem;
+  flex: 0 1 auto;
+  width: 100%;
   container-type: inline-size;
-  border-radius: 1.4rem;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__track {
   height: auto;
+  gap: 1rem;
 }
 
-/* One box at a time with the next one peeking in; long titles take two lines. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__slide {
-  --p-box-w: calc(100cqw - var(--p-pad) * 2 - 1.75rem);
-  --p-box-h: min(calc(var(--p-box-w) * 1.3), calc(100svh - 21rem));
+  --p-box-w: calc(100cqw - 2.25rem);
+  --p-box-h: min(var(--p-box-w), calc(100svh - 20rem));
   width: var(--p-box-w);
-  min-width: 0;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__box {
+  border-radius: 1.25rem;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__slide-title {
-  display: flex;
-  align-items: flex-end;
-  min-height: calc(var(--p-title) * 2.3);
+  font-size: var(--p-cap);
   white-space: normal;
   text-wrap: balance;
 }

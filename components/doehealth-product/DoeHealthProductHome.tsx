@@ -528,6 +528,7 @@ export function DoeHealthProductArtboard({
         <div
           className="absolute left-[64px] right-[12px] top-[12px] bottom-[12px] rounded-[24px] z-[15]"
           aria-hidden="true"
+          data-shell-dim
           onClick={() => setNavExpanded(false)}
           style={{
             backgroundColor: "rgba(20, 12, 4, 0.18)",

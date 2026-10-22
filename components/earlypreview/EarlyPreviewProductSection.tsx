@@ -35,27 +35,33 @@ type Align = "start" | "center" | "end";
 /** The part of the source a box may show, in the source's pixels, and which edge it holds to when the box is narrower or shorter. */
 type Crop = { x: number; y: number; w: number; h: number; ax?: Align; ay?: Align };
 
+/**
+ * Where the UI sits in its box: tucked into a corner (`br` sits in the bottom right and runs off those two edges) or
+ * along one edge, inset from the other three (`b` runs off the bottom, `t` off the top).
+ */
+type Sit = "br" | "bl" | "tr" | "tl" | "b" | "t";
+
 type Visual =
-  | { kind: "app"; tab: DoeHealthProductTab; menu?: boolean; crop: Crop; aspect: number }
-  | { kind: "film"; film: EarlyPreviewProductFilm; frame: number; crop: Crop; aspect: number };
+  | { kind: "app"; tab: DoeHealthProductTab; menu?: boolean; crop: Crop; sit: Sit }
+  | { kind: "film"; film: EarlyPreviewProductFilm; frame: number; crop: Crop; sit: Sit };
 
 /**
- * What each box shows: a corner of the whole product (outer and inner shell) or one component on its own, cropped so
- * the box is filled edge to edge. `aspect` is the box's width over its height.
+ * What each box shows: a corner of the whole product (outer and inner shell) or one component on its own. The crop's
+ * held edges are the ones that show inside the box; the others run off its sides.
  */
 const VISUALS: Record<EarlyPreviewProductSlideId, Visual> = {
-  index: { kind: "app", tab: "integrations", crop: { x: 0, y: 0, w: 900, h: 640, ax: "start", ay: "start" }, aspect: 1.4 },
-  interface: { kind: "app", tab: "search", crop: { x: 118, y: 150, w: 826, h: 700, ay: "start" }, aspect: 1.3 },
-  auth: { kind: "film", film: "permissions", frame: 660, crop: { x: 410, y: 250, w: 1110, h: 560, ax: "end" }, aspect: 1.7 },
-  permissions: { kind: "app", tab: "permissions", crop: { x: 560, y: 125, w: 880, h: 704, ax: "end", ay: "start" }, aspect: 1.25 },
-  insurance: { kind: "film", film: "communication", frame: 575, crop: { x: 310, y: 225, w: 1270, h: 705 }, aspect: 1.75 },
-  forms: { kind: "app", tab: "forms", crop: { x: 388, y: 150, w: 676, h: 690, ax: "start", ay: "start" }, aspect: 1.4 },
-  followUp: { kind: "film", film: "coordinate", frame: 500, crop: { x: 450, y: 15, w: 1015, h: 1030, ay: "start" }, aspect: 1.5 },
-  multiSite: { kind: "app", tab: "integrations", menu: true, crop: { x: 0, y: 500, w: 394, h: 400, ax: "start", ay: "end" }, aspect: 1 },
-  clinics: { kind: "app", tab: "referrals", crop: { x: 100, y: 125, w: 1000, h: 400, ax: "start", ay: "start" }, aspect: 1.5 },
-  departments: { kind: "film", film: "permissions", frame: 380, crop: { x: 120, y: 40, w: 990, h: 1000, ay: "start" }, aspect: 1 },
-  directory: { kind: "film", film: "network", frame: 440, crop: { x: 0, y: 0, w: 1400, h: 1080, ax: "start", ay: "start" }, aspect: 1.3 },
-  payments: { kind: "app", tab: "payments", crop: { x: 600, y: 300, w: 840, h: 600, ax: "end", ay: "end" }, aspect: 1.4 },
+  index: { kind: "app", tab: "integrations", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  interface: { kind: "app", tab: "search", crop: { x: 92, y: 122, w: 876, h: 636, ay: "start" }, sit: "b" },
+  auth: { kind: "film", film: "permissions", frame: 660, crop: { x: 410, y: 250, w: 810, h: 540, ax: "start", ay: "start" }, sit: "br" },
+  permissions: { kind: "app", tab: "permissions", crop: { x: 560, y: 125, w: 840, h: 560, ax: "end", ay: "start" }, sit: "bl" },
+  insurance: { kind: "film", film: "communication", frame: 575, crop: { x: 775, y: 385, w: 805, h: 540, ax: "end", ay: "end" }, sit: "tl" },
+  forms: { kind: "app", tab: "forms", crop: { x: 370, y: 120, w: 715, h: 520, ay: "start" }, sit: "b" },
+  followUp: { kind: "film", film: "coordinate", frame: 500, crop: { x: 445, y: 65, w: 1030, h: 770, ay: "end" }, sit: "t" },
+  multiSite: { kind: "app", tab: "integrations", menu: true, crop: { x: 0, y: 520, w: 570, h: 380, ax: "start", ay: "end" }, sit: "tr" },
+  clinics: { kind: "app", tab: "referrals", crop: { x: 620, y: 0, w: 820, h: 547, ax: "end", ay: "start" }, sit: "bl" },
+  departments: { kind: "film", film: "permissions", frame: 380, crop: { x: 448, y: 66, w: 648, h: 470, ay: "start" }, sit: "b" },
+  directory: { kind: "film", film: "network", frame: 440, crop: { x: 160, y: 210, w: 830, h: 600, ay: "start" }, sit: "b" },
+  payments: { kind: "app", tab: "payments", crop: { x: 620, y: 340, w: 820, h: 560, ax: "end", ay: "end" }, sit: "tl" },
 };
 
 /** Where the source's edge lands in the box, held inside the source so the box never shows past it. */
@@ -120,8 +126,7 @@ const SlideVisual = memo(function SlideVisual({ visual }: { visual: Visual }) {
 /* ------------------------------------------------------------------ timing */
 
 const HEAD = [0.25, 1.0] as const;
-const RECT = [0.75, 1.45] as const;
-const SLIDES_IN = [1.15, 1.6] as const;
+const SLIDES_IN = [0.85, 1.6] as const;
 /** Progress the carousel takes per box as it pans right to left. */
 const PER_SLIDE = 0.5;
 const PAN = [1.6, 1.6 + PER_SLIDE * (SLIDES.length - 1)] as const;
@@ -148,7 +153,7 @@ function useCenterOffset(headRef: React.RefObject<HTMLDivElement | null>) {
   return offset;
 }
 
-/** How far the row of boxes runs past the rectangle, so the pan ends on the last box. */
+/** How far the row of boxes runs past the page's inset, so the pan ends on the last box. */
 function usePanDistance(trackRef: React.RefObject<HTMLOListElement | null>) {
   const [distance, setDistance] = useState(0);
   useEffect(() => {
@@ -188,9 +193,9 @@ function useNear(ref: React.RefObject<HTMLElement | null>) {
 
 /**
  * /earlypreview: the product, in a beige scroll-locked section under "We've been building together". The title comes
- * in centred between the side dots; scrolling lifts it to the top while the dots sink away, a big rounded rectangle
- * opens under it, and the boxes inside pan right to left, one piece of the product each. The lock lets go on the last.
- * On an iPhone it scrubs through a sticky track, as the market section does.
+ * in centred between the side dots; scrolling lifts it to the top while the dots sink away, a row of rounded boxes rises in under
+ * it, and the row pans right to left, one piece of the product per box with its name underneath. The lock lets go on
+ * the last. On an iPhone it scrubs through a sticky track, as the market section does.
  */
 export function EarlyPreviewProductSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -203,7 +208,6 @@ export function EarlyPreviewProductSection() {
   const distance = usePanDistance(trackRef);
 
   const lift = en(p, HEAD);
-  const open = en(p, RECT);
   const shown = en(p, SLIDES_IN);
   const pan = en(p, PAN);
 
@@ -231,20 +235,21 @@ export function EarlyPreviewProductSection() {
           </h2>
         </div>
         <div className={`earlypreview-product__frame ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-          <div className="earlypreview-product__stage" style={vars({ "--r": open })}>
+          <div className="earlypreview-product__stage">
             <ol
               ref={trackRef}
               className="earlypreview-product__track"
               style={{ ...vars({ "--k": shown }), transform: `translate3d(${-pan * distance}px, 0, 0)` }}
             >
-              {SLIDES.map((slide) => (
-                <li
-                  key={slide.id}
-                  className="earlypreview-product__slide"
-                  style={vars({ "--a": VISUALS[slide.id].aspect })}
+              {SLIDES.map((slide, i) => (
+                <li key={slide.id} className="earlypreview-product__slide" style={vars({ "--i": Math.min(i, 3), "--len": slide.title.length })}
                 >
+                  <div className="earlypreview-product__box">
+                    <div className="earlypreview-product__ui" data-sit={VISUALS[slide.id].sit}>
+                      {near ? <SlideVisual visual={VISUALS[slide.id]} /> : null}
+                    </div>
+                  </div>
                   <h3 className={`earlypreview-product__slide-title ${p22Mackinac.className}`}>{slide.title}</h3>
-                  <div className="earlypreview-product__box">{near ? <SlideVisual visual={VISUALS[slide.id]} /> : null}</div>
                 </li>
               ))}
             </ol>
