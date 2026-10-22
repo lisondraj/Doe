@@ -5436,9 +5436,10 @@ html:has(.earlypreview-page) {
   color: var(--doehealth-desk2-surface);
 }
 
-/* The band with nothing in it: brown, about as tall as it was with the invite in it. */
-.doehealth-desk2-page.earlypreview-page .earlypreview-invite-band--empty {
-  height: 74svh;
+/* The blank brown section above the footer: one screen tall, the nav-wash brown, nothing in it. */
+.doehealth-desk2-page.earlypreview-page .earlypreview-gtm-blank {
+  height: 100svh;
+  background-color: var(--doehealth-desk2-surface);
 }
 
 .doehealth-desk2-page.earlypreview-page .earlypreview-invite-band .doehealth-desk2-invite__panel {

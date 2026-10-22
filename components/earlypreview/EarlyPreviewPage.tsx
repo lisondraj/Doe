@@ -11,7 +11,7 @@ import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDes
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import { DoeHealthDesk2Workspace } from "@/components/doehealth-desk2/DoeHealthDesk2Workspace";
 import { EarlyPreviewHospitalSection, EarlyPreviewVideoGrid } from "@/components/earlypreview/EarlyPreviewGallery";
-import { EarlyPreviewGtmSection } from "@/components/earlypreview/EarlyPreviewGtmSection";
+import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { EarlyPreviewMarketSection } from "@/components/earlypreview/EarlyPreviewMarketSection";
 import { EarlyPreviewVideoOverlay } from "@/components/earlypreview/EarlyPreviewVideoOverlay";
 import {
@@ -256,9 +256,11 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
           videos={<EarlyPreviewVideoGrid />}
         />
         {/* Doe's go-to-market, the third scroll-locked brown section. */}
-        <EarlyPreviewGtmSection />
-        {/* An empty brown band before the footer. */}
-        <div className="earlypreview-invite-band earlypreview-invite-band--empty doehealth-desk2-nav-wash-surface" aria-hidden />
+        {/* The blank brown section above the footer: one screen tall, with nothing in it. */}
+        <div className="earlypreview-gtm-blank doehealth-desk2-nav-wash-surface" aria-hidden />
+        <div className="earlypreview-invite-band">
+          <DoeHealthDesk2InviteSection />
+        </div>
         <DoeHealthDesk2Footer sectionHrefBase={DESK2_PATH} />
       </main>
     </div>
