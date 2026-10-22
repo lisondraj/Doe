@@ -499,7 +499,7 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
       label: "Visits+",
       cells: [
         null,
-        "Add-on: $199/mo per provider",
+        "+$79/mo per provider",
         "Smart appointments, visit notes and pre-visit videos",
       ],
     },
