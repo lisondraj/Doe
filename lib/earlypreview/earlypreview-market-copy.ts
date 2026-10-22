@@ -365,9 +365,9 @@ export const EARLYPREVIEW_MARKET_PLANS = {
       name: "Free",
       priceMo: PLAN_MO.free,
       features: [
-        "Your verified Doe page",
-        "Found by every personal agent",
-        "Monthly agent demand report",
+        "Your verified clinic page",
+        "Found by patients' AI assistants",
+        "Monthly report on patient demand",
       ],
     },
     {
@@ -384,9 +384,9 @@ export const EARLYPREVIEW_MARKET_PLANS = {
       },
       features: [
         "Everything in Free",
-        "Readable by every agent",
-        "Hours, prices and openings shown",
-        "Booking through your web form",
+        "Accurate hours, prices and services",
+        "Spam and fake requests filtered out",
+        "Booking requests from your website",
       ],
     },
     {
@@ -402,9 +402,9 @@ export const EARLYPREVIEW_MARKET_PLANS = {
       },
       features: [
         "Everything in Basic",
-        "Two-way sync with your EHR",
-        "Instant booking and deposits",
-        "The Agent Firewall",
+        "Live openings, synced with your EHR",
+        "Patients book instantly and pay deposits",
+        "Bots and scrapers kept off your calendar",
       ],
     },
     {
@@ -415,9 +415,9 @@ export const EARLYPREVIEW_MARKET_PLANS = {
       note: "Per provider, every clinic",
       features: [
         "Everything in Advanced",
-        "AI receptionist",
-        "Appointments, with ambient scribe",
-        "Prepare, with pre-visit videos",
+        "A receptionist that answers every call",
+        "Visit notes written for you",
+        "Pre-visit videos, so patients arrive ready",
       ],
     },
   ],
@@ -442,60 +442,60 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
       id: "visibility",
       label: "Visibility",
       cells: [
-        "Agents can find and read your clinic",
-        "Agents know every service you offer",
-        "Featured wherever patients ask agents",
+        "Patients' AI assistants find your clinic",
+        "Every service and provider shown accurately",
+        "Featured wherever patients search",
       ],
     },
     {
       id: "schedule",
       label: "Scheduling",
       cells: [
-        "Read-only hours, prices and openings",
-        "Live two-way sync with your EHR",
-        "A calendar that runs itself, every site",
+        "Hours, prices and openings shown",
+        "Live openings, synced with your EHR",
+        "A calendar that fills itself, across every site",
       ],
     },
     {
       id: "booking",
       label: "Booking",
       cells: [
-        "Agents fill in your web form",
-        "Instant booking and deposits by API",
-        "Bookings, deposits and upsells, one payout",
+        "Requests come through your website",
+        "Patients book instantly and pay deposits",
+        "Bookings, deposits and add-on sales in one payout",
       ],
     },
     {
-      id: "security",
-      label: "Security",
+      id: "protection",
+      label: "Protection",
       cells: [
         null,
-        "The Agent Firewall, token-verified",
-        "Full guardrails against scraper bots",
+        "Spam and fake bookings filtered out",
+        "Bots and scrapers kept off your calendar",
       ],
     },
     {
       id: "voice",
-      label: "Voice",
+      label: "Phone",
       cells: [
         null,
-        `Add-on, $149/mo a line`,
-        "AI receptionist, inbound and outbound",
+        "Add-on: $149/mo per phone line",
+        "A receptionist that answers and books calls",
       ],
     },
     {
       id: "appointments",
-      label: "Appointments",
+      label: "Visits",
       cells: [
         null,
-        `Scribe add-on, $199/mo a provider`,
-        "Clinical evidence surfaced, ambient scribe",
+        "Add-on: $199/mo per provider",
+        "Visit notes written for you, with evidence at hand",
       ],
     },
     {
       id: "prepare",
       label: "Prepare",
-      cells: [null, null, "Pre-visit videos, so you're ready for the visit"],
+      cells: [null, null, "Pre-visit videos, so patients arrive ready"],
     },
   ] satisfies readonly {
     id: string;
