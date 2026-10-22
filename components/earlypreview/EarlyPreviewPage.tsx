@@ -13,6 +13,7 @@ import { DoeHealthDesk2Workspace } from "@/components/doehealth-desk2/DoeHealthD
 import { EarlyPreviewHospitalSection, EarlyPreviewVideoGrid } from "@/components/earlypreview/EarlyPreviewGallery";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { EarlyPreviewMarketSection } from "@/components/earlypreview/EarlyPreviewMarketSection";
+import { EarlyPreviewProductSection } from "@/components/earlypreview/EarlyPreviewProductSection";
 import { EarlyPreviewVideoOverlay } from "@/components/earlypreview/EarlyPreviewVideoOverlay";
 import {
   EARLYPREVIEW_BAND_DEK,
@@ -237,6 +238,8 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
         <EarlyPreviewMarketSection />
         {/* The blank band under the hero: the /product-nav beige, with the nav in its beige state over it. */}
         <EarlyPreviewBeigeBand sectionRef={beigeBandRef} minHeight={bandHeight} pad={bandPad} titleSize={bandTitleSize} />
+        {/* The product, a scroll-locked beige section: the title lifts, a big rectangle opens, and its boxes pan by. */}
+        <EarlyPreviewProductSection />
         <EarlyPreviewHospitalSection
           sectionStyle={{
             minHeight: bandBoxHeight,

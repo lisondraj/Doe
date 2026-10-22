@@ -221,6 +221,8 @@ const DOCTOR = { name: "Dr. Robert Roberts", email: "robert@robertsfamily.com", 
 
 type FitState = { scale: number; logicalWidth: number; left: number; top: number };
 
+export type DoeHealthProductTab = TabId;
+
 export function DoeHealthProductHome() {
   const [fit, setFit] = useState<FitState | null>(null);
 
@@ -246,9 +248,43 @@ export function DoeHealthProductHome() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
+  return (
+    <div className="doehealth-product-page relative h-[100dvh] w-full overflow-hidden bg-[#140C04]">
+      <div
+        className="absolute"
+        style={{
+          width: fit?.logicalWidth ?? MIN_LOGICAL_WIDTH,
+          height: ARTBOARD_HEIGHT,
+          left: fit?.left ?? 0,
+          top: fit?.top ?? 0,
+          transform: `scale(${fit?.scale ?? 1})`,
+          transformOrigin: "top left",
+          visibility: fit ? "visible" : "hidden",
+        }}
+      >
+        <DoeHealthProductArtboard />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The app itself at the artboard's 900px height: the rail and the shell with every tab. It fills its parent's width,
+ * which must sit inside `.doehealth-product-page` for the Paper tokens.
+ */
+export function DoeHealthProductArtboard({
+  initialTab = "integrations",
+  initialAccountMenuOpen = false,
+  mountAll = true,
+}: {
+  initialTab?: TabId;
+  initialAccountMenuOpen?: boolean;
+  /** false mounts only the tab on show, for static previews of one page. */
+  mountAll?: boolean;
+} = {}) {
   const [navExpanded, setNavExpanded] = useState(false);
   const [clinicId, setClinicId] = useState(CLINICS[0].id);
-  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(initialAccountMenuOpen);
   const [signedIn, setSignedIn] = useState(true);
   const activeClinic = CLINICS.find((c) => c.id === clinicId) ?? CLINICS[0];
   const accountLabel = `${signedIn ? DOCTOR.name : "Signed out"} · ${activeClinic.name}`;
@@ -262,10 +298,10 @@ export function DoeHealthProductHome() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [accountMenuOpen]);
-  const [activeTab, setActiveTab] = useState<TabId>("integrations");
-  const [shownTab, setShownTab] = useState<TabId>("integrations");
+  const [activeTab, setActiveTab] = useState<TabId>(initialTab);
+  const [shownTab, setShownTab] = useState<TabId>(initialTab);
   const [contentVisible, setContentVisible] = useState(true);
-  const [indexOpen, setIndexOpen] = useState(false);
+  const [indexOpen, setIndexOpen] = useState(INDEX_CHILDREN.includes(initialTab));
   const switchTimer = useRef<number | null>(null);
 
   useEffect(() => {
@@ -298,20 +334,15 @@ export function DoeHealthProductHome() {
     }, FADE_MS);
   };
 
+  /** A full-shell tab layer: always mounted, or only while on show when `mountAll` is off. */
+  const layer = (tab: TabId, page: ReactNode) =>
+    mountAll || shownTab === tab ? (
+      <div className="absolute inset-0" style={tabLayerStyle(tab)}>
+        {page}
+      </div>
+    ) : null;
+
   return (
-    <div className="doehealth-product-page relative h-[100dvh] w-full overflow-hidden bg-[#140C04]">
-      <div
-        className="absolute"
-        style={{
-          width: fit?.logicalWidth ?? MIN_LOGICAL_WIDTH,
-          height: ARTBOARD_HEIGHT,
-          left: fit?.left ?? 0,
-          top: fit?.top ?? 0,
-          transform: `scale(${fit?.scale ?? 1})`,
-          transformOrigin: "top left",
-          visibility: fit ? "visible" : "hidden",
-        }}
-      >
     <div className="[font-synthesis:none] wrap-anywhere text-[12px] leading-[16px] flex relative overflow-clip w-full h-[900px] bg-ink antialiased">
       {/* Expanding the rail slides the shell right instead of resizing it, so Paper layouts keep their widths. */}
       <div
@@ -507,39 +538,17 @@ export function DoeHealthProductHome() {
         />
         <div className="grow h-full flex p-[12px] rounded-[24px] overflow-clip gap-[12px] relative [background-color:#FFFCF1]">
           {/* Full-shell tab layers sit beneath the content panel, as in Paper. */}
-          <div className="absolute inset-0" style={tabLayerStyle("schedule")}>
-            <DoeHealthProductSchedulePage />
-          </div>
-          <div className="absolute inset-0" style={tabLayerStyle("calendar")}>
-            <DoeHealthProductCalendarPage />
-          </div>
-          <div className="absolute inset-0" style={tabLayerStyle("voice")}>
-            <DoeHealthProductVoicePage onOpenCall={() => switchTab("call")} />
-          </div>
-          <div className="absolute inset-0" style={tabLayerStyle("call")}>
-            <DoeHealthProductCallPage onBack={() => switchTab("voice")} />
-          </div>
-          <div className="absolute inset-0" style={tabLayerStyle("services")}>
-            <DoeHealthProductServicesPage />
-          </div>
-          <div className="absolute inset-0" style={tabLayerStyle("providers")}>
-            <DoeHealthProductProvidersLayers />
-          </div>
-          <div className="absolute inset-0" style={tabLayerStyle("referrals")}>
-            <DoeHealthProductReferralsPage />
-          </div>
-          <div className="absolute inset-0" style={tabLayerStyle("forms")}>
-            <DoeHealthProductFormsPage />
-          </div>
-          <div className="absolute inset-0" style={tabLayerStyle("search")}>
-            <DoeHealthProductSearchPage />
-          </div>
-          <div className="absolute inset-0" style={tabLayerStyle("payments")}>
-            <DoeHealthProductPaymentsPage />
-          </div>
-          <div className="absolute inset-0" style={tabLayerStyle("permissions")}>
-            <DoeHealthProductPermissionsPage />
-          </div>
+          {layer("schedule", <DoeHealthProductSchedulePage />)}
+          {layer("calendar", <DoeHealthProductCalendarPage />)}
+          {layer("voice", <DoeHealthProductVoicePage onOpenCall={() => switchTab("call")} />)}
+          {layer("call", <DoeHealthProductCallPage onBack={() => switchTab("voice")} />)}
+          {layer("services", <DoeHealthProductServicesPage />)}
+          {layer("providers", <DoeHealthProductProvidersLayers />)}
+          {layer("referrals", <DoeHealthProductReferralsPage />)}
+          {layer("forms", <DoeHealthProductFormsPage />)}
+          {layer("search", <DoeHealthProductSearchPage />)}
+          {layer("payments", <DoeHealthProductPaymentsPage />)}
+          {layer("permissions", <DoeHealthProductPermissionsPage />)}
           <div
             className="grow min-w-[0px] h-full flex flex-col p-[28px] gap-[24px] relative"
             style={{
@@ -554,8 +563,6 @@ export function DoeHealthProductHome() {
           </div>
         </div>
       </div>
-    </div>
-    </div>
     </div>
   );
 }
