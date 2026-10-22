@@ -2758,6 +2758,11 @@
   font-size: 1rem;
 }
 
+/* Desktop-only clinic types: left off the iPhone list. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__type-list > .is-desktop-only {
+  display: none;
+}
+
 /* Short iPhones (SE and the like): the screens tighten so nothing reaches the nav. */
 @media (max-height: 700px) {
   .doehealth-desk2-page:has(.doephone-mobile-root)

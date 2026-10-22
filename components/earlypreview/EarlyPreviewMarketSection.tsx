@@ -945,9 +945,15 @@ function ClinicsScene({ p }: { p: number }) {
                   {group.lead}
                 </h3>
                 <ul className="earlypreview-market__type-list">
-                  {group.types.map((type, i) => (
+                  {[
+                    ...group.types.map((type) => ({ type, desktop: false })),
+                    ...("desktopTypes" in group
+                      ? group.desktopTypes.map((type) => ({ type, desktop: true }))
+                      : []),
+                  ].map(({ type, desktop }, i) => (
                     <li
                       key={type}
+                      className={desktop ? "is-desktop-only" : undefined}
                       style={vars({
                         "--e": en(
                           t,

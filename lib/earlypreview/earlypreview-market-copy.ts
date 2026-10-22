@@ -296,6 +296,8 @@ export const EARLYPREVIEW_MARKET_CLINICS = {
         "IV Therapy",
         "Hair Restoration",
       ],
+      /** Four more private-pay types, shown on desktop only; they fill the bottom of the list. */
+      desktopTypes: ["Podiatry", "Speech Therapy", "Nutrition", "Laser Clinics"],
     },
     {
       id: "medical",
