@@ -35,7 +35,7 @@ const SCENES = [
   { id: "whyNow", len: 2.0 },
   { id: "index", len: 3.2 },
   { id: "seed", len: 2.2 },
-  { id: "plans", len: 3.0 },
+  { id: "plans", len: 2.4 },
   { id: "included", len: 2.4 },
   { id: "cities", len: 5.0 },
   { id: "clinics", len: 2.4 },
@@ -324,14 +324,12 @@ function Check() {
 const PAID_PLANS = PLANS.plans.filter((plan) => "foundingMo" in plan);
 
 /**
- * Free to paid: the title with the founding offer in the top right, then the four tiers in a row. A paid tier shows
- * its founding price, which gives way to the price it becomes after the first year.
+ * Free to paid: the title with the founding offer in the top right (each paid tier's founding price, then its regular
+ * one), then the four tiers in a row at their regular prices.
  */
 function PlansScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "plans");
   const hover = useHover<string>();
-  /** Late in the screen, the paid tiers' founding prices give way to their regular prices. */
-  const toRegular = en(t, 1.5, 1.9);
   return (
     <Scene o={o} label="Plans">
       <div className="earlypreview-market__plans-head">
@@ -376,47 +374,15 @@ function PlansScene({ p }: { p: number }) {
                 <span className="earlypreview-market__plan-name">
                   {plan.name}
                 </span>
-                {"foundingMo" in plan ? (
-                  <span className="earlypreview-market__plan-prices">
-                    <span className="earlypreview-market__plan-price">
-                      <span
-                        className="earlypreview-market__plan-value is-founding"
-                        style={vars({ "--o": 1 - toRegular })}
-                      >
-                        ${plan.foundingMo}
-                        <small>/mo</small>
-                      </span>
-                      <span
-                        className="earlypreview-market__plan-regular"
-                        style={vars({ "--o": toRegular })}
-                      >
-                        <span className="earlypreview-market__plan-value">
-                          ${plan.priceMo}
-                          <small>/mo</small>
-                        </span>
-                        <span className="earlypreview-market__plan-when">
-                          {PLANS.regularFrom}
-                        </span>
-                      </span>
-                    </span>
+                <span className="earlypreview-market__plan-prices">
+                  <span className="earlypreview-market__plan-value">
+                    ${plan.priceMo}
+                    <small>/mo</small>
                   </span>
-                ) : (
-                  <span className="earlypreview-market__plan-prices">
-                    <span className="earlypreview-market__plan-price">
-                      <span className="earlypreview-market__plan-value">
-                        ${plan.priceMo}
-                        <small>/mo</small>
-                      </span>
-                    </span>
-                  </span>
-                )}
+                </span>
                 {"group" in plan ? (
                   <span className="earlypreview-market__plan-group">
-                    <span style={vars({ "--o": 1 - toRegular })}>
-                      {plan.group.label} <strong>${plan.group.foundingMo}</strong>
-                      {plan.group.unit}
-                    </span>
-                    <span style={vars({ "--o": toRegular })}>
+                    <span>
                       {plan.group.label} <strong>${plan.group.priceMo}</strong>
                       {plan.group.unit}
                     </span>
