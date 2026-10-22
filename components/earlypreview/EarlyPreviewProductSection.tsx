@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { type CSSProperties, type ReactNode, memo, useEffect, useRef, useState } from "react";
 
 import { SkipIcon } from "@/components/doehealth-desk2/DoeHealthDesk2AudienceSection";
-import { DoeHealthDesk2DotTide } from "@/components/doehealth-desk2/DoeHealthDesk2DotTide";
+import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
 import { DoeHealthProductArtboard, type DoeHealthProductTab } from "@/components/doehealth-product/DoeHealthProductHome";
 import type { EarlyPreviewProductFilm } from "@/components/earlypreview/EarlyPreviewProductFilmFrame";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
@@ -193,7 +193,7 @@ function useNear(ref: React.RefObject<HTMLElement | null>) {
 
 /**
  * /earlypreview: the product, in a beige scroll-locked section under "We've been building together". The title comes
- * in centred between the side dots; scrolling lifts it to the top while the dots sink away, a row of rounded boxes rises in under
+ * in centred over a dot wave; scrolling lifts the title and the wave to the top, a row of rounded boxes rises in under
  * it, and the row pans right to left, one piece of the product per box with its name underneath. The lock lets go on
  * the last. On an iPhone it scrubs through a sticky track, as the market section does.
  */
@@ -219,16 +219,15 @@ export function EarlyPreviewProductSection() {
         data-nav-beige="1"
         aria-label="Product design, built by providers"
       >
-        <div className="earlypreview-product__tide" style={vars({ "--d": lift })} aria-hidden>
-          <div className="doehealth-desk2-visible__tide" style={vars({ "--s": 1 })}>
-            <DoeHealthDesk2DotTide color="rgba(110, 92, 64, 0.45)" active={near && lift < 1} />
-          </div>
-        </div>
         <div
           ref={headRef}
           className={`earlypreview-product__head ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
           style={vars({ "--y": toCenter * (1 - lift) })}
         >
+          {/* The dot wave runs under the title and lifts with it. */}
+          <div className="earlypreview-product__wave" aria-hidden>
+            <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.45)" top={0.18} amp={60} fade={0.3} active={near && lift < 1} />
+          </div>
           <h2 className={`earlypreview-product__title ${p22Mackinac.className}`}>
             <span>{HEADLINE.line1}</span>
             <span>{HEADLINE.line2}</span>

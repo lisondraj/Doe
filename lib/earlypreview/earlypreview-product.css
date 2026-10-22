@@ -1,7 +1,7 @@
 /*
  * /earlypreview product section (EarlyPreviewProductSection). One scroll-locked beige screen, the beige of the band
- * above it with the nav in its beige state. --y, --d and --k are set from scroll progress; nothing transitions except
- * the first reveal of the title and the dots.
+ * above it with the nav in its beige state. --y and --k are set from scroll progress; nothing transitions except the
+ * first reveal of the title.
  */
 
 .earlypreview-product {
@@ -21,34 +21,30 @@
   color: var(--p-ink);
 }
 
-/* The side dots of the band above, sinking away as the title lifts. */
-.earlypreview-product__tide {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: calc(1 - var(--d, 0));
-  transform: translateY(calc(var(--d, 0) * 45svh));
-}
-
-.earlypreview-product__tide > .doehealth-desk2-visible__tide {
-  opacity: 0;
-  transform: translateY(1.5rem);
-  transition:
-    opacity 1100ms cubic-bezier(0.33, 1, 0.68, 1) 260ms,
-    transform 1100ms cubic-bezier(0.33, 1, 0.68, 1) 260ms;
-}
-
-.earlypreview-product.is-in .earlypreview-product__tide > .doehealth-desk2-visible__tide {
-  opacity: 1;
-  transform: none;
-}
-
 .earlypreview-product__head {
   position: relative;
   z-index: 1;
   flex-shrink: 0;
   text-align: center;
   transform: translateY(calc(var(--y, 0) * 1px));
+}
+
+/* The dot wave, centred behind the title. It sits in the title's block, so it lifts with the title. */
+.earlypreview-product__wave {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 50%;
+  width: 100vw;
+  height: clamp(16rem, 44svh, 30rem);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.earlypreview-product__wave > canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* The band's title, in the band's dark beige. */
@@ -278,7 +274,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .earlypreview-product__tide > .doehealth-desk2-visible__tide,
   .earlypreview-product__title > span {
     opacity: 1;
     transform: none;
