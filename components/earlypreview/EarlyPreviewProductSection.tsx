@@ -39,7 +39,7 @@ type Crop = { x: number; y: number; w: number; h: number; ax?: Align; ay?: Align
  * Where the UI sits in its box: tucked into a corner (`br` sits in the bottom right and runs off those two edges) or
  * along one edge, inset from the other three (`b` runs off the bottom, `t` off the top).
  */
-type Sit = "br" | "bl" | "tr" | "tl" | "b" | "t";
+type Sit = "br" | "bl" | "tr" | "tl" | "b" | "t" | "full";
 
 type Visual =
   | { kind: "app"; tab: DoeHealthProductTab; menu?: boolean; crop: Crop; sit: Sit }
@@ -51,7 +51,7 @@ type Visual =
  */
 const VISUALS: Record<EarlyPreviewProductSlideId, Visual> = {
   index: { kind: "app", tab: "integrations", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
-  interface: { kind: "app", tab: "search", crop: { x: 92, y: 122, w: 876, h: 636, ay: "start" }, sit: "b" },
+  interface: { kind: "app", tab: "call", crop: { x: 0, y: 0, w: 1440, h: 900, ax: "center", ay: "center" }, sit: "full" },
   auth: { kind: "film", film: "permissions", frame: 660, crop: { x: 410, y: 250, w: 810, h: 540, ax: "start", ay: "start" }, sit: "br" },
   permissions: { kind: "app", tab: "permissions", crop: { x: 560, y: 125, w: 840, h: 560, ax: "end", ay: "start" }, sit: "bl" },
   insurance: { kind: "film", film: "communication", frame: 575, crop: { x: 775, y: 385, w: 805, h: 540, ax: "end", ay: "end" }, sit: "tl" },

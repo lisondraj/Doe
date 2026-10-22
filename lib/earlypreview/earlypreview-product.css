@@ -163,6 +163,12 @@
   border-bottom-right-radius: var(--p-ui-r);
 }
 
+/* The whole product, outer shell and all, floating inside the box. */
+.earlypreview-product__ui[data-sit="full"] {
+  inset: var(--p-in);
+  border-radius: var(--p-ui-r);
+}
+
 .earlypreview-product__ui[data-sit="b"] {
   inset: var(--p-in) var(--p-in) 0;
   border-radius: var(--p-ui-r) var(--p-ui-r) 0 0;
