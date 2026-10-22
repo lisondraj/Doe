@@ -324,12 +324,14 @@ function Check() {
 const PAID_PLANS = PLANS.plans.filter((plan) => "foundingMo" in plan);
 
 /**
- * Free to paid: the title with the founding offer in the top right, then the four tiers in a row. Every paid price
- * here is its founding price.
+ * Free to paid: the title with the founding offer in the top right, then the four tiers in a row. The tiers always show
+ * their founding prices; the corner switches to the regular prices late in the screen.
  */
 function PlansScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "plans");
   const hover = useHover<string>();
+  /** Late in the screen, the corner gives way from the founding prices to the regular ones. */
+  const toRegular = en(t, 1.5, 1.9);
   return (
     <Scene o={o} label="Plans">
       <div className="earlypreview-market__plans-head">
@@ -338,22 +340,52 @@ function PlansScene({ p }: { p: number }) {
           className="earlypreview-market__founding"
           style={vars({ "--e": en(t, 0.35, 0.7) })}
         >
-          <p className="earlypreview-market__founding-label">
-            {PLANS.founding.label}
-          </p>
-          <p className="earlypreview-market__founding-detail">
-            {PLANS.founding.detail[0]}
-            <br />
-            {PLANS.founding.detail[1]}
-          </p>
-          <ul className="earlypreview-market__founding-steps">
-            {PAID_PLANS.map((plan) => (
-              <li key={plan.id}>
-                <span>{plan.name}</span>
-                <strong>${plan.foundingMo}</strong>
-              </li>
-            ))}
-          </ul>
+          <div className="earlypreview-market__founding-stack">
+            <div
+              className="earlypreview-market__founding-view"
+              style={vars({ "--o": 1 - toRegular })}
+              aria-hidden={toRegular >= 0.5}
+            >
+              <p className="earlypreview-market__founding-label">
+                {PLANS.founding.label}
+              </p>
+              <p className="earlypreview-market__founding-detail">
+                {PLANS.founding.detail[0]}
+                <br />
+                {PLANS.founding.detail[1]}
+              </p>
+              <ul className="earlypreview-market__founding-steps">
+                {PAID_PLANS.map((plan) => (
+                  <li key={plan.id}>
+                    <span>{plan.name}</span>
+                    <strong>${plan.foundingMo}</strong>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div
+              className="earlypreview-market__founding-view"
+              style={vars({ "--o": toRegular })}
+              aria-hidden={toRegular < 0.5}
+            >
+              <p className="earlypreview-market__founding-label">
+                {PLANS.regular.label}
+              </p>
+              <p className="earlypreview-market__founding-detail">
+                {PLANS.regular.detail[0]}
+                <br />
+                {PLANS.regular.detail[1]}
+              </p>
+              <ul className="earlypreview-market__founding-steps">
+                {PAID_PLANS.map((plan) => (
+                  <li key={plan.id}>
+                    <span>{plan.name}</span>
+                    <strong>${plan.priceMo}</strong>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </aside>
       </div>
       <div className="earlypreview-market__body">

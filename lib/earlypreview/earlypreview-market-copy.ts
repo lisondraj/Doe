@@ -354,6 +354,11 @@ export const EARLYPREVIEW_MARKET_PLANS = {
     label: "Founding Pricing",
     detail: ["Buy in the first half of 2027,", "and your price holds for a year."],
   },
+  /** The same corner after the founding year: each tier's regular price. */
+  regular: {
+    label: "Regular Pricing",
+    detail: ["After your first year,", "each tier moves to its regular price."],
+  },
   plans: [
     {
       id: "free",

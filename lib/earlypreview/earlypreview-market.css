@@ -368,6 +368,19 @@
   transform: translateY(calc((1 - var(--e, 0)) * 0.9rem));
 }
 
+/* The founding and regular views share one grid cell: the corner crossfades between them at the same size. */
+.earlypreview-market__founding-stack {
+  display: grid;
+}
+
+.earlypreview-market__founding-view {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  opacity: var(--o, 1);
+}
+
 .earlypreview-market__founding-label {
   margin: 0;
   font-family: var(--m-display);
@@ -2793,6 +2806,16 @@
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__founding-view {
+  align-items: flex-start;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__founding-steps {
+  justify-content: start;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
   .earlypreview-market__founding-label {
   font-size: 1.3rem;
 }
@@ -2801,11 +2824,6 @@
   .earlypreview-market__founding-detail {
   margin-top: 0.25rem;
   font-size: 0.85rem;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__founding-steps {
-  display: none;
 }
 
 /* iPhone tiers: each layer's name on its own line over the three tiers' columns. */
