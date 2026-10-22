@@ -1,5 +1,5 @@
 import { useContext, useMemo, type ReactNode } from "react";
-import { Composition, Internals, registerRoot, useCurrentFrame, useVideoConfig } from "remotion";
+import { Composition, Internals, registerRoot, useCurrentFrame, useVideoConfig, type PlayableMediaTag } from "remotion";
 
 import "./load-fonts";
 import "./video1-player-match.css";
@@ -17,7 +17,7 @@ type TimelineState = {
   playing: boolean;
   imperativePlaying: { current: boolean };
   rootId: string;
-  audioAndVideoTags: { current: unknown[] };
+  audioAndVideoTags: { current: PlayableMediaTag[] };
 };
 
 /**

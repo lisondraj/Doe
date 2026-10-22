@@ -12,7 +12,6 @@ import {
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-scroll-lock";
 import {
   EARLYPREVIEW_GTM_AGENTS,
-  EARLYPREVIEW_GTM_CITY,
   EARLYPREVIEW_GTM_MILESTONES,
   EARLYPREVIEW_GTM_PRICING,
   EARLYPREVIEW_GTM_SCREENS,
@@ -79,71 +78,7 @@ function Screen({
   );
 }
 
-/** Toronto as a 19 x 12 dot grid; the dots nearest the core are claimed first, then made bookable. */
-const GRID = { cols: 19, rows: 12, gap: 10, core: { c: 5.5, r: 5.5 } } as const;
-const GRID_DOTS = (() => {
-  const dots = [];
-  for (let r = 0; r < GRID.rows; r += 1) {
-    for (let c = 0; c < GRID.cols; c += 1) {
-      // Stretched sideways a little, so the lit cluster reads as a city core, not a circle.
-      const dist = Math.hypot((c - GRID.core.c) * 0.8, r - GRID.core.r);
-      // A fixed scatter for the order the indexed dots come in.
-      const scatter = ((Math.sin((c + 1) * 12.9898 + (r + 1) * 78.233) * 43758.5453) % 1 + 1) % 1;
-      dots.push({ x: GRID.gap / 2 + c * GRID.gap, y: GRID.gap / 2 + r * GRID.gap, dist, scatter });
-    }
-  }
-  const byDist = [...dots].sort((a, b) => a.dist - b.dist);
-  return dots.map((dot) => ({ ...dot, rank: byDist.indexOf(dot) }));
-})();
-
 const toCount = (value: string) => Math.round(Number(value.replace(/[^\d]/g, "")));
-
-function CityScreen({ t }: { t: number }) {
-  const c = EARLYPREVIEW_GTM_CITY;
-  const [indexed, claimed, bookable] = c.stages.map((stage) => Math.round(toCount(stage.value) / c.perDot));
-  const stage = [ramp(t, 0.3, 0.75), ramp(t, 0.75, 1.1), ramp(t, 1.05, 1.4)];
-  return (
-    <Screen index={0} title={c.title} t={t} className="earlypreview-gtm__city">
-      <figure className="earlypreview-gtm__grid">
-        <svg viewBox={`0 0 ${GRID.cols * GRID.gap} ${GRID.rows * GRID.gap}`} preserveAspectRatio="xMinYMid meet" aria-hidden="true">
-          {GRID_DOTS.map((dot, i) => {
-            const seen = dot.rank < indexed ? clamp01((stage[0] - dot.scatter * 0.7) / 0.3) : 0;
-            const lit = dot.rank < claimed ? clamp01((stage[1] - (dot.rank / claimed) * 0.7) / 0.3) : 0;
-            const live = dot.rank < bookable ? clamp01((stage[2] - (dot.rank / bookable) * 0.6) / 0.4) : 0;
-            return (
-              <g key={i}>
-                <circle cx={dot.x} cy={dot.y} r={2.2} className="is-indexed" style={{ opacity: seen * (1 - lit) * 0.26 }} />
-                {lit > 0 ? <circle cx={dot.x} cy={dot.y} r={2.2} className="is-claimed" style={{ opacity: lit * (1 - live) }} /> : null}
-                {live > 0 ? <circle cx={dot.x} cy={dot.y} r={2.2 + live * 0.6} className="is-bookable" style={{ opacity: live }} /> : null}
-              </g>
-            );
-          })}
-        </svg>
-        <figcaption>
-          {c.stages.map((item, i) => (
-            <span key={item.label} className={`earlypreview-gtm__key earlypreview-gtm__key--${item.label}`} style={rise(stage[i])}>
-              <i aria-hidden />
-              <strong className={p22Mackinac.className}>{item.value}</strong> {item.label}
-            </span>
-          ))}
-        </figcaption>
-      </figure>
-      <div className="earlypreview-gtm__verticals-wrap">
-        <ol className="earlypreview-gtm__verticals" aria-label={`First five verticals, with ${c.countLabel}`}>
-          {c.verticals.map((v, i) => (
-            <li key={v.name} style={rise(ramp(t, 0.35 + i * 0.1, 0.65 + i * 0.1))}>
-              <span className={p22Mackinac.className}>{v.name}</span>
-              <span>{v.count}</span>
-            </li>
-          ))}
-        </ol>
-        <p className="earlypreview-gtm__note" style={rise(ramp(t, 0.9, 1.15))}>
-          {c.countLabel}, from public registers
-        </p>
-      </div>
-    </Screen>
-  );
-}
 
 /** Agent products on one side, the systems clinics run on the other, every line passing through Doe Connect. */
 function AgentFlow({ t, layout }: { t: number; layout: "wide" | "tall" }) {
@@ -216,7 +151,7 @@ function AgentFlow({ t, layout }: { t: number; layout: "wide" | "tall" }) {
 function AgentsScreen({ t }: { t: number }) {
   const c = EARLYPREVIEW_GTM_AGENTS;
   return (
-    <Screen index={1} title={c.title} t={t} className="earlypreview-gtm__agents">
+    <Screen index={0} title={c.title} t={t} className="earlypreview-gtm__agents">
       <div className="earlypreview-gtm__flow-box">
         <AgentFlow t={t} layout="wide" />
         <AgentFlow t={t} layout="tall" />
@@ -239,7 +174,7 @@ function PricingScreen({ t }: { t: number }) {
   const reportRef = useRef<HTMLDivElement>(null);
   const report = ramp(t, 0.3, 0.65);
   return (
-    <Screen index={2} title={c.title} t={t} className="earlypreview-gtm__pricing">
+    <Screen index={1} title={c.title} t={t} className="earlypreview-gtm__pricing">
       <div ref={reportRef} className="earlypreview-gtm__report" style={rise(report)}>
         <TracedOutline draw={report} box={reportRef} className="earlypreview-gtm__report-line" />
         <p className="earlypreview-gtm__report-from">{c.report.from}</p>
@@ -275,7 +210,7 @@ function countUp(value: string, e: number) {
 function MilestonesScreen({ t }: { t: number }) {
   const c = EARLYPREVIEW_GTM_MILESTONES;
   return (
-    <Screen index={3} title={c.title} t={t} className="earlypreview-gtm__milestones">
+    <Screen index={2} title={c.title} t={t} className="earlypreview-gtm__milestones">
       <ol className="earlypreview-gtm__quarters">
         {c.quarters.map((q, i) => {
           const e = ramp(t, 0.35 + i * 0.16, 0.65 + i * 0.16);
@@ -299,12 +234,11 @@ function MilestonesScreen({ t }: { t: number }) {
   );
 }
 
-const SCREENS = [CityScreen, AgentsScreen, PricingScreen, MilestonesScreen] as const;
+const SCREENS = [AgentsScreen, PricingScreen, MilestonesScreen] as const;
 
 /**
  * /earlypreview: Doe's go-to-market as a scroll-locked brown section. When it reaches the top of the screen the page
- * holds still and scrolling steps through four screens: the first city, how agents integrate, pricing, and the next
- * twelve months. The last screen stays once it has built.
+ * holds still and scrolling steps through three screens: how agents integrate, pricing, and the next twelve months. The last screen stays once it has built.
  */
 export function EarlyPreviewGtmSection() {
   const sectionRef = useRef<HTMLElement>(null);

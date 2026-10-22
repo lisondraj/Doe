@@ -1,34 +1,13 @@
 /**
- * /earlypreview go-to-market section: every figure the four screens show, in one place. Practice counts are rounded
- * estimates from public licensing registers (Ontario colleges, NPPES); prices and targets are Doe's plan as of
- * October 2026.
+ * /earlypreview go-to-market section: every figure the three screens show, in one place. Prices and targets are Doe's
+ * plan as of October 2026.
  */
 
 export type EarlyPreviewGtmLine = readonly { readonly text: string; readonly tone: "cream" | "salmon" }[];
 
 const line = (text: string, tone: "cream" | "salmon" = "cream"): EarlyPreviewGtmLine => [{ text, tone }];
 
-/** Screen 1: the first city. The five verticals, ranked, add up to the practices the dot grid stands for. */
-export const EARLYPREVIEW_GTM_CITY = {
-  title: [line("Start in one city,"), line("where patients choose their care.", "salmon")],
-  verticals: [
-    { name: "Physio & chiro", count: "2,400" },
-    { name: "Dental", count: "3,000" },
-    { name: "Mental health", count: "1,200" },
-    { name: "Aesthetics", count: "700" },
-    { name: "Optometry", count: "650" },
-  ],
-  countLabel: "GTA practices",
-  /** One dot in the grid is this many practices. */
-  perDot: 35,
-  stages: [
-    { value: "8,000", label: "indexed" },
-    { value: "1,000", label: "claimed" },
-    { value: "250", label: "bookable" },
-  ],
-} as const;
-
-/** Screen 2: agents on one side, the systems clinics run on the other, all through Doe Connect. */
+/** Screen 1: agents on one side, the systems clinics run on the other, all through Doe Connect. */
 export const EARLYPREVIEW_GTM_AGENTS = {
   title: [line("Don't build healthcare integrations."), line("Integrate Doe once.", "salmon")],
   sources: ["Personal agents", "Care navigators", "Health apps", "Assistants"],
@@ -41,7 +20,7 @@ export const EARLYPREVIEW_GTM_AGENTS = {
   ],
 } as const;
 
-/** Screen 3: the demand report every clinic gets for free, which is what brings it onto a paid plan. */
+/** Screen 2: the demand report every clinic gets for free, which is what brings it onto a paid plan. */
 export const EARLYPREVIEW_GTM_PRICING = {
   title: [line("Free to be found."), line("Paid when agents act.", "salmon")],
   report: {
@@ -56,7 +35,7 @@ export const EARLYPREVIEW_GTM_PRICING = {
   note: "A month, per location. No per-patient fees, no paid placement.",
 } as const;
 
-/** Screen 4: the next twelve months. Each figure counts up as it comes in. */
+/** Screen 3: the next twelve months. Each figure counts up as it comes in. */
 export const EARLYPREVIEW_GTM_MILESTONES = {
   title: [line("Toronto first."), line("Then New York and San Francisco.", "salmon")],
   quarters: [
@@ -67,4 +46,4 @@ export const EARLYPREVIEW_GTM_MILESTONES = {
   ],
 } as const;
 
-export const EARLYPREVIEW_GTM_SCREENS = 4;
+export const EARLYPREVIEW_GTM_SCREENS = 3;

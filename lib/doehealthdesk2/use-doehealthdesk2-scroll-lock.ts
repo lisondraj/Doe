@@ -41,8 +41,8 @@ const isTyping = (target: EventTarget | null) =>
  * Scroll lock for a one-screen section. When its top reaches the top of the viewport the page holds
  * still and scroll input moves progress from 0 to `end` instead; at either end the lock releases and
  * the page scrolls on. Once progress has reached `end` the section is done: it stays on its last scene
- * and never locks again. Returns the progress (the only clock the section's motion uses) and `skip`,
- * which jumps straight to the end.
+ * and never locks again. Returns the progress (the only clock the section's motion uses), `skip`, which
+ * jumps straight to the end, and `goTo`, which jumps to any progress and holds the section there.
  *
  * iPhone: the page is never held. Safari scrolls on its compositor, so every scrollTo correction lands
  * a frame late and reads as a judder. Instead the section is `position: sticky` inside a taller track
@@ -51,6 +51,7 @@ const isTyping = (target: EventTarget | null) =>
 export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, end: number) {
   const [p, setP] = useState(0);
   const skipRef = useRef<() => void>(() => {});
+  const goToRef = useRef<(target: number) => void>(() => {});
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -319,6 +320,28 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       jumpTo(sectionTop());
     };
 
+    goToRef.current = (target: number) => {
+      const next = Math.min(end, Math.max(0, target));
+      if (phone() && track) {
+        // A collapsed track comes back, so the jump can land anywhere along it again.
+        section.style.position = "";
+        track.style.height = "";
+        done = false;
+        releasePending = false;
+        window.clearTimeout(releaseTimer);
+        const run = track.offsetHeight - section.offsetHeight;
+        jumpTo(window.scrollY + track.getBoundingClientRect().top + (Math.max(0, run) * next) / end);
+        return;
+      }
+      done = false;
+      progress = next;
+      if (next >= end) finish();
+      publish();
+      setLocked(true);
+      lockedAt = performance.now();
+      jumpTo(sectionTop());
+    };
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("wheel", onWheel, { passive: false });
@@ -348,5 +371,9 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     };
   }, [sectionRef, end]);
 
-  return { p, skip: () => skipRef.current() };
+  return {
+    p,
+    skip: () => skipRef.current(),
+    goTo: (target: number) => goToRef.current(target),
+  };
 }

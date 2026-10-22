@@ -14,8 +14,6 @@ import { DoeHealthDesk2Workspace } from "@/components/doehealth-desk2/DoeHealthD
 import { EarlyPreviewHospitalSection, EarlyPreviewVideoGrid } from "@/components/earlypreview/EarlyPreviewGallery";
 import { EarlyPreviewGtmSection } from "@/components/earlypreview/EarlyPreviewGtmSection";
 import { EarlyPreviewMarketSection } from "@/components/earlypreview/EarlyPreviewMarketSection";
-import { EarlyPreviewProductSection } from "@/components/earlypreview/EarlyPreviewProductSection";
-import { EarlyPreviewTrustSection } from "@/components/earlypreview/EarlyPreviewTrustSection";
 import { EarlyPreviewVideoOverlay } from "@/components/earlypreview/EarlyPreviewVideoOverlay";
 import {
   EARLYPREVIEW_BAND_DEK,
@@ -236,6 +234,8 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
           </div>
           <DoeHealthDesk2Workspace overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />} className="doehealth-desk2-nav-wash-surface" />
         </div>
+        {/* The market, the page's second section: scroll-locked, it releases on the go-to-market screen. */}
+        <EarlyPreviewMarketSection />
         {/* The blank band under the hero: the /product-nav beige, with the nav in its beige state over it. */}
         <EarlyPreviewBeigeBand sectionRef={beigeBandRef} minHeight={bandHeight} pad={bandPad} titleSize={bandTitleSize} />
         <EarlyPreviewHospitalSection
@@ -256,14 +256,8 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
           headline={EARLYPREVIEW_PRACTICES_HEADLINE}
           videos={<EarlyPreviewVideoGrid />}
         />
-        {/* The market, under the beige band with the concierge video: scroll-locked, it releases on the expansion path. */}
-        <EarlyPreviewMarketSection />
-        {/* Doe's products for each audience, scroll-locked like the brown section above. */}
-        <EarlyPreviewProductSection />
         {/* Doe's go-to-market, the third scroll-locked brown section. */}
         <EarlyPreviewGtmSection />
-        {/* Security and compliance, the last scroll-locked brown section: it releases on the architecture scene. */}
-        <EarlyPreviewTrustSection />
         <div className="earlypreview-invite-band">
           <DoeHealthDesk2InviteSection />
         </div>
