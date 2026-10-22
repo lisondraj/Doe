@@ -71,34 +71,46 @@ export const EARLYPREVIEW_MARKET_WHY_NOW = {
   ],
 } as const;
 
-/** Monthly price per location on each plan; the Seed target and the plans screen both read it. */
-const PLAN_MO = { free: 0, basic: 79, advanced: 149 } as const;
+/**
+ * Commercial monthly price from April 2027: per location for an independent clinic, per provider for a multi-site
+ * group (on Advanced). The Seed target and the plans screen both read it.
+ */
+const PLAN_MO = { free: 0, basic: 69, advanced: 129, group: 89 } as const;
 
 /**
  * The target at Seed, Q2 2028, 18 months out: the one model the Seed, cities and breakdown screens all add up from.
- * Toronto proves the model first, and the U.S. is the larger market by Seed. ARR is paying locations × monthly price ×
- * 12; free clinics are the claimed ones that don't pay.
+ * Toronto proves the model first, with U.S. test sites in parallel. ARR is the commercial MRR × 12: independent
+ * locations at their plan's price, multi-site groups per provider seat. Free clinics are the claimed ones that don't pay.
  */
 const SEED_INDEXED = { canada: 7_500, us: 9_500 } as const;
 const SEED_CLAIMED = { canada: 400, us: 600 } as const;
+/** Independent clinics are one location each; multi-site groups average 5 locations and 15 provider seats. */
 const SEED_PLANS = {
-  canada: { basic: 50, advanced: 28 },
-  us: { basic: 80, advanced: 43 },
+  canada: { basic: 24, advanced: 12, groups: 12, groupSites: 60, groupSeats: 180 },
+  us: { basic: 8, advanced: 4, groups: 4, groupSites: 20, groupSeats: 60 },
 } as const;
-/** Of the paying clinics, how many are private-pay practices; the rest are other clinics. */
-const SEED_PRIVATE_PAY = 165;
 const SEED_LOIS = "1–2";
 
-type PlanCounts = { readonly basic: number; readonly advanced: number };
+type PlanCounts = (typeof SEED_PLANS)[keyof typeof SEED_PLANS];
 const yearly = (plans: PlanCounts) =>
-  (plans.basic * PLAN_MO.basic + plans.advanced * PLAN_MO.advanced) * 12;
-const paying = (plans: PlanCounts) => plans.basic + plans.advanced;
+  (plans.basic * PLAN_MO.basic +
+    plans.advanced * PLAN_MO.advanced +
+    plans.groupSeats * PLAN_MO.group) *
+  12;
+const paying = (plans: PlanCounts) =>
+  plans.basic + plans.advanced + plans.groupSites;
+const accounts = (plans: PlanCounts) =>
+  plans.basic + plans.advanced + plans.groups;
 
 const SEED_PAID = {
   canada: paying(SEED_PLANS.canada),
   us: paying(SEED_PLANS.us),
 };
 const SEED_ARR = yearly(SEED_PLANS.canada) + yearly(SEED_PLANS.us);
+const SEED_ACCOUNTS = accounts(SEED_PLANS.canada) + accounts(SEED_PLANS.us);
+const SEED_GROUPS = SEED_PLANS.canada.groups + SEED_PLANS.us.groups;
+const SEED_GROUP_SEATS =
+  SEED_PLANS.canada.groupSeats + SEED_PLANS.us.groupSeats;
 
 const total = (split: { canada: number; us: number }) =>
   split.canada + split.us;
@@ -128,11 +140,13 @@ export const EARLYPREVIEW_MARKET_SEED = {
       fig(n(total(SEED_CLAIMED) - total(SEED_PAID))),
       { text: " on Free, " },
       fig(n(total(SEED_PAID))),
-      { text: " paying" },
+      { text: " paying locations" },
     ],
     [
-      fig(`${Math.round((total(SEED_PAID) / total(SEED_CLAIMED)) * 100)}%`),
-      { text: " of claimed clinics upgrade" },
+      fig(n(SEED_ACCOUNTS)),
+      { text: " accounts, " },
+      fig(n(SEED_GROUPS)),
+      { text: " multi-site groups" },
     ],
     [fig("2K"), { text: " agent requests a month" }],
   ] satisfies readonly EarlyPreviewMarketLine[],
@@ -146,6 +160,16 @@ const planRow = (id: "basic" | "advanced", name: string) => ({
   us: SEED_PLANS.us[id],
   arr: kUsd((SEED_PLANS.canada[id] + SEED_PLANS.us[id]) * PLAN_MO[id] * 12),
 });
+
+/** Multi-site groups: their locations by country, and the ARR their provider seats add. */
+const groupRow = {
+  id: "groups",
+  name: "Multi-site",
+  price: `$${PLAN_MO.group}`,
+  canada: SEED_PLANS.canada.groupSites,
+  us: SEED_PLANS.us.groupSites,
+  arr: kUsd(SEED_GROUP_SEATS * PLAN_MO.group * 12),
+};
 
 /**
  * Toronto first, then the U.S., then the clinics that add up to ARR at Seed. The dot grid is the same for both:
@@ -161,7 +185,7 @@ export const EARLYPREVIEW_MARKET_CITIES = {
     paying: SEED_PAID.canada,
   },
   us: {
-    title: ["Then the U.S.", "Our largest market by Seed."],
+    title: ["Then the U.S.", "Our first test sites."],
     arr: kUsd(yearly(SEED_PLANS.us)),
     arrLabel: "U.S. ARR by Seed",
     indexed: SEED_INDEXED.us,
@@ -180,11 +204,12 @@ export const EARLYPREVIEW_MARKET_CITIES = {
       },
       planRow("basic", "Basic"),
       planRow("advanced", "Advanced"),
+      groupRow,
     ],
     total: { canada: SEED_PAID.canada, us: SEED_PAID.us, arr: kUsd(SEED_ARR) },
     facts: [
+      [fig(n(SEED_GROUP_SEATS)), { text: " Multi-site Provider Seats" }],
       [fig("65%"), { text: " Private-Pay Services" }],
-      [fig("35%"), { text: " Other Clinics" }],
       [fig(SEED_LOIS), { text: " Enterprise LOIs" }],
     ] satisfies readonly EarlyPreviewMarketLine[],
   },
@@ -279,19 +304,21 @@ export const EARLYPREVIEW_MARKET_INDEX = {
 } as const;
 
 /**
- * Founding pricing: a clinic that upgrades by `until` pays this for its first year, then the regular `PLAN_MO`
- * price. Founding clinics are back on regular pricing by Seed, so the Seed ARR is at regular prices.
+ * Founding pricing, January to March 2027, then the commercial `PLAN_MO` price from April 2027. The Seed ARR is at
+ * commercial prices.
  */
-const FOUNDING_MO = { basic: 49, advanced: 99 } as const;
+const FOUNDING_MO = { basic: 39, advanced: 79, group: 59 } as const;
 
 /** Free to paid: every clinic starts free, Basic connects it to agents, Advanced runs it with them. */
 export const EARLYPREVIEW_MARKET_PLANS = {
   title: ["Free to Claim.", "Paid to Connect."],
   founding: {
     label: "Founding pricing",
-    until: "Q2 2027",
-    detail: "Upgrade by Q2 2027 and keep it for your first year.",
+    until: "March 2027",
+    detail: "Founding prices from January to March 2027.",
   },
+  /** Shown under each paid plan's commercial price. */
+  regularFrom: "From April 2027",
   plans: [
     {
       id: "free",
@@ -328,6 +355,13 @@ export const EARLYPREVIEW_MARKET_PLANS = {
       tagline: "Let agents run the front desk",
       priceMo: PLAN_MO.advanced,
       foundingMo: FOUNDING_MO.advanced,
+      /** Multi-site groups take Advanced per provider instead of per location. */
+      group: {
+        label: "Multi-site",
+        priceMo: PLAN_MO.group,
+        foundingMo: FOUNDING_MO.group,
+        unit: "/provider/mo",
+      },
       features: [
         "Everything in Basic",
         "Voice agents on your phone line",

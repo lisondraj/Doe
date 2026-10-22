@@ -365,7 +365,7 @@ function PlansScene({ p }: { p: number }) {
                           <small>/mo</small>
                         </span>
                         <span className="earlypreview-market__plan-when">
-                          After one year
+                          {PLANS.regularFrom}
                         </span>
                       </span>
                     </span>
@@ -380,6 +380,18 @@ function PlansScene({ p }: { p: number }) {
                     </span>
                   </span>
                 )}
+                {"group" in plan ? (
+                  <span className="earlypreview-market__plan-group">
+                    <span style={vars({ "--o": 1 - toRegular })}>
+                      {plan.group.label} <strong>${plan.group.foundingMo}</strong>
+                      {plan.group.unit}
+                    </span>
+                    <span style={vars({ "--o": toRegular })}>
+                      {plan.group.label} <strong>${plan.group.priceMo}</strong>
+                      {plan.group.unit}
+                    </span>
+                  </span>
+                ) : null}
               </div>
               <ul className="earlypreview-market__plan-features">
                 {plan.features.map((feature) => (
