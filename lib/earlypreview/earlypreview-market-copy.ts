@@ -152,6 +152,16 @@ const SEED_ARR = yearly(SEED_PLANS.canada) + yearly(SEED_PLANS.us);
 const SEED_ACCOUNTS = accounts(SEED_PLANS.canada) + accounts(SEED_PLANS.us);
 const SEED_SEATS = both("groupSeats") + both("oneSeats");
 
+/**
+ * The targets table, which leaves Doe One out (its beta testers are a line under the table instead). Its paid
+ * locations and ARR are the Seed model's without Doe One; the Free row is the claimed clinics that don't pay.
+ */
+const TABLE_PAID = {
+  canada: SEED_PAID.canada - SEED_PLANS.canada.one,
+  us: SEED_PAID.us - SEED_PLANS.us.one,
+};
+const TABLE_ARR = SEED_ARR - both("oneSeats") * FOUNDING_MO.one * 12;
+
 const total = (split: { canada: number; us: number }) =>
   split.canada + split.us;
 const n = (value: number) => value.toLocaleString("en-US");
@@ -238,20 +248,20 @@ export const EARLYPREVIEW_MARKET_CITIES = {
         id: "free",
         name: "Free",
         price: "$0",
-        canada: SEED_CLAIMED.canada - SEED_PAID.canada,
-        us: SEED_CLAIMED.us - SEED_PAID.us,
+        canada: SEED_CLAIMED.canada - TABLE_PAID.canada,
+        us: SEED_CLAIMED.us - TABLE_PAID.us,
         arr: "$0",
       },
       planRow("basic", "Basic", FOUNDING_MO.basic, "basic"),
       planRow("advanced", "Advanced", FOUNDING_MO.advanced, "advanced"),
       planRow("groups", "Multi-site", FOUNDING_MO.group, "groupSites", "groupSeats"),
-      planRow("one", "Doe One", FOUNDING_MO.one, "one", "oneSeats"),
     ],
-    total: { canada: SEED_PAID.canada, us: SEED_PAID.us, arr: kUsd(SEED_ARR) },
+    total: { canada: TABLE_PAID.canada, us: TABLE_PAID.us, arr: kUsd(TABLE_ARR) },
     facts: [
-      [fig(n(SEED_SEATS)), { text: " Provider Seats" }],
+      [fig(n(both("groupSeats"))), { text: " Provider Seats" }],
       [fig("65%"), { text: " Private-Pay Services" }],
       [fig(SEED_LOIS), { text: " Enterprise LOIs" }],
+      [fig("5–10"), { text: " Doe One Beta Testers" }],
     ] satisfies readonly EarlyPreviewMarketLine[],
   },
 } as const;

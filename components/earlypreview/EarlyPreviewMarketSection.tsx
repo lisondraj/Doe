@@ -37,7 +37,7 @@ const SCENES = [
   { id: "seed", len: 2.2 },
   { id: "plans", len: 2.4 },
   { id: "included", len: 2.4 },
-  { id: "cities", len: 5.0 },
+  { id: "cities", len: 5.4 },
   { id: "clinics", len: 2.4 },
 ] as const;
 
@@ -644,6 +644,8 @@ function CountryPanel({
 
 /** Where each stage of the cities screen starts on its clock. */
 const CITY_STEP = { us: 1.6, breakdown: 3.0 } as const;
+/** Each line under the targets table takes its turn this far apart on the scroll. */
+const FACT_STEP = 0.5;
 
 /**
  * Toronto, then the U.S., then the clinics that add up to ARR at Seed: one screen that changes on scroll. The dot
@@ -745,10 +747,15 @@ function CitiesScene({ p }: { p: number }) {
                   key={line[0].text}
                   style={vars({
                     "--e":
-                      en(tableT, 0.3 + index * 0.7, 0.5 + index * 0.7) *
+                      en(tableT, 0.3 + index * FACT_STEP, 0.5 + index * FACT_STEP) *
                       (index === breakdown.facts.length - 1
                         ? 1
-                        : 1 - en(tableT, 0.8 + index * 0.7, 1.0 + index * 0.7)),
+                        : 1 -
+                          en(
+                            tableT,
+                            0.8 + index * FACT_STEP,
+                            1.0 + index * FACT_STEP,
+                          )),
                   })}
                 >
                   <FigureLine line={line} />
