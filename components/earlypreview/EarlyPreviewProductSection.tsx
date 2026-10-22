@@ -26,6 +26,10 @@ const FilmFrame = dynamic(
   () => import("@/components/earlypreview/EarlyPreviewProductFilmFrame").then((mod) => mod.EarlyPreviewProductFilmFrame),
   { ssr: false },
 );
+const EarlyPreviewAuthShell = dynamic(
+  () => import("@/components/earlypreview/EarlyPreviewAuthShell").then((mod) => mod.EarlyPreviewAuthShell),
+  { ssr: false },
+);
 
 /** The /doehealthproduct artboard and the films' frame, in their own pixels. */
 const ARTBOARD = { w: 1440, h: 900 };
@@ -43,7 +47,8 @@ type Sit = "br" | "bl" | "tr" | "tl" | "b" | "t" | "full";
 
 type Visual =
   | { kind: "app"; tab: DoeHealthProductTab; menu?: boolean; crop: Crop; sit: Sit }
-  | { kind: "film"; film: EarlyPreviewProductFilm; frame: number; crop: Crop; sit: Sit };
+  | { kind: "film"; film: EarlyPreviewProductFilm; frame: number; crop: Crop; sit: Sit }
+  | { kind: "shell"; crop: Crop; sit: Sit };
 
 /**
  * What each box shows: a corner of the whole product (outer and inner shell) or one component on its own. The crop's
@@ -51,8 +56,8 @@ type Visual =
  */
 const VISUALS: Record<EarlyPreviewProductSlideId, Visual> = {
   index: { kind: "app", tab: "integrations", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
-  interface: { kind: "app", tab: "call", crop: { x: 0, y: 0, w: 1440, h: 900, ax: "center", ay: "center" }, sit: "full" },
-  auth: { kind: "film", film: "permissions", frame: 660, crop: { x: 410, y: 250, w: 810, h: 540, ax: "start", ay: "start" }, sit: "br" },
+  interface: { kind: "app", tab: "call", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  auth: { kind: "shell", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   permissions: { kind: "app", tab: "permissions", crop: { x: 560, y: 125, w: 840, h: 560, ax: "end", ay: "start" }, sit: "bl" },
   insurance: { kind: "film", film: "communication", frame: 575, crop: { x: 775, y: 385, w: 805, h: 540, ax: "end", ay: "end" }, sit: "tl" },
   forms: { kind: "app", tab: "forms", crop: { x: 370, y: 120, w: 715, h: 520, ay: "start" }, sit: "b" },
@@ -114,6 +119,13 @@ const SlideVisual = memo(function SlideVisual({ visual }: { visual: Visual }) {
       </CropView>
     );
   }
+  if (visual.kind === "shell") {
+    return (
+      <CropView source={ARTBOARD} crop={visual.crop}>
+        <EarlyPreviewAuthShell />
+      </CropView>
+    );
+  }
   return (
     <CropView source={ARTBOARD} crop={visual.crop}>
       <div className="doehealth-product-page" style={{ width: ARTBOARD.w, height: ARTBOARD.h }}>
@@ -126,6 +138,8 @@ const SlideVisual = memo(function SlideVisual({ visual }: { visual: Visual }) {
 /* ------------------------------------------------------------------ timing */
 
 const HEAD = [0.25, 1.0] as const;
+/** How much of the title's climb the wave makes too: it moves up only part of the way, so it ends under the boxes' top. */
+const WAVE_CLIMB = 0.45;
 const SLIDES_IN = [0.85, 1.6] as const;
 /** Progress the carousel takes per box as it pans right to left. */
 const PER_SLIDE = 0.5;
@@ -225,8 +239,9 @@ export function EarlyPreviewProductSection() {
           style={vars({ "--y": toCenter * (1 - lift) })}
         >
           {/* The dot wave runs under the title and lifts with it. */}
-          <div className="earlypreview-product__wave" aria-hidden>
-            <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.45)" top={0.18} amp={60} fade={0.3} active={near && lift < 1} />
+          {/* The dot wave hangs from the title's bottom edge and only climbs part of the way with the title. */}
+          <div className="earlypreview-product__wave" style={vars({ "--w": toCenter * lift * WAVE_CLIMB })} aria-hidden>
+            <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.3)" top={0.04} amp={40} fade={0.25} active={near && lift < 1} />
           </div>
           <h2 className={`earlypreview-product__title ${p22Mackinac.className}`}>
             <span>{HEADLINE.line1}</span>

@@ -29,15 +29,16 @@
   transform: translateY(calc(var(--y, 0) * 1px));
 }
 
-/* The dot wave, centred behind the title. It sits in the title's block, so it lifts with the title. */
+/* The dot wave, hung from the title's bottom edge. It sits in the title's block, so it climbs with the title, and
+ * --w adds back the part it should not climb. Behind the title, and under the boxes where they overlap. */
 .earlypreview-product__wave {
   position: absolute;
   z-index: -1;
   left: 50%;
-  top: 50%;
+  top: 100%;
   width: 100vw;
-  height: clamp(16rem, 44svh, 30rem);
-  transform: translate(-50%, -50%);
+  height: clamp(12rem, 30svh, 20rem);
+  transform: translate(-50%, calc(var(--w, 0) * 1px));
   pointer-events: none;
 }
 

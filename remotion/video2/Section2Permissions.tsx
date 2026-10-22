@@ -528,7 +528,7 @@ const LOGS: LogRow[] = [
 const LOG = { top: 216, step: 48, h: 42 };
 const FLOW_TOP = 96;
 
-function AuditCard({ frame }: { frame: number }) {
+export function AuditCard({ frame }: { frame: number }) {
   const insert = ramp(frame, LOG_INSERT_AT, 16, EASE_IN_OUT);
   const stepW = (AUDIT.w - AUDIT.pad * 2) / FLOW.length;
   const travel = ramp(frame, FLOW_AT, FLOW_STEP * 3, EASE_IN_OUT);
