@@ -192,7 +192,7 @@ export const EARLYPREVIEW_MARKET_CITIES = {
 
 /**
  * The clinics Doe targets: private-pay practices first, where one owner decides and pays, then medical practices and
- * specialties. Each group leads with its name in salmon; the types follow in a light grey.
+ * specialties. Each group's name is salmon; its types follow in a light grey.
  */
 export const EARLYPREVIEW_MARKET_CLINICS = {
   title: ["We're targeting", "short-sales cycles first."],
@@ -276,45 +276,6 @@ export const EARLYPREVIEW_MARKET_INDEX = {
       "index page to claim by the end of Q1 2027.",
     ],
   },
-  /** Index pages going out: three rows of clinic pages that slide past. `claimed` ones are salmon. */
-  pages: [
-    [
-      "Maple Dental",
-      "Queen West Physio",
-      "Bloor Aesthetics",
-      "Harbour Optometry",
-      "Yonge Chiropractic",
-      "Annex Naturopathy",
-      "Leslieville Med Spa",
-      "Danforth Family Dental",
-      "Liberty Village Physio",
-      "King West Concierge",
-    ],
-    [
-      "Brooklyn Smile Studio",
-      "SoHo Skin Clinic",
-      "Austin Sports Physio",
-      "Mission Acupuncture",
-      "Chelsea Concierge MD",
-      "Miami Med Spa",
-      "Lincoln Park Dental",
-      "Denver Fertility Center",
-      "Seattle Vision Care",
-      "Back Bay Chiropractic",
-    ],
-    [
-      "Kits Beach Physio",
-      "Plateau Dental",
-      "Calgary Hearing Clinic",
-      "Westmount Aesthetics",
-      "Ottawa Massage Therapy",
-      "Oakville Orthodontics",
-      "Halifax Eye Care",
-      "Vancouver IV Lounge",
-      "Burlington Dental Arts",
-      "Mississauga Family Clinic",
-    ],
-  ],
 } as const;
 
 /**

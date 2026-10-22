@@ -643,37 +643,126 @@ function CitiesScene({ p }: { p: number }) {
   );
 }
 
+const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
+/** 0 → 1 as `t` moves through [k, k + w]: one stroke's share of a drawing's progress. */
+const seg = (t: number, k: number, w: number) => clamp01((t - k) / w);
+/** Style for a stroke traced in by CSS (pathLength 1, dash offset from --draw). */
+const draw = (value: number) => vars({ "--draw": value });
+
+/** The clinics around the page, near to far, alternating sides. `claimed` ones fill salmon at the end. */
+const INDEX_NODES = [
+  { x: 262, y: 84, claimed: true },
+  { x: 538, y: 92, claimed: false },
+  { x: 236, y: 226, claimed: false },
+  { x: 566, y: 222, claimed: true },
+  { x: 168, y: 150, claimed: false },
+  { x: 634, y: 156, claimed: false },
+  { x: 120, y: 62, claimed: false },
+  { x: 684, y: 70, claimed: true },
+  { x: 104, y: 246, claimed: true },
+  { x: 700, y: 240, claimed: false },
+  { x: 44, y: 152, claimed: false },
+  { x: 758, y: 148, claimed: false },
+] as const;
+const NODE_R = 13;
+
 /**
- * Index pages going out: three rows of clinic pages in large type, sliding past in alternating directions as the
- * scroll moves. Every third page is salmon, a clinic that has claimed its page.
+ * The Index going out, as a line drawing that builds with the scroll: a clinic's page in the middle, then a soft
+ * curve out to each clinic in the cloud around it, near ones first. Last, the clinics that claimed fill salmon.
  */
-function IndexPages({ t }: { t: number }) {
+function IndexDrawing({ t }: { t: number }) {
   return (
-    <div className="earlypreview-market__pages" aria-hidden>
-      {INDEX.pages.map((row, r) => {
-        const travel = ramp(t, [0.6, 3.0]);
-        const x = r % 2 === 0 ? -travel * 22 : -22 + travel * 22;
+    <svg
+      className="earlypreview-market__index-art"
+      viewBox="0 0 800 310"
+      fill="none"
+      aria-hidden
+    >
+      <rect
+        x={352}
+        y={88}
+        width={96}
+        height={128}
+        rx={18}
+        pathLength={1}
+        style={draw(seg(t, 0, 0.2))}
+      />
+      <circle
+        cx={377}
+        cy={115}
+        r={9}
+        pathLength={1}
+        className="is-soft"
+        style={draw(seg(t, 0.14, 0.08))}
+      />
+      <path
+        d="M395 111h30"
+        pathLength={1}
+        className="is-soft"
+        style={draw(seg(t, 0.17, 0.08))}
+      />
+      <path
+        d="M395 120h18"
+        pathLength={1}
+        className="is-faint"
+        style={draw(seg(t, 0.19, 0.08))}
+      />
+      <path
+        d="M368 146h64"
+        pathLength={1}
+        className="is-faint"
+        style={draw(seg(t, 0.21, 0.08))}
+      />
+      <path
+        d="M368 158h46"
+        pathLength={1}
+        className="is-faint"
+        style={draw(seg(t, 0.23, 0.08))}
+      />
+      <rect
+        x={368}
+        y={178}
+        width={46}
+        height={18}
+        rx={9}
+        pathLength={1}
+        className="is-salmon"
+        style={draw(seg(t, 0.26, 0.08))}
+      />
+      {INDEX_NODES.map((node, i) => {
+        const left = node.x < 400;
+        const sx = left ? 352 : 448;
+        const ex = node.x + (left ? NODE_R : -NODE_R);
+        const pull = (left ? -1 : 1) * Math.abs(ex - sx) * 0.5;
+        const start = 0.32 + i * 0.04;
         return (
-          <div
-            key={r}
-            className="earlypreview-market__pages-row"
-            style={vars({
-              "--x": x,
-              "--e": en(t, 0.9 + r * 0.12, 1.25 + r * 0.12),
-            })}
-          >
-            {[...row, ...row].map((name, i) => (
-              <span
-                key={`${name}-${i}`}
-                className={(i + r) % 3 === 0 ? "is-claimed" : undefined}
-              >
-                {name}
-              </span>
-            ))}
-          </div>
+          <g key={i}>
+            <path
+              d={`M${sx} 152C${sx + pull} 152 ${ex - pull} ${node.y} ${ex} ${node.y}`}
+              pathLength={1}
+              className={i < 6 ? "is-soft" : "is-faint"}
+              style={draw(seg(t, start, 0.12))}
+            />
+            <circle
+              cx={node.x}
+              cy={node.y}
+              r={NODE_R}
+              pathLength={1}
+              style={draw(seg(t, start + 0.1, 0.08))}
+            />
+            {node.claimed ? (
+              <circle
+                cx={node.x}
+                cy={node.y}
+                r={5}
+                className="is-dot"
+                style={vars({ "--k": seg(t, 0.86 + i * 0.008, 0.06) })}
+              />
+            ) : null}
+          </g>
         );
       })}
-    </div>
+    </svg>
   );
 }
 
@@ -706,8 +795,8 @@ function useCenterOffset(ref: { current: HTMLElement | null }) {
 }
 
 /**
- * The clinics Doe targets as one wall of type: private services large, then medical practices and specialties
- * smaller. Each group leads with its name in salmon, and its words come in one after another.
+ * The clinics Doe targets, in two groups side by side: private services first and widest, then medical practices
+ * and specialties. Each group's name is large and salmon over its types, which come in one after another.
  */
 function ClinicsScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "clinics");
@@ -717,25 +806,35 @@ function ClinicsScene({ p }: { p: number }) {
       <div className="earlypreview-market__body">
         <div className="earlypreview-market__types">
           {CLINICS.groups.map((group, g) => {
-            const from = g === 0 ? 0.4 : 1.25;
-            const step = g === 0 ? 0.04 : 0.03;
+            const from = g === 0 ? 0.4 : 0.9;
             return (
-              <ul
+              <div
                 key={group.id}
                 className={`earlypreview-market__type-group is-${group.id}`}
               >
-                {[group.lead, ...group.types].map((type, i) => (
-                  <li
-                    key={type}
-                    className={i === 0 ? "is-lead" : undefined}
-                    style={vars({
-                      "--e": en(t, from + i * step, from + i * step + 0.25),
-                    })}
-                  >
-                    {type}
-                  </li>
-                ))}
-              </ul>
+                <h3
+                  className="earlypreview-market__type-lead"
+                  style={vars({ "--e": en(t, from, from + 0.3) })}
+                >
+                  {group.lead}
+                </h3>
+                <ul className="earlypreview-market__type-list">
+                  {group.types.map((type, i) => (
+                    <li
+                      key={type}
+                      style={vars({
+                        "--e": en(
+                          t,
+                          from + 0.15 + i * 0.035,
+                          from + 0.4 + i * 0.035,
+                        ),
+                      })}
+                    >
+                      {type}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             );
           })}
         </div>
@@ -745,8 +844,8 @@ function ClinicsScene({ p }: { p: number }) {
 }
 
 /**
- * Go-to-market: the title starts in the middle of the screen and rises, and the clinics' Index pages slide past
- * under it in large type.
+ * Go-to-market: the title starts in the middle of the screen and rises, and the line drawing of the Index going out
+ * builds under it.
  */
 function IndexScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "index");
@@ -773,7 +872,7 @@ function IndexScene({ p }: { p: number }) {
         </p>
       </div>
       <div className="earlypreview-market__body">
-        <IndexPages t={t} />
+        <IndexDrawing t={ramp(t, [1.0, 2.6])} />
       </div>
     </Scene>
   );

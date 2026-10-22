@@ -255,48 +255,56 @@
 
 /* ------------------------------------------------------------ clinic types */
 
-/* One wall of type along the bottom: private services large, then medical smaller; each group's name in salmon. */
+/* Two groups side by side along the bottom, their names on one line: private services widest, then medical. */
 .earlypreview-market__types {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1.4rem, 4vh, 2.5rem);
-  max-width: 80rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(2rem, 5vw, 6rem);
 }
 
-.earlypreview-market__type-group {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.12em 0.6em;
+.earlypreview-market__type-lead {
+  margin: 0 0 clamp(1rem, 3.2vh, 1.9rem);
+  font-family: var(--m-display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, min(4vw, 6.6vh), 4.4rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--m-salmon);
+  opacity: var(--e, 0);
+  transform: translateY(calc((1 - var(--e, 0)) * 0.8rem));
+}
+
+.earlypreview-market__type-list {
+  display: grid;
+  gap: clamp(0.35rem, 1.1vh, 0.7rem) clamp(1rem, 2vw, 2rem);
   margin: 0;
   padding: 0;
   list-style: none;
   font-family: var(--m-display);
-  line-height: 1.08;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.05rem, min(1.45vw, 2.6vh), 1.55rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   color: rgb(255 252 241 / 0.74);
 }
 
-.earlypreview-market__type-group.is-private {
-  font-size: clamp(1.9rem, min(3.3vw, 5.4vh), 3.4rem);
+.earlypreview-market__type-group.is-private .earlypreview-market__type-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.earlypreview-market__type-group.is-medical {
-  font-size: clamp(1.3rem, min(2.1vw, 3.5vh), 2.15rem);
+.earlypreview-market__type-group.is-medical .earlypreview-market__type-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.earlypreview-market__type-group > li {
+.earlypreview-market__type-list > li {
+  white-space: nowrap;
   opacity: var(--e, 0);
-  transform: translateY(calc((1 - var(--e, 0)) * 0.6rem));
+  transform: translateY(calc((1 - var(--e, 0)) * 0.5rem));
   transition: color 200ms ease;
 }
 
-.earlypreview-market__type-group > .is-lead {
-  color: var(--m-salmon);
-}
-
 @media (hover: hover) {
-  .earlypreview-market__type-group > li:hover {
+  .earlypreview-market__type-list > li:hover {
     color: var(--m-cream);
   }
 }
@@ -719,39 +727,42 @@
   margin: 0;
 }
 
-/* Index pages: three rows of clinic names across the whole screen, sliding with --x (percent of the row). */
-.earlypreview-market__pages {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.5rem, 1.6vh, 1rem);
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
-  overflow: hidden;
-  mask-image: linear-gradient(
-    90deg,
-    transparent,
-    #000 12%,
-    #000 88%,
-    transparent
-  );
+/* The Index drawing fills the space under the title. Each stroke is traced in by its own --draw (0 to 1). */
+.earlypreview-market__body > .earlypreview-market__index-art {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  overflow: visible;
+  stroke: var(--m-cream);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.earlypreview-market__pages-row {
-  display: flex;
-  gap: 0 clamp(1.5rem, 3vw, 3rem);
-  width: max-content;
-  font-family: var(--m-display);
-  font-size: clamp(1.8rem, min(3.2vw, 5.2vh), 3.3rem);
-  line-height: 1.1;
-  letter-spacing: -0.035em;
-  white-space: nowrap;
-  color: var(--m-quiet);
-  opacity: var(--e, 0);
-  transform: translateX(calc(var(--x, 0) * 1%));
+.earlypreview-market__index-art [pathLength] {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw, 0));
+  /* Hidden until it starts drawing, so round caps don't leave a dot. */
+  opacity: min(1, calc(var(--draw, 0) * 40));
 }
 
-.earlypreview-market__pages-row > .is-claimed {
-  color: var(--m-salmon);
+.earlypreview-market__index-art .is-soft {
+  stroke-opacity: 0.62;
+}
+
+.earlypreview-market__index-art .is-faint {
+  stroke-opacity: 0.34;
+}
+
+.earlypreview-market__index-art .is-salmon {
+  stroke: var(--m-salmon);
+}
+
+.earlypreview-market__index-art .is-dot {
+  fill: var(--m-salmon);
+  stroke: none;
+  opacity: var(--k, 0);
 }
 
 /* ------------------------------------------------------------ market size */
@@ -2002,16 +2013,11 @@
   font-size: 0.9rem;
 }
 
-/* iPhone go-to-market: the pages in smaller type. */
+/* iPhone go-to-market. */
 .doehealth-desk2-page:has(.doephone-mobile-root)
   .earlypreview-market__index-detail {
   font-size: 1rem;
   text-wrap: balance;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__pages-row {
-  font-size: 1.4rem;
 }
 
 /* iPhone Seed: the metrics over the title, both full width. */
@@ -2474,16 +2480,6 @@
   clip: rect(0 0 0 0);
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__type-group.is-private {
-  font-size: 1.45rem;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__type-group.is-medical {
-  font-size: 1.05rem;
-}
-
 /* iPhone plans: one row per tier, its name on the left and its price on the right; the features don't fit. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__plans {
   display: flex;
@@ -2536,4 +2532,44 @@
   .earlypreview-market__country-panel {
   align-items: flex-start;
   text-align: left;
+}
+
+/* iPhone clinic types: the two groups stacked, two columns of types each. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__types {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.6rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__type-lead {
+  margin-bottom: 0.6rem;
+  font-size: 1.75rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__type-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem 1rem;
+  font-size: 1rem;
+}
+
+/* Short iPhones (SE and the like): the screens tighten so nothing reaches the nav. */
+@media (max-height: 700px) {
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__signals {
+    row-gap: 1rem;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__types {
+    gap: 1rem;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__type-lead {
+    margin-bottom: 0.4rem;
+    font-size: 1.5rem;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__type-list {
+    gap: 0.1rem 1rem;
+    font-size: 0.92rem;
+  }
 }

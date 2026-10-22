@@ -66,6 +66,9 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     let doneAt = 0;
     // Desktop pacing: input spends progress from a small bucket that refills at a steady rate.
     let tokens = DESKTOP_PACE_BURST;
+    // Desktop: wheel scroll not yet applied by the browser's smooth scrolling (px, signed), and when it was last added.
+    let pendingWheel = 0;
+    let pendingAt = 0;
     let tokensAt = performance.now();
     // iPhone toolbar: true while the viewport is changing size, so the lock doesn't re-pin mid-animation.
     let settling = false;
@@ -213,6 +216,10 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       const y = window.scrollY;
       const dir = y - lastY;
       lastY = y;
+      if (pendingWheel !== 0) {
+        const left = pendingWheel - dir;
+        pendingWheel = Math.sign(left) === Math.sign(pendingWheel) ? left : 0;
+      }
       if (phone()) {
         if (locked) setLocked(false);
         // Scrolling back up before the track has collapsed: scrub the scenes back, as they came in. Holding the
@@ -261,8 +268,37 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     };
 
     const onWheel = (event: WheelEvent) => {
-      if (!locked) return;
       const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
+      if (!locked) {
+        // Desktop: lock on the wheel step that would carry the section's top past the viewport's, before the page
+        // moves. Locking after the scroll lands overshoots, and pulling the page back reads as a bounce. `pending`
+        // is wheel scroll the browser is still animating towards.
+        // Another locked section took this step, so the page won't move.
+        if (done || phone() || event.defaultPrevented) return;
+        const raw = event.deltaY * scale;
+        if (performance.now() - pendingAt > 300) pendingWheel = 0;
+        pendingAt = performance.now();
+        const realTop = section.getBoundingClientRect().top;
+        // Only a section within a screen of the top can be reached by this step.
+        if (Math.abs(realTop) > window.innerHeight) {
+          pendingWheel = 0;
+          return;
+        }
+        const top = realTop - pendingWheel;
+        const crossesDown = raw > 0 && top > 1 && top - raw <= 1 && progress < end;
+        const crossesUp = raw < 0 && top < -1 && top - raw >= -1 && progress > 0;
+        if (crossesDown || crossesUp) {
+          event.preventDefault();
+          pendingWheel = 0;
+          setLocked(true);
+          lockedAt = performance.now();
+          jumpTo(sectionTop());
+          lastY = window.scrollY;
+          return;
+        }
+        pendingWheel += raw;
+        return;
+      }
       const delta = Math.max(-80, Math.min(80, event.deltaY * scale));
       if (advance(delta)) event.preventDefault();
     };
