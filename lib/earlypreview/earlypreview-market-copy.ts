@@ -270,7 +270,7 @@ const pct = (part: number) => `${Math.round((part / INDEX_TOTAL) * 100)}%`;
  */
 export const EARLYPREVIEW_MARKET_INDEX = {
   index: {
-    title: ["We're already indexed 8,000", "clinics in the US & Canada."],
+    title: ["We've already indexed 8,000", "clinics in the US & Canada."],
     detail: [
       "We're emailing every clinic its",
       "index page to claim by the end of Q1 2027.",
