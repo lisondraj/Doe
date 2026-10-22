@@ -387,7 +387,7 @@
 /* Each paid tier's founding price, then the price it becomes. */
 .earlypreview-market__founding-steps {
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: auto auto;
   justify-content: end;
   align-items: baseline;
   gap: 0.25rem 0.55rem;

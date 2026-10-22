@@ -324,8 +324,8 @@ function Check() {
 const PAID_PLANS = PLANS.plans.filter((plan) => "foundingMo" in plan);
 
 /**
- * Free to paid: the title with the founding offer in the top right (each paid tier's founding price, then its regular
- * one), then the four tiers in a row at their regular prices.
+ * Free to paid: the title with the founding offer in the top right, then the four tiers in a row. Every paid price
+ * here is its founding price.
  */
 function PlansScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "plans");
@@ -350,10 +350,7 @@ function PlansScene({ p }: { p: number }) {
             {PAID_PLANS.map((plan) => (
               <li key={plan.id}>
                 <span>{plan.name}</span>
-                <strong>${"foundingMo" in plan ? plan.foundingMo : ""}</strong>
-                <span className="sr-only">then</span>
-                <span aria-hidden>→</span>
-                <span>${plan.priceMo}</span>
+                <strong>${plan.foundingMo}</strong>
               </li>
             ))}
           </ul>
@@ -376,14 +373,14 @@ function PlansScene({ p }: { p: number }) {
                 </span>
                 <span className="earlypreview-market__plan-prices">
                   <span className="earlypreview-market__plan-value">
-                    ${plan.priceMo}
+                    ${"foundingMo" in plan ? plan.foundingMo : plan.priceMo}
                     <small>/mo</small>
                   </span>
                 </span>
                 {"group" in plan ? (
                   <span className="earlypreview-market__plan-group">
                     <span>
-                      {plan.group.label} <strong>${plan.group.priceMo}</strong>
+                      {plan.group.label} <strong>${plan.group.foundingMo}</strong>
                       {plan.group.unit}
                     </span>
                   </span>
