@@ -21,6 +21,7 @@ import {
 import {
   EARLYPREVIEW_MARKET_CITIES as CITIES,
   EARLYPREVIEW_MARKET_CLINICS as CLINICS,
+  EARLYPREVIEW_MARKET_INCLUDED as INCLUDED,
   EARLYPREVIEW_MARKET_INDEX as INDEX,
   EARLYPREVIEW_MARKET_PLANS as PLANS,
   EARLYPREVIEW_MARKET_SEED as SEED,
@@ -35,6 +36,7 @@ const SCENES = [
   { id: "index", len: 3.2 },
   { id: "seed", len: 2.2 },
   { id: "plans", len: 3.0 },
+  { id: "included", len: 2.4 },
   { id: "cities", len: 5.0 },
   { id: "clinics", len: 2.4 },
 ] as const;
@@ -319,9 +321,11 @@ function Check() {
   );
 }
 
+const PAID_PLANS = PLANS.plans.filter((plan) => "foundingMo" in plan);
+
 /**
- * Free to paid: the title and the founding offer on the left, the three plans down the right. A paid plan shows its
- * founding price beside the price it becomes after the first year.
+ * Free to paid: the title with the founding offer in the top right, then the four tiers in a row. A paid tier shows
+ * its founding price, which gives way to the price it becomes after the first year.
  */
 function PlansScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "plans");
@@ -330,7 +334,33 @@ function PlansScene({ p }: { p: number }) {
   const toRegular = en(t, 1.5, 1.9);
   return (
     <Scene o={o} label="Plans">
-      <SceneTitle title={PLANS.title} t={t} />
+      <div className="earlypreview-market__plans-head">
+        <SceneTitle title={PLANS.title} t={t} />
+        <aside
+          className="earlypreview-market__founding"
+          style={vars({ "--e": en(t, 0.35, 0.7) })}
+        >
+          <p className="earlypreview-market__founding-label">
+            {PLANS.founding.label}
+          </p>
+          <p className="earlypreview-market__founding-detail">
+            {PLANS.founding.detail[0]}
+            <br />
+            {PLANS.founding.detail[1]}
+          </p>
+          <ul className="earlypreview-market__founding-steps">
+            {PAID_PLANS.map((plan) => (
+              <li key={plan.id}>
+                <span>{plan.name}</span>
+                <strong>${"foundingMo" in plan ? plan.foundingMo : ""}</strong>
+                <span className="sr-only">then</span>
+                <span aria-hidden>→</span>
+                <span>${plan.priceMo}</span>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      </div>
       <div className="earlypreview-market__body">
         <ol className="earlypreview-market__plans">
           {PLANS.plans.map((plan, index) => (
@@ -392,6 +422,11 @@ function PlansScene({ p }: { p: number }) {
                     </span>
                   </span>
                 ) : null}
+                {"note" in plan ? (
+                  <span className="earlypreview-market__plan-group">
+                    <span>{plan.note}</span>
+                  </span>
+                ) : null}
               </div>
               <ul className="earlypreview-market__plan-features">
                 {plan.features.map((feature) => (
@@ -404,6 +439,67 @@ function PlansScene({ p }: { p: number }) {
             </li>
           ))}
         </ol>
+      </div>
+    </Scene>
+  );
+}
+
+/**
+ * What each tier includes: the tiers across the top, one row per layer of the clinic. Doe One's column is salmon, and
+ * what a tier leaves out is a quiet dash. Rows come in one after another.
+ */
+function IncludedScene({ p }: { p: number }) {
+  const { o, t } = sceneClock(p, "included");
+  const hover = useHover<string>();
+  return (
+    <Scene o={o} label="What's in each tier">
+      <SceneTitle title={INCLUDED.title} t={t} />
+      <div className="earlypreview-market__body">
+        <div
+          className="earlypreview-market__incl"
+          role="table"
+          aria-label="What each tier includes"
+        >
+          <div
+            className="earlypreview-market__incl-row is-head"
+            role="row"
+            style={vars({ "--e": en(t, 0.3, 0.55) })}
+          >
+            <span role="columnheader" />
+            {INCLUDED.tiers.map((tier) => (
+              <span key={tier.id} role="columnheader" className={`is-${tier.id}`}>
+                {tier.name} <em>${tier.priceMo}</em>
+              </span>
+            ))}
+          </div>
+          {INCLUDED.rows.map((row, index) => (
+            <div
+              key={row.id}
+              className={`earlypreview-market__incl-row${hover.state(row.id)}`}
+              role="row"
+              style={vars({
+                "--e": en(t, 0.4 + index * 0.08, 0.65 + index * 0.08),
+              })}
+              {...hover.bind(row.id)}
+            >
+              <span role="rowheader">{row.label}</span>
+              {row.cells.map((cell, c) => (
+                <span
+                  key={INCLUDED.tiers[c].id}
+                  role="cell"
+                  className={`is-${INCLUDED.tiers[c].id}${cell ? "" : " is-none"}`}
+                >
+                  {cell ?? (
+                    <>
+                      <span aria-hidden>—</span>
+                      <span className="sr-only">Not included</span>
+                    </>
+                  )}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </Scene>
   );
@@ -939,6 +1035,7 @@ const NAV = (() => {
     whole("Index", "index"),
     whole("Seed", "seed"),
     whole("Pricing", "plans"),
+    whole("Tiers", "included"),
     stage("Toronto", "cities", 0, CITY_STEP.us, CITY_STEP.us - 0.15),
     stage(
       "U.S.",
@@ -998,13 +1095,14 @@ function sceneP(p: number, id: SceneId) {
 const WhyNow = memo(WhyNowScene);
 const Seed = memo(SeedScene);
 const Plans = memo(PlansScene);
+const Included = memo(IncludedScene);
 const Cities = memo(CitiesScene);
 const Clinics = memo(ClinicsScene);
 const Index = memo(IndexScene);
 
 /**
- * The market section, the page's second, in six screens: why now ("Personal agents are scaling."), the clinics
- * already indexed, the target at Seed, the plans from free to paid, the cities (Toronto, then the U.S., then the
+ * The market section, the page's second, in seven screens: why now ("Personal agents are scaling."), the clinics
+ * already indexed, the target at Seed, the plans from free to paid, what each tier includes, the cities (Toronto, then the U.S., then the
  * targets), and the clinic types. It locks like the audience section on /doehealthdesk2: scrolling steps through the
  * screens, every motion follows the scroll, and the lock releases on the clinic types, which stay. On an iPhone it scrubs through a sticky track.
  */
@@ -1025,6 +1123,7 @@ export function EarlyPreviewMarketSection() {
         <WhyNow p={sceneP(p, "whyNow")} />
         <Seed p={sceneP(p, "seed")} />
         <Plans p={sceneP(p, "plans")} />
+        <Included p={sceneP(p, "included")} />
         <Cities p={sceneP(p, "cities")} />
         <Clinics p={sceneP(p, "clinics")} />
         <Index p={sceneP(p, "index")} />

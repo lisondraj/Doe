@@ -72,10 +72,17 @@ export const EARLYPREVIEW_MARKET_WHY_NOW = {
 } as const;
 
 /**
- * Commercial monthly price from April 2027: per location for an independent clinic, per provider for a multi-site
- * group (on Advanced). The Seed target and the plans screen both read it.
+ * Commercial monthly price: per location for an independent clinic, per provider for a multi-site group, and per
+ * provider for Doe One in every segment. The Seed target and the plans screens all read it.
  */
-const PLAN_MO = { free: 0, basic: 69, advanced: 129, group: 89 } as const;
+const PLAN_MO = {
+  free: 0,
+  basic: 69,
+  advanced: 129,
+  groupBasic: 49,
+  group: 89,
+  one: 299,
+} as const;
 
 /**
  * The target at Seed, Q2 2028, 18 months out: the one model the Seed, cities and breakdown screens all add up from.
@@ -304,58 +311,64 @@ export const EARLYPREVIEW_MARKET_INDEX = {
 } as const;
 
 /**
- * Founding pricing, January to March 2027, then the commercial `PLAN_MO` price from April 2027. The Seed ARR is at
- * commercial prices.
+ * Founding pricing: a clinic that buys in the first half of 2027 keeps its founding price for its first year, then
+ * pays the commercial `PLAN_MO` price. The Seed ARR is at commercial prices.
  */
-const FOUNDING_MO = { basic: 39, advanced: 79, group: 59 } as const;
+const FOUNDING_MO = {
+  basic: 39,
+  advanced: 79,
+  groupBasic: 29,
+  group: 59,
+  one: 199,
+} as const;
 
-/** Free to paid: every clinic starts free, Basic connects it to agents, Advanced runs it with them. */
+/**
+ * Free to paid: every clinic starts free, Basic makes it readable to agents, Advanced lets agents book it, and Doe One
+ * runs the whole visit. Each tier's features here are the short version; the included screen has the detail.
+ */
 export const EARLYPREVIEW_MARKET_PLANS = {
   title: ["Free to Claim.", "Paid to Connect."],
   founding: {
-    label: "Founding pricing",
-    until: "March 2027",
-    detail: "Founding prices from January to March 2027.",
+    label: "Founding Pricing",
+    detail: ["Buy in the first half of 2027,", "and your price holds for a year."],
   },
   /** Shown under each paid plan's commercial price. */
-  regularFrom: "From April 2027",
+  regularFrom: "After year one",
   plans: [
     {
       id: "free",
       name: "Free",
-      tagline: "Get found by personal agents",
       priceMo: PLAN_MO.free,
-      unit: "always",
       features: [
         "Your verified Doe page",
         "Found by every personal agent",
-        "Hours, services and providers listed",
         "Monthly agent demand report",
-        "Edit your page any time",
       ],
     },
     {
       id: "basic",
       name: "Basic",
-      tagline: "Answer every agent",
       priceMo: PLAN_MO.basic,
       foundingMo: FOUNDING_MO.basic,
+      /** Multi-site groups pay per provider instead of per location. */
+      group: {
+        label: "Multi-site",
+        priceMo: PLAN_MO.groupBasic,
+        foundingMo: FOUNDING_MO.groupBasic,
+        unit: "/provider/mo",
+      },
       features: [
         "Everything in Free",
-        "Your EMR and calendar, synced",
-        "Two-way messages with agents",
-        "Agent booking requests",
-        "A full, featured Index profile",
-        "Patient reminders by text",
+        "Readable by every agent",
+        "Hours, prices and openings shown",
+        "Booking through your web form",
       ],
     },
     {
       id: "advanced",
       name: "Advanced",
-      tagline: "Let agents run the front desk",
       priceMo: PLAN_MO.advanced,
       foundingMo: FOUNDING_MO.advanced,
-      /** Multi-site groups take Advanced per provider instead of per location. */
       group: {
         label: "Multi-site",
         priceMo: PLAN_MO.group,
@@ -364,15 +377,106 @@ export const EARLYPREVIEW_MARKET_PLANS = {
       },
       features: [
         "Everything in Basic",
-        "Voice agents on your phone line",
-        "Smart appointments",
-        "AI scribe",
-        "Agents that manage your clinic",
-        "Live booking by voice",
-        "A personal agent for every provider",
+        "Two-way sync with your EHR",
+        "Instant booking and deposits",
+        "The Agent Firewall",
+      ],
+    },
+    {
+      id: "one",
+      name: "Doe One",
+      priceMo: PLAN_MO.one,
+      foundingMo: FOUNDING_MO.one,
+      note: "Per provider, every clinic",
+      features: [
+        "Everything in Advanced",
+        "AI receptionist",
+        "Appointments, with ambient scribe",
+        "Prepare, with pre-visit videos",
       ],
     },
   ],
+} as const;
+
+/** One tier's column on the included screen. */
+type IncludedCell = string | null;
+
+/**
+ * What each paid tier includes, one row per layer of the clinic, Basic to Doe One. `null` is not included; an add-on
+ * names its price. The Free tier is the claimed page under all of them, so it has no column.
+ */
+export const EARLYPREVIEW_MARKET_INCLUDED = {
+  title: ["What's in each tier.", "Doe One runs the whole visit."],
+  tiers: [
+    { id: "basic", name: "Basic", priceMo: PLAN_MO.basic },
+    { id: "advanced", name: "Advanced", priceMo: PLAN_MO.advanced },
+    { id: "one", name: "Doe One", priceMo: PLAN_MO.one },
+  ],
+  rows: [
+    {
+      id: "found",
+      label: "Found by agents",
+      cells: [
+        "Schema.org tags and agents.json",
+        "Full schema, live capability match",
+        "Tuned for every agent and search index",
+      ],
+    },
+    {
+      id: "schedule",
+      label: "Scheduling",
+      cells: [
+        "Read-only hours, prices and openings",
+        "Live two-way sync with your EHR",
+        "A calendar that runs itself, every site",
+      ],
+    },
+    {
+      id: "booking",
+      label: "Booking",
+      cells: [
+        "Agents fill in your web form",
+        "Instant booking and deposits by API",
+        "Bookings, deposits and upsells, one payout",
+      ],
+    },
+    {
+      id: "security",
+      label: "Security",
+      cells: [
+        null,
+        "The Agent Firewall, token-verified",
+        "Full guardrails against scraper bots",
+      ],
+    },
+    {
+      id: "voice",
+      label: "Voice",
+      cells: [
+        null,
+        `Add-on, $149/mo a line`,
+        "AI receptionist, inbound and outbound",
+      ],
+    },
+    {
+      id: "appointments",
+      label: "Appointments",
+      cells: [
+        null,
+        `Scribe add-on, $199/mo a provider`,
+        "Clinical evidence surfaced, ambient scribe",
+      ],
+    },
+    {
+      id: "prepare",
+      label: "Prepare",
+      cells: [null, null, "Pre-visit videos, so you're ready for the visit"],
+    },
+  ] satisfies readonly {
+    id: string;
+    label: string;
+    cells: readonly [IncludedCell, IncludedCell, IncludedCell];
+  }[],
 } as const;
 
 /**
