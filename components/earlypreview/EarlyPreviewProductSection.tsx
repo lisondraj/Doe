@@ -58,7 +58,7 @@ const VISUALS: Record<EarlyPreviewProductSlideId, Visual> = {
   index: { kind: "app", tab: "integrations", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   interface: { kind: "app", tab: "call", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   auth: { kind: "shell", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
-  permissions: { kind: "app", tab: "permissions", crop: { x: 560, y: 125, w: 840, h: 560, ax: "end", ay: "start" }, sit: "bl" },
+  permissions: { kind: "app", tab: "permissions", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "bl" },
   insurance: { kind: "film", film: "communication", frame: 575, crop: { x: 775, y: 385, w: 805, h: 540, ax: "end", ay: "end" }, sit: "tl" },
   forms: { kind: "app", tab: "forms", crop: { x: 370, y: 120, w: 715, h: 520, ay: "start" }, sit: "b" },
   followUp: { kind: "film", film: "coordinate", frame: 500, crop: { x: 445, y: 65, w: 1030, h: 770, ay: "end" }, sit: "t" },
