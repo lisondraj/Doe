@@ -102,7 +102,7 @@ const FOUNDING_MO = {
  * the founding MRR × 12: independent locations at their plan's price; multi-site groups (on Advanced) and Doe One
  * clinics per provider seat. Free clinics are the claimed ones that don't pay.
  */
-const SEED_INDEXED = { canada: 11_900, us: 5_100 } as const;
+const SEED_INDEXED = { canada: 10_500, us: 4_500 } as const;
 const SEED_CLAIMED = { canada: 700, us: 300 } as const;
 /**
  * Independent clinics are one location each. Multi-site groups average 4 locations and 10 provider seats; Doe One
@@ -348,7 +348,7 @@ const pct = (part: number) => `${Math.round((part / INDEX_TOTAL) * 100)}%`;
  */
 export const EARLYPREVIEW_MARKET_INDEX = {
   index: {
-    title: ["We've already indexed 8,000", "clinics in the US & Canada."],
+    title: ["We've already indexed 1,500", "clinics in the US & Canada."],
     detail: [
       "We're emailing every clinic its",
       "index page to claim by the end of Q1 2027.",
