@@ -9,6 +9,8 @@ import {
   useState,
 } from "react";
 
+import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
+import { DoeHealthDesk2DotTide } from "@/components/doehealth-desk2/DoeHealthDesk2DotTide";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import {
   DOEHEALTH_DESK2_PHONE_STEP_PX,
@@ -30,11 +32,11 @@ import {
 /** The screens in order, and how much scroll progress each one holds. */
 const SCENES = [
   { id: "whyNow", len: 2.0 },
+  { id: "index", len: 3.2 },
   { id: "seed", len: 2.2 },
   { id: "plans", len: 3.0 },
   { id: "cities", len: 5.0 },
   { id: "clinics", len: 2.4 },
-  { id: "index", len: 3.2 },
 ] as const;
 
 type SceneId = (typeof SCENES)[number]["id"];
@@ -272,6 +274,20 @@ function SeedScene({ p }: { p: number }) {
       label="Target at Seed"
       className="earlypreview-market__scene--corners"
     >
+      {/* The hero's dot wave, across the middle of the screen at full width. */}
+      <div
+        className="earlypreview-market__seed-wave"
+        style={vars({ "--e": en(t, 0.1, 0.55) })}
+        aria-hidden
+      >
+        <DoeHealthBlogDotWave
+          color="rgba(252, 207, 184, 0.6)"
+          top={0.42}
+          amp={60}
+          fade={0.5}
+          active={o > 0}
+        />
+      </div>
       <ol className="earlypreview-market__seed-lines">
         {SEED.lines.map((line, index) => (
           <li
@@ -844,8 +860,8 @@ function ClinicsScene({ p }: { p: number }) {
 }
 
 /**
- * Go-to-market: the title starts in the middle of the screen and rises, and the line drawing of the Index going out
- * builds under it.
+ * The clinics already indexed: the title starts in the middle of the screen and rises, and the line drawing of the
+ * Index going out builds under it, between the dot tides at the sides.
  */
 function IndexScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "index");
@@ -856,6 +872,16 @@ function IndexScene({ p }: { p: number }) {
 
   return (
     <Scene o={o} label="Go-to-market">
+      {/* The side dot tides from the clinics scene on /doehealthdesk2, swept in with the title. They fade with the screen. */}
+      <div
+        className="doehealth-desk2-visible__tide earlypreview-market__index-tide"
+        style={vars({ "--s": ramp(t, [0.05, 0.9]) })}
+      >
+        <DoeHealthDesk2DotTide
+          color="rgba(252, 207, 184, 0.6)"
+          active={o > 0}
+        />
+      </div>
       <div
         ref={headRef}
         className="earlypreview-market__index-head"
@@ -898,6 +924,7 @@ const NAV = (() => {
     stage(label, id, 0, len(id), len(id) - FADE - 0.02);
   return [
     whole("Why Now", "whyNow"),
+    whole("Index", "index"),
     whole("Seed", "seed"),
     whole("Pricing", "plans"),
     stage("Toronto", "cities", 0, CITY_STEP.us, CITY_STEP.us - 0.15),
@@ -915,8 +942,7 @@ const NAV = (() => {
       len("cities"),
       len("cities") - FADE - 0.02,
     ),
-    whole("Clinics", "clinics"),
-    stage("Index", "index", 0, len("index"), len("index")),
+    stage("Clinics", "clinics", 0, len("clinics"), len("clinics")),
   ];
 })();
 
@@ -965,11 +991,10 @@ const Clinics = memo(ClinicsScene);
 const Index = memo(IndexScene);
 
 /**
- * The market section at the bottom of /earlypreview, in six screens: why now, "Personal agents are scaling.", the
- * target at Seed, the plans from free to paid, the cities (Toronto, then the U.S., then the clinic breakdown), the clinic types, and the
- * go-to-market (the clinics indexed, their pages going out). It locks like the audience section on /doehealthdesk2:
- * scrolling steps through the screens, every motion follows the scroll, and the lock releases on the go-to-market screen,
- * which stays. On an iPhone it scrubs through a sticky track.
+ * The market section, the page's second, in six screens: why now ("Personal agents are scaling."), the clinics
+ * already indexed, the target at Seed, the plans from free to paid, the cities (Toronto, then the U.S., then the
+ * targets), and the clinic types. It locks like the audience section on /doehealthdesk2: scrolling steps through the
+ * screens, every motion follows the scroll, and the lock releases on the clinic types, which stay. On an iPhone it scrubs through a sticky track.
  */
 export function EarlyPreviewMarketSection() {
   const sectionRef = useRef<HTMLElement>(null);

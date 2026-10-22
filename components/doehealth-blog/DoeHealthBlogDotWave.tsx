@@ -22,6 +22,7 @@ export function DoeHealthBlogDotWave({
   slant = 0,
   flip = false,
   motion = true,
+  active = true,
 }: {
   color: string;
   top?: number;
@@ -37,8 +38,17 @@ export function DoeHealthBlogDotWave({
   flip?: boolean;
   /** false holds the wave on one still frame — same path reduced-motion already takes. */
   motion?: boolean;
+  /** false pauses the wave on its current frame, as for a canvas in a hidden screen. */
+  active?: boolean;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const activeRef = useRef(active);
+  const runRef = useRef<() => void>(() => {});
+
+  useEffect(() => {
+    activeRef.current = active;
+    runRef.current();
+  }, [active]);
 
   useEffect(() => {
     const canvas = ref.current;
@@ -87,23 +97,44 @@ export function DoeHealthBlogDotWave({
       ctx.globalAlpha = 1;
     };
 
+    // Only animates while it can be seen: on screen (with a margin) and `active`. Otherwise it holds its last frame,
+    // so a canvas nobody is looking at costs nothing per frame.
     let raf = 0;
+    let onScreen = false;
     const loop = (now: number) => {
       paint(now);
       raf = requestAnimationFrame(loop);
     };
+    const run = () => {
+      const should = !reduce && onScreen && activeRef.current;
+      if (should && !raf) raf = requestAnimationFrame(loop);
+      if (!should && raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    };
+    runRef.current = run;
 
     size();
-    if (reduce) paint(start);
-    else raf = requestAnimationFrame(loop);
+    paint(start);
     const observer = new ResizeObserver(() => {
       size();
-      if (reduce) paint(start);
+      paint(performance.now());
     });
     observer.observe(canvas);
+    const visibility = new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting;
+        run();
+      },
+      { rootMargin: "200px 0px" },
+    );
+    visibility.observe(canvas);
     return () => {
       cancelAnimationFrame(raf);
+      runRef.current = () => {};
       observer.disconnect();
+      visibility.disconnect();
     };
   }, [color, top, amp, fade, phase, scale, slant, flip, motion]);
 

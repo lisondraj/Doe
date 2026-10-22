@@ -9,8 +9,26 @@ const REF_W = 1440;
  * Dense halftone tides banked against both side edges, from video1 Video 3 (payments). Their wavy inner
  * edges roll slowly down the frame. Drawn live on a canvas that fills its box; holds still for reduced motion.
  */
-export function DoeHealthDesk2DotTide({ color, step = 12, reach = 420 }: { color: string; step?: number; reach?: number }) {
+export function DoeHealthDesk2DotTide({
+  color,
+  step = 12,
+  reach = 420,
+  active = true,
+}: {
+  color: string;
+  step?: number;
+  reach?: number;
+  /** false pauses the tides on their current frame, as for a canvas in a hidden screen. */
+  active?: boolean;
+}) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const activeRef = useRef(active);
+  const runRef = useRef<() => void>(() => {});
+
+  useEffect(() => {
+    activeRef.current = active;
+    runRef.current();
+  }, [active]);
 
   useEffect(() => {
     const canvas = ref.current;
@@ -63,23 +81,44 @@ export function DoeHealthDesk2DotTide({ color, step = 12, reach = 420 }: { color
       ctx.globalAlpha = 1;
     };
 
+    // Only animates while it can be seen: on screen (with a margin) and `active`. Otherwise it holds its last frame,
+    // so a canvas nobody is looking at costs nothing per frame.
     let raf = 0;
+    let onScreen = false;
     const loop = (now: number) => {
       paint(now);
       raf = requestAnimationFrame(loop);
     };
+    const run = () => {
+      const should = !reduce && onScreen && activeRef.current;
+      if (should && !raf) raf = requestAnimationFrame(loop);
+      if (!should && raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    };
+    runRef.current = run;
 
     size();
-    if (reduce) paint(start);
-    else raf = requestAnimationFrame(loop);
+    paint(start);
     const observer = new ResizeObserver(() => {
       size();
-      if (reduce) paint(start);
+      paint(performance.now());
     });
     observer.observe(canvas);
+    const visibility = new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting;
+        run();
+      },
+      { rootMargin: "200px 0px" },
+    );
+    visibility.observe(canvas);
     return () => {
       cancelAnimationFrame(raf);
+      runRef.current = () => {};
       observer.disconnect();
+      visibility.disconnect();
     };
   }, [color, step, reach]);
 
