@@ -56,6 +56,7 @@ export function EarlyPreviewFilmShell({
   active,
   anchor = "center",
   focus,
+  inset,
 }: {
   film: EarlyPreviewProductFilm;
   frame: number;
@@ -63,15 +64,20 @@ export function EarlyPreviewFilmShell({
   anchor?: "center" | "start";
   /** A rectangle of the 1920×1080 film to cover the paper with, so a film that draws its own window shows only that window's page. */
   focus?: { x: number; y: number; w: number; h: number };
+  /** Keeps the film's page this far (in artboard px) off the rail and the top edge, as the other boxes' pages sit. */
+  inset?: { x: number; y: number };
 }) {
-  const scale = focus ? Math.max(PAPER.w / focus.w, PAPER.h / focus.h) : FILM_SCALE;
-  const left = focus ? (PAPER.w - focus.w * scale) / 2 - focus.x * scale : anchor === "start" ? 0 : (PAPER.w - FILM.w * scale) / 2;
-  const top = focus ? (PAPER.h - focus.h * scale) / 2 - focus.y * scale : (PAPER.h - FILM.h * scale) / 2;
+  const ix = inset?.x ?? 0;
+  const iy = inset?.y ?? 0;
+  const area = { w: PAPER.w - ix, h: PAPER.h - iy };
+  const scale = focus ? Math.max(area.w / focus.w, area.h / focus.h) : FILM_SCALE;
+  const left = focus ? (area.w - focus.w * scale) / 2 - focus.x * scale : anchor === "start" ? 0 : (area.w - FILM.w * scale) / 2;
+  const top = focus ? (area.h - focus.h * scale) / 2 - focus.y * scale : (area.h - FILM.h * scale) / 2;
   return (
     <div className={`${dmSans.variable} ${inter.className} ${p22Mackinac.className}`} style={{ width: SHELL.w, height: SHELL.h }}>
       <ShadowsContext.Provider value={false}>
         <ProductShell active={active}>
-          <div style={{ position: "absolute", left: 0, top: 0, width: PAPER.w, height: PAPER.h, overflow: "hidden" }}>
+          <div style={{ position: "absolute", left: ix, top: iy, width: area.w, height: area.h, overflow: "hidden" }}>
             <div style={{ position: "absolute", left, top, width: FILM.w, height: FILM.h, transform: `scale(${scale})`, transformOrigin: "0 0" }}>
               <EarlyPreviewProductFilmFrame film={film} frame={frame} />
             </div>
