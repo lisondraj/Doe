@@ -137,7 +137,11 @@
   --p-ui-r: clamp(0.85rem, 2.4cqw, 1.4rem);
   position: absolute;
   overflow: hidden;
-  background: #fffcf1;
+  background: #faf6e9;
+  /* Every product screen is toned into the section's beige by one shared map, so the same colour is the same shade in
+   * every box: lightness is kept, the darkest (text, the ink rail) lands on the deep beige and the lightest on cream (the map is
+   * the BeigeTone filter in the section). */
+  filter: url(#earlypreview-beige);
 }
 
 .earlypreview-product__ui[data-sit="br"] {

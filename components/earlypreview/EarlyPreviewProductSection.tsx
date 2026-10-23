@@ -163,6 +163,25 @@ const unsmooth = (s: number) => 0.5 - Math.sin(Math.asin(1 - 2 * s) / 3);
 const BOX_AT = SLIDES.map((_, i) => PAN[0] + (PAN[1] - PAN[0]) * unsmooth(i / (SLIDES.length - 1)));
 
 /**
+ * One tone map for every product screen: each pixel keeps its lightness and takes the matching shade of the section's
+ * beige (darkest = the title's deep beige, lightest = cream), so the same colour is the same shade in every box.
+ */
+function BeigeTone() {
+  return (
+    <svg width="0" height="0" aria-hidden focusable="false" style={{ position: "absolute" }}>
+      <filter id="earlypreview-beige" colorInterpolationFilters="sRGB">
+        <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0" />
+        <feComponentTransfer>
+          <feFuncR type="table" tableValues="0.3686 0.3843 0.4 0.4294 0.4588 0.4902 0.5216 0.5569 0.5922 0.6275 0.6627 0.698 0.7333 0.7647 0.7961 0.8235 0.851 0.8765 0.902 0.9412 0.9804" />
+          <feFuncG type="table" tableValues="0.3059 0.3216 0.3373 0.3667 0.3961 0.4275 0.4588 0.4941 0.5294 0.5667 0.6039 0.6412 0.6784 0.7137 0.749 0.7784 0.8078 0.8353 0.8627 0.9137 0.9647" />
+          <feFuncB type="table" tableValues="0.2078 0.2216 0.2353 0.2627 0.2902 0.3216 0.3529 0.3784 0.4039 0.4392 0.4745 0.5118 0.549 0.5863 0.6235 0.6588 0.6941 0.7275 0.7608 0.8392 0.9137" />
+        </feComponentTransfer>
+      </filter>
+    </svg>
+  );
+}
+
+/**
  * iPhone: one line per box along the bottom, filling as the row pans past it; a tap brings that box to the front.
  * The lines run across the page margins along the bottom, as in the market section, with the skip above them. Hidden on the desktop, where the boxes are one row to scroll.
  */
@@ -310,6 +329,7 @@ export function EarlyPreviewProductSection() {
         data-nav-beige="1"
         aria-label="Product design, built by providers"
       >
+        <BeigeTone />
         <div
           ref={headRef}
           className={`earlypreview-product__head ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
