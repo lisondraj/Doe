@@ -21,7 +21,7 @@ import {
   type EarlyPreviewProductSlideId,
 } from "@/lib/earlypreview/earlypreview-product-copy";
 import { useNavReveal } from "@/lib/earlypreview/use-nav-reveal";
-import { p22Mackinac } from "@/lib/home/fonts";
+import { dmSans, p22Mackinac } from "@/lib/home/fonts";
 
 const EarlyPreviewFilmShell = dynamic(
   () => import("@/components/earlypreview/EarlyPreviewAuthShell").then((mod) => mod.EarlyPreviewFilmShell),
@@ -344,7 +344,7 @@ export function EarlyPreviewProductSection() {
                       {near && inStage[i] ? <SlideVisual visual={VISUALS[slide.id]} /> : null}
                     </div>
                   </div>
-                  <h3 className={`earlypreview-product__slide-title ${p22Mackinac.className}`}>{slide.title}</h3>
+                  <h3 className={`earlypreview-product__slide-title ${dmSans.className}`}>{slide.title}</h3>
                 </li>
               ))}
             </ol>

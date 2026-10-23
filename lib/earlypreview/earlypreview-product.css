@@ -87,8 +87,8 @@
 }
 
 .earlypreview-product__stage {
-  --p-cap: clamp(1.35rem, min(1.95vw, 3vh), 2rem);
-  --p-cap-gap: clamp(0.55rem, 1.2vh, 0.9rem);
+  --p-cap: clamp(1rem, min(1.35vw, 2.2vh), 1.4rem);
+  --p-cap-gap: clamp(0.9rem, 2vh, 1.45rem);
   position: relative;
   flex: 1 1 auto;
   min-width: 0;
@@ -181,10 +181,10 @@
   align-self: center;
   max-width: 100%;
   margin: var(--p-cap-gap) 0 0;
-  font-weight: 400;
-  font-size: min(var(--p-cap), calc(100cqw / (var(--len, 20) * 0.5)));
+  font-weight: 500;
+  font-size: min(var(--p-cap), calc(100cqw / (var(--len, 20) * 0.58)));
   line-height: 1.1;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.01em;
   text-align: center;
   color: var(--p-ink);
   white-space: nowrap;
@@ -249,8 +249,8 @@
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__stage {
-  --p-cap: 1.3rem;
-  --p-cap-gap: 0.6rem;
+  --p-cap: 1rem;
+  --p-cap-gap: 0.95rem;
   flex: 0 1 auto;
   width: 100%;
   container-type: inline-size;
