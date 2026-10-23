@@ -22,6 +22,12 @@ export const DOEHEALTH_DESK2_PHONE_STEP_PX = 200;
 const DESKTOP_PACE_PER_S = 0.75;
 /** Desktop only: the most progress that can build up and be spent at once. A single notch always moves right away. */
 const DESKTOP_PACE_BURST = 0.5;
+/**
+ * Desktop only: what the bucket holds when the lock engages. The momentum that carried the page in keeps arriving after
+ * the settle window, and a full bucket would spend itself on it in a frame or two, which reads as a jolt right after the
+ * lock. Starting nearly empty, that tail ramps up at the steady pace instead; the bucket then refills as usual.
+ */
+const DESKTOP_PACE_AT_LOCK = 0.06;
 
 /** 0 → 1 as `p` moves through [from, to]. Every motion in a locked section is one of these. */
 export function scrollRamp(p: number, [from, to]: readonly [number, number]) {
@@ -175,6 +181,8 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     const lock = () => {
       setLocked(true);
       lockedAt = performance.now();
+      tokens = DESKTOP_PACE_AT_LOCK;
+      tokensAt = lockedAt;
       jumpTo(sectionTop());
       stopMomentum();
     };
@@ -187,7 +195,11 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     /** Feeds scroll input into the section. Returns true when the input was used (and the page must not move). */
     const advance = (delta: number) => {
       if (!locked) return false;
-      if (performance.now() - lockedAt < LOCK_SETTLE_MS) return true;
+      if (performance.now() - lockedAt < LOCK_SETTLE_MS) {
+        tokens = DESKTOP_PACE_AT_LOCK;
+        tokensAt = performance.now();
+        return true;
+      }
       if (done) {
         // Hold the last scene through the momentum that arrived with it, then let the page go either way.
         if (performance.now() - doneAt < LOCK_SETTLE_MS) return true;
@@ -292,6 +304,8 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
           pendingWheel = 0;
           setLocked(true);
           lockedAt = performance.now();
+          tokens = DESKTOP_PACE_AT_LOCK;
+          tokensAt = lockedAt;
           jumpTo(sectionTop());
           lastY = window.scrollY;
           return;

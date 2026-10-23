@@ -99,10 +99,15 @@ export function DoeHealthBlogDotWave({
 
     // Only animates while it can be seen: on screen (with a margin) and `active`. Otherwise it holds its last frame,
     // so a canvas nobody is looking at costs nothing per frame.
+    // `onScreen` is "within 200px of the screen" (so the first frame in view is already fresh); `inView` is strictly on
+    // screen. A canvas that is only nearby, like one that ends where a pinned section begins, repaints every sixth frame
+    // instead of every frame: it stays current without a full-size repaint per frame for something nobody can see.
     let raf = 0;
     let onScreen = false;
+    let inView = false;
+    let frame = 0;
     const loop = (now: number) => {
-      paint(now);
+      if (inView || frame++ % 6 === 0) paint(now);
       raf = requestAnimationFrame(loop);
     };
     const run = () => {
@@ -130,11 +135,21 @@ export function DoeHealthBlogDotWave({
       { rootMargin: "200px 0px" },
     );
     visibility.observe(canvas);
+    // Shrunk by a pixel, so a canvas that only touches the screen's edge does not count as in view.
+    const strict = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        if (inView && raf) paint(performance.now());
+      },
+      { rootMargin: "-1px 0px" },
+    );
+    strict.observe(canvas);
     return () => {
       cancelAnimationFrame(raf);
       runRef.current = () => {};
       observer.disconnect();
       visibility.disconnect();
+      strict.disconnect();
     };
   }, [color, top, amp, fade, phase, scale, slant, flip, motion]);
 
