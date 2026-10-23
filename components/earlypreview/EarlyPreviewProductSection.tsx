@@ -47,7 +47,7 @@ type Sit = "br" | "bl" | "tr" | "tl" | "b" | "t" | "full";
 
 type Visual =
   | { kind: "app"; tab: DoeHealthProductTab; menu?: boolean; crop: Crop; sit: Sit }
-  | { kind: "film"; film: EarlyPreviewProductFilm; frame: number; active: ProductRailKey; crop: Crop; sit: Sit }
+  | { kind: "film"; film: EarlyPreviewProductFilm; frame: number; active: ProductRailKey; anchor?: "start"; focus?: { x: number; y: number; w: number; h: number }; crop: Crop; sit: Sit }
   | { kind: "shell"; crop: Crop; sit: Sit };
 
 /** The same corner every app box shows, so the film boxes size and sit exactly like the rest. */
@@ -64,11 +64,11 @@ const VISUALS: Record<EarlyPreviewProductSlideId, Visual> = {
   permissions: { kind: "app", tab: "permissions", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   insurance: { kind: "film", film: "communication", frame: 575, active: "forms", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   forms: { kind: "app", tab: "forms", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
-  followUp: { kind: "film", film: "coordinate", frame: 300, active: "referrals", crop: CORNER, sit: "br" },
+  followUp: { kind: "film", film: "coordinate", frame: 300, active: "referrals", anchor: "start", crop: CORNER, sit: "br" },
   multiSite: { kind: "app", tab: "integrations", menu: true, crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   clinics: { kind: "app", tab: "referrals", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
-  departments: { kind: "film", film: "permissions", frame: 120, active: "permissions", crop: CORNER, sit: "br" },
-  directory: { kind: "film", film: "network", frame: 120, active: "providers", crop: CORNER, sit: "br" },
+  departments: { kind: "film", film: "permissions", frame: 200, active: "permissions", focus: { x: 240, y: 58, w: 1497, h: 964 }, crop: CORNER, sit: "br" },
+  directory: { kind: "film", film: "network", frame: 440, active: "providers", focus: { x: 0, y: 52, w: 1600, h: 1028 }, crop: CORNER, sit: "br" },
   payments: { kind: "app", tab: "payments", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
 };
 
@@ -118,7 +118,7 @@ const SlideVisual = memo(function SlideVisual({ visual }: { visual: Visual }) {
   if (visual.kind === "film") {
     return (
       <CropView source={ARTBOARD} crop={visual.crop}>
-        <EarlyPreviewFilmShell film={visual.film} frame={visual.frame} active={visual.active} />
+        <EarlyPreviewFilmShell film={visual.film} frame={visual.frame} active={visual.active} anchor={visual.anchor} focus={visual.focus} />
       </CropView>
     );
   }

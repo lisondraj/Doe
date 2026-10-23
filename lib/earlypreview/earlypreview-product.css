@@ -87,7 +87,7 @@
 }
 
 .earlypreview-product__stage {
-  --p-cap: clamp(1.6rem, min(2.3vw, 3.6vh), 2.4rem);
+  --p-cap: clamp(1.35rem, min(1.95vw, 3vh), 2rem);
   --p-cap-gap: clamp(0.55rem, 1.2vh, 0.9rem);
   position: relative;
   flex: 1 1 auto;
@@ -98,7 +98,7 @@
 /* One row, panned right to left by the scroll. */
 .earlypreview-product__track {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: clamp(1.5rem, 2.4vw, 2.5rem);
   width: max-content;
   height: 100%;
@@ -110,7 +110,7 @@
 
 /* Every box is the same size; the first few rise in one after another. */
 .earlypreview-product__slide {
-  --p-box-h: calc(100cqh - var(--p-cap) * 1.1 - var(--p-cap-gap));
+  --p-box-h: calc((100cqh - var(--p-cap) * 1.1 - var(--p-cap-gap)) * 0.9);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -176,30 +176,18 @@
   border-radius: 0 0 var(--p-ui-r) var(--p-ui-r);
 }
 
-/* Each box's name sits under its bottom left corner, big, in the title's deep beige; a long name comes down to its box's width. */
-/* The name under the box's bottom left corner, with a small dot in front of it: no pill, no border, no fill. */
+/* Each box's name sits centred under its box, in the title's deep beige; a long name comes down to its box's width. */
 .earlypreview-product__slide-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  align-self: flex-start;
+  align-self: center;
   max-width: 100%;
   margin: var(--p-cap-gap) 0 0;
   font-weight: 400;
-  font-size: min(var(--p-cap), calc(100cqw / (var(--len, 20) * 0.5 + 0.95)));
+  font-size: min(var(--p-cap), calc(100cqw / (var(--len, 20) * 0.5)));
   line-height: 1.1;
   letter-spacing: -0.035em;
+  text-align: center;
   color: var(--p-ink);
   white-space: nowrap;
-}
-
-.earlypreview-product__slide-title::before {
-  content: "";
-  flex-shrink: 0;
-  width: 0.4em;
-  height: 0.4em;
-  border-radius: 50%;
-  background: var(--p-ink);
 }
 
 .earlypreview-product__crop {
@@ -261,7 +249,7 @@
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__stage {
-  --p-cap: 1.5rem;
+  --p-cap: 1.3rem;
   --p-cap-gap: 0.6rem;
   flex: 0 1 auto;
   width: 100%;
@@ -274,7 +262,7 @@
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__slide {
-  --p-box-w: calc(100cqw - 2.25rem);
+  --p-box-w: calc((100cqw - 2.25rem) * 0.94);
   --p-box-h: min(var(--p-box-w), calc(100svh - 20rem));
   width: var(--p-box-w);
 }

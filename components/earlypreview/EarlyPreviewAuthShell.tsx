@@ -49,15 +49,30 @@ const FILM = { w: 1920, h: 1080 };
 /** Cover the paper with the film, so the film runs off its edges and leaves no paper showing. */
 const FILM_SCALE = Math.max(PAPER.w / FILM.w, PAPER.h / FILM.h);
 
-export function EarlyPreviewFilmShell({ film, frame, active }: { film: EarlyPreviewProductFilm; frame: number; active: ProductRailKey }) {
-  const left = (PAPER.w - FILM.w * FILM_SCALE) / 2;
-  const top = (PAPER.h - FILM.h * FILM_SCALE) / 2;
+/** `anchor: "start"` holds the film's left edge to the paper's, so the film's left-hand UI is never the part that is cut. */
+export function EarlyPreviewFilmShell({
+  film,
+  frame,
+  active,
+  anchor = "center",
+  focus,
+}: {
+  film: EarlyPreviewProductFilm;
+  frame: number;
+  active: ProductRailKey;
+  anchor?: "center" | "start";
+  /** A rectangle of the 1920×1080 film to cover the paper with, so a film that draws its own window shows only that window's page. */
+  focus?: { x: number; y: number; w: number; h: number };
+}) {
+  const scale = focus ? Math.max(PAPER.w / focus.w, PAPER.h / focus.h) : FILM_SCALE;
+  const left = focus ? (PAPER.w - focus.w * scale) / 2 - focus.x * scale : anchor === "start" ? 0 : (PAPER.w - FILM.w * scale) / 2;
+  const top = focus ? (PAPER.h - focus.h * scale) / 2 - focus.y * scale : (PAPER.h - FILM.h * scale) / 2;
   return (
     <div className={`${dmSans.variable} ${inter.className} ${p22Mackinac.className}`} style={{ width: SHELL.w, height: SHELL.h }}>
       <ShadowsContext.Provider value={false}>
         <ProductShell active={active}>
           <div style={{ position: "absolute", left: 0, top: 0, width: PAPER.w, height: PAPER.h, overflow: "hidden" }}>
-            <div style={{ position: "absolute", left, top, width: FILM.w, height: FILM.h, transform: `scale(${FILM_SCALE})`, transformOrigin: "0 0" }}>
+            <div style={{ position: "absolute", left, top, width: FILM.w, height: FILM.h, transform: `scale(${scale})`, transformOrigin: "0 0" }}>
               <EarlyPreviewProductFilmFrame film={film} frame={frame} />
             </div>
           </div>
