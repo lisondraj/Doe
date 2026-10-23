@@ -275,10 +275,13 @@ export function DoeHealthProductHome() {
 export function DoeHealthProductArtboard({
   initialTab = "integrations",
   initialAccountMenuOpen = false,
+  accountMenuAt = "bottom",
   mountAll = true,
 }: {
   initialTab?: TabId;
   initialAccountMenuOpen?: boolean;
+  /** Where the account menu opens: above the rail's account button (bottom), or at the top left of the shell (top). */
+  accountMenuAt?: "top" | "bottom";
   /** false mounts only the tab on show, for static previews of one page. */
   mountAll?: boolean;
 } = {}) {
@@ -499,7 +502,7 @@ export function DoeHealthProductArtboard({
           {/* Clicking anywhere outside the menu closes it. */}
           <div className="absolute inset-0 z-[25]" onClick={() => setAccountMenuOpen(false)} />
           <div
-            className="absolute z-[30] bottom-[24px]"
+            className={`absolute z-[30] ${accountMenuAt === "top" ? "top-[24px]" : "bottom-[24px]"}`}
             style={{
               left: (navExpanded ? RAIL_EXPANDED_WIDTH : RAIL_COLLAPSED_WIDTH) + 8,
               transition: "left 200ms ease",
