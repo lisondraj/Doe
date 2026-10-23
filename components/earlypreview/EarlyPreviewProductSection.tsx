@@ -149,6 +149,41 @@ const END = PAN[1] + 0.35;
 
 const smooth = (t: number) => t * t * (3 - 2 * t);
 const en = (p: number, range: readonly [number, number]) => smooth(ramp(p, range));
+/** The `t` at which `smooth(t)` is `s`, so a box can be brought to the front exactly. */
+const unsmooth = (s: number) => 0.5 - Math.sin(Math.asin(1 - 2 * s) / 3);
+/** The progress at which each box sits in front: the pan's start for the first, the rest spread evenly along it. */
+const BOX_AT = SLIDES.map((_, i) => PAN[0] + (PAN[1] - PAN[0]) * unsmooth(i / (SLIDES.length - 1)));
+
+/**
+ * iPhone: one line per box along the bottom, filling as the row pans past it; a tap brings that box to the front.
+ * The skip sits at the right end of the same row. Hidden on the desktop, where the boxes are one row to scroll.
+ */
+function ProductNav({ p, goTo }: { p: number; goTo: (target: number) => void }) {
+  const last = SLIDES.length - 1;
+  return (
+    <nav className="earlypreview-product__nav" aria-label="Product screens">
+      {SLIDES.map((slide, i) => {
+        const at = BOX_AT[i];
+        const to = i < last ? BOX_AT[i + 1] : at;
+        const live = (i === 0 || p >= at) && (i === last || p < to);
+        const fill = i < last ? ramp(p, [at, to]) : p >= at ? 1 : 0;
+        return (
+          <button
+            key={slide.id}
+            type="button"
+            className={`earlypreview-product__nav-item${live ? " is-live" : ""}`}
+            style={vars({ "--f": fill })}
+            aria-label={slide.title}
+            aria-current={live ? "step" : undefined}
+            onClick={() => goTo(at)}
+          >
+            <span className="earlypreview-product__nav-line" aria-hidden />
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
 
 /** How far the title has to come down from its place at the top to sit in the middle of the section. */
 function useCenterOffset(headRef: React.RefObject<HTMLDivElement | null>) {
@@ -248,7 +283,7 @@ export function EarlyPreviewProductSection() {
   const headRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLOListElement>(null);
-  const { p, skip } = useDoeHealthDesk2ScrollLock(sectionRef, END);
+  const { p, skip, goTo } = useDoeHealthDesk2ScrollLock(sectionRef, END);
   useNavReveal(sectionRef);
   const near = useNear(sectionRef);
   const inStage = useBoxesInStage(stageRef, trackRef);
@@ -307,6 +342,7 @@ export function EarlyPreviewProductSection() {
             </ol>
           </div>
         </div>
+        {p > 0 ? <ProductNav p={p} goTo={goTo} /> : null}
         {p > 0 && p < END ? (
           <button type="button" className="doehealth-desk2-visible__skip" aria-label="Skip the product section" onClick={skip}>
             <SkipIcon />
