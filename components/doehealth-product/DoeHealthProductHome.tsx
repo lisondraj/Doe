@@ -155,6 +155,46 @@ function AccountMenu({
   );
 }
 
+/** What each provider's agents may do at the clinic selected in the menu beside this panel. */
+const PROVIDER_ACCESS = [
+  { name: "Dr. Robert Roberts", role: "Family medicine", mode: "Bookable", tone: "#DCE5D0" },
+  { name: "Dr. Grace Kim", role: "Pediatrics", mode: "Request only", tone: "#F3E7C9" },
+  { name: "Dr. Henry Walsh", role: "Cardiology", mode: "Bookable", tone: "#DCE5D0" },
+  { name: "Dr. Maya Chen", role: "Dermatology", mode: "Hidden", tone: "#E6E0D2" },
+  { name: "Dr. Priya Raman", role: "Neurology", mode: "Request only", tone: "#F3E7C9" },
+  { name: "Dr. Leo Park", role: "ENT", mode: "Bookable", tone: "#DCE5D0" },
+] as const;
+
+/** Provider permissions for the open clinic, sitting to the right of the clinic menu. */
+function ProviderPermissions({ clinic }: { clinic: string }) {
+  return (
+    <div className="w-[500px] flex flex-col gap-[16px] p-[22px] rounded-[22px] [background-color:#FFFCF1] border border-solid border-[#2819101F]">
+      <div className="flex items-end justify-between gap-[16px] px-[6px]">
+        <span className="text-[28px] leading-[32px] tracking-[-0.02em] font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500] text-walnut">
+          Provider Permissions
+        </span>
+        <span className="shrink-0 pb-[2px] text-[13px] leading-[16px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-sub">{clinic}</span>
+      </div>
+      <div className="flex flex-col gap-[8px]">
+        {PROVIDER_ACCESS.map((provider) => (
+          <div key={provider.name} className="flex items-center gap-[14px] h-[64px] pl-[16px] pr-[12px] rounded-[18px] bg-sand">
+            <span className="flex flex-col grow min-w-[0px] gap-[2px]">
+              <span className="truncate text-[15px] leading-[20px] font-['DM_Sans',system-ui,sans-serif] font-[600] text-walnut">{provider.name}</span>
+              <span className="truncate text-[12px] leading-[16px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-sub">{provider.role}</span>
+            </span>
+            <span
+              className="h-[32px] px-[14px] shrink-0 flex items-center rounded-[999px] text-[13px] leading-[16px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut"
+              style={{ backgroundColor: provider.tone }}
+            >
+              {provider.mode}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** Paper artboard height; the design scales by height so its proportions stay intact. */
 const ARTBOARD_HEIGHT = 900;
 /** Narrowest logical width the layout is designed for (the original artboard). */
@@ -277,6 +317,7 @@ export function DoeHealthProductArtboard({
   initialAccountMenuOpen = false,
   accountMenuAt = "bottom",
   mountAll = true,
+  showProviderPermissions = false,
 }: {
   initialTab?: TabId;
   initialAccountMenuOpen?: boolean;
@@ -284,6 +325,8 @@ export function DoeHealthProductArtboard({
   accountMenuAt?: "top" | "bottom";
   /** false mounts only the tab on show, for static previews of one page. */
   mountAll?: boolean;
+  /** Shows the clinic's provider permissions beside the open clinic menu. */
+  showProviderPermissions?: boolean;
 } = {}) {
   const [navExpanded, setNavExpanded] = useState(false);
   const [clinicId, setClinicId] = useState(CLINICS[0].id);
@@ -517,6 +560,14 @@ export function DoeHealthProductArtboard({
               signedIn={signedIn}
             />
           </div>
+          {showProviderPermissions && signedIn && (
+            <div
+              className={`absolute z-[30] ${accountMenuAt === "top" ? "top-[24px]" : "bottom-[24px]"}`}
+              style={{ left: (navExpanded ? RAIL_EXPANDED_WIDTH : RAIL_COLLAPSED_WIDTH) + 8 + 320 + 16 }}
+            >
+              <ProviderPermissions clinic={activeClinic.name} />
+            </div>
+          )}
         </>
       )}
       <div

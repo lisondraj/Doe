@@ -46,7 +46,7 @@ type Crop = { x: number; y: number; w: number; h: number; ax?: Align; ay?: Align
 type Sit = "br" | "bl" | "tr" | "tl" | "b" | "t" | "full";
 
 type Visual =
-  | { kind: "app"; tab: DoeHealthProductTab; menu?: boolean; crop: Crop; sit: Sit }
+  | { kind: "app"; tab: DoeHealthProductTab; menu?: boolean; providerPanel?: boolean; crop: Crop; sit: Sit }
   | { kind: "film"; film: EarlyPreviewProductFilm; frame: number; active: ProductRailKey; anchor?: "start"; focus?: { x: number; y: number; w: number; h: number }; inset?: { x: number; y: number }; crop: Crop; sit: Sit }
   | { kind: "shell"; crop: Crop; sit: Sit };
 
@@ -67,7 +67,7 @@ const VISUALS: Record<EarlyPreviewProductSlideId, Visual> = {
   insurance: { kind: "film", film: "communication", frame: 575, active: "forms", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   forms: { kind: "app", tab: "forms", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   followUp: { kind: "film", film: "coordinate", frame: 300, active: "referrals", anchor: "start", crop: CORNER, sit: "br" },
-  multiSite: { kind: "app", tab: "integrations", menu: true, crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  multiSite: { kind: "app", tab: "integrations", menu: true, providerPanel: true, crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   clinics: { kind: "app", tab: "referrals", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   departments: { kind: "film", film: "permissions", frame: 200, active: "permissions", focus: { x: 240, y: 58, w: 1497, h: 964 }, inset: PAGE_INSET, crop: CORNER, sit: "br" },
   directory: { kind: "film", film: "network", frame: 440, active: "providers", focus: { x: 0, y: 52, w: 1600, h: 1028 }, inset: PAGE_INSET, crop: CORNER, sit: "br" },
@@ -138,6 +138,7 @@ const SlideVisual = memo(function SlideVisual({ visual }: { visual: Visual }) {
           initialTab={visual.tab}
           initialAccountMenuOpen={visual.menu}
           accountMenuAt={visual.menu ? "top" : "bottom"}
+          showProviderPermissions={visual.providerPanel}
           mountAll={false}
         />
       </div>
