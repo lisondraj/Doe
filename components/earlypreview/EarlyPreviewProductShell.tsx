@@ -88,7 +88,7 @@ export function ProductRail({ active }: { active: ProductRailKey }) {
               <path d="M3.5 19.5c.8-3.2 3-5 5.5-5s4.7 1.8 5.5 5" {...stroke} />
               <path d="M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.6 14.8c1.4.7 2.4 2.3 2.9 4.7" {...stroke} />
             </Item>
-            <Item label="Agent permissions" active={active === "permissions"}>
+            <Item label="Agent Permissions" active={active === "permissions"}>
               <path d="M12 3.8l6.8 2.6v5.1c0 4.2-2.8 7.4-6.8 8.8-4-1.4-6.8-4.6-6.8-8.8V6.4z" {...stroke} />
               <path d="M9.2 12.2l2 2 3.8-4" {...stroke} />
             </Item>

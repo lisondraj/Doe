@@ -148,6 +148,7 @@
    * every box: lightness is kept, the darkest (text, the ink rail) lands on the deep beige and the lightest on cream (the map is
    * the BeigeTone filter in the section). */
   filter: url(#earlypreview-beige);
+  -webkit-filter: url(#earlypreview-beige);
 }
 
 .earlypreview-product__ui[data-sit="br"] {
@@ -277,12 +278,14 @@
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__slide {
+  /* Same 1.45 box as desktop, so the crop shows the same slice of each product. */
   --p-box-w: calc((100cqw - 2.25rem) * 0.94);
-  --p-box-h: min(var(--p-box-w), calc(100svh - 20rem));
   width: var(--p-box-w);
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__box {
+  height: auto;
+  aspect-ratio: 1.45;
   border-radius: 1.25rem;
 }
 

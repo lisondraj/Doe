@@ -225,7 +225,7 @@ function AccessPage({ frame }: { frame: number }) {
   return (
     <>
       <div style={{ position: "absolute", left: 28, top: 28, fontFamily: F.display, fontWeight: 500, fontSize: 46, lineHeight: "50px", letterSpacing: "-0.025em", color: C.walnut, ...fly(frame, { at: 8, y: 14, dur: 18, blur: 0 }) }}>
-        Agent access
+        Agent Access
       </div>
         <div style={{ position: "absolute", right: 28, top: 34, display: "flex", gap: 8, ...fly(frame, { at: 12, y: 14, dur: 18, blur: 0 }) }}>
         <IconButton icon="search" />

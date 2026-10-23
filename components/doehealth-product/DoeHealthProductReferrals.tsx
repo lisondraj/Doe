@@ -22,11 +22,23 @@ const START: { id: string; who: string; specialty: string; to: string; stage: St
   { id: "leo", who: "Leo Jacobs", specialty: "ENT", to: "Boston Children’s", stage: "sent" },
   { id: "ava", who: "Ava Brooks", specialty: "Dermatology", to: "Beacon Dermatology", stage: "sent" },
   { id: "noah", who: "Noah Bennett", specialty: "Sleep study", to: "Mass General", stage: "sent" },
+  { id: "maya", who: "Maya Chen", specialty: "GI", to: "North Shore GI", stage: "sent" },
+  { id: "daniel", who: "Daniel Ruiz", specialty: "Ophthalmology", to: "Mass Eye and Ear", stage: "sent" },
+  { id: "elena", who: "Elena Vasquez", specialty: "Rheumatology", to: "Brigham and Women’s", stage: "sent" },
   { id: "henry", who: "Henry Walsh", specialty: "Cardiology", to: "Beth Israel", stage: "accepted" },
   { id: "lily", who: "Lily Park", specialty: "Allergy", to: "Brookline Allergy", stage: "accepted" },
+  { id: "james", who: "James Patel", specialty: "Urology", to: "Beth Israel", stage: "accepted" },
+  { id: "sofia", who: "Sofia Alvarez", specialty: "Endocrinology", to: "Joslin Diabetes", stage: "accepted" },
+  { id: "caleb", who: "Caleb Moore", specialty: "Pulmonology", to: "Boston Medical", stage: "accepted" },
   { id: "grace", who: "Grace Kim", specialty: "Orthopedics", to: "Tue, Oct 27", stage: "scheduled" },
   { id: "omar", who: "Omar Haddad", specialty: "Physical therapy", to: "Mon, Oct 26", stage: "scheduled" },
+  { id: "nora", who: "Nora Singh", specialty: "Pediatrics", to: "Tue, Oct 28", stage: "scheduled" },
+  { id: "owen", who: "Owen Clark", specialty: "Psychiatry", to: "Wed, Oct 29", stage: "scheduled" },
+  { id: "amara", who: "Amara Cole", specialty: "Nutrition", to: "Thu, Oct 30", stage: "scheduled" },
   { id: "priya", who: "Priya Raman", specialty: "Neurology", to: "Notes in chart", stage: "seen" },
+  { id: "theo", who: "Theo Nguyen", specialty: "Dermatology", to: "Notes in chart", stage: "seen" },
+  { id: "isla", who: "Isla Rahman", specialty: "Cardiology", to: "Visit complete", stage: "seen" },
+  { id: "marcus", who: "Marcus Bell", specialty: "Orthopedics", to: "Notes in chart", stage: "seen" },
 ];
 
 export function DoeHealthProductReferralsPage() {

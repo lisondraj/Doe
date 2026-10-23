@@ -98,7 +98,7 @@ export function DoeHealthProductPermissionsPage() {
     <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[24px] pt-[36px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
 
       <div className="relative flex items-end justify-between">
-        <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>Agent permissions</span>
+        <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>Agent Permissions</span>
       </div>
 
       <div className="relative flex grow min-h-[0px] gap-[12px]">
