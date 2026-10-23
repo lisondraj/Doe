@@ -146,8 +146,6 @@ const SlideVisual = memo(function SlideVisual({ visual }: { visual: Visual }) {
 /* ------------------------------------------------------------------ timing */
 
 const HEAD = [0.25, 1.0] as const;
-/** How much of the title's climb the wave makes too: it moves up only part of the way, so it ends under the boxes' top. */
-const WAVE_CLIMB = 0.45;
 const SLIDES_IN = [0.85, 1.6] as const;
 /** Progress the carousel takes per box as it pans right to left. */
 const PER_SLIDE = 0.5;
@@ -335,14 +333,9 @@ export function EarlyPreviewProductSection() {
           className={`earlypreview-product__head ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
           style={vars({ "--y": toCenter * (1 - lift) })}
         >
-          {/* The dot wave runs under the title and lifts with it. */}
-          {/* The dot wave hangs from the title's bottom edge and only climbs part of the way with the title. */}
-          <div
-            className="earlypreview-product__wave"
-            style={{ ...vars({ "--w": toCenter * lift * WAVE_CLIMB }), opacity: 1 - lift, visibility: lift >= 1 ? "hidden" : "visible" }}
-            aria-hidden
-          >
-            <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.3)" top={0.04} amp={40} fade={0.25} active={near && lift < 1} />
+          {/* The dot wave hangs from the title's bottom edge and climbs with it, ending in the space between the title and the boxes. */}
+          <div className="earlypreview-product__wave" aria-hidden>
+            <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.3)" top={0.04} amp={40} fade={0.25} active={near} />
           </div>
           <h2 className={`earlypreview-product__title ${p22Mackinac.className}`}>
             <span>{HEADLINE.line1}</span>
