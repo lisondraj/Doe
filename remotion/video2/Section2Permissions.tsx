@@ -508,11 +508,11 @@ function PatientCard({ frame }: { frame: number }) {
 
 /* ─── Audit trail: authorized, routed, answered, logged ────────────────────── */
 
-const FLOW: { label: string; meta: string; icon: IconName }[] = [
-  { label: "Request", meta: "Daniel’s agent", icon: "arrowUp" },
-  { label: "Authorized", meta: "Patient + policy", icon: "shield" },
-  { label: "Routed", meta: "Heart Failure Clinic", icon: "arrowRight" },
-  { label: "Responded", meta: "Referral approved", icon: "check" },
+const FLOW: { label: string }[] = [
+  { label: "Request" },
+  { label: "Authorized" },
+  { label: "Routed" },
+  { label: "Responded" },
 ];
 
 type LogRow = { time: string; agent: string; action: string; dept: string; decision: Access | "blocked" };
@@ -555,13 +555,8 @@ export function AuditCard({ frame, height = AUDIT.h }: { frame: number; height?:
         const pop = pulse(frame, FLOW_AT + i * FLOW_STEP, 4, 14);
         return (
           <div key={step.label} style={{ position: "absolute", left: AUDIT.pad + i * stepW, top: FLOW_TOP, width: stepW, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 999, boxSizing: "border-box", border: `1.5px solid ${lit > 0.5 ? C.ink : C.line2}`, background: mix(C.paper, C.ink, lit), display: "flex", alignItems: "center", justifyContent: "center", transform: `scale(${1 + 0.15 * pop})` }}>
-              <Icon name={step.icon} size={17} color={lit > 0.5 ? C.paper : C.faint} stroke={2.2} />
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, opacity: lerp(0.45, 1, lit) }}>
-              <div style={{ fontFamily: F.ui, fontWeight: 600, fontSize: 16, color: C.walnut }}>{step.label}</div>
-              <div style={{ fontFamily: F.body, fontSize: 13, color: C.muted, whiteSpace: "nowrap" }}>{step.meta}</div>
-            </div>
+            <div style={{ width: 40, height: 40, borderRadius: 999, boxSizing: "border-box", border: `1.5px solid ${lit > 0.5 ? C.ink : C.line2}`, background: mix(C.paper, C.ink, lit), transform: `scale(${1 + 0.15 * pop})` }} />
+            <div style={{ fontFamily: F.ui, fontWeight: 600, fontSize: 16, color: C.walnut, opacity: lerp(0.45, 1, lit) }}>{step.label}</div>
           </div>
         );
       })}
