@@ -184,6 +184,38 @@ function usePanDistance(trackRef: React.RefObject<HTMLOListElement | null>) {
   return distance;
 }
 
+/**
+ * Which boxes are in the stage or one stage away from it. A box that has panned well out of view unmounts its
+ * product (its timers and animation frames stop with it), the way the market section's finished screens leave the
+ * compositor. A box comes back in before it reaches the edge, so nothing pops in on screen.
+ */
+function useBoxesInStage(stageRef: React.RefObject<HTMLElement | null>, trackRef: React.RefObject<HTMLOListElement | null>) {
+  const [inStage, setInStage] = useState<Record<number, boolean>>({});
+  useEffect(() => {
+    const stage = stageRef.current;
+    const track = trackRef.current;
+    if (!stage || !track) return undefined;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setInStage((prev) => {
+          let next = prev;
+          for (const entry of entries) {
+            const i = Number((entry.target as HTMLElement).dataset.index);
+            if (!!next[i] === entry.isIntersecting) continue;
+            if (next === prev) next = { ...prev };
+            next[i] = entry.isIntersecting;
+          }
+          return next;
+        });
+      },
+      { root: stage, rootMargin: "0px 100% 0px 100%" },
+    );
+    Array.from(track.children).forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, [stageRef, trackRef]);
+  return inStage;
+}
+
 /** Mounts the product pieces once the section is within a couple of screens, not with the page. */
 function useNear(ref: React.RefObject<HTMLElement | null>) {
   const [near, setNear] = useState(false);
@@ -214,10 +246,12 @@ function useNear(ref: React.RefObject<HTMLElement | null>) {
 export function EarlyPreviewProductSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLOListElement>(null);
   const { p, skip } = useDoeHealthDesk2ScrollLock(sectionRef, END);
   useNavReveal(sectionRef);
   const near = useNear(sectionRef);
+  const inStage = useBoxesInStage(stageRef, trackRef);
   const toCenter = useCenterOffset(headRef);
   const distance = usePanDistance(trackRef);
 
@@ -253,18 +287,18 @@ export function EarlyPreviewProductSection() {
           </h2>
         </div>
         <div className={`earlypreview-product__frame ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-          <div className="earlypreview-product__stage">
+          <div ref={stageRef} className="earlypreview-product__stage">
             <ol
               ref={trackRef}
               className="earlypreview-product__track"
               style={{ ...vars({ "--k": shown }), transform: `translate3d(${-pan * distance}px, 0, 0)` }}
             >
               {SLIDES.map((slide, i) => (
-                <li key={slide.id} className="earlypreview-product__slide" style={vars({ "--i": Math.min(i, 3), "--len": slide.title.length })}
+                <li key={slide.id} data-index={i} className="earlypreview-product__slide" style={vars({ "--i": Math.min(i, 3), "--len": slide.title.length })}
                 >
                   <div className="earlypreview-product__box">
                     <div className="earlypreview-product__ui" data-sit={VISUALS[slide.id].sit}>
-                      {near ? <SlideVisual visual={VISUALS[slide.id]} /> : null}
+                      {near && inStage[i] ? <SlideVisual visual={VISUALS[slide.id]} /> : null}
                     </div>
                   </div>
                   <h3 className={`earlypreview-product__slide-title ${p22Mackinac.className}`}>{slide.title}</h3>
