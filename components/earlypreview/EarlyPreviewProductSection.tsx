@@ -149,6 +149,10 @@ const SlideVisual = memo(function SlideVisual({ visual }: { visual: Visual }) {
 
 const HEAD = [0.25, 1.0] as const;
 const SLIDES_IN = [0.85, 1.6] as const;
+/** Desktop: the title, once risen, fades away over the start of the pan. It keeps its place, so the boxes stay put. */
+const TITLE_OUT = [1.5, 2.3] as const;
+/** How much of the wave's strength it gives up as the title rises: full at rest, this much fainter once it has risen. */
+const WAVE_FADE = 0.72;
 /** Progress the carousel takes per box as it pans right to left. */
 const PER_SLIDE = 0.5;
 const PAN = [1.6, 1.6 + PER_SLIDE * (SLIDES.length - 1)] as const;
@@ -337,10 +341,10 @@ export function EarlyPreviewProductSection() {
         >
           {/* The dot wave hangs from the title's bottom edge and climbs with it, ending in the space between the title and the boxes.
               It drifts while the title rises, then holds that frame: a canvas redrawn every frame under the panning boxes costs the pan its smoothness. */}
-          <div className="earlypreview-product__wave" aria-hidden>
+          <div className="earlypreview-product__wave" style={{ opacity: 1 - WAVE_FADE * lift }} aria-hidden>
             <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.3)" top={0.04} amp={40} fade={0.25} active={near && lift < 1} />
           </div>
-          <h2 className={`earlypreview-product__title ${p22Mackinac.className}`}>
+          <h2 className={`earlypreview-product__title ${p22Mackinac.className}`} style={vars({ "--tf": 1 - en(p, TITLE_OUT) })}>
             <span>{HEADLINE.line1}</span>
             <span>{HEADLINE.line2}</span>
           </h2>

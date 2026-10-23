@@ -32,14 +32,13 @@
 /* The dot wave, a faint band hung from the title's bottom edge and climbing with it. It rides up behind the lower half
  * of the title, so its dots sit in the space between the title and the boxes' top. Behind the title, under the boxes. */
 .earlypreview-product__wave {
-  --wv-up: 1.6rem;
+  --wv-up: 2.6rem;
   position: absolute;
   z-index: -1;
   left: 50%;
   top: calc(100% - var(--wv-up));
   width: 100vw;
   height: clamp(12rem, 30svh, 20rem);
-  opacity: 0.5;
   transform: translateX(-50%);
   pointer-events: none;
 }
@@ -58,6 +57,11 @@
   line-height: 0.98;
   letter-spacing: -0.042em;
   color: var(--p-ink);
+}
+
+/* Desktop: the title fades out as the boxes pan (--tf), still taking its room so nothing under it moves. */
+.doehealth-desk2-page:not(:has(.doephone-mobile-root)) .earlypreview-product__title {
+  opacity: var(--tf, 1);
 }
 
 .earlypreview-product__title > span {
