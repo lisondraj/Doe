@@ -43,9 +43,9 @@
   pointer-events: none;
 }
 
-/* Desktop: as the title fades, the wave climbs into the empty band and sits at its vertical center. */
+/* Desktop: as the title fades, the wave climbs into the empty band, a little above its vertical center. */
 .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .earlypreview-product__wave {
-  top: calc((100% - var(--wv-up)) * (1 - var(--wv-rise, 0)) + 50% * var(--wv-rise, 0));
+  top: calc((100% - var(--wv-up)) * (1 - var(--wv-rise, 0)) + 18% * var(--wv-rise, 0));
 }
 
 .earlypreview-product__wave > canvas {

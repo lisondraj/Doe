@@ -342,10 +342,10 @@ export function EarlyPreviewProductSection() {
           className={`earlypreview-product__head ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
           style={vars({ "--y": toCenter * (1 - lift) })}
         >
-          {/* The dot wave hangs from the title's bottom edge and climbs with it, ending in the space between the title and the boxes.
-              It drifts while the title rises, then holds that frame: a canvas redrawn every frame under the panning boxes costs the pan its smoothness. */}
+          {/* The dot wave hangs from the title's bottom edge and climbs with it. It keeps rolling while the section is
+              on screen, including after the title has risen and the boxes pan. */}
           <div className="earlypreview-product__wave" style={{ opacity: 1 - WAVE_FADE * lift, ...vars({ "--wv-rise": gone }) }} aria-hidden>
-            <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.3)" top={0.04} amp={40} fade={0.25} active={near && lift < 1} />
+            <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.3)" top={0.04} amp={40} fade={0.25} active={near} />
           </div>
           <h2 className={`earlypreview-product__title ${p22Mackinac.className}`} style={vars({ "--tf": 1 - gone })}>
             <span>{HEADLINE.line1}</span>
