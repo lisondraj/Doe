@@ -242,10 +242,15 @@
   font-size: clamp(2rem, calc((100vw - 3rem) / 9.4), 2.75rem);
 }
 
-/* The phone's boxes are sized from its width, one at a time with the next one peeking in, in the middle of the space under the title. */
+/* The phone's boxes are sized from its width, one at a time with the next one peeking in, just above the nav row; the title centres in the space above them. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__frame {
+  flex: 0 0 auto;
   align-items: center;
   margin-top: 1rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__head {
+  margin-block: auto;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__stage {
@@ -277,36 +282,35 @@
   text-wrap: balance;
 }
 
-/* iPhone: the boxes and captions centre in the screen above the row the nav and skip share along the bottom. */
+/* iPhone: the boxes and captions sit above the skip button and the line menu stacked along the bottom, as in the market section. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product {
-  padding-bottom: calc(var(--desk2-phone-screen-h, 100lvh) - var(--app-vh, 100svh) + 3rem);
+  padding-bottom: calc(var(--desk2-phone-screen-h, 100lvh) - var(--app-vh, 100svh) + 4.5rem);
 }
 
-/* The line menu: hidden on the desktop, one line per box on the iPhone, the skip at its right end. */
+/* The line menu: hidden on the desktop; on the iPhone one line per box across the page margins at the bottom of the
+ * visible screen, as in the market section, with the skip button above it. */
 .earlypreview-product__nav {
   display: none;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__nav {
   position: absolute;
-  left: 1rem;
-  right: 4.25rem;
-  top: calc(var(--app-vh, 100svh) - 2.65rem - max(1.15rem, env(safe-area-inset-bottom, 0px)));
+  left: 0;
+  right: 0;
+  top: calc(var(--app-vh, 100svh) - max(0.5rem, env(safe-area-inset-bottom, 0px)));
+  transform: translateY(-100%);
   z-index: 3;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
-  column-gap: 0.3rem;
-  align-items: center;
-  height: 2.65rem;
+  column-gap: 0.35rem;
 }
 
 .earlypreview-product__nav-item {
   display: flex;
-  align-items: center;
-  height: 100%;
+  align-items: flex-start;
   min-width: 0;
-  padding: 0;
+  padding: 0.9rem 0 0.4rem;
   border: 0;
   background: none;
   cursor: pointer;

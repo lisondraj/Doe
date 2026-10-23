@@ -164,12 +164,12 @@ const BOX_AT = SLIDES.map((_, i) => PAN[0] + (PAN[1] - PAN[0]) * unsmooth(i / (S
 
 /**
  * iPhone: one line per box along the bottom, filling as the row pans past it; a tap brings that box to the front.
- * The skip sits at the right end of the same row. Hidden on the desktop, where the boxes are one row to scroll.
+ * The lines run across the page margins along the bottom, as in the market section, with the skip above them. Hidden on the desktop, where the boxes are one row to scroll.
  */
 function ProductNav({ p, goTo }: { p: number; goTo: (target: number) => void }) {
   const last = SLIDES.length - 1;
   return (
-    <nav className="earlypreview-product__nav" aria-label="Product screens">
+    <nav className={`earlypreview-product__nav ${DOEPHONE_DESKTOP_PAGE_INSET_X}`} aria-label="Product screens">
       {SLIDES.map((slide, i) => {
         const at = BOX_AT[i];
         const to = i < last ? BOX_AT[i + 1] : at;
