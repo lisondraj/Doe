@@ -177,10 +177,16 @@
 }
 
 /* Each box's name sits under its bottom left corner, big, in the title's deep beige; a long name comes down to its box's width. */
+/* The name sits in a circular pill under the box's bottom left corner: no fill, a border in the text's deep beige. */
 .earlypreview-product__slide-title {
+  align-self: flex-start;
+  max-width: 100%;
   margin: var(--p-cap-gap) 0 0;
+  padding: 0.22em 0.9em 0.28em;
+  border: 1px solid var(--p-ink);
+  border-radius: 999px;
   font-weight: 400;
-  font-size: min(var(--p-cap), calc(100cqw / (var(--len, 20) * 0.5)));
+  font-size: min(var(--p-cap), calc(100cqw / (var(--len, 20) * 0.5 + 1.8)));
   line-height: 1.1;
   letter-spacing: -0.035em;
   color: var(--p-ink);
@@ -272,6 +278,7 @@
   font-size: var(--p-cap);
   white-space: normal;
   text-wrap: balance;
+  text-align: center;
 }
 
 /* iPhone: the boxes and captions centre in the screen above the row the nav and skip share along the bottom. */
