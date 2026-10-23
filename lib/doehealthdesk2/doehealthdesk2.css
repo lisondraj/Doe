@@ -5602,6 +5602,15 @@ html:has(.earlypreview-page) {
   transition-delay: 260ms;
 }
 
+/*
+ * The band's side dots fade out toward the section's top and bottom edges, so they do not cut off hard against the
+ * section above and the one below.
+ */
+.earlypreview-page .earlypreview-beige-blank > .doehealth-desk2-visible__tide .doehealth-desk2-tide {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+}
+
 .earlypreview-page .earlypreview-band__line,
 .earlypreview-page .earlypreview-band__dek,
 .earlypreview-page .earlypreview-hospital__line {
