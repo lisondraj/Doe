@@ -1,0 +1,63 @@
+/*
+ * /earlypreview compliance section. It is a market section (same lock, titles, and nav), so the shell
+ * is .earlypreview-market. These rules are only the four plan items under each title.
+ */
+
+.earlypreview-compliance__items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.75rem, 6vh, 3.75rem) clamp(2rem, 6vw, 6rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.earlypreview-compliance__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  opacity: var(--e, 0);
+  transform: translateY(calc((1 - var(--e, 0)) * 1.1rem));
+}
+
+.earlypreview-compliance__mark {
+  font-family: var(--m-display);
+  font-weight: 400;
+  font-size: clamp(1.85rem, min(3.2vw, 5.2vh), 3.15rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--m-cream);
+}
+
+.earlypreview-compliance__item.is-salmon .earlypreview-compliance__mark {
+  color: var(--m-salmon);
+}
+
+.earlypreview-compliance__detail {
+  max-width: 32ch;
+  margin: 0;
+  font-size: clamp(1rem, 1.15vw, 1.15rem);
+  line-height: 1.4;
+  color: var(--m-dim);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__items {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 1.15rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__mark {
+  font-size: 1.65rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__detail {
+  font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earlypreview-compliance__item {
+    opacity: 1;
+    transform: none;
+  }
+}
