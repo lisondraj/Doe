@@ -326,6 +326,7 @@ export function EarlyPreviewProductSection() {
   const lift = en(p, HEAD);
   const shown = en(p, SLIDES_IN);
   const pan = en(p, PAN);
+  const gone = en(p, TITLE_OUT);
 
   return (
     <div className="earlypreview-product-track" style={vars({ "--product-run": END * DOEHEALTH_DESK2_PHONE_STEP_PX })}>
@@ -343,10 +344,10 @@ export function EarlyPreviewProductSection() {
         >
           {/* The dot wave hangs from the title's bottom edge and climbs with it, ending in the space between the title and the boxes.
               It drifts while the title rises, then holds that frame: a canvas redrawn every frame under the panning boxes costs the pan its smoothness. */}
-          <div className="earlypreview-product__wave" style={{ opacity: 1 - WAVE_FADE * lift }} aria-hidden>
+          <div className="earlypreview-product__wave" style={{ opacity: 1 - WAVE_FADE * lift, ...vars({ "--wv-rise": gone }) }} aria-hidden>
             <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.3)" top={0.04} amp={40} fade={0.25} active={near && lift < 1} />
           </div>
-          <h2 className={`earlypreview-product__title ${p22Mackinac.className}`} style={vars({ "--tf": 1 - en(p, TITLE_OUT) })}>
+          <h2 className={`earlypreview-product__title ${p22Mackinac.className}`} style={vars({ "--tf": 1 - gone })}>
             <span>{HEADLINE.line1}</span>
             <span>{HEADLINE.line2}</span>
           </h2>
