@@ -528,7 +528,7 @@ const LOGS: LogRow[] = [
 const LOG = { top: 216, step: 48, h: 42 };
 const FLOW_TOP = 96;
 
-export function AuditCard({ frame }: { frame: number }) {
+export function AuditCard({ frame, height = AUDIT.h }: { frame: number; height?: number }) {
   const insert = ramp(frame, LOG_INSERT_AT, 16, EASE_IN_OUT);
   const stepW = (AUDIT.w - AUDIT.pad * 2) / FLOW.length;
   const travel = ramp(frame, FLOW_AT, FLOW_STEP * 3, EASE_IN_OUT);
@@ -536,7 +536,7 @@ export function AuditCard({ frame }: { frame: number }) {
   const lineW = stepW * (FLOW.length - 1);
 
   return (
-    <div style={{ ...surface, position: "relative", height: AUDIT.h, borderRadius: 32, overflow: "hidden" }}>
+    <div style={{ ...surface, position: "relative", height, borderRadius: 32, overflow: "hidden" }}>
       <div style={{ position: "absolute", left: AUDIT.pad, right: AUDIT.pad, top: 26, height: 40, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ fontFamily: F.display, fontWeight: 500, fontSize: 32, letterSpacing: "-0.02em", color: C.walnut }}>Activity</div>
         <div style={{ display: "flex", gap: 8 }}>

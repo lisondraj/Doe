@@ -1,42 +1,67 @@
 "use client";
 
-import { ShadowsContext, AppShell } from "@/remotion/video1/ui";
 import { AuditCard } from "@/remotion/video2/Section2Permissions";
+import { ShadowsContext } from "@/remotion/video1/ui";
 import { dmSans, inter, p22Mackinac } from "@/lib/home/fonts";
+import { EarlyPreviewProductFilmFrame, type EarlyPreviewProductFilm } from "@/components/earlypreview/EarlyPreviewProductFilmFrame";
+import { ProductShell, type ProductRailKey } from "@/components/earlypreview/EarlyPreviewProductShell";
 
-/** The shell's size, the product's own 1440×900, and the Activity card's inner paper, which its rail leaves. */
+/** The shell's size, the product's own 1440×900, and the paper the rail leaves (1364×876). */
 const SHELL = { w: 1440, h: 900 };
-const RAIL = 64;
-const PAPER = { w: SHELL.w - RAIL - 12, h: SHELL.h - 24 };
-const CARD = { w: 820, h: 420, scale: 1.15 };
+const PAPER = { w: SHELL.w - 64 - 12, h: SHELL.h - 24 };
+/** Tall enough for all five rows (the last ends 450 px down) with the same 26 px under them as the title has above. */
+const CARD = { w: 820, h: 476, scale: 1.15 };
 /** The card's place in the paper, from its top left, so the shell's top-left corner is the one the box shows. */
 const CARD_AT = { x: 48, y: 48 };
-/** The permissions film's frame 660: the Activity card in its finished state. */
-const CARD_FRAME = 660;
+/** Past the Activity card's new-row insert, so every row sits in its place and none overlaps another. */
+const CARD_FRAME = 720;
 
 /**
- * The authentication box: the Activity card in the same outer shell as the product (the ink rail, and the paper panel
- * with its rounded corners), in the paper's top left corner. No shadows, as everywhere in the section.
+ * The authentication box: the Activity card in the product's outer shell (the ink rail, and the paper panel with its
+ * rounded corners), in the paper's top left corner. No shadows, as everywhere in the section.
  */
 export function EarlyPreviewAuthShell() {
   return (
     <div className={`${dmSans.variable} ${inter.className} ${p22Mackinac.className}`} style={{ width: SHELL.w, height: SHELL.h }}>
       <ShadowsContext.Provider value={false}>
-        <AppShell active={4} width={SHELL.w} height={SHELL.h}>
-        <div
-          style={{
-            position: "absolute",
-            left: CARD_AT.x,
-            top: CARD_AT.y,
-            width: CARD.w,
-            height: CARD.h,
-            transform: `scale(${CARD.scale})`,
-            transformOrigin: "0 0",
-          }}
-        >
-          <AuditCard frame={CARD_FRAME} />
-        </div>
-        </AppShell>
+        <ProductShell active="integrations">
+          <div
+            style={{
+              position: "absolute",
+              left: CARD_AT.x,
+              top: CARD_AT.y,
+              width: CARD.w,
+              height: CARD.h,
+              transform: `scale(${CARD.scale})`,
+              transformOrigin: "0 0",
+            }}
+          >
+            <AuditCard frame={CARD_FRAME} height={CARD.h} />
+          </div>
+        </ProductShell>
+      </ShadowsContext.Provider>
+    </div>
+  );
+}
+
+/** The films' own frame, in the product's outer shell: the ink rail with its nav icons, and the paper panel. */
+const FILM = { w: 1920, h: 1080 };
+/** Cover the paper with the film, so the film runs off its edges and leaves no paper showing. */
+const FILM_SCALE = Math.max(PAPER.w / FILM.w, PAPER.h / FILM.h);
+
+export function EarlyPreviewFilmShell({ film, frame, active }: { film: EarlyPreviewProductFilm; frame: number; active: ProductRailKey }) {
+  const left = (PAPER.w - FILM.w * FILM_SCALE) / 2;
+  const top = (PAPER.h - FILM.h * FILM_SCALE) / 2;
+  return (
+    <div className={`${dmSans.variable} ${inter.className} ${p22Mackinac.className}`} style={{ width: SHELL.w, height: SHELL.h }}>
+      <ShadowsContext.Provider value={false}>
+        <ProductShell active={active}>
+          <div style={{ position: "absolute", left: 0, top: 0, width: PAPER.w, height: PAPER.h, overflow: "hidden" }}>
+            <div style={{ position: "absolute", left, top, width: FILM.w, height: FILM.h, transform: `scale(${FILM_SCALE})`, transformOrigin: "0 0" }}>
+              <EarlyPreviewProductFilmFrame film={film} frame={frame} />
+            </div>
+          </div>
+        </ProductShell>
       </ShadowsContext.Provider>
     </div>
   );

@@ -7,6 +7,7 @@ import { SkipIcon } from "@/components/doehealth-desk2/DoeHealthDesk2AudienceSec
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
 import { DoeHealthProductArtboard, type DoeHealthProductTab } from "@/components/doehealth-product/DoeHealthProductHome";
 import type { EarlyPreviewProductFilm } from "@/components/earlypreview/EarlyPreviewProductFilmFrame";
+import type { ProductRailKey } from "@/components/earlypreview/EarlyPreviewProductShell";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import {
   DOEHEALTH_DESK2_PHONE_STEP_PX,
@@ -22,8 +23,8 @@ import {
 import { useNavReveal } from "@/lib/earlypreview/use-nav-reveal";
 import { p22Mackinac } from "@/lib/home/fonts";
 
-const FilmFrame = dynamic(
-  () => import("@/components/earlypreview/EarlyPreviewProductFilmFrame").then((mod) => mod.EarlyPreviewProductFilmFrame),
+const EarlyPreviewFilmShell = dynamic(
+  () => import("@/components/earlypreview/EarlyPreviewAuthShell").then((mod) => mod.EarlyPreviewFilmShell),
   { ssr: false },
 );
 const EarlyPreviewAuthShell = dynamic(
@@ -33,7 +34,6 @@ const EarlyPreviewAuthShell = dynamic(
 
 /** The /doehealthproduct artboard and the films' frame, in their own pixels. */
 const ARTBOARD = { w: 1440, h: 900 };
-const FILM = { w: 1920, h: 1080 };
 
 type Align = "start" | "center" | "end";
 /** The part of the source a box may show, in the source's pixels, and which edge it holds to when the box is narrower or shorter. */
@@ -47,7 +47,7 @@ type Sit = "br" | "bl" | "tr" | "tl" | "b" | "t" | "full";
 
 type Visual =
   | { kind: "app"; tab: DoeHealthProductTab; menu?: boolean; crop: Crop; sit: Sit }
-  | { kind: "film"; film: EarlyPreviewProductFilm; frame: number; crop: Crop; sit: Sit }
+  | { kind: "film"; film: EarlyPreviewProductFilm; frame: number; active: ProductRailKey; crop: Crop; sit: Sit }
   | { kind: "shell"; crop: Crop; sit: Sit };
 
 /**
@@ -57,16 +57,16 @@ type Visual =
 const VISUALS: Record<EarlyPreviewProductSlideId, Visual> = {
   index: { kind: "app", tab: "integrations", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   interface: { kind: "app", tab: "call", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
-  auth: { kind: "shell", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
-  permissions: { kind: "app", tab: "permissions", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "bl" },
-  insurance: { kind: "film", film: "communication", frame: 575, crop: { x: 775, y: 385, w: 805, h: 540, ax: "end", ay: "end" }, sit: "tl" },
-  forms: { kind: "app", tab: "forms", crop: { x: 370, y: 120, w: 715, h: 520, ay: "start" }, sit: "b" },
-  followUp: { kind: "film", film: "coordinate", frame: 500, crop: { x: 445, y: 65, w: 1030, h: 770, ay: "end" }, sit: "t" },
-  multiSite: { kind: "app", tab: "integrations", menu: true, crop: { x: 0, y: 520, w: 570, h: 380, ax: "start", ay: "end" }, sit: "tr" },
-  clinics: { kind: "app", tab: "referrals", crop: { x: 620, y: 0, w: 820, h: 547, ax: "end", ay: "start" }, sit: "bl" },
-  departments: { kind: "film", film: "permissions", frame: 380, crop: { x: 448, y: 66, w: 648, h: 470, ay: "start" }, sit: "b" },
-  directory: { kind: "film", film: "network", frame: 440, crop: { x: 160, y: 210, w: 830, h: 600, ay: "start" }, sit: "b" },
-  payments: { kind: "app", tab: "payments", crop: { x: 620, y: 340, w: 820, h: 560, ax: "end", ay: "end" }, sit: "tl" },
+  auth: { kind: "shell", crop: { x: 0, y: 0, w: 960, h: 668, ax: "start", ay: "start" }, sit: "br" },
+  permissions: { kind: "app", tab: "permissions", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  insurance: { kind: "film", film: "communication", frame: 575, active: "forms", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  forms: { kind: "app", tab: "forms", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  followUp: { kind: "film", film: "coordinate", frame: 500, active: "referrals", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  multiSite: { kind: "app", tab: "integrations", menu: true, crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  clinics: { kind: "app", tab: "referrals", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  departments: { kind: "film", film: "permissions", frame: 380, active: "permissions", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  directory: { kind: "film", film: "network", frame: 440, active: "providers", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  payments: { kind: "app", tab: "payments", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
 };
 
 /** Where the source's edge lands in the box, held inside the source so the box never shows past it. */
@@ -114,8 +114,8 @@ function CropView({ source, crop, children }: { source: { w: number; h: number }
 const SlideVisual = memo(function SlideVisual({ visual }: { visual: Visual }) {
   if (visual.kind === "film") {
     return (
-      <CropView source={FILM} crop={visual.crop}>
-        <FilmFrame film={visual.film} frame={visual.frame} />
+      <CropView source={ARTBOARD} crop={visual.crop}>
+        <EarlyPreviewFilmShell film={visual.film} frame={visual.frame} active={visual.active} />
       </CropView>
     );
   }
@@ -240,7 +240,11 @@ export function EarlyPreviewProductSection() {
         >
           {/* The dot wave runs under the title and lifts with it. */}
           {/* The dot wave hangs from the title's bottom edge and only climbs part of the way with the title. */}
-          <div className="earlypreview-product__wave" style={vars({ "--w": toCenter * lift * WAVE_CLIMB })} aria-hidden>
+          <div
+            className="earlypreview-product__wave"
+            style={{ ...vars({ "--w": toCenter * lift * WAVE_CLIMB }), opacity: 1 - lift, visibility: lift >= 1 ? "hidden" : "visible" }}
+            aria-hidden
+          >
             <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.3)" top={0.04} amp={40} fade={0.25} active={near && lift < 1} />
           </div>
           <h2 className={`earlypreview-product__title ${p22Mackinac.className}`}>
