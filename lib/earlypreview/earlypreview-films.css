@@ -1,3 +1,30 @@
+/* The film covers its still. The workspace ignores pointer events, and that inherits, so a tap
+   would otherwise pass through the photo on a touch screen. The film itself stays inert until it is showing,
+   so the click lands on the still and starts playback. */
+.earlypreview-page .desk2-workspace__photo,
+.earlypreview-page .earlypreview-gallery__tile--film {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.earlypreview-page .earlypreview-film {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.earlypreview-page .earlypreview-film.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* Playing takes the still's veil, names, play icon and hover card away so the film's own controls are clear.
    The still goes too, so a missing or rejected URL still shows the player instead of the photograph.
    Hover does not: the middle frame shows underneath the card, and the card stays. */

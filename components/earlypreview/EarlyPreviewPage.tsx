@@ -210,6 +210,23 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
   useDoeHealthDesk2PhoneScreenHeight(variant === "phone");
   useDoeHealthDesk2FitTitles(rootRef);
 
+  // The announcement's "See Video" is the desk page's link to About. Here it opens the hero film.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const onAnnounce = (event: MouseEvent) => {
+      const link = (event.target as HTMLElement | null)?.closest?.("a.doehealth-desk2-announce__link");
+      if (!link || !root.contains(link)) return;
+      event.preventDefault();
+      const photo = root.querySelector<HTMLElement>(".desk2-workspace__photo");
+      if (!photo) return;
+      photo.scrollIntoView({ behavior: "smooth", block: "center" });
+      photo.click();
+    };
+    root.addEventListener("click", onAnnounce);
+    return () => root.removeEventListener("click", onAnnounce);
+  }, []);
+
   return (
     <div
       ref={rootRef}
