@@ -111,6 +111,9 @@ const SEED_PLANS = {
   us: { basic: 15, advanced: 9, groups: 3, groupSites: 12, groupSeats: 36 },
 } as const;
 const SEED_LOIS = "1–2";
+/** Clinics in the Doe Index today, and agent requests a month at Seed (thousands). */
+const INDEXED_TODAY = 1_500;
+const SEED_REQUESTS_K = 2;
 /** Doe One's beta: 5–10 clinics. The upside has 9 of them convert at founding price, 3 providers each. */
 const DOE_ONE_BETA = "5–10";
 const DOE_ONE_UPSIDE_SEATS = 9 * 3;
@@ -143,6 +146,33 @@ const total = (split: { canada: number; us: number }) =>
 const n = (value: number) => value.toLocaleString("en-US");
 const kUsd = (dollars: number) => `$${Math.round(dollars / 1000)}K`;
 
+/** The Seed targets, for the plan section, so it quotes the same model as the Seed and cities screens. */
+export const EARLYPREVIEW_MARKET_TARGETS = {
+  indexedToday: INDEXED_TODAY,
+  indexed: total(SEED_INDEXED),
+  indexedCanada: SEED_INDEXED.canada,
+  indexedUs: SEED_INDEXED.us,
+  claimed: total(SEED_CLAIMED),
+  paying: total(SEED_PAID),
+  arrK: Math.round(SEED_ARR / 1000),
+  requestsK: SEED_REQUESTS_K,
+  lois: SEED_LOIS,
+  /** Founding price of the entry paid plan, per location a month. */
+  fromMo: FOUNDING_MO.basic,
+} as const;
+
+/**
+ * The Seed plan mix and both price lists, for the plan section's revenue screen: the same paying locations at founding
+ * prices, then at regular prices once their founding year ends.
+ */
+export const EARLYPREVIEW_MARKET_PRICING = {
+  founding: FOUNDING_MO,
+  regular: PLAN_MO,
+  seedPlans: SEED_PLANS,
+  seedClaimed: SEED_CLAIMED,
+  upsideArrK: UPSIDE_ARR_K,
+} as const;
+
 /** A line of copy whose figures are set apart from the words around them. */
 export type EarlyPreviewMarketLine = readonly {
   readonly text: string;
@@ -174,7 +204,7 @@ export const EARLYPREVIEW_MARKET_SEED = {
       fig(n(both("groups"))),
       { text: " multi-site groups" },
     ],
-    [fig("2K"), { text: " agent requests a month" }],
+    [fig(`${SEED_REQUESTS_K}K`), { text: " agent requests a month" }],
   ] satisfies readonly EarlyPreviewMarketLine[],
 } as const;
 
@@ -324,7 +354,7 @@ const pct = (part: number) => `${Math.round((part / INDEX_TOTAL) * 100)}%`;
  */
 export const EARLYPREVIEW_MARKET_INDEX = {
   index: {
-    title: ["We've already indexed 1,500", "clinics in the US & Canada."],
+    title: [`We've already indexed ${n(INDEXED_TODAY)}`, "clinics in the US & Canada."],
     detail: [
       "We're emailing every clinic its",
       "index page to claim by the end of Q1 2027.",
