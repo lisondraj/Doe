@@ -1,13 +1,14 @@
 import Image from "next/image";
-import { type CSSProperties, useEffect, useRef } from "react";
+import { type CSSProperties, type MouseEvent, type PointerEvent, useRef, useState } from "react";
 
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
-import { DOEHEALTH_DESK2_NAV_WASH_EVENT } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 import { EarlyPreviewVideoOverlay } from "@/components/earlypreview/EarlyPreviewVideoOverlay";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 import { EARLYPREVIEW_ENTERPRISE_DEK } from "@/lib/earlypreview/earlypreview-hero-copy";
 import { useNavReveal } from "@/lib/earlypreview/use-nav-reveal";
+import type { EarlyPreviewFilmId } from "@/lib/earlypreview/earlypreview-films";
+import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
 import {
   EARLYPREVIEW_AESTHETICS_VIDEO,
   EARLYPREVIEW_BEYOND_VIDEO,
@@ -17,14 +18,23 @@ import {
 } from "@/lib/earlypreview/earlypreview-videos";
 
 /** The hospital video has its own section, under the blank section below the main video. */
-const HOSPITAL_TILE: { src: string; alt: string; video: EarlyPreviewVideo; wide?: boolean; position?: string } = {
+const HOSPITAL_TILE: GalleryTileData = {
   src: "/doehealthdesk2/golden-loft.png",
   alt: "A golden-lit loft",
   video: EARLYPREVIEW_HOSPITALS_VIDEO,
   wide: true,
+  film: "hospitals",
 };
 
-type GalleryTileData = { src: string; alt: string; video: EarlyPreviewVideo; wide?: boolean; position?: string };
+type GalleryTileData = {
+  src: string;
+  alt: string;
+  video: EarlyPreviewVideo;
+  wide?: boolean;
+  position?: string;
+  /** The film itself, if it plays in place on the tile. The still above stays the thumbnail until then. */
+  film?: EarlyPreviewFilmId;
+};
 
 /** Two videos side by side, the first row of the beige section's video grid. */
 const PAIR_TILES: readonly GalleryTileData[] = [
@@ -33,7 +43,12 @@ const PAIR_TILES: readonly GalleryTileData[] = [
     alt: "Sunlit room with minimalist wooden stools",
     video: EARLYPREVIEW_BEYOND_VIDEO,
   },
-  { src: "/doehealthdesk2/other.png", alt: "A calm, sunlit interior", video: EARLYPREVIEW_AESTHETICS_VIDEO },
+  {
+    src: "/doehealthdesk2/other.png",
+    alt: "A calm, sunlit interior",
+    video: EARLYPREVIEW_AESTHETICS_VIDEO,
+    film: "derm",
+  },
 ];
 
 /** The last video, full width, under the pair. */
@@ -43,9 +58,102 @@ const LAST_TILE: GalleryTileData = {
   video: EARLYPREVIEW_CONCIERGE_VIDEO,
   position: "20% 50%",
   wide: true,
+  film: "concierge",
 };
 
+/**
+ * A tile whose film plays on the tile. At rest it is the still and the card, as on the other tiles. On a mouse, hovering
+ * shows the film's middle frame. A click starts the film from the top, with sound and the film's own controls (mute,
+ * full screen), and the card goes away so the controls are clear.
+ */
+function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPreviewFilmId }) {
+  const src = useEarlyPreviewFilm(film);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const hoveredRef = useRef(false);
+  const [showFrame, setShowFrame] = useState(false);
+  const [playing, setPlaying] = useState(false);
+
+  /** Seeks to the middle of the film, once its length is known (see `onLoadedMetadata`). */
+  const seekToMiddle = () => {
+    const video = videoRef.current;
+    if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
+    const middle = video.duration / 2;
+    // Setting the same time again fires no `seeked`, so show the frame straight away if it is already there.
+    if (video.readyState >= 2 && Math.abs(video.currentTime - middle) < 0.05) {
+      setShowFrame(true);
+    } else {
+      video.currentTime = middle;
+    }
+  };
+
+  const onPointerEnter = (event: PointerEvent<HTMLElement>) => {
+    if (event.pointerType !== "mouse" || playing) return;
+    hoveredRef.current = true;
+    seekToMiddle();
+  };
+
+  const onPointerLeave = (event: PointerEvent<HTMLElement>) => {
+    if (event.pointerType !== "mouse") return;
+    hoveredRef.current = false;
+    setShowFrame(false);
+  };
+
+  const onClick = (event: MouseEvent<HTMLElement>) => {
+    // The film's own controls and the article link keep their clicks.
+    if (playing || (event.target as HTMLElement).closest("a")) return;
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = false;
+    video.currentTime = 0;
+    setPlaying(true);
+    video.play().catch(() => setPlaying(false));
+  };
+
+  const visible = playing || showFrame;
+
+  return (
+    <figure
+      className={`earlypreview-gallery__tile earlypreview-gallery__tile--film${tile.wide ? " earlypreview-gallery__tile--wide" : ""}${playing ? " is-playing" : ""}`}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+      onClick={onClick}
+    >
+      <Image
+        src={tile.src}
+        alt={tile.alt}
+        width={2500}
+        height={1445}
+        sizes={tile.wide ? "(min-width: 1024px) 80vw, 100vw" : "(min-width: 1024px) 40vw, 50vw"}
+        style={tile.position ? { objectPosition: tile.position } : undefined}
+      />
+      <video
+        ref={videoRef}
+        className={`earlypreview-film${visible ? " is-visible" : ""}`}
+        src={src}
+        preload="metadata"
+        playsInline
+        controls={playing}
+        aria-label={`${tile.video.title.join(" ")}, video`}
+        onLoadedMetadata={() => {
+          if (hoveredRef.current) seekToMiddle();
+        }}
+        onSeeked={() => {
+          if (hoveredRef.current) setShowFrame(true);
+        }}
+      />
+      <span className="desk2-workspace__play" aria-hidden="true">
+        <svg viewBox="1.35 0 24 24" fill="currentColor">
+          <path d="M7.5 4.8v14.4a.9.9 0 0 0 1.37.77l11.3-7.2a.9.9 0 0 0 0-1.54L8.87 4.03A.9.9 0 0 0 7.5 4.8Z" />
+        </svg>
+      </span>
+      <EarlyPreviewVideoOverlay video={tile.video} compact={!tile.wide} />
+    </figure>
+  );
+}
+
 function GalleryTile({ tile }: { tile: GalleryTileData }) {
+  if (tile.film) return <FilmGalleryTile tile={tile} film={tile.film} />;
+
   return (
     <figure className={`earlypreview-gallery__tile${tile.wide ? " earlypreview-gallery__tile--wide" : ""}`}>
       <Image
@@ -76,31 +184,13 @@ export function EarlyPreviewHospitalSection({
   titleStyle?: CSSProperties;
 } = {}) {
   const sectionRef = useRef<HTMLElement>(null);
-  // The section starts beige, like the band above it, and fades to brown when the nav reaches it. The headline starts
-  // in the brown and fades to its colours at the same time.
+  // The headline starts in the brown and fades to its colours when the nav reaches the section.
   useNavReveal(sectionRef);
-  // While the section is still beige the nav reads as beige. Once it has faded to brown, the nav follows.
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return undefined;
-    const syncNavBeige = () => {
-      const revealed = el.classList.contains("is-in");
-      const next = revealed ? "0" : "1";
-      if (el.getAttribute("data-nav-beige") === next) return;
-      el.setAttribute("data-nav-beige", next);
-      window.dispatchEvent(new Event(DOEHEALTH_DESK2_NAV_WASH_EVENT));
-    };
-    syncNavBeige();
-    const observer = new MutationObserver(syncNavBeige);
-    observer.observe(el, { attributes: true, attributeFilter: ["class"] });
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <section
       ref={sectionRef}
       className={`earlypreview-gallery earlypreview-hospital doehealth-desk2-nav-wash-surface ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
-      data-nav-beige="1"
       aria-label="Doe for Hospitals video"
       style={sectionStyle}
     >

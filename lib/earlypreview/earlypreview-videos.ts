@@ -29,7 +29,7 @@ export const EARLYPREVIEW_BEYOND_VIDEO: EarlyPreviewVideo = {
 };
 
 export const EARLYPREVIEW_AESTHETICS_VIDEO: EarlyPreviewVideo = {
-  title: ["Doe for", "Aesthetic Practices"],
+  title: ["Doe for Derm", "& Plastic Surgery"],
   link: EARLYPREVIEW_NEWS_LINK,
 };
 

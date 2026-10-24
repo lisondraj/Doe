@@ -13,6 +13,7 @@ import { DoeHealthDesk2Workspace } from "@/components/doehealth-desk2/DoeHealthD
 import { EarlyPreviewHospitalSection, EarlyPreviewVideoGrid } from "@/components/earlypreview/EarlyPreviewGallery";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { EarlyPreviewComplianceSection } from "@/components/earlypreview/EarlyPreviewComplianceSection";
+import { EarlyPreviewPlanSection } from "@/components/earlypreview/EarlyPreviewPlanSection";
 import { EarlyPreviewMarketSection } from "@/components/earlypreview/EarlyPreviewMarketSection";
 import { EarlyPreviewProductSection } from "@/components/earlypreview/EarlyPreviewProductSection";
 import { EarlyPreviewVideoOverlay } from "@/components/earlypreview/EarlyPreviewVideoOverlay";
@@ -24,6 +25,7 @@ import {
   EARLYPREVIEW_PRACTICES_HEADLINE,
 } from "@/lib/earlypreview/earlypreview-hero-copy";
 import { EARLYPREVIEW_MAIN_VIDEO } from "@/lib/earlypreview/earlypreview-videos";
+import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
 import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
 import { useDoeHealthDesk2FitTitles } from "@/lib/doehealthdesk2/use-doehealthdesk2-fit-titles";
 import { useNavReveal } from "@/lib/earlypreview/use-nav-reveal";
@@ -52,6 +54,7 @@ function EarlyPreviewBeigeBand({
   titleSize,
   videos,
   headline = EARLYPREVIEW_BAND_HEADLINE,
+  heroFilm,
 }: {
   sectionRef?: RefObject<HTMLElement>;
   /** The hero block's height. Left out, the band is as tall as its content. */
@@ -64,6 +67,8 @@ function EarlyPreviewBeigeBand({
   videos?: ReactNode;
   /** The two title lines. The band under the hero keeps the default; the one under the enterprise section has its own. */
   headline?: { readonly line1: string; readonly line2: string; readonly phoneLines?: readonly string[] };
+  /** The hero film, shown again when this band has no grid of its own. */
+  heroFilm?: string;
 }) {
   return (
     <section
@@ -107,7 +112,11 @@ function EarlyPreviewBeigeBand({
         <div className={`earlypreview-band__videos ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>{videos}</div>
       ) : (
         /* The same video as the hero, under the copy. */
-        <DoeHealthDesk2Workspace overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />} />
+        <DoeHealthDesk2Workspace
+          film={heroFilm}
+          filmLabel={EARLYPREVIEW_MAIN_VIDEO.title.join(" ")}
+          overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />}
+        />
       )}
     </section>
   );
@@ -119,6 +128,7 @@ function EarlyPreviewBeigeBand({
  */
 export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealthDesk2Variant }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
+  const heroFilm = useEarlyPreviewFilm("hero");
   const rootRef = useRef<HTMLDivElement>(null);
   const beigeBandRef = useRef<HTMLElement>(null);
   const beigeBandRepeatRef = useRef<HTMLElement>(null);
@@ -233,14 +243,27 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
               <DoeHealthBlogDotWave color="rgba(252, 207, 184, 0.6)" top={0.42} amp={60} fade={0.5} />
             </div>
           </div>
-          <DoeHealthDesk2Workspace overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />} className="doehealth-desk2-nav-wash-surface" />
+          <DoeHealthDesk2Workspace
+            film={heroFilm}
+            filmLabel={EARLYPREVIEW_MAIN_VIDEO.title.join(" ")}
+            overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />}
+            className="doehealth-desk2-nav-wash-surface"
+          />
         </div>
         {/* The market, the page's second section: scroll-locked, it releases on the go-to-market screen. */}
         <EarlyPreviewMarketSection />
         {/* The blank band under the hero: the /product-nav beige, with the nav in its beige state over it. */}
-        <EarlyPreviewBeigeBand sectionRef={beigeBandRef} minHeight={bandHeight} pad={bandPad} titleSize={bandTitleSize} />
+        <EarlyPreviewBeigeBand
+          sectionRef={beigeBandRef}
+          minHeight={bandHeight}
+          pad={bandPad}
+          titleSize={bandTitleSize}
+          heroFilm={heroFilm}
+        />
         {/* The product, a scroll-locked beige section: the title lifts, a big rectangle opens, and its boxes pan by. */}
         <EarlyPreviewProductSection />
+        {/* The plan, four scroll-locked screens in the market section's style, above the enterprise section. */}
+        <EarlyPreviewPlanSection />
         <EarlyPreviewHospitalSection
           sectionStyle={{
             minHeight: bandBoxHeight,

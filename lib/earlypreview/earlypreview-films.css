@@ -1,0 +1,12 @@
+/* Playing takes the still's veil, names, play icon and hover card away so the film's own controls are clear.
+   Hover does not: the middle frame shows underneath the card, and the card stays. */
+.earlypreview-page .desk2-workspace__photo.is-playing {
+  cursor: default;
+}
+
+.earlypreview-page .desk2-workspace__photo.is-playing::after,
+.earlypreview-page .desk2-workspace__photo.is-playing .desk2-workspace__play,
+.earlypreview-page .desk2-workspace__photo.is-playing .desk2-workspace__person,
+.earlypreview-page .desk2-workspace__photo.is-playing .earlypreview-overlay {
+  display: none;
+}

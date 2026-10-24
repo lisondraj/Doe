@@ -1,63 +1,848 @@
 /*
- * /earlypreview compliance section. It is a market section (same lock, titles, and nav), so the shell
- * is .earlypreview-market. These rules are only the four plan items under each title.
+ * /earlypreview compliance section (EarlyPreviewComplianceSection). The market section's brown scroll-locked screen,
+ * its big titles and its type, with this section's own drawings: the sliding cards, the agent-by-clinic mesh, the
+ * eval matrix, the incident timeline and the staircase to Seed. Every --o, --s, --e, --k, --draw and dot front below is set from scroll
+ * progress, so nothing here transitions.
  */
 
-.earlypreview-compliance__items {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1.75rem, 6vh, 3.75rem) clamp(2rem, 6vw, 6rem);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.earlypreview-compliance {
+  --c-line: rgb(255 252 241 / 0.14);
 }
 
-.earlypreview-compliance__item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  min-width: 0;
+/* Everything that rises in with its screen. */
+.earlypreview-compliance__foot,
+.earlypreview-compliance__status,
+.earlypreview-compliance__stat,
+.earlypreview-compliance__quarter-stack,
+.earlypreview-compliance__keys {
   opacity: var(--e, 0);
-  transform: translateY(calc((1 - var(--e, 0)) * 1.1rem));
+  transform: translateY(calc((1 - var(--e, 0)) * 0.9rem));
 }
 
-.earlypreview-compliance__mark {
+/* The one small line under a drawing, in the display face like the Seed screen's lines. */
+.earlypreview-compliance__foot {
+  flex-shrink: 0;
+  max-width: 62rem;
+  margin: clamp(1rem, 3vh, 2rem) 0 0;
   font-family: var(--m-display);
-  font-weight: 400;
-  font-size: clamp(1.85rem, min(3.2vw, 5.2vh), 3.15rem);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: var(--m-cream);
+  font-size: clamp(1.15rem, min(1.7vw, 3vh), 1.75rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: var(--m-dim);
 }
 
-.earlypreview-compliance__item.is-salmon .earlypreview-compliance__mark {
+.earlypreview-compliance__foot strong {
+  font-weight: 400;
   color: var(--m-salmon);
 }
 
-.earlypreview-compliance__detail {
-  max-width: 32ch;
+/* A drawing takes all the room under the title, the way the Index drawing does, and scales to fit it. */
+.earlypreview-market__body > .earlypreview-compliance__art {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
   margin: 0;
-  font-size: clamp(1rem, 1.15vw, 1.15rem);
+  overflow: visible;
+}
+
+.earlypreview-compliance [pathLength] {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw, 0));
+  /* Hidden until it starts drawing, so round caps don't leave a dot. */
+  opacity: min(1, calc(var(--draw, 0) * 40));
+}
+
+/* ------------------------------------------------------------ overview */
+
+/* The row of cards runs from the page inset off the screen's right edge; the scroll slides it across. */
+.earlypreview-market__body > .earlypreview-compliance__deck {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  margin-right: calc(50% - 50vw);
+}
+
+.earlypreview-compliance__cards {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(0.9rem, 1.4vw, 1.5rem);
+  margin: 0;
+  padding: 0 clamp(1.5rem, 7.5vw, 7.25rem) 0 0;
+  list-style: none;
+  will-change: transform;
+}
+
+/*
+ * A flat rounded card a shade lighter than the brown, like the product section's boxes: no border, no shadow. It
+ * rises in with the screen (--e) and is fully lit only while it has the focus (--a).
+ */
+.earlypreview-compliance__card {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: clamp(19rem, 27vw, 26rem);
+  max-height: 34rem;
+  padding: clamp(1.1rem, 2.4vh, 1.6rem) clamp(1.25rem, 1.6vw, 1.6rem);
+  border-radius: 1.5rem;
+  background: rgb(255 252 241 / 0.055);
+  opacity: calc(var(--e, 0) * (0.36 + var(--a, 0) * 0.64));
+  transform: translateY(calc((1 - var(--e, 0)) * 1.25rem));
+}
+
+.earlypreview-compliance__card-when {
+  font-size: 0.88rem;
+  color: var(--m-salmon);
+}
+
+/* The drawing fills whatever the card has to spare, so every card's words line up along the bottom. */
+.earlypreview-compliance__card-art {
+  flex: 1 1 auto;
+  min-height: 4rem;
+  width: 100%;
+  margin: clamp(0.5rem, 1.5vh, 1rem) 0;
+  overflow: visible;
+}
+
+.earlypreview-compliance__card-name {
+  margin: 0;
+  font-family: var(--m-display);
+  font-weight: 400;
+  font-size: clamp(1.6rem, min(2.3vw, 4vh), 2.4rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.earlypreview-compliance__card-line {
+  margin: 0.55rem 0 0;
+  font-size: clamp(0.9rem, 1vw, 1rem);
   line-height: 1.4;
   color: var(--m-dim);
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__items {
-  grid-template-columns: minmax(0, 1fr);
-  row-gap: 1.15rem;
+/* The figure at the foot, the way the why-now screen sets a number beside its caption. */
+.earlypreview-compliance__card-figure {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: clamp(0.8rem, 2vh, 1.2rem) 0 0;
+  padding-top: clamp(0.7rem, 1.8vh, 1rem);
+  border-top: 1px solid var(--c-line);
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__mark {
-  font-size: 1.65rem;
+.earlypreview-compliance__card-figure strong {
+  flex-shrink: 0;
+  font-family: var(--m-display);
+  font-weight: 400;
+  font-size: clamp(1.6rem, min(2.4vw, 4.2vh), 2.5rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--m-salmon);
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__detail {
-  font-size: 0.9rem;
+.earlypreview-compliance__card-figure span {
+  font-size: 0.85rem;
+  line-height: 1.3;
+  color: var(--m-quiet);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .earlypreview-compliance__item {
-    opacity: 1;
-    transform: none;
-  }
+/* Each drawing builds from --d, its card's own progress; a dot's index (--j, --c, --f) sets its turn. */
+.earlypreview-compliance__card-art .is-ring {
+  stroke: rgb(255 252 241 / 0.25);
+}
+
+.earlypreview-compliance__card-art .is-grant {
+  fill: var(--m-salmon);
+  opacity: clamp(0, calc(var(--d, 0) * 8 - var(--j)), 1);
+}
+
+.earlypreview-compliance__card-art .is-rest {
+  fill: var(--m-cream);
+  opacity: calc(clamp(0, calc(var(--d, 0) * 4), 1) * (0.4 - clamp(0, calc((var(--d, 0) - 0.4) * 3), 1) * 0.24));
+}
+
+.earlypreview-compliance__card-art .is-pick {
+  --fly: clamp(0, calc((var(--d, 0) - 0.45) * 3 - var(--f) * 0.12), 1);
+  fill: var(--m-salmon);
+  opacity: clamp(0, calc(var(--d, 0) * 4), 1);
+  transform: translate(calc(var(--dx) * var(--fly) * 1px), calc(var(--dy) * var(--fly) * 1px));
+}
+
+.earlypreview-compliance__card-art .is-run {
+  fill: var(--m-cream);
+  opacity: calc(0.08 + clamp(0, calc(var(--d, 0) * 15 - var(--c)), 1) * 0.5);
+}
+
+.earlypreview-compliance__card-art .is-fail {
+  fill: var(--m-salmon);
+  opacity: calc(0.08 + clamp(0, calc(var(--d, 0) * 15 - var(--c)), 1) * 0.92);
+}
+
+.earlypreview-compliance__card-art .is-mark {
+  fill: var(--m-cream);
+  opacity: clamp(0, calc(var(--d, 0) * 8 - var(--j)), 1);
+}
+
+.earlypreview-compliance__card-art .is-mark.is-salmon {
+  fill: var(--m-salmon);
+}
+
+.earlypreview-compliance__card-art .is-entry {
+  stroke: rgb(255 252 241 / 0.4);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  transform: scaleX(clamp(0, calc(var(--d, 0) * 8 - var(--j)), 1));
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+
+.earlypreview-compliance__card-art .is-wall {
+  stroke: rgb(255 252 241 / 0.5);
+  opacity: clamp(0, calc(var(--d, 0) * 7 - var(--j)), 1);
+}
+
+.earlypreview-compliance__card-art .is-inside {
+  fill: var(--m-cream);
+  opacity: calc(clamp(0, calc(var(--d, 0) * 7 - var(--j) - 0.5), 1) * 0.55);
+}
+
+.earlypreview-compliance__card-art .is-step {
+  fill: var(--m-cream);
+  opacity: calc(0.08 + clamp(0, calc(var(--d, 0) * 5 - var(--c)), 1) * 0.55);
+}
+
+.earlypreview-compliance__card-art .is-step.is-salmon {
+  fill: var(--m-salmon);
+  opacity: calc(0.08 + clamp(0, calc(var(--d, 0) * 5 - var(--c)), 1) * 0.92);
+}
+
+/* ------------------------------------------------------------ protocol */
+
+/* The figure against the title: a target, big and salmon, with what it measures under it. */
+.earlypreview-compliance__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  max-width: 16rem;
+  text-align: right;
+}
+
+.earlypreview-compliance__stat-value {
+  font-family: var(--m-display);
+  font-size: clamp(2.4rem, min(4.4vw, 7.2vh), 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  color: var(--m-salmon);
+}
+
+.earlypreview-compliance__stat-caption {
+  margin-top: 0.5rem;
+  font-size: clamp(0.95rem, 1.05vw, 1.05rem);
+  line-height: 1.4;
+  color: var(--m-dim);
+}
+
+/*
+ * The protocol grid: a row a layer (its name and detail, then a fine line across), a column for day one and each
+ * update (a fine vertical line). Points sit where they cross: cream on day one, salmon where an update changed the
+ * layer, a faint dot elsewhere. Each column comes in with its own --e.
+ */
+.earlypreview-market__body > .earlypreview-compliance__grid {
+  margin: auto 0;
+}
+
+.earlypreview-compliance__grid {
+  --dot: 0.7rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.earlypreview-compliance__grid-row {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1.55fr) repeat(var(--n), minmax(0, 1fr)) 4.5rem;
+  align-items: stretch;
+  opacity: var(--e, 0);
+}
+
+.earlypreview-compliance__grid-row.is-head {
+  align-items: end;
+  padding-bottom: clamp(0.5rem, 1.4vh, 0.8rem);
+  font-size: clamp(0.76rem, 0.86vw, 0.86rem);
+  line-height: 1.3;
+  color: var(--m-cream);
+}
+
+.earlypreview-compliance__grid-row.is-head > span {
+  padding: 0 0.4rem;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.earlypreview-compliance__grid-row.is-head > span:not(.earlypreview-compliance__grid-corner):not(.earlypreview-compliance__grid-count) {
+  opacity: var(--e, 0);
+}
+
+.earlypreview-compliance__grid-row.is-head > .is-start {
+  color: var(--m-dim);
+}
+
+.earlypreview-compliance__grid-corner,
+.earlypreview-compliance__grid-row.is-head > .earlypreview-compliance__grid-count {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--m-quiet);
+}
+
+.earlypreview-compliance__grid-row.is-head > .earlypreview-compliance__grid-corner {
+  padding-left: 0;
+  text-align: left;
+}
+
+.earlypreview-compliance__grid-layer {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: clamp(0.5rem, 1.45vh, 0.8rem) 1rem clamp(0.5rem, 1.45vh, 0.8rem) 0;
+  border-top: 1px solid var(--c-line);
+}
+
+.earlypreview-compliance__grid-name {
+  font-family: var(--m-display);
+  font-size: clamp(1.1rem, min(1.5vw, 2.6vh), 1.55rem);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  color: var(--m-cream);
+}
+
+.earlypreview-compliance__grid-detail {
+  font-size: clamp(0.75rem, 0.82vw, 0.84rem);
+  white-space: nowrap;
+  color: var(--m-quiet);
+}
+
+/* A crossing: the row's line through it, the column's line down it, and its point in the middle. */
+.earlypreview-compliance__grid-cell {
+  position: relative;
+  border-top: 1px solid var(--c-line);
+}
+
+.earlypreview-compliance__grid-cell::before,
+.earlypreview-compliance__grid-cell::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.earlypreview-compliance__grid-cell::before {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgb(255 252 241 / 0.16);
+  transform: scaleX(var(--e, 0));
+  transform-origin: left;
+}
+
+.earlypreview-compliance__grid-cell::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgb(255 252 241 / 0.1);
+  opacity: var(--e, 0);
+}
+
+.earlypreview-compliance__grid-cell > i {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: 0.28rem;
+  height: 0.28rem;
+  border-radius: 50%;
+  background: rgb(255 252 241 / 0.3);
+  transform: translate(-50%, -50%) scale(var(--e, 0));
+}
+
+.earlypreview-compliance__grid-cell.is-start > i {
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--m-cream);
+}
+
+.earlypreview-compliance__grid-cell.is-hit > i {
+  width: var(--dot);
+  height: var(--dot);
+  background: var(--m-salmon);
+  box-shadow: 0 0 0 0.3rem var(--doehealth-desk2-surface);
+}
+
+.earlypreview-compliance__grid-row > .earlypreview-compliance__grid-count {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid var(--c-line);
+  font-family: var(--m-display);
+  font-size: clamp(1.05rem, min(1.4vw, 2.4vh), 1.45rem);
+  letter-spacing: -0.02em;
+  color: var(--m-salmon);
+}
+
+.earlypreview-compliance__grid-row.is-head > .earlypreview-compliance__grid-count {
+  display: block;
+  border-top: 0;
+  text-align: right;
+}
+
+.earlypreview-compliance__grid-row:last-child > * {
+  border-bottom: 1px solid var(--c-line);
+}
+
+/* ------------------------------------------------------------ incidents */
+
+.earlypreview-compliance__incidents text {
+  font-family: var(--m-display);
+  font-size: 17px;
+  letter-spacing: -0.02em;
+}
+
+.earlypreview-compliance__incidents .is-axis {
+  stroke: rgb(255 252 241 / 0.35);
+  stroke-width: 1.2;
+}
+
+.earlypreview-compliance__incidents .is-front {
+  stroke: var(--m-salmon);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.earlypreview-compliance__incidents .is-tick {
+  opacity: var(--k, 0);
+}
+
+.earlypreview-compliance__incidents .is-tick path {
+  stroke: rgb(255 252 241 / 0.35);
+}
+
+.earlypreview-compliance__incidents .is-tick text,
+.earlypreview-compliance__incidents .is-limit .is-sub {
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-anchor: middle;
+  fill: var(--m-quiet);
+}
+
+.earlypreview-compliance__incidents .is-limit {
+  opacity: var(--k, 0);
+}
+
+.earlypreview-compliance__incidents .is-limit path {
+  stroke: rgb(252 207 184 / 0.5);
+  stroke-dasharray: 2 5;
+}
+
+.earlypreview-compliance__incidents .is-limit text {
+  text-anchor: end;
+  fill: var(--m-dim);
+}
+
+.earlypreview-compliance__incidents .is-phase {
+  opacity: var(--k, 0);
+}
+
+.earlypreview-compliance__incidents .is-phase path {
+  stroke: rgb(255 252 241 / 0.3);
+}
+
+.earlypreview-compliance__incidents .is-phase text {
+  font-family: inherit;
+  font-size: 12.5px;
+  letter-spacing: 0;
+  text-anchor: middle;
+  fill: var(--m-dim);
+}
+
+.earlypreview-compliance__incidents .is-phase.is-auto text {
+  fill: var(--m-salmon);
+}
+
+.earlypreview-compliance__incidents .is-step path {
+  stroke: rgb(255 252 241 / 0.35);
+}
+
+.earlypreview-compliance__incidents .is-step circle {
+  fill: var(--m-cream);
+  opacity: calc(0.15 + var(--k, 0) * 0.85);
+}
+
+.earlypreview-compliance__incidents .is-step.is-auto circle {
+  fill: var(--m-salmon);
+}
+
+.earlypreview-compliance__incidents .is-step text {
+  fill: var(--m-cream);
+  opacity: var(--k, 0);
+}
+
+.earlypreview-compliance__incidents .is-step.is-auto text {
+  fill: var(--m-salmon);
+}
+
+.earlypreview-compliance__incidents .is-step .is-end {
+  text-anchor: end;
+}
+
+/* ------------------------------------------------------------ evals */
+
+/* The verdict on the latest run, big in the top right, with the count of attacks under it. */
+.earlypreview-compliance__status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.earlypreview-compliance__status-word {
+  font-family: var(--m-display);
+  font-size: clamp(2.4rem, min(4.4vw, 7.2vh), 4.6rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--m-cream);
+}
+
+.earlypreview-compliance__status.is-fail .earlypreview-compliance__status-word {
+  color: var(--m-salmon);
+}
+
+.earlypreview-compliance__status-note {
+  margin-top: 0.45rem;
+  font-size: clamp(0.95rem, 1.05vw, 1.05rem);
+  color: var(--m-dim);
+}
+
+.earlypreview-compliance__status-count {
+  margin-top: 0.2rem;
+  font-size: clamp(0.95rem, 1.05vw, 1.05rem);
+  font-variant-numeric: tabular-nums;
+  color: var(--m-quiet);
+}
+
+.earlypreview-compliance__matrix {
+  opacity: var(--e, 0);
+}
+
+.earlypreview-compliance__matrix .is-label {
+  font-size: 12.5px;
+  text-anchor: end;
+  fill: var(--m-dim);
+}
+
+.earlypreview-compliance__matrix .is-lane-label {
+  fill: var(--m-cream);
+}
+
+.earlypreview-compliance__matrix .is-label.is-failing {
+  fill: var(--m-salmon);
+}
+
+.earlypreview-compliance__matrix .is-base {
+  fill: rgb(255 252 241 / 0.09);
+}
+
+/* A run's dots and lane segments show once the run front (--run) passes their column (--c). */
+.earlypreview-compliance__matrix .is-pass,
+.earlypreview-compliance__matrix .is-fail,
+.earlypreview-compliance__matrix .is-lane {
+  opacity: clamp(0, calc((var(--run, 0) - var(--c)) * 2), 1);
+}
+
+.earlypreview-compliance__matrix .is-pass {
+  fill: rgb(255 252 241 / 0.6);
+}
+
+.earlypreview-compliance__matrix .is-fail {
+  fill: var(--m-salmon);
+}
+
+/* The retest sweeping down a column when the model or the tools change. */
+.earlypreview-compliance__matrix .is-sweep {
+  fill: rgb(252 207 184 / 0.14);
+  opacity: var(--k, 0);
+}
+
+/* A permission's lane: a solid line while it's granted, a faint salmon dash while it's suspended. */
+.earlypreview-compliance__matrix .is-lane {
+  stroke: rgb(255 252 241 / 0.7);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.earlypreview-compliance__matrix .is-lane.is-off {
+  stroke: rgb(252 207 184 / 0.55);
+  stroke-width: 1.4;
+  stroke-dasharray: 2 4;
+}
+
+.earlypreview-compliance__matrix .is-suspended {
+  font-size: 8.5px;
+  fill: var(--m-salmon);
+  opacity: calc(var(--k, 0) * 0.85);
+}
+
+.earlypreview-compliance__matrix .is-event path {
+  stroke: var(--m-salmon);
+  stroke-width: 1;
+}
+
+.earlypreview-compliance__matrix .is-event.is-first path {
+  stroke: rgb(255 252 241 / 0.3);
+}
+
+.earlypreview-compliance__matrix .is-event text {
+  font-size: 12.5px;
+  fill: var(--m-salmon);
+  opacity: var(--k, 0);
+}
+
+.earlypreview-compliance__matrix .is-event.is-first text {
+  fill: var(--m-dim);
+}
+
+/* ------------------------------------------------------------ path to Seed */
+
+/* The quarter in the top right: every quarter's lines stacked in one cell, cross-faded by --o. */
+.earlypreview-compliance__quarter-stack {
+  display: grid;
+  flex-shrink: 0;
+  justify-items: end;
+}
+
+.earlypreview-compliance__quarter {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  opacity: var(--o, 0);
+}
+
+.earlypreview-compliance__quarter-when {
+  font-family: var(--m-display);
+  font-size: clamp(1.6rem, min(2.6vw, 4.4vh), 2.7rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--m-salmon);
+}
+
+.earlypreview-compliance__quarter ul {
+  display: grid;
+  gap: 0.15rem;
+  margin: clamp(0.5rem, 1.4vh, 0.8rem) 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--m-display);
+  font-size: clamp(1.05rem, min(1.5vw, 2.6vh), 1.45rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--m-cream);
+}
+
+.earlypreview-compliance__quarter-unlock {
+  font-size: clamp(0.92rem, 1.02vw, 1.02rem);
+  color: var(--m-quiet);
+}
+
+.earlypreview-compliance__quarter-unlock strong {
+  font-weight: 400;
+  color: var(--m-dim);
+}
+
+.earlypreview-compliance__quarter.is-seed .earlypreview-compliance__quarter-unlock strong {
+  color: var(--m-salmon);
+}
+
+.earlypreview-market__body > .earlypreview-compliance__stair {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.earlypreview-compliance__stair-art {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow: visible;
+  opacity: var(--e, 0);
+}
+
+.earlypreview-compliance__stair-art .is-level path {
+  stroke: var(--c-line);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+}
+
+.earlypreview-compliance__stair-art .is-level text {
+  font-family: var(--m-display);
+  font-size: 15px;
+  letter-spacing: -0.02em;
+  text-anchor: end;
+  fill: var(--m-dim);
+}
+
+.earlypreview-compliance__stair-art .is-level .is-law {
+  font-family: inherit;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  fill: var(--m-quiet);
+}
+
+.earlypreview-compliance__stair-art .is-level.is-current text {
+  fill: var(--m-salmon);
+}
+
+/* A column's dots light once the cursor front (--q) passes them (--c); Seed's are salmon. */
+.earlypreview-compliance__stair-art circle {
+  fill: var(--m-cream);
+  opacity: calc(0.07 + clamp(0, calc((var(--q, 0) - var(--c)) * 3), 1) * 0.55);
+}
+
+.earlypreview-compliance__stair-art circle.is-seed {
+  fill: var(--m-salmon);
+  opacity: calc(0.07 + clamp(0, calc((var(--q, 0) - var(--c)) * 3), 1) * 0.93);
+}
+
+.earlypreview-compliance__stair-art .is-step {
+  stroke: var(--m-cream);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.earlypreview-compliance__stair-art .is-cursor {
+  stroke: var(--m-salmon);
+  stroke-width: 1.2;
+  opacity: var(--k, 0);
+}
+
+/* Each quarter's one deliverable under its column; the label column is 16% of the drawing. */
+.earlypreview-compliance__keys {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  column-gap: 0.75rem;
+  margin: clamp(0.6rem, 1.6vh, 1rem) 0 0 16%;
+  padding: 0;
+  list-style: none;
+  font-family: var(--m-display);
+  font-size: clamp(0.95rem, min(1.3vw, 2.3vh), 1.3rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--m-quiet);
+}
+
+.earlypreview-compliance__keys > li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.earlypreview-compliance__keys span {
+  font-family: var(--font-inter, inherit);
+  font-size: 0.68em;
+  letter-spacing: 0;
+  color: var(--m-quiet);
+}
+
+.earlypreview-compliance__keys > li.is-done {
+  color: var(--m-dim);
+}
+
+.earlypreview-compliance__keys > li.is-active {
+  color: var(--m-cream);
+}
+
+.earlypreview-compliance__keys > li.is-seed.is-active,
+.earlypreview-compliance__keys > li.is-seed.is-done {
+  color: var(--m-salmon);
+}
+
+/* ------------------------------------------------------------ iPhone */
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance .earlypreview-market__plans-head {
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__status,
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__stat,
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__quarter-stack,
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__quarter {
+  align-items: flex-start;
+  justify-items: start;
+  text-align: left;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__status-word {
+  font-size: 1.9rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__foot {
+  font-size: 1.05rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__keys {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__stat-value {
+  font-size: 2.4rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__card {
+  width: 78vw;
+  min-height: 0;
+}
+
+/* The protocol on the iPhone: the layer names only, the update labels small, the counts kept. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid {
+  --dot: 0.5rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-row {
+  grid-template-columns: 5.6rem repeat(var(--n), minmax(0, 1fr)) 1.8rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-detail,
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid ~ .earlypreview-compliance__foot {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-corner,
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-row.is-head > .earlypreview-compliance__grid-count {
+  visibility: hidden;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-row.is-head {
+  font-size: 0.52rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-row.is-head > span {
+  padding: 0 0.1rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-name {
+  font-size: 0.92rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-layer {
+  padding: 0.45rem 0.4rem 0.45rem 0;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-row > .earlypreview-compliance__grid-count {
+  font-size: 0.82rem;
 }
