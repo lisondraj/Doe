@@ -1,5 +1,7 @@
 import { put } from "@vercel/blob";
 
+import { vercelBlobCommand } from "@/lib/blob/vercel-blob";
+
 import { insertDoeDtcFile } from "@/lib/doedtc/doedtc-files-db";
 import { linqGetAttachment, linqSendMedia } from "@/lib/doedtc/linq";
 import type { InboundMediaAttachment } from "@/lib/doedtc/doedtc-messaging";
@@ -121,7 +123,7 @@ export async function ingestInboundDoeDtcMedia(params: {
 }): Promise<InboundMediaIngestResult> {
   const fileIds: string[] = [];
   const visionUrls: string[] = [];
-  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+  const command = vercelBlobCommand();
 
   for (const attachment of params.attachments) {
     try {
@@ -135,7 +137,7 @@ export async function ingestInboundDoeDtcMedia(params: {
             access: "public",
             contentType: mime,
             addRandomSuffix: true,
-            ...(token ? { token } : {}),
+            ...command,
           },
         );
         persistedUrl = uploaded.url;

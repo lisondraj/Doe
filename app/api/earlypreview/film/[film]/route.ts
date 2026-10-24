@@ -1,6 +1,7 @@
 import { issueSignedToken, list, presignUrl } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
+import { vercelBlobCommand } from "@/lib/blob/vercel-blob";
 import { EARLYPREVIEW_BLOB_FILMS, type EarlyPreviewFilmId, isEarlyPreviewFilmId } from "@/lib/earlypreview/earlypreview-films";
 
 /** Long enough to watch, short enough that a leaked link dies. */
@@ -44,7 +45,7 @@ let catalog: Promise<string[]> | null = null;
 
 function listPathnames() {
   if (!catalog) {
-    catalog = list({ limit: 100 })
+    catalog = list({ ...vercelBlobCommand(), limit: 100 })
       .then(({ blobs }) => blobs.map((blob) => blob.pathname))
       .catch((error: unknown) => {
         catalog = null;
@@ -91,6 +92,7 @@ export async function GET(_request: Request, { params }: RouteContext) {
   try {
     const pathname = await resolvePathname(params.film);
     const issued = await issueSignedToken({
+      ...vercelBlobCommand(),
       pathname,
       operations: ["get", "head"],
       validUntil,
