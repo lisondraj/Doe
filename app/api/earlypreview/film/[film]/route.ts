@@ -9,22 +9,42 @@ const PLAYBACK_MS = 6 * 60 * 60 * 1000;
 /** Resolved pathnames for this server process. A miss is not cached, so an upload shows up on the next request. */
 const resolved = new Map<EarlyPreviewFilmId, string>();
 
-/** The filename as uploaded, then the same name inside a folder or with the store's random suffix. */
-async function resolvePathname(id: EarlyPreviewFilmId): Promise<string | null> {
+/** Letters and digits only, so "sequence 01" matches "sequence-01" or "sequence01". */
+function compactName(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+/**
+ * The filename as uploaded, then the same name inside a folder or with the store's random suffix.
+ * A space in the list prefix does not match, so the search uses the first word and the exact name
+ * is signed when the list comes back empty.
+ */
+async function resolvePathname(id: EarlyPreviewFilmId): Promise<string> {
   const cached = resolved.get(id);
   if (cached) return cached;
   const name = EARLYPREVIEW_BLOB_FILMS[id];
   const stem = name.replace(/\.mp4$/i, "");
-  const { blobs } = await list({ prefix: stem, limit: 50 });
-  const hit =
-    blobs.find((blob) => blob.pathname === name || blob.pathname.endsWith(`/${name}`)) ??
-    blobs.find((blob) => {
-      const file = blob.pathname.split("/").pop() ?? "";
-      return file.startsWith(stem) && file.toLowerCase().endsWith(".mp4");
-    });
-  if (!hit) return null;
-  resolved.set(id, hit.pathname);
-  return hit.pathname;
+  const wanted = compactName(stem);
+  const prefix = stem.split(/\s+/)[0] || stem;
+
+  try {
+    const { blobs } = await list({ prefix, limit: 100 });
+    const hit =
+      blobs.find((blob) => blob.pathname === name || blob.pathname.endsWith(`/${name}`)) ??
+      blobs.find((blob) => {
+        const file = (blob.pathname.split("/").pop() ?? "").replace(/\.mp4$/i, "");
+        const base = compactName(file);
+        return base === wanted || base.startsWith(wanted);
+      });
+    if (hit) {
+      resolved.set(id, hit.pathname);
+      return hit.pathname;
+    }
+  } catch {
+    // The store could not be listed. Sign the name we were given.
+  }
+
+  return name;
 }
 
 type RouteContext = {
@@ -44,9 +64,6 @@ export async function GET(_request: Request, { params }: RouteContext) {
 
   try {
     const pathname = await resolvePathname(params.film);
-    if (!pathname) {
-      return NextResponse.json({ error: "Film not found." }, { status: 404 });
-    }
     const issued = await issueSignedToken({
       pathname,
       operations: ["get", "head"],
