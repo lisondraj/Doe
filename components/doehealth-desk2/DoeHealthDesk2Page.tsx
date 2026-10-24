@@ -15,6 +15,8 @@ import { DoeHealthDesk2Workspace } from "@/components/doehealth-desk2/DoeHealthD
 import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import { DOEHEALTH_DESK2_PAGE_BACKGROUND } from "@/lib/doehealthdesk2/doehealthdesk2-colors";
+import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
+import { EARLYPREVIEW_MAIN_VIDEO } from "@/lib/earlypreview/earlypreview-videos";
 import { useDoeHealthDesk2FitTitles } from "@/lib/doehealthdesk2/use-doehealthdesk2-fit-titles";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
 import { useDoeHealthDesk2PhoneScreenHeight } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-screen-height";
@@ -32,6 +34,7 @@ type DoeHealthDesk2PageProps = {
 /** /doehealthdesk — legacy /oldphone nav only on a blank canvas. */
 export function DoeHealthDesk2Page({ initialVariant }: DoeHealthDesk2PageProps) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
+  const heroFilm = useEarlyPreviewFilm("hero");
   const rootRef = useRef<HTMLDivElement>(null);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
   useDoePhoneStableViewport(variant === "phone");
@@ -59,7 +62,7 @@ export function DoeHealthDesk2Page({ initialVariant }: DoeHealthDesk2PageProps) 
       <main className="doehealth-desk2-main min-h-[100dvh]" aria-label="Desk canvas">
         <div className="doehealth-desk2-hero-stack">
           <DoeHealthDesk2Hero />
-          <DoeHealthDesk2Workspace />
+          <DoeHealthDesk2Workspace film={heroFilm} filmLabel={EARLYPREVIEW_MAIN_VIDEO.title.join(" ")} />
         </div>
         <DoeHealthDesk2AudienceSection />
         <DoeHealthDesk2AgentsSection />

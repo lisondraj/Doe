@@ -19,8 +19,9 @@ export function DoeHealthDesk2Workspace({
 }: {
   overlay?: ReactNode;
   className?: string;
-  /** A playable URL. Absent on /doehealthdesk2, which stays a still. */
+  /** A playable URL. The /doehealthdesk2 hero and /earlypreview both use the hero film. */
   film?: string;
+  /** Present whenever this photo is a film, including before the signed URL arrives. */
   filmLabel?: string;
 } = {}) {
   const [shown, setShown] = useState(false);
@@ -157,8 +158,8 @@ export function DoeHealthDesk2Workspace({
       <div className="desk2-workspace__stage">
         <figure
           className={`desk2-workspace__photo${playing ? " is-playing" : ""}`}
-          onPointerEnter={isFilm ? onPointerEnter : undefined}
-          onPointerLeave={isFilm ? onPointerLeave : undefined}
+          onPointerEnter={isFilm && overlay ? onPointerEnter : undefined}
+          onPointerLeave={isFilm && overlay ? onPointerLeave : undefined}
           onClick={isFilm ? onClick : undefined}
         >
           <Image

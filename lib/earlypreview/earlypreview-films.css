@@ -1,13 +1,13 @@
 /* The film covers its still. The workspace ignores pointer events, and that inherits, so a tap
    would otherwise pass through the photo on a touch screen. The film itself stays inert until it is showing,
    so the click lands on the still and starts playback. */
-.earlypreview-page .desk2-workspace__photo,
-.earlypreview-page .earlypreview-gallery__tile--film {
+.doehealth-desk2-page .desk2-workspace__photo,
+.doehealth-desk2-page .earlypreview-gallery__tile--film {
   pointer-events: auto;
   cursor: pointer;
 }
 
-.earlypreview-page .earlypreview-film {
+.doehealth-desk2-page .earlypreview-film {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -20,49 +20,49 @@
   transition: opacity 320ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
-.earlypreview-page .earlypreview-film.is-visible {
+.doehealth-desk2-page .earlypreview-film.is-visible {
   opacity: 1;
   pointer-events: auto;
 }
 
 /* The opening frame is the thumbnail, behind the veil, the names and the play button. */
-.earlypreview-page .earlypreview-film.is-poster {
+.doehealth-desk2-page .earlypreview-film.is-poster {
   z-index: 0;
   opacity: 1;
   pointer-events: none;
 }
 
-.earlypreview-page .desk2-workspace__photo:has(.earlypreview-film.is-poster)::after {
+.doehealth-desk2-page .desk2-workspace__photo:has(.earlypreview-film.is-poster)::after {
   z-index: 1;
 }
 
-.earlypreview-page .desk2-workspace__photo:has(.earlypreview-film.is-poster) :is(.desk2-workspace__play, .desk2-workspace__person) {
+.doehealth-desk2-page .desk2-workspace__photo:has(.earlypreview-film.is-poster) :is(.desk2-workspace__play, .desk2-workspace__person) {
   z-index: 2;
 }
 
 /* Playing takes the still's veil, names, play icon and hover card away so the film's own controls are clear.
    The still goes too, so a missing or rejected URL still shows the player instead of the photograph.
    Hover does not: the middle frame shows underneath the card, and the card stays. */
-.earlypreview-page .desk2-workspace__photo.is-playing,
-.earlypreview-page .earlypreview-gallery__tile.is-playing {
+.doehealth-desk2-page .desk2-workspace__photo.is-playing,
+.doehealth-desk2-page .earlypreview-gallery__tile.is-playing {
   cursor: default;
 }
 
-.earlypreview-page .desk2-workspace__photo.is-playing .earlypreview-film,
-.earlypreview-page .earlypreview-gallery__tile.is-playing .earlypreview-film {
+.doehealth-desk2-page .desk2-workspace__photo.is-playing .earlypreview-film,
+.doehealth-desk2-page .earlypreview-gallery__tile.is-playing .earlypreview-film {
   z-index: 4;
   opacity: 1;
   pointer-events: auto;
 }
 
-.earlypreview-page .desk2-workspace__photo.is-playing img,
-.earlypreview-page .earlypreview-gallery__tile.is-playing img {
+.doehealth-desk2-page .desk2-workspace__photo.is-playing img,
+.doehealth-desk2-page .earlypreview-gallery__tile.is-playing img {
   opacity: 0;
 }
 
-.earlypreview-page .desk2-workspace__photo.is-playing::after,
-.earlypreview-page .desk2-workspace__photo.is-playing .desk2-workspace__play,
-.earlypreview-page .desk2-workspace__photo.is-playing .desk2-workspace__person,
-.earlypreview-page .desk2-workspace__photo.is-playing .earlypreview-overlay {
+.doehealth-desk2-page .desk2-workspace__photo.is-playing::after,
+.doehealth-desk2-page .desk2-workspace__photo.is-playing .desk2-workspace__play,
+.doehealth-desk2-page .desk2-workspace__photo.is-playing .desk2-workspace__person,
+.doehealth-desk2-page .desk2-workspace__photo.is-playing .earlypreview-overlay {
   display: none;
 }
