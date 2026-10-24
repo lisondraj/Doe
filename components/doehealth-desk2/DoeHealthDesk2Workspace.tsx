@@ -9,7 +9,7 @@ import { inter, p22Mackinac } from "@/lib/home/fonts";
 /**
  * Lounge photo (2500 × 1667), rounded to the page's corner radius, with the two founder names on it. The bottom veil
  * lifts as you scroll. `overlay` is laid over the photo (the hover card on /earlypreview). `film` is that page's
- * hero video: the still stays until a click plays it.
+ * hero video: its first frame replaces the photo, and a click plays it.
  */
 export function DoeHealthDesk2Workspace({
   overlay,
@@ -26,9 +26,17 @@ export function DoeHealthDesk2Workspace({
   const [shown, setShown] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [showFrame, setShowFrame] = useState(false);
+  const [poster, setPoster] = useState(false);
   const fadeRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hoveredRef = useRef(false);
+  const playingRef = useRef(false);
+  const filmSeen = useRef(film);
+  playingRef.current = playing;
+  if (filmSeen.current !== film) {
+    filmSeen.current = film;
+    setPoster(false);
+  }
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -83,10 +91,25 @@ export function DoeHealthDesk2Workspace({
     }
   };
 
+  /** The opening frame. Time 0 often stays black until a short seek makes the browser decode it. */
+  const revealFirstFrame = () => {
+    const video = videoRef.current;
+    if (!video || playingRef.current || hoveredRef.current) return;
+    if (video.readyState >= 2 && video.currentTime > 0 && video.currentTime < 0.2) {
+      setPoster(true);
+      return;
+    }
+    try {
+      video.currentTime = 0.04;
+    } catch {
+      // Not seekable yet. `loadeddata` tries again.
+    }
+  };
+
   const onPointerEnter = (event: PointerEvent<HTMLElement>) => {
     if (event.pointerType !== "mouse" || playing) return;
     hoveredRef.current = true;
-    // Show the film immediately. The middle frame replaces the black frame once the seek lands.
+    // Show the film immediately. The middle frame replaces the opening frame once the seek lands.
     setShowFrame(true);
     seekToMiddle();
   };
@@ -95,6 +118,7 @@ export function DoeHealthDesk2Workspace({
     if (event.pointerType !== "mouse") return;
     hoveredRef.current = false;
     setShowFrame(false);
+    if (!playingRef.current) revealFirstFrame();
   };
 
   const startPlayback = () => {
@@ -112,6 +136,7 @@ export function DoeHealthDesk2Workspace({
   const onClick = (event: MouseEvent<HTMLElement>) => {
     if (playing || (event.target as HTMLElement).closest("a")) return;
     // The still comes off whether or not the URL is ready or valid, so a bad link still shows the player.
+    playingRef.current = true;
     setPlaying(true);
     startPlayback();
   };
@@ -147,21 +172,27 @@ export function DoeHealthDesk2Workspace({
           {isFilm ? (
             <video
               ref={videoRef}
-              className={`earlypreview-film${filmVisible ? " is-visible" : ""}`}
-              src={film}
+              className={`earlypreview-film${poster ? " is-poster" : ""}${filmVisible ? " is-visible" : ""}`}
+              src={film ? `${film}#t=0.04` : undefined}
               preload="metadata"
               playsInline
               controls={playing}
               aria-label={filmLabel ? `${filmLabel}, video` : "Video"}
               onLoadedMetadata={() => {
-                if (playing) {
+                if (playingRef.current) {
                   startPlayback();
                   return;
                 }
                 if (hoveredRef.current) seekToMiddle();
+                else revealFirstFrame();
+              }}
+              onLoadedData={() => {
+                if (!playingRef.current && !hoveredRef.current) revealFirstFrame();
               }}
               onSeeked={() => {
+                if (playingRef.current) return;
                 if (hoveredRef.current) setShowFrame(true);
+                else setPoster(true);
               }}
             />
           ) : null}

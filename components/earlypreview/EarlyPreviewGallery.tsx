@@ -32,7 +32,7 @@ type GalleryTileData = {
   video: EarlyPreviewVideo;
   wide?: boolean;
   position?: string;
-  /** The film itself, if it plays in place on the tile. The still above stays the thumbnail until then. */
+  /** The film itself, if it plays in place on the tile. Its first frame is the thumbnail. */
   film?: EarlyPreviewFilmId;
 };
 
@@ -62,16 +62,24 @@ const LAST_TILE: GalleryTileData = {
 };
 
 /**
- * A tile whose film plays on the tile. At rest it is the still and the card, as on the other tiles. On a mouse, hovering
- * shows the film's middle frame. A click starts the film from the top, with sound and the film's own controls (mute,
- * full screen), and the card goes away so the controls are clear.
+ * A tile whose film plays on the tile. At rest the thumbnail is the film's first frame, with the card over it. On a
+ * mouse, hovering shows the middle frame. A click starts the film from the top, with sound and the film's own controls
+ * (mute, full screen), and the card goes away so the controls are clear.
  */
 function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPreviewFilmId }) {
   const src = useEarlyPreviewFilm(film);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hoveredRef = useRef(false);
+  const playingRef = useRef(false);
+  const srcSeen = useRef(src);
   const [showFrame, setShowFrame] = useState(false);
+  const [poster, setPoster] = useState(false);
   const [playing, setPlaying] = useState(false);
+  playingRef.current = playing;
+  if (srcSeen.current !== src) {
+    srcSeen.current = src;
+    setPoster(false);
+  }
 
   /** Seeks to the middle of the film, once its length is known (see `onLoadedMetadata`). */
   const seekToMiddle = () => {
@@ -86,6 +94,21 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
     }
   };
 
+  /** The opening frame. Time 0 often stays black until a short seek makes the browser decode it. */
+  const revealFirstFrame = () => {
+    const video = videoRef.current;
+    if (!video || playingRef.current || hoveredRef.current) return;
+    if (video.readyState >= 2 && video.currentTime > 0 && video.currentTime < 0.2) {
+      setPoster(true);
+      return;
+    }
+    try {
+      video.currentTime = 0.04;
+    } catch {
+      // Not seekable yet. `loadeddata` tries again.
+    }
+  };
+
   const onPointerEnter = (event: PointerEvent<HTMLElement>) => {
     if (event.pointerType !== "mouse" || playing) return;
     hoveredRef.current = true;
@@ -97,6 +120,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
     if (event.pointerType !== "mouse") return;
     hoveredRef.current = false;
     setShowFrame(false);
+    if (!playingRef.current) revealFirstFrame();
   };
 
   const startPlayback = () => {
@@ -114,6 +138,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   const onClick = (event: MouseEvent<HTMLElement>) => {
     // The film's own controls and the article link keep their clicks.
     if (playing || (event.target as HTMLElement).closest("a")) return;
+    playingRef.current = true;
     setPlaying(true);
     startPlayback();
   };
@@ -142,21 +167,27 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
       />
       <video
         ref={videoRef}
-        className={`earlypreview-film${visible ? " is-visible" : ""}`}
-        src={src}
+        className={`earlypreview-film${poster ? " is-poster" : ""}${visible ? " is-visible" : ""}`}
+        src={src ? `${src}#t=0.04` : undefined}
         preload="metadata"
         playsInline
         controls={playing}
         aria-label={`${tile.video.title.join(" ")}, video`}
         onLoadedMetadata={() => {
-          if (playing) {
+          if (playingRef.current) {
             startPlayback();
             return;
           }
           if (hoveredRef.current) seekToMiddle();
+          else revealFirstFrame();
+        }}
+        onLoadedData={() => {
+          if (!playingRef.current && !hoveredRef.current) revealFirstFrame();
         }}
         onSeeked={() => {
+          if (playingRef.current) return;
           if (hoveredRef.current) setShowFrame(true);
+          else setPoster(true);
         }}
       />
       <span className="desk2-workspace__play" aria-hidden="true">

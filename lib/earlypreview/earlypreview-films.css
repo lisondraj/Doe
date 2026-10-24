@@ -25,6 +25,21 @@
   pointer-events: auto;
 }
 
+/* The opening frame is the thumbnail, behind the veil, the names and the play button. */
+.earlypreview-page .earlypreview-film.is-poster {
+  z-index: 0;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.earlypreview-page .desk2-workspace__photo:has(.earlypreview-film.is-poster)::after {
+  z-index: 1;
+}
+
+.earlypreview-page .desk2-workspace__photo:has(.earlypreview-film.is-poster) :is(.desk2-workspace__play, .desk2-workspace__person) {
+  z-index: 2;
+}
+
 /* Playing takes the still's veil, names, play icon and hover card away so the film's own controls are clear.
    The still goes too, so a missing or rejected URL still shows the player instead of the photograph.
    Hover does not: the middle frame shows underneath the card, and the card stays. */
@@ -37,6 +52,7 @@
 .earlypreview-page .earlypreview-gallery__tile.is-playing .earlypreview-film {
   z-index: 4;
   opacity: 1;
+  pointer-events: auto;
 }
 
 .earlypreview-page .desk2-workspace__photo.is-playing img,
