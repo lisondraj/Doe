@@ -25,7 +25,19 @@
   pointer-events: auto;
 }
 
-/* The opening frame is the thumbnail, behind the veil, the names and the play button. */
+/* The film's own frame is the thumbnail. The lounge still and the names laid over it stay out,
+   so the page does not flash the photo and then the video. */
+.doehealth-desk2-page .desk2-workspace__photo:has(.earlypreview-film)::after {
+  content: none;
+}
+
+.doehealth-desk2-page .earlypreview-gallery__tile--film:not(:has(.earlypreview-film.is-poster)):not(.is-playing) img,
+.doehealth-desk2-page .desk2-workspace__photo:has(.earlypreview-film):not(:has(.earlypreview-film.is-poster)):not(.is-playing) .desk2-workspace__play,
+.doehealth-desk2-page .earlypreview-gallery__tile--film:not(:has(.earlypreview-film.is-poster)):not(.is-playing) .desk2-workspace__play {
+  opacity: 0;
+}
+
+/* The opening frame is the thumbnail, behind the play button. */
 .doehealth-desk2-page .earlypreview-film.is-poster {
   z-index: 0;
   opacity: 1;

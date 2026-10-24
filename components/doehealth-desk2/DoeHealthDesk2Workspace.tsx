@@ -165,14 +165,16 @@ export function DoeHealthDesk2Workspace({
           onPointerLeave={isFilm && overlay ? onPointerLeave : undefined}
           onClick={isFilm ? onClick : undefined}
         >
-          <Image
-            src="/doehealthdesk2/newhero.jpg"
-            alt="A bright, minimal lounge with a cream curved sofa, a sculpted coffee table and a grey lounge chair by a sunlit window"
-            width={2500}
-            height={1445}
-            sizes="(min-width: 1024px) 80vw, 100vw"
-            priority
-          />
+          {isFilm ? null : (
+            <Image
+              src="/doehealthdesk2/newhero.jpg"
+              alt="A bright, minimal lounge with a cream curved sofa, a sculpted coffee table and a grey lounge chair by a sunlit window"
+              width={2500}
+              height={1445}
+              sizes="(min-width: 1024px) 80vw, 100vw"
+              priority
+            />
+          )}
           {isFilm ? (
             <video
               ref={videoRef}
@@ -200,14 +202,18 @@ export function DoeHealthDesk2Workspace({
               }}
             />
           ) : null}
-          <div className={`desk2-workspace__person desk2-workspace__person--james ${p22Mackinac.className}`}>
-            <p className="desk2-workspace__name">James Lisondra</p>
-            <p className={`desk2-workspace__role ${inter.className}`}>Founder, Medicine</p>
-          </div>
-          <div className={`desk2-workspace__person desk2-workspace__person--matthew ${p22Mackinac.className}`}>
-            <p className="desk2-workspace__name">Matthew Lisondra</p>
-            <p className={`desk2-workspace__role ${inter.className}`}>Founder, Engineering</p>
-          </div>
+          {isFilm ? null : (
+            <>
+              <div className={`desk2-workspace__person desk2-workspace__person--james ${p22Mackinac.className}`}>
+                <p className="desk2-workspace__name">James Lisondra</p>
+                <p className={`desk2-workspace__role ${inter.className}`}>Founder, Medicine</p>
+              </div>
+              <div className={`desk2-workspace__person desk2-workspace__person--matthew ${p22Mackinac.className}`}>
+                <p className="desk2-workspace__name">Matthew Lisondra</p>
+                <p className={`desk2-workspace__role ${inter.className}`}>Founder, Engineering</p>
+              </div>
+            </>
+          )}
           <span className="desk2-workspace__play" aria-hidden="true">
             <svg viewBox="1.35 0 24 24" fill="currentColor">
               <path d="M7.5 4.8v14.4a.9.9 0 0 0 1.37.77l11.3-7.2a.9.9 0 0 0 0-1.54L8.87 4.03A.9.9 0 0 0 7.5 4.8Z" />
