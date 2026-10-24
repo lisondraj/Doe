@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { type CSSProperties, type MouseEvent, type PointerEvent, useRef, useState } from "react";
+import { type CSSProperties, type MouseEvent, type PointerEvent, useEffect, useRef, useState } from "react";
 
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
 import { EarlyPreviewVideoOverlay } from "@/components/earlypreview/EarlyPreviewVideoOverlay";
@@ -89,6 +89,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   const onPointerEnter = (event: PointerEvent<HTMLElement>) => {
     if (event.pointerType !== "mouse" || playing) return;
     hoveredRef.current = true;
+    setShowFrame(true);
     seekToMiddle();
   };
 
@@ -98,16 +99,29 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
     setShowFrame(false);
   };
 
+  const startPlayback = () => {
+    const video = videoRef.current;
+    if (!video || !src) return;
+    video.muted = false;
+    try {
+      video.currentTime = 0;
+    } catch {
+      // Metadata may not be in yet. `onLoadedMetadata` starts it from the top.
+    }
+    void video.play();
+  };
+
   const onClick = (event: MouseEvent<HTMLElement>) => {
     // The film's own controls and the article link keep their clicks.
     if (playing || (event.target as HTMLElement).closest("a")) return;
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = false;
-    video.currentTime = 0;
     setPlaying(true);
-    video.play().catch(() => setPlaying(false));
+    startPlayback();
   };
+
+  useEffect(() => {
+    if (playing) startPlayback();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [src, playing]);
 
   const visible = playing || showFrame;
 
@@ -135,6 +149,10 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
         controls={playing}
         aria-label={`${tile.video.title.join(" ")}, video`}
         onLoadedMetadata={() => {
+          if (playing) {
+            startPlayback();
+            return;
+          }
           if (hoveredRef.current) seekToMiddle();
         }}
         onSeeked={() => {

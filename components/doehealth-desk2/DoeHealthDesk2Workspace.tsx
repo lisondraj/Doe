@@ -86,6 +86,8 @@ export function DoeHealthDesk2Workspace({
   const onPointerEnter = (event: PointerEvent<HTMLElement>) => {
     if (event.pointerType !== "mouse" || playing) return;
     hoveredRef.current = true;
+    // Show the film immediately. The middle frame replaces the black frame once the seek lands.
+    setShowFrame(true);
     seekToMiddle();
   };
 
@@ -95,15 +97,30 @@ export function DoeHealthDesk2Workspace({
     setShowFrame(false);
   };
 
-  const onClick = (event: MouseEvent<HTMLElement>) => {
-    if (!film || playing || (event.target as HTMLElement).closest("a")) return;
+  const startPlayback = () => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !film) return;
     video.muted = false;
-    video.currentTime = 0;
-    setPlaying(true);
-    video.play().catch(() => setPlaying(false));
+    try {
+      video.currentTime = 0;
+    } catch {
+      // Metadata may not be in yet. `onLoadedMetadata` starts it from the top.
+    }
+    void video.play();
   };
+
+  const onClick = (event: MouseEvent<HTMLElement>) => {
+    if (playing || (event.target as HTMLElement).closest("a")) return;
+    // The still comes off whether or not the URL is ready or valid, so a bad link still shows the player.
+    setPlaying(true);
+    startPlayback();
+  };
+
+  useEffect(() => {
+    if (playing) startPlayback();
+    // startPlayback reads the video element; it should run again only when the URL arrives.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [film, playing]);
 
   const filmVisible = playing || showFrame;
   // The early preview passes a label even before the signed URL arrives, so the film element is there
@@ -137,6 +154,10 @@ export function DoeHealthDesk2Workspace({
               controls={playing}
               aria-label={filmLabel ? `${filmLabel}, video` : "Video"}
               onLoadedMetadata={() => {
+                if (playing) {
+                  startPlayback();
+                  return;
+                }
                 if (hoveredRef.current) seekToMiddle();
               }}
               onSeeked={() => {
