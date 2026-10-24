@@ -6,10 +6,13 @@ import { type MouseEvent, type PointerEvent, type ReactNode, useEffect, useRef, 
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
+/** Where the hero film rests before a click, on /earlypreview and /doehealthdesk2. */
+const HERO_POSTER_SECONDS = 4;
+
 /**
  * Lounge photo (2500 × 1667), rounded to the page's corner radius, with the two founder names on it. The bottom veil
  * lifts as you scroll. `overlay` is laid over the photo (the hover card on /earlypreview). `film` is that page's
- * hero video: its first frame replaces the photo, and a click plays it.
+ * hero video: the frame at 0:04 replaces the photo, and a click plays it from the start.
  */
 export function DoeHealthDesk2Workspace({
   overlay,
@@ -92,16 +95,16 @@ export function DoeHealthDesk2Workspace({
     }
   };
 
-  /** The opening frame. Time 0 often stays black until a short seek makes the browser decode it. */
+  /** The thumbnail is four seconds in. Seeking there makes the browser decode that frame. */
   const revealFirstFrame = () => {
     const video = videoRef.current;
     if (!video || playingRef.current || hoveredRef.current) return;
-    if (video.readyState >= 2 && video.currentTime > 0 && video.currentTime < 0.2) {
+    if (video.readyState >= 2 && Math.abs(video.currentTime - HERO_POSTER_SECONDS) < 0.15) {
       setPoster(true);
       return;
     }
     try {
-      video.currentTime = 0.04;
+      video.currentTime = HERO_POSTER_SECONDS;
     } catch {
       // Not seekable yet. `loadeddata` tries again.
     }
@@ -174,7 +177,7 @@ export function DoeHealthDesk2Workspace({
             <video
               ref={videoRef}
               className={`earlypreview-film${poster ? " is-poster" : ""}${filmVisible ? " is-visible" : ""}`}
-              src={film ? `${film}#t=0.04` : undefined}
+              src={film ? `${film}#t=${HERO_POSTER_SECONDS}` : undefined}
               preload="metadata"
               playsInline
               controls={playing}

@@ -24,7 +24,7 @@ export const EARLYPREVIEW_HOSPITALS_VIDEO: EarlyPreviewVideo = {
 };
 
 export const EARLYPREVIEW_BEYOND_VIDEO: EarlyPreviewVideo = {
-  title: ["Doe for Dentists", "& Home Care"],
+  title: ["Doe for Dentists"],
   link: EARLYPREVIEW_NEWS_LINK,
 };
 
