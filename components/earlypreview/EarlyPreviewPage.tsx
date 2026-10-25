@@ -206,9 +206,10 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
   }, []);
 
   // The band under the hero fades from brown to beige the first time it reaches the nav bar.
-  useNavReveal(beigeBandRef);
+  // It starts as the band scrolls into view, so it is not a blank section until it reaches the nav.
+  useNavReveal(beigeBandRef, { early: true });
   // The same for the beige band under the enterprise section.
-  useNavReveal(beigeBandRepeatRef);
+  useNavReveal(beigeBandRepeatRef, { early: true });
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
   useDoePhoneStableViewport(variant === "phone");
   useDoeHealthDesk2PhoneScreenHeight(variant === "phone");
