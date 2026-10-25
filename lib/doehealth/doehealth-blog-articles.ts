@@ -1,3 +1,5 @@
+import type { EarlyPreviewFilmId } from "@/lib/earlypreview/earlypreview-films";
+
 export const DOEHEALTH_BLOG_PATH = "/news";
 
 /** Doe brand colours only — three beige shades for hero art, three accent tones for body figures. */
@@ -67,6 +69,8 @@ export type DoeHealthBlogWave = {
   flip?: boolean;
 };
 
+export type DoeHealthBlogFilm = { id: EarlyPreviewFilmId; thumbnail: string; label: string };
+
 export type DoeHealthBlogArticle = {
   slug: string;
   eyebrow: string;
@@ -78,12 +82,18 @@ export type DoeHealthBlogArticle = {
   heroTone: DoeHealthBlogPlaceholderTone;
   wave?: DoeHealthBlogWave;
   heroImage?: DoeHealthBlogHeroImage;
+  /**
+   * The /earlypreview film this article is about. When set, the hero is that film, playable in place, with the same
+   * screenshot thumbnail as on /earlypreview (a 16:9 frame at the film's own 4K size).
+   */
+  film?: DoeHealthBlogFilm;
   lede: string;
   blocks: readonly DoeHealthBlogBlock[];
 };
 
 const PERSONAL_AGENTS: DoeHealthBlogArticle = {
   slug: "healthcare-in-the-era-of-personal-agents",
+  film: { id: "hero", thumbnail: "/earlypreview/thumbs/hero.jpg", label: "Healthcare in the Era of Personal Agents" },
   eyebrow: "Founder's Memo",
   title: ["Healthcare in the", "Era of Personal Agents"],
   author: "James Lisondra",
@@ -621,6 +631,7 @@ const CLAIMS_WITHOUT_HOLD_MUSIC: DoeHealthBlogArticle = {
 
 const HEALTH_SYSTEM_MAPPED: DoeHealthBlogArticle = {
   slug: "the-health-system-mapped-for-agents",
+  film: { id: "hospitals", thumbnail: "/earlypreview/thumbs/hospitals.jpg", label: "Doe for Hospitals & Health Systems" },
   heroImage: STOOLS_HERO_IMAGE,
   wave: { top: 0.43, amp: 80, phase: 1.6, scale: 1.1, slant: 0.4 },
   eyebrow: "For Hospitals",
@@ -727,6 +738,7 @@ const HEALTH_SYSTEM_MAPPED: DoeHealthBlogArticle = {
 
 const AESTHETIC_FRONT_DOOR: DoeHealthBlogArticle = {
   slug: "the-new-front-door-for-aesthetic-care",
+  film: { id: "derm", thumbnail: "/earlypreview/thumbs/derm.jpg", label: "Doe for Derm, Plastics & Aesthetics" },
   heroImage: OTHER_HERO_IMAGE,
   wave: { top: 0.46, amp: 70, phase: 5.2, scale: 0.95, slant: -0.3 },
   eyebrow: "For Aesthetics",
@@ -825,10 +837,11 @@ const AESTHETIC_FRONT_DOOR: DoeHealthBlogArticle = {
 
 const MEMBERSHIP_MEDICINE: DoeHealthBlogArticle = {
   slug: "membership-medicine-extended-by-agents",
+  film: { id: "concierge", thumbnail: "/earlypreview/thumbs/concierge.jpg", label: "Doe for Concierge Medicine" },
   heroImage: GOLDEN_LOFT_HERO_IMAGE,
   wave: { top: 0.42, amp: 90, phase: 2.4, scale: 0.8, slant: 0.15, flip: true },
   eyebrow: "For Concierge",
-  title: ["Membership Medicine,", "Extended by Agents"],
+  title: ["Concierge Medicine,", "Extended by Agents"],
   author: "James Lisondra",
   date: "October 18, 2026",
   excerpt:
@@ -919,6 +932,7 @@ const MEMBERSHIP_MEDICINE: DoeHealthBlogArticle = {
 
 const BEYOND_FIND_A_DOCTOR: DoeHealthBlogArticle = {
   slug: "beyond-find-me-a-doctor",
+  film: { id: "concierge", thumbnail: "/earlypreview/thumbs/dentists.jpg", label: "Doe for Dentists & Home Care" },
   heroImage: STOOLS_HERO_IMAGE,
   wave: { top: 0.45, amp: 75, phase: 0.8, scale: 1.25, slant: -0.45 },
   eyebrow: "For Practices",

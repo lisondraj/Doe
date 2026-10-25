@@ -1,3 +1,4 @@
+import { DoeHealthBlogFilm } from "@/components/doehealth-blog/DoeHealthBlogFilm";
 import { DoeHealthBlogListen } from "@/components/doehealth-blog/DoeHealthBlogListen";
 import { DoeHealthBlogPlaceholder, articleBoxColors } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthBlogUiFigure } from "@/components/doehealth-blog/DoeHealthBlogUiFigure";
@@ -71,11 +72,20 @@ export function DoeHealthBlogArticle({ article }: { article: Article }) {
       </header>
 
       {/* The hero box is the desktop video screen (the lounge photo with the founders and the play button). */}
-      <DoeHealthBlogVideo
-        className="doehealth-blog-article__hero"
-        src={article.heroImage?.src}
-        alt={article.heroImage?.alt}
-      />
+      {article.film ? (
+        <DoeHealthBlogFilm
+          className="doehealth-blog-article__hero"
+          film={article.film.id}
+          thumbnail={article.film.thumbnail}
+          label={article.film.label}
+        />
+      ) : (
+        <DoeHealthBlogVideo
+          className="doehealth-blog-article__hero"
+          src={article.heroImage?.src}
+          alt={article.heroImage?.alt}
+        />
+      )}
 
       <DoeHealthBlogListen />
 

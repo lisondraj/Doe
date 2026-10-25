@@ -77,3 +77,55 @@
   width: 40%;
   height: 40%;
 }
+
+/* An article's playable hero (DoeHealthBlogFilm): the screenshot and play button until the film is showing frames. */
+.film {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  container-type: inline-size;
+  border-radius: var(--doehealth-desk-radius);
+  background: #281910;
+  cursor: pointer;
+}
+
+.film img {
+  object-fit: cover;
+}
+
+.filmVideo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #281910;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.filmPlaying {
+  cursor: default;
+}
+
+.filmPlaying .filmVideo {
+  pointer-events: auto;
+}
+
+.filmRolling .filmVideo {
+  opacity: 1;
+}
+
+.filmPlaying .play {
+  display: none;
+}
+
+.filmPlaying .filmVideo {
+  background: transparent;
+}
+
+.filmRolling .filmVideo {
+  background: #281910;
+}
