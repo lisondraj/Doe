@@ -20,6 +20,7 @@ import {
   useDoeHealthDesk2ScrollLock,
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-scroll-lock";
 import { EARLYPREVIEW_PLAN as PLAN, EARLYPREVIEW_PLAN_QUARTERS as QUARTERS } from "@/lib/earlypreview/earlypreview-plan-copy";
+import { EARLYPREVIEW_PLAN_PHONE as PHONE } from "@/lib/earlypreview/earlypreview-plan-phone-copy";
 
 /**
  * The go-to-market, above the enterprise section, in the market section's brown. The timeline first: supply, agents
@@ -143,7 +144,12 @@ function TimelineScene({ p }: { p: number }) {
   const k = ramp(t, [0.55, 2.2]);
   return (
     <Scene o={o} t={t} label="Supply, agents and revenue, all three from day one">
-      <SceneTitle title={copy.title} t={t} />
+      <div className="earlypreview-plan__title-desk">
+        <SceneTitle title={copy.title} t={t} />
+      </div>
+      <div className="earlypreview-plan__title-phone">
+        <SceneTitle title={PHONE.timeline.title} t={t} />
+      </div>
       {/* iPhone: this screen drawn as a picture. */}
       <div className="earlypreview-market__body earlypreview-plan__phone-only">
         <PhoneTimeline t={t} />
@@ -219,7 +225,12 @@ function SourcesScene({ p }: { p: number }) {
   return (
     <Scene o={o} t={t} label="Every practice, found four different ways">
       <div className="earlypreview-plan__head">
-        <SceneTitle title={copy.title} t={t} />
+        <div className="earlypreview-plan__title-desk">
+          <SceneTitle title={copy.title} t={t} />
+        </div>
+        <div className="earlypreview-plan__title-phone">
+          <SceneTitle title={PHONE.sources.title} t={t} />
+        </div>
       </div>
       {/* iPhone: this screen drawn as a picture. */}
       <div className="earlypreview-market__body earlypreview-plan__phone-only">
@@ -350,7 +361,7 @@ function GroupsScene({ p }: { p: number }) {
           <SceneTitle title={copy.title} t={t} />
         </div>
         <div className="earlypreview-plan__title-phone">
-          <SceneTitle title={copy.phone.title} t={t} />
+          <SceneTitle title={PHONE.groups.title} t={t} />
         </div>
         <div className="earlypreview-plan__corner" style={vars({ "--e": en(t, 1.4, 1.7) })}>
           <p className="earlypreview-plan__corner-value">{copy.share.value}</p>
