@@ -198,8 +198,18 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
         alt={tile.alt}
         width={2500}
         height={1445}
-        sizes={tile.wide ? "(min-width: 1024px) 80vw, 100vw" : "(min-width: 1024px) 40vw, 50vw"}
-        quality={90}
+        // The hero gallery's boxes are a full column on the iPhone (so 100vw, not the half the other grid's pair takes) and
+        // are sharp screenshots of 4K films, so they are served at high quality and at the screen's full pixel width.
+        sizes={
+          tile.plain
+            ? tile.wide
+              ? "(min-width: 1024px) 80vw, 100vw"
+              : "(min-width: 1024px) 45vw, 100vw"
+            : tile.wide
+              ? "(min-width: 1024px) 80vw, 100vw"
+              : "(min-width: 1024px) 40vw, 50vw"
+        }
+        quality={tile.plain ? 95 : 90}
         style={tile.position ? { objectPosition: tile.position } : undefined}
       />
       <video
