@@ -499,3 +499,33 @@
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
+
+/*
+ * iPhone: scrolling parts of the product (the Forms list, the Index lists) are drawn by Safari on layers of their own,
+ * and the beige filter does not reach those layers, so those boxes showed the product's own colours. The pictures never
+ * scroll, so those regions are clipped where they stand instead, which keeps them in the same layer as the rest and
+ * under the filter. The box itself is also kept as one filtered layer.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__source :is(
+    [class*="overflow-y-auto"],
+    [class*="overflow-x-auto"],
+    [class*="overflow-auto"],
+    [class*="overflow-scroll"],
+    [class*="overflow-y-scroll"],
+    [style*="overflow: auto"],
+    [style*="overflow-y: auto"],
+    [style*="overflow-x: auto"],
+    [style*="overflow: scroll"],
+    [style*="overflow-y: scroll"],
+    [style*="overflow:auto"],
+    [style*="overflow-y:auto"]
+  ) {
+  overflow: clip !important;
+  -webkit-overflow-scrolling: auto !important;
+  overscroll-behavior: none !important;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__ui {
+  will-change: filter;
+  contain: paint;
+}
