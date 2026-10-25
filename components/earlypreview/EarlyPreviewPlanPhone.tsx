@@ -199,7 +199,7 @@ export const PhoneCampaign = memo(function PhoneCampaign({ t }: { t: number }) {
     <>
       <Card className="pv-card--james">
         <span className="pv-james__photo">
-          <Image src={c.james.photo} alt="James Lisondra" fill sizes="(max-width: 600px) 90vw, 400px" style={{ objectFit: "cover", objectPosition: "22% 38%" }} />
+          <Image src={c.james.photo} alt="James Lisondra" fill sizes="(max-width: 600px) 90vw, 400px" style={{ objectFit: "cover", objectPosition: "12% 40%" }} />
         </span>
         <div>
           <h3 className="pv-card__title">{c.james.name}</h3>
