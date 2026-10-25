@@ -2,6 +2,16 @@
 
 import { type ReactNode, memo, useEffect, useRef } from "react";
 
+import {
+  PhoneAgents,
+  PhoneEvents,
+  PhoneGroups,
+  PhoneJourney,
+  PhoneLoop,
+  PhoneSources,
+  PhoneSystems,
+  PhoneTimeline,
+} from "@/components/earlypreview/EarlyPreviewPlanPhone";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import {
   DOEHEALTH_DESK2_PHONE_STEP_PX,
@@ -133,30 +143,11 @@ function TimelineScene({ p }: { p: number }) {
   return (
     <Scene o={o} t={t} label="Supply, agents and revenue, all three from day one">
       <SceneTitle title={copy.title} t={t} />
-      <div className="earlypreview-market__body">
-        {/* iPhone: each lane's Seed figure, big, over a cloud of dots that fills as the plan plays. */}
-        <ol className="earlypreview-plan__seed-cards">
-          {copy.lanes.map((lane, index) => (
-            <li
-              key={lane.id}
-              className={`earlypreview-plan__seed-card is-${lane.id}`}
-              style={vars({ "--e": en(t, 0.25 + index * 0.22, 0.75 + index * 0.22), "--k": en(t, 0.5 + index * 0.25, 1.9 + index * 0.25) })}
-            >
-              <span className="earlypreview-plan__seed-cloud" aria-hidden />
-              <span className="earlypreview-plan__seed-head">
-                <span className="earlypreview-plan__seed-name">{lane.name}</span>
-                <span className="earlypreview-plan__seed-now">
-                  {QUARTERS[lane.milestones[0].q]}: {lane.milestones[0].text}
-                </span>
-              </span>
-              <span className="earlypreview-plan__seed-value">{lane.big.value}</span>
-              <span className="earlypreview-plan__seed-line">
-                <span className="earlypreview-plan__seed-unit">{lane.big.unit}</span>
-                <span className="earlypreview-plan__seed-sub">{lane.big.sub}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
+      {/* iPhone: this screen drawn as a picture. */}
+      <div className="earlypreview-market__body earlypreview-plan__phone-only">
+        <PhoneTimeline t={t} />
+      </div>
+      <div className="earlypreview-market__body earlypreview-plan__desk-only">
         <div className="earlypreview-plan__timeline" style={vars({ "--k": k, "--e": en(t, 0.3, 0.6) })}>
           <div className="earlypreview-plan__axis" aria-hidden>
             <span />
@@ -229,34 +220,11 @@ function SourcesScene({ p }: { p: number }) {
       <div className="earlypreview-plan__head">
         <SceneTitle title={copy.title} t={t} />
       </div>
-      <div className="earlypreview-market__body">
-        {/* iPhone: the four ways as four big cards, each a numeral over a cloud of dots, what it is, and who and where. */}
-        <ol className="earlypreview-plan__channels">
-          {copy.groups.map((group, index) => (
-            <li
-              key={group.id}
-              className={`earlypreview-plan__channel is-${group.id}`}
-              style={vars({ "--e": en(t, 0.3 + index * 0.22, 0.75 + index * 0.22) })}
-            >
-              <span className="earlypreview-plan__channel-cloud" aria-hidden />
-              <span className="earlypreview-plan__channel-num">{`0${index + 1}`}</span>
-              <span className="earlypreview-plan__channel-name">{group.name}</span>
-              <span className="earlypreview-plan__channel-lede">{group.lede}</span>
-              <span className="earlypreview-plan__channel-chips">
-                {group.items.map((item) => (
-                  <span key={item.name}>{item.name}</span>
-                ))}
-              </span>
-            </li>
-          ))}
-        </ol>
-        <p className="earlypreview-plan__channels-result" style={vars({ "--e": en(t, 1.5, 1.85) })}>
-          <strong>{PLAN.sourcesResult.value}</strong>
-          <span>
-            {PLAN.sourcesResult.label}
-            <em>{PLAN.sourcesResult.sub}</em>
-          </span>
-        </p>
+      {/* iPhone: this screen drawn as a picture. */}
+      <div className="earlypreview-market__body earlypreview-plan__phone-only">
+        <PhoneSources t={t} />
+      </div>
+      <div className="earlypreview-market__body earlypreview-plan__desk-only">
         <div className="earlypreview-plan__directory">
           {columns.map((groups, c) => (
             <div key={c} className="earlypreview-plan__directory-col">
@@ -309,7 +277,11 @@ function EventsScene({ p }: { p: number }) {
           ))}
         </ul>
       </div>
-      <div className="earlypreview-market__body earlypreview-plan__events">
+      {/* iPhone: this screen drawn as a picture. */}
+      <div className="earlypreview-market__body earlypreview-plan__phone-only">
+        <PhoneEvents t={t} />
+      </div>
+      <div className="earlypreview-market__body earlypreview-plan__desk-only earlypreview-plan__events">
         <ol className="earlypreview-plan__calendar">
           {copy.months.map((month, m) => {
             if (month === "Jan") year += 1;
@@ -384,49 +356,11 @@ function GroupsScene({ p }: { p: number }) {
           <p className="earlypreview-plan__corner-label">{copy.share.label}</p>
         </div>
       </div>
-      <div className="earlypreview-market__body earlypreview-plan__groups">
-        {/* iPhone: the two kinds of practice the pre-seed plan is built on. */}
-        <div className="earlypreview-plan__focus">
-          <section className="earlypreview-plan__focus-card is-private" style={vars({ "--e": en(t, 0.3, 0.7) })}>
-            <span className="earlypreview-plan__channel-cloud" aria-hidden />
-            <span className="earlypreview-plan__seed-name">{copy.phone.private.name}</span>
-            <span className="earlypreview-plan__focus-value">{copy.phone.private.value}</span>
-            <span className="earlypreview-plan__focus-label">{copy.phone.private.label}</span>
-            <span className="earlypreview-plan__focus-note">{copy.phone.private.note}</span>
-            <span className="earlypreview-plan__channel-chips">
-              {copy.phone.private.types.map((type) => (
-                <span key={type}>{type}</span>
-              ))}
-            </span>
-          </section>
-          <section className="earlypreview-plan__focus-card is-multi" style={vars({ "--e": en(t, 0.7, 1.1) })}>
-            <span className="earlypreview-plan__channel-cloud" aria-hidden />
-            <span className="earlypreview-plan__seed-name">{copy.phone.multi.name}</span>
-            <span className="earlypreview-plan__focus-value">{copy.share.value}</span>
-            <span className="earlypreview-plan__focus-label">{copy.share.label}</span>
-            <span className="earlypreview-plan__focus-note">{copy.phone.multi.note}</span>
-            <svg className="earlypreview-plan__focus-tree" viewBox="0 0 320 70" fill="none" aria-hidden>
-              <rect x="2" y="26" width="46" height="18" rx="9" pathLength={1} className="is-root" style={draw(en(t, 0.9, 1.1))} />
-              {range(copy.sites).map((s) => (
-                <g key={s}>
-                  <rect x={86 + s * 58} y="26" width="46" height="18" rx="9" pathLength={1} className="is-site" style={draw(en(t, 1.0 + s * 0.12, 1.35 + s * 0.12))} />
-                  <path d={`M48 35H${86 + s * 58}`} pathLength={1} className="is-branch" style={draw(en(t, 1.0 + s * 0.12, 1.35 + s * 0.12))} />
-                  {range(copy.perSite).map((v) => (
-                    <circle key={v} cx={96 + s * 58 + v * 12} cy={57} r={3.2} className="is-provider" style={vars({ "--k": en(t, 1.3 + s * 0.1 + v * 0.04, 1.5 + s * 0.1 + v * 0.04) })} />
-                  ))}
-                </g>
-              ))}
-            </svg>
-            <ul className="earlypreview-plan__focus-figures">
-              {copy.figures.map((figure) => (
-                <li key={figure.id}>
-                  <strong>{figure.value}</strong>
-                  {figure.label}
-                </li>
-              ))}
-            </ul>
-          </section>
-        </div>
+      {/* iPhone: this screen drawn as a picture. */}
+      <div className="earlypreview-market__body earlypreview-plan__phone-only">
+        <PhoneGroups t={t} />
+      </div>
+      <div className="earlypreview-market__body earlypreview-plan__desk-only earlypreview-plan__groups">
         <svg className="earlypreview-plan__tree" viewBox="0 0 700 300" fill="none" aria-hidden>
           <rect x={TREE.rootX} y={ROOT_Y - TREE.h / 2} width={TREE.rootW} height={TREE.h} rx={8} pathLength={1} className="is-root" style={draw(root)} />
           <text x={TREE.rootX + TREE.rootW / 2} y={ROOT_Y + 5} className="is-root-name" style={vars({ "--k": root })}>
@@ -506,7 +440,11 @@ function AgentsScene({ p }: { p: number }) {
       <div className="earlypreview-plan__head">
         <SceneTitle title={copy.title} t={t} />
       </div>
-      <div className="earlypreview-market__body earlypreview-plan__board-wrap">
+      {/* iPhone: this screen drawn as a picture. */}
+      <div className="earlypreview-market__body earlypreview-plan__phone-only">
+        <PhoneAgents t={t} />
+      </div>
+      <div className="earlypreview-market__body earlypreview-plan__desk-only earlypreview-plan__board-wrap">
         {/* Each column's header and notes sit in the board's grid; the tokens share one row under all four headers. */}
         <div className="earlypreview-plan__board" style={vars({ "--cols": columns })}>
           {copy.columns.map((column, c) => (
@@ -583,7 +521,11 @@ function LoopScene({ p }: { p: number }) {
           <p className="earlypreview-plan__corner-label">{copy.stat.caption}</p>
         </div>
       </div>
-      <div className="earlypreview-market__body earlypreview-plan__loop">
+      {/* iPhone: this screen drawn as a picture. */}
+      <div className="earlypreview-market__body earlypreview-plan__phone-only">
+        <PhoneLoop t={t} />
+      </div>
+      <div className="earlypreview-market__body earlypreview-plan__desk-only earlypreview-plan__loop">
         <article className={`earlypreview-plan__page${claimed ? " is-claimed" : ""}`} style={vars({ "--e": en(t, 0.3, 0.6) })}>
           <header>
             <span>
@@ -670,7 +612,11 @@ function JourneyScene({ p }: { p: number }) {
           <p className="earlypreview-plan__corner-label">{copy.stat.caption}</p>
         </div>
       </div>
-      <div className="earlypreview-market__body earlypreview-plan__journey">
+      {/* iPhone: this screen drawn as a picture. */}
+      <div className="earlypreview-market__body earlypreview-plan__phone-only">
+        <PhoneJourney t={t} />
+      </div>
+      <div className="earlypreview-market__body earlypreview-plan__desk-only earlypreview-plan__journey">
         <svg className="earlypreview-plan__ruler" viewBox="0 0 1000 340" fill="none" style={vars({ "--run": run, "--e": en(t, 0.3, 0.55) })} aria-hidden>
           <path d={`M${RULER.left} ${RULER.y}H${RULER.right}`} className="is-edge" />
           <path d={`M${RULER.left} ${RULER.y}H${RULER.right}`} pathLength={1} className="is-run" style={draw(run)} />
@@ -742,7 +688,11 @@ function SystemsScene({ p }: { p: number }) {
       <div className="earlypreview-plan__head">
         <SceneTitle title={copy.title} t={t} />
       </div>
-      <div className="earlypreview-market__body earlypreview-plan__systems">
+      {/* iPhone: this screen drawn as a picture. */}
+      <div className="earlypreview-market__body earlypreview-plan__phone-only">
+        <PhoneSystems t={t} />
+      </div>
+      <div className="earlypreview-market__body earlypreview-plan__desk-only earlypreview-plan__systems">
         <svg className="earlypreview-plan__hospital" viewBox="0 0 640 310" fill="none" aria-hidden>
           <path
             d={`M${BUILDING.x - 30} ${BUILDING_BOTTOM}H${BUILDING.x + BUILDING.w + 30}M${BUILDING.x} ${BUILDING_BOTTOM}V${BUILDING.top}H${BUILDING.x + BUILDING.w}V${BUILDING_BOTTOM}`}
