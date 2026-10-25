@@ -10,9 +10,8 @@ import { DoeHealthDesk2DotTide } from "@/components/doehealth-desk2/DoeHealthDes
 import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import { DoeHealthDesk2Workspace } from "@/components/doehealth-desk2/DoeHealthDesk2Workspace";
-import { EarlyPreviewHeroGallery, EarlyPreviewHospitalSection, EarlyPreviewVideoGrid } from "@/components/earlypreview/EarlyPreviewGallery";
+import { EarlyPreviewHeroGallery } from "@/components/earlypreview/EarlyPreviewGallery";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
-import { EarlyPreviewComplianceSection } from "@/components/earlypreview/EarlyPreviewComplianceSection";
 import { EarlyPreviewPlanSection } from "@/components/earlypreview/EarlyPreviewPlanSection";
 import { EarlyPreviewMarketSection } from "@/components/earlypreview/EarlyPreviewMarketSection";
 import { EarlyPreviewProductSection } from "@/components/earlypreview/EarlyPreviewProductSection";
@@ -22,7 +21,6 @@ import {
   EARLYPREVIEW_BAND_HEADLINE,
   EARLYPREVIEW_HERO_DEK,
   EARLYPREVIEW_HERO_HEADLINE,
-  EARLYPREVIEW_PRACTICES_HEADLINE,
 } from "@/lib/earlypreview/earlypreview-hero-copy";
 import { EARLYPREVIEW_MAIN_VIDEO } from "@/lib/earlypreview/earlypreview-videos";
 
@@ -135,51 +133,12 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
   const heroFilm = useEarlyPreviewFilm("hero");
   const rootRef = useRef<HTMLDivElement>(null);
   const beigeBandRef = useRef<HTMLElement>(null);
-  const beigeBandRepeatRef = useRef<HTMLElement>(null);
   // The band under the hero matches the whole hero block: its height, and the hero's top and bottom padding, so the
   // title and the video sit at the same offsets as in the hero. Measured from the hero's computed styles.
   const [bandHeight, setBandHeight] = useState<number | undefined>(undefined);
   const [bandPad, setBandPad] = useState<{ top: number; bottom: number } | undefined>(undefined);
   // The band's title takes the hero title's font size, which the hero's own fit sets.
   const [bandTitleSize, setBandTitleSize] = useState<string | undefined>(undefined);
-  // The band's title-to-video gap and full box height. The hospital section below copies them, so its title and video
-  // sit at the same offsets and it is the same height as the band.
-  const [bandGap, setBandGap] = useState<number | undefined>(undefined);
-  const [bandBoxHeight, setBandBoxHeight] = useState<number | undefined>(undefined);
-
-  // Measured after every commit, so it reads the band's final layout (its padding and title size change after mount).
-  useEffect(() => {
-    const band = beigeBandRef.current;
-    if (!band) return;
-    const title = band.querySelector<HTMLElement>(".earlypreview-band__headline");
-    const video = band.querySelector<HTMLElement>(":scope > .desk2-workspace");
-    if (title && video) {
-      const gap = video.getBoundingClientRect().top - title.getBoundingClientRect().bottom;
-      setBandGap((prev) => (prev === gap ? prev : gap));
-    }
-    const height = band.getBoundingClientRect().height;
-    setBandBoxHeight((prev) => (prev === height ? prev : height));
-  });
-
-  // Anything that can change the band's size after mount asks for a fresh measurement: the band or the nav resizing,
-  // and fonts or the page load finishing (the hero's title fit settles then).
-  const [, setMeasureTick] = useState(0);
-  useEffect(() => {
-    const band = beigeBandRef.current;
-    if (!band) return undefined;
-    const request = () => setMeasureTick((t) => t + 1);
-    const observer = new ResizeObserver(request);
-    observer.observe(band);
-    const chrome = document.querySelector<HTMLElement>(".doehealth-desk2-chrome");
-    if (chrome) observer.observe(chrome);
-    window.addEventListener("load", request);
-    void document.fonts?.ready.then(request);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("load", request);
-    };
-  }, []);
-
   useEffect(() => {
     const hero = document.querySelector<HTMLElement>(".earlypreview-page .doehealth-desk2-hero");
     const heroTitle = hero?.querySelector<HTMLElement>(".doehealth-desk2-hero__headline");
@@ -208,8 +167,6 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
   // The band under the hero fades from brown to beige the first time it reaches the nav bar.
   // It starts as the band scrolls into view, so it is not a blank section until it reaches the nav.
   useNavReveal(beigeBandRef, { early: true });
-  // The same for the beige band under the enterprise section.
-  useNavReveal(beigeBandRepeatRef, { early: true });
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
   useDoePhoneStableViewport(variant === "phone");
   useDoeHealthDesk2PhoneScreenHeight(variant === "phone");
@@ -289,26 +246,6 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
         <EarlyPreviewProductSection />
         {/* The plan, four scroll-locked screens in the market section's style, above the enterprise section. */}
         <EarlyPreviewPlanSection />
-        <EarlyPreviewHospitalSection
-          sectionStyle={{
-            minHeight: bandBoxHeight,
-            paddingTop: bandPad ? `calc(5.5rem + var(--desk2-banner-h, 2.85rem) + ${bandPad.top}px)` : undefined,
-            paddingBottom: 0,
-            justifyContent: "flex-start",
-          }}
-          titleStyle={{ fontSize: bandTitleSize, marginBottom: 0 }}
-        />
-        {/* The blank section under the enterprise one: the beige band again, with all the same behaviour. The big video
-            stays in the first band; this one holds the three other videos, and is as tall as they need. */}
-        <EarlyPreviewBeigeBand
-          sectionRef={beigeBandRepeatRef}
-          pad={bandPad}
-          titleSize={bandTitleSize}
-          headline={EARLYPREVIEW_PRACTICES_HEADLINE}
-          videos={<EarlyPreviewVideoGrid />}
-        />
-        {/* Compliance and security through Seed, for the U.S. and Canada: four screens in the market section's style. */}
-        <EarlyPreviewComplianceSection />
         <div className="earlypreview-invite-band">
           <DoeHealthDesk2InviteSection />
         </div>
