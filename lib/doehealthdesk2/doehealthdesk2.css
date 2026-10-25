@@ -5118,7 +5118,7 @@ html:has(.earlypreview-page) {
  * centred one. There is no hover effect on these videos (no fade, no zoom, no pointer cursor), and it is the same on
  * touch screens. Sizes follow the grid width (cqw), with a floor, so the card fits the small tiles on a phone.
  */
-.earlypreview-page .earlypreview-band__videos .earlypreview-overlay {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay {
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -5136,66 +5136,66 @@ html:has(.earlypreview-page) {
   transition: none;
 }
 
-.earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay--compact {
   gap: clamp(0.4rem, 1.6cqw, 1rem);
   padding: clamp(0.6rem, 2cqw, 1.5rem);
 }
 
 /* The contents of each private-practice card are scaled up, the play button more than the title (see the variables). */
-.earlypreview-page .earlypreview-band__videos {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) {
   --earlypreview-card-copy-scale: 1.4;
   --earlypreview-card-play-scale: 1.7;
 }
 
-.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__copy {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay__copy {
   transform: scale(var(--earlypreview-card-copy-scale));
   transform-origin: left bottom;
   transition: none;
 }
 
-.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__play {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay__play {
   transform: scale(var(--earlypreview-card-play-scale));
   transform-origin: right bottom;
   transition: none;
 }
 
-.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__title {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay__title {
   font-size: clamp(1.3rem, 3.9cqw, 3.6rem);
 }
 
-.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__link {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay__link {
   margin-top: clamp(0.3rem, 1.2cqw, 1rem);
   font-size: clamp(0.8rem, 1.4cqw, 1.15rem);
 }
 
-.earlypreview-page .earlypreview-band__videos .earlypreview-overlay__play {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay__play {
   width: clamp(1.9rem, 3.6cqw, 3.4rem);
 }
 
-.earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact .earlypreview-overlay__title {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay--compact .earlypreview-overlay__title {
   font-size: clamp(0.72rem, 2.7cqw, 2.5rem);
 }
 
-.earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact .earlypreview-overlay__link {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay--compact .earlypreview-overlay__link {
   font-size: clamp(0.62rem, 1.4cqw, 1.15rem);
 }
 
-.earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact .earlypreview-overlay__play {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay--compact .earlypreview-overlay__play {
   width: clamp(1.25rem, 3.2cqw, 2.4rem);
 }
 
 /* The card's small play button replaces the big centred one. */
-.earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile .desk2-workspace__play {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-gallery__tile .desk2-workspace__play {
   display: none;
 }
 
 /* No pointer cursor on the tile (the link keeps its own). */
-.earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-gallery__tile {
   cursor: auto;
 }
 
 /* The picture stays put at rest. Its hover zoom is set in the pointer-device block at the end of this file. */
-.earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile img {
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-gallery__tile img {
   transform: none;
 }
 
@@ -5748,21 +5748,21 @@ html:has(.earlypreview-page) {
   order: -1;
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact {
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay--compact {
   gap: clamp(0.5rem, 3cqw, 1.5rem);
   padding: clamp(0.9rem, 3cqw, 2.25rem);
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact .earlypreview-overlay__title {
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay--compact .earlypreview-overlay__title {
   font-size: clamp(1.3rem, 3.9cqw, 3.6rem);
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact .earlypreview-overlay__link {
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay--compact .earlypreview-overlay__link {
   margin-top: clamp(0.3rem, 1.2cqw, 1rem);
   font-size: clamp(0.8rem, 1.4cqw, 1.15rem);
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .earlypreview-band__videos .earlypreview-overlay--compact .earlypreview-overlay__play {
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay--compact .earlypreview-overlay__play {
   width: clamp(1.9rem, 3.6cqw, 3.4rem);
 }
 
@@ -5844,50 +5844,50 @@ html:has(.earlypreview-page) {
  * card reads as before. Pointer devices only.
  */
 @media (hover: hover) and (pointer: fine) {
-  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__copy {
+  .earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay__copy {
     transform: translateY(0.6rem) scale(var(--earlypreview-card-copy-scale));
     transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__play {
+  .earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay__play {
     transform: translateY(0.6rem) scale(var(--earlypreview-card-play-scale));
     transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile:is(:hover, :focus-within) .earlypreview-overlay__copy {
+  .earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-gallery__tile:is(:hover, :focus-within) .earlypreview-overlay__copy {
     transform: translateY(0) scale(var(--earlypreview-card-copy-scale));
   }
 
-  .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile:is(:hover, :focus-within) .earlypreview-overlay__play {
+  .earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-gallery__tile:is(:hover, :focus-within) .earlypreview-overlay__play {
     transform: translateY(0) scale(var(--earlypreview-card-play-scale));
   }
 
   /* The same slow, eased zoom as the hero scenes: the picture eases in over 900ms and eases back out when the pointer leaves. */
-  .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile img {
+  .earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-gallery__tile img {
     transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile:is(:hover, :focus-within) img {
+  .earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-gallery__tile:is(:hover, :focus-within) img {
     transform: scale(1.025);
     transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__copy,
-  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__play {
+  .earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay__copy,
+  .earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay__play {
     transition: none;
   }
 
-  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__copy {
+  .earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay__copy {
     transform: scale(var(--earlypreview-card-copy-scale));
   }
 
-  .earlypreview-page .earlypreview-band__videos .earlypreview-overlay__play {
+  .earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-overlay__play {
     transform: scale(var(--earlypreview-card-play-scale));
   }
 
-  .earlypreview-page .earlypreview-band__videos .earlypreview-gallery__tile img {
+  .earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-gallery__tile img {
     transform: none;
     transition: none;
   }
@@ -5898,7 +5898,7 @@ html:has(.earlypreview-page) {
  * gap, and the gallery's own bottom padding is the room the hero video had (grown by the pull, so the band below stays).
  */
 .doehealth-desk2-page.earlypreview-page .desk2-workspace:has(+ .earlypreview-hero-gallery) {
-  padding-bottom: var(--earlypreview-gallery-gap) !important;
+  padding-bottom: clamp(2.5rem, 6vw, 4.5rem) !important;
 }
 
 .earlypreview-page .earlypreview-hero-gallery {
@@ -5906,41 +5906,70 @@ html:has(.earlypreview-page) {
 }
 
 /*
- * iPhone: the videos under the hero video run in one column, each with a small title and description under it. The
- * title is a little smaller than the hero's. A tile fills its item, so a wide tile and a half tile are the same width.
+ * The videos under the hero video: each item is a centred title and description above its box, in the hero's type (the
+ * title a bit smaller). The title's first line is white, the second salmon. The items are spaced apart by the row gap,
+ * and the hero video sits that far above the first one. On the iPhone they run in one column.
  */
+.earlypreview-page .earlypreview-hero-gallery {
+  --earlypreview-hero-gallery-space: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.earlypreview-page .earlypreview-hero-gallery .earlypreview-gallery__grid {
+  row-gap: var(--earlypreview-hero-gallery-space);
+}
+
 .earlypreview-hero-gallery__item > .earlypreview-gallery__tile {
   grid-column: auto;
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery .earlypreview-gallery__grid {
-  grid-template-columns: minmax(0, 1fr);
-  row-gap: 2rem;
+/* The still image is the thumbnail, never the film's frame (the film only shows once it plays). */
+.doehealth-desk2-page .earlypreview-gallery__tile--still:not(.is-playing) img {
+  opacity: 1;
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery .earlypreview-overlay--compact {
-  gap: clamp(0.5rem, 3cqw, 1.5rem);
-  padding: clamp(0.9rem, 3cqw, 2.25rem);
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery .earlypreview-gallery__grid {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .earlypreview-hero-gallery__caption {
-  padding-top: 0.9rem;
+  padding-bottom: 1.25rem;
+  text-align: center;
 }
 
 .earlypreview-hero-gallery__title {
   margin: 0;
-  font-size: clamp(1.45rem, 6.4vw, 1.9rem);
   font-weight: 400;
-  line-height: 1.12;
-  letter-spacing: -0.01em;
-  color: #fff6e6;
+  font-size: clamp(1.9rem, 3.5vw, 3.3rem);
+  line-height: 0.98;
+  letter-spacing: -0.042em;
+  color: #fffcf1;
+}
+
+.earlypreview-hero-gallery__line {
+  display: block;
+}
+
+.earlypreview-hero-gallery__line--salmon {
+  color: #fccfb8;
 }
 
 .earlypreview-hero-gallery__dek {
-  margin: 0.45rem 0 0;
-  font-size: clamp(0.9rem, 3.6vw, 1.05rem);
-  line-height: 1.45;
-  color: rgba(255, 246, 230, 0.72);
+  margin: 0.8rem auto 0;
+  max-width: 36ch;
+  color: var(--doehealth-desk2-ink);
+  font-size: clamp(1.125rem, 1.35vw, 1.3125rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery__title {
+  font-size: clamp(1.5rem, calc((100vw - 5rem) / 12.5), 2.4rem);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery__dek {
+  font-size: clamp(0.85rem, calc((100vw - 3rem) / 23.8), 1.125rem);
 }
 
 /*
@@ -5954,5 +5983,5 @@ html:has(.earlypreview-page) {
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .desk2-workspace:has(+ .earlypreview-hero-gallery) {
-  padding-bottom: 2rem !important;
+  padding-bottom: clamp(2.5rem, 6vw, 4.5rem) !important;
 }

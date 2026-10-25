@@ -34,6 +34,8 @@ type GalleryTileData = {
   position?: string;
   /** The film itself, if it plays in place on the tile. Its first frame is the thumbnail. */
   film?: EarlyPreviewFilmId;
+  /** Shows the still image as the thumbnail, never the film's frame. The film still plays in place on a click. */
+  still?: boolean;
 };
 
 /** Two videos side by side, the first row of the beige section's video grid. */
@@ -97,7 +99,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   /** The opening frame. Time 0 often stays black until a short seek makes the browser decode it. */
   const revealFirstFrame = () => {
     const video = videoRef.current;
-    if (!video || playingRef.current || hoveredRef.current) return;
+    if (tile.still || !video || playingRef.current || hoveredRef.current) return;
     if (video.readyState >= 2 && video.currentTime > 0 && video.currentTime < 0.2) {
       setPoster(true);
       return;
@@ -110,7 +112,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   };
 
   const onPointerEnter = (event: PointerEvent<HTMLElement>) => {
-    if (event.pointerType !== "mouse" || playing) return;
+    if (tile.still || event.pointerType !== "mouse" || playing) return;
     hoveredRef.current = true;
     setShowFrame(true);
     seekToMiddle();
@@ -152,7 +154,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
 
   return (
     <figure
-      className={`earlypreview-gallery__tile earlypreview-gallery__tile--film${tile.wide ? " earlypreview-gallery__tile--wide" : ""}${playing ? " is-playing" : ""}`}
+      className={`earlypreview-gallery__tile earlypreview-gallery__tile--film${tile.still ? " earlypreview-gallery__tile--still" : ""}${tile.wide ? " earlypreview-gallery__tile--wide" : ""}${playing ? " is-playing" : ""}`}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       onClick={onClick}
@@ -169,7 +171,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
         ref={videoRef}
         className={`earlypreview-film${poster ? " is-poster" : ""}${visible ? " is-visible" : ""}`}
         src={src ? `${src}#t=0.04` : undefined}
-        preload="metadata"
+        preload={tile.still ? "none" : "metadata"}
         playsInline
         controls={playing}
         aria-label={`${tile.video.title.join(" ")}, video`}
@@ -185,7 +187,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
           if (!playingRef.current && !hoveredRef.current) revealFirstFrame();
         }}
         onSeeked={() => {
-          if (playingRef.current) return;
+          if (tile.still || playingRef.current) return;
           if (hoveredRef.current) setShowFrame(true);
           else setPoster(true);
         }}
@@ -291,61 +293,65 @@ export function EarlyPreviewVideoGrid() {
   );
 }
 
-/** The iPhone captions under the hero-gallery videos: a short title and a description for each. */
-const HERO_GALLERY_CAPTIONS: Record<string, { title: string; dek: string }> = {
+/** The title above each hero-gallery video, one entry per line (the first white, the second salmon), and a description. */
+const HERO_GALLERY_CAPTIONS: Record<string, { title: readonly [string, string]; dek: string }> = {
   hospitals: {
-    title: "Doe for Hospitals & Health Systems",
+    title: ["What the hospital", "never tells you."],
     dek: "One front door for every patient, across every site, built to scale through enterprise.",
   },
   dentists: {
-    title: "Doe for Dentists",
+    title: ["Behind every smile,", "a missed call."],
     dek: "Calls, scheduling and follow-ups handled, so the chair stays full and the team stays focused.",
   },
   derm: {
-    title: "Doe for Derm & Plastic Surgery",
+    title: ["Before the mirror,", "after the question."],
     dek: "Consults, before-and-afters and aftercare, answered the way your practice would.",
   },
   concierge: {
-    title: "Doe for Concierge Medicine",
+    title: ["Someone is always", "awake for you."],
     dek: "Round-the-clock access for members, with the personal touch your practice is known for.",
   },
 };
 
 const HERO_GALLERY_ITEMS: readonly { key: string; tile: GalleryTileData }[] = [
-  { key: "hospitals", tile: HOSPITAL_TILE },
-  { key: "dentists", tile: PAIR_TILES[0] },
-  { key: "derm", tile: PAIR_TILES[1] },
-  { key: "concierge", tile: LAST_TILE },
+  { key: "hospitals", tile: { ...HOSPITAL_TILE, still: true } },
+  { key: "dentists", tile: { ...PAIR_TILES[0], still: true } },
+  { key: "derm", tile: { ...PAIR_TILES[1], still: true } },
+  { key: "concierge", tile: { ...LAST_TILE, still: true } },
 ];
 
 /**
  * The videos attached under the hero video: Doe for Hospitals full width, the dentist and derm pair under it, then
- * Doe for Concierge full width. The gap between every box, and between the hero video and the first one, is the same.
- * On the iPhone they run in one column, each with a small title and description under it (`captions`).
+ * Doe for Concierge full width. Each has a centred title (white, then salmon) and description above its box, in the
+ * hero's type. The boxes are the still images with the brown card (title, link, play button) always showing.
  */
-export function EarlyPreviewHeroGallery({ captions = false }: { captions?: boolean } = {}) {
+export function EarlyPreviewHeroGallery() {
   return (
     <section
       className={`earlypreview-gallery earlypreview-hero-gallery ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
       aria-label="Doe videos"
     >
       <div className="earlypreview-gallery__grid">
-        {HERO_GALLERY_ITEMS.map(({ key, tile }) => (
-          <div
-            key={key}
-            className={`earlypreview-hero-gallery__item${tile.wide ? " earlypreview-gallery__tile--wide" : ""}`}
-          >
-            <GalleryTile tile={tile} />
-            {captions ? (
+        {HERO_GALLERY_ITEMS.map(({ key, tile }) => {
+          const caption = HERO_GALLERY_CAPTIONS[key];
+          return (
+            <div
+              key={key}
+              className={`earlypreview-hero-gallery__item${tile.wide ? " earlypreview-gallery__tile--wide" : ""}`}
+            >
               <div className="earlypreview-hero-gallery__caption">
                 <h3 className={`earlypreview-hero-gallery__title ${p22Mackinac.className}`}>
-                  {HERO_GALLERY_CAPTIONS[key].title}
+                  <span className="earlypreview-hero-gallery__line">{caption.title[0]}</span>
+                  <span className="earlypreview-hero-gallery__line earlypreview-hero-gallery__line--salmon">
+                    {caption.title[1]}
+                  </span>
                 </h3>
-                <p className={`earlypreview-hero-gallery__dek ${inter.className}`}>{HERO_GALLERY_CAPTIONS[key].dek}</p>
+                <p className={`earlypreview-hero-gallery__dek ${inter.className}`}>{caption.dek}</p>
               </div>
-            ) : null}
-          </div>
-        ))}
+              <GalleryTile tile={tile} />
+            </div>
+          );
+        })}
       </div>
     </section>
   );
