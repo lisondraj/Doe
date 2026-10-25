@@ -2873,3 +2873,59 @@
     font-size: 2.5rem;
   }
 }
+
+/* iPhone plans: the four tiers in a 2 × 2 grid (Free and Basic over Advanced and Doe One), each tier's name over its
+   price, left aligned. Doe One has no note under its price. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__plans {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: none;
+  align-items: start;
+  justify-content: stretch;
+  gap: 2.4rem 1.25rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__plan {
+  grid-row: auto;
+  grid-template-rows: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__plan-main {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__plan-name {
+  padding-top: 0;
+  font-size: 1.45rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__plan-prices {
+  margin-top: 0.5rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__plan-value {
+  font-size: clamp(2.5rem, 12.5vw, 3.4rem);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__plan-group {
+  flex-basis: auto;
+  justify-items: start;
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  white-space: normal;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__plan.is-one
+  .earlypreview-market__plan-group {
+  display: none;
+}
