@@ -5994,3 +5994,7 @@ html:has(.earlypreview-page) {
 .earlypreview-page .earlypreview-gallery__tile--plain {
   cursor: pointer;
 }
+
+.earlypreview-hero-gallery__line {
+  text-wrap: balance;
+}
