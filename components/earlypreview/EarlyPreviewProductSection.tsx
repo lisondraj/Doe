@@ -68,6 +68,7 @@ const VISUALS: Record<EarlyPreviewProductSlideId, Visual> = {
   forms: { kind: "app", tab: "forms", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   followUp: { kind: "film", film: "coordinate", frame: 300, active: "referrals", anchor: "start", crop: CORNER, sit: "br" },
   multiSite: { kind: "app", tab: "integrations", menu: true, providerPanel: true, crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  scheduling: { kind: "app", tab: "schedule", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   clinics: { kind: "app", tab: "referrals", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   departments: { kind: "film", film: "permissions", frame: 200, active: "permissions", focus: { x: 240, y: 58, w: 1497, h: 964 }, inset: PAGE_INSET, crop: CORNER, sit: "br" },
   directory: { kind: "film", film: "network", frame: 440, active: "providers", focus: { x: 150, y: 0, w: 1560, h: 995 }, inset: PAGE_INSET, crop: CORNER, sit: "br" },
@@ -164,15 +165,22 @@ const END = PAN[1] + 0.35;
 
 const smooth = (t: number) => t * t * (3 - 2 * t);
 const en = (p: number, range: readonly [number, number]) => smooth(ramp(p, range));
-/** The progress at which each box sits in front: the pan's start for the first, the rest spread evenly along it. */
-const BOX_AT = SLIDES.map((_, i) => PAN[0] + ((PAN[1] - PAN[0]) * i) / (SLIDES.length - 1));
+/**
+ * The progress at which each box sits in front (on the iPhone, where the column shows two at once, the last two sit in
+ * the window together, so the column stops with the second to last in front and the last is a short step after it).
+ */
+const BOX_AT = SLIDES.map((_, i) =>
+  i < SLIDES.length - 1 ? PAN[0] + ((PAN[1] - PAN[0]) * i) / (SLIDES.length - 2) : PAN[1] + 0.15,
+);
 /**
  * iPhone: how far down the column the boxes have been pushed, in boxes (0 is the first in front, 11 the last). Each box
  * holds in front for a stretch of the scroll, then the next pushes it up and out.
  */
 function columnPosition(p: number) {
-  const at = ramp(p, PAN) * (SLIDES.length - 1);
-  const whole = Math.min(Math.floor(at), SLIDES.length - 2);
+  // Two boxes show at once, so the column stops one early: the last two sit in the window together.
+  const last = SLIDES.length - 2;
+  const at = ramp(p, PAN) * last;
+  const whole = Math.min(Math.floor(at), last - 1);
   return whole + smooth(ramp(at - whole, [0.15, 0.85]));
 }
 

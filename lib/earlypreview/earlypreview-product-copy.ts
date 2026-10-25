@@ -17,6 +17,7 @@ export const EARLYPREVIEW_PRODUCT_SLIDES = [
   { id: "clinics", title: "Clinic-Clinic Communication" },
   { id: "departments", title: "Doe for Hospitals: Cross-Department Agents" },
   { id: "directory", title: "Doe for Hospitals: Department Directory" },
+  { id: "scheduling", title: "Live Scheduling" },
   { id: "payments", title: "Post-Seed: Payments" },
 ] as const;
 
