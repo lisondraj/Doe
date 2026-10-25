@@ -142,55 +142,6 @@ export const PhoneEvents = memo(function PhoneEvents({ t }: { t: number }) {
   );
 });
 
-/* ------------------------------------------------------------ 4. who pays first */
-
-/** Private-pay practices, then the owner-run groups the Seed plan counts on, then the networks that come after. */
-export const PhoneGroups = memo(function PhoneGroups({ t }: { t: number }) {
-  const copy = PHONE.groups;
-  return (
-    <div className="pv">
-      <section className="pv-block" style={rise(t, 0)}>
-        <div className="pv-block__figure">
-          <strong>{copy.privatePay.value}</strong>
-          <span>{copy.privatePay.label}</span>
-        </div>
-        <p>{copy.privatePay.text}</p>
-      </section>
-      <section className="pv-block" style={rise(t, 1)}>
-        <div className="pv-block__figure">
-          <strong className="is-seed">{PLAN.groups.share.value}</strong>
-          <span>{PLAN.groups.share.label}</span>
-        </div>
-        <ul className="pv-figures">
-          {copy.seed.map((figure) => (
-            <li key={figure.label}>
-              <strong>{figure.value}</strong>
-              {figure.label}
-            </li>
-          ))}
-        </ul>
-        <p>{copy.seedText}</p>
-      </section>
-      <section style={rise(t, 2)}>
-        <span className="pv-eyebrow">{copy.networks.label}</span>
-        <ol className="pv-table pv-table--tight">
-          {copy.networks.rows.map((row) => (
-            <li key={row.name}>
-              <div>
-                <span className="pv-table__name">{row.name}</span>
-                <span className="pv-table__text">
-                  {row.what}, {row.when}
-                </span>
-              </div>
-              <span className="pv-table__size">{row.size}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
-    </div>
-  );
-});
-
 /* ------------------------------------------------------------ 5. the agents we partner with */
 
 /** The partner pipeline as bars, each as long as its count against the target list, then where developers find Doe. */
@@ -227,47 +178,6 @@ export const PhoneAgents = memo(function PhoneAgents({ t }: { t: number }) {
           </li>
         ))}
       </ol>
-    </div>
-  );
-});
-
-/* ------------------------------------------------------------ 6. the missed-demand report */
-
-/** The report itself, as the owner gets it, then how many claims it starts. */
-export const PhoneLoop = memo(function PhoneLoop({ t }: { t: number }) {
-  const email = PHONE.loop.email;
-  const stat = PLAN.loop.stat;
-  return (
-    <div className="pv">
-      <article className="pv-email" style={rise(t, 0)}>
-        <span className="pv-email__label">{email.label}</span>
-        <dl className="pv-email__meta">
-          <div>
-            <dt>From</dt>
-            <dd>{email.from}</dd>
-          </div>
-          <div>
-            <dt>To</dt>
-            <dd>{email.to}</dd>
-          </div>
-        </dl>
-        <p className="pv-email__subject">{email.subject}</p>
-        <ul className="pv-email__rows">
-          {email.rows.map((row, i) => (
-            <li key={row.text} style={rise(t, i + 1, 0.5)}>
-              <strong>{row.value}</strong>
-              {row.text}
-            </li>
-          ))}
-        </ul>
-        <span className="pv-email__action" style={rise(t, 4, 0.5)}>
-          {email.action}
-        </span>
-      </article>
-      <div className="pv-total" style={rise(t, 5)}>
-        <span className="pv-total__value is-seed">{stat.value}</span>
-        <span className="pv-total__label">{stat.caption}</span>
-      </div>
     </div>
   );
 });
@@ -486,22 +396,50 @@ function Meter({ t, start }: { t: number; start: number }) {
   );
 }
 
-/* ------------------------------------------------------------ 8. one health system */
+/* ------------------------------------------------------------ 8. the path to a hospital LOI */
 
-/** How one health system signs: a row a step, dated, with the security work it needs. */
+/** How long health systems take to buy, against the plan's ten months to a letter of intent. */
+function CycleBars({ t }: { t: number }) {
+  const c = PHONE.systems.cycle;
+  const most = c.rows.reduce((max, row) => Math.max(max, row.to), 0);
+  return (
+    <div className="pv-cycle" style={rise(t, 0, 0.2)}>
+      {c.rows.map((row, i) => (
+        <div key={row.label} className={`pv-cycle__row${"plan" in row ? " is-seed" : ""}`}>
+          <span className="pv-cycle__label">{row.label}</span>
+          <span className="pv-cycle__track" aria-hidden>
+            <i
+              style={{
+                left: `${fx((row.from / most) * 100)}%`,
+                width: `${fx(((row.to - row.from) / most) * 100 * en(t, 0.4 + i * 0.2, 0.9 + i * 0.2))}%`,
+              }}
+            />
+          </span>
+          <span className="pv-cycle__value">{row.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** The path to a hospital letter of intent by Q4 ’27: each gate dated, what it produces, and who signs it. */
 export const PhoneSystems = memo(function PhoneSystems({ t }: { t: number }) {
-  const steps = PHONE.systems.steps;
+  const copy = PHONE.systems;
   return (
     <div className="pv">
-      <ol className="pv-cal pv-cal--steps">
-        {steps.map((step, i) => (
+      <CycleBars t={t} />
+      <ol className="pv-gates">
+        {copy.gates.map((gate, i) => (
           <li
-            key={step.text}
-            className={"seed" in step ? "is-seed" : "after" in step ? "is-after" : undefined}
-            style={vars({ "--e": fx(en(t, 0.3 + i * 0.16, 0.7 + i * 0.16)) })}
+            key={gate.title}
+            className={"seed" in gate ? "is-seed" : "after" in gate ? "is-after" : undefined}
+            style={vars({ "--e": fx(en(t, 0.55 + i * 0.16, 0.95 + i * 0.16)) })}
           >
-            <span className="pv-cal__when">{step.when}</span>
-            <span className="pv-cal__name">{step.text}</span>
+            <span className="pv-gates__when">{gate.when}</span>
+            <div>
+              <span className="pv-gates__title">{gate.title}</span>
+              <span className="pv-gates__text">{gate.text}</span>
+            </div>
           </li>
         ))}
       </ol>

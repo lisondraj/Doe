@@ -5,9 +5,7 @@ import { type ReactNode, memo, useEffect, useRef } from "react";
 import {
   PhoneAgents,
   PhoneEvents,
-  PhoneGroups,
   PhoneCampaign,
-  PhoneLoop,
   PhoneSources,
   PhoneSystems,
   PhoneTimeline,
@@ -34,9 +32,7 @@ const SCENES = [
   { id: "timeline", len: 3.6 },
   { id: "sources", len: 2.4 },
   { id: "events", len: 2.6 },
-  { id: "groups", len: 2.4 },
   { id: "agents", len: 2.6 },
-  { id: "loop", len: 2.4 },
   // On the iPhone this screen is the launch campaign, six views long.
   { id: "journey", len: 3.9 },
   { id: "systems", len: 2.6 },
@@ -332,108 +328,6 @@ function EventsScene({ p }: { p: number }) {
   );
 }
 
-/* ------------------------------------------------------------ 4. groups */
-
-/** The tree: one group on the left, its locations in the middle, each location's providers on the right. */
-const TREE = { rootX: 40, rootW: 190, siteX: 330, siteW: 150, provX: 580, top: 22, gap: 76, h: 40, prov: 13 } as const;
-const SITE_Y = (s: number) => TREE.top + s * TREE.gap;
-const ROOT_Y = (SITE_Y(0) + SITE_Y(PLAN.groups.sites - 1)) / 2;
-/** An elbow from (x1, y1) to (x2, y2): across, a rounded turn, then across again. */
-const elbow = (x1: number, y1: number, x2: number, y2: number) => {
-  const mid = (x1 + x2) / 2;
-  if (Math.abs(y2 - y1) < 1) return `M${x1} ${y1}H${x2}`;
-  const r = Math.min(10, Math.abs(y2 - y1) / 2);
-  const dir = y2 > y1 ? 1 : -1;
-  return `M${x1} ${y1}H${mid - r}Q${mid} ${y1} ${mid} ${y1 + dir * r}V${y2 - dir * r}Q${mid} ${y2} ${mid + r} ${y2}H${x2}`;
-};
-
-/**
- * Multi-site groups as an org tree: one contract at the root, its four locations, three providers at each, drawn
- * branch by branch. Beside it, what groups add up to by Seed, and how we find and sell them.
- */
-function GroupsScene({ p }: { p: number }) {
-  const { o, t } = sceneClock(p, "groups");
-  const copy = PLAN.groups;
-  const root = en(t, 0.35, 0.6);
-  return (
-    <Scene o={o} t={t} label="One contract, twelve providers">
-      <div className="earlypreview-plan__head">
-        <div className="earlypreview-plan__title-desk">
-          <SceneTitle title={copy.title} t={t} />
-        </div>
-        <div className="earlypreview-plan__title-phone">
-          <SceneTitle title={PHONE.groups.title} t={t} />
-        </div>
-        <div className="earlypreview-plan__corner" style={vars({ "--e": en(t, 1.4, 1.7) })}>
-          <p className="earlypreview-plan__corner-value">{copy.share.value}</p>
-          <p className="earlypreview-plan__corner-label">{copy.share.label}</p>
-        </div>
-      </div>
-      {/* iPhone: this screen drawn as a picture. */}
-      <div className="earlypreview-market__body earlypreview-plan__phone-only">
-        <PhoneGroups t={t} />
-      </div>
-      <div className="earlypreview-market__body earlypreview-plan__desk-only earlypreview-plan__groups">
-        <svg className="earlypreview-plan__tree" viewBox="0 0 700 300" fill="none" aria-hidden>
-          <rect x={TREE.rootX} y={ROOT_Y - TREE.h / 2} width={TREE.rootW} height={TREE.h} rx={8} pathLength={1} className="is-root" style={draw(root)} />
-          <text x={TREE.rootX + TREE.rootW / 2} y={ROOT_Y + 5} className="is-root-name" style={vars({ "--k": root })}>
-            {copy.root}
-          </text>
-          {range(copy.sites).map((s) => {
-            const at = 0.55 + s * 0.12;
-            const y = SITE_Y(s);
-            return (
-              <g key={s}>
-                <path d={elbow(TREE.rootX + TREE.rootW, ROOT_Y, TREE.siteX, y)} pathLength={1} className="is-branch" style={draw(en(t, at, at + 0.2))} />
-                <rect x={TREE.siteX} y={y - TREE.h / 2} width={TREE.siteW} height={TREE.h} rx={8} pathLength={1} className="is-site" style={draw(en(t, at + 0.12, at + 0.3))} />
-                <text x={TREE.siteX + TREE.siteW / 2} y={y + 5} className="is-site-name" style={vars({ "--k": en(t, at + 0.2, at + 0.35) })}>
-                  {copy.site} {s + 1}
-                </text>
-                {range(copy.perSite).map((v) => {
-                  const py = y + (v - 1) * 21;
-                  const pat = at + 0.3 + v * 0.05;
-                  return (
-                    <g key={v}>
-                      <path d={elbow(TREE.siteX + TREE.siteW, y, TREE.provX, py)} pathLength={1} className="is-branch is-fine" style={draw(en(t, pat, pat + 0.15))} />
-                      <rect
-                        x={TREE.provX}
-                        y={py - TREE.prov / 2}
-                        width={TREE.prov}
-                        height={TREE.prov}
-                        rx={5}
-                        className="is-provider"
-                        style={vars({ "--k": en(t, pat + 0.1, pat + 0.2) })}
-                      />
-                    </g>
-                  );
-                })}
-              </g>
-            );
-          })}
-        </svg>
-        <div className="earlypreview-plan__group-copy">
-          <ul className="earlypreview-plan__group-figures" style={vars({ "--e": en(t, 1.2, 1.5) })}>
-            {copy.figures.map((figure) => (
-              <li key={figure.id}>
-                <strong>{figure.value}</strong>
-                {figure.label}
-              </li>
-            ))}
-          </ul>
-          <dl className="earlypreview-plan__group-how">
-            {copy.how.map((item, i) => (
-              <div key={item.lead} style={vars({ "--e": en(t, 1.5 + i * 0.1, 1.8 + i * 0.1) })}>
-                <dt>{item.lead}</dt>
-                <dd>{item.text}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </div>
-    </Scene>
-  );
-}
-
 /* ------------------------------------------------------------ 5. agents */
 
 const TOKENS_PER_ROW = 5;
@@ -503,85 +397,6 @@ function AgentsScene({ p }: { p: number }) {
           </div>
         </div>
         <Note e={en(t, 2.0, 2.3)}>{copy.sources}</Note>
-      </div>
-    </Scene>
-  );
-}
-
-/* ------------------------------------------------------------ 6. loop */
-
-/** When the page is claimed, on the screen's clock. */
-const CLAIM = [1.25, 1.55] as const;
-
-/**
- * The loop on the practice's own Doe page, drawn as a plain wireframe. Unclaimed, its rows are hatched blanks and a
- * salmon line counts the agent requests it couldn't answer. Then it's claimed: the badge flips, the rows fill in one
- * by one, and the line becomes "Bookable by agents". Beside it, the three moments, each lit in turn.
- */
-function LoopScene({ p }: { p: number }) {
-  const { o, t } = sceneClock(p, "loop");
-  const copy = PLAN.loop;
-  const page = copy.page;
-  const claim = en(t, CLAIM[0], CLAIM[1]);
-  const claimed = claim >= 0.5;
-  const stage = t < 0.95 ? 0 : t < CLAIM[0] ? 1 : 2;
-  return (
-    <Scene o={o} t={t} label="Every missed request recruits a practice">
-      <div className="earlypreview-plan__head">
-        <SceneTitle title={copy.title} t={t} />
-        <div className="earlypreview-plan__corner" style={vars({ "--e": en(t, 1.7, 2.0) })}>
-          <p className="earlypreview-plan__corner-value">{copy.stat.value}</p>
-          <p className="earlypreview-plan__corner-label">{copy.stat.caption}</p>
-        </div>
-      </div>
-      {/* iPhone: this screen drawn as a picture. */}
-      <div className="earlypreview-market__body earlypreview-plan__phone-only">
-        <PhoneLoop t={t} />
-      </div>
-      <div className="earlypreview-market__body earlypreview-plan__desk-only earlypreview-plan__loop">
-        <article className={`earlypreview-plan__page${claimed ? " is-claimed" : ""}`} style={vars({ "--e": en(t, 0.3, 0.6) })}>
-          <header>
-            <span>
-              <span className="earlypreview-plan__page-name">{page.name}</span>
-              <span className="earlypreview-plan__page-place">{page.place}</span>
-            </span>
-            <span className="earlypreview-plan__page-badge">{claimed ? page.claimed : page.unclaimed}</span>
-          </header>
-          <p className="earlypreview-plan__page-alert">
-            {claimed ? (
-              page.bookable
-            ) : (
-              <>
-                <strong>
-                  <Count value={page.missed} k={en(t, 0.5, 1.1)} />
-                </strong>{" "}
-                {page.missedLine}
-              </>
-            )}
-          </p>
-          <dl>
-            {page.rows.map((row, i) => {
-              const fill = en(t, CLAIM[1] + i * 0.07, CLAIM[1] + 0.15 + i * 0.07);
-              return (
-                <div key={row.label} style={vars({ "--f": fill })}>
-                  <dt>{row.label}</dt>
-                  <dd>
-                    <span className="earlypreview-plan__page-blank" aria-hidden />
-                    <span className="earlypreview-plan__page-value">{row.value}</span>
-                  </dd>
-                </div>
-              );
-            })}
-          </dl>
-        </article>
-        <ol className="earlypreview-plan__stages">
-          {copy.stages.map((item, i) => (
-            <li key={item.lead} className={i === stage ? "is-now" : i < stage ? "is-done" : undefined} style={vars({ "--e": en(t, 0.45 + i * 0.12, 0.7 + i * 0.12) })}>
-              <span className="earlypreview-plan__stage-lead">{item.lead}</span>
-              <span className="earlypreview-plan__stage-text">{item.text}</span>
-            </li>
-          ))}
-        </ol>
       </div>
     </Scene>
   );
@@ -704,7 +519,12 @@ function SystemsScene({ p }: { p: number }) {
   return (
     <Scene o={o} t={t} label="Practices first, then the health system">
       <div className="earlypreview-plan__head">
-        <SceneTitle title={copy.title} t={t} />
+        <div className="earlypreview-plan__title-desk">
+          <SceneTitle title={copy.title} t={t} />
+        </div>
+        <div className="earlypreview-plan__title-phone">
+          <SceneTitle title={PHONE.systems.title} t={t} />
+        </div>
       </div>
       {/* iPhone: this screen drawn as a picture. */}
       <div className="earlypreview-market__body earlypreview-plan__phone-only">
@@ -795,9 +615,7 @@ function sceneP(p: number, id: SceneId) {
 const Timeline = memo(TimelineScene);
 const Sources = memo(SourcesScene);
 const Events = memo(EventsScene);
-const Groups = memo(GroupsScene);
 const Agents = memo(AgentsScene);
-const Loop = memo(LoopScene);
 const Journey = memo(JourneyScene);
 const Systems = memo(SystemsScene);
 
@@ -812,9 +630,7 @@ export function EarlyPreviewPlanSection() {
         <Timeline p={sceneP(p, "timeline")} />
         <Sources p={sceneP(p, "sources")} />
         <Events p={sceneP(p, "events")} />
-        <Groups p={sceneP(p, "groups")} />
         <Agents p={sceneP(p, "agents")} />
-        <Loop p={sceneP(p, "loop")} />
         <Journey p={sceneP(p, "journey")} />
         <Systems p={sceneP(p, "systems")} />
         <SceneNav p={p} goTo={goTo} />

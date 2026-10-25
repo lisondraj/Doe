@@ -95,30 +95,6 @@ export const EARLYPREVIEW_PLAN_PHONE = {
     split: { today: n(T.indexedToday), canada: n(T.indexedCanada), us: n(T.indexedUs), total: n(T.indexed) },
   },
 
-  /** Who pays first: private-pay practices, and owner-run groups. */
-  groups: {
-    title: ["Pre-seed customers:", "private-pay and multi-site."],
-    privatePay: {
-      value: "65%",
-      label: "of paying clinics at Seed are private-pay",
-      text: "Dental, physiotherapy, optometry and aesthetics. The owner decides and pays; there is no insurer contract or procurement step.",
-    },
-    seed: [
-      { value: String(groups), label: "groups by Seed" },
-      { value: String(groupSites), label: "locations" },
-      { value: String(groupSeats), label: "provider seats" },
-    ],
-    seedText: `Owner-run groups of 2 to 12 locations, found through shared owners in the Index. $${P.founding.group} a provider a month at founding prices, $${P.regular.group} after.`,
-    networks: {
-      label: "National networks, after Seed",
-      rows: [
-        { name: "dentalcorp", what: "Dental practices", size: "570+", when: "Q1 2025" },
-        { name: "123Dentist", what: "Dental clinics", size: "450+", when: "Dec 2025" },
-        { name: "Lifemark", what: "Physio and rehab clinics", size: "325+", when: "2025" },
-      ],
-    },
-  },
-
   /** Where agent developers find Doe. */
   agents: {
     listings: [
@@ -128,32 +104,58 @@ export const EARLYPREVIEW_PLAN_PHONE = {
     ],
   },
 
-  /** The report that turns missed demand into a claim, shown as the email itself. */
-  loop: {
-    email: {
-      label: "Example report",
-      from: "Doe",
-      to: "Bloor West Physiotherapy",
-      subject: "18 agent requests couldn’t be answered this month",
-      rows: [
-        { value: "7", text: "asked for your hours" },
-        { value: "6", text: "asked if you take Sun Life" },
-        { value: "5", text: "tried to book an assessment" },
-      ],
-      action: "Claim your page: free, about five minutes",
-    },
-  },
-
-  /** How one health system signs, with the security work each step needs. */
+  /** The path to a hospital letter of intent by Q4 ’27, gate by gate, with what each one produces. */
   systems: {
-    steps: [
-      { when: "Q1 ’27", text: "A Clinical Partner working inside the department" },
-      { when: "Q2 ’27", text: "A department champion who owns the workflow" },
-      { when: "Q3 ’27", text: "One scoped workflow: referral intake" },
-      { when: "Q2–Q4 ’27", text: "Security: PHIPA assessment, HIPAA BAAs, SOC 2 Type I" },
-      { when: "Q4 ’27", text: "Letter of intent" },
-      { when: "By Seed", text: `${T.lois} paid pilots: referral intake and rehabilitation`, seed: true },
-      { when: "After Seed", text: "System-wide contract", after: true },
+    title: ["Path to a hospital LOI", "by Q4 ’27."],
+    cycle: {
+      rows: [
+        { label: "Typical health system purchase", from: 6, to: 18, value: "6–18 mo" },
+        { label: "Doe: first meeting to LOI", from: 0, to: 10, value: "10 mo", plan: true },
+      ],
+    },
+    gates: [
+      {
+        when: "Q1 ’27",
+        title: "Clinical Partners inside",
+        text: "Placements map one department’s referral intake",
+      },
+      {
+        when: "Q2 ’27",
+        title: "A department champion",
+        text: "Physician lead and manager agree one workflow, one measure",
+      },
+      {
+        when: "Q2 ’27",
+        title: "Privacy impact assessment",
+        text: "PHIPA review with the privacy office; PHI stays in Canada",
+      },
+      {
+        when: "Q3 ’27",
+        title: "Validation project",
+        text: "Through the innovation office or a CAN Health Network project",
+      },
+      {
+        when: "Q3 ’27",
+        title: "Security review",
+        text: "Vendor questionnaire, pen test, SOC 2 Type I, HIPAA BAA",
+      },
+      {
+        when: "Q4 ’27",
+        title: "Letter of intent",
+        text: "Department and procurement sign scope, measure and fee",
+        seed: true,
+      },
+      {
+        when: "By Seed",
+        title: `${T.lois} paid pilots`,
+        text: "Referral intake and rehabilitation, 12-month terms",
+      },
+      {
+        when: "After Seed",
+        title: "System-wide contract",
+        text: "Competitive bid, or a shared-services buyer like Mohawk Medbuy",
+        after: true,
+      },
     ],
   },
 
