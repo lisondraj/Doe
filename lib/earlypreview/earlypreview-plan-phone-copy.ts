@@ -239,4 +239,73 @@ export const EARLYPREVIEW_PLAN_PHONE = {
       ["Waitlist page", "ODA Spring Meeting"],
     ],
   },
+
+  /** iPhone, picture-first versions: short labels only, the figures carry the detail. */
+  pictures: {
+    plan: {
+      columns: [
+        {
+          lane: "supply",
+          name: "Supply",
+          marks: [
+            { q: 0, label: `${n(T.indexedToday)} indexed` },
+            { q: 1, label: "Pages emailed" },
+            { q: 2, label: "Founding 100" },
+            { q: 3, label: "NY and SF" },
+          ],
+          seed: { value: n(T.indexed), label: "indexed" },
+        },
+        {
+          lane: "agents",
+          name: "Agents",
+          marks: [
+            { q: 0, label: "Sandbox" },
+            { q: 1, label: "MCP and SDKs" },
+            { q: 2, label: "Live requests" },
+            { q: 4, label: "10 integrations" },
+          ],
+          seed: { value: "5", label: "agents live" },
+        },
+        {
+          lane: "revenue",
+          name: "Revenue",
+          marks: [
+            { q: 1, label: "Plans open" },
+            { q: 3, label: "First claims" },
+            { q: 4, label: "Hospital LOIs" },
+            { q: 5, label: "U.S. groups" },
+          ],
+          seed: { value: `$${T.arrK}K`, label: "ARR" },
+        },
+      ],
+    },
+    funnel: {
+      stages: [
+        { value: "9.4M+", label: "public provider records" },
+        { value: n(T.indexed), label: "indexed by Seed" },
+        { value: n(T.claimed), label: "claimed" },
+        { value: String(T.paying), label: "paying" },
+      ],
+      sources: ["CPSO", "RCDSO", "CPO", "NPPES", "Maps"],
+      filters: ["Owner-run", "Private-pay", "2+ sites", "Books online"],
+    },
+    agents: {
+      found: ["MCP Registry", "Apps in ChatGPT", "AI Engineer World’s Fair"],
+    },
+    gates: {
+      columns: ["Q1 ’27", "Q2 ’27", "Q3 ’27", "Q4 ’27", "Seed"],
+      rows: [
+        { name: "Clinical Partners", col: 0 },
+        { name: "Champion", col: 1 },
+        { name: "Privacy review", col: 1 },
+        { name: "Validation", col: 2 },
+        { name: "Security review", col: 2, span: 2 },
+        { name: "LOI", col: 3, loi: true },
+        { name: `${T.lois} paid pilots`, col: 4 },
+      ],
+      ours: { value: "10", unit: "months", label: "first meeting to LOI" },
+      typical: { value: "6–18", unit: "months", label: "typical health system buy" },
+      after: "After Seed: system-wide contract",
+    },
+  },
 } as const;
