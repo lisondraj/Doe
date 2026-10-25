@@ -5998,3 +5998,48 @@ html:has(.earlypreview-page) {
 .earlypreview-hero-gallery__line {
   text-wrap: balance;
 }
+
+/*
+ * The hero-gallery parts come up in segments: when an item reaches the screen its title and description rise in, then
+ * its box follows a beat later. The second of the side-by-side pair trails the first. Without script they just show.
+ */
+.earlypreview-hero-gallery__caption,
+.earlypreview-hero-gallery__item > .earlypreview-gallery__tile {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity 1000ms cubic-bezier(0.33, 1, 0.68, 1),
+    transform 1000ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.earlypreview-hero-gallery__item.is-in .earlypreview-hero-gallery__caption,
+.earlypreview-hero-gallery__item.is-in > .earlypreview-gallery__tile {
+  opacity: 1;
+  transform: none;
+}
+
+.earlypreview-hero-gallery__item.is-in > .earlypreview-gallery__tile {
+  transition-delay: 260ms;
+}
+
+.earlypreview-hero-gallery__item:nth-child(3).is-in .earlypreview-hero-gallery__caption {
+  transition-delay: 140ms;
+}
+
+.earlypreview-hero-gallery__item:nth-child(3).is-in > .earlypreview-gallery__tile {
+  transition-delay: 400ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earlypreview-hero-gallery__caption,
+  .earlypreview-hero-gallery__item > .earlypreview-gallery__tile {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Until the film's frame is decoded the box is the page's brown, not a black flash, and the frame fades in over it. */
+.earlypreview-page .earlypreview-gallery__tile--plain {
+  background: var(--doehealth-desk2-surface);
+}

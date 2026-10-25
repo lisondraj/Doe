@@ -77,6 +77,10 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   const hoveredRef = useRef(false);
   const playingRef = useRef(false);
   const srcSeen = useRef(src);
+  const figureRef = useRef<HTMLElement>(null);
+  // The film file is only requested once the tile is near the screen (or clicked), so the tiles do not compete with the
+  // hero film for bandwidth. The signed link itself is fetched at once and shared (see `useEarlyPreviewFilm`).
+  const [near, setNear] = useState(false);
   const [showFrame, setShowFrame] = useState(false);
   const [poster, setPoster] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -85,6 +89,26 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
     srcSeen.current = src;
     setPoster(false);
   }
+
+  useEffect(() => {
+    const figure = figureRef.current;
+    if (!figure || near) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setNear(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setNear(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "900px 0px" },
+    );
+    observer.observe(figure);
+    return () => observer.disconnect();
+  }, [near]);
 
   /** Seeks to the middle of the film, once its length is known (see `onLoadedMetadata`). */
   const seekToMiddle = () => {
@@ -144,6 +168,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
     // The film's own controls and the article link keep their clicks.
     if (playing || (event.target as HTMLElement).closest("a")) return;
     playingRef.current = true;
+    setNear(true);
     setPlaying(true);
     startPlayback();
   };
@@ -157,6 +182,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
 
   return (
     <figure
+      ref={figureRef}
       className={`earlypreview-gallery__tile earlypreview-gallery__tile--film${tile.still ? " earlypreview-gallery__tile--still" : ""}${tile.frameAt !== undefined ? " earlypreview-gallery__tile--plain" : ""}${tile.wide ? " earlypreview-gallery__tile--wide" : ""}${playing ? " is-playing" : ""}`}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
@@ -173,7 +199,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
       <video
         ref={videoRef}
         className={`earlypreview-film${poster ? " is-poster" : ""}${visible ? " is-visible" : ""}`}
-        src={src ? `${src}#t=${posterTime}` : undefined}
+        src={src && near ? `${src}#t=${posterTime}` : undefined}
         preload={tile.still ? "none" : "metadata"}
         playsInline
         controls={playing}
@@ -317,7 +343,7 @@ const HERO_GALLERY_CAPTIONS: Record<string, { title: readonly [string, string]; 
 };
 
 const HERO_GALLERY_ITEMS: readonly { key: string; tile: GalleryTileData }[] = [
-  { key: "hospitals", tile: { ...HOSPITAL_TILE, frameAt: 2 } },
+  { key: "hospitals", tile: { ...HOSPITAL_TILE, frameAt: 1 } },
   { key: "dentists", tile: { ...PAIR_TILES[0], film: "concierge", frameAt: 62 } },
   { key: "derm", tile: { ...PAIR_TILES[1], frameAt: 4 } },
   { key: "concierge", tile: { ...LAST_TILE, frameAt: 57 } },
@@ -329,12 +355,38 @@ const HERO_GALLERY_ITEMS: readonly { key: string; tile: GalleryTileData }[] = [
  * hero's type. The boxes are the still images with the brown card (title, link, play button) always showing.
  */
 export function EarlyPreviewHeroGallery() {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // The parts come up one after another as they reach the screen: each item's title and description first, then its
+  // box a beat later (see the CSS). The two side-by-side items follow each other.
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    const items = Array.from(grid.querySelectorAll<HTMLElement>(".earlypreview-hero-gallery__item"));
+    if (typeof IntersectionObserver === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      items.forEach((item) => item.classList.add("is-in"));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("is-in");
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
+    );
+    items.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section
       className={`earlypreview-gallery earlypreview-hero-gallery ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
       aria-label="Doe videos"
     >
-      <div className="earlypreview-gallery__grid">
+      <div ref={gridRef} className="earlypreview-gallery__grid">
         {HERO_GALLERY_ITEMS.map(({ key, tile }) => {
           const caption = HERO_GALLERY_CAPTIONS[key];
           return (
