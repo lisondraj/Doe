@@ -1,9 +1,9 @@
 "use client";
 
 /**
- * Integrations tab — what any connected agent can see and do at this practice. The permissions sit in the
- * middle (each is Bookable, Request only, or Hidden); on the right, what an agent sees today follows those
- * choices, then the latest decisions made for agents, then the same settings in plain words.
+ * Integrations tab — what any connected agent can see and do at this practice. A preset (Open, Balanced, Cautious)
+ * sets every permission at once and each can still be changed (Bookable, Request only, or Hidden), which makes the
+ * set Custom. The right side puts the settings in plain words, then the safeguards, then the latest decisions.
  */
 import { useState } from "react";
 
@@ -12,6 +12,7 @@ const SANS = "font-['DM_Sans',system-ui,sans-serif]";
 const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
 
 type Mode = "bookable" | "request" | "hidden";
+type Modes = Record<string, Mode>;
 
 const MODES: { id: Mode; label: string; tone: string }[] = [
   { id: "bookable", label: "Bookable", tone: "#DCE5D0" },
@@ -20,19 +21,49 @@ const MODES: { id: Mode; label: string; tone: string }[] = [
 ];
 const OPTION_W = 104;
 
-type Permission = { id: string; name: string; note: string; group: "See" | "Book" | "Handle"; mode: Mode };
+type Permission = { id: string; name: string; note: string; group: "See" | "Book" | "Handle" };
 
 const PERMISSIONS: Permission[] = [
-  { id: "services", name: "Services and prices", note: "24 services listed", group: "See", mode: "bookable" },
-  { id: "availability", name: "Live availability", note: "Synced with ModMed", group: "See", mode: "bookable" },
-  { id: "providers", name: "Provider profiles", note: "Bios, specialties, languages", group: "See", mode: "bookable" },
-  { id: "established", name: "Established patients", note: "Confirmed on its own", group: "Book", mode: "bookable" },
-  { id: "new", name: "New patients", note: "You approve each one", group: "Book", mode: "request" },
-  { id: "forms", name: "Intake forms", note: "Patient reviews first", group: "Handle", mode: "request" },
-  { id: "desk", name: "Front desk messages", note: "Non-urgent only", group: "Handle", mode: "hidden" },
+  { id: "services", name: "Services and prices", note: "24 services listed", group: "See" },
+  { id: "availability", name: "Live availability", note: "Synced with ModMed", group: "See" },
+  { id: "providers", name: "Provider profiles", note: "Bios, specialties, languages", group: "See" },
+  { id: "established", name: "Established patients", note: "Confirmed on its own", group: "Book" },
+  { id: "new", name: "New patients", note: "You approve each one", group: "Book" },
+  { id: "forms", name: "Intake forms", note: "Patient reviews first", group: "Handle" },
+  { id: "desk", name: "Front desk messages", note: "Non-urgent only", group: "Handle" },
 ];
 
 const GROUPS: Permission["group"][] = ["See", "Book", "Handle"];
+
+type PresetId = "open" | "balanced" | "cautious" | "custom";
+
+const PRESETS: { id: PresetId; label: string; blurb: string; modes?: Modes }[] = [
+  {
+    id: "open",
+    label: "Open",
+    blurb: "Agents book everyone on their own",
+    modes: { services: "bookable", availability: "bookable", providers: "bookable", established: "bookable", new: "bookable", forms: "bookable", desk: "request" },
+  },
+  {
+    id: "balanced",
+    label: "Balanced",
+    blurb: "New patients and forms wait for you",
+    modes: { services: "bookable", availability: "bookable", providers: "bookable", established: "bookable", new: "request", forms: "request", desk: "hidden" },
+  },
+  {
+    id: "cautious",
+    label: "Cautious",
+    blurb: "Agents read, you confirm every booking",
+    modes: { services: "bookable", availability: "bookable", providers: "bookable", established: "request", new: "request", forms: "request", desk: "hidden" },
+  },
+  { id: "custom", label: "Custom", blurb: "Your own mix" },
+];
+
+/** Which preset the current permissions are, or Custom when they match none. */
+function presetOf(modes: Modes): PresetId {
+  const match = PRESETS.find((p) => p.modes && Object.entries(p.modes).every(([id, m]) => modes[id] === m));
+  return match ? match.id : "custom";
+}
 
 const NAV = [
   { label: "Permissions", on: true, icon: "M12 3.8l6.8 2.6v5.1c0 4.2-2.8 7.4-6.8 8.8-4-1.4-6.8-4.6-6.8-8.8V6.4z" },
@@ -50,13 +81,23 @@ const AGENT_MARKS = [
   { letter: "G", bg: "#D5D9EA", fg: "#2A3260" },
 ];
 
+const SAFEGUARDS = [
+  { id: "limit", label: "Daily limit", note: "6 bookings per agent", on: true },
+  { id: "network", label: "In-network plans only", note: "18 plans checked live", on: true },
+  { id: "charges", label: "Ask before charges over $100", note: "HSA and cards", on: true },
+  { id: "grants", label: "Grants end after 7 days", note: "Patient renews in their agent", on: false },
+];
+
 const DECISIONS = [
   { when: "2m", verdict: "Allowed", tone: "#3F6431", what: "booked Tue 4:15", why: "Established patient, Harbor Mutual" },
   { when: "14m", verdict: "Held", tone: "#8A6A10", what: "new patient waiting", why: "Needs your approval" },
-  { when: "1h", verdict: "Blocked", tone: "#A4452B", what: "message the front desk", why: "Hidden for every agent" },
 ];
 
+/** What an agent asked for last week, so a change shows what it would have done. */
+const WEEK = { established: 31, new: 16, desk: 9 };
+
 const RULE = "border-[rgba(40,25,16,0.1)]";
+const CAP = `text-[11.5px] leading-[14px] tracking-[0.07em] uppercase ${SANS} font-[500] text-[rgba(40,25,16,0.42)]`;
 
 function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) {
   const index = MODES.findIndex((m) => m.id === mode);
@@ -86,41 +127,71 @@ function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => voi
   );
 }
 
-/** The permissions as a sentence: what any agent can read, what it books on its own, and what waits for the practice. */
-function plainWords(modes: Record<string, Mode>) {
-  const open = (id: string) => modes[id] !== "hidden";
-  const read = [open("services") && "your services and prices", open("availability") && "live openings", open("providers") && "provider profiles"].filter(Boolean) as string[];
-  const reads = read.length === 0 ? "It cannot read anything about the practice" : `Any agent can read ${read.length > 1 ? `${read.slice(0, -1).join(", ")} and ${read[read.length - 1]}` : read[0]}`;
-  const book = (id: string, who: string) =>
-    modes[id] === "bookable" ? `books ${who} on its own` : modes[id] === "request" ? `asks you first for ${who}` : `does not book ${who}`;
-  const booking = `It ${book("established", "established patients")}, and ${book("new", "new patients")}`;
-  const desk = modes.desk === "hidden" ? "It cannot message the front desk." : modes.desk === "request" ? "Messages to the front desk wait for you." : "It can message the front desk.";
-  return `${reads}. ${booking}. ${desk}`;
-}
-
-function Check({ tone, kind }: { tone: string; kind: "ok" | "wait" | "off" }) {
+function Toggle({ on, onChange, label }: { on: boolean; onChange: () => void; label: string }) {
   return (
-    <span className="w-[18px] h-[18px] shrink-0 flex items-center justify-center rounded-[999px]" style={{ backgroundColor: tone }}>
-      {kind === "ok" ? (
-        <svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
-          <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#FFFCF1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      ) : null}
-    </span>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      onClick={onChange}
+      className={`relative w-[44px] h-[26px] shrink-0 rounded-[999px] transition-colors duration-200 ${on ? "bg-ink" : "bg-[#E1D9C8]"}`}
+    >
+      <span
+        className="absolute top-[3px] left-[3px] w-[20px] h-[20px] rounded-[999px] bg-paper"
+        style={{ transform: `translateX(${on ? 18 : 0}px)`, transition: `transform 260ms ${EASE}` }}
+      />
+    </button>
   );
 }
 
-export function DoeHealthProductSearchPage() {
-  const [modes, setModes] = useState<Record<string, Mode>>(() => Object.fromEntries(PERMISSIONS.map((p) => [p.id, p.mode])));
+type Piece = { text: string; em?: boolean };
 
-  const sees = [
-    { label: "Services and prices", id: "services", on: "24", ask: "on request" },
-    { label: "Live availability", id: "availability", on: "12 openings", ask: "on request" },
-    { label: "Providers", id: "providers", on: "5", ask: "on request" },
-    { label: "Booking, established", id: "established", on: "on its own", ask: "needs you" },
-    { label: "Booking, new patients", id: "new", on: "on its own", ask: "needs you" },
-    { label: "Front desk messages", id: "desk", on: "on its own", ask: "needs you" },
+/** The permissions as a sentence: what any agent can read, what it books on its own, and what waits for the practice. */
+function plainWords(modes: Modes): Piece[] {
+  const open = (id: string) => modes[id] !== "hidden";
+  const read = [open("services") && "services, prices", open("availability") && "live openings", open("providers") && "provider profiles"].filter(Boolean) as string[];
+  const reads =
+    read.length === 0
+      ? [{ text: "It cannot read anything about the practice" }]
+      : [{ text: "Any agent can read your " }, { text: read.length > 1 ? `${read.slice(0, -1).join(", ")} and ${read[read.length - 1]}` : read[0]!, em: true }];
+  const desk = modes.desk === "hidden" ? "It cannot message the front desk." : modes.desk === "request" ? "Messages to the front desk wait for you." : "It can message the front desk.";
+  const lead: Piece[] = [{ text: ". It books " }];
+  return [
+    ...reads,
+    ...lead,
+    ...(modes.established === "bookable" ? [{ text: "established patients", em: true }, { text: " on its own" }] : modes.established === "request" ? [{ text: "established patients", em: true }, { text: " only after you confirm" }] : [{ text: "no established patients", em: true }]),
+    { text: "; " },
+    ...(modes.new === "bookable" ? [{ text: "new patients", em: true }, { text: " too" }] : modes.new === "request" ? [{ text: "new patients wait for you", em: true }] : [{ text: "no new patients", em: true }]),
+    { text: `. ${desk}` },
   ];
+}
+
+/** What these settings would have done with last week's requests. */
+function impact(modes: Modes) {
+  const sum = (ids: (keyof typeof WEEK)[], mode: Mode) => ids.filter((id) => modes[id] === mode).reduce((s, id) => s + WEEK[id], 0);
+  return { auto: sum(["established", "new"], "bookable"), asked: sum(["established", "new"], "request"), blocked: sum(["established", "new", "desk"], "hidden") };
+}
+
+export function DoeHealthProductSearchPage() {
+  const [modes, setModes] = useState<Modes>(() => ({ ...PRESETS.find((p) => p.id === "balanced")!.modes! }));
+  const [safeguards, setSafeguards] = useState<Record<string, boolean>>(() => Object.fromEntries(SAFEGUARDS.map((s) => [s.id, s.on])));
+  const [picked, setPicked] = useState<PresetId>("balanced");
+
+  const active = presetOf(modes);
+  const shown = picked === "custom" ? "custom" : active;
+  const result = impact(modes);
+
+  const choose = (id: PresetId) => {
+    const preset = PRESETS.find((p) => p.id === id)!;
+    setPicked(id);
+    if (preset.modes) setModes({ ...preset.modes });
+  };
+  const change = (id: string, m: Mode) => {
+    const next = { ...modes, [id]: m };
+    setModes(next);
+    setPicked(presetOf(next));
+  };
 
   return (
     <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[22px] pt-[36px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
@@ -161,49 +232,92 @@ export function DoeHealthProductSearchPage() {
           </div>
         </div>
 
-        <div className="grow min-w-[0px] flex flex-col px-[28px] pt-[22px] pb-[10px] rounded-[28px] bg-[#FAF6EC] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="grow min-w-[0px] flex flex-col px-[28px] pt-[22px] pb-[8px] rounded-[28px] bg-[#FAF6EC] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <span className="flex items-baseline justify-between">
             <span className={`text-[30px] leading-[34px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>Permissions</span>
             <span className={`text-[13px] leading-[16px] ${SANS} text-sub`}>Saved automatically</span>
           </span>
+
+          <div className={`grid grid-cols-4 mt-[16px] border-b ${RULE}`} role="radiogroup" aria-label="Preset">
+            {PRESETS.map((p) => {
+              const on = shown === p.id;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  onClick={() => choose(p.id)}
+                  className="relative flex flex-col items-start gap-[3px] pt-[6px] pb-[14px] pr-[14px] text-left"
+                >
+                  <span className={`flex items-center gap-[8px] text-[15px] leading-[20px] ${SANS} font-[500] ${on ? "text-walnut" : "text-[rgba(40,25,16,0.7)]"}`}>
+                    {on ? <span className="w-[8px] h-[8px] rounded-[999px] bg-ink" /> : null}
+                    {p.label}
+                  </span>
+                  <span className={`text-[12.5px] leading-[17px] ${SANS} text-sub`}>{p.blurb}</span>
+                  <span className="absolute left-0 right-[14px] -bottom-[1px] h-[2px]" style={{ backgroundColor: on ? "#140C04" : "transparent" }} />
+                </button>
+              );
+            })}
+          </div>
+
           {GROUPS.map((group) => (
             <div key={group} className="flex flex-col">
-              <span className={`pt-[18px] pb-[8px] text-[11.5px] leading-[14px] tracking-[0.07em] uppercase ${SANS} font-[500] text-[rgba(40,25,16,0.42)]`}>{group}</span>
+              <span className={`pt-[14px] pb-[6px] ${CAP}`}>{group}</span>
               {PERMISSIONS.filter((p) => p.group === group).map((p) => (
-                <div key={p.id} className={`flex items-center justify-between gap-[16px] h-[70px] shrink-0 border-t ${RULE}`}>
+                <div key={p.id} className={`flex items-center justify-between gap-[16px] h-[56px] shrink-0 border-t ${RULE}`}>
                   <span className="flex flex-col min-w-[0px]">
                     <span className={`truncate text-[15px] leading-[19px] ${SANS} font-[500] text-walnut`}>{p.name}</span>
                     <span className={`truncate text-[12.5px] leading-[17px] ${SANS} text-sub`}>{p.note}</span>
                   </span>
-                  <ModeSwitch mode={modes[p.id]!} onChange={(m) => setModes((prev) => ({ ...prev, [p.id]: m }))} />
+                  <ModeSwitch mode={modes[p.id]!} onChange={(m) => change(p.id, m)} />
                 </div>
               ))}
             </div>
           ))}
+
+          <div className={`flex items-start gap-[10px] mt-auto pt-[12px] border-t ${RULE} text-[13.5px] leading-[20px] ${SANS} text-sub`}>
+            <span className="w-[22px] h-[22px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#EBDDB6] text-[#6B5320]" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" style={{ display: "block" }}>
+                <path d="M13 3.5L5.5 13H12l-1 7.5L18.5 11H12z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <span>
+              With these settings, last week agents would have booked <b className="font-[500] text-walnut">{result.auto}</b> visits on their own, sent{" "}
+              <b className="font-[500] text-walnut">{result.asked}</b> to you to confirm, and been turned away{" "}
+              <b className="font-[500] text-walnut">{result.blocked}</b> {result.blocked === 1 ? "time" : "times"}.
+            </span>
+          </div>
         </div>
 
         <div className="w-[320px] shrink-0 flex flex-col min-h-[0px] pt-[4px]">
-          <span className={`pb-[8px] text-[11.5px] leading-[14px] tracking-[0.07em] uppercase ${SANS} font-[500] text-[rgba(40,25,16,0.42)]`}>What an agent sees today</span>
-          {sees.map((s) => {
-            const mode = modes[s.id]!;
-            return (
-              <div key={s.label} className={`flex items-center gap-[11px] h-[36px] shrink-0 border-b ${RULE}`}>
-                <Check kind={mode === "bookable" ? "ok" : mode === "request" ? "wait" : "off"} tone={mode === "bookable" ? "#6E9A5B" : mode === "request" ? "#D9A227" : "#E1D9C8"} />
-                <span
-                  className={`text-[14px] leading-[18px] ${SANS} ${mode === "hidden" ? "text-[rgba(40,25,16,0.42)] line-through decoration-[rgba(40,25,16,0.3)]" : "text-walnut"}`}
-                >
-                  {s.label}
+          <span className={`pb-[8px] ${CAP}`}>In plain words</span>
+          <p className={`text-[20px] leading-[29px] tracking-[-0.005em] ${DISPLAY} text-walnut`}>
+            {plainWords(modes).map((piece, i) =>
+              piece.em ? (
+                <span key={i} className="bg-[linear-gradient(transparent_64%,rgba(252,207,184,0.85)_64%)]">
+                  {piece.text}
                 </span>
-                {mode !== "hidden" ? (
-                  <span className={`ml-auto text-[12.5px] ${SANS} text-[rgba(40,25,16,0.42)]`}>{mode === "request" ? s.ask : s.on}</span>
-                ) : null}
-              </div>
-            );
-          })}
+              ) : (
+                <span key={i}>{piece.text}</span>
+              ),
+            )}
+          </p>
 
-          <span className={`mt-[22px] pb-[2px] text-[11.5px] leading-[14px] tracking-[0.07em] uppercase ${SANS} font-[500] text-[rgba(40,25,16,0.42)]`}>Recent decisions</span>
+          <span className={`mt-[22px] pb-[2px] ${CAP}`}>Safeguards</span>
+          {SAFEGUARDS.map((s) => (
+            <div key={s.id} className={`flex items-center justify-between gap-[12px] py-[9px] border-b ${RULE}`}>
+              <span className="flex flex-col min-w-[0px]">
+                <span className={`text-[14px] leading-[18px] ${SANS} text-walnut`}>{s.label}</span>
+                <span className={`text-[12px] leading-[16px] ${SANS} text-sub`}>{s.note}</span>
+              </span>
+              <Toggle on={!!safeguards[s.id]} label={s.label} onChange={() => setSafeguards((prev) => ({ ...prev, [s.id]: !prev[s.id] }))} />
+            </div>
+          ))}
+
+          <span className={`mt-[20px] pb-[2px] ${CAP}`}>Recent decisions</span>
           {DECISIONS.map((d) => (
-            <div key={d.when} className="grid grid-cols-[40px_1fr] gap-[6px] py-[8px] border-b border-dotted border-[rgba(40,25,16,0.2)]">
+            <div key={d.when} className="grid grid-cols-[38px_1fr] gap-[6px] py-[8px] border-b border-dotted border-[rgba(40,25,16,0.2)]">
               <span className={`text-[12px] leading-[18px] ${SANS} text-[rgba(40,25,16,0.42)]`}>{d.when}</span>
               <span className="flex flex-col">
                 <span className={`text-[13.5px] leading-[18px] ${SANS} text-walnut`}>
@@ -216,11 +330,6 @@ export function DoeHealthProductSearchPage() {
               </span>
             </div>
           ))}
-
-          <div className="flex flex-col grow justify-end gap-[8px] pt-[18px] min-h-[0px]">
-            <span className={`text-[11.5px] leading-[14px] tracking-[0.07em] uppercase ${SANS} font-[500] text-[rgba(40,25,16,0.42)]`}>In plain words</span>
-            <p className={`text-[17px] leading-[25px] tracking-[-0.005em] ${DISPLAY} text-walnut`}>{plainWords(modes)}</p>
-          </div>
         </div>
       </div>
     </div>
