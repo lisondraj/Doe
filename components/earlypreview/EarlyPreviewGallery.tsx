@@ -402,8 +402,8 @@ export function EarlyPreviewHeroGallery() {
               key={key}
               className={`earlypreview-hero-gallery__item${tile.wide ? " earlypreview-gallery__tile--wide" : ""}`}
             >
-              {/* Hospitals sits between the dot tides from the second section's Index screen, one on each side. */}
-              {key === "hospitals" ? (
+              {/* Hospitals and Concierge sit between the dot tides from the second section's Index screen, one on each side. */}
+              {key === "hospitals" || key === "concierge" ? (
                 <div className="doehealth-desk2-visible__tide earlypreview-hero-gallery__tide" aria-hidden>
                   <DoeHealthDesk2DotTide color="rgba(252, 207, 184, 0.6)" />
                 </div>
@@ -425,7 +425,7 @@ export function EarlyPreviewHeroGallery() {
                   <span className="earlypreview-hero-gallery__line earlypreview-hero-gallery__line--salmon">{second}</span>
                 </h3>
                 {tile.video.link ? (
-                  <Link href={tile.video.link.href} className="earlypreview-overlay__link earlypreview-hero-gallery__link">
+                  <Link href={tile.video.link.href} className="earlypreview-overlay__link earlypreview-hero-gallery__link earlypreview-hero-gallery__link--title">
                     <span className="earlypreview-overlay__label">{tile.video.link.label}</span>
                     <span className="earlypreview-overlay__arrow" aria-hidden="true">
                       →
@@ -434,6 +434,12 @@ export function EarlyPreviewHeroGallery() {
                 ) : null}
               </div>
               <GalleryTile tile={tile} />
+              {/* iPhone: "See Article" sits under the video box instead of under the title, without the arrow. */}
+              {tile.video.link ? (
+                <Link href={tile.video.link.href} className="earlypreview-overlay__link earlypreview-hero-gallery__link earlypreview-hero-gallery__link--box">
+                  <span className="earlypreview-overlay__label">{tile.video.link.label}</span>
+                </Link>
+              ) : null}
             </div>
           );
         })}

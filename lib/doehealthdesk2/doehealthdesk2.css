@@ -6223,3 +6223,28 @@ html:has(.earlypreview-page) {
   margin-top: 0.75rem;
   font-size: 1rem;
 }
+
+/* "See Article": under the title on desktop; on the iPhone it moves under the video box and loses its arrow. */
+.earlypreview-hero-gallery__link--box {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery__link--title {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery__link--box {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.1rem;
+  font-size: 1rem;
+}
+
+/* iPhone: more room between the video parts, and between the hero video and the first one. */
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .earlypreview-hero-gallery {
+  --earlypreview-hero-gallery-space: 10rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .doehealth-desk2-hero-stack .desk2-workspace:has(+ .earlypreview-hero-gallery) {
+  padding-bottom: 10rem !important;
+}
