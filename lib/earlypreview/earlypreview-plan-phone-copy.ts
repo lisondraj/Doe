@@ -156,4 +156,59 @@ export const EARLYPREVIEW_PLAN_PHONE = {
       { when: "After Seed", text: "System-wide contract", after: true },
     ],
   },
+
+  /** The launch campaign, told by James: a med student who wants AI to work for providers. Six views on scroll. */
+  campaign: {
+    title: ["The Doe Toronto launch,", "told by James."],
+    james: {
+      name: "Meet James",
+      line: "Med student and Doe co-founder. He’s building the AI he wants to use in clinic.",
+      photo: "/earlypreview/thumbs/hero.jpg",
+    },
+    website: {
+      title: "Claim your page and edit it.",
+      url: "doe.care/bloor-west-physiotherapy",
+      rows: ["Hours", "Services and prices", "Insurance"],
+      badge: "Claimed",
+    },
+    meter: {
+      title: "Teach personal agents about your clinic before your competitor does.",
+      label: "How likely a patient’s agent finds you and gets every answer",
+      note: "Illustrative",
+      steps: [
+        { text: "Name and address", add: 20 },
+        { text: "Hours", add: 15 },
+        { text: "Services and prices", add: 20 },
+        { text: "Insurance accepted", add: 15 },
+        { text: "Live openings", add: 15 },
+        { text: "Booking", add: 15 },
+      ],
+    },
+    handle: { title: "Claim your @.", value: "doe.care/@bloorwestphysio", status: "Available" },
+    switch: { title: "It’s easier than ever to switch.", from: ["Booking tool", "Phone line", "Intake forms"], to: "Doe" },
+    psychiatry: {
+      title: "Doe Psychiatry",
+      line: "A scribe built for one specialty.",
+      note: ["Mental status exam", "PHQ-9: 14, moderate", "Follow-up in 2 weeks"],
+    },
+    onePrice: { title: "Every intelligent tool you love. One place, one price.", tools: ["Scribe", "Voice agent", "Booking", "Forms", "Payments"] },
+    privateModel: { title: "Every tool on your own intelligent model, with private compute.", tools: ["Scribe", "Voice", "Booking"], model: "Your model", compute: "Private compute" },
+    secure: {
+      title: "The Doe Secure Protocol",
+      lines: [
+        "Health Intelligence Protocol: new LLM research folded in as it lands",
+        "Security that updates its architecture as frontier models change",
+        "Building toward personalized intelligence",
+      ],
+    },
+    toronto: {
+      title: "Doe Toronto is launching soon.",
+      line: "Have your clinic ready before launch day.",
+      tiers: [
+        { name: "Waitlist", price: "Free" },
+        { name: "Founding cohort", price: "$9.99 deposit", detail: "Founding pricing, 3 months free, extra AI tools" },
+      ],
+    },
+    canada: { title: "Canadian Intelligence", href: "/doecanada" },
+  },
 } as const;

@@ -1,6 +1,8 @@
 "use client";
 
-import { memo } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { type ReactNode, memo } from "react";
 
 import { cssVars as vars, scrollRamp as ramp } from "@/lib/doehealthdesk2/use-doehealthdesk2-scroll-lock";
 import { EARLYPREVIEW_PLAN as PLAN } from "@/lib/earlypreview/earlypreview-plan-copy";
@@ -270,40 +272,219 @@ export const PhoneLoop = memo(function PhoneLoop({ t }: { t: number }) {
   );
 });
 
-/* ------------------------------------------------------------ 7. first email to paying */
+/* ------------------------------------------------------------ 7. the launch campaign */
 
-/** The 45 days on one scale, then each step on its day, and what it costs to acquire a practice. */
-export const PhoneJourney = memo(function PhoneJourney({ t }: { t: number }) {
-  const copy = PLAN.journey;
-  const last = copy.marks[copy.marks.length - 1].day;
-  const k = ramp(t, [0.6, 1.8]);
+const VIEW_AT = 0.3;
+const VIEW_LEN = 0.56;
+const VIEW_FADE = 0.1;
+
+function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <section className={`pv-card ${className}`}>{children}</section>;
+}
+
+/** Six views, one after another as you scroll: each a piece of the launch, shown as the thing itself. */
+export const PhoneCampaign = memo(function PhoneCampaign({ t }: { t: number }) {
+  const c = PHONE.campaign;
+  const views: ReactNode[] = [
+    <>
+      <Card className="pv-card--james">
+        <span className="pv-james__photo">
+          <Image src={c.james.photo} alt="James Lisondra" fill sizes="(max-width: 600px) 90vw, 400px" style={{ objectFit: "cover", objectPosition: "22% 38%" }} />
+        </span>
+        <div>
+          <h3 className="pv-card__title">{c.james.name}</h3>
+          <p className="pv-card__line">{c.james.line}</p>
+        </div>
+      </Card>
+      <Card>
+        <h3 className="pv-card__title">{c.website.title}</h3>
+        <div className="pv-browser">
+          <span className="pv-browser__bar">
+            <i />
+            <i />
+            <i />
+            <span>{c.website.url}</span>
+            <span className="pv-browser__badge">{c.website.badge}</span>
+          </span>
+          {c.website.rows.map((row) => (
+            <span key={row} className="pv-browser__row">
+              {row}
+              <em>Edit</em>
+            </span>
+          ))}
+        </div>
+      </Card>
+    </>,
+    <Meter key="meter" t={t} start={VIEW_AT + VIEW_LEN} />,
+    <>
+      <Card>
+        <h3 className="pv-card__title">{c.handle.title}</h3>
+        <span className="pv-field">
+          {c.handle.value}
+          <em>{c.handle.status}</em>
+        </span>
+      </Card>
+      <Card>
+        <h3 className="pv-card__title">{c.switch.title}</h3>
+        <div className="pv-switchto">
+          <span className="pv-switchto__from">
+            {c.switch.from.map((tool) => (
+              <span key={tool}>{tool}</span>
+            ))}
+          </span>
+          <span className="pv-switchto__arrow" aria-hidden>
+            →
+          </span>
+          <span className="pv-switchto__to">{c.switch.to}</span>
+        </div>
+      </Card>
+    </>,
+    <>
+      <Card>
+        <h3 className="pv-card__title">{c.psychiatry.title}</h3>
+        <p className="pv-card__line">{c.psychiatry.line}</p>
+        <div className="pv-scribe">
+          <span className="pv-scribe__wave" aria-hidden>
+            {Array.from({ length: 28 }, (_, i) => (
+              <i key={i} style={{ height: `${fx(20 + 70 * Math.abs(Math.sin(i * 1.7) * Math.cos(i * 0.6)))}%` }} />
+            ))}
+          </span>
+          {c.psychiatry.note.map((line) => (
+            <span key={line} className="pv-scribe__line">
+              {line}
+            </span>
+          ))}
+        </div>
+      </Card>
+      <Card>
+        <h3 className="pv-card__title">{c.onePrice.title}</h3>
+        <div className="pv-merge">
+          {c.onePrice.tools.map((tool) => (
+            <span key={tool}>{tool}</span>
+          ))}
+          <strong>One price</strong>
+        </div>
+      </Card>
+    </>,
+    <>
+      <Card>
+        <h3 className="pv-card__title">{c.privateModel.title}</h3>
+        <div className="pv-model">
+          <span className="pv-model__tools">
+            {c.privateModel.tools.map((tool) => (
+              <span key={tool}>{tool}</span>
+            ))}
+          </span>
+          <span className="pv-model__box">
+            <strong>{c.privateModel.model}</strong>
+            <em>{c.privateModel.compute}</em>
+          </span>
+        </div>
+      </Card>
+      <Card className="pv-card--secure">
+        <h3 className="pv-card__title">{c.secure.title}</h3>
+        <ol className="pv-card__points">
+          {c.secure.lines.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ol>
+      </Card>
+    </>,
+    <>
+      <Card className="pv-card--launch">
+        <h3 className="pv-card__title">{c.toronto.title}</h3>
+        <p className="pv-card__line">{c.toronto.line}</p>
+        <div className="pv-tiers">
+          {c.toronto.tiers.map((tier) => (
+            <div key={tier.name} className={"detail" in tier ? "is-seed" : undefined}>
+              <span className="pv-tiers__name">{tier.name}</span>
+              <strong>{tier.price}</strong>
+              {"detail" in tier ? <span className="pv-tiers__detail">{tier.detail}</span> : null}
+            </div>
+          ))}
+        </div>
+      </Card>
+      <Link href={c.canada.href} className="pv-card pv-card--link">
+        <span className="pv-card__title">{c.canada.title}</span>
+        <span aria-hidden>→</span>
+      </Link>
+    </>,
+  ];
+  const boundary = (i: number) => VIEW_AT + (i + 1) * VIEW_LEN;
+  const at = views.slice(0, -1).reduce<number>((sum, _, i) => sum + en(t, boundary(i) - VIEW_FADE, boundary(i) + VIEW_FADE), 0);
   return (
-    <div className="pv">
-      <div className="pv-hero" style={rise(t, 0)}>
-        <strong className="pv-hero__value is-seed">{copy.stat.value}</strong>
-        <p>{copy.stat.caption}</p>
+    <div className="pv pv-campaign" style={rise(t, 0, 0.15)}>
+      <div className="pv-pager" aria-hidden>
+        <span>{`0${Math.round(at) + 1}`}</span>
+        <span className="pv-pager__track">
+          <i style={{ width: `${fx(((at + 1) / views.length) * 100)}%` }} />
+        </span>
+        <span>{`0${views.length}`}</span>
       </div>
-      <span className="pv-track pv-track--days" style={vars({ "--k": fx(k) })} aria-hidden>
-        <span className="pv-track__fill" />
-        {copy.marks.map((mark) => {
-          const at = mark.day / last;
-          return <i key={mark.text} className={"salmon" in mark ? "is-seed" : undefined} style={{ left: `${fx(at * 100)}%`, opacity: fx(ramp(k, [at - 0.05, at])) }} />;
+      <div className="pv-campaign__stack">
+        {views.map((view, i) => {
+          const start = VIEW_AT + i * VIEW_LEN;
+          const end = start + VIEW_LEN;
+          const fadeIn = i === 0 ? 1 : en(t, start, start + VIEW_FADE);
+          const fadeOut = i === views.length - 1 ? 1 : 1 - en(t, end - VIEW_FADE, end);
+          const shown = fx(fadeIn * fadeOut);
+          return (
+            <div
+              key={i}
+              className="pv-campaign__view"
+              style={{
+                opacity: shown,
+                visibility: shown < 0.01 ? "hidden" : undefined,
+                transform: `translateY(${fx((1 - fadeIn) * 0.75 - (1 - fadeOut) * 0.75)}rem)`,
+              }}
+              aria-hidden={shown < 0.5}
+            >
+              {view}
+            </div>
+          );
         })}
-      </span>
-      <ol className="pv-days">
-        {copy.marks.map((mark, i) => (
-          <li key={mark.text} className={"salmon" in mark ? "is-seed" : undefined} style={rise(t, i, 0.5)}>
-            <span className="pv-days__day">{`Day ${mark.day}`}</span>
-            <span>{mark.text}</span>
-          </li>
-        ))}
-      </ol>
-      <p className="pv-note" style={rise(t, 6, 0.5)}>
-        {copy.foot}
-      </p>
+      </div>
     </div>
   );
 });
+
+/** How well a patient's agent can find and answer for a clinic, climbing as each piece of the page is added. */
+function Meter({ t, start }: { t: number; start: number }) {
+  const m = PHONE.campaign.meter;
+  const k = ramp(t, [start + 0.06, start + VIEW_LEN * 0.8]);
+  let total = 0;
+  const steps = m.steps.map((step, i) => {
+    const on = ramp(k, [i / m.steps.length, (i + 0.6) / m.steps.length]);
+    total += step.add * on;
+    return { ...step, on };
+  });
+  return (
+    <Card className="pv-card--meter">
+      <h3 className="pv-card__title">{m.title}</h3>
+      <div className="pv-meter">
+        <div className="pv-meter__figure">
+          <strong>{`${Math.round(total)}%`}</strong>
+          <span>
+            {m.label}
+            <em>{m.note}</em>
+          </span>
+        </div>
+        <span className="pv-meter__bar" aria-hidden>
+          <i style={{ width: `${fx(total)}%` }} />
+        </span>
+        <ul className="pv-meter__steps">
+          {steps.map((step) => (
+            <li key={step.text} className={step.on >= 1 ? "is-on" : undefined} style={{ opacity: fx(0.35 + step.on * 0.65) }}>
+              <i aria-hidden />
+              {step.text}
+              <span>{`+${step.add}%`}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Card>
+  );
+}
 
 /* ------------------------------------------------------------ 8. one health system */
 

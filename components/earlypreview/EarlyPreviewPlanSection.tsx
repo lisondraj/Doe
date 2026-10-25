@@ -6,7 +6,7 @@ import {
   PhoneAgents,
   PhoneEvents,
   PhoneGroups,
-  PhoneJourney,
+  PhoneCampaign,
   PhoneLoop,
   PhoneSources,
   PhoneSystems,
@@ -37,7 +37,8 @@ const SCENES = [
   { id: "groups", len: 2.4 },
   { id: "agents", len: 2.6 },
   { id: "loop", len: 2.4 },
-  { id: "journey", len: 2.4 },
+  // On the iPhone this screen is the launch campaign, six views long.
+  { id: "journey", len: 3.9 },
   { id: "systems", len: 2.6 },
 ] as const;
 
@@ -618,7 +619,12 @@ function JourneyScene({ p }: { p: number }) {
   return (
     <Scene o={o} t={t} label="From first email to paying">
       <div className="earlypreview-plan__head">
-        <SceneTitle title={copy.title} t={t} />
+        <div className="earlypreview-plan__title-desk">
+          <SceneTitle title={copy.title} t={t} />
+        </div>
+        <div className="earlypreview-plan__title-phone">
+          <SceneTitle title={PHONE.campaign.title} t={t} />
+        </div>
         <div className="earlypreview-plan__corner" style={vars({ "--e": en(t, 1.6, 1.9) })}>
           <p className="earlypreview-plan__corner-value">{copy.stat.value}</p>
           <p className="earlypreview-plan__corner-label">{copy.stat.caption}</p>
@@ -626,7 +632,7 @@ function JourneyScene({ p }: { p: number }) {
       </div>
       {/* iPhone: this screen drawn as a picture. */}
       <div className="earlypreview-market__body earlypreview-plan__phone-only">
-        <PhoneJourney t={t} />
+        <PhoneCampaign t={t} />
       </div>
       <div className="earlypreview-market__body earlypreview-plan__desk-only earlypreview-plan__journey">
         <svg className="earlypreview-plan__ruler" viewBox="0 0 1000 340" fill="none" style={vars({ "--run": run, "--e": en(t, 0.3, 0.55) })} aria-hidden>
