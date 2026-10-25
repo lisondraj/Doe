@@ -25,6 +25,9 @@ import {
   EARLYPREVIEW_PRACTICES_HEADLINE,
 } from "@/lib/earlypreview/earlypreview-hero-copy";
 import { EARLYPREVIEW_MAIN_VIDEO } from "@/lib/earlypreview/earlypreview-videos";
+
+/** A screenshot of the hero film at 0:04, its thumbnail. */
+const EARLYPREVIEW_HERO_THUMBNAIL = "/earlypreview/thumbs/hero.jpg";
 import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
 import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
 import { useDoeHealthDesk2FitTitles } from "@/lib/doehealthdesk2/use-doehealthdesk2-fit-titles";
@@ -116,6 +119,7 @@ function EarlyPreviewBeigeBand({
           film={heroFilm}
           filmLabel={EARLYPREVIEW_MAIN_VIDEO.title.join(" ")}
           overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />}
+          thumbnail={EARLYPREVIEW_HERO_THUMBNAIL}
         />
       )}
     </section>
@@ -264,6 +268,7 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
             film={heroFilm}
             filmLabel={EARLYPREVIEW_MAIN_VIDEO.title.join(" ")}
             overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />}
+            thumbnail={EARLYPREVIEW_HERO_THUMBNAIL}
             className="doehealth-desk2-nav-wash-surface"
           />
           {/* The hospital, dentist, derm and concierge videos, attached under the hero video with equal gaps. */}

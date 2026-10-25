@@ -6210,3 +6210,13 @@ html:has(.earlypreview-page) {
 .doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .doehealth-desk2-hero-stack .desk2-workspace:has(+ .earlypreview-hero-gallery) {
   padding-bottom: 6.5rem !important;
 }
+
+/* "See Article" under each hero-gallery title, in the cards' link style, centred. */
+.earlypreview-page .earlypreview-hero-gallery__link {
+  margin-top: 0.9rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery__link {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+}

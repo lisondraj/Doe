@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { type CSSProperties, type MouseEvent, type PointerEvent, useEffect, useRef, useState } from "react";
 
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
@@ -21,11 +22,12 @@ import {
 
 /** The hospital video has its own section, under the blank section below the main video. */
 const HOSPITAL_TILE: GalleryTileData = {
-  src: "/doehealthdesk2/golden-loft.png",
-  alt: "A golden-lit loft",
+  src: "/earlypreview/thumbs/hospitals-open.jpg",
+  alt: "The opening of the Doe for Hospitals film",
   video: EARLYPREVIEW_HOSPITALS_VIDEO,
   wide: true,
   film: "hospitals",
+  still: true,
 };
 
 type GalleryTileData = {
@@ -34,12 +36,15 @@ type GalleryTileData = {
   video: EarlyPreviewVideo;
   wide?: boolean;
   position?: string;
-  /** The film itself, if it plays in place on the tile. Its first frame is the thumbnail. */
+  /** The film itself, if it plays in place on the tile. */
   film?: EarlyPreviewFilmId;
-  /** Shows the still image as the thumbnail, never the film's frame. The film still plays in place on a click. */
+  /**
+   * The thumbnail is the still image (`src`), a screenshot of the film's frame, never the paused film, so nothing waits
+   * on the video to show. The film loads and plays in place on a click.
+   */
   still?: boolean;
-  /** Shows the film's own frame at this second as the thumbnail, with only the centred play button (no card). */
-  frameAt?: number;
+  /** Only the centred play button over the still, no card. */
+  plain?: boolean;
 };
 
 /** Two videos side by side, the first row of the beige section's video grid. */
@@ -50,21 +55,22 @@ const PAIR_TILES: readonly GalleryTileData[] = [
     video: EARLYPREVIEW_BEYOND_VIDEO,
   },
   {
-    src: "/doehealthdesk2/other.png",
-    alt: "A calm, sunlit interior",
+    src: "/earlypreview/thumbs/derm-open.jpg",
+    alt: "The opening of the Doe for Derm film",
     video: EARLYPREVIEW_AESTHETICS_VIDEO,
     film: "derm",
+    still: true,
   },
 ];
 
 /** The last video, full width, under the pair. */
 const LAST_TILE: GalleryTileData = {
-  src: "/doehealthdesk2/newhero.jpg",
-  alt: "A bright, minimal lounge by a sunlit window",
+  src: "/earlypreview/thumbs/concierge-open.jpg",
+  alt: "The opening of the Doe for Concierge film",
   video: EARLYPREVIEW_CONCIERGE_VIDEO,
-  position: "20% 50%",
   wide: true,
   film: "concierge",
+  still: true,
 };
 
 /**
@@ -74,7 +80,7 @@ const LAST_TILE: GalleryTileData = {
  */
 function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPreviewFilmId }) {
   const src = useEarlyPreviewFilm(film);
-  const posterTime = tile.frameAt ?? 0.04;
+  const posterTime = 0.04;
   const videoRef = useRef<HTMLVideoElement>(null);
   const hoveredRef = useRef(false);
   const playingRef = useRef(false);
@@ -87,6 +93,8 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   const [showFrame, setShowFrame] = useState(false);
   const [poster, setPoster] = useState(false);
   const [playing, setPlaying] = useState(false);
+  // True once the film is actually showing frames. Until then the still stays up, so a click never shows a black box.
+  const [rolling, setRolling] = useState(false);
   playingRef.current = playing;
   if (srcSeen.current !== src) {
     srcSeen.current = src;
@@ -142,7 +150,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   };
 
   const onPointerEnter = (event: PointerEvent<HTMLElement>) => {
-    if (tile.still || tile.frameAt !== undefined || event.pointerType !== "mouse" || playing) return;
+    if (tile.still || event.pointerType !== "mouse" || playing) return;
     hoveredRef.current = true;
     setShowFrame(true);
     seekToMiddle();
@@ -180,7 +188,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   return (
     <figure
       ref={figureRef}
-      className={`earlypreview-gallery__tile earlypreview-gallery__tile--film${tile.still ? " earlypreview-gallery__tile--still" : ""}${tile.frameAt !== undefined ? " earlypreview-gallery__tile--plain" : ""}${tile.wide ? " earlypreview-gallery__tile--wide" : ""}${playing ? " is-playing" : ""}`}
+      className={`earlypreview-gallery__tile earlypreview-gallery__tile--film${tile.still ? " earlypreview-gallery__tile--still" : ""}${tile.plain ? " earlypreview-gallery__tile--plain" : ""}${tile.wide ? " earlypreview-gallery__tile--wide" : ""}${playing ? " is-playing" : ""}${rolling ? " is-rolling" : ""}`}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       onClick={onClick}
@@ -191,6 +199,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
         width={2500}
         height={1445}
         sizes={tile.wide ? "(min-width: 1024px) 80vw, 100vw" : "(min-width: 1024px) 40vw, 50vw"}
+        quality={90}
         style={tile.position ? { objectPosition: tile.position } : undefined}
       />
       <video
@@ -212,6 +221,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
         onLoadedData={() => {
           if (!playingRef.current && !hoveredRef.current) revealFirstFrame();
         }}
+        onPlaying={() => setRolling(true)}
         onSeeked={() => {
           if (tile.still || playingRef.current) return;
           if (hoveredRef.current) setShowFrame(true);
@@ -223,7 +233,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
           <path d="M7.5 4.8v14.4a.9.9 0 0 0 1.37.77l11.3-7.2a.9.9 0 0 0 0-1.54L8.87 4.03A.9.9 0 0 0 7.5 4.8Z" />
         </svg>
       </span>
-      {tile.frameAt === undefined ? <EarlyPreviewVideoOverlay video={tile.video} compact={!tile.wide} /> : null}
+      {!tile.plain ? <EarlyPreviewVideoOverlay video={tile.video} compact={!tile.wide} /> : null}
     </figure>
   );
 }
@@ -239,6 +249,7 @@ function GalleryTile({ tile }: { tile: GalleryTileData }) {
         width={2500}
         height={1445}
         sizes={tile.wide ? "(min-width: 1024px) 80vw, 100vw" : "(min-width: 1024px) 40vw, 50vw"}
+        quality={90}
         style={tile.position ? { objectPosition: tile.position } : undefined}
       />
       <span className="desk2-workspace__play" aria-hidden="true">
@@ -328,10 +339,21 @@ const HERO_GALLERY_TITLES: Record<string, readonly [string, string]> = {
 };
 
 const HERO_GALLERY_ITEMS: readonly { key: string; tile: GalleryTileData }[] = [
-  { key: "hospitals", tile: { ...HOSPITAL_TILE, frameAt: 2.5 } },
-  { key: "dentists", tile: { ...PAIR_TILES[0], film: "concierge", frameAt: 42 } },
-  { key: "derm", tile: { ...PAIR_TILES[1], frameAt: 4 } },
-  { key: "concierge", tile: { ...LAST_TILE, frameAt: 57 } },
+  // Screenshots of each film at its thumbnail time: hospitals 0:02.5, dentists (the concierge film) 0:42, derm 0:04,
+  // concierge 0:57.
+  {
+    key: "hospitals",
+    tile: { ...HOSPITAL_TILE, src: "/earlypreview/thumbs/hospitals.jpg", alt: "Doe for Hospitals film", plain: true },
+  },
+  {
+    key: "dentists",
+    tile: { ...PAIR_TILES[0], src: "/earlypreview/thumbs/dentists.jpg", alt: "Doe for Dentists film", film: "concierge", still: true, plain: true },
+  },
+  { key: "derm", tile: { ...PAIR_TILES[1], src: "/earlypreview/thumbs/derm.jpg", alt: "Doe for Derm film", plain: true } },
+  {
+    key: "concierge",
+    tile: { ...LAST_TILE, src: "/earlypreview/thumbs/concierge.jpg", alt: "Doe for Concierge film", plain: true },
+  },
 ];
 
 /**
@@ -400,6 +422,14 @@ export function EarlyPreviewHeroGallery() {
                   </span>
                   <span className="earlypreview-hero-gallery__line earlypreview-hero-gallery__line--salmon">{second}</span>
                 </h3>
+                {tile.video.link ? (
+                  <Link href={tile.video.link.href} className="earlypreview-overlay__link earlypreview-hero-gallery__link">
+                    <span className="earlypreview-overlay__label">{tile.video.link.label}</span>
+                    <span className="earlypreview-overlay__arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </Link>
+                ) : null}
               </div>
               <GalleryTile tile={tile} />
             </div>

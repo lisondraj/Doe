@@ -20,6 +20,7 @@ export function DoeHealthDesk2Workspace({
   className = "",
   film,
   filmLabel,
+  thumbnail,
 }: {
   overlay?: ReactNode;
   className?: string;
@@ -27,11 +28,17 @@ export function DoeHealthDesk2Workspace({
   film?: string;
   /** Present whenever this photo is a film, including before the signed URL arrives. */
   filmLabel?: string;
+  /**
+   * A screenshot of the film's thumbnail frame. When set it is the thumbnail, shown at once, in place of the paused film,
+   * and the film only loads on a click; it stays up until the film is actually showing frames.
+   */
+  thumbnail?: string;
 } = {}) {
   const [shown, setShown] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [showFrame, setShowFrame] = useState(false);
   const [poster, setPoster] = useState(false);
+  const [rolling, setRolling] = useState(false);
   const fadeRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hoveredRef = useRef(false);
@@ -100,7 +107,7 @@ export function DoeHealthDesk2Workspace({
   /** The thumbnail is four seconds in. Seeking there makes the browser decode that frame. */
   const revealFirstFrame = () => {
     const video = videoRef.current;
-    if (!video || playingRef.current || hoveredRef.current) return;
+    if (thumbnail || !video || playingRef.current || hoveredRef.current) return;
     if (video.readyState >= 2 && Math.abs(video.currentTime - HERO_POSTER_SECONDS) < 0.15) {
       setPoster(true);
       return;
@@ -156,9 +163,9 @@ export function DoeHealthDesk2Workspace({
     <section className={`desk2-workspace ${DOEPHONE_DESKTOP_PAGE_INSET_X}${shown ? " is-in" : ""}${className ? ` ${className}` : ""}`} aria-label="Doe clinic">
       <div className="desk2-workspace__stage">
         <figure
-          className={`desk2-workspace__photo${playing ? " is-playing" : ""}`}
-          onPointerEnter={isFilm && overlay ? onPointerEnter : undefined}
-          onPointerLeave={isFilm && overlay ? onPointerLeave : undefined}
+          className={`desk2-workspace__photo${thumbnail ? " has-thumb" : ""}${playing ? " is-playing" : ""}${rolling ? " is-rolling" : ""}`}
+          onPointerEnter={isFilm && overlay && !thumbnail ? onPointerEnter : undefined}
+          onPointerLeave={isFilm && overlay && !thumbnail ? onPointerLeave : undefined}
           onClick={isFilm ? onClick : undefined}
         >
           {isFilm ? null : (
@@ -171,12 +178,15 @@ export function DoeHealthDesk2Workspace({
               priority
             />
           )}
+          {isFilm && thumbnail ? (
+            <Image src={thumbnail} alt="" width={2560} height={1440} sizes="(min-width: 1024px) 80vw, 100vw" quality={90} priority />
+          ) : null}
           {isFilm ? (
             <video
               ref={videoRef}
               className={`earlypreview-film${poster ? " is-poster" : ""}${filmVisible ? " is-visible" : ""}`}
-              src={film ? `${film}#t=${HERO_POSTER_SECONDS}` : undefined}
-              preload={playing ? "auto" : "metadata"}
+              src={film ? (thumbnail ? film : `${film}#t=${HERO_POSTER_SECONDS}`) : undefined}
+              preload={playing ? "auto" : thumbnail ? "none" : "metadata"}
               playsInline
               controls={playing}
               aria-label={filmLabel ? `${filmLabel}, video` : "Video"}
@@ -191,6 +201,7 @@ export function DoeHealthDesk2Workspace({
               onLoadedData={() => {
                 if (!playingRef.current && !hoveredRef.current) revealFirstFrame();
               }}
+              onPlaying={() => setRolling(true)}
               onSeeked={() => {
                 if (playingRef.current) return;
                 if (hoveredRef.current) setShowFrame(true);
