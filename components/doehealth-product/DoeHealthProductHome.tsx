@@ -20,13 +20,15 @@ import { DoeHealthProductPaymentsPage } from "@/components/doehealth-product/Doe
 import { DoeHealthProductPermissionsPage } from "@/components/doehealth-product/DoeHealthProductPermissions";
 import { DoeHealthProductReferralsPage } from "@/components/doehealth-product/DoeHealthProductReferrals";
 import { DoeHealthProductFormsPage } from "@/components/doehealth-product/DoeHealthProductForms";
+import { DoeHealthProductInsightsPage } from "@/components/doehealth-product/DoeHealthProductInsights";
+import { DoeHealthProductAutomationsPage } from "@/components/doehealth-product/DoeHealthProductAutomations";
 import { DoeHealthProductSearchPage } from "@/components/doehealth-product/DoeHealthProductSearch";
 import { DoeHealthProductCallPage } from "@/components/doehealth-product/DoeHealthProductCall";
 import { DoeHealthProductIndex } from "@/components/doehealth-product/DoeHealthProductIndex";
 import { HalftoneDisc } from "@/components/doehealth-product/DoeHealthProductHalftone";
 
 /** "call" is opened from the Voice tab's Handled list and has no rail icon of its own. */
-type TabId = "schedule" | "calendar" | "voice" | "call" | "services" | "providers" | "referrals" | "payments" | "permissions" | "search" | "forms" | "integrations";
+type TabId = "schedule" | "calendar" | "voice" | "call" | "services" | "providers" | "referrals" | "payments" | "permissions" | "search" | "forms" | "integrations" | "insights" | "automations";
 
 /** Pages that live in the Index dropdown in the rail. */
 const INDEX_CHILDREN: TabId[] = ["services", "providers", "permissions", "search", "forms"];
@@ -399,7 +401,7 @@ export function DoeHealthProductArtboard({
         <div className="w-[40px] flex justify-center text-[28px] leading-[28px] font-['Lora-Regular_SemiBold','Lora',system-ui,sans-serif] font-[600] [color:var(--color-paper)]">
           D
         </div>
-        <div className="flex flex-col gap-[10px] mt-[110px]">
+        <div className="flex flex-col gap-[10px] mt-[40px]">
           {/* Index is the default page; its sub-pages open in a dropdown beneath it. */}
           <div className="flex flex-col">
             <NavButton
@@ -480,6 +482,12 @@ export function DoeHealthProductArtboard({
           <NavButton label="Payments" active={activeTab === "payments"} onSelect={() => switchTab("payments")}>
             <rect x="3.5" y="6" width="17" height="12.5" rx="3.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
             <path d="M3.5 10.5h17M7.5 14.8h3" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+          </NavButton>
+          <NavButton label="Insights" active={activeTab === "insights"} onSelect={() => switchTab("insights")}>
+            <path d="M5 19.5V11M12 19.5V5M19 19.5v-6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+          </NavButton>
+          <NavButton label="Automations" active={activeTab === "automations"} onSelect={() => switchTab("automations")}>
+            <path d="M13 3.5L5.5 13H12l-1 7.5L18.5 11H12z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
           </NavButton>
         </div>
         <div className="flex flex-col gap-[10px] mt-auto">
@@ -604,6 +612,8 @@ export function DoeHealthProductArtboard({
           {layer("search", <DoeHealthProductSearchPage />)}
           {layer("payments", <DoeHealthProductPaymentsPage />)}
           {layer("permissions", <DoeHealthProductPermissionsPage />)}
+          {layer("insights", <DoeHealthProductInsightsPage />)}
+          {layer("automations", <DoeHealthProductAutomationsPage />)}
           <div
             className="grow min-w-[0px] h-full flex flex-col p-[28px] gap-[24px] relative"
             style={{
