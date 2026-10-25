@@ -6,6 +6,7 @@ import { EarlyPreviewVideoOverlay } from "@/components/earlypreview/EarlyPreview
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 import { EARLYPREVIEW_ENTERPRISE_DEK } from "@/lib/earlypreview/earlypreview-hero-copy";
+import { type FilmStart, startFilm } from "@/lib/earlypreview/start-film";
 import { useNavReveal } from "@/lib/earlypreview/use-nav-reveal";
 import type { EarlyPreviewFilmId } from "@/lib/earlypreview/earlypreview-films";
 import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
@@ -78,6 +79,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   const playingRef = useRef(false);
   const srcSeen = useRef(src);
   const figureRef = useRef<HTMLElement>(null);
+  const filmStartRef = useRef<FilmStart>({ rewound: false });
   // The film file is only requested once the tile is near the screen (or clicked), so the tiles do not compete with the
   // hero film for bandwidth. The signed link itself is fetched at once and shared (see `useEarlyPreviewFilm`).
   const [near, setNear] = useState(false);
@@ -155,13 +157,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   const startPlayback = () => {
     const video = videoRef.current;
     if (!video || !src) return;
-    video.muted = false;
-    try {
-      video.currentTime = 0;
-    } catch {
-      // Metadata may not be in yet. `onLoadedMetadata` starts it from the top.
-    }
-    void video.play();
+    startFilm(video, filmStartRef.current);
   };
 
   const onClick = (event: MouseEvent<HTMLElement>) => {
@@ -200,7 +196,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
         ref={videoRef}
         className={`earlypreview-film${poster ? " is-poster" : ""}${visible ? " is-visible" : ""}`}
         src={src && near ? `${src}#t=${posterTime}` : undefined}
-        preload={tile.still ? "none" : "metadata"}
+        preload={playing ? "auto" : tile.still ? "none" : "metadata"}
         playsInline
         controls={playing}
         aria-label={`${tile.video.title.join(" ")}, video`}

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { type MouseEvent, type PointerEvent, type ReactNode, useEffect, useRef, useState } from "react";
 
+import { type FilmStart, startFilm } from "@/lib/earlypreview/start-film";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
@@ -35,6 +36,7 @@ export function DoeHealthDesk2Workspace({
   const videoRef = useRef<HTMLVideoElement>(null);
   const hoveredRef = useRef(false);
   const playingRef = useRef(false);
+  const filmStartRef = useRef<FilmStart>({ rewound: false });
   const filmSeen = useRef(film);
   playingRef.current = playing;
   if (filmSeen.current !== film) {
@@ -128,13 +130,7 @@ export function DoeHealthDesk2Workspace({
   const startPlayback = () => {
     const video = videoRef.current;
     if (!video || !film) return;
-    video.muted = false;
-    try {
-      video.currentTime = 0;
-    } catch {
-      // Metadata may not be in yet. `onLoadedMetadata` starts it from the top.
-    }
-    void video.play();
+    startFilm(video, filmStartRef.current);
   };
 
   const onClick = (event: MouseEvent<HTMLElement>) => {
@@ -180,7 +176,7 @@ export function DoeHealthDesk2Workspace({
               ref={videoRef}
               className={`earlypreview-film${poster ? " is-poster" : ""}${filmVisible ? " is-visible" : ""}`}
               src={film ? `${film}#t=${HERO_POSTER_SECONDS}` : undefined}
-              preload="metadata"
+              preload={playing ? "auto" : "metadata"}
               playsInline
               controls={playing}
               aria-label={filmLabel ? `${filmLabel}, video` : "Video"}
