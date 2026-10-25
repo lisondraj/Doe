@@ -80,6 +80,10 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     let settling = false;
     let settleTimer = 0;
 
+    // Within a screen of the viewport. Far from it nothing here needs to read layout on scroll, wheel or touch: the
+    // section is settled at one end. Starts true so the first reading is taken; the observer below keeps it current.
+    let near = true;
+
     const desktopPaced = () => window.matchMedia(DESKTOP_QUERY).matches;
     const phone = () => !desktopPaced();
     const track = section.parentElement;
@@ -225,6 +229,11 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     };
 
     const onScroll = () => {
+      // Far from the section and not holding the page: skip the layout read. The settle at either end ran when it left.
+      if (!near && !locked) {
+        lastY = window.scrollY;
+        return;
+      }
       const y = window.scrollY;
       const dir = y - lastY;
       lastY = y;
@@ -286,7 +295,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
         // moves. Locking after the scroll lands overshoots, and pulling the page back reads as a bounce. `pending`
         // is wheel scroll the browser is still animating towards.
         // Another locked section took this step, so the page won't move.
-        if (done || phone() || event.defaultPrevented) return;
+        if (done || !near || phone() || event.defaultPrevented) return;
         const raw = event.deltaY * scale;
         if (performance.now() - pendingAt > 300) pendingWheel = 0;
         pendingAt = performance.now();
@@ -392,11 +401,49 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       jumpTo(sectionTop());
     };
 
+    // Keeps `near` current. On leaving, the scroll handler runs once more while `near` is still true, so the section
+    // settles at the end it was left at; on arriving it reads the position straight away.
+    const proximity = new Map<Element, boolean>();
+    const watched = typeof IntersectionObserver === "undefined" ? null : new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) proximity.set(entry.target, entry.isIntersecting);
+        const now = Array.from(proximity.values()).some(Boolean);
+        if (now === near) return;
+        if (now) {
+          near = true;
+          onScroll();
+        } else {
+          onScroll();
+          near = false;
+        }
+      },
+      { rootMargin: "100% 0px" },
+    );
+    watched?.observe(section);
+    if (track && track !== section.ownerDocument.body && track.tagName !== "MAIN") watched?.observe(track);
+
+    // The wheel and touch listeners can stop the page, so they are not passive. Only the desktop lock holds the page
+    // (the iPhone scrolls natively), so only the desktop layout gets them: on the phone a non-passive touchmove on the
+    // window would make every scroll wait for script.
+    const desktopQuery = window.matchMedia(DESKTOP_QUERY);
+    let inputBound = false;
+    const bindInput = () => {
+      if (desktopQuery.matches === inputBound) return;
+      inputBound = desktopQuery.matches;
+      if (inputBound) {
+        window.addEventListener("wheel", onWheel, { passive: false });
+        window.addEventListener("touchmove", onTouchMove, { passive: false });
+      } else {
+        window.removeEventListener("wheel", onWheel);
+        window.removeEventListener("touchmove", onTouchMove);
+      }
+    };
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("wheel", onWheel, { passive: false });
+    bindInput();
+    desktopQuery.addEventListener("change", bindInput);
     window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
     window.addEventListener("touchcancel", onTouchEnd, { passive: true });
     window.addEventListener("keydown", onKeyDown);
@@ -409,6 +456,8 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       if (track) track.style.height = "";
       window.clearTimeout(settleTimer);
       window.clearTimeout(releaseTimer);
+      watched?.disconnect();
+      desktopQuery.removeEventListener("change", bindInput);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);

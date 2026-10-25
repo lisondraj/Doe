@@ -162,10 +162,19 @@ const END = PAN[1] + 0.35;
 
 const smooth = (t: number) => t * t * (3 - 2 * t);
 const en = (p: number, range: readonly [number, number]) => smooth(ramp(p, range));
-/** The `t` at which `smooth(t)` is `s`, so a box can be brought to the front exactly. */
-const unsmooth = (s: number) => 0.5 - Math.sin(Math.asin(1 - 2 * s) / 3);
 /** The progress at which each box sits in front: the pan's start for the first, the rest spread evenly along it. */
-const BOX_AT = SLIDES.map((_, i) => PAN[0] + (PAN[1] - PAN[0]) * unsmooth(i / (SLIDES.length - 1)));
+const BOX_AT = SLIDES.map((_, i) => PAN[0] + ((PAN[1] - PAN[0]) * i) / (SLIDES.length - 1));
+/**
+ * iPhone: how far down the column the boxes have been pushed, in boxes (0 is the first in front, 11 the last). Each box
+ * holds in front for a stretch of the scroll, then the next pushes it up and out.
+ */
+function columnPosition(p: number) {
+  const at = ramp(p, PAN) * (SLIDES.length - 1);
+  const whole = Math.min(Math.floor(at), SLIDES.length - 2);
+  return whole + smooth(ramp(at - whole, [0.2, 0.8]));
+}
+/** iPhone: the scroll through the track is this many times the desktop's per unit of progress, so each box gets room. */
+const PHONE_RUN_SCALE = 2.2;
 
 /**
  * One tone map for every product screen: each pixel keeps its lightness and takes the matching shade of the section's
@@ -277,7 +286,7 @@ function useBoxesInStage(stageRef: React.RefObject<HTMLElement | null>, trackRef
           return next;
         });
       },
-      { root: stage, rootMargin: "0px 100% 0px 100%" },
+      { root: stage, rootMargin: "100% 100% 100% 100%" },
     );
     Array.from(track.children).forEach((item) => observer.observe(item));
     return () => observer.disconnect();
@@ -330,7 +339,7 @@ export function EarlyPreviewProductSection() {
   const gone = en(p, TITLE_OUT);
 
   return (
-    <div className="earlypreview-product-track" style={vars({ "--product-run": END * DOEHEALTH_DESK2_PHONE_STEP_PX })}>
+    <div className="earlypreview-product-track" style={vars({ "--product-run": END * DOEHEALTH_DESK2_PHONE_STEP_PX * PHONE_RUN_SCALE })}>
       <section
         ref={sectionRef}
         className="earlypreview-product doehealth-desk2-nav-wash-surface"
@@ -358,10 +367,10 @@ export function EarlyPreviewProductSection() {
             <ol
               ref={trackRef}
               className="earlypreview-product__track"
-              style={{ ...vars({ "--k": shown }), transform: `translate3d(${-pan * distance}px, 0, 0)` }}
+              style={vars({ "--k": shown, "--pan-x": -pan * distance, "--s": columnPosition(p) })}
             >
               {SLIDES.map((slide, i) => (
-                <li key={slide.id} data-index={i} className="earlypreview-product__slide" style={vars({ "--i": Math.min(i, 3), "--len": slide.title.length })}
+                <li key={slide.id} data-index={i} className="earlypreview-product__slide" style={vars({ "--i": Math.min(i, 3), "--n": i, "--len": slide.title.length })}
                 >
                   <div className="earlypreview-product__box">
                     <div className="earlypreview-product__ui" data-sit={VISUALS[slide.id].sit}>

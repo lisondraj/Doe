@@ -46,8 +46,23 @@ export function useDoeHealthDesk2PhoneOverflowChrome(enabled: boolean) {
       return Number(surface.dataset.navBeige ?? 0) >= 0.5 ? beige : brown;
     };
 
+    // elementFromPoint makes the browser resolve layout, so while scrolling it runs a few times a second, not every frame.
+    const MIN_GAP_MS = 120;
+    let lastAt = 0;
+    let timer = 0;
     const update = () => {
       raf = 0;
+      const wait = MIN_GAP_MS - (performance.now() - lastAt);
+      if (wait > 0) {
+        if (!timer) {
+          timer = window.setTimeout(() => {
+            timer = 0;
+            schedule();
+          }, wait);
+        }
+        return;
+      }
+      lastAt = performance.now();
       const next = pickSurface();
       if (next === last) return;
       last = next;
@@ -72,6 +87,7 @@ export function useDoeHealthDesk2PhoneOverflowChrome(enabled: boolean) {
 
     return () => {
       if (raf) window.cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       window.removeEventListener(DOEHEALTH_DESK2_NAV_WASH_EVENT, schedule);

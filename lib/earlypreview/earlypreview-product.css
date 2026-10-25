@@ -116,6 +116,7 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  transform: translate3d(calc(var(--pan-x, 0) * 1px), 0, 0);
   will-change: transform;
 }
 
@@ -368,4 +369,39 @@
     transform: none;
     transition: none;
   }
+}
+
+/*
+ * iPhone: the boxes are one column, one in front at a time, locked in the section. The boxes sit stacked in one grid
+ * cell, so the stage is one box and its caption tall and clips the rest; scrolling pushes the column up (--s is how many
+ * boxes it has moved), each box taking the place of the one before it.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__stage {
+  overflow: hidden;
+  /* The caption's room under each box, so a two-line name never shifts the column. */
+  --p-cap-room: 2.9rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__track {
+  display: grid;
+  width: 100%;
+  transform: none;
+  will-change: auto;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__slide {
+  --p-slide-h: calc(var(--p-box-w) / 1.45 + var(--p-cap-gap) + var(--p-cap-room));
+  grid-area: 1 / 1;
+  justify-self: center;
+  height: var(--p-slide-h);
+  transform: translate3d(
+    0,
+    calc((var(--n, 0) - var(--s, 0)) * (var(--p-slide-h) + 1rem) + (1 - var(--k, 0)) * 2.5rem),
+    0
+  );
+  will-change: transform;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__slide-title {
+  min-height: calc(var(--p-cap-room) - 0.2rem);
 }

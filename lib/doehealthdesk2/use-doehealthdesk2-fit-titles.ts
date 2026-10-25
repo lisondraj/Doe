@@ -79,7 +79,14 @@ export function useDoeHealthDesk2FitTitles(rootRef: RefObject<HTMLElement | null
     };
 
     // Titles mount and change text as scenes scroll in (the find wheel rotates its lines).
-    const mutationObserver = new MutationObserver(() => {
+    // Only a change that adds a title or touches one needs a refit; the page's other scenes mounting do not.
+    const insideTitle = (node: Node) => (node instanceof Element ? node : node.parentElement)?.closest(TITLE_SELECTOR) != null;
+    const addsTitle = (node: Node) => insideTitle(node) || (node instanceof Element && node.querySelector(TITLE_SELECTOR) !== null);
+    const mutationObserver = new MutationObserver((mutations) => {
+      const relevant = mutations.some(
+        (mutation) => insideTitle(mutation.target) || Array.from(mutation.addedNodes).some(addsTitle),
+      );
+      if (!relevant) return;
       observeTitles();
       fitAll();
     });
