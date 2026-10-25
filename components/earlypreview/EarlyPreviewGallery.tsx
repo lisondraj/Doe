@@ -320,7 +320,7 @@ const HERO_GALLERY_ITEMS: readonly { key: string; tile: GalleryTileData }[] = [
   { key: "hospitals", tile: { ...HOSPITAL_TILE, frameAt: 2 } },
   { key: "dentists", tile: { ...PAIR_TILES[0], still: true } },
   { key: "derm", tile: { ...PAIR_TILES[1], frameAt: 4 } },
-  { key: "concierge", tile: { ...LAST_TILE, still: true } },
+  { key: "concierge", tile: { ...LAST_TILE, frameAt: 57 } },
 ];
 
 /**
