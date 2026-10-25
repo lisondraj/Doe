@@ -325,19 +325,19 @@ export function EarlyPreviewVideoGrid() {
 /** The title above each hero-gallery video, one entry per line (the first white, the second salmon), and a description. */
 const HERO_GALLERY_CAPTIONS: Record<string, { title: readonly [string, string]; dek: string }> = {
   hospitals: {
-    title: ["Doe for", "Hospitals & Health Systems"],
+    title: ["Doe for Hospitals", "& Health Systems"],
     dek: "One front door for every patient, across every site, built to scale through enterprise.",
   },
   dentists: {
-    title: ["Doe for", "Dentists"],
+    title: ["Doe for Dentists", "& Home Care"],
     dek: "Calls, scheduling and follow-ups handled, so the chair stays full and the team stays focused.",
   },
   derm: {
-    title: ["Doe for", "Derm & Plastic Surgery"],
+    title: ["Doe for Derm,", "Plastics & Aesthetics"],
     dek: "Consults, before-and-afters and aftercare, answered the way your practice would.",
   },
   concierge: {
-    title: ["Doe for", "Concierge Medicine"],
+    title: ["Doe for Concierge", "Medicine"],
     dek: "Round-the-clock access for members, with the personal touch your practice is known for.",
   },
 };
