@@ -156,6 +156,8 @@ const TITLE_OUT = [1.5, 2.3] as const;
 const WAVE_FADE = 0.72;
 /** Progress the carousel takes per box as it pans right to left. */
 const PER_SLIDE = 0.5;
+/** iPhone: the title fades out over this stretch, as the first boxes come up under it. */
+const HEAD_OUT = [0.45, 1.15] as const;
 const PAN = [1.6, 1.6 + PER_SLIDE * (SLIDES.length - 1)] as const;
 /** The last box holds a moment before the lock lets go. */
 const END = PAN[1] + 0.35;
@@ -324,7 +326,7 @@ function useBoxesInStage(stageRef: React.RefObject<HTMLElement | null>, trackRef
           return next;
         });
       },
-      { root: stage, rootMargin: "100% 100% 100% 100%" },
+      { root: stage, rootMargin: "30% 100% 30% 100%" },
     );
     Array.from(track.children).forEach((item) => observer.observe(item));
     return () => observer.disconnect();
@@ -375,6 +377,7 @@ export function EarlyPreviewProductSection() {
   const shown = en(p, SLIDES_IN);
   const pan = en(p, PAN);
   const gone = en(p, TITLE_OUT);
+  const headOut = en(p, HEAD_OUT);
   useColumnGlide(trackRef, columnPosition(p));
 
   return (
@@ -389,12 +392,12 @@ export function EarlyPreviewProductSection() {
         <div
           ref={headRef}
           className={`earlypreview-product__head ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
-          style={vars({ "--y": toCenter * (1 - lift) })}
+          style={vars({ "--y": toCenter * (1 - lift), "--hf": 1 - headOut })}
         >
           {/* The dot wave hangs from the title's bottom edge and climbs with it. It keeps rolling while the section is
               on screen, including after the title has risen and the boxes pan. */}
           <div className="earlypreview-product__wave" style={{ opacity: 1 - WAVE_FADE * lift, ...vars({ "--wv-rise": gone }) }} aria-hidden>
-            <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.3)" top={0.04} amp={40} fade={0.25} active={near} />
+            <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.3)" top={0.04} amp={40} fade={0.25} active={near && headOut < 1} />
           </div>
           <h2 className={`earlypreview-product__title ${p22Mackinac.className}`} style={vars({ "--tf": 1 - gone })}>
             <span>{HEADLINE.line1}</span>

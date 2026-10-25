@@ -435,3 +435,67 @@
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__ui {
   isolation: isolate;
 }
+
+/*
+ * iPhone: the title sits in the middle of the section and fades away as you scroll (--hf), leaving the room to the
+ * boxes. The column shows two boxes at once, the one in front and the next, and fades out at its top and bottom edges
+ * so a box never ends in a hard cut. Only the boxes in or next to the window are alive (see useBoxesInStage).
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__head {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  transform: translateY(-50%);
+  opacity: var(--hf, 1);
+  pointer-events: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0;
+  align-items: center;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__stage {
+  /* One box and its caption, from the screen's width (the frame is the screen less 1rem each side). */
+  --p-slide-h: calc((100vw - 4.25rem) * 0.94 / 1.45 + var(--p-cap-gap) + var(--p-cap-room));
+  flex: 0 0 auto;
+  height: calc(var(--p-slide-h) * 2 + 1rem);
+  max-height: 100%;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__slide {
+  --p-slide-h: calc((100vw - 4.25rem) * 0.94 / 1.45 + var(--p-cap-gap) + var(--p-cap-room));
+}
+
+/* The fade at the top and bottom of the window: the section's own beige, opaque at the edge and clear inward. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__stage::before,
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__stage::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  height: 3rem;
+  pointer-events: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__stage::before {
+  top: 0;
+  background: linear-gradient(to bottom, #f4eedf 0%, rgb(244 238 223 / 0) 100%);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__stage::after {
+  bottom: 0;
+  background: linear-gradient(to top, #f4eedf 0%, rgb(244 238 223 / 0) 100%);
+}
+
+/* Each picture is rendered on its own layer and toned as a whole, so the beige filter covers all of it. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__ui {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
