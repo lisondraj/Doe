@@ -291,22 +291,61 @@ export function EarlyPreviewVideoGrid() {
   );
 }
 
+/** The iPhone captions under the hero-gallery videos: a short title and a description for each. */
+const HERO_GALLERY_CAPTIONS: Record<string, { title: string; dek: string }> = {
+  hospitals: {
+    title: "Doe for Hospitals & Health Systems",
+    dek: "One front door for every patient, across every site, built to scale through enterprise.",
+  },
+  dentists: {
+    title: "Doe for Dentists",
+    dek: "Calls, scheduling and follow-ups handled, so the chair stays full and the team stays focused.",
+  },
+  derm: {
+    title: "Doe for Derm & Plastic Surgery",
+    dek: "Consults, before-and-afters and aftercare, answered the way your practice would.",
+  },
+  concierge: {
+    title: "Doe for Concierge Medicine",
+    dek: "Round-the-clock access for members, with the personal touch your practice is known for.",
+  },
+};
+
+const HERO_GALLERY_ITEMS: readonly { key: string; tile: GalleryTileData }[] = [
+  { key: "hospitals", tile: HOSPITAL_TILE },
+  { key: "dentists", tile: PAIR_TILES[0] },
+  { key: "derm", tile: PAIR_TILES[1] },
+  { key: "concierge", tile: LAST_TILE },
+];
+
 /**
  * The videos attached under the hero video: Doe for Hospitals full width, the dentist and derm pair under it, then
  * Doe for Concierge full width. The gap between every box, and between the hero video and the first one, is the same.
+ * On the iPhone they run in one column, each with a small title and description under it (`captions`).
  */
-export function EarlyPreviewHeroGallery() {
+export function EarlyPreviewHeroGallery({ captions = false }: { captions?: boolean } = {}) {
   return (
     <section
       className={`earlypreview-gallery earlypreview-hero-gallery ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
       aria-label="Doe videos"
     >
       <div className="earlypreview-gallery__grid">
-        <GalleryTile tile={HOSPITAL_TILE} />
-        {PAIR_TILES.map((tile) => (
-          <GalleryTile key={tile.src} tile={tile} />
+        {HERO_GALLERY_ITEMS.map(({ key, tile }) => (
+          <div
+            key={key}
+            className={`earlypreview-hero-gallery__item${tile.wide ? " earlypreview-gallery__tile--wide" : ""}`}
+          >
+            <GalleryTile tile={tile} />
+            {captions ? (
+              <div className="earlypreview-hero-gallery__caption">
+                <h3 className={`earlypreview-hero-gallery__title ${p22Mackinac.className}`}>
+                  {HERO_GALLERY_CAPTIONS[key].title}
+                </h3>
+                <p className={`earlypreview-hero-gallery__dek ${inter.className}`}>{HERO_GALLERY_CAPTIONS[key].dek}</p>
+              </div>
+            ) : null}
+          </div>
         ))}
-        <GalleryTile tile={LAST_TILE} />
       </div>
     </section>
   );

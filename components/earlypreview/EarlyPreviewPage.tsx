@@ -267,7 +267,7 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
             className="doehealth-desk2-nav-wash-surface"
           />
           {/* The hospital, dentist, derm and concierge videos, attached under the hero video with equal gaps. */}
-          <EarlyPreviewHeroGallery />
+          <EarlyPreviewHeroGallery captions={variant !== "desktop"} />
         </div>
         {/* The market, the page's second section: scroll-locked, it releases on the go-to-market screen. */}
         <EarlyPreviewMarketSection />

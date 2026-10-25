@@ -5904,3 +5904,41 @@ html:has(.earlypreview-page) {
 .earlypreview-page .earlypreview-hero-gallery {
   padding-bottom: calc(clamp(2.5rem, 6vh, 4.5rem) + var(--earlypreview-hero-pull, 1.5rem));
 }
+
+/*
+ * iPhone: the videos under the hero video run in one column, each with a small title and description under it. The
+ * title is a little smaller than the hero's. A tile fills its item, so a wide tile and a half tile are the same width.
+ */
+.earlypreview-hero-gallery__item > .earlypreview-gallery__tile {
+  grid-column: auto;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery .earlypreview-gallery__grid {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 2rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery .earlypreview-overlay--compact {
+  gap: clamp(0.5rem, 3cqw, 1.5rem);
+  padding: clamp(0.9rem, 3cqw, 2.25rem);
+}
+
+.earlypreview-hero-gallery__caption {
+  padding-top: 0.9rem;
+}
+
+.earlypreview-hero-gallery__title {
+  margin: 0;
+  font-size: clamp(1.45rem, 6.4vw, 1.9rem);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: #fff6e6;
+}
+
+.earlypreview-hero-gallery__dek {
+  margin: 0.45rem 0 0;
+  font-size: clamp(0.9rem, 3.6vw, 1.05rem);
+  line-height: 1.45;
+  color: rgba(255, 246, 230, 0.72);
+}
