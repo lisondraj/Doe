@@ -5892,3 +5892,15 @@ html:has(.earlypreview-page) {
     transition: none;
   }
 }
+
+/*
+ * The videos attached under the hero video share the grid's gap on every side: the hero video's bottom padding is that
+ * gap, and the gallery's own bottom padding is the room the hero video had (grown by the pull, so the band below stays).
+ */
+.doehealth-desk2-page.earlypreview-page .desk2-workspace:has(+ .earlypreview-hero-gallery) {
+  padding-bottom: var(--earlypreview-gallery-gap) !important;
+}
+
+.earlypreview-page .earlypreview-hero-gallery {
+  padding-bottom: calc(clamp(2.5rem, 6vh, 4.5rem) + var(--earlypreview-hero-pull, 1.5rem));
+}

@@ -290,3 +290,24 @@ export function EarlyPreviewVideoGrid() {
     </div>
   );
 }
+
+/**
+ * The videos attached under the hero video: Doe for Hospitals full width, the dentist and derm pair under it, then
+ * Doe for Concierge full width. The gap between every box, and between the hero video and the first one, is the same.
+ */
+export function EarlyPreviewHeroGallery() {
+  return (
+    <section
+      className={`earlypreview-gallery earlypreview-hero-gallery ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
+      aria-label="Doe videos"
+    >
+      <div className="earlypreview-gallery__grid">
+        <GalleryTile tile={HOSPITAL_TILE} />
+        {PAIR_TILES.map((tile) => (
+          <GalleryTile key={tile.src} tile={tile} />
+        ))}
+        <GalleryTile tile={LAST_TILE} />
+      </div>
+    </section>
+  );
+}

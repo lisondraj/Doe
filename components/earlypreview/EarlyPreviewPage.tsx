@@ -10,7 +10,7 @@ import { DoeHealthDesk2DotTide } from "@/components/doehealth-desk2/DoeHealthDes
 import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import { DoeHealthDesk2Workspace } from "@/components/doehealth-desk2/DoeHealthDesk2Workspace";
-import { EarlyPreviewHospitalSection, EarlyPreviewVideoGrid } from "@/components/earlypreview/EarlyPreviewGallery";
+import { EarlyPreviewHeroGallery, EarlyPreviewHospitalSection, EarlyPreviewVideoGrid } from "@/components/earlypreview/EarlyPreviewGallery";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { EarlyPreviewComplianceSection } from "@/components/earlypreview/EarlyPreviewComplianceSection";
 import { EarlyPreviewPlanSection } from "@/components/earlypreview/EarlyPreviewPlanSection";
@@ -266,6 +266,8 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
             overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />}
             className="doehealth-desk2-nav-wash-surface"
           />
+          {/* The hospital, dentist, derm and concierge videos, attached under the hero video with equal gaps. */}
+          <EarlyPreviewHeroGallery />
         </div>
         {/* The market, the page's second section: scroll-locked, it releases on the go-to-market screen. */}
         <EarlyPreviewMarketSection />
