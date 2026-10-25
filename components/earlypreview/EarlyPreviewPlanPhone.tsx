@@ -20,46 +20,83 @@ const rise = (t: number, n: number, from = 0.3) => vars({ "--e": fx(en(t, from +
 
 /* ------------------------------------------------------------ 1. supply, agents and revenue */
 
-/** Each lane's Seed figure, and its track from today to Seed with its milestones on it. */
+/** Where each lane's stretch of the screen starts, and how long it holds. The three run one after another. */
+const LANE_AT = 0.3;
+const LANE_LEN = 1.05;
+const LANE_FADE = 0.12;
+
+/**
+ * The three lanes one at a time, as you scroll: a switcher across the top follows the scroll, and each lane shows its
+ * Seed figure over its own quarter-by-quarter timeline, today to Seed. The spine is a column of the section's dots; it
+ * fills down as the lane plays, and each quarter's milestone comes in as the fill reaches it.
+ */
 export const PhoneTimeline = memo(function PhoneTimeline({ t }: { t: number }) {
   const copy = PLAN.timeline;
-  const k = ramp(t, [0.6, 2.1]);
+  const lanes = copy.lanes;
+  // The switcher's bar moves with the swap between lanes, so it is always under the lane on screen.
+  const boundary = (i: number) => LANE_AT + (i + 1) * LANE_LEN;
+  const at = lanes.slice(0, -1).reduce((sum, _, i) => sum + en(t, boundary(i) - LANE_FADE, boundary(i) + LANE_FADE), 0);
+  const current = Math.round(at);
   return (
-    <div className="pv">
-      <ol className="pv-metrics">
-        {copy.lanes.map((lane, i) => (
-          <li key={lane.id} className="pv-metric" style={rise(t, i)}>
-            <div className="pv-metric__head">
-              <span className="pv-eyebrow">{lane.name}</span>
-              <span className="pv-metric__value">{lane.big.value}</span>
-            </div>
-            <p className="pv-metric__caption">
-              {lane.big.unit}
-              <span>{lane.big.sub}</span>
-            </p>
-            <span className="pv-track" style={vars({ "--k": fx(k) })} aria-hidden>
-              <span className="pv-track__fill" />
-              {lane.milestones.map((m) => {
-                const at = (m.q + 0.5) / QUARTERS.length;
-                return (
-                  <i
-                    key={m.text}
-                    className={"seed" in m ? "is-seed" : undefined}
-                    style={{ left: `${fx(at * 100)}%`, opacity: fx(ramp(k, [at - 0.04, at])) }}
-                  />
-                );
-              })}
-            </span>
-          </li>
+    <div className="pv pv-lanes" style={rise(t, 0, 0.15)}>
+      <div className="pv-switch" role="tablist" aria-label="Lanes">
+        {lanes.map((lane, i) => (
+          <span key={lane.id} role="tab" aria-selected={current === i} className={current === i ? "is-on" : undefined}>
+            {lane.name}
+          </span>
         ))}
-      </ol>
-      <div className="pv-axis" style={rise(t, 3)}>
-        <span>
-          {QUARTERS[0]} · {copy.now}
-        </span>
-        <span className="is-seed">
-          {QUARTERS[QUARTERS.length - 1]} · {copy.seed}
-        </span>
+        <i className="pv-switch__bar" style={{ transform: `translateX(${fx(at * 100)}%)` }} aria-hidden />
+      </div>
+      <div className="pv-lanes__stack">
+        {lanes.map((lane, i) => {
+          const start = LANE_AT + i * LANE_LEN;
+          const end = start + LANE_LEN;
+          // One lane at a time: the one leaving is gone before the next comes in, so the two never overlap.
+          const fadeIn = i === 0 ? 1 : en(t, start, start + LANE_FADE);
+          const fadeOut = i === lanes.length - 1 ? 1 : 1 - en(t, end - LANE_FADE, end);
+          const shown = fx(fadeIn * fadeOut);
+          const shift = fx((1 - fadeIn) * 0.5 - (1 - fadeOut) * 0.5);
+          const fill = ramp(t, [start + LANE_FADE, start + LANE_LEN * 0.75]);
+          return (
+            <section
+              key={lane.id}
+              className="pv-lane"
+              style={{ opacity: shown, visibility: shown < 0.01 ? "hidden" : undefined, transform: `translateY(${shift}rem)` }}
+              aria-hidden={shown < 0.5}
+            >
+              <div className="pv-lane__figure">
+                <strong>{lane.big.value}</strong>
+                <span>
+                  {lane.big.unit}
+                  <em>{lane.big.sub}</em>
+                </span>
+              </div>
+              <ol className="pv-quarters" style={vars({ "--k": fx(fill) })}>
+                <span className="pv-quarters__spine" aria-hidden />
+                {QUARTERS.map((quarter, q) => {
+                  const milestone = lane.milestones.find((m) => m.q === q);
+                  const reach = (q + 0.5) / QUARTERS.length;
+                  const on = fx(ramp(fill, [reach - 0.08, reach]));
+                  const seed = milestone && "seed" in milestone;
+                  return (
+                    <li
+                      key={quarter}
+                      className={`${milestone ? "has-step" : ""}${seed ? " is-seed" : ""}${q === 0 ? " is-now" : ""}`}
+                      style={vars({ "--on": on })}
+                    >
+                      <i aria-hidden />
+                      <span className="pv-quarters__when">
+                        {quarter}
+                        {q === 0 ? <em>{copy.now}</em> : seed ? <em>{copy.seed}</em> : null}
+                      </span>
+                      <span className="pv-quarters__text">{milestone ? milestone.text : ""}</span>
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+          );
+        })}
       </div>
     </div>
   );

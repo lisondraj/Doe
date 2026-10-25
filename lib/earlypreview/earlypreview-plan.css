@@ -1278,55 +1278,173 @@
   box-shadow: 0 0 0 3px var(--doehealth-desk2-surface);
 }
 
-/* 1. three lanes */
-.pv-metrics {
+/* 1. three lanes, one at a time */
+.pv-lanes {
+  gap: 1.75rem;
+}
+
+/* The switcher: the three lane names on a hairline, a salmon bar under the one on screen. */
+.pv-switch {
+  position: relative;
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-bottom: 1px solid var(--pv-rule);
+}
+
+.pv-switch > span {
+  padding: 0 0 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--pv-faint);
+  transition: color 240ms ease;
+}
+
+.pv-switch > span.is-on {
+  color: var(--m-cream);
+}
+
+.pv-switch__bar {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: calc(100% / 3);
+  height: 2px;
+  background: var(--m-salmon);
+}
+
+.pv-lanes__stack {
+  display: grid;
+}
+
+.pv-lane {
+  grid-area: 1 / 1;
+  display: grid;
+  align-content: start;
   gap: 1.5rem;
+}
+
+/* The lane's Seed figure, in the display face, with what it counts beside it. */
+.pv-lane__figure {
+  display: flex;
+  align-items: baseline;
+  gap: 0.875rem;
+}
+
+.pv-lane__figure > strong {
+  font-family: var(--m-display);
+  font-size: 3.75rem;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+}
+
+.pv-lane__figure > span {
+  display: grid;
+  gap: 0.125rem;
+  font-family: var(--m-display);
+  font-size: 1.25rem;
+  line-height: 1.1;
+}
+
+.pv-lane__figure em {
+  font-family: var(--font-inter, inherit);
+  font-size: 0.8125rem;
+  font-style: normal;
+  color: var(--pv-muted);
+}
+
+/* The quarters, today to Seed: a spine of dots down the left that fills as the lane plays (--k), a row a quarter. */
+.pv-quarters {
+  position: relative;
+  display: grid;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.pv-metric {
+.pv-quarters__spine {
+  position: absolute;
+  top: 0.55rem;
+  bottom: 0.55rem;
+  left: 3px;
+  width: 2px;
+  background-image: radial-gradient(circle, var(--pv-rule) 0 1px, transparent 1.3px);
+  background-size: 2px 6px;
+  background-repeat: repeat-y;
+}
+
+.pv-quarters__spine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--m-salmon) 0 1px, transparent 1.3px);
+  background-size: 2px 6px;
+  background-repeat: repeat-y;
+  clip-path: inset(0 0 calc((1 - var(--k, 0)) * 100%) 0);
+}
+
+.pv-quarters > li {
+  position: relative;
   display: grid;
-  gap: 0.375rem;
-}
-
-.pv-metric__head {
-  display: flex;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
   align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
+  min-height: 2.25rem;
+  padding-left: 1.5rem;
 }
 
-.pv-metric__value {
-  font-family: var(--m-display);
-  font-size: 2.5rem;
-  line-height: 1;
-  letter-spacing: -0.035em;
-  font-variant-numeric: tabular-nums;
+.pv-quarters > li > i {
+  position: absolute;
+  top: 0.4rem;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--doehealth-desk2-surface);
+  box-shadow: inset 0 0 0 1.25px var(--pv-faint);
 }
 
-.pv-metric__caption {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 0 0 0.5rem;
-  font-size: 0.8125rem;
-  color: var(--m-cream);
+.pv-quarters > li.has-step > i {
+  background: color-mix(in srgb, var(--m-cream) calc(var(--on, 0) * 100%), var(--doehealth-desk2-surface));
+  box-shadow: inset 0 0 0 1.25px color-mix(in srgb, var(--m-cream) calc(var(--on, 0) * 100%), var(--pv-faint));
 }
 
-.pv-metric__caption > span {
-  color: var(--pv-muted);
-  text-align: right;
+.pv-quarters > li.is-seed > i {
+  width: 10px;
+  height: 10px;
+  left: -1px;
+  background: color-mix(in srgb, var(--m-salmon) calc(var(--on, 0) * 100%), var(--doehealth-desk2-surface));
+  box-shadow: 0 0 0 4px rgb(252 207 184 / calc(var(--on, 0) * 0.16)), inset 0 0 0 1.25px var(--m-salmon);
 }
 
-.pv-axis {
-  display: flex;
-  justify-content: space-between;
-  margin-top: -0.5rem;
+.pv-quarters__when {
+  display: grid;
   font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
   color: var(--pv-faint);
+}
+
+.pv-quarters__when > em {
+  font-style: normal;
+  font-size: 0.6875rem;
+  color: var(--pv-muted);
+}
+
+.pv-quarters > li.is-seed .pv-quarters__when,
+.pv-quarters > li.is-seed .pv-quarters__when > em {
+  color: var(--m-salmon);
+}
+
+.pv-quarters__text {
+  font-size: 0.875rem;
+  line-height: 1.35;
+  opacity: calc(0.25 + var(--on, 0) * 0.75);
+  transform: translateX(calc((1 - var(--on, 0)) * 0.375rem));
+}
+
+.pv-quarters > li.is-seed .pv-quarters__text {
+  color: var(--m-salmon);
 }
 
 /* 2. a numbered list */

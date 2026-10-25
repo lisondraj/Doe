@@ -29,7 +29,8 @@ import { EARLYPREVIEW_PLAN as PLAN, EARLYPREVIEW_PLAN_QUARTERS as QUARTERS } fro
  * behind each.
  */
 const SCENES = [
-  { id: "timeline", len: 2.8 },
+  // Longer than the others: on the iPhone it steps through its three lanes one at a time.
+  { id: "timeline", len: 3.6 },
   { id: "sources", len: 2.4 },
   { id: "events", len: 2.6 },
   { id: "groups", len: 2.4 },
