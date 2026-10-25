@@ -91,8 +91,17 @@ export const EARLYPREVIEW_PLAN_PHONE = {
       { name: "NPPES NPI registry", gives: "Every U.S. provider and organization, with address and specialty", size: "9.4M records" },
       { name: "Practice websites and maps", gives: "Services, hours and insurance accepted, checked per practice", size: "Per practice" },
     ],
-    note: "Register sizes: RCDSO strategic plan 2023–25, CPO annual report 2021–22, NPPES full file 2026.",
-    split: { today: n(T.indexedToday), canada: n(T.indexedCanada), us: n(T.indexedUs), total: n(T.indexed) },
+    criteria: {
+      title: "From every practice, we pull the criteria that point to fast growth and a short sale",
+      items: [
+        "Owner-operated: one person decides and pays",
+        "Private-pay services",
+        "Two or more locations under one owner",
+        "Already books online",
+        "New or expanding locations",
+        "Hiring front-desk staff",
+      ],
+    },
   },
 
   /** Where agent developers find Doe. */

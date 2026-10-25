@@ -1572,45 +1572,6 @@
   padding: 0.5625rem 0;
 }
 
-/* Today against Seed, side by side. */
-.pv-split {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.pv-split > div {
-  display: grid;
-  align-content: start;
-  gap: 0.25rem;
-}
-
-.pv-split > div + div {
-  padding-left: 1rem;
-  border-left: 1px solid var(--pv-rule);
-}
-
-.pv-split strong {
-  font-family: var(--m-display);
-  font-size: 2.5rem;
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.035em;
-  font-variant-numeric: tabular-nums;
-}
-
-.pv-split__sub {
-  font-size: 0.75rem;
-  color: var(--pv-muted);
-}
-
-.pv-source {
-  margin: 0;
-  font-size: 0.6875rem;
-  line-height: 1.45;
-  color: var(--pv-faint);
-}
-
-
 /*
  * 7. the launch campaign: six views on scroll, each one or two cards showing the thing itself. Cards are soft, filled
  * surfaces with a cloud of the section's dots in one corner: no outlines, shadows or glows. The mocks inside them (a
@@ -2205,4 +2166,35 @@
 
 .pv-gates > li.is-after :is(.pv-gates__title, .pv-gates__text) {
   color: var(--pv-faint);
+}
+
+/* 2. under the registers: what we pull from each practice to decide who to reach first. */
+.pv-criteria {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.pv-criteria__title {
+  margin: 0;
+  font-family: var(--m-display);
+  font-size: 1.25rem;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.pv-criteria ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pv-criteria li {
+  padding: 0.3125rem 0.6875rem;
+  border-radius: 999px;
+  background: rgb(255 252 241 / 0.09);
+  font-size: 0.75rem;
+  color: var(--m-cream);
 }

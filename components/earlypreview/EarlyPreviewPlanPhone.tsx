@@ -83,22 +83,14 @@ export const PhoneSources = memo(function PhoneSources({ t }: { t: number }) {
           </li>
         ))}
       </ol>
-      <div className="pv-split" style={rise(t, 5)}>
-        <div>
-          <span className="pv-eyebrow">Indexed today</span>
-          <strong>{copy.split.today}</strong>
-        </div>
-        <div>
-          <span className="pv-eyebrow">By Seed</span>
-          <strong className="is-seed">{copy.split.total}</strong>
-          <span className="pv-split__sub">
-            {copy.split.canada} Canada, {copy.split.us} U.S.
-          </span>
-        </div>
-      </div>
-      <p className="pv-source" style={rise(t, 6)}>
-        {copy.note}
-      </p>
+      <section className="pv-criteria" style={rise(t, 5)}>
+        <p className="pv-criteria__title">{copy.criteria.title}</p>
+        <ul>
+          {copy.criteria.items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 });
