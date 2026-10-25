@@ -6196,7 +6196,8 @@ html:has(.earlypreview-page) {
   width: 100vw;
   height: calc(36svh - var(--earlypreview-hero-pull, 1.5rem));
   margin: 0;
-  top: calc(var(--earlypreview-hero-gallery-space) / -2);
+  /* Centred on the gap, then lifted a little. */
+  top: calc(var(--earlypreview-hero-gallery-space) / -2 - 3rem);
   transform: translateY(-50%);
 }
 
