@@ -921,6 +921,39 @@ function useCenterOffset(ref: { current: HTMLElement | null }) {
 }
 
 /**
+ * How far to move the Index title down from where it rests, so it sits in the middle of the space between the nav and
+ * the top of the line drawing (not hard against the nav). Measured from the layout, so it follows the screen size.
+ */
+function useIndexRestOffset(ref: { current: HTMLElement | null }) {
+  const [offset, setOffset] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    const scene = el?.closest<HTMLElement>(".earlypreview-market__scene");
+    if (!el || !scene) return;
+    const measure = () => {
+      const art = scene.querySelector<SVGSVGElement>(".earlypreview-market__index-art");
+      const tide = scene.querySelector<HTMLElement>(".earlypreview-market__index-tide");
+      const matrix = art?.getScreenCTM();
+      if (!art || !tide || !matrix || el.offsetParent !== scene) return;
+      const sceneTop = scene.getBoundingClientRect().top;
+      // The tide starts half a rem under the nav, so the nav's bottom edge is just above it.
+      const navBottom = tide.getBoundingClientRect().top - 8;
+      const bounds = art.getBBox();
+      const drawingTop = matrix.f + bounds.y * matrix.d;
+      const headTop = sceneTop + el.offsetTop;
+      const down = (navBottom + drawingTop) / 2 - (headTop + el.offsetHeight / 2);
+      setOffset(Math.max(0, Math.round(down)));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(scene);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [ref]);
+  return offset;
+}
+
+/**
  * The clinics Doe targets, in two groups side by side: private services first and widest, then medical practices
  * and specialties. Each group's name is large and salmon over its types, which come in one after another.
  */
@@ -984,6 +1017,7 @@ function IndexScene({ p }: { p: number }) {
   const { index } = INDEX;
   const headRef = useRef<HTMLDivElement>(null);
   const toCenter = useCenterOffset(headRef);
+  const restDown = useIndexRestOffset(headRef);
   const lift = en(t, 0.7, 1.15);
 
   return (
@@ -1001,7 +1035,7 @@ function IndexScene({ p }: { p: number }) {
       <div
         ref={headRef}
         className="earlypreview-market__index-head"
-        style={vars({ "--y": toCenter * (1 - lift) })}
+        style={vars({ "--y": toCenter * (1 - lift) + restDown * lift })}
       >
         <SceneTitle title={index.title} t={t} />
         <p
