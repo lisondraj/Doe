@@ -31,42 +31,42 @@ export const EARLYPREVIEW_PLAN_PHONE = {
         when: "Q4 ’26",
         tag: "Now",
         items: [
-          { lane: "supply", text: `${n(T.indexedToday)} Toronto practices indexed from public college registers` },
-          { lane: "agents", text: "First agent developers building in the Doe sandbox" },
+          { lane: "supply", text: `${n(T.indexedToday)} Toronto practices indexed` },
+          { lane: "agents", text: "Agent developers in the sandbox" },
         ],
       },
       {
         when: "Q1 ’27",
         items: [
-          { lane: "supply", text: "Every indexed Toronto practice emailed its Doe page" },
+          { lane: "supply", text: "Every Toronto practice emailed its page" },
           { lane: "agents", text: "MCP server and SDKs public" },
-          { lane: "revenue", text: `Paid plans open at founding prices: $${P.founding.basic} and $${P.founding.advanced} a month` },
+          { lane: "revenue", text: `Paid plans open: $${P.founding.basic} and $${P.founding.advanced} a month` },
         ],
       },
       {
         when: "Q2 ’27",
         items: [
-          { lane: "supply", text: "Founding 100 practices set up by our team" },
-          { lane: "agents", text: "First live requests from patients’ agents" },
+          { lane: "supply", text: "Founding 100 set up by our team" },
+          { lane: "agents", text: "First live agent requests" },
         ],
       },
       {
         when: "Q3 ’27",
         items: [
-          { lane: "supply", text: "New York and San Francisco indexed from the NPPES NPI registry" },
-          { lane: "revenue", text: "First practices claim their page because of agent requests" },
+          { lane: "supply", text: "New York and San Francisco indexed" },
+          { lane: "revenue", text: "First claims from agent requests" },
         ],
       },
       {
         when: "Q4 ’27",
         items: [
-          { lane: "agents", text: "10 agent integrations live" },
-          { lane: "revenue", text: "First hospital letters of intent" },
+          { lane: "agents", text: "10 agent integrations" },
+          { lane: "revenue", text: "First hospital LOIs" },
         ],
       },
       {
         when: "Q1 ’28",
-        items: [{ lane: "revenue", text: `U.S. multi-site groups on Advanced, $${P.founding.group} a provider a month` }],
+        items: [{ lane: "revenue", text: `U.S. multi-site groups, $${P.founding.group} a provider` }],
       },
       {
         when: "Q2 ’28",
@@ -81,25 +81,33 @@ export const EARLYPREVIEW_PLAN_PHONE = {
     ],
   },
 
+  /** What the plan adds up to at Seed, one figure a lane, under the calendar. */
+  seedKpis: [
+    { lane: "supply", value: n(T.indexed), label: "practices indexed", sub: `${n(T.claimed)} claimed` },
+    { lane: "agents", value: "5", label: "agents live", sub: `${T.requestsK}K requests/mo` },
+    { lane: "revenue", value: `$${T.arrK}K`, label: "ARR", sub: `${T.paying} paying locations` },
+  ],
+
   /** The registers the Index is built from, with their public size. */
   sources: {
     title: ["Where the 15,000", "practices come from."],
     rows: [
-      { name: "College of Physicians and Surgeons of Ontario", gives: "Every licensed Ontario physician and practice address", size: "Public register" },
-      { name: "Royal College of Dental Surgeons of Ontario", gives: "Every registered Ontario dentist", size: "≈10,800" },
-      { name: "College of Physiotherapists of Ontario", gives: "Every registered Ontario physiotherapist", size: "10,000+" },
-      { name: "NPPES NPI registry", gives: "Every U.S. provider and organization, with address and specialty", size: "9.4M records" },
-      { name: "Practice websites and maps", gives: "Services, hours and insurance accepted, checked per practice", size: "Per practice" },
+      { name: "College of Physicians and Surgeons of Ontario", gives: "Physicians and practice addresses", size: "Public register" },
+      { name: "Royal College of Dental Surgeons of Ontario", gives: "Registered dentists", size: "≈10,800" },
+      { name: "College of Physiotherapists of Ontario", gives: "Registered physiotherapists", size: "10,000+" },
+      { name: "NPPES NPI registry", gives: "U.S. providers, by address and specialty", size: "9.4M records" },
+      { name: "Practice websites and maps", gives: "Services, hours, insurance", size: "Per practice" },
     ],
     criteria: {
-      title: "From every practice, we pull the criteria that point to fast growth and a short sale",
+      title: "What we pull from each practice",
+      sub: "The signals for fast growth and a short sale",
       items: [
-        "Owner-operated: one person decides and pays",
-        "Private-pay services",
-        "Two or more locations under one owner",
-        "Already books online",
-        "New or expanding locations",
-        "Hiring front-desk staff",
+        { lead: "Owner-run", text: "One person decides and pays" },
+        { lead: "Private-pay", text: "No insurer in the sale" },
+        { lead: "2+ locations", text: "One owner, many sites" },
+        { lead: "Books online", text: "Already buys software" },
+        { lead: "Expanding", text: "New or growing locations" },
+        { lead: "Hiring", text: "Front-desk roles open" },
       ],
     },
   },
@@ -170,21 +178,21 @@ export const EARLYPREVIEW_PLAN_PHONE = {
 
   /** The launch campaign, told by James: a med student who wants AI to work for providers. Six views on scroll. */
   campaign: {
-    title: ["The Doe Toronto launch,", "told by James."],
+    title: ["Six launch campaigns,", "fronted by James."],
     james: {
       name: "Meet James",
-      line: "Med student and Doe co-founder. He’s building the AI he wants to use in clinic.",
+      line: "Med student and co-founder, building the AI he wants in clinic.",
       photo: "/earlypreview/thumbs/hero.jpg",
     },
     website: {
-      title: "Claim your page and edit it.",
+      title: "Claim your page.",
       url: "doe.care/bloor-west-physiotherapy",
       rows: ["Hours", "Services and prices", "Insurance"],
       badge: "Claimed",
     },
     meter: {
-      title: "Teach personal agents about your clinic before your competitor does.",
-      label: "How likely a patient’s agent finds you and gets every answer",
+      title: "Teach agents about your clinic before a competitor does.",
+      label: "Chance a patient’s agent finds you and gets every answer",
       note: "Illustrative",
       steps: [
         { text: "Name and address", add: 20 },
@@ -202,24 +210,33 @@ export const EARLYPREVIEW_PLAN_PHONE = {
       line: "A scribe built for one specialty.",
       note: ["Mental status exam", "PHQ-9: 14, moderate", "Follow-up in 2 weeks"],
     },
-    onePrice: { title: "Every intelligent tool you love. One place, one price.", tools: ["Scribe", "Voice agent", "Booking", "Forms", "Payments"] },
-    privateModel: { title: "Every tool on your own intelligent model, with private compute.", tools: ["Scribe", "Voice", "Booking"], model: "Your model", compute: "Private compute" },
+    onePrice: { title: "Every tool you love. One price.", tools: ["Scribe", "Voice agent", "Booking", "Forms", "Payments"] },
+    privateModel: { title: "Your own model, on private compute.", tools: ["Scribe", "Voice", "Booking"], model: "Your model", compute: "Private compute" },
     secure: {
       title: "The Doe Secure Protocol",
       lines: [
-        "Health Intelligence Protocol: new LLM research folded in as it lands",
-        "Security that updates its architecture as frontier models change",
-        "Building toward personalized intelligence",
+        "Health Intelligence Protocol: new LLM research, built in",
+        "Security that upgrades with every frontier model",
+        "Toward personalized intelligence",
       ],
     },
     toronto: {
       title: "Doe Toronto is launching soon.",
-      line: "Have your clinic ready before launch day.",
+      line: "Get your clinic ready before launch day.",
       tiers: [
         { name: "Waitlist", price: "Free" },
         { name: "Founding cohort", price: "$9.99 deposit", detail: "Founding pricing, 3 months free, extra AI tools" },
       ],
     },
     canada: { title: "Canadian Intelligence", href: "/doecanada" },
+    /** Where each view's campaign runs, in order. */
+    runs: [
+      ["Instagram", "TikTok", "LinkedIn"],
+      ["Email to every indexed practice"],
+      ["Email", "Owner groups"],
+      ["Specialty associations", "LinkedIn"],
+      ["Hospital privacy and IT leads"],
+      ["Waitlist page", "ODA Spring Meeting"],
+    ],
   },
 } as const;

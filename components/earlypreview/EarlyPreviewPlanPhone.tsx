@@ -39,7 +39,9 @@ function LaneKey({ style }: { style?: ReturnType<typeof vars> }) {
 
 /** The three lanes on one calendar: a row a quarter, each thing that ships marked by its lane, Seed last. */
 export const PhoneTimeline = memo(function PhoneTimeline({ t }: { t: number }) {
-  const quarters = PHONE.timeline.quarters;
+  const all = PHONE.timeline.quarters;
+  const seed = all[all.length - 1];
+  const quarters = all.slice(0, -1);
   return (
     <div className="pv">
       <LaneKey style={rise(t, 0, 0.2)} />
@@ -61,6 +63,21 @@ export const PhoneTimeline = memo(function PhoneTimeline({ t }: { t: number }) {
           </li>
         ))}
       </ol>
+      <section className="pv-seed" style={rise(t, quarters.length + 1, 0.35)}>
+        <span className="pv-seed__when">
+          {seed.when} · {"tag" in seed ? seed.tag : ""}
+        </span>
+        <ul className="pv-seed__tiles">
+          {PHONE.seedKpis.map((kpi) => (
+            <li key={kpi.lane} className={`is-${kpi.lane}`}>
+              <i aria-hidden />
+              <strong>{kpi.value}</strong>
+              <span>{kpi.label}</span>
+              <em>{kpi.sub}</em>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 });
@@ -84,10 +101,16 @@ export const PhoneSources = memo(function PhoneSources({ t }: { t: number }) {
         ))}
       </ol>
       <section className="pv-criteria" style={rise(t, 5)}>
-        <p className="pv-criteria__title">{copy.criteria.title}</p>
+        <div className="pv-criteria__head">
+          <span className="pv-criteria__title">{copy.criteria.title}</span>
+          <span className="pv-criteria__sub">{copy.criteria.sub}</span>
+        </div>
         <ul>
-          {copy.criteria.items.map((item) => (
-            <li key={item}>{item}</li>
+          {copy.criteria.items.map((item, i) => (
+            <li key={item.lead} style={vars({ "--e": fx(en(t, 1.0 + i * 0.1, 1.35 + i * 0.1)) })}>
+              <strong>{item.lead}</strong>
+              <span>{item.text}</span>
+            </li>
           ))}
         </ul>
       </section>
@@ -341,7 +364,13 @@ export const PhoneCampaign = memo(function PhoneCampaign({ t }: { t: number }) {
               }}
               aria-hidden={shown < 0.5}
             >
-              {view}
+              <p className="pv-runs">
+                <span>Runs on</span>
+                {c.runs[i].map((channel) => (
+                  <em key={channel}>{channel}</em>
+                ))}
+              </p>
+              <div className="pv-campaign__cards">{view}</div>
             </div>
           );
         })}
