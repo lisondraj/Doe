@@ -2,7 +2,7 @@
 
 import { type ReactNode, useRef } from "react";
 
-import { SkipIcon, TracedOutline } from "@/components/doehealth-desk2/DoeHealthDesk2AudienceSection";
+import { SkipButton, TracedOutline } from "@/components/doehealth-desk2/DoeHealthDesk2AudienceSection";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import {
   cssVars as vars,
@@ -266,11 +266,7 @@ export function EarlyPreviewGtmSection() {
           {current + 1} / {EARLYPREVIEW_GTM_SCREENS}
         </p>
 
-        {p > 0 && p < END ? (
-          <button type="button" className="doehealth-desk2-visible__skip" aria-label="Skip to the twelve-month plan" onClick={skip}>
-            <SkipIcon />
-          </button>
-        ) : null}
+        <SkipButton shown={p > 0 && p < END} label="Skip to the twelve-month plan" onClick={skip} />
       </section>
     </div>
   );

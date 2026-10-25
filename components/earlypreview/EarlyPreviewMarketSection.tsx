@@ -1,5 +1,6 @@
 "use client";
 
+import { SkipButton } from "@/components/doehealth-desk2/DoeHealthDesk2AudienceSection";
 import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
@@ -1238,36 +1239,7 @@ export function EarlyPreviewMarketSection() {
         <Clinics p={sceneP(p, "clinics")} />
         <Index p={sceneP(p, "index")} />
         <SceneNav p={p} goTo={goTo} />
-        {p > 0 && p < END ? (
-          <button
-            type="button"
-            className="doehealth-desk2-visible__skip"
-            aria-label="Skip the market section"
-            onClick={skip}
-          >
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden
-            >
-              <path
-                d="M7 5.5 13 12 7 18.5"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M16.35 5.5v13"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
-        ) : null}
+        <SkipButton shown={p > 0 && p < END} label="Skip the market section" onClick={skip} />
       </section>
     </div>
   );

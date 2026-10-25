@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { type CSSProperties, type ReactNode, memo, useEffect, useRef, useState } from "react";
 
-import { SkipIcon } from "@/components/doehealth-desk2/DoeHealthDesk2AudienceSection";
+import { SkipButton } from "@/components/doehealth-desk2/DoeHealthDesk2AudienceSection";
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
 import { DoeHealthProductArtboard, type DoeHealthProductTab } from "@/components/doehealth-product/DoeHealthProductHome";
 import type { EarlyPreviewProductFilm } from "@/components/earlypreview/EarlyPreviewProductFilmFrame";
@@ -197,7 +197,13 @@ function useColumnGlide(trackRef: React.RefObject<HTMLOListElement | null>, targ
     if (!track || !track.closest(".doehealth-desk2-page")?.querySelector(".doephone-mobile-root")) return undefined;
     const st = state.current;
     const items = Array.from(track.children) as HTMLElement[];
-    const write = (at: number) => items.forEach((item, i) => item.style.setProperty("--d", (i - at).toFixed(4)));
+    // The window shows boxes at offsets -1 to 2; a box past those is hidden, so it is not painted or composited.
+    const write = (at: number) =>
+      items.forEach((item, i) => {
+        const d = i - at;
+        item.style.setProperty("--d", d.toFixed(4));
+        item.style.visibility = d <= -1.01 || d >= 2.01 ? "hidden" : "";
+      });
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       st.at = target;
       write(target);
@@ -249,10 +255,15 @@ function BeigeTone() {
  * iPhone: one line per box along the bottom, filling as the row pans past it; a tap brings that box to the front.
  * The lines run across the page margins along the bottom, as in the market section, with the skip above them. Hidden on the desktop, where the boxes are one row to scroll.
  */
-function ProductNav({ p, goTo }: { p: number; goTo: (target: number) => void }) {
+function ProductNav({ p, goTo, hidden }: { p: number; goTo: (target: number) => void; hidden: boolean }) {
   const last = SLIDES.length - 1;
   return (
-    <nav className={`earlypreview-product__nav ${DOEPHONE_DESKTOP_PAGE_INSET_X}`} aria-label="Product screens">
+    <nav
+      className={`earlypreview-product__nav ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
+      aria-label="Product screens"
+      aria-hidden={hidden || undefined}
+      style={hidden ? { visibility: "hidden" } : undefined}
+    >
       {SLIDES.map((slide, i) => {
         const at = BOX_AT[i];
         const to = i < last ? BOX_AT[i + 1] : at;
@@ -363,6 +374,36 @@ function useNear(ref: React.RefObject<HTMLElement | null>) {
   return near;
 }
 
+/** iPhone: whether the page is the phone layout, read once mounted (null until then). */
+function usePhoneLayout(ref: React.RefObject<HTMLElement | null>) {
+  const [phone, setPhone] = useState<boolean | null>(null);
+  useEffect(() => {
+    setPhone(!!ref.current?.closest(".doehealth-desk2-page")?.querySelector(".doephone-mobile-root"));
+  }, [ref]);
+  return phone;
+}
+
+/**
+ * Desktop: once the section is near, lets the live products mount one at a time, a frame or two apart, instead of all
+ * in the same frame, so reaching the section does not stall the scroll.
+ */
+function useStaggeredMount(near: boolean, count: number) {
+  const [ready, setReady] = useState(0);
+  useEffect(() => {
+    if (!near) return undefined;
+    let n = 0;
+    let id = 0;
+    const next = () => {
+      n += 1;
+      setReady(n);
+      if (n < count) id = window.setTimeout(() => requestAnimationFrame(next), 90);
+    };
+    id = window.setTimeout(() => requestAnimationFrame(next), 0);
+    return () => window.clearTimeout(id);
+  }, [near, count]);
+  return ready;
+}
+
 /**
  * /earlypreview: the product, in a beige scroll-locked section under "We've been building together". The title comes
  * in centred over a dot wave; scrolling lifts the title and the wave to the top, a row of rounded boxes rises in under
@@ -377,6 +418,8 @@ export function EarlyPreviewProductSection() {
   const { p, skip, goTo } = useDoeHealthDesk2ScrollLock(sectionRef, END);
   useNavReveal(sectionRef);
   const near = useNear(sectionRef);
+  const phone = usePhoneLayout(sectionRef);
+  const ready = useStaggeredMount(near && phone === false, SLIDES.length);
   const inStage = useBoxesInStage(stageRef, trackRef);
   const toCenter = useCenterOffset(headRef);
   const distance = usePanDistance(trackRef);
@@ -423,8 +466,15 @@ export function EarlyPreviewProductSection() {
                 <li key={slide.id} data-index={i} className="earlypreview-product__slide" style={vars({ "--i": Math.min(i, 3), "--d": i, "--len": slide.title.length })}
                 >
                   <div className="earlypreview-product__box">
-                    <div className="earlypreview-product__ui" data-sit={VISUALS[slide.id].sit}>
-                      {near && inStage[i] ? <SlideVisual visual={VISUALS[slide.id]} /> : null}
+                    <div className="earlypreview-product__ui" data-sit={VISUALS[slide.id].sit} data-still={phone ? "" : undefined}>
+                      {/* iPhone: each box is a still of the product, already toned (public/earlypreview/product), so
+                          scrolling moves pictures rather than thirteen live products under a colour filter. They are in the page from
+                          the start and load lazily, so nothing is put into the page as it scrolls. */}
+                      {phone ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img className="earlypreview-product__still" src={`/earlypreview/product/${slide.id}.webp`} alt="" loading="lazy" decoding="async" draggable={false} />
+                      ) : null}
+                      {near && phone === false && inStage[i] && i < ready ? <SlideVisual visual={VISUALS[slide.id]} /> : null}
                     </div>
                   </div>
                   <h3 className={`earlypreview-product__slide-title ${dmSans.className}`}>{slide.title}</h3>
@@ -433,12 +483,10 @@ export function EarlyPreviewProductSection() {
             </ol>
           </div>
         </div>
-        {p > 0 ? <ProductNav p={p} goTo={goTo} /> : null}
-        {p > 0 && p < END ? (
-          <button type="button" className="doehealth-desk2-visible__skip" aria-label="Skip the product section" onClick={skip}>
-            <SkipIcon />
-          </button>
-        ) : null}
+        {/* The nav stays mounted and is only hidden, as the skip is: putting a node into the page while scrolling makes
+            the browser re-check the page's `:has()` rules and restyle the whole page, which showed as a hitch on entry. */}
+        <ProductNav p={p} goTo={goTo} hidden={p <= 0} />
+        <SkipButton shown={p > 0 && p < END} label="Skip the product section" onClick={skip} />
       </section>
     </div>
   );

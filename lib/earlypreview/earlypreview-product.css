@@ -529,3 +529,25 @@
   will-change: filter;
   contain: paint;
 }
+
+/*
+ * iPhone: the boxes show stills of the product, captured already toned, so the beige filter and its layer are not
+ * needed. Each still covers its box from the top left, as the live crop does.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__ui[data-still] {
+  filter: none;
+  -webkit-filter: none;
+  will-change: auto;
+}
+
+.earlypreview-product__still {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 0 0;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}

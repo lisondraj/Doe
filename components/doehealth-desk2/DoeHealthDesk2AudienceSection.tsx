@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
+import { type CSSProperties, useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
 
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
 import { DoeHealthDesk2DotTide } from "@/components/doehealth-desk2/DoeHealthDesk2DotTide";
@@ -75,6 +75,27 @@ export function SkipIcon() {
       <path d="M7 5.5 13 12 7 18.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M16.35 5.5v13" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
+  );
+}
+
+/**
+ * A locked section's skip button. It stays in the page and is only hidden while the section is at either end: putting
+ * a node into the page mid-scroll makes the browser re-check the page's `:has()` rules and restyle all of it, which
+ * showed as a hitch each time a section started or finished.
+ */
+export function SkipButton({ shown, label, onClick, style }: { shown: boolean; label: string; onClick: () => void; style?: CSSProperties }) {
+  return (
+    <button
+      type="button"
+      className="doehealth-desk2-visible__skip"
+      style={shown ? style : { ...style, visibility: "hidden" }}
+      aria-label={label}
+      aria-hidden={shown ? undefined : true}
+      tabIndex={shown ? undefined : -1}
+      onClick={onClick}
+    >
+      <SkipIcon />
+    </button>
   );
 }
 
@@ -485,11 +506,7 @@ export function DoeHealthDesk2AudienceSection() {
           </form>
       </div>
 
-        {p > 0 && p < END ? (
-          <button type="button" className="doehealth-desk2-visible__skip" style={vars({ "--b": beige })} aria-label="Skip to see if your clinic was included" onClick={skip}>
-            <SkipIcon />
-          </button>
-        ) : null}
+        <SkipButton shown={p > 0 && p < END} style={vars({ "--b": beige })} label="Skip to see if your clinic was included" onClick={skip} />
     </section>
     </div>
   );
