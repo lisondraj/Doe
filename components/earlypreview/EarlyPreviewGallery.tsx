@@ -2,6 +2,7 @@ import Image from "next/image";
 import { type CSSProperties, type MouseEvent, type PointerEvent, useEffect, useRef, useState } from "react";
 
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
+import { DoeHealthDesk2DotTide } from "@/components/doehealth-desk2/DoeHealthDesk2DotTide";
 import { EarlyPreviewVideoOverlay } from "@/components/earlypreview/EarlyPreviewVideoOverlay";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
@@ -318,24 +319,12 @@ export function EarlyPreviewVideoGrid() {
   );
 }
 
-/** The title above each hero-gallery video, one entry per line (the first white, the second salmon), and a description. */
-const HERO_GALLERY_CAPTIONS: Record<string, { title: readonly [string, string]; dek: string }> = {
-  hospitals: {
-    title: ["Doe for Hospitals", "& Health Systems"],
-    dek: "One front door for every patient, across every site, built to scale through enterprise.",
-  },
-  dentists: {
-    title: ["Doe for Dentists", "& Home Care"],
-    dek: "Calls, scheduling and follow-ups handled, so the chair stays full and the team stays focused.",
-  },
-  derm: {
-    title: ["Doe for Derm,", "Plastics & Aesthetics"],
-    dek: "Consults, before-and-afters and aftercare, answered the way your practice would.",
-  },
-  concierge: {
-    title: ["Doe for Concierge", "Medicine"],
-    dek: "Round-the-clock access for members, with the personal touch your practice is known for.",
-  },
+/** The title above each hero-gallery video, one entry per line. The first line's last word and the second line are salmon. */
+const HERO_GALLERY_TITLES: Record<string, readonly [string, string]> = {
+  hospitals: ["Doe for Hospitals", "& Health Systems"],
+  dentists: ["Doe for Dentists", "& Home Care"],
+  derm: ["Doe for Derm,", "Plastics & Aesthetics"],
+  concierge: ["Doe for Concierge", "Medicine"],
 };
 
 const HERO_GALLERY_ITEMS: readonly { key: string; tile: GalleryTileData }[] = [
@@ -347,8 +336,8 @@ const HERO_GALLERY_ITEMS: readonly { key: string; tile: GalleryTileData }[] = [
 
 /**
  * The videos attached under the hero video: Doe for Hospitals full width, the dentist and derm pair under it, then
- * Doe for Concierge full width. Each has a centred title (white, then salmon) and description above its box, in the
- * hero's type. The boxes are the still images with the brown card (title, link, play button) always showing.
+ * Doe for Concierge full width. Each has a centred title (white with its last word salmon, then salmon) above its box,
+ * in the hero's type. The boxes are the still images with the brown card (title, link, play button) always showing.
  */
 export function EarlyPreviewHeroGallery() {
   const gridRef = useRef<HTMLDivElement>(null);
@@ -384,20 +373,33 @@ export function EarlyPreviewHeroGallery() {
     >
       <div ref={gridRef} className="earlypreview-gallery__grid">
         {HERO_GALLERY_ITEMS.map(({ key, tile }) => {
-          const caption = HERO_GALLERY_CAPTIONS[key];
+          const [first, second] = HERO_GALLERY_TITLES[key];
+          const cut = first.lastIndexOf(" ") + 1;
           return (
             <div
               key={key}
               className={`earlypreview-hero-gallery__item${tile.wide ? " earlypreview-gallery__tile--wide" : ""}`}
             >
+              {/* Hospitals sits between the dot tides from the second section's Index screen, one on each side. */}
+              {key === "hospitals" ? (
+                <div className="doehealth-desk2-visible__tide earlypreview-hero-gallery__tide" aria-hidden>
+                  <DoeHealthDesk2DotTide color="rgba(252, 207, 184, 0.6)" />
+                </div>
+              ) : null}
+              {/* iPhone: the hero's dot wave in the space above Derm. */}
+              {key === "derm" ? (
+                <div className="earlypreview-hero-gallery__wave" aria-hidden>
+                  <DoeHealthBlogDotWave color="rgba(252, 207, 184, 0.6)" top={0.42} amp={60} fade={0.5} />
+                </div>
+              ) : null}
               <div className="earlypreview-hero-gallery__caption">
                 <h3 className={`earlypreview-hero-gallery__title ${p22Mackinac.className}`}>
-                  <span className="earlypreview-hero-gallery__line">{caption.title[0]}</span>
-                  <span className="earlypreview-hero-gallery__line earlypreview-hero-gallery__line--salmon">
-                    {caption.title[1]}
+                  <span className="earlypreview-hero-gallery__line">
+                    {first.slice(0, cut)}
+                    <span className="earlypreview-hero-gallery__line--salmon">{first.slice(cut)}</span>
                   </span>
+                  <span className="earlypreview-hero-gallery__line earlypreview-hero-gallery__line--salmon">{second}</span>
                 </h3>
-                <p className={`earlypreview-hero-gallery__dek ${inter.className}`}>{caption.dek}</p>
               </div>
               <GalleryTile tile={tile} />
             </div>
