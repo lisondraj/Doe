@@ -5942,3 +5942,17 @@ html:has(.earlypreview-page) {
   line-height: 1.45;
   color: rgba(255, 246, 230, 0.72);
 }
+
+/*
+ * iPhone: the brown hero section runs down through the videos. The stack no longer centres the hero in the screen with
+ * room below it (that room was for the hero alone); it starts at the top and the videos, one per row, fill the brown
+ * under the hero video. The hero video's gap to the first one matches the gap between rows.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .doehealth-desk2-hero-stack {
+  justify-content: flex-start;
+  padding-bottom: 0;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .desk2-workspace:has(+ .earlypreview-hero-gallery) {
+  padding-bottom: 2rem !important;
+}
