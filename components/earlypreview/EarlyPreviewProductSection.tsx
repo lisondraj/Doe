@@ -171,7 +171,45 @@ const BOX_AT = SLIDES.map((_, i) => PAN[0] + ((PAN[1] - PAN[0]) * i) / (SLIDES.l
 function columnPosition(p: number) {
   const at = ramp(p, PAN) * (SLIDES.length - 1);
   const whole = Math.min(Math.floor(at), SLIDES.length - 2);
-  return whole + smooth(ramp(at - whole, [0.2, 0.8]));
+  return whole + smooth(ramp(at - whole, [0.15, 0.85]));
+}
+
+/**
+ * iPhone: glides the column to `target` instead of jumping with each scroll event. Each box's offset (`--d`, its place
+ * in the column less the column's position) is written straight onto its own element every frame; the property does
+ * not inherit (see the CSS), so only the box moves and nothing inside the product it shows is restyled.
+ */
+function useColumnGlide(trackRef: React.RefObject<HTMLOListElement | null>, target: number) {
+  const state = useRef({ at: target, raf: 0 });
+  useEffect(() => {
+    const track = trackRef.current;
+    // The desktop pans the row sideways instead (set inline on the track).
+    if (!track || !track.closest(".doehealth-desk2-page")?.querySelector(".doephone-mobile-root")) return undefined;
+    const st = state.current;
+    const items = Array.from(track.children) as HTMLElement[];
+    const write = (at: number) => items.forEach((item, i) => item.style.setProperty("--d", (i - at).toFixed(4)));
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      st.at = target;
+      write(target);
+      return undefined;
+    }
+    const step = () => {
+      const gap = target - st.at;
+      if (Math.abs(gap) < 0.0015) {
+        st.at = target;
+        write(target);
+        st.raf = 0;
+        return;
+      }
+      // Eases out over a few frames, so a fast or uneven scroll still moves the boxes evenly.
+      st.at += gap * 0.14;
+      write(st.at);
+      st.raf = requestAnimationFrame(step);
+    };
+    cancelAnimationFrame(st.raf);
+    st.raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(st.raf);
+  }, [trackRef, target]);
 }
 /** iPhone: the scroll through the track is this many times the desktop's per unit of progress, so each box gets room. */
 const PHONE_RUN_SCALE = 2.2;
@@ -337,6 +375,7 @@ export function EarlyPreviewProductSection() {
   const shown = en(p, SLIDES_IN);
   const pan = en(p, PAN);
   const gone = en(p, TITLE_OUT);
+  useColumnGlide(trackRef, columnPosition(p));
 
   return (
     <div className="earlypreview-product-track" style={vars({ "--product-run": END * DOEHEALTH_DESK2_PHONE_STEP_PX * PHONE_RUN_SCALE })}>
@@ -367,10 +406,10 @@ export function EarlyPreviewProductSection() {
             <ol
               ref={trackRef}
               className="earlypreview-product__track"
-              style={vars({ "--k": shown, "--pan-x": -pan * distance, "--s": columnPosition(p) })}
+              style={{ ...vars({ "--k": shown }), transform: `translate3d(${-pan * distance}px, 0, 0)` }}
             >
               {SLIDES.map((slide, i) => (
-                <li key={slide.id} data-index={i} className="earlypreview-product__slide" style={vars({ "--i": Math.min(i, 3), "--n": i, "--len": slide.title.length })}
+                <li key={slide.id} data-index={i} className="earlypreview-product__slide" style={vars({ "--i": Math.min(i, 3), "--d": i, "--len": slide.title.length })}
                 >
                   <div className="earlypreview-product__box">
                     <div className="earlypreview-product__ui" data-sit={VISUALS[slide.id].sit}>

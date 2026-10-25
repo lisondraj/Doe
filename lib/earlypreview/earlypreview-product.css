@@ -1,3 +1,11 @@
+/* A box's place in the iPhone column, less the column's position. Set on each box every frame as the column glides, so
+   it must not inherit: an inherited property would restyle the whole product inside the box each frame. */
+@property --d {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
 /*
  * /earlypreview product section (EarlyPreviewProductSection). One scroll-locked beige screen, the beige of the band
  * above it with the nav in its beige state. --y and --k are set from scroll progress; nothing transitions except the
@@ -116,7 +124,6 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  transform: translate3d(calc(var(--pan-x, 0) * 1px), 0, 0);
   will-change: transform;
 }
 
@@ -385,7 +392,8 @@
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__track {
   display: grid;
   width: 100%;
-  transform: none;
+  /* The desktop's sideways pan is set inline; the phone's column moves each box instead. */
+  transform: none !important;
   will-change: auto;
 }
 
@@ -396,7 +404,7 @@
   height: var(--p-slide-h);
   transform: translate3d(
     0,
-    calc((var(--n, 0) - var(--s, 0)) * (var(--p-slide-h) + 1rem) + (1 - var(--k, 0)) * 2.5rem),
+    calc(var(--d, 0) * (var(--p-slide-h) + 1rem) + (1 - var(--k, 0)) * 2.5rem),
     0
   );
   will-change: transform;
@@ -404,4 +412,26 @@
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__slide-title {
   min-height: calc(var(--p-cap-room) - 0.2rem);
+}
+
+/*
+ * iPhone: the product inside each box is a still picture. Its own animations and transitions are run to their end and its
+ * layers flattened, so Safari's beige tone (the BeigeTone filter) covers all of it. Safari does not filter the parts of
+ * the product that it puts on their own layers while they animate, which is what left some of them in their own colours.
+ * It is also far less work per frame.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__source *,
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__source *::before,
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__source *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition: none !important;
+  will-change: auto !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__ui {
+  isolation: isolate;
 }

@@ -6057,3 +6057,90 @@ html:has(.earlypreview-page) {
   opacity: 1 !important;
   z-index: 2;
 }
+
+
+/*
+ * The nav's colours resolve on the chrome itself, from the wash and beige NavWash sets there (not on the root, which
+ * would restyle the whole page on every step of a fade). Same mixes as on the page above.
+ */
+.doehealth-desk2-page .doehealth-desk2-chrome {
+  --desk2-wash: var(--desk2-nav-wash, 0);
+  /* 0 to 1 while a beige stretch of the brown section is on screen; set by NavWash. */
+  --desk2-beige: var(--desk2-nav-beige, 0);
+  --desk2-nav-bg: color-mix(
+    in srgb,
+    #f4eedf calc(var(--desk2-beige) * 100%),
+    color-mix(
+      in srgb,
+      rgb(var(--doehealth-desk2-surface-rgb) / 0.78) calc(var(--desk2-wash) * 100%),
+      rgb(255 252 241 / 0.72)
+    )
+  );
+  --desk2-nav-ink: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #fffcf1 calc(var(--desk2-wash) * 100%), var(--doehealth-desk2-ink))
+  );
+  --desk2-nav-button-bg: color-mix(
+    in srgb,
+    #e6dac2 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #fccfb8 calc(var(--desk2-wash) * 100%), var(--doehealth-desk2-surface))
+  );
+  --desk2-nav-button-fg: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, var(--doehealth-desk2-surface) calc(var(--desk2-wash) * 100%), #fffcf1)
+  );
+  --desk2-nav-button-line: color-mix(
+    in srgb,
+    rgb(110 92 64 / 0.25) calc(var(--desk2-beige) * 100%),
+    color-mix(
+      in srgb,
+      rgb(var(--doehealth-desk2-surface-rgb) / 0.22) calc(var(--desk2-wash) * 100%),
+      rgb(255 252 241 / 0.22)
+    )
+  );
+  /* iPhone wordmark + menu chevron: salmon on brown, ink on cream, brown on beige. */
+  --desk2-nav-accent: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #fccfb8 calc(var(--desk2-wash) * 100%), var(--doehealth-desk2-ink))
+  );
+  /* Expanded iPhone menu: the same surface and ink as the nav bar in each state (cream, brown, or beige). */
+  --desk2-sheet-bg: color-mix(
+    in srgb,
+    #f4eedf calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #281910 calc(var(--desk2-wash) * 100%), #fffcf1)
+  );
+  --desk2-sheet-ink: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #fffcf1 calc(var(--desk2-wash) * 100%), #281910)
+  );
+  --desk2-sheet-line: color-mix(
+    in srgb,
+    rgb(110 92 64 / 0.25) calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, rgb(255 252 241 / 0.18) calc(var(--desk2-wash) * 100%), rgb(20 12 4 / 0.1))
+  );
+  --desk2-announce-bg: color-mix(
+    in srgb,
+    #e6dac2 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #fccfb8 calc(var(--desk2-wash) * 100%), var(--doehealth-desk2-surface))
+  );
+  --desk2-announce-ink: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, var(--doehealth-desk2-surface) calc(var(--desk2-wash) * 100%), #fffcf1)
+  );
+  --desk2-announce-link: color-mix(
+    in srgb,
+    #6e5c40 calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, var(--doehealth-desk2-surface) calc(var(--desk2-wash) * 100%), #fccfb8)
+  );
+}
+
+/* First paint on /earlypreview: the nav starts brown (see the root rule above); NavWash's inline values take over. */
+.earlypreview-page .doehealth-desk2-chrome {
+  --desk2-nav-wash: 1;
+  --desk2-nav-beige: 0;
+}

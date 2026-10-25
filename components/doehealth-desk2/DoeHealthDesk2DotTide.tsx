@@ -43,7 +43,8 @@ export function DoeHealthDesk2DotTide({
 
     const size = () => {
       const r = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
+      // Capped at 2: a 3× phone screen paints more than twice the pixels for dots no one can tell apart.
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
       w = r.width;
       h = r.height;
       canvas.width = Math.round(w * dpr);
@@ -112,8 +113,10 @@ export function DoeHealthDesk2DotTide({
     let onScreen = false;
     let inView = false;
     let frame = 0;
+    // Touch screens (phones) step the drift at 30 fps; it is slow enough that the halved rate doesn't show.
+    const every = window.matchMedia("(pointer: coarse)").matches ? 2 : 1;
     const loop = (now: number) => {
-      if (inView || frame % 6 === 0) paint(now, true, frame);
+      if (inView ? frame % every === 0 : frame % 6 === 0) paint(now, true, frame);
       frame++;
       raf = requestAnimationFrame(loop);
     };

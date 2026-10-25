@@ -79,16 +79,27 @@ export function DoeHealthDesk2NavWash() {
     };
     refreshBrownNodes();
 
+    // The nav colours are set on the nav chrome, not the root: a custom property changed on the root is inherited by
+    // every element on the page, so each step of a fade (and each scroll frame in a locked section) restyled the
+    // whole page. Only the chrome reads them. The root keeps them only if no chrome is on the page.
+    const targets = () => {
+      const chrome = Array.from(document.querySelectorAll<HTMLElement>(".doehealth-desk2-chrome"));
+      return chrome.length > 0 ? chrome : [root];
+    };
+    const paintVar = (name: string, value: number) => {
+      const text = value.toFixed(4);
+      for (const el of targets()) el.style.setProperty(name, text);
+    };
     const paintWash = (value: number) => {
       washRef.current = value;
-      root.style.setProperty("--desk2-nav-wash", value.toFixed(4));
+      paintVar("--desk2-nav-wash", value);
     };
     // Beige fades on the same curve and time as the wash when a section switches it on or off. A scroll-locked
     // section sends a fraction between 0 and 1 that follows the scroll, so those paint straight away, without a fade.
     const beige = { value: 0, from: 0, target: 0, start: 0, anim: 0 };
     const paintBeige = (value: number) => {
       beige.value = value;
-      root.style.setProperty("--desk2-nav-beige", value.toFixed(4));
+      paintVar("--desk2-nav-beige", value);
     };
     const cancelBeige = () => {
       if (beige.anim) cancelAnimationFrame(beige.anim);
@@ -233,8 +244,10 @@ export function DoeHealthDesk2NavWash() {
       window.removeEventListener("scroll", tick);
       window.removeEventListener(DOEHEALTH_DESK2_NAV_WASH_EVENT, tick);
       window.removeEventListener("resize", onResize);
-      root.style.removeProperty("--desk2-nav-wash");
-      root.style.removeProperty("--desk2-nav-beige");
+      for (const el of [root, ...Array.from(document.querySelectorAll<HTMLElement>(".doehealth-desk2-chrome"))]) {
+        el.style.removeProperty("--desk2-nav-wash");
+        el.style.removeProperty("--desk2-nav-beige");
+      }
     };
   }, []);
 
