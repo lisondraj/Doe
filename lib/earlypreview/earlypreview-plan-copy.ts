@@ -42,6 +42,8 @@ export const EARLYPREVIEW_PLAN = {
       {
         id: "supply",
         name: "Supply",
+        /** The iPhone card: the Seed figure, big, with what it counts and a line under it. */
+        big: { value: n(T.indexed), unit: "practices indexed", sub: `${n(T.claimed)} claimed` },
         milestones: [
           { q: 0, text: `${n(T.indexedToday)} practices indexed` },
           { q: 1, text: "Every Toronto practice emailed its page" },
@@ -53,6 +55,7 @@ export const EARLYPREVIEW_PLAN = {
       {
         id: "agents",
         name: "Agents",
+        big: { value: "5", unit: "active agents", sub: `${T.requestsK}K requests a month` },
         milestones: [
           { q: 0, text: "First design partners in the sandbox" },
           { q: 1, text: "MCP server and SDKs public" },
@@ -64,6 +67,7 @@ export const EARLYPREVIEW_PLAN = {
       {
         id: "revenue",
         name: "Revenue",
+        big: { value: `$${T.arrK}K`, unit: "ARR", sub: `${T.lois} enterprise pilots` },
         milestones: [
           { q: 1, text: "Paid plans open at founding prices" },
           { q: 3, text: "First claims from agent demand" },

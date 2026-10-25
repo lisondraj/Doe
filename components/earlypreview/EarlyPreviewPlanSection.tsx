@@ -134,6 +134,29 @@ function TimelineScene({ p }: { p: number }) {
     <Scene o={o} t={t} label="Supply, agents and revenue, all three from day one">
       <SceneTitle title={copy.title} t={t} />
       <div className="earlypreview-market__body">
+        {/* iPhone: each lane's Seed figure, big, over a cloud of dots that fills as the plan plays. */}
+        <ol className="earlypreview-plan__seed-cards">
+          {copy.lanes.map((lane, index) => (
+            <li
+              key={lane.id}
+              className={`earlypreview-plan__seed-card is-${lane.id}`}
+              style={vars({ "--e": en(t, 0.25 + index * 0.22, 0.75 + index * 0.22), "--k": en(t, 0.5 + index * 0.25, 1.9 + index * 0.25) })}
+            >
+              <span className="earlypreview-plan__seed-cloud" aria-hidden />
+              <span className="earlypreview-plan__seed-head">
+                <span className="earlypreview-plan__seed-name">{lane.name}</span>
+                <span className="earlypreview-plan__seed-now">
+                  {QUARTERS[lane.milestones[0].q]}: {lane.milestones[0].text}
+                </span>
+              </span>
+              <span className="earlypreview-plan__seed-value">{lane.big.value}</span>
+              <span className="earlypreview-plan__seed-line">
+                <span className="earlypreview-plan__seed-unit">{lane.big.unit}</span>
+                <span className="earlypreview-plan__seed-sub">{lane.big.sub}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
         <div className="earlypreview-plan__timeline" style={vars({ "--k": k, "--e": en(t, 0.3, 0.6) })}>
           <div className="earlypreview-plan__axis" aria-hidden>
             <span />
