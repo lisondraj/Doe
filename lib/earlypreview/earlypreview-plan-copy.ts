@@ -86,9 +86,6 @@ export const EARLYPREVIEW_PLAN = {
       {
         id: "find",
         name: "Where we find them",
-        lede: "Registers and maps, read without asking",
-        short: "Registers & maps",
-        detail: "Ontario colleges · U.S. NPPES",
         items: [
           { name: "Ontario college registers", gives: "Every licensed clinician and where they practise" },
           { name: "NPPES NPI registry", gives: "Every U.S. provider, by address and specialty" },
@@ -99,9 +96,6 @@ export const EARLYPREVIEW_PLAN = {
       {
         id: "gather",
         name: "Where they gather",
-        lede: "Owners already in one room",
-        short: "Where owners gather",
-        detail: "ODA · CDA · MGMA · study clubs",
         items: [
           { name: "Provincial associations", gives: "Member offers to a whole profession" },
           { name: "Dental study clubs", gives: "Ten to thirty owners in one room, monthly" },
@@ -112,9 +106,6 @@ export const EARLYPREVIEW_PLAN = {
       {
         id: "bring",
         name: "Who brings them",
-        lede: "People who vouch for us",
-        short: "Who brings them",
-        detail: "Clinical Partners · Founding 100",
         items: [
           { name: "Clinical Partners", gives: "Students and new clinicians inside clinics" },
           { name: "Practice invites", gives: "Owners who bring the practice next door" },
@@ -124,9 +115,6 @@ export const EARLYPREVIEW_PLAN = {
       {
         id: "pull",
         name: "What pulls them in",
-        lede: "Demand does the selling",
-        short: "What pulls them in",
-        detail: "Agents’ missed requests",
         items: [
           { name: "Agents’ missed requests", gives: "Patients who already tried to book them" },
           { name: "Their page, already built", gives: "A reason to claim before a competitor does" },
