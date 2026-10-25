@@ -12,6 +12,7 @@ import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealt
 import { DoeHealthDesk2Workspace } from "@/components/doehealth-desk2/DoeHealthDesk2Workspace";
 import { EarlyPreviewHeroGallery } from "@/components/earlypreview/EarlyPreviewGallery";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
+import { EarlyPreviewComplianceSection } from "@/components/earlypreview/EarlyPreviewComplianceSection";
 import { EarlyPreviewPlanSection } from "@/components/earlypreview/EarlyPreviewPlanSection";
 import { EarlyPreviewMarketSection } from "@/components/earlypreview/EarlyPreviewMarketSection";
 import { EarlyPreviewProductSection } from "@/components/earlypreview/EarlyPreviewProductSection";
@@ -246,6 +247,8 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
         <EarlyPreviewProductSection />
         {/* The plan, four scroll-locked screens in the market section's style, above the enterprise section. */}
         <EarlyPreviewPlanSection />
+        {/* Compliance and security through Seed, for the U.S. and Canada: four screens in the market section's style. */}
+        <EarlyPreviewComplianceSection />
         <div className="earlypreview-invite-band">
           <DoeHealthDesk2InviteSection />
         </div>
