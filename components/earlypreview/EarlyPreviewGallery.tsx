@@ -408,10 +408,12 @@ export function EarlyPreviewHeroGallery() {
                   <DoeHealthDesk2DotTide color="rgba(252, 207, 184, 0.6)" />
                 </div>
               ) : null}
-              {/* iPhone: the hero's dot wave in the space above Derm. */}
+              {/* iPhone: the hero's dot wave (same box, dots and fade) in the space above Derm, out of the layout. */}
               {key === "derm" ? (
-                <div className="earlypreview-hero-gallery__wave" aria-hidden>
-                  <DoeHealthBlogDotWave color="rgba(252, 207, 184, 0.6)" top={0.42} amp={60} fade={0.5} />
+                <div className="earlypreview-hero-wave earlypreview-hero-gallery__wave" aria-hidden>
+                  <div className="earlypreview-hero-wave__fade">
+                    <DoeHealthBlogDotWave color="rgba(252, 207, 184, 0.6)" top={0.42} amp={60} fade={0.5} />
+                  </div>
                 </div>
               ) : null}
               <div className="earlypreview-hero-gallery__caption">

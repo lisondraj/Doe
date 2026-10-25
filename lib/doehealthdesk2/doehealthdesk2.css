@@ -6179,36 +6179,39 @@ html:has(.earlypreview-page) {
   mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
 }
 
-/* The hero's dot wave above Derm: iPhone only, where Derm has its own row. Faded out above and below. */
+/*
+ * The hero's dot wave above Derm: iPhone only, where Derm has its own row. It is the hero's wave box exactly (same dots,
+ * size and fade), taken out of the layout so it adds no space: it is centred on the gap between the Dentists box and Derm's
+ * title and sits behind both.
+ */
 .earlypreview-hero-gallery__wave {
   display: none;
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery__wave {
+.doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .earlypreview-hero-gallery__wave {
   display: block;
-  position: relative;
+  position: absolute;
+  z-index: -1;
   left: calc(50% - 50vw);
   width: 100vw;
-  height: 9rem;
-  margin: -1.5rem 0 1rem;
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+  height: calc(36svh - var(--earlypreview-hero-pull, 1.5rem));
+  margin: 0;
+  top: calc(var(--earlypreview-hero-gallery-space) / -2);
+  transform: translateY(-50%);
 }
 
-.earlypreview-hero-gallery__wave > canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
+/* The Dentists item paints over Derm's wave, so the wave runs behind the Dentists box too. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-hero-gallery__item:nth-child(2) {
+  z-index: 1;
 }
 
 /* iPhone: more room between the video parts, and between the hero video and the first one. */
 .doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .earlypreview-hero-gallery {
-  --earlypreview-hero-gallery-space: 6.5rem;
+  --earlypreview-hero-gallery-space: 8rem;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .doehealth-desk2-hero-stack .desk2-workspace:has(+ .earlypreview-hero-gallery) {
-  padding-bottom: 6.5rem !important;
+  padding-bottom: 8rem !important;
 }
 
 /* "See Article" under each hero-gallery title, in the cards' link style, centred. */
