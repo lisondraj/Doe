@@ -922,7 +922,7 @@ function useCenterOffset(ref: { current: HTMLElement | null }) {
 
 /**
  * How far to move the Index title down from where it rests, so it sits in the middle of the space between the nav and
- * the top of the line drawing (not hard against the nav). Measured from the layout, so it follows the screen size.
+ * the top of the line drawing (not hard against the nav). iPhone only. Measured from the layout, so it follows the screen size.
  */
 function useIndexRestOffset(ref: { current: HTMLElement | null }) {
   const [offset, setOffset] = useState(0);
@@ -931,6 +931,11 @@ function useIndexRestOffset(ref: { current: HTMLElement | null }) {
     const scene = el?.closest<HTMLElement>(".earlypreview-market__scene");
     if (!el || !scene) return;
     const measure = () => {
+      // iPhone only: the desktop layout keeps the title where it was.
+      if (!scene.closest(".doehealth-desk2-page")?.querySelector(".doephone-mobile-root")) {
+        setOffset(0);
+        return;
+      }
       const art = scene.querySelector<SVGSVGElement>(".earlypreview-market__index-art");
       const tide = scene.querySelector<HTMLElement>(".earlypreview-market__index-tide");
       const matrix = art?.getScreenCTM();
