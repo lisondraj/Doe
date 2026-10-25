@@ -6,6 +6,7 @@
  */
 
 import {
+  EARLYPREVIEW_MARKET_CLINICS as CLINICS,
   EARLYPREVIEW_MARKET_PRICING as P,
   EARLYPREVIEW_MARKET_TARGETS as T,
 } from "@/lib/earlypreview/earlypreview-market-copy";
@@ -85,6 +86,7 @@ export const EARLYPREVIEW_PLAN = {
       {
         id: "find",
         name: "Where we find them",
+        lede: "Registers and maps, read without asking",
         items: [
           { name: "Ontario college registers", gives: "Every licensed clinician and where they practise" },
           { name: "NPPES NPI registry", gives: "Every U.S. provider, by address and specialty" },
@@ -95,6 +97,7 @@ export const EARLYPREVIEW_PLAN = {
       {
         id: "gather",
         name: "Where they gather",
+        lede: "Owners already in one room",
         items: [
           { name: "Provincial associations", gives: "Member offers to a whole profession" },
           { name: "Dental study clubs", gives: "Ten to thirty owners in one room, monthly" },
@@ -105,6 +108,7 @@ export const EARLYPREVIEW_PLAN = {
       {
         id: "bring",
         name: "Who brings them",
+        lede: "People who vouch for us",
         items: [
           { name: "Clinical Partners", gives: "Students and new clinicians inside clinics" },
           { name: "Practice invites", gives: "Owners who bring the practice next door" },
@@ -114,6 +118,7 @@ export const EARLYPREVIEW_PLAN = {
       {
         id: "pull",
         name: "What pulls them in",
+        lede: "Demand does the selling",
         items: [
           { name: "Agents’ missed requests", gives: "Patients who already tried to book them" },
           { name: "Their page, already built", gives: "A reason to claim before a competitor does" },
@@ -121,6 +126,8 @@ export const EARLYPREVIEW_PLAN = {
       },
     ],
   },
+  /** Where the four ways lead, for the iPhone card under them. */
+  sourcesResult: { value: n(T.indexed), label: "practices indexed", sub: `${n(T.claimed)} claimed by Seed` },
   /** The rooms we'll be in, month by month to Seed: practice owners, groups, agent builders and health systems. */
   events: {
     nav: "Conferences",
@@ -159,6 +166,21 @@ export const EARLYPREVIEW_PLAN = {
   groups: {
     nav: "Groups",
     title: ["One contract,", "twelve providers."],
+    /** The iPhone version: the two kinds of practice the pre-seed plan is built on. */
+    phone: {
+      title: ["Pre-seed: private services", "and multi-site clinics."],
+      private: {
+        name: "Private services",
+        value: "65%",
+        label: "of paying clinics at Seed are private‑pay",
+        note: "One owner decides and pays, so the sale is short.",
+        types: CLINICS.groups[0].types.slice(0, 8),
+      },
+      multi: {
+        name: "Multi-site clinics",
+        note: "One contract covers every location and provider.",
+      },
+    },
     sites: 4,
     perSite: 3,
     root: "A multi-site group",

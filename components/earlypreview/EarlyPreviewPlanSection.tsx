@@ -230,6 +230,33 @@ function SourcesScene({ p }: { p: number }) {
         <SceneTitle title={copy.title} t={t} />
       </div>
       <div className="earlypreview-market__body">
+        {/* iPhone: the four ways as four big cards, each a numeral over a cloud of dots, what it is, and who and where. */}
+        <ol className="earlypreview-plan__channels">
+          {copy.groups.map((group, index) => (
+            <li
+              key={group.id}
+              className={`earlypreview-plan__channel is-${group.id}`}
+              style={vars({ "--e": en(t, 0.3 + index * 0.22, 0.75 + index * 0.22) })}
+            >
+              <span className="earlypreview-plan__channel-cloud" aria-hidden />
+              <span className="earlypreview-plan__channel-num">{`0${index + 1}`}</span>
+              <span className="earlypreview-plan__channel-name">{group.name}</span>
+              <span className="earlypreview-plan__channel-lede">{group.lede}</span>
+              <span className="earlypreview-plan__channel-chips">
+                {group.items.map((item) => (
+                  <span key={item.name}>{item.name}</span>
+                ))}
+              </span>
+            </li>
+          ))}
+        </ol>
+        <p className="earlypreview-plan__channels-result" style={vars({ "--e": en(t, 1.5, 1.85) })}>
+          <strong>{PLAN.sourcesResult.value}</strong>
+          <span>
+            {PLAN.sourcesResult.label}
+            <em>{PLAN.sourcesResult.sub}</em>
+          </span>
+        </p>
         <div className="earlypreview-plan__directory">
           {columns.map((groups, c) => (
             <div key={c} className="earlypreview-plan__directory-col">
@@ -346,13 +373,60 @@ function GroupsScene({ p }: { p: number }) {
   return (
     <Scene o={o} t={t} label="One contract, twelve providers">
       <div className="earlypreview-plan__head">
-        <SceneTitle title={copy.title} t={t} />
+        <div className="earlypreview-plan__title-desk">
+          <SceneTitle title={copy.title} t={t} />
+        </div>
+        <div className="earlypreview-plan__title-phone">
+          <SceneTitle title={copy.phone.title} t={t} />
+        </div>
         <div className="earlypreview-plan__corner" style={vars({ "--e": en(t, 1.4, 1.7) })}>
           <p className="earlypreview-plan__corner-value">{copy.share.value}</p>
           <p className="earlypreview-plan__corner-label">{copy.share.label}</p>
         </div>
       </div>
       <div className="earlypreview-market__body earlypreview-plan__groups">
+        {/* iPhone: the two kinds of practice the pre-seed plan is built on. */}
+        <div className="earlypreview-plan__focus">
+          <section className="earlypreview-plan__focus-card is-private" style={vars({ "--e": en(t, 0.3, 0.7) })}>
+            <span className="earlypreview-plan__channel-cloud" aria-hidden />
+            <span className="earlypreview-plan__seed-name">{copy.phone.private.name}</span>
+            <span className="earlypreview-plan__focus-value">{copy.phone.private.value}</span>
+            <span className="earlypreview-plan__focus-label">{copy.phone.private.label}</span>
+            <span className="earlypreview-plan__focus-note">{copy.phone.private.note}</span>
+            <span className="earlypreview-plan__channel-chips">
+              {copy.phone.private.types.map((type) => (
+                <span key={type}>{type}</span>
+              ))}
+            </span>
+          </section>
+          <section className="earlypreview-plan__focus-card is-multi" style={vars({ "--e": en(t, 0.7, 1.1) })}>
+            <span className="earlypreview-plan__channel-cloud" aria-hidden />
+            <span className="earlypreview-plan__seed-name">{copy.phone.multi.name}</span>
+            <span className="earlypreview-plan__focus-value">{copy.share.value}</span>
+            <span className="earlypreview-plan__focus-label">{copy.share.label}</span>
+            <span className="earlypreview-plan__focus-note">{copy.phone.multi.note}</span>
+            <svg className="earlypreview-plan__focus-tree" viewBox="0 0 320 70" fill="none" aria-hidden>
+              <rect x="2" y="26" width="46" height="18" rx="9" pathLength={1} className="is-root" style={draw(en(t, 0.9, 1.1))} />
+              {range(copy.sites).map((s) => (
+                <g key={s}>
+                  <rect x={86 + s * 58} y="26" width="46" height="18" rx="9" pathLength={1} className="is-site" style={draw(en(t, 1.0 + s * 0.12, 1.35 + s * 0.12))} />
+                  <path d={`M48 35H${86 + s * 58}`} pathLength={1} className="is-branch" style={draw(en(t, 1.0 + s * 0.12, 1.35 + s * 0.12))} />
+                  {range(copy.perSite).map((v) => (
+                    <circle key={v} cx={96 + s * 58 + v * 12} cy={57} r={3.2} className="is-provider" style={vars({ "--k": en(t, 1.3 + s * 0.1 + v * 0.04, 1.5 + s * 0.1 + v * 0.04) })} />
+                  ))}
+                </g>
+              ))}
+            </svg>
+            <ul className="earlypreview-plan__focus-figures">
+              {copy.figures.map((figure) => (
+                <li key={figure.id}>
+                  <strong>{figure.value}</strong>
+                  {figure.label}
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
         <svg className="earlypreview-plan__tree" viewBox="0 0 700 300" fill="none" aria-hidden>
           <rect x={TREE.rootX} y={ROOT_Y - TREE.h / 2} width={TREE.rootW} height={TREE.h} rx={8} pathLength={1} className="is-root" style={draw(root)} />
           <text x={TREE.rootX + TREE.rootW / 2} y={ROOT_Y + 5} className="is-root-name" style={vars({ "--k": root })}>
