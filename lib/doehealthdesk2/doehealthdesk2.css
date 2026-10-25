@@ -5985,3 +5985,12 @@ html:has(.earlypreview-page) {
 .doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .desk2-workspace:has(+ .earlypreview-hero-gallery) {
   padding-bottom: clamp(2.5rem, 6vw, 4.5rem) !important;
 }
+
+/* A tile with only its film's frame and the centred play button: no card, no fade, and the big play button stays. */
+.earlypreview-page :is(.earlypreview-band__videos, .earlypreview-hero-gallery) .earlypreview-gallery__tile--plain .desk2-workspace__play {
+  display: grid;
+}
+
+.earlypreview-page .earlypreview-gallery__tile--plain {
+  cursor: pointer;
+}

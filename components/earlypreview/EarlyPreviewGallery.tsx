@@ -36,6 +36,8 @@ type GalleryTileData = {
   film?: EarlyPreviewFilmId;
   /** Shows the still image as the thumbnail, never the film's frame. The film still plays in place on a click. */
   still?: boolean;
+  /** Shows the film's own frame at this second as the thumbnail, with only the centred play button (no card). */
+  frameAt?: number;
 };
 
 /** Two videos side by side, the first row of the beige section's video grid. */
@@ -70,6 +72,7 @@ const LAST_TILE: GalleryTileData = {
  */
 function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPreviewFilmId }) {
   const src = useEarlyPreviewFilm(film);
+  const posterTime = tile.frameAt ?? 0.04;
   const videoRef = useRef<HTMLVideoElement>(null);
   const hoveredRef = useRef(false);
   const playingRef = useRef(false);
@@ -100,19 +103,19 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   const revealFirstFrame = () => {
     const video = videoRef.current;
     if (tile.still || !video || playingRef.current || hoveredRef.current) return;
-    if (video.readyState >= 2 && video.currentTime > 0 && video.currentTime < 0.2) {
+    if (video.readyState >= 2 && Math.abs(video.currentTime - posterTime) < 0.2) {
       setPoster(true);
       return;
     }
     try {
-      video.currentTime = 0.04;
+      video.currentTime = posterTime;
     } catch {
       // Not seekable yet. `loadeddata` tries again.
     }
   };
 
   const onPointerEnter = (event: PointerEvent<HTMLElement>) => {
-    if (tile.still || event.pointerType !== "mouse" || playing) return;
+    if (tile.still || tile.frameAt !== undefined || event.pointerType !== "mouse" || playing) return;
     hoveredRef.current = true;
     setShowFrame(true);
     seekToMiddle();
@@ -154,7 +157,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
 
   return (
     <figure
-      className={`earlypreview-gallery__tile earlypreview-gallery__tile--film${tile.still ? " earlypreview-gallery__tile--still" : ""}${tile.wide ? " earlypreview-gallery__tile--wide" : ""}${playing ? " is-playing" : ""}`}
+      className={`earlypreview-gallery__tile earlypreview-gallery__tile--film${tile.still ? " earlypreview-gallery__tile--still" : ""}${tile.frameAt !== undefined ? " earlypreview-gallery__tile--plain" : ""}${tile.wide ? " earlypreview-gallery__tile--wide" : ""}${playing ? " is-playing" : ""}`}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       onClick={onClick}
@@ -170,7 +173,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
       <video
         ref={videoRef}
         className={`earlypreview-film${poster ? " is-poster" : ""}${visible ? " is-visible" : ""}`}
-        src={src ? `${src}#t=0.04` : undefined}
+        src={src ? `${src}#t=${posterTime}` : undefined}
         preload={tile.still ? "none" : "metadata"}
         playsInline
         controls={playing}
@@ -197,7 +200,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
           <path d="M7.5 4.8v14.4a.9.9 0 0 0 1.37.77l11.3-7.2a.9.9 0 0 0 0-1.54L8.87 4.03A.9.9 0 0 0 7.5 4.8Z" />
         </svg>
       </span>
-      <EarlyPreviewVideoOverlay video={tile.video} compact={!tile.wide} />
+      {tile.frameAt === undefined ? <EarlyPreviewVideoOverlay video={tile.video} compact={!tile.wide} /> : null}
     </figure>
   );
 }
@@ -314,7 +317,7 @@ const HERO_GALLERY_CAPTIONS: Record<string, { title: readonly [string, string]; 
 };
 
 const HERO_GALLERY_ITEMS: readonly { key: string; tile: GalleryTileData }[] = [
-  { key: "hospitals", tile: { ...HOSPITAL_TILE, still: true } },
+  { key: "hospitals", tile: { ...HOSPITAL_TILE, frameAt: 2 } },
   { key: "dentists", tile: { ...PAIR_TILES[0], still: true } },
   { key: "derm", tile: { ...PAIR_TILES[1], still: true } },
   { key: "concierge", tile: { ...LAST_TILE, still: true } },
