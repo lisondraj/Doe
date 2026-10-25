@@ -54,6 +54,11 @@ const TIMING = (() => {
 
 /** Progress at which the lock releases going down. */
 const END = TIMING[TIMING.length - 1].start + TIMING[TIMING.length - 1].len;
+/**
+ * How much of the first screen builds while the section scrolls into view, before it locks (the title, then the first
+ * numbers, top to bottom). The rest builds from there once it locks, so nothing waits for the bottom of the scroll.
+ */
+const LEAD_IN = 1.1;
 /** Each screen cross-fades over this much progress at either end. */
 const FADE = 0.28;
 
@@ -213,8 +218,10 @@ function SignalSource({ source }: { source: EarlyPreviewMarketSource }) {
 
 /* ---------------------------------------------------------------- screens */
 
-function WhyNowScene({ p }: { p: number }) {
-  const { o, t } = sceneClock(p, "whyNow");
+function WhyNowScene({ p, lead }: { p: number; lead: number }) {
+  const { o, t: clock } = sceneClock(p, "whyNow");
+  // `lead` is how much of the screen has already built while the section scrolls up to the lock (see the section).
+  const t = clock + lead;
   const hover = useHover<string>();
   return (
     <Scene o={o} label="Why now">
@@ -1148,6 +1155,61 @@ const Clinics = memo(ClinicsScene);
 const Index = memo(IndexScene);
 
 /**
+ * How far the first screen has built (0 to LEAD_IN) as the section's top travels from just under the bottom of the
+ * screen to the top, where it locks. It follows the scroll both ways and is held in steps so the screen is not redrawn
+ * for every pixel. Nothing is read while the section is more than a screen away.
+ */
+function useLeadIn(ref: { current: HTMLElement | null }) {
+  const [lead, setLead] = useState(0);
+  useEffect(() => {
+    const section = ref.current;
+    if (!section) return;
+    let raf = 0;
+    let near = true;
+    let last = -1;
+    const read = () => {
+      raf = 0;
+      const vh = window.innerHeight;
+      const start = vh * 0.92;
+      const progress = Math.min(1, Math.max(0, (start - section.getBoundingClientRect().top) / start));
+      const next = Math.round(progress * LEAD_IN * 50) / 50;
+      if (next === last) return;
+      last = next;
+      setLead(next);
+    };
+    const onScroll = () => {
+      if (!near || raf) return;
+      raf = window.requestAnimationFrame(read);
+    };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const now = entry.isIntersecting;
+        if (now === near) return;
+        if (now) {
+          near = true;
+          onScroll();
+        } else {
+          read();
+          near = false;
+        }
+      },
+      { rootMargin: "100% 0px" },
+    );
+    observer.observe(section.parentElement ?? section);
+    read();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      observer.disconnect();
+      if (raf) window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [ref]);
+  return lead;
+}
+
+/**
  * The market section, the page's second, in seven screens: why now ("Personal agents are scaling."), the clinics
  * already indexed, the target at Seed, the plans from free to paid, what each tier includes, the cities (Toronto, then the U.S., then the
  * targets), and the clinic types. It locks like the audience section on /doehealthdesk2: scrolling steps through the
@@ -1156,6 +1218,7 @@ const Index = memo(IndexScene);
 export function EarlyPreviewMarketSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const { p, skip, goTo } = useDoeHealthDesk2ScrollLock(sectionRef, END);
+  const lead = useLeadIn(sectionRef);
 
   return (
     <div
@@ -1167,7 +1230,7 @@ export function EarlyPreviewMarketSection() {
         className="earlypreview-market doehealth-desk2-nav-wash-surface"
         aria-label="The market for personal health agents"
       >
-        <WhyNow p={sceneP(p, "whyNow")} />
+        <WhyNow p={sceneP(p, "whyNow")} lead={lead} />
         <Seed p={sceneP(p, "seed")} />
         <Plans p={sceneP(p, "plans")} />
         <Included p={sceneP(p, "included")} />
