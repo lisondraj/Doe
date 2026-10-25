@@ -6043,3 +6043,17 @@ html:has(.earlypreview-page) {
 .earlypreview-page .earlypreview-gallery__tile--plain {
   background: var(--doehealth-desk2-surface);
 }
+
+/*
+ * The frame boxes (hospitals, dentists, derm, concierge) show their still image and the play button straight away, then
+ * the film's frame fades in over the still once it has decoded. Before, the box was blank until the frame landed, which on
+ * the iPhone could take a moment. Playing takes the still away as before.
+ */
+.doehealth-desk2-page .earlypreview-gallery__tile--plain:not(.is-playing) img {
+  opacity: 1 !important;
+}
+
+.doehealth-desk2-page .earlypreview-gallery__tile--plain:not(.is-playing) .desk2-workspace__play {
+  opacity: 1 !important;
+  z-index: 2;
+}
