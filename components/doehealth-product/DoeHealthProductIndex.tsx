@@ -5,7 +5,8 @@
  * status. Rows open in place (Providers-style) to show detail, and jump to their tab.
  */
 import { Fragment, type ReactNode, useEffect, useRef, useState } from "react";
-import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
+import { SlowDotWave } from "@/components/doehealth-product/DoeHealthProductHalftone";
+import { SHOW_LEGACY_PROVIDERS } from "@/components/doehealth-product/DoeHealthProductProviders";
 import { useLocations } from "@/components/doehealth-product/DoeHealthProductLocations";
 type IndexTab = "schedule" | "interface" | "services" | "providers" | "locations" | "transit" | "payments" | "permissions";
 type SectionId = "needs" | Exclude<IndexTab, "permissions"> | "agents" | "messages" | "systems";
@@ -211,7 +212,7 @@ const WELL = "#F7F2E6";
 
 /** Agent hand-offs waiting on Dr. Brooks. Each one is something an agent could not finish on its own. */
 const NEEDS = [
-  { id: "leo", who: "Leo Jacobs", time: "11:08", what: "Staring spells are back. EEG order drafted", from: "Mom’s Call", action: "Review", tone: "#F7DCCB" },
+  { id: "leo", who: "James Lisondra", time: "9:30", what: "Worsening Headache, booked with Dr. Brooks", from: "Muse", action: "Review", tone: "#F7DCCB" },
   { id: "grace", who: "Grace Kim", time: "10:42", what: "Pickup moves to CVS Beacon St", from: "Pharmacy Change Request", action: "Approve", tone: "#DCE5D0" },
   { id: "lily", who: "Lily’s mom", time: "1:48", what: "Wants Dr. Patel. Nothing open before Thu", from: "About EEG Visit", action: "Pick slot", tone: "#FCCFB8" },
   { id: "henry", who: "Henry Walsh", time: "9:30", what: "MRI results held until the $40 copay is paid", from: "Billing", action: "Release", tone: "#E9DCC7" },
@@ -487,8 +488,8 @@ function ScheduleDetail() {
         <span className="flex items-center gap-[10px]">
           <span className="w-[36px] h-[36px] shrink-0 rounded-full" style={{ backgroundColor: "#FCCFB8" }} />
           <span className="flex flex-col min-w-[0px]">
-            <span className={`text-[20px] leading-[24px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>Maya Chen</span>
-            <span className={MUTED}>Migraine Follow-up</span>
+            <span className={`text-[20px] leading-[24px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>James Lisondra</span>
+            <span className={MUTED}>Booked</span>
           </span>
         </span>
         <span className="grid grid-cols-2 gap-[6px]">
@@ -514,6 +515,7 @@ function ScheduleDetail() {
 
 /** Calls on the line first, then recent ones. */
 const CALLS = [
+  { name: "James Lisondra", about: "Booking appt", time: "Now", live: true },
   { name: "Hannah Lee", about: "Moving Friday’s visit", time: "2:14", live: true },
   { name: "Marcus Webb", about: "Gabapentin dose question", time: "0:48", live: true },
   { name: "Mia Jacobs", about: "Leo’s staring spells again", time: "11:08", live: false },
@@ -572,7 +574,7 @@ function CallCarousel() {
             <span className={`truncate ${MUTED}`}>{c.about}</span>
           </span>
           <Pill primary={c.live} className="w-full">
-            {c.live ? "Take over" : "Listen"}
+            {c.live ? "See Details" : "Listen"}
           </Pill>
         </Card>
       ))}
@@ -1001,19 +1003,20 @@ function BookingNotice() {
   return (
     <div className="absolute top-[28px] right-[28px] z-[2] flex flex-col w-[360px] rounded-[24px] bg-paper border border-solid border-[#2819100F] shadow-[0_18px_48px_-24px_#140C0459] overflow-hidden">
       <div className="flex items-center gap-[12px] px-[18px] pt-[18px]">
+        <Avatar initials="" size={40} tone="#F3E7C9" />
         <span className="flex flex-col grow min-w-[0px]">
           <span className={`truncate ${TITLE}`}>James Lisondra</span>
           <span className={`truncate ${MUTED}`}>Connected through Muse</span>
         </span>
-        {confirmed ? <Chip dot={GREEN} tone="#E3E9D9">Booked</Chip> : <Chip dot={ACCENT}>Booking</Chip>}
+        {confirmed && <Chip dot={GREEN} tone="#E3E9D9">Booked</Chip>}
       </div>
 
       <div className="mx-[18px] mt-[14px] flex items-center justify-between gap-[10px] px-[14px] py-[12px] rounded-[16px]" style={{ backgroundColor: WELL }}>
-        <span className="flex flex-col min-w-[0px]">
-          <span className={`truncate text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>Worsening Headache</span>
-          <span className={`truncate ${MUTED}`}>Dr. Brooks</span>
-        </span>
+        <span className={`truncate text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>Worsening Headache</span>
         <span className={`shrink-0 text-[18px] leading-[22px] ${DISPLAY} text-walnut`}>9:30 am</span>
+      </div>
+      <div className="mx-[18px] mt-[8px] flex items-center px-[14px] py-[10px] rounded-[16px] border border-solid border-[#2819101F]">
+        <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>Dr. Brooks</span>
       </div>
 
       <div className="flex flex-col px-[18px] pt-[14px]">
@@ -1128,8 +1131,8 @@ export function DoeHealthProductIndex({
 
   return (
     <>
-      <div className="absolute top-[-28px] right-[-28px] bottom-[-28px] w-[420px] z-0 pointer-events-none [&_canvas]:absolute [&_canvas]:inset-0 [&_canvas]:h-full [&_canvas]:w-full">
-        <DoeHealthBlogDotWave color="rgba(196, 172, 128, 0.32)" top={0.08} amp={46} fade={0.12} scale={1.08} slant={0.22} />
+      <div className="absolute top-[-28px] right-[-28px] bottom-[-28px] w-[640px] z-0 pointer-events-none [&_canvas]:absolute [&_canvas]:inset-0 [&_canvas]:h-full [&_canvas]:w-full">
+        <SlowDotWave width={640} height={1000} top={0.05} amp={50} vertical fade={0.45} color="#C2A987" style={{ opacity: 0.55 }} />
         <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(90deg, var(--color-paper) 0%, transparent 42%)" }} />
       </div>
       <BookingNotice />
@@ -1155,7 +1158,7 @@ export function DoeHealthProductIndex({
         }}
       >
         <div ref={innerRef} className="flex flex-col gap-[8px] pb-[40px]">
-        {SECTIONS.map((section) => {
+        {SECTIONS.filter((section) => SHOW_LEGACY_PROVIDERS || section.id !== "providers").map((section) => {
           const expanded = open === section.id;
           const summary = section.id === "needs" ? needsSummary : section.id === "locations" ? locationsSummary : section.summary;
           return (

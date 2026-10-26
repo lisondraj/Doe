@@ -1,10 +1,10 @@
 "use client";
 
 /**
- * Locations tab — the group's sites and who works at each. The list on the left holds the group overview (pinned at
- * the top) and every location; the panel on the right edits the selected one (address, hours, status, which
- * providers work there on which days and how agents may book them, and the services offered there) or, for the
- * group, shows a who-works-where grid where a click adds or removes a provider at a site.
+ * Locations tab — the group's sites and who works at each. The list on the left holds every location with its
+ * providers underneath; the panel on the right edits the selected location (address, hours, status, which providers
+ * work there on which days and how agents may book them, and the services offered there), the selected provider's
+ * settings at that location, or, for the group, a who-works-where grid where a click adds or removes a provider.
  *
  * The locations live in a shared store, so the clinic switcher in the rail, Team and Agent Access all see the same
  * list, and can add a location from where they show one.
@@ -17,7 +17,13 @@ const SANS = "font-['DM_Sans',system-ui,sans-serif]";
 export type AgentMode = "bookable" | "request" | "hidden";
 type Status = "open" | "opening" | "paused";
 
-export type LocationProvider = { id: string; days: string[]; agents: AgentMode };
+export type LocationProvider = {
+  id: string;
+  days: string[];
+  agents: AgentMode;
+  /** Services this provider sees here; unset means every service the location offers. */
+  services?: string[];
+};
 
 export type Location = {
   id: string;
@@ -504,6 +510,92 @@ function LocationPanel({ l }: { l: Location }) {
   );
 }
 
+/** One provider's settings at one location: days, how agents book them, what they see here, and where else they work. */
+function ProviderPanel({ l, lp, onBack }: { l: Location; lp: LocationProvider; onBack: () => void }) {
+  const { update, locations } = useLocations();
+  const g = providerOf(lp.id);
+  const services = lp.services ?? l.services;
+  const editHere = (patch: Partial<LocationProvider>) => update(l.id, { providers: l.providers.map((x) => (x.id === lp.id ? { ...x, ...patch } : x)) });
+  const sites = locations.filter((x) => x.providers.some((y) => y.id === lp.id));
+  const flip = (x: Location) =>
+    update(x.id, { providers: x.providers.some((y) => y.id === lp.id) ? x.providers.filter((y) => y.id !== lp.id) : [...x.providers, p(lp.id, ["Mon"], "request")] });
+
+  return (
+    <>
+      <div className="flex items-center justify-between gap-[16px]">
+        <span className="flex items-center gap-[14px] grow min-w-[0px]">
+          <Mark tone={l.tone} size={52}>
+            {initials(g.name)}
+          </Mark>
+          <span className="flex flex-col grow min-w-[0px]">
+            <span className={`truncate text-[32px] leading-[38px] tracking-[-0.02em] ${DISPLAY} text-walnut`}>{g.name}</span>
+            <span className={`truncate text-[14px] leading-[18px] ${SANS} text-sub`}>
+              {g.role} · at {l.short || l.name}
+            </span>
+          </span>
+        </span>
+        <span className="flex items-center gap-[8px] shrink-0">
+          <button type="button" className={btnGrey} onClick={onBack}>
+            Back to {l.short || "location"}
+          </button>
+          <button
+            type="button"
+            className={btnGrey}
+            onClick={() => {
+              update(l.id, { providers: l.providers.filter((x) => x.id !== lp.id) });
+              onBack();
+            }}
+          >
+            Remove here
+          </button>
+        </span>
+      </div>
+
+      <Tiles
+        items={[
+          ["Days here", String(lp.days.length)],
+          ["Locations", String(sites.length)],
+          ["Agents", MODES.find((m) => m.id === lp.agents)!.label],
+        ]}
+      />
+
+      <div className="flex flex-col grow min-h-[0px] gap-[6px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <Row label="Days here">
+          <span className="flex flex-wrap gap-[6px]">
+            {DAYS.map((d) => (
+              <Chip key={d} on={lp.days.includes(d)} onClick={() => editHere({ days: toggle(lp.days, d) })}>
+                {d}
+              </Chip>
+            ))}
+          </span>
+        </Row>
+        <Row label="Agents can">
+          <Segmented value={lp.agents} options={MODES} onChange={(v) => editHere({ agents: v })} />
+        </Row>
+        <Row label="Sees here" top>
+          <span className="flex flex-wrap gap-[6px]">
+            {l.services.map((sv) => (
+              <Chip key={sv} on={services.includes(sv)} onClick={() => editHere({ services: toggle(services, sv) })}>
+                {sv}
+              </Chip>
+            ))}
+            {l.services.length === 0 && <span className={`py-[7px] text-[14px] leading-[20px] ${SANS} text-sub`}>This location offers no services yet.</span>}
+          </span>
+        </Row>
+        <Row label="Works at" top>
+          <span className="flex flex-wrap gap-[6px]">
+            {locations.map((x) => (
+              <Chip key={x.id} on={x.providers.some((y) => y.id === lp.id)} onClick={() => x.id !== l.id && flip(x)}>
+                {x.short || x.name}
+              </Chip>
+            ))}
+          </span>
+        </Row>
+      </div>
+    </>
+  );
+}
+
 /** Who works where: providers down the side, locations across, days per week in each cell. */
 function GroupPanel() {
   const { locations, update, select } = useLocations();
@@ -569,76 +661,140 @@ function GroupPanel() {
   );
 }
 
+const VIEW_OPTIONS = [
+  { id: "group", label: "Group" },
+  { id: "sites", label: "Locations" },
+] as const;
+
 export function DoeHealthProductLocationsPage() {
   const { locations, selected, select, add } = useLocations();
+  const [providerId, setProviderId] = useState<string | null>(null);
   const current = locations.find((l) => l.id === selected);
-  const providerCount = new Set(locations.flatMap((l) => l.providers.map((x) => x.id))).size;
+  const currentProvider = current?.providers.find((x) => x.id === providerId);
+  const open = (id: string, provider: string | null = null) => {
+    select(id);
+    setProviderId(provider);
+  };
+  const addLocation = () => {
+    add();
+    setProviderId(null);
+  };
 
   return (
     <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[20px] pt-[36px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
       <div className="relative flex items-end justify-between">
         <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>Locations</span>
-        <button type="button" onClick={add} className={`flex items-center h-[40px] px-[18px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`}>
-          Add location
-        </button>
+        <div className="flex items-center gap-[8px]">
+          <button type="button" className={`flex items-center gap-[6px] ${btnGrey}`}>
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+              <circle cx="12" cy="12" r="3" fill="none" stroke="#281910" strokeWidth="1.8" />
+              <path
+                d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"
+                fill="none"
+                stroke="#281910"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Manage
+          </button>
+          <button type="button" onClick={addLocation} className={`flex items-center gap-[6px] h-[40px] pr-[18px] pl-[14px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`}>
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style={{ display: "block" }}>
+              <path d="M7 2.5v9M2.5 7h9" fill="none" stroke="#FFFCF1" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+            Add Location
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-[360px_1fr] gap-[16px] grow min-h-[0px]">
-        <div className="flex flex-col min-h-[0px] gap-[12px]">
-          <button
-            type="button"
-            onClick={() => select("group")}
-            className={`flex items-center gap-[12px] h-[60px] shrink-0 px-[14px] rounded-[18px] bg-[#F4EEDF] text-left outline outline-[1.5px] -outline-offset-[1.5px] transition-[outline-color] duration-150 ${selected === "group" ? "outline-ink" : "outline-transparent hover:outline-[#28191026]"}`}
-          >
-            <span className="w-[36px] h-[36px] shrink-0 flex items-center justify-center rounded-[999px] bg-ink">
-              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
-                <path d="M4 20V9l8-5 8 5v11M9 20v-6h6v6" fill="none" stroke="#FFFCF1" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-            <span className="flex flex-col grow min-w-[0px]">
-              <span className={`text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`}>Group overview</span>
-              <span className={`text-[12px] leading-[16px] ${SANS} text-sub`}>
-                {locations.length} locations · {providerCount} providers
-              </span>
-            </span>
-          </button>
-
-          <div className="flex flex-col grow min-h-[0px] gap-[4px] p-[8px] rounded-[18px] bg-[#F4EEDF] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {locations.map((l) => (
-              <button
-                key={l.id}
-                type="button"
-                onClick={() => select(l.id)}
-                className={`flex items-center gap-[12px] min-h-[72px] shrink-0 px-[12px] py-[10px] rounded-[12px] bg-paper text-left outline outline-[1.5px] -outline-offset-[1.5px] transition-[outline-color] duration-150 ${selected === l.id ? "outline-ink" : "outline-transparent hover:outline-[#28191026]"} ${l.status === "paused" ? "opacity-70" : ""}`}
-              >
-                <Mark tone={l.tone} size={40}>
-                  <span className="w-[10px] h-[10px] rounded-[999px]" style={{ backgroundColor: l.dot }} />
-                </Mark>
-                <span className="flex flex-col grow min-w-[0px] gap-[2px]">
-                  <span className={`truncate text-[15px] leading-[20px] ${SANS} font-[500] text-ink`}>{l.name || "Untitled location"}</span>
-                  <span className={`truncate text-[12px] leading-[16px] ${SANS} text-sub`}>
-                    {l.city || "No address yet"} · {l.providers.length} {l.providers.length === 1 ? "provider" : "providers"}
-                  </span>
-                  <span className="flex items-center pt-[2px]">
-                    {l.providers.slice(0, 5).map((lp, i) => (
-                      <span
-                        key={lp.id}
-                        title={providerOf(lp.id).name}
-                        className={`w-[22px] h-[22px] flex items-center justify-center rounded-[999px] border-2 border-solid border-paper text-[9px] leading-[10px] ${SANS} font-[700] text-walnut ${i ? "-ml-[6px]" : ""}`}
-                        style={{ backgroundColor: l.tone }}
-                      >
-                        {initials(providerOf(lp.id).name)}
-                      </span>
-                    ))}
-                  </span>
-                </span>
-                {l.status !== "open" && <Pill status={l.status} note={l.note} />}
-              </button>
-            ))}
-          </div>
+      <div className="flex flex-col gap-[20px] grow min-h-[0px]">
+        <div className="w-[360px] shrink-0 [&>span]:w-full [&_button]:grow">
+          <Segmented
+            value={selected === "group" ? "group" : "sites"}
+            options={VIEW_OPTIONS}
+            onChange={(v) => {
+              if (v === "group") open("group");
+              else if (selected === "group") open(locations[0]?.id ?? "group");
+            }}
+          />
         </div>
 
-        <div className="flex flex-col min-w-[0px] min-h-[0px] gap-[16px] p-[24px] rounded-[28px] bg-[#FAF6EC]">{current ? <LocationPanel key={current.id} l={current} /> : <GroupPanel />}</div>
+        <div className="grid grid-cols-[360px_1fr] gap-[16px] grow min-h-[0px]">
+          <div className="flex flex-col min-h-[0px] gap-[4px] p-[8px] rounded-[18px] bg-[#F4EEDF] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {locations.map((l) => {
+              const on = selected === l.id && !currentProvider;
+              return (
+                <div key={l.id} className={`flex flex-col shrink-0 p-[6px] rounded-[14px] bg-paper ${l.status === "paused" ? "opacity-70" : ""}`}>
+                  <div className={`flex items-center gap-[10px] pr-[6px] rounded-[10px] outline outline-[1.5px] -outline-offset-[1.5px] transition-[outline-color] duration-150 ${on ? "outline-ink" : "outline-transparent hover:outline-[#28191026]"}`}>
+                    <button type="button" onClick={() => open(l.id)} className="flex items-center gap-[12px] grow min-w-[0px] p-[6px] text-left">
+                      <Mark tone={l.tone} size={36} />
+                      <span className="flex flex-col grow min-w-[0px]">
+                        <span className={`truncate text-[15px] leading-[20px] ${SANS} font-[600] text-ink`}>{l.name || "Untitled location"}</span>
+                        <span className={`truncate text-[12px] leading-[16px] ${SANS} text-sub`}>{l.city || "No address yet"}</span>
+                      </span>
+                    </button>
+                    {l.status !== "open" && <Pill status={l.status} note={l.note} />}
+                    <button
+                      type="button"
+                      aria-label={`Edit ${l.name || "location"}`}
+                      onClick={() => open(l.id)}
+                      className="w-[30px] h-[30px] shrink-0 flex items-center justify-center rounded-[999px] hover:bg-[#28191014] transition-colors duration-150"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+                        <path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="#281910" strokeWidth="2" strokeLinejoin="round" />
+                        <path d="M13.5 6.5l4 4" fill="none" stroke="#281910" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  </div>
+                  {l.providers.length > 0 && (
+                    <div className="flex flex-col gap-[2px] mt-[4px] ml-[24px] pl-[10px] border-l-[1.5px] border-solid border-[#2819101A]">
+                      {l.providers.map((lp) => {
+                        const g = providerOf(lp.id);
+                        const picked = selected === l.id && providerId === lp.id;
+                        return (
+                          <button
+                            key={lp.id}
+                            type="button"
+                            onClick={() => open(l.id, lp.id)}
+                            className={`flex items-center gap-[10px] h-[40px] shrink-0 px-[8px] rounded-[10px] text-left transition-colors duration-150 ${picked ? "bg-[#F4EEDF]" : "hover:bg-[#FAF6EC]"}`}
+                          >
+                            <span className={`w-[26px] h-[26px] shrink-0 flex items-center justify-center rounded-[999px] text-[10px] leading-[10px] ${SANS} font-[700] text-walnut`} style={{ backgroundColor: l.tone }}>
+                              {initials(g.name)}
+                            </span>
+                            <span className={`truncate grow min-w-[0px] text-[13px] leading-[18px] ${SANS} font-[500] text-walnut`}>{g.name}</span>
+                            <span className={`shrink-0 text-[12px] leading-[16px] ${SANS} text-sub`}>
+                              {lp.days.length} {lp.days.length === 1 ? "day" : "days"}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            <button
+              type="button"
+              onClick={addLocation}
+              className={`flex items-center justify-center gap-[8px] h-[56px] shrink-0 rounded-[14px] border-[1.5px] border-dashed border-[#28191033] hover:bg-[#EEE6D6] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+                <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+              </svg>
+              Add location
+            </button>
+          </div>
+
+          <div className="flex flex-col min-w-[0px] min-h-[0px] gap-[16px] p-[24px] rounded-[28px] bg-[#FAF6EC]">
+            {current && currentProvider ? (
+              <ProviderPanel key={`${current.id}-${currentProvider.id}`} l={current} lp={currentProvider} onBack={() => setProviderId(null)} />
+            ) : current ? (
+              <LocationPanel key={current.id} l={current} />
+            ) : (
+              <GroupPanel />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

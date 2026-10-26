@@ -11,79 +11,18 @@
  * Rendered as a shell-level layer (the root fills the inner shell), so it replaces the
  * integrations content panel while the Services tab is active.
  */
-import { type CSSProperties, type ReactNode, useState } from "react";
+import { type CSSProperties, useState } from "react";
+import { OfferPill, useOffers } from "@/components/doehealth-product/DoeHealthProductOffers";
 
 /** Gap between cards, and between the grid and the detail panel. */
 const GAP = 12;
 /** Shared timing for the grid reflow and the panel slide, so they move together. */
-const MOVE_MS = 320;
-const EASE = "cubic-bezier(0.2, 0.7, 0.2, 1)";
+const MOVE_MS = 420;
+const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 /** Width of the detail panel, including the gutter it sits behind. */
 const PANEL_OPEN_WIDTH = 432;
 
-const line = { fill: "none", stroke: "#281910", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 const svgBase = { display: "inline-block", flexShrink: "0" } as const;
-
-function Glyph({ children }: { children: ReactNode }) {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={svgBase}>
-      {children}
-    </svg>
-  );
-}
-
-const ICON = {
-  person: (
-    <Glyph>
-      <circle cx="12" cy="8.5" r="3.5" {...line} />
-      <path d="M5 19c1.2-3.5 4-5 7-5s5.8 1.5 7 5" {...line} />
-    </Glyph>
-  ),
-  bolt: (
-    <Glyph>
-      <path d="M13 3.5L5.5 13H12l-1 7.5L18.5 11H12z" {...line} />
-    </Glyph>
-  ),
-  brain: (
-    <Glyph>
-      <path d="M11 5.5a3 3 0 0 0-5 2.2 3 3 0 0 0-1 5.3 3.2 3.2 0 0 0 3.5 4.5A2.5 2.5 0 0 0 11 19z" {...line} />
-      <path d="M13 5.5a3 3 0 0 1 5 2.2 3 3 0 0 1 1 5.3 3.2 3.2 0 0 1-3.5 4.5A2.5 2.5 0 0 1 13 19z" {...line} />
-    </Glyph>
-  ),
-  bars: (
-    <Glyph>
-      <path d="M4 12h1.5M8 8.5v7M12 5v14M16 8.5v7M20 12h-1.5" {...line} />
-    </Glyph>
-  ),
-  plus: (
-    <Glyph>
-      <rect x="5" y="5" width="14" height="14" rx="4" {...line} />
-      <path d="M12 9v6M9 12h6" {...line} />
-    </Glyph>
-  ),
-  drop: (
-    <Glyph>
-      <path d="M12 4.5c2.8 3.5 4.5 6 4.5 8.5a4.5 4.5 0 0 1-9 0c0-2.5 1.7-5 4.5-8.5z" {...line} />
-    </Glyph>
-  ),
-  wave: (
-    <Glyph>
-      <path d="M4 15c2-2 4-2 6 0s4 2 6 0 3-1.5 4-1" {...line} />
-      <circle cx="12" cy="8" r="2.6" {...line} />
-    </Glyph>
-  ),
-  dot: (
-    <Glyph>
-      <circle cx="12" cy="12" r="6.5" {...line} />
-      <circle cx="12" cy="12" r="2" fill="#281910" />
-    </Glyph>
-  ),
-  moon: (
-    <Glyph>
-      <path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z" {...line} />
-    </Glyph>
-  ),
-};
 
 type ChipTone = "tint" | "outline" | "today" | "salmon" | "dark";
 type Chip = { label: string; tone: ChipTone; calendar?: boolean; eyeOff?: boolean };
@@ -92,12 +31,11 @@ type Service = {
   id: string;
   name: string;
   price: string;
-  icon: ReactNode;
+  /** Light Doe colour for the card's circle. */
+  tone: string;
   chips: Chip[];
   /** Quieter card, used for services hidden from agents. */
   muted?: boolean;
-  /** Card with a soft shadow, used for the featured service. */
-  featured?: boolean;
   self: string;
   insurance: string;
   length: string;
@@ -113,7 +51,7 @@ const SERVICES: Service[] = [
     id: "new-patient",
     name: "New patient consult",
     price: "$325",
-    icon: ICON.person,
+    tone: "#F7DCCB",
     chips: [
       { label: "Referral", tone: "outline" },
       { label: "Tue", tone: "tint", calendar: true },
@@ -128,9 +66,8 @@ const SERVICES: Service[] = [
     id: "migraine-follow-up",
     name: "Migraine follow-up",
     price: "$185",
-    icon: ICON.bolt,
+    tone: "#DCE5D0",
     chips: [{ label: "Tue", tone: "tint", calendar: true }],
-    featured: true,
     self: "$185",
     insurance: "14 plans",
     length: "30 min",
@@ -141,7 +78,7 @@ const SERVICES: Service[] = [
     id: "routine-eeg",
     name: "Routine EEG",
     price: "$450",
-    icon: ICON.bars,
+    tone: "#F3E7C9",
     chips: [
       { label: "Referral", tone: "outline" },
       { label: "Oct 21", tone: "tint", calendar: true },
@@ -156,7 +93,7 @@ const SERVICES: Service[] = [
     id: "emg",
     name: "EMG and nerve study",
     price: "$620",
-    icon: ICON.dot,
+    tone: "#DCE6F5",
     chips: [{ label: "Today", tone: "today", calendar: true }],
     self: "$620",
     insurance: "18 plans",
@@ -168,22 +105,22 @@ const SERVICES: Service[] = [
     id: "botox",
     name: "Botox for chronic migraine",
     price: "$1,850",
-    icon: ICON.plus,
+    tone: "#FCCFB8",
     chips: [
-      { label: "Prior auth", tone: "salmon" },
+      { label: "Self-pay only", tone: "dark" },
       { label: "Request only", tone: "outline" },
     ],
     self: "$1,850",
-    insurance: "Prior auth",
+    insurance: "None",
     length: "30 min",
     referral: 2,
-    plans: ["BlueChoice", "Tricare"],
+    plans: [],
   },
   {
     id: "memory",
     name: "Memory screening",
     price: "$395",
-    icon: ICON.brain,
+    tone: "#E9DCC7",
     chips: [
       { label: "Self-pay only", tone: "dark" },
       { label: "Wed", tone: "tint", calendar: true },
@@ -198,7 +135,7 @@ const SERVICES: Service[] = [
     id: "seizure-follow-up",
     name: "Seizure follow-up",
     price: "$185",
-    icon: ICON.bolt,
+    tone: "#F7DCCB",
     chips: [{ label: "Today", tone: "today", calendar: true }],
     self: "$185",
     insurance: "14 plans",
@@ -210,7 +147,7 @@ const SERVICES: Service[] = [
     id: "return-to-play",
     name: "Return-to-play note",
     price: "$75",
-    icon: ICON.wave,
+    tone: "#DCE5D0",
     chips: [{ label: "Self-pay only", tone: "dark" }],
     self: "$75",
     insurance: "None",
@@ -222,7 +159,7 @@ const SERVICES: Service[] = [
     id: "ms-infusion",
     name: "MS infusion",
     price: "$1,800",
-    icon: ICON.drop,
+    tone: "#F3E7C9",
     chips: [{ label: "Hidden from agents", tone: "dark", eyeOff: true }],
     muted: true,
     self: "$1,800",
@@ -235,7 +172,7 @@ const SERVICES: Service[] = [
     id: "nerve-block",
     name: "Occipital nerve block",
     price: "$240",
-    icon: ICON.drop,
+    tone: "#DCE6F5",
     chips: [{ label: "Today", tone: "today", calendar: true }],
     self: "$240",
     insurance: "14 plans",
@@ -247,7 +184,7 @@ const SERVICES: Service[] = [
     id: "ambulatory-eeg",
     name: "48-hour EEG",
     price: "$980",
-    icon: ICON.bars,
+    tone: "#FCCFB8",
     chips: [
       { label: "Referral", tone: "outline" },
       { label: "Oct 21", tone: "tint", calendar: true },
@@ -262,7 +199,7 @@ const SERVICES: Service[] = [
     id: "sleep",
     name: "Sleep consult",
     price: "$250",
-    icon: ICON.moon,
+    tone: "#E9DCC7",
     chips: [{ label: "Wed", tone: "tint", calendar: true }],
     self: "$250",
     insurance: "18 plans",
@@ -285,6 +222,7 @@ function cellStyle(index: number, cols: number, rows: number): CSSProperties {
     width: `calc(${w})`,
     height: `calc(${h})`,
     transition: `left ${move}, top ${move}, width ${move}, height ${move}, box-shadow 200ms ease`,
+    willChange: "left, top, width, height",
   };
 }
 
@@ -316,12 +254,8 @@ function ServiceCard({
   style: CSSProperties;
   onToggle: () => void;
 }) {
-  const surface = s.muted
-    ? "bg-sand border border-solid border-[#2819101A]"
-    : s.featured
-      ? "[background-color:#FFFCF1] [box-shadow:#2819101A_0px_6px_16px]"
-      : "[background-color:var(--color-paper)] border border-solid border-[#2819101A]";
-  const ring = selected ? "[box-shadow:#281910_0px_0px_0px_1.5px_inset,#2819101A_0px_6px_16px]" : "";
+  const surface = s.muted ? "bg-sand border border-solid border-[#2819101A]" : "[background-color:var(--color-paper)] border border-solid border-[#2819101A]";
+  const ring = selected ? "[box-shadow:#281910_0px_0px_0px_1.5px_inset]" : "";
 
   return (
     <div
@@ -339,7 +273,7 @@ function ServiceCard({
       style={style}
     >
       <div className="flex items-center justify-between">
-        <div className="w-[36px] h-[36px] flex items-center justify-center rounded-doe shrink-0 bg-sand">{s.icon}</div>
+        <div className="w-[36px] h-[36px] rounded-[50%] shrink-0" style={{ backgroundColor: s.tone }} />
         <div
           className={`w-[34px] h-gutter flex items-center p-[2px] rounded-[999px] shrink-0 ${selected ? "justify-end bg-walnut" : "justify-start bg-[#28191029]"}`}
         >
@@ -396,6 +330,42 @@ function Field({ label, value, chevron, muted }: { label: string; value: string;
   );
 }
 
+/** Offers that include this service: each can be published or ended here, and a new one starts as a draft. */
+function ServiceOffers({ service: s }: { service: Service }) {
+  const { offers, update, add } = useOffers();
+  const mine = offers.filter((o) => o.services.includes(s.name));
+  return (
+    <div className="flex flex-col gap-[6px]">
+      <div className="text-[12px] leading-[16px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#2819109E]">Offers</div>
+      {mine.map((o) => (
+        <div key={o.id} className="flex items-center gap-[10px] h-[44px] pl-[12px] pr-[6px] rounded-[10px] shrink-0 bg-sand">
+          <div className="shrink-0 text-[16px] leading-[20px] tracking-[-0.01em] font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500] text-walnut">{o.value || "—"}</div>
+          <div className="grow min-w-[0px] truncate text-[13px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">{o.title || "Untitled offer"}</div>
+          <OfferPill status={o.status} />
+          <button
+            type="button"
+            onClick={() => update(o.id, { status: o.status === "live" ? "ended" : "live" })}
+            className={`h-[30px] shrink-0 px-[12px] rounded-[8px] text-[12px] leading-[16px] font-['DM_Sans',system-ui,sans-serif] font-[500] transition-colors duration-150 ${
+              o.status === "live" ? "[background-color:#FFFCF1] text-walnut" : "bg-ink [color:#FFFCF1]"
+            }`}
+          >
+            {o.status === "live" ? "End" : o.status === "ended" ? "Run again" : "Publish"}
+          </button>
+        </div>
+      ))}
+      <div className="flex pt-[2px]">
+        <button
+          type="button"
+          onClick={() => add([s.name], `${s.name} offer`)}
+          className="flex items-center h-[26px] px-[10px] rounded-[999px] border border-dashed border-[#28191040] text-[12px] leading-[16px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-[#2819109E]"
+        >
+          Add offer
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function ServiceDetail({ service: s, onRemove }: { service: Service; onRemove: () => void }) {
   return (
     <div className="flex flex-col shrink-0 p-[18px] rounded-[18px] gap-[14px] [background-color:#FFFCF1]">
@@ -440,12 +410,14 @@ function ServiceDetail({ service: s, onRemove }: { service: Service; onRemove: (
           </div>
         </div>
       </div>
+      <ServiceOffers service={s} />
     </div>
   );
 }
 
 export function DoeHealthProductServicesPage() {
   const [picked, setPicked] = useState<Set<string>>(() => new Set());
+  const [scrolled, setScrolled] = useState(false);
   const selected = SERVICES.filter((s) => picked.has(s.id));
   const count = selected.length;
   const cols = count > 0 ? 3 : 4;
@@ -469,6 +441,24 @@ export function DoeHealthProductServicesPage() {
             </div>
           </div>
           <div className="flex items-center gap-[8px]">
+            <div className="w-[80px] h-[38px] flex items-center shrink-0 p-[3px] rounded-[999px] gap-[2px] bg-[#EEEADF]">
+              <div className="w-[34px] h-[32px] flex items-center justify-center rounded-[999px] shrink-0 [box-shadow:#2819101F_0px_1px_2px] [background-color:#FFFCF1]">
+                <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={svgBase}>
+                  <rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1.2" fill="none" stroke="#281910" strokeWidth="1.5" />
+                  <rect x="9" y="2.5" width="4.5" height="4.5" rx="1.2" fill="none" stroke="#281910" strokeWidth="1.5" />
+                  <rect x="2.5" y="9" width="4.5" height="4.5" rx="1.2" fill="none" stroke="#281910" strokeWidth="1.5" />
+                  <rect x="9" y="9" width="4.5" height="4.5" rx="1.2" fill="none" stroke="#281910" strokeWidth="1.5" />
+                </svg>
+              </div>
+              <div className="w-[34px] h-[32px] flex items-center justify-center rounded-[999px] shrink-0">
+                <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={svgBase}>
+                  <path d="M6 4h8M6 8h8M6 12h8" fill="none" stroke="#281910" strokeWidth="1.5" strokeLinecap="round" />
+                  <circle cx="3" cy="4" r="1" fill="#281910" />
+                  <circle cx="3" cy="8" r="1" fill="#281910" />
+                  <circle cx="3" cy="12" r="1" fill="#281910" />
+                </svg>
+              </div>
+            </div>
             <div className="w-[38px] h-[38px] flex items-center justify-center rounded-[50%] shrink-0 bg-[#EEEADF]">
               <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={svgBase}>
                 <circle cx="11" cy="11" r="6.5" fill="none" stroke="#281910" strokeWidth="2" />
@@ -482,27 +472,9 @@ export function DoeHealthProductServicesPage() {
               <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] [color:var(--color-paper)]">Add service</div>
             </div>
           </div>
-          <div className="absolute left-[591px] top-[6px] w-[80px] h-[38px] flex items-center p-[3px] rounded-[999px] gap-[2px] bg-[#EEEADF]">
-            <div className="w-[34px] h-[32px] flex items-center justify-center rounded-[999px] shrink-0 [box-shadow:#2819101F_0px_1px_2px] [background-color:#FFFCF1]">
-              <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={svgBase}>
-                <rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1.2" fill="none" stroke="#281910" strokeWidth="1.5" />
-                <rect x="9" y="2.5" width="4.5" height="4.5" rx="1.2" fill="none" stroke="#281910" strokeWidth="1.5" />
-                <rect x="2.5" y="9" width="4.5" height="4.5" rx="1.2" fill="none" stroke="#281910" strokeWidth="1.5" />
-                <rect x="9" y="9" width="4.5" height="4.5" rx="1.2" fill="none" stroke="#281910" strokeWidth="1.5" />
-              </svg>
-            </div>
-            <div className="w-[34px] h-[32px] flex items-center justify-center rounded-[999px] shrink-0">
-              <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={svgBase}>
-                <path d="M6 4h8M6 8h8M6 12h8" fill="none" stroke="#281910" strokeWidth="1.5" strokeLinecap="round" />
-                <circle cx="3" cy="4" r="1" fill="#281910" />
-                <circle cx="3" cy="8" r="1" fill="#281910" />
-                <circle cx="3" cy="12" r="1" fill="#281910" />
-              </svg>
-            </div>
-          </div>
         </div>
-        <div className="flex items-center justify-between [width:100%] h-[40px] shrink-0 rounded-[999px] gap-[8px] py-[4px]">
-          <div className="flex items-center h-[40px] gap-[2px] grow justify-between p-[4px] rounded-[999px] bg-sand">
+        <div className="flex items-center [width:100%] h-[40px] shrink-0 rounded-[999px] gap-[8px] py-[4px]">
+          <div className="flex items-center h-[40px] gap-[2px] shrink-0 p-[4px] rounded-[999px] bg-sand">
             <div className="flex items-baseline h-[30px] pt-[6px] rounded-[999px] gap-[6px] px-[14px] [box-shadow:#2819101A_0px_1px_2px] [background-color:#FFFCF1]">
               <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">All</div>
               <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-[#2819107A]">{SERVICES.length}</div>
@@ -532,7 +504,10 @@ export function DoeHealthProductServicesPage() {
             <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">Self-pay prices</div>
           </div>
         </div>
-        <div className="[width:100%] grow min-h-[0px] overflow-clip mt-[-10px] mb-[-10px] relative">
+        <div
+          className="[width:100%] grow min-h-[0px] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden mt-[-10px] mb-[-10px] relative"
+          onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 0)}
+        >
           {SERVICES.map((s, i) => (
             <ServiceCard
               key={s.id}
@@ -543,16 +518,16 @@ export function DoeHealthProductServicesPage() {
             />
           ))}
           <div
-            className="absolute top-[0px] left-[0px] right-[0px] h-[72px] pointer-events-none"
-            style={{ backgroundImage: 'linear-gradient(in oklab 180deg, oklab(99% -0.001 0.015) 0%, oklab(99% -0.001 0.015) 10%, oklab(99% -0.001 0.015 / 75.3%) 32%, oklab(99% -0.001 0.015 / 44%) 58%, oklab(99% -0.001 0.015 / 15.7%) 82%, oklab(99% -0.001 0.015 / 0%) 100%)' }}
+            className="absolute top-[0px] left-[0px] right-[0px] h-[72px] pointer-events-none transition-opacity duration-200"
+            style={{ backgroundImage: 'linear-gradient(in oklab 180deg, oklab(99% -0.001 0.015) 0%, oklab(99% -0.001 0.015) 10%, oklab(99% -0.001 0.015 / 75.3%) 32%, oklab(99% -0.001 0.015 / 44%) 58%, oklab(99% -0.001 0.015 / 15.7%) 82%, oklab(99% -0.001 0.015 / 0%) 100%)', opacity: scrolled ? 1 : 0 }}
           />
           <div
             className="absolute bottom-[0px] left-[0px] right-[0px] h-[72px] pointer-events-none"
             style={{ backgroundImage: 'linear-gradient(in oklab 0deg, oklab(99% -0.001 0.015) 0%, oklab(99% -0.001 0.015) 10%, oklab(99% -0.001 0.015 / 75.3%) 32%, oklab(99% -0.001 0.015 / 44%) 58%, oklab(99% -0.001 0.015 / 15.7%) 82%, oklab(99% -0.001 0.015 / 0%) 100%)' }}
           />
-          <div className="absolute top-[0px] left-[0px] right-[0px] h-[6px] pointer-events-none [background:radial-gradient(rgba(40,25,16,0.13)_0.9px,transparent_1.1px)_8px_14px/16px_16px,none_0%_0%_rgb(255,252,241)]" />
+          <div className={`absolute top-[0px] left-[0px] right-[0px] h-[6px] pointer-events-none transition-opacity duration-200 ${scrolled ? "opacity-100" : "opacity-0"} [background:radial-gradient(rgba(40,25,16,0.13)_0.9px,transparent_1.1px)_8px_14px/16px_16px,none_0%_0%_rgb(255,252,241)]`} />
           <div className="absolute left-[0px] right-[0px] h-[6px] pointer-events-none [background:radial-gradient(rgba(40,25,16,0.13)_0.9px,transparent_1.1px)_8px_0px/16px_16px,none_0%_0%_rgb(255,252,241)] bottom-[0px]" />
-          <div className="absolute top-[12px] left-[calc(50%-12px)] w-[24px] h-[24px] flex items-center justify-center pointer-events-none">
+          <div className={`absolute top-[12px] left-[calc(50%-12px)] w-[24px] h-[24px] flex items-center justify-center pointer-events-none transition-opacity duration-200 ${scrolled ? "opacity-100" : "opacity-0"}`}>
             <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={svgBase}>
               <path d="M3.5 10 8 5.5 12.5 10" fill="none" stroke="#281910" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

@@ -11,6 +11,7 @@ import "@/lib/doehealthproduct/doehealthproduct.css";
 import {
   DoeHealthProductProvidersHeader,
   DoeHealthProductProvidersLayers,
+  SHOW_LEGACY_PROVIDERS,
 } from "@/components/doehealth-product/DoeHealthProductProviders";
 import { DoeHealthProductServicesPage } from "@/components/doehealth-product/DoeHealthProductServices";
 import { DoeHealthProductInterfacePage } from "@/components/doehealth-product/DoeHealthProductInterface";
@@ -18,7 +19,7 @@ import { DoeHealthProductSchedulePage } from "@/components/doehealth-product/Doe
 import { DoeHealthProductPaymentsPage } from "@/components/doehealth-product/DoeHealthProductPayments";
 import { DoeHealthProductPermissionsPage } from "@/components/doehealth-product/DoeHealthProductPermissions";
 import { DoeHealthProductTransitPage } from "@/components/doehealth-product/DoeHealthProductTransit";
-import { DoeHealthProductOffersPage } from "@/components/doehealth-product/DoeHealthProductOffers";
+import { DoeHealthProductOffersPage, OffersProvider } from "@/components/doehealth-product/DoeHealthProductOffers";
 import { DoeHealthProductTeamPage } from "@/components/doehealth-product/DoeHealthProductTeam";
 import { DoeHealthProductFormsPage } from "@/components/doehealth-product/DoeHealthProductForms";
 import { DoeHealthProductInsightsPage } from "@/components/doehealth-product/DoeHealthProductInsights";
@@ -339,7 +340,9 @@ export function DoeHealthProductHome() {
 export function DoeHealthProductArtboard(props: ArtboardProps = {}) {
   return (
     <LocationsProvider>
-      <Artboard {...props} />
+      <OffersProvider>
+        <Artboard {...props} />
+      </OffersProvider>
     </LocationsProvider>
   );
 }
@@ -479,11 +482,13 @@ function Artboard({
                   <circle cx="5" cy="12" r="1.2" fill="currentColor" />
                   <circle cx="5" cy="17" r="1.2" fill="currentColor" />
                 </NavButton>
-                <NavButton label="Providers" active={activeTab === "providers"} onSelect={() => switchTab("providers")}>
-                  <circle cx="9" cy="8.5" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
-                  <path d="M3.5 19.5c.8-3.2 3-5 5.5-5s4.7 1.8 5.5 5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-                  <path d="M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.6 14.8c1.4.7 2.4 2.3 2.9 4.7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-                </NavButton>
+                {SHOW_LEGACY_PROVIDERS && (
+                  <NavButton label="Providers" active={activeTab === "providers"} onSelect={() => switchTab("providers")}>
+                    <circle cx="9" cy="8.5" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
+                    <path d="M3.5 19.5c.8-3.2 3-5 5.5-5s4.7 1.8 5.5 5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                    <path d="M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.6 14.8c1.4.7 2.4 2.3 2.9 4.7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                  </NavButton>
+                )}
                 <NavButton label="Locations" active={activeTab === "locations"} onSelect={() => switchTab("locations")}>
                   <path d="M12 20.5s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
                   <circle cx="12" cy="9.5" r="2.4" fill="none" stroke="currentColor" strokeWidth="1.7" />
@@ -655,7 +660,7 @@ function Artboard({
           {layer("interface", <DoeHealthProductInterfacePage onOpenCall={() => switchTab("call")} />)}
           {layer("call", <DoeHealthProductCallPage onBack={() => switchTab("interface")} />)}
           {layer("services", <DoeHealthProductServicesPage />)}
-          {layer("providers", <DoeHealthProductProvidersLayers />)}
+          {SHOW_LEGACY_PROVIDERS && layer("providers", <DoeHealthProductProvidersLayers />)}
           {layer("locations", <DoeHealthProductLocationsPage />)}
           {layer("offers", <DoeHealthProductOffersPage />)}
           {layer("team", <DoeHealthProductTeamPage onAddLocation={() => openLocations(true)} />)}

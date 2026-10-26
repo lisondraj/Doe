@@ -7,6 +7,9 @@
  */
 import { SlowDotWave } from "@/components/doehealth-product/DoeHealthProductHalftone";
 
+/** The old Providers tab is hidden from the app; its code stays here in case it's needed again. */
+export const SHOW_LEGACY_PROVIDERS = false;
+
 /** Header row for the Providers panel. */
 export function DoeHealthProductProvidersHeader() {
   return (

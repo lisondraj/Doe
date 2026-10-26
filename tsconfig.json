@@ -16,5 +16,11 @@
     "paths": { "@/*": ["./*"] }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "remotion/video3-export.tsx",
+    "remotion/video3/stable-camera.tsx",
+    "remotion/video5/Film.tsx",
+    "remotion/video6-export-entry.tsx"
+  ]
 }

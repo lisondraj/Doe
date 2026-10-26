@@ -4,8 +4,10 @@
  * Offers tab — promotions the practice publishes to patients' personal agents. Offers sit in a list of tickets on
  * the left (the stub shows what each is worth). The panel on the right edits the selected one, shows how it's doing,
  * and previews the listing as agents receive it. Edits update the ticket as you type.
+ *
+ * The offers live in a shared store, so a selected service on the Services tab can show its offers and start one.
  */
-import { type ReactNode, useState } from "react";
+import { createContext, type ReactNode, useContext, useState } from "react";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 const SANS = "font-['DM_Sans',system-ui,sans-serif]";
@@ -13,7 +15,7 @@ const SANS = "font-['DM_Sans',system-ui,sans-serif]";
 type Status = "live" | "scheduled" | "draft" | "ended";
 type Kind = "off" | "price" | "addon" | "bundle";
 
-type Offer = {
+export type Offer = {
   id: string;
   title: string;
   kind: Kind;
@@ -43,10 +45,38 @@ const KINDS: { id: Kind; label: string }[] = [
   { id: "bundle", label: "Bundle" },
 ];
 
-const SERVICES = ["New patient consult", "Migraine follow-up", "Routine EEG", "EMG and nerve study", "Memory screening", "Return-to-play note", "Occipital nerve block", "Sleep consult"];
+const SERVICES = [
+  "New patient consult",
+  "Migraine follow-up",
+  "Routine EEG",
+  "EMG and nerve study",
+  "Botox for chronic migraine",
+  "Memory screening",
+  "Seizure follow-up",
+  "Return-to-play note",
+  "MS infusion",
+  "Occipital nerve block",
+  "48-hour EEG",
+  "Sleep consult",
+];
 const AUDIENCES = ["New patients", "Existing patients", "Not seen in 12+ months", "Migraine patients", "Within 5 miles", "Kids under 18", "Aetna members", "Blue Cross members"];
 
 const START: Offer[] = [
+  {
+    id: "botox",
+    title: "Botox for chronic migraine, self-pay",
+    kind: "price",
+    value: "$1,500",
+    services: ["Botox for chronic migraine"],
+    audience: ["Migraine patients", "Existing patients"],
+    starts: "Nov 1",
+    ends: "Jan 31",
+    perWeek: 6,
+    direct: false,
+    status: "live",
+    tone: "#FCCFB8",
+    stats: { matched: 860, shown: 214, booked: 12 },
+  },
   {
     id: "nerve-block",
     title: "Nerve block with a migraine visit",
@@ -133,7 +163,64 @@ const FILTERS: { id: "all" | Status; label: string }[] = [
 
 const n = (v: number) => v.toLocaleString("en-US");
 
-function Pill({ status }: { status: Status }) {
+type Store = {
+  offers: Offer[];
+  selected: string;
+  select: (id: string) => void;
+  update: (id: string, patch: Partial<Offer>) => void;
+  /** Starts a draft offer, optionally for some services, selects it and returns its id. */
+  add: (services?: string[], title?: string) => string;
+};
+
+const OffersContext = createContext<Store | null>(null);
+
+const STATIC: Store = { offers: START, selected: START[0]!.id, select: () => {}, update: () => {}, add: () => START[0]!.id };
+
+export function OffersProvider({ children }: { children: ReactNode }) {
+  const [offers, setOffers] = useState(START);
+  const [selected, select] = useState(START[0]!.id);
+  const [added, setAdded] = useState(0);
+
+  const store: Store = {
+    offers,
+    selected,
+    select,
+    update: (id, patch) => setOffers((prev) => prev.map((o) => (o.id === id ? { ...o, ...patch } : o))),
+    add: (services = [], title = "") => {
+      const id = `offer-${added + 1}`;
+      setAdded((v) => v + 1);
+      setOffers((prev) => [
+        {
+          id,
+          title,
+          kind: "off",
+          value: "$25 off",
+          services,
+          audience: [],
+          starts: "Nov 1",
+          ends: "Nov 30",
+          perWeek: 10,
+          direct: true,
+          status: "draft",
+          tone: "#FFFCF1",
+          stats: { matched: 0, shown: 0, booked: 0 },
+        },
+        ...prev,
+      ]);
+      select(id);
+      return id;
+    },
+  };
+
+  return <OffersContext.Provider value={store}>{children}</OffersContext.Provider>;
+}
+
+/** The shared offers; outside a provider it falls back to the seed list, read-only. */
+export function useOffers(): Store {
+  return useContext(OffersContext) ?? STATIC;
+}
+
+export function OfferPill({ status }: { status: Status }) {
   const s = STATUS[status];
   return (
     <span className={`flex items-center h-[24px] px-[10px] rounded-[999px] text-[12px] leading-[16px] ${SANS} font-[500] whitespace-nowrap`} style={{ backgroundColor: s.background, color: s.color }}>
@@ -151,14 +238,14 @@ function Ticket({ offer, on, onPick }: { offer: Offer; on: boolean; onPick: () =
       className={`flex shrink-0 h-[88px] rounded-[18px] text-left outline outline-[1.5px] -outline-offset-[1.5px] transition-[outline-color] duration-150 ${on ? "outline-ink" : "outline-transparent hover:outline-[#28191026]"} ${offer.status === "ended" ? "opacity-60" : ""}`}
       style={{ backgroundColor: offer.tone }}
     >
-      <span className="flex items-center w-[136px] shrink-0 px-[18px]">
+      <span className="flex items-center w-[120px] shrink-0 px-[16px]">
         <span className={`whitespace-nowrap text-[22px] leading-[28px] tracking-[-0.02em] ${DISPLAY} text-ink`}>{offer.value || "—"}</span>
       </span>
       <span className="w-[0px] shrink-0 border-l-[1.5px] border-dashed border-[#2819102E] my-[16px]" />
-      <span className="flex flex-col justify-center gap-[6px] grow min-w-[0px] px-[18px]">
+      <span className="flex flex-col justify-center gap-[6px] grow min-w-[0px] px-[16px]">
         <span className="flex items-center justify-between gap-[10px]">
           <span className={`truncate text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`}>{offer.title || "Untitled offer"}</span>
-          <Pill status={offer.status} />
+          <OfferPill status={offer.status} />
         </span>
         <span className={`flex items-center justify-between gap-[10px] text-[13px] leading-[16px] ${SANS} text-sub`}>
           <span className="truncate">
@@ -266,38 +353,18 @@ function Listing({ offer }: { offer: Offer }) {
 }
 
 export function DoeHealthProductOffersPage() {
-  const [offers, setOffers] = useState(START);
+  const { offers, selected, select: setSelected, update, add: addOffer } = useOffers();
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
-  const [selected, setSelected] = useState(START[0]!.id);
   const [mode, setMode] = useState<"edit" | "preview">("edit");
 
   const shown = offers.filter((o) => filter === "all" || o.status === filter);
-  const offer = offers.find((o) => o.id === selected)!;
-  const edit = (patch: Partial<Offer>) => setOffers((prev) => prev.map((o) => (o.id === selected ? { ...o, ...patch } : o)));
+  const offer = offers.find((o) => o.id === selected) ?? offers[0]!;
+  const edit = (patch: Partial<Offer>) => update(offer.id, patch);
   const toggle = (list: string[], item: string) => (list.includes(item) ? list.filter((x) => x !== item) : [...list, item]);
 
   const add = () => {
-    const id = `offer-${offers.length + 1}`;
-    setOffers((prev) => [
-      {
-        id,
-        title: "",
-        kind: "off",
-        value: "$25 off",
-        services: [],
-        audience: [],
-        starts: "Nov 1",
-        ends: "Nov 30",
-        perWeek: 10,
-        direct: true,
-        status: "draft",
-        tone: "#F4EEDF",
-        stats: { matched: 0, shown: 0, booked: 0 },
-      },
-      ...prev,
-    ]);
+    addOffer();
     setFilter("all");
-    setSelected(id);
     setMode("edit");
   };
 
@@ -311,111 +378,132 @@ export function DoeHealthProductOffersPage() {
     <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[20px] pt-[36px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
       <div className="relative flex items-end justify-between">
         <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>Offers</span>
-        <button type="button" onClick={add} className={`flex items-center h-[40px] px-[18px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`}>
-          New offer
-        </button>
+        <div className="flex items-center gap-[8px]">
+          <button type="button" className={`flex items-center gap-[6px] h-[38px] px-[16px] rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+              <circle cx="12" cy="12" r="3" fill="none" stroke="#281910" strokeWidth="1.8" />
+              <path
+                d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"
+                fill="none"
+                stroke="#281910"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Manage
+          </button>
+          <button type="button" onClick={add} className={`flex items-center gap-[6px] h-[40px] pr-[18px] pl-[14px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`}>
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style={{ display: "block" }}>
+              <path d="M7 2.5v9M2.5 7h9" fill="none" stroke="#FFFCF1" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+            New Offer
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-[420px_1fr] gap-[16px] grow min-h-[0px]">
-        <div className="flex flex-col min-h-[0px] gap-[12px]">
-          <span className="flex self-start">
-            <Segmented value={filter} onChange={setFilter} options={FILTERS} />
-          </span>
-          <div className="flex flex-col grow min-h-[0px] gap-[8px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {shown.map((o) => (
-              <Ticket key={o.id} offer={o} on={o.id === selected} onPick={() => setSelected(o.id)} />
-            ))}
-            {shown.length === 0 && <span className={`px-[4px] py-[16px] text-[14px] leading-[18px] ${SANS} text-sub`}>No offers here yet.</span>}
-          </div>
+      <div className="flex flex-col gap-[20px] grow min-h-[0px]">
+        <div className="w-[360px] shrink-0 [&>span]:w-full [&_button]:grow">
+          <Segmented value={filter} onChange={setFilter} options={FILTERS} />
         </div>
 
-        <div className="flex flex-col min-w-[0px] min-h-[0px] gap-[16px] p-[24px] rounded-[28px] bg-[#FAF6EC]">
-          <div className="flex items-center justify-between gap-[16px]">
-            <span className="flex items-center gap-[12px] grow min-w-[0px]">
-              <input
-                data-large-field
-                value={offer.title}
-                placeholder="Untitled offer"
-                onChange={(e) => edit({ title: e.target.value })}
-                className={`grow min-w-[0px] bg-transparent outline-none text-[32px] leading-[38px] tracking-[-0.02em] ${DISPLAY} text-walnut placeholder:text-sub`}
-              />
-              <Pill status={offer.status} />
-            </span>
-            <span className="flex items-center gap-[8px] shrink-0">
-              <Segmented
-                value={mode}
-                onChange={setMode}
-                options={[
-                  { id: "edit", label: "Edit" },
-                  { id: "preview", label: "Preview" },
-                ]}
-              />
-              <button type="button" className={`h-[38px] px-[16px] rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>
-                Duplicate
-              </button>
-              <button
-                type="button"
-                onClick={() => edit({ status: offer.status === "live" ? "ended" : "live" })}
-                className={`h-[38px] px-[16px] rounded-[999px] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] ${offer.status === "live" ? "bg-[#28191014] hover:bg-[#2819101F] text-walnut" : "bg-ink hover:bg-[#2B1D12] [color:#FFFCF1]"}`}
-              >
-                {offer.status === "live" ? "End" : offer.status === "ended" ? "Run again" : "Publish"}
-              </button>
-            </span>
+        <div className="grid grid-cols-[360px_1fr] gap-[16px] grow min-h-[0px]">
+          <div className="flex flex-col min-h-[0px] gap-[12px]">
+            <div className="flex flex-col grow min-h-[0px] gap-[4px] p-[8px] rounded-[18px] bg-[#F4EEDF] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {shown.map((o) => (
+                <Ticket key={o.id} offer={o} on={o.id === selected} onPick={() => setSelected(o.id)} />
+              ))}
+              {shown.length === 0 && <span className={`px-[4px] py-[16px] text-[14px] leading-[18px] ${SANS} text-sub`}>No offers here yet.</span>}
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-[8px] shrink-0">
-            {stats.map((t) => (
-              <div key={t.label} className="flex flex-col gap-[4px] px-[18px] py-[14px] rounded-[18px] bg-[#F4EEDF]">
-                <span className={`text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>{t.label}</span>
-                <span className={`text-[28px] leading-[32px] tracking-[-0.02em] ${DISPLAY} text-walnut [font-variant-numeric:tabular-nums]`}>{t.value ? n(t.value) : "—"}</span>
-              </div>
-            ))}
-          </div>
+          <div className="flex flex-col min-w-[0px] min-h-[0px] gap-[16px] p-[24px] rounded-[28px] bg-[#FAF6EC]">
+            <div className="flex items-center justify-between gap-[16px]">
+              <span className="flex items-center gap-[12px] grow min-w-[0px]">
+                <input
+                  data-large-field
+                  value={offer.title}
+                  placeholder="Untitled offer"
+                  onChange={(e) => edit({ title: e.target.value })}
+                  className={`grow min-w-[0px] bg-transparent outline-none text-[32px] leading-[38px] tracking-[-0.02em] ${DISPLAY} text-walnut placeholder:text-sub`}
+                />
+                <OfferPill status={offer.status} />
+              </span>
+              <span className="flex items-center gap-[8px] shrink-0">
+                <Segmented
+                  value={mode}
+                  onChange={setMode}
+                  options={[
+                    { id: "edit", label: "Edit" },
+                    { id: "preview", label: "Preview" },
+                  ]}
+                />
+                <button type="button" className={`h-[38px] px-[16px] rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>
+                  Duplicate
+                </button>
+                <button
+                  type="button"
+                  onClick={() => edit({ status: offer.status === "live" ? "ended" : "live" })}
+                  className={`h-[38px] px-[16px] rounded-[999px] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] ${offer.status === "live" ? "bg-[#28191014] hover:bg-[#2819101F] text-walnut" : "bg-ink hover:bg-[#2B1D12] [color:#FFFCF1]"}`}
+                >
+                  {offer.status === "live" ? "End" : offer.status === "ended" ? "Run again" : "Publish"}
+                </button>
+              </span>
+            </div>
 
-          <div className="flex flex-col grow min-h-[0px] gap-[6px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {mode === "preview" ? (
-              <Listing offer={offer} />
-            ) : (
-              <>
-                <Row label="Type">
-                  <Segmented value={offer.kind} onChange={(k) => edit({ kind: k })} options={KINDS} />
-                </Row>
-                <Row label="Worth">
-                  <Input value={offer.value} onChange={(v) => edit({ value: v })} width={160} />
-                </Row>
-                <Row label="Services" top>
-                  <span className="flex flex-wrap gap-[6px]">
-                    {SERVICES.map((s) => (
-                      <Chip key={s} on={offer.services.includes(s)} onClick={() => edit({ services: toggle(offer.services, s) })}>
-                        {s}
-                      </Chip>
-                    ))}
-                  </span>
-                </Row>
-                <Row label="Who it reaches" top>
-                  <span className="flex flex-wrap gap-[6px]">
-                    {AUDIENCES.map((a) => (
-                      <Chip key={a} on={offer.audience.includes(a)} onClick={() => edit({ audience: toggle(offer.audience, a) })}>
-                        {a}
-                      </Chip>
-                    ))}
-                  </span>
-                </Row>
-                <Row label="Runs">
-                  <span className="flex items-center gap-[8px]">
-                    <Input value={offer.starts} onChange={(v) => edit({ starts: v })} width={120} />
-                    <span className={`text-[14px] ${SANS} text-sub`}>to</span>
-                    <Input value={offer.ends} onChange={(v) => edit({ ends: v })} width={120} />
-                  </span>
-                </Row>
-                <Row label="Visits a week">
-                  <Stepper value={offer.perWeek} onChange={(v) => edit({ perWeek: v })} />
-                </Row>
-                <Row label="Agents book directly">
-                  <Toggle on={offer.direct} onChange={(v) => edit({ direct: v })} label="Agents book directly" />
-                </Row>
-              </>
-            )}
+            <div className="grid grid-cols-3 gap-[8px] shrink-0">
+              {stats.map((t) => (
+                <div key={t.label} className="flex flex-col gap-[4px] px-[18px] py-[14px] rounded-[18px] bg-[#F4EEDF]">
+                  <span className={`text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>{t.label}</span>
+                  <span className={`text-[28px] leading-[32px] tracking-[-0.02em] ${DISPLAY} text-walnut [font-variant-numeric:tabular-nums]`}>{t.value ? n(t.value) : "—"}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-col grow min-h-[0px] gap-[6px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {mode === "preview" ? (
+                <Listing offer={offer} />
+              ) : (
+                <>
+                  <Row label="Type">
+                    <Segmented value={offer.kind} onChange={(k) => edit({ kind: k })} options={KINDS} />
+                  </Row>
+                  <Row label="Worth">
+                    <Input value={offer.value} onChange={(v) => edit({ value: v })} width={160} />
+                  </Row>
+                  <Row label="Services" top>
+                    <span className="flex flex-wrap gap-[6px]">
+                      {SERVICES.map((s) => (
+                        <Chip key={s} on={offer.services.includes(s)} onClick={() => edit({ services: toggle(offer.services, s) })}>
+                          {s}
+                        </Chip>
+                      ))}
+                    </span>
+                  </Row>
+                  <Row label="Who it reaches" top>
+                    <span className="flex flex-wrap gap-[6px]">
+                      {AUDIENCES.map((a) => (
+                        <Chip key={a} on={offer.audience.includes(a)} onClick={() => edit({ audience: toggle(offer.audience, a) })}>
+                          {a}
+                        </Chip>
+                      ))}
+                    </span>
+                  </Row>
+                  <Row label="Runs">
+                    <span className="flex items-center gap-[8px]">
+                      <Input value={offer.starts} onChange={(v) => edit({ starts: v })} width={120} />
+                      <span className={`text-[14px] ${SANS} text-sub`}>to</span>
+                      <Input value={offer.ends} onChange={(v) => edit({ ends: v })} width={120} />
+                    </span>
+                  </Row>
+                  <Row label="Visits a week">
+                    <Stepper value={offer.perWeek} onChange={(v) => edit({ perWeek: v })} />
+                  </Row>
+                  <Row label="Agents book directly">
+                    <Toggle on={offer.direct} onChange={(v) => edit({ direct: v })} label="Agents book directly" />
+                  </Row>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
