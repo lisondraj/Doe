@@ -1433,10 +1433,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                     value={a.emails[p.id] ?? ""}
                     placeholder={a.payMode === "split" ? "Email for their payment link and invite" : "Email for their invite"}
                     aria-label={`${providerName(p)} email`}
-                    aria-invalid={(warnCheckout && !isEmail(a.emails[p.id] ?? "")) || undefined}
-                    data-pricing-warn={warnCheckout && !isEmail(a.emails[p.id] ?? "") ? "" : undefined}
                     onChange={(e) => set({ emails: { ...a.emails, [p.id]: e.target.value } })}
-                    className={`h-[48px] px-[16px] rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} ${warnCheckout && !isEmail(a.emails[p.id] ?? "") ? BAD : ""} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.4)] transition-[background-color,box-shadow] duration-150`}
+                    className={`h-[48px] px-[16px] rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.4)] transition-[background-color,box-shadow] duration-150`}
                   />
                 )}
               </div>
@@ -2005,7 +2003,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                 if (!addedSpecialtiesSet) return flag("additions");
                 setPlanEntry(seq);
                 setConfirming(false);
-                forward();
+                // The additions are confirmed; the price breakdown is next.
+                setPanel("price");
               }}
               className={`h-[48px] px-[22px] shrink-0 rounded-[999px] text-[15px] leading-[20px] font-[600] transition-colors duration-150 ${addedSpecialtiesSet ? "bg-[#281910] hover:bg-[#3A2920] text-[#FFFCF1]" : "bg-[rgba(20,12,4,0.1)] text-[rgba(20,12,4,0.38)]"}`}
             >
@@ -2027,8 +2026,11 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
 
   const panelOpenDesktop = !!sidePanel && !phone;
   const goLabel = last ? "Finish" : q.id === "plan" && a.plan && !phone ? "Finalize" : "Continue";
-  /** Continue (Finalize on desktop) on the comparison opens the price breakdown first, to confirm there; additions come after. */
-  const go = () => (onPlan ? setPanel("price") : proceed());
+  /**
+   * Continue (Finalize on desktop) on the comparison confirms anything added there first, then opens the price
+   * breakdown to confirm; the breakdown's Confirm moves on to checkout.
+   */
+  const go = () => (onPlan ? (additions ? setConfirming(true) : setPanel("price")) : proceed());
   const back = () => setAt(index - 1);
   const arrow = (dir: "back" | "next", size = 16) => (
     <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
