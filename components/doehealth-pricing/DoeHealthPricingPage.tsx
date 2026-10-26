@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 import { DoeHealthDesk2Footer } from "@/components/doehealth-desk2/DoeHealthDesk2Footer";
 import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
@@ -14,7 +14,6 @@ import {
   type DoeHealthDesk2Variant,
   useDoeHealthDesk2Variant,
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-variant";
-import { useDoeHealthDesk2FitTitles } from "@/lib/doehealthdesk2/use-doehealthdesk2-fit-titles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
 /** The desk2 site: its nav links, logo, and section anchors all live here. */
@@ -89,21 +88,53 @@ function Faq({ phone }: { phone: boolean }) {
   );
 }
 
+/** When founding pricing closes, as the banner shows it. */
+const FOUNDING_UNTIL = "March 2027";
+
 /**
- * /pricing — desk2 chrome around a pricing builder: the title in a soft bar along the top, the one-question-at-a-time
- * builder (practice, providers, plan, contact), then questions and the footer. Desktop and iPhone layouts follow the
- * desk2 variant. The title is fitted to the bar: one line on desktop, two on iPhone.
+ * The banner on top: a brown Doe box with the page's title, what founding pricing is, and when it ends in a tile of
+ * its own (beside the title on desktop, under it on iPhone).
+ */
+function FoundingBanner({ phone }: { phone: boolean }) {
+  return (
+    <section
+      aria-label="Founding pricing"
+      className={`relative z-[1] mx-auto w-full max-w-[1120px] bg-[#281910] text-[#FFFCF1] ${phone ? "flex flex-col gap-[22px] px-[22px] pt-[24px] pb-[22px] rounded-[28px]" : "flex items-center justify-between gap-[48px] px-[56px] py-[52px] rounded-[32px]"}`}
+    >
+      <div className={`flex flex-col items-start ${phone ? "gap-[14px]" : "gap-[18px] max-w-[660px]"}`}>
+        <span className="h-[28px] px-[12px] flex items-center gap-[7px] rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[14px] font-[700] text-[#140C04] whitespace-nowrap">
+          <span className="w-[6px] h-[6px] rounded-[999px] bg-[#A0522D]" aria-hidden="true" />
+          Founding pricing
+        </span>
+        <h1 className={`m-0 font-[400] tracking-[-0.035em] [text-wrap:balance] ${phone ? "text-[30px] leading-[33px]" : "text-[46px] leading-[50px]"} ${p22Mackinac.className}`}>
+          Teach personal agents about your clinic before it&apos;s too late.
+        </h1>
+        <p className={`m-0 [text-wrap:pretty] text-[rgba(255,252,241,0.7)] ${phone ? "text-[15px] leading-[22px]" : "text-[17px] leading-[25px]"}`}>
+          Founding prices are open to practices that join before {FOUNDING_UNTIL}.
+        </p>
+      </div>
+      <div
+        className={`flex flex-col shrink-0 border-[1.5px] border-solid border-[rgba(252,207,184,0.35)] ${phone ? "flex-row items-baseline justify-between gap-[12px] px-[18px] py-[14px] rounded-[20px]" : "items-start gap-[6px] px-[28px] py-[26px] rounded-[24px] min-w-[240px]"}`}
+      >
+        <span className="text-[13px] leading-[17px] font-[600] text-[rgba(255,252,241,0.62)]">Founding pricing ends</span>
+        <span className={`tracking-[-0.03em] text-[#FCCFB8] ${phone ? "text-[24px] leading-[28px]" : "text-[40px] leading-[44px]"} ${p22Mackinac.className}`}>{FOUNDING_UNTIL}</span>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * /pricing — desk2 chrome around a pricing builder: the founding-pricing banner on top, the one-question-at-a-time
+ * builder (practice, team, plan, contact), then questions and the footer. Desktop and iPhone layouts follow the desk2
+ * variant.
  */
 export function DoeHealthPricingPage({ initialVariant }: { initialVariant: DoeHealthDesk2Variant }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
   const phone = variant === "phone";
-  const rootRef = useRef<HTMLDivElement>(null);
   useDoeHealthDesk2PhoneOverflowChrome(phone);
-  useDoeHealthDesk2FitTitles(rootRef);
 
   return (
     <div
-      ref={rootRef}
       className={`doehealth-desk2-page relative min-h-[100dvh] overflow-x-clip ${inter.className} ${p22Mackinac.variable}`}
       style={{ backgroundColor: DOEHEALTH_DESK2_PAGE_BACKGROUND }}
       data-doeforvc-view={phone ? "iphone" : "desktop"}
@@ -121,25 +152,7 @@ export function DoeHealthPricingPage({ initialVariant }: { initialVariant: DoeHe
       )}
       <main className="doehealth-desk2-main min-h-[100dvh]" aria-label="Pricing">
         <div className={`mx-auto w-full max-w-[1320px] flex flex-col ${phone ? "px-[16px] gap-[28px] pt-[8px] pb-[48px]" : "px-[56px] gap-[40px] pt-[24px] pb-[96px]"}`}>
-          <section
-            aria-label="Pricing"
-            className={`relative mx-auto w-full max-w-[1120px] overflow-hidden border border-solid border-[rgba(20,12,4,0.07)] ${phone ? "rounded-[24px] px-[20px] py-[20px]" : "rounded-[28px] px-[48px] py-[26px]"}`}
-            style={{ background: "linear-gradient(100deg, rgba(252,207,184,0.55) 0%, rgba(244,238,223,0.85) 48%, rgba(220,229,208,0.7) 100%)" }}
-          >
-            <h1
-              data-fit-two-lines
-              className={`m-0 flex flex-col items-center text-center whitespace-nowrap leading-[1.04] tracking-[-0.035em] font-[400] text-[#281910] ${phone ? "text-[26px] [--desk2-title-max:1.75rem]" : "text-[34px] [--desk2-title-max:2.375rem]"} ${p22Mackinac.className}`}
-            >
-              {phone ? (
-                <>
-                  <span>Teach personal agents</span>
-                  <span>about your clinic before it&apos;s too late.</span>
-                </>
-              ) : (
-                <span>Teach personal agents about your clinic before it&apos;s too late.</span>
-              )}
-            </h1>
-          </section>
+          <FoundingBanner phone={phone} />
 
           <DoeHealthPricingBuilder phone={phone} />
 

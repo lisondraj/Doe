@@ -249,11 +249,12 @@ type Question = {
   id: string;
   /** The step's name in the row of steps. */
   step: string;
-  title: string;
+  /** The title, as the two lines it's set on. */
+  title: [string, string];
   /** What the answer reads as under its step. */
   answer: string;
-  /** Single-choice questions move on by themselves. */
-  auto?: boolean;
+  /** What's still missing before Continue works, shown beside it. */
+  need?: string;
   /** The comparison needs more room than a question. */
   wide?: boolean;
   ready: boolean;
@@ -278,7 +279,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const barSlot = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const advance = useRef<number | null>(null);
   const moved = useRef(false);
   const pinTop = phone ? 118 : 112;
 
@@ -314,12 +314,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const priceOf = (id: PlanId) => mixedPrice(rowsFor(id)).total * factor;
   const teamSpecialties = new Set(providers.map(specialtyOf).filter((s): s is SpecialtyId => !!s && s !== "other"));
 
-  function pick(patch: Partial<Answers>) {
-    set(patch);
-    if (advance.current) window.clearTimeout(advance.current);
-    advance.current = window.setTimeout(() => setAt((i) => i + 1), 340);
-  }
-
   /** Picking a practice shape reshapes the team, keeping what it can. */
   const pickShape = (shape: PracticeShape) => {
     const first = a.team[0]!;
@@ -331,7 +325,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           : a.team.length > 1
             ? a.team
             : [resize(first, Math.max(first.providers.length, 6)), newSite("Clinic 2", 3)];
-    pick({ shape, team });
+    set({ shape, team });
   };
 
   /** Locations from the toolbar: more turns the practice multi-clinic, fewer drops the last ones. */
@@ -859,9 +853,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     {
       id: "shape",
       step: "Practice",
-      title: "How is your practice set up?",
+      title: ["How is your", "practice set up?"],
       answer: PRACTICE_SHAPES.find((s) => s.id === a.shape)?.title ?? "",
-      auto: true,
+      need: "Pick how your practice is set up",
       ready: !!a.shape,
       body: (
         <div className={`grid gap-[10px] ${phone ? "grid-cols-1" : "grid-cols-3"}`}>
@@ -898,8 +892,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     {
       id: "team",
       step: "Team",
-      title: "Your team",
+      title: ["Who’s on", "your team?"],
       answer: sizeLine,
+      need: !specialtyLabel ? "Choose a main specialty" : "Name every location",
       ready: !!specialtyLabel && a.team.every((x) => x.name.trim()),
       body: (
         <div className="flex flex-col gap-[14px]">
@@ -911,7 +906,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     {
       id: "plan",
       step: "Plan",
-      title: "Compare plans",
+      title: ["Compare plans", "side by side"],
       answer: a.plan ? `${mixed ? "Mixed plans" : plan.name}, ${money(total)}/mo` : "",
       wide: true,
       ready: !!a.plan,
@@ -931,7 +926,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     {
       id: "contact",
       step: "Details",
-      title: "Where should we send your setup?",
+      title: ["Where should we", "send your setup?"],
+      need: "Add your name, practice and work email",
       answer: a.contact.email,
       ready: !!(a.contact.name.trim() && /.+@.+\..+/.test(a.contact.email) && a.contact.practice.trim()),
       body: (
@@ -957,13 +953,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     if (last) setDone(true);
     else setAt(index + 1);
   };
-
-  useEffect(
-    () => () => {
-      if (advance.current) window.clearTimeout(advance.current);
-    },
-    [],
-  );
 
   // The comparison starts with the team on Advanced; the panel waits for a button, and closes when you leave.
   useEffect(() => {
@@ -1023,25 +1012,16 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
 
   const planLabel = mixed ? "Mixed plans" : plan.name;
 
-  /** The chosen plan's price: a sticky pill above the question on desktop, a bar along the bottom on iPhone. */
+  /** Desktop: the chosen plan's price, a sticky pill above the question once there is one (iPhone has it in the dock). */
   const priceBar =
-    a.plan && (phone || !onPlan) ? (
+    a.plan && !phone && !onPlan ? (
       <div
-        className={`doe-pricing-rise z-40 flex items-center gap-[14px] bg-[#281910] text-[#FFFCF1] ${phone ? "fixed left-[10px] right-[10px] bottom-[max(10px,env(safe-area-inset-bottom))] p-[10px] pl-[20px] rounded-[22px]" : "sticky top-[124px] self-center h-[64px] pl-[24px] pr-[10px] rounded-[999px]"}`}
+        className={`doe-pricing-rise z-40 flex items-center gap-[14px] bg-[#281910] text-[#FFFCF1] sticky top-[124px] self-center h-[56px] px-[24px] rounded-[999px]`}
       >
         <span className="flex items-baseline gap-[4px] grow min-w-[0px] whitespace-nowrap">
           <span className={`text-[28px] leading-[32px] tracking-[-0.03em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}</span>
           <span className="text-[15px] text-[rgba(255,252,241,0.65)]">/mo</span>
         </span>
-        {(onPlan || phone) && (
-          <button
-            type="button"
-            onClick={() => setPanel("price")}
-            className="h-[44px] px-[16px] shrink-0 rounded-[999px] bg-[rgba(255,252,241,0.12)] hover:bg-[rgba(255,252,241,0.18)] text-[14px] leading-[18px] font-[500] text-[#FFFCF1] transition-colors duration-150"
-          >
-            Breakdown
-          </button>
-        )}
       </div>
     ) : null;
 
@@ -1208,6 +1188,95 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </nav>
   );
 
+  /** A question's title on its two lines. */
+  const heading = (lines: [string, string]) => (
+    <h2 className={`m-0 flex flex-col ${phone ? "text-[34px] leading-[37px]" : "text-[48px] leading-[51px]"} tracking-[-0.035em] font-[400] text-[#281910] ${DISPLAY}`}>
+      <span>{lines[0]}</span>
+      <span>{lines[1]}</span>
+    </h2>
+  );
+
+  const next = questions[index + 1];
+  const goLabel = last ? "Start onboarding" : q.id === "plan" && a.plan ? `Continue with ${mixed ? "these plans" : plan.name}` : "Continue";
+  /** Under the Continue button: what comes next, or what's still missing. */
+  const goNote = q.ready ? (next ? `Next: ${next.step}` : "Last step") : q.need;
+  const back = () => setAt(index - 1);
+  const arrow = (dir: "back" | "next", size = 16) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+      <path d={dir === "back" ? "M19 12H5m6-6l-6 6 6 6" : "M5 12h14m-6-6l6 6-6 6"} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+
+  /** Desktop: Back on the left, and on the right what's next (or missing) beside Continue. */
+  const desktopNav = (
+    <div className="flex items-center justify-between gap-[16px] pt-[24px] border-t border-solid border-[rgba(20,12,4,0.08)]">
+      {index > 0 ? (
+        <button
+          type="button"
+          onClick={back}
+          className="flex items-center gap-[8px] h-[52px] pl-[18px] pr-[22px] rounded-[999px] border-[1.5px] border-solid border-[rgba(20,12,4,0.14)] hover:bg-white hover:border-[rgba(20,12,4,0.24)] text-[15px] leading-[20px] font-[600] text-[#281910] transition-colors duration-150"
+        >
+          {arrow("back")}
+          Back
+        </button>
+      ) : (
+        <span />
+      )}
+      <span className="flex items-center gap-[18px] min-w-[0px]">
+        <span className={`truncate text-[14px] leading-[19px] font-[500] ${q.ready ? SUB : "text-[#A0522D]"}`}>{goNote}</span>
+        <button
+          type="button"
+          disabled={!q.ready}
+          onClick={forward}
+          className="flex items-center gap-[10px] h-[54px] pl-[26px] pr-[22px] shrink-0 rounded-[999px] bg-[#281910] hover:bg-[#3A2920] disabled:bg-[rgba(20,12,4,0.1)] disabled:text-[rgba(20,12,4,0.38)] text-[16px] leading-[20px] font-[600] text-[#FFFCF1] transition-colors duration-200"
+        >
+          {goLabel}
+          {arrow("next")}
+        </button>
+      </span>
+    </div>
+  );
+
+  /**
+   * iPhone: one dock along the bottom with Back, the price once there is one (tap it for the breakdown on the
+   * comparison) or what's next, and Continue.
+   */
+  const phoneDock =
+    !done && phone ? (
+      <div className="fixed left-[10px] right-[10px] bottom-[max(10px,env(safe-area-inset-bottom))] z-40 flex items-center gap-[8px] p-[8px] rounded-[24px] bg-[#281910] text-[#FFFCF1] shadow-[0_18px_40px_-20px_rgba(40,25,16,0.6)]">
+        {index > 0 && (
+          <button type="button" aria-label="Back" onClick={back} className="w-[48px] h-[48px] shrink-0 flex items-center justify-center rounded-[999px] bg-[rgba(255,252,241,0.12)] active:bg-[rgba(255,252,241,0.2)]">
+            {arrow("back", 18)}
+          </button>
+        )}
+        {a.plan ? (
+          <button
+            type="button"
+            disabled={!onPlan}
+            onClick={() => setPanel("price")}
+            className="flex flex-col items-start grow min-w-[0px] px-[8px] text-left disabled:cursor-default"
+          >
+            <span className="flex items-baseline gap-[3px] whitespace-nowrap">
+              <span className={`text-[24px] leading-[28px] tracking-[-0.03em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}</span>
+              <span className="text-[14px] text-[rgba(255,252,241,0.65)]">/mo</span>
+            </span>
+            {onPlan && <span className="text-[12px] leading-[15px] font-[600] text-[#FCCFB8]">See breakdown</span>}
+          </button>
+        ) : (
+          <span className={`grow min-w-[0px] px-[8px] line-clamp-2 text-[13px] leading-[17px] font-[500] ${q.ready ? "text-[rgba(255,252,241,0.62)]" : "text-[#FCCFB8]"}`}>{goNote}</span>
+        )}
+        <button
+          type="button"
+          disabled={!q.ready}
+          onClick={forward}
+          className="flex items-center gap-[8px] h-[48px] pl-[20px] pr-[16px] shrink-0 rounded-[999px] bg-[#FCCFB8] text-[#140C04] disabled:bg-[rgba(255,252,241,0.12)] disabled:text-[rgba(255,252,241,0.4)] text-[15px] leading-[20px] font-[600] transition-colors duration-200"
+        >
+          {last ? "Start onboarding" : "Continue"}
+          {arrow("next")}
+        </button>
+      </div>
+    ) : null;
+
   const card = done ? (
     <div className="doe-pricing-rise flex flex-col gap-[24px]">
       <span className="w-[60px] h-[60px] flex items-center justify-center rounded-[999px] bg-[#DCE5D0]">
@@ -1215,7 +1284,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#2F3B2A" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </span>
-      <h2 className={`m-0 text-[clamp(32px,4vw,48px)] leading-[1.04] tracking-[-0.035em] font-[400] text-[#281910] ${DISPLAY}`}>Welcome to Doe, {a.contact.name.trim().split(" ")[0]}.</h2>
+      {heading(["Welcome to Doe,", `${a.contact.name.trim().split(" ")[0]}.`])}
       <p className={`m-0 text-[17px] leading-[25px] ${SUB}`}>
         {`${planLabel} for ${a.contact.practice}, ${money(total)} a month.`} Your setup is on its way to {a.contact.email}.
       </p>
@@ -1238,32 +1307,11 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   ) : (
     <div key={q.id} className={`doe-pricing-rise flex flex-col ${phone ? "gap-[22px]" : "gap-[28px]"}`}>
       <div className="flex items-end justify-between gap-[16px] flex-wrap">
-        <h2 className={`m-0 text-[clamp(32px,3.8vw,48px)] leading-[1.04] tracking-[-0.035em] font-[400] text-[#281910] ${DISPLAY}`}>{q.title}</h2>
+        {heading(q.title)}
         {onPlan && !phone && billing}
       </div>
       {q.body}
-      <div className="flex items-center justify-between gap-[12px]">
-        {index > 0 ? (
-          <button type="button" onClick={() => setAt(index - 1)} className={`flex items-center gap-[6px] h-[48px] px-[6px] text-[16px] leading-[20px] font-[500] ${SUB} hover:text-[#281910] transition-colors duration-150`}>
-            <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
-              <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Back
-          </button>
-        ) : (
-          <span />
-        )}
-        {(!q.auto || q.ready) && (
-          <button
-            type="button"
-            disabled={!q.ready}
-            onClick={forward}
-            className="h-[54px] px-[30px] rounded-[999px] bg-[#281910] hover:bg-[#3A2920] disabled:bg-[rgba(20,12,4,0.1)] disabled:text-[rgba(20,12,4,0.38)] text-[16px] leading-[20px] font-[500] text-[#FFFCF1] transition-colors duration-200"
-          >
-            {last ? "Start onboarding" : q.id === "plan" && a.plan ? `Continue with ${mixed ? "these plans" : plan.name}` : "Continue"}
-          </button>
-        )}
-      </div>
+      {!phone && desktopNav}
     </div>
   );
 
@@ -1272,13 +1320,13 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   return (
     <div className="relative">
       <div className="doe-pricing-clouds" aria-hidden="true">
-        <span style={{ width: phone ? 360 : 640, height: phone ? 300 : 480, left: phone ? "-30%" : "4%", top: "12%", background: "rgba(252,207,184,0.5)" }} />
-        <span style={{ width: phone ? 380 : 660, height: phone ? 320 : 520, right: phone ? "-34%" : "2%", top: "34%", background: "rgba(220,229,208,0.6)" }} />
-        <span style={{ width: phone ? 340 : 580, height: phone ? 280 : 420, left: phone ? "-10%" : "28%", bottom: "10%", background: "rgba(236,226,204,0.9)" }} />
+        <span style={{ width: phone ? 360 : 640, height: phone ? 300 : 480, left: phone ? "-30%" : "4%", top: "12%", background: "rgba(246,170,142,0.42)" }} />
+        <span style={{ width: phone ? 380 : 660, height: phone ? 320 : 520, right: phone ? "-34%" : "2%", top: "34%", background: "rgba(196,158,120,0.3)" }} />
+        <span style={{ width: phone ? 340 : 580, height: phone ? 280 : 420, left: phone ? "-10%" : "28%", bottom: "10%", background: "rgba(234,218,190,0.9)" }} />
       </div>
 
       <div
-        className={`relative flex flex-col transition-[max-width,margin] duration-500 ${phone ? `mx-auto gap-[28px] ${a.plan ? "pb-[110px]" : "pb-[24px]"}` : `${wide ? "max-w-[1120px]" : "max-w-[760px]"} gap-[44px] pb-[40px] ${panelOpenDesktop ? "ml-0 mr-[380px]" : "mx-auto"}`}`}
+        className={`relative flex flex-col transition-[max-width,margin] duration-500 ${phone ? `mx-auto gap-[28px] ${done ? "pb-[24px]" : "pb-[110px]"}` : `${wide ? "max-w-[1120px]" : "max-w-[760px]"} gap-[44px] pb-[40px] ${panelOpenDesktop ? "ml-0 mr-[380px]" : "mx-auto"}`}`}
       >
         {priceBar}
         {steps}
@@ -1291,6 +1339,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           {card}
         </div>
       </div>
+      {phoneDock}
       {sidePanel}
     </div>
   );
