@@ -1,8 +1,9 @@
 "use client";
 
 /**
- * Calendar tab — a quiet week view of soft, rounded visit "clouds", with a month view that shows each
- * day as a small cluster of dots. Clicking a month day opens that week.
+ * Schedule's wider views — a quiet week of soft, rounded visit "clouds", a month that shows each day as a
+ * small cluster of dots, and a year of small months tinted by how full each day is. Clicking a day in the
+ * month or year opens that week; clicking a month in the year opens it.
  */
 import { type ReactNode, useEffect, useState } from "react";
 
@@ -34,7 +35,10 @@ const TONES = ["#F6DED0", "#E3E9D9", "#EEE6D6", "#F3E7C9"];
 const DOT_TONES = ["#E8A585", "#8DAA7C", "#C2A987", "#D9B860"];
 
 type Visit = { id: string; start: number; len: number; who: string; tone: number };
-type View = "week" | "month";
+export type ScheduleView = "day" | "week" | "month" | "year";
+type CalendarView = Exclude<ScheduleView, "day">;
+
+const VIEWS: ScheduleView[] = ["day", "week", "month", "year"];
 
 function seeded(seed: number) {
   let s = seed % 233280;
@@ -241,10 +245,78 @@ function MonthView({ month, today, onPickWeek }: { month: Date; today: Date; onP
   );
 }
 
-export function DoeHealthProductCalendarPage() {
+function YearView({ year, today, onPickMonth, onPickWeek }: { year: number; today: Date; onPickMonth: (d: Date) => void; onPickWeek: (d: Date) => void }) {
+  return (
+    <div className="doe-menu-in grid grid-cols-4 grid-rows-3 gap-[10px] grow min-h-[0px]">
+      {Array.from({ length: 12 }, (_, m) => {
+        const first = new Date(year, m, 1);
+        const start = mondayOf(first);
+        const cells = Array.from({ length: 42 }, (_, i) => addDays(start, i));
+        const isThisMonth = today.getFullYear() === year && today.getMonth() === m;
+        return (
+          <div key={m} className={`flex flex-col min-h-[0px] gap-[6px] p-[14px] rounded-[24px] ${isThisMonth ? "bg-sand" : "bg-[#FAF6EC]"}`}>
+            <button
+              type="button"
+              onClick={() => onPickMonth(first)}
+              className={`self-start px-[4px] text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut hover:text-sub transition-colors duration-150`}
+            >
+              {first.toLocaleDateString("en-US", { month: "long" })}
+            </button>
+            <div className="grid grid-cols-7 grid-rows-6 grow min-h-[0px]">
+              {cells.map((d) => {
+                if (d.getMonth() !== m) return <span key={d.toISOString()} />;
+                const isToday = sameDay(d, today);
+                const load = Math.min(1, visitsFor(d).length / 10);
+                return (
+                  <button
+                    key={d.toISOString()}
+                    type="button"
+                    aria-label={d.toDateString()}
+                    onClick={() => onPickWeek(d)}
+                    className="flex items-center justify-center min-h-[0px]"
+                  >
+                    <span
+                      className={`w-[22px] h-[22px] flex items-center justify-center rounded-[999px] text-[11px] leading-[14px] ${SANS} font-[500] ${isToday ? "bg-ink [color:#FFFCF1]" : "text-walnut hover:outline hover:outline-[1.5px] hover:outline-[#28191033]"}`}
+                      style={isToday || !load ? undefined : { backgroundColor: `rgb(232 165 133 / ${Math.round(18 + load * 50)}%)` }}
+                    >
+                      {d.getDate()}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Day · Week · Month · Year — shared by the day schedule and the calendar views. */
+export function ScheduleViewSwitch({ view, onChange }: { view: ScheduleView; onChange: (v: ScheduleView) => void }) {
+  return (
+    <div className="relative flex shrink-0 h-[40px] p-[4px] rounded-[999px] bg-[#EEEADF]">
+      <span
+        className="absolute top-[4px] bottom-[4px] w-[76px] rounded-[999px] bg-paper"
+        style={{ left: 4 + VIEWS.indexOf(view) * 76, transition: `left 300ms ${EASE}` }}
+      />
+      {VIEWS.map((v) => (
+        <button
+          key={v}
+          type="button"
+          onClick={() => onChange(v)}
+          className={`relative w-[76px] rounded-[999px] text-[14px] leading-[18px] ${SANS} font-[500] capitalize transition-colors duration-150 ${view === v ? "text-walnut" : "text-sub hover:text-walnut"}`}
+        >
+          {v}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function DoeHealthProductCalendar({ view, onView }: { view: CalendarView; onView: (v: ScheduleView) => void }) {
   const [today, setToday] = useState(() => startOfDay(new Date()));
   const [now, setNow] = useState<number | null>(null);
-  const [view, setView] = useState<View>("week");
   const [anchor, setAnchor] = useState(() => startOfDay(new Date()));
 
   useEffect(() => {
@@ -261,18 +333,31 @@ export function DoeHealthProductCalendarPage() {
   const monday = mondayOf(anchor);
   const shown = view === "week" ? addDays(monday, 3) : anchor;
   const step = (dir: 1 | -1) =>
-    setAnchor((a) => (view === "week" ? addDays(a, dir * 7) : new Date(a.getFullYear(), a.getMonth() + dir, 1)));
-  const onThisPeriod = view === "week" ? sameDay(mondayOf(today), monday) : today.getMonth() === anchor.getMonth() && today.getFullYear() === anchor.getFullYear();
+    setAnchor((a) =>
+      view === "week" ? addDays(a, dir * 7) : view === "month" ? new Date(a.getFullYear(), a.getMonth() + dir, 1) : new Date(a.getFullYear() + dir, a.getMonth(), 1),
+    );
+  const sameYear = today.getFullYear() === anchor.getFullYear();
+  const onThisPeriod = view === "week" ? sameDay(mondayOf(today), monday) : view === "month" ? sameYear && today.getMonth() === anchor.getMonth() : sameYear;
+  const openWeek = (d: Date) => {
+    setAnchor(d);
+    onView("week");
+  };
 
   return (
     <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[26px] pt-[36px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
 
       <div className="relative flex items-end justify-between">
         <div className="flex items-baseline gap-[14px]">
-          <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>
-            {shown.toLocaleDateString("en-US", { month: "long" })}
-          </span>
-          <span className={`text-[28px] leading-[32px] tracking-[-0.02em] ${DISPLAY} text-sub`}>{shown.getFullYear()}</span>
+          {view === "year" ? (
+            <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>{shown.getFullYear()}</span>
+          ) : (
+            <>
+              <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>
+                {shown.toLocaleDateString("en-US", { month: "long" })}
+              </span>
+              <span className={`text-[28px] leading-[32px] tracking-[-0.02em] ${DISPLAY} text-sub`}>{shown.getFullYear()}</span>
+            </>
+          )}
         </div>
         <div className="flex items-center gap-[8px]">
           <button
@@ -289,36 +374,26 @@ export function DoeHealthProductCalendarPage() {
           <RoundButton label="Next" onClick={() => step(1)}>
             <path d="M9 6l6 6-6 6" />
           </RoundButton>
-          <div className="relative flex h-[40px] p-[4px] ml-[8px] rounded-[999px] bg-[#EEEADF]">
-            <span
-              className="absolute top-[4px] bottom-[4px] w-[76px] rounded-[999px] bg-paper"
-              style={{ left: view === "week" ? 4 : 80, transition: `left 300ms ${EASE}` }}
-            />
-            {(["week", "month"] as const).map((v) => (
-              <button
-                key={v}
-                type="button"
-                onClick={() => setView(v)}
-                className={`relative w-[76px] rounded-[999px] text-[14px] leading-[18px] ${SANS} font-[500] capitalize transition-colors duration-150 ${view === v ? "text-walnut" : "text-sub hover:text-walnut"}`}
-              >
-                {v}
-              </button>
-            ))}
-          </div>
+          <span className="ml-[8px]">
+            <ScheduleViewSwitch view={view} onChange={onView} />
+          </span>
         </div>
       </div>
 
       {view === "week" ? (
         <WeekView key={monday.toDateString()} monday={monday} today={today} now={now} />
+      ) : view === "month" ? (
+        <MonthView key={`${anchor.getFullYear()}-${anchor.getMonth()}`} month={anchor} today={today} onPickWeek={openWeek} />
       ) : (
-        <MonthView
-          key={`${anchor.getFullYear()}-${anchor.getMonth()}`}
-          month={anchor}
+        <YearView
+          key={anchor.getFullYear()}
+          year={anchor.getFullYear()}
           today={today}
-          onPickWeek={(d) => {
+          onPickMonth={(d) => {
             setAnchor(d);
-            setView("week");
+            onView("month");
           }}
+          onPickWeek={openWeek}
         />
       )}
     </div>

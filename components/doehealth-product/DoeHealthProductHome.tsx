@@ -15,7 +15,6 @@ import {
 import { DoeHealthProductServicesPage } from "@/components/doehealth-product/DoeHealthProductServices";
 import { DoeHealthProductVoicePage } from "@/components/doehealth-product/DoeHealthProductVoice";
 import { DoeHealthProductSchedulePage } from "@/components/doehealth-product/DoeHealthProductSchedule";
-import { DoeHealthProductCalendarPage } from "@/components/doehealth-product/DoeHealthProductCalendar";
 import { DoeHealthProductPaymentsPage } from "@/components/doehealth-product/DoeHealthProductPayments";
 import { DoeHealthProductPermissionsPage } from "@/components/doehealth-product/DoeHealthProductPermissions";
 import { DoeHealthProductReferralsPage } from "@/components/doehealth-product/DoeHealthProductReferrals";
@@ -28,7 +27,7 @@ import { DoeHealthProductIndex } from "@/components/doehealth-product/DoeHealthP
 import { HalftoneDisc } from "@/components/doehealth-product/DoeHealthProductHalftone";
 
 /** "call" is opened from the Voice tab's Handled list and has no rail icon of its own. */
-type TabId = "schedule" | "calendar" | "voice" | "call" | "services" | "providers" | "referrals" | "payments" | "permissions" | "search" | "forms" | "integrations" | "insights" | "automations";
+type TabId = "schedule" | "voice" | "call" | "services" | "providers" | "referrals" | "payments" | "permissions" | "search" | "forms" | "integrations" | "insights" | "automations";
 
 /** Pages that live in the Index dropdown in the rail. */
 const INDEX_CHILDREN: TabId[] = ["services", "providers", "permissions", "search", "forms"];
@@ -462,14 +461,6 @@ export function DoeHealthProductArtboard({
             <rect x="13" y="3.5" width="7.5" height="7.5" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
             <rect x="3.5" y="13" width="17" height="7.5" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
           </NavButton>
-          <NavButton label="Calendar" active={activeTab === "calendar"} onSelect={() => switchTab("calendar")}>
-            <rect x="3.5" y="4.5" width="17" height="16" rx="4.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
-            <circle cx="8.5" cy="11" r="1.1" fill="currentColor" />
-            <circle cx="12" cy="11" r="1.1" fill="currentColor" />
-            <circle cx="15.5" cy="11" r="1.1" fill="currentColor" />
-            <circle cx="8.5" cy="15.2" r="1.1" fill="currentColor" />
-            <circle cx="12" cy="15.2" r="1.1" fill="currentColor" />
-          </NavButton>
           <NavButton label="Voice" active={activeTab === "voice" || activeTab === "call"} onSelect={() => switchTab("voice")}>
             <path d="M5 4.5h3.2l1.6 4-2 1.3a10.5 10.5 0 0 0 6.4 6.4l1.3-2 4 1.6V19a1.5 1.5 0 0 1-1.6 1.5C10.6 20 4 13.4 3.5 6.1A1.5 1.5 0 0 1 5 4.5z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
           </NavButton>
@@ -602,7 +593,6 @@ export function DoeHealthProductArtboard({
         <div className="grow h-full flex p-[12px] rounded-[24px] overflow-clip gap-[12px] relative [background-color:#FFFCF1]">
           {/* Full-shell tab layers sit beneath the content panel, as in Paper. */}
           {layer("schedule", <DoeHealthProductSchedulePage />)}
-          {layer("calendar", <DoeHealthProductCalendarPage />)}
           {layer("voice", <DoeHealthProductVoicePage onOpenCall={() => switchTab("call")} />)}
           {layer("call", <DoeHealthProductCallPage onBack={() => switchTab("voice")} />)}
           {layer("services", <DoeHealthProductServicesPage />)}

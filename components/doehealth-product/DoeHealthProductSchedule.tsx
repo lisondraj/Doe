@@ -3,9 +3,12 @@
 /**
  * Schedule tab — the day as stacked hour rows of soft visit boxes. Clicking a box opens it bento-style:
  * it widens and grows taller to show its note, and the boxes beside and below make room.
- * A finished pre-visit video opens in a panel that slides in on the right.
+ * A finished pre-visit video opens in a panel that slides in on the right. Week, month and year switch
+ * to the calendar views.
  */
 import { useEffect, useRef, useState } from "react";
+
+import { DoeHealthProductCalendar, type ScheduleView, ScheduleViewSwitch } from "@/components/doehealth-product/DoeHealthProductCalendar";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 const SANS = "font-['DM_Sans',system-ui,sans-serif]";
@@ -369,7 +372,7 @@ function OpenBody({ visit, status, onSign }: { visit: Visit; status: Status; onS
   );
 }
 
-export function DoeHealthProductSchedulePage() {
+function DayView({ onView }: { onView: (v: ScheduleView) => void }) {
   const [open, setOpen] = useState<string | null>(null);
   const [video, setVideo] = useState<string | null>(null);
   const [viewing, setViewing] = useState(VISITS[0]!.id);
@@ -435,6 +438,9 @@ export function DoeHealthProductSchedulePage() {
               {s === "draft" ? "drafts" : STATUS[s].label.toLowerCase()}
             </span>
           ))}
+          <span className="ml-[8px]">
+            <ScheduleViewSwitch view="day" onChange={onView} />
+          </span>
         </span>
       </div>
 
@@ -535,5 +541,26 @@ export function DoeHealthProductSchedulePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+/** Day is the default; the calendar stays mounted so its place is kept when you come back to it. */
+export function DoeHealthProductSchedulePage() {
+  const [view, setView] = useState<ScheduleView>("day");
+  const [calendarView, setCalendarView] = useState<Exclude<ScheduleView, "day">>("week");
+  const switchView = (v: ScheduleView) => {
+    if (v !== "day") setCalendarView(v);
+    setView(v);
+  };
+
+  return (
+    <>
+      <div className={view === "day" ? "h-full w-full" : "hidden"}>
+        <DayView onView={switchView} />
+      </div>
+      <div className={view === "day" ? "hidden" : "h-full w-full"}>
+        <DoeHealthProductCalendar view={calendarView} onView={switchView} />
+      </div>
+    </>
   );
 }
