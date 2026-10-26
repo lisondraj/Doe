@@ -6139,10 +6139,19 @@ html:has(.earlypreview-page) {
   );
 }
 
-/* First paint on /earlypreview: the nav starts brown (see the root rule above); NavWash's inline values take over. */
+/*
+ * First paint on /earlypreview: the nav starts brown (see the root rule above); NavWash's inline values take over.
+ * The brown state is solid, not the shared 78% brown. The hero films are white, and a translucent bar picks them up
+ * and reads as cream while the nav is still over the brown stretch from the hero through the market section.
+ */
 .earlypreview-page .doehealth-desk2-chrome {
   --desk2-nav-wash: 1;
   --desk2-nav-beige: 0;
+  --desk2-nav-bg: color-mix(
+    in srgb,
+    #f4eedf calc(var(--desk2-beige) * 100%),
+    color-mix(in srgb, #281910 calc(var(--desk2-wash) * 100%), rgb(255 252 241 / 0.72))
+  );
 }
 
 /* The hero-gallery titles: the first line's last word is salmon too ("Doe for" stays white). */

@@ -400,7 +400,7 @@ export function EarlyPreviewHeroGallery() {
 
   return (
     <section
-      className={`earlypreview-gallery earlypreview-hero-gallery ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
+      className={`earlypreview-gallery earlypreview-hero-gallery doehealth-desk2-nav-wash-surface ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}
       aria-label="Doe videos"
     >
       <div ref={gridRef} className="earlypreview-gallery__grid">
