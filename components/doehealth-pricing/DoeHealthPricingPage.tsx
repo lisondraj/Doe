@@ -102,12 +102,12 @@ function FoundingBanner({ phone }: { phone: boolean }) {
         <DoeHealthBlogDotWave color={box.dot} top={phone ? 0.66 : 0.72} amp={70} phase={2.2} scale={1.05} slant={-0.3} flip />
         <div className="doehealth-blog-placeholder__content">
           <div className={`flex flex-col items-start text-left w-full ${phone ? "gap-[18px]" : "gap-[24px]"}`}>
-            <h1
+            <h2
               className={`m-0 font-[400] tracking-[-0.035em] [text-wrap:balance] ${phone ? "text-[34px] leading-[37px]" : "max-w-[22ch] text-[48px] leading-[51px]"} ${p22Mackinac.className}`}
               style={{ color: NEWS_INK }}
             >
               Teach personal agents about your clinic before it&apos;s too late.
-            </h1>
+            </h2>
             <span className="inline-flex items-center gap-[10px] h-[34px] px-[14px] rounded-[999px] bg-white text-[14px] leading-[18px] whitespace-nowrap">
               <span className="font-[500] text-[#281910]">Founding Pricing</span>
               <span className="w-[1px] h-[14px] bg-[rgba(20,12,4,0.12)]" aria-hidden="true" />
@@ -149,6 +149,15 @@ export function DoeHealthPricingPage({ initialVariant }: { initialVariant: DoeHe
       )}
       <main className="doehealth-desk2-main min-h-[100dvh]" aria-label="Pricing">
         <div className={`mx-auto w-full max-w-[1320px] flex flex-col ${phone ? "px-[26px] gap-[28px] pt-[8px] pb-[48px]" : "px-[56px] gap-[40px] pt-[24px] pb-[96px]"}`}>
+          {/* The page title, as /news and /careers set theirs: centred, large, with the same room above and below. */}
+          <header className={`text-center ${phone ? "pt-[45px] pb-[8px]" : "pt-[calc(clamp(3rem,8vh,5rem)-24px)] pb-[clamp(0.5rem,2vh,1rem)]"}`}>
+            <h1
+              className={`m-0 font-[400] leading-[1] tracking-[-0.045em] text-[#281910] ${phone ? "text-[2.85rem]" : "text-[clamp(3rem,5.4vw,4.75rem)]"} ${p22Mackinac.className}`}
+            >
+              Pricing
+            </h1>
+          </header>
+
           <FoundingBanner phone={phone} />
 
           <DoeHealthPricingBuilder phone={phone} />
