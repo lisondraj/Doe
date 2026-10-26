@@ -364,6 +364,10 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const [openSpecialty, setOpenSpecialty] = useState<SpecialtyId | null>(null);
   /** The tier shown on iPhone, where tiers are compared one at a time; null follows the team's plan. */
   const [view, setView] = useState<PlanId | null>(null);
+  /** Ids past this were added on the comparison and not yet confirmed; zero until the comparison is reached. */
+  const [planEntry, setPlanEntry] = useState(0);
+  /** The modal that asks to confirm locations and providers added on the comparison, before checkout. */
+  const [confirming, setConfirming] = useState(false);
   /**
    * Where the pinned bar sits once it reaches the top of the screen, or null while it stays in place: the toolbar on
    * desktop (with a strip of tier names once the table's header has scrolled away), the tier switcher on iPhone.
@@ -474,7 +478,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const dark = (id: PlanId) => id === "one";
   const cell = (id: PlanId) => `flex justify-center self-stretch items-center ${dark(id) ? "bg-[#281910]" : lit(id) ? "bg-[rgba(244,232,210,0.7)]" : ""}`;
   const sizeLine = `${plural(providerCount, "provider")}, ${plural(locationCount, "location")}`;
-  const billedLine = a.annual ? "Billed yearly, shown per month" : "Billed monthly";
 
   const badge = (id: PlanId) =>
     id === "advanced" ? (
@@ -681,9 +684,12 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             <span className={`text-[40px] leading-[42px] tracking-[-0.04em] ${DISPLAY} [font-variant-numeric:tabular-nums] ${dark(shown) ? "text-[#FCCFB8]" : ""}`}>{money(priceOf(shown))}</span>
             <span className={`text-[14px] ${dark(shown) ? "text-[rgba(255,252,241,0.6)]" : SUB}`}>/mo</span>
           </span>
-          <span className={`text-[13px] leading-[17px] ${dark(shown) ? "text-[rgba(255,252,241,0.6)]" : SUB}`}>
-            {sizeLine} · {billedLine}
-          </span>
+          <span className={`text-[13px] leading-[17px] ${dark(shown) ? "text-[rgba(255,252,241,0.6)]" : SUB}`}>{sizeLine}</span>
+          {a.annual && (
+            <span className={`text-[13px] leading-[17px] font-[600] [font-variant-numeric:tabular-nums] ${dark(shown) ? "text-[#FCCFB8]" : "text-[#281910]"}`}>
+              {money(yearly(priceOf(shown)))} billed yearly
+            </span>
+          )}
         </span>
         {shownAction && <span className="flex">{shownAction}</span>}
       </div>
@@ -764,15 +770,18 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </span>
   );
 
-  /** iPhone: opens the team sheet. */
+  /** iPhone: the team's faces, opening the team sheet to edit providers, their specialties and plans; first on the comparison. */
   const teamButton = (
     <button
       type="button"
       onClick={() => setPanel("team")}
-      className={`flex items-center justify-center gap-[10px] h-[48px] w-full pl-[12px] pr-[16px] rounded-[18px] ${OUTER} text-[14px] leading-[18px] font-[600] text-[#281910] transition-colors duration-150 whitespace-nowrap`}
+      className={`flex items-center gap-[10px] h-[52px] w-full pl-[12px] pr-[16px] rounded-[20px] ${OUTER} text-[15px] leading-[20px] font-[600] text-[#281910] transition-colors duration-150 whitespace-nowrap`}
     >
-      <TeamIcon />
-      Providers and plans
+      {avatars}
+      <span className="grow text-left">Edit providers and plans</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+        <path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      </svg>
     </button>
   );
 
@@ -813,15 +822,15 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </div>
   );
 
-  /** iPhone: the practice's size, billing and the team, above the switcher; they stay in place as the page scrolls. */
+  /** iPhone: the team first, then the practice's size and billing, above the switcher; they stay in place as the page scrolls. */
   const phoneControls = (
     <div className="flex flex-col gap-[8px]">
+      {teamButton}
       <div className={`flex flex-col gap-[4px] p-[4px] rounded-[24px] ${OUTER}`}>
         <span className={`px-[14px] rounded-[20px] ${INNER}`}>{locationsControl}</span>
         <span className={`px-[14px] rounded-[20px] ${INNER}`}>{providersControl}</span>
       </div>
       {billing}
-      {teamButton}
     </div>
   );
 
@@ -1103,7 +1112,30 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       Edit
     </button>
   );
-  const payOption = (mode: Answers["payMode"], title: string, note: string) => {
+  /** What the buyer pays up front each way: everything, or their own share (nothing if they aren't a provider). */
+  const upfront = (perMonth: number) => `${money(Math.round(perMonth) * (a.annual ? 12 : 1))}${a.annual ? "/yr" : "/mo"}`;
+  const payIcon = (mode: Answers["payMode"]) => (
+    <svg width="26" height="22" viewBox="0 0 30 24" aria-hidden="true" style={{ display: "block" }}>
+      {mode === "one" ? (
+        <>
+          <rect x="2" y="4" width="26" height="17" rx="4" fill="none" stroke="currentColor" strokeWidth="1.7" />
+          <path d="M2 9.5h26M7 16h6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        </>
+      ) : (
+        <>
+          <rect x="1.5" y="9" width="15" height="11" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M1.5 10l7.5 5 7.5-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+          <rect x="13.5" y="3" width="15" height="11" rx="2.5" fill="#FFFFFF" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M13.5 4l7.5 5 7.5-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+        </>
+      )}
+    </svg>
+  );
+  /**
+   * One way to pay, as a tile: an icon in its well, the name, what the buyer pays up front, and a check once picked.
+   * Picked, Individual payments also says each provider's payment link and Doe invite go to the same email.
+   */
+  const payOption = (mode: Answers["payMode"], title: string, figure: string) => {
     const on = a.payMode === mode;
     return (
       <button
@@ -1111,15 +1143,31 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         role="radio"
         aria-checked={on}
         onClick={() => set({ payMode: mode })}
-        className={`flex items-start gap-[12px] p-[16px] rounded-[18px] text-left transition-colors duration-200 ${on ? SELECTED : `${INNER} hover:bg-[#FFFCF1]`}`}
+        className={`relative flex flex-col items-start gap-[14px] p-[16px] rounded-[20px] text-left transition-colors duration-200 ${on ? INNER : "bg-[rgba(255,255,255,0.5)] hover:bg-[rgba(255,255,255,0.8)]"}`}
       >
-        <span className={`mt-[1px] w-[18px] h-[18px] shrink-0 flex items-center justify-center rounded-[999px] transition-colors duration-200 ${on ? "bg-[#A0522D]" : "bg-[#F4EEDF]"}`} aria-hidden="true">
-          <span className={`w-[6px] h-[6px] rounded-[999px] bg-white transition-opacity duration-200 ${on ? "opacity-100" : "opacity-0"}`} />
+        <span className="w-full flex items-start justify-between gap-[12px]">
+          <span className={`w-[48px] h-[48px] flex items-center justify-center rounded-[15px] transition-colors duration-200 ${on ? "bg-[#FBE7DA] text-[#A0522D]" : "bg-[#F4EEDF] text-[#8A6A3F]"}`}>{payIcon(mode)}</span>
+          <span
+            aria-hidden="true"
+            className={`w-[24px] h-[24px] flex items-center justify-center rounded-[999px] transition-colors duration-200 ${on ? "bg-[#281910] text-[#FFFCF1]" : "shadow-[inset_0_0_0_1.5px_rgba(20,12,4,0.16)] text-transparent"}`}
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" style={{ display: "block" }}>
+              <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
         </span>
-        <span className="flex flex-col gap-[2px]">
-          <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">{title}</span>
-          <span className={`text-[13px] leading-[18px] ${SUB}`}>{note}</span>
+        <span className="flex flex-col gap-[3px]">
+          <span className={`text-[20px] leading-[24px] tracking-[-0.015em] ${DISPLAY} text-[#281910]`}>{title}</span>
+          <span className={`text-[14px] leading-[19px] ${SUB} [font-variant-numeric:tabular-nums]`}>{figure}</span>
         </span>
+        {mode === "split" && on && (
+          <span className="doe-pricing-rise w-full flex items-start gap-[8px] px-[12px] py-[10px] rounded-[14px] bg-[#FBE7DA] text-[13px] leading-[18px] font-[500] text-[#7A3E1F]">
+            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0, marginTop: 2 }}>
+              <path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+            </svg>
+            Each provider&apos;s payment link and their invite to Doe go to the email you add for them.
+          </span>
+        )}
       </button>
     );
   };
@@ -1180,7 +1228,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                     type="email"
                     inputMode="email"
                     value={a.emails[p.id] ?? ""}
-                    placeholder={a.payMode === "split" ? "Email for their payment link" : "Email for their invite"}
+                    placeholder={a.payMode === "split" ? "Email for their payment link and invite" : "Email for their invite"}
                     aria-label={`${providerName(p)} email`}
                     onChange={(e) => set({ emails: { ...a.emails, [p.id]: e.target.value } })}
                     className={`h-[48px] px-[16px] rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.4)] transition-[background-color,box-shadow] duration-150`}
@@ -1193,61 +1241,86 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       ))}
     </div>
   );
+  /** Each paid tier's colour in the summary: sand for Basic, peach for Advanced, Doe One's brown. */
+  const tone = (id: PlanId) => (id === "one" ? "#281910" : id === "advanced" ? "#F2B596" : "#E3D3B3");
+  /**
+   * The summary as a ticket: the practice on top, each tier's share of the month as one bar with a legend under it,
+   * the discounts as chips, then a torn edge and the bill on the stub.
+   */
+  const summary = (
+    <div className={`flex flex-col rounded-[22px] overflow-hidden ${INNER}`}>
+      <div className="flex items-start justify-between gap-[12px] px-[20px] pt-[18px] pb-[16px]">
+        <span className="flex flex-col gap-[3px] min-w-[0px]">
+          <span className={`truncate text-[22px] leading-[26px] tracking-[-0.02em] ${DISPLAY} text-[#281910]`}>
+            {a.contact.practice.trim() || PRACTICE_SHAPES.find((x) => x.id === a.shape)?.title}
+          </span>
+          <span className={`text-[13px] leading-[17px] ${SUB}`}>{sizeLine}</span>
+        </span>
+        {buyerLine && (
+          <span className="shrink-0 h-[26px] px-[10px] flex items-center rounded-[999px] bg-[#F4EEDF] text-[12px] leading-[14px] font-[600] text-[#281910] whitespace-nowrap">
+            {a.onBehalf ? "On behalf of providers" : buyerLine}
+          </span>
+        )}
+      </div>
+      <div className="px-[20px]">
+        <span className="flex gap-[3px] h-[10px]" aria-hidden="true">
+          {tierLines.map((t) => (
+            <span key={t.tier.id} className="basis-0 min-w-[10px] rounded-[99px] transition-[flex-grow] duration-300" style={{ flexGrow: t.amount || 1, background: tone(t.tier.id) }} />
+          ))}
+        </span>
+      </div>
+      <div className="flex flex-col px-[20px] pt-[8px] pb-[10px]">
+        {tierLines.map((t) => (
+          <span key={t.tier.id} className="flex items-center gap-[12px] py-[9px]">
+            <span className="w-[10px] h-[10px] shrink-0 rounded-[3px]" style={{ background: tone(t.tier.id) }} aria-hidden="true" />
+            <span className="flex flex-col grow min-w-[0px]">
+              <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">{t.tier.name}</span>
+              <span className={`truncate text-[13px] leading-[17px] ${SUB}`}>
+                {plural(t.providers, "provider")}
+                {locationCount > 1 ? ` at ${Array.from(new Set(t.sites)).join(", ")}` : ""}
+              </span>
+            </span>
+            <span className="shrink-0 text-[15px] leading-[20px] text-[#281910] [font-variant-numeric:tabular-nums]">
+              {money(t.amount)}
+              <span className={`text-[13px] ${SUB}`}>/mo</span>
+            </span>
+          </span>
+        ))}
+        {discountLines.length > 0 && (
+          <span className="flex flex-wrap gap-[6px] pt-[6px]">
+            {discountLines.map(([label, value]) => (
+              <span key={label} className="h-[28px] px-[11px] flex items-center gap-[6px] rounded-[999px] bg-[#FBE7DA] text-[13px] leading-[16px] font-[500] text-[#7A3E1F] whitespace-nowrap [font-variant-numeric:tabular-nums]">
+                {label}
+                <span className="font-[600]">−{money(value)}</span>
+              </span>
+            ))}
+          </span>
+        )}
+      </div>
+      {/* The torn edge: a notch each side, cut in the beige box's colour, and a dashed line between them. */}
+      <div className="relative h-[22px]" aria-hidden="true">
+        <span className="absolute top-0 -left-[11px] w-[22px] h-[22px] rounded-[999px] bg-[#F4EEDF]" />
+        <span className="absolute top-0 -right-[11px] w-[22px] h-[22px] rounded-[999px] bg-[#F4EEDF]" />
+        <span className="absolute left-[20px] right-[20px] top-[10px] border-t-[1.5px] border-dashed border-[rgba(20,12,4,0.16)]" />
+      </div>
+      <div className="flex items-end justify-between gap-[16px] px-[20px] pt-[8px] pb-[20px]">
+        <span className="flex flex-col gap-[2px]">
+          <span className="text-[14px] leading-[18px] font-[600] text-[#140C04]">{a.annual ? "Billed yearly" : "Billed monthly"}</span>
+          <span className={`text-[13px] leading-[17px] ${SUB} [font-variant-numeric:tabular-nums]`}>{a.annual ? `${money(total)}/mo × 12 months` : "Charged each month"}</span>
+        </span>
+        <span className="flex items-baseline gap-[3px]">
+          <span className={`text-[36px] leading-[38px] tracking-[-0.035em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{money(a.annual ? yearly(total) : total)}</span>
+          <span className={`text-[13px] ${SUB}`}>{a.annual ? "/yr" : "/mo"}</span>
+        </span>
+      </div>
+    </div>
+  );
   const checkout = (
     <div className="flex flex-col gap-[14px]">
       {section(
         1,
         "Summary",
-        <div className={`flex flex-col rounded-[22px] ${INNER}`}>
-          {/* What's being bought: the practice and who's buying, in one quiet line. */}
-          <span className={`flex items-center gap-[10px] px-[18px] pt-[16px] pb-[12px] border-b border-solid ${HAIR}`}>
-            <span className="w-[30px] h-[30px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[11px] leading-[12px] font-[700] text-[#281910]">
-              {meProvider ? initials(meProvider.name, providers.indexOf(meProvider) + 1) : a.contact.name.trim() ? initials(a.contact.name, 1) : "You"}
-            </span>
-            <span className="flex flex-col min-w-[0px]">
-              <span className="truncate text-[14px] leading-[19px] font-[600] text-[#140C04]">{a.contact.practice.trim() || PRACTICE_SHAPES.find((x) => x.id === a.shape)?.title}</span>
-              <span className={`truncate text-[13px] leading-[17px] ${SUB}`}>
-                {sizeLine}
-                {buyerLine ? ` · ${a.onBehalf ? "On behalf of providers" : buyerLine}` : ""}
-              </span>
-            </span>
-          </span>
-          {/* The receipt: each tier, then any discounts, then the month. */}
-          <div className="flex flex-col px-[18px] py-[6px]">
-            {tierLines.map((t) => (
-              <span key={t.tier.id} className="flex items-start justify-between gap-[16px] py-[10px]">
-                <span className="flex flex-col min-w-[0px]">
-                  <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">
-                    {t.tier.name} <span className={`font-[500] ${SUB}`}>× {plural(t.providers, "provider")}</span>
-                  </span>
-                  {locationCount > 1 && <span className={`truncate text-[13px] leading-[17px] ${SUB}`}>{Array.from(new Set(t.sites)).join(", ")}</span>}
-                </span>
-                <span className="shrink-0 text-[15px] leading-[20px] text-[#281910] [font-variant-numeric:tabular-nums]">{money(t.amount)}</span>
-              </span>
-            ))}
-            {discountLines.map(([label, value]) => (
-              <span key={label} className="flex justify-between gap-[16px] py-[6px] text-[14px] leading-[19px] text-[#A0522D]">
-                <span>{label}</span>
-                <span className="shrink-0 [font-variant-numeric:tabular-nums]">−{money(value)}</span>
-              </span>
-            ))}
-            <span className={`flex justify-between gap-[16px] mt-[6px] py-[12px] border-t border-solid ${HAIR} text-[15px] leading-[20px] font-[600] text-[#140C04]`}>
-              <span>Per month</span>
-              <span className="[font-variant-numeric:tabular-nums]">{money(total)}</span>
-            </span>
-          </div>
-          {/* The bill: a year is the month times twelve; monthly is the month. */}
-          <div className="flex items-end justify-between gap-[16px] m-[6px] mt-0 px-[16px] py-[14px] rounded-[18px] bg-[#F4EEDF]">
-            <span className="flex flex-col gap-[2px]">
-              <span className="text-[14px] leading-[18px] font-[600] text-[#140C04]">{a.annual ? "Billed yearly" : "Billed monthly"}</span>
-              <span className={`text-[13px] leading-[17px] ${SUB} [font-variant-numeric:tabular-nums]`}>{a.annual ? `${money(total)}/mo × 12 months` : "Charged each month"}</span>
-            </span>
-            <span className="flex items-baseline gap-[3px]">
-              <span className={`text-[30px] leading-[32px] tracking-[-0.03em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{money(a.annual ? yearly(total) : total)}</span>
-              <span className={`text-[13px] ${SUB}`}>{a.annual ? "/yr" : "/mo"}</span>
-            </span>
-          </div>
-        </div>,
+        summary,
         editLink,
       )}
       {section(
@@ -1265,9 +1338,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         3,
         "How you'll pay",
         <div className="flex flex-col gap-[6px]">
-          <div role="radiogroup" aria-label="How you'll pay" className={`grid gap-[6px] ${phone ? "grid-cols-1" : "grid-cols-2"}`}>
-            {payOption("one", "Pay as one", "One payment covers the whole practice")}
-            {payOption("split", "Individual payments", "Each provider gets a payment link for their share")}
+          <div role="radiogroup" aria-label="How you'll pay" className={`grid items-start gap-[6px] ${phone ? "grid-cols-1" : "grid-cols-2"}`}>
+            {payOption("one", "Pay as one", `You pay ${upfront(total)} for everyone`)}
+            {payOption("split", "Individual payments", meProvider ? `You pay your share, ${upfront(shareOf(meProvider))}` : "Each provider pays their own share")}
           </div>
           {(a.payMode === "split" || inviteRecipients.length > 0) && recipientList}
         </div>,
@@ -1406,6 +1479,15 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     else setAt(index + 1);
   };
 
+  /** Locations and providers added on the comparison since it was reached (or since they were last confirmed). */
+  const isAdded = (id: string) => planEntry > 0 && Number(id.slice(1)) > planEntry;
+  const addedSites = a.team.filter((s) => isAdded(s.id));
+  const addedProviders = providers.filter((p) => isAdded(p.id));
+  const additions = onPlan && addedSites.length + addedProviders.length > 0;
+  const addedLine = `${[addedSites.length ? plural(addedSites.length, "location") : "", addedProviders.length ? plural(addedProviders.length, "provider") : ""].filter(Boolean).join(" and ")} added`;
+  /** Leaving the comparison with additions asks to confirm them first. */
+  const proceed = () => (additions ? setConfirming(true) : forward());
+
   // Checkout starts with the buyer's name filled in from their provider, if they marked themselves and named them.
   useEffect(() => {
     if (q.id === "checkout" && !a.contact.name.trim() && meProvider?.name.trim()) set({ contact: { ...a.contact, name: meProvider.name.trim() } });
@@ -1416,7 +1498,11 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   // The comparison starts with the team on Advanced; the panel waits for a button, and closes when you leave.
   useEffect(() => {
     if (onPlan && !a.plan) set({ plan: "advanced" });
-    if (!onPlan) setPanel(null);
+    if (onPlan) setPlanEntry(seq);
+    if (!onPlan) {
+      setPanel(null);
+      setConfirming(false);
+    }
     // Only when entering or leaving the comparison.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onPlan]);
@@ -1544,7 +1630,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
               disabled={!a.plan}
               onClick={() => {
                 setPanel(null);
-                if (panel === "price") forward();
+                if (panel === "price") proceed();
               }}
               className="h-[48px] px-[22px] shrink-0 rounded-[999px] bg-[#281910] hover:bg-[#3A2920] disabled:bg-[rgba(20,12,4,0.1)] disabled:text-[rgba(20,12,4,0.38)] text-[15px] leading-[20px] font-[600] text-[#FFFCF1] transition-colors duration-150"
             >
@@ -1553,6 +1639,113 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           </div>
         </aside>
       </>
+    ) : null;
+
+  /**
+   * Confirms what was added on the comparison before checkout: each new location to name, and each new provider to
+   * name, with their specialty and plan. Locations that only gained providers show their name as it is.
+   */
+  const addedSpecialtiesSet = addedProviders.every((p) => p.specialty && (p.specialty !== "other" || p.other.trim()));
+  const additionsModal =
+    confirming && additions ? (
+      <div className={`fixed inset-0 z-[60] flex ${phone ? "items-end" : "items-center justify-center p-[24px]"}`}>
+        <button type="button" aria-label="Close" onClick={() => setConfirming(false)} className="absolute inset-0 bg-[rgba(20,12,4,0.32)]" />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="doe-pricing-additions"
+          className={`relative flex flex-col w-full bg-[#FFFCF1] ${phone ? "doe-pricing-sheet max-h-[86vh] rounded-t-[30px]" : "doe-pricing-rise max-w-[560px] max-h-[82vh] rounded-[32px] shadow-[0_24px_60px_-30px_rgba(40,25,16,0.45)]"}`}
+        >
+          <div className="flex items-start justify-between gap-[12px] p-[16px] pb-[12px]">
+            <span className="flex flex-col gap-[2px] pl-[6px] pt-[4px]">
+              <span id="doe-pricing-additions" className={`text-[22px] leading-[26px] tracking-[-0.02em] ${DISPLAY} text-[#281910]`}>
+                Confirm new additions
+              </span>
+              <span className={`text-[14px] leading-[19px] ${SUB}`}>{addedLine}</span>
+            </span>
+            <Close label="Close" onClick={() => setConfirming(false)} />
+          </div>
+          <div className="flex flex-col gap-[10px] grow min-h-[0px] px-[16px] pb-[16px] overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {a.team
+              .filter((site) => isAdded(site.id) || site.providers.some((p) => isAdded(p.id)))
+              .map((site) => {
+                const si = a.team.indexOf(site);
+                return (
+                  <div key={site.id} className={`flex flex-col gap-[6px] p-[8px] rounded-[22px] ${OUTER}`}>
+                    <span className="flex items-center gap-[8px] min-h-[40px] pl-[10px] pr-[4px]">
+                      {isAdded(site.id) ? (
+                        <NameField
+                          value={site.name}
+                          placeholder={`Clinic ${si + 1}`}
+                          label={`Location ${si + 1} name`}
+                          onChange={(v) => editSite(site.id, { name: v })}
+                          text={`text-[19px] leading-[24px] tracking-[-0.01em] ${DISPLAY} text-[#281910]`}
+                          large
+                        />
+                      ) : (
+                        <span className={`text-[19px] leading-[24px] tracking-[-0.01em] ${DISPLAY} text-[#281910]`}>{siteName(site)}</span>
+                      )}
+                      <span className="grow" />
+                      {isAdded(site.id) && <span className={`h-[24px] px-[9px] shrink-0 flex items-center rounded-[999px] text-[12px] leading-[14px] font-[600] whitespace-nowrap ${SELECTED}`}>New location</span>}
+                    </span>
+                    {site.providers
+                      .filter((p) => isAdded(p.id))
+                      .map((p) => {
+                        const n = providers.indexOf(p) + 1;
+                        return (
+                          <div key={p.id} className={`flex flex-col gap-[8px] p-[10px] rounded-[18px] ${INNER}`}>
+                            <span className="flex items-center gap-[10px] min-w-[0px]">
+                              <span className="w-[32px] h-[32px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[14px] font-[700] text-[#281910]">{initials(p.name, n)}</span>
+                              <NameField
+                                value={p.name}
+                                placeholder={`Provider ${n}`}
+                                label={`Provider ${n} name`}
+                                onChange={(v) => editProvider(p.id, { name: v })}
+                                text={`${phone ? "text-[16px] leading-[21px]" : "text-[15px] leading-[20px]"} font-[500] text-[#140C04]`}
+                              />
+                            </span>
+                            <span className="flex items-center gap-[6px] flex-wrap pl-[42px]">
+                              {specialtyField({
+                                label: `${providerName(p)} specialty`,
+                                value: specialtyOf(p),
+                                typed: p.other,
+                                typing: p.specialty === "other",
+                                onPick: (v) => editProvider(p.id, { specialty: v }),
+                                onType: (v) => editProvider(p.id, { other: v }),
+                              })}
+                              <Pick dark label={`${providerName(p)} plan`} value={planOf(p).id} options={planOptions} onChange={(v) => editProvider(p.id, { plan: v === plan.id ? null : v })} />
+                            </span>
+                          </div>
+                        );
+                      })}
+                  </div>
+                );
+              })}
+          </div>
+          <div className={`flex items-center gap-[10px] p-[16px] pt-[12px] border-t border-solid ${HAIR} ${phone ? "pb-[max(16px,env(safe-area-inset-bottom))]" : ""}`}>
+            <button
+              type="button"
+              onClick={() => setConfirming(false)}
+              className={`h-[48px] px-[20px] shrink-0 rounded-[999px] ${OUTER} hover:bg-[#EDE5D2] text-[15px] leading-[20px] font-[600] text-[#281910] transition-colors duration-150`}
+            >
+              Back
+            </button>
+            <span className="grow" />
+            <button
+              type="button"
+              disabled={!addedSpecialtiesSet}
+              onClick={() => {
+                setPlanEntry(seq);
+                setConfirming(false);
+                forward();
+              }}
+              className="h-[48px] px-[22px] shrink-0 rounded-[999px] bg-[#281910] hover:bg-[#3A2920] disabled:bg-[rgba(20,12,4,0.1)] disabled:text-[rgba(20,12,4,0.38)] text-[15px] leading-[20px] font-[600] text-[#FFFCF1] transition-colors duration-150"
+            >
+              Confirm and continue
+            </button>
+          </div>
+        </div>
+      </div>
     ) : null;
 
   /** A question's title, line by line. */
@@ -1567,7 +1760,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const panelOpenDesktop = !!sidePanel && !phone;
   const goLabel = last ? "Finish" : q.id === "plan" && a.plan && !phone ? "Finalize" : "Continue";
   /** On iPhone, Continue on the comparison opens the price breakdown first, to confirm there. */
-  const go = () => (phone && onPlan ? setPanel("price") : forward());
+  const go = () => (phone && onPlan ? setPanel("price") : proceed());
   const back = () => setAt(index - 1);
   const arrow = (dir: "back" | "next", size = 16) => (
     <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
@@ -1595,9 +1788,13 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           {/* The price, big, on the left once there is one; on the comparison it opens the breakdown. */}
           <span className="grow min-w-[0px] flex items-center pl-[8px]">
             {a.plan && (
-              <button type="button" disabled={!onPlan} onClick={() => setPanel("price")} aria-label={onPlan ? "See price breakdown" : undefined} className="flex items-baseline gap-[3px] whitespace-nowrap disabled:cursor-default">
-                <span className={`${phone ? "text-[24px] leading-[28px]" : "text-[28px] leading-[32px]"} tracking-[-0.03em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}</span>
-                <span className="text-[14px] text-[rgba(255,252,241,0.6)]">/mo</span>
+              <button type="button" disabled={!onPlan} onClick={() => setPanel("price")} aria-label={onPlan ? "See price breakdown" : undefined} className="flex flex-col items-start whitespace-nowrap text-left disabled:cursor-default">
+                <span className="flex items-baseline gap-[3px]">
+                  <span className={`${phone ? "text-[24px] leading-[26px]" : "text-[28px] leading-[30px]"} tracking-[-0.03em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}</span>
+                  <span className="text-[14px] text-[rgba(255,252,241,0.6)]">/mo</span>
+                </span>
+                {/* The price is the whole team's, not one provider's. */}
+                <span className="text-[12px] leading-[15px] font-[500] text-[rgba(255,252,241,0.6)]">Total for {plural(providerCount, "provider")}</span>
               </button>
             )}
           </span>
@@ -1685,7 +1882,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </div>
   ) : (
     <div key={q.id} className={`doe-pricing-rise flex flex-col ${phone ? "gap-[22px]" : "gap-[28px]"}`}>
-      <div className={`flex items-end justify-between gap-[16px] flex-wrap ${phone ? `p-[20px] rounded-[26px] ${OUTER} [&_h2]:text-[32px] [&_h2]:leading-[35px]` : ""}`}>
+      <div className={`flex items-end justify-between gap-[16px] flex-wrap ${OUTER} ${phone ? "p-[20px] rounded-[26px] [&_h2]:text-[32px] [&_h2]:leading-[35px]" : "px-[32px] py-[28px] rounded-[32px]"}`}>
         {heading(q.title)}
       </div>
       {q.body}
@@ -1708,6 +1905,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       </div>
       {dock}
       {sidePanel}
+      {additionsModal}
     </div>
   );
 }
