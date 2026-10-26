@@ -535,6 +535,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const barSlot = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  /** Desktop checkout: the summary, and whether it has scrolled away so a copy follows on the right. */
+  const summaryRef = useRef<HTMLDivElement>(null);
+  const [summaryFollows, setSummaryFollows] = useState(false);
   const moved = useRef(false);
   const pinTop = phone ? 118 : 112;
   /** Ids past this were added since the current step or panel came into view: they grow in rather than appear. */
@@ -1545,7 +1548,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       {section(
         1,
         "Summary",
-        summary,
+        <div ref={summaryRef}>{summary}</div>,
         editLink,
       )}
       {section(
@@ -1755,6 +1758,33 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     // Only when entering or leaving the comparison.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onPlan]);
+
+  // Desktop checkout: once the summary has scrolled up out of view, it follows along in the free space to the right of
+  // the page, until the checkout itself has scrolled away.
+  useEffect(() => {
+    if (phone || done || q.id !== "checkout") {
+      setSummaryFollows(false);
+      return undefined;
+    }
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const sum = summaryRef.current?.getBoundingClientRect();
+      const card = cardRef.current?.getBoundingClientRect();
+      setSummaryFollows(!!sum && !!card && sum.bottom < pinTop && card.bottom > pinTop + 520);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [phone, done, q.id, pinTop]);
 
   // Keep the question in view as it changes, without jumping on first load.
   useEffect(() => {
@@ -2185,6 +2215,22 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           {card}
         </div>
       </div>
+      {/* Desktop checkout: the summary, in the free space right of the page, once the one at the top has scrolled away.
+          Only where there's room beside the checkout column. */}
+      {summaryFollows && !phone && (
+        <aside
+          aria-label="Summary"
+          className="doe-pricing-rise hidden min-[1400px]:block fixed z-30 p-[6px] rounded-[28px] bg-[#F4EEDF]"
+          // The free space right of the 760px column, with an even gap each side.
+          style={{ top: pinTop + 12, left: "calc(50% + 380px + 24px)", width: "min(340px, calc(50vw - 380px - 48px))" }}
+        >
+          <span className="flex items-center justify-between px-[12px] pt-[8px] pb-[10px]">
+            <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">Summary</span>
+            {editLink}
+          </span>
+          {summary}
+        </aside>
+      )}
       {dock}
       {sidePanel}
       {additionsModal}
