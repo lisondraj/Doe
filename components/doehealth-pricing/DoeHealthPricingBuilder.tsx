@@ -46,8 +46,8 @@ const INNER = "bg-white";
 const SELECTED = "bg-[#FBE7DA] text-[#281910]";
 /** A field in focus: white, with a soft peach ring rather than a dark one. */
 const FOCUS = "focus:bg-white focus:shadow-[inset_0_0_0_1.5px_#EDBB9C]";
-/** A beige box pinned over the page as it scrolls, lifted off it by a soft shadow. */
-const PINNED = "bg-[#F4EEDF] shadow-[0_14px_34px_-22px_rgba(40,25,16,0.5)]";
+/** A beige box pinned over the page as it scrolls, lifted off it by a soft shadow (the cream behind it stops at its edge, so the shadow lands on the rows, not on a white haze). */
+const PINNED = "bg-[#F4EEDF] shadow-[0_12px_28px_-14px_rgba(40,25,16,0.45)]";
 
 /** Plans a practice can be on: every tier but Free, which stays in the comparison. */
 const PAID = PLANS.filter((p) => p.id !== "free");
@@ -844,8 +844,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       {pinned && (
         <div
           aria-hidden="true"
-          className="fixed inset-x-0 top-0 z-[29] pointer-events-none"
-          style={{ height: pinned.cover + 18, background: "linear-gradient(180deg, #FFFCF1 calc(100% - 18px), rgba(255,252,241,0))" }}
+          className="fixed inset-x-0 top-0 z-[29] pointer-events-none bg-[#FFFCF1]"
+          style={{ height: pinned.cover }}
         />
       )}
       <div className={pinned ? "fixed z-30" : ""} style={pinned ? { top: pinTop, left: pinned.left, width: pinned.width } : undefined}>
