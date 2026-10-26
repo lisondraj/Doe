@@ -34,6 +34,7 @@ import {
   SPECIALTY_FROM,
   type SpecialtyId,
 } from "@/lib/doehealthdesk2/doehealthdesk2-pricing";
+import { taxForZip, taxOn } from "@/lib/doehealthdesk2/doehealthdesk2-tax";
 import { p22Mackinac } from "@/lib/home/fonts";
 
 const DISPLAY = p22Mackinac.className;
@@ -46,6 +47,8 @@ const INNER = "bg-white";
 const SELECTED = "bg-[#FBE7DA] text-[#281910]";
 /** A field in focus: white, with a soft peach ring rather than a dark one. */
 const FOCUS = "focus:bg-white focus:shadow-[inset_0_0_0_1.5px_#EDBB9C]";
+/** A field that needs fixing before Continue: a rust ring, kept while it's focused. */
+const BAD = "shadow-[inset_0_0_0_1.5px_#D9825C] focus:shadow-[inset_0_0_0_1.5px_#D9825C]";
 /** A beige box pinned over the page as it scrolls, lifted off it by a soft shadow (the cream behind it stops at its edge, so the shadow lands on the rows, not on a white haze). */
 const PINNED = "bg-[#F4EEDF] shadow-[0_12px_28px_-14px_rgba(40,25,16,0.45)]";
 
@@ -55,6 +58,10 @@ const PAID = PLANS.filter((p) => p.id !== "free");
 const YEARLY_OFF = Math.round((1 - ANNUAL_FACTOR) * 100);
 
 const money = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
+/** Dollars and cents, for tax and anything with it added. */
+const cents = (n: number) => `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+/** Every price before checkout is before tax; this says so, wherever a price stands. */
+const TAX_NOTE = "Taxes calculated before payment";
 /** A year at a monthly price: the month as shown, in whole dollars, times twelve, so the sum on screen adds up. */
 const yearly = (perMonth: number) => Math.round(perMonth) * 12;
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
@@ -317,6 +324,7 @@ function TextField({
   type = "text",
   inputMode,
   autoComplete,
+  warning,
 }: {
   label: string;
   value: string;
@@ -325,6 +333,8 @@ function TextField({
   type?: string;
   inputMode?: "numeric" | "email" | "text";
   autoComplete?: string;
+  /** What to fix, under the field, once Continue has been tapped. */
+  warning?: string;
 }) {
   return (
     <label className="flex flex-col gap-[8px] min-w-[0px]">
@@ -335,10 +345,29 @@ function TextField({
         placeholder={placeholder}
         inputMode={inputMode}
         autoComplete={autoComplete}
+        aria-invalid={warning ? true : undefined}
         onChange={(e) => onChange(e.target.value)}
-        className={`h-[56px] px-[20px] rounded-[18px] bg-white outline-none ${FOCUS} text-[17px] leading-[22px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.32)] transition-[background-color,box-shadow] duration-150`}
+        className={`h-[56px] px-[20px] rounded-[18px] bg-white outline-none ${FOCUS} ${warning ? BAD : ""} text-[17px] leading-[22px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.32)] transition-[background-color,box-shadow] duration-150`}
       />
+      {warning && <Warn>{warning}</Warn>}
     </label>
+  );
+}
+
+/**
+ * What needs fixing, shown where it needs fixing once Continue is tapped on a step that isn't ready. The first one on
+ * the page is scrolled into view.
+ */
+function Warn({ children }: { children: ReactNode }) {
+  return (
+    <span data-pricing-warn="" role="alert" className="doe-pricing-rise flex items-start gap-[6px] px-[4px] text-[13px] leading-[17px] font-[500] text-[#A8431B]">
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" className="mt-[1.5px]" style={{ display: "block", flexShrink: 0 }}>
+        <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" strokeWidth="2" />
+        <path d="M12 7v6.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+        <circle cx="12" cy="17" r="1.3" fill="currentColor" />
+      </svg>
+      <span className="min-w-[0px]">{children}</span>
+    </span>
   );
 }
 
@@ -368,6 +397,19 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const [planEntry, setPlanEntry] = useState(0);
   /** The modal that asks to confirm locations and providers added on the comparison, before checkout. */
   const [confirming, setConfirming] = useState(false);
+  /** The step (or "additions", the confirm sheet) where Continue was tapped before it was ready; its fields show what to fix. */
+  const [tried, setTried] = useState<string | null>(null);
+  const [warnCount, setWarnCount] = useState(0);
+  const flag = (id: string) => {
+    setTried(id);
+    setWarnCount((n) => n + 1);
+  };
+  // Brings the first thing to fix into view, each time Continue is tapped too soon.
+  useEffect(() => {
+    if (!warnCount) return;
+    const id = requestAnimationFrame(() => document.querySelector("[data-pricing-warn]")?.scrollIntoView({ behavior: "smooth", block: "center" }));
+    return () => cancelAnimationFrame(id);
+  }, [warnCount]);
   /**
    * Where the pinned bar sits once it reaches the top of the screen, or null while it stays in place: the toolbar on
    * desktop (with a strip of tier names once the table's header has scrolled away), the tier switcher on iPhone.
@@ -404,6 +446,10 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const specialtyName = (sp: Specialty, typed: string) => (sp === "other" ? typed.trim() || "Other" : SPECIALTIES.find((x) => x.id === sp)?.label ?? "");
   /** Every provider has a specialty, and anyone on Other has typed theirs. */
   const specialtiesSet = providers.every((p) => p.specialty && (p.specialty !== "other" || p.other.trim()));
+  /** What a provider's specialty still needs, if anything. */
+  const specialtyGap = (p: Provider) => (!p.specialty ? "Choose a specialty" : p.specialty === "other" && !p.other.trim() ? "Type the specialty" : null);
+  /** What an email still needs, if anything. */
+  const emailGap = (v: string, empty: string) => (!v.trim() ? empty : isEmail(v) ? null : "Check this email, it looks incomplete");
   /** A location's name, or its default when left blank. */
   const siteName = (site: Site) => site.name.trim() || `Clinic ${a.team.indexOf(site) + 1}`;
   const providerName = (p: Provider) => p.name.trim() || `Provider ${providers.indexOf(p) + 1}`;
@@ -429,6 +475,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   /** What the buyer pays today: everything, or with individual payments only their own share (nothing if not a provider). */
   const monthlyDue = a.payMode === "one" ? total : meProvider ? shareOf(meProvider) : 0;
   const dueToday = Math.round(monthlyDue) * (a.annual ? 12 : 1);
+  /** Tax on what's paid today, by the state of the card's ZIP; null until the ZIP reads as one. */
+  const tax = taxForZip(a.card.zip);
+  const taxDue = tax ? taxOn(dueToday, tax.rate) : 0;
   /** Providers who get a payment link of their own. */
   const linkRecipients = a.payMode === "split" ? providers.filter((p) => p.id !== meProvider?.id) : [];
   /** Buying on behalf of providers and paying as one, every provider still gets an invite to Doe by email. */
@@ -908,6 +957,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   };
 
   const teamEditor = (withPlans: boolean) => {
+    const warnTeam = tried === "team" && !withPlans;
     const surface = OUTER;
     const row = INNER;
     return (
@@ -928,6 +978,11 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
               <span className={`absolute top-[3px] w-[20px] h-[20px] rounded-[999px] bg-white transition-[left] duration-200 ${a.onBehalf ? "left-[21px]" : "left-[3px]"}`} />
             </span>
           </button>
+          {warnTeam && !a.onBehalf && !meProvider && (
+            <span className="block px-[10px] pt-[8px] pb-[4px]">
+              <Warn>Tap &ldquo;That&apos;s me&rdquo; on your own row below, or turn on Purchasing on Behalf of Providers</Warn>
+            </span>
+          )}
         </div>
         {a.team.map((site, si) => (
           <div key={site.id} className={fresh(site.id) ? "doe-pricing-grow" : ""}>
@@ -981,6 +1036,11 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                     })}
                     {withPlans && <Pick dark label={`${providerName(p)} plan`} value={planOf(p).id} options={planOptions} onChange={(v) => editProvider(p.id, { plan: v === plan.id ? null : v })} />}
                   </span>
+                  {warnTeam && specialtyGap(p) && (
+                    <span className={withPlans || phone ? "pl-[42px]" : "sm:basis-full"}>
+                      <Warn>{specialtyGap(p)}</Warn>
+                    </span>
+                  )}
                   {!withPlans && !phone && site.providers.length > 1 && (
                     <Close label={`Remove ${providerName(p)}`} onClick={() => setTeam(a.team.map((x) => (x.id === site.id ? { ...x, providers: x.providers.filter((y) => y.id !== p.id) } : x)))} />
                   )}
@@ -1049,6 +1109,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   );
 
   const planLabel = mixed ? "Mixed plans" : plan.name;
+  /** Under the comparison: the prices above are before tax. */
+  const taxCaption = <span className={`px-[12px] text-center text-[13px] leading-[18px] ${SUB}`}>Prices shown before tax. {TAX_NOTE}, from your card&apos;s ZIP.</span>;
 
   const subtotal = priced.total;
   const yearlyOff = a.annual ? subtotal * (1 - ANNUAL_FACTOR) : 0;
@@ -1179,6 +1241,22 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   );
   /** One card field in the grouped card block: a quiet label over the input, hairlines between them. */
   /** A card field like the others on the page: a quiet label above a beige field, with an optional mark inside it. */
+  /** Which card details are not yet in the shape they're typed, once Continue has been tapped. */
+  const cardBad: Record<keyof Answers["card"], boolean> = {
+    number: !/^\d{13,19}$/.test(a.card.number.replace(/\s/g, "")),
+    expiry: !/^(0[1-9]|1[0-2])\/\d{2}$/.test(a.card.expiry),
+    cvc: !/^\d{3,4}$/.test(a.card.cvc),
+    zip: a.card.zip.trim().length < 3,
+  };
+  const warnCheckout = tried === "checkout";
+  const cardWarning = (() => {
+    if (!warnCheckout || dueToday === 0) return null;
+    const names = { number: "card number", expiry: "expiry (MM/YY)", cvc: "security code", zip: "ZIP" } as const;
+    const bad = (Object.keys(names) as (keyof typeof names)[]).filter((k) => cardBad[k]).map((k) => names[k]);
+    if (!bad.length) return null;
+    const list = bad.length === 1 ? bad[0] : `${bad.slice(0, -1).join(", ")} and ${bad[bad.length - 1]}`;
+    return `Check the ${list}`;
+  })();
   const cardField = (label: string, key: keyof Answers["card"], placeholder: string, format: (v: string) => string, autoComplete: string, mark?: ReactNode) => (
     <label className="flex flex-col gap-[6px] min-w-[0px]">
       <span className={`px-[4px] text-[13px] leading-[17px] font-[500] ${SUB}`}>{label}</span>
@@ -1188,8 +1266,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           placeholder={placeholder}
           inputMode="numeric"
           autoComplete={autoComplete}
+          aria-invalid={cardWarning && cardBad[key] ? true : undefined}
           onChange={(e) => set({ card: { ...a.card, [key]: format(e.target.value) } })}
-          className={`w-full min-w-[0px] h-[52px] px-[16px] ${mark ? "pr-[56px]" : ""} rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.35)] [font-variant-numeric:tabular-nums] transition-[background-color,box-shadow] duration-150`}
+          className={`w-full min-w-[0px] h-[52px] px-[16px] ${mark ? "pr-[56px]" : ""} rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} ${cardWarning && cardBad[key] ? BAD : ""} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.35)] [font-variant-numeric:tabular-nums] transition-[background-color,box-shadow] duration-150`}
         />
         {mark && <span className="pointer-events-none absolute right-[16px]">{mark}</span>}
       </span>
@@ -1230,10 +1309,12 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                     value={a.emails[p.id] ?? ""}
                     placeholder={a.payMode === "split" ? "Email for their payment link and invite" : "Email for their invite"}
                     aria-label={`${providerName(p)} email`}
+                    aria-invalid={warnCheckout && emailGap(a.emails[p.id] ?? "", "") !== null ? true : undefined}
                     onChange={(e) => set({ emails: { ...a.emails, [p.id]: e.target.value } })}
-                    className={`h-[48px] px-[16px] rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.4)] transition-[background-color,box-shadow] duration-150`}
+                    className={`h-[48px] px-[16px] rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} ${warnCheckout && emailGap(a.emails[p.id] ?? "", "") !== null ? BAD : ""} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.4)] transition-[background-color,box-shadow] duration-150`}
                   />
                 )}
+                {!mine && warnCheckout && emailGap(a.emails[p.id] ?? "", "") !== null && <Warn>{emailGap(a.emails[p.id] ?? "", `Add ${providerName(p)}'s email`)}</Warn>}
               </div>
             );
           })}
@@ -1306,7 +1387,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       <div className="flex items-end justify-between gap-[16px] px-[20px] pt-[8px] pb-[20px]">
         <span className="flex flex-col gap-[2px]">
           <span className="text-[14px] leading-[18px] font-[600] text-[#140C04]">{a.annual ? "Billed yearly" : "Billed monthly"}</span>
-          <span className={`text-[13px] leading-[17px] ${SUB} [font-variant-numeric:tabular-nums]`}>{a.annual ? `${money(total)}/mo × 12 months` : "Charged each month"}</span>
+          <span className={`text-[13px] leading-[17px] ${SUB} [font-variant-numeric:tabular-nums]`}>{a.annual ? `${money(total)}/mo × 12 months` : "Charged each month"}, plus tax</span>
         </span>
         <span className="flex items-baseline gap-[3px]">
           <span className={`text-[36px] leading-[38px] tracking-[-0.035em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{money(a.annual ? yearly(total) : total)}</span>
@@ -1327,10 +1408,10 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         2,
         "Your information",
         <div className={`grid gap-[12px] p-[14px] rounded-[22px] ${INNER} ${phone ? "grid-cols-1" : "grid-cols-2"} [&_input]:bg-[#F4EEDF]`}>
-          <TextField label="Your name" value={a.contact.name} onChange={(v) => set({ contact: { ...a.contact, name: v } })} placeholder="Jane Smith" autoComplete="name" />
-          <TextField label="Practice name" value={a.contact.practice} onChange={(v) => set({ contact: { ...a.contact, practice: v } })} placeholder="Northside Family Medicine" autoComplete="organization" />
+          <TextField label="Your name" value={a.contact.name} onChange={(v) => set({ contact: { ...a.contact, name: v } })} placeholder="Jane Smith" autoComplete="name" warning={warnCheckout && !a.contact.name.trim() ? "Add your name" : undefined} />
+          <TextField label="Practice name" value={a.contact.practice} onChange={(v) => set({ contact: { ...a.contact, practice: v } })} placeholder="Northside Family Medicine" autoComplete="organization" warning={warnCheckout && !a.contact.practice.trim() ? "Add your practice name" : undefined} />
           <div className={phone ? "" : "col-span-2"}>
-            <TextField label="Work email, where your access link goes" type="email" inputMode="email" value={a.contact.email} onChange={(v) => set({ contact: { ...a.contact, email: v } })} placeholder="jane@yourclinic.com" autoComplete="email" />
+            <TextField label="Work email, where your access link goes" type="email" inputMode="email" value={a.contact.email} onChange={(v) => set({ contact: { ...a.contact, email: v } })} placeholder="jane@yourclinic.com" autoComplete="email" warning={(warnCheckout && emailGap(a.contact.email, "Add your work email")) || undefined} />
           </div>
         </div>,
       )}
@@ -1351,15 +1432,22 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         <div className={`flex flex-col gap-[16px] p-[18px] rounded-[22px] ${INNER}`}>
           <span className="flex items-end justify-between gap-[12px]">
             <span className="flex flex-col gap-[2px]">
-              <span className={`text-[13px] leading-[17px] font-[500] ${SUB}`}>Due today</span>
+              <span className={`text-[13px] leading-[17px] font-[500] ${SUB}`}>{tax ? "Due today, with tax" : "Due today"}</span>
               <span className={`text-[13px] leading-[17px] ${SUB}`}>
                 {dueToday === 0
                   ? "Each provider pays from their link"
                   : `${a.annual ? "One year" : "One month"}${a.payMode === "split" ? ", your share" : `, ${plural(providerCount, "provider")}`}`}
               </span>
             </span>
-            <span className={`text-[36px] leading-[38px] tracking-[-0.035em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{money(dueToday)}</span>
+            <span className={`text-[36px] leading-[38px] tracking-[-0.035em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{tax ? cents(dueToday + taxDue) : money(dueToday)}</span>
           </span>
+          {/* Subtotal and tax, the tax filled in once the card's ZIP is in. */}
+          {dueToday > 0 && (
+            <span className="flex flex-col px-[16px] py-[2px] rounded-[16px] bg-[#FAF6EC]">
+              {line("Subtotal", cents(dueToday))}
+              {line(tax ? `Taxes, ${tax.state} ${+(tax.rate * 100).toFixed(3)}%` : "Taxes", tax ? cents(taxDue) : <span className={SUB}>Calculated from your ZIP</span>)}
+            </span>
+          )}
           {dueToday > 0 ? (
             <div className="grid grid-cols-3 gap-[10px]">
               <div className="col-span-3">
@@ -1377,7 +1465,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
               </div>
               {cardField("Expiry", "expiry", "MM/YY", groupExpiry, "cc-exp")}
               {cardField("CVC", "cvc", "123", (v) => v.replace(/\D/g, "").slice(0, 4), "cc-csc")}
-              {cardField("ZIP", "zip", "94107", (v) => v.slice(0, 10), "postal-code")}
+              {cardField("Billing ZIP", "zip", "94107", (v) => v.slice(0, 10), "postal-code")}
             </div>
           ) : null}
           {sendNote && (
@@ -1447,11 +1535,13 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           {phoneControls}
           {pinnedBar}
           {tierView}
+          {taxCaption}
         </div>
       ) : (
         <div className="flex flex-col gap-[12px]">
           {pinnedBar}
           {table}
+          {taxCaption}
         </div>
       ),
     },
@@ -1566,7 +1656,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           <span className="text-[14px] text-[rgba(255,252,241,0.6)]">/ month</span>
         </span>
         <span className="flex items-center justify-between gap-[10px] flex-wrap">
-          <span className="text-[13px] leading-[18px] text-[rgba(255,252,241,0.6)]">{a.annual ? `${money(yearly(total))} billed yearly` : "Billed monthly"}</span>
+          <span className="text-[13px] leading-[18px] text-[rgba(255,252,241,0.6)]">{a.annual ? `${money(yearly(total))} billed yearly` : "Billed monthly"}, plus tax</span>
           {saved > 0 && <span className="h-[24px] px-[10px] flex items-center rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[16px] font-[600] text-[#140C04]">Saving {money(saved)}/mo</span>}
         </span>
       </div>
@@ -1599,6 +1689,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           <span>Per month</span>
           <span className="[font-variant-numeric:tabular-nums]">{money(total)}</span>
         </span>
+        <span className={`pb-[10px] text-[13px] leading-[18px] ${SUB}`}>{TAX_NOTE}</span>
       </div>
 
       <div className="flex flex-col gap-[14px] px-[2px]">
@@ -1623,7 +1714,10 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           </div>
           <div className="flex flex-col grow min-h-[0px] px-[16px] pb-[16px] overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{panel === "team" ? teamEditor(true) : priceTab}</div>
           <div className={`flex items-center gap-[12px] p-[16px] pt-[12px] border-t border-solid ${HAIR} ${phone ? "pb-[max(16px,env(safe-area-inset-bottom))]" : ""}`}>
-            <span className={`grow min-w-[0px] text-[24px] leading-[28px] tracking-[-0.02em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{`${money(total)}/mo`}</span>
+            <span className="grow min-w-[0px] flex flex-col">
+              <span className={`text-[24px] leading-[28px] tracking-[-0.02em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{`${money(total)}/mo`}</span>
+              <span className={`text-[12px] leading-[15px] ${SUB}`}>Before tax</span>
+            </span>
             {/* The price confirms the plan and moves on to checkout; the team just closes. */}
             <button
               type="button"
@@ -1642,8 +1736,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     ) : null;
 
   /**
-   * Confirms what was added on the comparison before checkout: each new location to name, and each new provider to
-   * name, with their specialty and plan. Locations that only gained providers show their name as it is.
+   * Confirms what was added on the comparison before checkout, against the whole team: every location and every
+   * provider, the new ones to name (with their specialty and plan) and marked New, the rest shown as they are.
    */
   const addedSpecialtiesSet = addedProviders.every((p) => p.specialty && (p.specialty !== "other" || p.other.trim()));
   const additionsModal =
@@ -1666,9 +1760,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             <Close label="Close" onClick={() => setConfirming(false)} />
           </div>
           <div className="flex flex-col gap-[10px] grow min-h-[0px] px-[16px] pb-[16px] overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {a.team
-              .filter((site) => isAdded(site.id) || site.providers.some((p) => isAdded(p.id)))
-              .map((site) => {
+            {a.team.map((site) => {
                 const si = a.team.indexOf(site);
                 return (
                   <div key={site.id} className={`flex flex-col gap-[6px] p-[8px] rounded-[22px] ${OUTER}`}>
@@ -1688,10 +1780,21 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                       <span className="grow" />
                       {isAdded(site.id) && <span className={`h-[24px] px-[9px] shrink-0 flex items-center rounded-[999px] text-[12px] leading-[14px] font-[600] whitespace-nowrap ${SELECTED}`}>New location</span>}
                     </span>
-                    {site.providers
-                      .filter((p) => isAdded(p.id))
-                      .map((p) => {
+                    {site.providers.map((p) => {
                         const n = providers.indexOf(p) + 1;
+                        if (!isAdded(p.id)) {
+                          const sp = specialtyOf(p);
+                          return (
+                            <div key={p.id} className={`flex items-center gap-[10px] p-[10px] rounded-[18px] ${INNER}`}>
+                              <span className="w-[32px] h-[32px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#F4EEDF] text-[12px] leading-[14px] font-[700] text-[#281910]">{initials(p.name, n)}</span>
+                              <span className="grow min-w-[0px] truncate text-[15px] leading-[20px] font-[500] text-[#140C04]">{providerName(p)}</span>
+                              <span className="flex flex-wrap justify-end gap-[4px] shrink-0">
+                                <span className="h-[22px] px-[8px] flex items-center rounded-[999px] bg-[#F4EEDF] text-[12px] leading-[14px] font-[500] text-[#281910]">{planOf(p).name}</span>
+                                {sp && <span className="h-[22px] px-[8px] flex items-center rounded-[999px] bg-[#F4EEDF] text-[12px] leading-[14px] font-[500] text-[#281910]">{specialtyName(sp, p.other)}</span>}
+                              </span>
+                            </div>
+                          );
+                        }
                         return (
                           <div key={p.id} className={`flex flex-col gap-[8px] p-[10px] rounded-[18px] ${INNER}`}>
                             <span className="flex items-center gap-[10px] min-w-[0px]">
@@ -1703,6 +1806,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                                 onChange={(v) => editProvider(p.id, { name: v })}
                                 text={`${phone ? "text-[16px] leading-[21px]" : "text-[15px] leading-[20px]"} font-[500] text-[#140C04]`}
                               />
+                              <span className="grow" />
+                              <span className={`h-[22px] px-[8px] shrink-0 flex items-center rounded-[999px] text-[12px] leading-[14px] font-[600] whitespace-nowrap ${SELECTED}`}>New</span>
                             </span>
                             <span className="flex items-center gap-[6px] flex-wrap pl-[42px]">
                               {specialtyField({
@@ -1794,7 +1899,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                   <span className="text-[14px] text-[rgba(255,252,241,0.6)]">/mo</span>
                 </span>
                 {/* The price is the whole team's, not one provider's. */}
-                <span className="text-[12px] leading-[15px] font-[500] text-[rgba(255,252,241,0.6)]">Total for {plural(providerCount, "provider")}</span>
+                <span className="text-[12px] leading-[15px] font-[500] text-[rgba(255,252,241,0.6)]">Total for {plural(providerCount, "provider")}, before tax</span>
               </button>
             )}
           </span>
@@ -1860,7 +1965,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           <div className={`flex flex-col px-[16px] py-[4px] rounded-[22px] ${INNER}`}>
             {line("Plan", tierCounts || planLabel)}
             {line("Price", `${money(total)}/mo`)}
-            {dueToday > 0 && line("Paid today", money(dueToday), true)}
+            {dueToday > 0 && taxDue > 0 && line("Taxes", cents(taxDue))}
+            {dueToday > 0 && line("Paid today", cents(dueToday + taxDue), true)}
             {buyerLine && line("Buyer", a.onBehalf ? "On behalf of providers" : buyerLine)}
           </div>
         </div>
