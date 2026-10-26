@@ -421,6 +421,15 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const dueToday = monthlyDue * (a.annual ? 12 : 1);
   /** Providers who get a payment link of their own. */
   const linkRecipients = a.payMode === "split" ? providers.filter((p) => p.id !== meProvider?.id) : [];
+  /** Buying on behalf of providers and paying as one, every provider still gets an invite to Doe by email. */
+  const inviteRecipients = a.onBehalf && a.payMode === "one" ? providers : [];
+  /** Everyone who needs an email: a payment link, or an invite. */
+  const emailRecipients = linkRecipients.length ? linkRecipients : inviteRecipients;
+  const sendNote = linkRecipients.length
+    ? `${plural(linkRecipients.length, "payment link")} will go out when you finish.`
+    : inviteRecipients.length
+      ? `${plural(inviteRecipients.length, "invite")} to Doe will go out when you finish.`
+      : null;
 
   /** Picking a practice shape reshapes the team, keeping what it can. */
   const pickShape = (shape: PracticeShape) => {
@@ -1143,8 +1152,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             {payOption("one", "Pay as one", "One payment covers the whole practice")}
             {payOption("split", "Individual payments", "Each provider gets a payment link for their share")}
           </div>
-          {a.payMode === "split" && (
-            <div className={`doe-pricing-rise flex flex-col px-[16px] py-[6px] rounded-[22px] ${INNER}`}>
+          {(a.payMode === "split" || inviteRecipients.length > 0) && (
+            <div key={a.payMode} className={`doe-pricing-rise flex flex-col px-[16px] py-[6px] rounded-[22px] ${INNER}`}>
+              {a.payMode === "one" && <span className={`pt-[10px] pb-[2px] text-[13px] leading-[18px] ${SUB}`}>You&apos;re paying for everyone. Each provider gets an invite to Doe.</span>}
               {providers.map((p) => {
                 const mine = p.id === meProvider?.id;
                 return (
@@ -1154,14 +1164,14 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                         {providerName(p)}
                         {mine && <span className={`font-[500] ${SUB}`}> · you, pay below</span>}
                       </span>
-                      <span className="text-[14px] leading-[19px] text-[#281910] [font-variant-numeric:tabular-nums]">{money(shareOf(p))}/mo</span>
+                      {a.payMode === "split" && <span className="text-[14px] leading-[19px] text-[#281910] [font-variant-numeric:tabular-nums]">{money(shareOf(p))}/mo</span>}
                     </span>
                     {!mine && (
                       <input
                         type="email"
                         inputMode="email"
                         value={a.emails[p.id] ?? ""}
-                        placeholder="Email for their payment link"
+                        placeholder={a.payMode === "split" ? "Email for their payment link" : "Email for their invite"}
                         aria-label={`${providerName(p)} email`}
                         onChange={(e) => set({ emails: { ...a.emails, [p.id]: e.target.value } })}
                         className="h-[48px] px-[16px] rounded-[14px] bg-[#F4EEDF] outline-none focus:shadow-[inset_0_0_0_1.5px_#281910] text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.4)]"
@@ -1206,12 +1216,12 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
               </span>
             </div>
           ) : null}
-          {a.payMode === "split" && (
+          {sendNote && (
             <span className="flex items-center gap-[8px] px-[2px] text-[13px] leading-[18px] text-[#7A3E1F]">
               <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
                 <path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
               </svg>
-              {plural(linkRecipients.length, "payment link")} will go out when you finish.
+              {sendNote}
             </span>
           )}
         </div>,
@@ -1287,7 +1297,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       title: ["Review and", "check out"],
       ready:
         !!(a.contact.name.trim() && isEmail(a.contact.email) && a.contact.practice.trim()) &&
-        linkRecipients.every((p) => isEmail(a.emails[p.id] ?? "")) &&
+        emailRecipients.every((p) => isEmail(a.emails[p.id] ?? "")) &&
         (dueToday === 0 || cardOk(a.card)),
       body: checkout,
     },
@@ -1555,6 +1565,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const nextSteps = [
     ["Open the link in your email", "It signs you in to Doe"],
     ...(linkRecipients.length ? [[linkRecipients.length === 1 ? "1 provider pays from their link" : `${linkRecipients.length} providers pay from their links`, "Their access starts once they pay"]] : []),
+    ...(inviteRecipients.length ? [[inviteRecipients.length === 1 ? "Your provider gets their invite" : `${inviteRecipients.length} providers get their invites`, "They sign in from their email"]] : []),
     ["Teach agents about your clinic", "Services, providers, hours and more"],
   ];
   const card = done ? (
