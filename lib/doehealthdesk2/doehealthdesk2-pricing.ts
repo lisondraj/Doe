@@ -135,17 +135,85 @@ export const SPECIALTY_FEATURES: Record<SpecialtyId, string[]> = {
 
 export type Location = { id: string; name: string; providers: number };
 
-/** What a plan costs each month for a practice of this size, before any annual discount. */
+/** A discount on extra seats, by how many the practice has in all. */
+export type Bracket = { min: number; max: number; off: number };
+
+/** Extra providers cost less the more a practice has. */
+export const PROVIDER_BRACKETS: Bracket[] = [
+  { min: 1, max: 4, off: 0 },
+  { min: 5, max: 9, off: 0.1 },
+  { min: 10, max: 24, off: 0.15 },
+  { min: 25, max: Infinity, off: 0.2 },
+];
+
+/** Extra locations cost less the more a practice has. */
+export const LOCATION_BRACKETS: Bracket[] = [
+  { min: 1, max: 1, off: 0 },
+  { min: 2, max: 4, off: 0.1 },
+  { min: 5, max: 9, off: 0.15 },
+  { min: 10, max: Infinity, off: 0.2 },
+];
+
+export const bracketFor = (brackets: Bracket[], n: number) => brackets.find((b) => n >= b.min && n <= b.max) ?? brackets[brackets.length - 1]!;
+
+export const bracketLabel = (b: Bracket) => (b.max === Infinity ? `${b.min}+` : b.min === b.max ? `${b.min}` : `${b.min}–${b.max}`);
+
+/** What a plan costs each month for a practice of this size, with volume discounts, before any annual discount. */
 export function monthlyPrice(plan: Plan, providers: number, locations: number) {
   const extraProviders = Math.max(0, providers - 1);
   const extraLocations = Math.max(0, locations - 1);
+  const providerBracket = bracketFor(PROVIDER_BRACKETS, providers);
+  const locationBracket = bracketFor(LOCATION_BRACKETS, locations);
+  const providersGross = extraProviders * plan.perProvider;
+  const locationsGross = extraLocations * plan.perLocation;
+  const providerDiscount = providersGross * providerBracket.off;
+  const locationDiscount = locationsGross * locationBracket.off;
   return {
     base: plan.base,
-    providers: extraProviders * plan.perProvider,
-    locations: extraLocations * plan.perLocation,
-    total: plan.base + extraProviders * plan.perProvider + extraLocations * plan.perLocation,
     extraProviders,
     extraLocations,
+    providersGross,
+    locationsGross,
+    providerBracket,
+    locationBracket,
+    providerDiscount,
+    locationDiscount,
+    total: plan.base + providersGross + locationsGross - providerDiscount - locationDiscount,
+  };
+}
+
+/** Part of a practice on one plan: a location (multi-clinic) or a group of providers (one location). */
+export type PriceRow = { id: string; name: string; providers: number; plan: Plan; location: boolean };
+
+/**
+ * A practice whose locations or providers are on different plans. The highest plan's base covers its first provider
+ * and location; every other provider and location is added at its own plan's rate, and the volume discounts follow
+ * the practice's totals. With every row on one plan this equals {@link monthlyPrice}.
+ */
+export function mixedPrice(rows: PriceRow[]) {
+  const live = rows.filter((r) => r.providers > 0);
+  const top = live.reduce<Plan>((best, r) => (PLAN_ORDER.indexOf(r.plan.id) > PLAN_ORDER.indexOf(best.id) ? r.plan : best), PLANS[0]!);
+  const providers = live.reduce((n, r) => n + r.providers, 0);
+  const locations = Math.max(1, live.filter((r) => r.location).length);
+  const hasLocations = live.some((r) => r.location);
+  const rowGross = live.map((r) => ({ row: r, providers: r.providers * r.plan.perProvider, location: r.location ? r.plan.perLocation : 0 }));
+  const providersGross = Math.max(0, rowGross.reduce((n, g) => n + g.providers, 0) - top.perProvider);
+  const locationsGross = hasLocations ? Math.max(0, rowGross.reduce((n, g) => n + g.location, 0) - top.perLocation) : 0;
+  const providerBracket = bracketFor(PROVIDER_BRACKETS, providers);
+  const locationBracket = bracketFor(LOCATION_BRACKETS, locations);
+  const providerDiscount = providersGross * providerBracket.off;
+  const locationDiscount = locationsGross * locationBracket.off;
+  return {
+    top,
+    providers,
+    locations,
+    rowGross,
+    included: top.perProvider + (hasLocations ? top.perLocation : 0),
+    providerBracket,
+    locationBracket,
+    providerDiscount,
+    locationDiscount,
+    total: top.base + providersGross + locationsGross - providerDiscount - locationDiscount,
   };
 }
 
@@ -156,7 +224,7 @@ export const PRICING_FAQ = [
   { q: "Can I start for free?", a: "Yes. Claiming your clinic and keeping its profile up to date costs nothing." },
   {
     q: "How is the price worked out?",
-    a: "Prices start at one provider and one location. Each extra provider and each extra location adds a set amount, which you can see as you go.",
+    a: "Prices start at one provider and one location. Each extra provider and location adds a set amount, and larger practices get a volume discount on those extras.",
   },
   { q: "Is a BAA included?", a: "Yes. A signed BAA, encryption in transit and at rest, and access controls for your team come standard." },
   { q: "Can I change plans later?", a: "Any time. Upgrades take effect right away, and downgrades at the end of your billing period." },
