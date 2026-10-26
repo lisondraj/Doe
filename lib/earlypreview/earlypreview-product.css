@@ -6,10 +6,17 @@
   initial-value: 0;
 }
 
+/* The boxes' rise-in, set on each box. It must not inherit, so the intro never restyles the products inside the boxes. */
+@property --pk {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
 /*
- * /earlypreview product section (EarlyPreviewProductSection). One scroll-locked beige screen, the beige of the band
- * above it with the nav in its beige state. --y and --k are set from scroll progress; nothing transitions except the
- * first reveal of the title.
+ * /earlypreview product section (EarlyPreviewProductSection). One beige screen, the beige of the band above it with
+ * the nav in its beige state. It never holds the scroll: --y and --pk come from a short intro played as it comes into
+ * view, and the lines under the boxes bring in each screen of boxes.
  */
 
 .earlypreview-product {
@@ -30,7 +37,9 @@
 }
 
 .earlypreview-product__head {
-  position: relative;
+  position: absolute;
+  left: 0;
+  right: 0;
   z-index: 1;
   flex-shrink: 0;
   text-align: center;
@@ -102,7 +111,7 @@
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
-  margin-top: clamp(1rem, 3vh, 2rem);
+  margin-top: 0;
 }
 
 .earlypreview-product__stage {
@@ -114,29 +123,44 @@
   container-type: size;
 }
 
-/* One row, panned right to left by the scroll. */
+/*
+ * Desktop: the boxes sit two by two, four to a screen, and the screens pan right to left by the scroll (--pg is how many
+ * screens it has moved, eased by the transition). Each box fills its cell's height less its name, and is as wide as 1.6 of that, so the four
+ * fill the room under the nav. The screen is centred, and each screen sits a page width after the one before it (a
+ * spacer column between them), so the next one waits off the page's right edge.
+ */
 .earlypreview-product__track {
-  display: flex;
+  --p-gap: clamp(1rem, 1.9vw, 1.75rem);
+  --p-box-h: calc((100cqh - var(--p-gap)) / 2 - var(--p-cap) * 1.1 - var(--p-cap-gap));
+  --p-col: min(calc((100cqw - var(--p-gap)) / 2), calc(var(--p-box-h) * 1.6));
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: var(--p-col) var(--p-col) calc(100vw - var(--p-col) * 2 - var(--p-gap) * 3);
   align-items: center;
-  gap: clamp(1.5rem, 2.4vw, 2.5rem);
-  width: max-content;
+  align-content: center;
+  gap: var(--p-gap);
+  width: calc(var(--p-col) * 2 + var(--p-gap));
   height: 100%;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   list-style: none;
+  transform: translate3d(calc(var(--pg, 0) * -100vw), 0, 0);
+  transition: transform 900ms cubic-bezier(0.65, 0, 0.35, 1);
   will-change: transform;
 }
 
 /* Every box is the same size; the first few rise in one after another. */
 .earlypreview-product__slide {
-  --p-box-h: calc((100cqh - var(--p-cap) * 1.1 - var(--p-cap-gap)) * 0.9);
+  grid-column: var(--col);
+  grid-row: var(--row);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  width: min(calc(var(--p-box-h) * 1.45), 80cqw);
+  min-width: 0;
   container-type: inline-size;
-  opacity: clamp(0, calc(var(--k, 0) * 1.75 - var(--i, 0) * 0.25), 1);
-  transform: translateY(calc((1 - var(--k, 0)) * (2.5rem + var(--i, 0) * 1.25rem)));
+  opacity: clamp(0, calc(var(--pk) * 1.75 - var(--i, 0) * 0.25), 1);
+  transform: translateY(calc((1 - var(--pk)) * (2.5rem + var(--i, 0) * 1.25rem)));
 }
 
 /* A rounded box the product sits in; no borders, no shadows, no glows. */
@@ -288,6 +312,9 @@
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__track {
   height: auto;
   gap: 1rem;
+  grid-template-rows: none;
+  grid-auto-columns: auto;
+  align-content: normal;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__slide {
@@ -313,10 +340,16 @@
   padding-bottom: calc(var(--desk2-phone-screen-h, 100lvh) - var(--app-vh, 100svh) + 4.5rem);
 }
 
-/* The line menu: hidden on the desktop; on the iPhone one line per box across the page margins at the bottom of the
- * visible screen, as in the market section, with the skip button above it. */
+/* The line menu, one line per screen of boxes. Desktop: a short row centred under the boxes. On the iPhone the lines
+ * run across the page margins at the bottom of the visible screen, as in the market section. */
 .earlypreview-product__nav {
-  display: none;
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: clamp(0.5rem, 1.5vh, 1rem);
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__nav {
@@ -334,9 +367,10 @@
 
 .earlypreview-product__nav-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  width: 4rem;
   min-width: 0;
-  padding: 0.9rem 0 0.4rem;
+  padding: 0.75rem 0;
   border: 0;
   background: none;
   cursor: pointer;
@@ -359,10 +393,47 @@
   background: #6e5c40;
   transform: scaleX(var(--f, 0));
   transform-origin: left;
+  transition: transform 500ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.earlypreview-product__nav-item:hover .earlypreview-product__nav-line {
+  background: rgb(110 92 64 / 0.42);
+}
+
+/* Until the first tap, the next line breathes, to show the lines can be tapped. */
+.earlypreview-product__nav.is-fresh .earlypreview-product__nav-item.is-next .earlypreview-product__nav-line {
+  animation: earlypreview-product-nav-breathe 1.8s ease-in-out infinite;
+}
+
+@keyframes earlypreview-product-nav-breathe {
+  0%,
+  100% {
+    background: rgb(110 92 64 / 0.22);
+  }
+  50% {
+    background: rgb(110 92 64 / 0.6);
+  }
 }
 
 .earlypreview-product__nav-item.is-live .earlypreview-product__nav-line {
   height: 3px;
+}
+
+/* iPhone: thicker, darker lines with a taller tap area, so they read as something to tap. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__nav-item {
+  width: auto;
+  padding: 1rem 0 0.6rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__nav-line {
+  height: 4px;
+  border-radius: 2px;
+  background: rgb(110 92 64 / 0.3);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__nav-item.is-live .earlypreview-product__nav-line {
+  height: 6px;
+  border-radius: 3px;
 }
 
 .earlypreview-product__nav-item:focus-visible {
@@ -371,6 +442,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .earlypreview-product__track,
+  .earlypreview-product__nav-line::after {
+    transition: none;
+  }
+
+  .earlypreview-product__nav.is-fresh .earlypreview-product__nav-item.is-next .earlypreview-product__nav-line {
+    animation: none;
+  }
+
   .earlypreview-product__title > span {
     opacity: 1;
     transform: none;
@@ -404,7 +484,7 @@
   height: var(--p-slide-h);
   transform: translate3d(
     0,
-    calc(var(--d, 0) * (var(--p-slide-h) + 1rem) + (1 - var(--k, 0)) * 2.5rem),
+    calc(var(--d, 0) * (var(--p-slide-h) + 1rem) + (1 - var(--pk)) * 2.5rem),
     0
   );
   will-change: transform;

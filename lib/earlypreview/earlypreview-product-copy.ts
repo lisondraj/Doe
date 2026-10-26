@@ -18,6 +18,9 @@ export const EARLYPREVIEW_PRODUCT_SLIDES = [
   { id: "departments", title: "Doe for Hospitals: Cross-Department Agents" },
   { id: "directory", title: "Doe for Hospitals: Department Directory" },
   { id: "scheduling", title: "Live Scheduling" },
+  { id: "services", title: "Services Catalog" },
+  { id: "insights", title: "Clinic Insights" },
+  { id: "automations", title: "Agent Automations" },
   { id: "payments", title: "Post-Seed: Payments" },
 ] as const;
 
