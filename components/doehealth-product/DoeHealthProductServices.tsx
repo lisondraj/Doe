@@ -433,13 +433,11 @@ export function DoeHealthProductServicesPage() {
 
   return (
     <div className="[font-synthesis:none] wrap-anywhere text-[12px] leading-[16px] grow h-full flex p-[12px] rounded-[24px] overflow-clip antialiased [background:radial-gradient(rgba(40,25,16,0.13)_0.9px,transparent_1.1px)_0px_0px/16px_16px,none_0%_0%_rgb(255,252,241)]">
-      <div className="grow min-w-[0px] h-full flex flex-col p-[28px] gap-[24px]">
-        <div className="flex items-center justify-between [width:100%] shrink-0 relative">
-          <div className="flex items-baseline gap-[14px]">
-            <div className="text-[46px] leading-[50px] tracking-[-0.025em] font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500] text-walnut">
-              Services
-            </div>
-          </div>
+      <div className="grow min-w-[0px] h-full flex flex-col p-[28px] pt-[24px] gap-[20px]">
+        <div className="flex items-end justify-between [width:100%] shrink-0 relative">
+          <span className="text-[58px] leading-[62px] tracking-[-0.03em] font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500] text-walnut">
+            Services
+          </span>
           <div className="flex items-center gap-[8px]">
             <div className="w-[80px] h-[38px] flex items-center shrink-0 p-[3px] rounded-[999px] gap-[2px] bg-[#EEEADF]">
               <div className="w-[34px] h-[32px] flex items-center justify-center rounded-[999px] shrink-0 [box-shadow:#2819101F_0px_1px_2px] [background-color:#FFFCF1]">
@@ -465,7 +463,7 @@ export function DoeHealthProductServicesPage() {
                 <path d="M16 16l4 4" fill="#000000" stroke="#281910" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </div>
-            <div className="flex items-center h-[38px] pr-[16px] pl-[12px] rounded-[999px] gap-[6px] bg-ink">
+            <div className="flex items-center h-[40px] pr-[18px] pl-[14px] rounded-[999px] gap-[6px] bg-ink">
               <svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" style={svgBase}>
                 <path d="M7 2.5v9M2.5 7h9" fill="#000000" stroke="#FFFCF1" strokeWidth="1.6" strokeLinecap="round" />
               </svg>

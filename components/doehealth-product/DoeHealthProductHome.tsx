@@ -20,7 +20,6 @@ import { DoeHealthProductPaymentsPage } from "@/components/doehealth-product/Doe
 import { DoeHealthProductPermissionsPage } from "@/components/doehealth-product/DoeHealthProductPermissions";
 import { DoeHealthProductTransitPage } from "@/components/doehealth-product/DoeHealthProductTransit";
 import { DoeHealthProductOffersPage, OffersProvider } from "@/components/doehealth-product/DoeHealthProductOffers";
-import { DoeHealthProductTeamPage } from "@/components/doehealth-product/DoeHealthProductTeam";
 import { DoeHealthProductFormsPage } from "@/components/doehealth-product/DoeHealthProductForms";
 import { DoeHealthProductInsightsPage } from "@/components/doehealth-product/DoeHealthProductInsights";
 import { DoeHealthProductAutomationsPage } from "@/components/doehealth-product/DoeHealthProductAutomations";
@@ -31,10 +30,10 @@ import { HalftoneDisc } from "@/components/doehealth-product/DoeHealthProductHal
 import { DoeHealthProductLocationsPage, LocationsProvider, useLocations } from "@/components/doehealth-product/DoeHealthProductLocations";
 
 /** "call" is opened from the Voice tab's Handled list and has no rail icon of its own. */
-type TabId = "schedule" | "interface" | "call" | "services" | "providers" | "locations" | "offers" | "team" | "transit" | "payments" | "permissions" | "search" | "forms" | "integrations" | "insights" | "automations";
+type TabId = "schedule" | "interface" | "call" | "services" | "providers" | "locations" | "offers" | "transit" | "payments" | "permissions" | "search" | "forms" | "integrations" | "insights" | "automations";
 
 /** Pages that live in the Index dropdown in the rail. */
-const INDEX_CHILDREN: TabId[] = ["services", "providers", "locations", "offers", "team", "permissions", "search", "forms"];
+const INDEX_CHILDREN: TabId[] = ["services", "providers", "locations", "offers", "permissions", "search", "forms"];
 
 /** Cross-fade duration for the inner shell when switching nav tabs. */
 const FADE_MS = 200;
@@ -497,11 +496,6 @@ function Artboard({
                   <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v1.8a2.7 2.7 0 0 0 0 5.4v1.8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-1.8a2.7 2.7 0 0 0 0-5.4z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
                   <path d="M10 9.5l4 5M10.2 14.5h.01M13.8 9.5h.01" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
                 </NavButton>
-                <NavButton label="Team" active={activeTab === "team"} onSelect={() => switchTab("team")}>
-                  <circle cx="8" cy="9" r="2.8" fill="none" stroke="currentColor" strokeWidth="1.7" />
-                  <circle cx="16" cy="9" r="2.8" fill="none" stroke="currentColor" strokeWidth="1.7" />
-                  <path d="M3.5 18.5c.6-2.6 2.4-4 4.5-4s3.9 1.4 4.5 4M11.5 18.5c.6-2.6 2.4-4 4.5-4s3.9 1.4 4.5 4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-                </NavButton>
                 <NavButton label="Agent Permissions" active={activeTab === "permissions"} onSelect={() => switchTab("permissions")}>
                   <path d="M12 3.8l6.8 2.6v5.1c0 4.2-2.8 7.4-6.8 8.8-4-1.4-6.8-4.6-6.8-8.8V6.4z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
                   <path d="M9.2 12.2l2 2 3.8-4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
@@ -663,7 +657,6 @@ function Artboard({
           {SHOW_LEGACY_PROVIDERS && layer("providers", <DoeHealthProductProvidersLayers />)}
           {layer("locations", <DoeHealthProductLocationsPage />)}
           {layer("offers", <DoeHealthProductOffersPage />)}
-          {layer("team", <DoeHealthProductTeamPage onAddLocation={() => openLocations(true)} />)}
           {layer("transit", <DoeHealthProductTransitPage />)}
           {layer("forms", <DoeHealthProductFormsPage />)}
           {layer("search", <DoeHealthProductSearchPage />)}

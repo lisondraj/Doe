@@ -4,7 +4,8 @@
  * Locations tab — the group's sites and who works at each. The list on the left holds every location with its
  * providers underneath; the panel on the right edits the selected location (address, hours, status, which providers
  * work there on which days and how agents may book them, and the services offered there), the selected provider's
- * settings at that location, or, for the group, a who-works-where grid where a click adds or removes a provider.
+ * settings at that location, or, for the group, a who-works-where grid where a click adds or removes a provider and
+ * the team settings the whole group shares.
  *
  * The locations live in a shared store, so the clinic switcher in the rail, Team and Agent Access all see the same
  * list, and can add a location from where they show one.
@@ -596,9 +597,112 @@ function ProviderPanel({ l, lp, onBack }: { l: Location; lp: LocationProvider; o
   );
 }
 
-/** Who works where: providers down the side, locations across, days per week in each cell. */
-function GroupPanel() {
+type TeamRole = "clinician" | "clinical" | "desk" | "billing" | "admin";
+
+const TEAM_ROLES: { id: TeamRole; label: string }[] = [
+  { id: "clinician", label: "Clinician" },
+  { id: "clinical", label: "Clinical staff" },
+  { id: "desk", label: "Front desk" },
+  { id: "billing", label: "Billing" },
+  { id: "admin", label: "Admin" },
+];
+
+/** Rules the whole team shares: who works the Needs you queue, approvals, coverage, office hours and sign-in. */
+type TeamSettings = {
+  queue: "everyone" | "role" | "assigned";
+  approvers: TeamRole[];
+  coverage: boolean;
+  twoSign: boolean;
+  handoff: boolean;
+  opens: string;
+  closes: string;
+  defaultRole: TeamRole;
+  signIn: "google" | "microsoft" | "email";
+  twoFactor: boolean;
+};
+
+const TEAM_SETTINGS: TeamSettings = {
+  queue: "role",
+  approvers: ["desk", "admin"],
+  coverage: true,
+  twoSign: false,
+  handoff: true,
+  opens: "8:00 AM",
+  closes: "5:30 PM",
+  defaultRole: "desk",
+  signIn: "google",
+  twoFactor: true,
+};
+
+function TeamSettingsRows({ settings, onChange }: { settings: TeamSettings; onChange: (patch: Partial<TeamSettings>) => void }) {
+  return (
+    <>
+      <Row label="Needs you queue">
+        <Segmented
+          value={settings.queue}
+          onChange={(v) => onChange({ queue: v })}
+          options={[
+            { id: "everyone", label: "Shared by everyone" },
+            { id: "role", label: "Split by role" },
+            { id: "assigned", label: "Assigned only" },
+          ]}
+        />
+      </Row>
+      <Row label="Approves new patients" top>
+        <span className="flex flex-wrap gap-[6px]">
+          {TEAM_ROLES.map((r) => (
+            <Chip key={r.id} on={settings.approvers.includes(r.id)} onClick={() => onChange({ approvers: toggle(settings.approvers, r.id) as TeamRole[] })}>
+              {r.label}
+            </Chip>
+          ))}
+        </span>
+      </Row>
+      <Row label="Coverage when away">
+        <Toggle on={settings.coverage} onChange={(v) => onChange({ coverage: v })} label="Route work to coverage when away" />
+      </Row>
+      <Row label="Hand off at close">
+        <Toggle on={settings.handoff} onChange={(v) => onChange({ handoff: v })} label="Hand off unfinished tasks at close" />
+      </Row>
+      <Row label="Two sign-offs on payer letters">
+        <Toggle on={settings.twoSign} onChange={(v) => onChange({ twoSign: v })} label="Two sign-offs on payer letters" />
+      </Row>
+      <Row label="Office hours">
+        <span className="flex items-center gap-[8px]">
+          <Input value={settings.opens} onChange={(v) => onChange({ opens: v })} width={110} />
+          <span className={`text-[14px] ${SANS} text-sub`}>to</span>
+          <Input value={settings.closes} onChange={(v) => onChange({ closes: v })} width={110} />
+        </span>
+      </Row>
+      <Row label="New invites start as">
+        <Segmented value={settings.defaultRole} options={TEAM_ROLES} onChange={(v) => onChange({ defaultRole: v })} />
+      </Row>
+      <Row label="Sign in with">
+        <Segmented
+          value={settings.signIn}
+          onChange={(v) => onChange({ signIn: v })}
+          options={[
+            { id: "google", label: "Google" },
+            { id: "microsoft", label: "Microsoft" },
+            { id: "email", label: "Email link" },
+          ]}
+        />
+      </Row>
+      <Row label="Require two-factor">
+        <Toggle on={settings.twoFactor} onChange={(v) => onChange({ twoFactor: v })} label="Require two-factor" />
+      </Row>
+    </>
+  );
+}
+
+const GROUP_VIEWS = [
+  { id: "where", label: "Who works where" },
+  { id: "team", label: "Team settings" },
+] as const;
+
+/** The group: who works where (providers down the side, locations across, days per week in each cell), or team settings. */
+function GroupPanel({ settings, onSettings }: { settings: TeamSettings; onSettings: (patch: Partial<TeamSettings>) => void }) {
   const { locations, update, select } = useLocations();
+  const [view, setView] = useState<(typeof GROUP_VIEWS)[number]["id"]>("where");
   const staffed = new Set(locations.flatMap((l) => l.providers.map((x) => x.id)));
   const cols = `200px repeat(${locations.length}, minmax(0, 1fr))`;
 
@@ -610,8 +714,11 @@ function GroupPanel() {
       <div className="flex items-center justify-between gap-[16px]">
         <span className="flex flex-col">
           <span className={`text-[32px] leading-[38px] tracking-[-0.02em] ${DISPLAY} text-walnut`}>Brooks Neurology Group</span>
-          <span className={`text-[14px] leading-[18px] ${SANS} text-sub`}>Who works where. Click a cell to add or remove a provider at a location.</span>
+          <span className={`text-[14px] leading-[18px] ${SANS} text-sub`}>
+            {view === "where" ? "Who works where. Click a cell to add or remove a provider at a location." : "Rules the whole team shares, at every location."}
+          </span>
         </span>
+        <Segmented value={view} options={GROUP_VIEWS} onChange={setView} />
       </div>
 
       <Tiles
@@ -622,6 +729,11 @@ function GroupPanel() {
         ]}
       />
 
+      {view === "team" ? (
+        <div className="flex flex-col grow min-h-[0px] gap-[6px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <TeamSettingsRows settings={settings} onChange={onSettings} />
+        </div>
+      ) : (
       <div className="flex flex-col grow min-h-[0px] gap-[4px] p-[8px] rounded-[18px] bg-paper overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="grid items-end gap-[6px] shrink-0 px-[8px] pb-[6px]" style={{ gridTemplateColumns: cols }}>
           <span className={`text-[13px] leading-[18px] ${SANS} text-sub`}>Provider</span>
@@ -657,6 +769,7 @@ function GroupPanel() {
           </div>
         ))}
       </div>
+      )}
     </>
   );
 }
@@ -669,6 +782,7 @@ const VIEW_OPTIONS = [
 export function DoeHealthProductLocationsPage() {
   const { locations, selected, select, add } = useLocations();
   const [providerId, setProviderId] = useState<string | null>(null);
+  const [teamSettings, setTeamSettings] = useState(TEAM_SETTINGS);
   const current = locations.find((l) => l.id === selected);
   const currentProvider = current?.providers.find((x) => x.id === providerId);
   const open = (id: string, provider: string | null = null) => {
@@ -791,7 +905,7 @@ export function DoeHealthProductLocationsPage() {
             ) : current ? (
               <LocationPanel key={current.id} l={current} />
             ) : (
-              <GroupPanel />
+              <GroupPanel settings={teamSettings} onSettings={(patch) => setTeamSettings((s) => ({ ...s, ...patch }))} />
             )}
           </div>
         </div>

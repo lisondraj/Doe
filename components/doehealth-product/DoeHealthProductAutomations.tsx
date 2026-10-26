@@ -2,36 +2,31 @@
 
 /**
  * Automations tab — workflows that run when something happens (an agent books, a claim is denied, a link goes
- * unopened). The list shows each workflow's health and a switch; opening one shows its steps on a canvas, with the
- * selected step's settings beside it.
+ * unopened). The landing leads with the week's numbers, shows each workflow as a card with its last seven days and a
+ * switch, and keeps what needs attention and the latest runs in a column beside them. Opening a workflow shows its
+ * steps as a left-to-right flow with straight connectors, and the selected step's settings in a panel.
  */
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 const SANS = "font-['DM_Sans',system-ui,sans-serif]";
-const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
+const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
-const PATH = {
-  bolt: "M13 3.5L5.5 13H12l-1 7.5L18.5 11H12z",
-  cal: "M4 7h16v13H4zM4 11h16M9 4v3M15 4v3",
-  doc: "M8 4h8l3 3v13H5V4z",
-  cr: "M3.5 6h17v12.5h-17zM3.5 10.5h17",
-  usr: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 20c1-4 4-6 8-6s7 2 8 6",
-  msg: "M5 6h14v10H11l-4.5 3.5V16H5z",
-  ph: "M5 4.5h3.2l1.6 4-2 1.3a10.5 10.5 0 0 0 6.4 6.4l1.3-2 4 1.6V19a1.5 1.5 0 0 1-1.6 1.5C10.6 20 4 13.4 3.5 6.1A1.5 1.5 0 0 1 5 4.5z",
-  shield: "M12 3.8l6.8 2.6v5.1c0 4.2-2.8 7.4-6.8 8.8-4-1.4-6.8-4.6-6.8-8.8V6.4z",
-  plus: "M12 5v14M5 12h14",
-  down: "M6 9l6 6 6-6",
-  search: "M11 5a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM16 16l4 4",
-};
-type IconName = keyof typeof PATH;
+const btnGrey = `flex items-center gap-[6px] h-[40px] px-[18px] rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`;
+const btnInk = `flex items-center gap-[6px] h-[40px] px-[18px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`;
+const scroll = "overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 
-function Icon({ name, size = 15 }: { name: IconName; size?: number }) {
+function Plus({ color = "#FFFCF1" }: { color?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
-      <path d={PATH[name]} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style={{ display: "block" }}>
+      <path d="M7 2.5v9M2.5 7h9" fill="none" stroke={color} strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
+}
+
+/** A plain circle in a light Doe colour; workflows and steps are told apart by colour, not icons. */
+function Dot({ tone, size = 34 }: { tone: string; size?: number }) {
+  return <span className="shrink-0 rounded-[50%]" style={{ width: size, height: size, backgroundColor: tone }} />;
 }
 
 function Toggle({ on, onChange, label }: { on: boolean; onChange: () => void; label: string }) {
@@ -45,190 +40,293 @@ function Toggle({ on, onChange, label }: { on: boolean; onChange: () => void; la
         e.stopPropagation();
         onChange();
       }}
-      className={`relative w-[46px] h-[28px] shrink-0 rounded-[999px] transition-colors duration-200 ${on ? "bg-ink" : "bg-[#E1D9C8]"}`}
+      className={`relative w-[42px] h-[24px] shrink-0 rounded-[999px] transition-colors duration-200 ${on ? "bg-ink" : "bg-[#28191026]"}`}
     >
-      <span className="absolute top-[3px] left-[3px] w-[22px] h-[22px] rounded-[999px] bg-paper" style={{ transform: `translateX(${on ? 18 : 0}px)`, transition: `transform 260ms ${EASE}` }} />
+      <span className="absolute top-[3px] w-[18px] h-[18px] rounded-[999px] bg-paper transition-[left] duration-200" style={{ left: on ? 21 : 3 }} />
     </button>
   );
 }
 
-type Status = "Live" | "Paused" | "Needs attention";
-
-const WORKFLOWS: { id: string; name: string; steps: number; starts: string; icon: IconName; rate: number; runs: number[]; on: boolean; attention?: boolean }[] = [
-  { id: "booked", name: "New patient booked", steps: 5, starts: "Agent books a visit", icon: "cal", rate: 97, runs: [2, 4, 3, 6, 5, 7, 9], on: true },
-  { id: "denied", name: "Claim denied", steps: 4, starts: "Payer sends a denial", icon: "doc", rate: 88, runs: [1, 0, 2, 1, 3, 1, 1], on: true },
-  { id: "referral", name: "Referral accepted", steps: 3, starts: "Clinic accepts", icon: "msg", rate: 100, runs: [0, 2, 1, 3, 2, 2, 4], on: true },
-  { id: "link", name: "Payment link unopened", steps: 4, starts: "2 days pass", icon: "cr", rate: 92, runs: [1, 1, 0, 2, 1, 0, 1], on: true },
-  { id: "intake", name: "Intake incomplete", steps: 4, starts: "1 day passes", icon: "doc", rate: 95, runs: [1, 3, 2, 4, 3, 5, 4], on: true },
-  { id: "after", name: "After-hours call", steps: 4, starts: "Call after 6 pm", icon: "ph", rate: 0, runs: [0, 0, 0, 0, 0, 0, 0], on: false },
-  { id: "onboard", name: "New provider onboarding", steps: 6, starts: "Added by hand", icon: "usr", rate: 64, runs: [0, 1, 0, 0, 1, 0, 2], on: true, attention: true },
-];
-
-const RUNS = [
-  { time: "2:48 pm", flow: "New patient booked", who: "Leo Jacobs", result: "Completed" },
-  { time: "2:31 pm", flow: "Intake incomplete", who: "Mia Thompson", result: "Completed" },
-  { time: "1:54 pm", flow: "New patient booked", who: "Noah Kim", result: "Held for you" },
-];
-
-type Step = { id: string; kind: "Starts when" | "If" | "Then" | "Else"; icon: IconName; title: string; chips: string[]; x: number; y: number; fields: { label: string; value: string }[]; note: string };
-
-const STEPS: Step[] = [
-  { id: "start", kind: "Starts when", icon: "bolt", title: "Agent books a visit", chips: ["Any agent", "Neurology"], x: 14, y: 190, note: "Starts when", fields: [{ label: "Event", value: "An agent books a visit" }, { label: "Agents", value: "Any agent" }, { label: "Service", value: "Neurology" }] },
-  { id: "network", kind: "If", icon: "shield", title: "In network", chips: ["18 plans", "Live check"], x: 244, y: 60, note: "Check · step 2 of 7", fields: [{ label: "Check", value: "Insurance plan is accepted" }, { label: "Source", value: "Live check" }, { label: "If it does not match", value: "Hold for front desk" }, { label: "Timeout", value: "5 seconds" }] },
-  { id: "limit", kind: "If", icon: "cr", title: "Under $100", chips: ["HSA or card"], x: 244, y: 270, note: "Check · step 3 of 7", fields: [{ label: "Check", value: "Visit total is under" }, { label: "Amount", value: "$100" }, { label: "Methods", value: "HSA or card" }] },
-  { id: "hold", kind: "Else", icon: "usr", title: "Hold for front desk", chips: ["Ruby", "30 min"], x: 244, y: 470, note: "Action · step 7 of 7", fields: [{ label: "Assign to", value: "Ruby" }, { label: "Respond within", value: "30 minutes" }] },
-  { id: "confirm", kind: "Then", icon: "cal", title: "Confirm the slot", chips: ["Auto"], x: 474, y: 24, note: "Action · step 4 of 7", fields: [{ label: "Confirm", value: "Automatically" }, { label: "Notify", value: "Patient and agent" }] },
-  { id: "forms", kind: "Then", icon: "doc", title: "Send intake forms", chips: ["7 fields", "Patient reviews"], x: 474, y: 180, note: "Action · step 5 of 7", fields: [{ label: "Form", value: "New patient intake" }, { label: "Fields", value: "7" }, { label: "Review", value: "Patient reviews first" }] },
-  { id: "charge", kind: "Then", icon: "cr", title: "Charge copay", chips: ["InstaMed"], x: 474, y: 388, note: "Action · step 6 of 7", fields: [{ label: "Charge", value: "Visit copay" }, { label: "Processor", value: "InstaMed" }, { label: "When", value: "At booking" }] },
-];
-
-const NODE_W = 204;
-const EDGES: [string, string, boolean?][] = [["start", "network"], ["start", "limit"], ["start", "hold", true], ["network", "confirm"], ["network", "forms"], ["limit", "forms"], ["limit", "charge"]];
-
-const byId = (id: string) => STEPS.find((s) => s.id === id)!;
-
-function Spark({ values }: { values: number[] }) {
-  const w = 90;
-  const h = 26;
-  const max = Math.max(...values) || 1;
-  const pts = values.map((v, i) => `${((i * (w - 6)) / (values.length - 1) + 3).toFixed(0)},${(h - 4 - (v / max) * (h - 8)).toFixed(0)}`);
+function Segmented<T extends string>({ value, options, onChange }: { value: T; options: readonly { id: T; label: string; count?: number }[]; onChange: (v: T) => void }) {
   return (
-    <svg width={w} height={h} aria-hidden="true" style={{ display: "block" }}>
-      <path d={`M${pts.join(" L")}`} fill="none" stroke="#C9704B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <span className="flex w-full p-[3px] gap-[2px] rounded-[999px] bg-[#F4EEDF]" role="tablist">
+      {options.map((o) => (
+        <button
+          key={o.id}
+          type="button"
+          role="tab"
+          aria-selected={value === o.id}
+          onClick={() => onChange(o.id)}
+          className={`grow flex items-center justify-center gap-[6px] h-[32px] px-[14px] rounded-[999px] text-[13px] leading-[16px] ${SANS} font-[500] whitespace-nowrap transition-colors duration-150 ${value === o.id ? "bg-paper text-ink" : "text-sub hover:text-walnut"}`}
+        >
+          {o.label}
+          {o.count !== undefined && <span className="text-[12px] opacity-50">{o.count}</span>}
+        </button>
+      ))}
+    </span>
   );
 }
+
+type Status = "Live" | "Paused" | "Needs Attention";
 
 const STATUS_STYLE: Record<Status, string> = {
   Live: "bg-[#D6DEC6] text-[#2F3B2A]",
   Paused: "bg-[#28191014] text-walnut",
-  "Needs attention": "bg-[#FCCFB8] text-[#7A3E26]",
+  "Needs Attention": "bg-[#FCCFB8] text-[#7A3E26]",
 };
 
-const COLS = "grid-cols-[2.2fr_1.2fr_1.1fr_1.3fr_1fr_0.5fr_54px]";
+function StatusPill({ status }: { status: Status }) {
+  return <span className={`flex items-center h-[26px] px-[11px] w-fit shrink-0 rounded-[999px] text-[12px] leading-[16px] ${SANS} font-[500] whitespace-nowrap ${STATUS_STYLE[status]}`}>{status}</span>;
+}
 
-function Editor({ name, onBack }: { name: string; onBack: () => void }) {
-  const [selected, setSelected] = useState("network");
-  const step = byId(selected);
-  const [values, setValues] = useState<Record<string, string>>({});
+type Workflow = { id: string; name: string; steps: number; starts: string; tone: string; rate: number; runs: number[]; on: boolean; attention?: string };
+
+const WORKFLOWS: Workflow[] = [
+  { id: "booked", name: "New Patient Booked", steps: 7, starts: "An agent books a visit", tone: "#F7DCCB", rate: 97, runs: [2, 4, 3, 6, 5, 7, 9], on: true },
+  { id: "denied", name: "Claim Denied", steps: 4, starts: "A payer sends a denial", tone: "#FCCFB8", rate: 88, runs: [1, 0, 2, 1, 3, 1, 1], on: true },
+  { id: "referral", name: "Referral Accepted", steps: 3, starts: "A clinic accepts", tone: "#DCE5D0", rate: 100, runs: [0, 2, 1, 3, 2, 2, 4], on: true },
+  { id: "link", name: "Payment Link Unopened", steps: 4, starts: "2 days pass", tone: "#F3E7C9", rate: 92, runs: [1, 1, 0, 2, 1, 0, 1], on: true },
+  { id: "intake", name: "Intake Incomplete", steps: 4, starts: "1 day passes", tone: "#E9DCC7", rate: 95, runs: [1, 3, 2, 4, 3, 5, 4], on: true },
+  { id: "after", name: "After-Hours Call", steps: 4, starts: "A call comes in after 6 pm", tone: "#DCE6F5", rate: 0, runs: [0, 0, 0, 0, 0, 0, 0], on: false },
+  {
+    id: "onboard",
+    name: "New Provider Onboarding",
+    steps: 6,
+    starts: "Someone adds a provider",
+    tone: "#E3E9D9",
+    rate: 64,
+    runs: [0, 1, 0, 0, 1, 0, 2],
+    on: true,
+    attention: "Credentialing step fails for Dr. Jun Lee. The payer portal wants a new NPI form.",
+  },
+];
+
+const RUNS = [
+  { time: "2:48 pm", flow: "New Patient Booked", who: "James Lisondra", result: "Completed" },
+  { time: "2:31 pm", flow: "Intake Incomplete", who: "Mia Thompson", result: "Completed" },
+  { time: "1:54 pm", flow: "New Patient Booked", who: "Noah Kim", result: "Held for You" },
+  { time: "1:12 pm", flow: "Payment Link Unopened", who: "Henry Walsh", result: "Completed" },
+  { time: "12:40 pm", flow: "Claim Denied", who: "Elena Cho", result: "Completed" },
+  { time: "11:58 am", flow: "Referral Accepted", who: "Ava Morales", result: "Completed" },
+  { time: "10:22 am", flow: "New Provider Onboarding", who: "Dr. Jun Lee", result: "Held for You" },
+];
+
+const TEMPLATES = [
+  { name: "No-Show Follow-Up", about: "Rebook through the patient’s agent the same day", tone: "#F7DCCB" },
+  { name: "Prior Auth Expiring", about: "Refile two weeks before an approval runs out", tone: "#DCE5D0" },
+  { name: "Refill Request", about: "Draft the refill for the doctor to sign", tone: "#F3E7C9" },
+  { name: "Results Ready", about: "Hold abnormal results for the doctor, release the rest", tone: "#DCE6F5" },
+  { name: "Waitlist Opening", about: "Offer a freed slot to the next patient’s agent", tone: "#E9DCC7" },
+];
+
+/** Seven days of runs as small bars; quieter when the workflow is off. */
+function Bars({ values, on }: { values: number[]; on: boolean }) {
+  const max = Math.max(...values) || 1;
   return (
-    <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[10px] pt-[30px] px-[40px] pb-[26px] rounded-[24px] overflow-clip bg-paper antialiased">
-      <div className="relative flex items-center justify-between">
-        <span className={`text-[44px] leading-[48px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>{name}</span>
-        <span className="flex items-center gap-[10px]">
-          <span className={`flex items-center gap-[7px] mr-[4px] text-[13px] ${SANS} font-[500] text-walnut`}>
-            <span className="w-[8px] h-[8px] rounded-[999px] bg-[#6E9A5B]" />Live
-          </span>
-          {["History", "Test run"].map((t) => (
-            <span key={t} className={`flex items-center h-[40px] px-[18px] rounded-[999px] bg-[#28191014] text-[14px] ${SANS} font-[500] text-walnut`}>{t}</span>
-          ))}
-          <span className={`flex items-center h-[40px] px-[18px] rounded-[999px] bg-ink text-[14px] ${SANS} font-[500] [color:#FFFCF1]`}>Publish v5</span>
-        </span>
-      </div>
-      <div className={`flex items-center gap-[10px] text-[13px] ${SANS} font-[500] text-[rgba(40,25,16,0.5)]`}>
-        <button type="button" onClick={onBack} className="hover:text-walnut transition-colors duration-150">Automations</button>
-        <span>/</span>
-        <span className="text-walnut">{name}</span>
-        <span className="flex items-center h-[24px] px-[11px] rounded-[999px] shadow-[inset_0_0_0_1px_rgba(40,25,16,0.2)] text-walnut">Draft changes</span>
-      </div>
+    <span className="flex items-end gap-[3px] h-[28px]" aria-hidden="true">
+      {values.map((v, i) => (
+        <span key={i} className="w-[6px] rounded-[2px]" style={{ height: `${Math.max(12, (v / max) * 100)}%`, backgroundColor: on && v ? "#E8A585" : "#2819101A" }} />
+      ))}
+    </span>
+  );
+}
 
-      <div className="relative grid grow min-h-[0px] gap-[12px]" style={{ gridTemplateColumns: "230px 1fr 310px" }}>
-        <div className="flex flex-col p-[14px_12px] rounded-[28px] bg-[#FAF6EC] overflow-hidden">
-          <span className={`px-[8px] pb-[6px] text-[24px] leading-[28px] ${DISPLAY} text-walnut`}>Steps</span>
-          {(["Starts when", "If", "Then", "Else"] as const).map((kind) => (
-            <div key={kind} className="flex flex-col">
-              <span className={`px-[10px] pt-[10px] pb-[4px] text-[12px] ${SANS} font-[500] text-[rgba(40,25,16,0.5)]`}>{kind === "If" ? "Checks" : kind === "Then" ? "Actions" : kind === "Else" ? "Otherwise" : kind}</span>
-              {STEPS.filter((s) => s.kind === kind).map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setSelected(s.id)}
-                  className={`flex items-center gap-[10px] h-[44px] px-[10px] rounded-[16px] text-left text-[14px] ${SANS} font-[500] text-walnut transition-colors duration-150 ${selected === s.id ? "bg-paper" : "hover:bg-[#F4EEDF]"}`}
-                >
-                  <span className="w-[30px] h-[30px] shrink-0 flex items-center justify-center rounded-[10px] bg-[#EFE8D9]"><Icon name={s.icon} /></span>
-                  <span className="truncate">{s.title}</span>
-                </button>
-              ))}
-            </div>
-          ))}
-          <span className={`flex items-center gap-[10px] h-[44px] px-[10px] mt-[6px] text-[14px] ${SANS} font-[500] text-[rgba(40,25,16,0.5)]`}>
-            <span className="w-[30px] h-[30px] flex items-center justify-center rounded-[10px] shadow-[inset_0_0_0_1px_rgba(40,25,16,0.2)]"><Icon name="plus" /></span>
-            Add step
+/* ——— Editor ——— */
+
+type Kind = "Starts when" | "If" | "Then" | "Else";
+
+const KIND: Record<Kind, { label: string; tone: string }> = {
+  "Starts when": { label: "When", tone: "#F7DCCB" },
+  If: { label: "If", tone: "#F3E7C9" },
+  Then: { label: "Then", tone: "#DCE5D0" },
+  Else: { label: "Otherwise", tone: "#FCCFB8" },
+};
+
+type Step = { id: string; kind: Kind; title: string; chips: string[]; col: number; row: number; fields: { label: string; value: string }[]; note: string };
+
+const STEPS: Step[] = [
+  { id: "start", kind: "Starts when", title: "Agent books a visit", chips: ["Any agent", "Neurology"], col: 0, row: 1, note: "Trigger · Step 1 of 7", fields: [{ label: "Event", value: "An agent books a visit" }, { label: "Agents", value: "Any agent" }, { label: "Service", value: "Neurology" }] },
+  { id: "network", kind: "If", title: "In network", chips: ["18 plans", "Live check"], col: 1, row: 0, note: "Check · Step 2 of 7", fields: [{ label: "Check", value: "Insurance plan is accepted" }, { label: "Source", value: "Live check" }, { label: "If it doesn’t match", value: "Hold for front desk" }, { label: "Timeout", value: "5 seconds" }] },
+  { id: "limit", kind: "If", title: "Under $100", chips: ["HSA or card"], col: 1, row: 1, note: "Check · Step 3 of 7", fields: [{ label: "Check", value: "Visit total is under" }, { label: "Amount", value: "$100" }, { label: "Methods", value: "HSA or card" }] },
+  { id: "hold", kind: "Else", title: "Hold for front desk", chips: ["Ruby", "30 min"], col: 1, row: 2, note: "Action · Step 7 of 7", fields: [{ label: "Assign to", value: "Ruby" }, { label: "Respond within", value: "30 minutes" }] },
+  { id: "confirm", kind: "Then", title: "Confirm the slot", chips: ["Auto"], col: 2, row: 0, note: "Action · Step 4 of 7", fields: [{ label: "Confirm", value: "Automatically" }, { label: "Notify", value: "Patient and agent" }] },
+  { id: "forms", kind: "Then", title: "Send intake forms", chips: ["7 fields", "Patient reviews"], col: 2, row: 1, note: "Action · Step 5 of 7", fields: [{ label: "Form", value: "New patient intake" }, { label: "Fields", value: "7" }, { label: "Review", value: "Patient reviews first" }] },
+  { id: "charge", kind: "Then", title: "Charge copay", chips: ["InstaMed"], col: 2, row: 2, note: "Action · Step 6 of 7", fields: [{ label: "Charge", value: "Visit copay" }, { label: "Processor", value: "InstaMed" }, { label: "When", value: "At booking" }] },
+];
+
+const EDGES: [string, string, boolean?][] = [["start", "network"], ["start", "limit"], ["start", "hold", true], ["network", "confirm"], ["network", "forms"], ["limit", "forms"], ["limit", "charge"]];
+
+/** The flow sits on a fixed grid so every connector is straight lines with right-angle turns. */
+const NODE_W = 210;
+const NODE_H = 104;
+const COL_GAP = 80;
+const ROW_GAP = 32;
+const PAD = 40;
+const CANVAS_W = PAD * 2 + NODE_W * 3 + COL_GAP * 2;
+const CANVAS_H = PAD * 2 + NODE_H * 3 + ROW_GAP * 2;
+
+const byId = (id: string) => STEPS.find((s) => s.id === id)!;
+const posOf = (s: Step) => ({ x: PAD + s.col * (NODE_W + COL_GAP), y: PAD + s.row * (NODE_H + ROW_GAP) });
+
+/** Right, down or up, then right again, with small rounded corners where it turns. */
+function connector(from: Step, to: Step) {
+  const a = posOf(from);
+  const b = posOf(to);
+  const x1 = a.x + NODE_W;
+  const y1 = a.y + NODE_H / 2;
+  const x2 = b.x;
+  const y2 = b.y + NODE_H / 2;
+  const mid = x1 + COL_GAP / 2;
+  if (y1 === y2) return `M${x1} ${y1} H${x2}`;
+  const r = 8;
+  const dir = y2 > y1 ? 1 : -1;
+  return `M${x1} ${y1} H${mid - r} Q${mid} ${y1} ${mid} ${y1 + r * dir} V${y2 - r * dir} Q${mid} ${y2} ${mid + r} ${y2} H${x2}`;
+}
+
+function SettingRow({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="flex flex-col gap-[6px] shrink-0 px-[16px] py-[12px] rounded-[16px] bg-paper">
+      <span className={`text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>{label}</span>
+      {children}
+    </label>
+  );
+}
+
+function Editor({ workflow, live, onToggle, onBack }: { workflow: Workflow; live: boolean; onToggle: () => void; onBack: () => void }) {
+  const [selected, setSelected] = useState("network");
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [zoom, setZoom] = useState(1);
+  const step = byId(selected);
+  const changed = Object.keys(values).length > 0;
+  const status: Status = !live ? "Paused" : workflow.attention ? "Needs Attention" : "Live";
+
+  return (
+    <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[20px] pt-[28px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
+      <div className="flex flex-col gap-[4px]">
+        <button type="button" onClick={onBack} className={`flex items-center gap-[4px] w-fit text-[14px] leading-[18px] ${SANS} font-[500] text-sub hover:text-walnut transition-colors duration-150`}>
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+            <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Automations
+        </button>
+        <div className="flex items-end justify-between gap-[16px]">
+          <span className="flex items-center gap-[14px] min-w-[0px]">
+            <span className={`truncate text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>{workflow.name}</span>
+            <StatusPill status={status} />
+          </span>
+          <span className="flex items-center gap-[10px] shrink-0">
+            <span className={`flex items-center gap-[8px] mr-[6px] text-[13px] ${SANS} font-[500] text-sub`}>
+              {live ? "On" : "Off"}
+              <Toggle on={live} onChange={onToggle} label={`${workflow.name} on`} />
+            </span>
+            <button type="button" className={btnGrey}>
+              History
+            </button>
+            <button type="button" className={btnGrey}>
+              Test Run
+            </button>
+            <button type="button" disabled={!changed} onClick={() => setValues({})} className={`${btnInk} disabled:opacity-40 disabled:cursor-default`}>
+              {changed ? "Publish Changes" : "Published"}
+            </button>
           </span>
         </div>
+      </div>
 
-        <div
-          className="relative rounded-[28px] bg-[#F4EEDF] overflow-hidden"
-          style={{ backgroundImage: "radial-gradient(rgba(40,25,16,0.14) 1px, transparent 1.3px)", backgroundSize: "20px 20px" }}
-        >
+      <div className="grid grow min-h-[0px] gap-[16px]" style={{ gridTemplateColumns: "1fr 340px" }}>
+        <div className="relative rounded-[28px] bg-[#FAF6EC] overflow-hidden" style={{ backgroundImage: "radial-gradient(rgba(40,25,16,0.1) 1px, transparent 1.3px)", backgroundSize: "20px 20px" }}>
+          <div className={`absolute inset-0 flex items-center justify-center ${scroll}`}>
+            <div className="relative shrink-0" style={{ width: CANVAS_W, height: CANVAS_H, transform: `scale(${zoom})`, transition: `transform 320ms ${EASE}` }}>
+              <svg className="absolute inset-0" width={CANVAS_W} height={CANVAS_H} fill="none" aria-hidden="true">
+                {EDGES.map(([from, to, dashed]) => {
+                  const lit = selected === from || selected === to;
+                  return (
+                    <path
+                      key={from + to}
+                      d={connector(byId(from), byId(to))}
+                      stroke={lit ? "#281910" : "#28191040"}
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeDasharray={dashed ? "4 5" : undefined}
+                      style={{ transition: "stroke 200ms ease" }}
+                    />
+                  );
+                })}
+              </svg>
+              {STEPS.map((s) => {
+                const { x, y } = posOf(s);
+                const on = selected === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setSelected(s.id)}
+                    className={`absolute flex flex-col justify-between p-[14px] rounded-[18px] bg-paper text-left border border-solid border-[#2819101A] outline outline-[1.5px] -outline-offset-[1px] transition-[outline-color,transform] duration-200 ${on ? "outline-ink" : "outline-transparent hover:outline-[#28191033]"}`}
+                    style={{ left: x, top: y, width: NODE_W, height: NODE_H }}
+                  >
+                    <span className="flex items-center gap-[8px]">
+                      <Dot tone={KIND[s.kind].tone} size={10} />
+                      <span className={`text-[12px] leading-[16px] ${SANS} font-[500] text-sub`}>{KIND[s.kind].label}</span>
+                    </span>
+                    <span className={`truncate text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>{s.title}</span>
+                    <span className="flex gap-[6px] overflow-hidden">
+                      {s.chips.map((c) => (
+                        <span key={c} className={`flex items-center h-[22px] px-[9px] shrink-0 rounded-[999px] bg-[#F4EEDF] text-[12px] ${SANS} font-[500] text-walnut`}>
+                          {c}
+                        </span>
+                      ))}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           <span className="absolute left-[14px] top-[14px] flex gap-[6px]">
-            <span className="w-[38px] h-[34px] flex items-center justify-center rounded-[999px] bg-paper"><Icon name="plus" /></span>
-            <span className={`flex items-center h-[34px] px-[16px] rounded-[999px] bg-paper text-[13px] ${SANS} font-[500]`}>Auto-layout</span>
+            <button type="button" className={`flex items-center gap-[6px] h-[34px] pr-[14px] pl-[11px] rounded-[999px] bg-paper hover:bg-[#FFFEF8] border border-solid border-[#2819101A] transition-colors duration-150 text-[13px] ${SANS} font-[500] text-walnut`}>
+              <Plus color="#281910" />
+              Add Step
+            </button>
           </span>
-          <svg className="absolute left-0 top-0" width="720" height="700" fill="none" stroke="#281910" strokeWidth="1.6" strokeOpacity="0.5" aria-hidden="true">
-            {EDGES.map(([from, to, dashed]) => {
-              const a = byId(from);
-              const b = byId(to);
-              const x1 = a.x + NODE_W;
-              const y1 = a.y + 55;
-              const x2 = b.x;
-              const y2 = b.y + 55;
-              return <path key={from + to} d={`M${x1} ${y1} C${x1 + 22} ${y1} ${x2 - 22} ${y2} ${x2} ${y2}`} strokeDasharray={dashed ? "5 5" : undefined} />;
-            })}
-          </svg>
-          {STEPS.map((s) => {
-            const dark = s.kind === "Starts when";
-            return (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => setSelected(s.id)}
-                className={`absolute flex flex-col gap-[8px] p-[12px] rounded-[22px] text-left transition-shadow duration-150 ${dark ? "bg-ink [color:#FFFCF1]" : "bg-paper text-walnut"} ${selected === s.id ? "shadow-[inset_0_0_0_2px_#140C04]" : ""}`}
-                style={{ left: s.x, top: s.y, width: NODE_W }}
-              >
-                <span className={`flex items-center h-[24px] px-[12px] w-fit rounded-[999px] text-[12px] ${SANS} font-[500] ${dark ? "bg-[#FFFCF124]" : "bg-[#F4EEDF]"}`}>{s.kind === "Starts when" ? "When" : s.kind}</span>
-                <span className={`flex items-center gap-[10px] text-[19px] leading-[21px] tracking-[-0.01em] ${DISPLAY}`}>
-                  <span className={`w-[30px] h-[30px] shrink-0 flex items-center justify-center rounded-[10px] ${dark ? "bg-[#FFFCF126]" : s.kind === "Then" ? "bg-[#D6DEC6]" : s.kind === "Else" ? "bg-[#FCCFB8]" : "bg-[#EFE8D9]"}`}><Icon name={s.icon} /></span>
-                  {s.title}
-                </span>
-                <span className="flex flex-wrap gap-[6px]">
-                  {s.chips.map((c) => (
-                    <span key={c} className={`flex items-center h-[24px] px-[12px] rounded-[999px] text-[12px] ${SANS} font-[500] ${dark ? "bg-[#FFFCF124]" : "bg-[#F4EEDF]"}`}>{c}</span>
-                  ))}
-                </span>
+          <span className="absolute right-[14px] bottom-[14px] flex items-center p-[3px] gap-[2px] rounded-[999px] bg-paper border border-solid border-[#2819101A]">
+            {[
+              { label: "−", aria: "Zoom out", run: () => setZoom((z) => Math.max(0.7, +(z - 0.1).toFixed(1))) },
+              { label: `${Math.round(zoom * 100)}%`, aria: "Reset zoom", run: () => setZoom(1) },
+              { label: "+", aria: "Zoom in", run: () => setZoom((z) => Math.min(1.3, +(z + 0.1).toFixed(1))) },
+            ].map((b) => (
+              <button key={b.aria} type="button" aria-label={b.aria} onClick={b.run} className={`min-w-[32px] h-[28px] px-[8px] rounded-[999px] hover:bg-[#F4EEDF] transition-colors duration-150 text-[13px] ${SANS} font-[500] text-walnut [font-variant-numeric:tabular-nums]`}>
+                {b.label}
               </button>
-            );
-          })}
-          <span className="absolute right-[14px] bottom-[14px] flex gap-[6px]">
-            {["−", "100%", "+"].map((t) => (
-              <span key={t} className={`flex items-center justify-center min-w-[38px] h-[34px] px-[12px] rounded-[999px] bg-paper text-[13px] ${SANS} font-[500]`}>{t}</span>
             ))}
           </span>
         </div>
 
-        <div className="flex flex-col p-[20px_20px_16px] rounded-[28px] bg-[#F4EEDF] overflow-hidden">
-          <span className="flex items-start justify-between">
-            <span className="flex flex-col">
-              <span className={`text-[24px] leading-[28px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>{step.title}</span>
-              <span className={`mt-[3px] text-[12.5px] ${SANS} font-[500] text-[rgba(40,25,16,0.55)]`}>{step.note}</span>
+        <div className="flex flex-col gap-[12px] min-h-[0px] p-[20px] rounded-[28px] bg-[#FAF6EC]">
+          <span className="flex items-center gap-[12px]">
+            <Dot tone={KIND[step.kind].tone} size={44} />
+            <span className="flex flex-col min-w-[0px]">
+              <span className={`truncate text-[24px] leading-[28px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>{step.title}</span>
+              <span className={`text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>{step.note}</span>
             </span>
-            <span className={`flex items-center h-[26px] px-[12px] rounded-[999px] bg-[#FFFCF1BF] text-[12px] ${SANS} font-[500]`}>v4</span>
           </span>
-          <div className="flex flex-col gap-[12px] mt-[14px] grow overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className={`flex flex-col gap-[6px] grow min-h-[0px] ${scroll}`}>
             {step.fields.map((f) => (
-              <label key={f.label} className="flex flex-col gap-[6px]">
-                <span className={`text-[12.5px] ${SANS} font-[500] text-[rgba(40,25,16,0.55)]`}>{f.label}</span>
+              <SettingRow key={f.label} label={f.label}>
                 <input
                   value={values[step.id + f.label] ?? f.value}
                   onChange={(e) => setValues((prev) => ({ ...prev, [step.id + f.label]: e.target.value }))}
-                  className={`h-[42px] px-[16px] rounded-[999px] bg-paper text-[14px] ${SANS} font-[500] text-walnut outline-none focus:shadow-[inset_0_0_0_1.5px_#140C04]`}
+                  className={`h-[38px] px-[12px] rounded-[12px] bg-[#F4EEDF] border-[1.5px] border-solid border-transparent focus:border-ink outline-none text-[14px] ${SANS} font-[500] text-walnut`}
                 />
-              </label>
+              </SettingRow>
             ))}
           </div>
-          <span className="flex items-center justify-between pt-[12px]">
-            <span className={`flex items-center gap-[7px] text-[13px] ${SANS} font-[500] text-walnut`}><span className="w-[8px] h-[8px] rounded-[999px] bg-[#6E9A5B]" />Saved</span>
-            <span className={`flex items-center h-[40px] px-[18px] rounded-[999px] bg-paper text-[14px] ${SANS} font-[500]`}>Test step</span>
+          <span className="flex items-center justify-between">
+            <span className={`flex items-center gap-[7px] text-[13px] ${SANS} font-[500] text-walnut`}>
+              <span className={`w-[8px] h-[8px] rounded-[999px] ${changed ? "bg-[#D9B860]" : "bg-[#6E9A5B]"}`} />
+              {changed ? "Unpublished Changes" : "Saved"}
+            </span>
+            <button type="button" className={btnGrey.replace("h-[40px]", "h-[38px]")}>
+              Test Step
+            </button>
           </span>
         </div>
       </div>
@@ -236,104 +334,187 @@ function Editor({ name, onBack }: { name: string; onBack: () => void }) {
   );
 }
 
+/* ——— Landing ——— */
+
+const TABS = [
+  { id: "workflows", label: "Workflows", count: WORKFLOWS.length },
+  { id: "runs", label: "Runs", count: RUNS.length },
+  { id: "templates", label: "Templates", count: TEMPLATES.length },
+] as const;
+
+function RunItem({ r }: { r: (typeof RUNS)[number] }) {
+  const held = r.result !== "Completed";
+  return (
+    <div className="flex items-center gap-[12px] shrink-0 px-[14px] py-[12px] rounded-[14px] bg-paper">
+      <span className="w-[8px] h-[8px] shrink-0 rounded-[50%]" style={{ backgroundColor: held ? "#E8A585" : "#6E9A5B" }} />
+      <span className="flex flex-col grow min-w-[0px]">
+        <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>{r.who}</span>
+        <span className={`truncate text-[12px] leading-[16px] ${SANS} text-sub`}>
+          {r.flow} · {held ? "Held for You" : "Completed"}
+        </span>
+      </span>
+      <span className={`shrink-0 text-[12px] leading-[16px] ${SANS} text-sub [font-variant-numeric:tabular-nums]`}>{r.time}</span>
+    </div>
+  );
+}
+
 export function DoeHealthProductAutomationsPage() {
   const [open, setOpen] = useState<string | null>(null);
   const [on, setOn] = useState<Record<string, boolean>>(() => Object.fromEntries(WORKFLOWS.map((w) => [w.id, w.on])));
-  const [tab, setTab] = useState("Workflows");
+  const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("workflows");
+  const [query, setQuery] = useState("");
+  const flip = (id: string) => setOn((prev) => ({ ...prev, [id]: !prev[id] }));
 
-  if (open) return <Editor name={WORKFLOWS.find((w) => w.id === open)!.name} onBack={() => setOpen(null)} />;
+  const opened = WORKFLOWS.find((w) => w.id === open);
+  if (opened) return <Editor workflow={opened} live={!!on[opened.id]} onToggle={() => flip(opened.id)} onBack={() => setOpen(null)} />;
 
-  const statusOf = (w: (typeof WORKFLOWS)[number]): Status => (!on[w.id] ? "Paused" : w.attention ? "Needs attention" : "Live");
+  const statusOf = (w: Workflow): Status => (!on[w.id] ? "Paused" : w.attention ? "Needs Attention" : "Live");
+  const q = query.trim().toLowerCase();
+  const shown = WORKFLOWS.filter((w) => !q || w.name.toLowerCase().includes(q) || w.starts.toLowerCase().includes(q));
+  const live = WORKFLOWS.filter((w) => on[w.id]);
+  const attention = live.filter((w) => w.attention);
+  const runsThisWeek = live.reduce((n, w) => n + w.runs.reduce((a, b) => a + b, 0), 0);
+  const success = live.length ? Math.round(live.reduce((n, w) => n + w.rate, 0) / live.length) : 0;
+  const stats = [
+    { label: "Runs This Week", value: String(runsThisWeek) },
+    { label: "Success Rate", value: `${success}%` },
+    { label: "Held for You", value: String(RUNS.filter((r) => r.result !== "Completed").length) },
+    { label: "Live Workflows", value: `${live.length} of ${WORKFLOWS.length}` },
+  ];
 
   return (
-    <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[12px] pt-[34px] px-[40px] pb-[24px] rounded-[24px] overflow-clip bg-paper antialiased">
-      <div className="relative flex items-center justify-between">
+    <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[22px] pt-[36px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
+      <div className="relative flex items-end justify-between">
         <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>Automations</span>
-        <span className="flex gap-[10px]">
-          <span className={`flex items-center h-[40px] px-[18px] rounded-[999px] bg-[#28191014] text-[14px] ${SANS} font-[500] text-walnut`}>Templates</span>
-          <span className={`flex items-center gap-[8px] h-[40px] px-[18px] rounded-[999px] bg-ink text-[14px] ${SANS} font-[500] [color:#FFFCF1]`}>
-            <Icon name="plus" />
-            New workflow
-          </span>
+        <span className="flex items-center gap-[8px]">
+          <button type="button" onClick={() => setTab("templates")} className={btnGrey}>
+            Templates
+          </button>
+          <button type="button" className={btnInk.replace("px-[18px]", "pr-[18px] pl-[14px]")}>
+            <Plus />
+            New Workflow
+          </button>
         </span>
       </div>
 
-      <div className="relative flex items-center gap-[10px]">
-        <span className="flex p-[3px] gap-[2px] rounded-[999px] bg-[#F4EEDF]" role="tablist">
-          {[["Workflows", String(WORKFLOWS.length)], ["Runs", "78"], ["Templates", ""]].map(([t, n]) => (
-            <button
-              key={t}
-              type="button"
-              role="tab"
-              aria-selected={tab === t}
-              onClick={() => setTab(t!)}
-              className={`flex items-center gap-[7px] h-[32px] px-[16px] rounded-[999px] text-[13px] ${SANS} font-[500] transition-colors duration-150 ${tab === t ? "bg-paper text-ink" : "text-sub hover:text-walnut"}`}
-            >
-              {t}
-              {n ? <span className="text-[12px] opacity-50">{n}</span> : null}
-            </button>
-          ))}
-        </span>
-        <span className="grow" />
-        <span className={`flex items-center gap-[8px] w-[230px] h-[38px] px-[16px] rounded-[999px] bg-[#F4EEDF] text-[14px] ${SANS} text-[rgba(40,25,16,0.55)]`}><Icon name="search" />Search</span>
-        {[["Status", "All"], ["Owner", "Anyone"]].map(([k, v]) => (
-          <span key={k} className={`flex items-center gap-[8px] h-[38px] px-[16px] rounded-[999px] bg-[#28191014] text-[14px] ${SANS} font-[500] text-walnut`}>
-            <span className="text-[rgba(40,25,16,0.55)]">{k}</span>{v}<Icon name="down" size={14} />
+      <div className="grid grid-cols-4 gap-[24px] shrink-0">
+        {stats.map((s, i) => (
+          <span key={s.label} className={`flex flex-col gap-[4px] min-w-[0px] ${i ? "pl-[24px] border-l border-solid border-[#2819101A]" : ""}`}>
+            <span className={`text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>{s.label}</span>
+            <span className={`truncate text-[38px] leading-[42px] tracking-[-0.03em] ${DISPLAY} text-walnut [font-variant-numeric:tabular-nums]`}>{s.value}</span>
           </span>
         ))}
       </div>
 
-      <div className="relative flex flex-col p-[8px_8px_4px] rounded-[22px] bg-[#F4EEDF] shrink-0">
-        <div className={`grid ${COLS} items-center gap-[14px] h-[36px] px-[16px] text-[13px] ${SANS} font-[500] text-[rgba(40,25,16,0.6)]`}>
-          <span>Workflow</span><span>Starts when</span><span>Status</span><span>Success rate</span><span>Runs, 7 days</span><span className="text-right">Total</span><span />
-        </div>
-        {WORKFLOWS.map((w) => {
-          const st = statusOf(w);
-          const rate = on[w.id] ? w.rate : 0;
-          return (
-            <div
-              key={w.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => setOpen(w.id)}
-              onKeyDown={(e) => e.key === "Enter" && setOpen(w.id)}
-              className={`grid ${COLS} items-center gap-[14px] h-[54px] shrink-0 px-[16px] mb-[4px] rounded-[16px] bg-paper cursor-pointer hover:bg-[#FFFEF8] transition-colors duration-150`}
-            >
-              <span className="flex items-center gap-[14px] min-w-[0px]">
-                <span className="w-[34px] h-[34px] shrink-0 flex items-center justify-center rounded-[11px] bg-[#EFE8D9]"><Icon name={w.icon} /></span>
-                <span className="flex flex-col min-w-[0px]">
-                  <span className={`truncate text-[20px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>{w.name}</span>
-                  <span className={`text-[12.5px] leading-[15px] ${SANS} font-[500] text-[rgba(40,25,16,0.5)]`}>{w.steps} steps</span>
-                </span>
-              </span>
-              <span className={`flex items-center h-[26px] px-[12px] w-fit rounded-[999px] shadow-[inset_0_0_0_1px_rgba(40,25,16,0.2)] text-[12px] ${SANS} font-[500] text-walnut whitespace-nowrap`}>{w.starts}</span>
-              <span className={`flex items-center h-[28px] px-[12px] w-fit rounded-[999px] text-[13px] ${SANS} font-[500] whitespace-nowrap ${STATUS_STYLE[st]}`}>{st}</span>
-              <span className="flex items-center gap-[10px]">
-                <span className="grow h-[10px] rounded-[999px] bg-[#EFE8D9] overflow-hidden"><span className="block h-full rounded-[999px] bg-[#E8A585]" style={{ width: `${rate}%`, transition: `width 300ms ${EASE}` }} /></span>
-                <span className={`w-[36px] text-right text-[13px] ${SANS} font-[500]`}>{rate}%</span>
-              </span>
-              <Spark values={on[w.id] ? w.runs : w.runs.map(() => 0)} />
-              <span className={`text-right text-[13.5px] ${SANS} font-[500] [font-variant-numeric:tabular-nums]`}>{on[w.id] ? w.runs.reduce((a, b) => a + b, 0) : 0}</span>
-              <Toggle on={!!on[w.id]} label={`${w.name} on`} onChange={() => setOn((prev) => ({ ...prev, [w.id]: !prev[w.id] }))} />
-            </div>
-          );
-        })}
+      <div className="flex items-center justify-between gap-[12px] shrink-0">
+        <span className="w-[360px] shrink-0">
+          <Segmented value={tab} options={TABS} onChange={setTab} />
+        </span>
+        {tab === "workflows" && (
+          <label className="flex items-center gap-[8px] w-[260px] h-[38px] px-[14px] rounded-[999px] bg-[#F4EEDF] border-[1.5px] border-solid border-transparent focus-within:border-ink text-sub transition-colors duration-150">
+            <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+              <path d="M11 5a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM16 16l4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search workflows" className={`grow min-w-[0px] bg-transparent outline-none text-[14px] ${SANS} font-[500] text-walnut placeholder:text-sub`} />
+          </label>
+        )}
       </div>
 
-      <div className="relative flex flex-col grow min-h-[0px] p-[14px_8px_4px] rounded-[22px] bg-[#FAF6EC] overflow-hidden">
-        <span className="flex items-center justify-between px-[12px] pb-[8px]">
-          <span className={`text-[24px] leading-[26px] ${DISPLAY} text-walnut`}>Recent runs</span>
-          <span className={`flex items-center h-[26px] px-[12px] rounded-[999px] shadow-[inset_0_0_0_1px_rgba(40,25,16,0.2)] text-[12px] ${SANS} font-[500]`}>View all</span>
-        </span>
-        {RUNS.map((r) => (
-          <div key={r.time} className="grid grid-cols-[80px_1fr_1fr_130px] items-center gap-[12px] h-[42px] shrink-0 px-[14px] mb-[4px] rounded-[14px] bg-paper text-[14px]">
-            <span className={`${SANS} font-[500] text-[rgba(40,25,16,0.55)]`}>{r.time}</span>
-            <span className={`${SANS} font-[500] text-walnut`}>{r.flow}</span>
-            <span className={`${SANS} text-walnut`}>{r.who}</span>
-            <span className={`flex items-center h-[26px] px-[12px] w-fit rounded-[999px] text-[13px] ${SANS} font-[500] ${r.result === "Completed" ? "bg-[#D6DEC6] text-[#2F3B2A]" : "bg-[#28191014] text-walnut"}`}>{r.result}</span>
+      {tab === "workflows" && (
+        <div className="grid grid-cols-[1fr_320px] gap-[16px] grow min-h-[0px]">
+          <div className={`grid grid-cols-2 auto-rows-min gap-[8px] p-[8px] rounded-[18px] bg-[#F4EEDF] ${scroll}`}>
+            {shown.map((w) => {
+              const isOn = !!on[w.id];
+              const total = w.runs.reduce((a, b) => a + b, 0);
+              return (
+                <div
+                  key={w.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setOpen(w.id)}
+                  onKeyDown={(e) => e.key === "Enter" && setOpen(w.id)}
+                  className={`flex flex-col gap-[14px] p-[16px] rounded-[14px] bg-paper cursor-pointer outline outline-[1.5px] -outline-offset-[1.5px] outline-transparent hover:outline-[#28191026] transition-[outline-color,opacity] duration-150 ${isOn ? "" : "opacity-70"}`}
+                >
+                  <span className="flex items-center justify-between">
+                    <Dot tone={w.tone} size={36} />
+                    <Toggle on={isOn} label={`${w.name} on`} onChange={() => flip(w.id)} />
+                  </span>
+                  <span className="flex flex-col gap-[2px] min-w-[0px]">
+                    <span className={`truncate text-[20px] leading-[24px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>{w.name}</span>
+                    <span className={`truncate text-[13px] leading-[17px] ${SANS} text-sub`}>
+                      When {w.starts.charAt(0).toLowerCase() + w.starts.slice(1)} · {w.steps} steps
+                    </span>
+                  </span>
+                  <span className="flex items-end justify-between gap-[12px] pt-[12px] border-t border-solid border-[#2819100F]">
+                    <span className="flex flex-col gap-[8px]">
+                      <StatusPill status={statusOf(w)} />
+                      <span className={`text-[12px] leading-[16px] ${SANS} text-sub [font-variant-numeric:tabular-nums]`}>
+                        {isOn ? `${total} runs · ${w.rate}% success` : "Off this week"}
+                      </span>
+                    </span>
+                    <Bars values={w.runs} on={isOn} />
+                  </span>
+                </div>
+              );
+            })}
+            {shown.length === 0 && <span className={`col-span-2 px-[12px] py-[18px] text-[14px] ${SANS} text-sub`}>No workflows match “{query}”.</span>}
           </div>
-        ))}
-      </div>
+
+          <div className={`flex flex-col gap-[12px] min-h-[0px] ${scroll}`}>
+            {attention.map((w) => (
+              <div key={w.id} className="flex flex-col gap-[10px] shrink-0 p-[16px] rounded-[18px] bg-[#FBEDE4] border-[1.5px] border-dashed border-[#E8A585]">
+                <span className="flex items-center gap-[8px]">
+                  <span className="w-[8px] h-[8px] rounded-[50%] bg-[#E8A585]" />
+                  <span className={`text-[13px] leading-[16px] ${SANS} font-[600] text-[#7A3E26]`}>Needs Attention</span>
+                </span>
+                <span className={`text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>{w.name}</span>
+                <span className={`text-[13px] leading-[19px] ${SANS} text-walnut`}>{w.attention}</span>
+                <button type="button" onClick={() => setOpen(w.id)} className={`self-start h-[34px] px-[14px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[13px] ${SANS} font-[500] [color:#FFFCF1]`}>
+                  Review Workflow
+                </button>
+              </div>
+            ))}
+            <div className="flex flex-col gap-[6px] shrink-0 p-[8px] rounded-[18px] bg-[#FAF6EC]">
+              <span className="flex items-center justify-between px-[8px] pt-[6px] pb-[4px]">
+                <span className={`text-[18px] leading-[22px] ${DISPLAY} text-walnut`}>Latest Runs</span>
+                <button type="button" onClick={() => setTab("runs")} className={`text-[13px] ${SANS} font-[500] text-sub hover:text-walnut transition-colors duration-150`}>
+                  See All
+                </button>
+              </span>
+              {RUNS.slice(0, 4).map((r) => (
+                <RunItem key={r.time} r={r} />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {tab === "runs" && (
+        <div className={`flex flex-col gap-[4px] grow min-h-[0px] p-[8px] rounded-[18px] bg-[#F4EEDF] ${scroll}`}>
+          <span className={`px-[8px] pt-[6px] pb-[4px] text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>Today</span>
+          {RUNS.map((r) => (
+            <RunItem key={r.time} r={r} />
+          ))}
+        </div>
+      )}
+
+      {tab === "templates" && (
+        <div className={`grid grid-cols-3 auto-rows-min gap-[8px] grow min-h-[0px] p-[8px] rounded-[18px] bg-[#F4EEDF] ${scroll}`}>
+          {TEMPLATES.map((t) => (
+            <div key={t.name} className="flex flex-col gap-[14px] p-[18px] rounded-[14px] bg-paper">
+              <Dot tone={t.tone} size={36} />
+              <span className="flex flex-col gap-[4px]">
+                <span className={`text-[20px] leading-[24px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>{t.name}</span>
+                <span className={`text-[14px] leading-[19px] ${SANS} text-sub`}>{t.about}</span>
+              </span>
+              <button type="button" className={`self-start flex items-center gap-[6px] h-[34px] pr-[14px] pl-[11px] rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150 text-[13px] ${SANS} font-[500] text-walnut`}>
+                <Plus color="#281910" />
+                Use Template
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

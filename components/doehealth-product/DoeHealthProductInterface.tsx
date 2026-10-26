@@ -3,9 +3,10 @@
 /**
  * Interface tab — where patients' personal agents reach the practice directly, without calls or email. Agents send
  * structured requests (book, reschedule, refill, a billing or prep question) and Doe answers or acts on them; calls
- * from people who still phone in are answered by the voice agents and land here too. A strip up top shows who is
- * answering right now. Below, a two-sided ledger: each exchange is one row, the request on the left and the
- * practice's answer on the right, and opening a row shows the whole exchange with a reply box.
+ * from people who still phone in are answered by the voice agents and land here too. A row up top shows who is
+ * answering right now, today's numbers and what's waiting on staff. Below, a two-sided ledger: each exchange is one
+ * row, the request on the left and the practice's answer on the right, and opening a row shows the whole exchange
+ * with a reply box and a way to mark it resolved.
  */
 import { useState } from "react";
 
@@ -17,9 +18,9 @@ type Status = "resolved" | "you" | "progress" | "live";
 
 const STATUS: Record<Status, { label: string; background: string; color: string; tone: string }> = {
   resolved: { label: "Resolved by Doe", background: "#D6DEC6", color: "#2F3B2A", tone: "#EEF1E6" },
-  you: { label: "Needs you", background: "#FCCFB8", color: "#140C04", tone: "#FBEDE4" },
-  progress: { label: "In progress", background: "#F3E2B4", color: "#281910", tone: "#F8F0DA" },
-  live: { label: "Live call", background: "#140C04", color: "#FFFCF1", tone: "#FAF6EC" },
+  you: { label: "Needs You", background: "#FCCFB8", color: "#140C04", tone: "#FBEDE4" },
+  progress: { label: "In Progress", background: "#F3E2B4", color: "#281910", tone: "#F8F0DA" },
+  live: { label: "Live Call", background: "#140C04", color: "#FFFCF1", tone: "#FAF6EC" },
 };
 
 type Message =
@@ -59,7 +60,7 @@ const THREADS: Thread[] = [
       { kind: "them", text: "Tomorrow at three, please." },
       { kind: "event", text: "June, your voice agent, is on the call" },
     ],
-    actions: ["Open call", "Take over"],
+    actions: ["Open Call", "Take Over"],
   },
   {
     id: "henry-bill",
@@ -77,7 +78,7 @@ const THREADS: Thread[] = [
       { kind: "them", text: "Thanks. Henry would like to split it over three months." },
       { kind: "event", text: "Payment plans need someone at the practice to approve" },
     ],
-    actions: ["Offer 3-month plan", "Call Henry"],
+    actions: ["Offer 3-Month Plan", "Call Henry"],
   },
   {
     id: "maya-move",
@@ -112,7 +113,7 @@ const THREADS: Thread[] = [
       { kind: "doe", text: "Dr. Brooks raised Marcus to 600 mg at bedtime on Oct 24. I’ve drafted the refill at the new dose." },
       { kind: "event", text: "Refill drafted for Dr. Brooks to sign" },
     ],
-    actions: ["Sign and send", "Open chart"],
+    actions: ["Sign and Send", "Open Chart"],
   },
   {
     id: "lily-prep",
@@ -130,7 +131,7 @@ const THREADS: Thread[] = [
       { kind: "them", text: "Got it, I’ve set a reminder for Lily." },
       { kind: "event", text: "Answered from Dr. Patel’s EEG prep instructions" },
     ],
-    actions: ["View instructions", "Message Lily"],
+    actions: ["View Instructions", "Message Lily"],
   },
   {
     id: "noah-sleep",
@@ -165,7 +166,7 @@ const THREADS: Thread[] = [
       { kind: "them", text: "Yes, thanks." },
       { kind: "event", text: "June booked Mon Nov 2, 4:15 and texted a confirmation" },
     ],
-    actions: ["Open call", "Open in Schedule"],
+    actions: ["Open Call", "Open in Schedule"],
   },
   {
     id: "grace-records",
@@ -199,7 +200,7 @@ const THREADS: Thread[] = [
       { kind: "doe", text: "I’ll have a clinician confirm and call you back within the hour." },
       { kind: "event", text: "Dose questions go to a clinician" },
     ],
-    actions: ["Confirm 25 mg", "Open call"],
+    actions: ["Confirm 25 Mg", "Open Call"],
   },
 ];
 
@@ -207,7 +208,7 @@ const FILTERS: { id: "all" | Channel | "you"; label: string }[] = [
   { id: "all", label: "All" },
   { id: "agent", label: "Agents" },
   { id: "voice", label: "Calls" },
-  { id: "you", label: "Needs you" },
+  { id: "you", label: "Needs You" },
 ];
 
 function Pill({ status }: { status: Status }) {
@@ -220,29 +221,14 @@ function Pill({ status }: { status: Status }) {
   );
 }
 
-function Phone({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
-      <path d="M5 4.5h3.2l1.6 4-2 1.3a10.5 10.5 0 0 0 6.4 6.4l1.3-2 4 1.6V19a1.5 1.5 0 0 1-1.6 1.5C10.6 20 4 13.4 3.5 6.1A1.5 1.5 0 0 1 5 4.5z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-/** Who's on the other end: a personal agent (their initial) or a phone call. */
+/** Who's on the other end, as a plain circle: salmon for a personal agent, sage for a phone call. */
 function Mark({ t, size = 32 }: { t: Thread; size?: number }) {
-  return (
-    <span
-      className={`shrink-0 flex items-center justify-center rounded-[999px] text-[13px] leading-[16px] ${SANS} font-[600] text-walnut`}
-      style={{ width: size, height: size, backgroundColor: t.channel === "agent" ? "#F8DCCB" : "#E3E9D9" }}
-    >
-      {t.channel === "agent" ? t.from[0] : <Phone size={size * 0.44} />}
-    </span>
-  );
+  return <span className="shrink-0 rounded-[50%]" style={{ width: size, height: size, backgroundColor: t.channel === "agent" ? "#F7DCCB" : "#DCE5D0" }} />;
 }
 
 function Search({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
-    <span className="flex items-center gap-[8px] w-[260px] h-[38px] px-[14px] rounded-[999px] bg-[#F4EEDF] text-sub">
+    <label className="flex items-center gap-[8px] w-[260px] h-[38px] px-[14px] rounded-[999px] bg-[#F4EEDF] border-[1.5px] border-solid border-transparent focus-within:border-ink text-sub transition-colors duration-150">
       <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
         <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />
         <path d="M16 16l4 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -251,55 +237,61 @@ function Search({ value, onChange }: { value: string; onChange: (v: string) => v
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search patients or agents"
-        className={`grow min-w-[0px] bg-transparent outline-none text-[14px] leading-[18px] ${SANS} text-walnut placeholder:text-sub`}
+        className={`grow min-w-[0px] bg-transparent outline-none text-[14px] leading-[18px] ${SANS} font-[500] text-walnut placeholder:text-sub`}
       />
-    </span>
+    </label>
   );
 }
 
-/** Who is answering right now, a few live numbers, and what's waiting on staff. */
+/**
+ * Today at a glance, in the same toned tiles as Payments' stage row: who's on the line, how much came in, how much
+ * Doe handled, and what's waiting on staff. The last tile filters the ledger to what needs you.
+ */
 function StatusBar({ needYou, onNeedYou }: { needYou: number; onNeedYou: () => void }) {
   const voice = [
-    { name: "June", line: "On a call · 2:14", busy: true },
-    { name: "Theo", line: "Ready", busy: false },
+    { name: "June", line: "On a Call · 2:14", busy: true, tone: "#DCE5D0" },
+    { name: "Theo", line: "Ready", busy: false, tone: "#F3E7C9" },
   ];
-  const numbers = [
-    { value: "312", label: "agents connected" },
-    { value: "128", label: "requests today" },
-    { value: "8s", label: "median reply" },
-    { value: "91%", label: "resolved by Doe" },
-  ];
+  const tile = "relative flex flex-col min-w-[0px] p-[18px_20px] text-left [container-type:inline-size]";
+  const label = `text-[min(15px,9cqw)] leading-[1.3] ${SANS} font-[500] text-[rgba(40,25,16,0.7)]`;
+  const value = `mt-auto text-[min(42px,22cqw)] leading-[1.1] tracking-[-0.03em] ${DISPLAY} text-ink [font-variant-numeric:tabular-nums]`;
+  const note = `mt-[4px] text-[min(14px,8.5cqw)] leading-[1.35] ${SANS} text-sub`;
+
   return (
-    <div className="flex items-center gap-[24px] h-[68px] shrink-0 pl-[10px] pr-[12px] rounded-[22px] bg-[#FAF6EC]">
-      <span className="flex items-center gap-[6px]">
-        {voice.map((v) => (
-          <span key={v.name} className="flex items-center gap-[10px] h-[48px] pl-[6px] pr-[14px] rounded-[16px] bg-paper">
-            <span className="relative w-[36px] h-[36px] flex items-center justify-center rounded-[999px] bg-[#E3E9D9] text-walnut">
-              <Phone />
-              <span className={`absolute -right-[1px] -bottom-[1px] w-[11px] h-[11px] rounded-[999px] border-[2px] border-solid border-paper ${v.busy ? "bg-[#E8A585]" : "bg-[#6E9A5B]"}`} />
+    <div className="grid grid-cols-[1.35fr_1fr_1fr_1fr] gap-[10px] h-[148px] shrink-0">
+      <div className={`${tile} rounded-l-[24px] rounded-r-[4px] border-[1.5px] border-dashed border-[#2819102E] bg-[#FAF6EC]`}>
+        <span className={label}>On the Line</span>
+        <span className="mt-auto flex flex-col gap-[10px]">
+          {voice.map((v) => (
+            <span key={v.name} className="flex items-center gap-[10px] min-w-[0px]">
+              <span className="relative w-[30px] h-[30px] shrink-0 rounded-[50%]" style={{ backgroundColor: v.tone }}>
+                <span className={`absolute -right-[1px] -bottom-[1px] w-[10px] h-[10px] rounded-[999px] border-[2px] border-solid border-[#FAF6EC] ${v.busy ? "bg-[#E8A585]" : "bg-[#6E9A5B]"}`} />
+              </span>
+              <span className={`text-[15px] leading-[19px] ${SANS} font-[600] text-walnut`}>{v.name}</span>
+              <span className={`truncate text-[13px] leading-[17px] ${SANS} text-sub [font-variant-numeric:tabular-nums]`}>{v.line}</span>
             </span>
-            <span className="flex flex-col">
-              <span className={`text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>{v.name}</span>
-              <span className={`text-[12px] leading-[16px] ${SANS} text-sub [font-variant-numeric:tabular-nums]`}>{v.line}</span>
-            </span>
-          </span>
-        ))}
-      </span>
-      <span className="flex items-center gap-[28px] grow min-w-[0px]">
-        {numbers.map((n) => (
-          <span key={n.label} className="flex items-baseline gap-[8px] whitespace-nowrap">
-            <span className={`text-[24px] leading-[28px] tracking-[-0.02em] ${DISPLAY} text-walnut [font-variant-numeric:tabular-nums]`}>{n.value}</span>
-            <span className={`text-[13px] leading-[16px] ${SANS} text-sub`}>{n.label}</span>
-          </span>
-        ))}
-      </span>
+          ))}
+        </span>
+      </div>
+      <div className={`${tile} rounded-[4px] bg-[#F4EEDF]`}>
+        <span className={label}>Requests Today</span>
+        <span className={value}>128</span>
+        <span className={note}>8s median reply</span>
+      </div>
+      <div className={`${tile} rounded-[4px] bg-[#E3E9D9]`}>
+        <span className={label}>Resolved by Doe</span>
+        <span className={value}>91%</span>
+        <span className={note}>312 agents connected</span>
+      </div>
       <button
         type="button"
         onClick={onNeedYou}
-        className={`flex items-center gap-[8px] h-[40px] px-[16px] rounded-[999px] bg-[#FCCFB8] hover:bg-[#F8C2A8] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-ink`}
+        disabled={needYou === 0}
+        className={`${tile} rounded-l-[4px] rounded-r-[24px] transition-colors duration-150 ${needYou ? "bg-[#F8D9C6] hover:bg-[#F6CFB8]" : "bg-[#E3E9D9] cursor-default"}`}
       >
-        <span className={`${DISPLAY} text-[16px]`}>{needYou}</span>
-        waiting on staff
+        <span className={label}>Waiting on You</span>
+        <span className={value}>{needYou}</span>
+        <span className={note}>{needYou ? "Show only these" : "All clear"}</span>
       </button>
     </div>
   );
@@ -327,7 +319,7 @@ const outcomeOf = (t: Thread) => [...t.messages].reverse().find((m) => m.kind ==
 const requestOf = (t: Thread) => t.messages.find((m) => m.kind === "request") as { fields: [string, string][] } | undefined;
 
 /** The whole exchange under an opened row, with a reply box and the row's two actions. */
-function Exchange({ t, onOpenCall }: { t: Thread; onOpenCall?: () => void }) {
+function Exchange({ t, onOpenCall, onResolve }: { t: Thread; onOpenCall?: () => void; onResolve?: () => void }) {
   const [reply, setReply] = useState("");
   const [sent, setSent] = useState<string[]>([]);
   const them = t.channel === "agent" ? t.from : t.patient.split(" ")[0]!;
@@ -338,10 +330,10 @@ function Exchange({ t, onOpenCall }: { t: Thread; onOpenCall?: () => void }) {
     setSent((s) => [...s, text]);
     setReply("");
   };
-  const act = (label: string) => label === "Open call" && onOpenCall?.();
+  const act = (label: string) => label === "Open Call" && onOpenCall?.();
 
   return (
-    <div className="doe-menu-in grid grid-cols-[1fr_300px] gap-[16px] mt-[8px] p-[16px] rounded-[20px] bg-[#FAF6EC]">
+    <div className="doe-menu-in grid grid-cols-[1fr_300px] gap-[16px] mt-[8px] p-[16px] rounded-[18px] bg-[#F4EEDF]">
       <div className="flex flex-col gap-[10px] min-w-[0px]">
         {t.messages
           .filter((m) => m.kind === "them" || m.kind === "doe")
@@ -361,7 +353,7 @@ function Exchange({ t, onOpenCall }: { t: Thread; onOpenCall?: () => void }) {
             <span className={`px-[14px] py-[10px] rounded-[18px] rounded-br-[6px] bg-walnut text-[14px] leading-[20px] ${SANS} [color:#FFFCF1]`}>{text}</span>
           </div>
         ))}
-        <span className="flex items-center gap-[8px] h-[44px] mt-[4px] pl-[16px] pr-[4px] rounded-[999px] bg-paper">
+        <span className="flex items-center gap-[8px] h-[44px] mt-[4px] pl-[16px] pr-[4px] rounded-[999px] bg-paper border-[1.5px] border-solid border-transparent focus-within:border-ink transition-colors duration-150">
           <input
             value={reply}
             onChange={(e) => setReply(e.target.value)}
@@ -393,12 +385,22 @@ function Exchange({ t, onOpenCall }: { t: Thread; onOpenCall?: () => void }) {
         <button type="button" onClick={() => act(t.actions[1])} className={`h-[42px] rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>
           {t.actions[1]}
         </button>
+        {onResolve && t.status !== "resolved" && t.status !== "live" && (
+          <button
+            type="button"
+            onClick={onResolve}
+            className={`flex items-center justify-center gap-[6px] h-[42px] rounded-[999px] border-[1.5px] border-dashed border-[#28191033] hover:bg-[#EEE6D6] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}
+          >
+            <Check />
+            Mark Resolved
+          </button>
+        )}
       </div>
     </div>
   );
 }
 
-function LedgerRow({ t, open, onToggle, onOpenCall }: { t: Thread; open: boolean; onToggle: () => void; onOpenCall?: () => void }) {
+function LedgerRow({ t, open, onToggle, onOpenCall, onResolve }: { t: Thread; open: boolean; onToggle: () => void; onOpenCall?: () => void; onResolve?: () => void }) {
   const asked = firstOf(t, "them")?.text;
   const answer = firstOf(t, "doe")?.text;
   const outcome = outcomeOf(t)?.text;
@@ -415,14 +417,13 @@ function LedgerRow({ t, open, onToggle, onOpenCall }: { t: Thread; open: boolean
         className="grid grid-cols-[1fr_96px_1fr] items-stretch text-left cursor-pointer outline-none group"
       >
         <span
-          className={`flex flex-col gap-[10px] min-w-[0px] p-[16px] rounded-[20px] outline outline-[1.5px] -outline-offset-[1.5px] transition-[outline-color] duration-150 ${open ? "outline-ink" : "outline-transparent group-hover:outline-[#28191026]"}`}
-          style={{ backgroundColor: t.channel === "agent" ? "#FBEDE4" : "#EEF1E6" }}
+          className={`flex flex-col gap-[12px] min-w-[0px] p-[16px] rounded-[18px] bg-[#F4EEDF] outline outline-[1.5px] -outline-offset-[1.5px] transition-[outline-color] duration-150 ${open ? "outline-ink" : "outline-transparent group-hover:outline-[#28191026]"}`}
         >
           <span className="flex items-center gap-[10px] min-w-[0px]">
             <Mark t={t} size={28} />
             <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>{t.channel === "agent" ? t.from : t.patient}</span>
             <span className={`truncate text-[12px] leading-[16px] ${SANS} text-sub`}>{t.channel === "agent" ? t.patient : t.from}</span>
-            <span className={`ml-auto flex items-center h-[22px] px-[9px] shrink-0 rounded-[999px] bg-[#FFFCF1B3] text-[12px] leading-[16px] ${SANS} font-[500] text-walnut`}>{t.intent}</span>
+            <span className={`ml-auto flex items-center h-[24px] px-[10px] shrink-0 rounded-[999px] bg-paper text-[12px] leading-[16px] ${SANS} font-[500] text-walnut`}>{t.intent}</span>
           </span>
           {requestOf(t) ? (
             <span className="grid grid-cols-[auto_1fr] gap-x-[12px] gap-y-[3px]">
@@ -439,21 +440,20 @@ function LedgerRow({ t, open, onToggle, onOpenCall }: { t: Thread; open: boolean
         </span>
 
         <span className="relative flex flex-col items-center justify-center gap-[2px]">
-          <span className="absolute left-[10px] right-[10px] top-1/2 h-[2px] rounded-[99px] bg-[#2819100F]" />
-          <span className={`relative flex flex-col items-center px-[8px] py-[4px] rounded-[12px] bg-paper`}>
+          <span className="absolute left-[6px] right-[6px] top-1/2 h-[1.5px] -mt-[0.75px] bg-[#28191026]" />
+          <span className="absolute left-[2px] top-1/2 -mt-[4px] w-[8px] h-[8px] rounded-[50%] bg-[#28191026]" />
+          <span className="absolute right-[2px] top-1/2 -mt-[4px] w-[8px] h-[8px] rounded-[50%]" style={{ backgroundColor: t.status === "resolved" ? "#6E9A5B" : t.status === "you" ? "#E8A585" : "#28191026" }} />
+          <span className="relative flex flex-col items-center px-[10px] py-[5px] rounded-[12px] bg-paper border border-solid border-[#2819101A]">
             <span className={`text-[13px] leading-[16px] ${SANS} font-[600] text-walnut [font-variant-numeric:tabular-nums]`}>{t.time}</span>
             <span className={`text-[11px] leading-[14px] ${SANS} text-sub whitespace-nowrap`}>{t.speed.replace("Replied in ", "")}</span>
           </span>
         </span>
 
         <span
-          className={`flex flex-col gap-[10px] min-w-[0px] p-[16px] rounded-[20px] ${waiting ? "border-[1.5px] border-dashed border-[#E8A585]" : "border-[1.5px] border-solid border-transparent"}`}
-          style={{ backgroundColor: waiting ? "#FFFCF1" : "#FAF6EC" }}
+          className={`flex flex-col gap-[12px] min-w-[0px] p-[16px] rounded-[18px] bg-paper border-[1.5px] ${waiting ? "border-dashed border-[#E8A585]" : "border-solid border-[#2819101A]"}`}
         >
           <span className="flex items-center gap-[10px]">
-            <span className={`w-[28px] h-[28px] shrink-0 flex items-center justify-center rounded-[999px] ${t.channel === "agent" ? "bg-ink" : "bg-[#E3E9D9]"}`}>
-              {t.channel === "agent" ? <span className={`text-[13px] leading-[13px] ${DISPLAY} [color:#FFFCF1]`}>D</span> : <span className="text-walnut"><Phone size={12} /></span>}
-            </span>
+            <span className="w-[28px] h-[28px] shrink-0 rounded-[50%]" style={{ backgroundColor: t.channel === "agent" ? "#281910" : "#DCE5D0" }} />
             <span className={`text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>{t.channel === "agent" ? "Doe" : "June"}</span>
             <span className={`text-[12px] leading-[16px] ${SANS} text-sub`}>{t.channel === "agent" ? "for your clinic" : "voice agent"}</span>
             <span className="ml-auto">
@@ -473,7 +473,7 @@ function LedgerRow({ t, open, onToggle, onOpenCall }: { t: Thread; open: boolean
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (t.actions[0] === "Open call") onOpenCall?.();
+                  if (t.actions[0] === "Open Call") onOpenCall?.();
                   else onToggle();
                 }}
                 className={`shrink-0 h-[32px] px-[14px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[13px] leading-[16px] ${SANS} font-[500] [color:#FFFCF1]`}
@@ -484,7 +484,7 @@ function LedgerRow({ t, open, onToggle, onOpenCall }: { t: Thread; open: boolean
           </span>
         </span>
       </div>
-      {open && <Exchange t={t} onOpenCall={onOpenCall} />}
+      {open && <Exchange t={t} onOpenCall={onOpenCall} onResolve={onResolve} />}
     </div>
   );
 }
@@ -493,12 +493,15 @@ export function DoeHealthProductInterfacePage({ onOpenCall }: { onOpenCall?: () 
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<string | null>(null);
+  const [resolved, setResolved] = useState<Set<string>>(() => new Set());
 
+  const all = THREADS.map((t) => (resolved.has(t.id) ? { ...t, status: "resolved" as const } : t));
   const q = query.trim().toLowerCase();
-  const threads = THREADS.filter(
+  const threads = all.filter(
     (t) => (filter === "all" || (filter === "you" ? t.status === "you" : t.channel === filter)) && (!q || `${t.from} ${t.patient} ${t.intent}`.toLowerCase().includes(q)),
   );
-  const needYou = THREADS.filter((t) => t.status === "you").length;
+  const needYou = all.filter((t) => t.status === "you").length;
+  const countOf = (id: (typeof FILTERS)[number]["id"]) => all.filter((t) => id === "all" || (id === "you" ? t.status === "you" : t.channel === id)).length;
   const sections = [
     { label: "Live", rows: threads.filter((t) => t.status === "live") },
     { label: "Today", rows: threads.filter((t) => t.status !== "live") },
@@ -508,10 +511,25 @@ export function DoeHealthProductInterfacePage({ onOpenCall }: { onOpenCall?: () 
     <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[18px] pt-[36px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
       <div className="relative flex items-end justify-between">
         <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>Interface</span>
-        <span className="flex items-center gap-[10px]">
-          <span className={`flex items-center h-[40px] px-[18px] rounded-[999px] bg-[#28191014] text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>Response rules</span>
-          <button type="button" className={`flex items-center h-[40px] px-[18px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`}>
-            Add voice agent
+        <span className="flex items-center gap-[8px]">
+          <button type="button" className={`flex items-center gap-[6px] h-[40px] px-[18px] rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+              <circle cx="12" cy="12" r="3" fill="none" stroke="#281910" strokeWidth="1.8" />
+              <path
+                d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"
+                fill="none"
+                stroke="#281910"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Manage
+          </button>
+          <button type="button" className={`flex items-center gap-[6px] h-[40px] pr-[18px] pl-[14px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`}>
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style={{ display: "block" }}>
+              <path d="M7 2.5v9M2.5 7h9" fill="none" stroke="#FFFCF1" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+            Communicate
           </button>
         </span>
       </div>
@@ -519,23 +537,27 @@ export function DoeHealthProductInterfacePage({ onOpenCall }: { onOpenCall?: () 
       <StatusBar needYou={needYou} onNeedYou={() => setFilter("you")} />
 
       <div className="flex items-center justify-between gap-[12px] shrink-0">
-        <span className="flex p-[3px] gap-[2px] rounded-[999px] bg-[#F4EEDF]">
+        <span className="flex w-[360px] shrink-0 p-[3px] gap-[2px] rounded-[999px] bg-[#F4EEDF]">
           {FILTERS.map((f) => (
             <button
               key={f.id}
               type="button"
               onClick={() => setFilter(f.id)}
-              className={`flex items-center gap-[8px] h-[32px] px-[16px] rounded-[999px] text-[13px] leading-[16px] ${SANS} font-[500] transition-colors duration-150 ${filter === f.id ? "bg-paper text-ink" : "text-sub hover:text-walnut"}`}
+              className={`grow flex items-center justify-center gap-[6px] h-[32px] px-[10px] rounded-[999px] text-[13px] leading-[16px] ${SANS} font-[500] whitespace-nowrap transition-colors duration-150 ${filter === f.id ? "bg-paper text-ink" : "text-sub hover:text-walnut"}`}
             >
               {f.label}
-              {f.id === "you" && <span className="flex items-center h-[18px] px-[7px] rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[14px] text-ink">{needYou}</span>}
+              {f.id === "you" && needYou > 0 ? (
+                <span className="flex items-center h-[18px] px-[6px] rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[14px] text-ink">{needYou}</span>
+              ) : (
+                <span className="text-[12px] opacity-50">{countOf(f.id)}</span>
+              )}
             </button>
           ))}
         </span>
         <Search value={query} onChange={setQuery} />
       </div>
 
-      <div className="flex flex-col grow min-h-[0px] gap-[10px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex flex-col grow min-h-[0px] gap-[8px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className={`grid grid-cols-[1fr_96px_1fr] shrink-0 px-[4px] text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>
           <span>Request</span>
           <span className="text-center">Time</span>
@@ -549,7 +571,17 @@ export function DoeHealthProductInterfacePage({ onOpenCall }: { onOpenCall?: () 
               <span className={`text-[13px] font-[500] text-sub`}>{sec.rows.length}</span>
             </span>
             {sec.rows.map((t) => (
-              <LedgerRow key={t.id} t={t} open={open === t.id} onToggle={() => setOpen((cur) => (cur === t.id ? null : t.id))} onOpenCall={onOpenCall} />
+              <LedgerRow
+                key={t.id}
+                t={t}
+                open={open === t.id}
+                onToggle={() => setOpen((cur) => (cur === t.id ? null : t.id))}
+                onOpenCall={onOpenCall}
+                onResolve={() => {
+                  setResolved((prev) => new Set(prev).add(t.id));
+                  setOpen(null);
+                }}
+              />
             ))}
           </div>
         ))}
