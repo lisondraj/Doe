@@ -64,7 +64,30 @@
   animation: doe-pricing-rise 520ms cubic-bezier(0.32, 0.72, 0, 1) backwards;
 }
 
+/* Something added to the team opens to its full height and fades in, rather than appearing at once. */
+@keyframes doe-pricing-grow {
+  from {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+  to {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+}
+
+.doe-pricing-grow {
+  display: grid;
+  animation: doe-pricing-grow 420ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.doe-pricing-grow > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .doe-pricing-grow,
   .doe-pricing-rise,
   .doe-pricing-slide,
   .doe-pricing-sheet {

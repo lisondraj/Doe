@@ -62,8 +62,6 @@ type Site = { id: string; name: string; providers: Provider[] };
 type Answers = {
   shape: PracticeShape | null;
   team: Site[];
-  specialty: Specialty | null;
-  otherSpecialty: string;
   plan: PlanId | null;
   annual: boolean;
   contact: { name: string; email: string; practice: string };
@@ -71,23 +69,25 @@ type Answers = {
 
 let seq = 0;
 const nextId = (prefix: string) => `${prefix}${++seq}`;
-const newProvider = (): Provider => ({ id: nextId("p"), name: "", specialty: null, other: "", plan: null });
-const newSite = (name: string, count: number): Site => ({ id: nextId("s"), name, providers: Array.from({ length: count }, newProvider) });
+/** A new provider, taking the specialty of the one it's added after, if any. */
+const newProvider = (from?: Provider): Provider => ({ id: nextId("p"), name: "", specialty: from?.specialty ?? null, other: from?.other ?? "", plan: null });
+const newSite = (name: string, count: number, from?: Provider): Site => ({ id: nextId("s"), name, providers: Array.from({ length: count }, () => newProvider(from)) });
 
 const START: Answers = {
   shape: null,
   team: [newSite("Clinic 1", 1)],
-  specialty: null,
-  otherSpecialty: "",
   plan: null,
   annual: true,
   contact: { name: "", email: "", practice: "" },
 };
 
-/** A site with its provider list grown or trimmed to `n`, keeping the providers it already has. */
+/** A site with its provider list grown or trimmed to `n`, keeping the providers it already has; new ones copy the last one's specialty. */
 const resize = (site: Site, n: number): Site => ({
   ...site,
-  providers: n > site.providers.length ? [...site.providers, ...Array.from({ length: n - site.providers.length }, newProvider)] : site.providers.slice(0, Math.max(1, n)),
+  providers:
+    n > site.providers.length
+      ? [...site.providers, ...Array.from({ length: n - site.providers.length }, () => newProvider(site.providers[site.providers.length - 1]))]
+      : site.providers.slice(0, Math.max(1, n)),
 });
 
 const shapeOf = (team: Site[]): PracticeShape => (team.length > 1 ? "group" : team[0]!.providers.length > 1 ? "clinic" : "solo");
@@ -279,6 +279,14 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const moved = useRef(false);
   const pinTop = phone ? 118 : 112;
+  /** Ids past this were added since the current step or panel came into view: they grow in rather than appear. */
+  const baseline = useRef(0);
+  const viewKey = useRef("");
+  if (viewKey.current !== `${at}-${done}-${panel}`) {
+    viewKey.current = `${at}-${done}-${panel}`;
+    baseline.current = seq;
+  }
+  const fresh = (id: string) => Number(id.slice(1)) > baseline.current;
 
   const set = (patch: Partial<Answers>) => setA((prev) => ({ ...prev, ...patch }));
   const setTeam = (team: Site[]) => set({ team, shape: shapeOf(team) });
@@ -292,9 +300,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const locationCount = a.team.length;
   const planOf = (p: Provider) => planById(p.plan ?? plan.id);
   const mixed = providers.some((p) => planOf(p).id !== plan.id);
-  const specialtyOf = (p: Provider): Specialty | null => p.specialty ?? a.specialty;
-  const specialtyName = (sp: Specialty | null, typed = a.otherSpecialty) => (sp === "other" ? typed.trim() || "Other" : SPECIALTIES.find((s) => s.id === sp)?.label ?? "");
-  const specialtyLabel = a.specialty === "other" ? a.otherSpecialty.trim() : specialtyName(a.specialty);
+  const specialtyOf = (p: Provider): Specialty | null => p.specialty;
+  /** Every provider has a specialty, and anyone on Other has typed theirs. */
+  const specialtiesSet = providers.every((p) => p.specialty && (p.specialty !== "other" || p.other.trim()));
   const providerName = (p: Provider) => p.name.trim() || `Provider ${providers.indexOf(p) + 1}`;
 
   /** The team as price rows: each location's providers grouped by plan, the location charged at its highest plan. */
@@ -319,16 +327,16 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       shape === "solo"
         ? [resize({ ...first, name: first.name }, 1)]
         : shape === "clinic"
-          ? [resize(first, Math.max(first.providers.length, 4))]
+          ? [resize(first, Math.max(first.providers.length, 2))]
           : a.team.length > 1
             ? a.team
-            : [resize(first, Math.max(first.providers.length, 6)), newSite("Clinic 2", 3)];
+            : [first, newSite("Clinic 2", 1, first.providers[0])];
     set({ shape, team });
   };
 
   /** Locations from the toolbar: more turns the practice multi-clinic, fewer drops the last ones. */
   const setLocations = (n: number) => {
-    if (n > a.team.length) setTeam([...a.team, ...Array.from({ length: n - a.team.length }, (_, i) => newSite(`Clinic ${a.team.length + i + 1}`, 1))]);
+    if (n > a.team.length) setTeam([...a.team, ...Array.from({ length: n - a.team.length }, (_, i) => newSite(`Clinic ${a.team.length + i + 1}`, 1, providers[0]))]);
     else setTeam(a.team.slice(0, Math.max(1, n)));
   };
   /** Providers from the toolbar: added to or taken from the last location. */
@@ -729,33 +737,19 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
 
   /**
    * The team, location by location: rename a location, set how many providers it has, name each provider and give them
-   * a specialty, and add or remove locations and providers. The practice's main specialty sits on top; on the comparison
-   * each provider also gets a plan.
+   * a specialty, and add or remove locations and providers; anything added grows into place. On the comparison each
+   * provider also gets a plan.
    */
   const teamEditor = (withPlans: boolean) => {
     const surface = OUTER;
     const row = INNER;
     return (
       <div className="flex flex-col gap-[10px]">
-        <div className={`p-[6px] rounded-[26px] ${surface}`}>
-        <div className={`flex items-center justify-between gap-x-[14px] gap-y-[10px] flex-wrap p-[12px] pl-[18px] rounded-[20px] ${row}`}>
-          <span className="flex flex-col">
-            <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">Main specialty</span>
-            <span className={`text-[13px] leading-[18px] ${SUB}`}>Every provider follows it unless you change theirs</span>
-          </span>
-          {specialtyField({
-            label: "Main specialty",
-            value: a.specialty,
-            typed: a.otherSpecialty,
-            typing: a.specialty === "other",
-            onPick: (v) => set({ specialty: v }),
-            onType: (v) => set({ otherSpecialty: v }),
-            big: true,
-          })}
-        </div>
-        </div>
         {a.team.map((site, si) => (
-          <div key={site.id} className={`flex flex-col gap-[6px] p-[8px] rounded-[22px] ${surface}`}>
+          <div key={site.id} className={fresh(site.id) ? "doe-pricing-grow" : ""}>
+          {/* The grow animates this padding-free box, so the location opens from nothing. */}
+          <div>
+          <div className={`flex flex-col gap-[6px] p-[8px] rounded-[22px] ${surface}`}>
             <span className="flex items-center gap-[8px] pl-[10px]">
               <input
                 value={site.name}
@@ -769,7 +763,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             {site.providers.map((p) => {
               const n = providers.indexOf(p) + 1;
               return (
-                <div key={p.id} className={`flex flex-col gap-[8px] p-[10px] rounded-[18px] ${row} ${withPlans || phone ? "" : "sm:flex-row sm:items-center"}`}>
+                <div key={p.id} className={fresh(p.id) ? "doe-pricing-grow" : ""}>
+                <div>
+                <div className={`flex flex-col gap-[8px] p-[10px] rounded-[18px] ${row} ${withPlans || phone ? "" : "sm:flex-row sm:items-center"}`}>
                   <span className="flex items-center gap-[10px] grow min-w-[0px]">
                     <span className="w-[32px] h-[32px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[14px] font-[700] text-[#281910]">{initials(p.name, n)}</span>
                     <input
@@ -789,7 +785,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                       value: specialtyOf(p),
                       typed: p.other,
                       typing: p.specialty === "other",
-                      onPick: (v) => editProvider(p.id, { specialty: v === a.specialty && v !== "other" ? null : v }),
+                      // The first specialty picked also fills in everyone still without one.
+                      onPick: (v) =>
+                        set({ team: a.team.map((x) => ({ ...x, providers: x.providers.map((y) => (y.id === p.id || (!y.specialty && v !== "other") ? { ...y, specialty: v } : y)) })) }),
                       onType: (v) => editProvider(p.id, { other: v }),
                     })}
                     {withPlans && <Pick dark label={`${providerName(p)} plan`} value={planOf(p).id} options={planOptions} onChange={(v) => editProvider(p.id, { plan: v === plan.id ? null : v })} />}
@@ -797,6 +795,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                   {!withPlans && !phone && site.providers.length > 1 && (
                     <Close label={`Remove ${providerName(p)}`} onClick={() => setTeam(a.team.map((x) => (x.id === site.id ? { ...x, providers: x.providers.filter((y) => y.id !== p.id) } : x)))} />
                   )}
+                </div>
+                </div>
                 </div>
               );
             })}
@@ -809,10 +809,12 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
               Add provider
             </button>
           </div>
+          </div>
+          </div>
         ))}
         <button
           type="button"
-          onClick={() => setTeam([...a.team, newSite(`Clinic ${a.team.length + 1}`, 1)])}
+          onClick={() => setTeam([...a.team, newSite(`Clinic ${a.team.length + 1}`, 1, providers[0])])}
           className={`flex items-center justify-center gap-[8px] h-[52px] rounded-[22px] ${OUTER} hover:bg-[#EDE5D2] text-[15px] leading-[20px] font-[600] text-[#281910] transition-colors duration-150`}
         >
           <span className="text-[18px] leading-[18px]">+</span>
@@ -822,36 +824,38 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     );
   };
 
-  /** What more providers and locations take off, and how many more reach the next step: the ladder on desktop, a line on iPhone. */
+  /** What more providers or locations take off: the discount now, a bar per step, and how many more reach the next. */
   const discountHint = (title: string, brackets: Bracket[], n: number, unit: string) => {
-    const now = bracketFor(brackets, n);
-    const next = brackets.find((b) => b.min > n);
+    const reached = brackets.indexOf(bracketFor(brackets, n));
+    const now = brackets[reached]!;
+    const next = brackets[reached + 1];
     const pct = (b: Bracket) => `${Math.round(b.off * 100)}%`;
     const more = next ? next.min - n : 0;
-    const line = next ? `Add ${more} more ${more === 1 ? unit : `${unit}s`} for ${pct(next)} off extra ${unit}s.` : `${pct(now)} off every extra ${unit}.`;
-    if (phone)
-      return (
-        <div key={title} className="flex flex-col gap-[2px] py-[12px] first:pt-[2px] last:pb-[2px] border-t border-solid border-[rgba(20,12,4,0.07)] first:border-t-0">
-          <span className="flex items-center justify-between gap-[10px]">
-            <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">{title}</span>
-            <span className={`h-[24px] px-[9px] flex items-center rounded-[999px] text-[12px] leading-[14px] font-[700] ${now.off ? "bg-[#281910] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}>
-              {now.off ? `−${pct(now)}` : "0%"}
-            </span>
-          </span>
-          <span className="text-[13px] leading-[18px] font-[500] text-[#7A3E1F]">{line}</span>
-        </div>
-      );
     return (
-      <div key={title} className={`flex flex-col gap-[10px] p-[16px] rounded-[22px] ${INNER}`}>
-        <Ladder title={title} brackets={brackets} n={n} />
-        <span className="text-[13px] leading-[18px] font-[500] text-[#7A3E1F]">{line}</span>
+      <div key={title} className="flex flex-col gap-[10px] min-w-[0px]">
+        <span className="flex items-baseline justify-between gap-[12px]">
+          <span className="text-[14px] leading-[18px] font-[600] text-[#140C04]">{title}</span>
+          <span className={`text-[14px] leading-[18px] font-[600] [font-variant-numeric:tabular-nums] transition-colors duration-300 ${now.off ? "text-[#140C04]" : SUB}`}>
+            {now.off ? `${pct(now)} off` : "0%"}
+          </span>
+        </span>
+        <span className="grid grid-cols-3 gap-[4px]" aria-hidden="true">
+          {brackets.slice(1).map((b, i) => (
+            <span key={b.min} className={`h-[4px] rounded-[99px] transition-colors duration-300 ${i < reached ? "bg-[#281910]" : "bg-[#F4EEDF]"}`} />
+          ))}
+        </span>
+        <span className={`text-[13px] leading-[17px] ${SUB}`}>
+          {next ? `${plural(more, `more ${unit}`, `more ${unit}s`)} ${more === 1 ? "unlocks" : "unlock"} ${pct(next)} off` : "Highest discount reached"}
+        </span>
       </div>
     );
   };
-  const hints = [discountHint("Multi-provider Discount", PROVIDER_BRACKETS, providerCount, "provider"), discountHint("Multi-clinic Discount", LOCATION_BRACKETS, locationCount, "location")];
   const discountHints = (
-    <div className={`p-[6px] rounded-[28px] ${OUTER}`}>
-      {phone ? <div className={`flex flex-col px-[16px] py-[12px] rounded-[22px] ${INNER}`}>{hints}</div> : <div className="grid grid-cols-2 gap-[6px]">{hints}</div>}
+    <div className={`p-[6px] rounded-[26px] ${OUTER}`}>
+      <div className={`grid p-[18px] rounded-[20px] ${INNER} ${phone ? "grid-cols-1 gap-[18px]" : "grid-cols-2 gap-[40px] px-[22px]"}`}>
+        {discountHint("Multi-provider Discount", PROVIDER_BRACKETS, providerCount, "provider")}
+        {discountHint("Multi-clinic Discount", LOCATION_BRACKETS, locationCount, "location")}
+      </div>
     </div>
   );
 
@@ -898,8 +902,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       id: "team",
       step: "Team",
       title: ["Who’s on", "your team?"],
-      need: !specialtyLabel ? "Choose a main specialty" : "Name every location",
-      ready: !!specialtyLabel && a.team.every((x) => x.name.trim()),
+      need: !specialtiesSet ? "Choose a specialty for each provider" : "Name every location",
+      ready: specialtiesSet && a.team.every((x) => x.name.trim()),
       body: (
         <div className="flex flex-col gap-[14px]">
           {discountHints}

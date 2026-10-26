@@ -110,7 +110,7 @@ function FoundingBanner({ phone }: { phone: boolean }) {
         <div className="doehealth-blog-placeholder__content">
           <div className={`flex flex-col items-start text-left w-full ${phone ? "gap-[18px]" : "gap-[24px]"}`}>
             <h1
-              className={`m-0 font-[400] tracking-[-0.035em] [text-wrap:balance] ${phone ? "max-w-[15ch] text-[32px] leading-[35px]" : "max-w-[22ch] text-[54px] leading-[57px]"} ${p22Mackinac.className}`}
+              className={`m-0 font-[400] tracking-[-0.035em] [text-wrap:balance] ${phone ? "text-[28px] leading-[31px]" : "max-w-[22ch] text-[54px] leading-[57px]"} ${p22Mackinac.className}`}
               style={{ color: NEWS_INK }}
             >
               Teach personal agents about your clinic before it&apos;s too late.
@@ -156,7 +156,7 @@ export function DoeHealthPricingPage({ initialVariant }: { initialVariant: DoeHe
         </>
       )}
       <main className="doehealth-desk2-main min-h-[100dvh]" aria-label="Pricing">
-        <div className={`mx-auto w-full max-w-[1320px] flex flex-col ${phone ? "px-[16px] gap-[28px] pt-[8px] pb-[48px]" : "px-[56px] gap-[40px] pt-[24px] pb-[96px]"}`}>
+        <div className={`mx-auto w-full max-w-[1320px] flex flex-col ${phone ? "px-10 gap-[28px] pt-[8px] pb-[48px]" : "px-[56px] gap-[40px] pt-[24px] pb-[96px]"}`}>
           <FoundingBanner phone={phone} />
 
           <DoeHealthPricingBuilder phone={phone} />
