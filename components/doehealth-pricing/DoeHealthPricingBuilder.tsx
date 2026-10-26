@@ -593,6 +593,11 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   /** Tax on what's paid today, by the state of the card's ZIP; null until the ZIP reads as one. */
   const tax = taxForZip(a.card.zip);
   const taxDue = tax ? taxOn(dueToday, tax.rate) : 0;
+  /** The tax's region and rate, as it's shown once the ZIP reads as one ("CA 7.25%"). */
+  const taxLabel = tax ? `${tax.state} ${+(tax.rate * 100).toFixed(3)}%` : "";
+  /** What the practice is billed each month or year, and the tax on it once known: the summary's total. */
+  const billed = a.annual ? yearly(total) : total;
+  const billedTax = tax ? taxOn(billed, tax.rate) : 0;
   /** Providers who get a payment link of their own. */
   const linkRecipients = a.payMode === "split" ? providers.filter((p) => p.id !== meProvider?.id) : [];
   /** Buying on behalf of providers and paying as one, every provider still gets an invite to Doe by email. */
@@ -1506,6 +1511,14 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           </span>
         )}
       </div>
+      {/* Taxes: to be calculated at payment, from the card's ZIP; then the region, rate and amount. */}
+      <div className={`flex items-center gap-[12px] mx-[20px] py-[12px] border-t border-solid ${HAIR}`}>
+        <span className="flex flex-col grow min-w-[0px]">
+          <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">Taxes</span>
+          <span className={`text-[13px] leading-[17px] ${SUB}`}>{tax ? taxLabel : "From your card's billing ZIP"}</span>
+        </span>
+        <span className={`shrink-0 text-[15px] leading-[20px] [font-variant-numeric:tabular-nums] ${tax ? "text-[#281910]" : SUB}`}>{tax ? cents(billedTax) : "Calculated at payment"}</span>
+      </div>
       {/* The torn edge: a notch each side, cut in the beige box's colour, and a dashed line between them. */}
       <div className="relative h-[22px]" aria-hidden="true">
         <span className="absolute top-0 -left-[11px] w-[22px] h-[22px] rounded-[999px] bg-[#F4EEDF]" />
@@ -1515,15 +1528,20 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       <div className="flex items-end justify-between gap-[16px] px-[20px] pt-[8px] pb-[20px]">
         <span className="flex flex-col gap-[2px]">
           <span className="text-[14px] leading-[18px] font-[600] text-[#140C04]">{a.annual ? "Billed yearly" : "Billed monthly"}</span>
-          <span className={`text-[13px] leading-[17px] ${SUB} [font-variant-numeric:tabular-nums]`}>{a.annual ? `${money(total)}/mo × 12 months` : "Charged each month"}, plus tax</span>
+          <span className={`text-[13px] leading-[17px] ${SUB} [font-variant-numeric:tabular-nums]`}>{a.annual ? `${money(total)}/mo × 12 months` : "Charged each month"}, {tax ? "with tax" : "plus tax"}</span>
         </span>
         <span className="flex items-baseline gap-[3px]">
-          <span className={`text-[36px] leading-[38px] tracking-[-0.035em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{money(a.annual ? yearly(total) : total)}</span>
+          <span className={`text-[36px] leading-[38px] tracking-[-0.035em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{tax ? cents(billed + billedTax) : money(billed)}</span>
           <span className={`text-[13px] ${SUB}`}>{a.annual ? "/yr" : "/mo"}</span>
         </span>
       </div>
     </div>
   );
+  /** Checkout is ready once the buyer, every email asked for and (when anything is due today) the card are in. */
+  const checkoutReady =
+    !!(a.contact.name.trim() && isEmail(a.contact.email) && a.contact.practice.trim()) &&
+    emailRecipients.every((p) => isEmail(a.emails[p.id] ?? "")) &&
+    (dueToday === 0 || cardOk(a.card));
   const checkout = (
     <div className="flex flex-col gap-[14px]">
       {section(
@@ -1598,6 +1616,29 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           ) : null}
         </div>,
       )}
+      {/* The very end: the tax, once the ZIP has set it, and Finish. Until everything is in, Finish rings what's missing. */}
+      <div className="flex flex-col gap-[10px] pt-[4px]">
+        {tax && dueToday > 0 && (
+          <span className={`flex items-baseline justify-between gap-[12px] px-[8px] text-[13px] leading-[18px] ${SUB} [font-variant-numeric:tabular-nums]`}>
+            <span>Taxes calculated, {taxLabel}</span>
+            <span className="font-[600] text-[#281910]">{cents(taxDue)}</span>
+          </span>
+        )}
+        <button
+          type="button"
+          aria-disabled={!checkoutReady || undefined}
+          onClick={() => (checkoutReady ? setDone(true) : flag("checkout"))}
+          className={`flex items-center justify-between gap-[12px] h-[60px] pl-[24px] pr-[20px] rounded-[999px] text-[16px] leading-[20px] font-[600] transition-colors duration-200 ${checkoutReady ? "bg-[#281910] hover:bg-[#3A2920] text-[#FFFCF1]" : "bg-[rgba(20,12,4,0.1)] text-[rgba(20,12,4,0.38)]"}`}
+        >
+          <span>Finish</span>
+          <span className="flex items-center gap-[10px] [font-variant-numeric:tabular-nums]">
+            {dueToday > 0 && <span className="font-[500] opacity-80">{tax ? cents(dueToday + taxDue) : money(dueToday)}</span>}
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+              <path d="M5 12h14m-6-6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        </button>
+      </div>
     </div>
   );
 
@@ -1669,10 +1710,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       id: "checkout",
       step: "Checkout",
       title: ["Review and", "check out"],
-      ready:
-        !!(a.contact.name.trim() && isEmail(a.contact.email) && a.contact.practice.trim()) &&
-        emailRecipients.every((p) => isEmail(a.emails[p.id] ?? "")) &&
-        (dueToday === 0 || cardOk(a.card)),
+      ready: checkoutReady,
       body: checkout,
     },
   ];
@@ -1989,8 +2027,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
 
   const panelOpenDesktop = !!sidePanel && !phone;
   const goLabel = last ? "Finish" : q.id === "plan" && a.plan && !phone ? "Finalize" : "Continue";
-  /** On iPhone, Continue on the comparison opens the price breakdown first, to confirm there. */
-  const go = () => (phone && onPlan ? setPanel("price") : proceed());
+  /** Continue (Finalize on desktop) on the comparison opens the price breakdown first, to confirm there; additions come after. */
+  const go = () => (onPlan ? setPanel("price") : proceed());
   const back = () => setAt(index - 1);
   const arrow = (dir: "back" | "next", size = 16) => (
     <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
@@ -2003,7 +2041,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
    * fades in once a practice type is picked.
    */
   const dock =
-    !done && a.shape ? (
+    !done && a.shape && q.id !== "checkout" ? (
       <div className={`fixed left-0 bottom-[max(10px,env(safe-area-inset-bottom))] z-40 flex justify-center pointer-events-none ${phone ? "right-0 px-[10px]" : panelOpenDesktop ? "right-[420px] px-[24px]" : "right-0 px-[24px]"}`}>
         <div className={`doe-pricing-rise pointer-events-auto flex items-center gap-[8px] p-[8px] rounded-[26px] bg-[#281910] text-[#FFFCF1] shadow-[0_18px_40px_-20px_rgba(40,25,16,0.6)] ${phone ? "w-full" : "w-[560px] max-w-full"}`}>
           <button
@@ -2113,6 +2151,17 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </div>
   ) : (
     <div key={q.id} className={`doe-pricing-rise flex flex-col ${phone ? "gap-[22px]" : "gap-[28px]"}`}>
+      {/* Checkout has no bar along the bottom, so its way back sits at the very top. */}
+      {q.id === "checkout" && (
+        <button
+          type="button"
+          onClick={back}
+          className={`self-start flex items-center gap-[8px] h-[36px] -mb-[8px] pl-[10px] pr-[14px] rounded-[999px] text-[14px] leading-[18px] font-[600] text-[#281910] [@media(hover:hover)]:hover:bg-[#F4EEDF] transition-colors duration-150`}
+        >
+          {arrow("back", 16)}
+          Back to Compare
+        </button>
+      )}
       <div className={`flex items-end justify-between gap-[16px] flex-wrap ${OUTER} ${phone ? "p-[20px] rounded-[26px] [&_h2]:text-[32px] [&_h2]:leading-[35px]" : "px-[32px] py-[28px] rounded-[32px]"}`}>
         {heading(q.title)}
       </div>
@@ -2123,7 +2172,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   return (
     <div className="relative">
       <div
-        className={`relative flex flex-col transition-[max-width,margin] duration-500 ${phone ? `mx-auto gap-[28px] ${done ? "pb-[24px]" : "pb-[110px]"}` : `${wide ? "max-w-[1120px]" : "max-w-[760px]"} gap-[44px] ${done ? "pb-[40px]" : "pb-[120px]"} ${panelOpenDesktop ? "ml-0 mr-[380px]" : "mx-auto"}`}`}
+        className={`relative flex flex-col transition-[max-width,margin] duration-500 ${phone ? `mx-auto gap-[28px] ${done || q.id === "checkout" ? "pb-[24px]" : "pb-[110px]"}` : `${wide ? "max-w-[1120px]" : "max-w-[760px]"} gap-[44px] ${done || q.id === "checkout" ? "pb-[40px]" : "pb-[120px]"} ${panelOpenDesktop ? "ml-0 mr-[380px]" : "mx-auto"}`}`}
       >
         <div
           ref={cardRef}
