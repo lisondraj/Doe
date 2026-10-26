@@ -38,11 +38,12 @@ export function doehealthDesk2NavCenterLinks(base = "") {
   }));
 }
 
-/** Nav bar pages on desktop and iPhone: Product, Agents, Security, News, then Careers. The footer keeps the center links. */
+/** Nav bar pages on desktop and iPhone: Product, Agents, Security, Pricing, News, then Careers. The footer keeps the center links. */
 export const DOEHEALTH_DESK2_NAV_PAGES = [
   { label: "Product", href: "/product-nav" },
   { label: "Agents", href: "#agents" },
   { label: "Security", href: "/security" },
+  { label: "Pricing", href: "/pricing" },
   { label: "News", href: "/news" },
   { label: "Careers", href: CAREERS_PATH },
 ] as const;
