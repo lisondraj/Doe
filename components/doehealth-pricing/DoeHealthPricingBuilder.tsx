@@ -626,14 +626,14 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </span>
   );
 
+  /** iPhone: opens the team sheet. */
   const teamButton = (
     <button
       type="button"
       onClick={() => setPanel("team")}
-      className={`flex items-center justify-center gap-[10px] h-[48px] pl-[12px] pr-[16px] rounded-[18px] text-[14px] leading-[18px] font-[600] text-[#281910] transition-colors duration-150 whitespace-nowrap ${phone ? `w-full ${OUTER}` : `${INNER} hover:bg-[#FFFCF1]`}`}
+      className={`flex items-center justify-center gap-[10px] h-[48px] w-full pl-[12px] pr-[16px] rounded-[18px] ${OUTER} text-[14px] leading-[18px] font-[600] text-[#281910] transition-colors duration-150 whitespace-nowrap`}
     >
-      {phone ? <TeamIcon /> : <span className="contents min-[1180px]:hidden"><TeamIcon /></span>}
-      {!phone && <span className="hidden min-[1180px]:flex">{avatars}</span>}
+      <TeamIcon />
       Providers and plans
     </button>
   );
@@ -648,22 +648,30 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const providersControl = counter("Providers", <Count value={providerCount} min={locationCount} max={200} onChange={setProviderTotal} />);
 
   /** Desktop: one toolbar for the practice's size, the team and the price, pinned as the table scrolls. */
+  /** Desktop: the team's faces and a pencil, opening the team panel to edit providers, their specialties and plans. */
+  const editTeam = (
+    <button
+      type="button"
+      onClick={() => setPanel("team")}
+      className={`flex items-center gap-[10px] h-[48px] pl-[10px] pr-[16px] rounded-[18px] ${INNER} hover:bg-[#FFFCF1] text-[14px] leading-[18px] font-[600] text-[#281910] transition-colors duration-150 whitespace-nowrap`}
+    >
+      {avatars}
+      Edit providers
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+        <path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      </svg>
+    </button>
+  );
+
+  /** Desktop: one toolbar, pinned as the table scrolls: the practice's size and its providers on the left, billing on the right. */
   const toolbar = (
     <div className={`flex items-center gap-[6px] p-[6px] rounded-[24px] ${pinned ? PINNED : OUTER}`}>
       <span className={`flex items-center h-[48px] rounded-[18px] ${INNER}`}>{locationsControl}</span>
       <span className={`flex items-center h-[48px] rounded-[18px] ${INNER}`}>{providersControl}</span>
+      {/* The panel shows the team itself while it's open, which leaves room for billing. */}
+      {!panel && editTeam}
       <span className="grow" />
-      {!panel && teamButton}
-      {!panel && (
-        <button
-          type="button"
-          onClick={() => setPanel("price")}
-          className="flex items-center justify-center gap-[10px] h-[48px] pl-[18px] pr-[6px] rounded-[18px] bg-[#281910] hover:bg-[#3A2920] text-[14px] leading-[18px] font-[600] text-[#FFFCF1] transition-colors duration-150 whitespace-nowrap"
-        >
-          See price
-          <span className={`h-[36px] px-[12px] flex items-center rounded-[13px] bg-[#FCCFB8] text-[#140C04] text-[15px] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}/mo</span>
-        </button>
-      )}
+      {billing}
     </div>
   );
 
@@ -895,7 +903,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     {
       id: "plan",
       step: "Plan",
-      title: phone ? ["Compare plans", "side by side"] : ["Compare"],
+      title: ["Compare"],
       wide: true,
       ready: !!a.plan,
       body: phone ? (
@@ -1226,7 +1234,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     <div key={q.id} className={`doe-pricing-rise flex flex-col ${phone ? "gap-[22px]" : "gap-[28px]"}`}>
       <div className="flex items-end justify-between gap-[16px] flex-wrap">
         {heading(q.title)}
-        {onPlan && !phone && billing}
       </div>
       {q.body}
     </div>
