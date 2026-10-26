@@ -216,7 +216,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
         ref={videoRef}
         className={`earlypreview-film${poster ? " is-poster" : ""}${visible ? " is-visible" : ""}`}
         src={src && near ? `${src}#t=${posterTime}` : undefined}
-        preload={playing ? "auto" : tile.still ? "none" : "metadata"}
+        preload={playing ? "auto" : "metadata"}
         playsInline
         controls={playing}
         aria-label={`${tile.video.title.join(" ")}, video`}

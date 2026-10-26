@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+import { FILM_PLAYING_ATTR } from "@/lib/earlypreview/start-film";
+
 /** Same grid as video1's DotWave (Video 2): 150 columns by 34 rows, rolling sine wave. */
 const COLS = 150;
 const ROWS = 34;
@@ -110,6 +112,11 @@ export function DoeHealthBlogDotWave({
     // Touch screens (phones) roll the wave at 30 fps; it is slow enough that the halved rate doesn't show.
     const every = window.matchMedia("(pointer: coarse)").matches ? 2 : 1;
     const loop = (now: number) => {
+      // A playing film needs every frame the phone can give it, so the dots hold their last frame meanwhile.
+      if (document.documentElement.hasAttribute(FILM_PLAYING_ATTR)) {
+        raf = requestAnimationFrame(loop);
+        return;
+      }
       if (inView ? frame % every === 0 : frame % 6 === 0) paint(now);
       frame++;
       raf = requestAnimationFrame(loop);

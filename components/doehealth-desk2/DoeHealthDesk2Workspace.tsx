@@ -186,7 +186,7 @@ export function DoeHealthDesk2Workspace({
               ref={videoRef}
               className={`earlypreview-film${poster ? " is-poster" : ""}${filmVisible ? " is-visible" : ""}`}
               src={film ? (thumbnail ? film : `${film}#t=${HERO_POSTER_SECONDS}`) : undefined}
-              preload={playing ? "auto" : thumbnail ? "none" : "metadata"}
+              preload={playing ? "auto" : "metadata"}
               playsInline
               controls={playing}
               aria-label={filmLabel ? `${filmLabel}, video` : "Video"}

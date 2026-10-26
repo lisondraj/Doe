@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+import { FILM_PLAYING_ATTR } from "@/lib/earlypreview/start-film";
+
 /** Width the tide's step and reach are authored at (video1 Video 3 is 1920 wide; these are tuned to a desktop section). */
 const REF_W = 1440;
 /** How far past the viewport (px) the live tide still draws its rows, so a fast scroll never outruns it. */
@@ -116,6 +118,11 @@ export function DoeHealthDesk2DotTide({
     // Touch screens (phones) step the drift at 30 fps; it is slow enough that the halved rate doesn't show.
     const every = window.matchMedia("(pointer: coarse)").matches ? 2 : 1;
     const loop = (now: number) => {
+      // A playing film needs every frame the phone can give it, so the dots hold their last frame meanwhile.
+      if (document.documentElement.hasAttribute(FILM_PLAYING_ATTR)) {
+        raf = requestAnimationFrame(loop);
+        return;
+      }
       if (inView ? frame % every === 0 : frame % 6 === 0) paint(now, true, frame);
       frame++;
       raf = requestAnimationFrame(loop);
