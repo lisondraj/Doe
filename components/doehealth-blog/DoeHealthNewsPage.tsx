@@ -20,7 +20,7 @@ import {
   type DoeHealthDesk2Variant,
   useDoeHealthDesk2Variant,
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-variant";
-import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
+import { DOEPHONE_READING_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
 /** The desk2 site: its nav links, logo, and section anchors all live here. */
@@ -297,7 +297,7 @@ export function DoeHealthNewsPage({
       )}
       <DoeHealthDesk2NavWash />
       <main className="doehealth-desk-main min-h-[100dvh]" aria-label="News">
-        <section className={`doehealth-news ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
+        <section className={`doehealth-news ${DOEPHONE_READING_PAGE_INSET_X}`}>
           <header className="doehealth-news__head">
             <h1 className={`doehealth-news__title ${p22Mackinac.className}`}>News</h1>
           </header>

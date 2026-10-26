@@ -36,7 +36,7 @@ export const PLANS: Plan[] = [
   { id: "free", name: "Free", line: "Be found.", base: 0, perProvider: 0, perLocation: 0 },
   { id: "basic", name: "Basic", line: "Be reached and act on it.", base: 49, perProvider: 29, perLocation: 39 },
   { id: "advanced", name: "Advanced", line: "Automate and optimize.", base: 149, perProvider: 79, perLocation: 99 },
-  { id: "one", name: "Doe One", line: "Run patient and appointment operations.", base: 349, perProvider: 149, perLocation: 199 },
+  { id: "one", name: "Doe One", line: "Run on autopilot.", base: 349, perProvider: 149, perLocation: 199 },
 ];
 
 export const PLAN_ORDER: PlanId[] = ["free", "basic", "advanced", "one"];

@@ -35,6 +35,10 @@ export const DOEPHONE_HERO_COPY_INSET =
 export const DOEPHONE_DESKTOP_PAGE_INSET_X =
   "px-10 md:px-20 lg:px-28 xl:px-36";
 
+/** /news and /careers: the desktop gutters, with a narrower 26px gutter on iPhone. */
+export const DOEPHONE_READING_PAGE_INSET_X =
+  "px-[26px] md:px-20 lg:px-28 xl:px-36";
+
 export const DOEPHONE_DESKTOP_PAGE_INSET_LEFT =
   "pl-10 md:pl-20 lg:pl-28 xl:pl-36";
 

@@ -41,6 +41,8 @@ const HAIR = "border-[rgba(20,12,4,0.07)]";
 /** Doe's boxes, as on /news: a beige box outside, white pieces inside it, no borders. */
 const OUTER = "bg-[#F4EEDF]";
 const INNER = "bg-white";
+/** What's picked: a soft peach fill with a thin peach ring, rather than a heavy dark fill. */
+const SELECTED = "bg-[#FBE7DA] text-[#281910] shadow-[inset_0_0_0_1.5px_#EDBB9C]";
 /** A beige box pinned over the page as it scrolls, lifted off it by a soft shadow. */
 const PINNED = "bg-[#F4EEDF] shadow-[0_14px_34px_-22px_rgba(40,25,16,0.5)]";
 
@@ -99,10 +101,10 @@ function initials(name: string, n: number) {
 
 /**
  * The shape of each kind of practice, drawn in lines a shade off its beige well: buildings as outlines, providers as
- * small rings. On the chosen card the lines go peach, softly.
+ * small rings. On the chosen card the lines go a soft peach.
  */
 function ShapeMark({ shape, on }: { shape: PracticeShape; on: boolean }) {
-  const line = on ? "rgba(252,207,184,0.55)" : "#D6C5A6";
+  const line = on ? "#E2A988" : "#D6C5A6";
   const building = (x: number, w: number, dots: number, key: string) => (
     <g key={key}>
       <rect x={x} y="10" width={w} height="34" rx="8" fill="none" stroke={line} strokeWidth="1.6" />
@@ -221,9 +223,9 @@ function Ladder({ title, brackets, n }: { title: string; brackets: Bracket[]; n:
         {brackets.map((b) => {
           const on = n >= b.min && n <= b.max;
           return (
-            <span key={b.min} className={`flex flex-col gap-[1px] px-[10px] py-[8px] rounded-[14px] transition-colors duration-200 ${on ? "bg-[#281910] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}>
+            <span key={b.min} className={`flex flex-col gap-[1px] px-[10px] py-[8px] rounded-[14px] transition-colors duration-200 ${on ? SELECTED : "bg-[#F4EEDF] text-[#281910]"}`}>
               <span className={`text-[16px] leading-[20px] ${DISPLAY}`}>{b.off ? `−${Math.round(b.off * 100)}%` : "0%"}</span>
-              <span className={`text-[11px] leading-[14px] ${on ? "text-[rgba(255,252,241,0.65)]" : SUB}`}>{bracketLabel(b)}</span>
+              <span className={`text-[11px] leading-[14px] ${SUB}`}>{bracketLabel(b)}</span>
             </span>
           );
         })}
@@ -318,7 +320,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const total = priced.total * factor;
   /** Each tier's price with the whole team on it, for the comparison. */
   const priceOf = (id: PlanId) => mixedPrice(rowsFor(id)).total * factor;
-  const teamSpecialties = new Set(providers.map(specialtyOf).filter((s): s is SpecialtyId => !!s && s !== "other"));
 
   /** Picking a practice shape reshapes the team, keeping what it can. */
   const pickShape = (shape: PracticeShape) => {
@@ -423,7 +424,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       >
         <Chevron open={open} />
         {sp.label}
-        {teamSpecialties.has(sp.id) && <span className="h-[20px] px-[8px] flex items-center rounded-[999px] bg-[#F4EEDF] text-[11px] leading-[14px] font-[600] text-[#281910] whitespace-nowrap">Your team</span>}
       </button>
     );
   };
@@ -432,10 +432,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const table = (
     <div className={`p-[6px] rounded-[30px] ${OUTER}`}>
     <div className={`grid ${cols} rounded-[24px] overflow-clip ${INNER}`}>
-      <div ref={headRef} className="flex flex-col gap-[2px] px-[20px] pt-[48px] pb-[22px]">
-        <span className={`text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-[#140C04]`}>{sizeLine}</span>
-        <span className={`text-[13px] leading-[17px] ${SUB}`}>{billedLine}</span>
-      </div>
+      <div ref={headRef} aria-hidden="true" />
       {PLANS.map((p) => {
         const special = dark(p.id);
         return (
@@ -500,10 +497,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const strip = (
     <div className={`mt-[6px] p-[6px] rounded-[24px] ${PINNED}`}>
     <div className={`grid ${cols} rounded-[18px] overflow-clip ${INNER}`}>
-      <span className="flex flex-col justify-center px-[20px] py-[10px] min-w-[0px]">
-        <span className="truncate text-[13px] leading-[17px] font-[600] text-[#140C04]">{sizeLine}</span>
-        <span className={`truncate text-[12px] leading-[16px] ${SUB}`}>{billedLine}</span>
-      </span>
+      <span aria-hidden="true" />
       {PLANS.map((p) => (
         <span key={p.id} className={`flex flex-col items-center justify-center py-[8px] ${dark(p.id) ? "bg-[#281910] text-[#FFFCF1]" : lit(p.id) ? "bg-[rgba(244,232,210,0.7)] text-[#281910]" : "text-[#281910]"}`}>
           <span className={`text-[16px] leading-[20px] whitespace-nowrap ${DISPLAY}`}>{p.name}</span>
@@ -514,7 +508,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </div>
   );
 
-  /** iPhone: the four tiers as a switcher, the one shown filled in, a dot on any the team uses. */
+  /** iPhone: the four tiers as a switcher, the one shown picked out in peach, a dot on any the team uses. */
   const shown = view ?? plan.id;
   const switcher = (
     <div role="tablist" aria-label="Plans" className={`grid grid-cols-4 gap-[4px] p-[4px] rounded-[22px] ${PINNED}`}>
@@ -527,13 +521,13 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             role="tab"
             aria-selected={on}
             onClick={() => setView(p.id)}
-            className={`flex flex-col items-center gap-[1px] pt-[9px] pb-[8px] rounded-[18px] transition-colors duration-200 ${on ? "bg-[#281910] text-[#FFFCF1]" : `${INNER} text-[#281910]`}`}
+            className={`flex flex-col items-center gap-[1px] pt-[9px] pb-[8px] rounded-[18px] transition-colors duration-200 ${on ? SELECTED : `${INNER} text-[#281910]`}`}
           >
             <span className="flex items-center gap-[4px] text-[12px] leading-[16px] font-[600] whitespace-nowrap">
               {p.name}
-              {lit(p.id) && <span className={`w-[5px] h-[5px] rounded-[999px] ${on ? "bg-[#FCCFB8]" : "bg-[#A0522D]"}`} aria-label="In use" />}
+              {lit(p.id) && <span className="w-[5px] h-[5px] rounded-[999px] bg-[#A0522D]" aria-label="In use" />}
             </span>
-            <span className={`text-[18px] leading-[22px] tracking-[-0.02em] ${DISPLAY} [font-variant-numeric:tabular-nums] ${on && dark(p.id) ? "text-[#FCCFB8]" : ""}`}>{money(priceOf(p.id))}</span>
+            <span className={`text-[18px] leading-[22px] tracking-[-0.02em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(priceOf(p.id))}</span>
           </button>
         );
       })}
@@ -875,14 +869,14 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                 type="button"
                 aria-pressed={on}
                 onClick={() => pickShape(s.id)}
-                className={`flex ${phone ? "flex-row items-center gap-[16px] p-[14px]" : "flex-col items-start gap-[26px] p-[20px]"} rounded-[26px] text-left transition-colors duration-200 ${on ? "bg-[#281910] text-[#FFFCF1]" : `${INNER} text-[#281910] [@media(hover:hover)]:hover:bg-[#FFFCF1]`}`}
+                className={`flex ${phone ? "flex-row items-center gap-[16px] p-[14px]" : "flex-col items-start gap-[26px] p-[20px]"} rounded-[26px] text-left transition-colors duration-200 ${on ? SELECTED : `${INNER} text-[#281910] [@media(hover:hover)]:hover:bg-[#FFFCF1]`}`}
               >
-                <span className={`shrink-0 flex items-center justify-center rounded-[18px] ${phone ? "w-[96px] h-[64px]" : "w-full h-[92px]"} ${on ? "bg-[rgba(255,252,241,0.06)]" : "bg-[#F4EEDF]"}`}>
+                <span className={`shrink-0 flex items-center justify-center rounded-[18px] ${phone ? "w-[96px] h-[64px]" : "w-full h-[92px]"} ${on ? "bg-[rgba(255,255,255,0.6)]" : "bg-[#F4EEDF]"}`}>
                   <ShapeMark shape={s.id} on={on} />
                 </span>
                 <span className="flex flex-col items-start gap-[2px]">
                   <span className={`text-[24px] leading-[28px] tracking-[-0.02em] ${DISPLAY}`}>{s.title}</span>
-                  <span className={`text-[15px] leading-[20px] ${on ? "text-[rgba(255,252,241,0.68)]" : SUB}`}>{s.note}</span>
+                  <span className={`text-[15px] leading-[20px] ${SUB}`}>{s.note}</span>
                 </span>
               </button>
             );
@@ -1102,7 +1096,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                   key={t}
                   type="button"
                   onClick={() => setPanel(t)}
-                  className={`h-[36px] px-[18px] rounded-[999px] text-[14px] leading-[18px] font-[500] transition-colors duration-200 ${panel === t ? "bg-[#281910] text-[#FFFCF1]" : `${SUB} hover:text-[#281910]`}`}
+                  className={`h-[36px] px-[18px] rounded-[999px] text-[14px] leading-[18px] font-[500] transition-colors duration-200 ${panel === t ? "bg-white text-[#140C04]" : `${SUB} hover:text-[#281910]`}`}
                 >
                   {t === "team" ? `Team · ${providerCount}` : "Price"}
                 </button>
@@ -1150,8 +1144,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   );
 
   /**
-   * The brown bar along the bottom: Back, the step counter (with the price above it once there is one; on the
-   * comparison it opens the breakdown), and Continue. It fades in once a practice type is picked.
+   * The brown bar along the bottom: Back, the price (big, once there is one), then where you are beside Continue. It
+   * fades in once a practice type is picked.
    */
   const dock =
     !done && a.shape ? (
@@ -1166,20 +1160,18 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           >
             {arrow("back", 18)}
           </button>
-          <button
-            type="button"
-            disabled={!onPlan}
-            onClick={() => setPanel("price")}
-            aria-label={onPlan ? "See price breakdown" : undefined}
-            className="grow min-w-[0px] flex flex-col items-center justify-center gap-[6px] disabled:cursor-default"
-          >
+          {/* The price, big, on the left once there is one; on the comparison it opens the breakdown. */}
+          <span className="grow min-w-[0px] flex items-center pl-[8px]">
             {a.plan && (
-              <span className="flex items-baseline gap-[3px] whitespace-nowrap">
-                <span className={`text-[20px] leading-[22px] tracking-[-0.02em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}</span>
-                <span className="text-[13px] text-[rgba(255,252,241,0.6)]">/mo</span>
-              </span>
+              <button type="button" disabled={!onPlan} onClick={() => setPanel("price")} aria-label={onPlan ? "See price breakdown" : undefined} className="flex items-baseline gap-[3px] whitespace-nowrap disabled:cursor-default">
+                <span className={`${phone ? "text-[24px] leading-[28px]" : "text-[28px] leading-[32px]"} tracking-[-0.03em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}</span>
+                <span className="text-[14px] text-[rgba(255,252,241,0.6)]">/mo</span>
+              </button>
             )}
-            <span className="flex items-center gap-[8px]" role="img" aria-label={`Step ${index + 1} of ${questions.length}: ${q.step}`}>
+          </span>
+          {/* Where you are, right beside Continue. */}
+          <span className="shrink-0 flex items-center gap-[8px] pr-[4px]" role="img" aria-label={`Step ${index + 1} of ${questions.length}: ${q.step}`}>
+            {!phone && (
               <span className="flex items-center gap-[4px]">
                 {questions.map((x, i) => (
                   <span
@@ -1188,11 +1180,11 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                   />
                 ))}
               </span>
-              <span className="text-[12px] leading-[14px] font-[600] text-[rgba(255,252,241,0.55)] [font-variant-numeric:tabular-nums]">
-                {index + 1}/{questions.length}
-              </span>
+            )}
+            <span className="text-[13px] leading-[16px] font-[600] text-[rgba(255,252,241,0.6)] [font-variant-numeric:tabular-nums]">
+              {index + 1}/{questions.length}
             </span>
-          </button>
+          </span>
           <button
             type="button"
             disabled={!q.ready}

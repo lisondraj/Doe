@@ -109,7 +109,6 @@ function FoundingBanner({ phone }: { phone: boolean }) {
               Teach personal agents about your clinic before it&apos;s too late.
             </h1>
             <span className="inline-flex items-center gap-[10px] h-[34px] px-[14px] rounded-[999px] bg-white text-[14px] leading-[18px] whitespace-nowrap">
-              <span className="w-[6px] h-[6px] rounded-[999px] bg-[#E0A67F]" aria-hidden="true" />
               <span className="font-[500] text-[#281910]">Founding Pricing</span>
               <span className="w-[1px] h-[14px] bg-[rgba(20,12,4,0.12)]" aria-hidden="true" />
               <span style={{ color: NEWS_INK }}>Until {FOUNDING_UNTIL}</span>
@@ -149,7 +148,7 @@ export function DoeHealthPricingPage({ initialVariant }: { initialVariant: DoeHe
         </>
       )}
       <main className="doehealth-desk2-main min-h-[100dvh]" aria-label="Pricing">
-        <div className={`mx-auto w-full max-w-[1320px] flex flex-col ${phone ? "px-10 gap-[28px] pt-[8px] pb-[48px]" : "px-[56px] gap-[40px] pt-[24px] pb-[96px]"}`}>
+        <div className={`mx-auto w-full max-w-[1320px] flex flex-col ${phone ? "px-[26px] gap-[28px] pt-[8px] pb-[48px]" : "px-[56px] gap-[40px] pt-[24px] pb-[96px]"}`}>
           <FoundingBanner phone={phone} />
 
           <DoeHealthPricingBuilder phone={phone} />

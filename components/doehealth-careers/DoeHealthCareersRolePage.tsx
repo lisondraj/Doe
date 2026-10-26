@@ -28,7 +28,7 @@ import {
   type DoeHealthDesk2Variant,
   useDoeHealthDesk2Variant,
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-variant";
-import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
+import { DOEPHONE_READING_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, lora, p22Mackinac } from "@/lib/home/fonts";
 
 const DESK2_PATH = "/doehealthdesk2";
@@ -223,7 +223,7 @@ function RoleDock({
   return (
     <div className={`doehealth-role__dock${visible ? " is-visible" : ""}`} aria-hidden={!visible}>
       <div ref={innerRef} className="doehealth-role__dock-inner">
-        <div className={`doehealth-role__dock-box ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
+        <div className={`doehealth-role__dock-box ${DOEPHONE_READING_PAGE_INSET_X}`}>
           <div className="doehealth-role__dock-copy">
             <Link href={`${CAREERS_PATH}#roles`} className="doehealth-role__back doehealth-role__dock-back">
               <svg viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -320,7 +320,7 @@ export function DoeHealthCareersRolePage({
       )}
       <DoeHealthDesk2NavWash />
       <main className="doehealth-desk-main min-h-[100dvh]" aria-label={role.title}>
-        <article className={`doehealth-role ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
+        <article className={`doehealth-role ${DOEPHONE_READING_PAGE_INSET_X}`}>
           <header className="doehealth-role__head">
             <Link href={`${CAREERS_PATH}#roles`} className="doehealth-role__back">
               <svg viewBox="0 0 16 16" fill="none" aria-hidden>
