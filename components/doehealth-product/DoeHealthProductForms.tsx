@@ -2,10 +2,10 @@
 
 /**
  * Forms tab — build the forms patients' agents send, complete, and return. Pick a form on the left,
- * shape its fields in the middle, and decide on the right when agents send it, how much they fill in
- * for the patient, and where the finished form lands.
+ * under Intake, Consent, or Records, shape its fields in the middle, and decide on the right when
+ * agents send it, how much they fill in for the patient, and where the finished form lands.
  */
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 const SANS = "font-['DM_Sans',system-ui,sans-serif]";
@@ -27,10 +27,14 @@ type Field = { id: string; type: FieldType; label: string; required: boolean; ag
 
 type Send = "booking" | "before" | "manual";
 type Dest = "chart" | "inbox";
+type Category = "Intake" | "Consent" | "Records";
+
+const CATEGORIES: Category[] = ["Intake", "Consent", "Records"];
 
 type Form = {
   id: string;
   name: string;
+  category: Category;
   tile: string;
   sent: number;
   returned: number;
@@ -47,6 +51,7 @@ const FORMS: Form[] = [
   {
     id: "intake",
     name: "New patient intake",
+    category: "Intake",
     tile: "#FCCFB8",
     sent: 48,
     returned: 44,
@@ -66,6 +71,7 @@ const FORMS: Form[] = [
   {
     id: "visit",
     name: "Pre-visit check-in",
+    category: "Intake",
     tile: "#E3E9D9",
     sent: 132,
     returned: 127,
@@ -75,19 +81,21 @@ const FORMS: Form[] = [
     fields: [f("text", "Reason for visit"), f("yesno", "Any changes since last visit?"), f("text", "Pharmacy"), f("yesno", "Need a refill?", false)],
   },
   {
-    id: "refill",
-    name: "Medication refill",
-    tile: "#F3E7C9",
-    sent: 37,
-    returned: 35,
-    send: "manual",
+    id: "pediatric",
+    name: "Pediatric history",
+    category: "Intake",
+    tile: "#E3E9D9",
+    sent: 19,
+    returned: 17,
+    send: "before",
     review: false,
-    dest: "inbox",
-    fields: [f("choice", "Medication"), f("text", "Dose"), f("text", "Pharmacy"), f("date", "Last dose", false)],
+    dest: "chart",
+    fields: [f("text", "Guardian name"), f("date", "Date of birth"), f("text", "Allergies", false), f("yesno", "Up to date on vaccines?")],
   },
   {
     id: "consent",
     name: "Telehealth consent",
+    category: "Consent",
     tile: "#E9DCC7",
     sent: 21,
     returned: 18,
@@ -97,41 +105,9 @@ const FORMS: Form[] = [
     fields: [f("yesno", "Understands telehealth limits"), f("signature", "Signature", true, false)],
   },
   {
-    id: "records",
-    name: "Records release",
-    tile: "#EEEADF",
-    sent: 9,
-    returned: 6,
-    send: "manual",
-    review: true,
-    dest: "inbox",
-    fields: [f("text", "Previous practice"), f("date", "Dates of care", false), f("signature", "Authorization", true, false)],
-  },
-  {
-    id: "referral",
-    name: "Referral request",
-    tile: "#F6DED0",
-    sent: 16,
-    returned: 14,
-    send: "manual",
-    review: true,
-    dest: "inbox",
-    fields: [f("choice", "Specialty"), f("text", "Reason for referral"), f("yesno", "Urgent?"), f("signature", "Authorization", true, false)],
-  },
-  {
-    id: "aftervisit",
-    name: "After-visit summary",
-    tile: "#DCE5D0",
-    sent: 64,
-    returned: 58,
-    send: "before",
-    review: false,
-    dest: "chart",
-    fields: [f("text", "What we covered"), f("text", "Home instructions"), f("yesno", "Questions for the doctor?")],
-  },
-  {
     id: "hipaa",
     name: "HIPAA authorization",
+    category: "Consent",
     tile: "#E9DCC7",
     sent: 28,
     returned: 22,
@@ -143,6 +119,7 @@ const FORMS: Form[] = [
   {
     id: "financial",
     name: "Financial policy",
+    category: "Consent",
     tile: "#F3E7C9",
     sent: 41,
     returned: 39,
@@ -152,15 +129,52 @@ const FORMS: Form[] = [
     fields: [f("yesno", "Understands payment terms"), f("choice", "Preferred payment"), f("signature", "Agreement", true, false)],
   },
   {
-    id: "pediatric",
-    name: "Pediatric history",
-    tile: "#E3E9D9",
-    sent: 19,
-    returned: 17,
+    id: "refill",
+    name: "Medication refill",
+    category: "Records",
+    tile: "#F3E7C9",
+    sent: 37,
+    returned: 35,
+    send: "manual",
+    review: false,
+    dest: "inbox",
+    fields: [f("choice", "Medication"), f("text", "Dose"), f("text", "Pharmacy"), f("date", "Last dose", false)],
+  },
+  {
+    id: "referral",
+    name: "Referral request",
+    category: "Records",
+    tile: "#F6DED0",
+    sent: 16,
+    returned: 14,
+    send: "manual",
+    review: true,
+    dest: "inbox",
+    fields: [f("choice", "Specialty"), f("text", "Reason for referral"), f("yesno", "Urgent?"), f("signature", "Authorization", true, false)],
+  },
+  {
+    id: "records",
+    name: "Records release",
+    category: "Records",
+    tile: "#EEEADF",
+    sent: 9,
+    returned: 6,
+    send: "manual",
+    review: true,
+    dest: "inbox",
+    fields: [f("text", "Previous practice"), f("date", "Dates of care", false), f("signature", "Authorization", true, false)],
+  },
+  {
+    id: "aftervisit",
+    name: "After-visit summary",
+    category: "Records",
+    tile: "#DCE5D0",
+    sent: 64,
+    returned: 58,
     send: "before",
     review: false,
     dest: "chart",
-    fields: [f("text", "Guardian name"), f("date", "Date of birth"), f("text", "Allergies", false), f("yesno", "Up to date on vaccines?")],
+    fields: [f("text", "What we covered"), f("text", "Home instructions"), f("yesno", "Questions for the doctor?")],
   },
 ];
 
@@ -249,7 +263,16 @@ function StepCard({ step, title, children }: { step: number; title: string; chil
 export function DoeHealthProductFormsPage() {
   const [forms, setForms] = useState<Form[]>(FORMS);
   const [activeId, setActiveId] = useState(FORMS[0]!.id);
+  const [collapsed, setCollapsed] = useState<Partial<Record<Category, boolean>>>({});
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
   const form = forms.find((x) => x.id === activeId) ?? forms[0]!;
+  const needle = query.trim().toLowerCase();
+
+  useEffect(() => {
+    if (searchOpen) searchRef.current?.focus();
+  }, [searchOpen]);
 
   const update = (patch: Partial<Form>) => setForms((all) => all.map((x) => (x.id === form.id ? { ...x, ...patch } : x)));
   const updateField = (id: string, patch: Partial<Field>) => update({ fields: form.fields.map((x) => (x.id === id ? { ...x, ...patch } : x)) });
@@ -262,8 +285,23 @@ export function DoeHealthProductFormsPage() {
   const addField = (type: FieldType) => update({ fields: [...form.fields, f(type, typeOf(type).label, false, type !== "signature" && type !== "upload")] });
   const newForm = () => {
     const id = `form${nextId++}`;
-    setForms((all) => [...all, { id, name: "Untitled form", tile: "#EEEADF", sent: 0, returned: 0, send: "manual", review: true, dest: "inbox", fields: [f("text", "Full name")] }]);
+    setForms((all) => [{ id, name: "Untitled form", category: "Intake", tile: "#EEEADF", sent: 0, returned: 0, send: "manual", review: true, dest: "inbox", fields: [f("text", "Full name")] }, ...all]);
+    setCollapsed((prev) => ({ ...prev, Intake: false }));
+    setQuery("");
+    setSearchOpen(false);
     setActiveId(id);
+  };
+  const onQuery = (value: string) => {
+    setQuery(value);
+    const next = value.trim().toLowerCase();
+    if (!next) return;
+    setCollapsed((prev) => {
+      const open = { ...prev };
+      for (const category of CATEGORIES) {
+        if (forms.some((x) => x.category === category && x.name.toLowerCase().includes(next))) open[category] = false;
+      }
+      return open;
+    });
   };
 
   const agentCount = form.fields.filter((x) => x.agent).length;
@@ -272,37 +310,105 @@ export function DoeHealthProductFormsPage() {
     <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[24px] pt-[36px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
       <div className="flex items-end justify-between gap-[16px]">
         <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>Forms</span>
-        <button
-          type="button"
-          onClick={newForm}
-          className={`flex items-center gap-[8px] h-[40px] px-[16px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
-            <path d="M12 5v14M5 12h14" fill="none" stroke="#FFFCF1" strokeWidth="2.2" strokeLinecap="round" />
-          </svg>
-          New form
-        </button>
+        <span className="flex items-center gap-[8px]">
+          {searchOpen && (
+            <input
+              ref={searchRef}
+              value={query}
+              onChange={(e) => onQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setQuery("");
+                  setSearchOpen(false);
+                }
+              }}
+              placeholder="Search"
+              aria-label="Search forms"
+              className={`w-[168px] h-[40px] px-[16px] rounded-[999px] bg-sand outline-none text-[14px] leading-[18px] ${SANS} font-[500] text-walnut placeholder:text-sub`}
+            />
+          )}
+          <button
+            type="button"
+            aria-label="Search forms"
+            aria-pressed={searchOpen}
+            onClick={() => {
+              if (searchOpen) setQuery("");
+              setSearchOpen((open) => !open);
+            }}
+            className={`w-[40px] h-[40px] shrink-0 flex items-center justify-center rounded-[999px] transition-colors duration-150 ${searchOpen ? "bg-[#E7DFD0] text-walnut" : "bg-sand text-walnut hover:bg-[#E7DFD0]"}`}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+              <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M16 16l4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={newForm}
+            className={`flex items-center gap-[8px] h-[40px] px-[16px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+              <path d="M12 5v14M5 12h14" fill="none" stroke="#FFFCF1" strokeWidth="2.2" strokeLinecap="round" />
+            </svg>
+            New form
+          </button>
+        </span>
       </div>
 
       <div className="grow min-h-[0px] grid grid-cols-[260px_1fr_300px] gap-[16px]">
-        <div className="flex flex-col gap-[8px] min-h-[0px] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {forms.map((x) => {
-            const on = x.id === form.id;
+        <div className="flex flex-col min-h-[0px] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {needle && forms.every((x) => !x.name.toLowerCase().includes(needle)) && (
+            <span className={`px-[12px] text-[13px] leading-[18px] ${SANS} text-sub`}>No forms</span>
+          )}
+          {CATEGORIES.map((category, index) => {
+            const items = forms.filter((x) => x.category === category && (!needle || x.name.toLowerCase().includes(needle)));
+            if (items.length === 0) return null;
+            const expanded = !collapsed[category];
             return (
-              <button
-                key={x.id}
-                type="button"
-                onClick={() => setActiveId(x.id)}
-                className={`flex items-center gap-[12px] p-[12px] rounded-[22px] text-left transition-colors duration-200 ${on ? "bg-sand" : "hover:bg-[#F8F3E6]"}`}
-              >
-                <span className="w-[44px] h-[44px] shrink-0 rounded-[16px]" style={{ backgroundColor: x.tile }} />
-                <span className="flex flex-col min-w-[0px] gap-[2px]">
-                  <span className={`truncate text-[15px] leading-[20px] ${SANS} font-[500] text-walnut`}>{x.name}</span>
-                  <span className={`text-[12px] leading-[16px] ${SANS} text-sub [font-variant-numeric:tabular-nums]`}>
-                    {x.sent ? `${x.returned} of ${x.sent} returned` : "Not sent yet"}
+              <div key={category} className={`flex flex-col gap-[2px] ${index === 0 ? "" : "mt-[14px]"}`}>
+                <button
+                  type="button"
+                  aria-expanded={expanded}
+                  onClick={() => setCollapsed((prev) => ({ ...prev, [category]: !prev[category] }))}
+                  className="flex items-center gap-[6px] w-full h-[28px] px-[12px] mb-[2px] text-left"
+                >
+                  <span className={`text-[12px] leading-[16px] ${SANS} font-[500] text-sub`}>{category}</span>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="shrink-0 text-sub"
+                    style={{ display: "block", transform: expanded ? "none" : "rotate(-90deg)", transition: `transform 200ms ${EASE}` }}
+                  >
+                    <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span
+                    className={`ml-auto w-[22px] h-[22px] shrink-0 flex items-center justify-center rounded-[999px] text-[11px] leading-[14px] ${SANS} font-[500] text-walnut [font-variant-numeric:tabular-nums] shadow-[inset_0_0_0_1px_rgba(40,25,16,0.22)]`}
+                  >
+                    {items.length}
                   </span>
-                </span>
-              </button>
+                </button>
+                {expanded && items.map((x) => {
+                  const on = x.id === form.id;
+                  return (
+                    <button
+                      key={x.id}
+                      type="button"
+                      onClick={() => setActiveId(x.id)}
+                      className={`flex items-center gap-[12px] p-[12px] rounded-[22px] text-left transition-colors duration-200 ${on ? "bg-sand" : "hover:bg-[#F8F3E6]"}`}
+                    >
+                      <span className="w-[44px] h-[44px] shrink-0 rounded-[16px]" style={{ backgroundColor: x.tile }} />
+                      <span className="flex flex-col min-w-[0px] gap-[2px]">
+                        <span className={`truncate text-[15px] leading-[20px] ${SANS} font-[500] text-walnut`}>{x.name}</span>
+                        <span className={`text-[12px] leading-[16px] ${SANS} text-sub [font-variant-numeric:tabular-nums]`}>
+                          {x.sent ? `${x.returned} of ${x.sent} returned` : "Not sent yet"}
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             );
           })}
         </div>
