@@ -205,6 +205,52 @@ function Close({ onClick, label }: { onClick: () => void; label: string }) {
   );
 }
 
+/**
+ * A name you can rename in place: the text at full strength (a blank name shows its default the same way), sized to
+ * itself, with a small pencil after it. Hover tints it, focus rings it, and the pencil steps back while typing.
+ */
+function NameField({
+  value,
+  placeholder,
+  label,
+  onChange,
+  text,
+  large = false,
+}: {
+  value: string;
+  placeholder: string;
+  label: string;
+  onChange: (v: string) => void;
+  /** Type classes, shared by the field and its sizing copy; under 16px on iPhone the site bumps fields to 16px. */
+  text: string;
+  /** Set above 16px, so the site's iPhone minimum leaves it alone. */
+  large?: boolean;
+}) {
+  return (
+    <label className="group/name inline-flex items-center gap-[7px] min-w-[0px] max-w-full h-[36px] -ml-[8px] px-[8px] rounded-[10px] cursor-text [@media(hover:hover)]:hover:bg-[rgba(20,12,4,0.05)] focus-within:bg-white focus-within:shadow-[inset_0_0_0_1.5px_#281910] transition-[background-color,box-shadow] duration-150">
+      {/* The hidden copy sizes the field to its text, so the pencil sits right after the name. */}
+      <span className="inline-grid min-w-[0px] max-w-full">
+        <span aria-hidden="true" className={`invisible col-start-1 row-start-1 whitespace-pre overflow-hidden ${text}`}>
+          {value || placeholder}
+        </span>
+        <input
+          value={value}
+          placeholder={placeholder}
+          aria-label={label}
+          // One character wide on its own, so the hidden copy, not the browser's default width, sets the size.
+          size={1}
+          data-large-field={large ? "" : undefined}
+          onChange={(e) => onChange(e.target.value)}
+          className={`col-start-1 row-start-1 w-full min-w-[0px] p-0 bg-transparent outline-none placeholder:text-inherit placeholder:opacity-100 ${text}`}
+        />
+      </span>
+      <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" className="shrink-0 text-[rgba(20,12,4,0.38)] group-hover/name:text-[#281910] group-focus-within/name:opacity-0 transition-[color,opacity] duration-150" style={{ display: "block" }}>
+        <path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      </svg>
+    </label>
+  );
+}
+
 function TeamIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
@@ -305,6 +351,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const specialtyOf = (p: Provider): Specialty | null => p.specialty;
   /** Every provider has a specialty, and anyone on Other has typed theirs. */
   const specialtiesSet = providers.every((p) => p.specialty && (p.specialty !== "other" || p.other.trim()));
+  /** A location's name, or its default when left blank. */
+  const siteName = (site: Site) => site.name.trim() || `Clinic ${a.team.indexOf(site) + 1}`;
   const providerName = (p: Provider) => p.name.trim() || `Provider ${providers.indexOf(p) + 1}`;
 
   /** The team as price rows: each location's providers grouped by plan, the location charged at its highest plan. */
@@ -314,7 +362,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         .reverse()
         .map((id) => ({ id, n: site.providers.filter((p) => (override ?? planOf(p).id) === id).length }))
         .filter((g) => g.n > 0);
-      return groups.map((g, i) => ({ id: `${site.id}-${g.id}`, name: site.name, providers: g.n, plan: planById(g.id), location: i === 0 }));
+      return groups.map((g, i) => ({ id: `${site.id}-${g.id}`, name: siteName(site), providers: g.n, plan: planById(g.id), location: i === 0 }));
     });
   const priced = mixedPrice(rowsFor());
   const total = priced.total * factor;
@@ -771,14 +819,17 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           <div>
           <div className={`flex flex-col gap-[6px] p-[8px] rounded-[22px] ${surface}`}>
             <span className="flex items-center gap-[8px] pl-[10px]">
-              <input
+              <NameField
                 value={site.name}
-                aria-label={`Location ${si + 1} name`}
-                onChange={(e) => editSite(site.id, { name: e.target.value })}
-                className={`grow min-w-[0px] h-[40px] bg-transparent outline-none text-[19px] leading-[24px] tracking-[-0.01em] ${DISPLAY} text-[#281910]`}
+                placeholder={`Clinic ${si + 1}`}
+                label={`Location ${si + 1} name`}
+                onChange={(v) => editSite(site.id, { name: v })}
+                text={`text-[19px] leading-[24px] tracking-[-0.01em] ${DISPLAY} text-[#281910]`}
+                large
               />
+              <span className="grow" />
               <Count value={site.providers.length} max={100} onChange={(v) => setTeam(a.team.map((x) => (x.id === site.id ? resize(x, v) : x)))} />
-              {a.team.length > 1 && <Close label={`Remove ${site.name}`} onClick={() => setTeam(a.team.filter((x) => x.id !== site.id))} />}
+              {a.team.length > 1 && <Close label={`Remove ${siteName(site)}`} onClick={() => setTeam(a.team.filter((x) => x.id !== site.id))} />}
             </span>
             {site.providers.map((p) => {
               const n = providers.indexOf(p) + 1;
@@ -788,13 +839,14 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                 <div className={`flex flex-col gap-[8px] p-[10px] rounded-[18px] ${row} ${withPlans || phone ? "" : "sm:flex-row sm:items-center"}`}>
                   <span className="flex items-center gap-[10px] grow min-w-[0px]">
                     <span className="w-[32px] h-[32px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[14px] font-[700] text-[#281910]">{initials(p.name, n)}</span>
-                    <input
+                    <NameField
                       value={p.name}
                       placeholder={`Provider ${n}`}
-                      aria-label={`Provider ${n} name`}
-                      onChange={(e) => editProvider(p.id, { name: e.target.value })}
-                      className="grow min-w-[0px] h-[34px] bg-transparent outline-none text-[15px] leading-[20px] font-[500] text-[#140C04] placeholder:text-[rgba(20,12,4,0.38)]"
+                      label={`Provider ${n} name`}
+                      onChange={(v) => editProvider(p.id, { name: v })}
+                      text={`${phone ? "text-[16px] leading-[21px]" : "text-[15px] leading-[20px]"} font-[500] text-[#140C04]`}
                     />
+                    <span className="grow" />
                     {(withPlans || phone) && site.providers.length > 1 && (
                       <Close label={`Remove ${providerName(p)}`} onClick={() => setTeam(a.team.map((x) => (x.id === site.id ? { ...x, providers: x.providers.filter((y) => y.id !== p.id) } : x)))} />
                     )}
@@ -914,7 +966,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       id: "team",
       step: "Team",
       title: ["Who’s on", "your team?"],
-      ready: specialtiesSet && a.team.every((x) => x.name.trim()),
+      ready: specialtiesSet,
       body: (
         <div className="flex flex-col gap-[14px]">
           {discountHints}
@@ -1066,7 +1118,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       <div className="flex flex-col rounded-[22px] bg-[#FAF6EC] px-[16px] py-[6px]">
         {lineGroups.map(({ site, rows }, i) => (
           <span key={site.id} className={`flex flex-col gap-[6px] py-[10px] text-[14px] leading-[19px] text-[#281910] ${i ? `border-t border-solid ${HAIR}` : ""}`}>
-            {locationCount > 1 && <span className="font-[600]">{site.name}</span>}
+            {locationCount > 1 && <span className="font-[600]">{siteName(site)}</span>}
             {rows.map((g) => (
               <span key={g.row.id} className="flex justify-between gap-[12px]">
                 <span>
