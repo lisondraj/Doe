@@ -91,3 +91,25 @@
     animation: none;
   }
 }
+
+/* A dropdown's list fades in with a small drop, as the careers menus do. */
+@keyframes doe-pricing-menu {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -4px, 0) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.doe-pricing-menu {
+  animation: doe-pricing-menu 160ms cubic-bezier(0.32, 0.72, 0, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doe-pricing-menu {
+    animation: none;
+  }
+}

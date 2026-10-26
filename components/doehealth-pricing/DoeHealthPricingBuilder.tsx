@@ -12,7 +12,8 @@
  * follows you down the page, and a panel on the right (a sheet on iPhone) holds the team to edit and the price, line
  * by line. Surfaces follow /news: beige outside, white inside, no borders.
  */
-import { Fragment, type ReactNode, useEffect, useRef, useState } from "react";
+import { Fragment, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import {
   ANNUAL_FACTOR,
@@ -178,7 +179,12 @@ function Count({ value, onChange, min = 1, max = 100, big = false }: { value: nu
   );
 }
 
-/** A small pill-shaped select, light or dark. */
+/**
+ * A small pill-shaped dropdown, light or dark, with the careers page's menu: a cream rounded list under the pill, the
+ * choice in bold with a check, rows lit in sand on hover. Arrow keys, Home/End, Enter, Escape and a click outside all
+ * work. The list is put on the page's top layer, so the side panel and sheets never clip it; it opens upward when
+ * there's no room below.
+ */
 function Pick<T extends string>({
   value,
   options,
@@ -194,23 +200,149 @@ function Pick<T extends string>({
   dark?: boolean;
   big?: boolean;
 }) {
+  const [place, setPlace] = useState<{ left: number; top?: number; bottom?: number; minWidth: number; maxHeight: number } | null>(null);
+  const open = !!place;
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const listId = useId();
+  const current = options.find((o) => o.id === value);
+  // A blank choice is the pill's prompt ("Choose specialty"), not something to pick.
+  const choices = options.filter((o) => o.id !== "");
+
+  const openMenu = () => {
+    const r = triggerRef.current?.getBoundingClientRect();
+    if (!r) return;
+    const below = window.innerHeight - r.bottom - 12;
+    const above = r.top - 12;
+    const up = below < 240 && above > below;
+    setPlace({
+      left: Math.max(8, Math.min(r.left, window.innerWidth - 248)),
+      ...(up ? { bottom: window.innerHeight - r.top + 6 } : { top: r.bottom + 6 }),
+      minWidth: Math.max(r.width, 200),
+      maxHeight: Math.min(340, up ? above : below) - 6,
+    });
+  };
+  const close = (refocus: boolean) => {
+    setPlace(null);
+    if (refocus) triggerRef.current?.focus();
+  };
+  const choose = (id: T) => {
+    onChange(id);
+    close(true);
+  };
+
+  useEffect(() => {
+    if (!open) return undefined;
+    // The current choice takes focus, so the keyboard can move from it straight away.
+    const items = Array.from(listRef.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? []);
+    (items.find((el) => el.getAttribute("aria-selected") === "true") ?? items[0])?.focus({ preventScroll: true });
+    items.find((el) => el.getAttribute("aria-selected") === "true")?.scrollIntoView({ block: "nearest" });
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as Node;
+      if (!listRef.current?.contains(t) && !triggerRef.current?.contains(t)) close(false);
+    };
+    // The list follows its pill as the page scrolls or the iPhone's toolbar resizes the screen, and closes once the
+    // pill has left the screen.
+    const follow = (e?: Event) => {
+      if (e && listRef.current?.contains(e.target as Node)) return;
+      const r = triggerRef.current?.getBoundingClientRect();
+      if (!r || r.bottom < 0 || r.top > window.innerHeight) close(false);
+      else openMenu();
+    };
+    const onScroll = (e: Event) => follow(e);
+    const onResize = () => follow();
+    document.addEventListener("pointerdown", onDown);
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", onResize);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("resize", onResize);
+    };
+    // Only when the menu opens or closes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  const onListKey = (e: ReactKeyboardEvent<HTMLUListElement>) => {
+    const items = Array.from(listRef.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? []);
+    const i = items.indexOf(document.activeElement as HTMLElement);
+    const go = (n: number) => {
+      e.preventDefault();
+      items[(n + items.length) % items.length]?.focus();
+    };
+    if (e.key === "ArrowDown") go(i + 1);
+    else if (e.key === "ArrowUp") go(i - 1);
+    else if (e.key === "Home") go(0);
+    else if (e.key === "End") go(items.length - 1);
+    else if (e.key === "Escape") {
+      e.preventDefault();
+      close(true);
+    } else if (e.key === "Tab") close(false);
+  };
+
   return (
-    <span className="relative flex items-center shrink-0">
-      <select
-        value={value}
-        aria-label={label}
-        onChange={(e) => onChange(e.target.value as T)}
-        className={`appearance-none rounded-[999px] font-[500] outline-none cursor-pointer ${big ? "h-[44px] pl-[16px] pr-[34px] text-[15px] leading-[20px]" : "h-[34px] pl-[12px] pr-[28px] text-[13px] leading-[16px]"} ${dark ? "bg-[#281910] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}
+    <span className="relative flex items-center shrink-0 min-w-[0px]">
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={open ? listId : undefined}
+        aria-label={`${label}: ${current?.label ?? ""}`}
+        onClick={() => (open ? close(false) : openMenu())}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            e.preventDefault();
+            openMenu();
+          }
+        }}
+        className={`flex items-center gap-[8px] min-w-[0px] max-w-full rounded-[999px] font-[500] outline-none cursor-pointer whitespace-nowrap focus-visible:outline-[2px] focus-visible:outline-offset-[2px] focus-visible:outline-[rgba(40,25,16,0.22)] transition-colors duration-150 ${big ? "h-[44px] pl-[16px] pr-[13px] text-[15px] leading-[20px]" : "h-[34px] pl-[12px] pr-[10px] text-[13px] leading-[16px]"} ${dark ? "bg-[#281910] hover:bg-[#3A2920] text-[#FFFCF1]" : "bg-[#F4EEDF] hover:bg-[#EDE5D2] text-[#281910]"}`}
       >
-        {options.map((o) => (
-          <option key={o.id} value={o.id}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-      <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true" className={`pointer-events-none absolute ${big ? "right-[14px]" : "right-[11px]"}`} style={{ display: "block" }}>
-        <path d="M6 9l6 6 6-6" fill="none" stroke={dark ? "#FCCFB8" : "#281910"} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+        <span className="truncate">{current?.label}</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true" className={`shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`} style={{ display: "block" }}>
+          <path d="M6 9l6 6 6-6" fill="none" stroke={dark ? "#FCCFB8" : "#281910"} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {place &&
+        createPortal(
+          <ul
+            ref={listRef}
+            id={listId}
+            role="listbox"
+            aria-label={label}
+            onKeyDown={onListKey}
+            style={{ left: place.left, top: place.top, bottom: place.bottom, minWidth: place.minWidth, maxHeight: place.maxHeight }}
+            className="doe-pricing-menu fixed z-[80] m-0 p-[6px] list-none rounded-[18px] bg-[#FFFCF1] shadow-[0_10px_28px_rgba(40,25,16,0.12),0_0_0_1px_rgba(40,25,16,0.05)] overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {choices.map((o) => {
+              const on = o.id === value;
+              return (
+                <li
+                  key={o.id}
+                  role="option"
+                  aria-selected={on}
+                  tabIndex={-1}
+                  onClick={() => choose(o.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      choose(o.id);
+                    }
+                  }}
+                  className={`flex items-center justify-between gap-[16px] px-[14px] py-[10px] rounded-[12px] text-[15px] leading-[20px] tracking-[-0.015em] text-[#281910] whitespace-nowrap cursor-pointer outline-none transition-colors duration-[140ms] hover:bg-[#F4EEDF] focus:bg-[#F4EEDF] ${on ? "font-[600]" : "font-[400]"}`}
+                >
+                  {o.label}
+                  {on && (
+                    <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+                      <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </li>
+              );
+            })}
+          </ul>,
+          document.body,
+        )}
     </span>
   );
 }
