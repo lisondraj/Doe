@@ -1685,7 +1685,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </div>
   ) : (
     <div key={q.id} className={`doe-pricing-rise flex flex-col ${phone ? "gap-[22px]" : "gap-[28px]"}`}>
-      <div className="flex items-end justify-between gap-[16px] flex-wrap">
+      <div className={`flex items-end justify-between gap-[16px] flex-wrap ${phone ? `p-[20px] rounded-[26px] ${OUTER} [&_h2]:text-[32px] [&_h2]:leading-[35px]` : ""}`}>
         {heading(q.title)}
       </div>
       {q.body}
