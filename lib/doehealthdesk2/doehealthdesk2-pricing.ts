@@ -2,11 +2,11 @@
 
 export type PracticeShape = "solo" | "clinic" | "group";
 
-/** The three ways a practice is set up: one provider, several at one location, or several locations. */
+/** The three ways a practice is set up: one provider, several at one location, or several locations. A blank note shows nothing. */
 export const PRACTICE_SHAPES: { id: PracticeShape; title: string; note: string }[] = [
   { id: "solo", title: "Solo", note: "One provider" },
-  { id: "clinic", title: "Single location", note: "Multiple providers" },
-  { id: "group", title: "Multi-clinic", note: "Multiple locations" },
+  { id: "clinic", title: "One Location + Multiple Providers", note: "" },
+  { id: "group", title: "Multiple Locations & Providers", note: "" },
 ];
 
 export type SpecialtyId = "concierge" | "aesthetic" | "fertility" | "homecare";
