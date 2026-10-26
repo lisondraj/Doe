@@ -16,8 +16,9 @@
   height: 340px;
 }
 
+/* iPhone: the title at the top, the founding-pricing pill pulled down to the bottom of the box. */
 [data-doeforvc-view="iphone"] .doe-pricing-banner .doehealth-blog-placeholder__content {
-  padding: 32px 24px 0;
+  padding: 32px 24px 24px;
 }
 
 @keyframes doe-pricing-slide {

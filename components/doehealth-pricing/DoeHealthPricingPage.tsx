@@ -101,9 +101,9 @@ function FoundingBanner({ phone }: { phone: boolean }) {
       <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doe-pricing-banner" style={{ background: box.bg }}>
         <DoeHealthBlogDotWave color={box.dot} top={phone ? 0.66 : 0.72} amp={70} phase={2.2} scale={1.05} slant={-0.3} flip />
         <div className="doehealth-blog-placeholder__content">
-          <div className={`flex flex-col items-start text-left w-full ${phone ? "gap-[18px]" : "gap-[24px]"}`}>
+          <div className={`flex flex-col items-start text-left w-full ${phone ? "h-full justify-between gap-[18px]" : "gap-[24px]"}`}>
             <h2
-              className={`m-0 font-[400] tracking-[-0.035em] [text-wrap:balance] ${phone ? "text-[34px] leading-[37px]" : "max-w-[22ch] text-[48px] leading-[51px]"} ${p22Mackinac.className}`}
+              className={`m-0 font-[400] tracking-[-0.035em] [text-wrap:balance] ${phone ? "text-[26px] leading-[29px]" : "max-w-[22ch] text-[48px] leading-[51px]"} ${p22Mackinac.className}`}
               style={{ color: NEWS_INK }}
             >
               Teach personal agents about your clinic before it&apos;s too late.
