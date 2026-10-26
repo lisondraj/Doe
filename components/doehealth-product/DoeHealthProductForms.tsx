@@ -70,7 +70,7 @@ const FORMS: Form[] = [
   },
   {
     id: "visit",
-    name: "Pre-visit check-in",
+    name: "Headache diary",
     category: "Intake",
     tile: "#E3E9D9",
     sent: 132,
@@ -78,11 +78,11 @@ const FORMS: Form[] = [
     send: "before",
     review: false,
     dest: "chart",
-    fields: [f("text", "Reason for visit"), f("yesno", "Any changes since last visit?"), f("text", "Pharmacy"), f("yesno", "Need a refill?", false)],
+    fields: [f("text", "Headache days this month"), f("choice", "Worst pain, 1 to 10"), f("text", "Medicines taken"), f("yesno", "Any new triggers?", false)],
   },
   {
-    id: "pediatric",
-    name: "Pediatric history",
+    id: "seizure",
+    name: "Seizure history",
     category: "Intake",
     tile: "#E3E9D9",
     sent: 19,
@@ -90,7 +90,7 @@ const FORMS: Form[] = [
     send: "before",
     review: false,
     dest: "chart",
-    fields: [f("text", "Guardian name"), f("date", "Date of birth"), f("text", "Allergies", false), f("yesno", "Up to date on vaccines?")],
+    fields: [f("date", "Last seizure"), f("text", "What happens during one"), f("text", "Seizure medications", false), f("yesno", "Any seizures since last visit?")],
   },
   {
     id: "consent",

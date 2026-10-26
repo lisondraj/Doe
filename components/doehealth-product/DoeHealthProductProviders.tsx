@@ -67,7 +67,7 @@ export function DoeHealthProductProvidersLayers() {
             </div>
             <div className="flex items-center h-[24px] px-[9px] rounded-[999px] gap-[4px] bg-sand">
               <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">
-                Pediatric ENT
+                Pediatric neurology
               </div>
             </div>
           </div>
@@ -77,7 +77,7 @@ export function DoeHealthProductProvidersLayers() {
             <div className="w-[48px] h-[48px] shrink-0 flex items-center justify-center rounded-[12px] bg-[#F7DCCB]" />
             <div className="flex flex-col grow basis-[0%] gap-[2px]">
               <div className="text-[28px] leading-[32px] tracking-[-0.015em] font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500] text-walnut">
-                Dr. Sofia Alvarez
+                Dr. Elena Alvarez
               </div>
             </div>
             <div className="flex items-center justify-center h-[24px] shrink-0 px-[9px] rounded-[999px] bg-sand">
@@ -87,7 +87,7 @@ export function DoeHealthProductProvidersLayers() {
             </div>
             <div className="flex items-center h-[24px] px-[9px] rounded-[999px] gap-[4px] bg-sand">
               <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">
-                Allergy & immunology
+                Sleep medicine
               </div>
             </div>
           </div>
@@ -97,17 +97,17 @@ export function DoeHealthProductProvidersLayers() {
             <div className="w-[48px] h-[48px] shrink-0 flex items-center justify-center rounded-[12px] bg-[#E9DCC7]" />
             <div className="flex flex-col grow basis-[0%] gap-[2px]">
               <div className="text-[28px] leading-[32px] tracking-[-0.015em] font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500] text-walnut">
-                Priya Raman
+                Hana Sato
               </div>
             </div>
             <div className="flex items-center justify-center h-[24px] shrink-0 px-[9px] rounded-[999px] bg-sand">
               <div className="text-[12px] leading-[16px] w-max font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">
-                AuD
+                NP
               </div>
             </div>
             <div className="flex items-center h-[24px] px-[9px] rounded-[999px] gap-[4px] bg-sand">
               <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">
-                Audiology
+                Headache care
               </div>
             </div>
           </div>
@@ -127,7 +127,7 @@ export function DoeHealthProductProvidersLayers() {
             </div>
             <div className="flex items-center h-[24px] px-[9px] rounded-[999px] gap-[4px] bg-sand">
               <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">
-                Head & neck surgery
+                Neuromuscular · EMG
               </div>
             </div>
           </div>
@@ -137,7 +137,7 @@ export function DoeHealthProductProvidersLayers() {
             <div className="w-[48px] h-[48px] shrink-0 flex items-center justify-center rounded-[12px] bg-[#F7DCCB]" />
             <div className="flex flex-col grow basis-[0%] gap-[2px]">
               <div className="text-[28px] leading-[32px] tracking-[-0.015em] font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500] text-walnut">
-                Dr. Ruth Chen
+                Dr. Lin Chen
               </div>
             </div>
             <div className="flex items-center justify-center h-[24px] shrink-0 px-[9px] rounded-[999px] bg-sand">
@@ -147,7 +147,7 @@ export function DoeHealthProductProvidersLayers() {
             </div>
             <div className="flex items-center h-[24px] px-[9px] rounded-[999px] gap-[4px] bg-sand">
               <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">
-                Laryngology
+                Headache medicine
               </div>
             </div>
           </div>
@@ -158,7 +158,7 @@ export function DoeHealthProductProvidersLayers() {
             <div className="flex flex-col gap-[6px]">
               <div className="flex items-start justify-between gap-[12px]">
                 <div className="text-[40px] leading-[44px] tracking-[-0.02em] font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500] text-walnut">
-                  Dr. Maya Okafor, MD
+                  Dr. Sarah Brooks, MD
                 </div>
                 <div className="flex items-center justify-center w-[32px] h-[32px] shrink-0 rounded-[50%] bg-[#28191014]">
                   <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ display: 'inline-block', flexShrink: '0' }}>
@@ -170,12 +170,12 @@ export function DoeHealthProductProvidersLayers() {
               <div className="flex items-center gap-[6px]">
                 <div className="flex items-center h-[30px] px-[14px] rounded-[999px] border border-solid border-[#28191033]">
                   <div className="text-[14px] leading-[18px] w-max font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
-                    Staff Physician
+                    Medical Director
                   </div>
                 </div>
                 <div className="flex items-center h-[30px] px-[14px] rounded-[999px] border border-solid border-[#28191033]">
                   <div className="text-[14px] leading-[18px] w-max font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
-                    Otolaryngology
+                    Neurology
                   </div>
                 </div>
               </div>
@@ -186,7 +186,7 @@ export function DoeHealthProductProvidersLayers() {
                   Specialty
                 </div>
                 <div className="text-[15px] leading-gutter font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
-                  Otolaryngology
+                  General neurology
                 </div>
               </div>
               <div className="w-[150px] flex flex-col gap-[3px] shrink-0">
@@ -194,7 +194,7 @@ export function DoeHealthProductProvidersLayers() {
                   Clinic
                 </div>
                 <div className="text-[15px] leading-gutter font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
-                  Mission
+                  Brookline
                 </div>
               </div>
               <div className="w-[150px] flex flex-col gap-[3px] shrink-0">
@@ -202,7 +202,7 @@ export function DoeHealthProductProvidersLayers() {
                   In practice
                 </div>
                 <div className="text-[15px] leading-gutter font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">
-                  12 years
+                  14 years
                 </div>
               </div>
               <div className="w-[150px] flex flex-col gap-[3px] shrink-0">

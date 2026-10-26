@@ -31,18 +31,18 @@ type Row = {
 };
 
 const ROWS: Row[] = [
-  { id: "leo-tubes", date: "Oct 14", name: "Leo Jacobs", service: "Ear Tube Surgery", payer: "Harbor Mutual", amount: "$1,840", auth: "info", stage: "auth", method: "—", note: "Harbor Mutual asked for the audiogram. Doe found the Oct 2 one and it’s ready to attach." },
-  { id: "grace-ait", date: "Oct 14", name: "Grace Patel", service: "Allergy Immunotherapy", payer: "Cigna", amount: "$640", auth: "drafting", stage: "auth", method: "—", note: "Pulling the allergy panel and visit note into Cigna’s form." },
-  { id: "priya-mri", date: "Oct 13", name: "Priya Raman", service: "MRI, Inner Ear", payer: "UnitedHealthcare", amount: "$410", auth: "submitted", stage: "auth", method: "—", note: "Filed on UnitedHealthcare’s portal. Doe checks it tomorrow morning." },
-  { id: "omar-dise", date: "Oct 11", name: "Omar Haddad", service: "Sleep Endoscopy", payer: "Harbor Mutual", amount: "$980", auth: "appeal", stage: "auth", method: "—", note: "Denied for a missing sleep study. Appeal sent Oct 13 with the study attached." },
-  { id: "leo-consult", date: "Oct 14", name: "Leo Jacobs", service: "Ear Tube Consult", payer: "Harbor Mutual", amount: "$40.00", auth: null, stage: "sent", method: "HSA •••• 4417", note: "Mia’s agent has the bill and pays from Leo’s HSA on Fridays." },
-  { id: "henry-ct", date: "Oct 12", name: "Henry Walsh", service: "Sinus CT", payer: "Aetna", amount: "$310.00", auth: "approved", stage: "waiting", method: "—", note: "Henry’s agent asked him to approve $310 after Aetna’s share. A reminder goes out tonight." },
-  { id: "maya-fit", date: "Oct 11", name: "Maya Chen", service: "Hearing Aid Fitting", payer: "Blue Cross", amount: "$85.00", auth: "approved", stage: "sent", method: "—", note: "Maya’s agent has the link and is checking her FSA balance." },
-  { id: "ava-test", date: "Oct 13", name: "Ava Thompson", service: "Hearing Test", payer: "Blue Cross", amount: "$65.00", auth: null, stage: "paid", method: "Visa •••• 2290", note: "Paid by Ava’s agent four minutes after the visit." },
-  { id: "noah-balance", date: "Oct 13", name: "Noah Kim", service: "Balance Testing", payer: "Aetna", amount: "$25.00", auth: "approved", stage: "paid", method: "HSA •••• 0912", note: "Aetna approved in a day, and Noah’s agent paid the copay at checkout." },
-  { id: "grace-panel", date: "Oct 12", name: "Grace Patel", service: "Allergy Panel", payer: "Cigna", amount: "$120.00", auth: null, stage: "paid", method: "Amex •••• 3005", note: "Paid by Grace’s agent." },
-  { id: "daniel-clean", date: "Oct 11", name: "Daniel Okafor", service: "Ear Cleaning", payer: "Aetna", amount: "$30.00", auth: null, stage: "paid", method: "Visa •••• 7731", note: "Paid by Daniel’s agent." },
-  { id: "tom-follow", date: "Oct 10", name: "Tom Halvorsen", service: "Follow-Up Visit", payer: "Blue Cross", amount: "$25.00", auth: null, stage: "paid", method: "Visa •••• 1184", note: "Paid at the front desk." },
+  { id: "leo-eeg", date: "Oct 14", name: "Leo Jacobs", service: "48-Hour EEG", payer: "Harbor Mutual", amount: "$1,840", auth: "info", stage: "auth", method: "—", note: "Harbor Mutual asked for the last EEG report. Doe found the Jun 12 one and it’s ready to attach." },
+  { id: "paul-botox", date: "Oct 14", name: "Paul Greene", service: "Botox for Chronic Migraine", payer: "Cigna", amount: "$640", auth: "drafting", stage: "auth", method: "—", note: "Pulling his headache diary and the last two visit notes into Cigna’s form." },
+  { id: "priya-mri", date: "Oct 13", name: "Priya Raman", service: "MRI, Brain", payer: "UnitedHealthcare", amount: "$410", auth: "submitted", stage: "auth", method: "—", note: "Filed on UnitedHealthcare’s portal. Doe checks it tomorrow morning." },
+  { id: "elena-cgrp", date: "Oct 11", name: "Elena Cho", service: "CGRP Injection", payer: "Harbor Mutual", amount: "$980", auth: "appeal", stage: "auth", method: "—", note: "Denied for needing two preventives tried first. Appeal sent Oct 13 with her topiramate history." },
+  { id: "leo-consult", date: "Oct 14", name: "Leo Jacobs", service: "Seizure Consult", payer: "Harbor Mutual", amount: "$40.00", auth: null, stage: "sent", method: "HSA •••• 4417", note: "Mia’s agent has the bill and pays from Leo’s HSA on Fridays." },
+  { id: "henry-mri", date: "Oct 12", name: "Henry Walsh", service: "MRI, Brain", payer: "Aetna", amount: "$310.00", auth: "approved", stage: "waiting", method: "—", note: "Henry’s agent asked him to approve $310 after Aetna’s share. A reminder goes out tonight." },
+  { id: "maya-nerve", date: "Oct 11", name: "Maya Chen", service: "Occipital Nerve Block", payer: "Blue Cross", amount: "$85.00", auth: "approved", stage: "sent", method: "—", note: "Maya’s agent has the link and is checking her FSA balance." },
+  { id: "ben-emg", date: "Oct 13", name: "Ben Torres", service: "EMG and Nerve Study", payer: "Blue Cross", amount: "$65.00", auth: null, stage: "paid", method: "Visa •••• 2290", note: "Paid by Ben’s agent four minutes after the visit." },
+  { id: "noah-sleep", date: "Oct 13", name: "Noah Bennett", service: "Sleep Consult", payer: "Aetna", amount: "$25.00", auth: "approved", stage: "paid", method: "HSA •••• 0912", note: "Aetna approved in a day, and Noah’s agent paid the copay at checkout." },
+  { id: "grace-follow", date: "Oct 12", name: "Grace Kim", service: "Parkinson’s Follow-Up", payer: "Cigna", amount: "$120.00", auth: null, stage: "paid", method: "Amex •••• 3005", note: "Paid by Grace’s agent." },
+  { id: "daniel-eeg", date: "Oct 11", name: "Daniel Okafor", service: "Routine EEG", payer: "Aetna", amount: "$30.00", auth: null, stage: "paid", method: "Visa •••• 7731", note: "Paid by Daniel’s agent." },
+  { id: "hannah-follow", date: "Oct 10", name: "Hannah Lee", service: "MS Follow-Up", payer: "Blue Cross", amount: "$25.00", auth: null, stage: "paid", method: "Visa •••• 1184", note: "Paid at the front desk." },
 ];
 
 const AUTH: Record<Auth, { label: string; background: string; color: string }> = {
@@ -172,7 +172,7 @@ function journey(r: Row): Step[] {
     steps.push({ label: "Filed with payer", detail: `On ${r.payer}’s portal`, state: r.auth === "drafting" ? "next" : r.auth === "submitted" ? "now" : "done", auth: true });
     steps.push({
       label: approved ? "Approved" : r.auth === "info" ? "Payer asked for more" : r.auth === "appeal" ? "Appealing a denial" : "Decision",
-      detail: approved ? "Valid for 90 days" : r.auth === "info" ? "Audiogram from the last 90 days" : r.auth === "appeal" ? "Sleep study attached" : "Doe checks daily",
+      detail: approved ? "Valid for 90 days" : r.auth === "info" ? "EEG report from the last 6 months" : r.auth === "appeal" ? "Preventive history attached" : "Doe checks daily",
       state: approved ? "done" : stuck ? "now" : "next",
       auth: true,
     });
@@ -187,7 +187,7 @@ function journey(r: Row): Step[] {
 }
 
 const ACTION: Record<string, [string, string]> = {
-  info: ["Attach audiogram", "Call payer"],
+  info: ["Attach EEG report", "Call payer"],
   drafting: ["Review packet", "Pause"],
   submitted: ["View packet", "Check now"],
   review: ["View packet", "Check now"],

@@ -64,11 +64,11 @@ export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {
               </div>
               <div className="w-[3px] h-[3px] shrink-0 rounded-[99px] bg-[#28191040]" />
               <div className="text-label leading-[18px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">
-                Right ear
+                Staring spells
               </div>
               <div className="w-[3px] h-[3px] shrink-0 rounded-[99px] bg-[#28191040]" />
               <div className="text-label leading-[18px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-walnut">
-                Dr. Roberts
+                Dr. Brooks
               </div>
             </div>
             <div className="flex items-center gap-[6px] self-stretch rounded-[14px]">
@@ -172,7 +172,7 @@ export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {
                     Ruby
                   </div>
                   <div className="text-[15px] leading-[22px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-walnut">
-                    Dr. Roberts’ office, this is Ruby. How can I help?
+                    Brooks Neurology, this is Ruby. How can I help?
                   </div>
                 </div>
                 <div className="flex items-center shrink-0 pt-px gap-[8px]">
@@ -193,7 +193,7 @@ export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {
                     Mia
                   </div>
                   <div className="text-[15px] leading-[22px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-walnut">
-                    Hi, it’s Mia Jacobs. My son Leo’s ear is hurting again, his right one.
+                    Hi, it’s Mia Jacobs. Leo’s teacher says he’s having staring spells again.
                   </div>
                 </div>
               </div>
@@ -235,7 +235,7 @@ export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {
                     Pulled Leo’s chart
                   </div>
                   <div className="text-label leading-[18px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#2819109E]">
-                    Amoxicillin course ended Thursday
+                    Last EEG in June was normal
                   </div>
                 </div>
               </div>
@@ -248,7 +248,7 @@ export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {
                     Ruby
                   </div>
                   <div className="text-[15px] leading-[22px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-walnut">
-                    When did it start, and has he had a fever?
+                    When did they start, and how long does each one last?
                   </div>
                 </div>
               </div>
@@ -261,7 +261,7 @@ export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {
                     Mia
                   </div>
                   <div className="text-[15px] leading-[22px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-walnut">
-                    Thursday, right when he finished the antibiotics. He had 38.2 on Saturday, it’s gone now. He says it feels full, worse when he lies down. Maybe a 6?
+                    Since Thursday. Just a few seconds, maybe ten times a day. He blinks and doesn’t answer, then carries on like nothing happened. No falls.
                   </div>
                 </div>
               </div>
@@ -277,7 +277,7 @@ export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {
                     Logged symptoms
                   </div>
                   <div className="text-label leading-[18px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#2819109E]">
-                    Flagged recurring infection for Dr. Roberts
+                    Flagged possible absence seizures for Dr. Brooks
                   </div>
                 </div>
               </div>
@@ -342,13 +342,13 @@ export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {
               <div className="flex items-center gap-[6px]">
                 <div className="flex items-center h-[28px] px-[12px] rounded-[999px] [background-color:#FFFCF1]">
                   <div className="flex text-[14px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] leading-[18px] text-walnut">
-                    Pain in Right Ear
+                    Staring Spells
                   </div>
                 </div>
                 <div className="flex items-center h-[28px] pr-[12px] pl-[4px] rounded-[999px] gap-[6px] [background-color:#FFFCF1]">
                   <div className="w-[14px] h-[14px] rounded-[999px] shrink-0 bg-salmon" />
                   <div className="inline-block text-[14px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] leading-[18px] text-walnut">
-                    Dr. Roberts
+                    Dr. Brooks
                   </div>
                 </div>
               </div>
@@ -392,7 +392,7 @@ export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {
                     </svg>
                   </div>
                   <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[600] text-walnut">
-                    Flagged waitlist for Dr. Roberts
+                    Flagged waitlist for Dr. Brooks
                   </div>
                 </div>
               </div>
@@ -400,7 +400,7 @@ export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {
             <div className="flex flex-col p-[12px] rounded-[16px] gap-[8px] bg-sand">
               <div className="py-[12px] px-[14px] rounded-[14px]">
                 <div className="text-[15px] leading-gutter font-['Inter-Regular','Inter',system-ui,sans-serif] text-walnut">
-                  Right ear pain for 4 days, starting when amoxicillin ended. Fever 38.2° Saturday, now gone. Pain 6/10, worse lying down. Possible recurrence.
+                  Staring spells since Thursday, a few seconds each, about 10 a day. Blinks, doesn’t respond, no falls. EEG in June was normal. Possible absence seizures.
                 </div>
               </div>
               <div className="flex flex-col gap-[8px]">

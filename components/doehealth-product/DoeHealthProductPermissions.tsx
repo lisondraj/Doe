@@ -40,19 +40,19 @@ const ACTIONS = [
 type ActionId = (typeof ACTIONS)[number]["id"];
 
 const SERVICES: { id: string; name: string; group: string; tile: string; levels: Record<ActionId, Level>; providers: number }[] = [
-  { id: "physical", name: "Annual physical", group: "Primary care", tile: "#E9DCC7", levels: { find: "allowed", book: "allowed", forms: "allowed", records: "review" }, providers: 5 },
-  { id: "sick", name: "Sick visit", group: "Same day", tile: "#F7DCCB", levels: { find: "allowed", book: "allowed", forms: "allowed", records: "off" }, providers: 5 },
-  { id: "ear", name: "Ear check", group: "Pediatrics", tile: "#E3E9D9", levels: { find: "allowed", book: "allowed", forms: "allowed", records: "restricted" }, providers: 2 },
-  { id: "flu", name: "Flu shot", group: "Vaccines", tile: "#DCE5D0", levels: { find: "allowed", book: "off", forms: "off", records: "allowed" }, providers: 3 },
-  { id: "labs", name: "Lab work", group: "Diagnostics", tile: "#EEEADF", levels: { find: "review", book: "allowed", forms: "allowed", records: "restricted" }, providers: 2 },
-  { id: "new", name: "New patient visit", group: "Primary care", tile: "#FCCFB8", levels: { find: "review", book: "review", forms: "allowed", records: "review" }, providers: 6 },
-  { id: "hearing", name: "Hearing test", group: "Audiology", tile: "#EEEADF", levels: { find: "allowed", book: "review", forms: "allowed", records: "allowed" }, providers: 2 },
-  { id: "aid", name: "Hearing aid fitting", group: "Audiology", tile: "#F7DCCB", levels: { find: "restricted", book: "review", forms: "off", records: "allowed" }, providers: 1 },
-  { id: "procedure", name: "Minor procedure", group: "In office", tile: "#E3E9D9", levels: { find: "restricted", book: "restricted", forms: "allowed", records: "restricted" }, providers: 2 },
+  { id: "follow-up", name: "Follow-up visit", group: "General neurology", tile: "#E9DCC7", levels: { find: "allowed", book: "allowed", forms: "allowed", records: "review" }, providers: 5 },
+  { id: "urgent", name: "Urgent headache visit", group: "Same day", tile: "#F7DCCB", levels: { find: "allowed", book: "allowed", forms: "allowed", records: "off" }, providers: 3 },
+  { id: "migraine", name: "Migraine follow-up", group: "Headache", tile: "#E3E9D9", levels: { find: "allowed", book: "allowed", forms: "allowed", records: "restricted" }, providers: 2 },
+  { id: "botox", name: "Botox for migraine", group: "Procedures", tile: "#DCE5D0", levels: { find: "allowed", book: "off", forms: "off", records: "allowed" }, providers: 2 },
+  { id: "eeg", name: "Routine EEG", group: "Diagnostics", tile: "#EEEADF", levels: { find: "review", book: "allowed", forms: "allowed", records: "restricted" }, providers: 2 },
+  { id: "new", name: "New patient consult", group: "General neurology", tile: "#FCCFB8", levels: { find: "review", book: "review", forms: "allowed", records: "review" }, providers: 6 },
+  { id: "emg", name: "EMG and nerve study", group: "Neuromuscular", tile: "#EEEADF", levels: { find: "allowed", book: "review", forms: "allowed", records: "allowed" }, providers: 1 },
+  { id: "memory", name: "Memory screening", group: "Cognitive", tile: "#F7DCCB", levels: { find: "restricted", book: "review", forms: "off", records: "allowed" }, providers: 2 },
+  { id: "nerve-block", name: "Nerve block", group: "In office", tile: "#E3E9D9", levels: { find: "restricted", book: "restricted", forms: "allowed", records: "restricted" }, providers: 2 },
 ];
 
 const VIEWS = ["Hospital", "Department", "Service", "Action"];
-const SITES = ["Main clinic", "Mission"];
+const SITES = ["Brookline", "Newton"];
 
 const next = (level: Level): Level => LEVELS[(LEVELS.indexOf(level) + 1) % LEVELS.length]!;
 
@@ -110,7 +110,7 @@ export function DoeHealthProductPermissionsPage() {
   const [view, setView] = useState("Service");
   const [selected, setSelected] = useState("new");
   const [levels, setLevels] = useState<Record<string, Record<ActionId, Level>>>(() => Object.fromEntries(SERVICES.map((s) => [s.id, { ...s.levels }])));
-  const [sites, setSites] = useState<Record<string, boolean>>({ "Main clinic": true, Mission: true });
+  const [sites, setSites] = useState<Record<string, boolean>>({ Brookline: true, Newton: true });
 
   const cycle = (id: string, action: ActionId) => setLevels((prev) => ({ ...prev, [id]: { ...prev[id]!, [action]: next(prev[id]![action]) } }));
   const service = SERVICES.find((s) => s.id === selected)!;

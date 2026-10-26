@@ -160,12 +160,12 @@ function AccountMenu({
 
 /** What each provider's agents may do at the clinic selected in the menu beside this panel. */
 const PROVIDER_ACCESS = [
-  { name: "Dr. Robert Roberts", role: "Family medicine", mode: "Bookable", tone: "#DCE5D0" },
-  { name: "Dr. Grace Kim", role: "Pediatrics", mode: "Request only", tone: "#F3E7C9" },
-  { name: "Dr. Henry Walsh", role: "Cardiology", mode: "Bookable", tone: "#DCE5D0" },
-  { name: "Dr. Maya Chen", role: "Dermatology", mode: "Hidden", tone: "#E6E0D2" },
-  { name: "Dr. Priya Raman", role: "Neurology", mode: "Request only", tone: "#F3E7C9" },
-  { name: "Dr. Leo Park", role: "ENT", mode: "Bookable", tone: "#DCE5D0" },
+  { name: "Dr. Sarah Brooks", role: "General neurology", mode: "Bookable", tone: "#DCE5D0" },
+  { name: "Dr. Raj Patel", role: "Epilepsy", mode: "Request only", tone: "#F3E7C9" },
+  { name: "Dr. Anika Shah", role: "Movement disorders", mode: "Bookable", tone: "#DCE5D0" },
+  { name: "Dr. Lin Chen", role: "Headache medicine", mode: "Bookable", tone: "#DCE5D0" },
+  { name: "Dr. Elena Alvarez", role: "Sleep medicine", mode: "Request only", tone: "#F3E7C9" },
+  { name: "Dr. Jun Lee", role: "Neuromuscular · EMG", mode: "Hidden", tone: "#E6E0D2" },
 ] as const;
 
 /** Provider permissions for the open clinic, sitting to the right of the clinic menu. */
@@ -255,12 +255,12 @@ function shellFadeMask(expanded: boolean): CSSProperties {
 
 /** Clinics the signed-in doctor can switch between. */
 const CLINICS = [
-  { id: "roberts", name: "Roberts Family Medicine", initials: "RF", location: "Brookline, MA", dot: "#E8A585" },
-  { id: "northgate", name: "Northgate Pediatrics", initials: "NP", location: "Newton, MA", dot: "#8DAA7C" },
-  { id: "oak", name: "Oak Street Clinic", initials: "OS", location: "Cambridge, MA", dot: "#C2A987" },
+  { id: "brooks", name: "Brooks Neurology", initials: "BN", location: "Brookline, MA", dot: "#E8A585" },
+  { id: "newton", name: "Newton Headache Center", initials: "NH", location: "Newton, MA", dot: "#8DAA7C" },
+  { id: "cambridge", name: "Cambridge EEG & Sleep Lab", initials: "CE", location: "Cambridge, MA", dot: "#C2A987" },
 ];
 /** The doctor currently signed in on this device. */
-const DOCTOR = { name: "Dr. Robert Roberts", email: "robert@robertsfamily.com", initials: "RR" };
+const DOCTOR = { name: "Dr. Sarah Brooks", email: "sarah@brooksneuro.com", initials: "SB" };
 
 type FitState = { scale: number; logicalWidth: number; left: number; top: number };
 

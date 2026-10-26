@@ -14,9 +14,9 @@ const RANGES = ["Day", "Week", "Month"] as const;
 const QUESTIONS = [
   { id: "mutual", text: "Do you take Harbor Mutual?", count: 186, gap: false },
   { id: "opening", text: "Earliest opening this week", count: 142, gap: false },
-  { id: "price", text: "Price of a hearing test", count: 118, gap: false },
+  { id: "price", text: "Price of an EEG", count: 118, gap: false },
   { id: "parking", text: "Is parking available?", count: 74, gap: true },
-  { id: "under2", text: "Do you see children under 2?", count: 61, gap: true },
+  { id: "under2", text: "Do you treat migraines in kids?", count: 61, gap: true },
 ];
 
 const AGENTS = [

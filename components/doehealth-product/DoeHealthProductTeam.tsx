@@ -29,7 +29,7 @@ const STATUS: Record<Status, { label: string; background: string; color: string 
 };
 
 const TABS = ["Schedule", "Voice", "Transit", "Payments", "Offers", "Insights", "Automations", "Integrations"];
-const LOCATIONS = ["Northside", "Riverside", "Telehealth"];
+const LOCATIONS = ["Brookline", "Newton", "Telehealth"];
 
 type Member = {
   id: string;
@@ -71,7 +71,7 @@ function member(
     title,
     role,
     status,
-    locations: ["Northside"],
+    locations: ["Brookline"],
     tabs: ROLE_TABS[role],
     charts: role === "clinician" || role === "clinical",
     approve: role === "desk" || role === "admin",
@@ -83,18 +83,18 @@ function member(
 }
 
 const START: Member[] = [
-  member("alvarez", "Dr. Elena Alvarez", "Pediatrics, MD", "clinician", "active", { locations: ["Northside", "Telehealth"], covers: "patel", stats: [["Visits this week", "38"], ["Notes to sign", "3"], ["Last active", "Now"]] }),
-  member("roberts", "Dr. Sarah Roberts", "Family medicine, MD", "clinician", "active", { stats: [["Visits this week", "41"], ["Notes to sign", "1"], ["Last active", "12m"]] }),
-  member("patel", "Dr. Raj Patel", "Family medicine, DO", "clinician", "away", { note: "Back Oct 28", covers: "alvarez", stats: [["Visits this week", "0"], ["Notes to sign", "0"], ["Last active", "Fri"]] }),
-  member("chen", "Dr. Lin Chen", "Audiology, AuD", "clinician", "active", { locations: ["Riverside"], stats: [["Visits this week", "22"], ["Notes to sign", "2"], ["Last active", "1h"]] }),
-  member("singh", "Nora Singh", "Nurse practitioner", "clinician", "active", { locations: ["Riverside", "Telehealth"], stats: [["Visits this week", "29"], ["Notes to sign", "0"], ["Last active", "4m"]] }),
-  member("ortiz", "Sam Ortiz", "Medical assistant", "clinical", "active", { stats: [["Rooms prepped", "52"], ["Vitals entered", "49"], ["Last active", "Now"]] }),
-  member("nair", "Priya Nair", "Medical assistant", "clinical", "invited", { locations: ["Riverside"], stats: [["Invite sent", "Oct 22"], ["Expires", "Oct 29"], ["Last active", "—"]] }),
-  member("moreno", "Jess Moreno", "Front desk lead", "desk", "active", { locations: ["Northside", "Riverside"], notify: "all", stats: [["Requests handled", "86"], ["Needs you open", "3"], ["Last active", "Now"]] }),
+  member("brooks", "Dr. Sarah Brooks", "General neurology, MD", "clinician", "active", { locations: ["Brookline", "Telehealth"], notify: "all", stats: [["Visits this week", "41"], ["Notes to sign", "3"], ["Last active", "Now"]] }),
+  member("alvarez", "Dr. Elena Alvarez", "Sleep medicine, MD", "clinician", "active", { covers: "patel", stats: [["Visits this week", "38"], ["Notes to sign", "1"], ["Last active", "12m"]] }),
+  member("patel", "Dr. Raj Patel", "Epilepsy, MD", "clinician", "away", { note: "Back Oct 28", covers: "alvarez", stats: [["Visits this week", "0"], ["Notes to sign", "0"], ["Last active", "Fri"]] }),
+  member("chen", "Dr. Lin Chen", "Headache medicine, MD", "clinician", "active", { locations: ["Newton"], stats: [["Visits this week", "22"], ["Notes to sign", "2"], ["Last active", "1h"]] }),
+  member("singh", "Nora Singh", "Nurse practitioner", "clinician", "active", { locations: ["Newton", "Telehealth"], stats: [["Visits this week", "29"], ["Notes to sign", "0"], ["Last active", "4m"]] }),
+  member("ortiz", "Sam Ortiz", "EEG technologist", "clinical", "active", { stats: [["EEGs run", "18"], ["Reports queued", "4"], ["Last active", "Now"]] }),
+  member("nair", "Priya Nair", "Medical assistant", "clinical", "invited", { locations: ["Newton"], stats: [["Invite sent", "Oct 22"], ["Expires", "Oct 29"], ["Last active", "—"]] }),
+  member("moreno", "Jess Moreno", "Front desk lead", "desk", "active", { locations: ["Brookline", "Newton"], notify: "all", stats: [["Requests handled", "86"], ["Needs you open", "3"], ["Last active", "Now"]] }),
   member("reyes", "Tomás Reyes", "Front desk", "desk", "active", { stats: [["Requests handled", "54"], ["Needs you open", "1"], ["Last active", "20m"]] }),
-  member("lin", "Abby Lin", "Front desk", "desk", "invited", { locations: ["Riverside"], stats: [["Invite sent", "Oct 24"], ["Expires", "Oct 31"], ["Last active", "—"]] }),
+  member("lin", "Abby Lin", "Front desk", "desk", "invited", { locations: ["Newton"], stats: [["Invite sent", "Oct 24"], ["Expires", "Oct 31"], ["Last active", "—"]] }),
   member("mensah", "Kofi Mensah", "Billing", "billing", "active", { stats: [["Claims sent", "112"], ["Prior auths open", "4"], ["Last active", "35m"]] }),
-  member("stone", "Rachel Stone", "Billing", "billing", "active", { locations: ["Riverside"], stats: [["Claims sent", "67"], ["Prior auths open", "0"], ["Last active", "2h"]] }),
+  member("stone", "Rachel Stone", "Billing", "billing", "active", { locations: ["Newton"], stats: [["Claims sent", "67"], ["Prior auths open", "0"], ["Last active", "2h"]] }),
   member("whitfield", "Dana Whitfield", "Practice manager", "admin", "active", { locations: LOCATIONS, notify: "all", stats: [["Changes this week", "9"], ["Invites pending", "2"], ["Last active", "Now"]] }),
 ];
 

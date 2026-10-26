@@ -27,10 +27,10 @@ function Glyph({ children, size = 20 }: { children: ReactNode; size?: number }) 
 
 /** Each provider gets its own disc tone and meter colour, all drawn from the Index palette. */
 const PROVIDERS = [
-  { name: "Dr. Roberts", status: "Room 2", seen: 5, booked: 9, here: true, tone: "#F7DCCB", meter: "#E07B53" },
+  { name: "Dr. Brooks", status: "Room 2", seen: 5, booked: 9, here: true, tone: "#F7DCCB", meter: "#E07B53" },
   { name: "Dr. Patel", status: "Room 4", seen: 6, booked: 8, here: true, tone: "#DCE5D0", meter: "#6E9A5B" },
   { name: "Dr. Shah", status: "Room 1", seen: 3, booked: 6, here: true, tone: "#E9DCC7", meter: "#B98A55" },
-  { name: "Dr. Lin", status: "Left at 1", seen: 7, booked: 7, here: true, tone: "#FCCFB8", meter: "#6F8FA3" },
+  { name: "Dr. Chen", status: "Left at 1", seen: 7, booked: 7, here: true, tone: "#FCCFB8", meter: "#6F8FA3" },
   { name: "Dr. Lee", status: "Back Monday", seen: 0, booked: 0, here: false, tone: "#EEEADF", meter: "#A8A192" },
 ];
 
@@ -202,22 +202,22 @@ const GREEN = "#6E9A5B";
 /** Soft inner surface on a paper card: a half-step between paper and the beige row. */
 const WELL = "#F7F2E6";
 
-/** Agent hand-offs waiting on Dr. Roberts. Each one is something an agent could not finish on its own. */
+/** Agent hand-offs waiting on Dr. Brooks. Each one is something an agent could not finish on its own. */
 const NEEDS = [
-  { id: "leo", who: "Leo Jacobs", time: "11:08", what: "Third ear infection this year. ENT referral drafted", from: "Mom’s Call", action: "Review", tone: "#F7DCCB" },
+  { id: "leo", who: "Leo Jacobs", time: "11:08", what: "Staring spells are back. EEG order drafted", from: "Mom’s Call", action: "Review", tone: "#F7DCCB" },
   { id: "grace", who: "Grace Kim", time: "10:42", what: "Pickup moves to CVS Beacon St", from: "Pharmacy Change Request", action: "Approve", tone: "#DCE5D0" },
-  { id: "lily", who: "Lily’s mom", time: "1:48", what: "Wants Dr. Patel. Nothing open before Thu", from: "About Rash Visit", action: "Pick slot", tone: "#FCCFB8" },
-  { id: "henry", who: "Henry Walsh", time: "9:30", what: "Results held until the $40 lipid copay is paid", from: "Billing", action: "Release", tone: "#E9DCC7" },
+  { id: "lily", who: "Lily’s mom", time: "1:48", what: "Wants Dr. Patel. Nothing open before Thu", from: "About EEG Visit", action: "Pick slot", tone: "#FCCFB8" },
+  { id: "henry", who: "Henry Walsh", time: "9:30", what: "MRI results held until the $40 copay is paid", from: "Billing", action: "Release", tone: "#E9DCC7" },
 ] as const;
 
 const DAY_FROM = 12;
 const DAY_TO = 18;
 const NOW = 15 + 20 / 60;
 const LANES = [
-  { who: "Roberts", blocks: [[12.25, 0.5], [13, 0.5], [13.75, 0.75], [14.75, 0.5], [15.5, 0.5], [16, 0.5], [16.75, 0.5]] },
+  { who: "Brooks", blocks: [[12.25, 0.5], [13, 0.5], [13.75, 0.75], [14.75, 0.5], [15.5, 0.5], [16, 0.5], [16.75, 0.5]] },
   { who: "Patel", blocks: [[12, 0.75], [13.25, 0.5], [14, 0.5], [15, 0.5], [15.75, 0.5], [16.5, 0.75]] },
   { who: "Shah", blocks: [[12.5, 0.5], [13.5, 0.75], [14.5, 0.5], [16.25, 0.5], [17, 0.5]] },
-  { who: "Lin", blocks: [[12, 0.75], [13.25, 0.5], [14, 0.5], [15, 0.5], [15.75, 0.5], [16.5, 0.75]] },
+  { who: "Chen", blocks: [[12, 0.75], [13.25, 0.5], [14, 0.5], [15, 0.5], [15.75, 0.5], [16.5, 0.75]] },
 ] as { who: string; blocks: [number, number][] }[];
 
 const CALL_MIX = [
@@ -236,27 +236,27 @@ const AGENT_COUNTS = [
 
 const THREADS = [
   { id: "grace", initials: "GK", who: "Grace Kim", time: "2:58", text: "Can I pick up the refill at the Beacon St CVS instead?", draft: "Yes, I’ve moved it to CVS on Beacon St. It’ll be ready after 5 today." },
-  { id: "marcus", initials: "MW", who: "Marcus Webb", time: "1:17", text: "Should I be worried about the A1C number?", draft: "Dr. Roberts will call you tomorrow to go over it. Nothing urgent in the meantime." },
-  { id: "ava", initials: "AB", who: "Ava Brooks", time: "12:05", text: "Uploaded my insurance card, front and back.", draft: "Thanks, Ava. We’ve got it and your visit is all set." },
+  { id: "marcus", initials: "MW", who: "Marcus Webb", time: "1:17", text: "Should I be worried about the MRI report?", draft: "Dr. Brooks will call you tomorrow to go over it. Nothing urgent in the meantime." },
+  { id: "ava", initials: "AM", who: "Ava Morales", time: "12:05", text: "Uploaded my insurance card, front and back.", draft: "Thanks, Ava. We’ve got it and your visit is all set." },
 ];
 
 const SERVICES = [
-  { id: "ear", name: "Ear check", price: "$25 copay", week: 18, trend: [4, 6, 5, 9, 8, 12, 18] },
-  { id: "flu", name: "Flu shot", price: "Covered", week: 14, trend: [2, 3, 6, 5, 9, 11, 14] },
-  { id: "physical", name: "Annual physical", price: "$0 with most plans", week: 9, trend: [7, 8, 6, 9, 7, 8, 9] },
+  { id: "migraine", name: "Migraine follow-up", price: "$25 copay", week: 18, trend: [4, 6, 5, 9, 8, 12, 18] },
+  { id: "eeg", name: "Routine EEG", price: "Covered", week: 14, trend: [2, 3, 6, 5, 9, 11, 14] },
+  { id: "consult", name: "New patient consult", price: "$40 with most plans", week: 9, trend: [7, 8, 6, 9, 7, 8, 9] },
 ];
 
 const STEPS = ["Sent", "Accepted", "Scheduled", "Seen"];
 const REFERRAL_ROWS = [
-  { id: "leo", who: "Leo Jacobs", specialty: "ENT", tone: PROVIDERS[0].tone, step: 0, stalled: "No reply in 4 days" },
-  { id: "henry", who: "Henry Walsh", specialty: "Cardiology", tone: PROVIDERS[1].tone, step: 1 },
-  { id: "grace", who: "Grace Kim", specialty: "Orthopedics", tone: PROVIDERS[2].tone, step: 2 },
+  { id: "leo", who: "Leo Jacobs", specialty: "EEG lab", tone: PROVIDERS[0].tone, step: 0, stalled: "No reply in 4 days" },
+  { id: "henry", who: "Henry Walsh", specialty: "Neuropsych", tone: PROVIDERS[1].tone, step: 1 },
+  { id: "grace", who: "Grace Kim", specialty: "Physical therapy", tone: PROVIDERS[2].tone, step: 2 },
 ];
 
 const OWED = [
-  { id: "priya", initials: "PR", who: "Priya Raman", what: "New patient visit", amount: "$185" },
-  { id: "daniel", initials: "DO", who: "Daniel Okafor", what: "Physical, after insurance", amount: "$62" },
-  { id: "henry", initials: "HW", who: "Henry Walsh", what: "Lipid panel copay", amount: "$40" },
+  { id: "priya", initials: "PR", who: "Priya Raman", what: "New patient consult", amount: "$185" },
+  { id: "daniel", initials: "DO", who: "Daniel Okafor", what: "EEG, after insurance", amount: "$62" },
+  { id: "henry", initials: "HW", who: "Henry Walsh", what: "MRI copay", amount: "$40" },
 ];
 
 const SYSTEMS = [
@@ -447,7 +447,7 @@ function ScheduleDetail() {
                 {lane.blocks.map(([start, len]) => {
                   const past = start + len <= NOW;
                   const current = start <= NOW && start + len > NOW;
-                  const next = start === 15.5 && lane.who === "Roberts";
+                  const next = start === 15.5 && lane.who === "Brooks";
                   return (
                     <span
                       key={start}
@@ -481,7 +481,7 @@ function ScheduleDetail() {
           <span className="w-[36px] h-[36px] shrink-0 rounded-full" style={{ backgroundColor: "#FCCFB8" }} />
           <span className="flex flex-col min-w-[0px]">
             <span className={`text-[20px] leading-[24px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>Maya Chen</span>
-            <span className={MUTED}>Annual Physical</span>
+            <span className={MUTED}>Migraine Follow-up</span>
           </span>
         </span>
         <span className="grid grid-cols-2 gap-[6px]">
@@ -508,12 +508,12 @@ function ScheduleDetail() {
 /** Calls on the line first, then recent ones. */
 const CALLS = [
   { name: "Hannah Lee", about: "Moving Friday’s visit", time: "2:14", live: true },
-  { name: "Marcus Webb", about: "Lab results question", time: "0:48", live: true },
-  { name: "Mia Jacobs", about: "Leo’s ear pain, third time", time: "11:08", live: false },
+  { name: "Marcus Webb", about: "Gabapentin dose question", time: "0:48", live: true },
+  { name: "Mia Jacobs", about: "Leo’s staring spells again", time: "11:08", live: false },
   { name: "Lily’s mom", about: "Asked for Dr. Patel", time: "1:48", live: false },
   { name: "Grace Kim", about: "Pickup moved to Beacon St", time: "10:42", live: false },
-  { name: "Ava Brooks", about: "Uploaded insurance card", time: "12:05", live: false },
-  { name: "Henry Walsh", about: "Lipid results question", time: "9:30", live: false },
+  { name: "Ava Morales", about: "Uploaded insurance card", time: "12:05", live: false },
+  { name: "Henry Walsh", about: "MRI results question", time: "9:30", live: false },
 ];
 
 /** Width of the soft fade on a carousel edge that still has cards hidden past it. */
@@ -616,7 +616,7 @@ function AgentsDetail() {
           <span className={MUTED}>for Maya Chen · 9:12</span>
         </span>
         <span className={`self-start max-w-[80%] px-[14px] py-[10px] rounded-[18px] rounded-tl-[6px] text-[14px] leading-[20px] ${SANS} font-[500] text-walnut`} style={{ backgroundColor: WELL }}>
-          Is there an annual physical before work this week? She has Harbor.
+          Is there a migraine follow-up before work this week? She has Harbor.
         </span>
         <span className="self-end flex items-center gap-[12px] w-[78%] p-[12px] rounded-[18px] rounded-tr-[6px] border border-solid border-[#2819101F]">
           <span className="w-[44px] h-[44px] shrink-0 flex flex-col items-center justify-center rounded-[12px] bg-ink [color:#FFFCF1]">
@@ -624,8 +624,8 @@ function AgentsDetail() {
             <span className={`text-[17px] leading-[20px] ${DISPLAY}`}>22</span>
           </span>
           <span className="flex flex-col grow min-w-[0px]">
-            <span className={TITLE}>8:30 AM · Dr. Roberts</span>
-            <span className={MUTED}>Annual physical · $0 with Harbor</span>
+            <span className={TITLE}>8:30 AM · Dr. Brooks</span>
+            <span className={MUTED}>Migraine follow-up · $0 with Harbor</span>
           </span>
           <Chip dot={GREEN}>Booked</Chip>
         </span>
@@ -728,7 +728,7 @@ function Sparkline({ values }: { values: number[] }) {
 }
 
 function ServicesDetail() {
-  const [bookable, setBookable] = useState<Record<string, boolean>>({ ear: true, flu: true, physical: true });
+  const [bookable, setBookable] = useState<Record<string, boolean>>({ migraine: true, eeg: true, consult: true });
   return (
     <div className="grid grid-cols-3 gap-[8px]">
       {SERVICES.map((s) => (
@@ -985,7 +985,7 @@ export function DoeHealthProductIndex({
         <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(90deg, var(--color-paper) 0%, transparent 42%)" }} />
       </div>
       <div className="relative z-[1] flex items-center justify-between w-[840px] shrink-0">
-        <div className={`text-[46px] leading-[50px] tracking-[-0.025em] ${DISPLAY} text-walnut`}>Dr. Robert’s Index</div>
+        <div className={`text-[46px] leading-[50px] tracking-[-0.025em] ${DISPLAY} text-walnut`}>Dr. Brooks’ Index</div>
         <button
           type="button"
           className={`flex items-center h-[30px] px-[12px] gap-[6px] rounded-[999px] bg-[#EEEADF] hover:bg-[#E6E0D2] transition-colors duration-150 text-[13px] leading-[16px] ${SANS} font-[500] text-walnut`}

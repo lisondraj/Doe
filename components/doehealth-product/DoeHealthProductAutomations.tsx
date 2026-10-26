@@ -73,7 +73,7 @@ const RUNS = [
 type Step = { id: string; kind: "Starts when" | "If" | "Then" | "Else"; icon: IconName; title: string; chips: string[]; x: number; y: number; fields: { label: string; value: string }[]; note: string };
 
 const STEPS: Step[] = [
-  { id: "start", kind: "Starts when", icon: "bolt", title: "Agent books a visit", chips: ["Any agent", "Primary care"], x: 14, y: 190, note: "Starts when", fields: [{ label: "Event", value: "An agent books a visit" }, { label: "Agents", value: "Any agent" }, { label: "Service", value: "Primary care" }] },
+  { id: "start", kind: "Starts when", icon: "bolt", title: "Agent books a visit", chips: ["Any agent", "Neurology"], x: 14, y: 190, note: "Starts when", fields: [{ label: "Event", value: "An agent books a visit" }, { label: "Agents", value: "Any agent" }, { label: "Service", value: "Neurology" }] },
   { id: "network", kind: "If", icon: "shield", title: "In network", chips: ["18 plans", "Live check"], x: 244, y: 60, note: "Check · step 2 of 7", fields: [{ label: "Check", value: "Insurance plan is accepted" }, { label: "Source", value: "Live check" }, { label: "If it does not match", value: "Hold for front desk" }, { label: "Timeout", value: "5 seconds" }] },
   { id: "limit", kind: "If", icon: "cr", title: "Under $100", chips: ["HSA or card"], x: 244, y: 270, note: "Check · step 3 of 7", fields: [{ label: "Check", value: "Visit total is under" }, { label: "Amount", value: "$100" }, { label: "Methods", value: "HSA or card" }] },
   { id: "hold", kind: "Else", icon: "usr", title: "Hold for front desk", chips: ["Ruby", "30 min"], x: 244, y: 470, note: "Action · step 7 of 7", fields: [{ label: "Assign to", value: "Ruby" }, { label: "Respond within", value: "30 minutes" }] },

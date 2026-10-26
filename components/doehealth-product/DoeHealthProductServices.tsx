@@ -39,17 +39,15 @@ const ICON = {
       <path d="M5 19c1.2-3.5 4-5 7-5s5.8 1.5 7 5" {...line} />
     </Glyph>
   ),
-  ear: (
+  bolt: (
     <Glyph>
-      <path d="M6 8.5a6.5 6.5 0 1 1 13 0c0 6-6 6-6 10a3.5 3.5 0 1 1-7 0" {...line} />
-      <path d="M15 8.5a2.5 2.5 0 0 0-5 0v1a2 2 0 1 1 0 4" {...line} />
+      <path d="M13 3.5L5.5 13H12l-1 7.5L18.5 11H12z" {...line} />
     </Glyph>
   ),
-  tonsil: (
+  brain: (
     <Glyph>
-      <path d="M6 7c0 6.5 2.7 10 6 10s6-3.5 6-10" {...line} />
-      <circle cx="9.5" cy="11" r="1.5" fill="#281910" />
-      <circle cx="14.5" cy="11" r="1.5" fill="#281910" />
+      <path d="M11 5.5a3 3 0 0 0-5 2.2 3 3 0 0 0-1 5.3 3.2 3.2 0 0 0 3.5 4.5A2.5 2.5 0 0 0 11 19z" {...line} />
+      <path d="M13 5.5a3 3 0 0 1 5 2.2 3 3 0 0 1 1 5.3 3.2 3.2 0 0 1-3.5 4.5A2.5 2.5 0 0 1 13 19z" {...line} />
     </Glyph>
   ),
   bars: (
@@ -61,12 +59,6 @@ const ICON = {
     <Glyph>
       <rect x="5" y="5" width="14" height="14" rx="4" {...line} />
       <path d="M12 9v6M9 12h6" {...line} />
-    </Glyph>
-  ),
-  cup: (
-    <Glyph>
-      <path d="M7 8.5h10V11a5 5 0 0 1-10 0V8.5z" {...line} />
-      <path d="M12 8.5v4.5" {...line} />
     </Glyph>
   ),
   drop: (
@@ -119,104 +111,104 @@ const REFERRALS = ["Never", "Some plans", "Always"];
 const SERVICES: Service[] = [
   {
     id: "new-patient",
-    name: "New patient visit",
-    price: "$225",
+    name: "New patient consult",
+    price: "$325",
     icon: ICON.person,
-    chips: [{ label: "Tue", tone: "tint", calendar: true }],
-    self: "$225",
-    insurance: "14 plans",
-    length: "45 min",
-    referral: 0,
-    plans: ["BlueChoice"],
-  },
-  {
-    id: "ear-tube-consult",
-    name: "Ear tube consult",
-    price: "$225",
-    icon: ICON.ear,
     chips: [
       { label: "Referral", tone: "outline" },
       { label: "Tue", tone: "tint", calendar: true },
     ],
-    featured: true,
-    self: "$225",
+    self: "$325",
     insurance: "14 plans",
-    length: "30 min",
-    referral: 1,
-    plans: ["BlueChoice", "Tricare"],
-  },
-  {
-    id: "tonsils",
-    name: "Tonsils and adenoids",
-    price: "$225",
-    icon: ICON.tonsil,
-    chips: [
-      { label: "Referral", tone: "outline" },
-      { label: "Oct 21", tone: "tint", calendar: true },
-    ],
-    self: "$225",
-    insurance: "9 plans",
-    length: "30 min",
+    length: "60 min",
     referral: 1,
     plans: ["BlueChoice"],
   },
   {
-    id: "hearing-test",
-    name: "Hearing test",
-    price: "$140",
-    icon: ICON.bars,
-    chips: [{ label: "Today", tone: "today", calendar: true }],
-    self: "$140",
-    insurance: "18 plans",
-    length: "45 min",
+    id: "migraine-follow-up",
+    name: "Migraine follow-up",
+    price: "$185",
+    icon: ICON.bolt,
+    chips: [{ label: "Tue", tone: "tint", calendar: true }],
+    featured: true,
+    self: "$185",
+    insurance: "14 plans",
+    length: "30 min",
     referral: 0,
+    plans: ["BlueChoice", "Tricare"],
+  },
+  {
+    id: "routine-eeg",
+    name: "Routine EEG",
+    price: "$450",
+    icon: ICON.bars,
+    chips: [
+      { label: "Referral", tone: "outline" },
+      { label: "Oct 21", tone: "tint", calendar: true },
+    ],
+    self: "$450",
+    insurance: "9 plans",
+    length: "60 min",
+    referral: 1,
+    plans: ["BlueChoice"],
+  },
+  {
+    id: "emg",
+    name: "EMG and nerve study",
+    price: "$620",
+    icon: ICON.dot,
+    chips: [{ label: "Today", tone: "today", calendar: true }],
+    self: "$620",
+    insurance: "18 plans",
+    length: "60 min",
+    referral: 1,
     plans: [],
   },
   {
-    id: "ear-tube-surgery",
-    name: "Ear tube surgery",
-    price: "$2,850",
+    id: "botox",
+    name: "Botox for chronic migraine",
+    price: "$1,850",
     icon: ICON.plus,
     chips: [
       { label: "Prior auth", tone: "salmon" },
       { label: "Request only", tone: "outline" },
     ],
-    self: "$2,850",
+    self: "$1,850",
     insurance: "Prior auth",
-    length: "90 min",
+    length: "30 min",
     referral: 2,
     plans: ["BlueChoice", "Tricare"],
   },
   {
-    id: "tongue-tie",
-    name: "Tongue-tie release",
+    id: "memory",
+    name: "Memory screening",
     price: "$395",
-    icon: ICON.cup,
+    icon: ICON.brain,
     chips: [
       { label: "Self-pay only", tone: "dark" },
       { label: "Wed", tone: "tint", calendar: true },
     ],
     self: "$395",
     insurance: "None",
+    length: "45 min",
+    referral: 0,
+    plans: [],
+  },
+  {
+    id: "seizure-follow-up",
+    name: "Seizure follow-up",
+    price: "$185",
+    icon: ICON.bolt,
+    chips: [{ label: "Today", tone: "today", calendar: true }],
+    self: "$185",
+    insurance: "14 plans",
     length: "30 min",
     referral: 0,
     plans: [],
   },
   {
-    id: "earwax",
-    name: "Earwax removal",
-    price: "$95",
-    icon: ICON.drop,
-    chips: [{ label: "Today", tone: "today", calendar: true }],
-    self: "$95",
-    insurance: "14 plans",
-    length: "15 min",
-    referral: 0,
-    plans: [],
-  },
-  {
-    id: "swim-earplugs",
-    name: "Swim earplugs",
+    id: "return-to-play",
+    name: "Return-to-play note",
     price: "$75",
     icon: ICON.wave,
     chips: [{ label: "Self-pay only", tone: "dark" }],
@@ -227,48 +219,48 @@ const SERVICES: Service[] = [
     plans: [],
   },
   {
-    id: "hearing-aid",
-    name: "Hearing aid fitting",
+    id: "ms-infusion",
+    name: "MS infusion",
     price: "$1,800",
-    icon: ICON.ear,
+    icon: ICON.drop,
     chips: [{ label: "Hidden from agents", tone: "dark", eyeOff: true }],
     muted: true,
     self: "$1,800",
     insurance: "None",
-    length: "60 min",
+    length: "4 hr",
     referral: 0,
     plans: [],
   },
   {
-    id: "sinus-rinse",
-    name: "Sinus rinse teaching",
-    price: "$40",
+    id: "nerve-block",
+    name: "Occipital nerve block",
+    price: "$240",
     icon: ICON.drop,
     chips: [{ label: "Today", tone: "today", calendar: true }],
-    self: "$40",
+    self: "$240",
     insurance: "14 plans",
     length: "20 min",
     referral: 0,
     plans: [],
   },
   {
-    id: "allergy-testing",
-    name: "Allergy testing",
-    price: "$180",
-    icon: ICON.dot,
+    id: "ambulatory-eeg",
+    name: "48-hour EEG",
+    price: "$980",
+    icon: ICON.bars,
     chips: [
       { label: "Referral", tone: "outline" },
       { label: "Oct 21", tone: "tint", calendar: true },
     ],
-    self: "$180",
+    self: "$980",
     insurance: "9 plans",
-    length: "45 min",
+    length: "48 hr",
     referral: 1,
     plans: ["BlueChoice"],
   },
   {
-    id: "snoring",
-    name: "Snoring evaluation",
+    id: "sleep",
+    name: "Sleep consult",
     price: "$250",
     icon: ICON.moon,
     chips: [{ label: "Wed", tone: "tint", calendar: true }],
@@ -516,19 +508,19 @@ export function DoeHealthProductServicesPage() {
               <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-[#2819107A]">{SERVICES.length}</div>
             </div>
             <div className="flex items-baseline h-[30px] pt-[6px] rounded-[999px] gap-[6px] px-[14px]">
-              <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-[#2819109E]">Ears</div>
-              <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-[#2819105C]">4</div>
+              <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-[#2819109E]">Headache</div>
+              <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-[#2819105C]">3</div>
             </div>
             <div className="flex items-baseline h-[30px] pt-[6px] rounded-[999px] gap-[6px] px-[14px]">
-              <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-[#2819109E]">Throat</div>
+              <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-[#2819109E]">Seizure</div>
+              <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-[#2819105C]">3</div>
+            </div>
+            <div className="flex items-baseline h-[30px] pt-[6px] rounded-[999px] gap-[6px] px-[14px]">
+              <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-[#2819109E]">Nerve</div>
               <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-[#2819105C]">2</div>
             </div>
             <div className="flex items-baseline h-[30px] pt-[6px] rounded-[999px] gap-[6px] px-[14px]">
-              <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-[#2819109E]">Hearing</div>
-              <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-[#2819105C]">2</div>
-            </div>
-            <div className="flex items-baseline h-[30px] pt-[6px] rounded-[999px] gap-[6px] px-[14px]">
-              <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-[#2819109E]">General</div>
+              <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-[#2819109E]">Sleep</div>
               <div className="text-[12px] leading-[16px] font-['Inter-Regular_Medium','Inter',system-ui,sans-serif] font-[500] text-[#2819105C]">1</div>
             </div>
           </div>

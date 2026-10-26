@@ -43,17 +43,17 @@ const KINDS: { id: Kind; label: string }[] = [
   { id: "bundle", label: "Bundle" },
 ];
 
-const SERVICES = ["Annual physical", "Flu shot", "Hearing test", "Tympanometry", "Allergy panel", "Sports physical", "Ear cleaning", "Follow-up visit"];
-const AUDIENCES = ["New patients", "Existing patients", "Not seen in 12+ months", "Due for a flu shot", "Within 5 miles", "Kids under 18", "Aetna members", "Blue Cross members"];
+const SERVICES = ["New patient consult", "Migraine follow-up", "Routine EEG", "EMG and nerve study", "Memory screening", "Return-to-play note", "Occipital nerve block", "Sleep consult"];
+const AUDIENCES = ["New patients", "Existing patients", "Not seen in 12+ months", "Migraine patients", "Within 5 miles", "Kids under 18", "Aetna members", "Blue Cross members"];
 
 const START: Offer[] = [
   {
-    id: "flu",
-    title: "Flu shot with any visit",
+    id: "nerve-block",
+    title: "Nerve block with a migraine visit",
     kind: "addon",
     value: "Free",
-    services: ["Flu shot", "Follow-up visit"],
-    audience: ["Existing patients", "Due for a flu shot"],
+    services: ["Occipital nerve block", "Migraine follow-up"],
+    audience: ["Existing patients", "Migraine patients"],
     starts: "Oct 1",
     ends: "Nov 30",
     perWeek: 24,
@@ -63,11 +63,11 @@ const START: Offer[] = [
     stats: { matched: 1240, shown: 412, booked: 41 },
   },
   {
-    id: "np-physical",
-    title: "New patient physical",
+    id: "np-consult",
+    title: "New patient headache consult",
     kind: "price",
-    value: "$75",
-    services: ["Annual physical"],
+    value: "$150",
+    services: ["New patient consult"],
     audience: ["New patients", "Within 5 miles"],
     starts: "Sep 15",
     ends: "Dec 31",
@@ -78,11 +78,11 @@ const START: Offer[] = [
     stats: { matched: 3880, shown: 905, booked: 18 },
   },
   {
-    id: "hearing",
-    title: "Hearing check bundle",
+    id: "memory",
+    title: "Memory check bundle",
     kind: "bundle",
     value: "20% off",
-    services: ["Hearing test", "Tympanometry"],
+    services: ["Memory screening", "New patient consult"],
     audience: ["Not seen in 12+ months"],
     starts: "Nov 3",
     ends: "Jan 15",
@@ -93,14 +93,14 @@ const START: Offer[] = [
     stats: { matched: 640, shown: 0, booked: 0 },
   },
   {
-    id: "allergy",
-    title: "Spring allergy prep",
+    id: "sleep",
+    title: "Winter sleep consult",
     kind: "off",
     value: "$40 off",
-    services: ["Allergy panel"],
+    services: ["Sleep consult"],
     audience: ["Existing patients"],
-    starts: "Mar 1",
-    ends: "Apr 30",
+    starts: "Jan 5",
+    ends: "Feb 28",
     perWeek: 6,
     direct: true,
     status: "draft",
@@ -108,11 +108,11 @@ const START: Offer[] = [
     stats: { matched: 0, shown: 0, booked: 0 },
   },
   {
-    id: "sports",
-    title: "Back-to-school sports physical",
+    id: "return-to-play",
+    title: "Back-to-school concussion clearance",
     kind: "price",
     value: "$45",
-    services: ["Sports physical"],
+    services: ["Return-to-play note"],
     audience: ["Kids under 18"],
     starts: "Aug 1",
     ends: "Sep 15",
@@ -252,7 +252,7 @@ function Listing({ offer }: { offer: Offer }) {
     { label: "Who", value: offer.audience.join(", ") || "Anyone" },
     { label: "When", value: `${offer.starts} to ${offer.ends}` },
     { label: "Booking", value: offer.direct ? `Direct, ${offer.perWeek} a week` : "Front desk confirms" },
-    { label: "From", value: "Northside Family Medicine, 0.8 mi" },
+    { label: "From", value: "Brooks Neurology, 0.8 mi" },
   ];
   return (
     <div className="flex flex-col gap-[6px]">

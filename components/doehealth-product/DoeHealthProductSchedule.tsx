@@ -41,29 +41,29 @@ type Visit = {
 };
 
 const VISITS: Visit[] = [
-  { id: "maya", hour: 8, time: "8:00", who: "Maya Chen", reason: "Right knee pain", status: "signed", note: { s: "Three weeks of knee pain, worse on stairs. No fall.", a: "Likely patellofemoral pain.", p: "PT referral, ibuprofen as needed, recheck in 6 weeks." }, codes: ["M22.2X1", "99213"] },
-  { id: "ben", hour: 8, time: "8:15", who: "Ben Torres", reason: "Sinus pressure", status: "signed", note: { s: "Ten days of facial pressure and congestion.", a: "Acute sinusitis.", p: "Saline rinses, amoxicillin if no better by Friday." }, codes: ["J01.90", "99213"] },
+  { id: "maya", hour: 8, time: "8:00", who: "Maya Chen", reason: "Migraine follow-up", status: "signed", note: { s: "Down to 3 migraines a month on topiramate. Mild tingling in fingers.", a: "Migraine without aura, improving.", p: "Continue topiramate 50 mg, headache diary, recheck in 3 months." }, codes: ["G43.009", "99213"] },
+  { id: "ben", hour: 8, time: "8:15", who: "Ben Torres", reason: "Numb hands at night", status: "signed", note: { s: "Both hands go numb at night, worse on the right. Types all day.", a: "Likely carpal tunnel, both sides.", p: "Wrist splints at night, EMG and nerve study next week." }, codes: ["G56.03", "99213"] },
   { id: "priya", hour: 8, time: "8:30", who: "Priya Raman", reason: "New patient, migraines", status: "signed", note: { s: "Migraines 3–4 times a week with aura for six months.", a: "Migraine with aura.", p: "MRI ordered, start sumatriptan, headache diary." }, codes: ["G43.109", "99204"] },
-  { id: "clara", hour: 8, time: "8:45", who: "Clara Diaz", reason: "Vaccine visit", status: "signed", note: { s: "Due for Tdap and flu shot. No reactions in the past.", a: "Routine immunizations.", p: "Tdap and flu shot given, next due in 10 years." }, codes: ["Z23", "90715"] },
-  { id: "daniel", hour: 9, time: "9:00", who: "Daniel Okafor", reason: "Annual physical", status: "signed", note: { s: "Feels well. Exercises twice a week.", a: "Healthy adult, BMI 26.", p: "Lipid panel, flu shot today, return in one year." }, codes: ["Z00.00", "99396"] },
-  { id: "grace", hour: 9, time: "9:30", who: "Grace Kim", reason: "Blood pressure check", status: "signed", note: { s: "Home readings in the 130s. Taking lisinopril daily.", a: "Hypertension, improving.", p: "Continue lisinopril 10 mg, refill sent to CVS." }, codes: ["I10", "99213"] },
-  { id: "ava", hour: 9, time: "9:45", who: "Ava Brooks", reason: "Rash on both arms", status: "signed", note: { s: "Itchy rash for a week after a new detergent.", a: "Contact dermatitis.", p: "Hydrocortisone cream, switch detergent, derm if no change." }, codes: ["L25.9", "99212"] },
-  { id: "henry", hour: 10, time: "10:00", who: "Henry Walsh", reason: "Lipid follow-up", status: "draft", note: { s: "No chest pain. Diet unchanged since last visit.", a: "LDL up to 162.", p: "Start atorvastatin 20 mg, repeat panel in 3 months." }, codes: ["E78.5", "99214"] },
-  { id: "hannah", hour: 11, time: "11:00", who: "Hannah Lee", reason: "Asthma follow-up", status: "signed", note: { s: "Using rescue inhaler about once a week.", a: "Mild persistent asthma, controlled.", p: "Continue current inhalers, review in 3 months." }, codes: ["J45.30", "99213"] },
-  { id: "leo", hour: 11, time: "11:15", who: "Leo Jacobs", reason: "Ear pain, third time", status: "draft", note: { s: "Left ear pain and fever since Saturday, per mom.", a: "Recurrent otitis media.", p: "Amoxicillin, ENT referral to Boston Children’s." }, codes: ["H66.92", "99213"] },
-  { id: "marcus", hour: 11, time: "11:30", who: "Marcus Webb", reason: "Diabetes check", status: "draft", note: { s: "Checking sugars most mornings, 140s to 160s.", a: "Type 2 diabetes, A1C 7.8.", p: "Raise metformin, nutrition visit, A1C in 3 months." }, codes: ["E11.65", "99214"] },
-  { id: "iris", hour: 11, time: "11:45", who: "Iris Novak", reason: "Pre-op clearance", status: "draft", note: { s: "Gallbladder surgery planned for next month.", a: "Low risk for surgery.", p: "ECG normal, clearance letter sent to the surgeon." }, codes: ["Z01.818", "99214"] },
-  { id: "omar", hour: 13, time: "1:00", who: "Omar Haddad", reason: "Sports physical", status: "draft", note: { s: "Plays soccer, no injuries this season.", a: "Cleared for sports.", p: "Form signed, sent to school." }, codes: ["Z02.5", "99394"] },
-  { id: "lily", hour: 13, time: "1:30", who: "Lily Park", reason: "Seasonal allergies", status: "draft", note: { s: "Sneezing and itchy eyes since September.", a: "Allergic rhinitis.", p: "Daily cetirizine, nasal spray, allergy referral." }, codes: ["J30.2", "99213"] },
-  { id: "elena", hour: 14, time: "2:00", who: "Elena Cho", reason: "Thyroid results", status: "draft", note: { s: "Tired, cold more often than usual.", a: "Hypothyroidism, TSH 6.8.", p: "Start levothyroxine 25 mcg, TSH in 6 weeks." }, codes: ["E03.9", "99213"] },
-  { id: "noah", hour: 14, time: "2:30", who: "Noah Bennett", reason: "Trouble sleeping", status: "draft", note: { s: "Partner notes loud snoring and pauses in breathing.", a: "Suspected sleep apnea.", p: "Sleep study at Mass General." }, codes: ["G47.33", "99214"] },
-  { id: "paul", hour: 14, time: "2:45", who: "Paul Greene", reason: "Knee injection", status: "draft", note: { s: "Arthritis pain in both knees, worse in the mornings.", a: "Osteoarthritis, both knees.", p: "Steroid injection, right knee. Recheck in 3 months." }, codes: ["M17.0", "20610"] },
-  { id: "ruth", hour: 15, time: "3:00", who: "Ruth Alvarez", reason: "Lower back pain", status: "listening", note: { s: "Started after lifting boxes on Friday…", a: "", p: "" }, codes: [] },
-  { id: "sam", hour: 15, time: "3:30", who: "Sam Ortiz", reason: "Cough, two weeks", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
+  { id: "clara", hour: 8, time: "8:45", who: "Clara Diaz", reason: "Concussion follow-up", status: "signed", note: { s: "Headaches easing two weeks after a fall skiing. Screens still bother her.", a: "Post-concussion syndrome, improving.", p: "Gradual return to work, limit screens, recheck in 2 weeks." }, codes: ["F07.81", "99213"] },
+  { id: "daniel", hour: 9, time: "9:00", who: "Daniel Okafor", reason: "Seizure follow-up", status: "signed", note: { s: "No seizures since March. Sleeping well, no missed doses.", a: "Focal epilepsy, controlled.", p: "Continue levetiracetam 500 mg twice daily, return in 6 months." }, codes: ["G40.209", "99214"] },
+  { id: "grace", hour: 9, time: "9:30", who: "Grace Kim", reason: "Parkinson’s check", status: "signed", note: { s: "Tremor in the right hand, worse late afternoon. Walking steady.", a: "Parkinson’s disease, stable.", p: "Add a fourth carbidopa-levodopa dose, refill sent to CVS, PT referral." }, codes: ["G20.A1", "99214"] },
+  { id: "ava", hour: 9, time: "9:45", who: "Ava Morales", reason: "Tingling in both feet", status: "signed", note: { s: "Pins and needles in both feet for three months, worse at night.", a: "Peripheral neuropathy, cause unclear.", p: "B12, A1C and thyroid labs, EMG if no cause found." }, codes: ["G62.9", "99213"] },
+  { id: "henry", hour: 10, time: "10:00", who: "Henry Walsh", reason: "Memory concerns", status: "draft", note: { s: "Wife notes he repeats questions and misses bills. Still drives.", a: "Mild cognitive impairment, MoCA 23.", p: "Brain MRI, neuropsych testing, recheck in 3 months." }, codes: ["G31.84", "99214"] },
+  { id: "hannah", hour: 11, time: "11:00", who: "Hannah Lee", reason: "MS follow-up", status: "signed", note: { s: "No new symptoms. Some fatigue in the afternoons.", a: "Relapsing MS, stable on ocrelizumab.", p: "Next infusion in April, MRI in 6 months." }, codes: ["G35", "99214"] },
+  { id: "leo", hour: 11, time: "11:15", who: "Leo Jacobs", reason: "Staring spells, again", status: "draft", note: { s: "Teacher reports staring spells several times a day, per mom.", a: "Possible absence seizures.", p: "Sleep-deprived EEG, seizure safety handout, follow up after EEG." }, codes: ["R56.9", "99214"] },
+  { id: "marcus", hour: 11, time: "11:30", who: "Marcus Webb", reason: "Burning feet", status: "draft", note: { s: "Burning in both feet keeps him up. Sugars in the 140s.", a: "Diabetic polyneuropathy.", p: "Raise gabapentin to 600 mg at bedtime, foot care, recheck in 3 months." }, codes: ["E11.42", "99214"] },
+  { id: "iris", hour: 11, time: "11:45", who: "Iris Novak", reason: "Dizzy spells", status: "draft", note: { s: "Room spins for a minute when she rolls over in bed.", a: "Benign positional vertigo, right side.", p: "Epley maneuver done today, home exercises, call if worse." }, codes: ["H81.11", "99213"] },
+  { id: "omar", hour: 13, time: "1:00", who: "Omar Haddad", reason: "Return to play", status: "draft", note: { s: "Hit heads in soccer three weeks ago. No headaches for 10 days.", a: "Concussion, resolved.", p: "Cleared for stepwise return to play, form sent to school." }, codes: ["S06.0X0D", "99213"] },
+  { id: "lily", hour: 13, time: "1:30", who: "Lily Park", reason: "Headaches after school", status: "draft", note: { s: "Afternoon headaches most school days since September.", a: "Tension-type headache.", p: "Water and lunch at school, sleep routine, headache diary." }, codes: ["G44.209", "99213"] },
+  { id: "elena", hour: 14, time: "2:00", who: "Elena Cho", reason: "Migraine prevention", status: "draft", note: { s: "Eight migraine days a month, missing work.", a: "Episodic migraine, needs prevention.", p: "Start topiramate 25 mg at night, recheck in 6 weeks." }, codes: ["G43.009", "99214"] },
+  { id: "noah", hour: 14, time: "2:30", who: "Noah Bennett", reason: "Daytime sleepiness", status: "draft", note: { s: "Falls asleep at his desk and once at a red light.", a: "Suspected narcolepsy.", p: "Sleep study and MSLT at Mass General, no driving until then." }, codes: ["G47.419", "99214"] },
+  { id: "paul", hour: 14, time: "2:45", who: "Paul Greene", reason: "Botox for migraine", status: "draft", note: { s: "Chronic migraine, 18 headache days a month before Botox.", a: "Chronic migraine, down to 9 days.", p: "Botox, 155 units across 31 sites. Next round in 12 weeks." }, codes: ["G43.709", "64615"] },
+  { id: "ruth", hour: 15, time: "3:00", who: "Ruth Alvarez", reason: "Numb left leg", status: "listening", note: { s: "Started after lifting boxes on Friday…", a: "", p: "" }, codes: [] },
+  { id: "sam", hour: 15, time: "3:30", who: "Sam Ortiz", reason: "Headache, two weeks", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
   { id: "june", hour: 16, time: "4:00", who: "June Patel", reason: "Medication review", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
-  { id: "omar2", hour: 16, time: "4:15", who: "Theo Haddad", reason: "Ear check", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
-  { id: "mia", hour: 16, time: "4:30", who: "Mia Rossi", reason: "Well child, age 4", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
-  { id: "victor", hour: 16, time: "4:45", who: "Victor Lane", reason: "Blood pressure", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
+  { id: "omar2", hour: 16, time: "4:15", who: "Theo Haddad", reason: "Tic follow-up", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
+  { id: "mia", hour: 16, time: "4:30", who: "Mia Rossi", reason: "Speech delay, age 4", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
+  { id: "victor", hour: 16, time: "4:45", who: "Victor Lane", reason: "Stroke follow-up", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
 ];
 
 const HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16];
@@ -99,13 +99,13 @@ const VIDEO: Record<string, { state: VideoState; length?: string; by?: string; p
   victor: { state: "later" },
 };
 
-const CLINICIANS = ["Dr. Roberts", "Dr. Patel", "Dr. Shah"];
+const CLINICIANS = ["Dr. Brooks", "Dr. Patel", "Dr. Shah"];
 const MEDS: Record<string, string> = {
-  grace: "Lisinopril 10 mg",
-  marcus: "Metformin 500 mg",
-  hannah: "Albuterol inhaler",
-  elena: "None",
-  paul: "Naproxen as needed",
+  grace: "Carbidopa-levodopa 25/100",
+  marcus: "Gabapentin 300 mg",
+  hannah: "Ocrelizumab infusions",
+  elena: "Sumatriptan as needed",
+  paul: "Rizatriptan as needed",
 };
 const PLANS: Record<string, string> = { leo: "Harbor Mutual", omar: "Harbor Mutual", omar2: "Harbor Mutual", daniel: "Aetna", priya: "Aetna", maya: "Aetna" };
 
@@ -115,7 +115,7 @@ const answersFor = (v: Visit) => [
   { label: "Reason", value: v.reason },
   { label: "In their words", value: v.note.s || "Shared in the video" },
   { label: "Medications", value: MEDS[v.id] ?? "None listed" },
-  { label: "Allergies", value: v.id === "lily" ? "Seasonal pollen" : "None known" },
+  { label: "Allergies", value: v.id === "lily" ? "Amoxicillin" : "None known" },
   { label: "Insurance", value: PLANS[v.id] ?? "Blue Cross" },
 ];
 const toSeconds = (len: string) => {

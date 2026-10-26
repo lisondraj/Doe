@@ -24,7 +24,7 @@ const PEOPLE = [
   "Leo Jacobs",
   "Hannah Lee",
   "Marcus Webb",
-  "Ava Brooks",
+  "Ava Morales",
   "Omar Haddad",
   "Sofia Ruiz",
   "Lily Park",

@@ -37,18 +37,18 @@ type Draft = {
 
 const DRAFTS: Record<string, Draft> = {
   "mia-form": {
-    heading: "Lincoln Elementary physical",
+    heading: "Lincoln Elementary seizure action plan",
     to: "Mia’s agent",
     send: "Sign and send",
     agent: "Mia’s agent",
     templates: [
-      { name: "Lincoln Elementary physical", note: "Sent by the school" },
-      { name: "Massachusetts school health record", note: "State form" },
-      { name: "Sports participation clearance", note: "Practice template" },
+      { name: "Lincoln Elementary seizure action plan", note: "Sent by the school" },
+      { name: "Massachusetts school medication form", note: "State form" },
+      { name: "Seizure first aid handout", note: "Practice template" },
     ],
     automations: [
-      { name: "Fill school forms from the last well visit", note: "Forms" },
-      { name: "Check immunizations against the state registry", note: "Forms" },
+      { name: "Fill school forms from the last visit", note: "Forms" },
+      { name: "Add seizure first aid to every action plan", note: "Forms" },
       { name: "Return finished forms to the sender’s agent", note: "Transit" },
     ],
     sections: [
@@ -56,48 +56,48 @@ const DRAFTS: Record<string, Draft> = {
         title: "Student",
         fields: [
           { id: "name", label: "Name", value: "Leo Jacobs", source: "chart", note: "Demographics" },
-          { id: "dob", label: "Date of birth", value: "Mar 14, 2019", source: "chart", note: "Demographics" },
+          { id: "dob", label: "Date of birth", value: "Mar 3, 2020", source: "chart", note: "Demographics" },
           { id: "grade", label: "Grade", value: "1st grade", source: "agent", note: "Told at intake" },
           { id: "guardian", label: "Guardian", value: "Mia Jacobs", source: "chart", note: "Contacts" },
         ],
       },
       {
-        title: "Exam",
+        title: "Seizures",
         fields: [
-          { id: "date", label: "Exam date", value: "Sep 18, 2026", source: "chart", note: "Well visit" },
-          { id: "hw", label: "Height and weight", value: "3′ 10″ · 49 lb", source: "chart", note: "Well visit" },
-          { id: "vision", label: "Vision", value: "20/20 both eyes", source: "chart", note: "Well visit" },
-          { id: "hearing", label: "Hearing", value: "Mild loss, left ear", source: "chart", note: "Audiogram, Oct 2" },
+          { id: "type", label: "Type", value: "Possible absence seizures", source: "chart", note: "Oct 26 visit" },
+          { id: "looks", label: "What they look like", value: "Staring and blinking, a few seconds", source: "chart", note: "Oct 26 visit" },
+          { id: "eeg", label: "Last EEG", value: "Jun 12, normal", source: "chart", note: "EEG report" },
+          { id: "rescue", label: "Rescue medication", value: "None needed", source: "chart", note: "Med list" },
         ],
       },
       {
-        title: "Health",
+        title: "At school",
         fields: [
           { id: "allergies", label: "Allergies", value: "None known", source: "chart", note: "Allergy list" },
-          { id: "meds", label: "Medications", value: "Amoxicillin, ends Oct 24", source: "chart", note: "Med list" },
-          { id: "shots", label: "Immunizations", value: "Up to date", source: "automation", note: "State registry" },
+          { id: "firstaid", label: "First aid", value: "Note the time, keep him safe, call Mia", source: "automation", note: "Practice template" },
+          { id: "call", label: "Call 911 if", value: "A seizure lasts over 5 minutes", source: "automation", note: "Practice template" },
           { id: "limits", label: "Limits on recess or gym", value: "", source: "missing", note: "Not in the chart" },
         ],
       },
       {
         title: "Sign-off",
-        fields: [{ id: "sign", label: "Clinician", value: "Dr. Elena Alvarez, MD", source: "automation", note: "Signature block", wide: true }],
+        fields: [{ id: "sign", label: "Clinician", value: "Dr. Sarah Brooks, MD", source: "automation", note: "Signature block", wide: true }],
       },
     ],
     chat: [
-      { from: "agent", text: "Hi, Lincoln Elementary needs Leo’s physical form back by Friday. I’ve attached their PDF." },
-      { from: "doe", text: "Got it. Everything but one field is filled from Leo’s chart. Dr. Alvarez will sign today." },
+      { from: "agent", text: "Hi, Lincoln Elementary needs a seizure action plan for Leo by Friday. I’ve attached their PDF." },
+      { from: "doe", text: "Got it. Everything but one field is filled from Leo’s chart. Dr. Brooks will sign today." },
     ],
     ask: {
       field: "limits",
-      question: "Does Leo have any limits on recess or gym the school should know about?",
-      answer: "No limits for recess or gym. His ear tube surgery is coming up, so no swimming for two weeks after.",
-      value: "None. No swimming for 2 weeks after ear tube surgery",
+      question: "Should Leo have any limits on recess or gym while we wait for the EEG?",
+      answer: "Recess and gym are fine. Mia would like an adult nearby when he climbs, and no swimming without one.",
+      value: "None. Adult nearby for climbing and swimming",
     },
-    suggestions: ["Is Mia okay with us sharing the hearing result?", "Which email should the school copy go to?"],
+    suggestions: ["Is Mia okay with us sharing the EEG result with the school?", "Which email should the school copy go to?"],
   },
   "harbor-letter": {
-    heading: "Reply to Harbor Mutual, ear tube prior auth",
+    heading: "Reply to Harbor Mutual, 48-hour EEG prior auth",
     to: "Harbor Mutual",
     send: "Send to Harbor Mutual",
     agent: "Mia’s agent",
@@ -107,7 +107,7 @@ const DRAFTS: Record<string, Draft> = {
       { name: "Records release cover sheet", note: "Practice template" },
     ],
     automations: [
-      { name: "Attach the latest audiogram to payer requests", note: "Prior auth" },
+      { name: "Attach the latest EEG report to payer requests", note: "Prior auth" },
       { name: "Pull visit notes for the dates a payer asks about", note: "Prior auth" },
       { name: "File payer replies under Payments", note: "Payments" },
     ],
@@ -116,41 +116,41 @@ const DRAFTS: Record<string, Draft> = {
         title: "Request",
         fields: [
           { id: "ref", label: "Reference", value: "HM-PA-448213", source: "letter", note: "Harbor Mutual letter" },
-          { id: "asks", label: "Asked for", value: "Audiogram, last 90 days", source: "letter", note: "Harbor Mutual letter" },
+          { id: "asks", label: "Asked for", value: "EEG report, last 6 months", source: "letter", note: "Harbor Mutual letter" },
           { id: "due", label: "Due", value: "Oct 21", source: "letter", note: "Harbor Mutual letter" },
-          { id: "code", label: "Procedure", value: "Ear tubes, CPT 69436", source: "chart", note: "Auth request" },
+          { id: "code", label: "Procedure", value: "48-hour ambulatory EEG", source: "chart", note: "Auth request" },
         ],
       },
       {
         title: "Clinical",
         fields: [
-          { id: "dx", label: "Diagnosis", value: "Recurrent otitis media, H66.93", source: "chart", note: "Problem list" },
-          { id: "episodes", label: "Episodes", value: "4 in the last 6 months", source: "chart", note: "Visit history" },
-          { id: "abx", label: "Treatment tried", value: "3 antibiotic courses since April", source: "chart", note: "Med history" },
-          { id: "audio", label: "Audiogram", value: "Oct 2, mild conductive loss, left", source: "automation", note: "Attached" },
+          { id: "dx", label: "Diagnosis", value: "Possible absence seizures, R56.9", source: "chart", note: "Problem list" },
+          { id: "episodes", label: "Episodes", value: "About 10 spells a day since Oct 22", source: "chart", note: "Visit history" },
+          { id: "prior", label: "Prior EEG", value: "Jun 12, routine, normal", source: "automation", note: "Attached" },
+          { id: "why", label: "Why 48 hours", value: "Spells not caught on a routine EEG", source: "chart", note: "Dr. Brooks’ note" },
           { id: "missed", label: "School days missed", value: "", source: "missing", note: "Not in the chart" },
-          { id: "tymp", label: "Tympanometry", value: "Flat, type B, left ear", source: "chart", note: "Oct 2 visit" },
+          { id: "exam", label: "Exam", value: "Normal neuro exam, Oct 26", source: "chart", note: "Oct 26 visit" },
         ],
       },
       {
         title: "Sign-off",
-        fields: [{ id: "sign", label: "Clinician", value: "Dr. Elena Alvarez, MD", source: "automation", note: "Signature block", wide: true }],
+        fields: [{ id: "sign", label: "Clinician", value: "Dr. Sarah Brooks, MD", source: "automation", note: "Signature block", wide: true }],
       },
     ],
-    chat: [{ from: "doe", text: "Harbor Mutual asked for Leo’s audiogram for the ear tube approval. I’m putting the reply together now." }],
+    chat: [{ from: "doe", text: "Harbor Mutual asked for Leo’s EEG report for the 48-hour EEG approval. I’m putting the reply together now." }],
     ask: {
       field: "missed",
-      question: "How many school days has Leo missed for ear infections since April?",
-      answer: "Six days since April, going by the school’s attendance app. Two were last week.",
-      value: "6 since April, per school attendance",
+      question: "How many school days has Leo missed because of the spells?",
+      answer: "Two days this month, going by the school’s attendance app. The nurse sent him home both times.",
+      value: "2 this month, per school attendance",
     },
-    suggestions: ["Has Leo had any ear pain since Oct 14?", "Can Mia share the school’s attendance record?"],
+    suggestions: ["Has Leo had any spells at home since Oct 26?", "Can Mia share the teacher’s notes?"],
   },
-  "quest-a1c": {
-    heading: "Note to Marcus about his A1C",
-    to: "Marcus’s agent",
-    send: "Send to Marcus’s agent",
-    agent: "Marcus’s agent",
+  "quest-labs": {
+    heading: "Note to Ava about her labs",
+    to: "Ava’s agent",
+    send: "Send to Ava’s agent",
+    agent: "Ava’s agent",
     templates: [
       { name: "Result, explained plainly", note: "Practice template" },
       { name: "Result with a visit request", note: "Practice template" },
@@ -158,37 +158,37 @@ const DRAFTS: Record<string, Draft> = {
     ],
     automations: [
       { name: "Explain lab results in plain language", note: "Results" },
-      { name: "Ask for home readings when A1C rises", note: "Results" },
+      { name: "Ask about diet and supplements when B12 is low", note: "Results" },
       { name: "Offer a visit when a result is out of range", note: "Schedule" },
     ],
     sections: [
       {
         title: "Result",
         fields: [
-          { id: "a1c", label: "A1C", value: "7.8%, up from 7.1% in June", source: "chart", note: "Quest, Oct 24" },
-          { id: "glucose", label: "Glucose", value: "162 mg/dL, fasting", source: "chart", note: "Quest, Oct 24" },
-          { id: "egfr", label: "Kidney function", value: "eGFR 88, normal", source: "chart", note: "Quest, Oct 24" },
-          { id: "home", label: "Home readings", value: "", source: "missing", note: "Not in the chart" },
+          { id: "b12", label: "B12", value: "180 pg/mL, low", source: "chart", note: "Quest, Oct 24" },
+          { id: "a1c", label: "A1C", value: "5.4%, normal", source: "chart", note: "Quest, Oct 24" },
+          { id: "tsh", label: "Thyroid", value: "TSH 2.1, normal", source: "chart", note: "Quest, Oct 24" },
+          { id: "diet", label: "Diet and supplements", value: "", source: "missing", note: "Not in the chart" },
         ],
       },
       {
         title: "Plan",
         fields: [
-          { id: "med", label: "Medication", value: "Metformin up to 1,000 mg twice a day", source: "chart", note: "Dr. Roberts’ plan" },
-          { id: "recheck", label: "Recheck", value: "A1C again in 3 months", source: "automation", note: "Results" },
+          { id: "med", label: "Medication", value: "Vitamin B12, 1,000 mcg a day", source: "chart", note: "Dr. Brooks’ plan" },
+          { id: "recheck", label: "Recheck", value: "B12 again in 3 months", source: "automation", note: "Results" },
           { id: "visit", label: "Visit offered", value: "Thu, Oct 29 at 10:30", source: "automation", note: "Schedule" },
-          { id: "by", label: "From", value: "Dr. Sarah Roberts", source: "automation", note: "Signature block" },
+          { id: "by", label: "From", value: "Dr. Sarah Brooks", source: "automation", note: "Signature block" },
         ],
       },
     ],
-    chat: [{ from: "doe", text: "Marcus’s A1C came back at 7.8%. Dr. Roberts wants to raise his metformin, so I’m writing him a short note." }],
+    chat: [{ from: "doe", text: "Ava’s B12 came back low at 180. Dr. Brooks thinks it explains the tingling, so I’m writing her a short note." }],
     ask: {
-      field: "home",
-      question: "Has Marcus been checking his sugar at home? What range has he seen?",
-      answer: "Mornings have been 140 to 170 this month. It’s all logged in his glucose app.",
-      value: "Mornings 140 to 170 this month",
+      field: "diet",
+      question: "Does Ava eat meat or dairy, or take any supplements?",
+      answer: "She’s been vegan for two years and doesn’t take a B12 supplement.",
+      value: "Vegan for 2 years, no B12 supplement",
     },
-    suggestions: ["Does Thursday at 10:30 work for Marcus?", "Is he still taking metformin every day?"],
+    suggestions: ["Does Thursday at 10:30 work for Ava?", "Is the tingling any worse this week?"],
   },
 };
 
@@ -462,7 +462,7 @@ export function TransitFillModal({ doc, onClose }: { doc: Doc; onClose: () => vo
           <div className="flex flex-col gap-[22px] max-w-[760px] mx-auto my-[24px] p-[36px] rounded-[24px] bg-paper">
             <div className="flex items-start justify-between gap-[16px]">
               <span className="flex flex-col gap-[4px]">
-                <span className={`text-[12px] leading-[16px] ${SANS} font-[600] uppercase tracking-[0.06em] text-sub`}>Northside Family Medicine</span>
+                <span className={`text-[12px] leading-[16px] ${SANS} font-[600] uppercase tracking-[0.06em] text-sub`}>Brooks Neurology</span>
                 <span className={`text-[28px] leading-[32px] tracking-[-0.02em] ${DISPLAY} text-walnut`}>{draft.templates[template]!.name}</span>
                 <span className={`text-[14px] leading-[18px] ${SANS} text-sub`}>
                   To {draft.to} · Re: {doc.patient}
