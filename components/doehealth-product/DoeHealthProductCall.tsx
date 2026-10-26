@@ -3,7 +3,7 @@
  * (file "Tender mountain", page "Doe App v2"). Markup is kept as exported.
  *
  * Rendered as a shell-level layer (the root fills the inner shell). Opened from a row in the
- * Voice tab's Handled list; the breadcrumb "Voice" returns to that tab.
+ * Interface tab's calls; the breadcrumb "Interface" returns to that tab.
  */
 export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {}) {
   return (
@@ -18,7 +18,7 @@ export function DoeHealthProductCallPage({ onBack }: { onBack?: () => void } = {
             onClick={onBack}
             className="cursor-pointer text-label leading-[18px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#2819109E]"
           >
-            Voice
+            Interface
           </button>
           <div className="text-label leading-[18px] font-['Inter-Regular','Inter',system-ui,sans-serif] text-[#28191066]">
             /

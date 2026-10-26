@@ -13,12 +13,13 @@ import {
   DoeHealthProductProvidersLayers,
 } from "@/components/doehealth-product/DoeHealthProductProviders";
 import { DoeHealthProductServicesPage } from "@/components/doehealth-product/DoeHealthProductServices";
-import { DoeHealthProductVoicePage } from "@/components/doehealth-product/DoeHealthProductVoice";
+import { DoeHealthProductInterfacePage } from "@/components/doehealth-product/DoeHealthProductInterface";
 import { DoeHealthProductSchedulePage } from "@/components/doehealth-product/DoeHealthProductSchedule";
 import { DoeHealthProductPaymentsPage } from "@/components/doehealth-product/DoeHealthProductPayments";
 import { DoeHealthProductPermissionsPage } from "@/components/doehealth-product/DoeHealthProductPermissions";
 import { DoeHealthProductTransitPage } from "@/components/doehealth-product/DoeHealthProductTransit";
 import { DoeHealthProductOffersPage } from "@/components/doehealth-product/DoeHealthProductOffers";
+import { DoeHealthProductTeamPage } from "@/components/doehealth-product/DoeHealthProductTeam";
 import { DoeHealthProductFormsPage } from "@/components/doehealth-product/DoeHealthProductForms";
 import { DoeHealthProductInsightsPage } from "@/components/doehealth-product/DoeHealthProductInsights";
 import { DoeHealthProductAutomationsPage } from "@/components/doehealth-product/DoeHealthProductAutomations";
@@ -28,10 +29,10 @@ import { DoeHealthProductIndex } from "@/components/doehealth-product/DoeHealthP
 import { HalftoneDisc } from "@/components/doehealth-product/DoeHealthProductHalftone";
 
 /** "call" is opened from the Voice tab's Handled list and has no rail icon of its own. */
-type TabId = "schedule" | "voice" | "call" | "services" | "providers" | "offers" | "transit" | "payments" | "permissions" | "search" | "forms" | "integrations" | "insights" | "automations";
+type TabId = "schedule" | "interface" | "call" | "services" | "providers" | "offers" | "team" | "transit" | "payments" | "permissions" | "search" | "forms" | "integrations" | "insights" | "automations";
 
 /** Pages that live in the Index dropdown in the rail. */
-const INDEX_CHILDREN: TabId[] = ["services", "providers", "offers", "permissions", "search", "forms"];
+const INDEX_CHILDREN: TabId[] = ["services", "providers", "offers", "team", "permissions", "search", "forms"];
 
 /** Cross-fade duration for the inner shell when switching nav tabs. */
 const FADE_MS = 200;
@@ -445,6 +446,11 @@ export function DoeHealthProductArtboard({
                   <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v1.8a2.7 2.7 0 0 0 0 5.4v1.8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-1.8a2.7 2.7 0 0 0 0-5.4z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
                   <path d="M10 9.5l4 5M10.2 14.5h.01M13.8 9.5h.01" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
                 </NavButton>
+                <NavButton label="Team" active={activeTab === "team"} onSelect={() => switchTab("team")}>
+                  <circle cx="8" cy="9" r="2.8" fill="none" stroke="currentColor" strokeWidth="1.7" />
+                  <circle cx="16" cy="9" r="2.8" fill="none" stroke="currentColor" strokeWidth="1.7" />
+                  <path d="M3.5 18.5c.6-2.6 2.4-4 4.5-4s3.9 1.4 4.5 4M11.5 18.5c.6-2.6 2.4-4 4.5-4s3.9 1.4 4.5 4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                </NavButton>
                 <NavButton label="Agent Permissions" active={activeTab === "permissions"} onSelect={() => switchTab("permissions")}>
                   <path d="M12 3.8l6.8 2.6v5.1c0 4.2-2.8 7.4-6.8 8.8-4-1.4-6.8-4.6-6.8-8.8V6.4z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
                   <path d="M9.2 12.2l2 2 3.8-4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
@@ -466,8 +472,9 @@ export function DoeHealthProductArtboard({
             <rect x="13" y="3.5" width="7.5" height="7.5" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
             <rect x="3.5" y="13" width="17" height="7.5" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
           </NavButton>
-          <NavButton label="Voice" active={activeTab === "voice" || activeTab === "call"} onSelect={() => switchTab("voice")}>
-            <path d="M5 4.5h3.2l1.6 4-2 1.3a10.5 10.5 0 0 0 6.4 6.4l1.3-2 4 1.6V19a1.5 1.5 0 0 1-1.6 1.5C10.6 20 4 13.4 3.5 6.1A1.5 1.5 0 0 1 5 4.5z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+          <NavButton label="Interface" active={activeTab === "interface" || activeTab === "call"} onSelect={() => switchTab("interface")}>
+            <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h7A2.5 2.5 0 0 1 16 6.5v4a2.5 2.5 0 0 1-2.5 2.5H9l-3.5 3v-3h0A1.5 1.5 0 0 1 4 11.5z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+            <path d="M19 9.5a1.5 1.5 0 0 1 1 1.4v4.6a1.5 1.5 0 0 1-1.5 1.5H18v3l-3.5-3H12" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
           </NavButton>
           <NavButton label="Transit" active={activeTab === "transit"} onSelect={() => switchTab("transit")}>
             <path d="M4 8.5h14M14.5 5l3.5 3.5-3.5 3.5M20 15.5H6M9.5 12L6 15.5 9.5 19" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
@@ -595,11 +602,12 @@ export function DoeHealthProductArtboard({
         <div data-doe-shell className="grow h-full flex p-[12px] rounded-[24px] overflow-clip gap-[12px] relative [background-color:#FFFCF1]">
           {/* Full-shell tab layers sit beneath the content panel, as in Paper. */}
           {layer("schedule", <DoeHealthProductSchedulePage />)}
-          {layer("voice", <DoeHealthProductVoicePage onOpenCall={() => switchTab("call")} />)}
-          {layer("call", <DoeHealthProductCallPage onBack={() => switchTab("voice")} />)}
+          {layer("interface", <DoeHealthProductInterfacePage onOpenCall={() => switchTab("call")} />)}
+          {layer("call", <DoeHealthProductCallPage onBack={() => switchTab("interface")} />)}
           {layer("services", <DoeHealthProductServicesPage />)}
           {layer("providers", <DoeHealthProductProvidersLayers />)}
           {layer("offers", <DoeHealthProductOffersPage />)}
+          {layer("team", <DoeHealthProductTeamPage />)}
           {layer("transit", <DoeHealthProductTransitPage />)}
           {layer("forms", <DoeHealthProductFormsPage />)}
           {layer("search", <DoeHealthProductSearchPage />)}

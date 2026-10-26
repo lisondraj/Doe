@@ -6,7 +6,7 @@
  */
 import { Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
-type IndexTab = "schedule" | "voice" | "services" | "providers" | "transit" | "payments" | "permissions";
+type IndexTab = "schedule" | "interface" | "services" | "providers" | "transit" | "payments" | "permissions";
 type SectionId = "needs" | Exclude<IndexTab, "permissions"> | "agents" | "messages" | "systems";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
@@ -72,9 +72,9 @@ const SECTIONS: Section[] = [
     ),
   },
   {
-    id: "voice",
-    title: "Voice",
-    tab: "voice",
+    id: "interface",
+    title: "Interface",
+    tab: "interface",
     tile: "#E3E9D9",
     icon: (
       <Glyph>
@@ -83,6 +83,7 @@ const SECTIONS: Section[] = [
     ),
     summary: (
       <>
+        <span className={`${CHIP} bg-sand`}>128 agent requests</span>
         <span className={`${CHIP} bg-sand`}>47 calls</span>
       </>
     ),
@@ -912,7 +913,7 @@ function SystemsDetail() {
 function SectionDetail({ id, done, onDone }: { id: SectionId; done: Set<string>; onDone: (id: string) => void }) {
   if (id === "needs") return <NeedsDetail done={done} onDone={onDone} />;
   if (id === "schedule") return <ScheduleDetail />;
-  if (id === "voice") return <VoiceDetail />;
+  if (id === "interface") return <VoiceDetail />;
   if (id === "agents") return <AgentsDetail />;
   if (id === "messages") return <MessagesDetail />;
   if (id === "services") return <ServicesDetail />;
