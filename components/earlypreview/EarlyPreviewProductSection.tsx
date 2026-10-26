@@ -69,7 +69,7 @@ const VISUALS: Record<EarlyPreviewProductSlideId, Visual> = {
   followUp: { kind: "film", film: "coordinate", frame: 300, active: "referrals", anchor: "start", crop: CORNER, sit: "br" },
   multiSite: { kind: "app", tab: "integrations", menu: true, providerPanel: true, crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   scheduling: { kind: "app", tab: "schedule", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
-  clinics: { kind: "app", tab: "referrals", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
+  clinics: { kind: "app", tab: "transit", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },
   departments: { kind: "film", film: "permissions", frame: 200, active: "permissions", focus: { x: 240, y: 58, w: 1497, h: 964 }, inset: PAGE_INSET, crop: CORNER, sit: "br" },
   directory: { kind: "film", film: "network", frame: 440, active: "providers", focus: { x: 150, y: 0, w: 1560, h: 995 }, inset: PAGE_INSET, crop: CORNER, sit: "br" },
   payments: { kind: "app", tab: "payments", crop: { x: 0, y: 0, w: 960, h: 640, ax: "start", ay: "start" }, sit: "br" },

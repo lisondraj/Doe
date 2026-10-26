@@ -6,7 +6,7 @@
  */
 import { Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
-type IndexTab = "schedule" | "voice" | "services" | "providers" | "referrals" | "payments" | "permissions";
+type IndexTab = "schedule" | "voice" | "services" | "providers" | "transit" | "payments" | "permissions";
 type SectionId = "needs" | Exclude<IndexTab, "permissions"> | "agents" | "messages" | "systems";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
@@ -152,14 +152,15 @@ const SECTIONS: Section[] = [
     ),
   },
   {
-    id: "referrals",
-    title: "Referrals",
-    tab: "referrals",
+    id: "transit",
+    title: "Transit",
+    tab: "transit",
     tile: "#EEEADF",
     summary: (
       <>
-        <span className={`${CHIP} bg-sand`}>37 open</span>
-        <span className={`${CHIP} bg-sand`}>11 scheduled</span>
+        <span className={`${CHIP} bg-sand`}>6 in today</span>
+        <span className={`${CHIP} bg-sand`}>6 out</span>
+        <span className={`${CHIP} bg-salmon`}>3 need you</span>
       </>
     ),
   },
@@ -916,7 +917,7 @@ function SectionDetail({ id, done, onDone }: { id: SectionId; done: Set<string>;
   if (id === "messages") return <MessagesDetail />;
   if (id === "services") return <ServicesDetail />;
   if (id === "providers") return <ProvidersDetail />;
-  if (id === "referrals") return <ReferralsDetail />;
+  if (id === "transit") return <ReferralsDetail />;
   if (id === "payments") return <PaymentsDetail />;
   return <SystemsDetail />;
 }
