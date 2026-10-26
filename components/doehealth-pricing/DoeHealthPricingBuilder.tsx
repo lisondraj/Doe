@@ -316,7 +316,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
 
   /** A tier is lit while anyone on the team is on it. */
   const lit = (id: PlanId) => !!a.plan && onTier(id) > 0;
-  const cols = phone ? "grid-cols-[150px_repeat(4,128px)]" : "grid-cols-[minmax(180px,1.5fr)_repeat(4,minmax(120px,1fr))]";
+  const cols = phone ? "grid-cols-[172px_repeat(4,128px)]" : "grid-cols-[minmax(180px,1.5fr)_repeat(4,minmax(120px,1fr))]";
   /** Doe One's column is always brown; a tier the team uses gets a soft tint. */
   const dark = (id: PlanId) => id === "one";
   const cell = (id: PlanId) => `flex justify-center self-stretch items-center ${dark(id) ? "bg-[#281910]" : lit(id) ? "bg-[#F7EFDF]" : ""}`;
@@ -345,23 +345,28 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const comparison = (
     <div className={phone ? "-mx-[20px] px-[20px] overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" : ""}>
       <div className={`grid ${cols} rounded-[28px] bg-[#FFFCF1] overflow-clip ${phone ? "w-max" : ""}`}>
-        <span className={first} />
+        <div className={`${first} flex flex-col gap-[2px] px-[20px] pt-[44px] pb-[20px]`}>
+          <span className={`text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-[#140C04]`}>
+            {plural(providerCount, "provider")}, {plural(locationCount, "location")}
+          </span>
+          <span className={`text-[13px] leading-[17px] ${SUB}`}>{a.annual ? "Billed yearly, shown per month" : "Billed monthly"}</span>
+        </div>
         {PLANS.map((p) => {
           const on = lit(p.id);
           const special = dark(p.id);
           return (
             <div
               key={p.id}
-              className={`relative flex flex-col gap-[12px] p-[18px] pb-[20px] transition-colors duration-200 ${special ? "bg-[#281910] text-[#FFFCF1]" : on ? "bg-[#F7EFDF] text-[#281910]" : "text-[#281910]"}`}
+              className={`relative flex flex-col items-center text-center gap-[12px] p-[18px] pb-[20px] transition-colors duration-200 ${special ? "bg-[#281910] text-[#FFFCF1]" : on ? "bg-[#F7EFDF] text-[#281910]" : "text-[#281910]"}`}
             >
-              {special && <span className="absolute left-[18px] right-[18px] top-0 h-[4px] rounded-b-[4px] bg-[#FCCFB8]" aria-hidden="true" />}
-              <span className="flex flex-col gap-[2px]">
+              {special && <span className="absolute left-1/2 -translate-x-1/2 w-[44px] top-0 h-[4px] rounded-b-[4px] bg-[#FCCFB8]" aria-hidden="true" />}
+              <span className="flex flex-col items-center gap-[2px]">
                 <span className="flex h-[22px] mb-[4px]">
                   {p.id === "advanced" && <span className="h-[22px] px-[9px] flex items-center rounded-[999px] bg-[#FCCFB8] text-[11px] leading-[14px] font-[600] text-[#140C04] whitespace-nowrap">Most chosen</span>}
                   {special && <span className="h-[22px] px-[9px] flex items-center rounded-[999px] border-[1.5px] border-solid border-[#FCCFB8] text-[11px] leading-[14px] font-[600] text-[#FCCFB8] whitespace-nowrap">Complete</span>}
                 </span>
                 <span className={`text-[22px] leading-[26px] tracking-[-0.02em] ${DISPLAY}`}>{p.name}</span>
-                <span className={`text-[13px] leading-[17px] min-h-[34px] ${special ? "text-[rgba(255,252,241,0.68)]" : SUB}`}>{p.line}</span>
+                <span className={`text-[13px] leading-[17px] min-h-[34px] [text-wrap:balance] ${special ? "text-[rgba(255,252,241,0.68)]" : SUB}`}>{p.line}</span>
               </span>
               <span className="flex items-baseline gap-[3px]">
                 <span className={`text-[32px] leading-[34px] tracking-[-0.035em] ${DISPLAY} [font-variant-numeric:tabular-nums] ${special ? "text-[#FCCFB8]" : ""}`}>{money(priceOf(p.id))}</span>
@@ -431,28 +436,71 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </div>
   );
 
+  const billing = (
+    <span className="flex items-center justify-center p-[4px] rounded-[20px] bg-[#FFFCF1]">
+      <span className="flex p-[3px] gap-[2px] rounded-[999px] bg-[#F4EEDF]">
+        {(["monthly", "annual"] as const).map((b) => (
+          <button
+            key={b}
+            type="button"
+            onClick={() => set({ annual: b === "annual" })}
+            className={`h-[34px] ${phone ? "px-[10px]" : "px-[14px]"} rounded-[999px] text-[13px] leading-[16px] font-[500] transition-colors duration-200 whitespace-nowrap ${(b === "annual") === a.annual ? "bg-[#281910] text-[#FFFCF1]" : `${SUB} hover:text-[#281910]`}`}
+          >
+            {b === "annual" ? (phone ? "Yearly" : "Yearly, 2 mo free") : "Monthly"}
+          </button>
+        ))}
+      </span>
+    </span>
+  );
+
+  const actions = (
+    <span className={`flex gap-[6px] ${phone ? "col-span-2" : ""}`}>
+      <button
+        type="button"
+        onClick={() => setPanel("team")}
+        className={`flex items-center justify-center gap-[8px] h-[48px] px-[18px] rounded-[20px] bg-[#FFFCF1] hover:bg-white text-[14px] leading-[18px] font-[500] text-[#281910] transition-colors duration-150 whitespace-nowrap ${phone ? "grow" : ""}`}
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+          <circle cx="9" cy="8.5" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M3.5 19.5c.8-3.2 3-5 5.5-5s4.7 1.8 5.5 5M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.6 14.8c1.4.7 2.4 2.3 2.9 4.7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+        Providers and plans
+      </button>
+      {!phone && (
+        <button
+          type="button"
+          onClick={() => setPanel("price")}
+          className={`flex items-center justify-center gap-[10px] h-[48px] pl-[18px] pr-[8px] rounded-[20px] bg-[#281910] hover:bg-[#3A2920] text-[14px] leading-[18px] font-[500] text-[#FFFCF1] transition-colors duration-150 whitespace-nowrap ${phone ? "grow" : ""}`}
+        >
+          See price
+          <span className={`h-[32px] px-[10px] flex items-center rounded-[14px] bg-[#FCCFB8] text-[#140C04] text-[14px] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}/mo</span>
+        </button>
+      )}
+    </span>
+  );
+
   /** The controls that follow the comparison: locations, providers (with their initials), billing, and the team. */
   const controls = (
     <div
-      className={`z-30 gap-[6px] p-[6px] rounded-[26px] bg-[rgba(237,229,210,0.94)] [backdrop-filter:blur(14px)] ${phone ? "grid grid-cols-2" : "flex flex-wrap items-stretch [&>*]:grow"} ${pinned ? "fixed" : ""}`}
+      className={`z-30 gap-[6px] p-[6px] rounded-[26px] bg-[rgba(237,229,210,0.94)] [backdrop-filter:blur(14px)] ${phone ? "grid grid-cols-2" : "grid grid-cols-3"} ${pinned ? "fixed" : ""}`}
       style={pinned ? { top: pinTop, left: pinned.left, width: pinned.width } : undefined}
     >
-      <span className={`flex items-center justify-between gap-[10px] px-[14px] py-[8px] rounded-[20px] bg-[#FFFCF1] ${phone ? "" : "basis-[220px]"}`}>
-        <span className="flex flex-col">
+      <span className={`flex justify-between rounded-[20px] bg-[#FFFCF1] ${phone ? "flex-col items-center gap-[6px] p-[8px] pt-[10px] min-w-[0px]" : "items-center gap-[10px] px-[14px] py-[8px]"}`}>
+        <span className="flex flex-col gap-[2px]">
           <span className={`text-[13px] leading-[16px] font-[500] ${SUB}`}>Locations</span>
-          {!phone && <span className="whitespace-nowrap text-[12px] leading-[16px] text-[rgba(20,12,4,0.42)]">{locationCount > 1 ? "Multi-clinic" : "Single location"}</span>}
+          {!phone && <span className="h-[20px] flex items-center whitespace-nowrap text-[12px] leading-[16px] text-[rgba(20,12,4,0.42)]">{locationCount > 1 ? "Multi-clinic" : "Single location"}</span>}
         </span>
         <span className="[&>span]:bg-[#F4EEDF] [&>span]:p-[2px] [&_button]:bg-[#FFFCF1]">
           <Count value={locationCount} max={30} onChange={setLocations} />
         </span>
       </span>
-      <span className={`flex items-center justify-between gap-[10px] px-[14px] py-[8px] rounded-[20px] bg-[#FFFCF1] ${phone ? "" : "basis-[260px]"}`}>
-        <span className="flex flex-col gap-[4px] min-w-[0px]">
+      <span className={`flex justify-between rounded-[20px] bg-[#FFFCF1] ${phone ? "flex-col items-center gap-[6px] p-[8px] pt-[10px] min-w-[0px]" : "items-center gap-[10px] px-[14px] py-[8px]"}`}>
+        <span className="flex flex-col gap-[2px] min-w-[0px]">
           <span className={`text-[13px] leading-[16px] font-[500] ${SUB}`}>Providers</span>
           {!phone && (
-            <span className="flex items-center">
+            <span className="h-[20px] flex items-center">
               {providers.slice(0, 5).map((p, i) => (
-                <span key={p.id} className={`w-[22px] h-[22px] flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[9px] leading-[10px] font-[700] text-[#281910] border-[2px] border-solid border-[#FFFCF1] ${i ? "-ml-[6px]" : ""}`}>
+                <span key={p.id} className={`w-[20px] h-[20px] flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[8px] leading-[10px] font-[700] text-[#281910] border-[2px] border-solid border-[#FFFCF1] ${i ? "-ml-[6px]" : ""}`}>
                   {initials(p.name, providers.indexOf(p) + 1)}
                 </span>
               ))}
@@ -464,45 +512,24 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           <Count value={providerCount} min={locationCount} max={200} onChange={setProviderTotal} />
         </span>
       </span>
-      <span className={`flex items-center justify-center p-[6px] rounded-[20px] bg-[#FFFCF1] ${phone ? "col-span-2" : "!grow-0"}`}>
-        <span className="flex p-[3px] gap-[2px] rounded-[999px] bg-[#F4EEDF]">
-          {(["monthly", "annual"] as const).map((b) => (
-            <button
-              key={b}
-              type="button"
-              onClick={() => set({ annual: b === "annual" })}
-              className={`h-[34px] px-[14px] rounded-[999px] text-[13px] leading-[16px] font-[500] transition-colors duration-200 whitespace-nowrap ${(b === "annual") === a.annual ? "bg-[#281910] text-[#FFFCF1]" : `${SUB} hover:text-[#281910]`}`}
-            >
-              {b === "annual" ? "Yearly, 2 mo free" : "Monthly"}
-            </button>
-          ))}
+      <span className={`flex items-center justify-between gap-[10px] rounded-[20px] bg-[#FFFCF1] ${phone ? "p-[4px] justify-center" : "px-[14px] py-[8px]"}`}>
+        <span className={phone ? "sr-only" : "flex flex-col gap-[2px]"}>
+          <span className={`text-[13px] leading-[16px] font-[500] ${SUB}`}>Plan</span>
+          {!phone && <span className="h-[20px] flex items-center whitespace-nowrap text-[12px] leading-[16px] text-[rgba(20,12,4,0.42)]">{mixed ? "Mixed across the team" : "Everyone on one plan"}</span>}
         </span>
-      </span>
-      <span className={`flex items-center justify-between gap-[10px] px-[14px] py-[8px] rounded-[20px] bg-[#FFFCF1] ${phone ? "col-span-2" : "basis-[220px]"}`}>
-        <span className={`whitespace-nowrap text-[13px] leading-[16px] font-[500] ${SUB}`}>{mixed ? "Mixed plans" : "Everyone on"}</span>
         <Pick dark label="Plan for everyone" value={plan.id} options={PLANS.map((p) => ({ id: p.id, label: p.name }))} onChange={everyoneOn} />
       </span>
-      <span className={`flex gap-[6px] ${phone ? "col-span-2" : "basis-full justify-end"}`}>
-        <button
-          type="button"
-          onClick={() => setPanel("team")}
-          className={`flex items-center justify-center gap-[8px] h-[44px] px-[18px] rounded-[20px] bg-[#FFFCF1] hover:bg-white text-[14px] leading-[18px] font-[500] text-[#281910] transition-colors duration-150 whitespace-nowrap ${phone ? "grow" : ""}`}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
-            <circle cx="9" cy="8.5" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.8" />
-            <path d="M3.5 19.5c.8-3.2 3-5 5.5-5s4.7 1.8 5.5 5M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.6 14.8c1.4.7 2.4 2.3 2.9 4.7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-          </svg>
-          Providers and plans
-        </button>
-        <button
-          type="button"
-          onClick={() => setPanel("price")}
-          className={`flex items-center justify-center gap-[10px] h-[44px] pl-[18px] pr-[8px] rounded-[20px] bg-[#281910] hover:bg-[#3A2920] text-[14px] leading-[18px] font-[500] text-[#FFFCF1] transition-colors duration-150 whitespace-nowrap ${phone ? "grow" : ""}`}
-        >
-          See price
-          <span className={`h-[30px] px-[10px] flex items-center rounded-[14px] bg-[#FCCFB8] text-[#140C04] text-[14px] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}/mo</span>
-        </button>
-      </span>
+      {phone ? (
+        <>
+          {billing}
+          {actions}
+        </>
+      ) : (
+        <span className="col-span-3 flex items-stretch justify-between gap-[6px]">
+          {billing}
+          {actions}
+        </span>
+      )}
     </div>
   );
 

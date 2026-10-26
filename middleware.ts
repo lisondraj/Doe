@@ -93,12 +93,13 @@ async function handleAdminAccess(request: NextRequest): Promise<NextResponse | n
 
 /**
  * Pages linked from Desk 2's nav, banner, CTA and footer — they stay on doehealth.care instead of bouncing to `/`.
- * `/earlypreview` is also served here, so doehealth.care/earlypreview opens the early preview.
+ * `/pricing` and `/earlypreview` are served here too, so doehealth.care/pricing and doehealth.care/earlypreview open those pages.
  */
 const DOEHEALTH_CARE_SUBPAGES = [
   "/about",
   "/careers",
   "/news",
+  "/pricing",
   "/security",
   "/waitlist",
   "/doehealthdesk",
