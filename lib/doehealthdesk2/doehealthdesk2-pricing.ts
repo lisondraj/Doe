@@ -1,64 +1,24 @@
-/** /pricing — practice shapes, specialties and their services, plans, and how a configuration is priced. */
+/** /pricing — practice shapes, specialties, the four tiers and what each includes, and how a practice's size is priced. */
 
 export type PracticeShape = "solo" | "clinic" | "group";
 
+/** The three ways a practice is set up: one provider, several at one location, or several locations. */
 export const PRACTICE_SHAPES: { id: PracticeShape; title: string; note: string }[] = [
-  { id: "solo", title: "Solo provider", note: "One provider, one location" },
-  { id: "clinic", title: "Single clinic", note: "A provider group at one location" },
-  { id: "group", title: "Multi-clinic group", note: "Several locations, each with its own team" },
+  { id: "solo", title: "Solo", note: "One provider" },
+  { id: "clinic", title: "Single location", note: "Multiple providers" },
+  { id: "group", title: "Multi-clinic", note: "Multiple locations" },
 ];
 
-export type SpecialtyId = "concierge" | "aesthetic" | "fertility" | "homecare" | "primary" | "dental";
+export type SpecialtyId = "concierge" | "aesthetic" | "fertility" | "homecare";
 
-/** Each specialty's services, so a provider picks from what fits their practice. */
-export const SPECIALTIES: { id: SpecialtyId; label: string; services: string[] }[] = [
-  {
-    id: "concierge",
-    label: "Concierge",
-    services: ["Primary care", "Same-day visits", "Preventive care", "Care coordination", "Travel medicine", "Executive health", "Specialist coordination"],
-  },
-  {
-    id: "aesthetic",
-    label: "Aesthetics",
-    services: ["Botox / neuromodulators", "Fillers", "Laser", "Microneedling", "Skin treatments", "Body contouring", "Cosmetic consultations"],
-  },
-  {
-    id: "fertility",
-    label: "Fertility",
-    services: ["Initial consultation", "IVF", "IUI", "Fertility testing", "Ultrasound monitoring", "Egg freezing", "Male fertility", "Donor / partner services"],
-  },
-  {
-    id: "homecare",
-    label: "Home care",
-    services: ["Personal support", "Nursing", "Dementia care", "Overnight care", "Respite", "Medication assistance", "Post-discharge care", "Companion care"],
-  },
-  {
-    id: "primary",
-    label: "Primary care",
-    services: ["Annual physicals", "Sick visits", "Chronic care", "Vaccines", "Labs", "Telehealth"],
-  },
-  {
-    id: "dental",
-    label: "Dental",
-    services: ["Cleanings", "Exams and X-rays", "Fillings", "Crowns", "Implants", "Whitening", "Orthodontics"],
-  },
+export const SPECIALTIES: { id: SpecialtyId; label: string }[] = [
+  { id: "concierge", label: "Concierge" },
+  { id: "aesthetic", label: "Aesthetics" },
+  { id: "fertility", label: "Fertility" },
+  { id: "homecare", label: "Home care" },
 ];
 
-export const APPOINTMENT_TYPES = ["In person", "Virtual", "Home visit", "Phone"];
-export const PAYMENT_OPTIONS = ["Self-pay", "Major insurers", "Medicare", "HSA / FSA", "Membership", "Financing"];
-export const REFERRAL_OPTIONS = [
-  { id: "none", label: "Not needed" },
-  { id: "some", label: "Some services" },
-  { id: "all", label: "Always" },
-] as const;
-export const AVAILABILITY_SOURCES = [
-  { id: "ehr", label: "EHR calendar" },
-  { id: "google", label: "Google Calendar" },
-  { id: "doe", label: "Doe calendar" },
-  { id: "manual", label: "Set by hand" },
-] as const;
-
-export type PlanId = "basic" | "advanced" | "one";
+export type PlanId = "free" | "basic" | "advanced" | "one";
 
 export type Plan = {
   id: PlanId;
@@ -70,66 +30,108 @@ export type Plan = {
   perProvider: number;
   /** Added each month for every location past the first. */
   perLocation: number;
-  includes?: string;
-  features: { title: string; items: string[] }[];
 };
 
 export const PLANS: Plan[] = [
-  {
-    id: "basic",
-    name: "Basic",
-    line: "Connect your clinic to personal agents.",
-    base: 49,
-    perProvider: 29,
-    perLocation: 39,
-    features: [
-      {
-        title: "Dynamic Index",
-        items: ["Clinic software integrations", "Live providers", "Services", "Locations", "Hours", "Availability", "Pricing where appropriate", "Insurance and payment information", "Referral and patient requirements"],
-      },
-      { title: "Doe Interface", items: ["Direct line between personal agents and your clinic", "Structured agent inquiries", "Attachments", "Status updates", "Human handoff"] },
-      { title: "Offers", items: ["Offers personal agents can surface", "Same-week openings", "New-patient offers", "Packages", "Promotions", "Cancellation availability"] },
-      { title: "Agent permissions", items: ["Control what agents can see", "Control what they can request", "Restrict actions"] },
-      { title: "Analytics", items: ["Agent searches", "Clinic views", "Requests", "Top services", "Response times"] },
-    ],
-  },
-  {
-    id: "advanced",
-    name: "Advanced",
-    line: "Automate and optimize your practice.",
-    base: 149,
-    perProvider: 79,
-    perLocation: 99,
-    includes: "Everything in Basic, plus",
-    features: [
-      { title: "Personal agents for your staff", items: ["Scheduling", "Intake", "Referrals", "Insurance workflows", "Follow-ups", "Administrative tasks"] },
-      { title: "AI Insights", items: ["Agent demand", "Unmet demand", "Capacity gaps", "Service trends", "Offer recommendations", "Conversion analytics", "Revenue attribution"] },
-      { title: "Flow", items: ["Read incoming forms and documents", "Extract information", "Autofill outgoing forms", "Route documents", "Flag missing information"] },
-      {
-        title: "Automations",
-        items: ["Workflow rules in plain language", "Trigger, condition, action", "Auto-reply", "Route requests", "Request missing information", "Send forms", "Notify staff", "Trigger intake", "Book where permitted"],
-      },
-      { title: "Advanced permissions and policies", items: ["Per-agent and per-service rules", "Approval chains", "Audit history"] },
-      { title: "Advanced analytics", items: ["Cohorts", "Funnels by service and location", "Exports"] },
-    ],
-  },
-  {
-    id: "one",
-    name: "Doe One",
-    line: "AI-powered patient and appointment operations.",
-    base: 349,
-    perProvider: 149,
-    perLocation: 199,
-    includes: "Everything in Advanced, plus",
-    features: [
-      { title: "Voice agents", items: ["Answer every call, day and night", "Book, reschedule, and triage", "Hand off to staff live"] },
-      { title: "Appointment operations", items: ["Fill cancellations automatically", "Waitlists across locations", "Reminders and no-show recovery"] },
-      { title: "Payments and prior auth", items: ["Collect through patients' agents", "Draft and file prior auth", "Payment plans"] },
-      { title: "Team and multi-location controls", items: ["Roles for every staff member", "Coverage and handoffs", "Location-level policies"] },
-      { title: "White-glove onboarding", items: ["Dedicated success manager", "Custom integrations", "Priority support"] },
-    ],
-  },
+  { id: "free", name: "Free", line: "Be found.", base: 0, perProvider: 0, perLocation: 0 },
+  { id: "basic", name: "Basic", line: "Be reached and act on it.", base: 49, perProvider: 29, perLocation: 39 },
+  { id: "advanced", name: "Advanced", line: "Automate and optimize.", base: 149, perProvider: 79, perLocation: 99 },
+  { id: "one", name: "Doe One", line: "Run patient and appointment operations.", base: 349, perProvider: 149, perLocation: 199 },
 ];
+
+export const PLAN_ORDER: PlanId[] = ["free", "basic", "advanced", "one"];
+
+/** A group of features, and the first tier that includes it (every tier above includes it too). */
+export type FeatureGroup = { title: string; from: PlanId; items: string[] };
+
+export const FEATURE_GROUPS: FeatureGroup[] = [
+  {
+    title: "Clinic profile",
+    from: "free",
+    items: [
+      "Find and claim your clinic",
+      "Edit services, providers, locations, hours, insurance, referral requirements",
+      "Structured agent-readable profile",
+      "Basic visibility and search analytics",
+      "Verification badge",
+    ],
+  },
+  {
+    title: "Dynamic Index",
+    from: "basic",
+    items: ["Sync services, providers, hours, availability, pricing, requirements", "Integrate scheduling, PMS, EHR, and CRM systems"],
+  },
+  {
+    title: "Doe Interface",
+    from: "basic",
+    items: ["Direct line between personal agents and your clinic", "Structured questions, replies, attachments, status updates", "Human handoff and routing"],
+  },
+  {
+    title: "Offers",
+    from: "basic",
+    items: ["Publish promotions, openings, same-week availability, packages", "Personal agents surface relevant offers to patients"],
+  },
+  { title: "Analytics", from: "basic", items: ["Searches", "Inquiries", "Top services", "Missed requests", "Response times"] },
+  { title: "Personal agents for staff", from: "advanced", items: ["Scheduling", "Referrals", "Intake", "Insurance", "Follow-ups", "Operational tasks"] },
+  { title: "AI Insights", from: "advanced", items: ["Unmet demand", "Service trends", "Agent conversion", "Capacity gaps", "Offer recommendations", "Revenue attribution"] },
+  {
+    title: "Flow",
+    from: "advanced",
+    items: ["Read incoming forms automatically", "Extract and map fields", "Autofill outgoing documents", "Route forms automatically", "Flag missing information"],
+  },
+  {
+    title: "Automations",
+    from: "advanced",
+    items: ["Rules in plain language", "Trigger, condition, action workflows", "Auto-reply, route, request info, book, notify staff, send forms"],
+  },
+  { title: "Advanced controls", from: "advanced", items: ["Agent permissions", "Human approval rules", "Workflow policies", "Multi-location management"] },
+  { title: "Voice agents", from: "one", items: ["Answer every call, day and night", "Book, reschedule, and triage", "Hand off to staff live"] },
+  { title: "White-glove onboarding", from: "one", items: ["Dedicated success manager", "Custom integrations", "Priority support"] },
+];
+
+/** Each specialty's own feature set, included with Doe One. */
+export const SPECIALTY_FEATURES: Record<SpecialtyId, string[]> = {
+  concierge: [
+    "Persistent line between patient agents and the care team",
+    "Member preferences, preferred specialists, pharmacy, and labs",
+    "Referral and diagnostic coordination",
+    "Travel-care coordination",
+    "Family and household authorization",
+    "After-hours routing",
+    "Outstanding follow-up dashboard",
+  ],
+  aesthetic: [
+    "Treatment and device-specific discovery",
+    "Real-time consultation and treatment availability",
+    "Dynamic offers and cancellation slots",
+    "Capacity optimization",
+    "Treatment bundles and packages",
+    "Pre-treatment intake and photos",
+    "Aftercare automation",
+    "Revenue attribution from agent to consult to treatment",
+  ],
+  fertility: [
+    "Full fertility journey tracking",
+    "Couple and partner coordination",
+    "Testing and lab readiness",
+    "Records collection",
+    "Consent and document management",
+    "Treatment milestone tracking",
+    "Insurance, benefits, and financing workflows",
+    "Cross-clinic and cross-border coordination",
+  ],
+  homecare: [
+    "Structured care-request matching",
+    "Geography and caregiver capacity",
+    "Skills, language, and shift requirements",
+    "Pre-service assessment",
+    "Family-agent communication",
+    "Caregiver and shift-gap workflows",
+    "Qualified referral intake",
+    "Start-of-care coordination",
+    "Ongoing schedule and status updates",
+  ],
+};
 
 export type Location = { id: string; name: string; providers: number };
 
@@ -151,12 +153,12 @@ export function monthlyPrice(plan: Plan, providers: number, locations: number) {
 export const ANNUAL_FACTOR = 10 / 12;
 
 export const PRICING_FAQ = [
+  { q: "Can I start for free?", a: "Yes. Claiming your clinic and keeping its profile up to date costs nothing." },
   {
     q: "How is the price worked out?",
-    a: "Every plan starts at one provider and one location. Each extra provider and each extra location adds a set amount, shown in your summary as you build.",
+    a: "Prices start at one provider and one location. Each extra provider and each extra location adds a set amount, which you can see as you go.",
   },
-  { q: "Is a BAA included?", a: "Yes. Every plan includes a signed BAA, encryption in transit and at rest, and access controls for your team." },
+  { q: "Is a BAA included?", a: "Yes. A signed BAA, encryption in transit and at rest, and access controls for your team come standard." },
   { q: "Can I change plans later?", a: "Any time. Upgrades take effect right away, and downgrades at the end of your billing period." },
-  { q: "How long does setup take?", a: "Most practices have their Index live within two days. We connect your scheduling software and confirm each provider with you." },
   { q: "Do patients pay anything?", a: "No. Patients and their personal agents reach your clinic for free." },
 ];
