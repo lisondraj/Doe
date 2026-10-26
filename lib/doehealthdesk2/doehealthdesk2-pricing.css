@@ -1,23 +1,23 @@
-/* /pricing — the soft backdrop behind the question flow, and how each question settles in. */
+/* /pricing — the banner on top, and how each question settles in. */
 
-/* Full-bleed behind the builder, fading out above and below so no edge shows. */
-.doe-pricing-clouds {
-  position: absolute;
-  top: -160px;
-  bottom: -160px;
-  left: 50%;
-  width: 100vw;
-  transform: translateX(-50%);
-  overflow: hidden;
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
-  mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+/* The banner: a /news box, taller, its copy to the left and above the dot wave. */
+.doehealth-blog-placeholder.doe-pricing-banner {
+  height: 380px;
+  border-radius: 12px;
 }
 
-.doe-pricing-clouds span {
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(80px);
+.doe-pricing-banner .doehealth-blog-placeholder__content {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 64px 64px 0;
+}
+
+[data-doeforvc-view="iphone"] .doehealth-blog-placeholder.doe-pricing-banner {
+  height: 340px;
+}
+
+[data-doeforvc-view="iphone"] .doe-pricing-banner .doehealth-blog-placeholder__content {
+  padding: 32px 24px 0;
 }
 
 @keyframes doe-pricing-slide {

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
+import { articleBoxColors } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthDesk2Footer } from "@/components/doehealth-desk2/DoeHealthDesk2Footer";
 import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
@@ -91,33 +93,36 @@ function Faq({ phone }: { phone: boolean }) {
 /** When founding pricing closes, as the banner shows it. */
 const FOUNDING_UNTIL = "March 2027";
 
+/** The tan ink /news sets its boxed copy in. */
+const NEWS_INK = "#8A6A3F";
+
 /**
- * The banner on top: a brown Doe box with the page's title, what founding pricing is, and when it ends in a tile of
- * its own (beside the title on desktop, under it on iPhone).
+ * The banner on top: one of the /news boxes (warm beige, the dot wave along the bottom) with the page's title and,
+ * under it, a small pill for founding pricing and when it ends. Everything sits to the left.
  */
 function FoundingBanner({ phone }: { phone: boolean }) {
+  const box = articleBoxColors("sand");
   return (
-    <section
-      aria-label="Founding pricing"
-      className={`relative z-[1] mx-auto w-full max-w-[1120px] bg-[#281910] text-[#FFFCF1] ${phone ? "flex flex-col gap-[22px] px-[22px] pt-[24px] pb-[22px] rounded-[28px]" : "flex items-center justify-between gap-[48px] px-[56px] py-[52px] rounded-[32px]"}`}
-    >
-      <div className={`flex flex-col items-start ${phone ? "gap-[14px]" : "gap-[18px] max-w-[660px]"}`}>
-        <span className="h-[28px] px-[12px] flex items-center gap-[7px] rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[14px] font-[700] text-[#140C04] whitespace-nowrap">
-          <span className="w-[6px] h-[6px] rounded-[999px] bg-[#A0522D]" aria-hidden="true" />
-          Founding pricing
-        </span>
-        <h1 className={`m-0 font-[400] tracking-[-0.035em] [text-wrap:balance] ${phone ? "text-[30px] leading-[33px]" : "text-[46px] leading-[50px]"} ${p22Mackinac.className}`}>
-          Teach personal agents about your clinic before it&apos;s too late.
-        </h1>
-        <p className={`m-0 [text-wrap:pretty] text-[rgba(255,252,241,0.7)] ${phone ? "text-[15px] leading-[22px]" : "text-[17px] leading-[25px]"}`}>
-          Founding prices are open to practices that join before {FOUNDING_UNTIL}.
-        </p>
-      </div>
-      <div
-        className={`flex flex-col shrink-0 border-[1.5px] border-solid border-[rgba(252,207,184,0.35)] ${phone ? "flex-row items-baseline justify-between gap-[12px] px-[18px] py-[14px] rounded-[20px]" : "items-start gap-[6px] px-[28px] py-[26px] rounded-[24px] min-w-[240px]"}`}
-      >
-        <span className="text-[13px] leading-[17px] font-[600] text-[rgba(255,252,241,0.62)]">Founding pricing ends</span>
-        <span className={`tracking-[-0.03em] text-[#FCCFB8] ${phone ? "text-[24px] leading-[28px]" : "text-[40px] leading-[44px]"} ${p22Mackinac.className}`}>{FOUNDING_UNTIL}</span>
+    <section aria-label="Founding pricing" className="mx-auto w-full max-w-[1120px]">
+      {/* The /news box markup, built here rather than with its placeholder so the title isn't hidden from screen readers. */}
+      <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doe-pricing-banner" style={{ background: box.bg }}>
+        <DoeHealthBlogDotWave color={box.dot} top={phone ? 0.66 : 0.72} amp={70} phase={2.2} scale={1.05} slant={-0.3} flip />
+        <div className="doehealth-blog-placeholder__content">
+          <div className={`flex flex-col items-start text-left w-full ${phone ? "gap-[18px]" : "gap-[24px]"}`}>
+            <h1
+              className={`m-0 font-[400] tracking-[-0.035em] [text-wrap:balance] ${phone ? "max-w-[15ch] text-[32px] leading-[35px]" : "max-w-[22ch] text-[54px] leading-[57px]"} ${p22Mackinac.className}`}
+              style={{ color: NEWS_INK }}
+            >
+              Teach personal agents about your clinic before it&apos;s too late.
+            </h1>
+            <span className="inline-flex items-center gap-[10px] h-[36px] pl-[5px] pr-[14px] rounded-[999px] bg-white">
+              <span className="h-[26px] px-[11px] flex items-center rounded-[999px] bg-[#281910] text-[12px] leading-[14px] font-[700] text-[#FCCFB8] whitespace-nowrap">Founding pricing</span>
+              <span className="text-[14px] leading-[18px] font-[500] whitespace-nowrap" style={{ color: NEWS_INK }}>
+                Until {FOUNDING_UNTIL}
+              </span>
+            </span>
+          </div>
+        </div>
       </div>
     </section>
   );

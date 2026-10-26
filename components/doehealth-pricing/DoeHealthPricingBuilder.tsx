@@ -4,13 +4,12 @@
  * /pricing builder — the practice and plan, one question at a time: how the practice is set up (Solo, Single
  * location, or Multi-clinic, each with a small drawing of its shape), its providers or locations, the specialty
  * (picked from the set or typed), then the four tiers side by side, and where to send the setup. Tiers stay out of
- * sight until the comparison. A row of steps on top tracks where you are and what you answered; answered steps open
- * again with a tap.
+ * sight until the comparison. A row of steps on top tracks where you are; finished steps open again with a tap.
  *
  * The practice is a team: locations, each with named providers who have their own specialty and plan. Free is in the
  * comparison but can't be chosen. On the comparison a toolbar for locations, providers, the team and the price
  * follows you down the page, and a panel on the right (a sheet on iPhone) holds the team to edit and the price, line
- * by line. Soft colour washes sit behind.
+ * by line. Surfaces follow /news: beige outside, white inside, no borders.
  */
 import { Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 
@@ -39,10 +38,11 @@ import { p22Mackinac } from "@/lib/home/fonts";
 const DISPLAY = p22Mackinac.className;
 const SUB = "text-[rgba(20,12,4,0.56)]";
 const HAIR = "border-[rgba(20,12,4,0.07)]";
-/** A surface that sits on the page's cream and its colour washes. */
-const CARD = "bg-[rgba(255,255,255,0.62)] border border-solid border-[rgba(20,12,4,0.08)] [backdrop-filter:blur(12px)]";
-/** The same, near opaque, for what pins over the page as it scrolls. */
-const PINNED = "bg-[rgba(255,252,241,0.94)] border border-solid border-[rgba(20,12,4,0.08)] [backdrop-filter:blur(14px)] shadow-[0_14px_34px_-22px_rgba(40,25,16,0.5)]";
+/** Doe's boxes, as on /news: a beige box outside, white pieces inside it, no borders. */
+const OUTER = "bg-[#F4EEDF]";
+const INNER = "bg-white";
+/** A beige box pinned over the page as it scrolls, lifted off it by a soft shadow. */
+const PINNED = "bg-[#F4EEDF] shadow-[0_14px_34px_-22px_rgba(40,25,16,0.5)]";
 
 /** Plans a practice can be on: every tier but Free, which stays in the comparison. */
 const PAID = PLANS.filter((p) => p.id !== "free");
@@ -122,9 +122,9 @@ function ShapeMark({ shape, on }: { shape: PracticeShape; on: boolean }) {
 
 function Count({ value, onChange, min = 1, max = 100, big = false }: { value: number; onChange: (v: number) => void; min?: number; max?: number; big?: boolean }) {
   const size = big ? "w-[52px] h-[52px] text-[24px]" : "w-[32px] h-[32px] text-[17px]";
-  const btn = `${size} flex items-center justify-center rounded-[999px] bg-white hover:bg-[#FFFCF1] shadow-[0_1px_2px_rgba(40,25,16,0.12)] text-[#281910] leading-none transition-colors duration-150 disabled:opacity-35 disabled:shadow-none`;
+  const btn = `${size} flex items-center justify-center rounded-[999px] bg-white hover:bg-[#FFFCF1] text-[#281910] leading-none transition-colors duration-150 disabled:opacity-35`;
   return (
-    <span className="inline-flex items-center gap-[2px] p-[3px] rounded-[999px] bg-[rgba(20,12,4,0.06)]">
+    <span className="inline-flex items-center gap-[2px] p-[3px] rounded-[999px] bg-[#F4EEDF]">
       <button type="button" aria-label="Fewer" disabled={value <= min} onClick={() => onChange(Math.max(min, value - 1))} className={btn}>
         −
       </button>
@@ -233,13 +233,13 @@ function Ladder({ title, brackets, n }: { title: string; brackets: Bracket[]; n:
 function TextField({ label, value, onChange, placeholder, type = "text" }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) {
   return (
     <label className="flex flex-col gap-[8px] min-w-[0px]">
-      <span className={`text-[14px] leading-[18px] font-[500] ${SUB}`}>{label}</span>
+      <span className={`px-[4px] text-[14px] leading-[18px] font-[500] ${SUB}`}>{label}</span>
       <input
         type={type}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="h-[56px] px-[20px] rounded-[20px] bg-[rgba(255,255,255,0.7)] border-[1.5px] border-solid border-[rgba(20,12,4,0.1)] focus:border-[#281910] focus:bg-white outline-none text-[17px] leading-[22px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.32)] transition-colors duration-150"
+        className="h-[56px] px-[20px] rounded-[18px] bg-white outline-none focus:shadow-[inset_0_0_0_1.5px_#281910] text-[17px] leading-[22px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.32)] transition-colors duration-150"
       />
     </label>
   );
@@ -251,8 +251,6 @@ type Question = {
   step: string;
   /** The title, as the two lines it's set on. */
   title: [string, string];
-  /** What the answer reads as under its step. */
-  answer: string;
   /** What's still missing before Continue works, shown beside it. */
   need?: string;
   /** The comparison needs more room than a question. */
@@ -424,7 +422,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
 
   /** Desktop: every tier side by side, price and a choose button up top, then each feature group, then the specialties. */
   const table = (
-    <div className={`grid ${cols} rounded-[28px] overflow-clip ${CARD}`}>
+    <div className={`p-[6px] rounded-[30px] ${OUTER}`}>
+    <div className={`grid ${cols} rounded-[24px] overflow-clip ${INNER}`}>
       <div ref={headRef} className="flex flex-col gap-[2px] px-[20px] pt-[48px] pb-[22px]">
         <span className={`text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-[#140C04]`}>{sizeLine}</span>
         <span className={`text-[13px] leading-[17px] ${SUB}`}>{billedLine}</span>
@@ -486,11 +485,13 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         <span key={id} className={cell(id)} />
       ))}
     </div>
+    </div>
   );
 
   /** Desktop: the tier names and prices, lined up with the table's columns, under the pinned toolbar once its header scrolls away. */
   const strip = (
-    <div className={`grid ${cols} mt-[6px] rounded-[20px] overflow-clip ${PINNED}`}>
+    <div className={`mt-[6px] p-[6px] rounded-[24px] ${PINNED}`}>
+    <div className={`grid ${cols} rounded-[18px] overflow-clip ${INNER}`}>
       <span className="flex flex-col justify-center px-[20px] py-[10px] min-w-[0px]">
         <span className="truncate text-[13px] leading-[17px] font-[600] text-[#140C04]">{sizeLine}</span>
         <span className={`truncate text-[12px] leading-[16px] ${SUB}`}>{billedLine}</span>
@@ -501,6 +502,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           <span className={`text-[13px] leading-[17px] [font-variant-numeric:tabular-nums] ${dark(p.id) ? "text-[#FCCFB8]" : SUB}`}>{money(priceOf(p.id))}/mo</span>
         </span>
       ))}
+    </div>
     </div>
   );
 
@@ -517,7 +519,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             role="tab"
             aria-selected={on}
             onClick={() => setView(p.id)}
-            className={`flex flex-col items-center gap-[1px] pt-[9px] pb-[8px] rounded-[18px] transition-colors duration-200 ${on ? "bg-[#281910] text-[#FFFCF1]" : "text-[#281910]"}`}
+            className={`flex flex-col items-center gap-[1px] pt-[9px] pb-[8px] rounded-[18px] transition-colors duration-200 ${on ? "bg-[#281910] text-[#FFFCF1]" : `${INNER} text-[#281910]`}`}
           >
             <span className="flex items-center gap-[4px] text-[12px] leading-[16px] font-[600] whitespace-nowrap">
               {p.name}
@@ -548,8 +550,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const shownPlan = planById(shown);
   const shownAction = tierAction(shown, true);
   const tierView = (
-    <div className="flex flex-col gap-[10px]">
-      <div key={shown} className={`doe-pricing-rise flex flex-col gap-[14px] p-[20px] rounded-[24px] ${dark(shown) ? "bg-[#281910] text-[#FFFCF1]" : `${CARD} text-[#281910]`}`}>
+    <div className={`flex flex-col gap-[6px] p-[6px] rounded-[30px] ${OUTER}`}>
+      <div key={shown} className={`doe-pricing-rise flex flex-col gap-[14px] p-[20px] rounded-[24px] ${dark(shown) ? "bg-[#281910] text-[#FFFCF1]" : `${INNER} text-[#281910]`}`}>
         <span className="flex items-start justify-between gap-[12px]">
           <span className="flex flex-col gap-[2px] min-w-[0px]">
             <span className={`text-[28px] leading-[32px] tracking-[-0.025em] ${DISPLAY}`}>{shownPlan.name}</span>
@@ -569,7 +571,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         {shownAction && <span className="flex">{shownAction}</span>}
       </div>
 
-      <div className={`flex flex-col rounded-[24px] py-[4px] ${CARD}`}>
+      <div className={`flex flex-col rounded-[24px] py-[4px] ${INNER}`}>
         {FEATURE_GROUPS.slice(0, -2).map((g) => featureGroup(g.title, g.items.map((item) => featureRow(item, includes(shown, g.from)))))}
         {featureGroup(
           "Specialty features",
@@ -592,7 +594,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
 
   /** Monthly or yearly, with what yearly takes off. */
   const billing = (
-    <div role="radiogroup" aria-label="Billing" className={`flex p-[4px] gap-[2px] rounded-[999px] bg-[rgba(20,12,4,0.06)] ${phone ? "w-full" : ""}`}>
+    <div role="radiogroup" aria-label="Billing" className={`flex p-[4px] gap-[2px] rounded-[999px] ${OUTER} ${phone ? "w-full" : ""}`}>
       {(["monthly", "annual"] as const).map((b) => {
         const on = (b === "annual") === a.annual;
         return (
@@ -602,7 +604,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             role="radio"
             aria-checked={on}
             onClick={() => set({ annual: b === "annual" })}
-            className={`flex items-center justify-center gap-[8px] h-[40px] px-[18px] rounded-[999px] text-[14px] leading-[18px] font-[600] whitespace-nowrap transition-[background-color,color,box-shadow] duration-200 ${phone ? "grow basis-0" : ""} ${on ? "bg-white text-[#140C04] shadow-[0_1px_3px_rgba(40,25,16,0.16)]" : `${SUB} hover:text-[#281910]`}`}
+            className={`flex items-center justify-center gap-[8px] h-[40px] px-[18px] rounded-[999px] text-[14px] leading-[18px] font-[600] whitespace-nowrap transition-[background-color,color,box-shadow] duration-200 ${phone ? "grow basis-0" : ""} ${on ? "bg-white text-[#140C04]" : `${SUB} hover:text-[#281910]`}`}
           >
             {b === "annual" ? "Yearly" : "Monthly"}
             {b === "annual" && <span className="h-[22px] px-[8px] flex items-center rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[14px] font-[600] text-[#140C04]">{YEARLY_OFF}% off</span>}
@@ -627,7 +629,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     <button
       type="button"
       onClick={() => setPanel("team")}
-      className={`flex items-center justify-center gap-[10px] h-[48px] pl-[12px] pr-[16px] rounded-[18px] bg-[rgba(20,12,4,0.05)] hover:bg-[rgba(20,12,4,0.09)] text-[14px] leading-[18px] font-[600] text-[#281910] transition-colors duration-150 whitespace-nowrap ${phone ? "w-full" : ""}`}
+      className={`flex items-center justify-center gap-[10px] h-[48px] pl-[12px] pr-[16px] rounded-[18px] text-[14px] leading-[18px] font-[600] text-[#281910] transition-colors duration-150 whitespace-nowrap ${phone ? `w-full ${OUTER}` : `${INNER} hover:bg-[#FFFCF1]`}`}
     >
       {phone ? <TeamIcon /> : <span className="contents min-[1180px]:hidden"><TeamIcon /></span>}
       {!phone && <span className="hidden min-[1180px]:flex">{avatars}</span>}
@@ -649,10 +651,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
 
   /** Desktop: one toolbar for the practice's size, the team and the price, pinned as the table scrolls. */
   const toolbar = (
-    <div className={`flex items-center gap-[6px] p-[6px] rounded-[24px] ${pinned ? PINNED : CARD}`}>
-      {locationsControl}
-      <span className="w-[1px] h-[32px] bg-[rgba(20,12,4,0.1)]" aria-hidden="true" />
-      {providersControl}
+    <div className={`flex items-center gap-[6px] p-[6px] rounded-[24px] ${pinned ? PINNED : OUTER}`}>
+      <span className={`flex items-center h-[48px] rounded-[18px] ${INNER}`}>{locationsControl}</span>
+      <span className={`flex items-center h-[48px] rounded-[18px] ${INNER}`}>{providersControl}</span>
       <span className="grow" />
       {!panel && teamButton}
       {!panel && (
@@ -671,10 +672,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   /** iPhone: the practice's size, billing and the team, above the switcher; they stay in place as the page scrolls. */
   const phoneControls = (
     <div className="flex flex-col gap-[8px]">
-      <div className={`flex flex-col px-[16px] py-[4px] rounded-[22px] ${CARD}`}>
-        {locationsControl}
-        <span className={`border-t border-solid ${HAIR}`} />
-        {providersControl}
+      <div className={`flex flex-col gap-[4px] p-[4px] rounded-[24px] ${OUTER}`}>
+        <span className={`px-[14px] rounded-[20px] ${INNER}`}>{locationsControl}</span>
+        <span className={`px-[14px] rounded-[20px] ${INNER}`}>{providersControl}</span>
       </div>
       {billing}
       {teamButton}
@@ -721,7 +721,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           placeholder="Type specialty"
           aria-label={`${o.label}, typed`}
           onChange={(e) => o.onType(e.target.value)}
-          className={`grow min-w-[0px] px-[14px] rounded-[999px] bg-white border-[1.5px] border-solid border-[rgba(20,12,4,0.12)] focus:border-[#281910] outline-none text-[#140C04] placeholder:text-[rgba(20,12,4,0.38)] ${o.big ? "h-[44px] w-[180px] text-[15px]" : "h-[34px] w-[140px] text-[13px]"}`}
+          className={`grow min-w-[0px] px-[14px] rounded-[999px] bg-[#F4EEDF] outline-none focus:shadow-[inset_0_0_0_1.5px_#281910] text-[#140C04] placeholder:text-[rgba(20,12,4,0.38)] ${o.big ? "h-[44px] w-[180px] text-[15px]" : "h-[34px] w-[140px] text-[13px]"}`}
         />
       )}
     </span>
@@ -733,11 +733,12 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
    * each provider also gets a plan.
    */
   const teamEditor = (withPlans: boolean) => {
-    const surface = withPlans ? "bg-[#FAF6EC]" : CARD;
-    const row = withPlans ? "bg-[#FFFCF1]" : "bg-[rgba(255,255,255,0.78)] border border-solid border-[rgba(20,12,4,0.05)]";
+    const surface = OUTER;
+    const row = INNER;
     return (
       <div className="flex flex-col gap-[10px]">
-        <div className={`flex items-center justify-between gap-x-[14px] gap-y-[10px] flex-wrap p-[12px] pl-[18px] rounded-[22px] ${surface}`}>
+        <div className={`p-[6px] rounded-[26px] ${surface}`}>
+        <div className={`flex items-center justify-between gap-x-[14px] gap-y-[10px] flex-wrap p-[12px] pl-[18px] rounded-[20px] ${row}`}>
           <span className="flex flex-col">
             <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">Main specialty</span>
             <span className={`text-[13px] leading-[18px] ${SUB}`}>Every provider follows it unless you change theirs</span>
@@ -751,6 +752,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             onType: (v) => set({ otherSpecialty: v }),
             big: true,
           })}
+        </div>
         </div>
         {a.team.map((site, si) => (
           <div key={site.id} className={`flex flex-col gap-[6px] p-[8px] rounded-[22px] ${surface}`}>
@@ -801,7 +803,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             <button
               type="button"
               onClick={() => setTeam(a.team.map((x) => (x.id === site.id ? resize(x, x.providers.length + 1) : x)))}
-              className="self-start flex items-center gap-[6px] h-[36px] px-[14px] rounded-[999px] text-[14px] leading-[18px] font-[600] text-[#281910] hover:bg-[rgba(20,12,4,0.05)] transition-colors duration-150"
+              className="self-start flex items-center gap-[6px] h-[36px] px-[14px] rounded-[999px] text-[14px] leading-[18px] font-[600] text-[#281910] hover:bg-white transition-colors duration-150"
             >
               <span className="text-[17px] leading-[17px]">+</span>
               Add provider
@@ -811,7 +813,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         <button
           type="button"
           onClick={() => setTeam([...a.team, newSite(`Clinic ${a.team.length + 1}`, 1)])}
-          className="flex items-center justify-center gap-[8px] h-[48px] rounded-[20px] border-[1.5px] border-dashed border-[rgba(20,12,4,0.2)] hover:bg-[rgba(255,255,255,0.6)] text-[15px] leading-[20px] font-[600] text-[#281910] transition-colors duration-150"
+          className={`flex items-center justify-center gap-[8px] h-[52px] rounded-[22px] ${OUTER} hover:bg-[#EDE5D2] text-[15px] leading-[20px] font-[600] text-[#281910] transition-colors duration-150`}
         >
           <span className="text-[18px] leading-[18px]">+</span>
           Add location
@@ -832,7 +834,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         <div key={title} className="flex flex-col gap-[2px] py-[12px] first:pt-[2px] last:pb-[2px] border-t border-solid border-[rgba(20,12,4,0.07)] first:border-t-0">
           <span className="flex items-center justify-between gap-[10px]">
             <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">{title}</span>
-            <span className={`h-[24px] px-[9px] flex items-center rounded-[999px] text-[12px] leading-[14px] font-[700] ${now.off ? "bg-[#281910] text-[#FFFCF1]" : "bg-[rgba(20,12,4,0.06)] text-[#281910]"}`}>
+            <span className={`h-[24px] px-[9px] flex items-center rounded-[999px] text-[12px] leading-[14px] font-[700] ${now.off ? "bg-[#281910] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}>
               {now.off ? `−${pct(now)}` : "0%"}
             </span>
           </span>
@@ -840,25 +842,28 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         </div>
       );
     return (
-      <div key={title} className={`flex flex-col gap-[10px] p-[16px] rounded-[22px] ${CARD}`}>
+      <div key={title} className={`flex flex-col gap-[10px] p-[16px] rounded-[22px] ${INNER}`}>
         <Ladder title={title} brackets={brackets} n={n} />
         <span className="text-[13px] leading-[18px] font-[500] text-[#7A3E1F]">{line}</span>
       </div>
     );
   };
   const hints = [discountHint("Multi-provider Discount", PROVIDER_BRACKETS, providerCount, "provider"), discountHint("Multi-clinic Discount", LOCATION_BRACKETS, locationCount, "location")];
-  const discountHints = phone ? <div className={`flex flex-col px-[16px] py-[12px] rounded-[22px] ${CARD}`}>{hints}</div> : <div className="grid grid-cols-2 gap-[10px]">{hints}</div>;
+  const discountHints = (
+    <div className={`p-[6px] rounded-[28px] ${OUTER}`}>
+      {phone ? <div className={`flex flex-col px-[16px] py-[12px] rounded-[22px] ${INNER}`}>{hints}</div> : <div className="grid grid-cols-2 gap-[6px]">{hints}</div>}
+    </div>
+  );
 
   const questions: Question[] = [
     {
       id: "shape",
       step: "Practice",
       title: ["How is your", "practice set up?"],
-      answer: PRACTICE_SHAPES.find((s) => s.id === a.shape)?.title ?? "",
       need: "Pick how your practice is set up",
       ready: !!a.shape,
       body: (
-        <div className={`grid gap-[10px] ${phone ? "grid-cols-1" : "grid-cols-3"}`}>
+        <div className={`grid gap-[6px] p-[6px] rounded-[32px] ${OUTER} ${phone ? "grid-cols-1" : "grid-cols-3"}`}>
           {PRACTICE_SHAPES.map((s) => {
             const on = a.shape === s.id;
             return (
@@ -867,7 +872,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                 type="button"
                 aria-pressed={on}
                 onClick={() => pickShape(s.id)}
-                className={`flex ${phone ? "flex-row items-center gap-[16px] p-[14px]" : "flex-col items-start gap-[26px] p-[20px]"} rounded-[26px] text-left transition-colors duration-200 ${on ? "bg-[#281910] text-[#FFFCF1] border border-solid border-[#281910]" : `${CARD} text-[#281910] [@media(hover:hover)]:hover:bg-white`}`}
+                className={`flex ${phone ? "flex-row items-center gap-[16px] p-[14px]" : "flex-col items-start gap-[26px] p-[20px]"} rounded-[26px] text-left transition-colors duration-200 ${on ? "bg-[#281910] text-[#FFFCF1]" : `${INNER} text-[#281910] [@media(hover:hover)]:hover:bg-[#FFFCF1]`}`}
               >
                 <span className={`shrink-0 flex items-center justify-center rounded-[18px] ${phone ? "w-[96px] h-[64px]" : "w-full h-[92px]"} ${on ? "bg-[rgba(255,252,241,0.08)]" : "bg-[#F7F1E3]"}`}>
                   <ShapeMark shape={s.id} on={on} />
@@ -893,7 +898,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       id: "team",
       step: "Team",
       title: ["Who’s on", "your team?"],
-      answer: sizeLine,
       need: !specialtyLabel ? "Choose a main specialty" : "Name every location",
       ready: !!specialtyLabel && a.team.every((x) => x.name.trim()),
       body: (
@@ -907,7 +911,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       id: "plan",
       step: "Plan",
       title: ["Compare plans", "side by side"],
-      answer: a.plan ? `${mixed ? "Mixed plans" : plan.name}, ${money(total)}/mo` : "",
       wide: true,
       ready: !!a.plan,
       body: phone ? (
@@ -928,10 +931,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       step: "Details",
       title: ["Where should we", "send your setup?"],
       need: "Add your name, practice and work email",
-      answer: a.contact.email,
       ready: !!(a.contact.name.trim() && /.+@.+\..+/.test(a.contact.email) && a.contact.practice.trim()),
       body: (
-        <div className={`grid gap-[12px] ${phone ? "grid-cols-1" : "grid-cols-2"}`}>
+        <div className={`grid gap-[14px] p-[16px] rounded-[28px] ${OUTER} ${phone ? "grid-cols-1" : "grid-cols-2"}`}>
           <TextField label="Your name" value={a.contact.name} onChange={(v) => set({ contact: { ...a.contact, name: v } })} placeholder="Jane Smith" />
           <TextField label="Practice name" value={a.contact.practice} onChange={(v) => set({ contact: { ...a.contact, practice: v } })} placeholder="Northside Family Medicine" />
           <div className={phone ? "" : "col-span-2"}>
@@ -1110,7 +1112,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         {phone && <button type="button" aria-label="Close" onClick={() => setPanel(null)} className="fixed inset-0 z-[49] bg-[rgba(20,12,4,0.28)]" />}
         <aside
           aria-label={panel === "team" ? "Your team" : "Price breakdown"}
-          className={`z-50 flex flex-col bg-[#FFFCF1] border-[1.5px] border-solid border-[rgba(20,12,4,0.08)] ${phone ? "doe-pricing-sheet fixed left-0 right-0 bottom-0 max-h-[86vh] rounded-t-[30px] border-b-0" : "doe-pricing-slide fixed right-[20px] top-[120px] bottom-[20px] w-[400px] rounded-[32px] shadow-[0_24px_60px_-30px_rgba(40,25,16,0.45)]"}`}
+          className={`z-50 flex flex-col bg-[#FFFCF1] ${phone ? "doe-pricing-sheet fixed left-0 right-0 bottom-0 max-h-[86vh] rounded-t-[30px]" : "doe-pricing-slide fixed right-[20px] top-[120px] bottom-[20px] w-[400px] rounded-[32px] shadow-[0_24px_60px_-30px_rgba(40,25,16,0.45)]"}`}
         >
           <div className="flex items-center justify-between gap-[12px] p-[16px] pb-[12px]">
             <span className="flex p-[3px] gap-[2px] rounded-[999px] bg-[#F4EEDF]">
@@ -1149,7 +1151,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       </>
     ) : null;
 
-  /** Every step in a row: done ones show their answer and open again with a tap, the current one is dark. */
+  /** Every step in a row, by name only: done ones open again with a tap, the current one is dark. */
   const steps = (
     <nav aria-label="Steps">
       <ol className={`m-0 p-0 list-none grid ${phone ? "gap-[6px]" : "gap-[10px]"}`} style={{ gridTemplateColumns: `repeat(${questions.length}, minmax(0, 1fr))` }}>
@@ -1169,7 +1171,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                 className="group w-full flex flex-col gap-[10px] pb-[2px] text-left disabled:cursor-default"
               >
                 <span className={`h-[3px] w-full rounded-[99px] transition-colors duration-500 ${past || now ? "bg-[#281910]" : "bg-[rgba(20,12,4,0.1)]"}`} />
-                <span className="flex flex-col gap-[1px] min-w-[0px]">
+                <span className="flex min-w-[0px]">
                   <span className={`flex items-center gap-[6px] ${phone ? "text-[11px] leading-[14px]" : "text-[12px] leading-[16px]"} font-[600] ${past || now ? "text-[#281910]" : "text-[rgba(20,12,4,0.36)]"}`}>
                     {x.step}
                     {past && (
@@ -1178,7 +1180,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                       </svg>
                     )}
                   </span>
-                  <span className={`truncate ${phone ? "text-[12px] leading-[16px]" : "text-[14px] leading-[19px]"} ${past ? `${SUB} group-hover:text-[#140C04]` : "text-transparent"} transition-colors duration-150`}>{(past && x.answer) || " "}</span>
                 </span>
               </button>
             </li>
@@ -1214,7 +1215,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         <button
           type="button"
           onClick={back}
-          className="flex items-center gap-[8px] h-[52px] pl-[18px] pr-[22px] rounded-[999px] border-[1.5px] border-solid border-[rgba(20,12,4,0.14)] hover:bg-white hover:border-[rgba(20,12,4,0.24)] text-[15px] leading-[20px] font-[600] text-[#281910] transition-colors duration-150"
+          className="flex items-center gap-[8px] h-[52px] pl-[18px] pr-[22px] rounded-[999px] bg-[#F4EEDF] hover:bg-[#EDE5D2] text-[15px] leading-[20px] font-[600] text-[#281910] transition-colors duration-150"
         >
           {arrow("back")}
           Back
@@ -1288,13 +1289,13 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       <p className={`m-0 text-[17px] leading-[25px] ${SUB}`}>
         {`${planLabel} for ${a.contact.practice}, ${money(total)} a month.`} Your setup is on its way to {a.contact.email}.
       </p>
-      <ol className="m-0 p-0 list-none flex flex-col gap-[8px]">
+      <ol className={`m-0 p-[6px] list-none flex flex-col gap-[6px] rounded-[28px] ${OUTER}`}>
         {[
           ["Connect your scheduling software", "Today, about 10 minutes"],
           [`Confirm your ${plural(providerCount, "provider")} and their services`, "With your onboarding lead"],
           ["Go live to personal agents", "Usually within two days"],
         ].map(([t, d], i) => (
-          <li key={t} className={`flex items-center gap-[14px] p-[16px] rounded-[22px] ${CARD}`}>
+          <li key={t} className={`flex items-center gap-[14px] p-[16px] rounded-[22px] ${INNER}`}>
             <span className={`w-[34px] h-[34px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#281910] text-[#FFFCF1] text-[16px] ${DISPLAY}`}>{i + 1}</span>
             <span className="flex flex-col">
               <span className="text-[16px] leading-[21px] font-[600] text-[#140C04]">{t}</span>
@@ -1319,12 +1320,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
 
   return (
     <div className="relative">
-      <div className="doe-pricing-clouds" aria-hidden="true">
-        <span style={{ width: phone ? 360 : 640, height: phone ? 300 : 480, left: phone ? "-30%" : "4%", top: "12%", background: "rgba(246,170,142,0.42)" }} />
-        <span style={{ width: phone ? 380 : 660, height: phone ? 320 : 520, right: phone ? "-34%" : "2%", top: "34%", background: "rgba(196,158,120,0.3)" }} />
-        <span style={{ width: phone ? 340 : 580, height: phone ? 280 : 420, left: phone ? "-10%" : "28%", bottom: "10%", background: "rgba(234,218,190,0.9)" }} />
-      </div>
-
       <div
         className={`relative flex flex-col transition-[max-width,margin] duration-500 ${phone ? `mx-auto gap-[28px] ${done ? "pb-[24px]" : "pb-[110px]"}` : `${wide ? "max-w-[1120px]" : "max-w-[760px]"} gap-[44px] pb-[40px] ${panelOpenDesktop ? "ml-0 mr-[380px]" : "mx-auto"}`}`}
       >
