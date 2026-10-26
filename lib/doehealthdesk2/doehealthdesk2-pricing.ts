@@ -41,6 +41,9 @@ export const PLANS: Plan[] = [
 
 export const PLAN_ORDER: PlanId[] = ["free", "basic", "advanced", "one"];
 
+/** The first tier that includes the specialty feature sets. */
+export const SPECIALTY_FROM: PlanId = "advanced";
+
 /** A group of features, and the first tier that includes it (every tier above includes it too). */
 export type FeatureGroup = { title: string; from: PlanId; items: string[] };
 
@@ -89,7 +92,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
   { title: "White-glove onboarding", from: "one", items: ["Dedicated success manager", "Custom integrations", "Priority support"] },
 ];
 
-/** Each specialty's own feature set, included with Doe One. */
+/** Each specialty's own feature set, included from Advanced up. */
 export const SPECIALTY_FEATURES: Record<SpecialtyId, string[]> = {
   concierge: [
     "Persistent line between patient agents and the care team",
