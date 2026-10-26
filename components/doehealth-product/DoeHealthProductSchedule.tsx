@@ -6,7 +6,7 @@
  * A finished pre-visit video opens in a panel that slides in on the right. Week, month and year switch
  * to the calendar views.
  */
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { DoeHealthProductCalendar, type ScheduleView, ScheduleViewSwitch } from "@/components/doehealth-product/DoeHealthProductCalendar";
 
@@ -43,14 +43,14 @@ type Visit = {
 const VISITS: Visit[] = [
   { id: "maya", hour: 8, time: "8:00", who: "Maya Chen", reason: "Migraine follow-up", status: "signed", note: { s: "Down to 3 migraines a month on topiramate. Mild tingling in fingers.", a: "Migraine without aura, improving.", p: "Continue topiramate 50 mg, headache diary, recheck in 3 months." }, codes: ["G43.009", "99213"] },
   { id: "ben", hour: 8, time: "8:15", who: "Ben Torres", reason: "Numb hands at night", status: "signed", note: { s: "Both hands go numb at night, worse on the right. Types all day.", a: "Likely carpal tunnel, both sides.", p: "Wrist splints at night, EMG and nerve study next week." }, codes: ["G56.03", "99213"] },
-  { id: "priya", hour: 8, time: "8:30", who: "Priya Raman", reason: "New patient, migraines", status: "signed", note: { s: "Migraines 3–4 times a week with aura for six months.", a: "Migraine with aura.", p: "MRI ordered, start sumatriptan, headache diary." }, codes: ["G43.109", "99204"] },
+  { id: "priya", hour: 8, time: "8:30", who: "Priya Raman", reason: "New patient", status: "signed", note: { s: "Migraines 3–4 times a week with aura for six months.", a: "Migraine with aura.", p: "MRI ordered, start sumatriptan, headache diary." }, codes: ["G43.109", "99204"] },
   { id: "clara", hour: 8, time: "8:45", who: "Clara Diaz", reason: "Concussion follow-up", status: "signed", note: { s: "Headaches easing two weeks after a fall skiing. Screens still bother her.", a: "Post-concussion syndrome, improving.", p: "Gradual return to work, limit screens, recheck in 2 weeks." }, codes: ["F07.81", "99213"] },
   { id: "daniel", hour: 9, time: "9:00", who: "Daniel Okafor", reason: "Seizure follow-up", status: "signed", note: { s: "No seizures since March. Sleeping well, no missed doses.", a: "Focal epilepsy, controlled.", p: "Continue levetiracetam 500 mg twice daily, return in 6 months." }, codes: ["G40.209", "99214"] },
-  { id: "grace", hour: 9, time: "9:30", who: "Grace Kim", reason: "Parkinson’s check", status: "signed", note: { s: "Tremor in the right hand, worse late afternoon. Walking steady.", a: "Parkinson’s disease, stable.", p: "Add a fourth carbidopa-levodopa dose, refill sent to CVS, PT referral." }, codes: ["G20.A1", "99214"] },
+  { id: "james", hour: 9, time: "9:30", who: "James Lisondra", reason: "Worsening Headache", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
   { id: "ava", hour: 9, time: "9:45", who: "Ava Morales", reason: "Tingling in both feet", status: "signed", note: { s: "Pins and needles in both feet for three months, worse at night.", a: "Peripheral neuropathy, cause unclear.", p: "B12, A1C and thyroid labs, EMG if no cause found." }, codes: ["G62.9", "99213"] },
   { id: "henry", hour: 10, time: "10:00", who: "Henry Walsh", reason: "Memory concerns", status: "draft", note: { s: "Wife notes he repeats questions and misses bills. Still drives.", a: "Mild cognitive impairment, MoCA 23.", p: "Brain MRI, neuropsych testing, recheck in 3 months." }, codes: ["G31.84", "99214"] },
   { id: "hannah", hour: 11, time: "11:00", who: "Hannah Lee", reason: "MS follow-up", status: "signed", note: { s: "No new symptoms. Some fatigue in the afternoons.", a: "Relapsing MS, stable on ocrelizumab.", p: "Next infusion in April, MRI in 6 months." }, codes: ["G35", "99214"] },
-  { id: "leo", hour: 11, time: "11:15", who: "Leo Jacobs", reason: "Staring spells, again", status: "draft", note: { s: "Teacher reports staring spells several times a day, per mom.", a: "Possible absence seizures.", p: "Sleep-deprived EEG, seizure safety handout, follow up after EEG." }, codes: ["R56.9", "99214"] },
+  { id: "leo", hour: 11, time: "11:15", who: "Leo Jacobs", reason: "Staring spells", status: "draft", note: { s: "Teacher reports staring spells several times a day, per mom.", a: "Possible absence seizures.", p: "Sleep-deprived EEG, seizure safety handout, follow up after EEG." }, codes: ["R56.9", "99214"] },
   { id: "marcus", hour: 11, time: "11:30", who: "Marcus Webb", reason: "Burning feet", status: "draft", note: { s: "Burning in both feet keeps him up. Sugars in the 140s.", a: "Diabetic polyneuropathy.", p: "Raise gabapentin to 600 mg at bedtime, foot care, recheck in 3 months." }, codes: ["E11.42", "99214"] },
   { id: "iris", hour: 11, time: "11:45", who: "Iris Novak", reason: "Dizzy spells", status: "draft", note: { s: "Room spins for a minute when she rolls over in bed.", a: "Benign positional vertigo, right side.", p: "Epley maneuver done today, home exercises, call if worse." }, codes: ["H81.11", "99213"] },
   { id: "omar", hour: 13, time: "1:00", who: "Omar Haddad", reason: "Return to play", status: "draft", note: { s: "Hit heads in soccer three weeks ago. No headaches for 10 days.", a: "Concussion, resolved.", p: "Cleared for stepwise return to play, form sent to school." }, codes: ["S06.0X0D", "99213"] },
@@ -59,10 +59,10 @@ const VISITS: Visit[] = [
   { id: "noah", hour: 14, time: "2:30", who: "Noah Bennett", reason: "Daytime sleepiness", status: "draft", note: { s: "Falls asleep at his desk and once at a red light.", a: "Suspected narcolepsy.", p: "Sleep study and MSLT at Mass General, no driving until then." }, codes: ["G47.419", "99214"] },
   { id: "paul", hour: 14, time: "2:45", who: "Paul Greene", reason: "Botox for migraine", status: "draft", note: { s: "Chronic migraine, 18 headache days a month before Botox.", a: "Chronic migraine, down to 9 days.", p: "Botox, 155 units across 31 sites. Next round in 12 weeks." }, codes: ["G43.709", "64615"] },
   { id: "ruth", hour: 15, time: "3:00", who: "Ruth Alvarez", reason: "Numb left leg", status: "listening", note: { s: "Started after lifting boxes on Friday…", a: "", p: "" }, codes: [] },
-  { id: "sam", hour: 15, time: "3:30", who: "Sam Ortiz", reason: "Headache, two weeks", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
+  { id: "sam", hour: 15, time: "3:30", who: "Sam Ortiz", reason: "Headache", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
   { id: "june", hour: 16, time: "4:00", who: "June Patel", reason: "Medication review", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
   { id: "omar2", hour: 16, time: "4:15", who: "Theo Haddad", reason: "Tic follow-up", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
-  { id: "mia", hour: 16, time: "4:30", who: "Mia Rossi", reason: "Speech delay, age 4", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
+  { id: "mia", hour: 16, time: "4:30", who: "Mia Rossi", reason: "Speech delay", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
   { id: "victor", hour: 16, time: "4:45", who: "Victor Lane", reason: "Stroke follow-up", status: "upcoming", note: { s: "", a: "", p: "" }, codes: [] },
 ];
 
@@ -79,7 +79,7 @@ const VIDEO: Record<string, { state: VideoState; length?: string; by?: string; p
   priya: { state: "done", length: "6:48" },
   clara: { state: "done", length: "3:20" },
   daniel: { state: "done", length: "7:40" },
-  grace: { state: "sent" },
+  james: { state: "done", length: "4:20" },
   ava: { state: "done", length: "5:31" },
   henry: { state: "done", length: "6:12" },
   hannah: { state: "done", length: "7:55" },
@@ -101,7 +101,7 @@ const VIDEO: Record<string, { state: VideoState; length?: string; by?: string; p
 
 const CLINICIANS = ["Dr. Brooks", "Dr. Patel", "Dr. Shah"];
 const MEDS: Record<string, string> = {
-  grace: "Carbidopa-levodopa 25/100",
+  james: "Ibuprofen as needed",
   marcus: "Gabapentin 300 mg",
   hannah: "Ocrelizumab infusions",
   elena: "Sumatriptan as needed",
@@ -113,7 +113,7 @@ const clinicianFor = (v: Visit) => CLINICIANS[VISITS.indexOf(v) % CLINICIANS.len
 const filledBy = (v: Visit) => VIDEO[v.id]?.by ?? v.who.split(" ")[0]!;
 const answersFor = (v: Visit) => [
   { label: "Reason", value: v.reason },
-  { label: "In their words", value: v.note.s || "Shared in the video" },
+  { label: "In their words", value: v.note.s || "Shared in the Video" },
   { label: "Medications", value: MEDS[v.id] ?? "None listed" },
   { label: "Allergies", value: v.id === "lily" ? "Amoxicillin" : "None known" },
   { label: "Insurance", value: PLANS[v.id] ?? "Blue Cross" },
@@ -126,11 +126,11 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).
 
 const hourLabel = (h: number) => `${((h + 11) % 12) + 1} ${h < 12 ? "am" : "pm"}`;
 
-function Chip({ status }: { status: Status }) {
+function Chip({ status, ready }: { status: Status; ready: boolean }) {
   return (
     <span className={`flex items-center gap-[6px] h-[24px] px-[10px] shrink-0 rounded-[999px] text-[12px] leading-[16px] ${SANS} font-[500] text-walnut`} style={{ backgroundColor: STATUS[status].chip }}>
       {status === "listening" && <span className="w-[6px] h-[6px] rounded-[99px] bg-[#C2603A] animate-pulse" />}
-      {STATUS[status].label}
+      {ready ? "Ready" : STATUS[status].label}
     </span>
   );
 }
@@ -170,7 +170,7 @@ function VideoChip({ visit, active, onOpen }: { visit: Visit; active: boolean; o
         <span className={`w-[22px] h-[22px] shrink-0 flex items-center justify-center rounded-[999px] ${active ? "bg-paper" : "bg-ink"}`}>
           <PlayGlyph color={active ? "#140C04" : "#FFFCF1"} />
         </span>
-        <span className="truncate">Pre-visit video</span>
+        <span className="truncate">Pre-visit Video</span>
         <span className={`shrink-0 font-[500] [font-variant-numeric:tabular-nums] ${active ? "[color:#FFFCF199]" : "text-sub"}`}>{info.length}</span>
       </button>
     );
@@ -220,7 +220,7 @@ function VideoPanel({ visit, onClose, onOpenNote }: { visit: Visit; onClose: () 
     <div className="flex flex-col h-full gap-[14px] pt-[22px] pb-[20px] px-[20px] rounded-[24px] bg-ink">
       <div className="flex items-center justify-between gap-[12px]">
         <span className="flex flex-col min-w-[0px]">
-          <span className={`text-[12px] leading-[16px] ${SANS} [color:#FFFCF180]`}>Pre-visit video</span>
+          <span className={`text-[12px] leading-[16px] ${SANS} [color:#FFFCF180]`}>Pre-visit Video</span>
           <span className={`truncate text-[28px] leading-[34px] tracking-[-0.02em] ${DISPLAY} [color:#FFFCF1]`}>{visit.who}</span>
         </span>
         <button type="button" aria-label="Close" onClick={onClose} className="w-[36px] h-[36px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#FFFCF114] hover:bg-[#FFFCF124] transition-colors duration-150">
@@ -309,7 +309,7 @@ function OpenBody({ visit, status, onSign }: { visit: Visit; status: Status; onS
     return (
       <div className="grid grid-cols-3 gap-[8px]">
         <NoteLine
-          label="Pre-visit video"
+          label="Pre-visit Video"
           text={
             VIDEO[visit.id]?.state === "done"
               ? `Recorded by ${filledBy(visit)}`
@@ -372,12 +372,324 @@ function OpenBody({ visit, status, onSign }: { visit: Visit; status: Status; onS
   );
 }
 
+type JamesDoc = "intake" | "auth-form" | "auth-confirm";
+
+type Sheet = {
+  file: string;
+  meta: string;
+  from: string;
+  title: string;
+  stamp?: string;
+  sections: { heading: string; rows: [string, string][] }[];
+  sign?: { name: string; line: string };
+};
+
+/** The paperwork behind James's visit, as ModMed holds it. */
+const jamesSheets = (visit: Visit): Record<JamesDoc, Sheet> => ({
+  intake: {
+    file: "Intake form.pdf",
+    meta: "Pulled from ModMed · 2 pages",
+    from: "Brooks Neurology",
+    title: "New Patient Intake",
+    sections: [
+      {
+        heading: "Patient",
+        rows: [
+          ["Name", visit.who],
+          ["Date of birth", "Mar 14, 1991"],
+          ["Phone", "(617) 555-0148"],
+          ["Visit", `${visit.time} am with ${clinicianFor(visit)}`],
+        ],
+      },
+      {
+        heading: "Reason for visit",
+        rows: [
+          ["Main concern", "Headaches getting worse"],
+          ["Started", "About 3 weeks ago"],
+          ["How often", "Every day, worst on waking"],
+          ["Tried", "Ibuprofen 400 mg, helping less each week"],
+          ["Also noticed", "Nausea some mornings. No vision changes, weakness or numbness."],
+        ],
+      },
+      {
+        heading: "Health history",
+        rows: [
+          ["Medications", "Ibuprofen as needed"],
+          ["Allergies", "None known"],
+          ["Conditions", "None"],
+          ["Family history", "Mother has migraines"],
+        ],
+      },
+      { heading: "Insurance", rows: [["Plan", "Blue Cross PPO"], ["Member ID", "XJL 448 210 935"]] },
+    ],
+    sign: { name: visit.who, line: "Signed electronically Oct 12, 8:41 pm" },
+  },
+  "auth-form": {
+    file: "Prior auth request.pdf",
+    meta: "Pulled from ModMed · 1 page",
+    from: "Brooks Neurology",
+    title: "Prior Authorization Request",
+    sections: [
+      {
+        heading: "Member",
+        rows: [
+          ["Name", visit.who],
+          ["Date of birth", "Mar 14, 1991"],
+          ["Plan", "Blue Cross PPO"],
+          ["Member ID", "XJL 448 210 935"],
+        ],
+      },
+      {
+        heading: "Request",
+        rows: [
+          ["Service", "New patient neurology visit"],
+          ["Visits", "1"],
+          ["Provider", `${clinicianFor(visit)}, Brooks Neurology`],
+          ["Referred by", "Dr. Ellis, primary care"],
+          ["Why", "Daily headaches for 3 weeks, no longer helped by ibuprofen"],
+        ],
+      },
+    ],
+    sign: { name: "Kofi Mensah", line: "Billing, sent to Blue Cross Oct 12, 9:02 pm" },
+  },
+  "auth-confirm": {
+    file: "Prior auth approval.pdf",
+    meta: "Pulled from ModMed · 1 page",
+    from: "Blue Cross",
+    title: "Prior Authorization Approved",
+    stamp: "Approved",
+    sections: [
+      {
+        heading: "Approval",
+        rows: [
+          ["Auth number", "BC-4471-2093"],
+          ["Approved", "Oct 13"],
+          ["Good through", "Jan 13"],
+          ["Visits approved", "1"],
+        ],
+      },
+      {
+        heading: "Covers",
+        rows: [
+          ["Member", visit.who],
+          ["Service", "New patient neurology visit"],
+          ["Provider", "Brooks Neurology"],
+        ],
+      },
+    ],
+  },
+});
+
+function CheckGlyph({ color = "#281910" }: { color?: string }) {
+  return (
+    <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+      <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function DocGlyph() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+      <path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z M14 3v5h5" fill="none" stroke="#281910" strokeWidth="2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** James's visit hasn't happened yet, so in place of a note his card shows what Doe pulled from ModMed to get ready for it. */
+function JamesBrief({ visit, onOpenVideo, onOpenDoc }: { visit: Visit; onOpenVideo: () => void; onOpenDoc: (d: JamesDoc) => void }) {
+  const label = `text-[11px] leading-[14px] ${SANS} font-[600] uppercase tracking-[0.06em] text-sub`;
+  const tile = "flex flex-col min-w-[0px] h-[156px] p-[14px] rounded-[18px] bg-[#FFFCF1B3]";
+  const done = (text: string) => (
+    <span className={`self-start flex items-center gap-[5px] h-[22px] pl-[7px] pr-[9px] rounded-[999px] bg-[#DCE5D0] text-[11px] leading-[14px] ${SANS} font-[600] text-walnut`}>
+      <CheckGlyph />
+      {text}
+    </span>
+  );
+  const attachment = (text: string, d: JamesDoc) => (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onOpenDoc(d);
+      }}
+      onKeyDown={(e) => e.stopPropagation()}
+      className={`flex items-center gap-[6px] h-[28px] min-w-[0px] px-[10px] rounded-[999px] bg-paper hover:bg-[#FFFFFF] border border-solid border-[#2819101A] transition-colors duration-150 text-[12px] leading-[16px] ${SANS} font-[600] text-walnut`}
+    >
+      <span className="shrink-0">
+        <DocGlyph />
+      </span>
+      <span className="truncate">{text}</span>
+    </button>
+  );
+
+  return (
+    <div className="flex flex-col gap-[10px]">
+      <div className="flex items-center justify-between gap-[12px] min-w-[0px]">
+        <span className="flex items-center gap-[8px] min-w-[0px]">
+          <span className={`w-[22px] h-[22px] shrink-0 flex items-center justify-center rounded-[7px] bg-ink text-[12px] leading-[12px] ${DISPLAY} [color:#FFFCF1]`}>M</span>
+          <span className={`shrink-0 text-[13px] leading-[18px] ${SANS} font-[600] text-walnut`}>Pulled from ModMed</span>
+          <span className={`truncate text-[13px] leading-[18px] ${SANS} font-[500] text-sub`}>Synced 9:12 am</span>
+        </span>
+        <span className={`shrink-0 text-[13px] leading-[18px] ${SANS} font-[500] text-sub`}>New patient · {clinicianFor(visit)}</span>
+      </div>
+
+      <div className="grid grid-cols-3 gap-[8px]">
+        <button
+          type="button"
+          aria-label="Play pre-visit video"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenVideo();
+          }}
+          onKeyDown={(e) => e.stopPropagation()}
+          className="group relative min-w-[0px] h-[156px] rounded-[18px] overflow-clip text-left"
+          style={{ backgroundImage: "linear-gradient(in oklab 160deg, oklab(31% 0.022 0.026) 0%, oklab(21% 0.014 0.011) 100%)" }}
+        >
+          <span className={`absolute top-[10px] left-[12px] text-[44px] leading-[44px] tracking-[-0.03em] ${DISPLAY} [color:#FFFCF114]`}>
+            {visit.who
+              .split(" ")
+              .map((p) => p[0])
+              .join("")}
+          </span>
+          <span className="absolute inset-0 flex items-center justify-center">
+            <span className="w-[44px] h-[44px] flex items-center justify-center rounded-[999px] bg-[#FFFCF1E6] group-hover:bg-paper group-hover:scale-[1.06] transition-[transform,background-color] duration-200">
+              <PlayGlyph size={15} color="#140C04" />
+            </span>
+          </span>
+          <span className="absolute left-[12px] right-[12px] bottom-[12px] flex items-center justify-between gap-[8px]">
+            <span className={`truncate text-[12px] leading-[16px] ${SANS} font-[600] [color:#FFFCF1]`}>Pre-visit Video</span>
+            <span className={`shrink-0 text-[12px] leading-[16px] ${SANS} [color:#FFFCF199] [font-variant-numeric:tabular-nums]`}>{VIDEO[visit.id]?.length}</span>
+          </span>
+        </button>
+
+        <div className={tile}>
+          {done("Completed")}
+          <span className={`mt-[10px] truncate text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>Intake form</span>
+          <span className={`truncate text-[13px] leading-[18px] ${SANS} font-[500] text-sub`}>Sent in on Oct 12</span>
+          <span className="mt-auto flex">{attachment("Intake form", "intake")}</span>
+        </div>
+
+        <div className={tile}>
+          {done("Confirmed")}
+          <span className={`mt-[10px] truncate text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>Prior auth</span>
+          <span className={`truncate text-[13px] leading-[18px] ${SANS} font-[500] text-sub`}>Blue Cross · BC-4471-2093</span>
+          <span className="mt-auto flex gap-[6px] min-w-[0px] [&>button:first-child]:shrink-0">
+            {attachment("Form", "auth-form")}
+            {attachment("Approval", "auth-confirm")}
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-4 gap-[12px] p-[14px] rounded-[18px] bg-[#FFFCF1B3]">
+        {[
+          ["Going on", "3 weeks, daily"],
+          ["Medications", MEDS[visit.id] ?? "None listed"],
+          ["Allergies", "None known"],
+          ["Referred by", "Dr. Ellis, primary care"],
+        ].map(([k, v]) => (
+          <span key={k} className="flex flex-col gap-[3px] min-w-[0px]">
+            <span className={label}>{k}</span>
+            <span className={`truncate text-[14px] leading-[20px] ${SANS} font-[500] text-walnut`}>{v}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** An attachment from James's card, opened over the schedule. */
+function DocViewer({ sheet, open, onClose }: { sheet: Sheet; open: boolean; onClose: () => void }) {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    // Capture phase: the card's buttons stop keydown from bubbling.
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [open, onClose]);
+
+  return (
+    <div
+      className="absolute inset-0 z-[30] flex items-center justify-center p-[32px] bg-[#140C0452]"
+      style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 240ms ease" }}
+      onClick={onClose}
+      aria-hidden={!open}
+    >
+      <div
+        role="dialog"
+        aria-label={sheet.file}
+        onClick={(e) => e.stopPropagation()}
+        className="flex flex-col w-[620px] max-w-full max-h-full rounded-[24px] bg-paper overflow-hidden shadow-[0_24px_60px_-20px_#140C0466]"
+        style={{ transform: open ? "translateY(0) scale(1)" : "translateY(12px) scale(0.98)", transition: `transform ${MOVE}` }}
+      >
+        <div className="flex items-center justify-between gap-[12px] px-[20px] py-[16px]">
+          <span className="flex items-center gap-[10px] min-w-[0px]">
+            <span className="w-[32px] h-[32px] shrink-0 flex items-center justify-center rounded-[10px] bg-sand">
+              <DocGlyph />
+            </span>
+            <span className="flex flex-col min-w-[0px]">
+              <span className={`truncate text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`}>{sheet.file}</span>
+              <span className={`truncate text-[12px] leading-[16px] ${SANS} font-[500] text-sub`}>{sheet.meta}</span>
+            </span>
+          </span>
+          <button type="button" aria-label="Close" onClick={onClose} className="w-[36px] h-[36px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#2819100F] hover:bg-[#2819101F] transition-colors duration-150">
+            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+              <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#281910" strokeWidth="2.2" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="grow min-h-[0px] overflow-y-auto px-[20px] pb-[20px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex flex-col gap-[22px] px-[32px] py-[30px] rounded-[14px] bg-[#FFFFFF] border border-solid border-[#2819100F]">
+            <div className="flex items-start justify-between gap-[16px] pb-[18px] border-b border-solid border-[#2819101A]">
+              <span className="flex flex-col gap-[4px]">
+                <span className={`text-[11px] leading-[14px] ${SANS} font-[600] uppercase tracking-[0.08em] text-sub`}>{sheet.from}</span>
+                <span className={`text-[26px] leading-[30px] tracking-[-0.02em] ${DISPLAY} text-walnut`}>{sheet.title}</span>
+              </span>
+              {sheet.stamp && (
+                <span className={`shrink-0 flex items-center gap-[6px] h-[30px] px-[12px] rounded-[999px] bg-[#DCE5D0] text-[13px] leading-[16px] ${SANS} font-[600] text-walnut`}>
+                  <CheckGlyph />
+                  {sheet.stamp}
+                </span>
+              )}
+            </div>
+
+            {sheet.sections.map((s) => (
+              <div key={s.heading} className="flex flex-col">
+                <span className={`pb-[6px] text-[11px] leading-[14px] ${SANS} font-[600] uppercase tracking-[0.06em] text-sub`}>{s.heading}</span>
+                {s.rows.map(([k, v]) => (
+                  <div key={k} className="flex items-start gap-[16px] py-[9px] border-b border-solid border-[#2819100F]">
+                    <span className={`w-[132px] shrink-0 text-[13px] leading-[18px] ${SANS} font-[500] text-sub`}>{k}</span>
+                    <span className={`grow min-w-[0px] text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>{v}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+
+            {sheet.sign && (
+              <div className="flex flex-col gap-[2px] pt-[4px]">
+                <span className="text-[26px] leading-[32px] text-walnut" style={{ fontFamily: "'Snell Roundhand', 'Segoe Script', cursive" }}>
+                  {sheet.sign.name}
+                </span>
+                <span className={`pt-[4px] border-t border-solid border-[#2819101A] text-[12px] leading-[16px] ${SANS} font-[500] text-sub`}>{sheet.sign.line}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DayView({ onView }: { onView: (v: ScheduleView) => void }) {
   const [open, setOpen] = useState<string | null>(null);
   const [video, setVideo] = useState<string | null>(null);
   const [viewing, setViewing] = useState(VISITS[0]!.id);
   const shown = VISITS.find((v) => v.id === (video ?? viewing)) ?? VISITS[0]!;
   const [statuses, setStatuses] = useState<Record<string, Status>>(() => Object.fromEntries(VISITS.map((v) => [v.id, v.status])));
+  const [doc, setDoc] = useState<JamesDoc>("intake");
+  const [docOpen, setDocOpen] = useState(false);
+  const closeDoc = useCallback(() => setDocOpen(false), []);
   const [fade, setFade] = useState({ top: 0, bottom: BOTTOM_FADE });
   const listRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
@@ -489,7 +801,7 @@ function DayView({ onView }: { onView: (v: ScheduleView) => void }) {
                         >
                           <div className="flex items-center justify-between gap-[10px]">
                             <span className={`text-[13px] leading-[16px] ${SANS} font-[600] text-sub`}>{v.time}</span>
-                            <Chip status={status} />
+                            <Chip status={status} ready={v.hour >= 9} />
                           </div>
                           <div className="flex flex-col gap-[2px] mt-[14px]">
                             <span className={`truncate tracking-[-0.01em] ${DISPLAY} text-walnut`} style={{ fontSize: isOpen ? 30 : 22, lineHeight: isOpen ? "34px" : "26px", transition: `font-size ${MOVE}, line-height ${MOVE}` }}>
@@ -497,14 +809,28 @@ function DayView({ onView }: { onView: (v: ScheduleView) => void }) {
                             </span>
                             <span className={`truncate text-[13px] leading-[18px] ${SANS} font-[500] text-sub`}>{v.reason}</span>
                           </div>
-                          <div className="absolute left-[20px] right-[20px] bottom-[18px] flex items-center min-w-[0px]">
+                          <div
+                            className="absolute left-[20px] right-[20px] bottom-[18px] flex items-center min-w-[0px]"
+                            style={v.id === "james" ? { opacity: isOpen ? 0 : 1, pointerEvents: isOpen ? "none" : "auto", transition: "opacity 200ms ease" } : undefined}
+                          >
                             <VideoChip visit={v} active={video === v.id} onOpen={() => openVideo(v.id)} />
                           </div>
                           <div
                             className="absolute left-[20px] right-[20px] top-[140px]"
                             style={{ opacity: isOpen ? 1 : 0, transform: `translateY(${isOpen ? 0 : 8}px)`, transition: `opacity 260ms ease ${isOpen ? "220ms" : "0ms"}, transform ${MOVE}`, pointerEvents: isOpen ? "auto" : "none" }}
                           >
-                            <OpenBody visit={v} status={status} onSign={() => setStatuses((prev) => ({ ...prev, [v.id]: "signed" }))} />
+                            {v.id === "james" ? (
+                              <JamesBrief
+                                visit={v}
+                                onOpenVideo={() => openVideo(v.id)}
+                                onOpenDoc={(d) => {
+                                  setDoc(d);
+                                  setDocOpen(true);
+                                }}
+                              />
+                            ) : (
+                              <OpenBody visit={v} status={status} onSign={() => setStatuses((prev) => ({ ...prev, [v.id]: "signed" }))} />
+                            )}
                           </div>
                         </div>
                       );
@@ -540,6 +866,8 @@ function DayView({ onView }: { onView: (v: ScheduleView) => void }) {
           />
         </div>
       </div>
+
+      <DocViewer sheet={jamesSheets(VISITS.find((v) => v.id === "james")!)[doc]} open={docOpen} onClose={closeDoc} />
     </div>
   );
 }

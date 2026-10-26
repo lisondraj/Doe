@@ -395,10 +395,12 @@ function Artboard({
   /** Shell-level layers are always mounted; only the active tab's layer is visible and clickable. */
   const tabLayerStyle = (tab: TabId): CSSProperties => {
     const visible = shownTab === tab && contentVisible;
+    /** Hidden too, so a side panel inside a faded-out layer (its own pointer-events: auto) can't catch clicks. */
     return {
       opacity: visible ? 1 : 0,
+      visibility: visible ? "visible" : "hidden",
       pointerEvents: visible ? "auto" : "none",
-      transition: `opacity ${FADE_MS}ms ease`,
+      transition: `opacity ${FADE_MS}ms ease, visibility ${FADE_MS}ms`,
     };
   };
 

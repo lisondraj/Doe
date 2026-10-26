@@ -958,6 +958,110 @@ function SectionDetail({ id, done, onDone }: { id: SectionId; done: Set<string>;
   return <SystemsDetail />;
 }
 
+const MARK = `w-[18px] h-[18px] shrink-0 flex items-center justify-center rounded-[6px] text-[10px] leading-[10px] ${SANS} font-[700]`;
+
+/** A file Muse handed over with the booking. */
+function Attached({ children }: { children: ReactNode }) {
+  return (
+    <span className={`flex items-center gap-[6px] h-[32px] min-w-[0px] px-[10px] rounded-[10px] bg-[#FFFCF1] border border-solid border-[#2819101A] text-[12px] leading-[16px] ${SANS} font-[500] text-walnut`}>
+      <Glyph size={18}>
+        <path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1ZM14 3v5h5" />
+      </Glyph>
+      <span className="truncate">{children}</span>
+      <Glyph size={12}>
+        <path d="M9 6l6 6-6 6" />
+      </Glyph>
+    </span>
+  );
+}
+
+function Done({ children }: { children: ReactNode }) {
+  return <span className={`flex items-center h-[20px] shrink-0 px-[7px] rounded-[999px] bg-[#E3E9D9] text-[11px] leading-[14px] ${SANS} font-[600] text-walnut`}>{children}</span>;
+}
+
+const BOOKING_STEPS: { title: string; detail?: ReactNode; states?: string[]; file?: string }[] = [
+  { title: "Reviewed calendar" },
+  {
+    title: "Matched availability to the clinic",
+    detail: (
+      <span className="flex items-center gap-[5px]">
+        <span className={`${MARK} bg-ink [color:#FFFCF1]`}>M</span>
+        ModMed schedule
+      </span>
+    ),
+  },
+  { title: "Intake form", states: ["Sent & Completed"], file: "Intake form.pdf" },
+  { title: "Pre-visit video", states: ["Sent & Completed"], file: "Pre-visit video, 4:20" },
+  { title: "Prior authorization", states: ["Sent & Approved"], file: "Approval BC-4471-2093.pdf" },
+];
+
+/** Top-right notice: James’s agent, Muse, booking him in and showing each step it took. */
+function BookingNotice() {
+  const [confirmed, setConfirmed] = useState(false);
+  return (
+    <div className="absolute top-[28px] right-[28px] z-[2] flex flex-col w-[360px] rounded-[24px] bg-paper border border-solid border-[#2819100F] shadow-[0_18px_48px_-24px_#140C0459] overflow-hidden">
+      <div className="flex items-center gap-[12px] px-[18px] pt-[18px]">
+        <span className="flex flex-col grow min-w-[0px]">
+          <span className={`truncate ${TITLE}`}>James Lisondra</span>
+          <span className={`truncate ${MUTED}`}>Connected through Muse</span>
+        </span>
+        {confirmed ? <Chip dot={GREEN} tone="#E3E9D9">Booked</Chip> : <Chip dot={ACCENT}>Booking</Chip>}
+      </div>
+
+      <div className="mx-[18px] mt-[14px] flex items-center justify-between gap-[10px] px-[14px] py-[12px] rounded-[16px]" style={{ backgroundColor: WELL }}>
+        <span className="flex flex-col min-w-[0px]">
+          <span className={`truncate text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>Worsening Headache</span>
+          <span className={`truncate ${MUTED}`}>Dr. Brooks</span>
+        </span>
+        <span className={`shrink-0 text-[18px] leading-[22px] ${DISPLAY} text-walnut`}>9:30 am</span>
+      </div>
+
+      <div className="flex flex-col px-[18px] pt-[14px]">
+        {BOOKING_STEPS.map((s, i) => (
+          <div key={s.title} className="flex gap-[12px]">
+            <span className="flex flex-col items-center">
+              <span className="w-[22px] h-[22px] shrink-0 flex items-center justify-center rounded-[999px] bg-ink [color:#FFFCF1]">
+                <Check size={12} />
+              </span>
+              {i < BOOKING_STEPS.length - 1 && <span className="grow w-[1.5px] my-[3px] bg-[#2819101F]" />}
+            </span>
+            <span className={`flex flex-col gap-[5px] grow min-w-[0px] ${i < BOOKING_STEPS.length - 1 ? "pb-[14px]" : ""}`}>
+              <span className="flex items-center justify-between gap-[8px] min-h-[22px]">
+                <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>{s.title}</span>
+                {s.states && (
+                  <span className="flex items-center gap-[4px]">
+                    {s.states.map((st) => (
+                      <Done key={st}>{st}</Done>
+                    ))}
+                  </span>
+                )}
+              </span>
+              {s.detail && <span className={`text-[12px] leading-[16px] ${SANS} font-[500] text-sub`}>{s.detail}</span>}
+              {s.file && (
+                <span className="flex">
+                  <Attached>{s.file}</Attached>
+                </span>
+              )}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-[18px] pt-[16px]">
+        <button
+          type="button"
+          disabled={confirmed}
+          onClick={() => setConfirmed(true)}
+          className={`w-full h-[44px] flex items-center justify-center gap-[8px] rounded-[999px] text-[15px] leading-[20px] ${SANS} font-[500] transition-colors duration-150 ${confirmed ? "bg-[#E3E9D9] text-walnut cursor-default" : "bg-ink [color:#FFFCF1] hover:bg-[#2B1D12]"}`}
+        >
+          {confirmed && <Check size={15} />}
+          {confirmed ? "Appointment confirmed" : "Confirm appointment"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 const TOP_FADE = 48;
 const BOTTOM_FADE = 96;
 
@@ -1028,6 +1132,7 @@ export function DoeHealthProductIndex({
         <DoeHealthBlogDotWave color="rgba(196, 172, 128, 0.32)" top={0.08} amp={46} fade={0.12} scale={1.08} slant={0.22} />
         <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(90deg, var(--color-paper) 0%, transparent 42%)" }} />
       </div>
+      <BookingNotice />
       <div className="relative z-[1] flex items-center justify-between w-[840px] shrink-0">
         <div className={`text-[46px] leading-[50px] tracking-[-0.025em] ${DISPLAY} text-walnut`}>Dr. Brooks’ Index</div>
         <button
