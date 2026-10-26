@@ -317,7 +317,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   /** A tier is lit while anyone on the team is on it. */
   const lit = (id: PlanId) => !!a.plan && onTier(id) > 0;
   const cols = phone ? "grid-cols-[150px_repeat(4,128px)]" : "grid-cols-[minmax(180px,1.5fr)_repeat(4,minmax(120px,1fr))]";
-  const cell = (id: PlanId) => `flex justify-center self-stretch items-center ${lit(id) ? "bg-[#281910]" : ""}`;
+  /** Doe One's column is always brown; a tier the team uses gets a soft tint. */
+  const dark = (id: PlanId) => id === "one";
+  const cell = (id: PlanId) => `flex justify-center self-stretch items-center ${dark(id) ? "bg-[#281910]" : lit(id) ? "bg-[#F7EFDF]" : ""}`;
   const first = `sticky left-0 z-[1] ${phone ? "bg-[#FFFCF1]" : ""}`;
 
   const groupRows = (title: string, from: PlanId, items: string[], key = title) => (
@@ -331,7 +333,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           <span className={`${first} px-[20px] py-[7px] text-[14px] leading-[19px] ${SUB}`}>{item}</span>
           {PLAN_ORDER.map((id) => (
             <span key={id} className={cell(id)}>
-              <Mark on={includes(id, from)} dark={lit(id)} />
+              <Mark on={includes(id, from)} dark={dark(id)} />
             </span>
           ))}
         </Fragment>
@@ -346,22 +348,30 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         <span className={first} />
         {PLANS.map((p) => {
           const on = lit(p.id);
+          const special = dark(p.id);
           return (
-            <div key={p.id} className={`flex flex-col gap-[12px] p-[18px] pb-[20px] transition-colors duration-200 ${on ? "bg-[#281910] text-[#FFFCF1]" : "text-[#281910]"}`}>
+            <div
+              key={p.id}
+              className={`relative flex flex-col gap-[12px] p-[18px] pb-[20px] transition-colors duration-200 ${special ? "bg-[#281910] text-[#FFFCF1]" : on ? "bg-[#F7EFDF] text-[#281910]" : "text-[#281910]"}`}
+            >
+              {special && <span className="absolute left-[18px] right-[18px] top-0 h-[4px] rounded-b-[4px] bg-[#FCCFB8]" aria-hidden="true" />}
               <span className="flex flex-col gap-[2px]">
                 <span className="flex h-[22px] mb-[4px]">
                   {p.id === "advanced" && <span className="h-[22px] px-[9px] flex items-center rounded-[999px] bg-[#FCCFB8] text-[11px] leading-[14px] font-[600] text-[#140C04] whitespace-nowrap">Most chosen</span>}
+                  {special && <span className="h-[22px] px-[9px] flex items-center rounded-[999px] border-[1.5px] border-solid border-[#FCCFB8] text-[11px] leading-[14px] font-[600] text-[#FCCFB8] whitespace-nowrap">Complete</span>}
                 </span>
                 <span className={`text-[22px] leading-[26px] tracking-[-0.02em] ${DISPLAY}`}>{p.name}</span>
-                <span className={`text-[13px] leading-[17px] min-h-[34px] ${on ? "text-[rgba(255,252,241,0.68)]" : SUB}`}>{p.line}</span>
+                <span className={`text-[13px] leading-[17px] min-h-[34px] ${special ? "text-[rgba(255,252,241,0.68)]" : SUB}`}>{p.line}</span>
               </span>
               <span className="flex items-baseline gap-[3px]">
-                <span className={`text-[32px] leading-[34px] tracking-[-0.035em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(priceOf(p.id))}</span>
-                <span className={`text-[13px] ${on ? "text-[rgba(255,252,241,0.6)]" : SUB}`}>/mo</span>
+                <span className={`text-[32px] leading-[34px] tracking-[-0.035em] ${DISPLAY} [font-variant-numeric:tabular-nums] ${special ? "text-[#FCCFB8]" : ""}`}>{money(priceOf(p.id))}</span>
+                <span className={`text-[13px] ${special ? "text-[rgba(255,252,241,0.6)]" : SUB}`}>/mo</span>
               </span>
               <span className="flex h-[30px]">
                 {on && (
-                  <span className="h-[30px] px-[12px] flex items-center gap-[6px] rounded-[999px] bg-[#FCCFB8] text-[13px] leading-[16px] font-[600] text-[#140C04] whitespace-nowrap">
+                  <span
+                    className={`h-[30px] px-[12px] flex items-center gap-[6px] rounded-[999px] text-[13px] leading-[16px] font-[600] whitespace-nowrap ${special ? "bg-[#FCCFB8] text-[#140C04]" : "bg-[#281910] text-[#FFFCF1]"}`}
+                  >
                     <svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
                       <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -394,7 +404,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
               </button>
               {PLAN_ORDER.map((id) => (
                 <span key={id} className={cell(id)}>
-                  <Mark on={includes(id, SPECIALTY_FROM)} dark={lit(id)} />
+                  <Mark on={includes(id, SPECIALTY_FROM)} dark={dark(id)} />
                 </span>
               ))}
               {open &&
@@ -403,7 +413,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                     <span className={`${first} pl-[40px] pr-[20px] py-[6px] text-[13px] leading-[18px] ${SUB}`}>{item}</span>
                     {PLAN_ORDER.map((id) => (
                       <span key={id} className={cell(id)}>
-                        <Mark on={includes(id, SPECIALTY_FROM)} dark={lit(id)} />
+                        <Mark on={includes(id, SPECIALTY_FROM)} dark={dark(id)} />
                       </span>
                     ))}
                   </Fragment>
