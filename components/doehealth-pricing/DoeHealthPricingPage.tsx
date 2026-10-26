@@ -90,30 +90,22 @@ const FOUNDING_UNTIL = "March 2027";
 const NEWS_INK = "#8A6A3F";
 
 /**
- * The banner on top: one of the /news boxes (warm beige, the dot wave along the bottom) with the page's title and,
- * under it, a small pill for founding pricing and when it ends. Everything sits to the left.
+ * The banner on top: the same box as the /careers hero, warm beige with the dot wave along the bottom. The founding-pricing
+ * pill sits at the bottom centre.
  */
 function FoundingBanner({ phone }: { phone: boolean }) {
   const box = articleBoxColors("sand");
   return (
-    <section aria-label="Founding pricing" className="mx-auto w-full max-w-[1120px]">
-      {/* The /news box markup, built here rather than with its placeholder so the title isn't hidden from screen readers. */}
+    <section aria-label="Founding pricing" className="w-full">
+      {/* The /news box markup, built here rather than with its placeholder so the pill isn't hidden from screen readers. */}
       <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doe-pricing-banner" style={{ background: box.bg }}>
         <DoeHealthBlogDotWave color={box.dot} top={phone ? 0.66 : 0.72} amp={70} phase={2.2} scale={1.05} slant={-0.3} flip />
         <div className="doehealth-blog-placeholder__content">
-          <div className={`flex flex-col items-start text-left w-full ${phone ? "h-full justify-between gap-[18px]" : "gap-[24px]"}`}>
-            <h2
-              className={`m-0 font-[400] tracking-[-0.035em] [text-wrap:balance] ${phone ? "text-[26px] leading-[29px]" : "max-w-[22ch] text-[48px] leading-[51px]"} ${p22Mackinac.className}`}
-              style={{ color: NEWS_INK }}
-            >
-              Teach personal agents about your clinic before it&apos;s too late.
-            </h2>
-            <span className="inline-flex items-center gap-[10px] h-[34px] px-[14px] rounded-[999px] bg-white text-[14px] leading-[18px] whitespace-nowrap">
-              <span className="font-[500] text-[#281910]">Founding Pricing</span>
-              <span className="w-[1px] h-[14px] bg-[rgba(20,12,4,0.12)]" aria-hidden="true" />
-              <span style={{ color: NEWS_INK }}>Until {FOUNDING_UNTIL}</span>
-            </span>
-          </div>
+          <span className="inline-flex items-center gap-[10px] h-[34px] px-[14px] rounded-[999px] bg-white text-[14px] leading-[18px] whitespace-nowrap">
+            <span className="font-[500] text-[#281910]">Founding Pricing</span>
+            <span className="w-[1px] h-[14px] bg-[rgba(20,12,4,0.12)]" aria-hidden="true" />
+            <span style={{ color: NEWS_INK }}>Until {FOUNDING_UNTIL}</span>
+          </span>
         </div>
       </div>
     </section>
@@ -160,7 +152,10 @@ export function DoeHealthPricingPage({ initialVariant }: { initialVariant: DoeHe
 
           <FoundingBanner phone={phone} />
 
-          <DoeHealthPricingBuilder phone={phone} />
+          {/* Each question sits in the middle of a screen-tall space under the nav, between the banner and the FAQ; a little top padding offsets the room the builder keeps below for its price bar. */}
+          <div className={`flex flex-col justify-center ${phone ? "min-h-[calc(100dvh-120px)] pt-[32px]" : "min-h-[calc(100dvh-112px)] pt-[40px]"}`}>
+            <DoeHealthPricingBuilder phone={phone} />
+          </div>
 
           <div className={phone ? "pt-[12px]" : "pt-[24px]"}>
             <Faq phone={phone} />
