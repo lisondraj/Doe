@@ -8,6 +8,8 @@
  */
 import { type ReactNode, useState } from "react";
 
+import { LOCATIONS, useLocations } from "@/components/doehealth-product/DoeHealthProductLocations";
+
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 const SANS = "font-['DM_Sans',system-ui,sans-serif]";
 
@@ -29,7 +31,6 @@ const STATUS: Record<Status, { label: string; background: string; color: string 
 };
 
 const TABS = ["Schedule", "Voice", "Transit", "Payments", "Offers", "Insights", "Automations", "Integrations"];
-const LOCATIONS = ["Brookline", "Newton", "Telehealth"];
 
 type Member = {
   id: string;
@@ -38,6 +39,7 @@ type Member = {
   role: Role;
   status: Status;
   note?: string;
+  /** Location ids, from the shared Locations store. */
   locations: string[];
   tabs: string[];
   charts: boolean;
@@ -71,7 +73,7 @@ function member(
     title,
     role,
     status,
-    locations: ["Brookline"],
+    locations: ["brookline"],
     tabs: ROLE_TABS[role],
     charts: role === "clinician" || role === "clinical",
     approve: role === "desk" || role === "admin",
@@ -83,19 +85,19 @@ function member(
 }
 
 const START: Member[] = [
-  member("brooks", "Dr. Sarah Brooks", "General neurology, MD", "clinician", "active", { locations: ["Brookline", "Telehealth"], notify: "all", stats: [["Visits this week", "41"], ["Notes to sign", "3"], ["Last active", "Now"]] }),
-  member("alvarez", "Dr. Elena Alvarez", "Sleep medicine, MD", "clinician", "active", { covers: "patel", stats: [["Visits this week", "38"], ["Notes to sign", "1"], ["Last active", "12m"]] }),
-  member("patel", "Dr. Raj Patel", "Epilepsy, MD", "clinician", "away", { note: "Back Oct 28", covers: "alvarez", stats: [["Visits this week", "0"], ["Notes to sign", "0"], ["Last active", "Fri"]] }),
-  member("chen", "Dr. Lin Chen", "Headache medicine, MD", "clinician", "active", { locations: ["Newton"], stats: [["Visits this week", "22"], ["Notes to sign", "2"], ["Last active", "1h"]] }),
-  member("singh", "Nora Singh", "Nurse practitioner", "clinician", "active", { locations: ["Newton", "Telehealth"], stats: [["Visits this week", "29"], ["Notes to sign", "0"], ["Last active", "4m"]] }),
-  member("ortiz", "Sam Ortiz", "EEG technologist", "clinical", "active", { stats: [["EEGs run", "18"], ["Reports queued", "4"], ["Last active", "Now"]] }),
-  member("nair", "Priya Nair", "Medical assistant", "clinical", "invited", { locations: ["Newton"], stats: [["Invite sent", "Oct 22"], ["Expires", "Oct 29"], ["Last active", "—"]] }),
-  member("moreno", "Jess Moreno", "Front desk lead", "desk", "active", { locations: ["Brookline", "Newton"], notify: "all", stats: [["Requests handled", "86"], ["Needs you open", "3"], ["Last active", "Now"]] }),
+  member("brooks", "Dr. Sarah Brooks", "General neurology, MD", "clinician", "active", { locations: ["brookline", "newton", "telehealth"], notify: "all", stats: [["Visits this week", "41"], ["Notes to sign", "3"], ["Last active", "Now"]] }),
+  member("alvarez", "Dr. Elena Alvarez", "Sleep medicine, MD", "clinician", "active", { locations: ["cambridge"], covers: "patel", stats: [["Visits this week", "38"], ["Notes to sign", "1"], ["Last active", "12m"]] }),
+  member("patel", "Dr. Raj Patel", "Epilepsy, MD", "clinician", "away", { locations: ["brookline", "cambridge"], note: "Back Oct 28", covers: "alvarez", stats: [["Visits this week", "0"], ["Notes to sign", "0"], ["Last active", "Fri"]] }),
+  member("chen", "Dr. Lin Chen", "Headache medicine, MD", "clinician", "active", { locations: ["newton", "telehealth"], stats: [["Visits this week", "22"], ["Notes to sign", "2"], ["Last active", "1h"]] }),
+  member("singh", "Nora Singh", "Nurse practitioner", "clinician", "active", { locations: ["brookline", "telehealth"], stats: [["Visits this week", "29"], ["Notes to sign", "0"], ["Last active", "4m"]] }),
+  member("ortiz", "Sam Ortiz", "EEG technologist", "clinical", "active", { locations: ["cambridge"], stats: [["EEGs run", "18"], ["Reports queued", "4"], ["Last active", "Now"]] }),
+  member("nair", "Priya Nair", "Medical assistant", "clinical", "invited", { locations: ["newton"], stats: [["Invite sent", "Oct 22"], ["Expires", "Oct 29"], ["Last active", "—"]] }),
+  member("moreno", "Jess Moreno", "Front desk lead", "desk", "active", { locations: ["brookline", "newton"], notify: "all", stats: [["Requests handled", "86"], ["Needs you open", "3"], ["Last active", "Now"]] }),
   member("reyes", "Tomás Reyes", "Front desk", "desk", "active", { stats: [["Requests handled", "54"], ["Needs you open", "1"], ["Last active", "20m"]] }),
-  member("lin", "Abby Lin", "Front desk", "desk", "invited", { locations: ["Newton"], stats: [["Invite sent", "Oct 24"], ["Expires", "Oct 31"], ["Last active", "—"]] }),
+  member("lin", "Abby Lin", "Front desk", "desk", "invited", { locations: ["newton"], stats: [["Invite sent", "Oct 24"], ["Expires", "Oct 31"], ["Last active", "—"]] }),
   member("mensah", "Kofi Mensah", "Billing", "billing", "active", { stats: [["Claims sent", "112"], ["Prior auths open", "4"], ["Last active", "35m"]] }),
-  member("stone", "Rachel Stone", "Billing", "billing", "active", { locations: ["Newton"], stats: [["Claims sent", "67"], ["Prior auths open", "0"], ["Last active", "2h"]] }),
-  member("whitfield", "Dana Whitfield", "Practice manager", "admin", "active", { locations: LOCATIONS, notify: "all", stats: [["Changes this week", "9"], ["Invites pending", "2"], ["Last active", "Now"]] }),
+  member("stone", "Rachel Stone", "Billing", "billing", "active", { locations: ["newton"], stats: [["Claims sent", "67"], ["Prior auths open", "0"], ["Last active", "2h"]] }),
+  member("whitfield", "Dana Whitfield", "Practice manager", "admin", "active", { locations: LOCATIONS.map((l) => l.id), notify: "all", stats: [["Changes this week", "9"], ["Invites pending", "2"], ["Last active", "Now"]] }),
 ];
 
 const FILTERS = [
@@ -206,7 +208,8 @@ function Tiles({ items }: { items: [string, string][] }) {
 
 const btnGrey = `h-[38px] px-[16px] rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`;
 
-function MemberPanel({ m, team, onEdit }: { m: Member; team: Member[]; onEdit: (patch: Partial<Member>) => void }) {
+function MemberPanel({ m, team, onEdit, onAddLocation }: { m: Member; team: Member[]; onEdit: (patch: Partial<Member>) => void; onAddLocation?: () => void }) {
+  const { locations } = useLocations();
   const toggle = (list: string[], item: string) => (list.includes(item) ? list.filter((x) => x !== item) : [...list, item]);
   const colleagues = team.filter((x) => x.id !== m.id && x.role === m.role);
 
@@ -245,11 +248,20 @@ function MemberPanel({ m, team, onEdit }: { m: Member; team: Member[]; onEdit: (
         </Row>
         <Row label="Locations">
           <span className="flex flex-wrap gap-[6px]">
-            {LOCATIONS.map((l) => (
-              <Chip key={l} on={m.locations.includes(l)} onClick={() => onEdit({ locations: toggle(m.locations, l) })}>
-                {l}
+            {locations.map((l) => (
+              <Chip key={l.id} on={m.locations.includes(l.id)} onClick={() => onEdit({ locations: toggle(m.locations, l.id) })}>
+                {l.short || l.name}
               </Chip>
             ))}
+            {onAddLocation && (
+              <button
+                type="button"
+                onClick={onAddLocation}
+                className={`h-[34px] px-[14px] rounded-[999px] border-[1.5px] border-dashed border-[#28191033] hover:bg-[#F4EEDF] transition-colors duration-150 text-[13px] leading-[16px] ${SANS} font-[500] text-walnut`}
+              >
+                Add location
+              </button>
+            )}
           </span>
         </Row>
         <Row label="Tabs they use" top>
@@ -391,7 +403,8 @@ function TeamPanel({ team, settings, onChange }: { team: Member[]; settings: Set
   );
 }
 
-export function DoeHealthProductTeamPage() {
+export function DoeHealthProductTeamPage({ onAddLocation }: { onAddLocation?: () => void } = {}) {
+  const { locations } = useLocations();
   const [team, setTeam] = useState(START);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
   const [selected, setSelected] = useState<string>("team");
@@ -435,7 +448,7 @@ export function DoeHealthProductTeamPage() {
             </span>
             <span className="flex flex-col grow min-w-[0px]">
               <span className={`text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`}>Team settings</span>
-              <span className={`text-[12px] leading-[16px] ${SANS} text-sub`}>{team.length} people · 3 locations</span>
+              <span className={`text-[12px] leading-[16px] ${SANS} text-sub`}>{team.length} people · {locations.length} locations</span>
             </span>
           </button>
 
@@ -466,7 +479,7 @@ export function DoeHealthProductTeamPage() {
 
         <div className="flex flex-col min-w-[0px] min-h-[0px] gap-[16px] p-[24px] rounded-[28px] bg-[#FAF6EC]">
           {current ? (
-            <MemberPanel key={current.id} m={current} team={team} onEdit={edit} />
+            <MemberPanel key={current.id} m={current} team={team} onEdit={edit} onAddLocation={onAddLocation} />
           ) : (
             <TeamPanel team={team} settings={settings} onChange={(patch) => setSettings((s) => ({ ...s, ...patch }))} />
           )}

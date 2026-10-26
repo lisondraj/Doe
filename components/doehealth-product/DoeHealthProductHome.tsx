@@ -27,12 +27,13 @@ import { DoeHealthProductSearchPage } from "@/components/doehealth-product/DoeHe
 import { DoeHealthProductCallPage } from "@/components/doehealth-product/DoeHealthProductCall";
 import { DoeHealthProductIndex } from "@/components/doehealth-product/DoeHealthProductIndex";
 import { HalftoneDisc } from "@/components/doehealth-product/DoeHealthProductHalftone";
+import { DoeHealthProductLocationsPage, LocationsProvider, useLocations } from "@/components/doehealth-product/DoeHealthProductLocations";
 
 /** "call" is opened from the Voice tab's Handled list and has no rail icon of its own. */
-type TabId = "schedule" | "interface" | "call" | "services" | "providers" | "offers" | "team" | "transit" | "payments" | "permissions" | "search" | "forms" | "integrations" | "insights" | "automations";
+type TabId = "schedule" | "interface" | "call" | "services" | "providers" | "locations" | "offers" | "team" | "transit" | "payments" | "permissions" | "search" | "forms" | "integrations" | "insights" | "automations";
 
 /** Pages that live in the Index dropdown in the rail. */
-const INDEX_CHILDREN: TabId[] = ["services", "providers", "offers", "team", "permissions", "search", "forms"];
+const INDEX_CHILDREN: TabId[] = ["services", "providers", "locations", "offers", "team", "permissions", "search", "forms"];
 
 /** Cross-fade duration for the inner shell when switching nav tabs. */
 const FADE_MS = 200;
@@ -93,12 +94,16 @@ function NavButton({
 function AccountMenu({
   clinicId,
   onSelectClinic,
+  onManageLocations,
   signedIn,
 }: {
   clinicId: string;
   onSelectClinic: (id: string) => void;
+  /** Opens the Locations tab; `add` starts a new location there. */
+  onManageLocations: (add: boolean) => void;
   signedIn: boolean;
 }) {
+  const clinics = useClinics();
   return (
     <div role="menu" className="doe-menu-in w-[320px] flex flex-col p-[6px] rounded-[22px] [background-color:#FFFCF1] border border-solid border-[#2819101F]">
       <div className="relative overflow-hidden flex flex-col justify-end gap-[14px] px-[16px] pt-[16px] pb-[16px] min-h-[294px] rounded-[17px] bg-sand">
@@ -123,7 +128,7 @@ function AccountMenu({
 
       {signedIn && (
         <div className="flex flex-col pt-[8px] gap-[2px]">
-          {CLINICS.map((clinic) => {
+          {clinics.map((clinic) => {
             const selected = clinic.id === clinicId;
             return (
               <button
@@ -151,6 +156,22 @@ function AccountMenu({
               </button>
             );
           })}
+          <div className="flex gap-[6px] pt-[6px] mt-[4px] border-t border-solid border-[#2819100F]">
+            {([
+              ["Add location", true],
+              ["Manage locations", false],
+            ] as const).map(([label, add]) => (
+              <button
+                key={label}
+                type="button"
+                role="menuitem"
+                onClick={() => onManageLocations(add)}
+                className={`grow h-[38px] rounded-[12px] text-[13px] leading-[16px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut transition-colors duration-150 ${add ? "border-[1.5px] border-dashed border-[#28191033] hover:bg-[#F4EEDF99]" : "bg-sand hover:bg-[#EEE6D6]"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -253,12 +274,12 @@ function shellFadeMask(expanded: boolean): CSSProperties {
   };
 }
 
-/** Clinics the signed-in doctor can switch between. */
-const CLINICS = [
-  { id: "brooks", name: "Brooks Neurology", initials: "BN", location: "Brookline, MA", dot: "#E8A585" },
-  { id: "newton", name: "Newton Headache Center", initials: "NH", location: "Newton, MA", dot: "#8DAA7C" },
-  { id: "cambridge", name: "Cambridge EEG & Sleep Lab", initials: "CE", location: "Cambridge, MA", dot: "#C2A987" },
-];
+/** Clinics the signed-in doctor can switch between: the group's in-person locations, from the shared Locations store. */
+function useClinics() {
+  return useLocations()
+    .locations.filter((l) => l.kind !== "virtual")
+    .map((l) => ({ id: l.id, name: l.name || "Untitled location", location: l.city || "No address yet", dot: l.dot }));
+}
 /** The doctor currently signed in on this device. */
 const DOCTOR = { name: "Dr. Sarah Brooks", email: "sarah@brooksneuro.com", initials: "SB" };
 
@@ -315,13 +336,15 @@ export function DoeHealthProductHome() {
  * The app itself at the artboard's 900px height: the rail and the shell with every tab. It fills its parent's width,
  * which must sit inside `.doehealth-product-page` for the Paper tokens.
  */
-export function DoeHealthProductArtboard({
-  initialTab = "integrations",
-  initialAccountMenuOpen = false,
-  accountMenuAt = "bottom",
-  mountAll = true,
-  showProviderPermissions = false,
-}: {
+export function DoeHealthProductArtboard(props: ArtboardProps = {}) {
+  return (
+    <LocationsProvider>
+      <Artboard {...props} />
+    </LocationsProvider>
+  );
+}
+
+type ArtboardProps = {
   initialTab?: TabId;
   initialAccountMenuOpen?: boolean;
   /** Where the account menu opens: above the rail's account button (bottom), or at the top left of the shell (top). */
@@ -330,12 +353,22 @@ export function DoeHealthProductArtboard({
   mountAll?: boolean;
   /** Shows the clinic's provider permissions beside the open clinic menu. */
   showProviderPermissions?: boolean;
-} = {}) {
+};
+
+function Artboard({
+  initialTab = "integrations",
+  initialAccountMenuOpen = false,
+  accountMenuAt = "bottom",
+  mountAll = true,
+  showProviderPermissions = false,
+}: ArtboardProps) {
   const [navExpanded, setNavExpanded] = useState(false);
-  const [clinicId, setClinicId] = useState(CLINICS[0].id);
+  const clinics = useClinics();
+  const locations = useLocations();
+  const [clinicId, setClinicId] = useState(clinics[0]!.id);
   const [accountMenuOpen, setAccountMenuOpen] = useState(initialAccountMenuOpen);
   const [signedIn, setSignedIn] = useState(true);
-  const activeClinic = CLINICS.find((c) => c.id === clinicId) ?? CLINICS[0];
+  const activeClinic = clinics.find((c) => c.id === clinicId) ?? clinics[0]!;
   const accountLabel = `${signedIn ? DOCTOR.name : "Signed out"} · ${activeClinic.name}`;
 
   /** Escape closes the account menu. */
@@ -381,6 +414,13 @@ export function DoeHealthProductArtboard({
       setContentVisible(true);
       switchTimer.current = null;
     }, FADE_MS);
+  };
+
+  /** Opens the Locations tab, on a new draft location when `add` is set, or on the active clinic. */
+  const openLocations = (add: boolean) => {
+    if (add) locations.add();
+    else locations.select(activeClinic.id);
+    switchTab("locations");
   };
 
   /** A full-shell tab layer: always mounted, or only while on show when `mountAll` is off. */
@@ -441,6 +481,10 @@ export function DoeHealthProductArtboard({
                   <circle cx="9" cy="8.5" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.7" />
                   <path d="M3.5 19.5c.8-3.2 3-5 5.5-5s4.7 1.8 5.5 5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
                   <path d="M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.6 14.8c1.4.7 2.4 2.3 2.9 4.7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                </NavButton>
+                <NavButton label="Locations" active={activeTab === "locations"} onSelect={() => switchTab("locations")}>
+                  <path d="M12 20.5s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+                  <circle cx="12" cy="9.5" r="2.4" fill="none" stroke="currentColor" strokeWidth="1.7" />
                 </NavButton>
                 <NavButton label="Offers" active={activeTab === "offers"} onSelect={() => switchTab("offers")}>
                   <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v1.8a2.7 2.7 0 0 0 0 5.4v1.8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-1.8a2.7 2.7 0 0 0 0-5.4z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
@@ -565,6 +609,10 @@ export function DoeHealthProductArtboard({
                 setClinicId(id);
                 setAccountMenuOpen(false);
               }}
+              onManageLocations={(add) => {
+                setAccountMenuOpen(false);
+                openLocations(add);
+              }}
               signedIn={signedIn}
             />
           </div>
@@ -606,13 +654,14 @@ export function DoeHealthProductArtboard({
           {layer("call", <DoeHealthProductCallPage onBack={() => switchTab("interface")} />)}
           {layer("services", <DoeHealthProductServicesPage />)}
           {layer("providers", <DoeHealthProductProvidersLayers />)}
+          {layer("locations", <DoeHealthProductLocationsPage />)}
           {layer("offers", <DoeHealthProductOffersPage />)}
-          {layer("team", <DoeHealthProductTeamPage />)}
+          {layer("team", <DoeHealthProductTeamPage onAddLocation={() => openLocations(true)} />)}
           {layer("transit", <DoeHealthProductTransitPage />)}
           {layer("forms", <DoeHealthProductFormsPage />)}
           {layer("search", <DoeHealthProductSearchPage />)}
           {layer("payments", <DoeHealthProductPaymentsPage />)}
-          {layer("permissions", <DoeHealthProductPermissionsPage />)}
+          {layer("permissions", <DoeHealthProductPermissionsPage onAddLocation={() => openLocations(true)} />)}
           {layer("insights", <DoeHealthProductInsightsPage />)}
           {layer("automations", <DoeHealthProductAutomationsPage />)}
           <div

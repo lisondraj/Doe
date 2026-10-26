@@ -8,6 +8,8 @@
  */
 import { useState } from "react";
 
+import { useLocations } from "@/components/doehealth-product/DoeHealthProductLocations";
+
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 const SANS = "font-['DM_Sans',system-ui,sans-serif]";
 const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
@@ -52,7 +54,6 @@ const SERVICES: { id: string; name: string; group: string; tile: string; levels:
 ];
 
 const VIEWS = ["Hospital", "Department", "Service", "Action"];
-const SITES = ["Brookline", "Newton"];
 
 const next = (level: Level): Level => LEVELS[(LEVELS.indexOf(level) + 1) % LEVELS.length]!;
 
@@ -105,12 +106,14 @@ function Icon({ d, size = 16 }: { d: string; size?: number }) {
   );
 }
 
-export function DoeHealthProductPermissionsPage() {
+export function DoeHealthProductPermissionsPage({ onAddLocation }: { onAddLocation?: () => void } = {}) {
+  const { locations } = useLocations();
   const [accepting, setAccepting] = useState(true);
   const [view, setView] = useState("Service");
   const [selected, setSelected] = useState("new");
   const [levels, setLevels] = useState<Record<string, Record<ActionId, Level>>>(() => Object.fromEntries(SERVICES.map((s) => [s.id, { ...s.levels }])));
-  const [sites, setSites] = useState<Record<string, boolean>>({ Brookline: true, Newton: true });
+  /** Sites the selected rules apply to, by location id; a location not listed yet is on. */
+  const [sites, setSites] = useState<Record<string, boolean>>({});
 
   const cycle = (id: string, action: ActionId) => setLevels((prev) => ({ ...prev, [id]: { ...prev[id]!, [action]: next(prev[id]![action]) } }));
   const service = SERVICES.find((s) => s.id === selected)!;
@@ -236,24 +239,28 @@ export function DoeHealthProductPermissionsPage() {
 
           <span className={`mt-[8px] text-[11.5px] leading-[14px] tracking-[0.07em] uppercase ${SANS} font-[500] text-[#FFFCF180]`}>Applies to</span>
           <span className="flex flex-wrap gap-[6px]">
-            {SITES.map((site) => {
-              const on = sites[site];
+            {locations.map((l) => {
+              const on = sites[l.id] ?? true;
               return (
                 <button
-                  key={site}
+                  key={l.id}
                   type="button"
                   aria-pressed={on}
-                  onClick={() => setSites((prev) => ({ ...prev, [site]: !prev[site] }))}
+                  onClick={() => setSites((prev) => ({ ...prev, [l.id]: !on }))}
                   className={`flex items-center h-[30px] px-[13px] rounded-[999px] text-[12.5px] leading-[16px] ${SANS} font-[500] transition-colors duration-150 ${on ? "bg-[#FFFCF11F]" : "bg-transparent shadow-[inset_0_0_0_1.5px_#FFFCF14D] text-[#FFFCF199]"}`}
                 >
-                  {site}
+                  {l.short || l.name}
                 </button>
               );
             })}
-            <span className={`flex items-center gap-[6px] h-[30px] px-[13px] rounded-[999px] text-[12.5px] leading-[16px] ${SANS} font-[500] shadow-[inset_0_0_0_1.5px_#FFFCF14D]`}>
+            <button
+              type="button"
+              onClick={onAddLocation}
+              className={`flex items-center gap-[6px] h-[30px] px-[13px] rounded-[999px] text-[12.5px] leading-[16px] ${SANS} font-[500] shadow-[inset_0_0_0_1.5px_#FFFCF14D] hover:bg-[#FFFCF114] transition-colors duration-150`}
+            >
               <Icon d="M12 5v14M5 12h14" size={13} />
-              Add site
-            </span>
+              Add location
+            </button>
           </span>
         </div>
       </div>

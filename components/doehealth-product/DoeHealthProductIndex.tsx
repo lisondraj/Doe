@@ -6,7 +6,8 @@
  */
 import { Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
-type IndexTab = "schedule" | "interface" | "services" | "providers" | "transit" | "payments" | "permissions";
+import { useLocations } from "@/components/doehealth-product/DoeHealthProductLocations";
+type IndexTab = "schedule" | "interface" | "services" | "providers" | "locations" | "transit" | "payments" | "permissions";
 type SectionId = "needs" | Exclude<IndexTab, "permissions"> | "agents" | "messages" | "systems";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
@@ -151,6 +152,12 @@ const SECTIONS: Section[] = [
         <span className={`${CHIP} bg-sand`}>4 in today</span>
       </span>
     ),
+  },
+  {
+    id: "locations",
+    title: "Locations",
+    tab: "locations",
+    tile: "#E3E9D9",
   },
   {
     id: "transit",
@@ -782,6 +789,33 @@ function ProvidersDetail() {
   );
 }
 
+/** Every site in the group, with who works there and how busy it is today. */
+function LocationsDetail() {
+  const { locations } = useLocations();
+  return (
+    <div className="flex gap-[8px] overflow-x-auto snap-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {locations.map((l) => (
+        <Card key={l.id} className={`w-[196px] shrink-0 snap-start gap-[12px] ${l.status === "paused" ? "opacity-60" : ""}`}>
+          <span className="flex items-center justify-between">
+            <span className="w-[32px] h-[32px] flex items-center justify-center rounded-full" style={{ backgroundColor: l.tone }}>
+              <span className="w-[9px] h-[9px] rounded-full" style={{ backgroundColor: l.dot }} />
+            </span>
+            {l.status === "open" ? <Chip dot={GREEN}>Open</Chip> : <Chip tone="#F3E7C9">{l.note ?? "Paused"}</Chip>}
+          </span>
+          <span className="flex flex-col min-h-[52px]">
+            <span className={`${TITLE} line-clamp-2`}>{l.name || "Untitled location"}</span>
+            <span className={MUTED}>{l.city || "No address yet"}</span>
+          </span>
+          <span className="flex items-center justify-between pt-[10px] border-t border-solid border-line">
+            <span className={MUTED}>{l.providers.length} {l.providers.length === 1 ? "provider" : "providers"}</span>
+            <span className={`text-[12px] leading-[16px] ${SANS} font-[600] text-walnut`}>{l.stats.today} today</span>
+          </span>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
 function ReferralsDetail() {
   const [nudged, setNudged] = useState(false);
   return (
@@ -918,6 +952,7 @@ function SectionDetail({ id, done, onDone }: { id: SectionId; done: Set<string>;
   if (id === "messages") return <MessagesDetail />;
   if (id === "services") return <ServicesDetail />;
   if (id === "providers") return <ProvidersDetail />;
+  if (id === "locations") return <LocationsDetail />;
   if (id === "transit") return <ReferralsDetail />;
   if (id === "payments") return <PaymentsDetail />;
   return <SystemsDetail />;
@@ -971,6 +1006,15 @@ export function DoeHealthProductIndex({
     }, 320);
   };
 
+  const { locations } = useLocations();
+  const opening = locations.filter((l) => l.status !== "open");
+  const locationsSummary = (
+    <>
+      <span className={`${CHIP} bg-sand`}>{locations.length} locations</span>
+      {opening[0] && <span className={`${CHIP} bg-[#F3E7C9]`}>{opening[0].short || opening[0].name} {opening[0].note?.toLowerCase() ?? opening[0].status}</span>}
+    </>
+  );
+
   const needsSummary =
     remaining > 0 ? (
       <span className={`${CHIP} bg-salmon`}>{remaining} waiting</span>
@@ -1008,7 +1052,7 @@ export function DoeHealthProductIndex({
         <div ref={innerRef} className="flex flex-col gap-[8px] pb-[40px]">
         {SECTIONS.map((section) => {
           const expanded = open === section.id;
-          const summary = section.id === "needs" ? needsSummary : section.summary;
+          const summary = section.id === "needs" ? needsSummary : section.id === "locations" ? locationsSummary : section.summary;
           return (
             <div
               key={section.id}
