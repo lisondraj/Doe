@@ -898,8 +898,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             className={`w-full flex items-center justify-between gap-[14px] p-[12px] pl-[16px] rounded-[18px] text-left ${row}`}
           >
             <span className="flex flex-col min-w-[0px]">
-              <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">I&apos;m not a provider</span>
-              <span className={`text-[13px] leading-[18px] ${SUB}`}>{a.onBehalf ? "You're buying on behalf of the practice" : "Otherwise, mark which provider is you"}</span>
+              <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">Purchasing on Behalf of Providers</span>
             </span>
             <span className={`relative w-[44px] h-[26px] shrink-0 rounded-[999px] transition-colors duration-200 ${a.onBehalf ? "bg-[#E2A988]" : "bg-[#E6DCC8]"}`} aria-hidden="true">
               <span className={`absolute top-[3px] w-[20px] h-[20px] rounded-[999px] bg-white transition-[left] duration-200 ${a.onBehalf ? "left-[21px]" : "left-[3px]"}`} />
@@ -1059,25 +1058,69 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         role="radio"
         aria-checked={on}
         onClick={() => set({ payMode: mode })}
-        className={`flex flex-col gap-[2px] p-[14px] rounded-[18px] text-left transition-colors duration-200 ${on ? SELECTED : `${INNER} hover:bg-[#FFFCF1]`}`}
+        className={`flex items-start gap-[12px] p-[16px] rounded-[18px] text-left transition-colors duration-200 ${on ? SELECTED : `${INNER} hover:bg-[#FFFCF1]`}`}
       >
-        <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">{title}</span>
-        <span className={`text-[13px] leading-[18px] ${SUB}`}>{note}</span>
+        <span className={`mt-[1px] w-[18px] h-[18px] shrink-0 flex items-center justify-center rounded-[999px] transition-colors duration-200 ${on ? "bg-[#A0522D]" : "bg-[#F4EEDF]"}`} aria-hidden="true">
+          <span className={`w-[6px] h-[6px] rounded-[999px] bg-white transition-opacity duration-200 ${on ? "opacity-100" : "opacity-0"}`} />
+        </span>
+        <span className="flex flex-col gap-[2px]">
+          <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">{title}</span>
+          <span className={`text-[13px] leading-[18px] ${SUB}`}>{note}</span>
+        </span>
       </button>
     );
   };
+  /** A small beige chip of detail, used in the summary. */
+  const chip = (text: string) => (
+    <span key={text} className={`h-[28px] px-[11px] flex items-center rounded-[999px] bg-[#F4EEDF] text-[13px] leading-[16px] font-[500] text-[#281910] whitespace-nowrap`}>
+      {text}
+    </span>
+  );
+  /** One card field in the grouped card block: a quiet label over the input, hairlines between them. */
+  const cardField = (label: string, key: keyof Answers["card"], placeholder: string, format: (v: string) => string, autoComplete: string, extra = "") => (
+    <label className={`flex flex-col gap-[2px] px-[16px] py-[10px] min-w-[0px] ${extra}`}>
+      <span className={`text-[12px] leading-[15px] font-[500] ${SUB}`}>{label}</span>
+      <input
+        value={a.card[key]}
+        placeholder={placeholder}
+        inputMode="numeric"
+        autoComplete={autoComplete}
+        onChange={(e) => set({ card: { ...a.card, [key]: format(e.target.value) } })}
+        className="w-full min-w-[0px] p-0 bg-transparent outline-none text-[17px] leading-[24px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.32)] [font-variant-numeric:tabular-nums]"
+      />
+    </label>
+  );
   const checkout = (
     <div className="flex flex-col gap-[14px]">
       {section(
         1,
         "Summary",
-        <div className={`flex flex-col px-[16px] py-[4px] rounded-[22px] ${INNER}`}>
-          {line("Practice", PRACTICE_SHAPES.find((x) => x.id === a.shape)?.title ?? "")}
-          {line("Team", sizeLine)}
-          {line("Plan", tierCounts || plan.name)}
-          {line("Billing", a.annual ? `Yearly, ${YEARLY_OFF}% off` : "Monthly")}
-          {buyerLine && line("Buyer", buyerLine)}
-          {line("Total", `${money(total)}/mo${a.annual ? `, ${money(total * 12)} a year` : ""}`, true)}
+        <div className={`flex flex-col rounded-[22px] ${INNER}`}>
+          <div className={`flex gap-[16px] p-[18px] ${phone ? "flex-col" : "items-start justify-between"}`}>
+            <span className="flex flex-col gap-[10px] min-w-[0px]">
+              <span className={`text-[24px] leading-[28px] tracking-[-0.02em] ${DISPLAY} text-[#281910]`}>{tierCounts || plan.name}</span>
+              <span className="flex flex-wrap gap-[6px]">
+                {chip(PRACTICE_SHAPES.find((x) => x.id === a.shape)?.title ?? "")}
+                {chip(sizeLine)}
+                {chip(a.annual ? `Yearly, ${YEARLY_OFF}% off` : "Monthly")}
+              </span>
+            </span>
+            <span className={`flex flex-col shrink-0 ${phone ? "items-start" : "items-end"}`}>
+              <span className="flex items-baseline gap-[3px]">
+                <span className={`text-[36px] leading-[38px] tracking-[-0.035em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{money(total)}</span>
+                <span className={`text-[14px] ${SUB}`}>/mo</span>
+              </span>
+              <span className={`text-[13px] leading-[18px] ${SUB}`}>{a.annual ? `${money(total * 12)} billed yearly` : "Billed monthly"}</span>
+            </span>
+          </div>
+          {buyerLine && (
+            <span className={`flex items-center gap-[10px] px-[18px] py-[12px] border-t border-solid ${HAIR}`}>
+              <span className="w-[28px] h-[28px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[11px] leading-[12px] font-[700] text-[#281910]">
+                {meProvider ? initials(meProvider.name, providers.indexOf(meProvider) + 1) : "You"}
+              </span>
+              <span className="text-[14px] leading-[19px] text-[#281910]">{a.onBehalf ? "Purchasing on behalf of providers" : buyerLine}</span>
+            </span>
+          )}
         </div>,
         editLink,
       )}
@@ -1134,32 +1177,43 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       {section(
         4,
         "Payment",
-        <div className={`flex flex-col gap-[14px] p-[14px] rounded-[22px] ${INNER}`}>
-          <span className="flex items-baseline justify-between gap-[12px] px-[4px]">
-            <span className={`text-[14px] leading-[19px] ${SUB}`}>Due today</span>
-            <span className={`text-[28px] leading-[32px] tracking-[-0.03em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{money(dueToday)}</span>
+        <div className={`flex flex-col gap-[16px] p-[18px] rounded-[22px] ${INNER}`}>
+          <span className="flex items-end justify-between gap-[12px]">
+            <span className="flex flex-col gap-[2px]">
+              <span className={`text-[13px] leading-[17px] font-[500] ${SUB}`}>Due today</span>
+              <span className={`text-[13px] leading-[17px] ${SUB}`}>
+                {dueToday === 0
+                  ? "Each provider pays from their link"
+                  : `${a.annual ? "One year" : "One month"}${a.payMode === "split" ? ", your share" : `, ${plural(providerCount, "provider")}`}`}
+              </span>
+            </span>
+            <span className={`text-[36px] leading-[38px] tracking-[-0.035em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{money(dueToday)}</span>
           </span>
           {dueToday > 0 ? (
-            <div className={`grid gap-[12px] ${phone ? "grid-cols-2" : "grid-cols-4"} [&_input]:bg-[#F4EEDF]`}>
-              <div className={phone ? "col-span-2" : "col-span-2"}>
-                <TextField label="Card number" inputMode="numeric" autoComplete="cc-number" value={a.card.number} onChange={(v) => set({ card: { ...a.card, number: groupCard(v) } })} placeholder="1234 1234 1234 1234" />
-              </div>
-              <TextField label="Expiry" inputMode="numeric" autoComplete="cc-exp" value={a.card.expiry} onChange={(v) => set({ card: { ...a.card, expiry: groupExpiry(v) } })} placeholder="MM/YY" />
-              <TextField label="CVC" inputMode="numeric" autoComplete="cc-csc" value={a.card.cvc} onChange={(v) => set({ card: { ...a.card, cvc: v.replace(/\D/g, "").slice(0, 4) } })} placeholder="123" />
-              <div className={phone ? "col-span-2" : "col-span-4"}>
-                <TextField label="Billing ZIP" inputMode="numeric" autoComplete="postal-code" value={a.card.zip} onChange={(v) => set({ card: { ...a.card, zip: v.slice(0, 10) } })} placeholder="94107" />
-              </div>
+            <div className="flex flex-col rounded-[18px] bg-[#F4EEDF] focus-within:shadow-[inset_0_0_0_1.5px_#281910] transition-shadow duration-150">
+              <span className="flex items-center">
+                {cardField("Card number", "number", "1234 1234 1234 1234", groupCard, "cc-number", "grow")}
+                <svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true" className="shrink-0 mr-[16px]" style={{ display: "block" }}>
+                  <rect x="0.75" y="0.75" width="28.5" height="20.5" rx="4" fill="none" stroke="#C9B48F" strokeWidth="1.5" />
+                  <path d="M1 7h28" stroke="#C9B48F" strokeWidth="2.5" />
+                  <path d="M5 15h7" stroke="#C9B48F" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </span>
+              <span className="grid grid-cols-3 border-t border-solid border-[rgba(20,12,4,0.08)] [&>label+label]:border-l [&>label+label]:border-solid [&>label+label]:border-[rgba(20,12,4,0.08)]">
+                {cardField("Expiry", "expiry", "MM/YY", groupExpiry, "cc-exp")}
+                {cardField("CVC", "cvc", "123", (v) => v.replace(/\D/g, "").slice(0, 4), "cc-csc")}
+                {cardField("ZIP", "zip", "94107", (v) => v.slice(0, 10), "postal-code")}
+              </span>
             </div>
-          ) : (
-            <span className={`px-[4px] text-[14px] leading-[20px] ${SUB}`}>Nothing is due from you. Each provider pays from their own link.</span>
+          ) : null}
+          {a.payMode === "split" && (
+            <span className="flex items-center gap-[8px] px-[2px] text-[13px] leading-[18px] text-[#7A3E1F]">
+              <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+                <path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+              </svg>
+              {plural(linkRecipients.length, "payment link")} will go out when you finish.
+            </span>
           )}
-          <span className={`px-[4px] text-[13px] leading-[18px] ${SUB}`}>
-            {a.payMode === "split"
-              ? `${plural(linkRecipients.length, "payment link")} will go out when you finish.`
-              : a.annual
-                ? `Billed yearly, ${money(total)}/mo.`
-                : "Billed monthly."}
-          </span>
         </div>,
       )}
     </div>
@@ -1496,25 +1550,55 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       </div>
     ) : null;
 
+  const firstName = a.contact.name.trim().replace(/^Dr\.?\s+/i, "").split(/\s+/)[0];
+  /** What happens next, after the thank-you. */
+  const nextSteps = [
+    ["Open the link in your email", "It signs you in to Doe"],
+    ...(linkRecipients.length ? [[linkRecipients.length === 1 ? "1 provider pays from their link" : `${linkRecipients.length} providers pay from their links`, "Their access starts once they pay"]] : []),
+    ["Teach agents about your clinic", "Services, providers, hours and more"],
+  ];
   const card = done ? (
-    <div className="doe-pricing-rise flex flex-col gap-[24px]">
-      <span className="w-[60px] h-[60px] flex items-center justify-center rounded-[999px] bg-[#FBE7DA]">
-        <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
-          <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#A0522D" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </span>
-      {/* The first name, past any "Dr." in front. */}
-      {heading(["Thank you,", `${a.contact.name.trim().replace(/^Dr\.?\s+/i, "").split(/\s+/)[0]}.`])}
-      <p className={`m-0 text-[17px] leading-[25px] ${SUB}`}>
-        We&apos;ve emailed you a link to access Doe. Check {a.contact.email} to get started.
-      </p>
-      <div className={`p-[6px] rounded-[28px] ${OUTER}`}>
-        <div className={`flex flex-col px-[16px] py-[4px] rounded-[22px] ${INNER}`}>
-          {line("Access link", a.contact.email)}
-          {line("Plan", `${planLabel}, ${money(total)}/mo`)}
-          {dueToday > 0 && line("Paid today", money(dueToday))}
-          {linkRecipients.length > 0 && line("Payment links", `Sent to ${plural(linkRecipients.length, "provider")}`)}
-          {buyerLine && line("Buyer", a.onBehalf ? `You, for ${a.contact.practice.trim() || "the practice"}` : buyerLine)}
+    <div className="doe-pricing-rise flex flex-col gap-[14px]">
+      <div className={`p-[6px] rounded-[30px] ${OUTER}`}>
+        <div className={`flex flex-col items-start gap-[18px] rounded-[24px] ${INNER} ${phone ? "p-[22px]" : "p-[36px]"}`}>
+          <span className="w-[52px] h-[52px] flex items-center justify-center rounded-[999px] bg-[#FBE7DA]">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+              <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#A0522D" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          {heading(["Thank you,", `${firstName}.`])}
+          <p className={`m-0 max-w-[46ch] text-[17px] leading-[25px] ${SUB}`}>We&apos;ve emailed you a link to access Doe.</p>
+          <span className="inline-flex items-center gap-[10px] max-w-full h-[44px] px-[16px] rounded-[999px] bg-[#F4EEDF] text-[15px] leading-[20px] font-[500] text-[#281910]">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+              <path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+            </svg>
+            <span className="truncate">{a.contact.email}</span>
+          </span>
+        </div>
+      </div>
+      <div className={`grid items-start gap-[14px] ${phone ? "grid-cols-1" : "grid-cols-2"}`}>
+        <div className={`flex flex-col gap-[6px] p-[6px] rounded-[28px] ${OUTER}`}>
+          <span className="px-[12px] pt-[8px] pb-[4px] text-[15px] leading-[20px] font-[600] text-[#140C04]">Your order</span>
+          <div className={`flex flex-col px-[16px] py-[4px] rounded-[22px] ${INNER}`}>
+            {line("Plan", tierCounts || planLabel)}
+            {line("Price", `${money(total)}/mo`)}
+            {dueToday > 0 && line("Paid today", money(dueToday), true)}
+            {buyerLine && line("Buyer", a.onBehalf ? "On behalf of providers" : buyerLine)}
+          </div>
+        </div>
+        <div className={`flex flex-col gap-[6px] p-[6px] rounded-[28px] ${OUTER}`}>
+          <span className="px-[12px] pt-[8px] pb-[4px] text-[15px] leading-[20px] font-[600] text-[#140C04]">What&apos;s next</span>
+          <ol className="m-0 p-0 list-none flex flex-col gap-[6px]">
+            {nextSteps.map(([t, d], i) => (
+              <li key={t} className={`flex items-center gap-[12px] p-[14px] rounded-[20px] ${INNER}`}>
+                <span className="w-[26px] h-[26px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#F4EEDF] text-[12px] leading-[14px] font-[700] text-[#281910]">{i + 1}</span>
+                <span className="flex flex-col">
+                  <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">{t}</span>
+                  <span className={`text-[13px] leading-[18px] ${SUB}`}>{d}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </div>
