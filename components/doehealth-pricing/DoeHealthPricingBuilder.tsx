@@ -44,6 +44,8 @@ const OUTER = "bg-[#F4EEDF]";
 const INNER = "bg-white";
 /** What's picked: a soft peach fill, no border, rather than a heavy dark fill. */
 const SELECTED = "bg-[#FBE7DA] text-[#281910]";
+/** A field in focus: white, with a soft peach ring rather than a dark one. */
+const FOCUS = "focus:bg-white focus:shadow-[inset_0_0_0_1.5px_#EDBB9C]";
 /** A beige box pinned over the page as it scrolls, lifted off it by a soft shadow. */
 const PINNED = "bg-[#F4EEDF] shadow-[0_14px_34px_-22px_rgba(40,25,16,0.5)]";
 
@@ -252,7 +254,7 @@ function NameField({
   large?: boolean;
 }) {
   return (
-    <label className="group/name inline-flex items-center gap-[7px] min-w-[0px] max-w-full h-[36px] -ml-[8px] px-[8px] rounded-[10px] cursor-text [@media(hover:hover)]:hover:bg-[rgba(20,12,4,0.05)] focus-within:bg-white focus-within:shadow-[inset_0_0_0_1.5px_#281910] transition-[background-color,box-shadow] duration-150">
+    <label className="group/name inline-flex items-center gap-[7px] min-w-[0px] max-w-full h-[36px] -ml-[8px] px-[8px] rounded-[10px] cursor-text [@media(hover:hover)]:hover:bg-[rgba(20,12,4,0.05)] focus-within:bg-white focus-within:shadow-[inset_0_0_0_1.5px_#EDBB9C] transition-[background-color,box-shadow] duration-150">
       {/* The hidden copy sizes the field to its text, so the pencil sits right after the name. */}
       <span className="inline-grid min-w-[0px] max-w-full">
         <span aria-hidden="true" className={`invisible col-start-1 row-start-1 whitespace-pre overflow-hidden ${text}`}>
@@ -332,7 +334,7 @@ function TextField({
         inputMode={inputMode}
         autoComplete={autoComplete}
         onChange={(e) => onChange(e.target.value)}
-        className="h-[56px] px-[20px] rounded-[18px] bg-white outline-none focus:shadow-[inset_0_0_0_1.5px_#281910] text-[17px] leading-[22px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.32)] transition-colors duration-150"
+        className={`h-[56px] px-[20px] rounded-[18px] bg-white outline-none ${FOCUS} text-[17px] leading-[22px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.32)] transition-[background-color,box-shadow] duration-150`}
       />
     </label>
   );
@@ -392,6 +394,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const planOf = (p: Provider) => planById(p.plan ?? plan.id);
   const mixed = providers.some((p) => planOf(p).id !== plan.id);
   const specialtyOf = (p: Provider): Specialty | null => p.specialty;
+  /** A specialty's name, or what was typed for Other. */
+  const specialtyName = (sp: Specialty, typed: string) => (sp === "other" ? typed.trim() || "Other" : SPECIALTIES.find((x) => x.id === sp)?.label ?? "");
   /** Every provider has a specialty, and anyone on Other has typed theirs. */
   const specialtiesSet = providers.every((p) => p.specialty && (p.specialty !== "other" || p.other.trim()));
   /** A location's name, or its default when left blank. */
@@ -859,7 +863,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           placeholder="Type specialty"
           aria-label={`${o.label}, typed`}
           onChange={(e) => o.onType(e.target.value)}
-          className={`grow min-w-[0px] px-[14px] rounded-[999px] bg-[#F4EEDF] outline-none focus:shadow-[inset_0_0_0_1.5px_#281910] text-[#140C04] placeholder:text-[rgba(20,12,4,0.38)] ${o.big ? "h-[44px] w-[180px] text-[15px]" : "h-[34px] w-[140px] text-[13px]"}`}
+          className={`grow min-w-[0px] px-[14px] rounded-[999px] bg-[#F4EEDF] outline-none ${FOCUS} text-[#140C04] placeholder:text-[rgba(20,12,4,0.38)] ${o.big ? "h-[44px] w-[180px] text-[15px]" : "h-[34px] w-[140px] text-[13px]"}`}
         />
       )}
     </span>
@@ -1086,18 +1090,68 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </span>
   );
   /** One card field in the grouped card block: a quiet label over the input, hairlines between them. */
-  const cardField = (label: string, key: keyof Answers["card"], placeholder: string, format: (v: string) => string, autoComplete: string, extra = "") => (
-    <label className={`flex flex-col gap-[2px] px-[16px] py-[10px] min-w-[0px] ${extra}`}>
-      <span className={`text-[12px] leading-[15px] font-[500] ${SUB}`}>{label}</span>
-      <input
-        value={a.card[key]}
-        placeholder={placeholder}
-        inputMode="numeric"
-        autoComplete={autoComplete}
-        onChange={(e) => set({ card: { ...a.card, [key]: format(e.target.value) } })}
-        className="w-full min-w-[0px] p-0 bg-transparent outline-none text-[17px] leading-[24px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.32)] [font-variant-numeric:tabular-nums]"
-      />
+  /** A card field like the others on the page: a quiet label above a beige field, with an optional mark inside it. */
+  const cardField = (label: string, key: keyof Answers["card"], placeholder: string, format: (v: string) => string, autoComplete: string, mark?: ReactNode) => (
+    <label className="flex flex-col gap-[6px] min-w-[0px]">
+      <span className={`px-[4px] text-[13px] leading-[17px] font-[500] ${SUB}`}>{label}</span>
+      <span className="relative flex items-center">
+        <input
+          value={a.card[key]}
+          placeholder={placeholder}
+          inputMode="numeric"
+          autoComplete={autoComplete}
+          onChange={(e) => set({ card: { ...a.card, [key]: format(e.target.value) } })}
+          className={`w-full min-w-[0px] h-[52px] px-[16px] ${mark ? "pr-[56px]" : ""} rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.35)] [font-variant-numeric:tabular-nums] transition-[background-color,box-shadow] duration-150`}
+        />
+        {mark && <span className="pointer-events-none absolute right-[16px]">{mark}</span>}
+      </span>
     </label>
+  );
+  /** Providers by location, as in the team editor, so it's clear whose email goes where; each with their plan and specialty. */
+  const recipientList = (
+    <div key={a.payMode} className="doe-pricing-rise flex flex-col gap-[6px]">
+      {a.payMode === "one" && <span className={`px-[12px] pt-[4px] text-[13px] leading-[18px] ${SUB}`}>You&apos;re paying for everyone. Each provider gets an invite to Doe.</span>}
+      {a.team.map((site) => (
+        <div key={site.id} className={`flex flex-col rounded-[22px] ${INNER}`}>
+          <span className={`flex items-baseline justify-between gap-[12px] px-[18px] pt-[14px] pb-[4px]`}>
+            <span className={`text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-[#281910]`}>{siteName(site)}</span>
+            <span className={`text-[13px] leading-[17px] ${SUB}`}>{plural(site.providers.length, "provider")}</span>
+          </span>
+          {site.providers.map((p) => {
+            const mine = p.id === meProvider?.id;
+            const n = providers.indexOf(p) + 1;
+            const sp = specialtyOf(p);
+            return (
+              <div key={p.id} className={`flex flex-col gap-[10px] px-[18px] py-[14px] border-t border-solid ${HAIR} first-of-type:border-t-0`}>
+                <span className="flex items-start gap-[10px]">
+                  <span className="w-[32px] h-[32px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[14px] font-[700] text-[#281910]">{initials(p.name, n)}</span>
+                  <span className="flex flex-col gap-[4px] grow min-w-[0px] pt-[6px]">
+                    <span className="truncate text-[15px] leading-[20px] font-[600] text-[#140C04]">{providerName(p)}</span>
+                    <span className="flex flex-wrap gap-[4px]">
+                      <span className="h-[22px] px-[8px] flex items-center rounded-[999px] bg-[#F4EEDF] text-[12px] leading-[14px] font-[500] text-[#281910]">{planOf(p).name}</span>
+                      {sp && <span className="h-[22px] px-[8px] flex items-center rounded-[999px] bg-[#F4EEDF] text-[12px] leading-[14px] font-[500] text-[#281910]">{specialtyName(sp, p.other)}</span>}
+                      {mine && <span className={`h-[22px] px-[8px] flex items-center rounded-[999px] text-[12px] leading-[14px] font-[600] ${SELECTED}`}>You, pay below</span>}
+                    </span>
+                  </span>
+                  {a.payMode === "split" && <span className="shrink-0 pt-[6px] text-[15px] leading-[20px] font-[600] text-[#281910] [font-variant-numeric:tabular-nums]">{money(shareOf(p))}<span className={`font-[400] text-[13px] ${SUB}`}>/mo</span></span>}
+                </span>
+                {!mine && (
+                  <input
+                    type="email"
+                    inputMode="email"
+                    value={a.emails[p.id] ?? ""}
+                    placeholder={a.payMode === "split" ? "Email for their payment link" : "Email for their invite"}
+                    aria-label={`${providerName(p)} email`}
+                    onChange={(e) => set({ emails: { ...a.emails, [p.id]: e.target.value } })}
+                    className={`h-[48px] px-[16px] rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.4)] transition-[background-color,box-shadow] duration-150`}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
   );
   const checkout = (
     <div className="flex flex-col gap-[14px]">
@@ -1152,36 +1206,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             {payOption("one", "Pay as one", "One payment covers the whole practice")}
             {payOption("split", "Individual payments", "Each provider gets a payment link for their share")}
           </div>
-          {(a.payMode === "split" || inviteRecipients.length > 0) && (
-            <div key={a.payMode} className={`doe-pricing-rise flex flex-col px-[16px] py-[6px] rounded-[22px] ${INNER}`}>
-              {a.payMode === "one" && <span className={`pt-[10px] pb-[2px] text-[13px] leading-[18px] ${SUB}`}>You&apos;re paying for everyone. Each provider gets an invite to Doe.</span>}
-              {providers.map((p) => {
-                const mine = p.id === meProvider?.id;
-                return (
-                  <div key={p.id} className={`flex flex-col gap-[8px] py-[12px] border-t border-solid ${HAIR} first:border-t-0`}>
-                    <span className="flex items-baseline justify-between gap-[12px]">
-                      <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">
-                        {providerName(p)}
-                        {mine && <span className={`font-[500] ${SUB}`}> · you, pay below</span>}
-                      </span>
-                      {a.payMode === "split" && <span className="text-[14px] leading-[19px] text-[#281910] [font-variant-numeric:tabular-nums]">{money(shareOf(p))}/mo</span>}
-                    </span>
-                    {!mine && (
-                      <input
-                        type="email"
-                        inputMode="email"
-                        value={a.emails[p.id] ?? ""}
-                        placeholder={a.payMode === "split" ? "Email for their payment link" : "Email for their invite"}
-                        aria-label={`${providerName(p)} email`}
-                        onChange={(e) => set({ emails: { ...a.emails, [p.id]: e.target.value } })}
-                        className="h-[48px] px-[16px] rounded-[14px] bg-[#F4EEDF] outline-none focus:shadow-[inset_0_0_0_1.5px_#281910] text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.4)]"
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          {(a.payMode === "split" || inviteRecipients.length > 0) && recipientList}
         </div>,
       )}
       {section(
@@ -1200,20 +1225,23 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             <span className={`text-[36px] leading-[38px] tracking-[-0.035em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{money(dueToday)}</span>
           </span>
           {dueToday > 0 ? (
-            <div className="flex flex-col rounded-[18px] bg-[#F4EEDF] focus-within:shadow-[inset_0_0_0_1.5px_#281910] transition-shadow duration-150">
-              <span className="flex items-center">
-                {cardField("Card number", "number", "1234 1234 1234 1234", groupCard, "cc-number", "grow")}
-                <svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true" className="shrink-0 mr-[16px]" style={{ display: "block" }}>
-                  <rect x="0.75" y="0.75" width="28.5" height="20.5" rx="4" fill="none" stroke="#C9B48F" strokeWidth="1.5" />
-                  <path d="M1 7h28" stroke="#C9B48F" strokeWidth="2.5" />
-                  <path d="M5 15h7" stroke="#C9B48F" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </span>
-              <span className="grid grid-cols-3 border-t border-solid border-[rgba(20,12,4,0.08)] [&>label+label]:border-l [&>label+label]:border-solid [&>label+label]:border-[rgba(20,12,4,0.08)]">
-                {cardField("Expiry", "expiry", "MM/YY", groupExpiry, "cc-exp")}
-                {cardField("CVC", "cvc", "123", (v) => v.replace(/\D/g, "").slice(0, 4), "cc-csc")}
-                {cardField("ZIP", "zip", "94107", (v) => v.slice(0, 10), "postal-code")}
-              </span>
+            <div className="grid grid-cols-3 gap-[10px]">
+              <div className="col-span-3">
+                {cardField(
+                  "Card number",
+                  "number",
+                  "1234 1234 1234 1234",
+                  groupCard,
+                  "cc-number",
+                  <svg width="26" height="18" viewBox="0 0 30 22" aria-hidden="true" style={{ display: "block" }}>
+                    <rect x="0.75" y="0.75" width="28.5" height="20.5" rx="4" fill="none" stroke="#C9B48F" strokeWidth="1.5" />
+                    <path d="M1 7h28" stroke="#C9B48F" strokeWidth="2.5" />
+                  </svg>,
+                )}
+              </div>
+              {cardField("Expiry", "expiry", "MM/YY", groupExpiry, "cc-exp")}
+              {cardField("CVC", "cvc", "123", (v) => v.replace(/\D/g, "").slice(0, 4), "cc-csc")}
+              {cardField("ZIP", "zip", "94107", (v) => v.slice(0, 10), "postal-code")}
             </div>
           ) : null}
           {sendNote && (
