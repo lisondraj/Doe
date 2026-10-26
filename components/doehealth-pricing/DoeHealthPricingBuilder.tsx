@@ -231,13 +231,19 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const [done, setDone] = useState(false);
   const [panel, setPanel] = useState<PanelTab | null>(null);
   const [openSpecialty, setOpenSpecialty] = useState<SpecialtyId | null>(null);
-  /** Where the controls pin to once they reach the top of the screen, or null while they sit in place. */
-  const [pinned, setPinned] = useState<{ left: number; width: number; height: number } | null>(null);
+  /** The tier shown on iPhone, where tiers are compared one at a time; null follows the team's plan. */
+  const [view, setView] = useState<PlanId | null>(null);
+  /**
+   * Where the pinned bar sits once it reaches the top of the screen, or null while it stays in place: the controls on
+   * desktop (with a strip of tier names once the table's header has scrolled away), the tier switcher on iPhone.
+   */
+  const [pinned, setPinned] = useState<{ left: number; width: number; height: number; strip: boolean } | null>(null);
   const barSlot = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const advance = useRef<number | null>(null);
   const moved = useRef(false);
-  const pinTop = phone ? 92 : 112;
+  const pinTop = phone ? 118 : 112;
 
   const set = (patch: Partial<Answers>) => setA((prev) => ({ ...prev, ...patch }));
   const setTeam = (team: Site[]) => set({ team, shape: shapeOf(team) });
@@ -316,21 +322,50 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
 
   /** A tier is lit while anyone on the team is on it. */
   const lit = (id: PlanId) => !!a.plan && onTier(id) > 0;
-  const cols = phone ? "grid-cols-[172px_repeat(4,128px)]" : "grid-cols-[minmax(180px,1.5fr)_repeat(4,minmax(120px,1fr))]";
+  const cols = "grid-cols-[minmax(180px,1.5fr)_repeat(4,minmax(120px,1fr))]";
   /** Doe One's column is always brown; a tier the team uses gets a soft tint. */
   const dark = (id: PlanId) => id === "one";
   const cell = (id: PlanId) => `flex justify-center self-stretch items-center ${dark(id) ? "bg-[#281910]" : lit(id) ? "bg-[#F7EFDF]" : ""}`;
-  const first = `sticky left-0 z-[1] ${phone ? "bg-[#FFFCF1]" : ""}`;
+  const sizeLine = `${plural(providerCount, "provider")}, ${plural(locationCount, "location")}`;
+  const billedLine = a.annual ? "Billed yearly, shown per month" : "Billed monthly";
+
+  const badge = (id: PlanId) =>
+    id === "advanced" ? (
+      <span className="h-[22px] px-[9px] flex items-center rounded-[999px] bg-[#FCCFB8] text-[11px] leading-[14px] font-[600] text-[#140C04] whitespace-nowrap">Most chosen</span>
+    ) : id === "one" ? (
+      <span className="h-[22px] px-[9px] flex items-center rounded-[999px] border-[1.5px] border-solid border-[#FCCFB8] text-[11px] leading-[14px] font-[600] text-[#FCCFB8] whitespace-nowrap">Complete</span>
+    ) : null;
+
+  /** On a tier the team uses, how many are on it; on any other, a button that puts everyone on it. */
+  const tierAction = (id: PlanId, full = false) =>
+    lit(id) ? (
+      <span
+        className={`flex items-center justify-center gap-[6px] rounded-[999px] font-[600] whitespace-nowrap ${full ? `h-[48px] text-[15px] leading-[20px] ${dark(id) ? "bg-[rgba(255,252,241,0.1)] text-[#FCCFB8]" : "bg-[#F4EEDF] text-[#281910]"}` : `h-[30px] px-[12px] text-[13px] leading-[16px] ${dark(id) ? "bg-[#FCCFB8] text-[#140C04]" : "bg-[#281910] text-[#FFFCF1]"}`}`}
+      >
+        <svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+          <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        {mixed ? plural(onTier(id), "provider") : "Your plan"}
+      </span>
+    ) : (
+      <button
+        type="button"
+        onClick={() => everyoneOn(id)}
+        className={`flex items-center justify-center rounded-[999px] font-[600] whitespace-nowrap transition-colors duration-150 ${full ? `h-[48px] text-[15px] leading-[20px] ${dark(id) ? "bg-[#FCCFB8] text-[#140C04]" : "bg-[#281910] text-[#FFFCF1]"}` : `h-[30px] px-[14px] border-[1.5px] border-solid text-[13px] leading-[16px] ${dark(id) ? "border-[rgba(252,207,184,0.55)] text-[#FCCFB8] hover:bg-[rgba(252,207,184,0.12)]" : "border-[rgba(20,12,4,0.18)] text-[#281910] hover:bg-[#F4EEDF]"}`}`}
+      >
+        Choose{full ? ` ${planById(id).name}` : ""}
+      </button>
+    );
 
   const groupRows = (title: string, from: PlanId, items: string[], key = title) => (
     <Fragment key={key}>
-      <span className={`${first} px-[20px] pt-[18px] pb-[6px] border-t border-solid ${HAIR} text-[15px] leading-[20px] font-[600] text-[#140C04]`}>{title}</span>
+      <span className={`px-[20px] pt-[18px] pb-[6px] border-t border-solid ${HAIR} text-[15px] leading-[20px] font-[600] text-[#140C04]`}>{title}</span>
       {PLAN_ORDER.map((id) => (
         <span key={id} className={`${cell(id)} border-t border-solid ${HAIR}`} />
       ))}
       {items.map((item) => (
         <Fragment key={item}>
-          <span className={`${first} px-[20px] py-[7px] text-[14px] leading-[19px] ${SUB}`}>{item}</span>
+          <span className={`px-[20px] py-[7px] text-[14px] leading-[19px] ${SUB}`}>{item}</span>
           {PLAN_ORDER.map((id) => (
             <span key={id} className={cell(id)}>
               <Mark on={includes(id, from)} dark={dark(id)} />
@@ -341,97 +376,185 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </Fragment>
   );
 
-  /** Every tier side by side: price and a choose button up top, then each feature group, then the specialties. */
-  const comparison = (
-    <div className={phone ? "-mx-[20px] px-[20px] overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" : ""}>
-      <div className={`grid ${cols} rounded-[28px] bg-[#FFFCF1] overflow-clip ${phone ? "w-max" : ""}`}>
-        <div className={`${first} flex flex-col gap-[2px] px-[20px] pt-[44px] pb-[20px]`}>
-          <span className={`text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-[#140C04]`}>
-            {plural(providerCount, "provider")}, {plural(locationCount, "location")}
-          </span>
-          <span className={`text-[13px] leading-[17px] ${SUB}`}>{a.annual ? "Billed yearly, shown per month" : "Billed monthly"}</span>
-        </div>
-        {PLANS.map((p) => {
-          const on = lit(p.id);
-          const special = dark(p.id);
-          return (
-            <div
-              key={p.id}
-              className={`relative flex flex-col items-center text-center gap-[12px] p-[18px] pb-[20px] transition-colors duration-200 ${special ? "bg-[#281910] text-[#FFFCF1]" : on ? "bg-[#F7EFDF] text-[#281910]" : "text-[#281910]"}`}
-            >
-              {special && <span className="absolute left-1/2 -translate-x-1/2 w-[44px] top-0 h-[4px] rounded-b-[4px] bg-[#FCCFB8]" aria-hidden="true" />}
-              <span className="flex flex-col items-center gap-[2px]">
-                <span className="flex h-[22px] mb-[4px]">
-                  {p.id === "advanced" && <span className="h-[22px] px-[9px] flex items-center rounded-[999px] bg-[#FCCFB8] text-[11px] leading-[14px] font-[600] text-[#140C04] whitespace-nowrap">Most chosen</span>}
-                  {special && <span className="h-[22px] px-[9px] flex items-center rounded-[999px] border-[1.5px] border-solid border-[#FCCFB8] text-[11px] leading-[14px] font-[600] text-[#FCCFB8] whitespace-nowrap">Complete</span>}
-                </span>
-                <span className={`text-[22px] leading-[26px] tracking-[-0.02em] ${DISPLAY}`}>{p.name}</span>
-                <span className={`text-[13px] leading-[17px] min-h-[34px] [text-wrap:balance] ${special ? "text-[rgba(255,252,241,0.68)]" : SUB}`}>{p.line}</span>
-              </span>
-              <span className="flex items-baseline gap-[3px]">
-                <span className={`text-[32px] leading-[34px] tracking-[-0.035em] ${DISPLAY} [font-variant-numeric:tabular-nums] ${special ? "text-[#FCCFB8]" : ""}`}>{money(priceOf(p.id))}</span>
-                <span className={`text-[13px] ${special ? "text-[rgba(255,252,241,0.6)]" : SUB}`}>/mo</span>
-              </span>
-              <span className="flex h-[30px]">
-                {on && (
-                  <span
-                    className={`h-[30px] px-[12px] flex items-center gap-[6px] rounded-[999px] text-[13px] leading-[16px] font-[600] whitespace-nowrap ${special ? "bg-[#FCCFB8] text-[#140C04]" : "bg-[#281910] text-[#FFFCF1]"}`}
-                  >
-                    <svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
-                      <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    {mixed ? plural(onTier(p.id), "provider") : "Your plan"}
+  /** A specialty and its feature set, opened from its name; the same on both layouts. */
+  const specialtyToggle = (sp: (typeof SPECIALTIES)[number], extra = "") => {
+    const open = openSpecialty === sp.id;
+    return (
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpenSpecialty(open ? null : sp.id)}
+        className={`flex items-center gap-[8px] text-left font-[500] text-[#281910] hover:bg-[#FBF7EC] transition-colors duration-150 ${extra}`}
+      >
+        <Chevron open={open} />
+        {sp.label}
+        {teamSpecialties.has(sp.id) && <span className="h-[20px] px-[8px] flex items-center rounded-[999px] bg-[#F4EEDF] text-[11px] leading-[14px] font-[600] text-[#281910] whitespace-nowrap">Your team</span>}
+      </button>
+    );
+  };
+
+  /** Desktop: every tier side by side, price and a choose button up top, then each feature group, then the specialties. */
+  const table = (
+    <div className={`grid ${cols} rounded-[28px] bg-[#FFFCF1] overflow-clip`}>
+      <div ref={headRef} className="flex flex-col gap-[2px] px-[20px] pt-[44px] pb-[20px]">
+        <span className={`text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-[#140C04]`}>{sizeLine}</span>
+        <span className={`text-[13px] leading-[17px] ${SUB}`}>{billedLine}</span>
+      </div>
+      {PLANS.map((p) => {
+        const special = dark(p.id);
+        return (
+          <div
+            key={p.id}
+            className={`relative flex flex-col items-center text-center gap-[12px] p-[18px] pb-[20px] transition-colors duration-200 ${special ? "bg-[#281910] text-[#FFFCF1]" : lit(p.id) ? "bg-[#F7EFDF] text-[#281910]" : "text-[#281910]"}`}
+          >
+            {special && <span className="absolute left-1/2 -translate-x-1/2 w-[44px] top-0 h-[4px] rounded-b-[4px] bg-[#FCCFB8]" aria-hidden="true" />}
+            <span className="flex flex-col items-center gap-[2px]">
+              <span className="flex h-[22px] mb-[4px]">{badge(p.id)}</span>
+              <span className={`text-[22px] leading-[26px] tracking-[-0.02em] ${DISPLAY}`}>{p.name}</span>
+              <span className={`text-[13px] leading-[17px] min-h-[34px] [text-wrap:balance] ${special ? "text-[rgba(255,252,241,0.68)]" : SUB}`}>{p.line}</span>
+            </span>
+            <span className="flex items-baseline gap-[3px]">
+              <span className={`text-[32px] leading-[34px] tracking-[-0.035em] ${DISPLAY} [font-variant-numeric:tabular-nums] ${special ? "text-[#FCCFB8]" : ""}`}>{money(priceOf(p.id))}</span>
+              <span className={`text-[13px] ${special ? "text-[rgba(255,252,241,0.6)]" : SUB}`}>/mo</span>
+            </span>
+            <span className="flex h-[30px]">{tierAction(p.id)}</span>
+          </div>
+        );
+      })}
+      {FEATURE_GROUPS.slice(0, -2).map((g) => groupRows(g.title, g.from, g.items))}
+
+      <span className={`px-[20px] pt-[18px] pb-[6px] border-t border-solid ${HAIR} text-[15px] leading-[20px] font-[600] text-[#140C04]`}>Specialty features</span>
+      {PLAN_ORDER.map((id) => (
+        <span key={id} className={`${cell(id)} border-t border-solid ${HAIR}`} />
+      ))}
+      {SPECIALTIES.map((sp) => (
+        <Fragment key={sp.id}>
+          {specialtyToggle(sp, "px-[20px] py-[8px] text-[14px] leading-[19px]")}
+          {PLAN_ORDER.map((id) => (
+            <span key={id} className={cell(id)}>
+              <Mark on={includes(id, SPECIALTY_FROM)} dark={dark(id)} />
+            </span>
+          ))}
+          {openSpecialty === sp.id &&
+            SPECIALTY_FEATURES[sp.id].map((item) => (
+              <Fragment key={item}>
+                <span className={`pl-[40px] pr-[20px] py-[6px] text-[13px] leading-[18px] ${SUB}`}>{item}</span>
+                {PLAN_ORDER.map((id) => (
+                  <span key={id} className={cell(id)}>
+                    <Mark on={includes(id, SPECIALTY_FROM)} dark={dark(id)} />
                   </span>
-                )}
-              </span>
-            </div>
-          );
-        })}
-        {FEATURE_GROUPS.slice(0, -2).map((g) => groupRows(g.title, g.from, g.items))}
-
-        <span className={`${first} px-[20px] pt-[18px] pb-[6px] border-t border-solid ${HAIR} text-[15px] leading-[20px] font-[600] text-[#140C04]`}>Specialty features</span>
-        {PLAN_ORDER.map((id) => (
-          <span key={id} className={`${cell(id)} border-t border-solid ${HAIR}`} />
-        ))}
-        {SPECIALTIES.map((sp) => {
-          const open = openSpecialty === sp.id;
-          return (
-            <Fragment key={sp.id}>
-              <button
-                type="button"
-                aria-expanded={open}
-                onClick={() => setOpenSpecialty(open ? null : sp.id)}
-                className={`${first} flex items-center gap-[8px] px-[20px] py-[8px] text-left text-[14px] leading-[19px] font-[500] text-[#281910] hover:bg-[#FBF7EC] transition-colors duration-150`}
-              >
-                <Chevron open={open} />
-                {sp.label}
-                {teamSpecialties.has(sp.id) && <span className="h-[20px] px-[8px] flex items-center rounded-[999px] bg-[#F4EEDF] text-[11px] leading-[14px] font-[600] text-[#281910] whitespace-nowrap">Your team</span>}
-              </button>
-              {PLAN_ORDER.map((id) => (
-                <span key={id} className={cell(id)}>
-                  <Mark on={includes(id, SPECIALTY_FROM)} dark={dark(id)} />
-                </span>
-              ))}
-              {open &&
-                SPECIALTY_FEATURES[sp.id].map((item) => (
-                  <Fragment key={item}>
-                    <span className={`${first} pl-[40px] pr-[20px] py-[6px] text-[13px] leading-[18px] ${SUB}`}>{item}</span>
-                    {PLAN_ORDER.map((id) => (
-                      <span key={id} className={cell(id)}>
-                        <Mark on={includes(id, SPECIALTY_FROM)} dark={dark(id)} />
-                      </span>
-                    ))}
-                  </Fragment>
                 ))}
-            </Fragment>
-          );
-        })}
+              </Fragment>
+            ))}
+        </Fragment>
+      ))}
 
-        {FEATURE_GROUPS.slice(-2).map((g) => groupRows(g.title, g.from, g.items))}
-        <span className={`${first} h-[16px]`} />
-        {PLAN_ORDER.map((id) => (
-          <span key={id} className={cell(id)} />
-        ))}
+      {FEATURE_GROUPS.slice(-2).map((g) => groupRows(g.title, g.from, g.items))}
+      <span className="h-[16px]" />
+      {PLAN_ORDER.map((id) => (
+        <span key={id} className={cell(id)} />
+      ))}
+    </div>
+  );
+
+  /** Desktop: the tier names and prices, lined up with the table's columns, under the pinned controls once its header scrolls away. */
+  const strip = (
+    <div className={`grid ${cols} mt-[6px] rounded-[20px] bg-[#FFFCF1] overflow-clip shadow-[0_10px_30px_-18px_rgba(40,25,16,0.45)]`}>
+      <span className="flex flex-col justify-center px-[20px] py-[10px] min-w-[0px]">
+        <span className="truncate text-[13px] leading-[17px] font-[600] text-[#140C04]">{sizeLine}</span>
+        <span className={`truncate text-[12px] leading-[16px] ${SUB}`}>{billedLine}</span>
+      </span>
+      {PLANS.map((p) => (
+        <span key={p.id} className={`flex items-center justify-center gap-[8px] py-[10px] ${dark(p.id) ? "bg-[#281910] text-[#FFFCF1]" : lit(p.id) ? "bg-[#F7EFDF] text-[#281910]" : "text-[#281910]"}`}>
+          <span className={`text-[17px] leading-[22px] ${DISPLAY}`}>{p.name}</span>
+          <span className={`text-[14px] leading-[18px] [font-variant-numeric:tabular-nums] ${dark(p.id) ? "text-[#FCCFB8]" : SUB}`}>{money(priceOf(p.id))}</span>
+        </span>
+      ))}
+    </div>
+  );
+
+  /** iPhone: the four tiers as a switcher, the one shown filled in, a dot on any the team uses. */
+  const shown = view ?? plan.id;
+  const switcher = (
+    <div role="tablist" aria-label="Plans" className="grid grid-cols-4 gap-[4px] p-[4px] rounded-[22px] bg-[rgba(237,229,210,0.94)] [backdrop-filter:blur(14px)]">
+      {PLANS.map((p) => {
+        const on = shown === p.id;
+        return (
+          <button
+            key={p.id}
+            type="button"
+            role="tab"
+            aria-selected={on}
+            onClick={() => setView(p.id)}
+            className={`relative flex flex-col items-center gap-[1px] pt-[9px] pb-[8px] rounded-[18px] transition-colors duration-200 ${on ? "bg-[#281910] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}
+          >
+            {dark(p.id) && <span className="absolute left-1/2 -translate-x-1/2 w-[28px] top-0 h-[3px] rounded-b-[3px] bg-[#FCCFB8]" aria-hidden="true" />}
+            <span className="flex items-center gap-[4px] text-[12px] leading-[16px] font-[600] whitespace-nowrap">
+              {p.name}
+              {lit(p.id) && <span className={`w-[5px] h-[5px] rounded-[999px] ${on ? "bg-[#FCCFB8]" : "bg-[#A0522D]"}`} aria-label="In use" />}
+            </span>
+            <span className={`text-[18px] leading-[22px] tracking-[-0.02em] ${DISPLAY} [font-variant-numeric:tabular-nums] ${on && dark(p.id) ? "text-[#FCCFB8]" : ""}`}>{money(priceOf(p.id))}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  /** iPhone: the shown tier, then every feature with whether it has it, the ones it lacks faded. */
+  const featureRow = (item: string, on: boolean, indent = false) => (
+    <span key={item} className={`flex items-start justify-between gap-[14px] py-[7px] ${indent ? "pl-[20px]" : ""}`}>
+      <span className={`text-[15px] leading-[20px] ${on ? "text-[rgba(20,12,4,0.74)]" : "text-[rgba(20,12,4,0.34)]"}`}>{item}</span>
+      <span className="h-[20px] w-[16px] shrink-0 flex items-center justify-center">
+        <Mark on={on} />
+      </span>
+    </span>
+  );
+  const featureGroup = (title: string, children: ReactNode) => (
+    <div key={title} className={`flex flex-col px-[18px] pt-[16px] pb-[10px] border-t border-solid ${HAIR} first:border-t-0`}>
+      <span className="pb-[4px] text-[16px] leading-[21px] font-[600] text-[#140C04]">{title}</span>
+      {children}
+    </div>
+  );
+  const shownPlan = planById(shown);
+  const tierView = (
+    <div className="flex flex-col gap-[10px]">
+      <div key={shown} className={`doe-pricing-rise relative flex flex-col gap-[14px] p-[20px] rounded-[24px] overflow-clip ${dark(shown) ? "bg-[#281910] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}>
+        <span className="flex items-start justify-between gap-[12px]">
+          <span className="flex flex-col gap-[2px] min-w-[0px]">
+            <span className={`text-[28px] leading-[32px] tracking-[-0.025em] ${DISPLAY}`}>{shownPlan.name}</span>
+            <span className={`text-[14px] leading-[19px] ${dark(shown) ? "text-[rgba(255,252,241,0.68)]" : SUB}`}>{shownPlan.line}</span>
+          </span>
+          <span className="flex shrink-0">{badge(shown)}</span>
+        </span>
+        <span className="flex flex-col gap-[2px]">
+          <span className="flex items-baseline gap-[4px]">
+            <span className={`text-[40px] leading-[42px] tracking-[-0.04em] ${DISPLAY} [font-variant-numeric:tabular-nums] ${dark(shown) ? "text-[#FCCFB8]" : ""}`}>{money(priceOf(shown))}</span>
+            <span className={`text-[14px] ${dark(shown) ? "text-[rgba(255,252,241,0.6)]" : SUB}`}>/mo</span>
+          </span>
+          <span className={`text-[13px] leading-[17px] ${dark(shown) ? "text-[rgba(255,252,241,0.6)]" : SUB}`}>
+            {sizeLine} · {billedLine}
+          </span>
+        </span>
+        <span className="flex [&>*]:grow">{tierAction(shown, true)}</span>
+      </div>
+
+      <div className="flex flex-col rounded-[24px] bg-[#FFFCF1] py-[4px]">
+        {FEATURE_GROUPS.slice(0, -2).map((g) => featureGroup(g.title, g.items.map((item) => featureRow(item, includes(shown, g.from)))))}
+        {featureGroup(
+          "Specialty features",
+          SPECIALTIES.map((sp) => (
+            <Fragment key={sp.id}>
+              <span className="flex items-center justify-between gap-[14px]">
+                {specialtyToggle(sp, `grow -ml-[8px] pl-[8px] py-[8px] rounded-[12px] text-[15px] leading-[20px] ${includes(shown, SPECIALTY_FROM) ? "" : "opacity-50"}`)}
+                <span className="w-[16px] shrink-0 flex items-center justify-center">
+                  <Mark on={includes(shown, SPECIALTY_FROM)} />
+                </span>
+              </span>
+              {openSpecialty === sp.id && SPECIALTY_FEATURES[sp.id].map((item) => featureRow(item, includes(shown, SPECIALTY_FROM), true))}
+            </Fragment>
+          )),
+        )}
+        {FEATURE_GROUPS.slice(-2).map((g) => featureGroup(g.title, g.items.map((item) => featureRow(item, includes(shown, g.from)))))}
       </div>
     </div>
   );
@@ -444,9 +567,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             key={b}
             type="button"
             onClick={() => set({ annual: b === "annual" })}
-            className={`h-[34px] ${phone ? "px-[10px]" : "px-[14px]"} rounded-[999px] text-[13px] leading-[16px] font-[500] transition-colors duration-200 whitespace-nowrap ${(b === "annual") === a.annual ? "bg-[#281910] text-[#FFFCF1]" : `${SUB} hover:text-[#281910]`}`}
+            className={`h-[34px] px-[14px] rounded-[999px] text-[13px] leading-[16px] font-[500] transition-colors duration-200 whitespace-nowrap ${(b === "annual") === a.annual ? "bg-[#281910] text-[#FFFCF1]" : `${SUB} hover:text-[#281910]`}`}
           >
-            {b === "annual" ? (phone ? "Yearly" : "Yearly, 2 mo free") : "Monthly"}
+            {b === "annual" ? "Yearly, 2 mo free" : "Monthly"}
           </button>
         ))}
       </span>
@@ -454,7 +577,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   );
 
   const actions = (
-    <span className={`flex gap-[6px] ${phone ? "col-span-2" : ""}`}>
+    <span className="flex gap-[6px]">
       <button
         type="button"
         onClick={() => setPanel("team")}
@@ -479,57 +602,83 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </span>
   );
 
-  /** The controls that follow the comparison: locations, providers (with their initials), billing, and the team. */
-  const controls = (
-    <div
-      className={`z-30 gap-[6px] p-[6px] rounded-[26px] bg-[rgba(237,229,210,0.94)] [backdrop-filter:blur(14px)] ${phone ? "grid grid-cols-2" : "grid grid-cols-3"} ${pinned ? "fixed" : ""}`}
-      style={pinned ? { top: pinTop, left: pinned.left, width: pinned.width } : undefined}
-    >
-      <span className={`flex justify-between rounded-[20px] bg-[#FFFCF1] ${phone ? "flex-col items-center gap-[6px] p-[8px] pt-[10px] min-w-[0px]" : "items-center gap-[10px] px-[14px] py-[8px]"}`}>
+  const locationCounter = <Count value={locationCount} max={30} onChange={setLocations} />;
+  const providerCounter = <Count value={providerCount} min={locationCount} max={200} onChange={setProviderTotal} />;
+
+  /** The controls above the comparison: locations, providers (with their initials), plan, billing, and the team. */
+  const controls = phone ? (
+    <div className="flex flex-col gap-[6px] p-[6px] rounded-[26px] bg-[rgba(237,229,210,0.94)]">
+      <span className="flex flex-col px-[14px] rounded-[20px] bg-[#FFFCF1] [&_.count>span]:bg-[#F4EEDF] [&_.count>span]:p-[2px] [&_.count_button]:bg-[#FFFCF1]">
+        <span className="flex items-center justify-between gap-[10px] py-[8px]">
+          <span className="text-[15px] leading-[20px] font-[500] text-[#281910]">Locations</span>
+          <span className="count">{locationCounter}</span>
+        </span>
+        <span className={`flex items-center justify-between gap-[10px] py-[8px] border-t border-solid ${HAIR}`}>
+          <span className="text-[15px] leading-[20px] font-[500] text-[#281910]">Providers</span>
+          <span className="count">{providerCounter}</span>
+        </span>
+      </span>
+      <span className="flex p-[3px] gap-[2px] rounded-[20px] bg-[#FFFCF1]">
+        {(["monthly", "annual"] as const).map((b) => (
+          <button
+            key={b}
+            type="button"
+            onClick={() => set({ annual: b === "annual" })}
+            className={`grow basis-0 h-[40px] rounded-[17px] text-[14px] leading-[18px] font-[500] transition-colors duration-200 whitespace-nowrap ${(b === "annual") === a.annual ? "bg-[#281910] text-[#FFFCF1]" : SUB}`}
+          >
+            {b === "annual" ? "Yearly, 2 mo free" : "Monthly"}
+          </button>
+        ))}
+      </span>
+      {actions}
+    </div>
+  ) : (
+    <div className="gap-[6px] p-[6px] rounded-[26px] bg-[rgba(237,229,210,0.94)] [backdrop-filter:blur(14px)] grid grid-cols-3">
+      <span className="flex justify-between rounded-[20px] bg-[#FFFCF1] items-center gap-[10px] px-[14px] py-[8px]">
         <span className="flex flex-col gap-[2px]">
           <span className={`text-[13px] leading-[16px] font-[500] ${SUB}`}>Locations</span>
-          {!phone && <span className="h-[20px] flex items-center whitespace-nowrap text-[12px] leading-[16px] text-[rgba(20,12,4,0.42)]">{locationCount > 1 ? "Multi-clinic" : "Single location"}</span>}
+          <span className="h-[20px] flex items-center whitespace-nowrap text-[12px] leading-[16px] text-[rgba(20,12,4,0.42)]">{locationCount > 1 ? "Multi-clinic" : "Single location"}</span>
         </span>
-        <span className="[&>span]:bg-[#F4EEDF] [&>span]:p-[2px] [&_button]:bg-[#FFFCF1]">
-          <Count value={locationCount} max={30} onChange={setLocations} />
-        </span>
+        <span className="[&>span]:bg-[#F4EEDF] [&>span]:p-[2px] [&_button]:bg-[#FFFCF1]">{locationCounter}</span>
       </span>
-      <span className={`flex justify-between rounded-[20px] bg-[#FFFCF1] ${phone ? "flex-col items-center gap-[6px] p-[8px] pt-[10px] min-w-[0px]" : "items-center gap-[10px] px-[14px] py-[8px]"}`}>
+      <span className="flex justify-between rounded-[20px] bg-[#FFFCF1] items-center gap-[10px] px-[14px] py-[8px]">
         <span className="flex flex-col gap-[2px] min-w-[0px]">
           <span className={`text-[13px] leading-[16px] font-[500] ${SUB}`}>Providers</span>
-          {!phone && (
-            <span className="h-[20px] flex items-center">
-              {providers.slice(0, 5).map((p, i) => (
-                <span key={p.id} className={`w-[20px] h-[20px] flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[8px] leading-[10px] font-[700] text-[#281910] border-[2px] border-solid border-[#FFFCF1] ${i ? "-ml-[6px]" : ""}`}>
-                  {initials(p.name, providers.indexOf(p) + 1)}
-                </span>
-              ))}
-              {providerCount > 5 && <span className={`ml-[4px] text-[12px] leading-[16px] ${SUB}`}>+{providerCount - 5}</span>}
-            </span>
-          )}
+          <span className="h-[20px] flex items-center">
+            {providers.slice(0, 5).map((p, i) => (
+              <span key={p.id} className={`w-[20px] h-[20px] flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[8px] leading-[10px] font-[700] text-[#281910] border-[2px] border-solid border-[#FFFCF1] ${i ? "-ml-[6px]" : ""}`}>
+                {initials(p.name, providers.indexOf(p) + 1)}
+              </span>
+            ))}
+            {providerCount > 5 && <span className={`ml-[4px] text-[12px] leading-[16px] ${SUB}`}>+{providerCount - 5}</span>}
+          </span>
         </span>
-        <span className="[&>span]:bg-[#F4EEDF] [&>span]:p-[2px] [&_button]:bg-[#FFFCF1]">
-          <Count value={providerCount} min={locationCount} max={200} onChange={setProviderTotal} />
-        </span>
+        <span className="[&>span]:bg-[#F4EEDF] [&>span]:p-[2px] [&_button]:bg-[#FFFCF1]">{providerCounter}</span>
       </span>
-      <span className={`flex items-center justify-between gap-[10px] rounded-[20px] bg-[#FFFCF1] ${phone ? "p-[4px] justify-center" : "px-[14px] py-[8px]"}`}>
-        <span className={phone ? "sr-only" : "flex flex-col gap-[2px]"}>
+      <span className="flex items-center justify-between gap-[10px] rounded-[20px] bg-[#FFFCF1] px-[14px] py-[8px]">
+        <span className="flex flex-col gap-[2px]">
           <span className={`text-[13px] leading-[16px] font-[500] ${SUB}`}>Plan</span>
-          {!phone && <span className="h-[20px] flex items-center whitespace-nowrap text-[12px] leading-[16px] text-[rgba(20,12,4,0.42)]">{mixed ? "Mixed across the team" : "Everyone on one plan"}</span>}
+          <span className="h-[20px] flex items-center whitespace-nowrap text-[12px] leading-[16px] text-[rgba(20,12,4,0.42)]">{mixed ? "Mixed across the team" : "Everyone on one plan"}</span>
         </span>
         <Pick dark label="Plan for everyone" value={plan.id} options={PLANS.map((p) => ({ id: p.id, label: p.name }))} onChange={everyoneOn} />
       </span>
-      {phone ? (
-        <>
-          {billing}
-          {actions}
-        </>
-      ) : (
-        <span className="col-span-3 flex items-stretch justify-between gap-[6px]">
-          {billing}
-          {actions}
-        </span>
-      )}
+      <span className="col-span-3 flex items-stretch justify-between gap-[6px]">
+        {billing}
+        {actions}
+      </span>
+    </div>
+  );
+
+  /**
+   * What follows the comparison down the page, pinned under the nav once it reaches it: the controls (and the strip of
+   * tier names) on desktop, the tier switcher on iPhone, whose controls stay in place.
+   */
+  const pinnedBar = (
+    <div ref={barSlot} style={{ height: pinned?.height }}>
+      <div className={pinned ? "fixed z-30" : ""} style={pinned ? { top: pinTop, left: pinned.left, width: pinned.width } : undefined}>
+        {phone ? switcher : controls}
+        {!phone && pinned?.strip && strip}
+      </div>
     </div>
   );
 
@@ -686,11 +835,10 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       wide: true,
       ready: !!a.plan,
       body: (
-        <div className="flex flex-col gap-[14px]">
-          <div ref={barSlot} style={{ height: pinned?.height }}>
-            {controls}
-          </div>
-          {comparison}
+        <div className={`flex flex-col ${phone ? "gap-[10px]" : "gap-[14px]"}`}>
+          {phone && controls}
+          {pinnedBar}
+          {phone ? tierView : table}
         </div>
       ),
     },
@@ -752,7 +900,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     if (top < offset - 20 || top > window.innerHeight * 0.55) window.scrollTo({ top: window.scrollY + top - offset, behavior: "smooth" });
   }, [index, done, phone]);
 
-  // The controls follow the comparison down the page. Sticky can't do it here, so pin them once they reach the top.
+  // The pinned bar follows the comparison down the page. Sticky can't do it here, so pin it once it reaches the top.
   useEffect(() => {
     if (!onPlan) {
       setPinned(null);
@@ -764,8 +912,13 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       if (!slot || !body) return;
       const r = slot.getBoundingClientRect();
       const end = body.getBoundingClientRect().bottom;
-      const height = (slot.firstElementChild as HTMLElement | null)?.offsetHeight ?? r.height;
-      setPinned(r.top < pinTop && end > pinTop + height + 40 ? { left: r.left, width: r.width, height } : null);
+      // The bar itself, not the strip that joins it once pinned.
+      const height = (slot.firstElementChild?.firstElementChild as HTMLElement | null)?.offsetHeight ?? r.height;
+      const head = headRef.current?.getBoundingClientRect().bottom;
+      const next = r.top < pinTop && end > pinTop + height + 40 ? { left: r.left, width: r.width, height, strip: head !== undefined && head < pinTop + height } : null;
+      setPinned((prev) =>
+        prev && next && prev.left === next.left && prev.width === next.width && prev.height === next.height && prev.strip === next.strip ? prev : next,
+      );
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
