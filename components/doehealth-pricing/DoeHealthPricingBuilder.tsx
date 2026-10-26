@@ -4,7 +4,7 @@
  * /pricing builder — the practice and plan, one question at a time: how the practice is set up (Solo, Single
  * location, or Multi-clinic, each with a small drawing of its shape), its providers or locations, the specialty
  * (picked from the set or typed), then the four tiers side by side, and where to send the setup. Tiers stay out of
- * sight until the comparison. A row of steps on top tracks where you are; finished steps open again with a tap.
+ * sight until the comparison. A brown bar along the bottom holds Back, a step counter and Continue.
  *
  * The practice is a team: locations, each with named providers who have their own specialty and plan. Free is in the
  * comparison but can't be chosen. On the comparison a toolbar for locations, providers, the team and the price
@@ -97,17 +97,19 @@ function initials(name: string, n: number) {
   return words.length ? words.map((w) => w[0]).join("").slice(0, 2).toUpperCase() : `P${n}`;
 }
 
-/** The shape of each kind of practice: buildings as outlines, providers as dots. */
+/**
+ * The shape of each kind of practice, drawn in lines a shade off its beige well: buildings as outlines, providers as
+ * small rings. On the chosen card the lines go peach, softly.
+ */
 function ShapeMark({ shape, on }: { shape: PracticeShape; on: boolean }) {
-  const line = on ? "#FCCFB8" : "#281910";
-  const dot = on ? "#FFFCF1" : "#281910";
+  const line = on ? "rgba(252,207,184,0.55)" : "#D6C5A6";
   const building = (x: number, w: number, dots: number, key: string) => (
     <g key={key}>
       <rect x={x} y="10" width={w} height="34" rx="8" fill="none" stroke={line} strokeWidth="1.6" />
       {Array.from({ length: dots }, (_, i) => {
         const cols = Math.min(dots, 2);
         const gap = w / (cols + 1);
-        return <circle key={i} cx={x + gap * ((i % cols) + 1)} cy={22 + Math.floor(i / cols) * 11} r="3.2" fill={dot} />;
+        return <circle key={i} cx={x + gap * ((i % cols) + 1)} cy={22 + Math.floor(i / cols) * 11} r="3.2" fill="none" stroke={line} strokeWidth="1.6" />;
       })}
     </g>
   );
@@ -251,8 +253,6 @@ type Question = {
   step: string;
   /** The title, as the two lines it's set on. */
   title: [string, string];
-  /** What's still missing before Continue works, shown beside it. */
-  need?: string;
   /** The comparison needs more room than a question. */
   wide?: boolean;
   ready: boolean;
@@ -864,7 +864,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       id: "shape",
       step: "Practice",
       title: ["How is your", "practice set up?"],
-      need: "Pick how your practice is set up",
       ready: !!a.shape,
       body: (
         <div className={`grid gap-[6px] p-[6px] rounded-[32px] ${OUTER} ${phone ? "grid-cols-1" : "grid-cols-3"}`}>
@@ -878,19 +877,12 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                 onClick={() => pickShape(s.id)}
                 className={`flex ${phone ? "flex-row items-center gap-[16px] p-[14px]" : "flex-col items-start gap-[26px] p-[20px]"} rounded-[26px] text-left transition-colors duration-200 ${on ? "bg-[#281910] text-[#FFFCF1]" : `${INNER} text-[#281910] [@media(hover:hover)]:hover:bg-[#FFFCF1]`}`}
               >
-                <span className={`shrink-0 flex items-center justify-center rounded-[18px] ${phone ? "w-[96px] h-[64px]" : "w-full h-[92px]"} ${on ? "bg-[rgba(255,252,241,0.08)]" : "bg-[#F7F1E3]"}`}>
+                <span className={`shrink-0 flex items-center justify-center rounded-[18px] ${phone ? "w-[96px] h-[64px]" : "w-full h-[92px]"} ${on ? "bg-[rgba(255,252,241,0.06)]" : "bg-[#F4EEDF]"}`}>
                   <ShapeMark shape={s.id} on={on} />
                 </span>
                 <span className="flex flex-col items-start gap-[2px]">
                   <span className={`text-[24px] leading-[28px] tracking-[-0.02em] ${DISPLAY}`}>{s.title}</span>
                   <span className={`text-[15px] leading-[20px] ${on ? "text-[rgba(255,252,241,0.68)]" : SUB}`}>{s.note}</span>
-                  {s.id !== "solo" && (
-                    <span
-                      className={`mt-[8px] h-[24px] px-[10px] flex items-center rounded-[999px] text-[12px] leading-[14px] font-[600] whitespace-nowrap ${on ? "bg-[#FCCFB8] text-[#140C04]" : "bg-[rgba(252,207,184,0.55)] text-[#7A3E1F]"}`}
-                    >
-                      {s.id === "clinic" ? "Multi-provider Discount" : "Multi-clinic Discount"}
-                    </span>
-                  )}
                 </span>
               </button>
             );
@@ -902,7 +894,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       id: "team",
       step: "Team",
       title: ["Who’s on", "your team?"],
-      need: !specialtiesSet ? "Choose a specialty for each provider" : "Name every location",
       ready: specialtiesSet && a.team.every((x) => x.name.trim()),
       body: (
         <div className="flex flex-col gap-[14px]">
@@ -934,7 +925,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       id: "contact",
       step: "Details",
       title: ["Where should we", "send your setup?"],
-      need: "Add your name, practice and work email",
       ready: !!(a.contact.name.trim() && /.+@.+\..+/.test(a.contact.email) && a.contact.practice.trim()),
       body: (
         <div className={`grid gap-[14px] p-[16px] rounded-[28px] ${OUTER} ${phone ? "grid-cols-1" : "grid-cols-2"}`}>
@@ -1017,19 +1007,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   }, [onPlan, pinTop, panel]);
 
   const planLabel = mixed ? "Mixed plans" : plan.name;
-
-  /** Desktop: the chosen plan's price, a sticky pill above the question once there is one (iPhone has it in the dock). */
-  const priceBar =
-    a.plan && !phone && !onPlan ? (
-      <div
-        className={`doe-pricing-rise z-40 flex items-center gap-[14px] bg-[#281910] text-[#FFFCF1] sticky top-[124px] self-center h-[56px] px-[24px] rounded-[999px]`}
-      >
-        <span className="flex items-baseline gap-[4px] grow min-w-[0px] whitespace-nowrap">
-          <span className={`text-[28px] leading-[32px] tracking-[-0.03em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}</span>
-          <span className="text-[15px] text-[rgba(255,252,241,0.65)]">/mo</span>
-        </span>
-      </div>
-    ) : null;
 
   const subtotal = priced.total;
   const yearlyOff = a.annual ? subtotal * (1 - ANNUAL_FACTOR) : 0;
@@ -1155,44 +1132,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       </>
     ) : null;
 
-  /** Every step in a row, by name only: done ones open again with a tap, the current one is dark. */
-  const steps = (
-    <nav aria-label="Steps">
-      <ol className={`m-0 p-0 list-none grid ${phone ? "gap-[6px]" : "gap-[10px]"}`} style={{ gridTemplateColumns: `repeat(${questions.length}, minmax(0, 1fr))` }}>
-        {questions.map((x, i) => {
-          const past = done || i < index;
-          const now = !done && i === index;
-          return (
-            <li key={x.id} className="min-w-[0px]">
-              <button
-                type="button"
-                disabled={!past}
-                aria-current={now ? "step" : undefined}
-                onClick={() => {
-                  setDone(false);
-                  setAt(i);
-                }}
-                className="group w-full flex flex-col gap-[10px] pb-[2px] text-left disabled:cursor-default"
-              >
-                <span className={`h-[3px] w-full rounded-[99px] transition-colors duration-500 ${past || now ? "bg-[#281910]" : "bg-[rgba(20,12,4,0.1)]"}`} />
-                <span className="flex min-w-[0px]">
-                  <span className={`flex items-center gap-[6px] ${phone ? "text-[11px] leading-[14px]" : "text-[12px] leading-[16px]"} font-[600] ${past || now ? "text-[#281910]" : "text-[rgba(20,12,4,0.36)]"}`}>
-                    {x.step}
-                    {past && (
-                      <svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true" className="opacity-0 group-hover:opacity-60 transition-opacity duration-150" style={{ display: "block" }}>
-                        <path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </span>
-                </span>
-              </button>
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
-  );
-
   /** A question's title on its two lines. */
   const heading = (lines: [string, string]) => (
     <h2 className={`m-0 flex flex-col ${phone ? "text-[34px] leading-[37px]" : "text-[48px] leading-[51px]"} tracking-[-0.035em] font-[400] text-[#281910] ${DISPLAY}`}>
@@ -1201,10 +1140,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </h2>
   );
 
-  const next = questions[index + 1];
-  const goLabel = last ? "Start onboarding" : q.id === "plan" && a.plan ? `Continue with ${mixed ? "these plans" : plan.name}` : "Continue";
-  /** Under the Continue button: what comes next, or what's still missing. */
-  const goNote = q.ready ? (next ? `Next: ${next.step}` : "Last step") : q.need;
+  const panelOpenDesktop = !!sidePanel && !phone;
+  const goLabel = last ? "Start onboarding" : q.id === "plan" && a.plan && !phone ? `Continue with ${mixed ? "these plans" : plan.name}` : "Continue";
   const back = () => setAt(index - 1);
   const arrow = (dir: "back" | "next", size = 16) => (
     <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
@@ -1212,73 +1149,60 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </svg>
   );
 
-  /** Desktop: Back on the left, and on the right what's next (or missing) beside Continue. */
-  const desktopNav = (
-    <div className="flex items-center justify-between gap-[16px] pt-[24px] border-t border-solid border-[rgba(20,12,4,0.08)]">
-      {index > 0 ? (
-        <button
-          type="button"
-          onClick={back}
-          className="flex items-center gap-[8px] h-[52px] pl-[18px] pr-[22px] rounded-[999px] bg-[#F4EEDF] hover:bg-[#EDE5D2] text-[15px] leading-[20px] font-[600] text-[#281910] transition-colors duration-150"
-        >
-          {arrow("back")}
-          Back
-        </button>
-      ) : (
-        <span />
-      )}
-      <span className="flex items-center gap-[18px] min-w-[0px]">
-        <span className={`truncate text-[14px] leading-[19px] font-[500] ${q.ready ? SUB : "text-[#A0522D]"}`}>{goNote}</span>
-        <button
-          type="button"
-          disabled={!q.ready}
-          onClick={forward}
-          className="flex items-center gap-[10px] h-[54px] pl-[26px] pr-[22px] shrink-0 rounded-[999px] bg-[#281910] hover:bg-[#3A2920] disabled:bg-[rgba(20,12,4,0.1)] disabled:text-[rgba(20,12,4,0.38)] text-[16px] leading-[20px] font-[600] text-[#FFFCF1] transition-colors duration-200"
-        >
-          {goLabel}
-          {arrow("next")}
-        </button>
-      </span>
-    </div>
-  );
-
   /**
-   * iPhone: one dock along the bottom with Back, the price once there is one (tap it for the breakdown on the
-   * comparison) or what's next, and Continue.
+   * The brown bar along the bottom: Back, the step counter (with the price above it once there is one; on the
+   * comparison it opens the breakdown), and Continue. It fades in once a practice type is picked.
    */
-  const phoneDock =
-    !done && phone ? (
-      <div className="fixed left-[10px] right-[10px] bottom-[max(10px,env(safe-area-inset-bottom))] z-40 flex items-center gap-[8px] p-[8px] rounded-[24px] bg-[#281910] text-[#FFFCF1] shadow-[0_18px_40px_-20px_rgba(40,25,16,0.6)]">
-        {index > 0 && (
-          <button type="button" aria-label="Back" onClick={back} className="w-[48px] h-[48px] shrink-0 flex items-center justify-center rounded-[999px] bg-[rgba(255,252,241,0.12)] active:bg-[rgba(255,252,241,0.2)]">
+  const dock =
+    !done && a.shape ? (
+      <div className={`fixed left-0 bottom-[max(10px,env(safe-area-inset-bottom))] z-40 flex justify-center pointer-events-none ${phone ? "right-0 px-[10px]" : panelOpenDesktop ? "right-[420px] px-[24px]" : "right-0 px-[24px]"}`}>
+        <div className={`doe-pricing-rise pointer-events-auto flex items-center gap-[8px] p-[8px] rounded-[26px] bg-[#281910] text-[#FFFCF1] shadow-[0_18px_40px_-20px_rgba(40,25,16,0.6)] ${phone ? "w-full" : "w-[560px] max-w-full"}`}>
+          <button
+            type="button"
+            aria-label="Back"
+            disabled={index === 0}
+            onClick={back}
+            className="w-[48px] h-[48px] shrink-0 flex items-center justify-center rounded-[999px] bg-[rgba(255,252,241,0.12)] hover:bg-[rgba(255,252,241,0.2)] disabled:opacity-30 disabled:hover:bg-[rgba(255,252,241,0.12)] transition-[background-color,opacity] duration-200"
+          >
             {arrow("back", 18)}
           </button>
-        )}
-        {a.plan ? (
           <button
             type="button"
             disabled={!onPlan}
             onClick={() => setPanel("price")}
-            className="flex flex-col items-start grow min-w-[0px] px-[8px] text-left disabled:cursor-default"
+            aria-label={onPlan ? "See price breakdown" : undefined}
+            className="grow min-w-[0px] flex flex-col items-center justify-center gap-[6px] disabled:cursor-default"
           >
-            <span className="flex items-baseline gap-[3px] whitespace-nowrap">
-              <span className={`text-[24px] leading-[28px] tracking-[-0.03em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}</span>
-              <span className="text-[14px] text-[rgba(255,252,241,0.65)]">/mo</span>
+            {a.plan && (
+              <span className="flex items-baseline gap-[3px] whitespace-nowrap">
+                <span className={`text-[20px] leading-[22px] tracking-[-0.02em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(total)}</span>
+                <span className="text-[13px] text-[rgba(255,252,241,0.6)]">/mo</span>
+              </span>
+            )}
+            <span className="flex items-center gap-[8px]" role="img" aria-label={`Step ${index + 1} of ${questions.length}: ${q.step}`}>
+              <span className="flex items-center gap-[4px]">
+                {questions.map((x, i) => (
+                  <span
+                    key={x.id}
+                    className={`h-[6px] rounded-[99px] transition-[width,background-color] duration-300 ${i === index ? "w-[18px] bg-[#FCCFB8]" : i < index ? "w-[6px] bg-[rgba(255,252,241,0.7)]" : "w-[6px] bg-[rgba(255,252,241,0.22)]"}`}
+                  />
+                ))}
+              </span>
+              <span className="text-[12px] leading-[14px] font-[600] text-[rgba(255,252,241,0.55)] [font-variant-numeric:tabular-nums]">
+                {index + 1}/{questions.length}
+              </span>
             </span>
-            {onPlan && <span className="text-[12px] leading-[15px] font-[600] text-[#FCCFB8]">See breakdown</span>}
           </button>
-        ) : (
-          <span className={`grow min-w-[0px] px-[8px] line-clamp-2 text-[13px] leading-[17px] font-[500] ${q.ready ? "text-[rgba(255,252,241,0.62)]" : "text-[#FCCFB8]"}`}>{goNote}</span>
-        )}
-        <button
-          type="button"
-          disabled={!q.ready}
-          onClick={forward}
-          className="flex items-center gap-[8px] h-[48px] pl-[20px] pr-[16px] shrink-0 rounded-[999px] bg-[#FCCFB8] text-[#140C04] disabled:bg-[rgba(255,252,241,0.12)] disabled:text-[rgba(255,252,241,0.4)] text-[15px] leading-[20px] font-[600] transition-colors duration-200"
-        >
-          {last ? "Start onboarding" : "Continue"}
-          {arrow("next")}
-        </button>
+          <button
+            type="button"
+            disabled={!q.ready}
+            onClick={forward}
+            className="flex items-center gap-[8px] h-[48px] pl-[20px] pr-[16px] shrink-0 rounded-[999px] bg-[#FCCFB8] hover:bg-[#FFDCCB] text-[#140C04] disabled:bg-[rgba(255,252,241,0.12)] disabled:text-[rgba(255,252,241,0.4)] text-[15px] leading-[20px] font-[600] transition-colors duration-200"
+          >
+            {goLabel}
+            {arrow("next")}
+          </button>
+        </div>
       </div>
     ) : null;
 
@@ -1316,19 +1240,14 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         {onPlan && !phone && billing}
       </div>
       {q.body}
-      {!phone && desktopNav}
     </div>
   );
-
-  const panelOpenDesktop = !!sidePanel && !phone;
 
   return (
     <div className="relative">
       <div
-        className={`relative flex flex-col transition-[max-width,margin] duration-500 ${phone ? `mx-auto gap-[28px] ${done ? "pb-[24px]" : "pb-[110px]"}` : `${wide ? "max-w-[1120px]" : "max-w-[760px]"} gap-[44px] pb-[40px] ${panelOpenDesktop ? "ml-0 mr-[380px]" : "mx-auto"}`}`}
+        className={`relative flex flex-col transition-[max-width,margin] duration-500 ${phone ? `mx-auto gap-[28px] ${done ? "pb-[24px]" : "pb-[110px]"}` : `${wide ? "max-w-[1120px]" : "max-w-[760px]"} gap-[44px] ${done ? "pb-[40px]" : "pb-[120px]"} ${panelOpenDesktop ? "ml-0 mr-[380px]" : "mx-auto"}`}`}
       >
-        {priceBar}
-        {steps}
         <div
           ref={cardRef}
           onKeyDown={(e) => {
@@ -1338,7 +1257,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           {card}
         </div>
       </div>
-      {phoneDock}
+      {dock}
       {sidePanel}
     </div>
   );

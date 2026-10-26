@@ -25,47 +25,40 @@ const DESK2_PATH = "/doehealthdesk2";
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 /**
- * Questions, one open at a time. An answer slides open by growing its row from nothing to its height (a grid row
- * animates where `height: auto` can't), its text easing down into place, and the plus turns into a minus.
+ * Questions, one open at a time, as Doe's boxes: white rows in a beige box. An answer slides open by growing its row
+ * from nothing to its height (a grid row animates where `height: auto` can't), its text easing down into place, and
+ * the plus turns into a minus.
  */
 function Faq({ phone }: { phone: boolean }) {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <section className={`grid gap-[24px] ${phone ? "grid-cols-1" : "grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-[56px]"}`} aria-label="Questions">
       <h2 className={`m-0 text-[clamp(34px,4vw,52px)] leading-[1.02] tracking-[-0.035em] font-[400] text-[#281910] ${p22Mackinac.className}`}>Questions</h2>
-      <div className="flex flex-col gap-[8px]">
+      <div className="flex flex-col gap-[6px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
         {PRICING_FAQ.map((f, i) => {
           const on = open === i;
           const id = `pricing-faq-${i}`;
           return (
-            <div
-              key={f.q}
-              className={`flex flex-col rounded-[16px] transition-[background-color,box-shadow] duration-300 ${on ? "bg-[#F4EEDF] shadow-[0_10px_28px_-22px_rgba(40,25,16,0.5)]" : "bg-[rgba(244,238,223,0.6)] [@media(hover:hover)]:hover:bg-[#F4EEDF]"}`}
-            >
+            <div key={f.q} className="flex flex-col rounded-[20px] bg-white">
               <button
                 type="button"
                 aria-expanded={on}
                 aria-controls={id}
                 onClick={() => setOpen(on ? null : i)}
-                className={`flex items-center justify-between gap-[16px] text-left ${phone ? "p-[18px]" : "p-[20px] pl-[22px]"}`}
+                className={`flex items-center justify-between gap-[16px] text-left ${phone ? "p-[18px]" : "px-[22px] py-[20px]"}`}
               >
                 <span className={`font-[600] text-[#140C04] ${phone ? "text-[16px] leading-[22px]" : "text-[17px] leading-[23px]"}`}>{f.q}</span>
-                <span
-                  className={`w-[32px] h-[32px] shrink-0 flex items-center justify-center rounded-[999px] transition-colors duration-300 ${on ? "bg-[#281910] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}
-                  aria-hidden="true"
-                >
-                  <svg width="12" height="12" viewBox="0 0 12 12" style={{ display: "block" }}>
-                    <path d="M1 6h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                    <path
-                      d="M6 1v10"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      className={`origin-center transition-transform duration-[420ms] ${EASE} motion-reduce:transition-none ${on ? "scale-y-0 rotate-90" : ""}`}
-                      style={{ transformBox: "fill-box" }}
-                    />
-                  </svg>
-                </span>
+                <svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true" className="shrink-0 text-[#281910]" style={{ display: "block" }}>
+                  <path d="M1 6h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                  <path
+                    d="M6 1v10"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    className={`origin-center transition-transform duration-[420ms] ${EASE} motion-reduce:transition-none ${on ? "scale-y-0 rotate-90" : ""}`}
+                    style={{ transformBox: "fill-box" }}
+                  />
+                </svg>
               </button>
               <div
                 id={id}
@@ -76,7 +69,7 @@ function Faq({ phone }: { phone: boolean }) {
               >
                 <div className="overflow-hidden min-h-[0px]">
                   <p
-                    className={`m-0 max-w-[60ch] text-[16px] leading-[24px] text-[rgba(20,12,4,0.68)] transition-[opacity,transform] duration-[460ms] ${EASE} motion-reduce:transition-none ${phone ? "px-[18px] pb-[18px]" : "px-[22px] pb-[22px]"} ${on ? "opacity-100 translate-y-[0px]" : "opacity-0 -translate-y-[8px]"}`}
+                    className={`m-0 max-w-[60ch] text-[16px] leading-[24px] text-[rgba(20,12,4,0.64)] transition-[opacity,transform] duration-[460ms] ${EASE} motion-reduce:transition-none ${phone ? "px-[18px] pb-[18px]" : "px-[22px] pb-[22px]"} ${on ? "opacity-100 translate-y-[0px]" : "opacity-0 -translate-y-[8px]"}`}
                   >
                     {f.a}
                   </p>
@@ -115,11 +108,11 @@ function FoundingBanner({ phone }: { phone: boolean }) {
             >
               Teach personal agents about your clinic before it&apos;s too late.
             </h1>
-            <span className="inline-flex items-center gap-[10px] h-[36px] pl-[5px] pr-[14px] rounded-[999px] bg-white">
-              <span className="h-[26px] px-[11px] flex items-center rounded-[999px] bg-[#281910] text-[12px] leading-[14px] font-[700] text-[#FCCFB8] whitespace-nowrap">Founding pricing</span>
-              <span className="text-[14px] leading-[18px] font-[500] whitespace-nowrap" style={{ color: NEWS_INK }}>
-                Until {FOUNDING_UNTIL}
-              </span>
+            <span className="inline-flex items-center gap-[10px] h-[34px] px-[14px] rounded-[999px] bg-white text-[14px] leading-[18px] whitespace-nowrap">
+              <span className="w-[6px] h-[6px] rounded-[999px] bg-[#E0A67F]" aria-hidden="true" />
+              <span className="font-[500] text-[#281910]">Founding Pricing</span>
+              <span className="w-[1px] h-[14px] bg-[rgba(20,12,4,0.12)]" aria-hidden="true" />
+              <span style={{ color: NEWS_INK }}>Until {FOUNDING_UNTIL}</span>
             </span>
           </div>
         </div>
