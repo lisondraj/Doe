@@ -47,8 +47,10 @@ const INNER = "bg-white";
 const SELECTED = "bg-[#FBE7DA] text-[#281910]";
 /** A field in focus: white, with a soft peach ring rather than a dark one. */
 const FOCUS = "focus:bg-white focus:shadow-[inset_0_0_0_1.5px_#EDBB9C]";
-/** A field that needs fixing before Continue: a rust ring, kept while it's focused. */
-const BAD = "shadow-[inset_0_0_0_1.5px_#D9825C] focus:shadow-[inset_0_0_0_1.5px_#D9825C]";
+/** A field still to complete, once Continue is tapped too soon: a red ring, kept while it's focused. */
+const BAD = "shadow-[inset_0_0_0_1.5px_#D9482B] focus:shadow-[inset_0_0_0_1.5px_#D9482B]";
+/** The same red ring for a control that isn't a text field (a chip, a picker), drawn outside it. */
+const BAD_RING = "rounded-[999px] shadow-[0_0_0_1.5px_#D9482B]";
 /** A beige box pinned over the page as it scrolls, lifted off it by a soft shadow (the cream behind it stops at its edge, so the shadow lands on the rows, not on a white haze). */
 const PINNED = "bg-[#F4EEDF] shadow-[0_12px_28px_-14px_rgba(40,25,16,0.45)]";
 
@@ -324,7 +326,7 @@ function TextField({
   type = "text",
   inputMode,
   autoComplete,
-  warning,
+  bad = false,
 }: {
   label: string;
   value: string;
@@ -333,8 +335,8 @@ function TextField({
   type?: string;
   inputMode?: "numeric" | "email" | "text";
   autoComplete?: string;
-  /** What to fix, under the field, once Continue has been tapped. */
-  warning?: string;
+  /** Still to complete, once Continue has been tapped: ringed in red. */
+  bad?: boolean;
 }) {
   return (
     <label className="flex flex-col gap-[8px] min-w-[0px]">
@@ -345,29 +347,12 @@ function TextField({
         placeholder={placeholder}
         inputMode={inputMode}
         autoComplete={autoComplete}
-        aria-invalid={warning ? true : undefined}
+        aria-invalid={bad || undefined}
+        data-pricing-warn={bad ? "" : undefined}
         onChange={(e) => onChange(e.target.value)}
-        className={`h-[56px] px-[20px] rounded-[18px] bg-white outline-none ${FOCUS} ${warning ? BAD : ""} text-[17px] leading-[22px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.32)] transition-[background-color,box-shadow] duration-150`}
+        className={`h-[56px] px-[20px] rounded-[18px] bg-white outline-none ${FOCUS} ${bad ? BAD : ""} text-[17px] leading-[22px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.32)] transition-[background-color,box-shadow] duration-150`}
       />
-      {warning && <Warn>{warning}</Warn>}
     </label>
-  );
-}
-
-/**
- * What needs fixing, shown where it needs fixing once Continue is tapped on a step that isn't ready. The first one on
- * the page is scrolled into view.
- */
-function Warn({ children }: { children: ReactNode }) {
-  return (
-    <span data-pricing-warn="" role="alert" className="doe-pricing-rise flex items-start gap-[6px] px-[4px] text-[13px] leading-[17px] font-[500] text-[#A8431B]">
-      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" className="mt-[1.5px]" style={{ display: "block", flexShrink: 0 }}>
-        <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" strokeWidth="2" />
-        <path d="M12 7v6.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-        <circle cx="12" cy="17" r="1.3" fill="currentColor" />
-      </svg>
-      <span className="min-w-[0px]">{children}</span>
-    </span>
   );
 }
 
@@ -404,7 +389,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     setTried(id);
     setWarnCount((n) => n + 1);
   };
-  // Brings the first thing to fix into view, each time Continue is tapped too soon.
+  // Brings the first field to complete into view, each time Continue is tapped too soon.
   useEffect(() => {
     if (!warnCount) return;
     const id = requestAnimationFrame(() => document.querySelector("[data-pricing-warn]")?.scrollIntoView({ behavior: "smooth", block: "center" }));
@@ -446,10 +431,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const specialtyName = (sp: Specialty, typed: string) => (sp === "other" ? typed.trim() || "Other" : SPECIALTIES.find((x) => x.id === sp)?.label ?? "");
   /** Every provider has a specialty, and anyone on Other has typed theirs. */
   const specialtiesSet = providers.every((p) => p.specialty && (p.specialty !== "other" || p.other.trim()));
-  /** What a provider's specialty still needs, if anything. */
-  const specialtyGap = (p: Provider) => (!p.specialty ? "Choose a specialty" : p.specialty === "other" && !p.other.trim() ? "Type the specialty" : null);
-  /** What an email still needs, if anything. */
-  const emailGap = (v: string, empty: string) => (!v.trim() ? empty : isEmail(v) ? null : "Check this email, it looks incomplete");
+  /** A provider still without a specialty, or on Other without one typed. */
+  const specialtyGap = (p: Provider) => !p.specialty || (p.specialty === "other" && !p.other.trim());
   /** A location's name, or its default when left blank. */
   const siteName = (site: Site) => site.name.trim() || `Clinic ${a.team.indexOf(site) + 1}`;
   const providerName = (p: Provider) => p.name.trim() || `Provider ${providers.indexOf(p) + 1}`;
@@ -908,8 +891,10 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const planOptions = PAID.map((x) => ({ id: x.id, label: x.name }));
 
   /** A specialty dropdown; Other opens a field beside it to type the specialty in. */
-  const specialtyField = (o: { label: string; value: Specialty | null; typed: string; typing: boolean; onPick: (v: Specialty) => void; onType: (v: string) => void; big?: boolean }) => (
+  const specialtyField = (o: { label: string; value: Specialty | null; typed: string; typing: boolean; onPick: (v: Specialty) => void; onType: (v: string) => void; big?: boolean; bad?: boolean }) => (
     <span className="flex items-center gap-[6px] min-w-[0px] grow sm:grow-0">
+      {/* Ringed in red until picked, once Continue has been tapped. */}
+      <span className={`flex min-w-[0px] ${o.bad && !o.value ? BAD_RING : ""}`} data-pricing-warn={o.bad && !o.value ? "" : undefined}>
       <Pick<Specialty | "">
         big={o.big}
         label={o.label}
@@ -917,13 +902,16 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         options={o.value ? specialtyChoices : [{ id: "", label: "Choose specialty" }, ...specialtyChoices]}
         onChange={(v) => v && o.onPick(v)}
       />
+      </span>
       {o.typing && (
         <input
           value={o.typed}
           placeholder="Type specialty"
           aria-label={`${o.label}, typed`}
+          aria-invalid={(o.bad && !o.typed.trim()) || undefined}
+          data-pricing-warn={o.bad && !o.typed.trim() ? "" : undefined}
           onChange={(e) => o.onType(e.target.value)}
-          className={`grow min-w-[0px] px-[14px] rounded-[999px] bg-[#F4EEDF] outline-none ${FOCUS} text-[#140C04] placeholder:text-[rgba(20,12,4,0.38)] ${o.big ? "h-[44px] w-[180px] text-[15px]" : "h-[34px] w-[140px] text-[13px]"}`}
+          className={`grow min-w-[0px] px-[14px] rounded-[999px] bg-[#F4EEDF] outline-none ${FOCUS} ${o.bad && !o.typed.trim() ? BAD : ""} text-[#140C04] placeholder:text-[rgba(20,12,4,0.38)] ${o.big ? "h-[44px] w-[180px] text-[15px]" : "h-[34px] w-[140px] text-[13px]"}`}
         />
       )}
     </span>
@@ -935,7 +923,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
    * provider also gets a plan.
    */
   /** Marks a provider as the buyer: "That's me" on everyone until someone is picked, then "Me" on them alone. */
-  const meToggle = (p: Provider) => {
+  const meToggle = (p: Provider, bad = false) => {
     if (a.onBehalf) return null;
     const isMe = a.me === p.id && !!meProvider;
     if (meProvider && !isMe) return null;
@@ -943,8 +931,10 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       <button
         type="button"
         aria-pressed={isMe}
+        aria-label={isMe ? "Me, tap to remove" : undefined}
+        data-pricing-warn={bad ? "" : undefined}
         onClick={() => set({ me: isMe ? null : p.id })}
-        className={`h-[30px] px-[12px] shrink-0 flex items-center gap-[6px] rounded-[999px] text-[13px] leading-[16px] font-[600] whitespace-nowrap transition-colors duration-150 ${isMe ? SELECTED : `bg-[#F4EEDF] ${SUB} hover:text-[#281910]`}`}
+        className={`h-[30px] px-[12px] shrink-0 flex items-center gap-[6px] rounded-[999px] text-[13px] leading-[16px] font-[600] whitespace-nowrap transition-colors duration-150 ${isMe ? `${SELECTED} pr-[9px]` : `bg-[#F4EEDF] ${SUB} hover:text-[#281910]`} ${bad ? BAD : ""}`}
       >
         {isMe && (
           <svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
@@ -952,12 +942,20 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           </svg>
         )}
         {isMe ? "Me" : "That's me"}
+        {/* An X on "Me", so it reads as removable. */}
+        {isMe && (
+          <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true" className="ml-[2px] opacity-70" style={{ display: "block" }}>
+            <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+          </svg>
+        )}
       </button>
     );
   };
 
   const teamEditor = (withPlans: boolean) => {
     const warnTeam = tried === "team" && !withPlans;
+    // Who's buying isn't set: the switch and each "That's me" are ringed.
+    const needBuyer = warnTeam && !a.onBehalf && !meProvider;
     const surface = OUTER;
     const row = INNER;
     return (
@@ -968,8 +966,10 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             type="button"
             role="switch"
             aria-checked={a.onBehalf}
+            aria-invalid={needBuyer || undefined}
+            data-pricing-warn={needBuyer ? "" : undefined}
             onClick={() => set({ onBehalf: !a.onBehalf, me: a.onBehalf ? a.me : null })}
-            className={`w-full flex items-center justify-between gap-[14px] p-[12px] pl-[16px] rounded-[18px] text-left ${row}`}
+            className={`w-full flex items-center justify-between gap-[14px] p-[12px] pl-[16px] rounded-[18px] text-left ${row} ${needBuyer ? BAD : ""}`}
           >
             <span className="flex flex-col min-w-[0px]">
               <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">Purchasing on Behalf of Providers</span>
@@ -978,11 +978,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
               <span className={`absolute top-[3px] w-[20px] h-[20px] rounded-[999px] bg-white transition-[left] duration-200 ${a.onBehalf ? "left-[21px]" : "left-[3px]"}`} />
             </span>
           </button>
-          {warnTeam && !a.onBehalf && !meProvider && (
-            <span className="block px-[10px] pt-[8px] pb-[4px]">
-              <Warn>Tap &ldquo;That&apos;s me&rdquo; on your own row below, or turn on Purchasing on Behalf of Providers</Warn>
-            </span>
-          )}
         </div>
         {a.team.map((site, si) => (
           <div key={site.id} className={fresh(site.id) ? "doe-pricing-grow" : ""}>
@@ -1018,7 +1013,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                       text={`${phone ? "text-[16px] leading-[21px]" : "text-[15px] leading-[20px]"} font-[500] text-[#140C04]`}
                     />
                     <span className="grow" />
-                    {meToggle(p)}
+                    {meToggle(p, needBuyer)}
                     {(withPlans || phone) && site.providers.length > 1 && (
                       <Close label={`Remove ${providerName(p)}`} onClick={() => setTeam(a.team.map((x) => (x.id === site.id ? { ...x, providers: x.providers.filter((y) => y.id !== p.id) } : x)))} />
                     )}
@@ -1029,6 +1024,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                       value: specialtyOf(p),
                       typed: p.other,
                       typing: p.specialty === "other",
+                      bad: warnTeam && specialtyGap(p),
                       // The first specialty picked also fills in everyone still without one.
                       onPick: (v) =>
                         set({ team: a.team.map((x) => ({ ...x, providers: x.providers.map((y) => (y.id === p.id || (!y.specialty && v !== "other") ? { ...y, specialty: v } : y)) })) }),
@@ -1036,11 +1032,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                     })}
                     {withPlans && <Pick dark label={`${providerName(p)} plan`} value={planOf(p).id} options={planOptions} onChange={(v) => editProvider(p.id, { plan: v === plan.id ? null : v })} />}
                   </span>
-                  {warnTeam && specialtyGap(p) && (
-                    <span className={withPlans || phone ? "pl-[42px]" : "sm:basis-full"}>
-                      <Warn>{specialtyGap(p)}</Warn>
-                    </span>
-                  )}
+
                   {!withPlans && !phone && site.providers.length > 1 && (
                     <Close label={`Remove ${providerName(p)}`} onClick={() => setTeam(a.team.map((x) => (x.id === site.id ? { ...x, providers: x.providers.filter((y) => y.id !== p.id) } : x)))} />
                   )}
@@ -1241,7 +1233,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   );
   /** One card field in the grouped card block: a quiet label over the input, hairlines between them. */
   /** A card field like the others on the page: a quiet label above a beige field, with an optional mark inside it. */
-  /** Which card details are not yet in the shape they're typed, once Continue has been tapped. */
+  /** Which card details are not yet in the shape they're typed. */
   const cardBad: Record<keyof Answers["card"], boolean> = {
     number: !/^\d{13,19}$/.test(a.card.number.replace(/\s/g, "")),
     expiry: !/^(0[1-9]|1[0-2])\/\d{2}$/.test(a.card.expiry),
@@ -1249,14 +1241,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     zip: a.card.zip.trim().length < 3,
   };
   const warnCheckout = tried === "checkout";
-  const cardWarning = (() => {
-    if (!warnCheckout || dueToday === 0) return null;
-    const names = { number: "card number", expiry: "expiry (MM/YY)", cvc: "security code", zip: "ZIP" } as const;
-    const bad = (Object.keys(names) as (keyof typeof names)[]).filter((k) => cardBad[k]).map((k) => names[k]);
-    if (!bad.length) return null;
-    const list = bad.length === 1 ? bad[0] : `${bad.slice(0, -1).join(", ")} and ${bad[bad.length - 1]}`;
-    return `Check the ${list}`;
-  })();
+  /** Card details are ringed in red once Continue is tapped with the card incomplete. */
+  const cardWarn = warnCheckout && dueToday > 0;
   const cardField = (label: string, key: keyof Answers["card"], placeholder: string, format: (v: string) => string, autoComplete: string, mark?: ReactNode) => (
     <label className="flex flex-col gap-[6px] min-w-[0px]">
       <span className={`px-[4px] text-[13px] leading-[17px] font-[500] ${SUB}`}>{label}</span>
@@ -1266,9 +1252,10 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           placeholder={placeholder}
           inputMode="numeric"
           autoComplete={autoComplete}
-          aria-invalid={cardWarning && cardBad[key] ? true : undefined}
+          aria-invalid={(cardWarn && cardBad[key]) || undefined}
+          data-pricing-warn={cardWarn && cardBad[key] ? "" : undefined}
           onChange={(e) => set({ card: { ...a.card, [key]: format(e.target.value) } })}
-          className={`w-full min-w-[0px] h-[52px] px-[16px] ${mark ? "pr-[56px]" : ""} rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} ${cardWarning && cardBad[key] ? BAD : ""} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.35)] [font-variant-numeric:tabular-nums] transition-[background-color,box-shadow] duration-150`}
+          className={`w-full min-w-[0px] h-[52px] px-[16px] ${mark ? "pr-[56px]" : ""} rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} ${cardWarn && cardBad[key] ? BAD : ""} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.35)] [font-variant-numeric:tabular-nums] transition-[background-color,box-shadow] duration-150`}
         />
         {mark && <span className="pointer-events-none absolute right-[16px]">{mark}</span>}
       </span>
@@ -1278,7 +1265,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const recipientList = (
     <div key={a.payMode} className="doe-pricing-rise flex flex-col gap-[6px]">
       {a.payMode === "one" && <span className={`px-[12px] pt-[4px] text-[13px] leading-[18px] ${SUB}`}>You&apos;re paying for everyone. Each provider gets an invite to Doe.</span>}
-      {a.team.map((site) => (
+      {a.team.map((site, si) => (
         <div key={site.id} className={`flex flex-col rounded-[22px] ${INNER}`}>
           <span className={`flex items-baseline justify-between gap-[12px] px-[18px] pt-[14px] pb-[4px]`}>
             <span className={`text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-[#281910]`}>{siteName(site)}</span>
@@ -1309,15 +1296,24 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                     value={a.emails[p.id] ?? ""}
                     placeholder={a.payMode === "split" ? "Email for their payment link and invite" : "Email for their invite"}
                     aria-label={`${providerName(p)} email`}
-                    aria-invalid={warnCheckout && emailGap(a.emails[p.id] ?? "", "") !== null ? true : undefined}
+                    aria-invalid={(warnCheckout && !isEmail(a.emails[p.id] ?? "")) || undefined}
+                    data-pricing-warn={warnCheckout && !isEmail(a.emails[p.id] ?? "") ? "" : undefined}
                     onChange={(e) => set({ emails: { ...a.emails, [p.id]: e.target.value } })}
-                    className={`h-[48px] px-[16px] rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} ${warnCheckout && emailGap(a.emails[p.id] ?? "", "") !== null ? BAD : ""} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.4)] transition-[background-color,box-shadow] duration-150`}
+                    className={`h-[48px] px-[16px] rounded-[14px] bg-[#F4EEDF] outline-none ${FOCUS} ${warnCheckout && !isEmail(a.emails[p.id] ?? "") ? BAD : ""} text-[16px] leading-[21px] text-[#140C04] placeholder:text-[rgba(20,12,4,0.4)] transition-[background-color,box-shadow] duration-150`}
                   />
                 )}
-                {!mine && warnCheckout && emailGap(a.emails[p.id] ?? "", "") !== null && <Warn>{emailGap(a.emails[p.id] ?? "", `Add ${providerName(p)}'s email`)}</Warn>}
               </div>
             );
           })}
+          {/* What goes out on finishing, at the foot of the last location's box. */}
+          {sendNote && si === a.team.length - 1 && (
+            <span className={`flex items-center gap-[8px] px-[18px] py-[14px] border-t border-solid ${HAIR} text-[13px] leading-[18px] text-[#7A3E1F]`}>
+              <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+                <path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+              </svg>
+              {sendNote}
+            </span>
+          )}
         </div>
       ))}
     </div>
@@ -1408,10 +1404,10 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         2,
         "Your information",
         <div className={`grid gap-[12px] p-[14px] rounded-[22px] ${INNER} ${phone ? "grid-cols-1" : "grid-cols-2"} [&_input]:bg-[#F4EEDF]`}>
-          <TextField label="Your name" value={a.contact.name} onChange={(v) => set({ contact: { ...a.contact, name: v } })} placeholder="Jane Smith" autoComplete="name" warning={warnCheckout && !a.contact.name.trim() ? "Add your name" : undefined} />
-          <TextField label="Practice name" value={a.contact.practice} onChange={(v) => set({ contact: { ...a.contact, practice: v } })} placeholder="Northside Family Medicine" autoComplete="organization" warning={warnCheckout && !a.contact.practice.trim() ? "Add your practice name" : undefined} />
+          <TextField label="Your name" value={a.contact.name} onChange={(v) => set({ contact: { ...a.contact, name: v } })} placeholder="Jane Smith" autoComplete="name" bad={warnCheckout && !a.contact.name.trim()} />
+          <TextField label="Practice name" value={a.contact.practice} onChange={(v) => set({ contact: { ...a.contact, practice: v } })} placeholder="Northside Family Medicine" autoComplete="organization" bad={warnCheckout && !a.contact.practice.trim()} />
           <div className={phone ? "" : "col-span-2"}>
-            <TextField label="Work email, where your access link goes" type="email" inputMode="email" value={a.contact.email} onChange={(v) => set({ contact: { ...a.contact, email: v } })} placeholder="jane@yourclinic.com" autoComplete="email" warning={(warnCheckout && emailGap(a.contact.email, "Add your work email")) || undefined} />
+            <TextField label="Work email, where your access link goes" type="email" inputMode="email" value={a.contact.email} onChange={(v) => set({ contact: { ...a.contact, email: v } })} placeholder="jane@yourclinic.com" autoComplete="email" bad={warnCheckout && !isEmail(a.contact.email)} />
           </div>
         </div>,
       )}
@@ -1468,14 +1464,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
               {cardField("Billing ZIP", "zip", "94107", (v) => v.slice(0, 10), "postal-code")}
             </div>
           ) : null}
-          {sendNote && (
-            <span className="flex items-center gap-[8px] px-[2px] text-[13px] leading-[18px] text-[#7A3E1F]">
-              <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
-                <path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-              </svg>
-              {sendNote}
-            </span>
-          )}
         </div>,
       )}
     </div>
@@ -1562,6 +1550,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const last = index === questions.length - 1;
   const onPlan = !done && q.id === "plan";
   const wide = !done && q.wide;
+
+  // A step's warnings clear when you move to another.
+  useEffect(() => setTried(null), [q.id]);
 
   const forward = () => {
     if (!q.ready) return;
@@ -1815,6 +1806,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
                                 value: specialtyOf(p),
                                 typed: p.other,
                                 typing: p.specialty === "other",
+                                bad: tried === "additions" && specialtyGap(p),
                                 onPick: (v) => editProvider(p.id, { specialty: v }),
                                 onType: (v) => editProvider(p.id, { other: v }),
                               })}
@@ -1838,13 +1830,14 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
             <span className="grow" />
             <button
               type="button"
-              disabled={!addedSpecialtiesSet}
+              aria-disabled={!addedSpecialtiesSet || undefined}
               onClick={() => {
+                if (!addedSpecialtiesSet) return flag("additions");
                 setPlanEntry(seq);
                 setConfirming(false);
                 forward();
               }}
-              className="h-[48px] px-[22px] shrink-0 rounded-[999px] bg-[#281910] hover:bg-[#3A2920] disabled:bg-[rgba(20,12,4,0.1)] disabled:text-[rgba(20,12,4,0.38)] text-[15px] leading-[20px] font-[600] text-[#FFFCF1] transition-colors duration-150"
+              className={`h-[48px] px-[22px] shrink-0 rounded-[999px] text-[15px] leading-[20px] font-[600] transition-colors duration-150 ${addedSpecialtiesSet ? "bg-[#281910] hover:bg-[#3A2920] text-[#FFFCF1]" : "bg-[rgba(20,12,4,0.1)] text-[rgba(20,12,4,0.38)]"}`}
             >
               Confirm and continue
             </button>
@@ -1921,9 +1914,9 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           </span>
           <button
             type="button"
-            disabled={!q.ready}
-            onClick={go}
-            className="flex items-center gap-[8px] h-[48px] pl-[20px] pr-[16px] shrink-0 rounded-[999px] bg-[#FCCFB8] hover:bg-[#FFDCCB] text-[#140C04] disabled:bg-[rgba(255,252,241,0.12)] disabled:text-[rgba(255,252,241,0.4)] text-[15px] leading-[20px] font-[600] transition-colors duration-200"
+            aria-disabled={!q.ready || undefined}
+            onClick={() => (q.ready ? go() : flag(q.id))}
+            className={`flex items-center gap-[8px] h-[48px] pl-[20px] pr-[16px] shrink-0 rounded-[999px] text-[15px] leading-[20px] font-[600] transition-colors duration-200 ${q.ready ? "bg-[#FCCFB8] hover:bg-[#FFDCCB] text-[#140C04]" : "bg-[rgba(255,252,241,0.12)] text-[rgba(255,252,241,0.4)]"}`}
           >
             {goLabel}
             {arrow("next")}
