@@ -55,6 +55,8 @@ const PAID = PLANS.filter((p) => p.id !== "free");
 const YEARLY_OFF = Math.round((1 - ANNUAL_FACTOR) * 100);
 
 const money = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
+/** A year at a monthly price: the month as shown, in whole dollars, times twelve, so the sum on screen adds up. */
+const yearly = (perMonth: number) => Math.round(perMonth) * 12;
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const includes = (plan: PlanId, from: PlanId) => PLAN_ORDER.indexOf(plan) >= PLAN_ORDER.indexOf(from);
 const planById = (id: PlanId) => PLANS.find((p) => p.id === id)!;
@@ -422,7 +424,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const meProvider = a.onBehalf ? undefined : providers.find((p) => p.id === a.me);
   /** What the buyer pays today: everything, or with individual payments only their own share (nothing if not a provider). */
   const monthlyDue = a.payMode === "one" ? total : meProvider ? shareOf(meProvider) : 0;
-  const dueToday = monthlyDue * (a.annual ? 12 : 1);
+  const dueToday = Math.round(monthlyDue) * (a.annual ? 12 : 1);
   /** Providers who get a payment link of their own. */
   const linkRecipients = a.payMode === "split" ? providers.filter((p) => p.id !== meProvider?.id) : [];
   /** Buying on behalf of providers and paying as one, every provider still gets an invite to Doe by email. */
@@ -1037,6 +1039,44 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </div>
   );
 
+  const planLabel = mixed ? "Mixed plans" : plan.name;
+
+  const subtotal = priced.total;
+  const yearlyOff = a.annual ? subtotal * (1 - ANNUAL_FACTOR) : 0;
+  const saved = priced.providerDiscount + priced.locationDiscount + yearlyOff;
+
+  /**
+   * Each location's providers on each tier, for the price tab. The top tier's base covers its first provider and
+   * location, so the first line on that tier carries the base in place of one provider; any other location's fee rides
+   * on its first line, so the breakdown shows only tiers and providers.
+   */
+  const baseRow = priced.rowGross.find((g) => g.row.plan.id === priced.top.id)?.row.id;
+  const baseLocation = priced.rowGross.find((g) => g.row.location && g.row.plan.id === priced.top.id)?.row.id;
+  const lineGroups = a.team.map((site) => ({
+    site,
+    rows: priced.rowGross
+      .filter((g) => g.row.id.startsWith(`${site.id}-`))
+      .map((g) => ({
+        row: g.row,
+        amount: g.providers + (g.row.id === baseRow ? priced.top.base - priced.top.perProvider : 0) + (g.row.id === baseLocation ? 0 : g.location),
+      })),
+  }));
+  /** The price by tier for the checkout receipt: each tier's providers across locations, and where they are. */
+  const tierLines = PAID.map((t) => {
+    const rows = lineGroups.flatMap(({ site, rows }) => rows.filter((g) => g.row.plan.id === t.id).map((g) => ({ ...g, site })));
+    return {
+      tier: t,
+      providers: rows.reduce((n, g) => n + g.row.providers, 0),
+      amount: rows.reduce((n, g) => n + g.amount, 0),
+      sites: rows.map((g) => siteName(g.site)),
+    };
+  }).filter((x) => x.providers > 0);
+  const discountLines = [
+    ...(priced.providerDiscount ? [["Multi-provider Discount", priced.providerDiscount] as const] : []),
+    ...(priced.locationDiscount ? [["Multi-clinic Discount", priced.locationDiscount] as const] : []),
+    ...(yearlyOff ? [[`Yearly Discount, ${YEARLY_OFF}% off`, yearlyOff] as const] : []),
+  ];
+
   /** A checkout box: a beige box with a numbered title, its content in white inside. */
   const section = (n: number, title: string, children: ReactNode, aside?: ReactNode) => (
     <section className={`flex flex-col gap-[6px] p-[6px] rounded-[28px] ${OUTER}`}>
@@ -1159,31 +1199,54 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
         1,
         "Summary",
         <div className={`flex flex-col rounded-[22px] ${INNER}`}>
-          <div className={`flex gap-[16px] p-[18px] ${phone ? "flex-col" : "items-start justify-between"}`}>
-            <span className="flex flex-col gap-[10px] min-w-[0px]">
-              <span className={`text-[24px] leading-[28px] tracking-[-0.02em] ${DISPLAY} text-[#281910]`}>{tierCounts || plan.name}</span>
-              <span className="flex flex-wrap gap-[6px]">
-                {chip(PRACTICE_SHAPES.find((x) => x.id === a.shape)?.title ?? "")}
-                {chip(sizeLine)}
-                {chip(a.annual ? `Yearly, ${YEARLY_OFF}% off` : "Monthly")}
+          {/* What's being bought: the practice and who's buying, in one quiet line. */}
+          <span className={`flex items-center gap-[10px] px-[18px] pt-[16px] pb-[12px] border-b border-solid ${HAIR}`}>
+            <span className="w-[30px] h-[30px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[11px] leading-[12px] font-[700] text-[#281910]">
+              {meProvider ? initials(meProvider.name, providers.indexOf(meProvider) + 1) : a.contact.name.trim() ? initials(a.contact.name, 1) : "You"}
+            </span>
+            <span className="flex flex-col min-w-[0px]">
+              <span className="truncate text-[14px] leading-[19px] font-[600] text-[#140C04]">{a.contact.practice.trim() || PRACTICE_SHAPES.find((x) => x.id === a.shape)?.title}</span>
+              <span className={`truncate text-[13px] leading-[17px] ${SUB}`}>
+                {sizeLine}
+                {buyerLine ? ` · ${a.onBehalf ? "On behalf of providers" : buyerLine}` : ""}
               </span>
             </span>
-            <span className={`flex flex-col shrink-0 ${phone ? "items-start" : "items-end"}`}>
-              <span className="flex items-baseline gap-[3px]">
-                <span className={`text-[36px] leading-[38px] tracking-[-0.035em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{money(total)}</span>
-                <span className={`text-[14px] ${SUB}`}>/mo</span>
+          </span>
+          {/* The receipt: each tier, then any discounts, then the month. */}
+          <div className="flex flex-col px-[18px] py-[6px]">
+            {tierLines.map((t) => (
+              <span key={t.tier.id} className="flex items-start justify-between gap-[16px] py-[10px]">
+                <span className="flex flex-col min-w-[0px]">
+                  <span className="text-[15px] leading-[20px] font-[600] text-[#140C04]">
+                    {t.tier.name} <span className={`font-[500] ${SUB}`}>× {plural(t.providers, "provider")}</span>
+                  </span>
+                  {locationCount > 1 && <span className={`truncate text-[13px] leading-[17px] ${SUB}`}>{Array.from(new Set(t.sites)).join(", ")}</span>}
+                </span>
+                <span className="shrink-0 text-[15px] leading-[20px] text-[#281910] [font-variant-numeric:tabular-nums]">{money(t.amount)}</span>
               </span>
-              <span className={`text-[13px] leading-[18px] ${SUB}`}>{a.annual ? `${money(total * 12)} billed yearly` : "Billed monthly"}</span>
+            ))}
+            {discountLines.map(([label, value]) => (
+              <span key={label} className="flex justify-between gap-[16px] py-[6px] text-[14px] leading-[19px] text-[#A0522D]">
+                <span>{label}</span>
+                <span className="shrink-0 [font-variant-numeric:tabular-nums]">−{money(value)}</span>
+              </span>
+            ))}
+            <span className={`flex justify-between gap-[16px] mt-[6px] py-[12px] border-t border-solid ${HAIR} text-[15px] leading-[20px] font-[600] text-[#140C04]`}>
+              <span>Per month</span>
+              <span className="[font-variant-numeric:tabular-nums]">{money(total)}</span>
             </span>
           </div>
-          {buyerLine && (
-            <span className={`flex items-center gap-[10px] px-[18px] py-[12px] border-t border-solid ${HAIR}`}>
-              <span className="w-[28px] h-[28px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#FCCFB8] text-[11px] leading-[12px] font-[700] text-[#281910]">
-                {meProvider ? initials(meProvider.name, providers.indexOf(meProvider) + 1) : "You"}
-              </span>
-              <span className="text-[14px] leading-[19px] text-[#281910]">{a.onBehalf ? "Purchasing on behalf of providers" : buyerLine}</span>
+          {/* The bill: a year is the month times twelve; monthly is the month. */}
+          <div className="flex items-end justify-between gap-[16px] m-[6px] mt-0 px-[16px] py-[14px] rounded-[18px] bg-[#F4EEDF]">
+            <span className="flex flex-col gap-[2px]">
+              <span className="text-[14px] leading-[18px] font-[600] text-[#140C04]">{a.annual ? "Billed yearly" : "Billed monthly"}</span>
+              <span className={`text-[13px] leading-[17px] ${SUB} [font-variant-numeric:tabular-nums]`}>{a.annual ? `${money(total)}/mo × 12 months` : "Charged each month"}</span>
             </span>
-          )}
+            <span className="flex items-baseline gap-[3px]">
+              <span className={`text-[30px] leading-[32px] tracking-[-0.03em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{money(a.annual ? yearly(total) : total)}</span>
+              <span className={`text-[13px] ${SUB}`}>{a.annual ? "/yr" : "/mo"}</span>
+            </span>
+          </div>
         </div>,
         editLink,
       )}
@@ -1406,28 +1469,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     };
   }, [onPlan, pinTop, panel]);
 
-  const planLabel = mixed ? "Mixed plans" : plan.name;
 
-  const subtotal = priced.total;
-  const yearlyOff = a.annual ? subtotal * (1 - ANNUAL_FACTOR) : 0;
-  const saved = priced.providerDiscount + priced.locationDiscount + yearlyOff;
-
-  /**
-   * Each location's providers on each tier, for the price tab. The top tier's base covers its first provider and
-   * location, so the first line on that tier carries the base in place of one provider; any other location's fee rides
-   * on its first line, so the breakdown shows only tiers and providers.
-   */
-  const baseRow = priced.rowGross.find((g) => g.row.plan.id === priced.top.id)?.row.id;
-  const baseLocation = priced.rowGross.find((g) => g.row.location && g.row.plan.id === priced.top.id)?.row.id;
-  const lineGroups = a.team.map((site) => ({
-    site,
-    rows: priced.rowGross
-      .filter((g) => g.row.id.startsWith(`${site.id}-`))
-      .map((g) => ({
-        row: g.row,
-        amount: g.providers + (g.row.id === baseRow ? priced.top.base - priced.top.perProvider : 0) + (g.row.id === baseLocation ? 0 : g.location),
-      })),
-  }));
 
   const priceTab = (
     <div className="flex flex-col gap-[16px]">
@@ -1438,7 +1480,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           <span className="text-[14px] text-[rgba(255,252,241,0.6)]">/ month</span>
         </span>
         <span className="flex items-center justify-between gap-[10px] flex-wrap">
-          <span className="text-[13px] leading-[18px] text-[rgba(255,252,241,0.6)]">{a.annual ? `${money(total * 12)} billed yearly` : "Billed monthly"}</span>
+          <span className="text-[13px] leading-[18px] text-[rgba(255,252,241,0.6)]">{a.annual ? `${money(yearly(total))} billed yearly` : "Billed monthly"}</span>
           {saved > 0 && <span className="h-[24px] px-[10px] flex items-center rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[16px] font-[600] text-[#140C04]">Saving {money(saved)}/mo</span>}
         </span>
       </div>
