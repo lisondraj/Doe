@@ -41,8 +41,8 @@ const HAIR = "border-[rgba(20,12,4,0.07)]";
 /** Doe's boxes, as on /news: a beige box outside, white pieces inside it, no borders. */
 const OUTER = "bg-[#F4EEDF]";
 const INNER = "bg-white";
-/** What's picked: a soft peach fill with a thin peach ring, rather than a heavy dark fill. */
-const SELECTED = "bg-[#FBE7DA] text-[#281910] shadow-[inset_0_0_0_1.5px_#EDBB9C]";
+/** What's picked: a soft peach fill, no border, rather than a heavy dark fill. */
+const SELECTED = "bg-[#FBE7DA] text-[#281910]";
 /** A beige box pinned over the page as it scrolls, lifted off it by a soft shadow. */
 const PINNED = "bg-[#F4EEDF] shadow-[0_14px_34px_-22px_rgba(40,25,16,0.5)]";
 
@@ -253,8 +253,8 @@ type Question = {
   id: string;
   /** The step's name in the row of steps. */
   step: string;
-  /** The title, as the two lines it's set on. */
-  title: [string, string];
+  /** The title, as the lines it's set on (two, but one where a single word says it). */
+  title: [string, string] | [string];
   /** The comparison needs more room than a question. */
   wide?: boolean;
   ready: boolean;
@@ -508,7 +508,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </div>
   );
 
-  /** iPhone: the four tiers as a switcher, the one shown picked out in peach, a dot on any the team uses. */
+  /** iPhone: the four tiers as a switcher, the one shown picked out in peach. */
   const shown = view ?? plan.id;
   const switcher = (
     <div role="tablist" aria-label="Plans" className={`grid grid-cols-4 gap-[4px] p-[4px] rounded-[22px] ${PINNED}`}>
@@ -525,7 +525,6 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
           >
             <span className="flex items-center gap-[4px] text-[12px] leading-[16px] font-[600] whitespace-nowrap">
               {p.name}
-              {lit(p.id) && <span className="w-[5px] h-[5px] rounded-[999px] bg-[#A0522D]" aria-label="In use" />}
             </span>
             <span className={`text-[18px] leading-[22px] tracking-[-0.02em] ${DISPLAY} [font-variant-numeric:tabular-nums]`}>{money(priceOf(p.id))}</span>
           </button>
@@ -639,17 +638,14 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </button>
   );
 
-  const counter = (label: string, note: string | null, control: ReactNode) => (
+  const counter = (label: string, control: ReactNode) => (
     <span className={`flex items-center justify-between gap-[14px] ${phone ? "py-[8px]" : "pl-[14px] pr-[6px]"}`}>
-      <span className="flex flex-col">
-        <span className="text-[14px] leading-[18px] font-[600] text-[#281910] whitespace-nowrap">{label}</span>
-        {note && <span className={`text-[12px] leading-[16px] whitespace-nowrap ${SUB}`}>{note}</span>}
-      </span>
+      <span className="text-[14px] leading-[18px] font-[600] text-[#281910] whitespace-nowrap">{label}</span>
       {control}
     </span>
   );
-  const locationsControl = counter("Locations", phone ? null : locationCount > 1 ? "Multi-clinic" : "Single location", <Count value={locationCount} max={30} onChange={setLocations} />);
-  const providersControl = counter("Providers", phone ? null : mixed ? "Mixed plans" : plan.name, <Count value={providerCount} min={locationCount} max={200} onChange={setProviderTotal} />);
+  const locationsControl = counter("Locations", <Count value={locationCount} max={30} onChange={setLocations} />);
+  const providersControl = counter("Providers", <Count value={providerCount} min={locationCount} max={200} onChange={setProviderTotal} />);
 
   /** Desktop: one toolbar for the practice's size, the team and the price, pinned as the table scrolls. */
   const toolbar = (
@@ -899,7 +895,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     {
       id: "plan",
       step: "Plan",
-      title: ["Compare plans", "side by side"],
+      title: phone ? ["Compare plans", "side by side"] : ["Compare"],
       wide: true,
       ready: !!a.plan,
       body: phone ? (
@@ -1126,16 +1122,17 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       </>
     ) : null;
 
-  /** A question's title on its two lines. */
-  const heading = (lines: [string, string]) => (
+  /** A question's title, line by line. */
+  const heading = (lines: string[]) => (
     <h2 className={`m-0 flex flex-col ${phone ? "text-[34px] leading-[37px]" : "text-[48px] leading-[51px]"} tracking-[-0.035em] font-[400] text-[#281910] ${DISPLAY}`}>
-      <span>{lines[0]}</span>
-      <span>{lines[1]}</span>
+      {lines.map((line) => (
+        <span key={line}>{line}</span>
+      ))}
     </h2>
   );
 
   const panelOpenDesktop = !!sidePanel && !phone;
-  const goLabel = last ? "Start onboarding" : q.id === "plan" && a.plan && !phone ? `Continue with ${mixed ? "these plans" : plan.name}` : "Continue";
+  const goLabel = last ? "Start onboarding" : q.id === "plan" && a.plan && !phone ? "Finalize" : "Continue";
   const back = () => setAt(index - 1);
   const arrow = (dir: "back" | "next", size = 16) => (
     <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>

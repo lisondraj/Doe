@@ -86,7 +86,7 @@ function Faq({ phone }: { phone: boolean }) {
 /** When founding pricing closes, as the banner shows it. */
 const FOUNDING_UNTIL = "March 2027";
 
-/** The tan ink /news sets its boxed copy in. */
+/** The tan ink /news sets its boxed copy in. The title is set at the questions' title size. */
 const NEWS_INK = "#8A6A3F";
 
 /**
@@ -103,7 +103,7 @@ function FoundingBanner({ phone }: { phone: boolean }) {
         <div className="doehealth-blog-placeholder__content">
           <div className={`flex flex-col items-start text-left w-full ${phone ? "gap-[18px]" : "gap-[24px]"}`}>
             <h1
-              className={`m-0 font-[400] tracking-[-0.035em] [text-wrap:balance] ${phone ? "text-[28px] leading-[31px]" : "max-w-[22ch] text-[54px] leading-[57px]"} ${p22Mackinac.className}`}
+              className={`m-0 font-[400] tracking-[-0.035em] [text-wrap:balance] ${phone ? "text-[34px] leading-[37px]" : "max-w-[22ch] text-[48px] leading-[51px]"} ${p22Mackinac.className}`}
               style={{ color: NEWS_INK }}
             >
               Teach personal agents about your clinic before it&apos;s too late.
