@@ -1355,7 +1355,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
       id: "team",
       step: "Team",
       title: ["Who’s on", "your team?"],
-      ready: specialtiesSet,
+      ready: specialtiesSet && (a.onBehalf || !!meProvider),
       body: (
         <div className="flex flex-col gap-[14px]">
           {discountHints}
