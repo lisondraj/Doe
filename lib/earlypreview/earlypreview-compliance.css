@@ -846,3 +846,39 @@
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-row > .earlypreview-compliance__grid-count {
   font-size: 0.82rem;
 }
+
+/*
+ * The evals on the iPhone: the drawing gets the room under the title (its 12-run layout is about as wide as the screen,
+ * so it is drawn near full size), the verdict sits on one line with its note, and the line under the drawing goes.
+ */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__status {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.6rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__status-note,
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__status-count {
+  margin-top: 0;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__status-count {
+  flex-basis: 100%;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__matrix ~ .earlypreview-compliance__foot {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__matrix .is-label {
+  font-size: 10.5px;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__matrix .is-event text {
+  font-size: 11px;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__matrix .is-suspended {
+  font-size: 9px;
+}

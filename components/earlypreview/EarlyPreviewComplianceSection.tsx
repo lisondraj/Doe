@@ -119,6 +119,17 @@ function Count({ value }: { value: number }) {
   );
 }
 
+/** iPhone: whether the page is the phone layout, read once mounted. */
+function usePhoneLayout(ref: { current: HTMLElement | null }) {
+  const [phone, setPhone] = useState(false);
+  useEffect(() => {
+    setPhone(!!ref.current?.closest(".doehealth-desk2-page")?.querySelector(".doephone-mobile-root"));
+  }, [ref]);
+  return phone;
+}
+
+type SceneProps = { p: number; phone: boolean };
+
 /* ------------------------------------------------------------ 1 · overview */
 
 type CardArt = (typeof OVERVIEW.cards)[number]["art"];
@@ -250,7 +261,7 @@ const FOCUS = [0.95, 3.25] as const;
  * moves to the next; the focused card is fully lit at the page edge and builds its drawing, the rest wait dimmed
  * beside it. Each card leads with its drawing and one figure; the quarter it lands in sits in its corner.
  */
-function OverviewScene({ p }: { p: number }) {
+function OverviewScene({ p, phone }: SceneProps) {
   const { o, t } = sceneClock(p, 0);
   const trackRef = useRef<HTMLOListElement>(null);
   const { step, max } = useTrackMetrics(trackRef);
@@ -267,7 +278,13 @@ function OverviewScene({ p }: { p: number }) {
           <ol ref={trackRef} className="earlypreview-compliance__cards" style={{ transform: `translateX(${-Math.min(focus * step, max)}px)` }}>
             {OVERVIEW.cards.map((card, i) => {
               const near = clamp01(1 - Math.abs(focus - i));
-              const built = i === 0 ? en(t, 0.55, 1.05) : clamp01((focus - i + 0.6) / 0.6);
+              // iPhone: a card's dots keep moving with the scroll, building as it slides in and coming apart as it
+              // leaves, so every card plays its drawing rather than holding a finished one.
+              const built = phone
+                ? smooth(Math.min(i === 0 ? en(t, 0.55, 1.05) : clamp01(u - i + 1), i === count - 1 ? 1 : 1 - clamp01((u - i - 0.4) / 0.8)))
+                : i === 0
+                  ? en(t, 0.55, 1.05)
+                  : clamp01((focus - i + 0.6) / 0.6);
               return (
                 <li
                   key={card.id}
@@ -307,7 +324,7 @@ const COLUMN_AT = (c: number) => 0.55 + c * 0.28;
  * a point on every layer; each update puts a salmon point on the layers it changes. The columns come in left to right
  * with the scroll, and each row counts how often its layer has improved.
  */
-function ProtocolScene({ p }: { p: number }) {
+function ProtocolScene({ p }: SceneProps) {
   const { o, t } = sceneClock(p, 1);
   const shown = COLUMNS.map((_, c) => en(t, COLUMN_AT(c), COLUMN_AT(c) + 0.22));
   return (
@@ -371,43 +388,91 @@ function ProtocolScene({ p }: { p: number }) {
 
 /* ------------------------------------------------------------ 3 · evals */
 
-const RUNS = 36;
-const EV = { x: 186, y: 50, pitch: 22.6, row: 15, r: 3.6 } as const;
-/** Where something changed and every attack ran again. */
-const EVENTS = [
-  { col: 0, label: "Model A" },
-  { col: 14, label: "Model B" },
-  { col: 26, label: "New tool" },
-] as const;
-/** The checks Model B fails on its first two runs: injected pages lead to PHI leaking out. */
-const FAILS: Record<number, readonly number[]> = { 14: [1, 5], 15: [5] };
-const FAILED_ROWS = new Set(Object.values(FAILS).flat());
-const FIRST_FAIL = 14;
-const LANE = { y: 254, gap: 17 } as const;
-const isFailing = (col: number) => col in FAILS;
+/**
+ * The matrix's layout. The desktop runs 36 times across a wide drawing. The iPhone runs 12 times in a drawing about as
+ * wide as the screen, so the dots and labels are drawn near full size, and Model B comes (and fails) a quarter of the
+ * way in instead of past a third, its warning held for three runs.
+ */
+type EvalGeometry = {
+  runs: number;
+  x: number;
+  y: number;
+  pitch: number;
+  row: number;
+  r: number;
+  lane: { y: number; gap: number };
+  width: number;
+  height: number;
+  events: readonly { col: number; label: string }[];
+  /** The checks each failing run fails: injected pages lead to PHI leaking out. */
+  fails: Record<number, readonly number[]>;
+  /** Where the clock runs the columns. */
+  clock: readonly [number, number];
+};
 
-const EvalDots = memo(function EvalDots() {
+const EVAL_DESK: EvalGeometry = {
+  runs: 36,
+  x: 186,
+  y: 50,
+  pitch: 22.6,
+  row: 15,
+  r: 3.6,
+  lane: { y: 254, gap: 17 },
+  width: 1000,
+  height: 316,
+  events: [
+    { col: 0, label: "Model A" },
+    { col: 14, label: "Model B" },
+    { col: 26, label: "New tool" },
+  ],
+  fails: { 14: [1, 5], 15: [5] },
+  clock: [0.45, 2.95],
+};
+
+const EVAL_PHONE: EvalGeometry = {
+  runs: 12,
+  x: 122,
+  y: 46,
+  pitch: 19,
+  row: 16,
+  r: 4.4,
+  lane: { y: 260, gap: 19 },
+  width: 352,
+  height: 330,
+  events: [
+    { col: 0, label: "Model A" },
+    { col: 3, label: "Model B" },
+    { col: 8, label: "New tool" },
+  ],
+  fails: { 3: [1, 5], 4: [5], 5: [5] },
+  clock: [0.3, 2.9],
+};
+
+const firstFail = (g: EvalGeometry) => Math.min(...Object.keys(g.fails).map(Number));
+const failRuns = (g: EvalGeometry) => Object.keys(g.fails).length;
+
+const EvalDots = memo(function EvalDots({ g }: { g: EvalGeometry }) {
   return (
     <>
       {EVALS.attacks.map((attack, r) =>
-        Array.from({ length: RUNS }, (_, c) => {
-          const cx = EV.x + c * EV.pitch;
-          const cy = EV.y + r * EV.row;
-          const fail = FAILS[c]?.includes(r);
+        Array.from({ length: g.runs }, (_, c) => {
+          const cx = g.x + c * g.pitch;
+          const cy = g.y + r * g.row;
+          const fail = g.fails[c]?.includes(r);
           return (
             <g key={`${attack}-${c}`} style={vars({ "--c": c })}>
-              <circle cx={cx} cy={cy} r={EV.r} className="is-base" />
-              <circle cx={cx} cy={cy} r={fail ? EV.r + 1.4 : EV.r} className={fail ? "is-fail" : "is-pass"} />
+              <circle cx={cx} cy={cy} r={g.r} className="is-base" />
+              <circle cx={cx} cy={cy} r={fail ? g.r + 1.4 : g.r} className={fail ? "is-fail" : "is-pass"} />
             </g>
           );
         }),
       )}
       {EVALS.lanes.map((lane, l) =>
-        Array.from({ length: RUNS }, (_, c) => (
+        Array.from({ length: g.runs }, (_, c) => (
           <path
             key={`${lane.label}-${c}`}
-            d={`M${EV.x + c * EV.pitch - EV.pitch / 2 + 1.5} ${LANE.y + l * LANE.gap}h${EV.pitch - 3}`}
-            className={lane.risky && isFailing(c) ? "is-lane is-off" : "is-lane"}
+            d={`M${g.x + c * g.pitch - g.pitch / 2 + 1.5} ${g.lane.y + l * g.lane.gap}h${g.pitch - 3}`}
+            className={lane.risky && c in g.fails ? "is-lane is-off" : "is-lane"}
             style={vars({ "--c": c })}
           />
         )),
@@ -421,17 +486,21 @@ const EvalDots = memo(function EvalDots() {
  * a retest down the column. Model B fails, its risky permissions break off in the lanes below at once, and they come
  * back only when it passes. The corner keeps the verdict and the count of attacks run.
  */
-function EvalsScene({ p }: { p: number }) {
+function EvalsScene({ p, phone }: SceneProps) {
   const { o, t } = sceneClock(p, 2);
-  const run = ramp(t, [0.45, 2.95]) * RUNS;
+  const g = phone ? EVAL_PHONE : EVAL_DESK;
+  const FIRST_FAIL = firstFail(g);
+  const failedRows = new Set(Object.values(g.fails).flat());
+  const laneEnd = g.lane.y + (EVALS.lanes.length - 1) * g.lane.gap;
+  const run = ramp(t, g.clock) * g.runs;
   const done = Math.floor(run);
-  const failing = done > FIRST_FAIL && done <= FIRST_FAIL + 2;
+  const failing = done > FIRST_FAIL && done <= FIRST_FAIL + failRuns(g);
   const status =
     done <= FIRST_FAIL
       ? { word: "Passing", note: "Model A, all twelve" }
       : failing
         ? { word: "Failing", note: "Model B, PHI leakage" }
-        : done <= 26
+        : done <= g.events[2].col
           ? { word: "Passing", note: "Model B, fixed and restored" }
           : { word: "Passing", note: "New tool, retested" };
   return (
@@ -442,52 +511,54 @@ function EvalsScene({ p }: { p: number }) {
           <span className="earlypreview-compliance__status-word">{status.word}</span>
           <span className="earlypreview-compliance__status-note">{status.note}</span>
           <span className="earlypreview-compliance__status-count">
-            <Count value={Math.min(done, RUNS) * EVALS.attacks.length} /> {EVALS.runsLabel}
+            <Count value={Math.min(done, g.runs) * EVALS.attacks.length} /> {EVALS.runsLabel}
           </span>
         </aside>
       </div>
       <div className="earlypreview-market__body">
         <svg
           className="earlypreview-compliance__art earlypreview-compliance__matrix"
-          viewBox="0 0 1000 316"
+          viewBox={`0 0 ${g.width} ${g.height}`}
           fill="none"
           style={vars({ "--run": run, "--e": en(t, 0.3, 0.55) })}
           aria-hidden
         >
-          {EVENTS.filter((event) => event.col > 0).map((event) => (
-            <rect
-              key={event.label}
-              x={EV.x + event.col * EV.pitch - EV.pitch / 2}
-              y={EV.y - 10}
-              width={EV.pitch}
-              height={LANE.y + (EVALS.lanes.length - 1) * LANE.gap - EV.y + 20}
-              rx={EV.pitch / 2}
-              className="is-sweep"
-              style={vars({ "--k": clamp01(1 - Math.abs(run - event.col - 0.5) * 1.4) })}
-            />
-          ))}
+          {g.events
+            .filter((event) => event.col > 0)
+            .map((event) => (
+              <rect
+                key={event.label}
+                x={g.x + event.col * g.pitch - g.pitch / 2}
+                y={g.y - 10}
+                width={g.pitch}
+                height={laneEnd - g.y + 20}
+                rx={g.pitch / 2}
+                className="is-sweep"
+                style={vars({ "--k": clamp01(1 - Math.abs(run - event.col - 0.5) * 1.4) })}
+              />
+            ))}
           {EVALS.attacks.map((attack, r) => (
-            <text key={attack} x={EV.x - 22} y={EV.y + r * EV.row + 4} className={`is-label${failing && FAILED_ROWS.has(r) ? " is-failing" : ""}`}>
+            <text key={attack} x={g.x - 16} y={g.y + r * g.row + 4} className={`is-label${failing && failedRows.has(r) ? " is-failing" : ""}`}>
               {attack}
             </text>
           ))}
           {EVALS.lanes.map((lane, l) => (
             <text
               key={lane.label}
-              x={EV.x - 22}
-              y={LANE.y + l * LANE.gap + 4}
+              x={g.x - 16}
+              y={g.lane.y + l * g.lane.gap + 4}
               className={`is-label is-lane-label${failing && lane.risky ? " is-failing" : ""}`}
             >
               {lane.label}
             </text>
           ))}
-          <EvalDots />
+          <EvalDots g={g} />
           {EVALS.lanes.map((lane, l) =>
             lane.risky ? (
               <text
                 key={lane.label}
-                x={EV.x + FIRST_FAIL * EV.pitch - EV.pitch / 2}
-                y={LANE.y + l * LANE.gap - 5}
+                x={g.x + FIRST_FAIL * g.pitch - g.pitch / 2}
+                y={g.lane.y + l * g.lane.gap - 5}
                 className="is-suspended"
                 style={vars({ "--k": clamp01((run - FIRST_FAIL - 1) * 2) })}
               >
@@ -495,13 +566,13 @@ function EvalsScene({ p }: { p: number }) {
               </text>
             ) : null,
           )}
-          {EVENTS.map((event) => {
-            const x = EV.x + event.col * EV.pitch - EV.pitch / 2;
+          {g.events.map((event) => {
+            const x = g.x + event.col * g.pitch - g.pitch / 2;
             const k = clamp01((run - event.col) * 2);
             return (
               <g key={event.label} className={`is-event${event.col === 0 ? " is-first" : ""}`} style={vars({ "--k": k })}>
-                <path d={`M${x} ${EV.y - 14}V${LANE.y + (EVALS.lanes.length - 1) * LANE.gap + 8}`} pathLength={1} style={draw(k)} />
-                <text x={x + 6} y={EV.y - 22}>
+                <path d={`M${x} ${g.y - 14}V${laneEnd + 8}`} pathLength={1} style={draw(k)} />
+                <text x={x + 6} y={g.y - 22}>
                   {event.label}
                 </text>
               </g>
@@ -546,7 +617,7 @@ const SWEEP = [0.5, 2.4] as const;
  * An incident on a log scale. A salmon front sweeps from the first tenth of a second; the automatic steps all land
  * inside ten seconds, the people's within the week, and HIPAA's 60-day limit sits far off at the right.
  */
-function IncidentsScene({ p }: { p: number }) {
+function IncidentsScene({ p }: SceneProps) {
   const { o, t } = sceneClock(p, 3);
   const sweep = en(t, SWEEP[0], SWEEP[1]);
   const front = LOG.x0 + sweep * (LOG.x1 - LOG.x0);
@@ -654,7 +725,7 @@ const WALK = [0.55, 3.9] as const;
  * cursor walks the quarters; each column fills as it passes, and the corner shows what that quarter ships and the
  * plan milestone it unlocks. The last step, Seed, is salmon.
  */
-function PathScene({ p }: { p: number }) {
+function PathScene({ p }: SceneProps) {
   const { o, t } = sceneClock(p, 4);
   const front = ramp(t, WALK) * QUARTERS.length;
   const active = Math.min(QUARTERS.length - 1, Math.floor(front));
@@ -769,12 +840,13 @@ function SceneNav({ p, goTo }: { p: number; goTo: (target: number) => void }) {
 export function EarlyPreviewComplianceSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const { p, skip, goTo } = useDoeHealthDesk2ScrollLock(sectionRef, END);
+  const phone = usePhoneLayout(sectionRef);
   return (
     <div className="earlypreview-market-track" style={vars({ "--market-run": END * DOEHEALTH_DESK2_PHONE_STEP_PX })}>
       <section ref={sectionRef} className="earlypreview-market earlypreview-compliance doehealth-desk2-nav-wash-surface" aria-label="Compliance and security">
         {SCENES.map((Screen, index) => {
           const slide = TIMING[index];
-          return <Screen key={slide.id} p={Math.min(slide.start + slide.len + 0.001, Math.max(slide.start - 0.001, p))} />;
+          return <Screen key={slide.id} phone={phone} p={Math.min(slide.start + slide.len + 0.001, Math.max(slide.start - 0.001, p))} />;
         })}
         <SceneNav p={p} goTo={goTo} />
         <SkipButton shown={p > 0 && p < END} label="Skip the compliance section" onClick={skip} />

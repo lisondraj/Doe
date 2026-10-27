@@ -204,8 +204,8 @@ function useIntro(ref: React.RefObject<HTMLElement | null>) {
 }
 
 /**
- * iPhone: glides the column to `target` (in boxes) instead of jumping. Each box's offset (`--d`, its place in the
- * column less the column's position) is written straight onto its own element every frame; the property does not
+ * iPhone: glides the screens sideways to `target` (in screens of two boxes) instead of jumping. Each box's offset
+ * (`--pd`, its screen less the position) is written straight onto its own element every frame; the property does not
  * inherit (see the CSS), so only the box moves and nothing inside the product it shows is restyled.
  */
 function useColumnGlide(trackRef: React.RefObject<HTMLOListElement | null>, target: number) {
@@ -216,12 +216,12 @@ function useColumnGlide(trackRef: React.RefObject<HTMLOListElement | null>, targ
     if (!track || !track.closest(".doehealth-desk2-page")?.querySelector(".doephone-mobile-root")) return undefined;
     const st = state.current;
     const items = Array.from(track.children) as HTMLElement[];
-    // The window shows boxes at offsets -1 to 2; a box past those is hidden, so it is not painted or composited.
+    // The window shows one screen and, mid-glide, its neighbour; a box past those is hidden, so it is not painted.
     const write = (at: number) =>
       items.forEach((item, i) => {
-        const d = i - at;
-        item.style.setProperty("--d", d.toFixed(4));
-        item.style.visibility = d <= -1.01 || d >= 2.01 ? "hidden" : "";
+        const d = Math.floor(i / PHONE_PER_PAGE) - at;
+        item.style.setProperty("--pd", d.toFixed(4));
+        item.style.visibility = d <= -1.01 || d >= 1.01 ? "hidden" : "";
       });
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       st.at = target;
@@ -305,6 +305,67 @@ function ProductNav({
       })}
     </nav>
   );
+}
+
+/**
+ * iPhone: a < and a > either side of the boxes, in place of the line menu, to switch screens sideways. The one that
+ * leads on breathes until the first switch; each hides at its end.
+ */
+function ProductArrows({ page, pages, goTo, fresh }: { page: number; pages: number; goTo: (page: number) => void; fresh: boolean }) {
+  return (
+    <>
+      {(["back", "next"] as const).map((dir) => {
+        const back = dir === "back";
+        const shown = back ? page > 0 : page < pages - 1;
+        return (
+          <button
+            key={dir}
+            type="button"
+            className={`earlypreview-product__arrow is-${dir}${shown ? "" : " is-off"}${fresh && !back ? " is-fresh" : ""}`}
+            aria-label={back ? "Previous product screens" : "Next product screens"}
+            tabIndex={shown ? undefined : -1}
+            onClick={() => goTo(page + (back ? -1 : 1))}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d={back ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"} stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        );
+      })}
+    </>
+  );
+}
+
+/**
+ * iPhone: a sideways swipe across the boxes switches screens. The listeners are passive and the stage only claims
+ * sideways panning (see the CSS), so the page keeps scrolling up and down as before.
+ */
+function useSwipe(ref: React.RefObject<HTMLElement | null>, onSwipe: (dir: 1 | -1) => void) {
+  const handler = useRef(onSwipe);
+  handler.current = onSwipe;
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    let start: { x: number; y: number } | null = null;
+    const down = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      start = event.touches.length === 1 && touch ? { x: touch.clientX, y: touch.clientY } : null;
+    };
+    const up = (event: TouchEvent) => {
+      const touch = event.changedTouches[0];
+      if (!start || !touch) return;
+      const dx = touch.clientX - start.x;
+      const dy = touch.clientY - start.y;
+      start = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) handler.current(dx < 0 ? 1 : -1);
+    };
+    el.addEventListener("touchstart", down, { passive: true });
+    el.addEventListener("touchend", up, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", down);
+      el.removeEventListener("touchend", up);
+    };
+  }, [ref]);
 }
 
 /** How far the title has to come down from its place at the top to sit in the middle of the section. */
@@ -407,7 +468,11 @@ export function EarlyPreviewProductSection() {
   const shown = en(p, phone ? SLIDES_IN : DESK_SLIDES_IN);
   const gone = en(p, TITLE_OUT);
   const headOut = en(p, HEAD_OUT);
-  useColumnGlide(trackRef, page * PHONE_PER_PAGE);
+  useColumnGlide(trackRef, page);
+  const stageRef = useRef<HTMLDivElement>(null);
+  useSwipe(stageRef, (dir) => {
+    if (phone) goTo(page + dir);
+  });
 
   return (
     <div className="earlypreview-product-track">
@@ -434,7 +499,7 @@ export function EarlyPreviewProductSection() {
           </h2>
         </div>
         <div className={`earlypreview-product__frame ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-          <div className="earlypreview-product__stage">
+          <div ref={stageRef} className="earlypreview-product__stage">
             <ol ref={trackRef} className="earlypreview-product__track" style={vars({ "--pg": page })}>
               {SLIDES.map((slide, i) => {
                 const onPage = Math.floor(i / DESK_PER_PAGE);
@@ -447,7 +512,8 @@ export function EarlyPreviewProductSection() {
                     style={vars({
                       "--pk": shown,
                       "--i": Math.min(i % DESK_PER_PAGE, 3),
-                      "--d": i,
+                      "--pd": Math.floor(i / PHONE_PER_PAGE),
+                      "--pr": i % PHONE_PER_PAGE,
                       "--len": slide.title.length,
                       "--col": onPage * 3 + (i % 2) + 1,
                       "--row": Math.floor((i % DESK_PER_PAGE) / 2) + 1,
@@ -471,6 +537,7 @@ export function EarlyPreviewProductSection() {
               })}
             </ol>
           </div>
+          <ProductArrows page={page} pages={pages} goTo={goTo} fresh={fresh} />
         </div>
         <ProductNav pages={pages} page={page} perPage={perPage} goTo={goTo} fresh={fresh} />
       </section>

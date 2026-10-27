@@ -1,6 +1,7 @@
-/* A box's place in the iPhone column, less the column's position. Set on each box every frame as the column glides, so
-   it must not inherit: an inherited property would restyle the whole product inside the box each frame. */
-@property --d {
+/* A box's screen on the iPhone, less the position the screens have glided to. Set on each box every frame as they glide,
+   so it must not inherit: an inherited property would restyle the whole product inside the box each frame. It has its
+   own name because a registered property is global: registering --d made every other section's --d stop inheriting. */
+@property --pd {
   syntax: "<number>";
   inherits: false;
   initial-value: 0;
@@ -482,12 +483,86 @@
   grid-area: 1 / 1;
   justify-self: center;
   height: var(--p-slide-h);
+  /* Two boxes a screen, one over the other (--pr); the screens sit side by side, a stage's width apart (--pd). */
   transform: translate3d(
-    0,
-    calc(var(--d, 0) * (var(--p-slide-h) + 1rem) + (1 - var(--pk)) * 2.5rem),
+    calc(var(--pd, 0) * 100cqw),
+    calc(var(--pr, 0) * (var(--p-slide-h) + 1rem) + (1 - var(--pk)) * 2.5rem),
     0
   );
   will-change: transform;
+}
+
+/* The stage takes sideways swipes (see useSwipe); up and down stay with the page. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__stage {
+  touch-action: pan-y;
+}
+
+/* iPhone: the < and > either side of the boxes replace the line menu. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__nav {
+  display: none;
+}
+
+.earlypreview-product__arrow {
+  display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__frame {
+  position: relative;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-top: -1.125rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(255 252 241 / 0.85);
+  color: #6e5c40;
+  box-shadow: 0 6px 16px -10px rgb(40 25 16 / 0.5);
+  cursor: pointer;
+  transition: opacity 240ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__arrow.is-back {
+  left: 0.15rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__arrow.is-next {
+  right: 0.15rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__arrow.is-off {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Until the first switch, > nudges toward the next screen, to show the boxes go on sideways. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__arrow.is-fresh svg {
+  animation: earlypreview-product-arrow-nudge 1.6s ease-in-out infinite;
+}
+
+@keyframes earlypreview-product-arrow-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__arrow.is-fresh svg {
+    animation: none;
+  }
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-product__slide-title {
