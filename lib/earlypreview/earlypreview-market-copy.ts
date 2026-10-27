@@ -27,6 +27,42 @@ export const EARLYPREVIEW_MARKET_SOURCES = {
     href: "https://www.hyro.ai/resources/guides-reports/2026-ai-agent-benchmark-report/",
   },
   model: { label: "Doe market model, 2026 (estimates)" },
+  blsClinics: {
+    label: "BLS QCEW, NAICS 621, Q4 2025",
+    href: "https://www.bls.gov/iag/tgs/iag621.htm",
+  },
+  blsCare: {
+    label: "BLS QCEW, NAICS 623, Q4 2025",
+    href: "https://www.bls.gov/iag/tgs/iag623.htm",
+  },
+  blsHospitals: {
+    label: "BLS QCEW, NAICS 622, Q4 2025",
+    href: "https://www.bls.gov/iag/tgs/iag622.htm",
+  },
+  isedClinics: {
+    label: "ISED / Statistics Canada, NAICS 621, 2025",
+    href: "https://ised-isde.canada.ca/app/ixb/cis/businesses-entreprises/621",
+  },
+  isedCare: {
+    label: "ISED / Statistics Canada, NAICS 623, 2025",
+    href: "https://ised-isde.canada.ca/app/ixb/cis/summary-sommaire/623",
+  },
+  isedHospitals: {
+    label: "ISED / Statistics Canada, NAICS 622, 2025",
+    href: "https://ised-isde.canada.ca/app/ixb/cis/summary-sommaire/622",
+  },
+  cms: {
+    label: "CMS National Health Expenditures, 2024",
+    href: "https://www.cms.gov/data-research/statistics-trends-and-reports/national-health-expenditure-data/historical",
+  },
+  cihi: {
+    label: "CIHI National Health Expenditure Trends, 2025",
+    href: "https://www.cihi.ca/en/national-health-expenditure-trends",
+  },
+  aha: {
+    label: "AHA Fast Facts on U.S. Hospitals, 2026",
+    href: "https://www.aha.org/statistics/fast-facts-us-hospitals",
+  },
 } as const satisfies Record<string, EarlyPreviewMarketSource>;
 
 const S = EARLYPREVIEW_MARKET_SOURCES;
@@ -114,8 +150,7 @@ const SEED_LOIS = "1–2";
 /** Clinics in the Doe Index today, and agent requests a month at Seed (thousands). */
 const INDEXED_TODAY = 1_500;
 const SEED_REQUESTS_K = 2;
-/** Doe One's beta: 5–10 clinics. The upside has 9 of them convert at founding price, 3 providers each. */
-const DOE_ONE_BETA = "5–10";
+/** The Doe One upside: 9 beta clinics convert at founding price, 3 providers each. */
 const DOE_ONE_UPSIDE_SEATS = 9 * 3;
 
 type PlanCounts = (typeof SEED_PLANS)[keyof typeof SEED_PLANS];
@@ -126,17 +161,12 @@ const yearly = (plans: PlanCounts) =>
   12;
 const paying = (plans: PlanCounts) =>
   plans.basic + plans.advanced + plans.groupSites;
-const accounts = (plans: PlanCounts) =>
-  plans.basic + plans.advanced + plans.groups;
-const both = (key: keyof PlanCounts) =>
-  SEED_PLANS.canada[key] + SEED_PLANS.us[key];
 
 const SEED_PAID = {
   canada: paying(SEED_PLANS.canada),
   us: paying(SEED_PLANS.us),
 };
 const SEED_ARR = yearly(SEED_PLANS.canada) + yearly(SEED_PLANS.us);
-const SEED_ACCOUNTS = accounts(SEED_PLANS.canada) + accounts(SEED_PLANS.us);
 /** The base case plus Doe One's beta converting, to the nearest $10K. */
 const UPSIDE_ARR_K =
   Math.round((SEED_ARR + DOE_ONE_UPSIDE_SEATS * FOUNDING_MO.one * 12) / 10_000) * 10;
@@ -144,7 +174,6 @@ const UPSIDE_ARR_K =
 const total = (split: { canada: number; us: number }) =>
   split.canada + split.us;
 const n = (value: number) => value.toLocaleString("en-US");
-const kUsd = (dollars: number) => `$${Math.round(dollars / 1000)}K`;
 
 /** The Seed targets, for the plan section, so it quotes the same model as the Seed and cities screens. */
 export const EARLYPREVIEW_MARKET_TARGETS = {
@@ -173,102 +202,85 @@ export const EARLYPREVIEW_MARKET_PRICING = {
   upsideArrK: UPSIDE_ARR_K,
 } as const;
 
-/** A line of copy whose figures are set apart from the words around them. */
-export type EarlyPreviewMarketLine = readonly {
-  readonly text: string;
-  readonly figure?: true;
-}[];
-const fig = (text: string) => ({ text, figure: true as const });
+/** A milestone on the way to Seed, with the parts it ships one to a line under it. */
+export type EarlyPreviewSeedMilestone = {
+  readonly name: string;
+  readonly text?: string;
+  readonly parts?: readonly { readonly name: string; readonly text: string }[];
+};
 
-/** The Seed target as one metric a line, from the Index down to paying clinics. */
+/** The milestones before Seed: what has to be true, in order, without the figures (those live in the plan section). */
 export const EARLYPREVIEW_MARKET_SEED = {
-  title: ["Target at Seed.", `${kUsd(SEED_ARR)} ARR by Q2 2028.`],
-  lines: [
-    [fig(n(total(SEED_INDEXED))), { text: " organizations indexed" }],
-    [
-      fig(n(SEED_INDEXED.canada)),
-      { text: " in Canada, " },
-      fig(n(SEED_INDEXED.us)),
-      { text: " in the U.S." },
-    ],
-    [fig(n(total(SEED_CLAIMED))), { text: " clinics claim their page" }],
-    [
-      fig(n(total(SEED_CLAIMED) - total(SEED_PAID))),
-      { text: " on Free, " },
-      fig(n(total(SEED_PAID))),
-      { text: " paying locations" },
-    ],
-    [
-      fig(n(SEED_ACCOUNTS)),
-      { text: " accounts, " },
-      fig(n(both("groups"))),
-      { text: " multi-site groups" },
-    ],
-    [fig(`${SEED_REQUESTS_K}K`), { text: " agent requests a month" }],
-  ] satisfies readonly EarlyPreviewMarketLine[],
+  title: ["Milestones to Seed.", "Prove it, then scale it."],
+  milestones: [
+    { name: "Prove PMF", text: "in Toronto, with U.S. test sites in parallel" },
+    {
+      name: "Push the core",
+      parts: [
+        { name: "Auth", text: "patients verified, agents act on signed grants" },
+        { name: "Index", text: "every provider, readable by personal agents" },
+        { name: "Interface", text: "clinics agents can ask, book and send to" },
+      ],
+    },
+    { name: "Expand the architecture", text: "integrations, sandbox evals, two data regions" },
+    { name: "Clear compliance", text: "PHIPA and HIPAA, with SOC 2 under way" },
+    { name: "Open enterprise", text: "first health-system conversations" },
+  ] satisfies readonly EarlyPreviewSeedMilestone[],
 } as const;
 
 /**
- * One row of the targets table, at founding prices: its locations by country, and the ARR it adds. Per-provider
- * tiers count their locations but bill their seats.
+ * Every health provider location in the U.S. and Canada, by kind and country, from the official counts. U.S.
+ * figures are BLS QCEW establishments with employees (private and public), Q4 2025; Canadian figures are ISED /
+ * Statistics Canada establishments for 2025, which also count practitioners without employees.
  */
-const planRow = (
-  id: string,
-  name: string,
-  priceMo: number,
-  locations: keyof PlanCounts,
-  billed: keyof PlanCounts = locations,
-) => ({
-  id,
-  name,
-  price: `$${priceMo}`,
-  canada: SEED_PLANS.canada[locations],
-  us: SEED_PLANS.us[locations],
-  arr: kUsd(both(billed) * priceMo * 12),
-});
+const PROVIDERS = [
+  { id: "clinics", name: "Clinics & practices", us: 778_576, canada: 267_573, sources: [S.blsClinics, S.isedClinics] },
+  { id: "care", name: "Long-term & residential care", us: 96_049, canada: 18_495, sources: [S.blsCare, S.isedCare] },
+  { id: "hospitals", name: "Hospitals", us: 21_016, canada: 1_046, sources: [S.blsHospitals, S.isedHospitals] },
+] as const;
+/** Ontario's clinics and practices (ISED 2025: 42,604 with employees, 64,771 without): the Toronto beachhead. */
+const ONTARIO_CLINICS = 107_375;
+/** Every location priced at Advanced, Doe's per-location list price, a year. Enterprise contracts are upside. */
+const LOCATION_YR = PLAN_MO.advanced * 12;
+const ALL_LOCATIONS = PROVIDERS.reduce((sum, row) => sum + row.us + row.canada, 0);
+const CLINIC_LOCATIONS = PROVIDERS[0].us + PROVIDERS[0].canada;
+const usdB = (dollars: number) =>
+  dollars >= 1e9 ? `$${(dollars / 1e9).toFixed(1)}B` : `$${Math.round(dollars / 1e6)}M`;
 
 /**
- * Toronto first, then the U.S., then the clinics that add up to ARR at Seed. The dot grid is the same for both:
- * Canada's clinics fill its share of the dots, the U.S. the rest; the paying ones are salmon.
+ * Toronto first, then the U.S., then the market behind them. The dot grid is the same for both countries: Canada's
+ * clinics fill its share of the dots, the U.S. the rest; the paying ones are salmon.
  */
 export const EARLYPREVIEW_MARKET_CITIES = {
   canada: {
     title: ["Proving PMF in Toronto.", "U.S. Expansion in Parallel."],
-    arr: kUsd(yearly(SEED_PLANS.canada)),
-    arrLabel: "Toronto ARR by Seed",
     indexed: SEED_INDEXED.canada,
     claimed: SEED_CLAIMED.canada,
     paying: SEED_PAID.canada,
   },
   us: {
     title: ["Then the U.S.", "Our first test sites."],
-    arr: kUsd(yearly(SEED_PLANS.us)),
-    arrLabel: "U.S. ARR by Seed",
     indexed: SEED_INDEXED.us,
     claimed: SEED_CLAIMED.us,
     paying: SEED_PAID.us,
   },
-  breakdown: {
-    rows: [
-      {
-        id: "free",
-        name: "Free",
-        price: "$0",
-        canada: SEED_CLAIMED.canada - SEED_PAID.canada,
-        us: SEED_CLAIMED.us - SEED_PAID.us,
-        arr: "$0",
-      },
-      planRow("basic", "Basic", FOUNDING_MO.basic, "basic"),
-      planRow("advanced", "Advanced", FOUNDING_MO.advanced, "advanced"),
-      planRow("groups", "Multi-site", FOUNDING_MO.group, "groupSites", "groupSeats"),
+  market: {
+    title: ["Every provider,", "U.S. and Canada."],
+    locationsLabel: "Health provider locations",
+    total: ALL_LOCATIONS,
+    providers: PROVIDERS,
+    /** TAM, SAM and SOM: locations × Advanced at list price. */
+    sizes: [
+      { id: "tam", key: "TAM", value: ALL_LOCATIONS * LOCATION_YR, display: usdB(ALL_LOCATIONS * LOCATION_YR), detail: `${n(ALL_LOCATIONS)} provider locations` },
+      { id: "sam", key: "SAM", value: CLINIC_LOCATIONS * LOCATION_YR, display: usdB(CLINIC_LOCATIONS * LOCATION_YR), detail: `${n(CLINIC_LOCATIONS)} clinics & practices` },
+      { id: "som", key: "SOM", value: ONTARIO_CLINICS * LOCATION_YR, display: usdB(ONTARIO_CLINICS * LOCATION_YR), detail: `${n(ONTARIO_CLINICS)} Ontario clinics, the beachhead` },
     ],
-    total: { canada: SEED_PAID.canada, us: SEED_PAID.us, arr: kUsd(SEED_ARR) },
+    sizeNote: `Locations × $${n(LOCATION_YR)} a year (Advanced, list). Health-system contracts are on top.`,
     facts: [
-      [fig("65%"), { text: " Private-Pay Services" }],
-      [fig(SEED_LOIS), { text: " Enterprise LOIs" }],
-      [fig(DOE_ONE_BETA), { text: " Doe One Beta Testers" }],
-      [fig(`$${UPSIDE_ARR_K}K`), { text: " Upside with Doe One" }],
-    ] satisfies readonly EarlyPreviewMarketLine[],
+      { value: "$5.3T", label: "U.S. health spending, 2024", source: S.cms },
+      { value: "C$399B", label: "Canadian health spending, 2025", source: S.cihi },
+      { value: "6,100", label: "U.S. hospitals", source: S.aha },
+    ],
   },
 } as const;
 

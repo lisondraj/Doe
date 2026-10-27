@@ -27,7 +27,6 @@ import {
   EARLYPREVIEW_MARKET_PLANS as PLANS,
   EARLYPREVIEW_MARKET_SEED as SEED,
   EARLYPREVIEW_MARKET_WHY_NOW as WHY_NOW,
-  type EarlyPreviewMarketLine,
   type EarlyPreviewMarketSource,
 } from "@/lib/earlypreview/earlypreview-market-copy";
 
@@ -260,28 +259,22 @@ function WhyNowScene({ p, lead }: { p: number; lead: number }) {
 
 const count = (n: number) => n.toLocaleString("en-US");
 
-/** A line of copy with its figures set apart. */
-function FigureLine({ line }: { line: EarlyPreviewMarketLine }) {
-  return (
-    <>
-      {line.map((part) =>
-        "figure" in part ? (
-          <strong key={part.text}>{part.text}</strong>
-        ) : (
-          <span key={part.text}>{part.text}</span>
-        ),
-      )}
-    </>
-  );
-}
-
-/** The target at Seed: the metrics one a line in the top right, the title building in the bottom left. */
+/**
+ * The milestones before Seed, one a line in the top right, the title building in the bottom left. A milestone that
+ * ships several parts lists them under it, indented, one a line, each with what it is.
+ */
 function SeedScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "seed");
+  // Every line (milestones and their parts) takes its turn in reading order.
+  let line = 0;
+  const rise = () => {
+    const i = line++;
+    return vars({ "--e": en(t, 0.5 + i * 0.07, 0.8 + i * 0.07) });
+  };
   return (
     <Scene
       o={o}
-      label="Target at Seed"
+      label="Milestones to Seed"
       className="earlypreview-market__scene--corners"
     >
       {/* The hero's dot wave, across the middle of the screen at full width. */}
@@ -299,14 +292,21 @@ function SeedScene({ p }: { p: number }) {
         />
       </div>
       <ol className="earlypreview-market__seed-lines">
-        {SEED.lines.map((line, index) => (
-          <li
-            key={line[0].text}
-            style={vars({
-              "--e": en(t, 0.55 + index * 0.1, 0.85 + index * 0.1),
-            })}
-          >
-            <FigureLine line={line} />
+        {SEED.milestones.map((milestone) => (
+          <li key={milestone.name}>
+            <span className="earlypreview-market__seed-line" style={rise()}>
+              <strong>{milestone.name}</strong>
+              {"text" in milestone && milestone.text ? <span>, {milestone.text}</span> : null}
+            </span>
+            {"parts" in milestone && milestone.parts ? (
+              <ul className="earlypreview-market__seed-parts">
+                {milestone.parts.map((part) => (
+                  <li key={part.name} style={rise()}>
+                    <strong>{part.name}</strong> <span>{part.text}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </li>
         ))}
       </ol>
@@ -606,7 +606,7 @@ function Layer({
   );
 }
 
-/** A country's ARR target over its paying, claimed and indexed clinics, all in large type. */
+/** A country's paying, claimed and indexed clinics, all in large type. */
 function CountryPanel({
   t,
   market,
@@ -621,25 +621,13 @@ function CountryPanel({
   ];
   return (
     <div className="earlypreview-market__country-panel">
-      <span
-        className="earlypreview-market__country-arr"
-        style={vars({ "--e": en(t, 0.35, 0.7) })}
-      >
-        {market.arr}
-      </span>
-      <span
-        className="earlypreview-market__country-arr-label"
-        style={vars({ "--e": en(t, 0.4, 0.75) })}
-      >
-        {market.arrLabel}
-      </span>
       <ul className="earlypreview-market__country-lines">
         {lines.map((line, index) => (
           <li
             key={line.id}
             className={`is-${line.id}`}
             style={vars({
-              "--e": en(t, 0.55 + index * 0.1, 0.85 + index * 0.1),
+              "--e": en(t, 0.35 + index * 0.1, 0.65 + index * 0.1),
             })}
           >
             <strong>{count(line.value)}</strong> {line.label}
@@ -650,25 +638,144 @@ function CountryPanel({
   );
 }
 
-/** Where each stage of the cities screen starts on its clock. */
-const CITY_STEP = { us: 1.6, breakdown: 3.0 } as const;
-/** Each line under the targets table takes its turn this far apart on the scroll. */
-const FACT_STEP = 0.5;
+const PROVIDER_MAX = Math.max(
+  ...CITIES.market.providers.map((row) => row.us + row.canada),
+);
+const SIZE_MAX = CITIES.market.sizes[0].value;
+const short = (value: number) =>
+  value >= 1e6
+    ? `${(value / 1e6).toFixed(2)}M`
+    : value >= 1e4
+      ? `${Math.round(value / 1e3)}K`
+      : count(value);
 
 /**
- * Toronto, then the U.S., then the clinics that add up to ARR at Seed: one screen that changes on scroll. The dot
- * grid holds the middle; Canada's dots give way to the U.S.'s larger grid, and then to the breakdown.
+ * The market behind the plan, from the official counts: every health provider location in the U.S. and Canada by
+ * kind (U.S. cream, Canada salmon, bars to scale), then TAM, SAM and SOM priced from those locations, then what the
+ * two countries spend on health. Each figure links its source.
+ */
+function MarketGraph({ t }: { t: number }) {
+  const { market } = CITIES;
+  const sources = [
+    ...market.providers.flatMap((row) => row.sources),
+    ...market.facts.map((fact) => fact.source),
+  ];
+  return (
+    <div className="earlypreview-market__graph">
+      <div className="earlypreview-market__mix-block">
+        <SceneTitle title={market.title} t={t} />
+      </div>
+      <div
+        className="earlypreview-market__graph-panel"
+        role="img"
+        aria-label={`${market.locationsLabel}: ${market.providers
+          .map((row) => `${row.name}, ${count(row.us)} U.S. and ${count(row.canada)} Canada`)
+          .join("; ")}`}
+      >
+        <p
+          className="earlypreview-market__graph-head"
+          style={vars({ "--e": en(t, 0.2, 0.45) })}
+        >
+          <span>{market.locationsLabel}</span>
+          <span className="earlypreview-market__graph-key">
+            <i className="is-us" /> U.S. <i className="is-ca" /> Canada
+          </span>
+        </p>
+        {market.providers.map((row, index) => {
+          const k = en(t, 0.3 + index * 0.1, 0.75 + index * 0.1);
+          return (
+            <div
+              key={row.id}
+              className="earlypreview-market__graph-row"
+              style={vars({ "--e": en(t, 0.25 + index * 0.1, 0.5 + index * 0.1) })}
+            >
+              <span className="earlypreview-market__graph-name">{row.name}</span>
+              <span className="earlypreview-market__graph-track" aria-hidden>
+                <span
+                  className="earlypreview-market__graph-bar is-us"
+                  style={vars({ "--w": (row.us / PROVIDER_MAX) * k })}
+                />
+                <span
+                  className="earlypreview-market__graph-bar is-ca"
+                  style={vars({ "--w": (row.canada / PROVIDER_MAX) * k })}
+                />
+              </span>
+              <span className="earlypreview-market__graph-value">
+                {short(row.us + row.canada)}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="earlypreview-market__graph-panel">
+        {market.sizes.map((size, index) => {
+          const k = en(t, 0.65 + index * 0.1, 1.05 + index * 0.1);
+          return (
+            <div
+              key={size.id}
+              className={`earlypreview-market__graph-row is-size is-${size.id}`}
+              style={vars({ "--e": en(t, 0.6 + index * 0.1, 0.85 + index * 0.1) })}
+            >
+              <span className="earlypreview-market__graph-name">
+                <b>{size.key}</b> {size.detail}
+              </span>
+              <span className="earlypreview-market__graph-track" aria-hidden>
+                <span
+                  className="earlypreview-market__graph-bar"
+                  style={vars({ "--w": (size.value / SIZE_MAX) * k })}
+                />
+              </span>
+              <span className="earlypreview-market__graph-value">{size.display}</span>
+            </div>
+          );
+        })}
+        <p
+          className="earlypreview-market__graph-note"
+          style={vars({ "--e": en(t, 0.9, 1.15) })}
+        >
+          {market.sizeNote}
+        </p>
+      </div>
+      <ul
+        className="earlypreview-market__graph-facts"
+        style={vars({ "--e": en(t, 1.0, 1.3) })}
+      >
+        {market.facts.map((fact) => (
+          <li key={fact.label}>
+            <strong>{fact.value}</strong> {fact.label}
+          </li>
+        ))}
+      </ul>
+      <p
+        className="earlypreview-market__graph-sources"
+        style={vars({ "--e": en(t, 1.05, 1.35) })}
+      >
+        <span className="earlypreview-market__sources-label">Sources</span>
+        {sources.map((source) => (
+          <SourceLink key={source.label} source={source} />
+        ))}
+      </p>
+    </div>
+  );
+}
+
+/** Where each stage of the cities screen starts on its clock. */
+const CITY_STEP = { us: 1.6, market: 3.0 } as const;
+
+/**
+ * Toronto, then the U.S., then the market behind them: one screen that changes on scroll. The dot grid holds the
+ * middle; Canada's dots give way to the U.S.'s larger grid, and then to the market graph.
  */
 function CitiesScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "cities");
-  const { canada, us, breakdown } = CITIES;
+  const { canada, us } = CITIES;
   const toUs = ramp(t, [CITY_STEP.us - 0.05, CITY_STEP.us + 0.2]);
   const toTable = ramp(t, [
-    CITY_STEP.breakdown - 0.05,
-    CITY_STEP.breakdown + 0.2,
+    CITY_STEP.market - 0.05,
+    CITY_STEP.market + 0.2,
   ]);
   const usT = t - CITY_STEP.us + 0.1;
-  const tableT = t - CITY_STEP.breakdown + 0.1;
+  const tableT = t - CITY_STEP.market + 0.1;
 
   return (
     <Scene o={o} label="Toronto, then the U.S.">
@@ -703,73 +810,7 @@ function CitiesScene({ p }: { p: number }) {
             <ClinicGrid t={t} usT={usT} />
           </Layer>
           <Layer o={toTable} className="earlypreview-market__mix-view">
-            <div className="earlypreview-market__mix-block">
-              <SceneTitle title={["Targets"]} t={tableT} />
-            </div>
-            <div
-              className="earlypreview-market__mix"
-              role="table"
-              aria-label="Clinics at Seed by plan and country, and the ARR each plan adds"
-            >
-              <div
-                className="earlypreview-market__mix-row is-head"
-                role="row"
-                style={vars({ "--e": en(tableT, 0.2, 0.45) })}
-              >
-                <span role="columnheader" />
-                <span role="columnheader">Canada</span>
-                <span role="columnheader">U.S.</span>
-                <span role="columnheader">ARR</span>
-              </div>
-              {breakdown.rows.map((row, index) => (
-                <div
-                  key={row.id}
-                  className={`earlypreview-market__mix-row is-${row.id}`}
-                  role="row"
-                  style={vars({
-                    "--e": en(tableT, 0.25 + index * 0.08, 0.5 + index * 0.08),
-                  })}
-                >
-                  <span role="rowheader">
-                    {row.name} <em>{row.price}</em>
-                  </span>
-                  <span role="cell">{count(row.canada)}</span>
-                  <span role="cell">{count(row.us)}</span>
-                  <span role="cell">{row.arr}</span>
-                </div>
-              ))}
-              <div
-                className="earlypreview-market__mix-row is-total"
-                role="row"
-                style={vars({ "--e": en(tableT, 0.5, 0.75) })}
-              >
-                <span role="rowheader">Paying</span>
-                <span role="cell">{breakdown.total.canada}</span>
-                <span role="cell">{breakdown.total.us}</span>
-                <span role="cell">{breakdown.total.arr}</span>
-              </div>
-            </div>
-            <ul className="earlypreview-market__mix-facts">
-              {breakdown.facts.map((line, index) => (
-                <li
-                  key={line[0].text}
-                  style={vars({
-                    "--e":
-                      en(tableT, 0.3 + index * FACT_STEP, 0.5 + index * FACT_STEP) *
-                      (index === breakdown.facts.length - 1
-                        ? 1
-                        : 1 -
-                          en(
-                            tableT,
-                            0.8 + index * FACT_STEP,
-                            1.0 + index * FACT_STEP,
-                          )),
-                  })}
-                >
-                  <FigureLine line={line} />
-                </li>
-              ))}
-            </ul>
+            <MarketGraph t={tableT} />
           </Layer>
         </div>
       </div>
@@ -1096,13 +1137,13 @@ const NAV = (() => {
       "U.S.",
       "cities",
       CITY_STEP.us,
-      CITY_STEP.breakdown,
-      CITY_STEP.breakdown - 0.1,
+      CITY_STEP.market,
+      CITY_STEP.market - 0.1,
     ),
     stage(
-      "Targets",
+      "Market",
       "cities",
-      CITY_STEP.breakdown,
+      CITY_STEP.market,
       len("cities"),
       len("cities") - FADE - 0.02,
     ),
