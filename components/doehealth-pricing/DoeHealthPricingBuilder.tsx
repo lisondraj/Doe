@@ -507,6 +507,8 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
   const [at, setAt] = useState(0);
   const [done, setDone] = useState(false);
   const [panel, setPanel] = useState<PanelTab | null>(null);
+  /** The team panel was opened from the price breakdown's Edit, so its Done goes back to the breakdown. */
+  const [fromPrice, setFromPrice] = useState(false);
   const [openSpecialty, setOpenSpecialty] = useState<SpecialtyId | null>(null);
   /** The tier shown on iPhone, where tiers are compared one at a time; null follows the team's plan. */
   const [view, setView] = useState<PlanId | null>(null);
@@ -994,15 +996,15 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </div>
   );
 
-  /** iPhone: the team first, then the practice's size and billing, above the switcher; they stay in place as the page scrolls. */
+  /** iPhone: the practice's size and billing, then the team right above the switcher; they stay in place as the page scrolls. */
   const phoneControls = (
     <div className="flex flex-col gap-[8px]">
-      {teamButton}
       <div className={`flex flex-col gap-[4px] p-[4px] rounded-[24px] ${OUTER}`}>
         <span className={`px-[14px] rounded-[20px] ${INNER}`}>{locationsControl}</span>
         <span className={`px-[14px] rounded-[20px] ${INNER}`}>{providersControl}</span>
       </div>
       {billing}
+      {teamButton}
     </div>
   );
 
@@ -1753,6 +1755,7 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     if (onPlan) setPlanEntry(seq);
     if (!onPlan) {
       setPanel(null);
+      setFromPrice(false);
       setConfirming(false);
     }
     // Only when entering or leaving the comparison.
@@ -1888,18 +1891,23 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
     </div>
   );
 
+  const closePanel = () => {
+    setFromPrice(false);
+    setPanel(null);
+  };
+
   /** The team and the price, in a panel over the right of the page on desktop or a sheet on iPhone. */
   const sidePanel =
     onPlan && panel ? (
       <>
-        {phone && <button type="button" aria-label="Close" onClick={() => setPanel(null)} className="fixed inset-0 z-[49] bg-[rgba(20,12,4,0.28)]" />}
+        {phone && <button type="button" aria-label="Close" onClick={closePanel} className="fixed inset-0 z-[49] bg-[rgba(20,12,4,0.28)]" />}
         <aside
           aria-label={panel === "team" ? "Your team" : "Price breakdown"}
           className={`z-50 flex flex-col bg-[#FFFCF1] ${phone ? "doe-pricing-sheet fixed left-0 right-0 bottom-0 max-h-[86vh] rounded-t-[30px]" : "doe-pricing-slide fixed right-[20px] top-[120px] bottom-[20px] w-[400px] rounded-[32px] shadow-[0_24px_60px_-30px_rgba(40,25,16,0.45)]"}`}
         >
           <div className="flex items-center justify-between gap-[12px] p-[16px] pb-[12px]">
             <span className={`pl-[6px] text-[22px] leading-[26px] tracking-[-0.02em] ${DISPLAY} text-[#281910]`}>{panel === "team" ? "Your team" : "Your price"}</span>
-            <Close label="Close panel" onClick={() => setPanel(null)} />
+            <Close label="Close panel" onClick={closePanel} />
           </div>
           <div className="flex flex-col grow min-h-[0px] px-[16px] pb-[16px] overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{panel === "team" ? teamEditor(true) : priceTab}</div>
           <div className={`flex items-center gap-[12px] p-[16px] pt-[12px] border-t border-solid ${HAIR} ${phone ? "pb-[max(16px,env(safe-area-inset-bottom))]" : ""}`}>
@@ -1907,12 +1915,32 @@ export function DoeHealthPricingBuilder({ phone }: { phone: boolean }) {
               <span className={`text-[24px] leading-[28px] tracking-[-0.02em] ${DISPLAY} text-[#281910] [font-variant-numeric:tabular-nums]`}>{`${money(total)}/mo`}</span>
               <span className={`text-[12px] leading-[15px] ${SUB}`}>Before tax</span>
             </span>
-            {/* The price confirms the plan and moves on to checkout; the team just closes. */}
+            {/* Edit opens the team, to change plans, providers and locations before confirming; Done brings the price back. */}
+            {panel === "price" && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFromPrice(true);
+                  setPanel("team");
+                }}
+                className={`flex items-center gap-[8px] h-[48px] px-[18px] shrink-0 rounded-[999px] ${OUTER} hover:bg-[#EDE5D2] text-[15px] leading-[20px] font-[600] text-[#281910] transition-colors duration-150`}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+                  <path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                </svg>
+                Edit
+              </button>
+            )}
+            {/* The price confirms the plan and moves on to checkout; the team closes, or goes back to the price it was opened from. */}
             <button
               type="button"
               disabled={!a.plan}
               onClick={() => {
-                setPanel(null);
+                if (panel === "team" && fromPrice) {
+                  setFromPrice(false);
+                  return setPanel("price");
+                }
+                closePanel();
                 if (panel === "price") proceed();
               }}
               className="h-[48px] px-[22px] shrink-0 rounded-[999px] bg-[#281910] hover:bg-[#3A2920] disabled:bg-[rgba(20,12,4,0.1)] disabled:text-[rgba(20,12,4,0.38)] text-[15px] leading-[20px] font-[600] text-[#FFFCF1] transition-colors duration-150"
