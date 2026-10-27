@@ -23,6 +23,7 @@ import {
 import { FEDERATED_CLINIC_INTELLIGENCE_PATH } from "@/lib/blog/federated-clinic-intelligence-article";
 import { CLINIC_SPECIALTY_WORKFLOWS_PATH } from "@/lib/blog/clinic-specialty-workflows-article";
 import { OUR_FOUNDER_STORY_PATH } from "@/lib/blog/our-founder-story-article";
+import { PREVIEW_ARTICLE_PATHS } from "@/lib/doehealth/doehealth-preview-articles";
 import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 
 const ADMIN_ROOT_PATH = "/admin";
@@ -93,7 +94,8 @@ async function handleAdminAccess(request: NextRequest): Promise<NextResponse | n
 
 /**
  * Pages linked from Desk 2's nav, banner, CTA and footer — they stay on doehealth.care instead of bouncing to `/`.
- * `/pricing` and `/earlypreview` are served here too, so doehealth.care/pricing and doehealth.care/earlypreview open those pages.
+ * `/pricing` and `/earlypreview` are served here too, so doehealth.care/pricing and doehealth.care/earlypreview open those pages,
+ * and so are the `/preview-<slug>` article duplicates /earlypreview links to.
  */
 const DOEHEALTH_CARE_SUBPAGES = [
   "/about",
@@ -104,7 +106,8 @@ const DOEHEALTH_CARE_SUBPAGES = [
   "/waitlist",
   "/doehealthdesk",
   "/earlypreview",
-] as const;
+  ...PREVIEW_ARTICLE_PATHS,
+];
 
 export async function middleware(request: NextRequest) {
   const host = requestHostFromHeaders(request.headers);

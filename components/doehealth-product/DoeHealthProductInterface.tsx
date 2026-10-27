@@ -414,54 +414,57 @@ function LedgerRow({ t, open, onToggle, onOpenCall, onResolve }: { t: Thread; op
         tabIndex={0}
         onClick={onToggle}
         onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), onToggle())}
-        className="grid grid-cols-[1fr_96px_1fr] items-stretch text-left cursor-pointer outline-none group"
+        className="grid grid-cols-[1fr_80px_1fr] items-stretch text-left cursor-pointer outline-none group"
       >
         <span
-          className={`flex flex-col gap-[12px] min-w-[0px] p-[16px] rounded-[18px] bg-[#F4EEDF] outline outline-[1.5px] -outline-offset-[1.5px] transition-[outline-color] duration-150 ${open ? "outline-ink" : "outline-transparent group-hover:outline-[#28191026]"}`}
+          className={`flex flex-col gap-[6px] min-w-[0px] p-[8px] rounded-[20px] bg-[#F4EEDF] outline outline-[1.5px] -outline-offset-[1.5px] transition-[outline-color] duration-150 ${open ? "outline-ink" : "outline-transparent group-hover:outline-[#28191026]"}`}
         >
-          <span className="flex items-center gap-[10px] min-w-[0px]">
+          <span className="flex items-center gap-[10px] min-w-[0px] h-[36px] px-[6px]">
             <Mark t={t} size={28} />
             <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>{t.channel === "agent" ? t.from : t.patient}</span>
             <span className={`truncate text-[12px] leading-[16px] ${SANS} text-sub`}>{t.channel === "agent" ? t.patient : t.from}</span>
             <span className={`ml-auto flex items-center h-[24px] px-[10px] shrink-0 rounded-[999px] bg-paper text-[12px] leading-[16px] ${SANS} font-[500] text-walnut`}>{t.intent}</span>
           </span>
-          {requestOf(t) ? (
-            <span className="grid grid-cols-[auto_1fr] gap-x-[12px] gap-y-[3px]">
-              {requestOf(t)!.fields.map(([k, v]) => (
-                <span key={k} className="contents">
-                  <span className={`text-[13px] leading-[19px] ${SANS} text-sub`}>{k}</span>
-                  <span className={`truncate text-[14px] leading-[19px] ${SANS} font-[500] text-ink`}>{v}</span>
-                </span>
-              ))}
-            </span>
-          ) : (
-            <span className={`text-[14px] leading-[20px] ${SANS} text-ink`}>“{asked}”</span>
-          )}
+          <span className="flex flex-col grow min-w-[0px] p-[14px] rounded-[14px] bg-paper">
+            {requestOf(t) ? (
+              <span className="grid grid-cols-[auto_1fr] gap-x-[12px] gap-y-[3px]">
+                {requestOf(t)!.fields.map(([k, v]) => (
+                  <span key={k} className="contents">
+                    <span className={`text-[13px] leading-[19px] ${SANS} text-sub`}>{k}</span>
+                    <span className={`truncate text-[14px] leading-[19px] ${SANS} font-[500] text-ink`}>{v}</span>
+                  </span>
+                ))}
+              </span>
+            ) : (
+              <span className={`text-[14px] leading-[20px] ${SANS} text-ink`}>“{asked}”</span>
+            )}
+          </span>
+          <span className={`flex items-center h-[32px] px-[6px] text-[13px] leading-[18px] ${SANS} text-sub`}>{t.channel === "agent" ? "Sent by a personal agent" : "Phone call"}</span>
         </span>
 
-        <span className="relative flex flex-col items-center justify-center gap-[2px]">
-          <span className="absolute left-[6px] right-[6px] top-1/2 h-[1.5px] -mt-[0.75px] bg-[#28191026]" />
-          <span className="absolute left-[2px] top-1/2 -mt-[4px] w-[8px] h-[8px] rounded-[50%] bg-[#28191026]" />
-          <span className="absolute right-[2px] top-1/2 -mt-[4px] w-[8px] h-[8px] rounded-[50%]" style={{ backgroundColor: t.status === "resolved" ? "#6E9A5B" : t.status === "you" ? "#E8A585" : "#28191026" }} />
-          <span className="relative flex flex-col items-center px-[10px] py-[5px] rounded-[12px] bg-paper border border-solid border-[#2819101A]">
+        <span className="relative flex items-center justify-center">
+          <span className="absolute inset-x-[0px] top-1/2 h-[1.5px] -mt-[0.75px] bg-[#28191026]" />
+          <span className="relative flex flex-col items-center px-[6px] py-[2px] bg-paper">
             <span className={`text-[13px] leading-[16px] ${SANS} font-[600] text-walnut [font-variant-numeric:tabular-nums]`}>{t.time}</span>
             <span className={`text-[11px] leading-[14px] ${SANS} text-sub whitespace-nowrap`}>{t.speed.replace("Replied in ", "")}</span>
           </span>
         </span>
 
         <span
-          className={`flex flex-col gap-[12px] min-w-[0px] p-[16px] rounded-[18px] bg-paper border-[1.5px] ${waiting ? "border-dashed border-[#E8A585]" : "border-solid border-[#2819101A]"}`}
+          className={`flex flex-col gap-[6px] min-w-[0px] p-[8px] rounded-[20px] bg-[#FAF6EC] border-[1.5px] border-solid border-transparent`}
         >
-          <span className="flex items-center gap-[10px]">
+          <span className="flex items-center gap-[10px] min-w-[0px] h-[36px] px-[6px]">
             <span className="w-[28px] h-[28px] shrink-0 rounded-[50%]" style={{ backgroundColor: t.channel === "agent" ? "#281910" : "#DCE5D0" }} />
             <span className={`text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>{t.channel === "agent" ? "Doe" : "June"}</span>
-            <span className={`text-[12px] leading-[16px] ${SANS} text-sub`}>{t.channel === "agent" ? "for your clinic" : "voice agent"}</span>
+            <span className={`truncate text-[12px] leading-[16px] ${SANS} text-sub`}>{t.channel === "agent" ? "for your clinic" : "voice agent"}</span>
             <span className="ml-auto">
               <Pill status={t.status} />
             </span>
           </span>
-          <span className={`text-[14px] leading-[20px] ${SANS} text-[rgba(40,25,16,0.82)] line-clamp-2`}>{t.status === "live" ? "Booking Ruth with Dr. Brooks, tomorrow at 3:00" : answer}</span>
-          <span className="flex items-center justify-between gap-[12px] mt-auto">
+          <span className="flex flex-col grow min-w-[0px] p-[14px] rounded-[14px] bg-paper">
+            <span className={`text-[14px] leading-[20px] ${SANS} text-[rgba(40,25,16,0.82)] line-clamp-2`}>{t.status === "live" ? "Booking Ruth with Dr. Brooks, tomorrow at 3:00" : answer}</span>
+          </span>
+          <span className="flex items-center justify-between gap-[12px] h-[32px] px-[6px]">
             {outcome && (
               <span className={`flex items-center gap-[6px] min-w-[0px] text-[13px] leading-[18px] ${SANS} font-[500] ${done ? "text-[#3F6431]" : "text-walnut"}`}>
                 {done ? <Check /> : <Clock />}
@@ -512,6 +515,7 @@ export function DoeHealthProductInterfacePage({ onOpenCall }: { onOpenCall?: () 
       <div className="relative flex items-end justify-between">
         <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>Interface</span>
         <span className="flex items-center gap-[8px]">
+          <Search value={query} onChange={setQuery} />
           <button type="button" className={`flex items-center gap-[6px] h-[40px] px-[18px] rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>
             <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
               <circle cx="12" cy="12" r="3" fill="none" stroke="#281910" strokeWidth="1.8" />
@@ -554,15 +558,9 @@ export function DoeHealthProductInterfacePage({ onOpenCall }: { onOpenCall?: () 
             </button>
           ))}
         </span>
-        <Search value={query} onChange={setQuery} />
       </div>
 
       <div className="flex flex-col grow min-h-[0px] gap-[8px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div className={`grid grid-cols-[1fr_96px_1fr] shrink-0 px-[4px] text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>
-          <span>Request</span>
-          <span className="text-center">Time</span>
-          <span>Response</span>
-        </div>
         {sections.map((sec) => (
           <div key={sec.label} className="flex flex-col gap-[10px] shrink-0">
             <span className={`flex items-center gap-[10px] pt-[4px] text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`}>

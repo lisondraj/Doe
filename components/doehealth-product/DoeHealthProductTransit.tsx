@@ -3,15 +3,20 @@
 /**
  * Transit tab — every document moving in and out of the practice: referrals, records, results, forms and payer
  * letters, to and from patients' personal agents, other clinics, payers and labs. A stats strip up top, a filterable
- * table of documents, and an inspector for the selected one: its details, attachment, what Doe read out of it, and
- * its activity from arrival to the chart (or from the chart to its recipient).
+ * pair of tables, Inbound and Outbound side by side, and an inspector that slides in from the right for the selected
+ * document: its details, attachment, what Doe read out of it, and its activity from arrival to the chart (or from
+ * the chart to its recipient). The first inbound document is open by default.
  */
-import { Fragment, type ReactNode, useState } from "react";
+import { Fragment, type ReactNode, useEffect, useState } from "react";
 
 import { TransitFillModal } from "@/components/doehealth-product/DoeHealthProductTransitFill";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 const SANS = "font-['DM_Sans',system-ui,sans-serif]";
+/** The inspector slides in from the side with the same motion as the Payments panel. */
+const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+const MOVE = `420ms ${EASE}`;
+const PANEL_W = 440;
 
 type Party = "agent" | "clinic" | "payer" | "lab";
 type Direction = "in" | "out";
@@ -54,27 +59,50 @@ export type Doc = {
 
 const DOCS: Doc[] = [
   {
-    id: "harbor-letter",
+    id: "james-auth",
     dir: "in",
     party: "payer",
-    who: "Harbor Mutual",
-    kind: "Payer letter",
-    title: "Request for EEG report",
+    who: "Blue Cross",
+    kind: "Prior auth",
+    title: "Prior Auth Approval",
+    patient: "James Lisondra",
+    time: "9:58",
+    status: "filed",
+    steps: [
+      { label: "Received", detail: "From Blue Cross’s portal", time: "9:58", state: "done" },
+      { label: "Matched", detail: "James Lisondra, visit Thu Oct 29 at 9:30", time: "9:58", state: "done" },
+      { label: "Read", detail: "Approved for the visit, valid 90 days", time: "9:59", state: "done" },
+      { label: "Filed", detail: "Attached to the booking, Muse notified", time: "9:59", state: "done" },
+    ],
+    fields: [
+      { label: "Reference", value: "BC-4471-2093" },
+      { label: "Valid", value: "90 days" },
+      { label: "Visit", value: "Worsening headache" },
+    ],
+    actions: ["Mark As Complete", "Message James"],
+  },
+  {
+    id: "harbor-letter",
+    dir: "in",
+    party: "agent",
+    who: "Leo’s agent",
+    kind: "Records",
+    title: "Asks for the latest EEG report",
     patient: "Leo Jacobs",
     time: "10:12",
     status: "review",
     steps: [
-      { label: "Received", detail: "From Harbor Mutual’s portal", time: "10:12", state: "done" },
-      { label: "Matched", detail: "Leo Jacobs, prior auth for a 48-hour EEG", time: "10:12", state: "done" },
-      { label: "Read", detail: "Payer wants the latest EEG report", time: "10:13", state: "done" },
-      { label: "Your call", detail: "Agent found the Jun 12 EEG, ready to attach", time: "Now", state: "now" },
+      { label: "Received", detail: "Leo’s agent sent a records request", time: "10:12", state: "done" },
+      { label: "Matched", detail: "Leo Jacobs, guardian Mia Jacobs", time: "10:12", state: "done" },
+      { label: "Read", detail: "Wants the most recent EEG report", time: "10:13", state: "done" },
+      { label: "Your call", detail: "Doe found the Jun 12 EEG, ready to send", time: "Now", state: "now" },
     ],
     fields: [
       { label: "Asks for", value: "EEG report, last 6 months" },
       { label: "Due", value: "Oct 21" },
-      { label: "Auth", value: "48-hour ambulatory EEG" },
+      { label: "Consent", value: "Signed in agent" },
     ],
-    actions: ["Attach and send", "Open auth"],
+    actions: ["Send report", "Message Leo’s agent"],
   },
   {
     id: "maya-mri",
@@ -97,30 +125,30 @@ const DOCS: Doc[] = [
       { label: "Impression", value: "No acute findings" },
       { label: "Read by", value: "Newton Imaging, Oct 9" },
     ],
-    actions: ["Open in chart", "Thank Maya’s agent"],
+    actions: ["Mark As Complete", "Thank Maya’s agent"],
   },
   {
     id: "quest-labs",
     dir: "in",
-    party: "lab",
-    who: "Quest Diagnostics",
+    party: "agent",
+    who: "Ava’s agent",
     kind: "Lab results",
     title: "B12, A1C and thyroid panel",
     patient: "Ava Morales",
     time: "9:20",
     status: "review",
     steps: [
-      { label: "Received", detail: "From Quest over Kno2", time: "9:20", state: "done" },
+      { label: "Received", detail: "Ava’s agent shared her Quest results", time: "9:20", state: "done" },
       { label: "Matched", detail: "Ava Morales, ordered Oct 6", time: "9:20", state: "done" },
       { label: "Read", detail: "B12 low at 180", time: "9:21", state: "done" },
-      { label: "Your call", detail: "Flagged for Dr. Brooks before it goes to Ava", time: "Now", state: "now" },
+      { label: "Your call", detail: "Flagged for Dr. Brooks before it goes back to Ava’s agent", time: "Now", state: "now" },
     ],
     fields: [
       { label: "B12", value: "180 pg/mL  ↓" },
       { label: "A1C", value: "5.4%, normal" },
       { label: "TSH", value: "2.1, normal" },
     ],
-    actions: ["Review result", "Draft note to Ava"],
+    actions: ["Review result", "Draft note to Ava’s agent"],
   },
   {
     id: "mia-form",
@@ -148,15 +176,15 @@ const DOCS: Doc[] = [
   {
     id: "bi-consult",
     dir: "in",
-    party: "clinic",
-    who: "Beth Israel Cardiology",
+    party: "agent",
+    who: "Victor’s agent",
     kind: "Visit summary",
     title: "Cardiology consult after stroke",
     patient: "Victor Lane",
     time: "8:30",
     status: "filed",
     steps: [
-      { label: "Received", detail: "Closing the loop on our referral", time: "8:30", state: "done" },
+      { label: "Received", detail: "Victor’s agent shared the Beth Israel summary", time: "8:30", state: "done" },
       { label: "Matched", detail: "Victor Lane, referral from Sep 30", time: "8:30", state: "done" },
       { label: "Read", detail: "Heart monitor found atrial fibrillation", time: "8:31", state: "done" },
       { label: "Filed", detail: "Referral marked complete", time: "8:31", state: "done" },
@@ -166,7 +194,7 @@ const DOCS: Doc[] = [
       { label: "Plan", value: "Apixaban 5 mg" },
       { label: "Referral", value: "Complete" },
     ],
-    actions: ["Open in chart", "Message Victor"],
+    actions: ["Mark As Complete", "Message Victor’s agent"],
   },
   {
     id: "grace-card",
@@ -194,8 +222,8 @@ const DOCS: Doc[] = [
   {
     id: "bch-referral",
     dir: "out",
-    party: "clinic",
-    who: "Boston Children’s EEG Lab",
+    party: "agent",
+    who: "Mia’s agent",
     kind: "Referral",
     title: "EEG referral, staring spells",
     patient: "Leo Jacobs",
@@ -204,15 +232,15 @@ const DOCS: Doc[] = [
     steps: [
       { label: "Drafted", detail: "From Dr. Brooks’ visit note", time: "9:58", state: "done" },
       { label: "Packed", detail: "Note, June EEG, teacher’s report", time: "9:59", state: "done" },
-      { label: "Delivered", detail: "To Boston Children’s over Kno2", time: "10:02", state: "done" },
-      { label: "Accepted", detail: "Usually within a day", time: "Next", state: "next" },
+      { label: "Delivered", detail: "To Mia’s agent, who books Boston Children’s", time: "10:02", state: "done" },
+      { label: "Booked", detail: "Usually within a day", time: "Next", state: "next" },
     ],
     fields: [
       { label: "Specialty", value: "Pediatric EEG" },
       { label: "Attached", value: "3 documents" },
-      { label: "Copied to", value: "Mia’s agent" },
+      { label: "Goes to", value: "Boston Children’s EEG Lab" },
     ],
-    actions: ["View packet", "Copy to Mia’s agent"],
+    actions: ["View packet", "Message Mia’s agent"],
   },
   {
     id: "priya-avs",
@@ -240,8 +268,8 @@ const DOCS: Doc[] = [
   {
     id: "mgh-sleep",
     dir: "out",
-    party: "clinic",
-    who: "Mass General Sleep",
+    party: "agent",
+    who: "Noah’s agent",
     kind: "Referral",
     title: "Sleep study and MSLT referral",
     patient: "Noah Bennett",
@@ -249,8 +277,8 @@ const DOCS: Doc[] = [
     status: "stalled",
     steps: [
       { label: "Drafted", detail: "From Dr. Alvarez’s visit note", time: "Oct 21", state: "done" },
-      { label: "Delivered", detail: "To Mass General over Kno2", time: "Oct 21", state: "done" },
-      { label: "Accepted", detail: "No reply in 3 days", time: "Now", state: "now" },
+      { label: "Delivered", detail: "To Noah’s agent, who sent it to Mass General", time: "Oct 21", state: "done" },
+      { label: "Accepted", detail: "Mass General hasn’t replied in 3 days", time: "Now", state: "now" },
       { label: "Scheduled", detail: "Noah’s agent will book it", time: "Next", state: "next" },
     ],
     fields: [
@@ -258,23 +286,23 @@ const DOCS: Doc[] = [
       { label: "Waiting", value: "3 days" },
       { label: "Fallback", value: "Brigham Sleep, 6 day wait" },
     ],
-    actions: ["Nudge Mass General", "Send to Brigham"],
+    actions: ["Nudge Noah’s agent", "Send to Brigham"],
   },
   {
     id: "aetna-packet",
     dir: "out",
-    party: "payer",
-    who: "Aetna",
+    party: "agent",
+    who: "Henry’s agent",
     kind: "Prior auth",
     title: "Prior auth packet, brain MRI",
     patient: "Henry Walsh",
     time: "Oct 12",
     status: "delivered",
     steps: [
-      { label: "Drafted", detail: "Agent built it from the chart", time: "Oct 12", state: "done" },
-      { label: "Delivered", detail: "On Aetna’s portal", time: "Oct 12", state: "done" },
-      { label: "Review", detail: "Day 2 of 5", time: "Now", state: "now" },
-      { label: "Decision", detail: "Agent checks daily", time: "Next", state: "next" },
+      { label: "Drafted", detail: "Built from the chart", time: "Oct 12", state: "done" },
+      { label: "Delivered", detail: "To Henry’s agent, who filed it with Aetna", time: "Oct 12", state: "done" },
+      { label: "Review", detail: "Aetna, day 2 of 5", time: "Now", state: "now" },
+      { label: "Decision", detail: "Henry’s agent checks daily", time: "Next", state: "next" },
     ],
     fields: [
       { label: "Code", value: "CPT 70553" },
@@ -376,9 +404,7 @@ function Avatar({ doc, size = 32 }: { doc: Doc; size?: number }) {
     <span
       className={`shrink-0 flex items-center justify-center rounded-[999px] text-[13px] leading-[16px] ${SANS} font-[600] text-walnut`}
       style={{ width: size, height: size, backgroundColor: PARTIES[doc.party].tone }}
-    >
-      {doc.who[0]}
-    </span>
+    />
   );
 }
 
@@ -436,7 +462,7 @@ function Menu<T extends string>({ label, value, options, onChange }: { label: st
 /** Four soft tiles in a row, joined like the stage row in Payments. */
 function Stats() {
   const stats = [
-    { label: "Received today", value: String(DOCS.filter((d) => d.dir === "in").length), note: "4 from personal agents", tone: "#F4EEDF" },
+    { label: "Received today", value: String(DOCS.filter((d) => d.dir === "in").length), note: `${DOCS.filter((d) => d.dir === "in" && d.party === "agent").length} from personal agents`, tone: "#F4EEDF" },
     { label: "Sent today", value: String(DOCS.filter((d) => d.dir === "out").length), note: "2 read within the hour", tone: "#F8D9C6" },
     { label: "Time to file", value: "1m 12s", note: "Median, arrival to chart", tone: "#ECE6DA" },
     { label: "Filed without you", value: "83%", note: "Up from 71% last month", tone: "#D6DEC6" },
@@ -458,50 +484,63 @@ function Stats() {
   );
 }
 
-/** A labeled soft box, the same one Schedule uses for each part of a note. */
+/** A white box in the inspector: a small title, then its contents. */
 function Box({ label, children, className = "" }: { label: string; children: ReactNode; className?: string }) {
   return (
-    <div className={`flex flex-col gap-[8px] p-[14px] rounded-[18px] bg-[#FFFCF1B3] ${className}`}>
-      <span className={`text-[11px] leading-[14px] ${SANS} font-[600] uppercase tracking-[0.06em] text-sub`}>{label}</span>
+    <div className={`flex flex-col gap-[10px] p-[16px] rounded-[18px] bg-paper ${className}`}>
+      <span className={`text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>{label}</span>
       {children}
     </div>
   );
 }
 
-function Inspector({ doc, onOpen }: { doc: Doc; onOpen: () => void }) {
+/** The selected document in the same grey panel Payments opens: header, white boxes, then the two actions. */
+function Inspector({ doc, onOpen, onClose }: { doc: Doc; onOpen: () => void; onClose: () => void }) {
   const meta = [
     { label: "From", value: doc.dir === "in" ? doc.who : "Brooks Neurology" },
     { label: "To", value: doc.dir === "in" ? "Chart" : doc.who },
     { label: "Patient", value: doc.patient },
     { label: "Channel", value: CHANNEL[doc.party] },
   ];
+  const done = doc.steps.filter((x) => x.state === "done").length;
 
   return (
-    <div className="doe-menu-in flex flex-col min-h-[0px] h-full gap-[14px] p-[22px] rounded-[28px]" style={{ backgroundColor: STATUS_TONE[doc.status] }}>
-      <div className="flex flex-col gap-[6px]">
-        <span className={`flex items-center gap-[6px] text-[13px] leading-[16px] ${SANS} font-[600] text-sub`}>
-          <Arrow dir={doc.dir} size={12} />
-          {doc.dir === "in" ? "Received" : "Sent"} {doc.time} · {doc.kind}
+    <div className="flex flex-col min-h-[0px] h-full gap-[12px] p-[20px] rounded-[28px] bg-[#FAF6EC]">
+      <div className="flex items-center gap-[12px]">
+        <Avatar doc={doc} size={44} />
+        <span className="flex flex-col grow min-w-[0px]">
+          <span className={`truncate text-[26px] leading-[30px] tracking-[-0.02em] ${DISPLAY} text-walnut`}>{doc.patient}</span>
+          <span className={`flex items-center gap-[6px] truncate text-[13px] leading-[17px] ${SANS} text-sub`}>
+            <Arrow dir={doc.dir} size={12} />
+            {doc.dir === "in" ? "Received" : "Sent"} {doc.time}
+          </span>
         </span>
-        <span className={`text-[28px] leading-[32px] tracking-[-0.02em] ${DISPLAY} text-walnut`}>{doc.title}</span>
-        <span className="flex mt-[2px]">
-          <Pill status={doc.status} />
+        <button type="button" aria-label="Close" onClick={onClose} className="w-[34px] h-[34px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150">
+          <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+            <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#281910" strokeWidth="2.2" strokeLinecap="round" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="flex items-center gap-[12px] shrink-0 p-[14px] rounded-[18px] bg-paper">
+        <span className="w-[10px] h-[36px] shrink-0 rounded-[99px] bg-[#E8A585]" />
+        <span className="flex flex-col grow min-w-[0px] gap-[2px]">
+          <span className={`text-[12px] leading-[16px] ${SANS} font-[500] text-sub`}>{doc.who}</span>
+          <span className={`truncate text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>{doc.title}</span>
         </span>
       </div>
 
-      <div className="flex flex-col grow min-h-[0px] gap-[8px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <Box label="Details">
-          <div className="grid grid-cols-[72px_1fr] gap-x-[12px] gap-y-[6px]">
-            {meta.map((m) => (
-              <Fragment key={m.label}>
-                <span className={`text-[14px] leading-[20px] ${SANS} font-[500] text-sub`}>{m.label}</span>
-                <span className={`truncate text-[14px] leading-[20px] ${SANS} font-[500] text-walnut`}>{m.value}</span>
-              </Fragment>
-            ))}
-          </div>
-        </Box>
+      <div className="flex flex-col grow min-h-[0px] gap-[12px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="grid grid-cols-2 gap-x-[16px] gap-y-[10px] shrink-0 p-[16px] rounded-[18px] bg-paper">
+          {meta.map((m) => (
+            <span key={m.label} className="flex flex-col gap-[2px] min-w-[0px]">
+              <span className={`text-[12px] leading-[16px] ${SANS} text-sub`}>{m.label}</span>
+              <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>{m.value}</span>
+            </span>
+          ))}
+        </div>
 
-        <Box label="Attachment">
+        <Box label="Attachment" className="shrink-0">
           <div className="flex items-center gap-[12px]">
             <span className={`w-[36px] h-[44px] shrink-0 flex items-end justify-center pb-[6px] rounded-[10px] bg-sand text-[10px] leading-[12px] ${SANS} font-[700] tracking-[0.04em] text-walnut`}>PDF</span>
             <span className="flex flex-col grow min-w-[0px]">
@@ -510,42 +549,55 @@ function Inspector({ doc, onOpen }: { doc: Doc; onOpen: () => void }) {
                 {pagesOf(doc)} {pagesOf(doc) === 1 ? "page" : "pages"}
               </span>
             </span>
-            <button type="button" className={`h-[32px] px-[14px] rounded-[999px] bg-paper hover:bg-[#F4EEDF] transition-colors duration-150 text-[13px] leading-[16px] ${SANS} font-[500] text-walnut`}>
-              Open
+            <button type="button" aria-label="Open attachment" className="w-[24px] h-[24px] shrink-0 flex items-center justify-center text-walnut opacity-70 hover:opacity-100 transition-opacity duration-150">
+              <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+                <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" fill="none" stroke="#281910" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </button>
           </div>
         </Box>
 
-        <div className="grid grid-cols-3 gap-[8px]">
-          {doc.fields.map((f) => (
-            <Box key={f.label} label={f.label} className="gap-[4px] min-w-[0px]">
-              <span className={`text-[14px] leading-[20px] ${SANS} font-[500] text-walnut`}>{f.value}</span>
-            </Box>
-          ))}
-        </div>
-
-        <Box label="Activity">
-          <div className="flex flex-col">
-            {doc.steps.map((s, i) => (
-              <div key={s.label} className="flex gap-[12px]">
-                <span className="flex flex-col items-center w-[12px] shrink-0">
+        <div className="flex flex-col grow gap-[12px] p-[16px] rounded-[18px] bg-paper">
+          <span className="flex items-center gap-[12px] shrink-0">
+            <span className="flex grow gap-[3px]">
+              {doc.steps.map((x) => (
+                <span key={x.label} className="grow h-[4px] rounded-[99px]" style={{ backgroundColor: x.state === "done" ? "#6E9A5B" : x.state === "now" ? "#E8A585" : "#2819100F" }} />
+              ))}
+            </span>
+            <span className={`shrink-0 text-[12px] leading-[16px] ${SANS} font-[500] text-sub [font-variant-numeric:tabular-nums]`}>
+              {done} of {doc.steps.length} done
+            </span>
+          </span>
+          <span className="flex flex-col grow">
+            {doc.steps.map((x, i) => (
+              <span key={x.label} className={`flex grow gap-[12px] px-[10px] -mx-[10px] rounded-[12px] ${x.state === "now" ? "bg-[#FBEDE4]" : ""}`}>
+                <span className="flex flex-col items-center w-[12px] shrink-0 pt-[13px]">
                   <span
-                    className="mt-[5px] w-[10px] h-[10px] shrink-0 rounded-[999px]"
-                    style={{ backgroundColor: s.state === "done" ? "#281910" : s.state === "now" ? "#E8A585" : "#28191026" }}
+                    className="w-[12px] h-[12px] shrink-0 rounded-[999px]"
+                    style={{
+                      backgroundColor: x.state === "done" ? "#6E9A5B" : x.state === "now" ? "#E8A585" : "transparent",
+                      border: x.state === "next" ? "1.5px solid #28191033" : undefined,
+                    }}
                   />
-                  {i < doc.steps.length - 1 && <span className="grow w-[2px] my-[3px] rounded-[99px] bg-[#2819101A]" />}
+                  {i < doc.steps.length - 1 && <span className="grow w-[1.5px] mt-[3px] -mb-[13px]" style={{ backgroundColor: x.state === "done" ? "#6E9A5B" : "#2819101A" }} />}
                 </span>
-                <span className="flex grow min-w-[0px] items-start justify-between gap-[12px] pb-[10px]">
-                  <span className="flex flex-col min-w-[0px]">
-                    <span className={`text-[14px] leading-[20px] ${SANS} font-[600] ${s.state === "next" ? "text-sub" : "text-walnut"}`}>{s.label}</span>
-                    <span className={`text-[13px] leading-[18px] ${SANS} text-sub`}>{s.detail}</span>
+                <span className="flex flex-col grow min-w-[0px] py-[9px]">
+                  <span className={`flex items-center gap-[8px] text-[14px] leading-[20px] ${SANS} font-[500] ${x.state === "next" ? "text-sub" : "text-walnut"}`}>
+                    <span className="truncate">{x.label}</span>
+                    <span className="ml-auto shrink-0">
+                      {x.state === "now" ? (
+                        <span className={`flex items-center h-[20px] px-[8px] rounded-[999px] bg-[#E8A585] text-[11px] leading-[14px] ${SANS} font-[600] text-ink`}>Now</span>
+                      ) : (
+                        <span className={`text-[12px] leading-[16px] ${SANS} font-[400] text-sub [font-variant-numeric:tabular-nums]`}>{x.time}</span>
+                      )}
+                    </span>
                   </span>
-                  <span className={`shrink-0 text-[13px] leading-[20px] ${SANS} font-[500] text-sub [font-variant-numeric:tabular-nums]`}>{s.time}</span>
+                  <span className={`text-[13px] leading-[18px] ${SANS} ${x.state === "now" ? "text-[#B4572F]" : x.state === "next" ? "text-[#2819105C]" : "text-sub"}`}>{x.detail}</span>
                 </span>
-              </div>
+              </span>
             ))}
-          </div>
-        </Box>
+          </span>
+        </div>
       </div>
 
       <div className="flex shrink-0 gap-[8px]">
@@ -560,125 +612,126 @@ function Inspector({ doc, onOpen }: { doc: Doc; onOpen: () => void }) {
   );
 }
 
-type Tab = "all" | "in" | "out" | "you";
 type KindFilter = "all" | string;
 type PartyFilter = "all" | Party;
 
 const KINDS = Array.from(new Set(DOCS.map((d) => d.kind)));
-const COLS = { patient: 110, party: 190, status: 140, time: 72 };
+
+/** One column of the pair: a header with the direction and count, then a compact table row per document. */
+function Column({ dir, docs, selected, open, onPick }: { dir: Direction; docs: Doc[]; selected: string; open: boolean; onPick: (id: string) => void }) {
+  return (
+    <div className="flex flex-col min-w-[0px] min-h-[0px] rounded-[18px] bg-[#F4EEDF] overflow-hidden">
+      <div className="flex items-center gap-[10px] shrink-0 px-[20px] pt-[16px] pb-[12px]">
+        <span className={`w-[28px] h-[28px] shrink-0 flex items-center justify-center rounded-[999px] ${dir === "in" ? "bg-[#EEEADF] text-walnut" : "bg-ink [color:#FFFCF1]"}`}>
+          <Arrow dir={dir} size={14} />
+        </span>
+        <span className={`text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`}>{dir === "in" ? "Inbound" : "Outbound"}</span>
+        <span className={`text-[13px] leading-[18px] ${SANS} font-[500] text-sub [font-variant-numeric:tabular-nums]`}>{docs.length}</span>
+      </div>
+      <div className="flex flex-col grow min-h-[0px] gap-[4px] px-[8px] pb-[8px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {docs.map((d) => {
+          const on = open && d.id === selected;
+          return (
+            <button
+              key={d.id}
+              type="button"
+              onClick={() => onPick(d.id)}
+              className={`flex items-center gap-[12px] h-[62px] shrink-0 px-[14px] rounded-[12px] bg-paper text-left outline outline-[1.5px] -outline-offset-[1.5px] transition-[outline-color] duration-150 ${on ? "outline-ink" : "outline-transparent hover:outline-[#28191026]"}`}
+            >
+              <Avatar doc={d} size={30} />
+              <span className="flex flex-col grow min-w-[0px]">
+                <span className={`truncate text-[15px] leading-[20px] tracking-[-0.01em] ${SANS} font-[500] text-ink`}>{d.title}</span>
+                <span className={`truncate text-[12px] leading-[16px] ${SANS} text-sub`}>
+                  {d.patient} · {d.who} · {d.time}
+                </span>
+              </span>
+              <Pill status={d.status} />
+            </button>
+          );
+        })}
+        {docs.length === 0 && <span className={`px-[12px] py-[20px] text-[14px] leading-[18px] ${SANS} text-sub`}>No documents match these filters.</span>}
+      </div>
+    </div>
+  );
+}
 
 export function DoeHealthProductTransitPage() {
-  const [tab, setTab] = useState<Tab>("all");
+  const [onlyYou, setOnlyYou] = useState(false);
   const [kind, setKind] = useState<KindFilter>("all");
   const [party, setParty] = useState<PartyFilter>("all");
-  const [selected, setSelected] = useState(DOCS[0]!.id);
+  const first = DOCS.find((d) => d.dir === "in")!.id;
+  const [open, setOpen] = useState<string | null>(first);
+  const [shown, setShown] = useState(first);
   const [filling, setFilling] = useState<string | null>(null);
 
-  const docs = DOCS.filter(
-    (d) => (tab === "all" || (tab === "you" ? needsYou(d) : d.dir === tab)) && (kind === "all" || d.kind === kind) && (party === "all" || d.party === party),
-  );
-  const doc = docs.find((d) => d.id === selected) ?? docs[0] ?? DOCS.find((d) => d.id === selected)!;
+  const matches = (d: Doc) => (!onlyYou || needsYou(d)) && (kind === "all" || d.kind === kind) && (party === "all" || d.party === party);
+  const inbound = DOCS.filter((d) => d.dir === "in" && matches(d));
+  const outbound = DOCS.filter((d) => d.dir === "out" && matches(d));
+  const doc = DOCS.find((d) => d.id === shown)!;
+  const select = (id: string) => {
+    setShown(id);
+    setOpen(id);
+  };
 
-  const tabs: { id: Tab; label: string; count: number }[] = [
-    { id: "all", label: "All", count: DOCS.length },
-    { id: "in", label: "Inbox", count: DOCS.filter((d) => d.dir === "in").length },
-    { id: "out", label: "Sent", count: DOCS.filter((d) => d.dir === "out").length },
-    { id: "you", label: "Needs you", count: DOCS.filter(needsYou).length },
-  ];
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && !filling && setOpen(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, filling]);
 
   return (
-    <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[20px] pt-[36px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
-      <div className="relative flex items-end justify-between">
-        <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>Transit</span>
-        <span className="flex items-center gap-[10px]">
-          <span className={`flex items-center gap-[8px] h-[40px] px-[16px] rounded-[999px] bg-[#EEEADF] text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>
-            <span className="w-[7px] h-[7px] rounded-[99px] bg-[#6E9A5B]" />
-            Synced with Kno2
+    <div className="relative [font-synthesis:none] h-full w-full flex rounded-[24px] overflow-clip bg-paper antialiased">
+      <div className="flex flex-col grow min-w-[0px] gap-[20px] pt-[36px] px-[40px] pb-[28px]">
+        <div className="relative flex items-end justify-between">
+          <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>Transit</span>
+          <span className="flex items-center gap-[10px]">
+            <span className={`flex items-center gap-[8px] h-[40px] px-[16px] rounded-[999px] bg-[#EEEADF] text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>
+              <span className="w-[7px] h-[7px] rounded-[99px] bg-[#6E9A5B]" />
+              Synced with Kno2
+            </span>
+            <span className={`flex items-center h-[40px] px-[18px] rounded-[999px] bg-ink text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`}>Send document</span>
           </span>
-          <span className={`flex items-center h-[40px] px-[18px] rounded-[999px] bg-ink text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`}>Send document</span>
-        </span>
-      </div>
-
-      <Stats />
-
-      <div className="grid grid-cols-[1fr_440px] gap-[12px] grow min-h-[0px]">
-        <div className="flex flex-col min-w-[0px] min-h-[0px] gap-[12px]">
-          <div className="flex items-center justify-between gap-[12px] h-[38px] shrink-0">
-            <span className="flex p-[3px] gap-[2px] rounded-[999px] bg-[#F4EEDF]">
-              {tabs.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setTab(t.id)}
-                  className={`flex items-center gap-[8px] h-[32px] px-[16px] rounded-[999px] text-[13px] leading-[16px] ${SANS} font-[500] transition-colors duration-150 ${tab === t.id ? "bg-paper text-ink" : "text-sub hover:text-walnut"}`}
-                >
-                  {t.label}
-                  <span className={t.id === "you" ? "flex items-center h-[18px] px-[7px] rounded-[999px] bg-[#FCCFB8] text-[12px] leading-[14px] text-ink" : "text-sub"}>{t.count}</span>
-                </button>
-              ))}
-            </span>
-            <span className="flex items-center gap-[8px]">
-              <Menu<KindFilter> label="Type" value={kind} onChange={setKind} options={[{ id: "all", label: "All" }, ...KINDS.map((k) => ({ id: k, label: k }))]} />
-              <Menu<PartyFilter>
-                label="With"
-                value={party}
-                onChange={setParty}
-                options={[{ id: "all", label: "Anyone" }, ...(Object.keys(PARTIES) as Party[]).map((p) => ({ id: p, label: PARTIES[p].label }))]}
-              />
-            </span>
-          </div>
-
-          <div className="flex flex-col grow min-h-[0px] pt-[8px] px-[8px] rounded-[18px] bg-[#F4EEDF] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <div className={`flex items-center gap-[16px] shrink-0 px-[16px] pt-[12px] pb-[10px] text-[13px] leading-[18px] ${SANS} text-sub`}>
-              <span className="grow min-w-[0px]">Document</span>
-              <span style={{ width: COLS.patient }} className="shrink-0">Patient</span>
-              <span style={{ width: COLS.party }} className="shrink-0">From / to</span>
-              <span style={{ width: COLS.status }} className="shrink-0">Status</span>
-              <span style={{ width: COLS.time }} className="shrink-0 text-right">Updated</span>
-            </div>
-            <div className="flex flex-col gap-[4px] pb-[8px]">
-              {docs.map((d) => {
-                const on = d.id === doc.id;
-                return (
-                  <button
-                    key={d.id}
-                    type="button"
-                    onClick={() => {
-                      setSelected(d.id);
-                      if (tab === "you") setFilling(d.id);
-                    }}
-                    className={`flex items-center gap-[16px] h-[62px] shrink-0 px-[16px] rounded-[12px] bg-paper text-left outline outline-[1.5px] transition-[outline-color] duration-150 ${on ? "outline-ink" : "outline-transparent hover:outline-[#28191026]"}`}
-                  >
-                    <span className="flex items-center gap-[12px] grow min-w-[0px]">
-                      <span className={`w-[30px] h-[30px] shrink-0 flex items-center justify-center rounded-[999px] ${d.dir === "in" ? "bg-[#EEEADF] text-walnut" : "bg-ink [color:#FFFCF1]"}`}>
-                        <Arrow dir={d.dir} size={14} />
-                      </span>
-                      <span className="flex flex-col min-w-[0px]">
-                        <span className={`truncate text-[15px] leading-[20px] tracking-[-0.01em] ${SANS} text-ink`}>{d.title}</span>
-                        <span className={`truncate text-[12px] leading-[16px] ${SANS} text-sub`}>{d.kind}</span>
-                      </span>
-                    </span>
-                    <span style={{ width: COLS.patient }} className={`shrink-0 truncate text-[14px] leading-[20px] ${SANS} text-walnut`}>{d.patient}</span>
-                    <span style={{ width: COLS.party }} className="shrink-0 flex items-center gap-[10px] min-w-[0px]">
-                      <Avatar doc={d} size={28} />
-                      <span className="flex flex-col min-w-[0px]">
-                        <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>{d.who}</span>
-                        <span className={`truncate text-[12px] leading-[16px] ${SANS} text-sub`}>{PARTIES[d.party].one}</span>
-                      </span>
-                    </span>
-                    <span style={{ width: COLS.status }} className="shrink-0 flex">
-                      <Pill status={d.status} />
-                    </span>
-                    <span style={{ width: COLS.time }} className={`shrink-0 text-right text-[14px] leading-[20px] ${SANS} text-sub [font-variant-numeric:tabular-nums]`}>{d.time}</span>
-                  </button>
-                );
-              })}
-              {docs.length === 0 && <span className={`px-[16px] py-[24px] text-[14px] leading-[18px] ${SANS} text-sub`}>No documents match these filters.</span>}
-            </div>
-          </div>
         </div>
 
-        <Inspector key={doc.id} doc={doc} onOpen={() => setFilling(doc.id)} />
+        <Stats />
+
+        <div className="flex items-center justify-between gap-[12px] h-[38px] shrink-0">
+          <button
+            type="button"
+            aria-pressed={onlyYou}
+            onClick={() => setOnlyYou((v) => !v)}
+            className={`flex items-center gap-[8px] h-[38px] px-[16px] rounded-[999px] text-[14px] leading-[18px] ${SANS} font-[500] transition-colors duration-150 ${onlyYou ? "bg-ink [color:#FFFCF1]" : "bg-[#28191014] hover:bg-[#2819101F] text-walnut"}`}
+          >
+            Needs you
+            <span className={`flex items-center h-[20px] px-[7px] rounded-[999px] text-[12px] leading-[14px] text-ink ${onlyYou ? "bg-paper" : "bg-[#FCCFB8]"}`}>{DOCS.filter(needsYou).length}</span>
+          </button>
+          <span className="flex items-center gap-[8px]">
+            <Menu<KindFilter> label="Type" value={kind} onChange={setKind} options={[{ id: "all", label: "All" }, ...KINDS.map((k) => ({ id: k, label: k }))]} />
+            <Menu<PartyFilter>
+              label="With"
+              value={party}
+              onChange={setParty}
+              options={[{ id: "all", label: "Anyone" }, ...(Object.keys(PARTIES) as Party[]).filter((p) => DOCS.some((d) => d.party === p)).map((p) => ({ id: p, label: PARTIES[p].label }))]}
+            />
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-[12px] grow min-h-[0px]">
+          <Column dir="in" docs={inbound} selected={shown} open={open !== null} onPick={select} />
+          <Column dir="out" docs={outbound} selected={shown} open={open !== null} onPick={select} />
+        </div>
+      </div>
+
+      <div className="h-full shrink-0 overflow-hidden" style={{ width: open ? PANEL_W + 12 : 0, transition: `width ${MOVE}` }} aria-hidden={!open}>
+        <div
+          role="dialog"
+          aria-label={doc.title}
+          className="h-full py-[12px] pr-[12px]"
+          style={{ width: PANEL_W + 12, opacity: open ? 1 : 0, transition: `opacity ${MOVE}`, pointerEvents: open ? "auto" : "none" }}
+        >
+          <Inspector key={doc.id} doc={doc} onOpen={() => setFilling(doc.id)} onClose={() => setOpen(null)} />
+        </div>
       </div>
 
       {filling && <TransitFillModal key={filling} doc={DOCS.find((d) => d.id === filling)!} onClose={() => setFilling(null)} />}

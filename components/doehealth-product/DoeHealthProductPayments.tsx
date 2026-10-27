@@ -29,11 +29,11 @@ type Row = {
   auth: Auth | null;
   stage: Stage;
   method: string;
-  note: string;
+  note?: string;
 };
 
 const ROWS: Row[] = [
-  { id: "james-botox", date: "Oct 14", name: "James Lisondra", service: "Botox for Chronic Migraine", payer: "Self-pay", amount: "$1,500.00", auth: null, stage: "sent", method: "—", note: "Muse has the bill at the $1,500 self-pay offer price and is paying from James’s card on file." },
+  { id: "james-botox", date: "Oct 14", name: "James Lisondra", service: "Botox for Chronic Migraine", payer: "Self-pay", amount: "$1,500.00", auth: null, stage: "sent", method: "—", },
   { id: "leo-eeg", date: "Oct 14", name: "Leo Jacobs", service: "48-Hour EEG", payer: "Harbor Mutual", amount: "$1,840", auth: "info", stage: "auth", method: "—", note: "Harbor Mutual asked for the last EEG report. Doe found the Jun 12 one and it’s ready to attach." },
   { id: "paul-botox", date: "Oct 14", name: "Paul Greene", service: "Botox for Chronic Migraine", payer: "Cigna", amount: "$640", auth: "drafting", stage: "auth", method: "—", note: "Pulling his headache diary and the last two visit notes into Cigna’s form." },
   { id: "priya-mri", date: "Oct 13", name: "Priya Raman", service: "MRI, Brain", payer: "UnitedHealthcare", amount: "$410", auth: "submitted", stage: "auth", method: "—", note: "Filed on UnitedHealthcare’s portal. Doe checks it tomorrow morning." },
@@ -73,8 +73,8 @@ const matches = (r: Row, f: Filter) => f === "all" || (f === "invoiced" ? r.stag
 const TILES: { id: Filter; label: string; value: string; tone: string }[] = [
   { id: "auth", label: "Prior Auth", value: "$3,870", tone: "#FAF6EC" },
   { id: "invoiced", label: "Invoiced", value: "$3,360", tone: "#F4EEDF" },
-  { id: "sent", label: "Sent to Agent", value: "$2,010", tone: "#F8D9C6" },
-  { id: "waiting", label: "Awaiting Approval", value: "$310", tone: "#ECE6DA" },
+  { id: "sent", label: "Sent to Agent", value: "$2,010", tone: "#EEE6D6" },
+  { id: "waiting", label: "Awaiting Approval", value: "$310", tone: "#E6DDCB" },
 ];
 
 const COLS = { date: 56, name: 140, coverage: 170, amount: 84, status: 148 };
@@ -223,7 +223,6 @@ function JourneyPanel({ row, onClose }: { row: Row; onClose: () => void }) {
         <span className="w-[44px] h-[44px] shrink-0 rounded-[50%]" style={{ backgroundColor: pill.background.length === 9 ? "#ECE6DA" : pill.background }} />
         <span className="flex flex-col grow min-w-[0px]">
           <span className={`truncate text-[26px] leading-[30px] tracking-[-0.02em] ${DISPLAY} text-walnut`}>{row.name}</span>
-          <span className={`truncate text-[13px] leading-[17px] ${SANS} text-sub`}>{row.service}</span>
         </span>
         <button type="button" aria-label="Close" onClick={onClose} className="w-[34px] h-[34px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150">
           <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
@@ -232,15 +231,23 @@ function JourneyPanel({ row, onClose }: { row: Row; onClose: () => void }) {
         </button>
       </div>
 
-      <div className="flex flex-col gap-[14px] p-[16px] rounded-[18px] bg-paper">
-        <span className="flex items-start justify-between gap-[12px]">
-          <span className="flex flex-col gap-[2px]">
-            <span className={`text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>{row.stage === "auth" ? "Est. After Insurance" : "Patient Owes"}</span>
-            <span className={`text-[40px] leading-[44px] tracking-[-0.03em] ${DISPLAY} text-ink [font-variant-numeric:tabular-nums]`}>{row.amount}</span>
-          </span>
-          <Pill {...pill} />
+      <div className="flex items-center gap-[12px] p-[14px] rounded-[18px] bg-paper">
+        <span className="w-[10px] h-[36px] shrink-0 rounded-[99px] bg-[#E8A585]" />
+        <span className="flex flex-col gap-[2px] min-w-[0px]">
+          <span className={`text-[12px] leading-[16px] ${SANS} font-[500] text-sub`}>Service</span>
+          <span className={`truncate text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>{row.service}</span>
         </span>
-        <span className="grid grid-cols-2 gap-x-[16px] gap-y-[10px] pt-[12px] border-t border-solid border-[#2819100F]">
+      </div>
+
+      <div className="flex items-end justify-between gap-[12px] p-[16px] rounded-[18px] bg-paper">
+        <span className="flex flex-col gap-[2px]">
+          <span className={`text-[40px] leading-[44px] tracking-[-0.03em] ${DISPLAY} text-ink [font-variant-numeric:tabular-nums]`}>{row.amount}</span>
+          <span className={`text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>{row.stage === "auth" ? "Est. After Insurance" : "Patient Owes"}</span>
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-[14px] p-[16px] rounded-[18px] bg-paper">
+        <span className="grid grid-cols-2 gap-x-[16px] gap-y-[10px]">
           {facts.map(([k, v]) => (
             <span key={k} className="flex flex-col gap-[2px] min-w-[0px]">
               <span className={`text-[12px] leading-[16px] ${SANS} text-sub`}>{k}</span>
@@ -251,22 +258,19 @@ function JourneyPanel({ row, onClose }: { row: Row; onClose: () => void }) {
       </div>
 
       <div className="flex flex-col grow min-h-[0px] gap-[14px] p-[16px] rounded-[18px] bg-paper overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <span className="flex flex-col gap-[8px] shrink-0">
-          <span className="flex items-center justify-between">
-            <span className={`text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`}>Journey</span>
-            <span className={`text-[12px] leading-[16px] ${SANS} font-[500] text-sub [font-variant-numeric:tabular-nums]`}>
-              {steps.filter((x) => x.state === "done").length} of {steps.length} Done
-            </span>
-          </span>
-          <span className="flex gap-[3px]">
+        <span className="flex items-center gap-[12px] shrink-0">
+          <span className="flex grow gap-[3px]">
             {steps.map((x) => (
               <span key={x.label} className="grow h-[4px] rounded-[99px]" style={{ backgroundColor: x.state === "done" ? "#6E9A5B" : x.state === "now" ? "#E8A585" : "#2819100F" }} />
             ))}
           </span>
+          <span className={`shrink-0 text-[12px] leading-[16px] ${SANS} font-[500] text-sub [font-variant-numeric:tabular-nums]`}>
+            {steps.filter((x) => x.state === "done").length} of {steps.length} done
+          </span>
         </span>
-        <span className="flex flex-col">
+        <span className="flex flex-col grow">
           {steps.map((x, i) => (
-            <span key={x.label} className={`flex gap-[12px] px-[10px] -mx-[10px] rounded-[12px] ${x.state === "now" ? "bg-[#FBEDE4]" : ""}`}>
+            <span key={x.label} className={`flex grow gap-[12px] px-[10px] -mx-[10px] rounded-[12px] ${x.state === "now" ? "bg-[#FBEDE4]" : ""}`}>
               <span className="flex flex-col items-center w-[12px] shrink-0 pt-[13px]">
                 <span
                   className="w-[12px] h-[12px] shrink-0 rounded-[999px]"
@@ -301,10 +305,12 @@ function JourneyPanel({ row, onClose }: { row: Row; onClose: () => void }) {
         </span>
       </div>
 
-      <div className="flex gap-[10px] p-[14px] rounded-[16px] bg-[#F4EEDF]">
-        <span className="mt-[6px] w-[7px] h-[7px] shrink-0 rounded-[99px] bg-[#E8A585]" />
-        <span className={`text-[13px] leading-[19px] ${SANS} text-walnut`}>{row.note}</span>
-      </div>
+      {row.note && (
+        <div className="flex gap-[10px] p-[14px] rounded-[16px] bg-[#F4EEDF]">
+          <span className="mt-[6px] w-[7px] h-[7px] shrink-0 rounded-[99px] bg-[#E8A585]" />
+          <span className={`text-[13px] leading-[19px] ${SANS} text-walnut`}>{row.note}</span>
+        </div>
+      )}
 
       <div className="flex gap-[8px] shrink-0">
         <button type="button" className={`grow h-[44px] rounded-[999px] bg-ink hover:bg-[#2B1D12] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] [color:#FFFCF1]`}>

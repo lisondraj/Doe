@@ -11,11 +11,13 @@
  * Rendered as a shell-level layer (the root fills the inner shell), so it replaces the
  * integrations content panel while the Services tab is active.
  */
-import { type CSSProperties, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { OfferPill, useOffers } from "@/components/doehealth-product/DoeHealthProductOffers";
 
 /** Gap between cards, and between the grid and the detail panel. */
-const GAP = 12;
+const GAP = 8;
+/** Cards keep one height however many there are, so the list grows past its box and scrolls. */
+const CARD_H = 184;
 /** Shared timing for the grid reflow and the panel slide, so they move together. */
 const MOVE_MS = 420;
 const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
@@ -207,20 +209,163 @@ const SERVICES: Service[] = [
     referral: 1,
     plans: [],
   },
+  {
+    id: "cluster",
+    name: "Cluster headache plan",
+    price: "$325",
+    tone: "#F7DCCB",
+    chips: [{ label: "Tue", tone: "tint", calendar: true }],
+    self: "$325",
+    insurance: "14 plans",
+    length: "45 min",
+    referral: 0,
+    plans: [],
+  },
+  {
+    id: "cgrp",
+    name: "CGRP injection",
+    price: "$980",
+    tone: "#FCCFB8",
+    chips: [{ label: "Referral", tone: "outline" }, { label: "Thu", tone: "tint", calendar: true }],
+    self: "$980",
+    insurance: "9 plans",
+    length: "30 min",
+    referral: 1,
+    plans: ["BlueChoice"],
+  },
+  {
+    id: "epilepsy-review",
+    name: "Epilepsy medication review",
+    price: "$185",
+    tone: "#DCE5D0",
+    chips: [{ label: "Today", tone: "today", calendar: true }],
+    self: "$185",
+    insurance: "14 plans",
+    length: "30 min",
+    referral: 0,
+    plans: [],
+  },
+  {
+    id: "video-eeg",
+    name: "Video EEG monitoring",
+    price: "$2,400",
+    tone: "#DCE6F5",
+    chips: [{ label: "Referral", tone: "outline" }, { label: "Oct 28", tone: "tint", calendar: true }],
+    self: "$2,400",
+    insurance: "9 plans",
+    length: "72 hr",
+    referral: 2,
+    plans: ["BlueChoice"],
+  },
+  {
+    id: "ncs",
+    name: "Nerve conduction study",
+    price: "$480",
+    tone: "#F3E7C9",
+    chips: [{ label: "Wed", tone: "tint", calendar: true }],
+    self: "$480",
+    insurance: "18 plans",
+    length: "45 min",
+    referral: 1,
+    plans: [],
+  },
+  {
+    id: "concussion",
+    name: "Concussion assessment",
+    price: "$295",
+    tone: "#E9DCC7",
+    chips: [{ label: "Today", tone: "today", calendar: true }],
+    self: "$295",
+    insurance: "14 plans",
+    length: "45 min",
+    referral: 0,
+    plans: [],
+  },
+  {
+    id: "neuropsych",
+    name: "Neuropsych testing",
+    price: "$1,150",
+    tone: "#F7DCCB",
+    chips: [{ label: "Self-pay only", tone: "dark" }, { label: "Request only", tone: "outline" }],
+    self: "$1,150",
+    insurance: "None",
+    length: "3 hr",
+    referral: 1,
+    plans: [],
+  },
+  {
+    id: "tremor",
+    name: "Tremor evaluation",
+    price: "$325",
+    tone: "#DCE5D0",
+    chips: [{ label: "Fri", tone: "tint", calendar: true }],
+    self: "$325",
+    insurance: "14 plans",
+    length: "60 min",
+    referral: 1,
+    plans: [],
+  },
+  {
+    id: "parkinson",
+    name: "Parkinson’s follow-up",
+    price: "$210",
+    tone: "#F3E7C9",
+    chips: [{ label: "Thu", tone: "tint", calendar: true }],
+    self: "$210",
+    insurance: "14 plans",
+    length: "30 min",
+    referral: 0,
+    plans: ["Tricare"],
+  },
+  {
+    id: "lp",
+    name: "Lumbar puncture",
+    price: "$860",
+    tone: "#DCE6F5",
+    chips: [{ label: "Referral", tone: "outline" }],
+    self: "$860",
+    insurance: "9 plans",
+    length: "60 min",
+    referral: 2,
+    plans: ["BlueChoice"],
+  },
+  {
+    id: "vertigo",
+    name: "Vertigo evaluation",
+    price: "$275",
+    tone: "#FCCFB8",
+    chips: [{ label: "Today", tone: "today", calendar: true }],
+    self: "$275",
+    insurance: "18 plans",
+    length: "45 min",
+    referral: 0,
+    plans: [],
+  },
+  {
+    id: "second-opinion",
+    name: "Second opinion consult",
+    price: "$400",
+    tone: "#E9DCC7",
+    chips: [{ label: "Self-pay only", tone: "dark" }],
+    self: "$400",
+    insurance: "None",
+    length: "60 min",
+    referral: 0,
+    plans: [],
+  },
 ];
 
-/** Position and size of a card in a grid of `cols` columns and `rows` rows, as calc() so it can transition. */
-function cellStyle(index: number, cols: number, rows: number): CSSProperties {
+/** Position of a card in a grid of `cols` columns with fixed-height rows, as calc() so it can transition. */
+function cellStyle(index: number, cols: number): CSSProperties {
   const col = index % cols;
   const row = Math.floor(index / cols);
   const w = `(100% - ${(cols - 1) * GAP}px) / ${cols}`;
-  const h = `(100% - ${(rows - 1) * GAP}px) / ${rows}`;
   const move = `${MOVE_MS}ms ${EASE}`;
   return {
     left: `calc(${col} * ((${w}) + ${GAP}px))`,
-    top: `calc(${row} * ((${h}) + ${GAP}px))`,
+    top: `${row * (CARD_H + GAP)}px`,
     width: `calc(${w})`,
-    height: `calc(${h})`,
+    height: `${CARD_H}px`,
     transition: `left ${move}, top ${move}, width ${move}, height ${move}, box-shadow 200ms ease`,
     willChange: "left, top, width, height",
   };
@@ -254,7 +399,7 @@ function ServiceCard({
   style: CSSProperties;
   onToggle: () => void;
 }) {
-  const surface = s.muted ? "bg-sand border border-solid border-[#2819101A]" : "[background-color:var(--color-paper)] border border-solid border-[#2819101A]";
+  const surface = s.muted ? "bg-sand" : "[background-color:var(--color-paper)]";
   const ring = selected ? "[box-shadow:#281910_0px_0px_0px_1.5px_inset]" : "";
 
   return (
@@ -418,10 +563,27 @@ function ServiceDetail({ service: s, onRemove }: { service: Service; onRemove: (
 export function DoeHealthProductServicesPage() {
   const [picked, setPicked] = useState<Set<string>>(() => new Set());
   const [scrolled, setScrolled] = useState(false);
+  const [more, setMore] = useState(true);
+  const listRef = useRef<HTMLDivElement>(null);
   const selected = SERVICES.filter((s) => picked.has(s.id));
   const count = selected.length;
   const cols = count > 0 ? 3 : 4;
   const rows = Math.ceil(SERVICES.length / cols);
+
+  const measure = () => {
+    const el = listRef.current;
+    if (!el) return;
+    setScrolled(el.scrollTop > 0);
+    setMore(el.scrollHeight - el.clientHeight - el.scrollTop > 1);
+  };
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [rows]);
 
   const toggle = (id: string) =>
     setPicked((prev) => {
@@ -502,35 +664,28 @@ export function DoeHealthProductServicesPage() {
             <div className="text-[14px] leading-[18px] font-['DM_Sans',system-ui,sans-serif] font-[500] text-walnut">Self-pay prices</div>
           </div>
         </div>
-        <div
-          className="[width:100%] grow min-h-[0px] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden mt-[-10px] mb-[-10px] relative"
-          onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 0)}
-        >
-          {SERVICES.map((s, i) => (
-            <ServiceCard
-              key={s.id}
-              service={s}
-              selected={picked.has(s.id)}
-              style={cellStyle(i, cols, rows)}
-              onToggle={() => toggle(s.id)}
-            />
-          ))}
+        <div className="relative flex [width:100%] grow min-h-[0px] p-[8px] rounded-[18px] bg-[#F4EEDF] overflow-hidden">
+          <div ref={listRef} className="[width:100%] h-full min-h-[0px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onScroll={measure}>
+            <div className="relative" style={{ height: rows * CARD_H + (rows - 1) * GAP }}>
+              {SERVICES.map((s, i) => (
+                <ServiceCard key={s.id} service={s} selected={picked.has(s.id)} style={cellStyle(i, cols)} onToggle={() => toggle(s.id)} />
+              ))}
+            </div>
+          </div>
           <div
-            className="absolute top-[0px] left-[0px] right-[0px] h-[72px] pointer-events-none transition-opacity duration-200"
-            style={{ backgroundImage: 'linear-gradient(in oklab 180deg, oklab(99% -0.001 0.015) 0%, oklab(99% -0.001 0.015) 10%, oklab(99% -0.001 0.015 / 75.3%) 32%, oklab(99% -0.001 0.015 / 44%) 58%, oklab(99% -0.001 0.015 / 15.7%) 82%, oklab(99% -0.001 0.015 / 0%) 100%)', opacity: scrolled ? 1 : 0 }}
+            className="absolute top-[8px] left-[8px] right-[8px] h-[72px] rounded-t-[12px] pointer-events-none transition-opacity duration-200"
+            style={{ backgroundImage: 'linear-gradient(180deg, #F4EEDF 0%, #F4EEDF 10%, #F4EEDFC0 32%, #F4EEDF70 58%, #F4EEDF28 82%, #F4EEDF00 100%)', opacity: scrolled ? 1 : 0 }}
           />
           <div
-            className="absolute bottom-[0px] left-[0px] right-[0px] h-[72px] pointer-events-none"
-            style={{ backgroundImage: 'linear-gradient(in oklab 0deg, oklab(99% -0.001 0.015) 0%, oklab(99% -0.001 0.015) 10%, oklab(99% -0.001 0.015 / 75.3%) 32%, oklab(99% -0.001 0.015 / 44%) 58%, oklab(99% -0.001 0.015 / 15.7%) 82%, oklab(99% -0.001 0.015 / 0%) 100%)' }}
+            className="absolute bottom-[8px] left-[8px] right-[8px] h-[72px] rounded-b-[12px] pointer-events-none transition-opacity duration-200"
+            style={{ backgroundImage: 'linear-gradient(0deg, #F4EEDF 0%, #F4EEDF 10%, #F4EEDFC0 32%, #F4EEDF70 58%, #F4EEDF28 82%, #F4EEDF00 100%)', opacity: more ? 1 : 0 }}
           />
-          <div className={`absolute top-[0px] left-[0px] right-[0px] h-[6px] pointer-events-none transition-opacity duration-200 ${scrolled ? "opacity-100" : "opacity-0"} [background:radial-gradient(rgba(40,25,16,0.13)_0.9px,transparent_1.1px)_8px_14px/16px_16px,none_0%_0%_rgb(255,252,241)]`} />
-          <div className="absolute left-[0px] right-[0px] h-[6px] pointer-events-none [background:radial-gradient(rgba(40,25,16,0.13)_0.9px,transparent_1.1px)_8px_0px/16px_16px,none_0%_0%_rgb(255,252,241)] bottom-[0px]" />
-          <div className={`absolute top-[12px] left-[calc(50%-12px)] w-[24px] h-[24px] flex items-center justify-center pointer-events-none transition-opacity duration-200 ${scrolled ? "opacity-100" : "opacity-0"}`}>
+          <div className={`absolute top-[16px] left-[calc(50%-12px)] w-[24px] h-[24px] flex items-center justify-center pointer-events-none transition-opacity duration-200 ${scrolled ? "opacity-100" : "opacity-0"}`}>
             <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={svgBase}>
               <path d="M3.5 10 8 5.5 12.5 10" fill="none" stroke="#281910" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <div className="absolute bottom-[12px] left-[calc(50%-12px)] w-[24px] h-[24px] flex items-center justify-center pointer-events-none">
+          <div className={`absolute bottom-[16px] left-[calc(50%-12px)] w-[24px] h-[24px] flex items-center justify-center pointer-events-none transition-opacity duration-200 ${more ? "opacity-100" : "opacity-0"}`}>
             <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style={svgBase}>
               <path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="#281910" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

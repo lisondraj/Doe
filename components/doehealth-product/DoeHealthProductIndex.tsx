@@ -965,7 +965,7 @@ const MARK = `w-[18px] h-[18px] shrink-0 flex items-center justify-center rounde
 /** A file Muse handed over with the booking. */
 function Attached({ children }: { children: ReactNode }) {
   return (
-    <span className={`flex items-center gap-[6px] h-[32px] min-w-[0px] px-[10px] rounded-[10px] bg-[#FFFCF1] border border-solid border-[#2819101A] text-[12px] leading-[16px] ${SANS} font-[500] text-walnut`}>
+    <span className={`flex items-center gap-[6px] h-[32px] min-w-[0px] px-[10px] rounded-[10px] bg-[#F4EEDF] text-[12px] leading-[16px] ${SANS} font-[500] text-walnut`}>
       <Glyph size={18}>
         <path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1ZM14 3v5h5" />
       </Glyph>
@@ -1001,36 +1001,37 @@ const BOOKING_STEPS: { title: string; detail?: ReactNode; states?: string[]; fil
 function BookingNotice() {
   const [confirmed, setConfirmed] = useState(false);
   return (
-    <div className="absolute top-[28px] right-[28px] z-[2] flex flex-col w-[360px] rounded-[24px] bg-paper border border-solid border-[#2819100F] shadow-[0_18px_48px_-24px_#140C0459] overflow-hidden">
-      <div className="flex items-center gap-[12px] px-[18px] pt-[18px]">
-        <Avatar initials="" size={40} tone="#F3E7C9" />
+    <div className="absolute top-[28px] right-[28px] z-[2] flex flex-col w-[380px] gap-[12px] p-[20px] rounded-[28px] bg-[#FAF6EC] shadow-[0_18px_48px_-24px_#140C0459]">
+      <div className="flex items-center gap-[12px]">
+        <Avatar initials="" size={44} tone="#F3E7C9" />
         <span className="flex flex-col grow min-w-[0px]">
-          <span className={`truncate ${TITLE}`}>James Lisondra</span>
+          <span className={`truncate text-[26px] leading-[30px] tracking-[-0.02em] ${DISPLAY} text-walnut`}>James Lisondra</span>
           <span className={`truncate ${MUTED}`}>Connected through Muse</span>
         </span>
         {confirmed && <Chip dot={GREEN} tone="#E3E9D9">Booked</Chip>}
       </div>
 
-      <div className="mx-[18px] mt-[14px] flex items-center justify-between gap-[10px] px-[14px] py-[12px] rounded-[16px]" style={{ backgroundColor: WELL }}>
-        <span className={`truncate text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>Worsening Headache</span>
+      <div className="flex items-center gap-[12px] p-[14px] rounded-[18px] bg-paper">
+        <span className="w-[10px] h-[36px] shrink-0 rounded-[99px] bg-[#E8A585]" />
+        <span className="flex flex-col grow min-w-[0px] gap-[2px]">
+          <span className={`text-[12px] leading-[16px] ${SANS} font-[500] text-sub`}>Dr. Brooks</span>
+          <span className={`truncate text-[18px] leading-[22px] tracking-[-0.01em] ${DISPLAY} text-walnut`}>Worsening Headache</span>
+        </span>
         <span className={`shrink-0 text-[18px] leading-[22px] ${DISPLAY} text-walnut`}>9:30 am</span>
       </div>
-      <div className="mx-[18px] mt-[8px] flex items-center px-[14px] py-[10px] rounded-[16px] border border-solid border-[#2819101F]">
-        <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>Dr. Brooks</span>
-      </div>
 
-      <div className="flex flex-col px-[18px] pt-[14px]">
+      <div className="flex flex-col p-[16px] rounded-[18px] bg-paper">
         {BOOKING_STEPS.map((s, i) => (
           <div key={s.title} className="flex gap-[12px]">
             <span className="flex flex-col items-center">
-              <span className="w-[22px] h-[22px] shrink-0 flex items-center justify-center rounded-[999px] bg-ink [color:#FFFCF1]">
+              <span className="w-[22px] h-[22px] shrink-0 flex items-center justify-center rounded-[999px] bg-[#6E9A5B] [color:#FFFCF1]">
                 <Check size={12} />
               </span>
-              {i < BOOKING_STEPS.length - 1 && <span className="grow w-[1.5px] my-[3px] bg-[#2819101F]" />}
+              {i < BOOKING_STEPS.length - 1 && <span className="grow w-[1.5px] my-[3px] bg-[#6E9A5B]" />}
             </span>
             <span className={`flex flex-col gap-[5px] grow min-w-[0px] ${i < BOOKING_STEPS.length - 1 ? "pb-[14px]" : ""}`}>
               <span className="flex items-center justify-between gap-[8px] min-h-[22px]">
-                <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>{s.title}</span>
+                <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>{s.title}</span>
                 {s.states && (
                   <span className="flex items-center gap-[4px]">
                     {s.states.map((st) => (
@@ -1039,7 +1040,7 @@ function BookingNotice() {
                   </span>
                 )}
               </span>
-              {s.detail && <span className={`text-[12px] leading-[16px] ${SANS} font-[500] text-sub`}>{s.detail}</span>}
+              {s.detail && <span className={`text-[13px] leading-[18px] ${SANS} text-sub`}>{s.detail}</span>}
               {s.file && (
                 <span className="flex">
                   <Attached>{s.file}</Attached>
@@ -1050,17 +1051,15 @@ function BookingNotice() {
         ))}
       </div>
 
-      <div className="p-[18px] pt-[16px]">
-        <button
-          type="button"
-          disabled={confirmed}
-          onClick={() => setConfirmed(true)}
-          className={`w-full h-[44px] flex items-center justify-center gap-[8px] rounded-[999px] text-[15px] leading-[20px] ${SANS} font-[500] transition-colors duration-150 ${confirmed ? "bg-[#E3E9D9] text-walnut cursor-default" : "bg-ink [color:#FFFCF1] hover:bg-[#2B1D12]"}`}
-        >
-          {confirmed && <Check size={15} />}
-          {confirmed ? "Appointment confirmed" : "Confirm appointment"}
-        </button>
-      </div>
+      <button
+        type="button"
+        disabled={confirmed}
+        onClick={() => setConfirmed(true)}
+        className={`w-full h-[44px] flex items-center justify-center gap-[8px] rounded-[999px] text-[14px] leading-[18px] ${SANS} font-[500] transition-colors duration-150 ${confirmed ? "bg-[#E3E9D9] text-walnut cursor-default" : "bg-ink [color:#FFFCF1] hover:bg-[#2B1D12]"}`}
+      >
+        {confirmed && <Check size={15} />}
+        {confirmed ? "Appointment confirmed" : "Confirm appointment"}
+      </button>
     </div>
   );
 }

@@ -1,11 +1,18 @@
+import dynamic from "next/dynamic";
+
 import { DoeHealthBlogFilm } from "@/components/doehealth-blog/DoeHealthBlogFilm";
 import { DoeHealthBlogListen } from "@/components/doehealth-blog/DoeHealthBlogListen";
 import { DoeHealthBlogPlaceholder, articleBoxColors } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
-import { DoeHealthBlogUiFigure } from "@/components/doehealth-blog/DoeHealthBlogUiFigure";
 import { DoeHealthBlogVideo } from "@/components/doehealth-blog/DoeHealthBlogVideo";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import type { DoeHealthBlogArticle as Article, DoeHealthBlogBlock } from "@/lib/doehealth/doehealth-blog-articles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
+
+/** The films and the live product pages load on the client only, after the article text. */
+const DoeHealthBlogProductView = dynamic(
+  () => import("@/components/doehealth-blog/DoeHealthBlogProductView").then((mod) => mod.DoeHealthBlogProductView),
+  { ssr: false },
+);
 
 function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: Article }) {
   switch (block.type) {
@@ -27,10 +34,62 @@ function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: 
           <figcaption>{block.caption}</figcaption>
         </figure>
       );
-    case "ui":
+    case "view":
       return (
         <figure className="doehealth-blog-article__figure">
-          <DoeHealthBlogUiFigure scene={block.scene} dots={block.dots} tone={block.tone} />
+          {/* Plain box behind the view while it loads; the film draws its own beige, the product pages their tone. */}
+          <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doehealth-blog-article__figure-art" style={{ background: "#F4EEDF" }}>
+            <DoeHealthBlogProductView view={block.view} />
+          </div>
+          <figcaption>{block.caption}</figcaption>
+        </figure>
+      );
+    case "investor":
+      return (
+        <aside className="doehealth-blog-article__investor" aria-label="For investors">
+          <p className="doehealth-blog-article__investor-eyebrow">For investors</p>
+          <h3 className={p22Mackinac.className}>{block.title}</h3>
+          <dl className="doehealth-blog-article__investor-stats">
+            {block.stats.map((stat) => (
+              <div key={stat.label}>
+                <dt>{stat.label}</dt>
+                <dd className={p22Mackinac.className}>{stat.value}</dd>
+              </div>
+            ))}
+          </dl>
+          {block.text ? <p>{block.text}</p> : null}
+          {block.points ? (
+            <ul>
+              {block.points.map((point) => (
+                <li key={point.lead}>
+                  <strong>{point.lead}:</strong> {point.text}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </aside>
+      );
+    case "timeline":
+      return (
+        <figure className="doehealth-blog-article__figure doehealth-blog-article__timeline">
+          <ol>
+            {block.steps.map((step) => (
+              <li key={step.when} data-seed={step.seed ? "" : undefined}>
+                <span className="doehealth-blog-article__timeline-when">{step.when}</span>
+                <div>
+                  <h4 className={p22Mackinac.className}>{step.title}</h4>
+                  <ul>
+                    {step.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <p>
+                    <span>Unlocks</span> {step.unlock}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
           <figcaption>{block.caption}</figcaption>
         </figure>
       );

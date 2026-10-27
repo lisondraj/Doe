@@ -1,37 +1,71 @@
+import type { DoeHealthProductTab } from "@/components/doehealth-product/DoeHealthProductHome";
+import { EARLYPREVIEW_COMPLIANCE_PATH } from "@/lib/earlypreview/earlypreview-compliance-copy";
 import type { EarlyPreviewFilmId } from "@/lib/earlypreview/earlypreview-films";
+import {
+  EARLYPREVIEW_MARKET_MODEL as MODEL,
+  EARLYPREVIEW_MARKET_PRICING as PRICING,
+  EARLYPREVIEW_MARKET_TARGETS as T,
+} from "@/lib/earlypreview/earlypreview-market-copy";
 
 export const DOEHEALTH_BLOG_PATH = "/news";
 
 /** Doe brand colours only — three beige shades for hero art, three accent tones for body figures. */
 export type DoeHealthBlogPlaceholderTone = "sand" | "panel" | "cream" | "gold" | "clay" | "umber";
 
-/** The dot designs behind an article's UI figures, after video1's backdrops. Each figure in one article uses a different one. */
+/** The dot designs behind an article's product figures, after video1's backdrops. Each figure in one article uses a different one. */
 export type DoeHealthBlogDots = "wave" | "tide" | "halftone" | "curtain" | "rings" | "sphere";
 
-/** Animated product scenes drawn in the video1 UI (components/doehealth-blog/scenes). */
-export type DoeHealthBlogSceneId =
-  | "hospital-network"
-  | "hospital-permissions"
-  | "hospital-pathway"
-  | "hospital-agents"
-  | "aesthetic-request"
-  | "aesthetic-packages"
-  | "aesthetic-calendar"
-  | "aesthetic-capacity"
-  | "concierge-profile"
-  | "concierge-membership"
-  | "concierge-connected"
-  | "concierge-agents"
-  | "dental-plan"
-  | "npp-scope"
-  | "homecare-coverage"
-  | "homecare-visit";
+/**
+ * A stretch of a /video1–/video6 section (by composition id, e.g. "Video2Network"), looping between two frames. `zoom`
+ * pushes in on one point of the 1920×1080 frame (as fractions), so one card or one corner of the shell fills the box.
+ */
+export type DoeHealthBlogFilmView = {
+  kind: "film";
+  film: string;
+  from: number;
+  to: number;
+  /** The frame shown before the film plays. Defaults to `from`. */
+  still?: number;
+  zoom?: { s: number; x: number; y: number };
+};
+
+/**
+ * A live /doehealthproduct tab. `sit` frames it: the whole product in its brown shell, its paper page alone, or its
+ * top-left (br) or top-right (bl) corner running off the box. A cursor clicks each `clicks` target in turn, found by the
+ * text it shows (`nth` for a repeated label), and holds `hold` ms on what the click opened.
+ */
+export type DoeHealthBlogAppView = {
+  kind: "app";
+  tab: DoeHealthProductTab;
+  sit: "full" | "inner" | "br" | "bl";
+  tone: DoeHealthBlogPlaceholderTone;
+  dots: DoeHealthBlogDots;
+  clicks: readonly { text: string; nth?: number; hold?: number }[];
+  /** Where the cursor starts, in the artboard's 1440×900 pixels. */
+  start?: { x: number; y: number };
+};
+
+export type DoeHealthBlogView = DoeHealthBlogFilmView | DoeHealthBlogAppView;
 
 export type DoeHealthBlogBlock =
   | { type: "paragraph"; text: string }
   | { type: "heading"; text: string }
   | { type: "figure"; tone: DoeHealthBlogPlaceholderTone; caption: string }
-  | { type: "ui"; scene: DoeHealthBlogSceneId; dots: DoeHealthBlogDots; tone: DoeHealthBlogPlaceholderTone; caption: string }
+  | { type: "view"; view: DoeHealthBlogView; caption: string }
+  /** A boxed note for investors: a title, a row of figures, and the points behind them. */
+  | {
+      type: "investor";
+      title: string;
+      stats: readonly { value: string; label: string }[];
+      text?: string;
+      points?: readonly { lead: string; text: string }[];
+    }
+  /** A quarter-by-quarter plan, each step with what it delivers and what it unlocks; `seed` marks the Seed quarter. */
+  | {
+      type: "timeline";
+      caption: string;
+      steps: readonly { when: string; title: string; items: readonly string[]; unlock: string; seed?: boolean }[];
+    }
   | { type: "quote"; text: string }
   | { type: "list"; items: readonly { lead: string; text: string }[] };
 
@@ -91,6 +125,12 @@ export type DoeHealthBlogArticle = {
   blocks: readonly DoeHealthBlogBlock[];
 };
 
+/** The investor figures, from the /earlypreview market model, so every article quotes the same plan. */
+const n = (value: number) => value.toLocaleString("en-US");
+const SEED_GROUPS = PRICING.seedPlans.canada.groups + PRICING.seedPlans.us.groups;
+const SEED_SEATS = PRICING.seedPlans.canada.groupSeats + PRICING.seedPlans.us.groupSeats;
+const GROUP_ARR_SHARE = Math.round(((SEED_SEATS * PRICING.founding.group * 12) / 1000 / T.arrK) * 100);
+
 const PERSONAL_AGENTS: DoeHealthBlogArticle = {
   slug: "healthcare-in-the-era-of-personal-agents",
   film: { id: "hero", thumbnail: "/earlypreview/thumbs/hero.jpg", label: "Healthcare in the Era of Personal Agents" },
@@ -125,9 +165,9 @@ const PERSONAL_AGENTS: DoeHealthBlogArticle = {
       text: "Those agents will not browse the way people do. They do not skim a homepage, notice a phone number in the footer, and decide to call between meetings. They look for structured answers: which provider sees this condition, at this age, under this plan, at this location, with an opening this week. When those answers are missing, the agent moves on, and so does the patient.",
     },
     {
-      type: "figure",
-      tone: "gold",
-      caption: "A personal agent asks the same questions a patient would, but it needs the answers in a form it can read.",
+      type: "view",
+      view: { kind: "film", film: "Video1Structured", from: 100, to: 192 },
+      caption: "Today the parent's agent asks for a pediatric ENT near Mission that takes Harbor Mutual, and has nothing to read. It comes back with a phone number.",
     },
     {
       type: "paragraph",
@@ -177,13 +217,25 @@ const PERSONAL_AGENTS: DoeHealthBlogArticle = {
       ],
     },
     {
+      type: "view",
+      view: {
+        kind: "app",
+        tab: "integrations",
+        sit: "full",
+        tone: "sand",
+        dots: "halftone",
+        clicks: [{ text: "Agents", hold: 2200 }, { text: "Messages", hold: 2000 }, { text: "Needs you", hold: 1800 }],
+      },
+      caption: "Dr. Brooks' Index on Doe: what needs the team, the schedule, agent requests, services, and locations, each row live for agents and opening in place.",
+    },
+    {
       type: "paragraph",
       text: "With that index in place, the same request reads very differently. The agent understands that ear tubes means ear tube insertion, finds a pediatric ENT a few blocks away who is in network with Harbor Mutual, notes that a referral is needed and can be requested automatically, and offers Wednesday at 9:40. The parent says yes. The visit is on the calendar before the coffee is cold.",
     },
     {
-      type: "figure",
-      tone: "clay",
-      caption: "The index turns a practice's tacit knowledge into answers an agent can act on.",
+      type: "view",
+      view: { kind: "film", film: "Video1Structured", from: 660, to: 832 },
+      caption: "With the index in place, the same request finds Atlantic Pediatric ENT, in network and a few blocks away, and the agent books Wednesday at 9:40.",
     },
     { type: "heading", text: "From search to the whole visit." },
     {
@@ -210,6 +262,23 @@ const PERSONAL_AGENTS: DoeHealthBlogArticle = {
     {
       type: "quote",
       text: "Practices and their patients should own their health intelligence, not borrow it.",
+    },
+    {
+      type: "investor",
+      title: "A two-sided network, started from both sides at once.",
+      stats: [
+        { value: n(T.indexedToday), label: "practices already in the Doe Index" },
+        { value: n(T.indexed), label: "practices indexed by Seed, Q2 2028" },
+        { value: `$${T.arrK}K`, label: "ARR target at Seed, at founding prices" },
+        { value: MODEL.tam.display, label: "the layer across healthcare" },
+      ],
+      text: "The shift is not hypothetical. More than 10 million people in the U.S. and Canada set up Meta's Muse in about six weeks, 43% of U.S. adults asked AI a health question in the past year, and 94% of health systems already using AI agents use them for appointments. Patients are arriving with agents; practices are not yet readable by them. Doe is the layer in between.",
+      points: [
+        { lead: "Business model", text: `free to claim, paid to connect. Paid plans start at $${T.fromMo} a location a month at founding prices ($${PRICING.regular.basic} regular), multi-site groups pay per provider, and agent developers integrate once through one API.` },
+        { lead: "Network effect", text: "every practice that claims its page makes Doe more useful to agents, and every request an agent cannot complete shows the next practice the patients it is missing." },
+        { lead: "Defensibility", text: "each practice gets its own intelligence model and index, improved by the work its own agents complete. That knowledge compounds with every visit and does not move to a competitor." },
+        { lead: "Path to Seed", text: `Toronto proves the model first, with New York and San Francisco in parallel: ${n(T.claimed)} practices claimed, ${n(T.paying)} paying locations, and ${T.requestsK}K agent requests a month by Q2 2028.` },
+      ],
     },
     { type: "heading", text: "What we are building toward." },
     {
@@ -662,11 +731,9 @@ const HEALTH_SYSTEM_MAPPED: DoeHealthBlogArticle = {
       text: "A health system is not one front door. It is dozens of departments across several campuses, plus partner organizations, each with its own scheduling rules. Personal agents are good at following rules and poor at guessing them. The phone tree, the PDF referral form, and the scheduler who knows that echo only runs on East Campus on Tuesdays are invisible to them.",
     },
     {
-      type: "ui",
-      scene: "hospital-network",
-      dots: "wave",
-      tone: "cream",
-      caption: "The Network page: every campus, department, and partner on one map, with the pathway a cardiac workup follows across them.",
+      type: "view",
+      view: { kind: "film", film: "Video6Network", from: 60, to: 470 },
+      caption: "Bayview Health on Doe: every location, department, specialty, program, and provider in one network. A family's agent asks for neurology care for Ava, finds the epilepsy program, and books the EEG.",
     },
     { type: "heading", text: "An intelligent map of the system." },
     {
@@ -691,11 +758,9 @@ const HEALTH_SYSTEM_MAPPED: DoeHealthBlogArticle = {
       ],
     },
     {
-      type: "ui",
-      scene: "hospital-permissions",
-      dots: "tide",
-      tone: "sand",
-      caption: "Agent permissions, set per department. Pediatric Surgery moves to request only and Oncology Infusion stops accepting agents, live.",
+      type: "view",
+      view: { kind: "film", film: "Video6Govern", from: 60, to: 430 },
+      caption: "Agent access, set by department. Cardiology's panel opens, appointment coordination is switched on, and the policy is saved, live for every agent at once.",
     },
     {
       type: "paragraph",
@@ -707,26 +772,39 @@ const HEALTH_SYSTEM_MAPPED: DoeHealthBlogArticle = {
       text: "The hardest part of hospital care is rarely the first appointment. It is everything after: the referral that loses its notes on the way to the specialist, the imaging order the next department cannot see, the rehab program that starts without the discharge summary.",
     },
     {
-      type: "ui",
-      scene: "hospital-pathway",
-      dots: "halftone",
-      tone: "panel",
-      caption: "Rosa Delgado's pathway: referral, consult, and echo checked off, the notes carried to each step, and rehab booked by her agent.",
+      type: "view",
+      view: { kind: "film", film: "Video6Coordinate", from: 60, to: 340 },
+      caption: "Robert Mills' journey across Bayview: emergency, cardiology, imaging, and discharge on one line, then a discharge plan whose every step carries its notes to the next.",
     },
     {
       type: "paragraph",
       text: "Doe follows the patient across departments, locations, and organizations as one pathway. Each step carries what the next step needs: the referral letter, the consult notes, the order, the coverage. When a step crosses to a partner organization, the context crosses with it.",
     },
     {
-      type: "ui",
-      scene: "hospital-agents",
-      dots: "rings",
-      tone: "gold",
-      caption: "Rosa's personal agent and the hospital's cardiology scheduling agent arrange her follow-up and share it with the partner rehab center.",
+      type: "view",
+      view: { kind: "film", film: "Video2Coordinate", from: 430, to: 760 },
+      caption: "After discharge, Daniel's agent works through the plan with the hospital: a cardiology follow-up booked, a weight check-in watched, the prescription ready, and rehab intake set up with the partner clinic.",
     },
     {
       type: "quote",
       text: "Patients should not have to carry their own records from one department to the next. Neither should their agents.",
+    },
+    {
+      type: "investor",
+      title: "Practices first. Then the whole system.",
+      stats: [
+        { value: "$400K+", label: "enterprise ACV, hospitals and health systems" },
+        { value: T.lois, label: "enterprise pilots by Seed, Q2 2028" },
+        { value: "Type II", label: "SOC 2 report by Seed, for hospital vendor reviews" },
+        { value: "94%", label: "of health systems using AI agents use them for appointments" },
+      ],
+      text: "Hospitals are the largest contracts in the market and the slowest to sign, so Doe does not start with them. Practices of one to ten providers build the network first. Hospitals then buy the same map, permissions, and pathways at enterprise scale, with the security record to pass their reviews.",
+      points: [
+        { lead: "Land", text: "clinics at $1–3K a year build the index and the agent traffic, Toronto first and then the U.S." },
+        { lead: "Expand", text: "hospital LOIs from Q4 2027, once SOC 2 Type I is in hand, and hospital security reviews through the Type II window." },
+        { lead: "Pull", text: "partner organizations on a hospital's map, rehab centres, labs, and imaging, are practices Doe can bring onto the network next." },
+        { lead: "Readiness", text: "PHIPA in Q2 2027, HIPAA BAAs in Q3 2027, SOC 2 Type I in Q4 2027 and Type II by Seed, laid out in our Compliance & Security memo." },
+      ],
     },
     { type: "heading", text: "Ready before the agents arrive." },
     {
@@ -764,11 +842,9 @@ const AESTHETIC_FRONT_DOOR: DoeHealthBlogArticle = {
       text: "By 2027 that kind of request will be routine. The practices an agent can read will be the ones it recommends. The rest will be skipped, however good their work is.",
     },
     {
-      type: "ui",
-      scene: "aesthetic-request",
-      dots: "halftone",
-      tone: "clay",
-      caption: "One request with two services, a budget, and a day. The agent finds a practice that can do both on Saturday and books them back to back.",
+      type: "view",
+      view: { kind: "film", film: "Video5Reach", from: 60, to: 460 },
+      caption: "Simone's agent asks for a Toronto clinic that treats acne scarring on darker skin with openings this month. Doe matches the practices that can, down to the treatment and the provider.",
     },
     { type: "heading", text: "Reach more patients." },
     {
@@ -781,11 +857,9 @@ const AESTHETIC_FRONT_DOOR: DoeHealthBlogArticle = {
       text: "Aesthetic practices rarely sell one visit at a time. They sell a series of facials, a laser package, a membership, a program timed to a wedding. Those offers are often the best value for patients and the best business for the practice, and they are the hardest for an agent to find when they live in a social post or a front desk script.",
     },
     {
-      type: "ui",
-      scene: "aesthetic-packages",
-      dots: "wave",
-      tone: "cream",
-      caption: "The Packages page. Every bundle has a price and a switch for agents; turning on Bridal Skin Prep makes it bookable right away.",
+      type: "view",
+      view: { kind: "film", film: "Video5Packages", from: 60, to: 340 },
+      caption: "Building a package on Doe: the Acne Scar Program bundles RF microneedling, subcision, and TCA CROSS at one price, and is published for agents with one click.",
     },
     {
       type: "paragraph",
@@ -806,26 +880,45 @@ const AESTHETIC_FRONT_DOOR: DoeHealthBlogArticle = {
       text: "Every practice has gaps: a cancellation at 10, an empty Wednesday morning, a new injector with a light schedule. Those hours are lost revenue, and today the only way to fill them is a last-minute email blast. Doe shows availability to agents in real time, so the open slot on Tuesday at 1 PM is visible to every agent looking for that service that week.",
     },
     {
-      type: "ui",
-      scene: "aesthetic-calendar",
-      dots: "curtain",
-      tone: "sand",
-      caption: "This week's calendar. Open slots fill as patients' agents book them, each one a new patient.",
+      type: "view",
+      view: { kind: "film", film: "Video5Capacity", from: 60, to: 300 },
+      caption: "This week's calendar. A cancelled 2:30 is opened back up for agents in two clicks, with the services it is good for.",
     },
     {
       type: "paragraph",
       text: "When there is more capacity than demand, a practice can attach an offer to just those hours: a same-week price, weekdays only, ending Friday. Agents see it and pass it to patients who asked for that service. The offer stops once the hours are full.",
     },
     {
-      type: "ui",
-      scene: "aesthetic-capacity",
-      dots: "tide",
-      tone: "gold",
-      caption: "Open capacity for the next seven days, and a same-week offer switched on for agents to fill it.",
+      type: "view",
+      view: {
+        kind: "app",
+        tab: "offers",
+        sit: "bl",
+        tone: "gold",
+        dots: "tide",
+        clicks: [{ text: "Preview", hold: 2600 }, { text: "Edit", hold: 1000 }, { text: "Free add-on", nth: 1, hold: 1500 }, { text: "Bundle", nth: 1, hold: 1500 }],
+      },
+      caption: "Offers on Doe. Each offer is published to patients' agents with the patients it is meant for, and shows how many agents matched it, how many patients saw it, and the visits it booked.",
     },
     {
       type: "quote",
       text: "The best time to fill an empty chair is before it is empty.",
+    },
+    {
+      type: "investor",
+      title: "Private pay is the short sales cycle.",
+      stats: [
+        { value: "65%", label: "of paying clinics at Seed are private-pay" },
+        { value: `$${T.fromMo}`, label: "a location a month to start, at founding prices" },
+        { value: `$${PRICING.founding.one}`, label: "a provider a month for Doe One, founding" },
+        { value: `$${PRICING.upsideArrK}K`, label: "ARR at Seed if Doe One's beta converts" },
+      ],
+      text: "Aesthetic, dermatology, and plastic surgery practices are where agent booking starts first: most services are elective, priced up front, and paid out of pocket, and one owner decides and pays, so the sale is short. They also see the return in plain numbers, because every offer reports the agents it matched, the patients who saw it, and the visits it booked.",
+      points: [
+        { lead: "Measurable return", text: "an empty chair filled through an agent is revenue the practice can count, which makes renewal a simple decision." },
+        { lead: "Expansion", text: "Doe One runs the whole visit for a provider, from booking to follow-up, and is the upside on top of the base plan." },
+        { lead: "Reach", text: "associations, conferences, and the practices that already share an owner in the Doe Index." },
+      ],
     },
     { type: "heading", text: "The practice stays in charge." },
     {
@@ -863,11 +956,9 @@ const MEMBERSHIP_MEDICINE: DoeHealthBlogArticle = {
       text: "That only works if the agent can read the practice. A concierge model is a set of specific promises: response times, visit lengths, panel size, home visits, and what the fee covers. When those promises are written down clearly, an agent can explain them to the patient. When they are buried in a brochure, the agent moves on.",
     },
     {
-      type: "ui",
-      scene: "concierge-profile",
-      dots: "wave",
-      tone: "cream",
-      caption: "The practice profile agents read: what sets the practice apart, who it cares for, and its physicians.",
+      type: "view",
+      view: { kind: "film", film: "Video3Connect", from: 420, to: 860 },
+      caption: "Alex's agent looks for a New York physician with same-week access and an annual health program. Of 388 practices, Hudson Concierge Medicine fits, and the agent books the intro call.",
     },
     { type: "heading", text: "Make the model of care discoverable." },
     {
@@ -880,11 +971,9 @@ const MEMBERSHIP_MEDICINE: DoeHealthBlogArticle = {
       text: "Membership pricing is where patients hesitate most. Doe lays out each membership as a clear set of inclusions and exclusions, with monthly and annual prices and add-ons for family members. An agent can answer the question patients actually ask: what do I get, and what will I still pay for?",
     },
     {
-      type: "ui",
-      scene: "concierge-membership",
-      dots: "halftone",
-      tone: "sand",
-      caption: "A membership written for agents: the price, what is included, what is not, and the family add-on.",
+      type: "view",
+      view: { kind: "film", film: "Video3Memberships", from: 660, to: 890 },
+      caption: "A patient asks what Hudson would include. The agent lays the memberships side by side, price, access, testing, and same-week visits, and requests the one that fits.",
     },
     {
       type: "list",
@@ -901,26 +990,45 @@ const MEMBERSHIP_MEDICINE: DoeHealthBlogArticle = {
       text: "Discovery is only the beginning. The real value of concierge medicine is the relationship that follows, and personal agents can strengthen it. Once a patient becomes a member, their personal agent connects directly to the practice. It can book visits, request refills, and pass along questions, within permissions that the practice and the patient both control.",
     },
     {
-      type: "ui",
-      scene: "concierge-connected",
-      dots: "curtain",
-      tone: "panel",
-      caption: "Connected agents. Each member's agent has its own permissions, and a new member is approved in one click.",
+      type: "view",
+      view: { kind: "film", film: "Video3Bridge", from: 60, to: 340 },
+      caption: "A new member connects their agent to Hudson, choosing what it may do: scheduling, messages, referrals, and how much health information to share.",
     },
     {
       type: "paragraph",
       text: "For the practice, that means fewer phone calls and more complete requests. For the member, it means the access they paid for actually feels like access: a message at 6:48 in the evening is answered with an appointment, not a voicemail.",
     },
     {
-      type: "ui",
-      scene: "concierge-agents",
-      dots: "rings",
-      tone: "gold",
-      caption: "Daniel's agent and the practice arrange a home visit for travel vaccines and send a refill before his trip.",
+      type: "view",
+      view: {
+        kind: "app",
+        tab: "interface",
+        sit: "inner",
+        tone: "panel",
+        dots: "curtain",
+        clicks: [{ text: "Henry", hold: 2200 }, { text: "Needs You", hold: 1600 }, { text: "All", hold: 1200 }],
+      },
+      caption: "Interface on Doe. Members' agents send structured requests, a bill question, a reschedule, a refill, and Doe answers or acts, passing only what needs the practice to someone on the team.",
     },
     {
       type: "quote",
       text: "Concierge medicine promised patients a direct line to their doctor. Agents keep that line open at any hour.",
+    },
+    {
+      type: "investor",
+      title: "Small panels, high-value accounts.",
+      stats: [
+        { value: String(SEED_GROUPS), label: "multi-site groups by Seed" },
+        { value: String(SEED_SEATS), label: "provider seats in those groups" },
+        { value: `${GROUP_ARR_SHARE}%`, label: "of ARR at Seed comes from groups" },
+        { value: `$${PRICING.founding.group}`, label: "a provider a month for groups, founding" },
+      ],
+      text: "Membership practices charge thousands of dollars a year per patient, so one new member found by an agent pays for Doe many times over. And once a member's agent is connected, the relationship runs through Doe every day: visits, refills, and questions, which is what keeps a practice on the platform.",
+      points: [
+        { lead: "One contract, many sites", text: `groups average four locations and twelve providers, bought by one operations lead at $${PRICING.founding.group} a provider ($${PRICING.regular.group} after the founding year).` },
+        { lead: "Doe One", text: "a beta with five to ten clinics before Seed, running the whole visit for each provider." },
+        { lead: "Retention", text: "every connected agent is another reason to stay: the practice's access promises are kept through Doe." },
+      ],
     },
     { type: "heading", text: "Built for small panels." },
     {
@@ -963,11 +1071,9 @@ const BEYOND_FIND_A_DOCTOR: DoeHealthBlogArticle = {
       text: "Dental care often happens in phases: a cleaning, then fillings, then a crown, with costs that depend on the plan and timing that depends on the benefit year. Patients delay treatment because the plan is confusing and the cost is unclear.",
     },
     {
-      type: "ui",
-      scene: "dental-plan",
-      dots: "wave",
-      tone: "cream",
-      caption: "A treatment plan in phases, with what insurance covers and what the patient pays, shared with the patient's agent.",
+      type: "view",
+      view: { kind: "film", film: "Video4Dental", from: 340, to: 560 },
+      caption: "Ana Ruiz's chart: the crown prep and seat laid out in phases, with what her plan covers and what she pays, sent to Ana's agent in one click.",
     },
     {
       type: "paragraph",
@@ -979,11 +1085,9 @@ const BEYOND_FIND_A_DOCTOR: DoeHealthBlogArticle = {
       text: "Nurse practitioners and physician assistants deliver a large share of primary and urgent care, often with same-day availability. But what each clinician can treat depends on their specialty, their training, and the rules of their state. A generic search cannot tell an agent whether a PA in orthopedics should see a urinary tract infection.",
     },
     {
-      type: "ui",
-      scene: "npp-scope",
-      dots: "tide",
-      tone: "sand",
-      caption: "Providers matched by scope. A clinician outside scope drops back, and the agent books the NP who can treat and prescribe today.",
+      type: "view",
+      view: { kind: "film", film: "Video4Scope", from: 200, to: 360 },
+      caption: "Jordan Lee, NP-C: each condition she can treat switched on in her scope of care, so agents only send her the patients she can actually see.",
     },
     {
       type: "paragraph",
@@ -995,22 +1099,18 @@ const BEYOND_FIND_A_DOCTOR: DoeHealthBlogArticle = {
       text: "Home care runs on geography and timing. An agency needs to know where its caregivers are, which neighborhoods are covered today, and where a new visit fits between existing ones. Families looking for help usually call several agencies before they find one with an opening.",
     },
     {
-      type: "ui",
-      scene: "homecare-coverage",
-      dots: "curtain",
-      tone: "panel",
-      caption: "Live coverage for a home care agency. An uncovered neighborhood fills as a caregiver's shift is assigned.",
+      type: "view",
+      view: { kind: "film", film: "Video4HomeCare", from: 260, to: 440 },
+      caption: "Live coverage for Sunrise Home Care: the service areas caregivers cover today, drawn on the map agents read.",
     },
     {
       type: "paragraph",
       text: "Doe gives home care agencies a live view of coverage that agents can read. When a family's agent asks for wound care and a medication review on Tuesday morning, Doe finds the caregiver who is nearby, qualified, and free, and places the visit in their day. The family's agent gets the details right away, and so does the caregiver.",
     },
     {
-      type: "ui",
-      scene: "homecare-visit",
-      dots: "rings",
-      tone: "gold",
-      caption: "A request from Eleanor's agent lands on the right caregiver's schedule, between two existing visits.",
+      type: "view",
+      view: { kind: "film", film: "Video4HomeCare", from: 560, to: 730 },
+      caption: "Walter Hayes' week. The new morning visits his family's agent asked for are placed into his caregiver's days and sent back to the agent.",
     },
     {
       type: "list",
@@ -1024,6 +1124,22 @@ const BEYOND_FIND_A_DOCTOR: DoeHealthBlogArticle = {
       type: "quote",
       text: "The right provider is not always a doctor. It is the one who can help with this, today, here.",
     },
+    {
+      type: "investor",
+      title: "A bigger market than doctors alone.",
+      stats: [
+        { value: MODEL.sam.display, label: "serviceable today, practices, groups, and the agent API" },
+        { value: n(T.indexedCanada), label: "organizations indexed in Canada by Seed" },
+        { value: n(T.indexedUs), label: "organizations indexed in the U.S. by Seed" },
+        { value: n(T.claimed), label: "practices claiming their page by Seed" },
+      ],
+      text: "Dentists, nurse practitioners, physician assistants, and home care agencies deliver a large share of care and are the least visible to a doctor search. Doe indexes them from public registers before they ever sign up, so each one finds a page already built, and a reason to claim it before a competitor does.",
+      points: [
+        { lead: "Supply without asking", text: "Ontario's college registers and the U.S. NPPES registry list every licensed clinician and where they practise." },
+        { lead: "Where they gather", text: "dental study clubs of ten to thirty owners a month, the ODA Spring Meeting, CDA Presents, and Greater NY Dental." },
+        { lead: "Pull", text: "requests agents could not complete show a practice the patients it lost, which is the most direct sales message there is." },
+      ],
+    },
     { type: "heading", text: "Discovery that fits the care." },
     {
       type: "paragraph",
@@ -1032,7 +1148,216 @@ const BEYOND_FIND_A_DOCTOR: DoeHealthBlogArticle = {
   ],
 };
 
+const COMPLIANCE_AND_SECURITY: DoeHealthBlogArticle = {
+  slug: "compliance-and-security-through-seed",
+  heroImage: GOLDEN_LOFT_HERO_IMAGE,
+  wave: { top: 0.44, amp: 65, phase: 3.4, scale: 1.05, slant: 0.25 },
+  eyebrow: "Compliance & Security",
+  title: ["Compliance & Security,", "Built Through Seed"],
+  author: "James Lisondra",
+  date: "October 26, 2026",
+  excerpt:
+    "Before the first real patient request, we decided how Doe earns the right to carry it: the protocol, the evals, the ledger, the incident playbooks, and the quarter-by-quarter path to PHIPA, HIPAA, and SOC 2 Type II by Seed.",
+  heroTone: "panel",
+  lede: "Personal agents are about to act for patients inside clinics and hospitals. Before the first real request reaches a practice, we decided exactly how Doe would earn the right to carry it.",
+  blocks: [
+    {
+      type: "paragraph",
+      text: "Doe sits between two parties that have never met: a patient's personal agent, built by a developer we do not control, and a practice that holds some of the most sensitive data a person has. Every request that crosses Doe either touches protected health information or could. That makes security the product, not a feature beside it. If a clinic cannot trust what an agent is allowed to do, it will not turn agents on, and if a hospital cannot audit what happened, it will not sign.",
+    },
+    {
+      type: "paragraph",
+      text: "So we wrote the security model before the growth plan, and tied the two together. Each quarter to Seed clears Doe to handle one more kind of data, and each clearance unlocks one milestone in the go-to-market. Nothing touches real patients before it is cleared to, and nothing in this memo claims a certification before the quarter it is earned in.",
+    },
+    {
+      type: "investor",
+      title: "Compliance is how Doe sells, not what slows it down.",
+      stats: [
+        { value: "Q2 ’27", label: "PHIPA assessments, first real patient requests in Toronto" },
+        { value: "Q3 ’27", label: "HIPAA BAAs with every U.S. clinic" },
+        { value: "Q4 ’27", label: "SOC 2 Type I, and the first hospital LOIs" },
+        { value: "Q2 ’28", label: "SOC 2 Type II report, at Seed" },
+      ],
+      text: "Hospitals and health systems are the $400K+ contracts, and every one of them starts with a vendor security review. We plan to have the evidence those reviews ask for, a SOC 2 Type II report, two external penetration tests, a rehearsed incident drill, and a complete hospital questionnaire package, in hand by Seed.",
+      points: [
+        { lead: "A moat that compounds", text: "every agent developer that integrates inherits Doe's grants, evals, and ledger instead of building their own for each clinic, which is work they will not want to redo elsewhere." },
+        { lead: "Two countries from launch", text: "PHIPA for Ontario and HIPAA for the U.S. are designed in together, with Canadian data hosted in Canada and a separate U.S. data region." },
+        { lead: "Capital efficient", text: "certifications land in the order the revenue needs them. HITRUST is held back until a buyer asks for it." },
+      ],
+    },
+    { type: "heading", text: "Six principles, one protocol." },
+    {
+      type: "paragraph",
+      text: "The Doe Health Intelligence Protocol is the set of rules every agent, every clinic, and every model on Doe works inside. It has six principles, and each one is something a security reviewer can test rather than take on faith.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "Doe Auth", text: "agents act on a patient's signed grant for one purpose, never a password. A grant ends on its own after seven days by default, and the patient or the clinic can revoke it at any time." },
+        { lead: "Minimum necessary", text: "the API returns only the fields an action needs, six for a booking rather than the chart, and Doe keeps none of it beyond what the action and the audit record require." },
+        { lead: "Continuous evals", text: "every model is attacked on synthetic patients before it touches a real one, across twelve attack classes, and again whenever a model, prompt, tool, or permission changes." },
+        { lead: "Doe Ledger", text: "every action can answer who asked, for whom, under which grant, under which clinic policy, with which model, touching what data, and with what result." },
+        { lead: "Isolation", text: "one security boundary per clinic. TLS 1.3 in transit, AES-256 at rest, and encryption keys held in a managed key service, separate for every clinic." },
+        { lead: "Certified on schedule", text: "PHIPA in Q2 2027, HIPAA BAAs in Q3 2027, SOC 2 Type I before the first hospital LOI, and a SOC 2 Type II report by Seed." },
+      ],
+    },
+    {
+      type: "view",
+      view: {
+        kind: "app",
+        tab: "search",
+        sit: "full",
+        tone: "sand",
+        dots: "halftone",
+        clicks: [{ text: "Cautious", hold: 2200 }, { text: "Open", hold: 2200 }, { text: "Balanced", hold: 2000 }],
+      },
+      caption: "What any connected agent may see, book, and handle at a practice. A preset sets every permission at once, and the tiles show what it would have done with last week's requests. Safeguards cap bookings per agent, keep to in-network plans, ask before charges, and expire grants.",
+    },
+    { type: "heading", text: "Identity and grants: never a password." },
+    {
+      type: "paragraph",
+      text: "Doe knows three identities on every request: the patient, the agent acting for them, and the developer who built that agent. An agent never logs in as the patient and never holds the patient's credentials. Instead it presents a grant the patient signed: book a visit at this clinic, share these records with this specialist, pay this bill. The grant names its purpose, its scope, and its expiry, and it is bound to the agent's own key, so a copied grant is useless to anyone else.",
+    },
+    {
+      type: "paragraph",
+      text: "Grants are deliberately narrow and short. An agent that booked a visit last week cannot use the same grant to read lab results today. When a patient revokes a grant, or a clinic stops accepting an agent, every session that depends on it ends.",
+    },
+    { type: "heading", text: "Policy and risk, set by each clinic." },
+    {
+      type: "paragraph",
+      text: "On top of the patient's grant sits the clinic's own policy. For every service and every action, a practice decides whether agents can act directly, can only send a request for staff to confirm, or cannot see it at all, and it can change its mind at any time without filing a ticket. A hospital sets the same controls department by department.",
+    },
+    {
+      type: "paragraph",
+      text: "Every action also carries a risk tier, from L0 to L5: public practice information at the bottom, then availability and visit requests, booking and rescheduling, forms and documents, clinical records, and finally payments and anything that changes a chart. The higher the tier, the narrower the grant it needs, the more often a person at the clinic reviews it, and the stricter the eval bar the model behind it must clear.",
+    },
+    {
+      type: "view",
+      view: {
+        kind: "app",
+        tab: "permissions",
+        sit: "br",
+        tone: "panel",
+        dots: "tide",
+        clicks: [{ text: "Botox for migraine", hold: 1600 }, { text: "Off", nth: 1, hold: 1400 }, { text: "Routine EEG", hold: 1600 }, { text: "Department", hold: 1400 }],
+      },
+      caption: "Agent Access: every service against every action, find care, booking, forms, and records, each set to Allowed, Review, Restricted, or Off. A click moves a cell to the next setting, live for every agent.",
+    },
+    { type: "heading", text: "Minimum necessary, by construction." },
+    {
+      type: "paragraph",
+      text: "The easiest data to protect is data you never collect. Doe's API is shaped around actions, not records: a booking returns the six fields a booking needs, not the chart behind it. Doe stores what it must to complete the action and to answer for it later, and nothing more. Model providers work under business associate agreements with zero data retention, so a prompt that contains health information is not kept or used to train anyone's model.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "In transit", text: "TLS 1.3 on every connection, between agents, Doe, and clinic systems." },
+        { lead: "At rest", text: "AES-256, with keys in a managed key service and a separate boundary for every clinic." },
+        { lead: "Residency", text: "Canadian patient data hosted in Canada from Q2 2027, and a U.S. data region from Q3 2027." },
+        { lead: "Ownership", text: "a practice's data and its intelligence model belong to the practice. Doe does not train shared models on one clinic's patients, and never sells data." },
+      ],
+    },
+    { type: "heading", text: "Evals: permissions are earned, then earned again." },
+    {
+      type: "paragraph",
+      text: "No model on Doe touches a real patient until it has been attacked on synthetic ones. We keep a sandbox of synthetic patients, practices, and agents, and every model, prompt, tool, and permission runs a standing suite of attacks before it ships. The results decide access. A capability that passes keeps its lane; one that fails is suspended for that lane until it passes again. The lanes that carry more risk, booking a visit and sending documents, are held to a stricter bar than search or a visit request.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "Injection", text: "prompt injection, injected web pages, and malicious documents that try to smuggle instructions into an agent's context." },
+        { lead: "Hijacking", text: "jailbreaks, tool hijacking, privilege escalation, and agent-to-agent tricks that try to make one agent act beyond its grant." },
+        { lead: "Data", text: "PHI leakage, data exfiltration, and memory poisoning that try to move information somewhere it should not go." },
+        { lead: "Identity and consent", text: "identity spoofing and invented consent, where an agent claims a patient or a permission it does not have." },
+      ],
+    },
+    {
+      type: "quote",
+      text: "A new model, prompt, tool, or permission reruns every attack on synthetic patients. Access follows the result.",
+    },
+    {
+      type: "paragraph",
+      text: "AI moves quickly, so the protocol is built to move with it. When a frontier model ships, new attack research is published, an agent standard changes, or a regulator issues guidance, the change is tested in the sandbox first and then released to every agent on Doe at once. Our target is 48 hours from a frontier model's release to its sandbox verdict.",
+    },
+    { type: "heading", text: "The Ledger: every action, answerable." },
+    {
+      type: "paragraph",
+      text: "Every action on Doe writes one record to the Doe Ledger: who asked, on whose behalf, under which grant, under which clinic policy, with which model and version, what data was touched, and what happened. Records are append-only, so they can be added to but never quietly edited, and a clinic or a hospital can ask any of those seven questions about any action and get an answer. The same record is what an auditor, a privacy officer, or a patient sees.",
+    },
+    {
+      type: "view",
+      view: { kind: "film", film: "Video2Permissions", from: 430, to: 720 },
+      caption: "On the patient's side, Daniel's agent sees what it may share, request, and receive, item by item. On the practice's side, every exchange lands in the activity log: requested, authorized, routed, responded.",
+    },
+    { type: "heading", text: "Incidents: contained in seconds, handled by people." },
+    {
+      type: "paragraph",
+      text: "Something will go wrong eventually, so we planned for it before the first patient. The first four steps are automatic, and these are our design targets: an unusual pattern is flagged within a third of a second, the agent's scopes are narrowed within a second, its sessions end within three, and its access is revoked at every clinic on Doe within ten. Then people take over, on a written playbook: the clinic is told within the hour, exposure is assessed and evidence kept within a day, the fix is retested before the agent returns, and formal notice goes out in writing within a week, well inside HIPAA's 60-day outer limit.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "Stolen credentials", text: "a developer's keys are rotated and every grant they hold is reissued under new keys." },
+        { lead: "Prompt-injection exploits", text: "the affected lane is suspended for every agent until the eval that missed it is added and passed." },
+        { lead: "Unsafe model updates", text: "a model that regresses is rolled back everywhere at once, because every agent runs the same release." },
+        { lead: "Compromised vendors", text: "a vendor's access is cut and the data it touched is traced through the Ledger." },
+      ],
+    },
+    {
+      type: "view",
+      view: { kind: "film", film: "Video6Govern", from: 640, to: 860 },
+      caption: "Oversight across a health system: every agent action in one activity feed, with requests by department, the share handled within policy, and anything restricted or under review in plain sight.",
+    },
+    { type: "heading", text: "The path to Seed, quarter by quarter." },
+    {
+      type: "paragraph",
+      text: "Doe climbs one step at a time: public data, then synthetic patients, then Canadian health information under PHIPA, then U.S. health information under HIPAA, and finally hospital systems under SOC 2. Each step is cleared before anything on it is touched, and each one unlocks the next stage of the go-to-market.",
+    },
+    {
+      type: "timeline",
+      caption: "The compliance path to Seed. Each quarter clears one more kind of data and unlocks one milestone in the go-to-market.",
+      steps: EARLYPREVIEW_COMPLIANCE_PATH.quarters.map((quarter) => ({
+        when: quarter.when,
+        title: quarter.key,
+        items: quarter.items,
+        unlock: quarter.unlock,
+        seed: "seed" in quarter ? quarter.seed : undefined,
+      })),
+    },
+    {
+      type: "investor",
+      title: "What is in place by Seed.",
+      stats: [
+        { value: "2", label: "external penetration tests, Q1 and Q4 2027" },
+        { value: "12", label: "attack classes rerun on every change" },
+        { value: "48h", label: "target from a frontier model's release to its verdict" },
+        { value: "7", label: "questions the Ledger answers about any action" },
+      ],
+      points: [
+        { lead: "Hospital-ready", text: "a SOC 2 Type II report, hospital vendor reviews passed, and an incident drill rehearsed with a clinic, which is what unlocks enterprise pilots." },
+        { lead: "Counsel and policy", text: "a HIPAA security risk assessment, written policies and incident response, and healthcare privacy counsel from Q4 2026." },
+        { lead: "Agreements", text: "an agreement with every Canadian clinic and a BAA with every U.S. clinic and model provider before their patients' data moves." },
+      ],
+    },
+    { type: "heading", text: "What we will not do." },
+    {
+      type: "list",
+      items: [
+        { lead: "Passwords", text: "no agent will ever ask for, hold, or replay a patient's password." },
+        { lead: "Training", text: "no shared model is trained on one practice's patients." },
+        { lead: "Selling data", text: "Doe does not sell health data, to anyone, in any form." },
+        { lead: "Claims", text: "no certification is claimed before the quarter it is earned in." },
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "The practices that let agents in will be the ones that can see exactly what those agents did and why. Our job is to make that visibility the default, and to have it audited before anyone has to ask. If you are a clinic, a hospital, or an investor who wants the detail behind any line of this memo, we would be glad to walk you through it.",
+    },
+  ],
+};
+
 export const DOEHEALTH_BLOG_ARTICLES = [
+  COMPLIANCE_AND_SECURITY,
   BEYOND_FIND_A_DOCTOR,
   MEMBERSHIP_MEDICINE,
   AESTHETIC_FRONT_DOOR,

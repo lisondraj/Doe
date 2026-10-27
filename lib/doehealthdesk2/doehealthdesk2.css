@@ -6258,3 +6258,64 @@ html:has(.earlypreview-page) {
 .doehealth-desk2-page:has(.doephone-mobile-root).earlypreview-page .doehealth-desk2-hero-stack .desk2-workspace:has(+ .earlypreview-hero-gallery) {
   padding-bottom: 10rem !important;
 }
+
+/*
+ * The Hospitals box in the hero gallery is a link to its article, not a film: the still with a brown veil, the article's
+ * title big on the left (two lines) and a "See Article" button on the far right. Sizes follow the grid width (cqw).
+ */
+.earlypreview-page .earlypreview-gallery__tile--article {
+  display: block;
+  cursor: pointer;
+  color: #fffcf1;
+  text-decoration: none;
+  background: var(--doehealth-desk2-surface);
+}
+
+.earlypreview-article-card {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(0.75rem, 3cqw, 2rem);
+  padding: clamp(1rem, 4cqw, 3rem);
+  background:
+    linear-gradient(to top, rgb(var(--doehealth-desk2-surface-rgb) / 0.88) 0%, rgb(var(--doehealth-desk2-surface-rgb) / 0.55) 38%, rgb(var(--doehealth-desk2-surface-rgb) / 0.12) 72%, transparent 100%),
+    rgb(var(--doehealth-desk2-surface-rgb) / 0.14);
+}
+
+.earlypreview-article-card__title {
+  min-width: 0;
+  font-size: clamp(1.15rem, 5cqw, 4.6rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.earlypreview-article-card__line {
+  display: block;
+  white-space: nowrap;
+}
+
+.earlypreview-article-card__line + .earlypreview-article-card__line {
+  color: #fccfb8;
+}
+
+.earlypreview-article-card__button {
+  flex: none;
+  padding: clamp(0.5rem, 1.3cqw, 1rem) clamp(0.85rem, 2.4cqw, 1.9rem);
+  border-radius: 999px;
+  background: #fffcf1;
+  color: var(--doehealth-desk2-surface);
+  font-size: clamp(0.72rem, 1.45cqw, 1.15rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  box-shadow: 0 6px 24px rgb(20 12 4 / 0.25);
+  transition: background-color 200ms ease;
+}
+
+.earlypreview-gallery__tile--article:is(:hover, :focus-visible) .earlypreview-article-card__button {
+  background: #fccfb8;
+}

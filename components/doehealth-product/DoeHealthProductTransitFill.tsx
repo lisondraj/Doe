@@ -97,27 +97,27 @@ const DRAFTS: Record<string, Draft> = {
     suggestions: ["Is Mia okay with us sharing the EEG result with the school?", "Which email should the school copy go to?"],
   },
   "harbor-letter": {
-    heading: "Reply to Harbor Mutual, 48-hour EEG prior auth",
-    to: "Harbor Mutual",
-    send: "Send to Harbor Mutual",
-    agent: "Mia’s agent",
+    heading: "Reply to Leo’s agent with his EEG report",
+    to: "Leo’s agent",
+    send: "Send to Leo’s agent",
+    agent: "Leo’s agent",
     templates: [
-      { name: "Payer request for more information", note: "Harbor Mutual format" },
+      { name: "Records reply", note: "Practice template" },
       { name: "Letter of medical necessity", note: "Practice template" },
       { name: "Records release cover sheet", note: "Practice template" },
     ],
     automations: [
-      { name: "Attach the latest EEG report to payer requests", note: "Prior auth" },
-      { name: "Pull visit notes for the dates a payer asks about", note: "Prior auth" },
-      { name: "File payer replies under Payments", note: "Payments" },
+      { name: "Attach the latest EEG report to records requests", note: "Records" },
+      { name: "Pull visit notes for the dates an agent asks about", note: "Records" },
+      { name: "Log shared records to the chart", note: "Chart" },
     ],
     sections: [
       {
         title: "Request",
         fields: [
-          { id: "ref", label: "Reference", value: "HM-PA-448213", source: "letter", note: "Harbor Mutual letter" },
-          { id: "asks", label: "Asked for", value: "EEG report, last 6 months", source: "letter", note: "Harbor Mutual letter" },
-          { id: "due", label: "Due", value: "Oct 21", source: "letter", note: "Harbor Mutual letter" },
+          { id: "ref", label: "Consent", value: "Signed in agent", source: "letter", note: "Leo’s agent" },
+          { id: "asks", label: "Asked for", value: "EEG report, last 6 months", source: "letter", note: "Leo’s agent" },
+          { id: "due", label: "Due", value: "Oct 21", source: "letter", note: "Leo’s agent" },
           { id: "code", label: "Procedure", value: "48-hour ambulatory EEG", source: "chart", note: "Auth request" },
         ],
       },
@@ -137,7 +137,7 @@ const DRAFTS: Record<string, Draft> = {
         fields: [{ id: "sign", label: "Clinician", value: "Dr. Sarah Brooks, MD", source: "automation", note: "Signature block", wide: true }],
       },
     ],
-    chat: [{ from: "doe", text: "Harbor Mutual asked for Leo’s EEG report for the 48-hour EEG approval. I’m putting the reply together now." }],
+    chat: [{ from: "doe", text: "Leo’s agent asked for his latest EEG report. I’m putting the reply together now." }],
     ask: {
       field: "missed",
       question: "How many school days has Leo missed because of the spells?",

@@ -274,10 +274,31 @@ function Pill({ status, note }: { status: Status; note?: string }) {
   );
 }
 
-function Row({ label, children, top = false }: { label: string; children: ReactNode; top?: boolean }) {
+/** A white box in the panel: a small title (with an optional note on the right), then its contents. */
+function Section({ title, aside, children }: { title: string; aside?: ReactNode; children: ReactNode }) {
   return (
-    <div className={`flex shrink-0 ${top ? "items-start" : "items-center"} gap-[20px] min-h-[64px] px-[20px] py-[14px] rounded-[18px] bg-paper`}>
-      <span className={`w-[150px] shrink-0 text-[14px] leading-[20px] ${SANS} font-[500] text-sub ${top ? "pt-[7px]" : ""}`}>{label}</span>
+    <section className="flex flex-col shrink-0 gap-[12px] p-[16px] rounded-[18px] bg-paper">
+      <span className="flex items-center justify-between gap-[12px] min-h-[24px]">
+        <span className={`text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`}>{title}</span>
+        {aside}
+      </span>
+      {children}
+    </section>
+  );
+}
+
+function Aside({ warn = false, children }: { warn?: boolean; children: ReactNode }) {
+  return <span className={`shrink-0 text-[12px] leading-[16px] ${SANS} font-[500] [font-variant-numeric:tabular-nums] ${warn ? "text-[#B4572F]" : "text-sub"}`}>{children}</span>;
+}
+
+/** One setting inside a section: its name (and an optional note) on the left, the control on the right. */
+function Field({ label, note, children, top = false }: { label: string; note?: string; children: ReactNode; top?: boolean }) {
+  return (
+    <div className={`flex ${top ? "items-start" : "items-center"} gap-[16px] min-h-[44px]`}>
+      <span className={`flex flex-col gap-[2px] w-[150px] shrink-0 ${top ? "pt-[6px]" : ""}`}>
+        <span className={`text-[14px] leading-[20px] ${SANS} font-[500] text-walnut`}>{label}</span>
+        {note && <span className={`text-[12px] leading-[16px] ${SANS} text-sub`}>{note}</span>}
+      </span>
       <div className="flex grow min-w-[0px] items-center">{children}</div>
     </div>
   );
@@ -355,11 +376,51 @@ function Mark({ tone, size = 36, children }: { tone: string; size?: number; chil
 
 const btnGrey = `h-[38px] px-[16px] rounded-[999px] bg-[#28191014] hover:bg-[#2819101F] transition-colors duration-150 text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`;
 
+const CLOSE_X = (
+  <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+    <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+  </svg>
+);
+
+const PLUS = (
+  <svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+    <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+  </svg>
+);
+
+const AGENT_NOTE: Record<AgentMode, string> = {
+  bookable: "Agents book open slots directly, no call needed.",
+  request: "Agents send a request and the front desk confirms the time.",
+  hidden: "Agents never see this provider here.",
+};
+
+function Tick({ ok }: { ok: boolean }) {
+  return (
+    <span className={`w-[18px] h-[18px] shrink-0 flex items-center justify-center rounded-[999px] ${ok ? "bg-[#6E9A5B] [color:#FFFCF1]" : "border-[1.5px] border-dashed border-[#28191040]"}`}>
+      {ok && (
+        <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+          <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )}
+    </span>
+  );
+}
+
 function LocationPanel({ l }: { l: Location }) {
   const { update, remove, locations } = useLocations();
   const edit = (patch: Partial<Location>) => update(l.id, patch);
   const editProvider = (id: string, patch: Partial<LocationProvider>) => edit({ providers: l.providers.map((x) => (x.id === id ? { ...x, ...patch } : x)) });
   const elsewhere = GROUP_PROVIDERS.filter((g) => !l.providers.some((x) => x.id === g.id));
+  const bookable = l.providers.filter((x) => x.agents === "bookable").length;
+  const perDay = DAYS.map((d) => ({ d, n: l.providers.filter((x) => x.days.includes(d)).length }));
+  const gaps = perDay.filter((x) => x.n === 0 && WEEKDAYS.includes(x.d)).map((x) => x.d);
+  const checks = [
+    { label: "Address and city", ok: !!l.address.trim() && !!l.city.trim() },
+    { label: "Phone number", ok: !!l.phone.trim() },
+    { label: "A provider agents can book", ok: bookable > 0 },
+    { label: "At least one service", ok: l.services.length > 0 },
+  ];
+  const ready = checks.filter((c) => c.ok).length;
 
   return (
     <>
@@ -400,9 +461,36 @@ function LocationPanel({ l }: { l: Location }) {
         ]}
       />
 
-      <div className="flex flex-col grow min-h-[0px] gap-[6px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <Row label="Providers here" top>
-          <div className="flex flex-col grow min-w-[0px] gap-[6px]">
+      <div className="flex flex-col grow min-h-[0px] gap-[8px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="grid grid-cols-[1fr_250px] gap-[8px] shrink-0">
+          <Section title="Week at a glance" aside={<Aside warn={gaps.length > 0}>{gaps.length ? `No one on ${gaps.join(", ")}` : "Covered Mon to Fri"}</Aside>}>
+            <div className="grid grid-cols-6 gap-[6px]">
+              {perDay.map(({ d, n }) => (
+                <span
+                  key={d}
+                  className={`flex flex-col items-center justify-center h-[64px] rounded-[14px] ${n ? "" : "border-[1.5px] border-dashed border-[#2819101F]"}`}
+                  style={n ? { backgroundColor: l.tone } : undefined}
+                >
+                  <span className={`text-[12px] leading-[16px] ${SANS} font-[500] text-sub`}>{d}</span>
+                  <span className={`text-[22px] leading-[26px] ${DISPLAY} ${n ? "text-walnut" : "text-[#28191040]"}`}>{n}</span>
+                </span>
+              ))}
+            </div>
+          </Section>
+          <Section title="Ready for agents" aside={<Aside warn={ready < checks.length}>{ready} of {checks.length}</Aside>}>
+            <div className="flex flex-col gap-[8px]">
+              {checks.map((c) => (
+                <span key={c.label} className={`flex items-center gap-[10px] text-[13px] leading-[18px] ${SANS} font-[500] ${c.ok ? "text-walnut" : "text-sub"}`}>
+                  <Tick ok={c.ok} />
+                  {c.label}
+                </span>
+              ))}
+            </div>
+          </Section>
+        </div>
+
+        <Section title="Providers here" aside={<Aside>{bookable} of {l.providers.length} bookable by agents</Aside>}>
+          <div className="flex flex-col gap-[6px]">
             {l.providers.map((lp) => {
               const g = providerOf(lp.id);
               return (
@@ -426,14 +514,12 @@ function LocationPanel({ l }: { l: Location }) {
                     onClick={() => edit({ providers: l.providers.filter((x) => x.id !== lp.id) })}
                     className="w-[28px] h-[28px] shrink-0 flex items-center justify-center rounded-[999px] hover:bg-[#28191014] transition-colors duration-150 text-sub"
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
-                      <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-                    </svg>
+                    {CLOSE_X}
                   </button>
                 </div>
               );
             })}
-            {l.providers.length === 0 && <span className={`py-[7px] text-[14px] leading-[20px] ${SANS} text-sub`}>No one works here yet.</span>}
+            {l.providers.length === 0 && <span className={`py-[4px] text-[14px] leading-[20px] ${SANS} text-sub`}>No one works here yet.</span>}
             {elsewhere.length > 0 && (
               <span className="flex flex-wrap gap-[6px] pt-[4px]">
                 {elsewhere.map((g) => (
@@ -443,61 +529,16 @@ function LocationPanel({ l }: { l: Location }) {
                     onClick={() => edit({ providers: [...l.providers, p(g.id, ["Mon"], "request")] })}
                     className={`flex items-center gap-[6px] h-[30px] px-[12px] rounded-[999px] border-[1.5px] border-dashed border-[#28191033] hover:bg-[#F4EEDF] transition-colors duration-150 text-[13px] leading-[16px] ${SANS} font-[500] text-walnut`}
                   >
-                    <svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
-                      <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-                    </svg>
+                    {PLUS}
                     {g.name}
                   </button>
                 ))}
               </span>
             )}
           </div>
-        </Row>
-        <Row label="Short name">
-          <Input value={l.short} onChange={(v) => edit({ short: v })} width={220} placeholder="Shown on chips" />
-        </Row>
-        <Row label="Address">
-          <span className="flex items-center gap-[8px] grow">
-            <Input value={l.address} onChange={(v) => edit({ address: v })} width={260} placeholder="Street" />
-            <Input value={l.city} onChange={(v) => edit({ city: v })} width={180} placeholder="City, state" />
-          </span>
-        </Row>
-        <Row label="Phone">
-          <Input value={l.phone} onChange={(v) => edit({ phone: v })} width={180} />
-        </Row>
-        <Row label="Hours">
-          <span className="flex items-center gap-[8px]">
-            <Input value={l.opens} onChange={(v) => edit({ opens: v })} width={110} />
-            <span className={`text-[14px] ${SANS} text-sub`}>to</span>
-            <Input value={l.closes} onChange={(v) => edit({ closes: v })} width={110} />
-          </span>
-        </Row>
-        <Row label="Kind">
-          <Segmented
-            value={l.kind}
-            onChange={(v) => edit({ kind: v })}
-            options={[
-              { id: "clinic", label: "Clinic" },
-              { id: "lab", label: "Lab" },
-              { id: "virtual", label: "Virtual" },
-            ]}
-          />
-        </Row>
-        <Row label="Status">
-          <Segmented
-            value={l.status}
-            onChange={(v) => edit({ status: v, note: undefined })}
-            options={[
-              { id: "open", label: "Open" },
-              { id: "opening", label: "Opening soon" },
-              { id: "paused", label: "Paused" },
-            ]}
-          />
-        </Row>
-        <Row label="Agents book here">
-          <Toggle on={l.agents} onChange={(v) => edit({ agents: v })} label="Agents book here" />
-        </Row>
-        <Row label="Services offered" top>
+        </Section>
+
+        <Section title="Services offered" aside={<Aside>{l.services.length} of {SERVICES.length}</Aside>}>
           <span className="flex flex-wrap gap-[6px]">
             {SERVICES.map((s) => (
               <Chip key={s} on={l.services.includes(s)} onClick={() => edit({ services: toggle(l.services, s) })}>
@@ -505,7 +546,57 @@ function LocationPanel({ l }: { l: Location }) {
               </Chip>
             ))}
           </span>
-        </Row>
+        </Section>
+
+        <Section title="Details">
+          <Field label="Short name" note="Shown on chips">
+            <Input value={l.short} onChange={(v) => edit({ short: v })} width={220} />
+          </Field>
+          <Field label="Address">
+            <span className="flex items-center gap-[8px] grow">
+              <Input value={l.address} onChange={(v) => edit({ address: v })} width={260} placeholder="Street" />
+              <Input value={l.city} onChange={(v) => edit({ city: v })} width={180} placeholder="City, state" />
+            </span>
+          </Field>
+          <Field label="Phone">
+            <Input value={l.phone} onChange={(v) => edit({ phone: v })} width={180} />
+          </Field>
+          <Field label="Hours">
+            <span className="flex items-center gap-[8px]">
+              <Input value={l.opens} onChange={(v) => edit({ opens: v })} width={110} />
+              <span className={`text-[14px] ${SANS} text-sub`}>to</span>
+              <Input value={l.closes} onChange={(v) => edit({ closes: v })} width={110} />
+            </span>
+          </Field>
+          <Field label="Kind">
+            <Segmented
+              value={l.kind}
+              onChange={(v) => edit({ kind: v })}
+              options={[
+                { id: "clinic", label: "Clinic" },
+                { id: "lab", label: "Lab" },
+                { id: "virtual", label: "Virtual" },
+              ]}
+            />
+          </Field>
+        </Section>
+
+        <Section title="Status and booking">
+          <Field label="Status">
+            <Segmented
+              value={l.status}
+              onChange={(v) => edit({ status: v, note: undefined })}
+              options={[
+                { id: "open", label: "Open" },
+                { id: "opening", label: "Opening soon" },
+                { id: "paused", label: "Paused" },
+              ]}
+            />
+          </Field>
+          <Field label="Agents book here" note={l.agents ? "Patients' agents can see openings" : "Hidden from agents"}>
+            <Toggle on={l.agents} onChange={(v) => edit({ agents: v })} label="Agents book here" />
+          </Field>
+        </Section>
       </div>
     </>
   );
@@ -518,8 +609,12 @@ function ProviderPanel({ l, lp, onBack }: { l: Location; lp: LocationProvider; o
   const services = lp.services ?? l.services;
   const editHere = (patch: Partial<LocationProvider>) => update(l.id, { providers: l.providers.map((x) => (x.id === lp.id ? { ...x, ...patch } : x)) });
   const sites = locations.filter((x) => x.providers.some((y) => y.id === lp.id));
+  const total = sites.reduce((n, x) => n + x.providers.find((y) => y.id === lp.id)!.days.length, 0);
   const flip = (x: Location) =>
     update(x.id, { providers: x.providers.some((y) => y.id === lp.id) ? x.providers.filter((y) => y.id !== lp.id) : [...x.providers, p(lp.id, ["Mon"], "request")] });
+  /** Days this provider is also booked at another site, which would double-book them. */
+  const clashWith = (x: Location) => (x.id === l.id ? [] : (x.providers.find((y) => y.id === lp.id)?.days ?? []).filter((d) => lp.days.includes(d)));
+  const clashes = locations.flatMap((x) => clashWith(x).map((d) => `${d} at ${x.short || x.name}`));
 
   return (
     <>
@@ -556,42 +651,66 @@ function ProviderPanel({ l, lp, onBack }: { l: Location; lp: LocationProvider; o
         items={[
           ["Days here", String(lp.days.length)],
           ["Locations", String(sites.length)],
-          ["Agents", MODES.find((m) => m.id === lp.agents)!.label],
+          ["Days a week", String(total)],
         ]}
       />
 
-      <div className="flex flex-col grow min-h-[0px] gap-[6px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <Row label="Days here">
-          <span className="flex flex-wrap gap-[6px]">
-            {DAYS.map((d) => (
-              <Chip key={d} on={lp.days.includes(d)} onClick={() => editHere({ days: toggle(lp.days, d) })}>
-                {d}
-              </Chip>
-            ))}
-          </span>
-        </Row>
-        <Row label="Agents can">
-          <Segmented value={lp.agents} options={MODES} onChange={(v) => editHere({ agents: v })} />
-        </Row>
-        <Row label="Sees here" top>
+      <div className="flex flex-col grow min-h-[0px] gap-[8px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {clashes.length > 0 && (
+          <div className="flex items-start gap-[10px] shrink-0 p-[14px] rounded-[16px] bg-[#FBEDE4]">
+            <span className="mt-[6px] w-[7px] h-[7px] shrink-0 rounded-[99px] bg-[#E8A585]" />
+            <span className={`text-[13px] leading-[19px] ${SANS} text-walnut`}>Also booked on {clashes.join(", ")}. Agents could double-book {g.name.split(" ")[0] === "Dr." ? g.name.split(" ")[1] : g.name.split(" ")[0]} on those days.</span>
+          </div>
+        )}
+
+        <Section title={`Schedule at ${l.short || l.name}`} aside={<Aside>{lp.days.length} {lp.days.length === 1 ? "day" : "days"} a week</Aside>}>
+          <Field label="Days here">
+            <span className="flex flex-wrap gap-[6px]">
+              {DAYS.map((d) => (
+                <Chip key={d} on={lp.days.includes(d)} onClick={() => editHere({ days: toggle(lp.days, d) })}>
+                  {d}
+                </Chip>
+              ))}
+            </span>
+          </Field>
+          <Field label="Agents can" note={AGENT_NOTE[lp.agents]} top>
+            <Segmented value={lp.agents} options={MODES} onChange={(v) => editHere({ agents: v })} />
+          </Field>
+        </Section>
+
+        <Section title="Sees here" aside={<Aside>{services.length} of {l.services.length}</Aside>}>
           <span className="flex flex-wrap gap-[6px]">
             {l.services.map((sv) => (
               <Chip key={sv} on={services.includes(sv)} onClick={() => editHere({ services: toggle(services, sv) })}>
                 {sv}
               </Chip>
             ))}
-            {l.services.length === 0 && <span className={`py-[7px] text-[14px] leading-[20px] ${SANS} text-sub`}>This location offers no services yet.</span>}
+            {l.services.length === 0 && <span className={`py-[4px] text-[14px] leading-[20px] ${SANS} text-sub`}>This location offers no services yet.</span>}
           </span>
-        </Row>
-        <Row label="Works at" top>
-          <span className="flex flex-wrap gap-[6px]">
-            {locations.map((x) => (
-              <Chip key={x.id} on={x.providers.some((y) => y.id === lp.id)} onClick={() => x.id !== l.id && flip(x)}>
-                {x.short || x.name}
-              </Chip>
-            ))}
-          </span>
-        </Row>
+        </Section>
+
+        <Section title="Across the group" aside={<Aside>{sites.length} of {locations.length} locations</Aside>}>
+          <div className="flex flex-col gap-[6px]">
+            {locations.map((x) => {
+              const here = x.providers.find((y) => y.id === lp.id);
+              const clash = clashWith(x);
+              return (
+                <button
+                  key={x.id}
+                  type="button"
+                  disabled={x.id === l.id}
+                  onClick={() => flip(x)}
+                  className={`flex items-center gap-[12px] h-[48px] px-[12px] rounded-[14px] text-left transition-colors duration-150 ${here ? "bg-[#FAF6EC]" : "border-[1.5px] border-dashed border-[#2819101F] hover:border-[#28191040]"} ${x.id === l.id ? "cursor-default" : ""}`}
+                >
+                  <span className="w-[8px] h-[8px] shrink-0 rounded-[999px]" style={{ backgroundColor: x.dot }} />
+                  <span className={`truncate grow min-w-[0px] text-[14px] leading-[18px] ${SANS} font-[500] ${here ? "text-walnut" : "text-sub"}`}>{x.short || x.name}</span>
+                  {clash.length > 0 && <span className={`shrink-0 text-[12px] leading-[16px] ${SANS} font-[500] text-[#B4572F]`}>Clashes {clash.join(", ")}</span>}
+                  <span className={`shrink-0 text-[12px] leading-[16px] ${SANS} text-sub`}>{here ? here.days.join(" ") || "No days" : "Add"}</span>
+                </button>
+              );
+            })}
+          </div>
+        </Section>
       </div>
     </>
   );
@@ -637,59 +756,67 @@ const TEAM_SETTINGS: TeamSettings = {
 function TeamSettingsRows({ settings, onChange }: { settings: TeamSettings; onChange: (patch: Partial<TeamSettings>) => void }) {
   return (
     <>
-      <Row label="Needs you queue">
-        <Segmented
-          value={settings.queue}
-          onChange={(v) => onChange({ queue: v })}
-          options={[
-            { id: "everyone", label: "Shared by everyone" },
-            { id: "role", label: "Split by role" },
-            { id: "assigned", label: "Assigned only" },
-          ]}
-        />
-      </Row>
-      <Row label="Approves new patients" top>
-        <span className="flex flex-wrap gap-[6px]">
-          {TEAM_ROLES.map((r) => (
-            <Chip key={r.id} on={settings.approvers.includes(r.id)} onClick={() => onChange({ approvers: toggle(settings.approvers, r.id) as TeamRole[] })}>
-              {r.label}
-            </Chip>
-          ))}
-        </span>
-      </Row>
-      <Row label="Coverage when away">
-        <Toggle on={settings.coverage} onChange={(v) => onChange({ coverage: v })} label="Route work to coverage when away" />
-      </Row>
-      <Row label="Hand off at close">
-        <Toggle on={settings.handoff} onChange={(v) => onChange({ handoff: v })} label="Hand off unfinished tasks at close" />
-      </Row>
-      <Row label="Two sign-offs on payer letters">
-        <Toggle on={settings.twoSign} onChange={(v) => onChange({ twoSign: v })} label="Two sign-offs on payer letters" />
-      </Row>
-      <Row label="Office hours">
-        <span className="flex items-center gap-[8px]">
-          <Input value={settings.opens} onChange={(v) => onChange({ opens: v })} width={110} />
-          <span className={`text-[14px] ${SANS} text-sub`}>to</span>
-          <Input value={settings.closes} onChange={(v) => onChange({ closes: v })} width={110} />
-        </span>
-      </Row>
-      <Row label="New invites start as">
-        <Segmented value={settings.defaultRole} options={TEAM_ROLES} onChange={(v) => onChange({ defaultRole: v })} />
-      </Row>
-      <Row label="Sign in with">
-        <Segmented
-          value={settings.signIn}
-          onChange={(v) => onChange({ signIn: v })}
-          options={[
-            { id: "google", label: "Google" },
-            { id: "microsoft", label: "Microsoft" },
-            { id: "email", label: "Email link" },
-          ]}
-        />
-      </Row>
-      <Row label="Require two-factor">
-        <Toggle on={settings.twoFactor} onChange={(v) => onChange({ twoFactor: v })} label="Require two-factor" />
-      </Row>
+      <Section title="Work and approvals">
+        <Field label="Needs you queue">
+          <Segmented
+            value={settings.queue}
+            onChange={(v) => onChange({ queue: v })}
+            options={[
+              { id: "everyone", label: "Shared by everyone" },
+              { id: "role", label: "Split by role" },
+              { id: "assigned", label: "Assigned only" },
+            ]}
+          />
+        </Field>
+        <Field label="Approves new patients" top>
+          <span className="flex flex-wrap gap-[6px]">
+            {TEAM_ROLES.map((r) => (
+              <Chip key={r.id} on={settings.approvers.includes(r.id)} onClick={() => onChange({ approvers: toggle(settings.approvers, r.id) as TeamRole[] })}>
+                {r.label}
+              </Chip>
+            ))}
+          </span>
+        </Field>
+        <Field label="Two sign-offs" note="On payer letters">
+          <Toggle on={settings.twoSign} onChange={(v) => onChange({ twoSign: v })} label="Two sign-offs on payer letters" />
+        </Field>
+      </Section>
+
+      <Section title="Hours and coverage">
+        <Field label="Office hours">
+          <span className="flex items-center gap-[8px]">
+            <Input value={settings.opens} onChange={(v) => onChange({ opens: v })} width={110} />
+            <span className={`text-[14px] ${SANS} text-sub`}>to</span>
+            <Input value={settings.closes} onChange={(v) => onChange({ closes: v })} width={110} />
+          </span>
+        </Field>
+        <Field label="Coverage when away" note="Route work to a teammate">
+          <Toggle on={settings.coverage} onChange={(v) => onChange({ coverage: v })} label="Route work to coverage when away" />
+        </Field>
+        <Field label="Hand off at close" note="Unfinished tasks move on">
+          <Toggle on={settings.handoff} onChange={(v) => onChange({ handoff: v })} label="Hand off unfinished tasks at close" />
+        </Field>
+      </Section>
+
+      <Section title="Access">
+        <Field label="New invites start as" top>
+          <Segmented value={settings.defaultRole} options={TEAM_ROLES} onChange={(v) => onChange({ defaultRole: v })} />
+        </Field>
+        <Field label="Sign in with">
+          <Segmented
+            value={settings.signIn}
+            onChange={(v) => onChange({ signIn: v })}
+            options={[
+              { id: "google", label: "Google" },
+              { id: "microsoft", label: "Microsoft" },
+              { id: "email", label: "Email link" },
+            ]}
+          />
+        </Field>
+        <Field label="Require two-factor">
+          <Toggle on={settings.twoFactor} onChange={(v) => onChange({ twoFactor: v })} label="Require two-factor" />
+        </Field>
+      </Section>
     </>
   );
 }
@@ -730,7 +857,7 @@ function GroupPanel({ settings, onSettings }: { settings: TeamSettings; onSettin
       />
 
       {view === "team" ? (
-        <div className="flex flex-col grow min-h-[0px] gap-[6px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex flex-col grow min-h-[0px] gap-[8px] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <TeamSettingsRows settings={settings} onChange={onSettings} />
         </div>
       ) : (
@@ -768,11 +895,22 @@ function GroupPanel({ settings, onSettings }: { settings: TeamSettings; onSettin
             })}
           </div>
         ))}
+        <div className="grid items-center gap-[6px] shrink-0 h-[44px] px-[8px] mt-[2px] rounded-[14px] bg-[#FAF6EC]" style={{ gridTemplateColumns: cols }}>
+          <span className={`text-[13px] leading-[18px] ${SANS} font-[600] text-walnut`}>On the team</span>
+          {locations.map((l) => (
+            <span key={l.id} className={`text-center text-[13px] leading-[18px] ${SANS} font-[500] text-sub [font-variant-numeric:tabular-nums]`}>
+              {l.providers.length}
+            </span>
+          ))}
+        </div>
       </div>
       )}
     </>
   );
 }
+
+/** The provider signed in to Doe, Dr. Sarah Brooks. */
+const ME = "brooks";
 
 const VIEW_OPTIONS = [
   { id: "group", label: "Group" },
@@ -793,6 +931,9 @@ export function DoeHealthProductLocationsPage() {
     add();
     setProviderId(null);
   };
+  /** The signed-in provider's own settings live at the first location they work at. */
+  const home = locations.find((l) => l.providers.some((x) => x.id === ME));
+  const mine = !!home && current?.id === home.id && currentProvider?.id === ME;
 
   return (
     <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[20px] pt-[36px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
@@ -835,6 +976,30 @@ export function DoeHealthProductLocationsPage() {
 
         <div className="grid grid-cols-[360px_1fr] gap-[16px] grow min-h-[0px]">
           <div className="flex flex-col min-h-[0px] gap-[4px] p-[8px] rounded-[18px] bg-[#F4EEDF] overflow-y-auto overscroll-y-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {home && (
+              <button
+                type="button"
+                onClick={() => open(home.id, ME)}
+                className={`flex items-center gap-[12px] h-[56px] shrink-0 pl-[8px] pr-[14px] mb-[4px] rounded-[14px] bg-paper text-left outline outline-[1.5px] -outline-offset-[1.5px] transition-[outline-color] duration-150 ${mine ? "outline-ink" : "outline-transparent hover:outline-[#28191026]"}`}
+              >
+                <span className="relative shrink-0">
+                  <Mark tone={home.tone} size={40} />
+                  <span className="absolute -right-[1px] -bottom-[1px] w-[12px] h-[12px] rounded-[999px] border-[2px] border-solid border-paper bg-[#6E9A5B]" />
+                </span>
+                <span className="flex flex-col grow min-w-[0px]">
+                  <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>Your settings</span>
+                  <span className={`truncate text-[12px] leading-[16px] ${SANS} text-sub`}>
+                    {providerOf(ME).name} · {locations.filter((l) => l.providers.some((x) => x.id === ME)).length} locations
+                  </span>
+                </span>
+                <span className={`flex items-center gap-[4px] shrink-0 text-[12px] leading-[16px] ${SANS} font-[500] ${mine ? "text-walnut" : "text-sub"}`}>
+                  {mine ? "Editing" : "Edit"}
+                  <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+                    <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              </button>
+            )}
             {locations.map((l) => {
               const on = selected === l.id && !currentProvider;
               return (

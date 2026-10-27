@@ -342,10 +342,10 @@ const TABS = [
   { id: "templates", label: "Templates", count: TEMPLATES.length },
 ] as const;
 
-function RunItem({ r }: { r: (typeof RUNS)[number] }) {
+function RunItem({ r, flat = false }: { r: (typeof RUNS)[number]; flat?: boolean }) {
   const held = r.result !== "Completed";
   return (
-    <div className="flex items-center gap-[12px] shrink-0 px-[14px] py-[12px] rounded-[14px] bg-paper">
+    <div className={`flex items-center gap-[12px] shrink-0 px-[14px] py-[12px] rounded-[14px] ${flat ? "hover:bg-[#FAF6EC] transition-colors duration-150" : "bg-paper"}`}>
       <span className="w-[8px] h-[8px] shrink-0 rounded-[50%]" style={{ backgroundColor: held ? "#E8A585" : "#6E9A5B" }} />
       <span className="flex flex-col grow min-w-[0px]">
         <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[600] text-walnut`}>{r.who}</span>
@@ -375,11 +375,70 @@ export function DoeHealthProductAutomationsPage() {
   const attention = live.filter((w) => w.attention);
   const runsThisWeek = live.reduce((n, w) => n + w.runs.reduce((a, b) => a + b, 0), 0);
   const success = live.length ? Math.round(live.reduce((n, w) => n + w.rate, 0) / live.length) : 0;
-  const stats = [
-    { label: "Runs This Week", value: String(runsThisWeek) },
-    { label: "Success Rate", value: `${success}%` },
-    { label: "Held for You", value: String(RUNS.filter((r) => r.result !== "Completed").length) },
-    { label: "Live Workflows", value: `${live.length} of ${WORKFLOWS.length}` },
+  const held = RUNS.filter((r) => r.result !== "Completed").length;
+  const daily = Array.from({ length: 7 }, (_, d) => live.reduce((n, w) => n + w.runs[d]!, 0));
+  const peak = Math.max(...daily) || 1;
+  const ticks = 24;
+  /** One shared language for the strip: rounded vertical marks standing on a common baseline. */
+  const Mark = ({ h, color }: { h: number | string; color: string }) => <span className="grow basis-[0%] rounded-[3px]" style={{ height: h, backgroundColor: color }} />;
+  const stats: { label: string; value: string; note: string; tone: string; strip: ReactNode }[] = [
+    {
+      label: "Runs this week",
+      value: String(runsThisWeek),
+      note: "Last 7 days",
+      tone: "#FAF6EC",
+      strip: (
+        <span className="flex gap-[6px] items-end">
+          {daily.map((v, i) => (
+            <span key={i} className="flex flex-col items-stretch grow basis-[0%] gap-[4px]">
+              <span className="flex items-end h-[32px]">
+                <Mark h={`${Math.max(14, (v / peak) * 100)}%`} color={i === daily.length - 1 ? "#281910" : "#28191033"} />
+              </span>
+              <span className={`text-center text-[10px] leading-[12px] ${SANS} font-[500] text-sub`}>{"SMTWTFS"[(i + 1) % 7]}</span>
+            </span>
+          ))}
+        </span>
+      ),
+    },
+    {
+      label: "Success rate",
+      value: `${success}%`,
+      note: "Runs that finished",
+      tone: "#F4EEDF",
+      strip: (
+        <span className="flex items-end gap-[2px] h-[48px] pb-[16px]">
+          {Array.from({ length: ticks }, (_, i) => (
+            <Mark key={i} h="100%" color={i < Math.round((success / 100) * ticks) ? "#281910" : "#2819101F"} />
+          ))}
+        </span>
+      ),
+    },
+    {
+      label: "Held for you",
+      value: String(held),
+      note: `Of ${RUNS.length} runs today`,
+      tone: "#EEE6D6",
+      strip: (
+        <span className="flex items-end gap-[3px] h-[48px] pb-[16px]">
+          {RUNS.map((r) => (
+            <Mark key={r.time} h="100%" color={r.result === "Completed" ? "#2819101F" : "#E8A585"} />
+          ))}
+        </span>
+      ),
+    },
+    {
+      label: "Live workflows",
+      value: `${live.length} of ${WORKFLOWS.length}`,
+      note: "Switched on",
+      tone: "#E6DDCB",
+      strip: (
+        <span className="flex items-end gap-[3px] h-[48px] pb-[16px]">
+          {WORKFLOWS.map((w) => (
+            <Mark key={w.id} h="100%" color={on[w.id] ? "#281910" : "#2819101F"} />
+          ))}
+        </span>
+      ),
+    },
   ];
 
   return (
@@ -387,7 +446,27 @@ export function DoeHealthProductAutomationsPage() {
       <div className="relative flex items-end justify-between">
         <span className={`text-[58px] leading-[62px] tracking-[-0.03em] ${DISPLAY} text-walnut`}>Automations</span>
         <span className="flex items-center gap-[8px]">
-          <button type="button" onClick={() => setTab("templates")} className={btnGrey}>
+          <label className="flex items-center gap-[8px] w-[260px] h-[40px] px-[14px] rounded-[999px] bg-[#F4EEDF] border-[1.5px] border-solid border-transparent focus-within:border-ink text-sub transition-colors duration-150">
+            <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
+              <path d="M11 5a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM16 16l4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+            <input
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setTab("workflows");
+              }}
+              placeholder="Search workflows"
+              className={`grow min-w-[0px] bg-transparent outline-none text-[14px] ${SANS} font-[500] text-walnut placeholder:text-sub`}
+            />
+          </label>
+          <button type="button" onClick={() => setTab("templates")} className={btnGrey.replace("px-[18px]", "pr-[18px] pl-[14px]")}>
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block" }}>
+              <rect x="4" y="4" width="7" height="7" rx="2" fill="none" stroke="#281910" strokeWidth="1.8" />
+              <rect x="13" y="4" width="7" height="7" rx="2" fill="none" stroke="#281910" strokeWidth="1.8" />
+              <rect x="4" y="13" width="7" height="7" rx="2" fill="none" stroke="#281910" strokeWidth="1.8" />
+              <path d="M16.5 13.5v6M13.5 16.5h6" fill="none" stroke="#281910" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
             Templates
           </button>
           <button type="button" className={btnInk.replace("px-[18px]", "pr-[18px] pl-[14px]")}>
@@ -397,11 +476,19 @@ export function DoeHealthProductAutomationsPage() {
         </span>
       </div>
 
-      <div className="grid grid-cols-4 gap-[24px] shrink-0">
+      <div className="grid grid-cols-4 gap-[10px] shrink-0">
         {stats.map((s, i) => (
-          <span key={s.label} className={`flex flex-col gap-[4px] min-w-[0px] ${i ? "pl-[24px] border-l border-solid border-[#2819101A]" : ""}`}>
-            <span className={`text-[13px] leading-[16px] ${SANS} font-[500] text-sub`}>{s.label}</span>
-            <span className={`truncate text-[38px] leading-[42px] tracking-[-0.03em] ${DISPLAY} text-walnut [font-variant-numeric:tabular-nums]`}>{s.value}</span>
+          <span
+            key={s.label}
+            className={`flex flex-col gap-[12px] h-[156px] min-w-[0px] p-[18px_20px] ${i === 0 ? "rounded-l-[24px] rounded-r-[4px]" : i === stats.length - 1 ? "rounded-l-[4px] rounded-r-[24px]" : "rounded-[4px]"}`}
+            style={{ backgroundColor: s.tone }}
+          >
+            <span className="flex items-center justify-between gap-[8px]">
+              <span className={`truncate text-[13px] leading-[16px] ${SANS} font-[500] text-[rgba(40,25,16,0.7)]`}>{s.label}</span>
+              <span className={`shrink-0 text-[12px] leading-[16px] ${SANS} text-sub`}>{s.note}</span>
+            </span>
+            <span className={`truncate text-[40px] leading-[42px] tracking-[-0.03em] ${DISPLAY} text-ink [font-variant-numeric:tabular-nums]`}>{s.value}</span>
+            <span className="mt-auto">{s.strip}</span>
           </span>
         ))}
       </div>
@@ -410,14 +497,6 @@ export function DoeHealthProductAutomationsPage() {
         <span className="w-[360px] shrink-0">
           <Segmented value={tab} options={TABS} onChange={setTab} />
         </span>
-        {tab === "workflows" && (
-          <label className="flex items-center gap-[8px] w-[260px] h-[38px] px-[14px] rounded-[999px] bg-[#F4EEDF] border-[1.5px] border-solid border-transparent focus-within:border-ink text-sub transition-colors duration-150">
-            <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
-              <path d="M11 5a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM16 16l4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search workflows" className={`grow min-w-[0px] bg-transparent outline-none text-[14px] ${SANS} font-[500] text-walnut placeholder:text-sub`} />
-          </label>
-        )}
       </div>
 
       {tab === "workflows" && (
@@ -460,9 +539,9 @@ export function DoeHealthProductAutomationsPage() {
             {shown.length === 0 && <span className={`col-span-2 px-[12px] py-[18px] text-[14px] ${SANS} text-sub`}>No workflows match “{query}”.</span>}
           </div>
 
-          <div className={`flex flex-col gap-[12px] min-h-[0px] ${scroll}`}>
+          <div className={`flex flex-col gap-[8px] min-h-[0px] p-[8px] rounded-[18px] bg-[#FAF6EC] ${scroll}`}>
             {attention.map((w) => (
-              <div key={w.id} className="flex flex-col gap-[10px] shrink-0 p-[16px] rounded-[18px] bg-[#FBEDE4] border-[1.5px] border-dashed border-[#E8A585]">
+              <div key={w.id} className="flex flex-col gap-[10px] shrink-0 p-[16px] rounded-[14px] bg-paper">
                 <span className="flex items-center gap-[8px]">
                   <span className="w-[8px] h-[8px] rounded-[50%] bg-[#E8A585]" />
                   <span className={`text-[13px] leading-[16px] ${SANS} font-[600] text-[#7A3E26]`}>Needs Attention</span>
@@ -474,15 +553,15 @@ export function DoeHealthProductAutomationsPage() {
                 </button>
               </div>
             ))}
-            <div className="flex flex-col gap-[6px] shrink-0 p-[8px] rounded-[18px] bg-[#FAF6EC]">
-              <span className="flex items-center justify-between px-[8px] pt-[6px] pb-[4px]">
+            <div className="flex flex-col grow gap-[2px] p-[8px] rounded-[14px] bg-paper">
+              <span className="flex items-center justify-between px-[8px] pt-[6px] pb-[6px]">
                 <span className={`text-[18px] leading-[22px] ${DISPLAY} text-walnut`}>Latest Runs</span>
                 <button type="button" onClick={() => setTab("runs")} className={`text-[13px] ${SANS} font-[500] text-sub hover:text-walnut transition-colors duration-150`}>
                   See All
                 </button>
               </span>
-              {RUNS.slice(0, 4).map((r) => (
-                <RunItem key={r.time} r={r} />
+              {RUNS.map((r) => (
+                <RunItem key={r.time} r={r} flat />
               ))}
             </div>
           </div>

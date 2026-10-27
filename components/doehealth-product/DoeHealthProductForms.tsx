@@ -178,6 +178,19 @@ const FORMS: Form[] = [
   },
 ];
 
+/** Who sent the latest copies back, for the returns list on the right; picked per form so each one differs. */
+const PATIENTS = ["Maya Chen", "Leo Jacobs", "Priya Raman", "Henry Walsh", "Grace Kim", "Noah Bennett", "Lily Park", "Elena Cho", "Theo Haddad", "Ava Morales"];
+const WHEN = ["9:42", "9:15", "8:58", "Yesterday", "Yesterday", "Mon"];
+const returnsOf = (form: Form, index: number) =>
+  form.sent
+    ? WHEN.slice(0, 4).map((when, i) => ({
+        who: PATIENTS[(index * 3 + i) % PATIENTS.length]!,
+        when,
+        byAgent: (index + i) % 4 !== 3,
+        waiting: i === 3 && form.returned < form.sent,
+      }))
+    : [];
+
 const SEND_OPTIONS: { id: Send; label: string }[] = [
   { id: "booking", label: "On booking" },
   { id: "before", label: "Day before" },
@@ -250,7 +263,7 @@ function IconButton({ label, onClick, disabled, children }: { label: string; onC
 
 function StepCard({ step, title, children }: { step: number; title: string; children: ReactNode }) {
   return (
-    <div className="flex flex-col gap-[12px] p-[18px] rounded-[24px] bg-sand">
+    <div className="flex flex-col shrink-0 gap-[12px] p-[16px] rounded-[18px] bg-paper">
       <span className="flex items-center gap-[10px]">
         <span className={`w-[26px] h-[26px] shrink-0 flex items-center justify-center rounded-[999px] bg-paper text-[13px] leading-[16px] ${DISPLAY} text-walnut`}>{step}</span>
         <span className={`text-[16px] leading-[20px] ${SANS} font-[500] text-walnut`}>{title}</span>
@@ -305,6 +318,8 @@ export function DoeHealthProductFormsPage() {
   };
 
   const agentCount = form.fields.filter((x) => x.agent).length;
+  const returns = returnsOf(form, forms.indexOf(form));
+  const out = form.sent - form.returned;
 
   return (
     <div className="relative [font-synthesis:none] h-full w-full flex flex-col gap-[24px] pt-[36px] px-[40px] pb-[28px] rounded-[24px] overflow-clip bg-paper antialiased">
@@ -483,7 +498,7 @@ export function DoeHealthProductFormsPage() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-[10px] min-h-[0px] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex flex-col gap-[10px] min-h-[0px] p-[14px] rounded-[28px] bg-[#FAF6EC] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <StepCard step={1} title="Agents send it">
             <Segmented value={form.send} options={SEND_OPTIONS} onChange={(send) => update({ send })} />
           </StepCard>
@@ -492,7 +507,7 @@ export function DoeHealthProductFormsPage() {
               <span className={`text-[14px] leading-[18px] ${SANS} text-walnut`}>Patient reviews first</span>
               <Toggle on={form.review} label="Patient reviews first" onChange={() => update({ review: !form.review })} />
             </span>
-            <span className="flex h-[8px] rounded-[99px] overflow-hidden bg-paper">
+            <span className="flex h-[8px] rounded-[99px] overflow-hidden bg-[#EEEADF]">
               <span className="h-full rounded-[99px] bg-[#6E9A5B]" style={{ width: `${(agentCount / form.fields.length) * 100}%`, transition: `width 400ms ${EASE}` }} />
             </span>
             <span className={`text-[12px] leading-[16px] ${SANS} text-sub`}>Signatures and uploads stay with the patient</span>
@@ -500,11 +515,50 @@ export function DoeHealthProductFormsPage() {
           <StepCard step={3} title="It comes back to">
             <Segmented value={form.dest} options={DEST_OPTIONS} onChange={(dest) => update({ dest })} />
           </StepCard>
-          <div className="flex items-center gap-[14px] p-[18px] rounded-[24px] border-[1.5px] border-dashed border-[#2819101F]">
-            <span className={`text-[34px] leading-[38px] tracking-[-0.02em] ${DISPLAY} text-walnut [font-variant-numeric:tabular-nums]`}>
-              {form.sent ? `${Math.round((form.returned / form.sent) * 100)}%` : "—"}
+
+          <div className="flex flex-col shrink-0 gap-[12px] p-[16px] rounded-[18px] bg-paper">
+            <span className="flex items-end justify-between gap-[12px]">
+              <span className="flex flex-col gap-[2px]">
+                <span className={`text-[34px] leading-[38px] tracking-[-0.02em] ${DISPLAY} text-walnut [font-variant-numeric:tabular-nums]`}>
+                  {form.sent ? `${Math.round((form.returned / form.sent) * 100)}%` : "—"}
+                </span>
+                <span className={`text-[13px] leading-[18px] ${SANS} text-sub`}>Returned complete this month</span>
+              </span>
             </span>
-            <span className={`text-[13px] leading-[18px] ${SANS} text-sub`}>returned complete this month</span>
+            <span className="grid grid-cols-3 gap-[8px]">
+              {[
+                ["Sent", form.sent],
+                ["Back", form.returned],
+                ["Out", out],
+              ].map(([label, value]) => (
+                <span key={label} className="flex flex-col gap-[2px] px-[12px] py-[10px] rounded-[14px] bg-[#FAF6EC]">
+                  <span className={`text-[12px] leading-[16px] ${SANS} text-sub`}>{label}</span>
+                  <span className={`text-[18px] leading-[22px] ${DISPLAY} text-walnut [font-variant-numeric:tabular-nums]`}>{value}</span>
+                </span>
+              ))}
+            </span>
+          </div>
+
+          <div className="flex flex-col grow gap-[10px] p-[16px] rounded-[18px] bg-paper">
+            <span className="flex items-center justify-between">
+              <span className={`text-[15px] leading-[20px] ${SANS} font-[600] text-walnut`}>Latest returns</span>
+              {out > 0 && <span className={`text-[12px] leading-[16px] ${SANS} font-[500] text-sub`}>{out} still out</span>}
+            </span>
+            {returns.length === 0 && <span className={`text-[13px] leading-[18px] ${SANS} text-sub`}>Nothing back yet. Returns show here as agents send them.</span>}
+            {returns.map((r) => (
+              <span key={r.who} className="flex items-center gap-[10px]">
+                <span className={`w-[28px] h-[28px] shrink-0 flex items-center justify-center rounded-[999px] text-[11px] leading-[14px] ${SANS} font-[600] text-walnut`} style={{ backgroundColor: form.tile }}>
+                  {r.who.split(" ").map((w) => w[0]).join("")}
+                </span>
+                <span className="flex flex-col grow min-w-[0px]">
+                  <span className={`truncate text-[14px] leading-[18px] ${SANS} font-[500] text-walnut`}>{r.who}</span>
+                  <span className={`truncate text-[12px] leading-[16px] ${SANS} ${r.waiting ? "text-[#B4572F]" : "text-sub"}`}>
+                    {r.waiting ? "Waiting on a signature" : r.byAgent ? "Filled by their agent" : "Filled by the patient"}
+                  </span>
+                </span>
+                <span className={`shrink-0 text-[12px] leading-[16px] ${SANS} text-sub [font-variant-numeric:tabular-nums]`}>{r.when}</span>
+              </span>
+            ))}
           </div>
         </div>
       </div>

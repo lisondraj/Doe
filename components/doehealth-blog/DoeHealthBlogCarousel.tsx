@@ -19,8 +19,11 @@ function Arrow({ flip = false }: { flip?: boolean }) {
   );
 }
 
-/** Swipe carousel of the other posts — desk card language, prev/next on the header row. */
-export function DoeHealthBlogCarousel({ currentSlug }: { currentSlug: string }) {
+/**
+ * Swipe carousel of the other posts — desk card language, prev/next on the header row. `cardHref` sends every card to
+ * one link instead of its post (the /preview duplicates' Contact James mail).
+ */
+export function DoeHealthBlogCarousel({ currentSlug, cardHref }: { currentSlug: string; cardHref?: string }) {
   const posts = doehealthBlogOtherArticles(currentSlug);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canPrev, setCanPrev] = useState(false);
@@ -75,7 +78,7 @@ export function DoeHealthBlogCarousel({ currentSlug }: { currentSlug: string }) 
         <ul className="doehealth-blog-carousel__track">
           {posts.map((post) => (
             <li key={post.slug} className="doehealth-blog-carousel__slide">
-              <Link href={doehealthBlogArticlePath(post.slug)} className="doehealth-blog-card">
+              <Link href={cardHref ?? doehealthBlogArticlePath(post.slug)} className="doehealth-blog-card">
                 {/* Static — the preview carousel never animates, even for a hero that does on its own page. */}
                 <DoeHealthBlogPlaceholder tone={post.heroTone} colors={articleBoxColors(post.heroTone)} className="doehealth-blog-card__art" pattern wave={post.wave} />
                 <p className="doehealth-blog-card__eyebrow">{post.eyebrow}</p>

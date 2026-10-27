@@ -31,20 +31,106 @@
   display: block;
 }
 
-/* Product scenes in body figures: drawn at 1280×720, then scaled into the box by SceneStage. */
-.doehealth-blog-scene {
+/* Body figures drawn from the product: a /video film stretch, or a live /doehealthproduct page with a cursor. */
+.doehealth-blog-view {
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
 }
 
-.doehealth-blog-scene__stage {
+/* No shadows or glows anywhere in a figure: the films and the product pages draw flat. */
+.doehealth-blog-view *,
+.doehealth-blog-view *::before,
+.doehealth-blog-view *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* The film covers the box: exact on the desktop's 16:9, cropped at the sides on the phone's 4:3. */
+.doehealth-blog-view__film {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  min-width: 100%;
+  aspect-ratio: 16 / 9;
+  transform: translateX(-50%);
+}
+
+.doehealth-blog-view__stage {
   position: absolute;
   top: 0;
   left: 0;
+  overflow: hidden;
   transform-origin: 0 0;
-  -webkit-font-smoothing: antialiased;
+  transition: opacity 450ms ease;
+}
+
+/* The whole product keeps its brown shell's rounded corners; a corner view rounds only the corner inside the box. */
+.doehealth-blog-view__stage[data-sit="full"] {
+  border-radius: 36px;
+}
+
+.doehealth-blog-view__stage[data-sit="br"] {
+  border-top-left-radius: 36px;
+}
+
+.doehealth-blog-view__stage[data-sit="bl"] {
+  border-top-right-radius: 36px;
+}
+
+/* The paper page alone, without the brown shell round it. */
+.doehealth-blog-view__stage[data-sit="inner"] {
+  overflow: visible;
+  clip-path: inset(12px 12px 12px 64px round 24px);
+}
+
+.doehealth-blog-view__source {
+  width: 1440px;
+  height: 900px;
+}
+
+/* The clinic menu and rail overlays never dim the page in a figure. */
+.doehealth-blog-view__source [data-shell-dim] {
+  opacity: 0 !important;
+}
+
+.doehealth-blog-view__cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  opacity: 0;
+  transform-origin: 2px 2px;
+  transition: opacity 300ms ease;
+}
+
+.doehealth-blog-view__ring {
+  position: absolute;
+  z-index: 1;
+  width: 88px;
+  height: 88px;
+  margin: -44px 0 0 -44px;
+  border: 3px solid rgb(20 12 4 / 0.35);
+  border-radius: 999px;
+  opacity: 0;
+  transform: scale(0.2);
+}
+
+.doehealth-blog-view__ring.is-on {
+  animation: doehealth-blog-view-ring 520ms ease-out forwards;
+}
+
+@keyframes doehealth-blog-view-ring {
+  from {
+    opacity: 1;
+    transform: scale(0.2);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1);
+  }
 }
 
 /* Original tone families, lightened (see DoeHealthBlogPlaceholder PATTERN_COLORS). */
@@ -328,6 +414,164 @@
   font-weight: 400;
   letter-spacing: -0.035em;
   line-height: 1.15;
+}
+
+/* A boxed note for investors in the reading column: flat beige, no line, no shadow. */
+.doehealth-blog-article__body > .doehealth-blog-article__investor {
+  margin-top: clamp(2.5rem, 5vh, 3.25rem);
+}
+
+.doehealth-blog-article__body > .doehealth-blog-article__investor + * {
+  margin-top: clamp(2.5rem, 5vh, 3.25rem);
+}
+
+.doehealth-blog-article__investor {
+  padding: clamp(1.4rem, 3vw, 2.25rem);
+  border-radius: var(--doehealth-desk-radius);
+  background: #f4eedf;
+}
+
+.doehealth-blog-article__investor-eyebrow {
+  margin: 0;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.doehealth-blog-article__investor h3 {
+  margin: 0.6rem 0 0;
+  color: var(--doehealth-desk-surface);
+  font-size: clamp(1.5rem, 2.2vw, 1.95rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.doehealth-blog-article__investor-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.6rem;
+  margin: 1.4rem 0 0;
+}
+
+.doehealth-blog-article__investor-stats > div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  padding: 1rem 1.1rem;
+  border-radius: calc(var(--doehealth-desk-radius) * 0.6);
+  background: #fffcf1;
+}
+
+.doehealth-blog-article__investor-stats dd {
+  margin: 0;
+  color: var(--doehealth-desk-surface);
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.doehealth-blog-article__investor-stats dt {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.6);
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+.doehealth-blog-article__investor > p,
+.doehealth-blog-article__investor li {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.78);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+
+.doehealth-blog-article__investor > p {
+  margin: 1.25rem 0 0;
+}
+
+.doehealth-blog-article__investor ul {
+  display: grid;
+  gap: 0.55rem;
+  margin: 1.1rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.doehealth-blog-article__investor strong {
+  color: var(--doehealth-desk-surface);
+  font-weight: 600;
+}
+
+/* The plan to Seed: one row a quarter on a rail, the Seed quarter in the salmon. */
+.doehealth-blog-article__timeline ol {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: clamp(1rem, 2.4vw, 1.75rem);
+  border-radius: var(--doehealth-desk-radius);
+  background: #f4eedf;
+  list-style: none;
+}
+
+.doehealth-blog-article__timeline ol > li {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 1.25rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: calc(var(--doehealth-desk-radius) * 0.6);
+  background: #fffcf1;
+}
+
+.doehealth-blog-article__timeline ol > li[data-seed] {
+  background: var(--blog-salmon);
+}
+
+.doehealth-blog-article__timeline-when {
+  color: var(--doehealth-desk-surface);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.doehealth-blog-article__timeline h4 {
+  margin: 0;
+  color: var(--doehealth-desk-surface);
+  font-size: 1.35rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.doehealth-blog-article__timeline ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.05rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.75);
+  font-size: 0.9875rem;
+  line-height: 1.5;
+}
+
+.doehealth-blog-article__timeline ol > li p {
+  margin: 0.6rem 0 0;
+  color: var(--doehealth-desk-surface);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.doehealth-blog-article__timeline ol > li p span {
+  margin-right: 0.35rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .doehealth-blog-article__timeline ol > li {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
 }
 
 /* Figures break out of the reading column on desktop. */

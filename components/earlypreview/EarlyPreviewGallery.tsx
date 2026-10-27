@@ -46,6 +46,11 @@ type GalleryTileData = {
   still?: boolean;
   /** Only the centred play button over the still, no card. */
   plain?: boolean;
+  /**
+   * No film: the still is a link to the article, with a card over it, the article's title big on the left (one entry
+   * per line) and a "See Article" button on the far right.
+   */
+  articleTitle?: readonly [string, string];
 };
 
 /** Two videos side by side, the first row of the beige section's video grid. */
@@ -250,7 +255,40 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   );
 }
 
+/** A still that links to its article: the title on the left and "See Article" on the right, over the picture. */
+function ArticleGalleryTile({ tile, title, href }: { tile: GalleryTileData; title: readonly [string, string]; href: string }) {
+  return (
+    <Link
+      href={href}
+      className={`earlypreview-gallery__tile earlypreview-gallery__tile--article${tile.wide ? " earlypreview-gallery__tile--wide" : ""}`}
+    >
+      <Image
+        src={tile.src}
+        alt={tile.alt}
+        width={2500}
+        height={1445}
+        sizes={tile.wide ? "(min-width: 1024px) 80vw, 100vw" : "(min-width: 1024px) 45vw, 100vw"}
+        quality={95}
+        style={tile.position ? { objectPosition: tile.position } : undefined}
+      />
+      <span className="earlypreview-article-card">
+        <span className={`earlypreview-article-card__title ${p22Mackinac.className}`}>
+          {title.map((line) => (
+            <span key={line} className="earlypreview-article-card__line">
+              {line}
+            </span>
+          ))}
+        </span>
+        <span className={`earlypreview-article-card__button ${inter.className}`}>{tile.video.link?.label ?? "See Article"}</span>
+      </span>
+    </Link>
+  );
+}
+
 function GalleryTile({ tile }: { tile: GalleryTileData }) {
+  if (tile.articleTitle && tile.video.link) {
+    return <ArticleGalleryTile tile={tile} title={tile.articleTitle} href={tile.video.link.href} />;
+  }
   if (tile.film) return <FilmGalleryTile tile={tile} film={tile.film} />;
 
   return (
@@ -352,10 +390,16 @@ const HERO_GALLERY_TITLES: Record<string, readonly [string, string]> = {
 
 const HERO_GALLERY_ITEMS: readonly { key: string; tile: GalleryTileData }[] = [
   // Screenshots of each film at its thumbnail time: hospitals 0:02.5, dentists (the concierge film) 0:42, derm 0:04,
-  // concierge 0:57.
+  // concierge 0:57. Hospitals has no film here: its still links to the article, which the card over it names.
   {
     key: "hospitals",
-    tile: { ...HOSPITAL_TILE, src: "/earlypreview/thumbs/hospitals.jpg", alt: "Doe for Hospitals film", plain: true },
+    tile: {
+      src: "/earlypreview/thumbs/hospitals.jpg",
+      alt: "Doe for Hospitals & Health Systems",
+      video: EARLYPREVIEW_HOSPITALS_VIDEO,
+      wide: true,
+      articleTitle: ["Growing Through Clinics", "Building for Enterprise"],
+    },
   },
   {
     key: "dentists",
@@ -371,7 +415,7 @@ const HERO_GALLERY_ITEMS: readonly { key: string; tile: GalleryTileData }[] = [
 /**
  * The videos attached under the hero video: Doe for Hospitals full width, the dentist and derm pair under it, then
  * Doe for Concierge full width. Each has a centred title (white with its last word salmon, then salmon) above its box,
- * in the hero's type. The boxes are the still images with the brown card (title, link, play button) always showing.
+ * in the hero's type. The boxes are the still images with the play button; Hospitals' is an article card instead.
  */
 export function EarlyPreviewHeroGallery() {
   const gridRef = useRef<HTMLDivElement>(null);
@@ -436,7 +480,8 @@ export function EarlyPreviewHeroGallery() {
                   </span>
                   <span className="earlypreview-hero-gallery__line earlypreview-hero-gallery__line--salmon">{second}</span>
                 </h3>
-                {tile.video.link ? (
+                {/* The article card links from inside its box instead. */}
+                {tile.video.link && !tile.articleTitle ? (
                   <Link href={tile.video.link.href} className="earlypreview-overlay__link earlypreview-hero-gallery__link earlypreview-hero-gallery__link--title">
                     <span className="earlypreview-overlay__label">{tile.video.link.label}</span>
                     <span className="earlypreview-overlay__arrow" aria-hidden="true">
@@ -447,7 +492,7 @@ export function EarlyPreviewHeroGallery() {
               </div>
               <GalleryTile tile={tile} />
               {/* iPhone: "See Article" sits under the video box instead of under the title, without the arrow. */}
-              {tile.video.link ? (
+              {tile.video.link && !tile.articleTitle ? (
                 <Link href={tile.video.link.href} className="earlypreview-overlay__link earlypreview-hero-gallery__link earlypreview-hero-gallery__link--box">
                   <span className="earlypreview-overlay__label">{tile.video.link.label}</span>
                 </Link>
