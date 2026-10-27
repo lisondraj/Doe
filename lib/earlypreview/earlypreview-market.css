@@ -223,12 +223,13 @@
 /* ------------------------------------------------------------ target at Seed */
 
 /* The metrics in the top right, right aligned; the title builds in the bottom left at the shared title size. */
-/* The hero's dot wave across the middle of the screen, edge to edge, faded at its top and bottom like the hero's. */
+/* The hero's dot wave across the lower half of the screen, under the milestones, edge to edge, faded at its top and
+   bottom like the hero's. */
 .earlypreview-market__seed-wave {
   position: absolute;
   left: 0;
   right: 0;
-  top: 50%;
+  top: 64%;
   z-index: -1;
   height: 36svh;
   pointer-events: none;
@@ -456,84 +457,10 @@
 
 /* ------------------------------------------------------------ plans */
 
-/* The title on the left, centred top to bottom; the plans down the right, spread over its full height. */
-/* The title on the left, the founding offer set against the top right. */
+/* The title alone at the top; the tiers sit in a row under it. */
 .earlypreview-market__plans-head {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
-  gap: 2rem;
-}
-
-.earlypreview-market__founding {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  flex-shrink: 0;
-  margin: 0;
-  text-align: right;
-  opacity: var(--e, 0);
-  transform: translateY(calc((1 - var(--e, 0)) * 0.9rem));
-}
-
-/* The founding and regular views share one grid cell: the corner crossfades between them at the same size. */
-.earlypreview-market__founding-stack {
-  display: grid;
-}
-
-.earlypreview-market__founding-view {
-  grid-area: 1 / 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  opacity: var(--o, 1);
-}
-
-.earlypreview-market__founding-label {
-  margin: 0;
-  font-family: var(--m-display);
-  font-size: clamp(1.5rem, min(2.2vw, 3.8vh), 2.3rem);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  color: var(--m-salmon);
-}
-
-.earlypreview-market__founding-detail {
-  margin: 0.45rem 0 0;
-  font-size: clamp(0.95rem, 1.05vw, 1.05rem);
-  line-height: 1.4;
-  color: var(--m-dim);
-}
-
-/* Each paid tier's founding price, then the price it becomes. */
-.earlypreview-market__founding-steps {
-  display: grid;
-  grid-template-columns: auto auto;
-  justify-content: end;
-  align-items: baseline;
-  gap: 0.25rem 0.55rem;
-  margin: clamp(0.6rem, 1.6vh, 0.9rem) 0 0;
-  padding: 0;
-  list-style: none;
-  font-size: clamp(0.95rem, 1.05vw, 1.05rem);
-  color: var(--m-dim);
-}
-
-.earlypreview-market__founding-steps > li {
-  display: contents;
-}
-
-.earlypreview-market__founding-steps > li > :first-child {
-  color: var(--m-quiet);
-}
-
-.earlypreview-market__founding-steps strong {
-  font-weight: 500;
-  color: var(--m-salmon);
-}
-
-.earlypreview-market__founding-steps > li > :last-child {
-  color: var(--m-cream);
 }
 
 .earlypreview-market__plans {
@@ -573,7 +500,6 @@
   transition: color 200ms ease;
 }
 
-/* The founding price, salmon, beside the price it becomes. */
 .earlypreview-market__plan-prices {
   display: flex;
   align-items: flex-start;
@@ -596,9 +522,10 @@
   color: var(--m-dim);
 }
 
-/* A tier's per-provider price for multi-site groups (or Doe One's note), under its own price. */
+/* What each extra provider and location adds, one a line under the tier's price. */
 .earlypreview-market__plan-group {
   display: grid;
+  gap: 0.15rem;
   margin-top: clamp(0.5rem, 1.4vh, 0.8rem);
   font-size: clamp(0.95rem, 1.05vw, 1.05rem);
   white-space: nowrap;
@@ -650,12 +577,12 @@
 
 /* ------------------------------------------------------------ included */
 
-/* The tiers across the top, a row per layer: the layer in P22 on the left, each tier's line in its column. */
+/* The tiers across the top, a row per feature group: the group on the left, a tick from the first tier that has it.
+   The costs close the table under a firmer rule. */
 .earlypreview-market__incl {
   display: grid;
-  grid-template-columns: minmax(max-content, 0.85fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(max-content, 1.1fr) repeat(4, minmax(0, 1fr));
   column-gap: clamp(1.25rem, 2.6vw, 3rem);
-  row-gap: clamp(0.15rem, 0.5vh, 0.35rem);
   width: 100%;
 }
 
@@ -663,26 +590,32 @@
   display: grid;
   grid-column: 1 / -1;
   grid-template-columns: subgrid;
-  align-items: baseline;
-  padding-top: clamp(0.45rem, 1.3vh, 0.8rem);
-  border-top: 1px solid rgb(255 252 241 / 0.14);
-  font-size: clamp(0.92rem, 1.02vw, 1.05rem);
-  line-height: 1.3;
-  color: var(--m-dim);
+  align-items: center;
+  padding: clamp(0.1rem, 0.5vh, 0.4rem) 0;
+  border-top: 1px solid rgb(255 252 241 / 0.12);
+  font-size: clamp(0.9rem, 1vw, 1rem);
+  line-height: 1.25;
+  color: var(--m-cream);
   opacity: var(--e, 0);
   transform: translateY(calc((1 - var(--e, 0)) * 0.9rem));
+  transition: opacity 200ms ease;
+}
+
+.earlypreview-market__incl-row.is-muted {
+  opacity: calc(var(--e, 0) * 0.45);
 }
 
 .earlypreview-market__incl-row > [role="rowheader"] {
   font-family: var(--m-display);
-  font-size: clamp(1.3rem, min(1.9vw, 3.3vh), 2rem);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-size: clamp(0.95rem, min(1.3vw, 2.3vh), 1.35rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
   white-space: nowrap;
   color: var(--m-cream);
 }
 
-.earlypreview-market__incl-row > .is-one {
+.earlypreview-market__incl-row > [role="cell"] svg {
+  display: block;
   color: var(--m-salmon);
 }
 
@@ -690,25 +623,80 @@
   color: var(--m-quiet);
 }
 
-.earlypreview-market__incl-row.is-head {
-  padding: 0 0 clamp(0.3rem, 1vh, 0.6rem);
-  border-top: 0;
+/* The cost rows are iPhone only: on wider screens each tier's extras sit under its name. */
+.earlypreview-market__incl-row.is-cost {
+  display: none;
+}
+
+.earlypreview-market__incl-row.is-cost > [role="cell"] {
   font-family: var(--m-display);
-  font-size: clamp(1.5rem, min(2.3vw, 4vh), 2.5rem);
-  line-height: 1;
-  letter-spacing: -0.035em;
+  font-size: clamp(1.1rem, min(1.5vw, 2.6vh), 1.5rem);
+  letter-spacing: -0.02em;
   color: var(--m-cream);
 }
 
-.earlypreview-market__incl-row.is-head em {
+.earlypreview-market__incl-row.is-cost > .is-one {
+  color: var(--m-salmon);
+}
+
+.earlypreview-market__incl-row.is-cost-first {
+  margin-top: clamp(0.3rem, 1vh, 0.6rem);
+  border-top-color: rgb(252 207 184 / 0.45);
+}
+
+/* Each tier's name and price, then what each extra provider and location adds, small, under it. */
+.earlypreview-market__incl-row.is-head {
+  align-items: start;
+  padding: 0 0 clamp(0.35rem, 1vh, 0.6rem);
+  border-top: 0;
+}
+
+.earlypreview-market__incl-row.is-head > [role="columnheader"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.earlypreview-market__incl-tier {
+  font-family: var(--m-display);
+  font-size: clamp(1.3rem, min(2vw, 3.4vh), 2.2rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  color: var(--m-cream);
+}
+
+.earlypreview-market__incl-tier em {
   font-style: normal;
   font-size: 0.6em;
   letter-spacing: -0.01em;
-  color: var(--m-quiet);
+  color: var(--m-salmon);
 }
 
-.earlypreview-market__incl-row.is-head > .is-one {
+.earlypreview-market__incl-row.is-head > .is-one .earlypreview-market__incl-tier {
   color: var(--m-salmon);
+}
+
+.earlypreview-market__incl-extras {
+  display: grid;
+  font-size: clamp(0.75rem, 0.85vw, 0.85rem);
+  line-height: 1.3;
+  white-space: nowrap;
+  color: var(--m-dim);
+}
+
+.earlypreview-market__incl-note {
+  margin: clamp(0.5rem, 1.4vh, 0.9rem) 0 0;
+  font-size: clamp(0.8rem, 0.9vw, 0.9rem);
+  color: var(--m-quiet);
+  opacity: var(--e, 0);
+}
+
+/* Short desktop screens: the note gives its line to the table, so the last row stays clear of the nav. */
+@media (max-height: 800px) {
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .earlypreview-market__incl-note {
+    display: none;
+  }
 }
 
 /* ------------------------------------------------------------ cities */
@@ -2438,6 +2426,39 @@
   text-wrap: balance;
 }
 
+/* iPhone: the nav keeps its lines; the labels don't fit nine across. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market {
+  --m-nav-room: 1.75rem;
+}
+
+/* The scene nav sits at the bottom of the visible screen, above Safari's toolbar and the home indicator. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__nav {
+  top: calc(100svh - max(0.5rem, env(safe-area-inset-bottom)));
+  bottom: auto;
+  column-gap: 0.35rem;
+  transform: translateY(-100%);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__nav-item {
+  gap: 0;
+  padding: 0.9rem 0 0.4rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__nav-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* iPhone Seed: the dot wave low, under the title, clear of the milestones. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__seed-wave {
+  top: 74%;
+}
+
 /* iPhone Seed: the milestones over the title, full width, a size up from the desktop's smallest. */
 .doehealth-desk2-page:has(.doephone-mobile-root)
   .earlypreview-market__seed-lines {
@@ -2674,95 +2695,9 @@
   }
 }
 
-/* iPhone plans: four tier rows, name and price only (the tiers screen after it has the detail). The founding offer
-   sits under the title, its price steps left out. */
-.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__plans {
-  gap: 1.1rem;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__plan-value {
-  font-size: 2.9rem;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__plans-head {
-  flex-direction: column;
-  gap: 0.9rem;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__founding {
-  align-items: flex-start;
-  text-align: left;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__founding-view {
-  align-items: flex-start;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__founding-steps {
-  justify-content: start;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__founding-label {
-  font-size: 1.3rem;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__founding-detail {
-  margin-top: 0.25rem;
-  font-size: 0.85rem;
-}
-
-/* iPhone tiers: each layer's name on its own line over the three tiers' columns. */
-.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  column-gap: 0.75rem;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__incl-row {
-  padding-top: 0.45rem;
-  font-size: 0.72rem;
-  line-height: 1.25;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__incl-row
-  > [role="rowheader"] {
-  grid-column: 1 / -1;
-  margin-bottom: 0.15rem;
-  font-size: 1.05rem;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__incl-row.is-head
-  > :first-child {
-  display: none;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__incl-row.is-head {
-  font-size: 1.2rem;
-}
-
-@media (max-height: 700px) {
-  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__plans {
-    gap: 0.8rem;
-  }
-
-  .doehealth-desk2-page:has(.doephone-mobile-root)
-    .earlypreview-market__plan-value {
-    font-size: 2.5rem;
-  }
-}
-
 /* iPhone plans: the four tiers in a 2 × 2 grid (Free and Basic over Advanced and Doe One), each tier's name over its
-   price, left aligned. Doe One has no note under its price. */
+   price and what each extra provider and location adds, left aligned. The features don't fit; the tiers screen after it
+   has them. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__plans {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2778,16 +2713,7 @@
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__plan-main {
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
   .earlypreview-market__plan-name {
-  padding-top: 0;
   font-size: 1.45rem;
 }
 
@@ -2803,16 +2729,94 @@
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
   .earlypreview-market__plan-group {
-  flex-basis: auto;
-  justify-items: start;
-  margin-top: 0.4rem;
-  font-size: 0.78rem;
+  margin-top: 0.45rem;
+  font-size: 0.8rem;
   line-height: 1.3;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__plan-features {
+  display: none;
+}
+
+@media (max-height: 700px) {
+  .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__plans {
+    row-gap: 1.6rem;
+  }
+
+  .doehealth-desk2-page:has(.doephone-mobile-root)
+    .earlypreview-market__plan-value {
+    font-size: 2.5rem;
+  }
+}
+
+/* iPhone tiers: the feature group on the left, four narrow tick columns; each tier's extras close the table as two
+   cost rows. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl {
+  grid-template-columns: minmax(0, 1fr) repeat(4, 2.9rem);
+  column-gap: 0.4rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__incl-row {
+  padding: 0.12rem 0;
+  font-size: 0.8rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__incl-row
+  > [role="rowheader"] {
+  font-size: 0.85rem;
   white-space: normal;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__plan.is-one
-  .earlypreview-market__plan-group {
+  .earlypreview-market__incl-row.is-cost {
+  display: grid;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__incl-row
+  > [role="cell"] {
+  justify-self: center;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__incl-row.is-cost
+  > [role="cell"] {
+  font-size: 0.85rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__incl-row.is-head
+  > [role="columnheader"] {
+  align-items: center;
+  text-align: center;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-tier {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.9rem;
+  white-space: normal;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-tier em {
+  font-size: 0.85em;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-extras {
   display: none;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-note {
+  font-size: 0.72rem;
+}
+
+/* iPhone cities: the numbers stack over the dots, so they line up with the title on the left. */
+.doehealth-desk2-page:has(.doephone-mobile-root)
+  .earlypreview-market__country-panel {
+  align-items: flex-start;
+  text-align: left;
 }

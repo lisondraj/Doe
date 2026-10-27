@@ -4,6 +4,16 @@
  * revenue model and expansion figures are Doe's own estimates; TAM matches the $28B on /about.
  */
 
+import {
+  FEATURE_GROUPS,
+  type FeatureGroup,
+  PLAN_ORDER,
+  PLANS as PRICING_PLANS,
+  type Plan as PricingPlan,
+  SPECIALTIES,
+  SPECIALTY_FROM,
+} from "@/lib/doehealthdesk2/doehealthdesk2-pricing";
+
 export type EarlyPreviewMarketSource = {
   readonly label: string;
   readonly href?: string;
@@ -452,158 +462,71 @@ export const EARLYPREVIEW_MARKET_INDEX = {
   },
 } as const;
 
+/** A tier's extras: what each provider and location past the first adds a month, as on /pricing. */
+const extras = (plan: PricingPlan) =>
+  plan.base === 0
+    ? ["Every provider and location"]
+    : [`+$${plan.perProvider}/provider/mo`, `+$${plan.perLocation}/location/mo`];
+
+/** The /pricing feature groups each tier adds, the specialty sets in Advanced. */
+const SPECIALTY_GROUP: FeatureGroup = {
+  title: "Specialty feature sets",
+  from: SPECIALTY_FROM,
+  items: SPECIALTIES.map((specialty) => specialty.label),
+};
+const GROUPS: readonly FeatureGroup[] = [
+  ...FEATURE_GROUPS.filter((group) => PLAN_ORDER.indexOf(group.from) <= PLAN_ORDER.indexOf(SPECIALTY_FROM)),
+  SPECIALTY_GROUP,
+  ...FEATURE_GROUPS.filter((group) => PLAN_ORDER.indexOf(group.from) > PLAN_ORDER.indexOf(SPECIALTY_FROM)),
+];
+
+/** A tier's features on the plans screen: Free lists its profile, each paid tier what it adds over the one before. */
+const features = (plan: PricingPlan, index: number) =>
+  index === 0
+    ? GROUPS.filter((group) => group.from === plan.id).flatMap((group) => group.items.filter((item) => item.length < 40))
+    : [
+        `Everything in ${PRICING_PLANS[index - 1]!.name}`,
+        ...GROUPS.filter((group) => group.from === plan.id).map((group) => group.title),
+      ];
+
 /**
- * Free to paid: every clinic starts free, Basic makes it readable to agents, Advanced lets agents book it, and Doe One
- * runs the whole visit. Each tier's features here are the short version; the included screen has the detail.
+ * Free to paid, priced as on /pricing: each tier's monthly price for one provider at one location, what each extra
+ * provider and location adds under it, then its features. The tiers screen after it has the detail.
  */
 export const EARLYPREVIEW_MARKET_PLANS = {
   title: ["Free to Claim.", "Paid to Connect."],
-  founding: {
-    label: "Founding Pricing",
-    detail: ["Buy in the first half of 2027,", "and your price holds for a year."],
-  },
-  /** The same corner after the founding year: each tier's regular price. */
-  regular: {
-    label: "Regular Pricing",
-    detail: ["After your first year,", "each tier moves to its regular price."],
-  },
-  plans: [
-    {
-      id: "free",
-      name: "Free",
-      priceMo: PLAN_MO.free,
-      features: [
-        "Your verified clinic page",
-        "Found by patients' AI assistants",
-        "Monthly report on patient demand",
-      ],
-    },
-    {
-      id: "basic",
-      name: "Basic",
-      priceMo: PLAN_MO.basic,
-      foundingMo: FOUNDING_MO.basic,
-      /** Multi-site groups pay per provider instead of per location. */
-      group: {
-        label: "Multi-site",
-        priceMo: PLAN_MO.groupBasic,
-        foundingMo: FOUNDING_MO.groupBasic,
-        unit: "/provider/mo",
-      },
-      features: [
-        "Everything in Free",
-        "Accurate hours, prices and services",
-        "Spam and fake requests filtered out",
-        "Booking requests from your website",
-      ],
-    },
-    {
-      id: "advanced",
-      name: "Advanced",
-      priceMo: PLAN_MO.advanced,
-      foundingMo: FOUNDING_MO.advanced,
-      group: {
-        label: "Multi-site",
-        priceMo: PLAN_MO.group,
-        foundingMo: FOUNDING_MO.group,
-        unit: "/provider/mo",
-      },
-      features: [
-        "Everything in Basic",
-        "Live openings, synced with your EHR",
-        "Patients book instantly and pay deposits",
-        "Bots and scrapers kept off your calendar",
-      ],
-    },
-    {
-      id: "one",
-      name: "Doe One",
-      priceMo: PLAN_MO.one,
-      foundingMo: FOUNDING_MO.one,
-      note: "Per provider, every clinic",
-      features: [
-        "Everything in Advanced",
-        "Voice agents that answer every call",
-        "Visits+: smart appointments, visit notes and pre-visit videos",
-      ],
-    },
-  ],
+  plans: PRICING_PLANS.map((plan, index) => ({
+    id: plan.id,
+    name: plan.name,
+    priceMo: plan.base,
+    extras: extras(plan),
+    features: features(plan, index),
+  })),
 } as const;
 
-/** One tier's column on the included screen. */
-type IncludedCell = string | null;
-
 /**
- * What each paid tier includes, one row per layer of the clinic, Basic to Doe One. `null` is not included; an add-on
- * names its price. The Free tier is the claimed page under all of them, so it has no column.
+ * What each tier includes, as on /pricing: the four tiers across the top with their price and what each extra provider
+ * and location adds, one row per feature group, ticked from the first tier that has it. On iPhone the extras close
+ * the table as two rows instead.
  */
 export const EARLYPREVIEW_MARKET_INCLUDED = {
-  title: ["What's in each tier.", "Doe One runs the whole visit."],
-  tiers: [
-    { id: "basic", name: "Basic", priceMo: PLAN_MO.basic },
-    { id: "advanced", name: "Advanced", priceMo: PLAN_MO.advanced },
-    { id: "one", name: "Doe One", priceMo: PLAN_MO.one },
+  title: ["What's in each tier.", "And what it costs."],
+  tiers: PRICING_PLANS.map((plan) => ({
+    id: plan.id,
+    name: plan.name,
+    priceMo: plan.base,
+    extras: extras(plan),
+  })),
+  rows: GROUPS.map((group) => ({
+    id: group.title,
+    label: group.title,
+    cells: PLAN_ORDER.map((id) => PLAN_ORDER.indexOf(id) >= PLAN_ORDER.indexOf(group.from)),
+  })),
+  costs: [
+    { id: "provider", label: "Each extra provider", cells: PRICING_PLANS.map((plan) => (plan.perProvider ? `+$${plan.perProvider}` : "$0")) },
+    { id: "location", label: "Each extra location", cells: PRICING_PLANS.map((plan) => (plan.perLocation ? `+$${plan.perLocation}` : "$0")) },
   ],
-  rows: [
-    {
-      id: "visibility",
-      label: "Visibility",
-      cells: [
-        "Patients' AI assistants find your clinic",
-        "Every service and provider shown accurately",
-        "Featured wherever patients search",
-      ],
-    },
-    {
-      id: "schedule",
-      label: "Scheduling",
-      cells: [
-        "Hours, prices and openings shown",
-        "Live openings, synced with your EHR",
-        "A calendar that fills itself, across every site",
-      ],
-    },
-    {
-      id: "booking",
-      label: "Booking",
-      cells: [
-        "Requests come through your website",
-        "Patients book instantly and pay deposits",
-        "Bookings, deposits and add-on sales in one payout",
-      ],
-    },
-    {
-      id: "protection",
-      label: "Protection",
-      cells: [
-        null,
-        "Spam and fake bookings filtered out",
-        "Bots and scrapers kept off your calendar",
-      ],
-    },
-    {
-      id: "voice",
-      label: "Voice Agents",
-      cells: [
-        null,
-        "Add-on: $149/mo per phone line",
-        "Voice agents that answer and book calls",
-      ],
-    },
-    {
-      id: "visits",
-      label: "Visits+",
-      cells: [
-        null,
-        "+$79/mo per provider",
-        "Smart appointments, visit notes and pre-visit videos",
-      ],
-    },
-  ] satisfies readonly {
-    id: string;
-    label: string;
-    cells: readonly [IncludedCell, IncludedCell, IncludedCell];
-  }[],
+  costsNote: "A month. Larger practices get a volume discount on extra providers and locations.",
 } as const;
 
 /**

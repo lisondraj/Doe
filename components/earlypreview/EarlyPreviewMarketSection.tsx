@@ -277,7 +277,7 @@ function SeedScene({ p }: { p: number }) {
       label="Milestones to Seed"
       className="earlypreview-market__scene--corners"
     >
-      {/* The hero's dot wave, across the middle of the screen at full width. */}
+      {/* The hero's dot wave, across the lower half of the screen at full width, under the milestones. */}
       <div
         className="earlypreview-market__seed-wave"
         style={vars({ "--e": en(t, 0.1, 0.55) })}
@@ -330,72 +330,17 @@ function Check() {
   );
 }
 
-const PAID_PLANS = PLANS.plans.filter((plan) => "foundingMo" in plan);
-
 /**
- * Free to paid: the title with the founding offer in the top right, then the four tiers in a row. The tiers always show
- * their founding prices; the corner switches to the regular prices late in the screen.
+ * Free to paid, as on /pricing: the title, then the four tiers in a row. Each shows its price for one provider at one
+ * location, what each extra provider and location adds under it, then its features.
  */
 function PlansScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "plans");
   const hover = useHover<string>();
-  /** Late in the screen, the corner gives way from the founding prices to the regular ones. */
-  const toRegular = en(t, 1.5, 1.9);
   return (
     <Scene o={o} label="Plans">
       <div className="earlypreview-market__plans-head">
         <SceneTitle title={PLANS.title} t={t} />
-        <aside
-          className="earlypreview-market__founding"
-          style={vars({ "--e": en(t, 0.35, 0.7) })}
-        >
-          <div className="earlypreview-market__founding-stack">
-            <div
-              className="earlypreview-market__founding-view"
-              style={vars({ "--o": 1 - toRegular })}
-              aria-hidden={toRegular >= 0.5}
-            >
-              <p className="earlypreview-market__founding-label">
-                {PLANS.founding.label}
-              </p>
-              <p className="earlypreview-market__founding-detail">
-                {PLANS.founding.detail[0]}
-                <br />
-                {PLANS.founding.detail[1]}
-              </p>
-              <ul className="earlypreview-market__founding-steps">
-                {PAID_PLANS.map((plan) => (
-                  <li key={plan.id}>
-                    <span>{plan.name}</span>
-                    <strong>${plan.foundingMo}</strong>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div
-              className="earlypreview-market__founding-view"
-              style={vars({ "--o": toRegular })}
-              aria-hidden={toRegular < 0.5}
-            >
-              <p className="earlypreview-market__founding-label">
-                {PLANS.regular.label}
-              </p>
-              <p className="earlypreview-market__founding-detail">
-                {PLANS.regular.detail[0]}
-                <br />
-                {PLANS.regular.detail[1]}
-              </p>
-              <ul className="earlypreview-market__founding-steps">
-                {PAID_PLANS.map((plan) => (
-                  <li key={plan.id}>
-                    <span>{plan.name}</span>
-                    <strong>${plan.priceMo}</strong>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </aside>
       </div>
       <div className="earlypreview-market__body">
         <ol className="earlypreview-market__plans">
@@ -414,23 +359,15 @@ function PlansScene({ p }: { p: number }) {
                 </span>
                 <span className="earlypreview-market__plan-prices">
                   <span className="earlypreview-market__plan-value">
-                    ${"foundingMo" in plan ? plan.foundingMo : plan.priceMo}
+                    ${plan.priceMo}
                     <small>/mo</small>
                   </span>
                 </span>
-                {"group" in plan ? (
-                  <span className="earlypreview-market__plan-group">
-                    <span>
-                      {plan.group.label} <strong>${plan.group.foundingMo}</strong>
-                      {plan.group.unit}
-                    </span>
-                  </span>
-                ) : null}
-                {"note" in plan ? (
-                  <span className="earlypreview-market__plan-group">
-                    <span>{plan.note}</span>
-                  </span>
-                ) : null}
+                <span className="earlypreview-market__plan-group">
+                  {plan.extras.map((extra) => (
+                    <span key={extra}>{extra}</span>
+                  ))}
+                </span>
               </div>
               <ul className="earlypreview-market__plan-features">
                 {plan.features.map((feature) => (
@@ -449,12 +386,16 @@ function PlansScene({ p }: { p: number }) {
 }
 
 /**
- * What each tier includes: the tiers across the top, one row per layer of the clinic. Doe One's column is salmon, and
- * what a tier leaves out is a quiet dash. Rows come in one after another.
+ * What each tier includes, as on /pricing: the tiers across the top with their price and what each extra provider and
+ * location adds, one row per feature group, ticked from the first tier that has it. On iPhone the extras close the
+ * table as two cost rows. What a tier leaves out is a quiet dash. Rows come in one after another.
  */
 function IncludedScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "included");
   const hover = useHover<string>();
+  const rows = INCLUDED.rows.length + INCLUDED.costs.length;
+  const rise = (index: number) =>
+    vars({ "--e": en(t, 0.4 + (index * 0.8) / rows, 0.65 + (index * 0.8) / rows) });
   return (
     <Scene o={o} label="What's in each tier">
       <SceneTitle title={INCLUDED.title} t={t} />
@@ -462,7 +403,7 @@ function IncludedScene({ p }: { p: number }) {
         <div
           className="earlypreview-market__incl"
           role="table"
-          aria-label="What each tier includes"
+          aria-label="What each tier includes, and what it costs"
         >
           <div
             className="earlypreview-market__incl-row is-head"
@@ -472,7 +413,14 @@ function IncludedScene({ p }: { p: number }) {
             <span role="columnheader" />
             {INCLUDED.tiers.map((tier) => (
               <span key={tier.id} role="columnheader" className={`is-${tier.id}`}>
-                {tier.name} <em>${tier.priceMo}</em>
+                <span className="earlypreview-market__incl-tier">
+                  {tier.name} <em>${tier.priceMo}</em>
+                </span>
+                <span className="earlypreview-market__incl-extras">
+                  {tier.extras.map((extra) => (
+                    <span key={extra}>{extra}</span>
+                  ))}
+                </span>
               </span>
             ))}
           </div>
@@ -481,19 +429,22 @@ function IncludedScene({ p }: { p: number }) {
               key={row.id}
               className={`earlypreview-market__incl-row${hover.state(row.id)}`}
               role="row"
-              style={vars({
-                "--e": en(t, 0.4 + index * 0.08, 0.65 + index * 0.08),
-              })}
+              style={rise(index)}
               {...hover.bind(row.id)}
             >
               <span role="rowheader">{row.label}</span>
-              {row.cells.map((cell, c) => (
+              {row.cells.map((included, c) => (
                 <span
                   key={INCLUDED.tiers[c].id}
                   role="cell"
-                  className={`is-${INCLUDED.tiers[c].id}${cell ? "" : " is-none"}`}
+                  className={`is-${INCLUDED.tiers[c].id}${included ? "" : " is-none"}`}
                 >
-                  {cell ?? (
+                  {included ? (
+                    <>
+                      <Check />
+                      <span className="sr-only">Included</span>
+                    </>
+                  ) : (
                     <>
                       <span aria-hidden>—</span>
                       <span className="sr-only">Not included</span>
@@ -503,7 +454,29 @@ function IncludedScene({ p }: { p: number }) {
               ))}
             </div>
           ))}
+          {INCLUDED.costs.map((row, index) => (
+            <div
+              key={row.id}
+              className={`earlypreview-market__incl-row is-cost${index === 0 ? " is-cost-first" : ""}${hover.state(row.id)}`}
+              role="row"
+              style={rise(INCLUDED.rows.length + index)}
+              {...hover.bind(row.id)}
+            >
+              <span role="rowheader">{row.label}</span>
+              {row.cells.map((cell, c) => (
+                <span key={INCLUDED.tiers[c].id} role="cell" className={`is-${INCLUDED.tiers[c].id}`}>
+                  {cell}
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
+        <p
+          className="earlypreview-market__incl-note"
+          style={vars({ "--e": en(t, 1.15, 1.4) })}
+        >
+          {INCLUDED.costsNote}
+        </p>
       </div>
     </Scene>
   );
