@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 
 import { DoeHealthBlogFilm } from "@/components/doehealth-blog/DoeHealthBlogFilm";
 import { DoeHealthBlogListen } from "@/components/doehealth-blog/DoeHealthBlogListen";
+import { DoeHealthBlogPlanMotion } from "@/components/doehealth-blog/DoeHealthBlogPlanMotion";
 import { DoeHealthBlogMotion } from "@/components/doehealth-blog/DoeHealthBlogMotion";
 import { DoeHealthBlogPlaceholder, articleBoxColors } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthBlogVideo } from "@/components/doehealth-blog/DoeHealthBlogVideo";
@@ -15,10 +16,38 @@ const DoeHealthBlogProductView = dynamic(
   { ssr: false },
 );
 
+/** The animated explainer figures, also client only. */
+const DoeHealthBlogDiagram = dynamic(
+  () => import("@/components/doehealth-blog/diagrams").then((mod) => mod.DoeHealthBlogDiagram),
+  { ssr: false },
+);
+
+/** Copy written to follow a "Lead:" reads as its own sentence once it stands alone. */
+function sentence(text: string) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: Article }) {
   switch (block.type) {
     case "paragraph":
-      return <p className="doehealth-blog-article__p">{block.text}</p>;
+      return (
+        <p className="doehealth-blog-article__p">
+          {block.text}
+          {block.links?.length ? (
+            <span>
+              {" "}
+              {block.links.map((link, index) => (
+                <span key={link.href}>
+                  {index ? " · " : ""}
+                  <a href={link.href} target="_blank" rel="noreferrer">
+                    {link.label}
+                  </a>
+                </span>
+              ))}
+            </span>
+          ) : null}
+        </p>
+      );
     case "heading":
       return <h2 className={`doehealth-blog-article__h2 ${p22Mackinac.className}`}>{block.text}</h2>;
     case "figure":
@@ -45,55 +74,80 @@ function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: 
           <figcaption>{block.caption}</figcaption>
         </figure>
       );
+    case "diagram":
+      return (
+        <figure className="doehealth-blog-article__figure">
+          <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doehealth-blog-article__figure-art" style={{ background: articleBoxColors(block.diagram.tone).bg }}>
+            <DoeHealthBlogDiagram diagram={block.diagram.id} tone={block.diagram.tone} dots={block.diagram.dots} />
+          </div>
+          <figcaption>{block.caption}</figcaption>
+        </figure>
+      );
+    case "planmotion":
+      return (
+        <figure className="doehealth-blog-article__figure">
+          <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doehealth-blog-article__figure-art">
+            <DoeHealthBlogPlanMotion scene={block.scene} />
+          </div>
+          <figcaption>{block.caption}</figcaption>
+        </figure>
+      );
     case "motion":
       return (
-        <figure className="doehealth-blog-article__figure doehealth-blog-article__motion">
-          {/* Drawn in the article, not in the product shell: a plan has no screen to show. */}
-          <DoeHealthBlogMotion scene={block.scene} />
+        <figure className="doehealth-blog-article__figure">
+          <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doehealth-blog-article__figure-art">
+            <DoeHealthBlogMotion scene={block.scene} />
+          </div>
           <figcaption>{block.caption}</figcaption>
         </figure>
       );
     case "investor":
       return (
-        <aside className="doehealth-blog-article__investor" aria-label="For investors">
-          <p className="doehealth-blog-article__investor-eyebrow">For investors</p>
+        <aside className="doehealth-blog-article__brief" aria-label={block.title}>
           <h3 className={p22Mackinac.className}>{block.title}</h3>
-          <dl className="doehealth-blog-article__investor-stats">
+          <dl className="doehealth-blog-article__brief-stats">
             {block.stats.map((stat) => (
               <div key={stat.label}>
-                <dt>{stat.label}</dt>
                 <dd className={p22Mackinac.className}>{stat.value}</dd>
+                <dt>{sentence(stat.label)}</dt>
               </div>
             ))}
           </dl>
-          {block.text ? <p>{block.text}</p> : null}
+          {block.text ? <p className="doehealth-blog-article__brief-text">{block.text}</p> : null}
           {block.points ? (
-            <ul>
+            <div className="doehealth-blog-article__brief-points">
               {block.points.map((point) => (
-                <li key={point.lead}>
-                  <strong>{point.lead}:</strong> {point.text}
-                </li>
+                <div key={point.lead}>
+                  <h4 className={p22Mackinac.className}>{point.lead}</h4>
+                  <p>{sentence(point.text)}</p>
+                </div>
               ))}
-            </ul>
+            </div>
           ) : null}
         </aside>
       );
     case "timeline":
       return (
-        <figure className="doehealth-blog-article__figure doehealth-blog-article__timeline">
+        <figure className="doehealth-blog-article__figure doehealth-blog-article__plan">
           <ol>
             {block.steps.map((step) => (
               <li key={step.when} data-seed={step.seed ? "" : undefined}>
-                <span className="doehealth-blog-article__timeline-when">{step.when}</span>
-                <div>
-                  <h4 className={p22Mackinac.className}>{step.title}</h4>
+                <p className={`doehealth-blog-article__plan-when ${p22Mackinac.className}`}>{step.when}</p>
+                <div className="doehealth-blog-article__plan-card">
+                  <h4 className={p22Mackinac.className}>
+                    {step.title}
+                    {step.seed ? <span className="doehealth-blog-article__plan-seed">Seed</span> : null}
+                  </h4>
                   <ul>
                     {step.items.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
-                  <p>
-                    <span>Unlocks</span> {step.unlock}
+                  <p className="doehealth-blog-article__plan-unlock">
+                    <svg viewBox="0 0 24 24" aria-hidden>
+                      <path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    {sentence(step.unlock)}
                   </p>
                 </div>
               </li>
@@ -140,7 +194,14 @@ export function DoeHealthBlogArticle({ article }: { article: Article }) {
       </header>
 
       {/* The hero box is the desktop video screen (the lounge photo with the founders and the play button). */}
-      {article.film ? (
+      {article.heroDiagram ? (
+        <div
+          className="doehealth-blog-article__hero doehealth-blog-diagram-hero doehealth-blog-placeholder doehealth-blog-placeholder--pattern"
+          style={{ background: articleBoxColors(article.heroDiagram.tone).bg }}
+        >
+          <DoeHealthBlogDiagram diagram={article.heroDiagram.id} tone={article.heroDiagram.tone} dots={article.heroDiagram.dots} />
+        </div>
+      ) : article.film ? (
         <DoeHealthBlogFilm
           className="doehealth-blog-article__hero"
           film={article.film.id}

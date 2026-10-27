@@ -86,6 +86,22 @@
   clip-path: inset(12px 12px 12px 64px round 24px);
 }
 
+/* Explainer figures: a fixed artboard of drawn UI, scaled to fit the box over its dot design. */
+.doehealth-blog-diagram__stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The hero box holds a figure in place of the photo. */
+.doehealth-blog-article__hero.doehealth-blog-diagram-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--doehealth-desk-radius);
+}
+
 .doehealth-blog-view__source {
   width: 1440px;
   height: 900px;
@@ -416,161 +432,261 @@
   line-height: 1.15;
 }
 
-/* A boxed note for investors in the reading column: flat beige, no line, no shadow. */
-.doehealth-blog-article__body > .doehealth-blog-article__investor {
+/* The summary box: the figures that matter first, then the argument behind them. Flat beige, paper tiles. */
+.doehealth-blog-article__body > .doehealth-blog-article__brief {
   margin-top: clamp(2.5rem, 5vh, 3.25rem);
 }
 
-.doehealth-blog-article__body > .doehealth-blog-article__investor + * {
+.doehealth-blog-article__body > .doehealth-blog-article__brief + * {
   margin-top: clamp(2.5rem, 5vh, 3.25rem);
 }
 
-.doehealth-blog-article__investor {
-  padding: clamp(1.4rem, 3vw, 2.25rem);
+.doehealth-blog-article__brief {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
   border-radius: var(--doehealth-desk-radius);
   background: #f4eedf;
 }
 
-.doehealth-blog-article__investor-eyebrow {
+.doehealth-blog-article__brief h3 {
   margin: 0;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.doehealth-blog-article__investor h3 {
-  margin: 0.6rem 0 0;
-  color: var(--doehealth-desk-surface);
-  font-size: clamp(1.5rem, 2.2vw, 1.95rem);
-  font-weight: 400;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
-}
-
-.doehealth-blog-article__investor-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
-  gap: 0.6rem;
-  margin: 1.4rem 0 0;
-}
-
-.doehealth-blog-article__investor-stats > div {
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
-  gap: 0.35rem;
-  padding: 1rem 1.1rem;
-  border-radius: calc(var(--doehealth-desk-radius) * 0.6);
-  background: #fffcf1;
-}
-
-.doehealth-blog-article__investor-stats dd {
-  margin: 0;
+  padding: 0 0.25rem;
   color: var(--doehealth-desk-surface);
   font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 400;
   letter-spacing: -0.03em;
-  line-height: 1;
+  line-height: 1.12;
 }
 
-.doehealth-blog-article__investor-stats dt {
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.6);
-  font-size: 0.875rem;
-  line-height: 1.35;
-}
-
-.doehealth-blog-article__investor > p,
-.doehealth-blog-article__investor li {
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.78);
-  font-size: 1.0625rem;
-  line-height: 1.55;
-}
-
-.doehealth-blog-article__investor > p {
-  margin: 1.25rem 0 0;
-}
-
-.doehealth-blog-article__investor ul {
+.doehealth-blog-article__brief-stats {
   display: grid;
-  gap: 0.55rem;
-  margin: 1.1rem 0 0;
-  padding-left: 1.1rem;
-}
-
-.doehealth-blog-article__investor strong {
-  color: var(--doehealth-desk-surface);
-  font-weight: 600;
-}
-
-/* The plan to Seed: one row a quarter on a rail, the Seed quarter in the salmon. */
-.doehealth-blog-article__timeline ol {
-  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
   gap: 0.5rem;
   margin: 0;
-  padding: clamp(1rem, 2.4vw, 1.75rem);
-  border-radius: var(--doehealth-desk-radius);
-  background: #f4eedf;
-  list-style: none;
 }
 
-.doehealth-blog-article__timeline ol > li {
-  display: grid;
-  grid-template-columns: 5.5rem 1fr;
-  gap: 1.25rem;
-  padding: 1.1rem 1.25rem;
-  border-radius: calc(var(--doehealth-desk-radius) * 0.6);
+.doehealth-blog-article__brief-stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.25rem 1.25rem 1.35rem;
+  border-radius: 18px;
   background: #fffcf1;
 }
 
-.doehealth-blog-article__timeline ol > li[data-seed] {
-  background: var(--blog-salmon);
-}
-
-.doehealth-blog-article__timeline-when {
-  color: var(--doehealth-desk-surface);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  line-height: 1.6;
-}
-
-.doehealth-blog-article__timeline h4 {
+.doehealth-blog-article__brief-stats dd {
   margin: 0;
   color: var(--doehealth-desk-surface);
-  font-size: 1.35rem;
+  font-size: clamp(2.1rem, 3.2vw, 2.75rem);
+  letter-spacing: -0.035em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.doehealth-blog-article__brief-stats dt {
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.68);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.doehealth-blog-article__brief-text {
+  margin: 0;
+  padding: 0 0.25rem;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.82);
+  font-size: 1.125rem;
+  line-height: 1.58;
+}
+
+.doehealth-blog-article__brief-points {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.5rem;
+}
+
+.doehealth-blog-article__brief-points > div {
+  padding: 1.15rem 1.25rem 1.25rem;
+  border-radius: 18px;
+  background: rgb(255 252 241 / 0.6);
+}
+
+.doehealth-blog-article__brief-points h4 {
+  margin: 0;
+  color: var(--doehealth-desk-surface);
+  font-size: 1.3rem;
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
 
-.doehealth-blog-article__timeline ul {
+.doehealth-blog-article__brief-points p {
   margin: 0.5rem 0 0;
-  padding-left: 1.05rem;
   color: rgb(var(--doehealth-desk-ink-rgb) / 0.75);
-  font-size: 0.9875rem;
+  font-size: 1.0625rem;
   line-height: 1.5;
 }
 
-.doehealth-blog-article__timeline ol > li p {
-  margin: 0.6rem 0 0;
-  color: var(--doehealth-desk-surface);
-  font-size: 0.9375rem;
-  line-height: 1.45;
+/* The plan: a rail of periods, each a paper card with what it delivers and what it unlocks; Seed in salmon. */
+.doehealth-blog-article__plan ol {
+  position: relative;
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: var(--doehealth-desk-radius);
+  background: #f4eedf;
+  list-style: none;
 }
 
-.doehealth-blog-article__timeline ol > li p span {
-  margin-right: 0.35rem;
-  color: rgb(var(--doehealth-desk-ink-rgb) / 0.5);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.doehealth-blog-article__plan ol > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.doehealth-blog-article__plan ol > li::before {
+  content: "";
+  position: absolute;
+  top: 0.95rem;
+  bottom: -1.5rem;
+  left: 7.4rem;
+  width: 2px;
+  background: rgb(var(--doehealth-desk-ink-rgb) / 0.12);
+}
+
+.doehealth-blog-article__plan ol > li:last-child::before {
+  display: none;
+}
+
+.doehealth-blog-article__plan ol > li::after {
+  content: "";
+  position: absolute;
+  top: 0.6rem;
+  left: calc(7.4rem - 6px);
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--doehealth-desk-surface);
+}
+
+.doehealth-blog-article__plan ol > li[data-seed]::after {
+  background: #c8714b;
+}
+
+.doehealth-blog-article__plan-when {
+  margin: 0;
+  padding-top: 0.2rem;
+  color: var(--doehealth-desk-surface);
+  font-size: 1.3rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.doehealth-blog-article__plan-card {
+  padding: 1.2rem 1.35rem 1.3rem;
+  border-radius: 18px;
+  background: #fffcf1;
+}
+
+.doehealth-blog-article__plan ol > li[data-seed] .doehealth-blog-article__plan-card {
+  background: var(--blog-salmon);
+}
+
+.doehealth-blog-article__plan h4 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  color: var(--doehealth-desk-surface);
+  font-size: 1.45rem;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.doehealth-blog-article__plan-seed {
+  display: inline-flex;
+  align-items: center;
+  height: 1.85rem;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  background: var(--doehealth-desk-ink);
+  color: #fffcf1;
+  font-family: var(--font-dm-sans, "DM Sans", system-ui, sans-serif);
+  font-size: 0.95rem;
+  letter-spacing: 0;
+}
+
+.doehealth-blog-article__plan ul {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  color: rgb(var(--doehealth-desk-ink-rgb) / 0.8);
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  list-style: none;
+}
+
+.doehealth-blog-article__plan ul li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+
+.doehealth-blog-article__plan ul li::before {
+  content: "";
+  position: absolute;
+  top: 0.62em;
+  left: 0.1rem;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: rgb(var(--doehealth-desk-ink-rgb) / 0.4);
+}
+
+.doehealth-blog-article__plan-unlock {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 1rem 0 0;
+  padding: 0.75rem 0.95rem;
+  border-radius: 14px;
+  background: #d6dec6;
+  color: #2f3b2a;
+  font-size: 1.0625rem;
+  line-height: 1.4;
+}
+
+.doehealth-blog-article__plan ol > li[data-seed] .doehealth-blog-article__plan-unlock {
+  background: #fffcf1;
+  color: var(--doehealth-desk-surface);
+}
+
+.doehealth-blog-article__plan-unlock svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.12rem;
+  flex-shrink: 0;
 }
 
 @media (max-width: 640px) {
-  .doehealth-blog-article__timeline ol > li {
+  .doehealth-blog-article__plan ol > li {
     grid-template-columns: 1fr;
-    gap: 0.35rem;
+    gap: 0.5rem;
+    padding-left: 1.6rem;
+  }
+
+  .doehealth-blog-article__plan ol > li::before {
+    left: 0.35rem;
+  }
+
+  .doehealth-blog-article__plan ol > li::after {
+    top: 0.45rem;
+    left: 0;
   }
 }
 
