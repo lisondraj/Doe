@@ -7,7 +7,6 @@ import {
   PhoneAgents,
   PhoneEvents,
   PhoneCampaign,
-  PhoneSources,
   PhoneSystems,
   PhoneTimeline,
 } from "@/components/earlypreview/EarlyPreviewPlanPhone";
@@ -31,7 +30,6 @@ import { EARLYPREVIEW_PLAN_PHONE as PHONE } from "@/lib/earlypreview/earlyprevie
 const SCENES = [
   // Longer than the others: on the iPhone it steps through its three lanes one at a time.
   { id: "timeline", len: 3.6 },
-  { id: "sources", len: 2.4 },
   { id: "events", len: 2.6 },
   { id: "agents", len: 2.6 },
   // On the iPhone this screen is the launch campaign, six views long.
@@ -202,65 +200,6 @@ function Note({ e, children }: { e: number; children: ReactNode }) {
     <p className="earlypreview-plan__note-line" style={vars({ "--e": e })}>
       {children}
     </p>
-  );
-}
-
-/* ------------------------------------------------------------ 2. sources */
-
-/**
- * Where potential customers come from, set like a printed index: a heading a kind of source, then each source, a
- * dotted leader drawn across, and what it gives us. Two columns, the groups filling in one after another.
- */
-function SourcesScene({ p }: { p: number }) {
-  const { o, t } = sceneClock(p, "sources");
-  const copy = PLAN.sources;
-  // Two columns: where we find them and who brings them on the left, where they gather and what pulls them on the right.
-  const columns = [
-    [copy.groups[0], copy.groups[2]],
-    [copy.groups[1], copy.groups[3]],
-  ];
-  let row = 0;
-  return (
-    <Scene o={o} t={t} label="Every practice, found four different ways">
-      <div className="earlypreview-plan__head">
-        <div className="earlypreview-plan__title-desk">
-          <SceneTitle title={copy.title} t={t} />
-        </div>
-        <div className="earlypreview-plan__title-phone">
-          <SceneTitle title={PHONE.sources.title} t={t} />
-        </div>
-      </div>
-      {/* iPhone: this screen drawn as a picture. */}
-      <div className="earlypreview-market__body earlypreview-plan__phone-only">
-        <PhoneSources t={t} />
-      </div>
-      <div className="earlypreview-market__body earlypreview-plan__desk-only">
-        <div className="earlypreview-plan__directory">
-          {columns.map((groups, c) => (
-            <div key={c} className="earlypreview-plan__directory-col">
-              {groups.map((group) => (
-                <section key={group.id} className={`is-${group.id}`}>
-                  <h3 style={vars({ "--e": en(t, 0.35 + row * 0.04, 0.6 + row * 0.04) })}>{group.name}</h3>
-                  <ul>
-                    {group.items.map((item) => {
-                      row += 1;
-                      const at = 0.4 + row * 0.06;
-                      return (
-                        <li key={item.name} style={vars({ "--e": en(t, at, at + 0.25), "--lead": en(t, at + 0.05, at + 0.35) })}>
-                          <span className="earlypreview-plan__entry-name">{item.name}</span>
-                          <span className="earlypreview-plan__entry-lead" aria-hidden />
-                          <span className="earlypreview-plan__entry-gives">{item.gives}</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </section>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-    </Scene>
   );
 }
 
@@ -614,7 +553,6 @@ function sceneP(p: number, id: SceneId) {
 }
 
 const Timeline = memo(TimelineScene);
-const Sources = memo(SourcesScene);
 const Events = memo(EventsScene);
 const Agents = memo(AgentsScene);
 const Journey = memo(JourneyScene);
@@ -629,7 +567,6 @@ export function EarlyPreviewPlanSection() {
     <div className="earlypreview-market-track" style={vars({ "--market-run": END * DOEHEALTH_DESK2_PHONE_STEP_PX })}>
       <section ref={sectionRef} className="earlypreview-market earlypreview-plan doehealth-desk2-nav-wash-surface" aria-label="Go-to-market">
         <Timeline p={sceneP(p, "timeline")} />
-        <Sources p={sceneP(p, "sources")} />
         <Events p={sceneP(p, "events")} />
         <Agents p={sceneP(p, "agents")} />
         <Journey p={sceneP(p, "journey")} />
