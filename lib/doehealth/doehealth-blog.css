@@ -1349,3 +1349,9 @@
 .doehealth-news-carousel__track .doehealth-news-card .doehealth-blog-card__art {
   order: -1;
 }
+
+/* /preview-<slug> article pages, iPhone nav: the mail icon takes the same brown as the "Doe" wordmark
+   (--desk2-nav-accent: ink on cream, tan on beige, salmon over brown) instead of its own salmon. */
+.doehealth-blog-page--preview nav.doephone-site-nav a.doe-nav-mail-link {
+  color: var(--desk2-nav-accent, var(--doehealth-desk2-ink)) !important;
+}

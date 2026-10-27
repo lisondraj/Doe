@@ -225,7 +225,7 @@ function NavChromeStrip({
         {menuMailTo ? (
           <a
             href={`mailto:${menuMailTo}`}
-            className="flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-black/[0.04]"
+            className="doe-nav-mail-link flex items-center justify-center p-3 iphone-page:p-[clamp(0.625rem,0.38rem+1.35vmin,0.975rem)] rounded-xl transition-colors active:bg-black/[0.04]"
             // The salmon accent, like the hero's second title line and the enterprise title's second line; it fades to the
             // dark beige ink with the rest of the nav over the beige sections.
             style={{ color: "color-mix(in srgb, #6e5c40 calc(var(--desk2-nav-beige, 0) * 100%), #fccfb8)" }}

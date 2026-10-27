@@ -40,7 +40,7 @@ export function DoeHealthBlogPage({ article, initialVariant, preview = false }: 
 
   return (
     <div
-      className={`doehealth-desk2-page doehealth-desk-page doehealth-blog-page relative min-h-[100dvh] ${p22Mackinac.variable}`}
+      className={`doehealth-desk2-page doehealth-desk-page doehealth-blog-page${preview ? " doehealth-blog-page--preview" : ""} relative min-h-[100dvh] ${p22Mackinac.variable}`}
       style={{ backgroundColor: DOEHEALTH_DESK2_PAGE_BACKGROUND }}
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}
     >
