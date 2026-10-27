@@ -153,9 +153,6 @@ export type DoeHealthBlogArticle = {
 
 /** The investor figures, from the /earlypreview market model, so every article quotes the same plan. */
 const n = (value: number) => value.toLocaleString("en-US");
-const SEED_GROUPS = PRICING.seedPlans.canada.groups + PRICING.seedPlans.us.groups;
-const SEED_SEATS = PRICING.seedPlans.canada.groupSeats + PRICING.seedPlans.us.groupSeats;
-const GROUP_ARR_SHARE = Math.round(((SEED_SEATS * PRICING.founding.group * 12) / 1000 / T.arrK) * 100);
 
 const PERSONAL_AGENTS: DoeHealthBlogArticle = {
   slug: "healthcare-in-the-era-of-personal-agents",
@@ -295,7 +292,7 @@ const PERSONAL_AGENTS: DoeHealthBlogArticle = {
       stats: [
         { value: n(T.indexedToday), label: "practices already in the Doe Index" },
         { value: n(T.indexed), label: "practices indexed by Seed, Q2 2028" },
-        { value: `$${T.arrK}K`, label: "ARR target at Seed, at founding prices" },
+        { value: `${n(T.indexedCanada)} / ${n(T.indexedUs)}`, label: "of those in Canada and the U.S., 65% and 35%" },
         { value: MODEL.tam.display, label: "the layer across healthcare" },
       ],
       text: "The shift is not hypothetical. More than 10 million people in the U.S. and Canada set up Meta's Muse in about six weeks, 43% of U.S. adults asked AI a health question in the past year, and 94% of health systems already using AI agents use them for appointments. Patients are arriving with agents; practices are not yet readable by them. Doe is the layer in between.",
@@ -303,7 +300,7 @@ const PERSONAL_AGENTS: DoeHealthBlogArticle = {
         { lead: "Business model", text: `free to claim, paid to connect. Paid plans start at $${T.fromMo} a location a month at founding prices ($${PRICING.regular.basic} regular), multi-site groups pay per provider, and agent developers integrate once through one API.` },
         { lead: "Network effect", text: "every practice that claims its page makes Doe more useful to agents, and every request an agent cannot complete shows the next practice the patients it is missing." },
         { lead: "Defensibility", text: "each practice gets its own intelligence model and index, improved by the work its own agents complete. That knowledge compounds with every visit and does not move to a competitor." },
-        { lead: "Path to Seed", text: `Toronto proves the model first, with New York and San Francisco in parallel: ${n(T.claimed)} practices claimed, ${n(T.paying)} paying locations, and ${T.requestsK}K agent requests a month by Q2 2028.` },
+        { lead: "Path to Seed", text: `Toronto proves the model first, with New York and San Francisco in parallel: ${n(T.claimed)} practices claimed and ${T.requestsK}K agent requests a month by Q2 2028.` },
       ],
     },
     { type: "heading", text: "What we are building toward." },
@@ -934,10 +931,10 @@ const AESTHETIC_FRONT_DOOR: DoeHealthBlogArticle = {
       type: "investor",
       title: "Private pay is the short sales cycle.",
       stats: [
-        { value: "65%", label: "of paying clinics at Seed are private-pay" },
+        { value: "1 owner", label: "decides and pays, so the sale is short" },
         { value: `$${T.fromMo}`, label: "a location a month to start, at founding prices" },
         { value: `$${PRICING.founding.one}`, label: "a provider a month for Doe One, founding" },
-        { value: `$${PRICING.upsideArrK}K`, label: "ARR at Seed if Doe One's beta converts" },
+        { value: "5–10", label: "clinics in the Doe One beta before Seed" },
       ],
       text: "Aesthetic, dermatology, and plastic surgery practices are where agent booking starts first: most services are elective, priced up front, and paid out of pocket, and one owner decides and pays, so the sale is short. They also see the return in plain numbers, because every offer reports the agents it matched, the patients who saw it, and the visits it booked.",
       points: [
@@ -1044,10 +1041,10 @@ const MEMBERSHIP_MEDICINE: DoeHealthBlogArticle = {
       type: "investor",
       title: "Small panels, high-value accounts.",
       stats: [
-        { value: String(SEED_GROUPS), label: "multi-site groups by Seed" },
-        { value: String(SEED_SEATS), label: "provider seats in those groups" },
-        { value: `${GROUP_ARR_SHARE}%`, label: "of ARR at Seed comes from groups" },
+        { value: "4", label: "locations in an average multi-site group" },
+        { value: "12", label: "providers in an average multi-site group" },
         { value: `$${PRICING.founding.group}`, label: "a provider a month for groups, founding" },
+        { value: `$${PRICING.regular.group}`, label: "a provider a month after the founding year" },
       ],
       text: "Membership practices charge thousands of dollars a year per patient, so one new member found by an agent pays for Doe many times over. And once a member's agent is connected, the relationship runs through Doe every day: visits, refills, and questions, which is what keeps a practice on the platform.",
       points: [
