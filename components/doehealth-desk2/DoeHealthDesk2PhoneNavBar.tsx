@@ -19,9 +19,12 @@ export function DoeHealthDesk2PhoneNavBar({
   primaryCta = DOEHEALTH_DESK2_NAV_PRIMARY_CTA,
   belowBar,
   menuMailTo,
+  logoLink = true,
 }: {
   /** Replace the menu button with a mail icon that opens this address (used on /earlypreview). */
   menuMailTo?: string;
+  /** False leaves the "Doe" mark as plain text, not a link. */
+  logoLink?: boolean;
   /** Where the "Doe" mark goes. Defaults to the legacy desk home. */
   logoHref?: string;
   /** Prefix for `#section` links when the sections live on another page. */
@@ -62,7 +65,7 @@ export function DoeHealthDesk2PhoneNavBar({
         showJoinCta={false}
         ctaLayout="single"
         navChromeTheme="light"
-        logoLink
+        logoLink={logoLink}
         brandFontClass={lora.className}
         navSheetItems={[...doehealthDesk2NavPages(sectionHrefBase), primaryCta]}
         navExtra={belowBar}

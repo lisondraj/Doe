@@ -7,7 +7,6 @@ import {
   PhoneAgents,
   PhoneEvents,
   PhoneCampaign,
-  PhoneSystems,
   PhoneTimeline,
 } from "@/components/earlypreview/EarlyPreviewPlanPhone";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
@@ -24,7 +23,7 @@ import { EARLYPREVIEW_PLAN_PHONE as PHONE } from "@/lib/earlypreview/earlyprevie
  * The go-to-market, above the enterprise section, in the market section's brown. The timeline first: supply, agents
  * and revenue side by side to Seed. Then the plan, one drawing a screen and none of them repeated: where potential
  * customers come from, the rooms we'll be in, the groups that bring most of the revenue, the agent pipeline, the page
- * that recruits a practice, one practice's first sixty days, and the way into a hospital. A faint dot field sits
+ * that recruits a practice, one practice's first sixty days. A faint dot field sits
  * behind each.
  */
 const SCENES = [
@@ -34,7 +33,6 @@ const SCENES = [
   { id: "agents", len: 2.6 },
   // On the iPhone this screen is the launch campaign, six views long.
   { id: "journey", len: 3.9 },
-  { id: "systems", len: 2.6 },
 ] as const;
 
 type SceneId = (typeof SCENES)[number]["id"];
@@ -427,100 +425,6 @@ function JourneyScene({ p }: { p: number }) {
   );
 }
 
-/* ------------------------------------------------------------ 8. health systems */
-
-/** The hospital in section: seven floors, a row of windows on each, standing on its ground line. */
-const BUILDING = { x: 70, w: 500, top: 20, floor: 40, windows: 8, win: 34, winH: 14 } as const;
-const FLOOR_Y = (f: number) => BUILDING.top + (PLAN.systems.floors.length - 1 - f) * BUILDING.floor;
-const BUILDING_BOTTOM = BUILDING.top + PLAN.systems.floors.length * BUILDING.floor;
-const WINDOW_X = (w: number) => BUILDING.x + 170 + w * ((BUILDING.w - 186) / BUILDING.windows);
-
-/** How lit each floor's windows are at each step: one window, the champion's floor, the pilots, then all of it. */
-function floorLight(step: number, f: number, w: number) {
-  const [first, second] = PLAN.systems.pilotFloors;
-  if (step >= 6) return f === first || f === second ? 2 : 1;
-  if (step >= 5) return f === first || f === second ? 2 : 0;
-  if (step >= 2) return f === first ? 1 : 0;
-  if (step >= 1) return f === first && w < 3 ? 1 : 0;
-  if (step >= 0) return f === first && w === 0 ? 1 : 0;
-  return 0;
-}
-
-/**
- * The way into a health system, on a hospital drawn in section. The steps run down the right; as each is reached the
- * building lights a little more: one window for the person inside, part of a floor for the champion, the floor for
- * the workflow, two floors in salmon for the pilots by Seed, and every floor once it goes system-wide.
- */
-function SystemsScene({ p }: { p: number }) {
-  const { o, t } = sceneClock(p, "systems");
-  const copy = PLAN.systems;
-  const progress = ramp(t, [0.55, 2.15]) * copy.steps.length;
-  const step = Math.min(copy.steps.length - 1, Math.floor(progress) - (progress <= 0 ? 1 : 0));
-  return (
-    <Scene o={o} t={t} label="Practices first, then the health system">
-      <div className="earlypreview-plan__head">
-        <div className="earlypreview-plan__title-desk">
-          <SceneTitle title={copy.title} t={t} />
-        </div>
-        <div className="earlypreview-plan__title-phone">
-          <SceneTitle title={PHONE.systems.title} t={t} />
-        </div>
-      </div>
-      {/* iPhone: this screen drawn as a picture. */}
-      <div className="earlypreview-market__body earlypreview-plan__phone-only">
-        <PhoneSystems t={t} />
-      </div>
-      <div className="earlypreview-market__body earlypreview-plan__desk-only earlypreview-plan__systems">
-        <svg className="earlypreview-plan__hospital" viewBox="0 0 640 310" fill="none" aria-hidden>
-          <path
-            d={`M${BUILDING.x - 30} ${BUILDING_BOTTOM}H${BUILDING.x + BUILDING.w + 30}M${BUILDING.x} ${BUILDING_BOTTOM}V${BUILDING.top}H${BUILDING.x + BUILDING.w}V${BUILDING_BOTTOM}`}
-            pathLength={1}
-            className="is-shell"
-            style={draw(en(t, 0.25, 0.6))}
-          />
-          {copy.floors.map((floor, f) => {
-            const y = FLOOR_Y(f);
-            return (
-              <g key={floor} style={vars({ "--k": en(t, 0.35 + f * 0.04, 0.6 + f * 0.04) })}>
-                {f > 0 ? <path d={`M${BUILDING.x} ${y + BUILDING.floor}H${BUILDING.x + BUILDING.w}`} className="is-slab" /> : null}
-                <text x={BUILDING.x + 16} y={y + BUILDING.floor / 2 + 5} className="is-floor-name">
-                  {floor}
-                </text>
-                {range(BUILDING.windows).map((w) => {
-                  const light = floorLight(step, f, w);
-                  return (
-                    <rect
-                      key={w}
-                      x={fixed(WINDOW_X(w))}
-                      y={fixed(y + (BUILDING.floor - BUILDING.winH) / 2)}
-                      width={BUILDING.win - 8}
-                      height={BUILDING.winH}
-                      rx={2}
-                      className={light === 2 ? "is-pilot" : light === 1 ? "is-lit" : "is-dark"}
-                    />
-                  );
-                })}
-              </g>
-            );
-          })}
-        </svg>
-        <ol className="earlypreview-plan__climb">
-          {copy.steps.map((item, i) => (
-            <li
-              key={item.name}
-              className={`${i === step ? "is-now" : i < step ? "is-done" : ""}${"salmon" in item ? " is-salmon" : ""}`}
-              style={vars({ "--e": en(t, 0.4 + i * 0.05, 0.65 + i * 0.05) })}
-            >
-              <span className="earlypreview-plan__climb-when">{item.when}</span>
-              <span className="earlypreview-plan__climb-name">{item.name}</span>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </Scene>
-  );
-}
-
 /* ------------------------------------------------------------ section */
 
 function SceneNav({ p, goTo }: { p: number; goTo: (target: number) => void }) {
@@ -556,7 +460,6 @@ const Timeline = memo(TimelineScene);
 const Events = memo(EventsScene);
 const Agents = memo(AgentsScene);
 const Journey = memo(JourneyScene);
-const Systems = memo(SystemsScene);
 
 /** The go-to-market, eight screens in the brown market section above “Expand through clinics.” */
 export function EarlyPreviewPlanSection() {
@@ -570,7 +473,6 @@ export function EarlyPreviewPlanSection() {
         <Events p={sceneP(p, "events")} />
         <Agents p={sceneP(p, "agents")} />
         <Journey p={sceneP(p, "journey")} />
-        <Systems p={sceneP(p, "systems")} />
         <SceneNav p={p} goTo={goTo} />
         <SkipButton shown={p > 0 && p < END} label="Skip the go-to-market" onClick={skip} />
       </section>

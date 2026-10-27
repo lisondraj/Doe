@@ -40,18 +40,18 @@ export function DoeHealthBlogPage({ article, initialVariant, preview = false }: 
 
   return (
     <div
-      className={`doehealth-desk2-page doehealth-desk-page doehealth-blog-page relative min-h-[100dvh] ${p22Mackinac.variable}`}
+      className={`doehealth-desk2-page doehealth-desk-page doehealth-blog-page${preview ? " doehealth-blog-page--preview" : ""} relative min-h-[100dvh] ${p22Mackinac.variable}`}
       style={{ backgroundColor: DOEHEALTH_DESK2_PAGE_BACKGROUND }}
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}
     >
       {variant === "desktop" ? (
         preview ? (
-          <DoeHealthDesk2DesktopNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} centerLinks={false} primaryCta={EARLYPREVIEW_NAV_CTA} />
+          <DoeHealthDesk2DesktopNavBar logoLink={false} logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} centerLinks={false} primaryCta={EARLYPREVIEW_NAV_CTA} />
         ) : (
           <DoeHealthDesk2DesktopNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
         )
       ) : preview ? (
-        <DoeHealthDesk2PhoneNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} primaryCta={EARLYPREVIEW_NAV_CTA} menuMailTo={ABOUT_CONTACT_EMAIL} />
+        <DoeHealthDesk2PhoneNavBar logoLink={false} logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} primaryCta={EARLYPREVIEW_NAV_CTA} menuMailTo={ABOUT_CONTACT_EMAIL} />
       ) : (
         <DoeHealthDesk2PhoneNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
       )}
@@ -60,7 +60,7 @@ export function DoeHealthBlogPage({ article, initialVariant, preview = false }: 
         <DoeHealthBlogArticle article={article} />
         <DoeHealthBlogCarousel currentSlug={article.slug} cardHref={preview ? EARLYPREVIEW_NAV_CTA.href : undefined} />
         <DoeHealthDesk2InviteSection />
-        <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} />
+        <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} markLink={!preview} />
       </main>
     </div>
   );

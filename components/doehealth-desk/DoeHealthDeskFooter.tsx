@@ -8,9 +8,12 @@ import { inter, lora } from "@/lib/home/fonts";
 /** Brown footer — /doehealth wordmark placement; desk nav + company copy. */
 export function DoeHealthDeskFooter({
   sectionHrefBase = "",
+  markLink = true,
 }: {
   /** Prefix for `#section` links when the sections live on another page. */
   sectionHrefBase?: string;
+  /** False leaves the footer "Doe" mark as plain text, not a link. */
+  markLink?: boolean;
 } = {}) {
   return (
     <footer className="doehealth-desk-footer doehealth-desk-nav-wash-surface" aria-label="Footer">
@@ -39,12 +42,16 @@ export function DoeHealthDeskFooter({
         </div>
 
         <div className="doehealth-desk-footer__wordmark-shell">
-          <Link
-            href="/doehealthdesk"
-            className={`doehealth-desk-footer__mark ${lora.className}`}
-          >
-            Doe
-          </Link>
+          {markLink ? (
+            <Link
+              href="/doehealthdesk"
+              className={`doehealth-desk-footer__mark ${lora.className}`}
+            >
+              Doe
+            </Link>
+          ) : (
+            <span className={`doehealth-desk-footer__mark ${lora.className}`}>Doe</span>
+          )}
         </div>
       </div>
     </footer>
