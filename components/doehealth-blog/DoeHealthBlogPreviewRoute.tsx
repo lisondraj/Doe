@@ -8,6 +8,7 @@ import { doehealthDesk2InitialVariant } from "@/lib/doehealthdesk2/doehealthdesk
 
 import "@/lib/doehealth/doehealth-desk.css";
 import "@/lib/doehealth/doehealth-blog.css";
+import "@/lib/doehealth/doehealth-blog-motion.css";
 import "@/lib/doehealth/doehealth-careers.css";
 import "@/lib/doehealthdesk2/doehealthdesk2.css";
 
