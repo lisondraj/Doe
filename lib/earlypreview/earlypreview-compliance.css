@@ -882,3 +882,235 @@
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__matrix .is-suspended {
   font-size: 9px;
 }
+
+/* ------------------------------------------------------------ iPhone: screens 2, 4 and 5 */
+
+/* A drawing the other layout owns stays out of the phone's way. */
+.earlypreview-compliance [hidden] {
+  display: none !important;
+}
+
+/* The protocol: the figure and its caption share a line, the rows are tighter so all seven layers clear the menu, and
+   the columns and rows slide in from the right with the scroll. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__stat {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__stat-caption {
+  margin-top: 0;
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-row.is-head {
+  font-size: 0.62rem;
+  padding-bottom: 0.35rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-layer {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-row {
+  transform: translateX(calc((1 - var(--e, 0)) * 1.6rem));
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-row.is-head > span:not(.earlypreview-compliance__grid-corner):not(.earlypreview-compliance__grid-count) {
+  transform: translateX(calc((1 - var(--e, 0)) * 1.2rem));
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__grid-cell > i {
+  transform: translate(calc(-50% + (1 - var(--e, 0)) * 1rem), -50%) scale(var(--e, 0));
+}
+
+/*
+ * The incidents: a list down a rail at a readable size. The salmon front runs down the rail (--sweep); a row slides in
+ * from the right as it reaches it (--k). Automatic steps are salmon, the people's cream.
+ */
+.earlypreview-compliance__timeline {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+  padding: 0 0 0 1.1rem;
+  list-style: none;
+}
+
+.earlypreview-compliance__timeline::before,
+.earlypreview-compliance__timeline::after {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 0.3rem;
+  bottom: 0.3rem;
+  width: 2px;
+  border-radius: 1px;
+}
+
+.earlypreview-compliance__timeline::before {
+  background: rgb(255 252 241 / 0.16);
+}
+
+.earlypreview-compliance__timeline::after {
+  background: var(--m-salmon);
+  transform: scaleY(var(--sweep, 0));
+  transform-origin: top;
+}
+
+.earlypreview-compliance__timeline > li {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.28rem 0;
+  opacity: var(--k, 0);
+  transform: translateX(calc((1 - var(--k, 0)) * 2.2rem));
+}
+
+.earlypreview-compliance__timeline > li.is-step::before,
+.earlypreview-compliance__timeline > li.is-limit::before {
+  content: "";
+  position: absolute;
+  left: -1.1rem;
+  top: 0.62rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--m-cream);
+}
+
+.earlypreview-compliance__timeline > li.is-auto::before {
+  background: var(--m-salmon);
+}
+
+.earlypreview-compliance__timeline > li.is-head {
+  padding: 0.55rem 0 0.1rem;
+}
+
+.earlypreview-compliance__timeline > li.is-head:first-child {
+  padding-top: 0;
+}
+
+.earlypreview-compliance__timeline-head {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--m-quiet);
+}
+
+.earlypreview-compliance__timeline > li.is-head.is-auto .earlypreview-compliance__timeline-head {
+  color: var(--m-salmon);
+}
+
+.earlypreview-compliance__timeline-time {
+  flex: 0 0 4.4rem;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--m-quiet);
+}
+
+.earlypreview-compliance__timeline > li.is-auto .earlypreview-compliance__timeline-time {
+  color: var(--m-salmon);
+}
+
+.earlypreview-compliance__timeline-text {
+  font-family: var(--m-display);
+  font-size: 1.12rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--m-cream);
+}
+
+.earlypreview-compliance__timeline > li.is-limit .earlypreview-compliance__timeline-text {
+  color: var(--m-dim);
+}
+
+.earlypreview-compliance__timeline > li.is-limit::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--m-salmon);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-compliance__timeline ~ .earlypreview-compliance__foot {
+  display: none;
+}
+
+/*
+ * The path: a row a quarter. The quarter, a bar of dots that has grown to the level it clears, and that level's name.
+ * A row slides in from the right (--in) and its dots light left to right as the cursor passes (--k).
+ */
+.earlypreview-compliance__path-rows {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.earlypreview-compliance__path-rows > li {
+  display: grid;
+  grid-template-columns: 3.1rem minmax(0, 1fr) 7.1rem;
+  align-items: center;
+  column-gap: 0.5rem;
+  padding: 0.18rem 0;
+  border-top: 1px solid var(--c-line);
+  opacity: var(--in, 0);
+  transform: translateX(calc((1 - var(--in, 0)) * 2.4rem));
+}
+
+.earlypreview-compliance__path-when {
+  font-family: var(--m-display);
+  font-size: 0.98rem;
+  letter-spacing: -0.02em;
+  color: var(--m-quiet);
+}
+
+.earlypreview-compliance__path-bar {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 1.7rem;
+  overflow: visible;
+}
+
+.earlypreview-compliance__path-bar circle {
+  fill: var(--m-cream);
+  opacity: calc(0.09 + clamp(0, calc(var(--k, 0) * 16 - var(--c)), 1) * 0.58);
+}
+
+.earlypreview-compliance__path-bar circle.is-seed {
+  fill: var(--m-salmon);
+  opacity: calc(0.09 + clamp(0, calc(var(--k, 0) * 16 - var(--c)), 1) * 0.91);
+}
+
+.earlypreview-compliance__path-level {
+  font-size: 0.74rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--m-quiet);
+}
+
+.earlypreview-compliance__path-rows > li.is-done .earlypreview-compliance__path-when,
+.earlypreview-compliance__path-rows > li.is-done .earlypreview-compliance__path-level {
+  color: var(--m-dim);
+}
+
+.earlypreview-compliance__path-rows > li.is-active .earlypreview-compliance__path-when,
+.earlypreview-compliance__path-rows > li.is-active .earlypreview-compliance__path-level {
+  color: var(--m-cream);
+}
+
+.earlypreview-compliance__path-rows > li.is-seed .earlypreview-compliance__path-when,
+.earlypreview-compliance__path-rows > li.is-seed.is-active .earlypreview-compliance__path-level,
+.earlypreview-compliance__path-rows > li.is-seed.is-done .earlypreview-compliance__path-level {
+  color: var(--m-salmon);
+}

@@ -617,11 +617,62 @@ const PEOPLE = bracket(STEPS.filter((step) => !step.auto));
 /** Where the sweep runs on the screen's clock. */
 const SWEEP = [0.5, 2.4] as const;
 
+/** "0.3 s", "10 s", "1 hour", "3 days": a step's time, as a person says it. */
+function sayTime(seconds: number) {
+  if (seconds < 60) return `${seconds} s`;
+  const unit = [
+    [604800, "week"],
+    [86400, "day"],
+    [3600, "hour"],
+    [60, "minute"],
+  ] as const;
+  const [size, name] = unit.find(([size]) => seconds >= size)!;
+  const n = Math.round(seconds / size);
+  return `${n} ${name}${n === 1 ? "" : "s"}`;
+}
+
+/** The iPhone timeline's rows, top to bottom: a heading for each phase, its steps, then HIPAA's limit. */
+const TIMELINE = [
+  { kind: "head" as const, auto: true, text: INCIDENTS.phases.auto },
+  ...INCIDENTS.steps.filter((step) => step.auto).map((step) => ({ kind: "step" as const, auto: true, text: step.text, time: sayTime(step.at) })),
+  { kind: "head" as const, auto: false, text: INCIDENTS.phases.people },
+  ...INCIDENTS.steps.filter((step) => !step.auto).map((step) => ({ kind: "step" as const, auto: false, text: step.text, time: sayTime(step.at) })),
+  { kind: "limit" as const, auto: false, text: INCIDENTS.limit.label, time: INCIDENTS.limit.sub },
+];
+
+/**
+ * iPhone: the incident as a list down the screen at a readable size, in place of the desktop's wide log scale. A salmon
+ * front runs down the rail with the scroll, and each row slides in from the right as it reaches it.
+ */
+function IncidentsList({ t }: { t: number }) {
+  const sweep = en(t, SWEEP[0], SWEEP[1]);
+  const n = TIMELINE.length;
+  return (
+    <ol className="earlypreview-compliance__timeline" style={vars({ "--sweep": sweep })}>
+      {TIMELINE.map((row, i) => {
+        const k = clamp01(sweep * (n + 1.5) - i);
+        return (
+          <li key={`${row.kind}-${row.text}`} className={`is-${row.kind}${row.auto ? " is-auto" : ""}`} style={vars({ "--k": k })}>
+            {row.kind === "head" ? (
+              <span className="earlypreview-compliance__timeline-head">{row.text}</span>
+            ) : (
+              <>
+                <span className="earlypreview-compliance__timeline-time">{row.time}</span>
+                <span className="earlypreview-compliance__timeline-text">{row.text}</span>
+              </>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 /**
  * An incident on a log scale. A salmon front sweeps from the first tenth of a second; the automatic steps all land
  * inside ten seconds, the people's within the week, and HIPAA's 60-day limit sits far off at the right.
  */
-function IncidentsScene({ p }: SceneProps) {
+function IncidentsScene({ p, phone }: SceneProps) {
   const { o, t } = sceneClock(p, 3);
   const sweep = en(t, SWEEP[0], SWEEP[1]);
   const front = LOG.x0 + sweep * (LOG.x1 - LOG.x0);
@@ -629,7 +680,14 @@ function IncidentsScene({ p }: SceneProps) {
     <Scene o={o} label="Something will go wrong">
       <SceneTitle title={INCIDENTS.title} t={t} />
       <div className="earlypreview-market__body">
-        <svg className="earlypreview-compliance__art earlypreview-compliance__incidents" viewBox="0 0 1000 312" fill="none" aria-hidden>
+        {phone ? <IncidentsList t={t} /> : null}
+        <svg
+          className="earlypreview-compliance__art earlypreview-compliance__incidents"
+          viewBox="0 0 1000 312"
+          fill="none"
+          style={phone ? { display: "none" } : undefined}
+          aria-hidden
+        >
           <path d={`M${LOG.x0} ${LOG.axis}H${LOG.x1}`} pathLength={1} className="is-axis" style={draw(en(t, 0.25, 0.6))} />
           <path d={`M${LOG.x0} ${LOG.axis}H${LOG.x1}`} pathLength={1} className="is-front" style={draw(sweep)} />
           {INCIDENTS.ticks.map((tick) => (
@@ -724,12 +782,60 @@ const STAIR_LINE = QUARTERS.reduce(
 /** Where the path's cursor runs on the screen's clock. */
 const WALK = [0.55, 3.9] as const;
 
+/** The iPhone rows' dots: a bar a level longer than the one before, two lines of dots, three columns a level. */
+const PHONE_BAR = { pitch: 11, line: 2, perLevel: 3, r: 3.1 } as const;
+const PHONE_MAX_COLS = LEVELS.length * PHONE_BAR.perLevel;
+
+const PathBar = memo(function PathBar({ level, seed }: { level: number; seed: boolean }) {
+  const cols = (level + 1) * PHONE_BAR.perLevel;
+  return (
+    <svg className="earlypreview-compliance__path-bar" viewBox={`0 0 ${PHONE_MAX_COLS * PHONE_BAR.pitch} ${PHONE_BAR.line * PHONE_BAR.pitch}`} fill="none" aria-hidden>
+      {Array.from({ length: cols * PHONE_BAR.line }, (_, i) => (
+        <circle
+          key={i}
+          cx={PHONE_BAR.pitch / 2 + (i % cols) * PHONE_BAR.pitch}
+          cy={PHONE_BAR.pitch / 2 + Math.floor(i / cols) * PHONE_BAR.pitch}
+          r={PHONE_BAR.r}
+          className={seed ? "is-seed" : undefined}
+          style={vars({ "--c": i % cols })}
+        />
+      ))}
+    </svg>
+  );
+});
+
+/**
+ * iPhone: the path as a row a quarter, down the screen. Each row's bar of dots grows to the level that quarter clears,
+ * named at its end; the rows slide in from the right as the cursor reaches them and light as it passes. Seed is salmon.
+ */
+function PathRows({ front, active }: { front: number; active: number }) {
+  return (
+    <ol className="earlypreview-compliance__path-rows" aria-label="What Doe is cleared to handle, by quarter">
+      {QUARTERS.map((quarter, q) => {
+        const seed = "seed" in quarter;
+        const arrive = clamp01((front - q) * 2.5 + 1);
+        return (
+          <li
+            key={quarter.when}
+            className={`${q === active ? "is-active" : q < front ? "is-done" : ""}${seed ? " is-seed" : ""}`}
+            style={vars({ "--in": arrive, "--k": clamp01(front - q) })}
+          >
+            <span className="earlypreview-compliance__path-when">{quarter.when}</span>
+            <PathBar level={quarter.level} seed={seed} />
+            <span className="earlypreview-compliance__path-level">{LEVELS[quarter.level].name}</span>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 /**
  * The path to Seed as a staircase in halftone: seven quarters across, what Doe is cleared to handle up the side. A
  * cursor walks the quarters; each column fills as it passes, and the corner shows what that quarter ships and the
  * plan milestone it unlocks. The last step, Seed, is salmon.
  */
-function PathScene({ p }: SceneProps) {
+function PathScene({ p, phone }: SceneProps) {
   const { o, t } = sceneClock(p, 4);
   const front = ramp(t, WALK) * QUARTERS.length;
   const active = Math.min(QUARTERS.length - 1, Math.floor(front));
@@ -765,7 +871,8 @@ function PathScene({ p }: SceneProps) {
         </div>
       </div>
       <div className="earlypreview-market__body">
-        <div className="earlypreview-compliance__stair">
+        {phone ? <PathRows front={front} active={active} /> : null}
+        <div className="earlypreview-compliance__stair" hidden={phone}>
           <svg
             className="earlypreview-compliance__stair-art"
             viewBox="0 0 1000 300"
