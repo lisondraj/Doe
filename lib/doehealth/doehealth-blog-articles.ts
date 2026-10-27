@@ -3,9 +3,9 @@ import { EARLYPREVIEW_COMPLIANCE_PATH } from "@/lib/earlypreview/earlypreview-co
 import type { EarlyPreviewFilmId } from "@/lib/earlypreview/earlypreview-films";
 import {
   EARLYPREVIEW_MARKET_MODEL as MODEL,
-  EARLYPREVIEW_MARKET_PRICING as PRICING,
   EARLYPREVIEW_MARKET_TARGETS as T,
 } from "@/lib/earlypreview/earlypreview-market-copy";
+import { monthlyPrice, type PlanId, PLANS } from "@/lib/doehealthdesk2/doehealthdesk2-pricing";
 
 export const DOEHEALTH_BLOG_PATH = "/news";
 
@@ -154,6 +154,16 @@ export type DoeHealthBlogArticle = {
 /** The investor figures, from the /earlypreview market model, so every article quotes the same plan. */
 const n = (value: number) => value.toLocaleString("en-US");
 
+/** Doe's own prices, from /pricing, so every article quotes what a practice would actually pay. */
+const plan = (id: PlanId) => PLANS.find((p) => p.id === id)!;
+const PRICE = {
+  basic: plan("basic").base,
+  one: plan("one").base,
+  advancedProvider: plan("advanced").perProvider,
+  /** The average multi-site group, four locations and twelve providers, on Advanced. */
+  advancedGroup: Math.round(monthlyPrice(plan("advanced"), 12, 4).total),
+};
+
 const PERSONAL_AGENTS: DoeHealthBlogArticle = {
   slug: "healthcare-in-the-era-of-personal-agents",
   film: { id: "hero", thumbnail: "/earlypreview/thumbs/hero.jpg", label: "Healthcare in the Era of Personal Agents" },
@@ -297,7 +307,7 @@ const PERSONAL_AGENTS: DoeHealthBlogArticle = {
       ],
       text: "The shift is not hypothetical. More than 10 million people in the U.S. and Canada set up Meta's Muse in about six weeks, 43% of U.S. adults asked AI a health question in the past year, and 94% of health systems already using AI agents use them for appointments. Patients are arriving with agents; practices are not yet readable by them. Doe is the layer in between.",
       points: [
-        { lead: "Business model", text: `free to claim, paid to connect. Paid plans start at $${T.fromMo} a location a month at founding prices ($${PRICING.regular.basic} regular), multi-site groups pay per provider, and agent developers integrate once through one API.` },
+        { lead: "Business model", text: `free to claim, paid to connect. Paid plans start at $${PRICE.basic} a month for one provider at one location, each extra provider and location adds a set amount with volume discounts for larger practices, and agent developers integrate once through one API.` },
         { lead: "Network effect", text: "every practice that claims its page makes Doe more useful to agents, and every request an agent cannot complete shows the next practice the patients it is missing." },
         { lead: "Defensibility", text: "each practice gets its own intelligence model and index, improved by the work its own agents complete. That knowledge compounds with every visit and does not move to a competitor." },
         { lead: "Path to Seed", text: `Toronto proves the model first, with New York and San Francisco in parallel: ${n(T.claimed)} practices claimed and ${T.requestsK}K agent requests a month by Q2 2028.` },
@@ -823,7 +833,7 @@ const HEALTH_SYSTEM_MAPPED: DoeHealthBlogArticle = {
       ],
       text: "Hospitals are the largest contracts in the market and the slowest to sign, so Doe does not start with them. Practices of one to ten providers build the network first. Hospitals then buy the same map, permissions, and pathways at enterprise scale, with the security record to pass their reviews.",
       points: [
-        { lead: "Land", text: "clinics at $1–3K a year build the index and the agent traffic, Toronto first and then the U.S." },
+        { lead: "Land", text: `clinics on plans from $${PRICE.basic} a month build the index and the agent traffic, Toronto first and then the U.S.` },
         { lead: "Expand", text: "hospital LOIs from Q4 2027, once SOC 2 Type I is in hand, and hospital security reviews through the Type II window." },
         { lead: "Pull", text: "partner organizations on a hospital's map, rehab centres, labs, and imaging, are practices Doe can bring onto the network next." },
         { lead: "Readiness", text: "PHIPA in Q2 2027, HIPAA BAAs in Q3 2027, SOC 2 Type I in Q4 2027 and Type II by Seed, laid out in our Compliance & Security memo." },
@@ -932,8 +942,8 @@ const AESTHETIC_FRONT_DOOR: DoeHealthBlogArticle = {
       title: "Private pay is the short sales cycle.",
       stats: [
         { value: "1 owner", label: "decides and pays, so the sale is short" },
-        { value: `$${T.fromMo}`, label: "a location a month to start, at founding prices" },
-        { value: `$${PRICING.founding.one}`, label: "a provider a month for Doe One, founding" },
+        { value: `$${PRICE.basic}`, label: "a month to start, one provider at one location" },
+        { value: `$${PRICE.one}`, label: "a month for Doe One, one provider at one location" },
         { value: "5–10", label: "clinics in the Doe One beta before Seed" },
       ],
       text: "Aesthetic, dermatology, and plastic surgery practices are where agent booking starts first: most services are elective, priced up front, and paid out of pocket, and one owner decides and pays, so the sale is short. They also see the return in plain numbers, because every offer reports the agents it matched, the patients who saw it, and the visits it booked.",
@@ -1043,12 +1053,12 @@ const MEMBERSHIP_MEDICINE: DoeHealthBlogArticle = {
       stats: [
         { value: "4", label: "locations in an average multi-site group" },
         { value: "12", label: "providers in an average multi-site group" },
-        { value: `$${PRICING.founding.group}`, label: "a provider a month for groups, founding" },
-        { value: `$${PRICING.regular.group}`, label: "a provider a month after the founding year" },
+        { value: `$${PRICE.advancedProvider}`, label: "a month for each extra provider on Advanced" },
+        { value: `$${n(PRICE.advancedGroup)}`, label: "a month for an average group on Advanced" },
       ],
       text: "Membership practices charge thousands of dollars a year per patient, so one new member found by an agent pays for Doe many times over. And once a member's agent is connected, the relationship runs through Doe every day: visits, refills, and questions, which is what keeps a practice on the platform.",
       points: [
-        { lead: "One contract, many sites", text: `groups average four locations and twelve providers, bought by one operations lead at $${PRICING.founding.group} a provider ($${PRICING.regular.group} after the founding year).` },
+        { lead: "One contract, many sites", text: `groups average four locations and twelve providers, bought by one operations lead for $${n(PRICE.advancedGroup)} a month on Advanced, with volume discounts on extra providers and locations.` },
         { lead: "Doe One", text: "a beta with five to ten clinics before Seed, running the whole visit for each provider." },
         { lead: "Retention", text: "every connected agent is another reason to stay: the practice's access promises are kept through Doe." },
       ],
