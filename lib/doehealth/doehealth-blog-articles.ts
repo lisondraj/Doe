@@ -63,7 +63,11 @@ export type DoeHealthBlogPlanScene = "layers" | "profile" | "auth" | "lanes" | "
 export type DoeHealthBlogMotionScene = "roadmap" | "index" | "auth" | "integrations" | "phi" | "watch";
 
 export type DoeHealthBlogBlock =
-  | { type: "paragraph"; text: string }
+  | {
+      type: "paragraph";
+      text: string;
+      links?: readonly { label: string; href: string }[];
+    }
   | { type: "heading"; text: string }
   | { type: "figure"; tone: DoeHealthBlogPlaceholderTone; caption: string }
   | { type: "view"; view: DoeHealthBlogView; caption: string }
@@ -1386,102 +1390,122 @@ const AGENT_STACK: DoeHealthBlogArticle = {
   author: "James Lisondra",
   date: "October 27, 2026",
   excerpt:
-    "Muse, Instinct, Poke and a wave of consumer agents now act for people. A field guide to how they find and deal with organizations: MCP, A2A, OAuth, delegated identity, and computer and phone use.",
+    "A field guide to the protocols personal agents use to reach organizations: Poppy, MCP, A2A, OAuth, delegated identity, and the browser or phone when no direct path exists.",
   heroTone: "sand",
   wave: { top: 0.46, amp: 58, phase: 1.2, scale: 0.95, slant: -0.2 },
-  lede: "A new kind of customer is arriving at every organization's door. It types faster than any person, never waits on hold willingly, and it is acting for someone who is not in the room.",
+  lede: "I believe personal agents will become one of the main ways people reach organizations. The difficult part is no longer understanding what a person wants. It is giving their agent a trustworthy way to act on it.",
   blocks: [
     {
       type: "paragraph",
-      text: "In 2026 the personal agent stopped being a demo. Meta launched Muse in September, an agent that sends email, books travel, fills out forms and makes purchases for its user, with a free tier and paid plans at $20 and $100 a month. Instinct, which people simply text or call, became one of the most discussed launches of the summer while still invite-only. Poke, from the Interaction Company of California, lives in iMessage, SMS and Telegram, and in June became the first third-party AI agent Apple approved to message people through Messages for Business. OpenClaw, the open-source agent people run on their own machines and talk to over WhatsApp or Telegram, passed 200,000 GitHub stars within months of its release.",
+      text: "Personal agents are moving from answering questions to completing errands. A person can ask one to find a service, compare options, change an order, book an appointment, or call a business. The interface may still be a message thread, but the work happens inside another organization.",
     },
     {
       type: "paragraph",
-      text: "These products look different, but they share a shape. The interface is a message thread. The work happens somewhere else: in the person's inbox and calendar, and increasingly at the organizations the person deals with, the clinic, the airline, the city office, the pharmacy. The hard part is no longer understanding what the person wants. It is reaching the organization that can do it, proving the agent is allowed to ask, and getting a reliable answer back.",
+      text: "That creates three separate questions. How does the agent discover what the organization can do? How does it prove which person it represents? And how does the organization limit, approve, and audit the action? No single protocol answers all three.",
     },
     {
       type: "paragraph",
-      text: "There are five ways that happens today. Some are open standards with real momentum, some are drafts still being written, and one is the fallback every agent uses when nothing else exists. This guide walks through each, what it is for, and what it means for an organization that wants agents to find it and deal with it well.",
+      text: "The emerging stack has several layers. Poppy describes the whole visit between a personal agent and a company. MCP exposes tools and data. A2A supports a conversation with the organization’s own agent. OAuth carries the person’s permission. Signed identity and mandate standards make the actor and its limits verifiable. When none of those paths exists, the agent falls back to the website or phone.",
+      links: [
+        { label: "Poppy draft specification", href: "https://personalagentprotocol.org/docs/spec" },
+        { label: "MCP specification", href: "https://modelcontextprotocol.io/specification" },
+        { label: "A2A specification", href: "https://a2a-protocol.org/latest/specification/" },
+      ],
     },
-    { type: "heading", text: "Five ways in." },
+    { type: "heading", text: "The stack is a set of layers, not one connector." },
     {
       type: "paragraph",
-      text: "From most structured to least: an agent can use tools the organization publishes (MCP), talk to an agent the organization runs (A2A), carry the person's permission into the organization's systems (OAuth), prove who is acting and for whom (delegated identity, the proxy layer), or, when none of that exists, use the website or phone line exactly as a person would (computer and phone use). In practice a single errand often touches several of them.",
+      text: "A single errand can use several layers at once. Discovery may begin with Poppy. The company may expose a booking tool through MCP or a service agent through A2A. OAuth can ask the person to approve access. A signed request can identify the agent, and a payment mandate can state the exact amount it may spend. Each layer solves a narrower problem, which is why clear boundaries matter more than choosing one winner.",
     },
     {
       type: "diagram",
       diagram: { id: "stack", tone: "panel", dots: "halftone" },
       caption: "The five ways a personal agent reaches an organization, from the most structured to the fallback. The further down the list, the slower, costlier, and harder to audit each request becomes.",
     },
-    { type: "heading", text: "MCP: the organization's tools, described for agents." },
+    { type: "heading", text: "Poppy: a front door for personal agents." },
     {
       type: "paragraph",
-      text: "The Model Context Protocol is an open standard for connecting AI applications to outside tools and data. An organization runs an MCP server; an agent connects as a client, asks what the server offers, and calls it. A server exposes tools (actions such as find_openings or book_visit, each with a typed input schema), resources (data the agent can read), and prompts (reusable templates). Because every tool describes itself, an agent that has never seen a server before can read its list and use it correctly.",
+      text: "The Personal Agent Protocol, or Poppy, is being developed by Sierra and Meta with partners including Genesys, Instinct, Shopify, Stripe, and Walmart. It starts from the relationship most other protocols leave implicit: one personal agent is acting for one user with one company.",
+      links: [
+        { label: "Sierra’s introduction to Poppy", href: "https://sierra.ai/blog/introducing-personal-agent-protocol" },
+        { label: "Poppy specification", href: "https://personalagentprotocol.org/docs/spec" },
+      ],
     },
     {
       type: "paragraph",
-      text: "MCP began at Anthropic in late 2024 and spread quickly across Claude, ChatGPT, Gemini, Microsoft Copilot, Cursor and VS Code. In December 2025 Anthropic donated it to the Agentic AI Foundation, a new Linux Foundation project formed alongside Block's goose and OpenAI's AGENTS.md, with Amazon, Google, Microsoft, OpenAI and Cloudflare among its members. By then more than 10,000 MCP servers had been published.",
+      text: "A company publishes a document at /.well-known/poppy.json. That document tells the personal agent how to authenticate, whether it can browse the site in a shared session, which APIs are available, and whether the company has an agent of its own. The same session can begin as a guest, continue after the user signs in, and move between the website, an MCP or OpenAPI endpoint, and a company agent without losing the thread.",
     },
     {
       type: "paragraph",
-      text: "The current specification, released on July 28, 2026, made the protocol stateless: there is no long-lived session to keep open, each request carries what the server needs, and a server/discover method returns its capabilities. It also added MCP Apps, an official extension that lets a server send back interactive interface inside the agent's window, and moved long-running tasks into their own extension so a booking that takes minutes can be checked on later rather than held open.",
+      text: "Poppy is still a draft, so it should be treated as a direction rather than settled infrastructure. Its important idea is already clear: the user controls the access they grant, while the company controls which actions it exposes. That is a better model than asking companies either to block agents or to accept invisible automation.",
+    },
+    { type: "heading", text: "MCP: tools an agent can read and call." },
+    {
+      type: "paragraph",
+      text: "The Model Context Protocol gives an agent a structured way to discover and call tools. An organization can expose actions such as find_openings or book_visit with typed inputs and outputs. It can also expose resources the agent may read. Instead of guessing how a website works, the agent receives a contract it can validate before it acts.",
+      links: [{ label: "Model Context Protocol", href: "https://modelcontextprotocol.io/specification" }],
+    },
+    {
+      type: "paragraph",
+      text: "MCP is strongest when the task is already well defined. Availability, prices, order status, booking, cancellation, and document requests all fit naturally because the organization can specify the fields required, the result returned, and whether a person or staff member must approve the call.",
+    },
+    {
+      type: "paragraph",
+      text: "The boundary is equally important. MCP describes capabilities; it does not decide whether the caller is entitled to use them. Authentication, consent, clinic policy, and the audit record still have to sit around the tool call.",
     },
     {
       type: "diagram",
       diagram: { id: "mcp", tone: "cream", dots: "tide" },
       caption: "A clinic's MCP server lists four tools, two marked as needing approval. The person's agent finds openings, picks one, and asks the person in their message thread before the tool that books.",
     },
-    {
-      type: "list",
-      items: [
-        { lead: "What it is good for", text: "well-defined actions with clear inputs and outputs: availability, prices, booking, cancelling, order status, document requests." },
-        { lead: "What the organization controls", text: "exactly which actions exist, what each returns, and which ones require the person's confirmation or a staff review before they run." },
-        { lead: "What it leaves to the agent", text: "the reasoning. The organization publishes capabilities; the person's agent decides which to call and in what order." },
-      ],
-    },
-    { type: "heading", text: "A2A: when the organization has an agent of its own." },
+    { type: "heading", text: "A2A: a conversation with the organization’s agent." },
     {
       type: "paragraph",
-      text: "MCP treats the organization as a set of tools. The Agent2Agent protocol treats it as a counterpart. Google introduced A2A in April 2025 and donated it to the Linux Foundation; its first stable 1.0 specification arrived in 2026, and by its first anniversary more than 150 organizations supported it, with support built into Microsoft's Azure AI Foundry and Copilot Studio and Amazon Bedrock AgentCore.",
+      text: "MCP treats the organization as a set of callable tools. The Agent2Agent protocol treats it as a counterpart. A2A is an open Linux Foundation standard for independent agents to discover one another, exchange messages, and manage work that may take time or require a person to step in.",
+      links: [{ label: "Agent2Agent Protocol", href: "https://a2a-protocol.org/latest/specification/" }],
     },
     {
       type: "paragraph",
-      text: "An organization that runs an agent publishes an Agent Card at a well-known address, /.well-known/agent-card.json. The card names the agent, lists its skills, says which transports it speaks (JSON-RPC, gRPC, or plain HTTP with JSON), declares how callers must authenticate, and can be cryptographically signed so a caller knows it came from the organization. The person's agent reads the card, then sends a message that starts a task. Tasks move through clear states: submitted, working, input-required when the organization's agent needs something, and finally completed with an artifact, or failed or canceled.",
+      text: "An organization publishes an Agent Card that describes its agent’s skills, endpoint, and authentication requirements. A personal agent can then create a task and follow its state from submitted to working, input required, and completed. The result arrives as an artifact rather than as an exposed view of the organization’s internal systems.",
     },
     {
       type: "paragraph",
-      text: "The difference matters when the exchange is a conversation rather than a function call. A front-desk agent can ask a follow-up question, apply its own policies, consult staff, and keep its internal systems private. Neither side has to expose its reasoning or its data to the other, only the messages and the result.",
+      text: "That is useful when the work is a conversation, not a function call. A clinic’s front-desk agent can ask a follow-up question, apply its own policy, consult staff, and keep its scheduling system private. Neither side has to reveal its private reasoning or tools; they exchange only the messages and result required to finish the task.",
     },
     {
       type: "diagram",
       diagram: { id: "a2a", tone: "gold", dots: "curtain" },
       caption: "The clinic's front-desk agent publishes a signed Agent Card. The person's agent hands it a task, answers its question about coverage, and gets back a confirmed visit as the task's artifact.",
     },
-    { type: "heading", text: "OAuth: carrying the person's permission." },
+    { type: "heading", text: "OAuth: carrying the person’s permission." },
     {
       type: "paragraph",
-      text: "Reaching an organization is not the same as being allowed to act there. For that, agents use OAuth, the same standard behind every \"Sign in with\" button, in a profile tightened for agents. MCP's authorization rules are a good map of where the industry has settled. The organization's server answers an unauthenticated request with a 401 and a pointer to its protected-resource metadata, which names the authorization server to use. The agent identifies itself with a client ID that is itself a URL, pointing at a public document describing the agent, so an organization can recognise an agent it has never registered. The person signs in and approves on a consent screen that names the agent and the permissions it is asking for.",
+      text: "Discovery is not permission. OAuth gives the person a direct moment to sign in to the organization and approve a limited set of scopes for the agent. The agent receives a token, not the person’s password. The organization can bind that token to its own server, record which agent received it, and require a new approval when the task expands.",
+      links: [
+        { label: "OAuth 2.0", href: "https://oauth.net/2/" },
+        { label: "MCP authorization", href: "https://modelcontextprotocol.io/specification/latest/basic/authorization" },
+      ],
     },
     {
       type: "paragraph",
-      text: "The details are where the safety lives. PKCE is mandatory, so an intercepted code is useless. Every token is requested for one specific server and that server must reject tokens meant for anyone else. Servers may not pass a token through to another service. Tokens are meant to be short-lived, and when an agent needs more than it was granted, the server replies with a 403 naming the missing scope and the agent goes back to the person to ask, rather than holding broad access just in case.",
+      text: "The safety comes from narrow, short-lived access. Proof Key for Code Exchange makes an intercepted authorization code useless. Resource indicators keep a token meant for one server from being replayed at another. When the agent needs a stronger permission, the right response is step-up consent, not a broad token issued just in case.",
     },
     {
       type: "diagram",
       diagram: { id: "oauth", tone: "clay", dots: "rings" },
       caption: "Discovery from a 401, a consent screen that names the agent and only the scopes it needs, a token bound to one server with the agent recorded as the actor, and a step-up request when paying needs more.",
     },
-    { type: "heading", text: "The proxy layer: acting for someone." },
+    { type: "heading", text: "Delegation: identify the agent, the person, and the limit." },
     {
       type: "paragraph",
-      text: "A personal agent is a proxy. It is not the person, and an organization increasingly needs to know three things about every request: which agent is calling, whom it is acting for, and what that person actually authorized. Three pieces of emerging infrastructure answer those questions separately.",
+      text: "A personal agent is a proxy, not the person. Every consequential request should answer three questions independently: which agent sent it, whom that agent represents, and what the person authorized. Collapsing those into one login makes the record easier to build and much harder to trust.",
     },
     {
-      type: "list",
-      items: [
-        { lead: "Which agent", text: "Web Bot Auth, now an IETF working-group draft authored by engineers at Cloudflare and Google, has agents sign each HTTP request with HTTP Message Signatures and name a Signature-Agent URL where their public keys are published. A website can verify the signature instead of guessing from IP addresses or user-agent strings. The draft is explicit that this proves which agent sent the request, not whether the request is authorized." },
-        { lead: "For whom", text: "OAuth's token exchange standard already defines an act claim for delegation, and several drafts extend the sign-in flow so a token records both the person (the subject) and the agent acting for them (the actor). An organization's records can then show that Maya asked, through her agent, rather than that Maya clicked." },
-        { lead: "Within what limits", text: "payment protocols add signed, specific mandates. Google's Agent Payments Protocol, backed by more than 60 payments and financial companies, uses cryptographically signed intent and cart mandates. OpenAI and Stripe's Agentic Commerce Protocol standardises checkout with single-use payment tokens, and Coinbase's x402 revives HTTP's 402 status code for machine-to-machine payments." },
+      type: "paragraph",
+      text: "Signed requests can identify the calling agent without pretending that identity equals authorization. OAuth token exchange can preserve both the human subject and the agent actor in the delegation chain. For payments, Google’s Agent Payments Protocol adds signed intent and cart mandates so a merchant can verify what the person approved instead of inferring intent from the agent’s behavior.",
+      links: [
+        { label: "OAuth Token Exchange", href: "https://datatracker.ietf.org/doc/html/rfc8693" },
+        { label: "Agent Payments Protocol", href: "https://ap2-protocol.org/" },
       ],
     },
     {
@@ -1496,41 +1520,34 @@ const AGENT_STACK: DoeHealthBlogArticle = {
     { type: "heading", text: "Computer and phone use: the fallback for everything else." },
     {
       type: "paragraph",
-      text: "Most organizations publish none of the above. So personal agents do what a person would. Muse runs each user's tasks in what Meta calls a dedicated, secure computer with its own browser, and uses that browser when a service has no public API. Instinct keeps a persistent cloud computer that holds its state between messages. On phones, Google's Gemini Intelligence, announced in May, operates third-party Android apps to finish multi-step chores and asks before any purchase. In September Google began testing Call for Me, which lets Gemini phone a business for its user, work through the phone menu, wait on hold, and talk to staff while the person watches a live transcript.",
+      text: "Most organizations publish none of these interfaces. Personal agents therefore do what a person would: open the website, fill a form, wait through a phone tree, or speak to staff. This works well enough to make agents useful, but it is the least reliable path and gives the organization the least structured control.",
     },
     {
       type: "paragraph",
-      text: "The models are good at this now. On OSWorld-Verified, a standard benchmark of real computer tasks, the best reported scores sit in the mid-80s percent, though most are self-reported by the labs. The limits are elsewhere. Websites put up CAPTCHAs and two-factor prompts built to stop exactly this kind of visitor. A page the agent reads can carry hidden instructions meant to hijack it. Every click is slower and costlier than a function call, and when a screen changes, the agent breaks. A phone call takes minutes of staff time, and leaves the organization with no structured record of who asked for what.",
+      text: "The failure modes are familiar. A page changes and the automation breaks. A CAPTCHA or second factor stops the task. Text on the page can attempt to redirect the agent through prompt injection. Every click costs more than a tool call, while a phone call consumes staff time and often leaves no structured record of the request. The fallback should remain available, but it should not be the primary interface for high-trust work.",
     },
     {
       type: "diagram",
       diagram: { id: "screens", tone: "sand", dots: "wave" },
       caption: "Without an interface for agents: the agent fills in a booking form in its own browser until a human check stops it, or phones the front desk, presses 1, waits on hold, and asks a person to do the booking.",
     },
-    { type: "heading", text: "How it fits together." },
+    { type: "heading", text: "One request, several layers." },
     {
       type: "paragraph",
-      text: "Follow one request. Maya texts her agent to book physio after work this week. The agent looks for the clinic's agent card or MCP server. If it finds one, it signs its requests so the clinic knows which agent is calling, gets Maya's consent through OAuth for exactly the scopes it needs, finds openings, and asks Maya before it books. If paying is involved, it carries a signed mandate with a ceiling. Every step leaves a record that names Maya, her agent, and what was allowed. If the clinic publishes nothing, the agent opens the website in its own browser or picks up the phone, and the same errand takes longer, costs more, and may stall at a CAPTCHA.",
+      text: "Imagine Maya asks her agent to book physiotherapy after work this week. The agent discovers the clinic through its Poppy document, then finds an MCP booking tool or an A2A front-desk agent. OAuth asks Maya to approve the minimum scopes. The request identifies both Maya and her agent, and the clinic’s own policy decides whether booking is direct or held for review. If payment is needed, a signed mandate sets the amount. Each layer leaves evidence of who asked, what was allowed, and what happened.",
     },
     {
       type: "paragraph",
-      text: "For organizations, this is a discovery question as much as a technical one. Agents will route toward the places they can deal with reliably. An organization that is legible to agents gets the booking in seconds, on its own terms. One that is not still gets the visitor, only slower, through its most expensive channel, and with far less control over what happens.",
+      text: "For organizations, this is as much a discovery problem as a technical one. Agents will prefer places they can understand and complete work with reliably. A legible organization can receive the request on its own terms. An illegible one still receives automation, but through its most expensive channels and with far less context.",
     },
-    { type: "heading", text: "What an organization can do now." },
+    { type: "heading", text: "What I would build first." },
     {
-      type: "list",
-      items: [
-        { lead: "Publish a front door for agents", text: "an MCP server for the handful of actions people ask for most, with clear names, schemas, and an approval flag on anything consequential." },
-        { lead: "Run an agent if the work is conversational", text: "and publish a signed Agent Card so other agents can find it, know what it can do, and know how to authenticate." },
-        { lead: "Use OAuth with narrow scopes", text: "a consent screen that names the agent, short-lived tokens bound to your server, and step-up when an agent wants more." },
-        { lead: "Verify agents instead of blocking all bots", text: "accept signed agent traffic, record the person and the actor separately, and keep stricter defaults for unsigned automation." },
-        { lead: "Decide where a person stays in the loop", text: "payments, records, and anything that changes an account can require the person's confirmation, and sometimes a staff member's." },
-        { lead: "Keep the human channels working", text: "agents will still call and still use the website, so a clear phone menu and an accessible booking page help them too." },
-      ],
+      type: "paragraph",
+      text: "I would begin with the few actions people ask for most, publish them with clear schemas, and mark the consequential ones for approval. If the work requires a conversation, I would add an organizational agent rather than stretching every exchange into a tool call. I would use OAuth with narrow scopes, record the human and agent as separate actors, and require explicit confirmation for payments, records, and account changes.",
     },
     {
       type: "paragraph",
-      text: "None of these standards is finished. A2A reached its first stable release this year, MCP rewrote its transport in July, and the identity and delegation work is still in drafts. But the direction is clear: personal agents are becoming the way people deal with organizations, and the organizations that describe themselves in a language agents can read will be the ones those agents can actually reach.",
+      text: "I would also keep the website and phone line usable. Standards evolve, agents fail, and people still need a way through. Poppy is a draft, identity work is still developing, and implementations will change. The durable principle is simpler: let agents discover what is possible, ask only for the permission they need, and leave a record a person can understand.",
     },
   ],
 };
@@ -1544,17 +1561,17 @@ const COMPLIANCE_PLAN: DoeHealthBlogArticle = {
   author: "James Lisondra",
   date: "October 27, 2026",
   excerpt:
-    "Our plan from November to Q3 2027: an Index agents can read with no PHI, then Doe Auth and integrations in a sandbox, PHIPA and HIPAA programs from January, SOC 2 from Q3, and health information only once every gate is cleared.",
+    "Why Doe begins with public clinic information, proves identity and integrations on synthetic data, and carries PHI only after each clinic clears its legal and security gates.",
   heroTone: "cream",
-  lede: "We are going to grow Doe in the order that trust can be earned: first what a clinic is willing to say in public, then who a patient is, and only then what is in their chart.",
+  lede: "I believe Doe should grow in the same order trust is earned: first what a clinic says in public, then who a patient is, and only then what is in their chart.",
   blocks: [
     {
       type: "paragraph",
-      text: "Most health technology companies are asked to choose between moving quickly and being careful. We think the choice is false if the plan is sequenced by data rather than by feature. Each phase below adds exactly one new kind of information to what Doe handles, and no phase starts until the one before it has been tested, measured, and, where the law asks for it, signed off. The product gets more useful at every step, and at no step does it hold anything it has not been cleared to hold.",
+      text: "Healthcare companies are often told to choose between speed and care. I do not think that is the real choice. The real question is whether the product is sequenced by features or by the sensitivity of the data. We are sequencing Doe by data. Each phase adds one new kind of information, and each phase has a gate that must be cleared before the next begins.",
     },
     {
       type: "paragraph",
-      text: "This memo lays out the plan from November 2026 to the start of Q3 2027, the compliance programs that run underneath it, and the two things that run the whole way through: security evaluations in the sandbox, and metrics we watch clinic by clinic. Dates are targets. Gates are not.",
+      text: "This is our plan from November 2026 through the start of Q3 2027. The dates are targets. The gates are commitments. If an assessment, agreement, test, or control is not ready, the date moves and the gate does not.",
     },
     {
       type: "investor",
@@ -1577,24 +1594,14 @@ const COMPLIANCE_PLAN: DoeHealthBlogArticle = {
       scene: "roadmap",
       caption: "The plan on one rail, November 2026 to Q3 2027. Product phases on top, compliance programs underneath, and the sandbox and per-clinic metrics running the whole way.",
     },
-    { type: "heading", text: "Months one and two: the Index, with nothing to protect but accuracy." },
+    { type: "heading", text: "Months one and two: build the Index without PHI." },
     {
       type: "paragraph",
-      text: "November and December are about one thing: more clinics claiming their page on the Doe Index, and the people who run those clinics filling it in themselves. A provider or an office administrator claims the clinic, confirms they are allowed to speak for it, and enters what the clinic actually does. In the same flow they can set up a simple Doe site for the clinic, built from the same information, so the page a patient reads and the record an agent reads never disagree.",
+      text: "In November and December, clinics claim their page on the Doe Index and describe themselves in their own words. A provider or administrator verifies that they can speak for the clinic, then adds its services, providers, coverage, prices, hours, and locations. The same record can power a Doe site, so the page a patient reads and the data an agent reads do not drift apart.",
     },
     {
       type: "paragraph",
-      text: "Everything in this phase is information a clinic would happily print on its front door. Doe turns it into structured data agents can read, with no patient information and no connection to any clinic system. That is a deliberate constraint. It lets us move quickly, and it means the hardest questions of this phase are about identity and accuracy rather than privacy.",
-    },
-    {
-      type: "list",
-      items: [
-        { lead: "Services", text: "what the clinic offers, the words patients use for it, who it is for, and what has to happen before a visit." },
-        { lead: "Providers", text: "names, specialties, the ages they see, languages, and whether they are accepting new patients." },
-        { lead: "Coverage and prices", text: "plans accepted, referral rules, and self-pay prices the clinic is willing to publish." },
-        { lead: "Offers", text: "promotions, memberships, and packages, written to the advertising rules of each profession." },
-        { lead: "Hours and locations", text: "where the clinic is, when it is open, and how to reach it." },
-      ],
+      text: "Everything in this phase is public business information. There is no patient identity, no symptom form, and no connection to a clinic system. That constraint lets us solve verification, accuracy, and freshness before we ask a clinic to trust us with anything sensitive.",
     },
     {
       type: "motion",
@@ -1603,49 +1610,32 @@ const COMPLIANCE_PLAN: DoeHealthBlogArticle = {
     },
     {
       type: "paragraph",
-      text: "No PHI does not mean no risk, so the Index ships with guardrails of its own. They are the part of this phase most likely to be skipped, and the part most likely to hurt someone if they were.",
+      text: "No PHI does not mean no risk. A false claim could misrepresent a clinic. Agent-directed instructions hidden in free text could manipulate downstream systems. A stale insurance listing could send a patient to a visit they cannot afford. Claims are therefore verified against professional registries, the clinic’s listed phone number, or its domain. Free text is screened for patient details and instructions aimed at agents. Every field carries a freshness date, and Doe sites use no third-party advertising pixels.",
     },
-    {
-      type: "list",
-      items: [
-        { lead: "Verified claims", text: "a clinic is claimed through a check against the professional registry, a callback to the listed phone number, or a work email on the clinic’s domain. A false claim on a clinic is the first attack we expect." },
-        { lead: "Text that cannot give orders", text: "everything a clinic types is read by agents, so free text is screened for instructions aimed at them, the same way we would screen a malicious web page." },
-        { lead: "No PHI by accident", text: "fields are structured, free text is checked for patient names and stories, and Doe sites carry no symptom forms. A contact form that asks what is wrong is collecting health information." },
-        { lead: "No trackers", text: "Doe sites carry no third-party advertising pixels. A tracker on a clinic’s booking page can disclose who is seeking care." },
-        { lead: "Freshness", text: "every field shows when it was last confirmed, and the clinic is asked to reconfirm on a schedule. A wrong insurance listing sends a patient to a visit they cannot afford." },
-      ],
-    },
-    { type: "heading", text: "The end of month two: PHIPA and HIPAA programs begin." },
+    { type: "heading", text: "Before identity: begin the legal and security work." },
     {
       type: "paragraph",
-      text: "We start the formal compliance programs in January, six months before any health information moves, because that is how long the work honestly takes. The point is not to have a policy binder. It is to have the assessments done, the agreements signed, and the controls tested on the day the first patient’s data is allowed through.",
+      text: "We begin the formal PHIPA and HIPAA programs in January, months before any health information moves. The goal is not a policy binder. It is to have the data map, assessments, agreements, training, incident procedures, and tested controls in place before the first clinic reaches the PHI gate.",
     },
     {
       type: "paragraph",
-      text: "In Ontario, Doe will act as an electronic service provider to clinics, which are the health information custodians under PHIPA. Where Doe lets two or more custodians share information with each other, it takes on the extra duties of a health information network provider under Ontario Regulation 329/04: performing threat risk and privacy impact assessments and giving each clinic the results, keeping an audit log of every access and transfer, notifying custodians of a breach at the first reasonable opportunity, publishing a plain-language description of its services and safeguards, entering a written agreement with each clinic, and holding its own subcontractors to the same terms. We are planning to meet those duties from the first day, whichever role a given workflow puts us in.",
+      text: "In Ontario, clinics are health information custodians under PHIPA. Doe expects to operate as an electronic service provider and, where the workflow enables custodians to exchange information, may also have duties as a health information network provider under Ontario Regulation 329/04. Those duties include privacy and threat-risk assessments, access and transfer logs, written agreements, public descriptions of safeguards, subcontractor controls, and breach notice at the first reasonable opportunity. Counsel will confirm Doe’s role for each workflow before launch.",
+      links: [{ label: "Ontario Regulation 329/04", href: "https://www.ontario.ca/laws/regulation/040329" }],
     },
     {
       type: "paragraph",
-      text: "PHIPA also names a role for consumer electronic service providers, the apps patients use to manage their own records. The requirements for that role are still to be set out in regulation. Personal agents sit close to it, so we are designing as though those requirements will arrive, rather than waiting to be surprised by them.",
+      text: "In the United States, Doe expects to act as a business associate when it handles PHI for a clinic. A business associate agreement must be in place with that clinic, and equivalent obligations must flow to every subcontractor that touches PHI. We are also designing toward the controls in HHS’s proposed Security Rule update, while being careful not to describe a proposed rule as final law.",
+      links: [{ label: "HHS proposed HIPAA Security Rule update", href: "https://www.hhs.gov/hipaa/for-professionals/security/hipaa-security-rule-nprm/factsheet/index.html" }],
     },
     {
       type: "paragraph",
-      text: "In the United States, Doe will be a business associate of each clinic under HIPAA, with a business associate agreement in place before any of that clinic’s PHI moves, and agreements down the chain with every vendor that touches it, including model providers on zero data retention. HHS has proposed the largest update to the HIPAA Security Rule in two decades and currently projects final action around July 2027, the same quarter our gate opens. We are building to the proposed controls now, including multi-factor authentication everywhere, encryption at rest and in transit, a full asset inventory, and regular penetration testing, so a final rule changes our paperwork rather than our architecture.",
+      text: "The program has named privacy and security owners, outside healthcare privacy counsel, workforce training, a complete data and vendor map, workflow-level assessments, access and retention policies, incident response, and template agreements for clinics and subprocessors. Personal-agent developers may also face consumer health-data obligations outside HIPAA, including the FTC Health Breach Notification Rule; Doe’s terms and technical controls need to account for that boundary.",
+      links: [{ label: "FTC Health Breach Notification Rule", href: "https://www.ftc.gov/legal-library/browse/rules/health-breach-notification-rule" }],
     },
-    {
-      type: "list",
-      items: [
-        { lead: "People", text: "a named privacy officer and security officer, outside healthcare privacy counsel, and training for everyone with production access." },
-        { lead: "Assessments", text: "a data map of every field Doe could ever hold, privacy impact and threat risk assessments for each workflow, and a HIPAA security risk analysis." },
-        { lead: "Agreements", text: "a PHIPA services agreement for Ontario clinics, a BAA for U.S. clinics, and subcontractor agreements for every vendor in the path." },
-        { lead: "Policies", text: "access control, retention and deletion, breach response, and a plain-language public description of what Doe does with health data." },
-        { lead: "Consumer side", text: "personal agent developers outside HIPAA can fall under the FTC’s Health Breach Notification Rule, so Doe’s developer terms require them to meet it." },
-      ],
-    },
-    { type: "heading", text: "Months three and four: Doe Auth." },
+    { type: "heading", text: "Months three and four: prove identity without proving a diagnosis." },
     {
       type: "paragraph",
-      text: "In January and February we release Doe Auth: a way for a clinic and a personal agent to know, safely, that the agent is acting for a real person who asked it to. The patient approves on their own device with a passkey. The agent receives a grant, not a password: one clinic, one purpose, a short expiry, bound to that agent’s own key. The clinic sees a verified badge on the request and the scope it is allowed to cover.",
+      text: "In January and February we plan to release Doe Auth. The patient approves on their own device with a passkey. The agent receives a signed grant rather than a password: one purpose, a short expiry, and a binding to that agent’s key. The clinic can verify who is asking, which agent represents them, and exactly what the grant permits.",
     },
     {
       type: "motion",
@@ -1654,16 +1644,16 @@ const COMPLIANCE_PLAN: DoeHealthBlogArticle = {
     },
     {
       type: "paragraph",
-      text: "There is a line in this phase that is easy to cross without noticing, so we have drawn it carefully. Verifying that a person is who they say they are produces identity data, which we protect as personal information. But the fact that a particular person is a patient of a particular clinic is health information in its own right. So in months three and four Doe Auth verifies the person and the agent, and nothing about their relationship to any clinic. Matching a verified person to a clinic’s own records waits for the Q3 gate, when the agreements that allow it are in place.",
+      text: "There is an important boundary here. Verifying a person creates sensitive identity data, but linking that person to a specific clinic can itself reveal health information. In this phase, Doe Auth verifies the person and agent without matching them to a clinic record. That match waits until the clinic has cleared the PHI gate.",
     },
     {
       type: "quote",
       text: "Doe Auth proves who is asking and what they are allowed to ask for. It does not need to know why.",
     },
-    { type: "heading", text: "Exploring integrations, in the sandbox first." },
+    { type: "heading", text: "Build integrations twice: to work, then to survive attack." },
     {
       type: "paragraph",
-      text: "Alongside Doe Auth we begin the integrations that let agents do more than read: book a visit, send a document, ask the clinic a question, explore offers and prices, and verify insurance. They differ sharply in what they touch, so they do not share a release date. The ones that only use what the clinic has published can go live early. The ones that carry a patient’s details are built and attacked against synthetic patients, and stay there until the PHI gate opens.",
+      text: "Alongside Doe Auth we build the integrations that let agents ask a clinic a question, read offers and prices, request a visit, send a document, or verify insurance. These lanes do not share one release date. Public questions and published prices can go live without patient data. Booking, documents, and eligibility checks remain on synthetic patients until the PHI gate opens.",
     },
     {
       type: "motion",
@@ -1671,70 +1661,45 @@ const COMPLIANCE_PLAN: DoeHealthBlogArticle = {
       caption: "Five integrations, three stages each. Questions and offers use only what the clinic has published and can go live early. Booking, documents, and insurance checks run on synthetic patients until the Q3 gate.",
     },
     {
-      type: "list",
-      items: [
-        { lead: "Ask questions", text: "answered from the clinic’s own Index, with anything outside it routed to staff. Live early, as long as the question does not carry the patient’s health details." },
-        { lead: "Offers, promotions, and pricing", text: "published by the clinic and read by agents. Live early, written within each profession’s advertising rules." },
-        { lead: "Book visits", text: "a name and a time at a clinic is health information. Built against practice management sandboxes, live after the gate." },
-        { lead: "Send documents", text: "referrals, forms, and records, the highest-risk lane after payments. Synthetic only until the gate, with the strictest eval bar." },
-        { lead: "Verify insurance", text: "eligibility checks carry plan and member details. Built with clearinghouse test environments, live after the gate." },
-      ],
+      type: "paragraph",
+      text: "From March through June, the work is depth rather than breadth: design-partner clinics, synthetic patient journeys, integration sandboxes, an external penetration test, and a tabletop incident exercise with a clinic team. Before a lane can carry real data, we want evidence of how it behaves under attack, not only how it behaves in a demo.",
+    },
+    { type: "heading", text: "Q3 2027: PHI opens clinic by clinic, not by calendar." },
+    {
+      type: "paragraph",
+      text: "At the start of Q3 we reach the part the rest of the plan exists to protect: personal health information moving between a patient’s agent and a clinic. The gate opens only when the clinic agreement is signed, required assessments are complete, subprocessors are under contract, penetration-test findings are fixed, every lane passes its synthetic evals, the incident drill is complete, and the correct Canadian or U.S. data region is ready.",
     },
     {
       type: "paragraph",
-      text: "From March to June the work is depth rather than breadth: pilots with a handful of clinics on synthetic patients, integration partners chosen for the systems those clinics already use, the first external penetration test, and a tabletop incident drill with a real clinic’s team. By the end of June every integration has a record of how it behaved under attack, not just how it behaved in a demo.",
-    },
-    { type: "heading", text: "Q3 2027: PHI, through personal agents." },
-    {
-      type: "paragraph",
-      text: "By the start of Q3 we turn to the part the rest of the plan exists to protect: personal health information moving between a patient’s own agent and a clinic. The gate does not open on a date. It opens when every item on its checklist is true for the clinic in question, and it opens clinic by clinic, not all at once.",
-    },
-    {
-      type: "list",
-      items: [
-        { lead: "Signed", text: "a PHIPA services agreement or a BAA with the clinic, and subcontractor agreements with every vendor in the path." },
-        { lead: "Assessed", text: "privacy impact and threat risk assessments delivered to the clinic, and the HIPAA risk analysis complete." },
-        { lead: "Tested", text: "an external penetration test with its findings fixed, and every lane passing its eval bar on synthetic patients." },
-        { lead: "Rehearsed", text: "an incident drill run with the clinic’s team, from the first automatic step to the written notice." },
-        { lead: "Resident", text: "Canadian health data hosted in Canada, and U.S. health data in a separate U.S. region." },
-      ],
+      text: "This is not one launch switch for the whole network. One clinic can be ready while another still has an assessment or agreement open. Doe should widen access only where the evidence is complete.",
     },
     {
       type: "paragraph",
-      text: "When PHI does move, it moves the narrowest way we can design. A request is tied to the patient’s grant. The API returns only the fields the action needs, six for a booking rather than the chart behind it. Each clinic’s data sits behind its own encryption keys. Every action writes a record to the Doe Ledger, and anything not needed to answer for the action later is deleted once it is done. The patient can see what their agent shared and revoke the grant at any time.",
+      text: "When PHI moves, it should move through the narrowest path we can design. A request is tied to the patient’s grant. The API returns the fields required for that action rather than the chart behind it. Clinic data is separated by its own security boundary and keys. Every action writes to the Doe Ledger, and data that is not needed for the action or its required record is deleted. The patient can review the grant and revoke it.",
     },
     {
       type: "motion",
       scene: "phi",
       caption: "Minimum necessary, drawn out. A chart has dozens of fields; a booking needs six. Everything else stays with the clinic, and what does move is encrypted, recorded, and then let go.",
     },
-    { type: "heading", text: "SOC 2, from the start of Q3." },
+    { type: "heading", text: "SOC 2 begins when the controls are real." },
     {
       type: "paragraph",
-      text: "SOC 2 is not required by law, but it is what hospitals and larger groups ask for first in a vendor review. We begin the program at the start of Q3, once the controls it audits are actually running with PHI: a readiness review, then a Type I report on how the controls are designed, then the observation window for a Type II report on how they performed over time, which we expect to have in hand by Seed. Because the PHIPA and HIPAA work started in January, most of the evidence SOC 2 asks for will already exist.",
+      text: "SOC 2 is not a healthcare law, but hospitals and larger groups commonly ask for it during vendor review. We plan to begin with readiness and a Type I examination once the relevant controls are operating, then enter the observation period required for a Type II report. Starting PHIPA and HIPAA work earlier means the same access, incident, vendor, and change-management evidence can support this examination instead of being recreated for it.",
     },
-    { type: "heading", text: "Throughout: the sandbox, and every clinic watched on its own." },
+    { type: "heading", text: "Two controls run through every phase." },
     {
       type: "paragraph",
-      text: "Two things do not belong to any one phase. The first is the sandbox: synthetic patients, synthetic clinics, and adversarial agents that attack every model, prompt, tool, and permission before it ships and again whenever any of them change. Prompt injection, tool hijacking, data exfiltration, identity spoofing, and invented consent all run as standing tests. A lane that fails is suspended until it passes. That is true in November, when the only thing to attack is the Index, and it is true in Q3, when the stakes are a patient’s records.",
+      text: "The first is the sandbox: synthetic patients, clinics, and adversarial agents used to test every model, prompt, tool, and permission before release and after every material change. Prompt injection, tool hijacking, data exfiltration, identity spoofing, and fabricated consent are standing tests. A lane that fails is suspended until it passes again.",
     },
     {
       type: "paragraph",
-      text: "The second is measurement, per clinic rather than in aggregate. A network average can look healthy while one clinic’s page is stale or one clinic’s policy is being probed. So every clinic has its own view, built only from counts and timings, never from patient content.",
+      text: "The second is clinic-level measurement. A network average can look healthy while one clinic’s page is stale or one clinic’s policy is being probed. Each practice therefore sees its own readiness, demand, trust, and safety signals using counts and timings rather than patient content.",
     },
     {
       type: "motion",
       scene: "watch",
       caption: "Left, the sandbox: attack classes against each release, with a failing lane suspended until it passes. Right, one clinic’s own metrics, the numbers that tell us whether it is ready for the next phase.",
-    },
-    {
-      type: "list",
-      items: [
-        { lead: "Readiness", text: "how complete the clinic’s page is, how recently each field was confirmed, and whether the claim is verified." },
-        { lead: "Demand", text: "agent questions answered, questions the Index could not answer, and requests sent to staff." },
-        { lead: "Trust", text: "verified requests through Doe Auth, policy overrides by staff, and grants revoked by patients." },
-        { lead: "Safety", text: "the eval pass rate for that clinic’s configuration, blocked attempts, and time to respond to anything unusual." },
-      ],
     },
     { type: "heading", text: "The plan, period by period." },
     {
@@ -1791,20 +1756,14 @@ const COMPLIANCE_PLAN: DoeHealthBlogArticle = {
         },
       ],
     },
-    { type: "heading", text: "What we will not do along the way." },
+    { type: "heading", text: "The promises are as important as the roadmap." },
     {
-      type: "list",
-      items: [
-        { lead: "Early PHI", text: "no health information moves for a clinic before that clinic’s gate is complete, whatever the calendar says." },
-        { lead: "Passwords", text: "no agent will ever ask for, hold, or replay a patient’s password." },
-        { lead: "Trackers", text: "no third-party advertising pixels on any page a patient uses to find or book care." },
-        { lead: "Selling or training", text: "Doe does not sell health data, and does not train shared models on one clinic’s patients." },
-        { lead: "Claims", text: "no certification is claimed before it is earned, and no law is described as met before counsel has said so." },
-      ],
+      type: "paragraph",
+      text: "No clinic’s PHI moves before that clinic clears its gate. No agent receives a patient’s password. No third-party advertising pixel belongs on a page used to find or book care. Doe does not sell health data or train a shared model on one clinic’s patients. We will not claim a certification before it is earned or say a legal obligation is satisfied before counsel and the relevant evidence support that statement.",
     },
     {
       type: "paragraph",
-      text: "The order matters more than the speed. If clinics can see that we held back the most sensitive data until the work to protect it was done, they will trust us with it when the time comes. If you are a clinic, a hospital, or an investor and want the detail behind any line of this plan, we would be glad to walk you through it.",
+      text: "The order matters more than the speed. I want clinics to see that we built useful infrastructure before asking for sensitive data, and that we held PHI back until the work to protect it was complete. That is how Doe earns the right to carry more.",
     },
   ],
 };

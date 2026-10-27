@@ -25,7 +25,24 @@ const DoeHealthBlogDiagram = dynamic(
 function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: Article }) {
   switch (block.type) {
     case "paragraph":
-      return <p className="doehealth-blog-article__p">{block.text}</p>;
+      return (
+        <p className="doehealth-blog-article__p">
+          {block.text}
+          {block.links?.length ? (
+            <span>
+              {" "}
+              {block.links.map((link, index) => (
+                <span key={link.href}>
+                  {index ? " · " : ""}
+                  <a href={link.href} target="_blank" rel="noreferrer">
+                    {link.label}
+                  </a>
+                </span>
+              ))}
+            </span>
+          ) : null}
+        </p>
+      );
     case "heading":
       return <h2 className={`doehealth-blog-article__h2 ${p22Mackinac.className}`}>{block.text}</h2>;
     case "figure":
