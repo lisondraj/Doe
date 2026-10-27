@@ -28,39 +28,39 @@ export const EARLYPREVIEW_MARKET_SOURCES = {
   },
   model: { label: "Doe market model, 2026 (estimates)" },
   blsClinics: {
-    label: "BLS QCEW, NAICS 621, Q4 2025",
+    label: "BLS QCEW 621",
     href: "https://www.bls.gov/iag/tgs/iag621.htm",
   },
   blsCare: {
-    label: "BLS QCEW, NAICS 623, Q4 2025",
+    label: "BLS QCEW 623",
     href: "https://www.bls.gov/iag/tgs/iag623.htm",
   },
   blsHospitals: {
-    label: "BLS QCEW, NAICS 622, Q4 2025",
+    label: "BLS QCEW 622",
     href: "https://www.bls.gov/iag/tgs/iag622.htm",
   },
   isedClinics: {
-    label: "ISED / Statistics Canada, NAICS 621, 2025",
+    label: "StatCan 621",
     href: "https://ised-isde.canada.ca/app/ixb/cis/businesses-entreprises/621",
   },
   isedCare: {
-    label: "ISED / Statistics Canada, NAICS 623, 2025",
+    label: "StatCan 623",
     href: "https://ised-isde.canada.ca/app/ixb/cis/summary-sommaire/623",
   },
   isedHospitals: {
-    label: "ISED / Statistics Canada, NAICS 622, 2025",
+    label: "StatCan 622",
     href: "https://ised-isde.canada.ca/app/ixb/cis/summary-sommaire/622",
   },
   cms: {
-    label: "CMS National Health Expenditures, 2024",
+    label: "CMS NHE 2024",
     href: "https://www.cms.gov/data-research/statistics-trends-and-reports/national-health-expenditure-data/historical",
   },
   cihi: {
-    label: "CIHI National Health Expenditure Trends, 2025",
+    label: "CIHI 2025",
     href: "https://www.cihi.ca/en/national-health-expenditure-trends",
   },
   aha: {
-    label: "AHA Fast Facts on U.S. Hospitals, 2026",
+    label: "AHA 2026",
     href: "https://www.aha.org/statistics/fast-facts-us-hospitals",
   },
 } as const satisfies Record<string, EarlyPreviewMarketSource>;
@@ -139,12 +139,13 @@ const FOUNDING_MO = {
  * provider seat. Doe One is in beta until Seed, so it adds nothing to the base case; it is the upside instead.
  * Free clinics are the claimed ones that don't pay.
  */
-const SEED_INDEXED = { canada: 10_500, us: 4_500 } as const;
-const SEED_CLAIMED = { canada: 560, us: 240 } as const;
+/** 65% of the Index in Canada, 35% in the U.S.; about 1 in 19 indexed clinics claims its page in both. */
+const SEED_INDEXED = { canada: 9_750, us: 5_250 } as const;
+const SEED_CLAIMED = { canada: 520, us: 280 } as const;
 /** Independent clinics are one location each. Multi-site groups average 4 locations and 12 provider seats. */
 const SEED_PLANS = {
-  canada: { basic: 35, advanced: 21, groups: 7, groupSites: 28, groupSeats: 84 },
-  us: { basic: 15, advanced: 9, groups: 3, groupSites: 12, groupSeats: 36 },
+  canada: { basic: 33, advanced: 19, groups: 7, groupSites: 28, groupSeats: 84 },
+  us: { basic: 17, advanced: 11, groups: 3, groupSites: 12, groupSeats: 36 },
 } as const;
 const SEED_LOIS = "1–2";
 /** Clinics in the Doe Index today, and agent requests a month at Seed (thousands). */
@@ -202,30 +203,32 @@ export const EARLYPREVIEW_MARKET_PRICING = {
   upsideArrK: UPSIDE_ARR_K,
 } as const;
 
-/** A milestone on the way to Seed, with the parts it ships one to a line under it. */
+/** A milestone on the way to Seed: its name, then a short line on what it means. Parts sit under it, indented. */
 export type EarlyPreviewSeedMilestone = {
   readonly name: string;
   readonly text?: string;
   readonly parts?: readonly { readonly name: string; readonly text: string }[];
 };
 
+const SEED_MILESTONES: readonly EarlyPreviewSeedMilestone[] = [
+  { name: "Prove PMF", text: "Toronto first, U.S. test sites in parallel" },
+  {
+    name: "Push the core",
+    parts: [
+      { name: "Auth", text: "Patients verified, agents on signed grants" },
+      { name: "Index", text: "Every provider, readable by agents" },
+      { name: "Interface", text: "Clinics agents can ask, book and send to" },
+    ],
+  },
+  { name: "Expand the architecture", text: "Integrations, sandbox evals, two data regions" },
+  { name: "Clear compliance", text: "PHIPA and HIPAA, SOC 2 under way" },
+  { name: "Open enterprise", text: "First health-system conversations" },
+];
+
 /** The milestones before Seed: what has to be true, in order, without the figures (those live in the plan section). */
 export const EARLYPREVIEW_MARKET_SEED = {
   title: ["Milestones to Seed.", "Prove it, then scale it."],
-  milestones: [
-    { name: "Prove PMF", text: "in Toronto, with U.S. test sites in parallel" },
-    {
-      name: "Push the core",
-      parts: [
-        { name: "Auth", text: "patients verified, agents act on signed grants" },
-        { name: "Index", text: "every provider, readable by personal agents" },
-        { name: "Interface", text: "clinics agents can ask, book and send to" },
-      ],
-    },
-    { name: "Expand the architecture", text: "integrations, sandbox evals, two data regions" },
-    { name: "Clear compliance", text: "PHIPA and HIPAA, with SOC 2 under way" },
-    { name: "Open enterprise", text: "first health-system conversations" },
-  ] satisfies readonly EarlyPreviewSeedMilestone[],
+  milestones: SEED_MILESTONES,
 } as const;
 
 /**
@@ -233,19 +236,105 @@ export const EARLYPREVIEW_MARKET_SEED = {
  * figures are BLS QCEW establishments with employees (private and public), Q4 2025; Canadian figures are ISED /
  * Statistics Canada establishments for 2025, which also count practitioners without employees.
  */
-const PROVIDERS = [
-  { id: "clinics", name: "Clinics & practices", us: 778_576, canada: 267_573, sources: [S.blsClinics, S.isedClinics] },
-  { id: "care", name: "Long-term & residential care", us: 96_049, canada: 18_495, sources: [S.blsCare, S.isedCare] },
-  { id: "hospitals", name: "Hospitals", us: 21_016, canada: 1_046, sources: [S.blsHospitals, S.isedHospitals] },
-] as const;
+type ProviderRow = {
+  readonly id: string;
+  readonly name: string;
+  readonly us: number;
+  readonly canada: number;
+};
+const PROVIDERS: readonly ProviderRow[] = [
+  { id: "clinics", name: "Clinics & practices", us: 778_576, canada: 267_573 },
+  { id: "care", name: "Long-term & residential care", us: 96_049, canada: 18_495 },
+  { id: "hospitals", name: "Hospitals", us: 21_016, canada: 1_046 },
+];
 /** Ontario's clinics and practices (ISED 2025: 42,604 with employees, 64,771 without): the Toronto beachhead. */
 const ONTARIO_CLINICS = 107_375;
 /** Every location priced at Advanced, Doe's per-location list price, a year. Enterprise contracts are upside. */
 const LOCATION_YR = PLAN_MO.advanced * 12;
-const ALL_LOCATIONS = PROVIDERS.reduce((sum, row) => sum + row.us + row.canada, 0);
+const sum = (pick: (row: ProviderRow) => number) =>
+  PROVIDERS.reduce((acc, row) => acc + pick(row), 0);
+const ALL_US = sum((row) => row.us);
+const ALL_CANADA = sum((row) => row.canada);
+const ALL_LOCATIONS = ALL_US + ALL_CANADA;
 const CLINIC_LOCATIONS = PROVIDERS[0].us + PROVIDERS[0].canada;
 const usdB = (dollars: number) =>
-  dollars >= 1e9 ? `$${(dollars / 1e9).toFixed(1)}B` : `$${Math.round(dollars / 1e6)}M`;
+  dollars >= 1e9
+    ? `$${(dollars / 1e9).toFixed(2)}B`
+    : `$${Math.round(dollars / 1e6)}M`;
+const compact = (value: number) =>
+  value >= 1e6 ? `${(value / 1e6).toFixed(2)}M` : `${Math.round(value / 1e3)}K`;
+
+export type EarlyPreviewMarketSize = {
+  readonly id: string;
+  readonly key: string;
+  readonly value: string;
+  readonly what: string;
+  readonly detail: string;
+};
+
+export type EarlyPreviewMarketRow = {
+  readonly id: string;
+  readonly name: string;
+  readonly us: string;
+  readonly canada: string;
+  readonly total: string;
+  readonly value: string;
+  /** The row's share of all locations, and the U.S. share of the row, for its bar. */
+  readonly share: number;
+  readonly usShare: number;
+};
+
+const row = (
+  id: string,
+  name: string,
+  us: number,
+  canada: number,
+): EarlyPreviewMarketRow => ({
+  id,
+  name,
+  us: n(us),
+  canada: n(canada),
+  total: n(us + canada),
+  value: usdB((us + canada) * LOCATION_YR),
+  share: (us + canada) / ALL_LOCATIONS,
+  usShare: us / (us + canada),
+});
+
+const SIZES: readonly EarlyPreviewMarketSize[] = [
+  {
+    id: "tam",
+    key: "TAM",
+    value: usdB(ALL_LOCATIONS * LOCATION_YR),
+    what: "Every provider",
+    detail: `${compact(ALL_LOCATIONS)} locations, U.S. and Canada`,
+  },
+  {
+    id: "sam",
+    key: "SAM",
+    value: usdB(CLINIC_LOCATIONS * LOCATION_YR),
+    what: "Clinics & practices",
+    detail: `${compact(CLINIC_LOCATIONS)} locations, where we sell first`,
+  },
+  {
+    id: "som",
+    key: "SOM",
+    value: usdB(ONTARIO_CLINICS * LOCATION_YR),
+    what: "Ontario clinics",
+    detail: `${compact(ONTARIO_CLINICS)} locations, the Toronto beachhead`,
+  },
+];
+
+const MARKET_SOURCES: readonly EarlyPreviewMarketSource[] = [
+  S.blsClinics,
+  S.blsHospitals,
+  S.blsCare,
+  S.isedClinics,
+  S.isedHospitals,
+  S.isedCare,
+  S.cms,
+  S.cihi,
+  S.aha,
+];
 
 /**
  * Toronto first, then the U.S., then the market behind them. The dot grid is the same for both countries: Canada's
@@ -253,12 +342,14 @@ const usdB = (dollars: number) =>
  */
 export const EARLYPREVIEW_MARKET_CITIES = {
   canada: {
+    place: "Toronto",
     title: ["Proving PMF in Toronto.", "U.S. Expansion in Parallel."],
     indexed: SEED_INDEXED.canada,
     claimed: SEED_CLAIMED.canada,
     paying: SEED_PAID.canada,
   },
   us: {
+    place: "United States",
     title: ["Then the U.S.", "Our first test sites."],
     indexed: SEED_INDEXED.us,
     claimed: SEED_CLAIMED.us,
@@ -266,23 +357,24 @@ export const EARLYPREVIEW_MARKET_CITIES = {
   },
   market: {
     title: ["Every provider,", "U.S. and Canada."],
-    locationsLabel: "Health provider locations",
-    total: ALL_LOCATIONS,
-    providers: PROVIDERS,
-    /** TAM, SAM and SOM: locations × Advanced at list price. */
-    sizes: [
-      { id: "tam", key: "TAM", value: ALL_LOCATIONS * LOCATION_YR, display: usdB(ALL_LOCATIONS * LOCATION_YR), detail: `${n(ALL_LOCATIONS)} provider locations` },
-      { id: "sam", key: "SAM", value: CLINIC_LOCATIONS * LOCATION_YR, display: usdB(CLINIC_LOCATIONS * LOCATION_YR), detail: `${n(CLINIC_LOCATIONS)} clinics & practices` },
-      { id: "som", key: "SOM", value: ONTARIO_CLINICS * LOCATION_YR, display: usdB(ONTARIO_CLINICS * LOCATION_YR), detail: `${n(ONTARIO_CLINICS)} Ontario clinics, the beachhead` },
-    ],
-    sizeNote: `Locations × $${n(LOCATION_YR)} a year (Advanced, list). Health-system contracts are on top.`,
+    sizes: SIZES,
+    table: {
+      head: ["Provider locations", "U.S.", "Canada", "Total", "A year"],
+      rows: PROVIDERS.map((p) => row(p.id, p.name, p.us, p.canada)),
+      total: row("total", "All providers", ALL_US, ALL_CANADA),
+    },
+    note: `A year = locations × $${n(LOCATION_YR)}, Advanced at list price. Health-system contracts come on top. U.S. counts establishments with staff; Canada also counts solo practitioners.`,
     facts: [
-      { value: "$5.3T", label: "U.S. health spending, 2024", source: S.cms },
-      { value: "C$399B", label: "Canadian health spending, 2025", source: S.cihi },
-      { value: "6,100", label: "U.S. hospitals", source: S.aha },
+      { value: "$5.3T", label: "U.S. health spending, 2024" },
+      { value: "C$399B", label: "Canadian health spending, 2025" },
+      { value: "6,100", label: "U.S. hospitals" },
     ],
+    sources: MARKET_SOURCES,
   },
 } as const;
+
+/** The four kinds of clinic Doe sells to until Seed, drawn as circles above the wider list. */
+const CLINIC_FOCUS = ["Aesthetics", "Orthopaedics & MSK", "Dentistry", "Concierge"] as const;
 
 /**
  * The clinics Doe targets: private-pay practices first, where one owner decides and pays, then medical practices and
@@ -290,6 +382,8 @@ export const EARLYPREVIEW_MARKET_CITIES = {
  */
 export const EARLYPREVIEW_MARKET_CLINICS = {
   title: ["We're targeting", "short-sales cycles first."],
+  focusLabel: "Our focus to Seed",
+  focus: CLINIC_FOCUS,
   groups: [
     {
       id: "private",
@@ -307,15 +401,7 @@ export const EARLYPREVIEW_MARKET_CLINICS = {
         "Acupuncture",
         "Psychotherapy",
         "Fertility",
-        "Hearing",
-        "Orthodontics",
-        "Cosmetic Surgery",
-        "Weight Loss",
-        "IV Therapy",
-        "Hair Restoration",
       ],
-      /** Four more private-pay types, shown on desktop only; they fill the bottom of the list. */
-      desktopTypes: ["Podiatry", "Speech Therapy", "Nutrition", "Laser Clinics"],
     },
     {
       id: "medical",
@@ -331,14 +417,6 @@ export const EARLYPREVIEW_MARKET_CLINICS = {
         "Sports Medicine",
         "OB/GYN",
         "ENT",
-        "Gastroenterology",
-        "Urology",
-        "Endocrinology",
-        "Neurology",
-        "Allergy",
-        "Rheumatology",
-        "Ophthalmology",
-        "Sleep Medicine",
       ],
     },
   ],

@@ -260,8 +260,8 @@ function WhyNowScene({ p, lead }: { p: number; lead: number }) {
 const count = (n: number) => n.toLocaleString("en-US");
 
 /**
- * The milestones before Seed, one a line in the top right, the title building in the bottom left. A milestone that
- * ships several parts lists them under it, indented, one a line, each with what it is.
+ * The milestones before Seed in the top right, the title building in the bottom left. Each milestone is its name over
+ * one short line of what it means; the core's parts sit under it, indented on a salmon rule, the same way.
  */
 function SeedScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "seed");
@@ -269,7 +269,7 @@ function SeedScene({ p }: { p: number }) {
   let line = 0;
   const rise = () => {
     const i = line++;
-    return vars({ "--e": en(t, 0.5 + i * 0.07, 0.8 + i * 0.07) });
+    return vars({ "--e": en(t, 0.45 + i * 0.07, 0.75 + i * 0.07) });
   };
   return (
     <Scene
@@ -293,16 +293,17 @@ function SeedScene({ p }: { p: number }) {
       </div>
       <ol className="earlypreview-market__seed-lines">
         {SEED.milestones.map((milestone) => (
-          <li key={milestone.name}>
-            <span className="earlypreview-market__seed-line" style={rise()}>
+          <li key={milestone.name} className="earlypreview-market__seed-item">
+            <p className="earlypreview-market__seed-line" style={rise()}>
               <strong>{milestone.name}</strong>
-              {"text" in milestone && milestone.text ? <span>, {milestone.text}</span> : null}
-            </span>
-            {"parts" in milestone && milestone.parts ? (
+              {milestone.text ? <span>{milestone.text}</span> : null}
+            </p>
+            {milestone.parts ? (
               <ul className="earlypreview-market__seed-parts">
                 {milestone.parts.map((part) => (
                   <li key={part.name} style={rise()}>
-                    <strong>{part.name}</strong> <span>{part.text}</span>
+                    <strong>{part.name}</strong>
+                    <span>{part.text}</span>
                   </li>
                 ))}
               </ul>
@@ -606,7 +607,7 @@ function Layer({
   );
 }
 
-/** A country's paying, claimed and indexed clinics, all in large type. */
+/** A country's name, then its paying, claimed and indexed clinics at Seed, all in large type. */
 function CountryPanel({
   t,
   market,
@@ -621,6 +622,12 @@ function CountryPanel({
   ];
   return (
     <div className="earlypreview-market__country-panel">
+      <p
+        className="earlypreview-market__country-place"
+        style={vars({ "--e": en(t, 0.25, 0.55) })}
+      >
+        {market.place}
+      </p>
       <ul className="earlypreview-market__country-lines">
         {lines.map((line, index) => (
           <li
@@ -638,107 +645,77 @@ function CountryPanel({
   );
 }
 
-const PROVIDER_MAX = Math.max(
-  ...CITIES.market.providers.map((row) => row.us + row.canada),
-);
-const SIZE_MAX = CITIES.market.sizes[0].value;
-const short = (value: number) =>
-  value >= 1e6
-    ? `${(value / 1e6).toFixed(2)}M`
-    : value >= 1e4
-      ? `${Math.round(value / 1e3)}K`
-      : count(value);
-
 /**
- * The market behind the plan, from the official counts: every health provider location in the U.S. and Canada by
- * kind (U.S. cream, Canada salmon, bars to scale), then TAM, SAM and SOM priced from those locations, then what the
- * two countries spend on health. Each figure links its source.
+ * The market behind the plan. TAM, SAM and SOM across the top in large type; under them every health provider
+ * location in the U.S. and Canada by kind, with the country split as a bar and what the locations are worth a year;
+ * then what the two countries spend on health, the method, and the sources. Built from the official counts.
  */
 function MarketGraph({ t }: { t: number }) {
   const { market } = CITIES;
-  const sources: { readonly label: string; readonly href: string }[] = [
-    ...market.providers.flatMap((row): readonly { readonly label: string; readonly href: string }[] => row.sources),
-    ...market.facts.map((fact) => fact.source),
-  ];
+  const { table } = market;
   return (
     <div className="earlypreview-market__graph">
-      <div className="earlypreview-market__mix-block">
+      <div className="earlypreview-market__graph-title">
         <SceneTitle title={market.title} t={t} />
       </div>
-      <div
-        className="earlypreview-market__graph-panel"
-        role="img"
-        aria-label={`${market.locationsLabel}: ${market.providers
-          .map((row) => `${row.name}, ${count(row.us)} U.S. and ${count(row.canada)} Canada`)
-          .join("; ")}`}
-      >
-        <p
-          className="earlypreview-market__graph-head"
-          style={vars({ "--e": en(t, 0.2, 0.45) })}
+      <dl className="earlypreview-market__sizes">
+        {market.sizes.map((size, index) => (
+          <div
+            key={size.id}
+            className={`earlypreview-market__size is-${size.id}`}
+            style={vars({ "--e": en(t, 0.3 + index * 0.12, 0.6 + index * 0.12) })}
+          >
+            <dt>
+              <span className="earlypreview-market__size-key">{size.key}</span>
+              <span className="earlypreview-market__size-what">{size.what}</span>
+            </dt>
+            <dd>
+              <span className="earlypreview-market__size-value">{size.value}</span>
+              <span className="earlypreview-market__size-detail">{size.detail}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <div className="earlypreview-market__breakdown" role="table" aria-label="Health provider locations by kind and country">
+        <div
+          className="earlypreview-market__breakdown-row is-head"
+          role="row"
+          style={vars({ "--e": en(t, 0.65, 0.9) })}
         >
-          <span>{market.locationsLabel}</span>
-          <span className="earlypreview-market__graph-key">
-            <i className="is-us" /> U.S. <i className="is-ca" /> Canada
-          </span>
-        </p>
-        {market.providers.map((row, index) => {
-          const k = en(t, 0.3 + index * 0.1, 0.75 + index * 0.1);
+          {table.head.map((cell, index) => (
+            <span key={cell} role="columnheader" className={index === 1 || index === 2 ? "is-country" : undefined}>
+              {index === 1 ? <i className="is-us" aria-hidden /> : index === 2 ? <i className="is-ca" aria-hidden /> : null}
+              {cell}
+            </span>
+          ))}
+        </div>
+        {[...table.rows, table.total].map((item, index) => {
+          const k = en(t, 0.75 + index * 0.08, 1.15 + index * 0.08);
           return (
             <div
-              key={row.id}
-              className="earlypreview-market__graph-row"
-              style={vars({ "--e": en(t, 0.25 + index * 0.1, 0.5 + index * 0.1) })}
+              key={item.id}
+              className={`earlypreview-market__breakdown-row is-${item.id}`}
+              role="row"
+              style={vars({ "--e": en(t, 0.7 + index * 0.08, 0.95 + index * 0.08) })}
             >
-              <span className="earlypreview-market__graph-name">{row.name}</span>
-              <span className="earlypreview-market__graph-track" aria-hidden>
-                <span
-                  className="earlypreview-market__graph-bar is-us"
-                  style={vars({ "--w": (row.us / PROVIDER_MAX) * k })}
-                />
-                <span
-                  className="earlypreview-market__graph-bar is-ca"
-                  style={vars({ "--w": (row.canada / PROVIDER_MAX) * k })}
-                />
+              <span role="rowheader" className="earlypreview-market__breakdown-name">
+                {item.name}
+                <span className="earlypreview-market__breakdown-bar" aria-hidden>
+                  <span style={vars({ "--w": item.share * item.usShare * k })} className="is-us" />
+                  <span style={vars({ "--w": item.share * (1 - item.usShare) * k })} className="is-ca" />
+                </span>
               </span>
-              <span className="earlypreview-market__graph-value">
-                {short(row.us + row.canada)}
-              </span>
+              <span role="cell" className="is-country">{item.us}</span>
+              <span role="cell" className="is-country">{item.canada}</span>
+              <span role="cell">{item.total}</span>
+              <span role="cell" className="is-value">{item.value}</span>
             </div>
           );
         })}
-      </div>
-      <div className="earlypreview-market__graph-panel">
-        {market.sizes.map((size, index) => {
-          const k = en(t, 0.65 + index * 0.1, 1.05 + index * 0.1);
-          return (
-            <div
-              key={size.id}
-              className={`earlypreview-market__graph-row is-size is-${size.id}`}
-              style={vars({ "--e": en(t, 0.6 + index * 0.1, 0.85 + index * 0.1) })}
-            >
-              <span className="earlypreview-market__graph-name">
-                <b>{size.key}</b> {size.detail}
-              </span>
-              <span className="earlypreview-market__graph-track" aria-hidden>
-                <span
-                  className="earlypreview-market__graph-bar"
-                  style={vars({ "--w": (size.value / SIZE_MAX) * k })}
-                />
-              </span>
-              <span className="earlypreview-market__graph-value">{size.display}</span>
-            </div>
-          );
-        })}
-        <p
-          className="earlypreview-market__graph-note"
-          style={vars({ "--e": en(t, 0.9, 1.15) })}
-        >
-          {market.sizeNote}
-        </p>
       </div>
       <ul
         className="earlypreview-market__graph-facts"
-        style={vars({ "--e": en(t, 1.0, 1.3) })}
+        style={vars({ "--e": en(t, 1.1, 1.35) })}
       >
         {market.facts.map((fact) => (
           <li key={fact.label}>
@@ -746,15 +723,18 @@ function MarketGraph({ t }: { t: number }) {
           </li>
         ))}
       </ul>
-      <p
-        className="earlypreview-market__graph-sources"
-        style={vars({ "--e": en(t, 1.05, 1.35) })}
+      <div
+        className="earlypreview-market__graph-foot"
+        style={vars({ "--e": en(t, 1.15, 1.4) })}
       >
-        <span className="earlypreview-market__sources-label">Sources</span>
-        {sources.map((source) => (
-          <SourceLink key={source.label} source={source} />
-        ))}
-      </p>
+        <p className="earlypreview-market__graph-note">{market.note}</p>
+        <p className="earlypreview-market__graph-sources">
+          <span className="earlypreview-market__sources-label">Sources</span>
+          {market.sources.map((source) => (
+            <SourceLink key={source.label} source={source} />
+          ))}
+        </p>
+      </div>
     </div>
   );
 }
@@ -1008,8 +988,8 @@ function useIndexRestOffset(ref: { current: HTMLElement | null }) {
 }
 
 /**
- * The clinics Doe targets, in two groups side by side: private services first and widest, then medical practices
- * and specialties. Each group's name is large and salmon over its types, which come in one after another.
+ * The clinics Doe targets: the four it focuses on until Seed as circles in Doe's neutrals, then the wider list in two
+ * groups side by side, private services first, then medical. Each group's name is salmon over its types.
  */
 function ClinicsScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "clinics");
@@ -1017,9 +997,28 @@ function ClinicsScene({ p }: { p: number }) {
     <Scene o={o} label="The clinics we're targeting">
       <SceneTitle title={CLINICS.title} t={t} />
       <div className="earlypreview-market__body">
+        <div className="earlypreview-market__focus">
+          <p
+            className="earlypreview-market__focus-label"
+            style={vars({ "--e": en(t, 0.3, 0.55) })}
+          >
+            {CLINICS.focusLabel}
+          </p>
+          <ul className="earlypreview-market__focus-list">
+            {CLINICS.focus.map((name, i) => (
+              <li
+                key={name}
+                className={`earlypreview-market__focus-dot is-${i + 1}`}
+                style={vars({ "--e": en(t, 0.35 + i * 0.08, 0.65 + i * 0.08) })}
+              >
+                <span>{name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
         <div className="earlypreview-market__types">
           {CLINICS.groups.map((group, g) => {
-            const from = g === 0 ? 0.4 : 0.9;
+            const from = g === 0 ? 0.75 : 1.0;
             return (
               <div
                 key={group.id}
@@ -1032,15 +1031,9 @@ function ClinicsScene({ p }: { p: number }) {
                   {group.lead}
                 </h3>
                 <ul className="earlypreview-market__type-list">
-                  {[
-                    ...group.types.map((type) => ({ type, desktop: false })),
-                    ...("desktopTypes" in group
-                      ? group.desktopTypes.map((type) => ({ type, desktop: true }))
-                      : []),
-                  ].map(({ type, desktop }, i) => (
+                  {group.types.map((type, i) => (
                     <li
                       key={type}
-                      className={desktop ? "is-desktop-only" : undefined}
                       style={vars({
                         "--e": en(
                           t,
