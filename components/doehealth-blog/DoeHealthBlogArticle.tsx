@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 
 import { DoeHealthBlogFilm } from "@/components/doehealth-blog/DoeHealthBlogFilm";
 import { DoeHealthBlogListen } from "@/components/doehealth-blog/DoeHealthBlogListen";
+import { DoeHealthBlogMotion } from "@/components/doehealth-blog/DoeHealthBlogMotion";
 import { DoeHealthBlogPlaceholder, articleBoxColors } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthBlogVideo } from "@/components/doehealth-blog/DoeHealthBlogVideo";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
@@ -56,6 +57,14 @@ function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: 
           <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doehealth-blog-article__figure-art" style={{ background: articleBoxColors(block.diagram.tone).bg }}>
             <DoeHealthBlogDiagram diagram={block.diagram.id} tone={block.diagram.tone} dots={block.diagram.dots} />
           </div>
+          <figcaption>{block.caption}</figcaption>
+        </figure>
+      );
+    case "motion":
+      return (
+        <figure className="doehealth-blog-article__figure doehealth-blog-article__motion">
+          {/* Drawn in the article, not in the product shell: a plan has no screen to show. */}
+          <DoeHealthBlogMotion scene={block.scene} />
           <figcaption>{block.caption}</figcaption>
         </figure>
       );
