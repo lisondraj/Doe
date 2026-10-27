@@ -1,13 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { type FormEvent, useRef } from "react";
 
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
+import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
 import { DoeHealthDesk2Footer } from "@/components/doehealth-desk2/DoeHealthDesk2Footer";
 import { DoeHealthDesk2Hero } from "@/components/doehealth-desk2/DoeHealthDesk2Hero";
-import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
+import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
+import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
+import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
 import { ABOUT_CONTACT_MAILTO } from "@/lib/about/about-contact";
+import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
 import { useDoeHealthDesk2FitTitles } from "@/lib/doehealthdesk2/use-doehealthdesk2-fit-titles";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
 import { useDoeHealthDesk2PhoneScreenHeight } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-screen-height";
@@ -15,7 +18,7 @@ import {
   type DoeHealthDesk2Variant,
   useDoeHealthDesk2Variant,
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-variant";
-import { inter, lora, p22Mackinac } from "@/lib/home/fonts";
+import { inter, p22Mackinac } from "@/lib/home/fonts";
 import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-viewport";
 import {
   LANDINGLAUNCH_DEK,
@@ -53,18 +56,13 @@ export function LandingLaunchPage({ initialVariant }: { initialVariant: DoeHealt
       className={`doehealth-desk2-page earlypreview-page landinglaunch-page relative min-h-[100dvh] ${inter.className} ${p22Mackinac.variable}`}
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}
     >
-      {/* Only the mark and the mail icon, on desktop and iPhone: no nav bar. */}
-      <header className={`landinglaunch-bar ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
-        <Link href="/" className={`landinglaunch-bar__mark ${lora.className}`}>
-          Doe
-        </Link>
-        <a className="landinglaunch-bar__mail" href={ABOUT_CONTACT_MAILTO} aria-label="Email James">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <rect x="3" y="5.5" width="18" height="13" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
-            <path d="m4 8 8 6 8-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </a>
-      </header>
+      {/* The same nav as /earlypreview: the mark and its CTA, with the mail icon in the iPhone menu. */}
+      {variant === "desktop" ? (
+        <DoeHealthDesk2DesktopNavBar logoHref="/" centerLinks={false} primaryCta={EARLYPREVIEW_NAV_CTA} />
+      ) : (
+        <DoeHealthDesk2PhoneNavBar logoHref="/" primaryCta={EARLYPREVIEW_NAV_CTA} menuMailTo="james@doe.care" />
+      )}
+      <DoeHealthDesk2NavWash />
       <main className="doehealth-desk2-main landinglaunch-main" aria-label="Launch">
         <div className="landinglaunch-stage doehealth-desk2-nav-wash-surface">
           <DoeHealthDesk2Hero
@@ -80,8 +78,8 @@ export function LandingLaunchPage({ initialVariant }: { initialVariant: DoeHealt
             </div>
           </div>
           <div className="landinglaunch-form">
-            <form className={`doehealth-desk2-hero__secure ${inter.className}`} onSubmit={onSubmit}>
-              <label className="doehealth-desk2-hero__email">
+            <form className={`doehealth-desk2-invite__form ${inter.className}`} onSubmit={onSubmit}>
+              <label>
                 <span className="doehealth-desk2-hero__sr">Your email</span>
                 <input type="email" name="email" placeholder="Your email" autoComplete="email" required />
                 <button type="submit" aria-label={LANDINGLAUNCH_EMAIL_LABEL}>
@@ -92,6 +90,10 @@ export function LandingLaunchPage({ initialVariant }: { initialVariant: DoeHealt
               </label>
             </form>
           </div>
+        </div>
+        {/* The salmon "Teach personal agents about your clinic." panel above the footer, as on /earlypreview, no email box. */}
+        <div className="earlypreview-invite-band">
+          <DoeHealthDesk2InviteSection showForm={false} />
         </div>
         <DoeHealthDesk2Footer />
       </main>

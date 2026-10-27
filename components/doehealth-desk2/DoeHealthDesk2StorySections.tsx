@@ -171,7 +171,8 @@ export function DoeHealthDesk2SundaySection() {
 }
 
 /** Invitation just above the footer. */
-export function DoeHealthDesk2InviteSection() {
+/** `showForm` false leaves the panel as the title alone, with no email box. */
+export function DoeHealthDesk2InviteSection({ showForm = true }: { showForm?: boolean } = {}) {
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
   }
@@ -183,17 +184,19 @@ export function DoeHealthDesk2InviteSection() {
           <span>Teach personal agents</span>
           <span>about your clinic.</span>
         </h2>
-        <form className={`doehealth-desk2-invite__form ${inter.className}`} onSubmit={onSubmit}>
-          <label>
-            <span className="doehealth-desk2-hero__sr">Your email</span>
-            <input type="email" name="email" placeholder="Your email" autoComplete="email" required />
-            <button type="submit" aria-label="Teach personal agents about your clinic">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </label>
-        </form>
+        {showForm ? (
+          <form className={`doehealth-desk2-invite__form ${inter.className}`} onSubmit={onSubmit}>
+            <label>
+              <span className="doehealth-desk2-hero__sr">Your email</span>
+              <input type="email" name="email" placeholder="Your email" autoComplete="email" required />
+              <button type="submit" aria-label="Teach personal agents about your clinic">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </label>
+          </form>
+        ) : null}
       </div>
     </section>
   );
