@@ -11,6 +11,7 @@ import { EARLYPREVIEW_ENTERPRISE_DEK } from "@/lib/earlypreview/earlypreview-her
 import { type FilmStart, startFilm } from "@/lib/earlypreview/start-film";
 import { useNavReveal } from "@/lib/earlypreview/use-nav-reveal";
 import type { EarlyPreviewFilmId } from "@/lib/earlypreview/earlypreview-films";
+import { useAdaptiveSrc } from "@/lib/earlypreview/use-adaptive-src";
 import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
 import {
   EARLYPREVIEW_AESTHETICS_VIDEO,
@@ -96,6 +97,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
   // True once the film is actually showing frames. Until then the still stays up, so a click never shows a black box.
   const [rolling, setRolling] = useState(false);
   playingRef.current = playing;
+  const videoSource = useAdaptiveSrc(videoRef, src && near ? `${src}#t=${posterTime}` : undefined);
   if (srcSeen.current !== src) {
     srcSeen.current = src;
     setPoster(false);
@@ -215,7 +217,7 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
       <video
         ref={videoRef}
         className={`earlypreview-film${poster ? " is-poster" : ""}${visible ? " is-visible" : ""}`}
-        src={src && near ? `${src}#t=${posterTime}` : undefined}
+        {...videoSource}
         preload={playing ? "auto" : "metadata"}
         playsInline
         controls={playing}

@@ -1,8 +1,9 @@
-import { issueSignedToken, list, presignUrl } from "@vercel/blob";
+import { head, issueSignedToken, list, presignUrl } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
 import { vercelBlobCommand } from "@/lib/blob/vercel-blob";
 import { EARLYPREVIEW_BLOB_FILMS, type EarlyPreviewFilmId, isEarlyPreviewFilmId } from "@/lib/earlypreview/earlypreview-films";
+import { HLS_MASTER, hlsFolder } from "@/lib/earlypreview/hls-playlist";
 
 /** Long enough to watch, short enough that a leaked link dies. */
 const PLAYBACK_MS = 6 * 60 * 60 * 1000;
@@ -45,8 +46,9 @@ let catalog: Promise<string[]> | null = null;
 
 function listPathnames() {
   if (!catalog) {
-    catalog = list({ ...vercelBlobCommand(), limit: 100 })
-      .then(({ blobs }) => blobs.map((blob) => blob.pathname))
+    // The HLS ladders add hundreds of segments under `hls/`; they are not films, so they are left out.
+    catalog = list({ ...vercelBlobCommand(), limit: 1000 })
+      .then(({ blobs }) => blobs.map((blob) => blob.pathname).filter((pathname) => !pathname.startsWith("hls/")))
       .catch((error: unknown) => {
         catalog = null;
         throw error;
@@ -72,6 +74,25 @@ async function resolvePathname(id: EarlyPreviewFilmId): Promise<string> {
     // The store could not be listed. Sign the name we were given so the player still attempts it.
   }
   return EARLYPREVIEW_BLOB_FILMS[id];
+}
+
+/** Films whose HLS ladder is in the store. A miss is rechecked after a minute, so an upload shows up without a deploy. */
+const hlsFound = new Set<EarlyPreviewFilmId>();
+const hlsMissedAt = new Map<EarlyPreviewFilmId, number>();
+const HLS_RECHECK_MS = 60 * 1000;
+
+async function hasHls(id: EarlyPreviewFilmId): Promise<boolean> {
+  if (hlsFound.has(id)) return true;
+  const missed = hlsMissedAt.get(id);
+  if (missed && Date.now() - missed < HLS_RECHECK_MS) return false;
+  try {
+    await head(hlsFolder(id) + HLS_MASTER, vercelBlobCommand());
+    hlsFound.add(id);
+    return true;
+  } catch {
+    hlsMissedAt.set(id, Date.now());
+    return false;
+  }
 }
 
 type RouteContext = {
@@ -104,8 +125,10 @@ export async function GET(_request: Request, { params }: RouteContext) {
       },
       { access: "private", operation: "get", pathname, validUntil },
     );
+    // With a ladder in the store the player streams it and picks the quality itself; the mp4 is its fallback.
+    const hls = (await hasHls(params.film)) ? `/api/earlypreview/film/${params.film}/hls/${HLS_MASTER}` : undefined;
     return NextResponse.json(
-      { url: presignedUrl },
+      { url: presignedUrl, hls },
       { headers: { "Cache-Control": "private, no-store" } },
     );
   } catch (error) {

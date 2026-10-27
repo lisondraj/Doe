@@ -4,6 +4,7 @@ import Image from "next/image";
 import { type MouseEvent, type PointerEvent, type ReactNode, useEffect, useRef, useState } from "react";
 
 import { type FilmStart, startFilm } from "@/lib/earlypreview/start-film";
+import { useAdaptiveSrc } from "@/lib/earlypreview/use-adaptive-src";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
@@ -46,6 +47,7 @@ export function DoeHealthDesk2Workspace({
   const filmStartRef = useRef<FilmStart>({ rewound: false });
   const filmSeen = useRef(film);
   playingRef.current = playing;
+  const videoSource = useAdaptiveSrc(videoRef, film ? (thumbnail ? film : `${film}#t=${HERO_POSTER_SECONDS}`) : undefined);
   if (filmSeen.current !== film) {
     filmSeen.current = film;
     setPoster(false);
@@ -185,7 +187,7 @@ export function DoeHealthDesk2Workspace({
             <video
               ref={videoRef}
               className={`earlypreview-film${poster ? " is-poster" : ""}${filmVisible ? " is-visible" : ""}`}
-              src={film ? (thumbnail ? film : `${film}#t=${HERO_POSTER_SECONDS}`) : undefined}
+              {...videoSource}
               preload={playing ? "auto" : "metadata"}
               playsInline
               controls={playing}

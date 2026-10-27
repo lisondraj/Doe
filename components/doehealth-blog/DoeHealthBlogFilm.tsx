@@ -6,6 +6,7 @@ import { type MouseEvent, useRef, useState } from "react";
 import styles from "@/components/doehealth-blog/DoeHealthBlogVideo.module.css";
 import type { EarlyPreviewFilmId } from "@/lib/earlypreview/earlypreview-films";
 import { type FilmStart, startFilm } from "@/lib/earlypreview/start-film";
+import { useAdaptiveSrc } from "@/lib/earlypreview/use-adaptive-src";
 import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
 
 /**
@@ -31,6 +32,7 @@ export function DoeHealthBlogFilm({
   const startRef = useRef<FilmStart>({ rewound: false });
   const [playing, setPlaying] = useState(false);
   const [rolling, setRolling] = useState(false);
+  const videoSource = useAdaptiveSrc(videoRef, playing ? src : undefined);
 
   const begin = () => {
     const video = videoRef.current;
@@ -59,7 +61,7 @@ export function DoeHealthBlogFilm({
       <video
         ref={videoRef}
         className={styles.filmVideo}
-        src={playing ? src : undefined}
+        {...videoSource}
         preload={playing ? "auto" : "none"}
         playsInline
         controls={playing}
