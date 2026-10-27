@@ -278,10 +278,14 @@ function OverviewScene({ p, phone }: SceneProps) {
           <ol ref={trackRef} className="earlypreview-compliance__cards" style={{ transform: `translateX(${-Math.min(focus * step, max)}px)` }}>
             {OVERVIEW.cards.map((card, i) => {
               const near = clamp01(1 - Math.abs(focus - i));
-              // iPhone: a card's dots keep moving with the scroll, building as it slides in and coming apart as it
-              // leaves, so every card plays its drawing rather than holding a finished one.
+              // iPhone: the card in focus fills its dots while the focus rests on it, then the focus moves to the next
+              // card, which fills in turn; a filled card stays filled. The last fills once the focus reaches it.
               const built = phone
-                ? smooth(Math.min(i === 0 ? en(t, 0.55, 1.05) : clamp01(u - i + 1), i === count - 1 ? 1 : 1 - clamp01((u - i - 0.4) / 0.8)))
+                ? i === 0
+                  ? en(t, 0.55, 1.05)
+                  : i === count - 1
+                    ? en(t, FOCUS[1], FOCUS[1] + 0.28)
+                    : smooth(clamp01((u - i) / 0.4))
                 : i === 0
                   ? en(t, 0.55, 1.05)
                   : clamp01((focus - i + 0.6) / 0.6);
