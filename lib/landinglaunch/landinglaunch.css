@@ -1,0 +1,97 @@
+/*
+ * /landinglaunch: the /earlypreview hero (brown ground, cream title, salmon dot wave) as a single screen, with an
+ * email box under the description and the footer below. The brown, nav and footer colours come from `.earlypreview-page`.
+ */
+.landinglaunch-page .landinglaunch-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.landinglaunch-page .landinglaunch-stage {
+  position: relative;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 82svh;
+  padding-bottom: 7rem;
+  overflow: hidden;
+}
+
+/* The dots run along the bottom of the screen, behind the title and the email box. */
+.landinglaunch-page .landinglaunch-stage > .earlypreview-hero-wave {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 58%;
+  margin-top: 0;
+  z-index: 0;
+}
+
+.landinglaunch-page .landinglaunch-stage > .doehealth-desk2-hero {
+  padding-top: 5.5rem;
+}
+
+.landinglaunch-page .landinglaunch-form {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  padding: 1.75rem 1.25rem 0;
+}
+
+.landinglaunch-page .landinglaunch-form .doehealth-desk2-hero__secure {
+  /* Shown at once: the hero's own reveal only runs on the hero's children. */
+  opacity: 1;
+  transform: none;
+  justify-self: center;
+  max-width: 24rem;
+}
+
+.landinglaunch-page .landinglaunch-form .doehealth-desk2-hero__email {
+  background: rgba(255, 252, 241, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 252, 241, 0.22);
+}
+
+.landinglaunch-page .landinglaunch-form .doehealth-desk2-hero__email button {
+  color: #281910;
+}
+
+/* The only chrome: the "Doe" mark and a salmon mail icon, pinned to the top on desktop and iPhone. */
+.landinglaunch-page .landinglaunch-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  pointer-events: none;
+}
+
+.landinglaunch-page .landinglaunch-bar > * {
+  pointer-events: auto;
+}
+
+.landinglaunch-page .landinglaunch-bar__mark {
+  font-size: 2.25rem;
+  line-height: 1;
+  color: #fffcf1;
+  text-decoration: none;
+}
+
+.landinglaunch-page .landinglaunch-bar__mail {
+  display: grid;
+  place-items: center;
+  color: #fccfb8;
+  transition: opacity 200ms ease;
+}
+
+.landinglaunch-page .landinglaunch-bar__mail:hover {
+  opacity: 0.75;
+}

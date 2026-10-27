@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { DoeCareFall26DeskPage } from "@/components/doe-carefall26-desk/DoeCareFall26DeskPage";
-import { DOECAREFALL26_DESK_HERO_DEK } from "@/lib/doecarefall26/doecarefall26-desk-hero-copy";
+import { LandingLaunchPage } from "@/components/landinglaunch/LandingLaunchPage";
 import {
   DOEHEALTH_PATH,
   isPrimaryHost,
@@ -11,8 +10,6 @@ import {
   requestHostFromHeaders,
   shouldEnforceDomainRouting,
 } from "@/lib/site-domains";
-
-import "@/lib/doecarefall26/doecarefall26-desk.css";
 
 export const dynamic = "force-dynamic";
 
@@ -34,8 +31,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    title: "Doe",
-    description: DOECAREFALL26_DESK_HERO_DEK[0],
+    title: "Doe | Preparing for launch",
+    description: "We're preparing for launch. Leave your email to keep up to date.",
     alternates: {
       canonical: primarySiteOrigin(),
     },
@@ -43,8 +40,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Production doe.care `/` — Fall 26 landing rendered here natively (URL stays `/`).
- * Middleware must NOT rewrite `/` to /doecarefall26: that would render one route
+ * Production doe.care `/` — the pre-launch landing (/landinglaunch) rendered here natively (URL stays `/`).
+ * Middleware must NOT rewrite `/` to /landinglaunch: that would render one route
  * tree on the server while the client hydrates app/page at `/`.
  * Localhost and preview hosts fall through to the doehealth landing redirect.
  */
@@ -53,7 +50,7 @@ export default function HomePage() {
   if (isPrimaryHomeRequest(host)) {
     const ua = headers().get("user-agent") ?? "";
     const initialVariant = MOBILE_UA.test(ua) ? "phone" : "desktop";
-    return <DoeCareFall26DeskPage initialVariant={initialVariant} />;
+    return <LandingLaunchPage initialVariant={initialVariant} />;
   }
 
   redirect(DOEHEALTH_PATH);

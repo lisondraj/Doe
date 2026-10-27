@@ -10,6 +10,7 @@ import {
   DOEHEALTH_BLOG_PATH,
   DOEHEALTH_DESK2_PATH,
   JOIN_PATH,
+  LANDINGLAUNCH_PATH,
   PARTNERS_PATH,
   isDesignersHost,
   isMarketingLandingRoot,
@@ -219,7 +220,24 @@ export async function middleware(request: NextRequest) {
     return applyLandingSiteHeaders(NextResponse.next());
   }
 
-  /** doe.care serves the Fall 26 landing at `/` only — bounce any other path back to root. */
+  /**
+   * doe.care also serves the pre-launch page, /earlypreview and the `/preview-<slug>` articles it links to, plus the
+   * files they load from public/ (videos, models, fonts) that the matcher doesn't already skip.
+   */
+  if (isPrimaryHost(host)) {
+    const isFile = /\/[^/]+\.[a-z0-9]+$/i.test(pathname);
+    if (
+      pathname === LANDINGLAUNCH_PATH ||
+      pathname === "/earlypreview" ||
+      pathname.startsWith("/earlypreview/") ||
+      PREVIEW_ARTICLE_PATHS.includes(pathname) ||
+      isFile
+    ) {
+      return applyLandingSiteHeaders(NextResponse.next());
+    }
+  }
+
+  /** doe.care serves the pre-launch landing at `/` only — bounce any other path back to root. */
   if (isPrimaryHost(host)) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/";

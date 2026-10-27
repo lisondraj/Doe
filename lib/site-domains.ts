@@ -22,6 +22,9 @@ export const DESIGNERS_PATH = "/designers";
 export const DOEHEALTH_PATH = "/doehealth";
 /** Landing served at doehealth.care root via middleware rewrite. */
 export const DOEHEALTH_DESK2_PATH = "/doehealthdesk2";
+
+/** The pre-launch page doe.care serves at `/`. */
+export const LANDINGLAUNCH_PATH = "/landinglaunch";
 /** The doehealth blog; the only pages besides `/` that doehealth.care serves. */
 export const DOEHEALTH_BLOG_PATH = "/news";
 /** Internal snapshot of /doehealth — fork edits in DoeHealthLegacyHome. */
