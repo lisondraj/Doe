@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 
 import { DoeHealthBlogFilm } from "@/components/doehealth-blog/DoeHealthBlogFilm";
 import { DoeHealthBlogListen } from "@/components/doehealth-blog/DoeHealthBlogListen";
+import { DoeHealthBlogPlanMotion } from "@/components/doehealth-blog/DoeHealthBlogPlanMotion";
 import { DoeHealthBlogMotion } from "@/components/doehealth-blog/DoeHealthBlogMotion";
 import { DoeHealthBlogPlaceholder, articleBoxColors } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthBlogVideo } from "@/components/doehealth-blog/DoeHealthBlogVideo";
@@ -56,6 +57,15 @@ function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: 
         <figure className="doehealth-blog-article__figure">
           <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doehealth-blog-article__figure-art" style={{ background: articleBoxColors(block.diagram.tone).bg }}>
             <DoeHealthBlogDiagram diagram={block.diagram.id} tone={block.diagram.tone} dots={block.diagram.dots} />
+          </div>
+          <figcaption>{block.caption}</figcaption>
+        </figure>
+      );
+    case "planmotion":
+      return (
+        <figure className="doehealth-blog-article__figure">
+          <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doehealth-blog-article__figure-art doehealth-blog-article__figure-art--planmotion">
+            <DoeHealthBlogPlanMotion scene={block.scene} />
           </div>
           <figcaption>{block.caption}</figcaption>
         </figure>

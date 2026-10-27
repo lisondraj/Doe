@@ -57,6 +57,9 @@ export type DoeHealthBlogDiagram = { id: DoeHealthBlogDiagramId; tone: DoeHealth
  * A drawn figure that lives in the article itself, not in the product shell: a looping diagram in the article's beige,
  * with its own dot design behind it (DoeHealthBlogMotion). For plans and protocols, where there is no screen to show.
  */
+/** The plan article's diagrams. */
+export type DoeHealthBlogPlanScene = "layers" | "profile" | "auth" | "lanes" | "evals" | "metrics" | "tracks";
+
 export type DoeHealthBlogMotionScene = "roadmap" | "index" | "auth" | "integrations" | "phi" | "watch";
 
 export type DoeHealthBlogBlock =
@@ -81,6 +84,8 @@ export type DoeHealthBlogBlock =
       caption: string;
       steps: readonly { when: string; title: string; items: readonly string[]; unlock: string; seed?: boolean }[];
     }
+  /** An animated diagram of the "From Public Index to Protected Health" plan (DoeHealthBlogPlanMotion). */
+  | { type: "planmotion"; scene: DoeHealthBlogPlanScene; caption: string }
   | { type: "quote"; text: string }
   | { type: "list"; items: readonly { lead: string; text: string }[] };
 
@@ -1804,7 +1809,248 @@ const COMPLIANCE_PLAN: DoeHealthBlogArticle = {
   ],
 };
 
+const PUBLIC_INDEX_PLAN: DoeHealthBlogArticle = {
+  slug: "from-public-index-to-protected-health",
+  heroImage: STOOLS_HERO_IMAGE,
+  wave: { top: 0.46, amp: 58, phase: 1.2, scale: 0.95, slant: -0.2 },
+  eyebrow: "Compliance Plan",
+  title: ["From Public Index", "to Protected Health"],
+  author: "James Lisondra",
+  date: "October 27, 2026",
+  excerpt:
+    "How Doe climbs from public, agent-readable clinic pages to protected health information: the Index first, Doe Auth next, integrations in a sandbox, PHI only once PHIPA and HIPAA are in place, and SOC 2 under way by Q3 2027.",
+  heroTone: "cream",
+  lede: "Doe will carry protected health information between personal agents and clinics one day. It will not carry any until it has earned the right to, and every step before that is built so a clinic can see exactly what it is agreeing to.",
+  blocks: [
+    {
+      type: "paragraph",
+      text: "Most health software asks for trust on day one: sign the agreement, connect the EHR, and hope the vendor got security right. We are doing it the other way round. Doe starts with the one kind of data that carries no privacy risk at all, a clinic's public description of itself, and makes that excellent before it touches anything else. Each step after that adds exactly one new kind of data, and none of them starts until the controls for it are in place.",
+    },
+    {
+      type: "paragraph",
+      text: "This is the plan for the next nine months, written out so clinics, agent developers, and investors can hold us to it. The dates are targets, the gates are not: if a gate is not cleared, the next step waits.",
+    },
+    {
+      type: "planmotion",
+      scene: "layers",
+      caption:
+        "Four layers, added one at a time. Each holds one more kind of data than the one below it, and each is cleared before anything on it is touched.",
+    },
+    {
+      type: "investor",
+      title: "Trust is built in the order revenue needs it.",
+      stats: [
+        { value: "Nov–Dec", label: "The Index: claimed, agent-readable clinic pages, no PHI" },
+        { value: "Jan–Feb", label: "Doe Auth for clinics and agents, integrations explored" },
+        { value: "Late Dec", label: "PHIPA and HIPAA programs begin" },
+        { value: "Q3 ’27", label: "PHI through personal agents, and SOC 2 under way" },
+      ],
+      text: "The first four months create value without any PHI at all: clinics become findable and bookable-by-request for personal agents, and every interaction produces the per-clinic metrics that show a practice what agents are already asking for. That demand is what makes the paid tiers, and later the PHI-bearing lanes, an easy yes.",
+      points: [
+        { lead: "Low risk, early revenue", text: "the Index and Doe Auth can be sold and used before a single health record moves." },
+        { lead: "Evidence before claims", text: "each gate leaves behind an artifact a hospital security review will ask for: a privacy impact assessment, a risk analysis, a pen test report, a SOC 2 report." },
+        { lead: "Two countries by design", text: "PHIPA for Ontario and HIPAA for the U.S. run as one program, so neither market waits for the other." },
+      ],
+    },
+
+    { type: "heading", text: "Months one and two: the Index." },
+    {
+      type: "paragraph",
+      text: "November and December are about one thing: getting clinics to claim their page and describe themselves accurately. Every practice in the Doe Index already has a page built from public registers. A provider or an office administrator claims it, proves they work there, and then fills in what no register knows: the services they actually offer, which providers do what, hours and locations, insurance accepted, referral requirements, prices, and current offers. Clinics that want a website get one from the same profile, so the page patients see and the data agents read never drift apart.",
+    },
+    {
+      type: "planmotion",
+      scene: "profile",
+      caption:
+        "An administrator fills in the clinic's page; Doe publishes the same facts as structured data any personal agent can read. A filter checks every free-text field for anything that looks like patient information before it is saved.",
+    },
+    {
+      type: "paragraph",
+      text: "Everything in this phase is public by design. There is no PHI in the Index, no integration with a clinic's systems, and no patient identity anywhere in the loop. That is a deliberate choice, not a limitation: it lets us move quickly with clinics while the compliance programs for the next layers are set up properly.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "Verified claims", text: "a claim is confirmed by a work-domain email or a call to the clinic's listed number, and providers are matched against their college or NPI registration. One unverified edit never reaches agents." },
+        { lead: "Agent-readable by default", text: "each page is published as structured data (schema.org markup on the website, a read-only API, and a read-only MCP endpoint) with a freshness stamp on every field." },
+        { lead: "No PHI, enforced", text: "free-text fields are scanned for names, dates of birth, health card numbers, and clinical details before saving, and anything flagged is held for the clinic to fix." },
+        { lead: "Every edit answerable", text: "the person, the time, and the before-and-after of every change is recorded, so a clinic can see who said what about it." },
+        { lead: "Staff accounts done right", text: "multi-factor sign-in for every clinic user from day one, roles for owners, providers, and front desk, and access removed when someone leaves." },
+      ],
+    },
+
+    { type: "heading", text: "End of month two: the compliance programs begin." },
+    {
+      type: "paragraph",
+      text: "Once the Index is running, late in December, we start the formal programs for the two laws that govern the data that comes next. They start here, months before any PHI, because their work is mostly design work: deciding what Doe is under each law, what it may do, and proving it in writing before it does it.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "People", text: "a named privacy officer and security officer at Doe, and healthcare privacy counsel in Ontario and the U.S." },
+        { lead: "PHIPA", text: "Doe's role mapped under Ontario's PHIPA, as an agent or electronic service provider for each clinic and as a health information network provider where it carries data between custodians. That role comes with a privacy impact assessment and a threat and risk assessment shared with every clinic, plus audit and breach duties we design for now." },
+        { lead: "HIPAA", text: "Doe as a business associate of U.S. clinics: a Security Rule risk analysis, written policies, workforce training, and a template business associate agreement, with BAAs in turn from every subprocessor that could touch PHI, including hosting and model providers with zero data retention." },
+        { lead: "Consumer side", text: "personal agents act for patients, not clinics, so we also design for the rules that cover consumer health data outside HIPAA, including breach notice duties for health apps." },
+        { lead: "Data map", text: "an inventory of every system, field, and vendor, so each later step can say exactly which data it adds and where it lives." },
+      ],
+    },
+
+    { type: "heading", text: "Months three and four: Doe Auth." },
+    {
+      type: "paragraph",
+      text: "In January and February we release Doe Auth: the way a clinic and a personal agent can both be sure who the patient is, and what the patient has allowed, without the agent ever holding the patient's password. The patient verifies once and signs a grant for one purpose, such as asking a question or requesting a visit at one clinic. The agent presents that grant, bound to its own key, and Doe checks identity, scope, and expiry before the clinic sees anything.",
+    },
+    {
+      type: "planmotion",
+      scene: "auth",
+      caption:
+        "Doe Auth: the patient signs a narrow grant, the agent presents it with its own key, Doe verifies it, and the clinic sees a verified patient, one allowed action, and when it expires.",
+    },
+    {
+      type: "paragraph",
+      text: "Agent developers register too. Each agent has a verified developer behind it, its own keys, and a public record of the lanes it is allowed in, so a clinic can turn a specific agent off without turning off agents altogether. Before Doe Auth takes its first real verification, it gets its first external penetration test.",
+    },
+    {
+      type: "paragraph",
+      text: "Alongside Auth, we begin exploring the integrations that let agents do real work: book, send documents, ask questions, see offers, promotions, and service pricing, and verify insurance. Exploring means building and attacking each one on synthetic patients in the sandbox, with a handful of design-partner clinics, before any of them carry real patient data.",
+    },
+    {
+      type: "planmotion",
+      scene: "lanes",
+      caption:
+        "Each integration is a lane with its own risk tier. Public lanes can pilot early; lanes that carry identity or health information stay on synthetic patients until the PHIPA and HIPAA gate opens.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "Ask questions", text: "structured questions to the clinic and replies back, starting with questions about the practice rather than about the patient." },
+        { lead: "Offers and pricing", text: "promotions, packages, same-week openings, and service prices, all public data the clinic publishes, so this lane can go live early." },
+        { lead: "Book", text: "first as requests a person at the clinic confirms, then direct booking once the scheduling integration has passed its evals." },
+        { lead: "Send documents", text: "intake forms, referrals, and records the patient chooses to send, which are PHI and so stay synthetic until Q3." },
+        { lead: "Verify insurance", text: "eligibility checks against the patient's plan, which need a member ID and so are tested on synthetic plans first." },
+      ],
+    },
+    {
+      type: "quote",
+      text: "Every integration is built twice: once to work, and once to be attacked on synthetic patients before anyone real depends on it.",
+    },
+
+    { type: "heading", text: "Start of Q3 2027: PHI, carefully." },
+    {
+      type: "paragraph",
+      text: "By the start of Q3 2027 we look at how PHI can safely move between a patient's personal agent and a clinic, and open the lanes that need it. This is where the earlier work pays off. The PHIPA privacy impact and threat assessments are done and shared, every U.S. clinic and subprocessor is under a BAA, Canadian data is hosted in Canada with a separate U.S. region, and every PHI-bearing lane has passed its evals on synthetic patients.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "Minimum necessary", text: "each action returns only the fields it needs, and Doe keeps nothing beyond what the action and its audit record require." },
+        { lead: "Patient direction", text: "PHI moves only on a grant the patient signed for that purpose, which ends on its own and can be revoked by the patient or the clinic at any time." },
+        { lead: "Clinic control", text: "for every service and action, a clinic chooses whether agents act directly, send a request for staff to confirm, or cannot see it at all." },
+        { lead: "Answerable", text: "every action records who asked, for whom, under which grant and policy, with which model, touching what data, and what happened." },
+        { lead: "Encrypted and separated", text: "TLS 1.3 in transit, AES-256 at rest, and keys held per clinic, so one clinic's boundary is never another's." },
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "SOC 2 begins by the same date. By the start of Q3 we will have chosen an auditor, set up continuous control monitoring, and finished a readiness assessment, so the Type I report and the Type II observation window that hospitals ask for can follow on schedule.",
+    },
+    {
+      type: "planmotion",
+      scene: "tracks",
+      caption:
+        "The product and compliance tracks side by side, November 2026 to September 2027. Each compliance track starts before the product step that depends on it.",
+    },
+
+    { type: "heading", text: "Throughout: the sandbox, and every clinic's numbers." },
+    {
+      type: "paragraph",
+      text: "Two things run the whole way through, from the first claimed page. The first is security evaluation in the sandbox: synthetic patients, practices, and agents, and a standing suite of attacks run against every model, prompt, tool, and permission whenever one of them changes. A lane that passes keeps its access; one that fails is suspended for that lane until it passes again.",
+    },
+    {
+      type: "planmotion",
+      scene: "evals",
+      caption:
+        "The sandbox, on synthetic patients only: every lane run against every attack class on each change. A failure holds that lane until the fix passes.",
+    },
+    {
+      type: "paragraph",
+      text: "The second is measurement, per clinic rather than in aggregate. A clinic is the unit that decides whether to trust agents, so it is the unit we watch. Every practice sees its own numbers, and we use the same numbers to decide when a lane is ready to widen.",
+    },
+    {
+      type: "planmotion",
+      scene: "metrics",
+      caption:
+        "Per-clinic metrics: how complete and fresh the page is, what agents read and ask, how quickly the clinic answers, and how that clinic's lanes are doing in evals.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "Profile", text: "completeness, freshness of each field, and verified providers." },
+        { lead: "Demand", text: "agent reads, questions, booking requests, and the requests agents could not complete." },
+        { lead: "Response", text: "time to first reply, time to confirm a booking, and handoffs to staff." },
+        { lead: "Safety", text: "possible PHI blocked in free text, grants issued and revoked, blocked agent attempts, and eval results for every lane the clinic has turned on." },
+      ],
+    },
+
+    { type: "heading", text: "The plan, step by step." },
+    {
+      type: "timeline",
+      caption: "Each step adds one kind of data and has to clear its gate before the next begins.",
+      steps: [
+        {
+          when: "Nov–Dec ’26",
+          title: "The Index",
+          items: ["Clinics claim and verify their pages", "Providers and admins enter their own details", "Agent-readable pages and websites, no PHI"],
+          unlock: "Per-clinic metrics, and demand for Doe Auth",
+        },
+        {
+          when: "Late Dec ’26",
+          title: "Programs begin",
+          items: ["Privacy and security officers, privacy counsel", "PHIPA role mapped, PIA and TRA started", "HIPAA risk analysis and BAA templates"],
+          unlock: "A paper trail before any PHI",
+        },
+        {
+          when: "Jan–Feb ’27",
+          title: "Doe Auth",
+          items: ["Patient verification and signed grants", "Agent and developer registration", "First external penetration test"],
+          unlock: "Integrations explored on synthetic patients",
+        },
+        {
+          when: "Mar–Jun ’27",
+          title: "Integrations in sandbox",
+          items: ["Book, documents, questions, offers, insurance", "Public lanes piloted with design partners", "PHI lanes held to synthetic data"],
+          unlock: "Lanes ready for the PHI gate",
+        },
+        {
+          when: "Q3 ’27",
+          title: "PHI, carefully",
+          items: ["PHIPA assessments complete, BAAs signed", "PHI between personal agents and clinics", "SOC 2 readiness done, audit under way"],
+          unlock: "Real patient requests, and hospital conversations",
+          seed: true,
+        },
+      ],
+    },
+
+    { type: "heading", text: "What we changed in the plan, and why." },
+    {
+      type: "list",
+      items: [
+        { lead: "Gates, not dates", text: "every step has written exit criteria. A missed criterion moves the date, never the bar." },
+        { lead: "A pen test before Auth", text: "Doe Auth is the first thing an attacker would target, so it is tested from outside before it takes a real verification, not after." },
+        { lead: "Public lanes first", text: "questions about the practice and offers and pricing carry no PHI, so they can pilot in the spring and prove demand while the PHI lanes wait." },
+        { lead: "PHI kept out of the Index", text: "a free-text filter, not just a policy, stops patient details from slipping into public pages." },
+        { lead: "One program, two laws", text: "PHIPA and HIPAA share one data map, one set of policies, and one evidence store, which SOC 2 later reuses rather than rebuilds." },
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "None of this is a certification claim. It is the order we are doing the work in, and the evidence each step will leave behind. If you run a clinic and want to claim your page, build an agent and want sandbox access, or want the detail behind any line here, we would be glad to talk.",
+    },
+  ],
+};
+
 export const DOEHEALTH_BLOG_ARTICLES = [
+  PUBLIC_INDEX_PLAN,
   AGENT_STACK,
   COMPLIANCE_PLAN,
   COMPLIANCE_AND_SECURITY,

@@ -12,6 +12,7 @@ export const PREVIEW_ARTICLE_SLUGS = [
   "compliance-and-security-through-seed",
   "how-personal-agents-reach-organizations",
   "the-compliance-plan-index-first-phi-when-earned",
+  "from-public-index-to-protected-health",
 ] as const;
 
 export type PreviewArticleSlug = (typeof PREVIEW_ARTICLE_SLUGS)[number];
