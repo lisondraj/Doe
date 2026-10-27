@@ -504,6 +504,28 @@ export const EARLYPREVIEW_MARKET_PLANS = {
   })),
 } as const;
 
+/** One plain sentence on what each /pricing feature group is, shown when its row on the tiers screen is opened. */
+const GROUP_DETAIL: Record<string, string> = {
+  "Clinic profile":
+    "Your clinic's page in the Doe Index. Claim it, keep services, providers, hours and insurance current, and get verified.",
+  "Dynamic Index":
+    "Your page stays live. Services, providers, hours, availability and prices sync from your scheduling, PMS, EHR and CRM.",
+  "Doe Interface":
+    "A direct line between patients' personal agents and your clinic, with structured questions, replies and handoff to staff.",
+  Offers: "Publish promotions, openings and packages. Personal agents surface them to the patients they fit.",
+  Analytics: "How agents find you: searches, inquiries, top services, missed requests and response times.",
+  "Personal agents for staff":
+    "Agents for your team that take on scheduling, referrals, intake, insurance and follow-ups.",
+  "AI Insights": "Where demand goes unmet, which services are trending, how agents convert and the revenue they bring.",
+  Flow: "Incoming forms read, mapped and routed on their own, outgoing documents filled in, and missing details flagged.",
+  Automations: "Rules in plain language. When something happens, reply, route, book, notify staff or send forms.",
+  "Advanced controls":
+    "Decide what agents may do: permissions, human approval rules and workflow policies, across every location.",
+  "Specialty feature sets": "Workflows built for concierge, aesthetics, fertility and home care practices.",
+  "Voice agents": "Every call answered, day and night. Book, reschedule and triage, with a live handoff to staff.",
+  "White-glove onboarding": "A dedicated success manager, custom integrations and priority support.",
+};
+
 /**
  * What each tier includes, as on /pricing: the four tiers across the top with their price and what each extra provider
  * and location adds, one row per feature group, ticked from the first tier that has it. On iPhone the extras close
@@ -520,6 +542,8 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
   rows: GROUPS.map((group) => ({
     id: group.title,
     label: group.title,
+    detail: GROUP_DETAIL[group.title] ?? `${group.items.join(", ")}.`,
+    from: PRICING_PLANS.find((plan) => plan.id === group.from)!.name,
     cells: PLAN_ORDER.map((id) => PLAN_ORDER.indexOf(id) >= PLAN_ORDER.indexOf(group.from)),
   })),
   costs: [

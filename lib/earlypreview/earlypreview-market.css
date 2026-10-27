@@ -614,6 +614,109 @@
   color: var(--m-cream);
 }
 
+/* A feature's name is its toggle: the name, then a thin chevron that turns over when the row is open. */
+.earlypreview-market__incl-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.earlypreview-market__chevron {
+  flex-shrink: 0;
+  color: var(--m-quiet);
+  transition:
+    transform 240ms ease,
+    color 200ms ease;
+}
+
+.earlypreview-market__incl-toggle:hover .earlypreview-market__chevron,
+.earlypreview-market__incl-row.is-open .earlypreview-market__chevron {
+  color: var(--m-salmon);
+}
+
+.earlypreview-market__incl-row.is-open .earlypreview-market__chevron {
+  transform: rotate(180deg);
+}
+
+.earlypreview-market__incl-toggle:focus-visible {
+  outline: 1px solid var(--m-salmon);
+  outline-offset: 3px;
+}
+
+/* An open feature: the rows on its far side fade out and its description sits in their place. */
+.earlypreview-market__incl-row,
+.earlypreview-market__incl-note {
+  transition: opacity 260ms ease;
+}
+
+.earlypreview-market__incl-row.is-faded,
+.earlypreview-market__incl-note.is-faded {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.earlypreview-market__incl-row.is-open {
+  position: relative;
+  z-index: 1;
+}
+
+.earlypreview-market__incl-detail {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 40rem;
+  padding: clamp(0.9rem, 2.4vh, 1.4rem) 0 0;
+  animation: earlypreview-incl-detail 320ms ease both;
+}
+
+.earlypreview-market__incl-detail.is-up {
+  top: auto;
+  bottom: 100%;
+  padding: 0 0 clamp(0.9rem, 2.4vh, 1.4rem);
+}
+
+.earlypreview-market__incl-detail p {
+  margin: 0;
+  font-family: var(--m-display);
+  font-size: clamp(1.25rem, min(1.9vw, 3.3vh), 1.9rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--m-cream);
+}
+
+.earlypreview-market__incl-detail span {
+  font-size: clamp(0.8rem, 0.9vw, 0.9rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--m-salmon);
+}
+
+@keyframes earlypreview-incl-detail {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earlypreview-market__incl-detail {
+    animation: none;
+  }
+}
+
 .earlypreview-market__incl-row > [role="cell"] svg {
   display: block;
   color: var(--m-salmon);
@@ -2819,4 +2922,13 @@
   .earlypreview-market__country-panel {
   align-items: flex-start;
   text-align: left;
+}
+
+/* iPhone: an opened feature's description a size down, across the full width. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-detail p {
+  font-size: 1.15rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-detail span {
+  font-size: 0.7rem;
 }

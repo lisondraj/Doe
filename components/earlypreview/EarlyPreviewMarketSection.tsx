@@ -316,6 +316,28 @@ function SeedScene({ p }: { p: number }) {
   );
 }
 
+/** A thin chevron that turns over when its row is open. */
+function Chevron() {
+  return (
+    <svg
+      className="earlypreview-market__chevron"
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      aria-hidden
+    >
+      <path
+        d="M2.5 4.5 6 8l3.5-3.5"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function Check() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
@@ -396,6 +418,16 @@ function IncludedScene({ p }: { p: number }) {
   const rows = INCLUDED.rows.length + INCLUDED.costs.length;
   const rise = (index: number) =>
     vars({ "--e": en(t, 0.4 + (index * 0.8) / rows, 0.65 + (index * 0.8) / rows) });
+  // The opened feature: the rows on one side of it fade and its description takes their place. A row in the top half
+  // opens downward over the rows under it; one in the bottom half opens upward. It closes when the screen leaves.
+  const [open, setOpen] = useState<number | null>(null);
+  const shown = o > 0.5;
+  useEffect(() => {
+    if (!shown) setOpen(null);
+  }, [shown]);
+  const up = open !== null && open >= INCLUDED.rows.length / 2;
+  const faded = (index: number) =>
+    open !== null && index !== open && (up ? index < open : index > open);
   return (
     <Scene o={o} label="What's in each tier">
       <SceneTitle title={INCLUDED.title} t={t} />
@@ -427,12 +459,25 @@ function IncludedScene({ p }: { p: number }) {
           {INCLUDED.rows.map((row, index) => (
             <div
               key={row.id}
-              className={`earlypreview-market__incl-row${hover.state(row.id)}`}
+              className={`earlypreview-market__incl-row${open === null ? hover.state(row.id) : ""}${faded(index) ? " is-faded" : ""}${open === index ? " is-open" : ""}`}
               role="row"
               style={rise(index)}
+              aria-hidden={faded(index) || undefined}
               {...hover.bind(row.id)}
             >
-              <span role="rowheader">{row.label}</span>
+              <span role="rowheader">
+                <button
+                  type="button"
+                  className="earlypreview-market__incl-toggle"
+                  aria-expanded={open === index}
+                  aria-controls={open === index ? "earlypreview-incl-detail" : undefined}
+                  tabIndex={faded(index) ? -1 : undefined}
+                  onClick={() => setOpen((current) => (current === index ? null : index))}
+                >
+                  {row.label}
+                  <Chevron />
+                </button>
+              </span>
               {row.cells.map((included, c) => (
                 <span
                   key={INCLUDED.tiers[c].id}
@@ -452,12 +497,21 @@ function IncludedScene({ p }: { p: number }) {
                   )}
                 </span>
               ))}
+              {open === index ? (
+                <div
+                  id="earlypreview-incl-detail"
+                  className={`earlypreview-market__incl-detail${up ? " is-up" : ""}`}
+                >
+                  <p>{row.detail}</p>
+                  <span>Included from {row.from}</span>
+                </div>
+              ) : null}
             </div>
           ))}
           {INCLUDED.costs.map((row, index) => (
             <div
               key={row.id}
-              className={`earlypreview-market__incl-row is-cost${index === 0 ? " is-cost-first" : ""}${hover.state(row.id)}`}
+              className={`earlypreview-market__incl-row is-cost${index === 0 ? " is-cost-first" : ""}${open === null ? hover.state(row.id) : ""}${open !== null && !up ? " is-faded" : ""}`}
               role="row"
               style={rise(INCLUDED.rows.length + index)}
               {...hover.bind(row.id)}
@@ -472,7 +526,7 @@ function IncludedScene({ p }: { p: number }) {
           ))}
         </div>
         <p
-          className="earlypreview-market__incl-note"
+          className={`earlypreview-market__incl-note${open !== null && !up ? " is-faded" : ""}`}
           style={vars({ "--e": en(t, 1.15, 1.4) })}
         >
           {INCLUDED.costsNote}
