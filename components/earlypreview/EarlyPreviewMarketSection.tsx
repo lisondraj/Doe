@@ -656,8 +656,8 @@ const short = (value: number) =>
  */
 function MarketGraph({ t }: { t: number }) {
   const { market } = CITIES;
-  const sources = [
-    ...market.providers.flatMap((row) => row.sources),
+  const sources: { readonly label: string; readonly href: string }[] = [
+    ...market.providers.flatMap((row): readonly { readonly label: string; readonly href: string }[] => row.sources),
     ...market.facts.map((fact) => fact.source),
   ];
   return (
