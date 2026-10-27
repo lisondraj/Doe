@@ -1,7 +1,7 @@
 /* /news — index and long-form articles on the /doehealthdesk surface (tokens from doehealth-desk.css). */
 
 .doehealth-blog-page {
-  --blog-read-w: 56rem;
+  --blog-read-w: 58rem;
   --blog-wide-w: 60rem;
   --blog-salmon: #fccfb8;
 }
@@ -338,9 +338,10 @@
 .doehealth-blog-article__p,
 .doehealth-blog-article__list {
   margin: 0;
-  font-size: 1.1875rem;
+  font-size: 1.25rem;
   letter-spacing: -0.015em;
   line-height: 1.62;
+  text-wrap: pretty;
 }
 
 .doehealth-blog-article__lede {
@@ -924,7 +925,7 @@
 
   .doehealth-blog-article__p,
   .doehealth-blog-article__list {
-    font-size: clamp(1.05rem, 4.3vw, 1.125rem);
+    font-size: clamp(1.075rem, 4.4vw, 1.1875rem);
     line-height: 1.6;
   }
 
