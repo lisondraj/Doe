@@ -27,12 +27,26 @@ function sentence(text: string) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+/** `[label](https://…)` in paragraph copy becomes a link in the sentence, so sources read as prose. */
+function inlineLinks(text: string) {
+  const parts = text.split(/(\[[^\]]+\]\(https?:\/\/[^)\s]+\))/);
+  return parts.map((part, index) => {
+    const match = /^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/.exec(part);
+    if (!match) return part;
+    return (
+      <a key={index} href={match[2]} target="_blank" rel="noreferrer">
+        {match[1]}
+      </a>
+    );
+  });
+}
+
 function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: Article }) {
   switch (block.type) {
     case "paragraph":
       return (
         <p className="doehealth-blog-article__p">
-          {block.text}
+          {inlineLinks(block.text)}
           {block.links?.length ? (
             <span>
               {" "}
@@ -138,11 +152,7 @@ function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: 
                     {step.title}
                     {step.seed ? <span className="doehealth-blog-article__plan-seed">Seed</span> : null}
                   </h4>
-                  <ul>
-                    {step.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
+                  <p className="doehealth-blog-article__plan-text">{step.text ?? sentence((step.items ?? []).join("; ")) + "."}</p>
                   <p className="doehealth-blog-article__plan-unlock">
                     <svg viewBox="0 0 24 24" aria-hidden>
                       <path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

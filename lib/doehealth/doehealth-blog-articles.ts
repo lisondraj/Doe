@@ -86,7 +86,7 @@ export type DoeHealthBlogBlock =
   | {
       type: "timeline";
       caption: string;
-      steps: readonly { when: string; title: string; items: readonly string[]; unlock: string; seed?: boolean }[];
+      steps: readonly { when: string; title: string; text?: string; items?: readonly string[]; unlock: string; seed?: boolean }[];
     }
   /** An animated diagram of the "From Public Index to Protected Health" plan (DoeHealthBlogPlanMotion). */
   | { type: "planmotion"; scene: DoeHealthBlogPlanScene; caption: string }
@@ -1405,12 +1405,7 @@ const AGENT_STACK: DoeHealthBlogArticle = {
     },
     {
       type: "paragraph",
-      text: "The emerging stack has several layers. Poppy describes the whole visit between a personal agent and a company. MCP exposes tools and data. A2A supports a conversation with the organization’s own agent. OAuth carries the person’s permission. Signed identity and mandate standards make the actor and its limits verifiable. When none of those paths exists, the agent falls back to the website or phone.",
-      links: [
-        { label: "Poppy draft specification", href: "https://personalagentprotocol.org/docs/spec" },
-        { label: "MCP specification", href: "https://modelcontextprotocol.io/specification" },
-        { label: "A2A specification", href: "https://a2a-protocol.org/latest/specification/" },
-      ],
+      text: "The emerging stack has several layers. [Poppy](https://personalagentprotocol.org/docs/spec) describes the whole visit between a personal agent and a company. [MCP](https://modelcontextprotocol.io/specification) exposes tools and data. [A2A](https://a2a-protocol.org/latest/specification/) supports a conversation with the organization’s own agent. OAuth carries the person’s permission. Signed identity and mandate standards make the actor and its limits verifiable. When none of those paths exists, the agent falls back to the website or phone.",
     },
     { type: "heading", text: "The stack is a set of layers, not one connector." },
     {
@@ -1425,11 +1420,7 @@ const AGENT_STACK: DoeHealthBlogArticle = {
     { type: "heading", text: "Poppy: a front door for personal agents." },
     {
       type: "paragraph",
-      text: "The Personal Agent Protocol, or Poppy, is being developed by Sierra and Meta with partners including Genesys, Instinct, Shopify, Stripe, and Walmart. It starts from the relationship most other protocols leave implicit: one personal agent is acting for one user with one company.",
-      links: [
-        { label: "Sierra’s introduction to Poppy", href: "https://sierra.ai/blog/introducing-personal-agent-protocol" },
-        { label: "Poppy specification", href: "https://personalagentprotocol.org/docs/spec" },
-      ],
+      text: "The Personal Agent Protocol, or [Poppy](https://personalagentprotocol.org/docs/spec), is being developed by [Sierra and Meta](https://sierra.ai/blog/introducing-personal-agent-protocol) with partners including Genesys, Instinct, Shopify, Stripe, and Walmart. It starts from the relationship most other protocols leave implicit: one personal agent is acting for one user with one company.",
     },
     {
       type: "paragraph",
@@ -1442,8 +1433,7 @@ const AGENT_STACK: DoeHealthBlogArticle = {
     { type: "heading", text: "MCP: tools an agent can read and call." },
     {
       type: "paragraph",
-      text: "The Model Context Protocol gives an agent a structured way to discover and call tools. An organization can expose actions such as find_openings or book_visit with typed inputs and outputs. It can also expose resources the agent may read. Instead of guessing how a website works, the agent receives a contract it can validate before it acts.",
-      links: [{ label: "Model Context Protocol", href: "https://modelcontextprotocol.io/specification" }],
+      text: "The [Model Context Protocol](https://modelcontextprotocol.io/specification) gives an agent a structured way to discover and call tools. An organization can expose actions such as find_openings or book_visit with typed inputs and outputs. It can also expose resources the agent may read. Instead of guessing how a website works, the agent receives a contract it can validate before it acts.",
     },
     {
       type: "paragraph",
@@ -1461,8 +1451,7 @@ const AGENT_STACK: DoeHealthBlogArticle = {
     { type: "heading", text: "A2A: a conversation with the organization’s agent." },
     {
       type: "paragraph",
-      text: "MCP treats the organization as a set of callable tools. The Agent2Agent protocol treats it as a counterpart. A2A is an open Linux Foundation standard for independent agents to discover one another, exchange messages, and manage work that may take time or require a person to step in.",
-      links: [{ label: "Agent2Agent Protocol", href: "https://a2a-protocol.org/latest/specification/" }],
+      text: "MCP treats the organization as a set of callable tools. The [Agent2Agent protocol](https://a2a-protocol.org/latest/specification/) treats it as a counterpart. A2A is an open Linux Foundation standard for independent agents to discover one another, exchange messages, and manage work that may take time or require a person to step in.",
     },
     {
       type: "paragraph",
@@ -1480,11 +1469,7 @@ const AGENT_STACK: DoeHealthBlogArticle = {
     { type: "heading", text: "OAuth: carrying the person’s permission." },
     {
       type: "paragraph",
-      text: "Discovery is not permission. OAuth gives the person a direct moment to sign in to the organization and approve a limited set of scopes for the agent. The agent receives a token, not the person’s password. The organization can bind that token to its own server, record which agent received it, and require a new approval when the task expands.",
-      links: [
-        { label: "OAuth 2.0", href: "https://oauth.net/2/" },
-        { label: "MCP authorization", href: "https://modelcontextprotocol.io/specification/latest/basic/authorization" },
-      ],
+      text: "Discovery is not permission. [OAuth](https://oauth.net/2/) gives the person a direct moment to sign in to the organization and approve a limited set of scopes for the agent. The agent receives a token, not the person’s password. The organization can bind that token to its own server, record which agent received it, and require a new approval when the task expands. MCP’s own [authorization specification](https://modelcontextprotocol.io/specification/latest/basic/authorization) is built on the same standard.",
     },
     {
       type: "paragraph",
@@ -1502,11 +1487,7 @@ const AGENT_STACK: DoeHealthBlogArticle = {
     },
     {
       type: "paragraph",
-      text: "Signed requests can identify the calling agent without pretending that identity equals authorization. OAuth token exchange can preserve both the human subject and the agent actor in the delegation chain. For payments, Google’s Agent Payments Protocol adds signed intent and cart mandates so a merchant can verify what the person approved instead of inferring intent from the agent’s behavior.",
-      links: [
-        { label: "OAuth Token Exchange", href: "https://datatracker.ietf.org/doc/html/rfc8693" },
-        { label: "Agent Payments Protocol", href: "https://ap2-protocol.org/" },
-      ],
+      text: "Signed requests can identify the calling agent without pretending that identity equals authorization. [OAuth token exchange](https://datatracker.ietf.org/doc/html/rfc8693) can preserve both the human subject and the agent actor in the delegation chain. For payments, Google’s [Agent Payments Protocol](https://ap2-protocol.org/) adds signed intent and cart mandates so a merchant can verify what the person approved instead of inferring intent from the agent’s behavior.",
     },
     {
       type: "diagram",
@@ -1582,12 +1563,7 @@ const COMPLIANCE_PLAN: DoeHealthBlogArticle = {
         { value: "Q3 ’27", label: "first PHI, through personal agents" },
         { value: "Q3 ’27", label: "SOC 2 program begins, Type II by Seed" },
       ],
-      text: "The first four months build the supply side of the network, clinics that agents can read and verify, without carrying regulated health data. That keeps early risk and cost low while the compliance work that has real lead time, assessments, agreements, policies, and audits, starts early enough to be finished when PHI arrives.",
-      points: [
-        { lead: "Growth without liability", text: "the Index and Doe Auth create value for clinics and agents before Doe holds a single chart field." },
-        { lead: "Lead time, used", text: "privacy impact and threat risk assessments, clinic agreements, and BAAs are drafted from January, so they are ready for the Q3 gate rather than started at it." },
-        { lead: "Evidence, not promises", text: "every phase ends with measured exit criteria that a clinic, an auditor, or an investor can check." },
-      ],
+      text: "The first four months build the supply side of the network, clinics that agents can read and verify, without carrying regulated health data. That keeps early risk and cost low while the compliance work that has real lead time, assessments, agreements, policies, and audits, starts early enough to be finished when PHI arrives. The Index and Doe Auth create value for clinics and agents before Doe holds a single chart field, and every phase ends with measured exit criteria that a clinic or an auditor can check.",
     },
     {
       type: "motion",
@@ -1619,18 +1595,15 @@ const COMPLIANCE_PLAN: DoeHealthBlogArticle = {
     },
     {
       type: "paragraph",
-      text: "In Ontario, clinics are health information custodians under PHIPA. Doe expects to operate as an electronic service provider and, where the workflow enables custodians to exchange information, may also have duties as a health information network provider under Ontario Regulation 329/04. Those duties include privacy and threat-risk assessments, access and transfer logs, written agreements, public descriptions of safeguards, subcontractor controls, and breach notice at the first reasonable opportunity. Counsel will confirm Doe’s role for each workflow before launch.",
-      links: [{ label: "Ontario Regulation 329/04", href: "https://www.ontario.ca/laws/regulation/040329" }],
+      text: "In Ontario, clinics are health information custodians under PHIPA. Doe expects to operate as an electronic service provider and, where the workflow enables custodians to exchange information, may also have duties as a health information network provider under [Ontario Regulation 329/04](https://www.ontario.ca/laws/regulation/040329). Those duties include privacy and threat-risk assessments, access and transfer logs, written agreements, public descriptions of safeguards, subcontractor controls, and breach notice at the first reasonable opportunity. Counsel will confirm Doe’s role for each workflow before launch.",
     },
     {
       type: "paragraph",
-      text: "In the United States, Doe expects to act as a business associate when it handles PHI for a clinic. A business associate agreement must be in place with that clinic, and equivalent obligations must flow to every subcontractor that touches PHI. We are also designing toward the controls in HHS’s proposed Security Rule update, while being careful not to describe a proposed rule as final law.",
-      links: [{ label: "HHS proposed HIPAA Security Rule update", href: "https://www.hhs.gov/hipaa/for-professionals/security/hipaa-security-rule-nprm/factsheet/index.html" }],
+      text: "In the United States, Doe expects to act as a business associate when it handles PHI for a clinic. A business associate agreement must be in place with that clinic, and equivalent obligations must flow to every subcontractor that touches PHI. We are also designing toward the controls in [HHS’s proposed Security Rule update](https://www.hhs.gov/hipaa/for-professionals/security/hipaa-security-rule-nprm/factsheet/index.html), while being careful not to describe a proposed rule as final law.",
     },
     {
       type: "paragraph",
-      text: "The program has named privacy and security owners, outside healthcare privacy counsel, workforce training, a complete data and vendor map, workflow-level assessments, access and retention policies, incident response, and template agreements for clinics and subprocessors. Personal-agent developers may also face consumer health-data obligations outside HIPAA, including the FTC Health Breach Notification Rule; Doe’s terms and technical controls need to account for that boundary.",
-      links: [{ label: "FTC Health Breach Notification Rule", href: "https://www.ftc.gov/legal-library/browse/rules/health-breach-notification-rule" }],
+      text: "The program has named privacy and security owners, outside healthcare privacy counsel, workforce training, a complete data and vendor map, workflow-level assessments, access and retention policies, incident response, and template agreements for clinics and subprocessors. Personal-agent developers may also face consumer health-data obligations outside HIPAA, including the [FTC Health Breach Notification Rule](https://www.ftc.gov/legal-library/browse/rules/health-breach-notification-rule); Doe’s terms and technical controls need to account for that boundary.",
     },
     { type: "heading", text: "Months three and four: prove identity without proving a diagnosis." },
     {
@@ -1709,49 +1682,32 @@ const COMPLIANCE_PLAN: DoeHealthBlogArticle = {
         {
           when: "Nov–Dec ’26",
           title: "The Index",
-          items: [
-            "Clinic claims, verified by registry, callback, or domain email",
-            "Providers and administrators enter services, providers, coverage, prices, and offers",
-            "Doe site setup from the same record",
-            "Structured, agent-readable data, with no PHI and no integrations",
-          ],
+          text: "Clinics claim their page and prove they can speak for it by registry, callback, or domain email. They enter services, providers, coverage, prices, and offers once, and the same record powers their Doe site and the structured data agents read. There is no PHI and no integration.",
           unlock: "clinics agents can read, with nothing regulated to protect.",
         },
         {
           when: "Jan–Feb ’27",
           title: "Doe Auth, and the compliance programs",
-          items: [
-            "Doe Auth for clinics and agents: passkey approval, narrow grants, verified requests",
-            "Integration builds begin on synthetic patients",
-            "PHIPA and HIPAA programs start: officers, counsel, data map, assessments",
-          ],
+          text: "Doe Auth lets patients approve on their own device with a passkey, so agents carry narrow signed grants and clinics see verified requests. Integration builds begin on synthetic patients, and the PHIPA and HIPAA programs start with named officers, counsel, a data map, and assessments.",
           unlock: "agents a clinic can trust, before any chart is involved.",
         },
         {
           when: "Mar–Jun ’27",
           title: "Pilots on synthetic patients",
-          items: [
-            "Questions and offers live; booking, documents, and insurance in the sandbox",
-            "Agreements and BAAs drafted and signed with pilot clinics",
-            "First external penetration test and a tabletop incident drill",
-          ],
+          text: "Questions and offers go live, while booking, documents, and insurance stay in the sandbox with design-partner clinics. Agreements and BAAs are drafted and signed, and the first external penetration test and a tabletop incident drill take place.",
           unlock: "every integration proven under attack, and every gate item in reach.",
         },
         {
           when: "Q3 ’27",
           title: "The PHI gate, and SOC 2",
-          items: [
-            "PHI through personal agents, clinic by clinic, once each checklist is complete",
-            "Booking, documents, and insurance checks go live where cleared",
-            "SOC 2 readiness review and Type I",
-          ],
+          text: "PHI reaches personal agents clinic by clinic, once each checklist is complete. Booking, documents, and insurance checks go live where cleared, and the SOC 2 readiness review and Type I examination begin.",
           unlock: "real patient requests, under agreements and audit.",
           seed: true,
         },
         {
           when: "Q4 ’27 →",
           title: "Toward Seed",
-          items: ["SOC 2 Type II observation window", "Second penetration test", "Hospital vendor reviews"],
+          text: "The SOC 2 Type II observation window runs, a second penetration test is completed, and hospital vendor reviews begin.",
           unlock: "a SOC 2 Type II report by Seed.",
         },
       ],
