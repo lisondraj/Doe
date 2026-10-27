@@ -1,4 +1,5 @@
 import { CAREERS_PATH } from "@/lib/doehealth/doehealth-careers";
+import { ABOUT_CONTACT_MAILTO_SUBJECT as ABOUT_CONTACT_MAILTO } from "@/lib/about/about-contact";
 import { ABOUT_PATH, WAITLIST_PATH } from "@/lib/site-domains";
 
 /** Desktop nav split-button primary CTA on /doehealthdesk. */
@@ -10,10 +11,10 @@ export const DOEHEALTH_DESK2_NAV_PRIMARY_CTA = {
 /** Desk announcement strip above the nav. */
 export const DOEHEALTH_DESK2_ANNOUNCEMENT = {
   message: "Healthcare in the Era of Personal Agents",
-  /** iPhone — shorter line, inline with See Video. */
+  /** iPhone — shorter line, inline with Contact Us. */
   phoneMessage: "Healthcare & Personal Agents",
-  linkLabel: "See Video",
-  href: ABOUT_PATH,
+  linkLabel: "Contact Us",
+  href: ABOUT_CONTACT_MAILTO,
 } as const;
 
 /** Chevron menu on the desk2 primary CTA — single option. */

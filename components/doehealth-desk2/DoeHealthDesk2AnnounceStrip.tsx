@@ -1,14 +1,12 @@
 "use client";
 
-import Link from "next/link";
-
 import { DoeLinkArrow } from "@/components/shared/DoeLinkArrow";
 import { DOEHEALTH_DESK2_ANNOUNCEMENT } from "@/lib/doehealthdesk2/doehealthdesk2-nav-copy";
 import { inter } from "@/lib/home/fonts";
 
 type DoeHealthDesk2AnnounceStripProps = {
   onDismiss: () => void;
-  /** iPhone — short label beside Learn more. */
+  /** iPhone — short label beside Contact Us. */
   compact?: boolean;
 };
 
@@ -18,10 +16,10 @@ export function DoeHealthDesk2AnnounceStrip({ onDismiss, compact = false }: DoeH
     <div className={`doehealth-desk2-announce ${inter.className}`}>
       <p>
         <span>{compact ? DOEHEALTH_DESK2_ANNOUNCEMENT.phoneMessage : DOEHEALTH_DESK2_ANNOUNCEMENT.message}</span>
-        <Link href={DOEHEALTH_DESK2_ANNOUNCEMENT.href} className="doehealth-desk2-announce__link">
+        <a href={DOEHEALTH_DESK2_ANNOUNCEMENT.href} className="doehealth-desk2-announce__link">
           {DOEHEALTH_DESK2_ANNOUNCEMENT.linkLabel}
           <DoeLinkArrow className="doehealth-desk2-announce__arrow" width={13} height={13} />
-        </Link>
+        </a>
       </p>
       <button type="button" aria-label="Dismiss announcement" onClick={onDismiss}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
