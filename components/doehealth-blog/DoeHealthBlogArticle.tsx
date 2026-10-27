@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 
 import { DoeHealthBlogFilm } from "@/components/doehealth-blog/DoeHealthBlogFilm";
 import { DoeHealthBlogListen } from "@/components/doehealth-blog/DoeHealthBlogListen";
+import { DoeHealthBlogMotion } from "@/components/doehealth-blog/DoeHealthBlogMotion";
 import { DoeHealthBlogPlaceholder, articleBoxColors } from "@/components/doehealth-blog/DoeHealthBlogPlaceholder";
 import { DoeHealthBlogVideo } from "@/components/doehealth-blog/DoeHealthBlogVideo";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
@@ -40,6 +41,16 @@ function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: 
           {/* Plain box behind the view while it loads; the film draws its own beige, the product pages their tone. */}
           <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doehealth-blog-article__figure-art" style={{ background: "#F4EEDF" }}>
             <DoeHealthBlogProductView view={block.view} />
+          </div>
+          <figcaption>{block.caption}</figcaption>
+        </figure>
+      );
+    case "motion":
+      return (
+        <figure className="doehealth-blog-article__figure">
+          {/* Drawn for the article, not the product: its own diagram over a dot field, animated while on screen. */}
+          <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doehealth-blog-article__figure-art doehealth-blog-article__figure-art--motion">
+            <DoeHealthBlogMotion scene={block.scene} />
           </div>
           <figcaption>{block.caption}</figcaption>
         </figure>

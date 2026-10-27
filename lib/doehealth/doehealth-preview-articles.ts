@@ -1,5 +1,5 @@
 /**
- * The /news articles /earlypreview links to, and the Compliance & Security memo, each duplicated at `/preview-<slug>`:
+ * The /news articles /earlypreview links to, the Compliance & Security memo, and the compliance plan, each duplicated at `/preview-<slug>`:
  * the same article, with the /earlypreview nav (no page links, "Contact James" in place of the waitlist). Kept apart
  * from the article bodies so the middleware can read the paths without loading them.
  */
@@ -10,6 +10,7 @@ export const PREVIEW_ARTICLE_SLUGS = [
   "the-new-front-door-for-aesthetic-care",
   "membership-medicine-extended-by-agents",
   "compliance-and-security-through-seed",
+  "from-public-index-to-protected-health",
 ] as const;
 
 export type PreviewArticleSlug = (typeof PREVIEW_ARTICLE_SLUGS)[number];
