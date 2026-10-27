@@ -47,11 +47,19 @@ export type DoeHealthBlogAppView = {
 
 export type DoeHealthBlogView = DoeHealthBlogFilmView | DoeHealthBlogAppView;
 
+/** The animated explainer figures (components/doehealth-blog/diagrams): drawn UI, not the product. */
+export type DoeHealthBlogDiagramId = "hero" | "stack" | "mcp" | "a2a" | "oauth" | "proxy" | "screens";
+
+/** One explainer figure, on an article box tone with one of the dot designs behind it. */
+export type DoeHealthBlogDiagram = { id: DoeHealthBlogDiagramId; tone: DoeHealthBlogPlaceholderTone; dots: DoeHealthBlogDots };
+
 export type DoeHealthBlogBlock =
   | { type: "paragraph"; text: string }
   | { type: "heading"; text: string }
   | { type: "figure"; tone: DoeHealthBlogPlaceholderTone; caption: string }
   | { type: "view"; view: DoeHealthBlogView; caption: string }
+  /** An animated explainer figure in the films' language. */
+  | { type: "diagram"; diagram: DoeHealthBlogDiagram; caption: string }
   /** A boxed note for investors: a title, a row of figures, and the points behind them. */
   | {
       type: "investor";
@@ -121,6 +129,8 @@ export type DoeHealthBlogArticle = {
    * screenshot thumbnail as on /earlypreview (a 16:9 frame at the film's own 4K size).
    */
   film?: DoeHealthBlogFilm;
+  /** An animated explainer figure as the hero, in place of the photo (and without the founders' names). */
+  heroDiagram?: DoeHealthBlogDiagram;
   lede: string;
   blocks: readonly DoeHealthBlogBlock[];
 };
@@ -1356,7 +1366,165 @@ const COMPLIANCE_AND_SECURITY: DoeHealthBlogArticle = {
   ],
 };
 
+const AGENT_STACK: DoeHealthBlogArticle = {
+  slug: "how-personal-agents-reach-organizations",
+  heroDiagram: { id: "hero", tone: "sand", dots: "wave" },
+  eyebrow: "Field Guide",
+  title: ["How Personal Agents", "Reach Organizations"],
+  author: "James Lisondra",
+  date: "October 27, 2026",
+  excerpt:
+    "Muse, Instinct, Poke and a wave of consumer agents now act for people. A field guide to how they find and deal with organizations: MCP, A2A, OAuth, delegated identity, and computer and phone use.",
+  heroTone: "sand",
+  wave: { top: 0.46, amp: 58, phase: 1.2, scale: 0.95, slant: -0.2 },
+  lede: "A new kind of customer is arriving at every organization's door. It types faster than any person, never waits on hold willingly, and it is acting for someone who is not in the room.",
+  blocks: [
+    {
+      type: "paragraph",
+      text: "In 2026 the personal agent stopped being a demo. Meta launched Muse in September, an agent that sends email, books travel, fills out forms and makes purchases for its user, with a free tier and paid plans at $20 and $100 a month. Instinct, which people simply text or call, became one of the most discussed launches of the summer while still invite-only. Poke, from the Interaction Company of California, lives in iMessage, SMS and Telegram, and in June became the first third-party AI agent Apple approved to message people through Messages for Business. OpenClaw, the open-source agent people run on their own machines and talk to over WhatsApp or Telegram, passed 200,000 GitHub stars within months of its release.",
+    },
+    {
+      type: "paragraph",
+      text: "These products look different, but they share a shape. The interface is a message thread. The work happens somewhere else: in the person's inbox and calendar, and increasingly at the organizations the person deals with, the clinic, the airline, the city office, the pharmacy. The hard part is no longer understanding what the person wants. It is reaching the organization that can do it, proving the agent is allowed to ask, and getting a reliable answer back.",
+    },
+    {
+      type: "paragraph",
+      text: "There are five ways that happens today. Some are open standards with real momentum, some are drafts still being written, and one is the fallback every agent uses when nothing else exists. This guide walks through each, what it is for, and what it means for an organization that wants agents to find it and deal with it well.",
+    },
+    { type: "heading", text: "Five ways in." },
+    {
+      type: "paragraph",
+      text: "From most structured to least: an agent can use tools the organization publishes (MCP), talk to an agent the organization runs (A2A), carry the person's permission into the organization's systems (OAuth), prove who is acting and for whom (delegated identity, the proxy layer), or, when none of that exists, use the website or phone line exactly as a person would (computer and phone use). In practice a single errand often touches several of them.",
+    },
+    {
+      type: "diagram",
+      diagram: { id: "stack", tone: "panel", dots: "halftone" },
+      caption: "The five ways a personal agent reaches an organization, from the most structured to the fallback. The further down the list, the slower, costlier, and harder to audit each request becomes.",
+    },
+    { type: "heading", text: "MCP: the organization's tools, described for agents." },
+    {
+      type: "paragraph",
+      text: "The Model Context Protocol is an open standard for connecting AI applications to outside tools and data. An organization runs an MCP server; an agent connects as a client, asks what the server offers, and calls it. A server exposes tools (actions such as find_openings or book_visit, each with a typed input schema), resources (data the agent can read), and prompts (reusable templates). Because every tool describes itself, an agent that has never seen a server before can read its list and use it correctly.",
+    },
+    {
+      type: "paragraph",
+      text: "MCP began at Anthropic in late 2024 and spread quickly across Claude, ChatGPT, Gemini, Microsoft Copilot, Cursor and VS Code. In December 2025 Anthropic donated it to the Agentic AI Foundation, a new Linux Foundation project formed alongside Block's goose and OpenAI's AGENTS.md, with Amazon, Google, Microsoft, OpenAI and Cloudflare among its members. By then more than 10,000 MCP servers had been published.",
+    },
+    {
+      type: "paragraph",
+      text: "The current specification, released on July 28, 2026, made the protocol stateless: there is no long-lived session to keep open, each request carries what the server needs, and a server/discover method returns its capabilities. It also added MCP Apps, an official extension that lets a server send back interactive interface inside the agent's window, and moved long-running tasks into their own extension so a booking that takes minutes can be checked on later rather than held open.",
+    },
+    {
+      type: "diagram",
+      diagram: { id: "mcp", tone: "cream", dots: "tide" },
+      caption: "A clinic's MCP server lists four tools, two marked as needing approval. The person's agent finds openings, picks one, and asks the person in their message thread before the tool that books.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "What it is good for", text: "well-defined actions with clear inputs and outputs: availability, prices, booking, cancelling, order status, document requests." },
+        { lead: "What the organization controls", text: "exactly which actions exist, what each returns, and which ones require the person's confirmation or a staff review before they run." },
+        { lead: "What it leaves to the agent", text: "the reasoning. The organization publishes capabilities; the person's agent decides which to call and in what order." },
+      ],
+    },
+    { type: "heading", text: "A2A: when the organization has an agent of its own." },
+    {
+      type: "paragraph",
+      text: "MCP treats the organization as a set of tools. The Agent2Agent protocol treats it as a counterpart. Google introduced A2A in April 2025 and donated it to the Linux Foundation; its first stable 1.0 specification arrived in 2026, and by its first anniversary more than 150 organizations supported it, with support built into Microsoft's Azure AI Foundry and Copilot Studio and Amazon Bedrock AgentCore.",
+    },
+    {
+      type: "paragraph",
+      text: "An organization that runs an agent publishes an Agent Card at a well-known address, /.well-known/agent-card.json. The card names the agent, lists its skills, says which transports it speaks (JSON-RPC, gRPC, or plain HTTP with JSON), declares how callers must authenticate, and can be cryptographically signed so a caller knows it came from the organization. The person's agent reads the card, then sends a message that starts a task. Tasks move through clear states: submitted, working, input-required when the organization's agent needs something, and finally completed with an artifact, or failed or canceled.",
+    },
+    {
+      type: "paragraph",
+      text: "The difference matters when the exchange is a conversation rather than a function call. A front-desk agent can ask a follow-up question, apply its own policies, consult staff, and keep its internal systems private. Neither side has to expose its reasoning or its data to the other, only the messages and the result.",
+    },
+    {
+      type: "diagram",
+      diagram: { id: "a2a", tone: "gold", dots: "curtain" },
+      caption: "The clinic's front-desk agent publishes a signed Agent Card. The person's agent hands it a task, answers its question about coverage, and gets back a confirmed visit as the task's artifact.",
+    },
+    { type: "heading", text: "OAuth: carrying the person's permission." },
+    {
+      type: "paragraph",
+      text: "Reaching an organization is not the same as being allowed to act there. For that, agents use OAuth, the same standard behind every \"Sign in with\" button, in a profile tightened for agents. MCP's authorization rules are a good map of where the industry has settled. The organization's server answers an unauthenticated request with a 401 and a pointer to its protected-resource metadata, which names the authorization server to use. The agent identifies itself with a client ID that is itself a URL, pointing at a public document describing the agent, so an organization can recognise an agent it has never registered. The person signs in and approves on a consent screen that names the agent and the permissions it is asking for.",
+    },
+    {
+      type: "paragraph",
+      text: "The details are where the safety lives. PKCE is mandatory, so an intercepted code is useless. Every token is requested for one specific server and that server must reject tokens meant for anyone else. Servers may not pass a token through to another service. Tokens are meant to be short-lived, and when an agent needs more than it was granted, the server replies with a 403 naming the missing scope and the agent goes back to the person to ask, rather than holding broad access just in case.",
+    },
+    {
+      type: "diagram",
+      diagram: { id: "oauth", tone: "clay", dots: "rings" },
+      caption: "Discovery from a 401, a consent screen that names the agent and only the scopes it needs, a token bound to one server with the agent recorded as the actor, and a step-up request when paying needs more.",
+    },
+    { type: "heading", text: "The proxy layer: acting for someone." },
+    {
+      type: "paragraph",
+      text: "A personal agent is a proxy. It is not the person, and an organization increasingly needs to know three things about every request: which agent is calling, whom it is acting for, and what that person actually authorized. Three pieces of emerging infrastructure answer those questions separately.",
+    },
+    {
+      type: "list",
+      items: [
+        { lead: "Which agent", text: "Web Bot Auth, now an IETF working-group draft authored by engineers at Cloudflare and Google, has agents sign each HTTP request with HTTP Message Signatures and name a Signature-Agent URL where their public keys are published. A website can verify the signature instead of guessing from IP addresses or user-agent strings. The draft is explicit that this proves which agent sent the request, not whether the request is authorized." },
+        { lead: "For whom", text: "OAuth's token exchange standard already defines an act claim for delegation, and several drafts extend the sign-in flow so a token records both the person (the subject) and the agent acting for them (the actor). An organization's records can then show that Maya asked, through her agent, rather than that Maya clicked." },
+        { lead: "Within what limits", text: "payment protocols add signed, specific mandates. Google's Agent Payments Protocol, backed by more than 60 payments and financial companies, uses cryptographically signed intent and cart mandates. OpenAI and Stripe's Agentic Commerce Protocol standardises checkout with single-use payment tokens, and Coinbase's x402 revives HTTP's 402 status code for machine-to-machine payments." },
+      ],
+    },
+    {
+      type: "diagram",
+      diagram: { id: "proxy", tone: "umber", dots: "sphere" },
+      caption: "Maya signs a narrow mandate. Her agent signs its request and carries a token naming both of them. The clinic checks which agent is calling, whom it acts for, and that the request sits inside the mandate before it accepts.",
+    },
+    {
+      type: "quote",
+      text: "Identity and permission are different questions. A signature says which agent is calling; only the person's grant says what it may do.",
+    },
+    { type: "heading", text: "Computer and phone use: the fallback for everything else." },
+    {
+      type: "paragraph",
+      text: "Most organizations publish none of the above. So personal agents do what a person would. Muse runs each user's tasks in what Meta calls a dedicated, secure computer with its own browser, and uses that browser when a service has no public API. Instinct keeps a persistent cloud computer that holds its state between messages. On phones, Google's Gemini Intelligence, announced in May, operates third-party Android apps to finish multi-step chores and asks before any purchase. In September Google began testing Call for Me, which lets Gemini phone a business for its user, work through the phone menu, wait on hold, and talk to staff while the person watches a live transcript.",
+    },
+    {
+      type: "paragraph",
+      text: "The models are good at this now. On OSWorld-Verified, a standard benchmark of real computer tasks, the best reported scores sit in the mid-80s percent, though most are self-reported by the labs. The limits are elsewhere. Websites put up CAPTCHAs and two-factor prompts built to stop exactly this kind of visitor. A page the agent reads can carry hidden instructions meant to hijack it. Every click is slower and costlier than a function call, and when a screen changes, the agent breaks. A phone call takes minutes of staff time, and leaves the organization with no structured record of who asked for what.",
+    },
+    {
+      type: "diagram",
+      diagram: { id: "screens", tone: "sand", dots: "wave" },
+      caption: "Without an interface for agents: the agent fills in a booking form in its own browser until a human check stops it, or phones the front desk, presses 1, waits on hold, and asks a person to do the booking.",
+    },
+    { type: "heading", text: "How it fits together." },
+    {
+      type: "paragraph",
+      text: "Follow one request. Maya texts her agent to book physio after work this week. The agent looks for the clinic's agent card or MCP server. If it finds one, it signs its requests so the clinic knows which agent is calling, gets Maya's consent through OAuth for exactly the scopes it needs, finds openings, and asks Maya before it books. If paying is involved, it carries a signed mandate with a ceiling. Every step leaves a record that names Maya, her agent, and what was allowed. If the clinic publishes nothing, the agent opens the website in its own browser or picks up the phone, and the same errand takes longer, costs more, and may stall at a CAPTCHA.",
+    },
+    {
+      type: "paragraph",
+      text: "For organizations, this is a discovery question as much as a technical one. Agents will route toward the places they can deal with reliably. An organization that is legible to agents gets the booking in seconds, on its own terms. One that is not still gets the visitor, only slower, through its most expensive channel, and with far less control over what happens.",
+    },
+    { type: "heading", text: "What an organization can do now." },
+    {
+      type: "list",
+      items: [
+        { lead: "Publish a front door for agents", text: "an MCP server for the handful of actions people ask for most, with clear names, schemas, and an approval flag on anything consequential." },
+        { lead: "Run an agent if the work is conversational", text: "and publish a signed Agent Card so other agents can find it, know what it can do, and know how to authenticate." },
+        { lead: "Use OAuth with narrow scopes", text: "a consent screen that names the agent, short-lived tokens bound to your server, and step-up when an agent wants more." },
+        { lead: "Verify agents instead of blocking all bots", text: "accept signed agent traffic, record the person and the actor separately, and keep stricter defaults for unsigned automation." },
+        { lead: "Decide where a person stays in the loop", text: "payments, records, and anything that changes an account can require the person's confirmation, and sometimes a staff member's." },
+        { lead: "Keep the human channels working", text: "agents will still call and still use the website, so a clear phone menu and an accessible booking page help them too." },
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "None of these standards is finished. A2A reached its first stable release this year, MCP rewrote its transport in July, and the identity and delegation work is still in drafts. But the direction is clear: personal agents are becoming the way people deal with organizations, and the organizations that describe themselves in a language agents can read will be the ones those agents can actually reach.",
+    },
+  ],
+};
+
 export const DOEHEALTH_BLOG_ARTICLES = [
+  AGENT_STACK,
   COMPLIANCE_AND_SECURITY,
   BEYOND_FIND_A_DOCTOR,
   MEMBERSHIP_MEDICINE,

@@ -14,6 +14,12 @@ const DoeHealthBlogProductView = dynamic(
   { ssr: false },
 );
 
+/** The animated explainer figures, also client only. */
+const DoeHealthBlogDiagram = dynamic(
+  () => import("@/components/doehealth-blog/diagrams").then((mod) => mod.DoeHealthBlogDiagram),
+  { ssr: false },
+);
+
 function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: Article }) {
   switch (block.type) {
     case "paragraph":
@@ -40,6 +46,15 @@ function ArticleBlock({ block, article }: { block: DoeHealthBlogBlock; article: 
           {/* Plain box behind the view while it loads; the film draws its own beige, the product pages their tone. */}
           <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doehealth-blog-article__figure-art" style={{ background: "#F4EEDF" }}>
             <DoeHealthBlogProductView view={block.view} />
+          </div>
+          <figcaption>{block.caption}</figcaption>
+        </figure>
+      );
+    case "diagram":
+      return (
+        <figure className="doehealth-blog-article__figure">
+          <div className="doehealth-blog-placeholder doehealth-blog-placeholder--pattern doehealth-blog-article__figure-art" style={{ background: articleBoxColors(block.diagram.tone).bg }}>
+            <DoeHealthBlogDiagram diagram={block.diagram.id} tone={block.diagram.tone} dots={block.diagram.dots} />
           </div>
           <figcaption>{block.caption}</figcaption>
         </figure>
@@ -131,7 +146,14 @@ export function DoeHealthBlogArticle({ article }: { article: Article }) {
       </header>
 
       {/* The hero box is the desktop video screen (the lounge photo with the founders and the play button). */}
-      {article.film ? (
+      {article.heroDiagram ? (
+        <div
+          className="doehealth-blog-article__hero doehealth-blog-diagram-hero doehealth-blog-placeholder doehealth-blog-placeholder--pattern"
+          style={{ background: articleBoxColors(article.heroDiagram.tone).bg }}
+        >
+          <DoeHealthBlogDiagram diagram={article.heroDiagram.id} tone={article.heroDiagram.tone} dots={article.heroDiagram.dots} />
+        </div>
+      ) : article.film ? (
         <DoeHealthBlogFilm
           className="doehealth-blog-article__hero"
           film={article.film.id}

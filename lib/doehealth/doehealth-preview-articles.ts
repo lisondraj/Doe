@@ -10,6 +10,7 @@ export const PREVIEW_ARTICLE_SLUGS = [
   "the-new-front-door-for-aesthetic-care",
   "membership-medicine-extended-by-agents",
   "compliance-and-security-through-seed",
+  "how-personal-agents-reach-organizations",
 ] as const;
 
 export type PreviewArticleSlug = (typeof PREVIEW_ARTICLE_SLUGS)[number];
