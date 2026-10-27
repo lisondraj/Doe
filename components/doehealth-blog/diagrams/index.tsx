@@ -1,13 +1,7 @@
 "use client";
 
+import { A2A_SCENE, HERO_SCENE, MCP_SCENE, OAUTH_SCENE, PROXY_SCENE, SCREENS_SCENE, STACK_SCENE } from "@/components/doehealth-blog/diagrams/connectors";
 import { DiagramFrame, type DiagramScene } from "@/components/doehealth-blog/diagrams/kit";
-import { A2A_SCENE } from "@/components/doehealth-blog/diagrams/scene-a2a";
-import { HERO_SCENE } from "@/components/doehealth-blog/diagrams/scene-hero";
-import { MCP_SCENE } from "@/components/doehealth-blog/diagrams/scene-mcp";
-import { OAUTH_SCENE } from "@/components/doehealth-blog/diagrams/scene-oauth";
-import { PROXY_SCENE } from "@/components/doehealth-blog/diagrams/scene-proxy";
-import { SCREENS_SCENE } from "@/components/doehealth-blog/diagrams/scene-screens";
-import { STACK_SCENE } from "@/components/doehealth-blog/diagrams/scene-stack";
 import type { DoeHealthBlogDiagramId, DoeHealthBlogDots, DoeHealthBlogPlaceholderTone } from "@/lib/doehealth/doehealth-blog-articles";
 
 export const DIAGRAM_SCENES: Record<DoeHealthBlogDiagramId, DiagramScene> = {
@@ -21,8 +15,8 @@ export const DIAGRAM_SCENES: Record<DoeHealthBlogDiagramId, DiagramScene> = {
 };
 
 /**
- * An animated explainer figure: drawn UI in the films' language (paper cards, ink and salmon agent pills, P22 titles)
- * on the article's dot backdrop. Not the product shell; these explain the open protocols, not Doe.
+ * An animated explainer figure: the product's paper panels, rows, and status pills on the article's dot backdrop.
+ * These explain the open protocols, not Doe's own screens.
  */
 export function DoeHealthBlogDiagram({
   diagram,

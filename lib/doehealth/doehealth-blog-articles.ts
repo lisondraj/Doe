@@ -1420,7 +1420,7 @@ const AGENT_STACK: DoeHealthBlogArticle = {
     {
       type: "diagram",
       diagram: { id: "stack", tone: "panel", dots: "halftone" },
-      caption: "The five ways a personal agent reaches an organization, from the most structured to the fallback. The further down the list, the slower, costlier, and harder to audit each request becomes.",
+      caption: "Poppy points the agent to an organization’s front door. Tools, agents, consent, and signed identity behind it take seconds; the browser and phone are the slow fallback.",
     },
     { type: "heading", text: "Poppy: a front door for personal agents." },
     {
@@ -1493,7 +1493,7 @@ const AGENT_STACK: DoeHealthBlogArticle = {
     {
       type: "diagram",
       diagram: { id: "oauth", tone: "clay", dots: "rings" },
-      caption: "Discovery from a 401, a consent screen that names the agent and only the scopes it needs, a token bound to one server with the agent recorded as the actor, and a step-up request when paying needs more.",
+      caption: "A consent screen that names the agent and only the scopes it needs, a token bound to one server with the agent recorded as the actor, and a fresh request when paying needs more.",
     },
     { type: "heading", text: "Delegation: identify the agent, the person, and the limit." },
     {
@@ -1939,7 +1939,7 @@ const PUBLIC_INDEX_PLAN: DoeHealthBlogArticle = {
       type: "planmotion",
       scene: "metrics",
       caption:
-        "Per-clinic metrics: how complete and fresh the page is, what agents read and ask, how quickly the clinic answers, and how that clinic's lanes are doing in evals.",
+        "Per-clinic metrics: how often agents read each practice this week, and how quickly its staff answer what agents send.",
     },
     {
       type: "list",
