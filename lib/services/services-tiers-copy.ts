@@ -211,6 +211,46 @@ export const SERVICES_TIERS = {
       ],
     },
     {
+      id: "spam",
+      label: "Spam protection",
+      rows: [
+        row(
+          "Spam Filter",
+          "Spam, junk leads and sales pitches filtered out before they reach you. Free catches the obvious; every paid tier filters it all.",
+          ["Basic", "Full", "Full", "Full"],
+        ),
+        row(
+          "Verified Agents Only",
+          "Only agents acting for a real, verified customer can ask for a quote or book. Anonymous bots are turned away.",
+          FROM_BASIC,
+        ),
+        row("Block List", "Block any agent, number or email in one click, across every channel.", FROM_BASIC),
+        row(
+          "Fake Job Detection",
+          "Jobs that look fake, like a quote request with no real address or a burst of holds, are caught and held for review before they take a slot.",
+          FROM_ADVANCED,
+        ),
+        row(
+          "Lead Quality Score",
+          "Every request scored for how likely it is to become a real, paying job, so you answer the best ones first.",
+          FROM_ADVANCED,
+        ),
+        row(
+          "Bot & Scraper Blocking",
+          "Bots and scrapers kept off your calendar and your rates, including competitors pricing against you.",
+          FROM_ADVANCED,
+        ),
+        row("Rate Limits", "Caps on how often any one agent can ask or book, so no one can flood your business.", FROM_ADVANCED),
+        row("Duplicate Merging", "The same job requested twice, or by two agents for one customer, merged into one.", FROM_ADVANCED),
+        row(
+          "Robocall Screening",
+          "Spam and robocalls screened out before your voice agent or your crew pick up. With voice agents on Advanced.",
+          [false, false, "Add-on", true],
+        ),
+        row("Spam Report", "What was blocked each week and why, with one click to let anything back in.", FROM_ADVANCED),
+      ],
+    },
+    {
       id: "trust",
       label: "Trust & security",
       rows: [
