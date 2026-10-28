@@ -509,7 +509,7 @@ export const EARLYPREVIEW_MARKET_PLANS = {
       advanced: [
         "Everything in Basic",
         "Priority in the Doe Engine",
-        "Document exchange and Doe Interface",
+        "Doe Interface, documents and forms",
         "Offers, waitlist and autofill",
         "Deposits and no-show protection",
         "Analytics and automations",
@@ -521,7 +521,7 @@ export const EARLYPREVIEW_MARKET_PLANS = {
         "Appointments+",
         "Staff agents with computer use",
         "Voice agents",
-        "Insurance checks and AI Insights",
+        "Insurance, prior auth and AI Insights",
         "White-glove onboarding",
       ],
     }[tier.id],
@@ -580,6 +580,12 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
           cells: ["Most", true, true, true],
         },
         {
+          label: "Services & Providers",
+          detail:
+            "Your services, providers and prices, each set up the way agents should present them, with the offers and booking rules attached.",
+          cells: ALL,
+        },
+        {
           label: "Doe Engine",
           detail:
             "How agents find you. Standard adds the well-known file, MCP and an API. Priority surfaces your clinic ahead of others in rotation, with Exa Connect, the MCP registry, MCP and PAP.",
@@ -603,7 +609,7 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
       rows: [
         {
           label: "Agent Booking",
-          detail: "Patients' agents book appointments with you directly and send you their documents.",
+          detail: "Patients' agents book, reschedule and cancel with you directly, and send you their documents.",
           cells: FROM_BASIC,
         },
         {
@@ -614,22 +620,30 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
         {
           label: "Integrations",
           detail:
-            "Basic connects your email and any scheduling app you use. Advanced connects the deeper systems your clinic runs on.",
+            "Basic connects your email and any scheduling app you use. Advanced connects your EMR and the deeper systems your clinic runs on.",
           cells: [false, "Basic", "Advanced", "Advanced"],
         },
         {
           label: "Document Exchange",
-          detail: "Forms in and out: agents fill in your intake forms and receive the documents you send back.",
+          detail:
+            "Referrals, records, results, forms and payer letters in and out. Doe reads each one and files it to the chart, with every step tracked.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Forms",
+          detail:
+            "Build your intake, consent and records forms. Agents send them, fill in what they can for the patient, and return them where you want.",
           cells: FROM_ADVANCED,
         },
         {
           label: "Doe Interface",
-          detail: "A direct line from a patient's agent to your clinic, with no phone call.",
+          detail:
+            "A direct line from a patient's agent to your clinic, with no phone call. Bookings, refills, billing and prep questions arrive structured, and Doe answers or acts.",
           cells: FROM_ADVANCED,
         },
         {
           label: "Referrals",
-          detail: "Referrals in and out, with the records attached and the status tracked until the patient is seen.",
+          detail: "Referrals in and out, with the records attached, moving from Sent to Seen on one board.",
           cells: FROM_ADVANCED,
         },
         {
@@ -644,7 +658,12 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
         },
         {
           label: "Analytics",
-          detail: "See how agents find you, what patients ask for and what they book.",
+          detail: "When agents ask, what they ask, how fast you answer, what they book and through which channels.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Unanswered Questions",
+          detail: "The questions agents asked that your clinic couldn't answer yet, each with one click to cover it.",
           cells: FROM_ADVANCED,
         },
       ],
@@ -664,9 +683,19 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
           cells: FROM_ADVANCED,
         },
         {
+          label: "Invoicing & Collection",
+          detail: "Invoices go to the patient's agent to approve and pay, and every visit's payment is tracked to collected.",
+          cells: FROM_ADVANCED,
+        },
+        {
           label: "Payouts",
           detail: "Bookings, deposits and add-ons paid out together, on a schedule you can see.",
           cells: FROM_ADVANCED,
+        },
+        {
+          label: "Prior Authorization",
+          detail: "Prior auth with the payer handled before the visit, for every service that needs it.",
+          cells: ONE_ONLY,
         },
         {
           label: "Insurance Checks",
@@ -680,8 +709,14 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
       label: "Run the clinic",
       rows: [
         {
+          label: "Smart Schedule",
+          detail: "Your day, week, month and year at a glance, with each visit's notes and prep a click away.",
+          cells: FROM_BASIC,
+        },
+        {
           label: "Automations",
-          detail: "Rules in plain language. When something happens, Doe replies, routes, books or sends the form.",
+          detail:
+            "Workflows that run when something happens, like an agent booking, a claim denied or a link left unopened, each with its own switch.",
           cells: FROM_ADVANCED,
         },
         {
@@ -691,12 +726,13 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
         },
         {
           label: "Voice Agents",
-          detail: "Every call answered, day and night, with booking and a live handoff to staff. An add-on on Advanced.",
+          detail:
+            "Every call answered, day and night, with booking and a live handoff to staff. Calls land beside agent requests. An add-on on Advanced.",
           cells: [false, false, "Add-on", true],
         },
         {
           label: "Appointments+",
-          detail: "Appointments with the prep and the follow-up built in, before and after every visit.",
+          detail: "Appointments with the prep, pre-visit videos and follow-up built in, before and after every visit.",
           cells: ONE_ONLY,
         },
         {
@@ -716,13 +752,20 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
       label: "Team & support",
       rows: [
         {
+          label: "Agent Access",
+          detail:
+            "Decide what agents may do. Pick Open, Balanced or Cautious, then set each service to allowed, reviewed first, restricted or off. One switch pauses them all.",
+          cells: [false, "Presets", "Full", "Full"],
+        },
+        {
           label: "Roles & Permissions",
-          detail: "Decide what each person on your team, and each agent, can see and do.",
+          detail: "Decide what each person on your team can see and do.",
           cells: FROM_ADVANCED,
         },
         {
           label: "Every Location, One Login",
-          detail: "All your locations side by side, with their own hours, providers and settings, from one account.",
+          detail:
+            "All your locations from one account: each with its own hours and services, and who works where on which days.",
           cells: FROM_ADVANCED,
         },
         {

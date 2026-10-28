@@ -491,7 +491,8 @@ function IncludedScene({ p }: { p: number }) {
       observer.disconnect();
     };
   }, []);
-  // An opened row moves to the top of the table, so its description has the space under it in view.
+  // An opened row moves to the top of the table, so its description has the space under it in view. The top fade
+  // is off while a row is open, so the row itself isn't dimmed there.
   useEffect(() => {
     const box = scrollRef.current;
     const row = box?.querySelector<HTMLElement>(".earlypreview-market__incl-row.is-open");
@@ -542,7 +543,7 @@ function IncludedScene({ p }: { p: number }) {
           <div
             ref={scrollRef}
             role="rowgroup"
-            className={`earlypreview-market__incl-scroll${more.above ? " is-more-above" : ""}${more.below ? " is-more-below" : ""}`}
+            className={`earlypreview-market__incl-scroll${more.above && open === null ? " is-more-above" : ""}${more.below ? " is-more-below" : ""}`}
             data-lock-scroll
           >
             {INCLUDED.sections.map((section) => (
