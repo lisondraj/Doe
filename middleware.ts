@@ -95,8 +95,9 @@ async function handleAdminAccess(request: NextRequest): Promise<NextResponse | n
 
 /**
  * Pages linked from Desk 2's nav, banner, CTA and footer — they stay on doehealth.care instead of bouncing to `/`.
- * `/pricing`, `/earlypreview` and `/services` are served here too, so doehealth.care/pricing and the others open those pages,
- * and so are the `/preview-<slug>` article duplicates /earlypreview links to.
+ * `/pricing` and `/earlypreview` are served here too, so doehealth.care/pricing and doehealth.care/earlypreview open those pages,
+ * and so are the `/preview-<slug>` article duplicates /earlypreview links to. `/services` is served only here:
+ * doe.care bounces it back to `/`.
  */
 const DOEHEALTH_CARE_SUBPAGES = [
   "/about",
@@ -222,7 +223,7 @@ export async function middleware(request: NextRequest) {
   }
 
   /**
-   * doe.care also serves the pre-launch page, /earlypreview, /services and the `/preview-<slug>` articles /earlypreview links to, plus the
+   * doe.care also serves the pre-launch page, /earlypreview and the `/preview-<slug>` articles it links to, plus the
    * files they load from public/ (videos, models, fonts) that the matcher doesn't already skip.
    */
   if (isPrimaryHost(host)) {
@@ -231,7 +232,6 @@ export async function middleware(request: NextRequest) {
       pathname === LANDINGLAUNCH_PATH ||
       pathname === "/earlypreview" ||
       pathname.startsWith("/earlypreview/") ||
-      pathname === "/services" ||
       PREVIEW_ARTICLE_PATHS.includes(pathname) ||
       isFile
     ) {
