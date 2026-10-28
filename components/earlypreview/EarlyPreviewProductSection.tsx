@@ -3,12 +3,13 @@
 import dynamic from "next/dynamic";
 import { type CSSProperties, type ReactNode, memo, useEffect, useRef, useState } from "react";
 
+import { SkipButton } from "@/components/doehealth-desk2/DoeHealthDesk2AudienceSection";
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
 import { DoeHealthProductArtboard, type DoeHealthProductTab } from "@/components/doehealth-product/DoeHealthProductHome";
 import type { EarlyPreviewProductFilm } from "@/components/earlypreview/EarlyPreviewProductFilmFrame";
 import type { ProductRailKey } from "@/components/earlypreview/EarlyPreviewProductShell";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
-import { cssVars as vars, scrollRamp as ramp } from "@/lib/doehealthdesk2/use-doehealthdesk2-scroll-lock";
+import { cssVars as vars, scrollRamp as ramp, useDoeHealthDesk2ScrollLock } from "@/lib/doehealthdesk2/use-doehealthdesk2-scroll-lock";
 import {
   EARLYPREVIEW_PRODUCT_HEADLINE as HEADLINE,
   EARLYPREVIEW_PRODUCT_SLIDES as SLIDES,
@@ -146,22 +147,29 @@ const SlideVisual = memo(function SlideVisual({ visual }: { visual: Visual }) {
 
 /* ------------------------------------------------------------------ timing */
 
-/** The intro plays once, on a clock, as the section comes into view: the title lifts and fades, the boxes rise in. */
+/** Both layouts: the title lifts and the boxes rise in over the same stretch of progress. */
 const HEAD = [0.25, 1.0] as const;
 const SLIDES_IN = [0.85, 1.6] as const;
-/** Desktop: the title, once risen, fades away as the first four boxes come up into the grid beneath it. */
-const DESK_SLIDES_IN = [1.0, 1.7] as const;
+/** iPhone: the intro plays once, on a clock, as the section comes into view; the title fades as the boxes come up. */
 const TITLE_OUT = [0.85, 1.4] as const;
-/** iPhone: the title fades out over this stretch, as the first boxes come up under it. */
 const HEAD_OUT = [0.45, 1.15] as const;
 const INTRO_END = 1.7;
 /** How long the intro takes, start to end. */
 const INTRO_MS = 1700;
 /** How much of the wave's strength it gives up as the title rises: full at rest, this much fainter once it has risen. */
 const WAVE_FADE = 0.72;
-/** The boxes per screen: two by two on the desktop, two at a time in the iPhone's column. */
-const DESK_PER_PAGE = 4;
+/** iPhone: two boxes a screen, one over the other. */
 const PHONE_PER_PAGE = 2;
+
+/**
+ * Desktop: the section holds the scroll. The title lifts, one row of big boxes rises in under it, and the scroll pans
+ * the row right to left; the title, once risen, fades over the start of the pan, keeping its place so the boxes stay
+ * put. The last box holds a moment before the lock lets go.
+ */
+const PAN_TITLE_OUT = [1.5, 2.3] as const;
+const PER_SLIDE = 0.5;
+const PAN = [1.6, 1.6 + PER_SLIDE * (SLIDES.length - 1)] as const;
+const END = PAN[1] + 0.35;
 
 const smooth = (t: number) => t * t * (3 - 2 * t);
 const en = (p: number, range: readonly [number, number]) => smooth(ramp(p, range));
@@ -170,11 +178,11 @@ const en = (p: number, range: readonly [number, number]) => smooth(ramp(p, range
  * Plays the intro once most of the section is on screen: progress runs 0 → INTRO_END on a clock, not the scroll, so
  * the page never holds. With reduced motion it starts at the end.
  */
-function useIntro(ref: React.RefObject<HTMLElement | null>) {
+function useIntro(ref: React.RefObject<HTMLElement | null>, enabled: boolean) {
   const [p, setP] = useState(0);
   useEffect(() => {
     const el = ref.current;
-    if (!el) return undefined;
+    if (!el || !enabled) return undefined;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setP(INTRO_END);
       return undefined;
@@ -199,7 +207,7 @@ function useIntro(ref: React.RefObject<HTMLElement | null>) {
       observer.disconnect();
       cancelAnimationFrame(raf);
     };
-  }, [ref]);
+  }, [ref, enabled]);
   return p;
 }
 
@@ -212,7 +220,7 @@ function useColumnGlide(trackRef: React.RefObject<HTMLOListElement | null>, targ
   const state = useRef({ at: target, raf: 0 });
   useEffect(() => {
     const track = trackRef.current;
-    // The desktop pans its screens sideways instead (see the track's CSS).
+    // The desktop pans its one row with the scroll instead (set inline on the track).
     if (!track || !track.closest(".doehealth-desk2-page")?.querySelector(".doephone-mobile-root")) return undefined;
     const st = state.current;
     const items = Array.from(track.children) as HTMLElement[];
@@ -268,8 +276,8 @@ function BeigeTone() {
 }
 
 /**
- * One line per screen of boxes (four on the desktop, two on the iPhone), under the boxes; a click or tap brings that
- * screen in. The line in view is filled. Until the first tap the next line breathes, to show the lines can be tapped.
+ * iPhone: one line per screen of two boxes, under the boxes; a tap brings that screen in. The line in view is filled.
+ * Until the first tap the next line breathes, to show the lines can be tapped. Hidden on the desktop, which scrolls.
  */
 function ProductNav({
   pages,
@@ -385,6 +393,55 @@ function useCenterOffset(headRef: React.RefObject<HTMLDivElement | null>) {
   return offset;
 }
 
+/** Desktop: how far the row of boxes runs past the page's inset, so the pan ends on the last box. */
+function usePanDistance(trackRef: React.RefObject<HTMLOListElement | null>, enabled: boolean) {
+  const [distance, setDistance] = useState(0);
+  useEffect(() => {
+    const track = trackRef.current;
+    const stage = track?.parentElement;
+    if (!track || !stage || !enabled) return undefined;
+    const measure = () => setDistance(Math.max(0, track.scrollWidth - stage.clientWidth));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [trackRef, enabled]);
+  return distance;
+}
+
+/**
+ * Desktop: which boxes are in the stage or one stage away from it. A box that has panned well out of view unmounts its
+ * product (its timers and animation frames stop with it); one comes back in before it reaches the edge, so nothing pops
+ * in on screen.
+ */
+function useBoxesInStage(stageRef: React.RefObject<HTMLElement | null>, trackRef: React.RefObject<HTMLOListElement | null>, enabled: boolean) {
+  const [inStage, setInStage] = useState<Record<number, boolean>>({});
+  useEffect(() => {
+    const stage = stageRef.current;
+    const track = trackRef.current;
+    if (!stage || !track || !enabled) return undefined;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setInStage((prev) => {
+          let next = prev;
+          for (const entry of entries) {
+            const i = Number((entry.target as HTMLElement).dataset.index);
+            if (!!next[i] === entry.isIntersecting) continue;
+            if (next === prev) next = { ...prev };
+            next[i] = entry.isIntersecting;
+          }
+          return next;
+        });
+      },
+      { root: stage, rootMargin: "30% 100% 30% 100%" },
+    );
+    Array.from(track.children).forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, [stageRef, trackRef, enabled]);
+  return inStage;
+}
+
 /** Mounts the product pieces once the section is within a couple of screens, not with the page. */
 function useNear(ref: React.RefObject<HTMLElement | null>) {
   const [near, setNear] = useState(false);
@@ -437,39 +494,42 @@ function useStaggeredMount(near: boolean, count: number) {
 }
 
 /**
- * /earlypreview: the product, in a beige section under "We've been building together". It never holds the scroll. As it
- * comes into view the title, centred over a dot wave, lifts and fades and the boxes rise in: two by two on the desktop,
- * two at a time in a column on the iPhone, one piece of the product per box with its name underneath. The lines under
- * them bring in the next screen of boxes.
+ * /earlypreview: the product, in a beige section under "We've been building together". The title comes in centred over
+ * a dot wave, lifts and fades, and the boxes rise in, one piece of the product per box with its name underneath.
+ * Desktop: the section holds the scroll and pans one row of big boxes right to left; the lock lets go on the last.
+ * iPhone: it never holds the scroll; the intro plays on a clock and the boxes come two at a time, switched sideways.
  */
 export function EarlyPreviewProductSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLOListElement>(null);
   const phone = usePhoneLayout(sectionRef);
-  const p = useIntro(sectionRef);
+  const desk = phone === false;
+  const lock = useDoeHealthDesk2ScrollLock(sectionRef, END, desk);
+  const intro = useIntro(sectionRef, phone === true);
+  const p = desk ? lock.p : intro;
   useNavReveal(sectionRef);
   const near = useNear(sectionRef);
-  const ready = useStaggeredMount(near && phone === false, SLIDES.length);
+  const ready = useStaggeredMount(near && desk, SLIDES.length);
+  const inStage = useBoxesInStage(stageRef, trackRef, desk);
+  const distance = usePanDistance(trackRef, desk);
   const toCenter = useCenterOffset(headRef);
   const [page, setPage] = useState(0);
   const [fresh, setFresh] = useState(true);
 
-  const perPage = phone ? PHONE_PER_PAGE : DESK_PER_PAGE;
-  const pages = Math.ceil(SLIDES.length / perPage);
+  const pages = Math.ceil(SLIDES.length / PHONE_PER_PAGE);
   const goTo = (next: number) => {
     setFresh(false);
     setPage(Math.min(pages - 1, Math.max(0, next)));
   };
-  // The layout is known only once mounted; keep the screen in range when it is.
-  useEffect(() => setPage((current) => Math.min(current, pages - 1)), [pages]);
 
   const lift = en(p, HEAD);
-  const shown = en(p, phone ? SLIDES_IN : DESK_SLIDES_IN);
-  const gone = en(p, TITLE_OUT);
+  const shown = en(p, SLIDES_IN);
+  const gone = en(p, desk ? PAN_TITLE_OUT : TITLE_OUT);
   const headOut = en(p, HEAD_OUT);
+  const pan = en(p, PAN);
   useColumnGlide(trackRef, page);
-  const stageRef = useRef<HTMLDivElement>(null);
   useSwipe(stageRef, (dir) => {
     if (phone) goTo(page + dir);
   });
@@ -478,7 +538,7 @@ export function EarlyPreviewProductSection() {
     <div className="earlypreview-product-track">
       <section
         ref={sectionRef}
-        className="earlypreview-product doehealth-desk2-nav-wash-surface"
+        className={`earlypreview-product doehealth-desk2-nav-wash-surface${desk ? " is-pan" : ""}`}
         data-nav-beige="1"
         aria-label="Product design, built by providers"
       >
@@ -489,7 +549,7 @@ export function EarlyPreviewProductSection() {
           style={vars({ "--y": toCenter * (1 - lift), "--hf": 1 - headOut })}
         >
           {/* The dot wave hangs from the title's bottom edge and climbs with it. It keeps rolling while the section is
-              on screen, including after the title has risen. */}
+              on screen, including after the title has risen and the boxes pan. */}
           <div className="earlypreview-product__wave" style={{ opacity: 1 - WAVE_FADE * lift, ...vars({ "--wv-rise": gone }) }} aria-hidden>
             <DoeHealthBlogDotWave color="rgba(110, 92, 64, 0.3)" top={0.04} amp={40} fade={0.25} active={near && headOut < 1} />
           </div>
@@ -500,46 +560,47 @@ export function EarlyPreviewProductSection() {
         </div>
         <div className={`earlypreview-product__frame ${DOEPHONE_DESKTOP_PAGE_INSET_X}`}>
           <div ref={stageRef} className="earlypreview-product__stage">
-            <ol ref={trackRef} className="earlypreview-product__track" style={vars({ "--pg": page })}>
-              {SLIDES.map((slide, i) => {
-                const onPage = Math.floor(i / DESK_PER_PAGE);
-                return (
-                  <li
-                    key={slide.id}
-                    data-index={i}
-                    className="earlypreview-product__slide"
-                    aria-hidden={Math.floor(i / perPage) !== page || undefined}
-                    style={vars({
-                      "--pk": shown,
-                      "--i": Math.min(i % DESK_PER_PAGE, 3),
-                      "--pd": Math.floor(i / PHONE_PER_PAGE),
-                      "--pr": i % PHONE_PER_PAGE,
-                      "--len": slide.title.length,
-                      "--col": onPage * 3 + (i % 2) + 1,
-                      "--row": Math.floor((i % DESK_PER_PAGE) / 2) + 1,
-                    })}
-                  >
-                    <div className="earlypreview-product__box">
-                      <div className="earlypreview-product__ui" data-sit={VISUALS[slide.id].sit} data-still={phone ? "" : undefined}>
-                        {/* iPhone: each box is a still of the product, already toned (public/earlypreview/product), so
-                            the column moves pictures rather than live products under a colour filter. */}
-                        {phone ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img className="earlypreview-product__still" src={`/earlypreview/product/${slide.id}.webp`} alt="" loading="lazy" decoding="async" draggable={false} />
-                        ) : null}
-                        {/* Desktop: only the screen in view and the ones either side hold live products. */}
-                        {near && phone === false && Math.abs(onPage - page) <= 1 && i < ready ? <SlideVisual visual={VISUALS[slide.id]} /> : null}
-                      </div>
+            <ol
+              ref={trackRef}
+              className="earlypreview-product__track"
+              style={desk ? { transform: `translate3d(${(-pan * distance).toFixed(2)}px, 0, 0)` } : undefined}
+            >
+              {SLIDES.map((slide, i) => (
+                <li
+                  key={slide.id}
+                  data-index={i}
+                  className="earlypreview-product__slide"
+                  aria-hidden={(phone && Math.floor(i / PHONE_PER_PAGE) !== page) || undefined}
+                  style={vars({
+                    "--pk": shown,
+                    "--i": Math.min(i, 3),
+                    "--pd": Math.floor(i / PHONE_PER_PAGE),
+                    "--pr": i % PHONE_PER_PAGE,
+                    "--len": slide.title.length,
+                  })}
+                >
+                  <div className="earlypreview-product__box">
+                    <div className="earlypreview-product__ui" data-sit={VISUALS[slide.id].sit} data-still={phone ? "" : undefined}>
+                      {/* iPhone: each box is a still of the product, already toned (public/earlypreview/product), so
+                          the column moves pictures rather than live products under a colour filter. */}
+                      {phone ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img className="earlypreview-product__still" src={`/earlypreview/product/${slide.id}.webp`} alt="" loading="lazy" decoding="async" draggable={false} />
+                      ) : null}
+                      {/* Desktop: only the boxes in or beside the stage hold live products. */}
+                      {near && desk && inStage[i] && i < ready ? <SlideVisual visual={VISUALS[slide.id]} /> : null}
                     </div>
-                    <h3 className={`earlypreview-product__slide-title ${dmSans.className}`}>{slide.title}</h3>
-                  </li>
-                );
-              })}
+                  </div>
+                  <h3 className={`earlypreview-product__slide-title ${dmSans.className}`}>{slide.title}</h3>
+                </li>
+              ))}
             </ol>
           </div>
           <ProductArrows page={page} pages={pages} goTo={goTo} fresh={fresh} />
         </div>
-        <ProductNav pages={pages} page={page} perPage={perPage} goTo={goTo} fresh={fresh} />
+        <ProductNav pages={pages} page={page} perPage={PHONE_PER_PAGE} goTo={goTo} fresh={fresh} />
+        {/* Desktop: the skip stays mounted and is only hidden, so nothing is put into the page mid-scroll. */}
+        {phone ? null : <SkipButton shown={desk && lock.p > 0 && lock.p < END} label="Skip the product section" onClick={lock.skip} />}
       </section>
     </div>
   );

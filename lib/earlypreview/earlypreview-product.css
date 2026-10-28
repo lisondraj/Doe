@@ -164,6 +164,39 @@
   transform: translateY(calc((1 - var(--pk)) * (2.5rem + var(--i, 0) * 1.25rem)));
 }
 
+/*
+ * Desktop, scroll-locked (`is-pan`): the title keeps its room at the top and one row of big boxes takes the rest of the
+ * screen under it, panned right to left by the scroll (the transform is set inline from progress). The line menu is
+ * not used; the skip lets the lock go.
+ */
+.earlypreview-product.is-pan .earlypreview-product__head {
+  position: relative;
+}
+
+.earlypreview-product.is-pan .earlypreview-product__frame {
+  margin-top: clamp(1rem, 3vh, 2rem);
+}
+
+.earlypreview-product.is-pan .earlypreview-product__track {
+  display: flex;
+  gap: clamp(1.5rem, 2.4vw, 2.5rem);
+  width: max-content;
+  margin: 0;
+  transform: none;
+  transition: none;
+}
+
+.earlypreview-product.is-pan .earlypreview-product__slide {
+  --p-box-h: calc((100cqh - var(--p-cap) * 1.1 - var(--p-cap-gap)) * 0.9);
+  width: min(calc(var(--p-box-h) * 1.45), 80cqw);
+  grid-column: auto;
+  grid-row: auto;
+}
+
+.earlypreview-product.is-pan .earlypreview-product__nav {
+  display: none;
+}
+
 /* A rounded box the product sits in; no borders, no shadows, no glows. */
 .earlypreview-product__box {
   position: relative;

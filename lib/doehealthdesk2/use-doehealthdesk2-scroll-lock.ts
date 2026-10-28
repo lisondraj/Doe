@@ -63,11 +63,19 @@ function innerScrollTakes(target: EventTarget | null, deltaY: number) {
  * iPhone: the page is never held. Safari scrolls on its compositor, so every scrollTo correction lands
  * a frame late and reads as a judder. Instead the section is `position: sticky` inside a taller track
  * (its parent), the page scrolls natively, and progress follows how far the track has scrolled by.
+ *
+ * With `enabled` false the section never locks and progress stays at 0 (a section that locks on one layout only).
+ * Its listeners are still bound on mount, so the page's locks always run in page order.
  */
-export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, end: number) {
+export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, end: number, enabled = true) {
   const [p, setP] = useState(0);
   const skipRef = useRef<() => void>(() => {});
   const goToRef = useRef<(target: number) => void>(() => {});
+  // The listeners are bound on mount either way, so every section's lock keeps its place in the page's listener order
+  // (a lock bound later would see the wheel steps an earlier one holds as page scroll); a disabled lock ignores input.
+  const enabledRef = useRef(enabled);
+  enabledRef.current = enabled;
+  const wakeRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -239,6 +247,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     };
 
     const onScroll = () => {
+      if (!enabledRef.current) return;
       // Far from the section and not holding the page: skip the layout read. The settle at either end ran when it left.
       if (!near && !locked) {
         lastY = window.scrollY;
@@ -299,6 +308,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     };
 
     const onWheel = (event: WheelEvent) => {
+      if (!enabledRef.current) return;
       const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
       if (locked && innerScrollTakes(event.target, event.deltaY)) return;
       if (!locked) {
@@ -338,14 +348,17 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     };
 
     const onTouchStart = (event: TouchEvent) => {
+      if (!enabledRef.current) return;
       touching = true;
       touchY = event.touches[0]?.clientY ?? null;
     };
     const onTouchEnd = (event: TouchEvent) => {
+      if (!enabledRef.current) return;
       touching = event.touches.length > 0;
       if (!touching && releasePending) armRelease();
     };
     const onTouchMove = (event: TouchEvent) => {
+      if (!enabledRef.current) return;
       const y = event.touches[0]?.clientY;
       if (!locked || touchY === null || y === undefined) return;
       const delta = (touchY - y) * 1.6;
@@ -355,6 +368,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
+      if (!enabledRef.current) return;
       if (!locked || isTyping(event.target)) return;
       const forward = event.key === "ArrowDown" || event.key === "PageDown" || event.key === " ";
       const back = event.key === "ArrowUp" || event.key === "PageUp";
@@ -364,6 +378,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
 
     /** Viewport resize (Safari's toolbar): hold corrections while it animates, then re-align once it settles. */
     const onViewportResize = () => {
+      if (!enabledRef.current) return;
       if (phone()) {
         followTrack();
         return;
@@ -451,6 +466,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       }
     };
 
+    wakeRef.current = onScroll;
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     bindInput();
@@ -481,6 +497,11 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       window.visualViewport?.removeEventListener("resize", onViewportResize);
     };
   }, [sectionRef, end]);
+
+  // Switched on after mount (a layout read once mounted): take a first reading, as on mount.
+  useEffect(() => {
+    if (enabled) wakeRef.current();
+  }, [enabled]);
 
   return {
     p,
