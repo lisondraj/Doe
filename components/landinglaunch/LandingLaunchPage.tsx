@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useRef } from "react";
+import { type FormEvent, useRef, useState } from "react";
 
 import { DoeHealthBlogDotWave } from "@/components/doehealth-blog/DoeHealthBlogDotWave";
 import { DoeHealthDesk2DesktopNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2DesktopNavBar";
@@ -9,7 +9,6 @@ import { DoeHealthDesk2Hero } from "@/components/doehealth-desk2/DoeHealthDesk2H
 import { DoeHealthDesk2NavWash } from "@/components/doehealth-desk2/DoeHealthDesk2NavWash";
 import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealthDesk2PhoneNavBar";
 import { DoeHealthDesk2InviteSection } from "@/components/doehealth-desk2/DoeHealthDesk2StorySections";
-import { ABOUT_CONTACT_MAILTO } from "@/lib/about/about-contact";
 import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
 import { useDoeHealthDesk2FitTitles } from "@/lib/doehealthdesk2/use-doehealthdesk2-fit-titles";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
@@ -23,7 +22,9 @@ import { useDoePhoneStableViewport } from "@/lib/doephone/use-doe-phone-stable-v
 import {
   LANDINGLAUNCH_DEK,
   LANDINGLAUNCH_EMAIL_LABEL,
+  LANDINGLAUNCH_ERROR,
   LANDINGLAUNCH_HEADLINE,
+  LANDINGLAUNCH_THANKS,
 } from "@/lib/landinglaunch/landinglaunch-copy";
 
 import "@/lib/doehealthdesk2/doehealthdesk2.css";
@@ -41,13 +42,32 @@ export function LandingLaunchPage({ initialVariant }: { initialVariant: DoeHealt
   useDoeHealthDesk2PhoneScreenHeight(variant === "phone");
   useDoeHealthDesk2FitTitles(rootRef);
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // No list to post to yet: the address opens as a note to James, so nobody's email is dropped on the floor.
+    if (status === "sending") return;
     const email = String(new FormData(event.currentTarget).get("email") ?? "").trim();
-    const subject = encodeURIComponent("Keep me up to date on Doe's launch");
-    const body = encodeURIComponent(`Please keep me up to date on Doe's launch: ${email}`);
-    window.location.href = `${ABOUT_CONTACT_MAILTO}?subject=${subject}&body=${body}`;
+    setStatus("sending");
+    setErrorMessage("");
+    try {
+      const response = await fetch("/api/launch-waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const result = (await response.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+      if (!response.ok || !result?.ok) {
+        setErrorMessage(response.status === 400 && result?.error ? result.error : LANDINGLAUNCH_ERROR);
+        setStatus("error");
+        return;
+      }
+      setStatus("done");
+    } catch {
+      setErrorMessage(LANDINGLAUNCH_ERROR);
+      setStatus("error");
+    }
   }
 
   return (
@@ -78,17 +98,36 @@ export function LandingLaunchPage({ initialVariant }: { initialVariant: DoeHealt
             </div>
           </div>
           <div className="landinglaunch-form">
-            <form className={`doehealth-desk2-invite__form ${inter.className}`} onSubmit={onSubmit}>
-              <label>
-                <span className="doehealth-desk2-hero__sr">Your email</span>
-                <input type="email" name="email" placeholder="Your email" autoComplete="email" required />
-                <button type="submit" aria-label={LANDINGLAUNCH_EMAIL_LABEL}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-                    <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </label>
-            </form>
+            {status === "done" ? (
+              <div className={`landinglaunch-thanks ${inter.className}`} role="status" aria-live="polite">
+                <p className="landinglaunch-thanks__title">{LANDINGLAUNCH_THANKS.title}</p>
+                <p className="landinglaunch-thanks__body">{LANDINGLAUNCH_THANKS.body}</p>
+              </div>
+            ) : (
+              <form className={`doehealth-desk2-invite__form ${inter.className}`} onSubmit={onSubmit}>
+                <label>
+                  <span className="doehealth-desk2-hero__sr">Your email</span>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Your email"
+                    autoComplete="email"
+                    required
+                    disabled={status === "sending"}
+                  />
+                  <button type="submit" aria-label={LANDINGLAUNCH_EMAIL_LABEL} disabled={status === "sending"}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </label>
+                {status === "error" ? (
+                  <p className="landinglaunch-error" role="alert">
+                    {errorMessage}
+                  </p>
+                ) : null}
+              </form>
+            )}
           </div>
         </div>
         {/* The salmon "Teach personal agents about your clinic." panel above the footer, as on /earlypreview, no email box. */}

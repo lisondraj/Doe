@@ -10,3 +10,11 @@ export const LANDINGLAUNCH_DEK = [
 ] as const;
 
 export const LANDINGLAUNCH_EMAIL_LABEL = "Keep me up to date";
+
+/** Shown in place of the email box once an address is saved. */
+export const LANDINGLAUNCH_THANKS = {
+  title: "Thank you!",
+  body: "You're on the list. We'll email you as soon as Doe launches.",
+} as const;
+
+export const LANDINGLAUNCH_ERROR = "Something went wrong. Please try again in a moment.";
