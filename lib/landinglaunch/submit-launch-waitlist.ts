@@ -1,10 +1,9 @@
-import { getResendClient } from "@/lib/resend/client";
+import { getSmtpConfig, sendSmtpMail } from "@/lib/landinglaunch/send-smtp-mail";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 
 const MAX_EMAIL_LENGTH = 320;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NOTIFY_TO_EMAIL = "james@doe.care";
-const DEFAULT_FROM_EMAIL = "James <james@doe.care>";
 
 export function parseLaunchWaitlistEmail(payload: unknown): string {
   if (!payload || typeof payload !== "object") throw new Error("Invalid submission.");
@@ -15,32 +14,21 @@ export function parseLaunchWaitlistEmail(payload: unknown): string {
   return email;
 }
 
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
 /** Tells James about a new signup. Never throws: a failed notification must not lose or block the signup. */
 async function notifyLaunchSignup(email: string): Promise<void> {
   try {
-    if (!process.env.RESEND_API_KEY?.trim()) return;
+    const config = getSmtpConfig();
+    if (!config) return;
     const when = new Date().toLocaleString("en-CA", {
       timeZone: "America/Toronto",
       dateStyle: "medium",
       timeStyle: "short",
     });
-    const { error } = await getResendClient().emails.send({
-      from: process.env.RESEND_FROM_EMAIL?.trim() || DEFAULT_FROM_EMAIL,
-      to: NOTIFY_TO_EMAIL,
+    await sendSmtpMail(config, {
+      to: process.env.LAUNCH_NOTIFY_EMAIL?.trim() || NOTIFY_TO_EMAIL,
       subject: `New launch signup: ${email}`,
       text: `${email} just signed up on /landinglaunch to keep up to date on Doe's launch.\n\n${when} (Toronto)`,
-      html: `<p style="font-family:Arial,sans-serif;font-size:15px;color:#1E343A;"><strong>${escapeHtml(email)}</strong> just signed up on /landinglaunch to keep up to date on Doe's launch.</p><p style="font-family:Arial,sans-serif;font-size:13px;color:#9A8F82;">${escapeHtml(when)} (Toronto)</p>`,
     });
-    if (error) console.error("launch-waitlist notification failed:", error.message);
   } catch (error) {
     console.error("launch-waitlist notification failed:", error instanceof Error ? error.message : error);
   }
