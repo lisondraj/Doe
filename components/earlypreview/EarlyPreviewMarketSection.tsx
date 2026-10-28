@@ -452,6 +452,8 @@ function TierCell({ value }: { value: EarlyPreviewTierCell }) {
 
 /** How many of the tiers table's first rows come in one after another. */
 const RISE_ROWS = 6;
+/** How far a tiers table's clock has to run before every row is in and the table takes scrolling. */
+const TIERS_READY = 0.65;
 
 /**
  * What each tier includes and what it costs: the tiers across the top with their price and what each extra provider
@@ -468,11 +470,14 @@ function TiersTable({ o, t, table }: { o: number; t: number; table: EarlyPreview
   const hover = useHover<string>();
   const scrollRef = useRef<HTMLDivElement>(null);
   // The first rows come in one after another; the rest, out of view under the fade until scrolled to, come in with
-  // the last of them, so no row is left half faded at the bottom.
+  // the last of them, so no row is left half faded at the bottom. All of it is in by TIERS_READY.
   const rise = (index: number) => {
-    const k = Math.min(index, RISE_ROWS) * 0.06;
-    return vars({ "--e": en(t, 0.4 + k, 0.65 + k) });
+    const k = Math.min(index, RISE_ROWS) * 0.04;
+    return vars({ "--e": en(t, 0.15 + k, 0.4 + k) });
   };
+  // The table takes scrolling only once it's fully on screen and built. Until then a swipe or wheel over it moves the
+  // page (and the section's progress) like anywhere else, so it can't stall the page with its rows still coming in.
+  const ready = o > 0.98 && t >= TIERS_READY;
   const [open, setOpen] = useState<number | null>(null);
   // Which edges have more table past them, so each fades only when there's something to scroll to.
   const [more, setMore] = useState({ above: false, below: false });
@@ -549,7 +554,7 @@ function TiersTable({ o, t, table }: { o: number; t: number; table: EarlyPreview
           <div
             ref={scrollRef}
             role="rowgroup"
-            className={`earlypreview-market__incl-scroll${more.above && open === null ? " is-more-above" : ""}${more.below ? " is-more-below" : ""}`}
+            className={`earlypreview-market__incl-scroll${ready ? " is-ready" : ""}${more.above && open === null ? " is-more-above" : ""}${more.below ? " is-more-below" : ""}`}
             data-lock-scroll
           >
             {table.sections.map((section) => (
