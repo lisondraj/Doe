@@ -533,6 +533,8 @@ const GROUP_DETAIL: Record<string, string> = {
  */
 export const EARLYPREVIEW_MARKET_INCLUDED = {
   title: ["What's in each tier.", "And what it costs."],
+  /** Under the title: how to open a feature's description. */
+  hint: "Select any feature to see what it is.",
   tiers: PRICING_PLANS.map((plan) => ({
     id: plan.id,
     name: plan.name,

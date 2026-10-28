@@ -431,6 +431,13 @@ function IncludedScene({ p }: { p: number }) {
   return (
     <Scene o={o} label="What's in each tier">
       <SceneTitle title={INCLUDED.title} t={t} />
+      <p
+        className="earlypreview-market__incl-hint"
+        style={vars({ "--e": en(t, 0.25, 0.5) })}
+      >
+        <Chevron />
+        {INCLUDED.hint}
+      </p>
       <div className="earlypreview-market__body">
         <div
           className="earlypreview-market__incl"

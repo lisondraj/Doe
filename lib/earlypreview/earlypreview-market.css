@@ -614,6 +614,21 @@
   color: var(--m-cream);
 }
 
+/* Under the title: a quiet line, led by the same chevron, saying a feature can be opened. */
+.earlypreview-market__incl-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: clamp(0.35rem, 1vh, 0.7rem) 0 0;
+  font-size: clamp(0.85rem, 0.95vw, 0.95rem);
+  color: var(--m-dim);
+  opacity: var(--e, 0);
+}
+
+.earlypreview-market__incl-hint .earlypreview-market__chevron {
+  color: var(--m-salmon);
+}
+
 /* A feature's name is its toggle: the name, then a thin chevron that turns over when the row is open. */
 .earlypreview-market__incl-toggle {
   display: inline-flex;
@@ -799,6 +814,10 @@
 @media (max-height: 800px) {
   .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .earlypreview-market__incl-note {
     display: none;
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .earlypreview-market__incl-row {
+    padding-block: 0.05rem;
   }
 }
 
