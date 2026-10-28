@@ -3020,3 +3020,9 @@
   align-items: flex-start;
   text-align: left;
 }
+
+/* A tiers table as a section of its own (/services): no scene nav under it, so the screen keeps less room at the
+   bottom. */
+.earlypreview-market--tiers {
+  --m-nav-room: 0.75rem;
+}

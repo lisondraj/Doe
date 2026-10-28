@@ -538,6 +538,23 @@ export type EarlyPreviewTierRow = {
   readonly cells: readonly [EarlyPreviewTierCell, EarlyPreviewTierCell, EarlyPreviewTierCell, EarlyPreviewTierCell];
 };
 
+/** A whole tiers table: its title and hint, the four tiers across the top, then its rows in sections. */
+export type EarlyPreviewTiersTable = {
+  readonly title: readonly string[];
+  readonly hint: string;
+  readonly tiers: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly priceMo: number;
+    readonly extras: readonly string[];
+  }[];
+  readonly sections: readonly {
+    readonly id: string;
+    readonly label: string;
+    readonly rows: readonly EarlyPreviewTierRow[];
+  }[];
+};
+
 const ALL = [true, true, true, true] as const;
 const FROM_BASIC = [false, true, true, true] as const;
 const FROM_ADVANCED = [false, false, true, true] as const;

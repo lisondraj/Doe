@@ -29,6 +29,7 @@ import {
   EARLYPREVIEW_MARKET_WHY_NOW as WHY_NOW,
   type EarlyPreviewMarketSource,
   type EarlyPreviewTierCell,
+  type EarlyPreviewTiersTable,
 } from "@/lib/earlypreview/earlypreview-market-copy";
 
 /** The screens in order, and how much scroll progress each one holds. */
@@ -459,6 +460,11 @@ const RISE_ROWS = 6;
  */
 function IncludedScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "included");
+  return <TiersTable o={o} t={t} table={INCLUDED} />;
+}
+
+/** The tiers table on a screen of its own, at opacity `o` and built as far as `t`. Its rows come from `table`. */
+function TiersTable({ o, t, table }: { o: number; t: number; table: EarlyPreviewTiersTable }) {
   const hover = useHover<string>();
   const scrollRef = useRef<HTMLDivElement>(null);
   // The first rows come in one after another; the rest, out of view under the fade until scrolled to, come in with
@@ -505,13 +511,13 @@ function IncludedScene({ p }: { p: number }) {
   let index = -1;
   return (
     <Scene o={o} label="What's in each tier">
-      <SceneTitle title={INCLUDED.title} t={t} />
+      <SceneTitle title={table.title} t={t} />
       <p
         className="earlypreview-market__incl-hint"
         style={vars({ "--e": en(t, 0.25, 0.5) })}
       >
         <Chevron />
-        {INCLUDED.hint}
+        {table.hint}
       </p>
       <div className="earlypreview-market__body earlypreview-market__body--table">
         <div
@@ -526,7 +532,7 @@ function IncludedScene({ p }: { p: number }) {
               style={vars({ "--e": en(t, 0.3, 0.55) })}
             >
               <span role="columnheader" />
-              {INCLUDED.tiers.map((tier) => (
+              {table.tiers.map((tier) => (
                 <span key={tier.id} role="columnheader" className={`is-${tier.id}`}>
                   <span className="earlypreview-market__incl-tier">
                     {tier.name} <em>${tier.priceMo}</em>
@@ -546,7 +552,7 @@ function IncludedScene({ p }: { p: number }) {
             className={`earlypreview-market__incl-scroll${more.above && open === null ? " is-more-above" : ""}${more.below ? " is-more-below" : ""}`}
             data-lock-scroll
           >
-            {INCLUDED.sections.map((section) => (
+            {table.sections.map((section) => (
               <div key={section.id} role="presentation" className="earlypreview-market__incl-group">
                 <div
                   role="row"
@@ -581,9 +587,9 @@ function IncludedScene({ p }: { p: number }) {
                       </span>
                       {row.cells.map((value, c) => (
                         <span
-                          key={INCLUDED.tiers[c].id}
+                          key={table.tiers[c].id}
                           role="cell"
-                          className={`is-${INCLUDED.tiers[c].id}${value === false ? " is-none" : ""}`}
+                          className={`is-${table.tiers[c].id}${value === false ? " is-none" : ""}`}
                         >
                           <TierCell value={value} />
                         </span>
@@ -1338,6 +1344,52 @@ function useLeadIn(ref: { current: HTMLElement | null }) {
     };
   }, [ref]);
   return lead;
+}
+
+/** How far a standalone tiers table builds (its `t`) once it's on screen, and how long that takes. */
+const TIERS_BUILT = 1.6;
+const TIERS_BUILD_MS = 1400;
+
+/**
+ * A tiers table as a section of its own, the market section's look without its lock or its other screens: one full
+ * screen whose table scrolls inside it. It builds once, the first time it comes into view.
+ */
+export function EarlyPreviewTiersSection({ table, label }: { table: EarlyPreviewTiersTable; label: string }) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [t, setT] = useState(0);
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return undefined;
+    let raf = 0;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        const start = performance.now();
+        const step = (now: number) => {
+          const k = Math.min(1, (now - start) / TIERS_BUILD_MS);
+          setT(k * TIERS_BUILT);
+          if (k < 1) raf = window.requestAnimationFrame(step);
+        };
+        raf = window.requestAnimationFrame(step);
+      },
+      { threshold: 0.35 },
+    );
+    observer.observe(section);
+    return () => {
+      observer.disconnect();
+      window.cancelAnimationFrame(raf);
+    };
+  }, []);
+  return (
+    <section
+      ref={sectionRef}
+      className="earlypreview-market earlypreview-market--tiers doehealth-desk2-nav-wash-surface"
+      aria-label={label}
+    >
+      <TiersTable o={1} t={t} table={table} />
+    </section>
+  );
 }
 
 /**

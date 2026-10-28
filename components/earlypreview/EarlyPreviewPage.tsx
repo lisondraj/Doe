@@ -125,6 +125,37 @@ function EarlyPreviewBeigeBand({
 }
 
 /**
+ * The hero: the title and description, the dot wave, the hero film and the gallery of films under it. Shared with
+ * /services.
+ */
+export function EarlyPreviewHeroStack({ heroFilm }: { heroFilm?: string }) {
+  return (
+    <>
+      {/* A brown surface for the nav over its whole height, including the empty space under the video on the phone. */}
+      <div className="doehealth-desk2-hero-stack doehealth-desk2-nav-wash-surface">
+        <DoeHealthDesk2Hero centered headline={EARLYPREVIEW_HERO_HEADLINE} dek={EARLYPREVIEW_HERO_DEK} className="doehealth-desk2-nav-wash-surface" />
+        {/* The dot wave in the space between the small description and the video. */}
+        {/* Also a brown surface for the nav, so the nav stays brown while the page scrolls past the space between the hero text and the video. */}
+        <div className="earlypreview-hero-wave doehealth-desk2-nav-wash-surface" aria-hidden>
+          <div className="earlypreview-hero-wave__fade">
+            <DoeHealthBlogDotWave color="rgba(252, 207, 184, 0.6)" top={0.42} amp={60} fade={0.5} />
+          </div>
+        </div>
+        <DoeHealthDesk2Workspace
+          film={heroFilm}
+          filmLabel={EARLYPREVIEW_MAIN_VIDEO.title.join(" ")}
+          overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />}
+          thumbnail={EARLYPREVIEW_HERO_THUMBNAIL}
+          className="doehealth-desk2-nav-wash-surface"
+        />
+        {/* The hospital, dentist, derm and concierge videos, attached under the hero video with equal gaps. */}
+        <EarlyPreviewHeroGallery />
+      </div>
+    </>
+  );
+}
+
+/**
  * /earlypreview: the regular /doehealthdesk look, brown sections on the light beige page. The nav keeps only the mark
  * and the CTA (no page links), and the sections are the /doehealthdesk2 ones with their regular theme.
  */
@@ -195,26 +226,7 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
       )}
       <DoeHealthDesk2NavWash />
       <main className="doehealth-desk2-main min-h-[100dvh]" aria-label="Early preview">
-        {/* A brown surface for the nav over its whole height, including the empty space under the video on the phone. */}
-        <div className="doehealth-desk2-hero-stack doehealth-desk2-nav-wash-surface">
-          <DoeHealthDesk2Hero centered headline={EARLYPREVIEW_HERO_HEADLINE} dek={EARLYPREVIEW_HERO_DEK} className="doehealth-desk2-nav-wash-surface" />
-          {/* The dot wave in the space between the small description and the video. */}
-          {/* Also a brown surface for the nav, so the nav stays brown while the page scrolls past the space between the hero text and the video. */}
-          <div className="earlypreview-hero-wave doehealth-desk2-nav-wash-surface" aria-hidden>
-            <div className="earlypreview-hero-wave__fade">
-              <DoeHealthBlogDotWave color="rgba(252, 207, 184, 0.6)" top={0.42} amp={60} fade={0.5} />
-            </div>
-          </div>
-          <DoeHealthDesk2Workspace
-            film={heroFilm}
-            filmLabel={EARLYPREVIEW_MAIN_VIDEO.title.join(" ")}
-            overlay={<EarlyPreviewVideoOverlay video={EARLYPREVIEW_MAIN_VIDEO} />}
-            thumbnail={EARLYPREVIEW_HERO_THUMBNAIL}
-            className="doehealth-desk2-nav-wash-surface"
-          />
-          {/* The hospital, dentist, derm and concierge videos, attached under the hero video with equal gaps. */}
-          <EarlyPreviewHeroGallery />
-        </div>
+        <EarlyPreviewHeroStack heroFilm={heroFilm} />
         {/* The market, the page's second section: scroll-locked, it releases on the go-to-market screen. */}
         <EarlyPreviewMarketSection />
         {/* The blank band under the hero: the /product-nav beige, with the nav in its beige state over it. */}
