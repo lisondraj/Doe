@@ -11,6 +11,7 @@ import { EARLYPREVIEW_ENTERPRISE_DEK } from "@/lib/earlypreview/earlypreview-her
 import { type FilmStart, startFilm } from "@/lib/earlypreview/start-film";
 import { useNavReveal } from "@/lib/earlypreview/use-nav-reveal";
 import type { EarlyPreviewFilmId } from "@/lib/earlypreview/earlypreview-films";
+import { useFilmWarmUp } from "@/lib/earlypreview/use-film-warm-up";
 import { useAdaptiveSrc } from "@/lib/earlypreview/use-adaptive-src";
 import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
 import {
@@ -107,6 +108,8 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
     srcSeen.current = src;
     setPoster(false);
   }
+  // Just before the tile is on screen its film starts filling a few seconds of buffer, so play starts at once.
+  useFilmWarmUp(videoRef, figureRef, near && !!src);
 
   useEffect(() => {
     const figure = figureRef.current;

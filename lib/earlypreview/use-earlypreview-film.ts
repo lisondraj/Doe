@@ -52,6 +52,24 @@ function pick(body: { url?: string; hls?: string }): string | undefined {
   return body.url;
 }
 
+const connected = new Set<string>();
+
+/** Opens the connection to the video host as soon as a film's link is known, so the first bytes don't wait for it. */
+function preconnect(url: string) {
+  try {
+    const origin = new URL(url).origin;
+    if (connected.has(origin) || origin === window.location.origin) return;
+    connected.add(origin);
+    const link = document.createElement("link");
+    link.rel = "preconnect";
+    link.href = origin;
+    link.crossOrigin = "anonymous";
+    document.head.appendChild(link);
+  } catch {
+    // Not a URL; nothing to connect to.
+  }
+}
+
 /** Asks the route once per film at a time. Failures are not kept, so the next call tries again. */
 export function loadEarlyPreviewFilm(id: EarlyPreviewFilmId): Promise<string | undefined> {
   const url = freshUrl(id);
@@ -64,6 +82,7 @@ export function loadEarlyPreviewFilm(id: EarlyPreviewFilmId): Promise<string | u
       const url = body ? pick(body) : undefined;
       if (url) {
         cache.set(id, { at: Date.now(), url });
+        preconnect(url);
         return url;
       }
       cache.delete(id);

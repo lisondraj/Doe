@@ -3,6 +3,7 @@
 import { type RefObject, useEffect, useState } from "react";
 
 import { canStreamHls, filmFallback } from "@/lib/earlypreview/use-earlypreview-film";
+import { FILM_WARM_EVENT } from "@/lib/earlypreview/use-film-warm-up";
 
 /**
  * hls.js from a pinned CDN build, loaded only when a film actually streams through it. The light build has no subtitle
@@ -63,6 +64,8 @@ function playsHlsNatively() {
 
 /** Seconds of film buffered ahead before anyone presses play, and once they have. */
 const IDLE_BUFFER_S = 3;
+/** Once the film is near the screen (see `useFilmWarmUp`), enough to start smoothly without pulling the whole film. */
+const WARM_BUFFER_S = 8;
 const PLAYING_BUFFER_S = 30;
 
 function split(src: string) {
@@ -113,21 +116,27 @@ export function useAdaptiveSrc(videoRef: RefObject<HTMLVideoElement>, src: strin
     const onPlay = () => {
       if (hls) hls.config.maxBufferLength = PLAYING_BUFFER_S;
     };
+    const onWarm = () => {
+      if (hls) hls.config.maxBufferLength = Math.max(hls.config.maxBufferLength, WARM_BUFFER_S);
+    };
     video.addEventListener("play", onPlay);
+    video.addEventListener(FILM_WARM_EVENT, onWarm);
     void loadHls().then((Hls) => {
       if (cancelled) return;
       if (!Hls || !Hls.isSupported()) {
         setFailed(base);
         return;
       }
-      const eager = video.preload === "auto" || !video.paused;
+      // A film that is already warm or playing when its stream is built starts with the larger buffer.
+      const eager = !video.paused;
+      const warm = video.preload === "auto";
       hls = new Hls({
         startPosition: parts.startAt ?? -1,
         // A small tile never pulls the top rendition; full screen lifts the cap.
         capLevelToPlayerSize: true,
         // Most visitors are on fast links; starting from a 4 Mbps guess opens on a sharp rendition instead of the lowest.
         abrEwmaDefaultEstimate: 4_000_000,
-        maxBufferLength: eager ? PLAYING_BUFFER_S : IDLE_BUFFER_S,
+        maxBufferLength: eager ? PLAYING_BUFFER_S : warm ? WARM_BUFFER_S : IDLE_BUFFER_S,
         maxMaxBufferLength: 60,
         backBufferLength: 30,
       });
@@ -140,6 +149,7 @@ export function useAdaptiveSrc(videoRef: RefObject<HTMLVideoElement>, src: strin
     return () => {
       cancelled = true;
       video.removeEventListener("play", onPlay);
+      video.removeEventListener(FILM_WARM_EVENT, onWarm);
       hls?.destroy();
       hls = null;
     };

@@ -5,6 +5,7 @@ import { type MouseEvent, type PointerEvent, type ReactNode, useEffect, useRef, 
 
 import { type FilmStart, startFilm } from "@/lib/earlypreview/start-film";
 import { useAdaptiveSrc } from "@/lib/earlypreview/use-adaptive-src";
+import { useFilmWarmUp } from "@/lib/earlypreview/use-film-warm-up";
 import { DOEPHONE_DESKTOP_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 
@@ -41,6 +42,7 @@ export function DoeHealthDesk2Workspace({
   const [poster, setPoster] = useState(false);
   const [rolling, setRolling] = useState(false);
   const fadeRef = useRef<HTMLDivElement>(null);
+  const photoRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hoveredRef = useRef(false);
   const playingRef = useRef(false);
@@ -52,6 +54,8 @@ export function DoeHealthDesk2Workspace({
     filmSeen.current = film;
     setPoster(false);
   }
+  // The hero film fills a few seconds of buffer as soon as it has a link and is on or near the screen.
+  useFilmWarmUp(videoRef, photoRef, !!film, "100% 0px");
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -165,6 +169,7 @@ export function DoeHealthDesk2Workspace({
     <section className={`desk2-workspace ${DOEPHONE_DESKTOP_PAGE_INSET_X}${shown ? " is-in" : ""}${className ? ` ${className}` : ""}`} aria-label="Doe clinic">
       <div className="desk2-workspace__stage">
         <figure
+          ref={photoRef}
           className={`desk2-workspace__photo${thumbnail ? " has-thumb" : ""}${playing ? " is-playing" : ""}${rolling ? " is-rolling" : ""}`}
           onPointerEnter={isFilm && overlay && !thumbnail ? onPointerEnter : undefined}
           onPointerLeave={isFilm && overlay && !thumbnail ? onPointerLeave : undefined}
