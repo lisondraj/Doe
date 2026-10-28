@@ -577,43 +577,6 @@
 
 /* ------------------------------------------------------------ included */
 
-/* The tiers across the top, a row per feature group: the group on the left, a tick from the first tier that has it.
-   The costs close the table under a firmer rule. */
-.earlypreview-market__incl {
-  display: grid;
-  grid-template-columns: minmax(max-content, 1.1fr) repeat(4, minmax(0, 1fr));
-  column-gap: clamp(1.25rem, 2.6vw, 3rem);
-  width: 100%;
-}
-
-.earlypreview-market__incl-row {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: subgrid;
-  align-items: center;
-  padding: clamp(0.1rem, 0.5vh, 0.4rem) 0;
-  border-top: 1px solid rgb(255 252 241 / 0.12);
-  font-size: clamp(0.9rem, 1vw, 1rem);
-  line-height: 1.25;
-  color: var(--m-cream);
-  opacity: var(--e, 0);
-  transform: translateY(calc((1 - var(--e, 0)) * 0.9rem));
-  transition: opacity 200ms ease;
-}
-
-.earlypreview-market__incl-row.is-muted {
-  opacity: calc(var(--e, 0) * 0.45);
-}
-
-.earlypreview-market__incl-row > [role="rowheader"] {
-  font-family: var(--m-display);
-  font-size: clamp(0.95rem, min(1.3vw, 2.3vh), 1.35rem);
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-  white-space: nowrap;
-  color: var(--m-cream);
-}
-
 /* Under the title: a quiet line, led by the same chevron, saying a feature can be opened. */
 .earlypreview-market__incl-hint {
   display: flex;
@@ -627,6 +590,164 @@
 
 .earlypreview-market__incl-hint .earlypreview-market__chevron {
   color: var(--m-salmon);
+}
+
+/* The table fills the rest of the screen: the tiers' names stay put and the rows scroll under them. */
+.earlypreview-market__body--table {
+  padding-bottom: 0;
+}
+
+.earlypreview-market__body--table > .earlypreview-market__incl {
+  margin: 0;
+}
+
+.earlypreview-market__incl {
+  --incl-cols: minmax(0, 1.35fr) repeat(4, minmax(0, 1fr));
+  --incl-gap: clamp(1.25rem, 2.6vw, 3rem);
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Fades at the top and bottom edges, each only while there's more of the table past it. No scrollbar: the fades show
+   there's more. */
+.earlypreview-market__incl-scroll {
+  --fade-top: 0px;
+  --fade-bottom: 0px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: clamp(1rem, 3vh, 2rem);
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade-top),
+    #000 calc(100% - var(--fade-bottom)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade-top),
+    #000 calc(100% - var(--fade-bottom)),
+    transparent 100%
+  );
+}
+
+.earlypreview-market__incl-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.earlypreview-market__incl-scroll.is-more-above {
+  --fade-top: clamp(2rem, 6vh, 3.5rem);
+}
+
+.earlypreview-market__incl-scroll.is-more-below {
+  --fade-bottom: clamp(2.5rem, 8vh, 4.5rem);
+}
+
+.earlypreview-market__incl-row {
+  display: grid;
+  grid-template-columns: var(--incl-cols);
+  column-gap: var(--incl-gap);
+  align-items: center;
+  padding: clamp(0.3rem, 0.9vh, 0.55rem) 0;
+  border-top: 1px solid rgb(255 252 241 / 0.12);
+  font-size: clamp(0.9rem, 1vw, 1rem);
+  line-height: 1.25;
+  color: var(--m-cream);
+  opacity: var(--e, 0);
+  transform: translateY(calc((1 - var(--e, 0)) * 0.9rem));
+}
+
+.earlypreview-market__incl-row.is-muted {
+  opacity: calc(var(--e, 0) * 0.45);
+}
+
+.earlypreview-market__incl-row > [role="rowheader"] {
+  font-family: var(--m-display);
+  font-size: clamp(1.05rem, min(1.4vw, 2.5vh), 1.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+  color: var(--m-cream);
+}
+
+.earlypreview-market__incl-row > [role="cell"] svg {
+  display: block;
+  color: var(--m-salmon);
+}
+
+.earlypreview-market__incl-row > .is-none {
+  color: var(--m-quiet);
+}
+
+/* A tier's word for how much of a feature it has (Standard, Priority, Full, a price). */
+.earlypreview-market__incl-word {
+  color: var(--m-cream);
+}
+
+.earlypreview-market__incl-row > .is-one .earlypreview-market__incl-word {
+  color: var(--m-salmon);
+}
+
+/* Each section's name, small and salmon, over its rows. */
+.earlypreview-market__incl-section {
+  padding: clamp(1.1rem, 3vh, 1.8rem) 0 clamp(0.35rem, 1vh, 0.6rem);
+  font-size: clamp(0.72rem, 0.8vw, 0.8rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--m-salmon);
+  opacity: var(--e, 0);
+}
+
+.earlypreview-market__incl-group:first-child .earlypreview-market__incl-section {
+  padding-top: clamp(0.5rem, 1.4vh, 0.9rem);
+}
+
+/* Each tier's name and price, then what each extra provider adds, small, under it. */
+.earlypreview-market__incl-row.is-head {
+  align-items: start;
+  padding: 0 0 clamp(0.35rem, 1vh, 0.6rem);
+  border-top: 0;
+  border-bottom: 1px solid rgb(255 252 241 / 0.22);
+}
+
+.earlypreview-market__incl-row.is-head > [role="columnheader"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.earlypreview-market__incl-tier {
+  font-family: var(--m-display);
+  font-size: clamp(1.3rem, min(2vw, 3.4vh), 2.2rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  color: var(--m-cream);
+}
+
+.earlypreview-market__incl-tier em {
+  font-style: normal;
+  font-size: 0.6em;
+  letter-spacing: -0.01em;
+  color: var(--m-salmon);
+}
+
+.earlypreview-market__incl-row.is-head > .is-one .earlypreview-market__incl-tier {
+  color: var(--m-salmon);
+}
+
+.earlypreview-market__incl-extras {
+  display: grid;
+  font-size: clamp(0.75rem, 0.85vw, 0.85rem);
+  line-height: 1.3;
+  white-space: nowrap;
+  color: var(--m-dim);
 }
 
 /* A feature's name is its toggle: the name, then a thin chevron that turns over when the row is open. */
@@ -666,14 +787,14 @@
   outline-offset: 3px;
 }
 
-/* An open feature: the rows on its far side fade out and its description sits in their place. */
+/* An open feature: the rows under it fade out and its description sits in their place. */
 .earlypreview-market__incl-row,
-.earlypreview-market__incl-note {
+.earlypreview-market__incl-section {
   transition: opacity 260ms ease;
 }
 
 .earlypreview-market__incl-row.is-faded,
-.earlypreview-market__incl-note.is-faded {
+.earlypreview-market__incl-section.is-faded {
   opacity: 0;
   pointer-events: none;
 }
@@ -688,18 +809,9 @@
   top: 100%;
   left: 0;
   right: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
   max-width: 40rem;
-  padding: clamp(0.9rem, 2.4vh, 1.4rem) 0 0;
+  padding: clamp(0.9rem, 2.4vh, 1.4rem) 0 clamp(1.5rem, 4vh, 2.5rem);
   animation: earlypreview-incl-detail 320ms ease both;
-}
-
-.earlypreview-market__incl-detail.is-up {
-  top: auto;
-  bottom: 100%;
-  padding: 0 0 clamp(0.9rem, 2.4vh, 1.4rem);
 }
 
 .earlypreview-market__incl-detail p {
@@ -710,13 +822,6 @@
   letter-spacing: -0.02em;
   text-wrap: balance;
   color: var(--m-cream);
-}
-
-.earlypreview-market__incl-detail span {
-  font-size: clamp(0.8rem, 0.9vw, 0.9rem);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--m-salmon);
 }
 
 @keyframes earlypreview-incl-detail {
@@ -732,93 +837,13 @@
   }
 }
 
-.earlypreview-market__incl-row > [role="cell"] svg {
-  display: block;
-  color: var(--m-salmon);
-}
-
-.earlypreview-market__incl-row > .is-none {
-  color: var(--m-quiet);
-}
-
-/* The cost rows are iPhone only: on wider screens each tier's extras sit under its name. */
-.earlypreview-market__incl-row.is-cost {
-  display: none;
-}
-
-.earlypreview-market__incl-row.is-cost > [role="cell"] {
-  font-family: var(--m-display);
-  font-size: clamp(1.1rem, min(1.5vw, 2.6vh), 1.5rem);
-  letter-spacing: -0.02em;
-  color: var(--m-cream);
-}
-
-.earlypreview-market__incl-row.is-cost > .is-one {
-  color: var(--m-salmon);
-}
-
-.earlypreview-market__incl-row.is-cost-first {
-  margin-top: clamp(0.3rem, 1vh, 0.6rem);
-  border-top-color: rgb(252 207 184 / 0.45);
-}
-
-/* Each tier's name and price, then what each extra provider and location adds, small, under it. */
-.earlypreview-market__incl-row.is-head {
-  align-items: start;
-  padding: 0 0 clamp(0.35rem, 1vh, 0.6rem);
-  border-top: 0;
-}
-
-.earlypreview-market__incl-row.is-head > [role="columnheader"] {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.earlypreview-market__incl-tier {
-  font-family: var(--m-display);
-  font-size: clamp(1.3rem, min(2vw, 3.4vh), 2.2rem);
-  line-height: 1;
-  letter-spacing: -0.035em;
-  white-space: nowrap;
-  color: var(--m-cream);
-}
-
-.earlypreview-market__incl-tier em {
-  font-style: normal;
-  font-size: 0.6em;
-  letter-spacing: -0.01em;
-  color: var(--m-salmon);
-}
-
-.earlypreview-market__incl-row.is-head > .is-one .earlypreview-market__incl-tier {
-  color: var(--m-salmon);
-}
-
-.earlypreview-market__incl-extras {
-  display: grid;
-  font-size: clamp(0.75rem, 0.85vw, 0.85rem);
-  line-height: 1.3;
-  white-space: nowrap;
+/* Plans: the 10+ locations line under the tiers. */
+.earlypreview-market__plans-custom {
+  margin: clamp(1.25rem, 3.5vh, 2.25rem) 0 0;
+  font-size: clamp(0.85rem, 0.95vw, 0.95rem);
+  line-height: 1.4;
   color: var(--m-dim);
-}
-
-.earlypreview-market__incl-note {
-  margin: clamp(0.5rem, 1.4vh, 0.9rem) 0 0;
-  font-size: clamp(0.8rem, 0.9vw, 0.9rem);
-  color: var(--m-quiet);
   opacity: var(--e, 0);
-}
-
-/* Short desktop screens: the note gives its line to the table, so the last row stays clear of the nav. */
-@media (max-height: 800px) {
-  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .earlypreview-market__incl-note {
-    display: none;
-  }
-
-  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .earlypreview-market__incl-row {
-    padding-block: 0.05rem;
-  }
 }
 
 /* ------------------------------------------------------------ cities */
@@ -2872,29 +2897,29 @@
   }
 }
 
-/* iPhone tiers: the feature group on the left, four narrow tick columns; each tier's extras close the table as two
-   cost rows. */
+/* iPhone tiers: each feature's name on its own line over the four tiers' columns, a size up so it reads easily. The
+   table scrolls under the tiers' names, which stay put. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl {
-  grid-template-columns: minmax(0, 1fr) repeat(4, 2.9rem);
-  column-gap: 0.4rem;
+  --incl-cols: repeat(4, minmax(0, 1fr));
+  --incl-gap: 0.5rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__body--table {
+  padding-top: 0.9rem;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
   .earlypreview-market__incl-row {
-  padding: 0.12rem 0;
-  font-size: 0.8rem;
+  row-gap: 0.3rem;
+  padding: 0.6rem 0;
+  font-size: 0.92rem;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
   .earlypreview-market__incl-row
   > [role="rowheader"] {
-  font-size: 0.85rem;
-  white-space: normal;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__incl-row.is-cost {
-  display: grid;
+  grid-column: 1 / -1;
+  font-size: 1.2rem;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
@@ -2904,36 +2929,53 @@
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__incl-row.is-cost
-  > [role="cell"] {
-  font-size: 0.85rem;
+  .earlypreview-market__incl-row.is-head
+  > :first-child {
+  display: none;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
   .earlypreview-market__incl-row.is-head
   > [role="columnheader"] {
   align-items: center;
+  gap: 0.2rem;
   text-align: center;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-tier {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.15rem;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   white-space: normal;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-tier em {
-  font-size: 0.85em;
+  font-size: 0.8em;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-extras {
-  display: none;
+  font-size: 0.68rem;
+  white-space: normal;
 }
 
-.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-note {
-  font-size: 0.72rem;
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-section {
+  padding: 1.3rem 0 0.4rem;
+  font-size: 0.75rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-hint {
+  font-size: 0.95rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-detail p {
+  font-size: 1.25rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__plans-custom {
+  margin-top: 1.75rem;
+  font-size: 0.85rem;
 }
 
 /* iPhone cities: the numbers stack over the dots, so they line up with the title on the left. */
@@ -2941,13 +2983,4 @@
   .earlypreview-market__country-panel {
   align-items: flex-start;
   text-align: left;
-}
-
-/* iPhone: an opened feature's description a size down, across the full width. */
-.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-detail p {
-  font-size: 1.15rem;
-}
-
-.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-detail span {
-  font-size: 0.7rem;
 }

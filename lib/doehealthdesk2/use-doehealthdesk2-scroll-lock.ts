@@ -43,6 +43,16 @@ export function cssVars(values: Record<string, number>) {
 const isTyping = (target: EventTarget | null) =>
   target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
 
+
+/**
+ * A wheel or touch over an element marked `data-lock-scroll` (a table that scrolls inside a locked screen) scrolls that
+ * element while it can still move that way; only at its end does the lock take the input again.
+ */
+function innerScrollTakes(target: EventTarget | null, deltaY: number) {
+  const el = target instanceof Element ? target.closest<HTMLElement>("[data-lock-scroll]") : null;
+  if (!el || deltaY === 0) return false;
+  return deltaY > 0 ? el.scrollTop + el.clientHeight < el.scrollHeight - 1 : el.scrollTop > 1;
+}
 /**
  * Scroll lock for a one-screen section. When its top reaches the top of the viewport the page holds
  * still and scroll input moves progress from 0 to `end` instead; at either end the lock releases and
@@ -290,6 +300,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
 
     const onWheel = (event: WheelEvent) => {
       const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
+      if (locked && innerScrollTakes(event.target, event.deltaY)) return;
       if (!locked) {
         // Desktop: lock on the wheel step that would carry the section's top past the viewport's, before the page
         // moves. Locking after the scroll lands overshoots, and pulling the page back reads as a bounce. `pending`
@@ -339,6 +350,7 @@ export function useDoeHealthDesk2ScrollLock(sectionRef: RefObject<HTMLElement>, 
       if (!locked || touchY === null || y === undefined) return;
       const delta = (touchY - y) * 1.6;
       touchY = y;
+      if (innerScrollTakes(event.target, delta)) return;
       if (advance(delta)) event.preventDefault();
     };
 

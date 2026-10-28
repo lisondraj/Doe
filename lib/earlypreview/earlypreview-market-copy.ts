@@ -4,16 +4,6 @@
  * revenue model and expansion figures are Doe's own estimates; TAM matches the $28B on /about.
  */
 
-import {
-  FEATURE_GROUPS,
-  type FeatureGroup,
-  PLAN_ORDER,
-  PLANS as PRICING_PLANS,
-  type Plan as PricingPlan,
-  SPECIALTIES,
-  SPECIALTY_FROM,
-} from "@/lib/doehealthdesk2/doehealthdesk2-pricing";
-
 export type EarlyPreviewMarketSource = {
   readonly label: string;
   readonly href?: string;
@@ -462,97 +452,230 @@ export const EARLYPREVIEW_MARKET_INDEX = {
   },
 } as const;
 
-/** A tier's extras: what each provider and location past the first adds a month, as on /pricing. */
-const extras = (plan: PricingPlan) =>
-  plan.base === 0
-    ? ["Every provider and location"]
-    : [`+$${plan.perProvider}/provider/mo`, `+$${plan.perLocation}/location/mo`];
+/**
+ * Earlypreview's own price list (not /pricing): a monthly base for one provider, then each provider past the first.
+ * Locations aren't priced; ten or more are quoted. Founding prices are for the first clinics in, for a set time.
+ */
+const TIERS = [
+  { id: "free", name: "Free", priceMo: 0, perProvider: 0 },
+  { id: "basic", name: "Basic", priceMo: 49, perProvider: 19 },
+  { id: "advanced", name: "Advanced", priceMo: 149, perProvider: 39 },
+  { id: "one", name: "Doe One", priceMo: 299, perProvider: 79 },
+] as const;
 
-/** The /pricing feature groups each tier adds, the specialty sets in Advanced. */
-const SPECIALTY_GROUP: FeatureGroup = {
-  title: "Specialty feature sets",
-  from: SPECIALTY_FROM,
-  items: SPECIALTIES.map((specialty) => specialty.label),
+type TierId = (typeof TIERS)[number]["id"];
+
+/** Under a tier's price: what each extra provider adds, and Doe One's usage. */
+const EXTRAS: Record<TierId, readonly string[]> = {
+  free: ["Always free"],
+  basic: ["+$19/provider/mo"],
+  advanced: ["+$39/provider/mo"],
+  one: ["+$79/provider/mo", "plus usage"],
 };
-const GROUPS: readonly FeatureGroup[] = [
-  ...FEATURE_GROUPS.filter((group) => PLAN_ORDER.indexOf(group.from) <= PLAN_ORDER.indexOf(SPECIALTY_FROM)),
-  SPECIALTY_GROUP,
-  ...FEATURE_GROUPS.filter((group) => PLAN_ORDER.indexOf(group.from) > PLAN_ORDER.indexOf(SPECIALTY_FROM)),
-];
 
-/** A tier's features on the plans screen: Free lists its profile, each paid tier what it adds over the one before. */
-const features = (plan: PricingPlan, index: number) =>
-  index === 0
-    ? GROUPS.filter((group) => group.from === plan.id).flatMap((group) => group.items.filter((item) => item.length < 40))
-    : [
-        `Everything in ${PRICING_PLANS[index - 1]!.name}`,
-        ...GROUPS.filter((group) => group.from === plan.id).map((group) => group.title),
-      ];
+const CUSTOM_LOCATIONS =
+  "10+ locations: custom pricing, discounted from your bulk total. Create an account and book a call to lock it in.";
 
 /**
- * Free to paid, priced as on /pricing: each tier's monthly price for one provider at one location, what each extra
- * provider and location adds under it, then its features. The tiers screen after it has the detail.
+ * Free to paid: each tier's monthly price for one provider, what each extra provider adds under it, then the few
+ * things it adds over the tier before. The tiers screen after it has the whole table.
  */
 export const EARLYPREVIEW_MARKET_PLANS = {
   title: ["Free to Claim.", "Paid to Connect."],
-  plans: PRICING_PLANS.map((plan, index) => ({
-    id: plan.id,
-    name: plan.name,
-    priceMo: plan.base,
-    extras: extras(plan),
-    features: features(plan, index),
+  custom: CUSTOM_LOCATIONS,
+  plans: TIERS.map((tier) => ({
+    id: tier.id,
+    name: tier.name,
+    priceMo: tier.priceMo,
+    extras: EXTRAS[tier.id],
+    features: {
+      free: ["Claim your profile", "Switched on for agents", "Edit it by typing", "Basic Doe Engine"],
+      basic: [
+        "Everything in Free",
+        "Agents book and send you documents",
+        "Well-known, MCP and API",
+        "Email and scheduler integrations",
+        "Canadian Intelligence",
+      ],
+      advanced: [
+        "Everything in Basic",
+        "Priority in the Doe Engine",
+        "Document exchange and Doe Interface",
+        "Offers, waitlist and autofill",
+        "Analytics",
+        "Ambient scribe (basic)",
+      ],
+      one: [
+        "Everything in Advanced",
+        "Full ambient scribe",
+        "Appointments+",
+        "Staff agents with computer use",
+        "Voice agents",
+      ],
+    }[tier.id],
   })),
 } as const;
 
-/** One plain sentence on what each /pricing feature group is, shown when its row on the tiers screen is opened. */
-const GROUP_DETAIL: Record<string, string> = {
-  "Clinic profile":
-    "Your clinic's page in the Doe Index. Claim it, keep services, providers, hours and insurance current, and get verified.",
-  "Dynamic Index":
-    "Your page stays live. Services, providers, hours, availability and prices sync from your scheduling, PMS, EHR and CRM.",
-  "Doe Interface":
-    "A direct line between patients' personal agents and your clinic, with structured questions, replies and handoff to staff.",
-  Offers: "Publish promotions, openings and packages. Personal agents surface them to the patients they fit.",
-  Analytics: "How agents find you: searches, inquiries, top services, missed requests and response times.",
-  "Personal agents for staff":
-    "Agents for your team that take on scheduling, referrals, intake, insurance and follow-ups.",
-  "AI Insights": "Where demand goes unmet, which services are trending, how agents convert and the revenue they bring.",
-  Flow: "Incoming forms read, mapped and routed on their own, outgoing documents filled in, and missing details flagged.",
-  Automations: "Rules in plain language. When something happens, reply, route, book, notify staff or send forms.",
-  "Advanced controls":
-    "Decide what agents may do: permissions, human approval rules and workflow policies, across every location.",
-  "Specialty feature sets": "Workflows built for concierge, aesthetics, fertility and home care practices.",
-  "Voice agents": "Every call answered, day and night. Book, reschedule and triage, with a live handoff to staff.",
-  "White-glove onboarding": "A dedicated success manager, custom integrations and priority support.",
+/** A tier's cell: a tick, a dash for not included, or a short word for how much of it the tier has. */
+export type EarlyPreviewTierCell = boolean | string;
+
+export type EarlyPreviewTierRow = {
+  readonly label: string;
+  /** One plain sentence on what it is, shown when the row is opened. */
+  readonly detail: string;
+  readonly cells: readonly [EarlyPreviewTierCell, EarlyPreviewTierCell, EarlyPreviewTierCell, EarlyPreviewTierCell];
 };
 
+const ALL = [true, true, true, true] as const;
+const FROM_BASIC = [false, true, true, true] as const;
+const FROM_ADVANCED = [false, false, true, true] as const;
+const ONE_ONLY = [false, false, false, true] as const;
+/** A cell for each tier, in order, from the price list. */
+const perTier = (pick: (tier: (typeof TIERS)[number]) => EarlyPreviewTierCell): EarlyPreviewTierRow["cells"] => [
+  pick(TIERS[0]),
+  pick(TIERS[1]),
+  pick(TIERS[2]),
+  pick(TIERS[3]),
+];
+
 /**
- * What each tier includes, as on /pricing: the four tiers across the top with their price and what each extra provider
- * and location adds, one row per feature group, ticked from the first tier that has it. On iPhone the extras close
- * the table as two rows instead.
+ * What each tier includes and what it costs, in sections: getting found, getting booked, running the clinic, then the
+ * price. Every row opens to one sentence on what it is. The table scrolls under the tiers' names.
  */
 export const EARLYPREVIEW_MARKET_INCLUDED = {
   title: ["What's in each tier.", "And what it costs."],
   /** Under the title: how to open a feature's description. */
   hint: "Select any feature to see what it is.",
-  tiers: PRICING_PLANS.map((plan) => ({
-    id: plan.id,
-    name: plan.name,
-    priceMo: plan.base,
-    extras: extras(plan),
-  })),
-  rows: GROUPS.map((group) => ({
-    id: group.title,
-    label: group.title,
-    detail: GROUP_DETAIL[group.title] ?? `${group.items.join(", ")}.`,
-    from: PRICING_PLANS.find((plan) => plan.id === group.from)!.name,
-    cells: PLAN_ORDER.map((id) => PLAN_ORDER.indexOf(id) >= PLAN_ORDER.indexOf(group.from)),
-  })),
-  costs: [
-    { id: "provider", label: "Each extra provider", cells: PRICING_PLANS.map((plan) => (plan.perProvider ? `+$${plan.perProvider}` : "$0")) },
-    { id: "location", label: "Each extra location", cells: PRICING_PLANS.map((plan) => (plan.perLocation ? `+$${plan.perLocation}` : "$0")) },
-  ],
-  costsNote: "A month. Larger practices get a volume discount on extra providers and locations.",
+  tiers: TIERS.map((tier) => ({ id: tier.id, name: tier.name, priceMo: tier.priceMo, extras: EXTRAS[tier.id] })),
+  sections: [
+    {
+      id: "found",
+      label: "Get found",
+      rows: [
+        {
+          label: "Clinic profile",
+          detail: "Claim your clinic's profile and switch it on for patients' personal agents.",
+          cells: ALL,
+        },
+        {
+          label: "Edit by typing",
+          detail: "Update your clinic by typing what changed. On Free a few fields, like live availability, stay locked.",
+          cells: ["Most", true, true, true],
+        },
+        {
+          label: "Doe Engine",
+          detail:
+            "How agents find you. Standard adds the well-known file, MCP and an API. Priority surfaces your clinic ahead of others in rotation, with Exa Connect, the MCP registry, MCP and PAP.",
+          cells: ["Basic", "Standard", "Priority", "Priority"],
+        },
+        {
+          label: "Canadian Intelligence",
+          detail: "Turn on Canadian Intelligence for your clinic with one switch.",
+          cells: FROM_BASIC,
+        },
+      ],
+    },
+    {
+      id: "booked",
+      label: "Get booked",
+      rows: [
+        {
+          label: "Agent booking",
+          detail: "Patients' agents book appointments with you directly and send you their documents.",
+          cells: FROM_BASIC,
+        },
+        {
+          label: "Integrations",
+          detail:
+            "Basic connects your email and any scheduling app you use. Advanced connects the deeper systems your clinic runs on.",
+          cells: [false, "Basic", "Advanced", "Advanced"],
+        },
+        {
+          label: "Document exchange",
+          detail: "Forms in and out: agents fill in your intake forms and receive the documents you send back.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Doe Interface",
+          detail: "A direct line from a patient's agent to your clinic, with no phone call.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Offers",
+          detail: "Publish openings, promotions and packages. Agents bring them to the patients they fit.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Waitlist & autofill",
+          detail: "A waitlist that fills cancelled slots on its own, so an empty chair gets booked again.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Analytics",
+          detail: "See how agents find you, what patients ask for and what they book.",
+          cells: FROM_ADVANCED,
+        },
+      ],
+    },
+    {
+      id: "run",
+      label: "Run the clinic",
+      rows: [
+        {
+          label: "Ambient scribe",
+          detail: "Visit notes written while you talk. Advanced has the basic scribe, Doe One the full one.",
+          cells: [false, false, "Basic", "Full"],
+        },
+        {
+          label: "Voice agents",
+          detail: "Every call answered, day and night, with booking and a live handoff to staff. An add-on on Advanced.",
+          cells: [false, false, "Add-on", true],
+        },
+        {
+          label: "Appointments+",
+          detail: "Appointments with the prep and the follow-up built in, before and after every visit.",
+          cells: ONE_ONLY,
+        },
+        {
+          label: "Staff agents",
+          detail: "A personal agent for each member of your staff that can work in your clinic's software for them.",
+          cells: ONE_ONLY,
+        },
+        {
+          label: "Support",
+          detail: "From self-serve docs on Free to a dedicated success manager on Doe One.",
+          cells: ["Docs", "Email", "Priority", "Dedicated"],
+        },
+      ],
+    },
+    {
+      id: "price",
+      label: "Price, a month",
+      rows: [
+        {
+          label: "Base",
+          detail: "One provider, any one clinic. Doe One adds usage on top.",
+          cells: perTier((tier) => `$${tier.priceMo}`),
+        },
+        {
+          label: "Each extra provider",
+          detail: "Added each month for every provider past the first.",
+          cells: perTier((tier) => (tier.perProvider ? `+$${tier.perProvider}` : false)),
+        },
+        {
+          label: "Founding price",
+          detail:
+            "Basic is $29 for the first 100 clinics and $39 for the next 50, each for a full year. Advanced is $59 for the first 50 and $89 for the next 50, each for six months. Doe One is $199 plus usage.",
+          cells: [false, "$29", "$59", "$199"],
+        },
+        {
+          label: "10+ locations",
+          detail: "Custom pricing, discounted from your bulk total. Create an account and book a call to lock it in.",
+          cells: [false, "Custom", "Custom", "Custom"],
+        },
+      ],
+    },
+  ] satisfies readonly { id: string; label: string; rows: readonly EarlyPreviewTierRow[] }[],
 } as const;
 
 /**

@@ -28,6 +28,7 @@ import {
   EARLYPREVIEW_MARKET_SEED as SEED,
   EARLYPREVIEW_MARKET_WHY_NOW as WHY_NOW,
   type EarlyPreviewMarketSource,
+  type EarlyPreviewTierCell,
 } from "@/lib/earlypreview/earlypreview-market-copy";
 
 /** The screens in order, and how much scroll progress each one holds. */
@@ -402,32 +403,86 @@ function PlansScene({ p }: { p: number }) {
             </li>
           ))}
         </ol>
+        <p
+          className="earlypreview-market__plans-custom"
+          style={vars({ "--e": en(t, 0.95, 1.2) })}
+        >
+          {PLANS.custom}
+        </p>
       </div>
     </Scene>
   );
 }
 
+/** A tier's cell on the tiers table: a tick, a quiet dash, or the short word for how much of it the tier has. */
+function TierCell({ value }: { value: EarlyPreviewTierCell }) {
+  if (value === true) {
+    return (
+      <>
+        <Check />
+        <span className="sr-only">Included</span>
+      </>
+    );
+  }
+  if (value === false) {
+    return (
+      <>
+        <span aria-hidden>—</span>
+        <span className="sr-only">Not included</span>
+      </>
+    );
+  }
+  return <span className="earlypreview-market__incl-word">{value}</span>;
+}
+
+const INCLUDED_ROWS = INCLUDED.sections.flatMap((section) => section.rows);
+
 /**
- * What each tier includes, as on /pricing: the tiers across the top with their price and what each extra provider and
- * location adds, one row per feature group, ticked from the first tier that has it. On iPhone the extras close the
- * table as two cost rows. What a tier leaves out is a quiet dash. Rows come in one after another.
+ * What each tier includes and what it costs: the tiers across the top with their price and what each extra provider
+ * adds, then the table in sections, scrolling under them with a fade at whichever edge has more. Every row opens on
+ * its chevron to one sentence on what it is, and the rows under it fade while it's open. Rows come in one after another.
  */
 function IncludedScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "included");
   const hover = useHover<string>();
-  const rows = INCLUDED.rows.length + INCLUDED.costs.length;
+  const scrollRef = useRef<HTMLDivElement>(null);
   const rise = (index: number) =>
-    vars({ "--e": en(t, 0.4 + (index * 0.8) / rows, 0.65 + (index * 0.8) / rows) });
-  // The opened feature: the rows on one side of it fade and its description takes their place. A row in the top half
-  // opens downward over the rows under it; one in the bottom half opens upward. It closes when the screen leaves.
+    vars({ "--e": en(t, 0.4 + (index * 0.75) / INCLUDED_ROWS.length, 0.65 + (index * 0.75) / INCLUDED_ROWS.length) });
   const [open, setOpen] = useState<number | null>(null);
+  // Which edges have more table past them, so each fades only when there's something to scroll to.
+  const [more, setMore] = useState({ above: false, below: false });
   const shown = o > 0.5;
   useEffect(() => {
     if (!shown) setOpen(null);
   }, [shown]);
-  const up = open !== null && open >= INCLUDED.rows.length / 2;
-  const faded = (index: number) =>
-    open !== null && index !== open && (up ? index < open : index > open);
+  useEffect(() => {
+    const box = scrollRef.current;
+    if (!box) return undefined;
+    const read = () => {
+      const above = box.scrollTop > 2;
+      const below = box.scrollTop + box.clientHeight < box.scrollHeight - 2;
+      setMore((prev) => (prev.above === above && prev.below === below ? prev : { above, below }));
+    };
+    read();
+    box.addEventListener("scroll", read, { passive: true });
+    const observer = new ResizeObserver(read);
+    observer.observe(box);
+    return () => {
+      box.removeEventListener("scroll", read);
+      observer.disconnect();
+    };
+  }, []);
+  // An opened row moves to the top of the table, so its description has the space under it in view.
+  useEffect(() => {
+    const box = scrollRef.current;
+    const row = box?.querySelector<HTMLElement>(".earlypreview-market__incl-row.is-open");
+    if (!box || !row) return;
+    const offset = row.getBoundingClientRect().top - box.getBoundingClientRect().top;
+    box.scrollTo({ top: box.scrollTop + offset - 8, behavior: "smooth" });
+  }, [open]);
+  const faded = (index: number) => open !== null && index > open;
+
+  let index = -1;
   return (
     <Scene o={o} label="What's in each tier">
       <SceneTitle title={INCLUDED.title} t={t} />
@@ -438,106 +493,94 @@ function IncludedScene({ p }: { p: number }) {
         <Chevron />
         {INCLUDED.hint}
       </p>
-      <div className="earlypreview-market__body">
+      <div className="earlypreview-market__body earlypreview-market__body--table">
         <div
           className="earlypreview-market__incl"
           role="table"
           aria-label="What each tier includes, and what it costs"
         >
+          <div role="rowgroup" className="earlypreview-market__incl-head">
+            <div
+              className="earlypreview-market__incl-row is-head"
+              role="row"
+              style={vars({ "--e": en(t, 0.3, 0.55) })}
+            >
+              <span role="columnheader" />
+              {INCLUDED.tiers.map((tier) => (
+                <span key={tier.id} role="columnheader" className={`is-${tier.id}`}>
+                  <span className="earlypreview-market__incl-tier">
+                    {tier.name} <em>${tier.priceMo}</em>
+                  </span>
+                  <span className="earlypreview-market__incl-extras">
+                    {tier.extras.map((extra) => (
+                      <span key={extra}>{extra}</span>
+                    ))}
+                  </span>
+                </span>
+              ))}
+            </div>
+          </div>
           <div
-            className="earlypreview-market__incl-row is-head"
-            role="row"
-            style={vars({ "--e": en(t, 0.3, 0.55) })}
+            ref={scrollRef}
+            role="rowgroup"
+            className={`earlypreview-market__incl-scroll${more.above ? " is-more-above" : ""}${more.below ? " is-more-below" : ""}`}
+            data-lock-scroll
           >
-            <span role="columnheader" />
-            {INCLUDED.tiers.map((tier) => (
-              <span key={tier.id} role="columnheader" className={`is-${tier.id}`}>
-                <span className="earlypreview-market__incl-tier">
-                  {tier.name} <em>${tier.priceMo}</em>
-                </span>
-                <span className="earlypreview-market__incl-extras">
-                  {tier.extras.map((extra) => (
-                    <span key={extra}>{extra}</span>
-                  ))}
-                </span>
-              </span>
+            {INCLUDED.sections.map((section) => (
+              <div key={section.id} role="presentation" className="earlypreview-market__incl-group">
+                <div
+                  role="row"
+                  className={`earlypreview-market__incl-section${faded(index + 1) ? " is-faded" : ""}`}
+                  style={rise(index + 1)}
+                >
+                  <span role="rowheader">{section.label}</span>
+                </div>
+                {section.rows.map((row) => {
+                  index += 1;
+                  const i = index;
+                  return (
+                    <div
+                      key={row.label}
+                      className={`earlypreview-market__incl-row${open === null ? hover.state(row.label) : ""}${faded(i) ? " is-faded" : ""}${open === i ? " is-open" : ""}`}
+                      role="row"
+                      style={rise(i)}
+                      aria-hidden={faded(i) || undefined}
+                      {...hover.bind(row.label)}
+                    >
+                      <span role="rowheader">
+                        <button
+                          type="button"
+                          className="earlypreview-market__incl-toggle"
+                          aria-expanded={open === i}
+                          aria-controls={open === i ? "earlypreview-incl-detail" : undefined}
+                          tabIndex={faded(i) ? -1 : undefined}
+                          onClick={() => setOpen((current) => (current === i ? null : i))}
+                        >
+                          {row.label}
+                          <Chevron />
+                        </button>
+                      </span>
+                      {row.cells.map((value, c) => (
+                        <span
+                          key={INCLUDED.tiers[c].id}
+                          role="cell"
+                          className={`is-${INCLUDED.tiers[c].id}${value === false ? " is-none" : ""}`}
+                        >
+                          <TierCell value={value} />
+                        </span>
+                      ))}
+                      {open === i ? (
+                        <div id="earlypreview-incl-detail" className="earlypreview-market__incl-detail">
+                          <p>{row.detail}</p>
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
             ))}
           </div>
-          {INCLUDED.rows.map((row, index) => (
-            <div
-              key={row.id}
-              className={`earlypreview-market__incl-row${open === null ? hover.state(row.id) : ""}${faded(index) ? " is-faded" : ""}${open === index ? " is-open" : ""}`}
-              role="row"
-              style={rise(index)}
-              aria-hidden={faded(index) || undefined}
-              {...hover.bind(row.id)}
-            >
-              <span role="rowheader">
-                <button
-                  type="button"
-                  className="earlypreview-market__incl-toggle"
-                  aria-expanded={open === index}
-                  aria-controls={open === index ? "earlypreview-incl-detail" : undefined}
-                  tabIndex={faded(index) ? -1 : undefined}
-                  onClick={() => setOpen((current) => (current === index ? null : index))}
-                >
-                  {row.label}
-                  <Chevron />
-                </button>
-              </span>
-              {row.cells.map((included, c) => (
-                <span
-                  key={INCLUDED.tiers[c].id}
-                  role="cell"
-                  className={`is-${INCLUDED.tiers[c].id}${included ? "" : " is-none"}`}
-                >
-                  {included ? (
-                    <>
-                      <Check />
-                      <span className="sr-only">Included</span>
-                    </>
-                  ) : (
-                    <>
-                      <span aria-hidden>—</span>
-                      <span className="sr-only">Not included</span>
-                    </>
-                  )}
-                </span>
-              ))}
-              {open === index ? (
-                <div
-                  id="earlypreview-incl-detail"
-                  className={`earlypreview-market__incl-detail${up ? " is-up" : ""}`}
-                >
-                  <p>{row.detail}</p>
-                  <span>Included from {row.from}</span>
-                </div>
-              ) : null}
-            </div>
-          ))}
-          {INCLUDED.costs.map((row, index) => (
-            <div
-              key={row.id}
-              className={`earlypreview-market__incl-row is-cost${index === 0 ? " is-cost-first" : ""}${open === null ? hover.state(row.id) : ""}${open !== null && !up ? " is-faded" : ""}`}
-              role="row"
-              style={rise(INCLUDED.rows.length + index)}
-              {...hover.bind(row.id)}
-            >
-              <span role="rowheader">{row.label}</span>
-              {row.cells.map((cell, c) => (
-                <span key={INCLUDED.tiers[c].id} role="cell" className={`is-${INCLUDED.tiers[c].id}`}>
-                  {cell}
-                </span>
-              ))}
-            </div>
-          ))}
         </div>
-        <p
-          className={`earlypreview-market__incl-note${open !== null && !up ? " is-faded" : ""}`}
-          style={vars({ "--e": en(t, 1.15, 1.4) })}
-        >
-          {INCLUDED.costsNote}
-        </p>
       </div>
     </Scene>
   );
