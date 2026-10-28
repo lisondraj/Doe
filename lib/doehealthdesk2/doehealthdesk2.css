@@ -5373,6 +5373,47 @@ html:has(.earlypreview-page) {
   }
 }
 
+/* The founders under the band's description: one row of two even columns, a name over two lines each, every line on
+   one row so both columns keep the same number of lines. */
+.earlypreview-band__founders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 4vw, 4rem);
+  width: min(100%, 40rem);
+  margin: clamp(1.75rem, 3.2vw, 2.75rem) auto 0;
+  padding: 0;
+  list-style: none;
+  color: inherit;
+}
+
+.earlypreview-band__founder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.earlypreview-band__founder-name {
+  font-size: clamp(1.5rem, 2.1vw, 2rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+.earlypreview-band__founder-line {
+  font-size: clamp(1rem, 1.15vw, 1.125rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  opacity: 0.8;
+}
+
+.earlypreview-band__founder-name + .earlypreview-band__founder-line {
+  margin-top: 0.4rem;
+}
+
 /* iPhone view: the band copy keeps to the screen. A little less side room than the sections around it, a title sized so
    its longest line ("since we were young.") fits, and a description whose two lines each stay on one row, sized to the
    width instead of wrapping and leaving a word on its own. Any other description here wraps evenly. */
@@ -5411,6 +5452,20 @@ html:has(.earlypreview-page) {
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__copy .earlypreview-band__dek span {
   white-space: nowrap;
+}
+
+/* iPhone view: the two founder columns stay side by side, their type sized to the column so no line wraps. */
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__founders {
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__founder-name {
+  font-size: clamp(1.05rem, calc((100vw - 3.75rem) / 16.5), 1.5rem);
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-band__founder-line {
+  font-size: clamp(0.72rem, calc((100vw - 3.75rem) / 25), 1rem);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5613,6 +5668,7 @@ html:has(.earlypreview-page) {
 
 .earlypreview-page .earlypreview-band__line,
 .earlypreview-page .earlypreview-band__dek,
+.earlypreview-page .earlypreview-band__founders,
 .earlypreview-page .earlypreview-hospital__line {
   opacity: 0;
   transform: translateY(0.9rem);
@@ -5644,7 +5700,7 @@ html:has(.earlypreview-page) {
   transform: none;
 }
 
-.earlypreview-page .earlypreview-beige-blank.is-in :is(.earlypreview-band__line, .earlypreview-band__dek),
+.earlypreview-page .earlypreview-beige-blank.is-in :is(.earlypreview-band__line, .earlypreview-band__dek, .earlypreview-band__founders),
 .earlypreview-page .earlypreview-hospital.is-in .earlypreview-hospital__line {
   opacity: 1;
   transform: none;
@@ -5656,6 +5712,10 @@ html:has(.earlypreview-page) {
 
 .earlypreview-page .earlypreview-beige-blank.is-in .earlypreview-band__dek {
   transition-delay: 180ms;
+}
+
+.earlypreview-page .earlypreview-beige-blank.is-in .earlypreview-band__founders {
+  transition-delay: 270ms;
 }
 
 /*
@@ -5707,6 +5767,7 @@ html:has(.earlypreview-page) {
   .earlypreview-page .earlypreview-beige-blank > .doehealth-desk2-visible__tide,
   .earlypreview-page .earlypreview-band__line,
   .earlypreview-page .earlypreview-band__dek,
+  .earlypreview-page .earlypreview-band__founders,
   .earlypreview-page .earlypreview-hospital__line,
   .earlypreview-page .doehealth-desk2-hero ~ .desk2-workspace .desk2-workspace__photo,
   .earlypreview-page .earlypreview-beige-blank > .desk2-workspace .desk2-workspace__photo,

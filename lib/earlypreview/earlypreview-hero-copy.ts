@@ -30,6 +30,15 @@ export const EARLYPREVIEW_BAND_DEK = [
   "to reinvent healthcare in the era of personal agents.",
 ] as const;
 
+/**
+ * /earlypreview second section: the founders in one row of two columns under its small text. Each credential is the
+ * same two lines, degree then university, so the columns stay even.
+ */
+export const EARLYPREVIEW_BAND_FOUNDERS = [
+  { name: "James Lisondra", lines: ["Doctor of Medicine", "University of Ottawa"] },
+  { name: "Matthew Lisondra", lines: ["PhD, AI & Robotics", "University of Toronto"] },
+] as const;
+
 /** /earlypreview hero small text: two lines under the title. */
 export const EARLYPREVIEW_HERO_DEK = [
   "Doe is building an intelligent platform",

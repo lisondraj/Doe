@@ -18,6 +18,7 @@ import { EarlyPreviewProductSection } from "@/components/earlypreview/EarlyPrevi
 import { EarlyPreviewVideoOverlay } from "@/components/earlypreview/EarlyPreviewVideoOverlay";
 import {
   EARLYPREVIEW_BAND_DEK,
+  EARLYPREVIEW_BAND_FOUNDERS,
   EARLYPREVIEW_BAND_HEADLINE,
   EARLYPREVIEW_HERO_DEK,
   EARLYPREVIEW_HERO_HEADLINE,
@@ -106,6 +107,21 @@ function EarlyPreviewBeigeBand({
             <span key={line}>{line}</span>
           ))}
         </p>
+        {/* The band under the hero: the founders, one row of two columns, each a name over the same two lines. */}
+        {headline === EARLYPREVIEW_BAND_HEADLINE ? (
+          <ul className="earlypreview-band__founders" aria-label="Founders">
+            {EARLYPREVIEW_BAND_FOUNDERS.map((founder) => (
+              <li key={founder.name} className="earlypreview-band__founder">
+                <span className={`earlypreview-band__founder-name ${p22Mackinac.className}`}>{founder.name}</span>
+                {founder.lines.map((line) => (
+                  <span key={line} className={`earlypreview-band__founder-line ${inter.className}`}>
+                    {line}
+                  </span>
+                ))}
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
       {/* The same empty space as the hero's dot-wave box, so the video sits at the same height as in the hero. */}
       <div className="earlypreview-hero-wave" aria-hidden />
