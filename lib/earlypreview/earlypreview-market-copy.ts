@@ -504,7 +504,6 @@ export const EARLYPREVIEW_MARKET_PLANS = {
         "Well-known, MCP and API",
         "Email and scheduler integrations",
         "Reminders and confirmations",
-        "LLM Router",
       ],
       advanced: [
         "Everything in Basic",
@@ -522,6 +521,7 @@ export const EARLYPREVIEW_MARKET_PLANS = {
         "Staff agents with computer use",
         "Voice agents",
         "Insurance, prior auth and AI Insights",
+        "LLM Router and usage tracking",
         "White-glove onboarding",
       ],
     }[tier.id],
@@ -607,12 +607,6 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
           detail:
             "How agents find you. Standard adds the well-known file, MCP and an API. Priority surfaces your clinic ahead of others in rotation, with Exa Connect, the MCP registry, MCP and PAP.",
           cells: ["Basic", "Standard", "Priority", "Priority"],
-        },
-        {
-          label: "LLM Router",
-          detail:
-            "Each request goes to the best model for it, fast and cheap for simple questions, stronger for hard ones, so agents get good answers at a sensible cost.",
-          cells: FROM_BASIC,
         },
         {
           label: "Any Language",
@@ -761,6 +755,12 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
         {
           label: "AI Insights",
           detail: "Where demand goes unmet, which services are rising and what to offer next, from what agents ask for.",
+          cells: ONE_ONLY,
+        },
+        {
+          label: "LLM Router",
+          detail:
+            "Each request goes to the best model for it, fast and cheap for simple questions, stronger for hard ones, so agents get good answers at a sensible cost.",
           cells: ONE_ONLY,
         },
         {
