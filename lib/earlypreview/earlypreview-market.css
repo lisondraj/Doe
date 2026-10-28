@@ -842,6 +842,26 @@
   }
 }
 
+/* Short desktop screens: the plans' features and prices a little tighter, so the 10+ locations line clears the nav. */
+@media (max-height: 800px) {
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .earlypreview-market__plan-features {
+    gap: 0.3rem;
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .earlypreview-market__plan-features > li {
+    font-size: 0.88rem;
+    line-height: 1.25;
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .earlypreview-market__plan-value {
+    font-size: clamp(2.6rem, min(4.6vw, 8.5vh), 5rem);
+  }
+
+  .doehealth-desk2-page:not(:has(.doephone-mobile-root)) .earlypreview-market__plans-custom {
+    margin-top: 0.75rem;
+  }
+}
+
 /* Plans: the 10+ locations line under the tiers. */
 .earlypreview-market__plans-custom {
   margin: clamp(1.25rem, 3.5vh, 2.25rem) 0 0;

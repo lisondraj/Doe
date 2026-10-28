@@ -497,12 +497,13 @@ export const EARLYPREVIEW_MARKET_PLANS = {
     priceMo: tier.priceMo,
     extras: EXTRAS[tier.id],
     features: {
-      free: ["Claim your profile", "Switched on for agents", "Edit it by typing", "Basic Doe Engine"],
+      free: ["Claim your profile", "Switched on for agents", "Verified badge", "Edit it by typing", "Basic Doe Engine"],
       basic: [
         "Everything in Free",
         "Agents book and send you documents",
         "Well-known, MCP and API",
         "Email and scheduler integrations",
+        "Reminders and confirmations",
         "Canadian Intelligence",
       ],
       advanced: [
@@ -510,7 +511,8 @@ export const EARLYPREVIEW_MARKET_PLANS = {
         "Priority in the Doe Engine",
         "Document exchange and Doe Interface",
         "Offers, waitlist and autofill",
-        "Analytics",
+        "Deposits and no-show protection",
+        "Analytics and automations",
         "Ambient scribe (basic)",
       ],
       one: [
@@ -519,6 +521,8 @@ export const EARLYPREVIEW_MARKET_PLANS = {
         "Appointments+",
         "Staff agents with computer use",
         "Voice agents",
+        "Insurance checks and AI Insights",
+        "White-glove onboarding",
       ],
     }[tier.id],
   })),
@@ -547,8 +551,8 @@ const perTier = (pick: (tier: (typeof TIERS)[number]) => EarlyPreviewTierCell): 
 ];
 
 /**
- * What each tier includes and what it costs, in sections: getting found, getting booked, running the clinic, then the
- * price. Every row opens to one sentence on what it is. The table scrolls under the tiers' names.
+ * What each tier includes and what it costs, in sections: getting found, getting booked, getting paid, running the
+ * clinic, the team and support, trust and security, then the price. Every row opens to one sentence on what it is. The table scrolls under the tiers' names.
  */
 export const EARLYPREVIEW_MARKET_INCLUDED = {
   title: ["What's in each tier.", "And what it costs."],
@@ -563,6 +567,11 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
         {
           label: "Clinic Profile",
           detail: "Claim your clinic's profile and switch it on for patients' personal agents.",
+          cells: ALL,
+        },
+        {
+          label: "Verified Badge",
+          detail: "A verified mark on your profile, so agents and patients know it's really your clinic.",
           cells: ALL,
         },
         {
@@ -581,6 +590,11 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
           detail: "Turn on Canadian Intelligence for your clinic with one switch.",
           cells: FROM_BASIC,
         },
+        {
+          label: "Any Language",
+          detail: "Agents read and answer for your clinic in the patient's own language, English and French first.",
+          cells: FROM_BASIC,
+        },
       ],
     },
     {
@@ -590,6 +604,11 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
         {
           label: "Agent Booking",
           detail: "Patients' agents book appointments with you directly and send you their documents.",
+          cells: FROM_BASIC,
+        },
+        {
+          label: "Reminders & Confirmations",
+          detail: "Reminders and confirmations go out on their own, by text and email, so fewer patients forget.",
           cells: FROM_BASIC,
         },
         {
@@ -606,6 +625,11 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
         {
           label: "Doe Interface",
           detail: "A direct line from a patient's agent to your clinic, with no phone call.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Referrals",
+          detail: "Referrals in and out, with the records attached and the status tracked until the patient is seen.",
           cells: FROM_ADVANCED,
         },
         {
@@ -626,9 +650,40 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
       ],
     },
     {
+      id: "paid",
+      label: "Get paid",
+      rows: [
+        {
+          label: "Deposits & Prepayment",
+          detail: "Take a deposit or the full fee when an agent books, so every slot is held by someone committed.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "No-Show Protection",
+          detail: "A card on file and a cancellation policy the patient's agent agrees to before it books.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Payouts",
+          detail: "Bookings, deposits and add-ons paid out together, on a schedule you can see.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Insurance Checks",
+          detail: "Coverage and eligibility checked before the visit, so there are no surprises at the front desk.",
+          cells: ONE_ONLY,
+        },
+      ],
+    },
+    {
       id: "run",
       label: "Run the clinic",
       rows: [
+        {
+          label: "Automations",
+          detail: "Rules in plain language. When something happens, Doe replies, routes, books or sends the form.",
+          cells: FROM_ADVANCED,
+        },
         {
           label: "Ambient Scribe",
           detail: "Visit notes written while you talk. Advanced has the basic scribe, Doe One the full one.",
@@ -650,9 +705,71 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
           cells: ONE_ONLY,
         },
         {
+          label: "AI Insights",
+          detail: "Where demand goes unmet, which services are rising and what to offer next, from what agents ask for.",
+          cells: ONE_ONLY,
+        },
+      ],
+    },
+    {
+      id: "team",
+      label: "Team & support",
+      rows: [
+        {
+          label: "Roles & Permissions",
+          detail: "Decide what each person on your team, and each agent, can see and do.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Every Location, One Login",
+          detail: "All your locations side by side, with their own hours, providers and settings, from one account.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Custom Workflows",
+          detail: "Workflows built around how your clinic already runs, set up with you.",
+          cells: ONE_ONLY,
+        },
+        {
+          label: "White-Glove Onboarding",
+          detail: "We set Doe up with you: integrations, your data and training for your team.",
+          cells: ONE_ONLY,
+        },
+        {
           label: "Support",
           detail: "From self-serve docs on Free to a dedicated success manager on Doe One.",
           cells: ["Docs", "Email", "Priority", "Dedicated"],
+        },
+      ],
+    },
+    {
+      id: "trust",
+      label: "Trust & security",
+      rows: [
+        {
+          label: "Encryption",
+          detail: "Everything encrypted in transit and at rest, on every tier.",
+          cells: ALL,
+        },
+        {
+          label: "PHIPA & HIPAA",
+          detail: "Built to PHIPA in Canada and HIPAA in the U.S., with SOC 2 under way.",
+          cells: ALL,
+        },
+        {
+          label: "Signed BAA",
+          detail: "A signed business associate agreement with Doe, for every paid clinic.",
+          cells: FROM_BASIC,
+        },
+        {
+          label: "Audit Log",
+          detail: "Every agent action recorded: who asked, what was shared and when.",
+          cells: FROM_ADVANCED,
+        },
+        {
+          label: "Single Sign-On",
+          detail: "Your whole team signs in with the accounts they already use.",
+          cells: ONE_ONLY,
         },
       ],
     },
