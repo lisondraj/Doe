@@ -504,7 +504,7 @@ export const EARLYPREVIEW_MARKET_PLANS = {
         "Well-known, MCP and API",
         "Email and scheduler integrations",
         "Reminders and confirmations",
-        "Canadian Intelligence",
+        "LLM Router",
       ],
       advanced: [
         "Everything in Basic",
@@ -609,8 +609,9 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
           cells: ["Basic", "Standard", "Priority", "Priority"],
         },
         {
-          label: "Canadian Intelligence",
-          detail: "Turn on Canadian Intelligence for your clinic with one switch.",
+          label: "LLM Router",
+          detail:
+            "Each request goes to the best model for it, fast and cheap for simple questions, stronger for hard ones, so agents get good answers at a sensible cost.",
           cells: FROM_BASIC,
         },
         {
@@ -760,6 +761,11 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
         {
           label: "AI Insights",
           detail: "Where demand goes unmet, which services are rising and what to offer next, from what agents ask for.",
+          cells: ONE_ONLY,
+        },
+        {
+          label: "Usage Tracking",
+          detail: "See what your usage adds up to: requests, calls and notes by day, by provider and by feature, so the bill is never a surprise.",
           cells: ONE_ONLY,
         },
       ],
