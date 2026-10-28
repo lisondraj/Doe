@@ -317,6 +317,20 @@ function SeedScene({ p }: { p: number }) {
   );
 }
 
+/** A row's name with its chevron, the last word held to the chevron so a wrapped name never leaves it on its own line. */
+function ToggleLabel({ label }: { label: string }) {
+  const cut = label.lastIndexOf(" ");
+  return (
+    <>
+      {cut > 0 ? `${label.slice(0, cut)} ` : null}
+      <span className="earlypreview-market__incl-last">
+        {label.slice(cut + 1)}
+        <Chevron />
+      </span>
+    </>
+  );
+}
+
 /** A thin chevron that turns over when its row is open. */
 function Chevron() {
   return (
@@ -435,7 +449,8 @@ function TierCell({ value }: { value: EarlyPreviewTierCell }) {
   return <span className="earlypreview-market__incl-word">{value}</span>;
 }
 
-const INCLUDED_ROWS = INCLUDED.sections.flatMap((section) => section.rows);
+/** How many of the tiers table's first rows come in one after another. */
+const RISE_ROWS = 6;
 
 /**
  * What each tier includes and what it costs: the tiers across the top with their price and what each extra provider
@@ -446,8 +461,12 @@ function IncludedScene({ p }: { p: number }) {
   const { o, t } = sceneClock(p, "included");
   const hover = useHover<string>();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const rise = (index: number) =>
-    vars({ "--e": en(t, 0.4 + (index * 0.75) / INCLUDED_ROWS.length, 0.65 + (index * 0.75) / INCLUDED_ROWS.length) });
+  // The first rows come in one after another; the rest, out of view under the fade until scrolled to, come in with
+  // the last of them, so no row is left half faded at the bottom.
+  const rise = (index: number) => {
+    const k = Math.min(index, RISE_ROWS) * 0.06;
+    return vars({ "--e": en(t, 0.4 + k, 0.65 + k) });
+  };
   const [open, setOpen] = useState<number | null>(null);
   // Which edges have more table past them, so each fades only when there's something to scroll to.
   const [more, setMore] = useState({ above: false, below: false });
@@ -556,8 +575,7 @@ function IncludedScene({ p }: { p: number }) {
                           tabIndex={faded(i) ? -1 : undefined}
                           onClick={() => setOpen((current) => (current === i ? null : i))}
                         >
-                          {row.label}
-                          <Chevron />
+                          <ToggleLabel label={row.label} />
                         </button>
                       </span>
                       {row.cells.map((value, c) => (

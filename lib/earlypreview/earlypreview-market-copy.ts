@@ -473,6 +473,14 @@ const EXTRAS: Record<TierId, readonly string[]> = {
   one: ["+$79/provider/mo", "plus usage"],
 };
 
+/** The same, short, for the small line under each tier's name in the tiers table. */
+const TABLE_EXTRAS: Record<TierId, readonly string[]> = {
+  free: ["Always free"],
+  basic: ["+$19/prov"],
+  advanced: ["+$39/prov"],
+  one: ["+$79/prov +\u00a0usage"],
+};
+
 const CUSTOM_LOCATIONS =
   "10+ locations: custom pricing, discounted from your bulk total. Create an account and book a call to lock it in.";
 
@@ -546,19 +554,19 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
   title: ["What's in each tier.", "And what it costs."],
   /** Under the title: how to open a feature's description. */
   hint: "Select any feature to see what it is.",
-  tiers: TIERS.map((tier) => ({ id: tier.id, name: tier.name, priceMo: tier.priceMo, extras: EXTRAS[tier.id] })),
+  tiers: TIERS.map((tier) => ({ id: tier.id, name: tier.name, priceMo: tier.priceMo, extras: TABLE_EXTRAS[tier.id] })),
   sections: [
     {
       id: "found",
       label: "Get found",
       rows: [
         {
-          label: "Clinic profile",
+          label: "Clinic Profile",
           detail: "Claim your clinic's profile and switch it on for patients' personal agents.",
           cells: ALL,
         },
         {
-          label: "Edit by typing",
+          label: "Edit by Typing",
           detail: "Update your clinic by typing what changed. On Free a few fields, like live availability, stay locked.",
           cells: ["Most", true, true, true],
         },
@@ -580,7 +588,7 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
       label: "Get booked",
       rows: [
         {
-          label: "Agent booking",
+          label: "Agent Booking",
           detail: "Patients' agents book appointments with you directly and send you their documents.",
           cells: FROM_BASIC,
         },
@@ -591,7 +599,7 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
           cells: [false, "Basic", "Advanced", "Advanced"],
         },
         {
-          label: "Document exchange",
+          label: "Document Exchange",
           detail: "Forms in and out: agents fill in your intake forms and receive the documents you send back.",
           cells: FROM_ADVANCED,
         },
@@ -606,7 +614,7 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
           cells: FROM_ADVANCED,
         },
         {
-          label: "Waitlist & autofill",
+          label: "Waitlist & Autofill",
           detail: "A waitlist that fills cancelled slots on its own, so an empty chair gets booked again.",
           cells: FROM_ADVANCED,
         },
@@ -622,12 +630,12 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
       label: "Run the clinic",
       rows: [
         {
-          label: "Ambient scribe",
+          label: "Ambient Scribe",
           detail: "Visit notes written while you talk. Advanced has the basic scribe, Doe One the full one.",
           cells: [false, false, "Basic", "Full"],
         },
         {
-          label: "Voice agents",
+          label: "Voice Agents",
           detail: "Every call answered, day and night, with booking and a live handoff to staff. An add-on on Advanced.",
           cells: [false, false, "Add-on", true],
         },
@@ -637,7 +645,7 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
           cells: ONE_ONLY,
         },
         {
-          label: "Staff agents",
+          label: "Staff Agents",
           detail: "A personal agent for each member of your staff that can work in your clinic's software for them.",
           cells: ONE_ONLY,
         },
@@ -658,18 +666,18 @@ export const EARLYPREVIEW_MARKET_INCLUDED = {
           cells: perTier((tier) => `$${tier.priceMo}`),
         },
         {
-          label: "Each extra provider",
+          label: "Each Extra Provider",
           detail: "Added each month for every provider past the first.",
           cells: perTier((tier) => (tier.perProvider ? `+$${tier.perProvider}` : false)),
         },
         {
-          label: "Founding price",
+          label: "Founding Price",
           detail:
             "Basic is $29 for the first 100 clinics and $39 for the next 50, each for a full year. Advanced is $59 for the first 50 and $89 for the next 50, each for six months. Doe One is $199 plus usage.",
           cells: [false, "$29", "$59", "$199"],
         },
         {
-          label: "10+ locations",
+          label: "10+ Locations",
           detail: "Custom pricing, discounted from your bulk total. Create an account and book a call to lock it in.",
           cells: [false, "Custom", "Custom", "Custom"],
         },

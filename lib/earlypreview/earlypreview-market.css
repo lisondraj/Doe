@@ -752,9 +752,7 @@
 
 /* A feature's name is its toggle: the name, then a thin chevron that turns over when the row is open. */
 .earlypreview-market__incl-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
+  display: inline;
   padding: 0;
   border: 0;
   background: none;
@@ -763,6 +761,13 @@
   color: inherit;
   text-align: left;
   cursor: pointer;
+}
+
+.earlypreview-market__incl-last {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  white-space: nowrap;
 }
 
 .earlypreview-market__chevron {
@@ -2897,11 +2902,11 @@
   }
 }
 
-/* iPhone tiers: each feature's name on its own line over the four tiers' columns, a size up so it reads easily. The
-   table scrolls under the tiers' names, which stay put. */
+/* iPhone tiers: each feature on one line, its name then the four tiers' cells, as large as fits the width. A long
+   name wraps within its own column rather than taking a line of its own. The table scrolls under the tiers' names. */
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl {
-  --incl-cols: repeat(4, minmax(0, 1fr));
-  --incl-gap: 0.5rem;
+  --incl-cols: minmax(0, 1fr) repeat(4, 3.45rem);
+  --incl-gap: 0.4rem;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__body--table {
@@ -2910,28 +2915,37 @@
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
   .earlypreview-market__incl-row {
-  row-gap: 0.3rem;
-  padding: 0.6rem 0;
-  font-size: 0.92rem;
+  padding: 0.5rem 0;
+  font-size: 0.7rem;
+  letter-spacing: -0.01em;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
   .earlypreview-market__incl-row
   > [role="rowheader"] {
-  grid-column: 1 / -1;
-  font-size: 1.2rem;
+  font-size: 1.05rem;
+  letter-spacing: -0.025em;
+  white-space: normal;
+  text-wrap: balance;
+}
+
+.doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-last {
+  gap: 0.3em;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
   .earlypreview-market__incl-row
   > [role="cell"] {
   justify-self: center;
+  text-align: center;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
-  .earlypreview-market__incl-row.is-head
-  > :first-child {
-  display: none;
+  .earlypreview-market__incl-row
+  > [role="cell"]
+  svg {
+  width: 16px;
+  height: 16px;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root)
@@ -2946,17 +2960,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.15rem;
-  font-size: 1.2rem;
-  white-space: normal;
+  gap: 0.1rem;
+  font-size: 0.84rem;
+  line-height: 1.05;
+  white-space: nowrap;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-tier em {
-  font-size: 0.8em;
+  font-size: 0.9em;
 }
 
 .doehealth-desk2-page:has(.doephone-mobile-root) .earlypreview-market__incl-extras {
-  font-size: 0.68rem;
+  font-size: 0.6rem;
+  line-height: 1.25;
   white-space: normal;
 }
 
