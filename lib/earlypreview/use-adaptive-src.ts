@@ -3,7 +3,7 @@
 import { type RefObject, useEffect, useState } from "react";
 
 import { canStreamHls, filmFallback } from "@/lib/earlypreview/use-earlypreview-film";
-import { FILM_WARM_EVENT } from "@/lib/earlypreview/use-film-warm-up";
+import { FILM_PARK_EVENT, FILM_RESUME_EVENT, FILM_WARM_EVENT } from "@/lib/earlypreview/use-film-warm-up";
 
 /**
  * hls.js from a pinned CDN build, loaded only when a film actually streams through it. The light build has no subtitle
@@ -15,6 +15,8 @@ type HlsInstance = {
   config: { maxBufferLength: number };
   loadSource(url: string): void;
   attachMedia(media: HTMLMediaElement): void;
+  stopLoad(): void;
+  startLoad(): void;
   on(event: string, handler: (event: string, data: { fatal?: boolean }) => void): void;
   destroy(): void;
 };
@@ -119,8 +121,13 @@ export function useAdaptiveSrc(videoRef: RefObject<HTMLVideoElement>, src: strin
     const onWarm = () => {
       if (hls) hls.config.maxBufferLength = Math.max(hls.config.maxBufferLength, WARM_BUFFER_S);
     };
+    // While another film plays in cinema mode this stream fetches nothing.
+    const onPark = () => hls?.stopLoad();
+    const onResume = () => hls?.startLoad();
     video.addEventListener("play", onPlay);
     video.addEventListener(FILM_WARM_EVENT, onWarm);
+    video.addEventListener(FILM_PARK_EVENT, onPark);
+    video.addEventListener(FILM_RESUME_EVENT, onResume);
     void loadHls().then((Hls) => {
       if (cancelled) return;
       if (!Hls || !Hls.isSupported()) {
@@ -150,6 +157,8 @@ export function useAdaptiveSrc(videoRef: RefObject<HTMLVideoElement>, src: strin
       cancelled = true;
       video.removeEventListener("play", onPlay);
       video.removeEventListener(FILM_WARM_EVENT, onWarm);
+      video.removeEventListener(FILM_PARK_EVENT, onPark);
+      video.removeEventListener(FILM_RESUME_EVENT, onResume);
       hls?.destroy();
       hls = null;
     };

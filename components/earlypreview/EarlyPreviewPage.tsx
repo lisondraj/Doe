@@ -28,6 +28,7 @@ import { EARLYPREVIEW_MAIN_VIDEO } from "@/lib/earlypreview/earlypreview-videos"
 /** A screenshot of the hero film at 0:04, its thumbnail. */
 const EARLYPREVIEW_HERO_THUMBNAIL = "/earlypreview/thumbs/hero.jpg";
 import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
+import { useFilmCinema } from "@/lib/earlypreview/use-film-cinema";
 import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
 import { useDoeHealthDesk2FitTitles } from "@/lib/doehealthdesk2/use-doehealthdesk2-fit-titles";
 import { useNavReveal } from "@/lib/earlypreview/use-nav-reveal";
@@ -40,9 +41,6 @@ import {
   type DoeHealthDesk2Variant,
   useDoeHealthDesk2Variant,
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-variant";
-
-/** How long the page takes to fade to black around the playing hero film, and back. Matches earlypreview-films.css. */
-const CINEMA_FADE_MS = 600;
 
 /** The desk2 site: its logo and section anchors live here. */
 const DESK2_PATH = "/doehealthdesk2";
@@ -214,62 +212,8 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
     return () => observer.disconnect();
   }, []);
 
-  // Cinema: while the hero film plays and is at least half on screen, the rest of the page (the nav included) fades to
-  // black and is then hidden, so the browser stops drawing it: the nav's backdrop blur, the drifting fade at the foot
-  // of the screen and the sections around the film all stop competing with the video for frames. Pausing, the film
-  // ending or scrolling it off screen brings the page back.
-  useEffect(() => {
-    const root = rootRef.current;
-    const video = root?.querySelector<HTMLVideoElement>(".doehealth-desk2-hero-stack > .desk2-workspace video");
-    if (!root || !video) return undefined;
-    let playing = !video.paused && !video.ended;
-    let visible = false;
-    let leaving = 0;
-    const update = () => {
-      const on = playing && visible;
-      if (on === root.hasAttribute("data-cinema")) return;
-      window.clearTimeout(leaving);
-      root.removeAttribute("data-cinema-leaving");
-      if (on) {
-        root.setAttribute("data-cinema", "");
-        return;
-      }
-      // The page fades back in for as long as the fade out took (see earlypreview-films.css).
-      root.removeAttribute("data-cinema");
-      root.setAttribute("data-cinema-leaving", "");
-      leaving = window.setTimeout(() => root.removeAttribute("data-cinema-leaving"), CINEMA_FADE_MS);
-    };
-    const onPlay = () => {
-      playing = true;
-      update();
-    };
-    const onStop = () => {
-      playing = false;
-      update();
-    };
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        visible = entry.intersectionRatio >= 0.5;
-        update();
-      },
-      { threshold: [0, 0.5, 1] },
-    );
-    observer.observe(video);
-    video.addEventListener("playing", onPlay);
-    video.addEventListener("pause", onStop);
-    video.addEventListener("ended", onStop);
-    video.addEventListener("emptied", onStop);
-    return () => {
-      observer.disconnect();
-      video.removeEventListener("playing", onPlay);
-      video.removeEventListener("pause", onStop);
-      video.removeEventListener("ended", onStop);
-      video.removeEventListener("emptied", onStop);
-      window.clearTimeout(leaving);
-      root.removeAttribute("data-cinema");
-      root.removeAttribute("data-cinema-leaving");
-    };
-  }, []);
+  // Cinema: while any film plays and is mostly on screen, the other films unload and the rest of the page goes dark.
+  useFilmCinema(rootRef);
 
   // The band under the hero fades from brown to beige the first time it reaches the nav bar.
   // It starts as the band scrolls into view, so it is not a blank section until it reaches the nav.

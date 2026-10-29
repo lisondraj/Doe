@@ -4,6 +4,10 @@ import { type RefObject, useEffect } from "react";
 
 /** Fired on a film's <video> when it should start filling its buffer ahead of a press of play. */
 export const FILM_WARM_EVENT = "earlypreview-film-warm";
+/** Fired on a film's <video> when another film takes the screen (see `useFilmCinema`): stop fetching. */
+export const FILM_PARK_EVENT = "earlypreview-film-park";
+/** Fired when that film is done: fetch again. */
+export const FILM_RESUME_EVENT = "earlypreview-film-resume";
 
 /** Whether this connection can afford to fetch a film nobody has pressed play on yet. */
 function canWarm(): boolean {

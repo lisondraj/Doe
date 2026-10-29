@@ -108,38 +108,30 @@
 }
 
 /*
- * Cinema (/earlypreview only): while the hero film plays and is at least half on screen (`data-cinema` on the page,
- * see EarlyPreviewPage), everything but the film fades to black and is then hidden, so it is no longer drawn: the nav and
- * its backdrop blur, the drifting fade at the foot of the screen, the hero's text, dot wave and gallery, and every
- * section after them. Leaving (`data-cinema-leaving`, briefly) it all fades back in. Keyframes rather than transitions,
- * so the elements' own transitions (the nav's, the hero's reveal) are left alone.
+ * Cinema (/earlypreview only): while a film plays and is at least half on screen (`data-cinema` on the page, see
+ * useFilmCinema), everything beside the path from the page down to that film's frame fades to black and is then hidden,
+ * so it is no longer drawn: the nav and its backdrop blur, the drifting fade at the foot of the screen, the other films
+ * and every section around them. Leaving (`data-cinema-leaving`, briefly) it all fades back in. Keyframes rather than
+ * transitions, so the elements' own transitions (the nav's, the hero's reveal) are left alone.
  */
-.earlypreview-page[data-cinema] :is(
-    .doehealth-desk2-chrome,
-    .desk2-workspace__fade,
-    .doehealth-desk2-hero-stack > :not(.desk2-workspace),
-    .doehealth-desk2-main > :not(.doehealth-desk2-hero-stack)
-  ) {
+.earlypreview-page[data-cinema] > :not([data-cinema-path], [data-cinema-film]),
+.earlypreview-page[data-cinema] [data-cinema-path] > :not([data-cinema-path], [data-cinema-film]) {
   pointer-events: none;
   animation: earlypreview-cinema-hide 600ms ease forwards;
 }
 
-.earlypreview-page[data-cinema-leaving] :is(
-    .doehealth-desk2-chrome,
-    .desk2-workspace__fade,
-    .doehealth-desk2-hero-stack > :not(.desk2-workspace),
-    .doehealth-desk2-main > :not(.doehealth-desk2-hero-stack)
-  ) {
+.earlypreview-page[data-cinema-leaving] > :not([data-cinema-path], [data-cinema-film]),
+.earlypreview-page[data-cinema-leaving] [data-cinema-path] > :not([data-cinema-path], [data-cinema-film]) {
   animation: earlypreview-cinema-show 600ms ease;
 }
 
 .earlypreview-page[data-cinema],
-.earlypreview-page[data-cinema] :is(.doehealth-desk2-main, .doehealth-desk2-hero-stack > .desk2-workspace) {
+.earlypreview-page[data-cinema] [data-cinema-path] {
   animation: earlypreview-cinema-black 600ms ease forwards;
 }
 
 .earlypreview-page[data-cinema-leaving],
-.earlypreview-page[data-cinema-leaving] :is(.doehealth-desk2-main, .doehealth-desk2-hero-stack > .desk2-workspace) {
+.earlypreview-page[data-cinema-leaving] [data-cinema-path] {
   animation: earlypreview-cinema-unblack 600ms ease;
 }
 
