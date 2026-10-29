@@ -5,14 +5,14 @@
  * and every section around them. Leaving (`data-cinema-leaving`, briefly) it all fades back in. Keyframes rather than
  * transitions, so the elements' own transitions (the nav's, the hero's reveal) are left alone.
  */
-[data-cinema-root][data-cinema] > :not([data-cinema-path], [data-cinema-film]),
-[data-cinema-root][data-cinema] [data-cinema-path] > :not([data-cinema-path], [data-cinema-film]) {
+[data-cinema-root][data-cinema] > :not([data-cinema-path], [data-cinema-film], [data-cinema-keep]),
+[data-cinema-root][data-cinema] [data-cinema-path] > :not([data-cinema-path], [data-cinema-film], [data-cinema-keep]) {
   pointer-events: none;
   animation: earlypreview-cinema-hide 600ms ease forwards;
 }
 
-[data-cinema-root][data-cinema-leaving] > :not([data-cinema-path], [data-cinema-film]),
-[data-cinema-root][data-cinema-leaving] [data-cinema-path] > :not([data-cinema-path], [data-cinema-film]) {
+[data-cinema-root][data-cinema-leaving] > :not([data-cinema-path], [data-cinema-film], [data-cinema-keep]),
+[data-cinema-root][data-cinema-leaving] [data-cinema-path] > :not([data-cinema-path], [data-cinema-film], [data-cinema-keep]) {
   animation: earlypreview-cinema-show 600ms ease;
 }
 
@@ -57,5 +57,80 @@
   [data-cinema-root][data-cinema-leaving] *,
   [data-cinema-root][data-cinema-leaving] {
     animation-duration: 1ms !important;
+  }
+}
+
+/* iPhone: while the page is locked, a drag that starts on the film can only go sideways (along its timeline). */
+[data-cinema-locked] [data-cinema-film] {
+  touch-action: pan-x;
+}
+
+[data-cinema-locked],
+[data-cinema-locked] body {
+  overscroll-behavior: none;
+}
+
+/* The film's title and article link, on the black above it. Fades in a beat after the page goes dark. */
+.earlypreview-cinema-caption {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 1.1rem);
+  left: clamp(1.25rem, 8vw, 7.2rem);
+  right: clamp(1.25rem, 8vw, 7.2rem);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  color: #fffcf1;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 600ms ease,
+    visibility 0s linear 600ms;
+}
+
+[data-cinema-root][data-cinema] .earlypreview-cinema-caption {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 600ms ease 250ms,
+    visibility 0s;
+}
+
+.earlypreview-cinema-caption__title {
+  margin: 0;
+  font-size: clamp(1.45rem, 2.1vw, 2.15rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-shadow: 0 1px 14px rgb(0 0 0 / 0.6);
+}
+
+.earlypreview-cinema-caption__line {
+  display: block;
+}
+
+.earlypreview-cinema-caption__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  color: #fccfb8;
+  text-decoration: none;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 0.6);
+}
+
+.earlypreview-cinema-caption__link:hover .earlypreview-cinema-caption__label,
+.earlypreview-cinema-caption__link:focus-visible .earlypreview-cinema-caption__label {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earlypreview-cinema-caption {
+    transition-duration: 1ms !important;
   }
 }

@@ -202,6 +202,10 @@ function FilmGalleryTile({ tile, film }: { tile: GalleryTileData; film: EarlyPre
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       onClick={onClick}
+      // What cinema mode shows on the black above the playing film, for the tiles with no hover card too.
+      data-cinema-title={tile.video.title.join("|")}
+      data-cinema-label={tile.video.link?.label}
+      data-cinema-href={tile.video.link?.href}
     >
       <Image
         src={tile.src}

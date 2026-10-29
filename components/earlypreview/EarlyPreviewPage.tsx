@@ -28,6 +28,7 @@ import { EARLYPREVIEW_MAIN_VIDEO } from "@/lib/earlypreview/earlypreview-videos"
 /** A screenshot of the hero film at 0:04, its thumbnail. */
 const EARLYPREVIEW_HERO_THUMBNAIL = "/earlypreview/thumbs/hero.jpg";
 import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
+import { EarlyPreviewCinemaCaption } from "@/components/earlypreview/EarlyPreviewCinemaCaption";
 import { useFilmCinema } from "@/lib/earlypreview/use-film-cinema";
 import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
 import { useDoeHealthDesk2FitTitles } from "@/lib/doehealthdesk2/use-doehealthdesk2-fit-titles";
@@ -213,7 +214,8 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
   }, []);
 
   // Cinema: while any film plays and is mostly on screen, the other films unload and the rest of the page goes dark.
-  useFilmCinema(rootRef);
+  // On an iPhone the film is also centred and the page locked. The film's title and article link show on the black.
+  const cinemaCaption = useFilmCinema(rootRef, { phone: variant === "phone" });
 
   // The band under the hero fades from brown to beige the first time it reaches the nav bar.
   // It starts as the band scrolls into view, so it is not a blank section until it reaches the nav.
@@ -245,6 +247,7 @@ export function EarlyPreviewPage({ initialVariant }: { initialVariant: DoeHealth
         />
       )}
       <DoeHealthDesk2NavWash />
+      <EarlyPreviewCinemaCaption caption={cinemaCaption} />
       <main className="doehealth-desk2-main min-h-[100dvh]" aria-label="Early preview">
         <EarlyPreviewHeroStack heroFilm={heroFilm} />
         {/* The market, the page's second section: scroll-locked, it releases on the go-to-market screen. */}

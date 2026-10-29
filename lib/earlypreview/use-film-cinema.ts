@@ -1,23 +1,40 @@
 "use client";
 
-import { type RefObject, useEffect } from "react";
+import { type RefObject, useEffect, useState } from "react";
 
 import "@/lib/earlypreview/earlypreview-cinema.css";
 import { FILM_PARK_EVENT, FILM_RESUME_EVENT } from "@/lib/earlypreview/use-film-warm-up";
 
 /** How long the page takes to fade to black around a playing film, and back. Matches earlypreview-cinema.css. */
 const CINEMA_FADE_MS = 600;
+/** The room a film's caption needs above it, in px: the title's two lines and the link, with a gap under them. */
+const CAPTION_ROOM_PX = 140;
+
+/** What cinema mode puts on the black above a playing film: its title, one entry per line, and its article link. */
+export type CinemaCaption = { title: string[]; label?: string; href?: string };
+
+type CinemaOptions = {
+  /** Off, the hook does nothing. */
+  enabled?: boolean;
+  /** iPhone: the playing film is scrolled to the middle of the screen and the page is locked until cinema ends. */
+  phone?: boolean;
+};
 
 /**
- * Cinema mode for every film under `rootRef` (/earlypreview, and the articles it links to at /preview-<slug> and /news): while one plays and is at least half on screen, nothing else competes with
- * it. Every other film is paused and, if nobody has played it yet, unloaded (a plain file's download is cut off, a stream
+ * Cinema mode for every film under `rootRef` (/earlypreview, and the articles it links to at /preview-<slug> and
+ * /news): while one plays and is at least half on screen, nothing else competes with it. Every other film is paused and, if nobody has played it yet, unloaded (a plain file's download is cut off, a stream
  * stops fetching), and the rest of the page fades to black and is then hidden, so it is no longer drawn. Pausing, the
  * film ending, scrolling it off screen or a tap on the black brings everything back, and the other films load again.
+ *
+ * On an iPhone (`phone`) the film is also centred on the screen and the page can't be scrolled until cinema ends. The
+ * returned caption is the playing film's title and article link, for the page to show on the black.
  *
  * The playing film's frame is marked `data-cinema-film` and every element between it and the page `data-cinema-path`;
  * the CSS (earlypreview-cinema.css) hides whatever is beside that path and turns the path itself black.
  */
-export function useFilmCinema(rootRef: RefObject<HTMLElement>, enabled = true) {
+export function useFilmCinema(rootRef: RefObject<HTMLElement>, { enabled = true, phone = false }: CinemaOptions = {}) {
+  const [caption, setCaption] = useState<CinemaCaption | null>(null);
+
   useEffect(() => {
     const root = rootRef.current;
     if (!root || !enabled) return undefined;
@@ -72,6 +89,50 @@ export function useFilmCinema(rootRef: RefObject<HTMLElement>, enabled = true) {
       parked.clear();
     };
 
+    /** Stops the page scrolling: touches off the film's frame are cancelled, its own drag can only go sideways. */
+    let unlock: (() => void) | null = null;
+    const lockPage = (video: HTMLVideoElement) => {
+      const frame = video.closest("figure") ?? video.parentElement ?? video;
+      const rect = frame.getBoundingClientRect();
+      const top = window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
+      const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: Math.max(0, top), behavior: calm ? "auto" : "smooth" });
+      const stop = (event: TouchEvent) => {
+        if (!(event.target instanceof Element) || !event.target.closest("[data-cinema-film]")) event.preventDefault();
+      };
+      document.addEventListener("touchmove", stop, { passive: false });
+      const html = document.documentElement;
+      const was = html.style.overflow;
+      html.style.overflow = "hidden";
+      root.setAttribute("data-cinema-locked", "");
+      unlock = () => {
+        document.removeEventListener("touchmove", stop);
+        html.style.overflow = was;
+        root.removeAttribute("data-cinema-locked");
+        unlock = null;
+      };
+    };
+
+    /** Desktop: a film too near the top of the screen for its caption is moved down a little, by scrolling the page. */
+    const makeRoom = (video: HTMLVideoElement) => {
+      const frame = video.closest("figure") ?? video.parentElement ?? video;
+      const short = frame.getBoundingClientRect().top - CAPTION_ROOM_PX;
+      if (short < -1 && frame.getBoundingClientRect().height + CAPTION_ROOM_PX <= window.innerHeight) {
+        window.scrollBy({ top: short, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      }
+    };
+
+    const readCaption = (video: HTMLVideoElement): CinemaCaption | null => {
+      const frame = video.closest("figure") ?? video.parentElement;
+      const card = frame?.matches("[data-cinema-title]") ? (frame as HTMLElement) : frame?.querySelector<HTMLElement>("[data-cinema-title]");
+      if (!card?.dataset.cinemaTitle) return null;
+      return {
+        title: card.dataset.cinemaTitle.split("|"),
+        label: card.dataset.cinemaLabel,
+        href: card.dataset.cinemaHref,
+      };
+    };
+
     const update = () => {
       const on = film && visible ? film : null;
       if (on === active) return;
@@ -81,10 +142,15 @@ export function useFilmCinema(rootRef: RefObject<HTMLElement>, enabled = true) {
         active = on;
         markPath(on);
         root.setAttribute("data-cinema", "");
+        const next = readCaption(on);
+        setCaption(next);
+        if (phone) lockPage(on);
+        else if (next) makeRoom(on);
         park(on);
         return;
       }
       active = null;
+      unlock?.();
       root.removeAttribute("data-cinema");
       root.setAttribute("data-cinema-leaving", "");
       unpark();
@@ -121,7 +187,8 @@ export function useFilmCinema(rootRef: RefObject<HTMLElement>, enabled = true) {
 
     // A tap on the black pauses the film, which ends cinema. The film's own frame, with its controls, keeps its taps.
     const onTap = (event: MouseEvent) => {
-      if (!active || !(event.target instanceof Element) || event.target.closest("[data-cinema-film]")) return;
+      if (!active || !(event.target instanceof Element)) return;
+      if (event.target.closest("[data-cinema-film], [data-cinema-keep]")) return;
       active.pause();
     };
 
@@ -138,11 +205,14 @@ export function useFilmCinema(rootRef: RefObject<HTMLElement>, enabled = true) {
       root.removeEventListener("ended", onStop, true);
       root.removeEventListener("emptied", onStop, true);
       window.clearTimeout(leaving);
+      unlock?.();
       unpark();
       root.removeAttribute("data-cinema");
       root.removeAttribute("data-cinema-leaving");
       root.removeAttribute("data-cinema-root");
       clearPath();
     };
-  }, [rootRef, enabled]);
+  }, [rootRef, enabled, phone]);
+
+  return caption;
 }

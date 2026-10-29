@@ -10,7 +10,13 @@ import { p22Mackinac } from "@/lib/home/fonts";
  */
 export function EarlyPreviewVideoOverlay({ video, compact = false }: { video: EarlyPreviewVideo; compact?: boolean }) {
   return (
-    <div className={`earlypreview-overlay${compact ? " earlypreview-overlay--compact" : ""}`}>
+    <div
+      className={`earlypreview-overlay${compact ? " earlypreview-overlay--compact" : ""}`}
+      // What cinema mode shows on the black above the playing film (see useFilmCinema).
+      data-cinema-title={video.title.join("|")}
+      data-cinema-label={video.link?.label}
+      data-cinema-href={video.link?.href}
+    >
       <div className="earlypreview-overlay__copy">
         <h3 className={`earlypreview-overlay__title ${p22Mackinac.className}`}>
           {video.title.map((line) => (

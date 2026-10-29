@@ -43,7 +43,10 @@ export function DoeHealthBlogPage({ article, initialVariant, preview = false }: 
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
   // The articles /earlypreview links to (here and at /preview-<slug>) play their film in cinema mode, like /earlypreview.
   const rootRef = useRef<HTMLDivElement>(null);
-  useFilmCinema(rootRef, (PREVIEW_ARTICLE_SLUGS as readonly string[]).includes(article.slug));
+  useFilmCinema(rootRef, {
+    enabled: (PREVIEW_ARTICLE_SLUGS as readonly string[]).includes(article.slug),
+    phone: variant === "phone",
+  });
 
   return (
     <div
