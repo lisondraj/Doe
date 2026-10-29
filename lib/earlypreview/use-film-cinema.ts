@@ -11,7 +11,7 @@ const CINEMA_FADE_MS = 600;
  * Cinema mode for every film under `rootRef`: while one plays and is at least half on screen, nothing else competes with
  * it. Every other film is paused and, if nobody has played it yet, unloaded (a plain file's download is cut off, a stream
  * stops fetching), and the rest of the page fades to black and is then hidden, so it is no longer drawn. Pausing, the
- * film ending or scrolling it off screen brings everything back, and the other films load again.
+ * film ending, scrolling it off screen or a tap on the black brings everything back, and the other films load again.
  *
  * The playing film's frame is marked `data-cinema-film` and every element between it and the page `data-cinema-path`;
  * the CSS (earlypreview-films.css) hides whatever is beside that path and turns the path itself black.
@@ -117,12 +117,20 @@ export function useFilmCinema(rootRef: RefObject<HTMLElement>) {
       update();
     };
 
+    // A tap on the black pauses the film, which ends cinema. The film's own frame, with its controls, keeps its taps.
+    const onTap = (event: MouseEvent) => {
+      if (!active || !(event.target instanceof Element) || event.target.closest("[data-cinema-film]")) return;
+      active.pause();
+    };
+
+    root.addEventListener("click", onTap);
     root.addEventListener("playing", onPlaying, true);
     root.addEventListener("pause", onStop, true);
     root.addEventListener("ended", onStop, true);
     root.addEventListener("emptied", onStop, true);
     return () => {
       observer.disconnect();
+      root.removeEventListener("click", onTap);
       root.removeEventListener("playing", onPlaying, true);
       root.removeEventListener("pause", onStop, true);
       root.removeEventListener("ended", onStop, true);
