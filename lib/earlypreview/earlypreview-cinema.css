@@ -1,0 +1,61 @@
+/*
+ * Cinema (/earlypreview, the articles it links to and their /news pages): while a film plays and is at least half on
+ * screen (`data-cinema` on the page, see useFilmCinema), everything beside the path from the page down to that film's frame fades to black and is then hidden,
+ * so it is no longer drawn: the nav and its backdrop blur, the drifting fade at the foot of the screen, the other films
+ * and every section around them. Leaving (`data-cinema-leaving`, briefly) it all fades back in. Keyframes rather than
+ * transitions, so the elements' own transitions (the nav's, the hero's reveal) are left alone.
+ */
+[data-cinema-root][data-cinema] > :not([data-cinema-path], [data-cinema-film]),
+[data-cinema-root][data-cinema] [data-cinema-path] > :not([data-cinema-path], [data-cinema-film]) {
+  pointer-events: none;
+  animation: earlypreview-cinema-hide 600ms ease forwards;
+}
+
+[data-cinema-root][data-cinema-leaving] > :not([data-cinema-path], [data-cinema-film]),
+[data-cinema-root][data-cinema-leaving] [data-cinema-path] > :not([data-cinema-path], [data-cinema-film]) {
+  animation: earlypreview-cinema-show 600ms ease;
+}
+
+[data-cinema-root][data-cinema],
+[data-cinema-root][data-cinema] [data-cinema-path] {
+  animation: earlypreview-cinema-black 600ms ease forwards;
+}
+
+[data-cinema-root][data-cinema-leaving],
+[data-cinema-root][data-cinema-leaving] [data-cinema-path] {
+  animation: earlypreview-cinema-unblack 600ms ease;
+}
+
+@keyframes earlypreview-cinema-hide {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes earlypreview-cinema-show {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes earlypreview-cinema-black {
+  to {
+    background-color: #000;
+  }
+}
+
+@keyframes earlypreview-cinema-unblack {
+  from {
+    background-color: #000;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-cinema-root][data-cinema] *,
+  [data-cinema-root][data-cinema],
+  [data-cinema-root][data-cinema-leaving] *,
+  [data-cinema-root][data-cinema-leaving] {
+    animation-duration: 1ms !important;
+  }
+}

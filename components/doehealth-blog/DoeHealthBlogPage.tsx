@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+
 import { DoeHealthBlogArticle } from "@/components/doehealth-blog/DoeHealthBlogArticle";
 import { DoeHealthBlogCarousel } from "@/components/doehealth-blog/DoeHealthBlogCarousel";
 import { DoeHealthDeskFooter } from "@/components/doehealth-desk/DoeHealthDeskFooter";
@@ -10,6 +12,8 @@ import { DoeHealthDesk2PhoneNavBar } from "@/components/doehealth-desk2/DoeHealt
 import type { DoeHealthBlogArticle as Article } from "@/lib/doehealth/doehealth-blog-articles";
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
+import { useFilmCinema } from "@/lib/earlypreview/use-film-cinema";
+import { PREVIEW_ARTICLE_SLUGS } from "@/lib/doehealth/doehealth-preview-articles";
 import { DOEHEALTH_DESK2_PAGE_BACKGROUND } from "@/lib/doehealthdesk2/doehealthdesk2-colors";
 import { useDoeHealthDesk2PhoneOverflowChrome } from "@/lib/doehealthdesk2/use-doehealthdesk2-phone-overflow-chrome";
 import {
@@ -37,9 +41,13 @@ type DoeHealthBlogPageProps = {
 export function DoeHealthBlogPage({ article, initialVariant, preview = false }: DoeHealthBlogPageProps) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
+  // The articles /earlypreview links to (here and at /preview-<slug>) play their film in cinema mode, like /earlypreview.
+  const rootRef = useRef<HTMLDivElement>(null);
+  useFilmCinema(rootRef, (PREVIEW_ARTICLE_SLUGS as readonly string[]).includes(article.slug));
 
   return (
     <div
+      ref={rootRef}
       className={`doehealth-desk2-page doehealth-desk-page doehealth-blog-page${preview ? " doehealth-blog-page--preview" : ""} relative min-h-[100dvh] ${p22Mackinac.variable}`}
       style={{ backgroundColor: DOEHEALTH_DESK2_PAGE_BACKGROUND }}
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}

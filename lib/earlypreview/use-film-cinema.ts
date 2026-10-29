@@ -2,24 +2,26 @@
 
 import { type RefObject, useEffect } from "react";
 
+import "@/lib/earlypreview/earlypreview-cinema.css";
 import { FILM_PARK_EVENT, FILM_RESUME_EVENT } from "@/lib/earlypreview/use-film-warm-up";
 
-/** How long the page takes to fade to black around a playing film, and back. Matches earlypreview-films.css. */
+/** How long the page takes to fade to black around a playing film, and back. Matches earlypreview-cinema.css. */
 const CINEMA_FADE_MS = 600;
 
 /**
- * Cinema mode for every film under `rootRef`: while one plays and is at least half on screen, nothing else competes with
+ * Cinema mode for every film under `rootRef` (/earlypreview, and the articles it links to at /preview-<slug> and /news): while one plays and is at least half on screen, nothing else competes with
  * it. Every other film is paused and, if nobody has played it yet, unloaded (a plain file's download is cut off, a stream
  * stops fetching), and the rest of the page fades to black and is then hidden, so it is no longer drawn. Pausing, the
  * film ending, scrolling it off screen or a tap on the black brings everything back, and the other films load again.
  *
  * The playing film's frame is marked `data-cinema-film` and every element between it and the page `data-cinema-path`;
- * the CSS (earlypreview-films.css) hides whatever is beside that path and turns the path itself black.
+ * the CSS (earlypreview-cinema.css) hides whatever is beside that path and turns the path itself black.
  */
-export function useFilmCinema(rootRef: RefObject<HTMLElement>) {
+export function useFilmCinema(rootRef: RefObject<HTMLElement>, enabled = true) {
   useEffect(() => {
     const root = rootRef.current;
-    if (!root) return undefined;
+    if (!root || !enabled) return undefined;
+    root.setAttribute("data-cinema-root", "");
     let film: HTMLVideoElement | null = null;
     let visible = false;
     let active: HTMLVideoElement | null = null;
@@ -139,7 +141,8 @@ export function useFilmCinema(rootRef: RefObject<HTMLElement>) {
       unpark();
       root.removeAttribute("data-cinema");
       root.removeAttribute("data-cinema-leaving");
+      root.removeAttribute("data-cinema-root");
       clearPath();
     };
-  }, [rootRef]);
+  }, [rootRef, enabled]);
 }
