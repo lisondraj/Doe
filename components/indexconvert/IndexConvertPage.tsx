@@ -26,7 +26,7 @@ import {
   SERVICES,
   SOURCE_PAGES,
 } from "@/lib/indexconvert/ford-plastic-surgery";
-import { AGENT_FILES, BASE, CLINIC_TOOLS, SLUG } from "@/lib/indexconvert/agent-files";
+import { AGENT_FILES, API_ORIGIN, BASE, CLINIC_TOOLS, MCP_URL, SLUG } from "@/lib/indexconvert/agent-files";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
@@ -618,7 +618,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
     const io = new IntersectionObserver(([entry]) => setClaimInView(entry!.isIntersecting), { root: scrollRef.current, threshold: 0.15 });
     io.observe(el);
     return () => io.disconnect();
-  }, [wide, scrollRef]);
+  }, [wide, view, scrollRef]);
 
   useEffect(() => {
     setActive(NAV[0].id);
@@ -659,7 +659,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 
   const claimed = Boolean(claim.claimed);
   const claimBox = (
-    <div ref={claimRef} id="claim" className="ic-rise scroll-mt-[124px]" style={{ animationDelay: "120ms" }}>
+    <div ref={wide || agent ? claimRef : undefined} id={wide || agent ? "claim" : undefined} className="ic-rise scroll-mt-[124px]" style={{ animationDelay: "120ms" }}>
       <ClaimBox agent={agent} claim={claim} setEmail={(email) => setClaim((c) => ({ ...c, email }))} emailRef={emailRef} onSubmit={submit} onPlan={choosePlan} />
     </div>
   );
@@ -703,6 +703,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         </aside>
 
         <main key={view} className="ic-fade min-w-0 flex flex-col gap-[28px] px-[16px] md:px-0 pt-[6px]">
+          {agent ? (
           <div className="ic-rise flex flex-col gap-[14px]">
             <div className="flex items-center gap-[16px]">
               <IndexConvertSphere size={76} className="shrink-0" />
@@ -721,10 +722,28 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
                 </p>
               </div>
             </div>
-            {agent ? <AgentStatus claimed={claimed} /> : <StatusPanel claimed={claimed} onClaim={goToClaim} />}
+            <AgentStatus claimed={claimed} />
           </div>
+          ) : (
+            <div className="ic-rise flex flex-col gap-[10px]">
+              <Hero />
+              {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
+              <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[124px]">
+                <StatusPanel
+                  claimed={claim.claimed}
+                  onClaim={goToClaim}
+                  form={
+                    wide || claimed ? null : (
+                      <ClaimForm claim={claim} setEmail={(email) => setClaim((c) => ({ ...c, email }))} emailRef={emailRef} onSubmit={submit} />
+                    )
+                  }
+                />
+              </div>
+            </div>
+          )}
 
-          {!wide && claimBox}
+          {/* Agent's View keeps its claim box here on iPhone; Your View shows it once claimed, for the plans. */}
+          {!wide && (agent || claimed) && claimBox}
 
           {agent ? <AgentSections /> : <YourSections claimed={claimed} />}
 
@@ -764,61 +783,165 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 
 /* ------------------------------------------------------------------ Status */
 
-/** /demo's dark session panel, as the page's status: readable now, MCP and API ready, nothing on until claimed. */
-function StatusPanel({ claimed, onClaim }: { claimed: boolean; onClaim: () => void }) {
-  const rows: [string, string][] = [
-    ["Agent-readable", `Yes · ${FIELD_COUNT} fields from ${SOURCE_PAGES.length} pages`],
-    ["Agent files", "llms.txt · robots.txt · openapi.json · mcp.json"],
-    ["MCP", claimed ? "Ready · turns on when you confirm" : "Ready · not activated"],
-    ["API", claimed ? "Ready · turns on when you confirm" : "Ready · not activated"],
-    ["Agent protocol", "Personal Agent Protocol · applied"],
-    ["Agent booking", claimed ? "Pick a plan to turn on" : "Off until claimed"],
-  ];
+/** The clinic as a small hero: sphere, name, what it is, where, its site. Centred on iPhone, a row from tablet up. */
+function Hero() {
   return (
-    <div className="rounded-[22px] bg-[#140C04] text-[#FFFCF1] p-[16px] md:p-[18px]">
-      <div className="flex items-center gap-[8px] mb-[12px] pb-[12px] border-b border-solid border-[#FFFCF11A]">
-        <span className="h-[8px] w-[8px] shrink-0 rounded-full bg-[#9FD18B]" aria-hidden="true" />
-        <span className="shrink-0 text-[13px] font-[600]">Connected to Doe</span>
-        <span className="min-w-0 truncate text-[12px] text-[#FFFCF180]">MCP · API · Personal Agent Protocol</span>
+    <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
+      <div className="rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px] flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]">
+        <IndexConvertSphere size={84} className="shrink-0" />
+        <div className="min-w-0">
+          <div className={`text-[11px] leading-[14px] font-[600] uppercase tracking-[0.1em] ${MUTED}`}>Agent page</div>
+          <h1 className={`${DISPLAY} mt-[6px] text-[30px] leading-[34px] md:text-[36px] md:leading-[40px] tracking-[-0.02em] [text-wrap:balance]`}>{CLINIC.name}</h1>
+          <p className={`mt-[6px] mx-auto md:mx-0 max-w-[32ch] text-[14.5px] leading-[20px] ${SUB} [text-wrap:balance]`}>
+            {CLINIC.kind} in {CLINIC.area}, since {CLINIC.since}
+          </p>
+          <p className="mt-[10px] text-[13px] leading-[18px] text-[#281910CC] [text-wrap:balance]">
+            7 St Thomas St, Suite 410
+            <span className={MUTED}> · </span>
+            <span className="font-[600] underline decoration-[#28191033] underline-offset-[3px]">{CLINIC.domain}</span>
+          </p>
+        </div>
       </div>
-      <div className="flex items-center justify-between gap-[10px]">
-        <span className="text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">{claimed ? "Claimed · confirm your email" : "Not activated"}</span>
-        {!claimed && (
-          <button type="button" onClick={onClaim} className="shrink-0 h-[30px] px-[12px] rounded-full bg-[#FFFCF1] text-[#140C04] text-[12.5px] font-[600]">
+    </div>
+  );
+}
+
+const CONNECTIONS = [
+  { name: "Model Context Protocol", target: MCP_URL.replace("https://", ""), note: `${CLINIC_TOOLS.length} tools` },
+  { name: "Doe API", target: `${API_ORIGIN.replace("https://", "")}${BASE}`, note: "OpenAPI 3.1" },
+  { name: "Personal Agent Protocol", target: "consent per user · agent disclosure", note: "applied" },
+];
+
+/** A label over its rows, in the page's type rather than chips. */
+function StatusGroup({ title, meta, children }: { title: string; meta: string; children: ReactNode }) {
+  return (
+    <div className="mt-[18px]">
+      <div className="flex items-baseline justify-between gap-[12px] pb-[6px] border-b border-solid border-[#2819101A]">
+        <span className="text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]">{title}</span>
+        <span className={`text-[12px] leading-[16px] ${MUTED}`}>{meta}</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * The page's status, set as type: the whole box reads "not activated". Connections to Doe's MCP, API and the Personal
+ * Agent Protocol are made but not live; the four agent files are ready. On iPhone the claim email sits at its foot.
+ */
+function StatusPanel({ claimed, onClaim, form }: { claimed: string | null; onClaim: () => void; form: ReactNode }) {
+  return (
+    <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
+      <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[18px] pb-[16px] md:px-[24px] md:pt-[22px] md:pb-[20px]">
+        <div className="flex items-center justify-between gap-[12px]">
+          <span className={`text-[11px] leading-[14px] font-[600] uppercase tracking-[0.1em] ${MUTED}`}>Status</span>
+          <span className={`font-mono text-[11.5px] leading-[14px] ${MUTED}`}>{claimed ? "pending_verification" : "not_activated"}</span>
+        </div>
+        <h2 className={`${DISPLAY} mt-[8px] text-[26px] leading-[30px] md:text-[30px] md:leading-[34px] tracking-[-0.02em] [text-wrap:balance]`}>
+          {claimed ? "Confirm your email" : "Not activated"}
+        </h2>
+        <p className={`mt-[6px] max-w-[46ch] text-[14.5px] leading-[21px] ${SUB} [text-wrap:pretty]`}>
+          {claimed
+            ? `We sent a link to ${claimed}. Once you confirm, MCP and the API go live and agents can answer for you.`
+            : `Built from ${SOURCE_PAGES.length} pages and connected to Doe. Agents can read it; nothing answers or books for you until you claim it.`}
+        </p>
+
+        <StatusGroup title="Connected" meta="not ready">
+          {CONNECTIONS.map((c) => (
+            <div key={c.name} className="flex items-start gap-[12px] py-[10px] border-b border-solid border-[#2819100F] last:border-b-0">
+              <span className="min-w-0 grow">
+                <span className="block text-[14px] leading-[19px] font-[600]">{c.name}</span>
+                <span className={`block mt-[1px] font-mono text-[11.5px] leading-[16px] ${MUTED} truncate`}>{c.target}</span>
+              </span>
+              <span className={`shrink-0 pt-[1px] text-right text-[12.5px] leading-[18px] ${MUTED}`}>
+                {c.note}
+                <br />
+                <span className="font-[600] text-[#281910B3]">Off</span>
+              </span>
+            </div>
+          ))}
+        </StatusGroup>
+
+        <StatusGroup title="Files" meta={`${AGENT_FILES.length} ready`}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-x-[20px]">
+            {AGENT_FILES.map((f) => (
+              <div key={f.path} className="flex items-center gap-[10px] h-[38px] border-b border-solid border-[#2819100F]">
+                <Check on size={16} />
+                <span className="min-w-0 grow truncate font-mono text-[12.5px] leading-[16px]">{f.path}</span>
+                <span className={`shrink-0 text-[12.5px] font-[600]`}>Ready</span>
+              </div>
+            ))}
+          </div>
+        </StatusGroup>
+
+        {!form && !claimed && (
+          <button type="button" onClick={onClaim} className="mt-[16px] h-[44px] px-[18px] rounded-[14px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600]">
             Claim to turn on
           </button>
         )}
       </div>
-      <dl className="mt-[12px] grid grid-cols-[112px_minmax(0,1fr)] gap-x-[12px] gap-y-[6px] text-[13.5px] leading-[19px]">
-        {rows.map(([k, v]) => (
-          <div key={k} className="contents">
-            <dt className="text-[#FFFCF180]">{k}</dt>
-            <dd className="font-[600]">{v}</dd>
-          </div>
-        ))}
-      </dl>
-      <div className="mt-[12px] flex flex-wrap gap-[6px]">
-        {(
-          [
-            ["Structured", true],
-            ["Agent-readable", true],
-            ["Connected", true],
-            ["Agent protocol", true],
-            ["MCP on", false],
-            ["API on", false],
-            ["Bookable", false],
-          ] as const
-        ).map(([label, on]) => (
-          <span
-            key={label}
-            className={`h-[24px] px-[9px] flex items-center rounded-full text-[11.5px] font-[600] ${on ? "bg-[#FFFCF11F] text-[#FFFCF1]" : "text-[#FFFCF166] border border-solid border-[#FFFCF126]"}`}
-          >
-            {on ? "✓ " : "– "}
-            {label}
-          </span>
-        ))}
-      </div>
+      {form && <div className="px-[6px] pt-[8px] pb-[2px]">{form}</div>}
     </div>
+  );
+}
+
+/** The claim's email field and button, shared by the status box (iPhone) and the claim box (desktop). */
+function ClaimForm({
+  claim,
+  setEmail,
+  emailRef,
+  onSubmit,
+  agent = false,
+}: {
+  claim: Claim;
+  setEmail: (email: string) => void;
+  emailRef: RefObject<HTMLInputElement>;
+  onSubmit: (e: FormEvent) => void;
+  agent?: boolean;
+}) {
+  return (
+    <form onSubmit={onSubmit} className="flex flex-col gap-[6px]">
+      <label htmlFor="ic-email" className="sr-only">
+        Work email
+      </label>
+      <div className="relative">
+        {agent && <span className={`absolute left-[16px] top-1/2 -translate-y-1/2 text-[13px] ${MUTED}`}>email:</span>}
+        <input
+          ref={emailRef}
+          id="ic-email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          required
+          value={claim.email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={`you@${CLINIC.domain}`}
+          className={`h-[52px] w-full rounded-[18px] bg-[#FFFCF1] px-[16px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#140C04] transition-colors ${agent ? "pl-[66px] text-[14px]" : ""}`}
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={claim.status === "sending"}
+        className="w-full h-[52px] flex items-center justify-center gap-[10px] rounded-[18px] bg-[#140C04] text-[15px] font-[600] text-[#FFFCF1] disabled:opacity-70 transition-opacity"
+      >
+        {claim.status === "sending" ? (
+          <>
+            <Spinner size={16} light />
+            {agent ? "sending" : "Claiming"}
+          </>
+        ) : agent ? (
+          "POST /claim"
+        ) : (
+          "Claim free & turn on"
+        )}
+      </button>
+      {claim.status === "error" && (
+        <p role="alert" className="px-[10px] text-[12.5px] leading-[17px] font-[600] text-[#B4532F]">
+          {claim.error}
+        </p>
+      )}
+      <p className={`px-[10px] pt-[2px] pb-[8px] text-[12px] leading-[17px] ${MUTED} [text-wrap:pretty]`}>We&apos;ll email you a link to confirm you work at {CLINIC.name}. No card needed.</p>
+    </form>
   );
 }
 
@@ -974,48 +1097,7 @@ function ClaimBox({
           <p className={`px-[10px] pb-[8px] text-[12px] leading-[17px] ${MUTED}`}>Or stay on Free: agents can still read your page, and you can upgrade any time.</p>
         </div>
       ) : (
-        <form onSubmit={onSubmit} className="flex flex-col gap-[6px]">
-          <label htmlFor="ic-email" className="sr-only">
-            Work email
-          </label>
-          <div className="relative">
-            {agent && <span className={`absolute left-[16px] top-1/2 -translate-y-1/2 text-[13px] ${MUTED}`}>email:</span>}
-            <input
-              ref={emailRef}
-              id="ic-email"
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              required
-              value={claim.email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={`you@${CLINIC.domain}`}
-              className={`h-[52px] w-full rounded-[18px] bg-[#FFFCF1] px-[16px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#140C04] transition-colors ${agent ? "pl-[66px] text-[14px]" : ""}`}
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={claim.status === "sending"}
-            className="w-full h-[52px] flex items-center justify-center gap-[10px] rounded-[18px] bg-[#140C04] text-[15px] font-[600] text-[#FFFCF1] disabled:opacity-70 transition-opacity"
-          >
-            {claim.status === "sending" ? (
-              <>
-                <Spinner size={16} light />
-                {agent ? "sending" : "Claiming"}
-              </>
-            ) : agent ? (
-              "POST /claim"
-            ) : (
-              "Claim & turn on"
-            )}
-          </button>
-          {claim.status === "error" && (
-            <p role="alert" className="px-[10px] text-[12.5px] leading-[17px] font-[600] text-[#B4532F]">
-              {claim.error}
-            </p>
-          )}
-          <p className={`px-[10px] pt-[2px] pb-[8px] text-[12px] leading-[17px] ${MUTED}`}>We&apos;ll email you a link to confirm you work at {CLINIC.name}. No card needed.</p>
-        </form>
+        <ClaimForm claim={claim} setEmail={setEmail} emailRef={emailRef} onSubmit={onSubmit} agent={agent} />
       )}
     </div>
   );

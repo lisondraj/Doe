@@ -46,7 +46,6 @@ export function apiDocs(origin: string) {
       set_comms: { id: COMMS.map((c) => c.id).join(" | "), on: true },
     } satisfies Record<AgentAction["type"], unknown>,
     mcp: { transport: "Streamable HTTP (JSON responses)", url: `${origin}${MCP_PATH}`, tools: MCP_TOOLS.map((t) => t.name) },
-    see_also: { llms_txt: `${origin}/llms.txt`, openapi: `${origin}/openapi.json`, mcp_server_card: `${origin}/.well-known/mcp.json` },
   };
 }
 
