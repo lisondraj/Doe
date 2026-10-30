@@ -16,8 +16,8 @@ export function DemoPage() {
   return (
     <DemoFrame agentView>
       <DemoGate
-        onProceed={async (consent, userName, check) => {
-          const r = await agent.connect(consent, userName, check);
+        onProceed={async (consent, userName, request, check) => {
+          const r = await agent.connect(consent, userName, request, check);
           return r.ok ? null : r.error;
         }}
       />

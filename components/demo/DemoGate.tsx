@@ -52,10 +52,11 @@ const ITEMS: { id: keyof DemoConsent; required: boolean; body: ReactNode }[] = [
 export function DemoGate({
   onProceed,
 }: {
-  onProceed: (consent: DemoConsent, userName: string, check: { website: string; elapsedMs: number }) => Promise<string | null>;
+  onProceed: (consent: DemoConsent, userName: string, request: string, check: { website: string; elapsedMs: number }) => Promise<string | null>;
 }) {
   const [consent, setConsent] = useState<DemoConsent>({ terms: false, phi: false, connected: false, network: false });
   const [userName, setUserName] = useState("");
+  const [request, setRequest] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** Bot checks: a field people never see, and how long the form was open. */
@@ -85,7 +86,7 @@ export function DemoGate({
 
       <section className="w-full max-w-[520px] mt-[8px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
         <p className="px-[16px] pt-[14px] pb-[12px] text-[15px] leading-[21px] font-[600] text-[#281910]">
-          Confirm with your user before booking
+          Confirm With Your User Before Booking
         </p>
         <label className="flex items-center gap-[12px] mb-[4px] h-[52px] px-[14px] rounded-[20px] bg-[#FFFCF1]">
           <span className="shrink-0 text-[13px] font-[600] text-[#28191099]">Acting for</span>
@@ -96,6 +97,18 @@ export function DemoGate({
             autoComplete="off"
             className="grow min-w-0 h-full bg-transparent outline-none text-[16px] md:text-[14px] text-[#281910] placeholder:text-[#2819105C]"
           />
+        </label>
+        <label className="flex flex-col gap-[6px] mb-[4px] px-[14px] pt-[12px] pb-[10px] rounded-[20px] bg-[#FFFCF1]">
+          <span className="text-[13px] font-[600] text-[#28191099]">What they want you to do</span>
+          <textarea
+            value={request}
+            onChange={(e) => setRequest(e.target.value.slice(0, 200))}
+            placeholder="e.g. Book Botox for chronic migraine, a weekday morning, under $1,400"
+            rows={2}
+            autoComplete="off"
+            className="w-full resize-none bg-transparent outline-none text-[16px] md:text-[14px] leading-[21px] text-[#281910] placeholder:text-[#2819105C]"
+          />
+          <span className="self-end text-[11px] text-[#28191066]">{request.length}/200</span>
         </label>
         <div className="flex flex-col gap-[4px]">
           {ITEMS.map((item, i) => {
@@ -161,7 +174,7 @@ export function DemoGate({
         onClick={async () => {
           setBusy(true);
           setError(null);
-          const err = await onProceed(consent, userName.trim() || "Alex Rivera", { website, elapsedMs: Date.now() - openedAt.current });
+          const err = await onProceed(consent, userName.trim() || "Alex Rivera", request.trim(), { website, elapsedMs: Date.now() - openedAt.current });
           if (err) {
             setError(err);
             setBusy(false);

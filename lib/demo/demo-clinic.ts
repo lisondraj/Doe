@@ -116,8 +116,21 @@ export const PAYMENT_NOTES = [
   { k: "Payment plans", v: "Bundles only" },
 ];
 
+/** The same facts, laid out for the Insurance & Payment section. */
+export const COVERAGE = [
+  { k: "OHIP", v: "Not covered", note: "Botox for migraine is private pay in Ontario." },
+  { k: "Private plans", v: "Usually reimbursed", note: "The clinic gives an itemized receipt with the DIN and units to submit." },
+] as const;
+export const INSURERS = ["Manulife", "Sun Life", "Canada Life", "Green Shield"] as const;
+export const PAY_METHODS = [
+  { k: "Card via Doe", note: "Charged after the visit" },
+  { k: "Interac e-Transfer", note: "Before the visit" },
+  { k: "In clinic", note: "Debit or credit at the front desk" },
+  { k: "Payment plans", note: "Bundles only, monthly" },
+] as const;
+
 export const COMMS = [
-  { id: "inbox", title: "Agent inbox", meta: "Under 5 min", on: true },
+  { id: "inbox", title: "Clinic messages", meta: "Replies in under 5 min", on: true },
   { id: "updates", title: "Booking updates", meta: "Holds, confirmations, reminders", on: true },
   { id: "cancel", title: "Cancellation alerts", meta: "Earlier slots", on: true },
   { id: "phone", title: "Phone callback to user", meta: "Coordinator", on: false },

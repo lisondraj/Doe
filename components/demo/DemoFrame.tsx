@@ -30,7 +30,8 @@ export function DemoFrame({
   overlay?: ReactNode;
   logoHref?: string;
 }) {
-  const mark = <span className={`${lora.className} text-[26px] leading-[30px] font-[600] tracking-[-0.01em] text-[#281910]`}>Doe</span>;
+  /** Set like /indexconvert's (and /earlypreview's) nav: Lora, regular weight. */
+  const mark = <span className={`${lora.className} text-[30px] leading-[30px] md:text-[36px] md:leading-[36px] font-normal text-[#281910]`}>Doe</span>;
   return (
     <div
       className={`${dmSans.className} doehealth-product-page fixed inset-0 bg-[#140C04] text-[#281910] antialiased [font-synthesis:none]`}
@@ -43,7 +44,7 @@ export function DemoFrame({
     >
       <div className="relative h-full w-full overflow-clip rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
         <div className="absolute inset-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
-          <header className="sticky top-0 z-30 flex items-center justify-between h-[64px] md:h-[72px] px-[22px] md:px-[32px] bg-[#FFFCF1E6] backdrop-blur-[12px]">
+          <header className="sticky top-0 z-30 flex items-center justify-between gap-[12px] h-[64px] md:h-[72px] px-[18px] md:px-[32px] bg-[#FFFCF1E6] backdrop-blur-[12px]">
             <span className="flex items-center gap-[10px]">
               {logoHref ? (
                 <Link href={logoHref} aria-label="Doe">
@@ -72,7 +73,7 @@ function AgentViewTag() {
         <path d="M3 12s3.5-6.5 9-6.5S21 12 21 12s-3.5 6.5-9 6.5S3 12 3 12z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
         <circle cx="12" cy="12" r="2.6" fill="currentColor" />
       </svg>
-      Agent view
+      Agent View
     </span>
   );
 }
@@ -95,5 +96,65 @@ export function Check({ on, size = 22 }: { on: boolean; size?: number }) {
         </svg>
       )}
     </span>
+  );
+}
+
+/**
+ * A sheet that rises from the bottom, as /pricing's do: full width with rounded top corners on iPhone, a centered
+ * panel on wider screens. Drawn in DemoFrame's overlay, so it stays inside the cream box's rounded edge.
+ */
+export function Sheet({
+  open,
+  onClose,
+  label,
+  title,
+  subtitle,
+  lead,
+  wide = false,
+  children,
+}: {
+  open: boolean;
+  onClose: () => void;
+  label: string;
+  title: ReactNode;
+  subtitle?: ReactNode;
+  /** Sits before the title (a back button). */
+  lead?: ReactNode;
+  /** A wider desktop panel, for forms. */
+  wide?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className={`absolute inset-0 z-40 flex items-end md:items-center md:justify-center md:p-[24px] ${open ? "" : "pointer-events-none"}`}
+      aria-hidden={!open}
+      style={{ visibility: open ? "visible" : "hidden", transition: `visibility 0ms linear ${open ? "0ms" : "420ms"}` }}
+    >
+      <div className="absolute inset-0 bg-[#140C0447] transition-opacity duration-300" style={{ opacity: open ? 1 : 0 }} onClick={onClose} />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={label}
+        className={`relative flex flex-col w-full h-[88%] md:h-[min(760px,100%)] ${wide ? "md:max-w-[760px]" : "md:max-w-[560px]"} rounded-t-[30px] md:rounded-[30px] bg-[#FFFCF1] shadow-[0_-12px_40px_rgba(20,12,4,0.18)] md:shadow-[0_24px_60px_-30px_rgba(40,25,16,0.45)] transition-[transform,opacity] duration-[420ms]`}
+        style={{ transform: open ? "translateY(0)" : "translateY(104%)", opacity: open ? 1 : 0.6, transitionTimingFunction: EASE }}
+      >
+        <div className="md:hidden shrink-0 flex justify-center pt-[8px]">
+          <span className="w-[38px] h-[5px] rounded-full bg-[#2819101F]" />
+        </div>
+        <div className="shrink-0 flex items-center gap-[10px] px-[16px] pt-[8px] md:pt-[16px] pb-[12px]">
+          {lead}
+          <span className="grow min-w-0 flex flex-col pl-[4px]">
+            <span className={`${DISPLAY} text-[22px] leading-[26px] tracking-[-0.02em] truncate`}>{title}</span>
+            {subtitle && <span className="text-[13px] leading-[18px] text-[#2819109E] truncate">{subtitle}</span>}
+          </span>
+          <button type="button" onClick={onClose} aria-label="Close" className="shrink-0 w-[38px] h-[38px] flex items-center justify-center rounded-full bg-[#F4EEDF] hover:bg-[#EEE6D6] transition-colors duration-150">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#281910" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+        <div className="grow min-h-0 flex flex-col">{children}</div>
+      </div>
+    </div>
   );
 }

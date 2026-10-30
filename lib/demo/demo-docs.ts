@@ -44,6 +44,7 @@ export function apiDocs(origin: string) {
       submit_forms: {},
       request_booking: { phi_confirmed: true },
       set_comms: { id: COMMS.map((c) => c.id).join(" | "), on: true },
+      set_consent: { id: "connected | network", on: true },
     } satisfies Record<AgentAction["type"], unknown>,
     mcp: { transport: "Streamable HTTP (JSON responses)", url: `${origin}${MCP_PATH}`, tools: MCP_TOOLS.map((t) => t.name) },
   };
@@ -113,6 +114,11 @@ export const MCP_TOOLS: { name: string; description: string; inputSchema: Record
     inputSchema: obj({ phi_confirmed: { type: "boolean" } }, ["phi_confirmed"]),
   },
   { name: "doe_set_comms", description: "Turn a communication preference on or off.", inputSchema: obj({ id: { type: "string", enum: COMMS.map((c) => c.id) }, on: { type: "boolean" } }, ["id", "on"]) },
+  {
+    name: "doe_set_consent",
+    description: "Change an optional permission your user gave at connect: connected (stay connected for updates) or network (join the Doe network).",
+    inputSchema: obj({ id: { type: "string", enum: ["connected", "network"] }, on: { type: "boolean" } }, ["id", "on"]),
+  },
 ];
 
 /** The snippets on the confirmation screen. */

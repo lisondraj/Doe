@@ -229,7 +229,8 @@ export type AgentAction =
   | { type: "record_signature"; signed_by?: string }
   | { type: "submit_forms" }
   | { type: "request_booking"; phi_confirmed: boolean }
-  | { type: "set_comms"; id: string; on: boolean };
+  | { type: "set_comms"; id: string; on: boolean }
+  | { type: "set_consent"; id: "connected" | "network"; on: boolean };
 
 export const AGENT_ACTIONS = [
   "select_plan",
@@ -243,6 +244,7 @@ export const AGENT_ACTIONS = [
   "submit_forms",
   "request_booking",
   "set_comms",
+  "set_consent",
 ] as const;
 
 type Ctx = { config: DemoConfig; slots: DemoSlots; now: Date; channel: DemoChannel | "clinic" };
@@ -451,6 +453,13 @@ export function applyAgentAction(input: DemoSession, action: AgentAction, ctx: C
       s.comms = { ...s.comms, [action.id]: action.on === true };
       event(s, "agent", ch, "comms_updated", `${COMMS.find((c) => c.id === action.id)!.title} ${action.on ? "on" : "off"}`, at);
       result = { comms: s.comms };
+      break;
+    }
+    case "set_consent": {
+      if (action.id !== "connected" && action.id !== "network") throw new DemoError(400, "id must be connected or network. Terms and PHI consent can't be withdrawn mid-session; end the session instead.");
+      s.consent = { ...s.consent, [action.id]: action.on === true };
+      event(s, "agent", ch, "consent_updated", `${action.id === "connected" ? "Stay connected" : "Doe network"} ${action.on ? "on" : "off"}`, at);
+      result = { consent: s.consent };
       break;
     }
     default:

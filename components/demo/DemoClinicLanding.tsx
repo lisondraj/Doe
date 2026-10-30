@@ -1,36 +1,28 @@
 "use client";
 
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
-import { Check, DISPLAY, DemoFrame, EASE } from "@/components/demo/DemoFrame";
-import { DemoForms } from "@/components/demo/DemoForms";
+import { Check, DISPLAY, DemoFrame, EASE, Sheet } from "@/components/demo/DemoFrame";
+import { DemoForms, formsProgress } from "@/components/demo/DemoForms";
 import { DemoSphere } from "@/components/demo/DemoSphere";
-import { DemoThread } from "@/components/demo/DemoThread";
-import { BUNDLES, CLINIC, COMMS, OFFERS, PAYMENT_NOTES, PROVIDERS, SERVICES, money } from "@/lib/demo/demo-clinic";
+import { type ChatMode, type Chip, DemoChat, mergeThreads } from "@/components/demo/DemoThread";
+import { ASSESSMENTS } from "@/lib/demo/demo-assessments";
+import { BUNDLES, CLINIC, COMMS, COVERAGE, INSURERS, OFFERS, PAY_METHODS, PROVIDERS, SERVICES, money } from "@/lib/demo/demo-clinic";
 import type { AgentAction } from "@/lib/demo/demo-engine";
 import type { AgentPayload } from "@/lib/demo/demo-service";
-import type { DemoPlan, DemoThreadId } from "@/lib/demo/demo-types";
+import type { DemoConsent, DemoPlan, DemoThreadId } from "@/lib/demo/demo-types";
 
 type Act = (a: AgentAction) => Promise<{ ok: true; result: Record<string, unknown> } | { ok: false; error: string }>;
 
 const NAV = [
-  { id: "services", label: "Services & pricing" },
+  { id: "services", label: "Services & Pricing" },
   { id: "availability", label: "Availability" },
   { id: "offers", label: "Offers" },
   { id: "bundles", label: "Bundles" },
-  { id: "negotiate", label: "Negotiate" },
-  { id: "ask", label: "Ask the clinic" },
-  { id: "insurance", label: "Insurance & payment" },
-  { id: "communication", label: "Communication" },
+  { id: "insurance", label: "Insurance & Payment" },
+  { id: "communication", label: "Communication & Permissions" },
   { id: "forms", label: "Forms" },
-  { id: "booking", label: "Booking", small: true },
 ] as const;
-
-const THREAD_TITLES: Record<DemoThreadId, { title: string; subtitle: string }> = {
-  concierge: { title: "Clinic concierge", subtitle: "Questions" },
-  negotiate: { title: "Pricing & bundles", subtitle: "Negotiation" },
-  forms: { title: "Forms", subtitle: "Intake and assessments" },
-};
 
 const planKey = (p: DemoPlan) => `${p.kind}:${p.id}`;
 const NEGOTIABLE: { plan: DemoPlan; label: string }[] = [
@@ -40,19 +32,31 @@ const NEGOTIABLE: { plan: DemoPlan; label: string }[] = [
   { plan: { kind: "bundle", id: "rescue" }, label: "Botox + nerve block" },
 ];
 
+const THREAD_IDS: DemoThreadId[] = ["concierge", "negotiate", "forms"];
+
+const PERMISSIONS: { id: keyof DemoConsent; title: string; meta: string; required: boolean }[] = [
+  { id: "terms", title: "Doe's Terms & Privacy Policy", meta: "Agreed at connect", required: true },
+  { id: "phi", title: "Share health information (PHI)", meta: "Needed to book through Doe", required: true },
+  { id: "connected", title: "Stay connected for updates", meta: "You can check back on this booking", required: false },
+  { id: "network", title: "Join the Doe network", meta: "Faster booking and network offers", required: false },
+];
+
 const clockLeft = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
 /** Dr. Brooks' clinic as the user's agent sees it, live: every control here is an API action on the agent's session. */
 export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; act: Act; onEnd: () => void }) {
   const s = state.session;
-  const [inboxOpen, setInboxOpen] = useState(false);
-  const [inboxThread, setInboxThread] = useState<DemoThreadId | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [mode, setMode] = useState<ChatMode>("concierge");
+  const [formsOpen, setFormsOpen] = useState(false);
   const [provider, setProvider] = useState<string>("all");
   const [day, setDay] = useState(state.availability[0]!.day);
   const [slot, setSlot] = useState<string | null>(s.hold?.slotId ?? null);
   const [phi, setPhi] = useState(false);
-  const [typing, setTyping] = useState<Record<DemoThreadId, boolean>>({ concierge: false, negotiate: false, forms: false });
+  const [typing, setTyping] = useState(false);
   const [read, setRead] = useState<Record<DemoThreadId, number>>({ concierge: 0, negotiate: 0, forms: 0 });
+  /** Switches flipped here show at once; the server's answer replaces them. */
+  const [pending, setPending] = useState<Record<string, boolean>>({});
   const [toast, setToast] = useState<string | null>(null);
   const [active, setActive] = useState<string>("services");
   const [now, setNow] = useState(() => Date.now());
@@ -79,6 +83,9 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
     }
   }, [s.booking.status]);
 
+  /** The booking card waits until the agent picks what to book; the session's default plan isn't a choice. */
+  const chosen = s.booking.status !== "none" || s.events.some((e) => e.type === "plan_selected" || e.type === "offer_accepted");
+
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => {
@@ -87,12 +94,12 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
       },
       { rootMargin: "-25% 0px -65% 0px" },
     );
-    NAV.forEach((n) => {
-      const el = document.getElementById(n.id);
+    [...NAV.map((n) => n.id), "booking"].forEach((id) => {
+      const el = document.getElementById(id);
       if (el) io.observe(el);
     });
     return () => io.disconnect();
-  }, []);
+  }, [chosen]);
 
   const run = async (a: AgentAction, done?: string) => {
     const r = await act(a);
@@ -101,51 +108,72 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
     return r;
   };
 
-  const unreadOf = (id: DemoThreadId) => s.threads[id].slice(read[id]).filter((m) => m.from === "clinic").length;
-  const markRead = (id: DemoThreadId) => setRead((r) => ({ ...r, [id]: s.threads[id].length + 1 }));
+  const toggle = async (key: string, a: AgentAction, on: boolean) => {
+    setPending((p) => ({ ...p, [key]: on }));
+    await run(a);
+    setPending(({ [key]: _, ...rest }) => rest);
+  };
+
+  const unread = THREAD_IDS.reduce((n, id) => n + s.threads[id].slice(read[id]).filter((m) => m.from === "clinic").length, 0);
   useEffect(() => {
-    if (inboxOpen && inboxThread) setRead((r) => ({ ...r, [inboxThread]: s.threads[inboxThread].length }));
-  }, [inboxOpen, inboxThread, s.threads]);
-  const unread = (Object.keys(THREAD_TITLES) as DemoThreadId[]).reduce((n, id) => n + unreadOf(id), 0);
+    if (chatOpen) setRead({ concierge: s.threads.concierge.length, negotiate: s.threads.negotiate.length, forms: s.threads.forms.length });
+  }, [chatOpen, s.threads]);
+
+  const items = useMemo(() => mergeThreads(s.threads), [s.threads]);
 
   const send = async (id: DemoThreadId, text: string) => {
-    setTyping((t) => ({ ...t, [id]: true }));
+    setTyping(true);
     await run({ type: "send_message", thread: id, text });
-    setTyping((t) => ({ ...t, [id]: false }));
-    markRead(id);
+    setTyping(false);
   };
 
   const p = state.pricing;
   const locked = s.booking.status === "requested" || s.booking.status === "confirmed";
   const holdLeft = state.hold ? Math.max(0, Math.round((Date.parse(state.hold.expiresAt) - now) / 1000)) : 0;
   const heldId = state.hold && holdLeft > 0 ? state.hold.slotId : null;
-  const ready = Boolean(heldId) && s.forms.status === "sent" && phi && state.bookable && !locked;
+  const ready = chosen && Boolean(heldId) && s.forms.status === "sent" && phi && state.bookable && !locked;
+  const first = s.userName.split(" ")[0];
 
-  const openInbox = (id: DemoThreadId | null = null) => {
-    setInboxOpen(true);
-    setInboxThread(id);
+  const openChat = (m: ChatMode) => {
+    setMode(m);
+    setChatOpen(true);
   };
   const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const chips: Record<DemoThreadId, string[]> = {
-    concierge: ["How many units does Dr. Brooks use?", "How soon does it start working?", "Any side effects?", "What's the earliest opening?", "Cancellation policy?"],
-    negotiate: [`Can you do ${money(Math.round((p.list * 0.88) / 25) * 25)}?`, "Is there a discount for my user?", "Can the consult be waived?"],
-    forms: ["Can my user bring their headache diary?", "Is a referral letter needed?"],
-  };
+  const chips: Chip[] =
+    mode === "negotiate"
+      ? [`Can you do ${money(Math.round((p.list * 0.88) / 25) * 25)}?`, "Is there a discount for my user?", "Can the consult be waived?"].map((text) => ({ text, thread: "negotiate" }))
+      : [
+          ...["How many units does Dr. Brooks use?", "How soon does it start working?", "Any side effects?", "What's the earliest opening?", "Cancellation policy?"].map((text) => ({ text, thread: "concierge" as const })),
+          ...["Can my user bring their headache diary?", "Is a referral letter needed?"].map((text) => ({ text, thread: "forms" as const })),
+        ];
 
-  const thread = (id: DemoThreadId, className: string) => (
-    <DemoThread
-      messages={s.threads[id]}
-      typing={typing[id]}
-      chips={chips[id]}
-      placeholder={id === "negotiate" ? "Propose a price or ask for a deal" : "Ask the clinic for your user"}
-      onSend={(t) => send(id, t)}
-      onOffer={id === "negotiate" ? (mid, accept) => void run({ type: "respond_offer", message_id: mid, accept }, accept ? "Price locked for 48 hours" : undefined) : undefined}
-      className={className}
-    />
+  const negotiateBar = (
+    <div className="px-[12px] pt-[10px]">
+      <div className="flex items-center justify-between gap-[10px] px-[4px] pb-[8px]">
+        <span className="text-[12.5px] font-[600]">{chosen ? `Negotiating ${p.label}` : "Pick what to negotiate"}</span>
+        {chosen && (
+          <span className="text-[12.5px] text-[#2819109E]">
+            List {money(p.list)}
+            {p.deal ? ` · Agreed ${money(p.deal)}` : ""}
+          </span>
+        )}
+      </div>
+      <div className="flex gap-[6px] overflow-x-auto [scrollbar-width:none]">
+        {NEGOTIABLE.map((n) => {
+          const deal = s.agreed[planKey(n.plan)];
+          return (
+            <Pill key={planKey(n.plan)} sand on={chosen && planKey(s.plan) === planKey(n.plan)} onClick={() => !locked && void run({ type: "select_plan", plan: n.plan })}>
+              {n.label}
+              {deal ? ` · ${money(deal)}` : ""}
+            </Pill>
+          );
+        })}
+      </div>
+    </div>
   );
 
-  const summary = (
+  const summary = chosen ? (
     <BookingSummary
       state={state}
       phi={phi}
@@ -154,48 +182,53 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
       holdLeft={holdLeft}
       heldId={heldId}
       onRequest={() => void run({ type: "request_booking", phi_confirmed: phi }, "Booking request sent")}
-      onGo={go}
+      onGo={(id) => (id === "forms" ? setFormsOpen(true) : go(id))}
+      onNegotiate={() => openChat("negotiate")}
     />
-  );
+  ) : null;
 
-  const inboxButton = (
+  const communicate = (
     <button
       type="button"
-      onClick={() => openInbox(null)}
-      aria-label={`Agent inbox, ${unread} unread`}
-      className="relative w-[42px] h-[42px] flex items-center justify-center rounded-full bg-[#F4EEDF] hover:bg-[#EEE6D6] transition-colors duration-150"
+      onClick={() => openChat("concierge")}
+      aria-label={`Communicate with the clinic${unread ? `, ${unread} unread` : ""}`}
+      className="relative shrink-0 h-[40px] pl-[12px] pr-[14px] flex items-center gap-[7px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[13.5px] font-[600] hover:bg-[#2A1C10] transition-colors duration-150"
     >
-      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M4 13.5l2.2-7.1A2 2 0 0 1 8.1 5h7.8a2 2 0 0 1 1.9 1.4l2.2 7.1V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="none" stroke="#281910" strokeWidth="1.7" strokeLinejoin="round" />
-        <path d="M4 13.5h4.5l1 2h5l1-2H20" fill="none" stroke="#281910" strokeWidth="1.7" strokeLinejoin="round" />
+      <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 18.5V6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H9z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
       </svg>
+      Communicate
       {unread > 0 && (
-        <span className="absolute -top-[2px] -right-[2px] min-w-[19px] h-[19px] px-[5px] flex items-center justify-center rounded-full bg-[#140C04] text-[11px] leading-[11px] font-[700] text-[#FFFCF1] border-2 border-solid border-[#FFFCF1]">
+        <span className="absolute -top-[4px] -right-[4px] min-w-[19px] h-[19px] px-[5px] flex items-center justify-center rounded-full bg-[#FCCFB8] text-[11px] leading-[11px] font-[700] text-[#281910] border-2 border-solid border-[#FFFCF1]">
           {unread}
         </span>
       )}
     </button>
   );
 
+  const progress = formsProgress(s.forms);
+
   const overlay = (
     <>
-      <div
-        className="lg:hidden absolute left-[10px] right-[10px] bottom-[10px] z-20 flex items-center gap-[12px] h-[62px] pl-[18px] pr-[8px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] shadow-[0_10px_30px_rgba(20,12,4,0.25)] transition-opacity duration-200"
-        style={{ opacity: inboxOpen ? 0 : 1, pointerEvents: inboxOpen ? "none" : "auto" }}
-      >
-        <span className="flex flex-col grow min-w-0">
-          <span className="truncate text-[12px] leading-[16px] text-[#FFFCF1A6]">{p.label}</span>
-          <span className="text-[16px] leading-[20px] font-[700]">
-            {money(s.booking.total ?? p.total)}
-            <span className="ml-[6px] text-[12px] font-[500] text-[#FFFCF1A6]">
-              {s.booking.status === "confirmed" ? "· Booked" : s.booking.status === "requested" ? "· Requested" : heldId ? `· Held ${clockLeft(holdLeft)}` : ""}
+      {chosen && (
+        <div
+          className="lg:hidden absolute left-[10px] right-[10px] bottom-[10px] z-20 flex items-center gap-[12px] h-[62px] pl-[18px] pr-[8px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] shadow-[0_10px_30px_rgba(20,12,4,0.25)] transition-opacity duration-200"
+          style={{ opacity: chatOpen || formsOpen ? 0 : 1, pointerEvents: chatOpen || formsOpen ? "none" : "auto" }}
+        >
+          <span className="flex flex-col grow min-w-0">
+            <span className="truncate text-[12px] leading-[16px] text-[#FFFCF1A6]">{p.label}</span>
+            <span className="text-[16px] leading-[20px] font-[700]">
+              {money(s.booking.total ?? p.total)}
+              <span className="ml-[6px] text-[12px] font-[500] text-[#FFFCF1A6]">
+                {s.booking.status === "confirmed" ? "· Booked" : s.booking.status === "requested" ? "· Requested" : heldId ? `· Held ${clockLeft(holdLeft)}` : ""}
+              </span>
             </span>
           </span>
-        </span>
-        <button type="button" onClick={() => go("booking")} className="shrink-0 h-[46px] px-[18px] rounded-[999px] bg-[#FFFCF1] text-[#140C04] text-[14px] font-[600]">
-          Review
-        </button>
-      </div>
+          <button type="button" onClick={() => go("booking")} className="shrink-0 h-[46px] px-[18px] rounded-[999px] bg-[#FFFCF1] text-[#140C04] text-[14px] font-[600]">
+            Review
+          </button>
+        </div>
+      )}
 
       {toast && (
         <div className="absolute left-1/2 top-[72px] md:top-[82px] z-50 -translate-x-1/2 max-w-[90%] h-[38px] px-[16px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap overflow-hidden text-ellipsis shadow-[0_8px_24px_rgba(20,12,4,0.25)] doe-menu-in">
@@ -203,25 +236,42 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
         </div>
       )}
 
-      <Inbox
-        open={inboxOpen}
-        threadId={inboxThread}
-        state={state}
-        unreadOf={unreadOf}
-        onClose={() => setInboxOpen(false)}
-        onOpenThread={(id) => openInbox(id)}
-        onBack={() => setInboxThread(null)}
-        renderThread={(id) => thread(id, "grow min-h-0")}
-      />
+      <Sheet open={chatOpen} onClose={() => setChatOpen(false)} label="Communicate with the clinic" title="Communicate" subtitle={`${CLINIC.name} · for ${s.userName}`}>
+        <DemoChat
+          items={items}
+          typing={typing}
+          mode={mode}
+          onMode={setMode}
+          chips={chips}
+          negotiateBar={negotiateBar}
+          onSend={send}
+          onOffer={(mid, accept) => void run({ type: "respond_offer", message_id: mid, accept }, accept ? "Price locked for 48 hours" : undefined)}
+        />
+      </Sheet>
+
+      <Sheet open={formsOpen} onClose={() => setFormsOpen(false)} label="Clinic forms" title="Intake Forms" subtitle={`${progress.done} of ${progress.total} complete · for ${s.userName}`} wide>
+        <DemoForms
+          forms={s.forms}
+          userName={s.userName}
+          onIntake={(fields) => run({ type: "update_intake", fields })}
+          onAnswer={(id, answers) => run({ type: "answer_assessment", assessment_id: id, answers })}
+          onSign={() => run({ type: "record_signature", signed_by: s.userName }, "Signature recorded")}
+          onSubmit={async () => {
+            const r = await run({ type: "submit_forms" }, "Forms passed back");
+            if (r.ok) setFormsOpen(false);
+          }}
+        />
+      </Sheet>
     </>
   );
 
   const daySlots = state.availability.find((d) => d.day === day)?.slots.filter((x) => provider === "all" || x.provider === provider) ?? [];
+  const nav = chosen ? [...NAV, { id: "booking", label: "Booking", small: true } as const] : NAV;
 
   return (
-    <DemoFrame agentView right={inboxButton} overlay={overlay}>
+    <DemoFrame agentView right={communicate} overlay={overlay}>
       <nav className="md:hidden sticky top-[64px] z-20 flex gap-[6px] overflow-x-auto px-[16px] py-[8px] bg-[#FFFCF1E6] backdrop-blur-[12px] [scrollbar-width:none]">
-        {NAV.map((n) => (
+        {nav.map((n) => (
           <button
             key={n.id}
             type="button"
@@ -233,26 +283,20 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
         ))}
       </nav>
 
-      <div className="md:grid md:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)_340px] md:gap-[28px] md:px-[32px] max-w-[1440px] mx-auto pb-[96px] lg:pb-[40px]">
+      <div
+        className={`md:grid md:grid-cols-[200px_minmax(0,1fr)] ${chosen ? "lg:grid-cols-[200px_minmax(0,1fr)_340px]" : "lg:max-w-[1100px]"} md:gap-[28px] md:px-[32px] max-w-[1440px] mx-auto ${chosen ? "pb-[96px]" : "pb-[40px]"} lg:pb-[40px]`}
+      >
         <aside className="hidden md:flex flex-col gap-[2px] sticky top-[78px] self-start mt-[6px] p-[6px] rounded-[22px] bg-[#F4EEDF]">
-          {NAV.map((n) => (
+          {nav.map((n) => (
             <button
               key={n.id}
               type="button"
               onClick={() => go(n.id)}
-              className={`${"small" in n ? "lg:hidden " : ""}h-[36px] px-[12px] rounded-[10px] text-left text-[14px] font-[500] transition-colors duration-150 ${active === n.id ? "bg-[#FFFCF1] text-[#281910]" : "text-[#281910A6] hover:text-[#281910]"}`}
+              className={`${"small" in n ? "lg:hidden " : ""}min-h-[36px] py-[8px] px-[12px] rounded-[10px] text-left text-[14px] leading-[18px] font-[500] transition-colors duration-150 ${active === n.id ? "bg-[#FFFCF1] text-[#281910]" : "text-[#281910A6] hover:text-[#281910]"}`}
             >
               {n.label}
             </button>
           ))}
-          <button
-            type="button"
-            onClick={() => openInbox(null)}
-            className="mt-[8px] h-[40px] px-[12px] flex items-center justify-between rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]"
-          >
-            Agent inbox
-            {unread > 0 && <span className="min-w-[20px] h-[20px] px-[6px] flex items-center justify-center rounded-full bg-[#FFFCF1] text-[#140C04] text-[11px]">{unread}</span>}
-          </button>
         </aside>
 
         <main className="min-w-0 flex flex-col gap-[28px] px-[16px] md:px-0 pt-[6px]">
@@ -268,7 +312,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
             </div>
             <div className="rounded-[20px] bg-[#140C04] text-[#FFFCF1] p-[16px] md:p-[18px]">
               <div className="flex items-center justify-between gap-[10px]">
-                <span className="text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">Session · {s.channel}</span>
+                <span className="text-[13px] font-[600] text-[#FFFCF1B3]">Your Session</span>
                 <button type="button" onClick={onEnd} className="h-[26px] px-[10px] rounded-full border border-solid border-[#FFFCF133] text-[11.5px] font-[600] text-[#FFFCF1CC] hover:text-[#FFFCF1]">
                   End session
                 </button>
@@ -282,35 +326,23 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                 ].map(([k, v]) => (
                   <div key={k} className="contents">
                     <dt className="text-[#FFFCF180]">{k}</dt>
-                    <dd className={`truncate ${k === "Session" ? "font-mono text-[12px] text-[#FFFCF1B3]" : "font-[600]"}`}>{v}</dd>
+                    <dd className={k === "Session" ? "truncate font-mono text-[12px] text-[#FFFCF1B3]" : k === "Request" ? "font-[600] break-words" : "truncate font-[600]"}>{v}</dd>
                   </div>
                 ))}
               </dl>
-              <div className="mt-[12px] flex flex-wrap gap-[6px]">
-                {[
-                  ["Terms", s.consent.terms],
-                  ["PHI", s.consent.phi],
-                  ["Connected", s.consent.connected],
-                  ["Network", s.consent.network],
-                ].map(([label, on]) => (
-                  <span key={label as string} className={`h-[24px] px-[9px] flex items-center rounded-full text-[11.5px] font-[600] ${on ? "bg-[#FFFCF11F] text-[#FFFCF1]" : "text-[#FFFCF166] border border-solid border-[#FFFCF126]"}`}>
-                    {on ? "✓ " : "– "}
-                    {label as string}
-                  </span>
-                ))}
-              </div>
             </div>
           </div>
 
-          <Section id="services" meta="CAD · private pay" title="Services & pricing">
+          <Section id="services" title="Services & Pricing">
             <div className="flex flex-col gap-[6px]">
               {SERVICES.map((x) => {
-                const on = s.plan.kind === "service" && s.plan.id === x.id;
+                const on = chosen && s.plan.kind === "service" && s.plan.id === x.id;
                 return (
                   <button
                     key={x.id}
                     type="button"
                     disabled={locked}
+                    aria-pressed={on}
                     onClick={() => void run({ type: "select_plan", plan: { kind: "service", id: x.id } })}
                     className={`flex items-start gap-[12px] p-[14px] rounded-[18px] text-left transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
                   >
@@ -330,7 +362,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
             </div>
           </Section>
 
-          <Section id="availability" meta={heldId ? `Held · ${clockLeft(holdLeft)}` : "Live"} title="Availability">
+          <Section id="availability" title="Availability">
             <div className="flex gap-[6px] overflow-x-auto [scrollbar-width:none]">
               {["all", ...PROVIDERS].map((x) => (
                 <Pill key={x} on={provider === x} onClick={() => setProvider(x)}>
@@ -413,12 +445,13 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
           <Section id="bundles" title="Bundles">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-[6px]">
               {BUNDLES.map((b) => {
-                const on = s.plan.kind === "bundle" && s.plan.id === b.id;
+                const on = chosen && s.plan.kind === "bundle" && s.plan.id === b.id;
                 return (
                   <button
                     key={b.id}
                     type="button"
                     disabled={locked}
+                    aria-pressed={on}
                     onClick={() => void run({ type: "select_plan", plan: { kind: "bundle", id: b.id } })}
                     className={`flex flex-col gap-[8px] p-[16px] rounded-[20px] text-left transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
                   >
@@ -438,96 +471,182 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                 );
               })}
             </div>
+            <button
+              type="button"
+              onClick={() => openChat("negotiate")}
+              className="mt-[6px] w-full flex items-center justify-between gap-[12px] p-[14px] rounded-[18px] bg-[#FFFCF1] hover:bg-[#FAF4E4] text-left transition-colors duration-150"
+            >
+              <span>
+                <span className="block text-[15px] leading-[20px] font-[600]">Want a better price?</span>
+                <span className="block mt-[2px] text-[13px] leading-[18px] text-[#2819109E]">Negotiate with the clinic&apos;s agent in Communicate.</span>
+              </span>
+              <span className="shrink-0 h-[36px] px-[14px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]">Negotiate</span>
+            </button>
           </Section>
 
-          <Section id="negotiate" meta="Agent to agent" title="Negotiate">
-            <div className="flex gap-[6px] overflow-x-auto [scrollbar-width:none] mb-[2px]">
-              {NEGOTIABLE.map((n) => {
-                const deal = s.agreed[planKey(n.plan)];
+          <Section id="insurance" title="Insurance & Payment">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
+              <div className="flex flex-col rounded-[18px] bg-[#FFFCF1] p-[16px]">
+                <span className="text-[15px] font-[600]">Coverage</span>
+                <div className="mt-[10px] flex flex-col gap-[12px]">
+                  {COVERAGE.map((c) => (
+                    <div key={c.k}>
+                      <div className="flex items-baseline justify-between gap-[12px]">
+                        <span className="text-[13.5px] text-[#281910B3]">{c.k}</span>
+                        <span className="text-[13.5px] font-[700]">{c.v}</span>
+                      </div>
+                      <p className="mt-[2px] text-[12.5px] leading-[17px] text-[#28191080]">{c.note}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-[14px] flex flex-wrap gap-[6px]">
+                  {INSURERS.map((i) => (
+                    <span key={i} className="h-[26px] px-[10px] flex items-center rounded-full bg-[#F4EEDF] text-[12px] font-[600]">
+                      {i}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col rounded-[18px] bg-[#FFFCF1] p-[16px]">
+                <span className="text-[15px] font-[600]">Ways to Pay</span>
+                <div className="mt-[6px] flex flex-col">
+                  {PAY_METHODS.map((m) => (
+                    <div key={m.k} className="flex items-baseline justify-between gap-[12px] py-[8px] border-b border-solid border-[#2819100F] last:border-b-0">
+                      <span className="text-[13.5px] font-[600]">{m.k}</span>
+                      <span className="text-right text-[12.5px] text-[#2819109E]">{m.note}</span>
+                    </div>
+                  ))}
+                </div>
+                {chosen && (
+                  <div className="mt-auto pt-[10px] flex items-baseline justify-between gap-[12px] border-t border-solid border-[#2819101A]">
+                    <span className="text-[13px] text-[#281910B3]">{first} pays the clinic</span>
+                    <span className="text-[16px] font-[700]">{money(s.booking.total ?? p.total)}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Section>
+
+          <Section id="communication" title="Communication & Permissions">
+            <div className="rounded-[18px] bg-[#FFFCF1]">
+              <div className="px-[16px] pt-[14px] pb-[4px] text-[15px] font-[600]">Clinic Updates</div>
+              {COMMS.map((c) => {
+                const on = pending[`comms:${c.id}`] ?? Boolean(s.comms[c.id]);
                 return (
-                  <Pill key={planKey(n.plan)} on={planKey(s.plan) === planKey(n.plan)} onClick={() => !locked && void run({ type: "select_plan", plan: n.plan })}>
-                    {n.label}
-                    {deal ? ` · ${money(deal)}` : ""}
-                  </Pill>
+                  <SwitchRow
+                    key={c.id}
+                    title={c.title}
+                    meta={c.meta}
+                    on={on}
+                    onChange={() => void toggle(`comms:${c.id}`, { type: "set_comms", id: c.id, on: !on }, !on)}
+                  />
                 );
               })}
             </div>
-            <div className="overflow-hidden">
-              <div className="flex items-center justify-between px-[10px] pt-[12px] pb-[0px]">
-                <span className="text-[13px] font-[600]">{p.label}</span>
-                <span className="text-[13px] text-[#2819109E]">
-                  List {money(p.list)}
-                  {p.deal ? ` · agreed ${money(p.deal)}` : ""}
+            <div className="mt-[6px] rounded-[18px] bg-[#FFFCF1]">
+              <div className="px-[16px] pt-[14px] pb-[4px]">
+                <span className="block text-[15px] font-[600]">Permissions From {first}</span>
+                <span className="block mt-[2px] text-[12.5px] leading-[17px] text-[#28191080]">Change these whenever {first} asks. Required ones stay on for the session.</span>
+              </div>
+              {PERMISSIONS.map((x) => {
+                const on = pending[`consent:${x.id}`] ?? Boolean(s.consent[x.id]);
+                return (
+                  <SwitchRow
+                    key={x.id}
+                    title={x.title}
+                    meta={x.meta}
+                    on={on}
+                    required={x.required}
+                    onChange={x.required ? undefined : () => void toggle(`consent:${x.id}`, { type: "set_consent", id: x.id as "connected" | "network", on: !on }, !on)}
+                  />
+                );
+              })}
+            </div>
+          </Section>
+
+          <Section id="forms" title="Forms">
+            <div className="rounded-[18px] bg-[#FFFCF1] p-[16px] md:p-[18px]">
+              <div className="flex items-start justify-between gap-[12px]">
+                <div className="min-w-0">
+                  <div className="text-[15px] leading-[20px] font-[600]">{s.forms.status === "sent" ? "Forms passed back" : `Dr. Brooks needs ${progress.total} forms before the first visit`}</div>
+                  <p className="mt-[4px] text-[13px] leading-[19px] text-[#2819109E]">
+                    {s.forms.status === "sent"
+                      ? "The clinic has the signed intake and assessments."
+                      : `Intake and consent, ${ASSESSMENTS.map((a) => a.name).join(", ")}. Start when ${first} is ready to answer; answers save as you go.`}
+                  </p>
+                </div>
+                <span className="shrink-0 text-[13px] font-[700] tabular-nums">
+                  {progress.done}/{progress.total}
                 </span>
               </div>
-              {thread("negotiate", "h-[440px]")}
+              <div className="mt-[12px] flex gap-[3px]" aria-hidden="true">
+                {Array.from({ length: progress.total }, (_, i) => (
+                  <span key={i} className={`h-[4px] grow rounded-full ${i < progress.done ? "bg-[#140C04]" : "bg-[#2819101A]"}`} />
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormsOpen(true)}
+                className="mt-[14px] h-[46px] px-[20px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] hover:bg-[#2A1C10] transition-colors duration-150"
+              >
+                {s.forms.status === "sent" ? "View forms" : progress.done > 0 ? "Continue forms" : "Start forms"}
+              </button>
             </div>
           </Section>
 
-          <Section id="ask" title="Ask the clinic">
-            <div className="overflow-hidden">{thread("concierge", "h-[420px]")}</div>
-          </Section>
-
-          <Section id="insurance" title="Insurance & payment">
-            <div className="rounded-[18px] bg-[#FFFCF1] px-[16px] py-[6px]">
-              {PAYMENT_NOTES.map((n) => (
-                <div key={n.k} className="flex items-baseline justify-between gap-[16px] py-[10px] border-b border-solid border-[#2819100F] last:border-b-0">
-                  <span className="shrink-0 text-[13.5px] text-[#281910B3]">{n.k}</span>
-                  <span className="text-right text-[13.5px] font-[600]">{n.v}</span>
-                </div>
-              ))}
+          {summary && (
+            <div id="booking" className="lg:hidden scroll-mt-[124px] md:scroll-mt-[88px]">
+              {summary}
             </div>
-          </Section>
-
-          <Section id="communication" title="Communication">
-            <div className="flex flex-col gap-[6px]">
-              {COMMS.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  role="switch"
-                  aria-checked={Boolean(s.comms[c.id])}
-                  onClick={() => void run({ type: "set_comms", id: c.id, on: !s.comms[c.id] })}
-                  className="flex items-center gap-[12px] p-[14px] rounded-[18px] bg-[#FFFCF1] hover:bg-[#FAF4E4] text-left transition-colors duration-150"
-                >
-                  <span className="grow">
-                    <span className="block text-[15px] leading-[20px] font-[600]">{c.title}</span>
-                    <span className="block text-[12.5px] leading-[17px] text-[#28191080]">{c.meta}</span>
-                  </span>
-                  <Toggle on={Boolean(s.comms[c.id])} />
-                </button>
-              ))}
-            </div>
-          </Section>
-
-          <Section id="forms" meta="5 required" title="Forms" bare>
-            <DemoForms
-              forms={s.forms}
-              userName={s.userName}
-              onIntake={(fields) => run({ type: "update_intake", fields })}
-              onAnswer={(id, answers) => run({ type: "answer_assessment", assessment_id: id, answers })}
-              onSign={() => run({ type: "record_signature", signed_by: s.userName }, "Signature recorded")}
-              onSubmit={() => run({ type: "submit_forms" }, "Forms passed back")}
-            />
-          </Section>
-
-          <div id="booking" className="lg:hidden scroll-mt-[124px] md:scroll-mt-[88px]">
-            {summary}
-          </div>
+          )}
         </main>
 
-        <aside className="hidden lg:block sticky top-[78px] self-start mt-[6px]">{summary}</aside>
+        {summary && <aside className="hidden lg:block sticky top-[78px] self-start mt-[6px]">{summary}</aside>}
       </div>
     </DemoFrame>
   );
 }
 
+function SwitchRow({ title, meta, on, required, onChange }: { title: string; meta: string; on: boolean; required?: boolean; onChange?: () => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-disabled={!onChange}
+      onClick={onChange}
+      className={`w-full flex items-center gap-[12px] px-[16px] py-[12px] text-left border-t border-solid border-[#2819100F] first-of-type:border-t-0 transition-colors duration-150 last:rounded-b-[18px] ${onChange ? "hover:bg-[#FAF4E4]" : "cursor-default"}`}
+    >
+      <span className="grow min-w-0">
+        <span className="flex flex-wrap items-center gap-[6px] text-[14.5px] leading-[20px] font-[600]">
+          {title}
+          {required && <span className="h-[18px] px-[7px] flex items-center rounded-full bg-[#F4EEDF] text-[10.5px] font-[700] text-[#28191099]">Required</span>}
+        </span>
+        <span className="block text-[12.5px] leading-[17px] text-[#28191080]">{meta}</span>
+      </span>
+      {required ? (
+        <span className="shrink-0 flex items-center gap-[6px] text-[12.5px] font-[600] text-[#28191099]">
+          <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" strokeWidth="2" />
+          </svg>
+          On
+        </span>
+      ) : (
+        <span className="shrink-0 flex items-center gap-[8px]">
+          <span className="w-[24px] text-right text-[12px] font-[600] text-[#28191099]">{on ? "On" : "Off"}</span>
+          <Toggle on={on} />
+        </span>
+      )}
+    </button>
+  );
+}
+
 /** A titled section: its content sits in an outer sand box, with cream boxes inside. `bare` skips the outer box for content that brings its own. */
-function Section({ id, meta, title, bare, children }: { id: string; meta?: string; title: string; bare?: boolean; children: ReactNode }) {
+function Section({ id, title, bare, children }: { id: string; title: string; bare?: boolean; children: ReactNode }) {
   return (
     <section id={id} className="scroll-mt-[124px] md:scroll-mt-[88px]">
-      <div className="mb-[12px] flex items-baseline justify-between gap-[12px]">
-        {meta && <span className="order-2 shrink-0 text-[12px] leading-[16px] font-[600] text-[#28191080]">{meta}</span>}
+      <div className="mb-[12px]">
         <h2 className={`${DISPLAY} text-[24px] leading-[28px] md:text-[28px] md:leading-[32px] tracking-[-0.02em]`}>{title}</h2>
       </div>
       {bare ? children : <div className="rounded-[24px] bg-[#F4EEDF] p-[6px]">{children}</div>}
@@ -535,12 +654,12 @@ function Section({ id, meta, title, bare, children }: { id: string; meta?: strin
   );
 }
 
-function Pill({ on, onClick, children }: { on: boolean; onClick: () => void; children: ReactNode }) {
+function Pill({ on, sand, onClick, children }: { on: boolean; sand?: boolean; onClick: () => void; children: ReactNode }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] whitespace-nowrap transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910] hover:bg-[#FAF4E4]"}`}
+      className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] whitespace-nowrap transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : sand ? "bg-[#F4EEDF] text-[#281910] hover:bg-[#EEE6D6]" : "bg-[#FFFCF1] text-[#281910] hover:bg-[#FAF4E4]"}`}
     >
       {children}
     </button>
@@ -564,6 +683,7 @@ function BookingSummary({
   heldId,
   onRequest,
   onGo,
+  onNegotiate,
 }: {
   state: AgentPayload;
   phi: boolean;
@@ -573,6 +693,7 @@ function BookingSummary({
   heldId: string | null;
   onRequest: () => void;
   onGo: (id: string) => void;
+  onNegotiate: () => void;
 }) {
   const s = state.session;
   const p = state.pricing;
@@ -590,7 +711,7 @@ function BookingSummary({
   return (
     <div className="rounded-[24px] bg-[#F4EEDF] p-[6px]">
       <div className="rounded-[20px] bg-[#FFFCF1] p-[16px]">
-        <div className="text-[12px] leading-[16px] font-[500] text-[#28191080]">Booking for {s.userName}</div>
+        <div className="text-[12px] leading-[16px] font-[500] text-[#28191080]">Booking For {s.userName}</div>
         <div className={`${DISPLAY} mt-[2px] text-[21px] leading-[25px] tracking-[-0.01em]`}>{p.label}</div>
         <div className="mt-[14px] flex flex-col gap-[6px] text-[13.5px] leading-[18px]">
           <Row k="List price" v={money(p.list)} strike={Boolean(p.deal)} />
@@ -603,7 +724,7 @@ function BookingSummary({
       </div>
       <div className="flex flex-col gap-[2px] p-[8px]">
         {steps.map((x) => (
-          <button key={x.go} type="button" onClick={() => onGo(x.go)} className="flex items-center gap-[10px] min-h-[40px] px-[8px] rounded-[12px] text-left hover:bg-[#EEE6D6] transition-colors duration-150">
+          <button key={x.go} type="button" onClick={() => (x.go === "negotiate" ? onNegotiate() : onGo(x.go))} className="flex items-center gap-[10px] min-h-[40px] px-[8px] rounded-[12px] text-left hover:bg-[#EEE6D6] transition-colors duration-150">
             <Check on={x.done} size={20} />
             <span className={`text-[13px] leading-[17px] ${x.done ? "font-[600]" : "text-[#281910A6]"}`}>{x.label}</span>
           </button>
@@ -643,94 +764,6 @@ function Row({ k, v, strike, bold }: { k: string; v: string; strike?: boolean; b
     <div className="flex items-baseline justify-between gap-[10px]">
       <span className={bold ? "font-[700]" : "text-[#281910B3]"}>{k}</span>
       <span className={`${bold ? "text-[18px] font-[700]" : "font-[600]"} ${strike ? "line-through text-[#28191066]" : ""}`}>{v}</span>
-    </div>
-  );
-}
-
-function Inbox({
-  open,
-  threadId,
-  state,
-  unreadOf,
-  onClose,
-  onOpenThread,
-  onBack,
-  renderThread,
-}: {
-  open: boolean;
-  threadId: DemoThreadId | null;
-  state: AgentPayload;
-  unreadOf: (id: DemoThreadId) => number;
-  onClose: () => void;
-  onOpenThread: (id: DemoThreadId) => void;
-  onBack: () => void;
-  renderThread: (id: DemoThreadId) => ReactNode;
-}) {
-  const ids = Object.keys(THREAD_TITLES) as DemoThreadId[];
-  return (
-    <div
-      className={`absolute inset-0 z-40 ${open ? "" : "pointer-events-none"}`}
-      aria-hidden={!open}
-      style={{ visibility: open ? "visible" : "hidden", transition: `visibility 0ms linear ${open ? "0ms" : "380ms"}` }}
-    >
-      <div className="absolute inset-0 bg-[#140C042E] transition-opacity duration-300" style={{ opacity: open ? 1 : 0 }} onClick={onClose} />
-      <aside
-        role="dialog"
-        aria-label="Agent inbox"
-        className={`absolute inset-0 md:left-auto md:top-[10px] md:bottom-[10px] md:right-[10px] md:w-[420px] md:rounded-[22px] flex flex-col bg-[#FFFCF1] md:shadow-[0_20px_60px_rgba(20,12,4,0.25)] transition-transform duration-[380ms] ${
-          open ? "translate-y-0 md:translate-x-0" : "translate-y-full md:translate-y-0 md:translate-x-[110%]"
-        }`}
-        style={{ transitionTimingFunction: EASE }}
-      >
-        <div className="shrink-0 flex items-center gap-[10px] h-[64px] px-[14px] border-b border-solid border-[#2819100F]">
-          {threadId ? (
-            <button type="button" onClick={onBack} aria-label="All threads" className="w-[38px] h-[38px] flex items-center justify-center rounded-full bg-[#F4EEDF]">
-              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M15 6l-6 6 6 6" fill="none" stroke="#281910" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          ) : null}
-          <span className="grow min-w-0 flex flex-col">
-            <span className={`${DISPLAY} text-[20px] leading-[24px]`}>{threadId ? THREAD_TITLES[threadId].title : "Agent inbox"}</span>
-            <span className="text-[12px] leading-[16px] text-[#2819109E]">{threadId ? THREAD_TITLES[threadId].subtitle : CLINIC.name}</span>
-          </span>
-          <button type="button" onClick={onClose} aria-label="Close inbox" className="w-[38px] h-[38px] flex items-center justify-center rounded-full bg-[#F4EEDF]">
-            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#281910" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </button>
-        </div>
-        {threadId ? (
-          <div className="grow min-h-0 flex flex-col bg-[#F4EEDF]">{renderThread(threadId)}</div>
-        ) : (
-          <div className="grow min-h-0 overflow-y-auto p-[10px]">
-            <div className="flex flex-col gap-[6px] p-[6px] rounded-[22px] bg-[#F4EEDF]">
-            {ids.map((id) => {
-              const msgs = state.session.threads[id];
-              const last = [...msgs].reverse().find((m) => m.from !== "system") ?? msgs[msgs.length - 1];
-              const n = unreadOf(id);
-              return (
-                <button key={id} type="button" onClick={() => onOpenThread(id)} className="flex items-start gap-[12px] p-[14px] rounded-[18px] bg-[#FFFCF1] hover:bg-[#FAF4E4] text-left transition-colors duration-150">
-                  <span className="grow min-w-0">
-                    <span className="flex items-baseline justify-between gap-[8px]">
-                      <span className="text-[15px] leading-[20px] font-[600]">{THREAD_TITLES[id].title}</span>
-                      {last && <span className="shrink-0 text-[11.5px] text-[#28191080]">{new Date(last.at).toLocaleTimeString("en-CA", { hour: "numeric", minute: "2-digit" })}</span>}
-                    </span>
-                    {last && (
-                      <span className="block mt-[2px] text-[13px] leading-[18px] text-[#2819109E] line-clamp-2">
-                        {last.from === "agent" ? "You: " : ""}
-                        {last.text}
-                      </span>
-                    )}
-                  </span>
-                  {n > 0 && <span className="shrink-0 min-w-[20px] h-[20px] px-[6px] flex items-center justify-center rounded-full bg-[#140C04] text-[11px] font-[700] text-[#FFFCF1]">{n}</span>}
-                </button>
-              );
-            })}
-            </div>
-          </div>
-        )}
-      </aside>
     </div>
   );
 }
