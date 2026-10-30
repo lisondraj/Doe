@@ -26,6 +26,7 @@ import {
   SERVICES,
   SOURCE_PAGES,
 } from "@/lib/indexconvert/ford-plastic-surgery";
+import { AGENT_FILES, BASE, CLINIC_TOOLS, SLUG } from "@/lib/indexconvert/agent-files";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
@@ -36,12 +37,13 @@ const MUTED = "text-[#28191080]";
 
 /** The loader's steps, in order, with how long each runs. */
 const STEPS: { title: string; detail: string; ms: number; bar?: boolean }[] = [
-  { title: "Finding your page", detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`, ms: 1500 },
-  { title: "Checking what personal agents see", detail: "No agent-readable page yet", ms: 1700 },
-  { title: "Structuring as JSON, metadata & HTML", detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`, ms: 2300 },
-  { title: "Integrating with Model Context Protocol", detail: "5 tools ready", ms: 1700 },
-  { title: "Integrating with Doe's API", detail: "Locations, hours, providers, prices", ms: 1500 },
-  { title: "Building your agent-readable page", detail: "Done", ms: 2600, bar: true },
+  { title: "Finding your page", detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`, ms: 1900 },
+  { title: "Checking what personal agents see", detail: "No llms.txt, MCP card or OpenAPI", ms: 1900 },
+  { title: "Converting to agent-readable page", detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`, ms: 2700 },
+  { title: "Building JSONs, robots.txt, llms.txt & well-known", detail: AGENT_FILES.map((f) => f.path.split("/").pop()).join(" · "), ms: 2600 },
+  { title: "Integrating into Doe's Model Context Protocol", detail: `${CLINIC_TOOLS.length} tools ready`, ms: 2100 },
+  { title: "Integrating Doe's API", detail: "OpenAPI 3.1 · locations, providers, prices", ms: 2000 },
+  { title: "Applying Personal Agent Protocol (PAP)", detail: "Connected", ms: 2600, bar: true },
 ];
 const STEP_STARTS = STEPS.map((_, i) => STEPS.slice(0, i).reduce((n, s) => n + s.ms, 0));
 const BUILD_MS = STEPS.reduce((n, s) => n + s.ms, 0);
@@ -50,6 +52,8 @@ const MUSE_MS = 1600;
 const TOTAL_MS = BUILD_MS + MUSE_MS;
 /** Each source page gets an equal slice of the build. */
 const SLOT_MS = BUILD_MS / SOURCE_PAGES.length;
+/** Cross-fade between two of the clinic's pages behind the loader. */
+const PAGE_FADE_MS = 900;
 const LOADER_FADE_MS = 420;
 
 /** What the loader lifts off each page as the scan line passes, keyed by screenshot. */
@@ -62,16 +66,15 @@ const PAGE_READS: Record<string, [string, string][]> = {
   facelift: [["provider", "Dr. Derek Ford"], ["provider", "Dr. Steven Hanna"], ["service", "Endoscopic mid facelift"]],
   contact: [["hours", "Mon–Fri 8:30–4:30"], ["phone", CLINIC.phone], ["booking", "Consult request form"]],
 };
+/** Chips sit on the right; the page directory has the left. */
 const READ_SPOTS = [
-  { top: "18%", side: "left" },
-  { top: "44%", side: "right" },
-  { top: "70%", side: "left" },
+  { top: "20%", right: "6%" },
+  { top: "45%", right: "11%" },
+  { top: "70%", right: "6%" },
 ] as const;
 
 /* ------------------------------------------------------------------ Agent data */
 
-const SLUG = "ford-plastic-surgery";
-const BASE = `/v1/clinics/${SLUG}`;
 const slug = (s: string) =>
   s
     .toLowerCase()
@@ -114,18 +117,16 @@ const AGENT = {
     form_fields: BOOKING.fields.map(slug),
     agent_booking: { enabled: false, reason: "not_activated" },
   },
-  tools: [
-    { name: "search_services", input: { query: "string" } },
-    { name: "get_prices", input: { service: "string" } },
-    { name: "list_providers", input: {} },
-    { name: "get_hours", input: { location: "string?" } },
-    { name: "request_consultation", input: { service: "string", provider: "string?", contact: "object" } },
-  ].map((t) => ({ ...t, state: "ready", enabled: false })),
+  tools: CLINIC_TOOLS.map((t) => ({ name: t.name, input: t.input, state: "ready", enabled: false })),
 };
 
 /** An example run: Muse can read the page, but its MCP and API calls stop at "not activated". */
 const AGENT_RUN: { who: "muse" | "doe"; text: string; tone?: "ok" | "stop" }[] = [
-  { who: "muse", text: `fetch https://${CLINIC.url}` },
+  { who: "muse", text: `fetch https://${CLINIC.url}/llms.txt` },
+  { who: "doe", text: "200 · text/plain · agent page, openapi, mcp card", tone: "ok" },
+  { who: "muse", text: `fetch https://${CLINIC.url}/.well-known/mcp.json` },
+  { who: "doe", text: `200 · ${CLINIC_TOOLS.length} tools · pap applied · not_activated`, tone: "ok" },
+  { who: "muse", text: `GET ${BASE}` },
   { who: "doe", text: `200 · MedicalClinic · ${FIELD_COUNT} fields`, tone: "ok" },
   { who: "muse", text: 'get_prices({ service: "deep_plane_facelift" })' },
   { who: "doe", text: "503 · mcp not_activated", tone: "stop" },
@@ -267,8 +268,8 @@ function ViewSwitch({ view, onChange }: { view: View; onChange: (v: View) => voi
 function Check({ on, size = 20 }: { on: boolean; size?: number }) {
   return (
     <span
-      className="shrink-0 flex items-center justify-center rounded-[7px] transition-colors duration-150"
-      style={{ width: size, height: size, backgroundColor: on ? "#140C04" : "transparent", border: on ? "none" : "1.5px solid #28191040" }}
+      className="shrink-0 flex items-center justify-center transition-colors duration-150"
+      style={{ width: size, height: size, borderRadius: Math.round(size * 0.35), backgroundColor: on ? "#140C04" : "transparent", border: on ? "none" : "1.5px solid #28191040" }}
       aria-hidden="true"
     >
       {on && (
@@ -299,7 +300,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
   const page = SOURCE_PAGES[pageIndex]!;
   const desktop = viewport.w >= 768;
   /** Short iPhone screens get a smaller sphere and one step's detail at a time. */
-  const compact = viewport.h < 780;
+  const compact = viewport.h < (desktop ? 780 : 880);
   const sphere = desktop ? (viewport.h < 860 ? 150 : 190) : viewport.h < 700 ? 96 : compact ? 120 : 156;
 
   return (
@@ -310,8 +311,8 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
         className="absolute inset-0 pointer-events-none"
         style={{
           background: desktop
-            ? "radial-gradient(ellipse 25% 52% at 50% 55%, rgba(255,252,241,0.97) 0%, rgba(255,252,241,0.85) 55%, rgba(255,252,241,0) 100%)"
-            : "radial-gradient(ellipse 74% 52% at 50% 57%, rgba(255,252,241,0.96) 0%, rgba(255,252,241,0.8) 58%, rgba(255,252,241,0) 100%)",
+            ? "radial-gradient(ellipse 24% 50% at 50% 55%, rgba(255,252,241,0.93) 0%, rgba(255,252,241,0.72) 55%, rgba(255,252,241,0) 100%)"
+            : "radial-gradient(ellipse 72% 50% at 50% 57%, rgba(255,252,241,0.92) 0%, rgba(255,252,241,0.66) 58%, rgba(255,252,241,0) 100%)",
         }}
       />
       <div className={`relative z-10 ${HEADER}`}>
@@ -324,6 +325,8 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
           Skip
         </button>
       </div>
+
+      <PageDirectory pageIndex={pageIndex} built={built} />
 
       <div className="absolute inset-x-0 bottom-0 top-[64px] md:top-[72px] z-10 flex flex-col items-center justify-center px-[16px] pb-[16px] md:pb-[28px]">
         <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
@@ -343,9 +346,26 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
               <span className={`ml-auto shrink-0 tabular-nums text-[13px] font-[600] ${MUTED}`}>{Math.round(progress * 100)}%</span>
             </div>
           </div>
-          {!compact && (
-            <div className={`mt-[8px] text-center text-[12px] leading-[16px] ${MUTED}`}>
+          {/* Phones and tablets: the page directory as a row of chips under the URL; short screens get one line. */}
+          {compact ? (
+            <div className={`lg:hidden mt-[8px] text-center text-[12px] leading-[16px] ${MUTED}`}>
               {built ? `${SOURCE_PAGES.length} of ${SOURCE_PAGES.length} pages read` : `Reading page ${pageIndex + 1} of ${SOURCE_PAGES.length} · ${page.label}`}
+            </div>
+          ) : (
+            <div className="lg:hidden mt-[8px] flex flex-wrap justify-center gap-[4px]">
+              {SOURCE_PAGES.map((p, i) => {
+                const read = built || i < pageIndex;
+                const now = !built && i === pageIndex;
+                return (
+                  <span
+                    key={p.path}
+                    className={`h-[22px] px-[8px] flex items-center gap-[4px] rounded-full text-[11px] font-[600] transition-colors duration-300 ${now ? "bg-[#140C04] text-[#FFFCF1]" : read ? "bg-[#F4EEDF] text-[#281910]" : "bg-[#F4EEDF99] text-[#28191066]"}`}
+                  >
+                    {read && "✓ "}
+                    {SHORT_LABEL[p.shot] ?? p.label}
+                  </span>
+                );
+              })}
             </div>
           )}
         </div>
@@ -382,11 +402,51 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
           <div className="flex items-center gap-[10px] min-h-[44px] px-[16px]" style={{ opacity: built ? 1 : 0.4, transition: "opacity 300ms ease" }}>
             <Check on={built} size={20} />
             <span className="grow text-[14px] leading-[18px] font-[600]">Your page is visible within Muse</span>
-            {built && <span className={`ic-fade hidden sm:inline text-[12px] font-[600] ${MUTED}`}>Not activated</span>}
+            {built && <span className={`ic-fade hidden sm:inline text-[12px] font-[600] ${MUTED}`}>Connected · not activated</span>}
           </div>
         </div>
       </div>
 
+    </div>
+  );
+}
+
+const SHORT_LABEL: Record<string, string> = {
+  home: "Home",
+  pricing: "Pricing",
+  medspa: "Med Spa",
+  staff: "Staff",
+  locations: "Locations",
+  facelift: "Facelift",
+  contact: "Contact",
+};
+
+/** Desktop: a brief directory of the clinic's pages on the left, ticking off as each is read. */
+function PageDirectory({ pageIndex, built }: { pageIndex: number; built: boolean }) {
+  return (
+    <div className="hidden lg:block absolute left-[32px] top-1/2 -translate-y-1/2 z-10 w-[236px] rounded-[20px] bg-[#FFFCF1E6] p-[6px] shadow-[0_6px_24px_rgba(20,12,4,0.08)]">
+      <div className={`flex items-baseline justify-between px-[10px] pt-[6px] pb-[6px] text-[11px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>
+        <span>Pages</span>
+        <span className="tabular-nums normal-case tracking-normal">
+          {built ? SOURCE_PAGES.length : pageIndex} / {SOURCE_PAGES.length}
+        </span>
+      </div>
+      <ol className="flex flex-col">
+        {SOURCE_PAGES.map((p, i) => {
+          const read = built || i < pageIndex;
+          const now = !built && i === pageIndex;
+          return (
+            <li
+              key={p.path}
+              className="flex items-center gap-[8px] h-[30px] px-[8px] rounded-[10px] transition-colors duration-300"
+              style={{ backgroundColor: now ? "#F4EEDF" : "transparent" }}
+            >
+              {now ? <Spinner size={14} /> : <Check on={read} size={14} />}
+              <span className={`min-w-0 truncate font-mono text-[11.5px] leading-[14px] ${now || read ? "text-[#281910]" : "text-[#28191066]"}`}>{p.path}</span>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }
@@ -403,20 +463,20 @@ function ParsingBackdrop({ pageIndex }: { pageIndex: number }) {
         if (i < pageIndex - 1 || i > pageIndex + 1) return null;
         const running: CSSProperties = { animationPlayState: i <= pageIndex ? "running" : "paused" };
         return (
-          <div key={page.shot} className="absolute inset-0 overflow-hidden" style={{ opacity: i === pageIndex ? 1 : 0, transition: "opacity 450ms ease" }}>
-            <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 0.32, filter: "grayscale(1)" }} priority={i === 0} />
+          <div key={page.shot} className="absolute inset-0 overflow-hidden" style={{ opacity: i === pageIndex ? 1 : 0, transition: `opacity ${PAGE_FADE_MS}ms ease` }}>
+            <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 0.46, filter: "grayscale(1)" }} priority={i === 0} />
             <div className="ic-reveal absolute inset-0 overflow-hidden" style={running}>
-              <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 0.85 }} />
+              <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 1 }} />
             </div>
-            <div className="ic-scan absolute left-0 right-0 h-[1.5px] bg-[#281910]" style={{ ...running, opacity: 0.35 }} />
+            <div className="ic-scan absolute left-0 right-0 h-[1.5px] bg-[#281910]" style={{ ...running, opacity: 0.4 }} />
             {i === pageIndex &&
               (PAGE_READS[page.shot] ?? []).map(([key, value], n) => {
                 const spot = READ_SPOTS[n]!;
                 return (
                   <span
                     key={key + value}
-                    className={`ic-chip absolute hidden md:inline-flex items-center gap-[8px] h-[34px] px-[12px] rounded-[12px] bg-[#FFFCF1] shadow-[0_6px_20px_rgba(20,12,4,0.1)] text-[13px] leading-[16px] font-[600] whitespace-nowrap ${spot.side === "left" ? "left-[7%]" : "right-[7%]"}`}
-                    style={{ top: spot.top, animationDelay: `${(parseFloat(spot.top) / 100) * SLOT_MS * 0.8}ms`, animationDuration: `${SLOT_MS * 0.85}ms` }}
+                    className="ic-chip absolute hidden md:inline-flex items-center gap-[8px] h-[34px] px-[12px] rounded-[12px] bg-[#FFFCF1] shadow-[0_6px_20px_rgba(20,12,4,0.1)] text-[13px] leading-[16px] font-[600] whitespace-nowrap"
+                    style={{ top: spot.top, right: spot.right, animationDelay: `${(parseFloat(spot.top) / 100) * SLOT_MS * 0.8}ms`, animationDuration: `${SLOT_MS * 0.85}ms` }}
                   >
                     <span className={`font-mono text-[11px] font-[500] ${MUTED}`}>{key}</span>
                     {value}
@@ -441,8 +501,9 @@ function Shot({ shot, className, style, priority }: { shot: string; className?: 
         alt=""
         draggable={false}
         fetchPriority={priority ? "high" : "auto"}
-        className={`absolute left-0 top-0 w-full h-auto select-none ${className ?? ""}`}
-        style={style}
+        className={`absolute top-0 w-full max-w-[1440px] h-auto select-none ${className ?? ""}`}
+        // Centred and never wider than the 1440px capture, so it isn't upscaled on big screens.
+        style={{ left: "max(0px, calc(50% - 720px))", ...style }}
       />
     </picture>
   );
@@ -458,6 +519,7 @@ const NAV = [
   { id: "prices", you: "Prices", agent: "prices" },
   { id: "offers", you: "Offers & financing", agent: "offers" },
   { id: "booking", you: "Booking", agent: "booking" },
+  { id: "files", you: "Agent files", agent: "files" },
   { id: "preview", you: "Agent preview", agent: "tools" },
 ] as const;
 
@@ -652,12 +714,19 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 function StatusPanel({ claimed, onClaim }: { claimed: boolean; onClaim: () => void }) {
   const rows: [string, string][] = [
     ["Agent-readable", `Yes · ${FIELD_COUNT} fields from ${SOURCE_PAGES.length} pages`],
+    ["Agent files", "llms.txt · robots.txt · openapi.json · mcp.json"],
     ["MCP", claimed ? "Ready · turns on when you confirm" : "Ready · not activated"],
     ["API", claimed ? "Ready · turns on when you confirm" : "Ready · not activated"],
+    ["PAP", "Applied"],
     ["Agent booking", claimed ? "Pick a plan to turn on" : "Off until claimed"],
   ];
   return (
     <div className="rounded-[22px] bg-[#140C04] text-[#FFFCF1] p-[16px] md:p-[18px]">
+      <div className="flex items-center gap-[8px] mb-[12px] pb-[12px] border-b border-solid border-[#FFFCF11A]">
+        <span className="h-[8px] w-[8px] shrink-0 rounded-full bg-[#9FD18B]" aria-hidden="true" />
+        <span className="shrink-0 text-[13px] font-[600]">Connected to Doe</span>
+        <span className="min-w-0 truncate text-[12px] text-[#FFFCF180]">MCP · API · PAP</span>
+      </div>
       <div className="flex items-center justify-between gap-[10px]">
         <span className="text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">{claimed ? "Claimed · confirm your email" : "Not activated"}</span>
         {!claimed && (
@@ -679,6 +748,8 @@ function StatusPanel({ claimed, onClaim }: { claimed: boolean; onClaim: () => vo
           [
             ["Structured", true],
             ["Agent-readable", true],
+            ["Connected", true],
+            ["PAP", true],
             ["MCP on", false],
             ["API on", false],
             ["Bookable", false],
@@ -707,6 +778,8 @@ function AgentStatus({ claimed }: { claimed: boolean }) {
           url: `https://${CLINIC.url}`,
           status: claimed ? "claimed_pending_verification" : "not_activated",
           agent_readable: true,
+          connected: { doe_mcp: true, doe_api: true, pap: "applied" },
+          files: AGENT_FILES.map((f) => f.path),
           fields: FIELD_COUNT,
           sources: SOURCE_PAGES.length,
           mcp: { ready: true, active: false },
@@ -1075,6 +1148,26 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </div>
       </Section>
 
+      <Section id="files" title="Agent files" meta={`${AGENT_FILES.length} built · connected`}>
+        <div className="rounded-[20px] bg-[#F4EEDF] px-[16px] py-[4px]">
+          {AGENT_FILES.map((f) => (
+            <div key={f.path} className="flex items-center gap-[12px] py-[11px] border-b border-solid border-[#2819100F] last:border-b-0">
+              <Check on size={18} />
+              <span className="min-w-0 grow">
+                <span className="block font-mono text-[13px] leading-[18px] font-[600] break-all">
+                  {CLINIC.domain}
+                  {f.path}
+                </span>
+                <span className={`block mt-[1px] text-[12.5px] leading-[17px] ${SUB}`}>{f.what}</span>
+              </span>
+            </div>
+          ))}
+        </div>
+        <p className={`mt-[10px] text-[13px] leading-[18px] ${SUB}`}>
+          Built and connected to Doe&apos;s MCP, Doe&apos;s API and the Personal Agent Protocol. Agents find them now; they answer for you once you claim.
+        </p>
+      </Section>
+
       <Section id="preview" title="How agents answer" meta="Example">
         <MusePreview />
       </Section>
@@ -1201,6 +1294,15 @@ function AgentSections() {
       {block("prices", "prices", `${PRICE_COUNT} items · CAD`, AGENT.prices, 460)}
       {block("offers", "offers", `${OFFERS.length} items`, AGENT.offers)}
       {block("booking", "booking", "agent_booking: off", AGENT.booking)}
+      <Section id="files" title="files" meta={`${AGENT_FILES.length} files · connected`} agent>
+        <div className="flex flex-col gap-[6px]">
+          {AGENT_FILES.map((f) => (
+            <Endpoint key={f.path} method="GET" path={`${CLINIC.domain}${f.path}`} status={f.kind === "text" ? "200 · text/plain" : "200 · json"} maxHeight={360}>
+              {f.kind === "text" ? String(f.body) : <Json value={f.body} />}
+            </Endpoint>
+          ))}
+        </div>
+      </Section>
       <Section id="preview" title="tools" meta="mcp · not activated" agent>
         <div className="flex flex-col gap-[6px]">
           <Endpoint method="MCP" path="tools/list" status={`${AGENT.tools.length} tools`} maxHeight={460}>

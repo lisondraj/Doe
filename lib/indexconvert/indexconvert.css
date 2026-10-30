@@ -2,8 +2,8 @@
 
 /* Fades every edge of the site screenshots into the cream box, so they read as a backdrop, not a frame. */
 .indexconvert-page .ic-corner-fade {
-  -webkit-mask-image: radial-gradient(ellipse 74% 70% at 50% 46%, #000 40%, rgba(0, 0, 0, 0.5) 64%, transparent 94%);
-  mask-image: radial-gradient(ellipse 74% 70% at 50% 46%, #000 40%, rgba(0, 0, 0, 0.5) 64%, transparent 94%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 76% at 50% 46%, #000 50%, rgba(0, 0, 0, 0.65) 72%, transparent 98%);
+  mask-image: radial-gradient(ellipse 80% 76% at 50% 46%, #000 50%, rgba(0, 0, 0, 0.65) 72%, transparent 98%);
 }
 
 /* The page being read slides up while the scan line passes over it. */
