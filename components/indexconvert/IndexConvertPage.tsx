@@ -1595,17 +1595,22 @@ const OFFER_TAGS = ["Credit", "Package", "Included", "Financing"];
 function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => void }) {
   return (
     <>
-      <div className="flex flex-col gap-[14px] pt-[6px]">
+      <div className="flex flex-col gap-[22px] pt-[14px] md:pt-[22px]">
         <div className="h-px bg-[#2819101F]" />
-        <div>
+        <div className="flex flex-col items-start gap-[14px]">
           <h2 className={`${DISPLAY} px-[4px] text-left text-[clamp(27px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
-            Here&apos;s the information we
+            Here&apos;s the information
             <br />
-            made visible to
+            we made visible to
             <br />
             personal agents.
           </h2>
-          <p className={`mt-[8px] px-[4px] text-[14px] leading-[20px] ${SUB}`}>Feel Free to Edit!</p>
+          <span className="ml-[4px] inline-flex items-center gap-[8px] h-[34px] pl-[12px] pr-[16px] rounded-full bg-[#F4EEDF] text-[13px] font-[600] text-[#281910CC]">
+            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z M14.5 7.5l3 3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Feel Free to Edit!
+          </span>
         </div>
       </div>
 
