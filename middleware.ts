@@ -96,8 +96,8 @@ async function handleAdminAccess(request: NextRequest): Promise<NextResponse | n
 /**
  * Pages linked from Desk 2's nav, banner, CTA and footer — they stay on doehealth.care instead of bouncing to `/`.
  * `/pricing` and `/earlypreview` are served here too, so doehealth.care/pricing and doehealth.care/earlypreview open those pages,
- * and so are the `/preview-<slug>` article duplicates /earlypreview links to. `/services` is served only here:
- * doe.care bounces it back to `/`.
+ * and so are the `/preview-<slug>` article duplicates /earlypreview links to. `/services` and `/demo` (with
+ * /demo/TOS, /demo/PP, /demo/clinic and the `/demoPP` short link) are served only here: doe.care bounces them back to `/`.
  */
 const DOEHEALTH_CARE_SUBPAGES = [
   "/about",
@@ -109,6 +109,8 @@ const DOEHEALTH_CARE_SUBPAGES = [
   "/doehealthdesk",
   "/earlypreview",
   "/services",
+  "/demo",
+  "/demoPP",
   ...PREVIEW_ARTICLE_PATHS,
 ];
 
