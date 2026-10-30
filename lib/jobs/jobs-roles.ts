@@ -7,7 +7,10 @@
  * HIPAA cleared step by step, SOC 2 under way. /careers keeps its own text.
  */
 
-import type { CareersRole } from "@/lib/doehealth/doehealth-careers";
+import { CAREERS_ROLES, type CareersRole } from "@/lib/doehealth/doehealth-careers";
+
+/** The two 2027 co-op terms. A co-op role lists both, and its form asks which ones. */
+export const JOBS_TERMS = ["May – August 2027", "September – December 2027"] as const;
 
 type RoleText = Pick<CareersRole, "summary" | "about" | "responsibilities" | "qualifications" | "bonus">;
 
@@ -18,9 +21,9 @@ export const JOBS_ABOUT_DOE: readonly string[] = [
   "We're proving it in Toronto with U.S. test sites in parallel, starting with aesthetics, orthopaedics & MSK, dentistry and concierge practices, and clearing PHIPA and HIPAA as we go.",
 ];
 
-const SPRING_2027 = [
+const TERM_2027 = [
   "Enrolled in a university or college program in Canada or the US, and returning to school after the term.",
-  "Available full time, remotely, for the Spring 2027 term, May through August.",
+  "Available full time, remotely, for one or both 2027 terms: May – August or September – December.",
 ] as const;
 
 export const JOBS_ROLE_TEXT: Record<string, RoleText> = {
@@ -181,7 +184,7 @@ export const JOBS_ROLE_TEXT: Record<string, RoleText> = {
     ],
   },
   "founding-engineering-co-op-spring-2027": {
-    summary: "Spend Spring 2027 shipping a real part of Doe, alongside the founding team.",
+    summary: "Spend a 2027 term shipping a real part of Doe, alongside the founding team.",
     about: [
       "You will own one real piece of Doe for the term, in the Index, the Interface, the Doe Engine or the clinic product, and ship it to production with the founders reviewing your work.",
       "No side projects: you'll take part in planning, join clinic visits, and finish the term with work running in production.",
@@ -193,7 +196,7 @@ export const JOBS_ROLE_TEXT: Record<string, RoleText> = {
       "Write, review and test code the same way the full-time engineers do.",
     ],
     qualifications: [
-      ...SPRING_2027,
+      ...TERM_2027,
       "Comfort writing TypeScript, Python or a similar language, shown through projects, past terms or coursework.",
       "Curiosity, clear writing and the habit of finishing what you start.",
     ],
@@ -204,7 +207,7 @@ export const JOBS_ROLE_TEXT: Record<string, RoleText> = {
     ],
   },
   "founding-product-co-op-spring-2027": {
-    summary: "Spend Spring 2027 owning a clinic workflow, from research to launch.",
+    summary: "Spend a 2027 term owning a clinic workflow, from research to launch.",
     about: [
       "You will own one clinic workflow for the term, such as claiming a page, a request type in the Interface or a step of onboarding, working with the founders, engineers and our clinician advisors.",
       "You'll spend time with practices, write the specs and see your work go live before the term ends.",
@@ -216,7 +219,7 @@ export const JOBS_ROLE_TEXT: Record<string, RoleText> = {
       "Measure the workflow after launch, and report on what the numbers say.",
     ],
     qualifications: [
-      ...SPRING_2027,
+      ...TERM_2027,
       "Clear, structured writing, shown through projects, past terms or coursework.",
       "Comfort with technical detail and working closely with engineers.",
     ],
@@ -227,7 +230,7 @@ export const JOBS_ROLE_TEXT: Record<string, RoleText> = {
     ],
   },
   "founding-growth-co-op-spring-2027": {
-    summary: "Spend Spring 2027 helping clinics claim their pages and agents find them.",
+    summary: "Spend a 2027 term helping clinics claim their pages and agents find them.",
     about: [
       "You will work with the founders on how Doe reaches clinics: from the Index and the claim emails to outbound, content and events in Toronto and our U.S. markets.",
       "You'll test ideas quickly, learn what practice owners respond to, and finish with results you can point to.",
@@ -239,7 +242,7 @@ export const JOBS_ROLE_TEXT: Record<string, RoleText> = {
       "Keep the funnel data clean, so every decision rests on real numbers.",
     ],
     qualifications: [
-      ...SPRING_2027,
+      ...TERM_2027,
       "Clear, persuasive writing, and comfort talking with people you have never met.",
       "Comfort with spreadsheets and data.",
     ],
@@ -250,7 +253,7 @@ export const JOBS_ROLE_TEXT: Record<string, RoleText> = {
     ],
   },
   "founding-brand-design-co-op-spring-2027": {
-    summary: "Spend Spring 2027 designing how Doe looks and moves, across the web, graphics and film.",
+    summary: "Spend a 2027 term designing how Doe looks and moves, across the web, graphics and film.",
     about: [
       "You will work across Doe's identity: the site, the films, launch graphics and the visuals inside the clinic product, with the founders as your closest collaborators.",
       "Doe's brand is still being written, so your work goes live, not into a folder.",
@@ -262,7 +265,7 @@ export const JOBS_ROLE_TEXT: Record<string, RoleText> = {
       "Extend Doe's visual system: type, colour, illustration and the dot-wave patterns.",
     ],
     qualifications: [
-      ...SPRING_2027,
+      ...TERM_2027,
       "A portfolio that shows strong craft in typography, layout and colour (include a link).",
       "Fluency in Figma, and in at least one motion, video or web tool.",
     ],
@@ -289,8 +292,20 @@ export const JOBS_ROLE_TEXT: Record<string, RoleText> = {
   },
 };
 
-/** A role with its /jobs text in place of the /careers text. */
+/**
+ * A role as /jobs shows it: its /jobs text in place of the /careers text, and a co-op as a 2027 role with both terms
+ * (its title ends "(2027)", not "(Spring 2027)").
+ */
 export function jobsRole(role: CareersRole): CareersRole {
   const text = JOBS_ROLE_TEXT[role.slug];
-  return text ? { ...role, ...text } : role;
+  const withText = text ? { ...role, ...text } : role;
+  if (!withText.student) return withText;
+  return {
+    ...withText,
+    title: withText.title.replace(/\(Spring 2027\)/, "(2027)"),
+    student: { ...withText.student, season: "2027", dates: JOBS_TERMS.join(" or ") },
+  };
 }
+
+/** Every role as /jobs shows it, in /careers order. */
+export const JOBS_ROLES: readonly CareersRole[] = CAREERS_ROLES.map(jobsRole);

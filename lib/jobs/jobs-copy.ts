@@ -3,7 +3,8 @@
  * listed is a live opening yet, and anyone can register interest as roles open. Pay is not listed in figures.
  */
 
-import { CAREERS_ROLES, type CareersRole } from "@/lib/doehealth/doehealth-careers";
+import type { CareersRole } from "@/lib/doehealth/doehealth-careers";
+import { JOBS_ROLES } from "@/lib/jobs/jobs-roles";
 
 export const JOBS_PATH = "/jobs";
 export const JOBS_FORM_ID = "apply";
@@ -50,9 +51,14 @@ export const JOBS_FORM_COPY = {
 /** The first choice in the position list; the rest are the listed roles. */
 export const JOBS_ANY_ROLE = { slug: "open", title: "Open to any role" } as const;
 
-export const JOBS_ROLE_OPTIONS: readonly { slug: string; title: string }[] = [
-  JOBS_ANY_ROLE,
-  ...CAREERS_ROLES.filter((role) => role.slug !== "expression-of-interest").map((role) => ({ slug: role.slug, title: role.title })),
+/** Every position the form can be sent for; `student` ones ask for 2027 terms instead of availability. */
+export const JOBS_ROLE_OPTIONS: readonly { slug: string; title: string; student: boolean }[] = [
+  { ...JOBS_ANY_ROLE, student: false },
+  ...JOBS_ROLES.filter((role) => role.slug !== "expression-of-interest").map((role) => ({
+    slug: role.slug,
+    title: role.title,
+    student: !!role.student,
+  })),
 ];
 
 export const JOBS_START_OPTIONS = [
@@ -61,13 +67,6 @@ export const JOBS_START_OPTIONS = [
   "Within 3–6 months",
   "More than 6 months",
   "Co-op or internship term",
-] as const;
-
-export const JOBS_AUTHORIZATION_OPTIONS = [
-  "Authorized to work in Canada",
-  "Authorized to work in the US",
-  "Authorized in both",
-  "Would need sponsorship",
 ] as const;
 
 /** The two countries roles are open to, and the address each asks for once chosen. */

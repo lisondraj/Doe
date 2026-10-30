@@ -4,7 +4,6 @@ import { type ChangeEvent, type FormEvent, type ReactNode, useState } from "reac
 
 import {
   JOBS_ANY_ROLE,
-  JOBS_AUTHORIZATION_OPTIONS,
   JOBS_CONTACT_EMAIL,
   JOBS_COUNTRIES,
   JOBS_FORM_COPY,
@@ -16,6 +15,7 @@ import {
   type JobsCountry,
 } from "@/lib/jobs/jobs-copy";
 import { p22Mackinac } from "@/lib/home/fonts";
+import { JOBS_TERMS } from "@/lib/jobs/jobs-roles";
 import { JobsConfidential } from "@/components/jobs/JobsConfidential";
 
 type Status = { state: "idle" } | { state: "sending" } | { state: "sent"; name: string } | { state: "error"; message: string };
@@ -87,10 +87,12 @@ function UploadIcon() {
 
 /**
  * "Indicate Your Interest" on every /jobs role: the essentials, an address that opens once the country is chosen, the
- * links a technical team looks at (LinkedIn, GitHub, a portfolio), a resume and a cover note. It posts to /api/jobs/apply,
+ * position (fixed to the role whose page it's on), its availability (for a co-op, the 2027 terms: one or both), the links
+ * a technical team looks at (LinkedIn, GitHub, a portfolio), a resume and a cover note. It posts to /api/jobs/apply,
  * which saves it to Supabase and emails James with the resume attached.
  */
-export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: string; sourcePath: string }) {
+export function JobsApplicationForm({ roleSlug = JOBS_ANY_ROLE.slug, sourcePath }: { roleSlug?: string; sourcePath: string }) {
+  const position = JOBS_ROLE_OPTIONS.find((option) => option.slug === roleSlug) ?? JOBS_ROLE_OPTIONS[0];
   const [status, setStatus] = useState<Status>({ state: "idle" });
   const [resumeName, setResumeName] = useState<string | null>(null);
   const [country, setCountry] = useState<JobsCountry | null>(null);
@@ -114,6 +116,10 @@ export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: strin
     const form = event.currentTarget;
     const data = new FormData(form);
     const name = String(data.get("fullName") ?? "").trim().split(/\s+/)[0] || "there";
+    if (position.student && data.getAll("terms").length === 0) {
+      setStatus({ state: "error", message: "Select at least one term." });
+      return;
+    }
     setStatus({ state: "sending" });
     try {
       const response = await fetch("/api/jobs/apply", { method: "POST", body: data });
@@ -182,19 +188,28 @@ export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: strin
             ) : null}
 
             <p className="jobs-form__group">{JOBS_FORM_COPY.groups.role}</p>
+            {/* The role whose page this is: shown, not chosen. */}
             <Field label="Position of Interest" wide>
-              <Select
-                name="role"
-                defaultValue={roleSlug ?? JOBS_ANY_ROLE.slug}
-                options={JOBS_ROLE_OPTIONS.map((option) => ({ value: option.slug, label: option.title }))}
-              />
+              <input type="hidden" name="role" value={position.slug} />
+              <span className="jobs-form__fixed">{position.title}</span>
             </Field>
-            <Field label="Availability">
-              <Select name="startTiming" options={JOBS_START_OPTIONS} />
-            </Field>
-            <Field label="Work Authorization">
-              <Select name="workAuthorization" options={JOBS_AUTHORIZATION_OPTIONS} />
-            </Field>
+            {position.student ? (
+              <fieldset className="jobs-form__field jobs-form__field--wide jobs-form__terms">
+                <legend className="jobs-form__label">Terms (select one or both)</legend>
+                <div className="jobs-form__term-list">
+                  {JOBS_TERMS.map((term) => (
+                    <label key={term} className="jobs-form__term">
+                      <input type="checkbox" name="terms" value={term} />
+                      <span>{term}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            ) : (
+              <Field label="Availability" wide>
+                <Select name="startTiming" options={JOBS_START_OPTIONS} />
+              </Field>
+            )}
 
             <p className="jobs-form__group">{JOBS_FORM_COPY.groups.work}</p>
             <Field label="LinkedIn Profile" optional>

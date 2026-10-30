@@ -41,7 +41,7 @@ import {
   jobsPayLabel,
   jobsRolePath,
 } from "@/lib/jobs/jobs-copy";
-import { JOBS_ABOUT_DOE } from "@/lib/jobs/jobs-roles";
+import { JOBS_ABOUT_DOE, JOBS_TERMS, jobsRole } from "@/lib/jobs/jobs-roles";
 import { JobsApplicationForm } from "@/components/jobs/JobsApplicationForm";
 
 const DESK2_PATH = "/doehealthdesk2";
@@ -291,7 +291,7 @@ export function DoeHealthCareersRolePage({
 }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
-  const others = careersOtherRoles(role);
+  const others = jobs ? careersOtherRoles(role).map(jobsRole) : careersOtherRoles(role);
   const ctaRef = useRef<HTMLAnchorElement>(null);
   const inviteRef = useRef<HTMLDivElement>(null);
   const [docked, setDocked] = useState(false);
@@ -403,7 +403,16 @@ export function DoeHealthCareersRolePage({
                   <dt>Type</dt>
                   <dd>{careersType(role)}</dd>
                 </div>
-                {role.student ? (
+                {role.student && jobs ? (
+                  <div>
+                    <dt>Terms</dt>
+                    <dd className="jobs-terms">
+                      {JOBS_TERMS.map((term) => (
+                        <span key={term}>{term}</span>
+                      ))}
+                    </dd>
+                  </div>
+                ) : role.student ? (
                   <>
                     <div>
                       <dt>Term</dt>

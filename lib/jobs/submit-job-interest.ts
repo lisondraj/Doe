@@ -1,11 +1,11 @@
 import {
-  JOBS_AUTHORIZATION_OPTIONS,
   JOBS_COUNTRIES,
   type JobsCountry,
   JOBS_RESUME_MAX_BYTES,
   JOBS_ROLE_OPTIONS,
   JOBS_START_OPTIONS,
 } from "@/lib/jobs/jobs-copy";
+import { JOBS_TERMS } from "@/lib/jobs/jobs-roles";
 import { getResendClient } from "@/lib/resend/client";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 
@@ -30,8 +30,8 @@ type JobInterest = {
   location: string;
   roleSlug: string;
   roleTitle: string;
+  /** Availability, or for a co-op the 2027 terms chosen. */
   startTiming: string;
-  workAuthorization: string;
   linkedinUrl: string | null;
   githubUrl: string | null;
   portfolioUrl: string | null;
@@ -67,8 +67,11 @@ function parse(formData: FormData): JobInterest {
   const city = text(formData, "city", 120);
   const postalCode = text(formData, "postalCode", 12);
   const roleSlug = text(formData, "role", 120);
-  const startTiming = text(formData, "startTiming", 80);
-  const workAuthorization = text(formData, "workAuthorization", 80);
+  const availability = text(formData, "startTiming", 80);
+  const terms = formData
+    .getAll("terms")
+    .map(String)
+    .filter((term) => (JOBS_TERMS as readonly string[]).includes(term));
   const note = text(formData, "note", 4000);
   const role = JOBS_ROLE_OPTIONS.find((option) => option.slug === roleSlug);
 
@@ -81,12 +84,11 @@ function parse(formData: FormData): JobInterest {
   }
   if (!city) throw new JobInterestInputError("Enter your city.");
   if (!role) throw new JobInterestInputError("Select a position of interest.");
-  if (!(JOBS_START_OPTIONS as readonly string[]).includes(startTiming)) {
+  if (role.student && terms.length === 0) throw new JobInterestInputError("Select at least one term.");
+  if (!role.student && !(JOBS_START_OPTIONS as readonly string[]).includes(availability)) {
     throw new JobInterestInputError("Select your availability.");
   }
-  if (!(JOBS_AUTHORIZATION_OPTIONS as readonly string[]).includes(workAuthorization)) {
-    throw new JobInterestInputError("Select your work authorization.");
-  }
+  const startTiming = role.student ? JOBS_TERMS.filter((term) => terms.includes(term)).join(" and ") : availability;
   if (!note) throw new JobInterestInputError("Add a cover note.");
   if (formData.get("consent") !== "yes") throw new JobInterestInputError("Confirm the statement above the button.");
   const location = [city, region, country].join(", ") + (postalCode ? ` ${postalCode.toUpperCase()}` : "");
@@ -99,7 +101,6 @@ function parse(formData: FormData): JobInterest {
     roleSlug: role.slug,
     roleTitle: role.title,
     startTiming,
-    workAuthorization,
     linkedinUrl: link(formData, "linkedinUrl", "LinkedIn"),
     githubUrl: link(formData, "githubUrl", "GitHub"),
     portfolioUrl: link(formData, "portfolioUrl", "portfolio or website"),
@@ -144,8 +145,7 @@ async function notify(application: JobInterest, resume: { name: string; content:
       ["Phone", application.phone],
       ["Location", application.location],
       ["Position", application.roleTitle],
-      ["Availability", application.startTiming],
-      ["Work authorization", application.workAuthorization],
+      [JOBS_ROLE_OPTIONS.find((option) => option.slug === application.roleSlug)?.student ? "Terms" : "Availability", application.startTiming],
       ["LinkedIn", application.linkedinUrl],
       ["GitHub", application.githubUrl],
       ["Portfolio / website", application.portfolioUrl],
@@ -220,7 +220,6 @@ export async function submitJobInterest(formData: FormData): Promise<{ id: strin
       role_slug: application.roleSlug,
       role_title: application.roleTitle,
       start_timing: application.startTiming,
-      work_authorization: application.workAuthorization,
       linkedin_url: application.linkedinUrl,
       github_url: application.githubUrl,
       portfolio_url: application.portfolioUrl,

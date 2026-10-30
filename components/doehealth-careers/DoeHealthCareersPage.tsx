@@ -29,6 +29,7 @@ import { inter, p22Mackinac } from "@/lib/home/fonts";
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
 import { JOBS_CONTACT_EMAIL, JOBS_COPY } from "@/lib/jobs/jobs-copy";
+import { JOBS_ROLES } from "@/lib/jobs/jobs-roles";
 import { JobsConfidential } from "@/components/jobs/JobsConfidential";
 
 const DESK2_PATH = "/doehealthdesk2";
@@ -78,7 +79,7 @@ function RoleGroup({ name, roles, jobs }: { name: string; roles: readonly Career
 function OpenRoles({ jobs }: { jobs: boolean }) {
   const [team, setTeam] = useState<string>(ALL);
   const [location, setLocation] = useState<string>(ALL);
-  const roles = CAREERS_ROLES.filter(
+  const roles = (jobs ? JOBS_ROLES : CAREERS_ROLES).filter(
     (role) =>
       (team === ALL || role.team === team) &&
       (location === ALL || role.countries.some((country) => country === location)),

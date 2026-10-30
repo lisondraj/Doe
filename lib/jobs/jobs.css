@@ -55,6 +55,14 @@
   margin-top: 0.6rem;
 }
 
+/* A co-op's two 2027 terms in "At a Glance", one a line. */
+.jobs-terms {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+}
+
 /* ------------------------------------------------------------ the form */
 
 /* The light box of the role pages' "At a Glance" card: the title with a mail link beside it, then the form in three
@@ -213,6 +221,70 @@ a.doehealth-role__glance-note.jobs-mail {
 .jobs-form__select select:focus-visible {
   border-color: var(--jobs-ink);
   box-shadow: 0 0 0 3px rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.08);
+}
+
+/* The position on a role's page: shown in a field's shape, not chosen. */
+.jobs-form__fixed {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 2.9rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--jobs-line);
+  border-radius: 12px;
+  background: rgb(255 252 241 / 0.55);
+  color: var(--jobs-ink);
+  font-size: 1rem;
+}
+
+/* A co-op's 2027 terms: one or both, as two tick boxes side by side. */
+.jobs-form__terms {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.jobs-form__terms legend {
+  padding: 0;
+  margin-bottom: 0.4rem;
+}
+
+.jobs-form__term-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.jobs-form__term {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 2.9rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--jobs-line);
+  border-radius: 12px;
+  background: var(--jobs-field);
+  color: var(--jobs-ink);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 160ms ease;
+}
+
+.jobs-form__term:hover {
+  border-color: rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.22);
+}
+
+.jobs-form__term:has(input:checked) {
+  border-color: var(--jobs-ink);
+}
+
+.jobs-form__term input {
+  flex-shrink: 0;
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0;
+  accent-color: var(--jobs-ink);
 }
 
 .jobs-form__select {
@@ -390,7 +462,8 @@ a.doehealth-role__glance-note.jobs-mail {
     font-size: clamp(1.9rem, 8vw, 2.3rem);
   }
 
-  .jobs-form__grid {
+  .jobs-form__grid,
+  .jobs-form__term-list {
     grid-template-columns: minmax(0, 1fr);
   }
 
