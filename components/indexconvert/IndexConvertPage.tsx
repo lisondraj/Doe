@@ -5,7 +5,8 @@
  * ready but not activated, with one email field to claim it. Built in /demo's frame: Doe's brown around a cream box
  * with rounded corners, sand boxes inside it. "Agent's View" shows the same page as the JSON and MCP an agent receives.
  */
-import { type CSSProperties, type FormEvent, type ReactNode, type RefObject, memo, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type FormEvent, type ReactNode, type RefObject, createContext, memo, useContext, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import "@/lib/doehealthproduct/doehealthproduct.css";
 import "@/lib/indexconvert/indexconvert.css";
@@ -166,12 +167,12 @@ const AGENT = {
 
 /* ------------------------------------------------------------------ Page */
 
-type Phase = "loading" | "leaving" | "done";
+type Phase = "intro" | "loading" | "leaving" | "done";
 type View = "you" | "agent";
 
 export function IndexConvertPage() {
   const [elapsed, setElapsed] = useState(0);
-  const [phase, setPhase] = useState<Phase>("loading");
+  const [phase, setPhase] = useState<Phase>("intro");
   const [view, setView] = useState<View>("you");
   const [viewport, setViewport] = useState({ w: 390, h: 844 });
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -183,13 +184,17 @@ export function IndexConvertPage() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  /** One clock drives the steps, the URL fill and which page is behind the loader. `?skip` jumps to the page. */
+  /** `?skip` jumps straight to the page. */
   useEffect(() => {
     if (new URLSearchParams(window.location.search).has("skip")) {
       setElapsed(TOTAL_MS);
       setPhase("done");
-      return;
     }
+  }, []);
+
+  /** One clock drives the steps, the URL fill and which page is behind the loader. It starts when the visitor asks to see the page. */
+  useEffect(() => {
+    if (phase !== "loading") return;
     const start = performance.now();
     let frame = 0;
     const tick = (now: number) => {
@@ -201,7 +206,7 @@ export function IndexConvertPage() {
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, []);
+  }, [phase]);
 
   useEffect(() => {
     if (phase !== "leaving") return;
@@ -216,9 +221,9 @@ export function IndexConvertPage() {
   };
 
   const loader =
-    phase !== "done" ? (
+    phase === "loading" || phase === "leaving" ? (
       <div
-        className="absolute inset-0 z-50 bg-[#FFFCF1]"
+        className="ic-fade absolute inset-0 z-50 bg-[#FFFCF1]"
         style={{ opacity: phase === "leaving" ? 0 : 1, transition: `opacity ${LOADER_FADE_MS}ms ease`, pointerEvents: phase === "leaving" ? "none" : "auto" }}
       >
         <Loader
@@ -234,7 +239,11 @@ export function IndexConvertPage() {
 
   return (
     // The page mounts once the loader has faded, so the two never show through each other.
-    <Frame scrollRef={scrollRef} right={phase === "done" ? <ViewSwitch view={view} onChange={switchView} /> : null} loader={loader}>
+    <Frame scrollRef={scrollRef} right={phase === "done" ? <ViewSwitch view={view} onChange={switchView} /> : null} loader={loader} mark={phase === "done"}>
+      {phase === "intro" && <Intro onStart={() => {
+        setElapsed(0);
+        setPhase("loading");
+      }} />}
       {phase === "done" && <AgentPage view={view} scrollRef={scrollRef} />}
     </Frame>
   );
@@ -247,7 +256,7 @@ const DoeMark = () => <span className={`${lora.className} text-[30px] leading-[3
 const HEADER = "flex items-center justify-between gap-[12px] h-[64px] md:h-[72px] px-[18px] md:px-[32px]";
 
 /** /demo's frame: Doe's brown fills the window and the page sits in a cream box that scrolls on its own. */
-function Frame({ scrollRef, right, loader, children }: { scrollRef: RefObject<HTMLDivElement>; right: ReactNode; loader: ReactNode; children: ReactNode }) {
+function Frame({ scrollRef, right, loader, mark = true, children }: { scrollRef: RefObject<HTMLDivElement>; right: ReactNode; loader: ReactNode; mark?: boolean; children: ReactNode }) {
   return (
     <div
       className={`${dmSans.className} doehealth-product-page indexconvert-page fixed inset-0 bg-[#140C04] text-[#281910] antialiased [font-synthesis:none]`}
@@ -261,11 +270,13 @@ function Frame({ scrollRef, right, loader, children }: { scrollRef: RefObject<HT
       <div className="relative h-full w-full overflow-clip rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
         <div ref={scrollRef} className="absolute inset-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
           <header className={`sticky top-0 z-30 ${HEADER} bg-[#FFFCF1E6] backdrop-blur-[12px]`}>
-            <DoeMark />
+            {mark ? <DoeMark /> : <span />}
             {right}
           </header>
           {children}
         </div>
+        {/* The claim modal mounts here: over the whole inner shell, inside the brown frame. */}
+        <div id="ic-modal-root" className="absolute inset-0 z-40 pointer-events-none" />
         {loader}
       </div>
     </div>
@@ -350,7 +361,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
       {/* The page being read stays behind as texture: washed cream and slightly blurred so the card reads clearly. */}
       <div className="absolute inset-0 pointer-events-none bg-[rgba(255,252,241,0.66)] backdrop-blur-[2px]" />
       <div className={`relative z-10 ${HEADER}`}>
-        <DoeMark />
+        <span />
         <button
           type="button"
           onClick={onSkip}
@@ -368,12 +379,9 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
           <div className="rounded-[26px] bg-[#FFFCF1] px-[16px] pt-[16px] pb-[14px] md:px-[20px] md:pt-[20px] md:pb-[16px] flex flex-col items-center">
             <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
             <h1 className={`${DISPLAY} mt-[12px] text-center text-[27px] leading-[31px] md:text-[34px] md:leading-[38px] tracking-[-0.02em]`}>{CLINIC.name}</h1>
-            <p className="mt-[6px] text-center text-[15px] leading-[20px] font-[600]">
-              Your clinic is not yet
-              <br />
-              optimized for personal agents.
+            <p className="mt-[8px] max-w-[18ch] text-center text-[16px] leading-[21px] font-[600] [text-wrap:balance]">
+              {built ? "Page Is Readable to Agents" : "Verifying Page Is Readable to Agents"}
             </p>
-            <div className={`mt-[8px] text-center text-[14px] leading-[19px] ${SUB}`}>{built ? "Your Agentic Page Is Ready" : "Building Your Agentic Page"}</div>
 
             {/* The clinic's URL in a box that fills as the build runs, with the page being read after the domain. */}
             <div className="mt-[14px] w-full">
@@ -607,6 +615,9 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   const [active, setActive] = useState<string>(NAV[0].id);
   /** Desktop puts the claim box in a sticky right column; narrower screens put it under the status panel. */
   const [wide, setWide] = useState(false);
+  const [modal, setModal] = useState<ClaimReason | null>(null);
+  const [modalShown, setModalShown] = useState(false);
+  const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
   const [claim, setClaim] = useState<Claim>({ email: "", status: "idle", error: "", claimed: null, plan: null, planSending: null });
 
   useEffect(() => {
@@ -653,10 +664,16 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   }, [view, scrollRef]);
 
   const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  const goToClaim = () => {
-    claimRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    window.setTimeout(() => emailRef.current?.focus({ preventScroll: true }), 450);
+  useEffect(() => setPortalEl(document.getElementById("ic-modal-root")), []);
+  const openModal = (reason: ClaimReason) => {
+    setModal(reason);
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => setModalShown(true)));
   };
+  const closeModal = () => {
+    setModalShown(false);
+    window.setTimeout(() => setModal(null), 270);
+  };
+  const goToClaim = () => openModal("activate");
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -685,7 +702,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   );
 
   return (
-    <>
+    <ClaimModalContext.Provider value={openModal}>
       {/* iPhone: section pills, shown from the Providers section on down. Zero height, so the page doesn't shift. */}
       <nav className="md:hidden sticky top-[64px] z-20 h-0" aria-hidden={!pillsOn}>
         <div
@@ -774,7 +791,8 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
           </div>
           ) : (
             <div className="ic-rise flex flex-col gap-[10px]">
-              <h2 className={`${DISPLAY} px-[4px] pb-[8px] text-left text-[clamp(27px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
+              <AboutDoe />
+              <h2 className={`${DISPLAY} mt-[14px] px-[4px] pb-[8px] text-left text-[clamp(27px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
                 We&apos;ve made your clinic
                 <br />
                 more discoverable
@@ -788,21 +806,15 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
                   activateRef={activateRef}
                   claimed={claim.claimed}
                   onClaim={goToClaim}
-                  form={
-                    wide || claimed ? null : (
-                      <ClaimForm claim={claim} setEmail={(email) => setClaim((c) => ({ ...c, email }))} emailRef={emailRef} onSubmit={submit} />
-                    )
-                  }
                 />
               </div>
-              <AboutDoe />
             </div>
           )}
 
           {/* Agent's View keeps its claim box here on iPhone; Your View shows it once claimed, for the plans. */}
           {!wide && (agent || claimed) && claimBox}
 
-          {agent ? <AgentSections /> : <YourSections claimed={claimed} onEdit={goToClaim} />}
+          {agent ? <AgentSections /> : <YourSections claimed={claimed} onEdit={() => openModal("edit")} />}
 
         </main>
 
@@ -827,17 +839,31 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         </span>
         Activate for Personal Agents
       </button>
-    </>
+      {modal && portalEl
+        ? createPortal(
+            <ClaimModal
+              reason={modal}
+              visible={modalShown}
+              claim={claim}
+              setEmail={(email) => setClaim((c) => ({ ...c, email }))}
+              onSubmit={submit}
+              onClose={closeModal}
+            />,
+            portalEl,
+          )
+        : null}
+    </ClaimModalContext.Provider>
   );
 }
 
 /* ------------------------------------------------------------------ Status */
 
 /** The clinic as a small hero: sphere, name, what it is, where, its site. Centred on iPhone, a row from tablet up. */
-function Hero() {
+function Hero({ action }: { action?: ReactNode }) {
   return (
     <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
-      <div className="rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px] flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]">
+      <div className="rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]">
+      <div className="flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]">
         <IndexConvertSphere size={84} className="shrink-0" />
         <div className="min-w-0">
           <h1 className={`${DISPLAY} text-[30px] leading-[34px] md:text-[36px] md:leading-[40px] tracking-[-0.02em] [text-wrap:balance]`}>{CLINIC.name}</h1>
@@ -854,7 +880,34 @@ function Hero() {
           </a>
         </div>
       </div>
+      {action}
+      </div>
     </div>
+  );
+}
+
+/** The first screen: the clinic's box and one button. The agent-readable page itself waits behind it. */
+function Intro({ onStart }: { onStart: () => void }) {
+  return (
+    <main className="ic-fade flex justify-center px-[16px] pt-[6px] pb-[40px]">
+      <div className="w-full max-w-[560px] flex flex-col gap-[10px]">
+        <AboutDoe />
+        <Hero
+          action={
+            <button
+              type="button"
+              onClick={onStart}
+              className="group mt-[20px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#2A1C12] transition-colors duration-150"
+            >
+              See Your Agent-Readable Page
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
+                <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          }
+        />
+      </div>
+    </main>
   );
 }
 
@@ -923,20 +976,19 @@ function LocationMap({ variant, size = 76 }: { variant: number; size?: number })
   );
 }
 
-/** The founders and why Doe exists: their photo from /earlypreview's film in a rounded box, faded on all four sides, then the note. */
+/** The founders and why Doe exists: their photo from /earlypreview's film in a rounded box, then the note. */
 function AboutDoe() {
-  const fade = "linear-gradient(to right, transparent 0%, #000 20%, #000 80%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%)";
   return (
     <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
       <div className="rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px]">
-        <div className="rounded-[18px] bg-[#F4EEDF] overflow-hidden">
+        <div className="rounded-[18px] overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/earlypreview/thumbs/hero.jpg"
             alt="James and Matthew Lisondra, the founders of Doe"
             draggable={false}
             className="block w-full aspect-[16/9] object-cover select-none"
-            style={{ objectPosition: "50% 38%", WebkitMaskImage: fade, maskImage: fade, WebkitMaskComposite: "source-in", maskComposite: "intersect" }}
+            style={{ objectPosition: "50% 38%" }}
           />
         </div>
         <div className="px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px]">
@@ -985,21 +1037,28 @@ function ActivateButton({ onClick, buttonRef, className = "" }: { onClick: () =>
   );
 }
 
+type ClaimReason = "edit" | "activate";
+
+/** Opens the claim modal. Every switch, edit icon and Activate button on the page calls it. */
+const ClaimModalContext = createContext<(reason: ClaimReason) => void>(() => undefined);
+
 /** A switch in the Off position: the page is built but not live. */
 function OffSwitch({ size = "md", label }: { size?: "sm" | "md" | "lg"; label?: string }) {
+  const openClaim = useContext(ClaimModalContext);
   const full = size === "lg";
   const w = full ? "100%" : size === "md" ? 64 : 44;
   const h = full ? 64 : size === "md" ? 36 : 26;
   const gap = 4;
   const k = h - gap * 2;
   return (
-    <span
-      role="img"
-      aria-label={label ?? "Off"}
-      className="relative flex shrink-0 items-center rounded-full bg-[#2819101F] border border-solid border-[#28191026]"
+    <button
+      type="button"
+      onClick={() => openClaim("activate")}
+      aria-label={`${label ?? "Off"}: claim to activate`}
+      className="group relative flex shrink-0 items-center rounded-full bg-[#2819101F] border border-solid border-[#28191026] hover:bg-[#28191029] transition-colors duration-150"
       style={{ width: w, height: h }}
     >
-      <span className="absolute rounded-full bg-[#FFFCF1] shadow-[0_1px_4px_rgba(40,25,16,0.28)]" style={{ width: k, height: k, left: gap, top: gap }} />
+      <span className="absolute rounded-full bg-[#FFFCF1] shadow-[0_1px_4px_rgba(40,25,16,0.28)] transition-transform duration-300 group-hover:translate-x-[3px]" style={{ width: k, height: k, left: gap, top: gap }} />
       {size === "lg" ? (
         <span className="absolute inset-y-0 right-0 flex items-center justify-center text-[14px] font-[700] tracking-[0.12em] text-[#28191080]" style={{ left: k + gap * 2 }}>
           {label ?? "OFF"}
@@ -1011,7 +1070,111 @@ function OffSwitch({ size = "md", label }: { size?: "sm" | "md" | "lg"; label?: 
           </span>
         )
       )}
-    </span>
+    </button>
+  );
+}
+
+/** The claim modal: it fills the inner shell in beige and leaves Doe's brown frame around it. */
+function ClaimModal({
+  reason,
+  visible,
+  claim,
+  setEmail,
+  onSubmit,
+  onClose,
+}: {
+  reason: ClaimReason;
+  visible: boolean;
+  claim: Claim;
+  setEmail: (email: string) => void;
+  onSubmit: (e: FormEvent) => void;
+  onClose: () => void;
+}) {
+  const input = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (!visible) return;
+    const t = window.setTimeout(() => input.current?.focus({ preventScroll: true }), 280);
+    return () => window.clearTimeout(t);
+  }, [visible]);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const claimed = claim.claimed;
+  const heading = claimed ? "Confirm Your Email" : reason === "edit" ? "To make edits, claim your page!" : "Claim to Activate Your Page";
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={heading}
+      className="absolute inset-0 overflow-y-auto overscroll-contain bg-[#F4EEDF] pointer-events-auto"
+      style={{ opacity: visible ? 1 : 0, transition: "opacity 260ms ease" }}
+    >
+      <div className={HEADER}>
+        <DoeMark />
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#FFFCF1] text-[#281910] hover:bg-[#FAF4E4] transition-colors duration-150"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        </button>
+      </div>
+      <div className="mx-auto w-full max-w-[560px] px-[16px] pb-[40px] flex flex-col gap-[14px]">
+        <h2 className={`${DISPLAY} mx-auto max-w-[17ch] pt-[4px] text-center text-[30px] leading-[35px] md:text-[38px] md:leading-[44px] tracking-[-0.02em] [text-wrap:balance]`}>{heading}</h2>
+        <Hero />
+        {claimed ? (
+          <div className="rounded-[26px] bg-[#FFFCF1] px-[20px] py-[22px] text-center">
+            <div className="text-[17px] leading-[24px] font-[600] [text-wrap:balance]">We sent a link to {claimed}.</div>
+            <div className={`mt-[4px] text-[14.5px] leading-[21px] ${SUB} [text-wrap:balance]`}>Confirm it to activate your page.</div>
+          </div>
+        ) : (
+          <form onSubmit={onSubmit} className="flex flex-col gap-[8px]">
+            <label htmlFor="ic-modal-email" className="sr-only">
+              Work email
+            </label>
+            <input
+              ref={input}
+              id="ic-modal-email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              required
+              value={claim.email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={`you@${CLINIC.domain}`}
+              className="h-[56px] w-full rounded-[20px] bg-[#FFFCF1] px-[18px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#140C04] transition-colors"
+            />
+            <button
+              type="submit"
+              disabled={claim.status === "sending"}
+              className="w-full h-[58px] flex items-center justify-center gap-[10px] rounded-[20px] bg-[#140C04] text-[15px] font-[700] text-[#FFFCF1] hover:bg-[#2A1C12] disabled:opacity-70 transition-colors duration-150"
+            >
+              {claim.status === "sending" ? (
+                <>
+                  <Spinner size={16} light />
+                  Claiming
+                </>
+              ) : (
+                "Claim & Activate Your Clinic Page"
+              )}
+            </button>
+            {claim.status === "error" && (
+              <p role="alert" className="px-[10px] text-[12.5px] leading-[17px] font-[600] text-[#B4532F]">
+                {claim.error}
+              </p>
+            )}
+          </form>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -1019,9 +1182,7 @@ function OffSwitch({ size = "md", label }: { size?: "sm" | "md" | "lg"; label?: 
  * The page's status, set as type: the whole box reads "not activated". Connections to Doe's MCP, API and the Personal
  * Agent Protocol are made but not live; the four agent files are ready. On iPhone the claim email sits at its foot.
  */
-function StatusPanel({ claimed, onClaim, form, activateRef }: { claimed: string | null; onClaim: () => void; form: ReactNode; activateRef: RefObject<HTMLButtonElement> }) {
-  /** iPhone and tablet: the email field opens under the button once it's tapped. */
-  const [open, setOpen] = useState(false);
+function StatusPanel({ claimed, onClaim, activateRef }: { claimed: string | null; onClaim: () => void; activateRef: RefObject<HTMLButtonElement> }) {
   return (
     <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
       <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[18px] pb-[16px] md:px-[24px] md:pt-[22px] md:pb-[20px]">
@@ -1040,10 +1201,7 @@ function StatusPanel({ claimed, onClaim, form, activateRef }: { claimed: string 
           <ActivateButton
             buttonRef={activateRef}
             className="mt-[16px]"
-            onClick={() => {
-              setOpen(true);
-              onClaim();
-            }}
+            onClick={onClaim}
           />
         )}
 
@@ -1087,7 +1245,6 @@ function StatusPanel({ claimed, onClaim, form, activateRef }: { claimed: string 
         </div>
       </div>
 
-      {form && open && <div className="ic-fade px-[0px] pt-[6px]">{form}</div>}
     </div>
   );
 }
@@ -1438,6 +1595,20 @@ const OFFER_TAGS = ["Credit", "Package", "Included", "Financing"];
 function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => void }) {
   return (
     <>
+      <div className="flex flex-col gap-[14px] pt-[6px]">
+        <div className="h-px bg-[#2819101F]" />
+        <div>
+          <h2 className={`${DISPLAY} px-[4px] text-left text-[clamp(27px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
+            Here&apos;s the information we
+            <br />
+            made visible to
+            <br />
+            personal agents.
+          </h2>
+          <p className={`mt-[8px] px-[4px] text-[14px] leading-[20px] ${SUB}`}>Feel Free to Edit!</p>
+        </div>
+      </div>
+
       <Section id="providers" title="Providers">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
           {PROVIDERS.map((p, i) => (
