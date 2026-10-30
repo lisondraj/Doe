@@ -1005,8 +1005,14 @@ function AboutDoe({ intro = false }: { intro?: boolean }) {
             </>
           )}
           <p className="mt-[10px] max-w-[58ch] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px] text-[#281910CC] [text-wrap:pretty]">
-            {intro ? "" : "My brother and I built Doe to prepare Canadian clinics for personal agents. "}In 2027, patients &amp; clients will be searching for and booking services through Muse, Instinct, Claude
-            Duet and GPT Dots. We believe most clinics are not ready.
+            {intro ? (
+              "My brother and I built Doe for free to help clinics reach more patients/clients as Muse, Instinct and other apps become more available."
+            ) : (
+              <>
+                My brother and I built Doe to prepare Canadian clinics for personal agents. In 2027, patients &amp; clients will be searching for and booking services through Muse, Instinct, Claude Duet
+                and GPT Dots. We believe most clinics are not ready.
+              </>
+            )}
           </p>
           {!intro && (
             <p className="mt-[12px] max-w-[58ch] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px] text-[#281910CC] [text-wrap:pretty]">
