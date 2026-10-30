@@ -48,11 +48,11 @@ export const HOURS = [
 ] as const;
 
 export const PROVIDERS = [
-  { name: "Dr. Derek Ford", role: "Plastic surgeon · Founder", fact: "Royal College certified. First in Canada to offer the endoscopic mid facelift. U of T faculty.", tone: "#F7DCCB" },
-  { name: "Dr. Steven Hanna", role: "Plastic surgeon", fact: "Royal College certified. Aesthetic fellowship, Manhattan Eye, Ear & Throat. Rhinoplasty and facelift.", tone: "#DCE5D0" },
-  { name: "Dr. Laura Snell", role: "Plastic surgeon", fact: "FRCSC. Breast enhancement and body contouring.", tone: "#E9DCC7" },
-  { name: "Dr. Meghan McGrattan", role: "Gynecologic surgeon", fact: "Royal College certified, fellowship trained. Labiaplasty and aesthetic gynecology.", tone: "#FCCFB8" },
-  { name: "Isabel Middleman, PA-C", role: "Physician assistant", fact: "BOTOX and dermal fillers, OR assist, post-op care.", tone: "#E3E9D9" },
+  { name: "Dr. Derek Ford", role: "Plastic Surgeon · Founder", fact: "Royal College certified. First in Canada to offer the endoscopic mid facelift. U of T faculty.", tone: "#F7DCCB" },
+  { name: "Dr. Steven Hanna", role: "Plastic Surgeon", fact: "Royal College certified. Aesthetic fellowship, Manhattan Eye, Ear & Throat. Rhinoplasty and facelift.", tone: "#DCE5D0" },
+  { name: "Dr. Laura Snell", role: "Plastic Surgeon", fact: "FRCSC. Breast enhancement and body contouring.", tone: "#E9DCC7" },
+  { name: "Dr. Meghan McGrattan", role: "Gynecologic Surgeon", fact: "Royal College certified, fellowship trained. Labiaplasty and aesthetic gynecology.", tone: "#FCCFB8" },
+  { name: "Isabel Middleman, PA-C", role: "Physician Assistant", fact: "BOTOX and dermal fillers, OR assist, post-op care.", tone: "#E3E9D9" },
   { name: "Caroline Watson", role: "Aesthetician", fact: "20+ years. The Custom CW Facial, microneedling, virtual skincare consults.", tone: "#EEEADF" },
 ] as const;
 
@@ -143,9 +143,9 @@ export const PRICES: { group: string; items: { name: string; price: string }[] }
 ];
 
 export const OFFERS = [
-  { title: "Consult credit", detail: "The $300 consult fee comes off any procedure booked within 3 months." },
-  { title: "3-session packages", detail: "BBL, HALO, Morpheus8, MOXI, peels and facials. Morpheus8 face: $2,700 for 3." },
-  { title: "Facelift aftercare included", detail: "Every deep plane facelift includes 3 lymphatic drainage sessions." },
+  { title: "Consult Credit", detail: "The $300 consult fee comes off any procedure booked within 3 months." },
+  { title: "3-Session Packages", detail: "BBL, HALO, Morpheus8, MOXI, peels and facials. Morpheus8 face: $2,700 for 3." },
+  { title: "Facelift Aftercare Included", detail: "Every deep plane facelift includes 3 lymphatic drainage sessions." },
   { title: "Financing", detail: "Medicard (no down payment, up to $50,000) and Beautifi, with 0% specials at times." },
 ] as const;
 
@@ -160,11 +160,11 @@ export const BOOKING = {
 
 /** Things the parse found that an agent would trip on; each is fixed in a sentence once the page is claimed. */
 export const ISSUES = [
-  { title: "Two BOTOX prices", detail: "$11/unit in the pricing intro, $13/unit in the table." },
-  { title: "Two JUVÉDERM prices", detail: "$775/cc in the intro, $800/cc in the table." },
-  { title: "Suite 202 has two names", detail: "Ford Plastic Surgery at the top of the home page, St. Thomas Aesthetics in the footer." },
-  { title: "No weekend or holiday hours", detail: "Agents can't tell patients whether you're open." },
-  { title: "No online booking", detail: "Agents can only send patients to a form and wait for a callback." },
+  { title: "Two BOTOX Prices", detail: "$11/unit in the pricing intro, $13/unit in the table." },
+  { title: "Two JUVÉDERM Prices", detail: "$775/cc in the intro, $800/cc in the table." },
+  { title: "Suite 202 Has Two Names", detail: "Ford Plastic Surgery at the top of the home page, St. Thomas Aesthetics in the footer." },
+  { title: "No Weekend or Holiday Hours", detail: "Agents can't tell patients whether you're open." },
+  { title: "No Online Booking", detail: "Agents can only send patients to a form and wait for a callback." },
 ] as const;
 
 export const SERVICE_COUNT = SERVICES.reduce((n, g) => n + g.items.length, 0);

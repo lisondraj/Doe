@@ -9,6 +9,7 @@ import { type CSSProperties, type FormEvent, type ReactNode, type RefObject, mem
 
 import "@/lib/doehealthproduct/doehealthproduct.css";
 import "@/lib/indexconvert/indexconvert.css";
+import { HalftoneDisc } from "@/components/doehealth-product/DoeHealthProductHalftone";
 import { IndexConvertSphere } from "@/components/indexconvert/IndexConvertSphere";
 import { dmSans, lora } from "@/lib/home/fonts";
 import {
@@ -38,22 +39,22 @@ const MUTED = "text-[#28191080]";
 /** The loader's steps, in order, with how long each runs. */
 /** `subs` load one at a time under a step while it runs, then fold into its detail line. */
 const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?: boolean }[] = [
-  { title: "Finding your page", detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`, ms: 1900 },
-  { title: "Checking what personal agents see", detail: "No llms.txt, MCP card or OpenAPI", ms: 1900 },
+  { title: "Finding Your Page", detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`, ms: 1900 },
+  { title: "Checking What Personal Agents See", detail: "No llms.txt, MCP card or OpenAPI", ms: 1900 },
   {
-    title: "Converting to agent-readable page",
+    title: "Converting to Agent-Readable Page",
     detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`,
     ms: 2700,
     subs: ["JSON · 7 resources", "JSON-LD · schema.org/MedicalClinic", "Metadata & HTML"],
   },
   {
-    title: "Building agent files",
+    title: "Building Agent Files",
     detail: `${AGENT_FILES.length} files ready`,
     ms: 2800,
     subs: ["openapi.json", "llms.txt", "robots.txt", ".well-known/mcp.json"],
   },
   {
-    title: "Integrating into Doe's Model Context Protocol",
+    title: "Integrating Into Doe's Model Context Protocol",
     detail: `${CLINIC_TOOLS.length} tools ready`,
     ms: 2800,
     subs: CLINIC_TOOLS.map((t) => t.name),
@@ -558,15 +559,15 @@ function Shot({ shot, className, style, priority }: { shot: string; className?: 
 /* ------------------------------------------------------------------ Agent page */
 
 const NAV = [
-  { id: "review", you: "Needs review", agent: "warnings" },
-  { id: "locations", you: "Locations & hours", agent: "locations" },
+  { id: "review", you: "Needs Review", agent: "warnings" },
+  { id: "locations", you: "Locations & Hours", agent: "locations" },
   { id: "providers", you: "Providers", agent: "providers" },
   { id: "services", you: "Services", agent: "services" },
   { id: "prices", you: "Prices", agent: "prices" },
-  { id: "offers", you: "Offers & financing", agent: "offers" },
+  { id: "offers", you: "Offers & Financing", agent: "offers" },
   { id: "booking", you: "Booking", agent: "booking" },
-  { id: "files", you: "Agent files", agent: "files" },
-  { id: "preview", you: "Agent preview", agent: "tools" },
+  { id: "files", you: "Agent Files", agent: "files" },
+  { id: "preview", you: "Agent Preview", agent: "tools" },
 ] as const;
 
 type Claim = { email: string; status: "idle" | "sending" | "error"; error: string; claimed: string | null; plan: string | null; planSending: string | null };
@@ -739,10 +740,6 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 
           {agent ? <AgentSections /> : <YourSections claimed={claimed} />}
 
-          <p className={`text-[12px] leading-[17px] ${MUTED} ${agent ? "font-mono text-[11.5px]" : ""}`}>
-            Read by Doe from public pages on {CLINIC.domain}. Prices are CAD starting prices before HST, as listed on the site. Agent answers and calls shown
-            are examples. Nothing here is live for agents until the clinic claims the page.
-          </p>
         </main>
 
         {wide && <aside className="sticky top-[72px] self-start pt-[8px]">{claimBox}</aside>}
@@ -759,7 +756,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
       >
         <span className={`flex flex-col grow min-w-0 ${agent ? "font-mono" : ""}`}>
           <span className="truncate text-[12px] leading-[16px] text-[#FFFCF1A6]">{agent ? "status" : CLINIC.domain}</span>
-          <span className={`truncate font-[700] ${agent ? "text-[14px] leading-[20px]" : "text-[16px] leading-[20px]"}`}>{agent ? "ready · not_published" : "Ready, not live yet"}</span>
+          <span className={`truncate font-[700] ${agent ? "text-[14px] leading-[20px]" : "text-[16px] leading-[20px]"}`}>{agent ? "ready · not_published" : "Ready, Not Live Yet"}</span>
         </span>
         <button
           type="button"
@@ -819,6 +816,53 @@ function StatusGroup({ title, meta, children }: { title: string; meta: string; c
   );
 }
 
+/** A switch in the Off position: the page is built but not live. */
+function OffSwitch({ size = "md" }: { size?: "sm" | "md" }) {
+  const w = size === "md" ? 64 : 44;
+  const h = size === "md" ? 36 : 26;
+  const k = h - 8;
+  return (
+    <span
+      role="img"
+      aria-label="Off"
+      className="shrink-0 relative inline-flex items-center rounded-full bg-[#2819101F] border border-solid border-[#28191026]"
+      style={{ width: w, height: h }}
+    >
+      <span className="absolute rounded-full bg-[#FFFCF1] shadow-[0_1px_3px_rgba(40,25,16,0.25)]" style={{ width: k, height: k, left: 3, top: 3 }} />
+      <span className="absolute right-[9px] text-[10px] font-[700] tracking-[0.06em] text-[#28191080]" style={{ display: size === "md" ? "block" : "none" }}>
+        OFF
+      </span>
+    </span>
+  );
+}
+
+const TRACK: { label: string; done: boolean }[] = [
+  { label: "Built", done: true },
+  { label: "Published", done: false },
+  { label: "Live for Agents", done: false },
+];
+
+/** Three stages, the first filled and the rest dashed, so what's left to do is visible at a glance. */
+function Track() {
+  return (
+    <ol className="mt-[18px] grid grid-cols-3 gap-[6px]">
+      {TRACK.map((t, i) => (
+        <li key={t.label} className="flex flex-col gap-[7px] min-w-0">
+          <span
+            className="block h-[5px] rounded-full"
+            style={t.done ? { backgroundColor: "#140C04" } : { backgroundImage: "repeating-linear-gradient(90deg,#28191040 0 7px,transparent 7px 12px)" }}
+          />
+          <span className="flex items-center gap-[6px] min-w-0">
+            {t.done ? <Check on size={14} /> : <span className="shrink-0 w-[14px] h-[14px] rounded-full border-[1.5px] border-dashed border-[#28191059]" aria-hidden="true" />}
+            <span className={`truncate text-[12px] leading-[16px] font-[600] ${t.done ? "" : MUTED}`}>{t.label}</span>
+            {i === 1 && <span className="hidden sm:inline shrink-0 h-[16px] px-[6px] rounded-full bg-[#FCCFB8] text-[9.5px] leading-[16px] font-[700] uppercase tracking-[0.05em]">Next</span>}
+          </span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 /**
  * The page's status, set as type: the whole box reads "not activated". Connections to Doe's MCP, API and the Personal
  * Agent Protocol are made but not live; the four agent files are ready. On iPhone the claim email sits at its foot.
@@ -829,10 +873,16 @@ function StatusPanel({ claimed, onClaim, form }: { claimed: string | null; onCla
   return (
     <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
       <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[18px] pb-[16px] md:px-[24px] md:pt-[22px] md:pb-[20px]">
-        <h2 className={`${DISPLAY} text-[26px] leading-[30px] md:text-[30px] md:leading-[34px] tracking-[-0.02em] [text-wrap:balance]`}>
-          {claimed ? "Confirm your email" : "Ready, not yet live for personal agents"}
-        </h2>
+        <div className="flex items-start justify-between gap-[14px]">
+          <h2 className={`${DISPLAY} text-[26px] leading-[30px] md:text-[30px] md:leading-[34px] tracking-[-0.02em] [text-wrap:balance]`}>
+            {claimed ? "Confirm Your Email" : "Ready, Not Yet Live for Personal Agents"}
+          </h2>
+          <span className="mt-[2px]">
+            <OffSwitch />
+          </span>
+        </div>
         {claimed && <p className={`mt-[6px] text-[14.5px] leading-[21px] ${SUB}`}>Link sent to {claimed}.</p>}
+        <Track />
 
         <StatusGroup title="Settings" meta="Ready">
           {CONNECTIONS.map((c) => (
@@ -848,12 +898,12 @@ function StatusPanel({ claimed, onClaim, form }: { claimed: string | null; onCla
         </StatusGroup>
 
         <StatusGroup title="Files" meta="Not published">
-          <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-x-[20px]">
+          <div className="mt-[10px] grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
             {AGENT_FILES.map((f) => (
-              <div key={f.path} className="flex items-center gap-[10px] h-[38px] border-b border-solid border-[#2819100F]">
+              <div key={f.path} className="flex items-center gap-[10px] h-[44px] px-[12px] rounded-[14px] border-[1.5px] border-dashed border-[#28191033]">
                 <Check on size={16} />
-                <span className="min-w-0 grow truncate font-mono text-[12.5px] leading-[16px]">{f.path}</span>
-                <span className={`shrink-0 text-[12px] ${MUTED}`}>Not published</span>
+                <span className="min-w-0 grow truncate font-mono text-[12.5px] leading-[16px] text-[#281910CC]">{f.path}</span>
+                <span className={`shrink-0 text-[11.5px] font-[600] ${MUTED}`}>Not published</span>
               </div>
             ))}
           </div>
@@ -867,9 +917,12 @@ function StatusPanel({ claimed, onClaim, form }: { claimed: string | null; onCla
             setOpen(true);
             onClaim();
           }}
-          className="mt-[6px] w-full h-[64px] rounded-[21px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.08em] hover:bg-[#2A1C12] transition-colors duration-150"
+          className="group mt-[6px] w-full h-[64px] flex items-center justify-center gap-[14px] rounded-[21px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.08em] hover:bg-[#2A1C12] transition-colors duration-150"
         >
-          Activate for personal agents
+          <span className="relative inline-flex items-center w-[40px] h-[22px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
+            <span className="absolute left-[3px] top-[3px] w-[16px] h-[16px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-hover:translate-x-[18px]" />
+          </span>
+          Activate for Personal Agents
         </button>
       )}
       {form && open && <div className="ic-fade px-[0px] pt-[6px]">{form}</div>}
@@ -1007,7 +1060,7 @@ function ClaimBox({
     : [
         ["Page built", true],
         [claimed ? `Confirm the link sent to ${claimed}` : "Confirm you work at the clinic", false],
-        ["Activate for personal agents", false],
+        ["Activate for Personal Agents", false],
       ];
 
   return (
@@ -1029,8 +1082,15 @@ function ClaimBox({
         ) : (
           <>
             <div className={`text-[12px] leading-[16px] font-[500] ${MUTED}`}>{CLINIC.name}</div>
-            <div className={`${DISPLAY} mt-[2px] text-[21px] leading-[25px] tracking-[-0.01em]`}>{claimed ? "Claimed" : "Activate for personal agents"}</div>
+            <div className={`${DISPLAY} mt-[2px] text-[21px] leading-[25px] tracking-[-0.01em]`}>{claimed ? "Claimed" : "Activate for Personal Agents"}</div>
             <div className="mt-[14px] flex flex-col gap-[6px] text-[13.5px] leading-[18px]">
+              <div className="flex items-center justify-between gap-[10px]">
+                <span className="text-[#281910B3]">Personal Agents</span>
+                <span className="flex items-center gap-[8px] font-[600]">
+                  Off
+                  <OffSwitch size="sm" />
+                </span>
+              </div>
               <Row k="Claiming" v="Free" />
               <Row k="Settings" v="Ready" />
               <Row k="Files" v="Not published" />
@@ -1137,6 +1197,8 @@ function Pill({ on, onClick, children }: { on: boolean; onClick: () => void; chi
 }
 
 const BOX = "rounded-[18px] bg-[#FFFCF1] p-[14px]";
+/** Provider disc colours, from /doehealthproduct's Index palette. */
+const AVATAR_DOTS = ["#E07B53", "#6E9A5B", "#B98A55", "#6F8FA3", "#C2A987", "#E8A585"];
 const OFFER_TAGS = ["Credit", "Package", "Included", "Financing"];
 
 function YourSections({ claimed }: { claimed: boolean }) {
@@ -1144,7 +1206,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
   const [priceTab, setPriceTab] = useState(0);
   return (
     <>
-      <Section id="review" title="Needs review" meta={`${ISSUES.length} found`}>
+      <Section id="review" title="Needs Review" meta={`${ISSUES.length} found`}>
         <div className="rounded-[18px] bg-[#FFFCF1] px-[16px] py-[4px]">
           {ISSUES.map((issue) => (
             <div key={issue.title} className="py-[11px] border-b border-solid border-[#2819100F] last:border-b-0">
@@ -1158,7 +1220,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </p>
       </Section>
 
-      <Section id="locations" title="Locations & hours" meta={`${LOCATIONS.length} sites`}>
+      <Section id="locations" title="Locations & Hours" meta={`${LOCATIONS.length} sites`}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
           {LOCATIONS.map((loc) => (
             <div key={loc.name} className={BOX}>
@@ -1189,11 +1251,14 @@ function YourSections({ claimed }: { claimed: boolean }) {
 
       <Section id="providers" title="Providers" meta={`${PROVIDERS.length} listed`}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
-          {PROVIDERS.map((p) => (
-            <div key={p.name} className={BOX}>
-              <div className="text-[15px] leading-[20px] font-[600]">{p.name}</div>
-              <div className={`mt-[1px] text-[12.5px] leading-[17px] ${MUTED}`}>{p.role}</div>
-              <div className="mt-[8px] text-[13px] leading-[18px] text-[#281910CC]">{p.fact}</div>
+          {PROVIDERS.map((p, i) => (
+            <div key={p.name} className={`${BOX} flex items-start gap-[14px]`}>
+              <HalftoneDisc size={68} step={7.4} maxDot={3.2} color={AVATAR_DOTS[i % AVATAR_DOTS.length]} className="shrink-0" />
+              <div className="min-w-0">
+                <div className="text-[15px] leading-[20px] font-[600]">{p.name}</div>
+                <div className={`mt-[1px] text-[12.5px] leading-[17px] ${MUTED}`}>{p.role}</div>
+                <div className="mt-[8px] text-[13px] leading-[18px] text-[#281910CC]">{p.fact}</div>
+              </div>
             </div>
           ))}
         </div>
@@ -1237,7 +1302,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </p>
       </Section>
 
-      <Section id="offers" title="Offers & financing">
+      <Section id="offers" title="Offers & Financing">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
           {OFFERS.map((o, i) => (
             <div key={o.title} className={`${BOX} flex flex-col gap-[6px]`}>
@@ -1276,7 +1341,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </div>
       </Section>
 
-      <Section id="files" title="Agent files" meta="Not published">
+      <Section id="files" title="Agent Files" meta="Not published">
         <div className="rounded-[18px] bg-[#FFFCF1] px-[16px] py-[4px]">
           {AGENT_FILES.map((f) => (
             <div key={f.path} className="flex items-center gap-[12px] py-[11px] border-b border-solid border-[#2819100F] last:border-b-0">
@@ -1296,7 +1361,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </p>
       </Section>
 
-      <Section id="preview" title="How agents answer" meta="Example" bare>
+      <Section id="preview" title="How Agents Answer" meta="Example" bare>
         <MusePreview />
       </Section>
     </>
