@@ -1008,8 +1008,8 @@ function StepBoxes() {
   return (
     <>
       {STEP_BOXES.map((st) => (
-        <div key={st.n} className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
-          <div className="rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px]">
+        <div key={st.n} className="rounded-[26px] bg-[#F4EEDF] p-[6px] flex flex-col">
+          <div className="flex-1 rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px]">
             <StepVisual n={st.n} />
             <div className="px-[8px] pt-[14px] pb-[8px] md:px-[12px]">
               <div className="flex items-start gap-[12px]">
@@ -1030,8 +1030,10 @@ function StepBoxes() {
 /** The first screen: the clinic's box and one button. The agent-readable page itself waits behind it. */
 function Intro({ onStart }: { onStart: () => void }) {
   return (
-    <main className="ic-fade flex justify-center px-[16px] pt-[22px] pb-[96px]">
-      <div className="w-full max-w-[560px] flex flex-col gap-[10px]">
+    <main className="ic-fade flex justify-center px-[16px] md:px-[28px] pt-[22px] pb-[96px]">
+      {/* iPhone: one column. Tablet: one wider column, steps two across. Desktop: clinic and founders left, steps right. */}
+      <div className="w-full max-w-[560px] md:max-w-[720px] xl:max-w-[1180px] flex flex-col gap-[10px] xl:grid xl:grid-cols-2 xl:items-start">
+        <div className="flex flex-col gap-[10px]">
         <Hero
           action={
             <button
@@ -1047,7 +1049,10 @@ function Intro({ onStart }: { onStart: () => void }) {
           }
         />
         <AboutDoe intro />
-        <StepBoxes />
+        </div>
+        <div className="flex flex-col gap-[10px] md:grid md:grid-cols-2">
+          <StepBoxes />
+        </div>
       </div>
     </main>
   );
@@ -1129,8 +1134,8 @@ function AboutDoe({ intro = false }: { intro?: boolean }) {
             src="/earlypreview/thumbs/hero.jpg"
             alt="James and Matthew Lisondra, the founders of Doe"
             draggable={false}
-            className="block w-full aspect-[16/9] object-cover select-none"
-            style={{ objectPosition: "50% 38%" }}
+            className={`block w-full aspect-[16/9] object-cover select-none ${intro ? "" : "lg:aspect-[2.3/1]"}`}
+            style={{ objectPosition: "50% 32%" }}
           />
         </div>
         <div className="px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px]">
@@ -1393,11 +1398,11 @@ function StatusPanel({ claimed, onClaim, activateRef }: { claimed: string | null
             </div>
 
             <div className="mt-[16px] text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]">Files</div>
-            <div className="mt-[6px] grid grid-cols-1 sm:grid-cols-2 sm:gap-x-[24px]">
+            <div className="mt-[6px] grid grid-cols-1">
               {AGENT_FILES.map((f) => (
                 <div key={f.path} className="flex items-center gap-[10px] py-[8px]">
                   <Check on size={16} />
-                  <span className="min-w-0 grow break-all font-mono text-[12.5px] leading-[17px]">
+                  <span className="min-w-0 grow break-words font-mono text-[12.5px] leading-[17px]">
                     <span className={MUTED}>ford-plastics</span>
                     {f.path}
                   </span>
