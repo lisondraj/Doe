@@ -71,6 +71,8 @@ const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?:
     subs: ["Consent per user", "Agents say they're agents", "Connected to Doe"],
   },
 ];
+/** The steps box keeps one height for the whole build, so the card never jumps. */
+const STEPS_BOX_HEIGHT = 260;
 const STEP_STARTS = STEPS.map((_, i) => STEPS.slice(0, i).reduce((n, s) => n + s.ms, 0));
 const BUILD_MS = STEPS.reduce((n, s) => n + s.ms, 0);
 /** How long "Ready" holds before the page opens. */
@@ -366,7 +368,11 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
           <div className="rounded-[26px] bg-[#FFFCF1] px-[16px] pt-[16px] pb-[14px] md:px-[20px] md:pt-[20px] md:pb-[16px] flex flex-col items-center">
             <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
             <h1 className={`${DISPLAY} mt-[12px] text-center text-[27px] leading-[31px] md:text-[34px] md:leading-[38px] tracking-[-0.02em]`}>{CLINIC.name}</h1>
-            <p className="mt-[6px] text-center text-[15px] leading-[20px] font-[600] [text-wrap:balance]">Your clinic is not yet optimized for personal agents.</p>
+            <p className="mt-[6px] text-center text-[15px] leading-[20px] font-[600]">
+              Your clinic is not yet
+              <br />
+              optimized for personal agents.
+            </p>
             <div className={`mt-[8px] text-center text-[14px] leading-[19px] ${SUB}`}>{built ? "Your Agentic Page Is Ready" : "Building Your Agentic Page"}</div>
 
             {/* The clinic's URL in a box that fills as the build runs, with the page being read after the domain. */}
@@ -403,10 +409,12 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
             </div>
 
             {/* Finished steps stay small on top; the one in progress sits big at the bottom; what's next stays hidden. */}
-            <ol className="mt-[12px] w-full rounded-[20px] bg-[#F4EEDF] p-[6px]">
+            <ol className="mt-[12px] w-full rounded-[20px] bg-[#F4EEDF] p-[6px] overflow-hidden" style={{ height: STEPS_BOX_HEIGHT }}>
               {STEPS.map((step, i) => {
                 if (!built && i > stepIndex) return null;
                 if (built || i < stepIndex) {
+                  /** Only the last three finished steps show, so the list never grows past its box. */
+                  if (i < (built ? STEPS.length : stepIndex) - 3) return null;
                   return (
                     <li key={step.title} className="ic-fade flex items-center gap-[9px] px-[10px] py-[4px]">
                       <Check on size={16} />
@@ -766,6 +774,13 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
           </div>
           ) : (
             <div className="ic-rise flex flex-col gap-[10px]">
+              <h2 className={`${DISPLAY} px-[4px] pb-[8px] text-left text-[clamp(27px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
+                We&apos;ve made your clinic
+                <br />
+                more discoverable
+                <br />
+                to personal agents.
+              </h2>
               <Hero />
               {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
               <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[124px] md:scroll-mt-[88px]">
@@ -780,6 +795,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
                   }
                 />
               </div>
+              <AboutDoe />
             </div>
           )}
 
@@ -907,6 +923,51 @@ function LocationMap({ variant, size = 76 }: { variant: number; size?: number })
   );
 }
 
+/** The founders and why Doe exists: their photo from /earlypreview's film in a rounded box, faded on all four sides, then the note. */
+function AboutDoe() {
+  const fade = "linear-gradient(to right, transparent 0%, #000 20%, #000 80%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%)";
+  return (
+    <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
+      <div className="rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px]">
+        <div className="rounded-[18px] bg-[#F4EEDF] overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/earlypreview/thumbs/hero.jpg"
+            alt="James and Matthew Lisondra, the founders of Doe"
+            draggable={false}
+            className="block w-full aspect-[16/9] object-cover select-none"
+            style={{ objectPosition: "50% 38%", WebkitMaskImage: fade, maskImage: fade, WebkitMaskComposite: "source-in", maskComposite: "intersect" }}
+          />
+        </div>
+        <div className="px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px]">
+          <span className={`${DISPLAY} inline-flex items-center h-[40px] px-[18px] rounded-full bg-[#F4EEDF] text-[19px] leading-[24px] tracking-[-0.01em]`}>What Is Doe?</span>
+          <p className={`${DISPLAY} mt-[16px] max-w-[30ch] text-[22px] leading-[28px] md:text-[26px] md:leading-[32px] tracking-[-0.01em] [text-wrap:balance]`}>
+            Hi! I&apos;m a medical student from uOttawa.
+          </p>
+          <p className="mt-[10px] max-w-[58ch] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px] text-[#281910CC] [text-wrap:pretty]">
+            My brother and I built Doe to prepare Canadian clinics for personal agents. In 2027, patients &amp; clients will be searching for and booking services through Muse, Instinct, Claude Duet and
+            GPT Dots. We believe most clinics are not ready.
+          </p>
+          <p className="mt-[12px] max-w-[58ch] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px] text-[#281910CC] [text-wrap:pretty]">
+            We&apos;ve made Doe free to use, however some features require expensive compute costs to run so we&apos;ve added a little fee to those interested. You can reach us anytime with any questions
+            or help.
+          </p>
+          <a
+            href="mailto:james@doe.care"
+            className="mt-[16px] inline-flex items-center gap-[10px] h-[44px] pl-[14px] pr-[18px] rounded-full bg-[#F4EEDF] text-[14px] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3.5" y="5.5" width="17" height="13" rx="3" fill="none" stroke="currentColor" strokeWidth="1.7" />
+              <path d="M4.5 8l7.5 5.5L19.5 8" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            james@doe.care
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** The black Activate button, the same in Your View, Agent's View and the status box. */
 function ActivateButton({ onClick, buttonRef, className = "" }: { onClick: () => void; buttonRef?: RefObject<HTMLButtonElement>; className?: string }) {
   return (
@@ -925,21 +986,31 @@ function ActivateButton({ onClick, buttonRef, className = "" }: { onClick: () =>
 }
 
 /** A switch in the Off position: the page is built but not live. */
-function OffSwitch({ size = "md" }: { size?: "sm" | "md" }) {
-  const w = size === "md" ? 64 : 44;
-  const h = size === "md" ? 36 : 26;
-  const k = h - 8;
+function OffSwitch({ size = "md", label }: { size?: "sm" | "md" | "lg"; label?: string }) {
+  const full = size === "lg";
+  const w = full ? "100%" : size === "md" ? 64 : 44;
+  const h = full ? 64 : size === "md" ? 36 : 26;
+  const gap = 4;
+  const k = h - gap * 2;
   return (
     <span
       role="img"
-      aria-label="Off"
-      className="shrink-0 relative inline-flex items-center rounded-full bg-[#2819101F] border border-solid border-[#28191026]"
+      aria-label={label ?? "Off"}
+      className="relative flex shrink-0 items-center rounded-full bg-[#2819101F] border border-solid border-[#28191026]"
       style={{ width: w, height: h }}
     >
-      <span className="absolute rounded-full bg-[#FFFCF1] shadow-[0_1px_3px_rgba(40,25,16,0.25)]" style={{ width: k, height: k, left: 3, top: 3 }} />
-      <span className="absolute right-[9px] text-[10px] font-[700] tracking-[0.06em] text-[#28191080]" style={{ display: size === "md" ? "block" : "none" }}>
-        OFF
-      </span>
+      <span className="absolute rounded-full bg-[#FFFCF1] shadow-[0_1px_4px_rgba(40,25,16,0.28)]" style={{ width: k, height: k, left: gap, top: gap }} />
+      {size === "lg" ? (
+        <span className="absolute inset-y-0 right-0 flex items-center justify-center text-[14px] font-[700] tracking-[0.12em] text-[#28191080]" style={{ left: k + gap * 2 }}>
+          {label ?? "OFF"}
+        </span>
+      ) : (
+        size === "md" && (
+          <span className="absolute font-[700] tracking-[0.1em] text-[#28191080]" style={{ right: 9, fontSize: 10 }}>
+            {label ?? "OFF"}
+          </span>
+        )
+      )}
     </span>
   );
 }
@@ -954,17 +1025,14 @@ function StatusPanel({ claimed, onClaim, form, activateRef }: { claimed: string 
   return (
     <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
       <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[18px] pb-[16px] md:px-[24px] md:pt-[22px] md:pb-[20px]">
-        <div className="flex items-start justify-between gap-[14px]">
-          <h2 className="text-[27px] leading-[32px] md:text-[34px] md:leading-[40px] font-[500] tracking-[-0.015em] [text-wrap:balance]">
-            {claimed ? "Confirm Your Email" : "We\u2019ve made your clinic readable to personal agents."}
-          </h2>
-          <span className="mt-[2px]">
-            <OffSwitch />
-          </span>
-        </div>
+        {claimed ? (
+          <div className="text-[30px] leading-[34px] md:text-[38px] md:leading-[42px] font-[700] tracking-[0.02em] uppercase">Confirm Your Email</div>
+        ) : (
+          <OffSwitch size="lg" label="NOT ACTIVE" />
+        )}
         {claimed && <p className={`mt-[6px] text-[14.5px] leading-[21px] ${SUB}`}>Link sent to {claimed}.</p>}
         {!claimed && (
-          <p className="mt-[18px] max-w-[46ch] text-[17px] leading-[25px] md:text-[19px] md:leading-[27px] text-[#281910B3] [text-wrap:pretty]">
+          <p className="mt-[10px] max-w-[46ch] text-[17px] leading-[25px] md:text-[19px] md:leading-[27px] text-[#281910B3] [text-wrap:pretty]">
             Claim this page to activate it and begin securing customers through personal agents.
           </p>
         )}
