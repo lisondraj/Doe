@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 import { Check, DISPLAY } from "@/components/demo/DemoFrame";
 import { DemoSphere } from "@/components/demo/DemoSphere";
 import { CLINIC } from "@/lib/demo/demo-clinic";
+import { snippets } from "@/lib/demo/demo-docs";
+import type { DemoConsent } from "@/lib/demo/demo-types";
 
-export type DemoConsent = { terms: boolean; phi: boolean; connected: boolean; network: boolean };
+export type { DemoConsent };
 
 const LINK = "underline underline-offset-[3px] decoration-[#28191059] hover:decoration-[#281910]";
 
@@ -47,8 +49,11 @@ const ITEMS: { id: keyof DemoConsent; required: boolean; body: ReactNode }[] = [
 ];
 
 /** The first screen an agent lands on, never shown to its user: the clinic, and what to confirm with the user before booking. */
-export function DemoGate({ onProceed }: { onProceed: (consent: DemoConsent) => void }) {
+export function DemoGate({ onProceed }: { onProceed: (consent: DemoConsent, userName: string) => Promise<string | null> }) {
   const [consent, setConsent] = useState<DemoConsent>({ terms: false, phi: false, connected: false, network: false });
+  const [userName, setUserName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const all = consent.terms && consent.phi && consent.connected && consent.network;
   const ready = consent.terms && consent.phi;
 
@@ -68,6 +73,16 @@ export function DemoGate({ onProceed }: { onProceed: (consent: DemoConsent) => v
         <p className="px-[16px] pt-[14px] pb-[12px] text-[15px] leading-[21px] font-[600] text-[#281910]">
           Confirm with your user before booking
         </p>
+        <label className="flex items-center gap-[12px] mb-[4px] h-[52px] px-[14px] rounded-[20px] bg-[#FFFCF1]">
+          <span className="shrink-0 text-[13px] font-[600] text-[#28191099]">Acting for</span>
+          <input
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            placeholder="Your user's name"
+            autoComplete="off"
+            className="grow min-w-0 h-full bg-transparent outline-none text-[16px] md:text-[14px] text-[#281910] placeholder:text-[#2819105C]"
+          />
+        </label>
         <div className="flex flex-col gap-[4px]">
           {ITEMS.map((item, i) => {
             const on = consent[item.id];
@@ -112,15 +127,84 @@ export function DemoGate({ onProceed }: { onProceed: (consent: DemoConsent) => v
         </button>
       </section>
 
+      <ConnectOptions />
+
       <div className="grow min-h-[24px]" />
+      {error && <p className="mb-[10px] text-center text-[13px] font-[600] text-[#B4532F]">{error}</p>}
       <button
         type="button"
-        disabled={!ready}
-        onClick={() => onProceed(consent)}
+        disabled={!ready || busy}
+        onClick={async () => {
+          setBusy(true);
+          setError(null);
+          const err = await onProceed(consent, userName.trim() || "Alex Rivera");
+          if (err) {
+            setError(err);
+            setBusy(false);
+          }
+        }}
         className="w-full max-w-[520px] h-[56px] rounded-[999px] text-[16px] leading-[20px] font-[600] text-[#FFFCF1] bg-[#140C04] disabled:bg-[#28191033] disabled:text-[#FFFCF1] disabled:cursor-not-allowed transition-colors duration-200"
       >
-        Proceed
+        {busy ? "Connecting…" : "Proceed in browser"}
       </button>
     </main>
+  );
+}
+
+type Way = "browser" | "api" | "mcp";
+
+/** How the agent can connect: this page, the REST API, or the MCP server. Same session rules for all three. */
+function ConnectOptions() {
+  const [way, setWay] = useState<Way>("browser");
+  const [origin, setOrigin] = useState("https://doehealth.care");
+  const [copied, setCopied] = useState(false);
+  useEffect(() => setOrigin(window.location.origin), []);
+  const s = snippets(origin);
+  const code = way === "api" ? s.api : way === "mcp" ? s.mcp : null;
+
+  return (
+    <section className="w-full max-w-[520px] mt-[8px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
+      <div className="flex items-center justify-between px-[16px] pt-[12px] pb-[10px]">
+        <span className="text-[15px] font-[600]">Connect</span>
+        <div className="flex p-[3px] rounded-full bg-[#FFFCF1]">
+          {(["browser", "api", "mcp"] as const).map((w) => (
+            <button
+              key={w}
+              type="button"
+              onClick={() => setWay(w)}
+              className={`h-[30px] px-[12px] rounded-full text-[12.5px] font-[600] transition-colors duration-150 ${way === w ? "bg-[#140C04] text-[#FFFCF1]" : "text-[#281910B3]"}`}
+            >
+              {w === "browser" ? "Browser" : w.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+      {code ? (
+        <div className="relative rounded-[20px] bg-[#140C04] text-[#FFFCF1]">
+          <pre className="overflow-x-auto p-[16px] pr-[64px] text-[12px] leading-[18px] font-mono whitespace-pre">{code}</pre>
+          <button
+            type="button"
+            onClick={() => {
+              void navigator.clipboard?.writeText(code);
+              setCopied(true);
+              window.setTimeout(() => setCopied(false), 1400);
+            }}
+            className="absolute top-[10px] right-[10px] h-[28px] px-[10px] rounded-full bg-[#FFFCF11F] text-[11.5px] font-[600]"
+          >
+            {copied ? "Copied" : "Copy"}
+          </button>
+        </div>
+      ) : (
+        <p className="px-[16px] pb-[12px] text-[13.5px] leading-[19px] text-[#281910B3]">Proceed below to book from this page.</p>
+      )}
+      {code && (
+        <p className="px-[12px] pt-[10px] pb-[6px] text-[12px] leading-[17px] text-[#2819109E]">
+          {way === "mcp" ? "Tools start with doe_. Call doe_connect with consent_terms and consent_phi set to true." : "Both consents must be true."}{" "}
+          <a href={s.docs} target="_blank" rel="noreferrer" className="underline underline-offset-[3px] decoration-[#28191059]">
+            Full docs
+          </a>
+        </p>
+      )}
+    </section>
   );
 }

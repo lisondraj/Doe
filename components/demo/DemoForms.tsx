@@ -4,33 +4,38 @@ import { useEffect, useRef, useState } from "react";
 
 import { DISPLAY } from "@/components/demo/DemoFrame";
 import { ASSESSMENTS, type Assessment, type AssessmentQuestion, isComplete } from "@/lib/demo/demo-assessments";
-import { DEMO_USER, INTAKE_FIELDS, type IntakeField, type IntakeSource } from "@/lib/demo/demo-clinic";
+import { INTAKE_FIELDS, type IntakeField } from "@/lib/demo/demo-clinic";
+import type { DemoSession } from "@/lib/demo/demo-types";
 
-const SOURCE: Record<IntakeSource, { label: string; tone: string }> = {
-  profile: { label: "Profile", tone: "#F4EEDF" },
-  confirmed: { label: "Confirmed", tone: "#E3E9D9" },
-  user: { label: "User", tone: "#FCCFB8" },
-};
+const SECTIONS: IntakeField["section"][] = ["About", "Headache history", "Safety"];
+const FIELDS = INTAKE_FIELDS.filter((f) => f.id !== "consent");
 
-const SECTIONS: IntakeField["section"][] = ["About", "Headache history", "Safety", "Consent"];
-
-/** "intake", or an assessment id. */
-type TabId = string;
 export type Answers = Record<string, Record<string, number>>;
 
-export type FormsState = "draft" | "sent";
-
 /**
- * The clinic's forms as the agent fills them: the intake, drafted from the user's profile, and the validated
- * headache assessments, which the agent asks the user one question at a time. All of it goes back to the clinic
- * in one pass.
+ * The clinic's forms, saved to the session as the agent fills them: the intake, and the validated headache
+ * assessments the agent asks the user one question at a time. All of it goes back to the clinic in one pass.
  */
-export function DemoForms({ state, onPassBack }: { state: FormsState; onPassBack: (answers: Answers) => void }) {
-  const [tab, setTab] = useState<TabId>("intake");
-  const [values, setValues] = useState(() => Object.fromEntries(INTAKE_FIELDS.map((f) => [f.id, f.value])));
-  const [sign, setSign] = useState<"none" | "asked" | "signed">("none");
-  const [answers, setAnswers] = useState<Answers>({});
+export function DemoForms({
+  forms,
+  userName,
+  onIntake,
+  onAnswer,
+  onSign,
+  onSubmit,
+}: {
+  forms: DemoSession["forms"];
+  userName: string;
+  onIntake: (fields: Record<string, string>) => Promise<unknown>;
+  onAnswer: (assessmentId: string, answers: Record<string, number>) => Promise<unknown>;
+  onSign: () => Promise<unknown>;
+  onSubmit: () => Promise<unknown>;
+}) {
+  const [tab, setTab] = useState("intake");
+  const [draft, setDraft] = useState<Record<string, string>>(forms.intake);
+  const [asking, setAsking] = useState(false);
   const [steps, setSteps] = useState<Record<string, number>>({});
+  const focused = useRef<string | null>(null);
   const timer = useRef<number | null>(null);
   useEffect(
     () => () => {
@@ -39,15 +44,33 @@ export function DemoForms({ state, onPassBack }: { state: FormsState; onPassBack
     [],
   );
 
-  const sent = state === "sent";
-  const done = (id: TabId) => (id === "intake" ? sign === "signed" : isComplete(ASSESSMENTS.find((a) => a.id === id)!, answers[id]));
-  const tabs: { id: TabId; label: string }[] = [{ id: "intake", label: "Intake" }, ...ASSESSMENTS.map((a) => ({ id: a.id, label: a.name }))];
+  /** Server values win, except in the field being typed in. */
+  useEffect(() => {
+    setDraft((d) => {
+      const next = { ...forms.intake };
+      if (focused.current) next[focused.current] = d[focused.current] ?? "";
+      return next;
+    });
+  }, [forms.intake]);
+
+  const sent = forms.status === "sent";
+  const intakeDone = Boolean(forms.signedBy) && FIELDS.every((f) => forms.intake[f.id]?.trim());
+  const done = (id: string) => (id === "intake" ? intakeDone : isComplete(ASSESSMENTS.find((a) => a.id === id)!, forms.assessments[id]));
+  const tabs = [{ id: "intake", label: "Intake" }, ...ASSESSMENTS.map((a) => ({ id: a.id, label: a.name }))];
   const complete = tabs.filter((t) => done(t.id)).length;
   const assessment = ASSESSMENTS.find((a) => a.id === tab);
 
   const askToSign = () => {
-    setSign("asked");
-    timer.current = window.setTimeout(() => setSign("signed"), 1600);
+    setAsking(true);
+    timer.current = window.setTimeout(() => {
+      void onSign().finally(() => setAsking(false));
+    }, 1400);
+  };
+
+  const fillProfile = () => {
+    const fields = Object.fromEntries(FIELDS.map((f) => [f.id, f.id === "name" ? draft.name?.trim() || userName : f.value]));
+    setDraft(fields);
+    void onIntake(fields);
   };
 
   return (
@@ -84,13 +107,13 @@ export function DemoForms({ state, onPassBack }: { state: FormsState; onPassBack
         <Walkthrough
           key={assessment.id}
           assessment={assessment}
-          answers={answers[assessment.id] ?? {}}
+          answers={forms.assessments[assessment.id] ?? {}}
           step={steps[assessment.id] ?? 0}
           locked={sent}
           onStep={(n) => setSteps((s) => ({ ...s, [assessment.id]: n }))}
-          onAnswer={(q, v) => setAnswers((a) => ({ ...a, [assessment.id]: { ...a[assessment.id], [q]: v } }))}
+          onAnswer={(q, v) => onAnswer(assessment.id, { [q]: v })}
           onFill={() => {
-            setAnswers((a) => ({ ...a, [assessment.id]: { ...assessment.demo } }));
+            void onAnswer(assessment.id, assessment.demo);
             setSteps((s) => ({ ...s, [assessment.id]: assessment.questions.length }));
           }}
         />
@@ -98,42 +121,54 @@ export function DemoForms({ state, onPassBack }: { state: FormsState; onPassBack
         <div className="flex flex-col gap-[6px]">
           {SECTIONS.map((section) => (
             <div key={section} className="rounded-[20px] bg-[#FFFCF1] p-[14px]">
-              <div className="text-[11px] leading-[14px] font-[600] uppercase tracking-[0.07em] text-[#28191080] mb-[10px]">{section}</div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[14px] gap-y-[12px]">
-                {INTAKE_FIELDS.filter((f) => f.section === section).map((f) =>
-                  f.id === "consent" ? (
-                    <div key={f.id} className="md:col-span-2 flex flex-col gap-[8px]">
-                      <FieldLabel label="Consent to Botox treatment" source={sign === "signed" ? "confirmed" : "user"} />
-                      <div className="flex items-center gap-[10px] min-h-[46px] px-[14px] rounded-[14px] border-[1.5px] border-dashed border-[#28191033]">
-                        {sign === "signed" ? (
-                          <span className="font-['Lora',serif] italic text-[18px]">
-                            {DEMO_USER.name} <span className="not-italic font-sans text-[12px] text-[#28191080]">· Oct 30, 2026</span>
-                          </span>
-                        ) : (
-                          <span className="text-[13px] text-[#28191099]">{sign === "asked" ? "Waiting for signature…" : "User signature"}</span>
-                        )}
-                        {sign === "none" && !sent && (
-                          <button type="button" onClick={askToSign} className="ml-auto h-[32px] px-[12px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[12.5px] font-[600]">
-                            Request signature
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <label key={f.id} className="flex flex-col gap-[6px] min-w-0">
-                      <FieldLabel label={f.label} source={f.source} />
-                      <input
-                        value={values[f.id] ?? ""}
-                        disabled={sent}
-                        onChange={(e) => setValues((v) => ({ ...v, [f.id]: e.target.value }))}
-                        className="h-[42px] px-[12px] rounded-[12px] bg-[#F4EEDF99] border border-solid border-transparent focus:border-[#28191040] outline-none text-[16px] md:text-[14px] disabled:opacity-70"
-                      />
-                    </label>
-                  ),
+              <div className="flex items-center justify-between mb-[10px]">
+                <span className="text-[11px] leading-[14px] font-[600] uppercase tracking-[0.07em] text-[#28191080]">{section}</span>
+                {section === "About" && !sent && (
+                  <button type="button" onClick={fillProfile} className="text-[12px] font-[600] text-[#2819109E] hover:text-[#281910] underline underline-offset-[3px] decoration-[#28191040]">
+                    Fill from user&apos;s profile
+                  </button>
                 )}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[14px] gap-y-[12px]">
+                {FIELDS.filter((f) => f.section === section).map((f) => (
+                  <label key={f.id} className="flex flex-col gap-[6px] min-w-0">
+                    <span className="text-[13px] leading-[16px] font-[600]">{f.label}</span>
+                    <input
+                      value={draft[f.id] ?? ""}
+                      disabled={sent}
+                      onFocus={() => {
+                        focused.current = f.id;
+                      }}
+                      onChange={(e) => setDraft((v) => ({ ...v, [f.id]: e.target.value }))}
+                      onBlur={() => {
+                        focused.current = null;
+                        if ((draft[f.id] ?? "") !== (forms.intake[f.id] ?? "")) void onIntake({ [f.id]: draft[f.id] ?? "" });
+                      }}
+                      className="h-[42px] px-[12px] rounded-[12px] bg-[#F4EEDF99] border border-solid border-transparent focus:border-[#28191040] outline-none text-[16px] md:text-[14px] disabled:opacity-70"
+                    />
+                  </label>
+                ))}
               </div>
             </div>
           ))}
+          <div className="rounded-[20px] bg-[#FFFCF1] p-[14px]">
+            <div className="text-[11px] leading-[14px] font-[600] uppercase tracking-[0.07em] text-[#28191080] mb-[10px]">Consent</div>
+            <div className="flex items-center gap-[10px] min-h-[46px] px-[14px] rounded-[14px] border-[1.5px] border-dashed border-[#28191033]">
+              {forms.signedBy ? (
+                <span className="font-['Lora',serif] italic text-[18px]">
+                  {forms.signedBy}{" "}
+                  <span className="not-italic font-sans text-[12px] text-[#28191080]">· {new Date(forms.signedAt!).toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" })}</span>
+                </span>
+              ) : (
+                <span className="text-[13px] text-[#28191099]">{asking ? "Waiting for signature…" : "Consent to Botox treatment"}</span>
+              )}
+              {!forms.signedBy && !asking && !sent && (
+                <button type="button" onClick={askToSign} className="ml-auto h-[32px] px-[12px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[12.5px] font-[600]">
+                  Request signature
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -141,7 +176,7 @@ export function DemoForms({ state, onPassBack }: { state: FormsState; onPassBack
         <button
           type="button"
           disabled={sent || complete < tabs.length}
-          onClick={() => onPassBack(answers)}
+          onClick={() => void onSubmit()}
           className="h-[46px] px-[20px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] disabled:bg-[#28191033] disabled:cursor-not-allowed transition-colors duration-200"
         >
           {sent ? "Passed back" : `Pass back to clinic${complete < tabs.length ? ` · ${complete}/${tabs.length}` : ""}`}
@@ -165,91 +200,89 @@ function Walkthrough({
   step: number;
   locked: boolean;
   onStep: (n: number) => void;
-  onAnswer: (q: string, v: number) => void;
+  onAnswer: (q: string, v: number) => Promise<unknown>;
   onFill: () => void;
 }) {
   const total = assessment.questions.length;
-  const finished = step >= total;
-  const q = assessment.questions[Math.min(step, total - 1)]!;
   const complete = isComplete(assessment, answers);
+  const finished = (step >= total || locked) && complete;
+  const q = assessment.questions[Math.min(step, total - 1)]!;
   const result = complete ? assessment.result(answers) : null;
-  const advance = useRef<number | null>(null);
-  useEffect(
-    () => () => {
-      if (advance.current) window.clearTimeout(advance.current);
-    },
-    [],
-  );
+  const [local, setLocal] = useState<number | undefined>(answers[q.id]);
+  useEffect(() => setLocal(answers[q.id]), [q.id, answers]);
 
   const pick = (v: number) => {
-    onAnswer(q.id, v);
-    if (advance.current) window.clearTimeout(advance.current);
-    advance.current = window.setTimeout(() => onStep(step + 1), 260);
+    setLocal(v);
+    void onAnswer(q.id, v);
+    onStep(step + 1);
   };
 
   return (
-    <div className="flex flex-col gap-[6px]">
-      <div className="rounded-[20px] bg-[#FFFCF1] p-[16px] md:p-[20px]">
-        <div className="flex items-start justify-between gap-[12px]">
-          <div className="min-w-0">
-            <div className={`${DISPLAY} text-[20px] leading-[24px]`}>{assessment.full}</div>
-            <div className="mt-[2px] text-[12px] text-[#28191080]">
-              {assessment.name} · {assessment.window}
-            </div>
+    <div className="rounded-[20px] bg-[#FFFCF1] p-[16px] md:p-[20px]">
+      <div className="flex items-start justify-between gap-[12px]">
+        <div className="min-w-0">
+          <div className={`${DISPLAY} text-[20px] leading-[24px]`}>{assessment.full}</div>
+          <div className="mt-[2px] text-[12px] text-[#28191080]">
+            {assessment.name} · {assessment.window}
           </div>
-          {result && (
-            <span className="shrink-0 flex flex-col items-end">
-              <span className={`${DISPLAY} text-[22px] leading-[24px]`}>{result.score}</span>
-              <span className="mt-[4px] h-[22px] px-[8px] flex items-center rounded-full text-[11px] font-[700]" style={{ backgroundColor: result.tone }}>
-                {result.band}
-              </span>
+        </div>
+        {result && (
+          <span className="shrink-0 flex flex-col items-end">
+            <span className={`${DISPLAY} text-[22px] leading-[24px]`}>{result.score}</span>
+            <span className="mt-[4px] h-[22px] px-[8px] flex items-center rounded-full text-[11px] font-[700]" style={{ backgroundColor: result.tone }}>
+              {result.band}
             </span>
-          )}
-        </div>
-
-        <div className="mt-[14px] flex gap-[3px]" aria-hidden="true">
-          {assessment.questions.map((x, i) => (
-            <span key={x.id} className="h-[4px] grow rounded-full transition-colors duration-200" style={{ backgroundColor: answers[x.id] !== undefined ? "#140C04" : i === step ? "#28191059" : "#2819101A" }} />
-          ))}
-        </div>
-
-        {finished && complete ? (
-          <div className="mt-[16px] flex flex-col gap-[2px]">
-            {assessment.questions.map((x, i) => (
-              <button key={x.id} type="button" disabled={locked} onClick={() => onStep(i)} className="flex items-center justify-between gap-[12px] min-h-[38px] px-[10px] rounded-[10px] text-left hover:bg-[#F4EEDF] transition-colors duration-150">
-                <span className="text-[13px] text-[#281910B3]">{x.short}</span>
-                <span className="text-[13px] font-[700]">{label(x, answers[x.id])}</span>
-              </button>
-            ))}
-          </div>
-        ) : (
-          <>
-            <div className="mt-[16px] flex items-center justify-between">
-              <span className="text-[11px] font-[700] uppercase tracking-[0.08em] text-[#E8704A]">Ask your user</span>
-              <span className="text-[12px] font-[600] text-[#28191080]">
-                {step + 1} / {total}
-              </span>
-            </div>
-            <p className="mt-[6px] text-[18px] leading-[25px] md:text-[20px] md:leading-[28px] font-[500]">&ldquo;{q.prompt}&rdquo;</p>
-            <div className="mt-[14px]">
-              <Answer question={q} value={answers[q.id]} onPick={pick} onSet={(v) => onAnswer(q.id, v)} />
-            </div>
-            <div className="mt-[14px] flex items-center gap-[8px]">
-              <button type="button" disabled={step === 0} onClick={() => onStep(step - 1)} className="h-[40px] px-[16px] rounded-full bg-[#F4EEDF] text-[13px] font-[600] disabled:opacity-40">
-                Back
-              </button>
-              {q.kind === "days" && (
-                <button type="button" disabled={answers[q.id] === undefined} onClick={() => onStep(step + 1)} className="h-[40px] px-[18px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] disabled:bg-[#28191033]">
-                  Next
-                </button>
-              )}
-              <button type="button" disabled={locked} onClick={onFill} className="ml-auto h-[40px] px-[12px] rounded-full text-[12.5px] font-[600] text-[#2819109E] hover:text-[#281910] underline underline-offset-[3px] decoration-[#28191040]">
-                Use user&apos;s answers
-              </button>
-            </div>
-          </>
+          </span>
         )}
       </div>
+
+      <div className="mt-[14px] flex gap-[3px]" aria-hidden="true">
+        {assessment.questions.map((x, i) => (
+          <span key={x.id} className="h-[4px] grow rounded-full transition-colors duration-200" style={{ backgroundColor: answers[x.id] !== undefined ? "#140C04" : i === step ? "#28191059" : "#2819101A" }} />
+        ))}
+      </div>
+
+      {finished ? (
+        <div className="mt-[16px] flex flex-col gap-[2px]">
+          {assessment.questions.map((x, i) => (
+            <button key={x.id} type="button" disabled={locked} onClick={() => onStep(i)} className="flex items-center justify-between gap-[12px] min-h-[38px] px-[10px] rounded-[10px] text-left hover:bg-[#F4EEDF] transition-colors duration-150 disabled:hover:bg-transparent">
+              <span className="text-[13px] text-[#281910B3]">{x.short}</span>
+              <span className="text-[13px] font-[700]">{label(x, answers[x.id])}</span>
+            </button>
+          ))}
+        </div>
+      ) : (
+        <>
+          <div className="mt-[16px] flex items-center justify-between">
+            <span className="text-[11px] font-[700] uppercase tracking-[0.08em] text-[#28191080]">Ask your user</span>
+            <span className="text-[12px] font-[600] text-[#28191080]">
+              {Math.min(step, total - 1) + 1} / {total}
+            </span>
+          </div>
+          <p className="mt-[6px] text-[18px] leading-[25px] md:text-[20px] md:leading-[28px] font-[500]">&ldquo;{q.prompt}&rdquo;</p>
+          <div className="mt-[14px]">
+            <Answer question={q} value={local} onPick={pick} onSet={(v) => setLocal(v)} />
+          </div>
+          <div className="mt-[14px] flex items-center gap-[8px]">
+            <button type="button" disabled={step === 0} onClick={() => onStep(step - 1)} className="h-[40px] px-[16px] rounded-full bg-[#F4EEDF] text-[13px] font-[600] disabled:opacity-40">
+              Back
+            </button>
+            {q.kind === "days" && (
+              <button
+                type="button"
+                disabled={local === undefined}
+                onClick={() => local !== undefined && pick(local)}
+                className="h-[40px] px-[18px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] disabled:bg-[#28191033]"
+              >
+                Next
+              </button>
+            )}
+            <button type="button" disabled={locked} onClick={onFill} className="ml-auto h-[40px] px-[12px] rounded-full text-[12.5px] font-[600] text-[#2819109E] hover:text-[#281910] underline underline-offset-[3px] decoration-[#28191040]">
+              Use user&apos;s answers
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -317,16 +350,3 @@ function Answer({ question: q, value, onPick, onSet }: { question: AssessmentQue
     </div>
   );
 }
-
-function FieldLabel({ label, source }: { label: string; source: IntakeSource }) {
-  const s = SOURCE[source];
-  return (
-    <span className="flex items-center justify-between gap-[8px]">
-      <span className="text-[13px] leading-[16px] font-[600]">{label}</span>
-      <span className="shrink-0 h-[20px] px-[8px] flex items-center rounded-full text-[10.5px] font-[600] text-[#281910B3]" style={{ backgroundColor: s.tone }}>
-        {s.label}
-      </span>
-    </span>
-  );
-}
-

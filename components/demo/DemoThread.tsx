@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 
 import { money } from "@/lib/demo/demo-clinic";
-import type { DemoMessage } from "@/lib/demo/demo-replies";
+import type { DemoMessage } from "@/lib/demo/demo-types";
+
+const time = (iso: string) => new Date(iso).toLocaleTimeString("en-CA", { hour: "numeric", minute: "2-digit" });
 
 /**
  * One conversation between the user's agent and the clinic's agent: messages, any price the clinic puts on the
@@ -22,7 +24,7 @@ export function DemoThread({
   typing: boolean;
   chips: string[];
   placeholder: string;
-  onSend: (text: string) => void;
+  onSend: (text: string) => Promise<unknown> | void;
   onOffer?: (messageId: string, accept: boolean) => void;
   className?: string;
 }) {
@@ -36,9 +38,9 @@ export function DemoThread({
 
   const send = (text: string) => {
     const t = text.trim();
-    if (!t) return;
-    onSend(t);
+    if (!t || typing) return;
     setDraft("");
+    void onSend(t);
   };
 
   return (
@@ -52,7 +54,7 @@ export function DemoThread({
           ) : (
             <div key={m.id} className={`flex flex-col max-w-[86%] gap-[4px] ${m.from === "agent" ? "self-end items-end" : "self-start items-start"}`}>
               <span className="px-[4px] text-[11px] leading-[14px] font-[600] text-[#28191073]">
-                {m.from === "agent" ? "Your agent" : "Brooks clinic agent"} · {m.at}
+                {m.from === "agent" ? "You" : m.by === "staff" ? "Brooks clinic · staff" : "Brooks clinic agent"} · {time(m.at)}
               </span>
               <div
                 className={`px-[14px] py-[10px] rounded-[18px] text-[14px] leading-[20px] ${

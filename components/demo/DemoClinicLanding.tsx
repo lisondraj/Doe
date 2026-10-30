@@ -3,28 +3,15 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
 import { Check, DISPLAY, DemoFrame, EASE } from "@/components/demo/DemoFrame";
-import type { DemoConsent } from "@/components/demo/DemoGate";
-import { type Answers, DemoForms, type FormsState } from "@/components/demo/DemoForms";
+import { DemoForms } from "@/components/demo/DemoForms";
 import { DemoSphere } from "@/components/demo/DemoSphere";
 import { DemoThread } from "@/components/demo/DemoThread";
-import {
-  BUNDLES,
-  CLINIC,
-  COMMS,
-  DAYS,
-  DEMO_USER,
-  OFFERS,
-  PAYMENT_NOTES,
-  PROVIDERS,
-  SERVICES,
-  money,
-} from "@/lib/demo/demo-clinic";
-import { ASSESSMENTS } from "@/lib/demo/demo-assessments";
-import { type DemoMessage, type DemoThreadId, conciergeReply, formsReply, negotiateReply } from "@/lib/demo/demo-replies";
+import { BUNDLES, CLINIC, COMMS, OFFERS, PAYMENT_NOTES, PROVIDERS, SERVICES, money } from "@/lib/demo/demo-clinic";
+import type { AgentAction } from "@/lib/demo/demo-engine";
+import type { AgentPayload } from "@/lib/demo/demo-service";
+import type { DemoPlan, DemoThreadId } from "@/lib/demo/demo-types";
 
-type Plan = { kind: "service" | "bundle"; id: string };
-type Thread = { title: string; subtitle: string; messages: DemoMessage[]; unread: number; typing: boolean };
-type Booking = "none" | "sent" | "confirmed";
+type Act = (a: AgentAction) => Promise<{ ok: true; result: Record<string, unknown> } | { ok: false; error: string }>;
 
 const NAV = [
   { id: "services", label: "Services & pricing" },
@@ -39,100 +26,59 @@ const NAV = [
   { id: "booking", label: "Booking", small: true },
 ] as const;
 
-const PLANS: { plan: Plan; label: string; price: number }[] = [
-  ...SERVICES.map((s) => ({ plan: { kind: "service" as const, id: s.id }, label: s.name, price: s.price })),
-  ...BUNDLES.map((b) => ({ plan: { kind: "bundle" as const, id: b.id }, label: b.name, price: b.price })),
+const THREAD_TITLES: Record<DemoThreadId, { title: string; subtitle: string }> = {
+  concierge: { title: "Clinic concierge", subtitle: "Questions" },
+  negotiate: { title: "Pricing & bundles", subtitle: "Negotiation" },
+  forms: { title: "Forms", subtitle: "Intake and assessments" },
+};
+
+const planKey = (p: DemoPlan) => `${p.kind}:${p.id}`;
+const NEGOTIABLE: { plan: DemoPlan; label: string }[] = [
+  { plan: { kind: "service", id: "botox" }, label: "Botox session" },
+  { plan: { kind: "bundle", id: "start" }, label: "Start bundle" },
+  { plan: { kind: "bundle", id: "year" }, label: "Year of relief" },
+  { plan: { kind: "bundle", id: "rescue" }, label: "Botox + nerve block" },
 ];
-const planKey = (p: Plan) => `${p.kind}:${p.id}`;
-const planOf = (p: Plan) => PLANS.find((x) => planKey(x.plan) === planKey(p))!;
-const NEGOTIABLE: Plan[] = [
-  { kind: "service", id: "botox" },
-  { kind: "bundle", id: "start" },
-  { kind: "bundle", id: "year" },
-  { kind: "bundle", id: "rescue" },
-];
 
-const clock = () => new Date().toLocaleTimeString("en-CA", { hour: "numeric", minute: "2-digit" });
-let seq = 0;
-const msg = (from: DemoMessage["from"], text: string, extra: Partial<DemoMessage> = {}): DemoMessage => ({
-  id: `m${++seq}`,
-  from,
-  text,
-  at: clock(),
-  ...extra,
-});
+const clockLeft = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
-function initialThreads(consent: DemoConsent): Record<DemoThreadId, Thread> {
-  return {
-    concierge: {
-      title: "Clinic concierge",
-      subtitle: "Questions",
-      unread: 1,
-      typing: false,
-      messages: [
-        msg("system", `Agent session opened for ${DEMO_USER.name}${consent.connected ? " · stays connected" : ""}`),
-        msg(
-          "clinic",
-          `Brooks clinic agent here. Ask about treatment, timing or the visit.`,
-        ),
-      ],
-    },
-    negotiate: {
-      title: "Pricing & bundles",
-      subtitle: "Negotiation",
-      unread: 1,
-      typing: false,
-      messages: [
-        msg(
-          "clinic",
-          "Private pay, CAD. Propose a price and I'll check with Dr. Brooks.",
-        ),
-      ],
-    },
-    forms: {
-      title: "Forms",
-      subtitle: "Intake and assessments",
-      unread: 1,
-      typing: false,
-      messages: [
-        msg(
-          "clinic",
-          "Needed before the first visit: intake, ID-Migraine, MIDAS, HIT-6 and ICHD-3 criteria.",
-        ),
-      ],
-    },
-  };
-}
-
-/** Dr. Brooks' clinic, as the user's personal agent sees it once it's through the consent screen. */
-export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
-  const [threads, setThreads] = useState(() => initialThreads(consent));
+/** Dr. Brooks' clinic as the user's agent sees it, live: every control here is an API action on the agent's session. */
+export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; act: Act; onEnd: () => void }) {
+  const s = state.session;
   const [inboxOpen, setInboxOpen] = useState(false);
   const [inboxThread, setInboxThread] = useState<DemoThreadId | null>(null);
-  const [plan, setPlan] = useState<Plan>({ kind: "service", id: "botox" });
-  const [agreed, setAgreed] = useState<Record<string, number>>({});
   const [provider, setProvider] = useState<string>("all");
-  const [day, setDay] = useState(DAYS[0]!.id);
-  const [slot, setSlot] = useState<string | null>(null);
-  const [held, setHeld] = useState<string | null>(null);
-  const [comms, setComms] = useState(() => Object.fromEntries(COMMS.map((c) => [c.id, c.on])));
-  const [intake, setIntake] = useState<FormsState>("draft");
-  const [phiConfirmed, setPhiConfirmed] = useState(false);
-  const [booking, setBooking] = useState<Booking>("none");
+  const [day, setDay] = useState(state.availability[0]!.day);
+  const [slot, setSlot] = useState<string | null>(s.hold?.slotId ?? null);
+  const [phi, setPhi] = useState(false);
+  const [typing, setTyping] = useState<Record<DemoThreadId, boolean>>({ concierge: false, negotiate: false, forms: false });
+  const [read, setRead] = useState<Record<DemoThreadId, number>>({ concierge: 0, negotiate: 0, forms: 0 });
   const [toast, setToast] = useState<string | null>(null);
   const [active, setActive] = useState<string>("services");
-  const timers = useRef<number[]>([]);
+  const [now, setNow] = useState(() => Date.now());
+  const toastTimer = useRef<number | null>(null);
+  const lastBooking = useRef(s.booking.status);
 
   useEffect(() => {
-    const list = timers.current;
-    return () => list.forEach((t) => window.clearTimeout(t));
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
   }, []);
 
-  const later = (fn: () => void, ms: number) => {
-    timers.current.push(window.setTimeout(fn, ms));
+  const flash = (text: string) => {
+    setToast(text);
+    if (toastTimer.current) window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => setToast(null), 2600);
   };
 
-  /** Highlights the section in view in the nav. */
+  /** Tells the agent when the clinic decides on its booking. */
+  useEffect(() => {
+    if (lastBooking.current !== s.booking.status) {
+      if (s.booking.status === "confirmed") flash("Booking confirmed by the clinic");
+      if (s.booking.status === "declined") flash("Clinic declined the booking");
+      lastBooking.current = s.booking.status;
+    }
+  }, [s.booking.status]);
+
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => {
@@ -148,149 +94,66 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
     return () => io.disconnect();
   }, []);
 
-  const flash = (text: string) => {
-    setToast(text);
-    later(() => setToast((t) => (t === text ? null : t)), 2600);
+  const run = async (a: AgentAction, done?: string) => {
+    const r = await act(a);
+    if (!r.ok) flash(r.error);
+    else if (done) flash(done);
+    return r;
   };
 
-  /** The thread open in the inbox, read by replies that land after a delay. */
-  const viewing = useRef<DemoThreadId | null>(null);
-  viewing.current = inboxOpen ? inboxThread : null;
+  const unreadOf = (id: DemoThreadId) => s.threads[id].slice(read[id]).filter((m) => m.from === "clinic").length;
+  const markRead = (id: DemoThreadId) => setRead((r) => ({ ...r, [id]: s.threads[id].length + 1 }));
+  useEffect(() => {
+    if (inboxOpen && inboxThread) setRead((r) => ({ ...r, [inboxThread]: s.threads[inboxThread].length }));
+  }, [inboxOpen, inboxThread, s.threads]);
+  const unread = (Object.keys(THREAD_TITLES) as DemoThreadId[]).reduce((n, id) => n + unreadOf(id), 0);
 
-  /** Adds a message; it counts as unread unless the thread is open in the inbox. */
-  const post = (id: DemoThreadId, m: DemoMessage, unread = m.from !== "agent") =>
-    setThreads((t) => ({
-      ...t,
-      [id]: { ...t[id], typing: false, messages: [...t[id].messages, m], unread: t[id].unread + (unread && viewing.current !== id ? 1 : 0) },
-    }));
-
-  const typing = (id: DemoThreadId, on: boolean) => setThreads((t) => ({ ...t, [id]: { ...t[id], typing: on } }));
-
-  const current = planOf(plan);
-
-  const send = (id: DemoThreadId, text: string) => {
-    post(id, msg("agent", text));
-    typing(id, true);
-    later(() => {
-      if (id === "concierge") post(id, msg("clinic", conciergeReply(text)));
-      else if (id === "forms") post(id, msg("clinic", formsReply()));
-      else {
-        const r = negotiateReply(text, current.label, current.price);
-        post(id, msg("clinic", r.text, r.offer ? { offer: r.offer } : {}));
-      }
-    }, 1100);
+  const send = async (id: DemoThreadId, text: string) => {
+    setTyping((t) => ({ ...t, [id]: true }));
+    await run({ type: "send_message", thread: id, text });
+    setTyping((t) => ({ ...t, [id]: false }));
+    markRead(id);
   };
 
-  const answerOffer = (messageId: string, accept: boolean) => {
-    const m = threads.negotiate.messages.find((x) => x.id === messageId);
-    if (!m?.offer) return;
-    setThreads((t) => ({
-      ...t,
-      negotiate: {
-        ...t.negotiate,
-        messages: t.negotiate.messages.map((x) =>
-          x.id === messageId && x.offer ? { ...x, offer: { ...x.offer, status: accept ? "accepted" : "declined" } } : x,
-        ),
-      },
-    }));
-    if (accept) {
-      const p = PLANS.find((x) => x.label === m.offer!.label);
-      if (p) {
-        setAgreed((a) => ({ ...a, [planKey(p.plan)]: m.offer!.price }));
-        setPlan(p.plan);
-      }
-      post("negotiate", msg("agent", `Accepted ${money(m.offer.price)} for ${m.offer.label} on behalf of ${DEMO_USER.name}.`));
-      typing("negotiate", true);
-      later(() => post("negotiate", msg("clinic", "Locked in. The price holds for 48 hours and shows on the booking.")), 900);
-      flash(`Price locked: ${money(m.offer.price)}`);
-    } else {
-      post("negotiate", msg("agent", "My user will pass on that one for now."));
-    }
-  };
-
-  const slotInfo = DAYS.flatMap((d) => d.slots.map((s) => ({ ...s, day: d }))).find((s) => s.id === held);
-
-  const holdSlot = () => {
-    if (!slot) return;
-    const s = DAYS.flatMap((d) => d.slots.map((x) => ({ ...x, day: d }))).find((x) => x.id === slot)!;
-    setHeld(slot);
-    post("concierge", msg("system", `Held ${s.day.weekday} ${s.day.date}, ${s.time} with ${s.provider} for 10 minutes`), false);
-    later(() => post("concierge", msg("clinic", `Held: ${s.day.weekday} ${s.day.date}, ${s.time}, ${s.provider}.`)), 700);
-    flash("Slot held for 10 minutes");
-  };
-
-  const passBack = (answers: Answers) => {
-    setIntake("sent");
-    const scores = ASSESSMENTS.map((a) => {
-      const r = a.result(answers[a.id] ?? {});
-      return `${a.name} ${r.score}`;
-    }).join(" · ");
-    post("forms", msg("agent", `Passing back the signed intake and assessments: ${scores}.`));
-    typing("forms", true);
-    later(() => post("forms", msg("clinic", "Received. Dr. Brooks will review before the visit.")), 1000);
-    flash("Forms passed back");
-  };
-
-  const list = current.price;
-  const deal = agreed[planKey(plan)];
-  const discount = deal ? 0 : Math.round(list * 0.05);
-  const total = (deal ?? list) - discount;
-  const ready = Boolean(held) && intake === "sent" && phiConfirmed;
-
-  const requestBooking = () => {
-    if (!slotInfo) return;
-    setBooking("sent");
-    post("concierge", msg("agent", `Booking request: ${current.label}, ${slotInfo.day.weekday} ${slotInfo.day.date} at ${slotInfo.time} with ${slotInfo.provider}, ${money(total)}.`));
-    typing("concierge", true);
-    later(() => {
-      setBooking("confirmed");
-      post("concierge", msg("clinic", `Confirmed: ${DEMO_USER.name}, ${slotInfo.day.weekday} ${slotInfo.day.date}, ${slotInfo.time}. Reminders at 48 h and 2 h.`));
-      flash("Booking confirmed");
-    }, 2200);
-  };
-
-  const unread = Object.values(threads).reduce((n, t) => n + t.unread, 0);
+  const p = state.pricing;
+  const locked = s.booking.status === "requested" || s.booking.status === "confirmed";
+  const holdLeft = state.hold ? Math.max(0, Math.round((Date.parse(state.hold.expiresAt) - now) / 1000)) : 0;
+  const heldId = state.hold && holdLeft > 0 ? state.hold.slotId : null;
+  const ready = Boolean(heldId) && s.forms.status === "sent" && phi && state.bookable && !locked;
 
   const openInbox = (id: DemoThreadId | null = null) => {
     setInboxOpen(true);
     setInboxThread(id);
-    if (id) setThreads((t) => ({ ...t, [id]: { ...t[id], unread: 0 } }));
   };
-
   const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const chips = {
-    concierge: ["How many units does Dr. Brooks use?", "How soon does it start working?", "Any side effects?", "Does my user need a referral?", "Cancellation policy?"],
-    negotiate: [`Can you do ${money(Math.round((list * 0.88) / 25) * 25)}?`, "Is there a discount for my user?", "Can the consult be waived?"],
+  const chips: Record<DemoThreadId, string[]> = {
+    concierge: ["How many units does Dr. Brooks use?", "How soon does it start working?", "Any side effects?", "What's the earliest opening?", "Cancellation policy?"],
+    negotiate: [`Can you do ${money(Math.round((p.list * 0.88) / 25) * 25)}?`, "Is there a discount for my user?", "Can the consult be waived?"],
     forms: ["Can my user bring their headache diary?", "Is a referral letter needed?"],
-  } satisfies Record<DemoThreadId, string[]>;
+  };
 
   const thread = (id: DemoThreadId, className: string) => (
     <DemoThread
-      messages={threads[id].messages}
-      typing={threads[id].typing}
+      messages={s.threads[id]}
+      typing={typing[id]}
       chips={chips[id]}
       placeholder={id === "negotiate" ? "Propose a price or ask for a deal" : "Ask the clinic for your user"}
       onSend={(t) => send(id, t)}
-      onOffer={id === "negotiate" ? answerOffer : undefined}
+      onOffer={id === "negotiate" ? (mid, accept) => void run({ type: "respond_offer", message_id: mid, accept }, accept ? "Price locked for 48 hours" : undefined) : undefined}
       className={className}
     />
   );
 
   const summary = (
     <BookingSummary
-      label={current.label}
-      list={list}
-      deal={deal}
-      discount={discount}
-      total={total}
-      slot={slotInfo ? `${slotInfo.day.weekday} ${slotInfo.day.date}, ${slotInfo.time} · ${slotInfo.provider}` : null}
-      intake={intake}
-      phi={phiConfirmed}
-      onPhi={() => setPhiConfirmed((v) => !v)}
-      booking={booking}
+      state={state}
+      phi={phi}
+      onPhi={() => setPhi((v) => !v)}
       ready={ready}
-      onRequest={requestBooking}
+      holdLeft={holdLeft}
+      heldId={heldId}
+      onRequest={() => void run({ type: "request_booking", phi_confirmed: phi }, "Booking request sent")}
       onGo={go}
     />
   );
@@ -307,7 +170,7 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
         <path d="M4 13.5h4.5l1 2h5l1-2H20" fill="none" stroke="#281910" strokeWidth="1.7" strokeLinejoin="round" />
       </svg>
       {unread > 0 && (
-        <span className="absolute -top-[2px] -right-[2px] min-w-[19px] h-[19px] px-[5px] flex items-center justify-center rounded-full bg-[#E8704A] text-[11px] leading-[11px] font-[700] text-[#FFFCF1] border-2 border-solid border-[#FFFCF1]">
+        <span className="absolute -top-[2px] -right-[2px] min-w-[19px] h-[19px] px-[5px] flex items-center justify-center rounded-full bg-[#140C04] text-[11px] leading-[11px] font-[700] text-[#FFFCF1] border-2 border-solid border-[#FFFCF1]">
           {unread}
         </span>
       )}
@@ -316,25 +179,26 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
 
   const overlay = (
     <>
-      {/* Phone: what the user will pay, always in reach. */}
       <div
         className="lg:hidden absolute left-[10px] right-[10px] bottom-[10px] z-20 flex items-center gap-[12px] h-[62px] pl-[18px] pr-[8px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] shadow-[0_10px_30px_rgba(20,12,4,0.25)] transition-opacity duration-200"
         style={{ opacity: inboxOpen ? 0 : 1, pointerEvents: inboxOpen ? "none" : "auto" }}
       >
         <span className="flex flex-col grow min-w-0">
-          <span className="truncate text-[12px] leading-[16px] text-[#FFFCF1A6]">{current.label}</span>
+          <span className="truncate text-[12px] leading-[16px] text-[#FFFCF1A6]">{p.label}</span>
           <span className="text-[16px] leading-[20px] font-[700]">
-            {money(total)}
-            <span className="ml-[6px] text-[12px] font-[500] text-[#FFFCF1A6]">{booking === "confirmed" ? "· Booked" : held ? "· Slot held" : ""}</span>
+            {money(s.booking.total ?? p.total)}
+            <span className="ml-[6px] text-[12px] font-[500] text-[#FFFCF1A6]">
+              {s.booking.status === "confirmed" ? "· Booked" : s.booking.status === "requested" ? "· Requested" : heldId ? `· Held ${clockLeft(holdLeft)}` : ""}
+            </span>
           </span>
         </span>
         <button type="button" onClick={() => go("booking")} className="shrink-0 h-[46px] px-[18px] rounded-[999px] bg-[#FFFCF1] text-[#140C04] text-[14px] font-[600]">
-          {booking === "confirmed" ? "Booked" : "Review"}
+          Review
         </button>
       </div>
 
       {toast && (
-        <div className="absolute left-1/2 top-[72px] md:top-[82px] z-50 -translate-x-1/2 h-[38px] px-[16px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap shadow-[0_8px_24px_rgba(20,12,4,0.25)] doe-menu-in">
+        <div className="absolute left-1/2 top-[72px] md:top-[82px] z-50 -translate-x-1/2 max-w-[90%] h-[38px] px-[16px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap overflow-hidden text-ellipsis shadow-[0_8px_24px_rgba(20,12,4,0.25)] doe-menu-in">
           {toast}
         </div>
       )}
@@ -342,7 +206,8 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
       <Inbox
         open={inboxOpen}
         threadId={inboxThread}
-        threads={threads}
+        state={state}
+        unreadOf={unreadOf}
         onClose={() => setInboxOpen(false)}
         onOpenThread={(id) => openInbox(id)}
         onBack={() => setInboxThread(null)}
@@ -351,9 +216,10 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
     </>
   );
 
+  const daySlots = state.availability.find((d) => d.day === day)?.slots.filter((x) => provider === "all" || x.provider === provider) ?? [];
+
   return (
     <DemoFrame agentView right={inboxButton} overlay={overlay}>
-      {/* Phone: sections as a sticky row of pills under the bar. */}
       <nav className="md:hidden sticky top-[64px] z-20 flex gap-[6px] overflow-x-auto px-[16px] py-[8px] bg-[#FFFCF1E6] backdrop-blur-[12px] [scrollbar-width:none]">
         {NAV.map((n) => (
           <button
@@ -369,7 +235,6 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
 
       <div className="md:grid md:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)_340px] md:gap-[28px] md:px-[32px] max-w-[1440px] mx-auto pb-[96px] lg:pb-[40px]">
         <aside className="hidden md:flex flex-col gap-[2px] sticky top-[72px] self-start pt-[8px]">
-          <span className="px-[12px] pb-[8px] text-[11px] font-[600] uppercase tracking-[0.08em] text-[#28191073]">On this page</span>
           {NAV.map((n) => (
             <button
               key={n.id}
@@ -386,12 +251,11 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
             className="mt-[14px] h-[40px] px-[12px] flex items-center justify-between rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]"
           >
             Agent inbox
-            {unread > 0 && <span className="min-w-[20px] h-[20px] px-[6px] flex items-center justify-center rounded-full bg-[#E8704A] text-[11px]">{unread}</span>}
+            {unread > 0 && <span className="min-w-[20px] h-[20px] px-[6px] flex items-center justify-center rounded-full bg-[#FFFCF1] text-[#140C04] text-[11px]">{unread}</span>}
           </button>
         </aside>
 
         <main className="min-w-0 flex flex-col gap-[28px] px-[16px] md:px-0 pt-[6px]">
-          {/* Hero: the clinic and the agent's session. */}
           <div className="flex flex-col gap-[14px]">
             <div className="flex items-center gap-[16px]">
               <DemoSphere size={76} className="shrink-0" />
@@ -404,30 +268,30 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
             </div>
             <div className="rounded-[22px] bg-[#140C04] text-[#FFFCF1] p-[16px] md:p-[18px]">
               <div className="flex items-center justify-between gap-[10px]">
-                <span className="flex items-center gap-[8px] text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">
-                  <span className="w-[7px] h-[7px] rounded-full bg-[#9BC59D] animate-pulse" /> Session · via Doe
-                </span>
-                <span className="text-[11px] font-[600] text-[#FFFCF166]">Not shown to user</span>
+                <span className="text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">Session · {s.channel}</span>
+                <button type="button" onClick={onEnd} className="h-[26px] px-[10px] rounded-full border border-solid border-[#FFFCF133] text-[11.5px] font-[600] text-[#FFFCF1CC] hover:text-[#FFFCF1]">
+                  End session
+                </button>
               </div>
               <dl className="mt-[12px] grid grid-cols-[88px_minmax(0,1fr)] gap-x-[12px] gap-y-[6px] text-[13.5px] leading-[19px]">
                 {[
-                  ["Acting for", DEMO_USER.name],
-                  ["Request", DEMO_USER.request],
-                  ["Pay", "Private"],
-                  ["Scope", "Hold · Negotiate · Forms · Book"],
+                  ["Acting for", s.userName],
+                  ["Request", s.request],
+                  ["Status", state.status],
+                  ["Session", s.id],
                 ].map(([k, v]) => (
                   <div key={k} className="contents">
                     <dt className="text-[#FFFCF180]">{k}</dt>
-                    <dd className="font-[600]">{v}</dd>
+                    <dd className={`truncate ${k === "Session" ? "font-mono text-[12px] text-[#FFFCF1B3]" : "font-[600]"}`}>{v}</dd>
                   </div>
                 ))}
               </dl>
               <div className="mt-[12px] flex flex-wrap gap-[6px]">
                 {[
-                  ["Terms", true],
-                  ["PHI", true],
-                  ["Connected", consent.connected],
-                  ["Network", consent.network],
+                  ["Terms", s.consent.terms],
+                  ["PHI", s.consent.phi],
+                  ["Connected", s.consent.connected],
+                  ["Network", s.consent.network],
                 ].map(([label, on]) => (
                   <span key={label as string} className={`h-[24px] px-[9px] flex items-center rounded-full text-[11.5px] font-[600] ${on ? "bg-[#FFFCF11F] text-[#FFFCF1]" : "text-[#FFFCF166] border border-solid border-[#FFFCF126]"}`}>
                     {on ? "✓ " : "– "}
@@ -436,63 +300,53 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
                 ))}
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-[6px]">
-              {[
-                ["Botox from", money(1450)],
-                ["Earliest", "Mon, 9:00 am"],
-                ["Replies in", "Under 5 min"],
-              ].map(([k, v]) => (
-                <div key={k} className="rounded-[16px] bg-[#F4EEDF] px-[12px] py-[10px]">
-                  <div className="text-[11px] leading-[14px] text-[#2819109E]">{k}</div>
-                  <div className="mt-[2px] text-[14px] leading-[18px] font-[700]">{v}</div>
-                </div>
-              ))}
-            </div>
           </div>
 
           <Section id="services" meta="CAD · private pay" title="Services & pricing">
             <div className="flex flex-col gap-[6px]">
-              {SERVICES.map((s) => {
-                const on = plan.kind === "service" && plan.id === s.id;
+              {SERVICES.map((x) => {
+                const on = s.plan.kind === "service" && s.plan.id === x.id;
                 return (
                   <button
-                    key={s.id}
+                    key={x.id}
                     type="button"
-                    onClick={() => setPlan({ kind: "service", id: s.id })}
+                    disabled={locked}
+                    onClick={() => void run({ type: "select_plan", plan: { kind: "service", id: x.id } })}
                     className={`flex items-start gap-[12px] p-[14px] rounded-[18px] text-left transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}
                   >
                     <span className="grow min-w-0">
                       <span className="flex flex-wrap items-center gap-[6px]">
-                        <span className="text-[15px] leading-[20px] font-[600]">{s.name}</span>
-                        {s.match && <span className={`h-[20px] px-[8px] flex items-center rounded-full text-[10.5px] font-[700] ${on ? "bg-[#FCCFB8] text-[#281910]" : "bg-[#FCCFB8]"}`}>Your user&apos;s request</span>}
+                        <span className="text-[15px] leading-[20px] font-[600]">{x.name}</span>
+                        {x.match && <span className="h-[20px] px-[8px] flex items-center rounded-full text-[10.5px] font-[700] bg-[#FCCFB8] text-[#281910]">User&apos;s request</span>}
                       </span>
-                      <span className={`block mt-[3px] text-[13px] leading-[18px] ${on ? "text-[#FFFCF1B3]" : "text-[#2819109E]"}`}>{s.detail}</span>
-                      <span className={`block mt-[4px] text-[12px] leading-[16px] font-[500] ${on ? "text-[#FFFCF180]" : "text-[#28191080]"}`}>{s.duration}</span>
+                      <span className={`block mt-[3px] text-[13px] leading-[18px] ${on ? "text-[#FFFCF1B3]" : "text-[#2819109E]"}`}>
+                        {x.detail} · {x.duration}
+                      </span>
                     </span>
-                    <span className="shrink-0 text-[16px] leading-[20px] font-[700]">{money(s.price)}</span>
+                    <span className="shrink-0 text-[16px] leading-[20px] font-[700]">{money(x.price)}</span>
                   </button>
                 );
               })}
             </div>
           </Section>
 
-          <Section id="availability" meta="Live" title="Availability">
+          <Section id="availability" meta={heldId ? `Held · ${clockLeft(holdLeft)}` : "Live"} title="Availability">
             <div className="flex gap-[6px] overflow-x-auto [scrollbar-width:none]">
-              {["all", ...PROVIDERS].map((p) => (
-                <Pill key={p} on={provider === p} onClick={() => setProvider(p)}>
-                  {p === "all" ? "Any provider" : p}
+              {["all", ...PROVIDERS].map((x) => (
+                <Pill key={x} on={provider === x} onClick={() => setProvider(x)}>
+                  {x === "all" ? "Any provider" : x}
                 </Pill>
               ))}
             </div>
             <div className="mt-[10px] grid grid-cols-5 gap-[6px]">
-              {DAYS.map((d) => {
-                const n = d.slots.filter((s) => provider === "all" || s.provider === provider).length;
+              {state.availability.map((d) => {
+                const n = d.slots.filter((x) => (provider === "all" || x.provider === provider) && x.status === "open").length;
                 return (
                   <button
-                    key={d.id}
+                    key={d.day}
                     type="button"
-                    onClick={() => setDay(d.id)}
-                    className={`flex flex-col items-center py-[10px] rounded-[16px] transition-colors duration-150 ${day === d.id ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}
+                    onClick={() => setDay(d.day)}
+                    className={`flex flex-col items-center py-[10px] rounded-[16px] transition-colors duration-150 ${day === d.day ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}
                   >
                     <span className="text-[12px] leading-[16px] font-[500] opacity-70">{d.weekday}</span>
                     <span className="text-[15px] leading-[20px] font-[700]">{d.date.split(" ")[1]}</span>
@@ -502,50 +356,54 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
               })}
             </div>
             <div className="mt-[10px] grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
-              {DAYS.find((d) => d.id === day)!
-                .slots.filter((s) => provider === "all" || s.provider === provider)
-                .map((s) => {
-                  const on = slot === s.id;
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => setSlot(s.id)}
-                      className={`flex items-center justify-between h-[52px] px-[16px] rounded-[16px] border-[1.5px] border-solid transition-colors duration-150 ${on ? "border-[#140C04] bg-[#FFFCF1]" : "border-transparent bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}
-                    >
-                      <span className="text-[15px] font-[700]">{s.time}</span>
-                      <span className="text-[13px] text-[#2819109E]">
-                        {s.provider}
-                        {held === s.id ? " · Held" : ""}
-                      </span>
-                    </button>
-                  );
-                })}
-              {DAYS.find((d) => d.id === day)!.slots.filter((s) => provider === "all" || s.provider === provider).length === 0 && (
-                <p className="text-[13px] text-[#2819109E] px-[4px] py-[12px]">No openings with this provider on this day.</p>
-              )}
+              {daySlots.map((x) => {
+                const taken = x.status === "taken";
+                const mine = x.status.startsWith("yours");
+                const on = slot === x.id;
+                return (
+                  <button
+                    key={x.id}
+                    type="button"
+                    disabled={taken}
+                    onClick={() => setSlot(x.id)}
+                    className={`flex items-center justify-between h-[52px] px-[16px] rounded-[16px] border-[1.5px] border-solid transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed ${on ? "border-[#140C04] bg-[#FFFCF1]" : "border-transparent bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}
+                  >
+                    <span className={`text-[15px] font-[700] ${taken ? "line-through" : ""}`}>{x.time}</span>
+                    <span className="text-[13px] text-[#2819109E]">
+                      {x.provider}
+                      {mine ? ` · ${x.status === "yours_held" ? "Held" : x.status === "yours_booked" ? "Booked" : "Requested"}` : taken ? " · Taken" : ""}
+                    </span>
+                  </button>
+                );
+              })}
+              {daySlots.length === 0 && <p className="text-[13px] text-[#2819109E] px-[4px] py-[12px]">No openings.</p>}
             </div>
-            <div className="mt-[10px] flex items-center gap-[10px]">
+            <div className="mt-[10px] flex items-center gap-[8px]">
               <button
                 type="button"
-                disabled={!slot || slot === held || booking !== "none"}
-                onClick={holdSlot}
+                disabled={!slot || slot === heldId || locked}
+                onClick={() => slot && void run({ type: "hold_slot", slot_id: slot }, "Slot held for 10 minutes")}
                 className="h-[46px] px-[20px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] disabled:bg-[#28191033] disabled:cursor-not-allowed transition-colors duration-200"
               >
-                {held && slot === held ? "Held · 10 min" : held ? "Hold instead" : "Hold 10 min"}
+                {heldId && slot === heldId ? `Held · ${clockLeft(holdLeft)}` : heldId ? "Hold instead" : "Hold 10 min"}
               </button>
+              {heldId && !locked && (
+                <button type="button" onClick={() => void run({ type: "release_hold" }, "Hold released")} className="h-[46px] px-[16px] rounded-full bg-[#F4EEDF] text-[13.5px] font-[600]">
+                  Release
+                </button>
+              )}
             </div>
           </Section>
 
           <Section id="offers" title="Offers">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-[6px]">
               {OFFERS.map((o) => {
-                const status = o.id === "agent" ? "Applied" : o.id === "network" ? (consent.network ? "Active" : "Join network to unlock") : "Eligible";
+                const st = o.id === "agent" ? (p.deal ? "Replaced by negotiated price" : "Applied") : o.id === "network" ? (s.consent.network ? "Active" : "Network members only") : "Eligible";
                 return (
                   <div key={o.id} className="flex flex-col gap-[6px] p-[14px] rounded-[18px] bg-[#F4EEDF]">
                     <span className="self-start h-[20px] px-[8px] flex items-center rounded-full bg-[#FFFCF1] text-[10.5px] font-[700] text-[#281910B3]">{o.tag}</span>
                     <span className="text-[15px] leading-[20px] font-[600]">{o.title}</span>
-                    <span className={`mt-auto pt-[4px] text-[12px] font-[700] ${status === "Applied" || status === "Active" ? "text-[#4C7A4F]" : "text-[#28191080]"}`}>{status}</span>
+                    <span className={`mt-auto pt-[4px] text-[12px] font-[700] ${st === "Applied" || st === "Active" ? "text-[#4C7A4F]" : "text-[#28191080]"}`}>{st}</span>
                   </div>
                 );
               })}
@@ -555,12 +413,13 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
           <Section id="bundles" title="Bundles">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-[6px]">
               {BUNDLES.map((b) => {
-                const on = plan.kind === "bundle" && plan.id === b.id;
+                const on = s.plan.kind === "bundle" && s.plan.id === b.id;
                 return (
                   <button
                     key={b.id}
                     type="button"
-                    onClick={() => setPlan({ kind: "bundle", id: b.id })}
+                    disabled={locked}
+                    onClick={() => void run({ type: "select_plan", plan: { kind: "bundle", id: b.id } })}
                     className={`flex flex-col gap-[8px] p-[16px] rounded-[20px] text-left transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}
                   >
                     <span className={`${DISPLAY} text-[19px] leading-[23px]`}>{b.name}</span>
@@ -583,22 +442,22 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
 
           <Section id="negotiate" meta="Agent to agent" title="Negotiate">
             <div className="flex gap-[6px] overflow-x-auto [scrollbar-width:none] mb-[10px]">
-              {NEGOTIABLE.map((p) => {
-                const info = planOf(p);
+              {NEGOTIABLE.map((n) => {
+                const deal = s.agreed[planKey(n.plan)];
                 return (
-                  <Pill key={planKey(p)} on={planKey(plan) === planKey(p)} onClick={() => setPlan(p)}>
-                    {info.label === "Botox for chronic migraine" ? "Botox session" : info.label}
-                    {agreed[planKey(p)] ? ` · ${money(agreed[planKey(p)]!)}` : ""}
+                  <Pill key={planKey(n.plan)} on={planKey(s.plan) === planKey(n.plan)} onClick={() => !locked && void run({ type: "select_plan", plan: n.plan })}>
+                    {n.label}
+                    {deal ? ` · ${money(deal)}` : ""}
                   </Pill>
                 );
               })}
             </div>
             <div className="rounded-[22px] bg-[#F4EEDF] overflow-hidden">
               <div className="flex items-center justify-between px-[16px] pt-[14px] pb-[4px]">
-                <span className="text-[13px] font-[600]">{current.label}</span>
+                <span className="text-[13px] font-[600]">{p.label}</span>
                 <span className="text-[13px] text-[#2819109E]">
-                  List {money(list)}
-                  {deal ? ` · agreed ${money(deal)}` : ""}
+                  List {money(p.list)}
+                  {p.deal ? ` · agreed ${money(p.deal)}` : ""}
                 </span>
               </div>
               {thread("negotiate", "h-[440px]")}
@@ -622,33 +481,34 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
 
           <Section id="communication" title="Communication">
             <div className="flex flex-col gap-[6px]">
-              <div className="flex items-center gap-[12px] p-[14px] rounded-[18px] bg-[#F4EEDF]">
-                <span className="grow">
-                  <span className="block text-[15px] leading-[20px] font-[600]">Persistent connection</span>
-                </span>
-                <span className={`h-[26px] px-[10px] flex items-center rounded-full text-[12px] font-[700] ${consent.connected ? "bg-[#DCE5D0]" : "bg-[#FFFCF1]"}`}>{consent.connected ? "On" : "Off"}</span>
-              </div>
               {COMMS.map((c) => (
                 <button
                   key={c.id}
                   type="button"
                   role="switch"
-                  aria-checked={comms[c.id]}
-                  onClick={() => setComms((v) => ({ ...v, [c.id]: !v[c.id] }))}
+                  aria-checked={Boolean(s.comms[c.id])}
+                  onClick={() => void run({ type: "set_comms", id: c.id, on: !s.comms[c.id] })}
                   className="flex items-center gap-[12px] p-[14px] rounded-[18px] bg-[#F4EEDF] text-left hover:bg-[#EEE6D6] transition-colors duration-150"
                 >
                   <span className="grow">
                     <span className="block text-[15px] leading-[20px] font-[600]">{c.title}</span>
                     <span className="block text-[12.5px] leading-[17px] text-[#28191080]">{c.meta}</span>
                   </span>
-                  <Toggle on={Boolean(comms[c.id])} />
+                  <Toggle on={Boolean(s.comms[c.id])} />
                 </button>
               ))}
             </div>
           </Section>
 
           <Section id="forms" meta="5 required" title="Forms">
-            <DemoForms state={intake} onPassBack={passBack} />
+            <DemoForms
+              forms={s.forms}
+              userName={s.userName}
+              onIntake={(fields) => run({ type: "update_intake", fields })}
+              onAnswer={(id, answers) => run({ type: "answer_assessment", assessment_id: id, answers })}
+              onSign={() => run({ type: "record_signature", signed_by: s.userName }, "Signature recorded")}
+              onSubmit={() => run({ type: "submit_forms" }, "Forms passed back")}
+            />
           </Section>
 
           <div id="booking" className="lg:hidden scroll-mt-[124px] md:scroll-mt-[88px]">
@@ -695,82 +555,83 @@ function Toggle({ on }: { on: boolean }) {
 }
 
 function BookingSummary({
-  label,
-  list,
-  deal,
-  discount,
-  total,
-  slot,
-  intake,
+  state,
   phi,
   onPhi,
-  booking,
   ready,
+  holdLeft,
+  heldId,
   onRequest,
   onGo,
 }: {
-  label: string;
-  list: number;
-  deal?: number;
-  discount: number;
-  total: number;
-  slot: string | null;
-  intake: FormsState;
+  state: AgentPayload;
   phi: boolean;
   onPhi: () => void;
-  booking: Booking;
   ready: boolean;
+  holdLeft: number;
+  heldId: string | null;
   onRequest: () => void;
   onGo: (id: string) => void;
 }) {
+  const s = state.session;
+  const p = state.pricing;
+  const b = state.booking;
+  const live = b.status === "requested" || b.status === "confirmed";
   const steps: { label: string; done: boolean; go: string }[] = [
-    { label: slot ?? "Hold a slot", done: Boolean(slot), go: "availability" },
-    { label: intake === "sent" ? "Forms passed back" : "Pass back forms", done: intake === "sent", go: "forms" },
-    { label: deal ? `Agreed ${money(deal)}` : "Negotiate (optional)", done: Boolean(deal), go: "negotiate" },
+    {
+      label: live && b.slot ? b.slot : heldId && state.hold ? `${state.hold.slot} · ${clockLeft(holdLeft)}` : "Hold a slot",
+      done: Boolean((live && b.slot) || heldId),
+      go: "availability",
+    },
+    { label: s.forms.status === "sent" ? "Forms passed back" : "Pass back forms", done: s.forms.status === "sent", go: "forms" },
+    { label: p.deal ? `Agreed ${money(p.deal)}` : "Negotiate (optional)", done: Boolean(p.deal), go: "negotiate" },
   ];
   return (
     <div className="rounded-[24px] bg-[#F4EEDF] p-[6px]">
       <div className="rounded-[20px] bg-[#FFFCF1] p-[16px]">
-        <div className="text-[12px] leading-[16px] font-[500] text-[#28191080]">Booking for {DEMO_USER.name}</div>
-        <div className={`${DISPLAY} mt-[2px] text-[21px] leading-[25px] tracking-[-0.01em]`}>{label}</div>
+        <div className="text-[12px] leading-[16px] font-[500] text-[#28191080]">Booking for {s.userName}</div>
+        <div className={`${DISPLAY} mt-[2px] text-[21px] leading-[25px] tracking-[-0.01em]`}>{p.label}</div>
         <div className="mt-[14px] flex flex-col gap-[6px] text-[13.5px] leading-[18px]">
-          <Row k="List price" v={money(list)} strike={Boolean(deal)} />
-          {deal ? <Row k="Negotiated" v={money(deal)} /> : <Row k="Agent booking −5%" v={`−${money(discount)}`} />}
+          <Row k="List price" v={money(p.list)} strike={Boolean(p.deal)} />
+          {p.deal ? <Row k="Negotiated" v={money(p.deal)} /> : <Row k="Agent booking −5%" v={`−${money(p.discount)}`} />}
           <div className="h-[1px] my-[4px] bg-[#2819101A]" />
-          <Row k="Total" v={money(total)} bold />
+          <Row k="Total" v={money(live ? (b.total ?? p.total) : p.total)} bold />
         </div>
+        {!state.bookable && <p className="mt-[10px] text-[12.5px] font-[600] text-[#B4532F]">Not bookable by agents. Pick another plan.</p>}
+        {b.status === "declined" && <p className="mt-[10px] text-[12.5px] font-[600] text-[#B4532F]">Declined by the clinic{b.note ? `: ${b.note}` : ""}. Hold another slot.</p>}
       </div>
       <div className="flex flex-col gap-[2px] p-[8px]">
-        {steps.map((s) => (
-          <button key={s.go} type="button" onClick={() => onGo(s.go)} className="flex items-center gap-[10px] min-h-[40px] px-[8px] rounded-[12px] text-left hover:bg-[#EEE6D6] transition-colors duration-150">
-            <Check on={s.done} size={20} />
-            <span className={`text-[13px] leading-[17px] ${s.done ? "font-[600]" : "text-[#281910A6]"}`}>{s.label}</span>
+        {steps.map((x) => (
+          <button key={x.go} type="button" onClick={() => onGo(x.go)} className="flex items-center gap-[10px] min-h-[40px] px-[8px] rounded-[12px] text-left hover:bg-[#EEE6D6] transition-colors duration-150">
+            <Check on={x.done} size={20} />
+            <span className={`text-[13px] leading-[17px] ${x.done ? "font-[600]" : "text-[#281910A6]"}`}>{x.label}</span>
           </button>
         ))}
       </div>
+      {!live && (
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={phi}
+          onClick={onPhi}
+          className="mx-[6px] mb-[8px] flex items-start gap-[10px] p-[12px] rounded-[14px] bg-[#FFFCF1] text-left border-[1.5px] border-solid transition-colors duration-150"
+          style={{ borderColor: phi ? "#140C04" : "#2819101F", width: "calc(100% - 12px)" }}
+        >
+          <Check on={phi} size={20} />
+          <span className="grow text-[12.5px] leading-[17px]">
+            Confirmed with {s.userName.split(" ")[0]}: by booking through Doe, they&apos;re voluntarily providing their PHI.
+            <span className="ml-[6px] inline-flex items-center h-[18px] px-[7px] rounded-full align-[1px] bg-[#FCCFB8] text-[10.5px] font-[700]">Required</span>
+          </span>
+        </button>
+      )}
       <button
         type="button"
-        role="checkbox"
-        aria-checked={phi}
-        disabled={booking !== "none"}
-        onClick={onPhi}
-        className="mx-[6px] mb-[8px] flex items-start gap-[10px] p-[12px] rounded-[14px] bg-[#FFFCF1] text-left border-[1.5px] border-solid transition-colors duration-150"
-        style={{ borderColor: phi ? "#140C04" : "#2819101F", width: "calc(100% - 12px)" }}
-      >
-        <Check on={phi} size={20} />
-        <span className="grow text-[12.5px] leading-[17px]">
-          Confirmed with {DEMO_USER.name.split(" ")[0]}: by booking through Doe, they&apos;re voluntarily providing their PHI.
-          <span className="ml-[6px] inline-flex items-center h-[18px] px-[7px] rounded-full align-[1px] bg-[#FCCFB8] text-[10.5px] font-[700]">Required</span>
-        </span>
-      </button>
-      <button
-        type="button"
-        disabled={!ready || booking !== "none"}
+        disabled={!ready}
         onClick={onRequest}
         className="w-full h-[52px] rounded-[18px] text-[15px] font-[600] text-[#FFFCF1] disabled:cursor-not-allowed transition-colors duration-200"
-        style={{ backgroundColor: booking === "confirmed" ? "#4C7A4F" : ready && booking === "none" ? "#140C04" : booking === "sent" ? "#38251D" : "#28191033", transitionTimingFunction: EASE }}
+        style={{ backgroundColor: b.status === "confirmed" ? "#4C7A4F" : b.status === "requested" ? "#38251D" : ready ? "#140C04" : "#28191033", transitionTimingFunction: EASE }}
       >
-        {booking === "confirmed" ? "Booked" : booking === "sent" ? "Sending…" : "Send booking request"}
+        {b.status === "confirmed" ? "Booked" : b.status === "requested" ? "Waiting for clinic" : "Send booking request"}
       </button>
     </div>
   );
@@ -788,7 +649,8 @@ function Row({ k, v, strike, bold }: { k: string; v: string; strike?: boolean; b
 function Inbox({
   open,
   threadId,
-  threads,
+  state,
+  unreadOf,
   onClose,
   onOpenThread,
   onBack,
@@ -796,13 +658,14 @@ function Inbox({
 }: {
   open: boolean;
   threadId: DemoThreadId | null;
-  threads: Record<DemoThreadId, Thread>;
+  state: AgentPayload;
+  unreadOf: (id: DemoThreadId) => number;
   onClose: () => void;
   onOpenThread: (id: DemoThreadId) => void;
   onBack: () => void;
   renderThread: (id: DemoThreadId) => ReactNode;
 }) {
-  const ids = Object.keys(threads) as DemoThreadId[];
+  const ids = Object.keys(THREAD_TITLES) as DemoThreadId[];
   return (
     <div
       className={`absolute inset-0 z-40 ${open ? "" : "pointer-events-none"}`}
@@ -827,8 +690,8 @@ function Inbox({
             </button>
           ) : null}
           <span className="grow min-w-0 flex flex-col">
-            <span className={`${DISPLAY} text-[20px] leading-[24px]`}>{threadId ? threads[threadId].title : "Agent inbox"}</span>
-            <span className="text-[12px] leading-[16px] text-[#2819109E]">{threadId ? threads[threadId].subtitle : CLINIC.name}</span>
+            <span className={`${DISPLAY} text-[20px] leading-[24px]`}>{threadId ? THREAD_TITLES[threadId].title : "Agent inbox"}</span>
+            <span className="text-[12px] leading-[16px] text-[#2819109E]">{threadId ? THREAD_TITLES[threadId].subtitle : CLINIC.name}</span>
           </span>
           <button type="button" onClick={onClose} aria-label="Close inbox" className="w-[38px] h-[38px] flex items-center justify-center rounded-full bg-[#F4EEDF]">
             <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
@@ -841,22 +704,24 @@ function Inbox({
         ) : (
           <div className="grow min-h-0 overflow-y-auto p-[10px] flex flex-col gap-[6px]">
             {ids.map((id) => {
-              const t = threads[id];
-              const last = [...t.messages].reverse().find((m) => m.from !== "system") ?? t.messages[t.messages.length - 1]!;
+              const msgs = state.session.threads[id];
+              const last = [...msgs].reverse().find((m) => m.from !== "system") ?? msgs[msgs.length - 1];
+              const n = unreadOf(id);
               return (
                 <button key={id} type="button" onClick={() => onOpenThread(id)} className="flex items-start gap-[12px] p-[14px] rounded-[18px] bg-[#F4EEDF] text-left hover:bg-[#EEE6D6] transition-colors duration-150">
-                  <span className="mt-[6px] w-[8px] h-[8px] shrink-0 rounded-full" style={{ backgroundColor: t.unread ? "#E8704A" : "transparent" }} />
                   <span className="grow min-w-0">
                     <span className="flex items-baseline justify-between gap-[8px]">
-                      <span className="text-[15px] leading-[20px] font-[600]">{t.title}</span>
-                      <span className="shrink-0 text-[11.5px] text-[#28191080]">{last.at}</span>
+                      <span className="text-[15px] leading-[20px] font-[600]">{THREAD_TITLES[id].title}</span>
+                      {last && <span className="shrink-0 text-[11.5px] text-[#28191080]">{new Date(last.at).toLocaleTimeString("en-CA", { hour: "numeric", minute: "2-digit" })}</span>}
                     </span>
-                    <span className="block mt-[2px] text-[13px] leading-[18px] text-[#2819109E] line-clamp-2">
-                      {last.from === "agent" ? "You: " : ""}
-                      {last.text}
-                    </span>
+                    {last && (
+                      <span className="block mt-[2px] text-[13px] leading-[18px] text-[#2819109E] line-clamp-2">
+                        {last.from === "agent" ? "You: " : ""}
+                        {last.text}
+                      </span>
+                    )}
                   </span>
-                  {t.unread > 0 && <span className="shrink-0 min-w-[20px] h-[20px] px-[6px] flex items-center justify-center rounded-full bg-[#140C04] text-[11px] font-[700] text-[#FFFCF1]">{t.unread}</span>}
+                  {n > 0 && <span className="shrink-0 min-w-[20px] h-[20px] px-[6px] flex items-center justify-center rounded-full bg-[#140C04] text-[11px] font-[700] text-[#FFFCF1]">{n}</span>}
                 </button>
               );
             })}
