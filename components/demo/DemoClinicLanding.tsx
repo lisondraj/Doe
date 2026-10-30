@@ -234,13 +234,13 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
       </nav>
 
       <div className="md:grid md:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)_340px] md:gap-[28px] md:px-[32px] max-w-[1440px] mx-auto pb-[96px] lg:pb-[40px]">
-        <aside className="hidden md:flex flex-col gap-[2px] sticky top-[72px] self-start pt-[8px]">
+        <aside className="hidden md:flex flex-col gap-[2px] sticky top-[78px] self-start mt-[6px] p-[6px] rounded-[22px] bg-[#F4EEDF]">
           {NAV.map((n) => (
             <button
               key={n.id}
               type="button"
               onClick={() => go(n.id)}
-              className={`${"small" in n ? "lg:hidden " : ""}h-[36px] px-[12px] rounded-[10px] text-left text-[14px] font-[500] transition-colors duration-150 ${active === n.id ? "bg-[#F4EEDF] text-[#281910]" : "text-[#281910A6] hover:text-[#281910]"}`}
+              className={`${"small" in n ? "lg:hidden " : ""}h-[36px] px-[12px] rounded-[10px] text-left text-[14px] font-[500] transition-colors duration-150 ${active === n.id ? "bg-[#FFFCF1] text-[#281910]" : "text-[#281910A6] hover:text-[#281910]"}`}
             >
               {n.label}
             </button>
@@ -248,7 +248,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
           <button
             type="button"
             onClick={() => openInbox(null)}
-            className="mt-[14px] h-[40px] px-[12px] flex items-center justify-between rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]"
+            className="mt-[8px] h-[40px] px-[12px] flex items-center justify-between rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]"
           >
             Agent inbox
             {unread > 0 && <span className="min-w-[20px] h-[20px] px-[6px] flex items-center justify-center rounded-full bg-[#FFFCF1] text-[#140C04] text-[11px]">{unread}</span>}
@@ -256,8 +256,8 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
         </aside>
 
         <main className="min-w-0 flex flex-col gap-[28px] px-[16px] md:px-0 pt-[6px]">
-          <div className="flex flex-col gap-[14px]">
-            <div className="flex items-center gap-[16px]">
+          <div className="flex flex-col gap-[6px] rounded-[26px] bg-[#F4EEDF] p-[6px]">
+            <div className="flex items-center gap-[16px] rounded-[20px] bg-[#FFFCF1] p-[14px] md:p-[18px]">
               <DemoSphere size={76} className="shrink-0" />
               <div className="min-w-0">
                 <h1 className={`${DISPLAY} text-[26px] leading-[30px] md:text-[34px] md:leading-[38px] tracking-[-0.02em]`}>{CLINIC.name}</h1>
@@ -266,7 +266,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                 </p>
               </div>
             </div>
-            <div className="rounded-[22px] bg-[#140C04] text-[#FFFCF1] p-[16px] md:p-[18px]">
+            <div className="rounded-[20px] bg-[#140C04] text-[#FFFCF1] p-[16px] md:p-[18px]">
               <div className="flex items-center justify-between gap-[10px]">
                 <span className="text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">Session · {s.channel}</span>
                 <button type="button" onClick={onEnd} className="h-[26px] px-[10px] rounded-full border border-solid border-[#FFFCF133] text-[11.5px] font-[600] text-[#FFFCF1CC] hover:text-[#FFFCF1]">
@@ -312,7 +312,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                     type="button"
                     disabled={locked}
                     onClick={() => void run({ type: "select_plan", plan: { kind: "service", id: x.id } })}
-                    className={`flex items-start gap-[12px] p-[14px] rounded-[18px] text-left transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}
+                    className={`flex items-start gap-[12px] p-[14px] rounded-[18px] text-left transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
                   >
                     <span className="grow min-w-0">
                       <span className="flex flex-wrap items-center gap-[6px]">
@@ -338,7 +338,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                 </Pill>
               ))}
             </div>
-            <div className="mt-[10px] grid grid-cols-5 gap-[6px]">
+            <div className="mt-[6px] grid grid-cols-5 gap-[6px]">
               {state.availability.map((d) => {
                 const n = d.slots.filter((x) => (provider === "all" || x.provider === provider) && x.status === "open").length;
                 return (
@@ -346,7 +346,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                     key={d.day}
                     type="button"
                     onClick={() => setDay(d.day)}
-                    className={`flex flex-col items-center py-[10px] rounded-[16px] transition-colors duration-150 ${day === d.day ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}
+                    className={`flex flex-col items-center py-[10px] rounded-[16px] transition-colors duration-150 ${day === d.day ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
                   >
                     <span className="text-[12px] leading-[16px] font-[500] opacity-70">{d.weekday}</span>
                     <span className="text-[15px] leading-[20px] font-[700]">{d.date.split(" ")[1]}</span>
@@ -355,7 +355,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                 );
               })}
             </div>
-            <div className="mt-[10px] grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
+            <div className="mt-[6px] grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
               {daySlots.map((x) => {
                 const taken = x.status === "taken";
                 const mine = x.status.startsWith("yours");
@@ -366,7 +366,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                     type="button"
                     disabled={taken}
                     onClick={() => setSlot(x.id)}
-                    className={`flex items-center justify-between h-[52px] px-[16px] rounded-[16px] border-[1.5px] border-solid transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed ${on ? "border-[#140C04] bg-[#FFFCF1]" : "border-transparent bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}
+                    className={`flex items-center justify-between h-[52px] px-[16px] rounded-[16px] border-[1.5px] border-solid transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed ${on ? "border-[#140C04] bg-[#FFFCF1]" : "border-transparent bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
                   >
                     <span className={`text-[15px] font-[700] ${taken ? "line-through" : ""}`}>{x.time}</span>
                     <span className="text-[13px] text-[#2819109E]">
@@ -376,9 +376,9 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                   </button>
                 );
               })}
-              {daySlots.length === 0 && <p className="text-[13px] text-[#2819109E] px-[4px] py-[12px]">No openings.</p>}
+              {daySlots.length === 0 && <p className="rounded-[16px] bg-[#FFFCF1] text-[13px] text-[#2819109E] px-[16px] py-[16px]">No openings.</p>}
             </div>
-            <div className="mt-[10px] flex items-center gap-[8px]">
+            <div className="mt-[6px] flex items-center gap-[6px]">
               <button
                 type="button"
                 disabled={!slot || slot === heldId || locked}
@@ -388,7 +388,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                 {heldId && slot === heldId ? `Held · ${clockLeft(holdLeft)}` : heldId ? "Hold instead" : "Hold 10 min"}
               </button>
               {heldId && !locked && (
-                <button type="button" onClick={() => void run({ type: "release_hold" }, "Hold released")} className="h-[46px] px-[16px] rounded-full bg-[#F4EEDF] text-[13.5px] font-[600]">
+                <button type="button" onClick={() => void run({ type: "release_hold" }, "Hold released")} className="h-[46px] px-[16px] rounded-full bg-[#FFFCF1] text-[13.5px] font-[600]">
                   Release
                 </button>
               )}
@@ -400,8 +400,8 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
               {OFFERS.map((o) => {
                 const st = o.id === "agent" ? (p.deal ? "Replaced by negotiated price" : "Applied") : o.id === "network" ? (s.consent.network ? "Active" : "Network members only") : "Eligible";
                 return (
-                  <div key={o.id} className="flex flex-col gap-[6px] p-[14px] rounded-[18px] bg-[#F4EEDF]">
-                    <span className="self-start h-[20px] px-[8px] flex items-center rounded-full bg-[#FFFCF1] text-[10.5px] font-[700] text-[#281910B3]">{o.tag}</span>
+                  <div key={o.id} className="flex flex-col gap-[6px] p-[14px] rounded-[18px] bg-[#FFFCF1]">
+                    <span className="self-start h-[20px] px-[8px] flex items-center rounded-full bg-[#F4EEDF] text-[10.5px] font-[700] text-[#281910B3]">{o.tag}</span>
                     <span className="text-[15px] leading-[20px] font-[600]">{o.title}</span>
                     <span className={`mt-auto pt-[4px] text-[12px] font-[700] ${st === "Applied" || st === "Active" ? "text-[#4C7A4F]" : "text-[#28191080]"}`}>{st}</span>
                   </div>
@@ -420,7 +420,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                     type="button"
                     disabled={locked}
                     onClick={() => void run({ type: "select_plan", plan: { kind: "bundle", id: b.id } })}
-                    className={`flex flex-col gap-[8px] p-[16px] rounded-[20px] text-left transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}
+                    className={`flex flex-col gap-[8px] p-[16px] rounded-[20px] text-left transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
                   >
                     <span className={`${DISPLAY} text-[19px] leading-[23px]`}>{b.name}</span>
                     <span className="flex flex-col gap-[4px]">
@@ -441,7 +441,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
           </Section>
 
           <Section id="negotiate" meta="Agent to agent" title="Negotiate">
-            <div className="flex gap-[6px] overflow-x-auto [scrollbar-width:none] mb-[10px]">
+            <div className="flex gap-[6px] overflow-x-auto [scrollbar-width:none] mb-[2px]">
               {NEGOTIABLE.map((n) => {
                 const deal = s.agreed[planKey(n.plan)];
                 return (
@@ -452,8 +452,8 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                 );
               })}
             </div>
-            <div className="rounded-[22px] bg-[#F4EEDF] overflow-hidden">
-              <div className="flex items-center justify-between px-[16px] pt-[14px] pb-[4px]">
+            <div className="overflow-hidden">
+              <div className="flex items-center justify-between px-[10px] pt-[12px] pb-[0px]">
                 <span className="text-[13px] font-[600]">{p.label}</span>
                 <span className="text-[13px] text-[#2819109E]">
                   List {money(p.list)}
@@ -465,11 +465,11 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
           </Section>
 
           <Section id="ask" title="Ask the clinic">
-            <div className="rounded-[22px] bg-[#F4EEDF] overflow-hidden">{thread("concierge", "h-[420px]")}</div>
+            <div className="overflow-hidden">{thread("concierge", "h-[420px]")}</div>
           </Section>
 
           <Section id="insurance" title="Insurance & payment">
-            <div className="rounded-[20px] bg-[#F4EEDF] px-[16px] py-[6px]">
+            <div className="rounded-[18px] bg-[#FFFCF1] px-[16px] py-[6px]">
               {PAYMENT_NOTES.map((n) => (
                 <div key={n.k} className="flex items-baseline justify-between gap-[16px] py-[10px] border-b border-solid border-[#2819100F] last:border-b-0">
                   <span className="shrink-0 text-[13.5px] text-[#281910B3]">{n.k}</span>
@@ -488,7 +488,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                   role="switch"
                   aria-checked={Boolean(s.comms[c.id])}
                   onClick={() => void run({ type: "set_comms", id: c.id, on: !s.comms[c.id] })}
-                  className="flex items-center gap-[12px] p-[14px] rounded-[18px] bg-[#F4EEDF] text-left hover:bg-[#EEE6D6] transition-colors duration-150"
+                  className="flex items-center gap-[12px] p-[14px] rounded-[18px] bg-[#FFFCF1] hover:bg-[#FAF4E4] text-left transition-colors duration-150"
                 >
                   <span className="grow">
                     <span className="block text-[15px] leading-[20px] font-[600]">{c.title}</span>
@@ -500,7 +500,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
             </div>
           </Section>
 
-          <Section id="forms" meta="5 required" title="Forms">
+          <Section id="forms" meta="5 required" title="Forms" bare>
             <DemoForms
               forms={s.forms}
               userName={s.userName}
@@ -516,20 +516,21 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
           </div>
         </main>
 
-        <aside className="hidden lg:block sticky top-[72px] self-start pt-[8px]">{summary}</aside>
+        <aside className="hidden lg:block sticky top-[78px] self-start mt-[6px]">{summary}</aside>
       </div>
     </DemoFrame>
   );
 }
 
-function Section({ id, meta, title, children }: { id: string; meta?: string; title: string; children: ReactNode }) {
+/** A titled section: its content sits in an outer sand box, with cream boxes inside. `bare` skips the outer box for content that brings its own. */
+function Section({ id, meta, title, bare, children }: { id: string; meta?: string; title: string; bare?: boolean; children: ReactNode }) {
   return (
     <section id={id} className="scroll-mt-[124px] md:scroll-mt-[88px]">
       <div className="mb-[12px] flex items-baseline justify-between gap-[12px]">
         {meta && <span className="order-2 shrink-0 text-[12px] leading-[16px] font-[600] text-[#28191080]">{meta}</span>}
         <h2 className={`${DISPLAY} text-[24px] leading-[28px] md:text-[28px] md:leading-[32px] tracking-[-0.02em]`}>{title}</h2>
       </div>
-      {children}
+      {bare ? children : <div className="rounded-[24px] bg-[#F4EEDF] p-[6px]">{children}</div>}
     </section>
   );
 }
@@ -539,7 +540,7 @@ function Pill({ on, onClick, children }: { on: boolean; onClick: () => void; chi
     <button
       type="button"
       onClick={onClick}
-      className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] whitespace-nowrap transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910] hover:bg-[#EEE6D6]"}`}
+      className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] whitespace-nowrap transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910] hover:bg-[#FAF4E4]"}`}
     >
       {children}
     </button>
@@ -702,13 +703,14 @@ function Inbox({
         {threadId ? (
           <div className="grow min-h-0 flex flex-col bg-[#F4EEDF]">{renderThread(threadId)}</div>
         ) : (
-          <div className="grow min-h-0 overflow-y-auto p-[10px] flex flex-col gap-[6px]">
+          <div className="grow min-h-0 overflow-y-auto p-[10px]">
+            <div className="flex flex-col gap-[6px] p-[6px] rounded-[22px] bg-[#F4EEDF]">
             {ids.map((id) => {
               const msgs = state.session.threads[id];
               const last = [...msgs].reverse().find((m) => m.from !== "system") ?? msgs[msgs.length - 1];
               const n = unreadOf(id);
               return (
-                <button key={id} type="button" onClick={() => onOpenThread(id)} className="flex items-start gap-[12px] p-[14px] rounded-[18px] bg-[#F4EEDF] text-left hover:bg-[#EEE6D6] transition-colors duration-150">
+                <button key={id} type="button" onClick={() => onOpenThread(id)} className="flex items-start gap-[12px] p-[14px] rounded-[18px] bg-[#FFFCF1] hover:bg-[#FAF4E4] text-left transition-colors duration-150">
                   <span className="grow min-w-0">
                     <span className="flex items-baseline justify-between gap-[8px]">
                       <span className="text-[15px] leading-[20px] font-[600]">{THREAD_TITLES[id].title}</span>
@@ -725,6 +727,7 @@ function Inbox({
                 </button>
               );
             })}
+            </div>
           </div>
         )}
       </aside>

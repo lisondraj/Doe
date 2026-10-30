@@ -23,7 +23,19 @@ import {
   statusOf,
   viewOf,
 } from "@/lib/demo/demo-engine";
-import { listSessions, readConfig, readSession, readSlots, withLock, writeConfig, writeSession, writeSlots } from "@/lib/demo/demo-store";
+import { CONNECT_PER_IP_HOUR, CONNECT_TOTAL_HOUR, hourBucket, ipKey } from "@/lib/demo/demo-guard";
+import {
+  listSessions,
+  readConfig,
+  readConnectCount,
+  readSession,
+  readSlots,
+  withLock,
+  writeConfig,
+  writeConnectCount,
+  writeSession,
+  writeSlots,
+} from "@/lib/demo/demo-store";
 import type { DemoChannel, DemoConfig, DemoSession, DemoSlots } from "@/lib/demo/demo-types";
 
 export { DemoError };
@@ -59,10 +71,18 @@ function agentPayload(s: DemoSession, config: DemoConfig, slots: DemoSlots, now:
 
 export type AgentPayload = ReturnType<typeof agentPayload>;
 
-export async function connect(input: ConnectInput) {
+export async function connect(input: ConnectInput, ip: string) {
   const now = new Date();
   const s = createSession(input, now);
-  await withLock(LOCK, () => writeSession(s));
+  await withLock(LOCK, async () => {
+    const hour = hourBucket(now);
+    const key = ipKey(ip);
+    const count = await readConnectCount(hour);
+    if ((count.ips[key] ?? 0) >= CONNECT_PER_IP_HOUR) throw new DemoError(429, "Too many new sessions from this network this hour. Reuse your session token.");
+    if (count.total >= CONNECT_TOTAL_HOUR) throw new DemoError(429, "The clinic is taking too many new sessions right now. Try again later.");
+    await writeConnectCount(hour, { total: count.total + 1, ips: { ...count.ips, [key]: (count.ips[key] ?? 0) + 1 } });
+    await writeSession(s);
+  });
   const [config, slots] = await Promise.all([readConfig(), readSlots()]);
   return { token: tokenOf(s), ...agentPayload(s, config, slots, now.getTime()) };
 }

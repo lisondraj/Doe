@@ -39,7 +39,7 @@ export function DemoLegal({ doc }: { doc: keyof typeof DOCS }) {
     <DemoFrame
       logoHref="/demo"
       right={
-        <Link href={doc === "terms" ? "/demo/PP" : "/demo/TOS"} className="h-[38px] px-[14px] flex items-center rounded-full bg-[#F4EEDF] text-[13px] font-[600]">
+        <Link href={doc === "terms" ? "/demo/PP" : "/demo/TOS"} className="h-[38px] px-[14px] flex items-center rounded-full bg-[#F4EEDF] text-[13px] font-[600] hover:bg-[#EEE6D6]">
           {doc === "terms" ? "Privacy Policy" : "Terms of Service"}
         </Link>
       }
@@ -48,9 +48,9 @@ export function DemoLegal({ doc }: { doc: keyof typeof DOCS }) {
         <p className="text-[12px] font-[500] text-[#28191080]">Last updated October 30, 2026</p>
         <h1 className={`${DISPLAY} mt-[4px] text-[34px] leading-[38px] md:text-[44px] md:leading-[48px] tracking-[-0.02em]`}>{d.title}</h1>
         <p className="mt-[14px] text-[16px] leading-[24px] text-[#281910CC]">{d.intro}</p>
-        <div className="mt-[24px] flex flex-col gap-[6px]">
+        <div className="mt-[24px] flex flex-col gap-[6px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
           {d.sections.map(([h, body]) => (
-            <section key={h} className="p-[16px] rounded-[20px] bg-[#F4EEDF]">
+            <section key={h} className="p-[16px] rounded-[20px] bg-[#FFFCF1]">
               <h2 className="text-[16px] leading-[22px] font-[600]">{h}</h2>
               <p className="mt-[4px] text-[14px] leading-[21px] text-[#281910B3]">{body}</p>
             </section>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 
 import { Check, DISPLAY } from "@/components/demo/DemoFrame";
 import { DemoSphere } from "@/components/demo/DemoSphere";
@@ -49,27 +49,41 @@ const ITEMS: { id: keyof DemoConsent; required: boolean; body: ReactNode }[] = [
 ];
 
 /** The first screen an agent lands on, never shown to its user: the clinic, and what to confirm with the user before booking. */
-export function DemoGate({ onProceed }: { onProceed: (consent: DemoConsent, userName: string) => Promise<string | null> }) {
+export function DemoGate({
+  onProceed,
+}: {
+  onProceed: (consent: DemoConsent, userName: string, check: { website: string; elapsedMs: number }) => Promise<string | null>;
+}) {
   const [consent, setConsent] = useState<DemoConsent>({ terms: false, phi: false, connected: false, network: false });
   const [userName, setUserName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** Bot checks: a field people never see, and how long the form was open. */
+  const [website, setWebsite] = useState("");
+  const openedAt = useRef(0);
+  useEffect(() => {
+    openedAt.current = Date.now();
+  }, []);
   const all = consent.terms && consent.phi && consent.connected && consent.network;
   const ready = consent.terms && consent.phi;
 
   return (
     <main className="flex flex-col items-center px-[20px] pb-[28px] md:pb-[48px] min-h-[calc(100%-64px)]">
-      <DemoSphere size={210} className="mt-[4px] md:mt-[12px]" />
-      <h1 className={`${DISPLAY} mt-[18px] text-center text-[30px] leading-[34px] md:text-[40px] md:leading-[44px] tracking-[-0.02em] text-[#281910]`}>
-        {CLINIC.name}
-      </h1>
-      <p className="mt-[10px] text-center text-[15px] leading-[22px] text-[#2819109E]">
-        {CLINIC.addressLine1}
-        <br />
-        {CLINIC.addressLine2}
-      </p>
+      <section className="w-full max-w-[520px] mt-[4px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
+        <div className="flex flex-col items-center px-[16px] pt-[18px] pb-[22px] rounded-[20px] bg-[#FFFCF1]">
+          <DemoSphere size={190} />
+          <h1 className={`${DISPLAY} mt-[16px] text-center text-[30px] leading-[34px] md:text-[36px] md:leading-[40px] tracking-[-0.02em] text-[#281910]`}>
+            {CLINIC.name}
+          </h1>
+          <p className="mt-[8px] text-center text-[15px] leading-[22px] text-[#2819109E]">
+            {CLINIC.addressLine1}
+            <br />
+            {CLINIC.addressLine2}
+          </p>
+        </div>
+      </section>
 
-      <section className="w-full max-w-[520px] mt-[28px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
+      <section className="w-full max-w-[520px] mt-[8px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
         <p className="px-[16px] pt-[14px] pb-[12px] text-[15px] leading-[21px] font-[600] text-[#281910]">
           Confirm with your user before booking
         </p>
@@ -121,13 +135,23 @@ export function DemoGate({ onProceed }: { onProceed: (consent: DemoConsent, user
         <button
           type="button"
           onClick={() => setConsent({ terms: !all, phi: !all, connected: !all, network: !all })}
-          className="w-full h-[46px] mt-[6px] rounded-[20px] text-[14px] leading-[18px] font-[600] text-[#281910] border-[1.5px] border-dashed border-[#28191033] hover:bg-[#EEE6D6] transition-colors duration-150"
+          className="w-full h-[46px] mt-[4px] rounded-[20px] bg-[#FFFCF1] text-[14px] leading-[18px] font-[600] text-[#281910] hover:bg-[#FAF4E4] transition-colors duration-150"
         >
           {all ? "Clear all" : "Confirm all"}
         </button>
       </section>
 
       <ConnectOptions />
+      <input
+        type="text"
+        name="website"
+        value={website}
+        onChange={(e) => setWebsite(e.target.value)}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute left-[-9999px] w-px h-px opacity-0"
+      />
 
       <div className="grow min-h-[24px]" />
       {error && <p className="mb-[10px] text-center text-[13px] font-[600] text-[#B4532F]">{error}</p>}
@@ -137,7 +161,7 @@ export function DemoGate({ onProceed }: { onProceed: (consent: DemoConsent, user
         onClick={async () => {
           setBusy(true);
           setError(null);
-          const err = await onProceed(consent, userName.trim() || "Alex Rivera");
+          const err = await onProceed(consent, userName.trim() || "Alex Rivera", { website, elapsedMs: Date.now() - openedAt.current });
           if (err) {
             setError(err);
             setBusy(false);
@@ -195,7 +219,7 @@ function ConnectOptions() {
           </button>
         </div>
       ) : (
-        <p className="px-[16px] pb-[12px] text-[13.5px] leading-[19px] text-[#281910B3]">Proceed below to book from this page.</p>
+        <p className="px-[16px] py-[14px] rounded-[20px] bg-[#FFFCF1] text-[13.5px] leading-[19px] text-[#281910B3]">Proceed below to book from this page.</p>
       )}
       {code && (
         <p className="px-[12px] pt-[10px] pb-[6px] text-[12px] leading-[17px] text-[#2819109E]">

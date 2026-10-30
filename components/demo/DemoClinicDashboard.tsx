@@ -349,7 +349,8 @@ function Overview({ state, now, onOpen }: { state: ClinicStatePayload | null; no
       </Title>
 
       {latest ? (
-        <button type="button" onClick={() => onOpen(latest.id)} className="w-full mb-[12px] flex items-center gap-[12px] p-[14px] rounded-[20px] bg-[#140C04] text-[#FFFCF1] text-left">
+        <Card className="mb-[12px]">
+        <button type="button" onClick={() => onOpen(latest.id)} className="w-full flex items-center gap-[12px] p-[14px] rounded-[18px] bg-[#140C04] text-[#FFFCF1] text-left">
           <span className="shrink-0 h-[20px] px-[7px] flex items-center rounded-[6px] bg-[#FFFCF1] text-[#140C04] font-mono text-[10.5px] font-[500]">{CHANNEL[latest.channel]}</span>
           <span className="grow min-w-0">
             <span className="block truncate text-[14px] font-[600]">
@@ -361,13 +362,15 @@ function Overview({ state, now, onOpen }: { state: ClinicStatePayload | null; no
           </span>
           <span className="shrink-0 text-[12.5px] font-[600] text-[#FFFCF1CC]">Open</span>
         </button>
+        </Card>
       ) : (
-        <div className="mb-[12px]">
+        <Card className="mb-[12px]">
           <Empty>No agents have connected yet. Open /demo, or point an agent at the API or MCP endpoint below.</Empty>
-        </div>
+        </Card>
       )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-[6px]">
+      <Card>
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-[4px]">
         {[
           ["Agents connected", String(a.sessions), `${a.live} live now`],
           ["By channel", `${a.byChannel.browser} · ${a.byChannel.api} · ${a.byChannel.mcp}`, "Browser · API · MCP"],
@@ -375,13 +378,14 @@ function Overview({ state, now, onOpen }: { state: ClinicStatePayload | null; no
           ["Booked revenue", money(a.revenue), "confirmed, private pay"],
           ["Median reply", reply, `${a.agentActions} agent actions`],
         ].map(([k, v, sub]) => (
-          <div key={k} className="rounded-[20px] bg-[#F4EEDF] p-[16px]">
+          <div key={k} className="rounded-[16px] bg-[#FFFCF1] p-[16px] min-w-0">
             <div className="text-[12px] leading-[16px] text-[#2819109E]">{k}</div>
-            <div className={`${DISPLAY} mt-[6px] text-[26px] leading-[30px]`}>{v}</div>
+            <div className={`${DISPLAY} mt-[6px] text-[26px] leading-[30px] truncate`}>{v}</div>
             <div className="mt-[2px] text-[11.5px] text-[#28191080]">{sub}</div>
           </div>
         ))}
       </div>
+      </Card>
 
       <Card title="Funnel" className="mt-[12px]">
         <div className="grid grid-cols-5 gap-[4px]">
@@ -474,7 +478,9 @@ function Inbox({
     <>
       <Title>Agent inbox</Title>
       {sessions.length === 0 ? (
-        <Empty>No agent sessions yet.</Empty>
+        <Card>
+          <Empty>No agent sessions yet.</Empty>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-[12px]">
           <Card>
@@ -730,20 +736,21 @@ function Services({ config, onConfig }: { config: DemoConfig | null; onConfig: (
   return (
     <>
       <Title kicker="Private pay · what agents can book">Services & pricing</Title>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-[6px] mb-[12px]">
-        <div className="flex items-center gap-[12px] p-[14px] rounded-[20px] bg-[#F4EEDF]">
+      <Card className="mb-[12px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-[4px]">
+        <div className="flex items-center gap-[12px] p-[14px] rounded-[16px] bg-[#FFFCF1]">
           <span className="grow">
             <span className="block text-[14px] font-[600]">Lowest negotiated price</span>
             <span className="block text-[12.5px] text-[#2819109E]">{pct}% of list</span>
           </span>
-          <button type="button" aria-label="Lower" onClick={() => void onConfig({ floorPct: Math.max(0.5, config.floorPct - 0.01) })} className="w-[36px] h-[36px] rounded-full bg-[#FFFCF1] text-[18px] font-[600]">
+          <button type="button" aria-label="Lower" onClick={() => void onConfig({ floorPct: Math.max(0.5, config.floorPct - 0.01) })} className="w-[36px] h-[36px] rounded-full bg-[#F4EEDF] text-[18px] font-[600]">
             −
           </button>
-          <button type="button" aria-label="Raise" onClick={() => void onConfig({ floorPct: Math.min(1, config.floorPct + 0.01) })} className="w-[36px] h-[36px] rounded-full bg-[#FFFCF1] text-[18px] font-[600]">
+          <button type="button" aria-label="Raise" onClick={() => void onConfig({ floorPct: Math.min(1, config.floorPct + 0.01) })} className="w-[36px] h-[36px] rounded-full bg-[#F4EEDF] text-[18px] font-[600]">
             +
           </button>
         </div>
-        <button type="button" role="switch" aria-checked={config.autoConfirm} onClick={() => void onConfig({ autoConfirm: !config.autoConfirm })} className="flex items-center gap-[12px] p-[14px] rounded-[20px] bg-[#F4EEDF] text-left">
+        <button type="button" role="switch" aria-checked={config.autoConfirm} onClick={() => void onConfig({ autoConfirm: !config.autoConfirm })} className="flex items-center gap-[12px] p-[14px] rounded-[16px] bg-[#FFFCF1] text-left">
           <span className="grow">
             <span className="block text-[14px] font-[600]">Auto-confirm agent bookings</span>
             <span className="block text-[12.5px] text-[#2819109E]">{config.autoConfirm ? "On" : "Off · staff confirm each request"}</span>
@@ -751,6 +758,7 @@ function Services({ config, onConfig }: { config: DemoConfig | null; onConfig: (
           <Check on={config.autoConfirm} />
         </button>
       </div>
+      </Card>
       <Card>
         <div className="flex flex-col gap-[4px]">
           {rows.map((r) => (
@@ -786,7 +794,9 @@ function Forms({ sessions }: { sessions: Session[] }) {
     <>
       <Title>Forms</Title>
       {!f ? (
-        <Empty>No forms yet. They appear here as agents fill them.</Empty>
+        <Card>
+          <Empty>No forms yet. They appear here as agents fill them.</Empty>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-[12px]">
           <Card>

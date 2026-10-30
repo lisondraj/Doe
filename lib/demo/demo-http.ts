@@ -1,10 +1,10 @@
 /** Request and response helpers for the /api/demo routes. */
 import { NextResponse } from "next/server";
 
-import { DemoError } from "@/lib/demo/demo-engine";
+import { DemoError } from "@/lib/demo/demo-error";
 import type { DemoChannel } from "@/lib/demo/demo-types";
 
-const MAX_BODY = 100_000;
+const MAX_BODY = 32_000;
 
 export const CORS = {
   "Access-Control-Allow-Origin": "*",

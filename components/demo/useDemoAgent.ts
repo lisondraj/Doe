@@ -53,11 +53,11 @@ export function useDemoAgent() {
     return () => window.clearInterval(id);
   }, [token, load]);
 
-  const connect = useCallback(async (consent: DemoConsent, userName: string): Promise<Result> => {
+  const connect = useCallback(async (consent: DemoConsent, userName: string, check: { website: string; elapsedMs: number }): Promise<Result> => {
     const res = await fetch("/api/demo/v1/connect", {
       method: "POST",
       headers: HEADERS,
-      body: JSON.stringify({ agent_name: "Browser agent", user_name: userName, consent }),
+      body: JSON.stringify({ agent_name: "Browser agent", user_name: userName, consent, website: check.website, elapsed_ms: check.elapsedMs }),
     });
     const data = await res.json();
     if (!res.ok) return { ok: false, error: data.error ?? "Couldn't connect." };

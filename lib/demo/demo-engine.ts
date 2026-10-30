@@ -4,6 +4,8 @@
  * they behave the same.
  */
 import { ASSESSMENTS, isComplete } from "@/lib/demo/demo-assessments";
+import { DemoError } from "@/lib/demo/demo-error";
+import { checkMessage } from "@/lib/demo/demo-guard";
 import { BUNDLES, CLINIC, COMMS, DAYS, INTAKE_FIELDS, SERVICES, money } from "@/lib/demo/demo-clinic";
 import { conciergeReply, formsReply, negotiateReply } from "@/lib/demo/demo-replies";
 import type {
@@ -25,6 +27,11 @@ export const LIVE_MS = 2 * 60 * 1000;
 const AGENT_DISCOUNT = 0.05;
 const MAX_EVENTS = 300;
 const MAX_MESSAGES = 200;
+/** Per session, per hour: enough for a full booking many times over, not enough to flood the clinic. */
+export const MAX_ACTIONS_HOUR = 300;
+export const MAX_MESSAGES_HOUR = 40;
+/** The same message twice in a thread within this window is rejected as a repeat. */
+const REPEAT_MS = 30_000;
 
 export const DEFAULT_CONFIG: DemoConfig = {
   bookable: Object.fromEntries([...SERVICES, ...BUNDLES].map((s) => [s.id, s.id !== "virtual"])),
@@ -32,20 +39,15 @@ export const DEFAULT_CONFIG: DemoConfig = {
   autoConfirm: false,
 };
 
-export class DemoError extends Error {
-  constructor(
-    public status: number,
-    message: string,
-  ) {
-    super(message);
-  }
-}
+export { DemoError };
 
 const rand = (n: number) => Array.from({ length: n }, () => "abcdefghijklmnopqrstuvwxyz0123456789"[Math.floor(Math.random() * 36)]).join("");
 /** Time-ordered ids, so listing sessions by name lists them newest first. */
 export const newSessionId = () => `ses_${Date.now().toString(36).padStart(9, "0")}${rand(6)}`;
 export const newSecret = () => rand(32);
 const rid = (p: string) => `${p}${Date.now().toString(36)}${rand(5)}`;
+
+const CHANNEL_NAME: Record<DemoChannel, string> = { browser: "Browser", api: "API", mcp: "MCP" };
 
 export const THREADS: { id: DemoThreadId; title: string }[] = [
   { id: "concierge", title: "Clinic concierge" },
@@ -212,7 +214,7 @@ export function createSession(input: ConnectInput, now: Date): DemoSession {
   post(s, "concierge", { from: "clinic", by: "clinic-agent", text: `Brooks clinic agent here. Ask about treatment, timing or the visit.`, at });
   post(s, "negotiate", { from: "clinic", by: "clinic-agent", text: "Private pay, CAD. Propose a price and I'll check with Dr. Brooks.", at });
   post(s, "forms", { from: "clinic", by: "clinic-agent", text: "Needed before the first visit: intake, ID-Migraine, MIDAS, HIT-6 and ICHD-3 criteria.", at });
-  event(s, "agent", input.channel, "connected", `${agentName} connected via ${input.channel} for ${userName}`, at);
+  event(s, "agent", input.channel, "connected", `connected via ${CHANNEL_NAME[input.channel]} for ${userName}`, at);
   return s;
 }
 
@@ -270,6 +272,16 @@ export function applyAgentAction(input: DemoSession, action: AgentAction, ctx: C
   const ch = ctx.channel;
   const locked = s.booking.status === "requested" || s.booking.status === "confirmed";
 
+  const hour = at.slice(0, 13);
+  const usage = s.usage?.hour === hour ? { ...s.usage } : { hour, actions: 0, messages: 0 };
+  if (usage.actions >= MAX_ACTIONS_HOUR) throw new DemoError(429, "This session has hit its hourly action limit. Try again next hour.");
+  usage.actions += 1;
+  if (action?.type === "send_message") {
+    if (usage.messages >= MAX_MESSAGES_HOUR) throw new DemoError(429, "This session has hit its hourly message limit.");
+    usage.messages += 1;
+  }
+  s.usage = usage;
+
   switch (action?.type) {
     case "select_plan": {
       const plan = action.plan;
@@ -307,6 +319,9 @@ export function applyAgentAction(input: DemoSession, action: AgentAction, ctx: C
     case "send_message": {
       if (!THREAD_IDS.includes(action.thread)) throw new DemoError(400, "thread must be concierge, negotiate or forms.");
       const text = str(action.text, 2000, "text");
+      checkMessage(text);
+      const repeat = [...s.threads[action.thread]].reverse().find((m) => m.from === "agent");
+      if (repeat && repeat.text === text && now - Date.parse(repeat.at) < REPEAT_MS) throw new DemoError(409, "You just sent that message.");
       const sent = post(s, action.thread, { from: "agent", text, at });
       let reply: DemoMessage;
       if (action.thread === "concierge") reply = post(s, "concierge", { from: "clinic", by: "clinic-agent", text: conciergeReply(text, earliestOpen(slots, now)), at });
@@ -465,6 +480,7 @@ export function applyClinicAction(input: DemoSession, action: ClinicAction, ctx:
     case "send_message": {
       if (!THREAD_IDS.includes(action.thread)) throw new DemoError(400, "thread must be concierge, negotiate or forms.");
       const text = str(action.text, 2000, "text");
+      checkMessage(text);
       post(s, action.thread, { from: "clinic", by: "staff", text, at });
       event(s, "clinic", "clinic", "clinic_message", `Staff replied: ${text.slice(0, 120)}`, at);
       break;

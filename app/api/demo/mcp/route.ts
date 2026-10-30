@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { FLOW, MCP_TOOLS } from "@/lib/demo/demo-docs";
 import { type AgentAction, DemoError } from "@/lib/demo/demo-engine";
+import { clientIp, rateLimit } from "@/lib/demo/demo-guard";
 import { CORS } from "@/lib/demo/demo-http";
 import { agentAct, agentState, catalog, connect } from "@/lib/demo/demo-service";
 
@@ -16,7 +17,7 @@ const SERVER = { name: "doe-demo", title: "Doe · Dr. Brooks' Migraine Clinic", 
 
 type Rpc = { jsonrpc?: string; id?: string | number | null; method?: string; params?: Record<string, unknown> };
 
-async function callTool(name: string, args: Record<string, unknown>) {
+async function callTool(name: string, args: Record<string, unknown>, ip: string) {
   const { session_token, ...rest } = args;
   switch (name) {
     case "doe_connect":
@@ -26,7 +27,7 @@ async function callTool(name: string, args: Record<string, unknown>) {
         userName: rest.user_name,
         request: rest.request,
         consent: { terms: rest.consent_terms, phi: rest.consent_phi, connected: rest.stay_connected, network: rest.join_network },
-      });
+      }, ip);
     case "doe_clinic_info":
       return catalog();
     case "doe_get_session":
@@ -40,7 +41,7 @@ async function callTool(name: string, args: Record<string, unknown>) {
   }
 }
 
-async function handle(msg: Rpc): Promise<Record<string, unknown> | null> {
+async function handle(msg: Rpc, ip: string): Promise<Record<string, unknown> | null> {
   const id = msg.id ?? null;
   const ok = (result: unknown) => ({ jsonrpc: "2.0", id, result });
   const fail = (code: number, message: string) => ({ jsonrpc: "2.0", id, error: { code, message } });
@@ -64,7 +65,8 @@ async function handle(msg: Rpc): Promise<Record<string, unknown> | null> {
       if (typeof name !== "string") return fail(-32602, "params.name is required.");
       const args = (msg.params?.arguments ?? {}) as Record<string, unknown>;
       try {
-        const result = await callTool(name, args);
+        if (name === "doe_connect") rateLimit("connect", ip);
+        const result = await callTool(name, args, ip);
         return ok({ content: [{ type: "text", text: JSON.stringify(result, null, 2) }], structuredContent: result });
       } catch (error) {
         const message = error instanceof DemoError ? error.message : "Something went wrong. Try again.";
@@ -82,6 +84,15 @@ async function handle(msg: Rpc): Promise<Record<string, unknown> | null> {
 }
 
 export async function POST(request: Request) {
+  const ip = clientIp(request);
+  try {
+    rateLimit("mcp", ip);
+  } catch (error) {
+    return NextResponse.json({ jsonrpc: "2.0", id: null, error: { code: -32000, message: error instanceof Error ? error.message : "Too many requests." } }, { status: 429, headers: CORS });
+  }
+  if (Number(request.headers.get("content-length") ?? 0) > 32_000) {
+    return NextResponse.json({ jsonrpc: "2.0", id: null, error: { code: -32600, message: "Request body is too large." } }, { status: 413, headers: CORS });
+  }
   let body: unknown;
   try {
     body = await request.json();
@@ -89,8 +100,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error." } }, { status: 400, headers: CORS });
   }
   const batch = Array.isArray(body);
-  const messages = (batch ? body : [body]) as Rpc[];
-  const replies = (await Promise.all(messages.map((m) => handle(m)))).filter(Boolean);
+  const messages = ((batch ? body : [body]) as Rpc[]).slice(0, 10);
+  const replies = (await Promise.all(messages.map((m) => handle(m, ip)))).filter(Boolean);
   if (!replies.length) return new NextResponse(null, { status: 202, headers: CORS });
   return NextResponse.json(batch ? replies : replies[0], { headers: { ...CORS, "MCP-Protocol-Version": PROTOCOL } });
 }

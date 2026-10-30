@@ -70,6 +70,8 @@ export type DemoSession = {
   };
   threads: Record<DemoThreadId, DemoMessage[]>;
   events: DemoEvent[];
+  /** Actions and messages this hour, for the per-session quota. */
+  usage?: { hour: string; actions: number; messages: number };
 };
 
 /** A session as the clinic or a client sees it: no secret. */

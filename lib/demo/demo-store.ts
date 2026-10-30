@@ -119,3 +119,11 @@ export async function listSessions(limit = 60): Promise<DemoSession[]> {
   const cutoff = Date.now() - RETENTION_MS;
   return all.filter((s): s is DemoSession => Boolean(s) && Date.parse(s!.createdAt) > cutoff);
 }
+
+type ConnectCount = { total: number; ips: Record<string, number> };
+
+/** New sessions this hour, in total and by hashed IP. */
+export async function readConnectCount(hour: string): Promise<ConnectCount> {
+  return (await readJson<ConnectCount>(`guard/connect-${hour}.json`)) ?? { total: 0, ips: {} };
+}
+export const writeConnectCount = (hour: string, c: ConnectCount) => writeJson(`guard/connect-${hour}.json`, c);
