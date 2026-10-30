@@ -29,6 +29,32 @@
   color: inherit;
 }
 
+/* "All submissions are confidential.": small and quiet, with a lock. Left-aligned over the roles' filter bar; over the
+   form's submit button, it sits a little apart from the consent line. */
+.jobs-confidential {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.6rem 0.25rem;
+  color: rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.55);
+  font-size: 0.8rem;
+  letter-spacing: 0.005em;
+}
+
+.jobs-confidential svg {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+}
+
+.jobs-confidential--form {
+  margin: 1.4rem 0 0;
+}
+
+.jobs-confidential--form + .jobs-form__submit {
+  margin-top: 0.6rem;
+}
+
 /* ------------------------------------------------------------ the form */
 
 /* The light box of the role pages' "At a Glance" card: the title with a mail link beside it, then the form in three

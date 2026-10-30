@@ -21,9 +21,9 @@ export function jobsPayLabel(role: CareersRole) {
 export const JOBS_CONTACT_EMAIL = "james@doe.care";
 
 export const JOBS_COPY = {
-  title: "Founding Team",
+  title: "Let's Build",
   intro: [
-    "We're building our founding team.",
+    "We're assembling our founding team.",
     "Personal agents are about to change how every patient finds and reaches care, and only a handful of people will build the layer that makes it work. The roles below open soon. Be first in line.",
   ],
   rolesTitle: "Future Roles",
@@ -31,6 +31,8 @@ export const JOBS_COPY = {
   moreTitle: "More Future Roles",
   moreLink: "See All Future Roles",
   cta: "Indicate Your Interest",
+  /** Small, over the roles' filter bar and over the form's submit button. */
+  confidential: "All submissions are confidential.",
 } as const;
 
 export const JOBS_FORM_COPY = {

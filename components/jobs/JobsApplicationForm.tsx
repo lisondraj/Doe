@@ -16,6 +16,7 @@ import {
   type JobsCountry,
 } from "@/lib/jobs/jobs-copy";
 import { p22Mackinac } from "@/lib/home/fonts";
+import { JobsConfidential } from "@/components/jobs/JobsConfidential";
 
 type Status = { state: "idle" } | { state: "sending" } | { state: "sent"; name: string } | { state: "error"; message: string };
 
@@ -236,6 +237,7 @@ export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: strin
             </p>
           ) : null}
 
+          <JobsConfidential className="jobs-confidential--form" />
           <button type="submit" className="jobs-form__submit" disabled={status.state === "sending"}>
             {status.state === "sending" ? JOBS_FORM_COPY.sending : JOBS_FORM_COPY.submit}
           </button>

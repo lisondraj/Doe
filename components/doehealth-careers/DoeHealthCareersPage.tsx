@@ -29,6 +29,7 @@ import { inter, p22Mackinac } from "@/lib/home/fonts";
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
 import { JOBS_CONTACT_EMAIL, JOBS_COPY } from "@/lib/jobs/jobs-copy";
+import { JobsConfidential } from "@/components/jobs/JobsConfidential";
 
 const DESK2_PATH = "/doehealthdesk2";
 /** The footer still uses the legacy desk section anchors. */
@@ -85,6 +86,7 @@ function OpenRoles({ jobs }: { jobs: boolean }) {
   return (
     <div className="doehealth-careers__roles" id="roles">
       <h2 className={`doehealth-careers__roles-title ${p22Mackinac.className}`}>{jobs ? JOBS_COPY.rolesTitle : "Open Roles"}</h2>
+      {jobs ? <JobsConfidential /> : null}
       <div className="doehealth-careers__bar">
         <div className="doehealth-careers__filter">
           <CareersFilterDropdown label="Team" value={team} sections={TEAM_SECTIONS} onChange={setTeam} />
