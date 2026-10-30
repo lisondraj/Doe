@@ -17,7 +17,6 @@ import {
   CLINIC,
   FIELD_COUNT,
   HOURS,
-  ISSUES,
   LOCATIONS,
   OFFERS,
   PRICE_COUNT,
@@ -89,7 +88,7 @@ const PAGE_READS: Record<string, [string, string][]> = {
   pricing: [["price", "Deep Plane Facelift · $22,500"], ["price", "Rhinoplasty · $17,100"], ["consult", "$300 + HST"]],
   medspa: [["price", "BOTOX · $13/unit"], ["service", "Morpheus8 · $950"], ["service", "HALO · $1,500"]],
   staff: [["provider", "Isabel Middleman, PA-C"], ["provider", "Caroline Watson"], ["role", "Injectables"]],
-  locations: [["location", "7 St Thomas St, Suite 410"], ["location", "St. Thomas Surgical Centre"], ["privileges", "Lakeridge Health"]],
+  locations: [["location", "7 St Thomas St, Suite 410"], ["location", "7 St Thomas St, Suite 202"], ["hours", "Mon–Fri 8:30–4:30"]],
   facelift: [["provider", "Dr. Derek Ford"], ["provider", "Dr. Steven Hanna"], ["service", "Endoscopic mid facelift"]],
   contact: [["hours", "Mon–Fri 8:30–4:30"], ["phone", CLINIC.phone], ["booking", "Consult request form"]],
 };
@@ -116,24 +115,41 @@ function parsePrice(price: string) {
   return { from: Number(amount!.replace(/[^\d]/g, "")), ...(per ? { per } : {}) };
 }
 
+/** A category's services split into those with a listed price and those without, matching names loosely. */
+function splitGroup(group: string) {
+  const priced = PRICES.find((x) => x.group === group)?.items ?? [];
+  const names = priced.map((x) => x.name.toLowerCase());
+  const unpriced = (SERVICES.find((x) => x.group === group)?.items ?? []).filter((item) => {
+    const l = item.toLowerCase();
+    return !names.some((n) => n.includes(l) || l.includes(n));
+  });
+  return { priced, unpriced };
+}
+
 const DAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
 const AGENT = {
-  warnings: ISSUES.map((i) => ({ code: slug(i.title), detail: i.detail })),
   locations: {
-    locations: LOCATIONS.map((l) => ({ name: l.name, type: l.detail, address: `${l.address}, ${l.city}` })),
-    hours: Object.fromEntries(HOURS.map((h, i) => [DAY_KEYS[i], h.time ? "08:30-16:30" : null])),
+    locations: LOCATIONS.map((l) => ({
+      name: l.name,
+      type: l.detail,
+      address: `${l.address}, ${l.city}`,
+      hours: Object.fromEntries(HOURS.map((h, i) => [DAY_KEYS[i], h.time ? "08:30-16:30" : null])),
+    })),
     phone: "+1-416-925-7337",
     toll_free: "+1-888-925-7337",
   },
   providers: PROVIDERS.map((p) => ({ id: slug(p.name.split(",")[0]!), name: p.name, role: p.role, notes: p.fact })),
-  services: Object.fromEntries(SERVICES.map((g) => [slug(g.group), g.items.map(slug)])),
-  prices: {
+  services: {
     currency: "CAD",
     tax: "HST extra",
     basis: "starting_price",
-    consult: { price: 300, credited_toward_procedure_within_days: 90 },
-    items: PRICES.flatMap((g) => g.items.map((p) => ({ service: slug(p.name), ...parsePrice(p.price) }))),
+    categories: Object.fromEntries(
+      SERVICES.map((g) => {
+        const { priced, unpriced } = splitGroup(g.group);
+        return [slug(g.group), { priced: priced.map((p) => ({ service: slug(p.name), ...parsePrice(p.price) })), no_price_listed: unpriced.map(slug) }];
+      }),
+    ),
   },
   offers: OFFERS.map((o) => ({ id: slug(o.title), detail: o.detail })),
   booking: {
@@ -144,22 +160,7 @@ const AGENT = {
     form_fields: BOOKING.fields.map(slug),
     agent_booking: { enabled: false, reason: "not_activated" },
   },
-  tools: CLINIC_TOOLS.map((t) => ({ name: t.name, input: t.input, state: "ready", enabled: false })),
 };
-
-/** An example run: Muse can read the page, but its MCP and API calls stop at "not activated". */
-const AGENT_RUN: { who: "muse" | "doe"; text: string; tone?: "ok" | "stop" }[] = [
-  { who: "muse", text: `fetch https://${CLINIC.url}/llms.txt` },
-  { who: "doe", text: "200 · text/plain · agent page, openapi, mcp card", tone: "ok" },
-  { who: "muse", text: `fetch https://${CLINIC.url}/.well-known/mcp.json` },
-  { who: "doe", text: `200 · ${CLINIC_TOOLS.length} tools · pap applied · not_activated`, tone: "ok" },
-  { who: "muse", text: `GET ${BASE}` },
-  { who: "doe", text: `200 · MedicalClinic · ${FIELD_COUNT} fields`, tone: "ok" },
-  { who: "muse", text: 'get_prices({ service: "deep_plane_facelift" })' },
-  { who: "doe", text: "503 · mcp not_activated", tone: "stop" },
-  { who: "muse", text: 'request_consultation({ provider: "dr_derek_ford" })' },
-  { who: "doe", text: "403 · booking not_activated · clinic must claim", tone: "stop" },
-];
 
 /* ------------------------------------------------------------------ Page */
 
@@ -270,25 +271,35 @@ function Frame({ scrollRef, right, loader, children }: { scrollRef: RefObject<HT
 }
 
 function ViewSwitch({ view, onChange }: { view: View; onChange: (v: View) => void }) {
+  /** In Your View a pill opens what agents see; in Agent's View a clean arrow goes back. */
+  if (view === "you") {
+    return (
+      <button
+        type="button"
+        onClick={() => onChange("agent")}
+        className="group ic-fade h-[40px] pl-[16px] pr-[12px] flex items-center gap-[8px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap hover:bg-[#2A1C12] transition-colors duration-150"
+      >
+        What Agents See
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[2px]">
+          <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+    );
+  }
   return (
-    <div role="tablist" aria-label="View" className="ic-fade flex p-[3px] rounded-full bg-[#F4EEDF]">
-      {(
-        [
-          ["you", "Your View"],
-          ["agent", "Agent's View"],
-        ] as const
-      ).map(([id, label]) => (
-        <button
-          key={id}
-          type="button"
-          role="tab"
-          aria-selected={view === id}
-          onClick={() => onChange(id)}
-          className={`h-[34px] px-[12px] md:px-[16px] rounded-full text-[13px] font-[600] whitespace-nowrap transition-colors duration-150 ${view === id ? "bg-[#140C04] text-[#FFFCF1]" : "text-[#281910B3] hover:text-[#281910]"}`}
-        >
-          {label}
-        </button>
-      ))}
+    <div className="ic-fade flex items-center gap-[6px]">
+      <button
+        type="button"
+        onClick={() => onChange("you")}
+        aria-label="Back to your page"
+        title="Back"
+        className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#F4EEDF] text-[#281910] hover:bg-[#EEE6D6] transition-colors duration-150"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      <span className="h-[40px] px-[16px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap">Agent&apos;s View</span>
     </div>
   );
 }
@@ -329,20 +340,13 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
   const desktop = viewport.w >= 768;
   /** Short iPhone screens get a smaller sphere and one step's detail at a time. */
   const compact = viewport.h < (desktop ? 780 : 880);
-  const sphere = desktop ? (viewport.h < 860 ? 150 : 190) : viewport.h < 700 ? 96 : compact ? 120 : 156;
+  const sphere = desktop ? (viewport.h < 860 ? 104 : 132) : viewport.h < 700 ? 64 : compact ? 84 : 104;
 
   return (
     <div className="relative h-full w-full overflow-hidden">
       <ParsingBackdrop pageIndex={pageIndex} />
-      {/* Cream behind the column so the text stays readable over the page being read. */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: desktop
-            ? "radial-gradient(ellipse 27% 54% at 50% 55%, rgba(255,252,241,0.97) 0%, rgba(255,252,241,0.88) 55%, rgba(255,252,241,0.2) 100%)"
-            : "radial-gradient(ellipse 76% 54% at 50% 57%, rgba(255,252,241,0.96) 0%, rgba(255,252,241,0.86) 58%, rgba(255,252,241,0.18) 100%)",
-        }}
-      />
+      {/* The page being read stays behind as texture: washed cream and slightly blurred so the card reads clearly. */}
+      <div className="absolute inset-0 pointer-events-none bg-[rgba(255,252,241,0.66)] backdrop-blur-[2px]" />
       <div className={`relative z-10 ${HEADER}`}>
         <DoeMark />
         <button
@@ -356,84 +360,81 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
 
       <PageDirectory pageIndex={pageIndex} built={built} />
 
-      <div
-        className="absolute inset-x-0 bottom-0 h-[42%] pointer-events-none"
-        style={{ background: "linear-gradient(to top, rgba(255,252,241,0.95) 0%, rgba(255,252,241,0.7) 45%, rgba(255,252,241,0) 100%)" }}
-      />
-      <div className="absolute inset-x-0 bottom-0 top-[64px] md:top-[72px] z-10 flex flex-col items-center justify-center px-[16px] pb-[16px] md:pb-[28px]">
-        <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
-        <div className={`mt-[14px] text-[12px] leading-[16px] font-[600] uppercase tracking-[0.12em] ${MUTED}`}>{built ? "Ready" : "Loading"}</div>
-        <h1 className={`${DISPLAY} mt-[4px] text-center text-[30px] leading-[34px] md:text-[42px] md:leading-[46px] tracking-[-0.02em]`}>{CLINIC.name}</h1>
+      <div className="absolute inset-x-0 bottom-0 top-[64px] md:top-[72px] z-10 flex flex-col items-center justify-center px-[14px] pb-[14px] md:pb-[24px]">
+        {/* One card: sand shell, cream inside, lifted off the page behind it. */}
+        <div className="w-full max-w-[460px] rounded-[32px] bg-[#F4EEDF] p-[6px] border border-solid border-[#2819101F] shadow-[0_36px_90px_rgba(40,25,16,0.26),0_2px_8px_rgba(40,25,16,0.08)]">
+          <div className="rounded-[26px] bg-[#FFFCF1] px-[16px] pt-[16px] pb-[14px] md:px-[20px] md:pt-[20px] md:pb-[16px] flex flex-col items-center">
+            <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
+            <h1 className={`${DISPLAY} mt-[12px] text-center text-[27px] leading-[31px] md:text-[34px] md:leading-[38px] tracking-[-0.02em]`}>{CLINIC.name}</h1>
+            <p className="mt-[6px] text-center text-[15px] leading-[20px] font-[600] [text-wrap:balance]">Your clinic is not yet optimized for personal agents.</p>
+            <div className={`mt-[8px] text-center text-[14px] leading-[19px] ${SUB}`}>{built ? "Your Agentic Page Is Ready" : "Building Your Agentic Page"}</div>
 
-        {/* The clinic's URL in a fill box that fills as the build runs, with the page being read after the domain. */}
-        <div className="mt-[16px] w-full max-w-[420px]">
-          <div className="rounded-[20px] bg-[#F4EEDF] p-[5px] shadow-[0_10px_28px_rgba(40,25,16,0.10)]">
-          <div className="relative h-[46px] rounded-[15px] bg-[#FFFCF1] overflow-hidden">
-            <div className="absolute inset-y-0 left-0 bg-[#F4EEDF]" style={{ width: `${progress * 100}%`, transition: "width 120ms linear" }} />
-            <div className="relative h-full flex items-center gap-[10px] px-[13px]">
-              {built ? <Check on size={20} /> : <Spinner />}
-              <span className="min-w-[0px] truncate text-[15px] leading-[20px] font-[600]">
-                {CLINIC.url}
-                {!built && page.path !== "/" && <span className={`font-[500] ${MUTED}`}>{page.path}</span>}
-              </span>
-              <span className={`ml-auto shrink-0 tabular-nums text-[13px] font-[600] ${MUTED}`}>{Math.round(progress * 100)}%</span>
-            </div>
-          </div>
-          </div>
-          {/* Phones and tablets: the page directory as a row of chips under the URL; short screens skip it. */}
-          {!compact && (
-            <div className="lg:hidden mt-[8px] flex flex-wrap justify-center gap-[4px]">
-              {SOURCE_PAGES.map((p, i) => {
-                const read = built || i < pageIndex;
-                const now = !built && i === pageIndex;
-                return (
-                  <span
-                    key={p.path}
-                    className={`h-[22px] px-[8px] flex items-center gap-[4px] rounded-full text-[11px] font-[600] transition-colors duration-300 ${now ? "bg-[#140C04] text-[#FFFCF1]" : read ? "bg-[#F4EEDF] text-[#281910]" : "bg-[#F4EEDF99] text-[#28191066]"}`}
-                  >
-                    {read && "✓ "}
-                    {SHORT_LABEL[p.shot] ?? p.label}
+            {/* The clinic's URL in a box that fills as the build runs, with the page being read after the domain. */}
+            <div className="mt-[14px] w-full">
+              <div className="relative h-[46px] rounded-[16px] bg-[#F4EEDF] overflow-hidden">
+                <div className="absolute inset-y-0 left-0 bg-[#E9DFC9]" style={{ width: `${progress * 100}%`, transition: "width 120ms linear" }} />
+                <div className="relative h-full flex items-center gap-[10px] px-[14px]">
+                  {built ? <Check on size={20} /> : <Spinner />}
+                  <span className="min-w-[0px] truncate text-[15px] leading-[20px] font-[600]">
+                    {CLINIC.url}
+                    {!built && page.path !== "/" && <span className={`font-[500] ${MUTED}`}>{page.path}</span>}
                   </span>
-                );
-              })}
+                  <span className={`ml-auto shrink-0 tabular-nums text-[13px] font-[600] ${MUTED}`}>{Math.round(progress * 100)}%</span>
+                </div>
+              </div>
+              {/* Phones and tablets: the page directory as a row of chips under the URL; short screens skip it. */}
+              {!compact && (
+                <div className="lg:hidden mt-[8px] flex flex-wrap justify-center gap-[4px]">
+                  {SOURCE_PAGES.map((p, i) => {
+                    const read = built || i < pageIndex;
+                    const now = !built && i === pageIndex;
+                    return (
+                      <span
+                        key={p.path}
+                        className={`h-[22px] px-[8px] flex items-center gap-[4px] rounded-full text-[11px] font-[600] transition-colors duration-300 ${now ? "bg-[#140C04] text-[#FFFCF1]" : read ? "bg-[#F4EEDF] text-[#281910]" : "bg-[#F4EEDF99] text-[#28191066]"}`}
+                      >
+                        {read && "✓ "}
+                        {SHORT_LABEL[p.shot] ?? p.label}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        {/* Box in a box, like /demo's booking summary: steps on cream, inside sand. */}
-        <div className="mt-[14px] w-full max-w-[420px] rounded-[24px] bg-[#F4EEDF] p-[6px] shadow-[0_18px_44px_rgba(40,25,16,0.12)]">
-          <ol className="rounded-[20px] bg-[#FFFCF1] p-[6px]">
             {/* Finished steps stay small on top; the one in progress sits big at the bottom; what's next stays hidden. */}
-            {STEPS.map((step, i) => {
-              if (!built && i > stepIndex) return null;
-              if (built || i < stepIndex) {
+            <ol className="mt-[12px] w-full rounded-[20px] bg-[#F4EEDF] p-[6px]">
+              {STEPS.map((step, i) => {
+                if (!built && i > stepIndex) return null;
+                if (built || i < stepIndex) {
+                  return (
+                    <li key={step.title} className="ic-fade flex items-center gap-[9px] px-[10px] py-[4px]">
+                      <Check on size={16} />
+                      <span className={`min-w-[0px] truncate text-[13px] leading-[17px] font-[500] ${SUB}`}>{step.title}</span>
+                    </li>
+                  );
+                }
+                const stepProgress = (elapsed - STEP_STARTS[i]!) / step.ms;
                 return (
-                  <li key={step.title} className="ic-fade flex items-center gap-[9px] px-[10px] py-[4px]">
-                    <Check on size={16} />
-                    <span className={`min-w-[0px] truncate text-[13px] leading-[17px] font-[500] ${SUB}`}>{step.title}</span>
+                  <li key={step.title} className="ic-fade mt-[4px] flex items-start gap-[12px] px-[12px] py-[12px] rounded-[16px] bg-[#FFFCF1]">
+                    <span className="mt-[1px]">
+                      <Spinner size={22} />
+                    </span>
+                    <span className="min-w-[0px] grow">
+                      <span className="block text-[17px] leading-[22px] md:text-[19px] md:leading-[24px] font-[600]">{step.title}</span>
+                      {step.subs && <SubSteps subs={step.subs} progress={stepProgress} />}
+                    </span>
                   </li>
                 );
-              }
-              const stepProgress = (elapsed - STEP_STARTS[i]!) / step.ms;
-              return (
-                <li key={step.title} className="ic-fade mt-[4px] flex items-start gap-[12px] px-[12px] py-[12px] rounded-[16px] bg-[#F4EEDF]">
-                  <span className="mt-[1px]">
-                    <Spinner size={22} />
-                  </span>
-                  <span className="min-w-[0px] grow">
-                    <span className="block text-[17px] leading-[22px] md:text-[19px] md:leading-[24px] font-[600]">{step.title}</span>
-                    {step.subs && <SubSteps subs={step.subs} progress={stepProgress} />}
-                  </span>
+              })}
+              {built && (
+                <li className="ic-fade mt-[4px] flex items-center gap-[12px] px-[12px] py-[12px] rounded-[16px] bg-[#FFFCF1]">
+                  <Check on size={22} />
+                  <span className="text-[17px] leading-[22px] md:text-[19px] md:leading-[24px] font-[600]">Ready</span>
                 </li>
-              );
-            })}
-            {built && (
-              <li className="ic-fade mt-[4px] flex items-center gap-[12px] px-[12px] py-[12px] rounded-[16px] bg-[#F4EEDF]">
-                <Check on size={22} />
-                <span className="text-[17px] leading-[22px] md:text-[19px] md:leading-[24px] font-[600]">Ready</span>
-              </li>
-            )}
-          </ol>
+              )}
+            </ol>
+          </div>
         </div>
       </div>
 
@@ -563,15 +564,11 @@ function Shot({ shot, className, style, priority }: { shot: string; className?: 
 /* ------------------------------------------------------------------ Agent page */
 
 const NAV = [
-  { id: "locations", you: "Locations & Hours", agent: "locations" },
   { id: "providers", you: "Providers", agent: "providers" },
-  { id: "services", you: "Services", agent: "services" },
-  { id: "prices", you: "Prices", agent: "prices" },
+  { id: "locations", you: "Locations & Hours", agent: "locations" },
+  { id: "services", you: "Services & Pricing", agent: "services" },
   { id: "offers", you: "Offers & Financing", agent: "offers" },
   { id: "booking", you: "Booking", agent: "booking" },
-  { id: "files", you: "Agent Files", agent: "files" },
-  { id: "preview", you: "Agent Preview", agent: "tools" },
-  { id: "review", you: "Needs Review", agent: "warnings" },
 ] as const;
 
 type Claim = { email: string; status: "idle" | "sending" | "error"; error: string; claimed: string | null; plan: string | null; planSending: string | null };
@@ -597,6 +594,8 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   const emailRef = useRef<HTMLInputElement>(null);
   const activateRef = useRef<HTMLButtonElement>(null);
   const [claimInView, setClaimInView] = useState(true);
+  /** The section pills appear once Providers is on screen, and stay while the page scrolls down. */
+  const [pillsOn, setPillsOn] = useState(false);
   const [active, setActive] = useState<string>(NAV[0].id);
   /** Desktop puts the claim box in a sticky right column; narrower screens put it under the status panel. */
   const [wide, setWide] = useState(false);
@@ -634,6 +633,17 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
     return () => io.disconnect();
   }, [view, scrollRef]);
 
+  useEffect(() => {
+    const el = document.getElementById("providers");
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setPillsOn(entry!.isIntersecting || entry!.boundingClientRect.top < 0), { root: scrollRef.current, threshold: 0 });
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      setPillsOn(false);
+    };
+  }, [view, scrollRef]);
+
   const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   const goToClaim = () => {
     claimRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -657,24 +667,40 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 
   const claimed = Boolean(claim.claimed);
   const claimBox = (
-    <div ref={wide || agent ? claimRef : undefined} id={wide || agent ? "claim" : undefined} className="ic-rise scroll-mt-[124px]" style={{ animationDelay: "120ms" }}>
-      <ClaimBox agent={agent} claim={claim} setEmail={(email) => setClaim((c) => ({ ...c, email }))} emailRef={emailRef} onSubmit={submit} onPlan={choosePlan} />
+    <div ref={wide || agent ? claimRef : undefined} id={wide || agent ? "claim" : undefined} className="ic-rise scroll-mt-[124px] md:scroll-mt-[88px]" style={{ animationDelay: "120ms" }}>
+      {agent && !claimed ? (
+        <ConnectBox />
+      ) : (
+        <ClaimBox agent={agent} claim={claim} setEmail={(email) => setClaim((c) => ({ ...c, email }))} emailRef={emailRef} onSubmit={submit} onPlan={choosePlan} />
+      )}
     </div>
   );
 
   return (
     <>
-      <nav className="md:hidden sticky top-[64px] z-20 flex gap-[6px] overflow-x-auto px-[16px] py-[8px] bg-[#FFFCF1E6] backdrop-blur-[12px] ic-noscroll">
-        {NAV.map((n) => (
-          <button
-            key={n.id}
-            type="button"
-            onClick={() => go(n.id)}
-            className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] transition-colors duration-150 ${agent ? "font-mono text-[12.5px]" : ""} ${active === n.id ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}
-          >
-            {agent ? n.agent : n.you}
-          </button>
-        ))}
+      {/* iPhone: section pills, shown from the Providers section on down. Zero height, so the page doesn't shift. */}
+      <nav className="md:hidden sticky top-[64px] z-20 h-0" aria-hidden={!pillsOn}>
+        <div
+          className="absolute inset-x-0 top-0 flex gap-[6px] overflow-x-auto px-[16px] py-[8px] bg-[#FFFCF1E6] backdrop-blur-[12px] ic-noscroll"
+          style={{
+            opacity: pillsOn ? 1 : 0,
+            transform: pillsOn ? "none" : "translateY(-12px)",
+            pointerEvents: pillsOn ? "auto" : "none",
+            transition: `opacity 220ms ease, transform 300ms ${EASE}`,
+          }}
+        >
+          {NAV.map((n) => (
+            <button
+              key={n.id}
+              type="button"
+              tabIndex={pillsOn ? 0 : -1}
+              onClick={() => go(n.id)}
+              className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] transition-colors duration-150 ${agent ? "font-mono text-[12.5px]" : ""} ${active === n.id ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}
+            >
+              {agent ? n.agent : n.you}
+            </button>
+          ))}
+        </div>
       </nav>
 
       <div className="md:grid md:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)_340px] md:gap-[28px] md:px-[32px] max-w-[1440px] mx-auto pb-[96px] lg:pb-[40px]">
@@ -693,9 +719,9 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
             <button
               type="button"
               onClick={goToClaim}
-              className={`mt-[14px] h-[40px] px-[12px] flex items-center rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] ${agent ? "font-mono text-[12.5px]" : ""}`}
+              className="mt-[14px] h-[40px] px-[12px] flex items-center rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]"
             >
-              {agent ? "POST /claim" : "Activate"}
+              Activate
             </button>
           )}
         </aside>
@@ -703,21 +729,37 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         <main key={view} className="ic-fade min-w-0 flex flex-col gap-[28px] px-[16px] md:px-0 pt-[6px]">
           {agent ? (
           <div className="ic-rise flex flex-col gap-[14px]">
-            <div className="flex items-center gap-[16px]">
-              <IndexConvertSphere size={76} className="shrink-0" />
-              <div className="min-w-0">
-                <h1
-                  className={
-                    agent
-                      ? "font-mono text-[18px] leading-[24px] md:text-[22px] md:leading-[28px] font-[600] break-all"
-                      : `${DISPLAY} text-[26px] leading-[30px] md:text-[34px] md:leading-[38px] tracking-[-0.02em]`
-                  }
-                >
-                  {agent ? SLUG : CLINIC.name}
-                </h1>
-                <p className={`mt-[4px] text-[13px] leading-[18px] ${SUB} ${agent ? "font-mono text-[12px]" : ""}`}>
-                  {agent ? `${BASE} · schema.org/MedicalClinic` : `7 St Thomas St, Suite 410, Toronto · ${CLINIC.domain}`}
-                </p>
+            {/* The whole Agent's View is a preview: nothing here is live yet. */}
+            <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
+              <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[16px] pb-[16px]">
+                <div className="flex items-center justify-between gap-[14px]">
+                  <div className="min-w-0 text-[19px] leading-[26px] md:text-[22px] md:leading-[30px] font-[500] [text-wrap:balance]">
+                    We&apos;ve made your clinic readable to personal agents.
+                  </div>
+                  <OffSwitch />
+                </div>
+                <ActivateButton onClick={goToClaim} className="mt-[14px]" />
+              </div>
+            </div>
+            <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
+              <div className="rounded-[21px] bg-[#FFFCF1] px-[20px] py-[20px] md:px-[26px] md:py-[22px] text-left">
+                <div className="flex items-center gap-[16px]">
+                  <IndexConvertSphere size={64} className="shrink-0" />
+                  <div className="min-w-0">
+                    <h1
+                      className={
+                        agent
+                          ? "font-mono text-[14.5px] leading-[20px] sm:text-[18px] sm:leading-[24px] md:text-[22px] md:leading-[28px] font-[600]"
+                          : `${DISPLAY} text-[26px] leading-[30px] md:text-[34px] md:leading-[38px] tracking-[-0.02em]`
+                      }
+                    >
+                      {agent ? SLUG : CLINIC.name}
+                    </h1>
+                    <p className={`mt-[4px] text-[13px] leading-[18px] ${SUB} ${agent ? "font-mono text-[12px]" : ""}`}>
+                      {agent ? `${BASE} · schema.org/MedicalClinic` : `7 St Thomas St, Suite 410, Toronto · ${CLINIC.domain}`}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
             <AgentStatus claimed={claimed} />
@@ -726,7 +768,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
             <div className="ic-rise flex flex-col gap-[10px]">
               <Hero />
               {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
-              <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[124px]">
+              <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[124px] md:scroll-mt-[88px]">
                 <StatusPanel
                   activateRef={activateRef}
                   claimed={claim.claimed}
@@ -744,7 +786,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
           {/* Agent's View keeps its claim box here on iPhone; Your View shows it once claimed, for the plans. */}
           {!wide && (agent || claimed) && claimBox}
 
-          {agent ? <AgentSections /> : <YourSections claimed={claimed} />}
+          {agent ? <AgentSections /> : <YourSections claimed={claimed} onEdit={goToClaim} />}
 
         </main>
 
@@ -757,7 +799,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         onClick={goToClaim}
         tabIndex={!claimed && !claimInView ? 0 : -1}
         aria-hidden={claimed || claimInView}
-        className={`group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(20,12,4,0.25)] ${agent ? "font-mono text-[13px] tracking-[0.02em]" : "text-[12.5px] tracking-[0.04em]"}`}
+        className={`group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(20,12,4,0.25)] text-[12.5px] tracking-[0.04em]`}
         style={{
           bottom: "calc(max(8px, env(safe-area-inset-bottom)) + 10px)",
           transform: !claimed && !claimInView ? "none" : "translateY(calc(100% + 40px))",
@@ -767,7 +809,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         <span className="relative inline-flex shrink-0 items-center w-[36px] h-[20px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
           <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-active:translate-x-[16px]" />
         </span>
-        {agent ? "POST /claim · activate" : "Activate for Personal Agents"}
+        Activate for Personal Agents
       </button>
     </>
   );
@@ -819,6 +861,69 @@ function StatusGroup({ title, meta, children }: { title: string; meta?: string; 
   );
 }
 
+/** A small abstract street map with a pin, round and faded to nothing at the rim; `variant` picks a different map. */
+function LocationMap({ variant, size = 76 }: { variant: number; size?: number }) {
+  const v = variant % 2;
+  return (
+    <span
+      className="shrink-0 block"
+      style={{
+        width: size,
+        height: size,
+        WebkitMaskImage: "radial-gradient(circle at center, #000 46%, rgba(0,0,0,0.55) 62%, transparent 76%)",
+        maskImage: "radial-gradient(circle at center, #000 46%, rgba(0,0,0,0.55) 62%, transparent 76%)",
+      }}
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 100 100" width={size} height={size} className="block">
+        <rect width="100" height="100" fill="#EDE4D0" />
+        {v === 0 ? (
+          <>
+            <rect x="62" y="56" width="26" height="22" rx="5" fill="#DCE5D0" />
+            <g stroke="#FFFCF1" strokeLinecap="round" fill="none">
+              <path d="M-4 22H104M-4 48H104M-4 74H104" strokeWidth="6" />
+              <path d="M30 -4V104M62 -4V104" strokeWidth="6" />
+              <path d="M-4 92L104 28" strokeWidth="5" />
+            </g>
+          </>
+        ) : (
+          <>
+            <rect x="4" y="6" width="28" height="22" rx="5" fill="#DCE5D0" />
+            <rect x="60" y="68" width="30" height="20" rx="5" fill="#D9E3E6" />
+            <g stroke="#FFFCF1" strokeLinecap="round" fill="none">
+              <path d="M24 -4V104M52 -4V104M80 -4V104" strokeWidth="6" />
+              <path d="M-4 30H104M-4 64H104" strokeWidth="6" />
+              <path d="M-4 82Q40 58 104 78" strokeWidth="5" />
+            </g>
+          </>
+        )}
+        <g transform={v === 0 ? "translate(46 44)" : "translate(56 48)"}>
+          <ellipse cx="0" cy="13" rx="6" ry="2.2" fill="#281910" opacity="0.18" />
+          <path d="M0 12C-8 2 -9.5 -2 -9.5 -6.5a9.5 9.5 0 0 1 19 0C9.5 -2 8 2 0 12z" fill="#140C04" />
+          <circle cx="0" cy="-6.5" r="3.6" fill="#FFFCF1" />
+        </g>
+      </svg>
+    </span>
+  );
+}
+
+/** The black Activate button, the same in Your View, Agent's View and the status box. */
+function ActivateButton({ onClick, buttonRef, className = "" }: { onClick: () => void; buttonRef?: RefObject<HTMLButtonElement>; className?: string }) {
+  return (
+    <button
+      ref={buttonRef}
+      type="button"
+      onClick={onClick}
+      className={`group w-full h-[60px] flex items-center justify-center gap-[9px] sm:gap-[14px] px-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[12px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.03em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[#2A1C12] transition-colors duration-150 ${className}`}
+    >
+      <span className="relative inline-flex shrink-0 items-center w-[34px] h-[20px] sm:w-[40px] sm:h-[22px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
+        <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-hover:translate-x-[14px] sm:group-hover:translate-x-[18px]" />
+      </span>
+      Activate for Personal Agents
+    </button>
+  );
+}
+
 /** A switch in the Off position: the page is built but not live. */
 function OffSwitch({ size = "md" }: { size?: "sm" | "md" }) {
   const w = size === "md" ? 64 : 44;
@@ -839,33 +944,6 @@ function OffSwitch({ size = "md" }: { size?: "sm" | "md" }) {
   );
 }
 
-const TRACK: { label: string; done: boolean }[] = [
-  { label: "Built", done: true },
-  { label: "Published", done: false },
-  { label: "Live for Agents", done: false },
-];
-
-/** Three stages, the first filled and the rest dashed, so what's left to do is visible at a glance. */
-function Track() {
-  return (
-    <ol className="mt-[18px] grid grid-cols-3 gap-[6px]">
-      {TRACK.map((t, i) => (
-        <li key={t.label} className="flex flex-col gap-[7px] min-w-0">
-          <span
-            className="block h-[5px] rounded-full"
-            style={t.done ? { backgroundColor: "#140C04" } : { backgroundImage: "repeating-linear-gradient(90deg,#28191040 0 7px,transparent 7px 12px)" }}
-          />
-          <span className="flex items-center gap-[6px] min-w-0">
-            {t.done ? <Check on size={14} /> : <span className="shrink-0 w-[14px] h-[14px] rounded-full border-[1.5px] border-dashed border-[#28191059]" aria-hidden="true" />}
-            <span className={`truncate text-[12px] leading-[16px] font-[600] ${t.done ? "" : MUTED}`}>{t.label}</span>
-            {i === 1 && <span className="hidden sm:inline shrink-0 h-[16px] px-[6px] rounded-full bg-[#FCCFB8] text-[9.5px] leading-[16px] font-[700] uppercase tracking-[0.05em]">Next</span>}
-          </span>
-        </li>
-      ))}
-    </ol>
-  );
-}
-
 /**
  * The page's status, set as type: the whole box reads "not activated". Connections to Doe's MCP, API and the Personal
  * Agent Protocol are made but not live; the four agent files are ready. On iPhone the claim email sits at its foot.
@@ -877,35 +955,28 @@ function StatusPanel({ claimed, onClaim, form, activateRef }: { claimed: string 
     <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
       <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[18px] pb-[16px] md:px-[24px] md:pt-[22px] md:pb-[20px]">
         <div className="flex items-start justify-between gap-[14px]">
-          <h2 className={`${DISPLAY} text-[32px] leading-[36px] md:text-[40px] md:leading-[44px] tracking-[-0.02em] [text-wrap:balance]`}>
-            {claimed ? "Confirm Your Email" : "Personal Agents Cannot Read This Page Yet"}
+          <h2 className="text-[27px] leading-[32px] md:text-[34px] md:leading-[40px] font-[500] tracking-[-0.015em] [text-wrap:balance]">
+            {claimed ? "Confirm Your Email" : "We\u2019ve made your clinic readable to personal agents."}
           </h2>
           <span className="mt-[2px]">
             <OffSwitch />
           </span>
         </div>
         {claimed && <p className={`mt-[6px] text-[14.5px] leading-[21px] ${SUB}`}>Link sent to {claimed}.</p>}
-        <Track />
         {!claimed && (
           <p className="mt-[18px] max-w-[46ch] text-[17px] leading-[25px] md:text-[19px] md:leading-[27px] text-[#281910B3] [text-wrap:pretty]">
-            We&apos;ve converted your page into structured data that personal agents can find and read.
+            Claim this page to activate it and begin securing customers through personal agents.
           </p>
         )}
         {!claimed && (
-          <button
-            ref={activateRef}
-            type="button"
+          <ActivateButton
+            buttonRef={activateRef}
+            className="mt-[16px]"
             onClick={() => {
               setOpen(true);
               onClaim();
             }}
-            className="group mt-[16px] w-full h-[60px] flex items-center justify-center gap-[9px] sm:gap-[14px] px-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[12px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.03em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[#2A1C12] transition-colors duration-150"
-          >
-            <span className="relative inline-flex shrink-0 items-center w-[34px] h-[20px] sm:w-[40px] sm:h-[22px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
-              <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-hover:translate-x-[14px] sm:group-hover:translate-x-[18px]" />
-            </span>
-            Activate for Personal Agents
-          </button>
+          />
         )}
 
         {/* Settings and files in one inner sand box, greyed because none of it is live yet. */}
@@ -995,10 +1066,8 @@ function ClaimForm({
         {claim.status === "sending" ? (
           <>
             <Spinner size={16} light />
-            {agent ? "sending" : "Claiming"}
+            Claiming
           </>
-        ) : agent ? (
-          "POST /claim"
         ) : (
           "Claim free & activate"
         )}
@@ -1037,6 +1106,62 @@ function AgentStatus({ claimed }: { claimed: boolean }) {
 }
 
 /* ------------------------------------------------------------------ Claim */
+
+const CONNECT_TABS = ["MCP", "API", "PAP"] as const;
+
+/** What an agent runs to reach Ford through Doe's MCP and API, and to open a Personal Agent Protocol session for its user. */
+const CONNECT_CODE: Record<(typeof CONNECT_TABS)[number], string> = {
+  MCP: JSON.stringify(
+    {
+      mcpServers: {
+        [SLUG]: { type: "http", url: MCP_URL },
+      },
+    },
+    null,
+    2,
+  ) + `\n\n// tools: ${CLINIC_TOOLS.map((t) => t.name).join(", ")}`,
+  API: `curl ${API_ORIGIN}${BASE} \\
+  -H 'Authorization: Bearer $DOE_AGENT_KEY'
+
+curl -X POST ${API_ORIGIN}${BASE}/consultations \\
+  -H 'Authorization: Bearer $DOE_AGENT_KEY' \\
+  -H 'Content-Type: application/json' \\
+  -d '{"service":"deep-plane-facelift","provider":"derek-ford"}'`,
+  PAP: `curl -X POST ${API_ORIGIN}${BASE}/pap/sessions \\
+  -H 'Authorization: Bearer $DOE_AGENT_KEY' \\
+  -H 'Content-Type: application/json' \\
+  -d '{
+    "clinic": "${SLUG}",
+    "agent": { "name": "my-agent", "disclosed": true },
+    "consent": { "granted": true, "scope": ["read", "consult_request"] }
+  }'`,
+};
+
+/** Agent's View claim box: the code for an agent to connect to Ford's page on Doe's MCP and API and open a PAP session, all three stacked. */
+function ConnectBox() {
+  return (
+    <div className="rounded-[24px] bg-[#F4EEDF] p-[6px]">
+      <div className="rounded-[20px] bg-[#FFFCF1] p-[16px]">
+        <div className="flex items-start justify-between gap-[12px]">
+          <div className={`${DISPLAY} text-[21px] leading-[25px] tracking-[-0.01em] [text-wrap:balance]`}>Connections Are Ready, Not Yet Active</div>
+          <span className="mt-[1px]">
+            <OffSwitch />
+          </span>
+        </div>
+        <div className="mt-[14px] flex flex-col gap-[8px]">
+          {CONNECT_TABS.map((t) => (
+            <div key={t} className="rounded-[16px] bg-[#140C04] text-[#FFFCF1] overflow-hidden">
+              <div className="flex items-center h-[34px] px-[14px] border-b border-solid border-[#FFFCF114] font-mono text-[11.5px] text-[#FFFCF180]">
+                {t === "MCP" ? "mcp.json" : t === "API" ? "api" : "pap/sessions"}
+              </div>
+              <pre className="p-[14px] font-mono text-[11.5px] leading-[18px] whitespace-pre-wrap [overflow-wrap:anywhere]">{CONNECT_CODE[t]}</pre>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /** After claiming: the free page is theirs; paid plans let agents book. Prices from earlypreview's list. */
 const PLANS = [
@@ -1189,10 +1314,11 @@ function Row({ k, v, bold }: { k: string; v: string; bold?: boolean }) {
 /* ------------------------------------------------------------------ Your View */
 
 /** A titled section: its content in an outer sand box with cream boxes inside, as on /demo. `bare` is for content that brings its own box. */
-function Section({ id, title, meta, agent, bare, children }: { id: string; title: string; meta?: string; agent?: boolean; bare?: boolean; children: ReactNode }) {
+function Section({ id, title, meta, agent, bare, action, children }: { id: string; title: string; meta?: string; agent?: boolean; bare?: boolean; action?: ReactNode; children: ReactNode }) {
   return (
     <section id={id} className="scroll-mt-[124px] md:scroll-mt-[88px]">
-      <div className="mb-[12px] flex items-baseline justify-between gap-[12px]">
+      <div className="mb-[12px] flex items-center justify-between gap-[12px]">
+        {action && <span className="order-2 shrink-0">{action}</span>}
         {meta && <span className={`order-2 shrink-0 text-[12px] leading-[16px] font-[600] ${MUTED} ${agent ? "font-mono font-[500]" : ""}`}>{meta}</span>}
         <h2
           className={
@@ -1220,50 +1346,37 @@ function Pill({ on, onClick, children }: { on: boolean; onClick: () => void; chi
 }
 
 const BOX = "rounded-[18px] bg-[#FFFCF1] p-[14px]";
+
+/** A round pencil button; editing starts once the page is claimed, so it leads to the claim box. */
+function EditButton({ onClick, label, className = "" }: { onClick: () => void; label: string; className?: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title="Edit"
+      className={`shrink-0 w-[32px] h-[32px] flex items-center justify-center rounded-full bg-[#F4EEDF] text-[#281910B3] hover:bg-[#EEE6D6] hover:text-[#281910] transition-colors duration-150 ${className}`}
+    >
+      <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z M14.5 7.5l3 3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </button>
+  );
+}
 /** Provider disc colours, from /doehealthproduct's Index palette. */
 const AVATAR_DOTS = ["#E07B53", "#6E9A5B", "#B98A55", "#6F8FA3", "#C2A987", "#E8A585"];
 const OFFER_TAGS = ["Credit", "Package", "Included", "Financing"];
 
-function YourSections({ claimed }: { claimed: boolean }) {
-  const [serviceTab, setServiceTab] = useState(0);
-  const [priceTab, setPriceTab] = useState(0);
+function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => void }) {
   return (
     <>
-      <Section id="locations" title="Locations & Hours">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
-          {LOCATIONS.map((loc) => (
-            <div key={loc.name} className={BOX}>
-              <div className="text-[15px] leading-[20px] font-[600]">{loc.name}</div>
-              <div className={`mt-[2px] text-[12.5px] leading-[17px] ${MUTED}`}>{loc.detail}</div>
-              <div className="mt-[8px] text-[13.5px] leading-[19px]">
-                {loc.address}
-                <br />
-                {loc.city}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-[6px] rounded-[18px] bg-[#FFFCF1] px-[16px] py-[6px]">
-          {[
-            ["Monday – Friday", "8:30 a.m. – 4:30 p.m."],
-            ["Saturday – Sunday", "Not listed"],
-            ["Phone", CLINIC.phone],
-            ["Toll-free", CLINIC.tollFree],
-          ].map(([k, v]) => (
-            <div key={k} className="flex items-baseline justify-between gap-[16px] py-[10px] border-b border-solid border-[#2819100F] last:border-b-0">
-              <span className="shrink-0 text-[13.5px] text-[#281910B3]">{k}</span>
-              <span className={`text-right text-[13.5px] font-[600] ${v === "Not listed" ? MUTED : ""}`}>{v}</span>
-            </div>
-          ))}
-        </div>
-      </Section>
-
       <Section id="providers" title="Providers">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
           {PROVIDERS.map((p, i) => (
-            <div key={p.name} className={`${BOX} flex items-start gap-[14px]`}>
+            <div key={p.name} className={`${BOX} relative flex items-start gap-[14px]`}>
+              <EditButton onClick={onEdit} label={`Edit ${p.name}`} className="absolute top-[10px] right-[10px]" />
               <HalftoneDisc size={68} step={7.4} maxDot={3.2} color={AVATAR_DOTS[i % AVATAR_DOTS.length]} className="shrink-0" />
-              <div className="min-w-0">
+              <div className="min-w-0 pr-[34px]">
                 <div className="text-[15px] leading-[20px] font-[600]">{p.name}</div>
                 <div className={`mt-[1px] text-[12.5px] leading-[17px] ${MUTED}`}>{p.role}</div>
                 <div className="mt-[8px] text-[13px] leading-[18px] text-[#281910CC]">{p.fact}</div>
@@ -1273,50 +1386,113 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </div>
       </Section>
 
-      <Section id="services" title="Services">
-        <div className="flex gap-[6px] overflow-x-auto ic-noscroll">
-          {SERVICES.map((g, i) => (
-            <Pill key={g.group} on={serviceTab === i} onClick={() => setServiceTab(i)}>
-              {g.group} · {g.items.length}
-            </Pill>
-          ))}
-        </div>
-        <div key={serviceTab} className="ic-fade mt-[6px] rounded-[18px] bg-[#FFFCF1] p-[8px] flex flex-wrap gap-[6px]">
-          {SERVICES[serviceTab]!.items.map((s) => (
-            <span key={s} className="h-[34px] px-[13px] flex items-center rounded-full bg-[#F4EEDF] text-[13px] font-[500]">
-              {s}
-            </span>
-          ))}
-        </div>
-      </Section>
-
-      <Section id="prices" title="Prices">
-        <div className="flex gap-[6px] overflow-x-auto ic-noscroll">
-          {PRICES.map((g, i) => (
-            <Pill key={g.group} on={priceTab === i} onClick={() => setPriceTab(i)}>
-              {g.group} · {g.items.length}
-            </Pill>
-          ))}
-        </div>
-        <div key={priceTab} className="ic-fade mt-[6px] rounded-[18px] bg-[#FFFCF1] px-[16px] py-[6px] grid grid-cols-1 sm:grid-cols-2 sm:gap-x-[28px]">
-          {PRICES[priceTab]!.items.map((p) => (
-            <div key={p.name} className="flex items-baseline justify-between gap-[16px] py-[10px] border-b border-solid border-[#2819100F]">
-              <span className="text-[13.5px] text-[#281910CC]">{p.name}</span>
-              <span className="shrink-0 text-[13.5px] font-[700] tabular-nums">{p.price}</span>
+      <Section id="locations" title="Locations & Hours" action={<EditButton onClick={onEdit} label="Edit locations" />}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px] items-start">
+          {LOCATIONS.map((loc, i) => (
+            <div key={loc.name} className={BOX}>
+              <div className="flex items-center gap-[12px]">
+                <LocationMap variant={i} />
+                <div className="min-w-0">
+                  <div className="text-[15px] leading-[20px] font-[600]">{loc.name}</div>
+                  <div className={`mt-[2px] text-[12.5px] leading-[17px] ${MUTED}`}>{loc.detail}</div>
+                  <div className="mt-[6px] text-[13.5px] leading-[19px]">
+                    {loc.address}
+                    <br />
+                    {loc.city}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-[12px] rounded-[14px] bg-[#F4EEDF] px-[12px] pt-[8px] pb-[6px]">
+                <div className="flex items-center justify-between">
+                  <span className={`text-[11px] leading-[14px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>Hours</span>
+                  <EditButton onClick={onEdit} label={`Edit hours for ${loc.name}`} className="!bg-[#FFFCF1]" />
+                </div>
+                {[
+                  ["Monday – Friday", "8:30 a.m. – 4:30 p.m."],
+                  ["Saturday – Sunday", "Not listed"],
+                ].map(([k, v]) => (
+                  <div key={k} className="flex items-baseline justify-between gap-[12px] py-[7px]">
+                    <span className="shrink-0 text-[13px] text-[#281910B3]">{k}</span>
+                    <span className={`text-right text-[13px] font-[600] ${v === "Not listed" ? MUTED : ""}`}>{v}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
-        <p className={`px-[10px] pt-[10px] pb-[6px] text-[13px] leading-[18px] ${SUB}`}>
-          Consultation {CLINIC.consult}. {CLINIC.consultNote}
-        </p>
+        <div className="mt-[6px] rounded-[18px] bg-[#FFFCF1] px-[16px] py-[8px]">
+          {[
+            ["Phone", CLINIC.phone],
+            ["Toll-free", CLINIC.tollFree],
+          ].map(([k, v]) => (
+            <div key={k} className="flex items-baseline justify-between gap-[16px] py-[8px]">
+              <span className="shrink-0 text-[13.5px] text-[#281910B3]">{k}</span>
+              <span className="text-right text-[13.5px] font-[600]">{v}</span>
+            </div>
+          ))}
+        </div>
       </Section>
 
-      <Section id="offers" title="Offers & Financing">
+      <Section
+        id="services"
+        title="Services & Pricing"
+        action={
+          <button
+            type="button"
+            onClick={onEdit}
+            className="h-[32px] pl-[10px] pr-[14px] flex items-center gap-[6px] rounded-full bg-[#F4EEDF] text-[13px] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150"
+          >
+            <span className="text-[16px] leading-[16px] font-[500]">+</span>
+            Service
+          </button>
+        }
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[6px] items-start">
+          {SERVICES.map((g) => {
+            const { priced, unpriced } = splitGroup(g.group);
+            return (
+              <div key={g.group} className="rounded-[18px] bg-[#FFFCF1] p-[16px]">
+                <div className="flex items-center justify-between gap-[10px]">
+                  <div className="flex items-baseline gap-[8px]">
+                    <span className={`${DISPLAY} text-[20px] leading-[24px] tracking-[-0.01em]`}>{g.group}</span>
+                    <span className={`text-[12.5px] font-[600] ${MUTED}`}>{g.items.length}</span>
+                  </div>
+                  <EditButton onClick={onEdit} label={`Edit ${g.group} services`} />
+                </div>
+                <div className="mt-[8px] flex flex-col">
+                  {priced.map((x) => (
+                    <div key={x.name} className="flex items-baseline justify-between gap-[14px] py-[7px]">
+                      <span className="text-[13.5px] leading-[18px] text-[#281910CC]">{x.name}</span>
+                      <span className="shrink-0 text-[13.5px] font-[700] tabular-nums">{x.price}</span>
+                    </div>
+                  ))}
+                </div>
+                {unpriced.length > 0 && (
+                  <div className="mt-[12px]">
+                    <div className={`text-[11px] leading-[14px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>No Price Listed</div>
+                    <div className="mt-[8px] flex flex-wrap gap-[5px]">
+                      {unpriced.map((item) => (
+                        <span key={item} className="h-[28px] px-[11px] flex items-center rounded-full bg-[#F4EEDF] text-[12.5px] font-[500]">
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </Section>
+
+
+      <Section id="offers" title="Offers & Financing" action={<EditButton onClick={onEdit} label="Edit offers" />}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
           {OFFERS.map((o, i) => (
-            <div key={o.title} className={`${BOX} flex flex-col gap-[6px]`}>
+            <div key={o.title} className={`${BOX} relative flex flex-col gap-[6px]`}>
+              <EditButton onClick={onEdit} label={`Edit ${o.title}`} className="absolute top-[10px] right-[10px]" />
               <span className="self-start h-[20px] px-[8px] flex items-center rounded-full bg-[#F4EEDF] text-[10.5px] font-[700] text-[#281910B3]">{OFFER_TAGS[i]}</span>
-              <span className="text-[15px] leading-[20px] font-[600]">{o.title}</span>
+              <span className="pr-[40px] text-[15px] leading-[20px] font-[600]">{o.title}</span>
               <span className={`text-[13px] leading-[18px] ${SUB}`}>{o.detail}</span>
             </div>
           ))}
@@ -1350,110 +1526,28 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </div>
       </Section>
 
-      <Section id="files" title="Agent Files">
-        <div className="rounded-[18px] bg-[#FFFCF1] px-[16px] py-[4px]">
-          {AGENT_FILES.map((f) => (
-            <div key={f.path} className="flex items-center gap-[12px] py-[11px] border-b border-solid border-[#2819100F] last:border-b-0">
-              <Check on size={18} />
-              <span className="min-w-0 grow">
-                <span className="block font-mono text-[13px] leading-[18px] font-[600] break-all">
-                  {CLINIC.domain}
-                  {f.path}
-                </span>
-                <span className={`block mt-[1px] text-[12.5px] leading-[17px] ${SUB}`}>{f.what}</span>
-              </span>
-            </div>
-          ))}
-        </div>
-        <p className={`px-[10px] pt-[10px] pb-[6px] text-[13px] leading-[18px] ${SUB}`}>
-          Ready to publish. They go live when you activate the page.
-        </p>
-      </Section>
 
-      <Section id="preview" title="How Agents Answer" bare>
-        <MusePreview />
-      </Section>
-
-      <Section id="review" title="Needs Review">
-        <div className="rounded-[18px] bg-[#FFFCF1] px-[16px] py-[4px]">
-          {ISSUES.map((issue) => (
-            <div key={issue.title} className="py-[11px] border-b border-solid border-[#2819100F] last:border-b-0">
-              <div className="text-[14.5px] leading-[19px] font-[600]">{issue.title}</div>
-              <div className={`mt-[2px] text-[13px] leading-[18px] ${SUB}`}>{issue.detail}</div>
-            </div>
-          ))}
-        </div>
-        <p className={`px-[10px] pt-[10px] pb-[6px] text-[13px] leading-[18px] ${SUB}`}>
-          {claimed ? "Fix any of these by typing a sentence once you confirm your email." : "Agents repeat these to patients as they are. Once claimed, fix each by typing a sentence."}
-        </p>
-      </Section>
     </>
   );
 }
 
-function MusePreview() {
-  const [mode, setMode] = useState<"today" | "with">("with");
-  return (
-    <div className="rounded-[24px] bg-[#F4EEDF] p-[6px]">
-      <div className="flex p-[3px] gap-[2px]">
-        {(
-          [
-            ["today", "Today"],
-            ["with", "With your page on"],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setMode(id)}
-            className={`grow h-[34px] rounded-full text-[13px] font-[600] transition-colors duration-150 ${mode === id ? "bg-[#140C04] text-[#FFFCF1]" : "text-[#281910B3] hover:text-[#281910]"}`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <div className="mt-[4px] rounded-[20px] bg-[#FFFCF1] p-[14px] flex flex-col gap-[10px]">
-        <div className={`text-[12px] font-[600] ${MUTED}`}>A patient asks Muse</div>
-        <div className="self-end max-w-[88%] rounded-[18px] rounded-br-[6px] bg-[#F4EEDF] px-[14px] py-[10px] text-[14px] leading-[20px]">
-          I want a deep plane facelift in Toronto. Who&apos;s good, what does it cost, and can I see someone next week?
-        </div>
-        {mode === "today" ? (
-          <div
-            key="today"
-            className="ic-fade self-start max-w-[92%] rounded-[18px] rounded-bl-[6px] border-[1.5px] border-solid border-[#2819101F] px-[14px] py-[10px] text-[14px] leading-[20px] text-[#281910B3]"
-          >
-            Ford Plastic Surgery in Yorkville comes up for facelifts. I couldn&apos;t confirm their current prices or open consult times, so I can&apos;t book
-            for you. Their site asks you to fill out a form and wait for a call back, weekdays 8:30 to 4:30.
-          </div>
-        ) : (
-          <div key="with" className="ic-fade self-start max-w-[94%] flex flex-col gap-[6px]">
-            <div className="rounded-[18px] rounded-bl-[6px] bg-[#140C04] text-[#FFFCF1] px-[14px] py-[10px] text-[14px] leading-[20px]">
-              Ford Plastic Surgery, Bloor-Yorkville. Dr. Derek Ford was the first surgeon in Canada to offer the endoscopic mid facelift. A deep plane facelift
-              starts at $22,500 and includes 3 lymphatic drainage sessions. Consults are $300, credited if you book within 3 months.
-            </div>
-            <div className="rounded-[18px] bg-[#F4EEDF] p-[12px]">
-              <div className="text-[14px] leading-[18px] font-[600]">Consult · Dr. Derek Ford</div>
-              <div className={`text-[12.5px] leading-[17px] ${MUTED}`}>7 St Thomas St, Suite 410 · or virtual</div>
-              <div className="mt-[10px] flex gap-[6px]">
-                {["Tue 10:30", "Wed 2:00", "Fri 9:15"].map((t, i) => (
-                  <span key={t} className={`h-[32px] px-[12px] flex items-center rounded-full text-[13px] font-[600] ${i === 0 ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1]"}`}>
-                    {t}
-                  </span>
-                ))}
-              </div>
-              <div className={`mt-[10px] text-[12.5px] font-[600] ${MUTED}`}>Booking turns on when you claim</div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 /* ------------------------------------------------------------------ Agent's View */
 
-/** A dark response block: method and path on top, highlighted JSON below. */
+/** A dark response block: method and path on top, highlighted JSON below. A tall block doesn't scroll; what spills past the bottom edge fades out. */
 function Endpoint({ method, path, status, maxHeight, children }: { method: string; path: string; status: string; maxHeight?: number; children: ReactNode }) {
+  const body = useRef<HTMLPreElement>(null);
+  const [spills, setSpills] = useState(false);
+  useEffect(() => {
+    const el = body.current;
+    if (!el || !maxHeight) return;
+    const check = () => setSpills(el.scrollHeight > el.clientHeight + 2);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [maxHeight]);
+  const fade = spills ? "linear-gradient(to bottom, #000 calc(100% - 72px), transparent 100%)" : undefined;
   return (
     <div className="rounded-[22px] bg-[#140C04] text-[#FFFCF1] overflow-hidden font-mono">
       <div className="flex items-center gap-[10px] h-[44px] px-[16px] border-b border-solid border-[#FFFCF114] text-[12px]">
@@ -1461,7 +1555,11 @@ function Endpoint({ method, path, status, maxHeight, children }: { method: strin
         <span className="min-w-0 truncate text-[#FFFCF1CC]">{path}</span>
         <span className="ml-auto shrink-0 text-[#FFFCF180]">{status}</span>
       </div>
-      <pre className="overflow-auto ic-noscroll p-[16px] text-[12px] leading-[19px] whitespace-pre-wrap break-words" style={maxHeight ? { maxHeight } : undefined}>
+      <pre
+        ref={body}
+        className="overflow-hidden p-[16px] text-[12px] leading-[19px] whitespace-pre-wrap break-words"
+        style={{ ...(maxHeight ? { maxHeight } : {}), ...(fade ? { WebkitMaskImage: fade, maskImage: fade } : {}) }}
+      >
         {children}
       </pre>
     </div>
@@ -1503,41 +1601,11 @@ function AgentSections() {
   );
   return (
     <>
-      {block("locations", "locations", `${LOCATIONS.length} items`, AGENT.locations, 460)}
       {block("providers", "providers", `${PROVIDERS.length} items`, AGENT.providers, 460)}
-      {block("services", "services", `${SERVICE_COUNT} items`, AGENT.services, 460)}
-      {block("prices", "prices", `${PRICE_COUNT} items · CAD`, AGENT.prices, 460)}
+      {block("locations", "locations", `${LOCATIONS.length} items`, AGENT.locations, 460)}
+      {block("services", "services", `${SERVICE_COUNT} items · CAD`, AGENT.services, 460)}
       {block("offers", "offers", `${OFFERS.length} items`, AGENT.offers)}
       {block("booking", "booking", "agent_booking: off", AGENT.booking)}
-      <Section id="files" title="files" meta="ready · not_published" agent>
-        <div className="flex flex-col gap-[6px]">
-          {AGENT_FILES.map((f) => (
-            <Endpoint key={f.path} method="GET" path={`${CLINIC.domain}${f.path}`} status={f.kind === "text" ? "200 · text/plain" : "200 · json"} maxHeight={360}>
-              {f.kind === "text" ? String(f.body) : <Json value={f.body} />}
-            </Endpoint>
-          ))}
-        </div>
-      </Section>
-      <Section id="preview" title="tools" meta="mcp · ready · not_published" agent>
-        <div className="flex flex-col gap-[6px]">
-          <Endpoint method="MCP" path="tools/list" status={`${AGENT.tools.length} tools`} maxHeight={460}>
-            <Json value={AGENT.tools} />
-          </Endpoint>
-          <div className="rounded-[24px] bg-[#F4EEDF] p-[6px] font-mono">
-            <div className={`px-[10px] py-[8px] text-[12px] font-[600] ${MUTED}`}>example run · muse</div>
-            <div className="rounded-[20px] bg-[#FFFCF1] p-[14px] flex flex-col gap-[8px] text-[12.5px] leading-[18px]">
-              {AGENT_RUN.map((line, i) => (
-                <div key={i} className="flex gap-[10px]">
-                  <span className={`shrink-0 w-[34px] ${MUTED}`}>{line.who}</span>
-                  <span className={`shrink-0 ${MUTED}`}>{line.who === "muse" ? "→" : "←"}</span>
-                  <span className={`min-w-0 break-words ${line.tone === "stop" ? "text-[#B4532F] font-[600]" : line.tone === "ok" ? "font-[600]" : ""}`}>{line.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Section>
-      {block("review", "warnings", `${ISSUES.length} items`, AGENT.warnings)}
     </>
   );
 }

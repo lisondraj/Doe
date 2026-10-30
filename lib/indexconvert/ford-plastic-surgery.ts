@@ -21,7 +21,7 @@ export const CLINIC = {
   domain: "fordplasticsurgery.com",
   url: "www.fordplasticsurgery.com",
   headline: "Naturally Rejuvenated Results, Expertly Done",
-  kind: "Plastic surgery & nonsurgical aesthetics",
+  kind: "Plastic Surgery & Nonsurgical Aesthetics",
   area: "Bloor-Yorkville, Toronto",
   since: 2004,
   phone: "(416) 925-7337",
@@ -33,8 +33,6 @@ export const CLINIC = {
 export const LOCATIONS = [
   { name: "Ford Plastic Surgery", detail: "Surgical office · overnight stays", address: "7 St Thomas St, Suite 410", city: "Toronto, ON M5S 2B7" },
   { name: "St. Thomas Aesthetics", detail: "Medical spa", address: "7 St Thomas St, Suite 202", city: "Toronto, ON M5S 2B7" },
-  { name: "St. Thomas Surgical Centre", detail: "Accredited surgical centre, same building", address: "7 St Thomas St", city: "Toronto, ON" },
-  { name: "Lakeridge Health", detail: "Hospital privileges · reconstructive, OHIP", address: "1 Hospital Ct", city: "Oshawa, ON L1G 2B9" },
 ] as const;
 
 export const HOURS = [
