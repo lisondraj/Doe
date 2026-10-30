@@ -791,8 +791,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
           </div>
           ) : (
             <div className="ic-rise flex flex-col gap-[10px]">
-              <AboutDoe />
-              <h2 className={`${DISPLAY} mt-[14px] px-[4px] pb-[8px] text-left text-[clamp(27px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
+              <h2 className={`${DISPLAY} px-[4px] pb-[8px] text-left text-[clamp(27px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
                 We&apos;ve made your clinic
                 <br />
                 more discoverable
@@ -808,6 +807,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
                   onClaim={goToClaim}
                 />
               </div>
+              <AboutDoe />
             </div>
           )}
 
