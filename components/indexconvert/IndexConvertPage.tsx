@@ -339,8 +339,8 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
         className="absolute inset-0 pointer-events-none"
         style={{
           background: desktop
-            ? "radial-gradient(ellipse 27% 54% at 50% 55%, rgba(255,252,241,0.95) 0%, rgba(255,252,241,0.8) 55%, rgba(255,252,241,0.18) 100%)"
-            : "radial-gradient(ellipse 76% 54% at 50% 57%, rgba(255,252,241,0.94) 0%, rgba(255,252,241,0.76) 58%, rgba(255,252,241,0.16) 100%)",
+            ? "radial-gradient(ellipse 27% 54% at 50% 55%, rgba(255,252,241,0.97) 0%, rgba(255,252,241,0.88) 55%, rgba(255,252,241,0.2) 100%)"
+            : "radial-gradient(ellipse 76% 54% at 50% 57%, rgba(255,252,241,0.96) 0%, rgba(255,252,241,0.86) 58%, rgba(255,252,241,0.18) 100%)",
         }}
       />
       <div className={`relative z-10 ${HEADER}`}>
@@ -356,6 +356,10 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
 
       <PageDirectory pageIndex={pageIndex} built={built} />
 
+      <div
+        className="absolute inset-x-0 bottom-0 h-[42%] pointer-events-none"
+        style={{ background: "linear-gradient(to top, rgba(255,252,241,0.95) 0%, rgba(255,252,241,0.7) 45%, rgba(255,252,241,0) 100%)" }}
+      />
       <div className="absolute inset-x-0 bottom-0 top-[64px] md:top-[72px] z-10 flex flex-col items-center justify-center px-[16px] pb-[16px] md:pb-[28px]">
         <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
         <div className={`mt-[14px] text-[12px] leading-[16px] font-[600] uppercase tracking-[0.12em] ${MUTED}`}>{built ? "Ready" : "Loading"}</div>
@@ -363,7 +367,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
 
         {/* The clinic's URL in a fill box that fills as the build runs, with the page being read after the domain. */}
         <div className="mt-[16px] w-full max-w-[420px]">
-          <div className="rounded-[20px] bg-[#F4EEDF] p-[5px]">
+          <div className="rounded-[20px] bg-[#F4EEDF] p-[5px] shadow-[0_10px_28px_rgba(40,25,16,0.10)]">
           <div className="relative h-[46px] rounded-[15px] bg-[#FFFCF1] overflow-hidden">
             <div className="absolute inset-y-0 left-0 bg-[#F4EEDF]" style={{ width: `${progress * 100}%`, transition: "width 120ms linear" }} />
             <div className="relative h-full flex items-center gap-[10px] px-[13px]">
@@ -397,7 +401,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
         </div>
 
         {/* Box in a box, like /demo's booking summary: steps on cream, inside sand. */}
-        <div className="mt-[14px] w-full max-w-[420px] rounded-[24px] bg-[#F4EEDF] p-[6px]">
+        <div className="mt-[14px] w-full max-w-[420px] rounded-[24px] bg-[#F4EEDF] p-[6px] shadow-[0_18px_44px_rgba(40,25,16,0.12)]">
           <ol className="rounded-[20px] bg-[#FFFCF1] p-[6px]">
             {/* Finished steps stay small on top; the one in progress sits big at the bottom; what's next stays hidden. */}
             {STEPS.map((step, i) => {
@@ -559,7 +563,6 @@ function Shot({ shot, className, style, priority }: { shot: string; className?: 
 /* ------------------------------------------------------------------ Agent page */
 
 const NAV = [
-  { id: "review", you: "Needs Review", agent: "warnings" },
   { id: "locations", you: "Locations & Hours", agent: "locations" },
   { id: "providers", you: "Providers", agent: "providers" },
   { id: "services", you: "Services", agent: "services" },
@@ -568,6 +571,7 @@ const NAV = [
   { id: "booking", you: "Booking", agent: "booking" },
   { id: "files", you: "Agent Files", agent: "files" },
   { id: "preview", you: "Agent Preview", agent: "tools" },
+  { id: "review", you: "Needs Review", agent: "warnings" },
 ] as const;
 
 type Claim = { email: string; status: "idle" | "sending" | "error"; error: string; claimed: string | null; plan: string | null; planSending: string | null };
@@ -1225,20 +1229,6 @@ function YourSections({ claimed }: { claimed: boolean }) {
   const [priceTab, setPriceTab] = useState(0);
   return (
     <>
-      <Section id="review" title="Needs Review">
-        <div className="rounded-[18px] bg-[#FFFCF1] px-[16px] py-[4px]">
-          {ISSUES.map((issue) => (
-            <div key={issue.title} className="py-[11px] border-b border-solid border-[#2819100F] last:border-b-0">
-              <div className="text-[14.5px] leading-[19px] font-[600]">{issue.title}</div>
-              <div className={`mt-[2px] text-[13px] leading-[18px] ${SUB}`}>{issue.detail}</div>
-            </div>
-          ))}
-        </div>
-        <p className={`px-[10px] pt-[10px] pb-[6px] text-[13px] leading-[18px] ${SUB}`}>
-          {claimed ? "Fix any of these by typing a sentence once you confirm your email." : "Agents repeat these to patients as they are. Once claimed, fix each by typing a sentence."}
-        </p>
-      </Section>
-
       <Section id="locations" title="Locations & Hours">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
           {LOCATIONS.map((loc) => (
@@ -1383,6 +1373,20 @@ function YourSections({ claimed }: { claimed: boolean }) {
       <Section id="preview" title="How Agents Answer" bare>
         <MusePreview />
       </Section>
+
+      <Section id="review" title="Needs Review">
+        <div className="rounded-[18px] bg-[#FFFCF1] px-[16px] py-[4px]">
+          {ISSUES.map((issue) => (
+            <div key={issue.title} className="py-[11px] border-b border-solid border-[#2819100F] last:border-b-0">
+              <div className="text-[14.5px] leading-[19px] font-[600]">{issue.title}</div>
+              <div className={`mt-[2px] text-[13px] leading-[18px] ${SUB}`}>{issue.detail}</div>
+            </div>
+          ))}
+        </div>
+        <p className={`px-[10px] pt-[10px] pb-[6px] text-[13px] leading-[18px] ${SUB}`}>
+          {claimed ? "Fix any of these by typing a sentence once you confirm your email." : "Agents repeat these to patients as they are. Once claimed, fix each by typing a sentence."}
+        </p>
+      </Section>
     </>
   );
 }
@@ -1499,7 +1503,6 @@ function AgentSections() {
   );
   return (
     <>
-      {block("review", "warnings", `${ISSUES.length} items`, AGENT.warnings)}
       {block("locations", "locations", `${LOCATIONS.length} items`, AGENT.locations, 460)}
       {block("providers", "providers", `${PROVIDERS.length} items`, AGENT.providers, 460)}
       {block("services", "services", `${SERVICE_COUNT} items`, AGENT.services, 460)}
@@ -1534,6 +1537,7 @@ function AgentSections() {
           </div>
         </div>
       </Section>
+      {block("review", "warnings", `${ISSUES.length} items`, AGENT.warnings)}
     </>
   );
 }
