@@ -239,7 +239,7 @@ export function IndexConvertPage() {
 
   return (
     // The page mounts once the loader has faded, so the two never show through each other.
-    <Frame scrollRef={scrollRef} right={phase === "done" ? <ViewSwitch view={view} onChange={switchView} /> : null} loader={loader} mark={phase === "done"}>
+    <Frame scrollRef={scrollRef} right={phase === "done" ? <ViewSwitch view={view} onChange={switchView} /> : null} loader={loader} mark={phase === "done" || phase === "intro"}>
       {phase === "intro" && <Intro onStart={() => {
         setElapsed(0);
         setPhase("loading");
