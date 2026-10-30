@@ -32,7 +32,16 @@ import { DOEPHONE_READING_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, lora, p22Mackinac } from "@/lib/home/fonts";
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
-import { JOBS_ANY_ROLE, JOBS_COPY, JOBS_FORM_ID, JOBS_PATH, JOBS_PAY_NOTE, jobsPayLabel, jobsRolePath } from "@/lib/jobs/jobs-copy";
+import {
+  JOBS_ANY_ROLE,
+  JOBS_CONTACT_EMAIL,
+  JOBS_COPY,
+  JOBS_FORM_ID,
+  JOBS_PATH,
+  jobsPayLabel,
+  jobsRolePath,
+} from "@/lib/jobs/jobs-copy";
+import { JOBS_ABOUT_DOE } from "@/lib/jobs/jobs-roles";
 import { JobsApplicationForm } from "@/components/jobs/JobsApplicationForm";
 
 const DESK2_PATH = "/doehealthdesk2";
@@ -106,9 +115,9 @@ const BENEFITS_COLORS = { bg: "#FBF0D9", dot: "#E0AB62" };
 
 /**
  * Doe One: a bright gold band with the name in Lora and the claim, then the package as four category cards, two across.
- * Each card writes its benefits out as rows, with the figure in Lora at the end.
+ * Each card writes its benefits out as rows, with the figure in Lora at the end. `bandOnly` (/jobs) keeps just the band.
  */
-function Benefits() {
+function Benefits({ bandOnly = false }: { bandOnly?: boolean }) {
   return (
     <section className="doehealth-role__section doehealth-role__benefits" aria-labelledby="doehealth-role-benefits-title">
       <div className="doehealth-role__benefits-hero">
@@ -126,21 +135,23 @@ function Benefits() {
           </h2>
         </div>
       </div>
-      <div className="doehealth-role__benefits-groups">
-        {CAREERS_BENEFIT_GROUPS.map((group) => (
-          <div key={group.title} className="doehealth-role__benefits-group">
-            <h3 className={`doehealth-role__benefits-group-title ${p22Mackinac.className}`}>{group.title}</h3>
-            <ul className="doehealth-role__benefits-list">
-              {group.items.map((benefit) => (
-                <li key={benefit.name} className="doehealth-role__benefit">
-                  <span className="doehealth-role__benefit-name">{benefit.name}</span>
-                  <span className={`doehealth-role__benefit-figure ${lora.className}`}>{benefit.figure}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+      {bandOnly ? null : (
+        <div className="doehealth-role__benefits-groups">
+          {CAREERS_BENEFIT_GROUPS.map((group) => (
+            <div key={group.title} className="doehealth-role__benefits-group">
+              <h3 className={`doehealth-role__benefits-group-title ${p22Mackinac.className}`}>{group.title}</h3>
+              <ul className="doehealth-role__benefits-list">
+                {group.items.map((benefit) => (
+                  <li key={benefit.name} className="doehealth-role__benefit">
+                    <span className="doehealth-role__benefit-name">{benefit.name}</span>
+                    <span className={`doehealth-role__benefit-figure ${lora.className}`}>{benefit.figure}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
@@ -252,7 +263,7 @@ function RoleDock({
             </p>
           </div>
           <a href={jobs ? `#${JOBS_FORM_ID}` : careersApplyHref(role)} className="doehealth-role__dock-link">
-            Start Your Application
+            {jobs ? JOBS_COPY.cta : "Start Your Application"}
             <svg viewBox="0 0 16 16" fill="none" aria-hidden>
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -266,8 +277,8 @@ function RoleDock({
 /**
  * /careers/[slug]: one open role, its details, and the application.
  *
- * `jobs` is /jobs/[slug], the same role as an indication of interest: the /earlypreview nav, no pay figures ("$$$ +
- * Equity", discussed at interview), and "Start Your Application" at the foot in place of the hiring list.
+ * `jobs` is /jobs/[slug], the same role as an indication of interest: the /earlypreview nav, the /jobs role text, no pay
+ * figures, Doe One as its band only, and "Indicate Your Interest" above the other roles in place of the hiring list.
  */
 export function DoeHealthCareersRolePage({
   role,
@@ -358,9 +369,8 @@ export function DoeHealthCareersRolePage({
                 <CareersMetaItem>{role.pay}</CareersMetaItem>
               ) : null}
             </p>
-            {jobs ? <p className="jobs-role-note">{JOBS_COPY.roleNote}</p> : null}
             <a ref={ctaRef} href={jobs ? `#${JOBS_FORM_ID}` : careersApplyHref(role)} className="doehealth-role__cta">
-              Start Your Application
+              {jobs ? JOBS_COPY.cta : "Start Your Application"}
             </a>
           </header>
 
@@ -408,9 +418,7 @@ export function DoeHealthCareersRolePage({
                 {jobs ? (
                   <div>
                     <dt>Pay</dt>
-                    <dd>
-                      {jobsPayLabel(role)} ({JOBS_PAY_NOTE.toLowerCase()})
-                    </dd>
+                    <dd>{jobsPayLabel(role)}</dd>
                   </div>
                 ) : null}
                 {!jobs && role.pay ? (
@@ -427,16 +435,26 @@ export function DoeHealthCareersRolePage({
                 ) : null}
               </dl>
               <a href={jobs ? `#${JOBS_FORM_ID}` : careersApplyHref(role)} className="doehealth-role__cta doehealth-role__cta--block">
-                Start Your Application
+                {jobs ? JOBS_COPY.cta : "Start Your Application"}
               </a>
-              <p className="doehealth-role__glance-note">
-                Questions? <a href={`mailto:${CAREERS_APPLY_EMAIL}`}>{CAREERS_APPLY_EMAIL}</a>
-              </p>
+              {jobs ? (
+                <a className="doehealth-role__glance-note jobs-mail" href={`mailto:${JOBS_CONTACT_EMAIL}`}>
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden>
+                    <rect x="2.5" y="4.5" width="15" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M3.5 6l6.5 5 6.5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {JOBS_CONTACT_EMAIL}
+                </a>
+              ) : (
+                <p className="doehealth-role__glance-note">
+                  Questions? <a href={`mailto:${CAREERS_APPLY_EMAIL}`}>{CAREERS_APPLY_EMAIL}</a>
+                </p>
+              )}
             </aside>
 
             <div className="doehealth-role__body">
               <RoleSection title="About Doe">
-                {CAREERS_ABOUT_DOE.map((paragraph) => (
+                {(jobs ? JOBS_ABOUT_DOE : CAREERS_ABOUT_DOE).map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </RoleSection>
@@ -455,9 +473,18 @@ export function DoeHealthCareersRolePage({
               <RoleSection title="Nice to Have">
                 <RoleList items={role.bonus} />
               </RoleSection>
-              {role.student ? null : <Benefits />}
+              {role.student ? null : <Benefits bandOnly={jobs} />}
             </div>
           </div>
+
+          {jobs ? (
+            <div ref={inviteRef}>
+              <JobsApplicationForm
+                roleSlug={role.slug === "expression-of-interest" ? JOBS_ANY_ROLE.slug : role.slug}
+                sourcePath={jobsRolePath(role)}
+              />
+            </div>
+          ) : null}
 
           {others.length > 0 ? (
             <section className="doehealth-role__more" aria-labelledby="doehealth-role-more-title">
@@ -475,16 +502,11 @@ export function DoeHealthCareersRolePage({
             </section>
           ) : null}
 
-          <div ref={inviteRef}>
-            {jobs ? (
-              <JobsApplicationForm
-                roleSlug={role.slug === "expression-of-interest" ? JOBS_ANY_ROLE.slug : role.slug}
-                sourcePath={jobsRolePath(role)}
-              />
-            ) : (
+          {jobs ? null : (
+            <div ref={inviteRef}>
               <HiringList />
-            )}
-          </div>
+            </div>
+          )}
         </article>
 
         <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} markLink={!jobs} />

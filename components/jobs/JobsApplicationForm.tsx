@@ -5,12 +5,15 @@ import { type ChangeEvent, type FormEvent, type ReactNode, useState } from "reac
 import {
   JOBS_ANY_ROLE,
   JOBS_AUTHORIZATION_OPTIONS,
+  JOBS_CONTACT_EMAIL,
+  JOBS_COUNTRIES,
   JOBS_FORM_COPY,
   JOBS_FORM_ID,
   JOBS_RESUME_ACCEPT,
   JOBS_RESUME_MAX_BYTES,
   JOBS_ROLE_OPTIONS,
   JOBS_START_OPTIONS,
+  type JobsCountry,
 } from "@/lib/jobs/jobs-copy";
 import { p22Mackinac } from "@/lib/home/fonts";
 
@@ -28,20 +31,33 @@ function Field({ label, optional, wide, children }: { label: string; optional?: 
   );
 }
 
-function Select({ name, options, defaultValue }: { name: string; options: readonly { value: string; label: string }[]; defaultValue?: string }) {
+function Select({
+  name,
+  options,
+  defaultValue,
+  onChange,
+}: {
+  name: string;
+  options: readonly string[] | readonly { value: string; label: string }[];
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+}) {
   return (
     <span className="jobs-form__select">
-      <select name={name} required defaultValue={defaultValue ?? ""}>
+      <select name={name} required defaultValue={defaultValue ?? ""} onChange={(event) => onChange?.(event.currentTarget.value)}>
         {defaultValue ? null : (
           <option value="" disabled>
-            Choose one
+            Select
           </option>
         )}
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
+        {options.map((option) => {
+          const { value, label } = typeof option === "string" ? { value: option, label: option } : option;
+          return (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          );
+        })}
       </select>
       <svg viewBox="0 0 16 16" fill="none" aria-hidden>
         <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -50,21 +66,41 @@ function Select({ name, options, defaultValue }: { name: string; options: readon
   );
 }
 
+function MailIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden>
+      <rect x="2.5" y="4.5" width="15" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M3.5 6l6.5 5 6.5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function UploadIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M12 15V4M7.5 8.5 12 4l4.5 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 /**
- * "Start Your Application" at the foot of /jobs and every /jobs role: an indication of interest for the founding team.
- * The essentials, the links a technical team looks at (LinkedIn, GitHub, a portfolio), a résumé, and a short note. It
- * posts to /api/jobs/apply, which saves it to Supabase and emails James with the résumé attached.
+ * "Indicate Your Interest" on every /jobs role: the essentials, an address that opens once the country is chosen, the
+ * links a technical team looks at (LinkedIn, GitHub, a portfolio), a resume and a cover note. It posts to /api/jobs/apply,
+ * which saves it to Supabase and emails James with the resume attached.
  */
 export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: string; sourcePath: string }) {
   const [status, setStatus] = useState<Status>({ state: "idle" });
   const [resumeName, setResumeName] = useState<string | null>(null);
+  const [country, setCountry] = useState<JobsCountry | null>(null);
+  const address = country ? JOBS_COUNTRIES[country] : null;
 
   const onResume = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
     if (file && file.size > JOBS_RESUME_MAX_BYTES) {
       event.currentTarget.value = "";
       setResumeName(null);
-      setStatus({ state: "error", message: "Your résumé must be 4 MB or smaller." });
+      setStatus({ state: "error", message: "Your resume must be 4 MB or smaller." });
       return;
     }
     setResumeName(file?.name ?? null);
@@ -87,6 +123,7 @@ export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: strin
       }
       form.reset();
       setResumeName(null);
+      setCountry(null);
       setStatus({ state: "sent", name });
     } catch {
       setStatus({ state: "error", message: JOBS_FORM_COPY.error });
@@ -99,21 +136,10 @@ export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: strin
         <h2 id="jobs-form-title" className={`jobs-form__title ${p22Mackinac.className}`}>
           {JOBS_FORM_COPY.title}
         </h2>
-        <p className="jobs-form__subtitle">{JOBS_FORM_COPY.subtitle}</p>
-        <ol className="jobs-form__steps">
-          {JOBS_FORM_COPY.steps.map((step, index) => (
-            <li key={step.title}>
-              <span className={`jobs-form__step-num ${p22Mackinac.className}`}>{index + 1}</span>
-              <span>
-                <strong>{step.title}</strong>
-                {step.text}
-              </span>
-            </li>
-          ))}
-        </ol>
-        <p className="jobs-form__questions">
-          <a href="mailto:jobs@doe.care">{JOBS_FORM_COPY.questions}</a>
-        </p>
+        <a className="jobs-form__mail" href={`mailto:${JOBS_CONTACT_EMAIL}`}>
+          <MailIcon />
+          {JOBS_CONTACT_EMAIL}
+        </a>
       </header>
 
       {status.state === "sent" ? (
@@ -121,64 +147,80 @@ export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: strin
           {JOBS_FORM_COPY.thanks.replace("{name}", status.name)}
         </p>
       ) : (
-        <form className="jobs-form__form" onSubmit={onSubmit} noValidate={false}>
+        <form className="jobs-form__form" onSubmit={onSubmit}>
           <input type="hidden" name="sourcePath" value={sourcePath} />
           {/* Left empty by people; bots fill it. */}
           <input className="jobs-form__trap" type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden />
 
           <div className="jobs-form__grid">
             <p className="jobs-form__group">{JOBS_FORM_COPY.groups.about}</p>
-            <Field label="Full name">
+            <Field label="Full Name">
               <input type="text" name="fullName" autoComplete="name" required maxLength={200} />
             </Field>
-            <Field label="Email">
+            <Field label="Email Address">
               <input type="email" name="email" autoComplete="email" required maxLength={320} />
             </Field>
-            <Field label="Phone" optional>
+            <Field label="Phone Number" optional>
               <input type="tel" name="phone" autoComplete="tel" maxLength={60} />
             </Field>
-            <Field label="Where you're based">
-              <input type="text" name="location" placeholder="City, Country" autoComplete="address-level2" required maxLength={200} />
+            <Field label="Country">
+              <Select name="country" options={Object.keys(JOBS_COUNTRIES)} onChange={(value) => setCountry(value as JobsCountry)} />
             </Field>
+            {address ? (
+              <>
+                <Field label={address.regionLabel}>
+                  <Select key={country} name="region" options={address.regions} />
+                </Field>
+                <Field label="City">
+                  <input type="text" name="city" autoComplete="address-level2" required maxLength={120} />
+                </Field>
+                <Field label={address.postalLabel} optional>
+                  <input type="text" name="postalCode" autoComplete="postal-code" maxLength={12} />
+                </Field>
+              </>
+            ) : null}
+
             <p className="jobs-form__group">{JOBS_FORM_COPY.groups.role}</p>
-            <Field label="Role you're interested in" wide>
+            <Field label="Position of Interest" wide>
               <Select
                 name="role"
                 defaultValue={roleSlug ?? JOBS_ANY_ROLE.slug}
                 options={JOBS_ROLE_OPTIONS.map((option) => ({ value: option.slug, label: option.title }))}
               />
             </Field>
-            <Field label="When you could start">
-              <Select name="startTiming" options={JOBS_START_OPTIONS.map((value) => ({ value, label: value }))} />
+            <Field label="Availability">
+              <Select name="startTiming" options={JOBS_START_OPTIONS} />
             </Field>
-            <Field label="Work authorization">
-              <Select name="workAuthorization" options={JOBS_AUTHORIZATION_OPTIONS.map((value) => ({ value, label: value }))} />
+            <Field label="Work Authorization">
+              <Select name="workAuthorization" options={JOBS_AUTHORIZATION_OPTIONS} />
             </Field>
+
             <p className="jobs-form__group">{JOBS_FORM_COPY.groups.work}</p>
-            <Field label="LinkedIn" optional>
+            <Field label="LinkedIn Profile" optional>
               <input type="text" name="linkedinUrl" placeholder="linkedin.com/in/you" inputMode="url" maxLength={500} />
             </Field>
-            <Field label="GitHub" optional>
+            <Field label="GitHub Profile" optional>
               <input type="text" name="githubUrl" placeholder="github.com/you" inputMode="url" maxLength={500} />
             </Field>
-            <Field label="Portfolio or website" optional wide>
+            <Field label="Portfolio or Website" optional wide>
               <input type="text" name="portfolioUrl" placeholder="yoursite.com" inputMode="url" maxLength={500} />
             </Field>
-            <Field label="What would you build at Doe?" wide>
+            <Field label="Cover Note" wide>
               <textarea
                 name="note"
                 rows={5}
                 required
                 maxLength={4000}
-                placeholder="A few lines on the work you do best, and what you'd want to own here."
+                placeholder="Your relevant experience, and what you would want to own at Doe."
               />
             </Field>
             <div className="jobs-form__field jobs-form__field--wide">
-              <span className="jobs-form__label">Résumé</span>
-              <label className="jobs-form__file">
+              <span className="jobs-form__label">Resume</span>
+              <label className={`jobs-form__file${resumeName ? " has-file" : ""}`}>
                 <input type="file" name="resume" accept={JOBS_RESUME_ACCEPT} required onChange={onResume} />
-                <span className="jobs-form__file-button">{resumeName ? "Change file" : "Upload résumé"}</span>
-                <span className="jobs-form__file-name">{resumeName ?? "PDF or Word, up to 4 MB"}</span>
+                <UploadIcon />
+                <span className="jobs-form__file-button">{resumeName ? "Replace Resume" : "Upload Resume"}</span>
+                <span className="jobs-form__file-name">{resumeName ?? "PDF or Word document, up to 4 MB"}</span>
               </label>
             </div>
           </div>

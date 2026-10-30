@@ -28,8 +28,7 @@ import { DOEPHONE_READING_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
 import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
 import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
-import { JOBS_COPY, JOBS_PATH } from "@/lib/jobs/jobs-copy";
-import { JobsApplicationForm } from "@/components/jobs/JobsApplicationForm";
+import { JOBS_CONTACT_EMAIL, JOBS_COPY } from "@/lib/jobs/jobs-copy";
 
 const DESK2_PATH = "/doehealthdesk2";
 /** The footer still uses the legacy desk section anchors. */
@@ -114,7 +113,8 @@ function OpenRoles({ jobs }: { jobs: boolean }) {
       ) : (
         <p className="doehealth-careers__empty">
           Nothing open here yet. Write to{" "}
-          <a href={`mailto:${CAREERS_APPLY_EMAIL}`}>{CAREERS_APPLY_EMAIL}</a> and tell us what you would build.
+          <a href={`mailto:${jobs ? JOBS_CONTACT_EMAIL : CAREERS_APPLY_EMAIL}`}>{jobs ? JOBS_CONTACT_EMAIL : CAREERS_APPLY_EMAIL}</a> and
+          tell us what you would build.
         </p>
       )}
     </div>
@@ -125,7 +125,7 @@ function OpenRoles({ jobs }: { jobs: boolean }) {
  * /careers — the team, a few sections on how it works, and the open roles. Not linked from the nav or footer.
  *
  * `jobs` is /jobs, the same page as an indication of interest: the /earlypreview nav (no page links, "Contact James"),
- * the founding-team intro, no pay figures, and "Start Your Application" at the foot.
+ * the founding-team intro, no pay figures, and only the roles: no picture boxes and no form (each role page has it).
  */
 export function DoeHealthCareersPage({ initialVariant, jobs = false }: { initialVariant: DoeHealthDesk2Variant; jobs?: boolean }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
@@ -162,30 +162,34 @@ export function DoeHealthCareersPage({ initialVariant, jobs = false }: { initial
             ) : null}
           </header>
 
-          <DoeHealthBlogPlaceholder tone="clay" className="doehealth-careers__hero" pattern />
+          {/* /jobs goes straight from the intro to the roles. */}
+          {jobs ? null : (
+            <>
+              <DoeHealthBlogPlaceholder tone="clay" className="doehealth-careers__hero" pattern />
 
-          <div className="doehealth-careers__sections">
-            {CAREERS_TEAM_SECTIONS.map((section, index) => (
-              <article
-                key={section.title}
-                className={`doehealth-careers__section${index % 2 === 1 ? " doehealth-careers__section--flip" : ""}`}
-              >
-                <div className="doehealth-careers__section-copy">
-                  <h2 className={`doehealth-careers__section-title ${p22Mackinac.className}`}>{section.title}</h2>
-                  <p className="doehealth-careers__section-body">{section.body}</p>
-                </div>
-                <DoeHealthBlogPlaceholder
-                  tone={section.tone}
-                  className="doehealth-careers__section-art"
-                  pattern
-                  wave={section.wave}
-                />
-              </article>
-            ))}
-          </div>
+              <div className="doehealth-careers__sections">
+                {CAREERS_TEAM_SECTIONS.map((section, index) => (
+                  <article
+                    key={section.title}
+                    className={`doehealth-careers__section${index % 2 === 1 ? " doehealth-careers__section--flip" : ""}`}
+                  >
+                    <div className="doehealth-careers__section-copy">
+                      <h2 className={`doehealth-careers__section-title ${p22Mackinac.className}`}>{section.title}</h2>
+                      <p className="doehealth-careers__section-body">{section.body}</p>
+                    </div>
+                    <DoeHealthBlogPlaceholder
+                      tone={section.tone}
+                      className="doehealth-careers__section-art"
+                      pattern
+                      wave={section.wave}
+                    />
+                  </article>
+                ))}
+              </div>
+            </>
+          )}
 
           <OpenRoles jobs={jobs} />
-          {jobs ? <JobsApplicationForm sourcePath={JOBS_PATH} /> : null}
         </section>
 
         <DoeHealthDesk2InviteSection />

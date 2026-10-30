@@ -1,5 +1,7 @@
 import {
   JOBS_AUTHORIZATION_OPTIONS,
+  JOBS_COUNTRIES,
+  type JobsCountry,
   JOBS_RESUME_MAX_BYTES,
   JOBS_ROLE_OPTIONS,
   JOBS_START_OPTIONS,
@@ -60,7 +62,10 @@ function link(formData: FormData, name: string, label: string): string | null {
 function parse(formData: FormData): JobInterest {
   const fullName = text(formData, "fullName", 200);
   const email = text(formData, "email", 320).toLowerCase();
-  const location = text(formData, "location", 200);
+  const country = text(formData, "country", 40);
+  const region = text(formData, "region", 60);
+  const city = text(formData, "city", 120);
+  const postalCode = text(formData, "postalCode", 12);
   const roleSlug = text(formData, "role", 120);
   const startTiming = text(formData, "startTiming", 80);
   const workAuthorization = text(formData, "workAuthorization", 80);
@@ -69,16 +74,22 @@ function parse(formData: FormData): JobInterest {
 
   if (!fullName) throw new JobInterestInputError("Enter your name.");
   if (!EMAIL_PATTERN.test(email)) throw new JobInterestInputError("Enter a valid email.");
-  if (!location) throw new JobInterestInputError("Enter where you're based.");
-  if (!role) throw new JobInterestInputError("Choose the role you're interested in.");
+  if (!(country in JOBS_COUNTRIES)) throw new JobInterestInputError("Select your country.");
+  const address = JOBS_COUNTRIES[country as JobsCountry];
+  if (!(address.regions as readonly string[]).includes(region)) {
+    throw new JobInterestInputError(`Select your ${address.regionLabel.toLowerCase()}.`);
+  }
+  if (!city) throw new JobInterestInputError("Enter your city.");
+  if (!role) throw new JobInterestInputError("Select a position of interest.");
   if (!(JOBS_START_OPTIONS as readonly string[]).includes(startTiming)) {
-    throw new JobInterestInputError("Choose when you could start.");
+    throw new JobInterestInputError("Select your availability.");
   }
   if (!(JOBS_AUTHORIZATION_OPTIONS as readonly string[]).includes(workAuthorization)) {
-    throw new JobInterestInputError("Choose your work authorization.");
+    throw new JobInterestInputError("Select your work authorization.");
   }
-  if (!note) throw new JobInterestInputError("Tell us a little about what you'd build at Doe.");
-  if (formData.get("consent") !== "yes") throw new JobInterestInputError("Please confirm the note above the button.");
+  if (!note) throw new JobInterestInputError("Add a cover note.");
+  if (formData.get("consent") !== "yes") throw new JobInterestInputError("Confirm the statement above the button.");
+  const location = [city, region, country].join(", ") + (postalCode ? ` ${postalCode.toUpperCase()}` : "");
 
   return {
     fullName,
@@ -99,11 +110,11 @@ function parse(formData: FormData): JobInterest {
 
 function resumeFile(formData: FormData): { file: File; contentType: string } {
   const file = formData.get("resume");
-  if (!(file instanceof File) || file.size === 0) throw new JobInterestInputError("Attach your résumé.");
-  if (file.size > JOBS_RESUME_MAX_BYTES) throw new JobInterestInputError("Your résumé must be 4 MB or smaller.");
+  if (!(file instanceof File) || file.size === 0) throw new JobInterestInputError("Upload your resume.");
+  if (file.size > JOBS_RESUME_MAX_BYTES) throw new JobInterestInputError("Your resume must be 4 MB or smaller.");
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
   const contentType = RESUME_TYPES[ext];
-  if (!contentType) throw new JobInterestInputError("Your résumé must be a PDF or Word document.");
+  if (!contentType) throw new JobInterestInputError("Your resume must be a PDF or Word document.");
   return { file, contentType };
 }
 
@@ -131,9 +142,9 @@ async function notify(application: JobInterest, resume: { name: string; content:
       ["Name", application.fullName],
       ["Email", application.email],
       ["Phone", application.phone],
-      ["Based in", application.location],
-      ["Role", application.roleTitle],
-      ["Could start", application.startTiming],
+      ["Location", application.location],
+      ["Position", application.roleTitle],
+      ["Availability", application.startTiming],
       ["Work authorization", application.workAuthorization],
       ["LinkedIn", application.linkedinUrl],
       ["GitHub", application.githubUrl],
@@ -153,19 +164,19 @@ async function notify(application: JobInterest, resume: { name: string; content:
           return `<tr><td style="${cell}color:#9A8F82;">${escapeHtml(label)}</td><td style="${cell}">${shown}</td></tr>`;
         })
         .join("")}</table>`,
-      `<p style="font-family:Arial,sans-serif;font-size:13px;color:#9A8F82;margin-top:18px;">What they'd build at Doe</p>`,
+      `<p style="font-family:Arial,sans-serif;font-size:13px;color:#9A8F82;margin-top:18px;">Cover note</p>`,
       `<p style="font-family:Arial,sans-serif;font-size:14px;color:#1E343A;white-space:pre-wrap;">${escapeHtml(application.note)}</p>`,
-      `<p style="font-family:Arial,sans-serif;font-size:13px;color:#9A8F82;">Résumé attached. ${escapeHtml(when)} (Toronto)</p>`,
+      `<p style="font-family:Arial,sans-serif;font-size:13px;color:#9A8F82;">Resume attached. ${escapeHtml(when)} (Toronto)</p>`,
     ].join("");
     const plain = [
       `${application.fullName} sent an indication of interest for ${application.roleTitle}.`,
       "",
       ...filled.map(([label, value]) => `${label}: ${value}`),
       "",
-      "What they'd build at Doe:",
+      "Cover note:",
       application.note,
       "",
-      `Résumé attached. ${when} (Toronto)`,
+      `Resume attached. ${when} (Toronto)`,
     ].join("\n");
     const { error } = await getResendClient().emails.send({
       from: process.env.RESEND_FROM_EMAIL?.trim() || DEFAULT_FROM_EMAIL,
@@ -230,7 +241,7 @@ export async function submitJobInterest(formData: FormData): Promise<{ id: strin
     .upload(path, content, { contentType, upsert: false });
   if (uploadError) {
     await supabase.from("job_interest_applications").delete().eq("id", id);
-    throw new Error(uploadError.message || "Could not upload the résumé.");
+    throw new Error(uploadError.message || "Could not upload the resume.");
   }
 
   const emailed = await notify(application, { name: fileName, content });

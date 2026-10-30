@@ -1,7 +1,6 @@
 /**
- * /jobs: the /careers page and its role pages as an indication of interest. Doe is building its founding team and
- * gathering interest; nothing listed is a live opening, and anyone can ask to be considered as roles open. Pay is not
- * listed, only "$$$ + Equity", discussed at interview.
+ * /jobs: the /careers page and its role pages as an indication of interest. Doe is building its founding team; nothing
+ * listed is a live opening yet, and anyone can register interest as roles open. Pay is not listed in figures.
  */
 
 import { CAREERS_ROLES, type CareersRole } from "@/lib/doehealth/doehealth-careers";
@@ -15,48 +14,39 @@ export function jobsRolePath(role: CareersRole) {
 
 /** What a role pays, as /jobs shows it: no figures. Student terms are paid hourly and carry no equity. */
 export function jobsPayLabel(role: CareersRole) {
-  return role.student ? "$$$" : "$$$ + Equity";
+  return role.student ? "Paid Term" : "Competitive Salary + Equity";
 }
 
-export const JOBS_PAY_NOTE = "Discussed at interview";
+/** Where questions about /jobs go. */
+export const JOBS_CONTACT_EMAIL = "james@doe.care";
 
 export const JOBS_COPY = {
   title: "Founding Team",
   intro: [
-    "We're building our founding team and gathering interest.",
-    "None of these is a live opening yet. Tell us the role you'd want and a little about you, and we'll reach out as each one opens.",
+    "We're building our founding team.",
+    "Personal agents are about to change how every patient finds and reaches care, and only a handful of people will build the layer that makes it work. The roles below open soon. Be first in line.",
   ],
   rolesTitle: "Future Roles",
   backLabel: "All Future Roles",
   moreTitle: "More Future Roles",
   moreLink: "See All Future Roles",
-  /** Under a role's title: what this page is. */
-  roleNote: "Indication of interest. We're building our founding team and will reach out as this role opens.",
+  cta: "Indicate Your Interest",
 } as const;
 
-/** The start of the form: a short title and what it is. */
 export const JOBS_FORM_COPY = {
-  title: "Start Your Application",
-  subtitle: "An indication of interest for our founding team. It takes about three minutes, and we read every one.",
-  submit: "Submit Application",
+  title: "Indicate Your Interest",
+  submit: "Submit",
   sending: "Sending…",
   /** Shown in place of the form once it has gone through. `{name}` is the first name. */
-  thanks: "Thank you, {name}. We have your application and will be in touch as roles open.",
-  error: "Something went wrong sending it. Try again, or email jobs@doe.care.",
-  /** Beside the form on desktop, over it on iPhone: what happens after they send it. */
-  steps: [
-    { title: "Tell us about you", text: "The role you'd want, your links and your résumé." },
-    { title: "We read every one", text: "James and the team go through each application ourselves." },
-    { title: "We reach out as roles open", text: "If there's a fit, we'll set up a first conversation." },
-  ],
-  questions: "Questions? jobs@doe.care",
-  groups: { about: "About you", role: "The role", work: "Your work" },
+  thanks: "Thank you, {name}. We have your details and will be in touch as roles open.",
+  error: `Something went wrong sending it. Try again, or email ${JOBS_CONTACT_EMAIL}.`,
+  groups: { about: "Personal Information", role: "Position", work: "Experience" },
   consent:
-    "I understand this is an indication of interest for future hiring, not an application to a live opening, and that Doe may keep my details to contact me about roles.",
+    "I understand this registers my interest in future roles at Doe, and that Doe may keep my details to contact me about them.",
 } as const;
 
-/** "Not sure yet" sits at the top of the role choice; the rest are the listed roles. */
-export const JOBS_ANY_ROLE = { slug: "open", title: "Not sure yet — open to anything" } as const;
+/** The first choice in the position list; the rest are the listed roles. */
+export const JOBS_ANY_ROLE = { slug: "open", title: "Open to any role" } as const;
 
 export const JOBS_ROLE_OPTIONS: readonly { slug: string; title: string }[] = [
   JOBS_ANY_ROLE,
@@ -64,11 +54,11 @@ export const JOBS_ROLE_OPTIONS: readonly { slug: string; title: string }[] = [
 ];
 
 export const JOBS_START_OPTIONS = [
-  "Right away",
+  "Immediately",
   "Within 1–3 months",
-  "In 3–6 months",
-  "6+ months out",
-  "A co-op or internship term",
+  "Within 3–6 months",
+  "More than 6 months",
+  "Co-op or internship term",
 ] as const;
 
 export const JOBS_AUTHORIZATION_OPTIONS = [
@@ -77,6 +67,34 @@ export const JOBS_AUTHORIZATION_OPTIONS = [
   "Authorized in both",
   "Would need sponsorship",
 ] as const;
+
+/** The two countries roles are open to, and the address each asks for once chosen. */
+export const JOBS_COUNTRIES = {
+  "United States": {
+    regionLabel: "State",
+    postalLabel: "ZIP Code",
+    regions: [
+      "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware",
+      "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+      "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+      "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York",
+      "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+      "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
+      "West Virginia", "Wisconsin", "Wyoming",
+    ],
+  },
+  Canada: {
+    regionLabel: "Province or Territory",
+    postalLabel: "Postal Code",
+    regions: [
+      "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador",
+      "Northwest Territories", "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec",
+      "Saskatchewan", "Yukon",
+    ],
+  },
+} as const;
+
+export type JobsCountry = keyof typeof JOBS_COUNTRIES;
 
 /** The résumé types the private bucket takes. */
 export const JOBS_RESUME_ACCEPT = ".pdf,.doc,.docx";

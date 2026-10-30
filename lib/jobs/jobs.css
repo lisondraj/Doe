@@ -29,19 +29,10 @@
   color: inherit;
 }
 
-/* Under a role's title. */
-.jobs-role-note {
-  max-width: 34rem;
-  margin: 0.9rem 0 0;
-  color: rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.62);
-  font-size: 0.95rem;
-  line-height: 1.45;
-}
-
 /* ------------------------------------------------------------ the form */
 
-/* The light box of the role pages' "At a Glance" card: the title, what happens next and a questions line on the left,
-   the form on the right, in three short groups. Stacked on iPhone. */
+/* The light box of the role pages' "At a Glance" card: the title with a mail link beside it, then the form in three
+   short groups. */
 .jobs-form {
   --jobs-box: #f4eedf;
   --jobs-field: #fffcf1;
@@ -49,22 +40,22 @@
   --jobs-line: rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.12);
   --jobs-quiet: rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.58);
   box-sizing: border-box;
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.25fr);
-  gap: clamp(2rem, 5vw, 4.5rem);
   max-width: 72rem;
   margin: clamp(4rem, 10vh, 6rem) auto 0;
   padding: clamp(2rem, 5vw, 3.5rem);
   border-radius: 22px;
   background: var(--jobs-box);
   color: var(--jobs-ink);
-  scroll-margin-top: calc(var(--desk2-nav-clearance, 8.35rem) + 1.5rem);
+  scroll-margin-top: calc(var(--desk2-nav-clearance, 8.35rem) + var(--doehealth-role-dock-h, 0px) + 1.5rem);
 }
 
 .jobs-form__head {
-  align-self: start;
-  position: sticky;
-  top: calc(var(--desk2-nav-clearance, 8.35rem) + 1.5rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  margin-bottom: clamp(1.75rem, 4vh, 2.5rem);
 }
 
 .jobs-form__title {
@@ -76,65 +67,33 @@
   line-height: 1;
 }
 
-.jobs-form__subtitle {
-  margin: 0.9rem 0 0;
-  color: var(--jobs-quiet);
-  font-size: 1rem;
-  line-height: 1.5;
+/* A mail icon and the address, quiet until hovered. Used in the form's head and the role's "At a Glance" card. */
+.jobs-form__mail,
+.jobs-mail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--jobs-quiet, rgb(20 12 4 / 0.58));
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: color 160ms ease;
 }
 
-.jobs-form__steps {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin: 1.75rem 0 0;
-  padding: 1.5rem 0 0;
-  border-top: 1px solid var(--jobs-line);
-  list-style: none;
-}
-
-.jobs-form__steps li {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.85rem;
-  color: var(--jobs-quiet);
-  font-size: 0.92rem;
-  line-height: 1.45;
-}
-
-.jobs-form__steps strong {
-  display: block;
-  color: var(--jobs-ink);
-  font-weight: 500;
-}
-
-.jobs-form__step-num {
-  display: grid;
-  place-items: center;
+.jobs-form__mail svg,
+.jobs-mail svg {
   flex-shrink: 0;
-  width: 1.85rem;
-  height: 1.85rem;
-  border-radius: 999px;
-  background: var(--jobs-field);
-  color: var(--jobs-ink);
-  font-size: 1rem;
-  line-height: 1;
+  width: 18px;
+  height: 18px;
 }
 
-.jobs-form__questions {
-  margin: 1.5rem 0 0;
-  font-size: 0.9rem;
+.jobs-form__mail:hover,
+.jobs-mail:hover {
+  color: var(--jobs-ink, #281910);
 }
 
-.jobs-form__questions a {
-  color: var(--jobs-quiet);
-  text-decoration: underline;
-  text-decoration-color: var(--jobs-line);
-  text-underline-offset: 0.2em;
-}
-
-.jobs-form__questions a:hover {
-  color: var(--jobs-ink);
+a.doehealth-role__glance-note.jobs-mail {
+  display: flex;
+  justify-content: center;
 }
 
 .jobs-form__form {
@@ -252,24 +211,34 @@
   pointer-events: none;
 }
 
-/* The résumé: a quiet drop area with a small dark button and the chosen file's name beside it. */
+/* The resume: a large drop area with an upload icon, a small dark button and the chosen file's name under it. */
 .jobs-form__file {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.85rem;
-  min-height: 3.4rem;
-  padding: 0.45rem;
-  border: 1px dashed rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.25);
-  border-radius: 12px;
+  justify-content: center;
+  gap: 0.7rem;
+  min-height: 11rem;
+  padding: 1.5rem;
+  border: 1.5px dashed rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.25);
+  border-radius: 14px;
   background: var(--jobs-field);
+  text-align: center;
   cursor: pointer;
-  transition: border-color 160ms ease;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
 }
 
 .jobs-form__file:hover,
 .jobs-form__file:focus-within {
   border-color: var(--jobs-ink);
+}
+
+.jobs-form__file.has-file {
+  border-style: solid;
+  border-color: var(--jobs-line);
 }
 
 .jobs-form__file input {
@@ -281,20 +250,25 @@
   cursor: pointer;
 }
 
+.jobs-form__file > svg {
+  width: 28px;
+  height: 28px;
+  color: var(--jobs-quiet);
+}
+
 .jobs-form__file-button {
-  flex-shrink: 0;
-  padding: 0.55rem 0.95rem;
-  border-radius: 9px;
+  padding: 0.6rem 1.1rem;
+  border-radius: 10px;
   background: var(--jobs-ink);
   color: #fffcf1;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
 }
 
 .jobs-form__file-name {
-  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   color: var(--jobs-quiet);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -379,17 +353,6 @@
   clip: rect(0 0 0 0);
   opacity: 0;
   pointer-events: none;
-}
-
-@media (max-width: 899px) {
-  .jobs-form {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2rem;
-  }
-
-  .jobs-form__head {
-    position: static;
-  }
 }
 
 @media (max-width: 767px) {
