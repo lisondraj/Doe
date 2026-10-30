@@ -756,7 +756,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
       >
         <span className={`flex flex-col grow min-w-0 ${agent ? "font-mono" : ""}`}>
           <span className="truncate text-[12px] leading-[16px] text-[#FFFCF1A6]">{agent ? "status" : CLINIC.domain}</span>
-          <span className={`truncate font-[700] ${agent ? "text-[14px] leading-[20px]" : "text-[16px] leading-[20px]"}`}>{agent ? "ready · not_published" : "Ready, Not Live Yet"}</span>
+          <span className={`truncate font-[700] ${agent ? "text-[14px] leading-[20px]" : "text-[16px] leading-[20px]"}`}>{agent ? "ready · not_published" : "Agents Cannot Read It Yet"}</span>
         </span>
         <button
           type="button"
@@ -875,7 +875,7 @@ function StatusPanel({ claimed, onClaim, form }: { claimed: string | null; onCla
       <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[18px] pb-[16px] md:px-[24px] md:pt-[22px] md:pb-[20px]">
         <div className="flex items-start justify-between gap-[14px]">
           <h2 className={`${DISPLAY} text-[26px] leading-[30px] md:text-[30px] md:leading-[34px] tracking-[-0.02em] [text-wrap:balance]`}>
-            {claimed ? "Confirm Your Email" : "Ready, Not Yet Live for Personal Agents"}
+            {claimed ? "Confirm Your Email" : "Personal Agents Cannot Read This Page Yet"}
           </h2>
           <span className="mt-[2px]">
             <OffSwitch />
