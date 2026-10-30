@@ -1,14 +1,9 @@
-/* /indexconvert — loader and agent page. Tokens come from .doehealth-product-page (doehealthproduct.css). */
+/* /indexconvert — loader and agent page, in /demo's frame. Tokens come from .doehealth-product-page (doehealthproduct.css). */
 
-.indexconvert-page {
-  font-family: var(--font-dm-sans), "DM Sans", system-ui, sans-serif;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Fades every edge of the site screenshots into the page so they read as a backdrop, not a frame. */
+/* Fades every edge of the site screenshots into the cream box, so they read as a backdrop, not a frame. */
 .indexconvert-page .ic-corner-fade {
-  -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 46%, #000 38%, rgba(0, 0, 0, 0.55) 62%, transparent 92%);
-  mask-image: radial-gradient(ellipse 72% 68% at 50% 46%, #000 38%, rgba(0, 0, 0, 0.55) 62%, transparent 92%);
+  -webkit-mask-image: radial-gradient(ellipse 74% 70% at 50% 46%, #000 40%, rgba(0, 0, 0, 0.5) 64%, transparent 94%);
+  mask-image: radial-gradient(ellipse 74% 70% at 50% 46%, #000 40%, rgba(0, 0, 0, 0.5) 64%, transparent 94%);
 }
 
 /* The page being read slides up while the scan line passes over it. */
@@ -22,20 +17,20 @@
   to { top: 100%; }
 }
 
-/* Above the scan line the page shows as parsed: warm, crisp, and outlined. */
+/* Above the scan line the page shows in full colour: read. Below it stays grey: not yet read. */
 @keyframes ic-reveal {
   from { clip-path: inset(0 0 100% 0); }
   to { clip-path: inset(0 0 0 0); }
 }
 
 @keyframes ic-chip {
-  0% { opacity: 0; transform: translateY(8px) scale(0.96); }
+  0% { opacity: 0; transform: translateY(6px); }
   14%, 82% { opacity: 1; transform: none; }
-  100% { opacity: 0; transform: translateY(-4px); }
+  100% { opacity: 0; }
 }
 
 @keyframes ic-rise {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }
 }
 
@@ -48,35 +43,22 @@
   to { transform: rotate(360deg); }
 }
 
-@keyframes ic-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
-
-/* Light that runs along the filled part of the URL box. */
-@keyframes ic-sheen {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(260%); }
-}
-
 .indexconvert-page .ic-read { animation: ic-read var(--ic-slot) cubic-bezier(0.45, 0, 0.3, 1) forwards; }
 .indexconvert-page .ic-scan { animation: ic-scan var(--ic-slot) cubic-bezier(0.45, 0, 0.3, 1) forwards; }
 .indexconvert-page .ic-reveal { animation: ic-reveal var(--ic-slot) cubic-bezier(0.45, 0, 0.3, 1) forwards; }
 .indexconvert-page .ic-chip { opacity: 0; animation: ic-chip var(--ic-slot) ease both; }
-.indexconvert-page .ic-rise { opacity: 0; animation: ic-rise 700ms cubic-bezier(0.32, 0.72, 0, 1) both; }
-.indexconvert-page .ic-fade { animation: ic-fade 900ms ease both; }
+.indexconvert-page .ic-rise { opacity: 0; animation: ic-rise 600ms cubic-bezier(0.32, 0.72, 0, 1) both; }
+.indexconvert-page .ic-fade { animation: ic-fade 360ms ease both; }
 .indexconvert-page .ic-spin { animation: ic-spin 900ms linear infinite; }
-.indexconvert-page .ic-pulse { animation: ic-pulse 1.8s ease-in-out infinite; }
-.indexconvert-page .ic-sheen { animation: ic-sheen 1.6s ease-in-out infinite; }
 
-.indexconvert-page .ic-scroll::-webkit-scrollbar { display: none; }
-.indexconvert-page .ic-scroll { scrollbar-width: none; }
+.indexconvert-page .ic-noscroll { scrollbar-width: none; }
+.indexconvert-page .ic-noscroll::-webkit-scrollbar { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .indexconvert-page .ic-read,
   .indexconvert-page .ic-scan,
-  .indexconvert-page .ic-chip,
-  .indexconvert-page .ic-sheen { animation: none; }
+  .indexconvert-page .ic-chip { animation: none; }
   .indexconvert-page .ic-reveal { animation: none; clip-path: none; }
-  .indexconvert-page .ic-rise { animation-duration: 1ms; }
+  .indexconvert-page .ic-rise,
+  .indexconvert-page .ic-fade { animation-duration: 1ms; }
 }

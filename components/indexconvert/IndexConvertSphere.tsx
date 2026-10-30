@@ -1,47 +1,29 @@
 "use client";
 
 /**
- * The Doe dot sphere, turning. Same look as DoeHealthProductSphere (brown dots that swell and darken toward the
- * lower right) but drawn as real points on a globe so it can spin smoothly instead of rotating a flat picture.
+ * The Doe sphere in its brown, drawn as dots on a turning globe, shaded like /demo's sphere: dots facing the viewer are
+ * larger and darker. `speed` lets the loader spin it a little faster as it finishes. Holds still for reduced motion.
  */
-import { type CSSProperties, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
-const DOTS = 900;
-/** Seconds per full turn. */
-const TURN_SECONDS = 14;
-/** Dots swell and darken toward this direction (lower right, facing out), as in the Paper sphere. */
-const LIGHT = normalize([0.55, 0.62, 0.56]);
+const COUNT = 760;
+const SMALL_COUNT = 260;
+/** Seconds per full turn at speed 1. */
+const TURN_SECONDS = 16;
+/** Tilt toward the viewer, so the top cap shows. */
+const TILT = 0.38;
 
-function normalize([x, y, z]: number[]): [number, number, number] {
-  const l = Math.hypot(x, y, z);
-  return [x / l, y / l, z / l];
-}
-
-/** Evenly spread points on a unit sphere (Fibonacci lattice). */
+/** Evenly spread points on a unit sphere (golden-angle spiral). */
 function lattice(n: number): [number, number, number][] {
   const golden = Math.PI * (3 - Math.sqrt(5));
   return Array.from({ length: n }, (_, i) => {
     const y = 1 - (i / (n - 1)) * 2;
     const r = Math.sqrt(1 - y * y);
-    const t = golden * i;
-    return [Math.cos(t) * r, y, Math.sin(t) * r];
+    return [Math.cos(golden * i) * r, y, Math.sin(golden * i) * r];
   });
 }
 
-export function IndexConvertSphere({
-  size,
-  color = "#B99A72",
-  speed = 1,
-  className,
-  style,
-}: {
-  size: number;
-  color?: string;
-  /** Multiplies the spin; the loader speeds it up as it finishes. */
-  speed?: number;
-  className?: string;
-  style?: CSSProperties;
-}) {
+export function IndexConvertSphere({ size, color = "#B99A72", speed = 1, className }: { size: number; color?: string; speed?: number; className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const speedRef = useRef(speed);
   speedRef.current = speed;
@@ -53,50 +35,54 @@ export function IndexConvertSphere({
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = size * dpr;
     canvas.height = size * dpr;
-    ctx.scale(dpr, dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = color;
 
-    const points = lattice(DOTS);
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const tilt = -0.32;
-    const cosT = Math.cos(tilt);
-    const sinT = Math.sin(tilt);
+    const small = size < 120;
+    const points = lattice(small ? SMALL_COUNT : COUNT);
     const radius = size * 0.46;
-    const unit = size / 170;
+    const c = size / 2;
+    const ct = Math.cos(TILT);
+    const st = Math.sin(TILT);
+    const dot = small ? size / 110 : size / 160;
     let angle = 0;
-    let last = performance.now();
-    let frame = 0;
 
-    const draw = (now: number) => {
-      const dt = Math.max(0, Math.min(64, now - last)) / 1000;
-      last = now;
-      if (!reduced) angle += ((Math.PI * 2) / TURN_SECONDS) * dt * speedRef.current;
-      const cosA = Math.cos(angle);
-      const sinA = Math.sin(angle);
+    const draw = () => {
       ctx.clearRect(0, 0, size, size);
-      ctx.fillStyle = color;
-      for (const [px, py, pz] of points) {
-        // Spin about the vertical axis, then tilt the globe toward the viewer.
-        const x1 = px * cosA + pz * sinA;
-        const z1 = -px * sinA + pz * cosA;
-        const y2 = py * cosT - z1 * sinT;
-        const z2 = py * sinT + z1 * cosT;
-        if (z2 < -0.15) continue;
-        // Screen y runs down, so the light's y is flipped to sit on the lower right.
-        const lit = Math.max(0, x1 * LIGHT[0] - y2 * LIGHT[1] + z2 * LIGHT[2]);
-        const front = Math.max(0, z2);
-        const alpha = 0.22 + 0.78 * lit * (0.4 + 0.6 * front);
-        const r = unit * (0.5 + 1.9 * lit * (0.4 + 0.6 * front));
-        ctx.globalAlpha = Math.min(1, alpha);
+      const ca = Math.cos(angle);
+      const sa = Math.sin(angle);
+      for (const [x, y, z] of points) {
+        const x1 = x * ca + z * sa;
+        const z1 = -x * sa + z * ca;
+        const y2 = y * ct - z1 * st;
+        const z2 = y * st + z1 * ct;
+        const depth = (z2 + 1) / 2;
+        ctx.globalAlpha = 0.12 + 0.78 * Math.pow(depth, 1.6);
         ctx.beginPath();
-        ctx.arc(size / 2 + x1 * radius, size / 2 - y2 * radius, r, 0, Math.PI * 2);
+        ctx.arc(c + x1 * radius, c + y2 * radius, (0.5 + 1.9 * depth) * dot, 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.globalAlpha = 1;
-      frame = requestAnimationFrame(draw);
     };
-    frame = requestAnimationFrame(draw);
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      angle = 0.8;
+      draw();
+      return;
+    }
+
+    let last = performance.now();
+    let frame = 0;
+    const loop = (now: number) => {
+      // The first frame's timestamp can land just before `last`.
+      const dt = Math.max(0, Math.min(64, now - last)) / 1000;
+      last = now;
+      angle += ((Math.PI * 2) / TURN_SECONDS) * dt * speedRef.current;
+      draw();
+      frame = requestAnimationFrame(loop);
+    };
+    frame = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frame);
   }, [size, color]);
 
-  return <canvas ref={canvasRef} aria-hidden="true" className={className} style={{ width: size, height: size, display: "block", ...style }} />;
+  return <canvas ref={canvasRef} aria-hidden="true" className={className} style={{ width: size, height: size, display: "block" }} />;
 }
