@@ -47,8 +47,8 @@ const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?:
     subs: ["JSON · 7 resources", "JSON-LD · schema.org/MedicalClinic", "Metadata & HTML"],
   },
   {
-    title: "Building JSONs, robots.txt, llms.txt & well-known",
-    detail: AGENT_FILES.map((f) => f.path.split("/").pop()).join(" · "),
+    title: "Building agent files",
+    detail: `${AGENT_FILES.length} files ready`,
     ms: 2800,
     subs: ["openapi.json", "llms.txt", "robots.txt", ".well-known/mcp.json"],
   },
@@ -73,8 +73,8 @@ const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?:
 ];
 const STEP_STARTS = STEPS.map((_, i) => STEPS.slice(0, i).reduce((n, s) => n + s.ms, 0));
 const BUILD_MS = STEPS.reduce((n, s) => n + s.ms, 0);
-/** How long "visible within Muse" holds before the page opens. */
-const MUSE_MS = 1600;
+/** How long "Ready" holds before the page opens. */
+const MUSE_MS = 1100;
 const TOTAL_MS = BUILD_MS + MUSE_MS;
 /** Each source page gets an equal slice of the build. */
 const SLOT_MS = BUILD_MS / SOURCE_PAGES.length;
@@ -239,7 +239,7 @@ export function IndexConvertPage() {
 /* ------------------------------------------------------------------ Frame */
 
 /** The Doe wordmark as /earlypreview's nav sets it: Lora, regular weight, text-4xl. */
-const DoeMark = () => <span className={`${lora.className} text-[36px] leading-[36px] font-normal text-[#281910]`}>Doe</span>;
+const DoeMark = () => <span className={`${lora.className} text-[30px] leading-[30px] md:text-[36px] md:leading-[36px] font-normal text-[#281910]`}>Doe</span>;
 const HEADER = "flex items-center justify-between gap-[12px] h-[64px] md:h-[72px] px-[18px] md:px-[32px]";
 
 /** /demo's frame: Doe's brown fills the window and the page sits in a cream box that scrolls on its own. */
@@ -375,12 +375,8 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
             </div>
           </div>
           </div>
-          {/* Phones and tablets: the page directory as a row of chips under the URL; short screens get one line. */}
-          {compact ? (
-            <div className={`lg:hidden mt-[8px] text-center text-[12px] leading-[16px] ${MUTED}`}>
-              {built ? `${SOURCE_PAGES.length} of ${SOURCE_PAGES.length} pages read` : `Reading page ${pageIndex + 1} of ${SOURCE_PAGES.length} · ${page.label}`}
-            </div>
-          ) : (
+          {/* Phones and tablets: the page directory as a row of chips under the URL; short screens skip it. */}
+          {!compact && (
             <div className="lg:hidden mt-[8px] flex flex-wrap justify-center gap-[4px]">
               {SOURCE_PAGES.map((p, i) => {
                 const read = built || i < pageIndex;
@@ -399,7 +395,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
           )}
         </div>
 
-        {/* Box in a box, like /demo's booking summary: steps on cream, inside sand with the Muse line underneath. */}
+        {/* Box in a box, like /demo's booking summary: steps on cream, inside sand. */}
         <div className="mt-[14px] w-full max-w-[420px] rounded-[24px] bg-[#F4EEDF] p-[6px]">
           <ol className="rounded-[20px] bg-[#FFFCF1] p-[6px]">
             {STEPS.map((step, i) => {
@@ -429,11 +425,6 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
               );
             })}
           </ol>
-          <div className="flex items-center gap-[10px] min-h-[44px] px-[16px]" style={{ opacity: built ? 1 : 0.4, transition: "opacity 300ms ease" }}>
-            <Check on={built} size={20} />
-            <span className="grow text-[14px] leading-[18px] font-[600]">Your page is visible within Muse</span>
-            {built && <span className={`ic-fade hidden sm:inline text-[12px] font-[600] ${MUTED}`}>Connected · not activated</span>}
-          </div>
         </div>
       </div>
 
@@ -457,9 +448,6 @@ const PageDirectory = memo(function PageDirectory({ pageIndex, built }: { pageIn
     <div className="hidden lg:block absolute left-[32px] top-1/2 -translate-y-1/2 z-10 w-[236px] rounded-[20px] bg-[#F4EEDF] p-[5px]">
       <div className={`flex items-baseline justify-between px-[10px] pt-[6px] pb-[6px] text-[11px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>
         <span>Pages</span>
-        <span className="tabular-nums normal-case tracking-normal">
-          {built ? SOURCE_PAGES.length : pageIndex} / {SOURCE_PAGES.length}
-        </span>
       </div>
       <ol className="flex flex-col rounded-[16px] bg-[#FFFCF1] p-[4px]">
         {SOURCE_PAGES.map((p, i) => {
