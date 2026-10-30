@@ -329,7 +329,7 @@ export function DoeHealthCareersRolePage({
 
   return (
     <div
-      className={`doehealth-desk2-page doehealth-desk-page doehealth-blog-page doehealth-careers-page doehealth-role-page relative min-h-[100dvh] ${inter.className} ${p22Mackinac.variable}`}
+      className={`doehealth-desk2-page doehealth-desk-page doehealth-blog-page${jobs ? " doehealth-blog-page--preview" : ""} doehealth-careers-page doehealth-role-page relative min-h-[100dvh] ${inter.className} ${p22Mackinac.variable}`}
       style={{ backgroundColor: DOEHEALTH_DESK2_PAGE_BACKGROUND }}
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}
     >

@@ -6381,7 +6381,7 @@ html:has(.earlypreview-page) {
   background: #fccfb8;
 }
 
-/* /preview-<slug> articles: the iPhone mail icon is the brown of the "Doe" wordmark (the nav accent), not its own salmon. */
+/* /preview-<slug> articles and /jobs (which carries the same class): the iPhone mail icon is the brown of the "Doe" wordmark (the nav accent), not its own salmon. */
 .doehealth-blog-page--preview nav.doephone-site-nav a[href^="mailto:"] {
   color: var(--desk2-nav-accent, var(--doehealth-desk2-surface)) !important;
 }
