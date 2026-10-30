@@ -239,7 +239,7 @@ export function IndexConvertPage() {
 
   return (
     // The page mounts once the loader has faded, so the two never show through each other.
-    <Frame scrollRef={scrollRef} right={phase === "done" ? <ViewSwitch view={view} onChange={switchView} /> : null} loader={loader} mark={phase === "done" || phase === "intro"}>
+    <Frame scrollRef={scrollRef} right={phase === "done" ? <ViewSwitch view={view} onChange={switchView} /> : null} loader={loader} mark={phase === "done" || phase === "intro"} edgeFade={phase === "intro"}>
       {phase === "intro" && <Intro onStart={() => {
         setElapsed(0);
         setPhase("loading");
@@ -256,7 +256,22 @@ const DoeMark = () => <span className={`${lora.className} text-[30px] leading-[3
 const HEADER = "flex items-center justify-between gap-[12px] h-[64px] md:h-[72px] px-[18px] md:px-[32px]";
 
 /** /demo's frame: Doe's brown fills the window and the page sits in a cream box that scrolls on its own. */
-function Frame({ scrollRef, right, loader, mark = true, children }: { scrollRef: RefObject<HTMLDivElement>; right: ReactNode; loader: ReactNode; mark?: boolean; children: ReactNode }) {
+function Frame({
+  scrollRef,
+  right,
+  loader,
+  mark = true,
+  edgeFade = false,
+  children,
+}: {
+  scrollRef: RefObject<HTMLDivElement>;
+  right: ReactNode;
+  loader: ReactNode;
+  mark?: boolean;
+  /** Fades whatever scrolls past the top or bottom edge of the shell. */
+  edgeFade?: boolean;
+  children: ReactNode;
+}) {
   return (
     <div
       className={`${dmSans.className} doehealth-product-page indexconvert-page fixed inset-0 bg-[#140C04] text-[#281910] antialiased [font-synthesis:none]`}
@@ -275,6 +290,20 @@ function Frame({ scrollRef, right, loader, mark = true, children }: { scrollRef:
           </header>
           {children}
         </div>
+        {edgeFade && (
+          <>
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 top-[64px] md:top-[72px] z-20 h-[22px]"
+              style={{ background: "linear-gradient(to bottom, #FFFCF1 0%, rgba(255,252,241,0) 100%)" }}
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[96px]"
+              style={{ background: "linear-gradient(to top, #FFFCF1 6%, rgba(255,252,241,0.82) 38%, rgba(255,252,241,0) 100%)" }}
+            />
+          </>
+        )}
         {/* The claim modal mounts here: over the whole inner shell, inside the brown frame. */}
         <div id="ic-modal-root" className="absolute inset-0 z-40 pointer-events-none" />
         {loader}
@@ -891,7 +920,7 @@ function Hero({ action, compact = false }: { action?: ReactNode; compact?: boole
 /** The first screen: the clinic's box and one button. The agent-readable page itself waits behind it. */
 function Intro({ onStart }: { onStart: () => void }) {
   return (
-    <main className="ic-fade flex justify-center px-[16px] pt-[6px] pb-[40px]">
+    <main className="ic-fade flex justify-center px-[16px] pt-[22px] pb-[96px]">
       <div className="w-full max-w-[560px] flex flex-col gap-[10px]">
         <Hero
           action={
