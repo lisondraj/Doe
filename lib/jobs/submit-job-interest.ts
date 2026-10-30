@@ -1,0 +1,243 @@
+import {
+  JOBS_AUTHORIZATION_OPTIONS,
+  JOBS_RESUME_MAX_BYTES,
+  JOBS_ROLE_OPTIONS,
+  JOBS_START_OPTIONS,
+} from "@/lib/jobs/jobs-copy";
+import { getResendClient } from "@/lib/resend/client";
+import { createSupabaseAdmin } from "@/lib/supabase/admin";
+
+const RESUME_BUCKET = "job-interest-resumes";
+const NOTIFY_TO_EMAIL = "james@doe.care";
+const DEFAULT_FROM_EMAIL = "James <james@doe.care>";
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const RESUME_TYPES: Record<string, string> = {
+  pdf: "application/pdf",
+  doc: "application/msword",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+};
+
+/** A message the form can show as it is. Anything else is reported as a general failure. */
+export class JobInterestInputError extends Error {}
+
+type JobInterest = {
+  fullName: string;
+  email: string;
+  phone: string | null;
+  location: string;
+  roleSlug: string;
+  roleTitle: string;
+  startTiming: string;
+  workAuthorization: string;
+  linkedinUrl: string | null;
+  githubUrl: string | null;
+  portfolioUrl: string | null;
+  note: string;
+  sourcePath: string | null;
+};
+
+function text(formData: FormData, name: string, max: number): string {
+  return String(formData.get(name) ?? "")
+    .trim()
+    .slice(0, max);
+}
+
+/** An optional link: blank is null, a bare domain gets https://, anything that isn't a web address is refused. */
+function link(formData: FormData, name: string, label: string): string | null {
+  const raw = text(formData, name, 500);
+  if (!raw) return null;
+  const withScheme = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  try {
+    const url = new URL(withScheme);
+    if (!url.hostname.includes(".")) throw new Error();
+    return url.toString();
+  } catch {
+    throw new JobInterestInputError(`Enter a valid ${label} link.`);
+  }
+}
+
+function parse(formData: FormData): JobInterest {
+  const fullName = text(formData, "fullName", 200);
+  const email = text(formData, "email", 320).toLowerCase();
+  const location = text(formData, "location", 200);
+  const roleSlug = text(formData, "role", 120);
+  const startTiming = text(formData, "startTiming", 80);
+  const workAuthorization = text(formData, "workAuthorization", 80);
+  const note = text(formData, "note", 4000);
+  const role = JOBS_ROLE_OPTIONS.find((option) => option.slug === roleSlug);
+
+  if (!fullName) throw new JobInterestInputError("Enter your name.");
+  if (!EMAIL_PATTERN.test(email)) throw new JobInterestInputError("Enter a valid email.");
+  if (!location) throw new JobInterestInputError("Enter where you're based.");
+  if (!role) throw new JobInterestInputError("Choose the role you're interested in.");
+  if (!(JOBS_START_OPTIONS as readonly string[]).includes(startTiming)) {
+    throw new JobInterestInputError("Choose when you could start.");
+  }
+  if (!(JOBS_AUTHORIZATION_OPTIONS as readonly string[]).includes(workAuthorization)) {
+    throw new JobInterestInputError("Choose your work authorization.");
+  }
+  if (!note) throw new JobInterestInputError("Tell us a little about what you'd build at Doe.");
+  if (formData.get("consent") !== "yes") throw new JobInterestInputError("Please confirm the note above the button.");
+
+  return {
+    fullName,
+    email,
+    phone: text(formData, "phone", 60) || null,
+    location,
+    roleSlug: role.slug,
+    roleTitle: role.title,
+    startTiming,
+    workAuthorization,
+    linkedinUrl: link(formData, "linkedinUrl", "LinkedIn"),
+    githubUrl: link(formData, "githubUrl", "GitHub"),
+    portfolioUrl: link(formData, "portfolioUrl", "portfolio or website"),
+    note,
+    sourcePath: text(formData, "sourcePath", 200) || null,
+  };
+}
+
+function resumeFile(formData: FormData): { file: File; contentType: string } {
+  const file = formData.get("resume");
+  if (!(file instanceof File) || file.size === 0) throw new JobInterestInputError("Attach your résumé.");
+  if (file.size > JOBS_RESUME_MAX_BYTES) throw new JobInterestInputError("Your résumé must be 4 MB or smaller.");
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+  const contentType = RESUME_TYPES[ext];
+  if (!contentType) throw new JobInterestInputError("Your résumé must be a PDF or Word document.");
+  return { file, contentType };
+}
+
+function safeFileName(name: string) {
+  return name.replace(/[^\w.\-()+ ]+/g, "_").slice(0, 180) || "resume";
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+/** Emails James the application, every field and the résumé attached. Never throws: the application is already saved. */
+async function notify(application: JobInterest, resume: { name: string; content: Buffer }): Promise<boolean> {
+  try {
+    if (!process.env.RESEND_API_KEY?.trim()) {
+      console.warn("[jobs/apply] RESEND_API_KEY is not configured; skipping the notification.");
+      return false;
+    }
+    const rows: [string, string | null][] = [
+      ["Name", application.fullName],
+      ["Email", application.email],
+      ["Phone", application.phone],
+      ["Based in", application.location],
+      ["Role", application.roleTitle],
+      ["Could start", application.startTiming],
+      ["Work authorization", application.workAuthorization],
+      ["LinkedIn", application.linkedinUrl],
+      ["GitHub", application.githubUrl],
+      ["Portfolio / website", application.portfolioUrl],
+      ["Sent from", application.sourcePath],
+    ];
+    const filled = rows.filter((row): row is [string, string] => !!row[1]);
+    const when = new Date().toLocaleString("en-CA", { timeZone: "America/Toronto", dateStyle: "medium", timeStyle: "short" });
+    const cell = "font-family:Arial,sans-serif;font-size:14px;color:#1E343A;padding:6px 14px 6px 0;vertical-align:top;";
+    const html = [
+      `<p style="font-family:Arial,sans-serif;font-size:16px;color:#1E343A;"><strong>${escapeHtml(application.fullName)}</strong> sent an indication of interest for <strong>${escapeHtml(application.roleTitle)}</strong>.</p>`,
+      `<table style="border-collapse:collapse;">${filled
+        .map(([label, value]) => {
+          const shown = /^https?:\/\//.test(value)
+            ? `<a href="${escapeHtml(value)}">${escapeHtml(value)}</a>`
+            : escapeHtml(value);
+          return `<tr><td style="${cell}color:#9A8F82;">${escapeHtml(label)}</td><td style="${cell}">${shown}</td></tr>`;
+        })
+        .join("")}</table>`,
+      `<p style="font-family:Arial,sans-serif;font-size:13px;color:#9A8F82;margin-top:18px;">What they'd build at Doe</p>`,
+      `<p style="font-family:Arial,sans-serif;font-size:14px;color:#1E343A;white-space:pre-wrap;">${escapeHtml(application.note)}</p>`,
+      `<p style="font-family:Arial,sans-serif;font-size:13px;color:#9A8F82;">Résumé attached. ${escapeHtml(when)} (Toronto)</p>`,
+    ].join("");
+    const plain = [
+      `${application.fullName} sent an indication of interest for ${application.roleTitle}.`,
+      "",
+      ...filled.map(([label, value]) => `${label}: ${value}`),
+      "",
+      "What they'd build at Doe:",
+      application.note,
+      "",
+      `Résumé attached. ${when} (Toronto)`,
+    ].join("\n");
+    const { error } = await getResendClient().emails.send({
+      from: process.env.RESEND_FROM_EMAIL?.trim() || DEFAULT_FROM_EMAIL,
+      to: NOTIFY_TO_EMAIL,
+      replyTo: application.email,
+      subject: `Indication of interest: ${application.fullName} — ${application.roleTitle}`,
+      html,
+      text: plain,
+      attachments: [{ filename: resume.name, content: resume.content }],
+    });
+    if (error) {
+      console.error("[jobs/apply] notification failed:", error.message);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error("[jobs/apply] notification failed:", error instanceof Error ? error.message : error);
+    return false;
+  }
+}
+
+/**
+ * Saves a /jobs indication of interest: the row first, then the résumé in the private bucket (the row is removed if
+ * that fails, so nothing is left half saved), then emails James with every field and the résumé attached.
+ */
+export async function submitJobInterest(formData: FormData): Promise<{ id: string }> {
+  // A field people can't see: anything in it is a bot. It is told it worked, and nothing is saved.
+  if (text(formData, "website", 200)) return { id: "ok" };
+
+  const application = parse(formData);
+  const { file, contentType } = resumeFile(formData);
+  const supabase = createSupabaseAdmin();
+
+  const { data: inserted, error: insertError } = await supabase
+    .from("job_interest_applications")
+    .insert({
+      full_name: application.fullName,
+      email: application.email,
+      phone: application.phone,
+      location: application.location,
+      role_slug: application.roleSlug,
+      role_title: application.roleTitle,
+      start_timing: application.startTiming,
+      work_authorization: application.workAuthorization,
+      linkedin_url: application.linkedinUrl,
+      github_url: application.githubUrl,
+      portfolio_url: application.portfolioUrl,
+      note: application.note,
+      resume_file_name: file.name.slice(0, 200),
+      source_path: application.sourcePath,
+    })
+    .select("id")
+    .single();
+  if (insertError || !inserted) throw new Error(insertError?.message || "Could not save the application.");
+
+  const id = inserted.id as string;
+  const fileName = safeFileName(file.name);
+  const path = `${id}/${fileName}`;
+  const content = Buffer.from(await file.arrayBuffer());
+  const { error: uploadError } = await supabase.storage
+    .from(RESUME_BUCKET)
+    .upload(path, content, { contentType, upsert: false });
+  if (uploadError) {
+    await supabase.from("job_interest_applications").delete().eq("id", id);
+    throw new Error(uploadError.message || "Could not upload the résumé.");
+  }
+
+  const emailed = await notify(application, { name: fileName, content });
+  await supabase
+    .from("job_interest_applications")
+    .update({ resume_storage_path: path, ...(emailed ? { email_sent_at: new Date().toISOString() } : {}) })
+    .eq("id", id);
+
+  return { id };
+}

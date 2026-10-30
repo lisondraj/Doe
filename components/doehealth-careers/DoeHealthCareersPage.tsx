@@ -26,6 +26,10 @@ import {
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-variant";
 import { DOEPHONE_READING_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, p22Mackinac } from "@/lib/home/fonts";
+import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
+import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
+import { JOBS_COPY, JOBS_PATH } from "@/lib/jobs/jobs-copy";
+import { JobsApplicationForm } from "@/components/jobs/JobsApplicationForm";
 
 const DESK2_PATH = "/doehealthdesk2";
 /** The footer still uses the legacy desk section anchors. */
@@ -55,20 +59,20 @@ function teamGroups(roles: readonly CareersRole[]) {
 }
 
 /** One team's heading and its rows. */
-function RoleGroup({ name, roles }: { name: string; roles: readonly CareersRole[] }) {
+function RoleGroup({ name, roles, jobs }: { name: string; roles: readonly CareersRole[]; jobs: boolean }) {
   return (
     <div className="doehealth-careers__group">
       <h3 className="doehealth-careers__group-title">{name}</h3>
       <ul className="doehealth-careers__list">
         {roles.map((role) => (
-          <CareersRoleRow key={role.slug} role={role} />
+          <CareersRoleRow key={role.slug} role={role} jobs={jobs} />
         ))}
       </ul>
     </div>
   );
 }
 
-function OpenRoles() {
+function OpenRoles({ jobs }: { jobs: boolean }) {
   const [team, setTeam] = useState<string>(ALL);
   const [location, setLocation] = useState<string>(ALL);
   const roles = CAREERS_ROLES.filter(
@@ -81,7 +85,7 @@ function OpenRoles() {
 
   return (
     <div className="doehealth-careers__roles" id="roles">
-      <h2 className={`doehealth-careers__roles-title ${p22Mackinac.className}`}>Open Roles</h2>
+      <h2 className={`doehealth-careers__roles-title ${p22Mackinac.className}`}>{jobs ? JOBS_COPY.rolesTitle : "Open Roles"}</h2>
       <div className="doehealth-careers__bar">
         <div className="doehealth-careers__filter">
           <CareersFilterDropdown label="Team" value={team} sections={TEAM_SECTIONS} onChange={setTeam} />
@@ -97,12 +101,12 @@ function OpenRoles() {
       {founding.length + additional.length > 0 ? (
         <>
           {founding.map((group) => (
-            <RoleGroup key={group.name} name={group.name} roles={group.roles} />
+            <RoleGroup key={group.name} name={group.name} roles={group.roles} jobs={jobs} />
           ))}
           {additional.length > 0 ? (
             <div className="doehealth-careers__additional">
               {additional.map((group) => (
-                <RoleGroup key={group.name} name={group.name} roles={group.roles} />
+                <RoleGroup key={group.name} name={group.name} roles={group.roles} jobs={jobs} />
               ))}
             </div>
           ) : null}
@@ -117,8 +121,13 @@ function OpenRoles() {
   );
 }
 
-/** /careers — the team, a few sections on how it works, and the open roles. Not linked from the nav or footer. */
-export function DoeHealthCareersPage({ initialVariant }: { initialVariant: DoeHealthDesk2Variant }) {
+/**
+ * /careers — the team, a few sections on how it works, and the open roles. Not linked from the nav or footer.
+ *
+ * `jobs` is /jobs, the same page as an indication of interest: the /earlypreview nav (no page links, "Contact James"),
+ * the founding-team intro, no pay figures, and "Start Your Application" at the foot.
+ */
+export function DoeHealthCareersPage({ initialVariant, jobs = false }: { initialVariant: DoeHealthDesk2Variant; jobs?: boolean }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
 
@@ -129,15 +138,28 @@ export function DoeHealthCareersPage({ initialVariant }: { initialVariant: DoeHe
       data-doeforvc-view={variant === "desktop" ? "desktop" : "iphone"}
     >
       {variant === "desktop" ? (
-        <DoeHealthDesk2DesktopNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
+        jobs ? (
+          <DoeHealthDesk2DesktopNavBar logoLink={false} logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} centerLinks={false} primaryCta={EARLYPREVIEW_NAV_CTA} />
+        ) : (
+          <DoeHealthDesk2DesktopNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
+        )
+      ) : jobs ? (
+        <DoeHealthDesk2PhoneNavBar logoLink={false} logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} primaryCta={EARLYPREVIEW_NAV_CTA} menuMailTo={ABOUT_CONTACT_EMAIL} />
       ) : (
         <DoeHealthDesk2PhoneNavBar logoHref={DESK2_PATH} sectionHrefBase={DESK2_PATH} />
       )}
       <DoeHealthDesk2NavWash />
-      <main className="doehealth-desk-main min-h-[100dvh]" aria-label="Careers">
+      <main className="doehealth-desk-main min-h-[100dvh]" aria-label={jobs ? JOBS_COPY.title : "Careers"}>
         <section className={`doehealth-careers ${DOEPHONE_READING_PAGE_INSET_X}`}>
           <header className="doehealth-careers__head">
-            <h1 className={`doehealth-careers__title ${p22Mackinac.className}`}>Careers</h1>
+            <h1 className={`doehealth-careers__title ${p22Mackinac.className}`}>{jobs ? JOBS_COPY.title : "Careers"}</h1>
+            {jobs ? (
+              <div className="jobs-intro">
+                {JOBS_COPY.intro.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </div>
+            ) : null}
           </header>
 
           <DoeHealthBlogPlaceholder tone="clay" className="doehealth-careers__hero" pattern />
@@ -162,11 +184,12 @@ export function DoeHealthCareersPage({ initialVariant }: { initialVariant: DoeHe
             ))}
           </div>
 
-          <OpenRoles />
+          <OpenRoles jobs={jobs} />
+          {jobs ? <JobsApplicationForm sourcePath={JOBS_PATH} /> : null}
         </section>
 
         <DoeHealthDesk2InviteSection />
-        <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} />
+        <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} markLink={!jobs} />
       </main>
     </div>
   );

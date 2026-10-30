@@ -9,6 +9,7 @@ import {
   careersType,
 } from "@/lib/doehealth/doehealth-careers";
 import { p22Mackinac } from "@/lib/home/fonts";
+import { jobsPayLabel, jobsRolePath } from "@/lib/jobs/jobs-copy";
 
 /** A dot and the item after it wrap together, so a line never ends on a dot. */
 export function CareersMetaItem({ children }: { children: ReactNode }) {
@@ -22,12 +23,12 @@ export function CareersMetaItem({ children }: { children: ReactNode }) {
   );
 }
 
-/** One open role: title, location, pay. The whole row links to the role's page. */
-export function CareersRoleRow({ role }: { role: CareersRole }) {
+/** One open role: title, location, pay. The whole row links to the role's page. On /jobs (`jobs`) pay is "$$$ + Equity". */
+export function CareersRoleRow({ role, jobs = false }: { role: CareersRole; jobs?: boolean }) {
   const equity = careersEquityLabel(role);
   return (
     <li>
-      <Link href={careersRolePath(role)} className="doehealth-careers__role">
+      <Link href={jobs ? jobsRolePath(role) : careersRolePath(role)} className="doehealth-careers__role">
         <span className="doehealth-careers__role-copy">
           <span className={`doehealth-careers__role-title ${p22Mackinac.className}`}>{role.title}</span>
           <span className="doehealth-careers__role-meta">
@@ -35,8 +36,14 @@ export function CareersRoleRow({ role }: { role: CareersRole }) {
             <CareersMetaItem>{careersType(role)}</CareersMetaItem>
           </span>
           <span className="doehealth-careers__role-pay">
-            {role.pay ? <span>{role.pay}</span> : null}
-            {equity ? <CareersMetaItem>{equity}</CareersMetaItem> : null}
+            {jobs ? (
+              <span>{jobsPayLabel(role)}</span>
+            ) : (
+              <>
+                {role.pay ? <span>{role.pay}</span> : null}
+                {equity ? <CareersMetaItem>{equity}</CareersMetaItem> : null}
+              </>
+            )}
           </span>
         </span>
         <svg className="doehealth-careers__role-arrow" viewBox="0 0 16 16" fill="none" aria-hidden>

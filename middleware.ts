@@ -223,8 +223,9 @@ export async function middleware(request: NextRequest) {
   }
 
   /**
-   * doe.care also serves the pre-launch page, /earlypreview and the `/preview-<slug>` articles it links to, plus the
-   * files they load from public/ (videos, models, fonts) that the matcher doesn't already skip.
+   * doe.care also serves the pre-launch page, /earlypreview and the `/preview-<slug>` articles it links to, /jobs and
+   * its role pages (doe.care only; doehealth.care bounces them), plus the files they load from public/ (videos, models,
+   * fonts) that the matcher doesn't already skip.
    */
   if (isPrimaryHost(host)) {
     const isFile = /\/[^/]+\.[a-z0-9]+$/i.test(pathname);
@@ -232,6 +233,8 @@ export async function middleware(request: NextRequest) {
       pathname === LANDINGLAUNCH_PATH ||
       pathname === "/earlypreview" ||
       pathname.startsWith("/earlypreview/") ||
+      pathname === "/jobs" ||
+      pathname.startsWith("/jobs/") ||
       PREVIEW_ARTICLE_PATHS.includes(pathname) ||
       isFile
     ) {

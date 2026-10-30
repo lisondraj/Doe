@@ -30,6 +30,10 @@ import {
 } from "@/lib/doehealthdesk2/use-doehealthdesk2-variant";
 import { DOEPHONE_READING_PAGE_INSET_X } from "@/lib/doephone/section-styles";
 import { inter, lora, p22Mackinac } from "@/lib/home/fonts";
+import { ABOUT_CONTACT_EMAIL } from "@/lib/about/about-contact";
+import { EARLYPREVIEW_NAV_CTA } from "@/lib/earlypreview/earlypreview-nav-copy";
+import { JOBS_ANY_ROLE, JOBS_COPY, JOBS_FORM_ID, JOBS_PATH, JOBS_PAY_NOTE, jobsPayLabel, jobsRolePath } from "@/lib/jobs/jobs-copy";
+import { JobsApplicationForm } from "@/components/jobs/JobsApplicationForm";
 
 const DESK2_PATH = "/doehealthdesk2";
 /** The footer still uses the legacy desk section anchors. */
@@ -198,9 +202,11 @@ function splitTitleTwoLines(title: string): [string, string] {
 function RoleDock({
   role,
   visible,
+  jobs,
 }: {
   role: CareersRole;
   visible: boolean;
+  jobs: boolean;
 }) {
   const [titleFirst, titleSecond] = splitTitleTwoLines(role.title);
   const innerRef = useRef<HTMLDivElement>(null);
@@ -225,11 +231,11 @@ function RoleDock({
       <div ref={innerRef} className="doehealth-role__dock-inner">
         <div className={`doehealth-role__dock-box ${DOEPHONE_READING_PAGE_INSET_X}`}>
           <div className="doehealth-role__dock-copy">
-            <Link href={`${CAREERS_PATH}#roles`} className="doehealth-role__back doehealth-role__dock-back">
+            <Link href={`${jobs ? JOBS_PATH : CAREERS_PATH}#roles`} className="doehealth-role__back doehealth-role__dock-back">
               <svg viewBox="0 0 16 16" fill="none" aria-hidden>
                 <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              All Open Roles
+              {jobs ? JOBS_COPY.backLabel : "All Open Roles"}
             </Link>
             <p className={`doehealth-role__dock-title ${p22Mackinac.className}`}>
               <span>{titleFirst}</span>
@@ -238,10 +244,14 @@ function RoleDock({
             <p className="doehealth-role__dock-meta">
               <span>{careersLocation(role)}</span>
               <CareersMetaItem>{careersType(role)}</CareersMetaItem>
-              {role.pay ? <CareersMetaItem>{role.pay}</CareersMetaItem> : null}
+              {jobs ? (
+                <CareersMetaItem>{jobsPayLabel(role)}</CareersMetaItem>
+              ) : role.pay ? (
+                <CareersMetaItem>{role.pay}</CareersMetaItem>
+              ) : null}
             </p>
           </div>
-          <a href={careersApplyHref(role)} className="doehealth-role__dock-link">
+          <a href={jobs ? `#${JOBS_FORM_ID}` : careersApplyHref(role)} className="doehealth-role__dock-link">
             Start Your Application
             <svg viewBox="0 0 16 16" fill="none" aria-hidden>
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -253,13 +263,20 @@ function RoleDock({
   );
 }
 
-/** /careers/[slug]: one open role, its details, and the application. */
+/**
+ * /careers/[slug]: one open role, its details, and the application.
+ *
+ * `jobs` is /jobs/[slug], the same role as an indication of interest: the /earlypreview nav, no pay figures ("$$$ +
+ * Equity", discussed at interview), and "Start Your Application" at the foot in place of the hiring list.
+ */
 export function DoeHealthCareersRolePage({
   role,
   initialVariant,
+  jobs = false,
 }: {
   role: CareersRole;
   initialVariant: DoeHealthDesk2Variant;
+  jobs?: boolean;
 }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
   useDoeHealthDesk2PhoneOverflowChrome(variant === "phone");
@@ -309,33 +326,40 @@ export function DoeHealthCareersRolePage({
         <DoeHealthDesk2DesktopNavBar
           logoHref={DESK2_PATH}
           sectionHrefBase={DESK2_PATH}
-          belowBar={<RoleDock role={role} visible={docked} />}
+          belowBar={<RoleDock role={role} visible={docked} jobs={jobs} />}
+          {...(jobs ? { logoLink: false, centerLinks: false, primaryCta: EARLYPREVIEW_NAV_CTA } : {})}
         />
       ) : (
         <DoeHealthDesk2PhoneNavBar
           logoHref={DESK2_PATH}
           sectionHrefBase={DESK2_PATH}
-          belowBar={<RoleDock role={role} visible={docked} />}
+          belowBar={<RoleDock role={role} visible={docked} jobs={jobs} />}
+          {...(jobs ? { logoLink: false, primaryCta: EARLYPREVIEW_NAV_CTA, menuMailTo: ABOUT_CONTACT_EMAIL } : {})}
         />
       )}
       <DoeHealthDesk2NavWash />
       <main className="doehealth-desk-main min-h-[100dvh]" aria-label={role.title}>
         <article className={`doehealth-role ${DOEPHONE_READING_PAGE_INSET_X}`}>
           <header className="doehealth-role__head">
-            <Link href={`${CAREERS_PATH}#roles`} className="doehealth-role__back">
+            <Link href={`${jobs ? JOBS_PATH : CAREERS_PATH}#roles`} className="doehealth-role__back">
               <svg viewBox="0 0 16 16" fill="none" aria-hidden>
                 <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              All Open Roles
+              {jobs ? JOBS_COPY.backLabel : "All Open Roles"}
             </Link>
             <p className="doehealth-role__team">{role.team}</p>
             <h1 className={`doehealth-role__title ${p22Mackinac.className}`}>{role.title}</h1>
             <p className="doehealth-role__meta">
               <span>{careersLocation(role)}</span>
               <CareersMetaItem>{careersType(role)}</CareersMetaItem>
-              {role.pay ? <CareersMetaItem>{role.pay}</CareersMetaItem> : null}
+              {jobs ? (
+                <CareersMetaItem>{jobsPayLabel(role)}</CareersMetaItem>
+              ) : role.pay ? (
+                <CareersMetaItem>{role.pay}</CareersMetaItem>
+              ) : null}
             </p>
-            <a ref={ctaRef} href={careersApplyHref(role)} className="doehealth-role__cta">
+            {jobs ? <p className="jobs-role-note">{JOBS_COPY.roleNote}</p> : null}
+            <a ref={ctaRef} href={jobs ? `#${JOBS_FORM_ID}` : careersApplyHref(role)} className="doehealth-role__cta">
               Start Your Application
             </a>
           </header>
@@ -381,20 +405,28 @@ export function DoeHealthCareersRolePage({
                     </div>
                   </>
                 ) : null}
-                {role.pay ? (
+                {jobs ? (
+                  <div>
+                    <dt>Pay</dt>
+                    <dd>
+                      {jobsPayLabel(role)} ({JOBS_PAY_NOTE.toLowerCase()})
+                    </dd>
+                  </div>
+                ) : null}
+                {!jobs && role.pay ? (
                   <div>
                     <dt>Pay</dt>
                     <dd>{role.pay}</dd>
                   </div>
                 ) : null}
-                {role.equity ? (
+                {!jobs && role.equity ? (
                   <div>
                     <dt>Equity</dt>
                     <dd>{role.equity}</dd>
                   </div>
                 ) : null}
               </dl>
-              <a href={careersApplyHref(role)} className="doehealth-role__cta doehealth-role__cta--block">
+              <a href={jobs ? `#${JOBS_FORM_ID}` : careersApplyHref(role)} className="doehealth-role__cta doehealth-role__cta--block">
                 Start Your Application
               </a>
               <p className="doehealth-role__glance-note">
@@ -413,7 +445,7 @@ export function DoeHealthCareersRolePage({
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </RoleSection>
-              {role.student ? <TermLadder term={role.student} /> : null}
+              {role.student && !jobs ? <TermLadder term={role.student} /> : null}
               <RoleSection title="What You'll Do">
                 <RoleList items={role.responsibilities} />
               </RoleSection>
@@ -430,25 +462,32 @@ export function DoeHealthCareersRolePage({
           {others.length > 0 ? (
             <section className="doehealth-role__more" aria-labelledby="doehealth-role-more-title">
               <h2 id="doehealth-role-more-title" className={`doehealth-role__more-title ${p22Mackinac.className}`}>
-                More Open Roles
+                {jobs ? JOBS_COPY.moreTitle : "More Open Roles"}
               </h2>
               <ul className="doehealth-careers__list">
                 {others.map((other) => (
-                  <CareersRoleRow key={other.slug} role={other} />
+                  <CareersRoleRow key={other.slug} role={other} jobs={jobs} />
                 ))}
               </ul>
-              <Link href={`${CAREERS_PATH}#roles`} className="doehealth-role__more-link">
-                See All Open Roles
+              <Link href={`${jobs ? JOBS_PATH : CAREERS_PATH}#roles`} className="doehealth-role__more-link">
+                {jobs ? JOBS_COPY.moreLink : "See All Open Roles"}
               </Link>
             </section>
           ) : null}
 
           <div ref={inviteRef}>
-            <HiringList />
+            {jobs ? (
+              <JobsApplicationForm
+                roleSlug={role.slug === "expression-of-interest" ? JOBS_ANY_ROLE.slug : role.slug}
+                sourcePath={jobsRolePath(role)}
+              />
+            ) : (
+              <HiringList />
+            )}
           </div>
         </article>
 
-        <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} />
+        <DoeHealthDeskFooter sectionHrefBase={DESK_PATH} markLink={!jobs} />
       </main>
     </div>
   );
