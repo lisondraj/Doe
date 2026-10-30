@@ -37,6 +37,9 @@ const DESK_PATH = "/doehealthdesk";
 
 const ALL = "all";
 
+/** The /jobs box under the intro: the role pages' cream, with a wave of its own. */
+const JOBS_HERO_WAVE = { top: 0.44, amp: 70, phase: 2.8, scale: 1.05, slant: 0.3 };
+
 const TEAM_SECTIONS: readonly CareersDropdownSection[] = [
   {
     options: [{ value: ALL, label: "All Teams" }, ...CAREERS_TEAMS.map((name) => ({ value: name, label: name }))],
@@ -127,7 +130,7 @@ function OpenRoles({ jobs }: { jobs: boolean }) {
  * /careers — the team, a few sections on how it works, and the open roles. Not linked from the nav or footer.
  *
  * `jobs` is /jobs, the same page as an indication of interest: the /earlypreview nav (no page links, "Contact James"),
- * the founding-team intro, no pay figures, and only the roles: no picture boxes and no form (each role page has it).
+ * the founding-team intro and one light box under it, no pay figures, and no form (each role page has it).
  */
 export function DoeHealthCareersPage({ initialVariant, jobs = false }: { initialVariant: DoeHealthDesk2Variant; jobs?: boolean }) {
   const variant = useDoeHealthDesk2Variant(initialVariant);
@@ -164,7 +167,8 @@ export function DoeHealthCareersPage({ initialVariant, jobs = false }: { initial
             ) : null}
           </header>
 
-          {/* /jobs goes straight from the intro to the roles. */}
+          {/* /jobs: one light box under the intro, the role pages' cream dot-wave, then the roles. */}
+          {jobs ? <DoeHealthBlogPlaceholder tone="cream" wave={JOBS_HERO_WAVE} className="doehealth-careers__hero" pattern /> : null}
           {jobs ? null : (
             <>
               <DoeHealthBlogPlaceholder tone="clay" className="doehealth-careers__hero" pattern />
