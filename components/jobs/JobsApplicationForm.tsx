@@ -100,6 +100,20 @@ export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: strin
           {JOBS_FORM_COPY.title}
         </h2>
         <p className="jobs-form__subtitle">{JOBS_FORM_COPY.subtitle}</p>
+        <ol className="jobs-form__steps">
+          {JOBS_FORM_COPY.steps.map((step, index) => (
+            <li key={step.title}>
+              <span className={`jobs-form__step-num ${p22Mackinac.className}`}>{index + 1}</span>
+              <span>
+                <strong>{step.title}</strong>
+                {step.text}
+              </span>
+            </li>
+          ))}
+        </ol>
+        <p className="jobs-form__questions">
+          <a href="mailto:jobs@doe.care">{JOBS_FORM_COPY.questions}</a>
+        </p>
       </header>
 
       {status.state === "sent" ? (
@@ -113,6 +127,7 @@ export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: strin
           <input className="jobs-form__trap" type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden />
 
           <div className="jobs-form__grid">
+            <p className="jobs-form__group">{JOBS_FORM_COPY.groups.about}</p>
             <Field label="Full name">
               <input type="text" name="fullName" autoComplete="name" required maxLength={200} />
             </Field>
@@ -125,6 +140,7 @@ export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: strin
             <Field label="Where you're based">
               <input type="text" name="location" placeholder="City, Country" autoComplete="address-level2" required maxLength={200} />
             </Field>
+            <p className="jobs-form__group">{JOBS_FORM_COPY.groups.role}</p>
             <Field label="Role you're interested in" wide>
               <Select
                 name="role"
@@ -138,6 +154,7 @@ export function JobsApplicationForm({ roleSlug, sourcePath }: { roleSlug?: strin
             <Field label="Work authorization">
               <Select name="workAuthorization" options={JOBS_AUTHORIZATION_OPTIONS.map((value) => ({ value, label: value }))} />
             </Field>
+            <p className="jobs-form__group">{JOBS_FORM_COPY.groups.work}</p>
             <Field label="LinkedIn" optional>
               <input type="text" name="linkedinUrl" placeholder="linkedin.com/in/you" inputMode="url" maxLength={500} />
             </Field>

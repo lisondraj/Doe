@@ -43,6 +43,14 @@ export const JOBS_FORM_COPY = {
   /** Shown in place of the form once it has gone through. `{name}` is the first name. */
   thanks: "Thank you, {name}. We have your application and will be in touch as roles open.",
   error: "Something went wrong sending it. Try again, or email jobs@doe.care.",
+  /** Beside the form on desktop, over it on iPhone: what happens after they send it. */
+  steps: [
+    { title: "Tell us about you", text: "The role you'd want, your links and your résumé." },
+    { title: "We read every one", text: "James and the team go through each application ourselves." },
+    { title: "We reach out as roles open", text: "If there's a fit, we'll set up a first conversation." },
+  ],
+  questions: "Questions? jobs@doe.care",
+  groups: { about: "About you", role: "The role", work: "Your work" },
   consent:
     "I understand this is an indication of interest for future hiring, not an application to a live opening, and that Doe may keep my details to contact me about roles.",
 } as const;

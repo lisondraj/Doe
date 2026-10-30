@@ -40,56 +40,136 @@
 
 /* ------------------------------------------------------------ the form */
 
+/* The light box of the role pages' "At a Glance" card: the title, what happens next and a questions line on the left,
+   the form on the right, in three short groups. Stacked on iPhone. */
 .jobs-form {
-  --jobs-salmon: #fccfb8;
-  --jobs-cream: #fffcf1;
+  --jobs-box: #f4eedf;
+  --jobs-field: #fffcf1;
+  --jobs-ink: var(--doehealth-desk-surface, #281910);
+  --jobs-line: rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.12);
+  --jobs-quiet: rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.58);
   box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.25fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
   max-width: 72rem;
   margin: clamp(4rem, 10vh, 6rem) auto 0;
-  padding: clamp(2.75rem, 7vh, 4.5rem) clamp(1.5rem, 6vw, 5rem);
-  border-radius: var(--doehealth-desk2-radius);
-  background: var(--doehealth-desk2-surface);
-  color: var(--jobs-cream);
+  padding: clamp(2rem, 5vw, 3.5rem);
+  border-radius: 22px;
+  background: var(--jobs-box);
+  color: var(--jobs-ink);
   scroll-margin-top: calc(var(--desk2-nav-clearance, 8.35rem) + 1.5rem);
 }
 
 .jobs-form__head {
-  max-width: 40rem;
-  margin: 0 auto clamp(2rem, 5vh, 3rem);
-  text-align: center;
+  align-self: start;
+  position: sticky;
+  top: calc(var(--desk2-nav-clearance, 8.35rem) + 1.5rem);
 }
 
 .jobs-form__title {
   margin: 0;
-  color: var(--jobs-salmon);
-  font-size: clamp(2.2rem, 3.8vw, 3.3rem);
+  color: var(--jobs-ink);
+  font-size: clamp(2.1rem, 3.2vw, 2.9rem);
   font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 1;
 }
 
 .jobs-form__subtitle {
-  margin: 0.85rem 0 0;
-  color: rgb(255 252 241 / 0.72);
+  margin: 0.9rem 0 0;
+  color: var(--jobs-quiet);
   font-size: 1rem;
+  line-height: 1.5;
+}
+
+.jobs-form__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1.75rem 0 0;
+  padding: 1.5rem 0 0;
+  border-top: 1px solid var(--jobs-line);
+  list-style: none;
+}
+
+.jobs-form__steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  color: var(--jobs-quiet);
+  font-size: 0.92rem;
   line-height: 1.45;
 }
 
+.jobs-form__steps strong {
+  display: block;
+  color: var(--jobs-ink);
+  font-weight: 500;
+}
+
+.jobs-form__step-num {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 999px;
+  background: var(--jobs-field);
+  color: var(--jobs-ink);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.jobs-form__questions {
+  margin: 1.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+.jobs-form__questions a {
+  color: var(--jobs-quiet);
+  text-decoration: underline;
+  text-decoration-color: var(--jobs-line);
+  text-underline-offset: 0.2em;
+}
+
+.jobs-form__questions a:hover {
+  color: var(--jobs-ink);
+}
+
 .jobs-form__form {
-  max-width: 46rem;
-  margin: 0 auto;
+  min-width: 0;
 }
 
 .jobs-form__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.1rem 1.25rem;
+  gap: 1rem 1rem;
+}
+
+/* A group's name, small, over its fields; the first sits at the top with no rule. */
+.jobs-form__group {
+  grid-column: 1 / -1;
+  margin: 1rem 0 -0.15rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--jobs-line);
+  color: var(--jobs-ink);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.jobs-form__group:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
 }
 
 .jobs-form__field {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.4rem;
   min-width: 0;
 }
 
@@ -98,13 +178,12 @@
 }
 
 .jobs-form__label {
-  color: rgb(255 252 241 / 0.82);
-  font-size: 0.85rem;
-  letter-spacing: 0.01em;
+  color: var(--jobs-ink);
+  font-size: 0.86rem;
 }
 
 .jobs-form__optional {
-  color: rgb(255 252 241 / 0.48);
+  color: var(--jobs-quiet);
 }
 
 .jobs-form__field input,
@@ -112,35 +191,43 @@
 .jobs-form__select select {
   box-sizing: border-box;
   width: 100%;
-  min-height: 3rem;
-  padding: 0.75rem 0.95rem;
-  border: 1px solid transparent;
-  border-radius: var(--doehealth-desk2-radius);
-  background: var(--jobs-cream);
-  color: var(--doehealth-desk2-surface);
+  min-height: 2.9rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--jobs-line);
+  border-radius: 12px;
+  background: var(--jobs-field);
+  color: var(--jobs-ink);
   font: inherit;
   font-size: 1rem;
   letter-spacing: -0.01em;
   outline: none;
-  transition: border-color 160ms ease;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .jobs-form__field textarea {
-  min-height: 8.5rem;
+  min-height: 8rem;
   line-height: 1.45;
   resize: vertical;
 }
 
 .jobs-form__field input::placeholder,
 .jobs-form__field textarea::placeholder {
-  color: rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.4);
+  color: rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.36);
+}
+
+.jobs-form__field input:hover,
+.jobs-form__field textarea:hover,
+.jobs-form__select select:hover {
+  border-color: rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.22);
 }
 
 .jobs-form__field input:focus-visible,
 .jobs-form__field textarea:focus-visible,
 .jobs-form__select select:focus-visible {
-  border-color: var(--jobs-salmon);
-  box-shadow: 0 0 0 2px rgb(252 207 184 / 0.45);
+  border-color: var(--jobs-ink);
+  box-shadow: 0 0 0 3px rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.08);
 }
 
 .jobs-form__select {
@@ -157,25 +244,32 @@
 .jobs-form__select svg {
   position: absolute;
   top: 50%;
-  right: 0.95rem;
+  right: 0.9rem;
   width: 16px;
   height: 16px;
-  color: var(--doehealth-desk2-surface);
+  color: var(--jobs-quiet);
   transform: translateY(-50%);
   pointer-events: none;
 }
 
-/* The résumé: a salmon button and the chosen file's name beside it. */
+/* The résumé: a quiet drop area with a small dark button and the chosen file's name beside it. */
 .jobs-form__file {
   position: relative;
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  min-height: 3rem;
-  padding: 0.35rem;
-  border: 1px dashed rgb(255 252 241 / 0.35);
-  border-radius: var(--doehealth-desk2-radius);
+  min-height: 3.4rem;
+  padding: 0.45rem;
+  border: 1px dashed rgb(var(--doehealth-desk-ink-rgb, 20 12 4) / 0.25);
+  border-radius: 12px;
+  background: var(--jobs-field);
   cursor: pointer;
+  transition: border-color 160ms ease;
+}
+
+.jobs-form__file:hover,
+.jobs-form__file:focus-within {
+  border-color: var(--jobs-ink);
 }
 
 .jobs-form__file input {
@@ -187,24 +281,20 @@
   cursor: pointer;
 }
 
-.jobs-form__file:focus-within {
-  border-color: var(--jobs-salmon);
-}
-
 .jobs-form__file-button {
   flex-shrink: 0;
-  padding: 0.6rem 1rem;
-  border-radius: var(--doehealth-desk2-radius);
-  background: var(--jobs-salmon);
-  color: var(--doehealth-desk2-surface);
-  font-size: 0.95rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 9px;
+  background: var(--jobs-ink);
+  color: #fffcf1;
+  font-size: 0.9rem;
 }
 
 .jobs-form__file-name {
   min-width: 0;
   overflow: hidden;
-  color: rgb(255 252 241 / 0.72);
-  font-size: 0.92rem;
+  color: var(--jobs-quiet);
+  font-size: 0.9rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -214,8 +304,8 @@
   align-items: flex-start;
   gap: 0.7rem;
   margin-top: 1.5rem;
-  color: rgb(255 252 241 / 0.72);
-  font-size: 0.88rem;
+  color: var(--jobs-quiet);
+  font-size: 0.86rem;
   line-height: 1.45;
   cursor: pointer;
 }
@@ -225,26 +315,29 @@
   width: 1.05rem;
   height: 1.05rem;
   margin: 0.15rem 0 0;
-  accent-color: var(--jobs-salmon);
+  accent-color: var(--jobs-ink);
 }
 
 .jobs-form__error {
   margin: 1.1rem 0 0;
-  color: var(--jobs-salmon);
-  font-size: 0.95rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  background: #fbe3d6;
+  color: #8a3518;
+  font-size: 0.92rem;
 }
 
 .jobs-form__submit {
   display: block;
   width: 100%;
-  min-height: 3.25rem;
-  margin-top: 1.5rem;
+  min-height: 3.2rem;
+  margin-top: 1.4rem;
   border: 0;
-  border-radius: var(--doehealth-desk2-radius);
-  background: var(--jobs-salmon);
-  color: var(--doehealth-desk2-surface);
+  border-radius: 12px;
+  background: var(--jobs-ink);
+  color: #fffcf1;
   font: inherit;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: -0.01em;
   cursor: pointer;
@@ -252,27 +345,29 @@
 }
 
 .jobs-form__submit:hover {
-  opacity: 0.9;
+  opacity: 0.88;
 }
 
 .jobs-form__submit:disabled {
   cursor: progress;
-  opacity: 0.65;
+  opacity: 0.6;
 }
 
 .jobs-form__submit:focus-visible {
-  outline: 2px solid var(--jobs-salmon);
+  outline: 2px solid var(--jobs-ink);
   outline-offset: 3px;
 }
 
 .jobs-form__thanks {
-  max-width: 34rem;
-  margin: 0 auto;
-  color: var(--jobs-cream);
-  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  align-self: center;
+  margin: 0;
+  padding: 2rem;
+  border-radius: 16px;
+  background: var(--jobs-field);
+  color: var(--jobs-ink);
+  font-size: clamp(1.4rem, 2.2vw, 1.85rem);
   letter-spacing: -0.03em;
-  line-height: 1.2;
-  text-align: center;
+  line-height: 1.25;
 }
 
 /* The field bots fill and people never see. */
@@ -286,9 +381,20 @@
   pointer-events: none;
 }
 
+@media (max-width: 899px) {
+  .jobs-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  .jobs-form__head {
+    position: static;
+  }
+}
+
 @media (max-width: 767px) {
   .jobs-form {
-    padding: 2.5rem 1.25rem;
+    padding: 1.6rem 1.25rem 1.75rem;
   }
 
   .jobs-form__title {
@@ -297,6 +403,12 @@
 
   .jobs-form__grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .jobs-form__field input,
+  .jobs-form__field textarea,
+  .jobs-form__select select {
+    font-size: 16px;
   }
 
   .jobs-intro {
