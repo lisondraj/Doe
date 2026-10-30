@@ -891,7 +891,7 @@ function Intro({ onStart }: { onStart: () => void }) {
   return (
     <main className="ic-fade flex justify-center px-[16px] pt-[6px] pb-[40px]">
       <div className="w-full max-w-[560px] flex flex-col gap-[10px]">
-        <AboutDoe />
+        <AboutDoe intro />
         <Hero
           action={
             <button
@@ -977,7 +977,7 @@ function LocationMap({ variant, size = 76 }: { variant: number; size?: number })
 }
 
 /** The founders and why Doe exists: their photo from /earlypreview's film in a rounded box, then the note. */
-function AboutDoe() {
+function AboutDoe({ intro = false }: { intro?: boolean }) {
   return (
     <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
       <div className="rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px]">
@@ -992,18 +992,28 @@ function AboutDoe() {
           />
         </div>
         <div className="px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px]">
-          <span className={`${DISPLAY} inline-flex items-center h-[40px] px-[18px] rounded-full bg-[#F4EEDF] text-[19px] leading-[24px] tracking-[-0.01em]`}>What Is Doe?</span>
-          <p className={`${DISPLAY} mt-[16px] max-w-[30ch] text-[22px] leading-[28px] md:text-[26px] md:leading-[32px] tracking-[-0.01em] [text-wrap:balance]`}>
-            Hi! I&apos;m a medical student from uOttawa.
-          </p>
+          {intro ? (
+            <p className={`${DISPLAY} max-w-[22ch] text-[clamp(26px,6.6vw,38px)] leading-[1.14] tracking-[-0.02em] [text-wrap:balance]`}>
+              We&apos;ve built Doe to prepare Canadian clinics for personal agents.
+            </p>
+          ) : (
+            <>
+              <span className={`${DISPLAY} inline-flex items-center h-[40px] px-[18px] rounded-full bg-[#F4EEDF] text-[19px] leading-[24px] tracking-[-0.01em]`}>What Is Doe?</span>
+              <p className={`${DISPLAY} mt-[16px] max-w-[30ch] text-[22px] leading-[28px] md:text-[26px] md:leading-[32px] tracking-[-0.01em] [text-wrap:balance]`}>
+                Hi! I&apos;m a medical student from uOttawa.
+              </p>
+            </>
+          )}
           <p className="mt-[10px] max-w-[58ch] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px] text-[#281910CC] [text-wrap:pretty]">
-            My brother and I built Doe to prepare Canadian clinics for personal agents. In 2027, patients &amp; clients will be searching for and booking services through Muse, Instinct, Claude Duet and
-            GPT Dots. We believe most clinics are not ready.
+            {intro ? "" : "My brother and I built Doe to prepare Canadian clinics for personal agents. "}In 2027, patients &amp; clients will be searching for and booking services through Muse, Instinct, Claude
+            Duet and GPT Dots. We believe most clinics are not ready.
           </p>
-          <p className="mt-[12px] max-w-[58ch] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px] text-[#281910CC] [text-wrap:pretty]">
-            We&apos;ve made Doe free to use, however some features require expensive compute costs to run so we&apos;ve added a little fee to those interested. You can reach us anytime with any questions
-            or help.
-          </p>
+          {!intro && (
+            <p className="mt-[12px] max-w-[58ch] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px] text-[#281910CC] [text-wrap:pretty]">
+              We&apos;ve made Doe free to use, however some features require expensive compute costs to run so we&apos;ve added a little fee to those interested. You can reach us anytime with any questions
+              or help.
+            </p>
+          )}
           <a
             href="mailto:james@doe.care"
             className="mt-[16px] inline-flex items-center gap-[10px] h-[44px] pl-[14px] pr-[18px] rounded-full bg-[#F4EEDF] text-[14px] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150"
