@@ -891,15 +891,14 @@ function Hero({ action, compact = false }: { action?: ReactNode; compact?: boole
 /** The first screen: the clinic's box and one button. The agent-readable page itself waits behind it. */
 function Intro({ onStart }: { onStart: () => void }) {
   return (
-    <main className="ic-fade h-[calc(100%-64px)] md:h-[calc(100%-72px)] min-h-[520px] flex justify-center px-[14px] pb-[14px] md:pb-[18px]">
-      <div className="w-full max-w-[560px] min-h-0 flex flex-col gap-[10px]">
+    <main className="ic-fade flex justify-center px-[16px] pt-[6px] pb-[40px]">
+      <div className="w-full max-w-[560px] flex flex-col gap-[10px]">
         <Hero
-          compact
           action={
             <button
               type="button"
               onClick={onStart}
-              className="group mt-[14px] w-full h-[56px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#2A1C12] transition-colors duration-150"
+              className="group mt-[20px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#2A1C12] transition-colors duration-150"
             >
               See Your Agent-Readable Page
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
@@ -982,21 +981,21 @@ function LocationMap({ variant, size = 76 }: { variant: number; size?: number })
 /** The founders and why Doe exists: their photo from /earlypreview's film in a rounded box, then the note. */
 function AboutDoe({ intro = false }: { intro?: boolean }) {
   return (
-    <div className={`rounded-[26px] bg-[#F4EEDF] p-[6px] ${intro ? "flex flex-col flex-1 min-h-0" : ""}`}>
-      <div className={`rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px] ${intro ? "flex flex-col flex-1 min-h-0" : ""}`}>
-        <div className={`rounded-[18px] overflow-hidden ${intro ? "flex-1 min-h-[60px]" : ""}`}>
+    <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
+      <div className="rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px]">
+        <div className="rounded-[18px] overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/earlypreview/thumbs/hero.jpg"
             alt="James and Matthew Lisondra, the founders of Doe"
             draggable={false}
-            className={`block w-full object-cover select-none ${intro ? "h-full" : "aspect-[16/9]"}`}
+            className="block w-full aspect-[16/9] object-cover select-none"
             style={{ objectPosition: "50% 38%" }}
           />
         </div>
-        <div className={intro ? "shrink-0 px-[8px] pt-[14px] pb-[6px] md:px-[14px]" : "px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px]"}>
+        <div className="px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px]">
           {intro ? (
-            <p className={`${DISPLAY} max-w-[24ch] text-[clamp(21px,5.4vw,30px)] leading-[1.14] tracking-[-0.02em] [text-wrap:balance]`}>
+            <p className={`${DISPLAY} max-w-[22ch] text-[clamp(26px,6.6vw,38px)] leading-[1.14] tracking-[-0.02em] [text-wrap:balance]`}>
               We&apos;ve built Doe to prepare Canadian clinics for personal agents.
             </p>
           ) : (
@@ -1007,7 +1006,7 @@ function AboutDoe({ intro = false }: { intro?: boolean }) {
               </p>
             </>
           )}
-          <p className={`max-w-[58ch] text-[#281910CC] [text-wrap:pretty] ${intro ? "mt-[6px] text-[13.5px] leading-[20px]" : "mt-[10px] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px]"}`}>
+          <p className="mt-[10px] max-w-[58ch] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px] text-[#281910CC] [text-wrap:pretty]">
             {intro ? (
               "My brother and I built Doe for free to help clinics reach more patients/clients as Muse, Instinct and other apps become more available."
             ) : (
@@ -1025,7 +1024,7 @@ function AboutDoe({ intro = false }: { intro?: boolean }) {
           )}
           <a
             href="mailto:james@doe.care"
-            className={`inline-flex items-center gap-[10px] rounded-full bg-[#F4EEDF] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150 ${intro ? "mt-[10px] h-[38px] pl-[12px] pr-[16px] text-[13px]" : "mt-[16px] h-[44px] pl-[14px] pr-[18px] text-[14px]"}`}
+            className="mt-[16px] inline-flex items-center gap-[10px] h-[44px] pl-[14px] pr-[18px] rounded-full bg-[#F4EEDF] text-[14px] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
               <rect x="3.5" y="5.5" width="17" height="13" rx="3" fill="none" stroke="currentColor" strokeWidth="1.7" />
