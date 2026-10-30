@@ -591,6 +591,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   const agent = view === "agent";
   const claimRef = useRef<HTMLDivElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
+  const activateRef = useRef<HTMLButtonElement>(null);
   const [claimInView, setClaimInView] = useState(true);
   const [active, setActive] = useState<string>(NAV[0].id);
   /** Desktop puts the claim box in a sticky right column; narrower screens put it under the status panel. */
@@ -606,12 +607,12 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   }, []);
 
   useEffect(() => {
-    const el = claimRef.current;
+    const el = !agent && !wide ? activateRef.current : claimRef.current;
     if (!el) return;
-    const io = new IntersectionObserver(([entry]) => setClaimInView(entry!.isIntersecting), { root: scrollRef.current, threshold: 0.15 });
+    const io = new IntersectionObserver(([entry]) => setClaimInView(entry!.isIntersecting), { root: scrollRef.current, threshold: 0.4 });
     io.observe(el);
     return () => io.disconnect();
-  }, [wide, view, scrollRef]);
+  }, [wide, view, agent, scrollRef]);
 
   useEffect(() => {
     setActive(NAV[0].id);
@@ -723,6 +724,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
               <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[124px]">
                 <StatusPanel
+                  activateRef={activateRef}
                   claimed={claim.claimed}
                   onClaim={goToClaim}
                   form={
@@ -745,27 +747,24 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         {wide && <aside className="sticky top-[72px] self-start pt-[8px]">{claimBox}</aside>}
       </div>
 
-      {/* iPhone: /demo's bottom pill, whenever the claim box is off screen. */}
-      <div
-        className="lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center gap-[12px] h-[62px] pl-[20px] pr-[8px] rounded-[999px] bg-[#140C04] text-[#FFFCF1]"
+      {/* iPhone: a black pill that is the Activate button, shown once the one in the page scrolls away. */}
+      <button
+        type="button"
+        onClick={goToClaim}
+        tabIndex={!claimed && !claimInView ? 0 : -1}
+        aria-hidden={claimed || claimInView}
+        className={`group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(20,12,4,0.25)] ${agent ? "font-mono text-[13px] tracking-[0.02em]" : "text-[12.5px] tracking-[0.04em]"}`}
         style={{
           bottom: "calc(max(8px, env(safe-area-inset-bottom)) + 10px)",
           transform: !claimed && !claimInView ? "none" : "translateY(calc(100% + 40px))",
           transition: `transform 360ms ${EASE}`,
         }}
       >
-        <span className={`flex flex-col grow min-w-0 ${agent ? "font-mono" : ""}`}>
-          <span className="truncate text-[12px] leading-[16px] text-[#FFFCF1A6]">{agent ? "status" : CLINIC.domain}</span>
-          <span className={`truncate font-[700] ${agent ? "text-[14px] leading-[20px]" : "text-[16px] leading-[20px]"}`}>{agent ? "ready · not_published" : "Agents Cannot Read It Yet"}</span>
+        <span className="relative inline-flex shrink-0 items-center w-[36px] h-[20px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
+          <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-active:translate-x-[16px]" />
         </span>
-        <button
-          type="button"
-          onClick={goToClaim}
-          className={`shrink-0 h-[46px] px-[18px] rounded-[999px] bg-[#FFFCF1] text-[#140C04] text-[14px] font-[600] ${agent ? "font-mono text-[13px]" : ""}`}
-        >
-          {agent ? "activate" : "Activate"}
-        </button>
-      </div>
+        {agent ? "POST /claim · activate" : "Activate for Personal Agents"}
+      </button>
     </>
   );
 }
@@ -867,14 +866,14 @@ function Track() {
  * The page's status, set as type: the whole box reads "not activated". Connections to Doe's MCP, API and the Personal
  * Agent Protocol are made but not live; the four agent files are ready. On iPhone the claim email sits at its foot.
  */
-function StatusPanel({ claimed, onClaim, form }: { claimed: string | null; onClaim: () => void; form: ReactNode }) {
+function StatusPanel({ claimed, onClaim, form, activateRef }: { claimed: string | null; onClaim: () => void; form: ReactNode; activateRef: RefObject<HTMLButtonElement> }) {
   /** iPhone and tablet: the email field opens under the button once it's tapped. */
   const [open, setOpen] = useState(false);
   return (
     <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
       <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[18px] pb-[16px] md:px-[24px] md:pt-[22px] md:pb-[20px]">
         <div className="flex items-start justify-between gap-[14px]">
-          <h2 className={`${DISPLAY} text-[26px] leading-[30px] md:text-[30px] md:leading-[34px] tracking-[-0.02em] [text-wrap:balance]`}>
+          <h2 className={`${DISPLAY} text-[32px] leading-[36px] md:text-[40px] md:leading-[44px] tracking-[-0.02em] [text-wrap:balance]`}>
             {claimed ? "Confirm Your Email" : "Personal Agents Cannot Read This Page Yet"}
           </h2>
           <span className="mt-[2px]">
@@ -884,50 +883,65 @@ function StatusPanel({ claimed, onClaim, form }: { claimed: string | null; onCla
         {claimed && <p className={`mt-[6px] text-[14.5px] leading-[21px] ${SUB}`}>Link sent to {claimed}.</p>}
         <Track />
         {!claimed && (
-          <p className={`mt-[18px] max-w-[52ch] text-[14.5px] leading-[21px] ${SUB} [text-wrap:pretty]`}>
+          <p className="mt-[18px] max-w-[46ch] text-[17px] leading-[25px] md:text-[19px] md:leading-[27px] text-[#281910B3] [text-wrap:pretty]">
             We&apos;ve converted your page into structured data that personal agents can find and read.
           </p>
         )}
         {!claimed && (
           <button
+            ref={activateRef}
             type="button"
             onClick={() => {
               setOpen(true);
               onClaim();
             }}
-            className="group mt-[16px] w-full h-[60px] flex items-center justify-center gap-[14px] px-[12px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[12.5px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.05em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[#2A1C12] transition-colors duration-150"
+            className="group mt-[16px] w-full h-[60px] flex items-center justify-center gap-[9px] sm:gap-[14px] px-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[12px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.03em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[#2A1C12] transition-colors duration-150"
           >
-            <span className="relative hidden sm:inline-flex shrink-0 items-center w-[40px] h-[22px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
-              <span className="absolute left-[3px] top-[3px] w-[16px] h-[16px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-hover:translate-x-[18px]" />
+            <span className="relative inline-flex shrink-0 items-center w-[34px] h-[20px] sm:w-[40px] sm:h-[22px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
+              <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-hover:translate-x-[14px] sm:group-hover:translate-x-[18px]" />
             </span>
             Activate for Personal Agents
           </button>
         )}
 
-        <StatusGroup title="Settings">
-          {CONNECTIONS.map((c) => (
-            <div key={c.name} className="flex items-start gap-[12px] py-[10px] border-b border-solid border-[#2819100F] last:border-b-0">
-              <Check on size={18} />
-              <span className="min-w-0 grow">
-                <span className="block text-[14px] leading-[19px] font-[600]">{c.name}</span>
-                <span className={`block mt-[1px] font-mono text-[11.5px] leading-[16px] ${MUTED} truncate`}>{c.target}</span>
-              </span>
-              <span className="shrink-0 pt-[1px] text-[12.5px] leading-[18px] font-[600]">Ready</span>
+        {/* Settings and files in one inner sand box, greyed because none of it is live yet. */}
+        <div className="mt-[18px] rounded-[18px] bg-[#F4EEDF] px-[16px] py-[14px]">
+          <div className="opacity-60">
+            <div className="text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]">Settings</div>
+            <div className="mt-[6px] flex flex-col">
+              {CONNECTIONS.map((c) => (
+                <div key={c.name} className="flex items-start gap-[12px] py-[9px]">
+                  <Check on size={18} />
+                  <span className="min-w-0 grow">
+                    <span className="block text-[14px] leading-[19px] font-[600]">{c.name}</span>
+                    <span className={`block mt-[1px] font-mono text-[11.5px] leading-[16px] ${MUTED} truncate`}>{c.target}</span>
+                  </span>
+                  <span className="shrink-0 pt-[1px] text-right text-[12.5px] leading-[17px]">
+                    <span className="block font-[600]">Created</span>
+                    <span className={`block text-[11.5px] ${MUTED}`}>Not published</span>
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
-        </StatusGroup>
 
-        <StatusGroup title="Files">
-          <div className="mt-[10px] grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
-            {AGENT_FILES.map((f) => (
-              <div key={f.path} className="flex items-center gap-[10px] h-[44px] px-[12px] rounded-[14px] border-[1.5px] border-dashed border-[#28191033]">
-                <Check on size={16} />
-                <span className="min-w-0 grow truncate font-mono text-[12.5px] leading-[16px] text-[#281910CC]">{f.path}</span>
-                <span className={`shrink-0 text-[11.5px] font-[600] ${MUTED}`}>Not published</span>
-              </div>
-            ))}
+            <div className="mt-[16px] text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]">Files</div>
+            <div className="mt-[6px] grid grid-cols-1 sm:grid-cols-2 sm:gap-x-[24px]">
+              {AGENT_FILES.map((f) => (
+                <div key={f.path} className="flex items-center gap-[10px] py-[8px]">
+                  <Check on size={16} />
+                  <span className="min-w-0 grow break-all font-mono text-[12.5px] leading-[17px]">
+                    <span className={MUTED}>ford-plastics</span>
+                    {f.path}
+                  </span>
+                  <span className="shrink-0 text-right text-[11.5px] leading-[15px]">
+                    <span className="block font-[600]">Created</span>
+                    <span className={`block ${MUTED}`}>Not published</span>
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-        </StatusGroup>
+        </div>
       </div>
 
       {form && open && <div className="ic-fade px-[0px] pt-[6px]">{form}</div>}
@@ -1211,7 +1225,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
   const [priceTab, setPriceTab] = useState(0);
   return (
     <>
-      <Section id="review" title="Needs Review" meta={`${ISSUES.length} found`}>
+      <Section id="review" title="Needs Review">
         <div className="rounded-[18px] bg-[#FFFCF1] px-[16px] py-[4px]">
           {ISSUES.map((issue) => (
             <div key={issue.title} className="py-[11px] border-b border-solid border-[#2819100F] last:border-b-0">
@@ -1225,7 +1239,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </p>
       </Section>
 
-      <Section id="locations" title="Locations & Hours" meta={`${LOCATIONS.length} sites`}>
+      <Section id="locations" title="Locations & Hours">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
           {LOCATIONS.map((loc) => (
             <div key={loc.name} className={BOX}>
@@ -1254,7 +1268,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </div>
       </Section>
 
-      <Section id="providers" title="Providers" meta={`${PROVIDERS.length} listed`}>
+      <Section id="providers" title="Providers">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
           {PROVIDERS.map((p, i) => (
             <div key={p.name} className={`${BOX} flex items-start gap-[14px]`}>
@@ -1269,7 +1283,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </div>
       </Section>
 
-      <Section id="services" title="Services" meta={`${SERVICE_COUNT} services`}>
+      <Section id="services" title="Services">
         <div className="flex gap-[6px] overflow-x-auto ic-noscroll">
           {SERVICES.map((g, i) => (
             <Pill key={g.group} on={serviceTab === i} onClick={() => setServiceTab(i)}>
@@ -1286,7 +1300,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </div>
       </Section>
 
-      <Section id="prices" title="Prices" meta="CAD · before HST">
+      <Section id="prices" title="Prices">
         <div className="flex gap-[6px] overflow-x-auto ic-noscroll">
           {PRICES.map((g, i) => (
             <Pill key={g.group} on={priceTab === i} onClick={() => setPriceTab(i)}>
@@ -1346,7 +1360,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </div>
       </Section>
 
-      <Section id="files" title="Agent Files" meta="Not published">
+      <Section id="files" title="Agent Files">
         <div className="rounded-[18px] bg-[#FFFCF1] px-[16px] py-[4px]">
           {AGENT_FILES.map((f) => (
             <div key={f.path} className="flex items-center gap-[12px] py-[11px] border-b border-solid border-[#2819100F] last:border-b-0">
@@ -1366,7 +1380,7 @@ function YourSections({ claimed }: { claimed: boolean }) {
         </p>
       </Section>
 
-      <Section id="preview" title="How Agents Answer" meta="Example" bare>
+      <Section id="preview" title="How Agents Answer" bare>
         <MusePreview />
       </Section>
     </>
