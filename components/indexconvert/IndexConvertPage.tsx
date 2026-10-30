@@ -917,6 +917,116 @@ function Hero({ action, compact = false }: { action?: ReactNode; compact?: boole
   );
 }
 
+/** One illustration per step, drawn small and quiet on a sand tile. */
+function StepVisual({ n }: { n: 1 | 2 | 3 | 4 }) {
+  const tile = "h-[112px] rounded-[16px] bg-[#F4EEDF] flex items-center justify-center overflow-hidden";
+  const svgProps = { viewBox: "0 0 240 96", width: "100%", height: "100%", style: { maxWidth: 280, fontFamily: "inherit" }, "aria-hidden": true } as const;
+  if (n === 1)
+    return (
+      <div className={tile}>
+        <svg {...svgProps}>
+          <rect x="22" y="14" width="68" height="68" rx="10" fill="#FFFCF1" />
+          <rect x="22" y="14" width="68" height="14" rx="7" fill="#E9DFC9" />
+          <rect x="32" y="38" width="48" height="5" rx="2.5" fill="#28191033" />
+          <rect x="32" y="49" width="38" height="5" rx="2.5" fill="#28191026" />
+          <rect x="32" y="60" width="44" height="5" rx="2.5" fill="#28191026" />
+          <path d="M102 48h30M124 40l8 8-8 8" fill="none" stroke="#281910" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="144" y="20" width="76" height="56" rx="12" fill="#140C04" />
+          <text x="156" y="42" fontSize="12" fill="#FCCFB8" fontFamily="ui-monospace, monospace">{"{"}</text>
+          <rect x="166" y="34" width="38" height="5" rx="2.5" fill="#FFFCF1" opacity="0.85" />
+          <rect x="166" y="46" width="28" height="5" rx="2.5" fill="#FFFCF1" opacity="0.5" />
+          <rect x="166" y="58" width="34" height="5" rx="2.5" fill="#FFFCF1" opacity="0.5" />
+          <text x="208" y="70" fontSize="12" fill="#FCCFB8" fontFamily="ui-monospace, monospace">{"}"}</text>
+        </svg>
+      </div>
+    );
+  if (n === 2)
+    return (
+      <div className={tile}>
+        <svg {...svgProps}>
+          <rect x="26" y="22" width="146" height="38" rx="19" fill="#FFFCF1" stroke="#2819101F" strokeWidth="1.5" />
+          <text x="46" y="45" fontSize="12.5" fill="#28191080">you@yourclinic.com</text>
+          <circle cx="198" cy="41" r="17" fill="#140C04" />
+          <path d="M190 41.5l6 6 11-12" fill="none" stroke="#FFFCF1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="26" y="68" width="146" height="14" rx="7" fill="#140C04" />
+          <rect x="76" y="73" width="46" height="4" rx="2" fill="#FFFCF1" opacity="0.8" />
+        </svg>
+      </div>
+    );
+  if (n === 3)
+    return (
+      <div className={`${tile} px-[14px]`}>
+        <div className="flex flex-wrap items-center justify-center gap-[6px]">
+          {["Book", "Intake", "Deposits", "Waitlist", "& more"].map((t, i) => (
+            <span key={t} className={`h-[30px] px-[13px] flex items-center rounded-full text-[12.5px] font-[600] ${i === 0 ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}>
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  const nodes = [
+    { label: "Muse", x: 8, y: 8, w: 52 },
+    { label: "Instinct", x: 172, y: 8, w: 60 },
+    { label: "Claude Duet", x: 4, y: 66, w: 82 },
+    { label: "GPT Dots", x: 156, y: 66, w: 72 },
+  ];
+  return (
+    <div className={tile}>
+      <svg {...svgProps}>
+        {nodes.map((nd) => (
+          <line key={nd.label} x1="120" y1="48" x2={nd.x + nd.w / 2} y2={nd.y + 11} stroke="#28191033" strokeWidth="1.5" strokeDasharray="3 4" />
+        ))}
+        {nodes.map((nd) => (
+          <g key={nd.label}>
+            <rect x={nd.x} y={nd.y} width={nd.w} height="22" rx="11" fill="#FFFCF1" />
+            <text x={nd.x + nd.w / 2} y={nd.y + 15} fontSize="10.5" fontWeight="600" textAnchor="middle" fill="#281910">
+              {nd.label}
+            </text>
+          </g>
+        ))}
+        <circle cx="120" cy="48" r="20" fill="#FFFCF1" />
+        {[0, 1, 2, 3, 4, 5].map((i) => {
+          const a = (i / 6) * Math.PI * 2;
+          return <circle key={i} cx={120 + Math.cos(a) * 9} cy={48 + Math.sin(a) * 9} r="2.4" fill="#C2A987" />;
+        })}
+        <circle cx="120" cy="48" r="3" fill="#B99A72" />
+      </svg>
+    </div>
+  );
+}
+
+const STEP_BOXES: { n: 1 | 2 | 3 | 4; title: string; detail?: string }[] = [
+  { n: 1, title: "We've created an agentic-readable version of your clinic page" },
+  { n: 2, title: "Claim your page" },
+  { n: 3, title: "Allow potential clients to book through agents, complete intake, pay deposits, join waitlist & more" },
+  { n: 4, title: "We handle the rest", detail: "We connect your clinic directly to the channels that make it visible and interactable to personal agents." },
+];
+
+/** How it works, one box per step: sand shell, cream inside, a small picture, then the line. */
+function StepBoxes() {
+  return (
+    <>
+      {STEP_BOXES.map((st) => (
+        <div key={st.n} className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
+          <div className="rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px]">
+            <StepVisual n={st.n} />
+            <div className="px-[8px] pt-[14px] pb-[8px] md:px-[12px]">
+              <div className="flex items-start gap-[12px]">
+                <span className="shrink-0 mt-[1px] w-[26px] h-[26px] flex items-center justify-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[700]">{st.n}</span>
+                <div className="min-w-0">
+                  <div className="text-[17px] leading-[24px] font-[600] [text-wrap:balance]">{st.title}</div>
+                  {st.detail && <div className={`mt-[4px] text-[14.5px] leading-[22px] ${SUB} [text-wrap:pretty]`}>{st.detail}</div>}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
 /** The first screen: the clinic's box and one button. The agent-readable page itself waits behind it. */
 function Intro({ onStart }: { onStart: () => void }) {
   return (
@@ -937,6 +1047,7 @@ function Intro({ onStart }: { onStart: () => void }) {
           }
         />
         <AboutDoe intro />
+        <StepBoxes />
       </div>
     </main>
   );
