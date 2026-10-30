@@ -888,6 +888,21 @@ function StatusPanel({ claimed, onClaim, form }: { claimed: string | null; onCla
             We&apos;ve converted your page into structured data that personal agents can find and read.
           </p>
         )}
+        {!claimed && (
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(true);
+              onClaim();
+            }}
+            className="group mt-[16px] w-full h-[60px] flex items-center justify-center gap-[14px] px-[12px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[12.5px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.05em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[#2A1C12] transition-colors duration-150"
+          >
+            <span className="relative hidden sm:inline-flex shrink-0 items-center w-[40px] h-[22px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
+              <span className="absolute left-[3px] top-[3px] w-[16px] h-[16px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-hover:translate-x-[18px]" />
+            </span>
+            Activate for Personal Agents
+          </button>
+        )}
 
         <StatusGroup title="Settings">
           {CONNECTIONS.map((c) => (
@@ -915,21 +930,6 @@ function StatusPanel({ claimed, onClaim, form }: { claimed: string | null; onCla
         </StatusGroup>
       </div>
 
-      {!claimed && (
-        <button
-          type="button"
-          onClick={() => {
-            setOpen(true);
-            onClaim();
-          }}
-          className="group mt-[6px] w-full h-[64px] flex items-center justify-center gap-[14px] rounded-[21px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.08em] hover:bg-[#2A1C12] transition-colors duration-150"
-        >
-          <span className="relative inline-flex items-center w-[40px] h-[22px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
-            <span className="absolute left-[3px] top-[3px] w-[16px] h-[16px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-hover:translate-x-[18px]" />
-          </span>
-          Activate for Personal Agents
-        </button>
-      )}
       {form && open && <div className="ic-fade px-[0px] pt-[6px]">{form}</div>}
     </div>
   );
