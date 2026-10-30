@@ -348,7 +348,9 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
   const pageIndex = Math.min(SOURCE_PAGES.length - 1, Math.floor(elapsed / SLOT_MS));
   const stepIndex = STEPS.findIndex((_, i) => elapsed < STEP_STARTS[i]! + STEPS[i]!.ms);
   const built = stepIndex === -1;
-  const progress = Math.min(1, elapsed / BUILD_MS);
+  /** The bar follows the steps: each finished step is one share, the running one fills its share in time. */
+  const stepFrac = built ? 1 : Math.min(1, Math.max(0, (elapsed - STEP_STARTS[stepIndex]!) / STEPS[stepIndex]!.ms));
+  const progress = built ? 1 : (stepIndex + stepFrac) / STEPS.length;
   const page = SOURCE_PAGES[pageIndex]!;
   const desktop = viewport.w >= 768;
   /** Short iPhone screens get a smaller sphere and one step's detail at a time. */
@@ -386,7 +388,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
             {/* The clinic's URL in a box that fills as the build runs, with the page being read after the domain. */}
             <div className="mt-[14px] w-full">
               <div className="relative h-[46px] rounded-[16px] bg-[#F4EEDF] overflow-hidden">
-                <div className="absolute inset-y-0 left-0 bg-[#E9DFC9]" style={{ width: `${progress * 100}%`, transition: "width 120ms linear" }} />
+                <div className="absolute inset-0 bg-[#E9DFC9] origin-left will-change-transform" style={{ transform: `scaleX(${progress})` }} />
                 <div className="relative h-full flex items-center gap-[10px] px-[14px]">
                   {built ? <Check on size={20} /> : <Spinner />}
                   <span className="min-w-[0px] truncate text-[15px] leading-[20px] font-[600]">
@@ -859,28 +861,28 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 /* ------------------------------------------------------------------ Status */
 
 /** The clinic as a small hero: sphere, name, what it is, where, its site. Centred on iPhone, a row from tablet up. */
-function Hero({ action }: { action?: ReactNode }) {
+function Hero({ action, compact = false }: { action?: ReactNode; compact?: boolean }) {
   return (
-    <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
-      <div className="rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]">
-      <div className="flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]">
-        <IndexConvertSphere size={84} className="shrink-0" />
-        <div className="min-w-0">
-          <h1 className={`${DISPLAY} text-[30px] leading-[34px] md:text-[36px] md:leading-[40px] tracking-[-0.02em] [text-wrap:balance]`}>{CLINIC.name}</h1>
-          <p className={`mt-[6px] mx-auto md:mx-0 max-w-[32ch] text-[14.5px] leading-[20px] ${SUB} [text-wrap:balance]`}>
-            {CLINIC.kind} in {CLINIC.area}, since {CLINIC.since}
-          </p>
-          <a
-            href={`https://${CLINIC.url}`}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-[12px] inline-flex items-center h-[32px] px-[14px] rounded-full bg-[#F4EEDF] text-[13px] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150"
-          >
-            {CLINIC.domain}
-          </a>
+    <div className="rounded-[26px] bg-[#F4EEDF] p-[6px] shrink-0">
+      <div className={compact ? "rounded-[21px] bg-[#FFFCF1] px-[16px] py-[16px] md:px-[22px] md:py-[18px]" : "rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]"}>
+        <div className={compact ? "flex items-center text-left gap-[14px]" : "flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]"}>
+          <IndexConvertSphere size={compact ? 60 : 84} className="shrink-0" />
+          <div className="min-w-0">
+            <h1 className={`${DISPLAY} tracking-[-0.02em] [text-wrap:balance] ${compact ? "text-[24px] leading-[28px] md:text-[30px] md:leading-[34px]" : "text-[30px] leading-[34px] md:text-[36px] md:leading-[40px]"}`}>{CLINIC.name}</h1>
+            <p className={`mt-[4px] max-w-[32ch] ${SUB} [text-wrap:balance] ${compact ? "text-[13px] leading-[18px]" : "mx-auto md:mx-0 mt-[6px] text-[14.5px] leading-[20px]"}`}>
+              {CLINIC.kind} in {CLINIC.area}, since {CLINIC.since}
+            </p>
+            <a
+              href={`https://${CLINIC.url}`}
+              target="_blank"
+              rel="noreferrer"
+              className={`inline-flex items-center rounded-full bg-[#F4EEDF] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150 ${compact ? "mt-[8px] h-[28px] px-[12px] text-[12.5px]" : "mt-[12px] h-[32px] px-[14px] text-[13px]"}`}
+            >
+              {CLINIC.domain}
+            </a>
+          </div>
         </div>
-      </div>
-      {action}
+        {action}
       </div>
     </div>
   );
@@ -889,15 +891,15 @@ function Hero({ action }: { action?: ReactNode }) {
 /** The first screen: the clinic's box and one button. The agent-readable page itself waits behind it. */
 function Intro({ onStart }: { onStart: () => void }) {
   return (
-    <main className="ic-fade flex justify-center px-[16px] pt-[6px] pb-[40px]">
-      <div className="w-full max-w-[560px] flex flex-col gap-[10px]">
-        <AboutDoe intro />
+    <main className="ic-fade h-[calc(100%-64px)] md:h-[calc(100%-72px)] min-h-[520px] flex justify-center px-[14px] pb-[14px] md:pb-[18px]">
+      <div className="w-full max-w-[560px] min-h-0 flex flex-col gap-[10px]">
         <Hero
+          compact
           action={
             <button
               type="button"
               onClick={onStart}
-              className="group mt-[20px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#2A1C12] transition-colors duration-150"
+              className="group mt-[14px] w-full h-[56px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#2A1C12] transition-colors duration-150"
             >
               See Your Agent-Readable Page
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
@@ -906,6 +908,7 @@ function Intro({ onStart }: { onStart: () => void }) {
             </button>
           }
         />
+        <AboutDoe intro />
       </div>
     </main>
   );
@@ -979,21 +982,21 @@ function LocationMap({ variant, size = 76 }: { variant: number; size?: number })
 /** The founders and why Doe exists: their photo from /earlypreview's film in a rounded box, then the note. */
 function AboutDoe({ intro = false }: { intro?: boolean }) {
   return (
-    <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
-      <div className="rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px]">
-        <div className="rounded-[18px] overflow-hidden">
+    <div className={`rounded-[26px] bg-[#F4EEDF] p-[6px] ${intro ? "flex flex-col flex-1 min-h-0" : ""}`}>
+      <div className={`rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px] ${intro ? "flex flex-col flex-1 min-h-0" : ""}`}>
+        <div className={`rounded-[18px] overflow-hidden ${intro ? "flex-1 min-h-[60px]" : ""}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/earlypreview/thumbs/hero.jpg"
             alt="James and Matthew Lisondra, the founders of Doe"
             draggable={false}
-            className="block w-full aspect-[16/9] object-cover select-none"
+            className={`block w-full object-cover select-none ${intro ? "h-full" : "aspect-[16/9]"}`}
             style={{ objectPosition: "50% 38%" }}
           />
         </div>
-        <div className="px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px]">
+        <div className={intro ? "shrink-0 px-[8px] pt-[14px] pb-[6px] md:px-[14px]" : "px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px]"}>
           {intro ? (
-            <p className={`${DISPLAY} max-w-[22ch] text-[clamp(26px,6.6vw,38px)] leading-[1.14] tracking-[-0.02em] [text-wrap:balance]`}>
+            <p className={`${DISPLAY} max-w-[24ch] text-[clamp(21px,5.4vw,30px)] leading-[1.14] tracking-[-0.02em] [text-wrap:balance]`}>
               We&apos;ve built Doe to prepare Canadian clinics for personal agents.
             </p>
           ) : (
@@ -1004,7 +1007,7 @@ function AboutDoe({ intro = false }: { intro?: boolean }) {
               </p>
             </>
           )}
-          <p className="mt-[10px] max-w-[58ch] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px] text-[#281910CC] [text-wrap:pretty]">
+          <p className={`max-w-[58ch] text-[#281910CC] [text-wrap:pretty] ${intro ? "mt-[6px] text-[13.5px] leading-[20px]" : "mt-[10px] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px]"}`}>
             {intro ? (
               "My brother and I built Doe for free to help clinics reach more patients/clients as Muse, Instinct and other apps become more available."
             ) : (
@@ -1022,7 +1025,7 @@ function AboutDoe({ intro = false }: { intro?: boolean }) {
           )}
           <a
             href="mailto:james@doe.care"
-            className="mt-[16px] inline-flex items-center gap-[10px] h-[44px] pl-[14px] pr-[18px] rounded-full bg-[#F4EEDF] text-[14px] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150"
+            className={`inline-flex items-center gap-[10px] rounded-full bg-[#F4EEDF] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150 ${intro ? "mt-[10px] h-[38px] pl-[12px] pr-[16px] text-[13px]" : "mt-[16px] h-[44px] pl-[14px] pr-[18px] text-[14px]"}`}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
               <rect x="3.5" y="5.5" width="17" height="13" rx="3" fill="none" stroke="currentColor" strokeWidth="1.7" />
@@ -1121,13 +1124,14 @@ function ClaimModal({
   }, [onClose]);
 
   const claimed = claim.claimed;
-  const heading = claimed ? "Confirm Your Email" : reason === "edit" ? "To make edits, claim your page!" : "Claim to Activate Your Page";
+  /** Opened from an edit icon it says why; from a switch or Activate button it goes straight to the form. */
+  const heading = claimed ? "Confirm Your Email" : reason === "edit" ? "To make edits, claim your page!" : null;
   return (
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={heading}
-      className="absolute inset-0 overflow-y-auto overscroll-contain bg-[#F4EEDF] pointer-events-auto"
+      aria-label={heading ?? "Claim your page"}
+      className="absolute inset-0 flex flex-col overflow-y-auto overscroll-contain bg-[#F4EEDF] pointer-events-auto"
       style={{ opacity: visible ? 1 : 0, transition: "opacity 260ms ease" }}
     >
       <div className={HEADER}>
@@ -1143,8 +1147,11 @@ function ClaimModal({
           </svg>
         </button>
       </div>
-      <div className="mx-auto w-full max-w-[560px] px-[16px] pb-[40px] flex flex-col gap-[14px]">
-        <h2 className={`${DISPLAY} mx-auto max-w-[17ch] pt-[4px] text-center text-[30px] leading-[35px] md:text-[38px] md:leading-[44px] tracking-[-0.02em] [text-wrap:balance]`}>{heading}</h2>
+      {/* Centered in the shell: the bottom padding matches the header above, so the middle is the shell's middle. */}
+      <div className="mx-auto w-full max-w-[560px] flex-1 px-[16px] pb-[64px] md:pb-[72px] flex flex-col justify-center gap-[14px]">
+        {heading && (
+          <h2 className={`${DISPLAY} mx-auto max-w-[17ch] pt-[4px] text-center text-[30px] leading-[35px] md:text-[38px] md:leading-[44px] tracking-[-0.02em] [text-wrap:balance]`}>{heading}</h2>
+        )}
         <Hero />
         {claimed ? (
           <div className="rounded-[26px] bg-[#FFFCF1] px-[20px] py-[22px] text-center">
@@ -1165,7 +1172,7 @@ function ClaimModal({
               required
               value={claim.email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder={`you@${CLINIC.domain}`}
+              placeholder="you@example.com"
               className="h-[56px] w-full rounded-[20px] bg-[#FFFCF1] px-[18px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#140C04] transition-colors"
             />
             <button
@@ -1179,7 +1186,12 @@ function ClaimModal({
                   Claiming
                 </>
               ) : (
-                "Claim & Activate Your Clinic Page"
+                <>
+                  <span className="relative inline-flex shrink-0 items-center w-[34px] h-[20px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
+                    <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] rounded-full bg-[#FFFCF1]" />
+                  </span>
+                  Claim &amp; Activate Your Page
+                </>
               )}
             </button>
             {claim.status === "error" && (
