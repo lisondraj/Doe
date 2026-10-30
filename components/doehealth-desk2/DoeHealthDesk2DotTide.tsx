@@ -18,12 +18,15 @@ export function DoeHealthDesk2DotTide({
   step = 12,
   reach = 420,
   active = true,
+  symmetrical = false,
 }: {
   color: string;
   step?: number;
   reach?: number;
   /** false pauses the tides on their current frame, as for a canvas in a hidden screen. */
   active?: boolean;
+  /** The right band is a mirror of the left. Otherwise the two sides roll on different phases. */
+  symmetrical?: boolean;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const activeRef = useRef(active);
@@ -87,8 +90,8 @@ export function DoeHealthDesk2DotTide({
       ctx.clearRect(0, 0, w, h);
       ctx.fillStyle = color;
       for (const side of [0, 1]) {
-        const phase = side * 2.4;
-        const dir = side ? -1 : 1;
+        const phase = symmetrical ? 0 : side * 2.4;
+        const dir = symmetrical ? 1 : side ? -1 : 1;
         const first = st / 2 + Math.max(0, Math.floor((from - st / 2) / st)) * st;
         for (let y = first; y < h && y < to; y += st) {
           const edge = rc + 90 * k * Math.sin(y / (230 * k) - dir * t * 0.5 + phase) + 36 * k * Math.sin(y / (97 * k) + dir * t * 0.8 + 1.3 + phase);
@@ -171,7 +174,7 @@ export function DoeHealthDesk2DotTide({
       visibility.disconnect();
       strict.disconnect();
     };
-  }, [color, step, reach]);
+  }, [color, step, reach, symmetrical]);
 
   return <canvas ref={ref} className="doehealth-desk2-tide" aria-hidden />;
 }

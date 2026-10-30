@@ -1,0 +1,28 @@
+import { chromium } from "../node_modules/playwright/index.mjs";
+const sel = process.argv[2] || ".earlypreview-product";
+const browser = await chromium.launch();
+const page = await (await browser.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
+await page.goto("http://localhost:3000/earlypreview", { waitUntil: "load", timeout: 300000 });
+await page.waitForTimeout(10000);
+await page.evaluate((s) => { const el = document.querySelector(s); scrollTo(0, el.getBoundingClientRect().top + scrollY - 30); }, sel);
+await page.waitForTimeout(3000);
+await page.mouse.move(720, 450);
+if (process.argv[4] === "corner") await page.mouse.move(1, 899);
+const mode = process.argv[3] || "none";
+if (mode === "pause") await page.addStyleTag({ content: ".earlypreview-product__source *, .earlypreview-product__source *::before, .earlypreview-product__source *::after { animation-play-state: paused !important; }" });
+if (mode === "contain") await page.addStyleTag({ content: ".earlypreview-product__slide { contain: layout paint style; } .earlypreview-product__track { will-change: transform; }" });
+if (mode === "nocontainer") await page.addStyleTag({ content: ".earlypreview-product__stage, .earlypreview-product__box, .earlypreview-product__slide { container-type: normal !important; }" });
+if (mode === "track") await page.addStyleTag({ content: ".earlypreview-product__track { will-change: transform; }" });
+if (mode === "hide") await page.addStyleTag({ content: ".earlypreview-product__ui { visibility: hidden !important; }" });
+const cdp = await page.context().newCDPSession(page);
+await cdp.send("Performance.enable");
+const metrics = async () => Object.fromEntries((await cdp.send("Performance.getMetrics")).metrics.map((m) => [m.name, m.value]));
+await page.evaluate(() => { window.__f = []; const t = (x) => { window.__f.push(x); if (window.__f.length < 5000) requestAnimationFrame(t); }; requestAnimationFrame(t); });
+const a = await metrics();
+for (let i = 0; i < 60; i++) { await page.mouse.wheel(0, 40); await page.waitForTimeout(40); }
+await page.waitForTimeout(800);
+const b = await metrics();
+const gaps = await page.evaluate(() => { const f = window.__f; const g = []; for (let i = 1; i < f.length; i++) g.push(f[i] - f[i - 1]); g.sort((x, y) => x - y); return { n: g.length, mean: g.reduce((x, y) => x + y, 0) / g.length, p95: g[Math.floor(g.length * 0.95)], over50: g.filter((x) => x > 50).length }; });
+const d = (k) => +((b[k] - a[k]) * 1000).toFixed(0);
+console.log(sel, JSON.stringify({ scriptMs: d("ScriptDuration"), layoutMs: d("LayoutDuration"), styleMs: d("RecalcStyleDuration"), taskMs: d("TaskDuration"), layouts: b.LayoutCount - a.LayoutCount, styleRecalcs: b.RecalcStyleCount - a.RecalcStyleCount, nodes: b.Nodes, frames: gaps }));
+await browser.close();

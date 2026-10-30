@@ -1,0 +1,24 @@
+/*
+ * Desktop body is overflow:hidden (wide-desktop on the root layout), so a page of
+ * full-height screens cannot scroll. This page is the scroller.
+ */
+@media (min-width: 1280px) and (hover: hover) and (pointer: fine) {
+  html:has(.pitchdesigns-page) {
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto;
+  }
+
+  html:has(.pitchdesigns-page) body {
+    overflow: visible !important;
+    overscroll-behavior-y: auto;
+  }
+}
+
+/* The /landinglaunch wave fills each screen. Its own rules only position it inside the hero box. */
+.pitchdesigns-page .doehealth-blog-dotwave {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}

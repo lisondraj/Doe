@@ -1,0 +1,7 @@
+<html><body style="margin:0;background:#888;font:14px sans-serif">
+<script>
+const pairs=[];
+const q=new URLSearchParams(location.search).get('ids').split(',');
+for(const id of q){ const [a,b]=id.split('|'); pairs.push([a,b]); }
+document.write(pairs.map(([a,b])=>`<div style="display:flex;gap:8px;margin:6px"><img src="${a}" style="width:700px"><img src="${b}" style="width:330px"></div>`).join(''));
+</script></body></html>

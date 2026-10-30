@@ -27,6 +27,7 @@ import { VIDEO2_LIST } from "./video2";
 import { VIDEO3_LIST } from "./video3";
 import { VIDEO4_LIST } from "./video4";
 import { VIDEO6_LIST } from "./video6";
+import { VIDEO_INTRO_LIST } from "./video-intro";
 
 export const RemotionRoot = () => (
   <>
@@ -54,7 +55,7 @@ export const RemotionRoot = () => (
       width={MOTION_TEST_WIDTH}
       height={MOTION_TEST_HEIGHT}
     />
-    {[...VIDEO1_LIST, ...VIDEO2_LIST, ...VIDEO3_LIST, ...VIDEO4_LIST, ...VIDEO6_LIST].map((video) => (
+    {[...VIDEO1_LIST, ...VIDEO2_LIST, ...VIDEO3_LIST, ...VIDEO4_LIST, ...VIDEO6_LIST, ...VIDEO_INTRO_LIST].map((video) => (
       <Composition
         key={video.id}
         id={video.id}

@@ -1,0 +1,358 @@
+/* ------------------------------------------------------------ target at Seed */
+
+/* The metrics in the top right, right aligned; the title builds in the bottom left. */
+.earlypreview-market__scene--corners .earlypreview-market__title {
+  margin-top: auto;
+  font-size: clamp(3rem, min(6.4vw, 10vh), 7.2rem);
+}
+
+.earlypreview-market__seed-lines {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: clamp(0.3rem, 1.1vh, 0.75rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: right;
+}
+
+.earlypreview-market__seed-lines > li {
+  font-family: var(--m-display);
+  font-size: clamp(1.35rem, min(2.3vw, 3.9vh), 2.45rem);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: var(--m-dim);
+  opacity: var(--e, 0);
+  transform: translateY(calc((1 - var(--e, 0)) * 0.9rem));
+}
+
+.earlypreview-market__seed-lines strong,
+.earlypreview-market__mix-facts strong {
+  font-weight: 400;
+  color: var(--m-salmon);
+}
+
+/* ------------------------------------------------------------ plans */
+
+/* Three open columns, free to paid. Space between them, no boxes. */
+.earlypreview-market__plans {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(2rem, 5vw, 5.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.earlypreview-market__plan {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  opacity: var(--e, 0);
+  transform: translateY(calc((1 - var(--e, 0)) * 1.1rem));
+}
+
+.earlypreview-market__plan-name {
+  font-family: var(--m-display);
+  font-size: clamp(2rem, min(3vw, 5vh), 3.2rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  transition: color 200ms ease;
+}
+
+.earlypreview-market__plan-tagline {
+  margin-top: 0.45rem;
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
+  line-height: 1.3;
+  color: var(--m-dim);
+}
+
+/* The founding price, big and salmon, beside the price it becomes. */
+.earlypreview-market__plan-prices {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.8rem, 1.6vw, 1.5rem);
+  margin-top: clamp(1.2rem, 3.4vh, 2.2rem);
+}
+
+.earlypreview-market__plan-price {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.earlypreview-market__plan-value {
+  font-family: var(--m-display);
+  font-size: clamp(2.6rem, min(4.4vw, 7.4vh), 4.8rem);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+
+.earlypreview-market__plan-value small {
+  margin-left: 0.08em;
+  font-size: 0.36em;
+  letter-spacing: -0.01em;
+  color: var(--m-dim);
+}
+
+.earlypreview-market__plan-price.is-founding .earlypreview-market__plan-value {
+  color: var(--m-salmon);
+}
+
+.earlypreview-market__plan-price:not(.is-founding) .earlypreview-market__plan-value {
+  color: var(--m-cream);
+}
+
+.earlypreview-market__plan-arrow {
+  padding-top: 0.2em;
+  font-family: var(--m-display);
+  font-size: clamp(1.6rem, min(2.6vw, 4.4vh), 2.8rem);
+  line-height: 1;
+  color: var(--m-quiet);
+}
+
+.earlypreview-market__plan-when {
+  font-size: clamp(0.95rem, 1.1vw, 1.08rem);
+  color: var(--m-dim);
+}
+
+.earlypreview-market__plan-price.is-founding .earlypreview-market__plan-when {
+  color: var(--m-salmon);
+}
+
+.earlypreview-market__plan-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: clamp(1.4rem, 3.6vh, 2.4rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.earlypreview-market__plan-features > li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+  line-height: 1.3;
+}
+
+.earlypreview-market__plan-features svg {
+  flex-shrink: 0;
+  translate: 0 0.12em;
+  color: var(--m-salmon);
+}
+
+/* "Everything in …" reads as the carry-over, quieter than what the plan adds. */
+.earlypreview-market__plan:not(.is-free) .earlypreview-market__plan-features > li:first-child {
+  color: var(--m-dim);
+}
+
+/* The founding offer, once, under the plans. */
+.earlypreview-market__plan-founding {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.8rem;
+  align-items: baseline;
+  margin: clamp(2rem, 5.5vh, 3.5rem) 0 0;
+  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+  color: var(--m-dim);
+  opacity: var(--e, 0);
+}
+
+.earlypreview-market__plan-founding strong {
+  font-weight: 400;
+  color: var(--m-salmon);
+}
+
+/* ------------------------------------------------------------ cities */
+
+/*
+ * The titles, the country view and the breakdown are each a stack of layers in one grid cell, so the screen never
+ * reflows as they cross-fade.
+ */
+.earlypreview-market__title-stack,
+.earlypreview-market__stack,
+.earlypreview-market__country-panels {
+  display: grid;
+}
+
+.earlypreview-market__title-stack {
+  flex-shrink: 0;
+}
+
+.earlypreview-market__title-stack > *,
+.earlypreview-market__stack > *,
+.earlypreview-market__country-panels > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+  opacity: var(--o, 0);
+}
+
+.earlypreview-market__title-stack > .is-off,
+.earlypreview-market__stack > .is-off,
+.earlypreview-market__country-panels > .is-off {
+  pointer-events: none;
+}
+
+.earlypreview-market__title-stack > .is-gone,
+.earlypreview-market__stack > .is-gone,
+.earlypreview-market__country-panels > .is-gone {
+  visibility: hidden;
+}
+
+/* The dots hold the middle of the screen; the country's numbers sit beside them in large type. */
+.earlypreview-market__country-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+
+.earlypreview-market__country-dots {
+  display: block;
+  width: 100%;
+  max-height: 48vh;
+}
+
+.earlypreview-market__country-dots .is-claimed {
+  fill: rgb(255 252 241 / 0.3);
+}
+
+.earlypreview-market__country-dots .is-paying {
+  fill: var(--m-salmon);
+}
+
+.earlypreview-market__country-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.earlypreview-market__country-arr,
+.earlypreview-market__country-arr-label,
+.earlypreview-market__country-lines > li,
+.earlypreview-market__mix-row,
+.earlypreview-market__mix-facts > li {
+  opacity: var(--e, 0);
+  transform: translateY(calc((1 - var(--e, 0)) * 0.9rem));
+}
+
+.earlypreview-market__country-arr {
+  font-family: var(--m-display);
+  font-size: clamp(4rem, min(8vw, 13vh), 8.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: var(--m-salmon);
+}
+
+.earlypreview-market__country-arr-label {
+  margin-top: 0.6rem;
+  font-size: clamp(1.1rem, 1.4vw, 1.35rem);
+  color: var(--m-dim);
+}
+
+.earlypreview-market__country-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: clamp(1.4rem, 4vh, 2.6rem) 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--m-display);
+  font-size: clamp(1.6rem, min(2.6vw, 4.4vh), 2.7rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--m-dim);
+}
+
+.earlypreview-market__country-lines strong {
+  font-weight: 400;
+  color: var(--m-cream);
+}
+
+.earlypreview-market__country-lines > .is-paying strong {
+  color: var(--m-salmon);
+}
+
+.earlypreview-market__country-lines > .is-indexed {
+  color: var(--m-quiet);
+}
+
+.earlypreview-market__country-lines > .is-indexed strong {
+  color: var(--m-dim);
+}
+
+/* The breakdown: plans down, Canada, U.S. and ARR across; the clinic mix beside it. */
+.earlypreview-market__mix-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 6rem);
+}
+
+.earlypreview-market__mix {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+  row-gap: clamp(0.5rem, 1.8vh, 1.1rem);
+}
+
+.earlypreview-market__mix-row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+  font-family: var(--m-display);
+  font-size: clamp(1.7rem, min(2.9vw, 4.8vh), 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.earlypreview-market__mix-row > :not(:first-child) {
+  text-align: right;
+}
+
+.earlypreview-market__mix-row em {
+  font-style: normal;
+  color: var(--m-quiet);
+}
+
+.earlypreview-market__mix-row.is-head {
+  font-family: inherit;
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
+  letter-spacing: 0;
+  color: var(--m-dim);
+}
+
+.earlypreview-market__mix-row.is-free {
+  color: var(--m-dim);
+}
+
+.earlypreview-market__mix-row > :last-child {
+  color: var(--m-salmon);
+}
+
+.earlypreview-market__mix-row.is-head > :last-child,
+.earlypreview-market__mix-row.is-free > :last-child {
+  color: var(--m-dim);
+}
+
+.earlypreview-market__mix-row.is-total {
+  margin-top: clamp(0.4rem, 1.6vh, 1rem);
+  color: var(--m-cream);
+}
+
+.earlypreview-market__mix-facts {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.4rem, 1.4vh, 0.9rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--m-display);
+  font-size: clamp(1.6rem, min(2.6vw, 4.4vh), 2.7rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--m-dim);
+}
+

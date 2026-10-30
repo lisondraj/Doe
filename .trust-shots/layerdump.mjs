@@ -1,0 +1,23 @@
+import { chromium } from "../node_modules/playwright/index.mjs";
+const sel = process.argv[2] || ".earlypreview-product";
+const browser = await chromium.launch();
+const page = await (await browser.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
+await page.goto("http://localhost:3000/earlypreview", { waitUntil: "load", timeout: 300000 });
+await page.waitForTimeout(10000);
+await page.evaluate((s) => { const el = document.querySelector(s); scrollTo(0, el.getBoundingClientRect().top + scrollY - 30); }, sel);
+await page.waitForTimeout(3000);
+await page.mouse.move(720, 450);
+const cdp = await page.context().newCDPSession(page);
+let layers = [];
+cdp.on("LayerTree.layerTreeDidChange", (e) => { if (e.layers) layers = e.layers; });
+await cdp.send("LayerTree.enable");
+for (let i = 0; i < 40; i++) { await page.mouse.wheel(0, 40); await page.waitForTimeout(60); }
+await page.waitForTimeout(500);
+const rows = layers.map((l) => ({ w: Math.round(l.width), h: Math.round(l.height), paints: l.paintCount, draws: l.drawsContent, reasons: (l.compositingReasons || []).join("|"), backend: l.backendNodeId }));
+rows.sort((a, b) => b.w * b.h - a.w * a.h);
+console.log(rows.length, "layers");
+for (const r of rows.slice(0, 14)) console.log(JSON.stringify(r));
+const byReason = {};
+for (const r of rows) byReason[r.reasons] = (byReason[r.reasons] || 0) + 1;
+console.log(JSON.stringify(Object.entries(byReason).sort((a, b) => b[1] - a[1]).slice(0, 8)));
+await browser.close();
