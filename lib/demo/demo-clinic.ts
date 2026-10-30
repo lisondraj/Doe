@@ -32,7 +32,7 @@ export const SERVICES: DemoService[] = [
   {
     id: "botox",
     name: "Botox for chronic migraine",
-    detail: "155 units across 31 sites (PREEMPT protocol). Medication included.",
+    detail: "155 units · 31 sites · drug included",
     duration: "30 min",
     price: 1450,
     match: true,
@@ -40,14 +40,14 @@ export const SERVICES: DemoService[] = [
   {
     id: "consult",
     name: "Headache consultation",
-    detail: "First visit with Dr. Brooks. Required before a first Botox session.",
+    detail: "Required before first Botox",
     duration: "45 min",
     price: 350,
   },
-  { id: "followup", name: "Follow-up visit", detail: "Review of headache diary and treatment response.", duration: "20 min", price: 175 },
-  { id: "block", name: "Occipital nerve block", detail: "Both sides, with local anaesthetic.", duration: "20 min", price: 295 },
-  { id: "trigger", name: "Trigger point injections", detail: "Neck and shoulder, up to 6 points.", duration: "20 min", price: 225 },
-  { id: "virtual", name: "Virtual follow-up", detail: "Video visit for medication changes.", duration: "15 min", price: 125 },
+  { id: "followup", name: "Follow-up visit", detail: "Diary and response review", duration: "20 min", price: 175 },
+  { id: "block", name: "Occipital nerve block", detail: "Bilateral", duration: "20 min", price: 295 },
+  { id: "trigger", name: "Trigger point injections", detail: "Up to 6 points", duration: "20 min", price: 225 },
+  { id: "virtual", name: "Virtual follow-up", detail: "Video", duration: "15 min", price: 125 },
 ];
 
 export type DemoBundle = {
@@ -56,7 +56,6 @@ export type DemoBundle = {
   includes: string[];
   price: number;
   was: number;
-  note: string;
 };
 
 export const BUNDLES: DemoBundle[] = [
@@ -66,7 +65,6 @@ export const BUNDLES: DemoBundle[] = [
     includes: ["Headache consultation", "First Botox session, same day"],
     price: 1650,
     was: 1800,
-    note: "Most agents book this for a first visit.",
   },
   {
     id: "year",
@@ -74,7 +72,6 @@ export const BUNDLES: DemoBundle[] = [
     includes: ["4 Botox sessions, every 12 weeks", "2 follow-up visits", "Headache diary review"],
     price: 5200,
     was: 6150,
-    note: "Prepaid, or 4 payments of $1,300.",
   },
   {
     id: "rescue",
@@ -82,16 +79,15 @@ export const BUNDLES: DemoBundle[] = [
     includes: ["Botox session", "Occipital nerve block, same visit"],
     price: 1650,
     was: 1745,
-    note: "For users with a current flare.",
   },
 ];
 
-export type DemoOffer = { id: string; title: string; detail: string; tag: string };
+export type DemoOffer = { id: string; title: string; tag: string };
 
 export const OFFERS: DemoOffer[] = [
-  { id: "agent", title: "5% off when booked by an agent", detail: "Applied at checkout to any service booked through Doe.", tag: "Agents only" },
-  { id: "credit", title: "Consult fee credited", detail: "The $350 consult comes off the first Botox session if booked within 30 days.", tag: "New patients" },
-  { id: "network", title: "Doe network priority", detail: "Members of the Doe network see cancellation slots first.", tag: "Network" },
+  { id: "agent", title: "5% off when booked by an agent", tag: "Agents only" },
+  { id: "credit", title: "Consult fee credited", tag: "New patients" },
+  { id: "network", title: "Doe network priority", tag: "Network" },
 ];
 
 export type DemoSlot = { id: string; time: string; provider: string };
@@ -112,17 +108,19 @@ function s(id: string, time: string, provider: 0 | 1): DemoSlot {
 }
 
 export const PAYMENT_NOTES = [
-  { title: "Private pay only", detail: "OHIP does not cover Botox for migraine at this clinic. Every service is billed to the patient." },
-  { title: "Receipts for reimbursement", detail: "Itemized receipts list the drug, DIN and units, for private plans or a health spending account." },
-  { title: "Private plans we see reimbursed", detail: "Manulife, Sun Life, Canada Life, Green Shield. The clinic does not bill plans directly." },
-  { title: "How to pay", detail: "Card on file through Doe, Interac e-Transfer, or in clinic. Bundles can be split into payments." },
+  { k: "OHIP", v: "Not covered" },
+  { k: "Billing", v: "Patient pays clinic" },
+  { k: "Private plans", v: "Itemized receipt (DIN, units)" },
+  { k: "Reimbursed by", v: "Manulife, Sun Life, Canada Life, Green Shield" },
+  { k: "Pay with", v: "Card via Doe, e-Transfer, in clinic" },
+  { k: "Payment plans", v: "Bundles only" },
 ];
 
 export const COMMS = [
-  { id: "inbox", title: "Agent inbox", detail: "Replies in under 5 minutes during clinic hours.", on: true },
-  { id: "updates", title: "Booking updates", detail: "Holds, confirmations and reminders sent to your agent.", on: true },
-  { id: "cancel", title: "Cancellation alerts", detail: "Earlier slots offered as they open.", on: true },
-  { id: "phone", title: "Phone callback", detail: "A coordinator calls your user directly.", on: false },
+  { id: "inbox", title: "Agent inbox", meta: "Under 5 min", on: true },
+  { id: "updates", title: "Booking updates", meta: "Holds, confirmations, reminders", on: true },
+  { id: "cancel", title: "Cancellation alerts", meta: "Earlier slots", on: true },
+  { id: "phone", title: "Phone callback to user", meta: "Coordinator", on: false },
 ];
 
 export type IntakeSource = "profile" | "confirmed" | "user";
@@ -140,8 +138,6 @@ export const INTAKE_FIELDS: IntakeField[] = [
   { id: "dob", label: "Date of birth", value: "1989-04-17", source: "profile", section: "About" },
   { id: "phone", label: "Phone", value: "(647) 555-0198", source: "profile", section: "About" },
   { id: "email", label: "Email", value: "alex.rivera@example.com", source: "profile", section: "About" },
-  { id: "days", label: "Headache days per month", value: "18", source: "confirmed", section: "Headache history" },
-  { id: "years", label: "Years with chronic migraine", value: "6", source: "confirmed", section: "Headache history" },
   { id: "tried", label: "Preventives tried", value: "Topiramate, propranolol", source: "profile", section: "Headache history" },
   { id: "acute", label: "Acute medications", value: "Sumatriptan 50 mg as needed", source: "profile", section: "Headache history" },
   { id: "allergies", label: "Allergies", value: "None known", source: "profile", section: "Safety" },

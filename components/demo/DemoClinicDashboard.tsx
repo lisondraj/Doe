@@ -10,6 +10,7 @@ import { type ReactNode, useState } from "react";
 import "@/lib/doehealthproduct/doehealthproduct.css";
 import { Check, DISPLAY } from "@/components/demo/DemoFrame";
 import { DemoSphere } from "@/components/demo/DemoSphere";
+import { ASSESSMENTS } from "@/lib/demo/demo-assessments";
 import { BUNDLES, CLINIC, INTAKE_FIELDS, SERVICES, money } from "@/lib/demo/demo-clinic";
 import { dmSans, lora } from "@/lib/home/fonts";
 
@@ -117,12 +118,38 @@ const TODAY = [
   { time: "4:00 pm", user: "Noah Singh", service: "Trigger point injections", provider: "Dr. Lin Chen", source: "Agent" },
 ];
 
-const FORMS_IN = [
-  { user: "Alex Rivera", form: "New patient intake", status: "Draft by agent", when: "Now" },
-  { user: "Sofia García", form: "New patient intake", status: "Returned", when: "21 min ago" },
-  { user: "Priya Nair", form: "New patient intake", status: "Returned", when: "1 hr ago" },
-  { user: "Hannah Ortiz", form: "Headache diary", status: "Returned", when: "Yesterday" },
+type Score = { name: string; score: string; band: string; tone: string };
+
+/** Each patient's own answers where they differ from the demo intake. */
+const FORMS_IN: { user: string; status: "In progress" | "Returned"; when: string; own?: Record<string, string>; scores: Score[] }[] = [
+  { user: "Alex Rivera", status: "In progress", when: "Now", scores: [] },
+  {
+    user: "Sofia García",
+    status: "Returned",
+    when: "21 min ago",
+    own: { dob: "1994-09-02", phone: "(416) 555-0163", email: "sofia.garcia@example.com", tried: "Amitriptyline", acute: "Rizatriptan 10 mg as needed" },
+    scores: [
+      { name: "ID-Migraine", score: "3 of 3", band: "Positive", tone: "#FCCFB8" },
+      { name: "MIDAS", score: "14", band: "Grade III", tone: "#F3E7C9" },
+      { name: "HIT-6", score: "58", band: "Substantial", tone: "#F3E7C9" },
+      { name: "ICHD-3", score: "Not met", band: "Episodic", tone: "#E3E9D9" },
+    ],
+  },
+  {
+    user: "Priya Nair",
+    status: "Returned",
+    when: "1 hr ago",
+    own: { dob: "1985-01-23", phone: "(905) 555-0127", email: "priya.nair@example.com", tried: "Topiramate, candesartan, erenumab", acute: "Eletriptan 40 mg as needed" },
+    scores: [
+      { name: "ID-Migraine", score: "2 of 3", band: "Positive", tone: "#FCCFB8" },
+      { name: "MIDAS", score: "23", band: "Grade IV", tone: "#FCCFB8" },
+      { name: "HIT-6", score: "64", band: "Severe", tone: "#FCCFB8" },
+      { name: "ICHD-3", score: "Meets", band: "Botox eligible", tone: "#FCCFB8" },
+    ],
+  },
 ];
+
+const ASSESSMENT_NAMES = ASSESSMENTS.map((a) => a.name);
 
 const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
   {
@@ -252,7 +279,7 @@ export function DemoClinicDashboard() {
         </div>
       </nav>
 
-      <div className="relative grow min-w-0 h-full ml-[8px] md:ml-0 overflow-hidden rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
+      <div className="relative grow min-w-0 h-full ml-[8px] md:ml-0 overflow-clip rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
         <div className="absolute inset-0 overflow-y-auto overscroll-contain">
           {/* Phone: Doe mark and the tabs as pills. */}
           <div className="md:hidden sticky top-0 z-20 bg-[#FFFCF1E6] backdrop-blur-[12px]">
@@ -283,11 +310,11 @@ export function DemoClinicDashboard() {
   );
 }
 
-function Title({ kicker, children, right }: { kicker: string; children: ReactNode; right?: ReactNode }) {
+function Title({ kicker, children, right }: { kicker?: string; children: ReactNode; right?: ReactNode }) {
   return (
     <div className="flex items-end justify-between gap-[12px] mb-[16px]">
       <div className="flex flex-col gap-[2px] min-w-0">
-        <span className="text-[12px] leading-[16px] font-[500] text-[#28191080]">{kicker}</span>
+        {kicker && <span className="text-[12px] leading-[16px] font-[500] text-[#28191080]">{kicker}</span>}
         <h1 className={`${DISPLAY} text-[28px] leading-[32px] md:text-[34px] md:leading-[38px] tracking-[-0.02em]`}>{children}</h1>
       </div>
       {right}
@@ -321,20 +348,19 @@ function Overview({ requests, onOpen }: { requests: Request[]; onOpen: (id: stri
       </Title>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-[6px]">
         {[
-          ["Agent sessions today", "38", "+9 vs last Friday"],
-          ["Booked by agents", "12", "of 17 bookings"],
-          ["Booked revenue", money(14820), "private pay"],
-          ["Median reply to agents", "2m 40s", "under 5 min goal"],
-        ].map(([k, v, sub]) => (
+          ["Agent sessions", "38"],
+          ["Agent bookings", "12 / 17"],
+          ["Booked revenue", money(14820)],
+          ["Reply to agents", "2m 40s"],
+        ].map(([k, v]) => (
           <div key={k} className="rounded-[20px] bg-[#F4EEDF] p-[16px]">
             <div className="text-[12px] leading-[16px] text-[#2819109E]">{k}</div>
             <div className={`${DISPLAY} mt-[6px] text-[28px] leading-[32px]`}>{v}</div>
-            <div className="mt-[2px] text-[11.5px] text-[#28191080]">{sub}</div>
           </div>
         ))}
       </div>
       <div className="mt-[12px] grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-[12px]">
-        <Card title={`Agents waiting on you · ${open.length}`}>
+        <Card title={`Waiting on you · ${open.length}`}>
           <div className="flex flex-col gap-[4px]">
             {open.map((r) => (
               <button key={r.id} type="button" onClick={() => onOpen(r.id)} className="flex items-center gap-[12px] p-[12px] rounded-[16px] bg-[#FFFCF1] text-left hover:bg-[#FFFCF1CC] transition-colors duration-150">
@@ -384,7 +410,7 @@ function Inbox({
   const [reply, setReply] = useState("");
   return (
     <>
-      <Title kicker="Personal agents acting for patients">Agent inbox</Title>
+      <Title>Agent inbox</Title>
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-[12px]">
         <Card>
           <div className="flex flex-col gap-[4px]">
@@ -498,7 +524,7 @@ function Inbox({
 function Schedule() {
   return (
     <>
-      <Title kicker="Friday, October 30">Schedule</Title>
+      <Title kicker="Fri, Oct 30">Schedule</Title>
       <Card>
         <div className="flex flex-col gap-[4px]">
           {TODAY.map((a) => (
@@ -525,7 +551,7 @@ function Services({ bookable, onToggle }: { bookable: Record<string, boolean>; o
   ];
   return (
     <>
-      <Title kicker="Private pay · what agents see and can book">Services & pricing</Title>
+      <Title kicker="Private pay">Services & pricing</Title>
       <Card>
         <div className="flex flex-col gap-[4px]">
           {rows.map((r) => (
@@ -540,9 +566,9 @@ function Services({ bookable, onToggle }: { bookable: Record<string, boolean>; o
                 <span className="block text-[12px] text-[#2819109E]">{r.sub}</span>
               </span>
               <span className="text-[14px] font-[700]">{money(r.price)}</span>
-              <span className="hidden md:block text-[12.5px] text-[#2819109E]">Agents may go to {money(Math.round((r.price * 0.92) / 5) * 5)}</span>
+              <span className="hidden md:block text-[12.5px] text-[#2819109E]">Floor {money(Math.round((r.price * 0.92) / 5) * 5)}</span>
               <span className="flex items-center gap-[8px] text-[12px] font-[600]">
-                <span className="hidden sm:inline">{bookable[r.id] ? "Agent bookable" : "Request only"}</span>
+                <span className="hidden sm:inline">{bookable[r.id] ? "Bookable" : "Request"}</span>
                 <Check on={Boolean(bookable[r.id])} size={20} />
               </span>
             </button>
@@ -556,24 +582,23 @@ function Services({ bookable, onToggle }: { bookable: Record<string, boolean>; o
 function Forms() {
   const [open, setOpen] = useState(1);
   const f = FORMS_IN[open]!;
+  const returned = f.status === "Returned";
   return (
     <>
-      <Title kicker="Passed back by patients' agents">Forms</Title>
+      <Title>Forms</Title>
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-[12px]">
         <Card>
           <div className="flex flex-col gap-[4px]">
             {FORMS_IN.map((x, i) => (
               <button
-                key={x.user + x.form}
+                key={x.user}
                 type="button"
                 onClick={() => setOpen(i)}
                 className={`flex items-center gap-[12px] p-[12px] rounded-[16px] bg-[#FFFCF1] text-left ${i === open ? "ring-[1.5px] ring-[#140C04]" : ""}`}
               >
                 <span className="grow min-w-0">
                   <span className="block truncate text-[14px] font-[600]">{x.user}</span>
-                  <span className="block truncate text-[12.5px] text-[#2819109E]">
-                    {x.form} · {x.when}
-                  </span>
+                  <span className="block truncate text-[12.5px] text-[#2819109E]">Intake + 4 assessments · {x.when}</span>
                 </span>
                 <span className={`shrink-0 h-[24px] px-[10px] flex items-center rounded-full text-[11.5px] font-[700] ${x.status === "Returned" ? "bg-[#DCE5D0]" : "bg-[#F3E7C9]"}`}>{x.status}</span>
               </button>
@@ -582,21 +607,32 @@ function Forms() {
         </Card>
         <Card>
           <div className="rounded-[18px] bg-[#FFFCF1] p-[16px]">
-            <div className={`${DISPLAY} text-[21px] leading-[25px]`}>{f.form}</div>
-            <div className="mt-[2px] text-[13px] text-[#2819109E]">
-              {f.user} · {f.status === "Returned" ? "returned by their agent, signed by the patient" : "their agent is still filling it in"}
+            <div className="flex items-baseline justify-between gap-[12px]">
+              <div className={`${DISPLAY} text-[21px] leading-[25px]`}>{f.user}</div>
+              <span className="text-[12px] font-[600] text-[#28191080]">{f.when}</span>
             </div>
-            <div className="mt-[14px] grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
-              {INTAKE_FIELDS.filter((x) => x.id !== "consent").map((x) => (
-                <div key={x.id} className="flex flex-col gap-[2px] p-[10px] rounded-[12px] bg-[#F4EEDF99]">
-                  <span className="text-[11.5px] font-[600] text-[#28191099]">{x.label}</span>
-                  <span className="text-[14px] font-[500]">{x.id === "name" ? f.user : f.status === "Returned" ? x.value : "…"}</span>
+            <div className="mt-[14px] grid grid-cols-2 gap-[6px]">
+              {(returned ? f.scores : ASSESSMENT_NAMES.map((name) => ({ name, score: "…", band: "Agent asking", tone: "#F4EEDF" }))).map((x) => (
+                <div key={x.name} className="flex flex-col gap-[4px] p-[12px] rounded-[14px] bg-[#F4EEDF99]">
+                  <span className="text-[11.5px] font-[600] text-[#28191099]">{x.name}</span>
+                  <span className={`${DISPLAY} text-[22px] leading-[26px]`}>{x.score}</span>
+                  <span className="self-start h-[20px] px-[8px] flex items-center rounded-full text-[10.5px] font-[700]" style={{ backgroundColor: x.tone }}>
+                    {x.band}
+                  </span>
                 </div>
               ))}
             </div>
-            <div className="mt-[12px] flex items-center gap-[10px] p-[12px] rounded-[12px] border-[1.5px] border-dashed border-[#28191033]">
-              <Check on={f.status === "Returned"} size={20} />
-              <span className="text-[13px]">{f.status === "Returned" ? `Consent signed by ${f.user}` : "Waiting for the patient's signature"}</span>
+            <div className="mt-[10px] grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
+              {INTAKE_FIELDS.filter((x) => x.id !== "consent").map((x) => (
+                <div key={x.id} className="flex flex-col gap-[2px] p-[10px] rounded-[12px] bg-[#F4EEDF99]">
+                  <span className="text-[11.5px] font-[600] text-[#28191099]">{x.label}</span>
+                  <span className="text-[14px] font-[500]">{x.id === "name" ? f.user : returned ? (f.own?.[x.id] ?? x.value) : "…"}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-[10px] flex items-center gap-[10px] p-[12px] rounded-[12px] border-[1.5px] border-dashed border-[#28191033]">
+              <Check on={returned} size={20} />
+              <span className="text-[13px]">{returned ? "Consent signed · PHI provided via Doe" : "Awaiting signature"}</span>
             </div>
           </div>
         </Card>

@@ -7,7 +7,7 @@ import { Check, DISPLAY } from "@/components/demo/DemoFrame";
 import { DemoSphere } from "@/components/demo/DemoSphere";
 import { CLINIC } from "@/lib/demo/demo-clinic";
 
-export type DemoConsent = { terms: boolean; connected: boolean; network: boolean };
+export type DemoConsent = { terms: boolean; phi: boolean; connected: boolean; network: boolean };
 
 const LINK = "underline underline-offset-[3px] decoration-[#28191059] hover:decoration-[#281910]";
 
@@ -30,21 +30,27 @@ const ITEMS: { id: keyof DemoConsent; required: boolean; body: ReactNode }[] = [
     ),
   },
   {
+    id: "phi",
+    required: true,
+    body: <>By booking through Doe, they&apos;re voluntarily providing their personal health information (PHI).</>,
+  },
+  {
     id: "connected",
     required: false,
-    body: <>They allow their personal agent to stay connected to Doe, and to check back for regular updates.</>,
+    body: <>They allow you to stay connected to Doe and check back for updates.</>,
   },
   {
     id: "network",
     required: false,
-    body: <>Ask if they&apos;d like to join the broader Doe network, to book services and appointments faster.</>,
+    body: <>They&apos;d like to join the Doe network to book faster.</>,
   },
 ];
 
-/** The first screen an agent lands on: the clinic, and what to confirm with its user before booking. */
+/** The first screen an agent lands on, never shown to its user: the clinic, and what to confirm with the user before booking. */
 export function DemoGate({ onProceed }: { onProceed: (consent: DemoConsent) => void }) {
-  const [consent, setConsent] = useState<DemoConsent>({ terms: false, connected: false, network: false });
-  const all = consent.terms && consent.connected && consent.network;
+  const [consent, setConsent] = useState<DemoConsent>({ terms: false, phi: false, connected: false, network: false });
+  const all = consent.terms && consent.phi && consent.connected && consent.network;
+  const ready = consent.terms && consent.phi;
 
   return (
     <main className="flex flex-col items-center px-[20px] pb-[28px] md:pb-[48px] min-h-[calc(100%-64px)]">
@@ -60,7 +66,7 @@ export function DemoGate({ onProceed }: { onProceed: (consent: DemoConsent) => v
 
       <section className="w-full max-w-[520px] mt-[28px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
         <p className="px-[16px] pt-[14px] pb-[12px] text-[15px] leading-[21px] font-[600] text-[#281910]">
-          Before proceeding with booking, please confirm the following with your user:
+          Confirm with your user before booking
         </p>
         <div className="flex flex-col gap-[4px]">
           {ITEMS.map((item, i) => {
@@ -99,25 +105,22 @@ export function DemoGate({ onProceed }: { onProceed: (consent: DemoConsent) => v
         </div>
         <button
           type="button"
-          onClick={() => setConsent({ terms: !all, connected: !all, network: !all })}
+          onClick={() => setConsent({ terms: !all, phi: !all, connected: !all, network: !all })}
           className="w-full h-[46px] mt-[6px] rounded-[20px] text-[14px] leading-[18px] font-[600] text-[#281910] border-[1.5px] border-dashed border-[#28191033] hover:bg-[#EEE6D6] transition-colors duration-150"
         >
-          {all ? "Clear all three" : "Confirm all three"}
+          {all ? "Clear all" : "Confirm all"}
         </button>
       </section>
 
       <div className="grow min-h-[24px]" />
       <button
         type="button"
-        disabled={!consent.terms}
+        disabled={!ready}
         onClick={() => onProceed(consent)}
         className="w-full max-w-[520px] h-[56px] rounded-[999px] text-[16px] leading-[20px] font-[600] text-[#FFFCF1] bg-[#140C04] disabled:bg-[#28191033] disabled:text-[#FFFCF1] disabled:cursor-not-allowed transition-colors duration-200"
       >
         Proceed
       </button>
-      <p className="mt-[10px] text-center text-[12px] leading-[16px] text-[#28191080]">
-        {consent.terms ? "Your agent will open the clinic's booking page." : "Item 1 is required to continue."}
-      </p>
     </main>
   );
 }

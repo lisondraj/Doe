@@ -4,7 +4,7 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 
 import { Check, DISPLAY, DemoFrame, EASE } from "@/components/demo/DemoFrame";
 import type { DemoConsent } from "@/components/demo/DemoGate";
-import { DemoIntakeForm, type IntakeState } from "@/components/demo/DemoIntakeForm";
+import { type Answers, DemoForms, type FormsState } from "@/components/demo/DemoForms";
 import { DemoSphere } from "@/components/demo/DemoSphere";
 import { DemoThread } from "@/components/demo/DemoThread";
 import {
@@ -19,6 +19,7 @@ import {
   SERVICES,
   money,
 } from "@/lib/demo/demo-clinic";
+import { ASSESSMENTS } from "@/lib/demo/demo-assessments";
 import { type DemoMessage, type DemoThreadId, conciergeReply, formsReply, negotiateReply } from "@/lib/demo/demo-replies";
 
 type Plan = { kind: "service" | "bundle"; id: string };
@@ -65,38 +66,38 @@ function initialThreads(consent: DemoConsent): Record<DemoThreadId, Thread> {
   return {
     concierge: {
       title: "Clinic concierge",
-      subtitle: "Questions about care and visits",
+      subtitle: "Questions",
       unread: 1,
       typing: false,
       messages: [
         msg("system", `Agent session opened for ${DEMO_USER.name}${consent.connected ? " · stays connected" : ""}`),
         msg(
           "clinic",
-          `Hi, I'm the agent for ${CLINIC.name}. I see your user is looking for Botox for chronic migraine. Ask me anything about the treatment, timing or the visit.`,
+          `Brooks clinic agent here. Ask about treatment, timing or the visit.`,
         ),
       ],
     },
     negotiate: {
       title: "Pricing & bundles",
-      subtitle: "Negotiate with the clinic",
+      subtitle: "Negotiation",
       unread: 1,
       typing: false,
       messages: [
         msg(
           "clinic",
-          "All prices are private pay, in CAD. If your user has a budget in mind, propose a price and I'll check what Dr. Brooks can do.",
+          "Private pay, CAD. Propose a price and I'll check with Dr. Brooks.",
         ),
       ],
     },
     forms: {
-      title: "Intake form",
-      subtitle: "Forms the clinic needs",
+      title: "Forms",
+      subtitle: "Intake and assessments",
       unread: 1,
       typing: false,
       messages: [
         msg(
           "clinic",
-          "Please pass back the new patient intake before the first visit. Most of it can come from your user's profile; we only need their signature.",
+          "Needed before the first visit: intake, ID-Migraine, MIDAS, HIT-6 and ICHD-3 criteria.",
         ),
       ],
     },
@@ -115,7 +116,8 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
   const [slot, setSlot] = useState<string | null>(null);
   const [held, setHeld] = useState<string | null>(null);
   const [comms, setComms] = useState(() => Object.fromEntries(COMMS.map((c) => [c.id, c.on])));
-  const [intake, setIntake] = useState<IntakeState>("draft");
+  const [intake, setIntake] = useState<FormsState>("draft");
+  const [phiConfirmed, setPhiConfirmed] = useState(false);
   const [booking, setBooking] = useState<Booking>("none");
   const [toast, setToast] = useState<string | null>(null);
   const [active, setActive] = useState<string>("services");
@@ -213,23 +215,27 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
     const s = DAYS.flatMap((d) => d.slots.map((x) => ({ ...x, day: d }))).find((x) => x.id === slot)!;
     setHeld(slot);
     post("concierge", msg("system", `Held ${s.day.weekday} ${s.day.date}, ${s.time} with ${s.provider} for 10 minutes`), false);
-    later(() => post("concierge", msg("clinic", `I've held ${s.day.weekday} ${s.day.date} at ${s.time} with ${s.provider}. Send the booking request when your user is ready.`)), 700);
+    later(() => post("concierge", msg("clinic", `Held: ${s.day.weekday} ${s.day.date}, ${s.time}, ${s.provider}.`)), 700);
     flash("Slot held for 10 minutes");
   };
 
-  const passBack = () => {
+  const passBack = (answers: Answers) => {
     setIntake("sent");
-    post("forms", msg("agent", "Passing back the new patient intake, signed by my user."));
+    const scores = ASSESSMENTS.map((a) => {
+      const r = a.result(answers[a.id] ?? {});
+      return `${a.name} ${r.score}`;
+    }).join(" · ");
+    post("forms", msg("agent", `Passing back the signed intake and assessments: ${scores}.`));
     typing("forms", true);
-    later(() => post("forms", msg("clinic", "Received, thank you. Dr. Brooks will review it before the visit.")), 1000);
-    flash("Intake passed back to the clinic");
+    later(() => post("forms", msg("clinic", "Received. Dr. Brooks will review before the visit.")), 1000);
+    flash("Forms passed back");
   };
 
   const list = current.price;
   const deal = agreed[planKey(plan)];
   const discount = deal ? 0 : Math.round(list * 0.05);
   const total = (deal ?? list) - discount;
-  const ready = Boolean(held) && intake === "sent";
+  const ready = Boolean(held) && intake === "sent" && phiConfirmed;
 
   const requestBooking = () => {
     if (!slotInfo) return;
@@ -238,7 +244,7 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
     typing("concierge", true);
     later(() => {
       setBooking("confirmed");
-      post("concierge", msg("clinic", `Confirmed. ${DEMO_USER.name} is booked for ${slotInfo.day.weekday} ${slotInfo.day.date} at ${slotInfo.time}. I'll send reminders to you 48 and 2 hours before.`));
+      post("concierge", msg("clinic", `Confirmed: ${DEMO_USER.name}, ${slotInfo.day.weekday} ${slotInfo.day.date}, ${slotInfo.time}. Reminders at 48 h and 2 h.`));
       flash("Booking confirmed");
     }, 2200);
   };
@@ -280,6 +286,8 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
       total={total}
       slot={slotInfo ? `${slotInfo.day.weekday} ${slotInfo.day.date}, ${slotInfo.time} · ${slotInfo.provider}` : null}
       intake={intake}
+      phi={phiConfirmed}
+      onPhi={() => setPhiConfirmed((v) => !v)}
       booking={booking}
       ready={ready}
       onRequest={requestBooking}
@@ -321,7 +329,7 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
           </span>
         </span>
         <button type="button" onClick={() => go("booking")} className="shrink-0 h-[46px] px-[18px] rounded-[999px] bg-[#FFFCF1] text-[#140C04] text-[14px] font-[600]">
-          {booking === "confirmed" ? "View booking" : "Review"}
+          {booking === "confirmed" ? "Booked" : "Review"}
         </button>
       </div>
 
@@ -344,7 +352,7 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
   );
 
   return (
-    <DemoFrame right={inboxButton} overlay={overlay}>
+    <DemoFrame agentView right={inboxButton} overlay={overlay}>
       {/* Phone: sections as a sticky row of pills under the bar. */}
       <nav className="md:hidden sticky top-[64px] z-20 flex gap-[6px] overflow-x-auto px-[16px] py-[8px] bg-[#FFFCF1E6] backdrop-blur-[12px] [scrollbar-width:none]">
         {NAV.map((n) => (
@@ -395,20 +403,34 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
               </div>
             </div>
             <div className="rounded-[22px] bg-[#140C04] text-[#FFFCF1] p-[16px] md:p-[18px]">
-              <div className="flex items-center gap-[8px] text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">
-                <span className="w-[7px] h-[7px] rounded-full bg-[#9BC59D] animate-pulse" /> Agent session · via Doe
+              <div className="flex items-center justify-between gap-[10px]">
+                <span className="flex items-center gap-[8px] text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">
+                  <span className="w-[7px] h-[7px] rounded-full bg-[#9BC59D] animate-pulse" /> Session · via Doe
+                </span>
+                <span className="text-[11px] font-[600] text-[#FFFCF166]">Not shown to user</span>
               </div>
-              <p className="mt-[8px] text-[16px] leading-[22px] font-[500]">
-                You&apos;re browsing for {DEMO_USER.name}. Their request: {DEMO_USER.request}, private pay.
-              </p>
+              <dl className="mt-[12px] grid grid-cols-[88px_minmax(0,1fr)] gap-x-[12px] gap-y-[6px] text-[13.5px] leading-[19px]">
+                {[
+                  ["Acting for", DEMO_USER.name],
+                  ["Request", DEMO_USER.request],
+                  ["Pay", "Private"],
+                  ["Scope", "Hold · Negotiate · Forms · Book"],
+                ].map(([k, v]) => (
+                  <div key={k} className="contents">
+                    <dt className="text-[#FFFCF180]">{k}</dt>
+                    <dd className="font-[600]">{v}</dd>
+                  </div>
+                ))}
+              </dl>
               <div className="mt-[12px] flex flex-wrap gap-[6px]">
                 {[
-                  ["Terms accepted", true],
-                  ["Stays connected", consent.connected],
-                  ["Doe network", consent.network],
+                  ["Terms", true],
+                  ["PHI", true],
+                  ["Connected", consent.connected],
+                  ["Network", consent.network],
                 ].map(([label, on]) => (
-                  <span key={label as string} className={`h-[26px] px-[10px] flex items-center rounded-full text-[12px] font-[600] ${on ? "bg-[#FFFCF11F] text-[#FFFCF1]" : "bg-transparent text-[#FFFCF166] border border-solid border-[#FFFCF126]"}`}>
-                    {on ? "✓ " : ""}
+                  <span key={label as string} className={`h-[24px] px-[9px] flex items-center rounded-full text-[11.5px] font-[600] ${on ? "bg-[#FFFCF11F] text-[#FFFCF1]" : "text-[#FFFCF166] border border-solid border-[#FFFCF126]"}`}>
+                    {on ? "✓ " : "– "}
                     {label as string}
                   </span>
                 ))}
@@ -428,7 +450,7 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
             </div>
           </div>
 
-          <Section id="services" kicker="All private pay, in CAD" title="Services & pricing">
+          <Section id="services" meta="CAD · private pay" title="Services & pricing">
             <div className="flex flex-col gap-[6px]">
               {SERVICES.map((s) => {
                 const on = plan.kind === "service" && plan.id === s.id;
@@ -454,7 +476,7 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
             </div>
           </Section>
 
-          <Section id="availability" kicker="Live from the clinic's calendar" title="Availability">
+          <Section id="availability" meta="Live" title="Availability">
             <div className="flex gap-[6px] overflow-x-auto [scrollbar-width:none]">
               {["all", ...PROVIDERS].map((p) => (
                 <Pill key={p} on={provider === p} onClick={() => setProvider(p)}>
@@ -510,13 +532,12 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
                 onClick={holdSlot}
                 className="h-[46px] px-[20px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] disabled:bg-[#28191033] disabled:cursor-not-allowed transition-colors duration-200"
               >
-                {held && slot === held ? "Held for your user" : held ? "Hold this slot instead" : "Hold for your user"}
+                {held && slot === held ? "Held · 10 min" : held ? "Hold instead" : "Hold 10 min"}
               </button>
-              <span className="text-[12.5px] leading-[17px] text-[#2819109E]">Holds last 10 minutes while you confirm with your user.</span>
             </div>
           </Section>
 
-          <Section id="offers" kicker="What the clinic is offering agents" title="Offers">
+          <Section id="offers" title="Offers">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-[6px]">
               {OFFERS.map((o) => {
                 const status = o.id === "agent" ? "Applied" : o.id === "network" ? (consent.network ? "Active" : "Join network to unlock") : "Eligible";
@@ -524,7 +545,6 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
                   <div key={o.id} className="flex flex-col gap-[6px] p-[14px] rounded-[18px] bg-[#F4EEDF]">
                     <span className="self-start h-[20px] px-[8px] flex items-center rounded-full bg-[#FFFCF1] text-[10.5px] font-[700] text-[#281910B3]">{o.tag}</span>
                     <span className="text-[15px] leading-[20px] font-[600]">{o.title}</span>
-                    <span className="text-[13px] leading-[18px] text-[#2819109E]">{o.detail}</span>
                     <span className={`mt-auto pt-[4px] text-[12px] font-[700] ${status === "Applied" || status === "Active" ? "text-[#4C7A4F]" : "text-[#28191080]"}`}>{status}</span>
                   </div>
                 );
@@ -532,7 +552,7 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
             </div>
           </Section>
 
-          <Section id="bundles" kicker="Packages the clinic puts together" title="Bundles">
+          <Section id="bundles" title="Bundles">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-[6px]">
               {BUNDLES.map((b) => {
                 const on = plan.kind === "bundle" && plan.id === b.id;
@@ -555,14 +575,13 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
                       <span className="text-[20px] leading-[24px] font-[700]">{money(b.price)}</span>
                       <span className={`text-[13px] line-through ${on ? "text-[#FFFCF166]" : "text-[#28191066]"}`}>{money(b.was)}</span>
                     </span>
-                    <span className={`text-[12px] leading-[16px] ${on ? "text-[#FFFCF199]" : "text-[#28191080]"}`}>{b.note}</span>
                   </button>
                 );
               })}
             </div>
           </Section>
 
-          <Section id="negotiate" kicker="Agent to agent" title="Negotiate">
+          <Section id="negotiate" meta="Agent to agent" title="Negotiate">
             <div className="flex gap-[6px] overflow-x-auto [scrollbar-width:none] mb-[10px]">
               {NEGOTIABLE.map((p) => {
                 const info = planOf(p);
@@ -586,29 +605,26 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
             </div>
           </Section>
 
-          <Section id="ask" kicker="Answered by the clinic's agent" title="Ask the clinic">
+          <Section id="ask" title="Ask the clinic">
             <div className="rounded-[22px] bg-[#F4EEDF] overflow-hidden">{thread("concierge", "h-[420px]")}</div>
           </Section>
 
-          <Section id="insurance" kicker="Private pay clinic" title="Insurance & payment">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
+          <Section id="insurance" title="Insurance & payment">
+            <div className="rounded-[20px] bg-[#F4EEDF] px-[16px] py-[6px]">
               {PAYMENT_NOTES.map((n) => (
-                <div key={n.title} className="p-[14px] rounded-[18px] bg-[#F4EEDF]">
-                  <div className="text-[15px] leading-[20px] font-[600]">{n.title}</div>
-                  <div className="mt-[4px] text-[13px] leading-[18px] text-[#2819109E]">{n.detail}</div>
+                <div key={n.k} className="flex items-baseline justify-between gap-[16px] py-[10px] border-b border-solid border-[#2819100F] last:border-b-0">
+                  <span className="shrink-0 text-[13.5px] text-[#281910B3]">{n.k}</span>
+                  <span className="text-right text-[13.5px] font-[600]">{n.v}</span>
                 </div>
               ))}
             </div>
           </Section>
 
-          <Section id="communication" kicker="How the clinic reaches you and your user" title="Communication">
+          <Section id="communication" title="Communication">
             <div className="flex flex-col gap-[6px]">
               <div className="flex items-center gap-[12px] p-[14px] rounded-[18px] bg-[#F4EEDF]">
                 <span className="grow">
                   <span className="block text-[15px] leading-[20px] font-[600]">Persistent connection</span>
-                  <span className="block text-[13px] leading-[18px] text-[#2819109E]">
-                    {consent.connected ? "Your agent stays connected and checks back for updates." : "Off. Your user didn't allow a persistent connection; updates wait until your next visit."}
-                  </span>
                 </span>
                 <span className={`h-[26px] px-[10px] flex items-center rounded-full text-[12px] font-[700] ${consent.connected ? "bg-[#DCE5D0]" : "bg-[#FFFCF1]"}`}>{consent.connected ? "On" : "Off"}</span>
               </div>
@@ -623,7 +639,7 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
                 >
                   <span className="grow">
                     <span className="block text-[15px] leading-[20px] font-[600]">{c.title}</span>
-                    <span className="block text-[13px] leading-[18px] text-[#2819109E]">{c.detail}</span>
+                    <span className="block text-[12.5px] leading-[17px] text-[#28191080]">{c.meta}</span>
                   </span>
                   <Toggle on={Boolean(comms[c.id])} />
                 </button>
@@ -631,8 +647,8 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
             </div>
           </Section>
 
-          <Section id="forms" kicker="The clinic asked for one form" title="Forms">
-            <DemoIntakeForm state={intake} onPassBack={passBack} />
+          <Section id="forms" meta="5 required" title="Forms">
+            <DemoForms state={intake} onPassBack={passBack} />
           </Section>
 
           <div id="booking" className="lg:hidden scroll-mt-[124px] md:scroll-mt-[88px]">
@@ -646,11 +662,11 @@ export function DemoClinicLanding({ consent }: { consent: DemoConsent }) {
   );
 }
 
-function Section({ id, kicker, title, children }: { id: string; kicker: string; title: string; children: ReactNode }) {
+function Section({ id, meta, title, children }: { id: string; meta?: string; title: string; children: ReactNode }) {
   return (
     <section id={id} className="scroll-mt-[124px] md:scroll-mt-[88px]">
-      <div className="mb-[12px] flex flex-col gap-[2px]">
-        <span className="text-[12px] leading-[16px] font-[500] text-[#28191080]">{kicker}</span>
+      <div className="mb-[12px] flex items-baseline justify-between gap-[12px]">
+        {meta && <span className="order-2 shrink-0 text-[12px] leading-[16px] font-[600] text-[#28191080]">{meta}</span>}
         <h2 className={`${DISPLAY} text-[24px] leading-[28px] md:text-[28px] md:leading-[32px] tracking-[-0.02em]`}>{title}</h2>
       </div>
       {children}
@@ -686,6 +702,8 @@ function BookingSummary({
   total,
   slot,
   intake,
+  phi,
+  onPhi,
   booking,
   ready,
   onRequest,
@@ -697,7 +715,9 @@ function BookingSummary({
   discount: number;
   total: number;
   slot: string | null;
-  intake: IntakeState;
+  intake: FormsState;
+  phi: boolean;
+  onPhi: () => void;
   booking: Booking;
   ready: boolean;
   onRequest: () => void;
@@ -705,8 +725,8 @@ function BookingSummary({
 }) {
   const steps: { label: string; done: boolean; go: string }[] = [
     { label: slot ?? "Hold a slot", done: Boolean(slot), go: "availability" },
-    { label: intake === "sent" ? "Intake passed back" : "Pass back the intake form", done: intake === "sent", go: "forms" },
-    { label: deal ? `Price agreed at ${money(deal)}` : "Negotiate a price (optional)", done: Boolean(deal), go: "negotiate" },
+    { label: intake === "sent" ? "Forms passed back" : "Pass back forms", done: intake === "sent", go: "forms" },
+    { label: deal ? `Agreed ${money(deal)}` : "Negotiate (optional)", done: Boolean(deal), go: "negotiate" },
   ];
   return (
     <div className="rounded-[24px] bg-[#F4EEDF] p-[6px]">
@@ -715,10 +735,9 @@ function BookingSummary({
         <div className={`${DISPLAY} mt-[2px] text-[21px] leading-[25px] tracking-[-0.01em]`}>{label}</div>
         <div className="mt-[14px] flex flex-col gap-[6px] text-[13.5px] leading-[18px]">
           <Row k="List price" v={money(list)} strike={Boolean(deal)} />
-          {deal ? <Row k="Negotiated" v={money(deal)} /> : <Row k="Booked by agent, 5% off" v={`−${money(discount)}`} />}
+          {deal ? <Row k="Negotiated" v={money(deal)} /> : <Row k="Agent booking −5%" v={`−${money(discount)}`} />}
           <div className="h-[1px] my-[4px] bg-[#2819101A]" />
-          <Row k="Your user pays" v={money(total)} bold />
-          <span className="text-[11.5px] leading-[15px] text-[#28191080]">Private pay · itemized receipt for reimbursement</span>
+          <Row k="Total" v={money(total)} bold />
         </div>
       </div>
       <div className="flex flex-col gap-[2px] p-[8px]">
@@ -731,12 +750,27 @@ function BookingSummary({
       </div>
       <button
         type="button"
+        role="checkbox"
+        aria-checked={phi}
+        disabled={booking !== "none"}
+        onClick={onPhi}
+        className="mx-[6px] mb-[8px] flex items-start gap-[10px] p-[12px] rounded-[14px] bg-[#FFFCF1] text-left border-[1.5px] border-solid transition-colors duration-150"
+        style={{ borderColor: phi ? "#140C04" : "#2819101F", width: "calc(100% - 12px)" }}
+      >
+        <Check on={phi} size={20} />
+        <span className="grow text-[12.5px] leading-[17px]">
+          Confirmed with {DEMO_USER.name.split(" ")[0]}: by booking through Doe, they&apos;re voluntarily providing their PHI.
+          <span className="ml-[6px] inline-flex items-center h-[18px] px-[7px] rounded-full align-[1px] bg-[#FCCFB8] text-[10.5px] font-[700]">Required</span>
+        </span>
+      </button>
+      <button
+        type="button"
         disabled={!ready || booking !== "none"}
         onClick={onRequest}
         className="w-full h-[52px] rounded-[18px] text-[15px] font-[600] text-[#FFFCF1] disabled:cursor-not-allowed transition-colors duration-200"
         style={{ backgroundColor: booking === "confirmed" ? "#4C7A4F" : ready && booking === "none" ? "#140C04" : booking === "sent" ? "#38251D" : "#28191033", transitionTimingFunction: EASE }}
       >
-        {booking === "confirmed" ? "Booked · confirmation in inbox" : booking === "sent" ? "Sending to clinic…" : "Send booking request"}
+        {booking === "confirmed" ? "Booked" : booking === "sent" ? "Sending…" : "Send booking request"}
       </button>
     </div>
   );
@@ -770,7 +804,11 @@ function Inbox({
 }) {
   const ids = Object.keys(threads) as DemoThreadId[];
   return (
-    <div className={`absolute inset-0 z-40 ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
+    <div
+      className={`absolute inset-0 z-40 ${open ? "" : "pointer-events-none"}`}
+      aria-hidden={!open}
+      style={{ visibility: open ? "visible" : "hidden", transition: `visibility 0ms linear ${open ? "0ms" : "380ms"}` }}
+    >
       <div className="absolute inset-0 bg-[#140C042E] transition-opacity duration-300" style={{ opacity: open ? 1 : 0 }} onClick={onClose} />
       <aside
         role="dialog"
@@ -790,7 +828,7 @@ function Inbox({
           ) : null}
           <span className="grow min-w-0 flex flex-col">
             <span className={`${DISPLAY} text-[20px] leading-[24px]`}>{threadId ? threads[threadId].title : "Agent inbox"}</span>
-            <span className="text-[12px] leading-[16px] text-[#2819109E]">{threadId ? threads[threadId].subtitle : `From ${CLINIC.name} to your agent`}</span>
+            <span className="text-[12px] leading-[16px] text-[#2819109E]">{threadId ? threads[threadId].subtitle : CLINIC.name}</span>
           </span>
           <button type="button" onClick={onClose} aria-label="Close inbox" className="w-[38px] h-[38px] flex items-center justify-center rounded-full bg-[#F4EEDF]">
             <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
@@ -822,9 +860,6 @@ function Inbox({
                 </button>
               );
             })}
-            <p className="px-[8px] pt-[8px] text-[12px] leading-[16px] text-[#28191080]">
-              The clinic writes here when something changes: holds, prices, forms and confirmations.
-            </p>
           </div>
         )}
       </aside>

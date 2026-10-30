@@ -19,8 +19,11 @@ export function DemoFrame({
   right,
   overlay,
   logoHref,
+  agentView = false,
 }: {
   children: ReactNode;
+  /** Marks the page as one only the user's agent sees. */
+  agentView?: boolean;
   /** Sits opposite the Doe mark in the top bar. */
   right?: ReactNode;
   /** Drawn over the box's content but inside its rounded edge (sheets, drawers). */
@@ -38,16 +41,19 @@ export function DemoFrame({
         paddingRight: "max(8px, env(safe-area-inset-right))",
       }}
     >
-      <div className="relative h-full w-full overflow-hidden rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
+      <div className="relative h-full w-full overflow-clip rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
         <div className="absolute inset-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
           <header className="sticky top-0 z-30 flex items-center justify-between h-[64px] md:h-[72px] px-[22px] md:px-[32px] bg-[#FFFCF1E6] backdrop-blur-[12px]">
-            {logoHref ? (
-              <Link href={logoHref} aria-label="Doe">
-                {mark}
-              </Link>
-            ) : (
-              mark
-            )}
+            <span className="flex items-center gap-[10px]">
+              {logoHref ? (
+                <Link href={logoHref} aria-label="Doe">
+                  {mark}
+                </Link>
+              ) : (
+                mark
+              )}
+              {agentView && <AgentViewTag />}
+            </span>
             {right}
           </header>
           {children}
@@ -55,6 +61,19 @@ export function DemoFrame({
         {overlay}
       </div>
     </div>
+  );
+}
+
+/** "Agent view": the page is for the user's agent, not the user. */
+function AgentViewTag() {
+  return (
+    <span className="h-[26px] pl-[8px] pr-[10px] flex items-center gap-[6px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[11.5px] font-[600] tracking-[0.01em]">
+      <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 12s3.5-6.5 9-6.5S21 12 21 12s-3.5 6.5-9 6.5S3 12 3 12z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+        <circle cx="12" cy="12" r="2.6" fill="currentColor" />
+      </svg>
+      Agent view
+    </span>
   );
 }
 

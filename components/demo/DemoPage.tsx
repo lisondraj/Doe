@@ -11,7 +11,7 @@ export function DemoPage() {
   const [consent, setConsent] = useState<DemoConsent | null>(null);
   if (consent) return <DemoClinicLanding consent={consent} />;
   return (
-    <DemoFrame>
+    <DemoFrame agentView>
       <DemoGate onProceed={setConsent} />
     </DemoFrame>
   );
