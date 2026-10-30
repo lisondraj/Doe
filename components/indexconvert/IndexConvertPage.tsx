@@ -5,7 +5,7 @@
  * ready but not activated, with one email field to claim it. Built in /demo's frame: Doe's brown around a cream box
  * with rounded corners, sand boxes inside it. "Agent's View" shows the same page as the JSON and MCP an agent receives.
  */
-import { type CSSProperties, type FormEvent, type ReactNode, type RefObject, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type FormEvent, type ReactNode, type RefObject, memo, useEffect, useRef, useState } from "react";
 
 import "@/lib/doehealthproduct/doehealthproduct.css";
 import "@/lib/indexconvert/indexconvert.css";
@@ -36,14 +36,40 @@ const MUTED = "text-[#28191080]";
 /* ------------------------------------------------------------------ Timeline */
 
 /** The loader's steps, in order, with how long each runs. */
-const STEPS: { title: string; detail: string; ms: number; bar?: boolean }[] = [
+/** `subs` load one at a time under a step while it runs, then fold into its detail line. */
+const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?: boolean }[] = [
   { title: "Finding your page", detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`, ms: 1900 },
   { title: "Checking what personal agents see", detail: "No llms.txt, MCP card or OpenAPI", ms: 1900 },
-  { title: "Converting to agent-readable page", detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`, ms: 2700 },
-  { title: "Building JSONs, robots.txt, llms.txt & well-known", detail: AGENT_FILES.map((f) => f.path.split("/").pop()).join(" · "), ms: 2600 },
-  { title: "Integrating into Doe's Model Context Protocol", detail: `${CLINIC_TOOLS.length} tools ready`, ms: 2100 },
-  { title: "Integrating Doe's API", detail: "OpenAPI 3.1 · locations, providers, prices", ms: 2000 },
-  { title: "Applying Personal Agent Protocol (PAP)", detail: "Connected", ms: 2600, bar: true },
+  {
+    title: "Converting to agent-readable page",
+    detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`,
+    ms: 2700,
+    subs: ["JSON · 7 resources", "JSON-LD · schema.org/MedicalClinic", "Metadata & HTML"],
+  },
+  {
+    title: "Building JSONs, robots.txt, llms.txt & well-known",
+    detail: AGENT_FILES.map((f) => f.path.split("/").pop()).join(" · "),
+    ms: 2800,
+    subs: ["openapi.json", "llms.txt", "robots.txt", ".well-known/mcp.json"],
+  },
+  {
+    title: "Integrating into Doe's Model Context Protocol",
+    detail: `${CLINIC_TOOLS.length} tools ready`,
+    ms: 2800,
+    subs: CLINIC_TOOLS.map((t) => t.name),
+  },
+  {
+    title: "Integrating Doe's API",
+    detail: "OpenAPI 3.1 · locations, providers, prices",
+    ms: 2600,
+    subs: ["GET /locations", "GET /providers", "GET /services", "GET /prices", "POST /consultations"],
+  },
+  {
+    title: "Applying Personal Agent Protocol",
+    detail: "Connected",
+    ms: 2400,
+    subs: ["Consent per user", "Agents say they're agents", "Connected to Doe"],
+  },
 ];
 const STEP_STARTS = STEPS.map((_, i) => STEPS.slice(0, i).reduce((n, s) => n + s.ms, 0));
 const BUILD_MS = STEPS.reduce((n, s) => n + s.ms, 0);
@@ -212,7 +238,8 @@ export function IndexConvertPage() {
 
 /* ------------------------------------------------------------------ Frame */
 
-const DoeMark = () => <span className={`${lora.className} text-[26px] leading-[30px] font-[600] tracking-[-0.01em] text-[#281910]`}>Doe</span>;
+/** The Doe wordmark as /earlypreview's nav sets it: Lora, regular weight, text-4xl. */
+const DoeMark = () => <span className={`${lora.className} text-[36px] leading-[36px] font-normal text-[#281910]`}>Doe</span>;
 const HEADER = "flex items-center justify-between gap-[12px] h-[64px] md:h-[72px] px-[18px] md:px-[32px]";
 
 /** /demo's frame: Doe's brown fills the window and the page sits in a cream box that scrolls on its own. */
@@ -311,8 +338,8 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
         className="absolute inset-0 pointer-events-none"
         style={{
           background: desktop
-            ? "radial-gradient(ellipse 24% 50% at 50% 55%, rgba(255,252,241,0.93) 0%, rgba(255,252,241,0.72) 55%, rgba(255,252,241,0) 100%)"
-            : "radial-gradient(ellipse 72% 50% at 50% 57%, rgba(255,252,241,0.92) 0%, rgba(255,252,241,0.66) 58%, rgba(255,252,241,0) 100%)",
+            ? "radial-gradient(ellipse 27% 54% at 50% 55%, rgba(255,252,241,0.95) 0%, rgba(255,252,241,0.8) 55%, rgba(255,252,241,0.18) 100%)"
+            : "radial-gradient(ellipse 76% 54% at 50% 57%, rgba(255,252,241,0.94) 0%, rgba(255,252,241,0.76) 58%, rgba(255,252,241,0.16) 100%)",
         }}
       />
       <div className={`relative z-10 ${HEADER}`}>
@@ -335,9 +362,10 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
 
         {/* The clinic's URL in a fill box that fills as the build runs, with the page being read after the domain. */}
         <div className="mt-[16px] w-full max-w-[420px]">
-          <div className="relative h-[50px] rounded-[16px] bg-[#F4EEDF] overflow-hidden">
-            <div className="absolute inset-y-0 left-0 bg-[#E9DCC7]" style={{ width: `${progress * 100}%` }} />
-            <div className="relative h-full flex items-center gap-[10px] px-[14px]">
+          <div className="rounded-[20px] bg-[#F4EEDF] p-[5px]">
+          <div className="relative h-[46px] rounded-[15px] bg-[#FFFCF1] overflow-hidden">
+            <div className="absolute inset-y-0 left-0 bg-[#F4EEDF]" style={{ width: `${progress * 100}%`, transition: "width 120ms linear" }} />
+            <div className="relative h-full flex items-center gap-[10px] px-[13px]">
               {built ? <Check on size={20} /> : <Spinner />}
               <span className="min-w-[0px] truncate text-[15px] leading-[20px] font-[600]">
                 {CLINIC.url}
@@ -345,6 +373,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
               </span>
               <span className={`ml-auto shrink-0 tabular-nums text-[13px] font-[600] ${MUTED}`}>{Math.round(progress * 100)}%</span>
             </div>
+          </div>
           </div>
           {/* Phones and tablets: the page directory as a row of chips under the URL; short screens get one line. */}
           {compact ? (
@@ -389,6 +418,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
                       {step.title}
                     </span>
                     {showDetail && <span className={`ic-fade block mt-[1px] text-[12.5px] leading-[16px] ${SUB}`}>{step.detail}</span>}
+                    {state === "active" && step.subs && <SubSteps subs={step.subs} progress={stepProgress} />}
                     {step.bar && state === "active" && (
                       <span className="block mt-[7px] h-[4px] rounded-full bg-[#2819101A] overflow-hidden">
                         <span className="block h-full rounded-full bg-[#140C04]" style={{ width: `${stepProgress * 100}%` }} />
@@ -422,23 +452,23 @@ const SHORT_LABEL: Record<string, string> = {
 };
 
 /** Desktop: a brief directory of the clinic's pages on the left, ticking off as each is read. */
-function PageDirectory({ pageIndex, built }: { pageIndex: number; built: boolean }) {
+const PageDirectory = memo(function PageDirectory({ pageIndex, built }: { pageIndex: number; built: boolean }) {
   return (
-    <div className="hidden lg:block absolute left-[32px] top-1/2 -translate-y-1/2 z-10 w-[236px] rounded-[20px] bg-[#FFFCF1E6] p-[6px] shadow-[0_6px_24px_rgba(20,12,4,0.08)]">
+    <div className="hidden lg:block absolute left-[32px] top-1/2 -translate-y-1/2 z-10 w-[236px] rounded-[20px] bg-[#F4EEDF] p-[5px]">
       <div className={`flex items-baseline justify-between px-[10px] pt-[6px] pb-[6px] text-[11px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>
         <span>Pages</span>
         <span className="tabular-nums normal-case tracking-normal">
           {built ? SOURCE_PAGES.length : pageIndex} / {SOURCE_PAGES.length}
         </span>
       </div>
-      <ol className="flex flex-col">
+      <ol className="flex flex-col rounded-[16px] bg-[#FFFCF1] p-[4px]">
         {SOURCE_PAGES.map((p, i) => {
           const read = built || i < pageIndex;
           const now = !built && i === pageIndex;
           return (
             <li
               key={p.path}
-              className="flex items-center gap-[8px] h-[30px] px-[8px] rounded-[10px] transition-colors duration-300"
+              className="flex items-center gap-[8px] h-[30px] px-[8px] rounded-[11px] transition-colors duration-300"
               style={{ backgroundColor: now ? "#F4EEDF" : "transparent" }}
             >
               {now ? <Spinner size={14} /> : <Check on={read} size={14} />}
@@ -449,13 +479,37 @@ function PageDirectory({ pageIndex, built }: { pageIndex: number; built: boolean
       </ol>
     </div>
   );
+});
+
+/** A step's parts, indented in grey: each loads in turn, a small spinner on the one in progress. */
+function SubSteps({ subs, progress }: { subs: string[]; progress: number }) {
+  // Leave the last sliver of the step with every part done.
+  const current = Math.floor(Math.min(0.999, progress / 0.9) * subs.length);
+  return (
+    <span className="block mt-[4px] pl-[2px]">
+      {subs.map((sub, i) =>
+        i > current ? null : (
+          <span key={sub} className={`ic-fade flex items-center gap-[7px] h-[19px] text-[12.5px] leading-[16px] font-[400] ${SUB}`}>
+            {i < current ? (
+              <svg width="11" height="11" viewBox="0 0 24 24" className="shrink-0" aria-hidden="true">
+                <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#28191080" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            ) : (
+              <Spinner size={11} />
+            )}
+            <span className="min-w-0 truncate">{sub}</span>
+          </span>
+        ),
+      )}
+    </span>
+  );
 }
 
 /**
  * The clinic's own pages behind the loader, one per slot: each scrolls while a scan line passes, the part above the
  * line turns from grey to full colour, and the values Doe lifted off it appear beside it. Edges fade into the cream.
  */
-function ParsingBackdrop({ pageIndex }: { pageIndex: number }) {
+const ParsingBackdrop = memo(function ParsingBackdrop({ pageIndex }: { pageIndex: number }) {
   return (
     <div className="ic-corner-fade absolute inset-0 pointer-events-none" style={{ "--ic-slot": `${SLOT_MS}ms` } as CSSProperties} aria-hidden="true">
       {SOURCE_PAGES.map((page, i) => {
@@ -464,18 +518,18 @@ function ParsingBackdrop({ pageIndex }: { pageIndex: number }) {
         const running: CSSProperties = { animationPlayState: i <= pageIndex ? "running" : "paused" };
         return (
           <div key={page.shot} className="absolute inset-0 overflow-hidden" style={{ opacity: i === pageIndex ? 1 : 0, transition: `opacity ${PAGE_FADE_MS}ms ease` }}>
-            <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 0.46, filter: "grayscale(1)" }} priority={i === 0} />
+            <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 0.4, filter: "grayscale(1)" }} priority={i === 0} />
             <div className="ic-reveal absolute inset-0 overflow-hidden" style={running}>
-              <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 1 }} />
+              <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 0.9 }} />
             </div>
-            <div className="ic-scan absolute left-0 right-0 h-[1.5px] bg-[#281910]" style={{ ...running, opacity: 0.4 }} />
+            <div className="ic-scan absolute left-0 right-0 h-[1px] bg-[#281910]" style={{ ...running, opacity: 0.28 }} />
             {i === pageIndex &&
               (PAGE_READS[page.shot] ?? []).map(([key, value], n) => {
                 const spot = READ_SPOTS[n]!;
                 return (
                   <span
                     key={key + value}
-                    className="ic-chip absolute hidden md:inline-flex items-center gap-[8px] h-[34px] px-[12px] rounded-[12px] bg-[#FFFCF1] shadow-[0_6px_20px_rgba(20,12,4,0.1)] text-[13px] leading-[16px] font-[600] whitespace-nowrap"
+                    className="ic-chip absolute hidden md:inline-flex items-center gap-[8px] h-[32px] px-[12px] rounded-[11px] bg-[#FFFCF1] border border-solid border-[#2819101A] text-[13px] leading-[16px] font-[600] whitespace-nowrap"
                     style={{ top: spot.top, right: spot.right, animationDelay: `${(parseFloat(spot.top) / 100) * SLOT_MS * 0.8}ms`, animationDuration: `${SLOT_MS * 0.85}ms` }}
                   >
                     <span className={`font-mono text-[11px] font-[500] ${MUTED}`}>{key}</span>
@@ -488,7 +542,7 @@ function ParsingBackdrop({ pageIndex }: { pageIndex: number }) {
       })}
     </div>
   );
-}
+});
 
 /** One of the site screenshots: the iPhone capture on phones, the 1440px capture from tablet width up. */
 function Shot({ shot, className, style, priority }: { shot: string; className?: string; style?: CSSProperties; priority?: boolean }) {
@@ -685,7 +739,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 
       {/* iPhone: /demo's bottom pill, whenever the claim box is off screen. */}
       <div
-        className="lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center gap-[12px] h-[62px] pl-[20px] pr-[8px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] shadow-[0_10px_30px_rgba(20,12,4,0.25)]"
+        className="lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center gap-[12px] h-[62px] pl-[20px] pr-[8px] rounded-[999px] bg-[#140C04] text-[#FFFCF1]"
         style={{
           bottom: "calc(max(8px, env(safe-area-inset-bottom)) + 10px)",
           transform: !claimed && !claimInView ? "none" : "translateY(calc(100% + 40px))",
@@ -717,7 +771,7 @@ function StatusPanel({ claimed, onClaim }: { claimed: boolean; onClaim: () => vo
     ["Agent files", "llms.txt · robots.txt · openapi.json · mcp.json"],
     ["MCP", claimed ? "Ready · turns on when you confirm" : "Ready · not activated"],
     ["API", claimed ? "Ready · turns on when you confirm" : "Ready · not activated"],
-    ["PAP", "Applied"],
+    ["Agent protocol", "Personal Agent Protocol · applied"],
     ["Agent booking", claimed ? "Pick a plan to turn on" : "Off until claimed"],
   ];
   return (
@@ -725,7 +779,7 @@ function StatusPanel({ claimed, onClaim }: { claimed: boolean; onClaim: () => vo
       <div className="flex items-center gap-[8px] mb-[12px] pb-[12px] border-b border-solid border-[#FFFCF11A]">
         <span className="h-[8px] w-[8px] shrink-0 rounded-full bg-[#9FD18B]" aria-hidden="true" />
         <span className="shrink-0 text-[13px] font-[600]">Connected to Doe</span>
-        <span className="min-w-0 truncate text-[12px] text-[#FFFCF180]">MCP · API · PAP</span>
+        <span className="min-w-0 truncate text-[12px] text-[#FFFCF180]">MCP · API · Personal Agent Protocol</span>
       </div>
       <div className="flex items-center justify-between gap-[10px]">
         <span className="text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">{claimed ? "Claimed · confirm your email" : "Not activated"}</span>
@@ -749,7 +803,7 @@ function StatusPanel({ claimed, onClaim }: { claimed: boolean; onClaim: () => vo
             ["Structured", true],
             ["Agent-readable", true],
             ["Connected", true],
-            ["PAP", true],
+            ["Agent protocol", true],
             ["MCP on", false],
             ["API on", false],
             ["Bookable", false],
