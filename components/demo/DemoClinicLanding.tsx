@@ -36,9 +36,9 @@ const THREAD_IDS: DemoThreadId[] = ["concierge", "negotiate", "forms"];
 
 const PERMISSIONS: { id: keyof DemoConsent; title: string; meta: string; required: boolean }[] = [
   { id: "terms", title: "Doe's Terms & Privacy Policy", meta: "Agreed at connect", required: true },
-  { id: "phi", title: "Share health information (PHI)", meta: "Needed to book through Doe", required: true },
-  { id: "connected", title: "Stay connected for updates", meta: "You can check back on this booking", required: false },
-  { id: "network", title: "Join the Doe network", meta: "Faster booking and network offers", required: false },
+  { id: "phi", title: "Share Health Information (PHI)", meta: "Needed to book through Doe", required: true },
+  { id: "connected", title: "Stay Connected for Updates", meta: "You can check back on this booking", required: false },
+  { id: "network", title: "Join the Doe Network", meta: "Faster booking and network offers", required: false },
 ];
 
 const clockLeft = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
@@ -59,6 +59,8 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
   const [pending, setPending] = useState<Record<string, boolean>>({});
   const [toast, setToast] = useState<string | null>(null);
   const [active, setActive] = useState<string>("services");
+  /** The iPhone section pills appear once Services is on screen, and stay while the page scrolls down. */
+  const [pillsOn, setPillsOn] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const toastTimer = useRef<number | null>(null);
   const lastBooking = useRef(s.booking.status);
@@ -100,6 +102,14 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
     });
     return () => io.disconnect();
   }, [chosen]);
+
+  useEffect(() => {
+    const el = document.getElementById("services");
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setPillsOn(entry!.isIntersecting || entry!.boundingClientRect.top < 0), { threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   const run = async (a: AgentAction, done?: string) => {
     const r = await act(a);
@@ -270,17 +280,29 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
 
   return (
     <DemoFrame agentView right={communicate} overlay={overlay}>
-      <nav className="md:hidden sticky top-[64px] z-20 flex gap-[6px] overflow-x-auto px-[16px] py-[8px] bg-[#FFFCF1E6] backdrop-blur-[12px] [scrollbar-width:none]">
-        {nav.map((n) => (
-          <button
-            key={n.id}
-            type="button"
-            onClick={() => go(n.id)}
-            className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] transition-colors duration-150 ${active === n.id ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}
-          >
-            {n.label}
-          </button>
-        ))}
+      {/* iPhone: section pills, shown from Services on down. Zero height, so the page doesn't shift. */}
+      <nav className="md:hidden sticky top-[64px] z-20 h-0" aria-hidden={!pillsOn}>
+        <div
+          className="absolute inset-x-0 top-0 flex gap-[6px] overflow-x-auto px-[16px] py-[8px] bg-[#FFFCF1E6] backdrop-blur-[12px] [scrollbar-width:none]"
+          style={{
+            opacity: pillsOn ? 1 : 0,
+            transform: pillsOn ? "none" : "translateY(-12px)",
+            pointerEvents: pillsOn ? "auto" : "none",
+            transition: `opacity 220ms ease, transform 300ms ${EASE}`,
+          }}
+        >
+          {nav.map((n) => (
+            <button
+              key={n.id}
+              type="button"
+              tabIndex={pillsOn ? 0 : -1}
+              onClick={() => go(n.id)}
+              className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] transition-colors duration-150 ${active === n.id ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}
+            >
+              {n.label}
+            </button>
+          ))}
+        </div>
       </nav>
 
       <div
@@ -300,36 +322,42 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
         </aside>
 
         <main className="min-w-0 flex flex-col gap-[28px] px-[16px] md:px-0 pt-[6px]">
-          <div className="flex flex-col gap-[6px] rounded-[26px] bg-[#F4EEDF] p-[6px]">
-            <div className="flex items-center gap-[16px] rounded-[20px] bg-[#FFFCF1] p-[14px] md:p-[18px]">
-              <DemoSphere size={76} className="shrink-0" />
-              <div className="min-w-0">
-                <h1 className={`${DISPLAY} text-[26px] leading-[30px] md:text-[34px] md:leading-[38px] tracking-[-0.02em]`}>{CLINIC.name}</h1>
-                <p className="mt-[4px] text-[13px] leading-[18px] text-[#2819109E]">
-                  {CLINIC.addressLine1}, {CLINIC.addressLine2}
-                </p>
+          <div className="flex flex-col gap-[10px]">
+            {/* The clinic as /indexconvert's hero: centred on iPhone, a row from tablet up. */}
+            <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
+              <div className="flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px] rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]">
+                <DemoSphere size={84} className="shrink-0" />
+                <div className="min-w-0">
+                  <h1 className={`${DISPLAY} text-[30px] leading-[34px] md:text-[36px] md:leading-[40px] tracking-[-0.02em] [text-wrap:balance]`}>{CLINIC.name}</h1>
+                  <p className="mt-[6px] text-[14.5px] leading-[20px] text-[#2819109E] [text-wrap:balance]">
+                    {CLINIC.addressLine1}, {CLINIC.addressLine2}
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="rounded-[20px] bg-[#140C04] text-[#FFFCF1] p-[16px] md:p-[18px]">
-              <div className="flex items-center justify-between gap-[10px]">
-                <span className="text-[13px] font-[600] text-[#FFFCF1B3]">Your Session</span>
-                <button type="button" onClick={onEnd} className="h-[26px] px-[10px] rounded-full border border-solid border-[#FFFCF133] text-[11.5px] font-[600] text-[#FFFCF1CC] hover:text-[#FFFCF1]">
-                  End session
-                </button>
+            {/* The session as /indexconvert's status box: the status set large, the details in an inner sand box. */}
+            <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
+              <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[16px] pb-[16px] md:px-[24px] md:pt-[20px] md:pb-[20px]">
+                <div className="flex items-center justify-between gap-[10px]">
+                  <span className="text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em] text-[#28191080]">Your Session</span>
+                  <button type="button" onClick={onEnd} className="h-[32px] px-[14px] rounded-full bg-[#F4EEDF] text-[12.5px] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150">
+                    End Session
+                  </button>
+                </div>
+                <div className={`${DISPLAY} mt-[8px] text-[26px] leading-[30px] md:text-[30px] md:leading-[34px] tracking-[-0.02em]`}>{state.status}</div>
+                <p className="mt-[4px] text-[14.5px] leading-[21px] text-[#2819109E]">Acting for {s.userName}</p>
+                <dl className="mt-[14px] rounded-[18px] bg-[#F4EEDF] px-[16px] py-[12px] grid grid-cols-[76px_minmax(0,1fr)] gap-x-[12px] gap-y-[8px] text-[13.5px] leading-[19px]">
+                  {[
+                    ["Request", s.request || "None given"],
+                    ["Session", s.id],
+                  ].map(([k, v]) => (
+                    <div key={k} className="contents">
+                      <dt className="text-[#281910B3]">{k}</dt>
+                      <dd className={k === "Session" ? "truncate font-mono text-[12px] leading-[19px] text-[#28191099]" : "font-[600] break-words"}>{v}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
-              <dl className="mt-[12px] grid grid-cols-[88px_minmax(0,1fr)] gap-x-[12px] gap-y-[6px] text-[13.5px] leading-[19px]">
-                {[
-                  ["Acting for", s.userName],
-                  ["Request", s.request],
-                  ["Status", state.status],
-                  ["Session", s.id],
-                ].map(([k, v]) => (
-                  <div key={k} className="contents">
-                    <dt className="text-[#FFFCF180]">{k}</dt>
-                    <dd className={k === "Session" ? "truncate font-mono text-[12px] text-[#FFFCF1B3]" : k === "Request" ? "font-[600] break-words" : "truncate font-[600]"}>{v}</dd>
-                  </div>
-                ))}
-              </dl>
             </div>
           </div>
 
@@ -366,7 +394,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
             <div className="flex gap-[6px] overflow-x-auto [scrollbar-width:none]">
               {["all", ...PROVIDERS].map((x) => (
                 <Pill key={x} on={provider === x} onClick={() => setProvider(x)}>
-                  {x === "all" ? "Any provider" : x}
+                  {x === "all" ? "Any Provider" : x}
                 </Pill>
               ))}
             </div>
@@ -417,7 +445,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                 onClick={() => slot && void run({ type: "hold_slot", slot_id: slot }, "Slot held for 10 minutes")}
                 className="h-[46px] px-[20px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] disabled:bg-[#28191033] disabled:cursor-not-allowed transition-colors duration-200"
               >
-                {heldId && slot === heldId ? `Held · ${clockLeft(holdLeft)}` : heldId ? "Hold instead" : "Hold 10 min"}
+                {heldId && slot === heldId ? `Held · ${clockLeft(holdLeft)}` : heldId ? "Hold Instead" : "Hold 10 Min"}
               </button>
               {heldId && !locked && (
                 <button type="button" onClick={() => void run({ type: "release_hold" }, "Hold released")} className="h-[46px] px-[16px] rounded-full bg-[#FFFCF1] text-[13.5px] font-[600]">
@@ -477,7 +505,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
               className="mt-[6px] w-full flex items-center justify-between gap-[12px] p-[14px] rounded-[18px] bg-[#FFFCF1] hover:bg-[#FAF4E4] text-left transition-colors duration-150"
             >
               <span>
-                <span className="block text-[15px] leading-[20px] font-[600]">Want a better price?</span>
+                <span className="block text-[15px] leading-[20px] font-[600]">Want a Better Price?</span>
                 <span className="block mt-[2px] text-[13px] leading-[18px] text-[#2819109E]">Negotiate with the clinic&apos;s agent in Communicate.</span>
               </span>
               <span className="shrink-0 h-[36px] px-[14px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]">Negotiate</span>
@@ -568,7 +596,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
             <div className="rounded-[18px] bg-[#FFFCF1] p-[16px] md:p-[18px]">
               <div className="flex items-start justify-between gap-[12px]">
                 <div className="min-w-0">
-                  <div className="text-[15px] leading-[20px] font-[600]">{s.forms.status === "sent" ? "Forms passed back" : `Dr. Brooks needs ${progress.total} forms before the first visit`}</div>
+                  <div className="text-[15px] leading-[20px] font-[600]">{s.forms.status === "sent" ? "Forms Passed Back" : `Dr. Brooks Needs ${progress.total} Forms Before the First Visit`}</div>
                   <p className="mt-[4px] text-[13px] leading-[19px] text-[#2819109E]">
                     {s.forms.status === "sent"
                       ? "The clinic has the signed intake and assessments."
@@ -589,7 +617,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                 onClick={() => setFormsOpen(true)}
                 className="mt-[14px] h-[46px] px-[20px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] hover:bg-[#2A1C10] transition-colors duration-150"
               >
-                {s.forms.status === "sent" ? "View forms" : progress.done > 0 ? "Continue forms" : "Start forms"}
+                {s.forms.status === "sent" ? "View Forms" : progress.done > 0 ? "Continue Forms" : "Start Forms"}
               </button>
             </div>
           </Section>
@@ -669,7 +697,7 @@ function Pill({ on, sand, onClick, children }: { on: boolean; sand?: boolean; on
 function Toggle({ on }: { on: boolean }) {
   return (
     <span className={`shrink-0 relative w-[44px] h-[26px] rounded-full transition-colors duration-200 ${on ? "bg-[#140C04]" : "bg-[#28191026]"}`}>
-      <span className="absolute top-[3px] w-[20px] h-[20px] rounded-full bg-[#FFFCF1] transition-[left] duration-200" style={{ left: on ? 21 : 3 }} />
+      <span className="absolute top-[3px] w-[20px] h-[20px] rounded-full bg-[#FFFCF1] shadow-[0_1px_4px_rgba(40,25,16,0.28)] transition-[left] duration-200" style={{ left: on ? 21 : 3 }} />
     </span>
   );
 }
@@ -714,8 +742,8 @@ function BookingSummary({
         <div className="text-[12px] leading-[16px] font-[500] text-[#28191080]">Booking For {s.userName}</div>
         <div className={`${DISPLAY} mt-[2px] text-[21px] leading-[25px] tracking-[-0.01em]`}>{p.label}</div>
         <div className="mt-[14px] flex flex-col gap-[6px] text-[13.5px] leading-[18px]">
-          <Row k="List price" v={money(p.list)} strike={Boolean(p.deal)} />
-          {p.deal ? <Row k="Negotiated" v={money(p.deal)} /> : <Row k="Agent booking −5%" v={`−${money(p.discount)}`} />}
+          <Row k="List Price" v={money(p.list)} strike={Boolean(p.deal)} />
+          {p.deal ? <Row k="Negotiated" v={money(p.deal)} /> : <Row k="Agent Booking −5%" v={`−${money(p.discount)}`} />}
           <div className="h-[1px] my-[4px] bg-[#2819101A]" />
           <Row k="Total" v={money(live ? (b.total ?? p.total) : p.total)} bold />
         </div>
@@ -750,10 +778,10 @@ function BookingSummary({
         type="button"
         disabled={!ready}
         onClick={onRequest}
-        className="w-full h-[52px] rounded-[18px] text-[15px] font-[600] text-[#FFFCF1] disabled:cursor-not-allowed transition-colors duration-200"
+        className="w-full h-[60px] rounded-[16px] text-[15px] md:text-[16px] font-[700] text-[#FFFCF1] disabled:cursor-not-allowed transition-colors duration-200"
         style={{ backgroundColor: b.status === "confirmed" ? "#4C7A4F" : b.status === "requested" ? "#38251D" : ready ? "#140C04" : "#28191033", transitionTimingFunction: EASE }}
       >
-        {b.status === "confirmed" ? "Booked" : b.status === "requested" ? "Waiting for clinic" : "Send booking request"}
+        {b.status === "confirmed" ? "Booked" : b.status === "requested" ? "Waiting for Clinic" : "Send Booking Request"}
       </button>
     </div>
   );

@@ -69,27 +69,26 @@ export function DemoGate({
   const ready = consent.terms && consent.phi;
 
   return (
-    <main className="flex flex-col items-center px-[20px] pb-[28px] md:pb-[48px] min-h-[calc(100%-64px)]">
-      <section className="w-full max-w-[520px] mt-[4px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
-        <div className="flex flex-col items-center px-[16px] pt-[18px] pb-[22px] rounded-[20px] bg-[#FFFCF1]">
-          <DemoSphere size={190} />
-          <h1 className={`${DISPLAY} mt-[16px] text-center text-[30px] leading-[34px] md:text-[36px] md:leading-[40px] tracking-[-0.02em] text-[#281910]`}>
-            {CLINIC.name}
-          </h1>
-          <p className="mt-[8px] text-center text-[15px] leading-[22px] text-[#2819109E]">
-            {CLINIC.addressLine1}
-            <br />
-            {CLINIC.addressLine2}
-          </p>
+    <main className="flex flex-col items-center px-[16px] pt-[22px] pb-[96px] min-h-[calc(100%-64px)]">
+      {/* The clinic as /indexconvert's hero: centred on iPhone, a row from tablet up. */}
+      <section className="w-full max-w-[560px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
+        <div className="flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px] rounded-[21px] bg-[#FFFCF1]">
+          <DemoSphere size={84} className="shrink-0" />
+          <div className="min-w-0">
+            <h1 className={`${DISPLAY} text-[30px] leading-[34px] md:text-[36px] md:leading-[40px] tracking-[-0.02em] [text-wrap:balance] text-[#281910]`}>{CLINIC.name}</h1>
+            <p className="mt-[6px] text-[14.5px] leading-[20px] text-[#2819109E] [text-wrap:balance]">
+              {CLINIC.addressLine1}, {CLINIC.addressLine2}
+            </p>
+          </div>
         </div>
       </section>
 
-      <section className="w-full max-w-[520px] mt-[8px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
+      <section className="w-full max-w-[560px] mt-[10px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
         <p className="px-[16px] pt-[14px] pb-[12px] text-[15px] leading-[21px] font-[600] text-[#281910]">
           Confirm With Your User Before Booking
         </p>
         <label className="flex items-center gap-[12px] mb-[4px] h-[52px] px-[14px] rounded-[20px] bg-[#FFFCF1]">
-          <span className="shrink-0 text-[13px] font-[600] text-[#28191099]">Acting for</span>
+          <span className="shrink-0 text-[13px] font-[600] text-[#28191099]">Acting For</span>
           <input
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
@@ -99,7 +98,7 @@ export function DemoGate({
           />
         </label>
         <label className="flex flex-col gap-[6px] mb-[4px] px-[14px] pt-[12px] pb-[10px] rounded-[20px] bg-[#FFFCF1]">
-          <span className="text-[13px] font-[600] text-[#28191099]">What they want you to do</span>
+          <span className="text-[13px] font-[600] text-[#28191099]">What They Want You to Do</span>
           <textarea
             value={request}
             onChange={(e) => setRequest(e.target.value.slice(0, 200))}
@@ -150,7 +149,7 @@ export function DemoGate({
           onClick={() => setConsent({ terms: !all, phi: !all, connected: !all, network: !all })}
           className="w-full h-[46px] mt-[4px] rounded-[20px] bg-[#FFFCF1] text-[14px] leading-[18px] font-[600] text-[#281910] hover:bg-[#FAF4E4] transition-colors duration-150"
         >
-          {all ? "Clear all" : "Confirm all"}
+          {all ? "Clear All" : "Confirm All"}
         </button>
       </section>
 
@@ -166,7 +165,7 @@ export function DemoGate({
         className="absolute left-[-9999px] w-px h-px opacity-0"
       />
 
-      <div className="grow min-h-[24px]" />
+      <div className="grow min-h-[16px]" />
       {error && <p className="mb-[10px] text-center text-[13px] font-[600] text-[#B4532F]">{error}</p>}
       <button
         type="button"
@@ -180,9 +179,14 @@ export function DemoGate({
             setBusy(false);
           }
         }}
-        className="w-full max-w-[520px] h-[56px] rounded-[999px] text-[16px] leading-[20px] font-[600] text-[#FFFCF1] bg-[#140C04] disabled:bg-[#28191033] disabled:text-[#FFFCF1] disabled:cursor-not-allowed transition-colors duration-200"
+        className="group w-full max-w-[560px] h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] text-[15px] md:text-[16px] leading-[20px] font-[700] text-[#FFFCF1] bg-[#140C04] enabled:hover:bg-[#2A1C12] disabled:bg-[#28191033] disabled:text-[#FFFCF1] disabled:cursor-not-allowed transition-colors duration-200"
       >
-        {busy ? "Connecting…" : "Proceed in browser"}
+        {busy ? "Connecting…" : "Proceed in Browser"}
+        {!busy && (
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
+            <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
       </button>
     </main>
   );
@@ -200,7 +204,7 @@ function ConnectOptions() {
   const code = way === "api" ? s.api : way === "mcp" ? s.mcp : null;
 
   return (
-    <section className="w-full max-w-[520px] mt-[8px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
+    <section className="w-full max-w-[560px] mt-[10px] p-[6px] rounded-[26px] bg-[#F4EEDF]">
       <div className="flex items-center justify-between px-[16px] pt-[12px] pb-[10px]">
         <span className="text-[15px] font-[600]">Connect</span>
         <div className="flex p-[3px] rounded-full bg-[#FFFCF1]">
@@ -217,19 +221,23 @@ function ConnectOptions() {
         </div>
       </div>
       {code ? (
-        <div className="relative rounded-[20px] bg-[#140C04] text-[#FFFCF1]">
-          <pre className="overflow-x-auto p-[16px] pr-[64px] text-[12px] leading-[18px] font-mono whitespace-pre">{code}</pre>
-          <button
-            type="button"
-            onClick={() => {
-              void navigator.clipboard?.writeText(code);
-              setCopied(true);
-              window.setTimeout(() => setCopied(false), 1400);
-            }}
-            className="absolute top-[10px] right-[10px] h-[28px] px-[10px] rounded-full bg-[#FFFCF11F] text-[11.5px] font-[600]"
-          >
-            {copied ? "Copied" : "Copy"}
-          </button>
+        <div className="rounded-[20px] bg-[#140C04] text-[#FFFCF1] overflow-hidden font-mono">
+          <div className="flex items-center gap-[10px] h-[44px] pl-[16px] pr-[8px] border-b border-solid border-[#FFFCF114] text-[12px]">
+            <span className="shrink-0 font-[600] text-[#FCCFB8]">{way === "mcp" ? "MCP" : "REST"}</span>
+            <span className="min-w-0 truncate text-[#FFFCF1CC]">{way === "mcp" ? "mcp.json" : "api"}</span>
+            <button
+              type="button"
+              onClick={() => {
+                void navigator.clipboard?.writeText(code);
+                setCopied(true);
+                window.setTimeout(() => setCopied(false), 1400);
+              }}
+              className="ml-auto shrink-0 h-[28px] px-[10px] rounded-full bg-[#FFFCF11F] font-sans text-[11.5px] font-[600]"
+            >
+              {copied ? "Copied" : "Copy"}
+            </button>
+          </div>
+          <pre className="p-[16px] text-[12px] leading-[19px] whitespace-pre-wrap [overflow-wrap:anywhere]">{code}</pre>
         </div>
       ) : (
         <p className="px-[16px] py-[14px] rounded-[20px] bg-[#FFFCF1] text-[13.5px] leading-[19px] text-[#281910B3]">Proceed below to book from this page.</p>

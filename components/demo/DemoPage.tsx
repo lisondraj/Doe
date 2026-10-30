@@ -14,7 +14,7 @@ export function DemoPage() {
   if (!agent.ready) return <DemoFrame agentView>{null}</DemoFrame>;
   if (agent.state) return <DemoClinicLanding state={agent.state} act={agent.act} onEnd={agent.end} />;
   return (
-    <DemoFrame agentView>
+    <DemoFrame agentView edgeFade>
       <DemoGate
         onProceed={async (consent, userName, request, check) => {
           const r = await agent.connect(consent, userName, request, check);

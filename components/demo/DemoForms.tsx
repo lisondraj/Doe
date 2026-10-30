@@ -222,7 +222,7 @@ export function DemoForms({
                   <div className="min-h-[44px] flex items-end pb-[4px] border-b-[1.5px] border-solid border-[#281910] text-[14px]">
                     {forms.signedAt ? new Date(forms.signedAt).toLocaleDateString("en-CA") : ""}
                   </div>
-                  <span className="-mt-[12px] text-[11.5px] text-[#28191099]">Signature of patient</span>
+                  <span className="-mt-[12px] text-[11.5px] text-[#28191099]">Signature of Patient</span>
                   <span className="-mt-[12px] text-[11.5px] text-[#28191099]">Date</span>
                 </div>
               </section>
@@ -246,7 +246,7 @@ export function DemoForms({
               onClick={() => void onSubmit()}
               className="h-[44px] px-[18px] rounded-[8px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] disabled:bg-[#28191033] disabled:cursor-not-allowed transition-colors duration-200"
             >
-              {sent ? "Passed back" : "Pass back to clinic"}
+              {sent ? "Passed Back" : "Pass Back to Clinic"}
             </button>
           </span>
         </div>

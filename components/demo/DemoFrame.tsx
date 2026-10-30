@@ -20,6 +20,7 @@ export function DemoFrame({
   overlay,
   logoHref,
   agentView = false,
+  edgeFade = false,
 }: {
   children: ReactNode;
   /** Marks the page as one only the user's agent sees. */
@@ -29,6 +30,8 @@ export function DemoFrame({
   /** Drawn over the box's content but inside its rounded edge (sheets, drawers). */
   overlay?: ReactNode;
   logoHref?: string;
+  /** Fades whatever scrolls past the top or bottom edge of the box, as on /indexconvert's opening screen. */
+  edgeFade?: boolean;
 }) {
   /** Set like /indexconvert's (and /earlypreview's) nav: Lora, regular weight. */
   const mark = <span className={`${lora.className} text-[30px] leading-[30px] md:text-[36px] md:leading-[36px] font-normal text-[#281910]`}>Doe</span>;
@@ -59,6 +62,20 @@ export function DemoFrame({
           </header>
           {children}
         </div>
+        {edgeFade && (
+          <>
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 top-[64px] md:top-[72px] z-20 h-[22px]"
+              style={{ background: "linear-gradient(to bottom, #FFFCF1 0%, rgba(255,252,241,0) 100%)" }}
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[96px]"
+              style={{ background: "linear-gradient(to top, #FFFCF1 6%, rgba(255,252,241,0.82) 38%, rgba(255,252,241,0) 100%)" }}
+            />
+          </>
+        )}
         {overlay}
       </div>
     </div>

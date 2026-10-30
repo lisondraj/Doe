@@ -61,7 +61,7 @@ const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
   },
   {
     id: "inbox",
-    label: "Agent inbox",
+    label: "Agent Inbox",
     icon: (
       <>
         <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h7A2.5 2.5 0 0 1 16 6.5v4a2.5 2.5 0 0 1-2.5 2.5H9l-3.5 3v-3h0A1.5 1.5 0 0 1 4 11.5z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
@@ -247,9 +247,9 @@ export function DemoClinicDashboard() {
       <div className="relative grow min-w-0 h-full ml-[8px] md:ml-0 overflow-clip rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
         <div className="absolute inset-0 overflow-y-auto overscroll-contain">
           <div className="md:hidden sticky top-0 z-20 bg-[#FFFCF1E6] backdrop-blur-[12px]">
-            <div className="flex items-center justify-between h-[60px] px-[22px]">
-              <span className={`${lora.className} text-[26px] leading-[30px] font-[600]`}>Doe</span>
-              <span className="text-[12px] font-[600] text-[#2819109E]">Clinic view</span>
+            <div className="flex items-center justify-between h-[64px] px-[18px]">
+              <span className={`${lora.className} text-[30px] leading-[30px] font-normal text-[#281910]`}>Doe</span>
+              <span className="h-[34px] px-[14px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[12.5px] font-[600]">Clinic View</span>
             </div>
             <div className="flex gap-[6px] overflow-x-auto px-[16px] pb-[10px] [scrollbar-width:none]">
               {TABS.map((t) => (
@@ -297,7 +297,7 @@ function Card({ title, right, children, className = "" }: { title?: string; righ
     <div className={`rounded-[22px] bg-[#F4EEDF] p-[6px] ${className}`}>
       {title && (
         <div className="flex items-center justify-between px-[12px] pt-[10px] pb-[8px]">
-          <span className="text-[13px] font-[600]">{title}</span>
+          <span className="text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em] text-[#281910B3]">{title}</span>
           {right}
         </div>
       )}
@@ -335,8 +335,8 @@ function Overview({ state, now, onOpen }: { state: ClinicStatePayload | null; no
     .slice(0, 14);
   const funnel = [
     ["Connected", a.sessions],
-    ["Held a slot", a.held],
-    ["Forms back", a.formsReturned],
+    ["Held a Slot", a.held],
+    ["Forms Back", a.formsReturned],
     ["Requested", a.requested],
     ["Booked", a.confirmed],
   ] as const;
@@ -372,11 +372,11 @@ function Overview({ state, now, onOpen }: { state: ClinicStatePayload | null; no
       <Card>
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-[4px]">
         {[
-          ["Agents connected", String(a.sessions), `${a.live} live now`],
-          ["By channel", `${a.byChannel.browser} · ${a.byChannel.api} · ${a.byChannel.mcp}`, "Browser · API · MCP"],
+          ["Agents Connected", String(a.sessions), `${a.live} live now`],
+          ["By Channel", `${a.byChannel.browser} · ${a.byChannel.api} · ${a.byChannel.mcp}`, "Browser · API · MCP"],
           ["Bookings", `${a.confirmed} / ${a.requested}`, "confirmed / requested"],
-          ["Booked revenue", money(a.revenue), "confirmed, private pay"],
-          ["Median reply", reply, `${a.agentActions} agent actions`],
+          ["Booked Revenue", money(a.revenue), "confirmed, private pay"],
+          ["Median Reply", reply, `${a.agentActions} agent actions`],
         ].map(([k, v, sub]) => (
           <div key={k} className="rounded-[16px] bg-[#FFFCF1] p-[16px] min-w-0">
             <div className="text-[12px] leading-[16px] text-[#2819109E]">{k}</div>
@@ -402,7 +402,7 @@ function Overview({ state, now, onOpen }: { state: ClinicStatePayload | null; no
       </Card>
 
       <div className="mt-[12px] grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-[12px]">
-        <Card title={`Waiting on you · ${waiting.length}`}>
+        <Card title={`Waiting on You · ${waiting.length}`}>
           <div className="flex flex-col gap-[4px]">
             {waiting.length === 0 && <Empty>Nothing needs you right now.</Empty>}
             {waiting.map((s) => (
@@ -434,11 +434,11 @@ function Overview({ state, now, onOpen }: { state: ClinicStatePayload | null; no
         </Card>
       </div>
 
-      <Card title="Agent access" className="mt-[12px]">
+      <Card title="Agent Access" className="mt-[12px]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-[4px]">
           {[
             ["REST API", `${origin}${API_BASE}`],
-            ["MCP server", `${origin}${MCP_PATH}`],
+            ["MCP Server", `${origin}${MCP_PATH}`],
           ].map(([k, v]) => (
             <div key={k} className="rounded-[16px] bg-[#FFFCF1] p-[12px]">
               <div className="text-[11.5px] font-[600] text-[#28191099]">{k}</div>
@@ -476,7 +476,7 @@ function Inbox({
 
   return (
     <>
-      <Title>Agent inbox</Title>
+      <Title>Agent Inbox</Title>
       {sessions.length === 0 ? (
         <Card>
           <Empty>No agent sessions yet.</Empty>
@@ -526,8 +526,8 @@ function Inbox({
                     [
                       ["Terms", open.consent.terms],
                       ["PHI", open.consent.phi],
-                      ["Stays connected", open.consent.connected],
-                      ["Doe network", open.consent.network],
+                      ["Stays Connected", open.consent.connected],
+                      ["Doe Network", open.consent.network],
                     ] as const
                   ).map(([k, on]) => (
                     <span key={k} className={`h-[24px] px-[9px] flex items-center rounded-full text-[11.5px] font-[600] ${on ? "bg-[#E3E9D9]" : "text-[#28191066] border border-solid border-[#2819101F]"}`}>
@@ -548,7 +548,7 @@ function Inbox({
                     <button type="button" onClick={() => void onAct(open.id, { type: "confirm_booking" }, "Booking confirmed")} className="h-[38px] px-[16px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]">
                       Confirm
                     </button>
-                    <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Reason (optional)" className="w-[150px] h-[38px] px-[12px] rounded-full bg-[#FFFCF1] text-[16px] md:text-[13px] outline-none" />
+                    <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Reason (Optional)" className="w-[150px] h-[38px] px-[12px] rounded-full bg-[#FFFCF1] text-[16px] md:text-[13px] outline-none" />
                     <button
                       type="button"
                       onClick={() => {
@@ -652,7 +652,7 @@ function Inbox({
               </div>
 
               <div className="m-[6px] mt-[4px] rounded-[16px] bg-[#FFFCF1] p-[10px]">
-                <div className="px-[4px] pb-[6px] text-[11px] font-[600] uppercase tracking-[0.07em] text-[#28191080]">Actions</div>
+                <div className="px-[4px] pb-[6px] text-[11px] font-[600] uppercase tracking-[0.08em] text-[#28191080]">Actions</div>
                 <div className="flex flex-col max-h-[220px] overflow-y-auto">
                   {[...open.events].reverse().map((e) => (
                     <div key={e.id} className="grid grid-cols-[76px_56px_minmax(0,1fr)] gap-[8px] px-[4px] py-[5px] text-[12px] leading-[17px]">
@@ -727,7 +727,7 @@ function Schedule({ state, onOpen }: { state: ClinicStatePayload | null; onOpen:
 }
 
 function Services({ config, onConfig }: { config: DemoConfig | null; onConfig: (c: Partial<DemoConfig>) => Promise<void> }) {
-  if (!config) return <Title>Services & pricing</Title>;
+  if (!config) return <Title>Services & Pricing</Title>;
   const rows = [
     ...SERVICES.map((s) => ({ id: s.id, name: s.name, sub: s.duration, price: s.price })),
     ...BUNDLES.map((b) => ({ id: b.id, name: b.name, sub: "Bundle", price: b.price })),
@@ -735,12 +735,12 @@ function Services({ config, onConfig }: { config: DemoConfig | null; onConfig: (
   const pct = Math.round(config.floorPct * 100);
   return (
     <>
-      <Title kicker="Private pay · what agents can book">Services & pricing</Title>
+      <Title kicker="Private pay · what agents can book">Services & Pricing</Title>
       <Card className="mb-[12px]">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-[4px]">
         <div className="flex items-center gap-[12px] p-[14px] rounded-[16px] bg-[#FFFCF1]">
           <span className="grow">
-            <span className="block text-[14px] font-[600]">Lowest negotiated price</span>
+            <span className="block text-[14px] font-[600]">Lowest Negotiated Price</span>
             <span className="block text-[12.5px] text-[#2819109E]">{pct}% of list</span>
           </span>
           <button type="button" aria-label="Lower" onClick={() => void onConfig({ floorPct: Math.max(0.5, config.floorPct - 0.01) })} className="w-[36px] h-[36px] rounded-full bg-[#F4EEDF] text-[18px] font-[600]">
@@ -752,7 +752,7 @@ function Services({ config, onConfig }: { config: DemoConfig | null; onConfig: (
         </div>
         <button type="button" role="switch" aria-checked={config.autoConfirm} onClick={() => void onConfig({ autoConfirm: !config.autoConfirm })} className="flex items-center gap-[12px] p-[14px] rounded-[16px] bg-[#FFFCF1] text-left">
           <span className="grow">
-            <span className="block text-[14px] font-[600]">Auto-confirm agent bookings</span>
+            <span className="block text-[14px] font-[600]">Auto-Confirm Agent Bookings</span>
             <span className="block text-[12.5px] text-[#2819109E]">{config.autoConfirm ? "On" : "Off · staff confirm each request"}</span>
           </span>
           <Check on={config.autoConfirm} />
@@ -815,7 +815,7 @@ function Forms({ sessions }: { sessions: Session[] }) {
                     </span>
                   </span>
                   <span className={`shrink-0 h-[24px] px-[10px] flex items-center rounded-full text-[11.5px] font-[700] ${x.forms.status === "sent" ? "bg-[#DCE5D0]" : "bg-[#F3E7C9]"}`}>
-                    {x.forms.status === "sent" ? "Returned" : "In progress"}
+                    {x.forms.status === "sent" ? "Returned" : "In Progress"}
                   </span>
                 </button>
               ))}
@@ -825,7 +825,7 @@ function Forms({ sessions }: { sessions: Session[] }) {
             <div className="rounded-[18px] bg-[#FFFCF1] p-[16px]">
               <div className="flex items-baseline justify-between gap-[12px]">
                 <div className={`${DISPLAY} text-[21px] leading-[25px]`}>{f.userName}</div>
-                <span className="text-[12px] font-[600] text-[#28191080]">{f.forms.sentAt ? `Returned ${clock(f.forms.sentAt)}` : "In progress"}</span>
+                <span className="text-[12px] font-[600] text-[#28191080]">{f.forms.sentAt ? `Returned ${clock(f.forms.sentAt)}` : "In Progress"}</span>
               </div>
               <div className="mt-[14px] grid grid-cols-2 gap-[6px]">
                 {f.scores.map((x) => (
@@ -833,7 +833,7 @@ function Forms({ sessions }: { sessions: Session[] }) {
                     <span className="text-[11.5px] font-[600] text-[#28191099]">{x.name}</span>
                     <span className={`${DISPLAY} text-[22px] leading-[26px]`}>{x.score ?? "…"}</span>
                     <span className="self-start h-[20px] px-[8px] flex items-center rounded-full text-[10.5px] font-[700]" style={{ backgroundColor: x.tone ?? "#F4EEDF" }}>
-                      {x.band ?? "Not finished"}
+                      {x.band ?? "Not Finished"}
                     </span>
                   </div>
                 ))}
@@ -848,7 +848,7 @@ function Forms({ sessions }: { sessions: Session[] }) {
               </div>
               <div className="mt-[10px] flex items-center gap-[10px] p-[12px] rounded-[12px] border-[1.5px] border-dashed border-[#28191033]">
                 <Check on={Boolean(f.forms.signedBy)} size={20} />
-                <span className="text-[13px]">{f.forms.signedBy ? `Consent signed by ${f.forms.signedBy} · PHI provided via Doe` : "Awaiting signature"}</span>
+                <span className="text-[13px]">{f.forms.signedBy ? `Consent signed by ${f.forms.signedBy} · PHI provided via Doe` : "Awaiting Signature"}</span>
               </div>
             </div>
           </Card>
