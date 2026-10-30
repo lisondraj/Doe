@@ -804,12 +804,12 @@ const CONNECTIONS = [
 ];
 
 /** A label over its rows, in the page's type rather than chips. */
-function StatusGroup({ title, meta, children }: { title: string; meta: string; children: ReactNode }) {
+function StatusGroup({ title, meta, children }: { title: string; meta?: string; children: ReactNode }) {
   return (
     <div className="mt-[18px]">
       <div className="flex items-baseline justify-between gap-[12px] pb-[6px] border-b border-solid border-[#2819101A]">
         <span className="text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]">{title}</span>
-        <span className={`text-[12px] leading-[16px] ${MUTED}`}>{meta}</span>
+        {meta && <span className={`text-[12px] leading-[16px] ${MUTED}`}>{meta}</span>}
       </div>
       {children}
     </div>
@@ -883,8 +883,13 @@ function StatusPanel({ claimed, onClaim, form }: { claimed: string | null; onCla
         </div>
         {claimed && <p className={`mt-[6px] text-[14.5px] leading-[21px] ${SUB}`}>Link sent to {claimed}.</p>}
         <Track />
+        {!claimed && (
+          <p className={`mt-[18px] max-w-[52ch] text-[14.5px] leading-[21px] ${SUB} [text-wrap:pretty]`}>
+            We&apos;ve converted your page into structured data that personal agents can find and read.
+          </p>
+        )}
 
-        <StatusGroup title="Settings" meta="Ready">
+        <StatusGroup title="Settings">
           {CONNECTIONS.map((c) => (
             <div key={c.name} className="flex items-start gap-[12px] py-[10px] border-b border-solid border-[#2819100F] last:border-b-0">
               <Check on size={18} />
@@ -897,7 +902,7 @@ function StatusPanel({ claimed, onClaim, form }: { claimed: string | null; onCla
           ))}
         </StatusGroup>
 
-        <StatusGroup title="Files" meta="Not published">
+        <StatusGroup title="Files">
           <div className="mt-[10px] grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
             {AGENT_FILES.map((f) => (
               <div key={f.path} className="flex items-center gap-[10px] h-[44px] px-[12px] rounded-[14px] border-[1.5px] border-dashed border-[#28191033]">
