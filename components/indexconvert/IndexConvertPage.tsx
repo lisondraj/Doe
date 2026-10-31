@@ -257,7 +257,7 @@ export function IndexConvertPage() {
 /* ------------------------------------------------------------------ Frame */
 
 /** The Doe wordmark as /earlypreview's nav sets it: Lora, regular weight, text-4xl. */
-const DoeMark = () => <span className={`${lora.className} absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 text-[30px] leading-[30px] md:text-[36px] md:leading-[36px] font-normal text-[#281910]`}>Doe</span>;
+const DoeMark = () => <span className={`${lora.className} absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-x-0 md:translate-y-0 text-[36px] leading-[36px] md:text-[36px] md:leading-[36px] font-normal text-[#281910]`}>Doe</span>;
 const HEADER = "flex items-center justify-between gap-[12px] h-[76px] md:h-[72px] px-[18px] md:px-[32px]";
 
 /** /demo's frame: Doe's brown fills the window and the page sits in a cream box that scrolls on its own. */
