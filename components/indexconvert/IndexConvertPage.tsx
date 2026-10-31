@@ -1317,12 +1317,12 @@ function FoundersFilm() {
 }
 
 /** The personal agents Ford shows up in, each one tested. `light` icons are mostly white, so they get a hairline edge. */
-const AGENT_APPS: { name: string; icon: string; light?: boolean }[] = [
-  { name: "Muse", icon: "/indexconvert/agents/muse.png", light: true },
-  { name: "Instinct", icon: "/indexconvert/agents/instinct.png", light: true },
-  { name: "GPT Dots", icon: "/indexconvert/agents/gpt-dots.png", light: true },
-  { name: "Claude Duet", icon: "/indexconvert/agents/claude-duet.png", light: true },
-  { name: "Poke", icon: "/indexconvert/agents/poke.png" },
+const AGENT_APPS: { name: string; href: string; icon: string; light?: boolean }[] = [
+  { name: "Muse", href: "https://muse.ai", icon: "/indexconvert/agents/muse.png", light: true },
+  { name: "Instinct", href: "https://instinct.com", icon: "/indexconvert/agents/instinct.png", light: true },
+  { name: "GPT Dots", href: "https://openai.com/index/introducing-dots/", icon: "/indexconvert/agents/gpt-dots.png", light: true },
+  { name: "Claude Duet", href: "https://claude.com/product/claude-duet", icon: "/indexconvert/agents/claude-duet.png", light: true },
+  { name: "Poke", href: "https://poke.com/about", icon: "/indexconvert/agents/poke.png" },
 ];
 
 /** iPhone: the agents Ford now appears in, one per row: app icon, name, and a tested & confirmed mark. */
@@ -1345,7 +1345,12 @@ function AgentSearches({ className = "" }: { className?: string }) {
                 className={`block shrink-0 w-[48px] h-[48px] rounded-[12px] object-cover select-none ${a.light ? "ring-1 ring-[#2819101A]" : ""}`}
               />
               <span className="min-w-0 flex-1">
-                <span className="block text-[16px] leading-[21px] font-[600]">{a.name}</span>
+                <a href={a.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-[4px] text-[16px] leading-[21px] font-[600] no-underline">
+                  {a.name}
+                  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" className={MUTED}>
+                    <path d="M9 5.5l6.5 6.5L9 18.5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </a>
                 <span className={`mt-[3px] flex items-center gap-[6px] text-[13px] leading-[18px] ${SUB}`}>
                   <Check on size={14} />
                   Tested &amp; confirmed
