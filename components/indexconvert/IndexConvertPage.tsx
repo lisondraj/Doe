@@ -2729,7 +2729,20 @@ function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => voi
         </div>
       </div>
 
-      <Section id="providers" title="Providers">
+      <Section
+        id="providers"
+        title="Providers"
+        action={
+          <button
+            type="button"
+            onClick={onEdit}
+            className="h-[32px] pl-[10px] pr-[14px] flex items-center gap-[6px] rounded-full bg-[#F4EEDF] text-[13px] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150"
+          >
+            <span className="text-[16px] leading-[16px] font-[500]">+</span>
+            Providers
+          </button>
+        }
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
           {PROVIDERS.map((p, i) => (
             <div key={p.name} className={`${BOX} relative flex items-start gap-[14px]`}>
