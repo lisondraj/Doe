@@ -919,11 +919,17 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               {/* iPhone: the first screen fits the viewport: the title, the clinic's box, its settings and files, then the
                   switch and the button at the foot. The rest follows below. */}
               <div className="flex flex-col gap-[10px] max-md:min-h-[calc(100svh-116px)]">
-                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:text-center max-md:pt-[8px] max-md:pb-[18px] max-md:[@media(max-height:760px)]:pt-[0px] max-md:[@media(max-height:760px)]:pb-[8px] max-md:[@media(max-height:760px)]:text-[25px] text-left text-[clamp(26px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
+                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:text-center max-md:pt-[8px] max-md:pb-[0px] max-md:[@media(max-height:760px)]:pt-[0px] max-md:[@media(max-height:760px)]:text-[25px] text-left text-[clamp(26px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
                   We&apos;ve made your clinic
                   <br /> more discoverable
                   <br /> to personal agents.
                 </h2>
+                {/* iPhone: a quiet line under the title saying what's left to do. */}
+                <p className="md:hidden pb-[16px] [@media(max-height:760px)]:pb-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.14em] text-[#28191080]">
+                  Claim your listing
+                  <br />
+                  to activate
+                </p>
                 <Hero className="max-md:order-1" compact={phone} />
                 <SetupFiles phone className="md:hidden order-2" />
                 {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
@@ -1737,7 +1743,10 @@ function SetupFiles({ className = "", phone = false }: { className?: string; pho
             <h3 className={`${DISPLAY} text-left text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] tracking-[-0.02em]`}>Here&apos;s what we made you.</h3>
             <span className={`shrink-0 mt-[3px] h-[22px] px-[9px] flex items-center rounded-full bg-[#FFFCF1] text-[10.5px] font-[700] uppercase tracking-[0.08em] ${MUTED}`}>Not Active</span>
           </div>
-          <p className={`mt-[4px] text-[14px] leading-[19px] ${SUB} [text-wrap:pretty]`}>All of these help personal agents discover you easier.</p>
+          <p className={`mt-[4px] text-[14px] leading-[19px] ${SUB} [text-wrap:balance]`}>
+            All of these help personal agents
+            <br /> discover and interact with you easier.
+          </p>
         </div>
       )}
       <div className="opacity-60">
