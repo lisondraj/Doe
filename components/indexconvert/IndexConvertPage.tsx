@@ -1453,12 +1453,12 @@ function AgentSearches({ className = "" }: { className?: string }) {
 
 const MUSE = AGENT_APPS[0];
 
-/** A patient asking their personal agent for a clinic, and Muse answering with Ford. Price from Ford's pricing page. */
+/** A patient asking their personal agent for a clinic, and Muse answering with Ford. HALO price from Ford's pricing page. */
 function AgentChat({ className = "" }: { className?: string }) {
   const sent = "max-w-[78%] self-end rounded-[20px] rounded-br-[6px] bg-[#3A2516] px-[14px] py-[8px] text-[14.5px] leading-[20px] text-[#FFFCF1]";
   return (
     <div className={`flex flex-col gap-[4px] ${className}`} aria-label="Example chat with a personal agent">
-      <div className={sent}>Find a rhinoplasty clinic within 30 km for $17,100, available within 10 months</div>
+      <div className={sent}>Find a HALO laser clinic within 30 km under $1,800, available within 10 months</div>
       <div className="mt-[12px] flex items-end gap-[8px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -1472,7 +1472,7 @@ function AgentChat({ className = "" }: { className?: string }) {
         <div className="min-w-0 max-w-[78%]">
           <div className={`pl-[12px] pb-[3px] text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>{MUSE.name}</div>
           <div className="rounded-[20px] rounded-bl-[6px] bg-[#F4EEDF] px-[14px] py-[8px] text-[14.5px] leading-[20px] text-[#281910]">
-            {CLINIC.name} offers rhinoplasty from $17,100. Want me to book a consult?
+            {CLINIC.name} at {LOCATIONS[0].address.split(",")[0]} is 10 minutes from you and offers HALO from $1,500. Want me to book?
           </div>
         </div>
       </div>
