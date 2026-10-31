@@ -246,9 +246,12 @@ export function IndexConvertPage() {
       mark={phase === "done"}
       lead={
         phase === "intro" ? (
-          <p className="max-w-[40ch] text-left text-[14px] leading-[19px] md:text-[16px] md:leading-[22px] font-[600] [text-wrap:balance]">
-            We can add your clinic to Doe&apos;s listings so clients can find you faster through Instinct or Muse.
-          </p>
+          // Lined up with the opening screen's column below it.
+          <div className="w-full max-w-[560px] md:max-w-[720px] xl:max-w-[1180px] mx-auto">
+            <h1 className={`${DISPLAY} max-w-[17ch] md:max-w-[24ch] text-left text-[clamp(26px,7.6vw,30px)] leading-[1.12] md:text-[36px] md:leading-[42px] tracking-[-0.02em] [text-wrap:balance]`}>
+              We can add your clinic to Doe&apos;s listings so clients can find you faster through Instinct or Muse.
+            </h1>
+          </div>
         ) : undefined
       }
       edgeFade={phase === "intro"}
@@ -304,7 +307,14 @@ function Frame({
     >
       <div className="relative h-full w-full overflow-clip rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
         <div ref={scrollRef} className="absolute inset-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
-          <header className={`sticky top-0 z-30 ${HEADER} bg-[#FFFCF1E6] backdrop-blur-[12px]`}>
+          {/* A lead is the opening screen's title: it sets the header's height and scrolls away with the page. */}
+          <header
+            className={
+              lead
+                ? "relative z-30 flex items-start justify-between gap-[12px] px-[18px] md:px-[28px] pt-[18px] md:pt-[28px] pb-[2px]"
+                : `sticky top-0 z-30 ${HEADER} bg-[#FFFCF1E6] backdrop-blur-[12px]`
+            }
+          >
             {lead ?? (mark ? <DoeMark center={centerMark} /> : <span />)}
             {right}
           </header>
@@ -896,11 +906,14 @@ function Hero({
   action,
   compact = false,
   nameOnly = false,
+  slim = false,
   className = "",
   innerClassName = "",
 }: {
   action?: ReactNode;
   compact?: boolean;
+  /** The opening screen's box: a smaller sphere and less padding on iPhone, so the title above has room. */
+  slim?: boolean;
   /** Just the sphere and the clinic's name, for the slim band on iPhone. */
   nameOnly?: boolean;
   className?: string;
@@ -908,21 +921,29 @@ function Hero({
 }) {
   return (
     <div className={`flex flex-col rounded-[26px] bg-[#F4EEDF] p-[6px] shrink-0 ${className}`}>
-      <div className={`grow flex flex-col justify-center ${compact ? "rounded-[21px] bg-[#FFFCF1] px-[16px] py-[14px] [@media(max-height:760px)]:py-[10px] md:px-[22px] md:py-[18px]" : "rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]"} ${innerClassName}`}>
-        <div className={compact ? "flex items-start text-left gap-[14px]" : "flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]"}>
-          <IndexConvertSphere size={compact ? 56 : 84} className="shrink-0" />
+      <div className={`grow flex flex-col justify-center ${compact ? "rounded-[21px] bg-[#FFFCF1] px-[16px] py-[14px] [@media(max-height:760px)]:py-[10px] md:px-[22px] md:py-[18px]" : `rounded-[21px] bg-[#FFFCF1] md:px-[26px] md:py-[24px] ${slim ? "px-[16px] pt-[16px] pb-[16px]" : "px-[20px] pt-[24px] pb-[22px]"}`} ${innerClassName}`}>
+        <div
+          className={
+            compact
+              ? "flex items-start text-left gap-[14px]"
+              : slim
+                ? "flex flex-row items-center text-left gap-[12px] md:gap-[22px]"
+                : "flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]"
+          }
+        >
+          <IndexConvertSphere size={compact ? 56 : slim ? 50 : 84} className="shrink-0" />
           <div className="min-w-0">
-            <h1 className={`${DISPLAY} tracking-[-0.02em] [text-wrap:balance] ${compact ? "text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] md:text-[30px] md:leading-[34px]" : "text-[30px] leading-[34px] md:text-[36px] md:leading-[40px]"}`}>{CLINIC.name}</h1>
+            <h1 className={`${DISPLAY} tracking-[-0.02em] [text-wrap:balance] ${compact ? "text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] md:text-[30px] md:leading-[34px]" : slim ? "text-[clamp(22px,6.4vw,26px)] leading-[1.15] md:text-[36px] md:leading-[40px]" : "text-[30px] leading-[34px] md:text-[36px] md:leading-[40px]"}`}>{CLINIC.name}</h1>
             {!nameOnly && (
               <>
-                <p className={`mt-[4px] max-w-[32ch] ${SUB} [text-wrap:balance] ${compact ? "text-[15px] leading-[20px] [@media(max-height:760px)]:text-[13.5px] [@media(max-height:760px)]:leading-[18px] font-[500]" : "mx-auto md:mx-0 mt-[6px] text-[14.5px] leading-[20px]"}`}>
+                <p className={`mt-[4px] max-w-[32ch] ${SUB} [text-wrap:balance] ${compact ? "text-[15px] leading-[20px] [@media(max-height:760px)]:text-[13.5px] [@media(max-height:760px)]:leading-[18px] font-[500]" : slim ? "md:mt-[6px] text-[13.5px] leading-[18px] md:text-[14.5px] md:leading-[20px]" : "mx-auto md:mx-0 mt-[6px] text-[14.5px] leading-[20px]"}`}>
                   {compact ? `${LOCATIONS[0].address}, ${CLINIC.area}` : `${CLINIC.kind} in ${CLINIC.area}, since ${CLINIC.since}`}
                 </p>
                 <a
                   href={`https://${CLINIC.url}`}
                   target="_blank"
                   rel="noreferrer"
-                  className={`inline-flex items-center rounded-full bg-[#F4EEDF] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150 ${compact ? "mt-[8px] h-[34px] px-[14px] text-[14.5px] [@media(max-height:760px)]:mt-[6px] [@media(max-height:760px)]:h-[30px] [@media(max-height:760px)]:text-[13px]" : "mt-[12px] h-[32px] px-[14px] text-[13px]"}`}
+                  className={`inline-flex items-center rounded-full bg-[#F4EEDF] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150 ${compact ? "mt-[8px] h-[34px] px-[14px] text-[14.5px] [@media(max-height:760px)]:mt-[6px] [@media(max-height:760px)]:h-[30px] [@media(max-height:760px)]:text-[13px]" : slim ? "mt-[8px] md:mt-[12px] h-[30px] md:h-[32px] px-[12px] md:px-[14px] text-[13px]" : "mt-[12px] h-[32px] px-[14px] text-[13px]"}`}
                 >
                   {CLINIC.domain}
                 </a>
@@ -1060,16 +1081,17 @@ function StepBoxes() {
 /** The first screen: the clinic's box and one button. The agent-readable page itself waits behind it. */
 function Intro({ onStart }: { onStart: () => void }) {
   return (
-    <main className="ic-fade flex justify-center px-[16px] md:px-[28px] pt-[22px] pb-[96px]">
+    <main className="ic-fade flex justify-center px-[16px] md:px-[28px] pt-[12px] md:pt-[22px] pb-[96px]">
       {/* iPhone: one column. Tablet: one wider column, steps two across. Desktop: clinic and founders left, steps right. */}
       <div className="w-full max-w-[560px] md:max-w-[720px] xl:max-w-[1180px] flex flex-col gap-[10px] xl:grid xl:grid-cols-2 xl:items-start">
         <div className="flex flex-col gap-[10px]">
         <Hero
+          slim
           action={
             <button
               type="button"
               onClick={onStart}
-              className="group mt-[20px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#2A1C12] transition-colors duration-150"
+              className="group mt-[12px] md:mt-[20px] w-full h-[54px] md:h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#2A1C12] transition-colors duration-150"
             >
               See The Page We Built You
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
