@@ -36,7 +36,7 @@ export const AGENT_TOPICS: Record<AgentTopicId, Topic> = {
   },
   api: {
     question: "What is an agent API?",
-    what: "An API is a set of questions your clinic can answer in a fixed format: services, prices, surgeons and hours, laid out so software reads them cleanly.",
+    what: "An API is a set of questions your clinic can answer in a fixed format: services, prices, providers and hours, laid out so software reads them cleanly.",
     why: "An agent can browse a website like a person, but it is slow, and pop-ups, sliders and price lists saved as pictures trip it up. Because agents juggle many errands at once, they go for a clean, structured answer first and only browse when there isn't one.",
     source: { label: "aws.amazon.com", href: "https://aws.amazon.com/what-is/api/" },
   },
@@ -72,9 +72,9 @@ export const AGENT_TOPICS: Record<AgentTopicId, Topic> = {
   },
   providers: {
     question: "How does Doe help agents find your providers?",
-    what: "Doe reads your team page and lists each surgeon, injector and aesthetician with their role and what they do, in one clean list.",
+    what: "Doe reads your team page and lists each of your providers with their role and what they do, in one clean list.",
     whyLabel: "Why it matters for your clinic",
-    why: "When a patient asks their agent for a surgeon who does rhinoplasty, the agent needs names and specialties it can trust. Bios inside photos and sliders are easy to miss. A clean list means your providers are the ones it finds and recommends.",
+    why: "When a patient asks their agent for someone who does the treatment they want, the agent needs names and specialties it can trust. Bios inside photos and sliders are easy to miss. A clean list means your providers are the ones it finds and recommends.",
   },
   locations: {
     question: "How does Doe help agents find your locations and hours?",
@@ -84,7 +84,7 @@ export const AGENT_TOPICS: Record<AgentTopicId, Topic> = {
   },
   services: {
     question: "How does Doe help agents read your services and prices?",
-    what: "Doe turns your treatment pages and price list into one list of services, each with its starting price in CAD.",
+    what: "Doe turns your treatment pages and price list into one list of services, each with its starting price.",
     whyLabel: "Why it matters for your clinic",
     why: "Patients ask agents to compare, like \"HALO under $1,800\". Prices in PDFs or pictures can't be compared. With yours laid out clearly, an agent can match you to the request and quote your real price.",
   },

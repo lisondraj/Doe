@@ -1,5 +1,5 @@
-import { IndexConvertPage } from "@/components/indexconvert/IndexConvertPage";
+import { FordPage } from "@/components/indexconvert/clinics/FordPage";
 
 export default function IndexConvertRoute() {
-  return <IndexConvertPage />;
+  return <FordPage />;
 }

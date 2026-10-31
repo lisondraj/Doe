@@ -3,7 +3,7 @@
  * contact and the facelift page). Only what the site states; prices are CAD starting prices before HST.
  */
 
-export type ParsedPage = { path: string; label: string; shot: string; found: string };
+import type { ClinicPack, ParsedPage } from "@/lib/indexconvert/clinic-pack";
 
 /** The pages the loader reads, in order, with the screenshot shown behind it and what it pulled from each. */
 export const SOURCE_PAGES: ParsedPage[] = [
@@ -170,3 +170,57 @@ export const PRICE_COUNT = PRICES.reduce((n, g) => n + g.items.length, 0);
 /** Every structured value on the page: listed fields, each service, price, provider, location, hours row and offer. */
 export const FIELD_COUNT =
   12 + SERVICE_COUNT + PRICE_COUNT * 2 + PROVIDERS.length * 3 + LOCATIONS.length * 4 + HOURS.length + OFFERS.length * 2 + BOOKING.fields.length;
+
+const FORD_HOURS_ROWS = [
+  ["Monday – Friday", "8:30 a.m. – 4:30 p.m."],
+  ["Saturday – Sunday", "Not listed"],
+] as const;
+const FORD_HOURS_24 = { mon: "08:30-16:30", tue: "08:30-16:30", wed: "08:30-16:30", thu: "08:30-16:30", fri: "08:30-16:30", sat: null, sun: null } as const;
+const OFFER_TAGS = ["Credit", "Package", "Included", "Financing"];
+
+/** Ford Plastic Surgery as /indexconvert shows it. */
+export const FORD_PACK: ClinicPack = {
+  short: "Ford",
+  assets: "/indexconvert",
+  SOURCE_PAGES,
+  CLINIC: {
+    ...CLINIC,
+    phoneIntl: "+1-416-925-7337",
+    tollFreeIntl: "+1-888-925-7337",
+    currency: "CAD",
+    tax: "HST extra",
+    bookingUrl: `https://${CLINIC.url}/contact/`,
+    bookingResponse: "callback",
+  },
+  LOCATIONS: LOCATIONS.map((l) => ({ ...l, hoursRows: FORD_HOURS_ROWS, hours24: FORD_HOURS_24 })),
+  PROVIDERS,
+  SERVICES,
+  PRICES,
+  OFFERS: OFFERS.map((o, i) => ({ ...o, tag: OFFER_TAGS[i]! })),
+  BOOKING: {
+    ...BOOKING,
+    withDoe: ["Agents book consults with the right surgeon, any hour", "Procedure, provider and documents arrive with the booking", "Confirmations and reminders sent for you"],
+  },
+  contactRows: [
+    ["Phone", CLINIC.phone],
+    ["Toll-free", CLINIC.tollFree],
+  ],
+  pageReads: {
+    home: [["name", "Ford Plastic Surgery"], ["specialty", "Facial plastic surgery"], ["area", "Bloor-Yorkville, Toronto"]],
+    pricing: [["price", "Deep Plane Facelift · $22,500"], ["price", "Rhinoplasty · $17,100"], ["consult", "$300 + HST"]],
+    medspa: [["price", "BOTOX · $13/unit"], ["service", "Morpheus8 · $950"], ["service", "HALO · $1,500"]],
+    staff: [["provider", "Isabel Middleman, PA-C"], ["provider", "Caroline Watson"], ["role", "Injectables"]],
+    locations: [["location", "7 St Thomas St, Suite 410"], ["location", "7 St Thomas St, Suite 202"], ["hours", "Mon–Fri 8:30–4:30"]],
+    facelift: [["provider", "Dr. Derek Ford"], ["provider", "Dr. Steven Hanna"], ["service", "Endoscopic mid facelift"]],
+    contact: [["hours", "Mon–Fri 8:30–4:30"], ["phone", CLINIC.phone], ["booking", "Consult request form"]],
+  },
+  agentCheck: { detail: "No llms.txt, MCP card or OpenAPI", subs: ["No llms.txt", "No MCP card", "No OpenAPI"] },
+  example: {
+    chatAsk: "Find a HALO laser clinic within 30 km under $1,800, available within 10 months",
+    chatReply: "Ford Plastic Surgery at 7 St Thomas St is 10 minutes from you and offers HALO from $1,500. Want me to book?",
+    priceJson: [["HALO", 1500], ["consult", 300]],
+    partnerQuery: "Facelift surgeon in Toronto",
+    partnerResult: "Deep plane facelift · from $22,500",
+    apiBody: `{"service":"deep-plane-facelift","provider":"derek-ford"}`,
+  },
+};

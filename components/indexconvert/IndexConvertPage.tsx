@@ -18,27 +18,27 @@ import { startFilm, type FilmStart } from "@/lib/earlypreview/start-film";
 import { useAdaptiveSrc } from "@/lib/earlypreview/use-adaptive-src";
 import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
 import { useFilmCinema } from "@/lib/earlypreview/use-film-cinema";
-import {
-  BOOKING,
-  CLINIC,
-  FIELD_COUNT,
-  HOURS,
-  LOCATIONS,
-  OFFERS,
-  PRICE_COUNT,
-  PRICES,
-  PROVIDERS,
-  SERVICE_COUNT,
-  SERVICES,
-  SOURCE_PAGES,
-} from "@/lib/indexconvert/ford-plastic-surgery";
+import { type ClinicPack, fieldCount, priceCount, serviceCount } from "@/lib/indexconvert/clinic-pack";
 import { AGENT_TOPICS, InfoButton, InfoSheet, type AgentTopicId, type SectionTopicId } from "@/components/indexconvert/AgentInfoSheet";
-import { AGENT_FILES, API_ORIGIN, BASE, CLINIC_TOOLS, MCP_URL, SLUG } from "@/lib/indexconvert/agent-files";
+import { buildAgentFiles } from "@/lib/indexconvert/agent-files";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
 const SUB = "text-[#2819109E]";
 const MUTED = "text-[#28191080]";
+
+/**
+ * Builds the whole page for one clinic. Called once per route at module level (see components/indexconvert/clinics),
+ * so every component below is made once per clinic and keeps a stable identity.
+ */
+export function createIndexConvertPage(pack: ClinicPack) {
+const { CLINIC, SOURCE_PAGES, LOCATIONS, PROVIDERS, SERVICES, PRICES, OFFERS, BOOKING } = pack;
+const SHORT = pack.short;
+const EXAMPLE = pack.example;
+const SERVICE_COUNT = serviceCount(pack);
+const PRICE_COUNT = priceCount(pack);
+const FIELD_COUNT = fieldCount(pack);
+const { AGENT_FILES, API_ORIGIN, BASE, CLINIC_TOOLS, MCP_URL, SLUG } = buildAgentFiles(pack);
 
 /* ------------------------------------------------------------------ Timeline */
 
@@ -47,43 +47,43 @@ const MUTED = "text-[#28191080]";
 /** `phoneSubs` fill the first two steps on iPhone, where the step has room for its list; desktop shows the detail line. */
 const STEPS: { title: string; detail: string; ms: number; subs?: string[]; phoneSubs?: string[]; bar?: boolean }[] = [
   {
-    title: "Finding Ford's Page",
+    title: `Finding ${SHORT}'s Page`,
     detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`,
     ms: 1175,
     phoneSubs: [CLINIC.domain, `${SOURCE_PAGES.length} pages found`, "Prices, providers, hours"],
   },
   {
-    title: "Checking What Personal Agents See at Ford",
-    detail: "No llms.txt, MCP card or OpenAPI",
+    title: `Checking What Personal Agents See at ${SHORT}`,
+    detail: pack.agentCheck.detail,
     ms: 1175,
-    phoneSubs: ["No llms.txt", "No MCP card", "No OpenAPI"],
+    phoneSubs: pack.agentCheck.subs,
   },
   {
-    title: "Building Ford's Agent-Readable Page",
+    title: `Building ${SHORT}'s Agent-Readable Page`,
     detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`,
     ms: 1610,
     subs: ["JSON · 7 resources", "JSON-LD · schema.org/MedicalClinic", "Metadata & HTML"],
   },
   {
-    title: "Building Ford's Agent Files",
+    title: `Building ${SHORT}'s Agent Files`,
     detail: `${AGENT_FILES.length} files ready`,
     ms: 1655,
     subs: ["openapi.json", "llms.txt", "robots.txt", ".well-known/mcp.json"],
   },
   {
-    title: "Integrating Ford with Doe's MCP",
+    title: `Integrating ${SHORT} with Doe's MCP`,
     detail: `${CLINIC_TOOLS.length} tools ready`,
     ms: 1655,
     subs: CLINIC_TOOLS.map((t) => t.name),
   },
   {
-    title: "Integrating Ford with Doe's API",
+    title: `Integrating ${SHORT} with Doe's API`,
     detail: "OpenAPI 3.1 · locations, providers, prices",
     ms: 1565,
     subs: ["GET /locations", "GET /providers", "GET /services", "GET /prices", "POST /consultations"],
   },
   {
-    title: "Applying Personal Agent Protocol to Ford",
+    title: `Applying Personal Agent Protocol to ${SHORT}`,
     detail: "Connected",
     ms: 1480,
     subs: ["Consent per user", "Agents say they're agents", "Connected to Doe"],
@@ -103,15 +103,7 @@ const PAGE_FADE_MS = 600;
 const LOADER_FADE_MS = 420;
 
 /** What the loader lifts off each page while it shows, keyed by screenshot. */
-const PAGE_READS: Record<string, [string, string][]> = {
-  home: [["name", "Ford Plastic Surgery"], ["specialty", "Facial plastic surgery"], ["area", "Bloor-Yorkville, Toronto"]],
-  pricing: [["price", "Deep Plane Facelift · $22,500"], ["price", "Rhinoplasty · $17,100"], ["consult", "$300 + HST"]],
-  medspa: [["price", "BOTOX · $13/unit"], ["service", "Morpheus8 · $950"], ["service", "HALO · $1,500"]],
-  staff: [["provider", "Isabel Middleman, PA-C"], ["provider", "Caroline Watson"], ["role", "Injectables"]],
-  locations: [["location", "7 St Thomas St, Suite 410"], ["location", "7 St Thomas St, Suite 202"], ["hours", "Mon–Fri 8:30–4:30"]],
-  facelift: [["provider", "Dr. Derek Ford"], ["provider", "Dr. Steven Hanna"], ["service", "Endoscopic mid facelift"]],
-  contact: [["hours", "Mon–Fri 8:30–4:30"], ["phone", CLINIC.phone], ["booking", "Consult request form"]],
-};
+const PAGE_READS: Record<string, [string, string][]> = pack.pageReads;
 /* ------------------------------------------------------------------ Agent data */
 
 const slug = (s: string) =>
@@ -122,10 +114,10 @@ const slug = (s: string) =>
     .replace(/[^a-z0-9]+/g, "_")
     .replace(/^_|_$/g, "");
 
-/** "$22,500" → { from: 22500 }; "$13 / unit" → { from: 13, per: "unit" }. */
+/** "$22,500" → { from: 22500 }; "$14.50 / unit" → { from: 14.5, per: "unit" }. */
 function parsePrice(price: string) {
   const [amount, per] = price.split("/").map((s) => s.trim());
-  return { from: Number(amount!.replace(/[^\d]/g, "")), ...(per ? { per } : {}) };
+  return { from: Number(amount!.replace(/[^\d.]/g, "")), ...(per ? { per } : {}) };
 }
 
 /** A category's services split into those with a listed price and those without, matching names loosely. */
@@ -147,15 +139,15 @@ const AGENT = {
       name: l.name,
       type: l.detail,
       address: `${l.address}, ${l.city}`,
-      hours: Object.fromEntries(HOURS.map((h, i) => [DAY_KEYS[i], h.time ? "08:30-16:30" : null])),
+      hours: Object.fromEntries(DAY_KEYS.map((d) => [d, l.hours24[d as keyof typeof l.hours24]])),
     })),
-    phone: "+1-416-925-7337",
-    toll_free: "+1-888-925-7337",
+    phone: CLINIC.phoneIntl,
+    ...(CLINIC.tollFreeIntl ? { toll_free: CLINIC.tollFreeIntl } : {}),
   },
   providers: PROVIDERS.map((p) => ({ id: slug(p.name.split(",")[0]!), name: p.name, role: p.role, notes: p.fact })),
   services: {
-    currency: "CAD",
-    tax: "HST extra",
+    currency: CLINIC.currency,
+    tax: CLINIC.tax,
     basis: "starting_price",
     categories: Object.fromEntries(
       SERVICES.map((g) => {
@@ -167,8 +159,8 @@ const AGENT = {
   offers: OFFERS.map((o) => ({ id: slug(o.title), detail: o.detail })),
   booking: {
     channels: [
-      { type: "web_form", url: `https://${CLINIC.url}/contact/`, response: "callback" },
-      { type: "phone", value: "+1-416-925-7337", hours: "mon-fri 08:30-16:30" },
+      { type: "web_form", url: CLINIC.bookingUrl, response: CLINIC.bookingResponse },
+      { type: "phone", value: CLINIC.phoneIntl },
     ],
     form_fields: BOOKING.fields.map(slug),
     agent_booking: { enabled: false, reason: "not_activated" },
@@ -180,7 +172,7 @@ const AGENT = {
 type Phase = "intro" | "loading" | "leaving" | "done";
 type View = "you" | "agent";
 
-export function IndexConvertPage() {
+function IndexConvertPage() {
   const [elapsed, setElapsed] = useState(0);
   const [phase, setPhase] = useState<Phase>("intro");
   const [view, setView] = useState<View>("you");
@@ -733,10 +725,10 @@ const ReadChips = memo(function ReadChips({ pageIndex, hidden }: { pageIndex: nu
 function Shot({ shot, className, style, priority }: { shot: string; className?: string; style?: CSSProperties; priority?: boolean }) {
   return (
     <picture>
-      <source media="(min-width: 768px)" srcSet={`/indexconvert/${shot}-d.jpg`} />
+      <source media="(min-width: 768px)" srcSet={`${pack.assets}/${shot}-d.jpg`} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={`/indexconvert/${shot}-m.jpg`}
+        src={`${pack.assets}/${shot}-m.jpg`}
         alt=""
         draggable={false}
         fetchPriority={priority ? "high" : "auto"}
@@ -1011,7 +1003,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
                       {agent ? SLUG : CLINIC.name}
                     </h1>
                     <p className={`mt-[4px] text-[13px] leading-[18px] ${SUB} ${agent ? "font-mono text-[12px]" : ""}`}>
-                      {agent ? `${BASE} · schema.org/MedicalClinic` : `7 St Thomas St, Suite 410, Toronto · ${CLINIC.domain}`}
+                      {agent ? `${BASE} · schema.org/MedicalClinic` : `${LOCATIONS[0]!.address}, ${CLINIC.area} · ${CLINIC.domain}`}
                     </p>
                   </div>
                 </div>
@@ -1174,7 +1166,7 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
         <div className="flex flex-col items-center">
           <div className="w-[64px] h-[64px] rounded-[14px] overflow-hidden bg-[#FFFCF1] ring-1 ring-[#2819101A]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/indexconvert/home-m.jpg" alt="" draggable={false} className="block w-full h-full object-cover object-top select-none" />
+            <img src={`${pack.assets}/${SOURCE_PAGES[0]!.shot}-m.jpg`} alt="" draggable={false} className="block w-full h-full object-cover object-top select-none" />
           </div>
           <span className={cap}>Your site</span>
         </div>
@@ -1380,9 +1372,9 @@ function Intro({ onStart }: { onStart: () => void }) {
 }
 
 const CONNECTIONS: { name: string; detail: string; topic: AgentTopicId }[] = [
-  { name: "Ford's MCP Server", detail: `${CLINIC_TOOLS.length} tools: prices, providers, consults`, topic: "mcp" },
-  { name: "Ford's Agent API", detail: "Services, prices & surgeons for agents", topic: "api" },
-  { name: "Ford's Agent Protocol", detail: "Patient consent · agents say they're agents", topic: "pap" },
+  { name: `${SHORT}'s MCP Server`, detail: `${CLINIC_TOOLS.length} tools: prices, providers, consults`, topic: "mcp" },
+  { name: `${SHORT}'s Agent API`, detail: "Services, prices & providers for agents", topic: "api" },
+  { name: `${SHORT}'s Agent Protocol`, detail: "Patient consent · agents say they're agents", topic: "pap" },
 ];
 
 /** Which explanation each agent file opens. */
@@ -1596,7 +1588,7 @@ function AgentChat({ className = "" }: { className?: string }) {
   const sent = "max-w-[78%] self-end rounded-[20px] rounded-br-[6px] bg-[color:var(--ic-ink)] px-[14px] py-[8px] text-[14.5px] leading-[20px] text-[#FFFCF1]";
   return (
     <div className={`flex flex-col gap-[4px] ${className}`} aria-label="Example chat with a personal agent">
-      <div className={sent}>Find a HALO laser clinic within 30 km under $1,800, available within 10 months</div>
+      <div className={sent}>{EXAMPLE.chatAsk}</div>
       <div className="mt-[12px] flex items-end gap-[8px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -1610,7 +1602,7 @@ function AgentChat({ className = "" }: { className?: string }) {
         <div className="min-w-0 max-w-[78%]">
           <div className={`pl-[12px] pb-[3px] text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>{MUSE.name}</div>
           <div className="rounded-[20px] rounded-bl-[6px] bg-[#F4EEDF] px-[14px] py-[8px] text-[14.5px] leading-[20px] text-[#281910]">
-            {CLINIC.name} at {LOCATIONS[0].address.split(",")[0]} is 10 minutes from you and offers HALO from $1,500. Want me to book?
+            {EXAMPLE.chatReply}
           </div>
         </div>
       </div>
@@ -2150,7 +2142,7 @@ function SetupFiles({ className = "", phone = false }: { className?: string; pho
       <div className="opacity-60">
         {!phone && (
           <div className="flex items-baseline justify-between gap-[10px]">
-            <span className={label}>Ford&apos;s Agent Settings</span>
+            <span className={label}>{SHORT}&apos;s Agent Settings</span>
             <span className={`text-[11.5px] font-[600] ${MUTED}`}>Not published</span>
           </div>
         )}
@@ -2169,7 +2161,7 @@ function SetupFiles({ className = "", phone = false }: { className?: string; pho
           ))}
         </div>
 
-        {!phone && <div className={`mt-[8px] ${label}`}>Ford&apos;s Agent Files</div>}
+        {!phone && <div className={`mt-[8px] ${label}`}>{SHORT}&apos;s Agent Files</div>}
         <div className="mt-[8px] grid grid-cols-2 gap-[6px] [@media(max-height:760px)]:hidden">
           {AGENT_FILES.map((f) => (
             <div key={f.path} className="flex items-center gap-[7px] h-[32px] px-[9px] rounded-[10px] bg-[#FFFCF1]">
@@ -2372,8 +2364,12 @@ function AgentsDifferent() {
               <div><span className="text-[#FCCFB8]">GET</span> /prices</div>
               <div className="text-[#FFFCF166]">200 · json</div>
               <div className="mt-[2px]">{"{"}</div>
-              <div className="pl-[10px]"><span className="text-[#FFFCF180]">&quot;HALO&quot;:</span> <span className="text-[#FCCFB8]">1500</span>,</div>
-              <div className="pl-[10px]"><span className="text-[#FFFCF180]">&quot;consult&quot;:</span> <span className="text-[#FCCFB8]">300</span></div>
+              {EXAMPLE.priceJson.map(([k, v], n) => (
+                <div key={k} className="pl-[10px] truncate">
+                  <span className="text-[#FFFCF180]">&quot;{k}&quot;:</span> <span className="text-[#FCCFB8]">{v}</span>
+                  {n < EXAMPLE.priceJson.length - 1 ? "," : ""}
+                </div>
+              ))}
               <div>{"}"}</div>
             </div>
           </figure>
@@ -2480,7 +2476,7 @@ function AgentsPartners() {
         <div className="w-full max-w-[340px] rounded-[16px] bg-[#FFFCF1] p-[10px] shadow-[0_6px_20px_rgba(40,25,16,0.08)]" aria-label="Example: a personal agent searching clinics with Doe">
           <div className="flex items-center gap-[8px]">
             <FakeAgent i={2} size={24} />
-            <span className="min-w-0 flex-1 h-[30px] px-[12px] flex items-center rounded-full bg-[#F4EEDF] text-[12.5px] text-[#281910CC] truncate">Facelift surgeon in Toronto</span>
+            <span className="min-w-0 flex-1 h-[30px] px-[12px] flex items-center rounded-full bg-[#F4EEDF] text-[12.5px] text-[#281910CC] truncate">{EXAMPLE.partnerQuery}</span>
           </div>
           <div className={`mt-[8px] flex items-center gap-[6px] px-[2px] text-[11px] font-[600] ${MUTED}`}>
             <IndexConvertSphere size={14} className="shrink-0" />
@@ -2490,7 +2486,7 @@ function AgentsPartners() {
             <IndexConvertSphere size={30} className="shrink-0" />
             <div className="min-w-0 flex-1">
               <div className="text-[13px] leading-[17px] font-[600] truncate">{CLINIC.name}</div>
-              <div className={`text-[11.5px] leading-[15px] ${SUB} truncate`}>Deep plane facelift · from $22,500</div>
+              <div className={`text-[11.5px] leading-[15px] ${SUB} truncate`}>{EXAMPLE.partnerResult}</div>
             </div>
             <span className="shrink-0 h-[26px] px-[10px] flex items-center rounded-full bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[11px] font-[600]">Book</span>
           </div>
@@ -2522,7 +2518,7 @@ curl ${API_ORIGIN}${BASE} \\
 curl -X POST ${API_ORIGIN}${BASE}/consultations \\
   -H 'Authorization: Bearer $DOE_AGENT_KEY' \\
   -H 'Content-Type: application/json' \\
-  -d '{"service":"deep-plane-facelift","provider":"derek-ford"}'`,
+  -d '${EXAMPLE.apiBody}'`,
   PAP: `# ${CLINIC.name} · Personal Agent Protocol
 curl -X POST ${API_ORIGIN}${BASE}/pap/sessions \\
   -H 'Authorization: Bearer $DOE_AGENT_KEY' \\
@@ -2775,7 +2771,6 @@ function EditButton({ onClick, label, className = "" }: { onClick: () => void; l
 }
 /** Provider disc colours, from /doehealthproduct's Index palette. */
 const AVATAR_DOTS = ["#E07B53", "#6E9A5B", "#B98A55", "#6F8FA3", "#C2A987", "#E8A585"];
-const OFFER_TAGS = ["Credit", "Package", "Included", "Financing"];
 
 function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => void }) {
   return (
@@ -2836,10 +2831,7 @@ function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => voi
                   <span className={`text-[11px] leading-[14px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>Hours</span>
                   <EditButton onClick={onEdit} label={`Edit hours for ${loc.name}`} className="!bg-[#FFFCF1]" />
                 </div>
-                {[
-                  ["Monday – Friday", "8:30 a.m. – 4:30 p.m."],
-                  ["Saturday – Sunday", "Not listed"],
-                ].map(([k, v]) => (
+                {loc.hoursRows.map(([k, v]) => (
                   <div key={k} className="flex items-baseline justify-between gap-[12px] py-[7px]">
                     <span className="shrink-0 text-[13px] text-[#281910B3]">{k}</span>
                     <span className={`text-right text-[13px] font-[600] ${v === "Not listed" ? MUTED : ""}`}>{v}</span>
@@ -2850,10 +2842,7 @@ function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => voi
           ))}
         </div>
         <div className="mt-[6px] rounded-[18px] bg-[#FFFCF1] px-[16px] py-[8px]">
-          {[
-            ["Phone", CLINIC.phone],
-            ["Toll-free", CLINIC.tollFree],
-          ].map(([k, v]) => (
+          {pack.contactRows.map(([k, v]) => (
             <div key={k} className="flex items-baseline justify-between gap-[16px] py-[8px]">
               <span className="shrink-0 text-[13.5px] text-[#281910B3]">{k}</span>
               <span className="text-right text-[13.5px] font-[600]">{v}</span>
@@ -2920,7 +2909,7 @@ function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => voi
           {OFFERS.map((o, i) => (
             <div key={o.title} className={`${BOX} relative flex flex-col gap-[6px]`}>
               <EditButton onClick={onEdit} label={`Edit ${o.title}`} className="absolute top-[10px] right-[10px]" />
-              <span className="self-start h-[20px] px-[8px] flex items-center rounded-full bg-[#F4EEDF] text-[10.5px] font-[700] text-[#281910B3]">{OFFER_TAGS[i]}</span>
+              <span className="self-start h-[20px] px-[8px] flex items-center rounded-full bg-[#F4EEDF] text-[10.5px] font-[700] text-[#281910B3]">{o.tag}</span>
               <span className="pr-[40px] text-[15px] leading-[20px] font-[600]">{o.title}</span>
               <span className={`text-[13px] leading-[18px] ${SUB}`}>{o.detail}</span>
             </div>
@@ -2943,7 +2932,7 @@ function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => voi
           <div className="rounded-[18px] bg-[color:var(--ic-ink)] text-[#FFFCF1] p-[14px]">
             <div className="text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">With Doe</div>
             <div className="mt-[8px] flex flex-col gap-[6px]">
-              {["Agents book consults with the right surgeon, any hour", "Procedure, provider and documents arrive with the booking", "Confirmations and reminders sent for you"].map(
+              {BOOKING.withDoe.map(
                 (line) => (
                   <span key={line} className="text-[13.5px] leading-[19px]">
                     · {line}
@@ -3053,4 +3042,7 @@ function AgentSections() {
       {block("booking", AGENT.booking)}
     </>
   );
+}
+
+return IndexConvertPage;
 }
