@@ -941,6 +941,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
                   />
                 </div>
               </div>
+              <AgentSearches className="md:hidden" />
               <AboutDoe />
             </div>
           )}
@@ -1312,6 +1313,47 @@ function FoundersFilm() {
       )}
       </div>
     </figure>
+  );
+}
+
+/** The personal agents Ford shows up in, each one tested. `light` icons are mostly white, so they get a hairline edge. */
+const AGENT_APPS: { name: string; icon: string; light?: boolean }[] = [
+  { name: "Muse", icon: "/indexconvert/agents/muse.png", light: true },
+  { name: "Instinct", icon: "/indexconvert/agents/instinct.png", light: true },
+  { name: "GPT Dots", icon: "/indexconvert/agents/gpt-dots.png", light: true },
+  { name: "Claude Duet", icon: "/indexconvert/agents/claude-duet.png", light: true },
+  { name: "Poke", icon: "/indexconvert/agents/poke.png" },
+];
+
+/** iPhone: the agents Ford now appears in, with their app icons and a confirmed mark under each. */
+function AgentSearches({ className = "" }: { className?: string }) {
+  return (
+    <div className={`rounded-[26px] bg-[#F4EEDF] p-[6px] ${className}`}>
+      <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[20px] pb-[22px]">
+        <h3 className={`${DISPLAY} text-[24px] leading-[28px] tracking-[-0.02em] [text-wrap:balance]`}>{CLINIC.name} now appears in searches for</h3>
+        <p className={`mt-[6px] text-[14px] leading-[19px] ${SUB} [text-wrap:balance]`}>We searched for you in each one and confirmed you show up.</p>
+        <ul className="mt-[20px] flex flex-wrap justify-center gap-y-[20px]">
+          {AGENT_APPS.map((a) => (
+            <li key={a.name} className="w-1/3 flex flex-col items-center text-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={a.icon}
+                alt=""
+                width={56}
+                height={56}
+                draggable={false}
+                className={`block w-[56px] h-[56px] rounded-[14px] object-cover select-none ${a.light ? "ring-1 ring-[#2819101A]" : ""}`}
+              />
+              <span className="mt-[8px] text-[14px] leading-[18px] font-[600] whitespace-nowrap">{a.name}</span>
+              <span className={`mt-[4px] flex items-center gap-[5px] text-[10px] leading-[14px] font-[700] uppercase tracking-[0.06em] ${MUTED}`}>
+                <Check on size={13} />
+                Confirmed
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }
 
