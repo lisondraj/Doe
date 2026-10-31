@@ -391,6 +391,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
       <ParsingBackdrop pageIndex={pageIndex} />
       {/* The page being read stays behind as texture: washed cream and slightly blurred so the card reads clearly. */}
       <div className="absolute inset-0 pointer-events-none bg-[rgba(255,252,241,0.66)] backdrop-blur-[2px]" />
+      <ReadChips pageIndex={pageIndex} />
       <div className={`relative z-10 ${HEADER}`}>
         <span />
         <button
@@ -405,9 +406,15 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
       <PageDirectory pageIndex={pageIndex} built={built} />
 
       <div className="absolute inset-x-0 bottom-0 top-[76px] md:top-[72px] z-10 flex flex-col items-center justify-center px-[14px] pb-[14px] md:pb-[24px]">
-        {/* One card: sand shell, cream inside, lifted off the page behind it. */}
-        <div className="w-full max-w-[460px] rounded-[32px] bg-[#F4EEDF] p-[6px] border border-solid border-[#2819101F] shadow-[0_36px_90px_rgba(40,25,16,0.26),0_2px_8px_rgba(40,25,16,0.08)]">
-          <div className="rounded-[26px] bg-[#FFFCF1] px-[16px] pt-[16px] pb-[14px] md:px-[20px] md:pt-[20px] md:pb-[16px] flex flex-col items-center">
+        {/* Tablet up, one card: sand shell, cream inside, lifted off the page behind it. iPhone: no card, just a soft
+            cream fill fading out underneath to set it off from the page being read. */}
+        <div className="relative w-full max-w-[460px] md:rounded-[32px] md:bg-[#F4EEDF] md:p-[6px] md:border md:border-solid md:border-[#2819101F] md:shadow-[0_36px_90px_rgba(40,25,16,0.26),0_2px_8px_rgba(40,25,16,0.08)]">
+          <div
+            aria-hidden="true"
+            className="md:hidden pointer-events-none absolute -inset-x-[14px] -top-[48px] -bottom-[40px] -z-10"
+            style={{ background: "radial-gradient(ellipse 72% 58% at 50% 50%, #FFFCF1 0%, rgba(255,252,241,0.94) 52%, rgba(255,252,241,0) 100%)" }}
+          />
+          <div className="md:rounded-[26px] md:bg-[#FFFCF1] px-[16px] pt-[16px] pb-[14px] md:px-[20px] md:pt-[20px] md:pb-[16px] flex flex-col items-center">
             <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
             <h1 className={`${DISPLAY} mt-[12px] text-center text-[27px] leading-[31px] md:text-[34px] md:leading-[38px] tracking-[-0.02em]`}>{CLINIC.name}</h1>
             <p className="mt-[8px] max-w-[18ch] text-center text-[16px] leading-[21px] font-[600] [text-wrap:balance]">
@@ -568,21 +575,29 @@ const ParsingBackdrop = memo(function ParsingBackdrop({ pageIndex }: { pageIndex
               <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 0.9 }} />
             </div>
             <div className="ic-scan absolute left-0 right-0 h-[1px] bg-[#281910]" style={{ ...running, opacity: 0.28 }} />
-            {i === pageIndex &&
-              (PAGE_READS[page.shot] ?? []).map(([key, value], n) => {
-                const spot = READ_SPOTS[n]!;
-                return (
-                  <span
-                    key={key + value}
-                    className="ic-chip absolute hidden md:inline-flex items-center gap-[8px] h-[32px] px-[12px] rounded-[11px] bg-[#FFFCF1] border border-solid border-[#2819101A] text-[13px] leading-[16px] font-[600] whitespace-nowrap"
-                    style={{ top: spot.top, right: spot.right, animationDelay: `${(parseFloat(spot.top) / 100) * SLOT_MS * 0.8}ms`, animationDuration: `${SLOT_MS * 0.85}ms` }}
-                  >
-                    <span className={`font-mono text-[11px] font-[500] ${MUTED}`}>{key}</span>
-                    {value}
-                  </span>
-                );
-              })}
           </div>
+        );
+      })}
+    </div>
+  );
+});
+
+/** The values Doe lifted off the page on show, set over the cream wash so they read at full strength. */
+const ReadChips = memo(function ReadChips({ pageIndex }: { pageIndex: number }) {
+  const page = SOURCE_PAGES[pageIndex]!;
+  return (
+    <div key={page.shot} className="absolute inset-0 z-[5] pointer-events-none" style={{ "--ic-slot": `${SLOT_MS}ms` } as CSSProperties} aria-hidden="true">
+      {(PAGE_READS[page.shot] ?? []).map(([key, value], n) => {
+        const spot = READ_SPOTS[n]!;
+        return (
+          <span
+            key={key + value}
+            className="ic-chip absolute inline-flex items-center gap-[6px] md:gap-[8px] h-[32px] max-w-[calc(100%-24px)] px-[10px] md:px-[12px] rounded-[11px] bg-[#FFFCF1] border border-solid border-[#2819101A] text-[12px] md:text-[13px] leading-[16px] font-[600] whitespace-nowrap"
+            style={{ top: spot.top, right: spot.right, animationDelay: `${(parseFloat(spot.top) / 100) * SLOT_MS * 0.8}ms`, animationDuration: `${SLOT_MS * 0.85}ms` }}
+          >
+            <span className={`shrink-0 font-mono text-[10.5px] md:text-[11px] font-[500] ${MUTED}`}>{key}</span>
+            <span className="min-w-0 truncate">{value}</span>
+          </span>
         );
       })}
     </div>
