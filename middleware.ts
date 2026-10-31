@@ -145,6 +145,12 @@ export async function middleware(request: NextRequest) {
       rewriteUrl.pathname = DOEHEALTH_DESK2_PATH;
       return applyLandingSiteHeaders(NextResponse.rewrite(rewriteUrl));
     }
+    // The page's route is upper case; a lower-case or mixed-case address lands on it instead of bouncing to `/`.
+    if (pathname !== "/GTMENGINE" && pathname.toLowerCase() === "/gtmengine") {
+      const gtmUrl = request.nextUrl.clone();
+      gtmUrl.pathname = "/GTMENGINE";
+      return applyLandingSiteHeaders(NextResponse.redirect(gtmUrl));
+    }
     const isBlog = pathname === DOEHEALTH_BLOG_PATH || pathname.startsWith(`${DOEHEALTH_BLOG_PATH}/`);
     const isDesk2Subpage = DOEHEALTH_CARE_SUBPAGES.some((path) => pathname === path || pathname.startsWith(`${path}/`));
     // Files from public/ (videos, models, fonts) that the matcher doesn't already skip.
