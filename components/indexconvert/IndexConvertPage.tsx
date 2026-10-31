@@ -234,8 +234,9 @@ export function IndexConvertPage() {
       </div>
     ) : null;
 
-  // Cinema mode only once the page is up: the loader and the opening screen are never blacked out.
-  useFilmCinema(scrollRef, { enabled: phase === "done" });
+  // Cinema mode only once the page is up: the loader and the opening screen are never blacked out. On every screen
+  // size the playing film is brought to the centre of the scroll box and the page is locked until the film stops.
+  useFilmCinema(scrollRef, { enabled: phase === "done", lock: true });
 
   return (
     // The page mounts once the loader has faded, so the two never show through each other.
@@ -307,7 +308,15 @@ function Frame({
       }}
     >
       <div className="relative h-full w-full overflow-clip rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
-        <div ref={scrollRef} className="absolute inset-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
+        <div
+          ref={scrollRef}
+          className="absolute inset-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]"
+          // A rise or fade that has played is marked done, which drops its animation (indexconvert.css), so cinema mode
+          // swapping and handing back the animation of the film's wrappers can neither hide them nor replay them.
+          onAnimationEnd={(event) => {
+            if (event.animationName === "ic-rise" || event.animationName === "ic-fade") (event.target as Element).setAttribute("data-ic-done", "");
+          }}
+        >
           {/* iPhone, with a lead: the plain nav with Doe centred; the lead (the opening screen's title) is tablet and desktop only. */}
           {lead && (
             <header className={`md:hidden sticky top-0 z-30 ${HEADER} bg-[#FFFCF1E6] backdrop-blur-[12px]`}>

@@ -18,7 +18,18 @@ type CinemaOptions = {
   enabled?: boolean;
   /** iPhone: the playing film is scrolled to the middle of the screen and the page is locked until cinema ends. */
   phone?: boolean;
+  /** Centre and lock on every screen size, not just iPhone (/indexconvert). Defaults to `phone`. */
+  lock?: boolean;
 };
+
+/** Keys that scroll a page; blocked while cinema has it locked, unless they're aimed at the film's own controls. */
+const SCROLL_KEYS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
+
+/** The root itself when it is the thing that scrolls (a fixed page with its own scroll box), else null: the window. */
+function scrollBox(root: HTMLElement): HTMLElement | null {
+  const overflow = window.getComputedStyle(root).overflowY;
+  return overflow === "auto" || overflow === "scroll" ? root : null;
+}
 
 /**
  * Cinema mode for every film under `rootRef` (/earlypreview, and the articles it links to at /preview-<slug> and
@@ -32,7 +43,8 @@ type CinemaOptions = {
  * The playing film's frame is marked `data-cinema-film` and every element between it and the page `data-cinema-path`;
  * the CSS (earlypreview-cinema.css) hides whatever is beside that path and turns the path itself black.
  */
-export function useFilmCinema(rootRef: RefObject<HTMLElement>, { enabled = true, phone = false }: CinemaOptions = {}) {
+export function useFilmCinema(rootRef: RefObject<HTMLElement>, { enabled = true, phone = false, lock }: CinemaOptions = {}) {
+  const locks = lock ?? phone;
   const [caption, setCaption] = useState<CinemaCaption | null>(null);
 
   useEffect(() => {
@@ -89,25 +101,49 @@ export function useFilmCinema(rootRef: RefObject<HTMLElement>, { enabled = true,
       parked.clear();
     };
 
-    /** Stops the page scrolling: touches off the film's frame are cancelled, its own drag can only go sideways. */
+    /**
+     * Centres the film and stops the page scrolling until cinema ends: touches off the film's frame are cancelled (its
+     * own drag can only go sideways), and so are the wheel and the scroll keys. Works whether the window scrolls or the
+     * root is its own scroll box (a fixed page like /indexconvert), which `overflow: hidden` on <html> can't reach.
+     */
     let unlock: (() => void) | null = null;
     const lockPage = (video: HTMLVideoElement) => {
       const frame = video.closest("figure") ?? video.parentElement ?? video;
       const rect = frame.getBoundingClientRect();
-      const top = window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
       const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      window.scrollTo({ top: Math.max(0, top), behavior: calm ? "auto" : "smooth" });
-      const stop = (event: TouchEvent) => {
-        if (!(event.target instanceof Element) || !event.target.closest("[data-cinema-film]")) event.preventDefault();
+      const box = scrollBox(root);
+      if (box) {
+        const boxRect = box.getBoundingClientRect();
+        const top = box.scrollTop + rect.top - boxRect.top + rect.height / 2 - box.clientHeight / 2;
+        box.scrollTo({ top: Math.max(0, top), behavior: calm ? "auto" : "smooth" });
+      } else {
+        const top = window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
+        window.scrollTo({ top: Math.max(0, top), behavior: calm ? "auto" : "smooth" });
+      }
+      const onFilm = (target: EventTarget | null) => target instanceof Element && !!target.closest("[data-cinema-film]");
+      const stopTouch = (event: TouchEvent) => {
+        if (!onFilm(event.target)) event.preventDefault();
       };
-      document.addEventListener("touchmove", stop, { passive: false });
+      const stopWheel = (event: WheelEvent) => {
+        // A sideways wheel on the film is left alone; anything that would move the page up or down is not.
+        if (!(onFilm(event.target) && Math.abs(event.deltaX) > Math.abs(event.deltaY))) event.preventDefault();
+      };
+      const stopKeys = (event: KeyboardEvent) => {
+        if (SCROLL_KEYS.has(event.key) && !onFilm(document.activeElement)) event.preventDefault();
+      };
+      document.addEventListener("touchmove", stopTouch, { passive: false });
+      document.addEventListener("wheel", stopWheel, { passive: false });
+      document.addEventListener("keydown", stopKeys);
+      // The window's own scrollbar goes; a scroll box keeps its scrollbar (no layout jump) and is held by the listeners.
       const html = document.documentElement;
       const was = html.style.overflow;
-      html.style.overflow = "hidden";
+      if (!box) html.style.overflow = "hidden";
       root.setAttribute("data-cinema-locked", "");
       unlock = () => {
-        document.removeEventListener("touchmove", stop);
-        html.style.overflow = was;
+        document.removeEventListener("touchmove", stopTouch);
+        document.removeEventListener("wheel", stopWheel);
+        document.removeEventListener("keydown", stopKeys);
+        if (!box) html.style.overflow = was;
         root.removeAttribute("data-cinema-locked");
         unlock = null;
       };
@@ -144,7 +180,7 @@ export function useFilmCinema(rootRef: RefObject<HTMLElement>, { enabled = true,
         root.setAttribute("data-cinema", "");
         const next = readCaption(on);
         setCaption(next);
-        if (phone) lockPage(on);
+        if (locks) lockPage(on);
         else if (next) makeRoom(on);
         park(on);
         return;
@@ -212,7 +248,7 @@ export function useFilmCinema(rootRef: RefObject<HTMLElement>, { enabled = true,
       root.removeAttribute("data-cinema-root");
       clearPath();
     };
-  }, [rootRef, enabled, phone]);
+  }, [rootRef, enabled, locks]);
 
   return caption;
 }
