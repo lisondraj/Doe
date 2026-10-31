@@ -613,6 +613,15 @@ const NAV = [
   { id: "booking", you: "Booking", agent: "booking" },
 ] as const;
 
+/** A desktop side column fading in from `shift` px to the side, and out of the way (no clicks) while hidden. */
+const revealStyle = (on: boolean, shift: number): CSSProperties => ({
+  opacity: on ? 1 : 0,
+  transform: on ? "none" : `translateX(${shift}px)`,
+  pointerEvents: on ? "auto" : "none",
+  visibility: on ? "visible" : "hidden",
+  transition: on ? `opacity 320ms ease, transform 420ms ${EASE}, visibility 0s` : `opacity 220ms ease, transform 320ms ${EASE}, visibility 0s linear 220ms`,
+});
+
 type Claim = { email: string; status: "idle" | "sending" | "error"; error: string; claimed: string | null; plan: string | null; planSending: string | null };
 
 async function postClaim(email: string, plan: string): Promise<string | null> {
@@ -641,6 +650,10 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   const [active, setActive] = useState<string>(NAV[0].id);
   /** Desktop puts the claim box in a sticky right column; narrower screens put it under the status panel. */
   const [wide, setWide] = useState(false);
+  /** Desktop opens on the centre column alone: the section nav joins once the edit section ("Here's the information…")
+   * is reached, the claim box once the Activate button has scrolled away. */
+  const [leftOn, setLeftOn] = useState(false);
+  const [rightOn, setRightOn] = useState(false);
   /** iPhone sets the clinic's box slim, as a band along the bottom of the first screen. */
   const [phone, setPhone] = useState(false);
   const [modal, setModal] = useState<ClaimReason | null>(null);
@@ -649,7 +662,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   const [claim, setClaim] = useState<Claim>({ email: "", status: "idle", error: "", claimed: null, plan: null, planSending: null });
 
   useEffect(() => {
-    const query = window.matchMedia("(min-width: 1024px)");
+    const query = window.matchMedia("(min-width: 1280px)");
     const update = () => setWide(query.matches);
     update();
     query.addEventListener("change", update);
@@ -698,6 +711,39 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
       setPillsOn(false);
     };
   }, [view, scrollRef]);
+
+  useEffect(() => {
+    if (!wide) return;
+    const el = document.getElementById(agent ? "providers" : "included");
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setLeftOn(entry!.isIntersecting || entry!.boundingClientRect.top < 0), { root: scrollRef.current, threshold: 0 });
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      setLeftOn(false);
+    };
+  }, [wide, view, agent, scrollRef]);
+
+  useEffect(() => {
+    if (!wide) return;
+    const el = activateRef.current;
+    // Claimed, there's no Activate button: the claim box (now the plans) shows from the start.
+    if (!el) {
+      setRightOn(true);
+      return;
+    }
+    // Gone once it has slid up under the 72px top bar.
+    const io = new IntersectionObserver(([entry]) => setRightOn(!entry!.isIntersecting && entry!.boundingClientRect.top < 100), {
+      root: scrollRef.current,
+      rootMargin: "-72px 0px 0px 0px",
+      threshold: 0,
+    });
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      setRightOn(false);
+    };
+  }, [wide, view, agent, scrollRef, claim.claimed]);
 
   const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   useEffect(() => setPortalEl(document.getElementById("ic-modal-root")), []);
@@ -764,8 +810,13 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         </div>
       </nav>
 
-      <div className="md:grid md:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)_340px] md:gap-[28px] md:px-[32px] max-w-[1440px] mx-auto pb-[96px] lg:pb-[40px]">
-        <aside className="hidden md:flex flex-col gap-[2px] sticky top-[72px] self-start pt-[8px]">
+      {/* Desktop: equal side columns keep the centre column centred; each side fades in on its cue (leftOn, rightOn). */}
+      <div className="md:grid md:grid-cols-[200px_minmax(0,1fr)] xl:grid-cols-[300px_minmax(0,1fr)_300px] md:gap-[28px] md:px-[32px] max-w-[1480px] mx-auto pb-[96px] xl:pb-[40px]">
+        <aside
+          className="hidden md:flex flex-col gap-[2px] sticky top-[72px] self-start pt-[8px] xl:max-w-[220px]"
+          aria-hidden={wide && !leftOn ? true : undefined}
+          style={wide ? revealStyle(leftOn, -12) : undefined}
+        >
           {NAV.map((n) => (
             <button
               key={n.id}
@@ -799,7 +850,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
                   </div>
                   <OffSwitch />
                 </div>
-                <ActivateButton onClick={goToClaim} className="mt-[14px]" />
+                <ActivateButton buttonRef={activateRef} onClick={goToClaim} className="mt-[14px]" />
               </div>
             </div>
             <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
@@ -830,7 +881,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               {/* iPhone: the first screen fits the viewport: the title, the clinic's box, its settings and files, then the
                   switch and the button at the foot. The rest follows below. */}
               <div className="flex flex-col gap-[10px] max-md:min-h-[calc(100svh-116px)]">
-                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:pt-[8px] max-md:pb-[6px] max-md:[@media(max-height:760px)]:pt-[0px] max-md:[@media(max-height:760px)]:pb-[0px] max-md:[@media(max-height:760px)]:text-[25px] text-left text-[clamp(26px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
+                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:pt-[8px] max-md:pb-[6px] max-md:[@media(max-height:760px)]:pt-[0px] max-md:[@media(max-height:760px)]:pb-[0px] max-md:[@media(max-height:760px)]:text-[25px] text-left text-[clamp(26px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] xl:text-[clamp(36px,3.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
                   We&apos;ve made your clinic
                   <br /> more discoverable
                   <br /> to personal agents.
@@ -862,7 +913,11 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 
         </main>
 
-        {wide && <aside className="sticky top-[72px] self-start pt-[8px]">{claimBox}</aside>}
+        {wide && (
+          <aside className="sticky top-[72px] self-start pt-[8px]" aria-hidden={!rightOn ? true : undefined} style={revealStyle(rightOn, 12)}>
+            {claimBox}
+          </aside>
+        )}
       </div>
 
       {/* iPhone: a black pill that is the Activate button, shown once the one in the page scrolls away. */}
@@ -871,7 +926,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         onClick={goToClaim}
         tabIndex={!claimed && !claimInView ? 0 : -1}
         aria-hidden={claimed || claimInView}
-        className={`group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(20,12,4,0.25)] text-[12.5px] tracking-[0.04em]`}
+        className={`group xl:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(20,12,4,0.25)] text-[12.5px] tracking-[0.04em]`}
         style={{
           bottom: "calc(max(8px, env(safe-area-inset-bottom)) + 10px)",
           transform: !claimed && !claimInView ? "none" : "translateY(calc(100% + 40px))",
@@ -1883,7 +1938,7 @@ function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => voi
     <>
       <div className="flex flex-col gap-[22px] pt-[14px] md:pt-[22px]">
         <div className="h-px bg-[#2819101F]" />
-        <div className="flex flex-col items-start gap-[14px]">
+        <div id="included" className="flex flex-col items-start gap-[14px]">
           <h2 className={`${DISPLAY} px-[4px] text-left text-[clamp(27px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
             Here&apos;s the information
             <br />
