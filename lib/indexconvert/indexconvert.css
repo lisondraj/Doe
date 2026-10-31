@@ -12,21 +12,10 @@
   mask-composite: intersect;
 }
 
-/* The page being read slides up while the scan line passes over it. */
+/* The page being read slides up while it shows. */
 @keyframes ic-read {
   from { transform: translate3d(0, 0, 0); }
   to { transform: translate3d(0, -22%, 0); }
-}
-
-@keyframes ic-scan {
-  from { top: 4%; }
-  to { top: 96%; }
-}
-
-/* Above the scan line the page shows in full colour: read. Below it stays grey: not yet read. */
-@keyframes ic-reveal {
-  from { clip-path: inset(0 0 96% 0); }
-  to { clip-path: inset(0 0 4% 0); }
 }
 
 @keyframes ic-chip {
@@ -49,10 +38,8 @@
   to { transform: rotate(360deg); }
 }
 
-/* One steady pace for the scroll, the scan line and the reveal, so they move together without lurching. */
+/* The page on show scrolls at one steady pace. */
 .indexconvert-page .ic-read { animation: ic-read var(--ic-slot) linear forwards; will-change: transform; backface-visibility: hidden; }
-.indexconvert-page .ic-scan { animation: ic-scan var(--ic-slot) linear forwards; }
-.indexconvert-page .ic-reveal { animation: ic-reveal var(--ic-slot) linear forwards; }
 .indexconvert-page .ic-chip { opacity: 0; animation: ic-chip var(--ic-slot) ease-in-out both; }
 .indexconvert-page .ic-rise { opacity: 0; animation: ic-rise 600ms cubic-bezier(0.32, 0.72, 0, 1) both; }
 .indexconvert-page .ic-fade { animation: ic-fade 360ms ease both; }
@@ -63,9 +50,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .indexconvert-page .ic-read,
-  .indexconvert-page .ic-scan,
   .indexconvert-page .ic-chip { animation: none; }
-  .indexconvert-page .ic-reveal { animation: none; clip-path: none; }
   .indexconvert-page .ic-rise,
   .indexconvert-page .ic-fade { animation-duration: 1ms; }
 }

@@ -46,7 +46,7 @@ const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?:
   { title: "Finding Your Page", detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`, ms: 2700 },
   { title: "Checking What Personal Agents See", detail: "No llms.txt, MCP card or OpenAPI", ms: 2700 },
   {
-    title: "Converting to Agent-Readable Page",
+    title: "Building Agent-Readable Page",
     detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`,
     ms: 3700,
     subs: ["JSON · 7 resources", "JSON-LD · schema.org/MedicalClinic", "Metadata & HTML"],
@@ -58,7 +58,7 @@ const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?:
     subs: ["openapi.json", "llms.txt", "robots.txt", ".well-known/mcp.json"],
   },
   {
-    title: "Integrating Into Doe's Model Context Protocol",
+    title: "Integrating Doe's MCP",
     detail: `${CLINIC_TOOLS.length} tools ready`,
     ms: 3800,
     subs: CLINIC_TOOLS.map((t) => t.name),
@@ -87,6 +87,8 @@ const LOADER_MESSAGES = [
 ];
 const MESSAGE_CHARS = LOADER_MESSAGES.reduce((n, m) => n + m.length, 0);
 const MESSAGE_ENDS = LOADER_MESSAGES.map((_, i) => (LOADER_MESSAGES.slice(0, i + 1).reduce((n, m) => n + m.length, 0) / MESSAGE_CHARS) * BUILD_MS);
+/** The read pills leave this long before the build ends, so Ready shows on its own. */
+const CHIPS_OFF_MS = 1500;
 /** How long "Ready" holds before the page opens. */
 const MUSE_MS = 1100;
 const TOTAL_MS = BUILD_MS + MUSE_MS;
@@ -96,7 +98,7 @@ const SLOT_MS = BUILD_MS / SOURCE_PAGES.length;
 const PAGE_FADE_MS = 900;
 const LOADER_FADE_MS = 420;
 
-/** What the loader lifts off each page as the scan line passes, keyed by screenshot. */
+/** What the loader lifts off each page while it shows, keyed by screenshot. */
 const PAGE_READS: Record<string, [string, string][]> = {
   home: [["name", "Ford Plastic Surgery"], ["specialty", "Facial plastic surgery"], ["area", "Bloor-Yorkville, Toronto"]],
   pricing: [["price", "Deep Plane Facelift · $22,500"], ["price", "Rhinoplasty · $17,100"], ["consult", "$300 + HST"]],
@@ -439,16 +441,13 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
           </h1>
         </div>
 
-        <ReadChips pageIndex={pageIndex} />
+        <ReadChips pageIndex={pageIndex} hidden={elapsed > BUILD_MS - CHIPS_OFF_MS} />
 
         {/* The build: the sphere, the step in progress with its parts, and a thin bar with the page being read. */}
         <div className="px-[18px] md:px-[32px] pb-[18px] md:pb-[28px]">
           <div className="w-full max-w-[460px]">
             <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
-            <p className={`mt-[14px] text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em] tabular-nums ${MUTED}`}>
-              {built ? "Readable to agents" : `Step ${stepIndex + 1} of ${STEPS.length}`}
-            </p>
-            <h2 key={step?.title ?? "ready"} className="ic-fade mt-[4px] text-[20px] leading-[25px] md:text-[22px] md:leading-[28px] font-[600] tracking-[-0.01em]">
+            <h2 key={step?.title ?? "ready"} className="ic-fade mt-[14px] [text-wrap:balance] text-[20px] leading-[25px] md:text-[22px] md:leading-[28px] font-[600] tracking-[-0.01em]">
               {step?.title ?? "Ready"}
             </h2>
             <div className="mt-[4px]" style={{ minHeight: compact ? 19 : 19 * 5 }}>
@@ -526,8 +525,8 @@ function SubSteps({ subs, progress, onlyCurrent = false }: { subs: string[]; pro
 }
 
 /**
- * The clinic's own pages behind the loader, one per slot: each scrolls while a scan line passes, the part above the
- * line turns from grey to full colour, and the values Doe lifted off it appear beside it. Edges fade into the cream.
+ * The clinic's own pages behind the loader, one per slot: each scrolls down while it shows, then fades to the next.
+ * Edges fade into the cream.
  */
 const ParsingBackdrop = memo(function ParsingBackdrop({ pageIndex }: { pageIndex: number }) {
   return (
@@ -538,11 +537,7 @@ const ParsingBackdrop = memo(function ParsingBackdrop({ pageIndex }: { pageIndex
         const running: CSSProperties = { animationPlayState: i <= pageIndex ? "running" : "paused" };
         return (
           <div key={page.shot} className="absolute inset-0 overflow-hidden" style={{ opacity: i === pageIndex ? 1 : 0, transition: `opacity ${PAGE_FADE_MS}ms ease` }}>
-            <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 0.4, filter: "grayscale(1)" }} priority={i === 0} />
-            <div className="ic-reveal absolute inset-0 overflow-hidden" style={running}>
-              <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 0.9 }} />
-            </div>
-            <div className="ic-scan absolute left-0 right-0 h-[1px] bg-[#281910]" style={{ ...running, opacity: 0.28 }} />
+            <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 0.9 }} priority={i === 0} />
           </div>
         );
       })}
@@ -551,13 +546,13 @@ const ParsingBackdrop = memo(function ParsingBackdrop({ pageIndex }: { pageIndex
 });
 
 /** The values Doe lifted off the page on show, centred in the clear middle between the two cream fades, one after another. */
-const ReadChips = memo(function ReadChips({ pageIndex }: { pageIndex: number }) {
+const ReadChips = memo(function ReadChips({ pageIndex, hidden }: { pageIndex: number; hidden: boolean }) {
   const page = SOURCE_PAGES[pageIndex]!;
   return (
     <div
       key={page.shot}
       className="flex-1 min-h-[0px] flex flex-col items-center justify-center gap-[8px] px-[18px] pointer-events-none"
-      style={{ "--ic-slot": `${SLOT_MS}ms` } as CSSProperties}
+      style={{ "--ic-slot": `${SLOT_MS}ms`, opacity: hidden ? 0 : 1, transition: "opacity 400ms ease" } as CSSProperties}
       aria-hidden="true"
     >
       {(PAGE_READS[page.shot] ?? []).map(([key, value], n) => (
