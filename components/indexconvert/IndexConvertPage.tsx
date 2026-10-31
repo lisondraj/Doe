@@ -2376,13 +2376,8 @@ function FakeAgent({ i, size = 40 }: { i: number; size?: number }) {
   );
 }
 
-/** Doe built into personal agents: six agents wired to Doe in the middle, then one of them answering from Doe. */
+/** Doe built into personal agents: one clean reply from a (made-up) personal agent, found through Doe, naming the clinic. */
 function AgentsPartners() {
-  // Three agents a side, wired into Doe in the middle.
-  const W = 300;
-  const H = 156;
-  const ys = [0, 58, 116];
-  const hub = { x: 118, y: 46, s: 64 };
   return (
     <Box innerClassName="p-[10px] md:p-[12px]">
       <div className="px-[8px] pt-[10px] pb-[18px] md:px-[12px] md:pt-[12px]">
@@ -2391,51 +2386,12 @@ function AgentsPartners() {
           <sup className="ml-[2px] text-[0.5em] align-super" aria-label="footnote 1">1</sup>
         </h2>
       </div>
-      <div className="rounded-[16px] bg-[#F4EEDF] px-[12px] pt-[22px] pb-[16px] md:px-[20px] flex flex-col items-center gap-[18px]">
-        <div className="relative shrink-0" style={{ width: W, height: H }} aria-hidden="true">
-          <svg className="absolute inset-0" width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
-            {ys.map((y) => (
-              <g key={y} fill="none" stroke="#28191040" strokeWidth="1.5" strokeDasharray="3 4" strokeLinecap="round">
-                <path d={`M40 ${y + 20} C 80 ${y + 20}, 80 ${hub.y + 32}, ${hub.x} ${hub.y + 32}`} />
-                <path d={`M${W - 40} ${y + 20} C ${W - 80} ${y + 20}, ${W - 80} ${hub.y + 32}, ${hub.x + hub.s} ${hub.y + 32}`} />
-              </g>
-            ))}
-          </svg>
-          {ys.map((y, k) => (
-            <span key={`l${y}`} className="absolute left-0" style={{ top: y }}>
-              <FakeAgent i={k} />
-            </span>
-          ))}
-          {ys.map((y, k) => (
-            <span key={`r${y}`} className="absolute right-0" style={{ top: y }}>
-              <FakeAgent i={k + 3} />
-            </span>
-          ))}
-          <span
-            className="absolute flex items-center justify-center rounded-[18px] bg-[color:var(--ic-ink)] shadow-[0_8px_24px_rgba(40,25,16,0.22)]"
-            style={{ left: hub.x, top: hub.y, width: hub.s, height: hub.s }}
-          >
-            <IndexConvertSphere size={42} color="#FCCFB8" />
-          </span>
-        </div>
-        {/* One of them, searching clinics through Doe. */}
-        <div className="w-full max-w-[340px] rounded-[16px] bg-[#FFFCF1] p-[10px] shadow-[0_6px_20px_rgba(40,25,16,0.08)]" aria-label="Example: a personal agent searching clinics with Doe">
-          <div className="flex items-center gap-[8px]">
-            <FakeAgent i={2} size={24} />
-            <span className="min-w-0 flex-1 h-[30px] px-[12px] flex items-center rounded-full bg-[#F4EEDF] text-[12.5px] text-[#281910CC] truncate">{EXAMPLE.partnerQuery}</span>
-          </div>
-          <div className={`mt-[8px] flex items-center gap-[6px] px-[2px] text-[11px] font-[600] ${MUTED}`}>
-            <IndexConvertSphere size={14} className="shrink-0" />
-            Clinic search by Doe
-          </div>
-          <div className="mt-[6px] flex items-center gap-[10px] rounded-[12px] p-[8px] shadow-[0_0_0_1px_rgba(40,25,16,0.08)]">
-            <IndexConvertSphere size={30} className="shrink-0" />
-            <div className="min-w-0 flex-1">
-              <div className="text-[13px] leading-[17px] font-[600] truncate">{CLINIC.name}</div>
-              <div className={`text-[11.5px] leading-[15px] ${SUB} truncate`}>{EXAMPLE.partnerResult}</div>
-            </div>
-            <span className="shrink-0 h-[26px] px-[10px] flex items-center rounded-full bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[11px] font-[600]">Book</span>
-          </div>
+      {/* Like the chat on the opening screen: the agent's mark, then its one reply. */}
+      <div className="flex items-end gap-[8px] px-[8px] pb-[14px] md:px-[12px]" aria-label="Example: a personal agent's reply, found through Doe">
+        <FakeAgent i={2} size={32} />
+        <div className="min-w-0 max-w-[86%]">
+          <div className={`pl-[12px] pb-[3px] text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>Personal agent</div>
+          <div className="rounded-[20px] rounded-bl-[6px] bg-[#F4EEDF] px-[14px] py-[9px] text-[14.5px] leading-[21px] text-[#281910]">{EXAMPLE.partnerReply}</div>
         </div>
       </div>
     </Box>

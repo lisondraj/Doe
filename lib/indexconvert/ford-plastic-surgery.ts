@@ -219,8 +219,7 @@ export const FORD_PACK: ClinicPack = {
     chatAsk: "Find a HALO laser clinic within 30 km under $1,800, available within 10 months",
     chatReply: "Ford Plastic Surgery at 7 St Thomas St is 10 minutes from you and offers HALO from $1,500. Want me to book?",
     priceJson: [["HALO", 1500], ["consult", 300]],
-    partnerQuery: "Facelift surgeon in Toronto",
-    partnerResult: "Deep plane facelift · from $22,500",
+    partnerReply: "I searched Doe for you: Ford Plastic Surgery in Bloor-Yorkville does deep plane facelifts from $22,500. Want me to book a consult?",
     apiBody: `{"service":"deep-plane-facelift","provider":"derek-ford"}`,
   },
 };

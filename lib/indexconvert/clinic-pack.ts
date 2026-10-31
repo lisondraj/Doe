@@ -62,9 +62,8 @@ export type ClinicPack = {
     chatReply: string;
     /** Two prices for the small "Agents Read Data" card. */
     priceJson: [string, number][];
-    /** The made-up agent's clinic search in the partners box, and the clinic's result line. */
-    partnerQuery: string;
-    partnerResult: string;
+    /** A made-up agent's one reply in the partners box, found through Doe and naming the clinic. */
+    partnerReply: string;
     /** The JSON body of the example consult request in the API code. */
     apiBody: string;
   };
