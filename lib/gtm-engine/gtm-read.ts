@@ -42,7 +42,7 @@ export async function readAllRows(table: GtmTableKey, params: URLSearchParams, f
   for (let from = 0; ; from += BATCH) {
     const base = supabase.from("gtm_engine_rows").select(GTM_ROW_SELECT).eq("table_key", table);
     const query: typeof base = applyQuickFilters(base, table, params);
-    const { data, error } = await query.order("entry_date", { ascending: false }).order("created_at", { ascending: true }).order("id").range(from, from + BATCH - 1);
+    const { data, error } = await query.order("report_date", { ascending: false, nullsFirst: false }).order("entry_date", { ascending: false }).order("created_at", { ascending: true }).order("id").range(from, from + BATCH - 1);
     if (error) throw error;
     rows.push(...((data ?? []) as GtmRow[]));
     if (!data || data.length < BATCH) break;

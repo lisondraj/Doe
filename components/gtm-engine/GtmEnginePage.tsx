@@ -218,10 +218,11 @@ function TableCard({ table }: { table: GtmTable }) {
       });
       const body = (await res.json().catch(() => ({}))) as { ok?: boolean; row?: GtmRow; error?: string };
       if (!res.ok || !body.row) throw new Error(body.error ?? "Can't add the row.");
+      const date = bulkReport || bulkDate;
       setCollapsed((set) => {
-        if (!set.has(bulkDate)) return set;
+        if (!set.has(date)) return set;
         const next = new Set(set);
-        next.delete(bulkDate);
+        next.delete(date);
         return next;
       });
       void load(page);
@@ -240,16 +241,22 @@ function TableCard({ table }: { table: GtmTable }) {
   const width = NUM_W + REPORT_W + table.columns.reduce((n, c) => n + c.width, 0) + PAGE_W + STATUS_W;
   const span = table.columns.length + 4;
   const first = page * GTM_PAGE_SIZE;
-  /** Saved lines under their dates, newest date first (the order the API returns them in). */
+  /**
+   * Saved lines under the date their date field shows (the report date, else the entry date), newest date first, so a
+   * group's heading always matches its lines. Within a date, lines keep the order the API returns them in.
+   */
   const groups = useMemo(() => {
-    const out: { date: string; rows: { row: GtmRow; n: number }[] }[] = [];
-    rows.forEach((row, i) => {
-      const last = out[out.length - 1];
-      const entry = { row, n: first + i + 1 };
-      if (last?.date === row.entry_date) last.rows.push(entry);
-      else out.push({ date: row.entry_date, rows: [entry] });
-    });
-    return out;
+    const byDate = new Map<string, GtmRow[]>();
+    for (const row of rows) {
+      const date = lineDate(row);
+      const list = byDate.get(date);
+      if (list) list.push(row);
+      else byDate.set(date, [row]);
+    }
+    let n = first;
+    return Array.from(byDate.entries())
+      .sort(([a], [b]) => (a < b ? 1 : a > b ? -1 : 0))
+      .map(([date, list]) => ({ date, rows: list.map((row) => ({ row, n: ++n })) }));
   }, [rows, first]);
 
   return (
@@ -489,6 +496,9 @@ function TableCard({ table }: { table: GtmTable }) {
     </div>
   );
 }
+
+/** The date a saved line is filed under: the date its date field shows (report date), else the day it was entered. */
+const lineDate = (row: GtmRow) => row.report_date || row.entry_date;
 
 /** Today in the browser's time zone, as YYYY-MM-DD. */
 const today = () => new Date().toLocaleDateString("en-CA");
