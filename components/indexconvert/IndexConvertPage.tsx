@@ -1574,6 +1574,7 @@ function AboutDoe({ intro = false }: { intro?: boolean }) {
               </>
             )}
           </p>
+          {!intro && <DoeListings className="mt-[18px] mb-[6px] max-w-[520px]" />}
           {!intro && (
             <p className="mt-[12px] max-w-[58ch] text-[15px] leading-[24px] md:text-[16px] md:leading-[26px] text-[#281910CC] [text-wrap:pretty]">
               We&apos;ve made Doe free to use, however some features require expensive compute costs to run so we&apos;ve added a little fee to those interested. You can reach us anytime with any questions
@@ -1593,6 +1594,73 @@ function AboutDoe({ intro = false }: { intro?: boolean }) {
         </div>
       </div>
     </div>
+  );
+}
+
+/** Doe's listings as personal agents see them: other clinics live, Ford listed but not active yet. */
+function DoeListings({ className = "" }: { className?: string }) {
+  /** A clinic already on Doe, drawn as a quiet placeholder: no names. */
+  const other = (w1: string, w2: string) => (
+    <li className="flex items-center gap-[10px] px-[10px] py-[10px]">
+      <span className="shrink-0 w-[30px] h-[30px] rounded-full bg-[#F4EEDF]" />
+      <span className="min-w-0 flex-1 flex flex-col gap-[6px]">
+        <span className="h-[7px] rounded-full bg-[#2819101F]" style={{ width: w1 }} />
+        <span className="h-[6px] rounded-full bg-[#28191012]" style={{ width: w2 }} />
+      </span>
+      <span className="shrink-0 inline-flex items-center gap-[5px] h-[24px] px-[9px] rounded-full bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[11px] font-[600]">
+        <svg width="10" height="10" viewBox="0 0 24 24" className="block">
+          <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Active
+      </span>
+    </li>
+  );
+  return (
+    <figure className={`rounded-[18px] bg-[#F4EEDF] p-[10px] ${className}`} aria-label={`Doe's listings, seen by personal agents. ${CLINIC.name} is listed but not active yet.`}>
+      <div className="flex items-center justify-between gap-[10px] px-[4px] pb-[10px]">
+        <span className="inline-flex items-center gap-[8px] whitespace-nowrap text-[13px] font-[600]">
+          <IndexConvertSphere size={20} className="shrink-0" />
+          Doe listings
+        </span>
+        <span className={`inline-flex items-center gap-[6px] whitespace-nowrap text-[11.5px] font-[600] ${MUTED}`}>
+          Seen by
+          <span className="flex gap-[2px]">
+            {AGENT_APPS.map((a) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={a.name}
+                src={a.icon}
+                alt=""
+                width={16}
+                height={16}
+                draggable={false}
+                className={`block w-[16px] h-[16px] rounded-[4px] object-cover select-none ${a.light ? "ring-1 ring-[#2819101A]" : ""}`}
+              />
+            ))}
+          </span>
+        </span>
+      </div>
+      <ul className="rounded-[14px] bg-[#FFFCF1]" aria-hidden="true">
+        {other("46%", "30%")}
+        <li className="flex items-center gap-[8px] sm:gap-[10px] mx-[4px] my-[4px] px-[6px] sm:px-[8px] py-[8px] rounded-[12px] border-[1.5px] border-dashed border-[#28191033]">
+          <IndexConvertSphere size={26} className="shrink-0" />
+          <span className="min-w-0 flex-1">
+            <span className="block whitespace-nowrap text-[13px] sm:text-[13.5px] leading-[18px] font-[600]">{CLINIC.name}</span>
+            <span className={`block truncate text-[11.5px] leading-[15px] ${SUB}`}>{CLINIC.area}</span>
+          </span>
+          <span className={`shrink-0 inline-flex items-center gap-[5px] h-[24px] pl-[9px] sm:pl-[4px] pr-[9px] rounded-full bg-[#F4EEDF] text-[11px] font-[600] whitespace-nowrap ${MUTED}`}>
+            <span className="relative max-sm:hidden inline-flex items-center w-[20px] h-[14px] rounded-full bg-[#2819101F]">
+              <span className="absolute left-[2px] w-[10px] h-[10px] rounded-full bg-[#FFFCF1]" />
+            </span>
+            Not active
+          </span>
+        </li>
+        {other("54%", "36%")}
+      </ul>
+      <figcaption className={`px-[4px] pt-[10px] text-[12px] leading-[16px] ${SUB} [text-wrap:balance]`}>
+        Agents can see {CLINIC.name}, but can&apos;t book until it&apos;s activated.
+      </figcaption>
+    </figure>
   );
 }
 
