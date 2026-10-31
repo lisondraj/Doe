@@ -1182,10 +1182,12 @@ function SessionDetail({ s, config, now, onAct, onWatch }: { s: Session; config:
                 >
                   {l.text}
                   {l.offer && (
-                    <span className="flex items-center gap-[6px] mt-[8px]">
+                    <span className="flex flex-wrap items-center gap-[6px] mt-[8px]">
                       <span className={`h-[22px] px-[8px] flex items-center rounded-full text-[11.5px] font-[700] ${l.from === "clinic" ? "bg-[#FFFCF11F]" : "bg-[#F4EEDF]"}`}>
                         Offer {money(l.offer.price)}
                       </span>
+                      <span className="text-[11.5px] font-[600] opacity-75">{l.offer.label}</span>
+                      {l.offer.list && l.offer.list > l.offer.price && <span className="text-[11.5px] font-[600] opacity-75">· save {money(l.offer.list - l.offer.price)}</span>}
                       <span className="text-[11.5px] font-[600] opacity-75 capitalize">{l.offer.status}</span>
                     </span>
                   )}

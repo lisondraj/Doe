@@ -14,7 +14,7 @@ export const FLOW = [
   "connect, with both consents true. Keep the token it returns.",
   "Read the clinic (services, bundles, availability) and pick a plan.",
   "Before you hold, tell your user about the provider (training, experience, reviews in clinic.provider_profiles) and ask if they want to book.",
-  "hold_slot for 10 minutes; negotiate or ask questions in threads if you like.",
+  "hold_slot for 10 minutes. To get a better price, use negotiate: propose a price, and ask about adding services (the clinic discounts packages); accept an offer with respond_offer.",
   "Fill the intake, walk your user through each assessment one question at a time, record their signature, submit_forms. Upload anything that helps the doctor, like your user's migraine diary, with upload_form.",
   "request_booking with phi_confirmed: true, then poll the session until the clinic confirms.",
 ];
@@ -46,6 +46,7 @@ export function apiDocs(origin: string) {
       request_booking: { phi_confirmed: true },
       set_comms: { id: COMMS.map((c) => c.id).join(" | "), on: true },
       set_consent: { id: "connected | network", on: true },
+      negotiate: { price: 1200, add_ons: ["consult", "followup"], note: "Optional message to the clinic" },
       upload_form: { title: "Migraine diary", text: "Oct 2: 7/10, 9 h, nausea…  (or file_name, mime_type, content_base64 for a PDF or photo)" },
     } satisfies Record<AgentAction["type"], unknown>,
     mcp: { transport: "Streamable HTTP (JSON responses)", url: `${origin}${MCP_PATH}`, tools: MCP_TOOLS.map((t) => t.name) },
@@ -95,6 +96,19 @@ export const MCP_TOOLS: { name: string; description: string; inputSchema: Record
     name: "doe_send_message",
     description: "Message the clinic. concierge: questions. negotiate: propose a price for the selected plan; replies may carry an offer. forms: questions about forms.",
     inputSchema: obj({ thread: { type: "string", enum: ["concierge", "negotiate", "forms"] }, text: { type: "string" } }, ["thread", "text"]),
+  },
+  {
+    name: "doe_negotiate",
+    description:
+      "Propose a price for your user's plan (Botox for chronic migraine by default), optionally adding services (add_ons, service ids from doe_clinic_info, e.g. consult, followup). The clinic agent replies with offers, often a better price as a package; each comes back with a message_id. Tell your user the offers, then accept one with doe_respond_offer. Don't go above your user's budget.",
+    inputSchema: obj(
+      {
+        price: { type: "number", description: "What your user would pay in total, in CAD." },
+        add_ons: { type: "array", items: { type: "string", enum: ["consult", "followup", "block", "trigger", "virtual"] }, description: "Services to add to the main one." },
+        note: { type: "string", description: "Optional message to the clinic." },
+      },
+      ["price"],
+    ),
   },
   { name: "doe_respond_offer", description: "Accept or decline a clinic offer from the negotiate thread.", inputSchema: obj({ message_id: { type: "string" }, accept: { type: "boolean" } }, ["message_id", "accept"]) },
   {

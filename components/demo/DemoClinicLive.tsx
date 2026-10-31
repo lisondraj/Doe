@@ -53,7 +53,7 @@ export function AgentAvatar({ name, size = 36, ring }: { name: string; size?: nu
 
 export type Notice = {
   id: string;
-  kind: "visit" | "connected" | "requested" | "forms" | "upload" | "confirmed";
+  kind: "visit" | "connected" | "negotiating" | "deal" | "requested" | "forms" | "upload" | "confirmed";
   /** The session, or for "visit", the MCP visit. */
   sessionId: string;
   eventId: string;
@@ -66,9 +66,11 @@ const NOTICE_TYPES: Record<string, Notice["kind"]> = {
   forms_submitted: "forms",
   form_uploaded: "upload",
   booking_confirmed: "confirmed",
+  negotiation_proposed: "negotiating",
+  offer_accepted: "deal",
 };
 /** How long each card stays up; 0 keeps it until the clinic acts or dismisses it. */
-const NOTICE_MS: Record<Notice["kind"], number> = { visit: 0, connected: 20000, requested: 0, forms: 14000, upload: 14000, confirmed: 6000 };
+const NOTICE_MS: Record<Notice["kind"], number> = { visit: 0, connected: 20000, negotiating: 20000, deal: 16000, requested: 0, forms: 14000, upload: 14000, confirmed: 6000 };
 
 /** New notices for events that weren't there on the last poll. The first poll only marks what's already there. */
 export function useNotices(state: ClinicStatePayload | null) {
@@ -246,6 +248,53 @@ function NoticeCard({ n, s, onDismiss, onWatch, onForms, onAct }: { n: Notice; s
         <span className="text-[13px] font-[600] text-[#BFD6B0]">{s.booking.status === "confirmed" ? "✓ Approved" : "Declined"}</span>
         <button type="button" onClick={onDismiss} className={quiet}>
           Close
+        </button>
+      </>
+    );
+  } else if (n.kind === "negotiating" || n.kind === "deal") {
+    const neg = s.threads.negotiate;
+    const at = Date.parse(ev?.at ?? "");
+    /** The proposal's counter-offers: clinic offers posted with it. */
+    const offers = neg.filter((m) => m.offer && m.from === "clinic" && Math.abs(Date.parse(m.at) - at) < 2000);
+    const accepted = n.kind === "deal" ? [...neg].reverse().find((m) => m.offer?.status === "accepted")?.offer : null;
+    title = (
+      <>
+        {n.kind === "deal" ? `${s.agentName} took the deal` : `${s.agentName} is negotiating`}
+        <span className="block text-[12.5px] font-[500] text-[#FFFCF1B3]">
+          for {s.userName} · {ev?.summary.replace(/^(Proposed|Accepted) /, n.kind === "deal" ? "" : "asked ")}
+        </span>
+      </>
+    );
+    body =
+      n.kind === "deal" && accepted ? (
+        <div className="flex items-center justify-between gap-[10px] p-[10px_12px] rounded-[14px] bg-[#FFFCF10F] text-[13px] leading-[18px]">
+          <span className="min-w-0">
+            <span className="block font-[600] truncate">{accepted.label}</span>
+            <span className="block text-[#BFD6B0]">{accepted.list && accepted.list > accepted.price ? `${money(accepted.list - accepted.price)} off list` : "At list price"}</span>
+          </span>
+          <span className={`${DISPLAY} text-[24px] leading-[28px]`}>{money(accepted.price)}</span>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-[4px]">
+          <span className="px-[2px] text-[11.5px] font-[600] uppercase tracking-[0.06em] text-[#FFFCF180]">Your clinic agent countered</span>
+          {offers.map((m) => (
+            <div key={m.id} className="flex items-center justify-between gap-[10px] p-[8px_12px] rounded-[14px] bg-[#FFFCF10F] text-[13px] leading-[17px]">
+              <span className="min-w-0">
+                <span className="block font-[600] truncate">{m.offer!.label}</span>
+                {m.offer!.list && m.offer!.list > m.offer!.price && <span className="block text-[#FFFCF199] line-through">{money(m.offer!.list)}</span>}
+              </span>
+              <span className="shrink-0 text-[16px] font-[700]">{money(m.offer!.price)}</span>
+            </div>
+          ))}
+        </div>
+      );
+    actions = (
+      <>
+        <button type="button" onClick={onWatch} className={primary}>
+          Watch Live
+        </button>
+        <button type="button" onClick={onDismiss} className={quiet}>
+          Dismiss
         </button>
       </>
     );
@@ -474,7 +523,7 @@ function FileGlyph() {
 
 /* ——— Live view ——— */
 
-type Screen = "gate" | "services" | "calendar" | "chat" | "forms" | "booking";
+type Screen = "gate" | "services" | "calendar" | "chat" | "negotiate" | "forms" | "booking";
 type Step = { key: string; at: string; screen: Screen; title: string; detail?: string; actor: "agent" | "clinic"; ms: number; ev?: Ev };
 
 const SCREEN_OF: Record<string, Screen> = {
@@ -484,9 +533,10 @@ const SCREEN_OF: Record<string, Screen> = {
   hold_released: "calendar",
   message_sent: "chat",
   clinic_message: "chat",
-  offer_made: "chat",
-  offer_accepted: "chat",
-  offer_declined: "chat",
+  negotiation_proposed: "negotiate",
+  offer_made: "negotiate",
+  offer_accepted: "negotiate",
+  offer_declined: "negotiate",
   intake_updated: "forms",
   assessment_completed: "forms",
   signature_recorded: "forms",
@@ -504,7 +554,8 @@ const TITLE_OF: Record<string, string> = {
   hold_released: "Released the hold",
   message_sent: "Messaged the clinic",
   clinic_message: "Clinic staff replied",
-  offer_made: "Clinic made an offer",
+  negotiation_proposed: "Proposed a price",
+  offer_made: "Clinic agent countered",
   offer_accepted: "Accepted the offer",
   offer_declined: "Declined the offer",
   intake_updated: "Filled the intake",
@@ -868,6 +919,57 @@ function Mirror({ s, step, steps, availability, onAct }: { s: Session; step: Ste
             Holding {target} · 10:00
           </div>
         )}
+      </div>
+    );
+  }
+
+  if (step.screen === "negotiate") {
+    const upTo = Date.parse(step.at) + 1500;
+    const msgs = s.threads.negotiate.filter((m) => m.from !== "system" && Date.parse(m.at) <= upTo).slice(-5);
+    const accepting = step.ev?.type === "offer_accepted" && active;
+    /** Offer status as of this step: later accepts and declines haven't happened yet in a replay. */
+    const statusAt = (m: (typeof msgs)[number]) => {
+      if (!m.offer) return null;
+      const decided = steps.some((x) => (x.ev?.type === "offer_accepted" || x.ev?.type === "offer_declined") && x.ev.summary.includes(money(m.offer!.price)) && x.ev.summary.includes(m.offer!.label));
+      /** A new proposal replaces offers still open, so they read as declined from then on. */
+      const replaced = m.offer.status === "declined" && steps.some((x) => (x.ev?.type === "negotiation_proposed" || x.ev?.type === "offer_accepted") && Date.parse(x.at) > Date.parse(m.at));
+      const later = decided || replaced;
+      return m.offer.status === "open" || later ? m.offer.status : "open";
+    };
+    return (
+      <div>
+        {heading("Pricing & Bundles", `Negotiating for ${s.userName} · private pay`)}
+        <div className="flex flex-col gap-[8px]">
+          {msgs.map((m, i) => {
+            const st = statusAt(m);
+            return (
+              <div key={m.id} className={`doe-menu-in flex flex-col max-w-[92%] gap-[3px] ${m.from === "agent" ? "self-end items-end" : "self-start items-start"}`} style={{ animationDelay: `${i * 140}ms`, animationFillMode: "both" }}>
+                <span className="px-[4px] text-[11px] font-[600] text-[#28191073]">{m.from === "agent" ? s.agentName : m.by === "staff" ? "Clinic staff" : "Clinic agent"}</span>
+                {m.offer ? (
+                  <div className={`relative w-full min-w-[240px] p-[12px_14px] rounded-[18px] rounded-bl-[6px] ${st === "accepted" ? "bg-[#E3E9D9]" : st === "declined" ? "bg-[#F4EEDF] opacity-60" : "bg-[#F4EEDF]"}`}>
+                    <div className="text-[13px] leading-[18px] text-[#281910CC]">{m.text}</div>
+                    <div className="mt-[8px] flex items-end justify-between gap-[10px] p-[10px_12px] rounded-[14px] bg-[#FFFCF1]">
+                      <span className="min-w-0">
+                        <span className="block text-[13px] font-[600]">{m.offer.label}</span>
+                        {m.offer.list && m.offer.list > m.offer.price && (
+                          <span className="flex items-center gap-[6px] text-[12px]">
+                            <span className="line-through text-[#28191080]">{money(m.offer.list)}</span>
+                            <span className="h-[20px] px-[7px] flex items-center rounded-full bg-[#FCCFB8] text-[11px] font-[700]">Save {money(m.offer.list - m.offer.price)}</span>
+                          </span>
+                        )}
+                      </span>
+                      <span className={`${DISPLAY} shrink-0 text-[24px] leading-[28px]`}>{money(m.offer.price)}</span>
+                    </div>
+                    <div className="mt-[6px] text-[11.5px] font-[700] uppercase tracking-[0.06em] text-[#2819109E]">{st === "accepted" ? "✓ Accepted" : st === "declined" ? "Declined" : "Open offer"}</div>
+                    {accepting && st === "accepted" && <Pointer delay={200} />}
+                  </div>
+                ) : (
+                  <span className={`px-[14px] py-[9px] rounded-[18px] text-[13.5px] leading-[19px] ${m.from === "agent" ? "bg-[#3A2516] text-[#FFFCF1] rounded-br-[6px]" : "bg-[#F4EEDF] rounded-bl-[6px]"}`}>{m.text}</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }

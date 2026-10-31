@@ -42,7 +42,23 @@ James's details, the clinic, Dr. Brooks and Harbour Mutual are all fictional.
 
 (Instinct gets all of this from `doe_clinic_info`: `provider_profiles` and `insurance_plans`.)
 
+**James:** Yes, but see if you can get the price down.
+
+*Instinct negotiates over MCP with `doe_negotiate`: $1,200 for Botox alone.*
+
+> **Clinic sees:** "Instinct is negotiating · asked $1,200 for Botox for chronic migraine", and under it the clinic agent's two counters: $1,335 for Botox alone, or $1,540 for Botox + consultation + follow-up (list $1,975). The live view shows the offers as cards, with the savings.
+
+**Instinct:**
+> They won't go below $1,335 for Botox alone. But your first Botox needs a $350 consultation anyway, so it's really $1,800. If you add the consultation and a follow-up, they'll do all three for $1,540 (list $1,975). Want me to try $1,500 for the three?
+
 **James:** Yes.
+
+*Instinct proposes $1,500 for the package. The clinic agent meets in the middle at $1,520 ($455 off list), and Instinct accepts with `doe_respond_offer`.*
+
+> **Clinic sees:** a new counter of $1,520, then "Instinct took the deal: $1,520 for Botox + consultation + follow-up, $455 off list".
+
+**Instinct:**
+> Done: $1,520 for Botox, the consultation and a follow-up, instead of $1,975. I'm holding Friday Nov 6 at 12:15 with Dr. Brooks.
 
 > **Clinic sees:** the calendar opens in the live view and the 12:15 pm Friday slot is held.
 
@@ -62,4 +78,4 @@ James's details, the clinic, Dr. Brooks and Harbour Mutual are all fictional.
 
 *Instinct requests the booking, confirming with James again that he's providing his PHI through Doe.*
 
-> **Clinic sees:** "Appointment requested": Fri Nov 6, 12:15 pm with Dr. Sarah Brooks, Botox for chronic migraine, $1,377. Approve right on the card (or in the live view). Instinct sees the confirmation on its next check.
+> **Clinic sees:** "Appointment requested": Fri Nov 6, 12:15 pm with Dr. Sarah Brooks, Botox + consultation + follow-up, $1,520. Approve right on the card (or in the live view). Instinct sees the confirmation on its next check.

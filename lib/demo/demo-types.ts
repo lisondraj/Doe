@@ -5,9 +5,19 @@
 
 export type DemoChannel = "browser" | "api" | "mcp";
 export type DemoThreadId = "concierge" | "negotiate" | "forms";
-export type DemoPlan = { kind: "service" | "bundle"; id: string };
+/** package: a service plus add-on services, priced together in a negotiation; id is service ids joined by "+". */
+export type DemoPlan = { kind: "service" | "bundle" | "package"; id: string };
 
-export type DemoOfferTerms = { price: number; label: string; planKey: string; status: "open" | "accepted" | "declined" };
+export type DemoOfferTerms = {
+  price: number;
+  label: string;
+  planKey: string;
+  status: "open" | "accepted" | "declined";
+  /** List price of what's offered, to show the saving. */
+  list?: number;
+  /** Services in a package offer. */
+  includes?: string[];
+};
 
 export type DemoMessage = {
   id: string;

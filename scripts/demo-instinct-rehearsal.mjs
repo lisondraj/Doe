@@ -72,7 +72,15 @@ const STEPS = [
   },
   { pause: 4, say: "Asks about Harbour Mutual", tool: "doe_send_message", args: { thread: "concierge", text: "Does Harbour Mutual cover Botox for migraine here, even partially?" } },
   { pause: 5, say: "Asks about Dr. Brooks", tool: "doe_send_message", args: { thread: "concierge", text: "What's Dr. Brooks' training and experience with Botox for migraine?" } },
-  { pause: 8, say: "James says yes, book Friday Nov 6 at 12:15 with Dr. Brooks", tool: "doe_hold_slot", args: { slot_id: "fri-2" } },
+  { pause: 5, say: "Tries to get Botox down to $1,200", tool: "doe_negotiate", args: { price: 1200, note: "James is paying privately and has partial coverage." } },
+  {
+    pause: 6,
+    say: "James is fine adding the consultation and a follow-up; Instinct offers $1,500 for all three",
+    tool: "doe_negotiate",
+    args: { price: 1500, add_ons: ["consult", "followup"] },
+  },
+  { pause: 5, say: "James says take it; Instinct accepts the counter", tool: "doe_respond_offer", args: (last) => ({ message_id: last.offers[0].message_id, accept: true }) },
+  { pause: 6, say: "James says yes, book Friday Nov 6 at 12:15 with Dr. Brooks", tool: "doe_hold_slot", args: { slot_id: "fri-2" } },
   { pause: 4, say: "Fills the intake", tool: "doe_update_intake", args: { fields: JAMES.intake } },
   { pause: 3, say: "ID-Migraine", tool: "doe_answer_assessment", args: { assessment_id: "idm", answers: { nausea: 1, light: 1, limit: 1 } } },
   { pause: 3, say: "MIDAS", tool: "doe_answer_assessment", args: { assessment_id: "midas", answers: { q1: 3, q2: 6, q3: 4, q4: 5, q5: 4, a: 14, b: 7 } } },
@@ -96,17 +104,21 @@ const sleep = (s) => new Promise((r) => setTimeout(r, (fast ? Math.min(s, 1.2) :
 const init = await rpc("initialize", { protocolVersion: "2025-06-18", clientInfo: { name: "instinct-rehearsal", version: "1" }, capabilities: {} });
 console.log(`Connected to ${init.serverInfo.title} at ${MCP}\n`);
 let token = null;
+let last = {};
 for (const step of STEPS) {
   await sleep(step.pause);
-  const out = await rpc("tools/call", { name: step.tool, arguments: { ...step.args, ...(token && step.tool !== "doe_connect" && step.tool !== "doe_clinic_info" ? { session_token: token } : {}) } });
+  const stepArgs = typeof step.args === "function" ? step.args(last) : step.args;
+  const out = await rpc("tools/call", { name: step.tool, arguments: { ...stepArgs, ...(token && step.tool !== "doe_connect" && step.tool !== "doe_clinic_info" ? { session_token: token } : {}) } });
   const data = out.structuredContent ?? {};
   if (out.isError) {
     console.error(`✗ ${step.say}: ${out.content?.[0]?.text}`);
     process.exit(1);
   }
   if (step.tool === "doe_connect") token = data.token;
-  const reply = data.result?.reply?.text;
-  console.log(`✓ ${step.say}${reply ? `\n    clinic: ${reply}` : ""}`);
+  last = data.result ?? {};
+  const reply = data.result?.reply?.text ?? (typeof data.result?.reply === "string" ? data.result.reply : null);
+  const offers = data.result?.offers?.map((o) => `${o.label}: $${o.price.toLocaleString("en-CA")}`).join(" | ");
+  console.log(`✓ ${step.say}${reply ? `\n    clinic: ${reply}` : ""}${offers ? `\n    offers: ${offers}` : ""}`);
   if (until && step.mark === until) break;
 }
 console.log("\nDone. Approve the request from the notification in /demo/clinic.");

@@ -7,7 +7,7 @@ import { ASSESSMENTS, isComplete } from "@/lib/demo/demo-assessments";
 import { DemoError } from "@/lib/demo/demo-error";
 import { checkMessage } from "@/lib/demo/demo-guard";
 import { BUNDLES, CLINIC, COMMS, DAYS, INTAKE_FIELDS, SERVICES, money } from "@/lib/demo/demo-clinic";
-import { conciergeReply, formsReply, negotiateReply } from "@/lib/demo/demo-replies";
+import { SUGGESTED_ADD_ONS, conciergeReply, formsReply, negotiateDeal, negotiateReply } from "@/lib/demo/demo-replies";
 import type {
   DemoAnalytics,
   DemoChannel,
@@ -59,6 +59,12 @@ export const THREADS: { id: DemoThreadId; title: string }[] = [
 export const planKey = (p: DemoPlan) => `${p.kind}:${p.id}`;
 
 export function planInfo(p: DemoPlan): { label: string; price: number } | null {
+  if (p.kind === "package") {
+    const items = p.id.split("+").map((id) => SERVICES.find((s) => s.id === id));
+    if (!items.length || items.some((x) => !x)) return null;
+    const [main, ...rest] = items as (typeof SERVICES)[number][];
+    return { label: `${main!.name} + ${rest.map((x) => x.name.replace(/ visit$/, "")).join(" + ")}`, price: items.reduce((n, x) => n + x!.price, 0) };
+  }
   const item = p.kind === "service" ? SERVICES.find((s) => s.id === p.id) : BUNDLES.find((b) => b.id === p.id);
   return item ? { label: item.name, price: item.price } : null;
 }
@@ -247,6 +253,7 @@ export type AgentAction =
   | { type: "request_booking"; phi_confirmed: boolean }
   | { type: "set_comms"; id: string; on: boolean }
   | { type: "set_consent"; id: "connected" | "network"; on: boolean }
+  | { type: "negotiate"; price: number; add_ons?: string[]; note?: string }
   | { type: "upload_form"; title: string; file_name?: string; mime_type?: string; text?: string; content_base64?: string };
 
 export const AGENT_ACTIONS = [
@@ -263,6 +270,7 @@ export const AGENT_ACTIONS = [
   "set_comms",
   "set_consent",
   "upload_form",
+  "negotiate",
 ] as const;
 
 type Ctx = { config: DemoConfig; slots: DemoSlots; now: Date; channel: DemoChannel | "clinic" };
@@ -377,7 +385,7 @@ export function applyAgentAction(input: DemoSession, action: AgentAction, ctx: C
         s.plan = { kind, id: pid };
         post(s, "negotiate", { from: "agent", text: `Accepted ${money(offer.price)} for ${offer.label} on behalf of ${s.userName}.`, at });
         post(s, "negotiate", { from: "clinic", by: "clinic-agent", text: "Locked in for 48 hours. It shows on the booking.", at });
-        event(s, "agent", ch, "offer_accepted", `Accepted ${money(offer.price)} for ${offer.label}`, at);
+        event(s, "agent", ch, "offer_accepted", `Accepted ${money(offer.price)} for ${offer.label}${offer.list && offer.list > offer.price ? `, ${money(offer.list - offer.price)} off list` : ""}`, at);
       } else {
         post(s, "negotiate", { from: "agent", text: `Declined ${money(offer.price)} for ${offer.label}.`, at });
         event(s, "agent", ch, "offer_declined", `Declined ${money(offer.price)} for ${offer.label}`, at);
@@ -480,6 +488,42 @@ export function applyAgentAction(input: DemoSession, action: AgentAction, ctx: C
       s.consent = { ...s.consent, [action.id]: action.on === true };
       event(s, "agent", ch, "consent_updated", `${action.id === "connected" ? "Stay connected" : "Doe network"} ${action.on ? "on" : "off"}`, at);
       result = { consent: s.consent };
+      break;
+    }
+    case "negotiate": {
+      if (locked) throw new DemoError(409, "A booking is already requested; the price can't change.");
+      const asked = Math.round(Number(action.price));
+      if (!Number.isFinite(asked) || asked < 50 || asked > 50000) throw new DemoError(400, "price must be a number of dollars between 50 and 50,000.");
+      /** The main service: the plan's, or its first service when the plan is already a package. */
+      const mainId = s.plan.kind === "package" ? s.plan.id.split("+")[0]! : s.plan.kind === "service" ? s.plan.id : "botox";
+      const main = SERVICES.find((x) => x.id === mainId)!;
+      const raw = Array.isArray(action.add_ons) ? action.add_ons : [];
+      const ids = Array.from(new Set(raw.map(String))).filter((id) => id !== main.id);
+      if (ids.length > 4) throw new DemoError(400, "Up to 4 add_ons.");
+      const addOns = ids.map((id) => {
+        const x = SERVICES.find((y) => y.id === id);
+        if (!x) throw new DemoError(400, `Unknown add-on ${id}. Use service ids: ${SERVICES.map((y) => y.id).join(", ")}.`);
+        if (ctx.config.bookable[id] === false) throw new DemoError(409, `${x.name} isn't bookable by agents.`);
+        return x;
+      });
+      const suggest = SUGGESTED_ADD_ONS.map((id) => SERVICES.find((x) => x.id === id)!).filter((x) => x.id !== main.id);
+      const note = typeof action.note === "string" && action.note.trim() ? ` ${action.note.trim().slice(0, 300)}` : "";
+      if (note) checkMessage(note);
+      const what = addOns.length ? `${main.name} with ${addOns.map((x) => x.name.toLowerCase()).join(" and ")}` : main.name;
+      post(s, "negotiate", { from: "agent", text: `${s.userName} would like ${what} for ${money(asked)}.${note}`, at });
+      event(s, "agent", ch, "negotiation_proposed", `Proposed ${money(asked)} for ${what}`, at);
+      const r = negotiateDeal({ asked, label: main.name, list: main.price, floorPct: ctx.config.floorPct, addOns, suggest });
+      /** New offers replace any still open. */
+      s.threads = { ...s.threads, negotiate: s.threads.negotiate.map((m) => (m.offer?.status === "open" ? { ...m, offer: { ...m.offer, status: "declined" as const } } : m)) };
+      const offers = r.offers.map((o) => {
+        const items = o.package ? [main, ...(addOns.length ? addOns : suggest)] : [main];
+        const plan: DemoPlan = o.package ? { kind: "package", id: items.map((x) => x.id).join("+") } : { kind: "service", id: main.id };
+        const info = planInfo(plan)!;
+        return { price: o.price, label: info.label, planKey: planKey(plan), status: "open" as const, list: info.price, includes: items.map((x) => x.name) };
+      });
+      const replies = offers.map((offer, i) => post(s, "negotiate", { from: "clinic", by: "clinic-agent", text: i === 0 ? r.text : `Package: ${offer.includes.join(" + ")}.`, offer, at }));
+      for (const o of offers) event(s, "clinic", "clinic", "offer_made", `Clinic agent offered ${money(o.price)} for ${o.label}${o.list > o.price ? ` (list ${money(o.list)})` : ""}`, at);
+      result = { proposed: { price: asked, for: what }, reply: r.text, offers: replies.map((m) => ({ message_id: m.id, ...m.offer })) };
       break;
     }
     case "upload_form": {
