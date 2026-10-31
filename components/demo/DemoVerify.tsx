@@ -6,7 +6,7 @@
  * (a WebAuthn platform check: Face ID on iPhone, Touch ID on a Mac). Then: "Thank you, your agent will continue from
  * here", and a button back to Messages.
  */
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DISPLAY, DemoFrame } from "@/components/demo/DemoFrame";
 
@@ -58,11 +58,12 @@ async function shrink(file: File): Promise<Attached> {
   }
 }
 
-/** Face ID: a platform credential with user verification for the server's challenge. Null when the device has none. */
+/**
+ * Face ID: a platform credential with user verification for the server's challenge. iOS Safari only shows Face ID
+ * when this runs straight from the tap, so nothing may be awaited before navigator.credentials.create: whether the
+ * device has Face ID is checked when the page loads (useFaceIdSupport), not here.
+ */
 async function faceId(challenge: string, userName: string) {
-  if (typeof window === "undefined" || !window.PublicKeyCredential) return null;
-  const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(() => false);
-  if (!available) return null;
   const cred = (await navigator.credentials.create({
     publicKey: {
       challenge: fromB64url(challenge),
@@ -81,6 +82,30 @@ async function faceId(challenge: string, userName: string) {
   const res = cred.response as AuthenticatorAttestationResponse;
   const authData = typeof res.getAuthenticatorData === "function" ? b64url(res.getAuthenticatorData()) : undefined;
   return { clientDataJSON: b64url(res.clientDataJSON), authenticatorData: authData };
+}
+
+/** Whether this browser can do Face ID (or Touch ID): yes, no, or still checking. In-app browsers often can't. */
+function useFaceIdSupport() {
+  const [support, setSupport] = useState<"checking" | "yes" | "no">("checking");
+  useEffect(() => {
+    if (!window.PublicKeyCredential || !window.isSecureContext) return setSupport("no");
+    PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+      .then((ok) => setSupport(ok ? "yes" : "no"))
+      .catch(() => setSupport("no"));
+  }, []);
+  return support;
+}
+
+/** The demo's sample licence (public/demo/sample-licence.jpg), attached in one tap. */
+async function demoLicence(): Promise<Attached> {
+  const blob = await (await fetch("/demo/sample-licence.jpg", { cache: "force-cache" })).blob();
+  const dataUrl = await new Promise<string>((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result));
+    r.onerror = rej;
+    r.readAsDataURL(blob);
+  });
+  return { dataUrl, fileName: "drivers-licence-demo.jpg", size: blob.size, preview: dataUrl };
 }
 
 function FaceIdGlyph({ size = 22 }: { size?: number }) {
@@ -130,6 +155,8 @@ export function DemoVerify({ token, state }: { token: string; state: State }) {
   const [skipFace, setSkipFace] = useState(false);
   const [done, setDone] = useState("done" in state && state.done);
   const input = useRef<HTMLInputElement>(null);
+  const support = useFaceIdSupport();
+  const useFace = support === "yes" && !skipFace;
 
   if ("error" in state) {
     return (
@@ -154,14 +181,22 @@ export function DemoVerify({ token, state }: { token: string; state: State }) {
     setError(null);
     if (!dob) return setError("Enter your date of birth.");
     if (!file) return setError("Attach a photo of your driver's licence.");
-    let webauthn: Awaited<ReturnType<typeof faceId>> = null;
-    if (!skipFace) {
+    let webauthn: Awaited<ReturnType<typeof faceId>> | null = null;
+    if (useFace) {
       setBusy("faceid");
       try {
+        /** First await in the tap handler, so Safari treats it as the user's own action and shows Face ID. */
         webauthn = await faceId(s.challenge, s.userName);
-      } catch {
+      } catch (e) {
         setBusy(null);
-        return setError("Face ID didn't finish. Tap Confirm to try again.");
+        const name = e instanceof DOMException ? e.name : "";
+        return setError(
+          name === "NotAllowedError"
+            ? "Face ID was cancelled or timed out. Tap Submit with Face ID to try again."
+            : name === "SecurityError"
+              ? "Face ID isn't allowed on this page. Open the link in Safari and try again."
+              : "Face ID didn't finish. Tap Submit with Face ID to try again.",
+        );
       }
     }
     setBusy("send");
@@ -210,7 +245,28 @@ export function DemoVerify({ token, state }: { token: string; state: State }) {
             />
           </label>
           <div className="flex flex-col gap-[10px] p-[14px_16px] rounded-[19px] bg-[#FFFCF1]">
-            <span className={label}>Driver&apos;s Licence</span>
+            <span className="flex items-center justify-between gap-[8px]">
+              <span className={label}>Driver&apos;s Licence</span>
+              {!file && (
+                <button
+                  type="button"
+                  disabled={Boolean(busy)}
+                  onClick={async () => {
+                    setBusy("photo");
+                    setError(null);
+                    try {
+                      setFile(await demoLicence());
+                    } catch {
+                      setError("Couldn't load the demo licence. Try again.");
+                    }
+                    setBusy(null);
+                  }}
+                  className="h-[30px] px-[12px] rounded-full bg-[#F4EEDF] text-[12.5px] font-[600] disabled:opacity-50"
+                >
+                  Use Demo Licence
+                </button>
+              )}
+            </span>
             {file ? (
               <div className="flex items-center gap-[12px]">
                 {file.preview ? (
@@ -279,12 +335,17 @@ export function DemoVerify({ token, state }: { token: string; state: State }) {
           onClick={() => void submit()}
           className="h-[58px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#3A2516] text-[#FFFCF1] text-[16px] font-[700] disabled:opacity-60 enabled:active:scale-[0.99] transition-transform"
         >
-          {!skipFace && <FaceIdGlyph />}
-          {busy === "faceid" ? "Waiting for Face ID…" : busy === "send" ? "Sending…" : skipFace ? "Submit" : "Submit with Face ID"}
+          {useFace && <FaceIdGlyph />}
+          {busy === "faceid" ? "Waiting for Face ID…" : busy === "send" ? "Sending…" : useFace ? "Submit with Face ID" : "Submit"}
         </button>
-        {error?.startsWith("Face ID") && !skipFace && (
+        {support === "no" && (
+          <p className="px-[6px] text-[12.5px] leading-[18px] text-[#B4532F]">
+            Face ID isn&apos;t available in this browser. For Face ID, open this link in Safari (tap ⋯ or the share button, then Open in Safari). You can still submit here.
+          </p>
+        )}
+        {error && /Face ID/.test(error) && useFace && (
           <button type="button" onClick={() => setSkipFace(true)} className="self-center text-[13px] font-[500] text-[#2819109E] underline underline-offset-2">
-            My device doesn&apos;t have Face ID
+            Continue without Face ID
           </button>
         )}
 
