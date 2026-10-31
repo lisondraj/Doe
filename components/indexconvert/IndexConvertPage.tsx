@@ -1109,33 +1109,32 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
         </div>
       </div>
     );
-  const nodes = [
-    { label: "Muse", x: 8, y: 8, w: 52 },
-    { label: "Instinct", x: 172, y: 8, w: 60 },
-    { label: "Claude Duet", x: 4, y: 66, w: 82 },
-    { label: "GPT Dots", x: 156, y: 66, w: 72 },
-  ];
+  // Step 5: the personal agents' own icons, each with a small check, over the booking they make.
   return (
-    <div className={tile}>
-      <svg {...svgProps}>
-        {nodes.map((nd) => (
-          <line key={nd.label} x1="120" y1="48" x2={nd.x + nd.w / 2} y2={nd.y + 11} stroke="#28191033" strokeWidth="1.5" strokeDasharray="3 4" />
+    <div className={`${tile} flex-col gap-[12px] px-[12px]`}>
+      <div className="flex items-center justify-center gap-[8px]">
+        {AGENT_APPS.map((a) => (
+          <span key={a.name} className="relative shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={a.icon}
+              alt={a.name}
+              width={36}
+              height={36}
+              draggable={false}
+              className={`block w-[36px] h-[36px] rounded-[10px] object-cover select-none ${a.light ? "ring-1 ring-[#2819101A]" : ""}`}
+            />
+            <span className="absolute -right-[4px] -bottom-[4px] rounded-[6px] ring-2 ring-[#F4EEDF]">
+              <Check on size={14} />
+            </span>
+          </span>
         ))}
-        {nodes.map((nd) => (
-          <g key={nd.label}>
-            <rect x={nd.x} y={nd.y} width={nd.w} height="22" rx="11" fill="#FFFCF1" />
-            <text x={nd.x + nd.w / 2} y={nd.y + 15} fontSize="10.5" fontWeight="600" textAnchor="middle" fill="#281910">
-              {nd.label}
-            </text>
-          </g>
-        ))}
-        <circle cx="120" cy="48" r="20" fill="#FFFCF1" />
-        {[0, 1, 2, 3, 4, 5].map((i) => {
-          const a = (i / 6) * Math.PI * 2;
-          return <circle key={i} cx={120 + Math.cos(a) * 9} cy={48 + Math.sin(a) * 9} r="2.4" fill="#C2A987" />;
-        })}
-        <circle cx="120" cy="48" r="3" fill="#B99A72" />
-      </svg>
+      </div>
+      <div className="flex items-center gap-[8px] h-[32px] pl-[6px] pr-[14px] rounded-full bg-[#FFFCF1]">
+        <IndexConvertSphere size={22} className="shrink-0" />
+        <span className="text-[12.5px] font-[600] whitespace-nowrap">Consult booked</span>
+        <span className={`text-[12.5px] whitespace-nowrap ${MUTED}`}>Tue 10:30</span>
+      </div>
     </div>
   );
 }
