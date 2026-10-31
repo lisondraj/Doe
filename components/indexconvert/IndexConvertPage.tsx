@@ -701,6 +701,8 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   const [active, setActive] = useState<string>(NAV[0].id);
   /** Desktop puts the claim box in a sticky right column; narrower screens put it under the status panel. */
   const [wide, setWide] = useState(false);
+  /** iPhone sets the clinic's box slim, as a band along the bottom of the first screen. */
+  const [phone, setPhone] = useState(false);
   const [modal, setModal] = useState<ClaimReason | null>(null);
   const [modalShown, setModalShown] = useState(false);
   const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
@@ -709,6 +711,14 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   useEffect(() => {
     const query = window.matchMedia("(min-width: 1024px)");
     const update = () => setWide(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 767px)");
+    const update = () => setPhone(query.matches);
     update();
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
@@ -877,16 +887,18 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
           </div>
           ) : (
             <div className="ic-rise flex flex-col gap-[10px]">
-              {/* iPhone: the title, the clinic's box, the switch and the button fill the first screen, the rest peeks in below. */}
+              {/* iPhone: the first screen is the title up top, settings and files with the switch and the button in the
+                  middle, and the clinic's name in a slim box along the bottom; the rest peeks in below. */}
               <div className="flex flex-col gap-[10px] max-md:min-h-[calc(100svh-148px)]">
-                <h2 className={`${DISPLAY} px-[4px] pt-[2px] text-left text-[clamp(27px,8.2vw,34px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
+                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:pt-[22px] max-md:pb-[18px] text-left text-[clamp(27px,8.2vw,34px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
                   We&apos;ve made your clinic
                   <br /> more discoverable
                   <br /> to personal agents.
                 </h2>
-                <Hero className="max-md:grow" innerClassName="max-md:py-[24px]" />
+                <Hero className="max-md:order-4 max-md:mt-[8px]" compact={phone} nameOnly={phone} />
+                <SetupFiles className="md:hidden order-2 mt-auto" />
                 {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
-                <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[136px] md:scroll-mt-[88px]">
+                <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="max-md:order-3 max-md:mt-[6px] max-md:mb-auto scroll-mt-[136px] md:scroll-mt-[88px]">
                   <StatusPanel
                     activateRef={activateRef}
                     claimed={claim.claimed}
@@ -899,7 +911,6 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
                   We&apos;ve built {CLINIC.name}&apos;s agentic pages, so personal agents can find, read and book you. Claim your page to switch them on.
                 </p>
               )}
-              <SetupFiles className="md:hidden" />
               <AboutDoe />
             </div>
           )}
@@ -952,7 +963,20 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 /* ------------------------------------------------------------------ Status */
 
 /** The clinic as a small hero: sphere, name, what it is, where, its site. Centred on iPhone, a row from tablet up. */
-function Hero({ action, compact = false, className = "", innerClassName = "" }: { action?: ReactNode; compact?: boolean; className?: string; innerClassName?: string }) {
+function Hero({
+  action,
+  compact = false,
+  nameOnly = false,
+  className = "",
+  innerClassName = "",
+}: {
+  action?: ReactNode;
+  compact?: boolean;
+  /** Just the sphere and the clinic's name, for the slim band on iPhone. */
+  nameOnly?: boolean;
+  className?: string;
+  innerClassName?: string;
+}) {
   return (
     <div className={`flex flex-col rounded-[26px] bg-[#F4EEDF] p-[6px] shrink-0 ${className}`}>
       <div className={`grow flex flex-col justify-center ${compact ? "rounded-[21px] bg-[#FFFCF1] px-[16px] py-[16px] md:px-[22px] md:py-[18px]" : "rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]"} ${innerClassName}`}>
@@ -960,17 +984,21 @@ function Hero({ action, compact = false, className = "", innerClassName = "" }: 
           <IndexConvertSphere size={compact ? 60 : 84} className="shrink-0" />
           <div className="min-w-0">
             <h1 className={`${DISPLAY} tracking-[-0.02em] [text-wrap:balance] ${compact ? "text-[24px] leading-[28px] md:text-[30px] md:leading-[34px]" : "text-[30px] leading-[34px] md:text-[36px] md:leading-[40px]"}`}>{CLINIC.name}</h1>
-            <p className={`mt-[4px] max-w-[32ch] ${SUB} [text-wrap:balance] ${compact ? "text-[13px] leading-[18px]" : "mx-auto md:mx-0 mt-[6px] text-[14.5px] leading-[20px]"}`}>
-              {CLINIC.kind} in {CLINIC.area}, since {CLINIC.since}
-            </p>
-            <a
-              href={`https://${CLINIC.url}`}
-              target="_blank"
-              rel="noreferrer"
-              className={`inline-flex items-center rounded-full bg-[#F4EEDF] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150 ${compact ? "mt-[8px] h-[28px] px-[12px] text-[12.5px]" : "mt-[12px] h-[32px] px-[14px] text-[13px]"}`}
-            >
-              {CLINIC.domain}
-            </a>
+            {!nameOnly && (
+              <>
+                <p className={`mt-[4px] max-w-[32ch] ${SUB} [text-wrap:balance] ${compact ? "text-[13px] leading-[18px]" : "mx-auto md:mx-0 mt-[6px] text-[14.5px] leading-[20px]"}`}>
+                  {CLINIC.kind} in {CLINIC.area}, since {CLINIC.since}
+                </p>
+                <a
+                  href={`https://${CLINIC.url}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`inline-flex items-center rounded-full bg-[#F4EEDF] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150 ${compact ? "mt-[8px] h-[28px] px-[12px] text-[12.5px]" : "mt-[12px] h-[32px] px-[14px] text-[13px]"}`}
+                >
+                  {CLINIC.domain}
+                </a>
+              </>
+            )}
           </div>
         </div>
         {action}
