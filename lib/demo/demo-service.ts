@@ -76,6 +76,8 @@ function verifyOf(s: DemoSession) {
   if (s.identity.status === "verified") return { status: "verified" as const, verified_at: s.identity.verifiedAt, method: s.identity.method };
   return {
     status: "pending" as const,
+    /** When the user last opened the link; null if they haven't yet. */
+    opened_at: s.identity.openedAt ?? null,
     url: s.identity.url,
     message_for_user: `Before I book, please confirm it's you: ${s.identity.url}\nIt takes a few seconds: check your date of birth, add a photo of your driver's licence, and confirm with Face ID. Then come back here.`,
   };
@@ -212,13 +214,24 @@ export async function resetDemo(confirm: unknown) {
 /* ——— Identity check ——— */
 
 /** What /demo/verify/<token> shows: whose check it is, and the WebAuthn challenge. */
-export async function openVerify(token: string) {
+export async function openVerify(token: string, log = true) {
   const rec = await readVerify(token);
   if (!rec) return { error: "missing" as const };
   const s = await readSession(rec.sessionId);
   if (!s?.identity) return { error: "missing" as const };
   if (s.identity.status === "verified") return { done: true as const, userName: s.userName, agentName: s.agentName };
   if (Date.parse(rec.expiresAt) <= Date.now()) return { error: "expired" as const };
+  /** The first open (and again after 5 minutes) goes in the log, so the agent and clinic can tell opened from not. */
+  if (log && (!s.identity.openedAt || Date.now() - Date.parse(s.identity.openedAt) > 5 * 60_000)) {
+    await withLock(LOCK, async () => {
+      const cur = await readSession(rec.sessionId);
+      if (!cur?.identity || cur.identity.status === "verified") return;
+      const at = new Date().toISOString();
+      cur.identity = { ...cur.identity, openedAt: at };
+      cur.events = [...cur.events, { id: `e_ido${Date.now().toString(36)}`, at, actor: "system", channel: cur.channel, type: "identity_opened", summary: `${cur.userName} opened the identity check` }];
+      await writeSession(cur);
+    });
+  }
   return { done: false as const, userName: s.userName, agentName: s.agentName, challenge: rec.challenge, clinic: CLINIC.name };
 }
 
@@ -352,7 +365,7 @@ export const SHARE_SAFEGUARDS = [
 ];
 
 /** The shared copy for /demo/forms/<token>, or why it can't be shown. Logs the view on the session. */
-export async function openShare(token: string) {
+export async function openShare(token: string, log = true) {
   const rec = await readShare(token);
   if (!rec) return { error: "missing" as const };
   if (Date.parse(rec.expiresAt) <= Date.now()) return { error: "expired" as const };
@@ -361,6 +374,10 @@ export async function openShare(token: string) {
     const share = s?.shares?.find((x) => x.id === rec.shareId);
     if (!s || !share) return { error: "missing" as const };
     if (share.revoked) return { error: "revoked" as const };
+    if (!log) {
+      const forms = { ...s.forms, uploads: (s.forms.uploads ?? []).filter((u) => u.by === "agent").map(({ dataUrl: _d, ...u }) => u) };
+      return { session: { userName: s.userName, agentName: s.agentName, forms, booking: { status: s.booking.status, slotId: s.booking.slotId, label: s.booking.label } }, share, scores: scores(s) };
+    }
     const at = new Date().toISOString();
     /** One log line per open, at most every 10 minutes, so reloads don't flood the clinic's log. */
     const quiet = share.lastViewedAt && Date.now() - Date.parse(share.lastViewedAt) < 10 * 60_000;

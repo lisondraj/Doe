@@ -50,3 +50,7 @@ export function originOf(request: Request) {
   const proto = request.headers.get("x-forwarded-proto") ?? (host?.startsWith("localhost") ? "http" : "https");
   return host ? `${proto}://${host}` : new URL(request.url).origin;
 }
+
+/** Link-preview fetchers (iMessage, Slack, WhatsApp…): they get the page, but don't count as the patient opening it. */
+export const isPreviewBot = (ua: string | null) =>
+  /facebookexternalhit|facebot|twitterbot|slackbot|discordbot|whatsapp|telegrambot|linkedinbot|skypeuripreview|embedly|bot\b|crawler|spider|preview/i.test(ua ?? "");

@@ -109,6 +109,9 @@ export async function POST(request: Request) {
   let visitId: string | null = request.headers.get("mcp-session-id");
   for (const m of messages) {
     if (!m?.method || m.id === undefined) continue;
+    /** Calls with a session token are already logged on that session; a new visit would show up as a second agent. */
+    const args = (m.params?.arguments ?? {}) as Record<string, unknown>;
+    if (m.method === "tools/call" && typeof args.session_token === "string" && args.session_token) continue;
     try {
       visitId = await mcpTouch({
         headerId: visitId,

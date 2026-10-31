@@ -73,6 +73,8 @@ export type DemoIdentity = {
   /** The link the agent sends; only the agent sees it. */
   url: string;
   requestedAt: string;
+  /** When the user last opened the link. */
+  openedAt?: string | null;
   verifiedAt: string | null;
   dob: string | null;
   /** face-id: unlocked with a platform authenticator (Face ID, Touch ID, Windows Hello); none: the device had none. */
