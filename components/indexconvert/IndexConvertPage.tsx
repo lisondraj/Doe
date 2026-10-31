@@ -1270,10 +1270,17 @@ function FoundersFilm() {
   }, [playing, film]);
 
   return (
-    <figure
-      className="relative m-0 rounded-[18px] overflow-hidden aspect-[16/9] lg:aspect-[2.3/1] bg-black cursor-pointer"
-      onClick={() => setPlaying(true)}
-    >
+    // The figure is the film's frame in cinema mode; the rounded clip sits inside it, so the hint above can show.
+    <figure className="relative m-0 cursor-pointer" onClick={() => setPlaying(true)}>
+      {/* iPhone, in cinema mode only: a quiet line on the black above the film saying how to leave. It lets taps
+          through, so a tap on it lands on the black and ends cinema like any other. */}
+      <span
+        aria-hidden="true"
+        className="md:hidden pointer-events-none absolute inset-x-0 bottom-full mb-[18px] text-center text-[11.5px] leading-[14px] font-[600] uppercase tracking-[0.14em] text-[#FFFCF180] opacity-0 transition-opacity duration-500 [[data-cinema]_&]:opacity-100 [[data-cinema]_&]:delay-300"
+      >
+        Tap outside the video to exit
+      </span>
+      <div className="relative rounded-[18px] overflow-hidden aspect-[16/9] lg:aspect-[2.3/1] bg-black">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={FOUNDERS_THUMB} alt="James and Matthew Lisondra, the founders of Doe" draggable={false} className="absolute inset-0 block h-full w-full object-cover select-none" style={{ objectPosition: "50% 32%" }} />
       {playing && (
@@ -1297,6 +1304,7 @@ function FoundersFilm() {
           </span>
         </button>
       )}
+      </div>
     </figure>
   );
 }
@@ -1449,9 +1457,11 @@ function ClaimModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  /** iPhone: "send to a clinic staff" swaps the claim form for one that hands the claim to someone at the clinic. */
+  const [handoff, setHandoff] = useState(false);
   const claimed = claim.claimed;
   /** Opened from an edit icon it says why; from a switch or Activate button it goes straight to the form. */
-  const heading = claimed ? "Confirm Your Email" : reason === "edit" ? "To make edits, claim your page!" : null;
+  const heading = claimed ? "Confirm Your Email" : handoff ? "Send to Clinic Staff" : reason === "edit" ? "To make edits, claim your page!" : null;
   return (
     <div
       role="dialog"
@@ -1484,6 +1494,8 @@ function ClaimModal({
             <div className="text-[17px] leading-[24px] font-[600] [text-wrap:balance]">We sent a link to {claimed}.</div>
             <div className={`mt-[4px] text-[14.5px] leading-[21px] ${SUB} [text-wrap:balance]`}>Confirm it to activate your page.</div>
           </div>
+        ) : handoff ? (
+          <HandoffForm onBack={() => setHandoff(false)} />
         ) : (
           <form onSubmit={onSubmit} className="flex flex-col gap-[8px]">
             <label htmlFor="ic-modal-email" className="sr-only">
@@ -1525,10 +1537,152 @@ function ClaimModal({
                 {claim.error}
               </p>
             )}
+            <button
+              type="button"
+              onClick={() => setHandoff(true)}
+              className="md:hidden mx-auto mt-[8px] px-[12px] py-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.1em] text-[#28191099] hover:text-[#281910] transition-colors duration-150"
+            >
+              Or send to a clinic staff
+              <br />
+              and complete later
+            </button>
           </form>
         )}
       </div>
     </div>
+  );
+}
+
+type HandoffChannel = "phone" | "email";
+
+/**
+ * Hands the claim to someone at the clinic: the sender's email (theirs or the provider's), and the staff member's phone
+ * number or email. Saved with the claim and sent to Doe, who gets it to them.
+ */
+function HandoffForm({ onBack }: { onBack: () => void }) {
+  const [from, setFrom] = useState("");
+  const [channel, setChannel] = useState<HandoffChannel>("phone");
+  const [contact, setContact] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [error, setError] = useState("");
+  const input = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    input.current?.focus({ preventScroll: true });
+  }, []);
+
+  const send = async (e: FormEvent) => {
+    e.preventDefault();
+    if (status === "sending") return;
+    setStatus("sending");
+    setError("");
+    try {
+      const res = await fetch("/api/indexconvert/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: from, clinic: CLINIC.domain, plan: "handoff", staff: { [channel]: contact } }),
+      });
+      if (res.ok) return setStatus("sent");
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      setError(body?.error ?? "Something went wrong. Try again.");
+    } catch {
+      setError("Couldn't reach Doe. Check your connection and try again.");
+    }
+    setStatus("error");
+  };
+
+  if (status === "sent") {
+    return (
+      <div className="rounded-[26px] bg-[#FFFCF1] px-[20px] py-[22px] text-center">
+        <div className="text-[17px] leading-[24px] font-[600] [text-wrap:balance]">Sent. We&apos;ll get it to them.</div>
+        <div className={`mt-[4px] text-[14.5px] leading-[21px] ${SUB} [text-wrap:balance]`}>They can claim and activate the page whenever they&apos;re ready.</div>
+      </div>
+    );
+  }
+
+  const field =
+    "h-[56px] w-full rounded-[20px] bg-[#FFFCF1] px-[18px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#3A2516] transition-colors";
+  return (
+    <form onSubmit={send} className="flex flex-col gap-[8px]">
+      <label htmlFor="ic-handoff-from" className="sr-only">
+        Your email or provider&apos;s email
+      </label>
+      <input
+        ref={input}
+        id="ic-handoff-from"
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        required
+        value={from}
+        onChange={(e) => setFrom(e.target.value)}
+        placeholder="Your email or provider's email"
+        className={field}
+      />
+      {/* Phone number or staff email: one field, its kind picked above it. */}
+      <div className="mt-[6px] grid grid-cols-2 gap-[4px] rounded-[16px] bg-[#EEE6D6] p-[4px]" role="radiogroup" aria-label="Send to clinic staff by">
+        {(
+          [
+            ["phone", "Phone Number"],
+            ["email", "Clinic Staff Email"],
+          ] as const
+        ).map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            role="radio"
+            aria-checked={channel === key}
+            onClick={() => {
+              setChannel(key);
+              setContact("");
+            }}
+            className={`h-[38px] rounded-[12px] text-[13px] font-[600] transition-colors duration-150 ${channel === key ? "bg-[#FFFCF1] text-[#281910] shadow-[0_1px_3px_rgba(40,25,16,0.12)]" : "text-[#281910A6]"}`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      <label htmlFor="ic-handoff-contact" className="sr-only">
+        {channel === "phone" ? "Clinic staff phone number" : "Clinic staff email"}
+      </label>
+      <input
+        key={channel}
+        id="ic-handoff-contact"
+        type={channel === "phone" ? "tel" : "email"}
+        inputMode={channel === "phone" ? "tel" : "email"}
+        autoComplete="off"
+        required
+        value={contact}
+        onChange={(e) => setContact(e.target.value)}
+        placeholder={channel === "phone" ? "Phone number" : "staff@clinic.com"}
+        className={field}
+      />
+      <button
+        type="submit"
+        disabled={status === "sending"}
+        className="w-full h-[58px] flex items-center justify-center gap-[10px] rounded-[20px] bg-[#3A2516] text-[15px] font-[700] text-[#FFFCF1] hover:bg-[#4A3121] disabled:opacity-70 transition-colors duration-150"
+      >
+        {status === "sending" ? (
+          <>
+            <Spinner size={16} light />
+            Sending
+          </>
+        ) : (
+          "Send"
+        )}
+      </button>
+      {status === "error" && (
+        <p role="alert" className="px-[10px] text-[12.5px] leading-[17px] font-[600] text-[#B4532F]">
+          {error}
+        </p>
+      )}
+      <button
+        type="button"
+        onClick={onBack}
+        className="mx-auto mt-[8px] px-[12px] py-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.1em] text-[#28191099] hover:text-[#281910] transition-colors duration-150"
+      >
+        Or claim it yourself now
+      </button>
+    </form>
   );
 }
 
