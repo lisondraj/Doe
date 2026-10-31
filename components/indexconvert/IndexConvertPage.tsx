@@ -662,7 +662,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   const [claim, setClaim] = useState<Claim>({ email: "", status: "idle", error: "", claimed: null, plan: null, planSending: null });
 
   useEffect(() => {
-    const query = window.matchMedia("(min-width: 1280px)");
+    const query = window.matchMedia("(min-width: 1024px)");
     const update = () => setWide(query.matches);
     update();
     query.addEventListener("change", update);
@@ -810,10 +810,11 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         </div>
       </nav>
 
-      {/* Desktop: equal side columns keep the centre column centred; each side fades in on its cue (leftOn, rightOn). */}
-      <div className="md:grid md:grid-cols-[200px_minmax(0,1fr)] xl:grid-cols-[300px_minmax(0,1fr)_300px] md:gap-[28px] md:px-[32px] max-w-[1480px] mx-auto pb-[96px] xl:pb-[40px]">
+      {/* Desktop: the side columns split the 200px + 340px they had, so the centre column keeps its width and sits
+          centred; each side fades in on its cue (leftOn, rightOn). */}
+      <div className="md:grid md:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[270px_minmax(0,1fr)_270px] md:gap-[28px] md:px-[32px] max-w-[1440px] mx-auto pb-[96px] lg:pb-[40px]">
         <aside
-          className="hidden md:flex flex-col gap-[2px] sticky top-[72px] self-start pt-[8px] xl:max-w-[220px]"
+          className="hidden md:flex flex-col gap-[2px] sticky top-[72px] self-start pt-[8px] lg:max-w-[220px]"
           aria-hidden={wide && !leftOn ? true : undefined}
           style={wide ? revealStyle(leftOn, -12) : undefined}
         >
@@ -881,7 +882,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               {/* iPhone: the first screen fits the viewport: the title, the clinic's box, its settings and files, then the
                   switch and the button at the foot. The rest follows below. */}
               <div className="flex flex-col gap-[10px] max-md:min-h-[calc(100svh-116px)]">
-                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:pt-[8px] max-md:pb-[6px] max-md:[@media(max-height:760px)]:pt-[0px] max-md:[@media(max-height:760px)]:pb-[0px] max-md:[@media(max-height:760px)]:text-[25px] text-left text-[clamp(26px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] xl:text-[clamp(36px,3.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
+                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:pt-[8px] max-md:pb-[6px] max-md:[@media(max-height:760px)]:pt-[0px] max-md:[@media(max-height:760px)]:pb-[0px] max-md:[@media(max-height:760px)]:text-[25px] text-left text-[clamp(26px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
                   We&apos;ve made your clinic
                   <br /> more discoverable
                   <br /> to personal agents.
@@ -926,7 +927,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         onClick={goToClaim}
         tabIndex={!claimed && !claimInView ? 0 : -1}
         aria-hidden={claimed || claimInView}
-        className={`group xl:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(20,12,4,0.25)] text-[12.5px] tracking-[0.04em]`}
+        className={`group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(20,12,4,0.25)] text-[12.5px] tracking-[0.04em]`}
         style={{
           bottom: "calc(max(8px, env(safe-area-inset-bottom)) + 10px)",
           transform: !claimed && !claimInView ? "none" : "translateY(calc(100% + 40px))",
