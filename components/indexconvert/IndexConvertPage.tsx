@@ -435,8 +435,8 @@ function StripedDoe() {
   }, []);
   const top = FS - ink.ascent;
   const h = ink.ascent + ink.descent;
-  /** 24 fine strips from the top of the D down, each thinner than the gap. */
-  const period = ink.ascent / 24;
+  /** 48 fine strips from the top of the D down, each thinner than the gap. */
+  const period = ink.ascent / 48;
   return (
     <svg
       ref={svgRef}
