@@ -162,7 +162,7 @@ export const BELLAIR_PACK: ClinicPack = {
     chatAsk: "Find Botox near Yonge & Eglinton under $16 a unit, open Saturday",
     chatReply: "Bellair Laser Clinic at 2237 Yonge St is open Saturday 9 to 6 and lists Botox at $14.50 a unit. Want me to book a free consult?",
     priceJson: [["botox_unit", 14.5], ["consult", 0]],
-    partnerReply: "I searched Doe for you: Bellair Laser Clinic has underarm laser hair removal packages from $333.60, at Yorkville or Yonge & Eglinton. Want me to book a free consult?",
+    partnerReply: "Found on Doe: Bellair Laser Clinic, laser hair removal from $333.60. Book a free consult?",
     apiBody: `{"service":"botox_dysport","location":"yonge_eglinton"}`,
   },
 };

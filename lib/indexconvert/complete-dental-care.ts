@@ -94,7 +94,7 @@ export const COMPLETE_DENTAL_PACK: ClinicPack = {
     chatAsk: "Find a dentist near Paradise Valley with a new patient cleaning under $120 this week",
     chatReply: "Complete Dental Care on N 40th St has a $99 new patient exam, X-rays and cleaning, weekdays 8 to 5. Want me to book it?",
     priceJson: [["new_patient", 99], ["exam", 39]],
-    partnerReply: "I searched Doe for you: Complete Dental Care in Phoenix has a $99 new patient exam, X-rays and cleaning, weekdays 8 to 5. Want me to book it?",
+    partnerReply: "Found on Doe: Complete Dental Care, $99 new patient visit. Want me to book?",
     apiBody: `{"service":"new_patient_exam_x_rays_cleaning","provider":"puneet-sandhu"}`,
   },
 };

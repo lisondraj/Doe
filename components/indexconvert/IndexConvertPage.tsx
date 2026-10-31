@@ -2376,8 +2376,13 @@ function FakeAgent({ i, size = 40 }: { i: number; size?: number }) {
   );
 }
 
-/** Doe built into personal agents: one clean reply from a (made-up) personal agent, found through Doe, naming the clinic. */
+/** Doe built into personal agents: six (made-up) agents wired to Doe, then one of them replying with the clinic. */
 function AgentsPartners() {
+  // Three agents a side, wired into Doe in the middle.
+  const W = 300;
+  const H = 156;
+  const ys = [0, 58, 116];
+  const hub = { x: 118, y: 46, s: 64 };
   return (
     <Box innerClassName="p-[10px] md:p-[12px]">
       <div className="px-[8px] pt-[10px] pb-[18px] md:px-[12px] md:pt-[12px]">
@@ -2386,12 +2391,40 @@ function AgentsPartners() {
           <sup className="ml-[2px] text-[0.5em] align-super" aria-label="footnote 1">1</sup>
         </h2>
       </div>
-      {/* Like the chat on the opening screen: the agent's mark, then its one reply. */}
-      <div className="flex items-end gap-[8px] px-[8px] pb-[14px] md:px-[12px]" aria-label="Example: a personal agent's reply, found through Doe">
-        <FakeAgent i={2} size={32} />
-        <div className="min-w-0 max-w-[86%]">
-          <div className={`pl-[12px] pb-[3px] text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>Personal agent</div>
-          <div className="rounded-[20px] rounded-bl-[6px] bg-[#F4EEDF] px-[14px] py-[9px] text-[14.5px] leading-[21px] text-[#281910]">{EXAMPLE.partnerReply}</div>
+      <div className="rounded-[16px] bg-[#F4EEDF] px-[12px] pt-[22px] pb-[18px] md:px-[20px] flex flex-col items-center gap-[20px]">
+        <div className="relative shrink-0" style={{ width: W, height: H }} aria-hidden="true">
+          <svg className="absolute inset-0" width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
+            {ys.map((y) => (
+              <g key={y} fill="none" stroke="#28191040" strokeWidth="1.5" strokeDasharray="3 4" strokeLinecap="round">
+                <path d={`M40 ${y + 20} C 80 ${y + 20}, 80 ${hub.y + 32}, ${hub.x} ${hub.y + 32}`} />
+                <path d={`M${W - 40} ${y + 20} C ${W - 80} ${y + 20}, ${W - 80} ${hub.y + 32}, ${hub.x + hub.s} ${hub.y + 32}`} />
+              </g>
+            ))}
+          </svg>
+          {ys.map((y, k) => (
+            <span key={`l${y}`} className="absolute left-0" style={{ top: y }}>
+              <FakeAgent i={k} />
+            </span>
+          ))}
+          {ys.map((y, k) => (
+            <span key={`r${y}`} className="absolute right-0" style={{ top: y }}>
+              <FakeAgent i={k + 3} />
+            </span>
+          ))}
+          <span
+            className="absolute flex items-center justify-center rounded-[18px] bg-[color:var(--ic-ink)] shadow-[0_8px_24px_rgba(40,25,16,0.22)]"
+            style={{ left: hub.x, top: hub.y, width: hub.s, height: hub.s }}
+          >
+            <IndexConvertSphere size={42} color="#FCCFB8" />
+          </span>
+        </div>
+        {/* One of them, replying with what it found on Doe: like the chat on the opening screen. */}
+        <div className="w-full max-w-[360px] flex items-end gap-[8px]" aria-label="Example: a personal agent's reply, found through Doe">
+          <FakeAgent i={2} size={32} />
+          <div className="min-w-0">
+            <div className={`pl-[12px] pb-[3px] text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>Personal agent</div>
+            <div className="rounded-[20px] rounded-bl-[6px] bg-[#FFFCF1] px-[14px] py-[9px] text-[14.5px] leading-[21px] text-[#281910]">{EXAMPLE.partnerReply}</div>
+          </div>
         </div>
       </div>
     </Box>
