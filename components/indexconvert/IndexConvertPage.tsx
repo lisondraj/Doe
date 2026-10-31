@@ -13,6 +13,10 @@ import "@/lib/indexconvert/indexconvert.css";
 import { HalftoneDisc } from "@/components/doehealth-product/DoeHealthProductHalftone";
 import { IndexConvertSphere } from "@/components/indexconvert/IndexConvertSphere";
 import { dmSans, lora } from "@/lib/home/fonts";
+import { startFilm, type FilmStart } from "@/lib/earlypreview/start-film";
+import { useAdaptiveSrc } from "@/lib/earlypreview/use-adaptive-src";
+import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
+import { useFilmCinema } from "@/lib/earlypreview/use-film-cinema";
 import {
   BOOKING,
   CLINIC,
@@ -244,6 +248,9 @@ export function IndexConvertPage() {
         />
       </div>
     ) : null;
+
+  // Cinema mode only once the page is up: the loader and the opening screen are never blacked out.
+  useFilmCinema(scrollRef, { enabled: phase === "done" });
 
   return (
     // The page mounts once the loader has faded, so the two never show through each other.
@@ -1178,21 +1185,74 @@ function LocationMap({ variant, size = 76 }: { variant: number; size?: number })
   );
 }
 
+const FOUNDERS_THUMB = "/earlypreview/thumbs/hero.jpg";
+
+/**
+ * The founders' film (/earlypreview's hero), in the What Is Doe box. Its thumbnail rests until a tap, which plays it with
+ * sound; the page's cinema mode (see useFilmCinema in IndexConvertPage) then blacks out everything around the film.
+ */
+function FoundersFilm() {
+  const film = useEarlyPreviewFilm("hero");
+  const [playing, setPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const startRef = useRef<FilmStart>({ rewound: false });
+  const source = useAdaptiveSrc(videoRef, playing ? film : undefined);
+
+  useEffect(() => {
+    if (playing && film && videoRef.current) startFilm(videoRef.current, startRef.current);
+  }, [playing, film]);
+
+  return (
+    <figure
+      className="relative m-0 rounded-[18px] overflow-hidden aspect-[16/9] lg:aspect-[2.3/1] bg-black cursor-pointer"
+      onClick={() => setPlaying(true)}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={FOUNDERS_THUMB} alt="James and Matthew Lisondra, the founders of Doe" draggable={false} className="absolute inset-0 block h-full w-full object-cover select-none" style={{ objectPosition: "50% 32%" }} />
+      {playing && (
+        <video
+          ref={videoRef}
+          {...source}
+          className="absolute inset-0 h-full w-full object-cover bg-black"
+          playsInline
+          controls
+          preload="auto"
+          aria-label="What Is Doe, video"
+          onLoadedMetadata={() => videoRef.current && startFilm(videoRef.current, startRef.current)}
+        />
+      )}
+      {!playing && (
+        <button type="button" aria-label="Play What Is Doe" className="absolute inset-0 flex items-center justify-center">
+          <span className="w-[64px] h-[64px] rounded-full bg-[#FFFCF1E6] text-[#140C04] flex items-center justify-center shadow-[0_8px_24px_rgba(20,12,4,0.25)]">
+            <svg width="26" height="26" viewBox="1.35 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M7.5 4.8v14.4a.9.9 0 0 0 1.37.77l11.3-7.2a.9.9 0 0 0 0-1.54L8.87 4.03A.9.9 0 0 0 7.5 4.8Z" />
+            </svg>
+          </span>
+        </button>
+      )}
+    </figure>
+  );
+}
+
 /** The founders and why Doe exists: their photo from /earlypreview's film in a rounded box, then the note. */
 function AboutDoe({ intro = false }: { intro?: boolean }) {
   return (
     <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
       <div className="rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px]">
-        <div className="rounded-[18px] overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/earlypreview/thumbs/hero.jpg"
-            alt="James and Matthew Lisondra, the founders of Doe"
-            draggable={false}
-            className={`block w-full aspect-[16/9] object-cover select-none ${intro ? "" : "lg:aspect-[2.3/1]"}`}
-            style={{ objectPosition: "50% 32%" }}
-          />
-        </div>
+        {intro ? (
+          <div className="rounded-[18px] overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={FOUNDERS_THUMB}
+              alt="James and Matthew Lisondra, the founders of Doe"
+              draggable={false}
+              className="block w-full aspect-[16/9] object-cover select-none"
+              style={{ objectPosition: "50% 32%" }}
+            />
+          </div>
+        ) : (
+          <FoundersFilm />
+        )}
         <div className="px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px]">
           {intro ? (
             <p className={`${DISPLAY} max-w-[22ch] text-[clamp(26px,6.6vw,38px)] leading-[1.14] tracking-[-0.02em] [text-wrap:balance]`}>
