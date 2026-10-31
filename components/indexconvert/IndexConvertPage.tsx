@@ -48,43 +48,43 @@ const STEPS: { title: string; detail: string; ms: number; subs?: string[]; phone
   {
     title: "Finding Your Page",
     detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`,
-    ms: 1350,
+    ms: 900,
     phoneSubs: [CLINIC.domain, `${SOURCE_PAGES.length} pages found`, "Prices, providers, hours"],
   },
   {
     title: "Checking What Personal Agents See",
     detail: "No llms.txt, MCP card or OpenAPI",
-    ms: 1350,
+    ms: 900,
     phoneSubs: ["No llms.txt", "No MCP card", "No OpenAPI"],
   },
   {
     title: "Building Agent-Readable Page",
     detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`,
-    ms: 1850,
+    ms: 1235,
     subs: ["JSON · 7 resources", "JSON-LD · schema.org/MedicalClinic", "Metadata & HTML"],
   },
   {
     title: "Building Agent Files",
     detail: `${AGENT_FILES.length} files ready`,
-    ms: 1900,
+    ms: 1265,
     subs: ["openapi.json", "llms.txt", "robots.txt", ".well-known/mcp.json"],
   },
   {
     title: "Integrating Doe's MCP",
     detail: `${CLINIC_TOOLS.length} tools ready`,
-    ms: 1900,
+    ms: 1265,
     subs: CLINIC_TOOLS.map((t) => t.name),
   },
   {
     title: "Integrating Doe's API",
     detail: "OpenAPI 3.1 · locations, providers, prices",
-    ms: 1800,
+    ms: 1200,
     subs: ["GET /locations", "GET /providers", "GET /services", "GET /prices", "POST /consultations"],
   },
   {
     title: "Applying Personal Agent Protocol",
     detail: "Connected",
-    ms: 1700,
+    ms: 1135,
     subs: ["Consent per user", "Agents say they're agents", "Connected to Doe"],
   },
 ];
@@ -92,7 +92,7 @@ const MAX_SUBS = Math.max(...STEPS.map((s) => s.subs?.length ?? s.phoneSubs?.len
 const STEP_STARTS = STEPS.map((_, i) => STEPS.slice(0, i).reduce((n, s) => n + s.ms, 0));
 const BUILD_MS = STEPS.reduce((n, s) => n + s.ms, 0);
 /** The read pills leave this long before the build ends. */
-const CHIPS_OFF_MS = 750;
+const CHIPS_OFF_MS = 500;
 /** The page opens as soon as the last step (the Personal Agent Protocol) finishes: no "Ready" screen. */
 const TOTAL_MS = BUILD_MS;
 /** Each source page gets an equal slice of the build. */
@@ -484,7 +484,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
           <h1
             className={`ic-rise ${DISPLAY} max-w-[16ch] md:max-w-[20ch] text-left text-[31px] leading-[36px] md:text-[44px] md:leading-[50px] tracking-[-0.02em] [text-wrap:balance]`}
           >
-            Hang tight! We&apos;re finding the listing we built {CLINIC.name}.
+            Hang tight! We&apos;re building {CLINIC.name}&apos;s MCP, API and agent files.
           </h1>
         </div>
 
@@ -494,10 +494,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
         <div className="px-[18px] md:px-[32px] pb-[18px] md:pb-[28px]">
           <div className="w-full max-w-[460px]">
             <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
-            <div className={`md:hidden mt-[18px] text-[12px] max-md:leading-[16px] font-[600] uppercase tracking-[0.08em] tabular-nums ${MUTED}`}>
-              Step {shown + 1} of {STEPS.length}
-            </div>
-            <h2 key={step.title} className="ic-fade mt-[4px] md:mt-[14px] [text-wrap:balance] text-[24px] leading-[29px] md:text-[22px] md:leading-[28px] font-[600] tracking-[-0.015em] md:tracking-[-0.01em]">
+            <h2 key={step.title} className="ic-fade mt-[18px] md:mt-[14px] [text-wrap:balance] text-[24px] leading-[29px] md:text-[22px] md:leading-[28px] font-[600] tracking-[-0.015em] md:tracking-[-0.01em]">
               {step.title}
             </h2>
             <div className="mt-[6px] md:mt-[4px]" style={{ minHeight: compact ? rowH : rowH * (desktop ? MAX_SUBS : (step.subs ?? step.phoneSubs ?? [step.detail]).length) }}>
