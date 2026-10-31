@@ -76,13 +76,12 @@ const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?:
     subs: ["Consent per user", "Agents say they're agents", "Connected to Doe"],
   },
 ];
-/** The steps box keeps one height for the whole build, so the card never jumps. */
-const STEPS_BOX_HEIGHT = 260;
 const STEP_STARTS = STEPS.map((_, i) => STEPS.slice(0, i).reduce((n, s) => n + s.ms, 0));
 const BUILD_MS = STEPS.reduce((n, s) => n + s.ms, 0);
-/** The loader's lines, in P22, in turn across the build; each holds for a share of it as long as its text. */
+/** The loader's lines, one sentence at a time, in P22 under the logo; each holds for a share of the build as long as its text. */
 const LOADER_MESSAGES = [
-  "Personal agents are already learning about thousands of clinics. We don\u2019t want Canadian clinics to be left out.",
+  "Personal agents are already learning about thousands of clinics.",
+  "We don\u2019t want Canadian clinics to be left out.",
   "Patients will be searching for clinics through Muse and Instinct in 2027.",
   "We built Doe to bring you more customers and save time on intake.",
 ];
@@ -107,13 +106,6 @@ const PAGE_READS: Record<string, [string, string][]> = {
   facelift: [["provider", "Dr. Derek Ford"], ["provider", "Dr. Steven Hanna"], ["service", "Endoscopic mid facelift"]],
   contact: [["hours", "Mon–Fri 8:30–4:30"], ["phone", CLINIC.phone], ["booking", "Consult request form"]],
 };
-/** Chips sit on the right; the page directory has the left. */
-const READ_SPOTS = [
-  { top: "20%", right: "6%" },
-  { top: "45%", right: "11%" },
-  { top: "70%", right: "6%" },
-] as const;
-
 /* ------------------------------------------------------------------ Agent data */
 
 const slug = (s: string) =>
@@ -400,147 +392,92 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
   const stepFrac = built ? 1 : Math.min(1, Math.max(0, (elapsed - STEP_STARTS[stepIndex]!) / STEPS[stepIndex]!.ms));
   const progress = built ? 1 : (stepIndex + stepFrac) / STEPS.length;
   const page = SOURCE_PAGES[pageIndex]!;
+  const step = built ? null : STEPS[stepIndex]!;
   const messageEnd = MESSAGE_ENDS.findIndex((end) => elapsed < end);
   const messageIndex = messageEnd === -1 ? LOADER_MESSAGES.length - 1 : messageEnd;
   const desktop = viewport.w >= 768;
-  /** Short iPhone screens get a smaller sphere and one step's detail at a time. */
-  const compact = viewport.h < (desktop ? 780 : 880);
-  const sphere = desktop ? (viewport.h < 860 ? 104 : 132) : viewport.h < 700 ? 64 : compact ? 84 : 104;
+  /** Short screens show only the part in progress under the step, not the whole list. */
+  const compact = viewport.h < (desktop ? 780 : 760);
+  const sphere = desktop ? 76 : compact ? 52 : 64;
 
   return (
     <div className="relative h-full w-full overflow-hidden">
       <ParsingBackdrop pageIndex={pageIndex} />
-      {/* The page being read stays in view up top: a light cream fade down from the header, and a full cream fade up
-          from the bottom that the loader sits on. */}
+      {/* Cream from the top and from the bottom, each solid where its words sit and fading out toward the middle, where
+          the page being read shows through. */}
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-[180px] md:h-[200px] pointer-events-none"
-        style={{ background: "linear-gradient(to bottom, #FFFCF1 0%, rgba(255,252,241,0.85) 40%, rgba(255,252,241,0) 100%)" }}
+        className="absolute inset-x-0 top-0 h-[48%] pointer-events-none"
+        style={{ background: "linear-gradient(to bottom, #FFFCF1 0%, #FFFCF1 56%, rgba(255,252,241,0.82) 72%, rgba(255,252,241,0) 100%)" }}
       />
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-[86%] md:h-[78%] pointer-events-none"
-        style={{ background: "linear-gradient(to top, #FFFCF1 0%, #FFFCF1 52%, rgba(255,252,241,0.9) 66%, rgba(255,252,241,0) 100%)" }}
+        className="absolute inset-x-0 bottom-0 h-[56%] pointer-events-none"
+        style={{ background: "linear-gradient(to top, #FFFCF1 0%, #FFFCF1 66%, rgba(255,252,241,0.85) 80%, rgba(255,252,241,0) 100%)" }}
       />
-      <ReadChips pageIndex={pageIndex} />
-      <div className={`relative z-10 ${HEADER}`}>
-        <DoeMark />
-        <button
-          type="button"
-          onClick={onSkip}
-          className={`h-[34px] px-[14px] rounded-full bg-[#F4EEDF] text-[13px] font-[600] ${SUB} hover:text-[#281910] transition-colors`}
-        >
-          Skip
-        </button>
-      </div>
-
       <PageDirectory pageIndex={pageIndex} built={built} />
 
-      <div className="absolute inset-x-0 bottom-0 top-[76px] md:top-[72px] z-10 flex flex-col items-center justify-end px-[14px] pb-[14px] md:pb-[28px]">
-        {/* No card: the loader sits on the bottom fade, left aligned. */}
-        <div className="w-full max-w-[460px]">
-          <div className="px-[6px] md:px-[4px] flex flex-col items-start">
-            <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
-            {/* Two lines of why, one then the other, each held long enough to read. */}
-            <h1
-              key={messageIndex}
-              className={`ic-fade ${DISPLAY} mt-[14px] max-w-[24ch] md:max-w-[26ch] text-left text-[23px] leading-[29px] md:text-[27px] md:leading-[34px] tracking-[-0.015em] [text-wrap:balance]`}
-            >
-              {LOADER_MESSAGES[messageIndex]}
-            </h1>
-            <p className={`mt-[10px] text-left text-[14px] leading-[19px] font-[600] ${SUB}`}>
-              {built ? "Page Is Readable to Agents" : "Verifying Page Is Readable to Agents"}
-            </p>
+      <div className="relative z-10 h-full flex flex-col">
+        <div className={HEADER}>
+          <DoeMark />
+          <button
+            type="button"
+            onClick={onSkip}
+            className={`h-[34px] px-[14px] rounded-full bg-[#F4EEDF] text-[13px] font-[600] ${SUB} hover:text-[#281910] transition-colors`}
+          >
+            Skip
+          </button>
+        </div>
 
-            {/* The clinic's URL in a box that fills as the build runs, with the page being read after the domain. */}
-            <div className="mt-[14px] w-full">
-              <div className="relative h-[46px] rounded-[16px] bg-[#F4EEDF] overflow-hidden">
-                <div className="absolute inset-0 bg-[#E9DFC9] origin-left will-change-transform" style={{ transform: `scaleX(${progress})` }} />
-                <div className="relative h-full flex items-center gap-[10px] px-[14px]">
-                  {built ? <Check on size={20} /> : <Spinner />}
-                  <span className="min-w-[0px] truncate text-[15px] leading-[20px] font-[600]">
-                    {CLINIC.url}
-                    {!built && page.path !== "/" && <span className={`font-[500] ${MUTED}`}>{page.path}</span>}
-                  </span>
-                  <span className={`ml-auto shrink-0 tabular-nums text-[13px] font-[600] ${MUTED}`}>{Math.round(progress * 100)}%</span>
-                </div>
-              </div>
-              {/* Phones and tablets: the page directory as a row of chips under the URL; short screens skip it. */}
-              {!compact && (
-                <div className="lg:hidden mt-[8px] flex flex-wrap justify-start gap-[4px]">
-                  {SOURCE_PAGES.map((p, i) => {
-                    const read = built || i < pageIndex;
-                    const now = !built && i === pageIndex;
-                    return (
-                      <span
-                        key={p.path}
-                        className={`h-[22px] px-[8px] flex items-center gap-[4px] rounded-full text-[11px] font-[600] transition-colors duration-300 ${now ? "bg-[#140C04] text-[#FFFCF1]" : read ? "bg-[#F4EEDF] text-[#281910]" : "bg-[#F4EEDF99] text-[#28191066]"}`}
-                      >
-                        {read && "✓ "}
-                        {SHORT_LABEL[p.shot] ?? p.label}
-                      </span>
-                    );
-                  })}
-                </div>
-              )}
+        {/* Why Doe, one sentence at a time, left under the logo. */}
+        <div className="px-[18px] md:px-[32px] pt-[6px] md:pt-[10px]">
+          <h1
+            key={messageIndex}
+            className={`ic-rise ${DISPLAY} max-w-[16ch] md:max-w-[20ch] text-left text-[31px] leading-[36px] md:text-[44px] md:leading-[50px] tracking-[-0.02em] [text-wrap:balance]`}
+          >
+            {LOADER_MESSAGES[messageIndex]}
+          </h1>
+        </div>
+
+        <ReadChips pageIndex={pageIndex} />
+
+        {/* The build: the sphere, the step in progress with its parts, and a thin bar with the page being read. */}
+        <div className="px-[18px] md:px-[32px] pb-[18px] md:pb-[28px]">
+          <div className="w-full max-w-[460px]">
+            <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
+            <p className={`mt-[14px] text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em] tabular-nums ${MUTED}`}>
+              {built ? "Readable to agents" : `Step ${stepIndex + 1} of ${STEPS.length}`}
+            </p>
+            <h2 key={step?.title ?? "ready"} className="ic-fade mt-[4px] text-[20px] leading-[25px] md:text-[22px] md:leading-[28px] font-[600] tracking-[-0.01em]">
+              {step?.title ?? "Ready"}
+            </h2>
+            <div className="mt-[4px]" style={{ minHeight: compact ? 19 : 19 * 5 }}>
+              {step?.subs && <SubSteps key={step.title} subs={step.subs} progress={stepFrac} onlyCurrent={compact} />}
+              {!step?.subs && <p className={`ic-fade text-[12.5px] leading-[19px] ${SUB}`}>{step?.detail ?? `${AGENT_FILES.length} files · ${CLINIC_TOOLS.length} tools · connected`}</p>}
             </div>
 
-            {/* Finished steps stay small on top; the one in progress sits big at the bottom; what's next stays hidden. */}
-            <ol className="mt-[12px] w-full rounded-[20px] bg-[#F4EEDF] p-[6px] overflow-hidden" style={{ height: STEPS_BOX_HEIGHT }}>
-              {STEPS.map((step, i) => {
-                if (!built && i > stepIndex) return null;
-                if (built || i < stepIndex) {
-                  /** Only the last three finished steps show, so the list never grows past its box. */
-                  if (i < (built ? STEPS.length : stepIndex) - 3) return null;
-                  return (
-                    <li key={step.title} className="ic-fade flex items-center gap-[9px] px-[10px] py-[4px]">
-                      <Check on size={16} />
-                      <span className={`min-w-[0px] truncate text-[13px] leading-[17px] font-[500] ${SUB}`}>{step.title}</span>
-                    </li>
-                  );
-                }
-                const stepProgress = (elapsed - STEP_STARTS[i]!) / step.ms;
-                return (
-                  <li key={step.title} className="ic-fade mt-[4px] flex items-start gap-[12px] px-[12px] py-[12px] rounded-[16px] bg-[#FFFCF1]">
-                    <span className="mt-[1px]">
-                      <Spinner size={22} />
-                    </span>
-                    <span className="min-w-[0px] grow">
-                      <span className="block text-[17px] leading-[22px] md:text-[19px] md:leading-[24px] font-[600]">{step.title}</span>
-                      {step.subs && <SubSteps subs={step.subs} progress={stepProgress} />}
-                    </span>
-                  </li>
-                );
-              })}
-              {built && (
-                <li className="ic-fade mt-[4px] flex items-center gap-[12px] px-[12px] py-[12px] rounded-[16px] bg-[#FFFCF1]">
-                  <Check on size={22} />
-                  <span className="text-[17px] leading-[22px] md:text-[19px] md:leading-[24px] font-[600]">Ready</span>
-                </li>
-              )}
-            </ol>
+            <div className="mt-[14px] h-[4px] rounded-full bg-[#2819101A] overflow-hidden">
+              <div className="h-full rounded-full bg-[#140C04] origin-left will-change-transform" style={{ transform: `scaleX(${progress})` }} />
+            </div>
+            <div className="mt-[10px] flex items-center gap-[8px]">
+              {built ? <Check on size={16} /> : <Spinner size={16} />}
+              <span className="min-w-[0px] truncate text-[13px] leading-[18px] font-[600]">
+                {CLINIC.url}
+                {!built && page.path !== "/" && <span className={`font-[500] ${MUTED}`}>{page.path}</span>}
+              </span>
+              <span className={`ml-auto shrink-0 tabular-nums text-[13px] font-[600] ${MUTED}`}>{Math.round(progress * 100)}%</span>
+            </div>
           </div>
         </div>
       </div>
-
     </div>
   );
 }
 
-const SHORT_LABEL: Record<string, string> = {
-  home: "Home",
-  pricing: "Pricing",
-  medspa: "Med Spa",
-  staff: "Staff",
-  locations: "Locations",
-  facelift: "Facelift",
-  contact: "Contact",
-};
-
-/** Desktop: a brief directory of the clinic's pages on the left, ticking off as each is read. */
+/** Desktop: a brief directory of the clinic's pages on the right, ticking off as each is read. */
 const PageDirectory = memo(function PageDirectory({ pageIndex, built }: { pageIndex: number; built: boolean }) {
   return (
-    <div className="hidden lg:block absolute left-[32px] top-1/2 -translate-y-1/2 z-10 w-[236px] rounded-[20px] bg-[#F4EEDF] p-[5px]">
+    <div className="hidden lg:block absolute right-[32px] top-1/2 -translate-y-1/2 z-10 w-[236px] rounded-[20px] bg-[#F4EEDF] p-[5px]">
       <div className={`flex items-baseline justify-between px-[10px] pt-[6px] pb-[6px] text-[11px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>
         <span>Pages</span>
       </div>
@@ -565,13 +502,13 @@ const PageDirectory = memo(function PageDirectory({ pageIndex, built }: { pageIn
 });
 
 /** A step's parts, indented in grey: each loads in turn, a small spinner on the one in progress. */
-function SubSteps({ subs, progress }: { subs: string[]; progress: number }) {
+function SubSteps({ subs, progress, onlyCurrent = false }: { subs: string[]; progress: number; onlyCurrent?: boolean }) {
   // Leave the last sliver of the step with every part done.
   const current = Math.floor(Math.min(0.999, progress / 0.9) * subs.length);
   return (
-    <span className="block mt-[4px] pl-[2px]">
+    <span className="block pl-[2px]">
       {subs.map((sub, i) =>
-        i > current ? null : (
+        i > current || (onlyCurrent && i < current) ? null : (
           <span key={sub} className={`ic-fade flex items-center gap-[7px] h-[19px] text-[12.5px] leading-[16px] font-[400] ${SUB}`}>
             {i < current ? (
               <svg width="11" height="11" viewBox="0 0 24 24" className="shrink-0" aria-hidden="true">
@@ -613,33 +550,26 @@ const ParsingBackdrop = memo(function ParsingBackdrop({ pageIndex }: { pageIndex
   );
 });
 
-/** The values Doe lifted off the page on show, set over the cream wash so they read at full strength. */
+/** The values Doe lifted off the page on show, centred in the clear middle between the two cream fades, one after another. */
 const ReadChips = memo(function ReadChips({ pageIndex }: { pageIndex: number }) {
   const page = SOURCE_PAGES[pageIndex]!;
   return (
-    <div key={page.shot} className="absolute inset-0 z-[5] pointer-events-none" style={{ "--ic-slot": `${SLOT_MS}ms` } as CSSProperties} aria-hidden="true">
-      {(PAGE_READS[page.shot] ?? []).map(([key, value], n) => {
-        const spot = READ_SPOTS[n]!;
-        return (
-          <span
-            key={key + value}
-            className="ic-chip absolute top-[var(--ic-top-m)] md:top-[var(--ic-top)] inline-flex items-center gap-[6px] md:gap-[8px] h-[32px] max-w-[calc(100%-24px)] px-[10px] md:px-[12px] rounded-[11px] bg-[#FFFCF1] border border-solid border-[#2819101A] text-[12px] md:text-[13px] leading-[16px] font-[600] whitespace-nowrap"
-            style={
-              {
-                // iPhone: stacked in the clear strip under the header, above the loader.
-                "--ic-top-m": `${92 + n * 40}px`,
-                "--ic-top": spot.top,
-                right: spot.right,
-                animationDelay: `${(parseFloat(spot.top) / 100) * SLOT_MS * 0.8}ms`,
-                animationDuration: `${SLOT_MS * 0.85}ms`,
-              } as CSSProperties
-            }
-          >
-            <span className={`shrink-0 font-mono text-[10.5px] md:text-[11px] font-[500] ${MUTED}`}>{key}</span>
-            <span className="min-w-0 truncate">{value}</span>
-          </span>
-        );
-      })}
+    <div
+      key={page.shot}
+      className="flex-1 min-h-[0px] flex flex-col items-center justify-center gap-[8px] px-[18px] pointer-events-none"
+      style={{ "--ic-slot": `${SLOT_MS}ms` } as CSSProperties}
+      aria-hidden="true"
+    >
+      {(PAGE_READS[page.shot] ?? []).map(([key, value], n) => (
+        <span
+          key={key + value}
+          className="ic-chip inline-flex items-center gap-[10px] h-[40px] max-w-full pl-[5px] pr-[16px] rounded-full bg-[#FFFCF1] shadow-[0_0_0_1px_rgba(40,25,16,0.08),0_8px_24px_rgba(40,25,16,0.10)] text-[14px] leading-[18px] font-[600] whitespace-nowrap"
+          style={{ animationDelay: `${SLOT_MS * (0.08 + n * 0.12)}ms`, animationDuration: `${SLOT_MS * 0.8}ms` }}
+        >
+          <span className={`shrink-0 h-[30px] px-[11px] flex items-center rounded-full bg-[#F4EEDF] text-[10.5px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>{key}</span>
+          <span className="min-w-0 truncate">{value}</span>
+        </span>
+      ))}
     </div>
   );
 });

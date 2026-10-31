@@ -30,9 +30,9 @@
 }
 
 @keyframes ic-chip {
-  0% { opacity: 0; }
-  18%, 78% { opacity: 1; }
-  100% { opacity: 0; }
+  0% { opacity: 0; transform: translateY(8px) scale(0.98); }
+  18%, 80% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(-4px); }
 }
 
 @keyframes ic-rise {
