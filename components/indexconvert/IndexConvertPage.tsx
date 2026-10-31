@@ -39,36 +39,36 @@ const MUTED = "text-[#28191080]";
 /** The loader's steps, in order, with how long each runs. */
 /** `subs` load one at a time under a step while it runs, then fold into its detail line. */
 const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?: boolean }[] = [
-  { title: "Finding Your Page", detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`, ms: 1900 },
-  { title: "Checking What Personal Agents See", detail: "No llms.txt, MCP card or OpenAPI", ms: 1900 },
+  { title: "Finding Your Page", detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`, ms: 2700 },
+  { title: "Checking What Personal Agents See", detail: "No llms.txt, MCP card or OpenAPI", ms: 2700 },
   {
     title: "Converting to Agent-Readable Page",
     detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`,
-    ms: 2700,
+    ms: 3700,
     subs: ["JSON · 7 resources", "JSON-LD · schema.org/MedicalClinic", "Metadata & HTML"],
   },
   {
     title: "Building Agent Files",
     detail: `${AGENT_FILES.length} files ready`,
-    ms: 2800,
+    ms: 3800,
     subs: ["openapi.json", "llms.txt", "robots.txt", ".well-known/mcp.json"],
   },
   {
     title: "Integrating Into Doe's Model Context Protocol",
     detail: `${CLINIC_TOOLS.length} tools ready`,
-    ms: 2800,
+    ms: 3800,
     subs: CLINIC_TOOLS.map((t) => t.name),
   },
   {
     title: "Integrating Doe's API",
     detail: "OpenAPI 3.1 · locations, providers, prices",
-    ms: 2600,
+    ms: 3600,
     subs: ["GET /locations", "GET /providers", "GET /services", "GET /prices", "POST /consultations"],
   },
   {
     title: "Applying Personal Agent Protocol",
     detail: "Connected",
-    ms: 2400,
+    ms: 3400,
     subs: ["Consent per user", "Agents say they're agents", "Connected to Doe"],
   },
 ];
@@ -76,6 +76,11 @@ const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?:
 const STEPS_BOX_HEIGHT = 260;
 const STEP_STARTS = STEPS.map((_, i) => STEPS.slice(0, i).reduce((n, s) => n + s.ms, 0));
 const BUILD_MS = STEPS.reduce((n, s) => n + s.ms, 0);
+/** The loader's two lines, in P22, one for each half of the build. */
+const LOADER_MESSAGES = [
+  "Personal agents are already learning about thousands of clinics. We don\u2019t want Canadian clinics to be left out.",
+  "We built Doe to bring you more customers and save time on intake.",
+];
 /** How long "Ready" holds before the page opens. */
 const MUSE_MS = 1100;
 const TOTAL_MS = BUILD_MS + MUSE_MS;
@@ -381,6 +386,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
   const stepFrac = built ? 1 : Math.min(1, Math.max(0, (elapsed - STEP_STARTS[stepIndex]!) / STEPS[stepIndex]!.ms));
   const progress = built ? 1 : (stepIndex + stepFrac) / STEPS.length;
   const page = SOURCE_PAGES[pageIndex]!;
+  const messageIndex = elapsed < BUILD_MS / 2 ? 0 : 1;
   const desktop = viewport.w >= 768;
   /** Short iPhone screens get a smaller sphere and one step's detail at a time. */
   const compact = viewport.h < (desktop ? 780 : 880);
@@ -389,8 +395,18 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
   return (
     <div className="relative h-full w-full overflow-hidden">
       <ParsingBackdrop pageIndex={pageIndex} />
-      {/* The page being read stays behind as texture: washed cream and slightly blurred so the card reads clearly. */}
-      <div className="absolute inset-0 pointer-events-none bg-[rgba(255,252,241,0.66)] backdrop-blur-[2px]" />
+      {/* The page being read stays in view up top: a light cream fade down from the header, and a full cream fade up
+          from the bottom that the loader sits on. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-[180px] md:h-[200px] pointer-events-none"
+        style={{ background: "linear-gradient(to bottom, #FFFCF1 0%, rgba(255,252,241,0.85) 40%, rgba(255,252,241,0) 100%)" }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-[86%] md:h-[78%] pointer-events-none"
+        style={{ background: "linear-gradient(to top, #FFFCF1 0%, #FFFCF1 52%, rgba(255,252,241,0.9) 66%, rgba(255,252,241,0) 100%)" }}
+      />
       <ReadChips pageIndex={pageIndex} />
       <div className={`relative z-10 ${HEADER}`}>
         <span />
@@ -405,19 +421,19 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
 
       <PageDirectory pageIndex={pageIndex} built={built} />
 
-      <div className="absolute inset-x-0 bottom-0 top-[76px] md:top-[72px] z-10 flex flex-col items-center justify-center px-[14px] pb-[14px] md:pb-[24px]">
-        {/* Tablet up, one card: sand shell, cream inside, lifted off the page behind it. iPhone: no card, just a soft
-            cream fill fading out underneath to set it off from the page being read. */}
-        <div className="relative w-full max-w-[460px] md:rounded-[32px] md:bg-[#F4EEDF] md:p-[6px] md:border md:border-solid md:border-[#2819101F] md:shadow-[0_36px_90px_rgba(40,25,16,0.26),0_2px_8px_rgba(40,25,16,0.08)]">
-          <div
-            aria-hidden="true"
-            className="md:hidden pointer-events-none absolute -inset-x-[14px] -top-[48px] -bottom-[40px] -z-10"
-            style={{ background: "radial-gradient(ellipse 72% 58% at 50% 50%, #FFFCF1 0%, rgba(255,252,241,0.94) 52%, rgba(255,252,241,0) 100%)" }}
-          />
-          <div className="md:rounded-[26px] md:bg-[#FFFCF1] px-[16px] pt-[16px] pb-[14px] md:px-[20px] md:pt-[20px] md:pb-[16px] flex flex-col items-center">
+      <div className="absolute inset-x-0 bottom-0 top-[76px] md:top-[72px] z-10 flex flex-col items-center justify-end px-[14px] pb-[14px] md:pb-[28px]">
+        {/* No card: the loader sits on the bottom fade, left aligned. */}
+        <div className="w-full max-w-[460px]">
+          <div className="px-[6px] md:px-[4px] flex flex-col items-start">
             <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
-            <h1 className={`${DISPLAY} mt-[12px] text-center text-[27px] leading-[31px] md:text-[34px] md:leading-[38px] tracking-[-0.02em]`}>{CLINIC.name}</h1>
-            <p className="mt-[8px] max-w-[18ch] text-center text-[16px] leading-[21px] font-[600] [text-wrap:balance]">
+            {/* Two lines of why, one then the other, each held long enough to read. */}
+            <h1
+              key={messageIndex}
+              className={`ic-fade ${DISPLAY} mt-[14px] max-w-[24ch] md:max-w-[26ch] text-left text-[23px] leading-[29px] md:text-[27px] md:leading-[34px] tracking-[-0.015em] [text-wrap:balance]`}
+            >
+              {LOADER_MESSAGES[messageIndex]}
+            </h1>
+            <p className={`mt-[10px] text-left text-[14px] leading-[19px] font-[600] ${SUB}`}>
               {built ? "Page Is Readable to Agents" : "Verifying Page Is Readable to Agents"}
             </p>
 
@@ -436,7 +452,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
               </div>
               {/* Phones and tablets: the page directory as a row of chips under the URL; short screens skip it. */}
               {!compact && (
-                <div className="lg:hidden mt-[8px] flex flex-wrap justify-center gap-[4px]">
+                <div className="lg:hidden mt-[8px] flex flex-wrap justify-start gap-[4px]">
                   {SOURCE_PAGES.map((p, i) => {
                     const read = built || i < pageIndex;
                     const now = !built && i === pageIndex;
@@ -592,8 +608,17 @@ const ReadChips = memo(function ReadChips({ pageIndex }: { pageIndex: number }) 
         return (
           <span
             key={key + value}
-            className="ic-chip absolute inline-flex items-center gap-[6px] md:gap-[8px] h-[32px] max-w-[calc(100%-24px)] px-[10px] md:px-[12px] rounded-[11px] bg-[#FFFCF1] border border-solid border-[#2819101A] text-[12px] md:text-[13px] leading-[16px] font-[600] whitespace-nowrap"
-            style={{ top: spot.top, right: spot.right, animationDelay: `${(parseFloat(spot.top) / 100) * SLOT_MS * 0.8}ms`, animationDuration: `${SLOT_MS * 0.85}ms` }}
+            className="ic-chip absolute top-[var(--ic-top-m)] md:top-[var(--ic-top)] inline-flex items-center gap-[6px] md:gap-[8px] h-[32px] max-w-[calc(100%-24px)] px-[10px] md:px-[12px] rounded-[11px] bg-[#FFFCF1] border border-solid border-[#2819101A] text-[12px] md:text-[13px] leading-[16px] font-[600] whitespace-nowrap"
+            style={
+              {
+                // iPhone: stacked in the clear strip under the header, above the loader.
+                "--ic-top-m": `${92 + n * 40}px`,
+                "--ic-top": spot.top,
+                right: spot.right,
+                animationDelay: `${(parseFloat(spot.top) / 100) * SLOT_MS * 0.8}ms`,
+                animationDuration: `${SLOT_MS * 0.85}ms`,
+              } as CSSProperties
+            }
           >
             <span className={`shrink-0 font-mono text-[10.5px] md:text-[11px] font-[500] ${MUTED}`}>{key}</span>
             <span className="min-w-0 truncate">{value}</span>
