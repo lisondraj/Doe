@@ -938,7 +938,7 @@ function Hero({
 }
 
 /** One illustration per step, drawn small and quiet on a sand tile. */
-function StepVisual({ n }: { n: 1 | 2 | 3 | 4 }) {
+function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
   const tile = "h-[112px] rounded-[16px] bg-[#F4EEDF] flex items-center justify-center overflow-hidden";
   const svgProps = { viewBox: "0 0 240 96", width: "100%", height: "100%", style: { maxWidth: 280, fontFamily: "inherit" }, "aria-hidden": true } as const;
   if (n === 1)
@@ -968,17 +968,27 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 }) {
           <text x="46" y="45" fontSize="12.5" fill="#28191080">you@yourclinic.com</text>
           <circle cx="198" cy="41" r="17" fill="#140C04" />
           <path d="M190 41.5l6 6 11-12" fill="none" stroke="#FFFCF1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          <rect x="26" y="68" width="146" height="14" rx="7" fill="#140C04" />
-          <rect x="76" y="73" width="46" height="4" rx="2" fill="#FFFCF1" opacity="0.8" />
         </svg>
       </div>
     );
   if (n === 3)
     return (
       <div className={`${tile} px-[14px]`}>
-        <div className="flex flex-wrap items-center justify-center gap-[6px]">
-          {["Book", "Intake", "Deposits", "Waitlist", "& more"].map((t, i) => (
-            <span key={t} className={`h-[30px] px-[13px] flex items-center rounded-full text-[12.5px] font-[600] ${i === 0 ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}>
+        <div className="flex flex-nowrap items-center justify-center gap-[6px]">
+          {["Book", "Intake", "Payments", "& more"].map((t, i) => (
+            <span key={t} className={`shrink-0 h-[30px] px-[13px] flex items-center whitespace-nowrap rounded-full text-[12.5px] font-[600] ${i === 0 ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}>
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  if (n === 4)
+    return (
+      <div className={`${tile} px-[14px]`}>
+        <div className="flex flex-nowrap items-center justify-center gap-[6px]">
+          {["MCP", "API", "JSON", "EXA"].map((t, i) => (
+            <span key={t} className={`shrink-0 h-[30px] px-[13px] flex items-center rounded-full font-mono text-[12.5px] font-[600] ${i === 0 ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}>
               {t}
             </span>
           ))}
@@ -1016,11 +1026,12 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 }) {
   );
 }
 
-const STEP_BOXES: { n: 1 | 2 | 3 | 4; title: string; detail?: string }[] = [
+const STEP_BOXES: { n: 1 | 2 | 3 | 4 | 5; title: string; detail?: string }[] = [
   { n: 1, title: "We've created an agentic-readable version of your clinic page" },
   { n: 2, title: "Claim your page" },
-  { n: 3, title: "Allow potential clients to book through agents, complete intake, pay deposits, join waitlist & more" },
+  { n: 3, title: "Allow potential clients to book through agents, complete intake, make payments & more" },
   { n: 4, title: "We handle the rest", detail: "We connect your clinic directly to the channels that make it visible and interactable to personal agents." },
+  { n: 5, title: "Potential clients can now use their personal agent to find and book you." },
 ];
 
 /** How it works, one box per step: sand shell, cream inside, a small picture, then the line. */
