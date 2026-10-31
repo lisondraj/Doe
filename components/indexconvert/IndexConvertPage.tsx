@@ -1325,29 +1325,31 @@ const AGENT_APPS: { name: string; icon: string; light?: boolean }[] = [
   { name: "Poke", icon: "/indexconvert/agents/poke.png" },
 ];
 
-/** iPhone: the agents Ford now appears in, with their app icons and a confirmed mark under each. */
+/** iPhone: the agents Ford now appears in, one per row: app icon, name, and a tested & confirmed mark. */
 function AgentSearches({ className = "" }: { className?: string }) {
   return (
     <div className={`rounded-[26px] bg-[#F4EEDF] p-[6px] ${className}`}>
-      <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[20px] pb-[22px]">
-        <h3 className={`${DISPLAY} text-[24px] leading-[28px] tracking-[-0.02em] [text-wrap:balance]`}>{CLINIC.name} now appears in searches for</h3>
-        <p className={`mt-[6px] text-[14px] leading-[19px] ${SUB} [text-wrap:balance]`}>We searched for you in each one and confirmed you show up.</p>
-        <ul className="mt-[20px] flex flex-wrap justify-center gap-y-[20px]">
+      <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[20px] pb-[10px]">
+        <h3 className={`${DISPLAY} text-[24px] leading-[28px] tracking-[-0.02em] [text-wrap:balance]`}>{CLINIC.name} now appears in personal agent searches.</h3>
+        <p className={`mt-[6px] text-[14px] leading-[19px] ${SUB} [text-wrap:pretty]`}>We searched for you in each one and found you every time.</p>
+        <ul className="mt-[12px] flex flex-col divide-y divide-[#28191014]">
           {AGENT_APPS.map((a) => (
-            <li key={a.name} className="w-1/3 flex flex-col items-center text-center">
+            <li key={a.name} className="flex items-center gap-[14px] py-[12px]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={a.icon}
                 alt=""
-                width={56}
-                height={56}
+                width={48}
+                height={48}
                 draggable={false}
-                className={`block w-[56px] h-[56px] rounded-[14px] object-cover select-none ${a.light ? "ring-1 ring-[#2819101A]" : ""}`}
+                className={`block shrink-0 w-[48px] h-[48px] rounded-[12px] object-cover select-none ${a.light ? "ring-1 ring-[#2819101A]" : ""}`}
               />
-              <span className="mt-[8px] text-[14px] leading-[18px] font-[600] whitespace-nowrap">{a.name}</span>
-              <span className={`mt-[4px] flex items-center gap-[5px] text-[10px] leading-[14px] font-[700] uppercase tracking-[0.06em] ${MUTED}`}>
-                <Check on size={13} />
-                Confirmed
+              <span className="min-w-0 flex-1">
+                <span className="block text-[16px] leading-[21px] font-[600]">{a.name}</span>
+                <span className={`mt-[3px] flex items-center gap-[6px] text-[13px] leading-[18px] ${SUB}`}>
+                  <Check on size={14} />
+                  Tested &amp; confirmed
+                </span>
               </span>
             </li>
           ))}
