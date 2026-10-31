@@ -214,7 +214,7 @@ export function DemoForms({
                     ) : sent ? null : asking ? (
                       <span className="text-[13px] text-[#28191099]">Waiting for {userName.split(" ")[0]} to sign…</span>
                     ) : (
-                      <button type="button" onClick={askToSign} className="mb-[2px] h-[32px] px-[12px] rounded-[6px] bg-[#140C04] text-[#FFFCF1] text-[12.5px] font-[600]">
+                      <button type="button" onClick={askToSign} className="mb-[2px] h-[32px] px-[12px] rounded-[6px] bg-[#3A2516] text-[#FFFCF1] text-[12.5px] font-[600]">
                         Request signature
                       </button>
                     )}
@@ -244,7 +244,7 @@ export function DemoForms({
               type="button"
               disabled={sent || complete < docs.length}
               onClick={() => void onSubmit()}
-              className="h-[44px] px-[18px] rounded-[8px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] disabled:bg-[#28191033] disabled:cursor-not-allowed transition-colors duration-200"
+              className="h-[44px] px-[18px] rounded-[8px] bg-[#3A2516] text-[#FFFCF1] text-[14px] font-[600] disabled:bg-[#28191033] disabled:cursor-not-allowed transition-colors duration-200"
             >
               {sent ? "Passed Back" : "Pass Back to Clinic"}
             </button>
@@ -320,7 +320,7 @@ function Answer({ question: q, value, locked, onSet }: { question: AssessmentQue
             type="button"
             disabled={locked}
             onClick={() => onSet(i)}
-            className={`w-[30px] md:w-[34px] h-[34px] text-[13px] font-[600] tabular-nums border-solid ${RULE} [&:not(:last-child)]:border-r transition-colors duration-150 ${value === i ? "bg-[#140C04] text-[#FFFCF1]" : "hover:bg-[#F4EEDF]"}`}
+            className={`w-[30px] md:w-[34px] h-[34px] text-[13px] font-[600] tabular-nums border-solid ${RULE} [&:not(:last-child)]:border-r transition-colors duration-150 ${value === i ? "bg-[#3A2516] text-[#FFFCF1]" : "hover:bg-[#F4EEDF]"}`}
           >
             {i}
           </button>
@@ -355,7 +355,7 @@ function Answer({ question: q, value, locked, onSet }: { question: AssessmentQue
 /** A square check box, as printed on a form. */
 function Box({ on, size }: { on: boolean; size: number }) {
   return (
-    <span className="shrink-0 flex items-center justify-center rounded-[3px] border-[1.5px] border-solid" style={{ width: size, height: size, borderColor: on ? "#140C04" : "#28191066", backgroundColor: on ? "#140C04" : "transparent" }} aria-hidden="true">
+    <span className="shrink-0 flex items-center justify-center rounded-[3px] border-[1.5px] border-solid" style={{ width: size, height: size, borderColor: on ? "#3A2516" : "#28191066", backgroundColor: on ? "#3A2516" : "transparent" }} aria-hidden="true">
       {on && (
         <svg width={size * 0.7} height={size * 0.7} viewBox="0 0 24 24">
           <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#FFFCF1" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />

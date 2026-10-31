@@ -202,7 +202,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
       type="button"
       onClick={() => openChat("concierge")}
       aria-label={`Communicate with the clinic${unread ? `, ${unread} unread` : ""}`}
-      className="relative shrink-0 h-[40px] pl-[12px] pr-[14px] flex items-center gap-[7px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[13.5px] font-[600] hover:bg-[#2A1C10] transition-colors duration-150"
+      className="relative shrink-0 h-[40px] pl-[12px] pr-[14px] flex items-center gap-[7px] rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13.5px] font-[600] hover:bg-[#2A1C10] transition-colors duration-150"
     >
       <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M5 18.5V6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H9z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
@@ -222,7 +222,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
     <>
       {chosen && (
         <div
-          className="lg:hidden absolute left-[10px] right-[10px] bottom-[10px] z-20 flex items-center gap-[12px] h-[62px] pl-[18px] pr-[8px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] shadow-[0_10px_30px_rgba(20,12,4,0.25)] transition-opacity duration-200"
+          className="lg:hidden absolute left-[10px] right-[10px] bottom-[10px] z-20 flex items-center gap-[12px] h-[62px] pl-[18px] pr-[8px] rounded-[999px] bg-[#3A2516] text-[#FFFCF1] shadow-[0_10px_30px_rgba(58,37,22,0.25)] transition-opacity duration-200"
           style={{ opacity: chatOpen || formsOpen ? 0 : 1, pointerEvents: chatOpen || formsOpen ? "none" : "auto" }}
         >
           <span className="flex flex-col grow min-w-0">
@@ -234,14 +234,14 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
               </span>
             </span>
           </span>
-          <button type="button" onClick={() => go("booking")} className="shrink-0 h-[46px] px-[18px] rounded-[999px] bg-[#FFFCF1] text-[#140C04] text-[14px] font-[600]">
+          <button type="button" onClick={() => go("booking")} className="shrink-0 h-[46px] px-[18px] rounded-[999px] bg-[#FFFCF1] text-[#3A2516] text-[14px] font-[600]">
             Review
           </button>
         </div>
       )}
 
       {toast && (
-        <div className="absolute left-1/2 top-[72px] md:top-[82px] z-50 -translate-x-1/2 max-w-[90%] h-[38px] px-[16px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap overflow-hidden text-ellipsis shadow-[0_8px_24px_rgba(20,12,4,0.25)] doe-menu-in">
+        <div className="absolute left-1/2 top-[72px] md:top-[82px] z-50 -translate-x-1/2 max-w-[90%] h-[38px] px-[16px] flex items-center rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap overflow-hidden text-ellipsis shadow-[0_8px_24px_rgba(58,37,22,0.25)] doe-menu-in">
           {toast}
         </div>
       )}
@@ -297,7 +297,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
               type="button"
               tabIndex={pillsOn ? 0 : -1}
               onClick={() => go(n.id)}
-              className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] transition-colors duration-150 ${active === n.id ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}
+              className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] transition-colors duration-150 ${active === n.id ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}
             >
               {n.label}
             </button>
@@ -372,7 +372,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                     disabled={locked}
                     aria-pressed={on}
                     onClick={() => void run({ type: "select_plan", plan: { kind: "service", id: x.id } })}
-                    className={`flex items-start gap-[12px] p-[14px] rounded-[18px] text-left transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
+                    className={`flex items-start gap-[12px] p-[14px] rounded-[18px] text-left transition-colors duration-150 ${on ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
                   >
                     <span className="grow min-w-0">
                       <span className="flex flex-wrap items-center gap-[6px]">
@@ -406,7 +406,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                     key={d.day}
                     type="button"
                     onClick={() => setDay(d.day)}
-                    className={`flex flex-col items-center py-[10px] rounded-[16px] transition-colors duration-150 ${day === d.day ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
+                    className={`flex flex-col items-center py-[10px] rounded-[16px] transition-colors duration-150 ${day === d.day ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
                   >
                     <span className="text-[12px] leading-[16px] font-[500] opacity-70">{d.weekday}</span>
                     <span className="text-[15px] leading-[20px] font-[700]">{d.date.split(" ")[1]}</span>
@@ -426,7 +426,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                     type="button"
                     disabled={taken}
                     onClick={() => setSlot(x.id)}
-                    className={`flex items-center justify-between h-[52px] px-[16px] rounded-[16px] border-[1.5px] border-solid transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed ${on ? "border-[#140C04] bg-[#FFFCF1]" : "border-transparent bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
+                    className={`flex items-center justify-between h-[52px] px-[16px] rounded-[16px] border-[1.5px] border-solid transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed ${on ? "border-[#3A2516] bg-[#FFFCF1]" : "border-transparent bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
                   >
                     <span className={`text-[15px] font-[700] ${taken ? "line-through" : ""}`}>{x.time}</span>
                     <span className="text-[13px] text-[#2819109E]">
@@ -443,7 +443,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                 type="button"
                 disabled={!slot || slot === heldId || locked}
                 onClick={() => slot && void run({ type: "hold_slot", slot_id: slot }, "Slot held for 10 minutes")}
-                className="h-[46px] px-[20px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] disabled:bg-[#28191033] disabled:cursor-not-allowed transition-colors duration-200"
+                className="h-[46px] px-[20px] rounded-[999px] bg-[#3A2516] text-[#FFFCF1] text-[14px] font-[600] disabled:bg-[#28191033] disabled:cursor-not-allowed transition-colors duration-200"
               >
                 {heldId && slot === heldId ? `Held · ${clockLeft(holdLeft)}` : heldId ? "Hold Instead" : "Hold 10 Min"}
               </button>
@@ -481,7 +481,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                     disabled={locked}
                     aria-pressed={on}
                     onClick={() => void run({ type: "select_plan", plan: { kind: "bundle", id: b.id } })}
-                    className={`flex flex-col gap-[8px] p-[16px] rounded-[20px] text-left transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
+                    className={`flex flex-col gap-[8px] p-[16px] rounded-[20px] text-left transition-colors duration-150 ${on ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
                   >
                     <span className={`${DISPLAY} text-[19px] leading-[23px]`}>{b.name}</span>
                     <span className="flex flex-col gap-[4px]">
@@ -508,7 +508,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
                 <span className="block text-[15px] leading-[20px] font-[600]">Want a Better Price?</span>
                 <span className="block mt-[2px] text-[13px] leading-[18px] text-[#2819109E]">Negotiate with the clinic&apos;s agent in Communicate.</span>
               </span>
-              <span className="shrink-0 h-[36px] px-[14px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]">Negotiate</span>
+              <span className="shrink-0 h-[36px] px-[14px] flex items-center rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600]">Negotiate</span>
             </button>
           </Section>
 
@@ -609,13 +609,13 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
               </div>
               <div className="mt-[12px] flex gap-[3px]" aria-hidden="true">
                 {Array.from({ length: progress.total }, (_, i) => (
-                  <span key={i} className={`h-[4px] grow rounded-full ${i < progress.done ? "bg-[#140C04]" : "bg-[#2819101A]"}`} />
+                  <span key={i} className={`h-[4px] grow rounded-full ${i < progress.done ? "bg-[#3A2516]" : "bg-[#2819101A]"}`} />
                 ))}
               </div>
               <button
                 type="button"
                 onClick={() => setFormsOpen(true)}
-                className="mt-[14px] h-[46px] px-[20px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] hover:bg-[#2A1C10] transition-colors duration-150"
+                className="mt-[14px] h-[46px] px-[20px] rounded-full bg-[#3A2516] text-[#FFFCF1] text-[14px] font-[600] hover:bg-[#2A1C10] transition-colors duration-150"
               >
                 {s.forms.status === "sent" ? "View Forms" : progress.done > 0 ? "Continue Forms" : "Start Forms"}
               </button>
@@ -687,7 +687,7 @@ function Pill({ on, sand, onClick, children }: { on: boolean; sand?: boolean; on
     <button
       type="button"
       onClick={onClick}
-      className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] whitespace-nowrap transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : sand ? "bg-[#F4EEDF] text-[#281910] hover:bg-[#EEE6D6]" : "bg-[#FFFCF1] text-[#281910] hover:bg-[#FAF4E4]"}`}
+      className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] whitespace-nowrap transition-colors duration-150 ${on ? "bg-[#3A2516] text-[#FFFCF1]" : sand ? "bg-[#F4EEDF] text-[#281910] hover:bg-[#EEE6D6]" : "bg-[#FFFCF1] text-[#281910] hover:bg-[#FAF4E4]"}`}
     >
       {children}
     </button>
@@ -696,7 +696,7 @@ function Pill({ on, sand, onClick, children }: { on: boolean; sand?: boolean; on
 
 function Toggle({ on }: { on: boolean }) {
   return (
-    <span className={`shrink-0 relative w-[44px] h-[26px] rounded-full transition-colors duration-200 ${on ? "bg-[#140C04]" : "bg-[#28191026]"}`}>
+    <span className={`shrink-0 relative w-[44px] h-[26px] rounded-full transition-colors duration-200 ${on ? "bg-[#3A2516]" : "bg-[#28191026]"}`}>
       <span className="absolute top-[3px] w-[20px] h-[20px] rounded-full bg-[#FFFCF1] shadow-[0_1px_4px_rgba(40,25,16,0.28)] transition-[left] duration-200" style={{ left: on ? 21 : 3 }} />
     </span>
   );
@@ -765,7 +765,7 @@ function BookingSummary({
           aria-checked={phi}
           onClick={onPhi}
           className="mx-[6px] mb-[8px] flex items-start gap-[10px] p-[12px] rounded-[14px] bg-[#FFFCF1] text-left border-[1.5px] border-solid transition-colors duration-150"
-          style={{ borderColor: phi ? "#140C04" : "#2819101F", width: "calc(100% - 12px)" }}
+          style={{ borderColor: phi ? "#3A2516" : "#2819101F", width: "calc(100% - 12px)" }}
         >
           <Check on={phi} size={20} />
           <span className="grow text-[12.5px] leading-[17px]">
@@ -779,7 +779,7 @@ function BookingSummary({
         disabled={!ready}
         onClick={onRequest}
         className="w-full h-[60px] rounded-[16px] text-[15px] md:text-[16px] font-[700] text-[#FFFCF1] disabled:cursor-not-allowed transition-colors duration-200"
-        style={{ backgroundColor: b.status === "confirmed" ? "#4C7A4F" : b.status === "requested" ? "#38251D" : ready ? "#140C04" : "#28191033", transitionTimingFunction: EASE }}
+        style={{ backgroundColor: b.status === "confirmed" ? "#4C7A4F" : b.status === "requested" ? "#38251D" : ready ? "#3A2516" : "#28191033", transitionTimingFunction: EASE }}
       >
         {b.status === "confirmed" ? "Booked" : b.status === "requested" ? "Waiting for Clinic" : "Send Booking Request"}
       </button>

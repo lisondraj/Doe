@@ -179,7 +179,7 @@ export function DemoGate({
             setBusy(false);
           }
         }}
-        className="group w-full max-w-[560px] h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] text-[15px] md:text-[16px] leading-[20px] font-[700] text-[#FFFCF1] bg-[#140C04] enabled:hover:bg-[#2A1C12] disabled:bg-[#28191033] disabled:text-[#FFFCF1] disabled:cursor-not-allowed transition-colors duration-200"
+        className="group w-full max-w-[560px] h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] text-[15px] md:text-[16px] leading-[20px] font-[700] text-[#FFFCF1] bg-[#3A2516] enabled:hover:bg-[#4A3121] disabled:bg-[#28191033] disabled:text-[#FFFCF1] disabled:cursor-not-allowed transition-colors duration-200"
       >
         {busy ? "Connecting…" : "Proceed in Browser"}
         {!busy && (
@@ -213,7 +213,7 @@ function ConnectOptions() {
               key={w}
               type="button"
               onClick={() => setWay(w)}
-              className={`h-[30px] px-[12px] rounded-full text-[12.5px] font-[600] transition-colors duration-150 ${way === w ? "bg-[#140C04] text-[#FFFCF1]" : "text-[#281910B3]"}`}
+              className={`h-[30px] px-[12px] rounded-full text-[12.5px] font-[600] transition-colors duration-150 ${way === w ? "bg-[#3A2516] text-[#FFFCF1]" : "text-[#281910B3]"}`}
             >
               {w === "browser" ? "Browser" : w.toUpperCase()}
             </button>
@@ -221,7 +221,7 @@ function ConnectOptions() {
         </div>
       </div>
       {code ? (
-        <div className="rounded-[20px] bg-[#140C04] text-[#FFFCF1] overflow-hidden font-mono">
+        <div className="rounded-[20px] bg-[#3A2516] text-[#FFFCF1] overflow-hidden font-mono">
           <div className="flex items-center gap-[10px] h-[44px] pl-[16px] pr-[8px] border-b border-solid border-[#FFFCF114] text-[12px]">
             <span className="shrink-0 font-[600] text-[#FCCFB8]">{way === "mcp" ? "MCP" : "REST"}</span>
             <span className="min-w-0 truncate text-[#FFFCF1CC]">{way === "mcp" ? "mcp.json" : "api"}</span>

@@ -198,7 +198,7 @@ export function DemoClinicDashboard() {
 
   return (
     <div
-      className={`${dmSans.className} doehealth-product-page fixed inset-0 flex bg-[#140C04] text-[#281910] antialiased [font-synthesis:none]`}
+      className={`${dmSans.className} doehealth-product-page fixed inset-0 flex bg-[#3A2516] text-[#281910] antialiased [font-synthesis:none]`}
       style={{
         paddingTop: "max(8px, env(safe-area-inset-top))",
         paddingBottom: "max(8px, env(safe-area-inset-bottom))",
@@ -229,7 +229,7 @@ export function DemoClinicDashboard() {
             </span>
             <span className="hidden lg:block text-[14px] font-[500]">{t.label}</span>
             {t.id === "inbox" && waiting > 0 && (
-              <span className="hidden lg:flex ml-auto mr-[10px] min-w-[20px] h-[20px] px-[6px] items-center justify-center rounded-full bg-[#FFFCF1] text-[11px] font-[700] text-[#140C04]">{waiting}</span>
+              <span className="hidden lg:flex ml-auto mr-[10px] min-w-[20px] h-[20px] px-[6px] items-center justify-center rounded-full bg-[#FFFCF1] text-[11px] font-[700] text-[#3A2516]">{waiting}</span>
             )}
           </button>
         ))}
@@ -248,8 +248,8 @@ export function DemoClinicDashboard() {
         <div className="absolute inset-0 overflow-y-auto overscroll-contain">
           <div className="md:hidden sticky top-0 z-20 bg-[#FFFCF1E6] backdrop-blur-[12px]">
             <div className="flex items-center justify-between h-[64px] px-[18px]">
-              <span className={`${lora.className} text-[30px] leading-[30px] font-normal text-[#281910]`}>Doe</span>
-              <span className="h-[34px] px-[14px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[12.5px] font-[600]">Clinic View</span>
+              <span className={`${lora.className} text-[30px] leading-[30px] font-normal text-[#3A2516]`}>Doe</span>
+              <span className="h-[34px] px-[14px] flex items-center rounded-full bg-[#3A2516] text-[#FFFCF1] text-[12.5px] font-[600]">Clinic View</span>
             </div>
             <div className="flex gap-[6px] overflow-x-auto px-[16px] pb-[10px] [scrollbar-width:none]">
               {TABS.map((t) => (
@@ -257,7 +257,7 @@ export function DemoClinicDashboard() {
                   key={t.id}
                   type="button"
                   onClick={() => setTab(t.id)}
-                  className={`shrink-0 h-[34px] px-[14px] rounded-full text-[13px] font-[600] ${tab === t.id ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF]"}`}
+                  className={`shrink-0 h-[34px] px-[14px] rounded-full text-[13px] font-[600] ${tab === t.id ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#F4EEDF]"}`}
                 >
                   {t.label}
                   {t.id === "inbox" && waiting > 0 ? ` · ${waiting}` : ""}
@@ -271,7 +271,7 @@ export function DemoClinicDashboard() {
           </div>
         </div>
         {toast && (
-          <div className="absolute left-1/2 top-[16px] z-40 -translate-x-1/2 max-w-[92%] min-h-[40px] px-[18px] py-[10px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] shadow-[0_8px_24px_rgba(20,12,4,0.25)] doe-menu-in">
+          <div className="absolute left-1/2 top-[16px] z-40 -translate-x-1/2 max-w-[92%] min-h-[40px] px-[18px] py-[10px] flex items-center rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600] shadow-[0_8px_24px_rgba(58,37,22,0.25)] doe-menu-in">
             {toast}
           </div>
         )}
@@ -315,7 +315,7 @@ function StatusChip({ status }: { status: DemoStatus }) {
 }
 
 function ChannelChip({ channel }: { channel: Session["channel"] }) {
-  return <span className="shrink-0 h-[20px] px-[7px] flex items-center rounded-[6px] bg-[#140C04] text-[#FFFCF1] font-mono text-[10.5px] font-[500]">{CHANNEL[channel]}</span>;
+  return <span className="shrink-0 h-[20px] px-[7px] flex items-center rounded-[6px] bg-[#3A2516] text-[#FFFCF1] font-mono text-[10.5px] font-[500]">{CHANNEL[channel]}</span>;
 }
 
 function Empty({ children }: { children: ReactNode }) {
@@ -350,8 +350,8 @@ function Overview({ state, now, onOpen }: { state: ClinicStatePayload | null; no
 
       {latest ? (
         <Card className="mb-[12px]">
-        <button type="button" onClick={() => onOpen(latest.id)} className="w-full flex items-center gap-[12px] p-[14px] rounded-[18px] bg-[#140C04] text-[#FFFCF1] text-left">
-          <span className="shrink-0 h-[20px] px-[7px] flex items-center rounded-[6px] bg-[#FFFCF1] text-[#140C04] font-mono text-[10.5px] font-[500]">{CHANNEL[latest.channel]}</span>
+        <button type="button" onClick={() => onOpen(latest.id)} className="w-full flex items-center gap-[12px] p-[14px] rounded-[18px] bg-[#3A2516] text-[#FFFCF1] text-left">
+          <span className="shrink-0 h-[20px] px-[7px] flex items-center rounded-[6px] bg-[#FFFCF1] text-[#3A2516] font-mono text-[10.5px] font-[500]">{CHANNEL[latest.channel]}</span>
           <span className="grow min-w-0">
             <span className="block truncate text-[14px] font-[600]">
               {latest.live ? "Connected now" : "Last connected"}: {latest.agentName} for {latest.userName}
@@ -394,7 +394,7 @@ function Overview({ state, now, onOpen }: { state: ClinicStatePayload | null; no
               <span className="text-[11.5px] font-[600] text-[#28191099] truncate">{k}</span>
               <span className={`${DISPLAY} text-[22px] leading-[24px]`}>{n}</span>
               <span className="h-[4px] rounded-full bg-[#2819100F] overflow-hidden">
-                <span className="block h-full bg-[#140C04]" style={{ width: `${a.sessions ? (n / a.sessions) * 100 : 0}%` }} />
+                <span className="block h-full bg-[#3A2516]" style={{ width: `${a.sessions ? (n / a.sessions) * 100 : 0}%` }} />
               </span>
             </div>
           ))}
@@ -490,7 +490,7 @@ function Inbox({
                   key={x.id}
                   type="button"
                   onClick={() => onOpen(x.id)}
-                  className={`flex items-start gap-[10px] p-[12px] rounded-[16px] bg-[#FFFCF1] text-left transition-colors duration-150 ${x.id === open?.id ? "ring-[1.5px] ring-[#140C04]" : "hover:bg-[#FFFCF1CC]"}`}
+                  className={`flex items-start gap-[10px] p-[12px] rounded-[16px] bg-[#FFFCF1] text-left transition-colors duration-150 ${x.id === open?.id ? "ring-[1.5px] ring-[#3A2516]" : "hover:bg-[#FFFCF1CC]"}`}
                 >
                   <ChannelChip channel={x.channel} />
                   <span className="grow min-w-0">
@@ -545,7 +545,7 @@ function Inbox({
                 {open.booking.status === "requested" && (
                   <div className="mt-[10px] flex flex-wrap items-center gap-[6px] p-[10px] rounded-[16px] bg-[#E3E9D9]">
                     <span className="grow text-[13px] font-[600]">Booking request · PHI provided via Doe</span>
-                    <button type="button" onClick={() => void onAct(open.id, { type: "confirm_booking" }, "Booking confirmed")} className="h-[38px] px-[16px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]">
+                    <button type="button" onClick={() => void onAct(open.id, { type: "confirm_booking" }, "Booking confirmed")} className="h-[38px] px-[16px] rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600]">
                       Confirm
                     </button>
                     <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Reason (Optional)" className="w-[150px] h-[38px] px-[12px] rounded-full bg-[#FFFCF1] text-[16px] md:text-[13px] outline-none" />
@@ -577,7 +577,7 @@ function Inbox({
                     key={t.id}
                     type="button"
                     onClick={() => setThread(t.id)}
-                    className={`h-[32px] px-[12px] rounded-full text-[12.5px] font-[600] ${thread === t.id ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1]"}`}
+                    className={`h-[32px] px-[12px] rounded-full text-[12.5px] font-[600] ${thread === t.id ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1]"}`}
                   >
                     {t.label} · {open.threads[t.id].filter((m) => m.from !== "system").length}
                   </button>
@@ -594,7 +594,7 @@ function Inbox({
                       <span className="px-[4px] text-[11px] font-[600] text-[#28191073]">
                         {l.from === "clinic" ? (l.by === "staff" ? "Clinic staff" : "Clinic agent") : open.agentName} · {clock(l.at)}
                       </span>
-                      <span className={`px-[14px] py-[10px] rounded-[18px] text-[14px] leading-[20px] ${l.from === "clinic" ? "bg-[#140C04] text-[#FFFCF1] rounded-br-[6px]" : "bg-[#FFFCF1] rounded-bl-[6px]"}`}>
+                      <span className={`px-[14px] py-[10px] rounded-[18px] text-[14px] leading-[20px] ${l.from === "clinic" ? "bg-[#3A2516] text-[#FFFCF1] rounded-br-[6px]" : "bg-[#FFFCF1] rounded-bl-[6px]"}`}>
                         {l.text}
                         {l.offer && (
                           <span className="block mt-[6px] text-[12px] font-[700] opacity-80">
@@ -645,7 +645,7 @@ function Inbox({
                     placeholder="Reply as clinic staff"
                     className="grow min-w-0 h-[42px] px-[14px] rounded-full bg-[#FFFCF1] border border-solid border-[#2819101F] text-[16px] md:text-[13.5px] outline-none"
                   />
-                  <button type="submit" className="h-[42px] px-[16px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[13.5px] font-[600]">
+                  <button type="submit" className="h-[42px] px-[16px] rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13.5px] font-[600]">
                     Send
                   </button>
                 </form>
@@ -806,7 +806,7 @@ function Forms({ sessions }: { sessions: Session[] }) {
                   key={x.id}
                   type="button"
                   onClick={() => setOpenId(x.id)}
-                  className={`flex items-center gap-[12px] p-[12px] rounded-[16px] bg-[#FFFCF1] text-left ${x.id === f.id ? "ring-[1.5px] ring-[#140C04]" : ""}`}
+                  className={`flex items-center gap-[12px] p-[12px] rounded-[16px] bg-[#FFFCF1] text-left ${x.id === f.id ? "ring-[1.5px] ring-[#3A2516]" : ""}`}
                 >
                   <span className="grow min-w-0">
                     <span className="block truncate text-[14px] font-[600]">{x.userName}</span>

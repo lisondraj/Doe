@@ -271,7 +271,7 @@ export function IndexConvertPage() {
 
 /** The Doe wordmark as /earlypreview's nav sets it: Lora, regular weight, text-4xl. */
 const DoeMark = ({ center = false }: { center?: boolean }) => (
-  <span className={`${lora.className} ${center ? "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-x-0 md:translate-y-0" : ""} text-[36px] leading-[36px] font-normal text-[#281910]`}>Doe</span>
+  <span className={`${lora.className} ${center ? "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-x-0 md:translate-y-0" : ""} text-[36px] leading-[36px] font-normal text-[#3A2516]`}>Doe</span>
 );
 const HEADER = "flex items-center justify-between gap-[12px] h-[76px] md:h-[72px] px-[18px] md:px-[32px]";
 

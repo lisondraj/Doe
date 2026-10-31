@@ -251,7 +251,7 @@ function ColumnCard({
       {c.domains && c.domains.length > 0 && (
         <div className="mt-[8px] flex gap-[4px]">
           {(["values", "domains"] as const).map((v) => (
-            <button key={v} type="button" onClick={() => setView(v)} className={`h-[26px] px-[10px] rounded-full text-[12px] font-[600] ${view === v ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}>
+            <button key={v} type="button" onClick={() => setView(v)} className={`h-[26px] px-[10px] rounded-full text-[12px] font-[600] ${view === v ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#F4EEDF] hover:bg-[#EEE6D6]"}`}>
               {v === "values" ? "Values" : "Domains"}
             </button>
           ))}

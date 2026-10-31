@@ -84,7 +84,7 @@ export function DemoChat({
                   {TAG[m.thread] && <span className="ml-[6px] px-[6px] py-[1px] rounded-[6px] bg-[#F4EEDF] text-[10.5px] font-[600] text-[#28191099]">{TAG[m.thread]}</span>}
                 </span>
               )}
-              <div className={`px-[14px] py-[9px] rounded-[18px] text-[14.5px] leading-[20px] ${mine ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}>{m.text}</div>
+              <div className={`px-[14px] py-[9px] rounded-[18px] text-[14.5px] leading-[20px] ${mine ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}>{m.text}</div>
               {m.offer && <Offer offer={m.offer} onAnswer={m.offer.status === "open" ? (accept) => onOffer(m.id, accept) : undefined} />}
             </div>
           );
@@ -140,7 +140,7 @@ export function DemoChat({
                   role="radio"
                   aria-checked={mode === id}
                   onClick={() => onMode(id)}
-                  className={`h-[28px] px-[12px] rounded-full text-[12.5px] font-[600] transition-colors duration-150 ${mode === id ? "bg-[#FFFCF1] text-[#281910] shadow-[0_1px_2px_rgba(20,12,4,0.08)]" : "text-[#28191099] hover:text-[#281910]"}`}
+                  className={`h-[28px] px-[12px] rounded-full text-[12.5px] font-[600] transition-colors duration-150 ${mode === id ? "bg-[#FFFCF1] text-[#281910] shadow-[0_1px_2px_rgba(58,37,22,0.08)]" : "text-[#28191099] hover:text-[#281910]"}`}
                 >
                   {label}
                 </button>
@@ -151,7 +151,7 @@ export function DemoChat({
             type="submit"
             aria-label="Send"
             disabled={!draft.trim() || typing}
-            className="shrink-0 w-[44px] h-[44px] mb-[4px] flex items-center justify-center rounded-full bg-[#140C04] disabled:bg-[#28191033] transition-colors duration-150"
+            className="shrink-0 w-[44px] h-[44px] mb-[4px] flex items-center justify-center rounded-full bg-[#3A2516] disabled:bg-[#28191033] transition-colors duration-150"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="#FFFCF1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -165,7 +165,7 @@ export function DemoChat({
 
 function Offer({ offer, onAnswer }: { offer: NonNullable<DemoMessage["offer"]>; onAnswer?: (accept: boolean) => void }) {
   return (
-    <div className="w-[270px] max-w-full p-[12px] rounded-[16px] border-[1.5px] border-solid border-[#140C04]">
+    <div className="w-[270px] max-w-full p-[12px] rounded-[16px] border-[1.5px] border-solid border-[#3A2516]">
       <div className="text-[11.5px] leading-[14px] font-[600] text-[#28191099]">Offer From Clinic</div>
       <div className="mt-[4px] flex items-baseline justify-between gap-[8px]">
         <span className="text-[14px] leading-[18px] font-[600]">{offer.label}</span>
@@ -173,7 +173,7 @@ function Offer({ offer, onAnswer }: { offer: NonNullable<DemoMessage["offer"]>; 
       </div>
       {onAnswer ? (
         <div className="mt-[10px] flex gap-[6px]">
-          <button type="button" onClick={() => onAnswer(true)} className="grow h-[34px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]">
+          <button type="button" onClick={() => onAnswer(true)} className="grow h-[34px] rounded-[999px] bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600]">
             Accept for user
           </button>
           <button type="button" onClick={() => onAnswer(false)} className="h-[34px] px-[14px] rounded-[999px] bg-[#F4EEDF] text-[13px] font-[600] text-[#281910]">

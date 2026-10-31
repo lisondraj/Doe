@@ -34,10 +34,10 @@ export function DemoFrame({
   edgeFade?: boolean;
 }) {
   /** Set like /indexconvert's (and /earlypreview's) nav: Lora, regular weight. */
-  const mark = <span className={`${lora.className} text-[30px] leading-[30px] md:text-[36px] md:leading-[36px] font-normal text-[#281910]`}>Doe</span>;
+  const mark = <span className={`${lora.className} text-[30px] leading-[30px] md:text-[36px] md:leading-[36px] font-normal text-[#3A2516]`}>Doe</span>;
   return (
     <div
-      className={`${dmSans.className} doehealth-product-page fixed inset-0 bg-[#140C04] text-[#281910] antialiased [font-synthesis:none]`}
+      className={`${dmSans.className} doehealth-product-page fixed inset-0 bg-[#3A2516] text-[#281910] antialiased [font-synthesis:none]`}
       style={{
         paddingTop: "max(8px, env(safe-area-inset-top))",
         paddingBottom: "max(8px, env(safe-area-inset-bottom))",
@@ -85,7 +85,7 @@ export function DemoFrame({
 /** "Agent view": the page is for the user's agent, not the user. */
 function AgentViewTag() {
   return (
-    <span className="h-[26px] pl-[8px] pr-[10px] flex items-center gap-[6px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[11.5px] font-[600] tracking-[0.01em]">
+    <span className="h-[26px] pl-[8px] pr-[10px] flex items-center gap-[6px] rounded-full bg-[#3A2516] text-[#FFFCF1] text-[11.5px] font-[600] tracking-[0.01em]">
       <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M3 12s3.5-6.5 9-6.5S21 12 21 12s-3.5 6.5-9 6.5S3 12 3 12z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
         <circle cx="12" cy="12" r="2.6" fill="currentColor" />
@@ -102,7 +102,7 @@ export function Check({ on, size = 22 }: { on: boolean; size?: number }) {
       style={{
         width: size,
         height: size,
-        backgroundColor: on ? "#140C04" : "transparent",
+        backgroundColor: on ? "#3A2516" : "transparent",
         border: on ? "none" : "1.5px solid #28191040",
       }}
       aria-hidden="true"
@@ -147,12 +147,12 @@ export function Sheet({
       aria-hidden={!open}
       style={{ visibility: open ? "visible" : "hidden", transition: `visibility 0ms linear ${open ? "0ms" : "420ms"}` }}
     >
-      <div className="absolute inset-0 bg-[#140C0447] transition-opacity duration-300" style={{ opacity: open ? 1 : 0 }} onClick={onClose} />
+      <div className="absolute inset-0 bg-[#3A251647] transition-opacity duration-300" style={{ opacity: open ? 1 : 0 }} onClick={onClose} />
       <div
         role="dialog"
         aria-modal="true"
         aria-label={label}
-        className={`relative flex flex-col w-full h-[88%] md:h-[min(760px,100%)] ${wide ? "md:max-w-[760px]" : "md:max-w-[560px]"} rounded-t-[30px] md:rounded-[30px] bg-[#FFFCF1] shadow-[0_-12px_40px_rgba(20,12,4,0.18)] md:shadow-[0_24px_60px_-30px_rgba(40,25,16,0.45)] transition-[transform,opacity] duration-[420ms]`}
+        className={`relative flex flex-col w-full h-[88%] md:h-[min(760px,100%)] ${wide ? "md:max-w-[760px]" : "md:max-w-[560px]"} rounded-t-[30px] md:rounded-[30px] bg-[#FFFCF1] shadow-[0_-12px_40px_rgba(58,37,22,0.18)] md:shadow-[0_24px_60px_-30px_rgba(40,25,16,0.45)] transition-[transform,opacity] duration-[420ms]`}
         style={{ transform: open ? "translateY(0)" : "translateY(104%)", opacity: open ? 1 : 0.6, transitionTimingFunction: EASE }}
       >
         <div className="md:hidden shrink-0 flex justify-center pt-[8px]">

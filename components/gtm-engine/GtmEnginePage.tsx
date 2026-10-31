@@ -82,7 +82,7 @@ function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (mode: Mode) => 
           role="tab"
           aria-selected={mode === id}
           onClick={() => onChange(id)}
-          className={`h-[34px] md:h-[36px] px-[12px] md:px-[16px] rounded-full text-[13px] md:text-[14px] font-[600] whitespace-nowrap transition-colors duration-150 ${mode === id ? "bg-[#140C04] text-[#FFFCF1]" : `${SUB} hover:text-[#281910]`}`}
+          className={`h-[34px] md:h-[36px] px-[12px] md:px-[16px] rounded-full text-[13px] md:text-[14px] font-[600] whitespace-nowrap transition-colors duration-150 ${mode === id ? "bg-[#3A2516] text-[#FFFCF1]" : `${SUB} hover:text-[#281910]`}`}
         >
           {label}
         </button>
@@ -106,7 +106,7 @@ function Section({ section }: { section: GtmSection }) {
                 key={t.key}
                 type="button"
                 onClick={() => setActive(t.key)}
-                className={`h-[34px] px-[14px] rounded-full text-[13.5px] font-[600] transition-colors duration-150 ${t.key === active ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910] hover:bg-[#EEE6D6]"}`}
+                className={`h-[34px] px-[14px] rounded-full text-[13.5px] font-[600] transition-colors duration-150 ${t.key === active ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910] hover:bg-[#EEE6D6]"}`}
               >
                 {t.title}
               </button>
@@ -293,21 +293,21 @@ function TableCard({ table }: { table: GtmTable }) {
           type="button"
           aria-expanded={filterOpen}
           onClick={() => setFilterOpen((o) => !o)}
-          className={`h-[38px] px-[14px] flex items-center gap-[6px] rounded-[12px] text-[14px] font-[600] transition-colors duration-150 ${filterOpen ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
+          className={`h-[38px] px-[14px] flex items-center gap-[6px] rounded-[12px] text-[14px] font-[600] transition-colors duration-150 ${filterOpen ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
           Filter
           {deepCount > 0 && (
-            <span className={`h-[20px] min-w-[20px] px-[6px] flex items-center justify-center rounded-full text-[12px] font-[700] tabular-nums ${filterOpen ? "bg-[#FFFCF1] text-[#140C04]" : "bg-[#140C04] text-[#FFFCF1]"}`}>{deepCount}</span>
+            <span className={`h-[20px] min-w-[20px] px-[6px] flex items-center justify-center rounded-full text-[12px] font-[700] tabular-nums ${filterOpen ? "bg-[#FFFCF1] text-[#3A2516]" : "bg-[#3A2516] text-[#FFFCF1]"}`}>{deepCount}</span>
           )}
         </button>
         <button
           type="button"
           aria-expanded={reportOpen}
           onClick={() => setReportOpen((o) => !o)}
-          className={`h-[38px] px-[14px] flex items-center gap-[6px] rounded-[12px] text-[14px] font-[600] transition-colors duration-150 ${reportOpen ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
+          className={`h-[38px] px-[14px] flex items-center gap-[6px] rounded-[12px] text-[14px] font-[600] transition-colors duration-150 ${reportOpen ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M5 20V10M12 20V4M19 20v-7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
@@ -328,13 +328,13 @@ function TableCard({ table }: { table: GtmTable }) {
         <button
           type="button"
           onClick={openInput}
-          className="h-[38px] pl-[12px] pr-[8px] flex items-center gap-[6px] rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] hover:bg-[#2A1C12] transition-colors duration-150"
+          className="h-[38px] pl-[12px] pr-[8px] flex items-center gap-[6px] rounded-[12px] bg-[#3A2516] text-[#FFFCF1] text-[14px] font-[600] hover:bg-[#4A3121] transition-colors duration-150"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
           </svg>
           Add Field
-          <span className="ml-[2px] h-[22px] min-w-[30px] px-[7px] flex items-center justify-center rounded-full bg-[#FFFCF1] text-[#140C04] text-[12px] font-[700] tabular-nums">
+          <span className="ml-[2px] h-[22px] min-w-[30px] px-[7px] flex items-center justify-center rounded-full bg-[#FFFCF1] text-[#3A2516] text-[12px] font-[700] tabular-nums">
             {GTM_PAGE_SIZE}
           </span>
         </button>
@@ -348,7 +348,7 @@ function TableCard({ table }: { table: GtmTable }) {
 
       {/* Input sheet: its own table, hidden until Add Field. 50 blank lines that save under the date picked here, then clear. */}
       {bulkOpen && (
-        <div ref={inputRef} className="mb-[6px] rounded-[21px] bg-[#140C04] p-[4px] scroll-mt-[16px]">
+        <div ref={inputRef} className="mb-[6px] rounded-[21px] bg-[#3A2516] p-[4px] scroll-mt-[16px]">
           <div className="flex flex-wrap items-center gap-x-[12px] gap-y-[8px] px-[12px] pt-[8px] pb-[10px]">
             <span className="text-[15px] font-[700] text-[#FFFCF1]">New lines</span>
             <label className="flex items-center gap-[8px]">
@@ -801,7 +801,7 @@ function LineCells({
         {/* Page generation isn't wired up yet. */}
         <button
           type="button"
-          className="w-full h-[34px] px-[12px] rounded-[10px] bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] hover:bg-[#2A1C12] transition-colors duration-150"
+          className="w-full h-[34px] px-[12px] rounded-[10px] bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600] hover:bg-[#4A3121] transition-colors duration-150"
         >
           Generate
         </button>
@@ -1001,8 +1001,8 @@ function ImportSheet({ table, onClose, onChanged }: { table: GtmTable; onClose: 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-[#140C0466] p-0 md:p-[24px]" role="dialog" aria-modal="true" aria-label={`Import into ${table.title}`}>
-      <div className="w-full max-w-[980px] max-h-[92svh] md:max-h-[88vh] flex flex-col rounded-t-[28px] md:rounded-[28px] bg-[#F4EEDF] p-[6px] shadow-[0_30px_80px_rgba(20,12,4,0.35)]">
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-[#3A251666] p-0 md:p-[24px]" role="dialog" aria-modal="true" aria-label={`Import into ${table.title}`}>
+      <div className="w-full max-w-[980px] max-h-[92svh] md:max-h-[88vh] flex flex-col rounded-t-[28px] md:rounded-[28px] bg-[#F4EEDF] p-[6px] shadow-[0_30px_80px_rgba(58,37,22,0.35)]">
         <div className="flex items-center gap-[10px] px-[14px] pt-[10px] pb-[12px]">
           <div className="min-w-0 mr-auto">
             <div className={`${DISPLAY} text-[24px] leading-[28px] md:text-[28px] md:leading-[32px] tracking-[-0.01em]`}>Import into {table.title}</div>
@@ -1045,7 +1045,7 @@ function ImportSheet({ table, onClose, onChanged }: { table: GtmTable; onClose: 
                   type="button"
                   disabled={!text.trim()}
                   onClick={() => readText(text)}
-                  className="h-[42px] px-[18px] rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[700] disabled:opacity-40 hover:bg-[#2A1C12]"
+                  className="h-[42px] px-[18px] rounded-[12px] bg-[#3A2516] text-[#FFFCF1] text-[14px] font-[700] disabled:opacity-40 hover:bg-[#4A3121]"
                 >
                   Read lines
                 </button>
@@ -1108,14 +1108,14 @@ function ImportSheet({ table, onClose, onChanged }: { table: GtmTable; onClose: 
                   {result.batch.undone_at ? (
                     <span className={`font-[600] ${MUTED}`}>Undone</span>
                   ) : (
-                    <button type="button" disabled={busy} onClick={() => void undo(result.batch!.id)} className="h-[36px] px-[14px] rounded-[10px] bg-[#140C04] text-[#FFFCF1] text-[13px] font-[700] disabled:opacity-50">
+                    <button type="button" disabled={busy} onClick={() => void undo(result.batch!.id)} className="h-[36px] px-[14px] rounded-[10px] bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[700] disabled:opacity-50">
                       Undo this import
                     </button>
                   )}
                 </div>
               )}
               <label className="flex items-center gap-[8px] text-[14px] font-[600]">
-                <input type="checkbox" checked={issuesOnly} onChange={(e) => setIssuesOnly(e.target.checked)} className="w-[16px] h-[16px] accent-[#140C04]" />
+                <input type="checkbox" checked={issuesOnly} onChange={(e) => setIssuesOnly(e.target.checked)} className="w-[16px] h-[16px] accent-[#3A2516]" />
                 Only lines with something to look at
               </label>
               <ol className="flex flex-col rounded-[16px] bg-[#FBF6E9] overflow-hidden">
@@ -1218,7 +1218,7 @@ function FooterButton({ children, onClick, primary = false, disabled = false }: 
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`h-[44px] px-[18px] rounded-[14px] text-[14px] font-[700] disabled:opacity-40 transition-colors duration-150 ${primary ? "bg-[#140C04] text-[#FFFCF1] hover:bg-[#2A1C12]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
+      className={`h-[44px] px-[18px] rounded-[14px] text-[14px] font-[700] disabled:opacity-40 transition-colors duration-150 ${primary ? "bg-[#3A2516] text-[#FFFCF1] hover:bg-[#4A3121]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
     >
       {children}
     </button>

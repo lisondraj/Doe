@@ -69,7 +69,7 @@ export function FilterChips({ table, filter, onChange }: { table: GtmTable; filt
     <div className="flex flex-wrap items-center gap-[6px] px-[12px] pb-[10px] md:px-[16px]">
       <span className={`text-[12px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>{filter.match === "any" ? "Any of" : "All of"}</span>
       {active.map((c) => (
-        <span key={`${c.field}-${c.op}-${c.value ?? ""}-${c.value2 ?? ""}`} className="h-[30px] pl-[11px] pr-[4px] flex items-center gap-[4px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]">
+        <span key={`${c.field}-${c.op}-${c.value ?? ""}-${c.value2 ?? ""}`} className="h-[30px] pl-[11px] pr-[4px] flex items-center gap-[4px] rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600]">
           <span className="max-w-[320px] truncate">{describeCondition(table, c)}</span>
           <button
             type="button"
@@ -109,7 +109,7 @@ export function FilterBuilder({ table, filter, onChange, onClose }: { table: Gtm
             <option value="any">any condition</option>
           </select>
         </label>
-        <button type="button" onClick={onClose} className="h-[36px] px-[14px] rounded-[10px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] hover:bg-[#2A1C12]">
+        <button type="button" onClick={onClose} className="h-[36px] px-[14px] rounded-[10px] bg-[#3A2516] text-[#FFFCF1] text-[14px] font-[600] hover:bg-[#4A3121]">
           Done
         </button>
       </div>
@@ -125,7 +125,7 @@ export function FilterBuilder({ table, filter, onChange, onClose }: { table: Gtm
                 type="button"
                 aria-pressed={on}
                 onClick={() => onChange(on ? { ...filter, conditions: filter.conditions.filter((c) => !same(c, p.condition)) } : withCondition(filter, p.condition))}
-                className={`h-[32px] px-[12px] rounded-full text-[13px] font-[600] transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#EEE6D6]"}`}
+                className={`h-[32px] px-[12px] rounded-full text-[13px] font-[600] transition-colors duration-150 ${on ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#EEE6D6]"}`}
               >
                 {p.label}
               </button>
@@ -236,7 +236,7 @@ function ConditionValue({
               else next.add(o);
               onChange({ values: Array.from(next) });
             }}
-            className={`h-[32px] px-[10px] rounded-full text-[13px] font-[600] ${picked.has(o) ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#EEE6D6]"}`}
+            className={`h-[32px] px-[10px] rounded-full text-[13px] font-[600] ${picked.has(o) ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#EEE6D6]"}`}
           >
             {o}
           </button>
