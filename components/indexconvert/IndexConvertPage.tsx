@@ -31,7 +31,7 @@ import {
   SERVICES,
   SOURCE_PAGES,
 } from "@/lib/indexconvert/ford-plastic-surgery";
-import { AGENT_TOPICS, InfoButton, InfoSheet, type AgentTopicId } from "@/components/indexconvert/AgentInfoSheet";
+import { AGENT_TOPICS, InfoButton, InfoSheet, type AgentTopicId, type SectionTopicId } from "@/components/indexconvert/AgentInfoSheet";
 import { AGENT_FILES, API_ORIGIN, BASE, CLINIC_TOOLS, MCP_URL, SLUG } from "@/lib/indexconvert/agent-files";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
@@ -929,7 +929,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               </div>
             </div>
             <AgentStatus claimed={claimed} />
-            <AgentsStudied />
+            <AgentsGuide />
             <AgentsPartners />
           </div>
           ) : (
@@ -2237,142 +2237,176 @@ function Box({ children, className = "", innerClassName = "" }: { children: Reac
   );
 }
 
-/** First box in Agent's View: a person sees a page, an agent reads data. */
+/** Agent's View opens like Your View: a big line (centred on iPhone), then a person's page beside an agent's answer. */
 function AgentsDifferent() {
   return (
-    <Box innerClassName="flex flex-col p-[10px] md:p-[12px]">
-      <div className="grid grid-cols-2 gap-[8px] rounded-[16px] bg-[#F4EEDF] p-[10px] md:p-[14px]">
-        {/* A person: a busy web page, a pop-up over it. */}
-        <figure className="flex flex-col items-center">
-          <div className="relative w-full h-[118px] rounded-[12px] bg-[#FFFCF1] overflow-hidden shadow-[0_0_0_1px_rgba(40,25,16,0.06)]" aria-hidden="true">
-            <div className="flex items-center gap-[4px] h-[18px] px-[8px] border-b border-solid border-[#2819100F]">
-              <span className="w-[5px] h-[5px] rounded-full bg-[#28191026]" />
-              <span className="w-[5px] h-[5px] rounded-full bg-[#28191026]" />
-              <span className="ml-[4px] h-[6px] flex-1 rounded-full bg-[#2819100F]" />
-            </div>
-            <div className="p-[8px] flex flex-col gap-[5px]">
-              <div className="flex gap-[4px]">
-                {[0, 1, 2, 3].map((i) => <span key={i} className="h-[5px] w-[18%] rounded-full bg-[#28191018]" />)}
-              </div>
-              <div className="h-[34px] rounded-[6px] bg-[#E9DCC6]" />
-              <span className="h-[5px] w-[80%] rounded-full bg-[#28191014]" />
-              <span className="h-[5px] w-[60%] rounded-full bg-[#28191014]" />
-            </div>
-            <div className="absolute right-[8px] bottom-[8px] w-[46%] rounded-[8px] bg-[#FFFCF1] p-[6px] shadow-[0_4px_14px_rgba(40,25,16,0.16)]">
-              <span className="block h-[4px] w-[80%] rounded-full bg-[#28191026]" />
-              <span className="mt-[4px] block h-[10px] w-[60%] rounded-full bg-[color:var(--ic-ink)]" />
-            </div>
-          </div>
-          <figcaption className={`mt-[8px] text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>People browse pages</figcaption>
-        </figure>
-        {/* An agent: a request and a clean answer. */}
-        <figure className="flex flex-col items-center">
-          <div className="w-full h-[118px] rounded-[12px] bg-[color:var(--ic-ink)] p-[10px] font-mono text-[10px] leading-[15px] text-[#FFFCF1CC] overflow-hidden" aria-hidden="true">
-            <div><span className="text-[#FCCFB8]">GET</span> /prices</div>
-            <div className="text-[#FFFCF166]">200 · json</div>
-            <div className="mt-[4px]">{"{"}</div>
-            <div className="pl-[10px]"><span className="text-[#FFFCF180]">&quot;HALO&quot;:</span> <span className="text-[#FCCFB8]">1500</span>,</div>
-            <div className="pl-[10px]"><span className="text-[#FFFCF180]">&quot;consult&quot;:</span> <span className="text-[#FCCFB8]">300</span></div>
-            <div>{"}"}</div>
-          </div>
-          <figcaption className={`mt-[8px] text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>Agents read data</figcaption>
-        </figure>
-      </div>
-      {/* Title and description first, the drawing under them. */}
-      <div className="order-first px-[8px] pt-[10px] pb-[18px] md:px-[12px] md:pt-[12px]">
-        <h2 className={`${DISPLAY} text-[28px] leading-[32px] md:text-[34px] md:leading-[38px] tracking-[-0.02em] [text-wrap:balance]`}>
-          Agents use the internet differently.
+    <section className="flex flex-col gap-[14px]">
+      <div className="px-[4px] max-md:text-center">
+        <h2 className={`${DISPLAY} whitespace-nowrap pt-[2px] max-md:pt-[8px] text-[clamp(22px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
+          Agents use the
+          <br /> internet differently.
         </h2>
-        <p className={`mt-[8px] max-w-[46ch] text-[15px] leading-[23px] ${SUB} [text-wrap:balance]`}>
+        <p className={`mt-[10px] md:mt-[14px] max-w-[44ch] max-md:mx-auto text-[15px] leading-[23px] ${SUB} [text-wrap:balance]`}>
           People scroll, tap menus and look at photos. Agents skip all of that: they read files, call tools and want a clear answer fast.
         </p>
       </div>
-    </Box>
-  );
-}
-
-const STUDIED: { title: string; body: string; file: string; code: string }[] = [
-  {
-    title: "We guide agents where to go.",
-    body: "Signposts on your site point every agent straight to your prices, providers and hours, instead of leaving it to guess.",
-    file: "robots.txt · llms.txt",
-    code: `# Agents: start here
-User-agent: *
-Allow: /
-
-LLMs   /llms.txt
-MCP    /.well-known/mcp.json
-API    /openapi.json`,
-  },
-  {
-    title: "We give agents different ways to find and connect with you.",
-    body: "Some agents call tools, some call an API, some just read the page. Your clinic is ready for each one.",
-    file: "connections",
-    code: `MCP      ${CLINIC_TOOLS.length} tools · prices, consults
-API      GET /providers · /prices
-JSON-LD  schema.org/MedicalClinic
-PAP      patient consent, per user`,
-  },
-];
-
-/** What Doe learned helps agents, row by row: code on one side, the big line on the other, alternating on wide screens. */
-function AgentsStudied() {
-  return (
-    <section className="flex flex-col gap-[14px] pt-[10px]">
-      <h2 className={`${DISPLAY} px-[4px] text-[28px] leading-[32px] md:text-[38px] md:leading-[44px] tracking-[-0.02em] [text-wrap:balance]`}>
-        We studied what helps businesses be more easily interacted with.
-      </h2>
-      <Box innerClassName="flex flex-col divide-y divide-[#28191014]">
-        {STUDIED.map((r, i) => (
-          <div key={r.title} className="grid gap-[16px] p-[14px] md:grid-cols-2 md:items-center md:gap-[24px] md:p-[18px]">
-            <CodeCard name={r.file} className={i % 2 ? "md:order-2" : ""}>
-              <Lines text={r.code} />
-            </CodeCard>
-            <div className={`px-[4px] max-md:order-first ${i % 2 ? "" : "md:order-2"}`}>
-              <h3 className={`${DISPLAY} text-[26px] leading-[30px] md:text-[30px] md:leading-[35px] tracking-[-0.02em] [text-wrap:balance]`}>{r.title}</h3>
-              <p className={`mt-[8px] text-[15px] leading-[23px] ${SUB} [text-wrap:balance]`}>{r.body}</p>
+      <Box innerClassName="p-[10px] md:p-[12px]">
+        <div className="grid grid-cols-2 gap-[8px] rounded-[16px] bg-[#F4EEDF] p-[10px] md:p-[14px]">
+          {/* A person: Ford's own page, busy, a pop-up over it. */}
+          <figure className="flex flex-col">
+            <figcaption className={`mb-[8px] text-center text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>People Browse Pages</figcaption>
+            <div className="relative w-full h-[148px] rounded-[12px] bg-[#FFFCF1] overflow-hidden shadow-[0_0_0_1px_rgba(40,25,16,0.06)]" aria-hidden="true">
+              <div className="flex items-center gap-[4px] h-[20px] px-[8px] border-b border-solid border-[#2819100F]">
+                <span className="w-[5px] h-[5px] rounded-full bg-[#28191026]" />
+                <span className="w-[5px] h-[5px] rounded-full bg-[#28191026]" />
+                <span className={`ml-[4px] min-w-0 truncate text-[8.5px] leading-[10px] font-[500] ${MUTED}`}>{CLINIC.domain}</span>
+              </div>
+              <div className="p-[8px] flex flex-col gap-[5px]">
+                <div className="flex gap-[4px]">
+                  {[0, 1, 2, 3].map((i) => <span key={i} className="h-[5px] w-[18%] rounded-full bg-[#28191018]" />)}
+                </div>
+                <div className="h-[38px] rounded-[6px] bg-[#E9DCC6]" />
+                <span className="h-[5px] w-[80%] rounded-full bg-[#28191014]" />
+                <span className="h-[5px] w-[60%] rounded-full bg-[#28191014]" />
+              </div>
+              <div className="absolute right-[8px] bottom-[8px] w-[46%] rounded-[8px] bg-[#FFFCF1] p-[6px] shadow-[0_4px_14px_rgba(40,25,16,0.16)]">
+                <span className="block h-[4px] w-[80%] rounded-full bg-[#28191026]" />
+                <span className="mt-[4px] block h-[10px] w-[60%] rounded-full bg-[color:var(--ic-ink)]" />
+              </div>
             </div>
-          </div>
-        ))}
+          </figure>
+          {/* An agent: a request to Ford's page and a clean answer. */}
+          <figure className="flex flex-col">
+            <figcaption className={`mb-[8px] text-center text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>Agents Read Data</figcaption>
+            <div className="w-full h-[148px] rounded-[12px] bg-[color:var(--ic-ink)] p-[10px] font-mono text-[10px] leading-[15px] text-[#FFFCF1CC] overflow-hidden" aria-hidden="true">
+              <div className="text-[#FFFCF166]">{"// "}{CLINIC.name}</div>
+              <div><span className="text-[#FCCFB8]">GET</span> /prices</div>
+              <div className="text-[#FFFCF166]">200 · json</div>
+              <div className="mt-[2px]">{"{"}</div>
+              <div className="pl-[10px]"><span className="text-[#FFFCF180]">&quot;HALO&quot;:</span> <span className="text-[#FCCFB8]">1500</span>,</div>
+              <div className="pl-[10px]"><span className="text-[#FFFCF180]">&quot;consult&quot;:</span> <span className="text-[#FCCFB8]">300</span></div>
+              <div>{"}"}</div>
+            </div>
+          </figure>
+        </div>
       </Box>
     </section>
   );
 }
 
-/** Doe built into a personal agent: the agent searches Doe and answers with Ford. */
-function AgentsPartners() {
+/** Ford's robots.txt and llms.txt, as signposts. */
+const GUIDE_CODE = `# ${CLINIC.name}
+# Agents: start here
+User-agent: *
+Allow: /
+
+LLMs   /llms.txt
+MCP    /.well-known/mcp.json
+API    /openapi.json`;
+
+/** "We guide agents where to go.": the line first, Ford's signposts under it. */
+function AgentsGuide() {
   return (
-    <Box innerClassName="flex flex-col p-[10px] md:p-[12px]">
-      <div className="rounded-[16px] bg-[#F4EEDF] px-[12px] py-[16px] md:px-[20px] md:py-[20px] flex justify-center">
-        <div className="w-full max-w-[360px] rounded-[18px] bg-[#FFFCF1] p-[12px] shadow-[0_8px_24px_rgba(40,25,16,0.08)]" aria-label="Example: a personal agent searching Doe">
-          <div className="flex items-center gap-[8px] pb-[10px] border-b border-solid border-[#2819100F]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={MUSE.icon} alt="" width={24} height={24} draggable={false} className="block w-[24px] h-[24px] rounded-[7px] object-cover ring-1 ring-[#2819101A]" />
-            <span className="text-[13px] font-[600]">{MUSE.name}</span>
-          </div>
-          <div className="mt-[10px] ml-auto w-fit max-w-[85%] rounded-[16px] rounded-br-[6px] bg-[color:var(--ic-ink)] px-[12px] py-[7px] text-[13px] leading-[18px] text-[#FFFCF1]">
-            Find a facelift surgeon in Toronto
-          </div>
-          <div className="mt-[10px] inline-flex items-center gap-[8px] h-[30px] pl-[4px] pr-[12px] rounded-full bg-[#F4EEDF] text-[12px] font-[600]">
-            <IndexConvertSphere size={22} className="shrink-0" />
-            Searched Doe
-            <span className={`font-[500] ${MUTED}`}>· healthcare clinics</span>
-          </div>
-          <div className="mt-[8px] flex items-center gap-[10px] rounded-[14px] p-[10px] shadow-[0_0_0_1px_rgba(40,25,16,0.08)]">
-            <IndexConvertSphere size={34} className="shrink-0" />
-            <div className="min-w-0 flex-1">
-              <div className="text-[13.5px] leading-[18px] font-[600] truncate">{CLINIC.name}</div>
-              <div className={`text-[12px] leading-[16px] ${SUB} truncate`}>Deep plane facelift · from $22,500</div>
-            </div>
-            <span className="shrink-0 h-[28px] px-[10px] flex items-center rounded-full bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[11.5px] font-[600]">Book</span>
-          </div>
-        </div>
+    <Box innerClassName="p-[10px] md:p-[12px]">
+      <div className="px-[8px] pt-[10px] pb-[18px] md:px-[12px] md:pt-[12px]">
+        <h2 className={`${DISPLAY} text-[28px] leading-[32px] md:text-[34px] md:leading-[38px] tracking-[-0.02em] [text-wrap:balance]`}>We guide agents where to go.</h2>
+        <p className={`mt-[8px] max-w-[46ch] text-[15px] leading-[23px] ${SUB} [text-wrap:balance]`}>
+          Signposts on your site point every agent straight to your prices, providers and hours, instead of leaving it to guess.
+        </p>
       </div>
-      <div className="order-first px-[8px] pt-[10px] pb-[18px] md:px-[12px] md:pt-[12px]">
+      <CodeCard name={`${CLINIC.domain}/robots.txt`}>
+        <Lines text={GUIDE_CODE} />
+      </CodeCard>
+    </Box>
+  );
+}
+
+/** Made-up personal agents for the partners drawing: abstract marks on their own colours, no real products. */
+const FAKE_AGENTS: { bg: string; fg: string; ring?: boolean; glyph: ReactNode }[] = [
+  { bg: "#E9D7C1", fg: "#3A2516", glyph: <path d="M15.5 4.5a8 8 0 1 0 4 10.5 6.5 6.5 0 0 1-4-10.5z" fill="currentColor" /> },
+  { bg: "#2F4A3A", fg: "#FFFCF1", glyph: <path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14zm0 0l7-7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /> },
+  { bg: "#F1B79A", fg: "#3A2516", glyph: <path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z" fill="currentColor" /> },
+  { bg: "#1F2A44", fg: "#FFFCF1", glyph: <path d="M3 10c3-3 6 3 9 0s6 3 9 0M3 15c3-3 6 3 9 0s6 3 9 0" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /> },
+  { bg: "#FFFCF1", fg: "#3A2516", ring: true, glyph: <><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2.2" /><circle cx="12" cy="12" r="3.2" fill="currentColor" /></> },
+  { bg: "#B4532F", fg: "#FFFCF1", glyph: <path d="M3.5 19L10 7l4 7 2.5-4L21 19z" fill="currentColor" /> },
+];
+
+/** A made-up agent's icon. */
+function FakeAgent({ i, size = 40 }: { i: number; size?: number }) {
+  const a = FAKE_AGENTS[i % FAKE_AGENTS.length]!;
+  return (
+    <span
+      className={`flex items-center justify-center shrink-0 shadow-[0_2px_8px_rgba(40,25,16,0.10)] ${a.ring ? "ring-1 ring-[#2819101A]" : ""}`}
+      style={{ width: size, height: size, borderRadius: Math.round(size * 0.28), backgroundColor: a.bg, color: a.fg }}
+      aria-hidden="true"
+    >
+      <svg width={Math.round(size * 0.5)} height={Math.round(size * 0.5)} viewBox="0 0 24 24" className="block">
+        {a.glyph}
+      </svg>
+    </span>
+  );
+}
+
+/** Doe built into personal agents: six agents wired to Doe in the middle, then one of them answering from Doe. */
+function AgentsPartners() {
+  // Three agents a side, wired into Doe in the middle.
+  const W = 300;
+  const H = 156;
+  const ys = [0, 58, 116];
+  const hub = { x: 118, y: 46, s: 64 };
+  return (
+    <Box innerClassName="p-[10px] md:p-[12px]">
+      <div className="px-[8px] pt-[10px] pb-[18px] md:px-[12px] md:pt-[12px]">
         <h2 className={`${DISPLAY} text-[26px] leading-[31px] md:text-[32px] md:leading-[38px] tracking-[-0.02em] [text-wrap:balance]`}>
           We&apos;re partnering with dozens of agents to integrate Doe as the default way to search for healthcare clinics.
         </h2>
-        <AgentIconsRow className="mt-[16px] !justify-start" ring="#FFFCF1" />
+      </div>
+      <div className="rounded-[16px] bg-[#F4EEDF] px-[12px] pt-[22px] pb-[16px] md:px-[20px] flex flex-col items-center gap-[18px]">
+        <div className="relative shrink-0" style={{ width: W, height: H }} aria-hidden="true">
+          <svg className="absolute inset-0" width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
+            {ys.map((y) => (
+              <g key={y} fill="none" stroke="#28191040" strokeWidth="1.5" strokeDasharray="3 4" strokeLinecap="round">
+                <path d={`M40 ${y + 20} C 80 ${y + 20}, 80 ${hub.y + 32}, ${hub.x} ${hub.y + 32}`} />
+                <path d={`M${W - 40} ${y + 20} C ${W - 80} ${y + 20}, ${W - 80} ${hub.y + 32}, ${hub.x + hub.s} ${hub.y + 32}`} />
+              </g>
+            ))}
+          </svg>
+          {ys.map((y, k) => (
+            <span key={`l${y}`} className="absolute left-0" style={{ top: y }}>
+              <FakeAgent i={k} />
+            </span>
+          ))}
+          {ys.map((y, k) => (
+            <span key={`r${y}`} className="absolute right-0" style={{ top: y }}>
+              <FakeAgent i={k + 3} />
+            </span>
+          ))}
+          <span
+            className="absolute flex items-center justify-center rounded-[18px] bg-[color:var(--ic-ink)] shadow-[0_8px_24px_rgba(40,25,16,0.22)]"
+            style={{ left: hub.x, top: hub.y, width: hub.s, height: hub.s }}
+          >
+            <IndexConvertSphere size={42} color="#FCCFB8" />
+          </span>
+        </div>
+        {/* One of them, searching clinics through Doe. */}
+        <div className="w-full max-w-[340px] rounded-[16px] bg-[#FFFCF1] p-[10px] shadow-[0_6px_20px_rgba(40,25,16,0.08)]" aria-label="Example: a personal agent searching clinics with Doe">
+          <div className="flex items-center gap-[8px]">
+            <FakeAgent i={2} size={24} />
+            <span className="min-w-0 flex-1 h-[30px] px-[12px] flex items-center rounded-full bg-[#F4EEDF] text-[12.5px] text-[#281910CC] truncate">Facelift surgeon in Toronto</span>
+          </div>
+          <div className={`mt-[8px] flex items-center gap-[6px] px-[2px] text-[11px] font-[600] ${MUTED}`}>
+            <IndexConvertSphere size={14} className="shrink-0" />
+            Clinic search by Doe
+          </div>
+          <div className="mt-[6px] flex items-center gap-[10px] rounded-[12px] p-[8px] shadow-[0_0_0_1px_rgba(40,25,16,0.08)]">
+            <IndexConvertSphere size={30} className="shrink-0" />
+            <div className="min-w-0 flex-1">
+              <div className="text-[13px] leading-[17px] font-[600] truncate">{CLINIC.name}</div>
+              <div className={`text-[11.5px] leading-[15px] ${SUB} truncate`}>Deep plane facelift · from $22,500</div>
+            </div>
+            <span className="shrink-0 h-[26px] px-[10px] flex items-center rounded-full bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[11px] font-[600]">Book</span>
+          </div>
+        </div>
       </div>
     </Box>
   );
@@ -2384,7 +2418,7 @@ const CONNECT_TABS = ["MCP", "API", "PAP"] as const;
 
 /** What an agent runs to reach Ford through Doe's MCP and API, and to open a Personal Agent Protocol session for its user. */
 const CONNECT_CODE: Record<(typeof CONNECT_TABS)[number], string> = {
-  MCP: JSON.stringify(
+  MCP: `// ${CLINIC.name} on Doe's MCP\n` + JSON.stringify(
     {
       mcpServers: {
         [SLUG]: { type: "http", url: MCP_URL },
@@ -2393,14 +2427,16 @@ const CONNECT_CODE: Record<(typeof CONNECT_TABS)[number], string> = {
     null,
     2,
   ) + `\n\n// tools: ${CLINIC_TOOLS.map((t) => t.name).join(", ")}`,
-  API: `curl ${API_ORIGIN}${BASE} \\
+  API: `# ${CLINIC.name} on Doe's API
+curl ${API_ORIGIN}${BASE} \\
   -H 'Authorization: Bearer $DOE_AGENT_KEY'
 
 curl -X POST ${API_ORIGIN}${BASE}/consultations \\
   -H 'Authorization: Bearer $DOE_AGENT_KEY' \\
   -H 'Content-Type: application/json' \\
   -d '{"service":"deep-plane-facelift","provider":"derek-ford"}'`,
-  PAP: `curl -X POST ${API_ORIGIN}${BASE}/pap/sessions \\
+  PAP: `# ${CLINIC.name} · Personal Agent Protocol
+curl -X POST ${API_ORIGIN}${BASE}/pap/sessions \\
   -H 'Authorization: Bearer $DOE_AGENT_KEY' \\
   -H 'Content-Type: application/json' \\
   -d '{
@@ -2410,24 +2446,37 @@ curl -X POST ${API_ORIGIN}${BASE}/consultations \\
   }'`,
 };
 
-/** Agent's View claim box: the code for an agent to connect to Ford's page on Doe's MCP and API and open a PAP session, all three stacked. */
+/** The full name under each connection's title. */
+const CONNECT_NAMES: Record<(typeof CONNECT_TABS)[number], string> = { MCP: "Model Context Protocol", API: "Agent API", PAP: "Personal Agent Protocol" };
+const CONNECT_TOPIC: Record<(typeof CONNECT_TABS)[number], AgentTopicId> = { MCP: "mcp", API: "api", PAP: "pap" };
+
+/**
+ * Agent's View claim box: what Doe learned helps agents, then the code for an agent to reach Ford through Doe's MCP and
+ * API and open a PAP session, each under a clean title with a ? that explains it.
+ */
 function ConnectBox() {
+  const [topic, setTopic] = useState<AgentTopicId | null>(null);
   return (
     <div className="rounded-[24px] bg-[#F4EEDF] p-[6px]">
+      {topic && <InfoSheet topic={topic} onClose={() => setTopic(null)} />}
       <div className="rounded-[20px] bg-[#FFFCF1] p-[16px]">
-        <div className="flex items-start justify-between gap-[12px]">
-          <div className={`${DISPLAY} text-[21px] leading-[25px] tracking-[-0.01em] [text-wrap:balance]`}>Connections Are Ready, Not Yet Active</div>
-          <span className="mt-[1px]">
-            <OffSwitch />
-          </span>
-        </div>
-        <div className="mt-[14px] flex flex-col gap-[8px]">
+        <div className={`${DISPLAY} text-[22px] leading-[27px] tracking-[-0.01em] [text-wrap:balance]`}>We studied what helps businesses be more easily interacted with.</div>
+        <div className="mt-[16px] flex flex-col gap-[14px]">
           {CONNECT_TABS.map((t) => (
-            <div key={t} className="rounded-[16px] bg-[color:var(--ic-ink)] text-[#FFFCF1] overflow-hidden">
-              <div className="flex items-center h-[34px] px-[14px] border-b border-solid border-[#FFFCF114] font-mono text-[11.5px] text-[#FFFCF180]">
-                {t === "MCP" ? "mcp.json" : t === "API" ? "api" : "pap/sessions"}
+            <div key={t}>
+              <div className="flex items-center justify-between gap-[10px] px-[2px] pb-[8px]">
+                <span className="min-w-0 flex items-baseline gap-[8px]">
+                  <span className="text-[15px] leading-[20px] font-[700] tracking-[0.04em]">{t}</span>
+                  <span className={`truncate text-[12.5px] leading-[18px] ${MUTED}`}>{CONNECT_NAMES[t]}</span>
+                </span>
+                <InfoButton label={AGENT_TOPICS[CONNECT_TOPIC[t]].question} onClick={() => setTopic(CONNECT_TOPIC[t])} size={22} />
               </div>
-              <pre className="p-[14px] font-mono text-[11.5px] leading-[18px] whitespace-pre-wrap [overflow-wrap:anywhere]">{CONNECT_CODE[t]}</pre>
+              <div className="rounded-[16px] bg-[color:var(--ic-ink)] text-[#FFFCF1] overflow-hidden">
+                <div className="flex items-center h-[34px] px-[14px] border-b border-solid border-[#FFFCF114] font-mono text-[11.5px] text-[#FFFCF180]">
+                  {t === "MCP" ? "mcp.json" : t === "API" ? "api" : "pap/sessions"}
+                </div>
+                <pre className="p-[14px] font-mono text-[11.5px] leading-[18px] whitespace-pre-wrap [overflow-wrap:anywhere]">{CONNECT_CODE[t]}</pre>
+              </div>
             </div>
           ))}
         </div>
@@ -2884,15 +2933,23 @@ function Json({ value, light }: { value: unknown; light?: boolean }) {
 }
 
 function AgentSections() {
-  const block = (id: string, title: string, meta: string, data: unknown, maxHeight?: number) => (
-    <Section id={id} title={title} meta={meta} agent>
-      <Endpoint method="GET" path={`${BASE}/${title}`} status="200" maxHeight={maxHeight}>
-        <Json value={data} />
+  const [topic, setTopic] = useState<SectionTopicId | null>(null);
+  // Each response names the clinic, so it reads as Ford's wherever it ends up.
+  const block = (id: SectionTopicId, data: unknown, maxHeight?: number) => (
+    <Section
+      id={id}
+      title={id}
+      agent
+      action={<InfoButton label={AGENT_TOPICS[id].question} onClick={() => setTopic(id)} size={24} />}
+    >
+      <Endpoint method="GET" path={`${BASE}/${id}`} status="200" maxHeight={maxHeight}>
+        <Json value={Array.isArray(data) ? { clinic: CLINIC.name, [id]: data } : { clinic: CLINIC.name, ...(data as object) }} />
       </Endpoint>
     </Section>
   );
   return (
     <>
+      {topic && <InfoSheet topic={topic} onClose={() => setTopic(null)} />}
       <div className="flex flex-col gap-[22px] pt-[14px] md:pt-[22px]">
         <div className="h-px bg-[#2819101F]" />
         <h2 className={`${DISPLAY} whitespace-nowrap px-[4px] text-left text-[clamp(22px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
@@ -2901,11 +2958,11 @@ function AgentSections() {
           we keep agents updated.
         </h2>
       </div>
-      {block("providers", "providers", `${PROVIDERS.length} items`, AGENT.providers, 460)}
-      {block("locations", "locations", `${LOCATIONS.length} items`, AGENT.locations, 460)}
-      {block("services", "services", `${SERVICE_COUNT} items · CAD`, AGENT.services, 460)}
-      {block("offers", "offers", `${OFFERS.length} items`, AGENT.offers)}
-      {block("booking", "booking", "agent_booking: off", AGENT.booking)}
+      {block("providers", AGENT.providers, 460)}
+      {block("locations", AGENT.locations, 460)}
+      {block("services", AGENT.services, 460)}
+      {block("offers", AGENT.offers)}
+      {block("booking", AGENT.booking)}
     </>
   );
 }

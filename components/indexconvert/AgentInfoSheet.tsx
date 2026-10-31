@@ -12,7 +12,9 @@ import { createPortal } from "react-dom";
 /** Same face as DISPLAY in IndexConvertPage. */
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
 
-export type AgentTopicId = "mcp" | "api" | "pap" | "llms" | "robots" | "openapi" | "card";
+export type AgentTopicId = "mcp" | "api" | "pap" | "llms" | "robots" | "openapi" | "card" | SectionTopicId;
+/** The sections of the agent page (What Agents See): what Doe does with each, written for the clinic's team. */
+export type SectionTopicId = "providers" | "locations" | "services" | "offers" | "booking";
 
 type Topic = {
   question: string;
@@ -20,7 +22,9 @@ type Topic = {
   what: string;
   /** Why it helps a personal agent find and use the clinic, from how those agents work. */
   why: string;
-  source: { label: string; href: string };
+  /** The small label over `why`. */
+  whyLabel?: string;
+  source?: { label: string; href: string };
 };
 
 export const AGENT_TOPICS: Record<AgentTopicId, Topic> = {
@@ -65,6 +69,36 @@ export const AGENT_TOPICS: Record<AgentTopicId, Topic> = {
     what: "A business card for your MCP server: its name, address and tools, kept in a file at a standard spot.",
     why: "Agents don't hunt for connections by hand. They check well-known places for a card, then connect by themselves. With the card in place, an agent can discover your clinic and start using it without anyone setting it up.",
     source: { label: "registry.modelcontextprotocol.io", href: "https://registry.modelcontextprotocol.io" },
+  },
+  providers: {
+    question: "How does Doe help agents find your providers?",
+    what: "Doe reads your team page and lists each surgeon, injector and aesthetician with their role and what they do, in one clean list.",
+    whyLabel: "Why it matters for your clinic",
+    why: "When a patient asks their agent for a surgeon who does rhinoplasty, the agent needs names and specialties it can trust. Bios inside photos and sliders are easy to miss. A clean list means your providers are the ones it finds and recommends.",
+  },
+  locations: {
+    question: "How does Doe help agents find your locations and hours?",
+    what: "Doe lists each of your locations with its address, phone and opening hours, in a format every agent reads the same way.",
+    whyLabel: "Why it matters for your clinic",
+    why: "Agents often search by distance and time, like \"within 30 km, open Saturday\". If your address and hours sit in a footer or an image, an agent may pass you by. Clear locations put you in those answers.",
+  },
+  services: {
+    question: "How does Doe help agents read your services and prices?",
+    what: "Doe turns your treatment pages and price list into one list of services, each with its starting price in CAD.",
+    whyLabel: "Why it matters for your clinic",
+    why: "Patients ask agents to compare, like \"HALO under $1,800\". Prices in PDFs or pictures can't be compared. With yours laid out clearly, an agent can match you to the request and quote your real price.",
+  },
+  offers: {
+    question: "How does Doe help agents see your offers and financing?",
+    what: "Doe gathers your current promotions and financing options and keeps them next to the services they apply to.",
+    whyLabel: "Why it matters for your clinic",
+    why: "Agents look for value on a patient's behalf. A clearly listed offer or payment plan can be the reason an agent puts your clinic first, instead of an offer it never saw on a banner.",
+  },
+  booking: {
+    question: "How does Doe help agents book with you?",
+    what: "Doe tells agents how to request a consult with you: what to send, who it goes to, and whether booking is turned on.",
+    whyLabel: "Why it matters for your clinic",
+    why: "Agents want to finish the job, not just suggest a name. Once you activate, an agent can request a consult with the patient's consent, and your team gets the request with everything it needs.",
   },
 };
 
@@ -126,9 +160,72 @@ function Pill({ x, y, w, label, dark = false }: { x: number; y: number; w: numbe
   );
 }
 
+/** The little picture on each section's card: a person, a pin, a list, a tag, a calendar. */
+function Glyph({ id, x, y }: { id: SectionTopicId; x: number; y: number }) {
+  const s = { fill: "none", stroke: ink, strokeWidth: 2.2, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      {id === "providers" && (
+        <>
+          <circle cx="12" cy="8" r="4.5" {...s} />
+          <path d="M3.5 21c1-5 4.5-7.5 8.5-7.5s7.5 2.5 8.5 7.5" {...s} />
+        </>
+      )}
+      {id === "locations" && (
+        <>
+          <path d="M12 22s7-6.4 7-12a7 7 0 0 0-14 0c0 5.6 7 12 7 12z" {...s} />
+          <circle cx="12" cy="10" r="2.6" {...s} />
+        </>
+      )}
+      {id === "services" && <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" {...s} />}
+      {id === "offers" && (
+        <>
+          <path d="M3 12V4h8l10 10-8 8z" {...s} />
+          <circle cx="7.5" cy="8.5" r="1.4" {...s} />
+        </>
+      )}
+      {id === "booking" && (
+        <>
+          <rect x="3" y="5" width="18" height="16" rx="3" {...s} />
+          <path d="M3 10h18M8 3v4M16 3v4M9 15l2 2 4-4" {...s} />
+        </>
+      )}
+    </g>
+  );
+}
+
+/** A busy page on the left, Doe's clean card for the section in the middle, an agent reading it on the right. */
+function SectionArt({ id }: { id: SectionTopicId }) {
+  return (
+    <>
+      {/* The clinic's own page: banner, menus, a pop-up. */}
+      <rect x="14" y="20" width="62" height="80" rx="10" fill={cream} />
+      <rect x="22" y="28" width="46" height="16" rx="4" fill="#E9DCC6" />
+      <rect x="22" y="50" width="38" height="4" rx="2" fill={line} />
+      <rect x="22" y="59" width="30" height="4" rx="2" fill={line} />
+      <rect x="22" y="68" width="42" height="4" rx="2" fill={line} />
+      <rect x="40" y="76" width="32" height="18" rx="5" fill={cream} stroke={line} strokeWidth="1" />
+      <rect x="45" y="83" width="22" height="5" rx="2.5" fill={ink} opacity="0.7" />
+      <path d="M82 60h12M88 54l6 6-6 6" fill="none" stroke={ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      {/* Doe's clean card for this section. */}
+      <rect x="100" y="10" width="64" height="84" rx="14" fill={ink} />
+      <rect x="114" y="20" width="36" height="36" rx="10" fill={cream} />
+      <Glyph id={id} x={120} y={26} />
+      <rect x="112" y="66" width="40" height="4" rx="2" fill={cream} opacity="0.85" />
+      <rect x="112" y="76" width="28" height="4" rx="2" fill={cream} opacity="0.5" />
+      <path d="M170 60h12M176 54l6 6-6 6" fill="none" stroke={ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <AgentDot cx={208} cy={60} r={20} />
+      <Pill x={92} y={99} w={80} label={id} />
+    </>
+  );
+}
+
+const SECTION_TOPICS: SectionTopicId[] = ["providers", "locations", "services", "offers", "booking"];
+
 function Drawing({ id }: { id: AgentTopicId }) {
   let art: ReactNode;
-  if (id === "mcp")
+  if ((SECTION_TOPICS as string[]).includes(id)) art = <SectionArt id={id as SectionTopicId} />;
+  else if (id === "mcp")
     art = (
       <>
         <AgentDot cx={48} cy={52} />
@@ -348,8 +445,9 @@ export function InfoSheet({ topic, onClose }: { topic: AgentTopicId; onClose: ()
         </div>
         <h2 className={`${DISPLAY} mt-[20px] text-[30px] leading-[34px] tracking-[-0.02em] [text-wrap:balance]`}>{info.question}</h2>
         <p className="mt-[12px] text-[16px] leading-[25px] text-[#281910E6] [text-wrap:pretty]">{info.what}</p>
-        <p className="mt-[16px] text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.12em] text-[#28191080]">Why it helps agents find you</p>
+        <p className="mt-[16px] text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.12em] text-[#28191080]">{info.whyLabel ?? "Why it helps agents find you"}</p>
         <p className="mt-[6px] text-[16px] leading-[25px] text-[#281910CC] [text-wrap:pretty]">{info.why}</p>
+        {info.source && (
         <a
           href={info.source.href}
           target="_blank"
@@ -362,6 +460,7 @@ export function InfoSheet({ topic, onClose }: { topic: AgentTopicId; onClose: ()
             <path d="M9 5.5l6.5 6.5L9 18.5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </a>
+        )}
       </div>
     </div>,
     document.body,
