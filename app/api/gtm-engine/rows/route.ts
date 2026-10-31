@@ -40,7 +40,8 @@ export async function GET(request: Request) {
       const rows = await readAllRows(table, params, filter);
       return NextResponse.json({ ok: true, rows: rows.slice(from, from + GTM_PAGE_SIZE), total: rows.length });
     }
-    const query = applyQuickFilters(createSupabaseAdmin().from(TABLE).select(SELECT, { count: "exact" }).eq("table_key", table), table, params);
+    const base = createSupabaseAdmin().from(TABLE).select(SELECT, { count: "exact" }).eq("table_key", table);
+    const query: typeof base = applyQuickFilters(base, table, params);
     const { data, count, error } = await query.order("entry_date", { ascending: false }).order("created_at", { ascending: true }).order("id").range(from, from + GTM_PAGE_SIZE - 1);
     if (error) throw error;
     return NextResponse.json({ ok: true, rows: data ?? [], total: count ?? 0 });
