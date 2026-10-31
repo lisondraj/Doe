@@ -107,6 +107,8 @@ export type DemoConfig = {
   floorPct: number;
   /** Confirm agent booking requests without staff review. */
   autoConfirm: boolean;
+  /** Which one-time settings changes (CONFIG_REV in demo-store) this config already has. */
+  rev?: number;
 };
 
 export type DemoSlotState = { status: "open" | "held" | "requested" | "booked"; sessionId?: string; until?: string };

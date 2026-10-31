@@ -12,6 +12,7 @@ import "@/lib/doehealthproduct/doehealthproduct.css";
 import { HalftoneDisc } from "@/components/doehealth-product/DoeHealthProductHalftone";
 import { Check, DISPLAY } from "@/components/demo/DemoFrame";
 import { DemoSphere } from "@/components/demo/DemoSphere";
+import { FormsLibrary } from "@/components/demo/DemoClinicForms";
 import { Integrations } from "@/components/demo/DemoClinicIntegrations";
 import { AgentAvatar, CHANNEL_LONG, LiveSession, NOTICE_CSS, NoticeStack, useNotices } from "@/components/demo/DemoClinicLive";
 import { Card, CardTitle, Empty, PageTitle, Segmented, Switch, SyncDot, Tag } from "@/components/demo/DemoClinicUi";
@@ -1461,12 +1462,12 @@ function Services({ config, onConfig }: { config: DemoConfig | null; onConfig: (
                     {r.sub}
                     <span className="md:hidden">
                       {" "}
-                      · {money(r.price)} · agents {money(Math.round(r.price * (1 - AGENT_DISCOUNT)))}
+                      · {money(r.price)} · agents {money(r.price - Math.round(r.price * AGENT_DISCOUNT))}
                     </span>
                   </span>
                 </span>
                 <span className="hidden md:block text-[14px] font-[700] [font-variant-numeric:tabular-nums]">{money(r.price)}</span>
-                <span className="hidden md:block text-[13.5px] [font-variant-numeric:tabular-nums]">{money(Math.round(r.price * (1 - AGENT_DISCOUNT)))}</span>
+                <span className="hidden md:block text-[13.5px] [font-variant-numeric:tabular-nums]">{money(r.price - Math.round(r.price * AGENT_DISCOUNT))}</span>
                 <span className="hidden md:block text-[13.5px] text-[#2819109E] [font-variant-numeric:tabular-nums]">{money(Math.round((r.price * f) / 5) * 5)}</span>
                 <span className="flex items-center justify-end gap-[10px] text-[12.5px] font-[500] text-[#2819109E]">
                   <span className="hidden sm:inline">{on ? "Bookable" : "Off"}</span>
@@ -1483,7 +1484,49 @@ function Services({ config, onConfig }: { config: DemoConfig | null; onConfig: (
 
 /* ——— Forms ——— */
 
+type FormsView = "library" | "returned";
+
+/** The clinic's forms (the ones agents fill in at /demo), and what patients' agents have sent back. */
 function Forms({ sessions, focus, onAct }: { sessions: Session[]; focus: { id: string; n: number } | null; onAct: Act }) {
+  const [view, setView] = useState<FormsView>(focus ? "returned" : "library");
+  const [open, setOpen] = useState(focus);
+  useEffect(() => {
+    if (!focus) return;
+    setOpen(focus);
+    setView("returned");
+  }, [focus]);
+  const back = sessions.filter((s) => s.forms.status === "sent").length;
+  const toggle = (
+    <Segmented
+      value={view}
+      onChange={setView}
+      options={[
+        { id: "library", label: "Library · 7" },
+        { id: "returned", label: `Returned · ${back}` },
+      ]}
+    />
+  );
+  return (
+    <>
+      <PageTitle kicker={view === "library" ? "What patients' agents fill in before a visit" : "Sent back by patients' agents"} right={toggle}>
+        Forms
+      </PageTitle>
+      {view === "library" ? (
+        <FormsLibrary
+          sessions={sessions}
+          onOpenReturn={(id) => {
+            setOpen((f) => ({ id, n: (f?.n ?? 0) + 1 }));
+            setView("returned");
+          }}
+        />
+      ) : (
+        <ReturnedForms sessions={sessions} focus={open} onAct={onAct} />
+      )}
+    </>
+  );
+}
+
+function ReturnedForms({ sessions, focus, onAct }: { sessions: Session[]; focus: { id: string; n: number } | null; onAct: Act }) {
   const withForms = sessions.filter((s) => s.forms.status === "sent" || Object.keys(s.forms.assessments).length > 0 || s.forms.signedBy || (s.forms.uploads?.length ?? 0) > 0);
   const [openId, setOpenId] = useState<string | null>(focus?.id ?? null);
   const [detail, setDetail] = useState(Boolean(focus));
@@ -1497,9 +1540,9 @@ function Forms({ sessions, focus, onAct }: { sessions: Session[]; focus: { id: s
   const returned = withForms.filter((s) => s.forms.status === "sent").length;
   return (
     <>
-      <div className={detail ? "hidden lg:block" : ""}>
-        <PageTitle kicker={withForms.length ? `${returned} returned · ${withForms.length - returned} in progress` : "Intake, assessments and consent"}>Forms</PageTitle>
-      </div>
+      <p className={`-mt-[6px] mb-[12px] text-[13px] text-[#2819109E] ${detail ? "hidden lg:block" : ""}`}>
+        {withForms.length ? `${returned} returned · ${withForms.length - returned} in progress` : "Nothing back yet"}
+      </p>
       {!f ? (
         <Empty>No forms yet. They appear here as agents fill them.</Empty>
       ) : (

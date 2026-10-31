@@ -94,9 +94,17 @@ export function withLock<T>(key: string, fn: () => Promise<T>): Promise<T> {
   return next;
 }
 
+/**
+ * One-time changes to the saved settings, applied on read until the next save records them.
+ * 1: Botox for chronic migraine is bookable again (the demo's featured service). Staff can still turn it off.
+ */
+const CONFIG_REV = 1;
+
 export async function readConfig(): Promise<DemoConfig> {
   const c = await readJson<Partial<DemoConfig>>("config.json");
-  return { ...DEFAULT_CONFIG, ...c, bookable: { ...DEFAULT_CONFIG.bookable, ...c?.bookable } };
+  const config: DemoConfig = { ...DEFAULT_CONFIG, ...c, bookable: { ...DEFAULT_CONFIG.bookable, ...c?.bookable } };
+  if ((c?.rev ?? 0) < 1) config.bookable.botox = true;
+  return { ...config, rev: CONFIG_REV };
 }
 export const writeConfig = (c: DemoConfig) => writeJson("config.json", c);
 
