@@ -429,8 +429,9 @@ function Cross({ size = 20 }: { size?: number }) {
       style={{ width: size, height: size, borderRadius: Math.round(size * 0.35) }}
       aria-hidden="true"
     >
-      <svg width={size * 0.5} height={size * 0.5} viewBox="0 0 24 24">
-        <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="#FFFCF1" strokeWidth="3.4" strokeLinecap="round" />
+      {/* An even glyph size in an even square, so the X sits on whole pixels, dead centre. */}
+      <svg width={Math.round(size / 4) * 2} height={Math.round(size / 4) * 2} viewBox="0 0 24 24" className="block">
+        <path d="M5 5l14 14M19 5L5 19" fill="none" stroke="#FFFCF1" strokeWidth="3.4" strokeLinecap="round" />
       </svg>
     </span>
   );
@@ -1032,7 +1033,7 @@ function Hero({
   return (
     <div className={`flex flex-col rounded-[26px] bg-[#F4EEDF] p-[6px] shrink-0 ${className}`}>
       <div className={`grow flex flex-col justify-center ${compact ? "rounded-[21px] bg-[#FFFCF1] px-[16px] pt-[26px] pb-[24px] [@media(max-height:760px)]:pt-[16px] [@media(max-height:760px)]:pb-[14px] md:px-[22px] md:py-[18px]" : "rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]"} ${innerClassName}`}>
-        <div className={compact ? "flex flex-col items-center text-center gap-[12px] [@media(max-height:760px)]:gap-[8px]" : "flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]"}>
+        <div className={compact ? "flex flex-col items-center text-center gap-[12px] [@media(max-height:760px)]:gap-[8px]" : "flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px] xl:flex-1 xl:min-w-0"}>
           <IndexConvertSphere size={compact ? 64 : 84} className="shrink-0" />
           <div className="min-w-0">
             <h1 className={`${DISPLAY} tracking-[-0.02em] [text-wrap:balance] ${compact ? "text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] md:text-[30px] md:leading-[34px]" : "text-[30px] leading-[34px] md:text-[36px] md:leading-[40px]"}`}>{CLINIC.name}</h1>
@@ -1218,7 +1219,8 @@ function StepBoxes() {
   return (
     <>
       {STEP_BOXES.map((st) => (
-        <div key={st.n} className="rounded-[26px] bg-[#F4EEDF] p-[6px] flex flex-col">
+        // Tablet: two across, the fifth spanning both. Desktop: three over two.
+        <div key={st.n} className={`rounded-[26px] bg-[#F4EEDF] p-[6px] flex flex-col ${st.n === 5 ? "md:col-span-2 xl:col-span-3" : st.n === 4 ? "xl:col-span-3" : "xl:col-span-2"}`}>
           <div className="flex-1 rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px]">
             <StepVisual n={st.n} />
             <div className="px-[8px] pt-[14px] pb-[8px] md:px-[12px]">
@@ -1241,14 +1243,15 @@ function StepBoxes() {
 function Intro({ onStart }: { onStart: () => void }) {
   return (
     <main className="ic-fade flex justify-center px-[16px] md:px-[28px] pt-[22px] pb-[96px]">
-      {/* iPhone: one column. Tablet: one wider column, steps two across. Desktop: clinic and founders left, steps right. */}
-      <div className="w-full max-w-[560px] md:max-w-[720px] xl:max-w-[1180px] flex flex-col gap-[10px] xl:grid xl:grid-cols-2 xl:items-start">
-        <div className="flex flex-col gap-[10px]">
+      {/* iPhone: one column. Tablet: one wider column, steps two across. Desktop: full-width bands: the clinic with its
+          button, the five steps three over two, then the founders. */}
+      <div className="w-full max-w-[560px] md:max-w-[720px] xl:max-w-[1180px] flex flex-col gap-[10px]">
         <Hero
+          innerClassName="xl:flex-row xl:items-center xl:gap-[36px] xl:!px-[32px] xl:!py-[28px]"
           action={
-            <>
+            <div className="w-full xl:w-[500px] xl:shrink-0">
             {/* Where the clinic stands today: the personal agents, each crossed out, in a quiet dashed box. */}
-            <div className="mt-[20px] w-full rounded-[16px] border-[1.5px] border-dashed border-[#28191033] px-[14px] pt-[14px] pb-[16px]">
+            <div className="mt-[20px] xl:mt-0 w-full rounded-[16px] border-[1.5px] border-dashed border-[#28191033] px-[14px] pt-[14px] pb-[16px]">
               <p className={`text-center text-[13px] leading-[18px] font-[500] ${SUB}`}>
                 Personal agents have a hard time
                 <br /> connecting to {CLINIC.name}
@@ -1265,14 +1268,13 @@ function Intro({ onStart }: { onStart: () => void }) {
                 <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
-            </>
+            </div>
           }
         />
-        <AboutDoe intro />
-        </div>
-        <div className="flex flex-col gap-[10px] md:grid md:grid-cols-2">
+        <div className="flex flex-col gap-[10px] md:grid md:grid-cols-2 xl:grid-cols-6 max-xl:order-1">
           <StepBoxes />
         </div>
+        <AboutDoe intro />
       </div>
     </main>
   );
@@ -1521,7 +1523,7 @@ function AgentChat({ className = "" }: { className?: string }) {
 function AboutDoe({ intro = false }: { intro?: boolean }) {
   return (
     <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
-      <div className="rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px]">
+      <div className={`rounded-[21px] bg-[#FFFCF1] p-[10px] md:p-[12px] ${intro ? "xl:grid xl:grid-cols-[1.2fr_1fr] xl:items-center xl:gap-[12px]" : ""}`}>
         {intro ? (
           <div className="rounded-[18px] overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1536,7 +1538,7 @@ function AboutDoe({ intro = false }: { intro?: boolean }) {
         ) : (
           <FoundersFilm />
         )}
-        <div className="px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px]">
+        <div className={`px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px] ${intro ? "xl:px-[24px] xl:py-[28px]" : ""}`}>
           {intro ? (
             <>
               <p className={`${DISPLAY} max-w-[22ch] text-[clamp(26px,6.6vw,38px)] leading-[1.14] tracking-[-0.02em] [text-wrap:balance]`}>
