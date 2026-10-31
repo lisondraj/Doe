@@ -2240,7 +2240,7 @@ function Box({ children, className = "", innerClassName = "" }: { children: Reac
 /** First box in Agent's View: a person sees a page, an agent reads data. */
 function AgentsDifferent() {
   return (
-    <Box innerClassName="p-[10px] md:p-[12px]">
+    <Box innerClassName="flex flex-col p-[10px] md:p-[12px]">
       <div className="grid grid-cols-2 gap-[8px] rounded-[16px] bg-[#F4EEDF] p-[10px] md:p-[14px]">
         {/* A person: a busy web page, a pop-up over it. */}
         <figure className="flex flex-col items-center">
@@ -2278,7 +2278,8 @@ function AgentsDifferent() {
           <figcaption className={`mt-[8px] text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>Agents read data</figcaption>
         </figure>
       </div>
-      <div className="px-[8px] pt-[18px] pb-[10px] md:px-[12px]">
+      {/* Title and description first, the drawing under them. */}
+      <div className="order-first px-[8px] pt-[10px] pb-[18px] md:px-[12px] md:pt-[12px]">
         <h2 className={`${DISPLAY} text-[28px] leading-[32px] md:text-[34px] md:leading-[38px] tracking-[-0.02em] [text-wrap:balance]`}>
           Agents use the internet differently.
         </h2>
@@ -2327,7 +2328,7 @@ function AgentsStudied() {
             <CodeCard name={r.file} className={i % 2 ? "md:order-2" : ""}>
               <Lines text={r.code} />
             </CodeCard>
-            <div className="px-[4px]">
+            <div className={`px-[4px] max-md:order-first ${i % 2 ? "" : "md:order-2"}`}>
               <h3 className={`${DISPLAY} text-[26px] leading-[30px] md:text-[30px] md:leading-[35px] tracking-[-0.02em] [text-wrap:balance]`}>{r.title}</h3>
               <p className={`mt-[8px] text-[15px] leading-[23px] ${SUB} [text-wrap:balance]`}>{r.body}</p>
             </div>
@@ -2341,7 +2342,7 @@ function AgentsStudied() {
 /** Doe built into a personal agent: the agent searches Doe and answers with Ford. */
 function AgentsPartners() {
   return (
-    <Box innerClassName="p-[10px] md:p-[12px]">
+    <Box innerClassName="flex flex-col p-[10px] md:p-[12px]">
       <div className="rounded-[16px] bg-[#F4EEDF] px-[12px] py-[16px] md:px-[20px] md:py-[20px] flex justify-center">
         <div className="w-full max-w-[360px] rounded-[18px] bg-[#FFFCF1] p-[12px] shadow-[0_8px_24px_rgba(40,25,16,0.08)]" aria-label="Example: a personal agent searching Doe">
           <div className="flex items-center gap-[8px] pb-[10px] border-b border-solid border-[#2819100F]">
@@ -2367,7 +2368,7 @@ function AgentsPartners() {
           </div>
         </div>
       </div>
-      <div className="px-[8px] pt-[18px] pb-[10px] md:px-[12px]">
+      <div className="order-first px-[8px] pt-[10px] pb-[18px] md:px-[12px] md:pt-[12px]">
         <h2 className={`${DISPLAY} text-[26px] leading-[31px] md:text-[32px] md:leading-[38px] tracking-[-0.02em] [text-wrap:balance]`}>
           We&apos;re partnering with dozens of agents to integrate Doe as the default way to search for healthcare clinics.
         </h2>
