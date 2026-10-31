@@ -247,7 +247,7 @@ export function IndexConvertPage() {
 
   return (
     // The page mounts once the loader has faded, so the two never show through each other.
-    <Frame scrollRef={scrollRef} right={phase === "done" ? <ViewSwitch view={view} onChange={switchView} /> : null} loader={loader} mark={phase === "done" || phase === "intro"} edgeFade={phase === "intro"}>
+    <Frame scrollRef={scrollRef} right={phase === "done" ? <ViewSwitch view={view} onChange={switchView} /> : null} loader={loader} mark={phase === "done" || phase === "intro"} centerMark={phase === "intro"} edgeFade={phase === "intro"}>
       {phase === "intro" && <Intro onStart={() => {
         setElapsed(0);
         setPhase("loading");
@@ -260,7 +260,9 @@ export function IndexConvertPage() {
 /* ------------------------------------------------------------------ Frame */
 
 /** The Doe wordmark as /earlypreview's nav sets it: Lora, regular weight, text-4xl. */
-const DoeMark = () => <span className={`${lora.className} absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-x-0 md:translate-y-0 text-[36px] leading-[36px] md:text-[36px] md:leading-[36px] font-normal text-[#281910]`}>Doe</span>;
+const DoeMark = ({ center = false }: { center?: boolean }) => (
+  <span className={`${lora.className} ${center ? "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-x-0 md:translate-y-0" : ""} text-[36px] leading-[36px] font-normal text-[#281910]`}>Doe</span>
+);
 const HEADER = "flex items-center justify-between gap-[12px] h-[76px] md:h-[72px] px-[18px] md:px-[32px]";
 
 /** /demo's frame: Doe's brown fills the window and the page sits in a cream box that scrolls on its own. */
@@ -269,6 +271,7 @@ function Frame({
   right,
   loader,
   mark = true,
+  centerMark = false,
   edgeFade = false,
   children,
 }: {
@@ -276,6 +279,7 @@ function Frame({
   right: ReactNode;
   loader: ReactNode;
   mark?: boolean;
+  centerMark?: boolean;
   /** Fades whatever scrolls past the top or bottom edge of the shell. */
   edgeFade?: boolean;
   children: ReactNode;
@@ -293,7 +297,7 @@ function Frame({
       <div className="relative h-full w-full overflow-clip rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
         <div ref={scrollRef} className="absolute inset-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
           <header className={`sticky top-0 z-30 ${HEADER} bg-[#FFFCF1E6] backdrop-blur-[12px]`}>
-            {mark ? <DoeMark /> : <span />}
+            {mark ? <DoeMark center={centerMark} /> : <span />}
             {right}
           </header>
           {children}
@@ -413,7 +417,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
       />
       <ReadChips pageIndex={pageIndex} />
       <div className={`relative z-10 ${HEADER}`}>
-        <span />
+        <DoeMark />
         <button
           type="button"
           onClick={onSkip}
