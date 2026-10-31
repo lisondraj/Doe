@@ -443,8 +443,8 @@ function StripedDoe() {
   }, []);
   const top = FS - ink.ascent;
   const h = ink.ascent + ink.descent;
-  /** 13 strips from the top of the D down, each a little thicker than the gap. */
-  const period = ink.ascent / 13;
+  /** 24 fine strips from the top of the D down, each thinner than the gap. */
+  const period = ink.ascent / 24;
   return (
     <svg
       ref={svgRef}
@@ -455,7 +455,7 @@ function StripedDoe() {
     >
       <defs>
         <pattern id="ic-doe-strips" patternUnits="userSpaceOnUse" x="0" y={top} width={FS * 4} height={period}>
-          <rect x="0" y="0" width={FS * 4} height={period * 0.58} fill="#FFFCF1" />
+          <rect x="0" y="0" width={FS * 4} height={period * 0.42} fill="#FFFCF1" />
         </pattern>
       </defs>
       <text x="0" y={FS} fontSize={FS} fill="url(#ic-doe-strips)" style={{ fontWeight: 400 }}>
@@ -2339,8 +2339,8 @@ function AgentsDifferent() {
           People scroll, tap menus and look at photos. Agents skip all of that: they read files, call tools and want a clear answer fast.
         </p>
       </div>
-      <Box innerClassName="p-[10px] md:p-[12px]">
-        <div className="grid grid-cols-2 gap-[8px] rounded-[16px] bg-[#F4EEDF] p-[10px] md:p-[14px]">
+      {/* The two comparisons on one full beige fill, no shell around it. */}
+      <div className="grid grid-cols-2 gap-[8px] rounded-[24px] bg-[#F4EEDF] p-[12px] md:p-[16px]">
           {/* A person: Ford's own page, busy, a pop-up over it. */}
           <figure className="flex flex-col">
             <figcaption className={`mb-[8px] text-center text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>People Browse Pages</figcaption>
@@ -2377,8 +2377,7 @@ function AgentsDifferent() {
               <div>{"}"}</div>
             </div>
           </figure>
-        </div>
-      </Box>
+      </div>
     </section>
   );
 }
