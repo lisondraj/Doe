@@ -822,22 +822,29 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
           </div>
           ) : (
             <div className="ic-rise flex flex-col gap-[10px]">
-              <h2 className={`${DISPLAY} px-[4px] pb-[8px] text-left text-[clamp(27px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
-                We&apos;ve made your clinic
-                <br />
-                more discoverable
-                <br />
-                to personal agents.
-              </h2>
-              <Hero />
-              {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
-              <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[124px] md:scroll-mt-[88px]">
-                <StatusPanel
-                  activateRef={activateRef}
-                  claimed={claim.claimed}
-                  onClaim={goToClaim}
-                />
+              {/* iPhone: the title, the clinic's box, the switch and the button fill the first screen, the rest peeks in below. */}
+              <div className="flex flex-col gap-[10px] max-md:min-h-[calc(100svh-136px)]">
+                <h2 className={`${DISPLAY} px-[4px] pt-[2px] text-left text-[clamp(27px,8.2vw,34px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
+                  We&apos;ve made your clinic
+                  <br /> more discoverable
+                  <br /> to personal agents.
+                </h2>
+                <Hero className="max-md:grow" innerClassName="max-md:py-[30px]" />
+                {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
+                <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[124px] md:scroll-mt-[88px]">
+                  <StatusPanel
+                    activateRef={activateRef}
+                    claimed={claim.claimed}
+                    onClaim={goToClaim}
+                  />
+                </div>
               </div>
+              {!claimed && (
+                <p className="md:hidden px-[4px] pt-[6px] pb-[8px] text-[17px] leading-[25px] text-[#281910B3] [text-wrap:pretty]">
+                  We&apos;ve built {CLINIC.name}&apos;s agentic pages, so personal agents can find, read and book you. Claim your page to switch them on.
+                </p>
+              )}
+              <SetupFiles className="md:hidden" />
               <AboutDoe />
             </div>
           )}
@@ -890,10 +897,10 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 /* ------------------------------------------------------------------ Status */
 
 /** The clinic as a small hero: sphere, name, what it is, where, its site. Centred on iPhone, a row from tablet up. */
-function Hero({ action, compact = false }: { action?: ReactNode; compact?: boolean }) {
+function Hero({ action, compact = false, className = "", innerClassName = "" }: { action?: ReactNode; compact?: boolean; className?: string; innerClassName?: string }) {
   return (
-    <div className="rounded-[26px] bg-[#F4EEDF] p-[6px] shrink-0">
-      <div className={compact ? "rounded-[21px] bg-[#FFFCF1] px-[16px] py-[16px] md:px-[22px] md:py-[18px]" : "rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]"}>
+    <div className={`flex flex-col rounded-[26px] bg-[#F4EEDF] p-[6px] shrink-0 ${className}`}>
+      <div className={`grow flex flex-col justify-center ${compact ? "rounded-[21px] bg-[#FFFCF1] px-[16px] py-[16px] md:px-[22px] md:py-[18px]" : "rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]"} ${innerClassName}`}>
         <div className={compact ? "flex items-center text-left gap-[14px]" : "flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]"}>
           <IndexConvertSphere size={compact ? 60 : 84} className="shrink-0" />
           <div className="min-w-0">
@@ -1356,8 +1363,9 @@ function ClaimModal({
  */
 function StatusPanel({ claimed, onClaim, activateRef }: { claimed: string | null; onClaim: () => void; activateRef: RefObject<HTMLButtonElement> }) {
   return (
-    <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
-      <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[18px] pb-[16px] md:px-[24px] md:pt-[22px] md:pb-[20px]">
+    // iPhone, before claiming: the switch and the button sit bare under the clinic's box, without the box around them.
+    <div className={`rounded-[26px] bg-[#F4EEDF] p-[6px] ${claimed ? "" : "max-md:bg-transparent max-md:p-0"}`}>
+      <div className={`rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[18px] pb-[16px] md:px-[24px] md:pt-[22px] md:pb-[20px] ${claimed ? "" : "max-md:p-0"}`}>
         {claimed ? (
           <div className="text-[30px] leading-[34px] md:text-[38px] md:leading-[42px] font-[700] tracking-[0.02em] uppercase">Confirm Your Email</div>
         ) : (
@@ -1365,58 +1373,65 @@ function StatusPanel({ claimed, onClaim, activateRef }: { claimed: string | null
         )}
         {claimed && <p className={`mt-[6px] text-[14.5px] leading-[21px] ${SUB}`}>Link sent to {claimed}.</p>}
         {!claimed && (
-          <p className="mt-[10px] max-w-[46ch] text-[17px] leading-[25px] md:text-[19px] md:leading-[27px] text-[#281910B3] [text-wrap:pretty]">
+          <p className="max-md:hidden mt-[10px] max-w-[46ch] text-[17px] leading-[25px] md:text-[19px] md:leading-[27px] text-[#281910B3] [text-wrap:pretty]">
             Claim this page to activate it and begin securing customers through personal agents.
           </p>
         )}
         {!claimed && (
           <ActivateButton
             buttonRef={activateRef}
-            className="mt-[16px]"
+            className="mt-[10px] md:mt-[16px]"
             onClick={onClaim}
           />
         )}
 
-        {/* Settings and files in one inner sand box, greyed because none of it is live yet. */}
-        <div className="mt-[18px] rounded-[18px] bg-[#F4EEDF] px-[16px] py-[14px]">
-          <div className="opacity-60">
-            <div className="text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]">Settings</div>
-            <div className="mt-[6px] flex flex-col">
-              {CONNECTIONS.map((c) => (
-                <div key={c.name} className="flex items-start gap-[12px] py-[9px]">
-                  <Check on size={18} />
-                  <span className="min-w-0 grow">
-                    <span className="block text-[14px] leading-[19px] font-[600]">{c.name}</span>
-                    <span className={`block mt-[1px] font-mono text-[11.5px] leading-[16px] ${MUTED} truncate`}>{c.target}</span>
-                  </span>
-                  <span className="shrink-0 pt-[1px] text-right text-[12.5px] leading-[17px]">
-                    <span className="block font-[600]">Created</span>
-                    <span className={`block text-[11.5px] ${MUTED}`}>Not published</span>
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-[16px] text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]">Files</div>
-            <div className="mt-[6px] grid grid-cols-1">
-              {AGENT_FILES.map((f) => (
-                <div key={f.path} className="flex items-center gap-[10px] py-[8px]">
-                  <Check on size={16} />
-                  <span className="min-w-0 grow break-words font-mono text-[12.5px] leading-[17px]">
-                    <span className={MUTED}>ford-plastics</span>
-                    {f.path}
-                  </span>
-                  <span className="shrink-0 text-right text-[11.5px] leading-[15px]">
-                    <span className="block font-[600]">Created</span>
-                    <span className={`block ${MUTED}`}>Not published</span>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        {/* tablet and desktop: settings and files sit inside the status box; iPhone sets them under it. */}
+        <SetupFiles className="max-md:hidden mt-[18px]" />
       </div>
 
+    </div>
+  );
+}
+
+/** Settings and files in one inner sand box, greyed because none of it is live yet. */
+function SetupFiles({ className = "" }: { className?: string }) {
+  return (
+    <div className={`rounded-[18px] bg-[#F4EEDF] px-[16px] py-[14px] ${className}`}>
+      <div className="opacity-60">
+        <div className="text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]">Settings</div>
+        <div className="mt-[6px] flex flex-col">
+          {CONNECTIONS.map((c) => (
+            <div key={c.name} className="flex items-start gap-[12px] py-[9px]">
+              <Check on size={18} />
+              <span className="min-w-0 grow">
+                <span className="block text-[14px] leading-[19px] font-[600]">{c.name}</span>
+                <span className={`block mt-[1px] font-mono text-[11.5px] leading-[16px] ${MUTED} truncate`}>{c.target}</span>
+              </span>
+              <span className="shrink-0 pt-[1px] text-right text-[12.5px] leading-[17px]">
+                <span className="block font-[600]">Created</span>
+                <span className={`block text-[11.5px] ${MUTED}`}>Not published</span>
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-[16px] text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]">Files</div>
+        <div className="mt-[6px] grid grid-cols-1">
+          {AGENT_FILES.map((f) => (
+            <div key={f.path} className="flex items-center gap-[10px] py-[8px]">
+              <Check on size={16} />
+              <span className="min-w-0 grow break-words font-mono text-[12.5px] leading-[17px]">
+                <span className={MUTED}>ford-plastics</span>
+                {f.path}
+              </span>
+              <span className="shrink-0 text-right text-[11.5px] leading-[15px]">
+                <span className="block font-[600]">Created</span>
+                <span className={`block ${MUTED}`}>Not published</span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
