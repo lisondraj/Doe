@@ -147,6 +147,15 @@ export async function listVisits(limit: number, maxAgeMs: number): Promise<DemoV
 export const readIpVisit = (key: string) => readJson<{ id: string; at: string }>(`visit-ip/${key}.json`);
 export const writeIpVisit = (key: string, id: string) => writeJson(`visit-ip/${key}.json`, { id, at: new Date().toISOString() });
 
+/** A share link's token, pointing at its session; only the holder of the link knows the token. */
+export type ShareRecord = { sessionId: string; shareId: string; expiresAt: string };
+const isToken = (t: string) => /^[A-Za-z0-9_-]{32,64}$/.test(t);
+export async function readShare(token: string): Promise<ShareRecord | null> {
+  if (!isToken(token)) return null;
+  return readJson<ShareRecord>(`shares/${token}.json`);
+}
+export const writeShare = (token: string, r: ShareRecord) => writeJson(`shares/${token}.json`, r);
+
 type ConnectCount = { total: number; ips: Record<string, number> };
 
 /** New sessions this hour, in total and by hashed IP. */

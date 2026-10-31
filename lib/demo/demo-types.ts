@@ -58,6 +58,16 @@ export type DemoUpload = {
   dataUrl?: string;
 };
 
+/** A private link to a read-only copy of the user's forms. */
+export type DemoShare = {
+  id: string;
+  createdAt: string;
+  expiresAt: string;
+  views: number;
+  lastViewedAt: string | null;
+  revoked: boolean;
+};
+
 export type DemoBookingStatus = "none" | "requested" | "confirmed" | "declined";
 
 export type DemoSession = {
@@ -103,6 +113,8 @@ export type DemoSession = {
   };
   threads: Record<DemoThreadId, DemoMessage[]>;
   events: DemoEvent[];
+  /** Read-only copies of the forms shared with the user by link. The token itself lives only in shares/<token>.json. */
+  shares?: DemoShare[];
   /** Actions and messages this hour, for the per-session quota. */
   usage?: { hour: string; actions: number; messages: number };
 };

@@ -271,6 +271,10 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
             if (r.ok) setFormsOpen(false);
           }}
           onUpload={(u) => run({ type: "upload_form", ...u }, `Uploaded ${u.title}`)}
+          onShare={async () => {
+            const r = await run({ type: "share_forms" }, "Link ready");
+            return r.ok ? { url: String(r.result.url), message: String(r.result.message_for_user) } : null;
+          }}
         />
       </Sheet>
     </>

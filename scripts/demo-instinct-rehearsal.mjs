@@ -89,6 +89,7 @@ const STEPS = [
   { pause: 3, say: "James signs the consent", tool: "doe_record_signature", args: { signed_by: JAMES.name } },
   { pause: 3, say: "Uploads James's migraine diary", tool: "doe_upload_form", args: { title: "Migraine diary, October 2026", text: DIARY } },
   { pause: 6, say: "James says send it. Instinct passes the forms back.", tool: "doe_submit_forms", args: {}, mark: "forms" },
+  { pause: 3, say: "Instinct makes James a private copy of his forms", tool: "doe_share_forms", args: {} },
   { pause: 5, say: "Requests the booking (PHI confirmed with James)", tool: "doe_request_booking", args: { phi_confirmed: true } },
 ];
 
@@ -117,6 +118,7 @@ for (const step of STEPS) {
   if (step.tool === "doe_connect") token = data.token;
   last = data.result ?? {};
   const reply = data.result?.reply?.text ?? (typeof data.result?.reply === "string" ? data.result.reply : null);
+  if (data.result?.url) console.log(`    link for James: ${data.result.url}`);
   const offers = data.result?.offers?.map((o) => `${o.label}: $${o.price.toLocaleString("en-CA")}`).join(" | ");
   console.log(`✓ ${step.say}${reply ? `\n    clinic: ${reply}` : ""}${offers ? `\n    offers: ${offers}` : ""}`);
   if (until && step.mark === until) break;

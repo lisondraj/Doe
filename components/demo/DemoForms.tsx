@@ -49,6 +49,7 @@ export function DemoForms({
   onSign,
   onSubmit,
   onUpload,
+  onShare,
 }: {
   forms: DemoSession["forms"];
   userName: string;
@@ -58,6 +59,8 @@ export function DemoForms({
   onSubmit: () => Promise<unknown>;
   /** Uploads a written form or a file (a migraine diary, a referral) to the clinic. */
   onUpload?: (u: { title: string; text?: string; file_name?: string; mime_type?: string; content_base64?: string }) => Promise<unknown>;
+  /** Makes a private link to a read-only copy for the user; resolves to the URL and the message to paste. */
+  onShare?: () => Promise<{ url: string; message: string } | null>;
 }) {
   const [tab, setTab] = useState("intake");
   const [draft, setDraft] = useState<Record<string, string>>(forms.intake);
@@ -254,8 +257,52 @@ export function DemoForms({
           </span>
         </div>
       </div>
+      {onShare && <ShareCopy userName={userName} onShare={onShare} />}
       {onUpload && <Uploads uploads={forms.uploads ?? []} onUpload={onUpload} />}
     </div>
+  );
+}
+
+/** A private, read-only copy of the forms for the user, as a link the agent pastes into its chat. */
+function ShareCopy({ userName, onShare }: { userName: string; onShare: () => Promise<{ url: string; message: string } | null> }) {
+  const [link, setLink] = useState<{ url: string; message: string } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+  return (
+    <section aria-label="Share a copy" className="mt-[16px] flex flex-col gap-[8px] p-[14px] rounded-[22px] bg-[#F4EEDF]">
+      <span className="flex items-center justify-between gap-[10px]">
+        <span className="min-w-0">
+          <span className="block text-[14px] font-[700]">Give {userName.split(" ")[0]} a copy</span>
+          <span className="block text-[12px] text-[#2819109E]">A private, read-only link that expires in 7 days</span>
+        </span>
+        {!link && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={async () => {
+              setBusy(true);
+              setLink(await onShare());
+              setBusy(false);
+            }}
+            className="shrink-0 h-[40px] px-[16px] rounded-[10px] bg-[#3A2516] text-[#FFFCF1] text-[13.5px] font-[600] disabled:opacity-50"
+          >
+            {busy ? "Making link…" : "Make Link"}
+          </button>
+        )}
+      </span>
+      {link && (
+        <span className="flex flex-col gap-[6px]">
+          <span className="p-[10px_12px] rounded-[12px] bg-[#FFFCF1] font-mono text-[12px] break-all">{link.url}</span>
+          <button
+            type="button"
+            onClick={() => void navigator.clipboard?.writeText(link.message).then(() => setCopied(true))}
+            className="self-start h-[38px] px-[14px] rounded-[10px] border border-solid border-[#28191033] text-[13px] font-[600]"
+          >
+            {copied ? "Copied message" : "Copy message for user"}
+          </button>
+        </span>
+      )}
+    </section>
   );
 }
 

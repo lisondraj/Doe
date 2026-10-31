@@ -53,7 +53,7 @@ export function AgentAvatar({ name, size = 36, ring }: { name: string; size?: nu
 
 export type Notice = {
   id: string;
-  kind: "visit" | "connected" | "negotiating" | "deal" | "requested" | "forms" | "upload" | "confirmed";
+  kind: "visit" | "connected" | "negotiating" | "deal" | "requested" | "forms" | "upload" | "shared" | "confirmed";
   /** The session, or for "visit", the MCP visit. */
   sessionId: string;
   eventId: string;
@@ -67,10 +67,11 @@ const NOTICE_TYPES: Record<string, Notice["kind"]> = {
   form_uploaded: "upload",
   booking_confirmed: "confirmed",
   negotiation_proposed: "negotiating",
+  forms_shared: "shared",
   offer_accepted: "deal",
 };
 /** How long each card stays up; 0 keeps it until the clinic acts or dismisses it. */
-const NOTICE_MS: Record<Notice["kind"], number> = { visit: 0, connected: 20000, negotiating: 20000, deal: 16000, requested: 0, forms: 14000, upload: 14000, confirmed: 6000 };
+const NOTICE_MS: Record<Notice["kind"], number> = { visit: 0, connected: 20000, negotiating: 20000, deal: 16000, shared: 12000, requested: 0, forms: 14000, upload: 14000, confirmed: 6000 };
 
 /** New notices for events that weren't there on the last poll. The first poll only marks what's already there. */
 export function useNotices(state: ClinicStatePayload | null) {
@@ -292,6 +293,29 @@ function NoticeCard({ n, s, onDismiss, onWatch, onForms, onAct }: { n: Notice; s
       <>
         <button type="button" onClick={onWatch} className={primary}>
           Watch Live
+        </button>
+        <button type="button" onClick={onDismiss} className={quiet}>
+          Dismiss
+        </button>
+      </>
+    );
+  } else if (n.kind === "shared") {
+    const sh = [...(s.shares ?? [])].reverse()[0];
+    title = (
+      <>
+        {s.agentName} shared the forms with {s.userName.split(" ")[0]}
+        <span className="block text-[12.5px] font-[500] text-[#FFFCF1B3]">A private, read-only copy</span>
+      </>
+    );
+    body = (
+      <div className="p-[10px_12px] rounded-[14px] bg-[#FFFCF10F] text-[13px] leading-[18px] text-[#FFFCF1CC]">
+        Link expires {sh ? new Date(sh.expiresAt).toLocaleDateString("en-CA", { month: "short", day: "numeric" }) : "in 7 days"}. You&apos;ll see each time it&apos;s opened, and you can turn it off under Forms.
+      </div>
+    );
+    actions = (
+      <>
+        <button type="button" onClick={onForms} className={primary}>
+          View Forms
         </button>
         <button type="button" onClick={onDismiss} className={quiet}>
           Dismiss
@@ -543,6 +567,9 @@ const SCREEN_OF: Record<string, Screen> = {
   forms_submitted: "forms",
   form_uploaded: "forms",
   form_sent: "forms",
+  forms_shared: "forms",
+  forms_viewed: "forms",
+  share_revoked: "forms",
   booking_requested: "booking",
   booking_confirmed: "booking",
   booking_declined: "booking",
@@ -564,6 +591,9 @@ const TITLE_OF: Record<string, string> = {
   forms_submitted: "Passed the forms back",
   form_uploaded: "Uploaded a form",
   form_sent: "Clinic sent a form",
+  forms_shared: "Shared a copy with the patient",
+  forms_viewed: "Patient opened their copy",
+  share_revoked: "Clinic turned off a shared link",
   booking_requested: "Requested the appointment",
   booking_confirmed: "Clinic approved",
   booking_declined: "Clinic declined",

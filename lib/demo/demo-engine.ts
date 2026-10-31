@@ -254,6 +254,8 @@ export type AgentAction =
   | { type: "set_comms"; id: string; on: boolean }
   | { type: "set_consent"; id: "connected" | "network"; on: boolean }
   | { type: "negotiate"; price: number; add_ons?: string[]; note?: string }
+  /** Handled by the actions route (shareForms), not applyAgentAction. */
+  | { type: "share_forms"; expires_days?: number }
   | { type: "upload_form"; title: string; file_name?: string; mime_type?: string; text?: string; content_base64?: string };
 
 export const AGENT_ACTIONS = [
@@ -549,7 +551,9 @@ export type ClinicAction =
   | { type: "make_offer"; price: number }
   | { type: "confirm_booking" }
   | { type: "decline_booking"; note?: string }
-  | { type: "release_hold" };
+  | { type: "release_hold" }
+  /** Handled by the clinic actions route (revokeShare), not applyClinicAction. */
+  | { type: "revoke_share"; share_id: string };
 
 export function applyClinicAction(input: DemoSession, action: ClinicAction, ctx: Omit<Ctx, "channel">): ActResult {
   const now = ctx.now.getTime();

@@ -1696,6 +1696,34 @@ function UploadsPanel({ s, onAct }: { s: Session; onAct: Act }) {
           </div>
         ))}
         {!uploads.length && !composing && <Empty>No uploads yet. Agents can attach a migraine diary, referral or past prescription.</Empty>}
+        {(s.shares ?? []).length > 0 && (
+          <div className="flex flex-col gap-[4px] mt-[6px]">
+            <span className="px-[4px] text-[11.5px] font-[600] uppercase tracking-[0.06em] text-[#28191080]">Copies shared with the patient</span>
+            {[...(s.shares ?? [])].reverse().map((sh) => {
+              const expired = Date.parse(sh.expiresAt) <= Date.now();
+              const state = sh.revoked ? "Turned off" : expired ? "Expired" : "Active";
+              return (
+                <div key={sh.id} className="flex items-center gap-[10px] p-[10px_12px] rounded-[16px] bg-[#FFFCF1CC]">
+                  <span className="grow min-w-0">
+                    <span className="block text-[13.5px] font-[600]">
+                      Private link · {sh.views ? `opened ${sh.views} time${sh.views === 1 ? "" : "s"}` : "not opened yet"}
+                    </span>
+                    <span className="block text-[12px] text-[#2819109E]">
+                      Shared {clock(sh.createdAt)} by {s.agentName} · {sh.revoked ? "turned off" : `expires ${new Date(sh.expiresAt).toLocaleDateString("en-CA", { month: "short", day: "numeric" })}`}
+                      {sh.lastViewedAt ? ` · last opened ${clock(sh.lastViewedAt)}` : ""}
+                    </span>
+                  </span>
+                  <span className={`shrink-0 h-[24px] px-[9px] flex items-center rounded-full text-[11.5px] font-[700] ${state === "Active" ? "bg-[#DCE5D0]" : "bg-[#F4EEDF] text-[#2819109E]"}`}>{state}</span>
+                  {state === "Active" && (
+                    <button type="button" onClick={() => void onAct(s.id, { type: "revoke_share", share_id: sh.id }, "Link turned off")} className="shrink-0 h-[30px] px-[12px] rounded-full bg-[#28191014] text-[12.5px] font-[600]">
+                      Turn Off
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
         {composing && (
           <form
             className="flex flex-col gap-[6px] p-[10px] rounded-[16px] border-[1.5px] border-dashed border-[#28191033]"

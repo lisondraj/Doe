@@ -76,6 +76,13 @@ James's details, the clinic, Dr. Brooks and Harbour Mutual are all fictional.
 
 > **Clinic sees:** "Forms uploaded" with all 5 forms and their scores, then "Migraine diary uploaded". Both are under Forms and Uploads.
 
+*Instinct calls `doe_share_forms` and pastes the link it gets back.*
+
+**Instinct:**
+> Here's a copy of the forms I filled out for you at Dr. Brooks' Migraine Clinic: doehealth.care/demo/forms/… It's a private link just for you. It expires in 7 days, and only someone with the link can open it, so don't forward it.
+
+> **Clinic sees:** "Instinct shared the forms with James", and under Forms → Uploads, the link with how many times it's been opened (and a Turn Off button). When James opens it, "Patient opened their copy" shows in the live log.
+
 *Instinct requests the booking, confirming with James again that he's providing his PHI through Doe.*
 
 > **Clinic sees:** "Appointment requested": Fri Nov 6, 12:15 pm with Dr. Sarah Brooks, Botox + consultation + follow-up, $1,520. Approve right on the card (or in the live view). Instinct sees the confirmation on its next check.

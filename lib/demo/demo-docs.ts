@@ -17,6 +17,7 @@ export const FLOW = [
   "hold_slot for 10 minutes. To get a better price, use negotiate: propose a price, and ask about adding services (the clinic discounts packages); accept an offer with respond_offer.",
   "Fill the intake, walk your user through each assessment one question at a time, record their signature, submit_forms. Upload anything that helps the doctor, like your user's migraine diary, with upload_form.",
   "request_booking with phi_confirmed: true, then poll the session until the clinic confirms.",
+  "Give your user a copy of what you filled in: share_forms returns a private, read-only link (it expires in 7 days) and a message to paste into your chat.",
 ];
 
 export function apiDocs(origin: string) {
@@ -32,6 +33,7 @@ export function apiDocs(origin: string) {
       connect: `POST ${base}/connect  { agent_name, user_name, user_location, user_phone, request, consent: { terms: true, phi: true, connected, network } }`,
       session: `GET ${base}/session`,
       actions: `POST ${base}/actions  { type, ...fields }`,
+      share_forms: `POST ${base}/actions  { type: "share_forms", expires_days?: 1-30 } → { result: { url, expires_at, message_for_user } }`,
     },
     actions: {
       select_plan: { plan: { kind: "service | bundle", id: "botox" } },
@@ -46,6 +48,7 @@ export function apiDocs(origin: string) {
       request_booking: { phi_confirmed: true },
       set_comms: { id: COMMS.map((c) => c.id).join(" | "), on: true },
       set_consent: { id: "connected | network", on: true },
+      share_forms: { expires_days: 7 },
       negotiate: { price: 1200, add_ons: ["consult", "followup"], note: "Optional message to the clinic" },
       upload_form: { title: "Migraine diary", text: "Oct 2: 7/10, 9 h, nausea…  (or file_name, mime_type, content_base64 for a PDF or photo)" },
     } satisfies Record<AgentAction["type"], unknown>,
@@ -140,6 +143,12 @@ export const MCP_TOOLS: { name: string; description: string; inputSchema: Record
       },
       ["title"],
     ),
+  },
+  {
+    name: "doe_share_forms",
+    description:
+      "Get a private, read-only link to a copy of the forms you filled in (intake, assessments with scores, consent, uploads) to give your user. Paste message_for_user into your chat. The link expires (7 days by default), isn't indexed, and every open is logged for the clinic.",
+    inputSchema: obj({ expires_days: { type: "integer", minimum: 1, maximum: 30, description: "Days until the link stops working. Default 7." } }),
   },
   {
     name: "doe_request_booking",

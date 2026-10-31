@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { FLOW, MCP_TOOLS } from "@/lib/demo/demo-docs";
 import { type AgentAction, DemoError } from "@/lib/demo/demo-engine";
 import { clientIp, rateLimit } from "@/lib/demo/demo-guard";
-import { CORS, MAX_BODY } from "@/lib/demo/demo-http";
-import { agentAct, agentState, catalog, connect, mcpTouch } from "@/lib/demo/demo-service";
+import { CORS, MAX_BODY, originOf } from "@/lib/demo/demo-http";
+import { agentAct, agentState, catalog, connect, mcpTouch, shareForms } from "@/lib/demo/demo-service";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +17,7 @@ const SERVER = { name: "doe-demo", title: "Doe · Dr. Brooks' Migraine Clinic", 
 
 type Rpc = { jsonrpc?: string; id?: string | number | null; method?: string; params?: Record<string, unknown> };
 
-async function callTool(name: string, args: Record<string, unknown>, ip: string, visitId: string | null) {
+async function callTool(name: string, args: Record<string, unknown>, ip: string, visitId: string | null, origin: string) {
   const { session_token, ...rest } = args;
   switch (name) {
     case "doe_connect":
@@ -32,6 +32,8 @@ async function callTool(name: string, args: Record<string, unknown>, ip: string,
       }, ip, visitId);
     case "doe_clinic_info":
       return catalog();
+    case "doe_share_forms":
+      return shareForms(session_token, origin, rest.expires_days, "mcp");
     case "doe_get_session":
       return agentState(session_token);
     case "doe_select_plan":
@@ -43,7 +45,7 @@ async function callTool(name: string, args: Record<string, unknown>, ip: string,
   }
 }
 
-async function handle(msg: Rpc, ip: string, visitId: string | null): Promise<Record<string, unknown> | null> {
+async function handle(msg: Rpc, ip: string, visitId: string | null, origin: string): Promise<Record<string, unknown> | null> {
   const id = msg.id ?? null;
   const ok = (result: unknown) => ({ jsonrpc: "2.0", id, result });
   const fail = (code: number, message: string) => ({ jsonrpc: "2.0", id, error: { code, message } });
@@ -68,7 +70,7 @@ async function handle(msg: Rpc, ip: string, visitId: string | null): Promise<Rec
       const args = (msg.params?.arguments ?? {}) as Record<string, unknown>;
       try {
         if (name === "doe_connect") rateLimit("connect", ip);
-        const result = await callTool(name, args, ip, visitId);
+        const result = await callTool(name, args, ip, visitId, origin);
         return ok({ content: [{ type: "text", text: JSON.stringify(result, null, 2) }], structuredContent: result });
       } catch (error) {
         const message = error instanceof DemoError ? error.message : "Something went wrong. Try again.";
@@ -120,7 +122,8 @@ export async function POST(request: Request) {
       console.error("[demo mcp visit]", error instanceof Error ? error.message : error);
     }
   }
-  const replies = (await Promise.all(messages.map((m) => handle(m, ip, visitId)))).filter(Boolean);
+  const origin = originOf(request);
+  const replies = (await Promise.all(messages.map((m) => handle(m, ip, visitId, origin)))).filter(Boolean);
   const headers: Record<string, string> = { ...CORS, "MCP-Protocol-Version": PROTOCOL };
   if (visitId) headers["Mcp-Session-Id"] = visitId;
   if (!replies.length) return new NextResponse(null, { status: 202, headers });

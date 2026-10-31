@@ -24,7 +24,11 @@ import {
   viewOf,
 } from "@/lib/demo/demo-engine";
 import { CONNECT_PER_IP_HOUR, CONNECT_TOTAL_HOUR, hourBucket, ipKey } from "@/lib/demo/demo-guard";
+import { randomBytes } from "node:crypto";
+
 import {
+  readShare,
+  writeShare,
   listVisits,
   readIpVisit,
   readVisit,
@@ -166,6 +170,94 @@ export async function clinicState() {
 }
 
 export type ClinicStatePayload = Awaited<ReturnType<typeof clinicState>>;
+
+const SHARE_DAYS = 7;
+const MAX_SHARES = 10;
+
+/**
+ * Makes a private, read-only link to the user's forms for the agent to give its user. The token is 32 random bytes
+ * and is stored only in shares/<token>.json; the session keeps the share's id, expiry and view count.
+ */
+export async function shareForms(token: unknown, origin: string, days: unknown, channel: DemoChannel) {
+  const first = await authenticate(token);
+  return withLock(LOCK, async () => {
+    const s = await readSession(first.id);
+    if (!s) throw new DemoError(401, "Session not found. Connect again.");
+    const started = s.forms.status === "sent" || Object.keys(s.forms.assessments).length > 0 || Object.keys(s.forms.intake).length > 1;
+    if (!started) throw new DemoError(409, "Fill in the forms first; there's nothing to share yet.");
+    if ((s.shares ?? []).filter((x) => !x.revoked).length >= MAX_SHARES) throw new DemoError(409, `This session already has ${MAX_SHARES} links.`);
+    const d = Math.min(30, Math.max(1, Math.round(Number(days) || SHARE_DAYS)));
+    const now = new Date();
+    const at = now.toISOString();
+    const expiresAt = new Date(now.getTime() + d * 86_400_000).toISOString();
+    const secret = randomBytes(32).toString("base64url");
+    const shareId = `sh_${now.getTime().toString(36)}${randomBytes(3).toString("hex")}`;
+    await writeShare(secret, { sessionId: s.id, shareId, expiresAt });
+    s.shares = [...(s.shares ?? []), { id: shareId, createdAt: at, expiresAt, views: 0, lastViewedAt: null, revoked: false }];
+    const until = new Date(expiresAt).toLocaleDateString("en-CA", { month: "short", day: "numeric" });
+    s.events = [...s.events, { id: `e_${shareId}`, at, actor: "agent", channel, type: "forms_shared", summary: `Shared a copy of the forms with ${s.userName} · link expires ${until}` }];
+    s.updatedAt = at;
+    s.lastSeenAt = at;
+    await writeSession(s);
+    const [config, slots] = await Promise.all([readConfig(), readSlots()]);
+    const url = `${origin}/demo/forms/${secret}`;
+    return {
+      result: {
+        url,
+        expires_at: expiresAt,
+        message_for_user: `Here's a copy of the forms I filled out for you at ${CLINIC.name}: ${url}\nIt's a private link just for you. It expires ${until}, and only someone with the link can open it, so don't forward it.`,
+        safeguards: SHARE_SAFEGUARDS,
+      },
+      ...agentPayload(s, config, slots, now.getTime()),
+    };
+  });
+}
+
+/** What protects a shared copy. Plain facts about the link, not a compliance certification. */
+export const SHARE_SAFEGUARDS = [
+  "Private link with a 256-bit random token; it isn't listed or indexed anywhere",
+  "Expires automatically (7 days unless set otherwise); the clinic can turn it off at any time",
+  "Read-only; every time it's opened is logged for the clinic",
+  "Sent over HTTPS and stored encrypted",
+  "Handled under Doe's privacy policy, which follows Ontario's PHIPA and Canada's PIPEDA where they apply",
+];
+
+/** The shared copy for /demo/forms/<token>, or why it can't be shown. Logs the view on the session. */
+export async function openShare(token: string) {
+  const rec = await readShare(token);
+  if (!rec) return { error: "missing" as const };
+  if (Date.parse(rec.expiresAt) <= Date.now()) return { error: "expired" as const };
+  return withLock(LOCK, async () => {
+    const s = await readSession(rec.sessionId);
+    const share = s?.shares?.find((x) => x.id === rec.shareId);
+    if (!s || !share) return { error: "missing" as const };
+    if (share.revoked) return { error: "revoked" as const };
+    const at = new Date().toISOString();
+    /** One log line per open, at most every 10 minutes, so reloads don't flood the clinic's log. */
+    const quiet = share.lastViewedAt && Date.now() - Date.parse(share.lastViewedAt) < 10 * 60_000;
+    s.shares = s.shares!.map((x) => (x.id === share.id ? { ...x, views: x.views + 1, lastViewedAt: at } : x));
+    if (!quiet) s.events = [...s.events, { id: `e_v${Date.now().toString(36)}${randomBytes(2).toString("hex")}`, at, actor: "system", channel: s.channel, type: "forms_viewed", summary: `${s.userName} opened the shared copy of their forms` }];
+    await writeSession(s);
+    /** Only what the page shows: never the session secret, its messages, or file bodies. */
+    const forms = { ...s.forms, uploads: (s.forms.uploads ?? []).filter((u) => u.by === "agent").map(({ dataUrl: _d, ...u }) => u) };
+    const copy = { userName: s.userName, agentName: s.agentName, forms, booking: { status: s.booking.status, slotId: s.booking.slotId, label: s.booking.label } };
+    return { session: copy, share: { ...share, views: share.views + 1 }, scores: scores(s) };
+  });
+}
+
+/** Clinic: turn a share link off. */
+export async function revokeShare(sessionId: unknown, shareId: unknown) {
+  if (typeof sessionId !== "string" || typeof shareId !== "string") throw new DemoError(400, "session_id and share_id are required.");
+  return withLock(LOCK, async () => {
+    const s = await readSession(sessionId);
+    if (!s?.shares?.some((x) => x.id === shareId)) throw new DemoError(404, "No such link.");
+    const at = new Date().toISOString();
+    s.shares = s.shares.map((x) => (x.id === shareId ? { ...x, revoked: true } : x));
+    s.events = [...s.events, { id: `e_r${Date.now().toString(36)}`, at, actor: "clinic", channel: "clinic", type: "share_revoked", summary: "Staff turned off a shared forms link" }];
+    await writeSession(s);
+    return { ok: true };
+  });
+}
 
 const VISIT_KEEP_MS = 6 * 60 * 60 * 1000;
 const IP_MATCH_MS = 30 * 60 * 1000;
