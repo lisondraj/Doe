@@ -97,6 +97,22 @@ export type DemoSession = {
   usage?: { hour: string; actions: number; messages: number };
 };
 
+/**
+ * An MCP agent from its first call (the initialize handshake), before it has a booking session: who it is and what it
+ * has read. Its Mcp-Session-Id is the visit id. doe_connect links it to the session it starts.
+ */
+export type DemoVisit = {
+  id: string;
+  createdAt: string;
+  lastSeenAt: string;
+  agentName: string;
+  client: { name: string | null; version: string | null; title: string | null };
+  userAgent: string | null;
+  ipKey: string;
+  sessionId: string | null;
+  calls: { at: string; method: string; tool: string | null; summary: string }[];
+};
+
 /** A session as the clinic or a client sees it: no secret. */
 export type DemoSessionView = Omit<DemoSession, "secret">;
 

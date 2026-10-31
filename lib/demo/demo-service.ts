@@ -25,6 +25,11 @@ import {
 } from "@/lib/demo/demo-engine";
 import { CONNECT_PER_IP_HOUR, CONNECT_TOTAL_HOUR, hourBucket, ipKey } from "@/lib/demo/demo-guard";
 import {
+  listVisits,
+  readIpVisit,
+  readVisit,
+  writeIpVisit,
+  writeVisit,
   listSessions,
   readConfig,
   readConnectCount,
@@ -36,7 +41,7 @@ import {
   writeSession,
   writeSlots,
 } from "@/lib/demo/demo-store";
-import type { DemoChannel, DemoConfig, DemoSession, DemoSessionView, DemoSlots, DemoUpload } from "@/lib/demo/demo-types";
+import type { DemoChannel, DemoConfig, DemoEvent, DemoSession, DemoSessionView, DemoSlots, DemoUpload, DemoVisit } from "@/lib/demo/demo-types";
 
 /**
  * Uploads without their file bodies, so polling stays light. Written forms keep a preview; `keepText` keeps the full
@@ -83,9 +88,22 @@ function agentPayload(s: DemoSession, config: DemoConfig, slots: DemoSlots, now:
 
 export type AgentPayload = ReturnType<typeof agentPayload>;
 
-export async function connect(input: ConnectInput, ip: string) {
+export async function connect(input: ConnectInput, ip: string, visitId?: string | null) {
   const now = new Date();
-  const s = createSession(input, now);
+  const visit = visitId ? await readVisit(visitId) : null;
+  const named = typeof input.agentName === "string" && input.agentName.trim();
+  const s = createSession({ ...input, agentName: named ? input.agentName : (visit?.agentName ?? input.agentName) }, now);
+  if (visit) {
+    /** What the agent did over MCP before it connected (the handshake, reading the clinic) leads the session's log. */
+    const before: DemoEvent[] = visit.calls
+      .filter((c) => c.tool !== "doe_connect")
+      .map((c, i) => ({ id: `e_mcp${i}_${visit.id.slice(-6)}`, at: c.at, actor: "agent", channel: "mcp", type: "mcp_call", summary: c.summary }));
+    s.events = [...before, ...s.events];
+    await withLock(`visit:${visit.id}`, async () => {
+      const v = (await readVisit(visit.id)) ?? visit;
+      await writeVisit({ ...v, sessionId: s.id, agentName: s.agentName });
+    });
+  }
   await withLock(LOCK, async () => {
     const hour = hourBucket(now);
     const key = ipKey(ip);
@@ -123,10 +141,12 @@ export async function agentAct(token: unknown, action: AgentAction, channel: Dem
 }
 
 export async function clinicState() {
-  const [sessions, config, slots] = await Promise.all([listSessions(), readConfig(), readSlots()]);
+  const [sessions, config, slots, visits] = await Promise.all([listSessions(), readConfig(), readSlots(), listVisits(30, VISIT_KEEP_MS).catch(() => [])]);
   const now = Date.now();
   return {
     config,
+    /** MCP agents from their first call; sessionId is set once they start a booking. */
+    visits: visits.map(({ ipKey: _ip, userAgent: _ua, ...v }) => ({ ...v, calls: v.calls.slice(-30), live: now - Date.parse(v.lastSeenAt) < LIVE_MS })),
     analytics: analytics(sessions, now),
     availability: availability(slots, now),
     slots,
@@ -146,6 +166,80 @@ export async function clinicState() {
 }
 
 export type ClinicStatePayload = Awaited<ReturnType<typeof clinicState>>;
+
+const VISIT_KEEP_MS = 6 * 60 * 60 * 1000;
+const IP_MATCH_MS = 30 * 60 * 1000;
+const REHANDSHAKE_MS = 10 * 60 * 1000;
+const MAX_CALLS = 80;
+const newVisitId = () => `vis_${Date.now().toString(36).padStart(9, "0")}${Math.random().toString(36).slice(2, 8).padEnd(6, "0")}`;
+
+/** Names the agent from its MCP client info or user agent: "instinct-ios" reads as Instinct. */
+function agentNameOf(client: DemoVisit["client"], ua: string | null) {
+  const known = ["Instinct", "Muse", "Poke", "Claude", "ChatGPT", "Gemini", "Cursor"];
+  const hay = `${client.title ?? ""} ${client.name ?? ""} ${ua ?? ""}`;
+  const hit = known.find((k) => new RegExp(k, "i").test(hay));
+  if (hit) return hit;
+  const raw = (client.title || client.name || "").trim();
+  return raw ? raw.slice(0, 40).replace(/^./, (c) => c.toUpperCase()) : "MCP agent";
+}
+
+const TOOL_SUMMARY: Record<string, string> = {
+  doe_clinic_info: "Read the clinic: services, prices, Dr. Brooks' profile, insurance and availability",
+  doe_connect: "Started a booking session",
+  doe_get_session: "Checked the booking",
+};
+
+/**
+ * Records one MCP request on the agent's visit, so /demo/clinic sees the agent from its first call. Returns the visit
+ * id (sent back as Mcp-Session-Id). A client that doesn't echo the header is matched by network for 30 minutes.
+ */
+export async function mcpTouch(o: {
+  headerId: string | null;
+  ip: string;
+  userAgent: string | null;
+  method: string;
+  tool: string | null;
+  clientInfo?: Record<string, unknown> | null;
+}): Promise<string> {
+  const now = new Date().toISOString();
+  const key = ipKey(o.ip);
+  const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim().slice(0, 80) : null);
+  let id: string | null = null;
+  if (o.method !== "initialize") {
+    if (o.headerId && (await readVisit(o.headerId))) id = o.headerId;
+    else {
+      const recent = await readIpVisit(key);
+      if (recent && Date.now() - Date.parse(recent.at) < IP_MATCH_MS) id = recent.id;
+    }
+  } else {
+    /** Clients that redo the handshake on every request stay one visit: same network, same client, still unbooked. */
+    const recent = await readIpVisit(key);
+    if (recent && Date.now() - Date.parse(recent.at) < REHANDSHAKE_MS) {
+      const v = await readVisit(recent.id);
+      if (v && !v.sessionId && v.client.name === str(o.clientInfo?.name)) id = v.id;
+    }
+  }
+  const summary =
+    o.method === "initialize"
+      ? `Connected over MCP${str(o.clientInfo?.name) ? ` (${str(o.clientInfo?.name)}${str(o.clientInfo?.version) ? ` ${str(o.clientInfo?.version)}` : ""})` : ""}`
+      : o.method === "tools/list"
+        ? "Listed what it can do at the clinic"
+        : o.tool
+          ? (TOOL_SUMMARY[o.tool] ?? `Called ${o.tool.replace(/^doe_/, "").replace(/_/g, " ")}`)
+          : o.method;
+  const call = { at: now, method: o.method, tool: o.tool, summary };
+  const visitId = id ?? newVisitId();
+  await withLock(`visit:${visitId}`, async () => {
+    const existing = id ? await readVisit(visitId) : null;
+    const client = existing?.client ?? { name: str(o.clientInfo?.name), version: str(o.clientInfo?.version), title: str(o.clientInfo?.title) };
+    const v: DemoVisit = existing
+      ? { ...existing, lastSeenAt: now, calls: [...existing.calls, call].slice(-MAX_CALLS) }
+      : { id: visitId, createdAt: now, lastSeenAt: now, client, agentName: agentNameOf(client, o.userAgent), userAgent: o.userAgent?.slice(0, 200) ?? null, ipKey: key, sessionId: null, calls: [call] };
+    await writeVisit(v);
+  });
+  await writeIpVisit(key, visitId);
+  return visitId;
+}
 
 /** One upload in full, for the clinic to open or download. */
 export async function clinicUpload(sessionId: unknown, uploadId: unknown) {

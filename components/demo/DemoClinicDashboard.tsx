@@ -14,7 +14,7 @@ import { Check, DISPLAY } from "@/components/demo/DemoFrame";
 import { DemoSphere } from "@/components/demo/DemoSphere";
 import { FormsLibrary } from "@/components/demo/DemoClinicForms";
 import { Integrations } from "@/components/demo/DemoClinicIntegrations";
-import { AgentAvatar, CHANNEL_LONG, LiveSession, NOTICE_CSS, NoticeStack, useNotices } from "@/components/demo/DemoClinicLive";
+import { AgentAvatar, CHANNEL_LONG, LiveSession, LiveVisit, NOTICE_CSS, NoticeStack, useNotices } from "@/components/demo/DemoClinicLive";
 import { Card, CardTitle, Empty, PageTitle, Segmented, Switch, SyncDot, Tag } from "@/components/demo/DemoClinicUi";
 import { INTAKE_FIELDS, BUNDLES, CLINIC, SERVICES, money } from "@/lib/demo/demo-clinic";
 import { API_BASE, MCP_PATH } from "@/lib/demo/demo-docs";
@@ -267,6 +267,10 @@ export function DemoClinicDashboard() {
   };
 
   const sessions = useMemo(() => state?.sessions ?? [], [state]);
+  const visits = useMemo(() => state?.visits ?? [], [state]);
+  /** Live view target: a session, or an MCP visit, which becomes its session once the agent starts a booking. */
+  const liveVisit = liveId ? (visits.find((v) => v.id === liveId) ?? null) : null;
+  const liveSession = liveId ? (sessions.find((x) => x.id === (liveVisit?.sessionId ?? liveId)) ?? null) : null;
   const waiting = sessions.filter(needsYou).length;
 
   /** The tab's title carries what's waiting, so it shows from another tab. */
@@ -294,6 +298,7 @@ export function DemoClinicDashboard() {
         syncedAt={syncedAt}
         onOpen={openSession}
         onWatch={setLiveId}
+        visits={visits}
         onWaiting={() => {
           setFilter("you");
           setDetail(false);
@@ -432,13 +437,13 @@ export function DemoClinicDashboard() {
           </div>
         </div>
         <style>{NOTICE_CSS}</style>
-        {liveId && sessions.some((x) => x.id === liveId) && state && (
-          <LiveSession s={sessions.find((x) => x.id === liveId)!} availability={state.availability} onClose={() => setLiveId(null)} onAct={act} />
-        )}
+        {liveSession && state && <LiveSession key={liveSession.id} s={liveSession} availability={state.availability} onClose={() => setLiveId(null)} onAct={act} />}
+        {!liveSession && liveVisit && <LiveVisit v={liveVisit} onClose={() => setLiveId(null)} />}
         <NoticeStack
           bottom={Boolean(liveId)}
-          notices={liveId ? notices.filter((n) => n.sessionId !== liveId || n.kind === "requested") : notices}
+          notices={liveId ? notices.filter((n) => (n.sessionId !== liveId && n.sessionId !== liveSession?.id) || n.kind === "requested") : notices}
           sessions={sessions}
+          visits={visits}
           onDismiss={dismiss}
           onWatch={(id) => setLiveId(id)}
           onForms={(id) => {
@@ -607,6 +612,7 @@ function Overview({
   syncedAt,
   onOpen,
   onWatch,
+  visits,
   onWaiting,
   flash,
 }: {
@@ -615,6 +621,7 @@ function Overview({
   syncedAt: number | null;
   onOpen: (id: string) => void;
   onWatch: (id: string) => void;
+  visits: ClinicStatePayload["visits"];
   onWaiting: () => void;
   flash: (t: string) => void;
 }) {
@@ -624,6 +631,8 @@ function Overview({
   const a = state.analytics;
   const latest = state.sessions[0];
   const live = state.sessions.filter((s) => s.live);
+  /** MCP agents connected but not booking yet. */
+  const reading = visits.filter((v) => v.live && !v.sessionId);
   const waiting = state.sessions.filter((s) => needsYou(s) || s.status === "Holding");
   const needCount = state.sessions.filter(needsYou).length;
   const feed = state.sessions
@@ -712,9 +721,19 @@ function Overview({
       {/* Today at a glance, in /doehealthproduct's Interface status tiles. */}
       <div className="grid grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1fr] gap-[8px] md:gap-[10px] mb-[10px]">
         <div className={`${tile} col-span-2 lg:col-span-1 rounded-[22px] lg:rounded-l-[24px] lg:rounded-r-[4px] border-[1.5px] border-dashed border-[#2819102E] bg-[#FAF6EC]`}>
-          <span className={label}>Live Now · {a.live}</span>
+          <span className={label}>Live Now · {a.live + reading.length}</span>
           <span className="mt-auto pt-[10px] flex flex-col gap-[8px]">
-            {live.length === 0 && <span className="text-[13.5px] text-[#2819109E]">No agent is connected right now.</span>}
+            {live.length === 0 && !reading.length && <span className="text-[13.5px] text-[#2819109E]">No agent is connected right now.</span>}
+            {reading.slice(0, 2).map((v) => (
+              <button key={v.id} type="button" onClick={() => onWatch(v.id)} className="flex items-center gap-[10px] min-w-0 text-left">
+                <span className="relative shrink-0">
+                  <AgentAvatar name={v.agentName} size={28} />
+                  <span className="absolute -right-[2px] -bottom-[2px] w-[10px] h-[10px] rounded-full border-[2px] border-solid border-[#FAF6EC] bg-[#E8A585]" />
+                </span>
+                <span className="truncate text-[14px] leading-[18px] font-[600]">{v.agentName}</span>
+                <span className="truncate text-[12.5px] leading-[17px] text-[#2819109E]">reading the clinic via MCP</span>
+              </button>
+            ))}
             {live.slice(0, 3).map((s) => (
               <button key={s.id} type="button" onClick={() => onWatch(s.id)} className="flex items-center gap-[10px] min-w-0 text-left">
                 <span className="relative shrink-0">

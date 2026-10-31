@@ -20,6 +20,7 @@ import type { ClinicStatePayload } from "@/lib/demo/demo-service";
 import { lora } from "@/lib/home/fonts";
 
 export type Session = ClinicStatePayload["sessions"][number];
+export type Visit = ClinicStatePayload["visits"][number];
 type Ev = Session["events"][number];
 type Act = (id: string, a: ClinicAction, done?: string) => Promise<void>;
 
@@ -52,7 +53,8 @@ export function AgentAvatar({ name, size = 36, ring }: { name: string; size?: nu
 
 export type Notice = {
   id: string;
-  kind: "connected" | "requested" | "forms" | "upload" | "confirmed";
+  kind: "visit" | "connected" | "requested" | "forms" | "upload" | "confirmed";
+  /** The session, or for "visit", the MCP visit. */
   sessionId: string;
   eventId: string;
   at: number;
@@ -66,7 +68,7 @@ const NOTICE_TYPES: Record<string, Notice["kind"]> = {
   booking_confirmed: "confirmed",
 };
 /** How long each card stays up; 0 keeps it until the clinic acts or dismisses it. */
-const NOTICE_MS: Record<Notice["kind"], number> = { connected: 20000, requested: 0, forms: 14000, upload: 14000, confirmed: 6000 };
+const NOTICE_MS: Record<Notice["kind"], number> = { visit: 0, connected: 20000, requested: 0, forms: 14000, upload: 14000, confirmed: 6000 };
 
 /** New notices for events that weren't there on the last poll. The first poll only marks what's already there. */
 export function useNotices(state: ClinicStatePayload | null) {
@@ -77,6 +79,12 @@ export function useNotices(state: ClinicStatePayload | null) {
     const first = !seen.current;
     const known = seen.current ?? new Set<string>();
     const fresh: Notice[] = [];
+    /** An MCP agent's first call, before it has a session. */
+    for (const v of state.visits ?? []) {
+      if (known.has(v.id)) continue;
+      known.add(v.id);
+      if (!first && !v.sessionId) fresh.push({ id: v.id, kind: "visit", sessionId: v.id, eventId: v.id, at: Date.now() });
+    }
     for (const s of state.sessions)
       for (const e of s.events) {
         if (known.has(e.id)) continue;
@@ -96,6 +104,13 @@ export function useNotices(state: ClinicStatePayload | null) {
     return () => window.clearTimeout(id);
   }, [notices]);
 
+  /** A visit's card gives way to the session's own once the agent starts a booking. */
+  useEffect(() => {
+    if (!state?.visits) return;
+    const linked = new Set(state.visits.filter((v) => v.sessionId).map((v) => v.id));
+    setNotices((n) => (n.some((x) => x.kind === "visit" && linked.has(x.sessionId)) ? n.filter((x) => !(x.kind === "visit" && linked.has(x.sessionId))) : n));
+  }, [state]);
+
   const dismiss = (id: string) => setNotices((n) => n.filter((x) => x.id !== id));
   return { notices, dismiss };
 }
@@ -103,6 +118,7 @@ export function useNotices(state: ClinicStatePayload | null) {
 export function NoticeStack({
   notices,
   sessions,
+  visits = [],
   onDismiss,
   onWatch,
   onForms,
@@ -113,6 +129,7 @@ export function NoticeStack({
   bottom?: boolean;
   notices: Notice[];
   sessions: Session[];
+  visits?: Visit[];
   onDismiss: (id: string) => void;
   onWatch: (sessionId: string) => void;
   onForms: (sessionId: string) => void;
@@ -125,6 +142,10 @@ export function NoticeStack({
       className={`absolute z-[45] left-[10px] right-[10px] md:left-auto md:right-[18px] md:w-[392px] flex gap-[8px] pointer-events-none ${bottom ? "bottom-[10px] md:bottom-[18px] flex-col-reverse" : "top-[64px] md:top-[18px] flex-col"}`}
     >
       {notices.map((n) => {
+        if (n.kind === "visit") {
+          const v = visits.find((x) => x.id === n.sessionId);
+          return v ? <VisitCard key={n.id} v={v} onDismiss={() => onDismiss(n.id)} onWatch={() => onWatch(v.id)} /> : null;
+        }
         const s = sessions.find((x) => x.id === n.sessionId);
         if (!s) return null;
         return <NoticeCard key={n.id} n={n} s={s} onDismiss={() => onDismiss(n.id)} onWatch={() => onWatch(s.id)} onForms={() => onForms(s.id)} onAct={onAct} />;
@@ -154,7 +175,7 @@ function NoticeCard({ n, s, onDismiss, onWatch, onForms, onAct }: { n: Notice; s
   if (n.kind === "connected") {
     title = (
       <>
-        {s.agentName} connected
+        {s.events.some((e) => e.type === "mcp_call") ? `${s.agentName} started a booking` : `${s.agentName} connected`}
         <span className="block text-[12.5px] font-[500] text-[#FFFCF1B3]">via {CHANNEL_LONG[s.channel]}</span>
       </>
     );
@@ -302,6 +323,146 @@ function NoticeCard({ n, s, onDismiss, onWatch, onForms, onAct }: { n: Notice; s
   );
 }
 
+/** An MCP agent connected and reading the clinic, before it has started a booking. */
+function VisitCard({ v, onDismiss, onWatch }: { v: Visit; onDismiss: () => void; onWatch: () => void }) {
+  const last = v.calls[v.calls.length - 1];
+  return (
+    <div role="status" className="doe-notice-in pointer-events-auto flex flex-col gap-[10px] p-[14px] rounded-[24px] bg-[#140C04] text-[#FFFCF1] shadow-[0_18px_44px_-12px_rgba(20,12,4,0.55)]">
+      <div className="flex items-start gap-[12px]">
+        <span className="relative">
+          <AgentAvatar name={v.agentName} size={42} />
+          <span className="absolute -right-[3px] -bottom-[3px] w-[14px] h-[14px] rounded-full bg-[#9DBF8A] border-[3px] border-solid border-[#140C04]" />
+        </span>
+        <span className="grow min-w-0 text-[15px] leading-[20px] font-[700]">
+          {v.agentName} connected
+          <span className="block text-[12.5px] font-[500] text-[#FFFCF1B3]">via Model Context Protocol</span>
+        </span>
+        <button type="button" aria-label="Dismiss" onClick={onDismiss} className="shrink-0 w-[28px] h-[28px] -mr-[4px] -mt-[2px] flex items-center justify-center rounded-full text-[#FFFCF199] hover:bg-[#FFFCF11A]">
+          <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+          </svg>
+        </button>
+      </div>
+      <div className="flex flex-col gap-[3px] p-[10px_12px] rounded-[14px] bg-[#FFFCF10F] text-[13px] leading-[18px]">
+        <span className="font-[600]">{last?.summary ?? "Connected"}</span>
+        <span className="text-[#FFFCF199]">Hasn&apos;t started a booking yet. You&apos;ll see the patient when it does.</span>
+        {v.client.name && (
+          <span className="font-mono text-[11px] text-[#FFFCF180]">
+            client: {v.client.name}
+            {v.client.version ? ` ${v.client.version}` : ""}
+          </span>
+        )}
+      </div>
+      <div className="flex flex-wrap items-center gap-[6px]">
+        <button type="button" onClick={onWatch} className="h-[36px] px-[14px] rounded-full text-[13px] font-[600] bg-[#FFFCF1] text-[#140C04] hover:bg-[#F4EEDF]">
+          Watch Live
+        </button>
+        <button type="button" onClick={onDismiss} className="h-[36px] px-[14px] rounded-full text-[13px] font-[600] bg-[#FFFCF11A] text-[#FFFCF1] hover:bg-[#FFFCF126]">
+          Dismiss
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** Live view for an MCP agent that's connected but hasn't started a booking: what it has read, as it reads it. */
+export function LiveVisit({ v, onClose }: { v: Visit; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  const read = v.calls.some((c) => c.tool === "doe_clinic_info");
+  return (
+    <div role="dialog" aria-modal="true" aria-label={`${v.agentName} live`} className="doe-menu-in absolute inset-0 z-[44] flex flex-col bg-[#FFFCF1]">
+      <style>{LIVE_CSS}</style>
+      <div className="shrink-0 flex items-center gap-[12px] px-[14px] md:px-[24px] pt-[12px] md:pt-[18px] pb-[12px] border-b border-solid border-[#2819100F]">
+        <span className="relative">
+          <AgentAvatar name={v.agentName} size={44} />
+          {v.live && <span className="absolute -right-[3px] -bottom-[3px] w-[14px] h-[14px] rounded-full bg-[#6E9A5B] border-[3px] border-solid border-[#FFFCF1]" />}
+        </span>
+        <span className="grow min-w-0">
+          <span className={`${DISPLAY} block truncate text-[22px] leading-[26px] md:text-[26px] md:leading-[30px] tracking-[-0.02em]`}>{v.agentName}</span>
+          <span className="block truncate text-[12.5px] md:text-[13px] text-[#2819109E]">via Model Context Protocol · no booking yet</span>
+        </span>
+        <button type="button" onClick={onClose} aria-label="Close live view" className="shrink-0 w-[38px] h-[38px] flex items-center justify-center rounded-full bg-[#F4EEDF] hover:bg-[#EEE6D6]">
+          <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#281910" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        </button>
+      </div>
+      <div className="grow min-h-0 overflow-y-auto lg:overflow-hidden overscroll-contain grid grid-cols-1 lg:grid-cols-[minmax(300px,380px)_minmax(0,1fr)] gap-[12px] p-[12px] md:p-[18px]">
+        <div className="order-2 lg:order-1 flex flex-col lg:min-h-0 rounded-[24px] bg-[#F4EEDF] p-[6px]">
+          <div className="flex items-center justify-between px-[12px] pt-[10px] pb-[8px]">
+            <span className={`${DISPLAY} text-[20px] leading-[24px]`}>Activity</span>
+            <span className="flex items-center gap-[8px] text-[12px] font-[600] text-[#2819109E]">
+              {v.live && <span className="w-[7px] h-[7px] rounded-full bg-[#6E9A5B] doe-ripple" />}
+              {v.live ? "Live" : "Idle"}
+            </span>
+          </div>
+          <div className="flex flex-col gap-[4px] lg:grow lg:min-h-0 lg:overflow-y-auto">
+            {v.calls.map((c, i) => (
+              <div key={`${c.at}-${i}`} className={`doe-menu-in grid grid-cols-[28px_minmax(0,1fr)] gap-[10px] p-[10px] rounded-[16px] ${i === v.calls.length - 1 ? "bg-[#FFFCF1]" : "bg-[#FFFCF180]"}`}>
+                <AgentAvatar name={v.agentName} size={28} />
+                <span className="min-w-0">
+                  <span className="flex items-baseline justify-between gap-[8px]">
+                    <span className="text-[13.5px] leading-[18px] font-[600]">{c.summary}</span>
+                    <span className="shrink-0 font-mono text-[10.5px] text-[#28191080]">{new Date(c.at).toLocaleTimeString("en-CA", { hour: "numeric", minute: "2-digit", second: "2-digit" })}</span>
+                  </span>
+                  <span className="block mt-[2px] font-mono text-[11px] text-[#28191080]">{c.tool ?? c.method}</span>
+                </span>
+              </div>
+            ))}
+            {v.live && (
+              <span className="flex items-center gap-[6px] px-[12px] py-[8px] text-[11.5px] font-[600] text-[#2819109E]">
+                <span className="doe-typing flex gap-[3px]">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                {v.agentName} is checking with its user
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="order-1 lg:order-2 flex flex-col min-h-[380px] rounded-[26px] bg-[#3A2516] p-[6px] md:p-[8px]">
+          <div className="flex items-center gap-[8px] px-[8px] pt-[2px] pb-[8px]">
+            <span className="grow min-w-0 h-[26px] px-[12px] flex items-center justify-center rounded-full bg-[#FFFCF11A] font-mono text-[11.5px] text-[#FFFCF1B3] truncate">mcp · doehealth.care/api/demo/mcp</span>
+          </div>
+          <div className="grow rounded-[20px] bg-[#FFFCF1] p-[14px] md:p-[22px] flex flex-col gap-[12px]">
+            <div className={`${DISPLAY} text-[22px] leading-[26px] md:text-[26px]`}>{read ? "Reading the clinic" : "Connected"}</div>
+            <div className="flex flex-col gap-[6px]">
+              {[
+                ["Services and prices", "Botox for chronic migraine $1,450 · consult $350"],
+                ["Providers", "Dr. Sarah Brooks · 4.9 ★ (312) · Dr. Lin Chen"],
+                ["Insurance", "Harbour Mutual · partial, 60% up to $2,000"],
+                ["Availability", "Nov 2 to 6 · open slots"],
+              ].map(([k, d], i) => (
+                <div key={k} className={`flex items-center gap-[10px] min-h-[52px] px-[14px] rounded-[16px] ${read ? "bg-[#E3E9D9]" : "bg-[#F4EEDF]"}`} style={read ? { animation: `doe-menu-in 300ms ease ${i * 140}ms both` } : undefined}>
+                  <span className={`w-[18px] h-[18px] shrink-0 flex items-center justify-center rounded-full ${read ? "bg-[#2F3B2A]" : "border-[1.5px] border-solid border-[#28191040]"}`}>
+                    {read && (
+                      <svg width="10" height="10" viewBox="0 0 24 24">
+                        <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#FFFCF1" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[14px] font-[600]">{k}</span>
+                    <span className="block truncate text-[12.5px] text-[#2819109E]">{d}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-auto p-[12px_14px] rounded-[16px] border-[1.5px] border-dashed border-[#28191033] text-[13px] leading-[19px] text-[#281910CC]">
+              {v.agentName} needs its user to agree to Doe&apos;s terms and to sharing PHI before it can start a booking. This view switches to the booking as soon as it does.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function FileGlyph() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" className="shrink-0">
@@ -365,6 +526,10 @@ function stepsOf(s: Session): Step[] {
   let calendarOpened = false;
   for (const e of s.events) {
     const actor = e.actor === "clinic" ? "clinic" : "agent";
+    if (e.type === "mcp_call") {
+      steps.push({ key: e.id, at: e.at, screen: "services", title: e.summary, detail: "Before starting a booking", actor, ms: 1300, ev: e });
+      continue;
+    }
     if (e.type === "connected") {
       steps.push({ key: `${e.id}-a`, at: e.at, screen: "gate", title: `Connected via ${CHANNEL_LONG[s.channel]}`, detail: `Acting for ${s.userName}${s.userLocation ? `, ${s.userLocation}` : ""}`, actor, ms: 1500, ev: e });
       steps.push({ key: `${e.id}-b`, at: e.at, screen: "gate", title: "Typed what the user wants", detail: `“${s.request}”`, actor, ms: 1400 + Math.min(200, s.request.length) * 32, ev: e });

@@ -8,7 +8,7 @@ import path from "node:path";
 
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { DEFAULT_CONFIG } from "@/lib/demo/demo-engine";
-import type { DemoConfig, DemoSession, DemoSlots } from "@/lib/demo/demo-types";
+import type { DemoConfig, DemoSession, DemoSlots, DemoVisit } from "@/lib/demo/demo-types";
 
 const BUCKET = "doe-demo";
 /** Sessions older than this drop out of the clinic view. */
@@ -127,6 +127,25 @@ export async function listSessions(limit = 60): Promise<DemoSession[]> {
   const cutoff = Date.now() - RETENTION_MS;
   return all.filter((s): s is DemoSession => Boolean(s) && Date.parse(s!.createdAt) > cutoff);
 }
+
+const isVisitId = (id: string) => /^vis_[a-z0-9]{9,30}$/.test(id);
+export async function readVisit(id: string): Promise<DemoVisit | null> {
+  if (!isVisitId(id)) return null;
+  return readJson<DemoVisit>(`visits/${id}.json`);
+}
+export const writeVisit = (v: DemoVisit) => writeJson(`visits/${v.id}.json`, v);
+
+/** The newest visits (ids are time-ordered), within `maxAgeMs`. */
+export async function listVisits(limit: number, maxAgeMs: number): Promise<DemoVisit[]> {
+  const names = await listNames("visits", limit);
+  const all = await Promise.all(names.map((n) => readJson<DemoVisit>(`visits/${n}`)));
+  const cutoff = Date.now() - maxAgeMs;
+  return all.filter((v): v is DemoVisit => Boolean(v) && Date.parse(v!.lastSeenAt) > cutoff);
+}
+
+/** The latest visit from a network, for MCP clients that don't send Mcp-Session-Id back. */
+export const readIpVisit = (key: string) => readJson<{ id: string; at: string }>(`visit-ip/${key}.json`);
+export const writeIpVisit = (key: string, id: string) => writeJson(`visit-ip/${key}.json`, { id, at: new Date().toISOString() });
 
 type ConnectCount = { total: number; ips: Record<string, number> };
 

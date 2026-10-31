@@ -11,6 +11,7 @@ export const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "authorization, content-type, mcp-session-id, mcp-protocol-version, x-doe-client",
+  "Access-Control-Expose-Headers": "Mcp-Session-Id, MCP-Protocol-Version",
   "Cache-Control": "no-store",
 };
 
