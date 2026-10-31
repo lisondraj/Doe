@@ -42,51 +42,62 @@ const MUTED = "text-[#28191080]";
 
 /** The loader's steps, in order, with how long each runs. */
 /** `subs` load one at a time under a step while it runs, then fold into its detail line. */
-const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?: boolean }[] = [
-  { title: "Finding Your Page", detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`, ms: 2700 },
-  { title: "Checking What Personal Agents See", detail: "No llms.txt, MCP card or OpenAPI", ms: 2700 },
+/** `phoneSubs` fill the first two steps on iPhone, where the step has room for its list; desktop shows the detail line. */
+const STEPS: { title: string; detail: string; ms: number; subs?: string[]; phoneSubs?: string[]; bar?: boolean }[] = [
+  {
+    title: "Finding Your Page",
+    detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`,
+    ms: 1350,
+    phoneSubs: [CLINIC.domain, `${SOURCE_PAGES.length} pages found`, "Prices, providers, hours"],
+  },
+  {
+    title: "Checking What Personal Agents See",
+    detail: "No llms.txt, MCP card or OpenAPI",
+    ms: 1350,
+    phoneSubs: ["No llms.txt", "No MCP card", "No OpenAPI"],
+  },
   {
     title: "Building Agent-Readable Page",
     detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`,
-    ms: 3700,
+    ms: 1850,
     subs: ["JSON · 7 resources", "JSON-LD · schema.org/MedicalClinic", "Metadata & HTML"],
   },
   {
     title: "Building Agent Files",
     detail: `${AGENT_FILES.length} files ready`,
-    ms: 3800,
+    ms: 1900,
     subs: ["openapi.json", "llms.txt", "robots.txt", ".well-known/mcp.json"],
   },
   {
     title: "Integrating Doe's MCP",
     detail: `${CLINIC_TOOLS.length} tools ready`,
-    ms: 3800,
+    ms: 1900,
     subs: CLINIC_TOOLS.map((t) => t.name),
   },
   {
     title: "Integrating Doe's API",
     detail: "OpenAPI 3.1 · locations, providers, prices",
-    ms: 3600,
+    ms: 1800,
     subs: ["GET /locations", "GET /providers", "GET /services", "GET /prices", "POST /consultations"],
   },
   {
     title: "Applying Personal Agent Protocol",
     detail: "Connected",
-    ms: 3400,
+    ms: 1700,
     subs: ["Consent per user", "Agents say they're agents", "Connected to Doe"],
   },
 ];
+const MAX_SUBS = Math.max(...STEPS.map((s) => s.subs?.length ?? s.phoneSubs?.length ?? 1));
 const STEP_STARTS = STEPS.map((_, i) => STEPS.slice(0, i).reduce((n, s) => n + s.ms, 0));
 const BUILD_MS = STEPS.reduce((n, s) => n + s.ms, 0);
-/** The read pills leave this long before the build ends, so Ready shows on its own. */
-const CHIPS_OFF_MS = 1500;
-/** How long "Ready" holds before the page opens. */
-const MUSE_MS = 1100;
-const TOTAL_MS = BUILD_MS + MUSE_MS;
+/** The read pills leave this long before the build ends. */
+const CHIPS_OFF_MS = 750;
+/** The page opens as soon as the last step (the Personal Agent Protocol) finishes: no "Ready" screen. */
+const TOTAL_MS = BUILD_MS;
 /** Each source page gets an equal slice of the build. */
 const SLOT_MS = BUILD_MS / SOURCE_PAGES.length;
 /** Cross-fade between two of the clinic's pages behind the loader. */
-const PAGE_FADE_MS = 900;
+const PAGE_FADE_MS = 600;
 const LOADER_FADE_MS = 420;
 
 /** What the loader lifts off each page while it shows, keyed by screenshot. */
@@ -428,11 +439,15 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
   const stepFrac = built ? 1 : Math.min(1, Math.max(0, (elapsed - STEP_STARTS[stepIndex]!) / STEPS[stepIndex]!.ms));
   const progress = built ? 1 : (stepIndex + stepFrac) / STEPS.length;
   const page = SOURCE_PAGES[pageIndex]!;
-  const step = built ? null : STEPS[stepIndex]!;
+  /** Once the last step finishes the page opens, so the loader never shows a "Ready" step: it holds the last one. */
+  const shown = built ? STEPS.length - 1 : stepIndex;
+  const step = STEPS[shown]!;
   const desktop = viewport.w >= 768;
   /** Short screens show only the part in progress under the step, not the whole list. */
   const compact = viewport.h < (desktop ? 780 : 760);
-  const sphere = desktop ? 76 : compact ? 52 : 64;
+  /** iPhone: a larger sphere and larger lines, and only the running step's rows are reserved, so the step fills the space above the bar. */
+  const sphere = desktop ? 76 : compact ? 72 : 96;
+  const rowH = desktop ? 19 : 25;
 
   return (
     <div className="relative h-full w-full overflow-hidden">
@@ -446,7 +461,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
       />
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-[56%] pointer-events-none"
+        className="absolute inset-x-0 bottom-0 h-[64%] md:h-[56%] pointer-events-none"
         style={{ background: "linear-gradient(to top, #FFFCF1 0%, #FFFCF1 66%, rgba(255,252,241,0.85) 80%, rgba(255,252,241,0) 100%)" }}
       />
       <PageDirectory pageIndex={pageIndex} built={built} />
@@ -478,12 +493,18 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
         <div className="px-[18px] md:px-[32px] pb-[18px] md:pb-[28px]">
           <div className="w-full max-w-[460px]">
             <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
-            <h2 key={step?.title ?? "ready"} className="ic-fade mt-[14px] [text-wrap:balance] text-[20px] leading-[25px] md:text-[22px] md:leading-[28px] font-[600] tracking-[-0.01em]">
-              {step?.title ?? "Ready"}
+            <div className={`md:hidden mt-[18px] text-[12px] max-md:leading-[16px] font-[600] uppercase tracking-[0.08em] tabular-nums ${MUTED}`}>
+              Step {shown + 1} of {STEPS.length}
+            </div>
+            <h2 key={step.title} className="ic-fade mt-[4px] md:mt-[14px] [text-wrap:balance] text-[24px] leading-[29px] md:text-[22px] md:leading-[28px] font-[600] tracking-[-0.015em] md:tracking-[-0.01em]">
+              {step.title}
             </h2>
-            <div className="mt-[4px]" style={{ minHeight: compact ? 19 : 19 * 5 }}>
-              {step?.subs && <SubSteps key={step.title} subs={step.subs} progress={stepFrac} onlyCurrent={compact} />}
-              {!step?.subs && <p className={`ic-fade text-[12.5px] leading-[19px] ${SUB}`}>{step?.detail ?? `${AGENT_FILES.length} files · ${CLINIC_TOOLS.length} tools · connected`}</p>}
+            <div className="mt-[6px] md:mt-[4px]" style={{ minHeight: compact ? rowH : rowH * (desktop ? MAX_SUBS : (step.subs ?? step.phoneSubs ?? [step.detail]).length) }}>
+              {desktop && !step.subs ? (
+                <p className={`ic-fade text-[12.5px] leading-[19px] ${SUB}`}>{step.detail}</p>
+              ) : (
+                <SubSteps key={step.title} subs={step.subs ?? step.phoneSubs ?? [step.detail]} progress={stepFrac} onlyCurrent={compact} large={!desktop} />
+              )}
             </div>
 
             <div className="mt-[14px] h-[4px] rounded-full bg-[#2819101A] overflow-hidden">
@@ -532,20 +553,20 @@ const PageDirectory = memo(function PageDirectory({ pageIndex, built }: { pageIn
 });
 
 /** A step's parts, indented in grey: each loads in turn, a small spinner on the one in progress. */
-function SubSteps({ subs, progress, onlyCurrent = false }: { subs: string[]; progress: number; onlyCurrent?: boolean }) {
+function SubSteps({ subs, progress, onlyCurrent = false, large = false }: { subs: string[]; progress: number; onlyCurrent?: boolean; large?: boolean }) {
   // Leave the last sliver of the step with every part done.
   const current = Math.floor(Math.min(0.999, progress / 0.9) * subs.length);
   return (
     <span className="block pl-[2px]">
       {subs.map((sub, i) =>
         i > current || (onlyCurrent && i < current) ? null : (
-          <span key={sub} className={`ic-fade flex items-center gap-[7px] h-[19px] text-[12.5px] leading-[16px] font-[400] ${SUB}`}>
+          <span key={sub} className={`ic-fade flex items-center ${large ? "gap-[9px] h-[25px] text-[15px] leading-[20px]" : "gap-[7px] h-[19px] text-[12.5px] leading-[16px]"} font-[400] ${SUB}`}>
             {i < current ? (
-              <svg width="11" height="11" viewBox="0 0 24 24" className="shrink-0" aria-hidden="true">
+              <svg width={large ? 14 : 11} height={large ? 14 : 11} viewBox="0 0 24 24" className="shrink-0" aria-hidden="true">
                 <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#28191080" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             ) : (
-              <Spinner size={11} />
+              <Spinner size={large ? 14 : 11} />
             )}
             <span className="min-w-0 truncate">{sub}</span>
           </span>
@@ -898,13 +919,13 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               {/* iPhone: the first screen fits the viewport: the title, the clinic's box, its settings and files, then the
                   switch and the button at the foot. The rest follows below. */}
               <div className="flex flex-col gap-[10px] max-md:min-h-[calc(100svh-116px)]">
-                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:pt-[8px] max-md:pb-[6px] max-md:[@media(max-height:760px)]:pt-[0px] max-md:[@media(max-height:760px)]:pb-[0px] max-md:[@media(max-height:760px)]:text-[25px] text-left text-[clamp(26px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
+                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:text-center max-md:pt-[8px] max-md:pb-[18px] max-md:[@media(max-height:760px)]:pt-[0px] max-md:[@media(max-height:760px)]:pb-[8px] max-md:[@media(max-height:760px)]:text-[25px] text-left text-[clamp(26px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
                   We&apos;ve made your clinic
                   <br /> more discoverable
                   <br /> to personal agents.
                 </h2>
                 <Hero className="max-md:order-1" compact={phone} />
-                <SetupFiles className="md:hidden order-2" />
+                <SetupFiles phone className="md:hidden order-2" />
                 {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
                 <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="max-md:order-3 max-md:mt-auto scroll-mt-[136px] md:scroll-mt-[88px]">
                   <StatusPanel
@@ -914,11 +935,6 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
                   />
                 </div>
               </div>
-              {!claimed && (
-                <p className="md:hidden px-[4px] pt-[6px] pb-[8px] text-[17px] leading-[25px] text-[#281910B3] [text-wrap:pretty]">
-                  We&apos;ve built {CLINIC.name}&apos;s agentic pages, so personal agents can find, read and book you. Claim your page to switch them on.
-                </p>
-              )}
               <AboutDoe />
             </div>
           )}
@@ -991,14 +1007,14 @@ function Hero({
 }) {
   return (
     <div className={`flex flex-col rounded-[26px] bg-[#F4EEDF] p-[6px] shrink-0 ${className}`}>
-      <div className={`grow flex flex-col justify-center ${compact ? "rounded-[21px] bg-[#FFFCF1] px-[16px] py-[14px] [@media(max-height:760px)]:py-[10px] md:px-[22px] md:py-[18px]" : "rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]"} ${innerClassName}`}>
-        <div className={compact ? "flex items-start text-left gap-[14px]" : "flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]"}>
-          <IndexConvertSphere size={compact ? 56 : 84} className="shrink-0" />
+      <div className={`grow flex flex-col justify-center ${compact ? "rounded-[21px] bg-[#FFFCF1] px-[16px] pt-[26px] pb-[24px] [@media(max-height:760px)]:pt-[16px] [@media(max-height:760px)]:pb-[14px] md:px-[22px] md:py-[18px]" : "rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]"} ${innerClassName}`}>
+        <div className={compact ? "flex flex-col items-center text-center gap-[12px] [@media(max-height:760px)]:gap-[8px]" : "flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]"}>
+          <IndexConvertSphere size={compact ? 64 : 84} className="shrink-0" />
           <div className="min-w-0">
             <h1 className={`${DISPLAY} tracking-[-0.02em] [text-wrap:balance] ${compact ? "text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] md:text-[30px] md:leading-[34px]" : "text-[30px] leading-[34px] md:text-[36px] md:leading-[40px]"}`}>{CLINIC.name}</h1>
             {!nameOnly && (
               <>
-                <p className={`mt-[4px] max-w-[32ch] ${SUB} [text-wrap:balance] ${compact ? "text-[15px] leading-[20px] [@media(max-height:760px)]:text-[13.5px] [@media(max-height:760px)]:leading-[18px] font-[500]" : "mx-auto md:mx-0 mt-[6px] text-[14.5px] leading-[20px]"}`}>
+                <p className={`mt-[4px] max-w-[32ch] ${SUB} [text-wrap:balance] ${compact ? "mx-auto " : ""}${compact ? "text-[15px] leading-[20px] [@media(max-height:760px)]:text-[13.5px] [@media(max-height:760px)]:leading-[18px] font-[500]" : "mx-auto md:mx-0 mt-[6px] text-[14.5px] leading-[20px]"}`}>
                   {compact ? `${LOCATIONS[0].address}, ${CLINIC.area}` : `${CLINIC.kind} in ${CLINIC.area}, since ${CLINIC.since}`}
                 </p>
                 <a
@@ -1556,15 +1572,27 @@ function StatusPanel({ claimed, onClaim, activateRef }: { claimed: string | null
  * Ford's settings and files in one inner sand box, greyed because none of it is live yet. Screens under 760px tall
  * (`[@media(max-height:760px)]`) drop the detail lines and list the files inline, so the first screen still fits.
  */
-function SetupFiles({ className = "" }: { className?: string }) {
+function SetupFiles({ className = "", phone = false }: { className?: string; phone?: boolean }) {
   const label = "text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]";
   return (
-    <div className={`rounded-[18px] bg-[#F4EEDF] px-[14px] pt-[12px] pb-[12px] ${className}`}>
-      <div className="opacity-60">
-        <div className="flex items-baseline justify-between gap-[10px]">
-          <span className={label}>Ford&apos;s Agent Settings</span>
-          <span className={`text-[11.5px] font-[600] ${MUTED}`}>Not published</span>
+    <div className={`rounded-[18px] bg-[#F4EEDF] px-[14px] pt-[12px] pb-[12px] ${phone ? "pt-[16px]" : ""} ${className}`}>
+      {/* iPhone: a big title and a line on what these are for, with a small Not Active tag in the corner. */}
+      {phone && (
+        <div className="pb-[6px]">
+          <div className="flex items-start justify-between gap-[10px]">
+            <h3 className={`${DISPLAY} text-left text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] tracking-[-0.02em]`}>Here&apos;s what we made you.</h3>
+            <span className={`shrink-0 mt-[3px] h-[22px] px-[9px] flex items-center rounded-full bg-[#FFFCF1] text-[10.5px] font-[700] uppercase tracking-[0.08em] ${MUTED}`}>Not Active</span>
+          </div>
+          <p className={`mt-[4px] text-[14px] leading-[19px] ${SUB} [text-wrap:pretty]`}>All of these help personal agents discover you easier.</p>
         </div>
+      )}
+      <div className="opacity-60">
+        {!phone && (
+          <div className="flex items-baseline justify-between gap-[10px]">
+            <span className={label}>Ford&apos;s Agent Settings</span>
+            <span className={`text-[11.5px] font-[600] ${MUTED}`}>Not published</span>
+          </div>
+        )}
         <div className="mt-[4px] flex flex-col">
           {CONNECTIONS.map((c) => (
             <div key={c.name} className="flex items-start gap-[10px] py-[6px] [@media(max-height:760px)]:py-[3px]">
@@ -1579,7 +1607,7 @@ function SetupFiles({ className = "" }: { className?: string }) {
           ))}
         </div>
 
-        <div className={`mt-[8px] ${label}`}>Ford&apos;s Agent Files</div>
+        {!phone && <div className={`mt-[8px] ${label}`}>Ford&apos;s Agent Files</div>}
         <div className="mt-[8px] grid grid-cols-2 gap-[6px] [@media(max-height:760px)]:hidden">
           {AGENT_FILES.map((f) => (
             <div key={f.path} className="flex items-center gap-[7px] h-[32px] px-[9px] rounded-[10px] bg-[#FFFCF1]">
