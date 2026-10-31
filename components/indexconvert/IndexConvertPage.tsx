@@ -223,6 +223,13 @@ export function IndexConvertPage() {
     return () => window.clearTimeout(id);
   }, [phase]);
 
+  // The phone's status bar follows the frame: darker brown in What Agents See.
+  useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) return;
+    meta.setAttribute("content", phase === "done" && view === "agent" ? "#140C04" : "#3A2516");
+  }, [phase, view]);
+
   const switchView = (next: View) => {
     if (next === view) return;
     setView(next);
@@ -255,6 +262,7 @@ export function IndexConvertPage() {
     <Frame
       scrollRef={scrollRef}
       right={phase === "done" ? <ViewSwitch view={view} onChange={switchView} /> : null}
+      dark={phase === "done" && view === "agent"}
       loader={loader}
       mark={phase === "done"}
       lead={
@@ -283,7 +291,7 @@ export function IndexConvertPage() {
 
 /** The Doe wordmark as /earlypreview's nav sets it: Lora, regular weight, text-4xl. */
 const DoeMark = ({ center = false }: { center?: boolean }) => (
-  <span className={`${lora.className} ${center ? "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-x-0 md:translate-y-0" : ""} text-[36px] leading-[36px] font-normal text-[#3A2516]`}>Doe</span>
+  <span className={`${lora.className} ${center ? "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-x-0 md:translate-y-0" : ""} text-[36px] leading-[36px] font-normal text-[color:var(--ic-ink)]`}>Doe</span>
 );
 const HEADER = "flex items-center justify-between gap-[12px] h-[76px] md:h-[72px] px-[18px] md:px-[32px]";
 
@@ -294,6 +302,7 @@ function Frame({
   loader,
   mark = true,
   centerMark = false,
+  dark = false,
   lead,
   edgeFade = false,
   children,
@@ -303,6 +312,8 @@ function Frame({
   loader: ReactNode;
   mark?: boolean;
   centerMark?: boolean;
+  /** What Agents See: the darker brown throughout (see indexconvert.css). */
+  dark?: boolean;
   /** Words in the header's left, in place of the logo. */
   lead?: ReactNode;
   /** Fades whatever scrolls past the top or bottom edge of the shell. */
@@ -311,7 +322,8 @@ function Frame({
 }) {
   return (
     <div
-      className={`${dmSans.className} doehealth-product-page indexconvert-page fixed inset-0 bg-[#3A2516] text-[#281910] antialiased [font-synthesis:none]`}
+      data-ic-view={dark ? "agent" : undefined}
+      className={`${dmSans.className} doehealth-product-page indexconvert-page fixed inset-0 bg-[color:var(--ic-ink)] text-[#281910] antialiased [font-synthesis:none]`}
       style={{
         paddingTop: "max(8px, env(safe-area-inset-top))",
         paddingBottom: "max(8px, env(safe-area-inset-bottom))",
@@ -378,7 +390,7 @@ function ViewSwitch({ view, onChange }: { view: View; onChange: (v: View) => voi
       <button
         type="button"
         onClick={() => onChange("agent")}
-        className="group ic-fade h-[40px] pl-[16px] pr-[12px] flex items-center gap-[8px] rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap hover:bg-[#4A3121] transition-colors duration-150"
+        className="ic-ink-dark group ic-fade h-[40px] pl-[16px] pr-[12px] flex items-center gap-[8px] rounded-full bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap hover:bg-[color:var(--ic-ink-hover)] transition-colors duration-150"
       >
         What Agents See
         <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[2px]">
@@ -400,7 +412,7 @@ function ViewSwitch({ view, onChange }: { view: View; onChange: (v: View) => voi
           <path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      <span className="h-[40px] px-[16px] flex items-center rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap">Agent&apos;s View</span>
+      <span className="h-[40px] px-[16px] flex items-center rounded-full bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap">Agent&apos;s View</span>
     </div>
   );
 }
@@ -409,7 +421,7 @@ function Check({ on, size = 20 }: { on: boolean; size?: number }) {
   return (
     <span
       className="shrink-0 flex items-center justify-center transition-colors duration-150"
-      style={{ width: size, height: size, borderRadius: Math.round(size * 0.35), backgroundColor: on ? "#3A2516" : "transparent", border: on ? "none" : "1.5px solid #28191040" }}
+      style={{ width: size, height: size, borderRadius: Math.round(size * 0.35), backgroundColor: on ? "var(--ic-ink)" : "transparent", border: on ? "none" : "1.5px solid #28191040" }}
       aria-hidden="true"
     >
       {on && (
@@ -425,7 +437,7 @@ function Check({ on, size = 20 }: { on: boolean; size?: number }) {
 function Cross({ size = 20 }: { size?: number }) {
   return (
     <span
-      className="shrink-0 flex items-center justify-center bg-[#3A2516]"
+      className="shrink-0 flex items-center justify-center bg-[color:var(--ic-ink)]"
       style={{ width: size, height: size, borderRadius: Math.round(size * 0.35) }}
       aria-hidden="true"
     >
@@ -441,7 +453,7 @@ function Spinner({ size = 20, light = false }: { size?: number; light?: boolean 
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" className="ic-spin shrink-0" aria-hidden="true">
       <circle cx="12" cy="12" r="9" fill="none" stroke={light ? "#FFFCF133" : "#2819101F"} strokeWidth="2.6" />
-      <path d="M12 3a9 9 0 0 1 9 9" fill="none" stroke={light ? "#FFFCF1" : "#3A2516"} strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M12 3a9 9 0 0 1 9 9" fill="none" style={{ stroke: light ? "#FFFCF1" : "var(--ic-ink)" }} strokeWidth="2.6" strokeLinecap="round" />
     </svg>
   );
 }
@@ -522,7 +534,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
             </div>
 
             <div className="mt-[14px] h-[4px] rounded-full bg-[#2819101A] overflow-hidden">
-              <div className="h-full rounded-full bg-[#3A2516] origin-left will-change-transform" style={{ transform: `scaleX(${progress})` }} />
+              <div className="h-full rounded-full bg-[color:var(--ic-ink)] origin-left will-change-transform" style={{ transform: `scaleX(${progress})` }} />
             </div>
             <div className="mt-[10px] flex items-center gap-[8px]">
               {built ? <Check on size={16} /> : <Spinner size={16} />}
@@ -853,7 +865,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               type="button"
               tabIndex={pillsOn ? 0 : -1}
               onClick={() => go(n.id)}
-              className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] transition-colors duration-150 ${agent ? "font-mono text-[12.5px]" : ""} ${active === n.id ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}
+              className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] transition-colors duration-150 ${agent ? "font-mono text-[12.5px]" : ""} ${active === n.id ? "bg-[color:var(--ic-ink)] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}
             >
               {agent ? n.agent : n.you}
             </button>
@@ -883,7 +895,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
             <button
               type="button"
               onClick={goToClaim}
-              className="mt-[14px] h-[40px] px-[12px] flex items-center rounded-[12px] bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600]"
+              className="mt-[14px] h-[40px] px-[12px] flex items-center rounded-[12px] bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[13px] font-[600]"
             >
               Activate
             </button>
@@ -893,18 +905,8 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         <main key={view} className="ic-fade min-w-0 flex flex-col gap-[28px] px-[16px] md:px-0 pt-[6px]">
           {agent ? (
           <div className="ic-rise flex flex-col gap-[14px]">
-            {/* The whole Agent's View is a preview: nothing here is live yet. */}
-            <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
-              <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[16px] pb-[16px]">
-                <div className="flex items-center justify-between gap-[14px]">
-                  <div className="min-w-0 text-[19px] leading-[26px] md:text-[22px] md:leading-[30px] font-[500] [text-wrap:balance]">
-                    We&apos;ve made your clinic readable to personal agents.
-                  </div>
-                  <OffSwitch />
-                </div>
-                <ActivateButton buttonRef={activateRef} onClick={goToClaim} className="mt-[14px]" />
-              </div>
-            </div>
+            {/* Why this view exists: agents don't browse the way people do. */}
+            <AgentsDifferent />
             <div className="rounded-[26px] bg-[#F4EEDF] p-[6px]">
               <div className="rounded-[21px] bg-[#FFFCF1] px-[20px] py-[20px] md:px-[26px] md:py-[22px] text-left">
                 <div className="flex items-center gap-[16px]">
@@ -927,6 +929,8 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               </div>
             </div>
             <AgentStatus claimed={claimed} />
+            <AgentsStudied />
+            <AgentsPartners />
           </div>
           ) : (
             <div className="ic-rise flex flex-col gap-[10px]">
@@ -984,7 +988,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         onClick={goToClaim}
         tabIndex={!claimed && !claimInView ? 0 : -1}
         aria-hidden={claimed || claimInView}
-        className={`group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[#3A2516] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(58,37,22,0.25)] text-[12.5px] tracking-[0.04em]`}
+        className={`ic-ink-default group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[color:var(--ic-ink)] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(58,37,22,0.25)] text-[12.5px] tracking-[0.04em]`}
         style={{
           bottom: "calc(max(8px, env(safe-area-inset-bottom)) + 10px)",
           transform: !claimed && !claimInView ? "none" : "translateY(calc(100% + 40px))",
@@ -1089,7 +1093,7 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
           <path d="M1 7h22M17 1.5L23 7l-6 5.5" {...stroke} strokeWidth={2} />
         </svg>
         <div className="flex flex-col items-center">
-          <div className="w-[64px] h-[64px] rounded-[14px] bg-[#3A2516] px-[10px] py-[10px] flex flex-col justify-center gap-[5px] font-mono text-[8.5px] leading-[10px] text-[#FFFCF1]">
+          <div className="w-[64px] h-[64px] rounded-[14px] bg-[color:var(--ic-ink)] px-[10px] py-[10px] flex flex-col justify-center gap-[5px] font-mono text-[8.5px] leading-[10px] text-[#FFFCF1]">
             <span className="text-[#FCCFB8]">{"{"}</span>
             <span className="block h-[4px] w-[36px] rounded-full bg-[#FFFCF1] opacity-85" />
             <span className="block h-[4px] w-[26px] rounded-full bg-[#FFFCF1] opacity-50" />
@@ -1110,7 +1114,7 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
             <path d="M4.5 8l7.5 5.5L19.5 8" {...stroke} />
           </svg>
           <span className={`min-w-0 flex-1 truncate text-[12.5px] ${MUTED}`}>you@clinic.com</span>
-          <span className="shrink-0 h-[34px] px-[14px] flex items-center rounded-full bg-[#3A2516] text-[#FFFCF1] text-[12px] font-[700] uppercase tracking-[0.04em]">Claim</span>
+          <span className="shrink-0 h-[34px] px-[14px] flex items-center rounded-full bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[12px] font-[700] uppercase tracking-[0.04em]">Claim</span>
         </div>
       </div>
     );
@@ -1150,7 +1154,7 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
       <div className={`${tile} gap-[6px] px-[10px]`}>
         {acts.map((a) => (
           <div key={a.label} className="flex flex-col items-center">
-            <div className="w-[50px] h-[50px] rounded-[13px] bg-[#FFFCF1] flex items-center justify-center text-[#3A2516]">
+            <div className="w-[50px] h-[50px] rounded-[13px] bg-[#FFFCF1] flex items-center justify-center text-[color:var(--ic-ink)]">
               <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
                 {a.icon}
               </svg>
@@ -1181,7 +1185,7 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
         </div>
         <span className={`${wire} border-y-[1.5px] border-r-[1.5px] rounded-r-[10px]`} aria-hidden="true" />
         <span className="w-[10px] h-[1.5px] bg-[#28191033]" aria-hidden="true" />
-        <span className="w-[52px] h-[52px] rounded-[16px] bg-[#3A2516] flex items-center justify-center">
+        <span className="w-[52px] h-[52px] rounded-[16px] bg-[color:var(--ic-ink)] flex items-center justify-center">
           <IndexConvertSphere size={34} color="#FCCFB8" />
         </span>
         <span className="w-[10px] h-[1.5px] bg-[#28191033]" aria-hidden="true" />
@@ -1225,7 +1229,7 @@ function StepBoxes() {
             <StepVisual n={st.n} />
             <div className="px-[8px] pt-[14px] pb-[8px] md:px-[12px]">
               <div className="flex items-start gap-[12px]">
-                <span className="shrink-0 mt-[1px] w-[26px] h-[26px] flex items-center justify-center rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[700]">{st.n}</span>
+                <span className="shrink-0 mt-[1px] w-[26px] h-[26px] flex items-center justify-center rounded-full bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[13px] font-[700]">{st.n}</span>
                 <div className="min-w-0">
                   <div className="text-[17px] leading-[24px] font-[600] [text-wrap:balance]">{st.title}</div>
                   {st.detail && <div className={`mt-[4px] text-[14.5px] leading-[22px] ${SUB} [text-wrap:pretty]`}>{st.detail}</div>}
@@ -1267,7 +1271,7 @@ function Intro({ onStart }: { onStart: () => void }) {
             <button
               type="button"
               onClick={onStart}
-              className="group mt-[10px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#3A2516] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#4A3121] transition-colors duration-150"
+              className="group mt-[10px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[color:var(--ic-ink-hover)] transition-colors duration-150"
             >
               See The Page We Built You
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
@@ -1351,7 +1355,7 @@ function LocationMap({ variant, size = 76 }: { variant: number; size?: number })
         )}
         <g transform={v === 0 ? "translate(46 44)" : "translate(56 48)"}>
           <ellipse cx="0" cy="13" rx="6" ry="2.2" fill="#281910" opacity="0.18" />
-          <path d="M0 12C-8 2 -9.5 -2 -9.5 -6.5a9.5 9.5 0 0 1 19 0C9.5 -2 8 2 0 12z" fill="#3A2516" />
+          <path d="M0 12C-8 2 -9.5 -2 -9.5 -6.5a9.5 9.5 0 0 1 19 0C9.5 -2 8 2 0 12z" style={{ fill: "var(--ic-ink)" }} />
           <circle cx="0" cy="-6.5" r="3.6" fill="#FFFCF1" />
         </g>
       </svg>
@@ -1404,7 +1408,7 @@ function FoundersFilm() {
       )}
       {!playing && (
         <button type="button" aria-label="Play What Is Doe" className="absolute inset-0 flex items-center justify-center">
-          <span className="w-[64px] h-[64px] rounded-full bg-[#FFFCF1E6] text-[#3A2516] flex items-center justify-center shadow-[0_8px_24px_rgba(58,37,22,0.25)]">
+          <span className="w-[64px] h-[64px] rounded-full bg-[#FFFCF1E6] text-[color:var(--ic-ink)] flex items-center justify-center shadow-[0_8px_24px_rgba(58,37,22,0.25)]">
             <svg width="26" height="26" viewBox="1.35 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M7.5 4.8v14.4a.9.9 0 0 0 1.37.77l11.3-7.2a.9.9 0 0 0 0-1.54L8.87 4.03A.9.9 0 0 0 7.5 4.8Z" />
             </svg>
@@ -1500,7 +1504,7 @@ const MUSE = AGENT_APPS[0];
 
 /** A patient asking their personal agent for a clinic, and Muse answering with Ford. HALO price from Ford's pricing page. */
 function AgentChat({ className = "" }: { className?: string }) {
-  const sent = "max-w-[78%] self-end rounded-[20px] rounded-br-[6px] bg-[#3A2516] px-[14px] py-[8px] text-[14.5px] leading-[20px] text-[#FFFCF1]";
+  const sent = "max-w-[78%] self-end rounded-[20px] rounded-br-[6px] bg-[color:var(--ic-ink)] px-[14px] py-[8px] text-[14.5px] leading-[20px] text-[#FFFCF1]";
   return (
     <div className={`flex flex-col gap-[4px] ${className}`} aria-label="Example chat with a personal agent">
       <div className={sent}>Find a HALO laser clinic within 30 km under $1,800, available within 10 months</div>
@@ -1599,7 +1603,7 @@ function ActivateButton({ onClick, buttonRef, className = "" }: { onClick: () =>
       ref={buttonRef}
       type="button"
       onClick={onClick}
-      className={`group w-full h-[60px] [@media(max-height:760px)]:h-[52px] flex items-center justify-center gap-[9px] sm:gap-[14px] px-[10px] rounded-[16px] bg-[#3A2516] text-[#FFFCF1] text-[12px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.03em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[#4A3121] transition-colors duration-150 ${className}`}
+      className={`group w-full h-[60px] [@media(max-height:760px)]:h-[52px] flex items-center justify-center gap-[9px] sm:gap-[14px] px-[10px] rounded-[16px] bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[12px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.03em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[color:var(--ic-ink-hover)] transition-colors duration-150 ${className}`}
     >
       <span className="relative inline-flex shrink-0 items-center w-[34px] h-[20px] sm:w-[40px] sm:h-[22px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
         <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-hover:translate-x-[14px] sm:group-hover:translate-x-[18px]" />
@@ -1640,7 +1644,7 @@ function OffSwitch({ size = "md", label }: { size?: "sm" | "md" | "lg"; label?: 
       type="button"
       onClick={press}
       aria-label={`${label ?? "Off"}: claim to activate`}
-      className={`group relative flex shrink-0 items-center rounded-full border border-solid transition-colors duration-300 ${on ? "bg-[#3A2516] border-[#3A2516]" : "bg-[#2819101F] border-[#28191026] hover:bg-[#28191029]"}`}
+      className={`group relative flex shrink-0 items-center rounded-full border border-solid transition-colors duration-300 ${on ? "bg-[color:var(--ic-ink)] border-[color:var(--ic-ink)]" : "bg-[#2819101F] border-[#28191026] hover:bg-[#28191029]"}`}
       style={{ width: w, height: h }}
     >
       <span
@@ -1752,12 +1756,12 @@ function ClaimModal({
               value={claim.email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="h-[56px] w-full rounded-[20px] bg-[#FFFCF1] px-[18px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#3A2516] transition-colors"
+              className="h-[56px] w-full rounded-[20px] bg-[#FFFCF1] px-[18px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[color:var(--ic-ink)] transition-colors"
             />
             <button
               type="submit"
               disabled={claim.status === "sending"}
-              className="w-full h-[58px] flex items-center justify-center gap-[10px] rounded-[20px] bg-[#3A2516] text-[15px] font-[700] text-[#FFFCF1] hover:bg-[#4A3121] disabled:opacity-70 transition-colors duration-150"
+              className="w-full h-[58px] flex items-center justify-center gap-[10px] rounded-[20px] bg-[color:var(--ic-ink)] text-[15px] font-[700] text-[#FFFCF1] hover:bg-[color:var(--ic-ink-hover)] disabled:opacity-70 transition-colors duration-150"
             >
               {claim.status === "sending" ? (
                 <>
@@ -1841,7 +1845,7 @@ function HandoffForm({ onBack }: { onBack: () => void }) {
   }
 
   const field =
-    "h-[56px] w-full rounded-[20px] bg-[#FFFCF1] px-[18px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#3A2516] transition-colors";
+    "h-[56px] w-full rounded-[20px] bg-[#FFFCF1] px-[18px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[color:var(--ic-ink)] transition-colors";
   return (
     <form onSubmit={send} className="flex flex-col gap-[8px]">
       <label htmlFor="ic-handoff-from" className="sr-only">
@@ -1900,7 +1904,7 @@ function HandoffForm({ onBack }: { onBack: () => void }) {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="w-full h-[58px] flex items-center justify-center gap-[10px] rounded-[20px] bg-[#3A2516] text-[15px] font-[700] text-[#FFFCF1] hover:bg-[#4A3121] disabled:opacity-70 transition-colors duration-150"
+        className="w-full h-[58px] flex items-center justify-center gap-[10px] rounded-[20px] bg-[color:var(--ic-ink)] text-[15px] font-[700] text-[#FFFCF1] hover:bg-[color:var(--ic-ink-hover)] disabled:opacity-70 transition-colors duration-150"
       >
         {status === "sending" ? (
           <>
@@ -2063,13 +2067,13 @@ function ClaimForm({
           value={claim.email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={`you@${CLINIC.domain}`}
-          className={`h-[52px] w-full rounded-[18px] bg-[#FFFCF1] px-[16px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#3A2516] transition-colors ${agent ? "pl-[66px] text-[14px]" : ""}`}
+          className={`h-[52px] w-full rounded-[18px] bg-[#FFFCF1] px-[16px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[color:var(--ic-ink)] transition-colors ${agent ? "pl-[66px] text-[14px]" : ""}`}
         />
       </div>
       <button
         type="submit"
         disabled={claim.status === "sending"}
-        className="w-full h-[52px] flex items-center justify-center gap-[10px] rounded-[18px] bg-[#3A2516] text-[15px] font-[600] text-[#FFFCF1] disabled:opacity-70 transition-opacity"
+        className="w-full h-[52px] flex items-center justify-center gap-[10px] rounded-[18px] bg-[color:var(--ic-ink)] text-[15px] font-[600] text-[#FFFCF1] disabled:opacity-70 transition-opacity"
       >
         {claim.status === "sending" ? (
           <>
@@ -2110,6 +2114,198 @@ function AgentStatus({ claimed }: { claimed: boolean }) {
         }}
       />
     </Endpoint>
+  );
+}
+
+
+/* ------------------------------------------------------------------ Agent's View: why */
+
+/** A dark code card, in the page's ink, with a file name over it. */
+function CodeCard({ name, children, className = "" }: { name: string; children: ReactNode; className?: string }) {
+  return (
+    <div className={`rounded-[18px] bg-[color:var(--ic-ink)] text-[#FFFCF1] overflow-hidden font-mono ${className}`}>
+      <div className="flex items-center gap-[6px] h-[34px] px-[14px] border-b border-solid border-[#FFFCF114] text-[11.5px] text-[#FFFCF180]">
+        <span className="w-[7px] h-[7px] rounded-full bg-[#FFFCF133]" aria-hidden="true" />
+        <span className="w-[7px] h-[7px] rounded-full bg-[#FFFCF133]" aria-hidden="true" />
+        <span className="w-[7px] h-[7px] rounded-full bg-[#FFFCF133]" aria-hidden="true" />
+        <span className="ml-[6px] truncate">{name}</span>
+      </div>
+      <pre className="p-[14px] text-[11.5px] leading-[19px] whitespace-pre overflow-x-auto ic-noscroll">{children}</pre>
+    </div>
+  );
+}
+
+/** Code with comments dimmed and the first word of a line tinted. */
+function Lines({ text }: { text: string }) {
+  return (
+    <>
+      {text.split("\n").map((line, i) => {
+        const comment = line.trimStart().startsWith("#") || line.trimStart().startsWith("//");
+        const [head, ...rest] = line.split(/(?<=^\S+)/);
+        return (
+          <span key={i} className="block">
+            {comment ? (
+              <span className="text-[#FFFCF166]">{line}</span>
+            ) : (
+              <>
+                <span className="text-[#FCCFB8]">{head}</span>
+                {rest.join("")}
+              </>
+            )}
+            {line === "" ? " " : null}
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
+/** Sand shell, cream inside: the page's box. */
+function Box({ children, className = "", innerClassName = "" }: { children: ReactNode; className?: string; innerClassName?: string }) {
+  return (
+    <div className={`rounded-[26px] bg-[#F4EEDF] p-[6px] ${className}`}>
+      <div className={`rounded-[21px] bg-[#FFFCF1] ${innerClassName}`}>{children}</div>
+    </div>
+  );
+}
+
+/** First box in Agent's View: a person sees a page, an agent reads data. */
+function AgentsDifferent() {
+  return (
+    <Box innerClassName="p-[10px] md:p-[12px]">
+      <div className="grid grid-cols-2 gap-[8px] rounded-[16px] bg-[#F4EEDF] p-[10px] md:p-[14px]">
+        {/* A person: a busy web page, a pop-up over it. */}
+        <figure className="flex flex-col items-center">
+          <div className="relative w-full h-[118px] rounded-[12px] bg-[#FFFCF1] overflow-hidden shadow-[0_0_0_1px_rgba(40,25,16,0.06)]" aria-hidden="true">
+            <div className="flex items-center gap-[4px] h-[18px] px-[8px] border-b border-solid border-[#2819100F]">
+              <span className="w-[5px] h-[5px] rounded-full bg-[#28191026]" />
+              <span className="w-[5px] h-[5px] rounded-full bg-[#28191026]" />
+              <span className="ml-[4px] h-[6px] flex-1 rounded-full bg-[#2819100F]" />
+            </div>
+            <div className="p-[8px] flex flex-col gap-[5px]">
+              <div className="flex gap-[4px]">
+                {[0, 1, 2, 3].map((i) => <span key={i} className="h-[5px] w-[18%] rounded-full bg-[#28191018]" />)}
+              </div>
+              <div className="h-[34px] rounded-[6px] bg-[#E9DCC6]" />
+              <span className="h-[5px] w-[80%] rounded-full bg-[#28191014]" />
+              <span className="h-[5px] w-[60%] rounded-full bg-[#28191014]" />
+            </div>
+            <div className="absolute right-[8px] bottom-[8px] w-[46%] rounded-[8px] bg-[#FFFCF1] p-[6px] shadow-[0_4px_14px_rgba(40,25,16,0.16)]">
+              <span className="block h-[4px] w-[80%] rounded-full bg-[#28191026]" />
+              <span className="mt-[4px] block h-[10px] w-[60%] rounded-full bg-[color:var(--ic-ink)]" />
+            </div>
+          </div>
+          <figcaption className={`mt-[8px] text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>People browse pages</figcaption>
+        </figure>
+        {/* An agent: a request and a clean answer. */}
+        <figure className="flex flex-col items-center">
+          <div className="w-full h-[118px] rounded-[12px] bg-[color:var(--ic-ink)] p-[10px] font-mono text-[10px] leading-[15px] text-[#FFFCF1CC] overflow-hidden" aria-hidden="true">
+            <div><span className="text-[#FCCFB8]">GET</span> /prices</div>
+            <div className="text-[#FFFCF166]">200 · json</div>
+            <div className="mt-[4px]">{"{"}</div>
+            <div className="pl-[10px]"><span className="text-[#FFFCF180]">&quot;HALO&quot;:</span> <span className="text-[#FCCFB8]">1500</span>,</div>
+            <div className="pl-[10px]"><span className="text-[#FFFCF180]">&quot;consult&quot;:</span> <span className="text-[#FCCFB8]">300</span></div>
+            <div>{"}"}</div>
+          </div>
+          <figcaption className={`mt-[8px] text-[11.5px] leading-[14px] font-[600] ${MUTED}`}>Agents read data</figcaption>
+        </figure>
+      </div>
+      <div className="px-[8px] pt-[18px] pb-[10px] md:px-[12px]">
+        <h2 className={`${DISPLAY} text-[28px] leading-[32px] md:text-[34px] md:leading-[38px] tracking-[-0.02em] [text-wrap:balance]`}>
+          Agents use the internet differently.
+        </h2>
+        <p className={`mt-[8px] max-w-[46ch] text-[15px] leading-[23px] ${SUB} [text-wrap:balance]`}>
+          People scroll, tap menus and look at photos. Agents skip all of that: they read files, call tools and want a clear answer fast.
+        </p>
+      </div>
+    </Box>
+  );
+}
+
+const STUDIED: { title: string; body: string; file: string; code: string }[] = [
+  {
+    title: "We guide agents where to go.",
+    body: "Signposts on your site point every agent straight to your prices, providers and hours, instead of leaving it to guess.",
+    file: "robots.txt · llms.txt",
+    code: `# Agents: start here
+User-agent: *
+Allow: /
+
+LLMs   /llms.txt
+MCP    /.well-known/mcp.json
+API    /openapi.json`,
+  },
+  {
+    title: "We give agents different ways to find and connect with you.",
+    body: "Some agents call tools, some call an API, some just read the page. Your clinic is ready for each one.",
+    file: "connections",
+    code: `MCP      ${CLINIC_TOOLS.length} tools · prices, consults
+API      GET /providers · /prices
+JSON-LD  schema.org/MedicalClinic
+PAP      patient consent, per user`,
+  },
+];
+
+/** What Doe learned helps agents, row by row: code on one side, the big line on the other, alternating on wide screens. */
+function AgentsStudied() {
+  return (
+    <section className="flex flex-col gap-[14px] pt-[10px]">
+      <h2 className={`${DISPLAY} px-[4px] text-[28px] leading-[32px] md:text-[38px] md:leading-[44px] tracking-[-0.02em] [text-wrap:balance]`}>
+        We studied what helps businesses be more easily interacted with.
+      </h2>
+      <Box innerClassName="flex flex-col divide-y divide-[#28191014]">
+        {STUDIED.map((r, i) => (
+          <div key={r.title} className="grid gap-[16px] p-[14px] md:grid-cols-2 md:items-center md:gap-[24px] md:p-[18px]">
+            <CodeCard name={r.file} className={i % 2 ? "md:order-2" : ""}>
+              <Lines text={r.code} />
+            </CodeCard>
+            <div className="px-[4px]">
+              <h3 className={`${DISPLAY} text-[26px] leading-[30px] md:text-[30px] md:leading-[35px] tracking-[-0.02em] [text-wrap:balance]`}>{r.title}</h3>
+              <p className={`mt-[8px] text-[15px] leading-[23px] ${SUB} [text-wrap:balance]`}>{r.body}</p>
+            </div>
+          </div>
+        ))}
+      </Box>
+    </section>
+  );
+}
+
+/** Doe built into a personal agent: the agent searches Doe and answers with Ford. */
+function AgentsPartners() {
+  return (
+    <Box innerClassName="p-[10px] md:p-[12px]">
+      <div className="rounded-[16px] bg-[#F4EEDF] px-[12px] py-[16px] md:px-[20px] md:py-[20px] flex justify-center">
+        <div className="w-full max-w-[360px] rounded-[18px] bg-[#FFFCF1] p-[12px] shadow-[0_8px_24px_rgba(40,25,16,0.08)]" aria-label="Example: a personal agent searching Doe">
+          <div className="flex items-center gap-[8px] pb-[10px] border-b border-solid border-[#2819100F]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={MUSE.icon} alt="" width={24} height={24} draggable={false} className="block w-[24px] h-[24px] rounded-[7px] object-cover ring-1 ring-[#2819101A]" />
+            <span className="text-[13px] font-[600]">{MUSE.name}</span>
+          </div>
+          <div className="mt-[10px] ml-auto w-fit max-w-[85%] rounded-[16px] rounded-br-[6px] bg-[color:var(--ic-ink)] px-[12px] py-[7px] text-[13px] leading-[18px] text-[#FFFCF1]">
+            Find a facelift surgeon in Toronto
+          </div>
+          <div className="mt-[10px] inline-flex items-center gap-[8px] h-[30px] pl-[4px] pr-[12px] rounded-full bg-[#F4EEDF] text-[12px] font-[600]">
+            <IndexConvertSphere size={22} className="shrink-0" />
+            Searched Doe
+            <span className={`font-[500] ${MUTED}`}>· healthcare clinics</span>
+          </div>
+          <div className="mt-[8px] flex items-center gap-[10px] rounded-[14px] p-[10px] shadow-[0_0_0_1px_rgba(40,25,16,0.08)]">
+            <IndexConvertSphere size={34} className="shrink-0" />
+            <div className="min-w-0 flex-1">
+              <div className="text-[13.5px] leading-[18px] font-[600] truncate">{CLINIC.name}</div>
+              <div className={`text-[12px] leading-[16px] ${SUB} truncate`}>Deep plane facelift · from $22,500</div>
+            </div>
+            <span className="shrink-0 h-[28px] px-[10px] flex items-center rounded-full bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[11.5px] font-[600]">Book</span>
+          </div>
+        </div>
+      </div>
+      <div className="px-[8px] pt-[18px] pb-[10px] md:px-[12px]">
+        <h2 className={`${DISPLAY} text-[26px] leading-[31px] md:text-[32px] md:leading-[38px] tracking-[-0.02em] [text-wrap:balance]`}>
+          We&apos;re partnering with dozens of agents to integrate Doe as the default way to search for healthcare clinics.
+        </h2>
+        <AgentIconsRow className="mt-[16px] !justify-start" ring="#FFFCF1" />
+      </div>
+    </Box>
   );
 }
 
@@ -2158,7 +2354,7 @@ function ConnectBox() {
         </div>
         <div className="mt-[14px] flex flex-col gap-[8px]">
           {CONNECT_TABS.map((t) => (
-            <div key={t} className="rounded-[16px] bg-[#3A2516] text-[#FFFCF1] overflow-hidden">
+            <div key={t} className="rounded-[16px] bg-[color:var(--ic-ink)] text-[#FFFCF1] overflow-hidden">
               <div className="flex items-center h-[34px] px-[14px] border-b border-solid border-[#FFFCF114] font-mono text-[11.5px] text-[#FFFCF180]">
                 {t === "MCP" ? "mcp.json" : t === "API" ? "api" : "pap/sessions"}
               </div>
@@ -2277,7 +2473,7 @@ function ClaimBox({
                 type="button"
                 disabled={Boolean(claim.plan) || Boolean(claim.planSending)}
                 onClick={() => onPlan(plan.id)}
-                className={`flex flex-col gap-[6px] p-[14px] rounded-[20px] text-left transition-colors duration-150 disabled:cursor-default ${chosen ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FBF7EA]"} ${claim.plan && !chosen ? "opacity-50" : ""}`}
+                className={`flex flex-col gap-[6px] p-[14px] rounded-[20px] text-left transition-colors duration-150 disabled:cursor-default ${chosen ? "bg-[color:var(--ic-ink)] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FBF7EA]"} ${claim.plan && !chosen ? "opacity-50" : ""}`}
               >
                 <span className="flex items-baseline gap-[8px]">
                   <span className={agent ? "text-[13px] font-[600]" : `${DISPLAY} text-[19px] leading-[23px]`}>{agent ? `{ "plan": "${plan.id}" }` : plan.name}</span>
@@ -2346,7 +2542,7 @@ function Pill({ on, onClick, children }: { on: boolean; onClick: () => void; chi
     <button
       type="button"
       onClick={onClick}
-      className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] whitespace-nowrap transition-colors duration-150 ${on ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910] hover:bg-[#FAF4E4]"}`}
+      className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] whitespace-nowrap transition-colors duration-150 ${on ? "bg-[color:var(--ic-ink)] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910] hover:bg-[#FAF4E4]"}`}
     >
       {children}
     </button>
@@ -2538,7 +2734,7 @@ function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => voi
               ))}
             </div>
           </div>
-          <div className="rounded-[18px] bg-[#3A2516] text-[#FFFCF1] p-[14px]">
+          <div className="rounded-[18px] bg-[color:var(--ic-ink)] text-[#FFFCF1] p-[14px]">
             <div className="text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">With Doe</div>
             <div className="mt-[8px] flex flex-col gap-[6px]">
               {["Agents book consults with the right surgeon, any hour", "Procedure, provider and documents arrive with the booking", "Confirmations and reminders sent for you"].map(
@@ -2576,7 +2772,7 @@ function Endpoint({ method, path, status, maxHeight, children }: { method: strin
   }, [maxHeight]);
   const fade = spills ? "linear-gradient(to bottom, #000 calc(100% - 72px), transparent 100%)" : undefined;
   return (
-    <div className="rounded-[22px] bg-[#3A2516] text-[#FFFCF1] overflow-hidden font-mono">
+    <div className="rounded-[22px] bg-[color:var(--ic-ink)] text-[#FFFCF1] overflow-hidden font-mono">
       <div className="flex items-center gap-[10px] h-[44px] px-[16px] border-b border-solid border-[#FFFCF114] text-[12px]">
         <span className="shrink-0 font-[600] text-[#FCCFB8]">{method}</span>
         <span className="min-w-0 truncate text-[#FFFCF1CC]">{path}</span>
@@ -2628,6 +2824,14 @@ function AgentSections() {
   );
   return (
     <>
+      <div className="flex flex-col gap-[22px] pt-[14px] md:pt-[22px]">
+        <div className="h-px bg-[#2819101F]" />
+        <h2 className={`${DISPLAY} whitespace-nowrap px-[4px] text-left text-[clamp(22px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
+          You edit your info,
+          <br />
+          we keep agents updated.
+        </h2>
+      </div>
       {block("providers", "providers", `${PROVIDERS.length} items`, AGENT.providers, 460)}
       {block("locations", "locations", `${LOCATIONS.length} items`, AGENT.locations, 460)}
       {block("services", "services", `${SERVICE_COUNT} items · CAD`, AGENT.services, 460)}

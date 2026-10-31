@@ -1,5 +1,22 @@
 /* /indexconvert — loader and agent page, in /demo's frame. Tokens come from .doehealth-product-page (doehealthproduct.css). */
 
+/* The page's dark brown. What Agents See (and its button) goes back to the darker brown; the sticky Activate pill keeps
+   the lighter one wherever it shows. */
+.indexconvert-page,
+.indexconvert-page .ic-ink-default {
+  --ic-ink: #3A2516;
+  --ic-ink-hover: #4A3121;
+}
+.indexconvert-page[data-ic-view="agent"],
+.indexconvert-page .ic-ink-dark {
+  --ic-ink: #140C04;
+  --ic-ink-hover: #2A1C12;
+}
+.indexconvert-page[data-ic-view="agent"] .ic-ink-default {
+  --ic-ink: #3A2516;
+  --ic-ink-hover: #4A3121;
+}
+
 /* Fades all four sides of the site screenshots into the cream box, so they read as a backdrop, not a frame. */
 .indexconvert-page .ic-corner-fade {
   -webkit-mask-image:
