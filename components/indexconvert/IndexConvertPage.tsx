@@ -817,18 +817,18 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
           </div>
           ) : (
             <div className="ic-rise flex flex-col gap-[10px]">
-              {/* iPhone: the first screen is the title up top, settings and files with the switch and the button in the
-                  middle, and the clinic's name in a slim box along the bottom; the rest peeks in below. */}
-              <div className="flex flex-col gap-[10px] max-md:min-h-[calc(100svh-148px)]">
-                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:pt-[22px] max-md:pb-[18px] text-left text-[clamp(27px,8.2vw,34px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
+              {/* iPhone: the first screen fits the viewport: the title, the clinic's box, its settings and files, then the
+                  switch and the button at the foot. The rest follows below. */}
+              <div className="flex flex-col gap-[10px] max-md:min-h-[calc(100svh-116px)]">
+                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:pt-[8px] max-md:pb-[6px] max-md:[@media(max-height:760px)]:pt-[0px] max-md:[@media(max-height:760px)]:pb-[0px] max-md:[@media(max-height:760px)]:text-[25px] text-left text-[clamp(26px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
                   We&apos;ve made your clinic
                   <br /> more discoverable
                   <br /> to personal agents.
                 </h2>
-                <Hero className="max-md:order-4 max-md:mt-[8px]" compact={phone} nameOnly={phone} />
-                <SetupFiles className="md:hidden order-2 mt-auto" />
+                <Hero className="max-md:order-1" compact={phone} />
+                <SetupFiles className="md:hidden order-2" />
                 {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
-                <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="max-md:order-3 max-md:mt-[6px] max-md:mb-auto scroll-mt-[136px] md:scroll-mt-[88px]">
+                <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="max-md:order-3 max-md:mt-auto scroll-mt-[136px] md:scroll-mt-[88px]">
                   <StatusPanel
                     activateRef={activateRef}
                     claimed={claim.claimed}
@@ -909,21 +909,21 @@ function Hero({
 }) {
   return (
     <div className={`flex flex-col rounded-[26px] bg-[#F4EEDF] p-[6px] shrink-0 ${className}`}>
-      <div className={`grow flex flex-col justify-center ${compact ? "rounded-[21px] bg-[#FFFCF1] px-[16px] py-[16px] md:px-[22px] md:py-[18px]" : "rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]"} ${innerClassName}`}>
-        <div className={compact ? "flex items-center text-left gap-[14px]" : "flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]"}>
-          <IndexConvertSphere size={compact ? 60 : 84} className="shrink-0" />
+      <div className={`grow flex flex-col justify-center ${compact ? "rounded-[21px] bg-[#FFFCF1] px-[16px] py-[14px] [@media(max-height:760px)]:py-[10px] md:px-[22px] md:py-[18px]" : "rounded-[21px] bg-[#FFFCF1] px-[20px] pt-[24px] pb-[22px] md:px-[26px] md:py-[24px]"} ${innerClassName}`}>
+        <div className={compact ? "flex items-start text-left gap-[14px]" : "flex flex-col items-center text-center md:flex-row md:text-left gap-[14px] md:gap-[22px]"}>
+          <IndexConvertSphere size={compact ? 56 : 84} className="shrink-0" />
           <div className="min-w-0">
-            <h1 className={`${DISPLAY} tracking-[-0.02em] [text-wrap:balance] ${compact ? "text-[24px] leading-[28px] md:text-[30px] md:leading-[34px]" : "text-[30px] leading-[34px] md:text-[36px] md:leading-[40px]"}`}>{CLINIC.name}</h1>
+            <h1 className={`${DISPLAY} tracking-[-0.02em] [text-wrap:balance] ${compact ? "text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] md:text-[30px] md:leading-[34px]" : "text-[30px] leading-[34px] md:text-[36px] md:leading-[40px]"}`}>{CLINIC.name}</h1>
             {!nameOnly && (
               <>
-                <p className={`mt-[4px] max-w-[32ch] ${SUB} [text-wrap:balance] ${compact ? "text-[13px] leading-[18px]" : "mx-auto md:mx-0 mt-[6px] text-[14.5px] leading-[20px]"}`}>
-                  {CLINIC.kind} in {CLINIC.area}, since {CLINIC.since}
+                <p className={`mt-[4px] max-w-[32ch] ${SUB} [text-wrap:balance] ${compact ? "text-[15px] leading-[20px] [@media(max-height:760px)]:text-[13.5px] [@media(max-height:760px)]:leading-[18px] font-[500]" : "mx-auto md:mx-0 mt-[6px] text-[14.5px] leading-[20px]"}`}>
+                  {compact ? `${LOCATIONS[0].address}, ${CLINIC.area}` : `${CLINIC.kind} in ${CLINIC.area}, since ${CLINIC.since}`}
                 </p>
                 <a
                   href={`https://${CLINIC.url}`}
                   target="_blank"
                   rel="noreferrer"
-                  className={`inline-flex items-center rounded-full bg-[#F4EEDF] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150 ${compact ? "mt-[8px] h-[28px] px-[12px] text-[12.5px]" : "mt-[12px] h-[32px] px-[14px] text-[13px]"}`}
+                  className={`inline-flex items-center rounded-full bg-[#F4EEDF] font-[600] hover:bg-[#EEE6D6] transition-colors duration-150 ${compact ? "mt-[8px] h-[34px] px-[14px] text-[14.5px] [@media(max-height:760px)]:mt-[6px] [@media(max-height:760px)]:h-[30px] [@media(max-height:760px)]:text-[13px]" : "mt-[12px] h-[32px] px-[14px] text-[13px]"}`}
                 >
                   {CLINIC.domain}
                 </a>
@@ -1090,9 +1090,9 @@ function Intro({ onStart }: { onStart: () => void }) {
 }
 
 const CONNECTIONS = [
-  { name: "Model Context Protocol", target: MCP_URL.replace("https://", ""), note: `${CLINIC_TOOLS.length} tools` },
-  { name: "Doe API", target: `${API_ORIGIN.replace("https://", "")}${BASE}`, note: "OpenAPI 3.1" },
-  { name: "Personal Agent Protocol", target: "consent per user · agent disclosure", note: "applied" },
+  { name: "Ford's MCP Server", detail: `${CLINIC_TOOLS.length} tools: prices, providers, consults` },
+  { name: "Ford's Agent API", detail: "Services, prices & surgeons for agents" },
+  { name: "Ford's Agent Protocol", detail: "Patient consent · agents say they're agents" },
 ];
 
 /** A label over its rows, in the page's type rather than chips. */
@@ -1274,7 +1274,7 @@ function ActivateButton({ onClick, buttonRef, className = "" }: { onClick: () =>
       ref={buttonRef}
       type="button"
       onClick={onClick}
-      className={`group w-full h-[60px] flex items-center justify-center gap-[9px] sm:gap-[14px] px-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[12px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.03em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[#2A1C12] transition-colors duration-150 ${className}`}
+      className={`group w-full h-[60px] [@media(max-height:760px)]:h-[52px] flex items-center justify-center gap-[9px] sm:gap-[14px] px-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[12px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.03em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[#2A1C12] transition-colors duration-150 ${className}`}
     >
       <span className="relative inline-flex shrink-0 items-center w-[34px] h-[20px] sm:w-[40px] sm:h-[22px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
         <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-hover:translate-x-[14px] sm:group-hover:translate-x-[18px]" />
@@ -1470,44 +1470,44 @@ function StatusPanel({ claimed, onClaim, activateRef }: { claimed: string | null
   );
 }
 
-/** Settings and files in one inner sand box, greyed because none of it is live yet. */
+/**
+ * Ford's settings and files in one inner sand box, greyed because none of it is live yet. Screens under 760px tall
+ * (`[@media(max-height:760px)]`) drop the detail lines and list the files inline, so the first screen still fits.
+ */
 function SetupFiles({ className = "" }: { className?: string }) {
+  const label = "text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]";
   return (
-    <div className={`rounded-[18px] bg-[#F4EEDF] px-[16px] py-[14px] ${className}`}>
+    <div className={`rounded-[18px] bg-[#F4EEDF] px-[14px] pt-[12px] pb-[12px] ${className}`}>
       <div className="opacity-60">
-        <div className="text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]">Settings</div>
-        <div className="mt-[6px] flex flex-col">
+        <div className="flex items-baseline justify-between gap-[10px]">
+          <span className={label}>Ford&apos;s Agent Settings</span>
+          <span className={`text-[11.5px] font-[600] ${MUTED}`}>Not published</span>
+        </div>
+        <div className="mt-[4px] flex flex-col">
           {CONNECTIONS.map((c) => (
-            <div key={c.name} className="flex items-start gap-[12px] py-[9px]">
-              <Check on size={18} />
-              <span className="min-w-0 grow">
-                <span className="block text-[14px] leading-[19px] font-[600]">{c.name}</span>
-                <span className={`block mt-[1px] font-mono text-[11.5px] leading-[16px] ${MUTED} truncate`}>{c.target}</span>
+            <div key={c.name} className="flex items-start gap-[10px] py-[6px] [@media(max-height:760px)]:py-[3px]">
+              <span className="pt-[1px]">
+                <Check on size={18} />
               </span>
-              <span className="shrink-0 pt-[1px] text-right text-[12.5px] leading-[17px]">
-                <span className="block font-[600]">Created</span>
-                <span className={`block text-[11.5px] ${MUTED}`}>Not published</span>
+              <span className="min-w-0">
+                <span className="block text-[15px] leading-[20px] font-[600]">{c.name}</span>
+                <span className={`block text-[12.5px] leading-[17px] ${SUB} truncate [@media(max-height:760px)]:hidden`}>{c.detail}</span>
               </span>
             </div>
           ))}
         </div>
 
-        <div className="mt-[16px] text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]">Files</div>
-        <div className="mt-[6px] grid grid-cols-1">
+        <div className={`mt-[8px] ${label}`}>Ford&apos;s Agent Files</div>
+        <div className="mt-[8px] grid grid-cols-2 gap-[6px] [@media(max-height:760px)]:hidden">
           {AGENT_FILES.map((f) => (
-            <div key={f.path} className="flex items-center gap-[10px] py-[8px]">
-              <Check on size={16} />
-              <span className="min-w-0 grow break-words font-mono text-[12.5px] leading-[17px]">
-                <span className={MUTED}>ford-plastics</span>
-                {f.path}
-              </span>
-              <span className="shrink-0 text-right text-[11.5px] leading-[15px]">
-                <span className="block font-[600]">Created</span>
-                <span className={`block ${MUTED}`}>Not published</span>
-              </span>
+            <div key={f.path} className="flex items-center gap-[7px] h-[32px] px-[9px] rounded-[10px] bg-[#FFFCF1]">
+              <Check on size={14} />
+              <span className="min-w-0 truncate font-mono text-[11.5px] leading-[15px]">{f.path.replace("/.well-known", "")}</span>
             </div>
           ))}
         </div>
+        {/* Short screens: the files on one line, so the switch and the button still fit on the first screen. */}
+        <p className={`hidden [@media(max-height:760px)]:block mt-[4px] font-mono text-[11.5px] leading-[17px]`}>{AGENT_FILES.map((f) => f.path.replace("/.well-known", "")).join("  ·  ")}</p>
       </div>
     </div>
   );
