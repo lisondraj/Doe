@@ -252,8 +252,8 @@ export function IndexConvertPage() {
 /* ------------------------------------------------------------------ Frame */
 
 /** The Doe wordmark as /earlypreview's nav sets it: Lora, regular weight, text-4xl. */
-const DoeMark = () => <span className={`${lora.className} text-[30px] leading-[30px] md:text-[36px] md:leading-[36px] font-normal text-[#281910]`}>Doe</span>;
-const HEADER = "flex items-center justify-between gap-[12px] h-[64px] md:h-[72px] px-[18px] md:px-[32px]";
+const DoeMark = () => <span className={`${lora.className} absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 text-[30px] leading-[30px] md:text-[36px] md:leading-[36px] font-normal text-[#281910]`}>Doe</span>;
+const HEADER = "flex items-center justify-between gap-[12px] h-[76px] md:h-[72px] px-[18px] md:px-[32px]";
 
 /** /demo's frame: Doe's brown fills the window and the page sits in a cream box that scrolls on its own. */
 function Frame({
@@ -294,7 +294,7 @@ function Frame({
           <>
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-[64px] md:top-[72px] z-20 h-[22px]"
+              className="pointer-events-none absolute inset-x-0 top-[76px] md:top-[72px] z-20 h-[22px]"
               style={{ background: "linear-gradient(to bottom, #FFFCF1 0%, rgba(255,252,241,0) 100%)" }}
             />
             <div
@@ -391,6 +391,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
       <ParsingBackdrop pageIndex={pageIndex} />
       {/* The page being read stays behind as texture: washed cream and slightly blurred so the card reads clearly. */}
       <div className="absolute inset-0 pointer-events-none bg-[rgba(255,252,241,0.66)] backdrop-blur-[2px]" />
+      <ReadChips pageIndex={pageIndex} />
       <div className={`relative z-10 ${HEADER}`}>
         <span />
         <button
@@ -404,10 +405,16 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
 
       <PageDirectory pageIndex={pageIndex} built={built} />
 
-      <div className="absolute inset-x-0 bottom-0 top-[64px] md:top-[72px] z-10 flex flex-col items-center justify-center px-[14px] pb-[14px] md:pb-[24px]">
-        {/* One card: sand shell, cream inside, lifted off the page behind it. */}
-        <div className="w-full max-w-[460px] rounded-[32px] bg-[#F4EEDF] p-[6px] border border-solid border-[#2819101F] shadow-[0_36px_90px_rgba(40,25,16,0.26),0_2px_8px_rgba(40,25,16,0.08)]">
-          <div className="rounded-[26px] bg-[#FFFCF1] px-[16px] pt-[16px] pb-[14px] md:px-[20px] md:pt-[20px] md:pb-[16px] flex flex-col items-center">
+      <div className="absolute inset-x-0 bottom-0 top-[76px] md:top-[72px] z-10 flex flex-col items-center justify-center px-[14px] pb-[14px] md:pb-[24px]">
+        {/* Tablet up, one card: sand shell, cream inside, lifted off the page behind it. iPhone: no card, just a soft
+            cream fill fading out underneath to set it off from the page being read. */}
+        <div className="relative w-full max-w-[460px] md:rounded-[32px] md:bg-[#F4EEDF] md:p-[6px] md:border md:border-solid md:border-[#2819101F] md:shadow-[0_36px_90px_rgba(40,25,16,0.26),0_2px_8px_rgba(40,25,16,0.08)]">
+          <div
+            aria-hidden="true"
+            className="md:hidden pointer-events-none absolute -inset-x-[14px] -top-[48px] -bottom-[40px] -z-10"
+            style={{ background: "radial-gradient(ellipse 72% 58% at 50% 50%, #FFFCF1 0%, rgba(255,252,241,0.94) 52%, rgba(255,252,241,0) 100%)" }}
+          />
+          <div className="md:rounded-[26px] md:bg-[#FFFCF1] px-[16px] pt-[16px] pb-[14px] md:px-[20px] md:pt-[20px] md:pb-[16px] flex flex-col items-center">
             <IndexConvertSphere size={sphere} speed={built ? 2.2 : 1} />
             <h1 className={`${DISPLAY} mt-[12px] text-center text-[27px] leading-[31px] md:text-[34px] md:leading-[38px] tracking-[-0.02em]`}>{CLINIC.name}</h1>
             <p className="mt-[8px] max-w-[18ch] text-center text-[16px] leading-[21px] font-[600] [text-wrap:balance]">
@@ -568,21 +575,29 @@ const ParsingBackdrop = memo(function ParsingBackdrop({ pageIndex }: { pageIndex
               <Shot shot={page.shot} className="ic-read" style={{ ...running, opacity: 0.9 }} />
             </div>
             <div className="ic-scan absolute left-0 right-0 h-[1px] bg-[#281910]" style={{ ...running, opacity: 0.28 }} />
-            {i === pageIndex &&
-              (PAGE_READS[page.shot] ?? []).map(([key, value], n) => {
-                const spot = READ_SPOTS[n]!;
-                return (
-                  <span
-                    key={key + value}
-                    className="ic-chip absolute hidden md:inline-flex items-center gap-[8px] h-[32px] px-[12px] rounded-[11px] bg-[#FFFCF1] border border-solid border-[#2819101A] text-[13px] leading-[16px] font-[600] whitespace-nowrap"
-                    style={{ top: spot.top, right: spot.right, animationDelay: `${(parseFloat(spot.top) / 100) * SLOT_MS * 0.8}ms`, animationDuration: `${SLOT_MS * 0.85}ms` }}
-                  >
-                    <span className={`font-mono text-[11px] font-[500] ${MUTED}`}>{key}</span>
-                    {value}
-                  </span>
-                );
-              })}
           </div>
+        );
+      })}
+    </div>
+  );
+});
+
+/** The values Doe lifted off the page on show, set over the cream wash so they read at full strength. */
+const ReadChips = memo(function ReadChips({ pageIndex }: { pageIndex: number }) {
+  const page = SOURCE_PAGES[pageIndex]!;
+  return (
+    <div key={page.shot} className="absolute inset-0 z-[5] pointer-events-none" style={{ "--ic-slot": `${SLOT_MS}ms` } as CSSProperties} aria-hidden="true">
+      {(PAGE_READS[page.shot] ?? []).map(([key, value], n) => {
+        const spot = READ_SPOTS[n]!;
+        return (
+          <span
+            key={key + value}
+            className="ic-chip absolute inline-flex items-center gap-[6px] md:gap-[8px] h-[32px] max-w-[calc(100%-24px)] px-[10px] md:px-[12px] rounded-[11px] bg-[#FFFCF1] border border-solid border-[#2819101A] text-[12px] md:text-[13px] leading-[16px] font-[600] whitespace-nowrap"
+            style={{ top: spot.top, right: spot.right, animationDelay: `${(parseFloat(spot.top) / 100) * SLOT_MS * 0.8}ms`, animationDuration: `${SLOT_MS * 0.85}ms` }}
+          >
+            <span className={`shrink-0 font-mono text-[10.5px] md:text-[11px] font-[500] ${MUTED}`}>{key}</span>
+            <span className="min-w-0 truncate">{value}</span>
+          </span>
         );
       })}
     </div>
@@ -723,7 +738,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 
   const claimed = Boolean(claim.claimed);
   const claimBox = (
-    <div ref={wide || agent ? claimRef : undefined} id={wide || agent ? "claim" : undefined} className="ic-rise scroll-mt-[124px] md:scroll-mt-[88px]" style={{ animationDelay: "120ms" }}>
+    <div ref={wide || agent ? claimRef : undefined} id={wide || agent ? "claim" : undefined} className="ic-rise scroll-mt-[136px] md:scroll-mt-[88px]" style={{ animationDelay: "120ms" }}>
       {agent && !claimed ? (
         <ConnectBox />
       ) : (
@@ -735,7 +750,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   return (
     <ClaimModalContext.Provider value={openModal}>
       {/* iPhone: section pills, shown from the Providers section on down. Zero height, so the page doesn't shift. */}
-      <nav className="md:hidden sticky top-[64px] z-20 h-0" aria-hidden={!pillsOn}>
+      <nav className="md:hidden sticky top-[76px] z-20 h-0" aria-hidden={!pillsOn}>
         <div
           className="absolute inset-x-0 top-0 flex gap-[6px] overflow-x-auto px-[16px] py-[8px] bg-[#FFFCF1E6] backdrop-blur-[12px] ic-noscroll"
           style={{
@@ -823,15 +838,15 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
           ) : (
             <div className="ic-rise flex flex-col gap-[10px]">
               {/* iPhone: the title, the clinic's box, the switch and the button fill the first screen, the rest peeks in below. */}
-              <div className="flex flex-col gap-[10px] max-md:min-h-[calc(100svh-136px)]">
+              <div className="flex flex-col gap-[10px] max-md:min-h-[calc(100svh-148px)]">
                 <h2 className={`${DISPLAY} px-[4px] pt-[2px] text-left text-[clamp(27px,8.2vw,34px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
                   We&apos;ve made your clinic
                   <br /> more discoverable
                   <br /> to personal agents.
                 </h2>
-                <Hero className="max-md:grow" innerClassName="max-md:py-[30px]" />
+                <Hero className="max-md:grow" innerClassName="max-md:py-[24px]" />
                 {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
-                <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[124px] md:scroll-mt-[88px]">
+                <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[136px] md:scroll-mt-[88px]">
                   <StatusPanel
                     activateRef={activateRef}
                     claimed={claim.claimed}
@@ -1285,7 +1300,7 @@ function ClaimModal({
       className="absolute inset-0 flex flex-col overflow-y-auto overscroll-contain bg-[#F4EEDF] pointer-events-auto"
       style={{ opacity: visible ? 1 : 0, transition: "opacity 260ms ease" }}
     >
-      <div className={HEADER}>
+      <div className={`relative ${HEADER}`}>
         <DoeMark />
         <button
           type="button"
@@ -1728,7 +1743,7 @@ function Row({ k, v, bold }: { k: string; v: string; bold?: boolean }) {
 /** A titled section: its content in an outer sand box with cream boxes inside, as on /demo. `bare` is for content that brings its own box. */
 function Section({ id, title, meta, agent, bare, action, children }: { id: string; title: string; meta?: string; agent?: boolean; bare?: boolean; action?: ReactNode; children: ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-[124px] md:scroll-mt-[88px]">
+    <section id={id} className="scroll-mt-[136px] md:scroll-mt-[88px]">
       <div className="mb-[12px] flex items-center justify-between gap-[12px]">
         {action && <span className="order-2 shrink-0">{action}</span>}
         {meta && <span className={`order-2 shrink-0 text-[12px] leading-[16px] font-[600] ${MUTED} ${agent ? "font-mono font-[500]" : ""}`}>{meta}</span>}
