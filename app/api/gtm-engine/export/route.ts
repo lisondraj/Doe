@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 
 import { toCsv } from "@/lib/gtm-engine/gtm-csv";
 import { GTM_TABLES, isGtmTableKey } from "@/lib/gtm-engine/gtm-tables";
-import { createSupabaseAdmin } from "@/lib/supabase/admin";
+import { EMPTY_FILTER } from "@/lib/gtm-engine/gtm-filters";
+import { filterFromParams, readAllRows } from "@/lib/gtm-engine/gtm-read";
 
 /**
  * GET ?table=clinics_ca&format=csv|json: every line of a table, every column (source links and evidence notes
- * included), plus its line id, entry and report dates, status, page and import batch, newest date first.
+ * included), plus its line id, entry and report dates, status, page and import batch, newest date first. With
+ * filtered=1, only the lines that meet the same filters the rows route takes (status, report_date, f.<column>, filter).
  */
-const PAGE = 1000;
-
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const key = params.get("table");
@@ -18,24 +18,12 @@ export async function GET(request: Request) {
   const table = GTM_TABLES[key];
 
   try {
-    const supabase = createSupabaseAdmin();
-    const rows: { id: string; entry_date: string; report_date: string | null; status: string | null; page: string | null; import_batch: string | null; created_at: string; data: Record<string, string> }[] = [];
-    for (let from = 0; ; from += PAGE) {
-      const { data, error } = await supabase
-        .from("gtm_engine_rows")
-        .select("id, created_at, entry_date, report_date, data, page, status, import_batch")
-        .eq("table_key", key)
-        .order("entry_date", { ascending: false })
-        .order("created_at", { ascending: true })
-        .order("id")
-        .range(from, from + PAGE - 1);
-      if (error) throw error;
-      rows.push(...((data ?? []) as typeof rows));
-      if (!data || data.length < PAGE) break;
-    }
+    // With filter params (the page's "Export filtered"), only the lines that meet them.
+    const filtered = params.get("filtered") === "1";
+    const rows = await readAllRows(key, filtered ? params : new URLSearchParams(), filtered ? filterFromParams(key, params) : EMPTY_FILTER);
 
     const stamp = new Date().toISOString().slice(0, 10);
-    const name = `gtm-${key}-${stamp}.${format}`;
+    const name = `gtm-${key}${filtered ? "-filtered" : ""}-${stamp}.${format}`;
     const headers = { "content-disposition": `attachment; filename="${name}"`, "cache-control": "no-store" };
     const meta = (r: (typeof rows)[number]) => ({
       line_id: r.id,

@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 
 import { GTM_PAGE_SIZE, GTM_STATUSES, GTM_TABLES, type GtmTableKey, dedupeKey, isGtmDate, isGtmTableKey } from "@/lib/gtm-engine/gtm-tables";
+import { GTM_ROW_SELECT, applyQuickFilters, filterFromParams, hasDeepFilter, readAllRows } from "@/lib/gtm-engine/gtm-read";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 
 /** /GTMENGINE's rows, in `public.gtm_engine_rows`, read and written here with the service role. */
 
 const TABLE = "gtm_engine_rows";
-const SELECT = "id, created_at, entry_date, report_date, data, page, status, import_batch";
+const SELECT = GTM_ROW_SELECT;
 const MAX_CELL = 4000;
 
 const fail = (error: string, status = 400) => NextResponse.json({ ok: false, error }, { status });
@@ -22,28 +23,24 @@ function cleanData(table: GtmTableKey, raw: unknown): Record<string, string> | n
   return out;
 }
 
-const likeEscape = (value: string) => value.replace(/[\\%_]/g, (c) => `\\${c}`);
-
-/** GET ?table=clinics_us&page=0&status=Sent&report_date=YYYY-MM-DD&f.<column>=text: one page of a table, filtered, newest date first. */
+/**
+ * GET ?table=clinics_us&page=0&status=Sent&report_date=YYYY-MM-DD&f.<column>=text&filter=<json>: one page of a table,
+ * filtered, newest date first. `filter` is the deep filter (lib/gtm-engine/gtm-filters.ts), run over every line.
+ */
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const table = params.get("table");
   if (!isGtmTableKey(table)) return fail("Unknown table.");
   const page = Math.max(0, Number.parseInt(params.get("page") ?? "0", 10) || 0);
+  const from = page * GTM_PAGE_SIZE;
 
   try {
-    let query = createSupabaseAdmin().from(TABLE).select(SELECT, { count: "exact" }).eq("table_key", table);
-    for (const column of GTM_TABLES[table].columns) {
-      const value = params.get(`f.${column.key}`)?.trim();
-      if (value) query = query.ilike(`data->>${column.key}`, `%${likeEscape(value)}%`);
+    const filter = filterFromParams(table, params);
+    if (hasDeepFilter(filter)) {
+      const rows = await readAllRows(table, params, filter);
+      return NextResponse.json({ ok: true, rows: rows.slice(from, from + GTM_PAGE_SIZE), total: rows.length });
     }
-    const reportDate = params.get("report_date");
-    if (reportDate && isGtmDate(reportDate)) query = query.eq("report_date", reportDate);
-    const status = params.get("status");
-    if (status === "none") query = query.is("status", null);
-    else if (status && (GTM_STATUSES as readonly string[]).includes(status)) query = query.eq("status", status);
-
-    const from = page * GTM_PAGE_SIZE;
+    const query = applyQuickFilters(createSupabaseAdmin().from(TABLE).select(SELECT, { count: "exact" }).eq("table_key", table), table, params);
     const { data, count, error } = await query.order("entry_date", { ascending: false }).order("created_at", { ascending: true }).order("id").range(from, from + GTM_PAGE_SIZE - 1);
     if (error) throw error;
     return NextResponse.json({ ok: true, rows: data ?? [], total: count ?? 0 });

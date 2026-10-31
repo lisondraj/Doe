@@ -6,6 +6,8 @@
  * table's Add Field opens a separate input sheet of 50 lines to fill under a chosen date; the saved table below groups lines by date
  * (newest first, each date folding open and shut), saves to Supabase as it goes (app/api/gtm-engine/rows), filters by
  * any column, by status and by report date, and gives each line a report date, a page (Generate) and a status.
+ * Filter builds deep filters on any column (all or any conditions, quick picks like "All Canada" or "Without email");
+ * Report shows every column's counts and values for the lines the filters let through, and clicking one filters to it.
  * Import takes CSV, pasted spreadsheet rows or JSON: map the columns, preview the checks (missing fields,
  * country/province mismatches, duplicates), import as one batch, undo a batch. Export writes the table as CSV or JSON.
  */
@@ -27,6 +29,9 @@ import {
   guessColumn,
 } from "@/lib/gtm-engine/gtm-tables";
 import { type ParsedSheet, parseSheet } from "@/lib/gtm-engine/gtm-csv";
+import { EMPTY_FILTER, type GtmCondition, type GtmFilter, activeConditions } from "@/lib/gtm-engine/gtm-filters";
+import { FilterBuilder, FilterChips, withCondition } from "@/components/gtm-engine/GtmFilterBuilder";
+import { GtmReport } from "@/components/gtm-engine/GtmReport";
 
 type Mode = "health" | "non-health";
 
@@ -114,7 +119,19 @@ function Section({ section }: { section: GtmSection }) {
   );
 }
 
-type Filters = { status: string; reportDate: string; columns: Record<string, string> };
+/** The quick filters (status, report date, the row under the column names) and the deep filter (Filter, Report). */
+type Filters = { status: string; reportDate: string; columns: Record<string, string>; deep: GtmFilter };
+
+/** The filters as the rows, report and export routes read them. */
+function filterParams(table: GtmTable, f: Filters): URLSearchParams {
+  const params = new URLSearchParams({ table: table.key });
+  if (f.status) params.set("status", f.status);
+  if (f.reportDate) params.set("report_date", f.reportDate);
+  for (const [key, value] of Object.entries(f.columns)) if (value.trim()) params.set(`f.${key}`, value.trim());
+  const deep = activeConditions(f.deep);
+  if (deep.length) params.set("filter", JSON.stringify({ match: f.deep.match, conditions: deep }));
+  return params;
+}
 
 /**
  * One table: its toolbar; the input sheet, shown only after Add Field (50 blank lines under a picked date, its own
@@ -127,7 +144,11 @@ function TableCard({ table }: { table: GtmTable }) {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<Filters>({ status: "", reportDate: "", columns: {} });
+  const [filters, setFilters] = useState<Filters>({ status: "", reportDate: "", columns: {}, deep: EMPTY_FILTER });
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  /** Counts the table's reloads, so the report reloads with it. */
+  const [version, setVersion] = useState(0);
   const [applied, setApplied] = useState<Filters>(filters);
   /** The date the input sheet's lines save under. */
   const [bulkDate, setBulkDate] = useState(today);
@@ -153,10 +174,8 @@ function TableCard({ table }: { table: GtmTable }) {
     async (target: number) => {
       const n = ++request.current;
       setLoading(true);
-      const params = new URLSearchParams({ table: table.key, page: String(target) });
-      if (applied.status) params.set("status", applied.status);
-      if (applied.reportDate) params.set("report_date", applied.reportDate);
-      for (const [key, value] of Object.entries(applied.columns)) if (value.trim()) params.set(`f.${key}`, value.trim());
+      const params = filterParams(table, applied);
+      params.set("page", String(target));
       try {
         const res = await fetch(`${API}?${params}`, { cache: "no-store" });
         const body = (await res.json()) as { ok: boolean; rows?: GtmRow[]; total?: number; error?: string };
@@ -164,6 +183,7 @@ function TableCard({ table }: { table: GtmTable }) {
         if (!res.ok || !body.ok) throw new Error(body.error ?? "Can't read the table.");
         setRows(body.rows ?? []);
         setTotal(body.total ?? 0);
+        setVersion((v) => v + 1);
         setError(null);
       } catch (e) {
         if (n === request.current) setError(e instanceof Error ? e.message : "Can't read the table.");
@@ -171,14 +191,19 @@ function TableCard({ table }: { table: GtmTable }) {
         if (n === request.current) setLoading(false);
       }
     },
-    [table.key, applied],
+    [table, applied],
   );
 
   useEffect(() => {
     void load(page);
   }, [load, page]);
 
-  const filtering = !!applied.status || !!applied.reportDate || Object.values(applied.columns).some((v) => v.trim());
+  const deepCount = activeConditions(filters.deep).length;
+  const filtering = !!applied.status || !!applied.reportDate || Object.values(applied.columns).some((v) => v.trim()) || activeConditions(applied.deep).length > 0;
+  const query = useMemo(() => filterParams(table, applied).toString(), [table, applied]);
+  const setDeep = useCallback((deep: GtmFilter) => setFilters((f) => ({ ...f, deep })), []);
+  /** A value clicked in the report: the table (and the report) narrow to it. */
+  const pick = useCallback((condition: GtmCondition) => setFilters((f) => ({ ...f, deep: withCondition(f.deep, condition) })), []);
   const pages = Math.max(1, Math.ceil(total / GTM_PAGE_SIZE));
 
   const replaceRow = useCallback((row: GtmRow) => setRows((list) => list.map((r) => (r.id === row.id ? row : r))), []);
@@ -264,7 +289,32 @@ function TableCard({ table }: { table: GtmTable }) {
             className="h-[38px] px-[10px] rounded-[12px] bg-[#FFFCF1] text-[14px] font-[600] outline-none focus:ring-[2px] focus:ring-[#28191033]"
           />
         </label>
-        <ExportButtons table={table} />
+        <button
+          type="button"
+          aria-expanded={filterOpen}
+          onClick={() => setFilterOpen((o) => !o)}
+          className={`h-[38px] px-[14px] flex items-center gap-[6px] rounded-[12px] text-[14px] font-[600] transition-colors duration-150 ${filterOpen ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          Filter
+          {deepCount > 0 && (
+            <span className={`h-[20px] min-w-[20px] px-[6px] flex items-center justify-center rounded-full text-[12px] font-[700] tabular-nums ${filterOpen ? "bg-[#FFFCF1] text-[#140C04]" : "bg-[#140C04] text-[#FFFCF1]"}`}>{deepCount}</span>
+          )}
+        </button>
+        <button
+          type="button"
+          aria-expanded={reportOpen}
+          onClick={() => setReportOpen((o) => !o)}
+          className={`h-[38px] px-[14px] flex items-center gap-[6px] rounded-[12px] text-[14px] font-[600] transition-colors duration-150 ${reportOpen ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 20V10M12 20V4M19 20v-7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+          </svg>
+          Report
+        </button>
+        <ExportButtons table={table} filteredQuery={filtering ? query : null} />
         <button
           type="button"
           onClick={() => setImportOpen(true)}
@@ -289,6 +339,10 @@ function TableCard({ table }: { table: GtmTable }) {
           </span>
         </button>
       </div>
+
+      <FilterChips table={table} filter={filters.deep} onChange={setDeep} />
+      {filterOpen && <FilterBuilder table={table} filter={filters.deep} onChange={setDeep} onClose={() => setFilterOpen(false)} />}
+      {reportOpen && <GtmReport table={table} query={query} version={version} onPick={pick} onClose={() => setReportOpen(false)} />}
 
       {error && <div className="mx-[6px] mb-[8px] px-[14px] py-[10px] rounded-[14px] bg-[#FCCFB8] text-[14px] font-[600]">{error}</div>}
 
@@ -782,7 +836,7 @@ const STATUS_TONE: Record<GtmStatus, string> = {
 /* ------------------------------------------------------------------ Export */
 
 /** Downloads the whole table, every column with its source links and evidence notes, as CSV or JSON. */
-function ExportButtons({ table }: { table: GtmTable }) {
+function ExportButtons({ table, filteredQuery }: { table: GtmTable; filteredQuery: string | null }) {
   const href = (format: "csv" | "json") => `/api/gtm-engine/export?table=${table.key}&format=${format}`;
   return (
     <div className="flex items-center rounded-[12px] bg-[#FFFCF1] p-[3px]">
@@ -792,6 +846,16 @@ function ExportButtons({ table }: { table: GtmTable }) {
           {f}
         </a>
       ))}
+      {filteredQuery && (
+        <a
+          href={`/api/gtm-engine/export?${filteredQuery}&format=csv&filtered=1`}
+          download
+          title="Only the lines that match the filters, as CSV"
+          className="h-[32px] px-[10px] flex items-center rounded-[9px] text-[13px] font-[700] hover:bg-[#F4EEDF] transition-colors duration-150"
+        >
+          Filtered
+        </a>
+      )}
     </div>
   );
 }
