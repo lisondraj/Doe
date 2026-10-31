@@ -26,6 +26,8 @@ const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans
 const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
 const SUB = "text-[#2819109E]";
 const MUTED = "text-[#28191080]";
+/** Salmon for the actions that turn a page on: Activate, the switch once it slides on, See The Page We Built You. */
+const SALMON = "bg-[#FCCFB8] text-[#281910] hover:bg-[#F8C0A3]";
 
 /**
  * Builds the whole page for one clinic. Called once per route at module level (see components/indexconvert/clinics),
@@ -399,10 +401,10 @@ function useInView(ref: RefObject<Element>, rootRef: RefObject<HTMLElement>) {
 /** Doe's footer: the address and James's email centred, then Doe in horizontal strips from edge to edge. */
 function SiteFooter({ footerRef }: { footerRef: RefObject<HTMLElement> }) {
   return (
-    <footer id="ic-footer" ref={footerRef} className="bg-[#3A2516] text-[#FFFCF1] overflow-hidden" aria-label="Footer">
+    <footer id="ic-footer" ref={footerRef} className="bg-[#3A2516] text-[#FCCFB8] overflow-hidden" aria-label="Footer">
       <div className="flex flex-col items-center gap-[6px] px-[18px] pt-[64px] md:pt-[88px] text-center">
-        <p className="text-[15px] leading-[22px] md:text-[17px] md:leading-[24px] text-[#FFFCF1B3]">Toronto, Ontario, Canada</p>
-        <a href={ABOUT_CONTACT_MAILTO} className="text-[15px] leading-[22px] md:text-[17px] md:leading-[24px] font-[600] text-[#FFFCF1] no-underline hover:opacity-85">
+        <p className="text-[15px] leading-[22px] md:text-[17px] md:leading-[24px] text-[#FCCFB8CC]">Toronto, Ontario, Canada</p>
+        <a href={ABOUT_CONTACT_MAILTO} className="text-[15px] leading-[22px] md:text-[17px] md:leading-[24px] font-[600] text-[#FCCFB8] no-underline hover:opacity-85">
           {ABOUT_CONTACT_EMAIL}
         </a>
       </div>
@@ -447,7 +449,7 @@ function StripedDoe() {
     >
       <defs>
         <pattern id="ic-doe-strips" patternUnits="userSpaceOnUse" x="0" y={top} width={FS * 4} height={period}>
-          <rect x="0" y="0" width={FS * 4} height={period * 0.42} fill="#FFFCF1" />
+          <rect x="0" y="0" width={FS * 4} height={period * 0.42} fill="#FCCFB8" />
         </pattern>
       </defs>
       <text x="0" y={FS} fontSize={FS} fill="url(#ic-doe-strips)" style={{ fontWeight: 400 }}>
@@ -976,7 +978,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
             <button
               type="button"
               onClick={goToClaim}
-              className="mt-[14px] h-[40px] px-[12px] flex items-center rounded-[12px] bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[13px] font-[600]"
+              className={`mt-[14px] h-[40px] px-[12px] flex items-center rounded-[12px] ${SALMON} text-[13px] font-[600] transition-colors duration-150`}
             >
               Activate
             </button>
@@ -1063,20 +1065,20 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         )}
       </div>
 
-      {/* iPhone: a black pill that is the Activate button, shown once the one in the page scrolls away. */}
+      {/* iPhone: a salmon pill that is the Activate button, shown once the one in the page scrolls away. */}
       <button
         type="button"
         onClick={goToClaim}
         tabIndex={pillOn ? 0 : -1}
         aria-hidden={!pillOn}
-        className={`ic-ink-default group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[color:var(--ic-ink)] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(58,37,22,0.25)] text-[12.5px] tracking-[0.04em]`}
+        className={`ic-ink-default group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] ${SALMON} font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(58,37,22,0.25)] text-[12.5px] tracking-[0.04em]`}
         style={{
           bottom: "calc(max(8px, env(safe-area-inset-bottom)) + 10px)",
           transform: pillOn ? "none" : "translateY(calc(100% + 40px))",
           transition: `transform 360ms ${EASE}`,
         }}
       >
-        <span className="relative inline-flex shrink-0 items-center w-[36px] h-[20px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
+        <span className="relative inline-flex shrink-0 items-center w-[36px] h-[20px] rounded-full bg-[#2819101F]" aria-hidden="true">
           <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-active:translate-x-[16px]" />
         </span>
         Activate for Personal Agents
@@ -1352,7 +1354,7 @@ function Intro({ onStart }: { onStart: () => void }) {
             <button
               type="button"
               onClick={onStart}
-              className="group mt-[10px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[color:var(--ic-ink-hover)] transition-colors duration-150"
+              className={`group mt-[10px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] ${SALMON} text-[15px] md:text-[16px] font-[700] transition-colors duration-150`}
             >
               See The Page We Built You
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
@@ -1745,16 +1747,16 @@ function DoeListings({ className = "" }: { className?: string }) {
   );
 }
 
-/** The black Activate button, the same in Your View, Agent's View and the status box. */
+/** The salmon Activate button, the same in Your View, Agent's View and the status box. */
 function ActivateButton({ onClick, buttonRef, className = "" }: { onClick: () => void; buttonRef?: RefObject<HTMLButtonElement>; className?: string }) {
   return (
     <button
       ref={buttonRef}
       type="button"
       onClick={onClick}
-      className={`group w-full h-[60px] [@media(max-height:760px)]:h-[52px] flex items-center justify-center gap-[9px] sm:gap-[14px] px-[10px] rounded-[16px] bg-[color:var(--ic-ink)] text-[#FFFCF1] text-[12px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.03em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[color:var(--ic-ink-hover)] transition-colors duration-150 ${className}`}
+      className={`group w-full h-[60px] [@media(max-height:760px)]:h-[52px] flex items-center justify-center gap-[9px] sm:gap-[14px] px-[10px] rounded-[16px] ${SALMON} text-[12px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.03em] sm:tracking-[0.08em] whitespace-nowrap transition-colors duration-150 ${className}`}
     >
-      <span className="relative inline-flex shrink-0 items-center w-[34px] h-[20px] sm:w-[40px] sm:h-[22px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
+      <span className="relative inline-flex shrink-0 items-center w-[34px] h-[20px] sm:w-[40px] sm:h-[22px] rounded-full bg-[#2819101F]" aria-hidden="true">
         <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-hover:translate-x-[14px] sm:group-hover:translate-x-[18px]" />
       </span>
       Activate for Personal Agents
@@ -1793,7 +1795,7 @@ function OffSwitch({ size = "md", label }: { size?: "sm" | "md" | "lg"; label?: 
       type="button"
       onClick={press}
       aria-label={`${label ?? "Off"}: claim to activate`}
-      className={`group relative flex shrink-0 items-center rounded-full border border-solid transition-colors duration-300 ${on ? "bg-[color:var(--ic-ink)] border-[color:var(--ic-ink)]" : "bg-[#2819101F] border-[#28191026] hover:bg-[#28191029]"}`}
+      className={`group relative flex shrink-0 items-center rounded-full border border-solid transition-colors duration-300 ${on ? "bg-[#FCCFB8] border-[#FCCFB8]" : "bg-[#2819101F] border-[#28191026] hover:bg-[#28191029]"}`}
       style={{ width: w, height: h }}
     >
       <span
@@ -1802,7 +1804,7 @@ function OffSwitch({ size = "md", label }: { size?: "sm" | "md" | "lg"; label?: 
       />
       {size === "lg" ? (
         <span
-          className={`absolute inset-y-0 flex items-center justify-center text-[14px] font-[700] tracking-[0.12em] transition-colors duration-300 ${on ? "text-[#FFFCF1]" : "text-[#28191080]"}`}
+          className={`absolute inset-y-0 flex items-center justify-center text-[14px] font-[700] tracking-[0.12em] transition-colors duration-300 ${on ? "text-[#281910]" : "text-[#28191080]"}`}
           style={on ? { left: 0, right: k + gap * 2 } : { left: k + gap * 2, right: 0 }}
         >
           {text}
@@ -1810,7 +1812,7 @@ function OffSwitch({ size = "md", label }: { size?: "sm" | "md" | "lg"; label?: 
       ) : (
         size === "md" && (
           <span
-            className={`absolute font-[700] tracking-[0.1em] transition-colors duration-300 ${on ? "text-[#FFFCF1]" : "text-[#28191080]"}`}
+            className={`absolute font-[700] tracking-[0.1em] transition-colors duration-300 ${on ? "text-[#281910]" : "text-[#28191080]"}`}
             style={on ? { left: 9, fontSize: 10 } : { right: 9, fontSize: 10 }}
           >
             {text}
@@ -1910,16 +1912,16 @@ function ClaimModal({
             <button
               type="submit"
               disabled={claim.status === "sending"}
-              className="w-full h-[58px] flex items-center justify-center gap-[10px] rounded-[20px] bg-[color:var(--ic-ink)] text-[15px] font-[700] text-[#FFFCF1] hover:bg-[color:var(--ic-ink-hover)] disabled:opacity-70 transition-colors duration-150"
+              className={`w-full h-[58px] flex items-center justify-center gap-[10px] rounded-[20px] ${SALMON} text-[15px] font-[700] disabled:opacity-70 transition-colors duration-150`}
             >
               {claim.status === "sending" ? (
                 <>
-                  <Spinner size={16} light />
+                  <Spinner size={16} />
                   Claiming
                 </>
               ) : (
                 <>
-                  <span className="relative inline-flex shrink-0 items-center w-[34px] h-[20px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
+                  <span className="relative inline-flex shrink-0 items-center w-[34px] h-[20px] rounded-full bg-[#2819101F]" aria-hidden="true">
                     <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] rounded-full bg-[#FFFCF1]" />
                   </span>
                   Claim &amp; Activate Your Page
@@ -2222,11 +2224,11 @@ function ClaimForm({
       <button
         type="submit"
         disabled={claim.status === "sending"}
-        className="w-full h-[52px] flex items-center justify-center gap-[10px] rounded-[18px] bg-[color:var(--ic-ink)] text-[15px] font-[600] text-[#FFFCF1] disabled:opacity-70 transition-opacity"
+        className={`w-full h-[52px] flex items-center justify-center gap-[10px] rounded-[18px] ${SALMON} text-[15px] font-[600] disabled:opacity-70 transition-colors duration-150`}
       >
         {claim.status === "sending" ? (
           <>
-            <Spinner size={16} light />
+            <Spinner size={16} />
             Claiming
           </>
         ) : (
