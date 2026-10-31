@@ -28,7 +28,7 @@ const CLINIC_TOOLS = [
 
 const LLMS_TXT = `# ${CLINIC.name}
 
-> ${CLINIC.kind} in ${CLINIC.area} since ${CLINIC.since}. ${PROVIDERS.length} providers, ${LOCATIONS.length} locations, ${SERVICE_COUNT} services, ${PRICE_COUNT} starting prices (${CLINIC.currency}${CLINIC.tax === "HST extra" ? ", before HST" : ""}). Built by Doe from ${CLINIC.domain}.
+> ${CLINIC.kind} in ${CLINIC.area}${CLINIC.since ? ` since ${CLINIC.since}` : ""}. ${PROVIDERS.length} providers, ${LOCATIONS.length} locations, ${SERVICE_COUNT} services, ${PRICE_COUNT} starting prices (${CLINIC.currency}${CLINIC.tax === "HST extra" ? ", before HST" : ""}). Built by Doe from ${CLINIC.domain}.
 
 Status: not_activated. Agents can read this page; MCP, API and booking turn on when the clinic claims it.
 

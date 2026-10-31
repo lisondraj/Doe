@@ -19,7 +19,8 @@ export type ClinicPack = {
     headline: string;
     kind: string;
     area: string;
-    since: number;
+    /** The year it opened, when the site says. */
+    since?: number;
     phone: string;
     /** E.164, for the agent JSON. */
     phoneIntl: string;

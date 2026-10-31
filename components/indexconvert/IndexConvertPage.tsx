@@ -1132,7 +1132,7 @@ function Hero({
                       {CLINIC.area}
                     </>
                   ) : (
-                    `${CLINIC.kind} in ${CLINIC.area}, since ${CLINIC.since}`
+                    `${CLINIC.kind} in ${CLINIC.area}${CLINIC.since ? `, since ${CLINIC.since}` : ""}`
                   )}
                 </p>
                 <a
