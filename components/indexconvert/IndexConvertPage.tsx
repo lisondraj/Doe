@@ -1330,8 +1330,8 @@ function AgentSearches({ className = "" }: { className?: string }) {
   return (
     <div className={`rounded-[26px] bg-[#F4EEDF] p-[6px] ${className}`}>
       <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[20px] pb-[10px]">
-        <h3 className={`${DISPLAY} text-[24px] leading-[28px] tracking-[-0.02em] [text-wrap:balance]`}>{CLINIC.name} now appears in personal agent searches.</h3>
-        <p className={`mt-[6px] text-[14px] leading-[19px] ${SUB} [text-wrap:pretty]`}>We searched for you in each one and found you every time.</p>
+        <h3 className={`${DISPLAY} text-[24px] leading-[28px] tracking-[-0.02em] [text-wrap:balance]`}>{CLINIC.name} was easier to interact with when activated.</h3>
+        <p className={`mt-[6px] text-[14px] leading-[19px] ${SUB} [text-wrap:balance]`}>Tested in each personal agent with your page activated.</p>
         <ul className="mt-[12px] flex flex-col divide-y divide-[#28191014]">
           {AGENT_APPS.map((a) => (
             <li key={a.name} className="flex items-center gap-[14px] py-[12px]">
@@ -1789,7 +1789,7 @@ function SetupFiles({ className = "", phone = false }: { className?: string; pho
       {phone && (
         <div className="pb-[6px]">
           <div className="flex items-start justify-between gap-[10px]">
-            <h3 className={`${DISPLAY} text-left text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] tracking-[-0.02em]`}>Here&apos;s what we made you.</h3>
+            <h3 className={`${DISPLAY} text-left text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] tracking-[-0.02em]`}>Here&apos;s what we<br /> made you.</h3>
             <span className={`shrink-0 mt-[3px] h-[22px] px-[9px] flex items-center rounded-full bg-[#FFFCF1] text-[10.5px] font-[700] uppercase tracking-[0.08em] ${MUTED}`}>Not Active</span>
           </div>
           <p className={`mt-[4px] text-[14px] leading-[19px] ${SUB} [text-wrap:balance]`}>
