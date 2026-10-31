@@ -1246,13 +1246,19 @@ function Intro({ onStart }: { onStart: () => void }) {
       {/* iPhone: one column. Tablet: one wider column, steps two across. Desktop: full-width bands: the clinic with its
           button, the five steps three over two, then the founders. */}
       <div className="w-full max-w-[560px] md:max-w-[720px] xl:max-w-[1180px] flex flex-col gap-[10px]">
+        {/* iPhone: a quiet line under the centred Doe logo, in the same type as "Claim your listing to activate". */}
+        <p className="md:hidden -mt-[10px] pb-[12px] whitespace-nowrap text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.14em] text-[#28191080]">
+          Doe can help increase bookings
+          <br />
+          through personal agents
+        </p>
         <Hero
           innerClassName="xl:flex-row xl:items-center xl:gap-[36px] xl:!px-[32px] xl:!py-[28px]"
           action={
             <div className="w-full xl:w-[500px] xl:shrink-0">
             {/* Where the clinic stands today: the personal agents, each crossed out, in a quiet dashed box. */}
             <div className="mt-[20px] xl:mt-0 w-full rounded-[16px] border-[1.5px] border-dashed border-[#28191033] px-[14px] pt-[14px] pb-[16px]">
-              <p className={`text-center text-[13px] leading-[18px] font-[500] ${SUB}`}>
+              <p className={`whitespace-nowrap text-center text-[clamp(11.5px,3.5vw,13px)] leading-[18px] font-[500] ${SUB}`}>
                 Personal agents have a hard time
                 <br /> connecting to {CLINIC.name}
               </p>
