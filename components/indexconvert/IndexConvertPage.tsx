@@ -1546,7 +1546,7 @@ function ClaimModal({
             <button
               type="button"
               onClick={() => setHandoff(true)}
-              className="md:hidden mx-auto mt-[8px] px-[12px] py-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.1em] text-[#28191099] hover:text-[#281910] transition-colors duration-150"
+              className="md:hidden underline underline-offset-[3px] mx-auto mt-[8px] px-[12px] py-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.1em] text-[#28191099] hover:text-[#281910] transition-colors duration-150"
             >
               Or send to a clinic staff
               <br />
@@ -1684,7 +1684,7 @@ function HandoffForm({ onBack }: { onBack: () => void }) {
       <button
         type="button"
         onClick={onBack}
-        className="mx-auto mt-[8px] px-[12px] py-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.1em] text-[#28191099] hover:text-[#281910] transition-colors duration-150"
+        className="mx-auto underline underline-offset-[3px] mt-[8px] px-[12px] py-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.1em] text-[#28191099] hover:text-[#281910] transition-colors duration-150"
       >
         Or claim it yourself now
       </button>
