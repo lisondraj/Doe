@@ -3,7 +3,7 @@
 /**
  * /GTMENGINE — the GTM team's prospect tables, in /demo/clinic's frame: brown edge, cream box, sand cards. Health holds
  * clinics (US, Canada, Other, Multi-site) and hospital LOIs (with programs); Non-Health holds local services. Every
- * table has a bulk input of 50 lines at the top for an agent to fill under a chosen date, saved lines grouped by date
+ * table's Add Field opens a separate input sheet of 50 lines to fill under a chosen date; the saved table below groups lines by date
  * (newest first, each date folding open and shut), saves to Supabase as it goes (app/api/gtm-engine/rows), filters by
  * any column and by status, and gives each line a page (Generate) and a status.
  */
@@ -110,9 +110,9 @@ function Section({ section }: { section: GtmSection }) {
 type Filters = { status: string; columns: Record<string, string> };
 
 /**
- * One table: its toolbar, then the sheet: the bulk input (50 blank lines under a date picked at the top) and the saved
- * lines grouped under their dates, newest first, each group folding open and shut. A pager steps through 50 saved
- * lines at a time.
+ * One table: its toolbar; the input sheet, shown only after Add Field (50 blank lines under a picked date, its own
+ * table); then the saved lines in a separate table, grouped under their dates, newest first, each group folding open
+ * and shut. A pager steps through 50 saved lines at a time.
  */
 function TableCard({ table }: { table: GtmTable }) {
   const [page, setPage] = useState(0);
@@ -122,11 +122,10 @@ function TableCard({ table }: { table: GtmTable }) {
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>({ status: "", columns: {} });
   const [applied, setApplied] = useState<Filters>(filters);
-  const [adding, setAdding] = useState(false);
-  const [focusId, setFocusId] = useState<string | null>(null);
-  /** The date the bulk input's lines save under. */
+  /** The date the input sheet's lines save under. */
   const [bulkDate, setBulkDate] = useState(today);
-  const [bulkOpen, setBulkOpen] = useState(true);
+  /** The input sheet stays hidden until Add Field. */
+  const [bulkOpen, setBulkOpen] = useState(false);
   /** Date groups folded shut, by YYYY-MM-DD. */
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
   const request = useRef(0);
@@ -195,18 +194,11 @@ function TableCard({ table }: { table: GtmTable }) {
     [table.key, bulkDate, load, page],
   );
 
-  /** + Add Field: a new empty line under the bulk input's date, its first cell focused. */
-  const addLine = async () => {
-    setAdding(true);
-    try {
-      const row = await createRow({});
-      setFocusId(row.id);
-      setError(null);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Can't add the row.");
-    } finally {
-      setAdding(false);
-    }
+  /** + Add Field: opens the input sheet (50 blank lines under a picked date) above the saved table, and brings it into view. */
+  const inputRef = useRef<HTMLDivElement | null>(null);
+  const openInput = () => {
+    setBulkOpen(true);
+    window.requestAnimationFrame(() => inputRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
 
   const width = NUM_W + table.columns.reduce((n, c) => n + c.width, 0) + PAGE_W + STATUS_W;
@@ -253,41 +245,71 @@ function TableCard({ table }: { table: GtmTable }) {
         </label>
         <button
           type="button"
-          onClick={() => void addLine()}
-          disabled={adding}
-          className="h-[38px] pl-[12px] pr-[16px] flex items-center gap-[6px] rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] hover:bg-[#2A1C12] disabled:opacity-60 transition-colors duration-150"
+          onClick={openInput}
+          className="h-[38px] pl-[12px] pr-[8px] flex items-center gap-[6px] rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[600] hover:bg-[#2A1C12] transition-colors duration-150"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
           </svg>
           Add Field
+          <span className="ml-[2px] h-[22px] min-w-[30px] px-[7px] flex items-center justify-center rounded-full bg-[#FFFCF1] text-[#140C04] text-[12px] font-[700] tabular-nums">
+            {GTM_PAGE_SIZE}
+          </span>
         </button>
       </div>
 
       {error && <div className="mx-[6px] mb-[8px] px-[14px] py-[10px] rounded-[14px] bg-[#FCCFB8] text-[14px] font-[600]">{error}</div>}
 
+      {/* Input sheet: its own table, hidden until Add Field. 50 blank lines that save under the date picked here, then clear. */}
+      {bulkOpen && (
+        <div ref={inputRef} className="mb-[6px] rounded-[21px] bg-[#140C04] p-[4px] scroll-mt-[16px]">
+          <div className="flex flex-wrap items-center gap-x-[12px] gap-y-[8px] px-[12px] pt-[8px] pb-[10px]">
+            <span className="text-[15px] font-[700] text-[#FFFCF1]">New lines</span>
+            <label className="flex items-center gap-[8px]">
+              <span className="text-[12px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">Date</span>
+              <input
+                type="date"
+                value={bulkDate}
+                onChange={(e) => e.target.value && setBulkDate(e.target.value)}
+                className="h-[34px] px-[10px] rounded-[10px] bg-[#FFFCF1] text-[#281910] text-[14px] font-[600] outline-none"
+              />
+            </label>
+            <span className="mr-auto text-[13px] text-[#FFFCF1B3]">
+              {GTM_PAGE_SIZE} lines. Each one saves under {dayLabel(bulkDate)} and moves to the table below.
+            </span>
+            <button
+              type="button"
+              onClick={() => setBulkOpen(false)}
+              className="h-[34px] px-[14px] rounded-[10px] text-[14px] font-[600] text-[#FFFCF1] bg-[#FFFCF11A] hover:bg-[#FFFCF133] transition-colors duration-150"
+            >
+              Done
+            </button>
+          </div>
+          <div className="rounded-[18px] bg-[#FFFCF1] overflow-hidden">
+            <div className="overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+              <table className="border-separate border-spacing-0 text-[14px] leading-[19px]" style={{ width, minWidth: "100%" }}>
+                <SheetCols table={table} />
+                <thead>
+                  <SheetHead table={table} />
+                </thead>
+                <tbody>
+                  {Array.from({ length: GTM_PAGE_SIZE }, (_, i) => (
+                    <BlankLine key={`blank-${i}`} n={i + 1} table={table} onCreate={createRow} onError={setError} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Saved lines: their own table, grouped by date, newest first. */}
       <div className="rounded-[21px] bg-[#FFFCF1] overflow-hidden">
         <div className="overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
           <table className="border-separate border-spacing-0 text-[14px] leading-[19px]" style={{ width, minWidth: "100%" }}>
-            <colgroup>
-              <col style={{ width: NUM_W }} />
-              {table.columns.map((c) => (
-                <col key={c.key} style={{ width: c.width }} />
-              ))}
-              <col style={{ width: PAGE_W }} />
-              <col style={{ width: STATUS_W }} />
-            </colgroup>
+            <SheetCols table={table} />
             <thead>
-              <tr>
-                <th className={`sticky left-0 z-[2] bg-[#FFFCF1] ${HEAD} text-center`}>#</th>
-                {table.columns.map((c) => (
-                  <th key={c.key} className={HEAD}>
-                    {c.label}
-                  </th>
-                ))}
-                <th className={HEAD}>Page</th>
-                <th className={HEAD}>Status</th>
-              </tr>
+              <SheetHead table={table} />
               <tr>
                 <th className={`sticky left-0 z-[2] bg-[#FFFCF1] ${FILTER_CELL}`}>
                   <svg width="15" height="15" viewBox="0 0 24 24" className="mx-auto" aria-label="Filters">
@@ -304,28 +326,6 @@ function TableCard({ table }: { table: GtmTable }) {
               </tr>
             </thead>
             <tbody>
-              {/* Bulk input: 50 blank lines at the very top, each saving under the date picked here. */}
-              <tr>
-                <td colSpan={span} className="p-0 bg-[#140C04]">
-                  <div className="sticky left-0 w-fit max-w-[calc(100vw-60px)] md:max-w-full flex flex-wrap items-center gap-x-[12px] gap-y-[8px] px-[12px] py-[10px]">
-                    <FoldButton open={bulkOpen} onClick={() => setBulkOpen((o) => !o)} light label="Bulk input" />
-                    <label className="flex items-center gap-[8px]">
-                      <span className="text-[12px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">Date</span>
-                      <input
-                        type="date"
-                        value={bulkDate}
-                        onChange={(e) => e.target.value && setBulkDate(e.target.value)}
-                        className="h-[34px] px-[10px] rounded-[10px] bg-[#FFFCF1] text-[#281910] text-[14px] font-[600] outline-none"
-                      />
-                    </label>
-                    <span className="text-[13px] text-[#FFFCF1B3]">Lines typed here save under {dayLabel(bulkDate)}.</span>
-                  </div>
-                </td>
-              </tr>
-              {bulkOpen &&
-                Array.from({ length: GTM_PAGE_SIZE }, (_, i) => (
-                  <BlankLine key={`blank-${i}`} n={i + 1} table={table} onCreate={createRow} onError={setError} />
-                ))}
               {groups.map((group) => {
                 const open = !collapsed.has(group.date);
                 return (
@@ -353,7 +353,7 @@ function TableCard({ table }: { table: GtmTable }) {
                     </tr>
                     {open &&
                       group.rows.map(({ row, n }) => (
-                        <Line key={row.id} n={n} table={table} row={row} autoFocus={row.id === focusId} onSaved={replaceRow} onError={setError} />
+                        <Line key={row.id} n={n} table={table} row={row} autoFocus={false} onSaved={replaceRow} onError={setError} />
                       ))}
                   </Fragment>
                 );
@@ -362,6 +362,13 @@ function TableCard({ table }: { table: GtmTable }) {
                 <tr>
                   <td colSpan={span} className={`px-[16px] py-[18px] text-[14px] ${SUB}`}>
                     No lines match these filters.
+                  </td>
+                </tr>
+              )}
+              {!loading && !rows.length && !filtering && (
+                <tr>
+                  <td colSpan={span} className={`px-[16px] py-[18px] text-[14px] ${SUB}`}>
+                    No lines yet. Use Add Field to enter {GTM_PAGE_SIZE} at a time.
                   </td>
                 </tr>
               )}
@@ -409,6 +416,36 @@ function FoldButton({ open, onClick, label, light = false }: { open: boolean; on
       </svg>
       {label}
     </button>
+  );
+}
+
+/** The column widths both sheets (input and saved) share, so their columns line up. */
+function SheetCols({ table }: { table: GtmTable }) {
+  return (
+    <colgroup>
+      <col style={{ width: NUM_W }} />
+      {table.columns.map((c) => (
+        <col key={c.key} style={{ width: c.width }} />
+      ))}
+      <col style={{ width: PAGE_W }} />
+      <col style={{ width: STATUS_W }} />
+    </colgroup>
+  );
+}
+
+/** The column names row both sheets share. */
+function SheetHead({ table }: { table: GtmTable }) {
+  return (
+    <tr>
+      <th className={`sticky left-0 z-[2] bg-[#FFFCF1] ${HEAD} text-center`}>#</th>
+      {table.columns.map((c) => (
+        <th key={c.key} className={HEAD}>
+          {c.label}
+        </th>
+      ))}
+      <th className={HEAD}>Page</th>
+      <th className={HEAD}>Status</th>
+    </tr>
   );
 }
 
