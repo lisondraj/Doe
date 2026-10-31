@@ -248,7 +248,8 @@ export function IndexConvertPage() {
         phase === "intro" ? (
           // Lined up with the opening screen's column below it.
           <div className="w-full max-w-[560px] md:max-w-[720px] xl:max-w-[1180px] mx-auto">
-            <h1 className={`${DISPLAY} max-w-[17ch] md:max-w-[24ch] text-left text-[clamp(26px,7.6vw,30px)] leading-[1.12] md:text-[36px] md:leading-[42px] tracking-[-0.02em] [text-wrap:balance]`}>
+            {/* Desktop: indented to the Ford box's inner edge (its 6px shell and 26px padding), so the two read as one column. */}
+            <h1 className={`${DISPLAY} max-w-[19ch] md:max-w-[24ch] md:pl-[32px] md:box-content text-left text-[clamp(22px,6.4vw,25px)] leading-[1.14] md:text-[36px] md:leading-[42px] tracking-[-0.02em] [text-wrap:balance]`}>
               We can add your clinic to Doe&apos;s listings so clients can find you faster through Instinct or Muse.
             </h1>
           </div>
