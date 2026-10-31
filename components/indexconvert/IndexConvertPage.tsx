@@ -46,43 +46,43 @@ const MUTED = "text-[#28191080]";
 /** `phoneSubs` fill the first two steps on iPhone, where the step has room for its list; desktop shows the detail line. */
 const STEPS: { title: string; detail: string; ms: number; subs?: string[]; phoneSubs?: string[]; bar?: boolean }[] = [
   {
-    title: "Finding Your Page",
+    title: "Finding Ford's Page",
     detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`,
     ms: 900,
     phoneSubs: [CLINIC.domain, `${SOURCE_PAGES.length} pages found`, "Prices, providers, hours"],
   },
   {
-    title: "Checking What Personal Agents See",
+    title: "Checking What Personal Agents See at Ford",
     detail: "No llms.txt, MCP card or OpenAPI",
     ms: 900,
     phoneSubs: ["No llms.txt", "No MCP card", "No OpenAPI"],
   },
   {
-    title: "Building Agent-Readable Page",
+    title: "Building Ford's Agent-Readable Page",
     detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`,
     ms: 1235,
     subs: ["JSON · 7 resources", "JSON-LD · schema.org/MedicalClinic", "Metadata & HTML"],
   },
   {
-    title: "Building Agent Files",
+    title: "Building Ford's Agent Files",
     detail: `${AGENT_FILES.length} files ready`,
     ms: 1265,
     subs: ["openapi.json", "llms.txt", "robots.txt", ".well-known/mcp.json"],
   },
   {
-    title: "Integrating Doe's MCP",
+    title: "Integrating Ford with Doe's MCP",
     detail: `${CLINIC_TOOLS.length} tools ready`,
     ms: 1265,
     subs: CLINIC_TOOLS.map((t) => t.name),
   },
   {
-    title: "Integrating Doe's API",
+    title: "Integrating Ford with Doe's API",
     detail: "OpenAPI 3.1 · locations, providers, prices",
     ms: 1200,
     subs: ["GET /locations", "GET /providers", "GET /services", "GET /prices", "POST /consultations"],
   },
   {
-    title: "Applying Personal Agent Protocol",
+    title: "Applying Personal Agent Protocol to Ford",
     detail: "Connected",
     ms: 1135,
     subs: ["Consent per user", "Agents say they're agents", "Connected to Doe"],
@@ -484,7 +484,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
           <h1
             className={`ic-rise ${DISPLAY} max-w-[16ch] md:max-w-[20ch] text-left text-[31px] leading-[36px] md:text-[44px] md:leading-[50px] tracking-[-0.02em] [text-wrap:balance]`}
           >
-            Hang tight! We&apos;re building {CLINIC.name}&apos;s MCP, API and agent files.
+            Hang tight! We&apos;re finding the listing we built {CLINIC.name}.
           </h1>
         </div>
 
