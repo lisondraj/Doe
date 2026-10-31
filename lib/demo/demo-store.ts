@@ -66,6 +66,44 @@ async function writeJson(file: string, value: unknown) {
   await fs.writeFile(full, body);
 }
 
+/** Everything agents and patients leave behind; the clinic's settings (config.json) are kept. */
+const RESET_DIRS = ["sessions", "visits", "visit-ip", "shares", "verify", "ids", "guard"];
+const RESET_FILES = ["slots.json"];
+
+/** Deletes every session, visit, slot hold, share and identity check. Returns how many files went. */
+export async function resetDemoData(): Promise<number> {
+  let removed = 0;
+  if (supabaseConfigured()) {
+    const { client, ready } = supabase();
+    await ready;
+    for (const dir of RESET_DIRS) {
+      for (;;) {
+        const { data, error } = await client.storage.from(BUCKET).list(dir, { limit: 1000 });
+        if (error) throw error;
+        const paths = (data ?? []).filter((f) => f.name && f.id).map((f) => `${dir}/${f.name}`);
+        if (!paths.length) break;
+        const { error: rmError } = await client.storage.from(BUCKET).remove(paths);
+        if (rmError) throw rmError;
+        removed += paths.length;
+        if (paths.length < 1000) break;
+      }
+    }
+    const { data } = await client.storage.from(BUCKET).remove(RESET_FILES);
+    return removed + (data?.length ?? 0);
+  }
+  for (const name of [...RESET_DIRS, ...RESET_FILES]) {
+    const full = path.join(LOCAL_DIR, name);
+    try {
+      const st = await fs.stat(full);
+      removed += st.isDirectory() ? (await fs.readdir(full)).length : 1;
+      await fs.rm(full, { recursive: true, force: true });
+    } catch {
+      /* Already gone. */
+    }
+  }
+  return removed;
+}
+
 async function listNames(dir: string, limit: number): Promise<string[]> {
   if (supabaseConfigured()) {
     const { client, ready } = supabase();

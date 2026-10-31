@@ -28,6 +28,7 @@ import { randomBytes } from "node:crypto";
 
 import {
   readShare,
+  resetDemoData,
   writeShare,
   readVerify,
   writeVerify,
@@ -201,6 +202,12 @@ export async function clinicState() {
 }
 
 export type ClinicStatePayload = Awaited<ReturnType<typeof clinicState>>;
+
+/** Clinic: start the demo over. Clears agents, bookings, holds, forms, links and IDs; keeps the clinic's settings. */
+export async function resetDemo(confirm: unknown) {
+  if (confirm !== "RESET") throw new DemoError(400, 'Send confirm: "RESET" to clear the demo.');
+  return withLock(LOCK, async () => ({ ok: true, removed: await resetDemoData() }));
+}
 
 /* ——— Identity check ——— */
 

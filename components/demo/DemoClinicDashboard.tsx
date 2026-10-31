@@ -261,6 +261,14 @@ export function DemoClinicDashboard() {
     const err = await post({ session_id: sessionId, ...action });
     flash(err ?? done ?? "Done");
   };
+  /** Clears every agent, booking, hold, form, link and ID; keeps the clinic's settings. */
+  const resetDemo = async () => {
+    if (!window.confirm("Reset the demo? This clears every agent session, booking, hold, form, shared link and ID. Clinic settings stay.")) return;
+    const err = await post({ type: "reset_demo", confirm: "RESET" });
+    setLiveId(null);
+    setOpenId(null);
+    flash(err ?? "Demo reset. Ready for the next agent.");
+  };
   const setConfig = async (config: Partial<DemoConfig>) => {
     const err = await post({ type: "set_config", config });
     if (err) flash(err);
@@ -298,6 +306,7 @@ export function DemoClinicDashboard() {
         syncedAt={syncedAt}
         onOpen={openSession}
         onWatch={setLiveId}
+        onReset={() => void resetDemo()}
         visits={visits}
         onWaiting={() => {
           setFilter("you");
@@ -389,6 +398,20 @@ export function DemoClinicDashboard() {
             </span>
             <span className="doe-nav-label text-[14px] leading-[18px] font-[500]">Try as an Agent</span>
           </a>
+          <button
+            type="button"
+            aria-label="Reset demo"
+            title={railOpen ? undefined : "Reset demo"}
+            onClick={() => void resetDemo()}
+            className="doe-nav-item w-full h-[40px] shrink-0 flex items-center rounded-[10px] whitespace-nowrap"
+          >
+            <span className="w-[40px] h-[40px] shrink-0 flex items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4.5v3.8h3.8" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <span className="doe-nav-label text-[14px] leading-[18px] font-[500]">Reset Demo</span>
+          </button>
           <button
             type="button"
             aria-label={railOpen ? "Collapse" : "Expand"}
@@ -612,6 +635,7 @@ function Overview({
   syncedAt,
   onOpen,
   onWatch,
+  onReset,
   visits,
   onWaiting,
   flash,
@@ -621,6 +645,7 @@ function Overview({
   syncedAt: number | null;
   onOpen: (id: string) => void;
   onWatch: (id: string) => void;
+  onReset?: () => void;
   visits: ClinicStatePayload["visits"];
   onWaiting: () => void;
   flash: (t: string) => void;
@@ -666,6 +691,11 @@ function Overview({
               Live{synced !== null && <span className="text-[#2819109E]">· synced {synced < 6 ? "now" : `${synced}s ago`}</span>}
             </span>
             <DemoSphere size={56} className="hidden sm:block" />
+            {onReset && (
+              <button type="button" onClick={onReset} className="md:hidden h-[38px] px-[14px] rounded-full bg-[#F4EEDF] text-[13px] font-[600]">
+                Reset Demo
+              </button>
+            )}
           </>
         }
       >
