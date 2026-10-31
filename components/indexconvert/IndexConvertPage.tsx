@@ -223,13 +223,6 @@ export function IndexConvertPage() {
     return () => window.clearTimeout(id);
   }, [phase]);
 
-  // The phone's status bar follows the frame: darker brown in What Agents See.
-  useEffect(() => {
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (!meta) return;
-    meta.setAttribute("content", phase === "done" && view === "agent" ? "#140C04" : "#3A2516");
-  }, [phase, view]);
-
   const switchView = (next: View) => {
     if (next === view) return;
     setView(next);
@@ -322,8 +315,9 @@ function Frame({
 }) {
   return (
     <div
+      // The outer shell stays the light brown in both views; only what's inside goes darker in What Agents See.
       data-ic-view={dark ? "agent" : undefined}
-      className={`${dmSans.className} doehealth-product-page indexconvert-page fixed inset-0 bg-[color:var(--ic-ink)] text-[#281910] antialiased [font-synthesis:none]`}
+      className={`${dmSans.className} doehealth-product-page indexconvert-page fixed inset-0 bg-[#3A2516] text-[#281910] antialiased [font-synthesis:none]`}
       style={{
         paddingTop: "max(8px, env(safe-area-inset-top))",
         paddingBottom: "max(8px, env(safe-area-inset-bottom))",
