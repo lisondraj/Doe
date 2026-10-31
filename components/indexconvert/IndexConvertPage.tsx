@@ -252,8 +252,8 @@ export function IndexConvertPage() {
 /* ------------------------------------------------------------------ Frame */
 
 /** The Doe wordmark as /earlypreview's nav sets it: Lora, regular weight, text-4xl. */
-const DoeMark = () => <span className={`${lora.className} text-[30px] leading-[30px] md:text-[36px] md:leading-[36px] font-normal text-[#281910]`}>Doe</span>;
-const HEADER = "flex items-center justify-between gap-[12px] h-[64px] md:h-[72px] px-[18px] md:px-[32px]";
+const DoeMark = () => <span className={`${lora.className} absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 text-[30px] leading-[30px] md:text-[36px] md:leading-[36px] font-normal text-[#281910]`}>Doe</span>;
+const HEADER = "flex items-center justify-between gap-[12px] h-[76px] md:h-[72px] px-[18px] md:px-[32px]";
 
 /** /demo's frame: Doe's brown fills the window and the page sits in a cream box that scrolls on its own. */
 function Frame({
@@ -294,7 +294,7 @@ function Frame({
           <>
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-[64px] md:top-[72px] z-20 h-[22px]"
+              className="pointer-events-none absolute inset-x-0 top-[76px] md:top-[72px] z-20 h-[22px]"
               style={{ background: "linear-gradient(to bottom, #FFFCF1 0%, rgba(255,252,241,0) 100%)" }}
             />
             <div
@@ -404,7 +404,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
 
       <PageDirectory pageIndex={pageIndex} built={built} />
 
-      <div className="absolute inset-x-0 bottom-0 top-[64px] md:top-[72px] z-10 flex flex-col items-center justify-center px-[14px] pb-[14px] md:pb-[24px]">
+      <div className="absolute inset-x-0 bottom-0 top-[76px] md:top-[72px] z-10 flex flex-col items-center justify-center px-[14px] pb-[14px] md:pb-[24px]">
         {/* One card: sand shell, cream inside, lifted off the page behind it. */}
         <div className="w-full max-w-[460px] rounded-[32px] bg-[#F4EEDF] p-[6px] border border-solid border-[#2819101F] shadow-[0_36px_90px_rgba(40,25,16,0.26),0_2px_8px_rgba(40,25,16,0.08)]">
           <div className="rounded-[26px] bg-[#FFFCF1] px-[16px] pt-[16px] pb-[14px] md:px-[20px] md:pt-[20px] md:pb-[16px] flex flex-col items-center">
@@ -723,7 +723,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
 
   const claimed = Boolean(claim.claimed);
   const claimBox = (
-    <div ref={wide || agent ? claimRef : undefined} id={wide || agent ? "claim" : undefined} className="ic-rise scroll-mt-[124px] md:scroll-mt-[88px]" style={{ animationDelay: "120ms" }}>
+    <div ref={wide || agent ? claimRef : undefined} id={wide || agent ? "claim" : undefined} className="ic-rise scroll-mt-[136px] md:scroll-mt-[88px]" style={{ animationDelay: "120ms" }}>
       {agent && !claimed ? (
         <ConnectBox />
       ) : (
@@ -735,7 +735,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   return (
     <ClaimModalContext.Provider value={openModal}>
       {/* iPhone: section pills, shown from the Providers section on down. Zero height, so the page doesn't shift. */}
-      <nav className="md:hidden sticky top-[64px] z-20 h-0" aria-hidden={!pillsOn}>
+      <nav className="md:hidden sticky top-[76px] z-20 h-0" aria-hidden={!pillsOn}>
         <div
           className="absolute inset-x-0 top-0 flex gap-[6px] overflow-x-auto px-[16px] py-[8px] bg-[#FFFCF1E6] backdrop-blur-[12px] ic-noscroll"
           style={{
@@ -831,7 +831,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               </h2>
               <Hero />
               {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
-              <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[124px] md:scroll-mt-[88px]">
+              <div ref={wide ? undefined : claimRef} id={wide ? undefined : "claim"} className="scroll-mt-[136px] md:scroll-mt-[88px]">
                 <StatusPanel
                   activateRef={activateRef}
                   claimed={claim.claimed}
@@ -1278,7 +1278,7 @@ function ClaimModal({
       className="absolute inset-0 flex flex-col overflow-y-auto overscroll-contain bg-[#F4EEDF] pointer-events-auto"
       style={{ opacity: visible ? 1 : 0, transition: "opacity 260ms ease" }}
     >
-      <div className={HEADER}>
+      <div className={`relative ${HEADER}`}>
         <DoeMark />
         <button
           type="button"
@@ -1713,7 +1713,7 @@ function Row({ k, v, bold }: { k: string; v: string; bold?: boolean }) {
 /** A titled section: its content in an outer sand box with cream boxes inside, as on /demo. `bare` is for content that brings its own box. */
 function Section({ id, title, meta, agent, bare, action, children }: { id: string; title: string; meta?: string; agent?: boolean; bare?: boolean; action?: ReactNode; children: ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-[124px] md:scroll-mt-[88px]">
+    <section id={id} className="scroll-mt-[136px] md:scroll-mt-[88px]">
       <div className="mb-[12px] flex items-center justify-between gap-[12px]">
         {action && <span className="order-2 shrink-0">{action}</span>}
         {meta && <span className={`order-2 shrink-0 text-[12px] leading-[16px] font-[600] ${MUTED} ${agent ? "font-mono font-[500]" : ""}`}>{meta}</span>}
