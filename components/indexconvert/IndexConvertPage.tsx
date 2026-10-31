@@ -48,43 +48,43 @@ const STEPS: { title: string; detail: string; ms: number; subs?: string[]; phone
   {
     title: "Finding Ford's Page",
     detail: `${CLINIC.domain} · ${SOURCE_PAGES.length} pages`,
-    ms: 900,
+    ms: 1175,
     phoneSubs: [CLINIC.domain, `${SOURCE_PAGES.length} pages found`, "Prices, providers, hours"],
   },
   {
     title: "Checking What Personal Agents See at Ford",
     detail: "No llms.txt, MCP card or OpenAPI",
-    ms: 900,
+    ms: 1175,
     phoneSubs: ["No llms.txt", "No MCP card", "No OpenAPI"],
   },
   {
     title: "Building Ford's Agent-Readable Page",
     detail: `${FIELD_COUNT} fields · ${SERVICE_COUNT} services · ${PRICE_COUNT} prices`,
-    ms: 1235,
+    ms: 1610,
     subs: ["JSON · 7 resources", "JSON-LD · schema.org/MedicalClinic", "Metadata & HTML"],
   },
   {
     title: "Building Ford's Agent Files",
     detail: `${AGENT_FILES.length} files ready`,
-    ms: 1265,
+    ms: 1655,
     subs: ["openapi.json", "llms.txt", "robots.txt", ".well-known/mcp.json"],
   },
   {
     title: "Integrating Ford with Doe's MCP",
     detail: `${CLINIC_TOOLS.length} tools ready`,
-    ms: 1265,
+    ms: 1655,
     subs: CLINIC_TOOLS.map((t) => t.name),
   },
   {
     title: "Integrating Ford with Doe's API",
     detail: "OpenAPI 3.1 · locations, providers, prices",
-    ms: 1200,
+    ms: 1565,
     subs: ["GET /locations", "GET /providers", "GET /services", "GET /prices", "POST /consultations"],
   },
   {
     title: "Applying Personal Agent Protocol to Ford",
     detail: "Connected",
-    ms: 1135,
+    ms: 1480,
     subs: ["Consent per user", "Agents say they're agents", "Connected to Doe"],
   },
 ];
@@ -92,7 +92,7 @@ const MAX_SUBS = Math.max(...STEPS.map((s) => s.subs?.length ?? s.phoneSubs?.len
 const STEP_STARTS = STEPS.map((_, i) => STEPS.slice(0, i).reduce((n, s) => n + s.ms, 0));
 const BUILD_MS = STEPS.reduce((n, s) => n + s.ms, 0);
 /** The read pills leave this long before the build ends. */
-const CHIPS_OFF_MS = 500;
+const CHIPS_OFF_MS = 650;
 /** The page opens as soon as the last step (the Personal Agent Protocol) finishes: no "Ready" screen. */
 const TOTAL_MS = BUILD_MS;
 /** Each source page gets an equal slice of the build. */
