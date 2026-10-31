@@ -222,13 +222,24 @@ function Drawing({ id }: { id: AgentTopicId }) {
   );
 }
 
-/** Rises from the bottom over a dimmed page. Closing slides it back down before it lets go of the topic. */
+/** How far down, or how fast, a swipe must go to close the sheet; anything less springs back. */
+const SWIPE_CLOSE_PX = 110;
+const SWIPE_CLOSE_SPEED = 0.6; // px per ms
+
+/**
+ * Rises from the bottom over a dimmed page. Closing slides it back down before it lets go of the topic. Swiping down
+ * closes it too: the drag starts only once the sheet is scrolled to its top, so reading it still scrolls as usual.
+ */
 export function InfoSheet({ topic, onClose }: { topic: AgentTopicId; onClose: () => void }) {
   const [shown, setShown] = useState(false);
+  /** How far the sheet is being dragged down, in px; null when no swipe is under way. */
+  const [drag, setDrag] = useState<number | null>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const info = AGENT_TOPICS[topic];
 
   const close = () => {
+    setDrag(null);
     setShown(false);
     window.setTimeout(onClose, 280);
   };
@@ -253,14 +264,68 @@ export function InfoSheet({ topic, onClose }: { topic: AgentTopicId; onClose: ()
     };
   }, []);
 
+  // Swipe down to close. Native listeners, so touchmove can stop the page behind from scrolling while the sheet moves.
+  useEffect(() => {
+    const el = sheetRef.current;
+    if (!el) return;
+    let startY = 0;
+    let lastY = 0;
+    let lastT = 0;
+    let speed = 0;
+    let dragging = false;
+    const onStart = (e: TouchEvent) => {
+      startY = lastY = e.touches[0]!.clientY;
+      lastT = performance.now();
+      speed = 0;
+      dragging = false;
+    };
+    const onMove = (e: TouchEvent) => {
+      const y = e.touches[0]!.clientY;
+      const dy = y - startY;
+      if (!dragging) {
+        if (dy <= 0 || el.scrollTop > 0) return;
+        dragging = true;
+        startY = y;
+      }
+      e.preventDefault();
+      const now = performance.now();
+      speed = (y - lastY) / Math.max(1, now - lastT);
+      lastY = y;
+      lastT = now;
+      setDrag(Math.max(0, y - startY));
+    };
+    const onEnd = () => {
+      if (!dragging) return;
+      dragging = false;
+      const dist = lastY - startY;
+      if (dist > SWIPE_CLOSE_PX || (dist > 24 && speed > SWIPE_CLOSE_SPEED)) closeRefFn.current();
+      else setDrag(null);
+    };
+    el.addEventListener("touchstart", onStart, { passive: true });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd);
+    el.addEventListener("touchcancel", onEnd);
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
+    };
+  }, []);
+
+  const dragging = drag !== null;
+  /** The dim fades as the sheet is pulled down. */
+  const dim = shown ? 0.45 * (dragging ? Math.max(0, 1 - drag / 400) : 1) : 0;
+
   return createPortal(
     <div className="fixed inset-0 z-[60] flex items-end justify-center" role="dialog" aria-modal="true" aria-label={info.question}>
-      <div className="absolute inset-0 bg-[#281910]" style={{ opacity: shown ? 0.45 : 0, transition: "opacity 280ms ease" }} onClick={close} />
+      <div className="absolute inset-0 bg-[#281910]" style={{ opacity: dim, transition: dragging ? "none" : "opacity 280ms ease" }} onClick={close} />
       <div
+        ref={sheetRef}
         className="relative w-full max-w-[560px] max-h-[90svh] overflow-y-auto overscroll-contain rounded-t-[28px] bg-[#FFFCF1] px-[20px] pt-[10px] text-[#281910] shadow-[0_-12px_40px_rgba(40,25,16,0.18)]"
         style={{
-          transform: shown ? "none" : "translateY(100%)",
-          transition: "transform 340ms cubic-bezier(0.32, 0.72, 0, 1)",
+          transform: !shown ? "translateY(100%)" : dragging ? `translateY(${drag}px)` : "none",
+          transition: dragging ? "none" : "transform 340ms cubic-bezier(0.32, 0.72, 0, 1)",
           paddingBottom: "calc(max(16px, env(safe-area-inset-bottom)) + 12px)",
         }}
       >
