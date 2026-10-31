@@ -1572,28 +1572,50 @@ const ClaimModalContext = createContext<(reason: ClaimReason) => void>(() => und
 /** A switch in the Off position: the page is built but not live. */
 function OffSwitch({ size = "md", label }: { size?: "sm" | "md" | "lg"; label?: string }) {
   const openClaim = useContext(ClaimModalContext);
+  const [on, setOn] = useState(false);
+  const timers = useRef<number[]>([]);
+  useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), []);
   const full = size === "lg";
   const w = full ? "100%" : size === "md" ? 64 : 44;
   const h = full ? 64 : size === "md" ? 36 : 26;
   const gap = 4;
   const k = h - gap * 2;
+  /** Slides to active, lets that read, then opens the claim; it rests back to off behind the modal. */
+  const press = () => {
+    if (on) return;
+    setOn(true);
+    timers.current.push(
+      window.setTimeout(() => openClaim("activate"), 380),
+      window.setTimeout(() => setOn(false), 1100),
+    );
+  };
+  const text = on ? "ACTIVE" : (label ?? "OFF");
   return (
     <button
       type="button"
-      onClick={() => openClaim("activate")}
+      onClick={press}
       aria-label={`${label ?? "Off"}: claim to activate`}
-      className="group relative flex shrink-0 items-center rounded-full bg-[#2819101F] border border-solid border-[#28191026] hover:bg-[#28191029] transition-colors duration-150"
+      className={`group relative flex shrink-0 items-center rounded-full border border-solid transition-colors duration-300 ${on ? "bg-[#3A2516] border-[#3A2516]" : "bg-[#2819101F] border-[#28191026] hover:bg-[#28191029]"}`}
       style={{ width: w, height: h }}
     >
-      <span className="absolute rounded-full bg-[#FFFCF1] shadow-[0_1px_4px_rgba(40,25,16,0.28)] transition-transform duration-300 group-hover:translate-x-[3px]" style={{ width: k, height: k, left: gap, top: gap }} />
+      <span
+        className={`absolute rounded-full bg-[#FFFCF1] shadow-[0_1px_4px_rgba(40,25,16,0.28)] transition-[left] duration-300 ease-out ${on ? "" : "group-hover:translate-x-[3px]"}`}
+        style={{ width: k, height: k, top: gap, left: on ? `calc(100% - ${k + gap}px)` : gap }}
+      />
       {size === "lg" ? (
-        <span className="absolute inset-y-0 right-0 flex items-center justify-center text-[14px] font-[700] tracking-[0.12em] text-[#28191080]" style={{ left: k + gap * 2 }}>
-          {label ?? "OFF"}
+        <span
+          className={`absolute inset-y-0 flex items-center justify-center text-[14px] font-[700] tracking-[0.12em] transition-colors duration-300 ${on ? "text-[#FFFCF1]" : "text-[#28191080]"}`}
+          style={on ? { left: 0, right: k + gap * 2 } : { left: k + gap * 2, right: 0 }}
+        >
+          {text}
         </span>
       ) : (
         size === "md" && (
-          <span className="absolute font-[700] tracking-[0.1em] text-[#28191080]" style={{ right: 9, fontSize: 10 }}>
-            {label ?? "OFF"}
+          <span
+            className={`absolute font-[700] tracking-[0.1em] transition-colors duration-300 ${on ? "text-[#FFFCF1]" : "text-[#28191080]"}`}
+            style={on ? { left: 9, fontSize: 10 } : { right: 9, fontSize: 10 }}
+          >
+            {text}
           </span>
         )
       )}
