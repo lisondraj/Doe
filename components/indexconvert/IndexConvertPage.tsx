@@ -1011,8 +1011,14 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
                 </div>
               </div>
             </div>
+            {/* The line that used to have its own box now heads the clinic's live response. */}
+            <div className="px-[4px] pt-[10px]">
+              <h2 className={`${DISPLAY} text-[28px] leading-[32px] md:text-[34px] md:leading-[38px] tracking-[-0.02em] [text-wrap:balance]`}>We guide agents where to go.</h2>
+              <p className={`mt-[8px] max-w-[46ch] text-[15px] leading-[23px] ${SUB} [text-wrap:balance]`}>
+                One clean address for everything about {CLINIC.name}, so every agent lands on your prices, providers and hours instead of guessing.
+              </p>
+            </div>
             <AgentStatus claimed={claimed} />
-            <AgentsGuide />
             <AgentsPartners />
           </div>
           ) : (
@@ -2271,46 +2277,6 @@ function AgentStatus({ claimed }: { claimed: boolean }) {
 
 /* ------------------------------------------------------------------ Agent's View: why */
 
-/** A dark code card, in the page's ink, with a file name over it. */
-function CodeCard({ name, children, className = "" }: { name: string; children: ReactNode; className?: string }) {
-  return (
-    <div className={`rounded-[18px] bg-[color:var(--ic-ink)] text-[#FFFCF1] overflow-hidden font-mono ${className}`}>
-      <div className="flex items-center gap-[6px] h-[34px] px-[14px] border-b border-solid border-[#FFFCF114] text-[11.5px] text-[#FFFCF180]">
-        <span className="w-[7px] h-[7px] rounded-full bg-[#FFFCF133]" aria-hidden="true" />
-        <span className="w-[7px] h-[7px] rounded-full bg-[#FFFCF133]" aria-hidden="true" />
-        <span className="w-[7px] h-[7px] rounded-full bg-[#FFFCF133]" aria-hidden="true" />
-        <span className="ml-[6px] truncate">{name}</span>
-      </div>
-      <pre className="p-[14px] text-[11.5px] leading-[19px] whitespace-pre overflow-x-auto ic-noscroll">{children}</pre>
-    </div>
-  );
-}
-
-/** Code with comments dimmed and the first word of a line tinted. */
-function Lines({ text }: { text: string }) {
-  return (
-    <>
-      {text.split("\n").map((line, i) => {
-        const comment = line.trimStart().startsWith("#") || line.trimStart().startsWith("//");
-        const [head, ...rest] = line.split(/(?<=^\S+)/);
-        return (
-          <span key={i} className="block">
-            {comment ? (
-              <span className="text-[#FFFCF166]">{line}</span>
-            ) : (
-              <>
-                <span className="text-[#FCCFB8]">{head}</span>
-                {rest.join("")}
-              </>
-            )}
-            {line === "" ? " " : null}
-          </span>
-        );
-      })}
-    </>
-  );
-}
-
 /** Sand shell, cream inside: the page's box. */
 function Box({ children, className = "", innerClassName = "" }: { children: ReactNode; className?: string; innerClassName?: string }) {
   return (
@@ -2377,33 +2343,6 @@ function AgentsDifferent() {
           </figure>
       </div>
     </section>
-  );
-}
-
-/** Ford's robots.txt and llms.txt, as signposts. */
-const GUIDE_CODE = `# ${CLINIC.name}
-# Agents: start here
-User-agent: *
-Allow: /
-
-LLMs   /llms.txt
-MCP    /.well-known/mcp.json
-API    /openapi.json`;
-
-/** "We guide agents where to go.": the line first, Ford's signposts under it. */
-function AgentsGuide() {
-  return (
-    <Box innerClassName="p-[10px] md:p-[12px]">
-      <div className="px-[8px] pt-[10px] pb-[18px] md:px-[12px] md:pt-[12px]">
-        <h2 className={`${DISPLAY} text-[28px] leading-[32px] md:text-[34px] md:leading-[38px] tracking-[-0.02em] [text-wrap:balance]`}>We guide agents where to go.</h2>
-        <p className={`mt-[8px] max-w-[46ch] text-[15px] leading-[23px] ${SUB} [text-wrap:balance]`}>
-          Signposts on your site point every agent straight to your prices, providers and hours, instead of leaving it to guess.
-        </p>
-      </div>
-      <CodeCard name={`${CLINIC.domain}/robots.txt`}>
-        <Lines text={GUIDE_CODE} />
-      </CodeCard>
-    </Box>
   );
 }
 
