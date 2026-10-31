@@ -313,7 +313,7 @@ function Frame({
           <>
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-[76px] md:top-[72px] z-20 h-[22px]"
+              className="hidden md:block pointer-events-none absolute inset-x-0 top-[72px] z-20 h-[22px]"
               style={{ background: "linear-gradient(to bottom, #FFFCF1 0%, rgba(255,252,241,0) 100%)" }}
             />
             <div
