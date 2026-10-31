@@ -1458,8 +1458,7 @@ function AgentChat({ className = "" }: { className?: string }) {
   const sent = "max-w-[78%] self-end rounded-[20px] rounded-br-[6px] bg-[#3A2516] px-[14px] py-[8px] text-[14.5px] leading-[20px] text-[#FFFCF1]";
   return (
     <div className={`flex flex-col gap-[4px] ${className}`} aria-label="Example chat with a personal agent">
-      <div className={sent}>Find a rhinoplasty clinic within 30 km for $17,100</div>
-      <div className={sent}>Available within 10 months</div>
+      <div className={sent}>Find a rhinoplasty clinic within 30 km for $17,100, available within 10 months</div>
       <div className="mt-[12px] flex items-end gap-[8px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
