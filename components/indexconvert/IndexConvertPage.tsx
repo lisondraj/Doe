@@ -13,6 +13,7 @@ import "@/lib/indexconvert/indexconvert.css";
 import { HalftoneDisc } from "@/components/doehealth-product/DoeHealthProductHalftone";
 import { IndexConvertSphere } from "@/components/indexconvert/IndexConvertSphere";
 import { dmSans, lora } from "@/lib/home/fonts";
+import { ABOUT_CONTACT_EMAIL, ABOUT_CONTACT_MAILTO } from "@/lib/about/about-contact";
 import { startFilm, type FilmStart } from "@/lib/earlypreview/start-film";
 import { useAdaptiveSrc } from "@/lib/earlypreview/use-adaptive-src";
 import { useEarlyPreviewFilm } from "@/lib/earlypreview/use-earlypreview-film";
@@ -313,6 +314,8 @@ function Frame({
   edgeFade?: boolean;
   children: ReactNode;
 }) {
+  const footerRef = useRef<HTMLElement>(null);
+  const footerOn = useInView(footerRef, scrollRef);
   return (
     <div
       // The outer shell stays the light brown in both views; only what's inside goes darker in What Agents See.
@@ -325,7 +328,8 @@ function Frame({
         paddingRight: "max(8px, env(safe-area-inset-right))",
       }}
     >
-      <div className="relative h-full w-full overflow-clip rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
+      {/* Brown behind the page, so the clipped corners never show a cream hairline over the footer. */}
+      <div className="relative h-full w-full overflow-clip rounded-[38px] md:rounded-[24px] bg-[#3A2516]">
         <div
           ref={scrollRef}
           className="absolute inset-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]"
@@ -335,6 +339,9 @@ function Frame({
             if (event.animationName === "ic-rise" || event.animationName === "ic-fade") (event.target as Element).setAttribute("data-ic-done", "");
           }}
         >
+          {/* The page is a cream panel with rounded bottom corners over the shell's brown; the footer sits under it in the
+              same brown, so at the bottom it reads as part of the outer frame. */}
+          <div className="bg-[#FFFCF1] rounded-b-[38px] md:rounded-b-[24px]">
           {/* iPhone, with a lead: the plain nav with Doe centred; the lead (the opening screen's title) is tablet and desktop only. */}
           {lead && (
             <header className={`md:hidden sticky top-0 z-30 ${HEADER} bg-[#FFFCF1E6] backdrop-blur-[12px]`}>
@@ -354,6 +361,8 @@ function Frame({
             {right}
           </header>
           {children}
+          </div>
+          <SiteFooter footerRef={footerRef} />
         </div>
         {edgeFade && (
           <>
@@ -365,7 +374,12 @@ function Frame({
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[96px]"
-              style={{ background: "linear-gradient(to top, #FFFCF1 6%, rgba(255,252,241,0.82) 38%, rgba(255,252,241,0) 100%)" }}
+              // Gone while the footer is up, so it doesn't wash over the brown.
+              style={{
+                background: "linear-gradient(to top, #FFFCF1 6%, rgba(255,252,241,0.82) 38%, rgba(255,252,241,0) 100%)",
+                opacity: footerOn ? 0 : 1,
+                transition: "opacity 200ms ease",
+              }}
             />
           </>
         )}
@@ -374,6 +388,80 @@ function Frame({
         {loader}
       </div>
     </div>
+  );
+}
+
+/** Whether an element shows inside the page's scroll box. */
+function useInView(ref: RefObject<Element>, rootRef: RefObject<HTMLElement>) {
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setOn(entry!.isIntersecting), { root: rootRef.current, threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref, rootRef]);
+  return on;
+}
+
+/** Doe's footer: the address and James's email centred, then Doe in horizontal strips from edge to edge. */
+function SiteFooter({ footerRef }: { footerRef: RefObject<HTMLElement> }) {
+  return (
+    <footer id="ic-footer" ref={footerRef} className="bg-[#3A2516] text-[#FFFCF1] overflow-hidden" aria-label="Footer">
+      <div className="flex flex-col items-center gap-[6px] px-[18px] pt-[64px] md:pt-[88px] text-center">
+        <p className="text-[15px] leading-[22px] md:text-[17px] md:leading-[24px] text-[#FFFCF1B3]">Toronto, Ontario, Canada</p>
+        <a href={ABOUT_CONTACT_MAILTO} className="text-[15px] leading-[22px] md:text-[17px] md:leading-[24px] font-[600] text-[#FFFCF1] no-underline hover:opacity-85">
+          {ABOUT_CONTACT_EMAIL}
+        </a>
+      </div>
+      {/* Clear of the shell's rounded corners, so the strips at the foot of the D and e aren't cut. */}
+      <div className="mt-[44px] md:mt-[64px] pb-[22px] md:pb-[14px]">
+        <StripedDoe />
+      </div>
+    </footer>
+  );
+}
+
+/** The Doe wordmark, in the logo's Lora, cut into horizontal strips and sized so its ink runs the full width. */
+function StripedDoe() {
+  const FS = 200;
+  const svgRef = useRef<SVGSVGElement>(null);
+  /** The letters' own ink, around the baseline at y = FS (a close guess until the font has loaded and been measured). */
+  const [ink, setInk] = useState({ left: 2, right: 352, ascent: 140, descent: 3 });
+  useEffect(() => {
+    const measure = () => {
+      const svg = svgRef.current;
+      const ctx = document.createElement("canvas").getContext("2d");
+      if (!svg || !ctx) return;
+      ctx.font = `400 ${FS}px ${getComputedStyle(svg).fontFamily}`;
+      const m = ctx.measureText("Doe");
+      if (!m.width) return;
+      setInk({ left: -m.actualBoundingBoxLeft, right: m.actualBoundingBoxRight, ascent: m.actualBoundingBoxAscent, descent: m.actualBoundingBoxDescent });
+    };
+    measure();
+    void document.fonts?.ready.then(measure);
+  }, []);
+  const top = FS - ink.ascent;
+  const h = ink.ascent + ink.descent;
+  /** 13 strips from the top of the D down, each a little thicker than the gap. */
+  const period = ink.ascent / 13;
+  return (
+    <svg
+      ref={svgRef}
+      viewBox={`${ink.left} ${top} ${ink.right - ink.left} ${h}`}
+      className={`${lora.className} block w-full h-auto`}
+      role="img"
+      aria-label="Doe"
+    >
+      <defs>
+        <pattern id="ic-doe-strips" patternUnits="userSpaceOnUse" x="0" y={top} width={FS * 4} height={period}>
+          <rect x="0" y="0" width={FS * 4} height={period * 0.58} fill="#FFFCF1" />
+        </pattern>
+      </defs>
+      <text x="0" y={FS} fontSize={FS} fill="url(#ic-doe-strips)" style={{ fontWeight: 400 }}>
+        Doe
+      </text>
+    </svg>
   );
 }
 
@@ -702,6 +790,11 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   const emailRef = useRef<HTMLInputElement>(null);
   const activateRef = useRef<HTMLButtonElement>(null);
   const [claimInView, setClaimInView] = useState(true);
+  const footerEl = useRef<Element | null>(null);
+  useEffect(() => {
+    footerEl.current = document.getElementById("ic-footer");
+  }, []);
+  const footerOn = useInView(footerEl, scrollRef);
   /** The section pills appear once Providers is on screen, and stay while the page scrolls down. */
   const [pillsOn, setPillsOn] = useState(false);
   const [active, setActive] = useState<string>(NAV[0].id);
@@ -830,6 +923,8 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
   };
 
   const claimed = Boolean(claim.claimed);
+  /** The iPhone pill also steps aside for the footer. */
+  const pillOn = !claimed && !claimInView && !footerOn;
   const claimBox = (
     <div ref={wide || agent ? claimRef : undefined} id={wide || agent ? "claim" : undefined} className="ic-rise scroll-mt-[136px] md:scroll-mt-[88px]" style={{ animationDelay: "120ms" }}>
       {agent && !claimed ? (
@@ -980,12 +1075,12 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
       <button
         type="button"
         onClick={goToClaim}
-        tabIndex={!claimed && !claimInView ? 0 : -1}
-        aria-hidden={claimed || claimInView}
+        tabIndex={pillOn ? 0 : -1}
+        aria-hidden={!pillOn}
         className={`ic-ink-default group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[color:var(--ic-ink)] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(58,37,22,0.25)] text-[12.5px] tracking-[0.04em]`}
         style={{
           bottom: "calc(max(8px, env(safe-area-inset-bottom)) + 10px)",
-          transform: !claimed && !claimInView ? "none" : "translateY(calc(100% + 40px))",
+          transform: pillOn ? "none" : "translateY(calc(100% + 40px))",
           transition: `transform 360ms ${EASE}`,
         }}
       >
