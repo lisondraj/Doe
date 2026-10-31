@@ -76,11 +76,14 @@ const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?:
 const STEPS_BOX_HEIGHT = 260;
 const STEP_STARTS = STEPS.map((_, i) => STEPS.slice(0, i).reduce((n, s) => n + s.ms, 0));
 const BUILD_MS = STEPS.reduce((n, s) => n + s.ms, 0);
-/** The loader's two lines, in P22, one for each half of the build. */
+/** The loader's lines, in P22, in turn across the build; each holds for a share of it as long as its text. */
 const LOADER_MESSAGES = [
   "Personal agents are already learning about thousands of clinics. We don\u2019t want Canadian clinics to be left out.",
+  "Patients will be searching for clinics through Muse and Instinct in 2027.",
   "We built Doe to bring you more customers and save time on intake.",
 ];
+const MESSAGE_CHARS = LOADER_MESSAGES.reduce((n, m) => n + m.length, 0);
+const MESSAGE_ENDS = LOADER_MESSAGES.map((_, i) => (LOADER_MESSAGES.slice(0, i + 1).reduce((n, m) => n + m.length, 0) / MESSAGE_CHARS) * BUILD_MS);
 /** How long "Ready" holds before the page opens. */
 const MUSE_MS = 1100;
 const TOTAL_MS = BUILD_MS + MUSE_MS;
@@ -386,7 +389,8 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
   const stepFrac = built ? 1 : Math.min(1, Math.max(0, (elapsed - STEP_STARTS[stepIndex]!) / STEPS[stepIndex]!.ms));
   const progress = built ? 1 : (stepIndex + stepFrac) / STEPS.length;
   const page = SOURCE_PAGES[pageIndex]!;
-  const messageIndex = elapsed < BUILD_MS / 2 ? 0 : 1;
+  const messageEnd = MESSAGE_ENDS.findIndex((end) => elapsed < end);
+  const messageIndex = messageEnd === -1 ? LOADER_MESSAGES.length - 1 : messageEnd;
   const desktop = viewport.w >= 768;
   /** Short iPhone screens get a smaller sphere and one step's detail at a time. */
   const compact = viewport.h < (desktop ? 780 : 880);
