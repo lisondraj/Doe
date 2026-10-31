@@ -1054,61 +1054,128 @@ function Hero({
 /** One illustration per step, drawn small and quiet on a sand tile. */
 function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
   const tile = "h-[112px] rounded-[16px] bg-[#F4EEDF] flex items-center justify-center overflow-hidden";
-  const svgProps = { viewBox: "0 0 240 96", width: "100%", height: "100%", style: { maxWidth: 280, fontFamily: "inherit" }, "aria-hidden": true } as const;
+  /** A small caption under a card in the tiles below. */
+  const cap = `mt-[6px] text-[11px] leading-[14px] font-[600] whitespace-nowrap ${MUTED}`;
+  const stroke = { fill: "none", stroke: "currentColor", strokeWidth: 1.9, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+  // Step 1: Ford's own site, read into a page agents can use.
   if (n === 1)
     return (
-      <div className={tile}>
-        <svg {...svgProps}>
-          <rect x="22" y="14" width="68" height="68" rx="10" fill="#FFFCF1" />
-          <rect x="22" y="14" width="68" height="14" rx="7" fill="#E9DFC9" />
-          <rect x="32" y="38" width="48" height="5" rx="2.5" fill="#28191033" />
-          <rect x="32" y="49" width="38" height="5" rx="2.5" fill="#28191026" />
-          <rect x="32" y="60" width="44" height="5" rx="2.5" fill="#28191026" />
-          <path d="M102 48h30M124 40l8 8-8 8" fill="none" stroke="#281910" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-          <rect x="144" y="20" width="76" height="56" rx="12" fill="#3A2516" />
-          <text x="156" y="42" fontSize="12" fill="#FCCFB8" fontFamily="ui-monospace, monospace">{"{"}</text>
-          <rect x="166" y="34" width="38" height="5" rx="2.5" fill="#FFFCF1" opacity="0.85" />
-          <rect x="166" y="46" width="28" height="5" rx="2.5" fill="#FFFCF1" opacity="0.5" />
-          <rect x="166" y="58" width="34" height="5" rx="2.5" fill="#FFFCF1" opacity="0.5" />
-          <text x="208" y="70" fontSize="12" fill="#FCCFB8" fontFamily="ui-monospace, monospace">{"}"}</text>
+      <div className={`${tile} gap-[12px]`}>
+        <div className="flex flex-col items-center">
+          <div className="w-[64px] h-[64px] rounded-[14px] overflow-hidden bg-[#FFFCF1] ring-1 ring-[#2819101A]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/indexconvert/home-m.jpg" alt="" draggable={false} className="block w-full h-full object-cover object-top select-none" />
+          </div>
+          <span className={cap}>Your site</span>
+        </div>
+        <svg width="26" height="14" viewBox="0 0 26 14" aria-hidden="true" className="mb-[20px] text-[#281910]">
+          <path d="M1 7h22M17 1.5L23 7l-6 5.5" {...stroke} strokeWidth={2} />
         </svg>
+        <div className="flex flex-col items-center">
+          <div className="w-[64px] h-[64px] rounded-[14px] bg-[#3A2516] px-[10px] py-[10px] flex flex-col justify-center gap-[5px] font-mono text-[8.5px] leading-[10px] text-[#FFFCF1]">
+            <span className="text-[#FCCFB8]">{"{"}</span>
+            <span className="block h-[4px] w-[36px] rounded-full bg-[#FFFCF1] opacity-85" />
+            <span className="block h-[4px] w-[26px] rounded-full bg-[#FFFCF1] opacity-50" />
+            <span className="block h-[4px] w-[32px] rounded-full bg-[#FFFCF1] opacity-50" />
+            <span className="self-end text-[#FCCFB8]">{"}"}</span>
+          </div>
+          <span className={cap}>Agent page</span>
+        </div>
       </div>
     );
+  // Step 2: the claim, as the email field and its button.
   if (n === 2)
     return (
+      <div className={`${tile} px-[14px]`}>
+        <div className="flex items-center gap-[8px] h-[44px] w-full max-w-[250px] pl-[14px] pr-[5px] rounded-full bg-[#FFFCF1] ring-1 ring-[#2819101A]">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" className="shrink-0 text-[#28191080]">
+            <rect x="3.5" y="5.5" width="17" height="13" rx="3" {...stroke} />
+            <path d="M4.5 8l7.5 5.5L19.5 8" {...stroke} />
+          </svg>
+          <span className={`min-w-0 flex-1 truncate text-[12.5px] ${MUTED}`}>you@clinic.com</span>
+          <span className="shrink-0 h-[34px] px-[14px] flex items-center rounded-full bg-[#3A2516] text-[#FFFCF1] text-[12px] font-[700] uppercase tracking-[0.04em]">Claim</span>
+        </div>
+      </div>
+    );
+  // Step 3: what agents can do once it's on, one small card each.
+  if (n === 3) {
+    const acts: { label: string; icon: ReactNode }[] = [
+      {
+        label: "Book",
+        icon: (
+          <>
+            <rect x="4" y="5.5" width="16" height="14.5" rx="3" {...stroke} />
+            <path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" {...stroke} />
+            <path d="M9 14.5l2 2 4-4" {...stroke} />
+          </>
+        ),
+      },
+      {
+        label: "Intake",
+        icon: (
+          <>
+            <rect x="5.5" y="4.5" width="13" height="16" rx="2.5" {...stroke} />
+            <path d="M9.5 3.5h5v2.5h-5zM9 11h6M9 14.5h6M9 18h3.5" {...stroke} />
+          </>
+        ),
+      },
+      {
+        label: "Payments",
+        icon: (
+          <>
+            <rect x="3.5" y="6" width="17" height="12" rx="2.5" {...stroke} />
+            <path d="M3.5 10h17M7 14.5h4" {...stroke} />
+          </>
+        ),
+      },
+    ];
+    return (
+      <div className={`${tile} gap-[6px] px-[10px]`}>
+        {acts.map((a) => (
+          <div key={a.label} className="flex flex-col items-center">
+            <div className="w-[50px] h-[50px] rounded-[13px] bg-[#FFFCF1] flex items-center justify-center text-[#3A2516]">
+              <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+                {a.icon}
+              </svg>
+            </div>
+            <span className={`${cap} w-[56px] text-center`}>{a.label}</span>
+          </div>
+        ))}
+        <div className="flex flex-col items-center">
+          <div className="w-[50px] h-[50px] rounded-[13px] border-[1.5px] border-dashed border-[#28191033] flex items-center justify-center gap-[4px]">
+            {[0, 1, 2].map((i) => (
+              <span key={i} className="w-[4px] h-[4px] rounded-full bg-[#28191066]" />
+            ))}
+          </div>
+          <span className={`${cap} w-[56px] text-center`}>& more</span>
+        </div>
+      </div>
+    );
+  }
+  // Step 4: Doe in the middle, wired to the channels agents read.
+  if (n === 4) {
+    const chip = "h-[26px] w-[52px] flex items-center justify-center rounded-full bg-[#FFFCF1] font-mono text-[11.5px] font-[600]";
+    const wire = "h-[36px] w-[18px] border-[#28191033] border-dashed";
+    return (
       <div className={tile}>
-        <svg {...svgProps}>
-          <rect x="26" y="22" width="146" height="38" rx="19" fill="#FFFCF1" stroke="#2819101F" strokeWidth="1.5" />
-          <text x="46" y="45" fontSize="12.5" fill="#28191080">you@yourclinic.com</text>
-          <circle cx="198" cy="41" r="17" fill="#3A2516" />
-          <path d="M190 41.5l6 6 11-12" fill="none" stroke="#FFFCF1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </div>
-    );
-  if (n === 3)
-    return (
-      <div className={`${tile} px-[14px]`}>
-        <div className="flex flex-nowrap items-center justify-center gap-[6px]">
-          {["Book", "Intake", "Payments", "& more"].map((t, i) => (
-            <span key={t} className={`shrink-0 h-[30px] px-[13px] flex items-center whitespace-nowrap rounded-full text-[12.5px] font-[600] ${i === 0 ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}>
-              {t}
-            </span>
-          ))}
+        <div className="flex flex-col gap-[10px]">
+          <span className={chip}>MCP</span>
+          <span className={chip}>API</span>
+        </div>
+        <span className={`${wire} border-y-[1.5px] border-r-[1.5px] rounded-r-[10px]`} aria-hidden="true" />
+        <span className="w-[10px] h-[1.5px] bg-[#28191033]" aria-hidden="true" />
+        <span className="w-[52px] h-[52px] rounded-[16px] bg-[#3A2516] flex items-center justify-center">
+          <IndexConvertSphere size={34} color="#FCCFB8" />
+        </span>
+        <span className="w-[10px] h-[1.5px] bg-[#28191033]" aria-hidden="true" />
+        <span className={`${wire} border-y-[1.5px] border-l-[1.5px] rounded-l-[10px]`} aria-hidden="true" />
+        <div className="flex flex-col gap-[10px]">
+          <span className={chip}>JSON</span>
+          <span className={chip}>EXA</span>
         </div>
       </div>
     );
-  if (n === 4)
-    return (
-      <div className={`${tile} px-[14px]`}>
-        <div className="flex flex-nowrap items-center justify-center gap-[6px]">
-          {["MCP", "API", "JSON", "EXA"].map((t, i) => (
-            <span key={t} className={`shrink-0 h-[30px] px-[13px] flex items-center rounded-full font-mono text-[12.5px] font-[600] ${i === 0 ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}>
-              {t}
-            </span>
-          ))}
-        </div>
-      </div>
-    );
+  }
   // Step 5: the personal agents' own icons, each with a small check, over the booking they make.
   return (
     <div className={`${tile} flex-col gap-[12px] px-[12px]`}>
