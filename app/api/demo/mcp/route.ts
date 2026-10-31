@@ -29,7 +29,7 @@ async function callTool(name: string, args: Record<string, unknown>, ip: string,
         userPhone: rest.user_phone,
         request: rest.request,
         consent: { terms: rest.consent_terms, phi: rest.consent_phi, connected: rest.stay_connected, network: rest.join_network },
-      }, ip, visitId);
+      }, ip, visitId, origin);
     case "doe_clinic_info":
       return catalog();
     case "doe_share_forms":

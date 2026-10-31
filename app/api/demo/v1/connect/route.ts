@@ -1,5 +1,5 @@
 import { checkHuman, clientIp, rateLimit } from "@/lib/demo/demo-guard";
-import { channelOf, jsonBody, preflight, respond } from "@/lib/demo/demo-http";
+import { channelOf, jsonBody, originOf, preflight, respond } from "@/lib/demo/demo-http";
 import { connect } from "@/lib/demo/demo-service";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ export function POST(request: Request) {
       userPhone: b.user_phone,
       request: b.request,
       consent: (b.consent ?? {}) as Record<string, unknown>,
-    }, ip);
+    }, ip, null, originOf(request));
   });
 }
 

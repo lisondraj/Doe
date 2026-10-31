@@ -144,6 +144,8 @@ export function nextSteps(s: DemoSession, config: DemoConfig, now: number): stri
   const steps: string[] = [];
   if (s.booking.status === "confirmed") return ["Booked. Tell your user the time and send reminders."];
   if (s.booking.status === "requested") return ["Wait for the clinic to confirm; poll the session or watch the concierge thread."];
+  if (s.identity?.status === "pending")
+    steps.push(`verify: send your user identity.url (or verify.message_for_user) now, so they can confirm their date of birth, attach their driver's licence and use Face ID. Booking needs it; check verify.status until it's verified.`);
   if (config.bookable[s.plan.id] === false) steps.push(`select_plan: "${pricing(s).label}" isn't bookable by agents; pick another plan.`);
   if (!s.hold || Date.parse(s.hold.expiresAt) <= now) steps.push("hold_slot: hold an open slot from availability (10 minutes).");
   if (s.forms.status !== "sent") {
@@ -465,6 +467,8 @@ export function applyAgentAction(input: DemoSession, action: AgentAction, ctx: C
       if (action.phi_confirmed !== true) throw new DemoError(400, "phi_confirmed must be true: confirm with your user that by booking through Doe they're voluntarily providing their PHI.");
       if (ctx.config.bookable[s.plan.id] === false) throw new DemoError(409, `${pricing(s).label} isn't bookable by agents.`);
       if (!s.hold) throw new DemoError(409, "Hold a slot first (holds last 10 minutes).");
+      if (ch !== "browser" && s.identity && s.identity.status !== "verified")
+        throw new DemoError(409, `${s.userName} hasn't verified their identity yet. Send them the link in verify.url (verify.message_for_user is ready to paste), then try again once verify.status is verified.`);
       if (s.forms.status !== "sent") throw new DemoError(409, "Pass the forms back first.");
       const p = pricing(s);
       slots[s.hold.slotId] = { sessionId: s.id, kind: "requested" };

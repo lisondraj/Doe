@@ -68,6 +68,18 @@ export type DemoShare = {
   revoked: boolean;
 };
 
+export type DemoIdentity = {
+  status: "pending" | "verified";
+  /** The link the agent sends; only the agent sees it. */
+  url: string;
+  requestedAt: string;
+  verifiedAt: string | null;
+  dob: string | null;
+  /** face-id: unlocked with a platform authenticator (Face ID, Touch ID, Windows Hello); none: the device had none. */
+  method: "face-id" | "none" | null;
+  license: { fileName: string; mime: string; size: number } | null;
+};
+
 export type DemoBookingStatus = "none" | "requested" | "confirmed" | "declined";
 
 export type DemoSession = {
@@ -113,6 +125,11 @@ export type DemoSession = {
   };
   threads: Record<DemoThreadId, DemoMessage[]>;
   events: DemoEvent[];
+  /**
+   * The user's identity check: the agent sends `url` after connect; the user confirms their date of birth, attaches a
+   * driver's licence and unlocks with Face ID (a WebAuthn platform check) on their phone.
+   */
+  identity?: DemoIdentity;
   /** Read-only copies of the forms shared with the user by link. The token itself lives only in shares/<token>.json. */
   shares?: DemoShare[];
   /** Actions and messages this hour, for the per-session quota. */

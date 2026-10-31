@@ -147,6 +147,18 @@ export async function listVisits(limit: number, maxAgeMs: number): Promise<DemoV
 export const readIpVisit = (key: string) => readJson<{ id: string; at: string }>(`visit-ip/${key}.json`);
 export const writeIpVisit = (key: string, id: string) => writeJson(`visit-ip/${key}.json`, { id, at: new Date().toISOString() });
 
+/** An identity-check link: its session, the WebAuthn challenge, and whether it's been used. */
+export type VerifyRecord = { sessionId: string; challenge: string; expiresAt: string; usedAt: string | null };
+export async function readVerify(token: string): Promise<VerifyRecord | null> {
+  if (!/^[A-Za-z0-9_-]{32,64}$/.test(token)) return null;
+  return readJson<VerifyRecord>(`verify/${token}.json`);
+}
+export const writeVerify = (token: string, r: VerifyRecord) => writeJson(`verify/${token}.json`, r);
+/** The licence image, kept apart from the session so polling never carries it. */
+export type IdFile = { dataUrl: string; fileName: string; mime: string };
+export const readIdFile = (sessionId: string) => (/^ses_[a-z0-9]{9,30}$/.test(sessionId) ? readJson<IdFile>(`ids/${sessionId}.json`) : Promise.resolve(null));
+export const writeIdFile = (sessionId: string, f: IdFile) => writeJson(`ids/${sessionId}.json`, f);
+
 /** A share link's token, pointing at its session; only the holder of the link knows the token. */
 export type ShareRecord = { sessionId: string; shareId: string; expiresAt: string };
 const isToken = (t: string) => /^[A-Za-z0-9_-]{32,64}$/.test(t);

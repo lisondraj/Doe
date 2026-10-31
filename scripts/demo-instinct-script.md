@@ -38,6 +38,13 @@ James's details, the clinic, Dr. Brooks and Harbour Mutual are all fictional.
 > **Clinic sees:** a card pops up: "Instinct connected via Model Context Protocol", with James's name, city, phone and request. Watch Live opens the live view: the log on the left, and on the right "What they want you to do" being typed, the consents ticked, then the clinic being read.
 
 **Instinct:**
+> Before I book, please confirm it's you: doehealth.care/demo/verify/… It takes a few seconds: check your date of birth, add a photo of your driver's licence, and confirm with Face ID. Then come back here.
+
+*James opens the link. "James Lisondra" is already filled in. He picks his date of birth, taps Upload Driver's Licence (camera or photo library) and sees it attached, then taps Submit with Face ID. Face ID comes up; then "Thank you, your agent will continue from here." with a Return to Messages button.*
+
+> **Clinic sees:** "James Lisondra verified their identity · ✓ Face ID · ✓ Born 1996-03-14 · ✓ Driver's licence", with View Licence. Instinct can't request the booking until this is done.
+
+**Instinct:**
 > They have availability Friday, November 6 at 12:15 pm with Dr. Sarah Brooks. She's a neurologist (FRCPC) trained at the University of Toronto, with a headache medicine fellowship at the Jefferson Headache Center. She has 15 years in practice and more than 4,000 Botox sessions for migraine. Patients rate her 4.9 from 312 verified reviews; one wrote, "Went from 20 headache days a month to 6 after my second round." Harbour Mutual covers 60% of Botox for chronic migraine, up to $2,000 a year. The session is $1,377 through Doe, so about $551 after Harbour Mutual. Want me to book?
 
 (Instinct gets all of this from `doe_clinic_info`: `provider_profiles` and `insurance_plans`.)

@@ -12,6 +12,7 @@ export const MCP_PATH = "/api/demo/mcp";
 export const FLOW = [
   "Confirm with your user: Doe's Terms of Service and Privacy Policy, and that by booking through Doe they're voluntarily providing their PHI.",
   "connect, with both consents true. Keep the token it returns.",
+  "Right after connecting, send your user verify.url from the response (verify.message_for_user is ready to paste). On their phone they confirm their date of birth, attach their driver's licence and use Face ID. Booking waits until verify.status is verified.",
   "Read the clinic (services, bundles, availability) and pick a plan.",
   "Before you hold, tell your user about the provider (training, experience, reviews in clinic.provider_profiles) and ask if they want to book.",
   "hold_slot for 10 minutes. To get a better price, use negotiate: propose a price, and ask about adding services (the clinic discounts packages); accept an offer with respond_offer.",
@@ -68,7 +69,7 @@ export const MCP_TOOLS: { name: string; description: string; inputSchema: Record
   {
     name: "doe_connect",
     description:
-      "Start a booking session at Dr. Brooks' Migraine Clinic for your user. First confirm with them that they agree to Doe's Terms of Service and Privacy Policy, and that by booking through Doe they're voluntarily providing their PHI; both must be true. Returns session_token.",
+      "Start a booking session at Dr. Brooks' Migraine Clinic for your user. First confirm with them that they agree to Doe's Terms of Service and Privacy Policy, and that by booking through Doe they're voluntarily providing their PHI; both must be true. Returns session_token, and verify: send verify.message_for_user (with verify.url) to your user straight away so they can confirm it's them with Face ID, their date of birth and a driver's licence photo. Check verify.status with doe_get_session; booking needs it verified.",
     inputSchema: {
       type: "object",
       properties: {

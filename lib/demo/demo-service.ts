@@ -29,6 +29,10 @@ import { randomBytes } from "node:crypto";
 import {
   readShare,
   writeShare,
+  readVerify,
+  writeVerify,
+  readIdFile,
+  writeIdFile,
   listVisits,
   readIpVisit,
   readVisit,
@@ -54,10 +58,27 @@ import type { DemoChannel, DemoConfig, DemoEvent, DemoSession, DemoSessionView, 
 const lightUploads = (list: DemoUpload[] | undefined, keepText: (u: DemoUpload) => boolean) =>
   (list ?? []).map(({ dataUrl, text, ...u }) => ({ ...u, hasFile: Boolean(dataUrl), ...(text ? (keepText(u) ? { text } : { preview: text.slice(0, 280) }) : {}) }));
 
-const lightView = (s: DemoSession, keepText: (u: DemoUpload) => boolean): DemoSessionView => {
+const lightView = (s: DemoSession, keepText: (u: DemoUpload) => boolean, keepUrl = false): DemoSessionView => {
   const v = viewOf(s);
-  return { ...v, forms: { ...v.forms, uploads: lightUploads(v.forms.uploads, keepText) as DemoUpload[] } };
+  return {
+    ...v,
+    forms: { ...v.forms, uploads: lightUploads(v.forms.uploads, keepText) as DemoUpload[] },
+    ...(v.identity ? { identity: { ...v.identity, url: keepUrl ? v.identity.url : "" } } : {}),
+  };
 };
+
+const VERIFY_HOURS = 24;
+
+/** The identity-check link and the message the agent sends with it. */
+function verifyOf(s: DemoSession) {
+  if (!s.identity) return null;
+  if (s.identity.status === "verified") return { status: "verified" as const, verified_at: s.identity.verifiedAt, method: s.identity.method };
+  return {
+    status: "pending" as const,
+    url: s.identity.url,
+    message_for_user: `Before I book, please confirm it's you: ${s.identity.url}\nIt takes a few seconds: check your date of birth, add a photo of your driver's licence, and confirm with Face ID. Then come back here.`,
+  };
+}
 
 export { DemoError };
 
@@ -78,7 +99,9 @@ async function authenticate(token: unknown): Promise<DemoSession> {
 function agentPayload(s: DemoSession, config: DemoConfig, slots: DemoSlots, now: number) {
   const n = normalize(s, now);
   return {
-    session: lightView(n, (u) => u.by === "clinic"),
+    session: lightView(n, (u) => u.by === "clinic", true),
+    /** Send url to the user right after connecting; booking waits for status "verified". */
+    verify: verifyOf(n),
     status: statusOf(n, now),
     pricing: pricing(n),
     bookable: config.bookable[n.plan.id] !== false,
@@ -92,11 +115,19 @@ function agentPayload(s: DemoSession, config: DemoConfig, slots: DemoSlots, now:
 
 export type AgentPayload = ReturnType<typeof agentPayload>;
 
-export async function connect(input: ConnectInput, ip: string, visitId?: string | null) {
+export async function connect(input: ConnectInput, ip: string, visitId?: string | null, origin?: string | null) {
   const now = new Date();
   const visit = visitId ? await readVisit(visitId) : null;
   const named = typeof input.agentName === "string" && input.agentName.trim();
   const s = createSession({ ...input, agentName: named ? input.agentName : (visit?.agentName ?? input.agentName) }, now);
+  /** Agents connecting over MCP or the API get an identity-check link to send their user; /demo's own page doesn't. */
+  if (origin && input.channel !== "browser") {
+    const token = randomBytes(32).toString("base64url");
+    await writeVerify(token, { sessionId: s.id, challenge: randomBytes(32).toString("base64url"), expiresAt: new Date(now.getTime() + VERIFY_HOURS * 3_600_000).toISOString(), usedAt: null });
+    const at = now.toISOString();
+    s.identity = { status: "pending", url: `${origin}/demo/verify/${token}`, requestedAt: at, verifiedAt: null, dob: null, method: null, license: null };
+    s.events = [...s.events, { id: `e_idr${now.getTime().toString(36)}`, at, actor: "agent", channel: input.channel, type: "identity_requested", summary: `Sent ${s.userName} a link to confirm it's them (Face ID, date of birth, driver's licence)` }];
+  }
   if (visit) {
     /** What the agent did over MCP before it connected (the handshake, reading the clinic) leads the session's log. */
     const before: DemoEvent[] = visit.calls
@@ -170,6 +201,97 @@ export async function clinicState() {
 }
 
 export type ClinicStatePayload = Awaited<ReturnType<typeof clinicState>>;
+
+/* ——— Identity check ——— */
+
+/** What /demo/verify/<token> shows: whose check it is, and the WebAuthn challenge. */
+export async function openVerify(token: string) {
+  const rec = await readVerify(token);
+  if (!rec) return { error: "missing" as const };
+  const s = await readSession(rec.sessionId);
+  if (!s?.identity) return { error: "missing" as const };
+  if (s.identity.status === "verified") return { done: true as const, userName: s.userName, agentName: s.agentName };
+  if (Date.parse(rec.expiresAt) <= Date.now()) return { error: "expired" as const };
+  return { done: false as const, userName: s.userName, agentName: s.agentName, challenge: rec.challenge, clinic: CLINIC.name };
+}
+
+const b64urlJson = (v: unknown) => {
+  if (typeof v !== "string" || v.length > 4000) return null;
+  try {
+    return JSON.parse(Buffer.from(v, "base64url").toString("utf8")) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+};
+const ID_TYPES = ["image/jpeg", "image/png", "image/heic", "image/webp", "application/pdf"];
+const MAX_ID_B64 = 900_000;
+
+/**
+ * The user's submission from /demo/verify/<token>. Face ID: the browser made a platform credential with user
+ * verification for our challenge; we check the challenge, origin and type in clientDataJSON and the user-present and
+ * user-verified flags in authenticatorData. (A demo check: no credential is kept, and attestation isn't verified.)
+ */
+export async function submitVerify(token: string, body: Record<string, unknown>, origin: string) {
+  const rec = await readVerify(token);
+  if (!rec) throw new DemoError(404, "This link doesn't work. Ask your agent for a new one.");
+  if (rec.usedAt) throw new DemoError(409, "You've already confirmed it's you. Your agent will continue from here.");
+  if (Date.parse(rec.expiresAt) <= Date.now()) throw new DemoError(410, "This link has expired. Ask your agent for a new one.");
+
+  const dob = typeof body.dob === "string" ? body.dob.trim() : "";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dob) || Number.isNaN(Date.parse(dob))) throw new DemoError(400, "Enter your date of birth.");
+  const age = (Date.now() - Date.parse(dob)) / (365.25 * 86_400_000);
+  if (age < 0 || age > 120) throw new DemoError(400, "That date of birth doesn't look right.");
+
+  const file = body.license as Record<string, unknown> | undefined;
+  const dataUrl = typeof file?.dataUrl === "string" ? file.dataUrl : "";
+  const m = dataUrl.match(/^data:([a-z/+.-]+);base64,([A-Za-z0-9+/=]+)$/);
+  if (!m) throw new DemoError(400, "Attach a photo of your driver's licence.");
+  const mime = m[1]!.toLowerCase();
+  if (!ID_TYPES.includes(mime)) throw new DemoError(400, "Attach the licence as a photo (JPEG, PNG or HEIC) or a PDF.");
+  if (m[2]!.length > MAX_ID_B64) throw new DemoError(413, "That photo is too large. Try again; the page shrinks photos before sending.");
+  const fileName = typeof file?.fileName === "string" && file.fileName.trim() ? file.fileName.trim().replace(/[^\w.\- ]+/g, "").slice(0, 80) : "drivers-licence.jpg";
+  const size = Math.floor((m[2]!.length * 3) / 4);
+
+  let method: "face-id" | "none" = "none";
+  const wa = body.webauthn as Record<string, unknown> | undefined;
+  if (wa) {
+    const client = b64urlJson(wa.clientDataJSON);
+    if (!client || client.type !== "webauthn.create" || client.challenge !== rec.challenge || client.origin !== origin) throw new DemoError(400, "Face ID check didn't match this page. Reload and try again.");
+    if (typeof wa.authenticatorData === "string") {
+      const ad = Buffer.from(wa.authenticatorData, "base64url");
+      const flags = ad[32] ?? 0;
+      if (ad.length < 37 || !(flags & 0x01) || !(flags & 0x04)) throw new DemoError(400, "Face ID didn't confirm it was you. Try again.");
+    }
+    method = "face-id";
+  }
+
+  return withLock(LOCK, async () => {
+    const s = await readSession(rec.sessionId);
+    if (!s?.identity) throw new DemoError(404, "This link doesn't work. Ask your agent for a new one.");
+    const at = new Date().toISOString();
+    await writeIdFile(s.id, { dataUrl, fileName, mime });
+    await writeVerify(token, { ...rec, usedAt: at });
+    const mismatch = s.forms.intake.dob?.trim() && s.forms.intake.dob.trim() !== dob;
+    s.identity = { ...s.identity, status: "verified", verifiedAt: at, dob, method, license: { fileName, mime, size } };
+    if (!s.forms.intake.dob?.trim()) s.forms = { ...s.forms, intake: { ...s.forms.intake, dob } };
+    const how = method === "face-id" ? "Face ID" : "no Face ID on this device";
+    s.events = [
+      ...s.events,
+      { id: `e_idv${Date.now().toString(36)}`, at, actor: "system", channel: s.channel, type: "identity_verified", summary: `${s.userName} confirmed it's them: ${how} · date of birth · driver's licence${mismatch ? " (date of birth differs from the intake)" : ""}` },
+    ];
+    s.updatedAt = at;
+    await writeSession(s);
+    return { ok: true, method };
+  });
+}
+
+/** Clinic: the licence image. */
+export async function clinicIdFile(sessionId: unknown) {
+  if (typeof sessionId !== "string") throw new DemoError(400, "session_id is required.");
+  const f = await readIdFile(sessionId);
+  if (!f) throw new DemoError(404, "No licence on file.");
+  return f;
+}
 
 const SHARE_DAYS = 7;
 const MAX_SHARES = 10;

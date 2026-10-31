@@ -53,7 +53,7 @@ export function AgentAvatar({ name, size = 36, ring }: { name: string; size?: nu
 
 export type Notice = {
   id: string;
-  kind: "visit" | "connected" | "negotiating" | "deal" | "requested" | "forms" | "upload" | "shared" | "confirmed";
+  kind: "visit" | "connected" | "verified" | "negotiating" | "deal" | "requested" | "forms" | "upload" | "shared" | "confirmed";
   /** The session, or for "visit", the MCP visit. */
   sessionId: string;
   eventId: string;
@@ -68,10 +68,11 @@ const NOTICE_TYPES: Record<string, Notice["kind"]> = {
   booking_confirmed: "confirmed",
   negotiation_proposed: "negotiating",
   forms_shared: "shared",
+  identity_verified: "verified",
   offer_accepted: "deal",
 };
 /** How long each card stays up; 0 keeps it until the clinic acts or dismisses it. */
-const NOTICE_MS: Record<Notice["kind"], number> = { visit: 0, connected: 20000, negotiating: 20000, deal: 16000, shared: 12000, requested: 0, forms: 14000, upload: 14000, confirmed: 6000 };
+const NOTICE_MS: Record<Notice["kind"], number> = { visit: 0, connected: 20000, verified: 18000, negotiating: 20000, deal: 16000, shared: 12000, requested: 0, forms: 14000, upload: 14000, confirmed: 6000 };
 
 /** New notices for events that weren't there on the last poll. The first poll only marks what's already there. */
 export function useNotices(state: ClinicStatePayload | null) {
@@ -292,6 +293,40 @@ function NoticeCard({ n, s, onDismiss, onWatch, onForms, onAct }: { n: Notice; s
     actions = (
       <>
         <button type="button" onClick={onWatch} className={primary}>
+          Watch Live
+        </button>
+        <button type="button" onClick={onDismiss} className={quiet}>
+          Dismiss
+        </button>
+      </>
+    );
+  } else if (n.kind === "verified") {
+    const id = s.identity;
+    title = (
+      <>
+        {s.userName} verified their identity
+        <span className="block text-[12.5px] font-[500] text-[#FFFCF1B3]">On their phone, from {s.agentName}&apos;s link</span>
+      </>
+    );
+    body = (
+      <div className="flex flex-wrap gap-[5px]">
+        {[id?.method === "face-id" ? "✓ Face ID" : "No Face ID on device", id?.dob ? `✓ Born ${id.dob}` : null, id?.license ? "✓ Driver's licence" : null]
+          .filter(Boolean)
+          .map((x) => (
+            <span key={x} className="h-[26px] px-[10px] flex items-center rounded-full bg-[#FFFCF11A] text-[12px] font-[600]">
+              {x}
+            </span>
+          ))}
+      </div>
+    );
+    actions = (
+      <>
+        {id?.license && (
+          <a href={`/api/demo/clinic/id?session_id=${encodeURIComponent(s.id)}`} target="_blank" rel="noreferrer" className={`${primary} flex items-center`}>
+            View Licence
+          </a>
+        )}
+        <button type="button" onClick={onWatch} className={quiet}>
           Watch Live
         </button>
         <button type="button" onClick={onDismiss} className={quiet}>
@@ -547,7 +582,7 @@ function FileGlyph() {
 
 /* ——— Live view ——— */
 
-type Screen = "gate" | "services" | "calendar" | "chat" | "negotiate" | "forms" | "booking";
+type Screen = "gate" | "services" | "verify" | "calendar" | "chat" | "negotiate" | "forms" | "booking";
 type Step = { key: string; at: string; screen: Screen; title: string; detail?: string; actor: "agent" | "clinic"; ms: number; ev?: Ev };
 
 const SCREEN_OF: Record<string, Screen> = {
@@ -557,6 +592,8 @@ const SCREEN_OF: Record<string, Screen> = {
   hold_released: "calendar",
   message_sent: "chat",
   clinic_message: "chat",
+  identity_requested: "verify",
+  identity_verified: "verify",
   negotiation_proposed: "negotiate",
   offer_made: "negotiate",
   offer_accepted: "negotiate",
@@ -581,6 +618,8 @@ const TITLE_OF: Record<string, string> = {
   hold_released: "Released the hold",
   message_sent: "Messaged the clinic",
   clinic_message: "Clinic staff replied",
+  identity_requested: "Sent an identity check",
+  identity_verified: "Patient verified their identity",
   negotiation_proposed: "Proposed a price",
   offer_made: "Clinic agent countered",
   offer_accepted: "Accepted the offer",
@@ -949,6 +988,49 @@ function Mirror({ s, step, steps, availability, onAct }: { s: Session; step: Ste
             Holding {target} · 10:00
           </div>
         )}
+      </div>
+    );
+  }
+
+  if (step.screen === "verify") {
+    const verified = step.ev?.type === "identity_verified";
+    const id = s.identity;
+    return (
+      <div className="flex flex-col items-center">
+        {heading("Confirm it's you", `Sent to ${s.userName}'s phone · doehealth.care/demo/verify`)}
+        <div className="w-full max-w-[300px] p-[8px] rounded-[34px] bg-[#3A2516]">
+          <div className="flex flex-col gap-[6px] p-[12px] rounded-[27px] bg-[#FFFCF1] min-h-[340px]">
+            {verified ? (
+              <div className="doe-menu-in grow flex flex-col items-center justify-center text-center gap-[10px] px-[6px]">
+                <span className="w-[56px] h-[56px] flex items-center justify-center rounded-full bg-[#DCE5D0]">
+                  <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#2F3B2A" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <span className={`${DISPLAY} text-[18px] leading-[22px]`}>Thank you, your agent will continue from here.</span>
+                <span className="flex flex-wrap justify-center gap-[4px] text-[11px] font-[600]">
+                  <span className="h-[22px] px-[8px] flex items-center rounded-full bg-[#E3E9D9]">{id?.method === "face-id" ? "✓ Face ID" : "No Face ID"}</span>
+                  {id?.dob && <span className="h-[22px] px-[8px] flex items-center rounded-full bg-[#E3E9D9]">✓ {id.dob}</span>}
+                  {id?.license && <span className="h-[22px] px-[8px] flex items-center rounded-full bg-[#E3E9D9]">✓ Licence</span>}
+                </span>
+              </div>
+            ) : (
+              <>
+                <div className="px-[10px] py-[8px] rounded-[14px] bg-[#F4EEDF]">
+                  <div className="text-[10.5px] font-[600] text-[#28191099]">Name</div>
+                  <div className="text-[14px] font-[600]">{s.userName}</div>
+                </div>
+                <div className="px-[10px] py-[8px] rounded-[14px] bg-[#F4EEDF]">
+                  <div className="text-[10.5px] font-[600] text-[#28191099]">Date of Birth</div>
+                  <div className="text-[13px] text-[#2819105C]">yyyy-mm-dd</div>
+                </div>
+                <div className="h-[46px] flex items-center justify-center rounded-[12px] border-[1.5px] border-dashed border-[#28191040] text-[12.5px] font-[600]">Upload Driver&apos;s Licence</div>
+                <div className="mt-auto h-[44px] flex items-center justify-center rounded-[12px] bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[700]">Submit with Face ID</div>
+                <div className="text-center text-[11px] text-[#2819109E]">{active ? `Waiting for ${s.userName.split(" ")[0]}…` : ""}</div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     );
   }

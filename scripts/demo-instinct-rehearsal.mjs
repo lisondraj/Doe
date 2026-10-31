@@ -70,6 +70,7 @@ const STEPS = [
       join_network: false,
     },
   },
+  { pause: 1, say: "Instinct texts James the identity link", verify: true },
   { pause: 4, say: "Asks about Harbour Mutual", tool: "doe_send_message", args: { thread: "concierge", text: "Does Harbour Mutual cover Botox for migraine here, even partially?" } },
   { pause: 5, say: "Asks about Dr. Brooks", tool: "doe_send_message", args: { thread: "concierge", text: "What's Dr. Brooks' training and experience with Botox for migraine?" } },
   { pause: 5, say: "Tries to get Botox down to $1,200", tool: "doe_negotiate", args: { price: 1200, note: "James is paying privately and has partial coverage." } },
@@ -106,8 +107,23 @@ const init = await rpc("initialize", { protocolVersion: "2025-06-18", clientInfo
 console.log(`Connected to ${init.serverInfo.title} at ${MCP}\n`);
 let token = null;
 let last = {};
+let verifyUrl = null;
 for (const step of STEPS) {
   await sleep(step.pause);
+  if (step.verify) {
+    /** Stands in for James on his phone: date of birth and the sample licence (a rehearsal has no Face ID). */
+    console.log(`  identity link: ${verifyUrl}`);
+    await sleep(4);
+    const { readFileSync } = await import("node:fs");
+    const licence = readFileSync(new URL("../public/demo/sample-licence.jpg", import.meta.url)).toString("base64");
+    const res = await fetch(`${base}/api/demo/verify/${verifyUrl.split("/").pop()}`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ dob: JAMES.intake.dob, license: { dataUrl: `data:image/jpeg;base64,${licence}`, fileName: "sample-licence.jpg" } }),
+    });
+    console.log(res.ok ? "✓ James confirmed it's him (date of birth + licence)" : `✗ identity check: ${(await res.json()).error}`);
+    continue;
+  }
   const stepArgs = typeof step.args === "function" ? step.args(last) : step.args;
   const out = await rpc("tools/call", { name: step.tool, arguments: { ...stepArgs, ...(token && step.tool !== "doe_connect" && step.tool !== "doe_clinic_info" ? { session_token: token } : {}) } });
   const data = out.structuredContent ?? {};
@@ -115,7 +131,10 @@ for (const step of STEPS) {
     console.error(`✗ ${step.say}: ${out.content?.[0]?.text}`);
     process.exit(1);
   }
-  if (step.tool === "doe_connect") token = data.token;
+  if (step.tool === "doe_connect") {
+    token = data.token;
+    verifyUrl = data.verify?.url ?? null;
+  }
   last = data.result ?? {};
   const reply = data.result?.reply?.text ?? (typeof data.result?.reply === "string" ? data.result.reply : null);
   if (data.result?.url) console.log(`    link for James: ${data.result.url}`);

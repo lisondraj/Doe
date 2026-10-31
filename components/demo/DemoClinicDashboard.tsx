@@ -1096,6 +1096,16 @@ function SessionDetail({ s, config, now, onAct, onWatch }: { s: Session; config:
               {on ? "✓" : "–"} {k}
             </span>
           ))}
+          {s.identity && (
+            <span className={`h-[26px] px-[10px] flex items-center gap-[5px] rounded-full text-[12px] font-[500] ${s.identity.status === "verified" ? "bg-[#D6DEC6] text-[#2F3B2A]" : "bg-[#F3E2B4] text-[#281910]"}`}>
+              {s.identity.status === "verified" ? `✓ ID Verified${s.identity.method === "face-id" ? " · Face ID" : ""}` : "ID Check Sent"}
+            </span>
+          )}
+          {s.identity?.license && (
+            <a href={`/api/demo/clinic/id?session_id=${encodeURIComponent(s.id)}`} target="_blank" rel="noreferrer" className="h-[26px] px-[10px] flex items-center rounded-full text-[12px] font-[600] bg-[#140C04] text-[#FFFCF1]">
+              View Licence
+            </a>
+          )}
           <span className="h-[26px] px-[10px] flex items-center rounded-full font-mono text-[11px] text-[#2819109E] shadow-[inset_0_0_0_1px_rgba(40,25,16,0.12)] truncate max-w-full">{s.id}</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-[6px]">
