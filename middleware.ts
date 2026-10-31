@@ -98,7 +98,7 @@ async function handleAdminAccess(request: NextRequest): Promise<NextResponse | n
  * `/pricing` and `/earlypreview` are served here too, so doehealth.care/pricing and doehealth.care/earlypreview open those pages,
  * and so are the `/preview-<slug>` article duplicates /earlypreview links to. `/services` and `/demo` (with
  * /demo/TOS, /demo/PP, /demo/clinic and the `/demoPP` short link) are served only here: doe.care bounces them back to `/`.
- * `/indexconvert` is the claim-your-page flow sent to clinics.
+ * `/indexconvert` is the claim-your-page flow sent to clinics; `/GTMENGINE` is the GTM team's prospect tables.
  */
 const DOEHEALTH_CARE_SUBPAGES = [
   "/about",
@@ -113,6 +113,7 @@ const DOEHEALTH_CARE_SUBPAGES = [
   "/demo",
   "/demoPP",
   "/indexconvert",
+  "/GTMENGINE",
   ...PREVIEW_ARTICLE_PATHS,
 ];
 
