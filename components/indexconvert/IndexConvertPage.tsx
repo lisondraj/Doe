@@ -407,6 +407,10 @@ function SiteFooter({ footerRef }: { footerRef: RefObject<HTMLElement> }) {
         <a href={ABOUT_CONTACT_MAILTO} className="text-[15px] leading-[22px] md:text-[17px] md:leading-[24px] font-[600] text-[#FCCFB8] no-underline hover:opacity-85">
           {ABOUT_CONTACT_EMAIL}
         </a>
+        {/* The footnote to "We're partnering with dozens of agents…" in What Agents See. */}
+        <p className="mt-[18px] max-w-[46ch] text-[11px] leading-[15px] md:text-[12px] md:leading-[16px] text-[#FCCFB899] [text-wrap:balance]">
+          <sup className="mr-[2px]">1</sup>Partnerships may be implemented, but not guaranteed, by Q3 2027.
+        </p>
       </div>
       {/* Clear of the shell's rounded corners, so the strips at the foot of the D and e aren't cut. */}
       <div className="mt-[44px] md:mt-[64px] pb-[22px] md:pb-[14px]">
@@ -2384,6 +2388,7 @@ function AgentsPartners() {
       <div className="px-[8px] pt-[10px] pb-[18px] md:px-[12px] md:pt-[12px]">
         <h2 className={`${DISPLAY} text-[26px] leading-[31px] md:text-[32px] md:leading-[38px] tracking-[-0.02em] [text-wrap:balance]`}>
           We&apos;re partnering with dozens of agents to integrate Doe as the default way to search for healthcare clinics.
+          <sup className="ml-[2px] text-[0.5em] align-super" aria-label="footnote 1">1</sup>
         </h2>
       </div>
       <div className="rounded-[16px] bg-[#F4EEDF] px-[12px] pt-[22px] pb-[16px] md:px-[20px] flex flex-col items-center gap-[18px]">
