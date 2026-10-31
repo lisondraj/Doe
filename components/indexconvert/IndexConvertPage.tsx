@@ -78,15 +78,6 @@ const STEPS: { title: string; detail: string; ms: number; subs?: string[]; bar?:
 ];
 const STEP_STARTS = STEPS.map((_, i) => STEPS.slice(0, i).reduce((n, s) => n + s.ms, 0));
 const BUILD_MS = STEPS.reduce((n, s) => n + s.ms, 0);
-/** The loader's lines, one sentence at a time, in P22 under the logo; each holds for a share of the build as long as its text. */
-const LOADER_MESSAGES = [
-  "Personal agents are already learning about thousands of clinics.",
-  "We don\u2019t want Canadian clinics to be left out.",
-  "Patients will be searching for clinics through Muse and Instinct in 2027.",
-  "We built Doe to bring you more customers and save time on intake.",
-];
-const MESSAGE_CHARS = LOADER_MESSAGES.reduce((n, m) => n + m.length, 0);
-const MESSAGE_ENDS = LOADER_MESSAGES.map((_, i) => (LOADER_MESSAGES.slice(0, i + 1).reduce((n, m) => n + m.length, 0) / MESSAGE_CHARS) * BUILD_MS);
 /** The read pills leave this long before the build ends, so Ready shows on its own. */
 const CHIPS_OFF_MS = 1500;
 /** How long "Ready" holds before the page opens. */
@@ -248,7 +239,20 @@ export function IndexConvertPage() {
 
   return (
     // The page mounts once the loader has faded, so the two never show through each other.
-    <Frame scrollRef={scrollRef} right={phase === "done" ? <ViewSwitch view={view} onChange={switchView} /> : null} loader={loader} mark={phase === "done" || phase === "intro"} centerMark={phase === "intro"} edgeFade={phase === "intro"}>
+    <Frame
+      scrollRef={scrollRef}
+      right={phase === "done" ? <ViewSwitch view={view} onChange={switchView} /> : null}
+      loader={loader}
+      mark={phase === "done"}
+      lead={
+        phase === "intro" ? (
+          <p className="max-w-[40ch] text-left text-[14px] leading-[19px] md:text-[16px] md:leading-[22px] font-[600] [text-wrap:balance]">
+            We can add your clinic to Doe&apos;s listings so clients can find you faster through Instinct or Muse.
+          </p>
+        ) : undefined
+      }
+      edgeFade={phase === "intro"}
+    >
       {phase === "intro" && <Intro onStart={() => {
         setElapsed(0);
         setPhase("loading");
@@ -273,6 +277,7 @@ function Frame({
   loader,
   mark = true,
   centerMark = false,
+  lead,
   edgeFade = false,
   children,
 }: {
@@ -281,6 +286,8 @@ function Frame({
   loader: ReactNode;
   mark?: boolean;
   centerMark?: boolean;
+  /** Words in the header's left, in place of the logo. */
+  lead?: ReactNode;
   /** Fades whatever scrolls past the top or bottom edge of the shell. */
   edgeFade?: boolean;
   children: ReactNode;
@@ -298,7 +305,7 @@ function Frame({
       <div className="relative h-full w-full overflow-clip rounded-[38px] md:rounded-[24px] bg-[#FFFCF1]">
         <div ref={scrollRef} className="absolute inset-0 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
           <header className={`sticky top-0 z-30 ${HEADER} bg-[#FFFCF1E6] backdrop-blur-[12px]`}>
-            {mark ? <DoeMark center={centerMark} /> : <span />}
+            {lead ?? (mark ? <DoeMark center={centerMark} /> : <span />)}
             {right}
           </header>
           {children}
@@ -395,8 +402,6 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
   const progress = built ? 1 : (stepIndex + stepFrac) / STEPS.length;
   const page = SOURCE_PAGES[pageIndex]!;
   const step = built ? null : STEPS[stepIndex]!;
-  const messageEnd = MESSAGE_ENDS.findIndex((end) => elapsed < end);
-  const messageIndex = messageEnd === -1 ? LOADER_MESSAGES.length - 1 : messageEnd;
   const desktop = viewport.w >= 768;
   /** Short screens show only the part in progress under the step, not the whole list. */
   const compact = viewport.h < (desktop ? 780 : 760);
@@ -431,13 +436,12 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
           </button>
         </div>
 
-        {/* Why Doe, one sentence at a time, left under the logo. */}
+        {/* One line while it runs, left under the logo. */}
         <div className="px-[18px] md:px-[32px] pt-[6px] md:pt-[10px]">
           <h1
-            key={messageIndex}
             className={`ic-rise ${DISPLAY} max-w-[16ch] md:max-w-[20ch] text-left text-[31px] leading-[36px] md:text-[44px] md:leading-[50px] tracking-[-0.02em] [text-wrap:balance]`}
           >
-            {LOADER_MESSAGES[messageIndex]}
+            Hang tight! We&apos;re finding the listing we built {CLINIC.name}.
           </h1>
         </div>
 
@@ -1067,7 +1071,7 @@ function Intro({ onStart }: { onStart: () => void }) {
               onClick={onStart}
               className="group mt-[20px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#2A1C12] transition-colors duration-150"
             >
-              See Your Agent-Readable Page
+              See The Page We Built You
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
                 <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
