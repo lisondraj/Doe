@@ -13,6 +13,7 @@ import { HalftoneDisc } from "@/components/doehealth-product/DoeHealthProductHal
 import { Check, DISPLAY } from "@/components/demo/DemoFrame";
 import { DemoSphere } from "@/components/demo/DemoSphere";
 import { Integrations } from "@/components/demo/DemoClinicIntegrations";
+import { AgentAvatar, CHANNEL_LONG, LiveSession, NOTICE_CSS, NoticeStack, useNotices } from "@/components/demo/DemoClinicLive";
 import { Card, CardTitle, Empty, PageTitle, Segmented, Switch, SyncDot, Tag } from "@/components/demo/DemoClinicUi";
 import { INTAKE_FIELDS, BUNDLES, CLINIC, SERVICES, money } from "@/lib/demo/demo-clinic";
 import { API_BASE, MCP_PATH } from "@/lib/demo/demo-docs";
@@ -154,9 +155,19 @@ function useClinicState() {
       setError("Can't reach the clinic's data. Retrying.");
     }
   }, []);
+  /** Polls every 1.5 s while an agent is live, so each step shows as it happens; every 3 s otherwise. */
+  const fast = useRef(false);
+  const tick = useRef(0);
+  useEffect(() => {
+    fast.current = Boolean(state?.sessions.some((x) => x.live));
+  }, [state]);
   useEffect(() => {
     void load();
-    const id = window.setInterval(() => document.visibilityState === "visible" && void load(), POLL_MS);
+    const id = window.setInterval(() => {
+      tick.current += 1;
+      if (document.visibilityState !== "visible") return;
+      if (fast.current || tick.current % 2 === 0) void load();
+    }, POLL_MS / 2);
     const onVisible = () => document.visibilityState === "visible" && void load();
     document.addEventListener("visibilitychange", onVisible);
     return () => {
@@ -187,7 +198,6 @@ export function DemoClinicDashboard() {
   const [toast, setToast] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [railOpen, setRailOpen] = useState(false);
-  const seen = useRef<Set<string> | null>(null);
   const timer = useRef<number | null>(null);
   const scroller = useRef<HTMLDivElement>(null);
 
@@ -241,16 +251,10 @@ export function DemoClinicDashboard() {
     return () => window.removeEventListener("keydown", onKey);
   }, [go]);
 
-  /** Announces each agent that connects while the dashboard is open. */
-  useEffect(() => {
-    if (!state) return;
-    const ids = new Set(state.sessions.map((s) => s.id));
-    if (seen.current) {
-      const fresh = state.sessions.filter((s) => !seen.current!.has(s.id));
-      if (fresh[0]) flash(`Agent connected: ${fresh[0].agentName} via ${CHANNEL[fresh[0].channel]} for ${fresh[0].userName}`);
-    }
-    seen.current = ids;
-  }, [state, flash]);
+  /** Cards for an agent connecting, uploading or passing back forms, and requesting an appointment. */
+  const { notices, dismiss } = useNotices(state);
+  const [liveId, setLiveId] = useState<string | null>(null);
+  const [formsFocus, setFormsFocus] = useState<{ id: string; n: number } | null>(null);
 
   const act: Act = async (sessionId, action, done) => {
     const err = await post({ session_id: sessionId, ...action });
@@ -288,6 +292,7 @@ export function DemoClinicDashboard() {
         now={now}
         syncedAt={syncedAt}
         onOpen={openSession}
+        onWatch={setLiveId}
         onWaiting={() => {
           setFilter("you");
           setDetail(false);
@@ -311,11 +316,12 @@ export function DemoClinicDashboard() {
           setDetail(true);
         }}
         onAct={act}
+        onWatch={setLiveId}
       />
     ),
     schedule: <Schedule state={state} onOpen={openSession} />,
     services: <Services config={state?.config ?? null} onConfig={setConfig} />,
-    forms: <Forms sessions={sessions} />,
+    forms: <Forms sessions={sessions} focus={formsFocus} onAct={act} />,
     integrations: <Integrations state={state} flash={flash} />,
   };
 
@@ -424,10 +430,27 @@ export function DemoClinicDashboard() {
             )}
           </div>
         </div>
+        <style>{NOTICE_CSS}</style>
+        {liveId && sessions.some((x) => x.id === liveId) && state && (
+          <LiveSession s={sessions.find((x) => x.id === liveId)!} availability={state.availability} onClose={() => setLiveId(null)} onAct={act} />
+        )}
+        <NoticeStack
+          bottom={Boolean(liveId)}
+          notices={liveId ? notices.filter((n) => n.sessionId !== liveId || n.kind === "requested") : notices}
+          sessions={sessions}
+          onDismiss={dismiss}
+          onWatch={(id) => setLiveId(id)}
+          onForms={(id) => {
+            setLiveId(null);
+            setFormsFocus((f) => ({ id, n: (f?.n ?? 0) + 1 }));
+            go("forms");
+          }}
+          onAct={act}
+        />
         {toast && (
           <div
             role="status"
-            className="absolute left-1/2 top-[68px] md:top-[18px] z-40 -translate-x-1/2 w-max max-w-[92%] min-h-[40px] px-[18px] py-[10px] flex items-center rounded-[20px] bg-[#140C04] text-[#FFFCF1] text-[13px] leading-[18px] font-[600] shadow-[0_8px_24px_rgba(20,12,4,0.3)] doe-menu-in"
+            className="absolute left-1/2 top-[68px] md:top-auto md:bottom-[18px] z-[46] -translate-x-1/2 w-max max-w-[92%] min-h-[40px] px-[18px] py-[10px] flex items-center rounded-[20px] bg-[#140C04] text-[#FFFCF1] text-[13px] leading-[18px] font-[600] shadow-[0_8px_24px_rgba(20,12,4,0.3)] doe-menu-in"
           >
             {toast}
           </div>
@@ -582,6 +605,7 @@ function Overview({
   now,
   syncedAt,
   onOpen,
+  onWatch,
   onWaiting,
   flash,
 }: {
@@ -589,6 +613,7 @@ function Overview({
   now: number;
   syncedAt: number | null;
   onOpen: (id: string) => void;
+  onWatch: (id: string) => void;
   onWaiting: () => void;
   flash: (t: string) => void;
 }) {
@@ -644,7 +669,9 @@ function Overview({
           className="relative w-full mb-[10px] flex items-center gap-[14px] p-[14px] md:p-[16px_20px] rounded-[24px] bg-[#140C04] text-[#FFFCF1] text-left overflow-hidden hover:bg-[#21160D] transition-colors duration-150"
         >
           <HalftoneDisc size={150} step={7} color="#E8A585" opacity={0.28} className="absolute right-[-36px] top-[-50px]" />
-          <HalftoneDisc size={40} step={4.4} maxDot={1.9} color={latest.live ? "#E8A585" : "#C2A987"} />
+          <span className="relative">
+            <AgentAvatar name={latest.agentName} size={40} />
+          </span>
           <span className="relative grow min-w-0">
             <span className="flex items-center gap-[8px] min-w-0">
               <ChannelChip channel={latest.channel} invert />
@@ -656,7 +683,24 @@ function Overview({
               {ago(latest.createdAt, now)} · {latest.status} · <span className="font-mono">{latest.id}</span>
             </span>
           </span>
-          <span className="relative shrink-0 h-[34px] px-[14px] hidden sm:flex items-center rounded-full bg-[#FFFCF11A] text-[13px] font-[500]">Open</span>
+          <span
+            role="button"
+            tabIndex={0}
+            onClick={(e) => {
+              e.stopPropagation();
+              onWatch(latest.id);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.stopPropagation();
+                onWatch(latest.id);
+              }
+            }}
+            className="relative shrink-0 h-[34px] px-[14px] flex items-center gap-[6px] rounded-full bg-[#FFFCF1] text-[#140C04] text-[13px] font-[600]"
+          >
+            {latest.live && <span className="w-[6px] h-[6px] rounded-full bg-[#C9704B]" />}
+            {latest.live ? "Watch Live" : "Replay"}
+          </span>
         </button>
       ) : (
         <div className="mb-[10px]">
@@ -671,9 +715,10 @@ function Overview({
           <span className="mt-auto pt-[10px] flex flex-col gap-[8px]">
             {live.length === 0 && <span className="text-[13.5px] text-[#2819109E]">No agent is connected right now.</span>}
             {live.slice(0, 3).map((s) => (
-              <button key={s.id} type="button" onClick={() => onOpen(s.id)} className="flex items-center gap-[10px] min-w-0 text-left">
-                <span className="relative w-[28px] h-[28px] shrink-0 rounded-full bg-[#F7DCCB]">
-                  <span className="absolute -right-[1px] -bottom-[1px] w-[10px] h-[10px] rounded-full border-[2px] border-solid border-[#FAF6EC] bg-[#6E9A5B]" />
+              <button key={s.id} type="button" onClick={() => onWatch(s.id)} className="flex items-center gap-[10px] min-w-0 text-left">
+                <span className="relative shrink-0">
+                  <AgentAvatar name={s.agentName} size={28} />
+                  <span className="absolute -right-[2px] -bottom-[2px] w-[10px] h-[10px] rounded-full border-[2px] border-solid border-[#FAF6EC] bg-[#6E9A5B]" />
                 </span>
                 <span className="truncate text-[14px] leading-[18px] font-[600] text-[#281910]">{s.agentName}</span>
                 <span className="truncate text-[12.5px] leading-[17px] text-[#2819109E]">for {s.userName}</span>
@@ -837,6 +882,7 @@ function Inbox({
   onBack,
   onOpen,
   onAct,
+  onWatch,
 }: {
   sessions: Session[];
   open: Session | null;
@@ -848,6 +894,7 @@ function Inbox({
   onBack: () => void;
   onOpen: (id: string) => void;
   onAct: Act;
+  onWatch: (id: string) => void;
 }) {
   const [query, setQuery] = useState("");
   const q = query.trim().toLowerCase();
@@ -904,8 +951,9 @@ function Inbox({
                     className={`flex flex-col gap-[6px] p-[8px] rounded-[20px] bg-[#F4EEDF] text-left outline outline-[1.5px] -outline-offset-[1.5px] transition-[outline-color] duration-150 ${selected ? "lg:outline-[#140C04] outline-transparent" : "outline-transparent hover:outline-[#28191026]"}`}
                   >
                     <span className="flex items-center gap-[10px] min-w-0 h-[34px] px-[6px]">
-                      <span className="relative w-[28px] h-[28px] shrink-0 rounded-full bg-[#F7DCCB]">
-                        {x.live && <span className="absolute -right-[1px] -bottom-[1px] w-[10px] h-[10px] rounded-full border-[2px] border-solid border-[#F4EEDF] bg-[#6E9A5B]" />}
+                      <span className="relative shrink-0">
+                        <AgentAvatar name={x.agentName} size={28} />
+                        {x.live && <span className="absolute -right-[2px] -bottom-[2px] w-[10px] h-[10px] rounded-full border-[2px] border-solid border-[#F4EEDF] bg-[#6E9A5B]" />}
                       </span>
                       <span className="truncate text-[14px] leading-[18px] font-[600] text-[#281910]">{x.userName}</span>
                       <span className="truncate text-[12px] leading-[16px] text-[#2819109E]">{x.live ? "Live" : ago(x.updatedAt, now)}</span>
@@ -929,7 +977,7 @@ function Inbox({
           {open && (
             <div className={`min-w-0 flex-col ${detail ? "flex" : "hidden lg:flex"}`}>
               <BackButton onClick={onBack} label="Inbox" />
-              <SessionDetail key={open.id} s={open} config={config} now={now} onAct={onAct} />
+              <SessionDetail key={open.id} s={open} config={config} now={now} onAct={onAct} onWatch={() => onWatch(open.id)} />
             </div>
           )}
         </div>
@@ -955,7 +1003,7 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
   );
 }
 
-function SessionDetail({ s, config, now, onAct }: { s: Session; config: DemoConfig | null; now: number; onAct: Act }) {
+function SessionDetail({ s, config, now, onAct, onWatch }: { s: Session; config: DemoConfig | null; now: number; onAct: Act; onWatch: () => void }) {
   const [thread, setThread] = useState<DemoThreadId>(s.status === "Negotiating" ? "negotiate" : "concierge");
   const [reply, setReply] = useState("");
   const [offer, setOffer] = useState("");
@@ -994,14 +1042,25 @@ function SessionDetail({ s, config, now, onAct }: { s: Session; config: DemoConf
     <div className="flex flex-col gap-[10px] min-w-0">
       <div className="relative overflow-hidden flex flex-col gap-[12px] p-[16px] md:p-[20px_22px] rounded-[24px] md:rounded-[28px] bg-[#FAF6EC]">
         <div className="flex items-start gap-[12px]">
-          <HalftoneDisc size={44} step={4.4} maxDot={2} color={s.live ? "#E8A585" : "#C2A987"} />
+          <AgentAvatar name={s.agentName} size={44} />
           <div className="grow min-w-0">
             <div className={`${DISPLAY} text-[24px] leading-[28px] md:text-[28px] md:leading-[32px] tracking-[-0.02em] truncate`}>{s.userName}</div>
             <div className="mt-[2px] text-[13px] leading-[18px] text-[#2819109E] truncate">
-              {s.agentName} via {CHANNEL[s.channel]} · {s.live ? "live" : `seen ${ago(s.lastSeenAt, now)}`}
+              {s.agentName} via {CHANNEL_LONG[s.channel]} · {s.live ? "live" : `seen ${ago(s.lastSeenAt, now)}`}
             </div>
+            {(s.userLocation || s.userPhone || s.forms.intake.phone) && (
+              <div className="mt-[2px] text-[13px] leading-[18px] text-[#281910CC] truncate">
+                {[s.userLocation, s.userPhone || s.forms.intake.phone].filter(Boolean).join(" · ")}
+              </div>
+            )}
           </div>
-          <StatusPill status={s.status} />
+          <span className="flex flex-col items-end gap-[6px] shrink-0">
+            <StatusPill status={s.status} />
+            <button type="button" onClick={onWatch} className="h-[30px] px-[12px] flex items-center gap-[6px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[12.5px] font-[600]">
+              {s.live && <span className="w-[6px] h-[6px] rounded-full bg-[#E8A585] doe-ripple" />}
+              {s.live ? "Watch Live" : "Replay"}
+            </button>
+          </span>
         </div>
         {s.request && <p className="px-[14px] py-[10px] rounded-[14px] bg-[#FFFCF1CC] text-[13.5px] leading-[19px] text-[#281910]">“{s.request}”</p>}
         <div className="flex flex-wrap gap-[6px]">
@@ -1180,6 +1239,8 @@ function SessionDetail({ s, config, now, onAct }: { s: Session; config: DemoConf
           </form>
         </div>
       </div>
+
+      <UploadsPanel s={s} onAct={onAct} />
 
       <details className="group rounded-[24px] md:rounded-[28px] bg-[#FAF6EC] p-[14px_16px] md:p-[16px_22px]" open>
         <summary className="flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden">
@@ -1422,10 +1483,16 @@ function Services({ config, onConfig }: { config: DemoConfig | null; onConfig: (
 
 /* ——— Forms ——— */
 
-function Forms({ sessions }: { sessions: Session[] }) {
-  const withForms = sessions.filter((s) => s.forms.status === "sent" || Object.keys(s.forms.assessments).length > 0 || s.forms.signedBy);
-  const [openId, setOpenId] = useState<string | null>(null);
-  const [detail, setDetail] = useState(false);
+function Forms({ sessions, focus, onAct }: { sessions: Session[]; focus: { id: string; n: number } | null; onAct: Act }) {
+  const withForms = sessions.filter((s) => s.forms.status === "sent" || Object.keys(s.forms.assessments).length > 0 || s.forms.signedBy || (s.forms.uploads?.length ?? 0) > 0);
+  const [openId, setOpenId] = useState<string | null>(focus?.id ?? null);
+  const [detail, setDetail] = useState(Boolean(focus));
+  /** Opened from a "Forms uploaded" notification: jump to that session. */
+  useEffect(() => {
+    if (!focus) return;
+    setOpenId(focus.id);
+    setDetail(true);
+  }, [focus]);
   const f = withForms.find((s) => s.id === openId) ?? withForms[0];
   const returned = withForms.filter((s) => s.forms.status === "sent").length;
   return (
@@ -1454,7 +1521,7 @@ function Forms({ sessions }: { sessions: Session[] }) {
                     <span className="grow min-w-0">
                       <span className="block truncate text-[14px] font-[600]">{x.userName}</span>
                       <span className="block truncate text-[12.5px] text-[#2819109E]">
-                        {done} of {x.scores.length} assessments · {x.agentName}
+                        {done} of {x.scores.length} assessments{x.forms.uploads?.length ? ` · ${x.forms.uploads.length} upload${x.forms.uploads.length === 1 ? "" : "s"}` : ""} · {x.agentName}
                       </span>
                     </span>
                     <Tag tone={x.forms.status === "sent" ? "sage" : undefined}>{x.forms.status === "sent" ? "Returned" : "In Progress"}</Tag>
@@ -1497,9 +1564,109 @@ function Forms({ sessions }: { sessions: Session[] }) {
                 <span className="text-[13.5px]">{f.forms.signedBy ? `Consent signed by ${f.forms.signedBy} · PHI provided via Doe` : "Awaiting Signature"}</span>
               </div>
             </div>
+            <div className="mt-[10px]">
+              <UploadsPanel s={f} onAct={onAct} />
+            </div>
           </div>
         </div>
       )}
     </>
   );
+}
+
+/* ——— Uploads ——— */
+
+type UploadView = NonNullable<Session["forms"]["uploads"]>[number] & { hasFile?: boolean; preview?: string };
+
+/** Files and written forms passed between the agent and the clinic, and a way to send the agent a form. */
+function UploadsPanel({ s, onAct }: { s: Session; onAct: Act }) {
+  const uploads = (s.forms.uploads ?? []) as UploadView[];
+  const [open, setOpen] = useState<string | null>(null);
+  const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
+  const [composing, setComposing] = useState(false);
+  const url = (u: UploadView, download = false) => `/api/demo/clinic/upload?session_id=${encodeURIComponent(s.id)}&upload_id=${encodeURIComponent(u.id)}${download ? "&download=1" : ""}`;
+  return (
+    <div className="rounded-[24px] md:rounded-[28px] bg-[#FAF6EC] p-[14px_16px] md:p-[16px_22px]">
+      <CardTitle
+        title="Uploads"
+        note={uploads.length ? `${uploads.length} passed back and forth` : "Forms and files from the agent show here"}
+        right={
+          <button type="button" onClick={() => setComposing((c) => !c)} className="h-[32px] px-[12px] rounded-full bg-[#28191014] hover:bg-[#2819101F] text-[12.5px] font-[600]">
+            {composing ? "Cancel" : "Send a Form"}
+          </button>
+        }
+      />
+      <div className="flex flex-col gap-[6px]">
+        {uploads.map((u) => (
+          <div key={u.id} className="flex flex-col gap-[6px] p-[10px_12px] rounded-[16px] bg-[#FFFCF1CC]">
+            <div className="flex items-center gap-[10px]">
+              <span className={`w-[34px] h-[34px] shrink-0 flex items-center justify-center rounded-[10px] ${u.by === "agent" ? "bg-[#E3E9D9] text-[#2F3B2A]" : "bg-[#FCCFB8] text-[#7A3E26]"}`}>
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 3.5h7l4.5 4.5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13.5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                  <path d="M14 3.5V8h4.5M8.5 13h7M8.5 16.5h5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                </svg>
+              </span>
+              <span className="grow min-w-0">
+                <span className="block truncate text-[14px] font-[600]">{u.title}</span>
+                <span className="block truncate text-[12px] text-[#2819109E]">
+                  {u.by === "agent" ? `Uploaded by ${s.agentName}` : "Sent by the clinic"} · {u.fileName} · {Math.max(1, Math.round(u.size / 1024))} KB · {clock(u.at)}
+                </span>
+              </span>
+              {u.preview !== undefined || u.text ? (
+                <button type="button" onClick={() => setOpen(open === u.id ? null : u.id)} className="shrink-0 h-[32px] px-[12px] rounded-full bg-[#F4EEDF] text-[12.5px] font-[600]">
+                  {open === u.id ? "Hide" : "Read"}
+                </button>
+              ) : (
+                <a href={url(u)} target="_blank" rel="noreferrer" className="shrink-0 h-[32px] px-[12px] flex items-center rounded-full bg-[#F4EEDF] text-[12.5px] font-[600]">
+                  Open
+                </a>
+              )}
+              <a href={url(u, true)} aria-label={`Download ${u.title}`} className="shrink-0 w-[32px] h-[32px] flex items-center justify-center rounded-full bg-[#F4EEDF]">
+                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+            </div>
+            {open === u.id && <UploadText url={url(u)} />}
+          </div>
+        ))}
+        {!uploads.length && !composing && <Empty>No uploads yet. Agents can attach a migraine diary, referral or past prescription.</Empty>}
+        {composing && (
+          <form
+            className="flex flex-col gap-[6px] p-[10px] rounded-[16px] border-[1.5px] border-dashed border-[#28191033]"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!title.trim() || !text.trim()) return;
+              void onAct(s.id, { type: "send_form", title: title.trim(), text: text.trim() }, `Sent ${title.trim()} to ${s.agentName}`);
+              setTitle("");
+              setText("");
+              setComposing(false);
+            }}
+          >
+            <input value={title} onChange={(e) => setTitle(e.target.value.slice(0, 120))} placeholder="Title, e.g. Before your Botox visit" className="h-[42px] px-[14px] rounded-[12px] bg-[#FFFCF1] text-[16px] md:text-[14px] outline-none" />
+            <textarea value={text} onChange={(e) => setText(e.target.value.slice(0, 12000))} rows={4} placeholder="The form or instructions for the agent to go through with the patient" className="px-[14px] py-[10px] rounded-[12px] bg-[#FFFCF1] text-[16px] md:text-[14px] leading-[20px] outline-none resize-y" />
+            <button type="submit" disabled={!title.trim() || !text.trim()} className="self-end h-[38px] px-[16px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] disabled:opacity-40">
+              Send to {s.agentName}
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function UploadText({ url }: { url: string }) {
+  const [text, setText] = useState<string | null>(null);
+  useEffect(() => {
+    let live = true;
+    fetch(url, { cache: "no-store" })
+      .then((r) => r.text())
+      .then((t) => live && setText(t))
+      .catch(() => live && setText("Couldn't load this form."));
+    return () => {
+      live = false;
+    };
+  }, [url]);
+  return <pre className="max-h-[280px] overflow-auto whitespace-pre-wrap break-words p-[12px] rounded-[12px] bg-[#FFFCF1] font-mono text-[12px] leading-[18px] text-[#281910CC]">{text ?? "Loading…"}</pre>;
 }

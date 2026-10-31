@@ -20,6 +20,7 @@ import type {
   DemoSlotState,
   DemoSlots,
   DemoThreadId,
+  DemoUpload,
 } from "@/lib/demo/demo-types";
 
 export const HOLD_MS = 10 * 60 * 1000;
@@ -171,6 +172,8 @@ export type ConnectInput = {
   channel: DemoChannel;
   agentName?: unknown;
   userName?: unknown;
+  userLocation?: unknown;
+  userPhone?: unknown;
   request?: unknown;
   consent?: Partial<Record<keyof DemoConsent, unknown>>;
 };
@@ -189,6 +192,9 @@ export function createSession(input: ConnectInput, now: Date): DemoSession {
         : input.channel === "mcp"
           ? "MCP agent"
           : "API agent";
+  const opt = (v: unknown, max: number) => (typeof v === "string" && v.trim() ? v.trim().slice(0, max) : null);
+  const userLocation = opt(input.userLocation, 80);
+  const userPhone = opt(input.userPhone, 40);
   const request = typeof input.request === "string" && input.request.trim() ? input.request.trim().slice(0, 200) : "Botox for chronic migraine";
   const s: DemoSession = {
     id: newSessionId(),
@@ -199,13 +205,23 @@ export function createSession(input: ConnectInput, now: Date): DemoSession {
     channel: input.channel,
     agentName,
     userName,
+    userLocation,
+    userPhone,
     request,
     consent: { terms: true, phi: true, connected: c.connected === true, network: c.network === true },
     plan: { kind: "service", id: "botox" },
     hold: null,
     agreed: {},
     comms: Object.fromEntries(COMMS.map((x) => [x.id, x.on])),
-    forms: { intake: { name: userName === "Your user" ? "" : userName }, signedBy: null, signedAt: null, assessments: {}, status: "draft", sentAt: null },
+    forms: {
+      intake: { name: userName === "Your user" ? "" : userName, ...(userPhone ? { phone: userPhone } : {}) },
+      signedBy: null,
+      signedAt: null,
+      assessments: {},
+      status: "draft",
+      sentAt: null,
+      uploads: [],
+    },
     booking: { status: "none", slotId: null, total: null, label: null, phiConfirmed: false, requestedAt: null, decidedAt: null, note: null },
     threads: { concierge: [], negotiate: [], forms: [] },
     events: [],
@@ -214,7 +230,7 @@ export function createSession(input: ConnectInput, now: Date): DemoSession {
   post(s, "concierge", { from: "clinic", by: "clinic-agent", text: `Brooks clinic agent here. Ask about treatment, timing or the visit.`, at });
   post(s, "negotiate", { from: "clinic", by: "clinic-agent", text: "Private pay, CAD. Propose a price and I'll check with Dr. Brooks.", at });
   post(s, "forms", { from: "clinic", by: "clinic-agent", text: "Needed before the first visit: intake, ID-Migraine, MIDAS, HIT-6 and ICHD-3 criteria.", at });
-  event(s, "agent", input.channel, "connected", `connected via ${CHANNEL_NAME[input.channel]} for ${userName}`, at);
+  event(s, "agent", input.channel, "connected", `connected via ${CHANNEL_NAME[input.channel]} for ${userName}${userLocation ? ` in ${userLocation}` : ""}`, at);
   return s;
 }
 
@@ -230,7 +246,8 @@ export type AgentAction =
   | { type: "submit_forms" }
   | { type: "request_booking"; phi_confirmed: boolean }
   | { type: "set_comms"; id: string; on: boolean }
-  | { type: "set_consent"; id: "connected" | "network"; on: boolean };
+  | { type: "set_consent"; id: "connected" | "network"; on: boolean }
+  | { type: "upload_form"; title: string; file_name?: string; mime_type?: string; text?: string; content_base64?: string };
 
 export const AGENT_ACTIONS = [
   "select_plan",
@@ -245,6 +262,7 @@ export const AGENT_ACTIONS = [
   "request_booking",
   "set_comms",
   "set_consent",
+  "upload_form",
 ] as const;
 
 type Ctx = { config: DemoConfig; slots: DemoSlots; now: Date; channel: DemoChannel | "clinic" };
@@ -379,6 +397,8 @@ export function applyAgentAction(input: DemoSession, action: AgentAction, ctx: C
         next[k] = v;
       }
       s.forms = { ...s.forms, intake: next };
+      const filled = Object.keys(fields).map((k) => INTAKE_FIELDS.find((f) => f.id === k)!.label.toLowerCase());
+      if (filled.length) event(s, "agent", ch, "intake_updated", `Filled intake: ${filled.join(", ")}`, at);
       result = { intake: next };
       break;
     }
@@ -462,6 +482,14 @@ export function applyAgentAction(input: DemoSession, action: AgentAction, ctx: C
       result = { consent: s.consent };
       break;
     }
+    case "upload_form": {
+      const up = makeUpload(s, action, "agent", at);
+      post(s, "forms", { from: "agent", text: `Uploaded ${up.title} (${up.fileName}).`, at });
+      post(s, "forms", { from: "clinic", by: "clinic-agent", text: `Received ${up.title}. It's filed with ${s.userName}'s forms for Dr. Brooks.`, at });
+      event(s, "agent", ch, "form_uploaded", `Uploaded ${up.title} · ${up.fileName} · ${kb(up.size)}`, at);
+      result = { upload: { ...up, dataUrl: undefined, text: undefined } };
+      break;
+    }
     default:
       throw new DemoError(400, `Unknown action type. Use one of: ${AGENT_ACTIONS.join(", ")}.`);
   }
@@ -472,6 +500,7 @@ export function applyAgentAction(input: DemoSession, action: AgentAction, ctx: C
 }
 
 export type ClinicAction =
+  | { type: "send_form"; title: string; text: string }
   | { type: "send_message"; thread: DemoThreadId; text: string }
   | { type: "make_offer"; price: number }
   | { type: "confirm_booking" }
@@ -486,6 +515,12 @@ export function applyClinicAction(input: DemoSession, action: ClinicAction, ctx:
   let slotsChanged = false;
 
   switch (action?.type) {
+    case "send_form": {
+      const up = makeUpload(s, { title: action.title, text: action.text, file_name: undefined, mime_type: "text/plain" }, "clinic", at);
+      post(s, "forms", { from: "clinic", by: "staff", text: `Sent ${up.title}. Please review it with ${s.userName}.`, at });
+      event(s, "clinic", "clinic", "form_sent", `Staff sent ${up.title}`, at);
+      break;
+    }
     case "send_message": {
       if (!THREAD_IDS.includes(action.thread)) throw new DemoError(400, "thread must be concierge, negotiate or forms.");
       const text = str(action.text, 2000, "text");
@@ -570,3 +605,39 @@ export function analytics(sessions: DemoSession[], now: number): DemoAnalytics {
 }
 
 export const CLINIC_PROFILE = CLINIC;
+
+const MAX_UPLOADS = 10;
+const MAX_UPLOAD_TEXT = 12_000;
+/** Base64 characters, about 66 KB of file. */
+const MAX_UPLOAD_B64 = 88_000;
+const UPLOAD_TYPES = ["application/pdf", "image/png", "image/jpeg", "image/heic", "text/plain", "text/csv", "text/markdown"];
+const kb = (n: number) => (n < 1024 ? `${n} B` : `${Math.round(n / 102.4) / 10} KB`);
+
+/** Checks an uploaded form or file and adds it to the session's forms. */
+function makeUpload(s: DemoSession, a: { title?: unknown; file_name?: unknown; mime_type?: unknown; text?: unknown; content_base64?: unknown }, by: DemoUpload["by"], at: string): DemoUpload {
+  const uploads = s.forms.uploads ?? [];
+  if (uploads.length >= MAX_UPLOADS) throw new DemoError(409, `This session already has ${MAX_UPLOADS} uploads.`);
+  const title = str(a.title, 120, "title");
+  const hasText = typeof a.text === "string" && a.text.trim().length > 0;
+  const hasFile = typeof a.content_base64 === "string" && a.content_base64.length > 0;
+  if (hasText === hasFile) throw new DemoError(400, "Send either text (a written form) or content_base64 (a file), not both.");
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "form";
+  let up: DemoUpload;
+  if (hasText) {
+    const text = (a.text as string).trim();
+    if (text.length > MAX_UPLOAD_TEXT) throw new DemoError(400, `text is longer than ${MAX_UPLOAD_TEXT} characters.`);
+    checkMessage(text.slice(0, 2000));
+    up = { id: rid("u_"), by, title, fileName: `${slug}.txt`, mime: "text/plain", size: new TextEncoder().encode(text).length, at, text };
+  } else {
+    const b64 = (a.content_base64 as string).replace(/^data:[^,]*,/, "").replace(/\s+/g, "");
+    if (b64.length > MAX_UPLOAD_B64) throw new DemoError(413, "File is too large for the demo (about 60 KB max). Send a smaller file or the form as text.");
+    if (!/^[A-Za-z0-9+/]+=*$/.test(b64)) throw new DemoError(400, "content_base64 must be base64.");
+    const mime = typeof a.mime_type === "string" ? a.mime_type.toLowerCase().trim() : "";
+    if (!UPLOAD_TYPES.includes(mime)) throw new DemoError(400, `mime_type must be one of ${UPLOAD_TYPES.join(", ")}.`);
+    const ext = mime.split("/")[1]!.replace("jpeg", "jpg").replace("plain", "txt");
+    const fileName = typeof a.file_name === "string" && a.file_name.trim() ? a.file_name.trim().replace(/[^\w.\- ]+/g, "").slice(0, 80) : `${slug}.${ext}`;
+    up = { id: rid("u_"), by, title, fileName, mime, size: Math.floor((b64.length * 3) / 4) - (b64.endsWith("==") ? 2 : b64.endsWith("=") ? 1 : 0), at, dataUrl: `data:${mime};base64,${b64}` };
+  }
+  s.forms = { ...s.forms, uploads: [...uploads, up] };
+  return up;
+}

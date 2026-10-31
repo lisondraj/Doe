@@ -31,6 +31,23 @@ export type DemoEvent = {
   summary: string;
 };
 
+/** A file or written form passed between the agent and the clinic (a migraine diary, a referral, instructions). */
+export type DemoUpload = {
+  id: string;
+  /** Who sent it. */
+  by: "agent" | "clinic";
+  title: string;
+  fileName: string;
+  mime: string;
+  /** Bytes. */
+  size: number;
+  at: string;
+  /** Written forms, as plain text. */
+  text?: string;
+  /** Files, as a data: URL. Left out of the clinic's list view; fetched on demand. */
+  dataUrl?: string;
+};
+
 export type DemoBookingStatus = "none" | "requested" | "confirmed" | "declined";
 
 export type DemoSession = {
@@ -43,6 +60,10 @@ export type DemoSession = {
   channel: DemoChannel;
   agentName: string;
   userName: string;
+  /** Where the user is, as the agent gave it (e.g. Toronto, Ontario). */
+  userLocation?: string | null;
+  /** The user's phone, as the agent gave it. */
+  userPhone?: string | null;
   request: string;
   consent: DemoConsent;
   plan: DemoPlan;
@@ -57,6 +78,8 @@ export type DemoSession = {
     assessments: Record<string, Record<string, number>>;
     status: "draft" | "sent";
     sentAt: string | null;
+    /** Files and written forms passed back and forth. */
+    uploads?: DemoUpload[];
   };
   booking: {
     status: DemoBookingStatus;

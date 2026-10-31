@@ -16,6 +16,8 @@ export function POST(request: Request) {
       channel,
       agentName: b.agent_name,
       userName: b.user_name,
+      userLocation: b.user_location,
+      userPhone: b.user_phone,
       request: b.request,
       consent: (b.consent ?? {}) as Record<string, unknown>,
     }, ip);

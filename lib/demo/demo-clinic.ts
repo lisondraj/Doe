@@ -95,6 +95,37 @@ export type DemoDay = { id: string; weekday: string; date: string; slots: DemoSl
 
 export const PROVIDERS = ["Dr. Sarah Brooks", "Dr. Lin Chen"] as const;
 
+/** What an agent can tell its user about each provider before booking. The clinic and its doctors are fictional. */
+export const PROVIDER_PROFILES = [
+  {
+    name: "Dr. Sarah Brooks",
+    role: "Neurologist, headache medicine · clinic founder",
+    experience: "15 years in practice; more than 4,000 Botox sessions for chronic migraine since 2012",
+    training: [
+      "MD, University of Toronto",
+      "Neurology residency, University of Toronto (FRCPC)",
+      "Headache medicine fellowship, Jefferson Headache Center, Philadelphia",
+      "Member, Canadian Headache Society and American Headache Society",
+    ],
+    languages: ["English", "French"],
+    rating: { score: 4.9, count: 312, source: "Verified patient reviews via Doe" },
+    reviews: [
+      "Went from 20 headache days a month to 6 after my second round. She explains everything.",
+      "Quick, precise injections and she actually reads your diary before the visit.",
+      "Booked through my agent, was seen on time, and the receipt went straight to my insurer.",
+    ],
+  },
+  {
+    name: "Dr. Lin Chen",
+    role: "Neurologist, headache medicine",
+    experience: "8 years in practice; leads the clinic's nerve block program",
+    training: ["MD, McMaster University", "Neurology residency, Western University (FRCPC)", "Headache fellowship, University of Calgary"],
+    languages: ["English", "Mandarin"],
+    rating: { score: 4.8, count: 147, source: "Verified patient reviews via Doe" },
+    reviews: ["Thorough and kind. The occipital block helped within a day.", "Clear plan and follow-up messages through my agent."],
+  },
+] as const;
+
 export const DAYS: DemoDay[] = [
   { id: "mon", weekday: "Mon", date: "Nov 2", slots: [s("mon-1", "9:00 am", 0), s("mon-2", "11:30 am", 1), s("mon-3", "3:15 pm", 0)] },
   { id: "tue", weekday: "Tue", date: "Nov 3", slots: [s("tue-1", "8:30 am", 1), s("tue-2", "1:00 pm", 0)] },
@@ -112,6 +143,7 @@ export const PAYMENT_NOTES = [
   { k: "Billing", v: "Patient pays clinic" },
   { k: "Private plans", v: "Itemized receipt (DIN, units)" },
   { k: "Reimbursed by", v: "Manulife, Sun Life, Canada Life, Green Shield" },
+  { k: "Harbour Mutual", v: "Partial: 60% of Botox for chronic migraine, up to $2,000 a year" },
   { k: "Pay with", v: "Card via Doe, e-Transfer, in clinic" },
   { k: "Payment plans", v: "Bundles only" },
 ];
@@ -121,7 +153,7 @@ export const COVERAGE = [
   { k: "OHIP", v: "Not covered", note: "Botox for migraine is private pay in Ontario." },
   { k: "Private plans", v: "Usually reimbursed", note: "The clinic gives an itemized receipt with the DIN and units to submit." },
 ] as const;
-export const INSURERS = ["Manulife", "Sun Life", "Canada Life", "Green Shield"] as const;
+export const INSURERS = ["Manulife", "Sun Life", "Canada Life", "Green Shield", "Harbour Mutual (partial)"] as const;
 export const PAY_METHODS = [
   { k: "Card via Doe", note: "Charged after the visit" },
   { k: "Interac e-Transfer", note: "Before the visit" },
@@ -145,6 +177,15 @@ export type IntakeField = {
   source: IntakeSource;
   section: "About" | "Headache history" | "Safety" | "Consent";
 };
+
+/** Plans the clinic's receipts are submitted to, and how much each typically covers. Harbour Mutual is fictional. */
+export const PLAN_COVERAGE = [
+  { plan: "Manulife", covers: "Usually 80 to 100% with a drug card", direct: false },
+  { plan: "Sun Life", covers: "Usually 80 to 100% with a drug card", direct: false },
+  { plan: "Canada Life", covers: "Usually 80% after deductible", direct: false },
+  { plan: "Green Shield", covers: "Usually 80 to 100%", direct: false },
+  { plan: "Harbour Mutual", covers: "Partial: 60% of Botox for chronic migraine, up to $2,000 a year; submit the itemized receipt", direct: false },
+] as const;
 
 export const INTAKE_FIELDS: IntakeField[] = [
   { id: "name", label: "Full name", value: "Alex Rivera", source: "profile", section: "About" },

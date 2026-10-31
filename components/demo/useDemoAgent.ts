@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { AgentAction } from "@/lib/demo/demo-engine";
 import type { AgentPayload } from "@/lib/demo/demo-service";
+import type { AgentAbout } from "@/components/demo/DemoGate";
 import type { DemoConsent } from "@/lib/demo/demo-types";
 
 const TOKEN_KEY = "doe-demo-token";
@@ -53,11 +54,20 @@ export function useDemoAgent() {
     return () => window.clearInterval(id);
   }, [token, load]);
 
-  const connect = useCallback(async (consent: DemoConsent, userName: string, request: string, check: { website: string; elapsedMs: number }): Promise<Result> => {
+  const connect = useCallback(async (consent: DemoConsent, userName: string, request: string, check: { website: string; elapsedMs: number }, about?: AgentAbout): Promise<Result> => {
     const res = await fetch("/api/demo/v1/connect", {
       method: "POST",
       headers: HEADERS,
-      body: JSON.stringify({ agent_name: "Browser agent", user_name: userName, request: request || undefined, consent, website: check.website, elapsed_ms: check.elapsedMs }),
+      body: JSON.stringify({
+        agent_name: about?.agentName.trim() || "Browser agent",
+        user_name: userName,
+        user_location: about?.location.trim() || undefined,
+        user_phone: about?.phone.trim() || undefined,
+        request: request || undefined,
+        consent,
+        website: check.website,
+        elapsed_ms: check.elapsedMs,
+      }),
     });
     const data = await res.json();
     if (!res.ok) return { ok: false, error: data.error ?? "Couldn't connect." };

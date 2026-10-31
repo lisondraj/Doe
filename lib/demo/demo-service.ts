@@ -3,7 +3,7 @@
  * clinic dashboard routes (/api/demo/clinic/*). Agents authenticate with the session token `connect` returns.
  */
 import { ASSESSMENTS } from "@/lib/demo/demo-assessments";
-import { BUNDLES, CLINIC, COMMS, INTAKE_FIELDS, OFFERS, PAYMENT_NOTES, PROVIDERS, SERVICES } from "@/lib/demo/demo-clinic";
+import { BUNDLES, CLINIC, COMMS, INTAKE_FIELDS, OFFERS, PAYMENT_NOTES, PLAN_COVERAGE, PROVIDERS, PROVIDER_PROFILES, SERVICES } from "@/lib/demo/demo-clinic";
 import {
   type AgentAction,
   type ClinicAction,
@@ -36,7 +36,19 @@ import {
   writeSession,
   writeSlots,
 } from "@/lib/demo/demo-store";
-import type { DemoChannel, DemoConfig, DemoSession, DemoSlots } from "@/lib/demo/demo-types";
+import type { DemoChannel, DemoConfig, DemoSession, DemoSessionView, DemoSlots, DemoUpload } from "@/lib/demo/demo-types";
+
+/**
+ * Uploads without their file bodies, so polling stays light. Written forms keep a preview; `keepText` keeps the full
+ * text (the agent needs to read forms the clinic sends it).
+ */
+const lightUploads = (list: DemoUpload[] | undefined, keepText: (u: DemoUpload) => boolean) =>
+  (list ?? []).map(({ dataUrl, text, ...u }) => ({ ...u, hasFile: Boolean(dataUrl), ...(text ? (keepText(u) ? { text } : { preview: text.slice(0, 280) }) : {}) }));
+
+const lightView = (s: DemoSession, keepText: (u: DemoUpload) => boolean): DemoSessionView => {
+  const v = viewOf(s);
+  return { ...v, forms: { ...v.forms, uploads: lightUploads(v.forms.uploads, keepText) as DemoUpload[] } };
+};
 
 export { DemoError };
 
@@ -57,7 +69,7 @@ async function authenticate(token: unknown): Promise<DemoSession> {
 function agentPayload(s: DemoSession, config: DemoConfig, slots: DemoSlots, now: number) {
   const n = normalize(s, now);
   return {
-    session: viewOf(n),
+    session: lightView(n, (u) => u.by === "clinic"),
     status: statusOf(n, now),
     pricing: pricing(n),
     bookable: config.bookable[n.plan.id] !== false,
@@ -121,7 +133,7 @@ export async function clinicState() {
     sessions: sessions.map((raw) => {
       const s = normalize(raw, now);
       return {
-        ...viewOf(s),
+        ...lightView(s, () => false),
         status: statusOf(s, now),
         live: now - Date.parse(s.lastSeenAt) < LIVE_MS,
         pricing: pricing(s),
@@ -134,6 +146,15 @@ export async function clinicState() {
 }
 
 export type ClinicStatePayload = Awaited<ReturnType<typeof clinicState>>;
+
+/** One upload in full, for the clinic to open or download. */
+export async function clinicUpload(sessionId: unknown, uploadId: unknown) {
+  if (typeof sessionId !== "string" || typeof uploadId !== "string") throw new DemoError(400, "session_id and upload_id are required.");
+  const s = await readSession(sessionId);
+  const up = s?.forms.uploads?.find((u) => u.id === uploadId);
+  if (!up) throw new DemoError(404, "No such upload.");
+  return up;
+}
 
 export async function clinicAct(sessionId: unknown, action: ClinicAction) {
   if (typeof sessionId !== "string") throw new DemoError(400, "session_id is required.");
@@ -172,6 +193,8 @@ export async function catalog() {
     availability: availability(slots, Date.now()),
     clinic: CLINIC,
     providers: PROVIDERS,
+    provider_profiles: PROVIDER_PROFILES,
+    insurance_plans: PLAN_COVERAGE,
     payment: "Private pay only, CAD. Agent bookings get 5% off unless a price was negotiated.",
     services: SERVICES.map((s) => ({ ...s, kind: "service", bookable: config.bookable[s.id] !== false })),
     bundles: BUNDLES.map((b) => ({ ...b, kind: "bundle", bookable: config.bookable[b.id] !== false })),

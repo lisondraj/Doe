@@ -18,8 +18,16 @@ const ANSWERS: { match: RegExp; reply: string }[] = [
     reply: "The most common side effects are neck pain or stiffness and a brief headache where the injections went in. A drooping eyelid is uncommon and wears off.",
   },
   {
+    match: /harbou?r/i,
+    reply: "Harbour Mutual reimburses part of it: 60% of Botox for chronic migraine, up to $2,000 a year. You pay the clinic, and we give you an itemized receipt (drug, DIN, units) to submit.",
+  },
+  {
     match: /insur|ohip|cover|receipt|reimburs|plan/i,
-    reply: "Private pay only. Receipts list the drug, DIN and units, and many private plans reimburse them. We don't bill plans directly.",
+    reply: "Private pay only. Receipts list the drug, DIN and units, and many private plans reimburse them, including Harbour Mutual (partially). We don't bill plans directly.",
+  },
+  {
+    match: /brooks|experience|training|trained|qualif|review|rating|fellowship/i,
+    reply: "Dr. Sarah Brooks is a neurologist (FRCPC) trained at the University of Toronto, with a headache medicine fellowship at the Jefferson Headache Center. 15 years in practice and more than 4,000 Botox sessions for migraine; rated 4.9 from 312 verified reviews.",
   },
   {
     match: /cancel|resched|change/i,

@@ -48,6 +48,7 @@ export function DemoForms({
   onAnswer,
   onSign,
   onSubmit,
+  onUpload,
 }: {
   forms: DemoSession["forms"];
   userName: string;
@@ -55,6 +56,8 @@ export function DemoForms({
   onAnswer: (assessmentId: string, answers: Record<string, number>) => Promise<unknown>;
   onSign: () => Promise<unknown>;
   onSubmit: () => Promise<unknown>;
+  /** Uploads a written form or a file (a migraine diary, a referral) to the clinic. */
+  onUpload?: (u: { title: string; text?: string; file_name?: string; mime_type?: string; content_base64?: string }) => Promise<unknown>;
 }) {
   const [tab, setTab] = useState("intake");
   const [draft, setDraft] = useState<Record<string, string>>(forms.intake);
@@ -251,7 +254,94 @@ export function DemoForms({
           </span>
         </div>
       </div>
+      {onUpload && <Uploads uploads={forms.uploads ?? []} onUpload={onUpload} />}
     </div>
+  );
+}
+
+const ACCEPT = "application/pdf,image/png,image/jpeg,image/heic,text/plain,text/csv,text/markdown";
+/** The demo stores files inline, so they stay small. */
+const MAX_FILE = 64_000;
+
+/** Files and written forms passed back and forth: what the clinic sent, what the agent uploaded, and a spot to add more. */
+function Uploads({ uploads, onUpload }: { uploads: NonNullable<DemoSession["forms"]["uploads"]>; onUpload: NonNullable<Parameters<typeof DemoForms>[0]["onUpload"]> }) {
+  const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const file = useRef<HTMLInputElement>(null);
+
+  const send = async (u: Parameters<typeof onUpload>[0]) => {
+    setBusy(true);
+    setError(null);
+    await onUpload(u);
+    setBusy(false);
+    setTitle("");
+    setText("");
+  };
+  const pick = (f: File | undefined) => {
+    if (!f) return;
+    if (f.size > MAX_FILE) return setError("That file is over 60 KB. Send a smaller file, or write the form as text.");
+    const r = new FileReader();
+    r.onload = () => void send({ title: title.trim() || f.name.replace(/\.[^.]+$/, ""), file_name: f.name, mime_type: f.type || "application/pdf", content_base64: String(r.result) });
+    r.readAsDataURL(f);
+  };
+
+  return (
+    <section aria-label="Uploads" className="mt-[16px] p-[6px] rounded-[22px] bg-[#F4EEDF]">
+      <div className="flex items-baseline justify-between px-[12px] pt-[10px] pb-[8px]">
+        <span className="text-[14px] font-[700]">Uploads</span>
+        <span className="text-[12px] text-[#2819109E]">Migraine diary, referrals, past prescriptions</span>
+      </div>
+      {uploads.length > 0 && (
+        <div className="flex flex-col gap-[4px] mb-[6px]">
+          {uploads.map((u) => (
+            <div key={u.id} className="flex flex-col gap-[4px] p-[12px] rounded-[16px] bg-[#FFFCF1]">
+              <span className="flex items-center gap-[10px]">
+                <span className="grow min-w-0">
+                  <span className="block truncate text-[14px] font-[600]">{u.title}</span>
+                  <span className="block truncate text-[12px] text-[#2819109E]">
+                    {u.by === "clinic" ? "From the clinic" : "Uploaded by you"} · {u.fileName} · {Math.max(1, Math.round(u.size / 1024))} KB
+                  </span>
+                </span>
+                <span className={`shrink-0 h-[24px] px-[9px] flex items-center rounded-full text-[11.5px] font-[700] ${u.by === "clinic" ? "bg-[#FCCFB8]" : "bg-[#DCE5D0]"}`}>{u.by === "clinic" ? "Received" : "Sent"}</span>
+              </span>
+              {u.by === "clinic" && u.text && <p className="whitespace-pre-wrap text-[13px] leading-[19px] text-[#281910CC]">{u.text}</p>}
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="flex flex-col gap-[6px] p-[10px] rounded-[16px] border-[1.5px] border-dashed border-[#28191033]">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value.slice(0, 120))}
+          placeholder="Title, e.g. Migraine diary, last 30 days"
+          className="h-[42px] px-[12px] rounded-[10px] bg-[#FFFCF1] text-[16px] md:text-[14px] outline-none"
+        />
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value.slice(0, 12000))}
+          placeholder="Write or paste the form here, or attach a file"
+          rows={3}
+          className="px-[12px] py-[10px] rounded-[10px] bg-[#FFFCF1] text-[16px] md:text-[14px] leading-[20px] outline-none resize-y"
+        />
+        <input ref={file} type="file" accept={ACCEPT} className="hidden" onChange={(e) => pick(e.target.files?.[0])} />
+        <span className="flex flex-wrap gap-[6px]">
+          <button type="button" disabled={busy} onClick={() => file.current?.click()} className="h-[42px] px-[14px] rounded-[10px] border border-solid border-[#28191033] text-[13.5px] font-[600] disabled:opacity-50">
+            Attach File
+          </button>
+          <button
+            type="button"
+            disabled={busy || !title.trim() || !text.trim()}
+            onClick={() => void send({ title: title.trim(), text: text.trim() })}
+            className="h-[42px] px-[16px] rounded-[10px] bg-[#3A2516] text-[#FFFCF1] text-[13.5px] font-[600] disabled:bg-[#28191033]"
+          >
+            {busy ? "Uploading…" : "Upload to Clinic"}
+          </button>
+        </span>
+        {error && <p className="text-[12.5px] font-[600] text-[#B4532F]">{error}</p>}
+      </div>
+    </section>
   );
 }
 

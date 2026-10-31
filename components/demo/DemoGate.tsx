@@ -48,15 +48,18 @@ const ITEMS: { id: keyof DemoConsent; required: boolean; body: ReactNode }[] = [
   },
 ];
 
+export type AgentAbout = { agentName: string; location: string; phone: string };
+
 /** The first screen an agent lands on, never shown to its user: the clinic, and what to confirm with the user before booking. */
 export function DemoGate({
   onProceed,
 }: {
-  onProceed: (consent: DemoConsent, userName: string, request: string, check: { website: string; elapsedMs: number }) => Promise<string | null>;
+  onProceed: (consent: DemoConsent, userName: string, request: string, check: { website: string; elapsedMs: number }, about: AgentAbout) => Promise<string | null>;
 }) {
   const [consent, setConsent] = useState<DemoConsent>({ terms: false, phi: false, connected: false, network: false });
   const [userName, setUserName] = useState("");
   const [request, setRequest] = useState("");
+  const [about, setAbout] = useState<AgentAbout>({ agentName: "", location: "", phone: "" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** Bot checks: a field people never see, and how long the form was open. */
@@ -109,6 +112,28 @@ export function DemoGate({
           />
           <span className="self-end text-[11px] text-[#28191066]">{request.length}/200</span>
         </label>
+        {/* Optional: who the agent is, and where to reach the user. The clinic sees these when the agent connects. */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-[4px] mb-[4px]">
+          {(
+            [
+              ["agentName", "Agent", "e.g. Instinct", "organization"],
+              ["location", "User's City", "e.g. Toronto, Ontario", "off"],
+              ["phone", "User's Phone", "Optional", "off"],
+            ] as const
+          ).map(([k, label, ph, ac]) => (
+            <label key={k} className="flex flex-col justify-center gap-[2px] min-h-[58px] px-[14px] py-[8px] rounded-[20px] bg-[#FFFCF1]">
+              <span className="text-[12px] font-[600] text-[#28191099]">{label}</span>
+              <input
+                value={about[k]}
+                onChange={(e) => setAbout((a) => ({ ...a, [k]: e.target.value.slice(0, k === "agentName" ? 80 : k === "phone" ? 40 : 80) }))}
+                placeholder={ph}
+                autoComplete={ac}
+                inputMode={k === "phone" ? "tel" : undefined}
+                className="w-full min-w-0 bg-transparent outline-none text-[16px] md:text-[14px] text-[#281910] placeholder:text-[#2819105C]"
+              />
+            </label>
+          ))}
+        </div>
         <div className="flex flex-col gap-[4px]">
           {ITEMS.map((item, i) => {
             const on = consent[item.id];
@@ -173,7 +198,7 @@ export function DemoGate({
         onClick={async () => {
           setBusy(true);
           setError(null);
-          const err = await onProceed(consent, userName.trim() || "Alex Rivera", request.trim(), { website, elapsedMs: Date.now() - openedAt.current });
+          const err = await onProceed(consent, userName.trim() || "Alex Rivera", request.trim(), { website, elapsedMs: Date.now() - openedAt.current }, about);
           if (err) {
             setError(err);
             setBusy(false);

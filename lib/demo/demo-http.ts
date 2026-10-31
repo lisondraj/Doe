@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 import { DemoError } from "@/lib/demo/demo-error";
 import type { DemoChannel } from "@/lib/demo/demo-types";
 
-const MAX_BODY = 32_000;
+/** Room for a small upload (a diary PDF or photo) alongside the action. */
+export const MAX_BODY = 96_000;
 
 export const CORS = {
   "Access-Control-Allow-Origin": "*",

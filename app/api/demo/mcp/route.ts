@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { FLOW, MCP_TOOLS } from "@/lib/demo/demo-docs";
 import { type AgentAction, DemoError } from "@/lib/demo/demo-engine";
 import { clientIp, rateLimit } from "@/lib/demo/demo-guard";
-import { CORS } from "@/lib/demo/demo-http";
+import { CORS, MAX_BODY } from "@/lib/demo/demo-http";
 import { agentAct, agentState, catalog, connect } from "@/lib/demo/demo-service";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +25,8 @@ async function callTool(name: string, args: Record<string, unknown>, ip: string)
         channel: "mcp",
         agentName: rest.agent_name,
         userName: rest.user_name,
+        userLocation: rest.user_location,
+        userPhone: rest.user_phone,
         request: rest.request,
         consent: { terms: rest.consent_terms, phi: rest.consent_phi, connected: rest.stay_connected, network: rest.join_network },
       }, ip);
@@ -90,7 +92,7 @@ export async function POST(request: Request) {
   } catch (error) {
     return NextResponse.json({ jsonrpc: "2.0", id: null, error: { code: -32000, message: error instanceof Error ? error.message : "Too many requests." } }, { status: 429, headers: CORS });
   }
-  if (Number(request.headers.get("content-length") ?? 0) > 32_000) {
+  if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY) {
     return NextResponse.json({ jsonrpc: "2.0", id: null, error: { code: -32600, message: "Request body is too large." } }, { status: 413, headers: CORS });
   }
   let body: unknown;

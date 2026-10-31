@@ -13,8 +13,9 @@ export const FLOW = [
   "Confirm with your user: Doe's Terms of Service and Privacy Policy, and that by booking through Doe they're voluntarily providing their PHI.",
   "connect, with both consents true. Keep the token it returns.",
   "Read the clinic (services, bundles, availability) and pick a plan.",
+  "Before you hold, tell your user about the provider (training, experience, reviews in clinic.provider_profiles) and ask if they want to book.",
   "hold_slot for 10 minutes; negotiate or ask questions in threads if you like.",
-  "Fill the intake, walk your user through each assessment one question at a time, record their signature, submit_forms.",
+  "Fill the intake, walk your user through each assessment one question at a time, record their signature, submit_forms. Upload anything that helps the doctor, like your user's migraine diary, with upload_form.",
   "request_booking with phi_confirmed: true, then poll the session until the clinic confirms.",
 ];
 
@@ -28,7 +29,7 @@ export function apiDocs(origin: string) {
     endpoints: {
       docs: `GET ${base}`,
       clinic: `GET ${base}/clinic`,
-      connect: `POST ${base}/connect  { agent_name, user_name, request, consent: { terms: true, phi: true, connected, network } }`,
+      connect: `POST ${base}/connect  { agent_name, user_name, user_location, user_phone, request, consent: { terms: true, phi: true, connected, network } }`,
       session: `GET ${base}/session`,
       actions: `POST ${base}/actions  { type, ...fields }`,
     },
@@ -45,6 +46,7 @@ export function apiDocs(origin: string) {
       request_booking: { phi_confirmed: true },
       set_comms: { id: COMMS.map((c) => c.id).join(" | "), on: true },
       set_consent: { id: "connected | network", on: true },
+      upload_form: { title: "Migraine diary", text: "Oct 2: 7/10, 9 h, nausea…  (or file_name, mime_type, content_base64 for a PDF or photo)" },
     } satisfies Record<AgentAction["type"], unknown>,
     mcp: { transport: "Streamable HTTP (JSON responses)", url: `${origin}${MCP_PATH}`, tools: MCP_TOOLS.map((t) => t.name) },
   };
@@ -68,6 +70,8 @@ export const MCP_TOOLS: { name: string; description: string; inputSchema: Record
       properties: {
         agent_name: { type: "string", description: "Your name, shown to the clinic." },
         user_name: { type: "string", description: "Your user's full name." },
+        user_location: { type: "string", description: "Where your user lives, e.g. Toronto, Ontario. Shown to the clinic." },
+        user_phone: { type: "string", description: "Your user's phone number, if they agree to share it. Prefills the intake." },
         request: { type: "string", description: "What your user wants, e.g. Botox for chronic migraine." },
         consent_terms: { type: "boolean", description: "User agreed to Doe's Terms of Service and Privacy Policy. Required: true." },
         consent_phi: { type: "boolean", description: "User confirmed they're voluntarily providing PHI by booking through Doe. Required: true." },
@@ -108,6 +112,21 @@ export const MCP_TOOLS: { name: string; description: string; inputSchema: Record
   },
   { name: "doe_record_signature", description: "Record that your user signed the consent to treatment.", inputSchema: obj({ signed_by: { type: "string" } }) },
   { name: "doe_submit_forms", description: "Pass the intake and assessments back to the clinic.", inputSchema: obj({}) },
+  {
+    name: "doe_upload_form",
+    description:
+      "Upload a form or file for the clinic: your user's migraine diary, a referral, a previous prescription. Send text for a written form, or file_name + mime_type + content_base64 for a PDF or photo (about 60 KB max). Ask your user before sending.",
+    inputSchema: obj(
+      {
+        title: { type: "string", description: "What it is, e.g. Migraine diary, last 30 days." },
+        text: { type: "string", description: "The form as plain text." },
+        file_name: { type: "string" },
+        mime_type: { type: "string", enum: ["application/pdf", "image/png", "image/jpeg", "image/heic", "text/plain", "text/csv", "text/markdown"] },
+        content_base64: { type: "string", description: "The file, base64-encoded." },
+      },
+      ["title"],
+    ),
+  },
   {
     name: "doe_request_booking",
     description: "Request the booking for the held slot. Confirm again with your user that by booking through Doe they're voluntarily providing their PHI.",

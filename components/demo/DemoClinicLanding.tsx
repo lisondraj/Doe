@@ -270,6 +270,7 @@ export function DemoClinicLanding({ state, act, onEnd }: { state: AgentPayload; 
             const r = await run({ type: "submit_forms" }, "Forms passed back");
             if (r.ok) setFormsOpen(false);
           }}
+          onUpload={(u) => run({ type: "upload_form", ...u }, `Uploaded ${u.title}`)}
         />
       </Sheet>
     </>
