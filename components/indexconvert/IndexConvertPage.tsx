@@ -1467,7 +1467,7 @@ function ClaimModal({
   const [handoff, setHandoff] = useState(false);
   const claimed = claim.claimed;
   /** Opened from an edit icon it says why; from a switch or Activate button it goes straight to the form. */
-  const heading = claimed ? "Confirm Your Email" : handoff ? "Send to Clinic Staff" : reason === "edit" ? "To make edits, claim your page!" : null;
+  const heading = claimed ? "Confirm Your Email" : handoff ? "Send to Clinic Staff" : reason === "edit" ? "To make edits, claim your page!" : "Claim Your Page to Activate";
   return (
     <div
       role="dialog"
