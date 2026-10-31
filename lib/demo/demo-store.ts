@@ -6,7 +6,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-import { createSupabaseAdmin } from "@/lib/supabase/admin";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { DEFAULT_CONFIG } from "@/lib/demo/demo-engine";
 import type { DemoConfig, DemoSession, DemoSlots, DemoVisit } from "@/lib/demo/demo-types";
 
@@ -19,20 +19,33 @@ const supabaseConfigured = () => {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && key && !key.startsWith("your-"));
 };
 
+/**
+ * The demo's own service-role client. Every request opts out of Next's fetch cache: the demo's state changes every
+ * second, and a cached download or list would show sessions that are gone (or miss ones that just arrived).
+ */
+let demoClient: SupabaseClient | null = null;
+function client() {
+  demoClient ??= createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }) },
+  });
+  return demoClient;
+}
+
 let bucketReady: Promise<void> | null = null;
 function supabase() {
-  const client = createSupabaseAdmin();
+  const c = client();
   bucketReady ??= (async () => {
-    const { error } = await client.storage.getBucket(BUCKET);
+    const { error } = await c.storage.getBucket(BUCKET);
     if (error) {
-      const created = await client.storage.createBucket(BUCKET, { public: false });
+      const created = await c.storage.createBucket(BUCKET, { public: false });
       if (created.error && !/exist/i.test(created.error.message)) {
         bucketReady = null;
         throw created.error;
       }
     }
   })();
-  return { client, ready: bucketReady };
+  return { client: c, ready: bucketReady };
 }
 
 const LOCAL_DIR = path.join(process.cwd(), ".demo-data");
