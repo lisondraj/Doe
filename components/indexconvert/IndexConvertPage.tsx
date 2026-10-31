@@ -923,11 +923,15 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
                   <br /> to personal agents.
                 </h2>
                 {/* iPhone: a quiet line under the title saying what's left to do. */}
-                <p className="md:hidden whitespace-nowrap pb-[16px] [@media(max-height:760px)]:pb-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.14em] text-[#28191080]">
-                  Claim your listing
-                  <br />
-                  to activate
-                </p>
+                <div className="md:hidden flex flex-col items-center gap-[12px] [@media(max-height:760px)]:gap-[8px] pb-[16px] [@media(max-height:760px)]:pb-[6px]">
+                  <p className="whitespace-nowrap text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.14em] text-[#28191080]">
+                    Claim your listing
+                    <br />
+                    to activate
+                  </p>
+                  {/* The personal agents it was tested in, one centred row, each checked. */}
+                  <AgentIconsRow ring="#FFFCF1" />
+                </div>
                 <Hero className="max-md:order-1" compact={phone} />
                 <SetupFiles phone className="md:hidden order-2" />
                 {/* iPhone and tablet: the claim form sits in the status box, so it doubles as the claim target. */}
@@ -1176,24 +1180,7 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
   // Step 5: the personal agents' own icons, each with a small check, over the booking they make.
   return (
     <div className={`${tile} flex-col gap-[12px] px-[12px]`}>
-      <div className="flex items-center justify-center gap-[8px]">
-        {AGENT_APPS.map((a) => (
-          <span key={a.name} className="relative shrink-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={a.icon}
-              alt={a.name}
-              width={36}
-              height={36}
-              draggable={false}
-              className={`block w-[36px] h-[36px] rounded-[10px] object-cover select-none ${a.light ? "ring-1 ring-[#2819101A]" : ""}`}
-            />
-            <span className="absolute -right-[4px] -bottom-[4px] rounded-[6px] ring-2 ring-[#F4EEDF]">
-              <Check on size={14} />
-            </span>
-          </span>
-        ))}
-      </div>
+      <AgentIconsRow />
       <div className="flex items-center gap-[8px] h-[32px] pl-[6px] pr-[14px] rounded-full bg-[#FFFCF1]">
         <IndexConvertSphere size={22} className="shrink-0" />
         <span className="text-[12.5px] font-[600] whitespace-nowrap">Consult booked</span>
@@ -1447,6 +1434,30 @@ function AgentSearches({ className = "" }: { className?: string }) {
           ))}
         </ul>
       </div>
+    </div>
+  );
+}
+
+/** The personal agents' own icons in one centred row, each with a small check. `ring` matches the colour behind it. */
+function AgentIconsRow({ ring = "#F4EEDF", className = "" }: { ring?: string; className?: string }) {
+  return (
+    <div className={`flex items-center justify-center gap-[8px] ${className}`}>
+      {AGENT_APPS.map((a) => (
+        <span key={a.name} className="relative shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={a.icon}
+            alt={a.name}
+            width={36}
+            height={36}
+            draggable={false}
+            className={`block w-[36px] h-[36px] rounded-[10px] object-cover select-none ${a.light ? "ring-1 ring-[#2819101A]" : ""}`}
+          />
+          <span className="absolute -right-[4px] -bottom-[4px] rounded-[6px]" style={{ boxShadow: `0 0 0 2px ${ring}` }}>
+            <Check on size={14} />
+          </span>
+        </span>
+      ))}
     </div>
   );
 }
