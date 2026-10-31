@@ -3,10 +3,11 @@
 /**
  * /GTMENGINE — the GTM team's prospect tables, in /demo/clinic's frame: brown edge, cream box, sand cards. Health holds
  * clinics (US, Canada, Other, Multi-site) and hospital LOIs (with programs); Non-Health holds local services. Every
- * table shows 50 lines a page for an agent to fill, saves to Supabase as it goes (app/api/gtm-engine/rows), filters by
+ * table has a bulk input of 50 lines at the top for an agent to fill under a chosen date, saved lines grouped by date
+ * (newest first, each date folding open and shut), saves to Supabase as it goes (app/api/gtm-engine/rows), filters by
  * any column and by status, and gives each line a page (Generate) and a status.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { DISPLAY, DemoFrame } from "@/components/demo/DemoFrame";
 import {
@@ -108,7 +109,11 @@ function Section({ section }: { section: GtmSection }) {
 
 type Filters = { status: string; columns: Record<string, string> };
 
-/** One table: its toolbar, the sheet of 50 lines, and the pager. */
+/**
+ * One table: its toolbar, then the sheet: the bulk input (50 blank lines under a date picked at the top) and the saved
+ * lines grouped under their dates, newest first, each group folding open and shut. A pager steps through 50 saved
+ * lines at a time.
+ */
 function TableCard({ table }: { table: GtmTable }) {
   const [page, setPage] = useState(0);
   const [rows, setRows] = useState<GtmRow[]>([]);
@@ -119,6 +124,11 @@ function TableCard({ table }: { table: GtmTable }) {
   const [applied, setApplied] = useState<Filters>(filters);
   const [adding, setAdding] = useState(false);
   const [focusId, setFocusId] = useState<string | null>(null);
+  /** The date the bulk input's lines save under. */
+  const [bulkDate, setBulkDate] = useState(today);
+  const [bulkOpen, setBulkOpen] = useState(true);
+  /** Date groups folded shut, by YYYY-MM-DD. */
+  const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set());
   const request = useRef(0);
 
   // Typing in a filter waits a beat before asking again.
@@ -160,36 +170,37 @@ function TableCard({ table }: { table: GtmTable }) {
 
   const filtering = !!applied.status || Object.values(applied.columns).some((v) => v.trim());
   const pages = Math.max(1, Math.ceil(total / GTM_PAGE_SIZE));
-  // Blank lines make up the page to 50 for an agent to fill; not while filtering, where they'd read as matches.
-  const blanks = filtering || loading ? 0 : Math.max(0, GTM_PAGE_SIZE - rows.length);
 
   const replaceRow = useCallback((row: GtmRow) => setRows((list) => list.map((r) => (r.id === row.id ? row : r))), []);
 
+  /** A new saved line under the bulk input's date. The page reloads so it lands in its date's group. */
   const createRow = useCallback(
     async (data: Record<string, string>, status?: GtmStatus | null) => {
-      const res = await fetch(API, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ table: table.key, data }) });
+      const res = await fetch(API, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ table: table.key, data, entry_date: bulkDate, status: status ?? undefined }),
+      });
       const body = (await res.json().catch(() => ({}))) as { ok?: boolean; row?: GtmRow; error?: string };
       if (!res.ok || !body.row) throw new Error(body.error ?? "Can't add the row.");
-      let row = body.row;
-      if (status) row = (await patchRow(table.key, row.id, { status })) ?? row;
-      setRows((list) => [...list, row]);
-      setTotal((t) => t + 1);
-      return row;
+      setCollapsed((set) => {
+        if (!set.has(bulkDate)) return set;
+        const next = new Set(set);
+        next.delete(bulkDate);
+        return next;
+      });
+      void load(page);
+      return body.row;
     },
-    [table.key],
+    [table.key, bulkDate, load, page],
   );
 
-  /** + Add Field: a new line at the end, opened on the page it lands on with its first cell focused. */
+  /** + Add Field: a new empty line under the bulk input's date, its first cell focused. */
   const addLine = async () => {
     setAdding(true);
     try {
-      setFilters({ status: "", columns: {} });
-      setApplied({ status: "", columns: {} });
       const row = await createRow({});
-      const last = Math.floor(total / GTM_PAGE_SIZE);
       setFocusId(row.id);
-      if (last !== page) setPage(last);
-      else await load(page);
       setError(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Can't add the row.");
@@ -199,7 +210,19 @@ function TableCard({ table }: { table: GtmTable }) {
   };
 
   const width = NUM_W + table.columns.reduce((n, c) => n + c.width, 0) + PAGE_W + STATUS_W;
+  const span = table.columns.length + 3;
   const first = page * GTM_PAGE_SIZE;
+  /** Saved lines under their dates, newest date first (the order the API returns them in). */
+  const groups = useMemo(() => {
+    const out: { date: string; rows: { row: GtmRow; n: number }[] }[] = [];
+    rows.forEach((row, i) => {
+      const last = out[out.length - 1];
+      const entry = { row, n: first + i + 1 };
+      if (last?.date === row.entry_date) last.rows.push(entry);
+      else out.push({ date: row.entry_date, rows: [entry] });
+    });
+    return out;
+  }, [rows, first]);
 
   return (
     <div className="mt-[14px] rounded-[26px] bg-[#F4EEDF] p-[6px]">
@@ -281,15 +304,63 @@ function TableCard({ table }: { table: GtmTable }) {
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, i) => (
-                <Line key={row.id} n={first + i + 1} table={table} row={row} autoFocus={row.id === focusId} onSaved={replaceRow} onError={setError} />
-              ))}
-              {Array.from({ length: blanks }, (_, i) => (
-                <BlankLine key={`blank-${page}-${i}`} n={first + rows.length + i + 1} table={table} onCreate={createRow} onError={setError} />
-              ))}
+              {/* Bulk input: 50 blank lines at the very top, each saving under the date picked here. */}
+              <tr>
+                <td colSpan={span} className="p-0 bg-[#140C04]">
+                  <div className="sticky left-0 w-fit max-w-[calc(100vw-60px)] md:max-w-full flex flex-wrap items-center gap-x-[12px] gap-y-[8px] px-[12px] py-[10px]">
+                    <FoldButton open={bulkOpen} onClick={() => setBulkOpen((o) => !o)} light label="Bulk input" />
+                    <label className="flex items-center gap-[8px]">
+                      <span className="text-[12px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">Date</span>
+                      <input
+                        type="date"
+                        value={bulkDate}
+                        onChange={(e) => e.target.value && setBulkDate(e.target.value)}
+                        className="h-[34px] px-[10px] rounded-[10px] bg-[#FFFCF1] text-[#281910] text-[14px] font-[600] outline-none"
+                      />
+                    </label>
+                    <span className="text-[13px] text-[#FFFCF1B3]">Lines typed here save under {dayLabel(bulkDate)}.</span>
+                  </div>
+                </td>
+              </tr>
+              {bulkOpen &&
+                Array.from({ length: GTM_PAGE_SIZE }, (_, i) => (
+                  <BlankLine key={`blank-${i}`} n={i + 1} table={table} onCreate={createRow} onError={setError} />
+                ))}
+              {groups.map((group) => {
+                const open = !collapsed.has(group.date);
+                return (
+                  <Fragment key={group.date}>
+                    <tr>
+                      <td colSpan={span} className="p-0 bg-[#F4EEDF] border-b border-solid border-[#2819101A]">
+                        <div className="sticky left-0 w-fit max-w-[calc(100vw-60px)] md:max-w-full flex items-center gap-[12px] px-[12px] py-[8px]">
+                          <FoldButton
+                            open={open}
+                            label={dayLabel(group.date)}
+                            onClick={() =>
+                              setCollapsed((set) => {
+                                const next = new Set(set);
+                                if (next.has(group.date)) next.delete(group.date);
+                                else next.add(group.date);
+                                return next;
+                              })
+                            }
+                          />
+                          <span className={`text-[13px] font-[600] tabular-nums ${MUTED}`}>
+                            {group.rows.length} {group.rows.length === 1 ? "line" : "lines"}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                    {open &&
+                      group.rows.map(({ row, n }) => (
+                        <Line key={row.id} n={n} table={table} row={row} autoFocus={row.id === focusId} onSaved={replaceRow} onError={setError} />
+                      ))}
+                  </Fragment>
+                );
+              })}
               {!loading && !rows.length && filtering && (
                 <tr>
-                  <td colSpan={table.columns.length + 3} className={`px-[16px] py-[18px] text-[14px] ${SUB}`}>
+                  <td colSpan={span} className={`px-[16px] py-[18px] text-[14px] ${SUB}`}>
                     No lines match these filters.
                   </td>
                 </tr>
@@ -312,6 +383,32 @@ function TableCard({ table }: { table: GtmTable }) {
         </div>
       </div>
     </div>
+  );
+}
+
+/** Today in the browser's time zone, as YYYY-MM-DD. */
+const today = () => new Date().toLocaleDateString("en-CA");
+
+/** "Fri, Oct 31, 2026", with "Today" for today's date. */
+function dayLabel(date: string) {
+  const label = new Date(`${date}T00:00:00`).toLocaleDateString("en-CA", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+  return date === today() ? `Today · ${label}` : label;
+}
+
+/** Expands or collapses a group of lines: a chevron and its label. */
+function FoldButton({ open, onClick, label, light = false }: { open: boolean; onClick: () => void; label: string; light?: boolean }) {
+  return (
+    <button
+      type="button"
+      aria-expanded={open}
+      onClick={onClick}
+      className={`h-[34px] pl-[6px] pr-[12px] flex items-center gap-[6px] rounded-[10px] text-[14px] font-[700] whitespace-nowrap transition-colors duration-150 ${light ? "text-[#FFFCF1] hover:bg-[#FFFCF11A]" : "text-[#281910] hover:bg-[#EEE6D6]"}`}
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200" style={{ transform: open ? "rotate(90deg)" : "none" }}>
+        <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      {label}
+    </button>
   );
 }
 

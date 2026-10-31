@@ -1,6 +1,6 @@
 /**
  * /GTMENGINE's tables. Each one's rows live in `public.gtm_engine_rows` under its `key`, with the columns below kept
- * by `key` in the row's `data`. Every row also has a page (Generate) and an outreach status.
+ * by `key` in the row's `data`. Every row also has an entry date, a page (Generate) and an outreach status.
  */
 
 export type GtmColumn = {
@@ -27,7 +27,7 @@ export type GtmSection = { title: string; tables: GtmTable[] };
 export const GTM_STATUSES = ["Sent", "Generated", "Claimed", "Purchased"] as const;
 export type GtmStatus = (typeof GTM_STATUSES)[number];
 
-/** Rows shown per page of a table, filled out with blank lines for an agent to fill. */
+/** Saved lines shown per page of a table, and blank lines in the bulk input at its top for an agent to fill. */
 export const GTM_PAGE_SIZE = 50;
 
 const CLINIC_COLUMNS: GtmColumn[] = [
@@ -143,7 +143,18 @@ export function isGtmTableKey(value: unknown): value is GtmTableKey {
 export type GtmRow = {
   id: string;
   created_at: string;
+  /** YYYY-MM-DD: the date the line was entered under. Lines group by it, newest first. */
+  entry_date: string;
   data: Record<string, string>;
   page: string | null;
   status: GtmStatus | null;
 };
+
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** A real calendar date as YYYY-MM-DD. */
+export function isGtmDate(value: unknown): value is string {
+  if (typeof value !== "string" || !DATE.test(value)) return false;
+  const d = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
+}
