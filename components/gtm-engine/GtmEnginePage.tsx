@@ -5,30 +5,37 @@
  * clinics (US, Canada, Other, Multi-site) and hospital LOIs (with programs); Non-Health holds local services. Every
  * table's Add Field opens a separate input sheet of 50 lines to fill under a chosen date; the saved table below groups lines by date
  * (newest first, each date folding open and shut), saves to Supabase as it goes (app/api/gtm-engine/rows), filters by
- * any column and by status, and gives each line a page (Generate) and a status.
+ * any column, by status and by report date, and gives each line a report date, a page (Generate) and a status.
+ * Import takes CSV, pasted spreadsheet rows or JSON: map the columns, preview the checks (missing fields,
+ * country/province mismatches, duplicates), import as one batch, undo a batch. Export writes the table as CSV or JSON.
  */
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { DISPLAY, DemoFrame } from "@/components/demo/DemoFrame";
 import {
+  GTM_IMPORT_MAX,
   GTM_PAGE_SIZE,
   GTM_STATUSES,
   HEALTH_SECTIONS,
   NON_HEALTH_SECTIONS,
   type GtmColumn,
+  type GtmImport,
   type GtmRow,
   type GtmSection,
   type GtmStatus,
   type GtmTable,
+  guessColumn,
 } from "@/lib/gtm-engine/gtm-tables";
+import { type ParsedSheet, parseSheet } from "@/lib/gtm-engine/gtm-csv";
 
 type Mode = "health" | "non-health";
 
 const SUB = "text-[#2819109E]";
 const MUTED = "text-[#28191080]";
 const API = "/api/gtm-engine/rows";
-/** The sheet's own columns after the table's: the line number, Page and Status. */
+/** The sheet's own columns around the table's: the line number and report date before, Page and Status after. */
 const NUM_W = 52;
+const REPORT_W = 150;
 const PAGE_W = 132;
 const STATUS_W = 150;
 const FILTER_DEBOUNCE_MS = 320;
@@ -42,7 +49,7 @@ export function GtmEnginePage() {
         <h1 className={`${DISPLAY} px-[4px] text-[34px] leading-[38px] md:text-[48px] md:leading-[52px] tracking-[-0.02em]`}>GTM Engine</h1>
         <p className={`mt-[8px] px-[4px] max-w-[60ch] text-[15px] leading-[22px] md:text-[16px] md:leading-[24px] ${SUB}`}>
           {mode === "health" ? "Clinics, multi-site groups and hospital LOIs." : "Local services businesses."} Every line saves as you go. Filter any
-          column from the row under its name.
+          column from the row under its name. Import a day&apos;s report as CSV, pasted rows or JSON, and export any table.
         </p>
         <div key={mode} className="mt-[22px] md:mt-[28px] flex flex-col gap-[28px] md:gap-[36px]">
           {sections.map((section) => (
@@ -107,7 +114,7 @@ function Section({ section }: { section: GtmSection }) {
   );
 }
 
-type Filters = { status: string; columns: Record<string, string> };
+type Filters = { status: string; reportDate: string; columns: Record<string, string> };
 
 /**
  * One table: its toolbar; the input sheet, shown only after Add Field (50 blank lines under a picked date, its own
@@ -120,10 +127,13 @@ function TableCard({ table }: { table: GtmTable }) {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<Filters>({ status: "", columns: {} });
+  const [filters, setFilters] = useState<Filters>({ status: "", reportDate: "", columns: {} });
   const [applied, setApplied] = useState<Filters>(filters);
   /** The date the input sheet's lines save under. */
   const [bulkDate, setBulkDate] = useState(today);
+  /** The report (edition) date the input sheet's lines carry, if any. */
+  const [bulkReport, setBulkReport] = useState("");
+  const [importOpen, setImportOpen] = useState(false);
   /** The input sheet stays hidden until Add Field. */
   const [bulkOpen, setBulkOpen] = useState(false);
   /** Date groups folded shut, by YYYY-MM-DD. */
@@ -145,6 +155,7 @@ function TableCard({ table }: { table: GtmTable }) {
       setLoading(true);
       const params = new URLSearchParams({ table: table.key, page: String(target) });
       if (applied.status) params.set("status", applied.status);
+      if (applied.reportDate) params.set("report_date", applied.reportDate);
       for (const [key, value] of Object.entries(applied.columns)) if (value.trim()) params.set(`f.${key}`, value.trim());
       try {
         const res = await fetch(`${API}?${params}`, { cache: "no-store" });
@@ -167,7 +178,7 @@ function TableCard({ table }: { table: GtmTable }) {
     void load(page);
   }, [load, page]);
 
-  const filtering = !!applied.status || Object.values(applied.columns).some((v) => v.trim());
+  const filtering = !!applied.status || !!applied.reportDate || Object.values(applied.columns).some((v) => v.trim());
   const pages = Math.max(1, Math.ceil(total / GTM_PAGE_SIZE));
 
   const replaceRow = useCallback((row: GtmRow) => setRows((list) => list.map((r) => (r.id === row.id ? row : r))), []);
@@ -178,7 +189,7 @@ function TableCard({ table }: { table: GtmTable }) {
       const res = await fetch(API, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ table: table.key, data, entry_date: bulkDate, status: status ?? undefined }),
+        body: JSON.stringify({ table: table.key, data, entry_date: bulkDate, report_date: bulkReport || undefined, status: status ?? undefined }),
       });
       const body = (await res.json().catch(() => ({}))) as { ok?: boolean; row?: GtmRow; error?: string };
       if (!res.ok || !body.row) throw new Error(body.error ?? "Can't add the row.");
@@ -191,7 +202,7 @@ function TableCard({ table }: { table: GtmTable }) {
       void load(page);
       return body.row;
     },
-    [table.key, bulkDate, load, page],
+    [table.key, bulkDate, bulkReport, load, page],
   );
 
   /** + Add Field: opens the input sheet (50 blank lines under a picked date) above the saved table, and brings it into view. */
@@ -201,8 +212,8 @@ function TableCard({ table }: { table: GtmTable }) {
     window.requestAnimationFrame(() => inputRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
 
-  const width = NUM_W + table.columns.reduce((n, c) => n + c.width, 0) + PAGE_W + STATUS_W;
-  const span = table.columns.length + 3;
+  const width = NUM_W + REPORT_W + table.columns.reduce((n, c) => n + c.width, 0) + PAGE_W + STATUS_W;
+  const span = table.columns.length + 4;
   const first = page * GTM_PAGE_SIZE;
   /** Saved lines under their dates, newest date first (the order the API returns them in). */
   const groups = useMemo(() => {
@@ -243,6 +254,27 @@ function TableCard({ table }: { table: GtmTable }) {
             ))}
           </select>
         </label>
+        <label className="flex items-center gap-[8px]">
+          <span className={`text-[12px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>Report</span>
+          <input
+            type="date"
+            value={filters.reportDate}
+            onChange={(e) => setFilters((f) => ({ ...f, reportDate: e.target.value }))}
+            aria-label="Filter by report date"
+            className="h-[38px] px-[10px] rounded-[12px] bg-[#FFFCF1] text-[14px] font-[600] outline-none focus:ring-[2px] focus:ring-[#28191033]"
+          />
+        </label>
+        <ExportButtons table={table} />
+        <button
+          type="button"
+          onClick={() => setImportOpen(true)}
+          className="h-[38px] px-[14px] flex items-center gap-[6px] rounded-[12px] bg-[#FFFCF1] text-[14px] font-[600] hover:bg-[#FAF4E4] transition-colors duration-150"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4v11M7 10l5 5 5-5M5 19h14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Import
+        </button>
         <button
           type="button"
           onClick={openInput}
@@ -274,6 +306,15 @@ function TableCard({ table }: { table: GtmTable }) {
                 className="h-[34px] px-[10px] rounded-[10px] bg-[#FFFCF1] text-[#281910] text-[14px] font-[600] outline-none"
               />
             </label>
+            <label className="flex items-center gap-[8px]">
+              <span className="text-[12px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">Report date</span>
+              <input
+                type="date"
+                value={bulkReport}
+                onChange={(e) => setBulkReport(e.target.value)}
+                className="h-[34px] px-[10px] rounded-[10px] bg-[#FFFCF1] text-[#281910] text-[14px] font-[600] outline-none"
+              />
+            </label>
             <span className="mr-auto text-[13px] text-[#FFFCF1B3]">
               {GTM_PAGE_SIZE} lines. Each one saves under {dayLabel(bulkDate)} and moves to the table below.
             </span>
@@ -294,7 +335,7 @@ function TableCard({ table }: { table: GtmTable }) {
                 </thead>
                 <tbody>
                   {Array.from({ length: GTM_PAGE_SIZE }, (_, i) => (
-                    <BlankLine key={`blank-${i}`} n={i + 1} table={table} onCreate={createRow} onError={setError} />
+                    <BlankLine key={`blank-${i}`} n={i + 1} table={table} reportDate={bulkReport} onCreate={createRow} onError={setError} />
                   ))}
                 </tbody>
               </table>
@@ -316,6 +357,7 @@ function TableCard({ table }: { table: GtmTable }) {
                     <path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="#28191080" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                 </th>
+                <th className={FILTER_CELL} />
                 {table.columns.map((c) => (
                   <th key={c.key} className={FILTER_CELL}>
                     <FilterInput column={c} value={filters.columns[c.key] ?? ""} onChange={(v) => setFilters((f) => ({ ...f, columns: { ...f.columns, [c.key]: v } }))} />
@@ -389,6 +431,7 @@ function TableCard({ table }: { table: GtmTable }) {
           <PagerButton label="Next page" disabled={page >= pages - 1} onClick={() => setPage((p) => p + 1)} d="M9 6l6 6-6 6" />
         </div>
       </div>
+      {importOpen && <ImportSheet table={table} onClose={() => setImportOpen(false)} onChanged={() => void load(page)} />}
     </div>
   );
 }
@@ -424,6 +467,7 @@ function SheetCols({ table }: { table: GtmTable }) {
   return (
     <colgroup>
       <col style={{ width: NUM_W }} />
+      <col style={{ width: REPORT_W }} />
       {table.columns.map((c) => (
         <col key={c.key} style={{ width: c.width }} />
       ))}
@@ -438,6 +482,7 @@ function SheetHead({ table }: { table: GtmTable }) {
   return (
     <tr>
       <th className={`sticky left-0 z-[2] bg-[#FFFCF1] ${HEAD} text-center`}>#</th>
+      <th className={HEAD}>Report date</th>
       {table.columns.map((c) => (
         <th key={c.key} className={HEAD}>
           {c.label}
@@ -486,7 +531,7 @@ function PagerButton({ label, disabled, onClick, d }: { label: string; disabled:
   );
 }
 
-async function patchRow(table: string, id: string, update: { data?: Record<string, string>; status?: GtmStatus | null }): Promise<GtmRow | null> {
+async function patchRow(table: string, id: string, update: { data?: Record<string, string>; status?: GtmStatus | null; report_date?: string | null }): Promise<GtmRow | null> {
   const res = await fetch(API, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ table, id, ...update }) });
   const body = (await res.json().catch(() => ({}))) as { row?: GtmRow; error?: string };
   if (!res.ok || !body.row) throw new Error(body.error ?? "Can't save the row.");
@@ -538,11 +583,22 @@ function Line({
     }
   };
 
+  const setReport = async (report: string) => {
+    try {
+      const updated = await patchRow(table.key, row.id, { report_date: report || null });
+      if (updated) onSaved(updated);
+    } catch (e) {
+      onError(e instanceof Error ? e.message : "Can't save the report date.");
+    }
+  };
+
   return (
     <LineCells
       n={n}
       table={table}
       values={draft}
+      reportDate={row.report_date ?? ""}
+      onReportDate={(d) => void setReport(d)}
       status={row.status}
       saving={saving}
       autoFocus={autoFocus}
@@ -557,11 +613,14 @@ function Line({
 function BlankLine({
   n,
   table,
+  reportDate,
   onCreate,
   onError,
 }: {
   n: number;
   table: GtmTable;
+  /** The input sheet's report date, which the line carries. */
+  reportDate: string;
   onCreate: (data: Record<string, string>, status?: GtmStatus | null) => Promise<GtmRow>;
   onError: (error: string) => void;
 }) {
@@ -584,6 +643,7 @@ function BlankLine({
       n={n}
       table={table}
       values={draft}
+      reportDate={reportDate}
       status={null}
       saving={saving}
       blank
@@ -598,6 +658,8 @@ function LineCells({
   n,
   table,
   values,
+  reportDate,
+  onReportDate,
   status,
   saving,
   blank = false,
@@ -609,6 +671,9 @@ function LineCells({
   n: number;
   table: GtmTable;
   values: Record<string, string>;
+  reportDate: string;
+  /** Saved lines change their report date here; blank lines take the input sheet's. */
+  onReportDate?: (date: string) => void;
   status: GtmStatus | null;
   saving: boolean;
   blank?: boolean;
@@ -628,6 +693,16 @@ function LineCells({
       <td className={`sticky left-0 z-[1] bg-[#FFFCF1] ${CELL} text-center text-[12px] font-[600] tabular-nums ${blank ? "text-[#28191040]" : MUTED}`}>
         {saving ? <span className="inline-block w-[10px] h-[10px] rounded-full bg-[#28191033] animate-pulse" /> : n}
       </td>
+      <td className={CELL}>
+        <input
+          type="date"
+          value={reportDate}
+          disabled={!onReportDate}
+          aria-label={`Report date, line ${n}`}
+          onChange={(e) => onReportDate?.(e.target.value)}
+          className={`${INPUT} tabular-nums ${reportDate ? "" : "text-[#28191066]"} disabled:opacity-70`}
+        />
+      </td>
       {table.columns.map((c, i) => {
         const value = values[c.key] ?? "";
         const ref = i === 0 ? (el: HTMLInputElement | HTMLSelectElement | null) => void (firstRef.current = el) : undefined;
@@ -645,6 +720,7 @@ function LineCells({
                 className={`${INPUT} ${value ? "" : "text-[#28191066]"}`}
               >
                 <option value="">—</option>
+                {value && !c.options.includes(value) && <option value={value}>{value}</option>}
                 {c.options.map((o) => (
                   <option key={o} value={o}>
                     {o}
@@ -702,3 +778,415 @@ const STATUS_TONE: Record<GtmStatus, string> = {
   Claimed: "#FCCFB8",
   Purchased: "#DCE5D0",
 };
+
+/* ------------------------------------------------------------------ Export */
+
+/** Downloads the whole table, every column with its source links and evidence notes, as CSV or JSON. */
+function ExportButtons({ table }: { table: GtmTable }) {
+  const href = (format: "csv" | "json") => `/api/gtm-engine/export?table=${table.key}&format=${format}`;
+  return (
+    <div className="flex items-center rounded-[12px] bg-[#FFFCF1] p-[3px]">
+      <span className={`pl-[9px] pr-[4px] text-[12px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>Export</span>
+      {(["csv", "json"] as const).map((f) => (
+        <a key={f} href={href(f)} download className="h-[32px] px-[10px] flex items-center rounded-[9px] text-[13px] font-[700] uppercase hover:bg-[#F4EEDF] transition-colors duration-150">
+          {f}
+        </a>
+      ))}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ Import */
+
+type ImportOutcome = { index: number; outcome: "accepted" | "duplicate" | "error"; errors: string[]; warnings: string[]; duplicateOf?: string };
+type ImportResponse = {
+  ok: boolean;
+  error?: string;
+  dryRun?: boolean;
+  batch?: GtmImport | null;
+  totals?: { accepted: number; skipped: number; errors: number; warnings: number };
+  lines?: ImportOutcome[];
+};
+type Step = "source" | "map" | "preview" | "done";
+
+const IMPORT_API = "/api/gtm-engine/import";
+const lines = (n: number) => `${n.toLocaleString()} ${n === 1 ? "line" : "lines"}`;
+const PREVIEW_LINES = 300;
+
+/**
+ * Bulk import for one table: paste rows from a spreadsheet, CSV or JSON (or upload a file), map its columns to the
+ * table's, check every line on the server without saving (missing fields, country / province mismatches, duplicates
+ * against earlier imports and within this one), then import the accepted lines as one batch. Past imports are listed
+ * with Undo, which takes a batch's lines back out.
+ */
+function ImportSheet({ table, onClose, onChanged }: { table: GtmTable; onClose: () => void; onChanged: () => void }) {
+  const [step, setStep] = useState<Step>("source");
+  const [text, setText] = useState("");
+  const [sheet, setSheet] = useState<ParsedSheet | null>(null);
+  const [mapping, setMapping] = useState<Record<string, string>>({});
+  const [reportDate, setReportDate] = useState("");
+  const [entryDate, setEntryDate] = useState(today);
+  const [result, setResult] = useState<ImportResponse | null>(null);
+  const [issuesOnly, setIssuesOnly] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [history, setHistory] = useState<GtmImport[] | null>(null);
+
+  const loadHistory = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/gtm-engine/imports?table=${table.key}`, { cache: "no-store" });
+      const body = (await res.json()) as { ok: boolean; imports?: GtmImport[] };
+      setHistory(body.imports ?? []);
+    } catch {
+      setHistory([]);
+    }
+  }, [table.key]);
+  useEffect(() => {
+    void loadHistory();
+  }, [loadHistory]);
+
+  // Escape closes; the page behind doesn't scroll while the sheet is up.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const readText = (value: string) => {
+    setError(null);
+    try {
+      const parsed = parseSheet(value);
+      if (parsed.rows.length > GTM_IMPORT_MAX) throw new Error(`At most ${GTM_IMPORT_MAX} lines per import; this has ${parsed.rows.length}.`);
+      setSheet(parsed);
+      setMapping(Object.fromEntries(parsed.headers.map((h) => [h, guessColumn(table, h) ?? ""])));
+      setStep("map");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Can't read that.");
+    }
+  };
+
+  const onFile = async (file: File | undefined) => {
+    if (!file) return;
+    const value = await file.text();
+    setText(value);
+    readText(value);
+  };
+
+  /** The lines as the table's columns: two source columns mapped to one are joined with a space. */
+  const mappedRows = useMemo(() => {
+    if (!sheet) return [];
+    return sheet.rows.map((r) => {
+      const out: Record<string, string> = {};
+      for (const [header, key] of Object.entries(mapping)) {
+        const v = r[header]?.trim();
+        if (!key || !v) continue;
+        out[key] = out[key] ? `${out[key]} ${v}` : v;
+      }
+      return out;
+    });
+  }, [sheet, mapping]);
+
+  const send = async (dryRun: boolean) => {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch(IMPORT_API, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ table: table.key, rows: mappedRows, report_date: reportDate || undefined, entry_date: entryDate, dry_run: dryRun, format: sheet?.format }),
+      });
+      const body = (await res.json().catch(() => ({ ok: false }))) as ImportResponse;
+      if (!res.ok || !body.ok) throw new Error(body.error ?? "The import didn't go through.");
+      setResult(body);
+      setStep(dryRun ? "preview" : "done");
+      if (!dryRun) {
+        onChanged();
+        void loadHistory();
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "The import didn't go through.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const undo = async (id: string) => {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/gtm-engine/imports", { method: "DELETE", headers: { "content-type": "application/json" }, body: JSON.stringify({ id }) });
+      const body = (await res.json().catch(() => ({ ok: false }))) as { ok: boolean; error?: string };
+      if (!res.ok || !body.ok) throw new Error(body.error ?? "Can't undo that import.");
+      onChanged();
+      await loadHistory();
+      if (result?.batch?.id === id) setResult((r) => (r?.batch ? { ...r, batch: { ...r.batch, undone_at: new Date().toISOString() } } : r));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Can't undo that import.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const mappedCount = Object.values(mapping).filter(Boolean).length;
+  const missingRequired = table.required.filter((k) => !Object.values(mapping).includes(k) && !(k === "country" && table.country));
+  /** What each preview line shows to name itself: its match columns, else the first mapped one. */
+  const nameOf = (i: number) => {
+    const row = mappedRows[i] ?? {};
+    const parts = table.match.keys.map((k) => row[k]).filter(Boolean);
+    return parts.length ? parts.join(" · ") : (Object.values(row)[0] ?? "(empty)");
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-[#140C0466] p-0 md:p-[24px]" role="dialog" aria-modal="true" aria-label={`Import into ${table.title}`}>
+      <div className="w-full max-w-[980px] max-h-[92svh] md:max-h-[88vh] flex flex-col rounded-t-[28px] md:rounded-[28px] bg-[#F4EEDF] p-[6px] shadow-[0_30px_80px_rgba(20,12,4,0.35)]">
+        <div className="flex items-center gap-[10px] px-[14px] pt-[10px] pb-[12px]">
+          <div className="min-w-0 mr-auto">
+            <div className={`${DISPLAY} text-[24px] leading-[28px] md:text-[28px] md:leading-[32px] tracking-[-0.01em]`}>Import into {table.title}</div>
+            <div className={`mt-[2px] text-[13px] leading-[18px] ${MUTED}`}>
+              {step === "source" && "CSV, rows pasted from a spreadsheet, or JSON."}
+              {step === "map" && `${lines(sheet?.rows.length ?? 0)} read. Match each column to the table's.`}
+              {step === "preview" && "Checked. Nothing is saved until you import."}
+              {step === "done" && "Imported as one batch."}
+            </div>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Close" className="w-[38px] h-[38px] flex items-center justify-center rounded-full bg-[#FFFCF1] hover:bg-[#FAF4E4]">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        {error && <div className="mx-[6px] mb-[6px] px-[14px] py-[10px] rounded-[14px] bg-[#FCCFB8] text-[14px] font-[600]">{error}</div>}
+
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain rounded-[22px] bg-[#FFFCF1] p-[14px] md:p-[18px]">
+          {step === "source" && (
+            <div className="flex flex-col gap-[14px]">
+              <div className="flex flex-wrap gap-[10px]">
+                <DateField label="Report date" value={reportDate} onChange={setReportDate} hint="The edition the lines come from." />
+                <DateField label="Date entered" value={entryDate} onChange={(v) => v && setEntryDate(v)} hint="Where they group in the table." />
+              </div>
+              <textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder={"Paste here: copy the rows from a spreadsheet with their header row, or paste CSV or JSON.\n\norganization,city,province_state,website\nForm Clinic,Toronto,ON,formclinic.ca"}
+                spellCheck={false}
+                className="w-full h-[240px] md:h-[280px] p-[14px] rounded-[16px] bg-[#FBF6E9] font-mono text-[12.5px] leading-[19px] outline-none focus:bg-[#F4EEDF] resize-y"
+              />
+              <div className="flex flex-wrap items-center gap-[10px]">
+                <label className="h-[42px] px-[16px] flex items-center gap-[8px] rounded-[12px] bg-[#F4EEDF] text-[14px] font-[600] cursor-pointer hover:bg-[#EEE6D6]">
+                  <input type="file" accept=".csv,.tsv,.txt,.json,text/csv,application/json" className="sr-only" onChange={(e) => void onFile(e.target.files?.[0])} />
+                  Upload a file
+                </label>
+                <button
+                  type="button"
+                  disabled={!text.trim()}
+                  onClick={() => readText(text)}
+                  className="h-[42px] px-[18px] rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[14px] font-[700] disabled:opacity-40 hover:bg-[#2A1C12]"
+                >
+                  Read lines
+                </button>
+                <span className={`text-[13px] ${MUTED}`}>Up to {GTM_IMPORT_MAX.toLocaleString()} lines at a time.</span>
+              </div>
+              <ImportHistory history={history} busy={busy} onUndo={(id) => void undo(id)} />
+            </div>
+          )}
+
+          {step === "map" && sheet && (
+            <div className="flex flex-col gap-[12px]">
+              <div className="rounded-[16px] bg-[#FBF6E9] overflow-hidden">
+                <div className={`grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1fr)] gap-x-[12px] px-[14px] py-[8px] text-[11.5px] font-[600] uppercase tracking-[0.06em] ${MUTED}`}>
+                  <span>Column in the import</span>
+                  <span className="max-md:hidden">First value</span>
+                  <span>Goes to</span>
+                </div>
+                {sheet.headers.map((h) => (
+                  <div key={h} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1fr)] items-center gap-x-[12px] px-[14px] py-[6px] border-t border-solid border-[#2819100F]">
+                    <span className="min-w-0 truncate text-[14px] font-[600]">{h}</span>
+                    <span className={`max-md:hidden min-w-0 truncate text-[13px] ${SUB}`}>{sheet.rows.find((r) => r[h])?.[h] ?? "—"}</span>
+                    <select
+                      value={mapping[h] ?? ""}
+                      onChange={(e) => setMapping((m) => ({ ...m, [h]: e.target.value }))}
+                      className={`${INPUT} bg-[#FFFCF1] font-[500] ${mapping[h] ? "" : "text-[#28191080]"}`}
+                    >
+                      <option value="">Skip this column</option>
+                      {table.columns.map((c) => (
+                        <option key={c.key} value={c.key}>
+                          {c.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+              </div>
+              <p className={`text-[13px] leading-[19px] ${SUB}`}>
+                {mappedCount} of {sheet.headers.length} columns mapped. Two columns mapped to one are joined.
+                {missingRequired.length > 0 && (
+                  <span className="font-[600] text-[#9A3B1B]"> Nothing is mapped to {missingRequired.map((k) => table.columns.find((c) => c.key === k)?.label).join(" or ")}, so every line will be refused.</span>
+                )}
+              </p>
+            </div>
+          )}
+
+          {(step === "preview" || step === "done") && result?.totals && (
+            <div className="flex flex-col gap-[12px]">
+              <div className="flex flex-wrap gap-[8px]">
+                <Total tone="#DCE5D0" label={step === "done" ? "Imported" : "Will import"} n={result.totals.accepted} />
+                <Total tone="#F3E7C9" label="Skipped as duplicates" n={result.totals.skipped} />
+                <Total tone="#FCCFB8" label="Refused (errors)" n={result.totals.errors} />
+                <Total tone="#F4EEDF" label="With warnings" n={result.totals.warnings} />
+              </div>
+              {step === "done" && result.batch && (
+                <div className="flex flex-wrap items-center gap-[10px] px-[14px] py-[10px] rounded-[14px] bg-[#FBF6E9] text-[14px]">
+                  <span className="mr-auto">
+                    Batch of {lines(result.batch.accepted)} under {dayLabel(result.batch.entry_date)}
+                    {result.batch.report_date ? `, report ${dayLabel(result.batch.report_date)}` : ""}.
+                  </span>
+                  {result.batch.undone_at ? (
+                    <span className={`font-[600] ${MUTED}`}>Undone</span>
+                  ) : (
+                    <button type="button" disabled={busy} onClick={() => void undo(result.batch!.id)} className="h-[36px] px-[14px] rounded-[10px] bg-[#140C04] text-[#FFFCF1] text-[13px] font-[700] disabled:opacity-50">
+                      Undo this import
+                    </button>
+                  )}
+                </div>
+              )}
+              <label className="flex items-center gap-[8px] text-[14px] font-[600]">
+                <input type="checkbox" checked={issuesOnly} onChange={(e) => setIssuesOnly(e.target.checked)} className="w-[16px] h-[16px] accent-[#140C04]" />
+                Only lines with something to look at
+              </label>
+              <ol className="flex flex-col rounded-[16px] bg-[#FBF6E9] overflow-hidden">
+                {(result.lines ?? [])
+                  .filter((l) => !issuesOnly || l.outcome !== "accepted" || l.warnings.length)
+                  .slice(0, PREVIEW_LINES)
+                  .map((l) => (
+                    <li key={l.index} className="flex items-start gap-[10px] px-[14px] py-[8px] border-b border-solid border-[#2819100D] last:border-b-0">
+                      <span className={`shrink-0 w-[44px] text-right text-[12px] font-[600] tabular-nums ${MUTED}`}>{l.index + 1}</span>
+                      <span
+                        className="shrink-0 h-[22px] px-[8px] flex items-center rounded-full text-[11.5px] font-[700]"
+                        style={{ backgroundColor: l.outcome === "accepted" ? "#DCE5D0" : l.outcome === "duplicate" ? "#F3E7C9" : "#FCCFB8" }}
+                      >
+                        {l.outcome === "accepted" ? "OK" : l.outcome === "duplicate" ? "Duplicate" : "Error"}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block truncate text-[14px] font-[600]">{nameOf(l.index)}</span>
+                        {l.duplicateOf && <span className={`block text-[12.5px] ${SUB}`}>Same {table.match.label} {l.duplicateOf}.</span>}
+                        {l.errors.map((m) => (
+                          <span key={m} className="block text-[12.5px] text-[#9A3B1B]">
+                            {m}
+                          </span>
+                        ))}
+                        {l.warnings.map((m) => (
+                          <span key={m} className={`block text-[12.5px] ${SUB}`}>
+                            {m}
+                          </span>
+                        ))}
+                      </span>
+                    </li>
+                  ))}
+              </ol>
+              {(result.lines?.length ?? 0) > PREVIEW_LINES && <p className={`text-[13px] ${MUTED}`}>Showing the first {PREVIEW_LINES} lines.</p>}
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-end gap-[8px] px-[8px] pt-[10px] pb-[6px]">
+          {step === "map" && (
+            <>
+              <FooterButton onClick={() => setStep("source")}>Back</FooterButton>
+              <FooterButton primary disabled={busy || !mappedCount} onClick={() => void send(true)}>
+                {busy ? "Checking…" : `Check ${lines(sheet?.rows.length ?? 0)}`}
+              </FooterButton>
+            </>
+          )}
+          {step === "preview" && (
+            <>
+              <FooterButton onClick={() => setStep("map")}>Back</FooterButton>
+              <FooterButton primary disabled={busy || !result?.totals?.accepted} onClick={() => void send(false)}>
+                {busy ? "Importing…" : `Import ${lines(result?.totals?.accepted ?? 0)}`}
+              </FooterButton>
+            </>
+          )}
+          {step === "done" && (
+            <>
+              <FooterButton
+                onClick={() => {
+                  setText("");
+                  setSheet(null);
+                  setResult(null);
+                  setStep("source");
+                }}
+              >
+                Import another
+              </FooterButton>
+              <FooterButton primary onClick={onClose}>
+                Done
+              </FooterButton>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DateField({ label, value, onChange, hint }: { label: string; value: string; onChange: (value: string) => void; hint: string }) {
+  return (
+    <label className="flex flex-col gap-[4px]">
+      <span className={`text-[12px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>{label}</span>
+      <input type="date" value={value} onChange={(e) => onChange(e.target.value)} className="h-[40px] px-[12px] rounded-[12px] bg-[#FBF6E9] text-[14px] font-[600] outline-none focus:bg-[#F4EEDF]" />
+      <span className={`text-[12px] ${MUTED}`}>{hint}</span>
+    </label>
+  );
+}
+
+function Total({ tone, label, n }: { tone: string; label: string; n: number }) {
+  return (
+    <span className="h-[44px] pl-[14px] pr-[16px] flex items-center gap-[10px] rounded-[14px]" style={{ backgroundColor: tone }}>
+      <span className="text-[20px] font-[700] tabular-nums">{n}</span>
+      <span className="text-[13px] font-[600]">{label}</span>
+    </span>
+  );
+}
+
+function FooterButton({ children, onClick, primary = false, disabled = false }: { children: ReactNode; onClick: () => void; primary?: boolean; disabled?: boolean }) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className={`h-[44px] px-[18px] rounded-[14px] text-[14px] font-[700] disabled:opacity-40 transition-colors duration-150 ${primary ? "bg-[#140C04] text-[#FFFCF1] hover:bg-[#2A1C12]" : "bg-[#FFFCF1] hover:bg-[#FAF4E4]"}`}
+    >
+      {children}
+    </button>
+  );
+}
+
+/** The table's recent imports, each with its totals and Undo. */
+function ImportHistory({ history, busy, onUndo }: { history: GtmImport[] | null; busy: boolean; onUndo: (id: string) => void }) {
+  if (!history?.length) return null;
+  return (
+    <div>
+      <div className={`mb-[6px] text-[12px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>Past imports</div>
+      <ol className="flex flex-col rounded-[16px] bg-[#FBF6E9] overflow-hidden">
+        {history.map((b) => (
+          <li key={b.id} className="flex flex-wrap items-center gap-x-[12px] gap-y-[4px] px-[14px] py-[9px] border-b border-solid border-[#2819100D] last:border-b-0 text-[13.5px]">
+            <span className="font-[600]">{new Date(b.created_at).toLocaleString("en-CA", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</span>
+            <span className={MUTED}>
+              {b.source === "api" ? "API" : "Page"}
+              {b.report_date ? ` · report ${b.report_date}` : ""} · {b.accepted} imported · {b.skipped} skipped · {b.errors} refused
+            </span>
+            <span className="ml-auto">
+              {b.undone_at ? (
+                <span className={`font-[600] ${MUTED}`}>Undone</span>
+              ) : (
+                <button type="button" disabled={busy} onClick={() => onUndo(b.id)} className="h-[30px] px-[12px] rounded-[9px] bg-[#FFFCF1] text-[13px] font-[700] hover:bg-[#F4EEDF] disabled:opacity-50">
+                  Undo
+                </button>
+              )}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}

@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-import { GTM_PAGE_SIZE, GTM_STATUSES, GTM_TABLES, type GtmTableKey, isGtmDate, isGtmTableKey } from "@/lib/gtm-engine/gtm-tables";
+import { GTM_PAGE_SIZE, GTM_STATUSES, GTM_TABLES, type GtmTableKey, dedupeKey, isGtmDate, isGtmTableKey } from "@/lib/gtm-engine/gtm-tables";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 
 /** /GTMENGINE's rows, in `public.gtm_engine_rows`, read and written here with the service role. */
 
 const TABLE = "gtm_engine_rows";
-const SELECT = "id, created_at, entry_date, data, page, status";
+const SELECT = "id, created_at, entry_date, report_date, data, page, status, import_batch";
 const MAX_CELL = 4000;
 
 const fail = (error: string, status = 400) => NextResponse.json({ ok: false, error }, { status });
@@ -24,7 +24,7 @@ function cleanData(table: GtmTableKey, raw: unknown): Record<string, string> | n
 
 const likeEscape = (value: string) => value.replace(/[\\%_]/g, (c) => `\\${c}`);
 
-/** GET ?table=clinics_us&page=0&status=Sent&f.<column>=text: one page of a table, filtered, newest date first. */
+/** GET ?table=clinics_us&page=0&status=Sent&report_date=YYYY-MM-DD&f.<column>=text: one page of a table, filtered, newest date first. */
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const table = params.get("table");
@@ -37,6 +37,8 @@ export async function GET(request: Request) {
       const value = params.get(`f.${column.key}`)?.trim();
       if (value) query = query.ilike(`data->>${column.key}`, `%${likeEscape(value)}%`);
     }
+    const reportDate = params.get("report_date");
+    if (reportDate && isGtmDate(reportDate)) query = query.eq("report_date", reportDate);
     const status = params.get("status");
     if (status === "none") query = query.is("status", null);
     else if (status && (GTM_STATUSES as readonly string[]).includes(status)) query = query.eq("status", status);
@@ -51,16 +53,18 @@ export async function GET(request: Request) {
   }
 }
 
-/** POST { table, data?, entry_date?, status? }: a new row, under the date given (today if none). */
+/** POST { table, data?, entry_date?, report_date?, status? }: a new row, under the date given (today if none). */
 export async function POST(request: Request) {
-  const body = (await request.json().catch(() => null)) as { table?: unknown; data?: unknown; entry_date?: unknown; status?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as { table?: unknown; data?: unknown; entry_date?: unknown; report_date?: unknown; status?: unknown } | null;
   if (!body || !isGtmTableKey(body.table)) return fail("Unknown table.");
   const data = body.data === undefined ? {} : cleanData(body.table, body.data);
   if (!data) return fail("Bad row.");
   if (body.entry_date !== undefined && !isGtmDate(body.entry_date)) return fail("Bad date.");
   if (body.status !== undefined && body.status !== null && !(GTM_STATUSES as readonly unknown[]).includes(body.status)) return fail("Bad status.");
-  const insert: Record<string, unknown> = { table_key: body.table, data };
+  if (body.report_date !== undefined && body.report_date !== null && body.report_date !== "" && !isGtmDate(body.report_date)) return fail("Bad report date.");
+  const insert: Record<string, unknown> = { table_key: body.table, data, dedupe_key: dedupeKey(GTM_TABLES[body.table], data) };
   if (body.entry_date) insert.entry_date = body.entry_date;
+  if (body.report_date) insert.report_date = body.report_date;
   if (body.status) insert.status = body.status;
   try {
     const { data: row, error } = await createSupabaseAdmin().from(TABLE).insert(insert).select(SELECT).single();
@@ -72,15 +76,24 @@ export async function POST(request: Request) {
   }
 }
 
-/** PATCH { id, table, data?, status?, page?, entry_date? }: saves a row's cells (the whole set), status, page or date. */
+/** PATCH { id, table, data?, status?, page?, entry_date?, report_date? }: saves a row's cells (the whole set), status, page or dates. */
 export async function PATCH(request: Request) {
-  const body = (await request.json().catch(() => null)) as { id?: unknown; table?: unknown; data?: unknown; status?: unknown; page?: unknown; entry_date?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as {
+    id?: unknown;
+    table?: unknown;
+    data?: unknown;
+    status?: unknown;
+    page?: unknown;
+    entry_date?: unknown;
+    report_date?: unknown;
+  } | null;
   if (!body || typeof body.id !== "string" || !isGtmTableKey(body.table)) return fail("Bad row.");
   const update: Record<string, unknown> = {};
   if (body.data !== undefined) {
     const data = cleanData(body.table, body.data);
     if (!data) return fail("Bad row.");
     update.data = data;
+    update.dedupe_key = dedupeKey(GTM_TABLES[body.table], data);
   }
   if (body.status !== undefined) {
     if (body.status !== null && !(GTM_STATUSES as readonly unknown[]).includes(body.status)) return fail("Bad status.");
@@ -93,6 +106,10 @@ export async function PATCH(request: Request) {
   if (body.entry_date !== undefined) {
     if (!isGtmDate(body.entry_date)) return fail("Bad date.");
     update.entry_date = body.entry_date;
+  }
+  if (body.report_date !== undefined) {
+    if (body.report_date !== null && body.report_date !== "" && !isGtmDate(body.report_date)) return fail("Bad report date.");
+    update.report_date = body.report_date || null;
   }
   if (!Object.keys(update).length) return fail("Nothing to save.");
   try {
@@ -108,5 +125,20 @@ export async function PATCH(request: Request) {
   } catch (error) {
     console.error("[gtm-engine/rows] update failed:", error instanceof Error ? error.message : error);
     return fail("Can't save the row.", 500);
+  }
+}
+
+/** DELETE { id, table }: removes one line. */
+export async function DELETE(request: Request) {
+  const body = (await request.json().catch(() => null)) as { id?: unknown; table?: unknown } | null;
+  if (!body || typeof body.id !== "string" || !isGtmTableKey(body.table)) return fail("Bad row.");
+  try {
+    const { data, error } = await createSupabaseAdmin().from(TABLE).delete().eq("id", body.id).eq("table_key", body.table).select("id");
+    if (error) throw error;
+    if (!data?.length) return fail("No such line.", 404);
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("[gtm-engine/rows] delete failed:", error instanceof Error ? error.message : error);
+    return fail("Can't delete the line.", 500);
   }
 }
