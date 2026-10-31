@@ -1454,6 +1454,33 @@ function AgentSearches({ className = "" }: { className?: string }) {
   );
 }
 
+const MUSE = AGENT_APPS[0];
+
+/** A patient asking their personal agent for a clinic, and Muse answering with Ford. Prices from Ford's pricing page. */
+function AgentChat({ className = "" }: { className?: string }) {
+  const sent = "max-w-[82%] self-end rounded-[18px] rounded-br-[6px] bg-[#3A2516] px-[14px] py-[9px] text-[14px] leading-[20px] text-[#FFFCF1] [text-wrap:pretty]";
+  return (
+    <div className={`rounded-[18px] bg-[#F4EEDF] px-[12px] pt-[14px] pb-[12px] flex flex-col gap-[6px] ${className}`} aria-label="Example chat with a personal agent">
+      <div className={sent}>Find a clinic within 30 km of me that offers rhinoplasty for $17,100</div>
+      <div className={sent}>and has availability within 10 months</div>
+      <div className="mt-[8px] flex items-end gap-[8px]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={MUSE.icon}
+          alt={MUSE.name}
+          width={28}
+          height={28}
+          draggable={false}
+          className="block shrink-0 w-[28px] h-[28px] rounded-[8px] object-cover select-none ring-1 ring-[#2819101A]"
+        />
+        <div className="max-w-[82%] rounded-[18px] rounded-bl-[6px] bg-[#FFFCF1] px-[14px] py-[9px] text-[14px] leading-[20px] text-[#281910] [text-wrap:pretty]">
+          {CLINIC.name} in {CLINIC.area} offers rhinoplasty from $17,100, with consults open within 10 months. Would you like me to book one?
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** The founders and why Doe exists: their photo from /earlypreview's film in a rounded box, then the note. */
 function AboutDoe({ intro = false }: { intro?: boolean }) {
   return (
@@ -1475,9 +1502,12 @@ function AboutDoe({ intro = false }: { intro?: boolean }) {
         )}
         <div className="px-[10px] pt-[18px] pb-[14px] md:px-[16px] md:pt-[22px] md:pb-[18px]">
           {intro ? (
-            <p className={`${DISPLAY} max-w-[22ch] text-[clamp(26px,6.6vw,38px)] leading-[1.14] tracking-[-0.02em] [text-wrap:balance]`}>
-              We&apos;ve built Doe to prepare Canadian clinics for personal agents.
-            </p>
+            <>
+              <p className={`${DISPLAY} max-w-[22ch] text-[clamp(26px,6.6vw,38px)] leading-[1.14] tracking-[-0.02em] [text-wrap:balance]`}>
+                We&apos;ve built Doe to prepare Canadian clinics for personal agents.
+              </p>
+              <AgentChat className="mt-[16px]" />
+            </>
           ) : (
             <>
               <span className={`${DISPLAY} inline-flex items-center h-[40px] px-[18px] rounded-full bg-[#F4EEDF] text-[19px] leading-[24px] tracking-[-0.01em]`}>What Is Doe?</span>
