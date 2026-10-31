@@ -421,6 +421,21 @@ function Check({ on, size = 20 }: { on: boolean; size?: number }) {
   );
 }
 
+/** Check's opposite: a small brown square with a cream X. */
+function Cross({ size = 20 }: { size?: number }) {
+  return (
+    <span
+      className="shrink-0 flex items-center justify-center bg-[#3A2516]"
+      style={{ width: size, height: size, borderRadius: Math.round(size * 0.35) }}
+      aria-hidden="true"
+    >
+      <svg width={size * 0.5} height={size * 0.5} viewBox="0 0 24 24">
+        <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="#FFFCF1" strokeWidth="3.4" strokeLinecap="round" />
+      </svg>
+    </span>
+  );
+}
+
 function Spinner({ size = 20, light = false }: { size?: number; light?: boolean }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" className="ic-spin shrink-0" aria-hidden="true">
@@ -1231,16 +1246,26 @@ function Intro({ onStart }: { onStart: () => void }) {
         <div className="flex flex-col gap-[10px]">
         <Hero
           action={
+            <>
+            {/* Where the clinic stands today: the personal agents, each crossed out, in a quiet dashed box. */}
+            <div className="mt-[20px] w-full rounded-[16px] border-[1.5px] border-dashed border-[#28191033] px-[14px] pt-[14px] pb-[16px]">
+              <p className={`text-center text-[13px] leading-[18px] font-[500] ${SUB}`}>
+                Personal agents have a hard time
+                <br /> connecting to {CLINIC.name}
+              </p>
+              <AgentIconsRow blocked ring="#FFFCF1" className="mt-[12px]" />
+            </div>
             <button
               type="button"
               onClick={onStart}
-              className="group mt-[20px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#3A2516] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#4A3121] transition-colors duration-150"
+              className="group mt-[10px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#3A2516] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#4A3121] transition-colors duration-150"
             >
               See The Page We Built You
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
                 <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
+            </>
           }
         />
         <AboutDoe intro />
@@ -1439,7 +1464,8 @@ function AgentSearches({ className = "" }: { className?: string }) {
 }
 
 /** The personal agents' own icons in one centred row, each with a small check. `ring` matches the colour behind it. */
-function AgentIconsRow({ ring = "#F4EEDF", className = "" }: { ring?: string; className?: string }) {
+/** `blocked` swaps each check for a small X and quiets the icons: agents that can't connect yet. */
+function AgentIconsRow({ ring = "#F4EEDF", blocked = false, className = "" }: { ring?: string; blocked?: boolean; className?: string }) {
   return (
     <div className={`flex items-center justify-center gap-[8px] ${className}`}>
       {AGENT_APPS.map((a) => (
@@ -1451,10 +1477,10 @@ function AgentIconsRow({ ring = "#F4EEDF", className = "" }: { ring?: string; cl
             width={36}
             height={36}
             draggable={false}
-            className={`block w-[36px] h-[36px] rounded-[10px] object-cover select-none ${a.light ? "ring-1 ring-[#2819101A]" : ""}`}
+            className={`block w-[36px] h-[36px] rounded-[10px] object-cover select-none ${a.light ? "ring-1 ring-[#2819101A]" : ""} ${blocked ? "grayscale-[0.7] opacity-[0.7]" : ""}`}
           />
           <span className="absolute -right-[4px] -bottom-[4px] rounded-[6px]" style={{ boxShadow: `0 0 0 2px ${ring}` }}>
-            <Check on size={14} />
+            {blocked ? <Cross size={14} /> : <Check on size={14} />}
           </span>
         </span>
       ))}
