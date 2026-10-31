@@ -132,6 +132,8 @@ export type DemoSession = {
    * driver's licence and unlocks with Face ID (a WebAuthn platform check) on their phone.
    */
   identity?: DemoIdentity;
+  /** What the agent is doing or waiting on, as of its last check-in or action (see agentDoing in demo-engine). */
+  agentNow?: { text: string; at: string };
   /** Read-only copies of the forms shared with the user by link. The token itself lives only in shares/<token>.json. */
   shares?: DemoShare[];
   /** Actions and messages this hour, for the per-session quota. */

@@ -36,6 +36,10 @@ const AGENT_ICONS: [RegExp, string][] = [
 ];
 export const agentIcon = (name: string) => AGENT_ICONS.find(([re]) => re.test(name))?.[1] ?? null;
 
+/** What the agent is doing right now, if it checked in or acted in the last 2 minutes. */
+export const doingNow = (s: { agentNow?: { text: string; at: string } | null; live?: boolean }) =>
+  s.agentNow && Date.now() - Date.parse(s.agentNow.at) < 120_000 ? s.agentNow.text : null;
+
 export function AgentAvatar({ name, size = 36, ring }: { name: string; size?: number; ring?: string }) {
   const icon = agentIcon(name);
   const style = { width: size, height: size, boxShadow: ring ? `0 0 0 2px ${ring}` : undefined };
@@ -426,6 +430,18 @@ function NoticeCard({ n, s, onDismiss, onWatch, onForms, onAct }: { n: Notice; s
         </button>
       </div>
       {body}
+      {doingNow(s) && n.kind !== "confirmed" && (
+        <div className="flex items-center gap-[8px] px-[2px] text-[12.5px] leading-[17px] text-[#FFFCF1CC]">
+          <span className="doe-typing flex gap-[3px] shrink-0">
+            <i />
+            <i />
+            <i />
+          </span>
+          <span className="min-w-0">
+            <span className="font-[700] text-[#FFFCF1]">Now:</span> {doingNow(s)}
+          </span>
+        </div>
+      )}
       <div className="flex flex-wrap items-center gap-[6px]">{actions}</div>
     </div>
   );
@@ -648,6 +664,10 @@ function stepsOf(s: Session): Step[] {
   let calendarOpened = false;
   for (const e of s.events) {
     const actor = e.actor === "clinic" ? "clinic" : "agent";
+    if (e.type === "agent_waiting") {
+      steps.push({ key: e.id, at: e.at, screen: steps[steps.length - 1]?.screen ?? "services", title: e.summary, detail: "Checked in with the clinic", actor, ms: 1300, ev: e });
+      continue;
+    }
     if (e.type === "mcp_call") {
       steps.push({ key: e.id, at: e.at, screen: "services", title: e.summary, detail: "Before starting a booking", actor, ms: 1300, ev: e });
       continue;
@@ -774,7 +794,8 @@ export function LiveSession({ s, availability, onClose, onAct }: { s: Session; a
                           <i />
                           <i />
                         </span>
-                        {s.agentName} is working
+                        {/* The live status only once the replay has caught up; mid-replay it would describe a later moment. */}
+                        {(!catchingUp && doingNow(s)) || `${s.agentName} is working`}
                       </span>
                     )}
                   </span>
@@ -1214,6 +1235,9 @@ const LIVE_CSS = `
 
 /** Shared keyframes for the notification cards (they live outside the live view). */
 export const NOTICE_CSS = `
+.doe-typing i{display:block;width:5px;height:5px;border-radius:99px;background:currentColor;animation:doe-dot 1.1s ease-in-out infinite}
+.doe-typing i:nth-child(2){animation-delay:.15s}.doe-typing i:nth-child(3){animation-delay:.3s}
+@keyframes doe-dot{0%,80%,100%{opacity:.25;transform:none}40%{opacity:1;transform:translateY(-2px)}}
 .doe-notice-in{animation:doe-notice-in .42s cubic-bezier(.32,.72,0,1) both}
 @keyframes doe-notice-in{from{opacity:0;transform:translateY(-14px) scale(.98)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.doe-notice-in{animation:none}}

@@ -14,7 +14,7 @@ import { Check, DISPLAY } from "@/components/demo/DemoFrame";
 import { DemoSphere } from "@/components/demo/DemoSphere";
 import { FormsLibrary } from "@/components/demo/DemoClinicForms";
 import { Integrations } from "@/components/demo/DemoClinicIntegrations";
-import { AgentAvatar, CHANNEL_LONG, LiveSession, LiveVisit, NOTICE_CSS, NoticeStack, useNotices } from "@/components/demo/DemoClinicLive";
+import { AgentAvatar, CHANNEL_LONG, LiveSession, LiveVisit, NOTICE_CSS, NoticeStack, doingNow, useNotices } from "@/components/demo/DemoClinicLive";
 import { Card, CardTitle, Empty, PageTitle, Segmented, Switch, SyncDot, Tag } from "@/components/demo/DemoClinicUi";
 import { INTAKE_FIELDS, BUNDLES, CLINIC, SERVICES, money } from "@/lib/demo/demo-clinic";
 import { API_BASE, MCP_PATH } from "@/lib/demo/demo-docs";
@@ -770,8 +770,8 @@ function Overview({
                   <AgentAvatar name={s.agentName} size={28} />
                   <span className="absolute -right-[2px] -bottom-[2px] w-[10px] h-[10px] rounded-full border-[2px] border-solid border-[#FAF6EC] bg-[#6E9A5B]" />
                 </span>
-                <span className="truncate text-[14px] leading-[18px] font-[600] text-[#281910]">{s.agentName}</span>
-                <span className="truncate text-[12.5px] leading-[17px] text-[#2819109E]">for {s.userName}</span>
+                <span className="shrink-0 text-[14px] leading-[18px] font-[600] text-[#281910]">{s.agentName}</span>
+                <span className="truncate text-[12.5px] leading-[17px] text-[#2819109E]">{doingNow(s) ?? `for ${s.userName}`}</span>
               </button>
             ))}
           </span>
@@ -1098,6 +1098,7 @@ function SessionDetail({ s, config, now, onAct, onWatch }: { s: Session; config:
             <div className="mt-[2px] text-[13px] leading-[18px] text-[#2819109E] truncate">
               {s.agentName} via {CHANNEL_LONG[s.channel]} · {s.live ? "live" : `seen ${ago(s.lastSeenAt, now)}`}
             </div>
+            {doingNow(s) && <div className="mt-[2px] text-[13px] leading-[18px] font-[600] text-[#281910] truncate">Now: {doingNow(s)}</div>}
             {(s.userLocation || s.userPhone || s.forms.intake.phone) && (
               <div className="mt-[2px] text-[13px] leading-[18px] text-[#281910CC] truncate">
                 {[s.userLocation, s.userPhone || s.forms.intake.phone].filter(Boolean).join(" · ")}

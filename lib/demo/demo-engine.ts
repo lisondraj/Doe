@@ -139,6 +139,30 @@ export function statusOf(s: DemoSession, now: number): DemoStatus {
   return "Browsing";
 }
 
+/**
+ * What the agent is actually doing when it checks in, from the session's state: who it's waiting on and for what.
+ * Shown to the clinic instead of a bare "checked the session".
+ */
+export function agentDoing(s: DemoSession, now: number): string {
+  const who = s.userName.split(" ")[0] || "the user";
+  if (s.booking.status === "confirmed") return `Telling ${who} the appointment is confirmed`;
+  if (s.booking.status === "requested") return "Waiting for the clinic to approve the appointment";
+  if (s.booking.status === "declined") return `Telling ${who} the clinic declined, and looking for another time`;
+  if (s.identity?.status === "pending") {
+    return s.identity.openedAt ? `Waiting for ${who} to finish the identity check (link opened)` : `Waiting for ${who} to open the identity check link`;
+  }
+  const neg = s.threads.negotiate;
+  if (neg.some((m) => m.offer?.status === "open" && m.from === "clinic")) return `Waiting for ${who} to decide on the clinic's offer`;
+  if (neg[neg.length - 1]?.from === "agent") return "Waiting for the clinic's reply on price";
+  if (s.forms.status === "sent") return s.hold && Date.parse(s.hold.expiresAt) > now ? `Confirming the booking with ${who}` : `Forms sent; picking a time with ${who}`;
+  const started = Object.keys(s.forms.assessments).length > 0 || s.forms.signedBy;
+  if (started) return `Going through the forms with ${who}`;
+  if (s.hold && Date.parse(s.hold.expiresAt) > now) return `Holding ${slotLabel(s.hold.slotId)}; checking with ${who}`;
+  const lastConcierge = s.threads.concierge[s.threads.concierge.length - 1];
+  if (lastConcierge?.from === "clinic" && lastConcierge.by === "staff") return "Reading the clinic's reply";
+  return `Checking in with ${who}`;
+}
+
 /** What the agent still has to do before the booking is confirmed. */
 export function nextSteps(s: DemoSession, config: DemoConfig, now: number): string[] {
   const steps: string[] = [];

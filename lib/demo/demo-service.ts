@@ -10,6 +10,7 @@ import {
   type ConnectInput,
   DemoError,
   LIVE_MS,
+  agentDoing,
   analytics,
   applyAgentAction,
   applyClinicAction,
@@ -158,9 +159,24 @@ export async function connect(input: ConnectInput, ip: string, visitId?: string 
 export async function agentState(token: unknown) {
   const s = await authenticate(token);
   const now = Date.now();
-  if (now - Date.parse(s.lastSeenAt) > SEEN_WRITE_MS) {
-    s.lastSeenAt = new Date(now).toISOString();
-    await withLock(LOCK, () => writeSession(s));
+  /**
+   * A check-in records what the agent is doing (agentDoing). The log gets a line only when that changes, so polling
+   * shows "Waiting for James to open the identity check link" once, not a line per poll.
+   */
+  const doing = agentDoing(normalize(s, now), now);
+  if (doing !== s.agentNow?.text || now - Date.parse(s.lastSeenAt) > SEEN_WRITE_MS) {
+    await withLock(LOCK, async () => {
+      const cur = (await readSession(s.id)) ?? s;
+      const at = new Date(now).toISOString();
+      const lastWait = [...cur.events].reverse().find((e) => e.type === "agent_waiting");
+      if (doing !== lastWait?.summary) {
+        cur.events = [...cur.events, { id: `e_w${now.toString(36)}${randomBytes(2).toString("hex")}`, at, actor: "agent", channel: cur.channel, type: "agent_waiting", summary: doing }];
+      }
+      cur.agentNow = { text: doing, at };
+      cur.lastSeenAt = at;
+      await writeSession(cur);
+      Object.assign(s, cur);
+    });
   }
   const [config, slots] = await Promise.all([readConfig(), readSlots()]);
   return agentPayload(s, config, slots, now);
@@ -173,6 +189,7 @@ export async function agentAct(token: unknown, action: AgentAction, channel: Dem
     if (!s) throw new DemoError(401, "Session not found. Connect again.");
     const now = new Date();
     const r = applyAgentAction(s, action, { config, slots, now, channel });
+    r.session.agentNow = { text: agentDoing(r.session, now.getTime()), at: now.toISOString() };
     await Promise.all([writeSession(r.session), r.slotsChanged ? writeSlots(r.slots) : null]);
     return { result: r.result, ...agentPayload(r.session, config, r.slots, now.getTime()) };
   });
