@@ -22,7 +22,6 @@ import {
   CLINIC,
   FIELD_COUNT,
   HOURS,
-  ISSUES,
   LOCATIONS,
   OFFERS,
   PRICE_COUNT,
@@ -252,7 +251,7 @@ export function IndexConvertPage() {
           <div className="w-full max-w-[560px] md:max-w-[720px] xl:max-w-[1180px] mx-auto">
             {/* Desktop: indented to the Ford box's inner edge (its 6px shell and 26px padding), so the two read as one column. */}
             <h1 className={`${DISPLAY} max-w-[19ch] md:max-w-[24ch] md:pl-[32px] md:box-content text-left text-[clamp(22px,6.4vw,25px)] leading-[1.14] md:text-[36px] md:leading-[42px] tracking-[-0.02em] [text-wrap:balance]`}>
-              Clients are starting to book through Instinct and Muse. We&apos;ve built {CLINIC.name} a page they can read.
+              We can add your clinic to Doe&apos;s listings so clients can find you faster through Instinct or Muse.
             </h1>
           </div>
         ) : undefined
@@ -300,7 +299,7 @@ function Frame({
 }) {
   return (
     <div
-      className={`${dmSans.className} doehealth-product-page indexconvert-page fixed inset-0 bg-[#3A2516] text-[#281910] antialiased [font-synthesis:none]`}
+      className={`${dmSans.className} doehealth-product-page indexconvert-page fixed inset-0 bg-[#140C04] text-[#281910] antialiased [font-synthesis:none]`}
       style={{
         paddingTop: "max(8px, env(safe-area-inset-top))",
         paddingBottom: "max(8px, env(safe-area-inset-bottom))",
@@ -367,7 +366,7 @@ function ViewSwitch({ view, onChange }: { view: View; onChange: (v: View) => voi
       <button
         type="button"
         onClick={() => onChange("agent")}
-        className="group ic-fade h-[40px] pl-[16px] pr-[12px] flex items-center gap-[8px] rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap hover:bg-[#4A3121] transition-colors duration-150"
+        className="group ic-fade h-[40px] pl-[16px] pr-[12px] flex items-center gap-[8px] rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap hover:bg-[#2A1C12] transition-colors duration-150"
       >
         What Agents See
         <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[2px]">
@@ -389,7 +388,7 @@ function ViewSwitch({ view, onChange }: { view: View; onChange: (v: View) => voi
           <path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      <span className="h-[40px] px-[16px] flex items-center rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap">Agent&apos;s View</span>
+      <span className="h-[40px] px-[16px] flex items-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600] whitespace-nowrap">Agent&apos;s View</span>
     </div>
   );
 }
@@ -398,7 +397,7 @@ function Check({ on, size = 20 }: { on: boolean; size?: number }) {
   return (
     <span
       className="shrink-0 flex items-center justify-center transition-colors duration-150"
-      style={{ width: size, height: size, borderRadius: Math.round(size * 0.35), backgroundColor: on ? "#3A2516" : "transparent", border: on ? "none" : "1.5px solid #28191040" }}
+      style={{ width: size, height: size, borderRadius: Math.round(size * 0.35), backgroundColor: on ? "#140C04" : "transparent", border: on ? "none" : "1.5px solid #28191040" }}
       aria-hidden="true"
     >
       {on && (
@@ -414,7 +413,7 @@ function Spinner({ size = 20, light = false }: { size?: number; light?: boolean 
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" className="ic-spin shrink-0" aria-hidden="true">
       <circle cx="12" cy="12" r="9" fill="none" stroke={light ? "#FFFCF133" : "#2819101F"} strokeWidth="2.6" />
-      <path d="M12 3a9 9 0 0 1 9 9" fill="none" stroke={light ? "#FFFCF1" : "#3A2516"} strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M12 3a9 9 0 0 1 9 9" fill="none" stroke={light ? "#FFFCF1" : "#140C04"} strokeWidth="2.6" strokeLinecap="round" />
     </svg>
   );
 }
@@ -488,7 +487,7 @@ function Loader({ elapsed, viewport, onSkip }: { elapsed: number; viewport: { w:
             </div>
 
             <div className="mt-[14px] h-[4px] rounded-full bg-[#2819101A] overflow-hidden">
-              <div className="h-full rounded-full bg-[#3A2516] origin-left will-change-transform" style={{ transform: `scaleX(${progress})` }} />
+              <div className="h-full rounded-full bg-[#140C04] origin-left will-change-transform" style={{ transform: `scaleX(${progress})` }} />
             </div>
             <div className="mt-[10px] flex items-center gap-[8px]">
               {built ? <Check on size={16} /> : <Spinner size={16} />}
@@ -819,7 +818,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               type="button"
               tabIndex={pillsOn ? 0 : -1}
               onClick={() => go(n.id)}
-              className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] transition-colors duration-150 ${agent ? "font-mono text-[12.5px]" : ""} ${active === n.id ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}
+              className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] transition-colors duration-150 ${agent ? "font-mono text-[12.5px]" : ""} ${active === n.id ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#F4EEDF] text-[#281910]"}`}
             >
               {agent ? n.agent : n.you}
             </button>
@@ -849,7 +848,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
             <button
               type="button"
               onClick={goToClaim}
-              className="mt-[14px] h-[40px] px-[12px] flex items-center rounded-[12px] bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[600]"
+              className="mt-[14px] h-[40px] px-[12px] flex items-center rounded-[12px] bg-[#140C04] text-[#FFFCF1] text-[13px] font-[600]"
             >
               Activate
             </button>
@@ -917,7 +916,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               </div>
               {!claimed && (
                 <p className="md:hidden px-[4px] pt-[6px] pb-[8px] text-[17px] leading-[25px] text-[#281910B3] [text-wrap:pretty]">
-                  We&apos;ve built {CLINIC.name}&apos;s agent pages from your website, so personal agents can find, read and book you. Claim yours free to switch them on.
+                  We&apos;ve built {CLINIC.name}&apos;s agentic pages, so personal agents can find, read and book you. Claim your page to switch them on.
                 </p>
               )}
               <AboutDoe />
@@ -944,7 +943,7 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
         onClick={goToClaim}
         tabIndex={!claimed && !claimInView ? 0 : -1}
         aria-hidden={claimed || claimInView}
-        className={`group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[#3A2516] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(58,37,22,0.25)] text-[12.5px] tracking-[0.04em]`}
+        className={`group lg:hidden fixed left-[18px] right-[18px] z-20 flex items-center justify-center gap-[10px] h-[62px] px-[14px] rounded-[999px] bg-[#140C04] text-[#FFFCF1] font-[700] uppercase whitespace-nowrap shadow-[0_10px_30px_rgba(20,12,4,0.25)] text-[12.5px] tracking-[0.04em]`}
         style={{
           bottom: "calc(max(8px, env(safe-area-inset-bottom)) + 10px)",
           transform: !claimed && !claimInView ? "none" : "translateY(calc(100% + 40px))",
@@ -1034,7 +1033,7 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
           <rect x="32" y="49" width="38" height="5" rx="2.5" fill="#28191026" />
           <rect x="32" y="60" width="44" height="5" rx="2.5" fill="#28191026" />
           <path d="M102 48h30M124 40l8 8-8 8" fill="none" stroke="#281910" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-          <rect x="144" y="20" width="76" height="56" rx="12" fill="#3A2516" />
+          <rect x="144" y="20" width="76" height="56" rx="12" fill="#140C04" />
           <text x="156" y="42" fontSize="12" fill="#FCCFB8" fontFamily="ui-monospace, monospace">{"{"}</text>
           <rect x="166" y="34" width="38" height="5" rx="2.5" fill="#FFFCF1" opacity="0.85" />
           <rect x="166" y="46" width="28" height="5" rx="2.5" fill="#FFFCF1" opacity="0.5" />
@@ -1049,7 +1048,7 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
         <svg {...svgProps}>
           <rect x="26" y="22" width="146" height="38" rx="19" fill="#FFFCF1" stroke="#2819101F" strokeWidth="1.5" />
           <text x="46" y="45" fontSize="12.5" fill="#28191080">you@yourclinic.com</text>
-          <circle cx="198" cy="41" r="17" fill="#3A2516" />
+          <circle cx="198" cy="41" r="17" fill="#140C04" />
           <path d="M190 41.5l6 6 11-12" fill="none" stroke="#FFFCF1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
@@ -1059,7 +1058,7 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
       <div className={`${tile} px-[14px]`}>
         <div className="flex flex-nowrap items-center justify-center gap-[6px]">
           {["Book", "Intake", "Payments", "& more"].map((t, i) => (
-            <span key={t} className={`shrink-0 h-[30px] px-[13px] flex items-center whitespace-nowrap rounded-full text-[12.5px] font-[600] ${i === 0 ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}>
+            <span key={t} className={`shrink-0 h-[30px] px-[13px] flex items-center whitespace-nowrap rounded-full text-[12.5px] font-[600] ${i === 0 ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}>
               {t}
             </span>
           ))}
@@ -1071,7 +1070,7 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
       <div className={`${tile} px-[14px]`}>
         <div className="flex flex-nowrap items-center justify-center gap-[6px]">
           {["MCP", "API", "JSON", "EXA"].map((t, i) => (
-            <span key={t} className={`shrink-0 h-[30px] px-[13px] flex items-center rounded-full font-mono text-[12.5px] font-[600] ${i === 0 ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}>
+            <span key={t} className={`shrink-0 h-[30px] px-[13px] flex items-center rounded-full font-mono text-[12.5px] font-[600] ${i === 0 ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910]"}`}>
               {t}
             </span>
           ))}
@@ -1110,11 +1109,11 @@ function StepVisual({ n }: { n: 1 | 2 | 3 | 4 | 5 }) {
 }
 
 const STEP_BOXES: { n: 1 | 2 | 3 | 4 | 5; title: string; detail?: string }[] = [
-  { n: 1, title: "We built your agent-readable page", detail: `From ${SOURCE_PAGES.length} pages of ${CLINIC.domain}: providers, prices, hours and offers. Already done.` },
-  { n: 2, title: "Claim it with your clinic email", detail: "Free. Takes a minute. Nothing goes live until you confirm." },
-  { n: 3, title: "Let agents book, take intake and payments", detail: "Clients' agents request consults with the right provider, any hour." },
-  { n: 4, title: "We handle the rest", detail: "We connect your clinic to the channels that make it visible to personal agents." },
-  { n: 5, title: "Clients find and book you through their agent", detail: "In Muse, Instinct, Claude Duet and GPT Dots." },
+  { n: 1, title: "We've created an agentic-readable version of your clinic page" },
+  { n: 2, title: "Claim your page" },
+  { n: 3, title: "Allow potential clients to book through agents, complete intake, make payments & more" },
+  { n: 4, title: "We handle the rest", detail: "We connect your clinic directly to the channels that make it visible and interactable to personal agents." },
+  { n: 5, title: "Potential clients can now use their personal agent to find and book you." },
 ];
 
 /** How it works, one box per step: sand shell, cream inside, a small picture, then the line. */
@@ -1127,7 +1126,7 @@ function StepBoxes() {
             <StepVisual n={st.n} />
             <div className="px-[8px] pt-[14px] pb-[8px] md:px-[12px]">
               <div className="flex items-start gap-[12px]">
-                <span className="shrink-0 mt-[1px] w-[26px] h-[26px] flex items-center justify-center rounded-full bg-[#3A2516] text-[#FFFCF1] text-[13px] font-[700]">{st.n}</span>
+                <span className="shrink-0 mt-[1px] w-[26px] h-[26px] flex items-center justify-center rounded-full bg-[#140C04] text-[#FFFCF1] text-[13px] font-[700]">{st.n}</span>
                 <div className="min-w-0">
                   <div className="text-[17px] leading-[24px] font-[600] [text-wrap:balance]">{st.title}</div>
                   {st.detail && <div className={`mt-[4px] text-[14.5px] leading-[22px] ${SUB} [text-wrap:pretty]`}>{st.detail}</div>}
@@ -1150,20 +1149,16 @@ function Intro({ onStart }: { onStart: () => void }) {
         <div className="flex flex-col gap-[10px]">
         <Hero
           action={
-            <>
-            <ProofStrip className="mt-[20px]" />
             <button
               type="button"
               onClick={onStart}
-              className="group mt-[12px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#3A2516] shadow-[0_10px_24px_rgba(58,37,22,0.22)] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#4A3121] transition-colors duration-150"
+              className="group mt-[20px] w-full h-[60px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[15px] md:text-[16px] font-[700] hover:bg-[#2A1C12] transition-colors duration-150"
             >
               See The Page We Built You
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
                 <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
-            <Reassure className="mt-[12px] justify-center" />
-            </>
           }
         />
         <AboutDoe intro />
@@ -1233,7 +1228,7 @@ function LocationMap({ variant, size = 76 }: { variant: number; size?: number })
         )}
         <g transform={v === 0 ? "translate(46 44)" : "translate(56 48)"}>
           <ellipse cx="0" cy="13" rx="6" ry="2.2" fill="#281910" opacity="0.18" />
-          <path d="M0 12C-8 2 -9.5 -2 -9.5 -6.5a9.5 9.5 0 0 1 19 0C9.5 -2 8 2 0 12z" fill="#3A2516" />
+          <path d="M0 12C-8 2 -9.5 -2 -9.5 -6.5a9.5 9.5 0 0 1 19 0C9.5 -2 8 2 0 12z" fill="#140C04" />
           <circle cx="0" cy="-6.5" r="3.6" fill="#FFFCF1" />
         </g>
       </svg>
@@ -1279,7 +1274,7 @@ function FoundersFilm() {
       )}
       {!playing && (
         <button type="button" aria-label="Play What Is Doe" className="absolute inset-0 flex items-center justify-center">
-          <span className="w-[64px] h-[64px] rounded-full bg-[#FFFCF1E6] text-[#3A2516] flex items-center justify-center shadow-[0_8px_24px_rgba(58,37,22,0.25)]">
+          <span className="w-[64px] h-[64px] rounded-full bg-[#FFFCF1E6] text-[#140C04] flex items-center justify-center shadow-[0_8px_24px_rgba(20,12,4,0.25)]">
             <svg width="26" height="26" viewBox="1.35 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M7.5 4.8v14.4a.9.9 0 0 0 1.37.77l11.3-7.2a.9.9 0 0 0 0-1.54L8.87 4.03A.9.9 0 0 0 7.5 4.8Z" />
             </svg>
@@ -1361,7 +1356,7 @@ function ActivateButton({ onClick, buttonRef, className = "" }: { onClick: () =>
       ref={buttonRef}
       type="button"
       onClick={onClick}
-      className={`group w-full h-[60px] [@media(max-height:760px)]:h-[52px] flex items-center justify-center gap-[9px] sm:gap-[14px] px-[10px] rounded-[16px] bg-[#3A2516] text-[#FFFCF1] text-[12px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.03em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[#4A3121] transition-colors duration-150 ${className}`}
+      className={`group w-full h-[60px] [@media(max-height:760px)]:h-[52px] flex items-center justify-center gap-[9px] sm:gap-[14px] px-[10px] rounded-[16px] bg-[#140C04] text-[#FFFCF1] text-[12px] sm:text-[15px] md:text-[16px] font-[700] uppercase tracking-[0.03em] sm:tracking-[0.08em] whitespace-nowrap hover:bg-[#2A1C12] transition-colors duration-150 ${className}`}
     >
       <span className="relative inline-flex shrink-0 items-center w-[34px] h-[20px] sm:w-[40px] sm:h-[22px] rounded-full bg-[#FFFCF133]" aria-hidden="true">
         <span className="absolute left-[3px] top-[3px] w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] rounded-full bg-[#FFFCF1] transition-transform duration-300 group-hover:translate-x-[14px] sm:group-hover:translate-x-[18px]" />
@@ -1488,12 +1483,12 @@ function ClaimModal({
               value={claim.email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="h-[56px] w-full rounded-[20px] bg-[#FFFCF1] px-[18px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#3A2516] transition-colors"
+              className="h-[56px] w-full rounded-[20px] bg-[#FFFCF1] px-[18px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#140C04] transition-colors"
             />
             <button
               type="submit"
               disabled={claim.status === "sending"}
-              className="w-full h-[58px] flex items-center justify-center gap-[10px] rounded-[20px] bg-[#3A2516] text-[15px] font-[700] text-[#FFFCF1] hover:bg-[#4A3121] disabled:opacity-70 transition-colors duration-150"
+              className="w-full h-[58px] flex items-center justify-center gap-[10px] rounded-[20px] bg-[#140C04] text-[15px] font-[700] text-[#FFFCF1] hover:bg-[#2A1C12] disabled:opacity-70 transition-colors duration-150"
             >
               {claim.status === "sending" ? (
                 <>
@@ -1514,7 +1509,6 @@ function ClaimModal({
                 {claim.error}
               </p>
             )}
-            <Reassure className="mt-[4px] justify-center" />
           </form>
         )}
       </div>
@@ -1539,7 +1533,7 @@ function StatusPanel({ claimed, onClaim, activateRef }: { claimed: string | null
         {claimed && <p className={`mt-[6px] text-[14.5px] leading-[21px] ${SUB}`}>Link sent to {claimed}.</p>}
         {!claimed && (
           <p className="max-md:hidden mt-[10px] max-w-[46ch] text-[17px] leading-[25px] md:text-[19px] md:leading-[27px] text-[#281910B3] [text-wrap:pretty]">
-            Your page is built and waiting. Claim it free to switch it on, so personal agents can find {CLINIC.name}, quote your prices and send you consults.
+            Claim this page to activate it and begin securing customers through personal agents.
           </p>
         )}
         {!claimed && (
@@ -1549,7 +1543,6 @@ function StatusPanel({ claimed, onClaim, activateRef }: { claimed: string | null
             onClick={onClaim}
           />
         )}
-        {!claimed && <Reassure className="max-md:hidden mt-[12px]" />}
 
         {/* tablet and desktop: settings and files sit inside the status box; iPhone sets them under it. */}
         <SetupFiles className="max-md:hidden mt-[18px]" />
@@ -1633,13 +1626,13 @@ function ClaimForm({
           value={claim.email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={`you@${CLINIC.domain}`}
-          className={`h-[52px] w-full rounded-[18px] bg-[#FFFCF1] px-[16px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#3A2516] transition-colors ${agent ? "pl-[66px] text-[14px]" : ""}`}
+          className={`h-[52px] w-full rounded-[18px] bg-[#FFFCF1] px-[16px] text-[16px] leading-[20px] placeholder:text-[#28191059] outline-none border-[1.5px] border-solid border-[#2819101F] focus:border-[#140C04] transition-colors ${agent ? "pl-[66px] text-[14px]" : ""}`}
         />
       </div>
       <button
         type="submit"
         disabled={claim.status === "sending"}
-        className="w-full h-[52px] flex items-center justify-center gap-[10px] rounded-[18px] bg-[#3A2516] text-[15px] font-[600] text-[#FFFCF1] disabled:opacity-70 transition-opacity"
+        className="w-full h-[52px] flex items-center justify-center gap-[10px] rounded-[18px] bg-[#140C04] text-[15px] font-[600] text-[#FFFCF1] disabled:opacity-70 transition-opacity"
       >
         {claim.status === "sending" ? (
           <>
@@ -1728,7 +1721,7 @@ function ConnectBox() {
         </div>
         <div className="mt-[14px] flex flex-col gap-[8px]">
           {CONNECT_TABS.map((t) => (
-            <div key={t} className="rounded-[16px] bg-[#3A2516] text-[#FFFCF1] overflow-hidden">
+            <div key={t} className="rounded-[16px] bg-[#140C04] text-[#FFFCF1] overflow-hidden">
               <div className="flex items-center h-[34px] px-[14px] border-b border-solid border-[#FFFCF114] font-mono text-[11.5px] text-[#FFFCF180]">
                 {t === "MCP" ? "mcp.json" : t === "API" ? "api" : "pap/sessions"}
               </div>
@@ -1847,7 +1840,7 @@ function ClaimBox({
                 type="button"
                 disabled={Boolean(claim.plan) || Boolean(claim.planSending)}
                 onClick={() => onPlan(plan.id)}
-                className={`flex flex-col gap-[6px] p-[14px] rounded-[20px] text-left transition-colors duration-150 disabled:cursor-default ${chosen ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FBF7EA]"} ${claim.plan && !chosen ? "opacity-50" : ""}`}
+                className={`flex flex-col gap-[6px] p-[14px] rounded-[20px] text-left transition-colors duration-150 disabled:cursor-default ${chosen ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] hover:bg-[#FBF7EA]"} ${claim.plan && !chosen ? "opacity-50" : ""}`}
               >
                 <span className="flex items-baseline gap-[8px]">
                   <span className={agent ? "text-[13px] font-[600]" : `${DISPLAY} text-[19px] leading-[23px]`}>{agent ? `{ "plan": "${plan.id}" }` : plan.name}</span>
@@ -1916,7 +1909,7 @@ function Pill({ on, onClick, children }: { on: boolean; onClick: () => void; chi
     <button
       type="button"
       onClick={onClick}
-      className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] whitespace-nowrap transition-colors duration-150 ${on ? "bg-[#3A2516] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910] hover:bg-[#FAF4E4]"}`}
+      className={`shrink-0 h-[34px] px-[14px] rounded-[999px] text-[13px] font-[600] whitespace-nowrap transition-colors duration-150 ${on ? "bg-[#140C04] text-[#FFFCF1]" : "bg-[#FFFCF1] text-[#281910] hover:bg-[#FAF4E4]"}`}
     >
       {children}
     </button>
@@ -1945,141 +1938,9 @@ function EditButton({ onClick, label, className = "" }: { onClick: () => void; l
 const AVATAR_DOTS = ["#E07B53", "#6E9A5B", "#B98A55", "#6F8FA3", "#C2A987", "#E8A585"];
 const OFFER_TAGS = ["Credit", "Package", "Included", "Financing"];
 
-/** What the read found, as four numbers: the work is already done, before anyone signs up. */
-function ProofStrip({ className = "" }: { className?: string }) {
-  const stats: [number, string][] = [
-    [FIELD_COUNT, "Fields"],
-    [SERVICE_COUNT, "Services"],
-    [PRICE_COUNT, "Prices"],
-    [PROVIDERS.length, "Providers"],
-  ];
-  return (
-    <div className={`grid grid-cols-4 gap-[4px] rounded-[16px] bg-[#F4EEDF] p-[4px] ${className}`}>
-      {stats.map(([n, label]) => (
-        <div key={label} className="flex flex-col items-center justify-center rounded-[12px] bg-[#FFFCF1] py-[10px]">
-          <span className="text-[20px] leading-[24px] md:text-[22px] md:leading-[26px] font-[700] tabular-nums tracking-[-0.01em]">{n}</span>
-          <span className={`mt-[2px] text-[10.5px] leading-[13px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>{label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/** The three answers to "what's the catch?", under every main button. */
-function Reassure({ className = "" }: { className?: string }) {
-  return (
-    <div className={`flex flex-wrap items-center gap-x-[14px] gap-y-[4px] text-[12.5px] leading-[17px] font-[600] text-[#281910A6] ${className}`}>
-      {["Free to claim", "Takes a minute", "Nothing live until you confirm"].map((t) => (
-        <span key={t} className="inline-flex items-center gap-[5px] whitespace-nowrap">
-          <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          {t}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-/** What the read found on the clinic's site that a personal agent trips on today, each fixed once the page is claimed. */
-function WhatWeFound() {
-  const openClaim = useContext(ClaimModalContext);
-  return (
-    <section className="flex flex-col gap-[14px] pt-[14px] md:pt-[22px]">
-      <div className="h-px bg-[#2819101F]" />
-      <div className="px-[4px]">
-        <span className={`text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em] ${MUTED}`}>What we found on {CLINIC.domain}</span>
-        <h2 className={`${DISPLAY} mt-[8px] max-w-[20ch] text-left text-[clamp(27px,7.4vw,44px)] leading-[1.12] tracking-[-0.02em] [text-wrap:balance]`}>
-          {ISSUES.length} things stop agents from booking you today.
-        </h2>
-        <p className="mt-[10px] max-w-[52ch] text-[15px] leading-[23px] md:text-[16px] md:leading-[25px] text-[#281910B3] [text-wrap:pretty]">
-          When an agent can&apos;t tell which price is right or whether you&apos;re open, it sends its client to a clinic it can read. Your page fixes each of these once it&apos;s claimed.
-        </p>
-      </div>
-      <div className="rounded-[24px] bg-[#F4EEDF] p-[6px]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-[6px]">
-          {ISSUES.map((issue, i) => (
-            <div key={issue.title} className={`${BOX} flex items-start gap-[12px] ${i === ISSUES.length - 1 && ISSUES.length % 2 === 1 ? "sm:col-span-2" : ""}`}>
-              <span className="shrink-0 mt-[1px] w-[26px] h-[26px] flex items-center justify-center rounded-full bg-[#F7DCCB] text-[#B4532F] text-[14px] font-[800]" aria-hidden="true">
-                !
-              </span>
-              <span className="min-w-0">
-                <span className="block text-[15px] leading-[20px] font-[600]">{issue.title}</span>
-                <span className={`mt-[3px] block text-[13px] leading-[18px] ${SUB}`}>{issue.detail}</span>
-              </span>
-            </div>
-          ))}
-        </div>
-        <button
-          type="button"
-          onClick={() => openClaim("activate")}
-          className="group mt-[6px] w-full h-[54px] flex items-center justify-center gap-[10px] rounded-[18px] bg-[#3A2516] text-[#FFFCF1] text-[15px] font-[700] hover:bg-[#4A3121] transition-colors duration-150"
-        >
-          Fix These: Claim Your Page Free
-          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
-            <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-      </div>
-    </section>
-  );
-}
-
-const FAQ: [string, string][] = [
-  ["What does it cost?", "Claiming and switching your page on is free. Agent booking, reminders and sync are optional plans from $29 a month, at founding prices."],
-  ["Do we have to rebuild our website?", `No. We built your page from ${CLINIC.domain} as it is today. You can edit any provider, price or hour once you've claimed it.`],
-  ["What is a personal agent?", "An assistant like Muse, Instinct, Claude Duet or GPT Dots that searches for and books services for its user. Agents only act with their user's consent and always say they're agents."],
-  ["Who can see the page right now?", "No one. It's built but not published. It goes live only after someone at the clinic confirms their email."],
-];
-
-/** The page's last word: the answers that hold people back, then one button. */
-function ClosingCta({ claimed }: { claimed: boolean }) {
-  const openClaim = useContext(ClaimModalContext);
-  return (
-    <section className="flex flex-col gap-[14px] pt-[8px]">
-      <h2 className={`${DISPLAY} text-[24px] leading-[28px] md:text-[28px] md:leading-[32px] tracking-[-0.02em]`}>Questions Clinics Ask</h2>
-      <div className="rounded-[24px] bg-[#F4EEDF] p-[6px] flex flex-col gap-[6px]">
-        {FAQ.map(([q, a]) => (
-          <details key={q} className="group rounded-[18px] bg-[#FFFCF1] px-[16px] [&_summary::-webkit-details-marker]:hidden">
-            <summary className="flex items-center justify-between gap-[12px] min-h-[54px] cursor-pointer list-none text-[15px] leading-[20px] font-[600]">
-              {q}
-              <span className="shrink-0 w-[28px] h-[28px] flex items-center justify-center rounded-full bg-[#F4EEDF] text-[18px] leading-[18px] font-[500] transition-transform duration-200 group-open:rotate-45" aria-hidden="true">
-                +
-              </span>
-            </summary>
-            <p className={`pb-[16px] max-w-[60ch] text-[14px] leading-[21px] ${SUB} [text-wrap:pretty]`}>{a}</p>
-          </details>
-        ))}
-      </div>
-      {!claimed && (
-        <div className="rounded-[26px] bg-[#3A2516] text-[#FFFCF1] px-[20px] py-[24px] md:px-[28px] md:py-[30px]">
-          <p className={`${DISPLAY} max-w-[22ch] text-[26px] leading-[31px] md:text-[34px] md:leading-[40px] tracking-[-0.02em] [text-wrap:balance]`}>
-            {CLINIC.name}&apos;s page is ready. It just needs you.
-          </p>
-          <p className="mt-[10px] max-w-[48ch] text-[15px] leading-[23px] text-[#FFFCF1B3] [text-wrap:pretty]">
-            Claim it with your clinic email and we&apos;ll switch it on for personal agents. You can edit anything once it&apos;s yours.
-          </p>
-          <button
-            type="button"
-            onClick={() => openClaim("activate")}
-            className="group mt-[18px] w-full md:w-auto md:px-[28px] h-[58px] flex items-center justify-center gap-[10px] rounded-[16px] bg-[#FFFCF1] text-[#3A2516] text-[15px] font-[700] hover:bg-[#F4EEDF] transition-colors duration-150"
-          >
-            Claim &amp; Activate Free
-            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-[3px]">
-              <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <Reassure className="mt-[12px] !text-[#FFFCF199]" />
-        </div>
-      )}
-    </section>
-  );
-}
-
 function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => void }) {
   return (
     <>
-      <WhatWeFound />
       <div className="flex flex-col gap-[22px] pt-[14px] md:pt-[22px]">
         <div className="h-px bg-[#2819101F]" />
         <div id="included" className="flex flex-col items-start gap-[14px]">
@@ -2240,7 +2101,7 @@ function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => voi
               ))}
             </div>
           </div>
-          <div className="rounded-[18px] bg-[#3A2516] text-[#FFFCF1] p-[14px]">
+          <div className="rounded-[18px] bg-[#140C04] text-[#FFFCF1] p-[14px]">
             <div className="text-[11px] font-[600] uppercase tracking-[0.08em] text-[#FFFCF199]">With Doe</div>
             <div className="mt-[8px] flex flex-col gap-[6px]">
               {["Agents book consults with the right surgeon, any hour", "Procedure, provider and documents arrive with the booking", "Confirmations and reminders sent for you"].map(
@@ -2255,7 +2116,7 @@ function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => voi
         </div>
       </Section>
 
-      <ClosingCta claimed={claimed} />
+
     </>
   );
 }
@@ -2278,7 +2139,7 @@ function Endpoint({ method, path, status, maxHeight, children }: { method: strin
   }, [maxHeight]);
   const fade = spills ? "linear-gradient(to bottom, #000 calc(100% - 72px), transparent 100%)" : undefined;
   return (
-    <div className="rounded-[22px] bg-[#3A2516] text-[#FFFCF1] overflow-hidden font-mono">
+    <div className="rounded-[22px] bg-[#140C04] text-[#FFFCF1] overflow-hidden font-mono">
       <div className="flex items-center gap-[10px] h-[44px] px-[16px] border-b border-solid border-[#FFFCF114] text-[12px]">
         <span className="shrink-0 font-[600] text-[#FCCFB8]">{method}</span>
         <span className="min-w-0 truncate text-[#FFFCF1CC]">{path}</span>

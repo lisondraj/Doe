@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#3A2516",
+  themeColor: "#140C04",
 };
 
 export default function IndexConvertLayout({ children }: { children: ReactNode }) {
