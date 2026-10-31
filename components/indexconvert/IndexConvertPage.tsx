@@ -31,6 +31,7 @@ import {
   SERVICES,
   SOURCE_PAGES,
 } from "@/lib/indexconvert/ford-plastic-surgery";
+import { AGENT_TOPICS, InfoButton, InfoSheet, type AgentTopicId } from "@/components/indexconvert/AgentInfoSheet";
 import { AGENT_FILES, API_ORIGIN, BASE, CLINIC_TOOLS, MCP_URL, SLUG } from "@/lib/indexconvert/agent-files";
 
 const DISPLAY = "font-['P22MackinacPro-Medium','P22_Mackinac_Pro',system-ui,sans-serif] font-[500]";
@@ -919,13 +920,13 @@ function AgentPage({ view, scrollRef }: { view: View; scrollRef: RefObject<HTMLD
               {/* iPhone: the first screen fits the viewport: the title, the clinic's box, its settings and files, then the
                   switch and the button at the foot. The rest follows below. */}
               <div className="flex flex-col gap-[10px] max-md:min-h-[calc(100svh-116px)]">
-                <h2 className={`${DISPLAY} px-[4px] pt-[2px] max-md:text-center max-md:pt-[8px] max-md:pb-[0px] max-md:[@media(max-height:760px)]:pt-[0px] max-md:[@media(max-height:760px)]:text-[25px] text-left text-[clamp(26px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
+                <h2 className={`${DISPLAY} whitespace-nowrap px-[4px] pt-[2px] max-md:text-center max-md:pt-[8px] max-md:pb-[0px] max-md:[@media(max-height:760px)]:pt-[0px] max-md:[@media(max-height:760px)]:text-[25px] text-left text-[clamp(22px,7.6vw,32px)] leading-[1.06] tracking-[-0.03em] md:pb-[8px] md:text-[clamp(27px,7.4vw,52px)] md:leading-[1.12] md:tracking-[-0.02em]`}>
                   We&apos;ve made your clinic
                   <br /> more discoverable
                   <br /> to personal agents.
                 </h2>
                 {/* iPhone: a quiet line under the title saying what's left to do. */}
-                <p className="md:hidden pb-[16px] [@media(max-height:760px)]:pb-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.14em] text-[#28191080]">
+                <p className="md:hidden whitespace-nowrap pb-[16px] [@media(max-height:760px)]:pb-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.14em] text-[#28191080]">
                   Claim your listing
                   <br />
                   to activate
@@ -1021,8 +1022,16 @@ function Hero({
             <h1 className={`${DISPLAY} tracking-[-0.02em] [text-wrap:balance] ${compact ? "text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] md:text-[30px] md:leading-[34px]" : "text-[30px] leading-[34px] md:text-[36px] md:leading-[40px]"}`}>{CLINIC.name}</h1>
             {!nameOnly && (
               <>
-                <p className={`mt-[4px] max-w-[32ch] ${SUB} [text-wrap:balance] ${compact ? "mx-auto " : ""}${compact ? "text-[15px] leading-[20px] [@media(max-height:760px)]:text-[13.5px] [@media(max-height:760px)]:leading-[18px] font-[500]" : "mx-auto md:mx-0 mt-[6px] text-[14.5px] leading-[20px]"}`}>
-                  {compact ? `${LOCATIONS[0].address}, ${CLINIC.area}` : `${CLINIC.kind} in ${CLINIC.area}, since ${CLINIC.since}`}
+                <p className={`mt-[4px] max-w-[32ch] ${SUB} ${compact ? "mx-auto whitespace-nowrap " : "[text-wrap:balance] "}${compact ? "text-[15px] leading-[20px] [@media(max-height:760px)]:text-[13.5px] [@media(max-height:760px)]:leading-[18px] font-[500]" : "mx-auto md:mx-0 mt-[6px] text-[14.5px] leading-[20px]"}`}>
+                  {compact ? (
+                    <>
+                      {LOCATIONS[0].address},
+                      <br />
+                      {CLINIC.area}
+                    </>
+                  ) : (
+                    `${CLINIC.kind} in ${CLINIC.area}, since ${CLINIC.since}`
+                  )}
                 </p>
                 <a
                   href={`https://${CLINIC.url}`}
@@ -1194,11 +1203,19 @@ function Intro({ onStart }: { onStart: () => void }) {
   );
 }
 
-const CONNECTIONS = [
-  { name: "Ford's MCP Server", detail: `${CLINIC_TOOLS.length} tools: prices, providers, consults` },
-  { name: "Ford's Agent API", detail: "Services, prices & surgeons for agents" },
-  { name: "Ford's Agent Protocol", detail: "Patient consent · agents say they're agents" },
+const CONNECTIONS: { name: string; detail: string; topic: AgentTopicId }[] = [
+  { name: "Ford's MCP Server", detail: `${CLINIC_TOOLS.length} tools: prices, providers, consults`, topic: "mcp" },
+  { name: "Ford's Agent API", detail: "Services, prices & surgeons for agents", topic: "api" },
+  { name: "Ford's Agent Protocol", detail: "Patient consent · agents say they're agents", topic: "pap" },
 ];
+
+/** Which explanation each agent file opens. */
+const FILE_TOPIC: Record<string, AgentTopicId> = {
+  "/llms.txt": "llms",
+  "/robots.txt": "robots",
+  "/openapi.json": "openapi",
+  "/.well-known/mcp.json": "card",
+};
 
 /** A label over its rows, in the page's type rather than chips. */
 function StatusGroup({ title, meta, children }: { title: string; meta?: string; children: ReactNode }) {
@@ -1318,11 +1335,11 @@ function FoundersFilm() {
 
 /** The personal agents Ford shows up in, each one tested. `light` icons are mostly white, so they get a hairline edge. */
 const AGENT_APPS: { name: string; href: string; icon: string; light?: boolean }[] = [
-  { name: "Muse", href: "https://muse.ai", icon: "/indexconvert/agents/muse.png", light: true },
+  { name: "Muse", href: "https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/", icon: "/indexconvert/agents/muse.png", light: true },
   { name: "Instinct", href: "https://instinct.com", icon: "/indexconvert/agents/instinct.png", light: true },
   { name: "GPT Dots", href: "https://openai.com/index/introducing-dots/", icon: "/indexconvert/agents/gpt-dots.png", light: true },
   { name: "Claude Duet", href: "https://claude.com/product/claude-duet", icon: "/indexconvert/agents/claude-duet.png", light: true },
-  { name: "Poke", href: "https://poke.com/about", icon: "/indexconvert/agents/poke.png" },
+  { name: "Poke", href: "https://poke.com/docs", icon: "/indexconvert/agents/poke.png" },
 ];
 
 /** iPhone: the agents Ford now appears in, one per row: app icon, name, and a tested & confirmed mark. */
@@ -1330,8 +1347,15 @@ function AgentSearches({ className = "" }: { className?: string }) {
   return (
     <div className={`rounded-[26px] bg-[#F4EEDF] p-[6px] ${className}`}>
       <div className="rounded-[21px] bg-[#FFFCF1] px-[18px] pt-[20px] pb-[10px]">
-        <h3 className={`${DISPLAY} text-[24px] leading-[28px] tracking-[-0.02em] [text-wrap:balance]`}>{CLINIC.name} was easier to interact with when activated.</h3>
-        <p className={`mt-[6px] text-[14px] leading-[19px] ${SUB} [text-wrap:balance]`}>Tested in each personal agent with your page activated.</p>
+        <h3 className={`${DISPLAY} whitespace-nowrap text-[clamp(20px,6.15vw,24px)] leading-[1.17] tracking-[-0.02em]`}>
+          {CLINIC.name}
+          <br /> was easier to interact
+          <br /> with when activated.
+        </h3>
+        <p className={`mt-[6px] whitespace-nowrap text-[14px] leading-[19px] ${SUB}`}>
+          Tested in each personal agent
+          <br /> with your page activated.
+        </p>
         <ul className="mt-[12px] flex flex-col divide-y divide-[#28191014]">
           {AGENT_APPS.map((a) => (
             <li key={a.name} className="flex items-center gap-[14px] py-[12px]">
@@ -1595,7 +1619,7 @@ function ClaimModal({
             <button
               type="button"
               onClick={() => setHandoff(true)}
-              className="md:hidden underline underline-offset-[3px] mx-auto mt-[8px] px-[12px] py-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.1em] text-[#28191099] hover:text-[#281910] transition-colors duration-150"
+              className="md:hidden whitespace-nowrap underline underline-offset-[3px] mx-auto mt-[8px] px-[12px] py-[6px] text-center text-[11.5px] leading-[16px] font-[700] uppercase tracking-[0.1em] text-[#28191099] hover:text-[#281910] transition-colors duration-150"
             >
               Or send to a clinic staff
               <br />
@@ -1783,16 +1807,18 @@ function StatusPanel({ claimed, onClaim, activateRef }: { claimed: string | null
  */
 function SetupFiles({ className = "", phone = false }: { className?: string; phone?: boolean }) {
   const label = "text-[12px] leading-[16px] font-[600] uppercase tracking-[0.08em]";
+  const [topic, setTopic] = useState<AgentTopicId | null>(null);
   return (
     <div className={`rounded-[18px] bg-[#F4EEDF] px-[14px] pt-[12px] pb-[12px] ${phone ? "pt-[16px]" : ""} ${className}`}>
+      {topic && <InfoSheet topic={topic} onClose={() => setTopic(null)} />}
       {/* iPhone: a big title and a line on what these are for, with a small Not Active tag in the corner. */}
       {phone && (
         <div className="pb-[6px]">
           <div className="flex items-start justify-between gap-[10px]">
-            <h3 className={`${DISPLAY} text-left text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] tracking-[-0.02em]`}>Here&apos;s what we<br /> made you.</h3>
+            <h3 className={`${DISPLAY} whitespace-nowrap text-left text-[24px] leading-[28px] [@media(max-height:760px)]:text-[21px] [@media(max-height:760px)]:leading-[25px] tracking-[-0.02em]`}>Here&apos;s what we<br /> made you.</h3>
             <span className={`shrink-0 mt-[3px] h-[22px] px-[9px] flex items-center rounded-full bg-[#FFFCF1] text-[10.5px] font-[700] uppercase tracking-[0.08em] ${MUTED}`}>Not Active</span>
           </div>
-          <p className={`mt-[4px] text-[14px] leading-[19px] ${SUB} [text-wrap:balance]`}>
+          <p className={`mt-[4px] whitespace-nowrap text-[14px] leading-[19px] ${SUB}`}>
             All of these help personal agents
             <br /> discover and interact with you easier.
           </p>
@@ -1811,10 +1837,11 @@ function SetupFiles({ className = "", phone = false }: { className?: string; pho
               <span className="pt-[1px]">
                 <Check on size={18} />
               </span>
-              <span className="min-w-0">
+              <span className="min-w-0 flex-1">
                 <span className="block text-[15px] leading-[20px] font-[600]">{c.name}</span>
                 <span className={`block text-[12.5px] leading-[17px] ${SUB} truncate [@media(max-height:760px)]:hidden`}>{c.detail}</span>
               </span>
+              <InfoButton label={AGENT_TOPICS[c.topic].question} onClick={() => setTopic(c.topic)} className="mt-[-1px] [@media(max-height:760px)]:mt-[-2px]" />
             </div>
           ))}
         </div>
@@ -1824,12 +1851,20 @@ function SetupFiles({ className = "", phone = false }: { className?: string; pho
           {AGENT_FILES.map((f) => (
             <div key={f.path} className="flex items-center gap-[7px] h-[32px] px-[9px] rounded-[10px] bg-[#FFFCF1]">
               <Check on size={14} />
-              <span className="min-w-0 truncate font-mono text-[11.5px] leading-[15px]">{f.path.replace("/.well-known", "")}</span>
+              <span className="min-w-0 flex-1 truncate font-mono text-[11.5px] leading-[15px]">{f.path.replace("/.well-known", "")}</span>
+              <InfoButton label={AGENT_TOPICS[FILE_TOPIC[f.path]].question} onClick={() => setTopic(FILE_TOPIC[f.path])} size={20} />
             </div>
           ))}
         </div>
         {/* Short screens: the files on one line, so the switch and the button still fit on the first screen. */}
-        <p className={`hidden [@media(max-height:760px)]:block mt-[4px] font-mono text-[11.5px] leading-[17px]`}>{AGENT_FILES.map((f) => f.path.replace("/.well-known", "")).join("  ·  ")}</p>
+        <div className="hidden [@media(max-height:760px)]:flex mt-[4px] flex-wrap items-center gap-x-[8px] gap-y-[4px] font-mono text-[11.5px] leading-[17px]">
+          {AGENT_FILES.map((f) => (
+            <span key={f.path} className="inline-flex items-center gap-[4px]">
+              {f.path.replace("/.well-known", "")}
+              <InfoButton label={AGENT_TOPICS[FILE_TOPIC[f.path]].question} onClick={() => setTopic(FILE_TOPIC[f.path])} size={16} />
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -2184,7 +2219,7 @@ function YourSections({ claimed, onEdit }: { claimed: boolean; onEdit: () => voi
       <div className="flex flex-col gap-[22px] pt-[14px] md:pt-[22px]">
         <div className="h-px bg-[#2819101F]" />
         <div id="included" className="flex flex-col items-start gap-[14px]">
-          <h2 className={`${DISPLAY} px-[4px] text-left text-[clamp(27px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
+          <h2 className={`${DISPLAY} whitespace-nowrap px-[4px] text-left text-[clamp(22px,7.4vw,52px)] leading-[1.12] tracking-[-0.02em]`}>
             Here&apos;s the information
             <br />
             we made visible to
